@@ -96,8 +96,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_cfits_OBJECTS = cfits-Cfits.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
-cfits_DEPENDENCIES = 00CORE/lib00core.la \
-	COREMOD_arith/libcoremodarith.la COREMOD_fft/libcoremodfft.la \
+cfits_DEPENDENCIES = 00CORE/lib00core.la COREMOD_fft/libcoremodfft.la \
+	COREMOD_arith/libcoremodarith.la \
 	COREMOD_info/libcoremodinfo.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
@@ -327,24 +327,18 @@ top_builddir = ..
 top_srcdir = ..
 cfits_SOURCES = Cfits.c Cfits.h
 cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src -I/CfitsDev/Cfits-src/src/00CORE \
-	-I/CfitsDev/Cfits-src/src/COREMOD_arith \
 	-I/CfitsDev/Cfits-src/src/COREMOD_fft \
+	-I/CfitsDev/Cfits-src/src/COREMOD_arith \
 	-I/CfitsDev/Cfits-src/src/COREMOD_info \
 	-I/CfitsDev/Cfits-src/src/COREMOD_iofits \
 	-I/CfitsDev/Cfits-src/src/COREMOD_memory \
 	-I/CfitsDev/Cfits-src/src/COREMOD_tools
-AM_CPPFLAGS = -DCONFIGDIR=\"tttest\"
-SUBDIRS = 00CORE COREMOD_arith COREMOD_fft COREMOD_info COREMOD_iofits \
+AM_CPPFLAGS = -DCONFIGDIR=\"/CfitsDev/Cfits-src/config\"
+SUBDIRS = 00CORE COREMOD_fft COREMOD_arith COREMOD_info COREMOD_iofits \
 	COREMOD_memory COREMOD_tools
-#cfits_SOURCES += 00CORE/00CORE.c 00CORE/00CORE.h
-#cfits_SOURCES += COREMOD_arith/COREMOD_arith.c COREMOD_arith/COREMOD_arith.h
-#cfits_SOURCES += COREMOD_fft/COREMOD_fft.c COREMOD_fft/COREMOD_fft.h
-#cfits_SOURCES += COREMOD_info/COREMOD_info.c COREMOD_info/COREMOD_info.h
-#cfits_SOURCES += COREMOD_iofits/COREMOD_iofits.c COREMOD_iofits/COREMOD_iofits.h
-#cfits_SOURCES += COREMOD_memory/COREMOD_memory.c COREMOD_memory/COREMOD_memory.h
-#cfits_SOURCES += COREMOD_tools/COREMOD_tools.c COREMOD_tools/COREMOD_tools.h
-cfits_LDADD = 00CORE/lib00core.la COREMOD_arith/libcoremodarith.la \
-	COREMOD_fft/libcoremodfft.la COREMOD_info/libcoremodinfo.la \
+cfits_LDADD = 00CORE/lib00core.la COREMOD_fft/libcoremodfft.la \
+	COREMOD_arith/libcoremodarith.la \
+	COREMOD_info/libcoremodinfo.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
 	COREMOD_tools/libcoremodtools.la

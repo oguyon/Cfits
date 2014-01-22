@@ -10,13 +10,13 @@
 #define OMP_NELEMENT_LIMIT 1000000
 #endif
 
-#include <Cfits.h>
-#include <00CORE/00CORE.h>
-#include <COREMOD_fft/COREMOD_fft.h>
-#include <COREMOD_memory/COREMOD_memory.h>
-#include <COREMOD_iofits/COREMOD_iofits.h>
-#include <COREMOD_arith/COREMOD_arith.h>
-#include <COREMOD_tools/COREMOD_tools.h>
+#include "Cfits.h"
+#include "00CORE/00CORE.h"
+#include "COREMOD_fft/COREMOD_fft.h"
+#include "COREMOD_memory/COREMOD_memory.h"
+#include "COREMOD_iofits/COREMOD_iofits.h"
+#include "COREMOD_arith/COREMOD_arith.h"
+#include "COREMOD_tools/COREMOD_tools.h"
 
 
 #define PI 3.14159265358979323846264338328
