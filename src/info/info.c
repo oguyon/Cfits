@@ -1,0 +1,965 @@
+#include <fitsio.h>  /* required by every program that uses CFITSIO  */
+#include <string.h>
+#include <malloc.h>
+#include <math.h>
+
+#include "Cfits.h"
+#include "00CORE/00CORE.h"
+#include "COREMOD_tools/COREMOD_tools.h"
+#include "COREMOD_memory/COREMOD_memory.h"
+#include "COREMOD_arith/COREMOD_arith.h"
+#include "fft/fft.h"
+
+#include "info/info.h"
+
+#define SWAP(a,b) temp=(a);(a)=(b);(b)=temp;
+
+extern DATA data;
+
+
+
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
+
+int info_profile_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0)
+    {
+      profile(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
+int init_info()
+{
+  strcpy(data.module[data.NBmodule].name, __FILE__);
+  strcpy(data.module[data.NBmodule].info, "image information and statistics");
+  data.NBmodule++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"profile");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = info_profile_cli;
+  strcpy(data.cmd[data.NBcmd].info,"radial profile");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <output file> <xcenter> <ycenter> <step> <Nbstep>");
+  strcpy(data.cmd[data.NBcmd].example,"profile psf psf.prof 256 256 1.0 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)");
+  data.NBcmd++;
+
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+long brighter(char *ID_name, double value) /* number of pixels brighter than value */
+{
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  long brighter, fainter;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+    
+  brighter = 0;
+  fainter = 0;
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++){
+      if(data.image[ID].array.F[jj*naxes[0]+ii]>value)
+	brighter++;
+      else
+	fainter++;
+    }
+  printf("brighter %ld   fainter %ld\n", brighter, fainter );
+
+  return(brighter);
+}
+
+int img_nbpix_flux(char *ID_name)
+{
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  double value = 0;
+  double *array;
+  long nelements,i;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0]*naxes[1];
+  
+  array = (double*) malloc(naxes[1]*naxes[0]*sizeof(double));
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++)
+      array[jj*naxes[0]+ii] = data.image[ID].array.F[jj*naxes[0]+ii];
+
+  quick_sort_double(array, nelements);
+  
+  for(i=0;i<nelements;i++)
+    {
+      value += array[i];
+      printf("%ld  %20.18e\n", i, value);
+    }
+
+  free(array);
+  return(0);
+}
+
+float img_percentile_float(char *ID_name, float p)
+{
+  int ID;
+  long ii;
+  long naxes[2];
+  float value = 0;
+  float *array;
+  long nelements;
+  long n;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0]*naxes[1];
+  
+  array = (float*) malloc(nelements*sizeof(float));
+  for (ii = 0; ii < nelements; ii++) 
+    array[ii] = data.image[ID].array.F[ii];
+
+  quick_sort_float(array, nelements);
+  
+  n = (long) (p*naxes[1]*naxes[0]);
+  if(n>(nelements-1))
+    n = (nelements-1);
+  if(n<0)
+    n = 0;
+  value = array[n];
+  free(array);
+
+  return(value);
+}
+
+double img_percentile_double(char *ID_name, double p)
+{
+  int ID;
+  long ii;
+  long naxes[2];
+  double value = 0;
+  double *array;
+  long nelements;
+  long n;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0]*naxes[1];
+  
+  array = (double*) malloc(nelements*sizeof(double));
+  for (ii = 0; ii < nelements; ii++) 
+    array[ii] = data.image[ID].array.F[ii];
+
+  quick_sort_double(array, nelements);
+  
+  n = (long) (p*naxes[1]*naxes[0]);
+  if(n>(nelements-1))
+    n = (nelements-1);
+  if(n<0)
+    n = 0;
+  value = array[n];
+  free(array);
+
+  return(value);
+}
+
+int img_histoc_float(char *ID_name, char *fname)
+{
+  FILE *fp;
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  float value = 0;
+  float *array;
+  long nelements;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0]*naxes[1];
+  
+  array = (float*) malloc(naxes[1]*naxes[0]*sizeof(float));
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++)
+      array[jj*naxes[0]+ii] = data.image[ID].array.F[jj*naxes[0]+ii];
+
+  quick_sort_float(array, nelements);
+  
+  if((fp=fopen(fname,"w"))==NULL)
+    {
+      printf("ERROR: cannot open file \"%s\"\n",fname);
+      exit(0);
+    }
+  value = 0.0;
+  for(ii=0;ii<nelements;ii++)
+    {
+      value += array[ii];
+      if(ii>0.99*nelements)
+	fprintf(fp,"%ld %g %g\n", nelements-ii, value, array[ii]);
+    }
+
+  fclose(fp);
+  free(array);
+
+  return(0);
+}
+
+int img_histoc_double(char *ID_name, char *fname)
+{
+  FILE *fp;
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  double value = 0;
+  double *array;
+  long nelements;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0]*naxes[1];
+  
+  array = (double*) malloc(naxes[1]*naxes[0]*sizeof(double));
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++)
+      array[jj*naxes[0]+ii] = data.image[ID].array.F[jj*naxes[0]+ii];
+
+  quick_sort_double(array, nelements);
+  
+  if((fp=fopen(fname,"w"))==NULL)
+    {
+      printf("ERROR: cannot open file \"%s\"\n",fname);
+      exit(0);
+    }
+  value = 0.0;
+  for(ii=0;ii<nelements;ii++)
+    {
+      value += array[ii];
+      if(ii>0.99*nelements)
+	fprintf(fp,"%ld %g %g\n",nelements-ii,value,array[ii]);
+    }
+
+  fclose(fp);
+  free(array);
+
+  return(0);
+}
+
+
+int make_histogram(char *ID_name, char *ID_out_name, double min, double max, long nbsteps)
+{
+  int ID,ID_out;
+  long ii,jj;
+  long naxes[2];
+  long n;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+
+  create_2Dimage_ID(ID_out_name,nbsteps,1);
+  ID_out = image_ID(ID_out_name);
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++)
+      {
+	n = (long) ((data.image[ID].array.F[jj*naxes[0]+ii]-min)/(max-min)*nbsteps);
+	if((n>0)&&(n<nbsteps))
+	  data.image[ID_out].array.F[n] += 1;
+      }
+  return(0);
+}
+
+double ssquare(char *ID_name)
+{
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  double ssquare;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+    
+  ssquare = 0;
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++){
+      ssquare = ssquare + data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
+    }
+  return(ssquare);
+}
+
+double rms_dev(char *ID_name)
+{
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  double ssquare,rms;
+  double constant;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+    
+  ssquare = 0;
+  constant = arith_image_total(ID_name)/naxes[0]/naxes[1];
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++){
+      ssquare = ssquare + (data.image[ID].array.F[jj*naxes[0]+ii]-constant)*(data.image[ID].array.F[jj*naxes[0]+ii]-constant);
+    }
+  rms = sqrt(ssquare/naxes[1]/naxes[0]);
+  return(rms);
+}
+
+
+// option "fileout" : output to file imstat.info.txt
+int stats(char *ID_name, char *options)
+{
+  int ID;
+  long ii,jj,j;
+  double min,max;
+  double rms;
+  long nelements;
+  double tot;
+  double *array;
+  long iimin,iimax;
+  int atype;
+  long tmp_long;
+  char type[20];
+  char vname[200];
+  double xtot,ytot;
+  double vbx,vby;
+  FILE *fp;
+  int mode = 0;
+  
+  // printf("OPTIONS = %s\n",options);
+   if (strstr(options,"fileout")!=NULL)
+    mode = 1;
+   
+  if(mode == 1)
+    fp = fopen("imstat.info.txt","w");
+  
+
+  ID = image_ID_noaccessupdate(ID_name);
+  if(ID!=-1)
+    {
+      nelements =  data.image[ID].nelement;
+      
+      atype = data.image[ID].atype;
+      tmp_long = data.image[ID].nelement*TYPESIZE[atype];
+      printf("\n");
+      printf("Image size (->imsize0...):     [");
+      printf("% ld",data.image[ID].size[0]);
+      j = 0;
+      sprintf(vname,"imsize%ld",j);
+      create_variable_ID(vname,1.0*data.image[ID].size[j]);
+      for(j=1;j<data.image[ID].naxis;j++)
+	{
+	  printf(" %ld",data.image[ID].size[j]);
+	  sprintf(vname,"imsize%ld",j);
+	  create_variable_ID(vname,1.0*data.image[ID].size[j]);
+	}
+      printf(" ]\n");
+
+      if(atype==CHAR)
+	sprintf(type,"CHAR");
+      if(atype==INT)
+	sprintf(type,"INT");
+      if(atype==FLOAT)
+	sprintf(type,"FLOAT");
+      if(atype==DOUBLE)
+	sprintf(type,"DOUBLE");
+      if(atype==COMPLEX_FLOAT)
+	sprintf(type,"CFLOAT");
+      if(atype==COMPLEX_DOUBLE)
+	sprintf(type,"CDOUBLE");
+      printf("type:            %s\n",type);
+      printf("Memory size:     %ld Kb\n",(long) tmp_long/1024);
+      //      printf("Created:         %f\n", data.image[ID].creation_time);
+      //      printf("Last access:     %f\n", data.image[ID].last_access);
+
+
+
+      min = data.image[ID].array.F[0];
+      max = data.image[ID].array.F[0];
+      
+      iimin = 0;
+      iimax = 0;
+      for (ii = 0; ii < nelements; ii++) 
+	{
+	  if (min > data.image[ID].array.F[ii])
+	    {
+	      min = data.image[ID].array.F[ii];
+	      iimin = ii;
+	    }
+	  if (max < data.image[ID].array.F[ii])
+	    {	
+	      max = data.image[ID].array.F[ii];
+	      iimax = ii;
+	    }
+	}
+
+      array = (double*) malloc(nelements*sizeof(double));
+      tot = 0.0;
+
+      rms = 0.0;
+      for (ii = 0; ii < nelements; ii++) 
+	{
+	  tot += data.image[ID].array.F[ii];
+	  rms += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+	  array[ii] = data.image[ID].array.F[ii];
+	}
+      rms = sqrt(rms);
+
+      printf("minimum         (->vmin)     %20.18e [ pix %ld ]\n", min, iimin);
+      if(mode == 1)
+	fprintf(fp,"minimum                  %20.18e [ pix %ld ]\n", min, iimin);
+      create_variable_ID("vmin",min);
+      printf("maximum         (->vmax)     %20.18e [ pix %ld ]\n", max, iimax);
+      if(mode == 1)
+	fprintf(fp,"maximum                  %20.18e [ pix %ld ]\n", max, iimax);
+      create_variable_ID("vmax",max);
+      printf("total           (->vtot)     %20.18e\n",tot);
+      if(mode == 1)
+	fprintf(fp,"total                    %20.18e\n",tot);
+      create_variable_ID("vtot",tot);
+      printf("rms             (->vrms)     %20.18e\n",rms);
+      if(mode == 1)
+	fprintf(fp,"rms                      %20.18e\n",rms);
+      create_variable_ID("vrms",rms);
+      printf("rms per pixel   (->vrmsp)    %20.18e\n",rms/sqrt(nelements));
+      if(mode == 1)
+	fprintf(fp,"rms per pixel            %20.18e\n",rms/sqrt(nelements));
+      create_variable_ID("vrmsp",rms/sqrt(nelements));
+      printf("rms dev per pix (->vrmsdp)   %20.18e\n",sqrt(rms*rms/nelements - tot*tot/nelements/nelements));
+      create_variable_ID("vrmsdp",sqrt(rms*rms/nelements - tot*tot/nelements/nelements));
+      printf("mean            (->vmean)    %20.18e\n",tot/nelements);
+      if(mode == 1)
+	fprintf(fp,"mean                     %20.18e\n",tot/nelements);
+      create_variable_ID("vmean",tot/nelements);
+      
+      if(data.image[ID].naxis==2)
+	{
+	  xtot = 0.0;
+	  ytot = 0.0;
+	  for(ii=0;ii<data.image[ID].size[0];ii++)
+	    for(jj=0;jj<data.image[ID].size[1];jj++)
+	      {
+		xtot += data.image[ID].array.F[jj*data.image[ID].size[0]+ii]*ii;
+		ytot += data.image[ID].array.F[jj*data.image[ID].size[0]+ii]*jj;
+	      }
+	  vbx = xtot/tot;
+	  vby = ytot/tot;
+	  printf("Barycenter x    (->vbx)      %20.18f\n",vbx);
+	  if(mode == 1)
+	    fprintf(fp,"photocenterX             %20.18e\n",vbx);
+	  create_variable_ID("vbx",vbx);
+	  printf("Barycenter y    (->vby)      %20.18f\n",vby);	  
+	  if(mode == 1)
+	    fprintf(fp,"photocenterY             %20.18e\n",vby);
+	  create_variable_ID("vby",vby);
+	}
+
+      quick_sort_double(array, nelements);
+      printf("\n");
+      printf("percentile values:\n");
+      
+      printf("1  percent      (->vp01)     %20.18e\n",array[(long) (0.01*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile01             %20.18e\n",array[(long) (0.01*nelements)]);
+      create_variable_ID("vp01",array[(long) (0.01*nelements)]);
+
+      printf("5  percent      (->vp05)     %20.18e\n",array[(long) (0.05*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile05             %20.18e\n",array[(long) (0.05*nelements)]);
+      create_variable_ID("vp05",array[(long) (0.05*nelements)]);
+
+      printf("10 percent      (->vp10)     %20.18e\n",array[(long) (0.1*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile10             %20.18e\n",array[(long) (0.10*nelements)]);
+      create_variable_ID("vp10",array[(long) (0.1*nelements)]);
+
+      printf("20 percent      (->vp20)     %20.18e\n",array[(long) (0.2*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile20             %20.18e\n",array[(long) (0.20*nelements)]);
+      create_variable_ID("vp20",array[(long) (0.2*nelements)]);
+
+      printf("50 percent      (->vp50)     %20.18e\n",array[(long) (0.5*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile50             %20.18e\n",array[(long) (0.50*nelements)]);
+      create_variable_ID("vp50",array[(long) (0.5*nelements)]);
+
+      printf("80 percent      (->vp80)     %20.18e\n",array[(long) (0.8*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile80             %20.18e\n",array[(long) (0.80*nelements)]);
+      create_variable_ID("vp80",array[(long) (0.8*nelements)]);
+
+      printf("90 percent      (->vp90)     %20.18e\n",array[(long) (0.9*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile90             %20.18e\n",array[(long) (0.90*nelements)]);
+      create_variable_ID("vp90",array[(long) (0.9*nelements)]);
+
+      printf("95 percent      (->vp95)     %20.18e\n",array[(long) (0.95*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile95             %20.18e\n",array[(long) (0.95*nelements)]);
+      create_variable_ID("vp95",array[(long) (0.95*nelements)]);
+
+      printf("99 percent      (->vp99)     %20.18e\n",array[(long) (0.99*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile99             %20.18e\n",array[(long) (0.99*nelements)]);
+      create_variable_ID("vp99",array[(long) (0.99*nelements)]);
+
+      printf("99.5 percent    (->vp995)    %20.18e\n",array[(long) (0.995*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile995            %20.18e\n",array[(long) (0.995*nelements)]);
+      create_variable_ID("vp995",array[(long) (0.995*nelements)]);
+
+      printf("99.8 percent    (->vp998)    %20.18e\n",array[(long) (0.998*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile998            %20.18e\n",array[(long) (0.998*nelements)]);
+      create_variable_ID("vp998",array[(long) (0.998*nelements)]);
+
+      printf("99.9 percent    (->vp999)    %20.18e\n",array[(long) (0.999*nelements)]);
+      if(mode == 1)
+	fprintf(fp,"percentile999            %20.18e\n",array[(long) (0.999*nelements)]);
+      create_variable_ID("vp999",array[(long) (0.999*nelements)]);
+
+      printf("\n");
+      free(array);      
+    }
+  
+  if(mode == 1)
+    fclose(fp);
+  
+  return(0);
+}
+
+double img_min(char *ID_name)
+{
+  int ID;
+  long ii;
+  double min;
+
+  ID = image_ID(ID_name);
+
+  min = data.image[ID].array.F[0];
+  for (ii = 0; ii < data.image[ID].nelement; ii++) 
+    if (min > data.image[ID].array.F[ii])
+      min = data.image[ID].array.F[ii];
+
+   return(min);
+}
+
+double img_max(char *ID_name)
+{
+  int ID;
+  long ii;
+  double max;
+
+  ID = image_ID(ID_name);
+
+  max = data.image[ID].array.F[0];
+    for (ii = 0; ii < data.image[ID].nelement; ii++) 
+      if (max < data.image[ID].array.F[ii])
+	max = data.image[ID].array.F[ii];
+
+   return(max);
+}
+
+int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)
+{
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  long nelements;
+  double distance;
+  double *dist;
+  double *mean;
+  double *rms;
+  long *counts;
+  FILE *fp;
+  long i;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0] * naxes[1]; 
+  dist = (double*) malloc(nb_step*sizeof(double));
+  mean = (double*) malloc(nb_step*sizeof(double));
+  rms = (double*) malloc(nb_step*sizeof(double));
+  counts = (long*) malloc(nb_step*sizeof(long));
+  
+  //  if( Debug )
+  //printf("Function profile. center = %f %f, step = %f, NBstep = %ld\n",xcenter,ycenter,step,nb_step);
+  
+  for (i=0;i<nb_step;i++)
+    {
+      dist[i] = 0.0;
+      mean[i] = 0.0;
+      rms[i] = 0.0;
+      counts[i] = 0;
+    }
+
+  if ((fp=fopen(outfile,"w"))==NULL)
+    printf("error : can't open file %s\n",outfile);
+ 
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++){
+      distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
+      i = (long) distance/step;
+      if(i<nb_step)
+	{
+	  dist[i] += distance;
+	  mean[i] += data.image[ID].array.F[jj*naxes[0]+ii];
+	  rms[i] += data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
+	  counts[i] += 1;
+	}
+    }
+
+  for (i=0;i<nb_step;i++)
+    {
+      dist[i] /= counts[i];
+      mean[i] /= counts[i];
+      rms[i] = 0.0;
+    }
+
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++){
+      distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
+      i = (long) distance/step;
+      if(i<nb_step)
+	{
+	  rms[i] += (data.image[ID].array.F[jj*naxes[0]+ii]-mean[i])*(data.image[ID].array.F[jj*naxes[0]+ii]-mean[i]);
+	  //	  counts[i] += 1;
+	}
+    }
+
+  printf("--------- TEST ----------\n");
+  
+  for (i=0;i<nb_step;i++)
+    {
+      //     dist[i] /= counts[i];
+      // mean[i] /= counts[i];
+      // rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
+      rms[i] = sqrt(rms[i]/counts[i]);
+      fprintf(fp,"%.18f %.18f %.18f %ld %ld\n",dist[i],mean[i],rms[i],counts[i],i);
+    }
+  
+
+  fclose(fp);
+
+  free(counts);
+  free(dist);
+  free(mean);
+  free(rms);
+  return(0);
+}
+
+int profile2im(char *profile_name, long nbpoints, long size, double xcenter, double ycenter, double radius, char *out)
+{
+  FILE *fp;
+  long ID;
+  double *profile_array;
+  long i;
+  long index;
+  double tmp;
+  long ii,jj;
+  double r,x;
+
+  ID = create_2Dimage_ID(out,size,size);
+  profile_array = (double*) malloc(sizeof(double)*nbpoints);
+
+  if((fp=fopen(profile_name,"r"))==NULL)
+    {
+      printf("ERROR: cannot open profile file \"%s\"\n",profile_name);
+      exit(0);
+    }
+  for(i=0;i<nbpoints;i++)
+    {
+      if(fscanf(fp,"%ld %f\n",&index,&tmp)!=2)
+	{
+	  printf("ERROR: fscanf, %s line %d\n",__FILE__,__LINE__);
+	  exit(0);
+	}
+      profile_array[i] = tmp;
+    }
+  fclose(fp);
+
+  for(ii=0;ii<size;ii++)
+    for(jj=0;jj<size;jj++)
+      {
+	r = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter))/radius;
+	i = (long) (r*nbpoints);
+	x = r*nbpoints-i; // 0<x<1
+
+	if(i+1<nbpoints)
+	  {
+	    data.image[ID].array.F[jj*size+ii] = (1.0-x)*profile_array[i]+x*profile_array[i+1];
+	  }
+	else
+	  if(i<nbpoints)
+	    data.image[ID].array.F[jj*size+ii] = profile_array[i];
+      }
+
+  free(profile_array);
+
+  return(0);
+}
+
+int printpix(char *ID_name, char *filename)
+{
+  int ID;
+  long ii,jj,kk;
+  long nelements;
+  long nbaxis;
+  long naxes[3];
+  FILE *fp;
+
+  long iistep = 1;
+  long jjstep = 1;
+
+  ID = variable_ID("_iistep");
+  if(ID!=-1)
+      {
+      iistep = (long) (0.1+data.variable[ID].value);
+      printf("iistep = %ld\n", iistep);
+    }
+  ID = variable_ID("_jjstep");
+  if(ID!=-1)
+    {
+      jjstep = (long) (0.1+data.variable[ID].value);
+       printf("jjstep = %ld\n", jjstep);
+    }
+
+  if((fp=fopen(filename,"w"))==NULL)
+    {
+      printf("ERROR: cannot open file \"%s\"\n",filename);
+      exit(0);
+    }
+
+  ID = image_ID(ID_name);
+  nbaxis = data.image[ID].naxis;
+  if(nbaxis==2)
+    {
+      naxes[0] = data.image[ID].size[0];
+      naxes[1] = data.image[ID].size[1];    
+      nelements = naxes[0] * naxes[1]; 
+      for (ii = 0; ii < naxes[0]; ii+=iistep)
+	{
+	  for (jj = 0; jj < naxes[1]; jj+=jjstep)
+	    {
+	      //  fprintf(fp,"%f ",data.image[ID].array.F[jj*naxes[0]+ii]);
+	      fprintf(fp,"%ld %ld %g\n",ii,jj,data.image[ID].array.F[jj*naxes[0]+ii]);
+	    }
+	  fprintf(fp,"\n");
+	}      
+    }
+  if(nbaxis==3)
+    {
+      naxes[0] = data.image[ID].size[0];
+      naxes[1] = data.image[ID].size[1];    
+      naxes[2] = data.image[ID].size[2];    
+      nelements = naxes[0] * naxes[1]; 
+      for (ii = 0; ii < naxes[0]; ii+=iistep) 
+	for (jj = 0; jj < naxes[1]; jj+=jjstep)
+	  for (kk = 0; kk < naxes[2]; kk++)
+	    {
+	      fprintf(fp,"%ld %ld %ld %f\n",ii,jj,kk,data.image[ID].array.F[kk*naxes[1]*naxes[0]+jj*naxes[0]+ii]);
+	    }
+    
+    }
+  fclose(fp);
+
+  return(0);
+}
+
+double background_photon_noise(char *ID_name)
+{
+  int ID;
+  long ii,jj;
+  long naxes[2];
+  double value1, value2, value3, value;
+  double *array;
+  long nelements;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+  nelements = naxes[0]*naxes[1];
+  
+  array = (double*) malloc(naxes[1]*naxes[0]*sizeof(double));
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++)
+      array[jj*naxes[0]+ii] = data.image[ID].array.F[jj*naxes[0]+ii];
+
+  quick_sort_double(array,nelements);
+  
+  /* uses the repartition function F of the normal distribution law */
+  /* F(0) = 0.5 */
+  /* F(-0.1 * sig) = 0.460172162723 */
+  /* F(-0.2 * sig) = 0.420740290562 */
+  /* F(-0.3 * sig) = 0.382088577811 */
+  /* F(-0.4 * sig) = 0.34457825839 */
+  /* F(-0.5 * sig) = 0.308537538726 */
+  /* F(-0.6 * sig) = 0.27425311775 */
+  /* F(-0.7 * sig) = 0.241963652223 */
+  /* F(-0.8 * sig) = 0.211855398584 */
+  /* F(-0.9 * sig) = 0.184060125347 */
+  /* F(-1.0 * sig) = 0.158655253931 */
+  /* F(-1.1 * sig) = 0.135666060946 */
+  /* F(-1.2 * sig) = 0.115069670222 */
+  /* F(-1.3 * sig) = 0.0968004845855 */
+
+  /* calculation using F(-0.9*sig) and F(-1.3*sig) */
+  value1 = array[(long) (0.184060125347*naxes[1]*naxes[0])]-array[(long) (0.0968004845855*naxes[1]*naxes[0])];
+  value1 /= (1.3-0.9);
+  printf("(-1.3 -0.9) %f\n",value1);
+
+  /* calculation using F(-0.6*sig) and F(-1.3*sig) */
+  value2 = array[(long) (0.27425311775*naxes[1]*naxes[0])]-array[(long) (0.0968004845855*naxes[1]*naxes[0])];
+  value2 /= (1.3-0.6);
+  printf("(-1.3 -0.6) %f\n",value2);
+
+  /* calculation using F(-0.3*sig) and F(-1.3*sig) */
+  value3 = array[(long) (0.382088577811*naxes[1]*naxes[0])]-array[(long) (0.0968004845855*naxes[1]*naxes[0])];
+  value3 /= (1.3-0.3);
+  printf("(-1.3 -0.3) %f\n",value3);
+
+  value = value3;
+  
+  free(array);
+  return(value);
+}
+
+int test_structure_function(char *ID_name, long NBpoints, char *ID_out)
+{
+  int ID,ID1,ID2;
+  long ii1,ii2,jj1,jj2,i,ii,jj;
+  long naxes[2];
+  long nelements;
+  double v1,v2;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+
+  nelements = naxes[0]*naxes[1];
+
+  ID1=create_2Dimage_ID("tmp1",naxes[0],naxes[1]);
+  ID2=create_2Dimage_ID("tmp2",naxes[0],naxes[1]);
+  
+  for(i=0;i<NBpoints;i++)
+    {
+      ii1=(long) (data.INVRANDMAX*rand()*naxes[0]);
+      jj1=(long) (data.INVRANDMAX*rand()*naxes[1]);
+      ii2=(long) (data.INVRANDMAX*rand()*naxes[0]);
+      jj2=(long) (data.INVRANDMAX*rand()*naxes[1]);
+      v1=data.image[ID].array.F[jj1*naxes[0]+ii1];
+      v2=data.image[ID].array.F[jj2*naxes[0]+ii2];
+      ii=(ii1-ii2);
+      if(ii<0)
+	ii=-ii;
+      jj=(jj1-jj2);
+      if(jj<0)
+	jj=-jj;
+      data.image[ID1].array.F[jj*naxes[0]+ii] += (v1-v2)*(v1-v2);
+      data.image[ID2].array.F[jj*naxes[0]+ii] += 1.0;
+    }
+  arith_image_div("tmp1","tmp2",ID_out);
+
+
+  return(0);
+}
+
+int full_structure_function(char *ID_name, long NBpoints, char *ID_out)
+{
+  int ID,ID1,ID2;
+  long ii1,ii2,jj1,jj2;
+  long naxes[2];
+  double v1,v2;
+  long i=0;
+  long STEP1=2;
+  long STEP2=3;
+
+  ID = image_ID(ID_name);
+  naxes[0] = data.image[ID].size[0];
+  naxes[1] = data.image[ID].size[1];    
+
+  ID1=create_2Dimage_ID("tmp1",naxes[0],naxes[1]);
+  ID2=create_2Dimage_ID("tmp2",naxes[0],naxes[1]);
+  
+
+  for(ii1=0;ii1<naxes[0];ii1+=STEP1)
+    {
+      printf(".");
+      for(jj1=0;jj1<naxes[1];jj1+=STEP1)
+	{
+	  if(i<NBpoints)
+	    {
+	      i++;
+	      fflush(stdout);
+	      for(ii2=0;ii2<naxes[0];ii2+=STEP2)
+		for(jj2=0;jj2<naxes[1];jj2+=STEP2)
+		  if((ii2>ii1)&&(jj2>jj1))
+		    {
+		      v1=data.image[ID].array.F[jj1*naxes[0]+ii1];
+		      v2=data.image[ID].array.F[jj2*naxes[0]+ii2];
+		      data.image[ID1].array.F[(jj2-jj1)*naxes[0]+ii2-ii1] += (v1-v2)*(v1-v2);
+		      data.image[ID2].array.F[(jj2-jj1)*naxes[0]+ii2-ii1] += 1.0;
+		    }
+	    }
+	}
+    }
+  printf("\n");
+
+  arith_image_div("tmp1","tmp2",ID_out);
+
+  return(0);
+}
+
+int fft_structure_function(char *ID_in, char *ID_out)
+{
+  long ID;
+  double value;
+  long nelement;
+
+  autocorrelation(ID_in,"stftmp");
+  ID=image_ID("stftmp");
+  nelement = data.image[ID].nelement;
+  value=-data.image[ID].array.F[0];
+  
+  arith_image_cstadd("stftmp",value,"stftmp1");
+  delete_image_ID("stftmp");
+  arith_image_cstmult("stftmp1",-2.0/sqrt(nelement),ID_out);
+  delete_image_ID("stftmp1");
+
+  return(0);
+}
