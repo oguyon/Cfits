@@ -50,15 +50,17 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- ../Cfits.h /usr/include/unistd.h \
+ /CfitsDev/Cfits-src/src/Cfits.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/fftw3.h \
  /usr/local/include/gsl/gsl_rng.h /usr/local/include/gsl/gsl_types.h \
  /usr/local/include/gsl/gsl_errno.h /usr/local/include/gsl/gsl_inline.h \
- ../00CORE/00CORE.h ../COREMOD_memory/COREMOD_memory.h \
- ../COREMOD_tools/COREMOD_tools.h ../COREMOD_fft/COREMOD_fft.h
+ /CfitsDev/Cfits-src/src/00CORE/00CORE.h \
+ /CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h \
+ /CfitsDev/Cfits-src/src/COREMOD_tools/COREMOD_tools.h \
+ /CfitsDev/Cfits-src/src/COREMOD_arith/COREMOD_arith.h
 
 /usr/include/stdc-predef.h:
 
@@ -196,7 +198,7 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
 
 /usr/include/asm-generic/errno-base.h:
 
-../Cfits.h:
+/CfitsDev/Cfits-src/src/Cfits.h:
 
 /usr/include/unistd.h:
 
@@ -220,10 +222,10 @@ COREMOD_arith.lo: COREMOD_arith.c /usr/include/stdc-predef.h \
 
 /usr/local/include/gsl/gsl_inline.h:
 
-../00CORE/00CORE.h:
+/CfitsDev/Cfits-src/src/00CORE/00CORE.h:
 
-../COREMOD_memory/COREMOD_memory.h:
+/CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h:
 
-../COREMOD_tools/COREMOD_tools.h:
+/CfitsDev/Cfits-src/src/COREMOD_tools/COREMOD_tools.h:
 
-../COREMOD_fft/COREMOD_fft.h:
+/CfitsDev/Cfits-src/src/COREMOD_arith/COREMOD_arith.h:

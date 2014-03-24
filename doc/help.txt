@@ -3,49 +3,68 @@
 -----------------------------------------------------------------------------------
 COMMAND LINE OPTIONS
 
--h         : Print this menu & exit
--i         : Print version, settings, info
--debug     : Set debug level 2 at startup
--j         : Write all commands to file "cfits_cmdlog.txt" as they are entered
--o         : Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
--l	   : Keeps a list of images in file imlist.txt
+  -h, --help 
+	print this message and exit
+  -i, --info
+	Print version, settings, info and exit
+  -j, --journal
+	keeps journal of commands - TO BE IMPLEMENTED 
+	Write all commands to file "cfits_cmdlog.txt" as they are entered
+  --verbose
+	be verbose
+  -d, --debug=DEBUGLEVEL
+	Set debug level at startup
+  -o, --overwrite         
+	Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
+  -l	  
+	Keeps a list of images in file imlist.txt
+  -m, --mmon=TTYDEVICE
+	open memory monitor on tty device
+	example:
+	<executable> -m /dev/tty2
+	<executable> --mmon=/dev/tty2
 
 -----------------------------------------------------------------------------------
-SYNTAX RULES
+SYNTAX RULES, PARSER
 
-Spaces used to separate arguments. Number of spaces irrelevant.
+Spaces are used to separate arguments. Number of spaces irrelevant.
 Comments are written after the special character #
 If a command is not found, the input string will be interpreted as an arithmetic operation (See ARITHMETIC OPERATIONS below)
  <command> <arg1> <arg2>   # comment
 
 -----------------------------------------------------------------------------------
+TAB COMPLETION
+
+Tab completion is provided and behaves as follows:
+  first argument:        try to match command, then image, then filename
+  additional arguments:  try to match image, then filename
+
+-----------------------------------------------------------------------------------
 INPUT
 
-Cfits uses GNU readline to read input. See GNU readline documentation on http://tiswww.case.edu/php/chet/readline/rltop.html. For a quick help on readline input, type:
-> helpreadline
-Cfits will take input from file cmdfile.txt if it exists. If file cmdfile.txt exists commands will be read one by one from top to bottom, and will be removed from the file as they are read, until the file is empty
+GNU readline used to read input. See GNU readline documentation on http://tiswww.case.edu/php/chet/readline/rltop.html. For a quick help on readline input, type:
+> helprl 
+
+The command line interpreter (CLI) will take input from file cmdfile.txt if it exists. If file cmdfile.txt exists commands will be read one by one from top to bottom, and will be removed from the file as they are read, until the file is empty
 
 -----------------------------------------------------------------------------------
 HELP COMMANDS
 
+> ?
 > help			     
 	# print this help file
-> helpreadline		     
+> helprl		     
 	# print readline quick help
-> m?                        
+> lm?                        
 	# list all modules loaded
 > m? <module>               
 	# list all commands for a module
-> m? all                    
+> m?                    
 	# perform m? on all modules loaded
-> c? <command>              
+> cmd? <command>              
 	# command description for <command>
-> c? all                    
+> cmd?                    
 	# command description for all commands
-> cm? <module> <command>
-	# command description within module
-> cm? <module> all	
-	# command description for all commands within module
 > h? str                    
 	# search for string <str> in all commands and their descriptions
 

@@ -14,6 +14,13 @@
 
 /*void print_sys_mem_info();*/
 
+
+int memory_monitor(char *termttyname);
+
+
+
+
+
 long compute_nb_image();
 
 long compute_nb_variable();
@@ -57,6 +64,8 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize);
 long copy_image_ID(char *name, char *newname);
 
 long create_variable_ID(char *name, double value);
+
+int list_image_ID_ofp(FILE *fo);
 
 int list_image_ID();
 

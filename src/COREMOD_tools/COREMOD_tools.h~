@@ -63,6 +63,8 @@ int read_int_file(char *fname);
 
 int write_int_file(char *fname, int value);
 
+int write_float_file(char *fname, float value);
+
 #endif
 
 

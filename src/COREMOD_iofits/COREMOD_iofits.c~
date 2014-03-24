@@ -1,20 +1,151 @@
 #include <fitsio.h> /* required by every program that uses CFITSIO  */
-#include <Cfits.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <modules/00CORE/00CORE.h>
-
-#include <modules/COREMOD_iofits/COREMOD_iofits.h>
-
-#include <modules/COREMOD_memory/COREMOD_memory.h>
+#include "../Cfits.h"
+#include "../00CORE/00CORE.h"
+#include "../COREMOD_iofits/COREMOD_iofits.h"
+#include "../COREMOD_memory/COREMOD_memory.h"
 
 #define SBUFFERSIZE 1000
 
 extern DATA data;
 
 char errormessage[SBUFFERSIZE];
+
+
+
+
+// forward declarations
+long load_fits(char *file_name, char ID_name[400]);
+int save_fl_fits(char *ID_name, char *file_name);
+int save_db_fits(char *ID_name, char *file_name);
+int break_cube(char *ID_name);
+int images_to_cube(char *img_name, long nbframes, char *cube_name);
+
+// CLI commands
+
+int load_fits_cli()
+{
+  load_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+
+  return 0;
+}
+
+int save_fl_fits_cli()
+{
+  save_fl_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+  
+  return 0;
+}
+
+int save_db_fits_cli()
+{
+  save_db_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+  
+  return 0;
+}
+
+int break_cube_cli()
+{
+  break_cube( data.cmdargtoken[1].val.string);
+
+  return 0;
+}
+
+int images_to_cube_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  if(data.cmdargtoken[2].type != 2)
+    {
+      printf("second argument has to be integer\n");
+      return -1;
+    }
+  
+  images_to_cube(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+
+  return 0;
+ }
+
+int init_COREMOD_iofits()
+{
+  
+  strcpy(data.cmd[data.NBcmd].key,"loadfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = load_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"load FITS format file");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"loadfits im.fits im");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long load_fits()");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"saveflfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = save_fl_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, float");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"saveflfits im im.fits");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int save_fl_fits(char *ID_name, char *file_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"savedbfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = save_db_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, double");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"savedbfits im im.fits");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int save_db_fits(char *ID_name, char *file_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"breakcube");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = break_cube_cli;
+  strcpy(data.cmd[data.NBcmd].info,"break cube into individual images (slices)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image>");
+  strcpy(data.cmd[data.NBcmd].example,"breakcube imc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int break_cube(char *ID_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"imgs2cube");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = images_to_cube_cli;
+  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image format> <max index> <output cube>");
+  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ imc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int images_to_cube(char *img_name, long nbframes, char *cube_name)");
+  data.NBcmd++;
+
+
+  // add atexit functions here
+
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static int FITSIO_status = 0;
  

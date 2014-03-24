@@ -1,11 +1,11 @@
 #ifndef _ARITH_H
 #define _ARITH_H
 
-long arith_set_pixel(char *ID_name, PRECISION value, long x, long y);
+long arith_set_pixel(char *ID_name, double value, long x, long y);
 
-long arith_set_row(char *ID_name, PRECISION value, long y);
+long arith_set_row(char *ID_name, double value, long y);
 
-long arith_set_col(char *ID_name, PRECISION value, long x);
+long arith_set_col(char *ID_name, double value, long x);
 
 long arith_image_zero(char *ID_name);
 
@@ -15,15 +15,14 @@ int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_
 
 int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart);
 
-PRECISION arith_image_total(char *ID_name);
+double arith_image_total(char *ID_name);
 
-PRECISION arith_image_min(char *ID_name);
+double arith_image_min(char *ID_name);
 
-PRECISION arith_image_max(char *ID_name);
+double arith_image_max(char *ID_name);
 
-PRECISION arith_image_median(char *ID_name);
-
-PRECISION arith_image_percentile(char *ID_name, PRECISION fraction);
+double arith_image_percentile(char *ID_name, double fraction);
+double arith_image_median(char *ID_name);
 
 long arith_image_dx(char *ID_name, char *IDout_name);
 long arith_image_dy(char *ID_name, char *IDout_name);
@@ -75,6 +74,13 @@ int arith_image_tanh_inplace(char *ID_name);
 /* image, image  -> image                                                    */
 /* ------------------------------------------------------------------------- */
 
+
+int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(double));
+
+
+
+
+
 int arith_image_fmod(char *ID1_name, char *ID2_name, char *ID_out);
 int arith_image_pow(char *ID1_name, char *ID2_name, char *ID_out);
 int arith_image_add(char *ID1_name, char *ID2_name, char *ID_out);
@@ -111,26 +117,26 @@ int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out);
 
 
 /* ------------------------------------------------------------------------- */
-/* image, PRECISION  -> image                                                */
+/* image, double  -> image                                                */
 /* ------------------------------------------------------------------------- */
 
-int arith_image_cstfmod(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstadd(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstsub(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstmult(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstdiv(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstpow(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstmaxv(char *ID_name, PRECISION f1, char *ID_out);
-int arith_image_cstminv(char *ID_name, PRECISION f1, char *ID_out);
+int arith_image_cstfmod(char *ID_name, double f1, char *ID_out);
+int arith_image_cstadd(char *ID_name, double f1, char *ID_out);
+int arith_image_cstsub(char *ID_name, double f1, char *ID_out);
+int arith_image_cstmult(char *ID_name, double f1, char *ID_out);
+int arith_image_cstdiv(char *ID_name, double f1, char *ID_out);
+int arith_image_cstpow(char *ID_name, double f1, char *ID_out);
+int arith_image_cstmaxv(char *ID_name, double f1, char *ID_out);
+int arith_image_cstminv(char *ID_name, double f1, char *ID_out);
 
-int arith_image_cstfmod_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstadd_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstsub_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstmult_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstdiv_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstpow_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstmaxv_inplace(char *ID_name, PRECISION f1);
-int arith_image_cstminv_inplace(char *ID_name, PRECISION f1);
+int arith_image_cstfmod_inplace(char *ID_name, double f1);
+int arith_image_cstadd_inplace(char *ID_name, double f1);
+int arith_image_cstsub_inplace(char *ID_name, double f1);
+int arith_image_cstmult_inplace(char *ID_name, double f1);
+int arith_image_cstdiv_inplace(char *ID_name, double f1);
+int arith_image_cstpow_inplace(char *ID_name, double f1);
+int arith_image_cstmaxv_inplace(char *ID_name, double f1);
+int arith_image_cstminv_inplace(char *ID_name, double f1);
 
 
 
@@ -138,14 +144,14 @@ int arith_image_cstminv_inplace(char *ID_name, PRECISION f1);
 /* complex image, complex image  -> complex image                            */
 /* ------------------------------------------------------------------------- */
 
-int arith_image_trunc(char *ID_name, PRECISION f1, PRECISION f2, char *ID_out);
-int arith_image_trunc_inplace(char *ID_name, PRECISION f1, PRECISION f2);
+int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out);
+int arith_image_trunc_inplace(char *ID_name, double f1, double f2);
 
 
 
 
 
-int arith_image_translate(char *ID_name, char *ID_out, PRECISION xtransl, PRECISION ytransl);
+int arith_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl);
 
 int execute_arith(char *cmd);
 

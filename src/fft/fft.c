@@ -2061,8 +2061,8 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
   double total = 0;
   
   IDin = image_ID(pupin_name);
-  xsize = data.image[ID].size[0];
-  ysize = data.image[ID].size[1];
+  xsize = data.image[IDin].size[0];
+  ysize = data.image[IDin].size[1];
 
 
   printf("zfactor = %f\n", zfactor);
@@ -2078,6 +2078,7 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
       else
 	data.image[IDpupin_mask].array.F[ii] = 0.0;
     }
+  //  save_fl_fits("_pupinmask", "!_pupinmask.fits");
 
   IDfpmz = image_ID(fpmz_name);
   IDfpmz_mask = create_2Dimage_ID("_fpmzmask", xsize, ysize);

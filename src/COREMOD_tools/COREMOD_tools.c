@@ -26,17 +26,17 @@ int create_counter_file(char *fname, long NBpts)
     }
 
   for(i=0;i<NBpts;i++)
-    fprintf(fp,"%ld %f\n",i,(PRECISION) (1.0*i/NBpts));
+    fprintf(fp,"%ld %f\n",i,(double) (1.0*i/NBpts));
   
   fclose(fp);
 
   return(0);
 }
 
-int bubble_sort(PRECISION *array, long count)
+int bubble_sort(double *array, long count)
 {
   register long a,b;
-  register PRECISION t;
+  register double t;
 
   for(a=1; a<count; a++)
     for(b=count-1; b>=a; b--)
@@ -49,10 +49,10 @@ int bubble_sort(PRECISION *array, long count)
   return(0);
 }
 
-void qs(PRECISION *array, long left, long right)
+void qs_float(float *array, long left, long right)
 {
   register long i,j;
-  PRECISION x,y;
+  float x,y;
   
   i = left; j = right;
   x = array[(left+right)/2];
@@ -69,8 +69,8 @@ void qs(PRECISION *array, long left, long right)
     }
   } while(i<=j);
   
-  if(left<j) qs(array,left,j);
-  if(i<right) qs(array,i,right);
+  if(left<j) qs_float(array,left,j);
+  if(i<right) qs_float(array,i,right);
 }
 
 void qs_long(long *array, long left, long right)
@@ -121,11 +121,11 @@ void qs_double(double *array, long left, long right)
   if(i<right) qs_double(array,i,right);
 }
 
-void qs3(PRECISION *array, PRECISION *array1, PRECISION *array2, long left, long right)
+void qs3(double *array, double *array1, double *array2, long left, long right)
 {
   register long i,j;
-  PRECISION x,y;
-  PRECISION y1,y2;
+  double x,y;
+  double y1,y2;
   
   i = left; j = right;
   x = array[(left+right)/2];
@@ -226,10 +226,10 @@ void qs3_double(double *array, double *array1, double *array2, long left, long r
 }
 
 
-void qs2l(PRECISION *array, long *array1, long left, long right)
+void qs2l(double *array, long *array1, long left, long right)
 {
   register long i,j;
-  PRECISION x,y;
+  double x,y;
   long l1;
   
   i = left; j = right;
@@ -320,9 +320,9 @@ void qs3ll_double(double *array, long *array1, long *array2, long left, long rig
   if(i<right) qs3ll_double(array,array1,array2,i,right);
 }
 
-void quick_sort(PRECISION *array, long count)
+void quick_sort_float(float *array, long count)
 {
-  qs(array,0,count-1);
+  qs_float(array,0,count-1);
 }
 
 void quick_sort_long(long *array, long count)
@@ -335,7 +335,7 @@ void quick_sort_double(double *array, long count)
   qs_double(array,0,count-1);
 }
 
-void quick_sort3(PRECISION *array, PRECISION *array1, PRECISION *array2, long count)
+void quick_sort3(double *array, double *array1, double *array2, long count)
 {
   qs3(array,array1,array2,0,count-1);
 }
@@ -350,7 +350,7 @@ void quick_sort3_double(double *array, double *array1, double *array2, long coun
   qs3_double(array,array1,array2,0,count-1);
 }
 
-void quick_sort2l(PRECISION *array, long *array1, long count)
+void quick_sort2l(double *array, long *array1, long count)
 {
   qs2l(array,array1,0,count-1);
 }
@@ -365,11 +365,11 @@ void quick_sort3ll_double(double *array, long *array1, long *array2, long count)
   qs3ll_double(array,array1,array2,0,count-1);
 }
 
-int lin_regress(PRECISION *a, PRECISION *b, PRECISION *Xi2, PRECISION *x, PRECISION *y, PRECISION *sig, int nb_points)
+int lin_regress(double *a, double *b, double *Xi2, double *x, double *y, double *sig, int nb_points)
 {
-  PRECISION S,Sx,Sy,Sxx,Sxy,Syy;
+  double S,Sx,Sy,Sxx,Sxy,Syy;
   int i;
-  PRECISION delta;
+  double delta;
 
   S = 0;
   Sx = 0;
@@ -569,7 +569,7 @@ FILE* open_file_r(char *filename)
   return(fp);
 }
 
-int write_1D_array(PRECISION *array, long nbpoints, char *filename)
+int write_1D_array(double *array, long nbpoints, char *filename)
 {
   FILE *fp;
   long ii;
@@ -582,7 +582,7 @@ int write_1D_array(PRECISION *array, long nbpoints, char *filename)
   return(0);
 }
 
-int read_1D_array(PRECISION *array, long nbpoints, char *filename)
+int read_1D_array(double *array, long nbpoints, char *filename)
 {
   FILE *fp;
   long ii;

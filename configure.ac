@@ -22,6 +22,18 @@ AM_PROG_CC_C_O
 # check for openMP
 AC_OPENMP
 
+
+# Support for Bison and Flex
+AC_PROG_YACC
+AM_PROG_LEX
+
+# Support for pthreads
+ACX_PTHREAD
+
+#LIBS="$PTHREAD_LIBS $LIBS"
+#CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+#CC="$PTHREAD_CC"
+
 #
 # AC_PREFIX_DEFAULT(~/Cfits) # howto coerce default "prefix" from /usr/local/ to ~/Cfits
 #
@@ -100,6 +112,14 @@ AC_SEARCH_LIBS( [readline], [readline],
                   exit 0;
                 ])
 
+AC_CHECK_LIB( [ncurses], [initscr], 
+		[],
+		[ echo "Cannot find required library:ncurses";
+ 		  echo "did you install ncurses package ?";
+                  cat doc/configure.howto;
+                  AC_MSG_FAILURE(["FATAL...Cannot find required library:ncurses"]); 
+                ]
+)
 
 AC_CHECK_LIB( [fftw3f], [main], 
                 [], 
@@ -119,6 +139,7 @@ AC_CHECK_LIB( [fftw3], [main],
                 ]
 )
 
+AC_CHECK_LIB([gomp], [omp_get_num_threads])
 
 #
 # fftw multi-thread
@@ -205,7 +226,7 @@ EXECNAME=Cfits
 AC_SUBST(EXECNAME)
 
 
+AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/image_gen/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile)
 
-AC_OUTPUT(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_fft/Makefile src/COREMOD_info/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile)
-
+AC_OUTPUT
 

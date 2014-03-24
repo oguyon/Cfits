@@ -80,7 +80,8 @@ host_triplet = x86_64-unknown-linux-gnu
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) ar-lib compile \
-	config.guess config.sub depcomp install-sh missing ltmain.sh
+	config.guess config.sub depcomp install-sh missing ylwrap \
+	ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -205,7 +206,7 @@ CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS =  -I/usr/local/include/
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"Cfits\" -DPACKAGE_TARNAME=\"cfits\" -DPACKAGE_VERSION=\"2.2.0\" -DPACKAGE_STRING=\"Cfits\ 2.2.0\" -DPACKAGE_BUGREPORT=\"oliv.guyon@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"cfits\" -DVERSION=\"2.2.0\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_LIBM=1 -DHAVE_LIBRT=1 -DHAVE_LIBGSLCBLAS=1 -DHAVE_LIBGSL=1 -DHAVE_LIBCFITSIO=1 -DHAVE_READLINE_H=1 -DHAVE_LIBFFTW3F=1 -DHAVE_LIBFFTW3=1 -DHAVE_FFTW3_H=1 -DHAVE_FITSIO_H=1
+DEFS = -DPACKAGE_NAME=\"Cfits\" -DPACKAGE_TARNAME=\"cfits\" -DPACKAGE_VERSION=\"2.2.0\" -DPACKAGE_STRING=\"Cfits\ 2.2.0\" -DPACKAGE_BUGREPORT=\"oliv.guyon@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"cfits\" -DVERSION=\"2.2.0\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DYYTEXT_POINTER=1 -DHAVE_LIBM=1 -DHAVE_LIBRT=1 -DHAVE_LIBGSLCBLAS=1 -DHAVE_LIBGSL=1 -DHAVE_LIBCFITSIO=1 -DHAVE_READLINE_H=1 -DHAVE_LIBNCURSES=1 -DHAVE_LIBFFTW3F=1 -DHAVE_LIBFFTW3=1 -DHAVE_LIBGOMP=1 -DHAVE_FFTW3_H=1 -DHAVE_FITSIO_H=1
 DEPDIR = .deps
 DLLTOOL = false
 DSYMUTIL = 
@@ -225,8 +226,11 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
+LEX = flex
+LEXLIB = -lfl
+LEX_OUTPUT_ROOT = lex.yy
 LIBOBJS = 
-LIBS = -lfftw3 -lfftw3f -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm 
+LIBS = -lgomp -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -255,6 +259,8 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 2.2.0
+YACC = bison -y
+YFLAGS = 
 abs_builddir = /CfitsDev/Cfits-src
 abs_srcdir = /CfitsDev/Cfits-src
 abs_top_builddir = /CfitsDev/Cfits-src

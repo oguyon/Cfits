@@ -180,7 +180,6 @@ PF mod_COREMOD_arith_setpix ( struct lxrcmd *c )
 
     arith_set_pixel ( c->args[1].v.s, c->args[2].v.f, c->args[3].v.ld, c->args[4].v.ld);   
 
-
     c->results = NULL;   // NULL results block. Change as appropriate
 
 

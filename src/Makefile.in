@@ -14,6 +14,9 @@
 
 @SET_MAKE@
 
+#SUFFIXES = .c .h .y .l
+
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -80,8 +83,9 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = cfits$(EXEEXT)
 subdir = src
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/depcomp
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am calc_bison.h \
+	calc_bison.c calc_flex.c $(top_srcdir)/depcomp \
+	$(top_srcdir)/ylwrap $(noinst_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -94,14 +98,18 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_cfits_OBJECTS = cfits-Cfits.$(OBJEXT)
+am_cfits_OBJECTS = cfits-Cfits.$(OBJEXT) cfits-calc_bison.$(OBJEXT) \
+	cfits-calc_flex.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
-cfits_DEPENDENCIES = 00CORE/lib00core.la COREMOD_fft/libcoremodfft.la \
-	COREMOD_arith/libcoremodarith.la \
-	COREMOD_info/libcoremodinfo.la \
+cfits_DEPENDENCIES = image_format/libimageformat.la \
+	PIAACMCsimul/libpiaacmcsimul.la \
+	coronagraphs/libcoronagraphs.la \
+	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
+	image_gen/libimagegen.la statistic/libstatistic.la \
+	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
-	COREMOD_tools/libcoremodtools.la
+	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -140,6 +148,23 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
+LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(LEX) $(AM_LFLAGS) $(LFLAGS)
+AM_V_LEX = $(am__v_LEX_@AM_V@)
+am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
+am__v_LEX_0 = @echo "  LEX     " $@;
+am__v_LEX_1 = 
+YLWRAP = $(top_srcdir)/ylwrap
+am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
+		   -e s/c++$$/h++/ -e s/c$$/h/
+YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
+LTYACCCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(YACC) $(AM_YFLAGS) $(YFLAGS)
+AM_V_YACC = $(am__v_YACC_@AM_V@)
+am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
+am__v_YACC_0 = @echo "  YACC    " $@;
+am__v_YACC_1 = 
 SOURCES = $(cfits_SOURCES)
 DIST_SOURCES = $(cfits_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
@@ -155,6 +180,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+HEADERS = $(noinst_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -243,6 +269,9 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
+LEX = @LEX@
+LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -273,6 +302,8 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+YACC = @YACC@
+YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -325,27 +356,46 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-cfits_SOURCES = Cfits.c Cfits.h
-cfits_CPPFLAGS = -I@abs_top_srcdir@/src -I@abs_top_srcdir@/src/00CORE \
-	-I@abs_top_srcdir@/src/COREMOD_fft \
+cfits_SOURCES = Cfits.c Cfits.h calc_bison.y calc_flex.l calc.h
+cfits_CPPFLAGS = -I@abs_top_srcdir@/src \
+	-DCONFIGDIR=\"@abs_top_srcdir@/config\" \
+	-DSOURCEDIR=\"@abs_top_srcdir@/src\" \
+	-DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp \
+	-I@abs_top_srcdir@/src/image_format \
+	-I@abs_top_srcdir@/src/PIAACMCsimul \
+	-I@abs_top_srcdir@/src/coronagraphs \
+	-I@abs_top_srcdir@/src/ZernikePolyn \
+	-I@abs_top_srcdir@/src/WFpropagate \
+	-I@abs_top_srcdir@/src/image_gen \
+	-I@abs_top_srcdir@/src/statistic -I@abs_top_srcdir@/src/fft \
+	-I@abs_top_srcdir@/src/info \
 	-I@abs_top_srcdir@/src/COREMOD_arith \
-	-I@abs_top_srcdir@/src/COREMOD_info \
 	-I@abs_top_srcdir@/src/COREMOD_iofits \
 	-I@abs_top_srcdir@/src/COREMOD_memory \
-	-I@abs_top_srcdir@/src/COREMOD_tools
-AM_CPPFLAGS = -DCONFIGDIR=\"@abs_top_srcdir@/config\"
-SUBDIRS = 00CORE COREMOD_fft COREMOD_arith COREMOD_info COREMOD_iofits \
-	COREMOD_memory COREMOD_tools
-cfits_LDADD = 00CORE/lib00core.la COREMOD_fft/libcoremodfft.la \
-	COREMOD_arith/libcoremodarith.la \
-	COREMOD_info/libcoremodinfo.la \
+	-I@abs_top_srcdir@/src/COREMOD_tools \
+	-I@abs_top_srcdir@/src/00CORE
+ACLOCAL_AMFLAGS = -I m4
+AM_YFLAGS = -d
+AM_LFLAGS = -i 
+noinst_HEADERS = calc.h
+BUILT_SOURCES = calc_bison.h
+SUBDIRS = image_format PIAACMCsimul coronagraphs ZernikePolyn \
+	WFpropagate image_gen statistic fft info COREMOD_arith \
+	COREMOD_iofits COREMOD_memory COREMOD_tools 00CORE
+cfits_LDADD = image_format/libimageformat.la \
+	PIAACMCsimul/libpiaacmcsimul.la \
+	coronagraphs/libcoronagraphs.la \
+	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
+	image_gen/libimagegen.la statistic/libstatistic.la \
+	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
-	COREMOD_tools/libcoremodtools.la
-all: all-recursive
+	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .l .lo .o .obj .y
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -425,6 +475,9 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+calc_bison.h: calc_bison.c
+	@if test ! -f $@; then rm -f calc_bison.c; else :; fi
+	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) calc_bison.c; else :; fi
 
 cfits$(EXEEXT): $(cfits_OBJECTS) $(cfits_DEPENDENCIES) $(EXTRA_cfits_DEPENDENCIES) 
 	@rm -f cfits$(EXEEXT)
@@ -437,6 +490,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfits-Cfits.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfits-calc_bison.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfits-calc_flex.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -472,6 +527,40 @@ cfits-Cfits.obj: Cfits.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='Cfits.c' object='cfits-Cfits.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-Cfits.obj `if test -f 'Cfits.c'; then $(CYGPATH_W) 'Cfits.c'; else $(CYGPATH_W) '$(srcdir)/Cfits.c'; fi`
+
+cfits-calc_bison.o: calc_bison.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-calc_bison.o -MD -MP -MF $(DEPDIR)/cfits-calc_bison.Tpo -c -o cfits-calc_bison.o `test -f 'calc_bison.c' || echo '$(srcdir)/'`calc_bison.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-calc_bison.Tpo $(DEPDIR)/cfits-calc_bison.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='calc_bison.c' object='cfits-calc_bison.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-calc_bison.o `test -f 'calc_bison.c' || echo '$(srcdir)/'`calc_bison.c
+
+cfits-calc_bison.obj: calc_bison.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-calc_bison.obj -MD -MP -MF $(DEPDIR)/cfits-calc_bison.Tpo -c -o cfits-calc_bison.obj `if test -f 'calc_bison.c'; then $(CYGPATH_W) 'calc_bison.c'; else $(CYGPATH_W) '$(srcdir)/calc_bison.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-calc_bison.Tpo $(DEPDIR)/cfits-calc_bison.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='calc_bison.c' object='cfits-calc_bison.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-calc_bison.obj `if test -f 'calc_bison.c'; then $(CYGPATH_W) 'calc_bison.c'; else $(CYGPATH_W) '$(srcdir)/calc_bison.c'; fi`
+
+cfits-calc_flex.o: calc_flex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-calc_flex.o -MD -MP -MF $(DEPDIR)/cfits-calc_flex.Tpo -c -o cfits-calc_flex.o `test -f 'calc_flex.c' || echo '$(srcdir)/'`calc_flex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-calc_flex.Tpo $(DEPDIR)/cfits-calc_flex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='calc_flex.c' object='cfits-calc_flex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-calc_flex.o `test -f 'calc_flex.c' || echo '$(srcdir)/'`calc_flex.c
+
+cfits-calc_flex.obj: calc_flex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-calc_flex.obj -MD -MP -MF $(DEPDIR)/cfits-calc_flex.Tpo -c -o cfits-calc_flex.obj `if test -f 'calc_flex.c'; then $(CYGPATH_W) 'calc_flex.c'; else $(CYGPATH_W) '$(srcdir)/calc_flex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-calc_flex.Tpo $(DEPDIR)/cfits-calc_flex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='calc_flex.c' object='cfits-calc_flex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-calc_flex.obj `if test -f 'calc_flex.c'; then $(CYGPATH_W) 'calc_flex.c'; else $(CYGPATH_W) '$(srcdir)/calc_flex.c'; fi`
+
+.l.c:
+	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
+
+.y.c:
+	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -634,14 +723,16 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-recursive
-all-am: Makefile $(PROGRAMS)
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-recursive
+all-am: Makefile $(PROGRAMS) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -671,6 +762,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f calc_bison.c
+	-rm -f calc_bison.h
+	-rm -f calc_flex.c
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
@@ -741,7 +836,8 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: $(am__recursive_targets) install-am install-strip
+.MAKE: $(am__recursive_targets) all check install install-am \
+	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
 	check-am clean clean-binPROGRAMS clean-generic clean-libtool \

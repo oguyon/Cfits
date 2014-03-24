@@ -14,6 +14,192 @@ extern DATA data;
 
 char errormessage[SBUFFERSIZE];
 
+
+
+
+// forward declarations
+long load_fits(char *file_name, char ID_name[400]);
+int save_fl_fits(char *ID_name, char *file_name);
+int save_db_fits(char *ID_name, char *file_name);
+int save_fits(char *ID_name, char *file_name);
+int break_cube(char *ID_name);
+int images_to_cube(char *img_name, long nbframes, char *cube_name);
+
+// CLI commands
+
+int load_fits_cli()
+{
+  load_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+
+  return 0;
+}
+
+int save_fl_fits_cli()
+{
+  char fname[200];
+  
+  switch(data.cmdNBarg){
+  case 3:
+    save_fl_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+    break;
+  case 2:
+    sprintf(fname, "%s.fits", data.cmdargtoken[1].val.string);
+    save_fl_fits( data.cmdargtoken[1].val.string, fname);
+    break;
+  }
+  return 0;
+}
+
+int save_db_fits_cli()
+{
+  char fname[200];
+  
+  switch(data.cmdNBarg){
+  case 3:
+    save_db_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+    break;
+  case 2:
+    sprintf(fname, "%s.fits", data.cmdargtoken[1].val.string);
+    save_db_fits( data.cmdargtoken[1].val.string, fname);
+    break;
+  }
+  
+  return 0;
+}
+
+int save_fits_cli()
+{
+  char fname[200];
+  
+  switch(data.cmdNBarg){
+  case 3:
+    save_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+    break;
+  case 2:
+    sprintf(fname, "%s.fits", data.cmdargtoken[1].val.string);
+    save_fits( data.cmdargtoken[1].val.string, fname);
+    break;
+  }
+  
+  return 0;
+}
+
+
+
+
+int break_cube_cli()
+{
+  break_cube( data.cmdargtoken[1].val.string);
+
+  return 0;
+}
+
+int images_to_cube_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  if(data.cmdargtoken[2].type != 2)
+    {
+      printf("second argument has to be integer\n");
+      return -1;
+    }
+  
+  images_to_cube(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+
+  return 0;
+ }
+
+int init_COREMOD_iofits()
+{
+
+  strcpy(data.module[data.NBmodule].name, __FILE__);
+  strcpy(data.module[data.NBmodule].info, "FITS format input/output");
+  data.NBmodule++;
+  
+  strcpy(data.cmd[data.NBcmd].key,"loadfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = load_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"load FITS format file");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"loadfits im.fits im");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long load_fits()");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"saveflfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = save_fl_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, float");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"saveflfits im im.fits");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int save_fl_fits(char *ID_name, char *file_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"savedbfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = save_db_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, double");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"savedbfits im im.fits");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int save_db_fits(char *ID_name, char *file_name)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"savefits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = save_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"save FITS format file");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"savefits im im.fits");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int save_fits(char *ID_name, char *file_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"breakcube");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = break_cube_cli;
+  strcpy(data.cmd[data.NBcmd].info,"break cube into individual images (slices)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image>");
+  strcpy(data.cmd[data.NBcmd].example,"breakcube imc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int break_cube(char *ID_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"imgs2cube");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = images_to_cube_cli;
+  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image format> <max index> <output cube>");
+  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ imc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int images_to_cube(char *img_name, long nbframes, char *cube_name)");
+  data.NBcmd++;
+
+
+  // add atexit functions here
+
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 static int FITSIO_status = 0;
  
 // set print to 0 if error message should not be printed to stderr
@@ -305,7 +491,7 @@ long load_fits(char *file_name, char ID_name[400])
 	fits_close_file (fptr, &FITSIO_status);
 	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
 	for (ii = 0; ii < nelements; ii++)
-	  data.image[ID].arrayD[ii] = (PRECISION) 1.0*sarray[ii];
+	  data.image[ID].array.F[ii] = 1.0*sarray[ii];
 	free(sarray);
 	sarray = NULL;
       }
@@ -330,7 +516,7 @@ long load_fits(char *file_name, char ID_name[400])
 	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
 	
 	for (ii = 0; ii < nelements; ii++) 
-	  data.image[ID].arrayD[ii] = (PRECISION) ((1.0*larray[ii]*bscale + bzero)/NDR); 
+	  data.image[ID].array.F[ii] = ((1.0*larray[ii]*bscale + bzero)/NDR); 
 	free(larray);
 	larray = NULL;
       }
@@ -352,7 +538,7 @@ long load_fits(char *file_name, char ID_name[400])
 	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
 	
 	for (ii = 0; ii < nelements; ii++)
-	  data.image[ID].arrayD[ii] = (PRECISION) (1.0*barray[ii]*bscale+bzero); 
+	  data.image[ID].array.F[ii] = (1.0*barray[ii]*bscale+bzero); 
 	free(barray);
 	barray = NULL;
       }
@@ -758,6 +944,31 @@ int save_sh_fits(char *ID_name, char *file_name)
 }
 
 
+int save_fits(char *ID_name, char *file_name)
+{
+  long ID;
+  int atype;
+
+  ID = image_ID(ID_name);
+  
+  if (ID!=-1)
+    {
+      atype = data.image[ID].atype;
+      switch(atype) {
+      case FLOAT:
+	save_fl_fits(ID_name, file_name);
+	break;
+      case DOUBLE:
+	save_db_fits(ID_name, file_name);
+	break;
+      case INT:
+	save_sh_fits(ID_name, file_name);
+	break;	
+      }
+    }  
+
+  return 0;
+}
 
 
 int saveall_fl_fits()
@@ -799,7 +1010,7 @@ int break_cube(char *ID_name)
       for(ii=0;ii<naxes[0];ii++)
 	for(jj=0;jj<naxes[1];jj++)
 	  {
-	    data.image[ID1].arrayD[jj*naxes[0]+ii] = data.image[ID].arrayD[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
+	    data.image[ID1].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
 	  }
     }
   
@@ -842,7 +1053,7 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name)
   ID = create_3Dimage_ID(cube_name,naxes[0],naxes[1],nbframes);
   for (ii = 0; ii < naxes[0]; ii++) 
     for (jj = 0; jj < naxes[1]; jj++)    
-      data.image[ID].arrayD[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].arrayD[jj*naxes[0]+ii];
+      data.image[ID].array.F[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].array.F[jj*naxes[0]+ii];
 
   for(frame=1;frame<nbframes;frame++)
     {
@@ -870,7 +1081,7 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name)
 	    }
 	  for (ii = 0; ii < naxes[0]; ii++) 
 	    for (jj = 0; jj < naxes[1]; jj++)    
-	      data.image[ID].arrayD[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].arrayD[jj*naxes[0]+ii];
+	      data.image[ID].array.F[frame*naxes[0]*naxes[1]+(jj*naxes[0]+ii)] = data.image[ID1].array.F[jj*naxes[0]+ii];
 	}
       printf("Done\n");
       fflush(stdout);

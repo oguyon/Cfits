@@ -638,6 +638,11 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIB@&t@OBJS
 EXECNAME
+LEXLIB
+LEX_OUTPUT_ROOT
+LEX
+YFLAGS
+YACC
 OPENMP_CFLAGS
 CPP
 OTOOL64
@@ -774,7 +779,9 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP'
+CPP
+YACC
+YFLAGS'
 
 
 # Initialize some variables set by options.
@@ -1426,6 +1433,12 @@ Some influential environment variables:
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
   CPP         C preprocessor
+  YACC        The `Yet Another Compiler Compiler' implementation to use.
+              Defaults to the first program found out of: `bison -y', `byacc',
+              `yacc'.
+  YFLAGS      The list of arguments that will be passed by default to @S|@YACC.
+              This script will default YFLAGS to the empty string to avoid a
+              default value of `-d' given by some make applications.
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -11714,6 +11727,221 @@ $as_echo "$ac_cv_prog_c_openmp" >&6; }
   
 
 
+
+# Support for Bison and Flex
+for ac_prog in 'bison -y' byacc
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_YACC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$YACC"; then
+  ac_cv_prog_YACC="$YACC" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_YACC="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+YACC=$ac_cv_prog_YACC
+if test -n "$YACC"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $YACC" >&5
+$as_echo "$YACC" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$YACC" && break
+done
+test -n "$YACC" || YACC="yacc"
+
+for ac_prog in flex lex
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_LEX+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$LEX"; then
+  ac_cv_prog_LEX="$LEX" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_LEX="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+LEX=$ac_cv_prog_LEX
+if test -n "$LEX"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $LEX" >&5
+$as_echo "$LEX" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$LEX" && break
+done
+test -n "$LEX" || LEX=":"
+
+if test "x$LEX" != "x:"; then
+  cat >conftest.l <<_ACEOF
+%%
+a { ECHO; }
+b { REJECT; }
+c { yymore (); }
+d { yyless (1); }
+e { /* IRIX 6.5 flex 2.5.4 underquotes its yyless argument.  */
+    yyless ((input () != 0)); }
+f { unput (yytext[0]); }
+. { BEGIN INITIAL; }
+%%
+#ifdef YYTEXT_POINTER
+extern char *yytext;
+#endif
+int
+main (void)
+{
+  return ! yylex () + ! yywrap ();
+}
+_ACEOF
+{ { ac_try="$LEX conftest.l"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$LEX conftest.l") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking lex output file root" >&5
+$as_echo_n "checking lex output file root... " >&6; }
+if ${ac_cv_prog_lex_root+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  
+if test -f lex.yy.c; then
+  ac_cv_prog_lex_root=lex.yy
+elif test -f lexyy.c; then
+  ac_cv_prog_lex_root=lexyy
+else
+  as_fn_error $? "cannot find output from $LEX; giving up" "$LINENO" 5
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_prog_lex_root" >&5
+$as_echo "$ac_cv_prog_lex_root" >&6; }
+LEX_OUTPUT_ROOT=$ac_cv_prog_lex_root
+
+if test -z "${LEXLIB+set}"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking lex library" >&5
+$as_echo_n "checking lex library... " >&6; }
+if ${ac_cv_lib_lex+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  
+    ac_save_LIBS=$LIBS
+    ac_cv_lib_lex='none needed'
+    for ac_lib in '' -lfl -ll; do
+      LIBS="$ac_lib $ac_save_LIBS"
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+`cat $LEX_OUTPUT_ROOT.c`
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_lex=$ac_lib
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+      test "$ac_cv_lib_lex" != 'none needed' && break
+    done
+    LIBS=$ac_save_LIBS
+  
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_lex" >&5
+$as_echo "$ac_cv_lib_lex" >&6; }
+  test "$ac_cv_lib_lex" != 'none needed' && LEXLIB=$ac_cv_lib_lex
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether yytext is a pointer" >&5
+$as_echo_n "checking whether yytext is a pointer... " >&6; }
+if ${ac_cv_prog_lex_yytext_pointer+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  # POSIX says lex can declare yytext either as a pointer or an array; the
+# default is implementation-dependent.  Figure out which it is, since
+# not all implementations provide the %pointer and %array declarations.
+ac_cv_prog_lex_yytext_pointer=no
+ac_save_LIBS=$LIBS
+LIBS="$LEXLIB $ac_save_LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+  #define YYTEXT_POINTER 1
+`cat $LEX_OUTPUT_ROOT.c`
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_prog_lex_yytext_pointer=yes
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_save_LIBS
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_prog_lex_yytext_pointer" >&5
+$as_echo "$ac_cv_prog_lex_yytext_pointer" >&6; }
+if test $ac_cv_prog_lex_yytext_pointer = yes; then
+  
+$as_echo "@%:@define YYTEXT_POINTER 1" >>confdefs.h
+
+fi
+rm -f conftest.l $LEX_OUTPUT_ROOT.c
+
+fi
+if test "$LEX" = :; then
+  LEX=${am_missing_run}flex
+fi
+
+# Support for pthreads
+ACX_PTHREAD
+
+#LIBS="$PTHREAD_LIBS $LIBS"
+#CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+#CC="$PTHREAD_CC"
+
 #
 # AC_PREFIX_DEFAULT(~/Cfits) # howto coerce default "prefix" from /usr/local/ to ~/Cfits
 #
@@ -12065,6 +12293,61 @@ See \`config.log' for more details" "$LINENO" 5; };
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for initscr in -lncurses" >&5
+$as_echo_n "checking for initscr in -lncurses... " >&6; }
+if ${ac_cv_lib_ncurses_initscr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lncurses  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char initscr ();
+int
+main ()
+{
+return initscr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ncurses_initscr=yes
+else
+  ac_cv_lib_ncurses_initscr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ncurses_initscr" >&5
+$as_echo "$ac_cv_lib_ncurses_initscr" >&6; }
+if test "x$ac_cv_lib_ncurses_initscr" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+@%:@define HAVE_LIBNCURSES 1
+_ACEOF
+
+  LIBS="-lncurses $LIBS"
+
+else
+   echo "Cannot find required library:ncurses";
+ 		  echo "did you install ncurses package ?";
+                  cat doc/configure.howto;
+                  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "\"FATAL...Cannot find required library:ncurses\"
+See \`config.log' for more details" "$LINENO" 5; }; 
+                
+
+fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lfftw3f" >&5
 $as_echo_n "checking for main in -lfftw3f... " >&6; }
@@ -12165,6 +12448,51 @@ See \`config.log' for more details" "$LINENO" 5; };
 
 fi
 
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for omp_get_num_threads in -lgomp" >&5
+$as_echo_n "checking for omp_get_num_threads in -lgomp... " >&6; }
+if ${ac_cv_lib_gomp_omp_get_num_threads+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgomp  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char omp_get_num_threads ();
+int
+main ()
+{
+return omp_get_num_threads ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_gomp_omp_get_num_threads=yes
+else
+  ac_cv_lib_gomp_omp_get_num_threads=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gomp_omp_get_num_threads" >&5
+$as_echo "$ac_cv_lib_gomp_omp_get_num_threads" >&6; }
+if test "x$ac_cv_lib_gomp_omp_get_num_threads" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+@%:@define HAVE_LIBGOMP 1
+_ACEOF
+
+  LIBS="-lgomp $LIBS"
+
+fi
 
 
 #
@@ -12410,8 +12738,8 @@ EXECNAME=Cfits
 
 
 
+ac_config_files="$ac_config_files Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/image_gen/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile"
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_fft/Makefile src/COREMOD_info/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -13437,11 +13765,18 @@ do
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/00CORE/Makefile") CONFIG_FILES="$CONFIG_FILES src/00CORE/Makefile" ;;
     "src/COREMOD_arith/Makefile") CONFIG_FILES="$CONFIG_FILES src/COREMOD_arith/Makefile" ;;
-    "src/COREMOD_fft/Makefile") CONFIG_FILES="$CONFIG_FILES src/COREMOD_fft/Makefile" ;;
-    "src/COREMOD_info/Makefile") CONFIG_FILES="$CONFIG_FILES src/COREMOD_info/Makefile" ;;
     "src/COREMOD_iofits/Makefile") CONFIG_FILES="$CONFIG_FILES src/COREMOD_iofits/Makefile" ;;
     "src/COREMOD_memory/Makefile") CONFIG_FILES="$CONFIG_FILES src/COREMOD_memory/Makefile" ;;
     "src/COREMOD_tools/Makefile") CONFIG_FILES="$CONFIG_FILES src/COREMOD_tools/Makefile" ;;
+    "src/info/Makefile") CONFIG_FILES="$CONFIG_FILES src/info/Makefile" ;;
+    "src/fft/Makefile") CONFIG_FILES="$CONFIG_FILES src/fft/Makefile" ;;
+    "src/statistic/Makefile") CONFIG_FILES="$CONFIG_FILES src/statistic/Makefile" ;;
+    "src/image_gen/Makefile") CONFIG_FILES="$CONFIG_FILES src/image_gen/Makefile" ;;
+    "src/WFpropagate/Makefile") CONFIG_FILES="$CONFIG_FILES src/WFpropagate/Makefile" ;;
+    "src/ZernikePolyn/Makefile") CONFIG_FILES="$CONFIG_FILES src/ZernikePolyn/Makefile" ;;
+    "src/coronagraphs/Makefile") CONFIG_FILES="$CONFIG_FILES src/coronagraphs/Makefile" ;;
+    "src/PIAACMCsimul/Makefile") CONFIG_FILES="$CONFIG_FILES src/PIAACMCsimul/Makefile" ;;
+    "src/image_format/Makefile") CONFIG_FILES="$CONFIG_FILES src/image_format/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -14631,6 +14966,5 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
-
 
 

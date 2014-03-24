@@ -184,6 +184,7 @@ long OVC_CHARGE = 2;
 long aporawN;
 double *aporaw_r; // radius
 double *aporaw_v; // value
+int fitapoINIT = 0;
 long fitapoN = 4; // number of terms of form a exp(b x^c)
 double *fitapo_a;
 double *fitapo_b;
@@ -195,6 +196,21 @@ static long LOOPCNT = 0;
 double optval0;
 
 
+
+long IDprol_init;
+long IDprol_ffrac;
+long IDprol_transm;
+long IDprol_peak;
+long IDprol_fitapo_a, IDprol_fitapo_b, IDprol_fitapo_c;
+long IDprol_fitfit;
+
+double fitapo_minc = 0.1;
+double APLCapo_CO_START = 0.0;
+double APLCapo_CO_END = 0.5;
+double APLCapo_CO_STEP = 0.001;
+double APLCapo_FPMRAD_START = 0.8;
+double APLCapo_FPMRAD_END = 5.0;
+double APLCapo_FPMRAD_STEP = 0.001;
 
 
 
@@ -1302,6 +1318,8 @@ double coronagraph_apofit_eval_r(double r)
 
   double a = 8.0; // for extrapolation beyond r=1
 
+
+
   if(r>1.0+eps)
     {
       rp = r-1.0;
@@ -1313,13 +1331,12 @@ double coronagraph_apofit_eval_r(double r)
 
   if(rp<eps1)
     rp = eps1;
-
-
+  
+  value = 0.0;
 
   for(n=0; n<fitapoN; n++)   
     value += fitapo_a[n] * exp(fitapo_b[n] * pow(rp, fitapo_c1[n]));
-   
-
+      
   if(isfinite(value)==0)
     {
       printf("ERROR : infinite value in coronagraph_apofit_eval_r\n");
@@ -1339,7 +1356,7 @@ double coronagraph_apofit_eval_r(double r)
 	  fflush(stdout);
 	}
     }
-
+  
 
   return(value);
 }
@@ -1353,7 +1370,6 @@ double  coronagraph_apofit_eval()
   double r, v;
   long n;
   double tmpv;
-  double minc = 0.1;
 
 
   value = 0.0;
@@ -1364,8 +1380,8 @@ double  coronagraph_apofit_eval()
       // penalize negative and small values of fitao_c
       value += 100.0*pow( 0.5*(  atan(-(fitapo_c[n]-0.5)*10.0/(M_PI/2))/(M_PI/2)+1.0  ), 8.0);
       fitapo_c1[n] = fitapo_c[n];
-      if(fitapo_c1[n]<minc)
-	fitapo_c1[n] = minc;
+      if(fitapo_c1[n]<fitapo_minc)
+	fitapo_c1[n] = fitapo_minc;
       
       // penalize large values of fitao_a and fitapo_b
       value += exp(-1.0/(fitapo_a[n]*fitapo_a[n]/200.0/200.0));
@@ -1800,12 +1816,6 @@ int coronagraph_APLCapo_compile()
 
   struct stat buffer;
 
-  double APLCapo_CO_START = 0.0;
-  double APLCapo_CO_END = 0.5;
-  double APLCapo_CO_STEP = 0.001;
-  double APLCapo_FPMRAD_START = 0.8;
-  double APLCapo_FPMRAD_END = 5.0;
-  double APLCapo_FPMRAD_STEP = 0.001;
 
   double FITVLIMIT = 1.0e-5;
 
@@ -1813,12 +1823,6 @@ int coronagraph_APLCapo_compile()
   double fpmrad = 0.8; // focal plane mask radius
   long ii, jj;
   long iisize, jjsize;
-  long IDprol_init;
-  long IDprol_ffrac;
-  long IDprol_transm;
-  long IDprol_peak;
-  long IDprol_fitapo_a, IDprol_fitapo_b, IDprol_fitapo_c;
-  long IDprol_fitfit;
 
   char fnameprolinfo[500];
   char fnameout[500];
@@ -2072,9 +2076,15 @@ int coronagraph_APLCapo_compile()
 
 
 
+
+
+
+
+
 //
 // this function only works for circular symmetry PIAA
 // it uses an analytical fit to apodized pupil function
+//
 //
 int coronagraph_init_PIAA()
 {
@@ -2121,7 +2131,7 @@ int coronagraph_init_PIAA()
   double fitv;
 
   double a, b, eps1;
-  long IDt;
+  long IDt, IDtt;
 
   double total_ir = 0.0;
   double total_or = 0.0;
@@ -2138,6 +2148,11 @@ int coronagraph_init_PIAA()
   double piaaconfdist;
   double piaaconfbeamradius;
 
+
+  long tmpstep = 1;
+
+
+
   printf("PIAA init    %ld points\n", PIAAAPO_NBPOINTS);
   printf("piaaconfNPUPFILESIZE = %ld\n", (long) piaaconfNPUPFILESIZE);
   printf("NBpoints0 = %ld\n", NBpoints0);
@@ -2148,28 +2163,52 @@ int coronagraph_init_PIAA()
   PIAAextfactor1 = 2.0; // shape extrapolation oversize factor at output
   
 
+
+
+
+  //
+  // STEP 1 : GET APODIZATION RADIAL PROFILE 
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
+  // allocate memory for profile
   PIAAAPO = (double*) malloc(sizeof(double)*PIAAAPO_NBPOINTS);
   PIAA_HYBRID_CPAAPO = (double*) malloc(sizeof(double)*PIAAAPO_NBPOINTS);
 
 
 
+  
+
+
+  //
   // preprocess apo profile file
-  sprintf(command,"awk '{print $1,$2}' %s/%s > apotmp.prof", CORONAGRAPHSDATALOCAL, PIAAAPO_FNAME);
+  //
+
+  /*
+  sprintf(command,"awk '{print $1,$2}' %s/APLCapo/raw/%s > apotmp.prof", CORONAGRAPHSDATALOCAL, PIAAAPO_FNAME);
   result = system(command);
-  sprintf(fname,"%s/%s", CORONAGRAPHSDATALOCAL, PIAAAPO_FNAME);
 
   if((fp=fopen("apotmp.prof","r"))==NULL)
     {
-      printf("ERROR : cannot open file \"%s\"\n",fname);
+      printf("ERROR : cannot open file apotmp.prof\n");
       exit(0);
     }
   else
     {
-      printf("FILE \"%s\" opened \n",fname);
+      printf("FILE apotmp.prof opened \n");
       fflush(stdout);
     }
+  */
+
+
 
   // FIT APODIZATION WITH ANALYTICAL FUNCTION
+  /*
   aporaw_r = (double*) malloc(sizeof(double)*PIAAAPO_NBPOINTS);
   aporaw_v = (double*) malloc(sizeof(double)*PIAAAPO_NBPOINTS);
 
@@ -2190,17 +2229,23 @@ int coronagraph_init_PIAA()
   fitapo_a = (double*) malloc(sizeof(double)*fitapoN);
   fitapo_b = (double*) malloc(sizeof(double)*fitapoN);
   fitapo_c = (double*) malloc(sizeof(double)*fitapoN);
+  fitapo_c1 = (double*) malloc(sizeof(double)*fitapoN);
  
 
   fitapo_a[0] = 1.0;
   fitapo_b[0] = -1.0;
   fitapo_c[0] = 2.0;
+  fitapo_c1[0] = 2.0;
   for(n=0; n<fitapoN; n++)
     {
       fitapo_a[n] = 0.0;
       fitapo_b[n] = -1.0;
       fitapo_c[n] = 2.0+n;     
+      fitapo_c1[n] = 2.0+n;     
     }
+
+
+ 
 
   sprintf(fname, "%s/APLCapo/%s.fitparams", CORONAGRAPHSDATALOCAL, PIAAAPO_FNAME);
   printf("Reading previous best fit solution [%s] ... ", fname);
@@ -2217,32 +2262,40 @@ int coronagraph_init_PIAA()
   printf("FIT SOLUTION RESIDUAL = %g\n", fitv);
   fflush(stdout);
   for(n=0; n<fitapoN; n++)
-    ret = fscanf(fpfit," %lf %lf %lf", &fitapo_a[n], &fitapo_b[n], &fitapo_c[n]);
+    {
+      ret = fscanf(fpfit," %lf %lf %lf", &fitapo_a[n], &fitapo_b[n], &fitapo_c[n]);
+      fitapo_c1[n] = fitapo_c[n];
+      if(fitapo_c1[n]<fitapo_minc)
+	fitapo_c1[n] = fitapo_minc;
+
+    }
   fclose(fpfit);
    
   n = 0;
-  printf("f(x) = %15.10f * exp(%15.10f * x**%15.10f)", fitapo_a[n], fitapo_b[n], fitapo_c[n]);
+  printf("f(x) = %15.10f * exp(%15.10f * x**%15.10f)", fitapo_a[n], fitapo_b[n], fitapo_c1[n]);
   for(n=1; n<fitapoN; n++)
-    printf("+ %15.10f * exp(%15.10f * x**%15.10f)", fitapo_a[n], fitapo_b[n], fitapo_c[n]);		    
+    printf("+ %15.10f * exp(%15.10f * x**%15.10f)", fitapo_a[n], fitapo_b[n], fitapo_c1[n]);		    
   printf("\n");
 
- 
+
+   
   free(aporaw_r);
   free(aporaw_v);
 
+  */
 
 
-
+  /*
   lim0 = 0.0;
   lim1 = -1.0;
   if((fp=fopen("apotmp.prof","r"))==NULL)
     {
-      printf("ERROR : cannot open file \"%s\"\n",fname);
+      printf("ERROR : cannot open file apotmp.prof\n");
       exit(0);
     }
   else
     {
-      printf("FILE \"%s\" opened \n",fname);
+      printf("FILE apotmp.prof opened \n");
       fflush(stdout);
     }
   for(i=0;i<PIAAAPO_NBPOINTS;i++)
@@ -2259,13 +2312,19 @@ int coronagraph_init_PIAA()
 	  lim0 = tmpf0;
 	  i0 = i;
 	}
-      //      printf("%ld %f/%ld %f    %f %f\n", i, tmpf0, PIAAAPO_NBPOINTS, tmpf, lim0, lim1);
-    }
+        }
   fclose(fp);
   printf("PROFILE INNER EDGE = %f\n", lim0);
   printf("PROFILE OUTER EDGE = %f\n", lim1);
   printf("CENTRAL OBS = %f\n", lim0/lim1);
  
+  */
+
+
+
+
+
+
   // HYBRID: SEPARATE APODIZATION INTO HYBRID + PIAA
   /* tmp = PIAA_HYBRID_CST*PIAAAPO[0];
   for(i=0;i<PIAAAPO_NBPOINTS;i++)
@@ -2292,23 +2351,36 @@ int coronagraph_init_PIAA()
 
 
 
-  /*  PIAAFLUXFACTOR = total1/total;*/
 
+
+  /*  PIAAFLUXFACTOR = total1/total;*/
+  printf("factor = %ld\n", factor);
+  
   total = 0.0;
   total1 = 0.0;
   total_or = 0.0; // outer region
   total_ir = 0.0; // inner region
   IDt = create_2Dimage_ID("apo2Dim", size, size);
-  for(ii=0;ii<factor*size;ii++)
-     for(jj=0;jj<factor*size;jj++)
+  IDtt = create_2Dimage_ID("apo2Dimt", size, size); // truncated
+
+
+  for(ii=0;ii<factor*size;ii+=tmpstep)
+    {
+      ii1 = (long) ((1.0*ii-0.5)/factor+0.5);
+	 
+      //      printf("%ld/%ld %ld %ld\n", ii, size, factor, ii1);
+      //fflush(stdout);
+ 
+      for(jj=0;jj<factor*size;jj+=tmpstep)
        {
-	 ii1 = (long) ((1.0*ii-0.5)/factor+0.5);
 	 jj1 = (long) ((1.0*jj-0.5)/factor+0.5);
 	 x = 1.0/factor*(ii-factor*size/2);
 	 y = 1.0/factor*(jj-factor*size/2);
 	 r = sqrt(x*x+y*y); /* in pixel */
 	 r /= CORONAGRAPHS_TDIAM/CORONAGRAPHS_PSCALE/2.0;
-	 value = 0.0;
+	 //	 printf("%ld %ld   %ld %ld    %f\n", ii, jj, ii1, jj1, r);
+	 // fflush(stdout);
+ 	 value = 0.0;
 	 if(r<PIAAextfactor1)
 	   {
 	     value = coronagraph_apofit_eval_r(r);
@@ -2328,12 +2400,19 @@ int coronagraph_init_PIAA()
 	 if((ii1>0)&&(jj1>0)&&(ii1<size)&&(jj1<size))
 	   {
 	     PIAAAPO2D[jj1*size+ii1] += value/factor/factor;
-	     data.image[IDt].array.F[jj1*size+ii1] =  PIAAAPO2D[jj1*size+ii1];
-	   }
+	     data.image[IDt].array.F[jj1*size+ii1] =  PIAAAPO2D[jj1*size+ii1];	     
+	     
+	     if((r>APLC_CentOBS1)&&(r<1.0))
+	       data.image[IDtt].array.F[jj1*size+ii1] =  PIAAAPO2D[jj1*size+ii1];	     
+	     else
+	       data.image[IDtt].array.F[jj1*size+ii1] = 0.0;	       
+	   }	 
        }
-
+    }
   normfactor = sqrt(total1/total);
   printf("NORMALIZATION FACTOR = %f\n", normfactor);
+  fflush(stdout);
+
   for(ii=0;ii<size*size;ii++)
     data.image[IDt].array.F[ii] *= normfactor;
 
@@ -2346,11 +2425,24 @@ int coronagraph_init_PIAA()
   printf("Light in outer ring (1->%f) = %g\n", PIAAextfactor1, total_or);
 
   save_fl_fits("apo2Dim", "!apo2Dim.fits");
+  save_fl_fits("apo2Dimt", "!apo2Dimt.fits");
   FLUXIN = total_ir;
   
+  //  system("rm apo2Dim.prof");
+  //profile("apo2Dim", "apo2Dim.prof", 2048, 2048, 1.0, 500);
 
   
   printf("GOAL = %g\n", total_ir/(APLC_CentOBS0*APLC_CentOBS0/(1.0-APLC_CentOBS0*APLC_CentOBS0)));
+
+  
+
+  //  exit(0);
+
+
+  //
+  // STEP 2: EXTEND PROFILE INWARD AND OUTWARD TO ENSURE OPTICS SHAPE SMOOTHNESS 
+  //
+
 
   // Compute inner pseudo profile 
   b = 0.5;
@@ -2801,6 +2893,8 @@ int coronagraph_init_PIAA()
 
   free(cntarray);
 
+  printf("init PIAA is done\n");
+  fflush(stdout);
 
   return(NBpoints);
 }
@@ -2812,6 +2906,7 @@ int coronagraphs_free_PIAA()
   free(fitapo_a);
   free(fitapo_b);
   free(fitapo_c);
+  free(fitapo_c1);
 
   return(0);
 }
@@ -3207,7 +3302,9 @@ int coronagraphs_PIAA_apodize_beam(char *ampl1, char *opd1, char *ampl2, char *o
 
   if(USE_2DPROL == 1)
     {
-      sprintf(fname_2DPROL, "%s/%s", CORONAGRAPHSDATALOCAL, PIAAAPODIZE_2DAPOFNAME);
+      //      sprintf(fname_2DPROL, "%s/APLCapo/raw/%s", CORONAGRAPHSDATALOCAL, PIAAAPODIZE_2DAPOFNAME);
+      sprintf(fname_2DPROL, "apo2Dimt.fits"); // generated by init_PIAA
+
       ID_2DPROL = image_ID("prol2d");
       if(ID_2DPROL == -1)
 	ID_2DPROL = load_fits(fname_2DPROL, "prol2d");
@@ -6499,6 +6596,12 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
   long IDfpm_a, IDfpm_p;
 
+  long iisize, jjsize;
+  long iico, jjfpmrad;
+
+  long n;
+
+
 
   if((ID=variable_ID("DFTZFACTOR"))!=-1)
     DFTZFACTOR = data.variable[ID].value;
@@ -6517,6 +6620,137 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
   printf("SIZE = %ld\n",size);
   fflush(stdout);
 
+
+
+
+
+  //
+  // READ APODIZATION PARAMETERS FOR PURELY CENTRALLY OBSCURED CIRCULAR PUPIL
+  //
+  
+  IDprol_init = image_ID("pinit");
+  if(IDprol_init == -1)
+    {
+      sprintf(fname, "%s/APLCapo_init.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_init = load_fits(fname, "pinit");
+    }
+
+  IDprol_ffrac = image_ID("pffrac");
+  if(IDprol_ffrac == -1)
+    {
+       sprintf(fname, "%s/APLCapo_ffrac.fits.gz", CORONAGRAPHSDATADIR);
+       IDprol_ffrac = load_fits(fname, "pffrac");
+    }
+
+  IDprol_transm = image_ID("ptransm");
+  if(IDprol_transm == -1)
+    {
+      sprintf(fname, "%s/APLCapo_transm.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_transm = load_fits(fname,"ptransm");
+    }
+
+  IDprol_peak = image_ID("ppeak");
+  if(IDprol_peak == -1)
+    {
+      sprintf(fname, "%s/APLCapo_peak.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_peak = load_fits(fname, "ppeak");
+    }
+
+  IDprol_fitapo_a = image_ID("fitapoa");
+  if(IDprol_fitapo_a == -1)
+    {
+      sprintf(fname, "%s/APLCapo_fitapo_a.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_fitapo_a = load_fits(fname, "fitapoa");
+    }
+
+  IDprol_fitapo_b = image_ID("fitapob");
+  if(IDprol_fitapo_b == -1)
+    {
+      sprintf(fname, "%s/APLCapo_fitapo_b.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_fitapo_b = load_fits(fname, "fitapob");
+    }
+
+  IDprol_fitapo_c = image_ID("fitapoc");
+  if(IDprol_fitapo_c == -1)
+    {
+      sprintf(fname, "%s/APLCapo_fitapo_c.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_fitapo_c = load_fits(fname, "fitapoc");
+    }
+
+  IDprol_fitfit = image_ID("fitfit");
+  if(IDprol_fitfit == -1)
+    {
+      sprintf(fname, "%s/APLCapo_fitfit.fits.gz", CORONAGRAPHSDATADIR);
+      IDprol_fitfit = load_fits(fname, "fitfit");
+    }
+
+  iisize = data.image[IDprol_init].size[0];
+  jjsize = data.image[IDprol_init].size[1];
+  
+
+  iico = (long) ((APLC_CentOBS1-APLCapo_CO_START)/APLCapo_CO_STEP + 0.1);
+  jjfpmrad = (long) ((APLC_FPMASKsize-APLCapo_FPMRAD_START)/APLCapo_FPMRAD_STEP + 0.1);
+ 
+
+  printf("%ld %ld\n", iico, jjfpmrad);
+
+  if((iico<0)||(iico>iisize-1))
+    {
+      printf("ERROR: iico out of range : %ld / %ld\n", iico, iisize);
+      exit(0);
+    }
+
+  if((jjfpmrad<0)||(jjfpmrad>jjsize-1))
+    {
+      printf("ERROR: iico out of range : %ld / %ld\n", jjfpmrad, jjsize);
+      exit(0);
+    }
+
+
+  
+
+  if(data.image[IDprol_init].array.F[jjfpmrad*iisize+iico] > 0.1)
+    {
+      tmp4 = data.image[IDprol_peak].array.F[jjfpmrad*iisize+iico];
+      MASKCAMULT = -(1.0-tmp4)/tmp4;
+      printf("Focal plane mask CA = %f (peak = %f)\n", MASKCAMULT, tmp4);
+
+      if(fitapoINIT==0)
+	{
+	  fitapoN = data.image[IDprol_fitapo_a].size[2];
+	  fitapo_a = (double*) malloc(sizeof(double)*fitapoN);
+	  fitapo_b = (double*) malloc(sizeof(double)*fitapoN);
+	  fitapo_c = (double*) malloc(sizeof(double)*fitapoN);
+	  fitapo_c1 = (double*) malloc(sizeof(double)*fitapoN);
+	  fitapoINIT = 1;
+	}
+      for(n=0;n<fitapoN;n++)
+	{
+	  fitapo_a[n] = data.image[IDprol_fitapo_a].array.F[n*iisize*jjsize+jjfpmrad*iisize+iico];
+	  fitapo_b[n] = data.image[IDprol_fitapo_b].array.F[n*iisize*jjsize+jjfpmrad*iisize+iico];
+	  fitapo_c[n] = data.image[IDprol_fitapo_c].array.F[n*iisize*jjsize+jjfpmrad*iisize+iico];
+	  fitapo_c1[n] = fitapo_c[n];
+	  if(fitapo_c1[n]<fitapo_minc)
+	    fitapo_c1[n] = fitapo_minc;
+	}
+      n = 0;
+      printf("f(x) = %15.10f * exp(%15.10f * x**%15.10f)", fitapo_a[n], fitapo_b[n], fitapo_c1[n]);
+      for(n=1; n<fitapoN; n++)
+	printf("+ %15.10f * exp(%15.10f * x**%15.10f)", fitapo_a[n], fitapo_b[n], fitapo_c1[n]);		    
+      printf("\n");
+      
+
+    }
+  else
+    {
+      printf("NO DATA FOR THIS POINT\n");
+      exit(0);
+    }
+
+
+  
+
+  /*
   if(APLC_CentOBS1>0.0001)
     sprintf(fname,"%s/APLCapo/raw/APLCapo_%.3f.%.3f.%ld.ref.gz", CORONAGRAPHSDATALOCAL, APLC_FPMASKsize, APLC_CentOBS1, size);
   else   
@@ -6571,7 +6805,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
 
       sprintf(fname, "APLCapo.%.3f.%.3f.info", APLC_FPMASKsize, APLC_CentOBS1);
-      if(stat(fname, &info)!=0) // if custom apo info does not exist
+      if(stat(fname, &info)!=0)
 	{
 	  if(APLC_CentOBS1>0.0001)
 	    sprintf(fname,"%s/APLCapo/APLCapo_%.3f.%.3f.%ld.ref.info", CORONAGRAPHSDATALOCAL, APLC_FPMASKsize, APLC_CentOBS1, size);
@@ -6596,7 +6830,12 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
       printf("Focal plane mask CA = %f (%f)\n", MASKCAMULT, tmp4);
     }
-  //  exit(0);
+  */
+
+ 
+
+
+
 
 
 
@@ -6755,7 +6994,9 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 	  initPIAA = 1;
 	}
       //    save_fl_fits("pa1","!pa111.fits");
+     
       coronagraphs_PIAA_apodize_beam("pa1", "pp1", "pa1a", "pp1a");
+
       //create_2Dimage_ID("pa1a", size, size);
       //create_2Dimage_ID("pp1a", size, size);
       //      save_fl_fits("pa1a", "!pa112.fits");
@@ -6816,7 +7057,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
       delete_image_ID("pp1a");
     }
 
-
+ 
   
   for(iter=0;iter<NB_APLC_STEP;iter++)
     {
@@ -6941,7 +7182,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 	    }
 	  else
 	    fft_DFTinsertFPM_re( "pc1", "aplcfpm1", DFTZFACTOR, "pc2");
-	  
+	  //	  list_image_ID();
 
 	  if(0) // testing
 	    {
@@ -6962,6 +7203,8 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 	      //delete_image_ID("dftfpmp");     
 	    }
 	  delete_image_ID("aplcfpm1");
+	  //	  exit(0);
+
 
 	  ID1 = image_ID("pc1");
 	  ID2 = image_ID("pc2");

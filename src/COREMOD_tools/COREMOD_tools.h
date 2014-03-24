@@ -3,37 +3,33 @@
 
 int create_counter_file(char *fname, long NBpts);
 
-int bubble_sort(PRECISION *array, long count);
+int bubble_sort(double *array, long count);
 
-void qs(PRECISION *array, long left, long right);
-
+void qs_float(float *array, long left, long right);
 void qs_long(long *array, long left, long right);
-
 void qs_double(double *array, long left, long right);
 
-void quick_sort(PRECISION *array, long count);
-
+void quick_sort_float(float *array, long count);
 void quick_sort_long(long *array, long count);
-
 void quick_sort_double(double *array, long count);
 
-void qs3(PRECISION *array, PRECISION *array1, PRECISION *array2, long left, long right);
+void qs3(double *array, double *array1, double *array2, long left, long right);
 
 void qs3_double(double *array, double *array1, double *array2, long left, long right);
 
-void quick_sort3(PRECISION *array, PRECISION *array1, PRECISION *array2, long count);
+void quick_sort3(double *array, double *array1, double *array2, long count);
 
 void quick_sort3_double(double *array, double *array1, double *array2, long count);
 
-void qs2l(PRECISION *array, long *array1, long left, long right);
+void qs2l(double *array, long *array1, long left, long right);
 
-void quick_sort2l(PRECISION *array, long *array1, long count);
+void quick_sort2l(double *array, long *array1, long count);
 
 void quick_sort2l_double(double *array, long *array1, long count);
 
 void quick_sort3ll_double(double *array, long *array1, long *array2, long count);
 
-int lin_regress(PRECISION *a, PRECISION *b, PRECISION *Xi2, PRECISION *x, PRECISION *y, PRECISION *sig, int nb_points);
+int lin_regress(double *a, double *b, double *Xi2, double *x, double *y, double *sig, int nb_points);
 
 int replace_char(char *content, char cin, char cout);
 
@@ -53,9 +49,9 @@ FILE* open_file_w(char *filename);
 
 FILE* open_file_r(char *filename);
 
-int write_1D_array(PRECISION *array, long nbpoints, char *filename);
+int write_1D_array(double *array, long nbpoints, char *filename);
 
-int read_1D_array(PRECISION *array, long nbpoints, char *filename);
+int read_1D_array(double *array, long nbpoints, char *filename);
 
 int tp(char *word);
 

@@ -7,12 +7,14 @@
 #include <time.h>
 #include <math.h>
 
+#include <ncurses.h>
+
 #include "../Cfits.h"
 #include "../00CORE/00CORE.h"
 #include "../COREMOD_memory/COREMOD_memory.h"
 #include "../COREMOD_iofits/COREMOD_iofits.h"
 
-
+ 
 # ifdef _OPENMP
 # include <omp.h>
 #define OMP_NELEMENT_LIMIT 1000000
@@ -20,6 +22,16 @@
 
 #define STYPESIZE 10
 #define SBUFFERSIZE 1000
+
+
+// MEMORY MONITOR 
+FILE *listim_scr_fpo;
+FILE *listim_scr_fpi;
+SCREEN *listim_scr; // for memory monitoring
+int MEM_MONITOR = 0; // 1 if memory monitor is on
+int listim_scr_wrow;
+int listim_scr_wcol;
+
 
 extern DATA data;
 
@@ -33,6 +45,359 @@ char errmsg[SBUFFERSIZE];
   printf("free RAM  %ld x %ld = %ld Mb\n",sysconf(_SC_AVPHYS_PAGES),sysconf(_SC_PAGESIZE), sysconf(_SC_AVPHYS_PAGES)*sysconf(_SC_PAGESIZE)/1024/1024);
 }
 */
+
+
+
+/*
+* Forward references 
+*/
+
+int list_image_ID();
+int list_variable_ID();
+long create_image_ID(char *name, long naxis, long *size, int atype);
+int memory_monitor(char *termttyname);
+int list_image_ID_ncurses();
+void close_list_image_ID_ncurses( void );
+long copy_image_ID(char *name, char *newname);
+
+
+// create image, default precision
+int create_image_cli()
+{
+  long *imsize;
+  long naxis = 0;
+  long i;
+
+  
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+      naxis = 0;
+      imsize = (long*) malloc(sizeof(long)*5);
+      i = 2;
+      while(data.cmdargtoken[i].type==2)
+	{
+	  imsize[naxis] = data.cmdargtoken[i].val.numl;
+	  naxis++;
+	  i++;
+	}
+      switch(data.precision){
+      case 0:
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT);
+	break;
+      case 1:
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE);
+	break;
+      }
+      free(imsize);
+    }
+  else
+    return 1;
+}
+
+
+
+int create_2Dimage_float()
+{
+  long *imsize;
+
+  // CHECK ARGS
+  printf("CREATING IMAGE\n");
+  imsize = (long*) malloc(sizeof(long)*2);
+
+  imsize[0] = data.cmdargtoken[2].val.numl;
+  imsize[1] = data.cmdargtoken[3].val.numl;
+
+  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT);
+
+  free(imsize);
+
+  return 0;
+}
+
+int create_3Dimage_float()
+{
+  long *imsize;
+
+  // CHECK ARGS
+  printf("CREATING 3D IMAGE\n");
+  imsize = (long*) malloc(sizeof(long)*3);
+
+  imsize[0] = data.cmdargtoken[2].val.numl;
+  imsize[1] = data.cmdargtoken[3].val.numl;
+  imsize[2] = data.cmdargtoken[4].val.numl;
+
+  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT);
+
+  free(imsize);
+
+  return 0;
+}
+
+
+int memory_monitor_cli()
+{
+  memory_monitor(data.cmdargtoken[1].val.string);
+  return 0;
+}
+
+int delete_image_ID_cli()
+{
+  long i = 1;
+  printf("%ld : %d\n", i, data.cmdargtoken[i].type);
+  while(data.cmdargtoken[i].type != 0)
+    {
+      if(data.cmdargtoken[i].type == 4)
+	delete_image_ID(data.cmdargtoken[i].val.string);
+      else
+	printf("Image %s does not exist\n", data.cmdargtoken[i].val.string);
+      i++;
+    }
+
+  return 0;
+}
+
+int copy_image_ID_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  
+  copy_image_ID(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+
+  return 0;
+}
+
+int chname_image_ID_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  
+  chname_image_ID(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+
+  return 0;
+}
+
+
+int mk_complex_from_reim_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  if(data.cmdargtoken[2].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[2].val.string);
+      return -1;
+    }
+
+  mk_complex_from_reim(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+
+  return 0;
+}
+
+
+int mk_complex_from_amph_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  if(data.cmdargtoken[2].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[2].val.string);
+      return -1;
+    }
+
+  mk_complex_from_amph(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+
+  return 0;
+}
+
+
+int mk_reim_from_complex_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+
+  mk_reim_from_complex(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+
+  return 0;
+}
+
+int mk_amph_from_complex_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+
+  mk_amph_from_complex(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+
+  return 0;
+}
+
+
+int init_COREMOD_memory()
+{
+  strcpy(data.module[data.NBmodule].name,__FILE__);
+  strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
+  data.NBmodule++;
+
+  strcpy(data.cmd[data.NBcmd].key,"listim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = list_image_ID;
+  strcpy(data.cmd[data.NBcmd].info,"list images in memory");
+  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+  strcpy(data.cmd[data.NBcmd].example,"listim");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int list_image_ID()");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"mmon");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = memory_monitor_cli;
+  strcpy(data.cmd[data.NBcmd].info,"Monitor memory content");
+  strcpy(data.cmd[data.NBcmd].syntax,"terminal tty name");
+  strcpy(data.cmd[data.NBcmd].example,"mmon /dev/pts/4");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int memory_monitor(char *ttyname)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"listvar");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = list_variable_ID;
+  strcpy(data.cmd[data.NBcmd].info,"list variables in memory");
+  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+  strcpy(data.cmd[data.NBcmd].example,"listvar");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID()");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"creaim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = create_image_cli;
+  strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
+  strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"crea3dim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = create_3Dimage_float;
+  strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
+  strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"rm");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = delete_image_ID_cli;
+  strcpy(data.cmd[data.NBcmd].info,"remove image(s)");
+  strcpy(data.cmd[data.NBcmd].syntax,"list of images");
+  strcpy(data.cmd[data.NBcmd].example,"rm im1 im4");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int delete_image_ID(char* imname)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"cp");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = copy_image_ID_cli;
+  strcpy(data.cmd[data.NBcmd].info,"copy image");
+  strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
+  strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"mv");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = chname_image_ID_cli;
+  strcpy(data.cmd[data.NBcmd].info,"change image name");
+  strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
+  strcpy(data.cmd[data.NBcmd].example,"mv im1 im4");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long chname_image_ID(char *name, char *newname)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"ri2c");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = mk_complex_from_reim_cli;
+  strcpy(data.cmd[data.NBcmd].info,"real, imaginary -> complex");
+  strcpy(data.cmd[data.NBcmd].syntax,"real imaginary complex");
+  strcpy(data.cmd[data.NBcmd].example,"ri2c imr imi imc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"ap2c");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = mk_complex_from_amph_cli;
+  strcpy(data.cmd[data.NBcmd].info,"ampl, pha -> complex");
+  strcpy(data.cmd[data.NBcmd].syntax,"ampl pha complex");
+  strcpy(data.cmd[data.NBcmd].example,"ap2c ima imp imc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"c2ri");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = mk_reim_from_complex_cli;
+  strcpy(data.cmd[data.NBcmd].info,"complex -> real, imaginary");
+  strcpy(data.cmd[data.NBcmd].syntax,"complex real imaginary");
+  strcpy(data.cmd[data.NBcmd].example,"c2ri imc imr imi");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"c2ap");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = mk_amph_from_complex_cli;
+  strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
+  strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
+  strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"rmall");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = clearall;
+  strcpy(data.cmd[data.NBcmd].info,"remove all images");
+  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+  strcpy(data.cmd[data.NBcmd].example,"rmall");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
+  data.NBcmd++;
+ 
+
+  // add atexit functions here
+
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 long compute_nb_image()
 {
@@ -95,6 +460,7 @@ long image_ID(char *name) /* ID number corresponding to a name */
   long i,ID;
   int found;
   long tmp = 0;
+  struct timespec timenow;
 
   i = 0;
   found = 0;
@@ -106,7 +472,8 @@ long image_ID(char *name) /* ID number corresponding to a name */
 	    {
 	      found = 1;
 	      tmp = i;
-	      data.image[i].last_access = time(NULL);
+	      clock_gettime(CLOCK_REALTIME, &timenow);
+	      data.image[i].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;	      
 	    }
 	}
       i++;
@@ -116,7 +483,7 @@ long image_ID(char *name) /* ID number corresponding to a name */
 	  tmp = -1;
 	}}
   ID = tmp;
-   
+  
   return(tmp);    
 }
 
@@ -302,14 +669,18 @@ int delete_image_ID(char* imname) /* deletes an ID */
 	}
 
        /*      free(data.image[ID].size);*/
-      data.image[ID].last_access = 0;
+       //      data.image[ID].last_access = 0;
     }
   else
     fprintf(stderr,"%c[%d;%dm WARNING: image %s does not exist [ %s  %s  %d ] %c[%d;m\n", (char) 27, 1, 31, imname, __FILE__, __func__, __LINE__, (char) 27, 0);
 
 
+  if(MEM_MONITOR == 1)
+    list_image_ID_ncurses();
+
   return(0);
 }
+
 
 // delete all images with a prefix 
 int delete_image_ID_prefix(char *prefix) 
@@ -353,7 +724,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
   long i,ii;
   time_t lt;
   long nelement;
-  
+  struct timespec timenow;
 
   ID = -1;
   if(image_ID(name)==-1)
@@ -494,9 +865,10 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	    }
 	}
     
-      lt = time(NULL);
-      data.image[ID].last_access = lt;
-      data.image[ID].creation_time = lt;
+      clock_gettime(CLOCK_REALTIME, &timenow);
+      data.image[ID].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
+      data.image[ID].creation_time = data.image[ID].last_access;
+
       data.image[ID].nelement = nelement;
     }
   else
@@ -525,6 +897,9 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	    exit(0);
 	  }
     }
+
+  if(MEM_MONITOR == 1)
+    list_image_ID_ncurses();
   
   return(ID);
 }
@@ -797,7 +1172,195 @@ long create_variable_ID(char *name, double value)
 
 
 
-int list_image_ID()
+
+
+int init_list_image_ID_ncurses(char *termttyname)
+{
+  int wrow, wcol;
+
+  listim_scr_fpi = fopen(termttyname, "r");
+  listim_scr_fpo = fopen(termttyname, "w");
+  listim_scr = newterm(NULL, listim_scr_fpo, listim_scr_fpi);
+  
+  getmaxyx(stdscr, listim_scr_wrow, listim_scr_wcol);
+  start_color();
+  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
+  init_pair(2, COLOR_BLACK, COLOR_RED);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
+  init_pair(4, COLOR_RED, COLOR_BLACK);
+  init_pair(5, COLOR_BLACK, COLOR_GREEN);
+  init_pair(6, COLOR_CYAN, COLOR_BLACK);
+  init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(8, COLOR_BLACK, COLOR_MAGENTA);
+
+  
+  return 0;
+}
+
+int list_image_ID_ncurses()
+{
+  char str[500];
+  long i, j;
+  long long tmp_long;
+  char type[STYPESIZE];
+  int atype;
+  int n;
+  long long sizeb, sizeKb, sizeMb, sizeGb;
+
+  struct timespec timenow;
+  double timediff;
+
+  clock_gettime(CLOCK_REALTIME, &timenow);
+
+  set_term(listim_scr);
+
+  clear();					
+
+
+  sizeb = compute_image_memory();
+
+
+  printw("INDEX    NAME         SIZE                    TYPE        SIZE  [percent]    LAST ACCESS\n");
+  printw("\n");
+
+  for (i=0;i<data.NB_MAX_IMAGE;i++)
+    {
+      if(data.image[i].used==1) 
+	{
+	  atype = data.image[i].atype;
+	  tmp_long = ((long long) (data.image[i].nelement)) * TYPESIZE[atype];
+	  
+	  printw("%4ld ", i);
+	  attron(A_BOLD | COLOR_PAIR(6));
+	  sprintf(str, "%10s ", data.image[i].name);
+	  printw(str);
+	  attroff(A_BOLD | COLOR_PAIR(6));
+	  
+	  sprintf(str, "[ %6ld",data.image[i].size[0]);
+	  
+	  for(j=1;j<data.image[i].naxis;j++)
+	    {
+	      sprintf(str, "%s x %6ld", str, data.image[i].size[j]);
+	    }
+	  sprintf(str, "%s]", str);
+	  
+	  printw("%-28s", str);
+	  
+	  attron(COLOR_PAIR(3));
+	  n = 0;
+	  if(atype==CHAR)
+	    n = snprintf(type,STYPESIZE,"CHAR");	
+	  if(atype==INT)
+	    n = snprintf(type,STYPESIZE,"INT");
+	  if(atype==FLOAT)
+	    n = snprintf(type,STYPESIZE,"FLOAT");
+	  if(atype==DOUBLE)
+	    n = snprintf(type,STYPESIZE,"DOUBLE");
+	  if(atype==COMPLEX_FLOAT)
+	    n = snprintf(type,STYPESIZE,"CFLOAT");
+	  if(atype==COMPLEX_DOUBLE)
+	    n = snprintf(type,STYPESIZE,"CDOUBLE");
+	  printw("%7s ", type);
+	  
+	  attroff(COLOR_PAIR(3));
+	  
+	  if(n >= STYPESIZE)
+	    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+	  
+	  printw("%10ld Kb %6.2f   ", (long) (tmp_long/1024), (float) (100.0*tmp_long/sizeb));
+	  
+	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].last_access;
+	  
+	  if(timediff<0.01)
+	    {
+	      attron(COLOR_PAIR(4));
+	      printw("%15.9f\n", timediff);
+	      attroff(COLOR_PAIR(4));
+	    }
+	  else
+	    printw("%15.9f\n", timediff);
+	}
+      else
+	{
+	  printw("\n");
+	}
+    }
+
+  sizeGb = 0;
+  sizeMb = 0;
+  sizeKb = 0;
+  sizeb = compute_image_memory();
+  
+  if(sizeb>1024-1)
+    {
+      sizeKb = sizeb/1024;
+      sizeb = sizeb-1024*sizeKb;
+    }
+  if(sizeKb>1024-1)
+    {
+      sizeMb = sizeKb/1024;
+      sizeKb = sizeKb-1024*sizeMb;
+    }
+  if(sizeMb>1024-1)
+    {
+      sizeGb = sizeMb/1024;
+      sizeMb = sizeMb-1024*sizeGb;
+    }
+  
+  //attron(A_BOLD);
+
+  sprintf(str, "%ld image(s)      ", compute_nb_image());
+  if(sizeGb>0)
+    sprintf(str, "%s %ld GB", str, (long) (sizeGb));
+
+  if(sizeMb>0)
+    sprintf(str, "%s %ld MB", str, (long) (sizeMb));
+  
+  if(sizeKb>0)
+    sprintf(str, "%s %ld KB", str, (long) (sizeKb));
+  
+  if(sizeb>0)
+    sprintf(str, "%s %ld B", str, (long) (sizeb));
+  
+  mvprintw(listim_scr_wrow-1, 0, "%s\n", str);
+  //  attroff(A_BOLD);
+
+  refresh();
+
+      
+  return 0;
+}
+
+void close_list_image_ID_ncurses( void )
+{
+  printf("Closing monitor cleanly\n");
+  set_term(listim_scr);
+  endwin();
+  fclose(listim_scr_fpo);
+  fclose(listim_scr_fpi);
+  MEM_MONITOR = 0;
+}
+
+
+int memory_monitor(char *termttyname)
+{
+  if(data.Debug>0)
+    printf("starting memory_monitor on \"%s\"\n", termttyname);
+
+  MEM_MONITOR = 1;
+  init_list_image_ID_ncurses(termttyname);
+  list_image_ID_ncurses();
+  atexit(close_list_image_ID_ncurses);
+
+}
+
+
+
+
+
+
+
+int list_image_ID_ofp(FILE *fo)
 {
   long i,j;
   long long tmp_long;
@@ -805,44 +1368,70 @@ int list_image_ID()
   int atype;
   int n;
   long long sizeb, sizeKb, sizeMb, sizeGb;
-
+  char str[500];
+  struct timespec timenow;
+  double timediff;
 
   sizeb = compute_image_memory();
 
+  clock_gettime(CLOCK_REALTIME, &timenow);
+
+  fprintf(fo, "\n");
+  fprintf(fo, "INDEX    NAME         SIZE                    TYPE        SIZE  [percent]    LAST ACCESS\n");
+  fprintf(fo, "\n");
 
   for (i=0;i<data.NB_MAX_IMAGE;i++)
     if(data.image[i].used==1) 
       {
-	atype = data.image[i].atype;
-	tmp_long = ((long long) (data.image[i].nelement)) * TYPESIZE[atype];
-	printf("%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].name, (char) 27, 0);
-	fflush(stdout);
-	printf(" %6ld",data.image[i].size[0]);
-	fflush(stdout);
-	for(j=1;j<data.image[i].naxis;j++)
-	  printf(" x %6ld",data.image[i].size[j]);
-	//	printf("]");
+	  atype = data.image[i].atype;
+	  tmp_long = ((long long) (data.image[i].nelement)) * TYPESIZE[atype];
+	  
+	  fprintf(fo, "%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].name, (char) 27, 0);
+	  //fprintf(fo, "%s", str);
+	  
+	  sprintf(str, "[ %6ld",data.image[i].size[0]);
+	  
+	  for(j=1;j<data.image[i].naxis;j++)
+	    {
+	      sprintf(str, "%s x %6ld", str, data.image[i].size[j]);
+	    }
+	  sprintf(str, "%s]", str);
+	  
+	  fprintf(fo, "%-28s", str);
+	  
 
-	n = 0;
-	if(atype==CHAR)
-	  n = snprintf(type,STYPESIZE,"CHAR");	
-	if(atype==INT)
-	  n = snprintf(type,STYPESIZE,"INT");
-	if(atype==FLOAT)
-	  n = snprintf(type,STYPESIZE,"FLOAT");
-	if(atype==DOUBLE)
-	  n = snprintf(type,STYPESIZE,"DOUBLE");
-	if(atype==COMPLEX_FLOAT)
-	  n = snprintf(type,STYPESIZE,"CFLOAT");
-	if(atype==COMPLEX_DOUBLE)
-	  n = snprintf(type,STYPESIZE,"CDOUBLE");
+	  n = 0;
+	  if(atype==CHAR)
+	    n = snprintf(type,STYPESIZE,"CHAR");	
+	  if(atype==INT)
+	    n = snprintf(type,STYPESIZE,"INT");
+	  if(atype==FLOAT)
+	    n = snprintf(type,STYPESIZE,"FLOAT");
+	  if(atype==DOUBLE)
+	    n = snprintf(type,STYPESIZE,"DOUBLE");
+	  if(atype==COMPLEX_FLOAT)
+	    n = snprintf(type,STYPESIZE,"CFLOAT");
+	  if(atype==COMPLEX_DOUBLE)
+	    n = snprintf(type,STYPESIZE,"CDOUBLE");
+	  fprintf(fo, "%7s ", type);
+	  
+	  
+	  if(n >= STYPESIZE)
+	    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+	  
+	  fprintf(fo, "%10ld Kb %6.2f   ", (long) (tmp_long/1024), (float) (100.0*tmp_long/sizeb));
+	  
+	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].last_access;
+	  
+	  fprintf(fo, "%15.9f\n", timediff);
+	}
+  fprintf(fo, "\n");
 
-	if(n >= STYPESIZE)
-	  printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-	printf("%7s %10ld Kb %6.2f%%   %s",type,(long) (tmp_long/1024),(float) (100.0*tmp_long/sizeb),asctime(localtime(&data.image[i].last_access)));
-	fflush(stdout);
-      }
+
+
+
+
  
   sizeGb = 0;
   sizeMb = 0;
@@ -865,21 +1454,29 @@ int list_image_ID()
       sizeMb = sizeMb-1024*sizeGb;
     }
 
-  printf("%ld image(s)   ",compute_nb_image());
+  fprintf(fo, "%ld image(s)   ",compute_nb_image());
   if(sizeGb>0)
-    printf(" %ld Gb",(long) (sizeGb));
+    fprintf(fo, " %ld Gb",(long) (sizeGb));
   if(sizeMb>0)
-    printf(" %ld Mb",(long) (sizeMb));
+    fprintf(fo, " %ld Mb",(long) (sizeMb));
   if(sizeKb>0)
-    printf(" %ld Kb",(long) (sizeKb));
+    fprintf(fo, " %ld Kb",(long) (sizeKb));
    if(sizeb>0)
-    printf(" %ld",(long) (sizeb));
-   printf("\n");
+     fprintf(fo, " %ld",(long) (sizeb));
+   fprintf(fo, "\n\n");
 
-  fflush(stdout);
-
-  return(0);
+   fflush(fo);
+   
+   return(0);
 }
+
+
+int list_image_ID()
+{
+  list_image_ID_ofp(stdout);
+  return 0;
+}
+
 
 
 /* list all images in memory
@@ -967,6 +1564,9 @@ long chname_image_ID(char *ID_name, char *new_name)
     }
   else
     printf("Cannot change name : new name already in use\n");
+
+  if(MEM_MONITOR==1)
+    list_image_ID_ncurses();
 
   return(ID);
 }
@@ -1089,8 +1689,8 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   # endif
       for(ii=0;ii<nelement;ii++)
 	{
-	  data.image[IDout].array.CF[ii].re = data.image[IDam].array.F[ii]*((float) cos(data.image[IDph].arrayD[ii]));
-	  data.image[IDout].array.CF[ii].im = data.image[IDam].array.F[ii]*((float) sin(data.image[IDph].arrayD[ii]));
+	  data.image[IDout].array.CF[ii].re = data.image[IDam].array.F[ii]*((float) cos(data.image[IDph].array.F[ii]));
+	  data.image[IDout].array.CF[ii].im = data.image[IDam].array.F[ii]*((float) sin(data.image[IDph].array.F[ii]));
 	}  
   # ifdef _OPENMP
   }

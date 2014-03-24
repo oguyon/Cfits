@@ -15,11 +15,12 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#include "../Cfits.h"
-#include "../00CORE/00CORE.h"
-#include "../COREMOD_memory/COREMOD_memory.h"
-#include "../COREMOD_tools/COREMOD_tools.h"
-#include "../COREMOD_fft/COREMOD_fft.h"
+#include "Cfits.h"
+#include "00CORE/00CORE.h"
+#include "COREMOD_memory/COREMOD_memory.h"
+#include "COREMOD_tools/COREMOD_tools.h"
+
+#include "COREMOD_arith/COREMOD_arith.h"
 
 #define SBUFFERSIZE 1000
 
@@ -28,7 +29,68 @@ extern DATA data;
 char errmsg[SBUFFERSIZE];
 
 
-long arith_set_pixel(char *ID_name, PRECISION value, long x, long y)
+
+
+
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
+
+
+int arith_image_extract2D_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)
+    {
+      arith_image_extract2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+      //      arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)
+      return 0;
+    }
+  else
+    return 1;
+
+}
+
+
+
+
+
+
+int init_COREMOD_arith()
+{
+  
+  strcpy(data.module[data.NBmodule].name, __FILE__);
+  strcpy(data.module[data.NBmodule].info, "image arithmetic operations");
+  data.NBmodule++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"extractim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_image_extract2D_cli;
+  strcpy(data.cmd[data.NBcmd].info,"crop 2D image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sizex> <sizey> <xstart> <ystart>");
+  strcpy(data.cmd[data.NBcmd].example,"extractim im ime 256 256 100 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)"); 
+  data.NBcmd++;
+  
+ // add atexit functions here
+
+
+}
+
+
+
+
+
+
+
+
+long arith_set_pixel(char *ID_name, double value, long x, long y)
 {
   long ID;
   long naxes[2];
@@ -56,7 +118,7 @@ long arith_set_pixel(char *ID_name, PRECISION value, long x, long y)
   return(ID);
 }
 
-long arith_set_row(char *ID_name, PRECISION value, long y)
+long arith_set_row(char *ID_name, double value, long y)
 {
   long ID;
   long naxes[2];
@@ -91,7 +153,7 @@ long arith_set_row(char *ID_name, PRECISION value, long y)
   return(ID);
 }
 
-long arith_set_col(char *ID_name, PRECISION value, long x)
+long arith_set_col(char *ID_name, double value, long x)
 {
   long ID;
   long naxes[2];
@@ -455,7 +517,7 @@ int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_
 }
 
 
-PRECISION arith_image_total(char *ID_name)
+double arith_image_total(char *ID_name)
 {
   long double value;
   long ID;
@@ -496,24 +558,24 @@ PRECISION arith_image_total(char *ID_name)
       exit(0);
     }
 
-  return((PRECISION) value);
+  return((double) value);
 }
 
-PRECISION arith_image_mean(char *ID_name)
+double arith_image_mean(char *ID_name)
 {
-  PRECISION value;
+  double value;
   long ID;
   
   ID = image_ID(ID_name);
   
-  value = (PRECISION) (arith_image_total(ID_name)/data.image[ID].nelement);
+  value = (double) (arith_image_total(ID_name)/data.image[ID].nelement);
   
   return(value);
 }
 
-PRECISION arith_image_min(char *ID_name)
+double arith_image_min(char *ID_name)
 {
-  PRECISION value,value1;
+  double value,value1;
   long ID;
   long ii;
   long nelement;
@@ -525,13 +587,13 @@ PRECISION arith_image_min(char *ID_name)
 
   nelement = data.image[ID].nelement;
     
-  value = (PRECISION) 0.0;
+  value = (double) 0.0;
   if(atype==CHAR)
     {
-      value = (PRECISION) data.image[ID].array.C[0];
+      value = (double) data.image[ID].array.C[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.C[ii];
+	  value1 = (double) data.image[ID].array.C[ii];
 	  if(value1<value)
 	    value = value1;
 	}
@@ -539,10 +601,10 @@ PRECISION arith_image_min(char *ID_name)
     }
   if(atype==INT)
     {
-      value = (PRECISION) data.image[ID].array.I[0];
+      value = (double) data.image[ID].array.I[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.I[ii];
+	  value1 = (double) data.image[ID].array.I[ii];
 	  if(value1<value)
 	    value = value1;
 	}
@@ -550,10 +612,10 @@ PRECISION arith_image_min(char *ID_name)
     }
   if(atype==FLOAT)
     {
-      value = (PRECISION) data.image[ID].array.F[0];
+      value = (double) data.image[ID].array.F[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.F[ii];
+	  value1 = (double) data.image[ID].array.F[ii];
 	  if(value1<value)
 	    value = value1;
 	}
@@ -561,10 +623,10 @@ PRECISION arith_image_min(char *ID_name)
     }
   if(atype==DOUBLE)
     {
-      value = (PRECISION) data.image[ID].array.D[0];
+      value = (double) data.image[ID].array.D[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.D[ii];
+	  value1 = (double) data.image[ID].array.D[ii];
 	  if(value1<value)
 	    value = value1;
 	}
@@ -576,9 +638,9 @@ PRECISION arith_image_min(char *ID_name)
   return(value);
 }
 
-PRECISION arith_image_max(char *ID_name)
+double arith_image_max(char *ID_name)
 {
-  PRECISION value,value1;
+  double value,value1;
   long ID;
   long ii;
   long nelement;
@@ -590,13 +652,13 @@ PRECISION arith_image_max(char *ID_name)
 
   nelement = data.image[ID].nelement;
     
-  value = (PRECISION) 0.0;
+  value = (double) 0.0;
   if(atype==CHAR)
     {
-      value = (PRECISION) data.image[ID].array.C[0];
+      value = (double) data.image[ID].array.C[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.C[ii];
+	  value1 = (double) data.image[ID].array.C[ii];
 	  if(value1>value)
 	    value = value1;
 	}
@@ -604,10 +666,10 @@ PRECISION arith_image_max(char *ID_name)
     }
   if(atype==INT)
     {
-      value = (PRECISION) data.image[ID].array.I[0];
+      value = (double) data.image[ID].array.I[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.I[ii];
+	  value1 = (double) data.image[ID].array.I[ii];
 	  if(value1>value)
 	    value = value1;
 	}
@@ -615,10 +677,10 @@ PRECISION arith_image_max(char *ID_name)
     }
   if(atype==FLOAT)
     {
-      value = (PRECISION) data.image[ID].array.F[0];
+      value = (double) data.image[ID].array.F[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.F[ii];
+	  value1 = (double) data.image[ID].array.F[ii];
 	  if(value1>value)
 	    value = value1;
 	}
@@ -626,10 +688,10 @@ PRECISION arith_image_max(char *ID_name)
     }
   if(atype==DOUBLE)
     {
-      value = (PRECISION) data.image[ID].array.D[0];
+      value = (double) data.image[ID].array.D[0];
       for (ii = 0; ii < nelement; ii++)
 	{
-	  value1 = (PRECISION) data.image[ID].array.D[ii];
+	  value1 = (double) data.image[ID].array.D[ii];
 	  if(value1>value)
 	    value = value1;
 	}
@@ -641,12 +703,17 @@ PRECISION arith_image_max(char *ID_name)
   return(value);
 }
 
-PRECISION arith_image_median(char *ID_name)
+
+
+
+double arith_image_percentile(char *ID_name, double fraction)
 {
   long ID;
   long ii;
-  PRECISION value = 0;
-  PRECISION *array = NULL;
+  double value = 0;
+  long *arrayL = NULL;
+  float *arrayF = NULL;
+  double *array_D = NULL;
   long nelement;
   int atype;
   int atypeOK = 1; 
@@ -656,101 +723,85 @@ PRECISION arith_image_median(char *ID_name)
 
   nelement = data.image[ID].nelement;
   
-  array = (PRECISION*) malloc(sizeof(PRECISION)*nelement);
-  if(array==NULL)
-     {
-       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-       exit(0);
-     }
-  array[0] = (PRECISION) 0.0;
 
   switch (atype) {
+
   case CHAR :
+    arrayL = (long*) malloc(sizeof(long)*nelement);
+    if(arrayL==NULL)
+      {
+	printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+      }
+    arrayL[0] = 0;
     for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.C[ii];
+      arrayL[ii] = (long) data.image[ID].array.C[ii];
+    quick_sort_long(arrayL, nelement);
+    value = (double) arrayL[(long) (fraction*nelement)];
+    free(arrayL);
     break;
+
   case INT :
+    arrayL = (long*) malloc(sizeof(long)*nelement);
+    if(arrayL==NULL)
+      {
+	printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+	exit(0);
+      }
+    arrayL[0] = 0;   
     for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.I[ii];
+      arrayL[ii] = (long) data.image[ID].array.I[ii];
+    quick_sort_long(arrayL, nelement);
+    value = (double) arrayL[(long) (fraction*nelement)];
+    free(arrayL);    
     break;
+
   case FLOAT :
+    arrayF = (float*) malloc(sizeof(float)*nelement);
+    if(arrayF==NULL)
+      {
+	printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+      }
+    arrayF[0] = 0.0;
     for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.F[ii];
+      arrayF[ii] = data.image[ID].array.F[ii];
+    value = (double) arrayF[(long) (fraction*nelement)];
+    free(arrayF);   
     break;
+
   case DOUBLE :
+    array_D = (double*) malloc(sizeof(double)*nelement);
+    if(array_D==NULL)
+      {
+	printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+	exit(0);
+      }
+    array_D[0] = 0.0;
     for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.D[ii];
+      array_D[ii] = data.image[ID].array.D[ii];
+    quick_sort_double(array_D, nelement);
+    value = array_D[(long) (fraction*nelement)];
+    free(array_D);    
     break;
+
   default:
     printERROR(__FILE__,__func__,__LINE__,"Image type not supported");
     atypeOK = 0;
     break;
   }
+
   if(atypeOK == 0)
     exit(0);
 
-  quick_sort(array,nelement);
-  
-  value = array[(long) (0.5*nelement)];
-
-  free(array);
   return(value);
 }
 
-PRECISION arith_image_percentile(char *ID_name, PRECISION fraction)
+
+double arith_image_median(char *ID_name)
 {
-  long ID;
-  long ii;
-  PRECISION value = 0;
-  PRECISION *array = NULL;
-  long nelement;
-  int atype;
-  int atypeOK = 1;
-
-  ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-
-  nelement = data.image[ID].nelement;
-  
-  array = (PRECISION*) malloc(sizeof(PRECISION)*nelement);
-  if(array==NULL)
-     {
-       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-       exit(0);
-     }
- 
-  array[0] = (PRECISION) 0.0;
-
-  switch (atype) {
-  case CHAR :
-    for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.C[ii];
-    break;
-  case INT :
-    for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.I[ii];
-    break;
-  case FLOAT :
-    for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.F[ii];
-    break;
-  case DOUBLE :
-    for (ii = 0; ii < nelement; ii++) 
-      array[ii] = (PRECISION) data.image[ID].array.D[ii];
-    break;
-  default:
-    printERROR(__FILE__,__func__,__LINE__,"Image type not supported");
-    atypeOK = 0;
-    break;
-  }
-  if(atypeOK == 0)
-    exit(0);
-
-  quick_sort(array,nelement);
-  
-  value = array[(long) (fraction*nelement)];
-
-  free(array);
+  double value = 0.0;
+  value = arith_image_percentile(ID_name, 0.5);
   return(value);
 }
 
@@ -782,9 +833,9 @@ long arith_image_dx(char *ID_name, char *IDout_name)
   for(jj=0;jj<naxes[1];jj++)
     {
       for(ii=1;ii<naxes[0]-1;ii++)
-	data.image[IDout].arrayD[jj*naxes[0]+ii] = (data.image[ID].arrayD[jj*naxes[0]+ii+1]-data.image[ID].arrayD[jj*naxes[0]+ii-1])/2.0;
-      data.image[IDout].arrayD[jj*naxes[0]] = data.image[ID].arrayD[jj*naxes[0]+1]-data.image[ID].arrayD[jj*naxes[0]];
-      data.image[IDout].arrayD[jj*naxes[0]+naxes[0]-1] = data.image[ID].arrayD[jj*naxes[0]+naxes[0]-1]-data.image[ID].arrayD[jj*naxes[0]+naxes[0]-2];
+	data.image[IDout].array.F[jj*naxes[0]+ii] = (data.image[ID].array.F[jj*naxes[0]+ii+1]-data.image[ID].array.F[jj*naxes[0]+ii-1])/2.0;
+      data.image[IDout].array.F[jj*naxes[0]] = data.image[ID].array.F[jj*naxes[0]+1]-data.image[ID].array.F[jj*naxes[0]];
+      data.image[IDout].array.F[jj*naxes[0]+naxes[0]-1] = data.image[ID].array.F[jj*naxes[0]+naxes[0]-1]-data.image[ID].array.F[jj*naxes[0]+naxes[0]-2];
     }
   
   free(naxes);
@@ -819,11 +870,11 @@ long arith_image_dy(char *ID_name, char *IDout_name)
   for(ii=0;ii<naxes[0];ii++)
     {
       for(jj=1;jj<naxes[1]-1;jj++)
-	data.image[IDout].arrayD[jj*naxes[0]+ii] = (data.image[ID].arrayD[(jj+1)*naxes[0]+ii]-data.image[ID].arrayD[(jj-1)*naxes[0]+ii])/2.0;
+	data.image[IDout].array.F[jj*naxes[0]+ii] = (data.image[ID].array.F[(jj+1)*naxes[0]+ii]-data.image[ID].array.F[(jj-1)*naxes[0]+ii])/2.0;
 
-      data.image[IDout].arrayD[ii] = data.image[ID].arrayD[1*naxes[0]+ii]-data.image[ID].arrayD[ii];
+      data.image[IDout].array.F[ii] = data.image[ID].array.F[1*naxes[0]+ii]-data.image[ID].array.F[ii];
 
-      data.image[IDout].arrayD[(naxes[1]-1)*naxes[0]+ii] = data.image[ID].arrayD[(naxes[1]-1)*naxes[0]+ii]-data.image[ID].arrayD[(naxes[1]-2)*naxes[0]+ii];
+      data.image[IDout].array.F[(naxes[1]-1)*naxes[0]+ii] = data.image[ID].array.F[(naxes[1]-1)*naxes[0]+ii]-data.image[ID].array.F[(naxes[1]-2)*naxes[0]+ii];
 
     }
   
@@ -842,7 +893,107 @@ long arith_image_dy(char *ID_name, char *IDout_name)
 /* ------------------------------------------------------------------------- */
 
 
-int arith_image_function_1_1(char *ID_name, char *ID_out, PRECISION (*pt2function)(PRECISION))
+int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(double))
+{
+  long ID;
+  long IDout;
+  long *naxes = NULL;
+  long naxis;
+  long ii;
+  long nelement;
+  int atype, atypeout;
+  long i;
+
+
+  if(data.Debug>0)
+    {
+      printf("arith_image_function_d_d  %s %s\n", ID_name, ID_out);
+      fflush(stdout);
+    }
+
+  ID = image_ID(ID_name);
+  atype = data.image[ID].atype;
+  naxis=data.image[ID].naxis;
+  naxes = (long*) malloc(sizeof(long)*naxis);
+  if(naxes==NULL)
+     {
+       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+     }
+
+
+  for(i=0;i<naxis;i++)
+    {
+      naxes[i] = data.image[ID].size[i];
+    }
+  
+
+  atypeout = FLOAT;
+  if(atype==DOUBLE)
+    atypeout = DOUBLE;
+
+  IDout = create_image_ID(ID_out,naxis,naxes,atypeout);
+  free(naxes);
+
+  nelement = data.image[ID].nelement;
+ 
+ 
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) 
+  {
+  # endif
+
+
+  if(atype==CHAR)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.C[ii]));
+    }
+  if(atype==INT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.I[ii]));
+    }
+  if(atype==FLOAT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+      	data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.F[ii]));
+    }
+  if(atype==DOUBLE)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[IDout].array.D[ii] = pt2function(data.image[ID].array.D[ii]);
+    }
+  # ifdef _OPENMP
+  }
+  # endif
+
+
+  if(data.Debug>0)
+    {
+      printf("arith_image_function_d_d  DONE\n");
+      fflush(stdout);
+    }
+
+
+  return(0);
+}
+
+
+
+int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(double))
 {
   long ID;
   long IDout;
@@ -894,7 +1045,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, PRECISION (*pt2functio
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.C[ii]));
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]));
     }
   if(atype==INT)
     {
@@ -902,7 +1053,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, PRECISION (*pt2functio
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.I[ii]));
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]));
     }
   if(atype==FLOAT)
     {
@@ -910,7 +1061,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, PRECISION (*pt2functio
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-      	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.F[ii]));
+      	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]));
     }
   if(atype==DOUBLE)
     {
@@ -918,7 +1069,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, PRECISION (*pt2functio
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.D[ii] = (double) pt2function((PRECISION) (data.image[ID].array.D[ii]));
+	data.image[IDout].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]));
     }
   # ifdef _OPENMP
   }
@@ -928,7 +1079,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, PRECISION (*pt2functio
 }
 
 // imagein -> imagein (in place)
-int arith_image_function_1_1_inplace(char *ID_name, PRECISION (*pt2function)(PRECISION))
+int arith_image_function_1_1_inplace(char *ID_name, double (*pt2function)(double))
 {
   long ID;
   long ii;
@@ -957,7 +1108,7 @@ int arith_image_function_1_1_inplace(char *ID_name, PRECISION (*pt2function)(PRE
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.C[ii]));
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]));
     }
   if(atype==INT)
     {
@@ -965,7 +1116,7 @@ int arith_image_function_1_1_inplace(char *ID_name, PRECISION (*pt2function)(PRE
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.I[ii]));
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]));
     }
   if(atype==FLOAT)
     {
@@ -973,7 +1124,7 @@ int arith_image_function_1_1_inplace(char *ID_name, PRECISION (*pt2function)(PRE
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.F[ii] = pt2function((PRECISION) (data.image[ID].array.F[ii]));
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]));
     }
   if(atype==DOUBLE)
     {
@@ -981,7 +1132,7 @@ int arith_image_function_1_1_inplace(char *ID_name, PRECISION (*pt2function)(PRE
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.D[ii] = (double) pt2function((PRECISION) (data.image[ID].array.D[ii]));
+	data.image[ID].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]));
     }
   
   # ifdef _OPENMP
@@ -993,28 +1144,28 @@ int arith_image_function_1_1_inplace(char *ID_name, PRECISION (*pt2function)(PRE
 }
 
 
-PRECISION Pacos(PRECISION a) {return((PRECISION) acos(a));}
-PRECISION Pasin(PRECISION a) {return((PRECISION) asin(a));}
-PRECISION Patan(PRECISION a) {return((PRECISION) atan(a));}
-PRECISION Pceil(PRECISION a) {return((PRECISION) ceil(a));}
-PRECISION Pcos(PRECISION a) {return((PRECISION) cos(a));}
-PRECISION Pcosh(PRECISION a) {return((PRECISION) cosh(a));}
-PRECISION Pexp(PRECISION a) {return((PRECISION) exp(a));}
-PRECISION Pfabs(PRECISION a) {return((PRECISION) fabs(a));}
-PRECISION Pfloor(PRECISION a) {return((PRECISION) floor(a));}
-PRECISION Pln(PRECISION a) {return((PRECISION) log(a));}
-PRECISION Plog(PRECISION a) {return((PRECISION) log10(a));}
-PRECISION Psqrt(PRECISION a) {return((PRECISION) sqrt(a));}
-PRECISION Psin(PRECISION a) {return((PRECISION) sin(a));}
-PRECISION Psinh(PRECISION a) {return((PRECISION) sinh(a));}
-PRECISION Ptan(PRECISION a) {return((PRECISION) tan(a));}
-PRECISION Ptanh(PRECISION a) {return((PRECISION) tanh(a));}
+double Pacos(double a) {return((double) acos(a));}
+double Pasin(double a) {return((double) asin(a));}
+double Patan(double a) {return((double) atan(a));}
+double Pceil(double a) {return((double) ceil(a));}
+double Pcos(double a) {return((double) cos(a));}
+double Pcosh(double a) {return((double) cosh(a));}
+double Pexp(double a) {return((double) exp(a));}
+double Pfabs(double a) {return((double) fabs(a));}
+double Pfloor(double a) {return((double) floor(a));}
+double Pln(double a) {return((double) log(a));}
+double Plog(double a) {return((double) log10(a));}
+double Psqrt(double a) {return((double) sqrt(a));}
+double Psin(double a) {return((double) sin(a));}
+double Psinh(double a) {return((double) sinh(a));}
+double Ptan(double a) {return((double) tan(a));}
+double Ptanh(double a) {return((double) tanh(a));}
 
-PRECISION Ppositive(PRECISION a) 
+double Ppositive(double a) 
 {
-PRECISION value = 0.0;
+double value = 0.0;
  if(a>0.0)
-   value = (PRECISION) 1.0;
+   value = (double) 1.0;
 return(value);
 }
 
@@ -1067,7 +1218,7 @@ int arith_image_positive_inplace(char *ID_name){ arith_image_function_1_1_inplac
 /* ------------------------------------------------------------------------- */
 
 
-int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECISION (*pt2function)(PRECISION,PRECISION))
+int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, double (*pt2function)(double, double))
 {
   long ID1,ID2;
   long IDout;
@@ -1078,9 +1229,25 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECI
   int atype1,atype2;
   long i;
   int n;
+  char errmsg[200];
 
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
+
+  if(ID1==-1)
+    {
+      sprintf(errmsg, "Image %s does not exist: cannot proceed\n", ID_name1);
+      printRED(errmsg);
+      return 1;
+    }    
+
+  if(ID2==-1)
+    {
+      sprintf(errmsg, "Image %s does not exist: cannot proceed\n", ID_name2);
+      printRED(errmsg);
+      return 1;
+    }    
+
   atype1 = data.image[ID1].atype;
   atype2 = data.image[ID2].atype;
   naxis=data.image[ID1].naxis;
@@ -1125,7 +1292,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECI
       # endif
 
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID1].array.C[ii]),(PRECISION) (data.image[ID2].array.C[ii]));
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.C[ii]),(double) (data.image[ID2].array.C[ii]));
     }
   if((atype1==INT)&&(atype2==INT))
     {
@@ -1133,7 +1300,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECI
       #pragma omp for
       # endif
      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID1].array.I[ii]),(PRECISION) (data.image[ID2].array.I[ii]));
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.I[ii]),(double) (data.image[ID2].array.I[ii]));
     }
   if((atype1==FLOAT)&&(atype2==FLOAT))
     {
@@ -1141,7 +1308,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECI
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID1].array.F[ii]),(PRECISION) (data.image[ID2].array.F[ii]));
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID1].array.F[ii]),(double) (data.image[ID2].array.F[ii]));
     }
   if((atype1==DOUBLE)&&(atype2==DOUBLE))
     {
@@ -1149,7 +1316,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECI
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.D[ii] = (double) pt2function((PRECISION) (data.image[ID1].array.D[ii]),(PRECISION) (data.image[ID2].array.D[ii]));
+	data.image[IDout].array.D[ii] = (double) pt2function((double) (data.image[ID1].array.D[ii]),(double) (data.image[ID2].array.D[ii]));
     }
 
   # ifdef _OPENMP
@@ -1160,7 +1327,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, PRECI
   return(0);
 }
 
-int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, PRECISION (*pt2function)(PRECISION,PRECISION))
+int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
 {
   long ID1,ID2;
   long ii;
@@ -1195,7 +1362,7 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, PRECISION (
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID1].arrayD[ii] = pt2function((PRECISION) (data.image[ID1].array.C[ii]),(PRECISION) (data.image[ID2].array.C[ii]));
+	data.image[ID1].array.F[ii] = pt2function((double) (data.image[ID1].array.C[ii]),(double) (data.image[ID2].array.C[ii]));
     }
   if((atype1==INT)&&(atype2==INT))
     {
@@ -1203,7 +1370,7 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, PRECISION (
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID1].arrayD[ii] = pt2function((PRECISION) (data.image[ID1].array.I[ii]),(PRECISION) (data.image[ID2].array.I[ii]));
+	data.image[ID1].array.F[ii] = pt2function((double) (data.image[ID1].array.I[ii]),(double) (data.image[ID2].array.I[ii]));
     }
   if((atype1==FLOAT)&&(atype2==FLOAT))
     {
@@ -1211,7 +1378,7 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, PRECISION (
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID1].arrayD[ii] = pt2function((PRECISION) (data.image[ID1].array.F[ii]),(PRECISION) (data.image[ID2].array.F[ii]));
+	data.image[ID1].array.F[ii] = pt2function((double) (data.image[ID1].array.F[ii]),(double) (data.image[ID2].array.F[ii]));
     }
   if((atype1==DOUBLE)&&(atype2==DOUBLE))
     {
@@ -1219,7 +1386,7 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, PRECISION (
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID1].array.D[ii] = pt2function((PRECISION) (data.image[ID1].array.D[ii]),(PRECISION) (data.image[ID2].array.D[ii]));
+	data.image[ID1].array.D[ii] = pt2function((double) (data.image[ID1].array.D[ii]),(double) (data.image[ID2].array.D[ii]));
     }
 
   # ifdef _OPENMP
@@ -1230,17 +1397,17 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, PRECISION (
 }
 
 
-PRECISION Pfmod(PRECISION a, PRECISION b) {return((PRECISION) fmod(a,b));}
-PRECISION Ppow(PRECISION a, PRECISION b) {if(b>0){return((PRECISION) pow(a,b));}else{return((PRECISION) pow(a,-b));}}
-PRECISION Padd(PRECISION a, PRECISION b) {return((PRECISION) a+b);}
-PRECISION Psub(PRECISION a, PRECISION b) {return((PRECISION) a-b);}
-PRECISION Pmult(PRECISION a, PRECISION b) {return((PRECISION) a*b);}
-PRECISION Pdiv(PRECISION a, PRECISION b) {return((PRECISION) a/b);}
-PRECISION Pdiv1(PRECISION a, PRECISION b) {return((PRECISION) b/a);}
-PRECISION Pminv(PRECISION a, PRECISION b) {if(a<b){return(a);}else{return(b);}}
-PRECISION Pmaxv(PRECISION a, PRECISION b) {if(a>b){return(a);}else{return(b);}}
-PRECISION Ptestlt(PRECISION a, PRECISION b) {if(a<b){return( (PRECISION) 1.0);}else{return((PRECISION) 0.0);}}
-PRECISION Ptestmt(PRECISION a, PRECISION b) {if(a<b){return((PRECISION) 0.0);}else{return((PRECISION) 1.0);}}
+double Pfmod(double a, double b) {return((double) fmod(a,b));}
+double Ppow(double a, double b) {if(b>0){return((double) pow(a,b));}else{return((double) pow(a,-b));}}
+double Padd(double a, double b) {return((double) a+b);}
+double Psub(double a, double b) {return((double) a-b);}
+double Pmult(double a, double b) {return((double) a*b);}
+double Pdiv(double a, double b) {return((double) a/b);}
+double Pdiv1(double a, double b) {return((double) b/a);}
+double Pminv(double a, double b) {if(a<b){return(a);}else{return(b);}}
+double Pmaxv(double a, double b) {if(a>b){return(a);}else{return(b);}}
+double Ptestlt(double a, double b) {if(a<b){return( (double) 1.0);}else{return((double) 0.0);}}
+double Ptestmt(double a, double b) {if(a<b){return((double) 0.0);}else{return((double) 1.0);}}
 
 
 
@@ -1279,8 +1446,8 @@ int arith_image_testmt_inplace(char *ID1_name, char *ID2_name){ arith_image_func
 /* ------------------------------------------------------------------------- */
 /* complex image, complex image  -> complex image                            */
 /* ------------------------------------------------------------------------- */
-
-int arith_image_function_CC_C(char *ID_name1, char *ID_name2, char *ID_out, CPRECISION (*pt2function)(CPRECISION,CPRECISION))
+// complex float (CF), complex float (CF) -> complex float (CF)
+int arith_image_function_CF_CF__CF(char *ID_name1, char *ID_name2, char *ID_out, complex_float (*pt2function)(complex_float, complex_float))
 {
   long ID1,ID2;
   long IDout;
@@ -1318,7 +1485,7 @@ int arith_image_function_CC_C(char *ID_name1, char *ID_name2, char *ID_out, CPRE
   #pragma omp for
   # endif
   for (ii = 0; ii < nelement; ii++)
-    data.image[IDout].arrayCD[ii] = pt2function(data.image[ID1].arrayCD[ii],data.image[ID2].arrayCD[ii]);
+    data.image[IDout].array.CF[ii] = pt2function(data.image[ID1].array.CF[ii], data.image[ID2].array.CF[ii]);
   # ifdef _OPENMP
   }
   # endif
@@ -1326,17 +1493,67 @@ int arith_image_function_CC_C(char *ID_name1, char *ID_name2, char *ID_out, CPRE
   return(0);
 }
 
-CPRECISION CPadd(CPRECISION a, CPRECISION b) {CPRECISION v; v.re=a.re+b.re; v.im=a.im+b.im; return(v);}
-
-CPRECISION CPsub(CPRECISION a, CPRECISION b) {CPRECISION v; v.re=a.re-b.re; v.im=a.im-b.im; return(v);}
-
-CPRECISION CPmult(CPRECISION a, CPRECISION b) {CPRECISION v; v.re=a.re*b.re-a.im*b.im; v.im=a.re*b.im+a.im*b.re; return(v);}
-
-CPRECISION CPdiv(CPRECISION a, CPRECISION b) 
+// complex double (CD), complex double (CD) -> complex double (CD)
+int arith_image_function_CD_CD__CD(char *ID_name1, char *ID_name2, char *ID_out, complex_double (*pt2function)(complex_double, complex_double))
 {
-  CPRECISION v; 
+  long ID1,ID2;
+  long IDout;
+  long ii;
+  long *naxes = NULL;
+  long nelement;
+  long naxis;
+  int atype1,atype2;
+  long i;
+
+  ID1 = image_ID(ID_name1);
+  ID2 = image_ID(ID_name2);
+  atype1 = data.image[ID1].atype;
+  atype2 = data.image[ID2].atype;
+  naxis=data.image[ID1].naxis;
+  naxes = (long*) malloc(sizeof(long)*naxis);
+  if(naxes==NULL)
+     {
+       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+     }
+
+  for(i=0;i<naxis;i++)
+    {
+      naxes[i] = data.image[ID1].size[i];
+    }
+  
+  IDout = create_image_ID(ID_out,naxis,naxes,atype1);
+  free(naxes);
+  nelement = data.image[ID1].nelement;
+  
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  {
+  #pragma omp for
+  # endif
+  for (ii = 0; ii < nelement; ii++)
+    data.image[IDout].array.CD[ii] = pt2function(data.image[ID1].array.CD[ii], data.image[ID2].array.CD[ii]);
+  # ifdef _OPENMP
+  }
+  # endif
+
+  return(0);
+}
+
+
+
+
+complex_double CPadd_CD_CD(complex_double a, complex_double b) {complex_double v; v.re=a.re+b.re; v.im=a.im+b.im; return(v);}
+
+complex_double CPsub_CD_CD(complex_double a, complex_double b) {complex_double v; v.re=a.re-b.re; v.im=a.im-b.im; return(v);}
+
+complex_double CPmult_CD_CD(complex_double a, complex_double b) {complex_double v; v.re=a.re*b.re-a.im*b.im; v.im=a.re*b.im+a.im*b.re; return(v);}
+
+complex_double CPdiv_CD_CD(complex_double a, complex_double b) 
+{
+  complex_double v; 
   double amp,pha; 
-  PRECISION are, aim, bre, bim;
+  double are, aim, bre, bim;
   
   are = a.re;
   aim = a.im;
@@ -1348,16 +1565,139 @@ CPRECISION CPdiv(CPRECISION a, CPRECISION b)
   pha = atan2(aim,are);
   pha -= atan2(bim,bre); 
 
-  v.re = (PRECISION) (amp*cos(pha)); 
-  v.im = (PRECISION) (amp*sin(pha)); 
+  v.re = (double) (amp*cos(pha)); 
+  v.im = (double) (amp*sin(pha)); 
 
   return(v);
 }
 
-int arith_image_Cadd(char *ID1_name, char *ID2_name, char *ID_out){ arith_image_function_CC_C(ID1_name,ID2_name,ID_out,&CPadd); return(0);}
-int arith_image_Csub(char *ID1_name, char *ID2_name, char *ID_out){ arith_image_function_CC_C(ID1_name,ID2_name,ID_out,&CPsub); return(0);}
-int arith_image_Cmult(char *ID1_name, char *ID2_name, char *ID_out){ arith_image_function_CC_C(ID1_name,ID2_name,ID_out,&CPmult); return(0);}
-int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out){ arith_image_function_CC_C(ID1_name,ID2_name,ID_out,&CPdiv); return(0);}
+complex_float CPadd_CF_CF(complex_float a, complex_float b) {complex_float v; v.re=a.re+b.re; v.im=a.im+b.im; return(v);}
+
+complex_float CPsub_CF_CF(complex_float a, complex_float b) {complex_float v; v.re=a.re-b.re; v.im=a.im-b.im; return(v);}
+
+complex_float CPmult_CF_CF(complex_float a, complex_float b) {complex_float v; v.re=a.re*b.re-a.im*b.im; v.im=a.re*b.im+a.im*b.re; return(v);}
+
+complex_float CPdiv_CF_CF(complex_float a, complex_float b) 
+{
+  complex_float v; 
+  float amp,pha; 
+  float are, aim, bre, bim;
+  
+  are = a.re;
+  aim = a.im;
+  bre = b.re;
+  bim = b.im;
+
+  amp = sqrt(are*are+aim*aim);
+  amp /= sqrt(bre*bre+bim*bim); 
+  pha = atan2(aim,are);
+  pha -= atan2(bim,bre); 
+
+  v.re = (float) (amp*cos(pha)); 
+  v.im = (float) (amp*sin(pha)); 
+
+  return(v);
+}
+
+int arith_image_Cadd(char *ID1_name, char *ID2_name, char *ID_out){ 
+  int atype1, atype2;
+  long ID1, ID2;
+
+  ID1 = image_ID(ID1_name);
+  ID2 = image_ID(ID2_name);
+  atype1 = data.image[ID1].atype;
+  atype2 = data.image[ID2].atype;
+
+  if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
+    {
+      arith_image_function_CF_CF__CF(ID1_name, ID2_name, ID_out, &CPadd_CF_CF); 
+      return 0;
+    }
+
+  if((atype1 == COMPLEX_DOUBLE)&&(atype2 ==  COMPLEX_DOUBLE))
+    {
+      arith_image_function_CD_CD__CD(ID1_name, ID2_name, ID_out, &CPadd_CD_CD); 
+      return 0;
+    }
+  printERROR(__FILE__,__func__,__LINE__,"data types do not match");
+
+  return 1;
+}
+
+int arith_image_Csub(char *ID1_name, char *ID2_name, char *ID_out){ 
+  int atype1, atype2;
+  long ID1, ID2;
+
+  ID1 = image_ID(ID1_name);
+  ID2 = image_ID(ID2_name);
+  atype1 = data.image[ID1].atype;
+  atype2 = data.image[ID2].atype;
+
+  if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
+    {
+      arith_image_function_CF_CF__CF(ID1_name, ID2_name, ID_out, &CPsub_CF_CF); 
+      return 0;
+    }
+
+  if((atype1 == COMPLEX_DOUBLE)&&(atype2 ==  COMPLEX_DOUBLE))
+    {
+      arith_image_function_CD_CD__CD(ID1_name, ID2_name, ID_out, &CPsub_CD_CD); 
+      return 0;
+    }
+  printERROR(__FILE__,__func__,__LINE__,"data types do not match");
+
+  return 1;
+}
+
+int arith_image_Cmult(char *ID1_name, char *ID2_name, char *ID_out){ 
+  int atype1, atype2;
+  long ID1, ID2;
+
+  ID1 = image_ID(ID1_name);
+  ID2 = image_ID(ID2_name);
+  atype1 = data.image[ID1].atype;
+  atype2 = data.image[ID2].atype;
+
+  if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
+    {
+      arith_image_function_CF_CF__CF(ID1_name, ID2_name, ID_out, &CPmult_CF_CF); 
+      return 0;
+    }
+
+  if((atype1 == COMPLEX_DOUBLE)&&(atype2 ==  COMPLEX_DOUBLE))
+    {
+      arith_image_function_CD_CD__CD(ID1_name, ID2_name, ID_out, &CPmult_CD_CD); 
+      return 0;
+    }
+  printERROR(__FILE__,__func__,__LINE__,"data types do not match");
+
+  return(0);
+}
+
+int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out){ 
+  int atype1, atype2;
+  long ID1, ID2;
+
+  ID1 = image_ID(ID1_name);
+  ID2 = image_ID(ID2_name);
+  atype1 = data.image[ID1].atype;
+  atype2 = data.image[ID2].atype;
+
+  if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
+    {
+      arith_image_function_CF_CF__CF(ID1_name, ID2_name, ID_out, &CPdiv_CF_CF); 
+      return 0;
+    }
+
+  if((atype1 == COMPLEX_DOUBLE)&&(atype2 ==  COMPLEX_DOUBLE))
+    {
+      arith_image_function_CD_CD__CD(ID1_name, ID2_name, ID_out, &CPdiv_CD_CD); 
+      return 0;
+    }
+  printERROR(__FILE__,__func__,__LINE__,"data types do not match");
+
+  return(0);
+}
 
 
 
@@ -1369,11 +1709,11 @@ int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out){ arith_image_
 
 
 /* ------------------------------------------------------------------------- */
-/* image, PRECISION  -> image                                                */
+/* image, double  -> image                                                */
 /* ------------------------------------------------------------------------- */
 
 
-int arith_image_function_1f_1(char *ID_name, PRECISION f1, char *ID_out, PRECISION (*pt2function)(PRECISION,PRECISION))
+int arith_image_function_1f_1(char *ID_name, double f1, char *ID_out, double (*pt2function)(double,double))
 {
   long ID;
   long IDout;
@@ -1408,6 +1748,8 @@ int arith_image_function_1f_1(char *ID_name, PRECISION f1, char *ID_out, PRECISI
   free(naxes);
   nelement = data.image[ID].nelement;
   
+
+
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {  
@@ -1418,7 +1760,7 @@ int arith_image_function_1f_1(char *ID_name, PRECISION f1, char *ID_out, PRECISI
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.C[ii]),f1);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1);
     }
   if(atype==INT)
     {
@@ -1426,7 +1768,7 @@ int arith_image_function_1f_1(char *ID_name, PRECISION f1, char *ID_out, PRECISI
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.I[ii]),f1);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1);
     }
   if(atype==FLOAT)
     {
@@ -1434,7 +1776,7 @@ int arith_image_function_1f_1(char *ID_name, PRECISION f1, char *ID_out, PRECISI
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.F[ii]),f1);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]),f1);
     }
   if(atype==DOUBLE)
     {
@@ -1442,17 +1784,18 @@ int arith_image_function_1f_1(char *ID_name, PRECISION f1, char *ID_out, PRECISI
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.D[ii] = (double) pt2function((PRECISION) (data.image[ID].array.D[ii]),f1);
+	data.image[IDout].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]),f1);
     }
   # ifdef _OPENMP
   }
   # endif
 
 
+
   return(0);
 }
 
-int arith_image_function_1f_1_inplace(char *ID_name, PRECISION f1, PRECISION (*pt2function)(PRECISION,PRECISION))
+int arith_image_function_1f_1_inplace(char *ID_name, double f1, double (*pt2function)(double,double))
 {
   long ID;
   long ii;
@@ -1473,7 +1816,7 @@ int arith_image_function_1f_1_inplace(char *ID_name, PRECISION f1, PRECISION (*p
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.C[ii]),f1);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1);
     }
   if(atype==INT)
     {
@@ -1481,7 +1824,7 @@ int arith_image_function_1f_1_inplace(char *ID_name, PRECISION f1, PRECISION (*p
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.I[ii]),f1);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1);
     }
   if(atype==FLOAT)
     {
@@ -1489,7 +1832,7 @@ int arith_image_function_1f_1_inplace(char *ID_name, PRECISION f1, PRECISION (*p
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.F[ii]),f1);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]),f1);
     }
   if(atype==DOUBLE)
     {
@@ -1497,7 +1840,7 @@ int arith_image_function_1f_1_inplace(char *ID_name, PRECISION f1, PRECISION (*p
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].array.D[ii] = (double) pt2function((PRECISION) (data.image[ID].array.D[ii]),f1);
+	data.image[ID].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]),f1);
     }
   # ifdef _OPENMP
   }
@@ -1508,40 +1851,40 @@ int arith_image_function_1f_1_inplace(char *ID_name, PRECISION f1, PRECISION (*p
 
 
 
-int arith_image_cstfmod(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pfmod); return(0);}
-int arith_image_cstadd(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Padd); return(0);}
-int arith_image_cstsub(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Psub); return(0);}
-int arith_image_cstmult(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmult); return(0);}
-int arith_image_cstdiv(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv); return(0);}
-int arith_image_cstdiv1(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv1); return(0);}
-int arith_image_cstpow(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ppow); return(0);}
-int arith_image_cstmaxv(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmaxv); return(0);}
-int arith_image_cstminv(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pminv); return(0);}
-int arith_image_csttestlt(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ptestlt); return(0);}
-int arith_image_csttestmt(char *ID_name, PRECISION f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ptestmt); return(0);}
+int arith_image_cstfmod(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pfmod); return(0);}
+int arith_image_cstadd(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Padd); return(0);}
+int arith_image_cstsub(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Psub); return(0);}
+int arith_image_cstmult(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmult); return(0);}
+int arith_image_cstdiv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv); return(0);}
+int arith_image_cstdiv1(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv1); return(0);}
+int arith_image_cstpow(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ppow); return(0);}
+int arith_image_cstmaxv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmaxv); return(0);}
+int arith_image_cstminv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pminv); return(0);}
+int arith_image_csttestlt(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ptestlt); return(0);}
+int arith_image_csttestmt(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Ptestmt); return(0);}
 
-int arith_image_cstfmod_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pfmod); return(0);}
-int arith_image_cstadd_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Padd); return(0);}
-int arith_image_cstsub_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Psub); return(0);}
-int arith_image_cstmult_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pmult); return(0);}
-int arith_image_cstdiv_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pdiv); return(0);}
-int arith_image_cstdiv1_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pdiv1); return(0);}
-int arith_image_cstpow_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ppow); return(0);}
-int arith_image_cstmaxv_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pmaxv); return(0);}
-int arith_image_cstminv_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pminv); return(0);}
-int arith_image_csttestlt_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ptestlt); return(0);}
-int arith_image_csttestmt_inplace(char *ID_name, PRECISION f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ptestmt); return(0);}
+int arith_image_cstfmod_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pfmod); return(0);}
+int arith_image_cstadd_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Padd); return(0);}
+int arith_image_cstsub_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Psub); return(0);}
+int arith_image_cstmult_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pmult); return(0);}
+int arith_image_cstdiv_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pdiv); return(0);}
+int arith_image_cstdiv1_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pdiv1); return(0);}
+int arith_image_cstpow_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ppow); return(0);}
+int arith_image_cstmaxv_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pmaxv); return(0);}
+int arith_image_cstminv_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pminv); return(0);}
+int arith_image_csttestlt_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ptestlt); return(0);}
+int arith_image_csttestmt_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ptestmt); return(0);}
 
 
 
 
 
 /* ------------------------------------------------------------------------- */
-/* image, PRECISION, PRECISION -> image                                      */
+/* image, double, double -> image                                      */
 /* ------------------------------------------------------------------------- */
 
 
-int arith_image_function_1ff_1(char *ID_name, PRECISION f1, PRECISION f2, char *ID_out, PRECISION (*pt2function)(PRECISION,PRECISION,PRECISION))
+int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out, double (*pt2function)(double,double,double))
 {
   long ID;
   long IDout;
@@ -1581,7 +1924,7 @@ int arith_image_function_1ff_1(char *ID_name, PRECISION f1, PRECISION f2, char *
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.C[ii]),f1,f2);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
     }
   if(atype==INT)
     {
@@ -1589,7 +1932,7 @@ int arith_image_function_1ff_1(char *ID_name, PRECISION f1, PRECISION f2, char *
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.I[ii]),f1,f2);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
     }
   if(atype==FLOAT)
     {
@@ -1597,7 +1940,7 @@ int arith_image_function_1ff_1(char *ID_name, PRECISION f1, PRECISION f2, char *
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.F[ii]),f1,f2);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]),f1,f2);
     }
   if(atype==DOUBLE)
     {
@@ -1605,7 +1948,7 @@ int arith_image_function_1ff_1(char *ID_name, PRECISION f1, PRECISION f2, char *
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.D[ii]),f1,f2);
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
     }
   # ifdef _OPENMP
   }
@@ -1614,7 +1957,7 @@ int arith_image_function_1ff_1(char *ID_name, PRECISION f1, PRECISION f2, char *
   return(0);
 }
 
-int arith_image_function_1ff_1_inplace(char *ID_name, PRECISION f1, PRECISION f2, PRECISION (*pt2function)(PRECISION,PRECISION,PRECISION))
+int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, double (*pt2function)(double,double,double))
 {
   long ID;
   long ii;
@@ -1635,7 +1978,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, PRECISION f1, PRECISION f2
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.C[ii]),f1,f2);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
     }
   if(atype==INT)
     {
@@ -1643,7 +1986,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, PRECISION f1, PRECISION f2
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.I[ii]),f1,f2);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
     }
   if(atype==FLOAT)
     {
@@ -1651,7 +1994,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, PRECISION f1, PRECISION f2
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.F[ii]),f1,f2);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]),f1,f2);
     }
   if(atype==DOUBLE)
     {
@@ -1659,7 +2002,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, PRECISION f1, PRECISION f2
       #pragma omp for
       # endif 
       for (ii = 0; ii < nelement; ii++)
-	data.image[ID].arrayD[ii] = pt2function((PRECISION) (data.image[ID].array.D[ii]),f1,f2);
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
     }
   # ifdef _OPENMP
   }
@@ -1669,11 +2012,11 @@ int arith_image_function_1ff_1_inplace(char *ID_name, PRECISION f1, PRECISION f2
 }
 
 
-PRECISION Ptrunc(PRECISION a, PRECISION b, PRECISION c) {PRECISION value; value=a; if(a<b){value=b;}; if(a>c){value=c;}; return(value);}
+double Ptrunc(double a, double b, double c) {double value; value=a; if(a<b){value=b;}; if(a>c){value=c;}; return(value);}
 
-int arith_image_trunc(char *ID_name, PRECISION f1, PRECISION f2, char *ID_out){ arith_image_function_1ff_1(ID_name,f1,f2,ID_out,&Ptrunc); return(0);}
+int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out){ arith_image_function_1ff_1(ID_name,f1,f2,ID_out,&Ptrunc); return(0);}
 
-int arith_image_trunc_inplace(char *ID_name, PRECISION f1, PRECISION f2) { arith_image_function_1ff_1_inplace(ID_name,f1,f2,&Ptrunc); return(0);}
+int arith_image_trunc_inplace(char *ID_name, double f1, double f2) { arith_image_function_1ff_1_inplace(ID_name,f1,f2,&Ptrunc); return(0);}
 
 
 
@@ -1828,12 +2171,12 @@ int isanumber(char *word)
 */
 
 
-long arith_make_slopexy(char *ID_name, long l1,long l2, PRECISION sx, PRECISION sy)
+long arith_make_slopexy(char *ID_name, long l1,long l2, double sx, double sy)
 {
   long ID;
   long ii,jj;
   long naxes[2];
-  PRECISION coeff;
+  double coeff;
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
@@ -1845,7 +2188,7 @@ long arith_make_slopexy(char *ID_name, long l1,long l2, PRECISION sx, PRECISION 
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
       {
-	data.image[ID].arrayD[jj*naxes[0]+ii] = sx*ii+sy*jj-coeff;
+	data.image[ID].array.F[jj*naxes[0]+ii] = sx*ii+sy*jj-coeff;
       }
   
   return(ID);
@@ -1853,61 +2196,6 @@ long arith_make_slopexy(char *ID_name, long l1,long l2, PRECISION sx, PRECISION 
 
 
 
-
-/*^-----------------------------------------------------------------------------
-| int 
-| arith_image_translate :
-|
-|   char *ID_name       :
-|   char *ID_out        :
-|   PRECISION xtransl   :
-|   PRECISION ytransl   :
-|
-| COMMENT:  Inclusion of this routine requires inclusion of modules:
-|           fft, gen_image 
-+-----------------------------------------------------------------------------*/
-int arith_image_translate(char *ID_name, char *ID_out, PRECISION xtransl, PRECISION ytransl)
-{
-  long ID;
-  long naxes[2];
-  //  int n0,n1;
-
-  fprintf( stdout, "[arith_image_translate %f %f]\n",xtransl,ytransl);
-  
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
-  // n0 = (int) ((log10(naxes[0])/log10(2))+0.01);
-  // n1 = (int) ((log10(naxes[0])/log10(2))+0.01);
-
-  //  if ((n0==n1)&&(naxes[0]==(int) pow(2,n0))&&(naxes[1]==(int) pow(2,n1)))
-  // {
-  do2drfft(ID_name,"ffttmp1");
-  mk_amph_from_complex("ffttmp1","amptmp","phatmp");
-  delete_image_ID("ffttmp1");
-  arith_make_slopexy("sltmp", naxes[0], naxes[1], (PRECISION) (xtransl*2.0*M_PI/naxes[0]), (PRECISION) (ytransl*2.0*M_PI/naxes[1]));
-  permut("sltmp");
-  arith_image_add("phatmp","sltmp","phatmp1");
-  delete_image_ID("phatmp");
-  delete_image_ID("sltmp");
-  mk_complex_from_amph("amptmp","phatmp1","ffttmp2");
-  delete_image_ID("amptmp");
-  delete_image_ID("phatmp1");
-  do2dffti("ffttmp2","ffttmp3");
-  delete_image_ID("ffttmp2");
-  mk_reim_from_complex("ffttmp3","retmp","imtmp");
-  arith_image_cstmult("retmp", (PRECISION) (1.0/naxes[0]/naxes[1]), ID_out);
-  delete_image_ID("ffttmp3");
-  delete_image_ID("retmp");
-  delete_image_ID("imtmp");
-      // }
-      // else
-      //{
-      // printf("Error: image size does not allow translation\n");
-      //}
-
-  return(0);
-}
 
 
 /*^-----------------------------------------------------------------------------
@@ -2258,7 +2546,7 @@ int execute_arith( char *cmd1 )
 	      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); if(n >= SBUFFERSIZE) printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 	      if(n >= SBUFFERSIZE) 
 		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-	      /*	  if(sizeof(PRECISION)==sizeof(float))
+	      /*	  if(sizeof(double)==sizeof(float))
 		else*/
 	      create_variable_ID(name,1.0*strtod(word[i],NULL));
 	      strcpy(word[i],name);
@@ -2397,7 +2685,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index,(int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstadd(word[i+1],(PRECISION) data.variable[variable_ID(word[i-1])].value,name);
+		      arith_image_cstadd(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2406,7 +2694,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index,(int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstadd(word[i-1],(PRECISION) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstadd(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2439,8 +2727,8 @@ int execute_arith( char *cmd1 )
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 		      n = snprintf(name1,SBUFFERSIZE,"_tmp1%d_%d",tmp_name_index, (int) getpid()); if(n >= SBUFFERSIZE) printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstsub(word[i+1],(PRECISION) data.variable[variable_ID(word[i-1])].value,name1);
-		      arith_image_cstmult(name1, (PRECISION) -1.0, name);
+		      arith_image_cstsub(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name1);
+		      arith_image_cstmult(name1, (double) -1.0, name);
 		      delete_image_ID(name1);
 		      tmp_name_index++;
 		      type = 10;
@@ -2450,7 +2738,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstsub(word[i-1],(PRECISION) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstsub(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2482,7 +2770,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmult(word[i+1],(PRECISION) data.variable[variable_ID(word[i-1])].value,name);
+		      arith_image_cstmult(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2491,7 +2779,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmult(word[i-1],(PRECISION) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstmult(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2524,7 +2812,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstdiv1(word[i+1],(PRECISION) data.variable[variable_ID(word[i-1])].value,name);
+		      arith_image_cstdiv1(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2533,7 +2821,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstdiv(word[i-1],(PRECISION) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstdiv(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2574,7 +2862,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name1,SBUFFERSIZE,"_tmp1%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstadd(word[i+1],(PRECISION) data.variable[variable_ID(word[i-1])].value,name1);
+		      arith_image_cstadd(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name1);
 		      arith_image_pow(name1,word[i+1],name);
 		      delete_image_ID(name1);
 		      tmp_name_index++;
@@ -2585,7 +2873,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstpow(word[i-1],(PRECISION) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstpow(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -2685,7 +2973,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = (PRECISION) ceil(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = (double) ceil(data.variable[variable_ID(word[i+1])].value);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3054,7 +3342,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = Ppositive( (PRECISION) data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = Ppositive( (double) data.variable[variable_ID(word[i+1])].value);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3145,7 +3433,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstfmod(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_cstfmod(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3181,7 +3469,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstminv(word[i+4], (PRECISION) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_cstminv(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3190,7 +3478,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstminv(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_cstminv(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3226,7 +3514,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmaxv(word[i+4], (PRECISION) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_cstmaxv(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3235,7 +3523,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmaxv(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_cstmaxv(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3270,7 +3558,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestmt(word[i+4], (PRECISION) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_csttestmt(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3279,7 +3567,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestlt(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_csttestlt(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3316,7 +3604,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestlt(word[i+4], (PRECISION) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_csttestlt(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3325,7 +3613,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestmt(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_csttestmt(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3354,7 +3642,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      tmp_prec = arith_image_percentile(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value);
+		      tmp_prec = arith_image_percentile(word[i+2], (double) data.variable[variable_ID(word[i+4])].value);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3372,7 +3660,7 @@ int execute_arith( char *cmd1 )
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 		      tmp_name_index++;
-		      arith_image_trunc(word[i+2], (PRECISION) data.variable[variable_ID(word[i+4])].value, (PRECISION) data.variable[variable_ID(word[i+6])].value,name);
+		      arith_image_trunc(word[i+2], (double) data.variable[variable_ID(word[i+4])].value, (double) data.variable[variable_ID(word[i+6])].value,name);
 		      type = 10;
 		    }
 		  else
