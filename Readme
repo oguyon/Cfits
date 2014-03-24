@@ -1,0 +1,57 @@
+================================================================================
+                     How to build Cfits                  
+                  PLEASE READ THIS FIRST !!!
+================================================================================
+
+Cfits is built with a core set of modules, plus other modules. The instructions 
+in this file are for building Cfits on UNIX systems (tested on several versions
+of Linux, OS-X)
+
+
+o REQUIRED LIBRARIES
+
+You will need the following static libraries:
+- readline
+- fitsio
+- fftw3 (install both single and double precision)
+- gsl & gslcblas
+
+IMPORTANT: make sure you install the STATIC libraries
+
+Under ubuntu, installing the most recent (as of Oct 2010) version of these
+libraries will be done by typing:
+
+sudo apt-get install libreadline6-dev
+sudo apt-get install libcfitsio3-dev
+sudo apt-get install fftw3-dev
+sudo apt-get install fftw-single-dev
+sudo apt-get install fftw-double-dev
+sudo apt-get install libgsl0-dev
+
+
+
+o DOWNLOAD CFITS
+
+https://github.com/oguyon/Cfits
+
+
+
+
+
+
+o COMPILE AND INSTALL
+
+./configure
+make
+make install
+
+
+The executable is ./bin/Cfits
+
+
+
+
+
+
+
+
