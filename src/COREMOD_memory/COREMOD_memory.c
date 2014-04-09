@@ -58,7 +58,7 @@ char errmsg[SBUFFERSIZE];
 
 int list_image_ID();
 int list_variable_ID();
-long create_image_ID(char *name, long naxis, long *size, int atype, int shared, long nbkw);
+long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int nbkw);
 long read_sharedmem_image(char *name);
 int memory_monitor(char *termttyname);
 int list_image_ID_ncurses();
@@ -97,10 +97,10 @@ int create_image_cli()
 	}
       switch(data.precision){
       case 0:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, data.SHARED_DFT, 10);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
 	break;
       case 1:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, data.SHARED_DFT, 10);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
 	break;
       }
       free(imsize);
@@ -138,10 +138,10 @@ int create_image_shared_cli()
 	}
       switch(data.precision){
       case 0:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, 1, 10);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, 1, data.NBKEWORD_DFT);
 	break;
       case 1:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, 1, 10);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, 1, data.NBKEWORD_DFT);
 	break;
       }
       free(imsize);
@@ -163,7 +163,7 @@ int create_2Dimage_float()
   imsize[0] = data.cmdargtoken[2].val.numl;
   imsize[1] = data.cmdargtoken[3].val.numl;
 
-  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT, data.SHARED_DFT, 10);
+  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   free(imsize);
 
@@ -182,7 +182,7 @@ int create_3Dimage_float()
   imsize[1] = data.cmdargtoken[3].val.numl;
   imsize[2] = data.cmdargtoken[4].val.numl;
 
-  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT, data.SHARED_DFT, 10);
+  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   free(imsize);
 
@@ -1201,9 +1201,9 @@ long create_1Dimage_ID(char *ID_name, long xsize)
   naxes[0]=xsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT); // single precision
+    ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name, naxis, naxes, 4, data.SHARED_DFT); // double precision
+    ID = create_image_ID(ID_name, naxis, naxes, 4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
  
   return(ID);
 }
@@ -1217,9 +1217,9 @@ long create_1DCimage_ID(char *ID_name, long xsize)
   naxes[0]=xsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
   return(ID);
 }
@@ -1234,9 +1234,9 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
   naxes[1]=ysize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
   return(ID);
 }
@@ -1250,7 +1250,7 @@ long create_2Dimagedouble_ID(char *ID_name, long xsize, long ysize)
   naxes[0]=xsize;
   naxes[1]=ysize;
 
-  ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT);
+  ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   return(ID);
 }
@@ -1267,9 +1267,9 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
   naxes[1]=ysize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
   return(ID);
 }
@@ -1289,7 +1289,7 @@ long create_3Dimage_ID_float(char *ID_name, long xsize, long ysize, long zsize)
   //  printf("CREATING 3D IMAGE: %s %ld %ld %ld\n", ID_name, xsize, ysize, zsize);
   //  fflush(stdout);
 
-  ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT); // single precision
+  ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
 
   //  printf("IMAGE CREATED WITH ID = %ld\n",ID);
   //  fflush(stdout);
@@ -1309,7 +1309,7 @@ long create_3Dimage_ID_double(char *ID_name, long xsize, long ysize, long zsize)
   naxes[1] = ysize;
   naxes[2] = zsize;
 
-  ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT); // double precision
+  ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
   
   return(ID);
 }
@@ -1328,9 +1328,9 @@ long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize)
   naxes[2]=zsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
   return(ID);
 }
@@ -1347,9 +1347,9 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
   naxes[2]=zsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
   return(ID);
 }
@@ -1383,7 +1383,7 @@ long copy_image_ID(char *name, char *newname)
   IDout = image_ID(newname);
   if(IDout==-1)
     {
-      create_image_ID(newname,naxis,size,atype, data.SHARED_DFT);
+      create_image_ID(newname,naxis,size,atype, data.SHARED_DFT, data.NBKEWORD_DFT);
       IDout = image_ID(newname);
     }
   else
@@ -1906,7 +1906,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   if((atype_re==FLOAT)&&(atype_im==FLOAT))
     {
       atype_out = COMPLEX_FLOAT;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CF[ii].re = data.image[IDre].array.F[ii];
@@ -1916,7 +1916,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   else if((atype_re==FLOAT)&&(atype_im==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CD[ii].re = data.image[IDre].array.F[ii];
@@ -1926,7 +1926,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   else if((atype_re==DOUBLE)&&(atype_im==FLOAT))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CD[ii].re = data.image[IDre].array.D[ii];
@@ -1936,7 +1936,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   else if((atype_re==DOUBLE)&&(atype_im==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CD[ii].re = data.image[IDre].array.D[ii];
@@ -1983,7 +1983,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   if((atype_am==FLOAT)&&(atype_ph==FLOAT))
     {
       atype_out = COMPLEX_FLOAT;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -2001,7 +2001,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   else if((atype_am==FLOAT)&&(atype_ph==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -2019,7 +2019,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   else if((atype_am==DOUBLE)&&(atype_ph==FLOAT))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -2037,7 +2037,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   else if((atype_am==DOUBLE)&&(atype_ph==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -2085,8 +2085,8 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
 
   if(atype == COMPLEX_FLOAT) // single precision
     {
-      IDre = create_image_ID(re_name,naxis,naxes,FLOAT, data.SHARED_DFT);
-      IDim = create_image_ID(im_name,naxis,naxes,FLOAT, data.SHARED_DFT);
+      IDre = create_image_ID(re_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
+      IDim = create_image_ID(im_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -2104,8 +2104,8 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
     }
   else if(atype==COMPLEX_DOUBLE) // double precision
     {
-      IDre = create_image_ID(re_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
-      IDim = create_image_ID(im_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
+      IDre = create_image_ID(re_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
+      IDim = create_image_ID(im_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -2158,8 +2158,8 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
 
   if(atype==COMPLEX_FLOAT) // single precision
     {
-      IDam = create_image_ID(am_name,naxis,naxes,FLOAT, data.SHARED_DFT);
-      IDph = create_image_ID(ph_name,naxis,naxes,FLOAT, data.SHARED_DFT);
+      IDam = create_image_ID(am_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
+      IDph = create_image_ID(ph_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
       
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) private(ii,amp_f,pha_f)
@@ -2179,8 +2179,8 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
     }
   else if(atype==COMPLEX_DOUBLE) // double precision
     {
-      IDam = create_image_ID(am_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
-      IDph = create_image_ID(ph_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
+      IDam = create_image_ID(am_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
+      IDph = create_image_ID(ph_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
       
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) private(ii,amp_d,pha_d)

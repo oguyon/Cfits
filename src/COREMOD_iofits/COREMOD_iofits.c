@@ -460,7 +460,7 @@ long load_fits(char *file_name, char ID_name[400])
       /* bitpix = -32  TFLOAT */
       if(bitpix == -32){
 	//tp("1.0");
-	ID = create_image_ID(ID_name, naxis, naxes, FLOAT, data.SHARED_DFT);
+	ID = create_image_ID(ID_name, naxis, naxes, FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
 	//tp("2.0");
 	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.F, &anynul, &FITSIO_status); 
 	//tp("3.0");
@@ -473,7 +473,7 @@ long load_fits(char *file_name, char ID_name[400])
       
       /* bitpix = -64  TDOUBLE */
       if(bitpix == -64){
-	ID = create_image_ID(ID_name, naxis, naxes, DOUBLE, data.SHARED_DFT);
+	ID = create_image_ID(ID_name, naxis, naxes, DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
 	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.D , &anynul, &FITSIO_status); 
 	if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1)!=0)
 	  fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
@@ -483,7 +483,7 @@ long load_fits(char *file_name, char ID_name[400])
       
       /* bitpix = 16   TSHORT */ 
       if(bitpix == 16){
-	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT);
+	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 	sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);	
 	if(sarray==NULL)
 	  {
@@ -511,7 +511,7 @@ long load_fits(char *file_name, char ID_name[400])
 	fits_read_key(fptr, TLONG, "NDR", &NDR, comment, &FITSIO_status);
 	if(check_FITSIO_status(__FILE__, __func__, __LINE__, 0)==1)
 	  NDR = 1;
-	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT);
+	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 	larray = (long*) malloc(sizeof(long)*nelements);
 	if(larray==NULL)
 	  {
@@ -532,7 +532,7 @@ long load_fits(char *file_name, char ID_name[400])
       
       /* bitpix = 8   TBYTE */ 
       if(bitpix == 8){
-	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT);
+	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 	barray = (unsigned char*) malloc(sizeof(unsigned char)*naxes[1]*naxes[0]);
 	if(barray==NULL)
 	  {

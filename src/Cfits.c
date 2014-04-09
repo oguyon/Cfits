@@ -249,6 +249,7 @@ int main(int argc, char *argv[])
   data.overwrite = 0;
   data.precision = 0; // float is default precision
   data.SHARED_DFT = 0; // do not allocate shared memory for images
+  data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image 
 
   // initialize readline
   // Tell readline to use custom completion function

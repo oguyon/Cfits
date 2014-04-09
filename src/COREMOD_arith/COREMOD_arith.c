@@ -308,7 +308,7 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
       naxes[i] = data.image[IDin].md[0].size[i];
       naxesout[i] = end[i]-start[i];
     }
-  IDout = create_image_ID(ID_out, naxis, naxesout, atype, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxesout, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   start_c[0] = start[0];
   if(start_c[0]<0)
@@ -852,7 +852,7 @@ long arith_image_dx(char *ID_name, char *IDout_name)
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1];
 
-  IDout = create_image_ID(IDout_name, naxis, naxes, atype, data.SHARED_DFT);
+  IDout = create_image_ID(IDout_name, naxis, naxes, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
   for(jj=0;jj<naxes[1];jj++)
     {
       for(ii=1;ii<naxes[0]-1;ii++)
@@ -889,7 +889,7 @@ long arith_image_dy(char *ID_name, char *IDout_name)
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1];
 
-  IDout = create_image_ID(IDout_name, naxis, naxes, atype, data.SHARED_DFT);
+  IDout = create_image_ID(IDout_name, naxis, naxes, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
   for(ii=0;ii<naxes[0];ii++)
     {
       for(jj=1;jj<naxes[1]-1;jj++)
@@ -955,7 +955,7 @@ int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(
   if(atype==DOUBLE)
     atypeout = DOUBLE;
 
-  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
 
   nelement = data.image[ID].md[0].nelement;
@@ -1050,7 +1050,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(
   if(atype==DOUBLE)
     atypeout = DOUBLE;
 
-  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
 
   nelement = data.image[ID].md[0].nelement;
@@ -1286,7 +1286,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
       naxes[i] = data.image[ID1].md[0].size[i];
     }
   
-  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
   nelement1 = data.image[ID1].md[0].nelement;
   nelement2 = data.image[ID2].md[0].nelement;
@@ -1498,7 +1498,7 @@ int arith_image_function_CF_CF__CF(char *ID_name1, char *ID_name2, char *ID_out,
       naxes[i] = data.image[ID1].md[0].size[i];
     }
   
-  IDout=create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT);
+  IDout=create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
   nelement = data.image[ID1].md[0].nelement;
   
@@ -1545,7 +1545,7 @@ int arith_image_function_CD_CD__CD(char *ID_name1, char *ID_name2, char *ID_out,
       naxes[i] = data.image[ID1].md[0].size[i];
     }
   
-  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
   nelement = data.image[ID1].md[0].nelement;
   
@@ -1766,7 +1766,7 @@ int arith_image_function_1f_1(char *ID_name, double f1, char *ID_out, double (*p
   if(atype == DOUBLE)
     atypeout = DOUBLE;
 
-  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   free(naxes);
   nelement = data.image[ID].md[0].nelement;
@@ -1933,7 +1933,7 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
       naxes[i] = data.image[ID].md[0].size[i];
     }
   
-  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
   nelement = data.image[ID].md[0].nelement;
   

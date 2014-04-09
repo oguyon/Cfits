@@ -594,7 +594,7 @@ int do1dfft(char *in_name, char *out_name)
       naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
 
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   if(naxis==1)
     {
@@ -678,10 +678,10 @@ int do1drfft(char *in_name, char *out_name)
   n = snprintf(ffttmpname,SBUFFERSIZE,"_ffttmpname_%d",(int) getpid());
   if(n >= SBUFFERSIZE) 
     printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-  IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT);
+  IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
 
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   if(naxis==2)
     {
@@ -750,7 +750,7 @@ int do1dffti(char *in_name, char *out_name)
       naxesl[i]= (long) data.image[IDin].md[0].size[i];
       naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   if(naxis==1)
     {
@@ -827,7 +827,7 @@ int do2dfft(char *in_name, char *out_name)
     }
 
 
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
   
   // need to swap first 2 axis for fftw
   if(naxis>1)
@@ -925,7 +925,7 @@ int do2dffti(char *in_name, char *out_name)
     }
 
 
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   // need to swap first 2 axis for fftw
   if(naxis>1)
@@ -936,7 +936,7 @@ int do2dffti(char *in_name, char *out_name)
     }
 
 
-  //  IDout = create_image_ID(out_name,naxis,naxesl,CDtype, data.SHARED_DFT);
+  //  IDout = create_image_ID(out_name,naxis,naxesl,CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   if(naxis==2)
     {
@@ -1109,9 +1109,9 @@ int do2drfft(char *in_name, char *out_name)
   n = snprintf(ffttmpname,SBUFFERSIZE,"_ffttmp_%d",(int) getpid());
   if(n >= SBUFFERSIZE) 
     printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-  IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT);
+  IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   if(naxis==2)
     {
@@ -1237,7 +1237,7 @@ int do2drffti(char *in_name, char *out_name)
       naxes[i]=data.image[IDin].md[0].size[i];
       naxesl[i]=data.image[IDin].md[0].size[i];
     }
-  IDout = create_image_ID(out_name, naxis, naxesl, Dtype, data.SHARED_DFT);
+  IDout = create_image_ID(out_name, naxis, naxesl, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
   if(naxis==2)
     {
