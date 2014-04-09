@@ -41,7 +41,7 @@ int C_ERRNO;			// C errno (from errno.h)
 #define TEST_ALLOC(f) if(f==NULL){printf("ERROR: pointer \"" #f "\" allocation failed\n");exit(0);}
 
 
-
+#define SHAREDMEMDIR "/tmp"
 
 
 
@@ -134,6 +134,7 @@ typedef struct
 #define DOUBLE 4
 #define COMPLEX_FLOAT 5
 #define COMPLEX_DOUBLE 6
+#define USHORT 7
 
 int TYPESIZE[7];
 
@@ -148,14 +149,38 @@ int TYPESIZE[7];
 
 
 
-typedef struct			/* structure used to store data arrays */
+typedef struct
 {
-  int used;			// 0 if this entry is unused, 1 if used
-  char name[100];               // image name
+  char name[80];               // image name
+
   long naxis;                   // number of axis
   long size[3];                 // image size 
   long nelement;		// number of elements in image
-  int atype;			// data type code
+  int atype;			// data type code   
+
+  double creation_time;	        // creation time (since program start)
+  double last_access;		// last time the image was accessed  (since program start)
+  struct timespec wtime;
+
+  int shared; // 1 if in shared memory
+
+  int write;                 // 1 if image is being written  
+  int status;
+  long cnt0;                 // counter (if image is updated)
+  long cnt1;
+
+} IMAGE_METADATA;
+
+
+
+typedef struct			/* structure used to store data arrays */
+{
+  int used;
+  int shmfd; // if shared memory, file descriptor
+  size_t memsize; // total size in memory if shared 
+
+  IMAGE_METADATA *md;
+
   union
   {
     char *C;
@@ -164,10 +189,16 @@ typedef struct			/* structure used to store data arrays */
     double *D;
     complex_float *CF;
     complex_double *CD;
-  } array;                              // pointer to data array
-  double creation_time;	        // creation time (since program start)
-  double last_access;		// last time the image was accessed  (since program start)
+    unsigned short *U;
+  } array;                      // pointer to data array
+
+  
+
 } IMAGE;
+
+
+
+
 
 
 typedef struct
@@ -214,6 +245,9 @@ typedef struct
   long NB_MAX_MODULE;
   MODULE *module;
 
+
+  // shared memory default
+  int SHARED_DFT;
 
   // images, variables
   long NB_MAX_IMAGE;

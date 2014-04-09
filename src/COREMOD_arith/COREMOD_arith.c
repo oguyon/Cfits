@@ -56,7 +56,17 @@ int arith_image_extract2D_cli()
 
 }
 
+int arith_set_pixel_cli()
+{
 
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+      arith_set_pixel(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
 
 
 
@@ -78,6 +88,17 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].Ccall,"int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)"); 
   data.NBcmd++;
   
+
+  strcpy(data.cmd[data.NBcmd].key,"setpix");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_set_pixel_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set pixel value");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <sizey> <xstart>");
+  strcpy(data.cmd[data.NBcmd].example,"setpix im 1.24 100 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_pixel(char *ID_name, double value, long x, long y)");
+  data.NBcmd++;
+  
+
  // add atexit functions here
 
 
@@ -98,9 +119,9 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
   int n;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  atype = data.image[ID].md[0].atype;
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
   
   if(atype == FLOAT)
     data.image[ID].array.F[y*naxes[0]+x] = value;
@@ -118,6 +139,8 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
   return(ID);
 }
 
+
+
 long arith_set_row(char *ID_name, double value, long y)
 {
   long ID;
@@ -127,9 +150,9 @@ long arith_set_row(char *ID_name, double value, long y)
   int n;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxes[0]=data.image[ID].size[0];
-  naxes[1]=data.image[ID].size[1];
+  atype = data.image[ID].md[0].atype;
+  naxes[0]=data.image[ID].md[0].size[0];
+  naxes[1]=data.image[ID].md[0].size[1];
 
   if(atype==FLOAT)
     {
@@ -162,9 +185,9 @@ long arith_set_col(char *ID_name, double value, long x)
   int n;
   
   ID = image_ID(ID_name);
-  naxes[0]=data.image[ID].size[0];
-  naxes[1]=data.image[ID].size[1];
-  atype = data.image[ID].atype;
+  naxes[0]=data.image[ID].md[0].size[0];
+  naxes[1]=data.image[ID].md[0].size[1];
+  atype = data.image[ID].md[0].atype;
 
 
   if(atype == FLOAT)
@@ -196,19 +219,19 @@ long arith_image_zero(char *ID_name)
   int n;
 
   ID = image_ID(ID_name);
-  nelem = data.image[ID].nelement;
+  nelem = data.image[ID].md[0].nelement;
 
-  if(data.image[ID].atype == FLOAT)
+  if(data.image[ID].md[0].atype == FLOAT)
     memset(data.image[ID].array.F,0,sizeof(float)*nelem);
-  else if(data.image[ID].atype == DOUBLE)
+  else if(data.image[ID].md[0].atype == DOUBLE)
     memset(data.image[ID].array.D,0,sizeof(double)*nelem);
-  else if(data.image[ID].atype == CHAR)
+  else if(data.image[ID].md[0].atype == CHAR)
     memset(data.image[ID].array.C,0,sizeof(char)*nelem);
-  else if(data.image[ID].atype == INT)
+  else if(data.image[ID].md[0].atype == INT)
     memset(data.image[ID].array.I,0,sizeof(int)*nelem);
-  else if(data.image[ID].atype == COMPLEX_FLOAT)
+  else if(data.image[ID].md[0].atype == COMPLEX_FLOAT)
     memset(data.image[ID].array.CF,0,sizeof(float)*2*nelem);
-  else if(data.image[ID].atype == COMPLEX_DOUBLE)
+  else if(data.image[ID].md[0].atype == COMPLEX_DOUBLE)
     memset(data.image[ID].array.CD,0,sizeof(double)*2*nelem);
   else 
     {
@@ -253,7 +276,7 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
       exit(0);
     }
 
-  naxis = data.image[IDin].naxis;
+  naxis = data.image[IDin].md[0].naxis;
   if(naxis < 1)
     {
       printERROR(__FILE__,__func__,__LINE__,"naxis < 1");
@@ -276,16 +299,16 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
        exit(0);
      }
 
-  atype = data.image[IDin].atype;
+  atype = data.image[IDin].md[0].atype;
  
   naxes[0] = 0;
   naxesout[0] = 0;
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[IDin].size[i];
+      naxes[i] = data.image[IDin].md[0].size[i];
       naxesout[i] = end[i]-start[i];
     }
-  IDout = create_image_ID(ID_out,naxis,naxesout,atype);
+  IDout = create_image_ID(ID_out, naxis, naxesout, atype, data.SHARED_DFT);
 
   start_c[0] = start[0];
   if(start_c[0]<0)
@@ -526,9 +549,9 @@ double arith_image_total(char *ID_name)
   int atype;
   
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
+  atype = data.image[ID].md[0].atype;
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
    
   value = 0.0;
 
@@ -568,7 +591,7 @@ double arith_image_mean(char *ID_name)
   
   ID = image_ID(ID_name);
   
-  value = (double) (arith_image_total(ID_name)/data.image[ID].nelement);
+  value = (double) (arith_image_total(ID_name)/data.image[ID].md[0].nelement);
   
   return(value);
 }
@@ -583,9 +606,9 @@ double arith_image_min(char *ID_name)
   int OK=0;
   
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
+  atype = data.image[ID].md[0].atype;
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
     
   value = (double) 0.0;
   if(atype==CHAR)
@@ -648,9 +671,9 @@ double arith_image_max(char *ID_name)
   int OK=0;
   
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
+  atype = data.image[ID].md[0].atype;
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
     
   value = (double) 0.0;
   if(atype==CHAR)
@@ -719,9 +742,9 @@ double arith_image_percentile(char *ID_name, double fraction)
   int atypeOK = 1; 
   
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
+  atype = data.image[ID].md[0].atype;
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
   
 
   switch (atype) {
@@ -818,18 +841,18 @@ long arith_image_dx(char *ID_name, char *IDout_name)
   long i;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxis = data.image[ID].naxis;
+  atype = data.image[ID].md[0].atype;
+  naxis = data.image[ID].md[0].naxis;
   if(naxis!=2)
     {
       printERROR(__FILE__,__func__,__LINE__,"Function only supports 2-D images\n");
       exit(0);
     }
   naxes = (long*) malloc(sizeof(long)*naxis);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
 
-  IDout = create_image_ID(IDout_name,naxis,naxes,atype);
+  IDout = create_image_ID(IDout_name, naxis, naxes, atype, data.SHARED_DFT);
   for(jj=0;jj<naxes[1];jj++)
     {
       for(ii=1;ii<naxes[0]-1;ii++)
@@ -855,18 +878,18 @@ long arith_image_dy(char *ID_name, char *IDout_name)
   long i;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxis = data.image[ID].naxis;
+  atype = data.image[ID].md[0].atype;
+  naxis = data.image[ID].md[0].naxis;
   if(naxis!=2)
     {
       printERROR(__FILE__,__func__,__LINE__,"Function only supports 2-D images\n");
       exit(0);
     }
   naxes = (long*) malloc(sizeof(long)*naxis);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
 
-  IDout = create_image_ID(IDout_name,naxis,naxes,atype);
+  IDout = create_image_ID(IDout_name, naxis, naxes, atype, data.SHARED_DFT);
   for(ii=0;ii<naxes[0];ii++)
     {
       for(jj=1;jj<naxes[1]-1;jj++)
@@ -912,8 +935,8 @@ int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(
     }
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxis=data.image[ID].naxis;
+  atype = data.image[ID].md[0].atype;
+  naxis=data.image[ID].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -924,7 +947,7 @@ int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID].size[i];
+      naxes[i] = data.image[ID].md[0].size[i];
     }
   
 
@@ -932,10 +955,10 @@ int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(
   if(atype==DOUBLE)
     atypeout = DOUBLE;
 
-  IDout = create_image_ID(ID_out,naxis,naxes,atypeout);
+  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT);
   free(naxes);
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
  
  
   # ifdef _OPENMP
@@ -1007,8 +1030,8 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(
   //  printf("arith_image_function_1_1\n");
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxis=data.image[ID].naxis;
+  atype = data.image[ID].md[0].atype;
+  naxis=data.image[ID].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -1019,7 +1042,7 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID].size[i];
+      naxes[i] = data.image[ID].md[0].size[i];
     }
   
 
@@ -1027,10 +1050,10 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(
   if(atype==DOUBLE)
     atypeout = DOUBLE;
 
-  IDout = create_image_ID(ID_out,naxis,naxes,atypeout);
+  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT);
   free(naxes);
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
  
  
   # ifdef _OPENMP
@@ -1089,13 +1112,13 @@ int arith_image_function_1_1_inplace(char *ID_name, double (*pt2function)(double
   // printf("arith_image_function_1_1_inplace\n");
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
+  atype = data.image[ID].md[0].atype;
 
   atypeout = atype;
   if(atype==DOUBLE)
     atypeout = DOUBLE;
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
 
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1248,9 +1271,9 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
       return 1;
     }    
 
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
-  naxis=data.image[ID1].naxis;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
+  naxis=data.image[ID1].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -1260,13 +1283,13 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID1].size[i];
+      naxes[i] = data.image[ID1].md[0].size[i];
     }
   
-  IDout = create_image_ID(ID_out, naxis, naxes, atype1);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT);
   free(naxes);
-  nelement1 = data.image[ID1].nelement;
-  nelement2 = data.image[ID2].nelement;
+  nelement1 = data.image[ID1].md[0].nelement;
+  nelement2 = data.image[ID2].md[0].nelement;
   
   nelement = nelement1;
   if(nelement1!=nelement2)
@@ -1337,10 +1360,10 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
   
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
-  nelement1 = data.image[ID1].nelement;
-  nelement2 = data.image[ID2].nelement;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
+  nelement1 = data.image[ID1].md[0].nelement;
+  nelement2 = data.image[ID2].md[0].nelement;
 
   nelement = nelement1;
   if(nelement1!=nelement2)
@@ -1460,9 +1483,9 @@ int arith_image_function_CF_CF__CF(char *ID_name1, char *ID_name2, char *ID_out,
 
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
-  naxis=data.image[ID1].naxis;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
+  naxis=data.image[ID1].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -1472,12 +1495,12 @@ int arith_image_function_CF_CF__CF(char *ID_name1, char *ID_name2, char *ID_out,
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID1].size[i];
+      naxes[i] = data.image[ID1].md[0].size[i];
     }
   
-  IDout=create_image_ID(ID_out,naxis,naxes,atype1);
+  IDout=create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT);
   free(naxes);
-  nelement = data.image[ID1].nelement;
+  nelement = data.image[ID1].md[0].nelement;
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1507,9 +1530,9 @@ int arith_image_function_CD_CD__CD(char *ID_name1, char *ID_name2, char *ID_out,
 
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
-  naxis=data.image[ID1].naxis;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
+  naxis=data.image[ID1].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -1519,12 +1542,12 @@ int arith_image_function_CD_CD__CD(char *ID_name1, char *ID_name2, char *ID_out,
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID1].size[i];
+      naxes[i] = data.image[ID1].md[0].size[i];
     }
   
-  IDout = create_image_ID(ID_out,naxis,naxes,atype1);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT);
   free(naxes);
-  nelement = data.image[ID1].nelement;
+  nelement = data.image[ID1].md[0].nelement;
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1605,8 +1628,8 @@ int arith_image_Cadd(char *ID1_name, char *ID2_name, char *ID_out){
 
   ID1 = image_ID(ID1_name);
   ID2 = image_ID(ID2_name);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
 
   if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
     {
@@ -1630,8 +1653,8 @@ int arith_image_Csub(char *ID1_name, char *ID2_name, char *ID_out){
 
   ID1 = image_ID(ID1_name);
   ID2 = image_ID(ID2_name);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
 
   if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
     {
@@ -1655,8 +1678,8 @@ int arith_image_Cmult(char *ID1_name, char *ID2_name, char *ID_out){
 
   ID1 = image_ID(ID1_name);
   ID2 = image_ID(ID2_name);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
 
   if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
     {
@@ -1680,8 +1703,8 @@ int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out){
 
   ID1 = image_ID(ID1_name);
   ID2 = image_ID(ID2_name);
-  atype1 = data.image[ID1].atype;
-  atype2 = data.image[ID2].atype;
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
 
   if((atype1 == COMPLEX_FLOAT)&&(atype2 ==  COMPLEX_FLOAT))
     {
@@ -1725,8 +1748,8 @@ int arith_image_function_1f_1(char *ID_name, double f1, char *ID_out, double (*p
   long i;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxis=data.image[ID].naxis;
+  atype = data.image[ID].md[0].atype;
+  naxis=data.image[ID].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -1736,17 +1759,17 @@ int arith_image_function_1f_1(char *ID_name, double f1, char *ID_out, double (*p
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID].size[i];
+      naxes[i] = data.image[ID].md[0].size[i];
     }
   
   atypeout = FLOAT;
   if(atype == DOUBLE)
     atypeout = DOUBLE;
 
-  IDout = create_image_ID(ID_out,naxis,naxes,atype);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT);
 
   free(naxes);
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
   
 
 
@@ -1803,8 +1826,8 @@ int arith_image_function_1f_1_inplace(char *ID_name, double f1, double (*pt2func
   int atype;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  nelement = data.image[ID].nelement;
+  atype = data.image[ID].md[0].atype;
+  nelement = data.image[ID].md[0].nelement;
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1896,8 +1919,8 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
   long i;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  naxis=data.image[ID].naxis;
+  atype = data.image[ID].md[0].atype;
+  naxis=data.image[ID].md[0].naxis;
   naxes = (long*) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
      {
@@ -1907,12 +1930,12 @@ int arith_image_function_1ff_1(char *ID_name, double f1, double f2, char *ID_out
 
   for(i=0;i<naxis;i++)
     {
-      naxes[i] = data.image[ID].size[i];
+      naxes[i] = data.image[ID].md[0].size[i];
     }
   
-  IDout=create_image_ID(ID_out,naxis,naxes,atype);
+  IDout = create_image_ID(ID_out, naxis, naxes, atype, data.SHARED_DFT);
   free(naxes);
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1965,8 +1988,8 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
   int atype;
 
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
-  nelement = data.image[ID].nelement;
+  atype = data.image[ID].md[0].atype;
+  nelement = data.image[ID].md[0].nelement;
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -2180,8 +2203,8 @@ long arith_make_slopexy(char *ID_name, long l1,long l2, double sx, double sy)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   coeff = sx*(naxes[0]/2)+sy*(naxes[1]/2);
 

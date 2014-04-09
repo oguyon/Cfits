@@ -204,10 +204,10 @@ int put_poisson_noise(char *ID_in_name, char *ID_out_name)
   long i;
 
   ID_in = image_ID(ID_in_name);
-  naxis = data.image[ID_in].naxis;
+  naxis = data.image[ID_in].md[0].naxis;
   nelements=1;
   for(i=0;i<naxis;i++)
-    nelements*=data.image[ID_in].size[i];
+    nelements*=data.image[ID_in].md[0].size[i];
 
   copy_image_ID(ID_in_name,ID_out_name);
 

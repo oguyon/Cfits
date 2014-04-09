@@ -14,6 +14,13 @@
 
 /*void print_sys_mem_info();*/
 
+
+int memory_monitor(char *termttyname);
+
+
+
+
+
 long compute_nb_image();
 
 long compute_nb_variable();

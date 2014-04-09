@@ -27,7 +27,6 @@
 
 
 
-
 #define SWAP(x,y)  tmp=(x);x=(y);y=tmp;
 #define PI 3.14159265358979323846264338328
 
@@ -185,7 +184,7 @@ long aporawN;
 double *aporaw_r; // radius
 double *aporaw_v; // value
 int fitapoINIT = 0;
-long fitapoN = 4; // number of terms of form a exp(b x^c)
+long fitapoN = 5; // number of terms of form a exp(b x^c)
 double *fitapo_a;
 double *fitapo_b;
 double *fitapo_c;
@@ -422,7 +421,7 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
   IDpupa0 = image_ID("pupa0");
   if(IDpupa0!=-1)
     {
-      if(data.image[IDpupa0].size[0]!=size)
+      if(data.image[IDpupa0].md[0].size[0]!=size)
 	{
 	  printf("ERROR: pupa0 should be %ld x %ld\n", size, size);
 	  exit(0);
@@ -800,7 +799,7 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
   IDpupa0 = image_ID("pupa0");
   if(IDpupa0!=-1)    
     {
-      if(data.image[IDpupa0].size[0]!=size)
+      if(data.image[IDpupa0].md[0].size[0]!=size)
 	{
 	  printf("ERROR: pupa0 should be %ld x %ld\n",size,size);
 	  exit(0);
@@ -1485,7 +1484,7 @@ double coronagraph_apofit(char *fnameout)
   gsl_multimin_function fpmeval_func;
   long NBoptVar;
   long iterMax;
-  long ITERMAX = 100;
+  long ITERMAX = 200;
   long iter1;
   double eps1;
   double bestvalue;
@@ -1638,7 +1637,7 @@ double coronagraph_apofit(char *fnameout)
 	      printf("KEEP  ");
 	      fflush(stdout);
 	      KEEPcnt++;
-	      KEEPlimit = (0.95*KEEPlimit + 0.05*bestvalue)*0.7 + 0.3*s->fval;
+	      KEEPlimit = (0.94*KEEPlimit + 0.05*bestvalue)*0.7 + 0.3*s->fval;
 	      for(n=0; n<fitapoN; n++)
 		{
 		  gsl_vector_set (x, 3*n, fitapo_a[n]);
@@ -1753,7 +1752,7 @@ double coronagraph_apofit(char *fnameout)
 		    KEEP = 1;
 		  else 
 		    KEEP = 0;
-		  if(KEEPcnt > 20)
+		  if(KEEPcnt > 50)
 		    KEEP = 0;
 		}
 	    }
@@ -1817,7 +1816,7 @@ int coronagraph_APLCapo_compile()
   struct stat buffer;
 
 
-  double FITVLIMIT = 1.0e-5;
+  double FITVLIMIT = 2.0e-5;
 
   double co = 0.0; // central obstruction
   double fpmrad = 0.8; // focal plane mask radius
@@ -2013,7 +2012,9 @@ int coronagraph_APLCapo_compile()
 		  free(aporaw_r);
 		  free(aporaw_v);
 		}
-	      
+	     
+	      quick_sort3_double(fitapo_a, fitapo_b, fitapo_c, fitapoN);
+ 
 	      for(n=0; n<fitapoN; n++)
 		{	
 		  data.image[IDprol_fitapo_a].array.F[n*iisize*jjsize+jj*iisize+ii] = fitapo_a[n];
@@ -2025,9 +2026,7 @@ int coronagraph_APLCapo_compile()
 	      free(fitapo_a);
 	      free(fitapo_b);
 	      free(fitapo_c);
-	      free(fitapo_c1);
-	      
-	      
+	      free(fitapo_c1);	      	      
 	    }
 	  else
 	    data.image[IDprol_init].array.F[jj*iisize+ii] = 0.0;
@@ -6656,6 +6655,8 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
       IDprol_peak = load_fits(fname, "ppeak");
     }
 
+
+
   IDprol_fitapo_a = image_ID("fitapoa");
   if(IDprol_fitapo_a == -1)
     {
@@ -6677,6 +6678,9 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
       IDprol_fitapo_c = load_fits(fname, "fitapoc");
     }
 
+
+
+
   IDprol_fitfit = image_ID("fitfit");
   if(IDprol_fitfit == -1)
     {
@@ -6684,8 +6688,8 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
       IDprol_fitfit = load_fits(fname, "fitfit");
     }
 
-  iisize = data.image[IDprol_init].size[0];
-  jjsize = data.image[IDprol_init].size[1];
+  iisize = data.image[IDprol_init].md[0].size[0];
+  jjsize = data.image[IDprol_init].md[0].size[1];
   
 
   iico = (long) ((APLC_CentOBS1-APLCapo_CO_START)/APLCapo_CO_STEP + 0.1);
@@ -6717,7 +6721,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
       if(fitapoINIT==0)
 	{
-	  fitapoN = data.image[IDprol_fitapo_a].size[2];
+	  fitapoN = data.image[IDprol_fitapo_a].md[0].size[2];
 	  fitapo_a = (double*) malloc(sizeof(double)*fitapoN);
 	  fitapo_b = (double*) malloc(sizeof(double)*fitapoN);
 	  fitapo_c = (double*) malloc(sizeof(double)*fitapoN);

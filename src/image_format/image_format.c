@@ -82,19 +82,35 @@ typedef struct {
 
 
 
-
-
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
 
 
 int CR2toFITS_cli()
 {
-
   //  if(CLI_checkarg(1, 3)+CLI_checkarg(2, 3))
   CR2toFITS(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
   // else
   // return(0);
 }
 
+
+int IMAGE_FORMAT_FITS_to_ushortintbin_lock_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+      IMAGE_FORMAT_FITS_to_ushortintbin_lock(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
 
 
 int init_image_format()
@@ -112,6 +128,15 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].Ccall,"int CR2toFITS(char *fnameCR2, char *fnameFITS)");
   data.NBcmd++;
  
+  strcpy(data.cmd[data.NBcmd].key,"writeushortintlock");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_FITS_to_ushortintbin_lock_cli;
+  strcpy(data.cmd[data.NBcmd].info,"write unsigned short int with file locking");
+  strcpy(data.cmd[data.NBcmd].syntax,"str1 is image, str2 is binary file");
+  strcpy(data.cmd[data.NBcmd].example,"writeushortintlock im im.bin");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname)");
+  data.NBcmd++;
+
  // add atexit functions here
 
   return 0;
@@ -272,8 +297,8 @@ int image_writeBMP_auto(char *IDnameR, char *IDnameG, char *IDnameB, char *outna
   IDR=image_ID(IDnameR);
   IDG=image_ID(IDnameG);
   IDB=image_ID(IDnameB);
-  width = (uint32) data.image[IDR].size[0];
-  height = (uint32) data.image[IDR].size[1];
+  width = (uint32) data.image[IDR].md[0].size[0];
+  height = (uint32) data.image[IDR].md[0].size[1];
   array = (unsigned char*) malloc(sizeof(unsigned char)*width*height*3);
 
   for(ii=0;ii<width;ii++)
@@ -300,8 +325,8 @@ int image_writeBMP(char *IDnameR, char *IDnameG, char *IDnameB, char *outname)
   IDR=image_ID(IDnameR);
   IDG=image_ID(IDnameG);
   IDB=image_ID(IDnameB);
-  width = (uint32) data.image[IDR].size[0];
-  height = (uint32) data.image[IDR].size[1];
+  width = (uint32) data.image[IDR].md[0].size[0];
+  height = (uint32) data.image[IDR].md[0].size[1];
   array = (unsigned char*) malloc(sizeof(unsigned char)*width*height*3);
 
   for(ii=0;ii<width;ii++)
@@ -323,7 +348,7 @@ long getImageInfo(FILE* inputFile, long offset, int numberOfChars)
   long				value=0L;
   int				i;
   unsigned char			dummy;
-
+  int r;
 
   dummy = '0';
   ptrC = &dummy;
@@ -332,7 +357,7 @@ long getImageInfo(FILE* inputFile, long offset, int numberOfChars)
 
   for(i=1; i<=numberOfChars; i++)
   {
-    fread(ptrC, sizeof(char), 1, inputFile);
+    r = fread(ptrC, sizeof(char), 1, inputFile);
     /* calculate value based on adding bytes */
     value = (long)(value + (*ptrC)*(pow(256, (i-1))));
   }
@@ -458,15 +483,15 @@ int read_BMPimage(char* filename, char *IDname_R, char *IDname_G, char *IDname_B
     {
       
       /*----READ FIRST BYTE TO GET BLUE VALUE-----*/
-      fread(pChar, sizeof(char), 1, bmpInput);
+      r = fread(pChar, sizeof(char), 1, bmpInput);
       BlueValue = *pChar;
 
       /*-----READ NEXT BYTE TO GET GREEN VALUE-----*/
-      fread(pChar, sizeof(char), 1, bmpInput);
+      r = fread(pChar, sizeof(char), 1, bmpInput);
       GreenValue = *pChar;
 
       /*-----READ NEXT BYTE TO GET RED VALUE-----*/
-      fread(pChar, sizeof(char), 1, bmpInput);
+      r = fread(pChar, sizeof(char), 1, bmpInput);
       RedValue = *pChar;
 
       /*---------WRITE TO FILES ---------*/
@@ -495,6 +520,7 @@ int read_PGMimage(char *fname, char *ID_name)
   long ID;
   double val;
   long ii,jj;
+  int r;
 
   if((fp=fopen(fname,"r"))==NULL)
     {
@@ -502,14 +528,14 @@ int read_PGMimage(char *fname, char *ID_name)
     }
   else
     {
-      fscanf(fp,"%s",line1);
+      r = fscanf(fp,"%s",line1);
       if(strcmp(line1,"P5")!=0)
 	fprintf(stderr,"ERROR: File is not PGM image\n");
       else
 	{
-	  fscanf(fp,"%ld %ld",&xsize,&ysize);
+	  r = fscanf(fp,"%ld %ld",&xsize,&ysize);
 	  printf("PGM image size: %ld x %ld\n",xsize,ysize);
-	  fscanf(fp,"%ld",&maxval);
+	  r = fscanf(fp,"%ld",&maxval);
 	  if(maxval!=65535)
 	    fprintf(stderr,"Not 16-bit image. Cannot read\n");
 	  else
@@ -545,43 +571,44 @@ int CR2toFITS(char *fnameCR2, char *fnameFITS)
   long ID;
   long xsize,ysize;
   long ii;
+  int r;
 
   sprintf(command,"dcraw -t 0 -D -4 -c %s > _tmppgm.pgm",fnameCR2);
-  system(command);
-
+  r = system(command);
+  
 
   read_PGMimage("_tmppgm.pgm","tmpfits1");
-  system("rm _tmppgm.pgm");
+  r = system("rm _tmppgm.pgm");
 
   if(CR2toFITS_NORM==1)
     {
       sprintf(command,"dcraw -i -v %s | grep \"ISO speed\"| awk '{print $3}' > iso_tmp.txt",fnameCR2);
-      system(command);
+      r = system(command);
       fp = fopen("iso_tmp.txt","r");
-      fscanf(fp,"%f\n",&iso);
+      r = fscanf(fp,"%f\n",&iso);
       fclose(fp);
-      system("rm iso_tmp.txt");
+      r = system("rm iso_tmp.txt");
       printf("iso = %f\n",iso);
       
       sprintf(command,"dcraw -i -v %s | grep \"Shutter\"| awk '{print $2}' > shutter_tmp.txt",fnameCR2);
-      system(command);
+      r = system(command);
       fp = fopen("shutter_tmp.txt","r");
-      fscanf(fp,"%f\n",&shutter);
+      r = fscanf(fp,"%f\n",&shutter);
       fclose(fp);
-      system("rm shutter_tmp.txt");
+      r = system("rm shutter_tmp.txt");
       printf("shutter = %f\n",shutter);
       
       sprintf(command,"dcraw -i -v %s | grep \"Aperture\"| awk '{print $2}' > aperture_tmp.txt",fnameCR2);
-      system(command);
+      r = system(command);
       fp = fopen("aperture_tmp.txt","r");
-      fscanf(fp,"f/%f\n",&aperture);
+      r = fscanf(fp,"f/%f\n",&aperture);
       fclose(fp);
-      system("rm aperture_tmp.txt");
+      r = system("rm aperture_tmp.txt");
       printf("aperture = %f\n",aperture);
 
       ID = image_ID("tmpfits1");
-      xsize = data.image[ID].size[0];
-      ysize = data.image[ID].size[1];
+      xsize = data.image[ID].md[0].size[0];
+      ysize = data.image[ID].md[0].size[1];
       
       for(ii=0;ii<xsize*ysize;ii++)
 	data.image[ID].array.F[ii] /= (shutter*aperture*aperture*iso);      
@@ -605,12 +632,13 @@ long loadCR2(char *fnameCR2, char *IDname)
   long ID;
   long xsize,ysize;
   long ii;
+  int r;
 
   sprintf(command,"dcraw -t 0 -D -4 -c %s > _tmppgm.pgm",fnameCR2);
-  system(command);
+  r = system(command);
 
   read_PGMimage("_tmppgm.pgm",IDname);
-  system("rm _tmppgm.pgm");
+  r = system("rm _tmppgm.pgm");
 
   return(ID);
 }
@@ -627,9 +655,10 @@ long CR2toFITS_strfilter(char *strfilter)
   char fname[200];
   char fname1[200];
   FILE *fp;
+  int r;
 
   sprintf(command,"ls %s.CR2 > flist.tmp\n",strfilter);
-  system(command);
+  r = system(command);
   
   fp = fopen("flist.tmp","r");
   while(fgets(fname,200,fp)!=NULL)
@@ -649,7 +678,7 @@ long CR2toFITS_strfilter(char *strfilter)
     }
 
   fclose(fp);
-  system("rm flist.tmp");
+  r = system("rm flist.tmp");
 
   printf("%ld files converted\n",cnt);
 
@@ -671,8 +700,8 @@ int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG
   long ID00, ID01, ID10, ID11;
 
   ID = image_ID(ID_name);
-  Xsize = data.image[ID].size[0];
-  Ysize = data.image[ID].size[1];
+  Xsize = data.image[ID].md[0].size[0];
+  Ysize = data.image[ID].md[0].size[1];
 
 
   if((Xsize == 4770)&&(Ysize == 3178))
@@ -742,8 +771,8 @@ int image_format_reconstruct_from_RGGBchan(char *IDr_name, char *IDg1_name, char
   IDg1 = image_ID(IDg1_name);
   IDg2 = image_ID(IDg2_name);
   IDb = image_ID(IDb_name);
-  xsize1 = data.image[IDr].size[0];
-  ysize1 = data.image[IDr].size[1];
+  xsize1 = data.image[IDr].md[0].size[0];
+  ysize1 = data.image[IDr].md[0].size[1];
 
   xsize2 = 2*xsize1;
   ysize2 = 2*ysize1;
@@ -817,8 +846,8 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
 
 
   ID = image_ID(ID_name);
-  Xsize = data.image[ID].size[0];
-  Ysize = data.image[ID].size[1];
+  Xsize = data.image[ID].md[0].size[0];
+  Ysize = data.image[ID].md[0].size[1];
 
   printf("X Y  = %ld %ld\n", Xsize, Ysize);
   
@@ -1200,43 +1229,45 @@ int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *f
   long ID;
   long xsize,ysize;
   long ii;
+  int r;
+
 
   sprintf(command,"dcraw -t 0 -D -4 -c %s > _tmppgm.pgm",fnameCR2);
-  system(command);
+  r = system(command);
   read_PGMimage("_tmppgm.pgm","tmpfits1");
-  system("rm _tmppgm.pgm");
+  r = system("rm _tmppgm.pgm");
   
 
   
   if(CR2toFITS_NORM==1)
     {
       sprintf(command,"dcraw -i -v %s | grep \"ISO speed\"| awk '{print $3}' > iso_tmp.txt",fnameCR2);
-      system(command);
+      r = system(command);
       fp = fopen("iso_tmp.txt","r");
-      fscanf(fp,"%f\n",&iso);
+      r = fscanf(fp,"%f\n",&iso);
       fclose(fp);
-      system("rm iso_tmp.txt");
+      r = system("rm iso_tmp.txt");
       printf("iso = %f\n",iso);
       
       sprintf(command,"dcraw -i -v %s | grep \"Shutter\"| awk '{print $2}' > shutter_tmp.txt",fnameCR2);
-      system(command);
+      r = system(command);
       fp = fopen("shutter_tmp.txt","r");
-      fscanf(fp,"%f\n",&shutter);
+      r = fscanf(fp,"%f\n",&shutter);
       fclose(fp);
-      system("rm shutter_tmp.txt");
+      r = system("rm shutter_tmp.txt");
       printf("shutter = %f\n",shutter);
       
       sprintf(command,"dcraw -i -v %s | grep \"Aperture\"| awk '{print $2}' > aperture_tmp.txt",fnameCR2);
-      system(command);
+      r = system(command);
       fp = fopen("aperture_tmp.txt","r");
-      fscanf(fp,"f/%f\n",&aperture);
+      r = fscanf(fp,"f/%f\n",&aperture);
       fclose(fp);
-      system("rm aperture_tmp.txt");
+      r = system("rm aperture_tmp.txt");
       printf("aperture = %f\n",aperture);
 
       ID = image_ID("tmpfits1");
-      xsize = data.image[ID].size[0];
-      ysize = data.image[ID].size[1];
+      xsize = data.image[ID].md[0].size[0];
+      ysize = data.image[ID].md[0].size[1];
       
       FLUXFACTOR = aperture*aperture/(shutter*iso);
     }
@@ -1277,8 +1308,8 @@ int convert_rawbayerFITStorgbFITS_mininfocontent(char *ID_name)
   long NBsource = 50;
     
   ID = image_ID(ID_name);
-  Xsize = data.image[ID].size[0];
-  Ysize = data.image[ID].size[1];
+  Xsize = data.image[ID].md[0].size[0];
+  Ysize = data.image[ID].md[0].size[1];
   
   
 
@@ -1391,6 +1422,8 @@ int CR2tomov()
 
   int MKim;
 
+  int r;
+
   sprintf(configfile,"cr2tojpegconf.txt");
 
   CR2toFITSrgb = read_config_parameter_int(configfile,"CR2TOFITSRGB");
@@ -1473,7 +1506,7 @@ int CR2tomov()
       load_fits("flat.fits","flat");
       
       sprintf(command,"ls ./CR2/*.CR2 > flist.tmp\n");
-      system(command);
+      r = system(command);
       
       fp = fopen("flist.tmp","r");
       SKIPcnt = 0;
@@ -1508,8 +1541,8 @@ int CR2tomov()
 		      chname_image_ID("imbc","imb");
 		      }*/
 		  ID = image_ID("imr");
-		  xsize = data.image[ID].size[0];
-		  ysize = data.image[ID].size[1];
+		  xsize = data.image[ID].md[0].size[0];
+		  ysize = data.image[ID].md[0].size[1];
 		  
 		  IDrtot = image_ID("imrtot");
 		  if(IDrtot==-1)
@@ -1671,13 +1704,13 @@ int CR2tomov()
 	  cnt++;	    
 	}
       fclose(fp);
-      system("rm flist.tmp");
+      r = system("rm flist.tmp");
       
       printf("%ld images processed\n",cnt);  
     }
 
-  system("rm imgstats.txt");
-  system("cat ./FITS/imgstats.*.txt > imgstats.txt");
+  r = system("rm imgstats.txt");
+  r = system("cat ./FITS/imgstats.*.txt > imgstats.txt");
   
   
 
@@ -1856,8 +1889,8 @@ int CR2tomov()
 			}
 		      
 
-		      xsize = data.image[IDr].size[0];
-		      ysize = data.image[IDr].size[1];
+		      xsize = data.image[IDr].md[0].size[0];
+		      ysize = data.image[IDr].md[0].size[1];
 		      
 		      if(MAXLEVEL_AUTO == 1)
 			MAXLEVEL = maxlevel[i];
@@ -1997,8 +2030,8 @@ int CR2tomov()
 		      delete_image_ID("imb");
 		      //		  sprintf(fnamejpg,"./JPEG/im%05ld.jpg",i);
 		      sprintf(command,"bmptoppm imrgb.bmp | ppmtojpeg --quality 95 > _tmpjpeg.jpg; mv _tmpjpeg.jpg %s",fnamejpg);
-		      system(command);
-		      system("rm imrgb.bmp");
+		      r = system(command);
+		      r = system("rm imrgb.bmp");
 		    }
 		  SKIPcnt_FITStoJPEG++;
 		  if(SKIPcnt_FITStoJPEG>SKIP_FITStoJPEG-1)
@@ -2025,8 +2058,8 @@ long IMAGE_FORMAT_requantize(char *IDin_name, char *IDout_name, double alpha, do
   double value;
 
   IDin = image_ID(IDin_name);
-  xsize = data.image[IDin].size[0];
-  ysize = data.image[IDin].size[1];
+  xsize = data.image[IDin].md[0].size[0];
+  ysize = data.image[IDin].md[0].size[1];
   
   IDout = create_2Dimage_ID(IDout_name,xsize,ysize);
   for(ii=0;ii<xsize*ysize;ii++)
@@ -2051,8 +2084,8 @@ long IMAGE_FORMAT_dequantize(char *IDin_name, char *IDout_name, double alpha, do
   double value;
 
   IDin = image_ID(IDin_name);
-  xsize = data.image[IDin].size[0];
-  ysize = data.image[IDin].size[1];
+  xsize = data.image[IDin].md[0].size[0];
+  ysize = data.image[IDin].md[0].size[1];
   
   IDout = create_2Dimage_ID(IDout_name,xsize,ysize);
   for(ii=0;ii<xsize*ysize;ii++)
@@ -2080,7 +2113,8 @@ long IMAGE_FORMAT_read_binary16(char *fname, long xsize, long ysize, char *IDnam
   long i, ii, jj;
   long ID;
   long v1;
-  
+  int r;
+ 
   //Open file
   fp = fopen(fname, "rb");
   if (!fp)
@@ -2104,7 +2138,7 @@ long IMAGE_FORMAT_read_binary16(char *fname, long xsize, long ysize, char *IDnam
     }
 
   //Read file contents into buffer
-  fread(buffer, fileLen, 1, fp);
+  r = fread(buffer, fileLen, 1, fp);
   fclose(fp);
 
   ID = create_2Dimage_ID(IDname, xsize, ysize);
@@ -2134,7 +2168,8 @@ long IMAGE_FORMAT_read_binary16f(char *fname, long xsize, long ysize, char *IDna
   long i, ii, jj;
   long ID;
   long v1;
-  
+  int r;
+
   //Open file
   fp = fopen(fname, "rb");
   if (!fp)
@@ -2158,7 +2193,7 @@ long IMAGE_FORMAT_read_binary16f(char *fname, long xsize, long ysize, char *IDna
     }
 
   //Read file contents into buffer
-  fread(buffer, fileLen, 1, fp);
+  r = fread(buffer, fileLen, 1, fp);
   fclose(fp);
 
   ID = create_2Dimage_ID(IDname, xsize, ysize);
@@ -2188,20 +2223,21 @@ long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname )
   long ii;
   int fd;
   unsigned short int *valarray;
+  int r;
 
   ID = image_ID(IDname);
-  xsize = data.image[ID].size[0];
-  ysize = data.image[ID].size[1];
+  xsize = data.image[ID].md[0].size[0];
+  ysize = data.image[ID].md[0].size[1];
 
   valarray = (unsigned short int*) malloc(sizeof(unsigned short int)*xsize*ysize);
 
-  if(data.image[ID].atype == FLOAT)
+  if(data.image[ID].md[0].atype == FLOAT)
     {
       printf("float -> unsigned short int array\n");
       for(ii=0;ii<xsize*ysize;ii++)
 	valarray[ii] = (unsigned short int) data.image[ID].array.F[ii];
     }
-  if(data.image[ID].atype == DOUBLE)
+  if(data.image[ID].md[0].atype == DOUBLE)
     {
       printf("double -> unsigned short int array\n");
       for(ii=0;ii<xsize*ysize;ii++)
@@ -2215,7 +2251,7 @@ long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname )
       perror( "Error opening file" );
       printf( "Error opening file \"%s\": %s\n", fname, strerror( errno ) );
     }
-  write(fd, valarray, sizeof(unsigned short int)*xsize*ysize);     
+  r = write(fd, valarray, sizeof(unsigned short int)*xsize*ysize);     
   flock(fd, LOCK_UN);
   close(fd);
 
@@ -2232,21 +2268,21 @@ long IMAGE_FORMAT_FITS_to_floatbin_lock(  char *IDname, char *fname )
   long ii;
   int fd;
   float *valarray;
- 
+  int r;
 
   ID = image_ID(IDname);
-  xsize = data.image[ID].size[0];
-  ysize = data.image[ID].size[1];
+  xsize = data.image[ID].md[0].size[0];
+  ysize = data.image[ID].md[0].size[1];
 
   valarray = (float*) malloc(sizeof(float)*xsize*ysize);
 
-  if(data.image[ID].atype == FLOAT)
+  if(data.image[ID].md[0].atype == FLOAT)
     {
       printf("WRITING float array\n");
       for(ii=0;ii<xsize*ysize;ii++)
 	valarray[ii] = data.image[ID].array.F[ii];
     }
-  if(data.image[ID].atype == DOUBLE)
+  if(data.image[ID].md[0].atype == DOUBLE)
     {
       printf("WRITING double array\n");
       for(ii=0;ii<xsize*ysize;ii++)
@@ -2258,7 +2294,7 @@ long IMAGE_FORMAT_FITS_to_floatbin_lock(  char *IDname, char *fname )
   if( fd < 0 )
     printf( "Error opening file: %s\n", strerror( errno ) );
     
-  write(fd, valarray, sizeof(float)*xsize*ysize);     
+  r = write(fd, valarray, sizeof(float)*xsize*ysize);     
   flock(fd, LOCK_UN);
   close(fd);
 

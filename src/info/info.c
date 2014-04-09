@@ -80,8 +80,8 @@ long brighter(char *ID_name, double value) /* number of pixels brighter than val
   long brighter, fainter;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
     
   brighter = 0;
   fainter = 0;
@@ -107,8 +107,8 @@ int img_nbpix_flux(char *ID_name)
   long nelements,i;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0]*naxes[1];
   
   array = (double*) malloc(naxes[1]*naxes[0]*sizeof(double));
@@ -139,8 +139,8 @@ float img_percentile_float(char *ID_name, float p)
   long n;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0]*naxes[1];
   
   array = (float*) malloc(nelements*sizeof(float));
@@ -171,8 +171,8 @@ double img_percentile_double(char *ID_name, double p)
   long n;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0]*naxes[1];
   
   array = (double*) malloc(nelements*sizeof(double));
@@ -203,8 +203,8 @@ int img_histoc_float(char *ID_name, char *fname)
   long nelements;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0]*naxes[1];
   
   array = (float*) malloc(naxes[1]*naxes[0]*sizeof(float));
@@ -244,8 +244,8 @@ int img_histoc_double(char *ID_name, char *fname)
   long nelements;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0]*naxes[1];
   
   array = (double*) malloc(naxes[1]*naxes[0]*sizeof(double));
@@ -283,8 +283,8 @@ int make_histogram(char *ID_name, char *ID_out_name, double min, double max, lon
   long n;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
 
   create_2Dimage_ID(ID_out_name,nbsteps,1);
   ID_out = image_ID(ID_out_name);
@@ -306,8 +306,8 @@ double ssquare(char *ID_name)
   double ssquare;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
     
   ssquare = 0;
   for (jj = 0; jj < naxes[1]; jj++) 
@@ -326,8 +326,8 @@ double rms_dev(char *ID_name)
   double constant;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
     
   ssquare = 0;
   constant = arith_image_total(ID_name)/naxes[0]/naxes[1];
@@ -371,21 +371,21 @@ int stats(char *ID_name, char *options)
   ID = image_ID_noaccessupdate(ID_name);
   if(ID!=-1)
     {
-      nelements =  data.image[ID].nelement;
+      nelements =  data.image[ID].md[0].nelement;
       
-      atype = data.image[ID].atype;
-      tmp_long = data.image[ID].nelement*TYPESIZE[atype];
+      atype = data.image[ID].md[0].atype;
+      tmp_long = data.image[ID].md[0].nelement*TYPESIZE[atype];
       printf("\n");
       printf("Image size (->imsize0...):     [");
-      printf("% ld",data.image[ID].size[0]);
+      printf("% ld",data.image[ID].md[0].size[0]);
       j = 0;
       sprintf(vname,"imsize%ld",j);
-      create_variable_ID(vname,1.0*data.image[ID].size[j]);
-      for(j=1;j<data.image[ID].naxis;j++)
+      create_variable_ID(vname,1.0*data.image[ID].md[0].size[j]);
+      for(j=1;j<data.image[ID].md[0].naxis;j++)
 	{
-	  printf(" %ld",data.image[ID].size[j]);
+	  printf(" %ld",data.image[ID].md[0].size[j]);
 	  sprintf(vname,"imsize%ld",j);
-	  create_variable_ID(vname,1.0*data.image[ID].size[j]);
+	  create_variable_ID(vname,1.0*data.image[ID].md[0].size[j]);
 	}
       printf(" ]\n");
 
@@ -466,15 +466,15 @@ int stats(char *ID_name, char *options)
 	fprintf(fp,"mean                     %20.18e\n",tot/nelements);
       create_variable_ID("vmean",tot/nelements);
       
-      if(data.image[ID].naxis==2)
+      if(data.image[ID].md[0].naxis==2)
 	{
 	  xtot = 0.0;
 	  ytot = 0.0;
-	  for(ii=0;ii<data.image[ID].size[0];ii++)
-	    for(jj=0;jj<data.image[ID].size[1];jj++)
+	  for(ii=0;ii<data.image[ID].md[0].size[0];ii++)
+	    for(jj=0;jj<data.image[ID].md[0].size[1];jj++)
 	      {
-		xtot += data.image[ID].array.F[jj*data.image[ID].size[0]+ii]*ii;
-		ytot += data.image[ID].array.F[jj*data.image[ID].size[0]+ii]*jj;
+		xtot += data.image[ID].array.F[jj*data.image[ID].md[0].size[0]+ii]*ii;
+		ytot += data.image[ID].array.F[jj*data.image[ID].md[0].size[0]+ii]*jj;
 	      }
 	  vbx = xtot/tot;
 	  vby = ytot/tot;
@@ -571,7 +571,7 @@ double img_min(char *ID_name)
   ID = image_ID(ID_name);
 
   min = data.image[ID].array.F[0];
-  for (ii = 0; ii < data.image[ID].nelement; ii++) 
+  for (ii = 0; ii < data.image[ID].md[0].nelement; ii++) 
     if (min > data.image[ID].array.F[ii])
       min = data.image[ID].array.F[ii];
 
@@ -587,7 +587,7 @@ double img_max(char *ID_name)
   ID = image_ID(ID_name);
 
   max = data.image[ID].array.F[0];
-    for (ii = 0; ii < data.image[ID].nelement; ii++) 
+    for (ii = 0; ii < data.image[ID].md[0].nelement; ii++) 
       if (max < data.image[ID].array.F[ii])
 	max = data.image[ID].array.F[ii];
 
@@ -609,8 +609,8 @@ int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double
   long i;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0] * naxes[1]; 
   dist = (double*) malloc(nb_step*sizeof(double));
   mean = (double*) malloc(nb_step*sizeof(double));
@@ -766,11 +766,11 @@ int printpix(char *ID_name, char *filename)
     }
 
   ID = image_ID(ID_name);
-  nbaxis = data.image[ID].naxis;
+  nbaxis = data.image[ID].md[0].naxis;
   if(nbaxis==2)
     {
-      naxes[0] = data.image[ID].size[0];
-      naxes[1] = data.image[ID].size[1];    
+      naxes[0] = data.image[ID].md[0].size[0];
+      naxes[1] = data.image[ID].md[0].size[1];    
       nelements = naxes[0] * naxes[1]; 
       for (ii = 0; ii < naxes[0]; ii+=iistep)
 	{
@@ -784,9 +784,9 @@ int printpix(char *ID_name, char *filename)
     }
   if(nbaxis==3)
     {
-      naxes[0] = data.image[ID].size[0];
-      naxes[1] = data.image[ID].size[1];    
-      naxes[2] = data.image[ID].size[2];    
+      naxes[0] = data.image[ID].md[0].size[0];
+      naxes[1] = data.image[ID].md[0].size[1];    
+      naxes[2] = data.image[ID].md[0].size[2];    
       nelements = naxes[0] * naxes[1]; 
       for (ii = 0; ii < naxes[0]; ii+=iistep) 
 	for (jj = 0; jj < naxes[1]; jj+=jjstep)
@@ -811,8 +811,8 @@ double background_photon_noise(char *ID_name)
   long nelements;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   nelements = naxes[0]*naxes[1];
   
   array = (double*) malloc(naxes[1]*naxes[0]*sizeof(double));
@@ -868,8 +868,8 @@ int test_structure_function(char *ID_name, long NBpoints, char *ID_out)
   double v1,v2;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
 
   nelements = naxes[0]*naxes[1];
 
@@ -910,8 +910,8 @@ int full_structure_function(char *ID_name, long NBpoints, char *ID_out)
   long STEP2=3;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
 
   ID1=create_2Dimage_ID("tmp1",naxes[0],naxes[1]);
   ID2=create_2Dimage_ID("tmp2",naxes[0],naxes[1]);
@@ -953,7 +953,7 @@ int fft_structure_function(char *ID_in, char *ID_out)
 
   autocorrelation(ID_in,"stftmp");
   ID=image_ID("stftmp");
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
   value=-data.image[ID].array.F[0];
   
   arith_image_cstadd("stftmp",value,"stftmp1");

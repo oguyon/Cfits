@@ -25,7 +25,15 @@ int save_fits(char *ID_name, char *file_name);
 int break_cube(char *ID_name);
 int images_to_cube(char *img_name, long nbframes, char *cube_name);
 
+
 // CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
 
 int load_fits_cli()
 {
@@ -96,11 +104,12 @@ int break_cube_cli()
 
 int images_to_cube_cli()
 {
-  if(data.cmdargtoken[1].type != 4)
+  /*  if(data.cmdargtoken[1].type != 4)
     {
       printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
       return -1;
-    }
+      }*/
+
   if(data.cmdargtoken[2].type != 2)
     {
       printf("second argument has to be integer\n");
@@ -451,7 +460,7 @@ long load_fits(char *file_name, char ID_name[400])
       /* bitpix = -32  TFLOAT */
       if(bitpix == -32){
 	//tp("1.0");
-	ID = create_image_ID(ID_name, naxis, naxes, FLOAT);
+	ID = create_image_ID(ID_name, naxis, naxes, FLOAT, data.SHARED_DFT);
 	//tp("2.0");
 	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.F, &anynul, &FITSIO_status); 
 	//tp("3.0");
@@ -464,7 +473,7 @@ long load_fits(char *file_name, char ID_name[400])
       
       /* bitpix = -64  TDOUBLE */
       if(bitpix == -64){
-	ID = create_image_ID(ID_name,naxis,naxes,DOUBLE);
+	ID = create_image_ID(ID_name, naxis, naxes, DOUBLE, data.SHARED_DFT);
 	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.D , &anynul, &FITSIO_status); 
 	if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1)!=0)
 	  fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
@@ -474,7 +483,7 @@ long load_fits(char *file_name, char ID_name[400])
       
       /* bitpix = 16   TSHORT */ 
       if(bitpix == 16){
-	ID = create_image_ID(ID_name,naxis,naxes,Dtype);
+	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT);
 	sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);	
 	if(sarray==NULL)
 	  {
@@ -502,7 +511,7 @@ long load_fits(char *file_name, char ID_name[400])
 	fits_read_key(fptr, TLONG, "NDR", &NDR, comment, &FITSIO_status);
 	if(check_FITSIO_status(__FILE__, __func__, __LINE__, 0)==1)
 	  NDR = 1;
-	ID = create_image_ID(ID_name,naxis,naxes,Dtype);
+	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT);
 	larray = (long*) malloc(sizeof(long)*nelements);
 	if(larray==NULL)
 	  {
@@ -523,7 +532,7 @@ long load_fits(char *file_name, char ID_name[400])
       
       /* bitpix = 8   TBYTE */ 
       if(bitpix == 8){
-	ID = create_image_ID(ID_name,naxis,naxes,Dtype);
+	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT);
 	barray = (unsigned char*) malloc(sizeof(unsigned char)*naxes[1]*naxes[0]);
 	if(barray==NULL)
 	  {
@@ -583,10 +592,10 @@ int save_db_fits(char *ID_name, char *file_name)
   
   if(ID!=-1)
     {
-      atype = data.image[ID].atype;
-      naxis = data.image[ID].naxis;
+      atype = data.image[ID].md[0].atype;
+      naxis = data.image[ID].md[0].naxis;
       for(i=0;i<naxis;i++)
-	naxes[i] = data.image[ID].size[i];
+	naxes[i] = data.image[ID].md[0].size[i];
       
       nelements = 1;
       for(i=0;i<naxis;i++)
@@ -700,10 +709,10 @@ int save_fl_fits(char *ID_name, char *file_name)
   
   if (ID!=-1)
     {
-      atype = data.image[ID].atype;
-      naxis=data.image[ID].naxis;
+      atype = data.image[ID].md[0].atype;
+      naxis=data.image[ID].md[0].naxis;
       for(i=0;i<naxis;i++)
-	naxes[i] = data.image[ID].size[i];
+	naxes[i] = data.image[ID].md[0].size[i];
       
       nelements = 1;
       for(i=0;i<naxis;i++)
@@ -837,10 +846,10 @@ int save_sh_fits(char *ID_name, char *file_name)
 
     if (ID!=-1)
       {
-	atype = data.image[ID].atype;
-	naxis=data.image[ID].naxis;
+	atype = data.image[ID].md[0].atype;
+	naxis=data.image[ID].md[0].naxis;
 	for(i=0;i<naxis;i++)
-	  naxes[i] = data.image[ID].size[i];
+	  naxes[i] = data.image[ID].md[0].size[i];
 
 	nelements = 1;
 	for(i=0;i<naxis;i++)
@@ -953,7 +962,7 @@ int save_fits(char *ID_name, char *file_name)
   
   if (ID!=-1)
     {
-      atype = data.image[ID].atype;
+      atype = data.image[ID].md[0].atype;
       switch(atype) {
       case FLOAT:
 	save_fl_fits(ID_name, file_name);
@@ -977,7 +986,7 @@ int saveall_fl_fits()
 
   for (i=0;i<data.NB_MAX_IMAGE;i++)
     if(data.image[i].used==1) 
-      save_fl_fits(data.image[i].name,data.image[i].name);
+      save_fl_fits(data.image[i].md[0].name,data.image[i].md[0].name);
 
   return(0);
 }
@@ -992,9 +1001,9 @@ int break_cube(char *ID_name)
   int n;
 
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
-  naxes[2] = data.image[ID].size[2];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
+  naxes[2] = data.image[ID].md[0].size[2];
   
   for(kk=0;kk<naxes[2];kk++)
     {
@@ -1043,8 +1052,8 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name)
       printERROR(__FILE__,__func__,__LINE__,errormessage);
       exit(0);
     }
-  naxes[0] = data.image[ID1].size[0];
-  naxes[1] = data.image[ID1].size[1];
+  naxes[0] = data.image[ID1].md[0].size[0];
+  naxes[1] = data.image[ID1].md[0].size[1];
   xsize = naxes[0];
   ysize = naxes[1];
   
@@ -1072,8 +1081,8 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name)
 	}
       else
 	{
-	  naxes[0] = data.image[ID1].size[0];
-	  naxes[1] = data.image[ID1].size[1];
+	  naxes[0] = data.image[ID1].md[0].size[0];
+	  naxes[1] = data.image[ID1].md[0].size[1];
 	  if((xsize != naxes[0])||(ysize != naxes[1]))
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"Image has wrong size");

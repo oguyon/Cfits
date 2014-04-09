@@ -83,8 +83,8 @@ int Fresnel_propagate_wavefront(char *in, char *out, double PUPIL_SCALE, double 
   do2dfft(in, "tmp");
   permut("tmp");
   ID = image_ID("tmp");
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
   coeff = PI*z*lambda/(PUPIL_SCALE*naxes[0])/(PUPIL_SCALE*naxes[0]);
   
   printf("coeff is %g\n",coeff);
@@ -200,14 +200,14 @@ int Fresnel_propagate_wavefront1(char *in, char *out, char *Cin)
   long sizein;
 
   ID = image_ID(in);
-  sizein=data.image[ID].size[0];
+  sizein=data.image[ID].md[0].size[0];
   sprintf(fname,"tmpfpw%ld", sizein);
 
   do2dfft(in,fname);
 
   ID=image_ID(fname);
-  naxes[0]=data.image[ID].size[0];
-  naxes[1]=data.image[ID].size[1];
+  naxes[0]=data.image[ID].md[0].size[0];
+  naxes[1]=data.image[ID].md[0].size[1];
   nbelem = naxes[0]*naxes[1];
   
   IDref = image_ID(Cin);
@@ -242,8 +242,8 @@ long Fresnel_propagate_cube(char *IDcin_name, char *IDout_name_amp, char *IDout_
   double re,im,amp,pha;
 
   IDcin = image_ID(IDcin_name);
-  xsize = data.image[IDcin].size[0];
-  ysize = data.image[IDcin].size[1];
+  xsize = data.image[IDcin].md[0].size[0];
+  ysize = data.image[IDcin].md[0].size[1];
   
   IDouta = create_3Dimage_ID(IDout_name_amp,xsize,ysize,NBzpts);
   IDoutp = create_3Dimage_ID(IDout_name_pha,xsize,ysize,NBzpts);
@@ -304,7 +304,7 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
       mk_amph_from_complex("imc1", "ima1", "imp1");
       delete_image_ID("imc1");
       ID = image_ID("ima1");
-      size = data.image[ID].size[0];
+      size = data.image[ID].md[0].size[0];
       sprintf(fname, "!ima_%ld_0.fits", k);
       save_fl_fits("ima1",fname);
       sprintf(fname, "!imp_%ld_0.fits", k);
@@ -335,7 +335,7 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
 
   IDa = image_ID("foca");
   IDp = image_ID("focp");
-  size = data.image[IDa].size[0];
+  size = data.image[IDa].md[0].size[0];
   for(ii=0;ii<size;ii++)
     for(jj=0;jj<size;jj++)
       {
@@ -362,7 +362,7 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
 
   ID = image_ID("foci");
   // scale : 5.12 pix = 1.0 l/D
-  size = data.image[ID].size[0];
+  size = data.image[ID].md[0].size[0];
   for(ii=0;ii<size;ii++)
     for(jj=0;jj<size;jj++)
       {

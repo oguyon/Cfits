@@ -504,7 +504,7 @@ double get_zer(char *ID_name, long zer_nb, double radius)
   char fname1[200];
 
   ID=image_ID(ID_name);
-  SIZE = data.image[ID].size[0];
+  SIZE = data.image[ID].md[0].size[0];
   make_disk("disktmp",SIZE,SIZE,0.5*SIZE,0.5*SIZE,radius);
   
   sprintf(fname,"/RAID0/tmp/Zernike/Z_%ld",zer_nb);
@@ -537,7 +537,7 @@ double get_zer_crop(char *ID_name, long zer_nb, double radius, double radius1)
   char fname1[200];
 
   ID=image_ID(ID_name);
-  SIZE = data.image[ID].size[0];
+  SIZE = data.image[ID].md[0].size[0];
   make_disk("disktmp",SIZE,SIZE,0.5*SIZE,0.5*SIZE,radius1);
   
   sprintf(fname,"/RAID0/tmp/Zernike/Z_%ld",zer_nb);
@@ -597,7 +597,7 @@ int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
 
   copy_image_ID(ID_name,ID_name_out);
   ID = image_ID(ID_name);
-  SIZE = data.image[ID].size[0];
+  SIZE = data.image[ID].md[0].size[0];
   for(i=0;i<max_zer;i++)
     {
       mk_zer("zer_tmp",SIZE,i,radius);
@@ -622,7 +622,7 @@ int remove_TTF(char *ID_name, char *ID_name_out, double radius)
   //  printf("-- %s  --- %s --\n",ID_name,ID_name_out);
   copy_image_ID(ID_name,ID_name_out);
   ID = image_ID(ID_name);
-  SIZE = data.image[ID].size[0];
+  SIZE = data.image[ID].md[0].size[0];
   make_disk("disktmpttf",SIZE,SIZE,0.5*SIZE,0.5*SIZE,radius);
   //  list_image_ID();
   for(i=0;i<5;i++)
@@ -673,7 +673,7 @@ double fit_zer(char *ID_name, long maxzer_nb, double radius, double *zvalue, dou
   copy_image_ID(ID_name,"resid");  
 
   ID = image_ID("resid");
-  SIZE = data.image[ID].size[0];
+  SIZE = data.image[ID].md[0].size[0];
   IDdisk = make_disk("dtmp",SIZE,SIZE,0.5*SIZE,0.5*SIZE,0.999*radius);
 
   for(ii=0;ii<SIZE*SIZE;ii++)

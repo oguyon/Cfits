@@ -410,11 +410,11 @@ int permut(char *ID_name)
   int OK=0;
 
   ID = image_ID(ID_name);
-  naxis = data.image[ID].naxis;
+  naxis = data.image[ID].md[0].naxis;
   naxes = (long*) malloc(naxis*sizeof(long));
   for(i=0;i<naxis;i++)
-    naxes[i] = data.image[ID].size[i];
-  atype = data.image[ID].atype;
+    naxes[i] = data.image[ID].md[0].size[i];
+  atype = data.image[ID].md[0].atype;
 
   tmp=0;
 
@@ -585,16 +585,16 @@ int do1dfft(char *in_name, char *out_name)
   fftwf_plan plan;
 
   IDin=image_ID(in_name);
-  naxis=data.image[IDin].naxis;
+  naxis=data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
   for (i=0;i<naxis;i++)
     {
-      naxesl[i]= (long) data.image[IDin].size[i];
-      naxes[i]= (int) data.image[IDin].size[i];
+      naxesl[i]= (long) data.image[IDin].md[0].size[i];
+      naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
 
-  IDout = create_image_ID(out_name,naxis,naxesl,CDtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
 
   if(naxis==1)
     {
@@ -660,28 +660,28 @@ int do1drfft(char *in_name, char *out_name)
   int n;
 
   IDin=image_ID(in_name);
-  naxis=data.image[IDin].naxis;
+  naxis=data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
   naxestmp = (long *) malloc(naxis*sizeof(long));
 
   for (i=0;i<naxis;i++)
     {
-      naxesl[i]= (long) data.image[IDin].size[i];
-      naxes[i]= (int) data.image[IDin].size[i];
-      naxestmp[i]=data.image[IDin].size[i];
+      naxesl[i]= (long) data.image[IDin].md[0].size[i];
+      naxes[i]= (int) data.image[IDin].md[0].size[i];
+      naxestmp[i]=data.image[IDin].md[0].size[i];
       if(i==0)
-	naxestmp[i]=data.image[IDin].size[i]/2+1;
+	naxestmp[i]=data.image[IDin].md[0].size[i]/2+1;
     }
 
 
   n = snprintf(ffttmpname,SBUFFERSIZE,"_ffttmpname_%d",(int) getpid());
   if(n >= SBUFFERSIZE) 
     printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-  IDtmp = create_image_ID(ffttmpname,naxis,naxestmp,CDtype);
+  IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT);
 
 
-  IDout = create_image_ID(out_name,naxis,naxesl,CDtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
 
   if(naxis==2)
     {
@@ -742,15 +742,15 @@ int do1dffti(char *in_name, char *out_name)
   fftwf_plan plan;
 
   IDin=image_ID(in_name);
-  naxis=data.image[IDin].naxis;
+  naxis=data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
   for (i=0;i<naxis;i++)
     {
-      naxesl[i]= (long) data.image[IDin].size[i];
-      naxes[i]= (int) data.image[IDin].size[i];
+      naxesl[i]= (long) data.image[IDin].md[0].size[i];
+      naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
-  IDout = create_image_ID(out_name,naxis,naxesl,CDtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
 
   if(naxis==1)
     {
@@ -816,18 +816,18 @@ int do2dfft(char *in_name, char *out_name)
 
 
   IDin = image_ID(in_name);
-  naxis = data.image[IDin].naxis;
+  naxis = data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
 
   for (i=0;i<naxis;i++)
     {
-      naxesl[i]= (long) data.image[IDin].size[i];
-      naxes[i]= (int) data.image[IDin].size[i];
+      naxesl[i]= (long) data.image[IDin].md[0].size[i];
+      naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
 
 
-  IDout = create_image_ID(out_name,naxis,naxesl,CDtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
   
   // need to swap first 2 axis for fftw
   if(naxis>1)
@@ -915,17 +915,17 @@ int do2dffti(char *in_name, char *out_name)
   int n;
 
   IDin=image_ID(in_name);
-  naxis=data.image[IDin].naxis;
+  naxis=data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
   for (i=0;i<naxis;i++)
     {
-      naxes[i]= (int) data.image[IDin].size[i];
-      naxesl[i]= (long) data.image[IDin].size[i];
+      naxes[i]= (int) data.image[IDin].md[0].size[i];
+      naxesl[i]= (long) data.image[IDin].md[0].size[i];
     }
 
 
-  IDout = create_image_ID(out_name, naxis, naxesl, CDtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
 
   // need to swap first 2 axis for fftw
   if(naxis>1)
@@ -936,7 +936,7 @@ int do2dffti(char *in_name, char *out_name)
     }
 
 
-  //  IDout = create_image_ID(out_name,naxis,naxesl,CDtype);
+  //  IDout = create_image_ID(out_name,naxis,naxesl,CDtype, data.SHARED_DFT);
 
   if(naxis==2)
     {
@@ -1092,26 +1092,26 @@ int do2drfft(char *in_name, char *out_name)
   int n;
 
   IDin = image_ID(in_name);
-  naxis = data.image[IDin].naxis;
+  naxis = data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
   naxestmp = (long *) malloc(naxis*sizeof(long));
 
   for (i=0;i<naxis;i++)
     {
-      naxes[i] = (int) data.image[IDin].size[i];
-      naxesl[i] = (long) data.image[IDin].size[i];
-      naxestmp[i]=data.image[IDin].size[i];
+      naxes[i] = (int) data.image[IDin].md[0].size[i];
+      naxesl[i] = (long) data.image[IDin].md[0].size[i];
+      naxestmp[i]=data.image[IDin].md[0].size[i];
       if(i==0)
-	naxestmp[i] = data.image[IDin].size[i]/2+1;
+	naxestmp[i] = data.image[IDin].md[0].size[i]/2+1;
     }
 
   n = snprintf(ffttmpname,SBUFFERSIZE,"_ffttmp_%d",(int) getpid());
   if(n >= SBUFFERSIZE) 
     printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-  IDtmp = create_image_ID(ffttmpname,naxis,naxestmp,CDtype);
+  IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT);
 
-  IDout = create_image_ID(out_name,naxis,naxesl,CDtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT);
 
   if(naxis==2)
     {
@@ -1228,16 +1228,16 @@ int do2drffti(char *in_name, char *out_name)
   int n;
 
   IDin = image_ID(in_name);
-  naxis = data.image[IDin].naxis;
+  naxis = data.image[IDin].md[0].naxis;
   naxes = (int *) malloc(naxis*sizeof(int));
   naxesl = (long *) malloc(naxis*sizeof(long));
 
   for (i=0;i<naxis;i++)
     {
-      naxes[i]=data.image[IDin].size[i];
-      naxesl[i]=data.image[IDin].size[i];
+      naxes[i]=data.image[IDin].md[0].size[i];
+      naxesl[i]=data.image[IDin].md[0].size[i];
     }
-  IDout = create_image_ID(out_name,naxis,naxesl,Dtype);
+  IDout = create_image_ID(out_name, naxis, naxesl, Dtype, data.SHARED_DFT);
 
   if(naxis==2)
     {
@@ -1325,7 +1325,7 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)
   int n;
   
   ID1 = image_ID(ID_name1);
-  nelement = data.image[ID1].nelement;  
+  nelement = data.image[ID1].md[0].nelement;  
 
 
   n = snprintf(ft1name,SBUFFERSIZE,"_ft1_%d",(int) getpid());
@@ -1420,7 +1420,7 @@ int autocorrelation(char *ID_name, char *ID_out)
   int n;
 
   ID = image_ID(ID_name);
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
 
   n = snprintf(atmp1name,SBUFFERSIZE,"_atmp1_%d",(int) getpid());
   if(n >= SBUFFERSIZE) 
@@ -1474,8 +1474,8 @@ int fftczoom(char *ID_name, char *ID_out, long factor)
 
   ID=image_ID(ID_name);
 
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
 
   coeff = 1.0/(factor*factor*naxes[0]*naxes[1]);
   permut(ID_name);
@@ -1528,8 +1528,8 @@ int fftzoom(char *ID_name, char *ID_out, long factor)
 
   ID = image_ID(ID_name);
 
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
 
   coeff = 1.0/(factor*factor*naxes[0]*naxes[1]);
   permut(ID_name);
@@ -1727,8 +1727,8 @@ long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDou
   IDin = image_ID(IDin_name);
 
   IDinmask = image_ID(IDinmask_name);
-  xsize = data.image[IDinmask].size[0];
-  ysize = data.image[IDinmask].size[1];
+  xsize = data.image[IDinmask].md[0].size[0];
+  ysize = data.image[IDinmask].md[0].size[1];
   NBptsin = 0;
   for(ii=0; ii<xsize; ii++)
     for(jj=0; jj<ysize; jj++)
@@ -1888,8 +1888,8 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
   printf("zfactor = %f\n", zfactor);
 
   IDin = image_ID(pupin_name);
-  xsize = data.image[ID].size[0];
-  ysize = data.image[ID].size[1];
+  xsize = data.image[ID].md[0].size[0];
+  ysize = data.image[ID].md[0].size[1];
 
   IDpupin_mask = create_2Dimage_ID("_pupinmask", xsize, ysize);
   for(ii=0; ii<xsize*ysize; ii++)
@@ -2061,8 +2061,8 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
   double total = 0;
   
   IDin = image_ID(pupin_name);
-  xsize = data.image[IDin].size[0];
-  ysize = data.image[IDin].size[1];
+  xsize = data.image[IDin].md[0].size[0];
+  ysize = data.image[IDin].md[0].size[1];
 
 
   printf("zfactor = %f\n", zfactor);
@@ -2172,8 +2172,8 @@ int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytra
   fprintf( stdout, "[arith_image_translate %f %f]\n", xtransl, ytransl);
   
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];
   // n0 = (int) ((log10(naxes[0])/log10(2))+0.01);
   // n1 = (int) ((log10(naxes[0])/log10(2))+0.01);
 

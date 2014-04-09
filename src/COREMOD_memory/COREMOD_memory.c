@@ -7,6 +7,10 @@
 #include <time.h>
 #include <math.h>
 
+#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/mman.h>
+
 #include <ncurses.h>
 
 #include "../Cfits.h"
@@ -54,14 +58,25 @@ char errmsg[SBUFFERSIZE];
 
 int list_image_ID();
 int list_variable_ID();
-long create_image_ID(char *name, long naxis, long *size, int atype);
+long create_image_ID(char *name, long naxis, long *size, int atype, int shared);
+long read_sharedmem_image(char *name);
 int memory_monitor(char *termttyname);
 int list_image_ID_ncurses();
 void close_list_image_ID_ncurses( void );
 long copy_image_ID(char *name, char *newname);
 
 
-// create image, default precision
+
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
+
 int create_image_cli()
 {
   long *imsize;
@@ -82,10 +97,51 @@ int create_image_cli()
 	}
       switch(data.precision){
       case 0:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, data.SHARED_DFT);
 	break;
       case 1:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, data.SHARED_DFT);
+	break;
+      }
+      free(imsize);
+    }
+  else
+    return 1;
+}
+
+int read_sharedmem_image_cli()
+{
+  if(CLI_checkarg(1,3)==0)
+    read_sharedmem_image(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+//long read_sharedmem_image(char *name);
+
+int create_image_shared_cli()
+{
+  long *imsize;
+  long naxis = 0;
+  long i;
+
+  
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+      naxis = 0;
+      imsize = (long*) malloc(sizeof(long)*5);
+      i = 2;
+      while(data.cmdargtoken[i].type==2)
+	{
+	  imsize[naxis] = data.cmdargtoken[i].val.numl;
+	  naxis++;
+	  i++;
+	}
+      switch(data.precision){
+      case 0:
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, 1);
+	break;
+      case 1:
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, 1);
 	break;
       }
       free(imsize);
@@ -107,7 +163,7 @@ int create_2Dimage_float()
   imsize[0] = data.cmdargtoken[2].val.numl;
   imsize[1] = data.cmdargtoken[3].val.numl;
 
-  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT);
+  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT, data.SHARED_DFT);
 
   free(imsize);
 
@@ -126,7 +182,7 @@ int create_3Dimage_float()
   imsize[1] = data.cmdargtoken[3].val.numl;
   imsize[2] = data.cmdargtoken[4].val.numl;
 
-  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT);
+  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT, data.SHARED_DFT);
 
   free(imsize);
 
@@ -287,7 +343,25 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
   strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"readshmim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = read_sharedmem_image_cli;
+  strcpy(data.cmd[data.NBcmd].info,"read shared memory image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name>");
+  strcpy(data.cmd[data.NBcmd].example,"readshmim im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image(char *name)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"creaimshm");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = create_image_shared_cli;
+  strcpy(data.cmd[data.NBcmd].info,"create image in shared mem, default precision");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
+  strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"crea3dim");
@@ -296,9 +370,9 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
   strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT, 0)");
   data.NBcmd++;
- 
+  
   strcpy(data.cmd[data.NBcmd].key,"rm");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = delete_image_ID_cli;
@@ -433,7 +507,7 @@ long long compute_image_memory()
   for(i=0;i<data.NB_MAX_IMAGE;i++)
     {
       if(data.image[i].used==1)
-	total += data.image[i].nelement*TYPESIZE[data.image[i].atype];
+	total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
     }
 
   return(total);
@@ -468,12 +542,12 @@ long image_ID(char *name) /* ID number corresponding to a name */
     {
       if(data.image[i].used == 1)
 	{
-	  if((strncmp(name,data.image[i].name,strlen(name))==0)&&(data.image[i].name[strlen(name)]=='\0'))
+	  if((strncmp(name,data.image[i].md[0].name,strlen(name))==0)&&(data.image[i].md[0].name[strlen(name)]=='\0'))
 	    {
 	      found = 1;
 	      tmp = i;
 	      clock_gettime(CLOCK_REALTIME, &timenow);
-	      data.image[i].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;	      
+	      data.image[i].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;	      
 	    }
 	}
       i++;
@@ -499,7 +573,7 @@ long image_ID_noaccessupdate(char *name) /* ID number corresponding to a name */
     {
       if(data.image[i].used == 1)
 	{
-	  if((strncmp(name,data.image[i].name,strlen(name))==0)&&(data.image[i].name[strlen(name)]=='\0'))
+	  if((strncmp(name,data.image[i].md[0].name,strlen(name))==0)&&(data.image[i].md[0].name[strlen(name)]=='\0'))
 	    {
 	      found = 1;
 	      tmp = i;
@@ -600,6 +674,8 @@ long next_avail_variable_ID() /* next available ID number */
 int delete_image_ID(char* imname) /* deletes an ID */
 {
   long ID;
+  char command[200];
+  int r; 
 
   ID = image_ID(imname);
  
@@ -607,69 +683,96 @@ int delete_image_ID(char* imname) /* deletes an ID */
     {
       data.image[ID].used = 0;
       
-      if(data.image[ID].atype==CHAR)
-	{
-	  if(data.image[ID].array.C == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-	      exit(0);
-	    }
-	  free(data.image[ID].array.C);
-	  data.image[ID].array.C = NULL;
-	}	 
-      if(data.image[ID].atype==INT)
-	{
-	  if(data.image[ID].array.I == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-	      exit(0);
-	    }
-	  free(data.image[ID].array.I);
-	  data.image[ID].array.I = NULL;
+      if(data.image[ID].md[0].shared == 1)
+	{	 
+	  if (munmap(data.image[ID].md, data.image[ID].memsize) == -1) {
+	    printf("unmapping ID %ld : %p  %ld\n", ID, data.image[ID].md, data.image[ID].memsize);
+	    perror("Error un-mmapping the file");
+	  }
+	  close(data.image[ID].shmfd);
+	  data.image[ID].md = NULL;
+	  data.image[ID].shmfd = -1;
+	  data.image[ID].memsize = 0;
+
+	  sprintf(command, "rm %s/%s.im.shm", SHAREDMEMDIR, imname);
+	  r = system(command);
 	}
-      if(data.image[ID].atype==FLOAT)
+      else
 	{
-	  if(data.image[ID].array.F == NULL)
+
+	  if(data.image[ID].md[0].atype==CHAR)
+	    {
+	      if(data.image[ID].array.C == NULL)
+		{
+		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+		  exit(0);
+		}
+	      free(data.image[ID].array.C);
+	      data.image[ID].array.C = NULL;
+	    }	 
+	  if(data.image[ID].md[0].atype==INT)
+	    {
+	      if(data.image[ID].array.I == NULL)
+		{
+		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+		  exit(0);
+		}
+	      free(data.image[ID].array.I);
+	      data.image[ID].array.I = NULL;
+	    }
+	  if(data.image[ID].md[0].atype==FLOAT)
+	    {
+	      if(data.image[ID].array.F == NULL)
+		{
+		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+		  exit(0);
+		}
+	      free(data.image[ID].array.F);
+	      data.image[ID].array.F = NULL;
+	    }
+	  if(data.image[ID].md[0].atype==DOUBLE)
+	    {
+	      if(data.image[ID].array.D == NULL)
+		{
+		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+		  exit(0);
+		}
+	      free(data.image[ID].array.D);
+	      data.image[ID].array.D = NULL;
+	    }
+	  if(data.image[ID].md[0].atype==COMPLEX_FLOAT)
+	    {
+	      if(data.image[ID].array.CF == NULL)
+		{
+		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+		  exit(0);
+		}
+	      free(data.image[ID].array.CF);
+	      data.image[ID].array.CF = NULL;
+	    }
+	  if(data.image[ID].md[0].atype==COMPLEX_DOUBLE)
+	    {
+	      if(data.image[ID].array.CD == NULL)
+		{
+		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+		  exit(0);
+		}
+	      free(data.image[ID].array.CD);
+	      data.image[ID].array.CD = NULL;
+	    }
+	  
+      
+	  if(data.image[ID].md == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
 	      exit(0);
 	    }
-	  free(data.image[ID].array.F);
-	  data.image[ID].array.F = NULL;
-	}
-      if(data.image[ID].atype==DOUBLE)
-	{
-	  if(data.image[ID].array.D == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-	      exit(0);
-	    }
-	  free(data.image[ID].array.D);
-	  data.image[ID].array.D = NULL;
-	}
-      if(data.image[ID].atype==COMPLEX_FLOAT)
-	{
-	  if(data.image[ID].array.CF == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-	      exit(0);
-	    }
-	  free(data.image[ID].array.CF);
-	  data.image[ID].array.CF = NULL;
-	}
-       if(data.image[ID].atype==COMPLEX_DOUBLE)
-	{
-	  if(data.image[ID].array.CD == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-	      exit(0);
-	    }
-	  free(data.image[ID].array.CD);
-	  data.image[ID].array.CD = NULL;
+	  free(data.image[ID].md);
+	  data.image[ID].md = NULL;
 	}
 
        /*      free(data.image[ID].size);*/
-       //      data.image[ID].last_access = 0;
+       //      data.image[ID].md[0].last_access = 0;
     }
   else
     fprintf(stderr,"%c[%d;%dm WARNING: image %s does not exist [ %s  %s  %d ] %c[%d;m\n", (char) 27, 1, 31, imname, __FILE__, __func__, __LINE__, (char) 27, 0);
@@ -686,15 +789,15 @@ int delete_image_ID(char* imname) /* deletes an ID */
 int delete_image_ID_prefix(char *prefix) 
 {
   long i;
-
+  
   for (i=0;i<data.NB_MAX_IMAGE;i++)
     {
-      
-      if((data.image[i].used==1)&&((strncmp(prefix,data.image[i].name,strlen(prefix)))==0))
-	{
-	  printf("deleting image %s\n",data.image[i].name);
-	  delete_image_ID(data.image[i].name);
-	}
+      if(data.image[i].used==1)
+	if((strncmp(prefix,data.image[i].md[0].name,strlen(prefix)))==0)
+	  {
+	    printf("deleting image %s\n",data.image[i].md[0].name);
+	    delete_image_ID(data.image[i].md[0].name);
+	  }
     }
   return(0);
 }
@@ -716,9 +819,11 @@ int delete_variable_ID(char* varname) /* deletes a variable ID */
    return(0);
 }
 
+
+
 /* creates an image ID */
-/* all Cfits images should be created by this function */
-long create_image_ID(char *name, long naxis, long *size, int atype)
+/* all images should be created by this function */
+long create_image_ID(char *name, long naxis, long *size, int atype, int shared)
 {
   long ID;
   long i,ii;
@@ -726,27 +831,103 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
   long nelement;
   struct timespec timenow;
 
+
+  size_t sharedsize = 0; // shared memory size in bytes
+  int SM_fd; // shared memory file descriptor
+  char SM_fname[200];
+  int result;
+  IMAGE_METADATA *map;
+  void *mapv; // pointed cast in bytes
+
   ID = -1;
   if(image_ID(name)==-1)
     {
       ID = next_avail_image_ID();
       data.image[ID].used = 1;
-      data.image[ID].atype = atype;
-      data.image[ID].naxis = naxis;
-      strcpy(data.image[ID].name,name);
-      
-
-      for(i=0;i<naxis;i++)
-	data.image[ID].size[i] = size[i];
-	
+      	
       nelement = 1;
       for(i=0;i<naxis;i++)
 	nelement*=size[i];
 
+      // compute total size to be allocated
+      if(shared==1)
+	{	  
+	  sharedsize = sizeof(IMAGE_METADATA);
+
+	  //	  printf("sharedsize = %zu\n", sharedsize);
+	  if(atype==CHAR)
+	    sharedsize += nelement*sizeof(char);
+	  if(atype==INT)
+	    sharedsize += nelement*sizeof(int);
+	  if(atype==FLOAT)
+	    sharedsize += nelement*sizeof(float);
+	  if(atype==DOUBLE)
+	    sharedsize += nelement*sizeof(double);
+	  if(atype==COMPLEX_FLOAT)
+	    sharedsize += nelement*2*sizeof(float);
+	  if(atype==COMPLEX_DOUBLE)
+	    sharedsize += nelement*2*sizeof(double);
+	  if(atype==USHORT)
+	    sharedsize += nelement*sizeof(unsigned short int);
+
+	  //	  printf("sharedsize = %zu\n", sharedsize);
+	  
+	  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
+	  SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+	 
+	  if (SM_fd == -1) {
+	    perror("Error opening file for writing");
+	    exit(0);
+	  }
+	  data.image[ID].shmfd = SM_fd;
+	  data.image[ID].memsize = sharedsize;
+
+	  result = lseek(SM_fd, sharedsize-1, SEEK_SET);
+	  if (result == -1) {
+	    close(SM_fd);
+	    perror("Error calling lseek() to 'stretch' the file");
+	    exit(0);
+	  }
+	  
+	  result = write(SM_fd, "", 1);
+	  if (result != 1) {
+	    close(SM_fd);
+	    perror("Error writing last byte of the file");
+	    exit(0);
+	  }
+	  
+	  map = (IMAGE_METADATA*) mmap(0, sharedsize, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+	  if (map == MAP_FAILED) {
+	    close(SM_fd);
+	    perror("Error mmapping the file");
+	    exit(0);
+	  }
+
+	  data.image[ID].md = (IMAGE_METADATA*) map;
+	  data.image[ID].md[0].shared = 1;
+	}
+      else
+	{
+	  data.image[ID].md = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
+	  data.image[ID].md[0].shared = 0;
+	}
+
+      data.image[ID].md[0].atype = atype;
+      data.image[ID].md[0].naxis = naxis;
+      strcpy(data.image[ID].md[0].name, name);	
+      for(i=0;i<naxis;i++)
+	data.image[ID].md[0].size[i] = size[i];
+    
+
 
       if(atype==CHAR)
 	{
-	  data.image[ID].array.C = (char*) calloc ((size_t) nelement,sizeof(char));
+	  if(shared==1)
+	    data.image[ID].array.C = (char*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.C = (char*) calloc ((size_t) nelement, sizeof(char));
+
+
 	  if(data.image[ID].array.C == NULL)
 	    {    
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
@@ -765,7 +946,11 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	}
       if(atype==INT)
 	{
-	  data.image[ID].array.I = (int*) calloc ((size_t) nelement,sizeof(int));
+	  if(shared==1)
+	    data.image[ID].array.I = (int*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.I = (int*) calloc ((size_t) nelement,sizeof(int));
+	  
 	  if(data.image[ID].array.I == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
@@ -784,7 +969,16 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	}
       if(atype==FLOAT)
 	{
-	  data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
+	  if(shared==1)
+	    {
+	      mapv = (void*) map;
+	      mapv += sizeof(IMAGE_METADATA);
+	      data.image[ID].array.F = (float*) (mapv);
+	      memset(data.image[ID].array.F, '\0', nelement*sizeof(float)); 
+	    }
+	  else
+	    data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
+
 	  if(data.image[ID].array.F == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
@@ -803,7 +997,10 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	}
       if(atype==DOUBLE)
 	{
-	  data.image[ID].array.D = (double*) calloc ((size_t) nelement,sizeof(double));
+	  if(shared==1)
+	    data.image[ID].array.D = (double*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.D = (double*) calloc ((size_t) nelement,sizeof(double));
 	  if(data.image[ID].array.D == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
@@ -821,9 +1018,11 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	    }
 	}
        if(atype==COMPLEX_FLOAT)
-	{
-	  
-	  data.image[ID].array.CF = (complex_float*) calloc ((size_t) nelement,sizeof(complex_float));
+	{	  
+	  if(shared==1)
+	    data.image[ID].array.CF = (complex_float*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.CF = (complex_float*) calloc ((size_t) nelement,sizeof(complex_float));
 	  for(ii=0;ii<nelement;ii++)
 	    {
 	      data.image[ID].array.CF[ii].re = 0.0;
@@ -847,7 +1046,10 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	}
       if(atype==COMPLEX_DOUBLE)
 	{
-	  data.image[ID].array.CD = (complex_double*) calloc ((size_t) nelement,sizeof(complex_double));
+	  if(shared==1)
+	    data.image[ID].array.CD = (complex_double*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.CD = (complex_double*) calloc ((size_t) nelement,sizeof(complex_double));
 	  if(data.image[ID].array.CD == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
@@ -862,27 +1064,49 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	      fprintf(stderr," %c[%d;m",(char) 27, 0);
 	      list_image_ID();
 	      exit(0);   
-	    }
+	    }	  
+	}
+      if(atype==USHORT)
+	{
+	  if(shared==1)
+	    data.image[ID].array.U = (unsigned short*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement,sizeof(unsigned short));
+	  if(data.image[ID].array.U == NULL)
+	    {
+	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+	      fprintf(stderr,"Image name = %s\n",name);
+	      fprintf(stderr,"Image size = ");
+	      fprintf(stderr,"%ld",size[0]);
+	      for(i=1;i<naxis;i++)
+		fprintf(stderr,"x%ld",size[i]);
+	      fprintf(stderr,"\n");
+	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double)*2);
+	      fprintf(stderr," %c[%d;m",(char) 27, 0);
+	      list_image_ID();
+	      exit(0);   
+	    }	  
 	}
     
       clock_gettime(CLOCK_REALTIME, &timenow);
-      data.image[ID].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
-      data.image[ID].creation_time = data.image[ID].last_access;
+      data.image[ID].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
+      data.image[ID].md[0].creation_time = data.image[ID].md[0].last_access;
 
-      data.image[ID].nelement = nelement;
+      data.image[ID].md[0].nelement = nelement;
     }
   else
     {
       //      printf("Cannot create image : name \"%s\" already in use\n",name);
       ID = image_ID(name);
 
-      if(data.image[ID].atype != atype)
+      if(data.image[ID].md[0].atype != atype)
 	{
 	  fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
 	  fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong type %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
 	  exit(0);
 	}
-      if(data.image[ID].naxis != naxis)
+      if(data.image[ID].md[0].naxis != naxis)
 	{
 	  fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
 	  fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong naxis %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
@@ -890,7 +1114,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
 	}
       
       for(i=0;i<naxis;i++)
-	if(data.image[ID].size[i] != size[i])
+	if(data.image[ID].md[0].size[i] != size[i])
 	  {
 	    fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
 	    fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong size %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
@@ -904,6 +1128,70 @@ long create_image_ID(char *name, long naxis, long *size, int atype)
   return(ID);
 }
 
+
+
+long read_sharedmem_image(char *name)
+{
+  long ID;
+  int SM_fd;
+  struct stat file_stat;
+  char SM_fname[200];
+  IMAGE_METADATA *map;
+  int atype;
+
+
+  ID = next_avail_image_ID();
+  data.image[ID].used = 1;
+
+  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name); 	
+  SM_fd = open(SM_fname, O_RDWR);
+
+  fstat(SM_fd, &file_stat);
+  printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+  map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+  if (map == MAP_FAILED) {
+    close(SM_fd);
+    perror("Error mmapping the file");
+    exit(0);
+  }
+
+  data.image[ID].memsize = file_stat.st_size;
+  data.image[ID].shmfd = SM_fd;
+  
+  data.image[ID].md = map;
+  atype = data.image[ID].md[0].atype;
+  data.image[ID].md[0].shared = 1;
+
+  printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
+
+    
+
+  if(atype==CHAR)
+    data.image[ID].array.C = (char*) map + sizeof(IMAGE_METADATA);
+  if(atype==INT)
+    data.image[ID].array.I = (int*) map + sizeof(IMAGE_METADATA);
+  if(atype==FLOAT)
+    data.image[ID].array.F = (float*) map + sizeof(IMAGE_METADATA);
+  if(atype==DOUBLE)
+    data.image[ID].array.D = (double*) map + sizeof(IMAGE_METADATA);
+  if(atype==COMPLEX_FLOAT)
+    data.image[ID].array.CF = (complex_float*) map + sizeof(IMAGE_METADATA);
+  if(atype==COMPLEX_DOUBLE)
+    data.image[ID].array.CD = (complex_double*) map + sizeof(IMAGE_METADATA);
+  if(atype==USHORT)
+    data.image[ID].array.U = (unsigned short*) map + sizeof(IMAGE_METADATA);
+
+  if(MEM_MONITOR == 1)
+    list_image_ID_ncurses();
+  
+  return(ID);
+}
+
+
+
+
+
 long create_1Dimage_ID(char *ID_name, long xsize)
 {
   long ID = -1;
@@ -913,9 +1201,9 @@ long create_1Dimage_ID(char *ID_name, long xsize)
   naxes[0]=xsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,3); // single precision
+    ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,4); // double precision
+    ID = create_image_ID(ID_name, naxis, naxes, 4, data.SHARED_DFT); // double precision
  
   return(ID);
 }
@@ -929,9 +1217,9 @@ long create_1DCimage_ID(char *ID_name, long xsize)
   naxes[0]=xsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT); // double precision
 
   return(ID);
 }
@@ -946,9 +1234,9 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
   naxes[1]=ysize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,3); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,4); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT); // double precision
 
   return(ID);
 }
@@ -962,7 +1250,7 @@ long create_2Dimagedouble_ID(char *ID_name, long xsize, long ysize)
   naxes[0]=xsize;
   naxes[1]=ysize;
 
-  ID = create_image_ID(ID_name,naxis,naxes,4);
+  ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT);
 
   return(ID);
 }
@@ -979,9 +1267,9 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
   naxes[1]=ysize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT); // double precision
 
   return(ID);
 }
@@ -1001,7 +1289,7 @@ long create_3Dimage_ID_float(char *ID_name, long xsize, long ysize, long zsize)
   //  printf("CREATING 3D IMAGE: %s %ld %ld %ld\n", ID_name, xsize, ysize, zsize);
   //  fflush(stdout);
 
-  ID = create_image_ID(ID_name,naxis,naxes,3); // single precision
+  ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT); // single precision
 
   //  printf("IMAGE CREATED WITH ID = %ld\n",ID);
   //  fflush(stdout);
@@ -1021,7 +1309,7 @@ long create_3Dimage_ID_double(char *ID_name, long xsize, long ysize, long zsize)
   naxes[1] = ysize;
   naxes[2] = zsize;
 
-  ID = create_image_ID(ID_name,naxis,naxes,4); // double precision
+  ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT); // double precision
   
   return(ID);
 }
@@ -1040,9 +1328,9 @@ long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize)
   naxes[2]=zsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,3); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,4); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT); // double precision
 
   return(ID);
 }
@@ -1059,9 +1347,9 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
   naxes[2]=zsize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT); // double precision
 
   return(ID);
 }
@@ -1077,7 +1365,7 @@ long copy_image_ID(char *name, char *newname)
   long i;
   
   ID = image_ID(name);
-  naxis = data.image[ID].naxis;
+  naxis = data.image[ID].md[0].naxis;
 
   size = (long*) malloc(sizeof(long)*naxis);
   if(size==NULL)
@@ -1087,26 +1375,26 @@ long copy_image_ID(char *name, char *newname)
     }
 
   for(i=0;i<naxis;i++)
-    size[i] = data.image[ID].size[i];
-  atype  = data.image[ID].atype;
+    size[i] = data.image[ID].md[0].size[i];
+  atype  = data.image[ID].md[0].atype;
 
-  nelement = data.image[ID].nelement;
+  nelement = data.image[ID].md[0].nelement;
 
   IDout = image_ID(newname);
   if(IDout==-1)
     {
-      create_image_ID(newname,naxis,size,atype);
+      create_image_ID(newname,naxis,size,atype, data.SHARED_DFT);
       IDout = image_ID(newname);
     }
   else
     {
       // verify newname has the right size and type
-      if(data.image[ID].nelement!=data.image[IDout].nelement)
+      if(data.image[ID].md[0].nelement != data.image[IDout].md[0].nelement)
 	{
 	  fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same size\n",name,newname);
 	  exit(0);
 	}
-      if(data.image[ID].atype!=data.image[IDout].atype)
+      if(data.image[ID].md[0].atype!=data.image[IDout].md[0].atype)
 	{
 	  fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same type\n",name,newname);	
 	  exit(0);
@@ -1192,7 +1480,7 @@ int init_list_image_ID_ncurses(char *termttyname)
   init_pair(6, COLOR_CYAN, COLOR_BLACK);
   init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
   init_pair(8, COLOR_BLACK, COLOR_MAGENTA);
-
+  init_pair(9, COLOR_YELLOW, COLOR_BLACK);
   
   return 0;
 }
@@ -1227,20 +1515,31 @@ int list_image_ID_ncurses()
     {
       if(data.image[i].used==1) 
 	{
-	  atype = data.image[i].atype;
-	  tmp_long = ((long long) (data.image[i].nelement)) * TYPESIZE[atype];
+	  atype = data.image[i].md[0].atype;
+	  tmp_long = ((long long) (data.image[i].md[0].nelement)) * TYPESIZE[atype];
 	  
-	  printw("%4ld ", i);
-	  attron(A_BOLD | COLOR_PAIR(6));
-	  sprintf(str, "%10s ", data.image[i].name);
+	  if(data.image[i].md[0].shared == 1)
+	    printw("%4ldS", i);
+	  else
+	    printw("%4ld ", i);
+
+	  if(data.image[i].md[0].shared == 1)
+	    attron(A_BOLD | COLOR_PAIR(9));
+	  else
+	    attron(A_BOLD | COLOR_PAIR(6));
+	  sprintf(str, "%10s ", data.image[i].md[0].name);
 	  printw(str);
-	  attroff(A_BOLD | COLOR_PAIR(6));
+
+	  if(data.image[i].md[0].shared == 1)
+	    attroff(A_BOLD | COLOR_PAIR(9));
+	  else
+	    attroff(A_BOLD | COLOR_PAIR(6));
+
+	  sprintf(str, "[ %6ld",data.image[i].md[0].size[0]);
 	  
-	  sprintf(str, "[ %6ld",data.image[i].size[0]);
-	  
-	  for(j=1;j<data.image[i].naxis;j++)
+	  for(j=1;j<data.image[i].md[0].naxis;j++)
 	    {
-	      sprintf(str, "%s x %6ld", str, data.image[i].size[j]);
+	      sprintf(str, "%s x %6ld", str, data.image[i].md[0].size[j]);
 	    }
 	  sprintf(str, "%s]", str);
 	  
@@ -1249,15 +1548,15 @@ int list_image_ID_ncurses()
 	  attron(COLOR_PAIR(3));
 	  n = 0;
 	  if(atype==CHAR)
-	    n = snprintf(type,STYPESIZE,"CHAR");	
+	    n = snprintf(type,STYPESIZE,"CHAR   ");	
 	  if(atype==INT)
-	    n = snprintf(type,STYPESIZE,"INT");
+	    n = snprintf(type,STYPESIZE,"INT    ");
 	  if(atype==FLOAT)
-	    n = snprintf(type,STYPESIZE,"FLOAT");
+	    n = snprintf(type,STYPESIZE,"FLOAT  ");
 	  if(atype==DOUBLE)
-	    n = snprintf(type,STYPESIZE,"DOUBLE");
+	    n = snprintf(type,STYPESIZE,"DOUBLE ");
 	  if(atype==COMPLEX_FLOAT)
-	    n = snprintf(type,STYPESIZE,"CFLOAT");
+	    n = snprintf(type,STYPESIZE,"CFLOAT ");
 	  if(atype==COMPLEX_DOUBLE)
 	    n = snprintf(type,STYPESIZE,"CDOUBLE");
 	  printw("%7s ", type);
@@ -1269,7 +1568,7 @@ int list_image_ID_ncurses()
 	  
 	  printw("%10ld Kb %6.2f   ", (long) (tmp_long/1024), (float) (100.0*tmp_long/sizeb));
 	  
-	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].last_access;
+	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].md[0].last_access;
 	  
 	  if(timediff<0.01)
 	    {
@@ -1383,17 +1682,20 @@ int list_image_ID_ofp(FILE *fo)
   for (i=0;i<data.NB_MAX_IMAGE;i++)
     if(data.image[i].used==1) 
       {
-	  atype = data.image[i].atype;
-	  tmp_long = ((long long) (data.image[i].nelement)) * TYPESIZE[atype];
+	  atype = data.image[i].md[0].atype;
+	  tmp_long = ((long long) (data.image[i].md[0].nelement)) * TYPESIZE[atype];
 	  
-	  fprintf(fo, "%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].name, (char) 27, 0);
-	  //fprintf(fo, "%s", str);
+	  if(data.image[i].md[0].shared==1)
+	    fprintf(fo, "%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 34, data.image[i].md[0].name, (char) 27, 0);
+	  else
+	    fprintf(fo, "%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].md[0].name, (char) 27, 0);
+//fprintf(fo, "%s", str);
 	  
-	  sprintf(str, "[ %6ld",data.image[i].size[0]);
+	  sprintf(str, "[ %6ld",data.image[i].md[0].size[0]);
 	  
-	  for(j=1;j<data.image[i].naxis;j++)
+	  for(j=1;j<data.image[i].md[0].naxis;j++)
 	    {
-	      sprintf(str, "%s x %6ld", str, data.image[i].size[j]);
+	      sprintf(str, "%s x %6ld", str, data.image[i].md[0].size[j]);
 	    }
 	  sprintf(str, "%s]", str);
 	  
@@ -1421,7 +1723,7 @@ int list_image_ID_ofp(FILE *fo)
 	  
 	  fprintf(fo, "%10ld Kb %6.2f   ", (long) (tmp_long/1024), (float) (100.0*tmp_long/sizeb));
 	  
-	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].last_access;
+	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].md[0].last_access;
 	  
 	  fprintf(fo, "%15.9f\n", timediff);
 	}
@@ -1509,11 +1811,11 @@ int list_image_ID_file(char *fname)
   for (i=0;i<data.NB_MAX_IMAGE;i++)
     if(data.image[i].used == 1) 
       {
-	atype = data.image[i].atype;
-	fprintf(fp,"%ld %s",i, data.image[i].name);
-	fprintf(fp," %ld",data.image[i].naxis);
-	for(j=0;j<data.image[i].naxis;j++)
-	  fprintf(fp," %ld",data.image[i].size[j]);
+	atype = data.image[i].md[0].atype;
+	fprintf(fp,"%ld %s",i, data.image[i].md[0].name);
+	fprintf(fp," %ld",data.image[i].md[0].naxis);
+	for(j=0;j<data.image[i].md[0].naxis;j++)
+	  fprintf(fp," %ld",data.image[i].md[0].size[j]);
 	
 	n = 0;
 	if(atype==CHAR)
@@ -1559,7 +1861,7 @@ long chname_image_ID(char *ID_name, char *new_name)
   if((image_ID(new_name)==-1)&&(variable_ID(new_name)==-1))
     {  
       ID = image_ID(ID_name);
-      strcpy(data.image[ID].name,new_name);
+      strcpy(data.image[ID].md[0].name, new_name);
       //      if ( Debug > 0 ) { printf("change image name %s -> %s\n",ID_name,new_name);}
     }
   else
@@ -1585,9 +1887,9 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   IDre = image_ID(re_name);
   IDim = image_ID(im_name);
   
-  atype_re = data.image[IDre].atype;
-  atype_im = data.image[IDim].atype;
-  naxis = data.image[IDre].naxis;
+  atype_re = data.image[IDre].md[0].atype;
+  atype_im = data.image[IDim].md[0].atype;
+  naxis = data.image[IDre].md[0].naxis;
 
   naxes = (long *) malloc(sizeof(long)*naxis);
   if(naxes==NULL)
@@ -1597,14 +1899,14 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
     }
 
   for(i=0;i<naxis;i++)
-    naxes[i] = data.image[IDre].size[i];
-  nelement = data.image[IDre].nelement;
+    naxes[i] = data.image[IDre].md[0].size[i];
+  nelement = data.image[IDre].md[0].nelement;
 
 
   if((atype_re==FLOAT)&&(atype_im==FLOAT))
     {
       atype_out = COMPLEX_FLOAT;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CF[ii].re = data.image[IDre].array.F[ii];
@@ -1614,7 +1916,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   else if((atype_re==FLOAT)&&(atype_im==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CD[ii].re = data.image[IDre].array.F[ii];
@@ -1624,7 +1926,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   else if((atype_re==DOUBLE)&&(atype_im==FLOAT))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CD[ii].re = data.image[IDre].array.D[ii];
@@ -1634,7 +1936,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
   else if((atype_re==DOUBLE)&&(atype_im==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
       for(ii=0;ii<nelement;ii++)
 	{
 	  data.image[IDout].array.CD[ii].re = data.image[IDre].array.D[ii];
@@ -1670,18 +1972,18 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
 
   IDam = image_ID(am_name);
   IDph = image_ID(ph_name);
-  atype_am = data.image[IDam].atype;
-  atype_ph = data.image[IDph].atype;
+  atype_am = data.image[IDam].md[0].atype;
+  atype_ph = data.image[IDph].md[0].atype;
 
-  naxis = data.image[IDam].naxis;
+  naxis = data.image[IDam].md[0].naxis;
   for(i=0;i<naxis;i++)
-    naxes[i] = data.image[IDam].size[i];
-  nelement = data.image[IDam].nelement;
+    naxes[i] = data.image[IDam].md[0].size[i];
+  nelement = data.image[IDam].md[0].nelement;
 
   if((atype_am==FLOAT)&&(atype_ph==FLOAT))
     {
       atype_out = COMPLEX_FLOAT;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -1699,7 +2001,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   else if((atype_am==FLOAT)&&(atype_ph==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -1717,7 +2019,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   else if((atype_am==DOUBLE)&&(atype_ph==FLOAT))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -1735,7 +2037,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
   else if((atype_am==DOUBLE)&&(atype_ph==DOUBLE))
     {
       atype_out = COMPLEX_DOUBLE;
-      IDout = create_image_ID(out_name,naxis,naxes,atype_out);
+      IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT);
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -1775,16 +2077,16 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
   int n;
 
   IDin = image_ID(in_name);
-  atype = data.image[IDin].atype;
-  naxis = data.image[IDin].naxis;
+  atype = data.image[IDin].md[0].atype;
+  naxis = data.image[IDin].md[0].naxis;
   for(i=0;i<naxis;i++)
-    naxes[i] = data.image[IDin].size[i];
-  nelement = data.image[IDin].nelement;
+    naxes[i] = data.image[IDin].md[0].size[i];
+  nelement = data.image[IDin].md[0].nelement;
 
   if(atype == COMPLEX_FLOAT) // single precision
     {
-      IDre = create_image_ID(re_name,naxis,naxes,FLOAT);
-      IDim = create_image_ID(im_name,naxis,naxes,FLOAT);
+      IDre = create_image_ID(re_name,naxis,naxes,FLOAT, data.SHARED_DFT);
+      IDim = create_image_ID(im_name,naxis,naxes,FLOAT, data.SHARED_DFT);
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1802,8 +2104,8 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
     }
   else if(atype==COMPLEX_DOUBLE) // double precision
     {
-      IDre = create_image_ID(re_name,naxis,naxes,DOUBLE);
-      IDim = create_image_ID(im_name,naxis,naxes,DOUBLE);
+      IDre = create_image_ID(re_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
+      IDim = create_image_ID(im_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
   
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
@@ -1847,17 +2149,17 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
   int n;
 
   IDin = image_ID(in_name);
-  atype = data.image[IDin].atype;
-  naxis = data.image[IDin].naxis;
+  atype = data.image[IDin].md[0].atype;
+  naxis = data.image[IDin].md[0].naxis;
 
   for(i=0;i<naxis;i++)
-    naxes[i] = data.image[IDin].size[i];
-  nelement = data.image[IDin].nelement;
+    naxes[i] = data.image[IDin].md[0].size[i];
+  nelement = data.image[IDin].md[0].nelement;
 
   if(atype==COMPLEX_FLOAT) // single precision
     {
-      IDam = create_image_ID(am_name,naxis,naxes,FLOAT);
-      IDph = create_image_ID(ph_name,naxis,naxes,FLOAT);
+      IDam = create_image_ID(am_name,naxis,naxes,FLOAT, data.SHARED_DFT);
+      IDph = create_image_ID(ph_name,naxis,naxes,FLOAT, data.SHARED_DFT);
       
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) private(ii,amp_f,pha_f)
@@ -1877,8 +2179,8 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
     }
   else if(atype==COMPLEX_DOUBLE) // double precision
     {
-      IDam = create_image_ID(am_name,naxis,naxes,DOUBLE);
-      IDph = create_image_ID(ph_name,naxis,naxes,DOUBLE);
+      IDam = create_image_ID(am_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
+      IDph = create_image_ID(ph_name,naxis,naxes,DOUBLE, data.SHARED_DFT);
       
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) private(ii,amp_d,pha_d)
@@ -1933,7 +2235,7 @@ int clearall()
   for(ID=0;ID<data.NB_MAX_IMAGE;ID++)
     {
       if(data.image[ID].used==1)
-	delete_image_ID(data.image[ID].name);
+	delete_image_ID(data.image[ID].md[0].name);
     }
   for(ID=0;ID<data.NB_MAX_VARIABLE;ID++)
     {
@@ -1951,13 +2253,13 @@ int check_2Dsize(char *ID_name, long xsize, long ysize)
 
   value = 1;
   ID=image_ID(ID_name);
-  if(data.image[ID].naxis!=2)
+  if(data.image[ID].md[0].naxis!=2)
     value=0;
   if(value==1)
     {
-      if(data.image[ID].size[0]!=xsize)
+      if(data.image[ID].md[0].size[0]!=xsize)
 	value = 0;
-      if(data.image[ID].size[1]!=ysize)
+      if(data.image[ID].md[0].size[1]!=ysize)
 	value = 0;
     }
   
@@ -1971,26 +2273,26 @@ int check_3Dsize(char *ID_name, long xsize, long ysize, long zsize)
 
   value = 1;
   ID=image_ID(ID_name);
-  if(data.image[ID].naxis!=3)
+  if(data.image[ID].md[0].naxis!=3)
     {
-      /*      printf("Wrong naxis : %ld - should be 3\n",data.image[ID].naxis);*/
+      /*      printf("Wrong naxis : %ld - should be 3\n",data.image[ID].md[0].naxis);*/
       value = 0;
     }
   if(value==1)
     {
-      if(data.image[ID].size[0]!=xsize)
+      if(data.image[ID].md[0].size[0]!=xsize)
 	{
-	  /*	  printf("Wrong xsize : %ld - should be %ld\n",data.image[ID].size[0],xsize);*/
+	  /*	  printf("Wrong xsize : %ld - should be %ld\n",data.image[ID].md[0].size[0],xsize);*/
 	  value = 0;
 	}
-      if(data.image[ID].size[1]!=ysize)
+      if(data.image[ID].md[0].size[1]!=ysize)
 	{
-	  /*	  printf("Wrong ysize : %ld - should be %ld\n",data.image[ID].size[1],ysize);*/
+	  /*	  printf("Wrong ysize : %ld - should be %ld\n",data.image[ID].md[0].size[1],ysize);*/
 	  value = 0;
 	}
-      if(data.image[ID].size[2]!=zsize)
+      if(data.image[ID].md[0].size[2]!=zsize)
 	{
-	  /*	  printf("Wrong zsize : %ld - should be %ld\n",data.image[ID].size[2],zsize);*/
+	  /*	  printf("Wrong zsize : %ld - should be %ld\n",data.image[ID].md[0].size[2],zsize);*/
 	  value = 0;
 	}
     }
@@ -2011,20 +2313,20 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
   int n;
   
   ID = image_ID(ID_name);
-  atype = data.image[ID].atype;
+  atype = data.image[ID].md[0].atype;
 
-  if(data.image[ID].naxis!=3)
+  if(data.image[ID].md[0].naxis!=3)
     {
-      n = snprintf(errmsg,SBUFFERSIZE,"Wrong naxis : %ld - should be 3\n",data.image[ID].naxis);
+      n = snprintf(errmsg,SBUFFERSIZE,"Wrong naxis : %ld - should be 3\n",data.image[ID].md[0].naxis);
       if(n >= SBUFFERSIZE) 
 	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
       printERROR(__FILE__,__func__,__LINE__,errmsg);
       exit(0);
     }
-  xsize = data.image[ID].size[0];
-  ysize = data.image[ID].size[1];
-  zsize = data.image[ID].size[2];
+  xsize = data.image[ID].md[0].size[0];
+  ysize = data.image[ID].md[0].size[1];
+  zsize = data.image[ID].md[0].size[2];
 
   if(atype==FLOAT) // single precision
     {

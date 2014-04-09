@@ -45,7 +45,7 @@ int delete_image_ID_prefix(char *prefix);
 
 int delete_variable_ID(char* varname);
 
-long create_image_ID(char *name, long naxis, long *size, int atype);
+long create_image_ID(char *name, long naxis, long *size, int atype, int shared);
 
 long create_1Dimage_ID(char *ID_name, long xsize);
 

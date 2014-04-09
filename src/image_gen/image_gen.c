@@ -367,8 +367,8 @@ long make_double_star(char *ID_name, long l1, long l2, double intensity_1, doubl
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   data.image[ID].array.F[((int) (naxes[1]/2))*naxes[0]+((int) (naxes[0]/2))] = intensity_1;
   data.image[ID].array.F[((int) (naxes[1]/2+separation*cos(position_angle)))*naxes[0]+((int) (naxes[0]/2+separation*sin(position_angle)))] = intensity_2;
@@ -394,8 +394,8 @@ long make_disk(char *ID_name, long l1, long l2, double x_center, double y_center
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
 
   x1 = (long) (x_center-radius-2);
   x2 = (long) (x_center+radius+2);
@@ -531,8 +531,8 @@ long make_subpixdisk(char *ID_name, long l1, long l2, double x_center, double y_
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
  
   x1 = (long) (x_center-radius-2);
   x2 = (long) (x_center+radius+2);
@@ -735,8 +735,8 @@ long make_subpixdisk_perturb(char *ID_name, long l1, long l2, double x_center, d
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
  
   x1 = (long) (x_center-radius1-2);
   x2 = (long) (x_center+radius1+2);
@@ -959,8 +959,8 @@ long make_square(char *ID_name, long l1, long l2, double x_center, double y_cent
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -980,8 +980,8 @@ long make_rectangle(char *ID_name, long l1, long l2, double x_center, double y_c
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1004,8 +1004,8 @@ long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, 
 
   create_2Dimage_ID(IDname,l1,l2);
   ID = image_ID(IDname);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
 
   r0 = sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
   PA0 = atan2((y2-y1),(x2-x1));
@@ -1042,8 +1042,8 @@ long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_cent
 
   create_2Dimage_ID(IDname,l1,l2);
   ID = image_ID(IDname);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1234,8 +1234,8 @@ long make_jacquinot_pupil(char *ID_name, long l1, long l2, double x_center, doub
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1256,8 +1256,8 @@ long make_sectors(char *ID_name, long l1, long l2, double x_center, double y_cen
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1298,8 +1298,8 @@ long make_rnd(char *ID_name, long l1, long l2, char *options)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   nelement=naxes[0]*naxes[1];
   /*  srand(time(NULL));*/
 
@@ -1374,8 +1374,8 @@ int make_rnd1(char *ID_name, long l1, long l2, char *options)
 
    create_2Dimage_ID(ID_name,l1,l2);
    ID = image_ID(ID_name);
-   naxes[0] = data.image[ID].size[0];
-   naxes[1] = data.image[ID].size[1]; 
+   naxes[0] = data.image[ID].md[0].size[0];
+   naxes[1] = data.image[ID].md[0].size[1]; 
    nelements=naxes[0]*naxes[1];
    
    prng_get_array(g,data.image[ID].array.F,nelements); 
@@ -1395,8 +1395,8 @@ long make_gauss(char *ID_name, long l1, long l2, double a, double A)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1418,8 +1418,8 @@ long make_2axis_gauss(char *ID_name, long l1, long l2, double a, double A, doubl
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1501,8 +1501,8 @@ long make_cluster(char *ID_name, long l1, long l2, char *options)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   if (sim==0)
     {
@@ -1698,8 +1698,8 @@ long make_Egalaxy(char *ID_name, long l1, long l2, char *options)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   xcenter = naxes[0]/2;
   ycenter = naxes[1]/2;
 
@@ -1773,8 +1773,8 @@ long make_slopexy(char *ID_name, long l1,long l2, double sx, double sy)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   coeff = sx*(naxes[0]/2)+sy*(naxes[1]/2);
 
@@ -1795,8 +1795,8 @@ long make_dist(char *ID_name, long l1,long l2, double f1, double f2)
   
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1817,8 +1817,8 @@ long make_PosAngle(char *ID_name, long l1,long l2, double f1, double f2)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1]; 
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1]; 
   
   for (jj = 0; jj < naxes[1]; jj++) 
     for (ii = 0; ii < naxes[0]; ii++)
@@ -1850,8 +1850,8 @@ long make_psf_from_profile(char *profile_name, char *ID_name, long l1, long l2)
 
   create_2Dimage_ID(ID_name,l1,l2);
   ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].size[0];
-  naxes[1] = data.image[ID].size[1];    
+  naxes[0] = data.image[ID].md[0].size[0];
+  naxes[1] = data.image[ID].md[0].size[1];    
   
   /* compute number of lines */
   sprintf(lstring,"wc -l %s > tmpcnt.txt",profile_name);
@@ -1997,8 +1997,8 @@ long make_tile(char *IDin_name, long size, char *IDout_name)
 
   IDout = create_2Dimage_ID(IDout_name,size,size);
   IDin = image_ID(IDin_name);
-  sizex0 = data.image[IDin].size[0];
-  sizey0 = data.image[IDin].size[1];
+  sizex0 = data.image[IDin].md[0].size[0];
+  sizey0 = data.image[IDin].md[0].size[1];
 
   for(ii=0;ii<size;ii++)
     for(jj=0;jj<size;jj++)

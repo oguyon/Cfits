@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
   data.Debug = 0;
   data.overwrite = 0;
   data.precision = 0; // float is default precision
-
+  data.SHARED_DFT = 0; // do not allocate shared memory for images
 
   // initialize readline
   // Tell readline to use custom completion function
@@ -503,16 +503,24 @@ char* CLI_generator(const char* text, int state)
   
   while (list_index1<data.NB_MAX_IMAGE) 
     {
-      name = data.image[list_index1].name;
       iok = data.image[list_index1].used;
+      if(iok == 1)
+	{
+	  name = data.image[list_index1].md[0].name;
+	  //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].md[0].name, name);
+	}
       list_index1++;
-      if(iok==1) 
+      if(iok == 1)
 	{
 	  if (strncmp (name, text, len) == 0)
 	    return (dupstr(name));
-	}
+	
+	  // printf("DONE %d\n", list_index1);
+	  //fflush(stdout);
+	}      
     }
-  
+  //  printf("DONE\n");
+  //fflush(stdout);
   /* If no names matched, then return NULL. */
   return ((char *)NULL);
   
@@ -625,6 +633,7 @@ void main_init()
   }
   
   data.image[0].used   = 0;
+  data.image[0].shmfd  = -1;
   tmplong              = data.NB_MAX_VARIABLE;
   data.NB_MAX_VARIABLE = data.NB_MAX_VARIABLE + NB_VARIABLES_BUFFER_REALLOC ;
   
@@ -632,7 +641,7 @@ void main_init()
   data.variable = (VARIABLE *) realloc(data.variable, data.NB_MAX_VARIABLE*sizeof(VARIABLE));
   for(i=tmplong;i<data.NB_MAX_VARIABLE;i++)
     data.variable[i].used = 0;
-  
+     
   
   
   tmplong = data.NB_MAX_VARIABLE;
@@ -876,6 +885,8 @@ int re_alloc()
 	}
       for(i=tmplong;i<data.NB_MAX_IMAGE;i++)   {
 	data.image[i].used = 0;
+	data.image[i].shmfd = -1;
+	data.image[i].memsize = 0;
       }
     }
   
