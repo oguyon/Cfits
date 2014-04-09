@@ -58,7 +58,7 @@ char errmsg[SBUFFERSIZE];
 
 int list_image_ID();
 int list_variable_ID();
-long create_image_ID(char *name, long naxis, long *size, int atype, int shared);
+long create_image_ID(char *name, long naxis, long *size, int atype, int shared, long nbkw);
 long read_sharedmem_image(char *name);
 int memory_monitor(char *termttyname);
 int list_image_ID_ncurses();
@@ -97,10 +97,10 @@ int create_image_cli()
 	}
       switch(data.precision){
       case 0:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, data.SHARED_DFT);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, data.SHARED_DFT, 10);
 	break;
       case 1:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, data.SHARED_DFT);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, data.SHARED_DFT, 10);
 	break;
       }
       free(imsize);
@@ -138,10 +138,10 @@ int create_image_shared_cli()
 	}
       switch(data.precision){
       case 0:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, 1);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, FLOAT, 1, 10);
 	break;
       case 1:
-	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, 1);
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, 1, 10);
 	break;
       }
       free(imsize);
@@ -163,7 +163,7 @@ int create_2Dimage_float()
   imsize[0] = data.cmdargtoken[2].val.numl;
   imsize[1] = data.cmdargtoken[3].val.numl;
 
-  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT, data.SHARED_DFT);
+  create_image_ID(data.cmdargtoken[1].val.string, 2, imsize, FLOAT, data.SHARED_DFT, 10);
 
   free(imsize);
 
@@ -182,7 +182,7 @@ int create_3Dimage_float()
   imsize[1] = data.cmdargtoken[3].val.numl;
   imsize[2] = data.cmdargtoken[4].val.numl;
 
-  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT, data.SHARED_DFT);
+  create_image_ID(data.cmdargtoken[1].val.string, 3, imsize, FLOAT, data.SHARED_DFT, 10);
 
   free(imsize);
 
@@ -343,7 +343,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
   strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"readshmim");
@@ -361,7 +361,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"create image in shared mem, default precision");
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
   strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"crea3dim");
@@ -370,7 +370,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
   strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT, 0)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT, 0, 10)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"rm");
@@ -823,7 +823,7 @@ int delete_variable_ID(char* varname) /* deletes a variable ID */
 
 /* creates an image ID */
 /* all images should be created by this function */
-long create_image_ID(char *name, long naxis, long *size, int atype, int shared)
+long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int NBkw)
 {
   long ID;
   long i,ii;

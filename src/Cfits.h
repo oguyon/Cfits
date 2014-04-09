@@ -151,7 +151,7 @@ int TYPESIZE[7];
 typedef struct
 {
   char name[16];
-  int type; // 0: undefined, 1: long, 2: double, 3: 16-char string 
+  int type; // 0: unused, 1: long, 2: double, 3: 16-char string 
   union {
     long numl;
     double numf;
