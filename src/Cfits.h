@@ -151,23 +151,15 @@ int TYPESIZE[7];
 typedef struct
 {
   char name[16];
-  long value;
+  int type; // 0: undefined, 1: long, 2: double, 3: 16-char string 
+  union {
+    long numl;
+    double numf;
+    char valstr[16];
+  } value;
   char comment[80];
-} IMAGE_KEYWORD_LONG;
+} IMAGE_KEYWORD;
 
-typedef struct
-{
-  char name[16];
-  double value;
-  char comment[80];
-} IMAGE_KEYWORD_DOUBLE;
-
-typedef struct
-{
-  char name[16];
-  char value[16];
-  char comment[80];
-} IMAGE_KEYWORD_STRING;
 
 
 typedef struct
@@ -189,16 +181,9 @@ typedef struct
   int status;
   long cnt0;                 // counter (if image is updated)
   long cnt1;
-
-  long NBkw_long;
-  IMAGE_KEYWORD_LONG *kwlong;
-
-  long NBkw_double;
-  IMAGE_KEYWORD_DOUBLE *kwdouble;
-
-  long NBkw_string;
-  IMAGE_KEYWORD_STRING *kwstring;
   
+  long NBkw; // number of keywords
+
 } IMAGE_METADATA;
 
 
@@ -222,6 +207,7 @@ typedef struct			/* structure used to store data arrays */
     unsigned short *U;
   } array;                      // pointer to data array
  
+  IMAGE_KEYWORD *kw;
 
 } IMAGE;
 
