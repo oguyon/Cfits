@@ -771,6 +771,9 @@ int delete_image_ID(char* imname) /* deletes an ID */
 	  data.image[ID].md = NULL;
 	}
 
+      free(data.image[ID].kw);
+      data.image[ID].kw = NULL;
+
        /*      free(data.image[ID].size);*/
        //      data.image[ID].md[0].last_access = 0;
     }
@@ -837,7 +840,11 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
   char SM_fname[200];
   int result;
   IMAGE_METADATA *map;
-  void *mapv; // pointed cast in bytes
+  char *mapv; // pointed cast in bytes
+
+  int kw;
+  char comment[80];
+  char kname[16];
 
   ID = -1;
   if(image_ID(name)==-1)
@@ -854,7 +861,6 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 	{	  
 	  sharedsize = sizeof(IMAGE_METADATA);
 
-	  //	  printf("sharedsize = %zu\n", sharedsize);
 	  if(atype==CHAR)
 	    sharedsize += nelement*sizeof(char);
 	  if(atype==INT)
@@ -870,7 +876,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 	  if(atype==USHORT)
 	    sharedsize += nelement*sizeof(unsigned short int);
 
-	  //	  printf("sharedsize = %zu\n", sharedsize);
+	  sharedsize += NBkw*sizeof(IMAGE_KEYWORD);
+	  
 	  
 	  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
 	  SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
@@ -910,6 +917,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 	{
 	  data.image[ID].md = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 	  data.image[ID].md[0].shared = 0;
+	  data.image[ID].kw = (IMAGE_KEYWORD*) malloc(sizeof(IMAGE_KEYWORD)*NBkw);	  
 	}
 
       data.image[ID].md[0].atype = atype;
@@ -917,7 +925,9 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
       strcpy(data.image[ID].md[0].name, name);	
       for(i=0;i<naxis;i++)
 	data.image[ID].md[0].size[i] = size[i];
-    
+      data.image[ID].md[0].NBkw = NBkw;
+
+      
 
 
       if(atype==CHAR)
@@ -967,14 +977,15 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 	      exit(0);   
 	    }
 	}
-      if(atype==FLOAT)
-	{
+      if(atype==FLOAT)	{
 	  if(shared==1)
 	    {
-	      mapv = (void*) map;
+	      mapv = (char*) map;
 	      mapv += sizeof(IMAGE_METADATA);
 	      data.image[ID].array.F = (float*) (mapv);
 	      memset(data.image[ID].array.F, '\0', nelement*sizeof(float)); 
+	      mapv += sizeof(float)*nelement;
+	      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
 	    }
 	  else
 	    data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
@@ -1122,6 +1133,20 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 	  }
     }
 
+
+  // initialize keywords (test)
+  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+    {
+      sprintf(kname, "KEY%ld", kw);
+      strcpy(data.image[ID].kw[kw].name, kname);	
+      data.image[ID].kw[kw].type = 'D';
+      data.image[ID].kw[kw].value.numf = 1.0*kw;
+      sprintf(comment, "this is keyword %ld", kw);
+      strcpy(data.image[ID].kw[kw].comment, comment);
+    }
+
+
+
   if(MEM_MONITOR == 1)
     list_image_ID_ncurses();
   
@@ -1137,6 +1162,7 @@ long read_sharedmem_image(char *name)
   struct stat file_stat;
   char SM_fname[200];
   IMAGE_METADATA *map;
+  char *mapv;
   int atype;
 
 
@@ -1164,23 +1190,26 @@ long read_sharedmem_image(char *name)
   data.image[ID].md[0].shared = 1;
 
   printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
+  
 
-    
+  mapv = (char*) map;
+  mapv += sizeof(IMAGE_METADATA);
 
   if(atype==CHAR)
-    data.image[ID].array.C = (char*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.C = (char*) mapv;
   if(atype==INT)
-    data.image[ID].array.I = (int*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.I = (int*) mapv;
   if(atype==FLOAT)
-    data.image[ID].array.F = (float*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.F = (float*) mapv;
   if(atype==DOUBLE)
-    data.image[ID].array.D = (double*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.D = (double*) mapv;
   if(atype==COMPLEX_FLOAT)
-    data.image[ID].array.CF = (complex_float*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.CF = (complex_float*) mapv;
   if(atype==COMPLEX_DOUBLE)
-    data.image[ID].array.CD = (complex_double*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.CD = (complex_double*) mapv;
   if(atype==USHORT)
-    data.image[ID].array.U = (unsigned short*) map + sizeof(IMAGE_METADATA);
+    data.image[ID].array.U = (unsigned short*) mapv;
+
 
   if(MEM_MONITOR == 1)
     list_image_ID_ncurses();
