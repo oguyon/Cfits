@@ -1169,8 +1169,8 @@ long read_sharedmem_image(char *name)
   ID = next_avail_image_ID();
   data.image[ID].used = 1;
 
-  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name); 	
-  SM_fd = open(SM_fname, O_RDWR);
+  //  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name); 	
+  SM_fd = open(name, O_RDWR);
 
   fstat(SM_fd, &file_stat);
   printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
