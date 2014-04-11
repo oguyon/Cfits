@@ -839,9 +839,7 @@ int save_sh_fits(char *ID_name, char *file_name)
   char file_name1[SBUFFERSIZE];
   int n;
   
-  unsigned short int x;
-  short int sh_y;
-
+ 
   if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
     {
       n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
@@ -923,14 +921,7 @@ int save_sh_fits(char *ID_name, char *file_name)
 	      }
 	    fflush(stdout);
 	    for (ii = 0; ii < nelements; ii++)   
-	      {
-		x = data.image[ID].array.U[ii];
-		if(x>32767)
-		  sh_y = x-32768;
-		else
-		  sh_y = x;
-		array[ii] = sh_y; //(short int) data.image[ID].array.U[ii];	   
-	      }
+	      array[ii] = (short int) data.image[ID].array.U[ii];	   	      
 	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
@@ -992,6 +983,165 @@ int save_sh_fits(char *ID_name, char *file_name)
 }
 
 
+
+
+
+/* saves an image in a unsigned short int format */
+
+int save_ush_fits(char *ID_name, char *file_name)
+{
+  fitsfile *fptr;       
+  long  fpixel = 1, naxis, nelements;
+  long naxes[3];
+  unsigned short int *array = NULL;
+  long ID;
+  long ii;
+  long i;
+  int atype;
+  char file_name1[SBUFFERSIZE];
+  int n;
+  
+ 
+  if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
+    {
+      n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
+      if(n >= SBUFFERSIZE) 
+	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+      printWARNING(__FILE__,__func__,__LINE__,errormessage);
+      //	printf("WARNING: automatic overwrite on file \"%s\"\n",file_name);
+      n = snprintf(file_name1,SBUFFERSIZE,"!%s",file_name);
+      if(n >= SBUFFERSIZE) 
+	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+    }
+  else
+    {
+      n = snprintf(file_name1,SBUFFERSIZE,"%s",file_name);
+      if(n >= SBUFFERSIZE) 
+	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+    }
+
+    ID = image_ID(ID_name);
+
+    if (ID!=-1)
+      {
+	atype = data.image[ID].md[0].atype;
+	naxis=data.image[ID].md[0].naxis;
+	for(i=0;i<naxis;i++)
+	  naxes[i] = data.image[ID].md[0].size[i];
+
+	nelements = 1;
+	for(i=0;i<naxis;i++)
+	  nelements *= naxes[i];
+	switch (atype) 
+	  {
+	  case CHAR :	  
+	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    if(array==NULL)
+	      {
+		printERROR(__FILE__,__func__,__LINE__,"malloc error");
+		exit(0);
+	      }
+	    for (ii = 0; ii < nelements; ii++)    
+	      array[ii] = (short int) data.image[ID].array.C[ii];
+	    break;
+	  case INT :
+	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    if(array==NULL)
+	      {
+		printERROR(__FILE__,__func__,__LINE__,"malloc error");
+		exit(0);
+	      }
+	    for (ii = 0; ii < nelements; ii++)    
+	      array[ii] = (short int) data.image[ID].array.I[ii];
+	    break;
+	  case FLOAT :
+	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    if(array==NULL)
+	      {
+		printERROR(__FILE__,__func__,__LINE__,"malloc error");
+		exit(0);
+	      }
+	    for (ii = 0; ii < nelements; ii++)    
+	      array[ii] = (short int) data.image[ID].array.F[ii];
+	    break;
+	  case DOUBLE :
+	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    if(array==NULL)
+	      {
+		printERROR(__FILE__,__func__,__LINE__,"malloc error");
+		exit(0);
+	      }
+	    for (ii = 0; ii < nelements; ii++)    
+	      array[ii] = (short int) data.image[ID].array.D[ii];
+	    break;
+	  case USHORT :
+	    break;
+	  default :
+	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+	    exit(0);
+	    break;
+	  }
+	
+	fits_create_file(&fptr, file_name1, &FITSIO_status);
+	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+	  {
+	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_file\" with filename \"%s\" %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
+	    if(file_exists(file_name1)==1)
+	      {
+		fprintf(stderr,"%c[%d;%dm File \"%s\" already exists. Make sure you remove this file before attempting to write file with identical name. %c[%d;m\n", (char) 27, 1, 31,file_name1, (char) 27, 0);
+		exit(0);
+	      }
+	    else
+	      {
+		fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+		list_image_ID();
+	      }
+	  }
+
+	fits_create_img(fptr, USHORT_IMG, naxis, naxes, &FITSIO_status);
+	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+	  {
+	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_create_img\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+	    fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+	    list_image_ID();
+	  }
+
+	if(atype==USHORT)
+	  fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
+	else
+	  fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
+
+	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+	  {
+	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_write_img\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+	    fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+	    list_image_ID();
+	  }
+
+	fits_close_file (fptr, &FITSIO_status);
+	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+	  {
+	    fprintf(stderr,"%c[%d;%dm Error while calling \"fits_close_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+	    fprintf(stderr,"%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+	    list_image_ID();
+	  }
+
+	free(array);
+	array = NULL;
+      }
+    else 
+      fprintf(stderr,"%c[%d;%dm image \"%s\" does not exist in memory %c[%d;m\n", (char) 27, 1, 31, ID_name, (char) 27, 0);
+          
+    return(0);
+}
+
+
+
+
+
+
+
+
 int save_fits(char *ID_name, char *file_name)
 {
   long ID;
@@ -1010,7 +1160,7 @@ int save_fits(char *ID_name, char *file_name)
 	save_db_fits(ID_name, file_name);
 	break;
       case USHORT:
-	save_sh_fits(ID_name, file_name);
+	save_ush_fits(ID_name, file_name);
 	break;	
       }
     }  
