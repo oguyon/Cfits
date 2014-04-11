@@ -925,7 +925,10 @@ int save_sh_fits(char *ID_name, char *file_name)
 	    for (ii = 0; ii < nelements; ii++)   
 	      {
 		x = data.image[ID].array.U[ii];
-		sh_y = x < 32767 ? (int)x : (x > 32768 ? -(int)-x : -32768);
+		if(x>32767)
+		  sh_y = x-32768;
+		else
+		  sh_y = x;
 		array[ii] = sh_y; //(short int) data.image[ID].array.U[ii];	   
 	      }
 	    break;
