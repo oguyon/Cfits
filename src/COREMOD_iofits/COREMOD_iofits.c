@@ -912,6 +912,14 @@ int save_sh_fits(char *ID_name, char *file_name)
 	      array[ii] = (short int) data.image[ID].array.D[ii];
 	    break;
 	  case USHORT :
+	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    if(array==NULL)
+	      {
+		printERROR(__FILE__,__func__,__LINE__,"malloc error");
+		exit(0);
+	      }
+	    for (ii = 0; ii < nelements; ii++)    
+	      array[ii] = (short int) data.image[ID].array.D[ii];	   
 	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
@@ -943,10 +951,10 @@ int save_sh_fits(char *ID_name, char *file_name)
 	    list_image_ID();
 	  }
 
-	if(atype==USHORT)
-	  fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
-	else
-	  fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
+	//	if(atype==USHORT)
+	//fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
+	//else
+	fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
 
 	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
 	  {
