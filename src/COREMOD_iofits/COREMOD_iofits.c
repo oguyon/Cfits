@@ -1035,7 +1035,7 @@ int save_ush_fits(char *ID_name, char *file_name)
 	switch (atype) 
 	  {
 	  case CHAR :	  
-	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
 	    if(array==NULL)
 	      {
 		printERROR(__FILE__,__func__,__LINE__,"malloc error");
@@ -1045,7 +1045,7 @@ int save_ush_fits(char *ID_name, char *file_name)
 	      array[ii] = (short int) data.image[ID].array.C[ii];
 	    break;
 	  case INT :
-	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
 	    if(array==NULL)
 	      {
 		printERROR(__FILE__,__func__,__LINE__,"malloc error");
@@ -1055,24 +1055,24 @@ int save_ush_fits(char *ID_name, char *file_name)
 	      array[ii] = (short int) data.image[ID].array.I[ii];
 	    break;
 	  case FLOAT :
-	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
 	    if(array==NULL)
 	      {
 		printERROR(__FILE__,__func__,__LINE__,"malloc error");
 		exit(0);
 	      }
 	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (short int) data.image[ID].array.F[ii];
+	      array[ii] = (unsigned short int) data.image[ID].array.F[ii];
 	    break;
 	  case DOUBLE :
-	    array = (short int*) malloc(sizeof(short int)*nelements);   
+	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
 	    if(array==NULL)
 	      {
 		printERROR(__FILE__,__func__,__LINE__,"malloc error");
 		exit(0);
 	      }
 	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (short int) data.image[ID].array.D[ii];
+	      array[ii] = (unsigned short int) data.image[ID].array.D[ii];
 	    break;
 	  case USHORT :
 	    break;
@@ -1107,9 +1107,9 @@ int save_ush_fits(char *ID_name, char *file_name)
 	  }
 
 	if(atype==USHORT)
-	  fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
+	  fits_write_img(fptr, TUSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
 	else
-	  fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
+	  fits_write_img(fptr, TUSHORT, fpixel, nelements, array, &FITSIO_status);
 
 	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
 	  {
