@@ -16,9 +16,8 @@ int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_
 int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart);
 
 double arith_image_total(char *ID_name);
-
+double arith_image_mean(char *ID_name);
 double arith_image_min(char *ID_name);
-
 double arith_image_max(char *ID_name);
 
 double arith_image_percentile(char *ID_name, double fraction);

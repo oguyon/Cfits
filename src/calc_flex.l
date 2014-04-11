@@ -143,7 +143,23 @@ yylval.fnctptr = arith_image_total;
 return TKFUNC_im_d; 
 }
 
+"imin(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = arith_image_min;
+return TKFUNC_im_d; 
+}
 
+"imax(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = arith_image_max;
+return TKFUNC_im_d; 
+}
+
+"imean(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = arith_image_mean;
+return TKFUNC_im_d; 
+}
 
 
 
