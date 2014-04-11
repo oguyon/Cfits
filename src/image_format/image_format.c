@@ -112,6 +112,17 @@ int IMAGE_FORMAT_FITS_to_ushortintbin_lock_cli()
     return 1;
 }
 
+int IMAGE_FORMAT_FITS_to_floatbin_lock_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+      IMAGE_FORMAT_FITS_to_floatbin_lock(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 
 int init_image_format()
 {
@@ -135,6 +146,15 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].syntax,"str1 is image, str2 is binary file");
   strcpy(data.cmd[data.NBcmd].example,"writeushortintlock im im.bin");
   strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"writefloatlock");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_FITS_to_floatbin_lock_cli;
+  strcpy(data.cmd[data.NBcmd].info,"write float with file locking");
+  strcpy(data.cmd[data.NBcmd].syntax,"str1 is image, str2 is binary file");
+  strcpy(data.cmd[data.NBcmd].example,"writefloatlock im im.bin");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_floatbin_lock( char *IDname, char *fname)");
   data.NBcmd++;
 
  // add atexit functions here
