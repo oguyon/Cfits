@@ -919,7 +919,7 @@ int save_sh_fits(char *ID_name, char *file_name)
 		exit(0);
 	      }
 	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (short int) data.image[ID].array.D[ii];	   
+	      array[ii] = (short int) data.image[ID].array.U[ii];	   
 	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
