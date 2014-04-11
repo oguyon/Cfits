@@ -55,8 +55,9 @@ extern int yydebug;
      TKCOMMAND = 264,
      TKFUNC_d_d = 265,
      TKFUNC_dd_d = 266,
-     TKFUNC_im_d = 267,
-     NEG = 268
+     TKFUNC_ddd_d = 267,
+     TKFUNC_im_d = 268,
+     NEG = 269
    };
 #endif
 /* Tokens.  */
@@ -69,8 +70,9 @@ extern int yydebug;
 #define TKCOMMAND 264
 #define TKFUNC_d_d 265
 #define TKFUNC_dd_d 266
-#define TKFUNC_im_d 267
-#define NEG 268
+#define TKFUNC_ddd_d 267
+#define TKFUNC_im_d 268
+#define NEG 269
 
 
 
@@ -88,7 +90,7 @@ typedef union YYSTYPE
 
 
 /* Line 2053 of yacc.c  */
-#line 92 "calc_bison.h"
+#line 94 "calc_bison.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

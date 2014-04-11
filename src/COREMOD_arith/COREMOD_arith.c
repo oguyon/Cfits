@@ -68,6 +68,19 @@ int arith_set_pixel_cli()
     return 1;
 }
 
+int arith_image_trunc_cli()
+{
+
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)==0)
+    {
+      arith_image_trunc(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 
 
 
@@ -98,6 +111,15 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_pixel(char *ID_name, double value, long x, long y)");
   data.NBcmd++;
   
+  strcpy(data.cmd[data.NBcmd].key,"imtrunc");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_image_trunc_cli;
+  strcpy(data.cmd[data.NBcmd].info,"trucate pixel values");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <min> <max> <output image>");
+  strcpy(data.cmd[data.NBcmd].example,"imtrunc im 0.0 1.0 out");
+  strcpy(data.cmd[data.NBcmd].Ccall,"arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out)");
+  data.NBcmd++;
+
 
  // add atexit functions here
 
@@ -2037,7 +2059,7 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
 
 double Ptrunc(double a, double b, double c) {double value; value=a; if(a<b){value=b;}; if(a>c){value=c;}; return(value);}
 
-int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out){ arith_image_function_1ff_1(ID_name,f1,f2,ID_out,&Ptrunc); return(0);}
+int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out){ arith_image_function_1ff_1(ID_name, f1, f2, ID_out, &Ptrunc); return(0);}
 
 int arith_image_trunc_inplace(char *ID_name, double f1, double f2) { arith_image_function_1ff_1_inplace(ID_name,f1,f2,&Ptrunc); return(0);}
 

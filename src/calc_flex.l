@@ -117,6 +117,11 @@ yylval.fnctptr = acos;
 return TKFUNC_d_d; 
 }
 
+"trunc(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = trunc;
+return TKFUNC_d_d; 
+}
 
 
 

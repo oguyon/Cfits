@@ -35,6 +35,7 @@ extern DATA data;
 %token <string> TKCOMMAND /* command */
 %token <fnctptr> TKFUNC_d_d /* function double -> double */
 %token <fnctptr> TKFUNC_dd_d /* function double double -> double */
+%token <fnctptr> TKFUNC_ddd_d /* function double double double -> double */
 %token <fnctptr> TKFUNC_im_d /* function image -> double */
 
 %type <val_l> expl
@@ -112,6 +113,14 @@ expd:      TKNUMd      { $$ = $1;        if(data.Debug>0){printf("this is a doub
 | TKFUNC_dd_d expl ',' expd ')'  { $$ = $1((double) $2,$4);  if(data.Debug>0){printf("double=func(long->double,double)\n");}}
 | TKFUNC_dd_d expd ',' expl ')'  { $$ = $1($2,(double) $4);  if(data.Debug>0){printf("double=func(double,long->double)\n");}}
 | TKFUNC_dd_d expl ',' expl ')'  { $$ = $1((double) $2,(double) $4);  if(data.Debug>0){printf("double=func(long->double,long->double)\n");}}
+| TKFUNC_ddd_d expd ',' expd ',' expd ')'  { $$ = $1($2,$4,$6);  if(data.Debug>0){printf("double=func(double,double,double)\n");}}
+| TKFUNC_ddd_d expl ',' expd ',' expd ')'  { $$ = $1((double) $2,$4,$6);  if(data.Debug>0){printf("double=func(long->double,double,double)\n");}}
+| TKFUNC_ddd_d expd ',' expl ',' expd ')'  { $$ = $1($2,(double) $4,$6);  if(data.Debug>0){printf("double=func(double,long->double,double)\n");}}
+| TKFUNC_ddd_d expl ',' expl ',' expd ')'  { $$ = $1((double) $2,(double) $4,$6);  if(data.Debug>0){printf("double=func(long->double,long->double,double)\n");}}
+| TKFUNC_ddd_d expd ',' expd ',' expl ')'  { $$ = $1($2,$4,(double) $6);  if(data.Debug>0){printf("double=func(double,double,long->double)\n");}}
+| TKFUNC_ddd_d expl ',' expd ',' expl ')'  { $$ = $1((double) $2,$4,(double) $6);  if(data.Debug>0){printf("double=func(long->double,double,long->double)\n");}}
+| TKFUNC_ddd_d expd ',' expl ',' expl ')'  { $$ = $1($2,(double) $4,(double) $6);  if(data.Debug>0){printf("double=func(double,long->double,long->double)\n");}}
+| TKFUNC_ddd_d expl ',' expl ',' expl ')'  { $$ = $1((double) $2,(double) $4,(double) $6);  if(data.Debug>0){printf("double=func(long->double,long->double,long->double)\n");}}
 | TKFUNC_im_d exps ')'  { $$ = $1($2);  if(data.Debug>0){printf("double=func(image)\n");}}
 | '(' expd ')'         { $$ = $2;                         }
 ;
