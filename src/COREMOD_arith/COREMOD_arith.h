@@ -151,7 +151,7 @@ int arith_image_trunc_inplace(char *ID_name, double f1, double f2);
 
 
 
-int arith_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl);
+//int arith_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl);
 
 int execute_arith(char *cmd);
 

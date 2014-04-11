@@ -50,10 +50,33 @@ int import_wisdom();
 int export_wisdom();
 int test_fftspeed(int nmax);
 
+
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
+
+
 int test_fftspeed_cli()
 {
   if(CLI_checkarg(1,2)==0)
     test_fftspeed((int) data.cmdargtoken[1].val.numl);
+
+  return 0;
+}
+
+
+int fft_image_translate_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1)==0)
+    fft_image_translate(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf);
+  else
+    return 1;
 
   return 0;
 }
@@ -104,7 +127,14 @@ int init_fft()
   strcpy(data.cmd[data.NBcmd].Ccall,"int test_fftwspeed(int nmax)");
   data.NBcmd++;
  
-
+  strcpy(data.cmd[data.NBcmd].key,"transl");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = fft_image_translate_cli;
+  strcpy(data.cmd[data.NBcmd].info,"translate image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<imagein> <imageout> <xtransl> <ytransl>");
+  strcpy(data.cmd[data.NBcmd].example,"transl im1 im2 2.3 -2.1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl);");
+  data.NBcmd++;
 
   return 0;
 }

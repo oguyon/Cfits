@@ -1135,16 +1135,16 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
 
   // initialize keywords (test)
-  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+  /*  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
     {
-      sprintf(kname, "KEY%ld", kw);
+      sprintf(kname, "KEY%d", kw);
       strcpy(data.image[ID].kw[kw].name, kname);	
       data.image[ID].kw[kw].type = 'D';
       data.image[ID].kw[kw].value.numf = 1.0*kw;
-      sprintf(comment, "this is keyword %ld", kw);
+      sprintf(comment, "this is keyword %d", kw);
       strcpy(data.image[ID].kw[kw].comment, comment);
     }
-
+  */
 
 
   if(MEM_MONITOR == 1)
@@ -1164,7 +1164,7 @@ long read_sharedmem_image(char *name)
   IMAGE_METADATA *map;
   char *mapv;
   int atype;
-
+  int kw;
 
   ID = next_avail_image_ID();
   data.image[ID].used = 1;
@@ -1210,6 +1210,19 @@ long read_sharedmem_image(char *name)
   if(atype==USHORT)
     data.image[ID].array.U = (unsigned short*) mapv;
 
+  mapv += sizeof(float)*data.image[ID].md[0].nelement;
+  data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+
+
+  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+    {
+      if(data.image[ID].kw[kw].type == 'L')
+	printf("%d  %s %ld %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numl, data.image[ID].kw[kw].comment);
+      if(data.image[ID].kw[kw].type == 'D')
+	printf("%d  %s %lf %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numf, data.image[ID].kw[kw].comment);
+      if(data.image[ID].kw[kw].type == 'S')
+	printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);      
+    }
 
   if(MEM_MONITOR == 1)
     list_image_ID_ncurses();
