@@ -839,6 +839,9 @@ int save_sh_fits(char *ID_name, char *file_name)
   char file_name1[SBUFFERSIZE];
   int n;
   
+  unsigned short int x;
+  short int sh_y;
+
   if((data.overwrite == 1)&&(file_name[0]!='!')&&(file_exists(file_name)==1))
     {
       n = snprintf(errormessage,SBUFFERSIZE,"automatic overwrite on file \"%s\"\n",file_name);
@@ -918,10 +921,13 @@ int save_sh_fits(char *ID_name, char *file_name)
 		printERROR(__FILE__,__func__,__LINE__,"malloc error");
 		exit(0);
 	      }
-	    printf("ushort\n");
 	    fflush(stdout);
-	    for (ii = 0; ii < nelements; ii++)    
-	      array[ii] = (short int) data.image[ID].array.U[ii];	   
+	    for (ii = 0; ii < nelements; ii++)   
+	      {
+		x = data.image[ID].array.U[ii];
+		sh_y = x < 32767 ? (int)x : (x > 32768 ? -(int)-x : -32768);
+		array[ii] = sh_y; //(short int) data.image[ID].array.U[ii];	   
+	      }
 	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
@@ -953,10 +959,10 @@ int save_sh_fits(char *ID_name, char *file_name)
 	    list_image_ID();
 	  }
 
-	//	if(atype==USHORT)
-	//fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
-	//else
-	fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
+	if(atype==USHORT)
+	  fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
+	else
+	  fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
 
 	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
 	  {
