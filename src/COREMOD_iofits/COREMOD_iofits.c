@@ -918,6 +918,8 @@ int save_sh_fits(char *ID_name, char *file_name)
 		printERROR(__FILE__,__func__,__LINE__,"malloc error");
 		exit(0);
 	      }
+	    printf("ushort\n");
+	    fflush(stdout);
 	    for (ii = 0; ii < nelements; ii++)    
 	      array[ii] = (short int) data.image[ID].array.U[ii];	   
 	    break;
