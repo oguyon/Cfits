@@ -1211,21 +1211,42 @@ long read_sharedmem_image(char *name)
       mapv += sizeof(IMAGE_METADATA);
       
       if(atype==CHAR)
-	data.image[ID].array.C = (char*) mapv;
+	{
+	  data.image[ID].array.C = (char*) mapv;
+	  mapv += sizeof(char)*data.image[ID].md[0].nelement;
+	}
       if(atype==INT)
-	data.image[ID].array.I = (int*) mapv;
+	{
+	  data.image[ID].array.I = (int*) mapv;
+	  mapv += sizeof(int)*data.image[ID].md[0].nelement;
+	}
       if(atype==FLOAT)
-	data.image[ID].array.F = (float*) mapv;
+	{
+	  data.image[ID].array.F = (float*) mapv;
+	  mapv += sizeof(float)*data.image[ID].md[0].nelement;
+	}      
       if(atype==DOUBLE)
-	data.image[ID].array.D = (double*) mapv;
+	{
+	  data.image[ID].array.D = (double*) mapv;
+	  mapv += sizeof(double)*data.image[ID].md[0].nelement;
+	}      
       if(atype==COMPLEX_FLOAT)
-	data.image[ID].array.CF = (complex_float*) mapv;
+	{
+	  data.image[ID].array.CF = (complex_float*) mapv;
+	  mapv += sizeof(complex_float)*data.image[ID].md[0].nelement;
+	}      
       if(atype==COMPLEX_DOUBLE)
-	data.image[ID].array.CD = (complex_double*) mapv;
+	{
+	  data.image[ID].array.CD = (complex_double*) mapv;
+	  mapv += sizeof(complex_double)*data.image[ID].md[0].nelement;
+	}      
       if(atype==USHORT)
-	data.image[ID].array.U = (unsigned short*) mapv;
-      
-      mapv += sizeof(float)*data.image[ID].md[0].nelement;
+	{
+	  data.image[ID].array.U = (unsigned short*) mapv;
+	  mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
+	}
+
+
       data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
       
       
