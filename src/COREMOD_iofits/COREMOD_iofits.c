@@ -710,16 +710,16 @@ int save_fl_fits(char *ID_name, char *file_name)
   if (ID!=-1)
     {
       atype = data.image[ID].md[0].atype;
-      naxis=data.image[ID].md[0].naxis;
+      naxis = data.image[ID].md[0].naxis;
       for(i=0;i<naxis;i++)
 	naxes[i] = data.image[ID].md[0].size[i];
       
       nelements = 1;
       for(i=0;i<naxis;i++)
 	nelements *= naxes[i];
-      
-      if(atype==CHAR)
+      switch(atype)
 	{
+	case CHAR :
 	  array = (float*) malloc(sizeof(float)*nelements);   
 	  if(array==NULL)
 	    {
@@ -728,9 +728,8 @@ int save_fl_fits(char *ID_name, char *file_name)
 	    }
 	  for (ii = 0; ii < nelements; ii++)    
 	    array[ii] = (float) data.image[ID].array.C[ii];
-	}
-      if(atype==INT)
-	{
+	  break;
+	case INT :
 	  array = (float*) malloc(sizeof(float)*nelements);   
 	  if(array==NULL)
 	    {
@@ -739,9 +738,10 @@ int save_fl_fits(char *ID_name, char *file_name)
 	    }
 	  for (ii = 0; ii < nelements; ii++)    
 	    array[ii] = (float) data.image[ID].array.I[ii];
-	}
-      if(atype==DOUBLE)
-	{
+	  break;
+	case FLOAT :
+	  break;
+	case DOUBLE :
 	  array = (float*) malloc(sizeof(float)*nelements);   
 	  if(array==NULL)
 	    {
@@ -750,6 +750,21 @@ int save_fl_fits(char *ID_name, char *file_name)
 	    }
 	  for (ii = 0; ii < nelements; ii++)    
 	    array[ii] = (float) data.image[ID].array.D[ii];
+	  break;
+	case USHORT :
+	  array = (float*) malloc(sizeof(float)*nelements);   
+	  if(array==NULL)
+	    {
+	      printERROR(__FILE__,__func__,__LINE__,"malloc error");
+	      exit(0);
+	    }
+	  for (ii = 0; ii < nelements; ii++)    
+	    array[ii] = (float) data.image[ID].array.U[ii];
+	  break;
+	default :
+	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+	    exit(0);
+	    break;
 	}
       
       fits_create_file(&fptr, file_name1, &FITSIO_status);
@@ -896,6 +911,8 @@ int save_sh_fits(char *ID_name, char *file_name)
 	    for (ii = 0; ii < nelements; ii++)    
 	      array[ii] = (short int) data.image[ID].array.D[ii];
 	    break;
+	  case USHORT :
+	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 	    exit(0);
@@ -926,7 +943,10 @@ int save_sh_fits(char *ID_name, char *file_name)
 	    list_image_ID();
 	  }
 
-	fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
+	if(atype==USHORT)
+	  fits_write_img(fptr, TSHORT, fpixel, nelements, data.image[ID].array.U, &FITSIO_status);
+	else
+	  fits_write_img(fptr, TSHORT, fpixel, nelements, array, &FITSIO_status);
 
 	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
 	  {
@@ -970,7 +990,7 @@ int save_fits(char *ID_name, char *file_name)
       case DOUBLE:
 	save_db_fits(ID_name, file_name);
 	break;
-      case INT:
+      case USHORT:
 	save_sh_fits(ID_name, file_name);
 	break;	
       }
