@@ -136,7 +136,7 @@ typedef struct
 #define COMPLEX_DOUBLE 6
 #define USHORT 7
 
-int TYPESIZE[7];
+int TYPESIZE[8];
 
 
 //typedef float PRECISION;

@@ -1793,6 +1793,8 @@ int list_image_ID_ofp(FILE *fo)
 	    n = snprintf(type,STYPESIZE,"CFLOAT");
 	  if(atype==COMPLEX_DOUBLE)
 	    n = snprintf(type,STYPESIZE,"CDOUBLE");
+	  if(atype==USHORT)
+	    n = snprintf(type,STYPESIZE,"USHORT");
 	  fprintf(fo, "%7s ", type);
 	  
 	  
