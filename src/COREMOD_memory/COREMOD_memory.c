@@ -1080,9 +1080,17 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
       if(atype==USHORT)
 	{
 	  if(shared==1)
-	    data.image[ID].array.U = (unsigned short*) (map + sizeof(IMAGE));
+	    {
+	      mapv = (char*) map;
+	      mapv += sizeof(IMAGE_METADATA);
+	      data.image[ID].array.U = (unsigned short*) (mapv);
+	      memset(data.image[ID].array.U, '\0', nelement*sizeof(unsigned short)); 
+	      mapv += sizeof(unsigned short)*nelement;
+	      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+	    }
 	  else
-	    data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement,sizeof(unsigned short));
+	    data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement, sizeof(unsigned short));
+
 	  if(data.image[ID].array.U == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
