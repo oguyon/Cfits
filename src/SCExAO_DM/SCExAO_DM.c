@@ -101,9 +101,9 @@ int SCExAO_DM_CombineChannels()
   char name[200];
   long *IDch;
   long NBch = 8;
-
+  long cnt = 0;
   long long cntsumold;
-  long long cntsum, cntsum0;
+  long long cntsum;
 
   long IDdisp;
   long IDvolt;
@@ -134,10 +134,11 @@ int SCExAO_DM_CombineChannels()
       for(ch=0;ch<NBch;ch++)
 	cntsum += data.image[IDch[ch]].md[0].cnt0;
       
-      if(cntsum != cntsum0)
+      if(cntsum != cntsumold)
 	{
-	  printf("NEW DM SHAPE\n");
+	  printf("NEW DM SHAPE %ld\n", cnt);
 	  fflush(stdout);
+	  cnt++;
 
 	  copy_image_ID("dmdisp0","dmdisptmp");
 	  for(ch=1;ch<NBch;ch++)
