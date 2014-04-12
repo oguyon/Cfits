@@ -331,6 +331,9 @@ long arith_image_zero(char *ID_name)
     memset(data.image[ID].array.CF,0,sizeof(float)*2*nelem);
   else if(data.image[ID].md[0].atype == COMPLEX_DOUBLE)
     memset(data.image[ID].array.CD,0,sizeof(double)*2*nelem);
+  if(data.image[ID].md[0].atype == USHORT)
+    memset(data.image[ID].array.U,0,sizeof(unsigned short)*nelem);
+
   else 
     {
       n = snprintf(errmsg,SBUFFERSIZE,"cannot detect image type for image %s",ID_name);
