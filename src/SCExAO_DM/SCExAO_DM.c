@@ -469,7 +469,7 @@ int SCEXAO_DMturb_loadconf()
 	exit(EXIT_FAILURE);
       }      
 
-      dmturbconf = (SCEXAO_DMTURBCONF*)mmap(0, sizeof(SCEXAO_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+      dmturbconf = (SCEXAO_DMTURBCONF*)mmap(0, sizeof(SCEXAO_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
       if (dmturbconf == MAP_FAILED) {
 	close(SMturbfd);
 	perror("Error mmapping the file");
@@ -545,7 +545,9 @@ int SCExAO_DM_turb()
   while(dmturbconf[0].on == 1) // computation loop
     {      
       usleep(dmturbconf[0].tint);
-      
+      printf(".");
+      fflush(stdout);
+
       tlast = dmturbconf[0].tend;
       clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tend);
       tdiff = time_diff(dmturbconf[0].tstart, dmturbconf[0].tend);
