@@ -104,9 +104,10 @@ int SCExAO_DM_CombineChannels()
   long cnt = 0;
   long long cntsumold;
   long long cntsum;
-
+  long ii;
   long IDdisp;
   long IDvolt;
+  double ave;
 
   size = (long*) malloc(sizeof(long)*naxis);
   IDch = (long*) malloc(sizeof(long)*NBch);
@@ -147,8 +148,24 @@ int SCExAO_DM_CombineChannels()
 	      arith_image_add_inplace("dmdisptmp",name);
 	    }
 	  copy_image_ID("dmdisptmp","dmdisp");	 
+
+
+	  // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
+	  ave = 0.0;
+	  for(ii=0;ii<NBact;ii++)
+	    ave += data.image[IDdisp].array.F[ii];
+	  ave /= NBact;
+	  
+	  for(ii=0;ii<NBact;ii++)
+	    {
+	      data.image[IDdisp].array.F[ii] += 0.5*(DMSTROKE100*MAXVOLT/100.0*MAXVOLT/100.0)-ave;
+	      if(data.image[IDdisp].array.F[ii]<0.0)
+		data.image[IDdisp].array.F[ii] = 0.0;
+	    }
+	  data.image[IDdisp].md[0].write = 0;
+	  
 	  SCExAO_DM_disp2V(IDdisp, IDvolt);
-	  cntsumold = cntsum;
+	  cntsumold = cntsum;	  
 	}
     }
     
