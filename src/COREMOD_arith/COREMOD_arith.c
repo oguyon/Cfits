@@ -68,6 +68,43 @@ int arith_set_pixel_cli()
     return 1;
 }
 
+int arith_set_row_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
+    {
+      arith_set_row(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+int arith_set_col_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
+    {
+      arith_set_col(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+int arith_image_zero_cli()
+{
+    if(CLI_checkarg(1,4)==0)
+    {
+      arith_image_zero(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+//long arith_image_zero(char *ID_name)
+//long arith_set_row(char *ID_name, double value, long y)
+
 int arith_image_trunc_cli()
 {
 
@@ -111,6 +148,33 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_pixel(char *ID_name, double value, long x, long y)");
   data.NBcmd++;
   
+  strcpy(data.cmd[data.NBcmd].key,"setrow");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_set_row_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set pixel row value");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <row>");
+  strcpy(data.cmd[data.NBcmd].example,"setrow im 1.24 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_row(char *ID_name, double value, long y)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"setcol");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_set_col_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set pixel column value");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <col>");
+  strcpy(data.cmd[data.NBcmd].example,"setcol im 1.24 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_col(char *ID_name, double value, long x)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"imzero");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_image_zero_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set pixels to zero");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image>");
+  strcpy(data.cmd[data.NBcmd].example,"imzero im");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_image_zero(char *ID_name)");
+  data.NBcmd++;
+
   strcpy(data.cmd[data.NBcmd].key,"imtrunc");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = arith_image_trunc_cli;
