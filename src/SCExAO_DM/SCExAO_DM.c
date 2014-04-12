@@ -145,10 +145,10 @@ int SCExAO_DM_CombineChannels()
 	      sprintf(name, "dmdisp%ld", ch);
 	      arith_image_add_inplace(name,"dmdisptmp");
 	    }
-	  copy_image_ID("dmdisptmp","dmdisp");
+	  copy_image_ID("dmdisptmp","dmdisp");	 
+	  SCExAO_DM_disp2V(IDdisp, IDvolt);
+	  cntsumold = cntsum;
 	}
-
-      SCExAO_DM_disp2V(IDdisp, IDvolt);
     }
     
   free(size);
