@@ -8,7 +8,7 @@ long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname);
 
 long IMAGE_FORMAT_FITS_to_floatbin_lock(  char *IDname, char *fname);
 
-long IMAGE_FORMAT_read_binary16f(char *fname, long xsize, long ysize, char *IDname);
+long IMAGE_FORMAT_read_binary32f(char *fname, long xsize, long ysize, char *IDname);
 
 #endif
 
