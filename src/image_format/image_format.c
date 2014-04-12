@@ -2315,7 +2315,7 @@ long IMAGE_FORMAT_FITS_to_floatbin_lock(  char *IDname, char *fname )
     printf( "Error opening file: %s\n", strerror( errno ) );
     
   r = write(fd, valarray, sizeof(float)*xsize*ysize);     
-  for(ii=0;ii<xsize*ysize;ii)
+  for(ii=0;ii<xsize*ysize;ii++)
     printf("[%ld %f] ", ii, valarray[ii]);
 
   flock(fd, LOCK_UN);
