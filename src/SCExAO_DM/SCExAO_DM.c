@@ -119,7 +119,7 @@ int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
 
 
 
-int SCEXAO_DM_loadconf()
+int SCEXAO_DM_createconf()
 {
   int result;
 
@@ -168,6 +168,34 @@ int SCEXAO_DM_loadconf()
 }
 
 
+int SCEXAO_DM_loadconf()
+{
+  int result;
+
+  if( dmdispcomb_loaded == 0 ) 
+    {
+      printf("Create/read configuration\n");  
+      
+      SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
+      if (SMfd == -1) {
+	perror("Error opening file for writing");
+	exit(EXIT_FAILURE);
+      }      
+      dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+      if (dispcombconf == MAP_FAILED) {
+	close(SMfd);
+	perror("Error mmapping the file");
+	exit(EXIT_FAILURE);
+      }
+      
+      dmdispcomb_loaded = 1; 
+    }
+
+  return 0;
+}
+
+
+
 int SCEXAO_DM_unloadconf()
 {
   if( dmdispcomb_loaded == 1 ) 
@@ -208,7 +236,7 @@ int SCExAO_DM_CombineChannels()
 
 
 
-  SCEXAO_DM_loadconf();
+  SCEXAO_DM_createconf();
 
 
   printf("Initialize channels\n");  
@@ -279,7 +307,7 @@ int SCExAO_DM_CombineChannels()
 int SCExAO_DM_dmdispcomboff()
 {
   SCEXAO_DM_loadconf();
-  //  dispcombconf[0].ON = 0;
+  dispcombconf[0].ON = 0;
 
   return 0;
 }
