@@ -242,7 +242,8 @@ int main(int argc, char *argv[])
   TYPESIZE[4] = sizeof(double);
   TYPESIZE[5] = 2*sizeof(float);
   TYPESIZE[6] = 2*sizeof(double);
-  
+  TYPESIZE[7] = sizeof(unsigned short);
+
   atexit(fnExit1);
 
   data.Debug = 0;
