@@ -1261,7 +1261,7 @@ int CLI_checkarg(int argnum, int argtype)
 
   if(rval==2)
     {
-      printf("arg %d: wrong arg type %d %d\n", argnum, argtype, data.cmdargtoken[argnum].type);
+      printf("arg %d: wrong arg type %d :  %d\n", argnum, argtype, data.cmdargtoken[argnum].type);
       rval = 1;
     }
 

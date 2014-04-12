@@ -41,7 +41,6 @@
 #include "COREMOD_arith/COREMOD_arith.h"
 
 
-
 #include "calc.h"
 #include "calc_bison.h"
 
@@ -781,6 +780,7 @@ void main_init()
   init_coronagraphs();
   init_PIAACMCsimul();
   init_image_format();
+  init_AOsystSim();
 
   printf("%ld commands loaded\n", data.NBcmd);
   

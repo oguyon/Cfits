@@ -12738,7 +12738,7 @@ EXECNAME=Cfits
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/image_gen/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/image_gen/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/AOsystSim/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -13777,6 +13777,7 @@ do
     "src/coronagraphs/Makefile") CONFIG_FILES="$CONFIG_FILES src/coronagraphs/Makefile" ;;
     "src/PIAACMCsimul/Makefile") CONFIG_FILES="$CONFIG_FILES src/PIAACMCsimul/Makefile" ;;
     "src/image_format/Makefile") CONFIG_FILES="$CONFIG_FILES src/image_format/Makefile" ;;
+    "src/AOsystSim/Makefile") CONFIG_FILES="$CONFIG_FILES src/AOsystSim/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -123,6 +123,18 @@ int IMAGE_FORMAT_FITS_to_floatbin_lock_cli()
     return 1;
 }
 
+int IMAGE_FORMAT_read_binary16f_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
+    {
+      IMAGE_FORMAT_read_binary16f(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 
 int init_image_format()
 {
@@ -155,6 +167,15 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].syntax,"str1 is image, str2 is binary file");
   strcpy(data.cmd[data.NBcmd].example,"writefloatlock im im.bin");
   strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_floatbin_lock( char *IDname, char *fname)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"readb16fim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_read_binary16f_cli;
+  strcpy(data.cmd[data.NBcmd].info,"read 16-bit float RAW image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <xsize> <ysize> <binary file>");
+  strcpy(data.cmd[data.NBcmd].example,"readb16fim im xsize ysize im.bin");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_read_binary16f(char *fname, long xsize, long ysize, char *IDname)");
   data.NBcmd++;
 
  // add atexit functions here
