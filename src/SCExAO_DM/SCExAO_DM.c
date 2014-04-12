@@ -43,7 +43,10 @@ int SCExAO_DM_dmtrigoff();
 
 int SCExAO_DM_turb();
 int SCExAO_DM_dmturboff();
-
+int SCExAO_DM_dmturb_wspeed(double wspeed);
+int SCExAO_DM_dmturb_ampl(double ampl);
+int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);
+int SCExAO_DM_dmturb_tint(long tint);
 
 // CLI commands
 //
@@ -53,6 +56,40 @@ int SCExAO_DM_dmturboff();
 // 3: string
 // 4: existing image
 //
+
+
+int SCExAO_DM_dmturb_wspeed_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    SCExAO_DM_dmturb_wspeed(data.cmdargtoken[1].val.numf);
+  else
+    return 1;
+}
+
+int SCExAO_DM_dmturb_ampl_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    SCExAO_DM_dmturb_ampl(data.cmdargtoken[1].val.numf);
+  else
+    return 1;
+}
+
+int SCExAO_DM_dmturb_LOcoeff_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    SCExAO_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numf);
+  else
+    return 1;
+}
+
+int SCExAO_DM_dmturb_tint_cli()
+{
+  if(CLI_checkarg(1,2)==0)
+    SCExAO_DM_dmturb_tint(data.cmdargtoken[1].val.numf);
+  else
+    return 1;
+}
+
 
 
 
@@ -110,6 +147,45 @@ int init_SCExAO_DM()
   strcpy(data.cmd[data.NBcmd].example,"scexaodmturboff");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturboff()");
   data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmturws");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli();
+  strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
+  strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmturws 5.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_wspeed(double wspeed);");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmturampl");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli();
+  strcpy(data.cmd[data.NBcmd].info,"set turbulence amplitude");
+  strcpy(data.cmd[data.NBcmd].syntax,"<amplitude [um]>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmturampl 0.1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_ampl(double ampl);");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmturlo");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_LOcoeff_cli();
+  strcpy(data.cmd[data.NBcmd].info,"set turbulence low order coefficient");
+  strcpy(data.cmd[data.NBcmd].syntax,"<coeff>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmturlo 0.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmturws");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli();
+  strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
+  strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmturws");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_wspeed(double wspeed);");
+  data.NBcmd++;
+
+
+
 
 
   // add atexit functions here
@@ -497,6 +573,37 @@ int SCExAO_DM_dmturboff()
   return 0;
 }
 
+int SCExAO_DM_dmturb_wspeed(double wspeed)
+{
+  SCEXAO_DMturb_loadconf();
+  dmturbconf[0].wspeed = wspeed;
+
+  return 0;
+}
+
+int SCExAO_DM_dmturb_ampl(double ampl)
+{
+  SCEXAO_DMturb_loadconf();
+  dmturbconf[0].ampl = ampl;
+
+  return 0;
+}
+
+int SCExAO_DM_dmturb_LOcoeff(double LOcoeff)
+{
+  SCEXAO_DMturb_loadconf();
+  dmturbconf[0].LOcoeff = LOcoeff;
+
+  return 0;
+}
+
+int SCExAO_DM_dmturb_tint(long tint)
+{
+  SCEXAO_DMturb_loadconf();
+  dmturbconf[0].tint = tint;
+
+  return 0;
+}
 
 
 
@@ -550,9 +657,7 @@ int SCExAO_DM_turb()
   while(dmturbconf[0].on == 1) // computation loop
     {      
       usleep(dmturbconf[0].tint);
-      printf(".");
-      fflush(stdout);
-
+ 
       tlast = dmturbconf[0].tend;
       clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tend);
       tdiff = time_diff(dmturbconf[0].tstart, dmturbconf[0].tend);

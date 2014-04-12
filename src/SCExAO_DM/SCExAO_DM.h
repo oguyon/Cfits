@@ -36,7 +36,7 @@ typedef struct
   long cnt;
 
 
-  float wspeed; // wind speed [m/s]
+  double wspeed; // wind speed [m/s]
   double ampl; // [um RMS]
   double LOcoeff; // 0 for full correction of low orders, 1 for no correction
 
@@ -48,8 +48,6 @@ typedef struct
   struct timespec tstart;
   struct timespec tend;
 
-  pid_t pid_main;
-  pid_t pid_prompt;
 } SCEXAO_DMTURBCONF;
 
 
