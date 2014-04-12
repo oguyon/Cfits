@@ -33,7 +33,7 @@ int SMfd;
 
 int SCEXAO_DM_unloadconf();
 int SCExAO_DM_dmdispcomboff();
-int SCExAO_DM_dmtrigoff()l
+int SCExAO_DM_dmtrigoff();
 
 
 
