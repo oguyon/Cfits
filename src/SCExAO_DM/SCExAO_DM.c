@@ -265,7 +265,10 @@ int SCExAO_DM_CombineChannels()
 	  cntsumold = cntsum;	  
 	}
     }
-    
+
+  printf("LOOP STOPPED\n");
+  fflush(stdout);
+
   free(size);
   free(IDch);
 
