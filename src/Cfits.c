@@ -1229,6 +1229,9 @@ int CLI_checkarg(int argnum, int argtype)
       printf("arg %d is command (=\"%s\"), but should be string\n", argnum, data.cmdargtoken[argnum].val.string);
       rval = 1;
       break;
+    case 6:
+      rval = 0;
+      break;
     }
     break;
 
@@ -1252,6 +1255,9 @@ int CLI_checkarg(int argnum, int argtype)
     case 5:
       printf("arg %d is command (=\"%s\"), but should be image\n", argnum, data.cmdargtoken[argnum].val.string);
       rval = 1;
+      break;
+    case 6:
+      rval = 0;
       break;
     }
     break;
