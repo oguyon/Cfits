@@ -402,12 +402,17 @@ int SCExAO_DM_dmtrigoff()
 int SCEXAO_DMturb_createconf()
 {
   int result;
+  long IDc1;
 
   if( dmturb_loaded == 0 ) 
     {
       printf("Create/read configuration\n");  
       fflush(stdout);
 
+      IDc1 = immage_ID("dmdisp1");
+      if(IDc1 == -1)
+	read_sharedmem_image("dmdisp1");
+      
       IDturb = create_2Dimage_ID("turbs", 50, 50);
 
  
