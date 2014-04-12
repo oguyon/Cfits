@@ -409,7 +409,7 @@ int SCEXAO_DMturb_createconf()
       printf("Create/read configuration\n");  
       fflush(stdout);
 
-      IDc1 = immage_ID("dmdisp1");
+      IDc1 = image_ID("dmdisp1");
       if(IDc1 == -1)
 	read_sharedmem_image("dmdisp1");
       
