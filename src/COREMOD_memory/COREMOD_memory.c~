@@ -1080,9 +1080,17 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
       if(atype==USHORT)
 	{
 	  if(shared==1)
-	    data.image[ID].array.U = (unsigned short*) (map + sizeof(IMAGE));
+	    {
+	      mapv = (char*) map;
+	      mapv += sizeof(IMAGE_METADATA);
+	      data.image[ID].array.U = (unsigned short*) (mapv);
+	      memset(data.image[ID].array.U, '\0', nelement*sizeof(unsigned short)); 
+	      mapv += sizeof(unsigned short)*nelement;
+	      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+	    }
 	  else
-	    data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement,sizeof(unsigned short));
+	    data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement, sizeof(unsigned short));
+
 	  if(data.image[ID].array.U == NULL)
 	    {
 	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
@@ -1157,7 +1165,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
 long read_sharedmem_image(char *name)
 {
-  long ID;
+  long ID = -1;
   int SM_fd;
   struct stat file_stat;
   char SM_fname[200];
@@ -1170,63 +1178,91 @@ long read_sharedmem_image(char *name)
   data.image[ID].used = 1;
 
   sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name); 	
+  printf("Importing mmap file \"%s\"\n",SM_fname);
+  
   SM_fd = open(SM_fname, O_RDWR);
-
-  fstat(SM_fd, &file_stat);
-  printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
-
-  map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
-  if (map == MAP_FAILED) {
-    close(SM_fd);
-    perror("Error mmapping the file");
-    exit(0);
-  }
-
-  data.image[ID].memsize = file_stat.st_size;
-  data.image[ID].shmfd = SM_fd;
-  
-  data.image[ID].md = map;
-  atype = data.image[ID].md[0].atype;
-  data.image[ID].md[0].shared = 1;
-
-  printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
-  
-
-  mapv = (char*) map;
-  mapv += sizeof(IMAGE_METADATA);
-
-  if(atype==CHAR)
-    data.image[ID].array.C = (char*) mapv;
-  if(atype==INT)
-    data.image[ID].array.I = (int*) mapv;
-  if(atype==FLOAT)
-    data.image[ID].array.F = (float*) mapv;
-  if(atype==DOUBLE)
-    data.image[ID].array.D = (double*) mapv;
-  if(atype==COMPLEX_FLOAT)
-    data.image[ID].array.CF = (complex_float*) mapv;
-  if(atype==COMPLEX_DOUBLE)
-    data.image[ID].array.CD = (complex_double*) mapv;
-  if(atype==USHORT)
-    data.image[ID].array.U = (unsigned short*) mapv;
-
-  mapv += sizeof(float)*data.image[ID].md[0].nelement;
-  data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
-
-
-  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+  if(SM_fd==NULL)
     {
-      if(data.image[ID].kw[kw].type == 'L')
-	printf("%d  %s %ld %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numl, data.image[ID].kw[kw].comment);
-      if(data.image[ID].kw[kw].type == 'D')
-	printf("%d  %s %lf %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numf, data.image[ID].kw[kw].comment);
-      if(data.image[ID].kw[kw].type == 'S')
-	printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);      
+      printf("Cannot import file\n");
     }
+  else
+    {
+      fstat(SM_fd, &file_stat);
+      printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+      
+      map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+      if (map == MAP_FAILED) {
+	close(SM_fd);
+	perror("Error mmapping the file");
+	exit(0);
+      }
+      
+      data.image[ID].memsize = file_stat.st_size;
+      data.image[ID].shmfd = SM_fd;
+      
+      data.image[ID].md = map;
+      atype = data.image[ID].md[0].atype;
+      data.image[ID].md[0].shared = 1;
+      
+      printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
+      
+      
+      mapv = (char*) map;
+      mapv += sizeof(IMAGE_METADATA);
+      
+      if(atype==CHAR)
+	{
+	  data.image[ID].array.C = (char*) mapv;
+	  mapv += sizeof(char)*data.image[ID].md[0].nelement;
+	}
+      if(atype==INT)
+	{
+	  data.image[ID].array.I = (int*) mapv;
+	  mapv += sizeof(int)*data.image[ID].md[0].nelement;
+	}
+      if(atype==FLOAT)
+	{
+	  data.image[ID].array.F = (float*) mapv;
+	  mapv += sizeof(float)*data.image[ID].md[0].nelement;
+	}      
+      if(atype==DOUBLE)
+	{
+	  data.image[ID].array.D = (double*) mapv;
+	  mapv += sizeof(double)*data.image[ID].md[0].nelement;
+	}      
+      if(atype==COMPLEX_FLOAT)
+	{
+	  data.image[ID].array.CF = (complex_float*) mapv;
+	  mapv += sizeof(complex_float)*data.image[ID].md[0].nelement;
+	}      
+      if(atype==COMPLEX_DOUBLE)
+	{
+	  data.image[ID].array.CD = (complex_double*) mapv;
+	  mapv += sizeof(complex_double)*data.image[ID].md[0].nelement;
+	}      
+      if(atype==USHORT)
+	{
+	  data.image[ID].array.U = (unsigned short*) mapv;
+	  mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
+	}
 
-  if(MEM_MONITOR == 1)
-    list_image_ID_ncurses();
-  
+
+      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+      
+      
+      for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+	{
+	  if(data.image[ID].kw[kw].type == 'L')
+	    printf("%d  %s %ld %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numl, data.image[ID].kw[kw].comment);
+	  if(data.image[ID].kw[kw].type == 'D')
+	    printf("%d  %s %lf %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numf, data.image[ID].kw[kw].comment);
+	  if(data.image[ID].kw[kw].type == 'S')
+	    printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);      
+	}
+      
+      if(MEM_MONITOR == 1)
+	list_image_ID_ncurses();
+    }
   return(ID);
 }
 
@@ -1757,6 +1793,8 @@ int list_image_ID_ofp(FILE *fo)
 	    n = snprintf(type,STYPESIZE,"CFLOAT");
 	  if(atype==COMPLEX_DOUBLE)
 	    n = snprintf(type,STYPESIZE,"CDOUBLE");
+	  if(atype==USHORT)
+	    n = snprintf(type,STYPESIZE,"USHORT");
 	  fprintf(fo, "%7s ", type);
 	  
 	  
