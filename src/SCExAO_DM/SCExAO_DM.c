@@ -136,7 +136,7 @@ int SCExAO_DM_CombineChannels()
       
       if(cntsum != cntsumold)
 	{
-	  printf("NEW DM SHAPE %ld\n", cnt);
+	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsum0);
 	  fflush(stdout);
 	  cnt++;
 
@@ -144,7 +144,7 @@ int SCExAO_DM_CombineChannels()
 	  for(ch=1;ch<NBch;ch++)
 	    {
 	      sprintf(name, "dmdisp%ld", ch);
-	      arith_image_add_inplace(name,"dmdisptmp");
+	      arith_image_add_inplace("dmdisptmp",name);
 	    }
 	  copy_image_ID("dmdisptmp","dmdisp");	 
 	  SCExAO_DM_disp2V(IDdisp, IDvolt);
