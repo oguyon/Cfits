@@ -406,7 +406,7 @@ int SCEXAO_DMturb_createconf()
   if( dmturb_loaded == 0 ) 
     {
       printf("Create/read configuration\n");  
-     
+      fflush(stdout);
 
       IDturb = create_2Dimage_ID("turbs", 50, 50);
 
@@ -431,7 +431,7 @@ int SCEXAO_DMturb_createconf()
 	exit(EXIT_FAILURE);
       }
       
-      dmturbconf = (SCEXAO_DMTURBCONF*)mmap(0, sizeof(SCEXAO_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+      dmturbconf = (SCEXAO_DMTURBCONF*)mmap(0, sizeof(SCEXAO_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
       if (dmturbconf == MAP_FAILED) {
 	close(SMturbfd);
 	perror("Error mmapping the file");
