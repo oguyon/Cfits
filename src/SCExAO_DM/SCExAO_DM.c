@@ -209,6 +209,8 @@ int SCEXAO_DM_unloadconf()
 }
 
 
+
+
 int SCExAO_DM_CombineChannels()
 {
   long naxis = 2;
@@ -293,6 +295,9 @@ int SCExAO_DM_CombineChannels()
 	  cntsumold = cntsum;	  
 	}
     }
+
+  arith_image_zero("dmvolt");
+  
 
   printf("LOOP STOPPED\n");
   fflush(stdout);
