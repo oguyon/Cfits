@@ -116,9 +116,9 @@ int read_sharedmem_image_cli()
   else
     return 1;
 }
-//long read_sharedmem_image(char *name);
 
-int create_image_shared_cli()
+
+int create_image_shared_cli() // default precision
 {
   long *imsize;
   long naxis = 0;
@@ -144,6 +144,33 @@ int create_image_shared_cli()
 	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, DOUBLE, 1, data.NBKEWORD_DFT);
 	break;
       }
+      free(imsize);
+    }
+  else
+    return 1;
+}
+
+
+int create_ushort_image_shared_cli() // default precision
+{
+  long *imsize;
+  long naxis = 0;
+  long i;
+
+  
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+      naxis = 0;
+      imsize = (long*) malloc(sizeof(long)*5);
+      i = 2;
+      while(data.cmdargtoken[i].type==2)
+	{
+	  imsize[naxis] = data.cmdargtoken[i].val.numl;
+	  naxis++;
+	  i++;
+	}
+      create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, USHORT, 1, data.NBKEWORD_DFT);
+	
       free(imsize);
     }
   else
@@ -362,6 +389,15 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
   strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
   strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"creaushortimshm");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = create_ushort_image_shared_cli;
+  strcpy(data.cmd[data.NBcmd].info,"create unsigned short image in shared mem");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
+  strcpy(data.cmd[data.NBcmd].example,"creaushortimshm imname 512 512");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, USHORT, 0, 10)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"crea3dim");
@@ -1181,7 +1217,7 @@ long read_sharedmem_image(char *name)
   printf("Importing mmap file \"%s\"\n",SM_fname);
   
   SM_fd = open(SM_fname, O_RDWR);
-  if(SM_fd==NULL)
+  if(SM_fd==-1)
     {
       printf("Cannot import file\n");
     }
@@ -1435,7 +1471,7 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
 
 long copy_image_ID(char *name, char *newname)
 {
-  long ID,IDout;
+  long ID, IDout;
   long naxis;
   long *size = NULL;
   int atype;
@@ -1478,25 +1514,32 @@ long copy_image_ID(char *name, char *newname)
 	  exit(0);
 	}
     }
-
+  data.image[IDout].md[0].write = 1;
+  
   if(atype==CHAR)
-    memcpy (data.image[IDout].array.C,data.image[ID].array.C,sizeof(char)*nelement);
+    memcpy (data.image[IDout].array.C,data.image[ID].array.C, sizeof(char)*nelement);
   
   if(atype==INT)
-    memcpy (data.image[IDout].array.I,data.image[ID].array.I,sizeof(int)*nelement);
+    memcpy (data.image[IDout].array.I,data.image[ID].array.I, sizeof(int)*nelement);
   
   if(atype==FLOAT)
-    memcpy (data.image[IDout].array.F,data.image[ID].array.F,sizeof(float)*nelement);
+    memcpy (data.image[IDout].array.F,data.image[ID].array.F, sizeof(float)*nelement);
   
   if(atype==DOUBLE)
-    memcpy (data.image[IDout].array.D,data.image[ID].array.D,sizeof(double)*nelement);
+    memcpy (data.image[IDout].array.D,data.image[ID].array.D, sizeof(double)*nelement);
   
   if(atype==COMPLEX_FLOAT)
-    memcpy (data.image[IDout].array.CF,data.image[ID].array.CF,sizeof(float)*2*nelement);
+    memcpy (data.image[IDout].array.CF,data.image[ID].array.CF, sizeof(float)*2*nelement);
   
   if(atype==COMPLEX_DOUBLE)
-    memcpy (data.image[IDout].array.CD,data.image[ID].array.CD,sizeof(double)*2*nelement);
+    memcpy (data.image[IDout].array.CD,data.image[ID].array.CD, sizeof(double)*2*nelement);
   
+  if(atype==USHORT)
+    memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
+
+  data.image[IDout].md[0].write = 0;
+  data.image[IDout].md[0].cnt0++;
+
   free(size);
 
   return(IDout);

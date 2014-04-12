@@ -147,10 +147,10 @@ int init_SCExAO_DM()
   strcpy(data.cmd[data.NBcmd].example,"scexaodmturboff");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturboff()");
   data.NBcmd++;
-
+  
   strcpy(data.cmd[data.NBcmd].key,"scexaodmturws");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli();
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
   strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
   strcpy(data.cmd[data.NBcmd].example,"scexaodmturws 5.2");
@@ -159,7 +159,7 @@ int init_SCExAO_DM()
 
   strcpy(data.cmd[data.NBcmd].key,"scexaodmturampl");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli();
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_ampl_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence amplitude");
   strcpy(data.cmd[data.NBcmd].syntax,"<amplitude [um]>");
   strcpy(data.cmd[data.NBcmd].example,"scexaodmturampl 0.1");
@@ -168,23 +168,23 @@ int init_SCExAO_DM()
 
   strcpy(data.cmd[data.NBcmd].key,"scexaodmturlo");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_LOcoeff_cli();
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_LOcoeff_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence low order coefficient");
   strcpy(data.cmd[data.NBcmd].syntax,"<coeff>");
   strcpy(data.cmd[data.NBcmd].example,"scexaodmturlo 0.2");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmturws");
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmturtint");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli();
-  strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
-  strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturws");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_wspeed(double wspeed);");
+  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_tint_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set turbulence interval time");
+  strcpy(data.cmd[data.NBcmd].syntax,"<interval time [us] long>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmturtint");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_turb_tint(long tint);");
   data.NBcmd++;
 
-
+  
 
 
 
