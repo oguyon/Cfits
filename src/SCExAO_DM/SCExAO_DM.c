@@ -136,7 +136,7 @@ int SCExAO_DM_CombineChannels()
       
       if(cntsum != cntsumold)
 	{
-	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsum0);
+	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
 	  fflush(stdout);
 	  cnt++;
 
