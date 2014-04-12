@@ -780,6 +780,7 @@ void main_init()
   init_coronagraphs();
   init_PIAACMCsimul();
   init_image_format();
+  init_SCExAO_DM();
   init_AOsystSim();
 
   printf("%ld commands loaded\n", data.NBcmd);
