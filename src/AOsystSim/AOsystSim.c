@@ -89,7 +89,8 @@ int AOsystSim_run()
     {
       a += cos(cnt);
       cnt ++;
-      usleep(1);
+      nanosleep((struct timespec[]){{0, 1000}}, NULL);
+      //usleep(1);
     }
  
   printf("%ld %lf\n", (long) cnt, a);
