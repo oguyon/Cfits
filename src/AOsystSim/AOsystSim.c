@@ -69,7 +69,7 @@ int AOsystSim_run()
   long *dmsize;
   long twait = 1; // us
   long long cnt = 0;
-  
+  struct timespec sleep_time = { 0, 1000000};
   long ID_dm;
   double a;
 
@@ -85,11 +85,12 @@ int AOsystSim_run()
   ID_dm = create_image_ID("dm_sim", 2, dmsize, FLOAT, 1, 0);
 
   a = 0.0;
-  while(cnt<1000000)
+  while(cnt<1000)
     {
       a += cos(cnt);
       cnt ++;
-      nanosleep((struct timespec[]){{0, 1000}}, NULL);
+      clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleep_time, NULL);
+      //nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, time, NULL);
       //usleep(1);
     }
  
