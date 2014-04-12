@@ -279,7 +279,7 @@ int SCExAO_DM_CombineChannels()
 int SCExAO_DM_dmdispcomboff()
 {
   SCEXAO_DM_loadconf();
-  dispcombconf[0].ON = 0;
+  //  dispcombconf[0].ON = 0;
 
   return 0;
 }
