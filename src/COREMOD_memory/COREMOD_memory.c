@@ -1514,7 +1514,7 @@ long copy_image_ID(char *name, char *newname)
 	  exit(0);
 	}
     }
-  data.image[ID].md[0].write = 1;
+  data.image[IDout].md[0].write = 1;
   
   if(atype==CHAR)
     memcpy (data.image[IDout].array.C,data.image[ID].array.C, sizeof(char)*nelement);
@@ -1537,8 +1537,8 @@ long copy_image_ID(char *name, char *newname)
   if(atype==USHORT)
     memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
 
-  data.image[ID].md[0].write = 0;
-  data.image[ID].md[0].cnt0++;
+  data.image[IDout].md[0].write = 0;
+  data.image[IDout].md[0].cnt0++;
 
   free(size);
 
