@@ -237,7 +237,7 @@ int SCExAO_DM_CombineChannels()
 
 
   SCEXAO_DM_createconf();
-
+  dispcombconf[0].ON = 1;
 
   printf("Initialize channels\n");  
 
