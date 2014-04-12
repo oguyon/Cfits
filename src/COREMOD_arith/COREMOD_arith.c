@@ -145,6 +145,7 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1];
   
+  data.image[ID].md[0].write = 1;
   if(atype == FLOAT)
     data.image[ID].array.F[y*naxes[0]+x] = value;
   else if(atype == DOUBLE)
@@ -157,7 +158,9 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
       printERROR(__FILE__,__func__,__LINE__,errmsg);
       exit(0);
     }
-
+  data.image[ID].md[0].write = 0;
+  data.image[ID].md[0].cnt0++;
+  
   return(ID);
 }
 
@@ -176,6 +179,7 @@ long arith_set_row(char *ID_name, double value, long y)
   naxes[0]=data.image[ID].md[0].size[0];
   naxes[1]=data.image[ID].md[0].size[1];
 
+  data.image[ID].md[0].write = 1;
   if(atype==FLOAT)
     {
       for(ii=0;ii<naxes[0];ii++)
@@ -195,6 +199,9 @@ long arith_set_row(char *ID_name, double value, long y)
       exit(0);
     }
 
+  data.image[ID].md[0].write = 0;
+  data.image[ID].md[0].cnt0++;
+
   return(ID);
 }
 
@@ -212,6 +219,7 @@ long arith_set_col(char *ID_name, double value, long x)
   atype = data.image[ID].md[0].atype;
 
 
+  data.image[ID].md[0].write = 1;
   if(atype == FLOAT)
     {
       for(y=0;y<naxes[1];y++)
@@ -231,6 +239,9 @@ long arith_set_col(char *ID_name, double value, long x)
       exit(0);
     }
 
+  data.image[ID].md[0].write = 0;
+  data.image[ID].md[0].cnt0++;
+
   return(ID);
 }
 
@@ -243,6 +254,7 @@ long arith_image_zero(char *ID_name)
   ID = image_ID(ID_name);
   nelem = data.image[ID].md[0].nelement;
 
+  data.image[ID].md[0].write = 0;
   if(data.image[ID].md[0].atype == FLOAT)
     memset(data.image[ID].array.F,0,sizeof(float)*nelem);
   else if(data.image[ID].md[0].atype == DOUBLE)
@@ -263,6 +275,8 @@ long arith_image_zero(char *ID_name)
       printERROR(__FILE__,__func__,__LINE__,errmsg);
       exit(0);
     }
+  data.image[ID].md[0].write = 0;
+  data.image[ID].md[0].cnt0++;
 
   return(ID);
 }
@@ -1142,6 +1156,7 @@ int arith_image_function_1_1_inplace(char *ID_name, double (*pt2function)(double
 
   nelement = data.image[ID].md[0].nelement;
 
+  data.image[ID].md[0].write = 0;
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {
@@ -1184,6 +1199,8 @@ int arith_image_function_1_1_inplace(char *ID_name, double (*pt2function)(double
   }
   # endif
 
+  data.image[ID].md[0].write = 0;
+  data.image[ID].md[0].cnt0++;
 
   return(0);
 }
@@ -1397,6 +1414,8 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
       exit(0);
     }
   
+  data.image[ID1].md[0].write = 1;
+  
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {  
@@ -1437,6 +1456,9 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
   # ifdef _OPENMP
   }
   # endif
+
+  data.image[ID1].md[0].write = 0;
+  data.image[ID1].md[0].cnt0++;
 
   return(0);
 }

@@ -179,7 +179,7 @@ typedef struct
 
   int write;                 // 1 if image is being written  
   int status;
-  long cnt0;                 // counter (if image is updated)
+  long cnt0;                 // counter (incremented if image is updated)
   long cnt1;
   
   long NBkw; // number of keywords
