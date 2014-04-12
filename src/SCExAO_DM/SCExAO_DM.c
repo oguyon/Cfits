@@ -33,6 +33,8 @@ int SMfd;
 
 int SCEXAO_DM_unloadconf();
 int SCExAO_DM_dmdispcomboff();
+int SCExAO_DM_dmtrigoff()l
+
 
 
 
@@ -77,10 +79,19 @@ int init_SCExAO_DM()
   strcpy(data.cmd[data.NBcmd].key,"scexaodmcomboff");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp =  SCExAO_DM_dmdispcomboff;
-  strcpy(data.cmd[data.NBcmd].info,"turn off combine");
+  strcpy(data.cmd[data.NBcmd].info,"turn off DM combine");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"scexaodmcomboff");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcomboff()");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmtrigoff");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmtrigoff;
+  strcpy(data.cmd[data.NBcmd].info,"turn off DM trigger");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmtrigoff");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmtrigoff()");
   data.NBcmd++;
 
 
@@ -313,6 +324,23 @@ int SCExAO_DM_dmdispcomboff()
 {
   SCEXAO_DM_loadconf();
   dispcombconf[0].ON = 0;
+
+  return 0;
+}
+
+int SCExAO_DM_dmtrigoff()
+{
+  long ID;
+  
+  ID=image_ID("dmvolt");
+
+  if(ID!=-1)
+    data.image[ID].md[0].status = 101;
+  else
+    {
+      ID = read_sharedmem_image("dmvolt");
+      data.image[ID].md[0].status = 101;
+    }
 
   return 0;
 }
