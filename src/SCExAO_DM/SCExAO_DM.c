@@ -47,6 +47,7 @@ int SCExAO_DM_dmturb_wspeed(double wspeed);
 int SCExAO_DM_dmturb_ampl(double ampl);
 int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);
 int SCExAO_DM_dmturb_tint(long tint);
+int SCExAO_DM_dmturb_status();
 
 // CLI commands
 //
@@ -180,7 +181,7 @@ int init_SCExAO_DM()
   data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_tint_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence interval time");
   strcpy(data.cmd[data.NBcmd].syntax,"<interval time [us] long>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturtint");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmturtint 200");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_turb_tint(long tint);");
   data.NBcmd++;
 
@@ -569,6 +570,7 @@ int SCExAO_DM_dmturboff()
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].on = 0;
+  SCExAO_DM_dmturb_printstatus();
 
   return 0;
 }
@@ -577,6 +579,7 @@ int SCExAO_DM_dmturb_wspeed(double wspeed)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].wspeed = wspeed;
+  SCExAO_DM_dmturb_printstatus();
 
   return 0;
 }
@@ -585,6 +588,7 @@ int SCExAO_DM_dmturb_ampl(double ampl)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].ampl = ampl;
+  SCExAO_DM_dmturb_printstatus();
 
   return 0;
 }
@@ -593,6 +597,7 @@ int SCExAO_DM_dmturb_LOcoeff(double LOcoeff)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].LOcoeff = LOcoeff;
+  SCExAO_DM_dmturb_printstatus();
 
   return 0;
 }
@@ -601,10 +606,36 @@ int SCExAO_DM_dmturb_tint(long tint)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].tint = tint;
+  SCExAO_DM_dmturb_printstatus();
 
   return 0;
 }
 
+
+
+int SCExAO_DM_dmturb_printstatus()
+{
+  SCEXAO_DMturb_loadconf();
+
+  printf("Run time = %.3f sec\n", dmturbconf[0].simtime);
+  printf("\n");
+  printf("cnt              : %ld   (ave frequ = %.2f kHz)\n", dmturbconf[0].cnt, 0.001*dmturbconf[0].cnt/dmturbconf[0].simtime);
+  printf("\n");
+
+  if(dmturbconf[0].on == 1)
+    printf("LOOP IS ON\n");
+  else 
+    printf("LOOP IS OFF\n");
+
+  printf("ampl    =  %.2f um\n", dmturbconf[0].ampl);
+  printf("wspeed  =  %.2f m/s\n", dmturbconf[0].wspeed);
+  printf("tint    =  %ld us\n", dmturbconf[0].tint);
+  printf("Requested uptdate frequ = %.2f kHz\n", 0.001/(1.0e-6*dmturbconf[0].tint));
+  printf("\n");
+  printf("\n");
+
+  return(0);
+} 
 
 
 int SCExAO_DM_turb()

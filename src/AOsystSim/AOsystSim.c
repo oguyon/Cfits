@@ -69,13 +69,33 @@ int AOsystSim_run()
   long *dmsize;
   long twait = 1; // us
   long long cnt = 0;
-  struct timespec sleep_time = { 0, 1000000};
   long ID_dm;
   double a;
+ 
+  long pupsize = 256;
+  double puprad = 22.0;
+  long IDpupa, IDpupp;
+  long IDpyrpha;
+  double x, y;
+  long ii, jj, ii1, jj1;
+  double pcoeff = 1.0;
+  long pupsize2;
+  long ID;
+  double lenssize = 30.0;
+
+  long wfssize = 120;
+  long *wfssize_array;
+  long ID_wfs;
+  long offset;
+
+  pupsize2 = pupsize*pupsize;
+
 
   printf("Running fake AO system simulation\n");
 
   dmsize = (long*) malloc(sizeof(long)*2);
+  wfssize_array = (long*) malloc(sizeof(long)*2);
+ 
   
   // INITIALIZE
   
@@ -84,18 +104,53 @@ int AOsystSim_run()
   dmsize[1] = dmysize;
   ID_dm = create_image_ID("dm_sim", 2, dmsize, FLOAT, 1, 0);
 
-  a = 0.0;
-  while(cnt<1000)
-    {
-      a += cos(cnt);
-      cnt ++;
-      clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleep_time, NULL);
-      //nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, time, NULL);
-      //usleep(1);
-    }
- 
-  printf("%ld %lf\n", (long) cnt, a);
+
+  // create WFS image
+  wfssize_array[0] = wfssize;
+  wfssize_array[1] = wfssize;
+  ID_wfs = create_image_ID("wfs_sim", 2, wfssize_array, FLOAT, 1, 0);
+
+
+
+  IDpyrpha = create_2Dimage_ID("pyrpha", pupsize, pupsize);
+  for(ii=0;ii<pupsize;ii++)
+    for(jj=0;jj<pupsize;jj++)
+      {
+	x = 1.0*(ii-pupsize/2);
+	y = 1.0*(jj-pupsize/2);
+	data.image[IDpyrpha].array.F[jj*pupsize+ii] = pcoeff*(fabs(x)+fabs(y));
+	if(fabs(x)>lenssize)
+	  data.image[IDpyrpha].array.F[jj*pupsize+ii] = 0.0;
+	if(fabs(y)>lenssize)
+	  data.image[IDpyrpha].array.F[jj*pupsize+ii] = 0.0;
+      }
+
+  IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+  IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
+  mk_complex_from_amph("pupa","pupp","pupc");
+  permut("pupc");
+  do2dfft("pupc","focc");
+  permut("focc");
+  mk_amph_from_complex("focc", "foca", "focp");
+  ID = image_ID("focp");
+  for(ii=0;ii<pupsize2;ii++)
+    data.image[ID].array.F[ii] += data.image[IDpyrpha].array.F[ii];
+  mk_complex_from_amph("foca","focp","focc1");
+  permut("focc1");
+  do2dfft("focc1","pupc1");
+  permut("pupc1");
+  mk_amph_from_complex("pupc1", "pupa1", "pupp1");
+
+  ID = image_ID("pupa1");
+  offset = (pupsize-wfssize)/2;
+  for(ii1=0;ii1<wfssize;ii1++)
+    for(jj1=0;jj1<wfssize;jj1++)
+      {
+	data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj+offset)*pupsize+ii+offset]*data.image[ID].array.F[(jj+offset)*pupsize+ii+offset];
+      }
+
   free(dmsize);
+  free(wfssize);
 
   return 0;
 }
