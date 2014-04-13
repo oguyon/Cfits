@@ -146,7 +146,7 @@ int AOsystSim_run()
   for(ii1=0;ii1<wfssize;ii1++)
     for(jj1=0;jj1<wfssize;jj1++)
       {
-	data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj+offset)*pupsize+ii+offset]*data.image[ID].array.F[(jj+offset)*pupsize+ii+offset];
+	data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
       }
 
   free(dmsize);
