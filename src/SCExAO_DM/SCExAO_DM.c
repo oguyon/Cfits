@@ -86,7 +86,7 @@ int SCExAO_DM_dmturb_LOcoeff_cli()
 int SCExAO_DM_dmturb_tint_cli()
 {
   if(CLI_checkarg(1,2)==0)
-    SCExAO_DM_dmturb_tint(data.cmdargtoken[1].val.numf);
+    SCExAO_DM_dmturb_tint(data.cmdargtoken[1].val.numl);
   else
     return 1;
 }
