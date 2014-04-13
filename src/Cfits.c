@@ -782,6 +782,7 @@ void main_init()
   init_image_format();
   init_SCExAO_DM();
   init_AOsystSim();
+  init_AOloopControl();
 
   printf("%ld commands loaded\n", data.NBcmd);
   

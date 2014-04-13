@@ -27,6 +27,11 @@ cfits_LDADD =
 ## Linking order matters
 ## Core modules last, higher level modules at the top
 
+
+SUBDIRS += AOloopControl
+cfits_LDADD += AOloopControl/libaoloopcontrol.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl
+
 SUBDIRS += AOsystSim
 cfits_LDADD += AOsystSim/libaosystsim.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim

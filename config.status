@@ -393,7 +393,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/image_gen/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/SCExAO_DM/Makefile src/AOsystSim/Makefile"
+config_files=" Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/image_gen/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/SCExAO_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile"
 config_commands=" depfiles libtool"
 
 ac_cs_usage="\
@@ -747,6 +747,7 @@ do
     "src/image_format/Makefile") CONFIG_FILES="$CONFIG_FILES src/image_format/Makefile" ;;
     "src/SCExAO_DM/Makefile") CONFIG_FILES="$CONFIG_FILES src/SCExAO_DM/Makefile" ;;
     "src/AOsystSim/Makefile") CONFIG_FILES="$CONFIG_FILES src/AOsystSim/Makefile" ;;
+    "src/AOloopControl/Makefile") CONFIG_FILES="$CONFIG_FILES src/AOloopControl/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

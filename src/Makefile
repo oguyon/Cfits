@@ -101,9 +101,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cfits_OBJECTS = cfits-Cfits.$(OBJEXT) cfits-calc_bison.$(OBJEXT) \
 	cfits-calc_flex.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
-cfits_DEPENDENCIES = AOsystSim/libaosystsim.la \
-	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
-	PIAACMCsimul/libpiaacmcsimul.la \
+cfits_DEPENDENCIES = AOloopControl/libaoloopcontrol.la \
+	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
+	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
 	image_gen/libimagegen.la statistic/libstatistic.la \
@@ -362,6 +362,7 @@ cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-DCONFIGDIR=\"/CfitsDev/Cfits-src/config\" \
 	-DSOURCEDIR=\"/CfitsDev/Cfits-src/src\" \
 	-DABSSRCTOPDIR=\"/CfitsDev/Cfits-src\" -fopenmp \
+	-I/CfitsDev/Cfits-src/src/AOloopControl \
 	-I/CfitsDev/Cfits-src/src/AOsystSim \
 	-I/CfitsDev/Cfits-src/src/SCExAO_DM \
 	-I/CfitsDev/Cfits-src/src/image_format \
@@ -382,11 +383,12 @@ AM_YFLAGS = -d
 AM_LFLAGS = -i 
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
-SUBDIRS = AOsystSim SCExAO_DM image_format PIAACMCsimul coronagraphs \
-	ZernikePolyn WFpropagate image_gen statistic fft info \
-	COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
+SUBDIRS = AOloopControl AOsystSim SCExAO_DM image_format PIAACMCsimul \
+	coronagraphs ZernikePolyn WFpropagate image_gen statistic fft \
+	info COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
 	00CORE
-cfits_LDADD = AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
+cfits_LDADD = AOloopControl/libaoloopcontrol.la \
+	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
 	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
