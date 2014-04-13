@@ -69,8 +69,8 @@ void qs_float(float *array, long left, long right)
     }
   } while(i<=j);
   
-  if(left<j) qs(array,left,j);
-  if(i<right) qs(array,i,right);
+  if(left<j) qs_float(array,left,j);
+  if(i<right) qs_float(array,i,right);
 }
 
 void qs_long(long *array, long left, long right)

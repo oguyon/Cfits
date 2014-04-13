@@ -8,10 +8,12 @@ int bubble_sort(double *array, long count);
 void qs_float(float *array, long left, long right);
 void qs_long(long *array, long left, long right);
 void qs_double(double *array, long left, long right);
+void qs_ushort(unsigned short *array, long left, long right);
 
 void quick_sort_float(float *array, long count);
 void quick_sort_long(long *array, long count);
 void quick_sort_double(double *array, long count);
+void quick_sort_ushort(unsigned short *array, long count);
 
 void qs3(double *array, double *array1, double *array2, long left, long right);
 

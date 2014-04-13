@@ -677,6 +677,11 @@ double arith_image_total(char *ID_name)
       for (ii = 0; ii < nelement; ii++)
 	value += (long double) data.image[ID].array.D[ii];
     }
+  else if(atype==USHORT)
+    {
+      for (ii = 0; ii < nelement; ii++)
+	value += (long double) data.image[ID].array.U[ii];
+    }
   else
     {
       printERROR(__FILE__,__func__,__LINE__,"invalid data type");
@@ -757,6 +762,17 @@ double arith_image_min(char *ID_name)
 	}
       OK=1;
     }
+  if(atype==USHORT)
+    {
+      value = (double) data.image[ID].array.U[0];
+      for (ii = 0; ii < nelement; ii++)
+	{
+	  value1 = (double) data.image[ID].array.U[ii];
+	  if(value1<value)
+	    value = value1;
+	}
+      OK=1;
+    }
   if(OK==0)
     printf("Error : Invalid data format for arith_image_min\n");
 
@@ -822,6 +838,17 @@ double arith_image_max(char *ID_name)
 	}
       OK=1;
     }
+  if(atype==USHORT)
+    {
+      value = (double) data.image[ID].array.U[0];
+      for (ii = 0; ii < nelement; ii++)
+	{
+	  value1 = (double) data.image[ID].array.U[ii];
+	  if(value1>value)
+	    value = value1;
+	}
+      OK=1;
+    }
   if(OK==0)
     printf("Error : Invalid data format for arith_image_max\n");
 
@@ -839,6 +866,7 @@ double arith_image_percentile(char *ID_name, double fraction)
   long *arrayL = NULL;
   float *arrayF = NULL;
   double *array_D = NULL;
+  unsigned short *array_U = NULL;
   long nelement;
   int atype;
   int atypeOK = 1; 
@@ -908,6 +936,21 @@ double arith_image_percentile(char *ID_name, double fraction)
     quick_sort_double(array_D, nelement);
     value = array_D[(long) (fraction*nelement)];
     free(array_D);    
+    break;
+
+  case USHORT :
+    array_U = (unsigned short*) malloc(sizeof(unsigned short)*nelement);
+    if(array_U==NULL)
+      {
+	printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+	exit(0);
+      }
+    array_U[0] = 0.0;
+    for (ii = 0; ii < nelement; ii++) 
+      array_U[ii] = data.image[ID].array.U[ii];
+    quick_sort_ushort(array_U, nelement);
+    value = array_U[(long) (fraction*nelement)];
+    free(array_U);    
     break;
 
   default:

@@ -121,6 +121,32 @@ void qs_double(double *array, long left, long right)
   if(i<right) qs_double(array,i,right);
 }
 
+void qs_ushort(unsigned short *array, long left, long right)
+{
+  register long i,j;
+  unsigned short x,y;
+  
+  i = left; j = right;
+  x = array[(left+right)/2];
+  
+  do {
+    while(array[i]<x && i<right) i++;
+    while(x<array[j] && j>left) j--;
+    
+    if(i<=j) {
+      y = array[i];
+      array[i] = array[j];
+      array[j] = y;
+      i++; j--;
+    }
+  } while(i<=j);
+  
+  if(left<j) qs_ushort(array,left,j);
+  if(i<right) qs_ushort(array,i,right);
+}
+
+
+
 void qs3(double *array, double *array1, double *array2, long left, long right)
 {
   register long i,j;
@@ -333,6 +359,11 @@ void quick_sort_long(long *array, long count)
 void quick_sort_double(double *array, long count)
 {
   qs_double(array,0,count-1);
+}
+
+void quick_sort_ushort(unsigned short *array, long count)
+{
+  qs_ushort(array,0,count-1);
 }
 
 void quick_sort3(double *array, double *array1, double *array2, long count)
