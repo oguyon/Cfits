@@ -479,6 +479,11 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
 	       data.image[IDout].array.CD[ii-start[0]].im = data.image[IDin].array.CD[ii].im;
 	    }
 	}
+      else if(atype == USHORT)
+	{
+	  for(ii=start_c[0];ii<end_c[0];ii++)
+	    data.image[IDout].array.U[ii-start[0]] = data.image[IDin].array.U[ii];	  
+	}     
       else
 	{
 	  n = snprintf(errmsg,SBUFFERSIZE,"invalid data type");
@@ -519,6 +524,12 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
 		data.image[IDout].array.CD[(jj-start[1])*naxesout[0]+(ii-start[0])].re = data.image[IDin].array.CD[jj*naxes[0]+ii].re;
 		data.image[IDout].array.CD[(jj-start[1])*naxesout[0]+(ii-start[0])].im = data.image[IDin].array.CD[jj*naxes[0]+ii].im;
 	      }
+	}
+      else if(atype == USHORT)
+	{
+	  for(ii=start_c[0];ii<end_c[0];ii++)
+	    for(jj=start_c[1];jj<end_c[1];jj++)
+	      data.image[IDout].array.U[(jj-start[1])*naxesout[0]+(ii-start[0])] = data.image[IDin].array.U[jj*naxes[0]+ii];
 	}
       else
 	{
@@ -561,6 +572,13 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
 		  data.image[IDout].array.CD[(kk-start[2])*naxesout[0]*naxesout[1]+(jj-start[1])*naxesout[0]+(ii-start[0])].re = data.image[IDin].array.CD[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii].re;		  
 		  data.image[IDout].array.CD[(kk-start[2])*naxesout[0]*naxesout[1]+(jj-start[1])*naxesout[0]+(ii-start[0])].im = data.image[IDin].array.CD[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii].im;
 		}
+	}
+      else if(atype == USHORT)
+	{
+	  for(ii=start_c[0];ii<end_c[0];ii++)
+	    for(jj=start_c[1];jj<end_c[1];jj++)
+	      for(kk=start_c[2];kk<end_c[2];kk++)
+		data.image[IDout].array.U[(kk-start[2])*naxesout[0]*naxesout[1]+(jj-start[1])*naxesout[0]+(ii-start[0])] = data.image[IDin].array.U[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
 	}
       else
 	{
@@ -605,6 +623,45 @@ int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_
 
   return(0);
 }
+
+
+//
+// every time im_name changes (counter increments), crop it to out_name in shared memory
+//
+int arith_image_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)
+{
+  long *start = NULL;
+  long *end = NULL;
+  
+  start = (long*) malloc(sizeof(long)*2);
+  if(start==NULL)
+     {
+       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+     }
+
+  end = (long*) malloc(sizeof(long)*2);
+  if(end==NULL)
+     {
+       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+     }
+
+  start[0]=xstart;
+  start[1]=ystart;
+  end[0]=xstart+size_x;
+  end[1]=ystart+size_y;
+  arith_image_crop(in_name, out_name, start, end, 2);
+
+  free(start);
+  free(end);
+
+  return(0);
+}
+
+
+
+
 
 int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart)
 {

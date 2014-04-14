@@ -58,10 +58,7 @@ typedef struct
   long ID_contrM; // Control matrix
   
 
-  long NBmodes;
-
-
-
+  
   // LOOP CONTROL
   int on;  // goes to 1 when loop starts, put to 0 to turn loop off
   float gain; // overall loop gain
