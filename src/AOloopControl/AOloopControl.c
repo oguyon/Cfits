@@ -596,36 +596,68 @@ int Average_cam_frames(long loop, long NbAve)
   long ii;
   double total;
   char name[200];
+  int atype;
 
-  
+  atype = data.image[AOconf[loop].ID_WFS].md[0].atype;
+
+
   if(NbAve>1)
     for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
       data.image[AOconf[loop].ID_WFS1].array.F[ii] = 0.0;
 
 
-  imcnt = 0;
-  while(imcnt<NbAve)
-    {
-      usleep(100);
-      
-      if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
-	{
-	  AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
-	  if(NbAve>1)
-	    {
-	      for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.F[ii];
-	    }
-	  else
-	    {
-	      for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.F[ii];
-	    }
-	  imcnt++;
-	}      
-    }
 
-
+  switch (atype) {
+  case FLOAT :
+    imcnt = 0;
+    while(imcnt<NbAve)
+      {
+	usleep(100);	  
+	if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
+	  {
+	    AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
+	    if(NbAve>1)
+	      {
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		  data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.F[ii];
+	      }
+	    else
+	      {
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		  data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.F[ii];
+	      }
+	    imcnt++;
+	  }      
+      }
+    break;
+  case USHORT :
+    imcnt = 0;
+    while(imcnt<NbAve)
+      {
+	usleep(100);	  
+	if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
+	  {
+	    AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
+	    if(NbAve>1)
+	      {
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		  data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.U[ii];
+	      }
+	    else
+	      {
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		  data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.U[ii];
+	      }
+	    imcnt++;
+	  }
+      }         
+    break;
+  default :
+    printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+    exit(0);
+    break;
+  }
+  
 
   if(NbAve>1)
     for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
