@@ -808,12 +808,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname)
       {
 	printf("Verifying file\n");
 	OK = 1;
-	if(data.image[ID].md[0].naxis!=3)
+	if(data.image[ID].md[0].naxis != 3)
 	  {
 	    printf("DM modes has wrong dimension\n");
 	    OK = 0;
 	  }
-	if(data.image[ID].md[0].atype!=FLOAT)
+	if(data.image[ID].md[0].atype != FLOAT)
 	  {
 	    printf("DM modes has wrong type\n");
 	    OK = 0;
@@ -1057,8 +1057,14 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   char fname[200];
 
 
-
-  NBloops = nbloop;
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+  
+  printf("SETTING UP...\n");
+  sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+  AOloopControl_loadconfigure(LOOPNUMBER, fname);
+  
+ 
 
   // initialize RM to zero
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
@@ -1242,15 +1248,10 @@ int AOloopControl_run()
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
 
-
   printf("SETTING UP...\n");
   sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
   AOloopControl_loadconfigure(LOOPNUMBER, fname);
  
-
-  printf("   init_WFSref    %d\n", AOconf[loop].init_refWFS);
-  printf("   init_RM        %d\n", AOconf[loop].init_RM);
-  printf("   init_CM        %d\n", AOconf[loop].init_CM);
 
   OK = 1;
   if(AOconf[loop].init_refWFS==0)
@@ -1287,7 +1288,8 @@ int AOloopControl_run()
 	}
     }
 
-  /*  printf("Acquiring image\n");
+  /*  
+      printf("Acquiring image\n");
   Average_cam_frames(LOOPNUMBER, 10);
   save_fl_fits("imWFS1_0","!imave.fits");
   */
