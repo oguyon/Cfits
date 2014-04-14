@@ -69,6 +69,7 @@ int AOsystSim_run()
   long *dmsize;
   long twait = 1; // us
   long long cnt = 0;
+  long long cnt0;
   long ID_dm;
  
   long pupsize = 256;
@@ -84,8 +85,8 @@ int AOsystSim_run()
 
   long wfssize = 120;
   long *wfssize_array;
-  long ID_wfs;
-  long offset;
+  long ID_wfs, ID_wfe;
+  long offset, offset1;
 
   pupsize2 = pupsize*pupsize;
 
@@ -98,6 +99,13 @@ int AOsystSim_run()
   
   // INITIALIZE
   
+  // create wavefront error input
+  dmsize[0] = dmxsize;
+  dmsize[1] = dmysize;
+  ID_wfe = create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);
+
+
+
   // create DM
   dmsize[0] = dmxsize;
   dmsize[1] = dmysize;
@@ -127,52 +135,76 @@ int AOsystSim_run()
       }
 
 
-
-
-
-  for(cnt=0;cnt<1000;cnt++)
+  offset1 = (pupsize-dmxsize)/2;
+  printf("OFFSET = %ld\n", offset);
+  cnt = -1;
+  printf("\n");
+  while(1)
     {
-      IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
-      IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
-      mk_complex_from_amph("pupa","pupp","pupc");
-      delete_image_ID("pupa");
-      delete_image_ID("pupp");
-      permut("pupc");
-      do2dfft("pupc","focc");
-      delete_image_ID("pupc");
-      permut("focc");
-      mk_amph_from_complex("focc", "foca", "focp");
-      delete_image_ID("focc");
-      IDp = image_ID("focp");
-      IDa = image_ID("foca");
-      
-      
-      for(ii=0;ii<pupsize2;ii++)
-	{
-	  data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
-	  data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
-	}
-      mk_complex_from_amph("foca","focp","focc1");
-      delete_image_ID("foca");
-      delete_image_ID("focp");
-      permut("focc1");
-      do2dfft("focc1","pupc1");
-      delete_image_ID("focc1");
-      permut("pupc1");
-      mk_amph_from_complex("pupc1", "pupa1", "pupp1");
-      delete_image_ID("pupc1");
-      delete_image_ID("pupp1");
-      
-      ID = image_ID("pupa1");
-      offset = (pupsize-wfssize)/2;
-      
-      for(ii1=0;ii1<wfssize;ii1++)
-	for(jj1=0;jj1<wfssize;jj1++)
-	  data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
-      delete_image_ID("pupa1");
+      usleep(10000); // 100 Hz 
+      // cnt0 = data.image[ID_dm].md[0].cnt0;
+      // if(cnt0!=cnt)
+      //{
+	  //	  printf("COMPUTING WFS IMAGE\n");
+	  //fflush(stdout);
+	  
+	  IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+	  IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
+
+	  for(ii=0;ii<dmxsize;ii++)
+	    for(jj=0;jj<dmysize;jj++)
+	      data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[ID_dm].array.F[jj*dmxsize+ii]+data.image[ID_wfe].array.F[jj*dmxsize+ii];
+
+
+	  //	  save_fl_fits("pupp","!pupp.fits");
+
+	  mk_complex_from_amph("pupa","pupp","pupc");
+	  delete_image_ID("pupa");
+	  delete_image_ID("pupp");
+	  permut("pupc");
+	  do2dfft("pupc","focc");
+	  delete_image_ID("pupc");
+	  permut("focc");
+	  mk_amph_from_complex("focc", "foca", "focp");
+	  delete_image_ID("focc");
+	  IDp = image_ID("focp");
+	  IDa = image_ID("foca");
+	  
+	  
+	  for(ii=0;ii<pupsize2;ii++)
+	    {
+	      data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
+	      data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
+	    }
+	  mk_complex_from_amph("foca","focp","focc1");
+	  delete_image_ID("foca");
+	  delete_image_ID("focp");
+	  permut("focc1");
+	  do2dfft("focc1","pupc1");
+	  delete_image_ID("focc1");
+	  permut("pupc1");
+	  mk_amph_from_complex("pupc1", "pupa1", "pupp1");
+	  delete_image_ID("pupc1");
+	  delete_image_ID("pupp1");
+	  
+	  ID = image_ID("pupa1");
+	  offset = (pupsize-wfssize)/2;
+	  
+	  data.image[ID_wfs].md[0].write = 1;
+	  for(ii1=0;ii1<wfssize;ii1++)
+	    for(jj1=0;jj1<wfssize;jj1++)
+	      data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
+	  data.image[ID_wfs].md[0].write = 0;
+	  data.image[ID_wfs].md[0].cnt0++;
+	  delete_image_ID("pupa1");
+
+
+	  printf("\r%10ld       ", data.image[ID_wfs].md[0].cnt0);
+	  fflush(stdout);
+	  //  cnt = cnt0;
+	  //	}
     }
-
-
+      
   free(dmsize);
   free(wfssize_array);
 
