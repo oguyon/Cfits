@@ -1103,10 +1103,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
 	  data.image[AOconf[loop].ID_cmd_modes].array.F[k1] = amp;
 	  set_DM_modes(loop);
 
-	  // TEST
-	  sprintf(fname, "!dmtest_%ld.fits", k1);
-	  save_fl_fits("dm_sim", fname);
-
 	  usleep(delayus);
 	  Average_cam_frames(loop, NbAve);
 	 
