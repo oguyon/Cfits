@@ -1087,6 +1087,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   int Verbose = 1;
   long k1, k, k2;
   char fname[200];
+  char name0[200];
   char name[200];
 
   if(AOloopcontrol_meminit==0)
@@ -1192,8 +1193,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
     {
       printf("[%ld] ", i);
       fflush(stdout);
+      sprintf(name0, "RespM_%ld", loop);
       sprintf(name, "cmat%ld", i);
-      compute_ControlMatrix(LOOPNUMBER, i, "RespM_0", name, "evecM");
+      compute_ControlMatrix(LOOPNUMBER, i, name0, name, "evecM");
     }
 
   printf("Done\n");
