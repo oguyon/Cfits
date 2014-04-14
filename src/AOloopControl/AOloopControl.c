@@ -48,6 +48,7 @@ int *AOconf_fd;
 
 
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
+int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop);
 int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name);
 int Average_cam_frames(long loop, long NbAve);
 int AOloopControl_loadconfigure(long loopnb, char *fname);
@@ -127,6 +128,17 @@ int AOloopControl_setmaxlimit_cli()
     return 1;
 }
 
+int AOloopControl_Measure_Resp_Matrix_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
+    {
+      Measure_Resp_Matrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 
 
 
@@ -155,6 +167,16 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <conf file>");
   strcpy(data.cmd[data.NBcmd].example,"AOlooploadconf 1 aoloop1.conf");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loadconfigure(long loopnb, char *fname)");
+  data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"aolacqresp");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_Measure_Resp_Matrix_cli;
+  strcpy(data.cmd[data.NBcmd].info,"acquire AO response matrix and WFS reference");
+  strcpy(data.cmd[data.NBcmd].syntax,"<ave#> <ampl> <nbloop>");
+  strcpy(data.cmd[data.NBcmd].example,"aolacqresp 50 0.1 5");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)");
   data.NBcmd++;
 
 
@@ -1213,7 +1235,8 @@ int AOloopControl_run()
 {
   char fname[200];
   long loop;
-  
+  int OK;
+
   loop = LOOPNUMBER;
   
   if(AOloopcontrol_meminit==0)
@@ -1225,29 +1248,44 @@ int AOloopControl_run()
   AOloopControl_loadconfigure(LOOPNUMBER, fname);
  
 
-  AOconf[loop].kill = 0;
-  AOconf[loop].on = 0;
-  printf("\n");
-  while( AOconf[loop].kill == 0)
+  printf("   init_WFSref    %d\n", AOconf[loop].init_refWFS);
+  printf("   init_RM        %d\n", AOconf[loop].init_RM);
+  printf("   init_CM        %d\n", AOconf[loop].init_CM);
+
+  OK = 1;
+  if(AOconf[loop].init_refWFS==0)
     {
-      printf(" WAITING                    \r");
-      fflush(stdout);
-      usleep(100);
-      
-      while(AOconf[loop].on == 1)
-	{
-	  printf("LOOP IS RUNNING  %llu  %g \r", AOconf[loop].cnt, AOconf[loop].RMSmodes);
-	  fflush(stdout);
-	  usleep(10000);
-	  AOcompute(loop);
-	  set_DM_modes(loop);
-	  AOconf[loop].cnt++;
-	}
-      
-
-      //      AOconf[loop].cnt++;
+      printf("ERROR: CANNOT RUN LOOP WITHOUT WFS REFERENCE\n");
+      OK = 0;
     }
-
+  if(AOconf[loop].init_CM==0)
+    {
+      printf("ERROR: CANNOT RUN LOOP WITHOUT CONTROL MATRIX\n");
+      OK = 0;
+    }
+  
+  if(OK==1)
+    {
+      AOconf[loop].kill = 0;
+      AOconf[loop].on = 0;
+      printf("\n");
+      while( AOconf[loop].kill == 0)
+	{
+	  printf(" WAITING                    \r");
+	  fflush(stdout);
+	  usleep(100);
+	  
+	  while(AOconf[loop].on == 1)
+	    {
+	      printf("LOOP IS RUNNING  %llu  %g \r", AOconf[loop].cnt, AOconf[loop].RMSmodes);
+	      fflush(stdout);
+	      usleep(10000);
+	      AOcompute(loop);
+	      set_DM_modes(loop);
+	      AOconf[loop].cnt++;
+	    }
+	}
+    }
 
   /*  printf("Acquiring image\n");
   Average_cam_frames(LOOPNUMBER, 10);
@@ -1272,6 +1310,9 @@ int AOloopControl_run()
 
   return(0);
 }
+
+
+
 
 
 int AOloopControl_setLoopNumber(long loop)
