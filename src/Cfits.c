@@ -209,6 +209,19 @@ int set_default_precision_double()
   return 0;
 }
 
+int cfits_usleep_cli()
+{
+  if(data.cmdargtoken[1].type == 2)
+    {
+      usleep(data.cmdargtoken[1].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 
 /*^-----------------------------------------------------------------------------
 | 
@@ -772,6 +785,15 @@ void main_init()
   strcpy(data.cmd[data.NBcmd].syntax,"no argument");
   strcpy(data.cmd[data.NBcmd].example,"dpdouble");
   strcpy(data.cmd[data.NBcmd].Ccall,"data.precision = 1");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"usleep");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = cfits_usleep_cli;
+  strcpy(data.cmd[data.NBcmd].info,"usleep");
+  strcpy(data.cmd[data.NBcmd].syntax,"<us>");
+  strcpy(data.cmd[data.NBcmd].example,"usleep 1000");
+  strcpy(data.cmd[data.NBcmd].Ccall,"usleep(long tus)");
   data.NBcmd++;
 
   
