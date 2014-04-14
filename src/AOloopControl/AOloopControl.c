@@ -1064,7 +1064,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
   AOloopControl_loadconfigure(LOOPNUMBER, fname);
   
- 
+  NBloops = nbloop;
 
   // initialize RM to zero
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
