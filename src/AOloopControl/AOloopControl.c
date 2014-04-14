@@ -1083,11 +1083,11 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   long NBloops;
   long kloop;
   long delayus = 100; // delay in us
-  long ii;
+  long ii, i;
   int Verbose = 1;
   long k1, k, k2;
   char fname[200];
-
+  char name[200];
 
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
@@ -1172,9 +1172,14 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
     data.image[AOconf[loop].ID_refWFS].array.F[ii] /= (NBloops*2.0*AOconf[loop].NBDMmodes);
 
+  
+  for(i=0;i<AOconf[loop].NBDMmodes-1;i++)
+    {
+      sprintf(name, "cmat%ld", i);
+      compute_ControlMatrix(LOOPNUMBER, i, "RespM_0", name, "evecM");
+    }
 
-
-   printf("Done\n");
+  printf("Done\n");
 
   return(0);
 }
