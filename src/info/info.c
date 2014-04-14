@@ -2,6 +2,24 @@
 #include <string.h>
 #include <malloc.h>
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/file.h>
+#include <sys/types.h>
+#include <sys/stat.h> //for the mkdir options
+#include <sys/mman.h>
+
+#include <fcntl.h> 
+#include <termios.h>
+#include <sys/types.h> //pid
+#include <sys/wait.h> //pid
+
+#include <ncurses.h>
+
 
 #include "Cfits.h"
 #include "00CORE/00CORE.h"
@@ -16,6 +34,13 @@
 
 extern DATA data;
 
+int wcol, wrow; // window size
+
+long long cntlast;
+struct timespec tlast;
+
+
+int info_image_monitor(char *ID_name, double frequ);
 
 
 
@@ -40,6 +65,18 @@ int info_profile_cli()
 }
 
 
+int info_image_monitor_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)==0)
+    {
+      info_image_monitor(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 
 
 int init_info()
@@ -47,6 +84,16 @@ int init_info()
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "image information and statistics");
   data.NBmodule++;
+
+  
+  strcpy(data.cmd[data.NBcmd].key,"imgmon");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = info_image_monitor_cli;
+  strcpy(data.cmd[data.NBcmd].info,"image monitor");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <frequ>");
+  strcpy(data.cmd[data.NBcmd].example,"imgmon im1 30");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int info_image_monitor(char *ID_name, double frequ)");
+  data.NBcmd++;
 
 
   strcpy(data.cmd[data.NBcmd].key,"profile");
@@ -63,10 +110,298 @@ int init_info()
 
 
 
+struct timespec info_time_diff(struct timespec start, struct timespec end)
+{
+  struct timespec temp;
+  if ((end.tv_nsec-start.tv_nsec)<0) {
+    temp.tv_sec = end.tv_sec-start.tv_sec-1;
+    temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+  } else {
+    temp.tv_sec = end.tv_sec-start.tv_sec;
+    temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+  }
+  return temp;
+}
+
+
+
+int kbdhit(void)
+{
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+     
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+ 
+    ch = getchar();
+ 
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+ 
+    if(ch != EOF)
+      {
+	//     ungetc(ch, stdin);
+        return 1;
+      }
+    
+    return 0;
+}
+
+
+int print_header(char *str, char c)
+{
+  long n;
+  long i;
+
+  attron(A_BOLD);
+  n = strlen(str);
+  for(i=0;i<(wcol-n)/2;i++)
+    printw("%c",c);
+  printw("%s", str);
+  for(i=0;i<(wcol-n)/2-1;i++)
+    printw("%c",c);
+  printw("\n");
+  attroff(A_BOLD);
+
+  return(0);
+}
+
+
+int printstatus(long ID)
+{
+  struct timespec tnow;
+  struct timespec tdiff;
+  double tdiffv;
+  
+ 
+  double frequ;
+  long NBhistopt = 20;
+  long *vcnt;
+  long h;
+  long cnt, i, ii;
+
+  int customcolor;
+
+
+  float minPV = 60000; 
+  float maxPV = 0;
+
+  int atype;
+  char line1[200];
+
+  atype = data.image[ID].md[0].atype;
+  if(atype==CHAR)
+    printw("type:  CHAR\n");
+  if(atype==INT)
+     printw("type:  INT\n");
+  if(atype==FLOAT)
+    printw("type:  FLOAT\n");
+  if(atype==DOUBLE)
+    printw("type:  DOUBLE\n");
+  if(atype==COMPLEX_FLOAT)
+    printw("type:  COMPLEX_FLOAT\n");
+  if(atype==COMPLEX_DOUBLE)
+    printw("type:  COMPLEX_DOUBLE\n");
+  if(atype==USHORT)
+    printw("type:  USHORT\n");
+  
+
+  /* printw("write  = %d\n", data.image[ID].md[0].write);
+  printw("status = %d\n", data.image[ID].md[0].status);
+  printw("cnt0   = %d\n", data.image[ID].md[0].cnt0);
+  printw("cnt1   = %d\n", data.image[ID].md[0].cnt1);
+  */
+  
+
+  
+  clock_gettime(CLOCK_REALTIME, &tnow);
+  tdiff = info_time_diff(tlast, tnow);
+  clock_gettime(CLOCK_REALTIME, &tlast);
+
+  tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+  frequ = (data.image[ID].md[0].cnt0-cntlast)/tdiffv;
+  cntlast = data.image[ID].md[0].cnt0;
+
+
+
+  printw("write  = %d\n", data.image[ID].md[0].write);
+  printw("status = %d\n", data.image[ID].md[0].status);
+  printw("cnt0   = %d      %6.2f Hz\n", data.image[ID].md[0].cnt0, frequ);
+  printw("cnt1   = %d\n", data.image[ID].md[0].cnt1);
 
 
 
 
+  /*
+  tdifflast = time_diff(tlast, zylaconf[0].tend);
+  tdiffvlast = 1.0*tdifflast.tv_sec + 1.0e-9*tdifflast.tv_nsec;
+  
+  tlast = zylaconf[0].tend;
+  freq = (zyladata[0].cnt - cntlast)/tdiffvlast;
+  cntlast = zyladata[0].cnt;
+  */
+
+  /*  printw("\n");
+  printw("Run time = %9.3f s\n", tdiffv);
+  printw("Monitor refresh every %6.2f ms  (%5.1f Hz)", 1000.0*tdiffvlast, 1.0/tdiffvlast);
+  printw("\n");
+  printw("Main program PID : %ld\n", (long) zylaconf[0].pid_main);
+  printw("CLI PID          : %ld\n", (long) zylaconf[0].pid_prompt);
+  printw("\n");
+  
+  */
+  
+  /*
+  
+  switch (zylaconf[0].status) {
+  case 0:
+    attron(A_BLINK | A_BOLD | COLOR_PAIR(4));
+    print_header(" CAMERA IS OFF ", ' ');
+    attroff(A_BLINK | A_BOLD | COLOR_PAIR(4));
+    break;
+  case 1:
+    attron(A_BLINK | A_BOLD | COLOR_PAIR(4));
+    print_header(" SETTING UP ", ' ');
+    attroff(A_BLINK | A_BOLD | COLOR_PAIR(4));
+    break;
+  case 2:
+    attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
+    print_header(" CAMERA IS ACQUIRING ", ' ');
+    attroff(A_BLINK | A_BOLD | COLOR_PAIR(3));
+    break;
+  case 3:
+    attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
+    print_header(" PAUSED ", ' ');
+    attroff(A_BLINK | A_BOLD | COLOR_PAIR(3));
+    break;
+  }
+
+  printw("Exposure time    : %.2f ms\n", 1000.0*zylaconf[0].etime);
+  */
+  // printw("Frame %10ld   ", zyladata[0].cnt);
+ 
+  /*  attron(A_BOLD);
+  printw("%6.2f Hz\n", freq);
+  attroff(A_BOLD);
+  */
+
+ 
+  vcnt = (long*) malloc(sizeof(long)*NBhistopt);
+
+  if(atype==FLOAT)
+    {
+      minPV = data.image[ID].array.F[0];
+      maxPV = minPV;
+      
+      for(h=0;h<NBhistopt; h++)
+	vcnt[h] = 0;
+      for(ii=0;ii<data.image[ID].md[0].nelement;ii++)
+	{
+	  if(data.image[ID].array.F[ii]<minPV)
+	    minPV = data.image[ID].array.F[ii];
+	  if(data.image[ID].array.F[ii]>maxPV)
+	    maxPV = data.image[ID].array.F[ii];
+	  h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.F[ii]-minPV))/(maxPV-minPV));
+	  if((h>-1)&&(h<NBhistopt))
+	    vcnt[h]++;
+	}
+    }
+  
+  if(atype==USHORT)
+    {
+      minPV = data.image[ID].array.U[0];
+      maxPV = minPV;
+      
+      for(h=0;h<NBhistopt; h++)
+	vcnt[h] = 0;
+      for(ii=0;ii<data.image[ID].md[0].nelement;ii++)
+	{
+	  if(data.image[ID].array.U[ii]<minPV)
+	    minPV = data.image[ID].array.U[ii];
+	  if(data.image[ID].array.U[ii]>maxPV)
+	    maxPV = data.image[ID].array.U[ii];
+	  h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.U[ii]-minPV))/(maxPV-minPV));
+	  if((h>-1)&&(h<NBhistopt))
+	    vcnt[h]++;
+	}
+    }
+  
+
+  print_header(" PIXEL VALUES ", '-');
+  printw("min - max   :   %f - %f\n", minPV, maxPV);
+ 
+  
+  /*PVrange = maxPV-minPV;
+  PVmid = 0.5*(maxPV+minPV);
+  minPV = PVmid-;
+  maxPV = 1.1*maxPV;
+  */ 
+
+  for(h=0;h<NBhistopt; h++)
+    {
+      customcolor = 1;
+      if(h==NBhistopt-1)
+	customcolor = 2;
+      sprintf(line1, "[%5f-%5f] %7ld", (minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
+      
+      printw("%s", line1); //(minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
+      attron(COLOR_PAIR(customcolor));
+
+      cnt=0;
+      i = 0;
+      while((cnt<wcol-strlen(line1)-1)&&(i<vcnt[h]))
+	{
+	  printw(" ");
+	  i += 10;
+	  cnt++;
+	}
+      attroff(COLOR_PAIR(customcolor));
+      printw("\n");
+    }
+  
+  
+  free(vcnt);
+  
+
+  return(0);
+}
+
+
+
+
+int info_image_monitor(char *ID_name, double frequ)
+{
+  long ID;
+
+  ID = image_ID(ID_name);
+  initscr();		
+  getmaxyx(stdscr,wrow,wcol);
+  start_color();
+  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
+  init_pair(2, COLOR_BLACK, COLOR_RED);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
+  init_pair(4, COLOR_RED, COLOR_BLACK);
+
+  while( !kbdhit() )
+    {
+      usleep((long) (1000000.0/frequ));
+      clear();
+      attron(A_BOLD);
+      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+      attroff(A_BOLD);
+      
+      printstatus(ID);
+      refresh();
+    }
+ endwin();	
+
+  return 0;
+}
 
 
 
@@ -704,7 +1039,7 @@ int profile2im(char *profile_name, long nbpoints, long size, double xcenter, dou
     }
   for(i=0;i<nbpoints;i++)
     {
-      if(fscanf(fp,"%ld %f\n",&index,&tmp)!=2)
+      if(fscanf(fp,"%ld %lf\n",&index,&tmp)!=2)
 	{
 	  printf("ERROR: fscanf, %s line %d\n",__FILE__,__LINE__);
 	  exit(0);
