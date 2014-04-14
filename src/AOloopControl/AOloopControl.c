@@ -1330,7 +1330,7 @@ int AOloopControl_run()
 	  
 	  while(AOconf[loop].on == 1)
 	    {
-	      printf("LOOP IS RUNNING  %llu  %g \r", AOconf[loop].cnt, AOconf[loop].RMSmodes);
+	      printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
 	      fflush(stdout);
 	      usleep(10000);
 	      AOcompute(loop);
