@@ -1159,6 +1159,11 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
 	}
     }
 
+  set_DM_modes(loop);
+
+  printf("Acquisition done, compiling results...");
+  fflush(stdout);
+
   arith_image_zero(AOconf[loop].WFSname);
   for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
     data.image[AOconf[loop].ID_cmd_modes].array.F[k2] = 0.0;
@@ -1172,12 +1177,21 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
     data.image[AOconf[loop].ID_refWFS].array.F[ii] /= (NBloops*2.0*AOconf[loop].NBDMmodes);
 
+  printf("\n");
+  fflush(stdout);
+
+  printf("Computing Control matrix(es) ... ");
+  fflush(stdout);
+
+
   imax = 5;
   if(imax<AOconf[loop].NBDMmodes-1)
     imax = AOconf[loop].NBDMmodes-1;
 
   for(i=0;i<imax;i++)
     {
+      printf("[%ld] ", i);
+      fflush(stdout);
       sprintf(name, "cmat%ld", i);
       compute_ControlMatrix(LOOPNUMBER, i, "RespM_0", name, "evecM");
     }

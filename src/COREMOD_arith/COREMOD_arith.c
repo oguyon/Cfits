@@ -616,41 +616,6 @@ int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_
   start[1]=ystart;
   end[0]=xstart+size_x;
   end[1]=ystart+size_y;
-  arith_image_crop(in_name,out_name,start,end,2);
-
-  free(start);
-  free(end);
-
-  return(0);
-}
-
-
-//
-// every time im_name changes (counter increments), crop it to out_name in shared memory
-//
-int arith_image_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)
-{
-  long *start = NULL;
-  long *end = NULL;
-  
-  start = (long*) malloc(sizeof(long)*2);
-  if(start==NULL)
-     {
-       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-       exit(0);
-     }
-
-  end = (long*) malloc(sizeof(long)*2);
-  if(end==NULL)
-     {
-       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-       exit(0);
-     }
-
-  start[0]=xstart;
-  start[1]=ystart;
-  end[0]=xstart+size_x;
-  end[1]=ystart+size_y;
   arith_image_crop(in_name, out_name, start, end, 2);
 
   free(start);

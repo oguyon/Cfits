@@ -234,6 +234,12 @@ int main(int argc, char *argv[])
   int nbtk;
   char *cmdargstring;
 
+  FILE *fpcmd;
+  FILE *fpcmdout;
+  int OKcmd;
+  char fline[200];
+  int r;
+
   TYPESIZE[0] = 0;
   TYPESIZE[1] = sizeof(char);
   TYPESIZE[2] = sizeof(int);
@@ -344,7 +350,11 @@ int main(int argc, char *argv[])
       // -------------------------------------------------------------
       //                 get user input
       // -------------------------------------------------------------
-      line = readline (prompt);  
+  
+
+  
+      line = readline (prompt);
+      
       add_history(line);		  
 
 
