@@ -1241,7 +1241,7 @@ int AOcompute(long loop)
   data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
  
-  if(0)
+  if(1)
     {
       printf("MATRIX MULT :  ");
       for(k=0; k<AOconf[loop].NBDMmodes; k++)
