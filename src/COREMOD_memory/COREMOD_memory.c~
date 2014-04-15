@@ -460,7 +460,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"complex -> real, imaginary");
   strcpy(data.cmd[data.NBcmd].syntax,"complex real imaginary");
   strcpy(data.cmd[data.NBcmd].example,"c2ri imc imr imi");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_reim_from_complex(char *re_name, char *im_name, char *out_name)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"c2ap");
@@ -469,7 +469,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
   strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
   strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(char *re_name, char *im_name, char *out_name)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"rmall");
