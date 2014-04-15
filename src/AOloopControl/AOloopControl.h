@@ -74,7 +74,7 @@ typedef struct
   // 6: MULTIPLYING BY GAINS
   // 7: MULTIPLYING BY MODE MATRIX -> COMMANDS SENT TO DM
 
-
+  int GPU; // 1 if computation done by GPU
 
   // LOOP TELEMETRY
   double RMSmodes;

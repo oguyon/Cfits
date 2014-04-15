@@ -48,6 +48,8 @@ int *AOconf_fd;
 
 
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
+int AOloopControl_MakeFourierModes(char *ID_name, long size, long NBfreq, float deltaCPA, float radius);
+
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop);
 int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name);
 int Average_cam_frames(long loop, long NbAve);
@@ -78,6 +80,18 @@ int AOloopControl_camimage_extract2D_sharedmem_loop_cli()
     {
       AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string , data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
       return 0;
+    }
+  else
+    return 1;
+}
+
+
+int AOloopControl_MakeFourierModes_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
+    {
+      AOloopControl_MakeFourierModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
+  return 0;
     }
   else
     return 1;
@@ -157,6 +171,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image>");
   strcpy(data.cmd[data.NBcmd].example,"cropshim imin imout");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"mkfouriermodes");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_MakeFourierModes_cli;
+  strcpy(data.cmd[data.NBcmd].info,"create Fourier modes basis");
+  strcpy(data.cmd[data.NBcmd].syntax,"<output image> <imsize> <NBfreq> <delta CPA> <radius>");
+  strcpy(data.cmd[data.NBcmd].example,"mkfouriermodes imout 50 100 0.8 26.0");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_MakeFourierModes(char *ID_name, long size, long NBfreq, float deltaCPA, float radius)");
   data.NBcmd++;
 
 
@@ -326,6 +349,106 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
   return(0);
 }
 
+
+int AOloopControl_MakeFourierModes(char *ID_name, long size, long NBfreq, float deltaCPA, float radius)
+{
+  long ID;
+  long IDx, IDy, IDr;
+  float CPAx, CPAy;
+  float x, y, r;
+  long ii, jj;
+  long k, k1;
+  float CPAmax = 20;
+  long NBmax;
+  float *CPAxarray;
+  float *CPAyarray;
+  float *CPArarray;
+  float coeff;
+  long size2;
+
+  size2 = size*size;
+  IDx = create_2Dimage_ID("tmpx", size, size);
+  IDy = create_2Dimage_ID("tmpy", size, size);
+  IDr = create_2Dimage_ID("tmpr", size, size);
+  
+  ID = create_3Dimage_ID(ID_name, size, size, 2*NBfreq);
+  
+
+  printf("precomputing x, y, r\n");
+  fflush(stdout);
+
+  for(ii=0;ii<size;ii++)
+    {
+      x = (1.0*ii-0.5*size)/radius;
+      for(jj=0;jj<size;jj++)
+	{
+	  y = (1.0*jj-0.5*size)/radius;
+	  r = sqrt(x*x+y*y);
+	  data.image[IDx].array.F[jj*size+ii] = x;
+	  data.image[IDy].array.F[jj*size+ii] = y;
+	  data.image[IDr].array.F[jj*size+ii] = r;	  
+	}
+    }
+  
+
+  printf("CPA: max = %f   delta = %f\n", CPAmax, deltaCPA);
+  fflush(stdout);
+  NBmax = 0;
+  for(CPAx=0;CPAx<CPAmax;CPAx+=deltaCPA)
+    for(CPAy=-CPAmax;CPAy<CPAmax;CPAy+=deltaCPA)
+      NBmax += 2;
+  
+  printf("NBmax = %ld\n", NBmax);
+  fflush(stdout);
+  
+  CPAxarray = (float*) malloc(sizeof(float)*NBmax);
+  CPAyarray = (float*) malloc(sizeof(float)*NBmax);
+  CPArarray = (float*) malloc(sizeof(float)*NBmax);
+  
+  NBmax = 0;
+  for(CPAx=0;CPAx<CPAmax;CPAx+=deltaCPA)
+    for(CPAy=-CPAmax;CPAy<CPAmax;CPAy+=deltaCPA)
+      {
+	CPAxarray[NBmax] = CPAx;
+	CPAyarray[NBmax] = CPAy;
+	CPArarray[NBmax] = sqrt(CPAx*CPAx+CPAy*CPAy);
+	NBmax ++;
+      }
+
+  printf("sorting\n");
+  fflush(stdout);
+
+  quick_sort3_float(CPArarray, CPAxarray, CPAyarray, NBmax);
+  
+ 
+  k1 = 0;
+  k = 0;
+  while(k<2*NBfreq)
+    {
+      printf("\r%5ld / %5ld          ", k, NBfreq);
+      //      fflush(stdout);
+      CPAx = CPAxarray[k1];
+      CPAy = CPAyarray[k1];
+      for(ii=0;ii<size2;ii++)
+	{
+	  x = data.image[IDx].array.F[ii];
+	  y = data.image[IDy].array.F[ii];
+	  r = data.image[IDr].array.F[ii];
+	  coeff = exp(-pow((0.8*r),20.0));
+	  data.image[ID].array.F[k*size2+ii] = cos(M_PI*(x*CPAx+y*CPAy))*coeff;
+	  data.image[ID].array.F[(k+1)*size2+ii] = sin(M_PI*(x*CPAx+y*CPAy))*coeff;
+	}      
+      k+=2;
+      k1++;
+    }
+  printf("\n");
+  
+  free(CPAxarray);
+  free(CPAyarray);
+  free(CPArarray); 
+  
+  return 0;
+}
 
 
 
@@ -612,44 +735,46 @@ int Average_cam_frames(long loop, long NbAve)
     imcnt = 0;
     while(imcnt<NbAve)
       {
-	usleep(100);	  
-	if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
-	  {
-	    AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
-	    if(NbAve>1)
-	      {
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		  data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.F[ii];
-	      }
-	    else
-	      {
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		  data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.F[ii];
-	      }
-	    imcnt++;
-	  }      
+	usleep(50);	  
+	if(data.image[AOconf[loop].ID_WFS].md[0].write == 0)
+	  if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
+	    {
+	      AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
+	      if(NbAve>1)
+		{
+		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		    data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.F[ii];
+		}
+	      else
+		{
+		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		    data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.F[ii];
+		}
+	      imcnt++;
+	    }      
       }
     break;
   case USHORT :
     imcnt = 0;
     while(imcnt<NbAve)
       {
-	usleep(100);	  
-	if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
-	  {
-	    AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
-	    if(NbAve>1)
-	      {
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		  data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.U[ii];
-	      }
-	    else
-	      {
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		  data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.U[ii];
-	      }
-	    imcnt++;
-	  }
+	usleep(50);
+	if(data.image[AOconf[loop].ID_WFS].md[0].write == 0)
+	  if(AOconf[loop].WFScnt!=data.image[AOconf[loop].ID_WFS].md[0].cnt0)
+	    {
+	      AOconf[loop].WFScnt = data.image[AOconf[loop].ID_WFS].md[0].cnt0;
+	      if(NbAve>1)
+		{
+		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		    data.image[AOconf[loop].ID_WFS1].array.F[ii] += data.image[AOconf[loop].ID_WFS].array.U[ii];
+		}
+	      else
+		{
+		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		    data.image[AOconf[loop].ID_WFS1].array.F[ii] = data.image[AOconf[loop].ID_WFS].array.U[ii];
+		}
+	      imcnt++;
+	    }
       }         
     break;
   default :
@@ -730,10 +855,20 @@ int AOloopControl_loadconfigure(long loop, char *config_fname)
   sizearray = (long*) malloc(sizeof(long)*3);
 
 
+  
+
   if(read_config_parameter(config_fname, "loopname", content)==0)
     exit(0);
   printf("loop name : %s\n", content);
   strcpy(AOconf[loop].name, content);
+
+  if(read_config_parameter(config_fname, "GPU", content)==0)
+    exit(0);
+  printf("GPU : %d\n", atoi(content));
+  AOconf[loop].GPU = atoi(content);
+
+
+
 
   // Connect to WFS camera
   if(read_config_parameter(config_fname, "WFSname", content)==0)
@@ -1185,17 +1320,20 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   fflush(stdout);
 
 
-  imax = 5;
+  imax = 2;
   if(imax<AOconf[loop].NBDMmodes-1)
     imax = AOconf[loop].NBDMmodes-1;
-
+  
   for(i=0;i<imax;i++)
     {
       printf("[%ld] ", i);
       fflush(stdout);
       sprintf(name0, "RespM_%ld", loop);
       sprintf(name, "cmat%ld", i);
+      sprintf(fname, "!cmat%ld.fits", i);
       compute_ControlMatrix(LOOPNUMBER, i, name0, name, "evecM");
+      save_fl_fits(name, fname); 
+      i += (long) (0.2*i);
     }
 
   printf("Done\n");
@@ -1228,31 +1366,51 @@ int AOcompute(long loop)
   long m, n;
   long index;
 
+  long cnttest;
+
   // get dark-subtracted image
   Average_cam_frames(loop, 1);
   
   AOconf[loop].status = 4;  // 4: REMOVING REF
   
 
+
   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     data.image[AOconf[loop].ID_WFS2].array.F[ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii] - data.image[AOconf[loop].ID_refWFS].array.F[ii];
+  cnttest = data.image[AOconf[loop].ID_cmd1_modes].md[0].cnt0;
+  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
   AOconf[loop].status = 5; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
-  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
-  ControlMatrixMultiply( data.image[AOconf[loop].ID_contrM].array.F, data.image[AOconf[loop].ID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[AOconf[loop].ID_cmd1_modes].array.F);
-  
 
+  if(AOconf[loop].GPU == 0)
+    {
+      ControlMatrixMultiply( data.image[AOconf[loop].ID_contrM].array.F, data.image[AOconf[loop].ID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[AOconf[loop].ID_cmd1_modes].array.F);
+      data.image[AOconf[loop].ID_cmd1_modes].md[0].cnt0 ++;
+    }
+  else
+    {
+      printf("Waiting for GPU to complete multiplication ");
+      while(cnttest==data.image[AOconf[loop].ID_cmd1_modes].md[0].cnt0)
+	{
+	  printf(".");
+	  usleep(50);
+	}
+      printf("\n");
+    }
  
-  if(1)
+
+  if(0)
     {
       printf("GSL MATRIX MULT  :  ");
       for(k=0; k<AOconf[loop].NBDMmodes; k++)
 	printf(" %6.3f ",data.image[AOconf[loop].ID_cmd1_modes].array.F[k]);
       printf("\n");       
-
-       
+    }
+  
+  if(0)
+    {       
       for(m=0; m<AOconf[loop].NBDMmodes; m++)
 	{
 	  data.image[AOconf[loop].ID_cmd1_modes].array.F[m] = 0.0;
@@ -1304,6 +1462,7 @@ int AOcompute(long loop)
 	data.image[AOconf[loop].ID_cmd_modes].array.F[k] = AOconf[loop].maxlimit;
     }	
 
+  data.image[AOconf[loop].ID_cmd_modes].md[0].cnt0 ++;
 
   /*
     for(k=0; k<smao[0].NBmode; k++)
