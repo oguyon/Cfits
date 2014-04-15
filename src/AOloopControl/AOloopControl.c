@@ -1224,6 +1224,9 @@ int AOcompute(long loop)
   float total = 0.0;
   long k, k1, k2;
   long ii;
+  
+  long m, n;
+  
 
   // get dark-subtracted image
   Average_cam_frames(loop, 1);
@@ -1243,10 +1246,24 @@ int AOcompute(long loop)
  
   if(1)
     {
-      printf("MATRIX MULT :  ");
+      printf("GSL MATRIX MULT  :  ");
       for(k=0; k<AOconf[loop].NBDMmodes; k++)
 	printf(" %6.3f ",data.image[AOconf[loop].ID_cmd1_modes].array.F[k]);
       printf("\n");       
+
+       
+      printf("Conventional mat mult %d %d\n", M, N);
+      for(m=0; m<AOconf[loop].NBDMmodes; m++)
+	{
+	  data.image[AOconf[loop].ID_cmd1_modes].array.F[m] = 0.0;
+	  for(n=0; n<AOconf[loop].sizeWFS; n++)
+	    data.image[AOconf[loop].ID_cmd1_modes].array.F[m] += cMat[n*AOconf[loop].NBDMmodes+m]*wfsVec[n];
+	}	  
+
+      printf("CONV MATRIX MULT :  ");
+      for(k=0; k<AOconf[loop].NBDMmodes; k++)
+	printf(" %6.3f ",data.image[AOconf[loop].ID_cmd1_modes].array.F[k]);
+      printf("\n");          
     }
 
   AOconf[loop].RMSmodes = 0;
