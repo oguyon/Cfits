@@ -1257,7 +1257,8 @@ int AOcompute(long loop)
 	  data.image[AOconf[loop].ID_cmd1_modes].array.F[m] = 0.0;
 	  for(n=0; n<AOconf[loop].sizeWFS; n++)
 	    {
-	      index = n*AOconf[loop].NBDMmodes+m;
+	      // index = n*AOconf[loop].NBDMmodes+m;
+	      index = m*AOconf[loop].sizeWFS+n;
 	      data.image[AOconf[loop].ID_cmd1_modes].array.F[m] += data.image[AOconf[loop].ID_contrM].array.F[index]*data.image[AOconf[loop].ID_WFS2].array.F[n];
 	    }
 	}	  
