@@ -1233,22 +1233,20 @@ int AOcompute(long loop)
 
   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     data.image[AOconf[loop].ID_WFS2].array.F[ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii] - data.image[AOconf[loop].ID_refWFS].array.F[ii];
-  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
   AOconf[loop].status = 5; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
 
   ControlMatrixMultiply( data.image[AOconf[loop].ID_contrM].array.F, data.image[AOconf[loop].ID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[AOconf[loop].ID_cmd1_modes].array.F);
+  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
  
-  if(1)
+  if(0)
     {
       printf("MATRIX MULT :  ");
       for(k=0; k<AOconf[loop].NBDMmodes; k++)
 	printf(" %6.3f ",data.image[AOconf[loop].ID_cmd1_modes].array.F[k]);
-      printf("\n");
-      
-      
+      printf("\n");       
     }
 
   AOconf[loop].RMSmodes = 0;
