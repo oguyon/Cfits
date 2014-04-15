@@ -1224,7 +1224,7 @@ int AOcompute(long loop)
   float total = 0.0;
   long k, k1, k2;
   long ii;
-  
+  long i;
   long m, n;
   long index;
 
@@ -1257,7 +1257,6 @@ int AOcompute(long loop)
 	  data.image[AOconf[loop].ID_cmd1_modes].array.F[m] = 0.0;
 	  for(n=0; n<AOconf[loop].sizeWFS; n++)
 	    {
-	      // index = n*AOconf[loop].NBDMmodes+m;
 	      index = m*AOconf[loop].sizeWFS+n;
 	      data.image[AOconf[loop].ID_cmd1_modes].array.F[m] += data.image[AOconf[loop].ID_contrM].array.F[index]*data.image[AOconf[loop].ID_WFS2].array.F[n];
 	    }
@@ -1267,6 +1266,22 @@ int AOcompute(long loop)
       for(k=0; k<AOconf[loop].NBDMmodes; k++)
 	printf(" %6.3f ",data.image[AOconf[loop].ID_cmd1_modes].array.F[k]);
       printf("\n");          
+   
+      printf("cMat  : ");
+      for(i=0;i<5;i++)
+	printf("%f ", data.image[AOconf[loop].ID_contrM].array.F[i]);
+      printf(" ... ");
+      for(i=AOconf[loop].sizeWFS*AOconf[loop].NBDMmodes-5;i<AOconf[loop].sizeWFS*AOconf[loop].NBDMmodes;i++)
+	printf("%f ", data.image[AOconf[loop].ID_contrM].array.F[i]);
+      printf("\n");
+      
+      printf("wfsVec: ");
+      for(n=0;n<5;n++)
+	printf("%f ", data.image[AOconf[loop].ID_WFS2].array.F[n]);
+      printf(" ... ");
+      for(n=AOconf[loop].sizeWFS-5;n<AOconf[loop].sizeWFS;n++)
+	printf("%f ", data.image[AOconf[loop].ID_WFS2].array.F[n]);
+      printf("\n");
     }
 
   AOconf[loop].RMSmodes = 0;
