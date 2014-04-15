@@ -1239,9 +1239,10 @@ int AOcompute(long loop)
 
   AOconf[loop].status = 5; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
+  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
   ControlMatrixMultiply( data.image[AOconf[loop].ID_contrM].array.F, data.image[AOconf[loop].ID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[AOconf[loop].ID_cmd1_modes].array.F);
-  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
+  
 
  
   if(1)
