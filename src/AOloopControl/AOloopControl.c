@@ -1252,7 +1252,6 @@ int AOcompute(long loop)
       printf("\n");       
 
        
-      printf("Conventional mat mult %d %d\n", M, N);
       for(m=0; m<AOconf[loop].NBDMmodes; m++)
 	{
 	  data.image[AOconf[loop].ID_cmd1_modes].array.F[m] = 0.0;
