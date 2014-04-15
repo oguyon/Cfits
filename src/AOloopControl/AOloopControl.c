@@ -1226,7 +1226,7 @@ int AOcompute(long loop)
   long ii;
   
   long m, n;
-  
+  long index;
 
   // get dark-subtracted image
   Average_cam_frames(loop, 1);
@@ -1256,7 +1256,10 @@ int AOcompute(long loop)
 	{
 	  data.image[AOconf[loop].ID_cmd1_modes].array.F[m] = 0.0;
 	  for(n=0; n<AOconf[loop].sizeWFS; n++)
-	    data.image[AOconf[loop].ID_cmd1_modes].array.F[m] += data.image[AOconf[loop].ID_contrM].array.F[n*AOconf[loop].NBDMmodes+m]*data.image[AOconf[loop].ID_WFS2].array.F[n];
+	    {
+	      index = n*AOconf[loop].NBDMmodes+m;
+	      data.image[AOconf[loop].ID_cmd1_modes].array.F[m] += data.image[AOconf[loop].ID_contrM].array.F[index]*data.image[AOconf[loop].ID_WFS2].array.F[n];
+	    }
 	}	  
 
       printf("CONV MATRIX MULT :  ");
