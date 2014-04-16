@@ -64,7 +64,7 @@ typedef struct
   // LOOP CONTROL
   int on;  // goes to 1 when loop starts, put to 0 to turn loop off
   float gain; // overall loop gain
-  
+  long framesAve; // number of frames to average
 
   int status;
   // -1: PROGRAM NOT RUNNING
@@ -83,6 +83,7 @@ typedef struct
   double RMSmodes;
 
   // logs
+  char logdir[80];
   int logon; // 1 if log is on, 0 if off
   long logsize;  // # of entries per log
   long IDlog0;  // image identifyer for log file #1

@@ -177,8 +177,9 @@ int printstatus(long ID)
   struct timespec tnow;
   struct timespec tdiff;
   double tdiffv;
-  
- 
+  char str[500];
+
+  long j;
   double frequ;
   long NBhistopt = 20;
   long *vcnt;
@@ -190,27 +191,44 @@ int printstatus(long ID)
 
   float minPV = 60000; 
   float maxPV = 0;
+  double average;
+  double imtotal;
 
   int atype;
   char line1[200];
 
+  double tmp;
+  double RMS = 0.0;
+
+  double RMS01 = 0.0;
+
   atype = data.image[ID].md[0].atype;
   if(atype==CHAR)
-    printw("type:  CHAR\n");
+    printw("type:  CHAR               ");
   if(atype==INT)
-     printw("type:  INT\n");
+     printw("type:  INT               ");
   if(atype==FLOAT)
-    printw("type:  FLOAT\n");
+    printw("type:  FLOAT              ");
   if(atype==DOUBLE)
-    printw("type:  DOUBLE\n");
+    printw("type:  DOUBLE             ");
   if(atype==COMPLEX_FLOAT)
-    printw("type:  COMPLEX_FLOAT\n");
+    printw("type:  COMPLEX_FLOAT      ");
   if(atype==COMPLEX_DOUBLE)
-    printw("type:  COMPLEX_DOUBLE\n");
+    printw("type:  COMPLEX_DOUBLE     ");
   if(atype==USHORT)
-    printw("type:  USHORT\n");
+    printw("type:  USHORT             ");
   
+  sprintf(str, "[ %6ld",data.image[ID].md[0].size[0]);
+  
+  for(j=1;j<data.image[ID].md[0].naxis;j++)
+    {
+      sprintf(str, "%s x %6ld", str, data.image[ID].md[0].size[j]);
+    }
+  sprintf(str, "%s]", str);
+  
+  printw("%-28s\n", str);
 
+ 
   /* printw("write  = %d\n", data.image[ID].md[0].write);
   printw("status = %d\n", data.image[ID].md[0].status);
   printw("cnt0   = %d\n", data.image[ID].md[0].cnt0);
@@ -229,12 +247,17 @@ int printstatus(long ID)
 
 
 
-  printw("write  = %d\n", data.image[ID].md[0].write);
-  printw("status = %d\n", data.image[ID].md[0].status);
-  printw("cnt0   = %d      %6.2f Hz\n", data.image[ID].md[0].cnt0, frequ);
-  printw("cnt1   = %d\n", data.image[ID].md[0].cnt1);
+  printw("write  = %d    ", data.image[ID].md[0].write);
+  printw("status = %2d\n", data.image[ID].md[0].status);
+  printw("cnt0   = %8d      %6.2f Hz\n", data.image[ID].md[0].cnt0, frequ);
+  printw("cnt1   = %8d\n", data.image[ID].md[0].cnt1);
 
-
+  average = arith_image_mean(data.image[ID].md[0].name);
+  imtotal = arith_image_total(data.image[ID].md[0].name);
+  printw("  median  = %12g\n", arith_image_median(data.image[ID].md[0].name));
+  printw("  average = %12g    total = %12g\n", imtotal/data.image[ID].md[0].nelement, imtotal);
+  
+  // printw("  RMS var = %g\n", );
 
 
   /*
@@ -306,6 +329,8 @@ int printstatus(long ID)
 	    minPV = data.image[ID].array.F[ii];
 	  if(data.image[ID].array.F[ii]>maxPV)
 	    maxPV = data.image[ID].array.F[ii];
+	  tmp = (1.0*data.image[ID].array.F[ii]-average);
+	  RMS += tmp*tmp;
 	  h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.F[ii]-minPV))/(maxPV-minPV));
 	  if((h>-1)&&(h<NBhistopt))
 	    vcnt[h]++;
@@ -325,15 +350,21 @@ int printstatus(long ID)
 	    minPV = data.image[ID].array.U[ii];
 	  if(data.image[ID].array.U[ii]>maxPV)
 	    maxPV = data.image[ID].array.U[ii];
+	  tmp = (1.0*data.image[ID].array.U[ii]-average);
+	  RMS += tmp*tmp;
 	  h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.U[ii]-minPV))/(maxPV-minPV));
 	  if((h>-1)&&(h<NBhistopt))
 	    vcnt[h]++;
 	}
     }
   
+  RMS = sqrt(RMS/data.image[ID].md[0].nelement);
+  RMS01 = 0.9*RMS01 + 0.1*RMS;
+
+  printw("RMS = %12.6g     ->  %12.6g\n", RMS, RMS01);
 
   print_header(" PIXEL VALUES ", '-');
-  printw("min - max   :   %f - %f\n", minPV, maxPV);
+  printw("min - max   :   %12.6e - %12.6e\n", minPV, maxPV);
  
   
   /*PVrange = maxPV-minPV;
@@ -347,7 +378,7 @@ int printstatus(long ID)
       customcolor = 1;
       if(h==NBhistopt-1)
 	customcolor = 2;
-      sprintf(line1, "[%5f-%5f] %7ld", (minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
+      sprintf(line1, "[%12.4e - %12.4e] %7ld", (minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
       
       printw("%s", line1); //(minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
       attron(COLOR_PAIR(customcolor));
@@ -373,14 +404,54 @@ int printstatus(long ID)
 
 
 
+int info_pixelstats_smallImage(long ID, long NBpix)
+{
+  long ii;
+
+  if(data.image[ID].md[0].atype == FLOAT)
+    {  
+      for(ii=0;ii<NBpix;ii++)
+	{
+	  printw("%3ld  %f\n", ii, data.image[ID].array.F[ii]);
+	}
+    }
+
+    if(data.image[ID].md[0].atype == USHORT)
+    {  
+      for(ii=0;ii<NBpix;ii++)
+	{
+	  printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
+	}
+    }
+
+
+
+  return(0);
+}
+
+
 
 int info_image_monitor(char *ID_name, double frequ)
 {
   long ID;
+  long mode = 0; // 0 for large image, 1 for small image
+  long NBpix;
+  long npix;
 
   ID = image_ID(ID_name);
+  npix = data.image[ID].md[0].nelement;
+  
+  
   initscr();		
-  getmaxyx(stdscr,wrow,wcol);
+  getmaxyx(stdscr, wrow, wcol);
+
+  if(npix<100)
+    mode = 1;
+
+  NBpix = npix;
+  if(NBpix > wrow)
+    NBpix = wrow-2;
+
   start_color();
   init_pair(1, COLOR_BLACK, COLOR_WHITE); 
   init_pair(2, COLOR_BLACK, COLOR_RED);
@@ -395,7 +466,11 @@ int info_image_monitor(char *ID_name, double frequ)
       print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
       attroff(A_BOLD);
       
-      printstatus(ID);
+      if(mode==0)
+	printstatus(ID);
+      else
+	info_pixelstats_smallImage(ID, NBpix);
+
       refresh();
     }
  endwin();	

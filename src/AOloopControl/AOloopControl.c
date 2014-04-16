@@ -64,6 +64,7 @@ int AOloopControl_setgain(float gain);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_logon();
 int AOloopControl_logoff();
+int AOloopControl_setframesAve(long nbframes);
 
 // CLI commands
 //
@@ -158,10 +159,34 @@ int AOloopControl_Measure_Resp_Matrix_cli()
 
 
 
+int AOloopControl_setframesAve_cli()
+{
+  if(CLI_checkarg(1,2)==0)
+    {
+      AOloopControl_setframesAve(data.cmdargtoken[1].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 int init_AOloopControl()
 {
-  LOOPNUMBER = 0;
+  FILE *fp;
+
+  if((fp=fopen("loopnb.txt","r"))!=NULL)
+    {
+      fscanf(fp,"%ld", &LOOPNUMBER);
+      printf("LOOP NUMBER = %ld\n", LOOPNUMBER);
+      fclose(fp);
+    }
+  else
+    LOOPNUMBER = 0;
   
+
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "AO loop control");
   data.NBmodule++;
@@ -285,6 +310,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<limit value>");
   strcpy(data.cmd[data.NBcmd].example,"aolsetmaxlim");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmaxlimit(float maxlimit)");
+  data.NBcmd++;
+  
+  strcpy(data.cmd[data.NBcmd].key,"aolsetnbfr");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setframesAve_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set number of frames to be averaged");
+  strcpy(data.cmd[data.NBcmd].syntax,"<nb frames>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetnbfr");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setframesAve(long nbframes)");
   data.NBcmd++;
   
 
@@ -706,8 +740,9 @@ int AOloopControl_InitializeMemory()
 	  AOconf[loop].init = 0;
 	  AOconf[loop].on = 0;
 	  AOconf[loop].cnt = 0;	  
-	  AOconf[loop].maxlimit = 0.1;
+	  AOconf[loop].maxlimit = 0.3;
 	  AOconf[loop].gain = 0.0;
+	  AOconf[loop].framesAve = 1;
 	}
     }
   else
@@ -715,7 +750,7 @@ int AOloopControl_InitializeMemory()
       for(loop=0; loop<NB_AOloopcontrol; loop++)
 	if(AOconf[loop].init == 1)
 	  {
-	    
+	    printf("LIST OF ACTIVE LOOPS:\n");
 	    printf("----- Loop %ld   (%s) ----------\n", loop, AOconf[loop].name);
 	    printf("  WFS:  %s  [%ld]  %ld x %ld\n", AOconf[loop].WFSname, AOconf[loop].ID_WFS, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 	    printf("   DM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].DMname, AOconf[loop].ID_DM, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
@@ -1042,6 +1077,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname)
 
 
   // Allocate / create logging data files/memory
+  if(read_config_parameter(config_fname, "logdir", content)==0)
+    {
+      printf("parameter logdir missing\n");
+      exit(0);
+    }
+  strcpy(AOconf[loop].logdir, content);
   if(read_config_parameter(config_fname, "logsize", content)==0)
     {
       printf("parameter logsize missing\n");
@@ -1229,6 +1270,8 @@ int set_DM_modes(long loop)
   long k;
   long i, j;
 
+
+
   data.image[AOconf[loop].ID_DM].md[0].write = 1;
 
   for(j=0;j<AOconf[loop].sizeDM;j++)
@@ -1258,20 +1301,49 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
 {
   long NBloops;
   long kloop;
-  long delayus = 100; // delay in us
+  long delayus = 0; // delay in us
   long ii, i, imax;
   int Verbose = 1;
   long k1, k, k2;
   char fname[200];
   char name0[200];
   char name[200];
+  
+  long kk;
+  long RespMatNBframes;
+  long IDrmc;
+  long kc;
+
+  int recordCube = 0;
 
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
+
+
+  RespMatNBframes = nbloop*2*AOconf[loop].NBDMmodes*NbAve;
+  printf("%ld frames total\n");
+  fflush(stdout);
+
+  if(recordCube == 1)
+    IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes);
+
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+ 
+  printf("STEP1\n");
+  fflush(stdout);
+  sleep(1);
   
+   
   printf("SETTING UP...\n");
   sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
   AOloopControl_loadconfigure(LOOPNUMBER, fname);
+  
+
+  printf("STEP2\n");
+  fflush(stdout);
+  sleep(1);
   
   NBloops = nbloop;
 
@@ -1282,20 +1354,27 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   
 
   // initialize reference to zero
+  
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
     data.image[AOconf[loop].ID_refWFS].array.F[ii] = 0.0;
-
-
+  
+  
   printf("\n");
   printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
+  fflush(stdout);
+  sleep(1);
 
 
 
-  arith_image_zero(AOconf[loop].WFSname);
   for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
     data.image[AOconf[loop].ID_cmd_modes].array.F[k2] = 0.0;
   
-  for (kloop = 0; kloop < NBloops; kloop++) // number of loops
+  printf("STEP2\n");
+  fflush(stdout);
+  sleep(1);
+
+  kc = 0;
+  for (kloop = 0; kloop < NBloops; kloop++)
     {
       if(Verbose)
 	{
@@ -1313,35 +1392,58 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
 	  set_DM_modes(loop);
 
 	  usleep(delayus);
-	  Average_cam_frames(loop, NbAve);
-	 
-	  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	    {
-	      data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
-	      data.image[AOconf[loop].ID_refWFS].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
-	    }
 
+
+	  for(kk=0;kk<NbAve;kk++)
+	    {
+	      Average_cam_frames(loop, 1);
+	 
+	      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
+		{
+		  data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		  data.image[AOconf[loop].ID_refWFS].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		  if(recordCube == 1)
+		    data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		}
+	      kc++;
+	      //      printf("FRAME = %ld / %ld\n", kc, RespMatNBframes);
+	    }
+	  
 	  // negative
 	  data.image[AOconf[loop].ID_cmd_modes].array.F[k1] = 0.0-amp;
 	  set_DM_modes(loop);
+
 	  usleep(delayus);
-	  Average_cam_frames(loop, NbAve);
-	 
-	  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	    {
-	      data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[AOconf[loop].ID_WFS1].array.F[ii];
-	      data.image[AOconf[loop].ID_refWFS].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
-	    }
 	  
+	  for(kk=0;kk<NbAve;kk++)
+	    {
+	      Average_cam_frames(loop, 1);
+	 
+	      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
+		{
+		  data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		  data.image[AOconf[loop].ID_refWFS].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		  if(recordCube == 1)
+		    data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		}	
+	      kc++;
+	      // printf("FRAME = %ld / %ld\n", kc, RespMatNBframes);
+	    }
 	}
     }
 
+  for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
+    data.image[AOconf[loop].ID_cmd_modes].array.F[k2] = 0.0;
   set_DM_modes(loop);
+  
 
   printf("Acquisition done, compiling results...");
   fflush(stdout);
 
-  arith_image_zero(AOconf[loop].WFSname);
+  if(recordCube == 1)
+    save_fl_fits("RMcube", "!RMcube.fits");
+
+ 
   for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
     data.image[AOconf[loop].ID_cmd_modes].array.F[k2] = 0.0;
 
@@ -1349,10 +1451,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
   
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
     for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
-      data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp);
+      data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*NbAve);
 
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-    data.image[AOconf[loop].ID_refWFS].array.F[ii] /= (NBloops*2.0*AOconf[loop].NBDMmodes);
+    data.image[AOconf[loop].ID_refWFS].array.F[ii] /= (NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
   printf("\n");
   fflush(stdout);
@@ -1374,9 +1476,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
       sprintf(fname, "!cmat%ld.fits", i);
       compute_ControlMatrix(LOOPNUMBER, i, name0, name, "evecM");
       save_fl_fits(name, fname); 
-      i += (long) (0.2*i);
+      i += (long) (0.4*i);
     }
-
+  
   printf("Done\n");
 
   return(0);
@@ -1406,11 +1508,14 @@ int AOcompute(long loop)
   long i;
   long m, n;
   long index;
-
+  //  long long wcnt;
+  // long long wcntmax;
   long cnttest;
+  double a;
+  
 
   // get dark-subtracted image
-  Average_cam_frames(loop, 1);
+  Average_cam_frames(loop, AOconf[loop].framesAve);
   
   AOconf[loop].status = 4;  // 4: REMOVING REF
   
@@ -1431,13 +1536,15 @@ int AOcompute(long loop)
     }
   else
     {
-      printf("Waiting for GPU to complete multiplication ");
+      a = 0.1;
       while(cnttest==data.image[AOconf[loop].ID_cmd1_modes].md[0].cnt0)
 	{
-	  printf(".");
-	  usleep(50);
+	  a = sqrt(a+0.1);
+	  //  usleep(10);
+	  // printf(".");
 	}
-      printf("\n");
+      //      printf("\n");
+      
     }
  
   if(0)
@@ -1543,6 +1650,7 @@ int AOloopControl_run()
   struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
   char logfname[1000];
   char command[1000];
+  int r;
 
   loop = LOOPNUMBER;
   
@@ -1579,11 +1687,13 @@ int AOloopControl_run()
 	  
 	  while(AOconf[loop].on == 1)
 	    {
-	      printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
-	      fflush(stdout);
-	      usleep(10000);
+	      //	      printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
+	      //	      fflush(stdout);
+	      //usleep(10000);
+	      
 	      AOcompute(loop);
-	      set_DM_modes(loop);
+	      if(fabs(AOconf[loop].gain)>1.0e-6)
+		set_DM_modes(loop);
 
 	      clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
 	      AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
@@ -1613,13 +1723,20 @@ int AOloopControl_run()
 		{
 		  if(AOconf[loop].logon == 1) // save to disk !!
 		    {
+		      printf("Saving to disk...\n");
+		      fflush(stdout);
 		      t = time(NULL);
 		      uttime = gmtime(&t);
 		      clock_gettime(CLOCK_REALTIME, thetime);
-		      
-		      sprintf(logfname, "%s/LOOP%d_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);		      
-		      sprintf(command, "cp /tmp/loop%ldlog%d %s &", loop, AOconf[loop].logfnb, logfname);
-		      system(command);
+		      printf("writing file name\n");
+		      fflush(stdout);
+		      sprintf(logfname, "%s/LOOP%d_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", AOconf[loop].logdir, LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);		      
+		      printf("writing file name\n");
+		      fflush(stdout);
+		      sprintf(command, "cp /tmp/loop%ldlog%d.im.shm %s &", loop, AOconf[loop].logfnb, logfname);
+		      printf("Executing command : %s\n", command);
+		      fflush(stdout);
+		      r = system(command);
 		    }
 		  AOconf[loop].logfnb++;
 		  AOconf[loop].logcnt = 0;
@@ -1641,10 +1758,31 @@ int AOloopControl_run()
 
 
 
+
+
+int AOloopControl_showparams(long loop)
+{
+  printf("loop number %ld\n", loop);
+  if(AOconf[loop].on == 1)
+    printf("loop is ON\n");
+  else
+    printf("loop is OFF\n");
+  if(AOconf[loop].logon == 1)
+    printf("log is ON\n");
+  else
+    printf("log is OFF\n");
+  printf("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
+
+  return 0;
+}
+
+
+
 int AOloopControl_setLoopNumber(long loop)
 {
   printf("LOOPNUMBER = %ld\n", loop);
   LOOPNUMBER = loop;
+  //  AOloopControl_showparams(loop);
 
   return 0;
 }
@@ -1665,6 +1803,7 @@ int AOloopControl_loopon()
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].on = 1;
+  AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
 }
@@ -1675,6 +1814,7 @@ int AOloopControl_loopoff()
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].on = 0;
+  AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
 }
@@ -1685,6 +1825,7 @@ int AOloopControl_logon()
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].logon = 1;
+  AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
 }
@@ -1695,6 +1836,7 @@ int AOloopControl_logoff()
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].logon = 0;
+  AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
 }
@@ -1705,6 +1847,7 @@ int AOloopControl_setgain(float gain)
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].gain = gain;
+  AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
 }
@@ -1715,6 +1858,21 @@ int AOloopControl_setmaxlimit(float maxlimit)
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].maxlimit = maxlimit;
+  AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
 }
+
+
+int AOloopControl_setframesAve(long nbframes)
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  AOconf[LOOPNUMBER].framesAve = nbframes;
+  AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
+}
+
+
