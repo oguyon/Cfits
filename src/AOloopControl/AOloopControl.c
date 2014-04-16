@@ -1377,18 +1377,10 @@ int AOcompute(long loop)
 
   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     data.image[AOconf[loop].ID_WFS2].array.F[ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii] - data.image[AOconf[loop].ID_refWFS].array.F[ii];
-<<<<<<< HEAD
-=======
   cnttest = data.image[AOconf[loop].ID_cmd1_modes].md[0].cnt0;
->>>>>>> e9a6aaf98de6eefddfe6dc6a6eddb9215ea0843e
   data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
   AOconf[loop].status = 5; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
-
-<<<<<<< HEAD
-  // data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
-=======
->>>>>>> e9a6aaf98de6eefddfe6dc6a6eddb9215ea0843e
 
 
   if(AOconf[loop].GPU == 0)
@@ -1407,10 +1399,6 @@ int AOcompute(long loop)
       printf("\n");
     }
  
-<<<<<<< HEAD
-=======
-
->>>>>>> e9a6aaf98de6eefddfe6dc6a6eddb9215ea0843e
   if(0)
     {
       printf("GSL MATRIX MULT  :  ");
