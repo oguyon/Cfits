@@ -13,8 +13,10 @@ int AOloopControl_run();
 
 typedef struct
 {
+  struct timespec tnow;  // computed at time of sending DM commands
+  double time_sec; // converted in second
+  
   // SETUP
-
   int init; // has been initialized
   unsigned long long cnt;
   unsigned long long DMupdatecnt;
@@ -63,6 +65,7 @@ typedef struct
   int on;  // goes to 1 when loop starts, put to 0 to turn loop off
   float gain; // overall loop gain
   
+
   int status;
   // -1: PROGRAM NOT RUNNING
   // 0: LOOP OFF
@@ -79,6 +82,15 @@ typedef struct
   // LOOP TELEMETRY
   double RMSmodes;
 
+  // logs
+  int logon; // 1 if log is on, 0 if off
+  long logsize;  // # of entries per log
+  long IDlog0;  // image identifyer for log file #1
+  long IDlog1;  // image identifyer for log file #2
+  int logcnt; // current position in log 
+  int logfnb; // current log file number (0 or 1)
+  char userLOGstring[80];
+  
 } AOLOOPCONTROL_CONF;
 
 

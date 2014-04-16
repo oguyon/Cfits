@@ -236,13 +236,13 @@ am__relativize = \
     dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
   done; \
   reldir="$$dir2"
-ACLOCAL = ${SHELL} /CfitsDev/Cfits-src/missing aclocal-1.13
+ACLOCAL = ${SHELL} /home/scexao/src/CfitsDev/Cfits/missing aclocal-1.13
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-AUTOCONF = ${SHELL} /CfitsDev/Cfits-src/missing autoconf
-AUTOHEADER = ${SHELL} /CfitsDev/Cfits-src/missing autoheader
-AUTOMAKE = ${SHELL} /CfitsDev/Cfits-src/missing automake-1.13
+AUTOCONF = ${SHELL} /home/scexao/src/CfitsDev/Cfits/missing autoconf
+AUTOHEADER = ${SHELL} /home/scexao/src/CfitsDev/Cfits/missing autoheader
+AUTOMAKE = ${SHELL} /home/scexao/src/CfitsDev/Cfits/missing automake-1.13
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -250,7 +250,7 @@ CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS =  -I/usr/local/include/
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"Cfits\" -DPACKAGE_TARNAME=\"cfits\" -DPACKAGE_VERSION=\"3.2.00\" -DPACKAGE_STRING=\"Cfits\ 3.2.00\" -DPACKAGE_BUGREPORT=\"oliv.guyon@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"cfits\" -DVERSION=\"3.2.00\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DYYTEXT_POINTER=1 -DHAVE_LIBM=1 -DHAVE_LIBRT=1 -DHAVE_LIBGSLCBLAS=1 -DHAVE_LIBGSL=1 -DHAVE_LIBCFITSIO=1 -DHAVE_READLINE_H=1 -DHAVE_LIBNCURSES=1 -DHAVE_LIBFFTW3F=1 -DHAVE_LIBFFTW3=1 -DHAVE_LIBGOMP=1 -DHAVE_FFTW3_H=1 -DHAVE_FITSIO_H=1
+DEFS = -DPACKAGE_NAME=\"Cfits\" -DPACKAGE_TARNAME=\"cfits\" -DPACKAGE_VERSION=\"3.2.00\" -DPACKAGE_STRING=\"Cfits\ 3.2.00\" -DPACKAGE_BUGREPORT=\"oliv.guyon@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"cfits\" -DVERSION=\"3.2.00\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_LIBM=1 -DHAVE_LIBRT=1 -DHAVE_LIBGSLCBLAS=1 -DHAVE_LIBGSL=1 -DHAVE_LIBCFITSIO=1 -DHAVE_READLINE_H=1 -DHAVE_LIBNCURSES=1 -DHAVE_LIBFFTW3F=1 -DHAVE_LIBFFTW3=1 -DHAVE_LIBGOMP=1 -DHAVE_FFTW3_H=1 -DHAVE_FITSIO_H=1
 DEPDIR = .deps
 DLLTOOL = false
 DSYMUTIL = 
@@ -270,16 +270,16 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
-LEX = flex
-LEXLIB = -lfl
-LEX_OUTPUT_ROOT = lex.yy
+LEX = ${SHELL} /home/scexao/src/CfitsDev/Cfits/missing flex
+LEXLIB = 
+LEX_OUTPUT_ROOT = 
 LIBOBJS = 
 LIBS = -lgomp -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /CfitsDev/Cfits-src/missing makeinfo
+MAKEINFO = ${SHELL} /home/scexao/src/CfitsDev/Cfits/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
@@ -303,12 +303,12 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 3.2.00
-YACC = bison -y
+YACC = yacc
 YFLAGS = 
-abs_builddir = /CfitsDev/Cfits-src/src
-abs_srcdir = /CfitsDev/Cfits-src/src
-abs_top_builddir = /CfitsDev/Cfits-src
-abs_top_srcdir = /CfitsDev/Cfits-src
+abs_builddir = /home/scexao/src/CfitsDev/Cfits/src
+abs_srcdir = /home/scexao/src/CfitsDev/Cfits/src
+abs_top_builddir = /home/scexao/src/CfitsDev/Cfits
+abs_top_srcdir = /home/scexao/src/CfitsDev/Cfits
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -337,7 +337,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /CfitsDev/Cfits-src/install-sh
+install_sh = ${SHELL} /home/scexao/src/CfitsDev/Cfits/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -346,7 +346,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /CfitsDev/Cfits-src
+prefix = /home/scexao/src/CfitsDev/Cfits
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -358,26 +358,26 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 cfits_SOURCES = Cfits.c Cfits.h calc_bison.y calc_flex.l calc.h
-cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
-	-DCONFIGDIR=\"/CfitsDev/Cfits-src/config\" \
-	-DSOURCEDIR=\"/CfitsDev/Cfits-src/src\" \
-	-DABSSRCTOPDIR=\"/CfitsDev/Cfits-src\" -fopenmp \
-	-I/CfitsDev/Cfits-src/src/AOloopControl \
-	-I/CfitsDev/Cfits-src/src/AOsystSim \
-	-I/CfitsDev/Cfits-src/src/SCExAO_DM \
-	-I/CfitsDev/Cfits-src/src/image_format \
-	-I/CfitsDev/Cfits-src/src/PIAACMCsimul \
-	-I/CfitsDev/Cfits-src/src/coronagraphs \
-	-I/CfitsDev/Cfits-src/src/ZernikePolyn \
-	-I/CfitsDev/Cfits-src/src/WFpropagate \
-	-I/CfitsDev/Cfits-src/src/image_gen \
-	-I/CfitsDev/Cfits-src/src/statistic -I/CfitsDev/Cfits-src/src/fft \
-	-I/CfitsDev/Cfits-src/src/info \
-	-I/CfitsDev/Cfits-src/src/COREMOD_arith \
-	-I/CfitsDev/Cfits-src/src/COREMOD_iofits \
-	-I/CfitsDev/Cfits-src/src/COREMOD_memory \
-	-I/CfitsDev/Cfits-src/src/COREMOD_tools \
-	-I/CfitsDev/Cfits-src/src/00CORE
+cfits_CPPFLAGS = -I/home/scexao/src/CfitsDev/Cfits/src \
+	-DCONFIGDIR=\"/home/scexao/src/CfitsDev/Cfits/config\" \
+	-DSOURCEDIR=\"/home/scexao/src/CfitsDev/Cfits/src\" \
+	-DABSSRCTOPDIR=\"/home/scexao/src/CfitsDev/Cfits\" -fopenmp \
+	-I/home/scexao/src/CfitsDev/Cfits/src/AOloopControl \
+	-I/home/scexao/src/CfitsDev/Cfits/src/AOsystSim \
+	-I/home/scexao/src/CfitsDev/Cfits/src/SCExAO_DM \
+	-I/home/scexao/src/CfitsDev/Cfits/src/image_format \
+	-I/home/scexao/src/CfitsDev/Cfits/src/PIAACMCsimul \
+	-I/home/scexao/src/CfitsDev/Cfits/src/coronagraphs \
+	-I/home/scexao/src/CfitsDev/Cfits/src/ZernikePolyn \
+	-I/home/scexao/src/CfitsDev/Cfits/src/WFpropagate \
+	-I/home/scexao/src/CfitsDev/Cfits/src/image_gen \
+	-I/home/scexao/src/CfitsDev/Cfits/src/statistic -I/home/scexao/src/CfitsDev/Cfits/src/fft \
+	-I/home/scexao/src/CfitsDev/Cfits/src/info \
+	-I/home/scexao/src/CfitsDev/Cfits/src/COREMOD_arith \
+	-I/home/scexao/src/CfitsDev/Cfits/src/COREMOD_iofits \
+	-I/home/scexao/src/CfitsDev/Cfits/src/COREMOD_memory \
+	-I/home/scexao/src/CfitsDev/Cfits/src/COREMOD_tools \
+	-I/home/scexao/src/CfitsDev/Cfits/src/00CORE
 ACLOCAL_AMFLAGS = -I m4
 AM_YFLAGS = -d
 AM_LFLAGS = -i 

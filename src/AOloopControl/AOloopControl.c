@@ -62,6 +62,8 @@ int AOloopControl_loopon();
 int AOloopControl_loopoff();
 int AOloopControl_setgain(float gain);
 int AOloopControl_setmaxlimit(float maxlimit);
+int AOloopControl_logon();
+int AOloopControl_logoff();
 
 // CLI commands
 //
@@ -247,6 +249,24 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"aoloff");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopoff()");
+  data.NBcmd++;
+  
+  strcpy(data.cmd[data.NBcmd].key,"aollogon");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_logon;
+  strcpy(data.cmd[data.NBcmd].info,"turn log on");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"aollogon");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_logon()");
+  data.NBcmd++;
+  
+  strcpy(data.cmd[data.NBcmd].key,"aollogoff");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_logoff;
+  strcpy(data.cmd[data.NBcmd].info,"turn log off");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"aollogoff");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_logoff()");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"aolsetgain");
@@ -1021,6 +1041,27 @@ int AOloopControl_loadconfigure(long loop, char *config_fname)
 	
 
 
+  // Allocate / create logging data files/memory
+  if(read_config_parameter(config_fname, "logsize", content)==0)
+    {
+      printf("parameter logsize missing\n");
+      exit(0);
+    }
+  AOconf[loop].logsize = atol(content);
+  // time [s]       (1)
+  // gains          ( AOconf[loop].NBDMmodes )
+  // ID_cmd_modes   ( AOconf[loop].NBDMmodes )
+  // ID_cmd1_modes  ( AOconf[loop].NBDMmodes )
+  sizearray[0] = 1+3*AOconf[loop].NBDMmodes;
+  sizearray[1] = AOconf[loop].logsize;
+  sprintf(name, "loop%ldlog0", loop);
+  AOconf[loop].IDlog0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
+  sprintf(name, "loop%ldlog1", loop);
+  AOconf[loop].IDlog1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
+  AOconf[loop].logcnt = 0;
+  AOconf[loop].logfnb = 0;
+  strcpy(AOconf[loop].userLOGstring, "");
+
   // AOconf[loop].ID_DMmodes = AOloopControl_MakeDMModes(loop, 5, name);
 
   printf("%ld modes\n", AOconf[loop].NBDMmodes);
@@ -1495,6 +1536,14 @@ int AOloopControl_run()
   long loop;
   int OK;
 
+  long ID;
+  long j, m;
+  struct tm *uttime;
+  time_t t;
+  struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+  char logfname[1000];
+  char command[1000];
+
   loop = LOOPNUMBER;
   
   if(AOloopcontrol_meminit==0)
@@ -1535,32 +1584,55 @@ int AOloopControl_run()
 	      usleep(10000);
 	      AOcompute(loop);
 	      set_DM_modes(loop);
+
+	      clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
+	      AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
+	      // logging
+	      
+	      if(AOconf[loop].logfnb==0)
+		ID = AOconf[loop].IDlog0;
+	      else
+		ID = AOconf[loop].IDlog1;
+	      
+	      
+	      data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec;
+	      j = 1;
+	     
+	      for(m=0;m<AOconf[loop].NBDMmodes;m++)
+		{
+		  data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = AOconf[loop].gain;
+		  j++;
+		  data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[AOconf[loop].ID_cmd1_modes].array.F[m];
+		  j++;
+		  data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[AOconf[loop].ID_cmd_modes].array.F[m];
+		  j++;		  
+		}
+	      
+	      AOconf[loop].logcnt++;
+	      if(AOconf[loop].logcnt==AOconf[loop].logsize)
+		{
+		  if(AOconf[loop].logon == 1) // save to disk !!
+		    {
+		      t = time(NULL);
+		      uttime = gmtime(&t);
+		      clock_gettime(CLOCK_REALTIME, thetime);
+		      
+		      sprintf(logfname, "%s/LOOP%d_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);		      
+		      sprintf(command, "cp /tmp/loop%ldlog%d %s &", loop, AOconf[loop].logfnb, logfname);
+		      system(command);
+		    }
+		  AOconf[loop].logfnb++;
+		  AOconf[loop].logcnt = 0;
+		}
+	      if(AOconf[loop].logfnb == 2)
+		  AOconf[loop].logfnb = 0;
+	      
 	      AOconf[loop].cnt++;
 	    }
 	}
     }
 
-  /*  
-      printf("Acquiring image\n");
-  Average_cam_frames(LOOPNUMBER, 10);
-  save_fl_fits("imWFS1_0","!imave.fits");
-  */
-  
-  /*  printf("Acquiring response matrix\n");
-  Measure_Resp_Matrix(LOOPNUMBER, 10, 1.0, 3);
-  
-  save_fl_fits("RespM_0", "!respm0.fits");
-  save_fl_fits("refWFS_0", "!refwfs0.fits");
-
-  printf("Computing control matrix\n");
-  compute_ControlMatrix(LOOPNUMBER, 1, "RespM_0", "ContrM_0", "evecM");
-  save_fl_fits("ContrM_0", "!ContrM_0.fits");
-  save_fl_fits("evecM", "!evecM.fits");
-  */
-
-  
-
-  list_image_ID();
+  free(thetime);
 
   return(0);
 }
@@ -1603,6 +1675,26 @@ int AOloopControl_loopoff()
     AOloopControl_InitializeMemory();
 
   AOconf[LOOPNUMBER].on = 0;
+
+  return 0;
+}
+
+int AOloopControl_logon()
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  AOconf[LOOPNUMBER].logon = 1;
+
+  return 0;
+}
+
+int AOloopControl_logoff()
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  AOconf[LOOPNUMBER].logon = 0;
 
   return 0;
 }
