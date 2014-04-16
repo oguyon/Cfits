@@ -1236,16 +1236,17 @@ int AOcompute(long loop)
 
   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     data.image[AOconf[loop].ID_WFS2].array.F[ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii] - data.image[AOconf[loop].ID_refWFS].array.F[ii];
+  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
   AOconf[loop].status = 5; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
-  data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
+  // data.image[AOconf[loop].ID_WFS2].md[0].cnt0 ++;
 
   ControlMatrixMultiply( data.image[AOconf[loop].ID_contrM].array.F, data.image[AOconf[loop].ID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[AOconf[loop].ID_cmd1_modes].array.F);
   
 
  
-  if(1)
+  if(0)
     {
       printf("GSL MATRIX MULT  :  ");
       for(k=0; k<AOconf[loop].NBDMmodes; k++)
