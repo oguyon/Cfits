@@ -135,6 +135,17 @@ int IMAGE_FORMAT_read_binary32f_cli()
 }
 
 
+int IMAGE_FORMAT_extract_RGGBchan_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
+    {
+      image_format_extract_RGGBchan(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 
 int init_image_format()
 {
@@ -176,6 +187,15 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].syntax,"<bin file> <xsize> <ysize> <output image>");
   strcpy(data.cmd[data.NBcmd].example,"readb32fim im.bin xsize ysize im");
   strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_read_binary32f(char *fname, long xsize, long ysize, char *IDname)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"extractRGGBchan");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_extract_RGGBchan_cli;
+  strcpy(data.cmd[data.NBcmd].info,"extract RGGB channels from color image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <imR> <imG1> <imG2> <imB>");
+  strcpy(data.cmd[data.NBcmd].example,"extractRGGBchan im imR imG1 imG2 imB");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG1_name, char *IDoutG2_name, char *IDoutB_name)");
   data.NBcmd++;
 
  // add atexit functions here
@@ -744,11 +764,16 @@ int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG
   Xsize = data.image[ID].md[0].size[0];
   Ysize = data.image[ID].md[0].size[1];
 
+  printf("ID = %ld\n", ID);
+  printf("size = %ld %ld\n", Xsize, Ysize);
+
 
   if((Xsize == 4770)&&(Ysize == 3178))
     RGBmode = 1;
   if((Xsize == 5202)&&(Ysize == 3465))
     RGBmode = 2;
+
+
 
   if(RGBmode == 0)
     {
@@ -759,11 +784,18 @@ int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG
   xsize2 = Xsize/2;
   ysize2 = Ysize/2;
 
-  IDr = create_2Dimage_ID(IDoutR_name,xsize2,ysize2);
-  IDg1 = create_2Dimage_ID(IDoutG1_name,xsize2,ysize2);
-  IDg2 = create_2Dimage_ID(IDoutG2_name,xsize2,ysize2);
-  IDb = create_2Dimage_ID(IDoutB_name,xsize2,ysize2);
+  printf("Creating color channel images, %ld x %ld\n", xsize2, ysize2);
+  fflush(stdout);
+
+
+  IDr = create_2Dimage_ID(IDoutR_name, xsize2, ysize2);
+  IDg1 = create_2Dimage_ID(IDoutG1_name, xsize2, ysize2);
+  IDg2 = create_2Dimage_ID(IDoutG2_name, xsize2, ysize2);
+  IDb = create_2Dimage_ID(IDoutB_name, xsize2, ysize2);
   
+  printf("STEP 2\n");
+  fflush(stdout);
+
   if(RGBmode==1) // GBRG
     {
       ID00 = IDg1;
@@ -780,7 +812,7 @@ int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG
       ID11 = IDb;
     }
 
-
+  
   for(ii=0;ii<xsize2;ii++)
     for(jj=0;jj<ysize2;jj++)
       {
@@ -791,7 +823,7 @@ int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG
 	data.image[ID11].array.F[jj*xsize2+ii] = data.image[ID].array.F[(jj1+1)*Xsize+(ii1+1)];
 	data.image[ID10].array.F[jj*xsize2+ii] = data.image[ID].array.F[jj1*Xsize+(ii1+1)];
       }
-
+  
   return(0);
 }
 
@@ -1636,7 +1668,7 @@ int CR2tomov()
 		  load_fits(fnameoutb,"imb");
 		}
 
-	      stats("imr","");
+	      info_image_stats("imr","");
 	      ID = variable_ID("vp01");
 	      vp01r = data.variable[ID].value;
 	      ID = variable_ID("vp05");
@@ -1663,7 +1695,7 @@ int CR2tomov()
 	      vp999r = data.variable[ID].value;
 	      delete_image_ID("imr");	      	      
 	      
-	      stats("img","");
+	      info_image_stats("img","");
 	      ID = variable_ID("vp01");
 	      vp01g = data.variable[ID].value;
 	      ID = variable_ID("vp05");
@@ -1690,7 +1722,7 @@ int CR2tomov()
 	      vp999g = data.variable[ID].value;
 	      delete_image_ID("img");
 	      
-	      stats("imb","");
+	      info_image_stats("imb","");
 	      ID = variable_ID("vp01");
 	      vp01b = data.variable[ID].value;
 	      ID = variable_ID("vp05");

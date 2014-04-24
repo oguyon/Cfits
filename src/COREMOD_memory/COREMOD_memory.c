@@ -1346,11 +1346,24 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
 
   naxes[0]=xsize;
   naxes[1]=ysize;
+  
+  printf("Creating 2D image %s, %ld x %ld [%d %d]", ID_name, xsize, ysize, data.SHARED_DFT, data.NBKEWORD_DFT);
+  fflush(stdout);
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
-  if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+    ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+  else if (data.precision == 1)
+    ID = create_image_ID(ID_name, naxis, naxes, 4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+  else 
+    {
+      printf("Default precision (%d) invalid value: assuming single precision\n", data.precision);
+      ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+    }
+    
+  printf("\n");
+  fflush(stdout);
+    
+
 
   return(ID);
 }

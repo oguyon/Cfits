@@ -41,6 +41,7 @@ struct timespec tlast;
 
 
 int info_image_monitor(char *ID_name, double frequ);
+int info_image_stats(char *ID_name, char *options);
 
 
 
@@ -76,6 +77,28 @@ int info_image_monitor_cli()
     return 1;
 }
 
+int info_image_stats_cli()
+{
+  if(CLI_checkarg(1,4)==0)
+    {
+      info_image_stats(data.cmdargtoken[1].val.string, "");
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+int info_image_statsf_cli()
+{
+  if(CLI_checkarg(1,4)==0)
+    {
+      info_image_stats(data.cmdargtoken[1].val.string, "fileout");
+      return 0;
+    }
+  else
+    return 1;
+}
 
 
 
@@ -104,6 +127,25 @@ int init_info()
   strcpy(data.cmd[data.NBcmd].example,"profile psf psf.prof 256 256 1.0 100");
   strcpy(data.cmd[data.NBcmd].Ccall,"int profile(char *ID_name, char *outfile, double xcenter, double ycenter, double step, long nb_step)");
   data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"imstats");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = info_image_stats_cli;
+  strcpy(data.cmd[data.NBcmd].info,"image stats");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+  strcpy(data.cmd[data.NBcmd].example,"imgstats im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int info_image_stats(char *ID_name, \"\")");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"imstatsf");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = info_image_statsf_cli;
+  strcpy(data.cmd[data.NBcmd].info,"image stats with file output");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+  strcpy(data.cmd[data.NBcmd].example,"imgstatsf im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int info_image_stats(char *ID_name, \"fileout\")");
+  data.NBcmd++;
+
 
   return 0;
 }
@@ -751,7 +793,7 @@ double rms_dev(char *ID_name)
 
 
 // option "fileout" : output to file imstat.info.txt
-int stats(char *ID_name, char *options)
+int info_image_stats(char *ID_name, char *options)
 {
   int ID;
   long ii,jj,j;

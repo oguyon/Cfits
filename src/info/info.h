@@ -16,7 +16,7 @@ double ssquare(char *ID_name);
 
 double rms_dev(char *ID_name);
 
-int stats(char *ID_name, char *options);
+int info_image_stats(char *ID_name, char *options);
 
 double img_min(char *ID_name);
 
