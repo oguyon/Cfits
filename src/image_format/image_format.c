@@ -146,6 +146,19 @@ int IMAGE_FORMAT_extract_RGGBchan_cli()
     return 1;
 }
 
+int IMAGE_FORMAT_loadCR2toFITSRGB_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)==0)
+    {
+      loadCR2toFITSRGB(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+//int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)
+
 
 int init_image_format()
 {
@@ -197,6 +210,17 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].example,"extractRGGBchan im imR imG1 imG2 imB");
   strcpy(data.cmd[data.NBcmd].Ccall,"int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG1_name, char *IDoutG2_name, char *IDoutB_name)");
   data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"loadcr2torgb");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_loadCR2toFITSRGB_cli;
+  strcpy(data.cmd[data.NBcmd].info,"load CR2 file into R G B images");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <imR> <imG> <imB>");
+  strcpy(data.cmd[data.NBcmd].example,"loadcr2torgb im imR imG imB");
+  strcpy(data.cmd[data.NBcmd].Ccall,"loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)");
+  data.NBcmd++;
+
+
 
  // add atexit functions here
 
