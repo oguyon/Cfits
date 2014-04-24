@@ -49,6 +49,7 @@ int fft_setNthreads(int nt);
 int import_wisdom();
 int export_wisdom();
 int test_fftspeed(int nmax);
+long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout);
 
 
 
@@ -80,6 +81,18 @@ int fft_image_translate_cli()
 
   return 0;
 }
+
+
+
+int fft_correlation_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    fft_correlation(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+  else
+    return 1;
+}
+
+
 
 
 
@@ -133,10 +146,19 @@ int init_fft()
   strcpy(data.cmd[data.NBcmd].info,"translate image");
   strcpy(data.cmd[data.NBcmd].syntax,"<imagein> <imageout> <xtransl> <ytransl>");
   strcpy(data.cmd[data.NBcmd].example,"transl im1 im2 2.3 -2.1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl);");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl)");
   data.NBcmd++;
 
-  return 0;
+   strcpy(data.cmd[data.NBcmd].key,"fcorrel");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = fft_correlation_cli;
+  strcpy(data.cmd[data.NBcmd].info,"correlate two images");
+  strcpy(data.cmd[data.NBcmd].syntax,"<imagein1> <imagein2> <correlout>");
+  strcpy(data.cmd[data.NBcmd].example,"fcorrel im1 im2 outim");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)");
+  data.NBcmd++;
+
+ return 0;
 }
 
 
