@@ -8,6 +8,7 @@
 
 #include "Cfits.h"
 #include "COREMOD_arith/COREMOD_arith.h"
+#include "info/info.h"
 extern DATA data;
 
 long i;
@@ -17,7 +18,7 @@ long i;
 
 alpha   [A-Za-z?]
 digit     [0-9]
-string    ({alpha}|{digit}|\$)({alpha}|{digit}|[_.\$])*
+string    ({alpha}|{digit}|[_.\$])({alpha}|{digit}|[_.\$])*
 numberl [0-9]+
 numberd	[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
 
@@ -159,6 +160,16 @@ return TKFUNC_im_d;
 if(data.Debug>0){printf("Found function %s\n", yytext);} 
 yylval.fnctptr = arith_image_mean;
 return TKFUNC_im_d; 
+}
+
+
+
+
+
+"perc(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = img_percentile;
+return TKFUNC_imd_d; 
 }
 
 

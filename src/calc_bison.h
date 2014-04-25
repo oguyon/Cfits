@@ -57,7 +57,8 @@ extern int yydebug;
      TKFUNC_dd_d = 266,
      TKFUNC_ddd_d = 267,
      TKFUNC_im_d = 268,
-     NEG = 269
+     TKFUNC_imd_d = 269,
+     NEG = 270
    };
 #endif
 /* Tokens.  */
@@ -72,7 +73,8 @@ extern int yydebug;
 #define TKFUNC_dd_d 266
 #define TKFUNC_ddd_d 267
 #define TKFUNC_im_d 268
-#define NEG 269
+#define TKFUNC_imd_d 269
+#define NEG 270
 
 
 
@@ -80,7 +82,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2053 of yacc.c  */
-#line 21 "calc_bison.y"
+#line 22 "calc_bison.y"
 
   long     val_l;  /* long */  
   float    val_f;  /* float */
@@ -90,7 +92,7 @@ typedef union YYSTYPE
 
 
 /* Line 2053 of yacc.c  */
-#line 94 "calc_bison.h"
+#line 96 "calc_bison.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

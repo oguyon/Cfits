@@ -10,6 +10,7 @@
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_arith/COREMOD_arith.h"
+#include "info/info.h"
 
 extern DATA data;
 
@@ -37,6 +38,7 @@ extern DATA data;
 %token <fnctptr> TKFUNC_dd_d /* function double double -> double */
 %token <fnctptr> TKFUNC_ddd_d /* function double double double -> double */
 %token <fnctptr> TKFUNC_im_d /* function image -> double */
+%token <fnctptr> TKFUNC_imd_d /* function image double -> double */
 
 %type <val_l> expl
 %type <val_d> expd
@@ -122,6 +124,7 @@ expd:      TKNUMd      { $$ = $1;        if(data.Debug>0){printf("this is a doub
 | TKFUNC_ddd_d expd ',' expl ',' expl ')'  { $$ = $1($2,(double) $4,(double) $6);  if(data.Debug>0){printf("double=func(double,long->double,long->double)\n");}}
 | TKFUNC_ddd_d expl ',' expl ',' expl ')'  { $$ = $1((double) $2,(double) $4,(double) $6);  if(data.Debug>0){printf("double=func(long->double,long->double,long->double)\n");}}
 | TKFUNC_im_d exps ')'  { $$ = $1($2);  if(data.Debug>0){printf("double=func(image)\n");}}
+| TKFUNC_imd_d exps ',' expd ')'  { $$ = $1($2,$4);  if(data.Debug>0){printf("double=func(image,double)\n");}}
 | '(' expd ')'         { $$ = $2;                         }
 ;
 

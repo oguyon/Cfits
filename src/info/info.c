@@ -644,6 +644,24 @@ double img_percentile_double(char *ID_name, double p)
   return(value);
 }
 
+double img_percentile(char *ID_name, double p)
+{
+  long ID;
+  int atype;
+  double value = 0.0;
+
+  ID = image_ID(ID_name);
+  atype = data.image[ID].md[0].atype;
+
+  if(atype==FLOAT)
+    value = img_percentile_float(ID_name, p);
+  if(atype==FLOAT)
+    value = img_percentile_double(ID_name, p);
+
+  return value;
+}
+
+
 int img_histoc_float(char *ID_name, char *fname)
 {
   FILE *fp;

@@ -803,6 +803,7 @@ void main_init()
   init_COREMOD_memory();
   init_COREMOD_arith();
   init_COREMOD_iofits();
+  init_COREMOD_tools();
   init_fft();
   init_info();
   init_statistic();

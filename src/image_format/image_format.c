@@ -923,6 +923,7 @@ int image_format_reconstruct_from_RGGBchan(char *IDr_name, char *IDg1_name, char
 // this is a simple interpolation routine
 // IMPORTANT: input will be modified
 // Sampling factor : 0=full resolution (slow), 1=half resolution (fast), 2=quarter resolution (very fast)
+// Fast mode does not reject bad pixels
 int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *ID_name_g, char *ID_name_b, int SamplFactor)
 {
   long ID;
@@ -941,6 +942,10 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
   double eps = 1.0e-8;
   int RGBmode = 0;
 
+  int FastMode = 0;
+
+  if(variable_ID("_RGBfast")!=-1)
+    FastMode = 1;
 
   ID = image_ID(ID_name);
   Xsize = data.image[ID].md[0].size[0];
@@ -963,6 +968,13 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
       exit(0);
     }
 
+
+  printf("FAST MODE = %d\n", FastMode);
+  printf("RGBmode   = %d\n", RGBmode);
+  //exit(0);
+
+  if(FastMode==0)
+    {
   // bias
   IDbias = image_ID("bias");
   if(IDbias == -1)
@@ -1063,7 +1075,7 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
   for(ii=0;ii<Xsize;ii++)
     for(jj=0;jj<Ysize;jj++)
       data.image[ID].array.F[jj*Xsize+ii] *= FLUXFACTOR;
-  
+    }
   
 
 
@@ -1116,107 +1128,247 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
 	ID11c = IDbc;
       }
 
-    for(ii1=0;ii1<Xsize/2;ii1++)
-      for(jj1=0;jj1<Ysize/2;jj1++)
-	{
-	  ii = ii1*2;
-	  jj = jj1*2;
-	  
-	  ii2 = ii;
-	  jj2 = jj+1;
-	  data.image[ID01].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
-	  data.image[ID01c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
-	  
-	  ii2 = ii+1;
-	  jj2 = jj+1;
-	  data.image[ID11].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
-	  data.image[ID11c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
-	  
-	  ii2 = ii;
-	  jj2 = jj;
-	  data.image[ID00].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
-	  data.image[ID00c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
-	  
-	  ii2 = ii+1;
-	  jj2 = jj;
-	  data.image[ID10].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
-	  data.image[ID10c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
-	}
-    
-    
-    for(ii=0;ii<Xsize;ii++)
-      for(jj=0;jj<Ysize;jj++)
-	{
-	  if(data.image[IDrc].array.F[jj*Xsize+ii]<0.5)
+    if(FastMode==0)
+      {
+	for(ii1=0;ii1<Xsize/2;ii1++)
+	  for(jj1=0;jj1<Ysize/2;jj1++)
 	    {
-	      v = 0.0;
-	      vc = 0.0;
-	      for(dii=-2;dii<3;dii++)
-		for(djj=-2;djj<3;djj++)
-		  {
-		    ii1 = ii+dii;
-		    jj1 = jj+djj;
-		    if((ii1>-1)&&(jj1>-1)&&(ii1<Xsize)&&(jj1<Ysize))
-		      if((dii!=0)||(djj!=0))
-			{
-			  if(data.image[IDrc].array.F[jj1*Xsize+ii1]>0.5)
-			    {
-			      coeff = exp(-5.0*(dii*dii+djj*djj));
-			      vc += coeff;
-			      v += data.image[IDr].array.F[jj1*Xsize+ii1]*coeff;
-			    }
-			}
-		  }
-	      data.image[IDr].array.F[jj*Xsize+ii] = v/vc;
-	    }
+	      ii = ii1*2;
+	      jj = jj1*2;
+	      
+	      ii2 = ii;
+	      jj2 = jj+1;
+	      data.image[ID01].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
+	      data.image[ID01c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
+	      
+	      ii2 = ii+1;
+	      jj2 = jj+1;
+	      data.image[ID11].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
+	      data.image[ID11c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
 	  
-	  if(data.image[IDgc].array.F[jj*Xsize+ii]<0.5)
-	    {
-	      v = 0.0;
-	      vc = 0.0;
-	      for(dii=-2;dii<3;dii++)
-		for(djj=-2;djj<3;djj++)
-		  {
-		    ii1 = ii+dii;
-		    jj1 = jj+djj;
-		    if((ii1>-1)&&(jj1>-1)&&(ii1<Xsize)&&(jj1<Ysize))
-		      if((dii!=0)||(djj!=0))
-			{
-			  if(data.image[IDgc].array.F[jj1*Xsize+ii1]>0.5)
-			    {
-			      coeff = exp(-5.0*(dii*dii+djj*djj));
-			      vc += coeff;
-			      v += data.image[IDg].array.F[jj1*Xsize+ii1]*coeff;
-			    }
-			}
-		  }
-	      data.image[IDg].array.F[jj*Xsize+ii] = v/vc;
+	      ii2 = ii;
+	      jj2 = jj;
+	      data.image[ID00].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
+	      data.image[ID00c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
+	      
+	      ii2 = ii+1;
+	      jj2 = jj;
+	      data.image[ID10].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2]/data.image[IDflat].array.F[jj2*Xsize+ii2];
+	      data.image[ID10c].array.F[jj2*Xsize+ii2] = 1.0-data.image[IDbp].array.F[jj2*Xsize+ii2];
 	    }
-	  
-	  if(data.image[IDbc].array.F[jj*Xsize+ii]<0.5)
+      	
+	for(ii=0;ii<Xsize;ii++)
+	  for(jj=0;jj<Ysize;jj++)
 	    {
-	      v = 0.0;
-	      vc = 0.0;
-	      for(dii=-2;dii<3;dii++)
-		for(djj=-2;djj<3;djj++)
-		  {
-		    ii1 = ii+dii;
-		    jj1 = jj+djj;
-		    if((ii1>-1)&&(jj1>-1)&&(ii1<Xsize)&&(jj1<Ysize))
-		      if((dii!=0)||(djj!=0))
-			{
-			  if(data.image[IDbc].array.F[jj1*Xsize+ii1]>0.5)
+	      if(data.image[IDrc].array.F[jj*Xsize+ii]<0.5)
+		{
+		  v = 0.0;
+		  vc = 0.0;
+		  for(dii=-2;dii<3;dii++)
+		    for(djj=-2;djj<3;djj++)
+		      {
+			ii1 = ii+dii;
+			jj1 = jj+djj;
+			if((ii1>-1)&&(jj1>-1)&&(ii1<Xsize)&&(jj1<Ysize))
+			  if((dii!=0)||(djj!=0))
 			    {
-			      coeff = exp(-5.0*(dii*dii+djj*djj));
-			      vc += coeff;
-			      v += data.image[IDb].array.F[jj1*Xsize+ii1]*coeff;
+			      if(data.image[IDrc].array.F[jj1*Xsize+ii1]>0.5)
+				{
+				  coeff = exp(-5.0*(dii*dii+djj*djj));
+				  vc += coeff;
+				  v += data.image[IDr].array.F[jj1*Xsize+ii1]*coeff;
+				}
 			    }
-			}
-		  }
-	      data.image[IDb].array.F[jj*Xsize+ii] = v/vc;
+		      }
+		  data.image[IDr].array.F[jj*Xsize+ii] = v/vc;
+		}
+	      
+	      if(data.image[IDgc].array.F[jj*Xsize+ii]<0.5)
+		{
+		  v = 0.0;
+		  vc = 0.0;
+		  for(dii=-2;dii<3;dii++)
+		    for(djj=-2;djj<3;djj++)
+		      {
+			ii1 = ii+dii;
+			jj1 = jj+djj;
+			if((ii1>-1)&&(jj1>-1)&&(ii1<Xsize)&&(jj1<Ysize))
+			  if((dii!=0)||(djj!=0))
+			    {
+			      if(data.image[IDgc].array.F[jj1*Xsize+ii1]>0.5)
+				{
+				  coeff = exp(-5.0*(dii*dii+djj*djj));
+				  vc += coeff;
+				  v += data.image[IDg].array.F[jj1*Xsize+ii1]*coeff;
+				}
+			    }
+		      }
+		  data.image[IDg].array.F[jj*Xsize+ii] = v/vc;
+		}
+	      
+	      if(data.image[IDbc].array.F[jj*Xsize+ii]<0.5)
+		{
+		  v = 0.0;
+		  vc = 0.0;
+		  for(dii=-2;dii<3;dii++)
+		    for(djj=-2;djj<3;djj++)
+		      {
+			ii1 = ii+dii;
+			jj1 = jj+djj;
+			if((ii1>-1)&&(jj1>-1)&&(ii1<Xsize)&&(jj1<Ysize))
+			  if((dii!=0)||(djj!=0))
+			    {
+			      if(data.image[IDbc].array.F[jj1*Xsize+ii1]>0.5)
+				{
+				  coeff = exp(-5.0*(dii*dii+djj*djj));
+				  vc += coeff;
+				  v += data.image[IDb].array.F[jj1*Xsize+ii1]*coeff;
+				}
+			    }
+		      }
+		  data.image[IDb].array.F[jj*Xsize+ii] = v/vc;
+		}
 	    }
-	}
-    
+      }
+    else
+      {
+	if(RGBmode==1) // GBRG
+	  {
+	    // G
+	    for(ii1=0;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 
+		  
+		  ii2 = ii;
+		  jj2 = jj;
+		  data.image[IDg].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2];
+		  ii2 = ii+1;
+		  jj2 = jj+1;
+		  data.image[IDg].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2];
+		}
+	    // replace blue pixels
+	    for(ii1=0;ii1<Xsize/2-1;ii1++)
+	      for(jj1=1;jj1<Ysize/2;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii+1;
+		  jj2 = jj;
+		  data.image[IDg].array.F[jj2*Xsize+ii2] = 0.25*(data.image[ID].array.F[jj2*Xsize+(ii2-1)]+data.image[ID].array.F[jj2*Xsize+(ii2+1)]+data.image[ID].array.F[(jj2+1)*Xsize+ii2]+data.image[ID].array.F[(jj2-1)*Xsize+ii2]);
+		}
+	    // replace red pixels
+	    for(ii1=1;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2-1;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+
+		  ii2 = ii;
+		  jj2 = jj+1;
+		  data.image[IDg].array.F[jj2*Xsize+ii2] = 0.25*(data.image[ID].array.F[jj2*Xsize+(ii2-1)]+data.image[ID].array.F[jj2*Xsize+(ii2+1)]+data.image[ID].array.F[(jj2+1)*Xsize+ii2]+data.image[ID].array.F[(jj2-1)*Xsize+ii2]);
+		}
+	    
+
+
+	    // R
+	    for(ii1=0;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2;jj1++)
+		{
+		   ii = ii1*2;
+		   jj = jj1*2;
+		   ii2 = ii;
+		   jj2 = jj+1;
+		   data.image[IDr].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2];
+		}
+	    // replace g1 pixels
+	    for(ii1=0;ii1<Xsize/2;ii1++)
+	      for(jj1=1;jj1<Ysize/2;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii;
+		  jj2 = jj;
+		  data.image[IDr].array.F[jj2*Xsize+ii2] = 0.5*(data.image[ID].array.F[(jj2-1)*Xsize+ii2] + data.image[ID].array.F[(jj2+1)*Xsize+ii2]);		  
+		}
+	    // replace g2 pixels
+	    for(ii1=0;ii1<Xsize/2-1;ii1++)
+	      for(jj1=0;jj1<Ysize/2;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii+1;
+		  jj2 = jj+1;
+		  data.image[IDr].array.F[jj2*Xsize+ii2] = 0.5*(data.image[ID].array.F[jj2*Xsize+(ii2-1)] + data.image[ID].array.F[jj2*Xsize+(ii2+1)]);		  
+		}
+	    // replace b pixels
+	    for(ii1=0;ii1<Xsize/2-1;ii1++)
+	      for(jj1=1;jj1<Ysize/2;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii+1;
+		  jj2 = jj;
+		  data.image[IDr].array.F[jj2*Xsize+ii2] = 0.25*(data.image[ID].array.F[(jj2-1)*Xsize+(ii2-1)] + data.image[ID].array.F[(jj2-1)*Xsize+(ii2+1)]+data.image[ID].array.F[(jj2+1)*Xsize+(ii2-1)] + data.image[ID].array.F[(jj2+1)*Xsize+(ii2+1)]);		  
+		}	 
+   
+
+	    // B
+	    for(ii1=0;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2;jj1++)
+		{
+		   ii = ii1*2;
+		   jj = jj1*2;
+		   ii2 = ii+1;
+		   jj2 = jj;
+		   data.image[IDb].array.F[jj2*Xsize+ii2] = data.image[ID].array.F[jj2*Xsize+ii2];
+		}
+
+	    // replace g2 pixels
+	    for(ii1=0;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2-1;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii+1;
+		  jj2 = jj+1;
+		  data.image[IDb].array.F[jj2*Xsize+ii2] = 0.5*(data.image[ID].array.F[(jj2-1)*Xsize+ii2] + data.image[ID].array.F[(jj2+1)*Xsize+ii2]);		  
+		}
+	    // replace g1 pixels
+	    for(ii1=1;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii;
+		  jj2 = jj;
+		  data.image[IDb].array.F[jj2*Xsize+ii2] = 0.5*(data.image[ID].array.F[jj2*Xsize+(ii2-1)] + data.image[ID].array.F[jj2*Xsize+(ii2+1)]);		  
+		}
+	    // replace r pixels
+	    for(ii1=1;ii1<Xsize/2;ii1++)
+	      for(jj1=0;jj1<Ysize/2-1;jj1++)
+		{
+		  ii = ii1*2;
+		  jj = jj1*2;
+		 		  
+		  ii2 = ii;
+		  jj2 = jj+1;
+		  data.image[IDb].array.F[jj2*Xsize+ii2] = 0.25*(data.image[ID].array.F[(jj2-1)*Xsize+(ii2-1)] + data.image[ID].array.F[(jj2-1)*Xsize+(ii2+1)]+data.image[ID].array.F[(jj2+1)*Xsize+(ii2-1)] + data.image[ID].array.F[(jj2+1)*Xsize+(ii2+1)]);		  
+		}	 
+
+	  }
+      }
+
+
+
     //  delete_image_ID("badpix1");
     
     delete_image_ID("imrc");
@@ -1315,6 +1467,14 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
 }
 
 
+
+
+
+
+
+
+
+
 // assumes dcraw is installed
 int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)
 {
@@ -1373,7 +1533,7 @@ int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *f
 
   printf("FLUXFACTOR = %g\n" ,FLUXFACTOR);
 
-  if(variable_ID("_RGBfullres")==-1)
+  if(variable_ID("RGBfullres")==-1)
     convert_rawbayerFITStorgbFITS_simple("tmpfits1", fnameFITSr, fnameFITSg, fnameFITSb, 1);
   else
     convert_rawbayerFITStorgbFITS_simple("tmpfits1", fnameFITSr, fnameFITSg, fnameFITSb, 0);
