@@ -903,6 +903,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname)
   long ID;
   long *sizearray;
   int OK;
+  int kw;
 
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
@@ -1097,8 +1098,26 @@ int AOloopControl_loadconfigure(long loop, char *config_fname)
   sizearray[1] = AOconf[loop].logsize;
   sprintf(name, "loop%ldlog0", loop);
   AOconf[loop].IDlog0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
+  ID = AOconf[loop].IDlog0;
+  data.image[ID].md[0].NBkw = 1;
+  kw = 0;
+  strcpy(data.image[ID].kw[kw].name, "TIMEORIGIN");	
+  data.image[ID].kw[kw].type = 'L';
+  data.image[ID].kw[kw].value.numl = 0;
+  strcpy(data.image[ID].kw[kw].comment, "time offset [sec]");
+
   sprintf(name, "loop%ldlog1", loop);
   AOconf[loop].IDlog1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
+  ID = AOconf[loop].IDlog1;
+  data.image[ID].md[0].NBkw = 1;
+  kw = 0;
+  strcpy(data.image[ID].kw[kw].name, "TIMEORIGIN");	
+  data.image[ID].kw[kw].type = 'L';
+  data.image[ID].kw[kw].value.numl = 0;
+  strcpy(data.image[ID].kw[kw].comment, "time offset [sec]");
+
+
+
   AOconf[loop].logcnt = 0;
   AOconf[loop].logfnb = 0;
   strcpy(AOconf[loop].userLOGstring, "");
@@ -1321,8 +1340,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop)
 
 
   RespMatNBframes = nbloop*2*AOconf[loop].NBDMmodes*NbAve;
-  printf("%ld frames total\n");
-  fflush(stdout);
+  //  printf("%ld frames total\n");
+  // fflush(stdout);
 
   if(recordCube == 1)
     IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes);
@@ -1697,15 +1716,22 @@ int AOloopControl_run()
 
 	      clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
 	      AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
-	      // logging
-	      
+
 	      if(AOconf[loop].logfnb==0)
 		ID = AOconf[loop].IDlog0;
 	      else
 		ID = AOconf[loop].IDlog1;
+
+	      if(AOconf[loop].logcnt==0)
+		{
+		  AOconf[loop].timeorigin_sec = (long) AOconf[loop].tnow.tv_sec;
+		  data.image[ID].kw[0].value.numl = AOconf[loop].timeorigin_sec;
+		}
+	      // logging
 	      
 	      
-	      data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec;
+	      
+	      data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec - 1.0*AOconf[loop].timeorigin_sec;
 	      j = 1;
 	     
 	      for(m=0;m<AOconf[loop].NBDMmodes;m++)
@@ -1718,6 +1744,7 @@ int AOloopControl_run()
 		  j++;		  
 		}
 	      
+
 	      AOconf[loop].logcnt++;
 	      if(AOconf[loop].logcnt==AOconf[loop].logsize)
 		{
@@ -1725,12 +1752,13 @@ int AOloopControl_run()
 		    {
 		      printf("Saving to disk...\n");
 		      fflush(stdout);
+		      		    
 		      t = time(NULL);
 		      uttime = gmtime(&t);
 		      clock_gettime(CLOCK_REALTIME, thetime);
 		      printf("writing file name\n");
 		      fflush(stdout);
-		      sprintf(logfname, "%s/LOOP%d_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", AOconf[loop].logdir, LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);		      
+		      sprintf(logfname, "%s/LOOP%ld_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", AOconf[loop].logdir, LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);		      
 		      printf("writing file name\n");
 		      fflush(stdout);
 		      sprintf(command, "cp /tmp/loop%ldlog%d.im.shm %s &", loop, AOconf[loop].logfnb, logfname);

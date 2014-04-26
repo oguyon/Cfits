@@ -91,7 +91,8 @@ typedef struct
   int logcnt; // current position in log 
   int logfnb; // current log file number (0 or 1)
   char userLOGstring[80];
-  
+  long timeorigin_sec;
+
 } AOLOOPCONTROL_CONF;
 
 
