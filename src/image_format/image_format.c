@@ -123,6 +123,7 @@ int IMAGE_FORMAT_FITS_to_floatbin_lock_cli()
     return 1;
 }
 
+
 int IMAGE_FORMAT_read_binary32f_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
