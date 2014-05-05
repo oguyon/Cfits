@@ -63,6 +63,15 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout);
 //
 
 
+int fft_permut_cli()
+{
+  if(CLI_checkarg(1,4)==0)
+    permut(data.cmdargtoken[1].val.string);
+
+  return 0;
+}
+
+
 int test_fftspeed_cli()
 {
   if(CLI_checkarg(1,2)==0)
@@ -86,7 +95,7 @@ int fft_image_translate_cli()
 
 int fft_correlation_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
     fft_correlation(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
   else
     return 1;
@@ -129,6 +138,15 @@ int init_fft()
   strcpy(data.cmd[data.NBcmd].syntax,"no argument");
   strcpy(data.cmd[data.NBcmd].example,"initfft");
   strcpy(data.cmd[data.NBcmd].Ccall,"int init_fftw_plans0()");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"permut");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = fft_permut_cli;
+  strcpy(data.cmd[data.NBcmd].info,"permut image quadrants");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+  strcpy(data.cmd[data.NBcmd].example,"permut im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int permut(char *ID_name)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"testfftspeed");
@@ -452,7 +470,7 @@ int init_fftw_plans0()
 int permut(char *ID_name)
 {
   double tmp;
-  long *naxes;   
+  long naxes0, naxes1, naxes2;   
   int ID;
   long xhalf,yhalf;
   long ii,jj,kk;
@@ -461,108 +479,198 @@ int permut(char *ID_name)
   int atype;
   int OK=0;
 
+  //  printf("permut image %s ...", ID_name);
+  // fflush(stdout);
+
   ID = image_ID(ID_name);
   naxis = data.image[ID].md[0].naxis;
-  naxes = (long*) malloc(naxis*sizeof(long));
-  for(i=0;i<naxis;i++)
-    naxes[i] = data.image[ID].md[0].size[i];
+  
+  naxes0 = data.image[ID].md[0].size[0];
+  if(naxis>1)
+     naxes1 = data.image[ID].md[0].size[1];
+  if(naxis>2)
+    naxes2 = data.image[ID].md[0].size[2];
+  else
+    naxes2 = 1;
+
+  //  printf(" [%ld %ld %ld] ", naxes0, naxes1, naxes2);
+  
+
   atype = data.image[ID].md[0].atype;
 
   tmp=0;
 
-  if(atype==Dtype)
+  if(atype==FLOAT)
     {
       if(naxis==1)
 	{
 	  OK=1;
-	  xhalf = (long) (naxes[0]/2);
+	  xhalf = (long) (naxes0/2);
 	  for (ii = 0; ii < xhalf; ii++)
 	    SWAP(data.image[ID].array.F[ii],data.image[ID].array.F[ii+xhalf])
 	}
       if(naxis==2)
 	{
 	  OK=1;
-	  xhalf = (long) (naxes[0]/2);
-	  yhalf = (long) (naxes[1]/2);
+	  xhalf = (long) (naxes0/2);
+	  yhalf = (long) (naxes1/2);
 	  for (jj = 0; jj < yhalf; jj++) 
 	    for (ii = 0; ii < xhalf; ii++){
-	      SWAP(data.image[ID].array.F[jj*naxes[0]+ii],data.image[ID].array.F[(jj+yhalf)*naxes[0]+(ii+xhalf)])
+	      SWAP(data.image[ID].array.F[jj*naxes0+ii],data.image[ID].array.F[(jj+yhalf)*naxes0+(ii+xhalf)])
 		}
-	  for (jj = yhalf; jj < naxes[1]; jj++) 
+	  for (jj = yhalf; jj < naxes1; jj++) 
 	    for (ii = 0; ii < xhalf; ii++){
-	      SWAP(data.image[ID].array.F[jj*naxes[0]+ii],data.image[ID].array.F[(jj-yhalf)*naxes[0]+(ii+xhalf)])
+	      SWAP(data.image[ID].array.F[jj*naxes0+ii],data.image[ID].array.F[(jj-yhalf)*naxes0+(ii+xhalf)])
 		}
 	}
       if(naxis==3)
 	{
 	  OK=1;
-	  xhalf = (long) (naxes[0]/2);
-	  yhalf = (long) (naxes[1]/2);
+	  xhalf = (long) (naxes0/2);
+	  yhalf = (long) (naxes1/2);
 	  for (jj = 0; jj < yhalf; jj++) 
 	    for (ii = 0; ii < xhalf; ii++)
 	      {
-		for(kk=0;kk<naxes[2];kk++)
-		  SWAP(data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii],data.image[ID].array.F[kk*naxes[0]*naxes[1]+(jj+yhalf)*naxes[0]+(ii+xhalf)])
+		for(kk=0;kk<naxes2;kk++)
+		  SWAP(data.image[ID].array.F[kk*naxes0*naxes1+jj*naxes0+ii],data.image[ID].array.F[kk*naxes0*naxes1+(jj+yhalf)*naxes0+(ii+xhalf)])
 	      }
-	  for (jj = yhalf; jj < naxes[1]; jj++) 
+	  for (jj = yhalf; jj < naxes1; jj++) 
 	    for (ii = 0; ii < xhalf; ii++)
 	      {
-		for(kk=0;kk<naxes[2];kk++)
-		  SWAP(data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii],data.image[ID].array.F[kk*naxes[0]*naxes[1]+(jj-yhalf)*naxes[0]+(ii+xhalf)])
+		for(kk=0;kk<naxes2;kk++)
+		  SWAP(data.image[ID].array.F[kk*naxes0*naxes1+jj*naxes0+ii],data.image[ID].array.F[kk*naxes0*naxes1+(jj-yhalf)*naxes0+(ii+xhalf)])
 	      } 
 	}
     }
   
-  if(atype==CDtype)
+  if(atype==DOUBLE)
     {
       if(naxis==1)
 	{
 	  OK=1;
-	  xhalf = (long) (naxes[0]/2);
+	  xhalf = (long) (naxes0/2);
+	  for (ii = 0; ii < xhalf; ii++)
+	    SWAP(data.image[ID].array.D[ii],data.image[ID].array.D[ii+xhalf])
+	}
+      if(naxis==2)
+	{
+	  OK=1;
+	  xhalf = (long) (naxes0/2);
+	  yhalf = (long) (naxes1/2);
+	  for (jj = 0; jj < yhalf; jj++) 
+	    for (ii = 0; ii < xhalf; ii++){
+	      SWAP(data.image[ID].array.D[jj*naxes0+ii],data.image[ID].array.D[(jj+yhalf)*naxes0+(ii+xhalf)])
+		}
+	  for (jj = yhalf; jj < naxes1; jj++) 
+	    for (ii = 0; ii < xhalf; ii++){
+	      SWAP(data.image[ID].array.D[jj*naxes0+ii],data.image[ID].array.D[(jj-yhalf)*naxes0+(ii+xhalf)])
+		}
+	}
+      if(naxis==3)
+	{
+	  OK=1;
+	  xhalf = (long) (naxes0/2);
+	  yhalf = (long) (naxes1/2);
+	  for (jj = 0; jj < yhalf; jj++) 
+	    for (ii = 0; ii < xhalf; ii++)
+	      {
+		for(kk=0;kk<naxes2;kk++)
+		  SWAP(data.image[ID].array.D[kk*naxes0*naxes1+jj*naxes0+ii],data.image[ID].array.D[kk*naxes0*naxes1+(jj+yhalf)*naxes0+(ii+xhalf)])
+	      }
+	  for (jj = yhalf; jj < naxes1; jj++) 
+	    for (ii = 0; ii < xhalf; ii++)
+	      {
+		for(kk=0;kk<naxes2;kk++)
+		  SWAP(data.image[ID].array.D[kk*naxes0*naxes1+jj*naxes0+ii],data.image[ID].array.D[kk*naxes0*naxes1+(jj-yhalf)*naxes0+(ii+xhalf)])
+	      } 
+	}
+    }
+  
+  if(atype==COMPLEX_FLOAT)
+    {
+      if(naxis==1)
+	{
+	  OK=1;
+	  xhalf = (long) (naxes0/2);
 	  for (ii = 0; ii < xhalf; ii++)
 	    CSWAP(data.image[ID].array.CF[ii],data.image[ID].array.CF[ii+xhalf])
 	}
       if(naxis==2)
 	{
 	  OK=1;
-	  xhalf = (long) (naxes[0]/2);
-	  yhalf = (long) (naxes[1]/2);
+	  xhalf = (long) (naxes0/2);
+	  yhalf = (long) (naxes1/2);
 	  for (jj = 0; jj < yhalf; jj++) 
 	    for (ii = 0; ii < xhalf; ii++){
-	      CSWAP(data.image[ID].array.CF[jj*naxes[0]+ii],data.image[ID].array.CF[(jj+yhalf)*naxes[0]+(ii+xhalf)])
+	      CSWAP(data.image[ID].array.CF[jj*naxes0+ii],data.image[ID].array.CF[(jj+yhalf)*naxes0+(ii+xhalf)])
 		}
-	  for (jj = yhalf; jj < naxes[1]; jj++) 
+	  for (jj = yhalf; jj < naxes1; jj++) 
 	    for (ii = 0; ii < xhalf; ii++){
-	      CSWAP(data.image[ID].array.CF[jj*naxes[0]+ii],data.image[ID].array.CF[(jj-yhalf)*naxes[0]+(ii+xhalf)])
+	      CSWAP(data.image[ID].array.CF[jj*naxes0+ii],data.image[ID].array.CF[(jj-yhalf)*naxes0+(ii+xhalf)])
 		}
 	}
       if(naxis==3)
 	{
+	  //	  printf("3D image ... ");
+	  // fflush(stdout);
 	  OK=1;
-	  xhalf = (long) (naxes[0]/2);
-	  yhalf = (long) (naxes[1]/2);
-	  for (jj = 0; jj < yhalf; jj++) 
-	    for (ii = 0; ii < xhalf; ii++)
-	      {
-		for(kk=0;kk<naxes[2];kk++)
-		  CSWAP(data.image[ID].array.CF[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii],data.image[ID].array.CF[kk*naxes[0]*naxes[1]+(jj+yhalf)*naxes[0]+(ii+xhalf)])
-	      }
-	  for (jj = yhalf; jj < naxes[1]; jj++) 
-	    for (ii = 0; ii < xhalf; ii++)
-	      {
-		for(kk=0;kk<naxes[2];kk++)
-		  CSWAP(data.image[ID].array.CF[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii],data.image[ID].array.CF[kk*naxes[0]*naxes[1]+(jj-yhalf)*naxes[0]+(ii+xhalf)])
-	      } 
+	  xhalf = (long) (naxes0/2);
+	  yhalf = (long) (naxes1/2);
+	  for(kk=0;kk<naxes2;kk++)
+	    for (jj = 0; jj < yhalf; jj++) 
+	      for (ii = 0; ii < xhalf; ii++)
+		{
+		  CSWAP(data.image[ID].array.CF[kk*naxes0*naxes1+jj*naxes0+ii],data.image[ID].array.CF[kk*naxes0*naxes1+(jj+yhalf)*naxes0+(ii+xhalf)])
+       	        }
+	  printf(" - ");
+	  fflush(stdout);
+
+	  for(kk=0;kk<naxes2;kk++)
+	    for (jj = yhalf; jj < naxes1; jj++) 
+	      for (ii = 0; ii < xhalf; ii++)
+		{
+		  CSWAP(data.image[ID].array.CF[kk*naxes0*naxes1+jj*naxes0+ii],data.image[ID].array.CF[kk*naxes0*naxes1+(jj-yhalf)*naxes0+(ii+xhalf)])
+		} 
+	  // printf("  done\n");
+	  // fflush(stdout);
+	  
+	  /*	  ii = 0;
+	  jj = 0;
+	  kk = 0;
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+jj*naxes0+ii, naxes0*naxes1*naxes2);
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+(jj+yhalf)*naxes0+(ii+xhalf), naxes0*naxes1*naxes2);
+	  ii = xhalf-1;
+	  jj = yhalf-1;
+	  kk = 0;
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+jj*naxes0+ii, naxes0*naxes1*naxes2);
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+(jj+yhalf)*naxes0+(ii+xhalf), naxes0*naxes1*naxes2);
+
+	  ii = 0;
+	  jj = yhalf;
+	  kk = 0;
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+jj*naxes0+ii, naxes0*naxes1*naxes2);
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+(jj-yhalf)*naxes0+(ii+xhalf), naxes0*naxes1*naxes2);
+	  ii = xhalf-1;
+	  jj = naxes1-1;
+	  kk = 0;
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+jj*naxes0+ii, naxes0*naxes1*naxes2);
+	  printf("MAX INDEX = %ld / %ld\n", kk*naxes0*naxes1+(jj-yhalf)*naxes0+(ii+xhalf), naxes0*naxes1*naxes2);
+	  */
 	}
     }
 
   if(OK==0)
     printf("Error : data format not supported by permut\n");
 
-  free(naxes);
+
+  //  printf(" done\n");
+  // fflush(stdout);
+
   
   return(0);
 }
+
+
 
 int array_index(long size)
 {
@@ -848,6 +956,10 @@ int do1dffti(char *in_name, char *out_name)
 
   return(0);
 }
+
+
+
+
 
 /* 2d complex fft */
 int do2dfft(char *in_name, char *out_name)
@@ -1748,8 +1860,8 @@ int test_fftspeed(int nmax)
 
 // Zfactor is zoom factor
 // dir = -1 for FT, 1 for inverse FT
-
-long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDoutmask_name, double Zfactor, int dir)
+// k in selects slice in IDin_name if this is a cube
+long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDoutmask_name, double Zfactor, int dir, long kin)
 {
   long IDin;
   long IDout;
@@ -1790,7 +1902,7 @@ long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDou
 	  NBptsin ++;
       }
 
-  printf("DFT (%f):  %ld input points -> ", Zfactor, NBptsin);
+  printf("DFT (factor %f, slice %ld):  %ld input points -> ", Zfactor, kin, NBptsin);
 
   iiinarray = (long *) malloc(sizeof(long)*NBptsin);
   jjinarray = (long *) malloc(sizeof(long)*NBptsin);
@@ -1811,8 +1923,8 @@ long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDou
 	    jjinarray[k] = jj;
 	    xinarray[k] = 1.0*ii/xsize-0.5;
 	    yinarray[k] = 1.0*jj/xsize-0.5;
-	    re = data.image[IDin].array.CF[jj*xsize+ii].re;
-	    im = data.image[IDin].array.CF[jj*xsize+ii].im;
+	    re = data.image[IDin].array.CF[kin*xsize*ysize+jj*xsize+ii].re;
+	    im = data.image[IDin].array.CF[kin*xsize*ysize+jj*xsize+ii].im;
 	    valinamp[k] = sqrt(re*re+im*im);
 	    valinpha[k] = atan2(im,re);
 	    k++;
@@ -1919,16 +2031,18 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
   long IDpupin_mask;
   long IDfpmz;
   long IDfpmz_mask;
-  long xsize, ysize;
+  long xsize, ysize, zsize;
   long IDin, IDout;
-  long ii, jj;
+  long ii, jj, k;
   double re, im, rein, imin, amp, pha, ampin, phain, amp2;
   double x, y, r;
   double total = 0;
-  
+  long IDout2D;
   int FORCE_IMZERO = 0;
   double imresidual = 0.0;
   double tx, ty, tcx, tcy;
+  long size2;
+
 
   if(variable_ID("_FORCE_IMZERO")!=-1)
     {
@@ -1940,152 +2054,166 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
   printf("zfactor = %f\n", zfactor);
 
   IDin = image_ID(pupin_name);
-  xsize = data.image[ID].md[0].size[0];
-  ysize = data.image[ID].md[0].size[1];
+  xsize = data.image[IDin].md[0].size[0];
+  ysize = data.image[IDin].md[0].size[1];
+  if(data.image[IDin].md[0].naxis > 2)
+    zsize = data.image[IDin].md[0].size[2];
+  else
+    zsize = 1;
+  printf("zsize = %ld\n", zsize);
+  size2 = xsize*ysize;
 
-  IDpupin_mask = create_2Dimage_ID("_pupinmask", xsize, ysize);
-  for(ii=0; ii<xsize*ysize; ii++)
+  IDout = create_3DCimage_ID(pupout_name, xsize, ysize, zsize);
+
+  for(k=0; k<zsize; k++)
     {
-      re = data.image[IDin].array.CF[ii].re;
-      im = data.image[IDin].array.CF[ii].im;
-      amp2 = re*re+im*im;
-      if(amp2>eps)
-	data.image[IDpupin_mask].array.F[ii] = 1.0;
-      else
-	data.image[IDpupin_mask].array.F[ii] = 0.0;
-    }
+      IDpupin_mask = create_2Dimage_ID("_pupinmask", xsize, ysize);
+      for(ii=0; ii<xsize*ysize; ii++)
+	{
+	  re = data.image[IDin].array.CF[k*size2+ii].re;
+	  im = data.image[IDin].array.CF[k*size2+ii].im;
+	  amp2 = re*re+im*im;
+	  if(amp2>eps)
+	    data.image[IDpupin_mask].array.F[ii] = 1.0;
+	  else
+	    data.image[IDpupin_mask].array.F[ii] = 0.0;
+	}
+      
+      IDfpmz = image_ID(fpmz_name);
+      IDfpmz_mask = create_2Dimage_ID("_fpmzmask", xsize, ysize);
+      for(ii=0; ii<xsize*ysize; ii++)
+	{
+	  re = data.image[IDfpmz].array.CF[ii].re;
+	  im = data.image[IDfpmz].array.CF[ii].im;
+	  amp2 = re*re+im*im;
+	  if(amp2>eps)
+	    data.image[IDfpmz_mask].array.F[ii] = 1.0;
+	  else
+	    data.image[IDfpmz_mask].array.F[ii] = 0.0;
+	}
+      
+    
 
-  IDfpmz = image_ID(fpmz_name);
-  IDfpmz_mask = create_2Dimage_ID("_fpmzmask", xsize, ysize);
-  for(ii=0; ii<xsize*ysize; ii++)
-    {
-      re = data.image[IDfpmz].array.CF[ii].re;
-      im = data.image[IDfpmz].array.CF[ii].im;
-      amp2 = re*re+im*im;
-      if(amp2>eps)
-	data.image[IDfpmz_mask].array.F[ii] = 1.0;
-      else
-	data.image[IDfpmz_mask].array.F[ii] = 0.0;
-    }
-
-  fft_DFT( pupin_name, "_pupinmask", "_foc0", "_fpmzmask", zfactor, -1);
-
-  ID = image_ID("_foc0");
-  total = 0.0;
-  tx = 0.0;
-  ty = 0.0;
-  tcx = 0.0;
-  tcy = 0.0;
-  for(ii=0; ii<xsize; ii++)
-    for(jj=0; jj<ysize; jj++)
-      {
-	x = 1.0*ii-0.5*xsize;
-	y = 1.0*jj-0.5*ysize;
-	re = data.image[IDfpmz].array.CF[jj*xsize+ii].re;
-	im = data.image[IDfpmz].array.CF[jj*xsize+ii].im;
-	amp = sqrt(re*re+im*im);
-	pha = atan2(im,re);
-	
-	rein = data.image[ID].array.CF[jj*xsize+ii].re;
-	imin = data.image[ID].array.CF[jj*xsize+ii].im;
-	ampin = sqrt(rein*rein+imin*imin);
-	phain = atan2(imin, rein);
-	
-	ampin *= amp;
-	total += ampin*ampin;
-	phain += pha;
-	
-	data.image[ID].array.CF[jj*xsize+ii].re = ampin*cos(phain);
-	data.image[ID].array.CF[jj*xsize+ii].im = ampin*sin(phain);      
-
-	tx += x*ampin*sin(phain)*ampin;
-	ty += y*ampin*sin(phain)*ampin;
-	tcx += x*x*ampin*ampin;
-	tcy += y*y*ampin*ampin;
-      }
-  printf("TX TY = %.18lf %.18lf", tx/tcx, ty/tcy);
-  if(FORCE_IMZERO==1) // Remove tip-tilt in focal plane mask imaginary part
-    {
+      fft_DFT( pupin_name, "_pupinmask", "_foc0", "_fpmzmask", zfactor, -1, k);
+      
+      ID = image_ID("_foc0");
+      total = 0.0;
       tx = 0.0;
       ty = 0.0;
+      tcx = 0.0;
+      tcy = 0.0;
       for(ii=0; ii<xsize; ii++)
 	for(jj=0; jj<ysize; jj++)
 	  {
 	    x = 1.0*ii-0.5*xsize;
 	    y = 1.0*jj-0.5*ysize;
-	    
-	    re = data.image[ID].array.CF[jj*xsize+ii].re;
-	    im = data.image[ID].array.CF[jj*xsize+ii].im;
+	    re = data.image[IDfpmz].array.CF[jj*xsize+ii].re;
+	    im = data.image[IDfpmz].array.CF[jj*xsize+ii].im;
 	    amp = sqrt(re*re+im*im);
+	    pha = atan2(im,re);
 	    
-	    data.image[ID].array.CF[jj*xsize+ii].im -= amp*(x*tx/tcx + y*ty/tcy);
-	    tx += x*data.image[ID].array.CF[jj*xsize+ii].im*amp;
-	    ty += y*data.image[ID].array.CF[jj*xsize+ii].im*amp;
+	    rein = data.image[ID].array.CF[jj*xsize+ii].re;
+	    imin = data.image[ID].array.CF[jj*xsize+ii].im;
+	    ampin = sqrt(rein*rein+imin*imin);
+	    phain = atan2(imin, rein);
+	    
+	    ampin *= amp;
+	    total += ampin*ampin;
+	    phain += pha;
+	    
+	    data.image[ID].array.CF[jj*xsize+ii].re = ampin*cos(phain);
+	    data.image[ID].array.CF[jj*xsize+ii].im = ampin*sin(phain);      
+	    
+	    tx += x*ampin*sin(phain)*ampin;
+	    ty += y*ampin*sin(phain)*ampin;
+	    tcx += x*x*ampin*ampin;
+	    tcy += y*y*ampin*ampin;
 	  }
-      printf("  ->   %.18lf %.18lf", tx/tcx, ty/tcy);
-    
-      mk_amph_from_complex("_foc0","_foc0_amp","_foc0_pha");
-      save_fl_fits("_foc0_amp", "!_foc_amp.fits");
-      save_fl_fits("_foc0_pha", "!_foc_pha.fits");
-      delete_image_ID("_foc0_amp");
-      delete_image_ID("_foc0_pha");
-    }
-  printf("\n");
-
-
-  data.FLOATARRAY[0] = (float) total;
-
-  /*  if(FORCE_IMZERO==1) // Remove tip-tilt in focal plane mask imaginary part
-    {
-      imresidual = 0.0;
-      ID = image_ID("_foc0");
-      ID1 = create_2Dimage_ID("imresidual", xsize, ysize);
-      for(ii=0; ii<xsize*ysize; ii++)
+      printf("TX TY = %.18lf %.18lf", tx/tcx, ty/tcy);
+      if(FORCE_IMZERO==1) // Remove tip-tilt in focal plane mask imaginary part
 	{
+	  tx = 0.0;
+	  ty = 0.0;
+	  for(ii=0; ii<xsize; ii++)
+	    for(jj=0; jj<ysize; jj++)
+	      {
+		x = 1.0*ii-0.5*xsize;
+		y = 1.0*jj-0.5*ysize;
+		
+		re = data.image[ID].array.CF[jj*xsize+ii].re;
+		im = data.image[ID].array.CF[jj*xsize+ii].im;
+		amp = sqrt(re*re+im*im);
+		
+		data.image[ID].array.CF[jj*xsize+ii].im -= amp*(x*tx/tcx + y*ty/tcy);
+		tx += x*data.image[ID].array.CF[jj*xsize+ii].im*amp;
+		ty += y*data.image[ID].array.CF[jj*xsize+ii].im*amp;
+	      }
+	  printf("  ->   %.18lf %.18lf", tx/tcx, ty/tcy);
+	  
+	  mk_amph_from_complex("_foc0","_foc0_amp","_foc0_pha");
+	  save_fl_fits("_foc0_amp", "!_foc_amp.fits");
+	  save_fl_fits("_foc0_pha", "!_foc_pha.fits");
+	  delete_image_ID("_foc0_amp");
+	  delete_image_ID("_foc0_pha");
+	}
+      printf("\n");
+      
+      
+      data.FLOATARRAY[0] = (float) total;
+      
+      /*  if(FORCE_IMZERO==1) // Remove tip-tilt in focal plane mask imaginary part
+	  {
+	  imresidual = 0.0;
+	  ID = image_ID("_foc0");
+	  ID1 = create_2Dimage_ID("imresidual", xsize, ysize);
+	  for(ii=0; ii<xsize*ysize; ii++)
+	  {
 	  data.image[ID1].array.F[ii] = data.image[ID].array.CF[ii].im;
 	  imresidual += data.image[ID].array.CF[ii].im*data.image[ID].array.CF[ii].im;
 	  data.image[ID].array.CF[ii].im = 0.0;
+	  }
+	  printf("IM RESIDUAL = %lf\n", imresidual);
+	  save_fl_fits("imresidual", "!imresidual.fits");
+	  delete_image_ID("imresidual");
+	  }
+      */
+      
+      if(0) // TEST
+	{
+	  mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
+	  save_fl_fits("tmp_foc0_a", "!_DFT_foca");
+	  save_fl_fits("tmp_foc0_p", "!_DFT_focp");
+	  delete_image_ID("tmp_foc0_a");
+	  delete_image_ID("tmp_foc0_p");
 	}
-      printf("IM RESIDUAL = %lf\n", imresidual);
-      save_fl_fits("imresidual", "!imresidual.fits");
-      delete_image_ID("imresidual");
+      
+      
+      /* for(ii=0; ii<xsize; ii++)
+	 for(jj=0; jj<ysize; jj++)
+	 {
+	 x = 1.0*ii-xsize/2;
+	 y = 1.0*jj-ysize/2;
+	 r = sqrt(x*x+y*y);
+	 if(r<150.0)
+	 data.image[IDpupin_mask].array.F[jj*xsize+ii] = 1.0;
+	 }*/
+      
+      fft_DFT( "_foc0", "_fpmzmask", "_pupout2D", "_pupinmask", zfactor, 1, 0);
+      
+      IDout2D = image_ID("_pupout2D");
+      for(ii=0; ii<xsize*ysize; ii++)
+	{
+	  data.image[IDout].array.CF[k*xsize*ysize+ii].re = data.image[IDout2D].array.CF[ii].re/(xsize*ysize);
+	  data.image[IDout].array.CF[k*xsize*ysize+ii].im = data.image[IDout2D].array.CF[ii].im/(xsize*ysize);
+	}  
+      delete_image_ID("_pupout2D");
+      delete_image_ID("_foc0");
+      
+      delete_image_ID("_pupinmask");
+      delete_image_ID("_fpmzmask");
     }
-  */
-
-  if(1) // TEST
-    {
-      mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
-      save_fl_fits("tmp_foc0_a", "!_DFT_foca");
-      save_fl_fits("tmp_foc0_p", "!_DFT_focp");
-      delete_image_ID("tmp_foc0_a");
-      delete_image_ID("tmp_foc0_p");
-    }
 
 
-  /* for(ii=0; ii<xsize; ii++)
-    for(jj=0; jj<ysize; jj++)
-      {
-	x = 1.0*ii-xsize/2;
-	y = 1.0*jj-ysize/2;
-	r = sqrt(x*x+y*y);
-	if(r<150.0)
-	  data.image[IDpupin_mask].array.F[jj*xsize+ii] = 1.0;
-	  }*/
-
-  fft_DFT( "_foc0", "_fpmzmask", pupout_name, "_pupinmask", zfactor, 1);
-
-  IDout = image_ID(pupout_name);
-  for(ii=0; ii<xsize*ysize; ii++)
-    {
-      data.image[IDout].array.CF[ii].re /= xsize*ysize;
-      data.image[IDout].array.CF[ii].im /= xsize*ysize;
-    }  
-
-  delete_image_ID("_foc0");
-
-  delete_image_ID("_pupinmask");
-  delete_image_ID("_fpmzmask");
-  
   return(IDout);
 }
 
@@ -2143,7 +2271,7 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
 	data.image[IDfpmz_mask].array.F[ii] = 0.0;
     }
 
-  fft_DFT( pupin_name, "_pupinmask", "_foc0", "_fpmzmask", zfactor, -1);
+  fft_DFT( pupin_name, "_pupinmask", "_foc0", "_fpmzmask", zfactor, -1, 0);
 
   ID = image_ID("_foc0");
   total = 0.0;
@@ -2185,7 +2313,7 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
 	  data.image[IDpupin_mask].array.F[jj*xsize+ii] = 1.0;
 	  }*/
 
-  fft_DFT( "_foc0", "_fpmzmask", pupout_name, "_pupinmask", zfactor, 1);
+  fft_DFT( "_foc0", "_fpmzmask", pupout_name, "_pupinmask", zfactor, 1, 0);
 
   IDout = image_ID(pupout_name);
   for(ii=0; ii<xsize*ysize; ii++)

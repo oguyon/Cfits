@@ -819,7 +819,7 @@ int save_fl_fits(char *ID_name, char *file_name)
   else 
     fprintf(stderr,"%c[%d;%dm image \"%s\" does not exist in memory %c[%d;m\n", (char) 27, 1, 31, ID_name, (char) 27, 0);
   
-    return(0);
+  return(0);
 }
 
 

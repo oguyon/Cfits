@@ -42,7 +42,7 @@ int fftczoom(char *ID_name, char *ID_out, long factor);
 
 int test_fftspeed(int nmax);
 
-long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDoutmask_name, double Zfactor, int dir);
+long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDoutmask_name, double Zfactor, int dir, long kin);
 
 long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *pupout_name);
 

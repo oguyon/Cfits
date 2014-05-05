@@ -1584,6 +1584,30 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
 	data.image[ID1].array.D[ii] = pt2function((double) (data.image[ID1].array.D[ii]),(double) (data.image[ID2].array.D[ii]));
     }
 
+  if((atype1==COMPLEX_FLOAT)&&(atype2==COMPLEX_FLOAT))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	{
+	  data.image[ID1].array.CF[ii].re = pt2function((double) (data.image[ID1].array.CF[ii].re),(double) (data.image[ID2].array.CF[ii].re));
+	  data.image[ID1].array.CF[ii].im = pt2function((double) (data.image[ID1].array.CF[ii].im),(double) (data.image[ID2].array.CF[ii].im));
+	}
+    }
+
+  if((atype1==COMPLEX_DOUBLE)&&(atype2==COMPLEX_DOUBLE))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	{
+	  data.image[ID1].array.CD[ii].re = pt2function((double) (data.image[ID1].array.CD[ii].re),(double) (data.image[ID2].array.CD[ii].re));
+	  data.image[ID1].array.CD[ii].im = pt2function((double) (data.image[ID1].array.CD[ii].im),(double) (data.image[ID2].array.CD[ii].im));
+	}
+    }
+
   # ifdef _OPENMP
   }
   # endif

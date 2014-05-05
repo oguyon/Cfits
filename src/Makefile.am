@@ -45,10 +45,13 @@ SUBDIRS += image_format
 cfits_LDADD += image_format/libimageformat.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_format
 
-
 SUBDIRS += PIAACMCsimul
 cfits_LDADD += PIAACMCsimul/libpiaacmcsimul.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/PIAACMCsimul
+
+SUBDIRS += OpticsMaterials
+cfits_LDADD += OpticsMaterials/libopticsmaterials.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/OpticsMaterials
 
 SUBDIRS += coronagraphs
 cfits_LDADD += coronagraphs/libcoronagraphs.la
