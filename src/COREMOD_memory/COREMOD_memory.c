@@ -911,6 +911,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 	    sharedsize += nelement*2*sizeof(double);
 	  if(atype==USHORT)
 	    sharedsize += nelement*sizeof(unsigned short int);
+	  if(atype==LONG)
+	    sharedsize += nelement*sizeof(long);
 
 	  sharedsize += NBkw*sizeof(IMAGE_KEYWORD);
 	  
@@ -1008,6 +1010,29 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 		fprintf(stderr,"x%ld",size[i]);
 	      fprintf(stderr,"\n");
 	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(int));
+	      fprintf(stderr," %c[%d;m",(char) 27, 0);
+	      list_image_ID();
+	      exit(0);   
+	    }
+	}
+      if(atype==LONG)
+	{
+	  if(shared==1)
+	    data.image[ID].array.L = (long*) (map + sizeof(IMAGE));
+	  else
+	    data.image[ID].array.L = (long*) calloc ((size_t) nelement,sizeof(long));
+	  
+	  if(data.image[ID].array.L == NULL)
+	    {
+	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+	      fprintf(stderr,"Image name = %s\n",name);
+	      fprintf(stderr,"Image size = ");
+	      fprintf(stderr,"%ld",size[0]);
+	      for(i=1;i<naxis;i++)
+		fprintf(stderr,"x%ld",size[i]);
+	      fprintf(stderr,"\n");
+	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(long));
 	      fprintf(stderr," %c[%d;m",(char) 27, 0);
 	      list_image_ID();
 	      exit(0);   
@@ -1685,6 +1710,8 @@ int list_image_ID_ncurses()
 	    n = snprintf(type,STYPESIZE,"CHAR   ");	
 	  if(atype==INT)
 	    n = snprintf(type,STYPESIZE,"INT    ");
+	  if(atype==LONG)
+	    n = snprintf(type,STYPESIZE,"LONG   ");
 	  if(atype==FLOAT)
 	    n = snprintf(type,STYPESIZE,"FLOAT  ");
 	  if(atype==DOUBLE)
@@ -1841,6 +1868,8 @@ int list_image_ID_ofp(FILE *fo)
 	    n = snprintf(type,STYPESIZE,"CHAR");	
 	  if(atype==INT)
 	    n = snprintf(type,STYPESIZE,"INT");
+	  if(atype==LONG)
+	    n = snprintf(type,STYPESIZE,"LONG");
 	  if(atype==FLOAT)
 	    n = snprintf(type,STYPESIZE,"FLOAT");
 	  if(atype==DOUBLE)
@@ -1958,6 +1987,8 @@ int list_image_ID_file(char *fname)
 	  n = snprintf(type,STYPESIZE,"CHAR");
 	if(atype==INT)
 	  n = snprintf(type,STYPESIZE,"INT");
+	if(atype==LONG)
+	  n = snprintf(type,STYPESIZE,"LONG");
 	if(atype==FLOAT)
 	  n = snprintf(type,STYPESIZE,"FLOAT");
 	if(atype==DOUBLE)

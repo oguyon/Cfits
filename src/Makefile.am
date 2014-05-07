@@ -69,6 +69,10 @@ SUBDIRS += image_gen
 cfits_LDADD += image_gen/libimagegen.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_gen
 
+SUBDIRS += linopt_imtools
+cfits_LDADD += linopt_imtools/liblinoptimtools.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/linopt_imtools
+
 SUBDIRS += statistic
 cfits_LDADD += statistic/libstatistic.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/statistic

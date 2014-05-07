@@ -2178,7 +2178,7 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
 	  }
       */
       
-      if(0) // TEST
+      if(1) // TEST
 	{
 	  mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
 	  save_fl_fits("tmp_foc0_a", "!_DFT_foca");

@@ -55,7 +55,7 @@ long make_offsetHyperGaussian(long size, double a, double b, long n, char* IDnam
 
 long make_cosapoedgePupil(long size, double a, double b, char *IDname);
 
-long make_2Dgridpix(char *IDname, long size, double pitchx, double pitchy, double offsetx, double offsety);
+long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double pitchy, double offsetx, double offsety);
 
 long make_tile(char *IDin_name, long size, char *IDout_name);
 

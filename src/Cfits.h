@@ -135,8 +135,9 @@ typedef struct
 #define COMPLEX_FLOAT 5
 #define COMPLEX_DOUBLE 6
 #define USHORT 7
+#define LONG 8
 
-int TYPESIZE[8];
+int TYPESIZE[9];
 
 
 //typedef float PRECISION;
@@ -200,6 +201,7 @@ typedef struct			/* structure used to store data arrays */
   {
     char *C;
     int *I;
+    long *L;
     float *F;
     double *D;
     complex_float *CF;

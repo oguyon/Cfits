@@ -107,8 +107,9 @@ cfits_DEPENDENCIES = AOloopControl/libaoloopcontrol.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
-	image_gen/libimagegen.la statistic/libstatistic.la \
-	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
+	image_gen/libimagegen.la linopt_imtools/liblinoptimtools.la \
+	statistic/libstatistic.la fft/libfft.la info/libinfo.la \
+	COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
 	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la
@@ -373,6 +374,7 @@ cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-I/CfitsDev/Cfits-src/src/ZernikePolyn \
 	-I/CfitsDev/Cfits-src/src/WFpropagate \
 	-I/CfitsDev/Cfits-src/src/image_gen \
+	-I/CfitsDev/Cfits-src/src/linopt_imtools \
 	-I/CfitsDev/Cfits-src/src/statistic -I/CfitsDev/Cfits-src/src/fft \
 	-I/CfitsDev/Cfits-src/src/info \
 	-I/CfitsDev/Cfits-src/src/COREMOD_arith \
@@ -387,16 +389,17 @@ noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
 SUBDIRS = AOloopControl AOsystSim SCExAO_DM image_format PIAACMCsimul \
 	OpticsMaterials coronagraphs ZernikePolyn WFpropagate \
-	image_gen statistic fft info COREMOD_arith COREMOD_iofits \
-	COREMOD_memory COREMOD_tools 00CORE
+	image_gen linopt_imtools statistic fft info COREMOD_arith \
+	COREMOD_iofits COREMOD_memory COREMOD_tools 00CORE
 cfits_LDADD = AOloopControl/libaoloopcontrol.la \
 	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
 	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
-	image_gen/libimagegen.la statistic/libstatistic.la \
-	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
+	image_gen/libimagegen.la linopt_imtools/liblinoptimtools.la \
+	statistic/libstatistic.la fft/libfft.la info/libinfo.la \
+	COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
 	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la

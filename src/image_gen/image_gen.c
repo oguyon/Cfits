@@ -271,6 +271,18 @@ int make_rectangle_cli()
 }
 
 
+int make_2Dgridpix_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)
+    {
+      make_2Dgridpix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 
 
 
@@ -344,6 +356,15 @@ int init_image_gen()
   strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <xcenter> <ycenter> <radius1> <radius2>");
   strcpy(data.cmd[data.NBcmd].example,"mkrect 512 512 256.0 256.0 100.0 200.0");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_rectangle(char *ID_name, long l1, long l2, double x_center, double y_center, double radius1, double radius2)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"mkgridpix");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = make_2Dgridpix_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make regular grid");
+  strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <xpitch> <ypitch> <xoffset> <yoffset>");
+  strcpy(data.cmd[data.NBcmd].example,"mkgridpix 512 512 10.0 10.0 4.5 2.8");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double pitchy, double offsetx, double offsety)");
   data.NBcmd++;
 
 
@@ -1963,7 +1984,7 @@ long make_cosapoedgePupil(long size, double a, double b, char *IDname)
 
 
 // make square grid of pixels
-long make_2Dgridpix(char *IDname, long size, double pitchx, double pitchy, double offsetx, double offsety)
+long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double pitchy, double offsetx, double offsety)
 {
   long ii,jj;
   long ID;
@@ -1971,18 +1992,18 @@ long make_2Dgridpix(char *IDname, long size, double pitchx, double pitchy, doubl
   long i,j;
   double u,t;
 
-  ID = create_2Dimage_ID(IDname,size,size);
-  for(x=offsetx;x<size-1;x+=pitchx)
-    for(y=offsety;y<size-1;y+=pitchy)
+  ID = create_2Dimage_ID(IDname,xsize,ysize);
+  for(x=offsetx;x<xsize-1;x+=pitchx)
+    for(y=offsety;y<ysize-1;y+=pitchy)
       {
 	i = (long) x;
 	j = (long) y;
 	u = x-i;
 	t = y-j;
-	data.image[ID].array.F[j*size+i] = (1.0-u)*(1.0-t);
-	data.image[ID].array.F[(j+1)*size+i] = (1.0-u)*t;
-	data.image[ID].array.F[j*size+i+1] = u*(1.0-t);
-	data.image[ID].array.F[(j+1)*size+i+1] = u*t;	
+	data.image[ID].array.F[j*xsize+i] = (1.0-u)*(1.0-t);
+	data.image[ID].array.F[(j+1)*xsize+i] = (1.0-u)*t;
+	data.image[ID].array.F[j*xsize+i+1] = u*(1.0-t);
+	data.image[ID].array.F[(j+1)*xsize+i+1] = u*t;	
       }
 
   return(ID);

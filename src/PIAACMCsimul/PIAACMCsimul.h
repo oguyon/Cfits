@@ -2,9 +2,9 @@
 #define _PIAACMCSIMUL_H
 
 
-#define SURFFIT_RADORDER 2
-#define SURFFIT_2DCORRORDER 2
-
+#define SURFFIT_RADORDER 5
+#define SURFFIT_2DCORRORDER 5
+#define SURFFIT_NBPARAMS ( 1 + 2 * ( SURFFIT_RADORDER - 1 ) + 2 * SURFFIT_2DCORRORDER * 2 * SURFFIT_2DCORRORDER - 2 )
 
 // ************************************************************************
 // ------------------- DEFINITION OF OPTICAL ELEMENTS ---------------------
@@ -89,7 +89,7 @@ typedef struct {
 
 //
 // *****************************************************************************************************
-// ------------------------------ structure defining the PIAA system geometry ---------------------------
+// ------------------------------ structure defining an optical system ---------------------------------
 // *****************************************************************************************************
 
 // Fresnel propagation used for simulations
@@ -142,7 +142,27 @@ typedef struct {
   long elem_pha_ID_array[100]; // phase map identifyer, additive
 
 
-} PIAAGEOM;
+} OPTSYST;
+
+
+
+
+//
+// *****************************************************************************************************
+// -------------------------- structure defining a reflective PIAACMC system ---------------------------
+// *****************************************************************************************************
+
+// this structure holds parameters to be optimized in the design
+typedef struct {
+  // PIAA MIRROR SHAPES
+  long IDpiaam0mcoeff;
+  long IDpiaam1mcoeff;
+  
+  
+  
+} MIRRORPIAACMCDESIGN;
+
+
 
 
 int init_PIAACMCsimul();
