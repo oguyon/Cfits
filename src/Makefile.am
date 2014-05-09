@@ -49,6 +49,10 @@ SUBDIRS += PIAACMCsimul
 cfits_LDADD += PIAACMCsimul/libpiaacmcsimul.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/PIAACMCsimul
 
+SUBDIRS += OptSystProp
+cfits_LDADD += OptSystProp/liboptsystprop.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
+
 SUBDIRS += OpticsMaterials
 cfits_LDADD += OpticsMaterials/libopticsmaterials.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/OpticsMaterials

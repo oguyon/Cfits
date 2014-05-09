@@ -813,6 +813,7 @@ void main_init()
   init_WFpropagate();
   init_ZernikePolyn();
   init_coronagraphs();
+  init_OptSystProp();
   init_PIAACMCsimul();
   init_image_format();
   init_SCExAO_DM();
