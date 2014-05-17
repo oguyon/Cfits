@@ -261,6 +261,7 @@ int main(int argc, char *argv[])
   TYPESIZE[5] = 2*sizeof(float);
   TYPESIZE[6] = 2*sizeof(double);
   TYPESIZE[7] = sizeof(unsigned short);
+  TYPESIZE[8] = sizeof(long);
 
   atexit(fnExit1);
 
@@ -812,6 +813,7 @@ void main_init()
   init_WFpropagate();
   init_ZernikePolyn();
   init_coronagraphs();
+  init_OptSystProp();
   init_PIAACMCsimul();
   init_image_format();
   init_SCExAO_DM();

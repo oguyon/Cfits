@@ -108,9 +108,10 @@ cfits_DEPENDENCIES = AOloopControl/libaoloopcontrol.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
-	image_gen/libimagegen.la linopt_imtools/liblinoptimtools.la \
-	statistic/libstatistic.la fft/libfft.la info/libinfo.la \
-	COREMOD_arith/libcoremodarith.la \
+	image_basic/libimagebasic.la image_filter/libimagefilter.la \
+	kdtree/libkdtree.la image_gen/libimagegen.la \
+	linopt_imtools/liblinoptimtools.la statistic/libstatistic.la \
+	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
 	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la
@@ -375,7 +376,9 @@ cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-I/CfitsDev/Cfits-src/src/coronagraphs \
 	-I/CfitsDev/Cfits-src/src/ZernikePolyn \
 	-I/CfitsDev/Cfits-src/src/WFpropagate \
-	-I/CfitsDev/Cfits-src/src/image_gen \
+	-I/CfitsDev/Cfits-src/src/image_basic \
+	-I/CfitsDev/Cfits-src/src/image_filter \
+	-I/CfitsDev/Cfits-src/src/kdtree -I/CfitsDev/Cfits-src/src/image_gen \
 	-I/CfitsDev/Cfits-src/src/linopt_imtools \
 	-I/CfitsDev/Cfits-src/src/statistic -I/CfitsDev/Cfits-src/src/fft \
 	-I/CfitsDev/Cfits-src/src/info \
@@ -391,9 +394,9 @@ noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
 SUBDIRS = AOloopControl AOsystSim SCExAO_DM image_format PIAACMCsimul \
 	OptSystProp OpticsMaterials coronagraphs ZernikePolyn \
-	WFpropagate image_gen linopt_imtools statistic fft info \
-	COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
-	00CORE
+	WFpropagate image_basic image_filter kdtree image_gen \
+	linopt_imtools statistic fft info COREMOD_arith COREMOD_iofits \
+	COREMOD_memory COREMOD_tools 00CORE
 cfits_LDADD = AOloopControl/libaoloopcontrol.la \
 	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
 	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
@@ -401,9 +404,10 @@ cfits_LDADD = AOloopControl/libaoloopcontrol.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
-	image_gen/libimagegen.la linopt_imtools/liblinoptimtools.la \
-	statistic/libstatistic.la fft/libfft.la info/libinfo.la \
-	COREMOD_arith/libcoremodarith.la \
+	image_basic/libimagebasic.la image_filter/libimagefilter.la \
+	kdtree/libkdtree.la image_gen/libimagegen.la \
+	linopt_imtools/liblinoptimtools.la statistic/libstatistic.la \
+	fft/libfft.la info/libinfo.la COREMOD_arith/libcoremodarith.la \
 	COREMOD_iofits/libcoremodiofits.la \
 	COREMOD_memory/libcoremodmemory.la \
 	COREMOD_tools/libcoremodtools.la 00CORE/lib00core.la

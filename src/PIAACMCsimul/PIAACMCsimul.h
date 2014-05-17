@@ -3,25 +3,46 @@
 
 
 
+#define ApoFitCosFact 1.3
+
 
 //
 // *****************************************************************************************************
 // -------------------------- structure defining a reflective PIAACMC system ---------------------------
 // *****************************************************************************************************
 
+
+
 //
-// this structure holds parameters to be optimized in the design
+// this structure holds parameters to be optimized in the PIAACMC diffractive design
 //
 typedef struct {
+
+  // ======= SEED RADIAL PIAACMC PARAMETERS ======
+  double centObs0; // input central obstruction
+  double centObs1; // output central obstruction
+  double r0lim; // outer radius after extrapolation, piaa mirror 0
+  double r1lim; // outer radius after extrapolation, piaa mirror 1
+  long NBradpts; // number of points for common r0, r1, piaa sags 1D table
+ 
+  
+
+  // ====== Overall Geometry ===============
   float beamrad; // [m]
   long size;
   float pixscale; // [m/pix]
+  float piaasep;// separation between PIAA surfaces [m]
 
-  // PIAA mirror shapes
-  
+
+
+  // ======= Optics shapes modes ============
+
   long CmodesID; // Cosine radial mode
+  long Cmsize; // cosine modes size 
   long NBCmodes;
+
   long FmodesID; // Fourier 2D modes
+  long Fmsize; 
   long NBFmodes;
 
   long piaa0CmodesID;
@@ -29,20 +50,49 @@ typedef struct {
   long piaa1CmodesID;
   long piaa1FmodesID;
   
-  
-  
+
+
+  // ========= Focal Plane Mask =============
+
+  long focmNBzone; // number of zones
+  double Fratio; // beam Fratio at focal plane
+  double maskscale; // m/pixel
+  long zonezID;  // focm zone material thickness
+  double fpzfactor; // focal plane mask DFT zoom factor
+
+  double fpmRad; // outer radius
+  long NBrings; // number of rings
+  long fpmarraysize;
+  int fpmmaterial; // materials:  1: SiO2  2: Si  3: PMGI  4: PMMA
+
 } MIRRORPIAACMCDESIGN;
 
 
 
 
+
+
+// module initialization
 int init_PIAACMCsimul();
-
-
-void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index );
 void  PIAACMCsimul_free( void );
 
-int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, double radius_edge, char *ID_PIAAM1_name, char *ID_PIAAM2_name);
+// Focal plane mask
+long PIAACMCsimul_mkFPM_zonemap(char *IDname);
+long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mode);
+
+// initializes the optsyst structure to simulate reflective PIAACMC system
+void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, double TTyld);
+
+// PIAA optics (geometrical optics) tools
+int PIAACMCsimul_loadRadialApodization(char *IDapo_name, long beamradpix, char *IDapofit_name);
+int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name);
+
+
+// misc optimization tools
+int PIAACMCsimul_unwrapPhase();
+
+
 int PIAACMCsimul_run();
+
 
 #endif

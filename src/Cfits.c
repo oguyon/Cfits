@@ -810,6 +810,8 @@ void main_init()
   init_statistic();
   init_linopt_imtools();
   init_image_gen();
+  init_image_filter();
+  init_image_basic();
   init_WFpropagate();
   init_ZernikePolyn();
   init_coronagraphs();

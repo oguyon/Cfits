@@ -40,7 +40,6 @@ SUBDIRS += SCExAO_DM
 cfits_LDADD += SCExAO_DM/libscexaodm.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/SCExAO_DM
 
-
 SUBDIRS += image_format
 cfits_LDADD += image_format/libimageformat.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_format
@@ -68,6 +67,18 @@ cfits_CPPFLAGS += -I@abs_top_srcdir@/src/ZernikePolyn
 SUBDIRS += WFpropagate
 cfits_LDADD += WFpropagate/libwfpropagate.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/WFpropagate
+
+SUBDIRS += image_basic
+cfits_LDADD += image_basic/libimagebasic.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_basic
+
+SUBDIRS += image_filter
+cfits_LDADD += image_filter/libimagefilter.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_filter
+
+SUBDIRS += kdtree
+cfits_LDADD += kdtree/libkdtree.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/kdtree
 
 SUBDIRS += image_gen
 cfits_LDADD += image_gen/libimagegen.la
