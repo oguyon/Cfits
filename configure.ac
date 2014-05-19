@@ -5,8 +5,8 @@ AC_INIT([Cfits], [3.2.00], [oliv.guyon@gmail.com])
 AC_PREREQ(2.61)
 #AC_CONFIG_HEADER([config.h])
 
-# sanity check a Cfits file to see if we're really in the build directory
-AC_CONFIG_SRCDIR([src/Cfits.c])
+# sanity check a file to see if we're really in the build directory
+AC_CONFIG_SRCDIR([src/CLIcore.c])
 
 AC_CONFIG_MACRO_DIR([m4])
 # Init Automake
@@ -34,8 +34,7 @@ ACX_PTHREAD
 #CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 #CC="$PTHREAD_CC"
 
-#
-# AC_PREFIX_DEFAULT(~/Cfits) # howto coerce default "prefix" from /usr/local/ to ~/Cfits
+
 #
 # Coerce @prefix@ default from /usr/local/ to fullpath of dir configure is run in
 AC_PREFIX_DEFAULT(`readlink -f .`)
@@ -210,7 +209,7 @@ AC_CHECK_HEADERS( [fitsio.h],
 
 
 
-#AC_MSG_NOTICE([Looking for special Cfits libraries])
+#AC_MSG_NOTICE([Looking for special libraries])
 #AC_INCLUDES_DEFAULT
 #AC_CHECK_LIB(gsl,gsl_ran_gaussian_ziggurat, , echo "FATAL..."; exit 0; )
 #AC_PROG_LEX

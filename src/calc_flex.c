@@ -559,7 +559,7 @@ char *yytext;
 #include "calc.h"
 #include "calc_bison.h"
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "info/info.h"
 extern DATA data;

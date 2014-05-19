@@ -15,7 +15,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_tools/COREMOD_tools.h"

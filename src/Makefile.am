@@ -1,8 +1,7 @@
 #SUFFIXES = .c .h .y .l
 
-
 bin_PROGRAMS = cfits
-cfits_SOURCES = Cfits.c Cfits.h calc_bison.y calc_flex.l calc.h
+cfits_SOURCES = CLIcore.c CLIcore.h initmodules.c initmodules.h calc_bison.y calc_flex.l calc.h
 cfits_CPPFLAGS = -I@abs_top_srcdir@/src -DCONFIGDIR=\"@abs_top_srcdir@/config\" -DSOURCEDIR=\"@abs_top_srcdir@/src\" -DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp
 
 ACLOCAL_AMFLAGS = -I m4

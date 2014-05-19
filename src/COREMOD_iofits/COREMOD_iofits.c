@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../Cfits.h"
-#include "../00CORE/00CORE.h"
-#include "../COREMOD_iofits/COREMOD_iofits.h"
-#include "../COREMOD_memory/COREMOD_memory.h"
+#include "CLIcore.h"
+#include "00CORE/00CORE.h"
+#include "COREMOD_iofits/COREMOD_iofits.h"
+#include "COREMOD_memory/COREMOD_memory.h"
 
 #define SBUFFERSIZE 1000
 

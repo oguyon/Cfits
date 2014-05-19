@@ -5,7 +5,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"

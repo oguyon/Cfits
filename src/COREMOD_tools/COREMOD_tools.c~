@@ -9,7 +9,59 @@
 
 #define SBUFFERSIZE 1000
 
+extern DATA data;
+
+
 char errormessage[SBUFFERSIZE];
+
+
+
+int write_float_file(char *fname, float value);
+
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string
+// 4: existing image
+//
+
+int write_flot_file_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
+    {
+      write_float_file(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+int init_COREMOD_tools()
+{
+  strcpy(data.module[data.NBmodule].name, __FILE__);
+  strcpy(data.module[data.NBmodule].info, "image information and statistics");
+  data.NBmodule++;
+
+  
+  strcpy(data.cmd[data.NBcmd].key,"writef2file");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = write_flot_file_cli;
+  strcpy(data.cmd[data.NBcmd].info,"write float to file");
+  strcpy(data.cmd[data.NBcmd].syntax,"<filename> <float variable>");
+  strcpy(data.cmd[data.NBcmd].example,"writef2file val.txt a");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int write_float_file(char *fname, float value)");
+  data.NBcmd++;
+
+
+  return 0;
+}
+
+
+
 
 
 
@@ -622,7 +674,7 @@ int read_1D_array(double *array, long nbpoints, char *filename)
   fp = open_file_r(filename);
   for(ii=0;ii<nbpoints;ii++)
     {
-      if(fscanf(fp,"%ld\t%f\n",&tmpl,&array[ii])!=2)
+      if(fscanf(fp,"%ld\t%lf\n",&tmpl,&array[ii])!=2)
 	{
 	  printERROR(__FILE__,__func__,__LINE__,"fscanf error");
 	  exit(0);

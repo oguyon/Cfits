@@ -6,7 +6,7 @@
 #include <time.h>
 #include <sys/stat.h>
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_arith/COREMOD_arith.h"

@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "../Cfits.h"
-#include "../COREMOD_memory/COREMOD_memory.h"
+#include "CLIcore.h"
+#include "COREMOD_memory/COREMOD_memory.h"
 
 extern DATA data;
 

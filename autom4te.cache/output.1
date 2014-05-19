@@ -595,7 +595,7 @@ PACKAGE_STRING='Cfits 3.2.00'
 PACKAGE_BUGREPORT='oliv.guyon@gmail.com'
 PACKAGE_URL=''
 
-ac_unique_file="src/Cfits.c"
+ac_unique_file="src/CLIcore.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -2226,7 +2226,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 #AC_CONFIG_HEADER([config.h])
 
-# sanity check a Cfits file to see if we're really in the build directory
+# sanity check a file to see if we're really in the build directory
 
 
 
@@ -11942,8 +11942,7 @@ ACX_PTHREAD
 #CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 #CC="$PTHREAD_CC"
 
-#
-# AC_PREFIX_DEFAULT(~/Cfits) # howto coerce default "prefix" from /usr/local/ to ~/Cfits
+
 #
 # Coerce @prefix@ default from /usr/local/ to fullpath of dir configure is run in
 
@@ -12722,7 +12721,7 @@ done
 
 
 
-#AC_MSG_NOTICE([Looking for special Cfits libraries])
+#AC_MSG_NOTICE([Looking for special libraries])
 #AC_INCLUDES_DEFAULT
 #AC_CHECK_LIB(gsl,gsl_ran_gaussian_ziggurat, , echo "FATAL..."; exit 0; )
 #AC_PROG_LEX

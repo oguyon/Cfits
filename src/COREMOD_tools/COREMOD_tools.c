@@ -4,8 +4,8 @@
 #include <time.h>
 #include <string.h>
 
-#include "../Cfits.h"
-#include "../00CORE/00CORE.h"
+#include "CLIcore.h"
+#include "00CORE/00CORE.h"
 
 #define SBUFFERSIZE 1000
 

@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include <gsl/gsl_randist.h>
-#include "Cfits.h"
+#include "CLIcore.h"
 
 
 #include "00CORE/00CORE.h"

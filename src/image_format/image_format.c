@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <sys/file.h>
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "COREMOD_tools/COREMOD_tools.h"

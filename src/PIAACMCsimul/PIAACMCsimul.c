@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "info/info.h"
@@ -1190,7 +1190,8 @@ int PIAACMCsimul_run()
   float scoringIWA = 2.0;
   float scoringOWA = 5.0;
   float scoringIWAx = 1.5;
-
+  long IDsm;
+  float r;
 
   // What to do
   int PIAACMCSIM_CREATESMODES = 0;
@@ -1226,6 +1227,9 @@ int PIAACMCsimul_run()
   piaacmc[0].fpmmaterial = 4; // PMMA
 
   focscale = (2.0*piaacmc[0].beamrad/piaacmc[0].pixscale)/piaacmc[0].size;
+
+
+
 
 
   // create modes for aspheric optical surfaces description
@@ -1474,7 +1478,6 @@ int PIAACMCsimul_run()
 
 
 
-
   // ============ MAKE FOCAL PLANE MASK ===============
 
   PIAACMCsimul_mkFPM_zonemap("fpmzmap");
@@ -1497,6 +1500,25 @@ int PIAACMCsimul_run()
   printf("FOCAL PLANE SCALE = %f l/d per pix\n", focscale);
 
 
+
+
+  // CREATE SCORING MASK
+  printf("FOCAL PLANE SCALE = %f l/d per pix\n", focscale);
+  IDsm = create_3Dimage_ID("scoringmask", size, size, optsyst[0].nblambda);
+  for(k=0;k<optsyst[0].nblambda;k++)
+    {
+      for(ii=0;ii<size;ii++)
+	for(jj=0;jj<size;jj++)
+	  {
+	    x = (1.0*ii-0.5*size)*focscale;
+	    y = (1.0*jj-0.5*size)*focscale;
+	    r = sqrt(x*x+y*y);
+	    if((r>scoringIWA)&&(r<scoringOWA)&&(x>scoringIWAx))
+	      data.image[IDsm].array.F[k*size2+jj*size+ii] = 1.0;
+	  }
+    }
+  save_fits("scoringmask","!scoringmask.fits");
+  
   
 
   list_image_ID();

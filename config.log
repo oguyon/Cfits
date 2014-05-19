@@ -413,11 +413,11 @@ configure:11850: checking lex output file root
 configure:11864: result: lex.yy
 configure:11869: checking lex library
 configure:11883: gcc -o conftest -g -O2   conftest.c   >&5
-/tmp/cc4giJrd.o: In function `input':
+/tmp/ccv2wdTb.o: In function `input':
 /CfitsDev/Cfits-src/lex.yy.c:1183: undefined reference to `yywrap'
-/tmp/cc4giJrd.o: In function `yylex':
+/tmp/ccv2wdTb.o: In function `yylex':
 /CfitsDev/Cfits-src/lex.yy.c:882: undefined reference to `yywrap'
-/tmp/cc4giJrd.o: In function `main':
+/tmp/ccv2wdTb.o: In function `main':
 /CfitsDev/Cfits-src/conftest.l:18: undefined reference to `yywrap'
 collect2: error: ld returned 1 exit status
 configure:11883: $? = 1
@@ -2237,32 +2237,32 @@ configure:11899: checking whether yytext is a pointer
 configure:11916: gcc -o conftest -g -O2   conftest.c -lfl  >&5
 configure:11916: $? = 0
 configure:11924: result: yes
-configure:11971: checking for main in -lm
-configure:11990: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lm   >&5
-configure:11990: $? = 0
-configure:11999: result: yes
-configure:12020: checking for clock in -lrt
-configure:12045: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lrt  -lm  >&5
-configure:12045: $? = 0
-configure:12054: result: yes
-configure:12076: checking for main in -lgslcblas
-configure:12095: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lgslcblas  -lrt -lm  >&5
-configure:12095: $? = 0
-configure:12104: result: yes
-configure:12126: checking for main in -lgsl
-configure:12145: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lgsl  -lgslcblas -lrt -lm  >&5
-configure:12145: $? = 0
-configure:12154: result: yes
-configure:12176: checking for main in -lcfitsio
-configure:12195: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lcfitsio  -lgsl -lgslcblas -lrt -lm  >&5
-configure:12195: $? = 0
-configure:12204: result: yes
-configure:12227: checking for library containing readline
-configure:12258: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-/tmp/cch4uWT5.o: In function `main':
+configure:11970: checking for main in -lm
+configure:11989: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lm   >&5
+configure:11989: $? = 0
+configure:11998: result: yes
+configure:12019: checking for clock in -lrt
+configure:12044: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lrt  -lm  >&5
+configure:12044: $? = 0
+configure:12053: result: yes
+configure:12075: checking for main in -lgslcblas
+configure:12094: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lgslcblas  -lrt -lm  >&5
+configure:12094: $? = 0
+configure:12103: result: yes
+configure:12125: checking for main in -lgsl
+configure:12144: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lgsl  -lgslcblas -lrt -lm  >&5
+configure:12144: $? = 0
+configure:12153: result: yes
+configure:12175: checking for main in -lcfitsio
+configure:12194: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lcfitsio  -lgsl -lgslcblas -lrt -lm  >&5
+configure:12194: $? = 0
+configure:12203: result: yes
+configure:12226: checking for library containing readline
+configure:12257: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
+/tmp/ccBmEpiC.o: In function `main':
 /CfitsDev/Cfits-src/conftest.c:40: undefined reference to `readline'
 collect2: error: ld returned 1 exit status
-configure:12258: $? = 1
+configure:12257: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME "Cfits"
@@ -2307,48 +2307,48 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:12258: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lreadline  -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-configure:12258: $? = 0
-configure:12275: result: -lreadline
-configure:12296: checking for initscr in -lncurses
-configure:12321: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lncurses  -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-configure:12321: $? = 0
-configure:12330: result: yes
-configure:12352: checking for main in -lfftw3f
-configure:12371: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lfftw3f  -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-configure:12371: $? = 0
-configure:12380: result: yes
-configure:12402: checking for main in -lfftw3
-configure:12421: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lfftw3  -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-configure:12421: $? = 0
-configure:12430: result: yes
-configure:12452: checking for omp_get_num_threads in -lgomp
-configure:12477: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lgomp  -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
-configure:12477: $? = 0
-configure:12486: result: yes
-configure:12680: checking fftw3.h usability
-configure:12680: gcc -c -g -O2  -I/usr/local/include/ conftest.c >&5
-configure:12680: $? = 0
-configure:12680: result: yes
-configure:12680: checking fftw3.h presence
-configure:12680: gcc -E  -I/usr/local/include/ conftest.c
-configure:12680: $? = 0
-configure:12680: result: yes
-configure:12680: checking for fftw3.h
-configure:12680: result: yes
-configure:12702: checking fitsio.h usability
-configure:12702: gcc -c -g -O2  -I/usr/local/include/ conftest.c >&5
-configure:12702: $? = 0
-configure:12702: result: yes
-configure:12702: checking fitsio.h presence
-configure:12702: gcc -E  -I/usr/local/include/ conftest.c
-configure:12702: $? = 0
-configure:12702: result: yes
-configure:12702: checking for fitsio.h
-configure:12702: result: yes
-configure:12889: checking that generated files are newer than configure
-configure:12895: result: done
-configure:12918: creating ./config.status
+configure:12257: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lreadline  -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
+configure:12257: $? = 0
+configure:12274: result: -lreadline
+configure:12295: checking for initscr in -lncurses
+configure:12320: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lncurses  -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
+configure:12320: $? = 0
+configure:12329: result: yes
+configure:12351: checking for main in -lfftw3f
+configure:12370: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lfftw3f  -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
+configure:12370: $? = 0
+configure:12379: result: yes
+configure:12401: checking for main in -lfftw3
+configure:12420: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lfftw3  -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
+configure:12420: $? = 0
+configure:12429: result: yes
+configure:12451: checking for omp_get_num_threads in -lgomp
+configure:12476: gcc -o conftest -g -O2  -I/usr/local/include/  conftest.c -lgomp  -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  >&5
+configure:12476: $? = 0
+configure:12485: result: yes
+configure:12679: checking fftw3.h usability
+configure:12679: gcc -c -g -O2  -I/usr/local/include/ conftest.c >&5
+configure:12679: $? = 0
+configure:12679: result: yes
+configure:12679: checking fftw3.h presence
+configure:12679: gcc -E  -I/usr/local/include/ conftest.c
+configure:12679: $? = 0
+configure:12679: result: yes
+configure:12679: checking for fftw3.h
+configure:12679: result: yes
+configure:12701: checking fitsio.h usability
+configure:12701: gcc -c -g -O2  -I/usr/local/include/ conftest.c >&5
+configure:12701: $? = 0
+configure:12701: result: yes
+configure:12701: checking fitsio.h presence
+configure:12701: gcc -E  -I/usr/local/include/ conftest.c
+configure:12701: $? = 0
+configure:12701: result: yes
+configure:12701: checking for fitsio.h
+configure:12701: result: yes
+configure:12888: checking that generated files are newer than configure
+configure:12894: result: done
+configure:12917: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##

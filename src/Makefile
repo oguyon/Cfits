@@ -98,8 +98,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_cfits_OBJECTS = cfits-Cfits.$(OBJEXT) cfits-calc_bison.$(OBJEXT) \
-	cfits-calc_flex.$(OBJEXT)
+am_cfits_OBJECTS = cfits-CLIcore.$(OBJEXT) cfits-initmodules.$(OBJEXT) \
+	cfits-calc_bison.$(OBJEXT) cfits-calc_flex.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
 cfits_DEPENDENCIES = AOloopControl/libaoloopcontrol.la \
 	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
@@ -361,7 +361,7 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-cfits_SOURCES = Cfits.c Cfits.h calc_bison.y calc_flex.l calc.h
+cfits_SOURCES = CLIcore.c CLIcore.h initmodules.c initmodules.h calc_bison.y calc_flex.l calc.h
 cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-DCONFIGDIR=\"/CfitsDev/Cfits-src/config\" \
 	-DSOURCEDIR=\"/CfitsDev/Cfits-src/src\" \
@@ -509,9 +509,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/cfits-Cfits.Po
+include ./$(DEPDIR)/cfits-CLIcore.Po
 include ./$(DEPDIR)/cfits-calc_bison.Po
 include ./$(DEPDIR)/cfits-calc_flex.Po
+include ./$(DEPDIR)/cfits-initmodules.Po
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -534,19 +535,33 @@ include ./$(DEPDIR)/cfits-calc_flex.Po
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
 
-cfits-Cfits.o: Cfits.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-Cfits.o -MD -MP -MF $(DEPDIR)/cfits-Cfits.Tpo -c -o cfits-Cfits.o `test -f 'Cfits.c' || echo '$(srcdir)/'`Cfits.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-Cfits.Tpo $(DEPDIR)/cfits-Cfits.Po
-#	$(AM_V_CC)source='Cfits.c' object='cfits-Cfits.o' libtool=no \
+cfits-CLIcore.o: CLIcore.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-CLIcore.o -MD -MP -MF $(DEPDIR)/cfits-CLIcore.Tpo -c -o cfits-CLIcore.o `test -f 'CLIcore.c' || echo '$(srcdir)/'`CLIcore.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-CLIcore.Tpo $(DEPDIR)/cfits-CLIcore.Po
+#	$(AM_V_CC)source='CLIcore.c' object='cfits-CLIcore.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-Cfits.o `test -f 'Cfits.c' || echo '$(srcdir)/'`Cfits.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-CLIcore.o `test -f 'CLIcore.c' || echo '$(srcdir)/'`CLIcore.c
 
-cfits-Cfits.obj: Cfits.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-Cfits.obj -MD -MP -MF $(DEPDIR)/cfits-Cfits.Tpo -c -o cfits-Cfits.obj `if test -f 'Cfits.c'; then $(CYGPATH_W) 'Cfits.c'; else $(CYGPATH_W) '$(srcdir)/Cfits.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-Cfits.Tpo $(DEPDIR)/cfits-Cfits.Po
-#	$(AM_V_CC)source='Cfits.c' object='cfits-Cfits.obj' libtool=no \
+cfits-CLIcore.obj: CLIcore.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-CLIcore.obj -MD -MP -MF $(DEPDIR)/cfits-CLIcore.Tpo -c -o cfits-CLIcore.obj `if test -f 'CLIcore.c'; then $(CYGPATH_W) 'CLIcore.c'; else $(CYGPATH_W) '$(srcdir)/CLIcore.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-CLIcore.Tpo $(DEPDIR)/cfits-CLIcore.Po
+#	$(AM_V_CC)source='CLIcore.c' object='cfits-CLIcore.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-Cfits.obj `if test -f 'Cfits.c'; then $(CYGPATH_W) 'Cfits.c'; else $(CYGPATH_W) '$(srcdir)/Cfits.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-CLIcore.obj `if test -f 'CLIcore.c'; then $(CYGPATH_W) 'CLIcore.c'; else $(CYGPATH_W) '$(srcdir)/CLIcore.c'; fi`
+
+cfits-initmodules.o: initmodules.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-initmodules.o -MD -MP -MF $(DEPDIR)/cfits-initmodules.Tpo -c -o cfits-initmodules.o `test -f 'initmodules.c' || echo '$(srcdir)/'`initmodules.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-initmodules.Tpo $(DEPDIR)/cfits-initmodules.Po
+#	$(AM_V_CC)source='initmodules.c' object='cfits-initmodules.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-initmodules.o `test -f 'initmodules.c' || echo '$(srcdir)/'`initmodules.c
+
+cfits-initmodules.obj: initmodules.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-initmodules.obj -MD -MP -MF $(DEPDIR)/cfits-initmodules.Tpo -c -o cfits-initmodules.obj `if test -f 'initmodules.c'; then $(CYGPATH_W) 'initmodules.c'; else $(CYGPATH_W) '$(srcdir)/initmodules.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/cfits-initmodules.Tpo $(DEPDIR)/cfits-initmodules.Po
+#	$(AM_V_CC)source='initmodules.c' object='cfits-initmodules.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cfits-initmodules.obj `if test -f 'initmodules.c'; then $(CYGPATH_W) 'initmodules.c'; else $(CYGPATH_W) '$(srcdir)/initmodules.c'; fi`
 
 cfits-calc_bison.o: calc_bison.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cfits_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cfits-calc_bison.o -MD -MP -MF $(DEPDIR)/cfits-calc_bison.Tpo -c -o cfits-calc_bison.o `test -f 'calc_bison.c' || echo '$(srcdir)/'`calc_bison.c

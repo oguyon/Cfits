@@ -21,7 +21,7 @@
 #include <ncurses.h>
 
 
-#include "Cfits.h"
+#include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_tools/COREMOD_tools.h"
 #include "COREMOD_memory/COREMOD_memory.h"
