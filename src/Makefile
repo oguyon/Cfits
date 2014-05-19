@@ -101,10 +101,10 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cfits_OBJECTS = cfits-CLIcore.$(OBJEXT) cfits-initmodules.$(OBJEXT) \
 	cfits-calc_bison.$(OBJEXT) cfits-calc_flex.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
-cfits_DEPENDENCIES = AOloopControl/libaoloopcontrol.la \
-	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
-	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
-	OptSystProp/liboptsystprop.la \
+cfits_DEPENDENCIES = AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
+	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
+	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
+	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
@@ -366,6 +366,8 @@ cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-DCONFIGDIR=\"/CfitsDev/Cfits-src/config\" \
 	-DSOURCEDIR=\"/CfitsDev/Cfits-src/src\" \
 	-DABSSRCTOPDIR=\"/CfitsDev/Cfits-src\" -fopenmp \
+	-I/CfitsDev/Cfits-src/src/AtmosphericTurbulence \
+	-I/CfitsDev/Cfits-src/src/psf \
 	-I/CfitsDev/Cfits-src/src/AOloopControl \
 	-I/CfitsDev/Cfits-src/src/AOsystSim \
 	-I/CfitsDev/Cfits-src/src/SCExAO_DM \
@@ -392,15 +394,16 @@ AM_YFLAGS = -d
 AM_LFLAGS = -i 
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
-SUBDIRS = AOloopControl AOsystSim SCExAO_DM image_format PIAACMCsimul \
-	OptSystProp OpticsMaterials coronagraphs ZernikePolyn \
-	WFpropagate image_basic image_filter kdtree image_gen \
-	linopt_imtools statistic fft info COREMOD_arith COREMOD_iofits \
-	COREMOD_memory COREMOD_tools 00CORE
-cfits_LDADD = AOloopControl/libaoloopcontrol.la \
-	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
-	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
-	OptSystProp/liboptsystprop.la \
+SUBDIRS = AtmosphericTurbulence psf AOloopControl AOsystSim SCExAO_DM \
+	image_format PIAACMCsimul OptSystProp OpticsMaterials \
+	coronagraphs ZernikePolyn WFpropagate image_basic image_filter \
+	kdtree image_gen linopt_imtools statistic fft info \
+	COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
+	00CORE
+cfits_LDADD = AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
+	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
+	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
+	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \

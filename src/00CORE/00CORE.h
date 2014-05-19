@@ -8,11 +8,12 @@ int printWARNING(const char *file, const char *func, int line, char *warnmessage
 
 int printERROR(const char *file, const char *func, int line, char *errmessage);
 
-int setCfits_precision(int vp);
+int set_precision(int vp);
 
-int CfitsWritePid();
+int CLIWritePid();
 
 struct timespec timespec_diff(struct timespec start, struct timespec end);
+
 double timespec_diff_double(struct timespec start, struct timespec end);
 
 #endif

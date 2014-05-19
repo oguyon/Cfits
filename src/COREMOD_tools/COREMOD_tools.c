@@ -435,7 +435,7 @@ void quick_sort3_double(double *array, double *array1, double *array2, long coun
 
 void quick_sort2l(double *array, long *array1, long count)
 {
-  qs2l(array,array1,0,count-1);
+  qs2l(array, array1, 0, count-1);
 }
 
 void quick_sort2l_double(double *array, long *array1, long count)

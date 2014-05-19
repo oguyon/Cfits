@@ -27,6 +27,14 @@ cfits_LDADD =
 ## Core modules last, higher level modules at the top
 
 
+SUBDIRS += AtmosphericTurbulence
+cfits_LDADD += AtmosphericTurbulence/libatmturb.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
+
+SUBDIRS += psf
+cfits_LDADD += psf/libpsf.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/psf
+
 SUBDIRS += AOloopControl
 cfits_LDADD += AOloopControl/libaoloopcontrol.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl

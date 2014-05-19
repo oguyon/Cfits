@@ -1419,9 +1419,9 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
   naxes[1]=ysize;
 
   if(data.precision == 0)
-    ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes, 5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
   if(data.precision == 1)
-    ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes, 6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
   return(ID);
 }

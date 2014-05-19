@@ -11,6 +11,8 @@
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
+#include "fft/fft.h"
+
 #include "AOsystSim/AOsystSim.h"
 
 extern DATA data;

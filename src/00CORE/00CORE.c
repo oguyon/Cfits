@@ -79,7 +79,7 @@ int printERROR(const char *file, const char *func, int line, char *errmessage)
   return(0);
 }
 
-int setCfits_precision(int vp)
+int set_precision(int vp)
 {
   if(vp == 0)
     {
@@ -99,10 +99,10 @@ int setCfits_precision(int vp)
   return(0);
 }
 
-int CfitsinfoPrint()
+int CLIinfoPrint()
 {
-  printf("Process ID   : %d\n",CfitsPID);
-  printf("%s BUILT     : %s %s\n", CfitsBuildFile,CfitsBuildDate,CfitsBuildTime);
+  printf("Process ID   : %d\n",CLIPID);
+  printf("%s BUILT     : %s %s\n", BuildFile, BuildDate, BuildTime);
   printf("Memory usage      : %ld Mb  (%ld images)\n",
                   ((long) (compute_image_memory(data)/1024/1024)),
                   compute_nb_image(data)  );
@@ -111,14 +111,14 @@ int CfitsinfoPrint()
  return(0);
 }
 
-int CfitsWritePid()
+int CLIWritePid()
 {
   int pid;
   char command[200];
   int n;
 
   pid = getpid();
-  n = snprintf(command,200,"touch cfits_%d",pid);
+  n = snprintf(command,200,"touch CLI_%d",pid);
   if(n >= 200) 
     printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
