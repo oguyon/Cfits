@@ -882,6 +882,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
   char comment[80];
   char kname[16];
 
+
   ID = -1;
   if(image_ID(name)==-1)
     {
