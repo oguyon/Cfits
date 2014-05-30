@@ -1297,6 +1297,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
   float beta = 0.0;
   float gain = 0.01;
   long IDrmcumul;
+  long IDrefi;
+  long IDrefcumul;
 
 
   if(AOloopcontrol_meminit==0)
@@ -1331,7 +1333,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
   IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
   IDrmcumul = create_3Dimage_ID("RMcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-  
+
+  IDrefi = create_2Dimage_ID("REFiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+  IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+ 
 
  
   for(iter=0;iter<NBiter;iter++)
@@ -1347,7 +1352,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
       // initialize reference to zero
       
       for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	data.image[AOconf[loop].ID_refWFS].array.F[ii] = 0.0;
+	data.image[IDrefi].array.F[ii] = 0.0;
       
       
       printf("\n");
@@ -1389,11 +1394,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		  Average_cam_frames(loop, 1);
 		  
 		  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-		    {
-		      data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
-		      data.image[AOconf[loop].ID_refWFS].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
-		      if(recordCube == 1)
-			data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		    {		      
+		      data.image[IDrefi].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];	
+		      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
 		    }
 		  kc++;
 		}
@@ -1410,10 +1413,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		  
 		  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
 		    {
-		      data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[AOconf[loop].ID_WFS1].array.F[ii];
-		      data.image[AOconf[loop].ID_refWFS].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
-		      if(recordCube == 1)
-			data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		      data.image[IDrefi].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
+		      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
 		    }	
 		  kc++;
 		}
@@ -1424,9 +1425,11 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	  printf("additional frame %ld [%ld/%ld]... ", kk, kc, RespMatNBframes+kc0max);
 	  fflush(stdout);
 	  Average_cam_frames(loop, 1);
-	  if(recordCube == 1)
-	    for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];
+	  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
+	    {
+	      data.image[IDrefi].array.F[ii] += data.image[AOconf[loop].ID_WFS1].array.F[ii];
+	      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[AOconf[loop].ID_WFS1].array.F[ii];	      
+	    }
 	  kc++;
 	  printf("done\n");
 	  fflush(stdout);
@@ -1441,16 +1444,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
       
 
 
-      /*
-      if((recordCube == 1)&&(0))
-	{
-	  printf("Saving RM cube ... ");
-	  fflush(stdout);
-	  save_fl_fits("RMcube", "!RMcube.fits");
-	  printf("Done\n");
-	  fflush(stdout);
-	}
-      */
 
 
       for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
@@ -1458,16 +1451,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	  data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*NbAve);
       
       for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	data.image[AOconf[loop].ID_refWFS].array.F[ii] /= (NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
+	data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
       
       printf("Acquisition done, compiling results...");
       fflush(stdout);
       
-      //      save_fits(data.image[IDrmi].md[0].name, "!respm_ntd.fits");
-      //save_fits(data.image[IDrmi].md[0].name, "!refwfs_ntd.fits");
-      
-      //      if(recordCube == 1)
-      //save_fl_fits("RMcube", "!RMcube.fits");
+   
       
       
       // PROCESS RMCUBE  
@@ -1546,20 +1535,28 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	}
       fclose(fp);
 
+
+
+
       printf("\n");
       fflush(stdout);
       delete_image_ID("rmtest");
   
       beta = (1.0-gain)*beta + gain;
       for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
-	  {
-	    data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] = (1.0-gain)*data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] + gain*data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii];
-	    data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii]/beta;
-	  }
+	{
+	  data.image[IDrefcumul].array.F[ii] = (1.0-gain)*data.image[IDrefcumul].array.F[ii] + gain*data.image[IDrefi].array.F[ii];
+	  data.image[AOconf[loop].ID_refWFS].array.F[ii] = data.image[IDrefcumul].array.F[ii]/beta;
+	  
+	  for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
+	    {
+	      data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] = (1.0-gain)*data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] + gain*data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii];
+	      data.image[AOconf[loop].ID_respM].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii]/beta;
+	    }
+	}
 
-
-      save_fits(data.image[AOconf[loop].ID_respM].md[0].name, "!respMcumul.fits");
+      save_fits(data.image[AOconf[loop].ID_refWFS].md[0].name, "!refwfs.fits");
+      save_fits(data.image[AOconf[loop].ID_respM].md[0].name, "!respm.fits");
     }
 
   
@@ -1607,6 +1604,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
   return(0);
 }
+
+
+
 
 
 
