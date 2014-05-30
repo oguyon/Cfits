@@ -142,6 +142,18 @@ int AOloopControl_setframesAve_cli()
 }
 
 
+int AOloopControl_computeCM_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    {
+      compute_ControlMatrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, "evecM");
+      delete_image_ID("evecM");
+    }
+  else
+    return 1;
+}
+
+
 int AOloopControl_loadCM_cli()
 {
   if(CLI_checkarg(1,3)==0)
@@ -298,6 +310,17 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setframesAve(long nbframes)");
   data.NBcmd++;
   
+
+  strcpy(data.cmd[data.NBcmd].key,"aolcmmake");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_computeCM_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make control matrix");
+  strcpy(data.cmd[data.NBcmd].syntax,"<NBmodes removed> <RespMatrix> <ContrMatrix>");
+  strcpy(data.cmd[data.NBcmd].example,"aolcmmake 8 respm cmat");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name)");
+  data.NBcmd++;
+
+
   strcpy(data.cmd[data.NBcmd].key,"aolloadcm");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_loadCM_cli;
@@ -1560,9 +1583,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     }
 
   
-
-
-
+  /*
 
   printf("Computing Control matrix(es) ... ");
   fflush(stdout);
@@ -1584,7 +1605,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         i += (long) (0.4*i);
     }
   save_fits("evecM", "!evecM.fits");
-  
+  */
 
   // Make eigenmodes image
   /* IDeigenmodes = create_3Dimage_ID("eDMmodes", AOloop[loop].sizexDM,  AOloop[loop].sizeyDM, AOconf[loop].NBDMmodes);
