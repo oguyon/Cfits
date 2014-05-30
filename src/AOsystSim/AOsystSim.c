@@ -86,7 +86,7 @@ int AOsystSim_run()
   double pcoeff = 0.75;
   long pupsize2;
   long ID, IDa, IDp;
-  double lenssize = 70.0;
+  double lenssize = 120.0;
 
   long wfssize = 120;
   long *wfssize_array;

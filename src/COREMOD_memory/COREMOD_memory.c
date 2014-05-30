@@ -1236,6 +1236,7 @@ long read_sharedmem_image(char *name)
   int atype;
   int kw;
 
+ 
   ID = next_avail_image_ID();
   data.image[ID].used = 1;
 
@@ -1245,6 +1246,7 @@ long read_sharedmem_image(char *name)
   SM_fd = open(SM_fname, O_RDWR);
   if(SM_fd==-1)
     {
+      ID = -1;
       printf("Cannot import file\n");
     }
   else
@@ -1325,6 +1327,7 @@ long read_sharedmem_image(char *name)
       if(MEM_MONITOR == 1)
 	list_image_ID_ncurses();
     }
+
   return(ID);
 }
 

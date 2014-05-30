@@ -20,22 +20,22 @@ typedef struct
 
   char name[80];
   
-  long ID_WFS;    // Camera input
+  //  long ID_WFS;    // Camera input
   char WFSname[80];   
   long sizexWFS;
   long sizeyWFS;
   long sizeWFS;
   long long WFScnt;  
 
-  long ID_WFS1; // averaged, dark-subtracted frame (float), name = "imWFS1_%ld", loop;
-  long ID_WFS2; // WFS1 image minus WFS reference (float), name = "imWFS2_%ld", loop;
-  long ID_refWFS; // WFS reference
+  //  long ID_WFS1; // averaged, dark-subtracted frame (float), name = "imWFS1_%ld", loop;
+  //  long ID_WFS2; // WFS1 image minus WFS reference (float), name = "imWFS2_%ld", loop;
+  // long ID_refWFS; // WFS reference
 
-  long ID_DM;     // DM
+  //long ID_DM;     // DM
   char DMname[80];
-  long ID_DMRM;     // DM channel for RM
+  //long ID_DMRM;     // DM channel for RM
   char DMnameRM[80];
-   long sizexDM;
+  long sizexDM;
   long sizeyDM;
   long sizeDM;
 
@@ -44,18 +44,18 @@ typedef struct
   int init_CM;        // Control Matrix loaded
 
   
-  long ID_DMmodes;  // DM modes
+  //long ID_DMmodes;  // DM modes
   long NBDMmodes;  
   float maxlimit; // maximum absolute value for mode values
   
 
-  long ID_cmd_modes; // modal commands to be applied to DM
-  long ID_cmd1_modes; // modal values at output of control matrix multiplication
+  // long ID_cmd_modes; // modal commands to be applied to DM
+  //  long ID_cmd1_modes; // modal values at output of control matrix multiplication
 
   char respMname[80];
-  long ID_respM;  // Response matrix
+  // long ID_respM;  // Response matrix
   char contrMname[80];
-  long ID_contrM; // Control matrix
+  //  long ID_contrM; // Control matrix
   
 
   
@@ -101,7 +101,7 @@ int AOloopControl_InitializeMemory();
 int Average_cam_frames(long loop, long NbAve);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
 long AOloopControl_loadCM(long loop, char *CMfname);
-int AOloopControl_loadconfigure(long loop, char *config_fname);
+int AOloopControl_loadconfigure(long loop, char *config_fname, int mode);
 int set_DM_modes(long loop);
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
