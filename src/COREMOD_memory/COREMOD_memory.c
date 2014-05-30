@@ -1266,7 +1266,7 @@ long read_sharedmem_image(char *name)
       data.image[ID].md[0].shared = 1;
       
       printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
-      
+      fflush(stdout);
       
       mapv = (char*) map;
       mapv += sizeof(IMAGE_METADATA);
@@ -2032,7 +2032,7 @@ long chname_image_ID(char *ID_name, char *new_name)
       //      if ( Debug > 0 ) { printf("change image name %s -> %s\n",ID_name,new_name);}
     }
   else
-    printf("Cannot change name : new name already in use\n");
+    printf("Cannot change name %s -> %s : new name already in use\n", ID_name, new_name);
 
   if(MEM_MONITOR==1)
     list_image_ID_ncurses();

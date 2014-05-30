@@ -36,7 +36,7 @@ int SMturbfd;
 long IDturb;
 
 
-int SCExAO_DM_CombineChannels();
+int SCExAO_DM_CombineChannels(int mode);
 int SCEXAO_DM_unloadconf();
 int SCExAO_DM_dmdispcomboff();
 int SCExAO_DM_dmtrigoff();
@@ -58,6 +58,16 @@ int SCExAO_DM_dmturb_status();
 // 4: existing image
 //
 
+
+int SCExAO_DM_CombineChannels_cli()
+{
+  if(CLI_checkarg(1,2)==0)
+    SCExAO_DM_CombineChannels(data.cmdargtoken[1].val.numl);
+  else
+    SCExAO_DM_CombineChannels(1);
+    
+    return 1;
+}
 
 int SCExAO_DM_dmturb_wspeed_cli()
 {
@@ -104,11 +114,11 @@ int init_SCExAO_DM()
 
   strcpy(data.cmd[data.NBcmd].key,"scexaoDMcomb");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_CombineChannels;
+  data.cmd[data.NBcmd].fp = SCExAO_DM_CombineChannels_cli;
   strcpy(data.cmd[data.NBcmd].info,"combine channels");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"scexaoDMcomb");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_CombineChannels()");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_CombineChannels(int mode)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"scexaodmcomboff");
@@ -335,8 +345,8 @@ int SCEXAO_DM_unloadconf()
 
 
 
-
-int SCExAO_DM_CombineChannels()
+// mode = 1 if DM volt computed
+int SCExAO_DM_CombineChannels(int mode)
 {
   long naxis = 2;
   long xsize = 50;
@@ -353,7 +363,7 @@ int SCExAO_DM_CombineChannels()
   long IDdisp;
   long IDvolt;
   double ave;
- 
+  long ID1;
 
 
   size = (long*) malloc(sizeof(long)*naxis);
@@ -376,7 +386,9 @@ int SCExAO_DM_CombineChannels()
     }
 
   IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
-  IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
+ 
+  if(mode==1)
+    IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
 
   cntsumold = 0;
   
@@ -384,6 +396,7 @@ int SCExAO_DM_CombineChannels()
     {
       usleep(1);
       cntsum = 0;
+
       for(ch=0;ch<NBch;ch++)
 	cntsum += data.image[IDch[ch]].md[0].cnt0;
       
@@ -393,35 +406,41 @@ int SCExAO_DM_CombineChannels()
 	  fflush(stdout);
 	  cnt++;
 
-	  copy_image_ID("dmdisp0","dmdisptmp");
+	  copy_image_ID("dmdisp0", "dmdisptmp");
 	  for(ch=1;ch<NBch;ch++)
 	    {
 	      sprintf(name, "dmdisp%ld", ch);
 	      arith_image_add_inplace("dmdisptmp",name);
 	    }
-	  copy_image_ID("dmdisptmp","dmdisp");	 
-
+	  ID1 = image_ID("dmdisptmp");
+	  
 
 	  // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
 	  ave = 0.0;
 	  for(ii=0;ii<NBact;ii++)
-	    ave += data.image[IDdisp].array.F[ii];
+	    ave += data.image[ID1].array.F[ii];
 	  ave /= NBact;
 	  
 	  for(ii=0;ii<NBact;ii++)
 	    {
-	      data.image[IDdisp].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
-	      if(data.image[IDdisp].array.F[ii]<0.0)
-		data.image[IDdisp].array.F[ii] = 0.0;
+	      data.image[ID1].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
+	      if(data.image[ID1].array.F[ii]<0.0)
+		data.image[ID1].array.F[ii] = 0.0;
 	    }
+
+	  data.image[IDdisp].md[0].write = 1;
+	  memcpy (data.image[IDdisp].array.F,data.image[ID1].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
+	  data.image[IDdisp].md[0].cnt0++;
 	  data.image[IDdisp].md[0].write = 0;
 	  
-	  SCExAO_DM_disp2V(IDdisp, IDvolt);
+	  if(mode==1)
+	    SCExAO_DM_disp2V(IDdisp, IDvolt);
 	  cntsumold = cntsum;	  
 	}
     }
 
-  arith_image_zero("dmvolt");
+  if(mode==1)
+    arith_image_zero("dmvolt");
   
 
   printf("LOOP STOPPED\n");
@@ -432,6 +451,14 @@ int SCExAO_DM_CombineChannels()
 
   return 0;
 }
+
+
+
+
+
+
+
+
 
 
 int SCExAO_DM_dmdispcomboff()

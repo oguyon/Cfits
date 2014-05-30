@@ -243,6 +243,9 @@ int printstatus(long ID)
   double RMS = 0.0;
 
   double RMS01 = 0.0;
+  long vcntmax;
+
+  printw("%s\n", data.image[ID].md[0].name);
 
   atype = data.image[ID].md[0].atype;
   if(atype==CHAR)
@@ -400,6 +403,8 @@ int printstatus(long ID)
 	}
     }
   
+  
+
   RMS = sqrt(RMS/data.image[ID].md[0].nelement);
   RMS01 = 0.9*RMS01 + 0.1*RMS;
 
@@ -415,6 +420,12 @@ int printstatus(long ID)
   maxPV = 1.1*maxPV;
   */ 
 
+  vcntmax = 0;
+  for(h=0;h<NBhistopt; h++)
+    if(vcnt[h]>vcntmax)
+      vcntmax = vcnt[h];
+  
+  
   for(h=0;h<NBhistopt; h++)
     {
       customcolor = 1;
@@ -430,7 +441,7 @@ int printstatus(long ID)
       while((cnt<wcol-strlen(line1)-1)&&(i<vcnt[h]))
 	{
 	  printw(" ");
-	  i += 10;
+	  i += (long) (vcntmax/(wcol-strlen(line1)))+1;
 	  cnt++;
 	}
       attroff(COLOR_PAIR(customcolor));

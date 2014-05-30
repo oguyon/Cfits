@@ -2086,8 +2086,8 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
       IDfpmz_mask = create_2Dimage_ID("_fpmzmask", xsize, ysize);
       for(ii=0; ii<xsize*ysize; ii++)
 	{
-	  re = data.image[IDfpmz].array.CF[ii].re;
-	  im = data.image[IDfpmz].array.CF[ii].im;
+	  re = data.image[IDfpmz].array.CF[k*size2+ii].re;
+	  im = data.image[IDfpmz].array.CF[k*size2+ii].im;
 	  amp2 = re*re+im*im;
 	  if(amp2>eps)
 	    data.image[IDfpmz_mask].array.F[ii] = 1.0;
@@ -2112,8 +2112,8 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
 	  {
 	    x = 1.0*ii-0.5*xsize;
 	    y = 1.0*jj-0.5*ysize;
-	    re = data.image[IDfpmz].array.CF[jj*xsize+ii].re;
-	    im = data.image[IDfpmz].array.CF[jj*xsize+ii].im;
+	    re = data.image[IDfpmz].array.CF[k*size2+jj*xsize+ii].re;
+	    im = data.image[IDfpmz].array.CF[k*size2+jj*xsize+ii].im;
 	    amp = sqrt(re*re+im*im);
 	    pha = atan2(im,re);
 	    

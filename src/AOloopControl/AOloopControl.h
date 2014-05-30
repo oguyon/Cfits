@@ -5,10 +5,6 @@
 
 #define AOLOOPCONTROL_CONF_FNAME "/tmp/aoloopcontrol.conf.shm"
 
-int init_AOloopControl();
-
-int AOloopControl_run();
-
 
 
 typedef struct
@@ -37,7 +33,9 @@ typedef struct
 
   long ID_DM;     // DM
   char DMname[80];
-  long sizexDM;
+  long ID_DMRM;     // DM channel for RM
+  char DMnameRM[80];
+   long sizexDM;
   long sizeyDM;
   long sizeDM;
 
@@ -96,6 +94,30 @@ typedef struct
 } AOLOOPCONTROL_CONF;
 
 
+int init_AOloopControl();
+int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
+int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name);
+int AOloopControl_InitializeMemory();
+int Average_cam_frames(long loop, long NbAve);
+long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
+long AOloopControl_loadCM(long loop, char *CMfname);
+int AOloopControl_loadconfigure(long loop, char *config_fname);
+int set_DM_modes(long loop);
+int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
+int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
+int AOcompute(long loop);
+int AOloopControl_run();
+
+int AOloopControl_showparams(long loop);
+int AOloopControl_setLoopNumber(long loop);
+int AOloopControl_loopkill();
+int AOloopControl_loopon();
+int AOloopControl_loopoff();
+int AOloopControl_logon();
+int AOloopControl_logoff();
+int AOloopControl_setgain(float gain);
+int AOloopControl_setmaxlimit(float maxlimit);
+int AOloopControl_setframesAve(long nbframes);
 
 
 #endif

@@ -11,6 +11,7 @@
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
+#include "image_filter/image_filter.h"
 #include "fft/fft.h"
 
 #include "AOsystSim/AOsystSim.h"
@@ -73,7 +74,9 @@ int AOsystSim_run()
   long long cnt = 0;
   long long cnt0;
   long ID_dm;
- 
+  float lambda = 0.7; // um
+
+
   long pupsize = 256;
   double puprad = 22.0;
   long IDpupa, IDpupp;
@@ -89,7 +92,17 @@ int AOsystSim_run()
   long *wfssize_array;
   long ID_wfs, ID_wfe;
   long offset, offset1;
+  long IDflat, IDdmdisp;
 
+  long IDatmpha;
+  long iioffset, jjoffset;
+  long IDpuppc;
+  long IDpsf;
+  long *pupsize_array;
+
+  float alphaCorr = 0.8;
+  long IDdmt, IDdmtg;
+ 
   pupsize2 = pupsize*pupsize;
 
 
@@ -97,27 +110,56 @@ int AOsystSim_run()
 
   dmsize = (long*) malloc(sizeof(long)*2);
   wfssize_array = (long*) malloc(sizeof(long)*2);
- 
+  pupsize_array = (long*) malloc(sizeof(long)*2);
+   
   
   // INITIALIZE
   
   // create wavefront error input
   dmsize[0] = dmxsize;
   dmsize[1] = dmysize;
-  ID_wfe = create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);
+  ID_wfe = read_sharedmem_image("dmdisp1"); // turbulence channel
 
 
+
+  IDflat = read_sharedmem_image("dmdisp0"); // flat
+  data.image[IDflat].md[0].write = 1;
+  for(ii=0;ii<dmxsize;ii++)
+    for(jj=0;jj<dmysize;jj++)
+      data.image[IDflat].array.F[jj*dmxsize+ii] = 5.5;
+  data.image[IDflat].md[0].cnt0++; 
+  data.image[IDflat].md[0].write = 0;
+
+
+  // create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);  
+ 
+  // create PSF image
+  pupsize_array[0] = pupsize;
+  pupsize_array[1] = pupsize;
+  IDpsf = create_image_ID("aosimpsf", 2, pupsize_array, FLOAT, 1, 0);  
+
+
+
+  IDatmpha = read_sharedmem_image("atmwfspha");
+  
+
+  
+
+  IDdmdisp = read_sharedmem_image("dmdisp");
 
   // create DM
   dmsize[0] = dmxsize;
   dmsize[1] = dmysize;
-  ID_dm = create_image_ID("dm_sim", 2, dmsize, FLOAT, 1, 0);
+  ID_dm = read_sharedmem_image("dmdisp2"); // correction
+  //create_image_ID("dm_sim", 2, dmsize, FLOAT, 1, 0);
 
 
   // create WFS image
   wfssize_array[0] = wfssize;
   wfssize_array[1] = wfssize;
   ID_wfs = create_image_ID("wfs_sim", 2, wfssize_array, FLOAT, 1, 0);
+
+  IDpuppc = create_image_ID("puppcrop", 2, dmsize, FLOAT, 1, 0);
 
 
   
@@ -143,7 +185,35 @@ int AOsystSim_run()
   printf("\n");
   while(1)
     {
-      usleep(10000); // 100 Hz 
+      usleep(100); // 10 kHz 
+      
+      // IMPORT WF ERROR
+      iioffset = 6;
+      jjoffset = 6;
+      IDdmt = create_2Dimage_ID("dmdispt", dmxsize, dmysize);
+      for(ii=0;ii<dmxsize;ii++)
+	for(jj=0;jj<dmysize;jj++)
+	  {
+	    data.image[IDdmt].array.F[jj*dmxsize+ii] = 0.0;
+	    ii1 = ii+iioffset;
+	    jj1 = jj+jjoffset;
+	    data.image[IDdmt].array.F[jj*dmxsize+ii] = data.image[IDatmpha].array.F[jj1*data.image[IDatmpha].md[0].size[0]+ii1]/2.0/M_PI*lambda/2.0; // um
+	    
+	  }
+      gauss_filter("dmdispt", "dmdisptg", 4.0, 5);
+      IDdmtg = image_ID("dmdisptg");
+      data.image[ID_wfe].md[0].write = 1;
+      for(ii=0;ii<dmxsize;ii++)
+	for(jj=0;jj<dmysize;jj++)
+	  data.image[ID_wfe].array.F[jj*dmxsize+ii] = data.image[IDdmt].array.F[jj*dmxsize+ii] - alphaCorr*data.image[IDdmtg].array.F[jj*dmxsize+ii];
+	        
+      data.image[ID_wfe].md[0].cnt0++;
+      data.image[ID_wfe].md[0].write = 0;
+      delete_image_ID("dmdispt");
+      delete_image_ID("dmdisptg");
+
+
+
       // cnt0 = data.image[ID_dm].md[0].cnt0;
       // if(cnt0!=cnt)
       //{
@@ -153,31 +223,47 @@ int AOsystSim_run()
 	  IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
 	  IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
 
+	  
+	  while((data.image[IDdmdisp].md[0].write==1)||(data.image[IDpuppc].md[0].write==1))
+	    usleep(100);
+
+	  data.image[IDpuppc].md[0].write==1;
+
+	  for(ii=0;ii<dmxsize*dmysize;ii++)
+	    data.image[IDpuppc].array.F[ii] = data.image[IDdmdisp].array.F[ii];
+	    
 	  for(ii=0;ii<dmxsize;ii++)
 	    for(jj=0;jj<dmysize;jj++)
-	      data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[ID_dm].array.F[jj*dmxsize+ii]+data.image[ID_wfe].array.F[jj*dmxsize+ii];
+	      data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*2.0*M_PI*2.0;
+	  
+	  data.image[IDpuppc].md[0].cnt0++;
+	  data.image[IDpuppc].md[0].write = 0;
+	  
 
-
-	  //	  save_fl_fits("pupp","!pupp.fits");
 
 	  mk_complex_from_amph("pupa","pupp","pupc");
 	  delete_image_ID("pupa");
-	  delete_image_ID("pupp");
+	  //	  delete_image_ID("pupp");
 	  permut("pupc");
 	  do2dfft("pupc","focc");
 	  delete_image_ID("pupc");
 	  permut("focc");
 	  mk_amph_from_complex("focc", "foca", "focp");
+	  
 	  delete_image_ID("focc");
 	  IDp = image_ID("focp");
 	  IDa = image_ID("foca");
 	  
-	  
+	  data.image[IDpsf].md[0].write = 1;
 	  for(ii=0;ii<pupsize2;ii++)
 	    {
+	      data.image[IDpsf].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
 	      data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
 	      data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
 	    }
+	  data.image[IDpsf].md[0].cnt0++;
+	  data.image[IDpsf].md[0].write = 0;
+
 	  mk_complex_from_amph("foca","focp","focc1");
 	  delete_image_ID("foca");
 	  delete_image_ID("focp");
@@ -196,8 +282,8 @@ int AOsystSim_run()
 	  for(ii1=0;ii1<wfssize;ii1++)
 	    for(jj1=0;jj1<wfssize;jj1++)
 	      data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
-	  data.image[ID_wfs].md[0].write = 0;
 	  data.image[ID_wfs].md[0].cnt0++;
+	  data.image[ID_wfs].md[0].write = 0;
 	  delete_image_ID("pupa1");
 
 
@@ -209,6 +295,8 @@ int AOsystSim_run()
       
   free(dmsize);
   free(wfssize_array);
+  free(pupsize_array);
+
 
   return 0;
 }

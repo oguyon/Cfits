@@ -3,7 +3,7 @@
 
 
 
-#define ApoFitCosFact 1.3
+#define ApoFitCosFact 1.0
 
 
 //
@@ -18,22 +18,32 @@
 //
 typedef struct {
 
+
   // ======= SEED RADIAL PIAACMC PARAMETERS ======
+
   double centObs0; // input central obstruction
   double centObs1; // output central obstruction
   double r0lim; // outer radius after extrapolation, piaa mirror 0
   double r1lim; // outer radius after extrapolation, piaa mirror 1
   long NBradpts; // number of points for common r0, r1, piaa sags 1D table
  
-  
 
-  // ====== Overall Geometry ===============
+  // Wavelength
+  int nblambda;
+
+
+
+  // ====== Overall OPTICAL Geometry ===============
+
   float beamrad; // [m]
   long size;
   float pixscale; // [m/pix]
   float piaasep;// separation between PIAA surfaces [m]
 
-
+  // ========= LYOT STOPS ============
+  long NBLyotStop;
+  long IDLyotStop[10];
+  double LyotStop_zpos[10];
 
   // ======= Optics shapes modes ============
 
@@ -57,7 +67,8 @@ typedef struct {
   long focmNBzone; // number of zones
   double Fratio; // beam Fratio at focal plane
   double maskscale; // m/pixel
-  long zonezID;  // focm zone material thickness
+  long zonezID;  // focm zone material thickness, double precision image
+  long zoneaID;  // focm zone amplitude transmission, double precision image
   double fpzfactor; // focal plane mask DFT zoom factor
 
   double fpmRad; // outer radius

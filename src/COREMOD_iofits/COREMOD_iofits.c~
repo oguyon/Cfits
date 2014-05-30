@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../Cfits.h"
-#include "../00CORE/00CORE.h"
-#include "../COREMOD_iofits/COREMOD_iofits.h"
-#include "../COREMOD_memory/COREMOD_memory.h"
+#include "CLIcore.h"
+#include "00CORE/00CORE.h"
+#include "COREMOD_iofits/COREMOD_iofits.h"
+#include "COREMOD_memory/COREMOD_memory.h"
 
 #define SBUFFERSIZE 1000
 
@@ -913,15 +913,6 @@ int save_sh_fits(char *ID_name, char *file_name)
 	      array[ii] = (short int) data.image[ID].array.D[ii];
 	    break;
 	  case USHORT :
-	    array = (short int*) malloc(sizeof(short int)*nelements);   
-	    if(array==NULL)
-	      {
-		printERROR(__FILE__,__func__,__LINE__,"malloc error");
-		exit(0);
-	      }
-	    fflush(stdout);
-	    for (ii = 0; ii < nelements; ii++)   
-	      array[ii] = (short int) data.image[ID].array.U[ii];	   	      
 	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
@@ -1075,6 +1066,14 @@ int save_ush_fits(char *ID_name, char *file_name)
 	      array[ii] = (unsigned short int) data.image[ID].array.D[ii];
 	    break;
 	  case USHORT :
+	    array = (unsigned short int*) malloc(sizeof(unsigned short int)*nelements);   
+	    if(array==NULL)
+	      {
+		printERROR(__FILE__,__func__,__LINE__,"malloc error");
+		exit(0);
+	      }
+	    for (ii = 0; ii < nelements; ii++)    
+	      array[ii] = (unsigned short int) data.image[ID].array.U[ii];
 	    break;
 	  default :
 	    printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
@@ -1160,7 +1159,7 @@ int save_fits(char *ID_name, char *file_name)
 	save_db_fits(ID_name, file_name);
 	break;
       case USHORT:
-	save_ush_fits(ID_name, file_name);
+	save_sh_fits(ID_name, file_name);
 	break;	
       }
     }  
