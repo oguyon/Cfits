@@ -207,40 +207,11 @@ int make_slopexy_cli()
 
 int make_dist_cli()
 {
-  int i;
   
-  if(data.cmdargtoken[1].type != 3)
-    {
-      printf("arg 1 (%s) has to be new image name\n", data.cmdargtoken[1].val.string);
-      return -1;
-    }
-
-  for(i=2;i<4;i++)
-    if(data.cmdargtoken[i].type != 2)
-	{
-	  printf("arg %d has to be an integer\n", i);
-	  return -1;
-	}
- 
-
-  for(i=4;i<6;i++)
-    {
-      if(data.cmdargtoken[i].type == 2) // convert long to float
-	{
-	  if(data.Debug>0)
-	    printf("Converting arg %d to floating point number\n", i);
-	  data.cmdargtoken[i].val.numf = (double) data.cmdargtoken[i].val.numl;
-	  data.cmdargtoken[i].type = 1;
-	}
-      
-      if(data.cmdargtoken[i].type != 1)
-	{
-	  printf("arg %d has to be a floating point number (or integer)\n", i);
-	  return -1;
-	}
-    }
-
-  make_dist(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(4,1)==0)
+    make_dist(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
+  else
+    return 1;
 
   return 0;
 }
