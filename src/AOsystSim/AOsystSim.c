@@ -102,7 +102,11 @@ int AOsystSim_run()
 
   float alphaCorr = 0.8;
   long IDdmt, IDdmtg;
+
+  long moffset;
  
+  long usleeptime = 100; // delay at each loop
+
   pupsize2 = pupsize*pupsize;
 
 
@@ -157,7 +161,9 @@ int AOsystSim_run()
   // create WFS image
   wfssize_array[0] = wfssize;
   wfssize_array[1] = wfssize;
-  ID_wfs = create_image_ID("wfs_sim", 2, wfssize_array, FLOAT, 1, 0);
+  wfssize_array[2] = 3; // number of slices in rolling buffer
+  ID_wfs = create_image_ID("wfs_sim", 3, wfssize_array, FLOAT, 1, 0);
+  data.image[ID_wfs].md[0].cnt1 = 0; // next slice to write
 
   IDpuppc = create_image_ID("puppcrop", 2, dmsize, FLOAT, 1, 0);
 
@@ -185,7 +191,7 @@ int AOsystSim_run()
   printf("\n");
   while(1)
     {
-      usleep(100); // 10 kHz 
+      usleep(usleeptime);
       
       // IMPORT WF ERROR
       iioffset = 6;
@@ -278,10 +284,15 @@ int AOsystSim_run()
 	  ID = image_ID("pupa1");
 	  offset = (pupsize-wfssize)/2;
 	  
+
 	  data.image[ID_wfs].md[0].write = 1;
+	  moffset = data.image[ID_wfs].md[0].cnt1*wfssize*wfssize;
 	  for(ii1=0;ii1<wfssize;ii1++)
 	    for(jj1=0;jj1<wfssize;jj1++)
-	      data.image[ID_wfs].array.F[jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
+	      data.image[ID_wfs].array.F[moffset+jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
+	  data.image[ID_wfs].md[0].cnt1++;
+	  if(data.image[ID_wfs].md[0].cnt1==data.image[ID_wfs].md[0].size[2])
+	    data.image[ID_wfs].md[0].cnt1 = 0;
 	  data.image[ID_wfs].md[0].cnt0++;
 	  data.image[ID_wfs].md[0].write = 0;
 	  delete_image_ID("pupa1");
