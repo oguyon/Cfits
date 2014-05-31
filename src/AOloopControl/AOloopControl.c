@@ -70,6 +70,10 @@ AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 int *AOconf_loaded = 0;
 int *AOconf_fd; 
 
+float *arrayftmp;
+unsigned short *arrayutmp;
+int avcamarraysInit = 0;
+
 
 // CLI commands
 //
@@ -823,10 +827,15 @@ int Average_cam_frames(long loop, long NbAve)
   int atype;
 
 
-
   atype = data.image[aoconfID_WFS].md[0].atype;
 
-
+  if(avcamarraysInit==0)
+    {
+      arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
+      arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
+      avcamarraysInit = 1;
+    }
+  
   if(NbAve>1)
     for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
       data.image[aoconfID_WFS1].array.F[ii] = 0.0;
@@ -839,21 +848,28 @@ int Average_cam_frames(long loop, long NbAve)
       {
 	usleep(50);	  
 	if(data.image[aoconfID_WFS].md[0].write == 0)
-	  if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
-	    {
-	      AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
-	      if(NbAve>1)
-		{
-		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		    data.image[aoconfID_WFS1].array.F[ii] += data.image[aoconfID_WFS].array.F[ii];
-		}
-	      else
-		{
-		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		    data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS].array.F[ii];
-		}
-	      imcnt++;
-	    }      
+	  {
+	    memcpy (arrayftmp, data.image[aoconfID_WFS].array.F, sizeof(float)*AOconf[loop].sizeWFS);
+	    if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
+	      {	      
+		AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
+		if(NbAve>1)
+		  {
+		    
+		    //		  memcpy (data.image[ID_WFS1].array.F, data.image[aoconfID_WFS].array.F, sizeof(float)*AOconf[loop].sizeDM);
+		    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		      data.image[aoconfID_WFS1].array.F[ii] += arrayftmp[ii]; //data.image[aoconfID_WFS].array.F[ii];
+		  }
+		else
+		  {
+		    memcpy(data.image[aoconfID_WFS1].array.F, arrayftmp,  sizeof(float)*AOconf[loop].sizeWFS);
+		    //		    memcpy (data.image[ID_WFS1].array.F, data.image[aoconfID_WFS].array.F, sizeof(float)*AOconf[loop].sizeWFS);
+		    //for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		    // data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS].array.F[ii];
+		  }
+		imcnt++;
+	      }      
+	  }
       }
     break;
   case USHORT :
@@ -862,21 +878,25 @@ int Average_cam_frames(long loop, long NbAve)
       {
 	usleep(50);
 	if(data.image[aoconfID_WFS].md[0].write == 0)
-	  if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
-	    {
-	      AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
-	      if(NbAve>1)
-		{
-		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		    data.image[aoconfID_WFS1].array.F[ii] += data.image[aoconfID_WFS].array.U[ii];
-		}
-	      else
-		{
-		  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-		    data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS].array.U[ii];
-		}
-	      imcnt++;
-	    }
+	  {
+	    memcpy (arrayutmp, data.image[aoconfID_WFS].array.U, sizeof(unsigned short)*AOconf[loop].sizeWFS);
+	    if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
+	      {
+		AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
+		if(NbAve>1)
+		  {
+		    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		      data.image[aoconfID_WFS1].array.F[ii] += arrayutmp[ii]; //data.image[aoconfID_WFS].array.U[ii];
+		  }
+		else
+		  {
+		    //		    memcpy (data.image[ID_WFS1].array.F, data.image[aoconfID_WFS].array.F, sizeof(float)*AOconf[loop].sizeWFS);
+		    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+		      data.image[aoconfID_WFS1].array.F[ii] = arrayutmp[ii]; //data.image[aoconfID_WFS].array.U[ii];
+		  }
+		imcnt++;
+	      }
+	  }
       }         
     break;
   default :
