@@ -183,6 +183,7 @@ int AOloopControl_computeCM_cli()
   if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
     {
       compute_ControlMatrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, "evecM");
+      save_fits("evecM","!evecM.fits");
       delete_image_ID("evecM");
     }
   else

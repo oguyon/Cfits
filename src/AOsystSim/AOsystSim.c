@@ -79,9 +79,9 @@ int AOsystSim_run()
 
   long pupsize = 256;
   double puprad = 22.0;
-  long IDpupa, IDpupp;
+  long IDpupa, IDpupp, IDpuppIR;
   long IDpyrpha, IDpyramp;
-  double x, y;
+  double x, y, r;
   long ii, jj, ii1, jj1;
   double pcoeff = 0.75;
   long pupsize2;
@@ -96,8 +96,8 @@ int AOsystSim_run()
 
   long IDatmpha;
   long iioffset, jjoffset;
-  long IDpuppc;
-  long IDpsf;
+  long IDpuppc, IDpuppcIR;
+  long IDpsf, IDpsfIR;
   long *pupsize_array;
 
   float alphaCorr = 0.8;
@@ -137,10 +137,11 @@ int AOsystSim_run()
 
   // create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);  
  
-  // create PSF image
+  // create PSF images
   pupsize_array[0] = pupsize;
   pupsize_array[1] = pupsize;
   IDpsf = create_image_ID("aosimpsf", 2, pupsize_array, FLOAT, 1, 0);  
+  IDpsfIR = create_image_ID("aosimpsfIR", 2, pupsize_array, FLOAT, 1, 0);  
 
 
 
@@ -169,7 +170,7 @@ int AOsystSim_run()
 
 
   
-  IDpyrpha = create_2Dimage_ID("pyrpha", pupsize, pupsize);
+  IDpyrpha = create_2Dimage_ID("pyrpha0", pupsize, pupsize);
   IDpyramp = create_2Dimage_ID("pyramp", pupsize, pupsize);
   for(ii=0;ii<pupsize;ii++)
     for(jj=0;jj<pupsize;jj++)
@@ -183,7 +184,9 @@ int AOsystSim_run()
 	else
 	  data.image[IDpyramp].array.F[jj*pupsize+ii] = 1.0;
       }
-
+  gauss_filter("pyrpha0", "pyrpha", 5.0, 8);
+  IDpyrpha = image_ID("pyrpha");
+  save_fits("pyrpha","!pyrpha.fits");
 
   offset1 = (pupsize-dmxsize)/2;
   printf("OFFSET = %ld\n", offset);
@@ -227,7 +230,21 @@ int AOsystSim_run()
 	  //fflush(stdout);
 	  
 	  IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+	  for(ii=0;ii<pupsize;ii++)
+	    for(jj=0;jj<pupsize;jj++)
+	      {
+		x = (1.0*ii-0.5*pupsize)/puprad;
+		y = (1.0*jj-0.5*pupsize)/puprad;
+		r = sqrt(x*x+y*y);
+		if(r<0.3)
+		  data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
+		if((fabs(0.5*x+0.5*y)<0.05)||(fabs(0.5*x-0.5*y)<0.05))
+		  data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
+	      }
+	  save_fits("pupa", "!pupa.fits");
+	  
 	  IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
+	  IDpuppIR = create_2Dimage_ID("puppIR", pupsize, pupsize);
 
 	  
 	  while((data.image[IDdmdisp].md[0].write==1)||(data.image[IDpuppc].md[0].write==1))
@@ -245,11 +262,14 @@ int AOsystSim_run()
 	  data.image[IDpuppc].md[0].cnt0++;
 	  data.image[IDpuppc].md[0].write = 0;
 	  
+	  for(ii=0;ii<dmxsize;ii++)
+	    for(jj=0;jj<dmysize;jj++)
+	      data.image[IDpuppIR].array.F[(jj+offset1)*pupsize+(ii+offset1)] = (0.65/1.65)*data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*2.0*M_PI*2.0;
+	  
+
 
 
 	  mk_complex_from_amph("pupa","pupp","pupc");
-	  delete_image_ID("pupa");
-	  //	  delete_image_ID("pupp");
 	  permut("pupc");
 	  do2dfft("pupc","focc");
 	  delete_image_ID("pupc");
@@ -259,7 +279,9 @@ int AOsystSim_run()
 	  delete_image_ID("focc");
 	  IDp = image_ID("focp");
 	  IDa = image_ID("foca");
-	  
+	 
+
+
 	  data.image[IDpsf].md[0].write = 1;
 	  for(ii=0;ii<pupsize2;ii++)
 	    {
@@ -269,6 +291,29 @@ int AOsystSim_run()
 	    }
 	  data.image[IDpsf].md[0].cnt0++;
 	  data.image[IDpsf].md[0].write = 0;
+
+
+	  mk_complex_from_amph("pupa","puppIR","pupc");
+	  delete_image_ID("pupa");
+	  permut("pupc");
+	  do2dfft("pupc","focc");
+	  delete_image_ID("pupc");
+	  permut("focc");
+	  mk_amph_from_complex("focc", "focaIR", "focpIR");
+	  
+	  delete_image_ID("focc");
+	  delete_image_ID("focpIR");
+	  IDa = image_ID("focaIR");
+	  
+
+	  data.image[IDpsfIR].md[0].write = 1;
+	  for(ii=0;ii<pupsize2;ii++)
+	    data.image[IDpsfIR].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
+	  data.image[IDpsfIR].md[0].cnt0++;
+	  data.image[IDpsfIR].md[0].write = 0;
+
+
+
 
 	  mk_complex_from_amph("foca","focp","focc1");
 	  delete_image_ID("foca");
@@ -288,14 +333,20 @@ int AOsystSim_run()
 	  data.image[ID_wfs].md[0].write = 1;
 	  moffset = data.image[ID_wfs].md[0].cnt1*wfssize*wfssize;
 	  for(ii1=0;ii1<wfssize;ii1++)
-	    for(jj1=0;jj1<wfssize;jj1++)
+	    for(jj1=0;jj1<wfssize;jj1++)	     
 	      data.image[ID_wfs].array.F[moffset+jj1*wfssize+ii1] = data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset]*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
 	  data.image[ID_wfs].md[0].cnt1++;
 	  if(data.image[ID_wfs].md[0].cnt1==data.image[ID_wfs].md[0].size[2])
 	    data.image[ID_wfs].md[0].cnt1 = 0;
 	  data.image[ID_wfs].md[0].cnt0++;
 	  data.image[ID_wfs].md[0].write = 0;
+
+
+
+
+
 	  delete_image_ID("pupa1");
+
 
 
 	  printf("\r%10ld       ", data.image[ID_wfs].md[0].cnt0);
