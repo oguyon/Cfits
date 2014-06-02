@@ -218,14 +218,16 @@ int AOloopControl_loadCM_cli()
 //int AOloopControl_loopMonitor(long loop, double frequ)
 int AOloopControl_loopMonitor_cli()
 {
- if(CLI_checkarg(1,1)+CLI_checkarg(1,2)==0)
+ if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0)
    {
      AOloopControl_loopMonitor(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl);
      return 0;
    }
  else
-   AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
- 
+   {
+     AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
+   }
+
   return(0);
 }
 
