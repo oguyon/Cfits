@@ -2108,9 +2108,11 @@ int AOcompute(long loop)
       
       if(data.image[aoconfID_cmd_modes].array.F[k] > AOconf[loop].maxlimit)
 	data.image[aoconfID_cmd_modes].array.F[k] = AOconf[loop].maxlimit;
+    }
+
 
       //data.image[aoconfID_cmd_modes].array.F[k] *= 1.0 - 0.05*(1.0*k/AOconf[loop].NBDMmodes);
-    }	
+
 
   data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
 
@@ -2285,7 +2287,10 @@ int AOloopControl_run()
 
 int AOloopControl_printloopstatus(long loop)
 {
+  long k, kmax;
+  
 
+  
   printw("loop number %ld\n", loop);
 
   
@@ -2301,6 +2306,15 @@ int AOloopControl_printloopstatus(long loop)
   printw("STATUS = %d\n", AOconf[loop].status);
   printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
+  
+  kmax = wrow-20;
+  if(kmax>AOconf[loop].NBDMmodes)
+    kmax = AOconf[loop].NBDMmodes;
+  for(k=0;k<kmax;k++)
+    {
+      printw("%4ld %20f\n", data.image[aoconfID_cmd_modes].array.F[k]);
+    }
+
 
   return(0);
 }
@@ -2309,8 +2323,32 @@ int AOloopControl_printloopstatus(long loop)
 
 int AOloopControl_loopMonitor(long loop, double frequ)
 {
+  char name[200];
+
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
+
+
+  // load arrays that are required
+  if(aoconfID_cmd_modes==-1)
+    {
+      sprintf(name, "DMmode_cmd_%ld", loop);
+      aoconfID_cmd_modes = read_sharedmem_image(name);
+    }
+     
+  if(aoconfID_cmd1_modes==-1)
+    {
+      sprintf(name, "DMmode_cmd1_%ld", loop);
+      aoconfID_cmd1_modes = read_sharedmem_image(name);
+    }
+
+  /*  
+      sprintf(name, "DMmode_cmd1_%ld", loop);
+      sizearray[0] =  AOconf[loop].NBDMmodes;
+      aoconfID_cmd1_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      aoconfID_cmd1_modes = read_sharedmem_image(name);
+  */
+
 
   initscr();		
   getmaxyx(stdscr, wrow, wcol);
