@@ -2376,6 +2376,8 @@ int AOloopControl_loopMonitor(long loop, double frequ)
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
 
+  printf("MEMORY HAS BEEN INITIALIZED\n");
+  fflush(stdout);
 
   // load arrays that are required
   if(aoconfID_cmd_modes==-1)
@@ -2389,6 +2391,34 @@ int AOloopControl_loopMonitor(long loop, double frequ)
       sprintf(name, "DMmode_cmd1_%ld", loop);
       aoconfID_cmd1_modes = read_sharedmem_image(name);
     }
+
+
+   if(aoconfID_RMS_modes==-1)
+     {
+       sprintf(name, "DMmode_RMS_%ld", loop);
+       aoconfID_RMS_modes = read_sharedmem_image(name);
+     }
+   
+   if(aoconfID_AVE_modes==-1)
+    {
+      sprintf(name, "DMmode_AVE_%ld", loop);
+      aoconfID_AVE_modes = read_sharedmem_image(name);
+    }
+   
+   if(aoconfID_GAIN_modes==-1)
+     {
+       sprintf(name, "DMmode_GAIN_%ld", loop);
+       aoconfID_GAIN_modes = read_sharedmem_image(name);
+    }
+   
+   if(aoconfID_LIMIT_modes==-1)
+     {
+       sprintf(name, "DMmode_LIMIT_%ld", loop);
+       aoconfID_LIMIT_modes = read_sharedmem_image(name);
+     }
+
+   
+
 
   /*  
       sprintf(name, "DMmode_cmd1_%ld", loop);
