@@ -2304,7 +2304,9 @@ int AOloopControl_printloopstatus(long loop)
 
 int AOloopControl_loopMonitor(long loop, double frequ)
 {
-  
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
   initscr();		
   getmaxyx(stdscr, wrow, wcol);
 
