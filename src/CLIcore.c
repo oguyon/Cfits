@@ -271,6 +271,16 @@ int main(int argc, char *argv[])
   data.SHARED_DFT = 0; // do not allocate shared memory for images
   data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image 
 
+
+  // to take advantage of kernel priority: 
+  // owner=root mode=4755 
+
+  getresuid(&euid_real, &euid_called, &suid);
+
+  //This sets it to the privileges of the normal user
+  seteuid(euid_real);
+  
+
   // initialize readline
   // Tell readline to use custom completion function
   rl_attempted_completion_function = CLI_completion;

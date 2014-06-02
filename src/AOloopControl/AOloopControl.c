@@ -11,6 +11,7 @@
 #include <sys/mman.h>
 #include <err.h>
 #include <fcntl.h>
+#include <sched.h>
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_math.h>
@@ -2129,11 +2130,21 @@ int AOloopControl_run()
   char logfname[1000];
   char command[1000];
   int r;
+  int RT_priority = 90; //any number from 0-99
+  struct sched_param schedpar;
+
+
+  schedpar.sched_priority = RT_priority;
+  seteuid(euid_called); //This goes up to maximum privileges
+  sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
 
   loop = LOOPNUMBER;
   
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
+
+  
+
 
   printf("SETTING UP...\n");
   sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
@@ -2236,6 +2247,8 @@ int AOloopControl_run()
     }
 
   free(thetime);
+
+  seteuid(euid_real);//Go back to normal privileges
 
   return(0);
 }

@@ -47,7 +47,6 @@ typedef struct
   //long ID_DMmodes;  // DM modes
   long NBDMmodes;  
   float maxlimit; // maximum absolute value for mode values
-  
 
   // long ID_cmd_modes; // modal commands to be applied to DM
   //  long ID_cmd1_modes; // modal values at output of control matrix multiplication

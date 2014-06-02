@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <time.h>
 #include <fftw3.h>
@@ -46,6 +47,16 @@ int C_ERRNO;			// C errno (from errno.h)
 
 
 #define NB_ARG_MAX                 20
+
+
+//Need to install process with setuid.  Then, so you aren't running privileged all the time do this:
+uid_t euid_real;
+uid_t euid_called;
+uid_t suid;
+
+
+
+
 
 
 
