@@ -218,9 +218,14 @@ int AOloopControl_loadCM_cli()
 //int AOloopControl_loopMonitor(long loop, double frequ)
 int AOloopControl_loopMonitor_cli()
 {
-
-  AOloopControl_loopMonitor(LOOPNUMBER, 10.0);
-
+ if(CLI_checkarg(1,1)+CLI_checkarg(1,2)==0)
+   {
+     AOloopControl_loopMonitor(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl);
+     return 0;
+   }
+ else
+   AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
+ 
   return(0);
 }
 
@@ -407,8 +412,8 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_loopMonitor_cli;
   strcpy(data.cmd[data.NBcmd].info,"monitor loop");
-  strcpy(data.cmd[data.NBcmd].syntax,"aolmon");
-  strcpy(data.cmd[data.NBcmd].example,"aolmon");
+  strcpy(data.cmd[data.NBcmd].syntax,"<frequ> <Nbcols>");
+  strcpy(data.cmd[data.NBcmd].example,"aolmon 10.0 3");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopMonitor(long loop, double frequ)");
   data.NBcmd++;
  
@@ -2333,10 +2338,10 @@ int AOloopControl_run()
 
 
 
-int AOloopControl_printloopstatus(long loop)
+int AOloopControl_printloopstatus(long loop, long nbcol)
 {
   long k, kmax;
-  
+  long col;
 
   
   printw("loop number %ld\n", loop);
@@ -2355,12 +2360,22 @@ int AOloopControl_printloopstatus(long loop)
   printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
   
-  kmax = (wrow-6);
+  kmax = (wrow-8)*nbcol;
   if(kmax>AOconf[loop].NBDMmodes)
     kmax = AOconf[loop].NBDMmodes;
+  nbcol = 2;
+  col = 0;
   for(k=0;k<kmax;k++)
     {
-      printw("%3ld [%4.2f %4.2f] %6.4f %6.4f %6.4f %6.4f\n", k, data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_cmd_modes].array.F[k], data.image[aoconfID_cmd1_modes].array.F[k], data.image[aoconfID_AVE_modes].array.F[k], data.image[aoconfID_RMS_modes].array.F[k]);
+      printw("%3ld [%4.2f %4.2f] %7.4f %7.4f %7.4f %6.4f", k, data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_cmd_modes].array.F[k], data.image[aoconfID_cmd1_modes].array.F[k], data.image[aoconfID_AVE_modes].array.F[k], data.image[aoconfID_RMS_modes].array.F[k]);
+      col++;
+      if(col==2)
+	{
+	  col = 0;
+	  printw("\n");
+	}
+      else
+	printw(" | ");
     }
 
 
@@ -2369,7 +2384,7 @@ int AOloopControl_printloopstatus(long loop)
 
 
 
-int AOloopControl_loopMonitor(long loop, double frequ)
+int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 {
   char name[200];
 
@@ -2446,7 +2461,7 @@ int AOloopControl_loopMonitor(long loop, double frequ)
       print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
       attroff(A_BOLD);
       
-      AOloopControl_printloopstatus(loop);
+      AOloopControl_printloopstatus(loop, nbcol);
       
       refresh();
     }
