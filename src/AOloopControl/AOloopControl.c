@@ -207,6 +207,19 @@ int AOloopControl_loadCM_cli()
 
 
 
+//int AOloopControl_loopMonitor(long loop, double frequ)
+int AOloopControl_loopMonitor_cli()
+{
+
+  AOloopControl_loopMonitor(LOOPNUMBER, 10.0);
+
+  return(0);
+}
+
+
+
+
+
 
 
 int init_AOloopControl()
@@ -381,6 +394,16 @@ int init_AOloopControl()
   data.NBcmd++;
   
 
+
+  strcpy(data.cmd[data.NBcmd].key,"aolmon");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_loopMonitor_cli;
+  strcpy(data.cmd[data.NBcmd].info,"monitor loop");
+  strcpy(data.cmd[data.NBcmd].syntax,"aolmon");
+  strcpy(data.cmd[data.NBcmd].example,"aolmon");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopMonitor(long loop, double frequ)");
+  data.NBcmd++;
+ 
 
   // add atexit functions here
   // atexit((void*) SCEXAO_DM_unloadconf);
