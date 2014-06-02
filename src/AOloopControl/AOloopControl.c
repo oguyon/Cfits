@@ -2307,12 +2307,13 @@ int AOloopControl_printloopstatus(long loop)
   printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
   
-  kmax = wrow-20;
+  kmax = 2*(wrow-6);
   if(kmax>AOconf[loop].NBDMmodes)
     kmax = AOconf[loop].NBDMmodes;
-  for(k=0;k<kmax;k++)
+  for(k=0;k<kmax-1;k+=2)
     {
-      printw("%4ld %20f %20f\n", k, data.image[aoconfID_cmd_modes].array.F[k], data.image[aoconfID_cmd1_modes].array.F[k]);
+      printw("%3ld %5.4f %5.4f   ", k, data.image[aoconfID_cmd_modes].array.F[k], data.image[aoconfID_cmd1_modes].array.F[k]);
+      printw("%3ld %5.4f %5.4f\n", k+1, data.image[aoconfID_cmd_modes].array.F[k+1], data.image[aoconfID_cmd1_modes].array.F[k+1]);           
     }
 
 
