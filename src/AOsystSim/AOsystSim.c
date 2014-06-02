@@ -29,6 +29,17 @@ extern DATA data;
 //
 
 
+
+int AOsystSim_fitTelPup_cli()
+{
+  if(CLI_checkarg(1,4)==0)
+    AOsystSim_fitTelPup(data.cmdargtoken[1].val.string);
+
+  return(0);
+}
+
+
+
 int AOsystSim_run_cli()
 {
   
@@ -45,6 +56,15 @@ int init_AOsystSim()
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "conversion between image format, I/O");
   data.NBmodule++;
+
+  strcpy(data.cmd[data.NBcmd].key,"AOsystsfitpup");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOsystSim_fitTelPup_cli;
+  strcpy(data.cmd[data.NBcmd].info,"fit telescope pupil");
+  strcpy(data.cmd[data.NBcmd].syntax,"tel pupil file");
+  strcpy(data.cmd[data.NBcmd].example,"AOsystfitpup");
+  strcpy(data.cmd[data.NBcmd].Ccall,"AOsystSim_fitTelPup(char *ID_name)");
+  data.NBcmd++;
 
 
   strcpy(data.cmd[data.NBcmd].key,"AOsystsim");
@@ -63,6 +83,163 @@ int init_AOsystSim()
 }
 
 
+
+// all sizes in actuators on DM
+
+long AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick)
+{
+  long ID, IDz;
+  long ii,  jj;
+  double x, y, x1, y1, r;
+  long binfact = 8;
+  long size;
+  double PA;
+  double val;
+  long IDindex, IDi;
+  long index;
+  long ii1, jj1;
+
+
+  size = msize*binfact;
+  
+  ID = create_2Dimage_ID("TPmask", msize, msize);
+  IDi = create_3Dimage_ID("TPind", msize, msize, 5);
+
+  IDz = create_2Dimage_ID("telpupDMz", size, size);
+  IDindex = create_2Dimage_ID("telpupDMzindex", size, size);
+  for(ii=0;ii<size;ii++)
+    for(jj=0;jj<size;jj++)
+      {
+	index = 0;
+	val = 1.0;
+
+	x = (1.0*ii/binfact);
+	y = (1.0*jj/binfact);
+	x -= xc;
+	y -= yc;
+	r = sqrt(x*x+y*y);
+	PA = atan2(y, x);
+	PA += pupPA;
+	x = r*cos(PA);
+	y = r*sin(PA);
+
+	if(r>rout)
+	  val = 0.0;
+	if(r<rin)
+	  val = 0.0;
+	
+	x1 = x-spideroffset-spiderthick/2.0;
+	y1 = y;
+	PA = atan2(y1,x1);
+	if(fabs(PA)<spiderPA)
+	  index = 1;
+
+
+	x1 = x+spideroffset+spiderthick/2.0;
+	y1 = y;
+	PA = atan2(y1,-x1);
+	if(fabs(PA)<spiderPA)
+	  index = 2;
+	
+
+
+
+	x1 = x+spideroffset-spiderthick/2.0;
+	y1 = y;
+	PA = atan2(x1,y1);
+	if((fabs(PA)<M_PI/2-spiderPA)&&(x<0))
+	  index = 3;
+	
+	x1 = -x+spideroffset-spiderthick/2.0;
+	y1 = y;
+	PA = atan2(x1,y1);
+	if((fabs(PA)<M_PI/2-spiderPA)&&(x>0))
+	  index = 3;
+	
+
+
+
+
+	x1 = x+spideroffset-spiderthick/2.0;
+	y1 = -y;
+	PA = atan2(x1,y1);
+	if((fabs(PA)<M_PI/2-spiderPA)&&(x<0))
+	  index = 4;
+
+	x1 = -x+spideroffset-spiderthick/2.0;
+	y1 = -y;
+	PA = atan2(x1,y1);
+	if((fabs(PA)<M_PI/2-spiderPA)&&(x>0))
+	  index = 4;
+
+	if(index==0)
+	  val = 0.0;
+	data.image[IDz].array.F[jj*size+ii] = val;
+	data.image[IDindex].array.F[jj*size+ii] = index*val;
+
+	ii1 = (long) (ii/binfact);
+	jj1 = (long) (jj/binfact);
+	
+
+	data.image[ID].array.F[jj1*msize+ii1] += val/binfact/binfact;
+	
+	if(val>0.5)
+	  {
+	    data.image[IDi].array.F[jj1*msize+ii1] = 1;
+	    data.image[IDi].array.F[index*msize*msize+jj1*msize+ii1] = 1;
+	  }
+      }
+  
+  //  save_fits("telpupDMz", "!telpupDMz.fits");
+  //save_fits("telpupDMzindex", "!telpupDMzindex.fits");  
+  delete_image_ID("telpupDMz");
+  delete_image_ID("telpupDMzindex");
+
+  save_fits("TPmask", "!TPmask.fits");
+  save_fits("TPind", "!TPind.fits");
+
+  return(ID);
+}
+
+
+long AOsystSim_fitTelPup(char *ID_name)
+{
+  long ID;
+  double xc, yc, pupPA, spiderPA, spideroffset, spiderthick, rin, rout;
+  long size;
+
+  rout = 21.99;
+  rin = 0.315*rout;
+  pupPA = -0.105;
+  spiderPA = 0.9;
+  spiderthick = 0.06*rout;
+  spideroffset = 0.165*rout;
+
+  xc = 24.87;
+  yc = 24.06;
+
+  
+  AOsystSim_mkTelPupDM("testpup", 50, xc, yc, rin, rout, pupPA, spiderPA, spideroffset, spiderthick);
+
+  /*  ID = image_ID(ID_name);
+  size = data.image[ID].md[0].size[0];
+
+  xc = 79.7;
+  yc= 71.125;
+
+  rout = 47.5;
+  rin = 0.315*rout;
+  pupPA = -0.105;
+  spiderPA = 0.9;
+  spiderthick = 0.06*rout;
+  spideroffset = 0.165*rout;
+
+  AOsystSim_mkTelPupDM("testpup", size, xc, yc, rin, rout, pupPA, spiderPA, spideroffset, spiderthick);
+  */
+  //  save_fits("TPmask", "!testpup.fits");
+
+  return(ID);
+}
 
 
 int AOsystSim_run()
@@ -104,7 +281,7 @@ int AOsystSim_run()
   long IDdmt, IDdmtg;
 
   long moffset;
- 
+  long msize;
   long usleeptime = 100; // delay at each loop
 
   pupsize2 = pupsize*pupsize;
@@ -130,7 +307,7 @@ int AOsystSim_run()
   data.image[IDflat].md[0].write = 1;
   for(ii=0;ii<dmxsize;ii++)
     for(jj=0;jj<dmysize;jj++)
-      data.image[IDflat].array.F[jj*dmxsize+ii] = 5.5;
+      data.image[IDflat].array.F[jj*dmxsize+ii] = 0.5;
   data.image[IDflat].md[0].cnt0++; 
   data.image[IDflat].md[0].write = 0;
 
@@ -192,6 +369,35 @@ int AOsystSim_run()
   printf("OFFSET = %ld\n", offset);
   cnt = -1;
   printf("\n");
+
+
+  if(ID=image_ID("TpupMask")==-1)
+    {
+      IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+      for(ii=0;ii<pupsize;ii++)
+	for(jj=0;jj<pupsize;jj++)
+	  {
+	    x = (1.0*ii-0.5*pupsize)/puprad;
+	    y = (1.0*jj-0.5*pupsize)/puprad;
+	    r = sqrt(x*x+y*y);
+	    if(r<0.3)
+	      data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
+	    if((fabs(0.5*x+0.5*y)<0.05)||(fabs(0.5*x-0.5*y)<0.05))
+		  data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
+	  }
+    } 
+  else
+    {      
+      msize = data.image[ID].md[0].size[0];
+      IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+      offset = (pupsize-msize)/2;
+      for(ii=0;ii<msize;ii++)
+	for(jj=0;jj<msize;jj++)
+	  data.image[IDpupa].array.F[(jj+offset)*pupsize+(ii+offset)] = data.image[ID].array.F[jj*msize+ii];	    
+    }
+ 
+  //  save_fits("pupa", "!Tpupa.fits");
+
   while(1)
     {
       usleep(usleeptime);
@@ -222,28 +428,7 @@ int AOsystSim_run()
       delete_image_ID("dmdisptg");
 
 
-
-      // cnt0 = data.image[ID_dm].md[0].cnt0;
-      // if(cnt0!=cnt)
-      //{
-	  //	  printf("COMPUTING WFS IMAGE\n");
-	  //fflush(stdout);
-	  
-	  IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
-	  for(ii=0;ii<pupsize;ii++)
-	    for(jj=0;jj<pupsize;jj++)
-	      {
-		x = (1.0*ii-0.5*pupsize)/puprad;
-		y = (1.0*jj-0.5*pupsize)/puprad;
-		r = sqrt(x*x+y*y);
-		if(r<0.3)
-		  data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
-		if((fabs(0.5*x+0.5*y)<0.05)||(fabs(0.5*x-0.5*y)<0.05))
-		  data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
-	      }
-	  save_fits("pupa", "!pupa.fits");
-	  
-	  IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
+   	IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
 	  IDpuppIR = create_2Dimage_ID("puppIR", pupsize, pupsize);
 
 	  
@@ -294,7 +479,6 @@ int AOsystSim_run()
 
 
 	  mk_complex_from_amph("pupa","puppIR","pupc");
-	  delete_image_ID("pupa");
 	  permut("pupc");
 	  do2dfft("pupc","focc");
 	  delete_image_ID("pupc");
