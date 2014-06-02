@@ -12,6 +12,7 @@
 #include <err.h>
 #include <fcntl.h>
 #include <sched.h>
+#include <ncurses.h>
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_math.h>
@@ -34,6 +35,7 @@
 
 
 
+int wcol, wrow; // window size
 
 
 long aoconfID_WFS = -1;
@@ -1068,7 +1070,7 @@ long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname)
 long AOloopControl_loadCM(long loop, char *CMfname)
 {
   long ID = -1;
-  int OK;
+  int vOK;
   char name[200];
   long ID0;
   long ii;
@@ -1079,36 +1081,36 @@ long AOloopControl_loadCM(long loop, char *CMfname)
   if( (ID=load_fits(CMfname, "tmpcontrM")) != -1 )
     {
       // check size is OK
-      OK = 1;
+      vOK = 1;
       if(data.image[ID].md[0].naxis!=3)
 	{
 	  printf("Control matrix has wrong dimension\n");
-	  OK = 0;
+	  vOK = 0;
 	}
       if(data.image[ID].md[0].atype!=FLOAT)
 	{
 	  printf("Control matrix has wrong type\n");
-	  OK = 0;
+	  vOK = 0;
 	}
-      if(OK==1)
+      if(vOK==1)
 	{
 	  if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexWFS)
 	    {
 	      printf("Control matrix has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
-	      OK = 0;
+	      vOK = 0;
 	    }
 	  if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyWFS)
 	    {
 	      printf("Control matrix has wrong y size\n");
-	      OK = 0;
+	      vOK = 0;
 	    }
 	  if(data.image[ID].md[0].size[2]!=AOconf[loop].NBDMmodes)
 	    {
 	      printf("Control matrix has wrong z size\n");
-	      OK = 0;
+	      vOK = 0;
 	    }	  
 	}
-      if(OK==1)
+      if(vOK==1)
 	{
 	  AOconf[loop].init_CM = 1;
 	  sprintf(name, "ContrM_%ld", loop);
@@ -1138,7 +1140,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
   char fname[200];
   long ID;
   long *sizearray;
-  int OK;
+  int vOK;
   int kw;
 
 
@@ -1210,37 +1212,37 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       if(read_config_parameter(config_fname, "WFSrefim", content)==0)
 	exit(0);
       printf("WFS ref file name : %s\n", content);
-      OK = 0;
+      vOK = 0;
       AOconf[loop].init_refWFS = 0;
       if(is_fits_file(content)==1)
 	if((ID=load_fits(content, "tmprefwfs"))!=-1)
 	  {
 	    printf("Verifying file\n");
-	    OK = 1;
+	    vOK = 1;
 	    if(data.image[ID].md[0].naxis!=2)
 	      {
 		printf("refWFS has wrong dimension\n");
-		OK = 0;
+		vOK = 0;
 	      }
 	    if(data.image[ID].md[0].atype!=FLOAT)
 	      {
 		printf("refWFS has wrong type\n");
-		OK = 0;
+		vOK = 0;
 	      }
-	    if(OK==1)
+	    if(vOK==1)
 	      {
 		if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexWFS)
 		  {
 		    printf("refWFS has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
-		    OK = 0;
+		    vOK = 0;
 		  }
 		if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyWFS)
 		  {
 		    printf("refWFS has wrong y size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
-		    OK = 0;
+		    vOK = 0;
 		  }
 	      }
-	    if(OK==1)
+	    if(vOK==1)
 	      {
 		sprintf(name, "refWFS_%ld", loop);
 		sizearray[0] =  AOconf[loop].sizexWFS;
@@ -1285,36 +1287,36 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	exit(0);
       printf("DM modes file name : %s\n", content);
       
-      OK = 0;
+      vOK = 0;
       if(is_fits_file(content)==1)
 	if((ID=load_fits(content, "tmpdmmodes"))!=-1)
 	  {
 	    printf("Verifying file\n");
-	    OK = 1;
+	    vOK = 1;
 	    if(data.image[ID].md[0].naxis != 3)
 	      {
 		printf("DM modes has wrong dimension\n");
-		OK = 0;
+		vOK = 0;
 	      }
 	    if(data.image[ID].md[0].atype != FLOAT)
 	      {
 		printf("DM modes has wrong type\n");
-		OK = 0;
+		vOK = 0;
 	      }
-	    if(OK==1)
+	    if(vOK==1)
 	      {
 		if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexDM)
 		  {
 		    printf("DM modes has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexDM);
-		    OK = 0;
+		    vOK = 0;
 		  }
 		if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyDM)
 		  {
 		    printf("DM modes has wrong y size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexDM);
-		    OK = 0;
+		    vOK = 0;
 		  }
 	      }
-	    if(OK==1)
+	    if(vOK==1)
 	      {
 		AOconf[loop].NBDMmodes = data.image[ID].md[0].size[2];
 		sprintf(name, "DMmodes_%ld", loop);
@@ -1327,7 +1329,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	      }
 	    delete_image_ID("tmpdmmodes");
 	  }
-      if(OK == 0)
+      if(vOK == 0)
 	{
 	  printf("\n");
 	  printf("========== ERROR: NEED DM MODES TO START AO LOOP ===========\n");	
@@ -1424,37 +1426,37 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       printf("Response Matrix file name : %s\n", content);
       if((ID=load_fits(content, "tmprespM"))!=-1)
 	{
-	  // check size is OK
-	  OK = 1;
+	  // check size is vOK
+	  vOK = 1;
 	  if(data.image[ID].md[0].naxis!=3)
 	    {
 	      printf("Response matrix has wrong dimension\n");
-	      OK = 0;
+	      vOK = 0;
 	    }
 	  if(data.image[ID].md[0].atype!=FLOAT)
 	    {
 	      printf("Response matrix has wrong type\n");
-	      OK = 0;
+	      vOK = 0;
 	    }
-	  if(OK==1)
+	  if(vOK==1)
 	    {
 	      if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexWFS)
 		{
 		  printf("Response matrix has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
-		  OK = 0;
+		  vOK = 0;
 		}
 	      if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyWFS)
 		{
 		  printf("Response matrix has wrong y size\n");
-		  OK = 0;
+		  vOK = 0;
 		}
 	      if(data.image[ID].md[0].size[2]!=AOconf[loop].NBDMmodes)
 		{
 		  printf("Response matrix has wrong z size\n");
-		  OK = 0;
+		  vOK = 0;
 		}	  
 	    }
-	  if(OK==1)
+	  if(vOK==1)
 	    {
 	      AOconf[loop].init_RM = 1;
 	      sprintf(name, "RespM_%ld", loop);
@@ -1638,7 +1640,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
   long NBexcl = 2; // number of frames excluded between DM mode changes
   long kc0min, kc0max;
   long IDrmtest;
-  int OK;
+  int vOK;
 
 
   long iter;
@@ -1861,7 +1863,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
       // PROCESS RMCUBE  
       fp = fopen("TimeDelayRM.txt", "w");
       RMsig = 0.0;
-      OK = 1;
+      vOK = 1;
       IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
       for(kc0=kc0min;kc0<kc0max;kc0++)
 	{
@@ -1906,13 +1908,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	      }
 	  
 	  if(RMsig<RMsigold)
-	    OK = 0;
-	  printf("Delay = %ld frame(s)   ->  RM signal = %lf   %d\n", kc0, (double) RMsig, OK);
+	    vOK = 0;
+	  printf("Delay = %ld frame(s)   ->  RM signal = %lf   %d\n", kc0, (double) RMsig, vOK);
 	  fprintf(fp, "%ld %lf\n", kc0, (double) RMsig);      
 	  if(RMsig<RMsigold)
-	    OK = 0;
+	    vOK = 0;
 
-	  if(OK==1) // ADOPT THIS MATRIX
+	  if(vOK==1) // ADOPT THIS MATRIX
 	    {
 	      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
 		for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
@@ -2120,7 +2122,7 @@ int AOloopControl_run()
 {
   char fname[200];
   long loop;
-  int OK;
+  int vOK;
 
   long ID;
   long j, m;
@@ -2132,10 +2134,10 @@ int AOloopControl_run()
   int r;
   int RT_priority = 90; //any number from 0-99
   struct sched_param schedpar;
-
+ 
 
   schedpar.sched_priority = RT_priority;
-  seteuid(euid_called); //This goes up to maximum privileges
+  r = seteuid(euid_called); //This goes up to maximum privileges
   sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
 
   loop = LOOPNUMBER;
@@ -2151,19 +2153,19 @@ int AOloopControl_run()
   AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
  
 
-  OK = 1;
+  vOK = 1;
   if(AOconf[loop].init_refWFS==0)
     {
       printf("ERROR: CANNOT RUN LOOP WITHOUT WFS REFERENCE\n");
-      OK = 0;
+      vOK = 0;
     }
   if(AOconf[loop].init_CM==0)
     {
       printf("ERROR: CANNOT RUN LOOP WITHOUT CONTROL MATRIX\n");
-      OK = 0;
+      vOK = 0;
     }
   
-  if(OK==1)
+  if(vOK==1)
     {
       AOconf[loop].kill = 0;
       AOconf[loop].on = 0;
@@ -2248,9 +2250,63 @@ int AOloopControl_run()
 
   free(thetime);
 
-  seteuid(euid_real);//Go back to normal privileges
+  r = seteuid(euid_real);//Go back to normal privileges
 
   return(0);
+}
+
+
+
+
+
+
+int AOloopControl_printloopstatus(long loop)
+{
+
+  printw("loop number %ld\n", loop);
+  if(AOconf[loop].on == 1)
+    printw("loop is ON\n");
+  else
+    printw("loop is OFF\n");
+  if(AOconf[loop].logon == 1)
+    printw("log is ON\n");
+  else
+    printw("log is OFF\n");
+  printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
+
+  return(0);
+}
+
+
+
+int AOloopControl_loopMonitor(long loop, double frequ)
+{
+  
+  initscr();		
+  getmaxyx(stdscr, wrow, wcol);
+
+
+  start_color();
+  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
+  init_pair(2, COLOR_BLACK, COLOR_RED);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
+  init_pair(4, COLOR_RED, COLOR_BLACK);
+
+  while( !kbdhit() )
+    {
+      usleep((long) (1000000.0/frequ));
+      clear();
+      attron(A_BOLD);
+      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+      attroff(A_BOLD);
+      
+      AOloopControl_printloopstatus(loop);
+      
+      refresh();
+    }
+  endwin();	
+
+  return 0;
 }
 
 

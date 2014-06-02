@@ -20,20 +20,13 @@ typedef struct
 
   char name[80];
   
-  //  long ID_WFS;    // Camera input
   char WFSname[80];   
   long sizexWFS;
   long sizeyWFS;
   long sizeWFS;
   long long WFScnt;  
 
-  //  long ID_WFS1; // averaged, dark-subtracted frame (float), name = "imWFS1_%ld", loop;
-  //  long ID_WFS2; // WFS1 image minus WFS reference (float), name = "imWFS2_%ld", loop;
-  // long ID_refWFS; // WFS reference
-
-  //long ID_DM;     // DM
   char DMname[80];
-  //long ID_DMRM;     // DM channel for RM
   char DMnameRM[80];
   long sizexDM;
   long sizeyDM;
@@ -44,17 +37,12 @@ typedef struct
   int init_CM;        // Control Matrix loaded
 
   
-  //long ID_DMmodes;  // DM modes
   long NBDMmodes;  
   float maxlimit; // maximum absolute value for mode values
-
-  // long ID_cmd_modes; // modal commands to be applied to DM
-  //  long ID_cmd1_modes; // modal values at output of control matrix multiplication
+  
 
   char respMname[80];
-  // long ID_respM;  // Response matrix
   char contrMname[80];
-  //  long ID_contrM; // Control matrix
   
 
   
@@ -108,7 +96,10 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 int AOcompute(long loop);
 int AOloopControl_run();
 
+int AOloopControl_printloopstatus(long loop);
+int AOloopControl_loopMonitor(long loop, double frequ);
 int AOloopControl_showparams(long loop);
+
 int AOloopControl_setLoopNumber(long loop);
 int AOloopControl_loopkill();
 int AOloopControl_loopon();
