@@ -2312,7 +2312,7 @@ int AOloopControl_printloopstatus(long loop)
     kmax = AOconf[loop].NBDMmodes;
   for(k=0;k<kmax;k++)
     {
-      printw("%4ld %20f\n", data.image[aoconfID_cmd_modes].array.F[k]);
+      printw("%4ld %20f\n", k, data.image[aoconfID_cmd_modes].array.F[k]);
     }
 
 
