@@ -2297,6 +2297,8 @@ int AOloopControl_printloopstatus(long loop)
     printw("log is ON\n");
   else
     printw("log is OFF\n");
+  
+  printw("STATUS = %d\n", AOconf[loop].status);
   printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
 
