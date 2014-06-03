@@ -575,6 +575,15 @@ int init_AOloopControl()
   data.NBcmd++;
 
 
+  strcpy(data.cmd[data.NBcmd].key,"aolresetrms");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_resetRMSperf;
+  strcpy(data.cmd[data.NBcmd].info,"reset RMS performance monitor");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"aolresetrms");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_resetRMSperf()");
+  data.NBcmd++;
+
 
   // add atexit functions here
   // atexit((void*) SCEXAO_DM_unloadconf);
@@ -2364,6 +2373,10 @@ int AOcompute(long loop)
   for(k=0; k<AOconf[loop].NBDMmodes; k++)
     AOconf[loop].RMSmodes += data.image[aoconfID_cmd1_modes].array.F[k]*data.image[aoconfID_cmd1_modes].array.F[k];
     
+  AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
+  AOconf[loop].RMSmodesCumulcnt ++;
+
+
 
   AOconf[loop].status = 6; //  MULTIPLYING BY GAINS
    
@@ -2603,7 +2616,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   
 
 
-  attron(A_BOLD);      
+   
   for(k=0;k<AOconf[loop].NBMblocks;k++)
     {
       if(k==0)
@@ -2612,7 +2625,10 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 	printw("MODE BLOCK %ld   [ %4ld - %4ld ]  %4.2f  %4.2f  %4.2f\n", k, AOconf[loop].indexmaxMB[k-1], AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
       nbl++;
     }
-  attroff(A_BOLD);
+ 
+
+  printw("            MODAL RMS (ALL MODES) : %6.4lf     CUMUL :  %6.4lf  ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
+
   
   print_header(" MODES ", '-');
   nbl++;
@@ -3111,6 +3127,24 @@ int AOloopControl_setmultfblock(long mb, float multfval)
       for(k=kmin; k<kmax; k++)
 	data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
     }
+
+  return 0;
+}
+
+
+
+
+int AOloopControl_resetRMSperf()
+{
+  long k;
+  char name[200];
+  long kmin, kmax;
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  AOconf[LOOPNUMBER].RMSmodesCumul = 0.0;
+  AOconf[LOOPNUMBER].RMSmodesCumulcnt = 0;
 
   return 0;
 }

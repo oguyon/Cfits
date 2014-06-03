@@ -81,6 +81,8 @@ typedef struct
 
   // LOOP TELEMETRY
   double RMSmodes;
+  double RMSmodesCumul;
+  long long RMSmodesCumulcnt;
 
   // logs
   char logdir[80];
@@ -132,5 +134,6 @@ int AOloopControl_setmultfrange(long m0, long m1, float multfval);
 int AOloopControl_setgainblock(long mb, float gainval);
 int AOloopControl_setlimitblock(long mb, float limitval);
 int AOloopControl_setmultfblock(long mb, float multfval);
+int AOloopControl_resetRMSperf();
 
 #endif
