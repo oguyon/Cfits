@@ -3096,6 +3096,8 @@ int AOloopControl_setgainblock(long mb, float gainval)
 	kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
       kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
 
+      AOconf[LOOPNUMBER].gainMB[mb] = gainval;
+
       for(k=kmin; k<kmax; k++)
 	data.image[aoconfID_GAIN_modes].array.F[k] = gainval;
     }
@@ -3126,6 +3128,8 @@ int AOloopControl_setlimitblock(long mb, float limitval)
       else
 	kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
       kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
+
+      AOconf[LOOPNUMBER].limitMB[mb] = limitval;
 
       for(k=kmin; k<kmax; k++)
 	data.image[aoconfID_LIMIT_modes].array.F[k] = limitval;
@@ -3158,6 +3162,8 @@ int AOloopControl_setmultfblock(long mb, float multfval)
 	kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
       kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
 
+      AOconf[LOOPNUMBER].multfMB[mb] = multfval;
+
       for(k=kmin; k<kmax; k++)
 	data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
     }
@@ -3189,14 +3195,28 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 {
   long k;
   float gain;
+  float bestgain= 0.0;
+  float bestval = 10000000.0;
+  float val;
+
 
   for(k=0;k<NBgain;k++)
     {
       gain = gainStart + 1.0*k/(NBgain-1)*(gainEnd-gainStart);
       AOloopControl_setgainblock(NBblock, gain); 
       AOloopControl_loopstep(LOOPNUMBER, NBstep);
-      printf("%2ld  %6.4f  %10.8lf\n", k, gain, sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt));
+      val = sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt);
+      printf("%2ld  %6.4f  %10.8lf\n", k, gain, val);
+      
+      if(val<bestval)
+	{
+	  bestval = val;
+	  bestgain = gain;
+	}
     }
+  printf("BEST GAIN = %f\n", bestgain);
+  
+  AOloopControl_setgainblock(NBblock, bestgain);
 
   return(0);
 }
