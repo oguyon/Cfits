@@ -2574,7 +2574,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   long k, kmax;
   long col;
   float val;
-  
+  long nbl = 0;
   float AVElim = 0.01;
   float RMSlim = 0.01;
   
@@ -2585,6 +2585,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     printw("loop is ON     ");
   else
     printw("loop is OFF    ");
+
   if(AOconf[loop].logon == 1)
     printw("log is ON   ");
   else
@@ -2594,9 +2595,30 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   
   kmax = (wrow-3)*(nbcol-1);
   printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
+  nbl++;
+
   printw("CNT : %lld  / %lld\n", AOconf[loop].cnt, AOconf[loop].cntmax);
+  nbl++;  
   
+
+
+  attron(A_BOLD);      
+  for(k=0;k<AOconf[loop].NBMblocks;k++)
+    {
+      if(k==0)
+	printf("MODE BLOCK %ld   [%ld-%ld]  %4.2f  %4.2f  %4.2f\n", k, (long) 0, AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+      else
+	printf("MODE BLOCK %ld   [%ld-%ld]  %4.2f  %4.2f  %4.2f\n", k, AOconf[loop].indexmaxMB[k-1], AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+      nbl++;
+    }
+  attroff(A_BOLD);
   
+  print_header(" MODES ", '-');
+  nbl++;
+
+
+
+
   if(kmax>AOconf[loop].NBDMmodes)
     kmax = AOconf[loop].NBDMmodes;
 
