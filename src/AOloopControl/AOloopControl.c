@@ -2370,7 +2370,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     {
       printw("%3ld [%4.2f %4.2f] %7.4f %7.4f %7.4f %6.4f", k, data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_cmd_modes].array.F[k], data.image[aoconfID_cmd1_modes].array.F[k], data.image[aoconfID_AVE_modes].array.F[k], data.image[aoconfID_RMS_modes].array.F[k]);
       col++;
-      if(col==2)
+      if(col==nbcol)
 	{
 	  col = 0;
 	  printw("\n");
