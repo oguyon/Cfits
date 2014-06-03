@@ -2601,8 +2601,13 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
        aoconfID_LIMIT_modes = read_sharedmem_image(name);
      }
 
+   if(aoconfID_MULTF_modes==-1)
+     {
+       sprintf(name, "DMmode_MULTF_%ld", loop);
+       aoconfID_MULTF_modes = read_sharedmem_image(name);
+     }
 
-
+  
    initscr();		
    getmaxyx(stdscr, wrow, wcol);
    
