@@ -1597,7 +1597,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       else
 	AOconf[loop].NBMblocks = atoi(content);
 
-      printf("NBMblocks : %d\n", AOconf[loop].NBMblocks);
+      printf("NBMblocks : %ld\n", AOconf[loop].NBMblocks);
       fflush(stdout);
 
       
@@ -1887,34 +1887,53 @@ int set_DM_modes(long loop)
   long k;
   long i, j;
   float *arrayf;
+  double a;
+  long cnttest;
 
-  arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
-
-  for(j=0;j<AOconf[loop].sizeDM;j++)
-    arrayf[j] = 0.0;
-
-
-# ifdef _OPENMP
-#pragma omp parallel private(i,k)
-  {
-#pragma omp for
-# endif
-    for(i=0;i<AOconf[loop].sizeDM;i++)
-      for(k=0; k < AOconf[loop].NBDMmodes; k++)
-	arrayf[i] += data.image[aoconfID_cmd_modes].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
- 
-# ifdef _OPENMP
-  }
-# endif
+  //
+  //# ifdef _OPENMP
+  //#pragma omp parallel private(i,k)
+  //      {
+  //#pragma omp for
+  //# endif
+	
+  //  for(i=0;i<AOconf[loop].sizeDM;i++)
+  //    for(k=0; k < AOconf[loop].NBDMmodes; k++)
+  //	arrayf[i] += data.image[aoconfID_cmd_modes].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
+    
+    //# ifdef _OPENMP
+      // }
+    //# endif
 
 
 
-  data.image[aoconfID_DM].md[0].write = 1;
-  memcpy (data.image[aoconfID_DM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-  data.image[aoconfID_DM].md[0].cnt0++;
-  data.image[aoconfID_DM].md[0].write = 0;
 
-  free(arrayf);
+  if(AOconf[loop].GPU == 0)
+    {
+      arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
+      for(j=0;j<AOconf[loop].sizeDM;j++)
+	arrayf[j] = 0.0;
+      
+      for(i=0;i<AOconf[loop].sizeDM;i++)
+	for(k=0; k < AOconf[loop].NBDMmodes; k++)
+	  arrayf[i] += data.image[aoconfID_cmd_modes].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
+
+      data.image[aoconfID_DM].md[0].write = 1;
+      memcpy (data.image[aoconfID_DM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+      data.image[aoconfID_DM].md[0].cnt0++;
+      data.image[aoconfID_DM].md[0].write = 0;
+      
+      free(arrayf);
+    }
+  else
+    {
+      a = 0.1;
+      while(cnttest==data.image[aoconfID_DM].md[0].cnt0)
+	{
+	  a = sqrt(a+0.1);
+	}      
+    }  
+
   AOconf[loop].DMupdatecnt ++;
 
   return(0);
@@ -2372,52 +2391,12 @@ int AOcompute(long loop)
       
     }
  
-  if(0)
-    {
-      printf("GSL MATRIX MULT  :  ");
-      for(k=0; k<AOconf[loop].NBDMmodes; k++)
-	printf(" %6.3f ",data.image[aoconfID_cmd1_modes].array.F[k]);
-      printf("\n");       
-    }
-  
-  if(0)
-    {       
-      for(m=0; m<AOconf[loop].NBDMmodes; m++)
-	{
-	  data.image[aoconfID_cmd1_modes].array.F[m] = 0.0;
-	  for(n=0; n<AOconf[loop].sizeWFS; n++)
-	    {
-	      index = m*AOconf[loop].sizeWFS+n;
-	      data.image[aoconfID_cmd1_modes].array.F[m] += data.image[aoconfID_contrM].array.F[index]*data.image[aoconfID_WFS2].array.F[n];
-	    }
-	}	  
 
-      printf("CONV MATRIX MULT :  ");
-      for(k=0; k<AOconf[loop].NBDMmodes; k++)
-	printf(" %6.3f ",data.image[aoconfID_cmd1_modes].array.F[k]);
-      printf("\n");          
-   
-      printf("cMat  : ");
-      for(i=0;i<5;i++)
-	printf("%f ", data.image[aoconfID_contrM].array.F[i]);
-      printf(" ... ");
-      for(i=AOconf[loop].sizeWFS*AOconf[loop].NBDMmodes-5;i<AOconf[loop].sizeWFS*AOconf[loop].NBDMmodes;i++)
-	printf("%f ", data.image[aoconfID_contrM].array.F[i]);
-      printf("\n");
-      
-      printf("wfsVec: ");
-      for(n=0;n<5;n++)
-	printf("%f ", data.image[aoconfID_WFS2].array.F[n]);
-      printf(" ... ");
-      for(n=AOconf[loop].sizeWFS-5;n<AOconf[loop].sizeWFS;n++)
-	printf("%f ", data.image[aoconfID_WFS2].array.F[n]);
-      printf("\n");
-    }
 
   AOconf[loop].RMSmodes = 0;
   for(k=0; k<AOconf[loop].NBDMmodes; k++)
     AOconf[loop].RMSmodes += data.image[aoconfID_cmd1_modes].array.F[k]*data.image[aoconfID_cmd1_modes].array.F[k];
-    
+  
   AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
   AOconf[loop].RMSmodesCumulcnt ++;
 
@@ -2447,36 +2426,11 @@ int AOcompute(long loop)
     }
 
 
-
-
-      //data.image[aoconfID_cmd_modes].array.F[k] *= 1.0 - 0.05*(1.0*k/AOconf[loop].NBDMmodes);
-
-
   data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
 
-  /*
-    for(k=0; k<smao[0].NBmode; k++)
-      {
-	smao[0].mon_mode_residual[k] += smao[0].cmmode_array1[k];
-	smao[0].mon_mode_residual_cnt[k]++;
-	
-	smao[0].mon_mode_residualRMS[k] += smao[0].cmmode_array1[k]*smao[0].cmmode_array1[k];
-	smao[0].mon_mode_residualRMS_cnt[k]++;
-	
-	smao[0].mon_mode_applied[k] += smao[0].command_modes[k];
-	smao[0].mon_mode_applied_cnt[k]++;
-      }
-  */
-
-    AOconf[loop].status = 7; // fill in covariance matrix
-    /*    if(smao[0].covM_on == 1)
-      {
-	for(k1=0; k1<smao[0].NBmode; k1++)
-	  for(k2=0; k2<k1+1; k2++)
-	    smao[0].covM[k2*smao[0].NBmode+k1] += smao[0].cmmode_array1[k1] * smao[0].cmmode_array1[k2];
-	smao[0].covMcnt++;
-	}*/
-
+  
+  AOconf[loop].status = 7; // fill in covariance matrix
+  
   return(0);
 }
 
