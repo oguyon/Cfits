@@ -2598,7 +2598,7 @@ int AOloopControl_loopon()
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
 
-  AOconf[loop].cntmax = AOconf[loop].cnt-1;
+  AOconf[LOOPNUMBER].cntmax = AOconf[LOOPNUMBER].cnt-1;
 
   AOconf[LOOPNUMBER].on = 1;
   AOloopControl_showparams(LOOPNUMBER);
