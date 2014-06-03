@@ -2610,10 +2610,11 @@ int AOloopControl_loopstep(long loop, long NBstep)
     AOloopControl_InitializeMemory();
 
   AOconf[loop].cntmax = AOconf[loop].cnt + NBstep;
-  printf("LOOP STEP    %lld %ld %lld\n", AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
 
+  printf("\nLOOP STEP    %lld %ld %lld\n\n", AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
+  fflush(stdout);
   
-  AOconf[loop].on = 1;
+  //  AOconf[loop].on = 1;
   //  AOloopControl_showparams(loop);
 
   return 0;
