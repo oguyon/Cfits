@@ -2343,7 +2343,9 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 {
   long k, kmax;
   long col;
-
+  float val;
+  float AVElim = 0.01;
+  float RMSlim = 0.01;
   
   printw("loop number %ld\n", loop);
 
@@ -2368,9 +2370,56 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   col = 0;
   for(k=0;k<kmax;k++)
     {
-      printw("%3ld [%4.2f %4.2f] %7.4f %7.4f %7.4f %6.4f", k, data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_cmd_modes].array.F[k], data.image[aoconfID_cmd1_modes].array.F[k], data.image[aoconfID_AVE_modes].array.F[k], data.image[aoconfID_RMS_modes].array.F[k]);
+      attron(A_BOLD);
+      printw("%4ld ", k);
+      attroff(A_BOLD);
+   
+      printw("[%4.2f %4.2f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k]);
+      
+      val = data.image[aoconfID_cmd_modes].array.F[k];
+      if(fabs(val)>0.99*AOconf[loop].maxlimit)
+	{
+	  attron(A_BOLD | COLOR_PAIR(2));
+	  printw("%7.4f ", val);
+	  attroff(A_BOLD | COLOR_PAIR(2));
+	}
+      else	
+	{
+	  if(fabs(val)>0.99*AOconf[loop].maxlimit*data.image[aoconfID_LIMIT_modes].array.F[k])
+	    {
+	      attron(A_BOLD | COLOR_PAIR(1));
+	      printw("%7.4f ", val);
+	      attroff(A_BOLD | COLOR_PAIR(1));
+	    }
+	  else
+	    printw("%7.4f ", val);
+	}
+
+      printw("%7.4f ", data.image[aoconfID_cmd1_modes].array.F[k]);
+      
+
+      val = data.image[aoconfID_AVE_modes].array.F[k];
+      if(fabs(val)>AVElim)
+	{
+	  attron(A_BOLD | COLOR_PAIR(2));
+	  printw("%7.4f ", val);
+	  attroff(A_BOLD | COLOR_PAIR(2));
+	}
+      else
+	printw("%7.4f ", val);
+
+        val = data.image[aoconfID_RMS_modes].array.F[k];
+      if(fabs(val)>RMSlim)
+	{
+	  attron(A_BOLD | COLOR_PAIR(2));
+	  printw("%7.4f ", val);
+	  attroff(A_BOLD | COLOR_PAIR(2));
+	}
+      else
+	printw("%7.4f ", val);
+
       col++;
-      if(col==nbcol)
+      if(col==nbcol-1)
 	{
 	  col = 0;
 	  printw("\n");
