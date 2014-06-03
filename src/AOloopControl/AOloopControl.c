@@ -349,7 +349,7 @@ int init_AOloopControl()
   
   strcpy(data.cmd[data.NBcmd].key,"aolstep");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_loopon;
+  data.cmd[data.NBcmd].fp = AOloopControl_loopstep_cli;
   strcpy(data.cmd[data.NBcmd].info,"turn loop on for N steps");
   strcpy(data.cmd[data.NBcmd].syntax,"<nbstep>");
   strcpy(data.cmd[data.NBcmd].example,"aolstep");
@@ -2598,6 +2598,8 @@ int AOloopControl_loopon()
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
 
+  AOconf[loop].cntmax = AOconf[loop].cnt-1;
+
   AOconf[LOOPNUMBER].on = 1;
   AOloopControl_showparams(LOOPNUMBER);
 
@@ -2614,8 +2616,8 @@ int AOloopControl_loopstep(long loop, long NBstep)
   printf("\nLOOP STEP    %lld %ld %lld\n\n", AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
   fflush(stdout);
   
-  //  AOconf[loop].on = 1;
-  //  AOloopControl_showparams(loop);
+  AOconf[loop].on = 1;
+  // AOloopControl_showparams(loop);
 
   return 0;
 }
