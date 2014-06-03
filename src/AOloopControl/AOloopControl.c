@@ -2344,6 +2344,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   long k, kmax;
   long col;
   float val;
+
   float AVElim = 0.01;
   float RMSlim = 0.01;
   
@@ -2360,7 +2361,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     printw("log is OFF\n");
   
   printw("STATUS = %d\n", AOconf[loop].status);
-  printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
+  printw("Gain = %f   maxlim = %f     GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
   
   kmax = (wrow-9)*nbcol;
@@ -2499,7 +2500,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 
   start_color();
   init_pair(1, COLOR_BLACK, COLOR_WHITE); 
-  init_pair(2, COLOR_BLACK, COLOR_RED);
+  init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_GREEN, COLOR_BLACK);
   init_pair(4, COLOR_RED, COLOR_BLACK);
 
