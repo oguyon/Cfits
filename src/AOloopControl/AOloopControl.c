@@ -2606,9 +2606,9 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   for(k=0;k<AOconf[loop].NBMblocks;k++)
     {
       if(k==0)
-	printf("MODE BLOCK %ld   [%ld-%ld]  %4.2f  %4.2f  %4.2f\n", k, (long) 0, AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+	printw("MODE BLOCK %ld   [%ld-%ld]  %4.2f  %4.2f  %4.2f\n", k, (long) 0, AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
       else
-	printf("MODE BLOCK %ld   [%ld-%ld]  %4.2f  %4.2f  %4.2f\n", k, AOconf[loop].indexmaxMB[k-1], AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+	printw("MODE BLOCK %ld   [%ld-%ld]  %4.2f  %4.2f  %4.2f\n", k, AOconf[loop].indexmaxMB[k-1], AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
       nbl++;
     }
   attroff(A_BOLD);
