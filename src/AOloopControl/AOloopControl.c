@@ -1557,6 +1557,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       fflush(stdout);
       AOconf[loop].NBMblocks = atoi(content);
       
+
       if(AOconf[loop].NBMblocks==1)
 	AOconf[loop].indexmaxMB[0] = AOconf[loop].NBDMmodes;
       else
