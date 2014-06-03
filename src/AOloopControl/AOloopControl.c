@@ -224,11 +224,8 @@ int AOloopControl_loopMonitor_cli()
      return 0;
    }
  else
-   {
-     AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
-   }
-
-  return(0);
+   return 1;
+ //     AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
 }
 
 
