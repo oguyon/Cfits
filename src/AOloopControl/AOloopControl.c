@@ -1521,22 +1521,26 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       // Create modal command vector memory
       sprintf(name, "DMmode_cmd_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_cmd_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  1;
+      aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       
       
       sprintf(name, "DMmode_cmd1_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_cmd1_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  1;
+      aoconfID_cmd1_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       
       sprintf(name, "DMmode_RMS_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_RMS_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  1;
+      aoconfID_RMS_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       for(k=0;k<AOconf[loop].NBDMmodes;k++)
 	data.image[aoconfID_RMS_modes].array.F[k] = 0.0;
      
       sprintf(name, "DMmode_AVE_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_AVE_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  1;
+      aoconfID_AVE_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       for(k=0;k<AOconf[loop].NBDMmodes;k++)
 	data.image[aoconfID_AVE_modes].array.F[k] = 0.0;
 
@@ -1549,13 +1553,15 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       
       sprintf(name, "DMmode_LIMIT_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_LIMIT_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  1;
+      aoconfID_LIMIT_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       for(k=0;k<AOconf[loop].NBDMmodes;k++)
 	data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
  
       sprintf(name, "DMmode_MULTF_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_MULTF_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  1;
+      aoconfID_MULTF_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       for(k=0;k<AOconf[loop].NBDMmodes;k++)
 	data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
     
@@ -2595,33 +2601,33 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
        aoconfID_LIMIT_modes = read_sharedmem_image(name);
      }
 
-  
-
-  initscr();		
-  getmaxyx(stdscr, wrow, wcol);
 
 
-  start_color();
-  init_pair(1, COLOR_BLUE, COLOR_BLACK); 
-  init_pair(2, COLOR_RED, COLOR_BLACK);
-  init_pair(3, COLOR_GREEN, COLOR_BLACK);
-  init_pair(4, COLOR_RED, COLOR_BLACK);
+   initscr();		
+   getmaxyx(stdscr, wrow, wcol);
+   
 
-  while( !kbdhit() )
-    {
-      usleep((long) (1000000.0/frequ));
-      clear();
-      attron(A_BOLD);
-      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-      attroff(A_BOLD);
-      
-      AOloopControl_printloopstatus(loop, nbcol);
-      
-      refresh();
-    }
-  endwin();	
-
-  return 0;
+   start_color();
+   init_pair(1, COLOR_BLUE, COLOR_BLACK); 
+   init_pair(2, COLOR_RED, COLOR_BLACK);
+   init_pair(3, COLOR_GREEN, COLOR_BLACK);
+   init_pair(4, COLOR_RED, COLOR_BLACK);
+   
+   while( !kbdhit() )
+     {
+       usleep((long) (1000000.0/frequ));
+       clear();
+       attron(A_BOLD);
+       print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+       attroff(A_BOLD);
+       
+       AOloopControl_printloopstatus(loop, nbcol);
+       
+       refresh();
+     }
+   endwin();	
+   
+   return 0;
 }
 
 
