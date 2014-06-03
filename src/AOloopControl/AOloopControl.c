@@ -33,6 +33,10 @@
 
 #include "ZernikePolyn/ZernikePolyn.h"
 
+# ifdef _OPENMP
+# include <omp.h>
+#define OMP_NELEMENT_LIMIT 1000000
+# endif
 
 
 int wcol, wrow; // window size
@@ -1886,11 +1890,21 @@ int set_DM_modes(long loop)
   for(j=0;j<AOconf[loop].sizeDM;j++)
     arrayf[j] = 0.0;
 
-  for(k=0; k < AOconf[loop].NBDMmodes; k++)
-    {
-      for(i=0;i<AOconf[loop].sizeDM;i++)
+
+  //  # ifdef _OPENMP
+  //  #pragma omp parallel private(i,k)
+  //  {
+  //  #pragma omp for
+  //  # endif
+    for(i=0;i<AOconf[loop].sizeDM;i++)
+      for(k=0; k < AOconf[loop].NBDMmodes; k++)
 	arrayf[i] += data.image[aoconfID_cmd_modes].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
-    }
+ 
+    //  # ifdef _OPENMP
+    //  }
+    //  # endif
+
+
 
   data.image[aoconfID_DM].md[0].write = 1;
   memcpy (data.image[aoconfID_DM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
@@ -2913,6 +2927,7 @@ int AOloopControl_loopreset()
 {
   char name[200];
   long k;
+  long mb;
 
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
@@ -2923,10 +2938,16 @@ int AOloopControl_loopreset()
       aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
-
   AOconf[LOOPNUMBER].on = 0;
   for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
     data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+
+  for(mb=0;mb<AOconf[LOOPNUMBER].NBMblocks;mb)
+    {
+      AOloopControl_setgainblock(mb, 0.0);
+      AOloopControl_setlimitblock(mb, 0.01);
+      AOloopControl_setmultfblock(mb, 0.95);
+    }
 
   return 0;
 }
@@ -3198,10 +3219,23 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
   float bestgain= 0.0;
   float bestval = 10000000.0;
   float val;
+  char name[200];
+
+
+  if(aoconfID_cmd_modes==-1)
+    {
+      sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+      aoconfID_cmd_modes = read_sharedmem_image(name);
+    }
 
 
   for(k=0;k<NBgain;k++)
     {
+
+
+      for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
+	data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+
       gain = gainStart + 1.0*k/(NBgain-1)*(gainEnd-gainStart);
       AOloopControl_setgainblock(NBblock, gain); 
       AOloopControl_loopstep(LOOPNUMBER, NBstep);
@@ -3220,3 +3254,5 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 
   return(0);
 }
+
+
