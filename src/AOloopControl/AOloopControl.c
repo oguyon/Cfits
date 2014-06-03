@@ -1594,9 +1594,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
       if(read_config_parameter(config_fname, "NBMblocks", content)==0)
 	AOconf[loop].NBMblocks = 1;
-      printf("NBMblocks : %d\n", atoi(content));
+      else
+	AOconf[loop].NBMblocks = atoi(content);
+
+      printf("NBMblocks : %d\n", AOconf[loop].NBMblocks);
       fflush(stdout);
-      AOconf[loop].NBMblocks = atoi(content);
+
       
 
       if(AOconf[loop].NBMblocks==1)
