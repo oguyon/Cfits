@@ -135,5 +135,6 @@ int AOloopControl_setgainblock(long mb, float gainval);
 int AOloopControl_setlimitblock(long mb, float limitval);
 int AOloopControl_setmultfblock(long mb, float multfval);
 int AOloopControl_resetRMSperf();
+int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
 
 #endif

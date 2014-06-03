@@ -322,6 +322,24 @@ int AOloopControl_setmultfblock_cli()
 
 
 
+int AOloopControl_scanGainBlock_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,2)==0)
+    {
+      AOloopControl_scanGainBlock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numl);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+
+
+
+
+
+
 int init_AOloopControl()
 {
   FILE *fp;
@@ -582,6 +600,16 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"aolresetrms");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_resetRMSperf()");
+  data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"aolscangainb");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_scanGainBlock_cli;
+  strcpy(data.cmd[data.NBcmd].info,"scan gain for block");
+  strcpy(data.cmd[data.NBcmd].syntax,"<blockNB> <NBAOsteps> <gainstart> <gainend> <NBgainpts>");
+  strcpy(data.cmd[data.NBcmd].example,"aolscangainb");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)");
   data.NBcmd++;
 
 
@@ -2850,11 +2878,17 @@ int AOloopControl_loopstep(long loop, long NBstep)
     AOloopControl_InitializeMemory();
 
   AOconf[loop].cntmax = AOconf[loop].cnt + NBstep;
+  AOconf[LOOPNUMBER].RMSmodesCumul = 0.0;
+  AOconf[LOOPNUMBER].RMSmodesCumulcnt = 0;
 
-  printf("\nLOOP %ld STEP    %lld %ld %lld\n\n", loop, AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
-  fflush(stdout);
+	//  printf("\nLOOP %ld STEP    %lld %ld %lld\n\n", loop, AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
+	//fflush(stdout);
   
   AOconf[loop].on = 1;
+
+  while(AOconf[loop].on==1)
+    usleep(100);
+
   // AOloopControl_showparams(loop);
 
   return 0;
@@ -3149,3 +3183,20 @@ int AOloopControl_resetRMSperf()
   return 0;
 }
 
+
+
+int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)
+{
+  long k;
+  float gain;
+
+  for(k=0;k<NBgain;k++)
+    {
+      gain = gainStart + 1.0*k/(NBgain-1)*(gainEnd-gainStart);
+      AOloopControl_setgainblock(NBblock, gain); 
+      AOloopControl_loopstep(LOOPNUMBER, NBstep);
+      printf("%2ld  %6.4f  %10.8lf\n", k, gain, sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt));
+    }
+
+  return(0);
+}
