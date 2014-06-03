@@ -1563,7 +1563,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	{
 	  for(k=0;k<AOconf[loop].NBMblocks;k++)
 	    AOconf[loop].indexmaxMB[k] = (long) (pow(1.0*(k+1.0)/AOconf[loop].NBMblocks,2.0)*AOconf[loop].NBDMmodes);
-	  AOconf[loop].indexmaxMB[AOconf[loop].NBMblocks-1] = AOconf[loop].NBMblocks;
+	  AOconf[loop].indexmaxMB[AOconf[loop].NBMblocks-1] = AOconf[loop].NBDMmodes;
 	}
       
 
