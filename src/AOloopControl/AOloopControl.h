@@ -5,6 +5,7 @@
 
 #define AOLOOPCONTROL_CONF_FNAME "/tmp/aoloopcontrol.conf.shm"
 
+#define maxNBMB 100
 
 
 typedef struct
@@ -47,6 +48,8 @@ typedef struct
   
 
   
+
+  
   // LOOP CONTROL
   int on;  // goes to 1 when loop starts, put to 0 to turn loop off
   float gain; // overall loop gain
@@ -62,6 +65,17 @@ typedef struct
   // 5: MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
   // 6: MULTIPLYING BY GAINS
   // 7: MULTIPLYING BY MODE MATRIX -> COMMANDS SENT TO DM
+  
+  
+  // LOOP TUNING
+  // BLOCKS OF MODES
+  long NBMblocks; // number of mode blocks
+  long indexmaxMB[maxNBMB];
+  float gainMB[maxNBMB];
+  float limitMB[maxNBMB];
+  float multfMB[maxNBMB];
+
+
 
   int GPU; // 1 if computation done by GPU
 
@@ -108,11 +122,15 @@ int AOloopControl_loopoff();
 int AOloopControl_logon();
 int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
+int AOloopControl_loopreset();
 int AOloopControl_setgain(float gain);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setframesAve(long nbframes);
 int AOloopControl_setgainrange(long m0, long m1, float gainval);
 int AOloopControl_setlimitrange(long m0, long m1, float limval);
 int AOloopControl_setmultfrange(long m0, long m1, float multfval);
+int AOloopControl_setgainblock(long mb, float gainval);
+int AOloopControl_setlimitblock(long mb, float limitval);
+int AOloopControl_setmultfblock(long mb, float multfval);
 
 #endif

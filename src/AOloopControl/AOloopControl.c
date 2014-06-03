@@ -283,6 +283,42 @@ int AOloopControl_setmultfrange_cli()
 
 
 
+int AOloopControl_setgainblock_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+      AOloopControl_setgainblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+int AOloopControl_setlimitblock_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+      AOloopControl_setlimitblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+int AOloopControl_setmultfblock_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+      AOloopControl_setmultfblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
 
 
 
@@ -401,6 +437,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopoff()");
   data.NBcmd++;
   
+  strcpy(data.cmd[data.NBcmd].key,"aolreset");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_loopreset;
+  strcpy(data.cmd[data.NBcmd].info,"reset loop, and turn it off");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"aolreset");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopreset()");
+  data.NBcmd++;
+
   strcpy(data.cmd[data.NBcmd].key,"aollogon");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_logon;
@@ -500,6 +545,33 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <multfval>");
   strcpy(data.cmd[data.NBcmd].example,"aolsetmultfr 10 30 0.98");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmultfrange(long m0, long m1, float multfval)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"aolsetgainb");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setgainblock_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set modal gains by block");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <gainval>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetgainb 2 0.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgainblock(long m0, long m1, float gainval)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"aolsetlimitb");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setlimitblock_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set modal limits by block");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <limval>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetlimitb 2 0.02");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitblock(long m0, long m1, float gainval)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"aolsetmultfb");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setmultfblock_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set modal multf by block");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <multfval>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetmultfb 2 0.98");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmultfblock(long m0, long m1, float multfval)");
   data.NBcmd++;
 
 
@@ -1276,8 +1348,17 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     AOloopControl_InitializeMemory();
 
 
+
+ 
+  
+  
+
+
   if(mode==1)
     {
+ 
+
+
       sizearray = (long*) malloc(sizeof(long)*3);
       
       
@@ -1287,8 +1368,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       fflush(stdout);
       strcpy(AOconf[loop].name, content);
       
-      
-      
+     
+
       if(read_config_parameter(config_fname, "GPU", content)==0)
 	exit(0);
       printf("GPU : %d\n", atoi(content));
@@ -1407,6 +1488,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       aoconfID_DMRM = read_sharedmem_image(content);
       
 
+
+
       // Load DM modes (will exit if not successful)
       sprintf(fname,"DMmodes_%ld.fits", loop);
       sprintf(name,"DMmodes_%ld", loop);
@@ -1464,6 +1547,33 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	  exit(0);
 	}
       
+
+
+      // modes blocks
+
+      if(read_config_parameter(config_fname, "NBMblocks", content)==0)
+	AOconf[loop].NBMblocks = 1;
+      printf("GPU : %d\n", atoi(content));
+      fflush(stdout);
+      AOconf[loop].NBMblocks = atoi(content);
+      
+      if(AOconf[loop].NBMblocks==1)
+	AOconf[loop].indexmaxMB[0] = AOconf[loop].NBDMmodes;
+      else
+	{
+	  for(k=0;k<AOconf[loop].NBMblocks;k++)
+	    AOconf[loop].indexmaxMB[k] = (long) (pow(1.0*(k+1.0)/AOconf[loop].NBMblocks,2.0)*AOconf[loop].NBDMmodes);
+	  AOconf[loop].indexmaxMB[AOconf[loop].NBMblocks-1] = AOconf[loop].NBMblocks;
+	}
+      
+
+      for(k=0;k<AOconf[loop].NBMblocks;k++)
+	{
+	  AOconf[loop].gainMB[k] = 1.0;
+	  AOconf[loop].limitMB[k] = 1.0;
+	  AOconf[loop].multfMB[k] = 1.0;
+	}
+
 
       
       // Allocate / create logging data files/memory
@@ -2711,6 +2821,8 @@ int AOloopControl_loopstep(long loop, long NBstep)
   return 0;
 }
 
+
+
 int AOloopControl_loopoff()
 {
   if(AOloopcontrol_meminit==0)
@@ -2721,6 +2833,35 @@ int AOloopControl_loopoff()
 
   return 0;
 }
+
+
+
+int AOloopControl_loopreset()
+{
+  char name[200];
+  long k;
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_cmd_modes==-1)
+    {
+      sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+      aoconfID_cmd_modes = read_sharedmem_image(name);
+    }
+
+
+  AOconf[LOOPNUMBER].on = 0;
+  for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
+    data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+
+  return 0;
+}
+
+
+
+
+
 
 int AOloopControl_logon()
 {
@@ -2858,4 +2999,96 @@ int AOloopControl_setmultfrange(long m0, long m1, float multfval)
   return 0;
 }
 
+
+int AOloopControl_setgainblock(long mb, float gainval)
+{
+  long k;
+  char name[200];
+  long kmin, kmax;
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_GAIN_modes==-1)
+    {
+      sprintf(name, "DMmode_GAIN_%ld", LOOPNUMBER);
+      aoconfID_GAIN_modes = read_sharedmem_image(name);
+    }
+
+  if(mb<AOconf[LOOPNUMBER].NBMblocks)
+    {
+      if(mb==0)
+	kmin = 0;
+      else
+	kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
+      kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
+
+      for(k=kmin; k<kmax; k++)
+	data.image[aoconfID_GAIN_modes].array.F[k] = gainval;
+    }
+
+  return 0;
+}
+
+
+int AOloopControl_setlimitblock(long mb, float limitval)
+{
+  long k;
+  char name[200];
+  long kmin, kmax;
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_LIMIT_modes==-1)
+    {
+      sprintf(name, "DMmode_LIMIT_%ld", LOOPNUMBER);
+      aoconfID_LIMIT_modes = read_sharedmem_image(name);
+    }
+
+  if(mb<AOconf[LOOPNUMBER].NBMblocks)
+    {
+      if(mb==0)
+	kmin = 0;
+      else
+	kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
+      kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
+
+      for(k=kmin; k<kmax; k++)
+	data.image[aoconfID_LIMIT_modes].array.F[k] = limitval;
+    }
+
+  return 0;
+}
+
+
+int AOloopControl_setmultfblock(long mb, float multfval)
+{
+  long k;
+  char name[200];
+  long kmin, kmax;
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_MULTF_modes==-1)
+    {
+      sprintf(name, "DMmode_MULTF_%ld", LOOPNUMBER);
+      aoconfID_MULTF_modes = read_sharedmem_image(name);
+    }
+
+  if(mb<AOconf[LOOPNUMBER].NBMblocks)
+    {
+      if(mb==0)
+	kmin = 0;
+      else
+	kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
+      kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
+
+      for(k=kmin; k<kmax; k++)
+	data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
+    }
+
+  return 0;
+}
 
