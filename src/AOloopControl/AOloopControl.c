@@ -1891,18 +1891,18 @@ int set_DM_modes(long loop)
     arrayf[j] = 0.0;
 
 
-  //  # ifdef _OPENMP
-  //  #pragma omp parallel private(i,k)
-  //  {
-  //  #pragma omp for
-  //  # endif
+# ifdef _OPENMP
+#pragma omp parallel private(i,k)
+  {
+#pragma omp for
+# endif
     for(i=0;i<AOconf[loop].sizeDM;i++)
       for(k=0; k < AOconf[loop].NBDMmodes; k++)
 	arrayf[i] += data.image[aoconfID_cmd_modes].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
  
-    //  # ifdef _OPENMP
-    //  }
-    //  # endif
+# ifdef _OPENMP
+  }
+# endif
 
 
 
