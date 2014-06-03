@@ -224,8 +224,10 @@ int AOloopControl_loopMonitor_cli()
      return 0;
    }
  else
-   return 1;
- //     AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
+   {
+     AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
+     return 0;
+   }
 }
 
 
@@ -2359,10 +2361,10 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   printw("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
   
-  kmax = (wrow-8)*nbcol;
+  kmax = (wrow-9)*nbcol;
   if(kmax>AOconf[loop].NBDMmodes)
     kmax = AOconf[loop].NBDMmodes;
-  nbcol = 2;
+
   col = 0;
   for(k=0;k<kmax;k++)
     {
