@@ -2391,7 +2391,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   
   kmax = (wrow-3)*(nbcol-1);
   printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
-  
+  printw("CNT : %lld  / %lld\n", AOconf[loop].cnt, AOconf[loop].cntmax);
   
   
   if(kmax>AOconf[loop].NBDMmodes)
