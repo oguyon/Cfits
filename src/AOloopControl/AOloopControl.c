@@ -2362,7 +2362,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   
   printw("STATUS = %d  ", AOconf[loop].status);
   
-  kmax = (wrow-5)*(nbcol-1);
+  kmax = (wrow-3)*(nbcol-1);
   printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
   
   
