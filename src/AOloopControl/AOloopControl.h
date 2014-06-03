@@ -111,6 +111,8 @@ int AOloopControl_logoff();
 int AOloopControl_setgain(float gain);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setframesAve(long nbframes);
-
+int AOloopControl_setgainrange(long m0, long m1, float gainval);
+int AOloopControl_setlimitrange(long m0, long m1, float limval);
+int AOloopControl_setmultfrange(long m0, long m1, float multfval);
 
 #endif

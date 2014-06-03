@@ -54,6 +54,8 @@ long aoconfID_RMS_modes = -1;
 long aoconfID_AVE_modes = -1;
 long aoconfID_GAIN_modes = -1;
 long aoconfID_LIMIT_modes = -1;
+long aoconfID_MULTF_modes = -1;
+
 
 
 
@@ -229,7 +231,6 @@ int AOloopControl_loopstep_cli()
 
 
 
-//int AOloopControl_loopMonitor(long loop, double frequ)
 int AOloopControl_loopMonitor_cli()
 {
  if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0)
@@ -244,6 +245,41 @@ int AOloopControl_loopMonitor_cli()
    }
 }
 
+
+int AOloopControl_setgainrange_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+      AOloopControl_setgainrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+int AOloopControl_setlimitrange_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+      AOloopControl_setlimitrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+int AOloopControl_setmultfrange_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+      AOloopControl_setmultfrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
 
 
 
@@ -430,8 +466,6 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_loadCM(long loop, char *CMfname)");
   data.NBcmd++;
   
-
-
   strcpy(data.cmd[data.NBcmd].key,"aolmon");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_loopMonitor_cli;
@@ -441,6 +475,34 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopMonitor(long loop, double frequ)");
   data.NBcmd++;
  
+  strcpy(data.cmd[data.NBcmd].key,"aolsetgainr");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setgainrange_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set modal gains");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <gainval>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetgainr 20 30 0.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgainrange(long m0, long m1, float gainval)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"aolsetlimitr");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setlimitrange_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set modal limits");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <limval>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetlimitr 20 30 0.02");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitrange(long m0, long m1, float gainval)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"aolsetmultfr");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setmultfrange_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set modal multf");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <multfval>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetmultfr 10 30 0.98");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmultfrange(long m0, long m1, float multfval)");
+  data.NBcmd++;
+
+
 
   // add atexit functions here
   // atexit((void*) SCEXAO_DM_unloadconf);
@@ -1480,7 +1542,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
       sprintf(name, "DMmode_GAIN_%ld", loop);
       sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_GAIN_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      sizearray[1] =  2;
+      aoconfID_GAIN_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       for(k=0;k<AOconf[loop].NBDMmodes;k++)
 	data.image[aoconfID_GAIN_modes].array.F[k] = 1.0;
       
@@ -1489,7 +1552,15 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       aoconfID_LIMIT_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
       for(k=0;k<AOconf[loop].NBDMmodes;k++)
 	data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
+ 
+      sprintf(name, "DMmode_MULTF_%ld", loop);
+      sizearray[0] =  AOconf[loop].NBDMmodes;
+      aoconfID_MULTF_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
+      for(k=0;k<AOconf[loop].NBDMmodes;k++)
+	data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
     
+
+ 
 
 
 
@@ -1625,6 +1696,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
       sprintf(name, "DMmode_LIMIT_%ld", loop);
       aoconfID_LIMIT_modes = read_sharedmem_image(name);
+
+      sprintf(name, "DMmode_MULTF_%ld", loop);
+      aoconfID_MULTF_modes = read_sharedmem_image(name);
 
 
 
@@ -2185,7 +2259,15 @@ int AOcompute(long loop)
       
       if(data.image[aoconfID_cmd_modes].array.F[k] > AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
 	data.image[aoconfID_cmd_modes].array.F[k] = AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
+
+      data.image[aoconfID_cmd_modes].array.F[k] *= data.image[aoconfID_MULTF_modes].array.F[k];
+      
+
+      // update total gain
+      data.image[aoconfID_GAIN_modes].array.F[k+AOconf[loop].NBDMmodes] = AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k];
     }
+
+
 
 
       //data.image[aoconfID_cmd_modes].array.F[k] *= 1.0 - 0.05*(1.0*k/AOconf[loop].NBDMmodes);
@@ -2405,7 +2487,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
       printw("%4ld ", k);
       attroff(A_BOLD);
    
-      printw("[%4.2f %4.2f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k]);
+      printw("[%4.2f %4.2f %4.2f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
       
       val = data.image[aoconfID_cmd_modes].array.F[k];
       if(fabs(val)>0.99*AOconf[loop].maxlimit)
@@ -2513,16 +2595,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
        aoconfID_LIMIT_modes = read_sharedmem_image(name);
      }
 
-   
-
-
-  /*  
-      sprintf(name, "DMmode_cmd1_%ld", loop);
-      sizearray[0] =  AOconf[loop].NBDMmodes;
-      aoconfID_cmd1_modes = create_image_ID(name, 1, sizearray, FLOAT, 1, 0);
-      aoconfID_cmd1_modes = read_sharedmem_image(name);
-  */
-
+  
 
   initscr();		
   getmaxyx(stdscr, wrow, wcol);
@@ -2686,6 +2759,86 @@ int AOloopControl_setframesAve(long nbframes)
 
   AOconf[LOOPNUMBER].framesAve = nbframes;
   AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
+}
+
+
+
+int AOloopControl_setgainrange(long m0, long m1, float gainval)
+{
+  long k;
+  long kmax;
+  char name[200];
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_GAIN_modes==-1)
+    {
+      sprintf(name, "DMmode_GAIN_%ld", LOOPNUMBER);
+      aoconfID_GAIN_modes = read_sharedmem_image(name);
+    }
+
+  kmax = m1+1;
+  if(kmax>AOconf[LOOPNUMBER].NBDMmodes)
+    kmax = AOconf[LOOPNUMBER].NBDMmodes-1;
+
+  for(k=m0;k<m1+1;k++)
+    data.image[aoconfID_GAIN_modes].array.F[k] = gainval;
+
+  return 0;
+}
+
+
+
+int AOloopControl_setlimitrange(long m0, long m1, float limval)
+{
+  long k;
+  long kmax;
+  char name[200];
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_LIMIT_modes==-1)
+    {
+      sprintf(name, "DMmode_LIMIT_%ld", LOOPNUMBER);
+      aoconfID_LIMIT_modes = read_sharedmem_image(name);
+    }
+
+  kmax = m1+1;
+  if(kmax>AOconf[LOOPNUMBER].NBDMmodes)
+    kmax = AOconf[LOOPNUMBER].NBDMmodes-1;
+
+  for(k=m0;k<m1+1;k++)
+    data.image[aoconfID_LIMIT_modes].array.F[k] = limval;
+
+  return 0;
+}
+
+
+int AOloopControl_setmultfrange(long m0, long m1, float multfval)
+{
+  long k;
+  long kmax;
+  char name[200];
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  if(aoconfID_MULTF_modes==-1)
+    {
+      sprintf(name, "DMmode_MULTF_%ld", LOOPNUMBER);
+      aoconfID_MULTF_modes = read_sharedmem_image(name);
+    }
+
+  kmax = m1+1;
+  if(kmax>AOconf[LOOPNUMBER].NBDMmodes)
+    kmax = AOconf[LOOPNUMBER].NBDMmodes-1;
+
+  for(k=m0;k<m1+1;k++)
+    data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
 
   return 0;
 }
