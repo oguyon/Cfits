@@ -2348,19 +2348,19 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   float AVElim = 0.01;
   float RMSlim = 0.01;
   
-  printw("loop number %ld\n", loop);
+  printw("loop number %ld    ", loop);
 
   
   if(AOconf[loop].on == 1)
-    printw("loop is ON\n");
+    printw("loop is ON     ");
   else
-    printw("loop is OFF\n");
+    printw("loop is OFF    ");
   if(AOconf[loop].logon == 1)
     printw("log is ON\n");
   else
     printw("log is OFF\n");
   
-  printw("STATUS = %d\n", AOconf[loop].status);
+  printw("STATUS = %d  ", AOconf[loop].status);
   printw("Gain = %f   maxlim = %f     GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
   
@@ -2388,9 +2388,9 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 	{
 	  if(fabs(val)>0.99*AOconf[loop].maxlimit*data.image[aoconfID_LIMIT_modes].array.F[k])
 	    {
-	      attron(A_BOLD | COLOR_PAIR(1));
+	      attron(COLOR_PAIR(1));
 	      printw("%7.4f ", val);
-	      attroff(A_BOLD | COLOR_PAIR(1));
+	      attroff(COLOR_PAIR(1));
 	    }
 	  else
 	    printw("%7.4f ", val);
@@ -2499,7 +2499,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 
 
   start_color();
-  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
+  init_pair(1, COLOR_BLUE, COLOR_BLACK); 
   init_pair(2, COLOR_RED, COLOR_BLACK);
   init_pair(3, COLOR_GREEN, COLOR_BLACK);
   init_pair(4, COLOR_RED, COLOR_BLACK);
