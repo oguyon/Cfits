@@ -2356,15 +2356,15 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   else
     printw("loop is OFF    ");
   if(AOconf[loop].logon == 1)
-    printw("log is ON\n");
+    printw("log is ON   ");
   else
-    printw("log is OFF\n");
+    printw("log is OFF  ");
   
   printw("STATUS = %d  ", AOconf[loop].status);
   printw("Gain = %f   maxlim = %f     GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
   
   
-  kmax = (wrow-9)*nbcol;
+  kmax = (wrow-10)*nbcol;
   if(kmax>AOconf[loop].NBDMmodes)
     kmax = AOconf[loop].NBDMmodes;
 
