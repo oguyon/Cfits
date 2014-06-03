@@ -1553,7 +1553,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
       if(read_config_parameter(config_fname, "NBMblocks", content)==0)
 	AOconf[loop].NBMblocks = 1;
-      printf("GPU : %d\n", atoi(content));
+      printf("NBMblocks : %d\n", atoi(content));
       fflush(stdout);
       AOconf[loop].NBMblocks = atoi(content);
       
