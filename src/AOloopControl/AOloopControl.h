@@ -15,6 +15,7 @@ typedef struct
   // SETUP
   int init; // has been initialized
   unsigned long long cnt;
+  unsigned long long cntmax;
   unsigned long long DMupdatecnt;
   int kill; // set to 1 to kill computation loop
 
@@ -105,6 +106,7 @@ int AOloopControl_loopkill();
 int AOloopControl_loopon();
 int AOloopControl_loopoff();
 int AOloopControl_logon();
+int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
 int AOloopControl_setgain(float gain);
 int AOloopControl_setmaxlimit(float maxlimit);

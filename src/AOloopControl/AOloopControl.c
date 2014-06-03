@@ -215,6 +215,20 @@ int AOloopControl_loadCM_cli()
 
 
 
+int AOloopControl_loopstep_cli()
+{
+  if(CLI_checkarg(1,2)==0)
+    {
+      AOloopControl_loopstep(LOOPNUMBER, data.cmdargtoken[1].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 //int AOloopControl_loopMonitor(long loop, double frequ)
 int AOloopControl_loopMonitor_cli()
 {
@@ -331,6 +345,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"aolon");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopon()");
+  data.NBcmd++;
+  
+  strcpy(data.cmd[data.NBcmd].key,"aolstep");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_loopon;
+  strcpy(data.cmd[data.NBcmd].info,"turn loop on for N steps");
+  strcpy(data.cmd[data.NBcmd].syntax,"<nbstep>");
+  strcpy(data.cmd[data.NBcmd].example,"aolstep");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopstep(long loop, long NBstep)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"aoloff");
@@ -2060,8 +2083,7 @@ int AOcompute(long loop)
   // long long wcntmax;
   long cnttest;
   double a;
-  
-
+ 
 
   // get dark-subtracted image
   Average_cam_frames(loop, AOconf[loop].framesAve);
@@ -2246,6 +2268,7 @@ int AOloopControl_run()
   
   if(vOK==1)
     {
+      
       AOconf[loop].kill = 0;
       AOconf[loop].on = 0;
       printf("\n");
@@ -2323,7 +2346,11 @@ int AOloopControl_run()
 		  AOconf[loop].logfnb = 0;
 	      
 	      AOconf[loop].cnt++;
+	    
+	      if(AOconf[loop].cnt == AOconf[loop].cntmax)
+		AOconf[loop].on = 0;
 	    }
+	  
 	}
     }
 
@@ -2573,6 +2600,19 @@ int AOloopControl_loopon()
 
   AOconf[LOOPNUMBER].on = 1;
   AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
+}
+
+int AOloopControl_loopstep(long loop, long NBstep)
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+  AOconf[loop].cntmax = AOconf[loop].cnt + NBstep;
+  
+  AOconf[loop].on = 1;
+  AOloopControl_showparams(loop);
 
   return 0;
 }
