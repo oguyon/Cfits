@@ -2795,7 +2795,7 @@ int AOloopControl_setgainrange(long m0, long m1, float gainval)
   if(kmax>AOconf[LOOPNUMBER].NBDMmodes)
     kmax = AOconf[LOOPNUMBER].NBDMmodes-1;
 
-  for(k=m0;k<m1+1;k++)
+  for(k=m0;k<kmax;k++)
     data.image[aoconfID_GAIN_modes].array.F[k] = gainval;
 
   return 0;
@@ -2822,7 +2822,7 @@ int AOloopControl_setlimitrange(long m0, long m1, float limval)
   if(kmax>AOconf[LOOPNUMBER].NBDMmodes)
     kmax = AOconf[LOOPNUMBER].NBDMmodes-1;
 
-  for(k=m0;k<m1+1;k++)
+  for(k=m0;k<kmax;k++)
     data.image[aoconfID_LIMIT_modes].array.F[k] = limval;
 
   return 0;
@@ -2848,7 +2848,7 @@ int AOloopControl_setmultfrange(long m0, long m1, float multfval)
   if(kmax>AOconf[LOOPNUMBER].NBDMmodes)
     kmax = AOconf[LOOPNUMBER].NBDMmodes-1;
 
-  for(k=m0;k<m1+1;k++)
+  for(k=m0;k<kmax;k++)
     data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
 
   return 0;
