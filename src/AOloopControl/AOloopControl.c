@@ -2344,7 +2344,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   long k, kmax;
   long col;
   float val;
-
+  
   float AVElim = 0.01;
   float RMSlim = 0.01;
   
@@ -2361,11 +2361,12 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     printw("log is OFF  ");
   
   printw("STATUS = %d  ", AOconf[loop].status);
- kmax = (wrow-10)*nbcol;
- printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
+  
+  kmax = (wrow-5)*(nbcol-1);
+  printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
   
   
- 
+  
   if(kmax>AOconf[loop].NBDMmodes)
     kmax = AOconf[loop].NBDMmodes;
 
