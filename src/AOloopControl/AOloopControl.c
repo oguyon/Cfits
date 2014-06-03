@@ -967,6 +967,10 @@ int AOloopControl_InitializeMemory()
     perror("Error mmapping the file");
     exit(0);
   }
+  
+  AOconf[loop].on = 0;
+  AOconf[loop].cnt = 0;	  
+  AOconf[loop].cntmax = 0;	  
 
   if(create==1)
     {
