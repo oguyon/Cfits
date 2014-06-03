@@ -240,7 +240,7 @@ int AOloopControl_loopMonitor_cli()
    }
  else
    {
-     AOloopControl_loopMonitor(LOOPNUMBER, 10.0, 3);
+     AOloopControl_loopMonitor(LOOPNUMBER, 1.0, 8);
      return 0;
    }
 }
@@ -285,7 +285,7 @@ int AOloopControl_setmultfrange_cli()
 
 int AOloopControl_setgainblock_cli()
 {
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
     {
       AOloopControl_setgainblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
       return 0;
@@ -297,7 +297,7 @@ int AOloopControl_setgainblock_cli()
 
 int AOloopControl_setlimitblock_cli()
 {
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
     {
       AOloopControl_setlimitblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
       return 0;
@@ -309,7 +309,7 @@ int AOloopControl_setlimitblock_cli()
 
 int AOloopControl_setmultfblock_cli()
 {
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
     {
       AOloopControl_setmultfblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
       return 0;
@@ -2627,7 +2627,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     }
  
 
-  printw("            MODAL RMS (ALL MODES) : %6.4lf     CUMUL :  %6.4lf  ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
+  printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
 
   
   print_header(" MODES ", '-');
