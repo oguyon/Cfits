@@ -2869,7 +2869,6 @@ int AOloopControl_setLoopNumber(long loop)
 {
   printf("LOOPNUMBER = %ld\n", loop);
   LOOPNUMBER = loop;
-  //  AOloopControl_showparams(loop);
 
   return 0;
 }

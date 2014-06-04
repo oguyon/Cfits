@@ -122,6 +122,7 @@ int arith_image_Cdiv(char *ID1_name, char *ID2_name, char *ID_out);
 int arith_image_cstfmod(char *ID_name, double f1, char *ID_out);
 int arith_image_cstadd(char *ID_name, double f1, char *ID_out);
 int arith_image_cstsub(char *ID_name, double f1, char *ID_out);
+int arith_image_cstsubm(char *ID_name, double f1, char *ID_out);
 int arith_image_cstmult(char *ID_name, double f1, char *ID_out);
 int arith_image_cstdiv(char *ID_name, double f1, char *ID_out);
 int arith_image_cstpow(char *ID_name, double f1, char *ID_out);

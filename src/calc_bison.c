@@ -2004,13 +2004,13 @@ sprintf(data.cmdargtoken[data.cmdNBarg].val.string, "%s", (yyvsp[(1) - (2)].stri
   case 69:
 /* Line 1787 of yacc.c  */
 #line 145 "calc_bison.y"
-    {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstadd((yyvsp[(3) - (3)].string),(double) -(yyvsp[(1) - (3)].val_d), calctmpimname); (yyval.string)=strdup(calctmpimname); if(data.Debug>0){printf("double - image\n");}}
+    {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstsubm((yyvsp[(3) - (3)].string),(double) (yyvsp[(1) - (3)].val_d), calctmpimname); (yyval.string)=strdup(calctmpimname); if(data.Debug>0){printf("double - image\n");}}
     break;
 
   case 70:
 /* Line 1787 of yacc.c  */
 #line 146 "calc_bison.y"
-    {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstadd((yyvsp[(3) - (3)].string),(double) -(yyvsp[(1) - (3)].val_l), calctmpimname); (yyval.string)=strdup(calctmpimname); if(data.Debug>0){printf("long - image\n");}}
+    {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstsubm((yyvsp[(3) - (3)].string),(double) (yyvsp[(1) - (3)].val_l), calctmpimname); (yyval.string)=strdup(calctmpimname); if(data.Debug>0){printf("long - image\n");}}
     break;
 
   case 71:

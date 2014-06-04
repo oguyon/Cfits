@@ -1622,6 +1622,7 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
 double Pfmod(double a, double b) {return((double) fmod(a,b));}
 double Ppow(double a, double b) {if(b>0){return((double) pow(a,b));}else{return((double) pow(a,-b));}}
 double Padd(double a, double b) {return((double) a+b);}
+double Psubm(double a, double b) {return((double) b-a);}
 double Psub(double a, double b) {return((double) a-b);}
 double Pmult(double a, double b) {return((double) a*b);}
 double Pdiv(double a, double b) {return((double) a/b);}
@@ -2076,6 +2077,7 @@ int arith_image_function_1f_1_inplace(char *ID_name, double f1, double (*pt2func
 int arith_image_cstfmod(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pfmod); return(0);}
 int arith_image_cstadd(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Padd); return(0);}
 int arith_image_cstsub(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Psub); return(0);}
+int arith_image_cstsubm(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Psubm); return(0);}
 int arith_image_cstmult(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pmult); return(0);}
 int arith_image_cstdiv(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv); return(0);}
 int arith_image_cstdiv1(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pdiv1); return(0);}
