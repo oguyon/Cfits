@@ -2818,6 +2818,9 @@ int AOloopControl_statusStats()
   usec0 = 50.0; 
   usec1 = 150.0;
 
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+  
   printf("Measyuring loop status distribution \n");
   fflush(stdout);
 
