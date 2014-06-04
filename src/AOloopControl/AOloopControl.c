@@ -3238,6 +3238,9 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
   char name[200];
 
 
+ if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
   if(aoconfID_cmd_modes==-1)
     {
       sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
