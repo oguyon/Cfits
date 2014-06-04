@@ -3245,10 +3245,10 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
     }
 
 
+  printf("Block: %ld, NBstep: %ld, gain: %f->%f (%ld septs)\n", NBblock, NBstep, gainStart, gainEnd, NBgain);
+
   for(k=0;k<NBgain;k++)
     {
-
-
       for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
 	data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
