@@ -1262,7 +1262,7 @@ int Average_cam_frames(long loop, long NbAve)
   for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
     data.image[aoconfID_WFS1].array.F[ii] /= total;
   
-  total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
+  // total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
 
   /*
   printf("SLEEPING ... ");
@@ -2402,7 +2402,8 @@ int AOcompute(long loop)
       //      printf("\n");
       
     }
- 
+
+  AOconf[loop].status = 6; //  MULTIPLYING BY GAINS
 
 
   AOconf[loop].RMSmodes = 0;
@@ -2414,7 +2415,6 @@ int AOcompute(long loop)
 
 
 
-  AOconf[loop].status = 6; //  MULTIPLYING BY GAINS
    
 
   for(k=0; k<AOconf[loop].NBDMmodes; k++)
@@ -2838,7 +2838,7 @@ int AOloopControl_statusStats()
     }
   
   for(st=0;st<statusmax;st++)
-    printf("STATUS %d     %5.2f %%\n", st, 100.0*statuscnt[st]/NBkiter);
+    printf("STATUS %2d     %5.2f %%\n", st, 100.0*statuscnt[st]/NBkiter);
     
   free(statuscnt);
   
