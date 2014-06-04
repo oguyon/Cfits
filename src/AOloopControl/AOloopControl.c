@@ -2818,6 +2818,9 @@ int AOloopControl_statusStats()
   usec0 = 50.0; 
   usec1 = 150.0;
 
+  printf("Measyuring loop status distribution \n");
+  fflush(stdout);
+
   statuscnt = (long*) malloc(sizeof(long));
 
   for(st=0;st<statusmax;st++)
