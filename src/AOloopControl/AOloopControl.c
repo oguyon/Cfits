@@ -616,6 +616,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)");
   data.NBcmd++;
 
+  strcpy(data.cmd[data.NBcmd].key,"aolstatusstats");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_statusStats;
+  strcpy(data.cmd[data.NBcmd].info,"measures distribution of status values");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"aolstatusstats");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_statusStats()");
+  data.NBcmd++;
+
 
   // add atexit functions here
   // atexit((void*) SCEXAO_DM_unloadconf);
@@ -1146,7 +1155,9 @@ int Average_cam_frames(long loop, long NbAve)
   if(NbAve>1)
     for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
       data.image[aoconfID_WFS1].array.F[ii] = 0.0;
-
+  
+  AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+  
   if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
       switch (atype) {
@@ -1240,7 +1251,7 @@ int Average_cam_frames(long loop, long NbAve)
       AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
 	
     }
-       
+  AOconf[loop].status = 3;  // 3: NORMALIZE WFS IMAGE
      
   
   // Normalize  
@@ -2355,6 +2366,7 @@ int AOcompute(long loop)
  
 
   // get dark-subtracted image
+  AOconf[loop].status = 1;  // 1: READING IMAGE
   Average_cam_frames(loop, AOconf[loop].framesAve);
   
   AOconf[loop].status = 4;  // 4: REMOVING REF
@@ -2506,6 +2518,8 @@ int AOloopControl_run()
 	      if(fabs(AOconf[loop].gain)>1.0e-6)
 		set_DM_modes(loop);
 
+	      AOconf[loop].status = 8; //  LOGGING, part 1
+
 	      clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
 	      AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
 
@@ -2533,7 +2547,9 @@ int AOloopControl_run()
 		  j++;		  
 		}
 	  	      
-
+	      
+	      AOconf[loop].status = 9; //  LOGGING, part 2
+	      
 	      AOconf[loop].logcnt++;
 	      if(AOconf[loop].logcnt==AOconf[loop].logsize)
 		{
@@ -2604,6 +2620,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
   else
     printw("log is OFF  ");
   
+
   printw("STATUS = %d  ", AOconf[loop].status);
   
   kmax = (wrow-3)*(nbcol-1);
@@ -2789,7 +2806,34 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 
 
 
+int AOloopControl_statusStats()
+{
+  long k;
+  long NBkiter = 10000;
+  long statusmax = 10;
+  long statuscnt[10];
+  float usec0, usec1;
+  int st;
 
+  usec0 = 100.0; // 10 kHz
+  usec1 = 200.0;
+
+  for(st=0;st<statusmax;st++)
+    statuscnt[st] = 0;
+
+  for(k=0;k<NBkiter;k++)
+    {
+      usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
+      statuscnt[AOconf[LOOPNUMBER].status]++;
+    }
+  
+  for(st=0;st<statusmax;st++)
+    printf("STATUS %d     %10.8f\n", st, 1.0*statuscnt[st]/NBkiter);
+    
+
+  
+  return 0;
+}
 
 
 

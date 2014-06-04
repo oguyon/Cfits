@@ -115,6 +115,7 @@ int AOloopControl_run();
 
 int AOloopControl_printloopstatus(long loop, long nbcol);
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
+int AOloopControl_statusStats();
 int AOloopControl_showparams(long loop);
 
 int AOloopControl_setLoopNumber(long loop);
