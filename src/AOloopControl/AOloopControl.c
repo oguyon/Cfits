@@ -2394,13 +2394,7 @@ int AOcompute(long loop)
     {
       a = 0.1;
       while(cnttest==data.image[aoconfID_cmd1_modes].md[0].cnt0)
-	{
-	  a = sqrt(a+0.1);
-	  //  usleep(10);
-	  // printf(".");
-	}
-      //      printf("\n");
-      
+	a = sqrt(a+0.1);
     }
 
   AOconf[loop].status = 6; //  MULTIPLYING BY GAINS
@@ -2463,7 +2457,8 @@ int AOloopControl_run()
   int r;
   int RT_priority = 90; //any number from 0-99
   struct sched_param schedpar;
- 
+  double a;
+  long cnttest;
 
   schedpar.sched_priority = RT_priority;
   r = seteuid(euid_called); //This goes up to maximum privileges
@@ -2512,11 +2507,22 @@ int AOloopControl_run()
 	      //	      fflush(stdout);
 	      //usleep(10000);
 	      
+	      cnttest = data.image[aoconfID_DM].md[0].cnt0;
 	      AOcompute(loop);
 	    
 	        
 	      if(fabs(AOconf[loop].gain)>1.0e-6)
-		set_DM_modes(loop);
+		{
+		  set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
+		
+		  a = 0.1;
+		  while(cnttest==data.image[aoconfID_DM].md[0].cnt0)  // wait for results (only useful for GPU)
+		    {
+		      a = sqrt(a+0.1);
+		    }      
+		}
+	      
+
 
 	      AOconf[loop].status = 8; //  LOGGING, part 1
 
