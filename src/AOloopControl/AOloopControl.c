@@ -2809,14 +2809,14 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 int AOloopControl_statusStats()
 {
   long k;
-  long NBkiter = 10000;
+  long NBkiter = 100000;
   long statusmax = 10;
   long statuscnt[10];
   float usec0, usec1;
   int st;
 
-  usec0 = 100.0; // 10 kHz
-  usec1 = 200.0;
+  usec0 = 50.0; 
+  usec1 = 150.0;
 
   for(st=0;st<statusmax;st++)
     statuscnt[st] = 0;
@@ -2828,7 +2828,7 @@ int AOloopControl_statusStats()
     }
   
   for(st=0;st<statusmax;st++)
-    printf("STATUS %d     %10.8f\n", st, 1.0*statuscnt[st]/NBkiter);
+    printf("STATUS %d     %5.2f %%\n", st, 100.0*statuscnt[st]/NBkiter);
     
 
   
