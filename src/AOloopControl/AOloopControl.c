@@ -2810,13 +2810,15 @@ int AOloopControl_statusStats()
 {
   long k;
   long NBkiter = 100000;
-  long statusmax = 10;
-  long statuscnt[10];
+  long statusmax = 11;
+  long *statuscnt;
   float usec0, usec1;
   int st;
 
   usec0 = 50.0; 
   usec1 = 150.0;
+
+  statuscnt = (long*) malloc(sizeof(long));
 
   for(st=0;st<statusmax;st++)
     statuscnt[st] = 0;
@@ -2824,13 +2826,15 @@ int AOloopControl_statusStats()
   for(k=0;k<NBkiter;k++)
     {
       usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
-      statuscnt[AOconf[LOOPNUMBER].status]++;
+      st = AOconf[LOOPNUMBER].status;
+      if(st<statusmax)
+	statuscnt[st]++;
     }
   
   for(st=0;st<statusmax;st++)
     printf("STATUS %d     %5.2f %%\n", st, 100.0*statuscnt[st]/NBkiter);
     
-
+  free(statuscnt);
   
   return 0;
 }
