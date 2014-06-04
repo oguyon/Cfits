@@ -3230,7 +3230,7 @@ int AOloopControl_resetRMSperf()
 
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)
 {
-  long k;
+  long k, kg;
   float gain;
   float bestgain= 0.0;
   float bestval = 10000000.0;
@@ -3247,16 +3247,16 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 
   printf("Block: %ld, NBstep: %ld, gain: %f->%f (%ld septs)\n", NBblock, NBstep, gainStart, gainEnd, NBgain);
 
-  for(k=0;k<NBgain;k++)
+  for(kg=0;kg<NBgain;kg++)
     {
       for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
 	data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
-      gain = gainStart + 1.0*k/(NBgain-1)*(gainEnd-gainStart);
+      gain = gainStart + 1.0*kg/(NBgain-1)*(gainEnd-gainStart);
       AOloopControl_setgainblock(NBblock, gain); 
       AOloopControl_loopstep(LOOPNUMBER, NBstep);
       val = sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt);
-      printf("%2ld  %6.4f  %10.8lf\n", k, gain, val);
+      printf("%2ld  %6.4f  %10.8lf\n", kg, gain, val);
       
       if(val<bestval)
 	{
