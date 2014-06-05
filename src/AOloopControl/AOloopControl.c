@@ -3377,9 +3377,9 @@ int AOloopControl_AutoTune()
   // initialize
   for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
     {
-        AOconf[LOOPNUMBER].gainMB[block] = 0.0;
-	AOconf[LOOPNUMBER].limitMB[block] = 0.1;
-	AOconf[LOOPNUMBER].multfMB[block] = 0.8;
+      AOloopControl_setgainblock(block, 0.0);
+	AOloopControl_setlimitblock(block, 0.1);
+	AOloopControl_setmultfblock(block, 0.8);	
     }
 
   
