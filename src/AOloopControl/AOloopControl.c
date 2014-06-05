@@ -3318,6 +3318,8 @@ int AOloopControl_InjectMode( long index, float ampl )
   for(i=0;i<AOconf[LOOPNUMBER].sizeDM;i++)
     arrayf[i] = ampl*data.image[aoconfID_DMmodes].array.F[index*AOconf[LOOPNUMBER].sizeDM+i];
 
+  printf("STEP 1\n");
+  fflush(stdout);
 
   data.image[aoconfID_DMRM].md[0].write = 1;
   memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
@@ -3326,7 +3328,6 @@ int AOloopControl_InjectMode( long index, float ampl )
 
   free(arrayf);
   AOconf[LOOPNUMBER].DMupdatecnt ++;
-
 
 
   return(0);
