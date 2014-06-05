@@ -3279,13 +3279,28 @@ int AOloopControl_AutoTune()
   long block;
   float gainStart = 0.0;
   float gainEnd = 1.0;
+
   long NBgain = 10;
   long NBstep = 10000;
+  float gain;
+  char name[200];
+  long k, kg;
+  float bestgain= 0.0;
+  float bestval = 10000000.0;
+  float val;
+  
+  int gOK;
+
 
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
   
-  
+  if(aoconfID_cmd_modes==-1)
+    {
+      sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+      aoconfID_cmd_modes = read_sharedmem_image(name);
+    }
+
   // initialize
   for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
     {
@@ -3296,8 +3311,36 @@ int AOloopControl_AutoTune()
 
   
   for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
-    AOloopControl_scanGainBlock(block, NBstep, gainStart, gainEnd, 10);
+    {
+      // tune block gain
+      gOK = 1;
+      gain = gainStart;
+      bestval = 100000000.0;
+      while((gOK==1)&&(gain<gainEnd))
+	{
+	  for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
+	    data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+	  
+	  gain += 0.01;
+	  gain *= 1.1;
 
+	  AOloopControl_setgainblock(block, gain); 
+	  AOloopControl_loopstep(LOOPNUMBER, NBstep);
+	  val = sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt);
+	  printf("%2ld  %6.4f  %10.8lf\n", kg, gain, val);
+		  
+	  if(val<bestval)
+	    {
+	      bestval = val;
+	      bestgain = gain;
+	    }
+	  else 
+	    gOK = 0;
+	}
+      printf("BLOCK %ld  : BEST GAIN = %f\n", block, bestgain);
+      
+      AOloopControl_setgainblock(block, bestgain);  
+    }
 
 
   return(0);
