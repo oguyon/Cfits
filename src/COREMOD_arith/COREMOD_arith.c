@@ -121,6 +121,23 @@ int arith_image_trunc_cli()
 
 
 
+
+//long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name);
+
+int arith_image_merge3D_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    {
+      arith_image_merge3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 int init_COREMOD_arith()
 {
   
@@ -182,6 +199,15 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <min> <max> <output image>");
   strcpy(data.cmd[data.NBcmd].example,"imtrunc im 0.0 1.0 out");
   strcpy(data.cmd[data.NBcmd].Ccall,"arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"merge3d");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_image_merge3D_cli;
+  strcpy(data.cmd[data.NBcmd].info,"merge two 3D cubes into one");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input cube 1> <input cube 2> <output cube>");
+  strcpy(data.cmd[data.NBcmd].example,"merge3d imc1 imc2 imcout");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name)");
   data.NBcmd++;
 
 
@@ -662,6 +688,46 @@ int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_
 
   return(0);
 }
+
+
+// join two cubes
+long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name)
+{
+  long ID1, ID2, IDout;
+  long xsize, ysize, zsize1, zsize2, zsizeout;
+  long ii, jj, kk;
+  void *mapv;
+
+  ID1 = image_ID(ID_name1);
+  ID2 = image_ID(ID_name2);
+  
+  xsize = data.image[ID1].md[0].size[0];
+  ysize = data.image[ID1].md[0].size[1];
+  zsize1 = data.image[ID1].md[0].size[2];
+  zsize2 = data.image[ID2].md[0].size[2];
+
+  if((xsize != data.image[ID2].md[0].size[0])||(ysize != data.image[ID2].md[0].size[1]))
+    {
+      printf("ERROR: input images must have same x y sizes\n");
+      printf("%s :  %ld %ld\n", ID_name1, xsize, ysize);
+      printf("%s :  %ld %ld\n", ID_name2, data.image[ID2].md[0].size[0], data.image[ID2].md[0].size[1]);
+      exit(0);
+    }
+
+  IDout = create_3Dimage_ID(IDout_name, xsize, ysize, zsize1+zsize2);
+  
+  mapv = (void*) data.image[IDout].array.F;
+
+  memcpy ( mapv, (void*) data.image[ID1].array.F, sizeof(float)*xsize*ysize*zsize1);
+  
+  mapv += sizeof(float)*xsize*ysize*zsize1;
+  memcpy ( mapv, data.image[ID2].array.F, sizeof(float)*xsize*ysize*zsize2);
+
+  return(IDout);
+}
+
+
+
 
 
 double arith_image_total(char *ID_name)

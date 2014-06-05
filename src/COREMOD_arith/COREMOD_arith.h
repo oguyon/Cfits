@@ -15,6 +15,8 @@ int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_
 
 int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart);
 
+long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name);
+
 double arith_image_total(char *ID_name);
 double arith_image_mean(char *ID_name);
 double arith_image_min(char *ID_name);
