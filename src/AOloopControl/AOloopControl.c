@@ -324,6 +324,17 @@ int AOloopControl_setmultfblock_cli()
 
 
 
+int AOloopControl_InjectMode_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
+    {
+      AOloopControl_InjectMode(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
 
 
 int AOloopControl_scanGainBlock_cli()
@@ -623,6 +634,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"aolstatusstats");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_statusStats()");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"aolinjectmode");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_InjectMode_cli;
+  strcpy(data.cmd[data.NBcmd].info,"inject single mode error into RM channel");
+  strcpy(data.cmd[data.NBcmd].syntax,"<index> <ampl>");
+  strcpy(data.cmd[data.NBcmd].example,"aolinjectmode 20 0.1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_InjectMode()");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"aolautotune");
@@ -3274,6 +3294,46 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 }
 
 
+int AOloopControl_InjectMode( long index, float ampl )
+{
+  long i;
+  float *arrayf;
+  char name[200];
+
+ if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+
+ if(aoconfID_DMmodes==-1)
+   {
+     sprintf(name, "DMmodes_%ld", LOOPNUMBER);
+     aoconfID_DMmodes = read_sharedmem_image(name);
+   }
+
+  if(aoconfID_DMRM==-1)
+    aoconfID_DMRM = read_sharedmem_image(AOconf[LOOPNUMBER].DMnameRM);
+
+
+  arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
+
+  for(i=0;i<AOconf[LOOPNUMBER].sizeDM;i++)
+    arrayf[i] = ampl*data.image[aoconfID_DMmodes].array.F[index*AOconf[LOOPNUMBER].sizeDM+i];
+
+
+  data.image[aoconfID_DMRM].md[0].write = 1;
+  memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
+  data.image[aoconfID_DMRM].md[0].cnt0++;
+  data.image[aoconfID_DMRM].md[0].write = 0;
+
+  free(arrayf);
+  AOconf[LOOPNUMBER].DMupdatecnt ++;
+
+
+
+  return(0);
+}
+
+
+
 int AOloopControl_AutoTune()
 {
   long block;
@@ -3291,6 +3351,7 @@ int AOloopControl_AutoTune()
   
   int gOK;
 
+  
 
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory();
