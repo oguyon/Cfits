@@ -23,6 +23,7 @@ typedef struct
   char name[80];
   
   char WFSname[80];   
+  float DarkLevel;
   long sizexWFS;
   long sizeyWFS;
   long sizeWFS;

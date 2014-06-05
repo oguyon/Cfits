@@ -1282,7 +1282,11 @@ int Average_cam_frames(long loop, long NbAve)
 	
     }
   AOconf[loop].status = 3;  // 3: NORMALIZE WFS IMAGE
-     
+  
+
+  // Dark subtract
+  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+    data.image[aoconfID_WFS1].array.F[ii] -= AOconf[loop].DarkLevel; 
   
   // Normalize  
   sprintf(name, "imWFS1_%ld", loop);
@@ -1476,6 +1480,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       
       
       // Create WFS1 image memory (averaged, dark-subtracted)
+      AOconf[loop].DarkLevel = 100.0;
       sprintf(name, "imWFS1_%ld", loop);
       sizearray[0] =  AOconf[loop].sizexWFS;
       sizearray[1] =  AOconf[loop].sizeyWFS;
@@ -2395,6 +2400,7 @@ int AOcompute(long loop)
 
   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - data.image[aoconfID_refWFS].array.F[ii];
+
   cnttest = data.image[aoconfID_cmd1_modes].md[0].cnt0;
   data.image[aoconfID_WFS2].md[0].cnt0 ++;
 
