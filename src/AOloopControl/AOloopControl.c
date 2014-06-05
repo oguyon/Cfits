@@ -3313,22 +3313,27 @@ int AOloopControl_InjectMode( long index, float ampl )
     aoconfID_DMRM = read_sharedmem_image(AOconf[LOOPNUMBER].DMnameRM);
 
 
-  arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
-
-  for(i=0;i<AOconf[LOOPNUMBER].sizeDM;i++)
-    arrayf[i] = ampl*data.image[aoconfID_DMmodes].array.F[index*AOconf[LOOPNUMBER].sizeDM+i];
-
-  printf("STEP 1\n");
-  fflush(stdout);
-
-  data.image[aoconfID_DMRM].md[0].write = 1;
-  memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
-  data.image[aoconfID_DMRM].md[0].cnt0++;
-  data.image[aoconfID_DMRM].md[0].write = 0;
-
-  free(arrayf);
-  AOconf[LOOPNUMBER].DMupdatecnt ++;
-
+  if((index<0)||(index>AOconf[LOOPNUMBER].NBDMmodes-1))
+    {
+      printf("Invalid mode index... must be between 0 and %ld\n", AOconf[LOOPNUMBER].NBDMmodes);
+    }    
+  else
+    {
+      arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
+      
+      for(i=0;i<AOconf[LOOPNUMBER].sizeDM;i++)
+	arrayf[i] = ampl*data.image[aoconfID_DMmodes].array.F[index*AOconf[LOOPNUMBER].sizeDM+i];
+      
+      
+      
+      data.image[aoconfID_DMRM].md[0].write = 1;
+      memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
+      data.image[aoconfID_DMRM].md[0].cnt0++;
+      data.image[aoconfID_DMRM].md[0].write = 0;
+      
+      free(arrayf);
+      AOconf[LOOPNUMBER].DMupdatecnt ++;
+    }
 
   return(0);
 }
