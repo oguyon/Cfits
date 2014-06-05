@@ -625,6 +625,16 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_statusStats()");
   data.NBcmd++;
 
+  strcpy(data.cmd[data.NBcmd].key,"aolautotune");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_AutoTune;
+  strcpy(data.cmd[data.NBcmd].info,"auto tuning of loop parameters");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"aolautotune");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AutoTune()");
+  data.NBcmd++;
+
+
 
   // add atexit functions here
   // atexit((void*) SCEXAO_DM_unloadconf);
@@ -3264,3 +3274,31 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 }
 
 
+int AOloopControl_AutoTune()
+{
+  long block;
+  float gainStart = 0.0;
+  float gainEnd = 1.0;
+  long NBgain = 10;
+  long NBstep = 10000;
+
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory();
+  
+  
+  // initialize
+  for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
+    {
+        AOconf[LOOPNUMBER].gainMB[maxNBMB] = 0.0;
+	AOconf[LOOPNUMBER].limitMB[maxNBMB] = 0.1;
+	AOconf[LOOPNUMBER].multfMB[maxNBMB] = 0.8;
+    }
+
+  
+  for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
+    AOloopControl_scanGainBlock(block, NBstep, gainStart, gainEnd, 10);
+
+
+
+  return(0);
+}
