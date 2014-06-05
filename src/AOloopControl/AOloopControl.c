@@ -1936,14 +1936,6 @@ int set_DM_modes(long loop)
       
       free(arrayf);
     }
-  else
-    {
-      a = 0.1;
-      while(cnttest==data.image[aoconfID_DM].md[0].cnt0)
-	{
-	  a = sqrt(a+0.1);
-	}      
-    }  
 
   AOconf[loop].DMupdatecnt ++;
 
@@ -2497,7 +2489,7 @@ int AOloopControl_run()
 	{
 	  printf(" WAITING                    \r");
 	  fflush(stdout);
-	  usleep(100);
+	  usleep(1000);
 	  
 	  while(AOconf[loop].on == 1)
 	    {
