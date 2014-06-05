@@ -11,6 +11,7 @@
 #include <sys/mman.h>
 #include <err.h>
 #include <fcntl.h>
+#include <sched.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -234,6 +235,8 @@ int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
   long ii;
   float volt;
 
+
+
   data.image[IDvolt].md[0].write = 1;
   for(ii=0;ii<NBact;ii++)
     {
@@ -364,6 +367,14 @@ int SCExAO_DM_CombineChannels(int mode)
   long IDvolt;
   double ave;
   long ID1;
+  int RT_priority = 95; //any number from 0-99
+  struct sched_param schedpar;
+  int r;
+
+  schedpar.sched_priority = RT_priority;
+  r = seteuid(euid_called); //This goes up to maximum privileges
+  sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+
 
 
   size = (long*) malloc(sizeof(long)*naxis);
@@ -394,7 +405,7 @@ int SCExAO_DM_CombineChannels(int mode)
   
   while(dispcombconf[0].ON == 1)
     {
-      usleep(1);
+      usleep(10);
       cntsum = 0;
 
       for(ch=0;ch<NBch;ch++)
@@ -402,8 +413,8 @@ int SCExAO_DM_CombineChannels(int mode)
       
       if(cntsum != cntsumold)
 	{
-	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
-	  fflush(stdout);
+	  //	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
+	  //fflush(stdout);
 	  cnt++;
 
 	  copy_image_ID("dmdisp0", "dmdisptmp");
@@ -442,6 +453,7 @@ int SCExAO_DM_CombineChannels(int mode)
   if(mode==1)
     arith_image_zero("dmvolt");
   
+  r = seteuid(euid_real);//Go back to normal privileges
 
   printf("LOOP STOPPED\n");
   fflush(stdout);

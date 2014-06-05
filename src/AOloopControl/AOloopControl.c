@@ -2435,8 +2435,6 @@ int AOcompute(long loop)
   data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
 
   
-  AOconf[loop].status = 7; // fill in covariance matrix
-  
   return(0);
 }
 
@@ -2509,7 +2507,8 @@ int AOloopControl_run()
 	      
 	      cnttest = data.image[aoconfID_DM].md[0].cnt0;
 	      AOcompute(loop);
-	    
+	     
+	      AOconf[loop].status = 7; 
 	        
 	      if(fabs(AOconf[loop].gain)>1.0e-6)
 		{
