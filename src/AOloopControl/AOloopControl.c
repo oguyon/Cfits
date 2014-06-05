@@ -1917,8 +1917,6 @@ int set_DM_modes(long loop)
     //# endif
 
 
-
-
   if(AOconf[loop].GPU == 0)
     {
       arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
@@ -2512,7 +2510,7 @@ int AOloopControl_run()
 		      a = sqrt(a+0.1);
 		    }      
 		}
-	      
+	      usleep(100); // max 10000kHz
 
 
 	      AOconf[loop].status = 8; //  LOGGING, part 1
