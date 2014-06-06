@@ -518,9 +518,9 @@ int SCExAO_DM_dmdispcombstatus()
       printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
       printw("busy      %d\n", dispcombconf[0].busy); 
       printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
-      printw("status    %d\n",  dispcombconf[0].busy);
+      printw("status    %d\n",  dispcombconf[0].status);
       printw("moninterval %d\n", dispcombconf[0].moninterval);
-
+      mcnt++;
       refresh();
     }
   endwin();	
