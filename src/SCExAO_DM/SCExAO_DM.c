@@ -12,14 +12,18 @@
 #include <err.h>
 #include <fcntl.h>
 #include <sched.h>
+#include <ncurses.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
+
 #include "SCExAO_DM/SCExAO_DM.h"
 
 extern DATA data;
+
+int wcol, wrow; // window size
 
 
 #define DMSTROKE100 0.7 // um displacement for 100V
@@ -37,18 +41,7 @@ int SMturbfd;
 long IDturb;
 
 
-int SCExAO_DM_CombineChannels(int mode);
-int SCEXAO_DM_unloadconf();
-int SCExAO_DM_dmdispcomboff();
-int SCExAO_DM_dmtrigoff();
 
-int SCExAO_DM_turb();
-int SCExAO_DM_dmturboff();
-int SCExAO_DM_dmturb_wspeed(double wspeed);
-int SCExAO_DM_dmturb_ampl(double ampl);
-int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);
-int SCExAO_DM_dmturb_tint(long tint);
-int SCExAO_DM_dmturb_status();
 
 // CLI commands
 //
@@ -129,6 +122,15 @@ int init_SCExAO_DM()
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"scexaodmcomboff");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcomboff()");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaodmcombmon");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmdispcombstatus;
+  strcpy(data.cmd[data.NBcmd].info,"monitor DM comb program");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"scexaodmcombmon");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcombstatus()");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"scexaodmtrigoff");
@@ -485,6 +487,46 @@ int SCExAO_DM_CombineChannels(int mode)
 
 
 
+
+
+int SCExAO_DM_dmdispcombstatus()
+{
+  long long mcnt = 0;
+
+
+  SCEXAO_DM_loadconf();
+
+  initscr();		
+  getmaxyx(stdscr, wrow, wcol);
+
+  start_color();
+  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
+  init_pair(2, COLOR_BLACK, COLOR_RED);
+  init_pair(3, COLOR_GREEN, COLOR_BLACK);
+  init_pair(4, COLOR_RED, COLOR_BLACK);
+
+  while( !kbdhit() )
+    {
+      usleep(dispcombconf[0].moninterval);
+      clear();
+      attron(A_BOLD);
+      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+      attroff(A_BOLD);
+      
+      printw("ON         %d\n", dispcombconf[0].ON);
+      printw("cnt       %ld\n", dispcombconf[0].loopcnt);
+      printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
+      printw("busy      %d\n", dispcombconf[0].busy); 
+      printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
+      printw("status    %d\n",  dispcombconf[0].busy);
+      printw("moninterval %d\n", dispcombconf[0].moninterval);
+
+      refresh();
+    }
+  endwin();	
+ 
+  return 0;
+}
 
 
 

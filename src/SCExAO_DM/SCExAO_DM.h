@@ -6,10 +6,6 @@
 #define DISPCOMB_FILENAME_CONF "/tmp/dmdispcombconf.conf.shm"
 #define DMTURBCONF_FILENAME "/tmp/dmturb.conf.shm"
 
-int init_AOsystSim();
-
-int AOsystSim_run();
-
 
 
 typedef struct
@@ -51,6 +47,29 @@ typedef struct
   struct timespec tend;
 
 } SCEXAO_DMTURBCONF;
+
+
+
+
+int init_AOsystSim();
+int SCExAO_DM_disp2V(long IDdisp, long IDvolt);
+int SCEXAO_DM_createconf();
+int SCEXAO_DM_loadconf();
+int SCEXAO_DM_unloadconf();
+int SCExAO_DM_CombineChannels(int mode);
+int SCExAO_DM_dmdispcombstatus();
+int SCExAO_DM_dmdispcomboff();
+int SCExAO_DM_dmtrigoff();
+
+int SCEXAO_DMturb_createconf();
+int SCEXAO_DMturb_loadconf();
+int SCExAO_DM_dmturboff();
+int SCExAO_DM_dmturb_wspeed(double wspeed);
+int SCExAO_DM_dmturb_ampl(double ampl);
+int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);
+int SCExAO_DM_dmturb_tint(long tint);
+int SCExAO_DM_dmturb_printstatus();
+int SCExAO_DM_turb();
 
 
 #endif
