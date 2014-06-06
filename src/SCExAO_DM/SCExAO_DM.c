@@ -512,7 +512,7 @@ int SCExAO_DM_dmdispcombstatus()
       attron(A_BOLD);
       print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
       attroff(A_BOLD);
-      
+      printw("    %ld\n", mcnt);
       printw("ON         %d\n", dispcombconf[0].ON);
       printw("cnt       %ld\n", dispcombconf[0].loopcnt);
       printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
