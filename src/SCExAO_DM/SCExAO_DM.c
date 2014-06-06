@@ -297,7 +297,8 @@ int SCEXAO_DM_createconf()
       dispcombconf[0].busy = 0;
       dispcombconf[0].MAXVOLT = 150.0;
       dispcombconf[0].moninterval = 30000; // 33Hz
-     
+      dispcombconf[0].status = 0;
+
       dmdispcomb_loaded = 1;
  
     }
@@ -386,6 +387,7 @@ int SCExAO_DM_CombineChannels(int mode)
 
   SCEXAO_DM_createconf();
   dispcombconf[0].ON = 1;
+  dispcombconf[0].status = 0;
 
   printf("Initialize channels\n");  
 
@@ -402,17 +404,22 @@ int SCExAO_DM_CombineChannels(int mode)
     IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
 
   cntsumold = 0;
-  
+
+  dispcombconf[0].status = 1;
+
   while(dispcombconf[0].ON == 1)
-    {
+    { 
+      dispcombconf[0].status = 2;
       usleep(10);
       cntsum = 0;
 
       for(ch=0;ch<NBch;ch++)
 	cntsum += data.image[IDch[ch]].md[0].cnt0;
+
       
       if(cntsum != cntsumold)
 	{
+	  dispcombconf[0].status = 3;
 	  //	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
 	  //fflush(stdout);
 	  cnt++;
@@ -425,6 +432,7 @@ int SCExAO_DM_CombineChannels(int mode)
 	    }
 	  ID1 = image_ID("dmdisptmp");
 	  
+	  dispcombconf[0].status = 4;
 
 	  // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
 	  ave = 0.0;
@@ -432,6 +440,8 @@ int SCExAO_DM_CombineChannels(int mode)
 	    ave += data.image[ID1].array.F[ii];
 	  ave /= NBact;
 	  
+	  dispcombconf[0].status = 5;
+
 	  for(ii=0;ii<NBact;ii++)
 	    {
 	      data.image[ID1].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
@@ -439,13 +449,20 @@ int SCExAO_DM_CombineChannels(int mode)
 		data.image[ID1].array.F[ii] = 0.0;
 	    }
 
+	  dispcombconf[0].status = 6;
+
 	  data.image[IDdisp].md[0].write = 1;
 	  memcpy (data.image[IDdisp].array.F,data.image[ID1].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
 	  data.image[IDdisp].md[0].cnt0++;
 	  data.image[IDdisp].md[0].write = 0;
+
+	  dispcombconf[0].status = 7;
 	  
 	  if(mode==1)
 	    SCExAO_DM_disp2V(IDdisp, IDvolt);
+
+	  dispcombconf[0].status = 8;
+
 	  cntsumold = cntsum;	  
 	}
     }

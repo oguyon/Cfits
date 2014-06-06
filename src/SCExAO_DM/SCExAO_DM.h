@@ -22,6 +22,8 @@ typedef struct
   int busy; // if set to 1, hold off and wait
   float MAXVOLT; // maximum voltage on DM
 
+  int status;
+
   struct timespec tstart;
   struct timespec tend;
 
