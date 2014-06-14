@@ -1,12 +1,3 @@
-/*^****************************************************************************
-* FILE: CLIcore.c : command line interface main
-*
-*
-*
-*
-*
-******************************************************************************/
-
 #include <string.h>
 #include <CLIcore.h>
 #include <malloc.h>
@@ -45,10 +36,23 @@
 #include "calc_bison.h"
 
 
+
+
+/**
+ * @file CLIcore.c
+ * @author Olivier Guyon
+ * @date Jun 13, 2014
+ */
+
+
 /*-----------------------------------------
 *       Globals
 */
-int Journal = 0; // keeps a log of commands on disk
+
+
+
+int Journal = 0; 
+
 int Verbose = 0; 
 int LIST_IMFILES = 0;
 DATA data;
@@ -85,7 +89,7 @@ int re_alloc();
 int command_line( int argc, char **argv);
 
 
-// CLI commands
+/// CLI commands
 int exitCLI();
 int help();
 int list_commands();
@@ -94,7 +98,7 @@ int help_command(char *cmdkey);
 
 
 
-// CLI functions
+/// CLI functions
 
 int exitCLI()
 {
@@ -223,13 +227,14 @@ int cfits_usleep_cli()
 
 
 
-/*^-----------------------------------------------------------------------------
-| 
-| 
-| 
-|
-|
-+-----------------------------------------------------------------------------*/
+/**
+ * @brief Command Line Interface (CLI) main\n 
+ *
+ * uses readline to read user input\n
+ * parsing done with bison and flex
+ */
+
+
 int main(int argc, char *argv[])
 {
   long i, j;
@@ -1141,6 +1146,12 @@ int list_commands_module(char *modulename)
 
 
 
+
+/**
+ * @brief command help\n 
+ *
+ * @param[in] cmdkey Commmand name
+ */
 
 
 int help_command(char *cmdkey)

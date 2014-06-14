@@ -7,11 +7,11 @@ int init_AtmosphericTurbulence();
 
 int AtmosphericTurbulence_change_configuration_file(char *fname);
 
-int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size);
+int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outerscale);
 
 int make_master_turbulence_screen_pow(char *ID_name1, char *ID_name2, long size, float power);
 
-int unwrap_phase_screen(char *ID_name);
+//int unwrap_phase_screen(char *ID_name);
 
 int contract_wavefront_series(char *in_prefix, char *out_prefix, long NB_files);
 
@@ -27,6 +27,6 @@ int measure_wavefront_series_expoframes(float etime, char *outfile);
 
 int frame_select_PSF(char *logfile, long NBfiles, float frac);
 
-int AtmosphericTurbulence_AOprocess();
+int AtmosphericTurbulence_WFprocess();
 
 #endif

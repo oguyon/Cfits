@@ -53,12 +53,8 @@ char CONFFILE[200] = "WFsim.conf";
 
 int make_AtmosphericTurbulence_wavefront_series_cli()
 {
-  
-  //  if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
-  //  {
   make_AtmosphericTurbulence_wavefront_series();
-  //  }
-  //else
+
   return 0;
 }
 
@@ -70,7 +66,7 @@ int AtmosphericTurbulence_mkmastert_cli()
   
   if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
     {
-      make_master_turbulence_screen(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+      make_master_turbulence_screen(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, 1.0*data.cmdargtoken[3].val.numl);
     }
   else
     return 1;
@@ -103,7 +99,7 @@ int init_AtmosphericTurbulence()
   strcpy(data.cmd[data.NBcmd].info,"make 2 master phase screens");
   strcpy(data.cmd[data.NBcmd].syntax,"<screen0> <screen1> <size>");
   strcpy(data.cmd[data.NBcmd].example,"mkmastert scr0 scr1 2048");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outercale)");
   data.NBcmd++;
 
   return 0;
@@ -117,20 +113,23 @@ int init_AtmosphericTurbulence()
 
 int AtmosphericTurbulence_change_configuration_file(char *fname)
 {
-  sprintf(CONFFILE,"%s",fname);
+  sprintf(CONFFILE, "%s", fname);
   
   return(0);
 }
 
 
-int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size)
+
+//
+// outerscale is in pixel 
+//
+int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outerscale)
 {
   long ID,ii,jj;
   float value,C1,C2;
   long cnt;
   long Dlim = 3;
   long IDv;
-  double outerscale = 100000000000.0; // in pixel
 
   int OUTERSCALE_MODE = 1; // 1 if outer scale
   double OUTERscale_f0;
@@ -142,7 +141,7 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size)
   if(IDv!=-1)
     {
       outerscale = data.variable[IDv].value;
-      printf("Outer scale = %f pix\n",outerscale);
+      printf("Outer scale = %f pix\n", outerscale);
     }
  
   IDv = variable_ID("RLIM");
@@ -238,6 +237,9 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size)
   return(0);
 }
 
+
+
+
 int make_master_turbulence_screen_pow(char *ID_name1, char *ID_name2, long size, float power)
 {
   long ID,ii,jj;
@@ -302,10 +304,11 @@ int make_master_turbulence_screen_pow(char *ID_name1, char *ID_name2, long size,
   return(0);
 }
 
+/*
 int unwrap_phase_screen(char *ID_name)
 {
   long ID,ID_Pcount;
-  long AOsize;
+  long WFsize;
   long naxis;
   long nbframe,frame;
   long ii,jj;
@@ -315,7 +318,7 @@ int unwrap_phase_screen(char *ID_name)
 
   ID=image_ID(ID_name);
   naxis = data.image[ID].md[0].naxis;
-  AOsize = data.image[ID].md[0].size[0];
+  WFsize = data.image[ID].md[0].size[0];
 
   nbframe=1;
   if(naxis==3)
@@ -323,16 +326,15 @@ int unwrap_phase_screen(char *ID_name)
   
   for(frame=0;frame<nbframe;frame++)
     {
-      ID_Pcount = create_2Dimage_ID("Pcount",AOsize,AOsize);
+      ID_Pcount = create_2Dimage_ID("Pcount", WFsize, WFsize);
       
-      data.image[ID_Pcount].array.F[(AOsize/2)*AOsize+AOsize/2] = 0.0;
+      data.image[ID_Pcount].array.F[(WFsize/2)*WFsize+WFsize/2] = 0.0;
       
-      /* x = AOsize/2 */
       P=0;
-      for(jj=AOsize/2;jj<AOsize-1;jj++)
+      for(jj=WFsize/2;jj<WFsize-1;jj++)
 	{
-	  phase1 = data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+AOsize/2];
-	  phase2 = data.image[ID].array.F[frame*AOsize*AOsize+(jj+1)*AOsize+AOsize/2];
+	  phase1 = data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+WFsize/2];
+	  phase2 = data.image[ID].array.F[frame*WFsize*WFsize+(jj+1)*WFsize+WFsize/2];
 	  tmp1=phase1-phase2;
 	  tmp2=phase1-phase2+2.0*PI;
 	  tmp3=phase1-phase2-2.0*PI;
@@ -345,14 +347,14 @@ int unwrap_phase_screen(char *ID_name)
 	  if(fabs(tmp3)<min)
 	    P++;
 	  
-	  data.image[ID_Pcount].array.F[(jj+1)*AOsize+AOsize/2] = 1.0*P;
+	  data.image[ID_Pcount].array.F[(jj+1)*WFsize+WFsize/2] = 1.0*P;
 	}
       
       P=0;
-      for(jj=AOsize/2;jj>0;jj--)
+      for(jj=WFsize/2;jj>0;jj--)
 	{
-	  phase1 = data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+AOsize/2];
-	  phase2 = data.image[ID].array.F[frame*AOsize*AOsize+(jj-1)*AOsize+AOsize/2];
+	  phase1 = data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+WFsize/2];
+	  phase2 = data.image[ID].array.F[frame*WFsize*WFsize+(jj-1)*WFsize+WFsize/2];
 	  tmp1=phase1-phase2;
 	  tmp2=phase1-phase2+2.0*PI;
 	  tmp3=phase1-phase2-2.0*PI;
@@ -365,16 +367,16 @@ int unwrap_phase_screen(char *ID_name)
 	  if(fabs(tmp3)<min)
 	    P++;
 	  
-	  data.image[ID_Pcount].array.F[(jj-1)*AOsize+AOsize/2] = 1.0*P;
+	  data.image[ID_Pcount].array.F[(jj-1)*WFsize+WFsize/2] = 1.0*P;
 	}
       
-      for(jj=0;jj<AOsize;jj++)
+      for(jj=0;jj<WFsize;jj++)
 	{
-	  P = data.image[ID_Pcount].array.F[jj*AOsize+AOsize/2];
-	  for(ii=AOsize/2;ii<AOsize-1;ii++)
+	  P = data.image[ID_Pcount].array.F[jj*WFsize+WFsize/2];
+	  for(ii=WFsize/2;ii<WFsize-1;ii++)
 	    {
-	      phase1 = data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+ii];
-	      phase2 = data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+ii+1];
+	      phase1 = data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+ii];
+	      phase2 = data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+ii+1];
 	      tmp1=phase1-phase2;
 	      tmp2=phase1-phase2+2.0*PI;
 	      tmp3=phase1-phase2-2.0*PI;
@@ -387,14 +389,14 @@ int unwrap_phase_screen(char *ID_name)
 	      if(fabs(tmp3)<min)
 		P++;
 	      
-	      data.image[ID_Pcount].array.F[jj*AOsize+ii+1] = 1.0*P;
+	      data.image[ID_Pcount].array.F[jj*WFsize+ii+1] = 1.0*P;
 	    }
 	  
-	  P = data.image[ID_Pcount].array.F[jj*AOsize+AOsize/2];
-	  for(ii=AOsize/2;ii>0;ii--)
+	  P = data.image[ID_Pcount].array.F[jj*WFsize+WFsize/2];
+	  for(ii=WFsize/2;ii>0;ii--)
 	    {
-	      phase1 = data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+ii];
-	      phase2 = data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+ii-1];
+	      phase1 = data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+ii];
+	      phase2 = data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+ii-1];
 	      tmp1=phase1-phase2;
 	      tmp2=phase1-phase2+2.0*PI;
 	      tmp3=phase1-phase2-2.0*PI;
@@ -407,15 +409,15 @@ int unwrap_phase_screen(char *ID_name)
 	      if(fabs(tmp3)<min)
 		P++;
 	      
-	      data.image[ID_Pcount].array.F[jj*AOsize+ii-1] = 1.0*P;
+	      data.image[ID_Pcount].array.F[jj*WFsize+ii-1] = 1.0*P;
 	    }
 	}
       
-      for(ii=0;ii<AOsize;ii++)
-	for(jj=0;jj<AOsize;jj++)
+      for(ii=0;ii<WFsize;ii++)
+	for(jj=0;jj<WFsize;jj++)
 	  {
-	    P = data.image[ID_Pcount].array.F[jj*AOsize+ii];
-	    data.image[ID].array.F[frame*AOsize*AOsize+jj*AOsize+ii] += 2.0*PI*P;
+	    P = data.image[ID_Pcount].array.F[jj*WFsize+ii];
+	    data.image[ID].array.F[frame*WFsize*WFsize+jj*WFsize+ii] += 2.0*PI*P;
 	  }
       
       delete_image_ID("Pcount");
@@ -423,6 +425,8 @@ int unwrap_phase_screen(char *ID_name)
 
   return(0);
 }
+*/
+
 
 
 int contract_wavefront_cube(char *ina_file, char *inp_file, char *outa_file, char *outp_file, int factor)
@@ -517,6 +521,7 @@ int contract_wavefront_cube(char *ina_file, char *inp_file, char *outa_file, cha
   return(0);
 }
 
+
 int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int factor)
 {
   /* contracts the wavefront series by a factor of 2^factor */
@@ -601,9 +606,11 @@ int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int facto
   return(0);
 }
 
+
+
 int make_AtmosphericTurbulence_wavefront_series()
 {
-  long AOsize;
+  long WFsize;
   //  fitsfile *fptr;       /* pointer to the FITS file; defined in fitsio.h */
   int status;
   long  fpixel = 1, naxis = 3, nelement;
@@ -717,6 +724,7 @@ int make_AtmosphericTurbulence_wavefront_series()
   float seeing;
   float Zangle;
   float SiteAlt;
+  float OuterScale;
   float CN2total;
   float tmp,tmpf,h,Rindex,Roffset,RoffsetS;
   
@@ -787,6 +795,11 @@ int make_AtmosphericTurbulence_wavefront_series()
   strcpy(KEYWORD,"SITE_ALT");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
   SiteAlt = atof(CONTENT);
+
+  strcpy(KEYWORD,"OUTERSCALE");
+  read_config_parameter(CONFFILE,KEYWORD,CONTENT);
+  OuterScale = atof(CONTENT);
+  
 
   strcpy(KEYWORD,"PUPIL_SCALE");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
@@ -866,31 +879,35 @@ int make_AtmosphericTurbulence_wavefront_series()
   printf("Scoeff is %f (%f)\n",Scoeff,Nslambda/Nlambda);
   fflush(stdout);
 
+
+  printf("Zenith angle = %f\n", Zangle);
+
+
   strcpy(KEYWORD,"SWF_FILE_PREFIX");
   read_config_parameter(CONFFILE,KEYWORD,SWF_FILE_PREFIX);
   Fresnel_alt_bin = atof(CONTENT);
 
-  strcpy(KEYWORD,"AOsize");
+  strcpy(KEYWORD,"WFsize");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-  AOsize = atol(CONTENT);
-  naxesout[0] = AOsize;
-  naxesout[1] = AOsize;
+  WFsize = atol(CONTENT);
+  naxesout[0] = WFsize;
+  naxesout[1] = WFsize;
   
   strcpy(KEYWORD,"WF_RAW_SIZE");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
   naxes[0]=atol(CONTENT);
   naxes[1]=atol(CONTENT);
 
-  //  pfactor = naxes[0]/AOsize;
+  //  pfactor = naxes[0]/WFsize;
   pfactor = 1;
   contraction_factor = 4;
-  if(naxes[0]/AOsize==1)
+  if(naxes[0]/WFsize==1)
     contraction_factor = 0;
-  if(naxes[0]/AOsize==2)
+  if(naxes[0]/WFsize==2)
     contraction_factor = 1;
-  if(naxes[0]/AOsize==4)
+  if(naxes[0]/WFsize==4)
     contraction_factor = 2;
-  if(naxes[0]/AOsize==8)
+  if(naxes[0]/WFsize==8)
     contraction_factor = 3;
 
   if(contraction_factor==4)
@@ -1212,7 +1229,7 @@ int make_AtmosphericTurbulence_wavefront_series()
 	  sprintf(fname_a,"t%ld_%ld",i+1,MASTER_SIZE);
 	  sprintf(fname1_a,"TM%ld",i+1);
 	  printf("CREATING %s %s\n",fname,fname_a);
-	  make_master_turbulence_screen(fname1,fname1_a,MASTER_SIZE);
+	  make_master_turbulence_screen(fname1, fname1_a, MASTER_SIZE, OuterScale/PUPIL_SCALE);
 	  save_fl_fits(fname1,fname);
 	  save_fl_fits(fname1_a,fname_a);
 	}
@@ -2001,7 +2018,7 @@ int measure_wavefront_series(float factor)
   float PUPIL_SCALE;
   float FOCAL_SCALE;
   float LAMBDA;
-  long AOsize;
+  long WFsize;
   double tmp;
   long ID,IDpsf,IDamp,IDpha;
   long IDpupamp;
@@ -2041,13 +2058,13 @@ int measure_wavefront_series(float factor)
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
   LAMBDA = 0.000001*atof(CONTENT);
 
-  strcpy(KEYWORD,"AOsize");
+  strcpy(KEYWORD,"WFsize");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-  AOsize = atol(CONTENT);
+  WFsize = atol(CONTENT);
  
 
-  FOCAL_SCALE = LAMBDA/AOsize/PUPIL_SCALE/PI*180.0*3600.0; /* in arcsecond per pixel */
-  printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE,AOsize);
+  FOCAL_SCALE = LAMBDA/WFsize/PUPIL_SCALE/PI*180.0*3600.0; /* in arcsecond per pixel */
+  printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE,WFsize);
 
   strcpy(KEYWORD,"PUPIL_AMPL_FILE");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
@@ -2183,7 +2200,7 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
   float PUPIL_SCALE;
   float FOCAL_SCALE;
   float LAMBDA;
-  long AOsize;
+  long WFsize;
   float tmp,tmp1;
   long ID,IDpsf,IDamp,IDpha;
   long tspan;
@@ -2220,13 +2237,13 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
   LAMBDA = 0.000001*atof(CONTENT);
 
-  strcpy(KEYWORD,"AOsize");
+  strcpy(KEYWORD,"WFsize");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-  AOsize = atol(CONTENT);
+  WFsize = atol(CONTENT);
  
 
-  FOCAL_SCALE = LAMBDA/AOsize/PUPIL_SCALE/PI*180.0*3600.0; /* in arcsecond per pixel */
-  printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE,AOsize);
+  FOCAL_SCALE = LAMBDA/WFsize/PUPIL_SCALE/PI*180.0*3600.0; /* in arcsecond per pixel */
+  printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE,WFsize);
 
   strcpy(KEYWORD,"PUPIL_AMPL_FILE");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
@@ -2596,7 +2613,7 @@ int frame_select_PSF(char *logfile, long NBfiles, float frac)
 
 
 // explore long exposure PSF structure
-double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, double Kdgain)
+double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdgain)
 {
   FILE *fp;
   char wf_file_name[200];
@@ -2642,10 +2659,10 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
   float PUPIL_SCALE;
   float FOCAL_SCALE;
   float LAMBDA;
-  long AOsize;
+  long WFsize;
 
   long BINWF = 2; // 2 for 30m telescope
-  long AOsize1; // after binning by BINWF
+  long WFsize1; // after binning by BINWF
 
   long size = 512;
   long BINFACTOR = 8; // 8 for 8m telescope
@@ -2722,14 +2739,14 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
   LAMBDA = 0.000001*atof(CONTENT); // [m]
 
-  strcpy(KEYWORD,"AOsize");
+  strcpy(KEYWORD,"WFsize");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-  AOsize = atol(CONTENT);
+  WFsize = atol(CONTENT);
  
-  AOsize1 = AOsize/BINWF;
+  WFsize1 = WFsize/BINWF;
 
-  FOCAL_SCALE = LAMBDA/AOsize/PUPIL_SCALE/PI*180.0*3600.0/BINWF; /* in arcsecond per pixel */
-  printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE,AOsize);
+  FOCAL_SCALE = LAMBDA/WFsize/PUPIL_SCALE/PI*180.0*3600.0/BINWF; /* in arcsecond per pixel */
+  printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE,WFsize);
 
   strcpy(KEYWORD,"WFTIME_STEP");
   read_config_parameter(CONFFILE,KEYWORD,CONTENT);
@@ -2747,28 +2764,28 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 
 
   // MAKE PUPIL MASK
-  IDtelpup = make_disk("TelPup", AOsize1, AOsize1, AOsize1/2, AOsize1/2, TelDiam*0.5/PUPIL_SCALE/BINWF);
+  IDtelpup = make_disk("TelPup", WFsize1, WFsize1, WFsize1/2, WFsize1/2, TelDiam*0.5/PUPIL_SCALE/BINWF);
 
 
-  IDatm_opd = create_2Dimage_ID("atmopd", AOsize1, AOsize1); // Atmosphere OPD at WFS lambda
-  IDatm_amp = create_2Dimage_ID("atmamp", AOsize1, AOsize1); // Atmosphere amplitude at WFS lambda
+  IDatm_opd = create_2Dimage_ID("atmopd", WFsize1, WFsize1); // Atmosphere OPD at WFS lambda
+  IDatm_amp = create_2Dimage_ID("atmamp", WFsize1, WFsize1); // Atmosphere amplitude at WFS lambda
 
-  IDatm_opd_sci = create_2Dimage_ID("atmopdsci", AOsize1, AOsize1); // Atmosphere OPD at SCI lambda
-  IDatm_amp_sci = create_2Dimage_ID("atmampsci", AOsize1, AOsize1); // Atmosphere amplitude at SCI lambda
+  IDatm_opd_sci = create_2Dimage_ID("atmopdsci", WFsize1, WFsize1); // Atmosphere OPD at SCI lambda
+  IDatm_amp_sci = create_2Dimage_ID("atmampsci", WFsize1, WFsize1); // Atmosphere amplitude at SCI lambda
 
-  IDwfs_opd = create_2Dimage_ID("wfsopd", AOsize1, AOsize1); // WFS OPD (corrected by DM)
-  IDwfs_amp = create_2Dimage_ID("wfsamp", AOsize1, AOsize1); // WFS amplitude (corrected by DM)
+  IDwfs_opd = create_2Dimage_ID("wfsopd", WFsize1, WFsize1); // WFS OPD (corrected by DM)
+  IDwfs_amp = create_2Dimage_ID("wfsamp", WFsize1, WFsize1); // WFS amplitude (corrected by DM)
 
-  IDdm_opd_tmp = create_2Dimage_ID("dmopdtmp", AOsize1, AOsize1); // DM opd (before being sent to DM)
-  IDdm_opd = create_2Dimage_ID("dmopd", AOsize1, AOsize1); // DM opd
+  IDdm_opd_tmp = create_2Dimage_ID("dmopdtmp", WFsize1, WFsize1); // DM opd (before being sent to DM)
+  IDdm_opd = create_2Dimage_ID("dmopd", WFsize1, WFsize1); // DM opd
 
-  IDwfs_mes_opd = create_2Dimage_ID("wfsmesopd", AOsize1, AOsize1); // measured WFS OPD 
-  IDwfs_mes_opd_prev = create_2Dimage_ID("wfsmesopdprev", AOsize1, AOsize1); // previous measured WFS OPD 
-  IDwfs_mes_opd_derivative = create_2Dimage_ID("wfsmesopdder", AOsize1, AOsize1); // derivative of measured WFS OPD 
-  IDwfs_mes_opd_integral = create_2Dimage_ID("wfsmesopdint", AOsize1, AOsize1); // integral of measured WFS OPD 
+  IDwfs_mes_opd = create_2Dimage_ID("wfsmesopd", WFsize1, WFsize1); // measured WFS OPD 
+  IDwfs_mes_opd_prev = create_2Dimage_ID("wfsmesopdprev", WFsize1, WFsize1); // previous measured WFS OPD 
+  IDwfs_mes_opd_derivative = create_2Dimage_ID("wfsmesopdder", WFsize1, WFsize1); // derivative of measured WFS OPD 
+  IDwfs_mes_opd_integral = create_2Dimage_ID("wfsmesopdint", WFsize1, WFsize1); // integral of measured WFS OPD 
 
-  IDsci_opd = create_2Dimage_ID("sciopd", AOsize1, AOsize1); // SCI OPD (corrected by DM)
-  IDsci_amp = create_2Dimage_ID("sciamp", AOsize1, AOsize1); // SCI amplitude (corrected by DM)
+  IDsci_opd = create_2Dimage_ID("sciopd", WFsize1, WFsize1); // SCI OPD (corrected by DM)
+  IDsci_amp = create_2Dimage_ID("sciamp", WFsize1, WFsize1); // SCI amplitude (corrected by DM)
 
   sizeb = size*BINFACTOR;
   IDpupa = create_2Dimage_ID("pupa", sizeb, sizeb);
@@ -2794,7 +2811,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
   */
 
   wfstime = 0.0;
-  for(ii=0;ii<AOsize1*AOsize1;ii++)
+  for(ii=0;ii<WFsize1*WFsize1;ii++)
     {
       data.image[IDwfs_opd].array.F[ii] = 0.0;
       data.image[IDdm_opd].array.F[ii] = 0.0;
@@ -2935,14 +2952,14 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
       
       if(BINWF==1)
 	{
-	  for(ii=0;ii<AOsize*AOsize;ii++)
+	  for(ii=0;ii<WFsize*WFsize;ii++)
 	    {
-	      val0 = data.image[IDac0].array.F[frameindex0*AOsize*AOsize+ii];
-	      val1 = data.image[IDac1].array.F[frameindex1*AOsize*AOsize+ii];
+	      val0 = data.image[IDac0].array.F[frameindex0*WFsize*WFsize+ii];
+	      val1 = data.image[IDac1].array.F[frameindex1*WFsize*WFsize+ii];
 	      amp = (1.0-framefrac)*val0 + framefrac*val1;
 	      
-	      val0 = data.image[IDpc0].array.F[frameindex0*AOsize*AOsize+ii];
-	      val1 = data.image[IDpc1].array.F[frameindex1*AOsize*AOsize+ii];
+	      val0 = data.image[IDpc0].array.F[frameindex0*WFsize*WFsize+ii];
+	      val1 = data.image[IDpc1].array.F[frameindex1*WFsize*WFsize+ii];
 	      pha = (1.0-framefrac)*val0 + framefrac*val1;
 	      
 	      
@@ -2950,12 +2967,12 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 	      data.image[IDatm_opd].array.F[ii] = pha/2.0/M_PI*LAMBDA;
 	      
 	      
-	      val0 = data.image[IDacs0].array.F[frameindex0*AOsize*AOsize+ii];
-	      val1 = data.image[IDacs1].array.F[frameindex1*AOsize*AOsize+ii];
+	      val0 = data.image[IDacs0].array.F[frameindex0*WFsize*WFsize+ii];
+	      val1 = data.image[IDacs1].array.F[frameindex1*WFsize*WFsize+ii];
 	      amp = (1.0-framefrac)*val0 + framefrac*val1;
 	      
-	      val0 = data.image[IDpcs0].array.F[frameindex0*AOsize*AOsize+ii];
-	      val1 = data.image[IDpcs1].array.F[frameindex1*AOsize*AOsize+ii];
+	      val0 = data.image[IDpcs0].array.F[frameindex0*WFsize*WFsize+ii];
+	      val1 = data.image[IDpcs1].array.F[frameindex1*WFsize*WFsize+ii];
 	      pha = (1.0-framefrac)*val0 + framefrac*val1;
 	      
 	      data.image[IDatm_amp_sci].array.F[ii] = amp;
@@ -2964,8 +2981,8 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 	}
       else
 	{
-	  for(ii1=0;ii1<AOsize1;ii1++)
-	    for(jj1=0;jj1<AOsize1;jj1++)	      
+	  for(ii1=0;ii1<WFsize1;ii1++)
+	    for(jj1=0;jj1<WFsize1;jj1++)	      
 	      {
 		re = 0.0;
 		im = 0.0;
@@ -2980,12 +2997,12 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 		      ii = ii1*BINWF+i;
 		      jj = jj1*BINWF+j;
 		      
-		      val0 = data.image[IDac0].array.F[frameindex0*AOsize*AOsize+jj*AOsize+ii];
-		      val1 = data.image[IDac1].array.F[frameindex1*AOsize*AOsize+jj*AOsize+ii];
+		      val0 = data.image[IDac0].array.F[frameindex0*WFsize*WFsize+jj*WFsize+ii];
+		      val1 = data.image[IDac1].array.F[frameindex1*WFsize*WFsize+jj*WFsize+ii];
 		      amp = (1.0-framefrac)*val0 + framefrac*val1;
 		      
-		      val0 = data.image[IDpc0].array.F[frameindex0*AOsize*AOsize+jj*AOsize+ii];
-		      val1 = data.image[IDpc1].array.F[frameindex1*AOsize*AOsize+jj*AOsize+ii];
+		      val0 = data.image[IDpc0].array.F[frameindex0*WFsize*WFsize+jj*WFsize+ii];
+		      val1 = data.image[IDpc1].array.F[frameindex1*WFsize*WFsize+jj*WFsize+ii];
 		      pha = (1.0-framefrac)*val0 + framefrac*val1;
 	  
 		      re += amp*cos(pha);
@@ -2993,12 +3010,12 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 		      pha_ave += pha;
 		      
 		      
-		      val0 = data.image[IDacs0].array.F[frameindex0*AOsize*AOsize+jj*AOsize+ii];
-		      val1 = data.image[IDacs1].array.F[frameindex1*AOsize*AOsize+jj*AOsize+ii];
+		      val0 = data.image[IDacs0].array.F[frameindex0*WFsize*WFsize+jj*WFsize+ii];
+		      val1 = data.image[IDacs1].array.F[frameindex1*WFsize*WFsize+jj*WFsize+ii];
 		      amp = (1.0-framefrac)*val0 + framefrac*val1;
 		
-		      val0 = data.image[IDpcs0].array.F[frameindex0*AOsize*AOsize+jj*AOsize+ii];
-		      val1 = data.image[IDpcs1].array.F[frameindex1*AOsize*AOsize+jj*AOsize+ii];
+		      val0 = data.image[IDpcs0].array.F[frameindex0*WFsize*WFsize+jj*WFsize+ii];
+		      val1 = data.image[IDpcs1].array.F[frameindex1*WFsize*WFsize+jj*WFsize+ii];
 		      pha = (1.0-framefrac)*val0 + framefrac*val1;
 		      
 		      re_sci += amp*cos(pha);
@@ -3012,7 +3029,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 		pha_ave /= (BINWF*BINWF);
 		pha_ave_sci /= (BINWF*BINWF);
 
-		data.image[IDatm_amp].array.F[jj1*AOsize1+ii1] = sqrt(re*re+im*im);
+		data.image[IDatm_amp].array.F[jj1*WFsize1+ii1] = sqrt(re*re+im*im);
 		pha = pha_ave;
 		errpha = atan2(im,re)-pha_ave; // close to -2PI, 0, 2PI etc...
 		errpha = modf(errpha/(2.0*M_PI),&tmpd);
@@ -3021,10 +3038,10 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 		if(errpha<-0.5)
 		  errpha += 1.0;
 		pha += errpha*2.0*M_PI;
-		data.image[IDatm_opd].array.F[jj1*AOsize1+ii1] = pha/2.0/M_PI*LAMBDA;
+		data.image[IDatm_opd].array.F[jj1*WFsize1+ii1] = pha/2.0/M_PI*LAMBDA;
 		
 		
-		data.image[IDatm_amp_sci].array.F[jj1*AOsize1+ii1] = sqrt(re_sci*re_sci+im_sci*im_sci);
+		data.image[IDatm_amp_sci].array.F[jj1*WFsize1+ii1] = sqrt(re_sci*re_sci+im_sci*im_sci);
 		pha = pha_ave_sci;
 		errpha = atan2(im_sci,re_sci)-pha_ave_sci; // close to -2PI, 0, 2PI etc...
 		errpha = modf(errpha/(2.0*M_PI),&tmpd);
@@ -3033,7 +3050,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 		if(errpha<-0.5)
 		  errpha += 1.0;
 		pha += errpha*2.0*M_PI;
-		data.image[IDatm_opd_sci].array.F[jj1*AOsize1+ii1] = pha/2.0/M_PI*(1.0e-9*SCILAMBDA);		
+		data.image[IDatm_opd_sci].array.F[jj1*WFsize1+ii1] = pha/2.0/M_PI*(1.0e-9*SCILAMBDA);		
 	      }
 	}
 
@@ -3042,7 +3059,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
       
 
       // Apply DM
-      for(ii=0;ii<AOsize1*AOsize1;ii++)
+      for(ii=0;ii<WFsize1*WFsize1;ii++)
 	{
 	  data.image[IDwfs_opd].array.F[ii] = data.image[IDatm_opd].array.F[ii] - data.image[IDdm_opd].array.F[ii];
 	  data.image[IDsci_opd].array.F[ii] = data.image[IDatm_opd_sci].array.F[ii] - data.image[IDdm_opd].array.F[ii];
@@ -3050,7 +3067,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 
 
       // WFS integration
-      for(ii=0;ii<AOsize1*AOsize1;ii++)
+      for(ii=0;ii<WFsize1*WFsize1;ii++)
 	data.image[IDwfs_mes_opd].array.F[ii] += data.image[IDwfs_opd].array.F[ii];
       wfscnt++;
       
@@ -3065,7 +3082,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 
 	  if(PIDok == 1)
 	    {
-	      for(ii=0;ii<AOsize1*AOsize1;ii++)
+	      for(ii=0;ii<WFsize1*WFsize1;ii++)
 		{
 		  data.image[IDwfs_mes_opd].array.F[ii] /= wfscnt; // AVERAGE OVER WFS INTEGRATION TIME
 		  data.image[IDwfs_mes_opd_derivative].array.F[ii] = (1.0-Kdgain)*data.image[IDwfs_mes_opd_derivative].array.F[ii] + Kdgain*(data.image[IDwfs_mes_opd].array.F[ii]-data.image[IDwfs_mes_opd_prev].array.F[ii])/WFS_SamplingTime;
@@ -3074,7 +3091,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 	    }
 	  else
 	    {
-	      for(ii=0;ii<AOsize1*AOsize1;ii++)
+	      for(ii=0;ii<WFsize1*WFsize1;ii++)
 		{
 		  data.image[IDwfs_mes_opd].array.F[ii] /= wfscnt; // AVERAGE OVER WFS INTEGRATION TIME
 		  data.image[IDwfs_mes_opd_derivative].array.F[ii] = 0.0;
@@ -3083,7 +3100,10 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 	      PIDok = 1;
 	    }
 
-	  for(ii=0;ii<AOsize1*AOsize1;ii++)
+
+
+
+	  for(ii=0;ii<WFsize1*WFsize1;ii++)
 	    {
 	      data.image[IDdm_opd_tmp].array.F[ii] += Kp*data.image[IDwfs_mes_opd].array.F[ii] + Kd*data.image[IDwfs_mes_opd_derivative].array.F[ii]*WFS_SamplingTime;
 	      data.image[IDwfs_mes_opd].array.F[ii] = 0.0;
@@ -3094,7 +3114,8 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 	  wfstime1 = 0.0;
 
 
-	  for(ii=0;ii<AOsize1*AOsize1;ii++)
+
+	  for(ii=0;ii<WFsize1*WFsize1;ii++)
 	    data.image[IDwfs_mes_opd_prev].array.F[ii] = data.image[IDwfs_mes_opd].array.F[ii]; // PREVIOUS WFS MEASUREMENT
 	}
 
@@ -3102,24 +3123,24 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 	{
 	  printf("UPDATE DM SHAPE\n");
 	  WFSdelayWait = 0;
-	  for(ii=0;ii<AOsize1*AOsize1;ii++)
+	  for(ii=0;ii<WFsize1*WFsize1;ii++)
 	    data.image[IDdm_opd].array.F[ii] = data.image[IDdm_opd_tmp].array.F[ii];
 	}
 
       // MEASURE WF QUALITY
       val0 = 0.0;
       val1 = 0.0;
-      for(ii=0;ii<AOsize1*AOsize1;ii++)
+      for(ii=0;ii<WFsize1*WFsize1;ii++)
 	{
 	  val0 += data.image[IDwfs_opd].array.F[ii]*data.image[IDtelpup].array.F[ii];
 	  val1 += data.image[IDtelpup].array.F[ii];	  
 	}
-      for(ii=0;ii<AOsize1*AOsize1;ii++) // REMOVE PISTON
+      for(ii=0;ii<WFsize1*WFsize1;ii++) // REMOVE PISTON
 	data.image[IDwfs_opd].array.F[ii] -= val0/val1;
 
       val0 = 0.0;
       val1 = 0.0;
-      for(ii=0;ii<AOsize1*AOsize1;ii++) // COMPUTE RMS WF QUALITY
+      for(ii=0;ii<WFsize1*WFsize1;ii++) // COMPUTE RMS WF QUALITY
 	{
 	  val0 += data.image[IDsci_opd].array.F[ii]*data.image[IDsci_opd].array.F[ii]*data.image[IDtelpup].array.F[ii];
 	  val1 += data.image[IDtelpup].array.F[ii];	  
@@ -3141,7 +3162,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
       
 
       // MAKING FOCAL PLANE IMAGE
-      //printf("%ld %ld\n", sizeb, AOsize1);
+      //printf("%ld %ld\n", sizeb, WFsize1);
       // list_image_ID();
       //    printf("Image identifiers: %ld %ld %ld %ld %ld\n", IDpupa, IDpupp, IDtelpup, IDatm_amp_sci, IDsci_opd);
       fflush(stdout);
@@ -3150,13 +3171,13 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
       for(ii=0; ii<sizeb; ii++)
 	for(jj=0; jj<sizeb; jj++)
 	  {
-	    ii1 = AOsize1/2-sizeb/2+ii;
-	    jj1 = AOsize1/2-sizeb/2+jj;
-	    if((ii1>-1)&&(jj1>-1)&&(ii1<AOsize1)&&(jj1<AOsize1))
+	    ii1 = WFsize1/2-sizeb/2+ii;
+	    jj1 = WFsize1/2-sizeb/2+jj;
+	    if((ii1>-1)&&(jj1>-1)&&(ii1<WFsize1)&&(jj1<WFsize1))
 	      {
-		data.image[IDpupa].array.F[jj*sizeb+ii] = data.image[IDtelpup].array.F[jj1*AOsize1+ii1]*data.image[IDatm_amp_sci].array.F[jj1*AOsize1+ii1];
+		data.image[IDpupa].array.F[jj*sizeb+ii] = data.image[IDtelpup].array.F[jj1*WFsize1+ii1]*data.image[IDatm_amp_sci].array.F[jj1*WFsize1+ii1];
 		tot += data.image[IDpupa].array.F[jj*sizeb+ii];
-		data.image[IDpupp].array.F[jj*sizeb+ii] = data.image[IDtelpup].array.F[jj1*AOsize1+ii1]*2.0*M_PI*data.image[IDsci_opd].array.F[jj1*AOsize1+ii1]/(1.0e-9*SCILAMBDA);	    
+		data.image[IDpupp].array.F[jj*sizeb+ii] = data.image[IDtelpup].array.F[jj1*WFsize1+ii1]*2.0*M_PI*data.image[IDsci_opd].array.F[jj1*WFsize1+ii1]/(1.0e-9*SCILAMBDA);	    
 	      }
 	  }
       
@@ -3365,7 +3386,7 @@ double AtmosphericTurbulence_exAO_speckles(double Kp, double Ki, double Kd, doub
 
 // custom AO related processing of a series of WF
 
-int AtmosphericTurbulence_AOprocess()
+int AtmosphericTurbulence_WFprocess()
 {
   FILE *fp;
   char wf_file_name[200];
@@ -3390,7 +3411,7 @@ int AtmosphericTurbulence_AOprocess()
   Kp = 0.5;
   Ki = 0.0;
   Kd = 0.0;
-  val = AtmosphericTurbulence_exAO_speckles(Kp, Ki, Kd, Kdgain);
+  val = AtmosphericTurbulence_makePSF(Kp, Ki, Kd, Kdgain);
   exit(0);
   
 
@@ -3409,7 +3430,7 @@ int AtmosphericTurbulence_AOprocess()
       //Kdgain = 0.5;
 
 
-      val = AtmosphericTurbulence_exAO_speckles(Kp, Ki, Kd, Kdgain);
+      val = AtmosphericTurbulence_makePSF(Kp, Ki, Kd, Kdgain);
       
       fp = fopen("res.log.txt","a");
       fprintf(fp, "%ld %e %e %e %e %e\n", iter, Kp, Ki, Kd, Kdgain, val);

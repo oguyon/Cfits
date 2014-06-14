@@ -703,8 +703,18 @@ long arith_image_merge3D(char *ID_name1, char *ID_name2, char *IDout_name)
   
   xsize = data.image[ID1].md[0].size[0];
   ysize = data.image[ID1].md[0].size[1];
-  zsize1 = data.image[ID1].md[0].size[2];
-  zsize2 = data.image[ID2].md[0].size[2];
+
+  if(data.image[ID1].md[0].naxis==2)
+    zsize1 = 1;
+  else
+    zsize1 = data.image[ID1].md[0].size[2];
+
+  if(data.image[ID2].md[0].naxis==2)
+    zsize2 = 1;
+  else
+    zsize2 = data.image[ID2].md[0].size[2];
+
+
 
   if((xsize != data.image[ID2].md[0].size[0])||(ysize != data.image[ID2].md[0].size[1]))
     {

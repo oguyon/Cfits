@@ -15,10 +15,10 @@
 
 #define PI 3.14159265358979323846264338328
 
-// Size of array CLICOREVARRAY
+/// Size of array CLICOREVARRAY
 #define SZ_CLICOREVARRAY 1000
 
-// important directories and info
+/// important directories and info
 pid_t CLIPID;
 char DocDir[200];		// location of documentation
 char SrcDir[200];		// location of source

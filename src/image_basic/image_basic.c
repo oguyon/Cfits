@@ -52,6 +52,17 @@ char errmsg[SBUFFERSIZE];
 // 4: existing image
 //
 
+int image_basic_resize_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2) == 0)
+    {
+      basic_resizeim(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 
 int init_image_basic()
 {
@@ -60,16 +71,16 @@ int init_image_basic()
   data.NBmodule++;
   
 
-  /*
-  strcpy(data.cmd[data.NBcmd].key,"piaacmcsimrun");
+  
+  strcpy(data.cmd[data.NBcmd].key,"resizeim");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = PIAACMCsimul_run_cli;
-  strcpy(data.cmd[data.NBcmd].info,"Simulate PIAACMC");
-  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-  strcpy(data.cmd[data.NBcmd].example,"piaacmcsimrun");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int PIAACMCsimul_run()");
-  data.NBcmd++;
-  */
+  data.cmd[data.NBcmd].fp = image_basic_resize_cli;
+  strcpy(data.cmd[data.NBcmd].info,"resize 2D image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <new x size> <new y size>");
+  strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
+  data.NBcmd++; 
+  
    
   // add atexit functions here
 

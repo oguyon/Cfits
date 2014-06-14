@@ -227,9 +227,9 @@ double APLCapo_FPMRAD_STEP = 0.001;
 
 int coronagraph_make_2Dprolate_cli()
 {
-  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0)
+  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
     {
-      coronagraph_make_2Dprolate(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
+      coronagraph_make_2Dprolate(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
       return 0;
     }
   else
@@ -238,9 +238,9 @@ int coronagraph_make_2Dprolate_cli()
 
 int coronagraph_make_2Dprolateld_cli()
 {
-  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0)
+  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
     {
-      coronagraph_make_2Dprolateld(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
+      coronagraph_make_2Dprolateld(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
       return 0;
     }
   else
@@ -249,9 +249,9 @@ int coronagraph_make_2Dprolateld_cli()
 
 int coronagraph_update_2Dprolate_cli()
 {
-  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
+  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,1)==0)
     {
-      coronagraph_update_2Dprolate(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf);
+      coronagraph_update_2Dprolate(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf);
       return 0;
     }
   else
@@ -304,9 +304,9 @@ int init_coronagraphs()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = coronagraph_make_2Dprolateld_cli;
   strcpy(data.cmd[data.NBcmd].info,"make 2D prolate, l/D unit mask size");
-  strcpy(data.cmd[data.NBcmd].syntax,"<focal plane mask radius [l/D]> <central obstruction> <image name>");
-  strcpy(data.cmd[data.NBcmd].example,"cormk2Dprolateld 1.20 0.1 prolim");
-  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_make_2Dprolateld(double masksizeld, double centralObs, char *outname)"); 
+  strcpy(data.cmd[data.NBcmd].syntax,"<focal plane mask radius [l/D]> <central obstruction> <image name> <array size>");
+  strcpy(data.cmd[data.NBcmd].example,"cormk2Dprolateld 1.20 0.1 prolim 2048");
+  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_make_2Dprolateld(double masksizeld, double centralObs, char *outname, long size)"); 
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"corup2Dprolate");
@@ -360,15 +360,13 @@ int init_coronagraphs()
 
 
 
-double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outname)
+double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double centralObs, char *outname, long size)
 {
   FILE *fp;
-  long size = CORONAGRAPHS_ARRAYSIZE;
-  long size2 = size*size;
+  long size2;
   long IDfpmask;
   long IDpupa0,IDpupp0,IDpupa0m,IDpupp0m;
   long ii,jj,ii1;
-  double trad_pix = CORONAGRAPHS_TDIAM/CORONAGRAPHS_PSCALE/2.0;
   double peak;
   long IDprol,ID;
   long double total,total0,total2,v1;
@@ -383,6 +381,8 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
   int CentralObstructionFlag = 0;
   long IDpupa0co;
     
+  size2 = size*size;
+
   if(centralObs > 0.001)
     CentralObstructionFlag = 1;
 
@@ -394,10 +394,12 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
     }
 
   v1 = 0.0;
-  MASKSIZELD = CORONAGRAPHS_PIXSCALE*masksize;
-  printf("PIXSCALE = %f\n", CORONAGRAPHS_PIXSCALE);
-  printf("MASK RADIUS = %f pix = %f l/D\n", masksize, MASKSIZELD);
-  printf("PUPIL RADIUS = %f\n", trad_pix);
+  
+
+
+  MASKSIZELD = (2.0*beamradpix/size)*fpmradpix;
+  printf("MASK RADIUS = %f pix = %f l/D\n", fpmradpix, MASKSIZELD);
+  printf("PUPIL RADIUS = %f\n", beamradpix);
   printf("SIZE = %ld\n", size);
 
   IDproli = create_2Dimage_ID("proli", size, size);
@@ -405,7 +407,7 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
   IDprolp = create_2Dimage_ID("prolp", size, size);
 	
 
-  IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, masksize);
+  IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, fpmradpix);
   for(ii=0;ii<size2;ii++)
     {
       data.image[IDfpmask].array.F[ii] = 1.0*data.image[IDfpmask].array.F[ii];
@@ -429,10 +431,10 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
     }
   if(IDpupa0==-1)
     {
-      IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, trad_pix);
+      IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, beamradpix);
       if(CentralObstructionFlag == 1)
 	{
-	  IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, trad_pix*centralObs);
+	  IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, beamradpix*centralObs);
 	  for(ii=0;ii<size*size;ii++)
 	    data.image[IDpupa0].array.F[ii] -= data.image[IDpupa0co].array.F[ii];
 	  delete_image_ID("pupa0co");
@@ -466,8 +468,8 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
 	  {
 	    x = 1.0*ii-size/2;
 	    y = 1.0*jj-size/2;
-	    r2 = (x*x+y*y)/trad_pix/trad_pix;
-	    data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*masksize);
+	    r2 = (x*x+y*y)/beamradpix/beamradpix;
+	    data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*fpmradpix);
 	    data.image[IDproli].array.F[jj*size+ii] = 0.0;
 	    data.image[IDprol].array.F[jj*size+ii] = data.image[IDprolr].array.F[jj*size+ii];
 	  }
@@ -480,7 +482,7 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
       }
 
   
-  ID = image_ID("startim");
+  ID = image_ID("apostart");
   if(ID!=-1)
     {
       for(ii=0;ii<size2;ii++)
@@ -489,7 +491,7 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
 	  data.image[IDprol].array.F[ii] = data.image[ID].array.F[ii];
 	}
     }
-  delete_image_ID("startim");
+  delete_image_ID("apostart");
 
 
 
@@ -659,12 +661,18 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
     data.image[IDfpmask].array.F[ii] = 1.0-data.image[IDfpmask].array.F[ii]*(1.0+(1.0-peak)/peak);
    
 
-  save_fl_fits("FPmask","!FPmask.fits");
+  //  save_fl_fits("FPmask","!FPmask.fits");
 
   delete_image_ID("FPmask");
   delete_image_ID("pupp0");
   delete_image_ID("pupa0");
   delete_image_ID("pupa0m");
+
+  delete_image_ID("proli");
+  delete_image_ID("prolr");
+  delete_image_ID("prolp");
+  delete_image_ID("pupp0m");
+
 
   return(transm);
 }
@@ -674,15 +682,13 @@ double coronagraph_make_2Dprolate(double masksize, double centralObs, char *outn
 // High definition prolate computation
 // Uses DFT 
 //
-double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *outname)
+double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, double centralObs, char *outname, long size)
 {
   FILE *fp;
-  long size = CORONAGRAPHS_ARRAYSIZE;
-  long size2 = size*size;
+  long size2;
   long IDfpmask, IDfpmaskc, IDfpmaskz;
   long IDpupa0,IDpupp0,IDpupa0m,IDpupp0m;
   long ii,jj,ii1;
-  double trad_pix = CORONAGRAPHS_TDIAM/CORONAGRAPHS_PSCALE/2.0;
   double peak;
   long IDprol,ID;
   long double total,total0,total2,v1;
@@ -707,6 +713,9 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
   double *fpmshape_ka;
   double *fpmshape_pa;
 
+
+  size2 = size * size;
+
   fpmshape_ra = (double*) malloc(sizeof(double)*fpmshape_n);
   fpmshape_ka = (double*) malloc(sizeof(double)*fpmshape_n);
   fpmshape_pa = (double*) malloc(sizeof(double)*fpmshape_n);
@@ -725,10 +734,9 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
 
   
   v1 = 0.0;
-  MASKSIZELD = CORONAGRAPHS_PIXSCALE*masksize;
-  printf("PIXSCALE = %f\n", CORONAGRAPHS_PIXSCALE);
-  printf("MASK SIZE = %f pixel = %f l/D\n", masksize, MASKSIZELD);
-  printf("PUPIL RADIUS = %f\n", trad_pix);
+  MASKSIZELD = (2.0*beamradpix/size) * fpmradpix;
+  printf("MASK SIZE = %f pixel = %f l/D\n", fpmradpix, MASKSIZELD);
+  printf("PUPIL RADIUS = %f\n", beamradpix);
   printf("SIZE = %ld\n", size);
 
   IDproli = create_2Dimage_ID("proli", size, size);
@@ -764,8 +772,8 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
       printf("FPM SHAPE TERM %02ld : %f %f %f\n", k,  fpmshape_ra[k],  fpmshape_ka[k],  fpmshape_pa[k]);
     }
 
-  IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, masksize);
-  IDfpmaskz = make_subpixdisk_perturb("FPmaskz", size, size, size/2, size/2, masksize*DFTZFACTOR, fpmshape_n, fpmshape_ra, fpmshape_ka, fpmshape_pa);
+  IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, fpmradpix);
+  IDfpmaskz = make_subpixdisk_perturb("FPmaskz", size, size, size/2, size/2, fpmradpix*DFTZFACTOR, fpmshape_n, fpmshape_ra, fpmshape_ka, fpmshape_pa);
   IDfpmaskc = create_2DCimage_ID("_fpmz", size, size);
   for(ii=0;ii<size2;ii++)
     {
@@ -784,7 +792,7 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
 
   //  exit(0);
 
-  if(1)
+  if(0)
     {
       mk_amph_from_complex("_fpmz", "_fpmza", "_fpmzp");
       save_fl_fits("_fpmza", "!_fpmza.fits");
@@ -807,12 +815,12 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
     }
   if(IDpupa0==-1)
     {
-      //      printf("Creating pupil, radius = %f\n", trad_pix);
-      IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, trad_pix);
+      //      printf("Creating pupil, radius = %f\n", beamradpix);
+      IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, beamradpix);
       if(CentralObstructionFlag == 1)
 	{
-	  //  printf("Central obstruction = %f\n", trad_pix*centralObs);
-	  IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, trad_pix*centralObs);
+	  //  printf("Central obstruction = %f\n", beamradpix*centralObs);
+	  IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, beamradpix*centralObs);
 	  for(ii=0;ii<size*size;ii++)
 	    data.image[IDpupa0].array.F[ii] -= data.image[IDpupa0co].array.F[ii];
 	  delete_image_ID("pupa0co");
@@ -847,8 +855,8 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
 	  {
 	    x = 1.0*ii-size/2;
 	    y = 1.0*jj-size/2;
-	    r2 = (x*x+y*y)/trad_pix/trad_pix;
-	    data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*masksize);
+	    r2 = (x*x+y*y)/beamradpix/beamradpix;
+	    data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*fpmradpix);
 	    data.image[IDproli].array.F[jj*size+ii] = 0.0;
 	    data.image[IDprol].array.F[jj*size+ii] = data.image[IDprolr].array.F[jj*size+ii];
 	  }
@@ -861,7 +869,7 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
       }
 
   
-  ID = image_ID("startim");
+  ID = image_ID("apostart");
   if(ID!=-1)
     {
       for(ii=0;ii<size2;ii++)
@@ -870,7 +878,7 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
 	  data.image[IDprol].array.F[ii] = data.image[ID].array.F[ii];
 	}
     }
-  delete_image_ID("startim");
+  delete_image_ID("apostart");
 
 
 
@@ -900,8 +908,8 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
       //save_fl_fits("pupa0m", "!pupa0m.fits");
       //save_fl_fits("pupp0", "!pupp0.fits");
       //printf("DFTZFACTOR = %f\n", DFTZFACTOR);
-      fft_DFTinsertFPM( "pc1", "_fpmz", DFTZFACTOR, "pc3");
 
+      fft_DFTinsertFPM( "pc1", "_fpmz", DFTZFACTOR, "pc3");
    
       
       //      exit(0);
@@ -969,7 +977,7 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
       printf("IDEAL COMPLEX TRANSMISSION = %g\n",-(1.0-peak)/peak);
 
 
-      if(1) // TEST
+      if(0) // TEST
 	{
 	  save_fl_fits("pr2","!_prol_pr2.fits");
 	  save_fl_fits("pi2","!_prol_pi2.fits");
@@ -1035,7 +1043,7 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
   for(ii=0;ii<size2;ii++)
     data.image[IDfpmaskz].array.F[ii] = 1.0-data.image[IDfpmaskz].array.F[ii]*(1.0+(1.0-peak)/peak);
 
-  save_fl_fits("FPmaskz","!FPmask.fits");
+  //  save_fl_fits("FPmaskz","!FPmask.fits");
   delete_image_ID("FPmaskz");
 
   delete_image_ID("FPmask");
@@ -1043,6 +1051,10 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
   delete_image_ID("pupp0");
   delete_image_ID("pupa0");
   delete_image_ID("pupa0m");
+  delete_image_ID("proli");
+  delete_image_ID("prolr");
+  delete_image_ID("prolp");
+  delete_image_ID("pupp0m");
 
   return(transm);
 }
@@ -1053,14 +1065,18 @@ double coronagraph_make_2Dprolate_DFT(double masksize, double centralObs, char *
 
 
 
-int coronagraph_make_2Dprolateld(double masksizeld, double centralObs, char *outname)
+int coronagraph_make_2Dprolateld(double masksizeld, double beamradpix, double centralObs, char *outname, long size)
 {
+  double fpmradpix;
+
   printf("Making 2D prolate ... \n");
 
+  fpmradpix = masksizeld/(2.0*beamradpix/size);
+
   if(useDFT==0)
-    coronagraph_make_2Dprolate(masksizeld/CORONAGRAPHS_PIXSCALE, centralObs, outname);
+    coronagraph_make_2Dprolate(fpmradpix, beamradpix, centralObs, outname,  size);
   else
-    coronagraph_make_2Dprolate_DFT(masksizeld/CORONAGRAPHS_PIXSCALE, centralObs, outname);
+    coronagraph_make_2Dprolate_DFT(fpmradpix, beamradpix, centralObs, outname, size);
 
   return (0);
 }
@@ -1069,14 +1085,13 @@ int coronagraph_make_2Dprolateld(double masksizeld, double centralObs, char *out
 // works for non circular pupil shape
 //
 // input is pupaCS
-int coronagraph_make_2Dprolate_CS(double masksize, char *outname)
+int coronagraph_make_2Dprolate_CS(double masksize, double beamradpix, char *outname)
 {
   long size = CORONAGRAPHS_ARRAYSIZE;
   long IDout;
 
-
   copy_image_ID("pupaCS", "pupa0");
-  coronagraph_make_2Dprolate_DFT(masksize, 0.0, "outapo");
+  coronagraph_make_2Dprolate_DFT(masksize, beamradpix, 0.0, "outapo", size);
   IDout = image_ID("outapo");
   list_image_ID();
 
@@ -1089,7 +1104,7 @@ int coronagraph_make_2Dprolate_CS(double masksize, char *outname)
 }
 
 
-int coronagraph_update_2Dprolate(double masksizeld, double centralObs, double zfactor)
+int coronagraph_update_2Dprolate(double masksizeld, double beamradpix, double centralObs, double zfactor)
 {
   /* masksizeld is in lambda/d */
   FILE *fp;
@@ -1243,12 +1258,12 @@ int coronagraph_update_2Dprolate(double masksizeld, double centralObs, double zf
 		      sprintf(fnameinfo,"%s/APLCapo/APLCapo_%.3f.%.3f.%ld.ref.info", CORONAGRAPHSDATALOCAL, MASKSIZELD, centralObs, size);
 		    }
 		  
-		  load_fits(fname, "startim");
-		  // save_fl_fits("startim", "!startim.fits");
+		  load_fits(fname, "apostart");
+		  // save_fl_fits("apostart", "!apostart.fits");
 		  //	  exit(0);
 		  printf(".... STARTING OPTIMIZATION [%s] (%f %f %f)... \n", fname, MASKSIZELD, CORONAGRAPHS_PIXSCALE, centralObs);
 
-		  transm = coronagraph_make_2Dprolate_DFT(MASKSIZELD/CORONAGRAPHS_PIXSCALE, centralObs, "out");
+		  transm = coronagraph_make_2Dprolate_DFT(MASKSIZELD/CORONAGRAPHS_PIXSCALE, beamradpix, centralObs, "out", size);
 
 		  save_fl_fits("out",fname1);
 		  ID = image_ID("out");
@@ -1274,7 +1289,7 @@ int coronagraph_update_2Dprolate(double masksizeld, double centralObs, double zf
 		  result = system(command);  
 		  
 		  
-		  delete_image_ID("startim");
+		  delete_image_ID("apostart");
 		  
 		  if(iter==1)
 		    {
