@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['shared',['shared',['../structIMAGE__METADATA.html#a3d6c8bfafb730a0cd2e42637256d48a4',1,'IMAGE_METADATA']]],
+  ['shared_5fdft',['SHARED_DFT',['../structDATA.html#a64d5b0ed5d5cedf11ff69ebf8d30dc20',1,'DATA']]],
+  ['shear4_5fshear',['SHEAR4_SHEAR',['../coronagraphs_8c.html#a4d008a7219a7d93d19381b9df8e43abd',1,'coronagraphs.c']]],
+  ['shmfd',['shmfd',['../structIMAGE.html#aa1de16f9b739720f6de65389f63d8229',1,'IMAGE']]],
+  ['simtime',['simtime',['../structSCEXAO__DMTURBCONF.html#aacb36dd719d1e4bd381b4256be2a75a6',1,'SCEXAO_DMTURBCONF']]],
+  ['size',['size',['../structIMAGE__METADATA.html#a43e0e2f9e2f202e540f665cfa2882338',1,'IMAGE_METADATA::size()'],['../structkdres.html#a7ac4f6162e557c880476f7ca024ce946',1,'kdres::size()'],['../structOPTSYST.html#a1ca7a42369dc6bf1567dbeb3028c8a2a',1,'OPTSYST::size()'],['../structMIRRORPIAACMCDESIGN.html#a2607aeebc70523a879425b7c2757f5e1',1,'MIRRORPIAACMCDESIGN::size()']]],
+  ['sizedm',['sizeDM',['../structAOLOOPCONTROL__CONF.html#ae5d0e7cbeb583d44a3f2e6815e8ba7fb',1,'AOLOOPCONTROL_CONF']]],
+  ['sizewfs',['sizeWFS',['../structAOLOOPCONTROL__CONF.html#a5356d94cbd92bbbd016c7414fab01991',1,'AOLOOPCONTROL_CONF']]],
+  ['sizexdm',['sizexDM',['../structAOLOOPCONTROL__CONF.html#ae5594424863b939ba332dd90c23945a3',1,'AOLOOPCONTROL_CONF']]],
+  ['sizexwfs',['sizexWFS',['../structAOLOOPCONTROL__CONF.html#a3c5249e7337b0733c4d4dc823d3e5bac',1,'AOLOOPCONTROL_CONF']]],
+  ['sizeydm',['sizeyDM',['../structAOLOOPCONTROL__CONF.html#a75c007f53da2b54406dd154b92f8fd28',1,'AOLOOPCONTROL_CONF']]],
+  ['sizeywfs',['sizeyWFS',['../structAOLOOPCONTROL__CONF.html#acadceda8680005ab95d7f32cd6dfe215',1,'AOLOOPCONTROL_CONF']]],
+  ['smfd',['SMfd',['../SCExAO__DM_8c.html#ad3fefa8c187fe37b7835f882acb21dda',1,'SCExAO_DM.c']]],
+  ['smturbfd',['SMturbfd',['../SCExAO__DM_8c.html#aa733da67de0ae3ba855ec77c80a1c73c',1,'SCExAO_DM.c']]],
+  ['srcdir',['SrcDir',['../CLIcore_8h.html#aedb03ab482b6c7291fc929f4e7ff3f33',1,'CLIcore.h']]],
+  ['status',['status',['../structAOLOOPCONTROL__CONF.html#a3612d14151fcd3a781096b07d64da501',1,'AOLOOPCONTROL_CONF::status()'],['../structIMAGE__METADATA.html#a7dc4062196f047f85e6a60aeba362791',1,'IMAGE_METADATA::status()'],['../structSCEXAO__DISPCOMB__CONF.html#ae3efb1af856ec641d6a989b0f4fa8825',1,'SCEXAO_DISPCOMB_CONF::status()']]],
+  ['string',['string',['../unionYYSTYPE.html#a0138efb4387041e915681aff6dfd68ff',1,'YYSTYPE::string()'],['../structCMDARGTOKEN.html#ac74ef24422dc07823178ebbe43b7ad10',1,'CMDARGTOKEN::string()']]],
+  ['stripcoffset',['STRIPCOFFSET',['../coronagraphs_8c.html#a4f703380a7682024cad4d9b1b8b031b1',1,'coronagraphs.c']]],
+  ['suid',['suid',['../CLIcore_8h.html#a4013b1078f89c6a61f5572b3691ce817',1,'CLIcore.h']]],
+  ['surfid',['surfID',['../structASPHSURFM.html#a1f7121b76f3219786afaaff57b3e6a8a',1,'ASPHSURFM::surfID()'],['../structASPHSURFR.html#a1883e1812b5e228da6efc3fa85b88ff5',1,'ASPHSURFR::surfID()']]],
+  ['sym_5ftable',['sym_table',['../calc_8h.html#ae960d0c72d629cff609d3a1c4f018504',1,'calc.h']]],
+  ['syntax',['syntax',['../structCMD.html#af841a2189f9e693dd3ec530d368d3e92',1,'CMD']]]
+];
