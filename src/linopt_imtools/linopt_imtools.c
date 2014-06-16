@@ -235,7 +235,7 @@ long linopt_imtools_makeCosRadModes(char *ID_name, long size, long kmax, float r
 
 
   size2 = size*size;
-  IDr = create_2Dimage_ID("tmpr", size, size);
+  IDr = create_2Dimage_ID("linopt_tmpr", size, size);
 
   for(ii=0;ii<size;ii++)
     {
@@ -259,7 +259,7 @@ long linopt_imtools_makeCosRadModes(char *ID_name, long size, long kmax, float r
       }
 
 
-  delete_image_ID("tmpr");
+  delete_image_ID("linopt_tmpr");
 
   return(ID);
 }
@@ -294,9 +294,9 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
 
 
   size2 = size*size;
-  IDx = create_2Dimage_ID("tmpx", size, size);
-  IDy = create_2Dimage_ID("tmpy", size, size);
-  IDr = create_2Dimage_ID("tmpr", size, size);
+  IDx = create_2Dimage_ID("cpa_tmpx", size, size);
+  IDy = create_2Dimage_ID("cpa_tmpy", size, size);
+  IDr = create_2Dimage_ID("cpa_tmpr", size, size);
   
 
   printf("precomputing x, y, r\n");
@@ -440,8 +440,15 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
   free(CPAyarray);
   free(CPArarray); 
   
+
+  delete_image_ID("cpa_tmpx");
+  delete_image_ID("cpa_tmpy");
+  delete_image_ID("cpa_tmpr");
+
   // printf("done \n");
   //fflush(stdout);
+
+  
 
    return NBmax;
 }

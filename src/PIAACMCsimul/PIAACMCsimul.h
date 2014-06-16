@@ -64,11 +64,12 @@ typedef struct {
 
   // ========= Focal Plane Mask =============
 
+  double fpmaskradld; // mask radius [l/d] for the idealized PIAACMC starting point
   long focmNBzone; // number of zones
   double Fratio; // beam Fratio at focal plane
-  double maskscale; // m/pixel
-  long zonezID;  // focm zone material thickness, double precision image
-  long zoneaID;  // focm zone amplitude transmission, double precision image
+  long zonezID;  // focm zone material thickness, double precision image, named fpmzt / fpm_zonez.fits
+  double fpmaskamptransm; // mask amplitude transmission (normally 1.0)
+  long zoneaID;  // focm zone amplitude transmission, double precision image, named fpmza / fpm_zonea.fits
   double fpzfactor; // focal plane mask DFT zoom factor
 
   double fpmRad; // outer radius
@@ -103,7 +104,7 @@ int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, ch
 int PIAACMCsimul_unwrapPhase();
 
 
-int PIAACMCsimul_run();
+int PIAACMCsimul_run(long confindex);
 
 
 #endif
