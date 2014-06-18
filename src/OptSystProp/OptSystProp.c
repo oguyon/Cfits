@@ -221,9 +221,24 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	  printf("============= Opaque mask =================\n");
 	  fflush(stdout);
 	  ID = optsyst[0].elemarrayindex[elem];
-	  for(ii=0;ii<size2;ii++)
-	    for(kl=0;kl<nblambda;kl++)
-	      data.image[IDa].array.F[size2*kl+ii] *= data.image[ID].array.F[ii];
+
+	  if(ID == -1)
+	    {
+	      printf("ERROR: ID = -1, missing mask image\n");
+	      exit(0);
+	    }
+
+	  if(data.image[ID].md[0].size[2] != nblambda)
+	    {
+	      for(ii=0;ii<size2;ii++)
+		for(kl=0;kl<nblambda;kl++)
+		  data.image[IDa].array.F[size2*kl+ii] *= data.image[ID].array.F[ii];
+	    }
+	  else
+	    {
+	      for(ii=0;ii<size2*nblambda;ii++)
+		data.image[IDa].array.F[ii] *= data.image[ID].array.F[ii];	      
+	    }
 	}
 
       if(optsyst[0].elemtype[elem]==3)  // MIRROR

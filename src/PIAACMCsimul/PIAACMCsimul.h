@@ -104,7 +104,7 @@ int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, ch
 int PIAACMCsimul_unwrapPhase();
 
 
-int PIAACMCsimul_run(long confindex);
+int PIAACMCsimul_run(long confindex, long mode);
 
 
 #endif

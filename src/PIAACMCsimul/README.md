@@ -19,12 +19,13 @@ Directories "./piaacmcconf<nnn>/" hold the default/current configuration setting
 
 By default, if no configuration file exists, a monochromatic PIAACMC for a centrally obscured pupil will be created. This is meant as a starting point for the PIAACMC, which will then be optimized further\n
 
-The command to run the PIAACMC simulation is
+The main command to run the PIAACMC simulation is
 \verbatim
-piaacmcsimrun <nnn>
+piaacmcsimrun <nnn> <mode>
 \endverbatim
 
-where <nnn> is long.
+where <nnn> [long] is the configuration index and <mode> [long] defines the operation to be performed.\n
+See function dsPIAACMCsimul_run(long confindex, long mode) for list of modes\n
 
 ### Initialization rules (function  PIAAsimul_initpiaacmc() )
 
@@ -47,29 +48,10 @@ where <nnn> is long.
 
 This is meant as a starting point for the PIAACMC, which will then be optimized further\n
 
--# Create the 2D apodization function for the centrally obscured aperture.\n
-The following set of commands can be used, and builds up the apodization function iteratively, for a 1.2 lambda/D radius mask a 200 pixel radius pupil, a 20% linear central obstruction, on a 1024 x 1024 pixel array.\n
-DFTZFACTOR is the zoom factor in the DFT.\n
-PNBITER is the number of iteration in the generalized prolate function computation.\n
-This script saves the result as "apo2Drad.fits".\n
-Note that <executable> is the executable name (including path if required)\n
 \verbatim
-<executable>
-DFTZFACTOR=2
-PNBITER=20
-cormk2Dprolateld 1.2 100.0 0.2 apo 512
-resizeim apo apostart 1024 1024
-rm apo
-DFTZFACTOR=4
-PNBITER=10
-cormk2Dprolateld 1.2 200.0 0.2 apo 1024
-mv apo apostart
-DFTZFACTOR=8
-PNBITER=5
-cormk2Dprolateld 1.2 200.0 0.2 apo 1024
-savefits apo "!apo2Drad.fits"
-exit
+piaacmcsimrun 0 10
 \endverbatim
+
 
 
 

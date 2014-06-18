@@ -1,5 +1,4 @@
-psf.lo: psf.c /usr/include/stdc-predef.h \
- /usr/include/x86_64-linux-gnu/bits/predefs.h /usr/include/string.h \
+psf.lo: psf.c /usr/include/stdc-predef.h /usr/include/string.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
@@ -37,6 +36,7 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
  /CfitsDev/Cfits-src/src/CLIcore.h /usr/include/unistd.h \
@@ -44,12 +44,12 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/fftw3.h \
- /usr/local/include/gsl/gsl_rng.h /usr/local/include/gsl/gsl_types.h \
- /usr/local/include/gsl/gsl_errno.h /usr/include/errno.h \
+ /usr/include/gsl/gsl_rng.h /usr/include/gsl/gsl_types.h \
+ /usr/include/gsl/gsl_errno.h /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/local/include/gsl/gsl_inline.h \
+ /usr/include/gsl/gsl_inline.h \
  /CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h \
  /CfitsDev/Cfits-src/src/info/info.h \
  /CfitsDev/Cfits-src/src/COREMOD_tools/COREMOD_tools.h \
@@ -61,8 +61,6 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
  /CfitsDev/Cfits-src/src/fft/fft.h /CfitsDev/Cfits-src/src/psf/psf.h
 
 /usr/include/stdc-predef.h:
-
-/usr/include/x86_64-linux-gnu/bits/predefs.h:
 
 /usr/include/string.h:
 
@@ -162,6 +160,8 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
 
 /usr/include/alloca.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
@@ -182,11 +182,11 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
 
 /usr/include/fftw3.h:
 
-/usr/local/include/gsl/gsl_rng.h:
+/usr/include/gsl/gsl_rng.h:
 
-/usr/local/include/gsl/gsl_types.h:
+/usr/include/gsl/gsl_types.h:
 
-/usr/local/include/gsl/gsl_errno.h:
+/usr/include/gsl/gsl_errno.h:
 
 /usr/include/errno.h:
 
@@ -200,7 +200,7 @@ psf.lo: psf.c /usr/include/stdc-predef.h \
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/local/include/gsl/gsl_inline.h:
+/usr/include/gsl/gsl_inline.h:
 
 /CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h:
 

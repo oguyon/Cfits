@@ -1,6 +1,5 @@
 AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
- /usr/include/stdc-predef.h /usr/include/x86_64-linux-gnu/bits/predefs.h \
- /usr/include/string.h /usr/include/features.h \
+ /usr/include/stdc-predef.h /usr/include/string.h /usr/include/features.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
@@ -24,6 +23,7 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
  /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/stdio.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
@@ -46,12 +46,12 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/fftw3.h \
- /usr/local/include/gsl/gsl_rng.h /usr/local/include/gsl/gsl_types.h \
- /usr/local/include/gsl/gsl_errno.h /usr/include/errno.h \
+ /usr/include/gsl/gsl_rng.h /usr/include/gsl/gsl_types.h \
+ /usr/include/gsl/gsl_errno.h /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/local/include/gsl/gsl_inline.h \
+ /usr/include/gsl/gsl_inline.h \
  /CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h \
  /CfitsDev/Cfits-src/src/COREMOD_arith/COREMOD_arith.h \
  /CfitsDev/Cfits-src/src/fft/fft.h \
@@ -67,8 +67,6 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
  /CfitsDev/Cfits-src/src/WFpropagate/WFpropagate.h
 
 /usr/include/stdc-predef.h:
-
-/usr/include/x86_64-linux-gnu/bits/predefs.h:
 
 /usr/include/string.h:
 
@@ -130,6 +128,8 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
 
 /usr/include/alloca.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
@@ -190,11 +190,11 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
 
 /usr/include/fftw3.h:
 
-/usr/local/include/gsl/gsl_rng.h:
+/usr/include/gsl/gsl_rng.h:
 
-/usr/local/include/gsl/gsl_types.h:
+/usr/include/gsl/gsl_types.h:
 
-/usr/local/include/gsl/gsl_errno.h:
+/usr/include/gsl/gsl_errno.h:
 
 /usr/include/errno.h:
 
@@ -208,7 +208,7 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/local/include/gsl/gsl_inline.h:
+/usr/include/gsl/gsl_inline.h:
 
 /CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h:
 

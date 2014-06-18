@@ -592,7 +592,7 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
       fp = fopen(fname, "w");
       fprintf(fp,"%f %.18f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak, centralObs);
       fclose(fp);
-      printf("IDEAL COMPLEX TRANSMISSION = %g\n",-(1.0-peak)/peak);
+      printf("IDEAL COMPLEX TRANSMISSION = %g\n", -(1.0-peak)/peak);
 
       //      save_fl_fits("pr2","!pr2.tmp.fits");
       // save_fl_fits("pi2","!pi2.tmp.fits");
@@ -712,6 +712,8 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
   double *fpmshape_ra;
   double *fpmshape_ka;
   double *fpmshape_pa;
+
+  long IDv;
 
 
   size2 = size * size;
@@ -976,6 +978,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
       fclose(fp);
       printf("IDEAL COMPLEX TRANSMISSION = %g\n",-(1.0-peak)/peak);
 
+      IDv = create_variable_ID("APLCmaskCtransm", -(1.0-peak)/peak);
 
       if(0) // TEST
 	{
