@@ -24,7 +24,6 @@ extern DATA data;
 #define SBUFFERSIZE 2000
 
 
-
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -136,7 +135,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 
 
   float beamradpix;
-  long ID0, ID1;
+  long ID0, ID1, ID2;
   long size0, size1;
   long i, j;
 
@@ -154,6 +153,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
   float val, tot;
   float u, t;
 
+  long elemstart1 = 0;
+  int elemOK;
 
   size = optsyst[0].size;
   size2 = size*size;
@@ -162,18 +163,53 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 
   
   // create base complex amplitude
-  IDa = create_3Dimage_ID("WFamp", size, size, nblambda);
-  IDp = create_3Dimage_ID("WFpha", size, size, nblambda);
+  IDa = image_ID("WFamp");
+  if(IDa==-1)
+    IDa = create_3Dimage_ID("WFamp", size, size, nblambda);
+
+  IDp = image_ID("WFpha");
+  if(IDp==-1)
+    IDp = create_3Dimage_ID("WFpha", size, size, nblambda);
+
   for(ii=0;ii<size2;ii++)
     for(kl=0;kl<nblambda;kl++)
       data.image[IDa].array.F[size2*kl+ii] = 1.0;
   
 
-  emax = elemend;
-  if(elemend>optsyst[0].NBelem)
-    elemend = optsyst[0].NBelem;
 
-  for(elem=elemstart; elem<emax; elem++)
+  elemstart1 = 0;
+  elemOK = 1;
+  while(elemOK==1)
+    {
+      if(elemstart1==0)
+	{
+	  sprintf(imnameamp_in, "WFamp");
+	  sprintf(imnamepha_in, "WFpha");
+	}
+      else
+	{
+	  sprintf(imnameamp_in, "WFamp_%03ld", elemstart1-1);
+	  sprintf(imnamepha_in, "WFpha_%03ld", elemstart1-1);
+	}      
+      if(((ID1=image_ID(imnameamp_in))!=-1)&&((ID2=image_ID(imnamepha_in))!=-1)&&(elemstart1<elemstart+1))
+	{
+	  elemstart1++;
+	  elemOK = 1;
+	}
+      else
+	elemOK = 0;
+
+      printf("%ld/%ld %d    %s %ld   %s %ld\n", elemstart1, elemstart, elemOK, imnameamp_in, ID1, imnamepha_in, ID2);
+    }
+  elemstart1--;
+
+  printf("STARTING AT ELEMENT %ld\n", elemstart1);
+
+  emax = elemend;
+  if(emax>optsyst[0].NBelem)
+    emax = optsyst[0].NBelem;
+
+  for(elem=elemstart1; elem<emax; elem++)
     {
       if(elem==0)
 	{
@@ -260,6 +296,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	  fflush(stdout);
 	  // uses 1-fpm 
 	  
+	  // test
+	  //	  save_fits(imnameamp_out, "!TESTamp.fits");
+	  //exit(0);
+
 	  ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
 	  delete_image_ID(imnameamp_out);
 	  delete_image_ID(imnamepha_out);
@@ -298,7 +338,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	      i = optsyst[0].elemarrayindex[elem];
 	      ID = optsyst[0].FOCMASKarray[i].fpmID;
 	      printf("focm : %s\n", data.image[ID].md[0].name);
-	      
+	      fflush(stdout);
 	      fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
 	      delete_image_ID("_WFctmpc");
 
@@ -356,6 +396,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	      i = optsyst[0].elemarrayindex[elem];
 	      ID = optsyst[0].FOCMASKarray[i].fpmID;
 	      printf("focm : %s\n", data.image[ID].md[0].name);
+	      fflush(stdout);
 	      fft_DFTinsertFPM("_WFctmp", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
 	    }
 

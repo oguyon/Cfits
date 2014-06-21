@@ -96,13 +96,18 @@ long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mod
 void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, double TTyld);
 
 // PIAA optics (geometrical optics) tools
-int PIAACMCsimul_loadRadialApodization(char *IDapo_name, long beamradpix, char *IDapofit_name);
+int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, float centralObs, char *IDapofit_name);
+int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name);
 int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name);
 
-
-// misc optimization tools
-int PIAACMCsimul_unwrapPhase();
-
+long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout);
+int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int load);
+int PIAACMCsimul_makePIAAshapes();
+double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem);
+int PIAAsimul_savepiaacmcconf(char *dname);
+int PIAAsimul_loadpiaacmcconf(char *dname);
+long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name);
+double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *IDincoh_name, float zmin, float zmax, double throughput, long NBz, long NBmasks);
 
 int PIAACMCsimul_run(long confindex, long mode);
 
