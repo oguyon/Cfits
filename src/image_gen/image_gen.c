@@ -35,91 +35,21 @@ extern DATA data;
 
 int make_disk_cli()
 {
-  int i;
-
-  if(data.cmdargtoken[1].type != 3)
-    {
-      printf("arg 1 (%s) has to be new image name\n", data.cmdargtoken[1].val.string);
-      return -1;
-    }
-
-  
-  if(data.cmdargtoken[2].type != 2)
-    {
-      printf("arg 2 has to be integer\n");
-      return -1;
-    }
-  if(data.cmdargtoken[3].type != 2)
-    {
-      printf("arg 3 has to be integer\n");
-      return -1;
-    }
-
-  for(i=4;i<7;i++)
-    {
-      if(data.cmdargtoken[i].type == 2) // convert long to float
-	{
-	  if(data.Debug>0)
-	    printf("Converting arg %d to floating point number\n", i);
-	  data.cmdargtoken[i].val.numf = (double) data.cmdargtoken[i].val.numl;
-	  data.cmdargtoken[i].type = 1;
-	}
-      
-      if(data.cmdargtoken[i].type != 1)
-	{
-	  printf("arg %d has to be a floating point number (or integer)\n", i);
-	  return -1;
-	}
-    }
-
-  make_disk(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf,  data.cmdargtoken[6].val.numf);
-
-
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
+    make_disk(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf,  data.cmdargtoken[6].val.numf);
+  else
+    return 1;
   return 0;
 }
 
+
 int make_subpixdisk_cli()
 {
-  int i;
-
-  if(data.cmdargtoken[1].type != 3)
-    {
-      printf("arg 1 (%s) has to be new image name\n", data.cmdargtoken[1].val.string);
-      return -1;
-    }
-
-  
-  if(data.cmdargtoken[2].type != 2)
-    {
-      printf("arg 2 has to be integer\n");
-      return -1;
-    }
-  if(data.cmdargtoken[3].type != 2)
-    {
-      printf("arg 3 has to be integer\n");
-      return -1;
-    }
-
-  for(i=4;i<7;i++)
-    {
-      if(data.cmdargtoken[i].type == 2) // convert long to float
-	{
-	  if(data.Debug>0)
-	    printf("Converting arg %d to floating point number\n", i);
-	  data.cmdargtoken[i].val.numf = (double) data.cmdargtoken[i].val.numl;
-	  data.cmdargtoken[i].type = 1;
-	}
-      
-      if(data.cmdargtoken[i].type != 1)
-	{
-	  printf("arg %d has to be a floating point number (or integer)\n", i);
-	  return -1;
-	}
-    }
-
-  make_subpixdisk(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf,  data.cmdargtoken[6].val.numf);
-
-
+ 
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
+    make_subpixdisk(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf,  data.cmdargtoken[6].val.numf);
+ else
+    return 1;
   return 0;
 }
 
@@ -127,88 +57,25 @@ int make_subpixdisk_cli()
 
 int make_gauss_cli()
 {
-  int i;
-
-  if(data.cmdargtoken[1].type != 3)
-    {
-      printf("arg 1 (%s) has to be new image name\n", data.cmdargtoken[1].val.string);
-      return -1;
-    }
-
-  for(i=2;i<4;i++)
-    if(data.cmdargtoken[i].type != 2)
-	{
-	  printf("arg %d has to be an integer\n", i);
-	  return -1;
-	}
- 
-
-  for(i=4;i<6;i++)
-    {
-      if(data.cmdargtoken[i].type == 2) // convert long to float
-	{
-	  if(data.Debug>0)
-	    printf("Converting arg %d to floating point number\n", i);
-	  data.cmdargtoken[i].val.numf = (double) data.cmdargtoken[i].val.numl;
-	  data.cmdargtoken[i].type = 1;
-	}
-      
-      if(data.cmdargtoken[i].type != 1)
-	{
-	  printf("arg %d has to be a floating point number (or integer)\n", i);
-	  return -1;
-	}
-    }
-
-  make_gauss(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
-
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
+    make_gauss(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
+  else
+    return 1;
   return 0;
 }
 
 int make_slopexy_cli()
 {
-  int i;
-  
-  if(data.cmdargtoken[1].type != 3)
-    {
-      printf("arg 1 (%s) has to be new image name\n", data.cmdargtoken[1].val.string);
-      return -1;
-    }
-
-  for(i=2;i<4;i++)
-    if(data.cmdargtoken[i].type != 2)
-	{
-	  printf("arg %d has to be an integer\n", i);
-	  return -1;
-	}
- 
-
-  for(i=4;i<6;i++)
-    {
-      if(data.cmdargtoken[i].type == 2) // convert long to float
-	{
-	  if(data.Debug>0)
-	    printf("Converting arg %d to floating point number\n", i);
-	  data.cmdargtoken[i].val.numf = (double) data.cmdargtoken[i].val.numl;
-	  data.cmdargtoken[i].type = 1;
-	}
-      
-      if(data.cmdargtoken[i].type != 1)
-	{
-	  printf("arg %d has to be a floating point number (or integer)\n", i);
-	  return -1;
-	}
-    }
-
-  make_slopexy(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
-
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
+    make_slopexy(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
+    else
+    return 1;
   return 0;
 }
 
 int make_dist_cli()
 {
-  
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(4,1)==0)
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
     make_dist(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
   else
     return 1;
@@ -241,6 +108,17 @@ int make_rectangle_cli()
     return 1;  
 }
 
+int make_line_cli()
+{
+  
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)==0)
+    {
+       make_line(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf);
+       return 0;
+    }
+  else
+    return 1;
+}
 
 int make_2Dgridpix_cli()
 {
@@ -327,6 +205,15 @@ int init_image_gen()
   strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <xcenter> <ycenter> <radius1> <radius2>");
   strcpy(data.cmd[data.NBcmd].example,"mkrect 512 512 256.0 256.0 100.0 200.0");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_rectangle(char *ID_name, long l1, long l2, double x_center, double y_center, double radius1, double radius2)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"mkline");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = make_line_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make line");
+  strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <x1> <y1> <x2> <y2> <thickness>");
+  strcpy(data.cmd[data.NBcmd].example,"mkline 512 512 256.0 256.0 100.0 200.0 3.0");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, double y2, double t)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"mkgridpix");

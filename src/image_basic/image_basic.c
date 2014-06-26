@@ -63,6 +63,16 @@ int image_basic_resize_cli()
     return 1;
 }
 
+int image_basic_add_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(4,2) == 0)
+    {  
+      basic_add(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
 
 int init_image_basic()
 {
@@ -79,6 +89,16 @@ int init_image_basic()
   strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <new x size> <new y size>");
   strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
   strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
+  data.NBcmd++; 
+  
+  strcpy(data.cmd[data.NBcmd].key,"addim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = image_basic_add_cli;
+  strcpy(data.cmd[data.NBcmd].info,"add two 2D images of different size");
+  strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
+  strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
+
   data.NBcmd++; 
   
    

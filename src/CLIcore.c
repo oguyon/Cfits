@@ -1188,6 +1188,7 @@ int CLI_checkarg(int argnum, int argtype)
 {
   int rval; // 0 if OK, 1 if not
 
+
   rval = 2;
 
   switch (argtype) {
@@ -1227,8 +1228,10 @@ int CLI_checkarg(int argnum, int argtype)
   case 2:  // should be integer
     switch (data.cmdargtoken[argnum].type) {
     case 1:
-      printf("arg %d is floating point, but should be integer\n", argnum);
-      rval = 1;
+      printf("converting floating point arg %d to integer\n", argnum);
+      data.cmdargtoken[argnum].val.numl = (long) (data.cmdargtoken[argnum].val.numf+0.5);
+      data.cmdargtoken[argnum].type = 2;
+      rval = 0;
       break;
     case 2: 
       rval = 0;
