@@ -76,7 +76,7 @@ typedef struct {
 typedef struct {
 
   int nblambda;
-  double lambdaarray[100];
+  double lambdaarray[2000];
 
   double beamrad; // beam radius at input in collimated space [m]
   double pixscale; // pixel scale in collimated beam [m/pix]
