@@ -373,7 +373,7 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
 
   if(writeMfile==1)
     {
-      fp = fopen("ModesExpr.txt","w");
+      fp = fopen("ModesExpr_CPA.txt", "w");
       fprintf(fp, "%4ld %10.5f %10.5f    1.0\n", (long) 0, 0.0, 0.0);
       k1 = 1;
       k = 2;
@@ -689,7 +689,7 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
   fflush(stdout);
 
   // Write eigenvalues
-  if((fp=fopen("eigenv.dat","w"))==NULL)
+  if((fp=fopen("eigenv.dat", "w"))==NULL)
     {
       printf("ERROR: cannot create file \"eigenv.dat\"\n");
       exit(0);

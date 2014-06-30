@@ -112,9 +112,11 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
 
 
 
+/// @param[in]  savedir  directory to which image results are saved
 
-int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
+int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir)
 {
+  char command[500];
   long IDx, IDy, IDr, IDPA;
   double x, y;
   long IDa, IDp;
@@ -155,6 +157,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 
   long elemstart1 = 0;
   int elemOK;
+
+  int r;
 
   size = optsyst[0].size;
   size2 = size*size;
@@ -282,7 +286,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	  printf("============= Mirror =======================\n");
 	  fflush(stdout);
 	  ID = optsyst[0].ASPHSURFMarray[optsyst[0].elemarrayindex[elem]].surfID;
-	  printf("%ld mirror ID = %ld\n", optsyst[0].elemarrayindex[elem], ID);
+	  printf("%d mirror ID = %ld\n", optsyst[0].elemarrayindex[elem], ID);
 	  fflush(stdout);
 	  for(ii=0;ii<size2;ii++)
 	    for(kl=0;kl<nblambda;kl++)
@@ -338,9 +342,19 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	      i = optsyst[0].elemarrayindex[elem];
 	      ID = optsyst[0].FOCMASKarray[i].fpmID;
 	      printf("focm : %s\n", data.image[ID].md[0].name);
-	      fflush(stdout);
+//	      printf("Saving to testfpm.fits\n");
+//      fflush(stdout);
+//	      list_image_ID();
+//	       mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
+//	       save_fits("fpma", "!testfpma.fits");
+//	      exit(0);
+	      
 	      fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
 	      delete_image_ID("_WFctmpc");
+	      sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
+	      r = system(command);
+	      sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
+	      r = system(command);
 
 	      //mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
 	      //save_fits("_twfre", "!_twfre.fits");
@@ -398,6 +412,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
 	      printf("focm : %s\n", data.image[ID].md[0].name);
 	      fflush(stdout);
 	      fft_DFTinsertFPM("_WFctmp", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
+	      sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
+	      r = system(command);
+	      sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
+	      r = system(command);
 	    }
 
 	  i = optsyst[0].elemarrayindex[elem];
@@ -428,9 +446,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
       printf("Saving intermediate plane [%ld] ... ", elem);
       fflush(stdout);
 
-      sprintf(fname, "!WFamp_%03ld.fits", elem);
+      sprintf(fname, "!./%s/WFamp_%03ld.fits", savedir, elem);
       save_fits(imnameamp_out, fname);
-      sprintf(fname, "!WFpha_%03ld.fits", elem);
+      sprintf(fname, "!./%s/WFpha_%03ld.fits", savedir, elem);
       save_fits(imnamepha_out, fname);
  
       printf("done\n");
@@ -446,8 +464,12 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
       delete_image_ID("_WFctmp");
       permut("psfc");
       mk_amph_from_complex("psfc", "psfa", "psfp");
-      save_fits("psfa","!psfa.fits");
-      save_fits("psfp","!psfp.fits");
+
+      sprintf(fname, "!%s/psfa.fits", savedir);
+      save_fits("psfa", fname);
+
+      sprintf(fname, "!%s/psfp.fits", savedir);
+      save_fits("psfp", fname);
       
       ID = image_ID("psfa");
       for(ii=0;ii<size2*nblambda;ii++)
@@ -457,7 +479,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend)
       total = arith_image_total("psfi")/nblambda;
       printf("TOTAL = %lf\n", total);
       
-      save_fits("psfi", "!psfi.fits");
+      sprintf(fname, "!%s/psfi.fits", savedir);
+      save_fits("psfi", fname);
     }
 
  

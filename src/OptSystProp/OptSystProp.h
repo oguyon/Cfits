@@ -117,7 +117,7 @@ typedef struct {
 
 int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop);
 
-int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend);
+int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir);
 
 
 #endif
