@@ -620,6 +620,8 @@ float img_percentile_float(char *ID_name, float p)
   value = array[n];
   free(array);
 
+	printf("percentile %f = %f (%ld)\n", p, value, n);
+
   return(value);
 }
 
@@ -665,8 +667,8 @@ double img_percentile(char *ID_name, double p)
   atype = data.image[ID].md[0].atype;
 
   if(atype==FLOAT)
-    value = img_percentile_float(ID_name, p);
-  if(atype==FLOAT)
+    value = (double) img_percentile_float(ID_name, (float) p);
+  if(atype==DOUBLE)
     value = img_percentile_double(ID_name, p);
 
   return value;
