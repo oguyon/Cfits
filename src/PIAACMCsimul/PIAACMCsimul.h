@@ -108,6 +108,7 @@ int PIAAsimul_savepiaacmcconf(char *dname);
 int PIAAsimul_loadpiaacmcconf(char *dname);
 long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name);
 double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *IDincoh_name, float zmin, float zmax, double throughput, long NBz, long NBmasks);
+double PIAACMCsimul_achromFPMsol_eval(float *fpmresp_array, double *zonez_array, double *dphadz_array, float *outtmp_array, long vsize, long nbz, long nbl);
 
 int PIAACMCsimul_run(long confindex, long mode);
 

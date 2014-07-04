@@ -435,8 +435,7 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 		}
 	      data.image[ID_tmp].array.F[jj*naxes[0]+ii] /= tot;
 	    }
-
-	  for (ii=naxes[0]-filter_size-1;ii<naxes[0];ii++)
+    for (ii=naxes[0]-filter_size-1;ii<naxes[0];ii++)
 	    {
 	      tot = 0.0;
 	      for(i=0;i<(2*filter_size+1)-(ii-naxes[0]+filter_size+1);i++)

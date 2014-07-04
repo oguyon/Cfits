@@ -184,7 +184,7 @@ int create_2Dimage_float()
   long *imsize;
 
   // CHECK ARGS
-  printf("CREATING IMAGE\n");
+//  printf("CREATING IMAGE\n");
   imsize = (long*) malloc(sizeof(long)*2);
 
   imsize[0] = data.cmdargtoken[2].val.numl;
@@ -202,7 +202,7 @@ int create_3Dimage_float()
   long *imsize;
 
   // CHECK ARGS
-  printf("CREATING 3D IMAGE\n");
+//  printf("CREATING 3D IMAGE\n");
   imsize = (long*) malloc(sizeof(long)*3);
 
   imsize[0] = data.cmdargtoken[2].val.numl;
@@ -1376,8 +1376,8 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
   naxes[0]=xsize;
   naxes[1]=ysize;
   
-  printf("Creating 2D image %s, %ld x %ld [%d %d]", ID_name, xsize, ysize, data.SHARED_DFT, data.NBKEWORD_DFT);
-  fflush(stdout);
+ // printf("Creating 2D image %s, %ld x %ld [%d %d]", ID_name, xsize, ysize, data.SHARED_DFT, data.NBKEWORD_DFT);
+ // fflush(stdout);
 
   if(data.precision == 0)
     ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
@@ -1389,8 +1389,8 @@ long create_2Dimage_ID(char *ID_name, long xsize, long ysize)
       ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     }
     
-  printf("\n");
-  fflush(stdout);
+//  printf("\n");
+ // fflush(stdout);
     
 
 
@@ -1419,7 +1419,7 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize)
   long naxis=2;
   long naxes[2];
 
-  naxes[0]=xsize;
+    naxes[0]=xsize;
   naxes[1]=ysize;
 
   if(data.precision == 0)

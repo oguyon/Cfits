@@ -50,6 +50,9 @@ double OPTICSMATERIALS_pha_lambda( int material, double z, double lambda )
   nair = 1.0 + PressureRatio * ( (5792105.0e-8/(238.0185-1.0/(lambdaum*lambdaum))) + (167917.0e-8/(57.362-1.0/(lambdaum*lambdaum))) );
 
   n = 1.0;
+	
+	if(material==0) // mirror 
+	n = 3.0;
 
   if(material==1) // SiO2
     n = sqrt(SiO2_n0 + (SiO2_B1*lambdaum*lambdaum)/(lambdaum*lambdaum-SiO2_C1) +(SiO2_B2*lambdaum*lambdaum)/(lambdaum*lambdaum-SiO2_C2));

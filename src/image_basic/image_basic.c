@@ -2305,75 +2305,79 @@ long basic_averageimages(char *prefix, char *ID_out)
 
 long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)
 {
-  long ID, IDout;
-  long naxis = 2;
-  long naxes[2];
-  long naxesout[2];
-  float xf,yf,xf1,yf1,uf,tf,v00f,v01f,v10f,v11f;
-  double xd,yd,xd1,yd1,ud,td,v00d,v01d,v10d,v11d;
-  int atype;
-  long ii,jj,ii1,jj1;
+    long ID, IDout;
+    long naxis = 2;
+    long naxes[2];
+    long naxesout[2];
+    float xf,yf,xf1,yf1,uf,tf,v00f,v01f,v10f,v11f;
+    double xd,yd,xd1,yd1,ud,td,v00d,v01d,v10d,v11d;
+    int atype;
+    long ii,jj,ii1,jj1;
 
 
-  ID = image_ID(imname_in);
-  atype = data.image[ID].md[0].atype;
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];
-  naxesout[0] = xsizeout;
-  naxesout[1] = ysizeout;
-  
+    ID = image_ID(imname_in);
+    atype = data.image[ID].md[0].atype;
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    naxesout[0] = xsizeout;
+    naxesout[1] = ysizeout;
 
-  if(atype == FLOAT)
+
+    if(atype == FLOAT)
     {
-      IDout = create_image_ID(imname_out, naxis, naxesout, atype, 0, 0);
-      for(ii=0;ii<naxesout[0];ii++)
-	for(jj=0;jj<naxesout[1];jj++)
-	  {
-	    xf = (float) (1.0*ii/naxesout[0]);
-	    yf = (float) (1.0*jj/naxesout[1]);
-	    xf1 = xf * (float) naxes[0];
-	    yf1 = yf * (float) naxes[1];
-	    ii1 = (long) xf1;
-	    jj1 = (long) yf1;
-	    uf = xf1 - (float) ii1;
-	    tf = yf1 - (float) jj1;
-	    v00f = data.image[ID].array.F[jj1*naxes[0]+ii1];
-	    v01f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1];
-	    v10f = data.image[ID].array.F[jj1*naxes[0]+ii1+1];
-	    v11f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1+1];
-	    data.image[IDout].array.F[jj*naxesout[0]+ii] = (float) (v00f*(1.0-uf)*(1.0-tf)+v10f*uf*(1.0-tf)+v01f*(1.0-uf)*tf+v11f*uf*tf);
-	  }
+        IDout = create_image_ID(imname_out, naxis, naxesout, atype, 0, 0);
+        for(ii=0; ii<naxesout[0]; ii++)
+            for(jj=0; jj<naxesout[1]; jj++)
+            {
+                xf = (float) (1.0*ii/naxesout[0]);
+                yf = (float) (1.0*jj/naxesout[1]);
+                xf1 = xf * (float) naxes[0];
+                yf1 = yf * (float) naxes[1];
+                ii1 = (long) xf1;
+                jj1 = (long) yf1;
+                uf = xf1 - (float) ii1;
+                tf = yf1 - (float) jj1;
+                if((ii1>-1)&&(ii1+1<naxes[0])&&(jj1>-1)&&(jj1+1<naxes[1]))
+                {
+					v00f = data.image[ID].array.F[jj1*naxes[0]+ii1];
+					v01f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1];
+					v10f = data.image[ID].array.F[jj1*naxes[0]+ii1+1];
+					v11f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1+1];
+					data.image[IDout].array.F[jj*naxesout[0]+ii] = (float) (v00f*(1.0-uf)*(1.0-tf)+v10f*uf*(1.0-tf)+v01f*(1.0-uf)*tf+v11f*uf*tf);
+				}
+            }
     }
-  else if(atype == DOUBLE)
+    else if(atype == DOUBLE)
     {
-      IDout = create_image_ID(imname_out, naxis, naxesout, atype, 0, 0);
-      for(ii=0;ii<naxesout[0];ii++)
-	for(jj=0;jj<naxesout[1];jj++)
-	  {
-	    xd = 1.0*ii/naxesout[0];
-	    yd = 1.0*jj/naxesout[1];
-	    xd1 = xd*naxes[0];
-	    yd1 = yd*naxes[1];
-	    ii1 = (long) xd1;
-	    jj1 = (long) yd1;
-	    ud = xd1 - (float) ii1;
-	    td = yd1 - (float) jj1;
-	    v00d = data.image[ID].array.D[jj1*naxes[0]+ii1];
-	    v01d = data.image[ID].array.D[(jj1+1)*naxes[0]+ii1];
-	    v10d = data.image[ID].array.D[jj1*naxes[0]+ii1+1];
-	    v11d = data.image[ID].array.D[(jj1+1)*naxes[0]+ii1+1];
-	    data.image[IDout].array.D[jj*naxesout[0]+ii] = (double) (v00d*(1.0-ud)*(1.0-td)+v10d*ud*(1.0-td)+v01d*(1.0-ud)*td+v11d*ud*td);
-	  }
+        IDout = create_image_ID(imname_out, naxis, naxesout, atype, 0, 0);
+        for(ii=0; ii<naxesout[0]-1; ii++)
+            for(jj=0; jj<naxesout[1]-1; jj++)
+            {
+                xd = 1.0*ii/naxesout[0];
+                yd = 1.0*jj/naxesout[1];
+                xd1 = xd*naxes[0];
+                yd1 = yd*naxes[1];
+                ii1 = (long) xd1;
+                jj1 = (long) yd1;
+                ud = xd1 - (float) ii1;
+                td = yd1 - (float) jj1;
+                v00d = data.image[ID].array.D[jj1*naxes[0]+ii1];
+                v01d = data.image[ID].array.D[(jj1+1)*naxes[0]+ii1];
+                v10d = data.image[ID].array.D[jj1*naxes[0]+ii1+1];
+                v11d = data.image[ID].array.D[(jj1+1)*naxes[0]+ii1+1];
+                data.image[IDout].array.D[jj*naxesout[0]+ii] = (double) (v00d*(1.0-ud)*(1.0-td)+v10d*ud*(1.0-td)+v01d*(1.0-ud)*td+v11d*ud*td);
+            }
     }
-  else
+    else
     {
-      printERROR(__FILE__,__func__,__LINE__,"Wrong image type(s)\n");
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,"Wrong image type(s)\n");
+        exit(0);
     }
-  
 
-  return(0);
+
+    return(0);
 }
+
 
 
 

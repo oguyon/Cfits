@@ -914,6 +914,11 @@ int info_image_stats(char *ID_name, char *options)
       rms = 0.0;
       for (ii = 0; ii < nelements; ii++) 
 	{
+	  if(isnan(data.image[ID].array.F[ii])!=0)
+		{
+			printf("element %ld is NAN -> replacing by 0\n", ii);
+			data.image[ID].array.F[ii] = 0.0;
+		}
 	  tot += data.image[ID].array.F[ii];
 	  rms += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
 	  array[ii] = data.image[ID].array.F[ii];

@@ -105,7 +105,7 @@ typedef struct {
   int elemarrayindex[100]; // if element is DM or aspheric surface, this is the index in the corresponding array of elements, otherwise, this is the image index
   double flux[100]; // total flux AFTER element
   double elemZpos[100]; // position along beam
-
+  int keepMem[100]; // set to 1 if memory should be kept, 0 otherwise
   // this is what is used for propagations, created from info above
   long elem_amp_ID_array[100]; // amplitude map identifyer, multiplicative
   long elem_pha_ID_array[100]; // phase map identifyer, additive
