@@ -2085,8 +2085,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
     // how to measure quality
     float focscale; // l/D per pix
     float scoringIWA = 1.5;
-    float scoringOWA = 10.0;
-    float scoringIWAx = -10.5;
+    float scoringOWA = 20.0;
+	float scoringOWAhr = 8.0;
+    float scoringIWAx = -20.5;
     long IDsm;
     float r;
 
@@ -2119,9 +2120,14 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 x = (1.0*ii-0.5*size)*focscale;
                 y = (1.0*jj-0.5*size)*focscale;
                 r = sqrt(x*x+y*y);
-                if((r>scoringIWA)&&(r<scoringOWA)&&(x>scoringIWAx))
+                
+                if((r>scoringIWA)&&(r<scoringOWAhr)&&(x>scoringIWAx))
                     data.image[IDsm].array.F[jj*size+ii] = 1.0;
-                if((x>scoringIWA)&&(fabs(y)<scoringIWA*0.5)&&(r<50.0))
+
+                 if((r>scoringIWA)&&(r<scoringOWA)&&(x>scoringIWAx)&&(ii%2==0)&&(jj%2==0))
+                    data.image[IDsm].array.F[jj*size+ii] = 1.0;
+                  
+                if((x>scoringIWA)&&(fabs(y)<scoringIWA*0.5)&&(r<50.0)) // single line
                     data.image[IDsm].array.F[jj*size+ii] = 1.0;
             }
 
