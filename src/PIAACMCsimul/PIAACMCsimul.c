@@ -243,6 +243,7 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
         }
     piaacmc[0].focmNBzone = piaacmc[0].NBrings;
 
+   
     return ID;
 }
 
@@ -1561,7 +1562,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             delete_image_ID("Cmodes");
         Cmsize = (long) (beamradpix*4);
         piaacmc[0].Cmsize = Cmsize;
-        linopt_imtools_makeCosRadModes("Cmodes", Cmsize, 60, ApoFitCosFact*beamradpix, 2.0);
+        linopt_imtools_makeCosRadModes("Cmodes", Cmsize, 40, ApoFitCosFact*beamradpix, 2.0);
         piaacmc[0].CmodesID = image_ID("Cmodes");
         save_fits("Cmodes", fname);
     }
@@ -2675,7 +2676,7 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
 
     float *rinarray;
     float *routarray;
-    float dr = 0.02;
+    float dr = 0.1;
     double tot;
 
 
@@ -2723,7 +2724,7 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
     for(m=1; m<NBmasks; m++)
     {
         routarray[m] = rinarray[m-1];
-        rinarray[m] = routarray[m] - 1.0/NBmasks;
+        rinarray[m] = routarray[m] - (1.0-piaacmc[0].centObs1)/NBmasks;
     }
     rinarray[NBmasks-1] = 0.0;
 
@@ -2881,6 +2882,8 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
 
     ID = PIAACMCsimul_mkLyotMask(IDincoh_name, "Lcomb", "LMzonemap", throughput, "LMask");
     delete_image_ID("Lcomb");
+
+
 
     for(m=0; m<NBmasks; m++)
     {
