@@ -1547,8 +1547,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
     // ==================== CREATE MODES USED TO FIT AND DESCRIBE PIAA SHAPES ===============
     CREATE_Cmodes = 0;
-    sprintf(fname, "%s/Cmodes.fits", piaacmcconfdir);
-    if(FORCE_CREATE_Cmodes==0)
+ //   sprintf(fname, "%s/Cmodes.fits", piaacmcconfdir);
+   sprintf(fname, "Cmodes.fits");
+   if(FORCE_CREATE_Cmodes==0)
     {
         piaacmc[0].CmodesID = image_ID("Cmodes");
         if(piaacmc[0].CmodesID==-1)
@@ -1572,7 +1573,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     piaacmc[0].Cmsize = data.image[piaacmc[0].CmodesID].md[0].size[0];
 
     CREATE_Fmodes = 0;
-    sprintf(fname, "%s/Fmodes.fits", piaacmcconfdir);
+//    sprintf(fname, "%s/Fmodes.fits", piaacmcconfdir);
+    sprintf(fname, "Fmodes.fits");
     if(FORCE_CREATE_Fmodes == 0)
     {
         piaacmc[0].FmodesID = image_ID("Fmodes");
@@ -2849,7 +2851,7 @@ long IDlscumul;
 
 
     sprintf(fname,  "!%s/LMintC.fits", piaacmcconfdir);
-    save_fits("LMintC", fname);
+   // save_fits("LMintC", fname);
 
     IDmc = create_2Dimage_ID("Lcomb", xsize, ysize);
 
