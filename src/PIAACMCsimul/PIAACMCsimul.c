@@ -4239,6 +4239,10 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
     case 40 : // optimize PIAA optics shapes and focal plane mask transmission (idealized PIAACMC)
 //		FORCE_CREATE_fpmza = 1;
+
+		if((IDv=variable_ID("PIAACMC_resolved"))!=-1)
+            computePSF_ResolvedTarget = 1;
+
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)

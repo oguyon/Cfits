@@ -284,8 +284,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 exit(0);
             }
 
-			save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
-			save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
+		//	save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
+			//save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
 
             if(data.image[ID].md[0].size[2] != nblambda)
             {
@@ -315,7 +315,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 # endif
             }
 		
-		save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
+	//	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
 		
 
         }
