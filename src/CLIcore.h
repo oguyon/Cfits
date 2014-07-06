@@ -289,6 +289,7 @@ typedef struct
 
   float FLOATARRAY[1000];	// array to store temporary variables
   double DOUBLEARRAY[1000];    // for convenience
+	char SAVEDIR[500];
 } DATA;
 
 

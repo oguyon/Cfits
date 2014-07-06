@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
   data.precision = 0; // float is default precision
   data.SHARED_DFT = 0; // do not allocate shared memory for images
   data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image 
-
+	sprintf(data.SAVEDIR, ".");
 
   // to take advantage of kernel priority: 
   // owner=root mode=4755 

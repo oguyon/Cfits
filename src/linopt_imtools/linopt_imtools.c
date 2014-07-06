@@ -605,6 +605,7 @@ long linopt_imtools_vec_to_2DImage(char *IDvec_name, char *IDpixindex_name, char
 int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name) /* works even for m != n */
 {
   FILE *fp;
+  char fname[200];
   long ii1, jj1, k, ii;
   gsl_matrix *matrix_D; /* this is the response matrix */
   gsl_matrix *matrix_Ds; /* this is the pseudo inverse of D */ 
@@ -689,9 +690,10 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
   fflush(stdout);
 
   // Write eigenvalues
-  if((fp=fopen("eigenv.dat", "w"))==NULL)
+  sprintf(fname, "%s/eigenv.dat", data.SAVEDIR);
+  if((fp=fopen(fname, "w"))==NULL)
     {
-      printf("ERROR: cannot create file \"eigenv.dat\"\n");
+      printf("ERROR: cannot create file \"%s\"\n", fname);
       exit(0);
     }
   for(k=0; k<m; k++)

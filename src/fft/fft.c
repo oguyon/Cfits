@@ -2179,7 +2179,7 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
         }
         */
 
-        if(1) // TEST
+        if(0) // TEST
         {
             mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
             save_fl_fits("tmp_foc0_a", "!_DFT_foca");
@@ -2240,6 +2240,7 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
     double re, im, rein, imin, amp, pha, ampin, phain, amp2;
     double x, y, r;
     double total = 0;
+	char fname[200];
 
     IDin = image_ID(pupin_name);
     xsize = data.image[IDin].md[0].size[0];
@@ -2295,11 +2296,13 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
     data.FLOATARRAY[0] = (float) total;
 
 
-    if(0) // TEST
+    if(1) // TEST
     {
         mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
-        save_fl_fits("tmp_foc0_a", "!_DFT_foca");
-        save_fl_fits("tmp_foc0_p", "!_DFT_focp");
+        sprintf(fname, "!%s/_DFT_foca", data.SAVEDIR);
+		save_fl_fits("tmp_foc0_a", fname);
+        sprintf(fname, "!%s/_DFT_focp", data.SAVEDIR);		
+        save_fl_fits("tmp_foc0_p", fname);
         delete_image_ID("tmp_foc0_a");
         delete_image_ID("tmp_foc0_p");
     }

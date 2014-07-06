@@ -588,7 +588,7 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
       // col 4 is peak 
       // ideal complex transmission for FPM is  MASKCAMULT = -(1.0-peak)/peak;        
       printf("------- MASK SIZE = %f l/D ------\n", MASKSIZELD);
-      sprintf(fname, "APLCapo.%.3f.%.3f.info", MASKSIZELD, centralObs);
+      sprintf(fname, "%s/APLCapo.%.3f.%.3f.info", data.SAVEDIR, MASKSIZELD, centralObs);
       fp = fopen(fname, "w");
       fprintf(fp,"%f %.18f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak, centralObs);
       fclose(fp);
@@ -786,7 +786,8 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
       //	data.image[IDfpmask].array.F[ii] = 0.0;
     }
 
-  save_fl_fits("FPmask","!FPmask.tmp.fits");
+	sprintf(fname, "!%s/FPmask.tmp.fits", data.SAVEDIR);
+  save_fl_fits("FPmask",fname);
 
   free(fpmshape_ra);
   free(fpmshape_ka);
@@ -972,7 +973,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
       // col 4 is peak 
       // ideal complex transmission for FPM is  MASKCAMULT = -(1.0-peak)/peak;        
       printf("------- MASK SIZE = %f l/D ------\n", MASKSIZELD);
-      sprintf(fname, "APLCapo.%.3f.%.3f.info", MASKSIZELD, centralObs);
+      sprintf(fname, "%s/APLCapo.%.3f.%.3f.info", data.SAVEDIR, MASKSIZELD, centralObs);
       fp = fopen(fname, "w");
       fprintf(fp,"%f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak);
       fclose(fp);

@@ -753,7 +753,7 @@ int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, flo
 
 
     linopt_imtools_image_fitModes("_apoincrop", "APOmodesCos", "fitmaskapo", 1.0e-8, IDapofit_name, 0);
-    sprintf(command, "mv eigenv.dat %s/eigenv_APOmodesCos.dat", piaacmcconfdir);
+    sprintf(command, "mv %s/eigenv.dat %s/eigenv_APOmodesCos.dat", piaacmcconfdir, piaacmcconfdir);
     ret = system(command);
 
     if(0) // test fit quality
@@ -1643,12 +1643,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             IDv2 = create_variable_ID("PNBITER", 10);
             coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
 
-            sprintf(command, "mv _DFT* %s/", piaacmcconfdir);
-            r = system(command);
-            sprintf(command, "mv APLCapo* %s/", piaacmcconfdir);
-            r = system(command);
-            sprintf(command, "mv FPmask.tmp.fits %s/", piaacmcconfdir);
-            r = system(command);
+          //  sprintf(command, "mv _DFT* %s/", piaacmcconfdir);
+         //   r = system(command);
+          //  sprintf(command, "mv APLCapo* %s/", piaacmcconfdir);
+          //  r = system(command);
+           // sprintf(command, "mv FPmask.tmp.fits %s/", piaacmcconfdir);
+           // r = system(command);
 
             chname_image_ID("apo", "apo2Drad");
             save_fits("apo2Drad", fname);
@@ -1706,7 +1706,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         fflush(stdout);
 
         linopt_imtools_image_fitModes("piaa0zcrop", "Cmodes", "maskfit", 1.0e-6, "piaa0Cmodescoeff", 0);
-        sprintf(command, "mv eigenv.dat %s/eigenv_piaa0Cmodes.dat", piaacmcconfdir);
+        sprintf(command, "mv %s/eigenv.dat %s/eigenv_piaa0Cmodes.dat", piaacmcconfdir, piaacmcconfdir);
         ret = system(command);
 
 
@@ -1714,7 +1714,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         save_fits("piaa0Cmodescoeff", fname);
 
         linopt_imtools_image_fitModes("piaa1zcrop", "Cmodes", "maskfit", 1.0e-6, "piaa1Cmodescoeff", 0);
-        sprintf(command, "mv eigenv.dat %s/eigenv_piaa1Cmodes.dat", piaacmcconfdir);
+        sprintf(command, "mv %s/eigenv.dat %s/eigenv_piaa1Cmodes.dat", piaacmcconfdir, piaacmcconfdir);
         ret = system(command);
 
         sprintf(fname, "!%s/piaa1Cmodescoeff.fits", piaacmcconfdir);
@@ -1758,11 +1758,11 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         fflush(stdout);
 
         linopt_imtools_image_fitModes("piaa0Cres", "Fmodes", "maskfit", 0.01, "piaa0Fmodescoeff", 0);
-        sprintf(command, "mv eigenv.dat %s/eigenv_piaa0Fmodes.dat", piaacmcconfdir);
+        sprintf(command, "mv %s/eigenv.dat %s/eigenv_piaa0Fmodes.dat", piaacmcconfdir, piaacmcconfdir);
         ret = system(command);
 
         linopt_imtools_image_fitModes("piaa1Cres", "Fmodes", "maskfit", 0.01, "piaa1Fmodescoeff", 0);
-        sprintf(command, "mv eigenv.dat %s/eigenv_piaa1Fmodes.dat", piaacmcconfdir);
+        sprintf(command, "mv %s/eigenv.dat %s/eigenv_piaa1Fmodes.dat", piaacmcconfdir, piaacmcconfdir);
         ret = system(command);
 
 
@@ -3242,7 +3242,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
 
     sprintf(piaacmcconfdir, "piaacmcconf%03ld", confindex);
-
+	sprintf(data.SAVEDIR, "%s", piaacmcconfdir);
 
     switch (mode) {
 
@@ -4612,8 +4612,8 @@ list_image_ID();
             }
 
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-5, "optcoeff", 0);
-            sprintf(command, "mv eigenv.dat %s/eigenv_DH.dat", piaacmcconfdir);
-            ret = system(command);
+           // sprintf(command, "mv eigenv.dat %s/eigenv_DH.dat", piaacmcconfdir);
+            //ret = system(command);
 
 
             // delete_image_ID("vecDHref1D");
