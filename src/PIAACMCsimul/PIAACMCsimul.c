@@ -1611,6 +1611,22 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     sprintf(command, "mkdir -p %s/piaaref/", piaacmcconfdir);
     ret = system(command);
 
+	if((piaacmc[0].piaa0CmodesID==-1)||( piaacmc[0].piaa0FmodesID==-1)||(piaacmc[0].piaa1CmodesID==-1)||( piaacmc[0].piaa1FmodesID==-1))
+		{
+	     sprintf(fname, "%s/piaaref/piaa0Cmodes.fits", piaacmcconfdir);
+		piaacmc[0].piaa0CmodesID= load_fits(fname, "piaa0Cmodescoeff");
+
+        sprintf(fname, "%s/piaaref/piaa0Fmodes.fits", piaacmcconfdir);
+        piaacmc[0].piaa0FmodesID = load_fits(fname, "piaa0Fmodescoeff");
+
+        sprintf(fname, "%s/piaaref/piaa1Cmodes.fits", piaacmcconfdir);
+		piaacmc[0].piaa1CmodesID = load_fits(fname, "piaa1Cmodescoeff");
+
+        sprintf(fname, "%s/piaaref/piaa1Fmodes.fits", piaacmcconfdir);
+        piaacmc[0].piaa1FmodesID =load_fits(fname, "piaa1Fmodescoeff");
+		}
+
+
     if((piaacmc[0].piaa0CmodesID==-1)||( piaacmc[0].piaa0FmodesID==-1)||(piaacmc[0].piaa1CmodesID==-1)||( piaacmc[0].piaa1FmodesID==-1))
     {
         sprintf(fname, "%s/apo2Drad.fits", piaacmcconfdir);
