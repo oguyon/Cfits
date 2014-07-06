@@ -1790,17 +1790,23 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         piaacmc[0].piaa1FmodesID = image_ID("piaa1Fmodescoeff");
 
 
-        sprintf(fname, "!%s/piaa0Cmodes.fits", piaacmcconfdir);
+		sprintf(command, "mkdir -p %s/piaaref/", piaacmcconfdir);
+		ret = system(command);
+	
+        sprintf(fname, "!%s/piaaref/piaa0Cmodes.fits", piaacmcconfdir);
         save_fits(data.image[piaacmc[0].piaa0CmodesID].md[0].name, fname);
-
-        sprintf(fname, "!%s/piaa0Fmodes.fits", piaacmcconfdir);
+ 
+        sprintf(fname, "!%s/piaaref/piaa0Fmodes.fits", piaacmcconfdir);
         save_fits(data.image[piaacmc[0].piaa0FmodesID].md[0].name, fname);
 
-        sprintf(fname, "!%s/piaa1Cmodes.fits", piaacmcconfdir);
+        sprintf(fname, "!%s/piaaref/piaa1Cmodes.fits", piaacmcconfdir);
         save_fits(data.image[piaacmc[0].piaa1CmodesID].md[0].name, fname);
 
-        sprintf(fname, "!%s/piaa1Fmodes.fits", piaacmcconfdir);
+        sprintf(fname, "!%s/piaaref/piaa1Fmodes.fits", piaacmcconfdir);
         save_fits(data.image[piaacmc[0].piaa1FmodesID].md[0].name, fname);
+
+		sprintf(command, "cp %s/piaaref/* %s/", piaacmcconfdir, piaacmcconfdir);
+		ret = system(command);
     }
 
 
