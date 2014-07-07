@@ -1955,12 +1955,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
                 piaacmc[0].IDLyotStop[i] = PIAAsimul_mkSimpleLyotStop(name, piaacmc[0].centObs1+0.02, 0.98);
                 break;
             }
-            ID = image_ID(name);
+     /*       ID = image_ID(name);
             for(ii=0; ii<size2; ii++)
             {
                 data.image[ID].array.F[ii] *= data.image[IDlscumul].array.F[ii];
                 data.image[IDlscumul].array.F[ii] = data.image[ID].array.F[ii];
-            }
+            }*/
             save_fl_fits(name, fname);
         }
     }

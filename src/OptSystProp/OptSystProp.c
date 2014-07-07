@@ -275,7 +275,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         if(optsyst[0].elemtype[elem]==1)   // OPAQUE MASK
         {
             ID = optsyst[0].elemarrayindex[elem];
-           printf("============= Opaque mask (%s) =================\n", data.image[ID].md[0].name);
+           printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].md[0].name);
             fflush(stdout);
 
             if(ID == -1)
