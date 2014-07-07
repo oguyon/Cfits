@@ -1456,6 +1456,7 @@ long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout)
 
 int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int load)
 {
+	FILE *fp;
     float beamradpix;
     long NBpiaacmcdesign = 1;
     long ii, jj, k, i;
@@ -1470,7 +1471,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     long IDv1, IDv2;
     char fname[200];
     char name[200];
-
+	float tmpf;
     double pha0, t0, t;
     int loaded;
 
@@ -1686,6 +1687,13 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
         sprintf(fname, "%s/piaaref/piaa1Fmodes.fits", piaacmcconfdir);
         piaacmc[0].piaa1FmodesID =load_fits(fname, "piaa1Fmodescoeff");
+        
+                 sprintf(fname, "%s/piaaref/APLCmaskCtransm.txt", piaacmcconfdir);
+                    fp = fopen(fname, "r");
+                    ret = fscanf(fp, "%f", &tmpf);
+                    piaacmc[0].fpmaskamptransm = tmpf;
+                    fclose(fp);
+   
 		}
 
 
@@ -1754,7 +1762,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
                     printf("FOCAL PLANE MASK TRANSM = %f\n", piaacmc[0].fpmaskamptransm);
                     printf("Saving default configuration\n");
                     fflush(stdout);
-                    saveconf = 1;
+                    saveconf = 1;                                        
+                    
+                    sprintf(fname, "%s/piaaref/APLCmaskCtransm.txt", piaacmcconfdir);
+                    fp = fopen(fname, "w");
+                    fprintf(fp, "%.20f\n", piaacmc[0].fpmaskamptransm);
+                    fclose(fp);
                 }
 
             }
