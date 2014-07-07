@@ -225,7 +225,9 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 	long ring;
 	long *nbsector;
 	long *nbsectorcumul;
-
+	double PAf;
+	double eps = 1.0e-6;
+	
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = piaacmc[0].fpmarraysize;
     sizearray[1] = piaacmc[0].fpmarraysize;
@@ -239,10 +241,16 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 	{
 		NBzones = 0;
 		nbsector[0] = 1;
-		for(ring=0;ring<piaacmc[0].NBrings;ring++)
+		nbsectorcumul[0] = 1;
+		for(ring=1;ring<piaacmc[0].NBrings;ring++)
+		{
 			nbsector[ring] = 2*(ring+1);
-	
+			nbsectorcumul[ring] = nbsectorcumul[ring-1]+nbsector[ring];
+		}
 	}
+
+	for(ring=0;ring<piaacmc[0].NBrings;ring++)
+	printf("ring %ld : %ld %ld\n", ring, nbsector[ring], nbsectorcumul[ring]);
 
     //  ID = create_2Dimage_ID(IDname, piaacmc[0].fpmarraysize, piaacmc[0].fpmarraysize);
     for(ii=0; ii<piaacmc[0].fpmarraysize; ii++)
@@ -252,7 +260,12 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
             y = (2.0*jj-1.0*piaacmc[0].fpmarraysize)/piaacmc[0].fpmarraysize;
             r = sqrt(x*x+y*y);
             PA = atan2(y,x);
-            
+            PAf = 0.5*((PA/M_PI)+1.0);
+            if(PAf<eps)
+				PAf = eps;
+			if(PAf>1.0-eps)
+				PAf = 1.0-eps;
+				
             zi = (long) ceil((1.0-r)*piaacmc[0].NBrings);
             
             
@@ -266,11 +279,30 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 				ring = -1;
 			
 			
-				
-            data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] = (unsigned short int) zi;
+			if(sectors==0)
+				data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] = (unsigned short int) zi;
+			else
+			{
+				if(ring==-1)
+					data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] = 0;
+				else
+				{
+					if(ring==0) // inner disk
+						data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] = 1;
+					else
+						{
+							data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] = (unsigned short int) nbsectorcumul[ring-1]+1;
+							data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] += (unsigned short int) (PAf*nbsector[ring]);
+						}
+				}
+			}	
         }
-    piaacmc[0].focmNBzone = piaacmc[0].NBrings;
-
+        
+	if(sectors==0)
+		piaacmc[0].focmNBzone = piaacmc[0].NBrings;
+	else
+		piaacmc[0].focmNBzone = nbsectorcumul[piaacmc[0].NBrings-1];
+		
 	free(nbsector);
 	free(nbsectorcumul);
 
@@ -2988,13 +3020,15 @@ long IDlscumul;
     save_fits("Lcomb", fname);
 
     ID = PIAACMCsimul_mkLyotMask(IDincoh_name, "Lcomb", "LMzonemap", throughput, "LMask");
+    sprintf(fname, "!%s/LMask.fits", piaacmcconfdir);
+    save_fits("LMask", fname);
+
     delete_image_ID("Lcomb");
 
-IDlscumul = create_2Dimage_ID("LMcumul", xsize, ysize);
+	IDlscumul = create_2Dimage_ID("LMcumul", xsize, ysize);
       	for(ii=0;ii<xsize*ysize;ii++)
-        	{
-				data.image[IDlscumul].array.F[ii] = 1.0;
-			}
+			data.image[IDlscumul].array.F[ii] = 1.0;
+
     for(m=0; m<NBmasks; m++)
     {
         sprintf(name, "optLM%02ld", m);
