@@ -2751,7 +2751,7 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
 
     bestval = 1.0; // to be minized: total starlight transmitted
     for(rsl=0.0*rsl0; rsl< 2.0*rsl0; rsl+=0.02*rsl0)
-        for(v=0.00000001*v0; v<0.1*v0; v*=1.2)
+        for(v=0.00000001*v0; v<10.0*v0; v*=1.2)
         {
             val = 0.0;
             val1 = 0.0;
@@ -3186,6 +3186,69 @@ double PIAACMCsimul_achromFPMsol_eval(float *fpmresp_array, double *zonez_array,
 
     return evalval;
 }
+
+
+
+
+double PIAACMCsimul_achromFPMsol_eval_zonezderivative(long zone, float *fpmresp_array, double *zonez_array, double *dphadz_array, float *outtmp_array, long vsize, long nbz, long nbl)
+{
+
+    // axis 0: eval pts (ii)   size = data.image[IDfpmresp].md[0].size[0] -> vsize
+    // axis 1: zones (mz)      size = data.image[piaacmc[0].zonezID].md[0].size[0]+1 = nbz+1
+    // axis 3: lambda (k)      size = piaacmc[0].nblambda -> nbl
+    //
+    // indexing :  k*(data.image[piaacmc[0].zonezID].md[0].size[0]+1)*vsize + mz*vsize + ii
+
+
+
+
+    for(evalk=0; evalk<nbl; evalk++) // lambda loop
+    {
+        evalki = evalk*(nbz+1)*vsize;
+
+
+        // outer zone
+        for(evalii=0; evalii<vsize; evalii++)
+            outtmp_array[evalk*vsize+evalii] = 0.0; //fpmresp_array[evalk*(nbz+1)*vsize+evalii];
+
+
+        evalmz = zone;
+
+        evalpha = zonez_array[evalmz]*dphadz_array[evalk];
+        evalcosp = cos(evalpha);
+        evalsinp = sin(evalpha);
+        evalki1 = evalki + (evalmz+1)*vsize;
+        evalkv = evalk*vsize;
+
+        for(evalii=0; evalii<vsize/2; evalii++)
+        {
+            evalii1 = 2*evalii;
+            evalii2 = 2*evalii+1;
+            evalre = fpmresp_array[evalki1 + evalii1];
+            evalim = fpmresp_array[evalki1 + evalii2];
+            evalre1 = evalre*evalcosp - evalim*evalsinp;
+            evalim1 = evalre*evalsinp + evalim*evalcosp;
+            outtmp_array[evalkv + evalii1] += evalre1;
+            outtmp_array[evalkv + evalii2] += evalim1;
+        }
+
+
+
+
+    }
+
+    evalval = 0.0;
+    for(evalii=0; evalii<vsize*nbl; evalii++)
+    {
+        evalv1 = outtmp_array[evalii];
+        evalval += evalv1*evalv1;
+    }
+    //  evalval /= vsize*nbl;
+
+    return evalval;
+}
+
+
 
 
 
@@ -4692,7 +4755,7 @@ list_image_ID();
 
                 sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
                 fp = fopen(fname, "a");
-                fprintf(fp, "# %5ld/%5ld %5ld/%5ld %20g %20g             %20g   %20g\n", iter, NBiter, i, NBparam, val, valref, data.image[piaacmc[0].zoneaID].array.D[0], *(paramval[0]));
+                fprintf(fp, "# %5ld/%5ld %5ld/%5ld %20g %20g \n", iter, NBiter, i, NBparam, val, valref);
                 fclose(fp);
 
 
