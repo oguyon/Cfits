@@ -1688,12 +1688,14 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         sprintf(fname, "%s/piaaref/piaa1Fmodes.fits", piaacmcconfdir);
         piaacmc[0].piaa1FmodesID =load_fits(fname, "piaa1Fmodescoeff");
         
-                 sprintf(fname, "%s/piaaref/APLCmaskCtransm.txt", piaacmcconfdir);
-                    fp = fopen(fname, "r");
-                    ret = fscanf(fp, "%f", &tmpf);
-                    piaacmc[0].fpmaskamptransm = tmpf;
-                    fclose(fp);
-   
+        sprintf(fname, "%s/piaaref/APLCmaskCtransm.txt", piaacmcconfdir);
+        fp = fopen(fname, "r");
+        if(fp!=NULL)
+        {
+			ret = fscanf(fp, "%f", &tmpf);
+            piaacmc[0].fpmaskamptransm = tmpf;
+            fclose(fp);
+		}
 		}
 
 
