@@ -1657,11 +1657,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
                 coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
 
                 // full size, 8x zoom
-     //           chname_image_ID("apo", "apostart");
-      //          IDv1 = create_variable_ID("DFTZFACTOR", 8);
-      //          IDv2 = create_variable_ID("PNBITER", 5);
-       //         coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
+				chname_image_ID("apo", "apostart");
+                IDv1 = create_variable_ID("DFTZFACTOR", 8);
+				IDv2 = create_variable_ID("PNBITER", 5);
+                coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
 
+//TODO
                 // full size, 16x zoom
      //           chname_image_ID("apo", "apostart");
      //           IDv1 = create_variable_ID("DFTZFACTOR", 16);
@@ -3843,17 +3844,17 @@ int PIAACMCsimul_exec(long confindex, long mode)
         // indexing :  k*(data.image[piaacmc[0].zonezID].md[0].size[0]+1)*data.image[ID].md[0].size[0] + mz*data.image[ID].md[0].size[0] + ii
         IDfpmresp = image_ID("FPMresp");
         if(IDfpmresp==-1)
-            IDfpmresp = create_3Dimage_ID("FPMresp", data.image[ID].md[0].size[0], piaacmc[0].NBrings+1, piaacmc[0].nblambda);
+            IDfpmresp = create_3Dimage_ID("FPMresp", data.image[ID].md[0].size[0], piaacmc[0].focmNBzone+1, piaacmc[0].nblambda);
 
 		// light outside mask
         for(k=0; k<piaacmc[0].nblambda; k++)
             for(ii=0; ii<data.image[ID].md[0].size[0]; ii++)
-                data.image[IDfpmresp].array.F[k*(piaacmc[0].NBrings+1)*data.image[ID].md[0].size[0] + ii] = data.image[ID].array.F[k*data.image[ID].md[0].size[0]+ii];
+                data.image[IDfpmresp].array.F[k*(piaacmc[0].focmNBzone+1)*data.image[ID].md[0].size[0] + ii] = data.image[ID].array.F[k*data.image[ID].md[0].size[0]+ii];
 
-        sprintf(fname, "!%s/FPMresp%d_%02ld_%02d.fits", piaacmcconfdir, computePSF_ResolvedTarget, piaacmc[0].NBrings, piaacmc[0].nblambda);
+        sprintf(fname, "!%s/FPMresp%d_%02ld_%02d.fits", piaacmcconfdir, computePSF_ResolvedTarget, piaacmc[0].focmNBzone, piaacmc[0].nblambda);
         save_fits("FPMresp", fname);
 
-        for(mz=1; mz<piaacmc[0].NBrings+1; mz++)
+        for(mz=1; mz<piaacmc[0].focmNBzone+1; mz++)
         {
             focmMode = mz;
             optsyst[0].FOCMASKarray[0].mode = 0; // direct focal plane mask response
@@ -3929,7 +3930,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 */
 
 
-        sprintf(fname, "%s/FPMresp%d_%02ld_%02d.fits", piaacmcconfdir, computePSF_ResolvedTarget, piaacmc[0].NBrings, piaacmc[0].nblambda);
+        sprintf(fname, "%s/FPMresp%d_%02ld_%02d.fits", piaacmcconfdir, computePSF_ResolvedTarget, piaacmc[0].focmNBzone, piaacmc[0].nblambda);
         IDfpmresp = load_fits(fname, "FPMresp");
 
         vsize = data.image[IDfpmresp].md[0].size[0]; // number of eval pts x2
@@ -4255,7 +4256,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
             NBiter = 20;
 
 
-        sprintf(fname, "%s/FPMresp%d_%02ld_%02d.fits", piaacmcconfdir, computePSF_ResolvedTarget, piaacmc[0].NBrings, piaacmc[0].nblambda);
+        sprintf(fname, "%s/FPMresp%d_%02ld_%02d.fits", piaacmcconfdir, computePSF_ResolvedTarget, piaacmc[0].focmNBzone, piaacmc[0].nblambda);
         IDfpmresp = load_fits(fname, "FPMresp");
 
         vsize = data.image[IDfpmresp].md[0].size[0]; // number of eval pts x2
@@ -4940,7 +4941,7 @@ char command[500];
 			if(i<3)
 				MODampl = 0.0;
 			else
-				MODampl = 1.0e-6*ran1()*ran1()*ran1()*ran1();
+				MODampl = 1.0e-6*ran1()*ran1()*ran1();
 			PIAACMCsimul_exec(confindex, mode);
 			if(PIAACMCSIMUL_VAL<bestval)
 				{
@@ -4951,7 +4952,9 @@ char command[500];
 		fp = fopen(fname, "a");
 		fprintf(fp,"%20.5g %20.5g %20.5g %20.5g\n", MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval);
 		fclose(fp);
-			
+	
+		sprintf(command, "cp %s/fpm_zonez_best.fits %s/fpm_zonez.fits", piaacmcconfdir, piaacmcconfdir);
+		ret = system(command);		
 		}
 	}
 	else
