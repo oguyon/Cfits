@@ -216,16 +216,33 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 {
     long NBzones;
     long ID;
-    double x, y, r;
+    double x, y, r, PA;
     long ii, jj;
     long zi;
     long *sizearray;
+
+	int sectors = 1; // build sectors as well as rings
+	long ring;
+	long *nbsector;
+	long *nbsectorcumul;
 
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = piaacmc[0].fpmarraysize;
     sizearray[1] = piaacmc[0].fpmarraysize;
     ID = create_image_ID(IDname, 2, sizearray, USHORT, 0, 0);
     free(sizearray);
+
+	nbsector = (long*) malloc(sizeof(long)*piaacmc[0].NBrings);
+	nbsectorcumul = (long*) malloc(sizeof(long)*piaacmc[0].NBrings);
+
+	if(sectors==1)
+	{
+		NBzones = 0;
+		nbsector[0] = 1;
+		for(ring=0;ring<piaacmc[0].NBrings;ring++)
+			nbsector[ring] = 2*(ring+1);
+	
+	}
 
     //  ID = create_2Dimage_ID(IDname, piaacmc[0].fpmarraysize, piaacmc[0].fpmarraysize);
     for(ii=0; ii<piaacmc[0].fpmarraysize; ii++)
@@ -234,16 +251,29 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
             x = (2.0*ii-1.0*piaacmc[0].fpmarraysize)/piaacmc[0].fpmarraysize;
             y = (2.0*jj-1.0*piaacmc[0].fpmarraysize)/piaacmc[0].fpmarraysize;
             r = sqrt(x*x+y*y);
+            PA = atan2(y,x);
+            
             zi = (long) ceil((1.0-r)*piaacmc[0].NBrings);
+            
+            
             if(zi<0.1)
                 zi = 0;
             if(zi>piaacmc[0].NBrings)
                 zi = piaacmc[0].NBrings;
+            
+            ring = piaacmc[0].NBrings-zi; // 0 for inner disk, increases outward
+            if(zi==0)
+				ring = -1;
+			
+			
+				
             data.image[ID].array.U[jj*piaacmc[0].fpmarraysize+ii] = (unsigned short int) zi;
         }
     piaacmc[0].focmNBzone = piaacmc[0].NBrings;
 
-   
+	free(nbsector);
+	free(nbsectorcumul);
+
     return ID;
 }
 
@@ -1662,12 +1692,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 				IDv2 = create_variable_ID("PNBITER", 5);
                 coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
 
-//TODO
+
                 // full size, 16x zoom
-     //           chname_image_ID("apo", "apostart");
-     //           IDv1 = create_variable_ID("DFTZFACTOR", 16);
-      //          IDv2 = create_variable_ID("PNBITER", 10);
-     //           coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
+				chname_image_ID("apo", "apostart");
+                IDv1 = create_variable_ID("DFTZFACTOR", 16);
+                IDv2 = create_variable_ID("PNBITER", 10);
+                coronagraph_make_2Dprolateld(piaacmc[0].fpmaskradld, beamradpix, piaacmc[0].centObs1, "apo", size);
 
                 //  sprintf(command, "mv _DFT* %s/", piaacmcconfdir);
                 //   r = system(command);
@@ -2746,6 +2776,7 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
     char namepha[200];
     char nameint[200];
     char fname[200];
+    char fname1[200];
     long xsize, ysize;
     long ii, jj, k, m;
 
@@ -2922,7 +2953,8 @@ long IDlscumul;
 
     IDmc = create_2Dimage_ID("Lcomb", xsize, ysize);
 
-    fp = fopen("LyotMasks_zpos.txt", "w");
+	sprintf(fname1, "%s/LyotMasks_zpos.txt", piaacmcconfdir);
+    fp = fopen(fname1, "w");
     IDint = image_ID("LMintC");
     for(m=0; m<NBmasks; m++)
     {
