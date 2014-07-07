@@ -3297,7 +3297,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
     long NBparam;
     FILE *fp;
     char command[500];
-
+char dirname[500];
     int paramtype[10000]; // FLOAT or DOUBLE
     double *paramval[10000]; // array of pointers, double
     float *paramvalf[10000]; // array of pointers, float
@@ -4988,8 +4988,10 @@ list_image_ID();
 			PIAACMCSIMUL_VAL = val;
 			PIAACMCSIMUL_VALREF = valref;
 
-			PIAAsimul_savepiaacmcconf("piaacmclinopt"); // staging area
-			sprintf(command, "rsync -au --progress ./piaacmclinopt/* ./%s/", piaacmcconfdir);
+
+			sprintf(dirname, "%s_linopt", piaacmcconfdir);
+			PIAAsimul_savepiaacmcconf(dirname); // staging area
+			sprintf(command, "rsync -au --progress %s/* ./%s/", dirname, piaacmcconfdir);
 			r = system(command);
         }
     }
