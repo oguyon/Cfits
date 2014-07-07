@@ -115,6 +115,8 @@ double THICKRANGE = 2.0e-6;
 
 int computePSF_FAST_FPMresp = 0;
 int computePSF_ResolvedTarget = 0;
+int PIAACMC_FPM_FASTDERIVATIVES = 0;
+
 
 long NBsubPix = 8;
 
@@ -2751,7 +2753,7 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
 
     bestval = 1.0; // to be minized: total starlight transmitted
     for(rsl=0.0*rsl0; rsl< 2.0*rsl0; rsl+=0.02*rsl0)
-        for(v=0.00000001*v0; v<10.0*v0; v*=1.2)
+        for(v=0.00000001*v0; v<50.0*v0; v*=1.2)
         {
             val = 0.0;
             val1 = 0.0;
@@ -3208,15 +3210,15 @@ double PIAACMCsimul_achromFPMsol_eval_zonezderivative(long zone, float *fpmresp_
 
 
         // outer zone
-        for(evalii=0; evalii<vsize; evalii++)
-            outtmp_array[evalk*vsize+evalii] = 0.0; //fpmresp_array[evalk*(nbz+1)*vsize+evalii];
+      //  for(evalii=0; evalii<vsize; evalii++)
+        //    outtmp_array[evalk*vsize+evalii] = 0.0; //fpmresp_array[evalk*(nbz+1)*vsize+evalii];
 
 
         evalmz = zone;
 
         evalpha = zonez_array[evalmz]*dphadz_array[evalk];
-        evalcosp = cos(evalpha);
-        evalsinp = sin(evalpha);
+        evalcosp = -sin(evalpha)*dphadz_array[evalk]; //cos(evalpha);
+        evalsinp = cos(evalpha)*dphadz_array[evalk]; //sin(evalpha);
         evalki1 = evalki + (evalmz+1)*vsize;
         evalkv = evalk*vsize;
 
@@ -3228,24 +3230,12 @@ double PIAACMCsimul_achromFPMsol_eval_zonezderivative(long zone, float *fpmresp_
             evalim = fpmresp_array[evalki1 + evalii2];
             evalre1 = evalre*evalcosp - evalim*evalsinp;
             evalim1 = evalre*evalsinp + evalim*evalcosp;
-            outtmp_array[evalkv + evalii1] += evalre1;
-            outtmp_array[evalkv + evalii2] += evalim1;
+            outtmp_array[evalkv + evalii1] = evalre1;
+            outtmp_array[evalkv + evalii2] = evalim1;
         }
-
-
-
-
     }
 
-    evalval = 0.0;
-    for(evalii=0; evalii<vsize*nbl; evalii++)
-    {
-        evalv1 = outtmp_array[evalii];
-        evalval += evalv1*evalv1;
-    }
-    //  evalval /= vsize*nbl;
-
-    return evalval;
+    return 0.0;
 }
 
 
@@ -4214,7 +4204,8 @@ int PIAACMCsimul_exec(long confindex, long mode)
         ITERMAX = NBITER_DS;
         iterMax = 50000;
         printf("----------- STARTING DOWNHILL SIMPLEX ------------- [%ld]\n",ITERMAX);
-        fp = fopen("maskres.txt","w");
+		sprintf(fname, "%s/maskres,txt", piaacmcconfdir);
+        fp = fopen(fname, "w");
         OK = 0; // did it improve ?
         KEEPlimit = bestvalue;
         KEEPlimit1 = 3.0*bestvalue;
@@ -4687,7 +4678,6 @@ int PIAACMCsimul_exec(long confindex, long mode)
             size1Dvec += data.image[piaacmc[0].piaa1CmodesID].md[0].size[0];
         }
 
-		
 
         // re-package vector into 1D array and add regularization terms
         IDm = create_2Dimage_ID("DHmask", size1Dvec, 1);
@@ -4720,6 +4710,10 @@ int PIAACMCsimul_exec(long confindex, long mode)
         }
         delete_image_ID("vecDHref");
 
+
+	
+
+
         sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
         fp = fopen(fname, "w");
         fclose(fp);
@@ -4734,6 +4728,25 @@ list_image_ID();
 			printf("Iteration %ld/%ld\n", iter, NBiter);
             IDmodes = create_3Dimage_ID("DHmodes", size1Dvec, 1, NBparam);
 
+
+
+			// compute local derivatives
+			if(PIAACMC_FPM_FASTDERIVATIVES == 1)
+			{
+				ID = create_2Dimage_ID("DHmodes2Dtest", size1Dvec, NBparam);
+	for(mz=0; mz<data.image[piaacmc[0].zonezID].md[0].size[0]; mz++)
+		{
+			PIAACMCsimul_achromFPMsol_eval_zonezderivative(mz, fpmresp_array, zonez_array, dphadz_array, outtmp_array, vsize, data.image[piaacmc[0].zonezID].md[0].size[0], piaacmc[0].nblambda);
+			for(ii=0; ii<data.image[ID1D].md[0].nelement; ii++)
+                    data.image[ID].array.F[mz*data.image[ID1D].md[0].nelement+ii] = outtmp_array[ii]*paramdelta[mz];
+		}
+	            sprintf(fname, "!%s/DHmodes_test.fits", piaacmcconfdir);
+                save_fits("DHmodes2Dtest", fname);
+
+                delete_image_ID("DHmodes2Dtest");
+			}
+			else
+			{
             for(i=0; i<NBparam; i++)
             {
                 optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -4809,6 +4822,8 @@ list_image_ID();
 
                 delete_image_ID("DHmodes2D");
             }
+			}
+			
 
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-5, "optcoeff", 0);
            // sprintf(command, "mv eigenv.dat %s/eigenv_DH.dat", piaacmcconfdir);
@@ -4951,7 +4966,9 @@ list_image_ID();
             ID1Dref = image_ID("vecDHref1D");
 
             ID = image_ID("optcoeff");
-            fp = fopen("param.opt", "w");
+			
+			sprintf(fname, "%s/param.opt", piaacmcconfdir);
+            fp = fopen(fname, "w");
             for(i=0; i<NBparam; i++)
             {
                 if(paramtype[i]==FLOAT)
