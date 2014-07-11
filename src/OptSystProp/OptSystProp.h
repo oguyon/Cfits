@@ -110,6 +110,7 @@ typedef struct {
   long elem_amp_ID_array[100]; // amplitude map identifyer, multiplicative
   long elem_pha_ID_array[100]; // phase map identifyer, additive
 
+int SAVE; // 1 if intermediate results are saved, 0 otherwise
 
 } OPTSYST;
 

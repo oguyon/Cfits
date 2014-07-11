@@ -59,6 +59,8 @@ long create_2DCimage_ID(char *ID_name, long xsize, long ysize);
 
 long create_3Dimage_ID(char *ID_name, long xsize, long ysize, long zsize);
 
+long create_3Dimage_ID_double(char *ID_name, long xsize, long ysize, long zsize);
+
 long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize);
 
 long copy_image_ID(char *name, char *newname);

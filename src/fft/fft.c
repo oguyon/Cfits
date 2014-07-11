@@ -1004,7 +1004,7 @@ int do2dfft(char *in_name, char *out_name)
     if(naxis==2)
     {
         OK=1;
-        plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, -1,FFTWOPTMODE);
+        plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, -1, FFTWOPTMODE);
 
         if(plan==NULL)
         {
@@ -1017,7 +1017,7 @@ int do2dfft(char *in_name, char *out_name)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
             copy_image_ID(in_name,ffttmpcpyname);
 
-            plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, -1,FFTWOPTMODE);
+            plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, -1, FFTWOPTMODE);
             copy_image_ID(ffttmpcpyname,in_name);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
@@ -1032,7 +1032,7 @@ int do2dfft(char *in_name, char *out_name)
     {
         OK=1;
 
-        plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],-1,FFTWOPTMODE);
+        plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],-1, FFTWOPTMODE);
         if(plan==NULL)
         {
             //if ( Debug > 2)
@@ -1044,7 +1044,7 @@ int do2dfft(char *in_name, char *out_name)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
             copy_image_ID(in_name,ffttmpcpyname);
 
-            plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],-1,FFTWOPTMODE);
+            plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],-1, FFTWOPTMODE);
             copy_image_ID(ffttmpcpyname,in_name);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();

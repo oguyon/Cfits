@@ -63,6 +63,10 @@ int write_int_file(char *fname, int value);
 
 int write_float_file(char *fname, float value);
 
+
+int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step);
+
+
 #endif
 
 

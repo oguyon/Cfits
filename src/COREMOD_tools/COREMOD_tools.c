@@ -14,7 +14,7 @@ extern DATA data;
 
 char errormessage[SBUFFERSIZE];
 
-
+FILE *fpgnuplot;
 
 int write_float_file(char *fname, float value);
 
@@ -40,6 +40,21 @@ int write_flot_file_cli()
 }
 
 
+int COREMOD_TOOLS_imgdisplay3D_cli()
+{
+ if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
+    {
+	COREMOD_TOOLS_imgdisplay3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
+
 int init_COREMOD_tools()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -54,6 +69,15 @@ int init_COREMOD_tools()
   strcpy(data.cmd[data.NBcmd].syntax,"<filename> <float variable>");
   strcpy(data.cmd[data.NBcmd].example,"writef2file val.txt a");
   strcpy(data.cmd[data.NBcmd].Ccall,"int write_float_file(char *fname, float value)");
+  data.NBcmd++;
+
+ strcpy(data.cmd[data.NBcmd].key,"dispim3d");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_TOOLS_imgdisplay3D_cli;
+  strcpy(data.cmd[data.NBcmd].info,"display 2D image as 3D surface using gnuplot");
+  strcpy(data.cmd[data.NBcmd].syntax,"<imname> <step>");
+  strcpy(data.cmd[data.NBcmd].example,"dispim3d im1 5");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)");
   data.NBcmd++;
 
 
@@ -768,4 +792,58 @@ int write_float_file(char *fname, float value)
    }
 
   return(0);
+}
+
+
+// displays 2D image in 3D using gnuplot 
+//
+int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step)
+{
+	char ID;
+	long xsize, ysize;
+	long ii, jj;
+	char cmd[512];
+ FILE *fp;
+ 
+	ID = image_ID(IDname);
+	xsize = data.image[ID].md[0].size[0];
+	ysize = data.image[ID].md[0].size[1];
+	
+	snprintf(cmd, 512, "gnuplot");
+
+   if ((fpgnuplot = popen(cmd,"w")) == NULL)
+   {
+      fprintf(stderr, "could not connect to gnuplot\n");
+      return -1;
+   }
+	
+	printf("image: %s [%ld x %ld], step = %ld\n", IDname, xsize, ysize, step);
+	
+   fprintf(fpgnuplot, "set pm3d\n");
+   fprintf(fpgnuplot, "set hidden3d\n");
+   fprintf(fpgnuplot, "set palette\n");
+   //fprintf(gnuplot, "set xrange [0:%li]\n", image.md[0].size[0]);
+   //fprintf(gnuplot, "set yrange [0:1e-5]\n");
+   //fprintf(gnuplot, "set xlabel \"Mode #\"\n");
+   //fprintf(gnuplot, "set ylabel \"Mode RMS\"\n");
+   fflush(fpgnuplot);
+
+fp = fopen("pts.dat", "w");
+      fprintf(fpgnuplot, "splot \"-\" w d notitle\n");
+      for(ii=0;ii<xsize;ii+=step)
+		{
+			for(jj=0;jj<xsize;jj+=step)
+				{
+					fprintf(fpgnuplot, "%ld %ld %f\n", ii, jj, data.image[ID].array.F[jj*xsize+ii]);
+					fprintf(fp, "%ld %ld %f\n", ii, jj, data.image[ID].array.F[jj*xsize+ii]);
+				}
+			fprintf(fpgnuplot, "\n");
+				fprintf(fp, "\n");
+		}
+      fprintf(fpgnuplot, "e\n");
+      fflush(fpgnuplot);
+	fclose(fp);
+	
+	
+	return(0);
 }

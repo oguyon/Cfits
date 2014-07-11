@@ -393,10 +393,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 //      fflush(stdout);
                 //	      list_image_ID();
 				mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
+	
+	if(optsyst[0].SAVE == 1)
+{
 				sprintf(fname, "!%s/fpm_ampl.fits", savedir);
                 save_fits("fpma", fname);
  				sprintf(fname, "!%s/fpm_pha.fits", savedir);
                 save_fits("fpmp", fname);
+}
                //	      exit(0);
                 fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
                 delete_image_ID("_WFctmpc");
@@ -493,16 +497,19 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 		if(isnan(optsyst[0].flux[elem])!=0)
 			exit(0);
 
-        printf("Saving intermediate plane [%ld] ... ", elem);
+if(optsyst[0].SAVE == 1)
+{
+       printf("Saving intermediate plane [%ld] ... ", elem);
         fflush(stdout);
 
-        sprintf(fname, "!./%s/WFamp_%03ld.fits", savedir, elem);
+      sprintf(fname, "!./%s/WFamp_%03ld.fits", savedir, elem);
         save_fits(imnameamp_out, fname);
         sprintf(fname, "!./%s/WFpha_%03ld.fits", savedir, elem);
         save_fits(imnamepha_out, fname);
 
-        printf("done\n");
+       printf("done\n");
         fflush(stdout);
+}
     }
 
     if(elem==optsyst[0].NBelem) // Compute final focal plane image
@@ -515,11 +522,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         permut("psfc");
         mk_amph_from_complex("psfc", "psfa", "psfp");
 
-        sprintf(fname, "!%s/psfa.fits", savedir);
+ if(optsyst[0].SAVE == 1)
+{       sprintf(fname, "!%s/psfa.fits", savedir);
         save_fits("psfa", fname);
 
         sprintf(fname, "!%s/psfp.fits", savedir);
         save_fits("psfp", fname);
+}
+
 
         ID = image_ID("psfa");
         for(ii=0; ii<size2*nblambda; ii++)
@@ -529,8 +539,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         total = arith_image_total("psfi")/nblambda;
         printf("TOTAL = %lf\n", total);
 
-        sprintf(fname, "!%s/psfi.fits", savedir);
+if(optsyst[0].SAVE == 1)
+{        sprintf(fname, "!%s/psfi.fits", savedir);
         save_fits("psfi", fname);
+ }
     }
 
 

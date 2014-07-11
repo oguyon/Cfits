@@ -509,7 +509,7 @@ long linopt_imtools_mask_to_pixtable(char *IDmask_name, char *IDpixindex_name, c
 	k++;
       }
 
-  printf("%ld active pixels in mask %s\n", NBpix, IDmask_name);
+//  printf("%ld active pixels in mask %s\n", NBpix, IDmask_name);
 
   return(NBpix);
 }
@@ -644,8 +644,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
   //  long m = smao[0].NBmode;
   // long n = smao[0].NBwfselem;
 
-  printf("m = %ld actuators (modes), n = %ld sensors\n", m, n);
-  fflush(stdout);
+//  printf("m = %ld actuators (modes), n = %ld sensors\n", m, n);
+//  fflush(stdout);
 
   matrix_DtraD_eval = gsl_vector_alloc (m); 
   matrix_D = gsl_matrix_alloc (n,m);
@@ -686,8 +686,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
   gsl_eigen_symmv_free(w);
   gsl_eigen_symmv_sort (matrix_DtraD_eval, matrix_DtraD_evec, GSL_EIGEN_SORT_ABS_DESC);
 
-  printf("Eigenvalues\n");
-  fflush(stdout);
+//  printf("Eigenvalues\n");
+//  fflush(stdout);
 
   // Write eigenvalues
   sprintf(fname, "%s/eigenv.dat", data.SAVEDIR);
@@ -700,8 +700,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     fprintf(fp,"%ld %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
   fclose(fp);
   
-  for(k=0; k<m; k++)
-    printf("Mode %ld eigenvalue = %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
+//  for(k=0; k<m; k++)
+//    printf("Mode %ld eigenvalue = %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
   egvlim = SVDeps * gsl_vector_get(matrix_DtraD_eval,0);
   
   // Write rotation matrix to go from DM modes to eigenmodes
@@ -741,9 +741,9 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
 	else
 	  gsl_matrix_set(matrix1, ii1, jj1, 0.0);
       }
-  printf("%ld modes removed\n", nbmodesremoved);
-  printf("Compute inverse\n");
-  fflush(stdout);
+ // printf("%ld modes removed\n", nbmodesremoved);
+ // printf("Compute inverse\n");
+ // fflush(stdout);
 
   /* third, compute the "inverse" of DtraD */
   matrix2 = gsl_matrix_alloc (m, m);
@@ -759,8 +759,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
   gsl_matrix_free(matrix2);
   gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
 
-  printf("Write result\n");
-  fflush(stdout);
+//  printf("Write result\n");
+//  fflush(stdout);
 
   arraysizetmp[0] = n;
   arraysizetmp[1] = m;
@@ -885,15 +885,15 @@ long linopt_imtools_image_fitModes(char *ID_name, char *IDmodes_name, char *IDma
   IDrecm = image_ID("_fm_recm");
   m = data.image[IDrecm].md[0].size[1];
   n = data.image[IDrecm].md[0].size[0];
-  printf("m=%ld n=%ld\n", m, n);
+ // printf("m=%ld n=%ld\n", m, n);
   // m = number modes
   // n = number WFS elem
 
   IDcoeff = create_2Dimage_ID(IDcoeff_name, m, 1);
   cblas_sgemv (CblasRowMajor, CblasNoTrans, m, n, 1.0,  data.image[IDrecm].array.F, n, data.image[IDmvec].array.F, 1, 0.0, data.image[IDcoeff].array.F, 1);
   
-  for(ii=0;ii<m;ii++)
-    printf("  coeff %03ld  =  %g\n", ii, data.image[IDcoeff].array.F[ii]);
+ // for(ii=0;ii<m;ii++)
+ //   printf("  coeff %03ld  =  %g\n", ii, data.image[IDcoeff].array.F[ii]);
 
 
   delete_image_ID("_fm_measvec");
