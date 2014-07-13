@@ -232,14 +232,14 @@ typedef struct			/* structure used to store data arrays */
 typedef struct
 {
   int used;
-  char name[20];
+  char name[80];
   double value;
 } VARIABLE;
 
 typedef struct
 {
   int used;
-  char name[20];
+  char name[80];
   long value;
 } VARIABLELONG;
 
