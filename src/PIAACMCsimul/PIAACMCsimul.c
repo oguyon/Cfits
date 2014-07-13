@@ -5433,7 +5433,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
             if(iter==NBiter)
                 iterOK = 0;
-            if(iter>5)
+            if(iter>3)
                 if(val>0.999*oldval)
                     iterOK = 0;
             oldval = val;
