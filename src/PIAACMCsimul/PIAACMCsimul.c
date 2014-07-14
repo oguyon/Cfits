@@ -496,7 +496,7 @@ long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name, int mode
     {
         fpscale = (2.0*piaacmc[0].beamrad/piaacmc[0].pixscale)/piaacmc[0].size/piaacmc[0].fpzfactor*optsyst[0].lambdaarray[k]*piaacmc[0].Fratio;
         printf("LAMBDA = %10.5g m    SCALE = %10.5g m/pix   size=%4ld  rad=%g\n", optsyst[0].lambdaarray[k], fpscale, size, piaacmc[0].fpmRad);
-
+		printf("Zone 0 amplitude: %lf\n", data.image[piaacmc[0].zoneaID].array.D[0]);
 
         for(ii=0; ii<size; ii++)
             for(jj=0; jj<size; jj++)
@@ -796,6 +796,8 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         save_fits("fpmp", "!fpmp.fits");
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
+
+		exit(0);
     }
 
 
@@ -2130,8 +2132,8 @@ if(PIAACMC_save==1)
     }
 
 
-//exit(0);
 
+	printf("CREATE_fpmza = %d\n", CREATE_fpmza);
     if(FORCE_CREATE_fpmza == 0)
     {
         piaacmc[0].zoneaID = image_ID("fpmza");
@@ -2139,8 +2141,9 @@ if(PIAACMC_save==1)
         {
        sprintf(fname, "%s/fpm_zonea%d%d_%02ld_%03ld_%03ld.fits", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone);
 //           sprintf(fname, "%s/fpm_zonea.fits", piaacmcconfdir);
-            load_fits(fname, "fpmza");
-
+ 			printf("LOADING FILE NAME : \"%s\"\n", fname);
+          piaacmc[0].zoneaID = load_fits(fname, "fpmza");
+	
             if(piaacmc[0].zoneaID == -1)
                 CREATE_fpmza = 1;
         }
@@ -2158,6 +2161,9 @@ if(PIAACMC_save==1)
        sprintf(fname, "!%s/fpm_zonea%d%d_%02ld_%03ld_%03ld.fits", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone);
         save_fits("fpmza", fname);
     }
+
+
+
 
 
 
@@ -2864,7 +2870,7 @@ int PIAAsimul_loadpiaacmcconf(char *dname)
 
 long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name)
 {
-    long ID;
+    long ID, ID1;
     long IDmc, IDincoh, IDzone;
     double val, val1, v, v0, bestval, v_best, rsl_best;
     double rsl, rsl0;
@@ -2889,8 +2895,8 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
     IDincoh = gauss_filter(IDincoh_name, "incohg", sigma, filter_size);
     //IDincoh = image_ID(IDincoh_name);
  
-//    IDmc = image_ID(IDmc_name);
-	IDmc = gauss_filter(IDmc_name, "mcg", sigma, filter_size);
+   IDmc = image_ID(IDmc_name);
+//	IDmc = gauss_filter(IDmc_name, "mcg", sigma, filter_size);
 
     IDzone = image_ID(IDzone_name);
     xsize = data.image[IDmc].md[0].size[0];
@@ -2939,7 +2945,8 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
     }
     rsl0 = rsl;
 
-    v0 = img_percentile("mcg", 0.99);
+   // v0 = img_percentile("mcg", 0.99);
+    v0 = img_percentile(IDmc_name, 0.99);
 	printf("v0 = %lf\n", v0);
 
     bestval = 1.0; // to be minized: total starlight transmitted
@@ -2982,8 +2989,18 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
             else
                 data.image[IDout].array.F[ii] = 0.0;
 		}
+		
+if(1)
+{
+		ID1 = create_2Dimage_ID("postLMim", xsize, ysize);
+	for(ii=0; ii<xsize*ysize; ii++)
+	data.image[ID1].array.F[ii] = data.image[IDmc].array.F[ii]*data.image[IDout].array.F[ii];
+	save_fits("postLMim", "!postLMim.fits");
+	delete_image_ID("postLMim");
+}
+
     delete_image_ID("incohg");
-    delete_image_ID("mcg");
+  //  delete_image_ID("mcg");
 
     return(IDout);
 }
@@ -3049,11 +3066,14 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
 
 long IDlscumul;
 
+	 float *rarray;
+
+
     FILE *fp;
-    double alpha = 1.05; // norm alpha used to identify best plane
+    double alpha = 1.01; // norm alpha used to identify best plane
 
 
-	sigma = 0.01*piaacmc[0].beamrad/piaacmc[0].pixscale; 
+	sigma = 0.015*piaacmc[0].beamrad/piaacmc[0].pixscale; 
 	filter_size = (long) (sigma*2.0);
 
     zarray = (float*) malloc(sizeof(float)*NBz);
@@ -3085,6 +3105,11 @@ long IDlscumul;
     xsize = data.image[IDa].md[0].size[0];
     ysize = data.image[IDa].md[0].size[1];
 
+	rarray = (float*) malloc(sizeof(float)*xsize*ysize);
+
+	
+
+
     if(data.image[IDa].md[0].naxis==3)
         nblambda = data.image[IDa].md[0].size[2];
     else
@@ -3098,6 +3123,7 @@ long IDlscumul;
             x = (1.0*ii-0.5*xsize)/(piaacmc[0].beamrad/piaacmc[0].pixscale);
             y = (1.0*jj-0.5*xsize)/(piaacmc[0].beamrad/piaacmc[0].pixscale);
             r = sqrt(x*x+y*y);
+            rarray[jj*xsize+ii] = r;
             for(m=0; m<NBmasks; m++)
                 if((r>rinarray[m]-0.0001)&&(r<routarray[m]+0.0001))
                     data.image[IDzone].array.F[jj*xsize+ii] = m;
@@ -3172,7 +3198,7 @@ if(PIAACMC_save==1)
 				
 				
 //                data.image[ID].array.F[l*xsize*ysize+ii] += data.image[IDa].array.F[k*xsize*ysize+ii]*data.image[IDa].array.F[k*xsize*ysize+ii];
-                if((m>-1)&&(m<NBmasks))
+                if((m>-1)&&(m<NBmasks)&&(rarray[ii]<1.0)&&(rarray[ii]>0.9*piaacmc[0].centObs1))
                 {
                     totarray[l*NBmasks+m] += data.image[ID].array.F[l*xsize*ysize+ii];
                     tot2array[l*NBmasks+m] += pow(data.image[ID].array.F[l*xsize*ysize+ii], alpha);
@@ -3190,7 +3216,7 @@ if(PIAACMC_save==1)
 
 
     sprintf(fname,  "!%s/LMintC.fits", piaacmcconfdir);
-   // save_fits("LMintC", fname);
+    save_fits("LMintC", fname);
 
     IDmc = create_2Dimage_ID("Lcomb", xsize, ysize);
 
@@ -3287,6 +3313,7 @@ delete_image_ID("LMcumul");
     free(rinarray);
     free(routarray);
     free(zarray);
+    free(rarray);
 
     delete_image_ID("LMzonemap");
 
@@ -3684,6 +3711,8 @@ int PIAACMCsimul_exec(long confindex, long mode)
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
+ 
+ 
         valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem);
         printf("valref = %g\n", valref);
         break;

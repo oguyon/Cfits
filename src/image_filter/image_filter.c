@@ -30,6 +30,21 @@ extern DATA data;
 
 
 
+
+
+int gauss_filter_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0)
+    {
+      gauss_filter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 int init_image_filter()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -37,16 +52,15 @@ int init_image_filter()
   data.NBmodule++;
   
 
-  /*
-  strcpy(data.cmd[data.NBcmd].key,"piaacmcsimrun");
+  strcpy(data.cmd[data.NBcmd].key,"gaussfilt");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = PIAACMCsimul_run_cli;
-  strcpy(data.cmd[data.NBcmd].info,"Simulate PIAACMC");
-  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-  strcpy(data.cmd[data.NBcmd].example,"piaacmcsimrun");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int PIAACMCsimul_run()");
+  data.cmd[data.NBcmd].fp = gauss_filter_cli;
+  strcpy(data.cmd[data.NBcmd].info,"gaussian 2D filtering");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sigma> <filter box size>");
+  strcpy(data.cmd[data.NBcmd].example,"gaussfilt imin imout 2.3 5");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)");
   data.NBcmd++;
-  */
+  
    
   // add atexit functions here
 
