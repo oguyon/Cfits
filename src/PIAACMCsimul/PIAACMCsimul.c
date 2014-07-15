@@ -5570,6 +5570,7 @@ char command[500];
 long k;
 int fOK = 0;
 int bOK = 0;
+int zeroST=0;
 
 	if(mode==13)
 	{
@@ -5578,15 +5579,19 @@ int bOK = 0;
 //		fclose(fp);
 		for(i=0;i<100000000000;i++)
 		{
-			if((i<3))
+			if((i<1))
 				MODampl = 0.0;
 			else
 				MODampl = 1.0e-7*ran1()*ran1()*ran1();
 	
 			if((i>1)&&(ran1()>0.5))	
-				for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
+				{
+				zeroST = 1;
+					for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
 					data.image[piaacmc[0].zonezID].array.D[k] = 0.0;
-		
+				}
+				else
+				zeroST = 0;
 			
 			PIAACMCsimul_exec(confindex, mode);
 			bOK = 0;
@@ -5608,7 +5613,7 @@ int bOK = 0;
 			}
 
 		fp = fopen(fname, "a");
-		fprintf(fp,"%20.5g %20.5g %20.5g %20.5g", MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval);
+		fprintf(fp,"%20.5g %20.5g %20.5g %20.5g %d", MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval, zeroST);
 		if(bOK==1)
 			fprintf(fp, " BEST\n");
 		else
