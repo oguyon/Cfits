@@ -5,6 +5,8 @@
 #include <malloc.h>
 #include <math.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
@@ -135,6 +137,10 @@ float PIAACMC_MASKregcoeff = 1.0;
 long PIAACMC_FPMresp_mp;
 long PIAACMC_FPMresp_thread;
 
+
+long PIAACMC_MAXRINGOPTNB = 100; // maximum number of rings to optimize, from inside out
+long PIAACMC_RINGOPTNB;
+
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -171,6 +177,19 @@ int PIAACMCsimul_run_cli()
 }
 
 
+int PIAACMC_FPMresp_rmzones_cli()
+{
+	  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
+    {
+        PIAACMC_FPMresp_rmzones(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 /**
  * Initializes module
  */
@@ -198,6 +217,17 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].example,"piaacmcsimrun");
     strcpy(data.cmd[data.NBcmd].Ccall,"int PIAACMCsimul_run(int confindex)");
     data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"piaacmsimfpmresprm");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = PIAACMC_FPMresp_rmzones_cli;
+    strcpy(data.cmd[data.NBcmd].info,"remove zones in FPM resp matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input FPMresp> <output FPMresp> <NBzone removed>");
+    strcpy(data.cmd[data.NBcmd].example,"piaacmsimfpmresprm FPMresp FPMrespout 125");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones)");
+    data.NBcmd++;
+
 
 
     // add atexit functions here
@@ -3500,6 +3530,41 @@ double f_evalmask (const gsl_vector *v, void *params)
 
 
 
+
+
+// remove outer zones to FPMresp
+long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones)
+{
+	long ID, IDout;
+	long ii, jj, kk;
+	long xsize, ysize, zsize, ysize1;
+	
+	ID = image_ID(FPMresp_in_name);
+	xsize = data.image[ID].md[0].size[0];
+	ysize = data.image[ID].md[0].size[1];
+	zsize = data.image[ID].md[0].size[2];
+	
+	
+	ysize1 = data.image[ID].md[0].size[1]-NBzones;
+	
+	IDout = create_3Dimage_ID_double(FPMresp_out_name, xsize, ysize1, zsize);
+
+	for(ii=0;ii<xsize;ii++)
+		for(kk=0;kk<zsize;kk++)
+			{
+				for(jj=0;jj<ysize1;jj++)
+					data.image[IDout].array.D[kk*xsize*ysize1 + jj*xsize + ii] = data.image[ID].array.D[kk*xsize*ysize + jj*xsize + ii];
+				for(jj=ysize1;jj<ysize;jj++)
+					data.image[IDout].array.D[kk*xsize*ysize1 + ii] += data.image[ID].array.D[kk*xsize*ysize + jj*xsize + ii];
+			}
+
+	return(IDout);
+}
+
+
+
+
+
 /**
  *
  * @brief Main simulation routine
@@ -4476,8 +4541,9 @@ int PIAACMCsimul_exec(long confindex, long mode)
         ID = image_ID("imvect");
         */
 
+		
 
-        sprintf(fname, "!%s/FPMresp%d%d%d_%02ld_%03ld_%03ld_%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, computePSF_ResolvedTarget, PIAACMC_FPMsectors,  (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda);
+        sprintf(fname, "!%s/FPMresp%d%d%d_%02ld_%03ld_%03ld_%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, computePSF_ResolvedTarget, PIAACMC_FPMsectors,  (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda);	
         IDfpmresp = load_fits(fname, "FPMresp");
 
         if(IDfpmresp==-1)
@@ -5171,7 +5237,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
 
 
-        sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
+        sprintf(fname, "%s/linoptval_%d.txt", piaacmcconfdir, getpid());
         fp = fopen(fname, "w");
         fclose(fp);
 

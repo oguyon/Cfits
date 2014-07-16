@@ -206,12 +206,15 @@ int basic_lmax_im(char *ID_name, char *out_name)
   return(0);
 }
 
-long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2){
+long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)
+{
   int ID1, ID2; /* ID for the 2 images added */
   int ID_out; /* ID for the output image */
   long ii,jj; 
   long naxes1[2], naxes2[2], naxes[2];
   long xmin, ymin, xmax, ymax; /* extrema in the ID1 coordinates */
+  int atype1, atype2, atype;
+	int atypeOK;
   
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
@@ -220,6 +223,28 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
   naxes2[0] = data.image[ID2].md[0].size[0];
   naxes2[1] = data.image[ID2].md[0].size[1];
   
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
+ 
+atypeOK = 0;
+
+if((atype1==FLOAT)&&(atype2==FLOAT))
+{
+	atype = FLOAT;
+	atypeOK = 1;
+}
+ if((atype1==DOUBLE)&&(atype2==DOUBLE))
+{
+	atype = DOUBLE;
+	atypeOK = 1;
+}
+ 
+if(atypeOK == 0)
+	{
+		printf("ERROR in basic_add: data type combination not supported\n");
+		exit(0);
+	}
+ 
   /*  if(data.quiet==0)*/
   /* printf("add called with %s ( %ld x %ld ) %s ( %ld x %ld ) and offset ( %ld x %ld )\n",ID_name1,naxes1[0],naxes1[1],ID_name2,naxes2[0],naxes2[1],off1,off2);*/
   xmin = 0;
@@ -231,8 +256,11 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
   ymax = naxes1[1];
   if ((naxes2[1]+off2)>naxes1[1]) ymax = (naxes2[1]+off2);
   
-  create_2Dimage_ID(ID_name_out,(xmax-xmin),(ymax-ymin));
-  ID_out = image_ID(ID_name_out);
+ 
+  if(atype==FLOAT)
+  {
+	create_2Dimage_ID(ID_name_out,(xmax-xmin),(ymax-ymin));
+	  ID_out = image_ID(ID_name_out);
   naxes[0] = data.image[ID_out].md[0].size[0];
   naxes[1] = data.image[ID_out].md[0].size[1];
   
@@ -250,6 +278,31 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
 	    data.image[ID_out].array.F[jj*naxes[0]+ii] += data.image[ID2].array.F[(jj+ymin-off2)*naxes2[0]+(ii+xmin-off1)];
       }
     }
+  }
+  
+  if(atype==DOUBLE)
+   {
+	   create_2Dimagedouble_ID(ID_name_out,(xmax-xmin),(ymax-ymin));
+	  ID_out = image_ID(ID_name_out);
+  naxes[0] = data.image[ID_out].md[0].size[0];
+  naxes[1] = data.image[ID_out].md[0].size[1];
+  
+  for (jj = 0; jj < naxes[1]; jj++) 
+    for (ii = 0; ii < naxes[0]; ii++){ 
+      {
+	data.image[ID_out].array.D[jj*naxes[0]+ii] = 0;
+	/* if pixel is in ID1 */
+	if(((ii+xmin)>=0)&&((ii+xmin)<naxes1[0]))
+	  if(((jj+ymin)>=0)&&((jj+ymin)<naxes1[1]))
+	    data.image[ID_out].array.D[jj*naxes[0]+ii] += data.image[ID1].array.D[(jj+ymin)*naxes1[0]+(ii+xmin)];
+	/* if pixel is in ID2 */
+	if(((ii+xmin-off1)>=0)&&((ii+xmin-off1)<naxes2[0]))
+	  if(((jj+ymin-off2)>=0)&&((jj+ymin-off2)<naxes2[1]))
+	    data.image[ID_out].array.D[jj*naxes[0]+ii] += data.image[ID2].array.D[(jj+ymin-off2)*naxes2[0]+(ii+xmin-off1)];
+      }
+    }
+  }
+  
   return(ID_out);
 }
 

@@ -690,7 +690,9 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
 //  fflush(stdout);
 
   // Write eigenvalues
-  sprintf(fname, "%s/eigenv.dat", data.SAVEDIR);
+  
+  
+  /*sprintf(fname, "%s/eigenv.dat", data.SAVEDIR);
   if((fp=fopen(fname, "w"))==NULL)
     {
       printf("ERROR: cannot create file \"%s\"\n", fname);
@@ -699,6 +701,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
   for(k=0; k<m; k++)
     fprintf(fp,"%ld %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
   fclose(fp);
+  */
+  
   
 //  for(k=0; k<m; k++)
 //    printf("Mode %ld eigenvalue = %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
