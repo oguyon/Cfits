@@ -5237,7 +5237,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
 
 
-        sprintf(fname, "%s/linoptval_%d.txt", piaacmcconfdir, getpid());
+        sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
         fp = fopen(fname, "w");
         fclose(fp);
 
