@@ -188,8 +188,18 @@ int PIAACMC_FPMresp_rmzones_cli()
         return 1;
 }
 
+//long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)
 
-
+int PIAACMC_FPMresp_resample_cli()
+{
+	  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+        PIAACMC_FPMresp_resample(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
 /**
  * Initializes module
  */
@@ -226,6 +236,15 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].syntax,"<input FPMresp> <output FPMresp> <NBzone removed>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmsimfpmresprm FPMresp FPMrespout 125");
     strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"piaacmsimfpmresprs");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = PIAACMC_FPMresp_resample_cli;
+    strcpy(data.cmd[data.NBcmd].info,"resample FPM resp matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input FPMresp> <output FPMresp> <NBlambda> <EvalPts step>");
+    strcpy(data.cmd[data.NBcmd].example,"piaacmsimfpmresprs FPMresp FPMrespout 10 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)");
     data.NBcmd++;
 
 
@@ -2447,7 +2466,7 @@ double pha;
                         data.image[IDsm].array.F[jj*size+ii] = 1.0;
                 }
         }
-        if(SCORINGMASKTYPE==1) // focused on central pixels, fewer pixels for faster convergence
+        else // focused on central pixels, fewer pixels for faster convergence
         {
             for(ii=0; ii<size; ii++)
                 for(jj=0; jj<size; jj++)
@@ -3557,6 +3576,91 @@ long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long
 				for(jj=ysize1;jj<ysize;jj++)
 					data.image[IDout].array.D[kk*xsize*ysize1 + ii] += data.image[ID].array.D[kk*xsize*ysize + jj*xsize + ii];
 			}
+
+	return(IDout);
+}
+
+
+// compress FPMresp to smaller number of lambda and points
+long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)
+{
+	long ID, IDout;
+	long ii, jj, kk, ii1, kk1;
+	long xsize, ysize, zsize, xsize1, zsize1;
+	double alpha;
+	long kk1xi;
+	double kk1x;
+	double re, im, re0, im0, re1, im1;
+	
+	
+	ID = image_ID(FPMresp_in_name);
+	xsize = data.image[ID].md[0].size[0];
+	ysize = data.image[ID].md[0].size[1];
+	zsize = data.image[ID].md[0].size[2];
+	
+	
+	xsize1 = (long) (xsize/PTstep);
+	zsize1 = NBlambda;
+	
+	
+	IDout = create_3Dimage_ID_double(FPMresp_out_name, xsize1, ysize, zsize1);
+/*	for(kk1=0;kk1<zsize1;kk1++)
+		for(ii=0;ii<xsize;ii++)
+			data.image[IDout].array.D[kk1*xsize1*ysize + ii] = 1;
+	*/
+	
+	
+
+	for(kk1=0;kk1<zsize1;kk1++)
+	{
+		kk1x = 1.0*kk1/(zsize1-1);
+		kk1xi = (long) (kk1x*(zsize-1));
+		alpha = kk1x*(zsize-1)-kk1xi;
+		
+		if(kk1xi==zsize-1)
+			{
+				kk1xi = zsize-2;
+				alpha = 1.0;
+			}
+	
+		printf("lambda index %ld  (%lf)   :  %ld %lf (%lf)\n", kk1, kk1x, kk1xi, alpha, (kk1xi+alpha)/(zsize-1));
+		ii1 = 0;
+	
+		
+		
+		for(ii=0;ii<xsize;ii+=2*PTstep)
+		{
+			
+			for(jj=0;jj<ysize;jj++)
+			{
+				re0 = data.image[ID].array.D[kk1xi*xsize*ysize + jj*xsize + ii];
+				im0 = data.image[ID].array.D[kk1xi*xsize*ysize + jj*xsize + ii+1];
+			
+				re1 = data.image[ID].array.D[(kk1xi+1)*xsize*ysize + jj*xsize + ii];
+				im1 = data.image[ID].array.D[(kk1xi+1)*xsize*ysize + jj*xsize + ii+1];
+			
+				re = (1.0-alpha)*re0 + alpha*re1;
+				im = (1.0-alpha)*im0 + alpha*im1;
+			
+				
+				data.image[IDout].array.D[kk1*xsize1*ysize + jj*xsize1 + ii1] = re; //*sqrt(PTstep);
+				data.image[IDout].array.D[kk1*xsize1*ysize + jj*xsize1 + ii1+1] = im; //*sqrt(PTstep);
+			}
+						
+			ii1+=2;	
+		}
+	}
+	
+	
+/*		for(kk=0;kk<zsize;kk++)
+			{
+				for(jj=0;jj<ysize1;jj++)
+					data.image[IDout].array.D[kk*xsize*ysize1 + jj*xsize + ii] = data.image[ID].array.D[kk*xsize*ysize + jj*xsize + ii];
+				for(jj=ysize1;jj<ysize;jj++)
+					data.image[IDout].array.D[kk*xsize*ysize1 + ii] += data.image[ID].array.D[kk*xsize*ysize + jj*xsize + ii];
+			}
+*/
+
 
 	return(IDout);
 }
