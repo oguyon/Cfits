@@ -223,6 +223,15 @@ int memory_monitor_cli()
   return 0;
 }
 
+int list_variable_ID_file_cli()
+{
+ if(CLI_checkarg(1,3)==0)
+    list_variable_ID_file(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+
 int delete_image_ID_cli()
 {
   long i = 1;
@@ -362,6 +371,15 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].syntax,"no argument");
   strcpy(data.cmd[data.NBcmd].example,"listvar");
   strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID()");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"listvarf");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = list_variable_ID_file_cli;
+  strcpy(data.cmd[data.NBcmd].info,"list variables in memory, write to file");
+  strcpy(data.cmd[data.NBcmd].syntax,"<file name>");
+  strcpy(data.cmd[data.NBcmd].example,"listvarf var.txt");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID_file()");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"creaim");
@@ -706,6 +724,8 @@ long next_avail_variable_ID() /* next available ID number */
     }
   return(ID);
 }
+
+
 
 int delete_image_ID(char* imname) /* deletes an ID */
 {
@@ -2019,10 +2039,27 @@ int list_variable_ID()
 
   for (i=0;i<data.NB_MAX_VARIABLE;i++)
     if(data.variable[i].used == 1) 
-      printf("%4ld %10s %25.18g\n",i, data.variable[i].name,data.variable[i].value);
+      printf("%4ld %16s %25.18g\n",i, data.variable[i].name,data.variable[i].value);
   
   return(0);
 }
+
+int list_variable_ID_file(char *fname)
+{
+  long i;
+	FILE *fp;
+
+	fp = fopen(fname, "w");
+  for (i=0;i<data.NB_MAX_VARIABLE;i++)
+    if(data.variable[i].used == 1) 
+      fprintf(fp, "%s=%.18g\n",data.variable[i].name, data.variable[i].value);
+
+  fclose(fp);
+  
+  return(0);
+}
+
+
 
 long chname_image_ID(char *ID_name, char *new_name)
 {

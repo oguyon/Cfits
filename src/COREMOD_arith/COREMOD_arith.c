@@ -1503,6 +1503,10 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
 
+	printf("IMAGE IMAGE -> IMAGE\n");
+	fflush(stdout);
+
+
   if(ID1==-1)
     {
       sprintf(errmsg, "Image %s does not exist: cannot proceed\n", ID_name1);
@@ -1528,9 +1532,12 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
      }
 
   for(i=0;i<naxis;i++)
-    {
-      naxes[i] = data.image[ID1].md[0].size[i];
-    }
+      {
+		  naxes[i] = data.image[ID1].md[0].size[i];
+		//printf("axis %ld:  %ld\n", i, naxes[i]);
+//fflush(stdout);
+	  }
+  
   
   IDout = create_image_ID(ID_out, naxis, naxes, atype1, data.SHARED_DFT, data.NBKEWORD_DFT);
   free(naxes);
@@ -1549,6 +1556,8 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
       exit(0);
     }
 
+	//list_image_ID();
+
   # ifdef _OPENMP
   #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
   {  
@@ -1556,7 +1565,10 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
 
   if((atype1==CHAR)&&(atype2==CHAR))
     {
-      # ifdef _OPENMP
+  		//printf("CHAR CHAR\n");
+		//fflush(stdout);
+		//exit(0);
+     # ifdef _OPENMP
       #pragma omp for
       # endif
 
@@ -1565,7 +1577,10 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
     }
   if((atype1==INT)&&(atype2==INT))
     {
-      # ifdef _OPENMP
+  		//printf("INT INT\n");
+		//fflush(stdout);
+		//exit(0);
+     # ifdef _OPENMP
       #pragma omp for
       # endif
      for (ii = 0; ii < nelement; ii++)
@@ -1573,6 +1588,9 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
     }
   if((atype1==FLOAT)&&(atype2==FLOAT))
     {
+//		printf("FLOAT FLOAT\n");
+	//	fflush(stdout);
+		//exit(0);
       # ifdef _OPENMP
       #pragma omp for
       # endif
@@ -1581,7 +1599,10 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
     }
   if((atype1==DOUBLE)&&(atype2==DOUBLE))
     {
-      # ifdef _OPENMP
+// 		printf("DOUBLE DOUBLE\n");
+	//	fflush(stdout);
+		//exit(0);
+     # ifdef _OPENMP
       #pragma omp for
       # endif
       for (ii = 0; ii < nelement; ii++)

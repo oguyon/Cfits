@@ -75,6 +75,8 @@ int list_image_ID_file(char *fname);
 
 int list_variable_ID();
 
+int list_variable_ID_file(char *fname);
+
 long chname_image_ID(char *ID_name, char *new_name);
 
 int mk_complex_from_reim(char *re_name, char *im_name, char *out_name);

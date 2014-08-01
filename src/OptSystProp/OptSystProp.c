@@ -320,12 +320,12 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
         }
 
-        if(optsyst[0].elemtype[elem]==3)  // MIRROR
+        if(optsyst[0].elemtype[elem]==3)  // MIRROR OR REFRACTIVE SURFACE
         {
-            printf("============= Mirror =======================\n");
+            printf("============= Mirror or Refractive surface =======================\n");
             fflush(stdout);
             ID = optsyst[0].ASPHSURFMarray[optsyst[0].elemarrayindex[elem]].surfID;
-            printf("%d mirror ID = %ld\n", optsyst[0].elemarrayindex[elem], ID);
+            printf("%d surface ID = %ld\n", optsyst[0].elemarrayindex[elem], ID);
             fflush(stdout);
  # ifdef HAVE_LIBGOMP
     #pragma omp parallel default(shared) private(ii)

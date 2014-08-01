@@ -10,6 +10,10 @@
 #include <sys/types.h>
 #include <getopt.h>
 #include <ncurses.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdbool.h>
 
 #include <readline/readline.h>  
 #include <readline/history.h>  
@@ -57,7 +61,9 @@ int Verbose = 0;
 int LIST_IMFILES = 0;
 DATA data;
 
-
+  char *line;
+int rlquit = false;
+int CLIexecuteCMDready = 0;
 
 //double CFITSVARRAY[SZ_CFITSVARRAY];
 //long CFITSVARRAY_LONG[SZ_CFITSVARRAY];
@@ -226,6 +232,25 @@ int cfits_usleep_cli()
 
 
 
+/**
+ * @brief Readline callback
+ * 
+ **/
+void rl_cb(char* linein)
+{
+    if (NULL==linein) {
+        rlquit = true;
+        return;
+    }
+
+    CLIexecuteCMDready = 1;
+line = strdup(linein);
+  //  printf("You typed:\n%s\n", linein);
+   // free(line);
+}
+
+
+
 
 /**
  * @brief Command Line Interface (CLI) main\n 
@@ -245,19 +270,26 @@ int main(int argc, char *argv[])
   double v1;
   char prompt[200];
   char promptname[100];
-  char *line;
   int terminate = 0;
   char str[200];
   char command[200];
   int nbtk;
   char *cmdargstring;
-
+    struct timeval rldelay;
   FILE *fpcmd;
   FILE *fpcmdout;
   int OKcmd;
   char fline[200];
   int r;
 
+  struct stat st;
+  FILE *fpclififo;
+  char buf[100];
+  int fifofd, c=0;
+int fdmax;
+    fd_set cli_fdin_set;
+    int n;
+    
   TYPESIZE[0] = 0;
   TYPESIZE[1] = sizeof(char);
   TYPESIZE[2] = sizeof(int);
@@ -289,7 +321,6 @@ int main(int argc, char *argv[])
   // initialize readline
   // Tell readline to use custom completion function
   rl_attempted_completion_function = CLI_completion;
-
   rl_initialize ();
 
   // Get command-line options
@@ -303,7 +334,8 @@ int main(int argc, char *argv[])
   CLIPID = getpid();
 
   sprintf(promptname, "%s", PACKAGE_NAME);
-  sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, promptname, 0x1B, 0);
+	sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, promptname, 0x1B, 0);
+	//sprintf(prompt, "%s> ", PACKAGE_NAME);
 
   printf("type \"help\" for instructions\n");
     
@@ -342,7 +374,27 @@ int main(int argc, char *argv[])
     /* Initialize data control block */
     main_init();
 
-  
+// initialize readline 
+	if(data.fifoON==1)
+		rl_callback_handler_install(prompt, (rl_vcpfunc_t*) &rl_cb);
+//    rldelay.tv_sec = 0;
+ //   rldelay.tv_usec = 10000;
+
+// fifo
+fdmax = fileno(stdin);
+if(data.fifoON == 1)
+{
+	mkfifo(data.fifoname, 0666);
+    fifofd = open(data.fifoname, O_RDWR | O_NONBLOCK);
+    if (fifofd == -1) {
+        perror("open");
+        return EXIT_FAILURE;
+    }
+    if(fifofd>fdmax)
+		fdmax = fifofd;
+}
+
+
     tmplong = data.NB_MAX_VARIABLE;
     C_ERRNO = 0; // initialize C error variable to 0 (no error)
  
@@ -351,8 +403,8 @@ int main(int argc, char *argv[])
 
       data.CMDexecuted = 0;
 
-      if( fopen( "STOPCFITS","r" ) != NULL ) {
-	fprintf(stdout, "STOPCFITS FILE FOUND. Exiting...\n");
+      if( fopen( "STOPCLI","r" ) != NULL ) {
+	fprintf(stdout, "STOPCLI FILE FOUND. Exiting...\n");
 	exit(1);
         }
       
@@ -380,12 +432,35 @@ int main(int argc, char *argv[])
       //                 get user input
       // -------------------------------------------------------------
   
-
   
-      line = readline (prompt);
-      
-      add_history(line);		  
+	
+	if(data.fifoON==1)
+		{
+			printf("FIFO is ON : %s  %d\n", data.fifoname, fifofd);
 
+while(CLIexecuteCMDready == 0)
+{
+     FD_ZERO(&cli_fdin_set);
+	if(data.fifoON==1)
+		FD_SET(fifofd, &cli_fdin_set);
+	 FD_SET(fileno(stdin), &cli_fdin_set);
+  
+     n = select(fdmax+1, &cli_fdin_set, NULL, NULL, NULL);
+	
+	
+   if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
+			rl_callback_read_char();
+			}
+}	
+	CLIexecuteCMDready = 0;
+		}
+		else
+		line = readline (prompt);
+
+    
+    add_history(line);		  
+
+	
 
       if (line[0]=='!')
 	{
@@ -397,6 +472,11 @@ int main(int argc, char *argv[])
 	    }	  
 	  data.CMDexecuted = 1;
 	}
+	else if (line[0]=='#')
+	{
+		// do nothing... this is a comment
+  data.CMDexecuted = 1;
+  	}
       else
 	{
 	  // some initialization
@@ -482,8 +562,8 @@ int main(int argc, char *argv[])
 	printf("Command not found, or command with no effect\n");
     }
    
-    
-
+    if(data.fifoON==1)
+		rl_callback_handler_remove();
       
 
     return(0);
@@ -993,6 +1073,7 @@ int command_line( int argc, char **argv)
       {"overwrite",  no_argument,       0, 'o'},
       {"debug",      required_argument, 0, 'd'},
       {"mmon",      required_argument, 0, 'm'},
+      {"fifo",      required_argument, 0, 'f'},
       {0, 0, 0, 0}
     };
 
@@ -1001,7 +1082,7 @@ int command_line( int argc, char **argv)
  
   while (1)
     {
-      c = getopt_long (argc, argv, "hiod:m:",
+      c = getopt_long (argc, argv, "hiod:mf:",
 		       long_options, &option_index);
       
       /* Detect the end of the options. */
@@ -1043,6 +1124,12 @@ int command_line( int argc, char **argv)
 	case 'm':
 	  printf("Starting memory monitor on '%s'\n", optarg);
 	  memory_monitor(optarg);
+	  break;
+
+	case 'f':
+	  printf("using input fifo '%s'\n", optarg);
+	  data.fifoON = 1;
+	  strcpy(data.fifoname, optarg);
 	  break;
 
 	case '?':

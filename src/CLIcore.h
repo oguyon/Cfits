@@ -259,7 +259,9 @@ typedef struct
   gsl_rng *rndgen;		// random number generator  
   int precision;		// default precision: 0 for float, 1 for double
 
-  // Command Line Interface (CLI) INPUT
+  // Command Line Interface (CLI) INPUT 
+  int fifoON;
+  char fifoname[1024];
   long NBcmd;
   long NB_MAX_COMMAND;
   CMD *cmd;
@@ -287,7 +289,10 @@ typedef struct
   long NB_MAX_VARIABLE;
   VARIABLE *variable;
 
-  float FLOATARRAY[1000];	// array to store temporary variables
+   long NB_MAX_VARIABLELONG;
+  VARIABLELONG *variablelong;
+  
+ float FLOATARRAY[1000];	// array to store temporary variables
   double DOUBLEARRAY[1000];    // for convenience
 	char SAVEDIR[500];
 } DATA;
