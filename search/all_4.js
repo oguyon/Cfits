@@ -210,6 +210,6 @@ var searchData=
   ['ctloc',['ctloc',['../AtmosphericTurbulence_8c.html#a4e83b83fb0481b147c5edd139cb0158b',1,'ctloc():&#160;AtmosphericTurbulence.c'],['../nrlmsise-00_8c.html#a4e83b83fb0481b147c5edd139cb0158b',1,'ctloc():&#160;nrlmsise-00.c']]],
   ['cube_5faverage',['cube_average',['../image__basic_8c.html#a82904f1f73fcba3b18a22fe85b34f869',1,'cube_average(char *ID_in_name, char *ID_out_name, float alpha):&#160;image_basic.c'],['../image__basic_8h.html#a82904f1f73fcba3b18a22fe85b34f869',1,'cube_average(char *ID_in_name, char *ID_out_name, float alpha):&#160;image_basic.c']]],
   ['cval0',['cval0',['../PIAACMCsimul_8c.html#af135c3b49231877c60dca4688ef8ced1',1,'PIAACMCsimul.c']]],
-  ['command_20line_20interpreter',['Command line interpreter',['../md_src_CLIcore.html',1,'']]],
-  ['cfits_3a_20source_20code_20and_20development_20environment_20for_20image_20analysis_20_28and_20much_20more_29',['Cfits: source code and development environment for image analysis (and much more)',['../md_src_README.html',1,'']]]
+  ['cfits_3a_20source_20code_20and_20development_20environment_20for_20image_20analysis_20_28and_20much_20more_29',['Cfits: source code and development environment for image analysis (and much more)',['../index.html',1,'']]],
+  ['command_20line_20interpreter',['Command line interpreter',['../md_src_CLIcore.html',1,'']]]
 ];
