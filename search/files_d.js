@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['zernikepolyn_2ec',['ZernikePolyn.c',['../ZernikePolyn_8c.html',1,'']]],
-  ['zernikepolyn_2eh',['ZernikePolyn.h',['../ZernikePolyn_8h.html',1,'']]]
+  ['wfpropagate_2ec',['WFpropagate.c',['../WFpropagate_8c.html',1,'']]],
+  ['wfpropagate_2eh',['WFpropagate.h',['../WFpropagate_8h.html',1,'']]]
 ];

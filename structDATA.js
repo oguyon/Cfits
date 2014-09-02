@@ -8,6 +8,8 @@ var structDATA =
     [ "cmdNBarg", "structDATA.html#a6facd114f508ec4fcb52003b9f93d123", null ],
     [ "Debug", "structDATA.html#a8148a9459923d124f03989f0c796e137", null ],
     [ "DOUBLEARRAY", "structDATA.html#a15076d931e1bc151a4a9933e09f344b1", null ],
+    [ "fifoname", "structDATA.html#af8f6cef1914558713d691b6f9b7408de", null ],
+    [ "fifoON", "structDATA.html#a37b44a7ef0d3d29f33bf3700ec28665e", null ],
     [ "FLOATARRAY", "structDATA.html#a58210ca81311d78d220027755351f8b8", null ],
     [ "image", "structDATA.html#aafd2755d1c0845d9f671d42c916469ed", null ],
     [ "INVRANDMAX", "structDATA.html#aa17d253cb7412ac4cbc8f034dfe78308", null ],
@@ -16,6 +18,7 @@ var structDATA =
     [ "NB_MAX_IMAGE", "structDATA.html#a2522406c33b8f890757cfbd8db858f77", null ],
     [ "NB_MAX_MODULE", "structDATA.html#aa3ce94f1c13e2a2b3acc31caca1f3b95", null ],
     [ "NB_MAX_VARIABLE", "structDATA.html#adbdde6182898eaf675b02e337dc93750", null ],
+    [ "NB_MAX_VARIABLELONG", "structDATA.html#a13ee2e6cccc1746762217451a5e37759", null ],
     [ "NBcmd", "structDATA.html#ab3ecb17b2561794d854efcbc47584b19", null ],
     [ "NBKEWORD_DFT", "structDATA.html#aece2a33a30b5f15d8250cee2a8f0aa02", null ],
     [ "NBmodule", "structDATA.html#a4ef780e882fa0d3ad2462be54dc58f4e", null ],
@@ -24,6 +27,8 @@ var structDATA =
     [ "precision", "structDATA.html#a7b6fce0fc9e6046ffa57b30b8bcd0d1f", null ],
     [ "quiet", "structDATA.html#a3f7eda27560572dd2510250a1935deb5", null ],
     [ "rndgen", "structDATA.html#a819c0e911d771dbb7da0dbf26e993fc2", null ],
+    [ "SAVEDIR", "structDATA.html#a883b88f5c5cca024bfc4240cda302dd7", null ],
     [ "SHARED_DFT", "structDATA.html#a64d5b0ed5d5cedf11ff69ebf8d30dc20", null ],
-    [ "variable", "structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b", null ]
+    [ "variable", "structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b", null ],
+    [ "variablelong", "structDATA.html#a7e6eeb1ee2c3a2b51275aef8ebf659e3", null ]
 ];

@@ -1,6 +1,7 @@
 var annotated =
 [
     [ "AOLOOPCONTROL_CONF", "structAOLOOPCONTROL__CONF.html", "structAOLOOPCONTROL__CONF" ],
+    [ "ap_array", "structap__array.html", "structap__array" ],
     [ "ASPHSURFM", "structASPHSURFM.html", "structASPHSURFM" ],
     [ "ASPHSURFR", "structASPHSURFR.html", "structASPHSURFR" ],
     [ "BITMAPFILEHEADER", "structBITMAPFILEHEADER.html", "structBITMAPFILEHEADER" ],
@@ -21,6 +22,9 @@ var annotated =
     [ "kdtree", "structkdtree.html", "structkdtree" ],
     [ "MIRRORPIAACMCDESIGN", "structMIRRORPIAACMCDESIGN.html", "structMIRRORPIAACMCDESIGN" ],
     [ "MODULE", "structMODULE.html", "structMODULE" ],
+    [ "nrlmsise_flags", "structnrlmsise__flags.html", "structnrlmsise__flags" ],
+    [ "nrlmsise_input", "structnrlmsise__input.html", "structnrlmsise__input" ],
+    [ "nrlmsise_output", "structnrlmsise__output.html", "structnrlmsise__output" ],
     [ "OPTSYST", "structOPTSYST.html", "structOPTSYST" ],
     [ "res_node", "structres__node.html", "structres__node" ],
     [ "RGBQUAD", "structRGBQUAD.html", "structRGBQUAD" ],

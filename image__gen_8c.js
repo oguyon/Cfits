@@ -24,6 +24,7 @@ var image__gen_8c =
     [ "make_hexsegpupil_cli", "image__gen_8c.html#a92a047482efc72da3590502b02c157d7", null ],
     [ "make_jacquinot_pupil", "image__gen_8c.html#ada166e69b34441cd816e2c9261646089", null ],
     [ "make_line", "image__gen_8c.html#a436b08abf2a75fa821c0c5ed08633ffd", null ],
+    [ "make_line_cli", "image__gen_8c.html#a74a5eca68cab59550f89eaa6f27c6df6", null ],
     [ "make_offsetHyperGaussian", "image__gen_8c.html#a569861f60dd659cfe49f73fd65a84cbe", null ],
     [ "make_PosAngle", "image__gen_8c.html#ae573bdff412e3fb0d734decbd2f1ead9", null ],
     [ "make_psf_from_profile", "image__gen_8c.html#a954dab1d8007238843f3b6d828e3748d", null ],

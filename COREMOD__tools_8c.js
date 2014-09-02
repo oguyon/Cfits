@@ -2,6 +2,8 @@ var COREMOD__tools_8c =
 [
     [ "SBUFFERSIZE", "COREMOD__tools_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
     [ "bubble_sort", "COREMOD__tools_8c.html#a26167af6113dc8e86cdca4ee4cc237c1", null ],
+    [ "COREMOD_TOOLS_imgdisplay3D", "COREMOD__tools_8c.html#a8a814beac7a3602f06cacf56a4d59c4e", null ],
+    [ "COREMOD_TOOLS_imgdisplay3D_cli", "COREMOD__tools_8c.html#a114376a6d4bc5199e92c95956ede2d2b", null ],
     [ "create_counter_file", "COREMOD__tools_8c.html#a79cef364f1beccfdc11221ae217228a9", null ],
     [ "file_number_lines", "COREMOD__tools_8c.html#a64ea40c62e90dcbdf65a8cc7b4b057d4", null ],
     [ "init_COREMOD_tools", "COREMOD__tools_8c.html#a9383571be0026fd23ec4464fa50aba26", null ],
@@ -42,5 +44,6 @@ var COREMOD__tools_8c =
     [ "write_flot_file_cli", "COREMOD__tools_8c.html#a113cd2fde389a710692e0e998d51e204", null ],
     [ "write_int_file", "COREMOD__tools_8c.html#a6dbf348525a7a80c7431f95f6aa08460", null ],
     [ "data", "COREMOD__tools_8c.html#a9842752e03b4de9b4593f1a3b34364ab", null ],
-    [ "errormessage", "COREMOD__tools_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207", null ]
+    [ "errormessage", "COREMOD__tools_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207", null ],
+    [ "fpgnuplot", "COREMOD__tools_8c.html#a7a9031c756cc5a1da42cffc862eb783a", null ]
 ];

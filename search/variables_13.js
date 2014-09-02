@@ -1,8 +1,14 @@
 var searchData=
 [
-  ['u',['U',['../structIMAGE.html#a0e75d3dd1879fa0d0fa9caaa80a1074a',1,'IMAGE']]],
-  ['updatecnt',['updatecnt',['../structSCEXAO__DISPCOMB__CONF.html#a626efd091c9d0b420a0acd7ea273fa66',1,'SCEXAO_DISPCOMB_CONF']]],
-  ['used',['used',['../structIMAGE.html#aca4f71f11b37d19c782813e3be7dee49',1,'IMAGE::used()'],['../structVARIABLE.html#a33fcb1d4034cdf238453dc4ac3f17290',1,'VARIABLE::used()'],['../structVARIABLELONG.html#a233c6f0ba4a16bf7ee0da2c363c97354',1,'VARIABLELONG::used()']]],
-  ['usedft',['useDFT',['../coronagraphs_8c.html#ae72e98daac2fe7eb073889e402a42acd',1,'coronagraphs.c']]],
-  ['userlogstring',['userLOGstring',['../structAOLOOPCONTROL__CONF.html#ac8f07e95c4e760c68c9b1172f1131ea0',1,'AOLOOPCONTROL_CONF']]]
+  ['val',['val',['../structCMDARGTOKEN.html#a96839ddcbefc8d1629d9be94a1319bc3',1,'CMDARGTOKEN']]],
+  ['val_5fd',['val_d',['../unionYYSTYPE.html#a61bc717a8d5bde0979541eb670984140',1,'YYSTYPE']]],
+  ['val_5ff',['val_f',['../unionYYSTYPE.html#a6f4050b34641ae09204f63c853cb4c92',1,'YYSTYPE']]],
+  ['val_5fl',['val_l',['../unionYYSTYPE.html#a81f209066080f5ffa329c1772b8b70c5',1,'YYSTYPE']]],
+  ['valstr',['valstr',['../structIMAGE__KEYWORD.html#a148ed6e2cddc70400b2692efbdd23280',1,'IMAGE_KEYWORD']]],
+  ['value',['value',['../structsymrec.html#aabe0b508928c6472fcbdf5071c33b61a',1,'symrec::value()'],['../structIMAGE__KEYWORD.html#a93da8b101ca9f8e620803c6e39316b0e',1,'IMAGE_KEYWORD::value()'],['../structVARIABLE.html#a5c5836d07096a6a74d94bbd846215230',1,'VARIABLE::value()'],['../structVARIABLELONG.html#a25ebcef051481eebd5b3f8db5afb8744',1,'VARIABLELONG::value()']]],
+  ['var',['var',['../structsymrec.html#af3db0c7e569f93a9d7385d5b170578f8',1,'symrec']]],
+  ['variable',['variable',['../structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b',1,'DATA']]],
+  ['variablelong',['variablelong',['../structDATA.html#a7e6eeb1ee2c3a2b51275aef8ebf659e3',1,'DATA']]],
+  ['verbose',['Verbose',['../CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db',1,'CLIcore.c']]],
+  ['vsize',['vsize',['../PIAACMCsimul_8c.html#a2598a6b03b0791c60dc22c1a9c23b94d',1,'PIAACMCsimul.c']]]
 ];

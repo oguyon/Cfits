@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['scexao_5fdispcomb_5fconf',['SCEXAO_DISPCOMB_CONF',['../structSCEXAO__DISPCOMB__CONF.html',1,'']]],
-  ['scexao_5fdmturbconf',['SCEXAO_DMTURBCONF',['../structSCEXAO__DMTURBCONF.html',1,'']]],
-  ['simage',['sImage',['../structsImage.html',1,'']]],
-  ['symrec',['symrec',['../structsymrec.html',1,'']]]
+  ['res_5fnode',['res_node',['../structres__node.html',1,'']]],
+  ['rgbquad',['RGBQUAD',['../structRGBQUAD.html',1,'']]]
 ];

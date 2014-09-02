@@ -1,14 +1,20 @@
 var searchData=
 [
-  ['val',['val',['../structCMDARGTOKEN.html#a96839ddcbefc8d1629d9be94a1319bc3',1,'CMDARGTOKEN']]],
-  ['val_5fd',['val_d',['../unionYYSTYPE.html#a61bc717a8d5bde0979541eb670984140',1,'YYSTYPE']]],
-  ['val_5ff',['val_f',['../unionYYSTYPE.html#a6f4050b34641ae09204f63c853cb4c92',1,'YYSTYPE']]],
-  ['val_5fl',['val_l',['../unionYYSTYPE.html#a81f209066080f5ffa329c1772b8b70c5',1,'YYSTYPE']]],
-  ['valstr',['valstr',['../structIMAGE__KEYWORD.html#a148ed6e2cddc70400b2692efbdd23280',1,'IMAGE_KEYWORD']]],
-  ['value',['value',['../structsymrec.html#aabe0b508928c6472fcbdf5071c33b61a',1,'symrec::value()'],['../structIMAGE__KEYWORD.html#a93da8b101ca9f8e620803c6e39316b0e',1,'IMAGE_KEYWORD::value()'],['../structVARIABLE.html#a5c5836d07096a6a74d94bbd846215230',1,'VARIABLE::value()'],['../structVARIABLELONG.html#a25ebcef051481eebd5b3f8db5afb8744',1,'VARIABLELONG::value()']]],
-  ['var',['var',['../structsymrec.html#af3db0c7e569f93a9d7385d5b170578f8',1,'symrec']]],
-  ['variable',['VARIABLE',['../structVARIABLE.html',1,'VARIABLE'],['../structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b',1,'DATA::variable()']]],
-  ['variable_5fid',['variable_ID',['../COREMOD__memory_8c.html#ab79e820e973621f5863c3b6e90b981ba',1,'variable_ID(char *name):&#160;COREMOD_memory.c'],['../COREMOD__memory_8h.html#ab79e820e973621f5863c3b6e90b981ba',1,'variable_ID(char *name):&#160;COREMOD_memory.c']]],
-  ['variablelong',['VARIABLELONG',['../structVARIABLELONG.html',1,'']]],
-  ['verbose',['Verbose',['../CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db',1,'CLIcore.c']]]
+  ['wcol',['wcol',['../AOloopControl_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;AOloopControl.c'],['../info_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;info.c'],['../SCExAO__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;SCExAO_DM.c']]],
+  ['wfpropagate_2ec',['WFpropagate.c',['../WFpropagate_8c.html',1,'']]],
+  ['wfpropagate_2eh',['WFpropagate.h',['../WFpropagate_8h.html',1,'']]],
+  ['wfpropagate_5frun',['WFpropagate_run',['../WFpropagate_8c.html#a0154c900f6865033703f7f5a3ceb73fb',1,'WFpropagate_run():&#160;WFpropagate.c'],['../WFpropagate_8h.html#a0154c900f6865033703f7f5a3ceb73fb',1,'WFpropagate_run():&#160;WFpropagate.c']]],
+  ['wfpropagate_5ftestlyot',['WFpropagate_TestLyot',['../WFpropagate_8c.html#a99694a7d15d71ada276fac0c6910065f',1,'WFpropagate.c']]],
+  ['wfscnt',['WFScnt',['../structAOLOOPCONTROL__CONF.html#aef0d536a3ea46154930a9bf57967c5db',1,'AOLOOPCONTROL_CONF']]],
+  ['wfsname',['WFSname',['../structAOLOOPCONTROL__CONF.html#a18a75018d87159819342add7bf9e79fb',1,'AOLOOPCONTROL_CONF']]],
+  ['while',['while',['../calc__flex_8c.html#a8fdafe3be7e00ce3d4f0cb50a9a5eb39',1,'calc_flex.c']]],
+  ['write',['write',['../structIMAGE__METADATA.html#a0a6367366b22e0021e8846fddf2750a7',1,'IMAGE_METADATA']]],
+  ['write24bitbmpfile',['write24BitBmpFile',['../image__format_8c.html#a23f2c2eba92e1e4e9338e6411e84fc14',1,'image_format.c']]],
+  ['write_5f1d_5farray',['write_1D_array',['../COREMOD__tools_8c.html#a20f0ad2d22523d0fc7a8ff445fd72c5c',1,'write_1D_array(double *array, long nbpoints, char *filename):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#a20f0ad2d22523d0fc7a8ff445fd72c5c',1,'write_1D_array(double *array, long nbpoints, char *filename):&#160;COREMOD_tools.c']]],
+  ['write_5ffloat_5ffile',['write_float_file',['../COREMOD__tools_8c.html#ad511e96ac9f67fb260b3d55653e12222',1,'write_float_file(char *fname, float value):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#ad511e96ac9f67fb260b3d55653e12222',1,'write_float_file(char *fname, float value):&#160;COREMOD_tools.c']]],
+  ['write_5fflot_5ffile_5fcli',['write_flot_file_cli',['../COREMOD__tools_8c.html#a113cd2fde389a710692e0e998d51e204',1,'COREMOD_tools.c']]],
+  ['write_5fint_5ffile',['write_int_file',['../COREMOD__tools_8c.html#a6dbf348525a7a80c7431f95f6aa08460',1,'write_int_file(char *fname, int value):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#a6dbf348525a7a80c7431f95f6aa08460',1,'write_int_file(char *fname, int value):&#160;COREMOD_tools.c']]],
+  ['wrow',['wrow',['../AOloopControl_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;AOloopControl.c'],['../info_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;info.c'],['../SCExAO__DM_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;SCExAO_DM.c']]],
+  ['wspeed',['wspeed',['../structSCEXAO__DMTURBCONF.html#aeb9e49325ea345eba8aa3f6ee983928b',1,'SCEXAO_DMTURBCONF']]],
+  ['wtime',['wtime',['../structIMAGE__METADATA.html#a5a4dfe37e26ea28f88f85df4dde00600',1,'IMAGE_METADATA']]]
 ];

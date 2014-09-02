@@ -19,6 +19,8 @@ var image__format_8c =
     [ "CR2toFITS_strfilter", "image__format_8c.html#ad51010517f0f54120044b1c8adaa16eb", null ],
     [ "CR2tomov", "image__format_8c.html#ab068cc08dc3ad92ac18bca1314bfc7d2", null ],
     [ "getImageInfo", "image__format_8c.html#a6cd843e76b12b3677eb36330e13ff11d", null ],
+    [ "IMAGE_FORMAT_2Dim_to_ASCII", "image__format_8c.html#ab0550c2c0f0588603a9f227596c57f92", null ],
+    [ "IMAGE_FORMAT_2Dim_to_ASCII_cli", "image__format_8c.html#a76041d3ba4428df542d1d4e01a91adbd", null ],
     [ "IMAGE_FORMAT_dequantize", "image__format_8c.html#a6c12caf0fecc198b7c9377ea2e7bd208", null ],
     [ "image_format_extract_RGGBchan", "image__format_8c.html#a6f68f7110adc5198f6f382bf72b35438", null ],
     [ "IMAGE_FORMAT_extract_RGGBchan_cli", "image__format_8c.html#afe9eeb5ee28d9304da5434189903c4ee", null ],

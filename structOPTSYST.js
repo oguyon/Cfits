@@ -12,7 +12,8 @@ var structOPTSYST =
     [ "elemZpos", "structOPTSYST.html#a80079ae1f8045368a8e009e4ceda76a1", null ],
     [ "flux", "structOPTSYST.html#a50cc581680a3ba2856a0ba03f1ea97c0", null ],
     [ "FOCMASKarray", "structOPTSYST.html#a518be12873baa4ab7b73cf06fc03bf16", null ],
-    [ "lambdaarray", "structOPTSYST.html#a1fa7c321cba316e507bdcd3ec9c263e2", null ],
+    [ "keepMem", "structOPTSYST.html#a542117d96bcee0d0787417101c5f9664", null ],
+    [ "lambdaarray", "structOPTSYST.html#affffe3221582de4166398a84debc5257", null ],
     [ "NB_asphsurfm", "structOPTSYST.html#a42bf1a88cf3bc234c3ff551f7094be9e", null ],
     [ "NB_asphsurfr", "structOPTSYST.html#a1d1453dfab2f1a7d2cbd8c1a0f6b0174", null ],
     [ "NB_DM", "structOPTSYST.html#a176f56f1461a7e58abfe413c4297a0f3", null ],
@@ -20,5 +21,6 @@ var structOPTSYST =
     [ "NBelem", "structOPTSYST.html#ab9532e90f1fa8a506d6316eac6dfd5ce", null ],
     [ "nblambda", "structOPTSYST.html#a984f1bc6e335c6ca935a7a4abc960351", null ],
     [ "pixscale", "structOPTSYST.html#aa64373d953735e7fc898f664706ae434", null ],
+    [ "SAVE", "structOPTSYST.html#a1edeacc3267a9dae94f74a7ae2d5d668", null ],
     [ "size", "structOPTSYST.html#a1ca7a42369dc6bf1567dbeb3028c8a2a", null ]
 ];

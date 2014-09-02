@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['piaacmcsimul_2ec',['PIAACMCsimul.c',['../PIAACMCsimul_8c.html',1,'']]],
-  ['piaacmcsimul_2eh',['PIAACMCsimul.h',['../PIAACMCsimul_8h.html',1,'']]],
-  ['psf_2ec',['psf.c',['../psf_8c.html',1,'']]],
-  ['psf_2eh',['psf.h',['../psf_8h.html',1,'']]]
+  ['opticsmaterials_2ec',['OpticsMaterials.c',['../OpticsMaterials_8c.html',1,'']]],
+  ['opticsmaterials_2eh',['OpticsMaterials.h',['../OpticsMaterials_8h.html',1,'']]],
+  ['optsystprop_2ec',['OptSystProp.c',['../OptSystProp_8c.html',1,'']]],
+  ['optsystprop_2eh',['OptSystProp.h',['../OptSystProp_8h.html',1,'']]]
 ];

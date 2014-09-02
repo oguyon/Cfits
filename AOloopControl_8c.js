@@ -7,7 +7,7 @@ var AOloopControl_8c =
     [ "AOloopControl_camimage_extract2D_sharedmem_loop", "AOloopControl_8c.html#abafcddf53edec67a3729837724449116", null ],
     [ "AOloopControl_camimage_extract2D_sharedmem_loop_cli", "AOloopControl_8c.html#a4897e3e73260207bca0d6add46c8befe", null ],
     [ "AOloopControl_computeCM_cli", "AOloopControl_8c.html#ac4c2acd5fcd8a55f0cb11a5bf919d548", null ],
-    [ "AOloopControl_InitializeMemory", "AOloopControl_8c.html#a7071ae48e7bdbd03bc3c13ff143ec017", null ],
+    [ "AOloopControl_InitializeMemory", "AOloopControl_8c.html#a5ceb58dc5d3e50c4fe3a5a35a3f0832c", null ],
     [ "AOloopControl_InjectMode", "AOloopControl_8c.html#a15b78cd3a44b44c60cf340e457c421f9", null ],
     [ "AOloopControl_InjectMode_cli", "AOloopControl_8c.html#aae4733a02e3bb9b788446c265fd3c1e0", null ],
     [ "AOloopControl_loadCM", "AOloopControl_8c.html#a433c21c6619529f2a61c2b4c22a7c287", null ],

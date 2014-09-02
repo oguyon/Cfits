@@ -25,11 +25,14 @@ var searchData=
   ['image',['IMAGE',['../structIMAGE.html',1,'IMAGE'],['../structDATA.html#aafd2755d1c0845d9f671d42c916469ed',1,'DATA::image()']]],
   ['image_5fbasic_2ec',['image_basic.c',['../image__basic_8c.html',1,'']]],
   ['image_5fbasic_2eh',['image_basic.h',['../image__basic_8h.html',1,'']]],
+  ['image_5fbasic_5fadd_5fcli',['image_basic_add_cli',['../image__basic_8c.html#a684b33669f1b310a4c842f22389b9158',1,'image_basic.c']]],
   ['image_5fbasic_5fresize_5fcli',['image_basic_resize_cli',['../image__basic_8c.html#ae0be48507950a54ab73658cb41c11c38',1,'image_basic.c']]],
   ['image_5ffilter_2ec',['image_filter.c',['../image__filter_8c.html',1,'']]],
   ['image_5ffilter_2eh',['image_filter.h',['../image__filter_8h.html',1,'']]],
   ['image_5fformat_2ec',['image_format.c',['../image__format_8c.html',1,'']]],
   ['image_5fformat_2eh',['image_format.h',['../image__format_8h.html',1,'']]],
+  ['image_5fformat_5f2dim_5fto_5fascii',['IMAGE_FORMAT_2Dim_to_ASCII',['../image__format_8c.html#ab0550c2c0f0588603a9f227596c57f92',1,'IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname):&#160;image_format.c'],['../image__format_8h.html#ab0550c2c0f0588603a9f227596c57f92',1,'IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname):&#160;image_format.c']]],
+  ['image_5fformat_5f2dim_5fto_5fascii_5fcli',['IMAGE_FORMAT_2Dim_to_ASCII_cli',['../image__format_8c.html#a76041d3ba4428df542d1d4e01a91adbd',1,'image_format.c']]],
   ['image_5fformat_5fdequantize',['IMAGE_FORMAT_dequantize',['../image__format_8c.html#a6c12caf0fecc198b7c9377ea2e7bd208',1,'image_format.c']]],
   ['image_5fformat_5fextract_5frggbchan',['image_format_extract_RGGBchan',['../image__format_8c.html#a6f68f7110adc5198f6f382bf72b35438',1,'image_format.c']]],
   ['image_5fformat_5fextract_5frggbchan_5fcli',['IMAGE_FORMAT_extract_RGGBchan_cli',['../image__format_8c.html#afe9eeb5ee28d9304da5434189903c4ee',1,'image_format.c']]],
@@ -64,7 +67,6 @@ var searchData=
   ['img_5fpercentile_5fdouble',['img_percentile_double',['../info_8c.html#a4f2b87273df90f0c3e4a987ee99ad08f',1,'info.c']]],
   ['img_5fpercentile_5ffloat',['img_percentile_float',['../info_8c.html#a4fcbed12aef4748fcd6aee9824e3ee36',1,'info.c']]],
   ['import_5fwisdom',['import_wisdom',['../fft_8c.html#a0767c4e140bc8498e1984f927c16803f',1,'import_wisdom():&#160;fft.c'],['../fft_8h.html#a0767c4e140bc8498e1984f927c16803f',1,'import_wisdom():&#160;fft.c']]],
-  ['image_20analysis_20tools',['Image analysis tools',['../index.html',1,'']]],
   ['indexmaxmb',['indexmaxMB',['../structAOLOOPCONTROL__CONF.html#a71af8228ceacd218f14c15ba3f11aa30',1,'AOLOOPCONTROL_CONF']]],
   ['info',['info',['../structCMD.html#a008f20bb66a74f15dc4e9536ca19dd9a',1,'CMD::info()'],['../structMODULE.html#a8e21f2da9fe77d9781fc77e712d9e40c',1,'MODULE::info()']]],
   ['info_2ec',['info.c',['../info_8c.html',1,'']]],
@@ -121,6 +123,7 @@ var searchData=
   ['int32_5fmin',['INT32_MIN',['../calc__flex_8c.html#a688eb21a22db27c2b2bd5836943cdcbe',1,'calc_flex.c']]],
   ['int8_5fmax',['INT8_MAX',['../calc__flex_8c.html#aaf7f29f45f1a513b4748a4e5014ddf6a',1,'calc_flex.c']]],
   ['int8_5fmin',['INT8_MIN',['../calc__flex_8c.html#aadcf2a81af243df333b31efa6461ab8e',1,'calc_flex.c']]],
+  ['invpiaamode',['invPIAAmode',['../PIAACMCsimul_8c.html#abf3d91fbcde4e700fdee4507f8b895a5',1,'PIAACMCsimul.c']]],
   ['invrandmax',['INVRANDMAX',['../structDATA.html#aa17d253cb7412ac4cbc8f034dfe78308',1,'DATA']]],
   ['is_5ffits_5ffile',['is_fits_file',['../COREMOD__iofits_8c.html#a641a12bab3be6f1de076d108cb32a4f8',1,'is_fits_file(char *file_name):&#160;COREMOD_iofits.c'],['../COREMOD__iofits_8h.html#a641a12bab3be6f1de076d108cb32a4f8',1,'is_fits_file(char *file_name):&#160;COREMOD_iofits.c']]],
   ['isanumber',['isanumber',['../COREMOD__arith_8c.html#a958fa8861decfa44dd4d9875e8adc465',1,'COREMOD_arith.c']]],
@@ -128,5 +131,6 @@ var searchData=
   ['isfunction',['isfunction',['../COREMOD__arith_8c.html#a0a343f8ebf7119d8b70a4f22c4d76850',1,'COREMOD_arith.c']]],
   ['isfunction_5fsev_5fvar',['isfunction_sev_var',['../COREMOD__arith_8c.html#a8c2b0c83a1c0f1592b6dc14a6db85972',1,'COREMOD_arith.c']]],
   ['isoperand',['isoperand',['../COREMOD__arith_8c.html#a0393176f0bb2495992abc4b3562472bf',1,'COREMOD_arith.c']]],
-  ['item',['item',['../structres__node.html#a6d1e853ec1f48f263c277344f37f8cc3',1,'res_node']]]
+  ['item',['item',['../structres__node.html#a6d1e853ec1f48f263c277344f37f8cc3',1,'res_node']]],
+  ['image_20analysis_20tools',['Image analysis tools',['../md_README.html',1,'']]]
 ];

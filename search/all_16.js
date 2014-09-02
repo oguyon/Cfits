@@ -1,16 +1,15 @@
 var searchData=
 [
-  ['u',['U',['../structIMAGE.html#a0e75d3dd1879fa0d0fa9caaa80a1074a',1,'IMAGE']]],
-  ['uint16',['uint16',['../image__format_8c.html#afc4adc9111e54b3163b6126ce951ecc3',1,'image_format.c']]],
-  ['uint16_5fmax',['UINT16_MAX',['../calc__flex_8c.html#a3ea490c9b3617d4479bd80ef93cd5602',1,'calc_flex.c']]],
-  ['uint32',['uint32',['../image__format_8c.html#a9695cf1104606879c5d3f0221635a069',1,'image_format.c']]],
-  ['uint32_5fmax',['UINT32_MAX',['../calc__flex_8c.html#ab5eb23180f7cc12b7d6c04a8ec067fdd',1,'calc_flex.c']]],
-  ['uint8_5fmax',['UINT8_MAX',['../calc__flex_8c.html#aeb4e270a084ee26fe73e799861bd0252',1,'calc_flex.c']]],
-  ['unput',['unput',['../calc__flex_8c.html#a448a4e9041a09588332733c6846c770c',1,'calc_flex.c']]],
-  ['updatecnt',['updatecnt',['../structSCEXAO__DISPCOMB__CONF.html#a626efd091c9d0b420a0acd7ea273fa66',1,'SCEXAO_DISPCOMB_CONF']]],
-  ['used',['used',['../structIMAGE.html#aca4f71f11b37d19c782813e3be7dee49',1,'IMAGE::used()'],['../structVARIABLE.html#a33fcb1d4034cdf238453dc4ac3f17290',1,'VARIABLE::used()'],['../structVARIABLELONG.html#a233c6f0ba4a16bf7ee0da2c363c97354',1,'VARIABLELONG::used()']]],
-  ['usedft',['useDFT',['../coronagraphs_8c.html#ae72e98daac2fe7eb073889e402a42acd',1,'coronagraphs.c']]],
-  ['user_5ffunction',['user_function',['../CLIcore_8c.html#ac22472c4ee36d70ae07159f83fb690d3',1,'CLIcore.c']]],
-  ['userlogstring',['userLOGstring',['../structAOLOOPCONTROL__CONF.html#ac8f07e95c4e760c68c9b1172f1131ea0',1,'AOLOOPCONTROL_CONF']]],
-  ['ushort',['USHORT',['../CLIcore_8h.html#aea50feaf24fd53b7ffab0e9b62ff30a6',1,'CLIcore.h']]]
+  ['val',['val',['../structCMDARGTOKEN.html#a96839ddcbefc8d1629d9be94a1319bc3',1,'CMDARGTOKEN']]],
+  ['val_5fd',['val_d',['../unionYYSTYPE.html#a61bc717a8d5bde0979541eb670984140',1,'YYSTYPE']]],
+  ['val_5ff',['val_f',['../unionYYSTYPE.html#a6f4050b34641ae09204f63c853cb4c92',1,'YYSTYPE']]],
+  ['val_5fl',['val_l',['../unionYYSTYPE.html#a81f209066080f5ffa329c1772b8b70c5',1,'YYSTYPE']]],
+  ['valstr',['valstr',['../structIMAGE__KEYWORD.html#a148ed6e2cddc70400b2692efbdd23280',1,'IMAGE_KEYWORD']]],
+  ['value',['value',['../structsymrec.html#aabe0b508928c6472fcbdf5071c33b61a',1,'symrec::value()'],['../structIMAGE__KEYWORD.html#a93da8b101ca9f8e620803c6e39316b0e',1,'IMAGE_KEYWORD::value()'],['../structVARIABLE.html#a5c5836d07096a6a74d94bbd846215230',1,'VARIABLE::value()'],['../structVARIABLELONG.html#a25ebcef051481eebd5b3f8db5afb8744',1,'VARIABLELONG::value()']]],
+  ['var',['var',['../structsymrec.html#af3db0c7e569f93a9d7385d5b170578f8',1,'symrec']]],
+  ['variable',['VARIABLE',['../structVARIABLE.html',1,'VARIABLE'],['../structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b',1,'DATA::variable()']]],
+  ['variable_5fid',['variable_ID',['../COREMOD__memory_8c.html#ab79e820e973621f5863c3b6e90b981ba',1,'variable_ID(char *name):&#160;COREMOD_memory.c'],['../COREMOD__memory_8h.html#ab79e820e973621f5863c3b6e90b981ba',1,'variable_ID(char *name):&#160;COREMOD_memory.c']]],
+  ['variablelong',['VARIABLELONG',['../structVARIABLELONG.html',1,'VARIABLELONG'],['../structDATA.html#a7e6eeb1ee2c3a2b51275aef8ebf659e3',1,'DATA::variablelong()']]],
+  ['verbose',['Verbose',['../CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db',1,'CLIcore.c']]],
+  ['vsize',['vsize',['../PIAACMCsimul_8c.html#a2598a6b03b0791c60dc22c1a9c23b94d',1,'PIAACMCsimul.c']]]
 ];

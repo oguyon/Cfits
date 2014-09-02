@@ -29,6 +29,7 @@ var searchData=
   ['init_5frefwfs',['init_refWFS',['../structAOLOOPCONTROL__CONF.html#ab9f4a51ff0cea6a1cc440dce8fa4a90e',1,'AOLOOPCONTROL_CONF']]],
   ['init_5frm',['init_RM',['../structAOLOOPCONTROL__CONF.html#ac037d1346e22c2ad75d3502a7d7a3f71',1,'AOLOOPCONTROL_CONF']]],
   ['initpiaa',['initPIAA',['../coronagraphs_8c.html#a98e8407fac01f88eb8671abb3661196e',1,'coronagraphs.c']]],
+  ['invpiaamode',['invPIAAmode',['../PIAACMCsimul_8c.html#abf3d91fbcde4e700fdee4507f8b895a5',1,'PIAACMCsimul.c']]],
   ['invrandmax',['INVRANDMAX',['../structDATA.html#aa17d253cb7412ac4cbc8f034dfe78308',1,'DATA']]],
   ['item',['item',['../structres__node.html#a6d1e853ec1f48f263c277344f37f8cc3',1,'res_node']]]
 ];

@@ -1,5 +1,8 @@
 var searchData=
 [
+  ['a',['a',['../structap__array.html#ac8261eba1b3ae612e2361a0979eab92b',1,'ap_array']]],
+  ['alpha1h2o',['alpha1H2O',['../AtmosphericTurbulence_8c.html#afffc6c2b72cad4313261f240d110479b',1,'AtmosphericTurbulence.c']]],
+  ['alt',['alt',['../structnrlmsise__input.html#a102b283f83c88896582614654330d4d7',1,'nrlmsise_input']]],
   ['ampl',['ampl',['../structSCEXAO__DMTURBCONF.html#a876d9ca9cfcf6b6737c802e008fc6215',1,'SCEXAO_DMTURBCONF']]],
   ['aoconf',['AOconf',['../AOloopControl_8c.html#a1f96203c41ad50bad5dd1604a5c069a8',1,'AOloopControl.c']]],
   ['aoconf_5ffd',['AOconf_fd',['../AOloopControl_8c.html#ad7aafeaacb5bfb26d543728a81cf9833',1,'AOloopControl.c']]],
@@ -25,6 +28,9 @@ var searchData=
   ['aoconfidlog1',['aoconfIDlog1',['../AOloopControl_8c.html#a971835f5c61f829c82359dd89d28e004',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fmeminit',['AOloopcontrol_meminit',['../AOloopControl_8c.html#ac8a65ca6927b57d697b359281dd5ff24',1,'AOloopControl.c']]],
   ['aolooploadconf_5finit',['AOlooploadconf_init',['../AOloopControl_8c.html#a3cab4b1892467d2abeab3bdad99b690c',1,'AOloopControl.c']]],
+  ['ap',['ap',['../structnrlmsise__input.html#a65c8e469eba33cd0661c438ab2aedcb6',1,'nrlmsise_input']]],
+  ['ap_5fa',['ap_a',['../structnrlmsise__input.html#a60e2d0c5b6b229eaead58be694110631',1,'nrlmsise_input']]],
+  ['apdf',['apdf',['../AtmosphericTurbulence_8c.html#a70bc40d53750a0de2cd687b7172660bc',1,'apdf():&#160;AtmosphericTurbulence.c'],['../nrlmsise-00_8c.html#a70bc40d53750a0de2cd687b7172660bc',1,'apdf():&#160;nrlmsise-00.c']]],
   ['aplc_5fcentobs0',['APLC_CentOBS0',['../coronagraphs_8c.html#a362e38248aecac8da6accf426bb1723d',1,'coronagraphs.c']]],
   ['aplc_5fcentobs1',['APLC_CentOBS1',['../coronagraphs_8c.html#a98f3251521e87cde3262589e052c6b79',1,'coronagraphs.c']]],
   ['aplc_5fflip',['APLC_FLIP',['../coronagraphs_8c.html#a51ab23ae862a77d27b30ce7ff2bac5cf',1,'coronagraphs.c']]],
@@ -40,6 +46,7 @@ var searchData=
   ['aporaw_5fr',['aporaw_r',['../coronagraphs_8c.html#a16748dedbfa1c41f93d93a666b9b8f2d',1,'coronagraphs.c']]],
   ['aporaw_5fv',['aporaw_v',['../coronagraphs_8c.html#a377950043975bdda550871c34d1f1a9a',1,'coronagraphs.c']]],
   ['aporawn',['aporawN',['../coronagraphs_8c.html#a64d1fc3d7134dad9ab04e6e821a173d1',1,'coronagraphs.c']]],
+  ['apt',['apt',['../AtmosphericTurbulence_8c.html#ae2e227d16dce2a7b3989c8f5bcd6cf08',1,'apt():&#160;AtmosphericTurbulence.c'],['../nrlmsise-00_8c.html#ae2e227d16dce2a7b3989c8f5bcd6cf08',1,'apt():&#160;nrlmsise-00.c']]],
   ['array',['array',['../structIMAGE.html#a8a451a2074b51df5b761088baf49cc3f',1,'IMAGE']]],
   ['arrayftmp',['arrayftmp',['../AOloopControl_8c.html#ad8ff4c1042b8a554ff3f671ccbfe6c13',1,'AOloopControl.c']]],
   ['arrayutmp',['arrayutmp',['../AOloopControl_8c.html#ac39858ce68e2199bae5b1e5669cd12f6',1,'AOloopControl.c']]],

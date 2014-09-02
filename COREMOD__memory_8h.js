@@ -20,6 +20,7 @@ var COREMOD__memory_8h =
     [ "create_2Dimagedouble_ID", "COREMOD__memory_8h.html#a714156571551dd125e91545b533b7eb3", null ],
     [ "create_3DCimage_ID", "COREMOD__memory_8h.html#ad099a49dd948851d5b264e5dfb701467", null ],
     [ "create_3Dimage_ID", "COREMOD__memory_8h.html#abf85207142f563ce390acc8eeb4fccd6", null ],
+    [ "create_3Dimage_ID_double", "COREMOD__memory_8h.html#a94865ace3bc6d18ed262aa1d643fb1a2", null ],
     [ "create_image_ID", "COREMOD__memory_8h.html#ad5f0d3d48ee638e61a7e71e666da58a9", null ],
     [ "create_variable_ID", "COREMOD__memory_8h.html#a4a64cdffe7e8563c463a8483c9092197", null ],
     [ "delete_image_ID", "COREMOD__memory_8h.html#a522d41cb8c1210c034746b0d9b69cfbf", null ],
@@ -30,7 +31,9 @@ var COREMOD__memory_8h =
     [ "list_image_ID", "COREMOD__memory_8h.html#ac5f31cc96d209146bb1bef3e9de5fb19", null ],
     [ "list_image_ID_file", "COREMOD__memory_8h.html#a418076b2bf57f82c66c50b8ba30eb63d", null ],
     [ "list_image_ID_ofp", "COREMOD__memory_8h.html#a984798b15b26063866b435805ce9b715", null ],
+    [ "list_image_ID_ofp_simple", "COREMOD__memory_8h.html#a401da1890aea6049443921f70a254ad9", null ],
     [ "list_variable_ID", "COREMOD__memory_8h.html#acba313cd52a419094415744965378f9b", null ],
+    [ "list_variable_ID_file", "COREMOD__memory_8h.html#a9642102344572848460f4583b5f73840", null ],
     [ "memory_monitor", "COREMOD__memory_8h.html#a3d84758675153186eb5a24b2e8b6f7e0", null ],
     [ "mk_amph_from_complex", "COREMOD__memory_8h.html#a3e2b56c1d8b1d3dfc650a9df14be60e3", null ],
     [ "mk_amph_from_reim", "COREMOD__memory_8h.html#a5a1d8e27d5f9b583db6d04e18c1e2b49", null ],
@@ -40,6 +43,7 @@ var COREMOD__memory_8h =
     [ "mk_reim_from_complex", "COREMOD__memory_8h.html#ac81b64002327f9903084ce3013a00c43", null ],
     [ "next_avail_image_ID", "COREMOD__memory_8h.html#a41918c8ae161a6a6134242a29f05fb83", null ],
     [ "next_avail_variable_ID", "COREMOD__memory_8h.html#ad811bfe7214051710d028f9989a2c511", null ],
+    [ "read_sharedmem_image", "COREMOD__memory_8h.html#aa344e4c7481b275005bd6872679ba7cd", null ],
     [ "rotate_cube", "COREMOD__memory_8h.html#a59cde259a5445bc61fdcdc12b5d6c9c6", null ],
     [ "variable_ID", "COREMOD__memory_8h.html#ab79e820e973621f5863c3b6e90b981ba", null ]
 ];

@@ -47,6 +47,7 @@ var image__basic_8c =
     [ "gauss_histo_image", "image__basic_8c.html#afaae12b1475489d8eaf9e697e6764330", null ],
     [ "get_assym_component", "image__basic_8c.html#a187bfb37c377ae323eee4d3beb879c9d", null ],
     [ "get_sym_component", "image__basic_8c.html#a27c45a4c0688ba1037155b2713e186c1", null ],
+    [ "image_basic_add_cli", "image__basic_8c.html#a684b33669f1b310a4c842f22389b9158", null ],
     [ "image_basic_resize_cli", "image__basic_8c.html#ae0be48507950a54ab73658cb41c11c38", null ],
     [ "init_image_basic", "image__basic_8c.html#a4abcb12d1c88071d57c8259388174da2", null ],
     [ "load_fitsimages", "image__basic_8c.html#a975c26922325656c7ffc97be036fa9b2", null ],

@@ -1,13 +1,8 @@
 var searchData=
 [
-  ['tend',['tend',['../structSCEXAO__DISPCOMB__CONF.html#a47c85ce8d4aebbf3dc76f8e3eb964e87',1,'SCEXAO_DISPCOMB_CONF::tend()'],['../structSCEXAO__DMTURBCONF.html#ace2b091a0baeffc015502e9b72fbb215',1,'SCEXAO_DMTURBCONF::tend()']]],
-  ['time_5fsec',['time_sec',['../structAOLOOPCONTROL__CONF.html#a677fd2a674cdf2db20608625c029e36f',1,'AOLOOPCONTROL_CONF']]],
-  ['timeorigin_5fsec',['timeorigin_sec',['../structAOLOOPCONTROL__CONF.html#a56b35ee338c3432b48534458768d3cb5',1,'AOLOOPCONTROL_CONF']]],
-  ['tint',['tint',['../structSCEXAO__DMTURBCONF.html#a400fd554d673f5693ce6d67cc9e4ecc9',1,'SCEXAO_DMTURBCONF']]],
-  ['tlast',['tlast',['../info_8c.html#a60ac265155d44da3a9d8e3ede2e03972',1,'info.c']]],
-  ['tnow',['tnow',['../structAOLOOPCONTROL__CONF.html#ab093c95577638273f80418cc0b881fca',1,'AOLOOPCONTROL_CONF']]],
-  ['tree',['tree',['../structkdres.html#a76eebf2c192b36e4ee8a320969f02b13',1,'kdres']]],
-  ['tstart',['tstart',['../structSCEXAO__DISPCOMB__CONF.html#a2caaa62689a2795eacc0a25d777c61f4',1,'SCEXAO_DISPCOMB_CONF::tstart()'],['../structSCEXAO__DMTURBCONF.html#a56d25fd1fb67d71752743fd4cef0806d',1,'SCEXAO_DMTURBCONF::tstart()']]],
-  ['type',['type',['../structsymrec.html#a3ed0bae32ad0e16423a49153484094f8',1,'symrec::type()'],['../structCMDARGTOKEN.html#a268f75c3a394c9466df7aba70dc76c00',1,'CMDARGTOKEN::type()'],['../structIMAGE__KEYWORD.html#a93acc5dd5d573d8e91129b27332e4ef4',1,'IMAGE_KEYWORD::type()']]],
-  ['typesize',['TYPESIZE',['../CLIcore_8h.html#aadfaed58c87f621d2863f9f598db072e',1,'CLIcore.h']]]
+  ['u',['U',['../structIMAGE.html#a0e75d3dd1879fa0d0fa9caaa80a1074a',1,'IMAGE']]],
+  ['updatecnt',['updatecnt',['../structSCEXAO__DISPCOMB__CONF.html#a626efd091c9d0b420a0acd7ea273fa66',1,'SCEXAO_DISPCOMB_CONF']]],
+  ['used',['used',['../structIMAGE.html#aca4f71f11b37d19c782813e3be7dee49',1,'IMAGE::used()'],['../structVARIABLE.html#a33fcb1d4034cdf238453dc4ac3f17290',1,'VARIABLE::used()'],['../structVARIABLELONG.html#a233c6f0ba4a16bf7ee0da2c363c97354',1,'VARIABLELONG::used()']]],
+  ['usedft',['useDFT',['../coronagraphs_8c.html#ae72e98daac2fe7eb073889e402a42acd',1,'coronagraphs.c']]],
+  ['userlogstring',['userLOGstring',['../structAOLOOPCONTROL__CONF.html#ac8f07e95c4e760c68c9b1172f1131ea0',1,'AOLOOPCONTROL_CONF']]]
 ];
