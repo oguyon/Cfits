@@ -350,8 +350,9 @@ int SCEXAO_DM_unloadconf()
 }
 
 
-
+//
 // mode = 1 if DM volt computed
+//
 int SCExAO_DM_CombineChannels(int mode)
 {
   long naxis = 2;

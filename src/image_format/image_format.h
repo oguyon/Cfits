@@ -1,7 +1,7 @@
 #ifndef _IMAGEFORMATMODULE_H
 #define _IMAGEFORMATMODULE_H
 
-int IMAGE_FORMAT_FITS_to_ASCII(char *IDname, char *fname);
+int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname);
 
 int CR2toFITS(char *fnameCR2, char *fnameFITS);
 

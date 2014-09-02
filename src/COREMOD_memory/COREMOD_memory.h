@@ -47,6 +47,8 @@ int delete_variable_ID(char* varname);
 
 long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int nbkw);
 
+long read_sharedmem_image(char *name);
+
 long create_1Dimage_ID(char *ID_name, long xsize);
 
 long create_1DCimage_ID(char *ID_name, long xsize);
@@ -68,6 +70,8 @@ long copy_image_ID(char *name, char *newname);
 long create_variable_ID(char *name, double value);
 
 int list_image_ID_ofp(FILE *fo);
+
+int list_image_ID_ofp_simple(FILE *fo);
 
 int list_image_ID();
 

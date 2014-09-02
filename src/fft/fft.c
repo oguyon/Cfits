@@ -1089,8 +1089,9 @@ int do2dffti(char *in_name, char *out_name)
         naxesl[i]= (long) data.image[IDin].md[0].size[i];
     }
 
-
-    IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+	IDout = image_ID(out_name);
+	if(IDout==-1)
+		IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
     // need to swap first 2 axis for fftw
     if(naxis>1)
@@ -1376,7 +1377,7 @@ int do2drfft(char *in_name, char *out_name)
     return(0);
 }
 
-/* inverse real fft : complex to real */
+/* inverse real fft : real to complex */
 int do2drffti(char *in_name, char *out_name)
 {
     int *naxes;
@@ -1402,7 +1403,7 @@ int do2drffti(char *in_name, char *out_name)
         naxes[i]=data.image[IDin].md[0].size[i];
         naxesl[i]=data.image[IDin].md[0].size[i];
     }
-    IDout = create_image_ID(out_name, naxis, naxesl, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+    IDout = create_image_ID(out_name, naxis, naxesl, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
     if(naxis==2)
     {

@@ -14,6 +14,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/prctl.h>
+#include <sched.h>
 
 #include <readline/readline.h>  
 #include <readline/history.h>  
@@ -39,13 +41,13 @@
 #include "calc.h"
 #include "calc_bison.h"
 
-
+ 
 
 
 /**
  * @file CLIcore.c
  * @author Olivier Guyon
- * @date Jun 13, 2014
+ * @date Aug 6, 2014
  */
 
 
@@ -55,10 +57,9 @@
 
 
 
-int Journal = 0; 
-
+int Nofifo = 0;
 int Verbose = 0; 
-int LIST_IMFILES = 0;
+int Listimfile = 0;
 DATA data;
 
   char *line;
@@ -108,16 +109,28 @@ int help_command(char *cmdkey);
 
 int exitCLI()
 {
+	char command[500];
+	int r;
+	
+  if(data.fifoON == 1)
+	{
+		sprintf(command, "rm %s", data.fifoname);
+		r = system(command);
+	}
+  
   main_free();
   
 
-  if(LIST_IMFILES==1) {
+  if(Listimfile==1) {
     if(system("rm imlist.txt")==-1)
       {
 	printERROR(__FILE__,__func__,__LINE__,"system() error");
 	exit(0);
       }
     } 
+    
+	rl_callback_handler_remove();
+  
   
   printf("Closing PID %ld (prompt process)\n", (long) getpid());
   exit(0);
@@ -232,22 +245,144 @@ int cfits_usleep_cli()
 
 
 
+
+
+int CLI_execute_line()
+{
+	long i, j;
+	char *cmdargstring;
+    char str[200];
+
+    if (line[0]=='!')
+        {
+            line[0] = ' ';
+            if(system(line)==-1)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"system call error");
+                exit(1);
+            }
+            data.CMDexecuted = 1;
+        }
+        else if (line[0]=='#')
+        {
+            // do nothing... this is a comment
+            data.CMDexecuted = 1;
+        }
+        else
+        {
+            // some initialization
+            data.parseerror = 0;
+            data.calctmp_imindex = 0;
+            for(i=0; i<NB_ARG_MAX; i++)
+                data.cmdargtoken[0].type = 0;
+
+
+            data.cmdNBarg = 0;
+            cmdargstring = strtok (line," ");
+            while (cmdargstring!= NULL)
+            {
+                if((cmdargstring[0]=='\"')&&(cmdargstring[strlen(cmdargstring)-1]=='\"'))
+                {
+                    printf("Unprocessed string : ");
+                    for(j=0; j<strlen(cmdargstring)-2; j++)
+                        cmdargstring[j] = cmdargstring[j+1];
+                    cmdargstring[j] = '\0';
+                    printf("%s\n", cmdargstring);
+                    data.cmdargtoken[data.cmdNBarg].type = 6;
+                    sprintf(data.cmdargtoken[data.cmdNBarg].val.string, "%s", cmdargstring);
+                }
+                else
+                {
+                    sprintf(str,"%s\n", cmdargstring);
+                    yy_scan_string(str);
+                    data.calctmp_imindex = 0;
+                    yyparse ();
+                }
+                cmdargstring = strtok (NULL, " ");
+                data.cmdNBarg++;
+            }
+            data.cmdargtoken[data.cmdNBarg].type = 0;
+            yylex_destroy();
+
+            i=0;
+            if(data.Debug==1)
+                while(data.cmdargtoken[i].type != 0)
+                {
+                    printf("TOKEN %ld type : %d\n", i, data.cmdargtoken[i].type);
+                    if(data.cmdargtoken[i].type==1) // double
+                        printf("\t double : %g\n", data.cmdargtoken[i].val.numf);
+                    if(data.cmdargtoken[i].type==2) // long
+                        printf("\t long   : %ld\n", data.cmdargtoken[i].val.numl);
+                    if(data.cmdargtoken[i].type==3) // new variable/image
+                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                    if(data.cmdargtoken[i].type==4) // existing image
+                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                    if(data.cmdargtoken[i].type==5) // command
+                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                    if(data.cmdargtoken[i].type==6) // unprocessed string
+                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                    i++;
+                }
+            if(data.parseerror==0)
+            {
+                if(data.cmdargtoken[0].type==5)
+                {
+                    if(data.Debug==1)
+                        printf("EXECUTING COMMAND %ld (%s)\n", data.cmdindex, data.cmd[data.cmdindex].key);
+                    data.cmd[data.cmdindex].fp();
+                    data.CMDexecuted = 1;
+                }
+            }
+            for(i=0; i<data.calctmp_imindex; i++)
+            {
+                sprintf(calctmpimname,"_tmpcalc%ld",i);
+                if(image_ID(calctmpimname)!=-1)
+                {
+                    if(data.Debug==1)
+                        printf("Deleting %s\n", calctmpimname);
+                    delete_image_ID(calctmpimname);
+                }
+            }
+
+
+            if(!((data.cmdargtoken[0].type==3)||(data.cmdargtoken[0].type==6)))
+                data.CMDexecuted = 1;
+
+
+       add_history(line);
+
+		}
+
+
+	return(0);
+}
+
+
+
+
+
+
+
+
 /**
  * @brief Readline callback
- * 
+ *
  **/
 void rl_cb(char* linein)
 {
+  
     if (NULL==linein) {
         rlquit = true;
         return;
     }
 
     CLIexecuteCMDready = 1;
-line = strdup(linein);
-  //  printf("You typed:\n%s\n", linein);
-   // free(line);
+    line = strdup(linein);
+    CLI_execute_line();
+        
+    // free(line);
 }
+
 
 
 
@@ -262,94 +397,105 @@ line = strdup(linein);
 
 int main(int argc, char *argv[])
 {
-  long i, j;
-  int quiet=0;
-  long tmplong;
-  //  FILE *fp;
-  const gsl_rng_type * rndgenType;
-  double v1;
-  char prompt[200];
-  char promptname[100];
-  int terminate = 0;
-  char str[200];
-  char command[200];
-  int nbtk;
-  char *cmdargstring;
+	FILE *fp;
+    long i, j;
+    int quiet=0;
+    long tmplong;
+    //  FILE *fp;
+    const gsl_rng_type * rndgenType;
+    double v1;
+    char prompt[200];
+    char promptname[100];
+    int terminate = 0;
+    char str[200];
+    char command[200];
+    int nbtk;
+    char *cmdargstring;
     struct timeval rldelay;
-  FILE *fpcmd;
-  FILE *fpcmdout;
-  int OKcmd;
-  char fline[200];
-  int r;
+    FILE *fpcmd;
+    FILE *fpcmdout;
+    int OKcmd;
+    char fline[200];
+    int r;
 
-  struct stat st;
-  FILE *fpclififo;
-  char buf[100];
-  int fifofd, c=0;
-int fdmax;
+    struct stat st;
+    FILE *fpclififo;
+    char buf[100];
+    int fifofd, c=0;
+    int fdmax;
     fd_set cli_fdin_set;
     int n;
-    
-  TYPESIZE[0] = 0;
-  TYPESIZE[1] = sizeof(char);
-  TYPESIZE[2] = sizeof(int);
-  TYPESIZE[3] = sizeof(float);
-  TYPESIZE[4] = sizeof(double);
-  TYPESIZE[5] = 2*sizeof(float);
-  TYPESIZE[6] = 2*sizeof(double);
-  TYPESIZE[7] = sizeof(unsigned short);
-  TYPESIZE[8] = sizeof(long);
 
-  atexit(fnExit1);
+    ssize_t bytes;
+    size_t total_bytes;
+    char buf0[1];
+    char buf1[1024];
 
-  data.Debug = 0;
-  data.overwrite = 0;
-  data.precision = 0; // float is default precision
-  data.SHARED_DFT = 0; // do not allocate shared memory for images
-  data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image 
-	sprintf(data.SAVEDIR, ".");
 
-  // to take advantage of kernel priority: 
-  // owner=root mode=4755 
+    TYPESIZE[0] = 0;
+    TYPESIZE[1] = sizeof(char);
+    TYPESIZE[2] = sizeof(int);
+    TYPESIZE[3] = sizeof(float);
+    TYPESIZE[4] = sizeof(double);
+    TYPESIZE[5] = 2*sizeof(float);
+    TYPESIZE[6] = 2*sizeof(double);
+    TYPESIZE[7] = sizeof(unsigned short);
+    TYPESIZE[8] = sizeof(long);
 
-  getresuid(&euid_real, &euid_called, &suid);
+    atexit(fnExit1);
 
-  //This sets it to the privileges of the normal user
-  seteuid(euid_real);
-  
+    data.Debug = 0;
+    data.overwrite = 0;
+    data.precision = 0; // float is default precision
+    data.SHARED_DFT = 0; // do not allocate shared memory for images
+    data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image
+    sprintf(data.SAVEDIR, ".");
 
-  // initialize readline
-  // Tell readline to use custom completion function
-  rl_attempted_completion_function = CLI_completion;
-  rl_initialize ();
+    // to take advantage of kernel priority:
+    // owner=root mode=4755
 
-  // Get command-line options
-  command_line( argc, argv );
-  
-  // 
-  if( Verbose ) {
-    fprintf(stdout, "%s: compiled %s %s\n",__FILE__,__DATE__,__TIME__);
-  }
+    getresuid(&euid_real, &euid_called, &suid);
 
-  CLIPID = getpid();
+    //This sets it to the privileges of the normal user
+    r = seteuid(euid_real);
 
-  sprintf(promptname, "%s", PACKAGE_NAME);
-	sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, promptname, 0x1B, 0);
-	//sprintf(prompt, "%s> ", PACKAGE_NAME);
 
-  printf("type \"help\" for instructions\n");
-    
+	// initialize fifo
+	data.fifoON = 1;
+	 strcpy(data.fifoname, "clififo");
+	
+    // initialize readline
+    // Tell readline to use custom completion function
+    rl_attempted_completion_function = CLI_completion;
+    rl_initialize ();
+
+    // Get command-line options
+    command_line( argc, argv );
+
+    //
+    if( Verbose ) {
+        fprintf(stdout, "%s: compiled %s %s\n",__FILE__,__DATE__,__TIME__);
+    }
+
+    CLIPID = getpid();
+
+    sprintf(promptname, "%s", PACKAGE_NAME);
+    sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, promptname, 0x1B, 0);
+    //sprintf(prompt, "%s> ", PACKAGE_NAME);
+
+    printf("type \"help\" for instructions\n");
+
 # ifdef _OPENMP
-  printf("Running with openMP, max threads = %d  (defined by environment variable OMP_NUM_THREADS)\n", omp_get_max_threads());
+    printf("Running with openMP, max threads = %d  (defined by environment variable OMP_NUM_THREADS)\n", omp_get_max_threads());
 # endif
-  
 
 
-  //    sprintf(DocDir,"%s",DOCDIR);
-  //   sprintf(SrcDir,"%s",SOURCEDIR);
-  //  sprintf(BuildFile,"%s",__FILE__);
-  //  sprintf(BuildDate,"%s",__DATE__);
-  //  sprintf(BuildTime,"%s",__TIME__);
+
+    //    sprintf(DocDir,"%s",DOCDIR);
+    //   sprintf(SrcDir,"%s",SOURCEDIR);
+    //  sprintf(BuildFile,"%s",__FILE__);
+    //  sprintf(BuildDate,"%s",__DATE__);
+    //  sprintf(BuildTime,"%s",__TIME__);
 
     // Initialize random-number generator
     //
@@ -360,214 +506,140 @@ int fdmax;
     gsl_rng_set (data.rndgen,time(NULL));
 
     // warm up
-    for(i=0;i<10;i++)
-      v1 = gsl_rng_uniform (data.rndgen);
-    
-  
-    /*--------------------------------------------------          
-    |  Check command-line arguements  
-    +-------------------------------------------------*/
-   
+    for(i=0; i<10; i++)
+        v1 = gsl_rng_uniform (data.rndgen);
 
-   
-    
+
+    /*--------------------------------------------------
+    |  Check command-line arguements
+    +-------------------------------------------------*/
+
+
+
+
     /* Initialize data control block */
     main_init();
 
-// initialize readline 
-	if(data.fifoON==1)
-		rl_callback_handler_install(prompt, (rl_vcpfunc_t*) &rl_cb);
-//    rldelay.tv_sec = 0;
- //   rldelay.tv_usec = 10000;
+    // initialize readline
+    rl_callback_handler_install(prompt, (rl_vcpfunc_t*) &rl_cb);
 
-// fifo
-fdmax = fileno(stdin);
-if(data.fifoON == 1)
-{
-	mkfifo(data.fifoname, 0666);
-    fifofd = open(data.fifoname, O_RDWR | O_NONBLOCK);
-    if (fifofd == -1) {
-        perror("open");
-        return EXIT_FAILURE;
+    // fifo
+    fdmax = fileno(stdin);
+    if(data.fifoON == 1)
+    {
+        mkfifo(data.fifoname, 0666);
+        fifofd = open(data.fifoname, O_RDWR | O_NONBLOCK);
+        if (fifofd == -1) {
+            perror("open");
+            return EXIT_FAILURE;
+        }
+        if(fifofd>fdmax)
+            fdmax = fifofd;
     }
-    if(fifofd>fdmax)
-		fdmax = fifofd;
-}
 
 
     tmplong = data.NB_MAX_VARIABLE;
     C_ERRNO = 0; // initialize C error variable to 0 (no error)
- 
+
     terminate = 0;
     while(terminate==0) {
 
-      data.CMDexecuted = 0;
+        data.CMDexecuted = 0;
 
-      if( fopen( "STOPCLI","r" ) != NULL ) {
-	fprintf(stdout, "STOPCLI FILE FOUND. Exiting...\n");
-	exit(1);
+        if( fopen( "STOPCLI","r" ) != NULL ) {
+            fprintf(stdout, "STOPCLI FILE FOUND. Exiting...\n");
+            exit(1);
         }
-      
-      if(LIST_IMFILES==1) {
-	list_image_ID_file("imlist.txt");
-      }
 
-      /* Keep the number of image addresses available   
-       *  NB_IMAGES_BUFFER above the number of used images 
-       *
-       *  Keep the number of variables addresses available 
-       *  NB_VARIABLES_BUFFER above the number of used variables 
-       */
-      if( re_alloc() != 0 )
-	{
-	  fprintf(stderr,"%c[%d;%dm ERROR [ FILE: %s   FUNCTION: %s   LINE: %d ]  %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-	  fprintf(stderr,"%c[%d;%dm Memory re-allocation failed  %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-	  exit(0);
-	}
-      
-      compute_image_memory(data);
-      compute_nb_image(data);
-      
-      // -------------------------------------------------------------
-      //                 get user input
-      // -------------------------------------------------------------
-  
-  
-	
-	if(data.fifoON==1)
-		{
-			printf("FIFO is ON : %s  %d\n", data.fifoname, fifofd);
+        if(Listimfile==1) {
+            fp = fopen("imlist.txt", "w");
+			list_image_ID_ofp_simple(fp);
+			fclose(fp);            
+        }
 
-while(CLIexecuteCMDready == 0)
-{
-     FD_ZERO(&cli_fdin_set);
-	if(data.fifoON==1)
-		FD_SET(fifofd, &cli_fdin_set);
-	 FD_SET(fileno(stdin), &cli_fdin_set);
-  
-     n = select(fdmax+1, &cli_fdin_set, NULL, NULL, NULL);
-	
-	
-   if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
-			rl_callback_read_char();
-			}
-}	
-	CLIexecuteCMDready = 0;
-		}
-		else
-		line = readline (prompt);
+        /* Keep the number of image addresses available
+         *  NB_IMAGES_BUFFER above the number of used images
+         *
+         *  Keep the number of variables addresses available
+         *  NB_VARIABLES_BUFFER above the number of used variables
+         */
+        if( re_alloc() != 0 )
+        {
+            fprintf(stderr,"%c[%d;%dm ERROR [ FILE: %s   FUNCTION: %s   LINE: %d ]  %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Memory re-allocation failed  %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+            exit(0);
+        }
 
-    
-    add_history(line);		  
+        compute_image_memory(data);
+        compute_nb_image(data);
 
-	
-
-      if (line[0]=='!')
-	{
-	  line[0] = ' ';
-	  if(system(line)==-1)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"system call error");
-	      exit(1);
-	    }	  
-	  data.CMDexecuted = 1;
-	}
-	else if (line[0]=='#')
-	{
-		// do nothing... this is a comment
-  data.CMDexecuted = 1;
-  	}
-      else
-	{
-	  // some initialization
-	  data.parseerror = 0;
-	  data.calctmp_imindex = 0;
-	  for(i=0;i<NB_ARG_MAX;i++)
-	      data.cmdargtoken[0].type = 0;
+        // -------------------------------------------------------------
+        //                 get user input
+        // -------------------------------------------------------------
 
 
-	  data.cmdNBarg = 0;
-	  cmdargstring = strtok (line," ");
-	  while (cmdargstring!= NULL)
-	    {
-	      if((cmdargstring[0]=='\"')&&(cmdargstring[strlen(cmdargstring)-1]=='\"'))
-		{
-		  printf("Unprocessed string : ");
-		  for(j=0;j<strlen(cmdargstring)-2;j++)
-		    cmdargstring[j] = cmdargstring[j+1];
-		  cmdargstring[j] = '\0';
-		  printf("%s\n", cmdargstring);
-		  data.cmdargtoken[data.cmdNBarg].type = 6;
-		  sprintf(data.cmdargtoken[data.cmdNBarg].val.string, "%s", cmdargstring);
-		}
-	      else
-		{
-		  sprintf(str,"%s\n", cmdargstring);
-		  yy_scan_string(str);
-		  data.calctmp_imindex = 0;
-		  yyparse ();
-		}		 
-	      cmdargstring = strtok (NULL, " ");	      
-	      data.cmdNBarg++;		
-	    }
-	  data.cmdargtoken[data.cmdNBarg].type = 0;
-	  yylex_destroy();
 
-	  i=0;
-	  if(data.Debug==1)
-	    while(data.cmdargtoken[i].type != 0)
-	      {
-		printf("TOKEN %ld type : %d\n", i, data.cmdargtoken[i].type);
-		if(data.cmdargtoken[i].type==1) // double
-		  printf("\t double : %g\n", data.cmdargtoken[i].val.numf);
-		if(data.cmdargtoken[i].type==2) // long
-		  printf("\t long   : %ld\n", data.cmdargtoken[i].val.numl);
-		if(data.cmdargtoken[i].type==3) // new variable/image
-		  printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-		if(data.cmdargtoken[i].type==4) // existing image
-		  printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-		if(data.cmdargtoken[i].type==5) // command
-		  printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-		if(data.cmdargtoken[i].type==6) // unprocessed string
-		  printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-		i++;
-	      }
-	  if(data.parseerror==0)
-	    {
-	      if(data.cmdargtoken[0].type==5)
-		{
-		  if(data.Debug==1)
-		    printf("EXECUTING COMMAND %ld (%s)\n", data.cmdindex, data.cmd[data.cmdindex].key);
-		  data.cmd[data.cmdindex].fp();
-		  data.CMDexecuted = 1;
-		}
-	    }
-	  for(i=0;i<data.calctmp_imindex;i++)
-	    {
-	      sprintf(calctmpimname,"_tmpcalc%ld",i);
-	      if(image_ID(calctmpimname)!=-1)
-		{
-		  if(data.Debug==1) 
-		    printf("Deleting %s\n", calctmpimname);
-		  delete_image_ID(calctmpimname);
-		}
-	    }
+        while(CLIexecuteCMDready == 0)
+        {
+            FD_ZERO(&cli_fdin_set);
+            if(data.fifoON==1)
+                FD_SET(fifofd, &cli_fdin_set);
+            FD_SET(fileno(stdin), &cli_fdin_set);
 
-	  
-	  if(!((data.cmdargtoken[0].type==3)||(data.cmdargtoken[0].type==6)))
-	    data.CMDexecuted = 1;
-	  
-	}
-      if(data.CMDexecuted==0)
-	printf("Command not found, or command with no effect\n");
+            n = select(fdmax+1, &cli_fdin_set, NULL, NULL, NULL);
+
+            if (!n)
+                continue;
+            if (n == -1) {
+                perror("select");
+                return EXIT_FAILURE;
+            }
+
+
+            if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
+                rl_callback_read_char();
+            }
+
+            if(data.fifoON==1)
+            {
+                if (FD_ISSET(fifofd, &cli_fdin_set)) {
+                    total_bytes = 0;
+                    for (;;) {
+                        bytes = read(fifofd, buf0, 1);
+                        if (bytes > 0) {
+                            buf1[total_bytes] = buf0[0];
+                            total_bytes += (size_t)bytes;
+                        } else {
+                            if (errno == EWOULDBLOCK) {
+                                break;
+                            } else {
+                                perror("read");
+                                return EXIT_FAILURE;
+                            }
+                        }
+                        if(buf0[0]=='\n')
+                        {
+                            buf1[total_bytes-1] = '\0';
+                            line = buf1;
+                            CLI_execute_line();
+                            printf("%s", prompt);
+                            fflush(stdout);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        CLIexecuteCMDready = 0;
+
+        if(data.CMDexecuted==0)
+            printf("Command not found, or command with no effect\n");
     }
-   
-    if(data.fifoON==1)
-		rl_callback_handler_remove();
-      
 
     return(0);
 }
+
+
 
 
 
@@ -634,14 +706,8 @@ char* CLI_generator(const char* text, int state)
 	{
 	  if (strncmp (name, text, len) == 0)
 	    return (dupstr(name));
-	
-	  // printf("DONE %d\n", list_index1);
-	  //fflush(stdout);
 	}      
     }
-  //  printf("DONE\n");
-  //fflush(stdout);
-  /* If no names matched, then return NULL. */
   return ((char *)NULL);
   
 }
@@ -1060,12 +1126,15 @@ int command_line( int argc, char **argv)
   time_t tm;
   int c;
   int option_index = 0;
- 
+   struct sched_param schedpar;
+   int r;
+
   static struct option long_options[] =
     {
       /* These options set a flag. */
       {"verbose", no_argument,       &Verbose, 1},
-      {"journal", no_argument,       &Journal, 1},
+      {"nofifo", no_argument,       &Nofifo, 1},
+      {"listimf", no_argument,       &Listimfile, 1},
       /* These options don't set a flag.
 	 We distinguish them by their indices. */
       {"help",       no_argument,       0, 'h'},
@@ -1073,6 +1142,8 @@ int command_line( int argc, char **argv)
       {"overwrite",  no_argument,       0, 'o'},
       {"debug",      required_argument, 0, 'd'},
       {"mmon",      required_argument, 0, 'm'},
+      {"pname",     required_argument, 0, 'n'},
+      {"priority",     required_argument, 0, 'p'},
       {"fifo",      required_argument, 0, 'f'},
       {0, 0, 0, 0}
     };
@@ -1082,7 +1153,7 @@ int command_line( int argc, char **argv)
  
   while (1)
     {
-      c = getopt_long (argc, argv, "hiod:mf:",
+      c = getopt_long (argc, argv, "hiod:m:n:f:",
 		       long_options, &option_index);
       
       /* Detect the end of the options. */
@@ -1126,6 +1197,20 @@ int command_line( int argc, char **argv)
 	  memory_monitor(optarg);
 	  break;
 
+	case 'n':
+	  printf("process name '%s'\n", optarg);
+	  memory_monitor(optarg);
+   	memcpy((void *)argv[0], optarg, sizeof(optarg));
+	prctl(PR_SET_NAME,optarg,0,0,0);
+	  break;
+	 
+	case 'p':
+		 schedpar.sched_priority = atoi(optarg);
+		r = seteuid(euid_called); //This goes up to maximum privileges
+		sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+		r = seteuid(euid_real);//Go back to normal privileges
+		break;
+
 	case 'f':
 	  printf("using input fifo '%s'\n", optarg);
 	  data.fifoON = 1;
@@ -1141,16 +1226,12 @@ int command_line( int argc, char **argv)
 	}
     }
   
-  if(Journal == 1)
-    {
-      Journal = 1;
-      tm = time(NULL);
-      ptr = localtime(&tm);
-      fp = fopen("main_cmdlog.txt","a");
-      fprintf(fp,"# NEW SESSION ------------ %s\n",asctime(ptr));
-      fclose(fp);
-    }
-
+	if(Nofifo == 1)
+	{
+		printf("No fifo\n");
+		data.fifoON = 0;
+	}
+	
 	  // fprintf(stdout, "Object directory:        %s\n", OBJDIR);
 	  //fprintf(stdout, "Source directory:        %s\n", SOURCEDIR);
 	  //fprintf(stdout, "Documentation directory: %s\n", DOCDIR);

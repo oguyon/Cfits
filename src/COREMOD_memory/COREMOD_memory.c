@@ -42,29 +42,6 @@ extern DATA data;
 
 char errmsg[SBUFFERSIZE];
 
-/*void print_sys_mem_info()
-{
-   for solaris 
-  printf("total computer RAM  %ld x %ld = %ld Mb\n",sysconf(_SC_PHYS_PAGES),sysconf(_SC_PAGESIZE), sysconf(_SC_PHYS_PAGES)*sysconf(_SC_PAGESIZE)/1024/1024);
-  printf("free RAM  %ld x %ld = %ld Mb\n",sysconf(_SC_AVPHYS_PAGES),sysconf(_SC_PAGESIZE), sysconf(_SC_AVPHYS_PAGES)*sysconf(_SC_PAGESIZE)/1024/1024);
-}
-*/
-
-
-
-/*
-* Forward references 
-*/
-
-int list_image_ID();
-int list_variable_ID();
-long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int nbkw);
-long read_sharedmem_image(char *name);
-int memory_monitor(char *termttyname);
-int list_image_ID_ncurses();
-void close_list_image_ID_ncurses( void );
-long copy_image_ID(char *name, char *newname);
-
 
 
 
@@ -1245,6 +1222,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
 
 
+
+
 long read_sharedmem_image(char *name)
 {
   long ID = -1;
@@ -1918,11 +1897,6 @@ int list_image_ID_ofp(FILE *fo)
 	}
   fprintf(fo, "\n");
 
-
-
-
-
-
  
   sizeGb = 0;
   sizeMb = 0;
@@ -1960,6 +1934,30 @@ int list_image_ID_ofp(FILE *fo)
    
    return(0);
 }
+
+int list_image_ID_ofp_simple(FILE *fo)
+{
+  long i,j;
+  long long tmp_long;
+  int atype;
+
+  for (i=0;i<data.NB_MAX_IMAGE;i++)
+    if(data.image[i].used==1) 
+      {
+	  atype = data.image[i].md[0].atype;
+	  tmp_long = ((long long) (data.image[i].md[0].nelement)) * TYPESIZE[atype];
+	  
+		fprintf(fo, "%20s %d %ld %d %4ld", data.image[i].md[0].name, atype, data.image[i].md[0].naxis, data.image[i].md[0].shared, data.image[i].md[0].size[0]);
+	  
+	  for(j=1;j<data.image[i].md[0].naxis;j++)
+	      fprintf(fo, " %4ld", data.image[i].md[0].size[j]);
+	  fprintf(fo, "\n");
+	}
+  fprintf(fo, "\n");
+   
+   return(0);
+}
+
 
 
 int list_image_ID()

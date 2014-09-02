@@ -93,13 +93,13 @@ typedef struct {
 
 
 
-//int IMAGE_FORMAT_FITS_to_ASCII(char *IDname, char *fname)
+//int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)
 
-int IMAGE_FORMAT_FITS_to_ASCII_cli()
+int IMAGE_FORMAT_2Dim_to_ASCII_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
-      IMAGE_FORMAT_FITS_to_ASCII(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      IMAGE_FORMAT_2Dim_to_ASCII(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
       return 0;
     }
   else
@@ -181,13 +181,13 @@ int init_image_format()
   strcpy(data.module[data.NBmodule].info, "conversion between image format, I/O");
   data.NBmodule++;
   
-  strcpy(data.cmd[data.NBcmd].key,"fits2ascii");
+  strcpy(data.cmd[data.NBcmd].key,"im2ascii");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_FITS_to_ASCII_cli;
-  strcpy(data.cmd[data.NBcmd].info,"convert FITS file to ASCII");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input FITS file> <output ASCII file>");
-  strcpy(data.cmd[data.NBcmd].example,"fits2ascii im.fits im.txt");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int IMAGE_FORMAT_FITS_to_ASCII(char *IDname, char *fname)");
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_2Dim_to_ASCII_cli;
+  strcpy(data.cmd[data.NBcmd].info,"convert 2D image file to ASCII");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input 2D image> <output ASCII file>");
+  strcpy(data.cmd[data.NBcmd].example,"im2ascii im.fits im.txt");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"cr2tofits");
@@ -254,7 +254,7 @@ int init_image_format()
 
 
 
-int IMAGE_FORMAT_FITS_to_ASCII(char *IDname, char *fname)
+int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)
 {
 	long ii, jj;
 	long ID;
@@ -268,10 +268,10 @@ int IMAGE_FORMAT_FITS_to_ASCII(char *IDname, char *fname)
 		{
 			switch(data.image[ID].md[0].atype){
 				case FLOAT:
-				fprintf(fp, "%5ld %5ld %g\n", ii, jj, data.image[ID].array.F[jj*data.image[ID].md[0].size[0]+ii]);
+				fprintf(fp, "%5ld %5ld %.6g\n", ii, jj, data.image[ID].array.F[jj*data.image[ID].md[0].size[0]+ii]);
 				break;
 				case DOUBLE:
-				fprintf(fp, "%5ld %5ld %g\n", ii, jj, data.image[ID].array.D[jj*data.image[ID].md[0].size[0]+ii]);
+				fprintf(fp, "%5ld %5ld %.6g\n", ii, jj, data.image[ID].array.D[jj*data.image[ID].md[0].size[0]+ii]);
 				break;
 			}
 		}

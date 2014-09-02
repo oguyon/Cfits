@@ -16,15 +16,22 @@
 	be verbose
   -d, --debug=DEBUGLEVEL
 	Set debug level at startup
-  -o, --overwrite         
+  -o, --overwrite 
 	Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
-  -l	  
+  -l
 	Keeps a list of images in file imlist.txt
   -m, --mmon=TTYDEVICE
 	open memory monitor on tty device
 	example:
 	<executable> -m /dev/tty2
 	<executable> --mmon=/dev/tty2
+  -n, --pname=<myprocessname>
+	rename process to <processname>
+  -p, --priority=<PR>
+	change process priority (0-99)
+	higher number: higher priority
+	example:
+	<executable> -p 90
 \endverbatim
 
 ## SYNTAX RULES, PARSER
@@ -79,9 +86,9 @@ The command line interpreter (CLI) will take input from file cmdfile.txt if it e
 \verbatim
 > ci
 	# compilation time and memory usage
-> listim                    
+> listim 
 	# list all images in memory
-> listimf <filename>        
+> listimf <filename> 
 	# list all images in memory and write output to file <filename>
 > !<syscommand>             
 	# execute system command

@@ -7,16 +7,13 @@ COMMAND LINE OPTIONS
 	print this message and exit
   -i, --info
 	Print version, settings, info and exit
-  -j, --journal
-	keeps journal of commands - TO BE IMPLEMENTED 
-	Write all commands to file "cfits_cmdlog.txt" as they are entered
   --verbose
 	be verbose
   -d, --debug=DEBUGLEVEL
 	Set debug level at startup
   -o, --overwrite         
 	Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
-  -l	  
+  --listimfile	  
 	Keeps a list of images in file imlist.txt
   -m, --mmon=TTYDEVICE
 	open memory monitor on tty device
@@ -24,11 +21,12 @@ COMMAND LINE OPTIONS
 	<executable> -m /dev/tty2
 	<executable> --mmon=/dev/tty2
   -f, --fifo==FIFONAME
-	accept input from fifo
+	specify fifo name
 	example
 	<executable> -f /tmp/fifo24
 	<executable> --fifo=/tmp/fifo24
-
+  --nofifo
+	Do not create or use fifo
 
 -----------------------------------------------------------------------------------
 SYNTAX RULES, PARSER
@@ -126,31 +124,29 @@ SAVING FILES
 -----------------------------------------------------------------------------------
 INTEGRATION WITH STANDARD LINUX TOOLS AND COMMANDS
 
-SETTING UP FIFO TO CONTROL EXECUTABLE:
+FIFO INPUT TO EXECUTABLE:
 
-example:
+You can control the executable through a named pipe (fifo), which is created by default when the executable is started, and removed when it is cleanly stopped. Note that starting the program will erase the content of the fifo upon startup even if it was previously created.
+
+By default, the fifo is created in the local directory, with the name "clififo", to pipe commands into the command line interface. You can opt out of the fifo feature by adding the option --nofifo to the command line executable, or rename the fifo with the -f option :
 <executable> -f "/tmp/fifo145.txt"
-This will create a fifo named /tmp/fifo145.txt. Other programs can write to the fifo to issue commands to the executable, such as:
-cat myscript.txt > /tmp/fifo145.txt
+This will create a fifo named /tmp/fifo145.txt. 
+
+Other programs can write to the fifo to issue commands to the executable, such as:
+cat myscript.txt > clififo
+More complex commands can be issued within the executable using the fifo. 
+For example, to load all im*.fits files in memory, you can type within the executable:
+
+> !ls im*.fits | xargs -I {} echo loadfits {} >> clififo
 
 
-USING "cmdfile.txt" TO DRIVE EXECUTABLE FROM UNIX PROMPT:
+USING "imlist.txt" AND fifo
 
-Cfits can use standard linux tools and commands thanks to the cmdfile.txt file, which, if it exists, is executed as Cfits commands.
-For example, to load all im*.fits files in memory, you can type within Cfits:
+If you start the executable with the "-l" option,  the file "imlist.txt" contains the list of images currently in memory in a ASCII table. You can use standard unix tools to process this list and issue commands. For example, if you want to save all images with x size > 200 onto disk as single precision FITS files :
 
-> !ls im*.fits | xargs -I {} echo loadfits {} > cmdfile.txt
+> !awk '{if ($4>200) print $2}' imlist.txt| xargs -I {} echo saveflfits {} {}_tmp.fits >> clififo
 
-You can also drive Cfits from the unix command line if you are not in Cfits, but Cfits is running in the same directory. For example, the following command will load all im*.fits in Cfits from the unix command line:
-
-bash$ ls im*.fits | xargs -I {} echo loadfits {} > cmdfile.txt
-
-
-USING "imlist.txt" AND "cmdfile.txt"
-
-If you start Cfits with the "-l" option,  the file "imlist.txt" contains the list of images currently in memory in a ASCII table. You can use standard unix tools to process this list and issue commands. For example, if you want to save all images with x size > 200 onto disk as single precision FITS files :
-
-> !awk '{if ($4>200) print $2}' imlist.txt| xargs -I {} echo save_fl {} {}_tmp.fits > cmdfile.txt
+Note that if you launch several instances of the executable in the same directory, they will share the same fifo - this is generally a bad idea, as there is no easy way to control wich of the programs will read and execute the fifo commands.
 
 -----------------------------------------------------------------------------------
 ARITHMETIC OPERATIONS

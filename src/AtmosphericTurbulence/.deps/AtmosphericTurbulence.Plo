@@ -64,7 +64,8 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
  /CfitsDev/Cfits-src/src/statistic/statistic.h \
  /CfitsDev/Cfits-src/src/AtmosphericTurbulence/AtmosphericTurbulence.h \
  /CfitsDev/Cfits-src/src/psf/psf.h \
- /CfitsDev/Cfits-src/src/WFpropagate/WFpropagate.h
+ /CfitsDev/Cfits-src/src/WFpropagate/WFpropagate.h \
+ /CfitsDev/Cfits-src/src/OpticsMaterials/OpticsMaterials.h
 
 /usr/include/stdc-predef.h:
 
@@ -235,3 +236,5 @@ AtmosphericTurbulence.lo: AtmosphericTurbulence.c \
 /CfitsDev/Cfits-src/src/psf/psf.h:
 
 /CfitsDev/Cfits-src/src/WFpropagate/WFpropagate.h:
+
+/CfitsDev/Cfits-src/src/OpticsMaterials/OpticsMaterials.h:

@@ -584,7 +584,7 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_setgainblock_cli;
   strcpy(data.cmd[data.NBcmd].info,"set modal gains by block");
-  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <gainval>");
+  strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <gainval>");
   strcpy(data.cmd[data.NBcmd].example,"aolsetgainb 2 0.2");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgainblock(long m0, long m1, float gainval)");
   data.NBcmd++;
@@ -593,7 +593,7 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_setlimitblock_cli;
   strcpy(data.cmd[data.NBcmd].info,"set modal limits by block");
-  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <limval>");
+  strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <limval>");
   strcpy(data.cmd[data.NBcmd].example,"aolsetlimitb 2 0.02");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitblock(long m0, long m1, float gainval)");
   data.NBcmd++;
@@ -602,7 +602,7 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_setmultfblock_cli;
   strcpy(data.cmd[data.NBcmd].info,"set modal multf by block");
-  strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <multfval>");
+  strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <multfval>");
   strcpy(data.cmd[data.NBcmd].example,"aolsetmultfb 2 0.98");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setmultfblock(long m0, long m1, float multfval)");
   data.NBcmd++;
@@ -918,7 +918,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
 
   arraysizetmp = (long*) malloc(sizeof(long)*3);
@@ -1061,9 +1061,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 
 
+/*** mode = 0 or 1. if mode == 1, simply connect */
 
-
-int AOloopControl_InitializeMemory()
+int AOloopControl_InitializeMemory(int mode)
 {
   int SM_fd;
   struct stat file_stat;
@@ -1120,10 +1120,13 @@ int AOloopControl_InitializeMemory()
     exit(0);
   }
   
-  AOconf[loop].on = 0;
-  AOconf[loop].cnt = 0;	  
-  AOconf[loop].cntmax = 0;	  
-
+  if((mode==0)||(create==1))
+  {
+	AOconf[loop].on = 0;
+	AOconf[loop].cnt = 0;	  
+	AOconf[loop].cntmax = 0;	  
+  }
+  
   if(create==1)
     {
       for(loop=0; loop<NB_AOloopcontrol; loop++)
@@ -1361,7 +1364,7 @@ long AOloopControl_loadCM(long loop, char *CMfname)
   long ii;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(0);
 
   if( (ID=load_fits(CMfname, "tmpcontrM")) != -1 )
     {
@@ -1431,11 +1434,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(0);
 
 
 
- 
+ printf("mode = %d\n", mode);
   
   
 
@@ -2063,7 +2066,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(0);
 
 
  
@@ -2090,7 +2093,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
   
-  printf("SETTING UP...\n");
+  printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
   fflush(stdout);
   sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
@@ -2099,11 +2102,16 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-  //  AOloopControl_loadconfigure(LOOPNUMBER, fname, 0);
+  AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
   //exit(0);
 
+	printf("Importing DM response matrix channel shared memory ...\n");
   aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+
+printf("Importing WFS camera image shared memory ... \n");
   aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
+
+
 
   sprintf(name, "imWFS1RM_%ld", loop);
   sizearray[0] = AOconf[loop].sizexWFS;
@@ -2487,12 +2495,12 @@ int AOloopControl_run()
   schedpar.sched_priority = RT_priority;
   r = seteuid(euid_called); //This goes up to maximum privileges
   sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-  seteuid(euid_real);//Go back to normal privileges
+  r = seteuid(euid_real);//Go back to normal privileges
 
   loop = LOOPNUMBER;
   
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(0);
 
   
 
@@ -2654,7 +2662,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 
   printw("STATUS = %d  ", AOconf[loop].status);
   
-  kmax = (wrow-3)*(nbcol-1);
+  kmax = (wrow-3)*(nbcol);
   printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
   nbl++;
 
@@ -2693,8 +2701,9 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
       printw("%4ld ", k);
       attroff(A_BOLD);
    
-      printw("[%4.2f %4.2f %4.2f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
+      printw("[%4.2f %4.2f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
       
+      // print current value on DM
       val = data.image[aoconfID_cmd_modes].array.F[k];
       if(fabs(val)>0.99*AOconf[loop].maxlimit)
 	{
@@ -2714,9 +2723,11 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 	    printw("%7.4f ", val);
 	}
 
+	// last reading from WFS
       printw("%7.4f ", data.image[aoconfID_cmd1_modes].array.F[k]);
       
 
+	// Time average
       val = data.image[aoconfID_AVE_modes].array.F[k];
       if(fabs(val)>AVElim)
 	{
@@ -2727,6 +2738,8 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
       else
 	printw("%7.4f ", val);
 
+
+	// RMS variation
         val = data.image[aoconfID_RMS_modes].array.F[k];
       if(fabs(val)>RMSlim)
 	{
@@ -2738,7 +2751,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 	printw("%7.4f ", val);
 
       col++;
-      if(col==nbcol-1)
+      if(col==nbcol)
 	{
 	  col = 0;
 	  printw("\n");
@@ -2758,7 +2771,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
   char name[200];
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   printf("MEMORY HAS BEEN INITIALIZED\n");
   fflush(stdout);
@@ -2850,7 +2863,7 @@ int AOloopControl_statusStats()
   usec1 = 150.0;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
   
   printf("Measyuring loop status distribution \n");
   fflush(stdout);
@@ -2907,7 +2920,7 @@ int AOloopControl_setLoopNumber(long loop)
 int AOloopControl_loopkill()
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].kill = 1;
 
@@ -2917,7 +2930,7 @@ int AOloopControl_loopkill()
 int AOloopControl_loopon()
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].cntmax = AOconf[LOOPNUMBER].cnt-1;
 
@@ -2930,7 +2943,7 @@ int AOloopControl_loopon()
 int AOloopControl_loopstep(long loop, long NBstep)
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[loop].cntmax = AOconf[loop].cnt + NBstep;
   AOconf[LOOPNUMBER].RMSmodesCumul = 0.0;
@@ -2954,7 +2967,7 @@ int AOloopControl_loopstep(long loop, long NBstep)
 int AOloopControl_loopoff()
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].on = 0;
   AOloopControl_showparams(LOOPNUMBER);
@@ -2971,7 +2984,7 @@ int AOloopControl_loopreset()
   long mb;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_cmd_modes==-1)
     {
@@ -3001,7 +3014,7 @@ int AOloopControl_loopreset()
 int AOloopControl_logon()
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].logon = 1;
   AOloopControl_showparams(LOOPNUMBER);
@@ -3012,7 +3025,7 @@ int AOloopControl_logon()
 int AOloopControl_logoff()
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].logon = 0;
   AOloopControl_showparams(LOOPNUMBER);
@@ -3023,7 +3036,7 @@ int AOloopControl_logoff()
 int AOloopControl_setgain(float gain)
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].gain = gain;
   AOloopControl_showparams(LOOPNUMBER);
@@ -3034,7 +3047,7 @@ int AOloopControl_setgain(float gain)
 int AOloopControl_setmaxlimit(float maxlimit)
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].maxlimit = maxlimit;
   AOloopControl_showparams(LOOPNUMBER);
@@ -3046,7 +3059,7 @@ int AOloopControl_setmaxlimit(float maxlimit)
 int AOloopControl_setframesAve(long nbframes)
 {
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].framesAve = nbframes;
   AOloopControl_showparams(LOOPNUMBER);
@@ -3063,7 +3076,7 @@ int AOloopControl_setgainrange(long m0, long m1, float gainval)
   char name[200];
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_GAIN_modes==-1)
     {
@@ -3090,7 +3103,7 @@ int AOloopControl_setlimitrange(long m0, long m1, float limval)
   char name[200];
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_LIMIT_modes==-1)
     {
@@ -3116,7 +3129,7 @@ int AOloopControl_setmultfrange(long m0, long m1, float multfval)
   char name[200];
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_MULTF_modes==-1)
     {
@@ -3142,7 +3155,7 @@ int AOloopControl_setgainblock(long mb, float gainval)
   long kmin, kmax;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_GAIN_modes==-1)
     {
@@ -3175,7 +3188,7 @@ int AOloopControl_setlimitblock(long mb, float limitval)
   long kmin, kmax;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_LIMIT_modes==-1)
     {
@@ -3208,7 +3221,7 @@ int AOloopControl_setmultfblock(long mb, float multfval)
   long kmin, kmax;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_MULTF_modes==-1)
     {
@@ -3243,7 +3256,7 @@ int AOloopControl_resetRMSperf()
   long kmin, kmax;
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].RMSmodesCumul = 0.0;
   AOconf[LOOPNUMBER].RMSmodesCumulcnt = 0;
@@ -3264,7 +3277,7 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 
 
  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
   if(aoconfID_cmd_modes==-1)
     {
@@ -3307,7 +3320,7 @@ int AOloopControl_InjectMode( long index, float ampl )
   char name[200];
 
  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
 
  if(aoconfID_DMmodes==-1)
    {
@@ -3366,7 +3379,7 @@ int AOloopControl_AutoTune()
   
 
   if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory();
+    AOloopControl_InitializeMemory(1);
   
   if(aoconfID_cmd_modes==-1)
     {

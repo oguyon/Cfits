@@ -87,7 +87,7 @@ int Fresnel_propagate_wavefront(char *in, char *out, double PUPIL_SCALE, double 
   naxes[1] = data.image[ID].md[0].size[1];
   coeff = PI*z*lambda/(PUPIL_SCALE*naxes[0])/(PUPIL_SCALE*naxes[0]);
   
-  printf("coeff is %g\n",coeff);
+ // printf("coeff is %g\n",coeff);
  
   co1 = 1.0*naxes[0]*naxes[1];
   n0h = naxes[0]/2;
