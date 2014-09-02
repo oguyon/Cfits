@@ -98,7 +98,7 @@ typedef struct
 
 } AOLOOPCONTROL_CONF;
 
-
+long AOloopControl_makeTemplateAOloopconf(long loopnb);
 int init_AOloopControl();
 long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1);
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);

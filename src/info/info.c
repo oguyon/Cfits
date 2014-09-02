@@ -1237,13 +1237,13 @@ int printpix(char *ID_name, char *filename)
   ID = variable_ID("_iistep");
   if(ID!=-1)
       {
-      iistep = (long) (0.1+data.variable[ID].value);
+      iistep = (long) (0.1+data.variable[ID].value.f);
       printf("iistep = %ld\n", iistep);
     }
   ID = variable_ID("_jjstep");
   if(ID!=-1)
     {
-      jjstep = (long) (0.1+data.variable[ID].value);
+      jjstep = (long) (0.1+data.variable[ID].value.f);
        printf("jjstep = %ld\n", jjstep);
     }
 

@@ -699,10 +699,10 @@ if(PIAACMC_save==1)
 
 
     if((IDv=variable_ID("PIAACMC_invPIAAmode"))!=-1)
-        invPIAAmode = (long) (data.variable[IDv].value+0.001);
+        invPIAAmode = (long) (data.variable[IDv].value.f+0.001);
 
     if((IDv=variable_ID("PIAACMC_dftgrid"))!=-1)
-        optsyst[0].DFTgridpad = (long) (data.variable[IDv].value+0.001);
+        optsyst[0].DFTgridpad = (long) (data.variable[IDv].value.f+0.001);
 
 
     // define optical elements and locations
@@ -1762,16 +1762,16 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
 
     if((IDv=variable_ID("PIAACMC_nblambda"))!=-1)
-        piaacmc[0].nblambda = data.variable[IDv].value;
+        piaacmc[0].nblambda = data.variable[IDv].value.f;
 
     if((IDv=variable_ID("PIAACMC_NBrings"))!=-1)
-        piaacmc[0].NBrings = data.variable[IDv].value;
+        piaacmc[0].NBrings = data.variable[IDv].value.f;
 
     if((IDv=variable_ID("PIAACMC_size"))!=-1)
-        piaacmc[0].size = (long) (data.variable[IDv].value+0.01);
+        piaacmc[0].size = (long) (data.variable[IDv].value.f+0.01);
 
     if((IDv=variable_ID("PIAACMC_pixscale"))!=-1)
-        piaacmc[0].pixscale = data.variable[IDv].value;
+        piaacmc[0].pixscale = data.variable[IDv].value.f;
 
 
     // create modes for aspheric optical surfaces description
@@ -1950,7 +1950,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
                 if((piaacmctype==0)&&(loaded==0)) // idealized focal plane mask
                 {
-                    piaacmc[0].fpmaskamptransm =  -data.variable[variable_ID("APLCmaskCtransm")].value;
+                    piaacmc[0].fpmaskamptransm =  -data.variable[variable_ID("APLCmaskCtransm")].value.f;
                     printf("FOCAL PLANE MASK TRANSM = %f\n", piaacmc[0].fpmaskamptransm);
                     printf("Saving default configuration\n");
                     fflush(stdout);
@@ -3848,21 +3848,21 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
 
     if((IDv=variable_ID("PIAACMC_FPMsectors"))!=-1)
-        PIAACMC_FPMsectors = (long) data.variable[IDv].value+0.01;
+        PIAACMC_FPMsectors = (long) data.variable[IDv].value.f+0.01;
     printf("PIAACMC_FPMsectors = %d\n", PIAACMC_FPMsectors);
 
     if((IDv=variable_ID("SCORINGMASKTYPE"))!=-1)
-        SCORINGMASKTYPE = (long) data.variable[IDv].value+0.01;
+        SCORINGMASKTYPE = (long) data.variable[IDv].value.f+0.01;
     printf("SCORINGMASKTYPE = %d\n", SCORINGMASKTYPE);
 
     if((IDv=variable_ID("PIAACMC_save"))!=-1)
-        PIAACMC_save = (long) data.variable[IDv].value+0.01;
+        PIAACMC_save = (long) data.variable[IDv].value.f+0.01;
     printf("PIAACMC_save = %d\n", PIAACMC_FPMsectors);
 
 
 
     if((IDv=variable_ID("PIAACMC_resolved"))!=-1)
-        computePSF_ResolvedTarget = (long) data.variable[IDv].value+0.01;
+        computePSF_ResolvedTarget = (long) data.variable[IDv].value.f+0.01;
 
 
     optsyst[0].SAVE = PIAACMC_save;
@@ -3873,11 +3873,11 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
     case 0 :  // Run existing config for on-axis point source. If new, create centrally obscured idealized PIAACMC
         if((IDv=variable_ID("PIAACMC_centobs0"))!=-1)
-            centobs0 = data.variable[IDv].value;
+            centobs0 = data.variable[IDv].value.f;
         if((IDv=variable_ID("PIAACMC_centobs1"))!=-1)
-            centobs1 = data.variable[IDv].value;
+            centobs1 = data.variable[IDv].value.f;
         if((IDv=variable_ID("PIAACMC_fpmradld"))!=-1)
-            fpmradld = data.variable[IDv].value;
+            fpmradld = data.variable[IDv].value.f;
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -3890,7 +3890,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
        ldoffset = 0.01; // default
 		if((IDv=variable_ID("PIAACMC_ldoffset"))!=-1)
-            ldoffset = data.variable[IDv].value;
+            ldoffset = data.variable[IDv].value.f;
 		
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         PIAACMCsimul_makePIAAshapes();
@@ -4128,7 +4128,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
         // initialization
         if((IDv=variable_ID("PIAACMC_lsoptrange"))!=-1)
-            range = data.variable[IDv].value;
+            range = data.variable[IDv].value.f;
         else
             range = 2.0;
         stepsize = range/3.0;
@@ -4296,13 +4296,13 @@ int PIAACMCsimul_exec(long confindex, long mode)
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
-            NBiter = (long) data.variable[IDv].value+0.01;
+            NBiter = (long) data.variable[IDv].value.f+0.01;
         else
             NBiter = 1000;
 
         kmax = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
         if((IDv=variable_ID("PIAACMC_maxoptCterm"))!=-1)
-            kmax = (long) data.variable[IDv].value+0.01;
+            kmax = (long) data.variable[IDv].value.f+0.01;
 
         if(kmax>data.image[piaacmc[0].piaa0CmodesID].md[0].size[0])
             kmax = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
@@ -4341,15 +4341,15 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
         NBls = 3;
         if((IDv=variable_ID("PIAACMC_nblstop"))!=-1)
-            NBls = (long) data.variable[IDv].value+0.01;
+            NBls = (long) data.variable[IDv].value.f+0.01;
 
         NBpropstep = 100;
         if((IDv=variable_ID("PIAACMC_nbpropstep"))!=-1)
-            NBpropstep = (long) data.variable[IDv].value+0.01;
+            NBpropstep = (long) data.variable[IDv].value.f+0.01;
 
         lstransm = 0.85;
         if((IDv=variable_ID("PIAACMC_lstransm"))!=-1)
-            lstransm = (double) data.variable[IDv].value;
+            lstransm = (double) data.variable[IDv].value.f;
         printf("lstransm  = %f\n", lstransm);
 
         if(invPIAAmode==2)
@@ -4460,12 +4460,12 @@ int PIAACMCsimul_exec(long confindex, long mode)
         PIAACMC_FPMresp_mp = 1; // 1: all computations on a single thread
 
         if((IDv=variable_ID("PIAACMC_FPMresp_mp"))!=-1) // multi threaded
-            PIAACMC_FPMresp_mp = (long) data.variable[IDv].value+0.01;
+            PIAACMC_FPMresp_mp = (long) data.variable[IDv].value.f+0.01;
         printf("PIAACMC_FPMresp_mp = %ld\n", PIAACMC_FPMresp_mp);
 
         PIAACMC_FPMresp_thread = 0;
         if((IDv=variable_ID("PIAACMC_FPMresp_thread"))!=-1) // multi threaded
-            PIAACMC_FPMresp_thread = (long) data.variable[IDv].value+0.01;
+            PIAACMC_FPMresp_thread = (long) data.variable[IDv].value.f+0.01;
         printf("PIAACMC_FPMresp_thread = %ld\n", PIAACMC_FPMresp_thread);
 
 
@@ -4707,7 +4707,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
             zonezbest_array[mz] = zonez_array[mz];
 
         if((IDv=variable_ID("PIAACMC_nbiterSA"))!=-1)
-            NBITER_SA = (long) data.variable[IDv].value+0.01;
+            NBITER_SA = (long) data.variable[IDv].value.f+0.01;
 
 
         ITERMAX = NBITER_SA; // SIMULATED ANNEALING - STARTING FROM ZERO
@@ -4794,7 +4794,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
 
         if((IDv=variable_ID("PIAACMC_nbiterDS"))!=-1)
-            NBITER_DS = (long) data.variable[IDv].value+0.01;
+            NBITER_DS = (long) data.variable[IDv].value.f+0.01;
 
 
         ITERMAX = NBITER_DS;
@@ -4984,7 +4984,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
-            NBiter = (long) data.variable[IDv].value+0.01;
+            NBiter = (long) data.variable[IDv].value.f+0.01;
         else
             NBiter = 50;
 
@@ -5036,13 +5036,13 @@ int PIAACMCsimul_exec(long confindex, long mode)
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
-            NBiter = (long) data.variable[IDv].value+0.01;
+            NBiter = (long) data.variable[IDv].value.f+0.01;
         else
             NBiter = 1000;
 
         kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
         if((IDv=variable_ID("PIAACMC_maxoptCterm"))!=-1)
-            kmaxC = (long) data.variable[IDv].value+0.01;
+            kmaxC = (long) data.variable[IDv].value.f+0.01;
 
         if(kmaxC>data.image[piaacmc[0].piaa0CmodesID].md[0].size[0])
             kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
@@ -5050,7 +5050,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
         kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
         if((IDv=variable_ID("PIAACMC_maxoptFterm"))!=-1)
-            kmaxF = (long) data.variable[IDv].value+0.01;
+            kmaxF = (long) data.variable[IDv].value.f+0.01;
 
         if(kmaxF>data.image[piaacmc[0].piaa0FmodesID].md[0].size[0])
             kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
@@ -5127,13 +5127,13 @@ int PIAACMCsimul_exec(long confindex, long mode)
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
-            NBiter = (long) data.variable[IDv].value+0.01;
+            NBiter = (long) data.variable[IDv].value.f+0.01;
         else
             NBiter = 1000;
 
         kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
         if((IDv=variable_ID("PIAACMC_maxoptCterm"))!=-1)
-            kmaxC = (long) data.variable[IDv].value+0.01;
+            kmaxC = (long) data.variable[IDv].value.f+0.01;
 
         if(kmaxC>data.image[piaacmc[0].piaa0CmodesID].md[0].size[0])
             kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
@@ -5141,7 +5141,7 @@ int PIAACMCsimul_exec(long confindex, long mode)
 
         kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
         if((IDv=variable_ID("PIAACMC_maxoptFterm"))!=-1)
-            kmaxF = (long) data.variable[IDv].value+0.01;
+            kmaxF = (long) data.variable[IDv].value.f+0.01;
 
         if(kmaxF>data.image[piaacmc[0].piaa0FmodesID].md[0].size[0])
             kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];

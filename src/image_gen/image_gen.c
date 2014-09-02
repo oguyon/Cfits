@@ -975,7 +975,7 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
   if(ID!=-1)
     {
       PISTONerr = 1;
-      pampl = data.variable[ID].value;
+      pampl = data.variable[ID].value.f;
       printf("Piston error = %f\n",pampl);
     }
   else
@@ -985,7 +985,7 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
   ID = variable_ID("HEXPISTONindex");
   if(ID!=-1)
     {
-      errSEGindex = (long) (data.variable[ID].value+0.01);
+      errSEGindex = (long) (data.variable[ID].value.f+0.01);
       printf("SEGMENT INDEX = %ld\n", (long) errSEGindex);
     }
 

@@ -1207,7 +1207,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
       sprintf(kname, "KEY%d", kw);
       strcpy(data.image[ID].kw[kw].name, kname);	
       data.image[ID].kw[kw].type = 'D';
-      data.image[ID].kw[kw].value.numf = 1.0*kw;
+      data.image[ID].kw[kw].value.f.numf = 1.0*kw;
       sprintf(comment, "this is keyword %d", kw);
       strcpy(data.image[ID].kw[kw].comment, comment);
     }
@@ -1587,7 +1587,7 @@ long copy_image_ID(char *name, char *newname)
 }
 
 
-/* creates an ID */
+/* creates floating point variable */
 long create_variable_ID(char *name, double value)
 {
   long ID;
@@ -1612,13 +1612,90 @@ long create_variable_ID(char *name, double value)
 	ID = next_avail_variable_ID();
 
       data.variable[ID].used = 1;
+	data.variable[ID].type = 0; /** floating point double */
       strcpy(data.variable[ID].name,name);
-      data.variable[ID].value = value;
+      data.variable[ID].value.f = value;
 
     }
 
   return(ID);
 }
+
+
+/* creates long variable */
+long create_variable_long_ID(char *name, long value)
+{
+  long ID;
+  long i1,i2;
+
+  ID = -1;
+  i1 = image_ID(name);
+  i2 = variable_ID(name);
+
+  if(i1!=-1)
+    {
+      printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
+    }
+  else
+    {
+      if(i2!=-1)
+	{
+	  //	  printf("Warning : variable name \"%s\" is already in use\n",name);
+	  ID = i2;
+	}
+      else
+	ID = next_avail_variable_ID();
+
+      data.variable[ID].used = 1;
+	data.variable[ID].type = 1; /** long */
+      strcpy(data.variable[ID].name,name);
+      data.variable[ID].value.l = value;
+
+    }
+
+  return(ID);
+}
+
+
+
+/* creates long variable */
+long create_variable_string_ID(char *name, char *value)
+{
+  long ID;
+  long i1,i2;
+
+  ID = -1;
+  i1 = image_ID(name);
+  i2 = variable_ID(name);
+
+  if(i1!=-1)
+    {
+      printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
+    }
+  else
+    {
+      if(i2!=-1)
+	{
+	  //	  printf("Warning : variable name \"%s\" is already in use\n",name);
+	  ID = i2;
+	}
+      else
+	ID = next_avail_variable_ID();
+
+      data.variable[ID].used = 1;
+	data.variable[ID].type = 2; /** string */
+      strcpy(data.variable[ID].name,name);
+      strcpy(data.variable[ID].value.s, value);
+    }
+
+  return(ID);
+}
+
+
+
+
+
+
 
 
 
@@ -2037,7 +2114,7 @@ int list_variable_ID()
 
   for (i=0;i<data.NB_MAX_VARIABLE;i++)
     if(data.variable[i].used == 1) 
-      printf("%4ld %16s %25.18g\n",i, data.variable[i].name,data.variable[i].value);
+      printf("%4ld %16s %25.18g\n",i, data.variable[i].name,data.variable[i].value.f);
   
   return(0);
 }
@@ -2050,7 +2127,7 @@ int list_variable_ID_file(char *fname)
 	fp = fopen(fname, "w");
   for (i=0;i<data.NB_MAX_VARIABLE;i++)
     if(data.variable[i].used == 1) 
-      fprintf(fp, "%s=%.18g\n",data.variable[i].name, data.variable[i].value);
+      fprintf(fp, "%s=%.18g\n",data.variable[i].name, data.variable[i].value.f);
 
   fclose(fp);
   

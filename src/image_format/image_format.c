@@ -1798,7 +1798,7 @@ int CR2tomov()
 
   ID = variable_ID("SKIP");
   if(ID!=1)
-    SKIP = (long) (data.variable[ID].value + 0.1);
+    SKIP = (long) (data.variable[ID].value.f + 0.1);
   printf("SKIP = %ld\n",SKIP);
 
 
@@ -1902,83 +1902,83 @@ int CR2tomov()
 
 	      info_image_stats("imr","");
 	      ID = variable_ID("vp01");
-	      vp01r = data.variable[ID].value;
+	      vp01r = data.variable[ID].value.f;
 	      ID = variable_ID("vp05");
-	      vp05r = data.variable[ID].value;
+	      vp05r = data.variable[ID].value.f;
 	      ID = variable_ID("vp10");
-	      vp10r = data.variable[ID].value;
+	      vp10r = data.variable[ID].value.f;
 	      ID = variable_ID("vp20");
-	      vp20r = data.variable[ID].value;
+	      vp20r = data.variable[ID].value.f;
 	      ID = variable_ID("vp50");
-	      vp50r = data.variable[ID].value;
+	      vp50r = data.variable[ID].value.f;
 	      ID = variable_ID("vp80");
-	      vp80r = data.variable[ID].value;
+	      vp80r = data.variable[ID].value.f;
 	      ID = variable_ID("vp90");
-	      vp90r = data.variable[ID].value;
+	      vp90r = data.variable[ID].value.f;
 	      ID = variable_ID("vp95");
-	      vp95r = data.variable[ID].value;
+	      vp95r = data.variable[ID].value.f;
 	      ID = variable_ID("vp99");
-	      vp99r = data.variable[ID].value;
+	      vp99r = data.variable[ID].value.f;
 	      ID = variable_ID("vp995");
-	      vp995r = data.variable[ID].value;
+	      vp995r = data.variable[ID].value.f;
 	      ID = variable_ID("vp998");
-	      vp998r = data.variable[ID].value;
+	      vp998r = data.variable[ID].value.f;
 	      ID = variable_ID("vp999");
-	      vp999r = data.variable[ID].value;
+	      vp999r = data.variable[ID].value.f;
 	      delete_image_ID("imr");	      	      
 	      
 	      info_image_stats("img","");
 	      ID = variable_ID("vp01");
-	      vp01g = data.variable[ID].value;
+	      vp01g = data.variable[ID].value.f;
 	      ID = variable_ID("vp05");
-	      vp05g = data.variable[ID].value;
+	      vp05g = data.variable[ID].value.f;
 	      ID = variable_ID("vp10");
-	      vp10g = data.variable[ID].value;
+	      vp10g = data.variable[ID].value.f;
 	      ID = variable_ID("vp20");
-	      vp20g = data.variable[ID].value;
+	      vp20g = data.variable[ID].value.f;
 	      ID = variable_ID("vp50");
-	      vp50g = data.variable[ID].value;
+	      vp50g = data.variable[ID].value.f;
 	      ID = variable_ID("vp80");
-	      vp80g = data.variable[ID].value;
+	      vp80g = data.variable[ID].value.f;
 	      ID = variable_ID("vp90");
-	      vp90g = data.variable[ID].value;
+	      vp90g = data.variable[ID].value.f;
 	      ID = variable_ID("vp95");
-	      vp95g = data.variable[ID].value;
+	      vp95g = data.variable[ID].value.f;
 	      ID = variable_ID("vp99");
-	      vp99g = data.variable[ID].value;
+	      vp99g = data.variable[ID].value.f;
 	      ID = variable_ID("vp995");
-	      vp995g = data.variable[ID].value;
+	      vp995g = data.variable[ID].value.f;
 	      ID = variable_ID("vp998");
-	      vp998g = data.variable[ID].value;
+	      vp998g = data.variable[ID].value.f;
 	      ID = variable_ID("vp999");
-	      vp999g = data.variable[ID].value;
+	      vp999g = data.variable[ID].value.f;
 	      delete_image_ID("img");
 	      
 	      info_image_stats("imb","");
 	      ID = variable_ID("vp01");
-	      vp01b = data.variable[ID].value;
+	      vp01b = data.variable[ID].value.f;
 	      ID = variable_ID("vp05");
-	      vp05b = data.variable[ID].value;
+	      vp05b = data.variable[ID].value.f;
 	      ID = variable_ID("vp10");
-	      vp10b = data.variable[ID].value;
+	      vp10b = data.variable[ID].value.f;
 	      ID = variable_ID("vp20");
-	      vp20b = data.variable[ID].value;
+	      vp20b = data.variable[ID].value.f;
 	      ID = variable_ID("vp50");
-	      vp50b = data.variable[ID].value;
+	      vp50b = data.variable[ID].value.f;
 	      ID = variable_ID("vp80");
-	      vp80b = data.variable[ID].value;
+	      vp80b = data.variable[ID].value.f;
 	      ID = variable_ID("vp90");
-	      vp90b = data.variable[ID].value;
+	      vp90b = data.variable[ID].value.f;
 	      ID = variable_ID("vp95");
-	      vp95b = data.variable[ID].value;
+	      vp95b = data.variable[ID].value.f;
 	      ID = variable_ID("vp99");
-	      vp99b = data.variable[ID].value;
+	      vp99b = data.variable[ID].value.f;
 	      ID = variable_ID("vp995");
-	      vp995b = data.variable[ID].value;
+	      vp995b = data.variable[ID].value.f;
 	      ID = variable_ID("vp998");
-	      vp998b = data.variable[ID].value;
+	      vp998b = data.variable[ID].value.f;
 	      ID = variable_ID("vp999");
-	      vp999b = data.variable[ID].value;
+	      vp999b = data.variable[ID].value.f;
 	      delete_image_ID("imb");
 	      
 	      
@@ -2144,7 +2144,7 @@ int CR2tomov()
       
       ID = variable_ID("SKIP_FITStoJPEG");
       if(ID!=1)
-	SKIP_FITStoJPEG = (long) (data.variable[ID].value + 0.1);
+	SKIP_FITStoJPEG = (long) (data.variable[ID].value.f + 0.1);
       printf("SKIP FITS to JPEG = %ld\n",SKIP_FITStoJPEG);
 
 

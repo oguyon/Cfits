@@ -826,8 +826,10 @@ void main_init()
   // 
   data.variable = (VARIABLE *) realloc(data.variable, data.NB_MAX_VARIABLE*sizeof(VARIABLE));
   for(i=tmplong;i<data.NB_MAX_VARIABLE;i++)
-    data.variable[i].used = 0;
-     
+	{
+		data.variable[i].used = 0;
+		data.variable[i].type = 0; /** defaults to floating point type */
+	}
   
   
   tmplong = data.NB_MAX_VARIABLE;
@@ -835,6 +837,8 @@ void main_init()
     printERROR(__FILE__,__func__,__LINE__,"Reallocation of data.variable has failed - exiting program");
     exit(0);
   }
+  
+  
   
  
 
@@ -1020,79 +1024,91 @@ void fnExit1 (void)
 
 
 /*^-----------------------------------------------------------------------------
-| 
-|  re_alloc    : keep the number of images addresses available   
-| 		 NB_IMAGES_BUFFER above the number of used images 
 |
-|                keep the number of variables addresses available 
-|                NB_VARIABLES_BUFFER above the number of used variables 
+|  re_alloc    : keep the number of images addresses available
+| 		 NB_IMAGES_BUFFER above the number of used images
 |
-| NOTE:  this should probably be renamed and put in the module/memory/memory.c 
+|                keep the number of variables addresses available
+|                NB_VARIABLES_BUFFER above the number of used variables
+|
+| NOTE:  this should probably be renamed and put in the module/memory/memory.c
 |
 +-----------------------------------------------------------------------------*/
 int re_alloc()
 {
-  int i;
-  long  tmplong;
-  IMAGE *ptrtmp;
+    int i;
+    long  tmplong;
+    IMAGE *ptrtmp;
 
-  /* keeps the number of images addresses available   
-   *  NB_IMAGES_BUFFER above the number of used images 
-   */
-  if((compute_nb_image(data)+NB_IMAGES_BUFFER)>data.NB_MAX_IMAGE)
+    /* keeps the number of images addresses available
+     *  NB_IMAGES_BUFFER above the number of used images
+     */
+    if((compute_nb_image(data)+NB_IMAGES_BUFFER)>data.NB_MAX_IMAGE)
     {
-      if(data.Debug>0)
-	{
-	  printf("%p IMAGE STRUCT SIZE = %ld\n", data.image, (long) sizeof(IMAGE));
-	  printf("REALLOCATING IMAGE DATA BUFFER: %ld -> %ld\n", data.NB_MAX_IMAGE, data.NB_MAX_IMAGE + NB_IMAGES_BUFFER_REALLOC);
-	  fflush(stdout);
-	}
-      tmplong = data.NB_MAX_IMAGE;
-      data.NB_MAX_IMAGE = data.NB_MAX_IMAGE + NB_IMAGES_BUFFER_REALLOC;
-      ptrtmp = (IMAGE*) realloc(data.image, sizeof(IMAGE)*data.NB_MAX_IMAGE);
-      if(data.Debug>0)
-	{
-	  printf("NEW POINTER = %p\n", ptrtmp);
-	  fflush(stdout);
-	}
-      data.image = ptrtmp;
-      if(data.image==NULL)   {
-	printERROR(__FILE__,__func__,__LINE__,"Reallocation of data.image has failed - exiting program");
-	return -1;      //  exit(0);
-      }
-      if(data.Debug>0)
-	{
-	  printf("REALLOCATION DONE\n");
-	  fflush(stdout);
-	}
-      for(i=tmplong;i<data.NB_MAX_IMAGE;i++)   {
-	data.image[i].used = 0;
-	data.image[i].shmfd = -1;
-	data.image[i].memsize = 0;
-      }
+        if(data.Debug>0)
+        {
+            printf("%p IMAGE STRUCT SIZE = %ld\n", data.image, (long) sizeof(IMAGE));
+            printf("REALLOCATING IMAGE DATA BUFFER: %ld -> %ld\n", data.NB_MAX_IMAGE, data.NB_MAX_IMAGE + NB_IMAGES_BUFFER_REALLOC);
+            fflush(stdout);
+        }
+        tmplong = data.NB_MAX_IMAGE;
+        data.NB_MAX_IMAGE = data.NB_MAX_IMAGE + NB_IMAGES_BUFFER_REALLOC;
+        ptrtmp = (IMAGE*) realloc(data.image, sizeof(IMAGE)*data.NB_MAX_IMAGE);
+        if(data.Debug>0)
+        {
+            printf("NEW POINTER = %p\n", ptrtmp);
+            fflush(stdout);
+        }
+        data.image = ptrtmp;
+        if(data.image==NULL)   {
+            printERROR(__FILE__,__func__,__LINE__,"Reallocation of data.image has failed - exiting program");
+            return -1;      //  exit(0);
+        }
+        if(data.Debug>0)
+        {
+            printf("REALLOCATION DONE\n");
+            fflush(stdout);
+        }
+        for(i=tmplong; i<data.NB_MAX_IMAGE; i++)   {
+            data.image[i].used = 0;
+            data.image[i].shmfd = -1;
+            data.image[i].memsize = 0;
+        }
     }
-  
-  /* keeps the number of variables addresses available 
-   *  NB_VARIABLES_BUFFER above the number of used variables 
-   */
-  if((compute_nb_variable(data)+NB_VARIABLES_BUFFER)>data.NB_MAX_VARIABLE)
+
+
+
+    /* keeps the number of variables addresses available
+     *  NB_VARIABLES_BUFFER above the number of used variables
+     */
+    if((compute_nb_variable(data)+NB_VARIABLES_BUFFER)>data.NB_MAX_VARIABLE)
     {
-      if(data.Debug>0)
-	{
-	  printf("REALLOCATING VARIABLE DATA BUFFER\n");
-	  fflush(stdout);
-	}
-      data.NB_MAX_VARIABLE = data.NB_MAX_VARIABLE + NB_VARIABLES_BUFFER_REALLOC;
-      data.variable = (VARIABLE*) realloc(data.variable, sizeof(VARIABLE)*data.NB_MAX_VARIABLE);
-      if (data.variable==NULL)
-	{ 
-	  printERROR(__FILE__,__func__,__LINE__,"Reallocation of data.variable has failed - exiting program");
-	  return -1;   // exit(0);
-	}
+        if(data.Debug>0)
+        {
+            printf("REALLOCATING VARIABLE DATA BUFFER\n");
+            fflush(stdout);
+        }
+        tmplong = data.NB_MAX_VARIABLE;
+        data.NB_MAX_VARIABLE = data.NB_MAX_VARIABLE + NB_VARIABLES_BUFFER_REALLOC;
+        data.variable = (VARIABLE*) realloc(data.variable, sizeof(VARIABLE)*data.NB_MAX_VARIABLE);
+        if (data.variable==NULL)
+        {
+            printERROR(__FILE__,__func__,__LINE__,"Reallocation of data.variable has failed - exiting program");
+            return -1;   // exit(0);
+        }
+        
+        for(i=tmplong; i<data.NB_MAX_VARIABLE; i++)   {
+            data.variable[i].used = 0;
+            data.variable[i].type = -1;
+        }
+
+
     }
-  
-  return 0;
+
+    return 0;
 }
+
+
 
 
 

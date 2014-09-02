@@ -45,6 +45,10 @@ int delete_image_ID_prefix(char *prefix);
 
 int delete_variable_ID(char* varname);
 
+long create_variable_long_ID(char *name, long value);
+
+long create_variable_string_ID(char *name, char *value);
+
 long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int nbkw);
 
 long read_sharedmem_image(char *name);

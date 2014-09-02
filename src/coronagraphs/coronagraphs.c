@@ -390,7 +390,7 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
   ID = variable_ID("PNBITER");
   if(ID!=-1)
     {
-      NBiter = (long) (1.0*data.variable[ID].value+0.01);
+      NBiter = (long) (1.0*data.variable[ID].value.f+0.01);
     }
 
   v1 = 0.0;
@@ -724,7 +724,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
 
 
   if((ID=variable_ID("DFTZFACTOR"))!=-1)
-    DFTZFACTOR = data.variable[ID].value;
+    DFTZFACTOR = data.variable[ID].value.f;
 
   if(centralObs > 0.001)
     CentralObstructionFlag = 1;
@@ -732,7 +732,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
   // SET NUMBER OF ITERATION TO VALUE OTHER THAN DEFAULT IF VARIABLE PNBITER EXISTS
   ID = variable_ID("PNBITER");
   if(ID!=-1)
-    NBiter = (long) (1.0*data.variable[ID].value+0.01);
+    NBiter = (long) (1.0*data.variable[ID].value.f+0.01);
 
   
   v1 = 0.0;
@@ -760,16 +760,16 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
 
       sprintf(vname, "FPMSHAPE_%ld_r", k);
       if((ID=variable_ID(vname))!=-1)
-	fpmshape_ra[k] = data.variable[ID].value;
+	fpmshape_ra[k] = data.variable[ID].value.f;
       
 
       sprintf(vname, "FPMSHAPE_%ld_k", k);
       if((ID=variable_ID(vname))!=-1)
-	fpmshape_ka[k] = data.variable[ID].value;
+	fpmshape_ka[k] = data.variable[ID].value.f;
 
       sprintf(vname, "FPMSHAPE_%ld_p", k);
       if((ID=variable_ID(vname))!=-1)
-	fpmshape_pa[k] = data.variable[ID].value;
+	fpmshape_pa[k] = data.variable[ID].value.f;
 
       printf("FPM SHAPE TERM %02ld : %f %f %f\n", k,  fpmshape_ra[k],  fpmshape_ka[k],  fpmshape_pa[k]);
     }
@@ -1144,7 +1144,7 @@ int coronagraph_update_2Dprolate(double masksizeld, double beamradpix, double ce
 
   DFTZFACTOR = zfactor;
   if((ID=variable_ID("DFTZFACTOR"))!=-1)
-    DFTZFACTOR = data.variable[ID].value;
+    DFTZFACTOR = data.variable[ID].value.f;
 
   if(centralObs > 0.001)
     {
@@ -6622,7 +6622,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
 
   if((ID=variable_ID("DFTZFACTOR"))!=-1)
-    DFTZFACTOR = data.variable[ID].value;
+    DFTZFACTOR = data.variable[ID].value.f;
 
 
   if(useDFT==0)

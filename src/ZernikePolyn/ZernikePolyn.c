@@ -215,14 +215,14 @@ long mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix)
     ID = variable_ID("ZEXTENDc1");
     if(ID!=-1)
       {
-	coeffextend1 = data.variable[ID].value;
+	coeffextend1 = data.variable[ID].value.f;
 	printf("ZEXTENDc1 = %f\n", coeffextend1);
       }
 
     ID = variable_ID("ZEXTENDc2");
     if(ID!=-1)
       {
-	coeffextend2 = data.variable[ID].value;
+	coeffextend2 = data.variable[ID].value.f;
 	printf("ZEXTENDc2 = %f\n", coeffextend2);
       }
 
@@ -230,13 +230,13 @@ long mk_zer(char *ID_name, long SIZE, long zer_nb, float rpix)
     ID = variable_ID("Zxoffset");
     if(ID!=-1)
       {
-	xoffset = data.variable[ID].value;
+	xoffset = data.variable[ID].value.f;
 	printf("Zxoffset = %f\n", xoffset);
       }
     ID = variable_ID("Zyoffset");
     if(ID!=-1)
       {
-	yoffset = data.variable[ID].value;
+	yoffset = data.variable[ID].value.f;
 	printf("Zyoffset = %f\n", yoffset);
       }
 

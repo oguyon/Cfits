@@ -378,7 +378,7 @@ int SCExAO_DM_CombineChannels(int mode)
   schedpar.sched_priority = RT_priority;
   r = seteuid(euid_called); //This goes up to maximum privileges
   sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-  seteuid(euid_real);//Go back to normal privileges
+  r = seteuid(euid_real);//Go back to normal privileges
 
 
   size = (long*) malloc(sizeof(long)*naxis);

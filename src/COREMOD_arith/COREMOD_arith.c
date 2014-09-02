@@ -2907,7 +2907,7 @@ int execute_arith( char *cmd1 )
 	  for (i=0;i<nbword-3;i++)
 	    if ((word_type[i]==5)&&(word_type[i+3]==6)&&(strcmp(word[i+1],"-")==0))
 	      {
-		data.variable[variable_ID(word[i+2])].value = -data.variable[variable_ID(word[i+2])].value;
+		data.variable[variable_ID(word[i+2])].value.f = -data.variable[variable_ID(word[i+2])].value.f;
 		strcpy(word[i],word[i+2]);
 		word_type[i] = word_type[i+2];
 		for(j=i+2;j<nbword-3;j++)
@@ -2981,7 +2981,7 @@ int execute_arith( char *cmd1 )
 		  if(j==i)
 		  printf(">>");
 		  if(variable_ID(word[j])!=-1)
-		  printf(" %s(%f) ",word[j],data.variable[variable_ID(word[j])].value);
+		  printf(" %s(%f) ",word[j],data.variable[variable_ID(word[j])].value.f);
 		  else
 		  printf(" %s ",word[j]);	
 		  }
@@ -2993,7 +2993,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i-1]==2)&&(word_type[i+1]==2))
 		    {
-		      tmp_prec = data.variable[variable_ID(word[i-1])].value+data.variable[variable_ID(word[i+1])].value;
+		      tmp_prec = data.variable[variable_ID(word[i-1])].value.f+data.variable[variable_ID(word[i+1])].value.f;
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index,(int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3006,7 +3006,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index,(int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstadd(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name);
+		      arith_image_cstadd(word[i+1],(double) data.variable[variable_ID(word[i-1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3015,7 +3015,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index,(int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstadd(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstadd(word[i-1],(double) data.variable[variable_ID(word[i+1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3034,7 +3034,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i-1]==2)&&(word_type[i+1]==2))
 		    {
-		      tmp_prec = data.variable[variable_ID(word[i-1])].value-data.variable[variable_ID(word[i+1])].value;
+		      tmp_prec = data.variable[variable_ID(word[i-1])].value.f-data.variable[variable_ID(word[i+1])].value.f;
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3048,7 +3048,7 @@ int execute_arith( char *cmd1 )
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 		      n = snprintf(name1,SBUFFERSIZE,"_tmp1%d_%d",tmp_name_index, (int) getpid()); if(n >= SBUFFERSIZE) printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstsub(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name1);
+		      arith_image_cstsub(word[i+1],(double) data.variable[variable_ID(word[i-1])].value.f,name1);
 		      arith_image_cstmult(name1, (double) -1.0, name);
 		      delete_image_ID(name1);
 		      tmp_name_index++;
@@ -3059,7 +3059,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstsub(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstsub(word[i-1],(double) data.variable[variable_ID(word[i+1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3078,7 +3078,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i-1]==2)&&(word_type[i+1]==2))
 		    {
-		      tmp_prec = data.variable[variable_ID(word[i-1])].value*data.variable[variable_ID(word[i+1])].value;
+		      tmp_prec = data.variable[variable_ID(word[i-1])].value.f*data.variable[variable_ID(word[i+1])].value.f;
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3091,7 +3091,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmult(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name);
+		      arith_image_cstmult(word[i+1],(double) data.variable[variable_ID(word[i-1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3100,7 +3100,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmult(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstmult(word[i-1],(double) data.variable[variable_ID(word[i+1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3119,7 +3119,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i-1]==2)&&(word_type[i+1]==2))
 		    {
-		      tmp_prec = data.variable[variable_ID(word[i-1])].value/data.variable[variable_ID(word[i+1])].value;
+		      tmp_prec = data.variable[variable_ID(word[i-1])].value.f/data.variable[variable_ID(word[i+1])].value.f;
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3133,7 +3133,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstdiv1(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name);
+		      arith_image_cstdiv1(word[i+1],(double) data.variable[variable_ID(word[i-1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3142,7 +3142,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstdiv(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstdiv(word[i-1],(double) data.variable[variable_ID(word[i+1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3161,13 +3161,13 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i-1]==2)&&(word_type[i+1]==2))
 		    {
-		      if(data.variable[variable_ID(word[i+1])].value<0)
+		      if(data.variable[variable_ID(word[i+1])].value.f<0)
 			{
-			  tmp_prec = pow(data.variable[variable_ID(word[i-1])].value,-data.variable[variable_ID(word[i+1])].value);
+			  tmp_prec = pow(data.variable[variable_ID(word[i-1])].value.f,-data.variable[variable_ID(word[i+1])].value.f);
 			  tmp_prec = 1.0/tmp_prec;
 			}
 		      else
-			tmp_prec = pow(data.variable[variable_ID(word[i-1])].value,data.variable[variable_ID(word[i+1])].value);
+			tmp_prec = pow(data.variable[variable_ID(word[i-1])].value.f,data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3183,7 +3183,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name1,SBUFFERSIZE,"_tmp1%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstadd(word[i+1],(double) data.variable[variable_ID(word[i-1])].value,name1);
+		      arith_image_cstadd(word[i+1],(double) data.variable[variable_ID(word[i-1])].value.f,name1);
 		      arith_image_pow(name1,word[i+1],name);
 		      delete_image_ID(name1);
 		      tmp_name_index++;
@@ -3194,7 +3194,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstpow(word[i-1],(double) data.variable[variable_ID(word[i+1])].value,name);
+		      arith_image_cstpow(word[i-1],(double) data.variable[variable_ID(word[i+1])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3225,7 +3225,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = acos(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = acos(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3248,7 +3248,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = asin(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = asin(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3271,7 +3271,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = atan(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = atan(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid()); 
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3294,7 +3294,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = (double) ceil(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = (double) ceil(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3317,7 +3317,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = cos(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = cos(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3340,7 +3340,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = cosh(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = cosh(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3363,7 +3363,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = exp(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = exp(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3386,7 +3386,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = fabs(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = fabs(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3409,7 +3409,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = floor(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = floor(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3502,7 +3502,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = log(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = log(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3525,7 +3525,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = log10(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = log10(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3548,7 +3548,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = sqrt(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = sqrt(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3571,7 +3571,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = sin(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = sin(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3594,7 +3594,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = sinh(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = sinh(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3617,7 +3617,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = tan(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = tan(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3640,7 +3640,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = tanh(data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = tanh(data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3663,7 +3663,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if(word_type[i+1]==2)
 		    {
-		      tmp_prec = Ppositive( (double) data.variable[variable_ID(word[i+1])].value);
+		      tmp_prec = Ppositive( (double) data.variable[variable_ID(word[i+1])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE)
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3737,7 +3737,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i+2]==2)&&(word_type[i+4]==2))
 		    {
-		      tmp_prec = fmod(data.variable[variable_ID(word[i+2])].value,data.variable[variable_ID(word[i+4])].value);
+		      tmp_prec = fmod(data.variable[variable_ID(word[i+2])].value.f,data.variable[variable_ID(word[i+4])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3754,7 +3754,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstfmod(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_cstfmod(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3774,10 +3774,10 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i+2]==2)&&(word_type[i+4]==2))
 		    {
-		      if(data.variable[variable_ID(word[i+2])].value<data.variable[variable_ID(word[i+4])].value)
-			tmp_prec = data.variable[variable_ID(word[i+2])].value;
+		      if(data.variable[variable_ID(word[i+2])].value.f<data.variable[variable_ID(word[i+4])].value.f)
+			tmp_prec = data.variable[variable_ID(word[i+2])].value.f;
 		      else
-			tmp_prec = data.variable[variable_ID(word[i+4])].value;
+			tmp_prec = data.variable[variable_ID(word[i+4])].value.f;
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3790,7 +3790,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstminv(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_cstminv(word[i+4], (double) data.variable[variable_ID(word[i+2])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3799,7 +3799,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstminv(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_cstminv(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3819,10 +3819,10 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i+2]==2)&&(word_type[i+4]==2))
 		    {
-		      if(data.variable[variable_ID(word[i+2])].value>data.variable[variable_ID(word[i+4])].value)
-			tmp_prec = data.variable[variable_ID(word[i+2])].value;
+		      if(data.variable[variable_ID(word[i+2])].value.f>data.variable[variable_ID(word[i+4])].value.f)
+			tmp_prec = data.variable[variable_ID(word[i+2])].value.f;
 		      else
-			tmp_prec = data.variable[variable_ID(word[i+4])].value;
+			tmp_prec = data.variable[variable_ID(word[i+4])].value.f;
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3835,7 +3835,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmaxv(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_cstmaxv(word[i+4], (double) data.variable[variable_ID(word[i+2])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3844,7 +3844,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_cstmaxv(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_cstmaxv(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3863,7 +3863,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i+2]==2)&&(word_type[i+4]==2))
 		    {
-		      if(data.variable[variable_ID(word[i+2])].value>data.variable[variable_ID(word[i+4])].value)
+		      if(data.variable[variable_ID(word[i+2])].value.f>data.variable[variable_ID(word[i+4])].value.f)
 			tmp_prec = 0.0;
 		      else
 			tmp_prec = 1.0;
@@ -3879,7 +3879,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestmt(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_csttestmt(word[i+4], (double) data.variable[variable_ID(word[i+2])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3888,7 +3888,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestlt(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_csttestlt(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3909,7 +3909,7 @@ int execute_arith( char *cmd1 )
 		{
 		  if((word_type[i+2]==2)&&(word_type[i+4]==2))
 		    {
-		      if(data.variable[variable_ID(word[i+2])].value>data.variable[variable_ID(word[i+4])].value)
+		      if(data.variable[variable_ID(word[i+2])].value.f>data.variable[variable_ID(word[i+4])].value.f)
 			tmp_prec = 1.0;
 		      else
 			tmp_prec = 0.0;
@@ -3925,7 +3925,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestlt(word[i+4], (double) data.variable[variable_ID(word[i+2])].value,name);
+		      arith_image_csttestlt(word[i+4], (double) data.variable[variable_ID(word[i+2])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3934,7 +3934,7 @@ int execute_arith( char *cmd1 )
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      arith_image_csttestmt(word[i+2], (double) data.variable[variable_ID(word[i+4])].value,name);
+		      arith_image_csttestmt(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f,name);
 		      tmp_name_index++;
 		      type = 10;
 		    }
@@ -3959,11 +3959,11 @@ int execute_arith( char *cmd1 )
 		    printERROR(__FILE__,__func__,__LINE__,"Wrong input to function perc\n");
 		  else
 		    {
-		      //		  printf("Running percentile args = %s %f\n",word[i+2],data.variable[variable_ID(word[i+4])].value);
+		      //		  printf("Running percentile args = %s %f\n",word[i+2],data.variable[variable_ID(word[i+4])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-		      tmp_prec = arith_image_percentile(word[i+2], (double) data.variable[variable_ID(word[i+4])].value);
+		      tmp_prec = arith_image_percentile(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f);
 		      n = snprintf(name,SBUFFERSIZE,"_tmp%d_%d",tmp_name_index, (int) getpid());
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -3981,7 +3981,7 @@ int execute_arith( char *cmd1 )
 		      if(n >= SBUFFERSIZE) 
 			printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 		      tmp_name_index++;
-		      arith_image_trunc(word[i+2], (double) data.variable[variable_ID(word[i+4])].value, (double) data.variable[variable_ID(word[i+6])].value,name);
+		      arith_image_trunc(word[i+2], (double) data.variable[variable_ID(word[i+4])].value.f, (double) data.variable[variable_ID(word[i+6])].value.f,name);
 		      type = 10;
 		    }
 		  else
@@ -4004,7 +4004,7 @@ int execute_arith( char *cmd1 )
 		  for (i=0;i<nbword;i++)
 		  {
 		  if(variable_ID(word[i])!=-1)
-		  printf(" %s(%f) ",word[i],data.variable[variable_ID(word[i])].value);
+		  printf(" %s(%f) ",word[i],data.variable[variable_ID(word[i])].value.f);
 		  else
 		  printf(" %s ",word[i]);	
 		  }
@@ -4034,8 +4034,8 @@ int execute_arith( char *cmd1 )
 	      
 	      if(word_type[2]==2)
 		{
-		  create_variable_ID(word[0],data.variable[variable_ID(word[2])].value);
-		  printf("%.20g\n",data.variable[variable_ID(word[2])].value);
+		  create_variable_ID(word[0],data.variable[variable_ID(word[2])].value.f);
+		  printf("%.20g\n",data.variable[variable_ID(word[2])].value.f);
 		}
 	      if(word_type[2]==10)
 		{
@@ -4044,7 +4044,7 @@ int execute_arith( char *cmd1 )
 	    }
 	}
       else
-	printf("%.20g\n",data.variable[variable_ID(word[0])].value);
+	printf("%.20g\n",data.variable[variable_ID(word[0])].value.f);
       
       for(i=0;i<tmp_name_index;i++)
 	{

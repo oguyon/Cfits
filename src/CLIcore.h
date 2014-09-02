@@ -233,9 +233,19 @@ typedef struct
 {
   int used;
   char name[80];
-  double value;
+  int type; /** 0: double, 1: long, 2: string */
+  union
+  {
+	double f;
+	long l;
+	char s[80];
+  } value;
+  char comment[200];
 } VARIABLE;
 
+
+
+/*
 typedef struct
 {
   int used;
@@ -244,7 +254,13 @@ typedef struct
 } VARIABLELONG;
 
 
-
+typedef struct
+{
+  int used;
+  char name[80];
+  char value[80];
+} VARIABLESTRING;
+*/
 
 
 
@@ -288,9 +304,13 @@ typedef struct
 
   long NB_MAX_VARIABLE;
   VARIABLE *variable;
-
-   long NB_MAX_VARIABLELONG;
+/*
+  long NB_MAX_VARIABLELONG;
   VARIABLELONG *variablelong;
+  
+  long NB_MAX_VARIABLESTRING;
+  VARIABLESTRING *variablestring;
+  */
   
  float FLOATARRAY[1000];	// array to store temporary variables
   double DOUBLEARRAY[1000];    // for convenience
@@ -307,6 +327,27 @@ typedef struct
 
 
 
+
+
+
+
+/*** configuration file definition */
+/*
+typedef struct
+{
+	char name[100];
+	char content[100];
+	int type;
+	union
+	char comment[200];
+} CONF_FILE_ENTRY;
+
+typedef struct
+{
+	
+	
+} CONF_FILE_LINE;
+*/
 
 
 //extern int ECHO;

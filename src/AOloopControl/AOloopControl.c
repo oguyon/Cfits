@@ -101,6 +101,13 @@ int avcamarraysInit = 0;
 //
 
 
+int AOloopControl_makeTemplateAOloopconf_cli()
+{
+    if(CLI_checkarg(1,2)==0)
+        AOloopControl_makeTemplateAOloopconf(data.cmdargtoken[1].val.numl);
+    else
+        return 1;
+}
 
 
 int AOloopControl_mkModes_cli()
@@ -374,6 +381,15 @@ int init_AOloopControl()
   strcpy(data.module[data.NBmodule].info, "AO loop control");
   data.NBmodule++;
 
+
+  strcpy(data.cmd[data.NBcmd].key,"aolmkconf");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_makeTemplateAOloopconf_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make template configuration file");
+  strcpy(data.cmd[data.NBcmd].syntax,"<loopnb [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"aolmkconf 2");
+strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_makeTemplateAOloopconf(long loopnb)");
+	 data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"aolmkmodes");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -661,6 +677,38 @@ int init_AOloopControl()
   
   return 0;
 }
+
+
+
+
+
+long AOloopControl_makeTemplateAOloopconf(long loopnb)
+{
+    FILE *fp;
+    char fname[200];
+
+    sprintf(fname, "AOloop%ld.conf", loopnb);
+
+    fp = fopen(fname, "w");
+
+    fprintf(fp, "DMname		dmdisp1		[shared memory] DM displacement image - command\n");
+    fprintf(fp, "DMnameRM	dmdisp2		[shared memory] DM displacement for RM commands\n");
+    fprintf(fp, "WFSname		wfs_sim		[shared memory] WFS image\n");
+    fprintf(fp, "DMmodes		fmodes.fits	[file]		default DM modes to be loaded at startup\n");
+    fprintf(fp, "WFSrefim	refwfs.fits	[file]          default WFS reference image to be loaded at startup\n");
+    fprintf(fp, "RespMatrix	respm.fits	[file]          default response matrix to be loaded at startup\n");
+    fprintf(fp, "ContrMatrix	cmat.fits	[file]          default control matrix to be loaded at startup\n");
+    fprintf(fp, "GPU		0		use GPU\n");
+    fprintf(fp, "logsize         1000            number of consecutive entries in single log file\n");
+    fprintf(fp, "logdir          ./\n");
+    fprintf(fp, "NBMblocks	3		number of modes blocks\n");
+
+    fclose(fp);
+
+    return(0);
+}
+
+
 
 
 

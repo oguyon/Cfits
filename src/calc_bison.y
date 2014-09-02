@@ -87,7 +87,7 @@ expl:     TKNUMl       { $$ = $1;        if(data.Debug>0){printf("this is a long
 ;
 
 expd:      TKNUMd      { $$ = $1;        if(data.Debug>0){printf("this is a double\n");}}
-| TKVAR                { $$ = data.variable[variable_ID($1)].value;   }
+| TKVAR                { $$ = data.variable[variable_ID($1)].value.f;   }
 | TKVAR '=' expl       { $$ = $3; create_variable_ID($1, $3);  }
 | TKVAR '=' expd       { $$ = $3; create_variable_ID($1, $3);  }
 | TKNVAR '=' expl      { $$ = $3; create_variable_ID($1, $3);  if(data.Debug>0){printf("creating long\n");}}

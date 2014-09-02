@@ -2684,7 +2684,7 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, flo
 /*  IDv = variable_ID("OUTERSCALE");
   if(IDv!=-1)
     {
-      outerscale = data.variable[IDv].value;
+      outerscale = data.variable[IDv].value.f;
       printf("Outer scale = %f pix\n", outerscale);
     }
  */
@@ -2693,7 +2693,7 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, flo
   if(IDv!=-1)
     {
       RLIMMODE = 1;
-      rlim = data.variable[IDv].value;
+      rlim = data.variable[IDv].value.f;
       printf("R limit = %f pix\n",rlim);
     }
 
