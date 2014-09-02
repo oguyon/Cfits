@@ -5,6 +5,7 @@
 *.so
 *.la
 *.Po
+*.Plo
 sync
 TBE
 html/
