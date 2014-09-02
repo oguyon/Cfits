@@ -19,6 +19,7 @@ var AOloopControl_8h =
     [ "AOloopControl_loopreset", "AOloopControl_8h.html#a7eff3756b677cbbb8162855660b06598", null ],
     [ "AOloopControl_loopstep", "AOloopControl_8h.html#af9e154a6fb28dfba8c8acf770431923d", null ],
     [ "AOloopControl_MakeDMModes", "AOloopControl_8h.html#acc9ab7061d6a728e55bcacd6742448c1", null ],
+    [ "AOloopControl_makeTemplateAOloopconf", "AOloopControl_8h.html#a5c3b0bdcff0ed83ed3f9f217b14c014d", null ],
     [ "AOloopControl_mkModes", "AOloopControl_8h.html#af026d5c0c10a972e3627d65652cff9e3", null ],
     [ "AOloopControl_printloopstatus", "AOloopControl_8h.html#ac2130a837323ad0ead68e773805d463b", null ],
     [ "AOloopControl_resetRMSperf", "AOloopControl_8h.html#afabfd422328c9a189efe384efe6dfd9b", null ],

@@ -1,11 +1,13 @@
 var searchData=
 [
   ['wcol',['wcol',['../AOloopControl_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;AOloopControl.c'],['../info_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;info.c'],['../SCExAO__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;SCExAO_DM.c']]],
+  ['wfoutput',['WFOUTPUT',['../WFsim_8conf.html#ac62f9356b3bb699ad7d657cf3455ae41',1,'WFsim.conf']]],
   ['wfpropagate_2ec',['WFpropagate.c',['../WFpropagate_8c.html',1,'']]],
   ['wfpropagate_2eh',['WFpropagate.h',['../WFpropagate_8h.html',1,'']]],
   ['wfpropagate_5frun',['WFpropagate_run',['../WFpropagate_8c.html#a0154c900f6865033703f7f5a3ceb73fb',1,'WFpropagate_run():&#160;WFpropagate.c'],['../WFpropagate_8h.html#a0154c900f6865033703f7f5a3ceb73fb',1,'WFpropagate_run():&#160;WFpropagate.c']]],
   ['wfpropagate_5ftestlyot',['WFpropagate_TestLyot',['../WFpropagate_8c.html#a99694a7d15d71ada276fac0c6910065f',1,'WFpropagate.c']]],
   ['wfscnt',['WFScnt',['../structAOLOOPCONTROL__CONF.html#aef0d536a3ea46154930a9bf57967c5db',1,'AOLOOPCONTROL_CONF']]],
+  ['wfsim_2econf',['WFsim.conf',['../WFsim_8conf.html',1,'']]],
   ['wfsname',['WFSname',['../structAOLOOPCONTROL__CONF.html#a18a75018d87159819342add7bf9e79fb',1,'AOLOOPCONTROL_CONF']]],
   ['while',['while',['../calc__flex_8c.html#a8fdafe3be7e00ce3d4f0cb50a9a5eb39',1,'calc_flex.c']]],
   ['write',['write',['../structIMAGE__METADATA.html#a0a6367366b22e0021e8846fddf2750a7',1,'IMAGE_METADATA']]],

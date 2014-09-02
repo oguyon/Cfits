@@ -45,6 +45,7 @@ var searchData=
   ['make_5fsubpixdisk_5fcli',['make_subpixdisk_cli',['../image__gen_8c.html#a14e107c8e13ee2120ef75b878307a403',1,'image_gen.c']]],
   ['make_5fsubpixdisk_5fperturb',['make_subpixdisk_perturb',['../image__gen_8c.html#a6ff3d5e8956fb28e56d66ec28bd9d61b',1,'make_subpixdisk_perturb(char *ID_name, long l1, long l2, double x_center, double y_center, double radius, long n, double *ra, double *ka, double *pa):&#160;image_gen.c'],['../image__gen_8h.html#a6ff3d5e8956fb28e56d66ec28bd9d61b',1,'make_subpixdisk_perturb(char *ID_name, long l1, long l2, double x_center, double y_center, double radius, long n, double *ra, double *ka, double *pa):&#160;image_gen.c']]],
   ['make_5ftile',['make_tile',['../image__gen_8c.html#a1181a4204042005f488f9cde09d0eeaf',1,'make_tile(char *IDin_name, long size, char *IDout_name):&#160;image_gen.c'],['../image__gen_8h.html#a1181a4204042005f488f9cde09d0eeaf',1,'make_tile(char *IDin_name, long size, char *IDout_name):&#160;image_gen.c']]],
+  ['malloc',['malloc',['../calc__bison_8c.html#a5faf6a2d99f50a4655dd390199a8db7b',1,'calc_bison.c']]],
   ['masksizeld',['MASKSIZELD',['../coronagraphs_8c.html#afcc9085e76acbf4622ad45134b19f960',1,'coronagraphs.c']]],
   ['mat0',['mat0',['../structASPHSURFR.html#a9c6a2f637f66b2911129ec69640f98d2',1,'ASPHSURFR']]],
   ['mat1',['mat1',['../structASPHSURFR.html#a0f31e31171389f94d70cc4ea0610e2a4',1,'ASPHSURFR']]],

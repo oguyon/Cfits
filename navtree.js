@@ -3,6 +3,7 @@ var NAVTREE =
   [ "Cfits", "index.html", [
     [ "Cfits: source code and development environment for image analysis (and much more)", "index.html", null ],
     [ "Image analysis tools", "md_README.html", null ],
+    [ "AO loop control", "md_src_AOloopControl_README.html", null ],
     [ "Command line interpreter", "md_src_CLIcore.html", null ],
     [ "PIAACMC coronagraph design", "md_src_PIAACMCsimul_README.html", null ],
     [ "Data Structures", null, [
@@ -31,17 +32,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "00CORE-util_8c.html",
-"AtmosphericTurbulence_8c.html#ac99f5ae045b116551c39733cc98284a7",
-"COREMOD__arith_8c.html#abc07e92eca332ecc381ced7b5f936f4a",
-"COREMOD__memory_8c.html#a9576e38181c3404f2811d145999baf57",
-"PIAACMCsimul_8c.html#a9842752e03b4de9b4593f1a3b34364ab",
-"calc__bison_8c.html#a50db5aef8c2b6f13961b2480b37f84c0",
-"calc__flex_8c.html#ad557845057f187eec4be07e2717d2afa",
-"dir_545a73c80b83e1c7812a6808fc9654f7.html",
-"image__basic_8c.html#a856e9c763f542a6a0b78587b2989c159",
-"image__gen_8h.html#abcd69575b105c63e29bb4834d4f7e493",
-"nrlmsise-00_8c.html#af1178fe9c91c432a2eb4f8bce487f122",
-"structIMAGE__KEYWORD.html#a93acc5dd5d573d8e91129b27332e4ef4"
+"AtmosphericTurbulence_8c.html#ac4b2621b2a2cb25659563dbc6cd081c4",
+"COREMOD__arith_8c.html#ab5dd6042407715abe9bbf52feee83993",
+"COREMOD__memory_8c.html#a88d317ab8b2fb4b9f851cb7e234572e3",
+"PIAACMCsimul_8c.html#a856e9c763f542a6a0b78587b2989c159",
+"calc__bison_8c.html#a3b1e3628411fabac03abe0a337322016",
+"calc__flex_8c.html#ac58f2c111cc9989c86db2a7dc4fd84ca",
+"dir_1c699cef90b15b1f476abc9da5826c96.html",
+"image__basic_8c.html#a4adb1beed0019c4a8bc45889a956fe71",
+"image__gen_8h.html#a3e81b34a57de3a45cf426c2f28eb55c4",
+"nrlmsise-00_8c.html#ac7ac86294545f793edad8b9574d73132",
+"structIMAGE.html#a8a451a2074b51df5b761088baf49cc3f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

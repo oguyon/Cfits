@@ -29,6 +29,7 @@ var searchData=
   ['aoconfidlog0',['aoconfIDlog0',['../AOloopControl_8c.html#a648da43072af7afba7db98cf9cb4bb28',1,'AOloopControl.c']]],
   ['aoconfidlog1',['aoconfIDlog1',['../AOloopControl_8c.html#a971835f5c61f829c82359dd89d28e004',1,'AOloopControl.c']]],
   ['aoconfname',['AOconfname',['../AOloopControl_8c.html#a3d4ac22ab7ffd78896c076c09870ff9c',1,'AOloopControl.c']]],
+  ['aoloop0_2econf',['AOloop0.conf',['../AOloop0_8conf.html',1,'']]],
   ['aoloopcontrol_2ec',['AOloopControl.c',['../AOloopControl_8c.html',1,'']]],
   ['aoloopcontrol_2eh',['AOloopControl.h',['../AOloopControl_8h.html',1,'']]],
   ['aoloopcontrol_5fautotune',['AOloopControl_AutoTune',['../AOloopControl_8c.html#afbfea6c276731196c933505b60d8ee95',1,'AOloopControl_AutoTune():&#160;AOloopControl.c'],['../AOloopControl_8h.html#afbfea6c276731196c933505b60d8ee95',1,'AOloopControl_AutoTune():&#160;AOloopControl.c']]],
@@ -55,6 +56,8 @@ var searchData=
   ['aoloopcontrol_5floopstep',['AOloopControl_loopstep',['../AOloopControl_8c.html#af9e154a6fb28dfba8c8acf770431923d',1,'AOloopControl_loopstep(long loop, long NBstep):&#160;AOloopControl.c'],['../AOloopControl_8h.html#af9e154a6fb28dfba8c8acf770431923d',1,'AOloopControl_loopstep(long loop, long NBstep):&#160;AOloopControl.c']]],
   ['aoloopcontrol_5floopstep_5fcli',['AOloopControl_loopstep_cli',['../AOloopControl_8c.html#a3da4aabed253be900f2c6b766b2498bf',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fmakedmmodes',['AOloopControl_MakeDMModes',['../AOloopControl_8c.html#acc9ab7061d6a728e55bcacd6742448c1',1,'AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname):&#160;AOloopControl.c'],['../AOloopControl_8h.html#acc9ab7061d6a728e55bcacd6742448c1',1,'AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname):&#160;AOloopControl.c']]],
+  ['aoloopcontrol_5fmaketemplateaoloopconf',['AOloopControl_makeTemplateAOloopconf',['../AOloopControl_8c.html#a5c3b0bdcff0ed83ed3f9f217b14c014d',1,'AOloopControl_makeTemplateAOloopconf(long loopnb):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a5c3b0bdcff0ed83ed3f9f217b14c014d',1,'AOloopControl_makeTemplateAOloopconf(long loopnb):&#160;AOloopControl.c']]],
+  ['aoloopcontrol_5fmaketemplateaoloopconf_5fcli',['AOloopControl_makeTemplateAOloopconf_cli',['../AOloopControl_8c.html#a64be948f209d7c599c6543fddccd21cd',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fmeasure_5fresp_5fmatrix_5fcli',['AOloopControl_Measure_Resp_Matrix_cli',['../AOloopControl_8c.html#aa08af67cc681121485330c5f8fbe4513',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fmeminit',['AOloopcontrol_meminit',['../AOloopControl_8c.html#ac8a65ca6927b57d697b359281dd5ff24',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fmkmodes',['AOloopControl_mkModes',['../AOloopControl_8c.html#a2e80beb04ca5ef7646a34a923f93ff96',1,'AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1):&#160;AOloopControl.c'],['../AOloopControl_8h.html#af026d5c0c10a972e3627d65652cff9e3',1,'AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1):&#160;AOloopControl.c']]],
@@ -255,5 +258,6 @@ var searchData=
   ['autocorrelation',['autocorrelation',['../fft_8c.html#ac2b5d9d1a86ef48e9a5a0ea6810a126b',1,'autocorrelation(char *ID_name, char *ID_out):&#160;fft.c'],['../fft_8h.html#ac2b5d9d1a86ef48e9a5a0ea6810a126b',1,'autocorrelation(char *ID_name, char *ID_out):&#160;fft.c']]],
   ['autopiaacmask',['AUTOPIAACMASK',['../coronagraphs_8c.html#afad8554aa8456b1da893a50c7fc01ea2',1,'coronagraphs.c']]],
   ['avcamarraysinit',['avcamarraysInit',['../AOloopControl_8c.html#aff4e5acd229f86129440961b3272ae52',1,'AOloopControl.c']]],
-  ['average_5fcam_5fframes',['Average_cam_frames',['../AOloopControl_8c.html#aea1f823ddb827c2d0c2991bc4db15db6',1,'Average_cam_frames(long loop, long NbAve):&#160;AOloopControl.c'],['../AOloopControl_8h.html#aea1f823ddb827c2d0c2991bc4db15db6',1,'Average_cam_frames(long loop, long NbAve):&#160;AOloopControl.c']]]
+  ['average_5fcam_5fframes',['Average_cam_frames',['../AOloopControl_8c.html#aea1f823ddb827c2d0c2991bc4db15db6',1,'Average_cam_frames(long loop, long NbAve):&#160;AOloopControl.c'],['../AOloopControl_8h.html#aea1f823ddb827c2d0c2991bc4db15db6',1,'Average_cam_frames(long loop, long NbAve):&#160;AOloopControl.c']]],
+  ['ao_20loop_20control',['AO loop control',['../md_src_AOloopControl_README.html',1,'']]]
 ];

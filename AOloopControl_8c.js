@@ -25,6 +25,8 @@ var AOloopControl_8c =
     [ "AOloopControl_loopstep", "AOloopControl_8c.html#af9e154a6fb28dfba8c8acf770431923d", null ],
     [ "AOloopControl_loopstep_cli", "AOloopControl_8c.html#a3da4aabed253be900f2c6b766b2498bf", null ],
     [ "AOloopControl_MakeDMModes", "AOloopControl_8c.html#acc9ab7061d6a728e55bcacd6742448c1", null ],
+    [ "AOloopControl_makeTemplateAOloopconf", "AOloopControl_8c.html#a5c3b0bdcff0ed83ed3f9f217b14c014d", null ],
+    [ "AOloopControl_makeTemplateAOloopconf_cli", "AOloopControl_8c.html#a64be948f209d7c599c6543fddccd21cd", null ],
     [ "AOloopControl_Measure_Resp_Matrix_cli", "AOloopControl_8c.html#aa08af67cc681121485330c5f8fbe4513", null ],
     [ "AOloopControl_mkModes", "AOloopControl_8c.html#a2e80beb04ca5ef7646a34a923f93ff96", null ],
     [ "AOloopControl_mkModes_cli", "AOloopControl_8c.html#a0b63ecccbb4003b2463eb7933787b5eb", null ],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['l',['L',['../structIMAGE.html#aa8880295748522b823bef4732f5df685',1,'IMAGE']]],
+  ['l',['l',['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE::l()'],['../structIMAGE.html#aa8880295748522b823bef4732f5df685',1,'IMAGE::L()']]],
   ['lambdaarray',['lambdaarray',['../structOPTSYST.html#affffe3221582de4166398a84debc5257',1,'OPTSYST']]],
   ['lambdaend',['LAMBDAEND',['../PIAACMCsimul_8c.html#abe53f58d88702734246bbc1ebcd74236',1,'PIAACMCsimul.c']]],
   ['lambdastart',['LAMBDASTART',['../PIAACMCsimul_8c.html#a24e579c2d457f20533ced9a9cffe4121',1,'PIAACMCsimul.c']]],

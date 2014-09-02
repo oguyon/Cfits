@@ -140,8 +140,6 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVARIABLE.html">VARIABLE</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVARIABLELONG.html">VARIABLELONG</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDATA.html">DATA</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -154,9 +152,9 @@ Macros</h2></td></tr>
 <tr class="separator:a78b19ce4c616b344623732b2d458a939"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0fa6bd9911ebb72f34711131116e04d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8h.html#ab0fa6bd9911ebb72f34711131116e04d">CFITSEXIT</a>&#160;&#160;&#160;printf(&quot;Program abnormally terminated, File \&quot;%s\&quot;, line %d\n&quot;, __FILE__, __LINE__);exit(0)</td></tr>
 <tr class="separator:ab0fa6bd9911ebb72f34711131116e04d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81975fe4df7d378b72206b536008f83d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8h.html#a81975fe4df7d378b72206b536008f83d">nmalloc</a>(f, type, n)&#160;&#160;&#160;f = (type*) malloc(sizeof(type)*n);<a class="el" href="calc__flex_8c.html#ad4a65b873df5c05570846b5413b41dfd">if</a>(f==NULL){printf(&quot;ERROR: pointer \&quot;&quot; #f &quot;\&quot; allocation failed\n&quot;);exit(0);}</td></tr>
+<tr class="memitem:a81975fe4df7d378b72206b536008f83d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8h.html#a81975fe4df7d378b72206b536008f83d">nmalloc</a>(f, type, n)&#160;&#160;&#160;f = (type*) <a class="el" href="calc__bison_8c.html#a5faf6a2d99f50a4655dd390199a8db7b">malloc</a>(sizeof(type)*n);<a class="el" href="calc__flex_8c.html#ad4a65b873df5c05570846b5413b41dfd">if</a>(f==NULL){printf(&quot;ERROR: pointer \&quot;&quot; #f &quot;\&quot; allocation failed\n&quot;);exit(0);}</td></tr>
 <tr class="separator:a81975fe4df7d378b72206b536008f83d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b0fc1b013b1d44c19e737c1a1344c0d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8h.html#a1b0fc1b013b1d44c19e737c1a1344c0d">nfree</a>(f)&#160;&#160;&#160;free(f);</td></tr>
+<tr class="memitem:a1b0fc1b013b1d44c19e737c1a1344c0d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8h.html#a1b0fc1b013b1d44c19e737c1a1344c0d">nfree</a>(f)&#160;&#160;&#160;<a class="el" href="calc__bison_8c.html#af07d89f5ceaea0c7c8252cc41fd75f37">free</a>(f);</td></tr>
 <tr class="separator:a1b0fc1b013b1d44c19e737c1a1344c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ce45abed084638ca9c884a419acd17f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8h.html#a6ce45abed084638ca9c884a419acd17f">TEST_ALLOC</a>(f)&#160;&#160;&#160;<a class="el" href="calc__flex_8c.html#ad4a65b873df5c05570846b5413b41dfd">if</a>(f==NULL){printf(&quot;ERROR: pointer \&quot;&quot; #f &quot;\&quot; allocation failed\n&quot;);exit(0);}</td></tr>
 <tr class="separator:a6ce45abed084638ca9c884a419acd17f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -400,7 +398,7 @@ Variables</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">f</td><td>)</td>
-          <td>&#160;&#160;&#160;free(f);</td>
+          <td>&#160;&#160;&#160;<a class="el" href="calc__bison_8c.html#af07d89f5ceaea0c7c8252cc41fd75f37">free</a>(f);</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -432,7 +430,7 @@ Variables</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;f = (type*) malloc(sizeof(type)*n);<a class="el" href="calc__flex_8c.html#ad4a65b873df5c05570846b5413b41dfd">if</a>(f==NULL){printf(&quot;ERROR: pointer \&quot;&quot; #f &quot;\&quot; allocation failed\n&quot;);exit(0);}</td>
+          <td></td><td>&#160;&#160;&#160;f = (type*) <a class="el" href="calc__bison_8c.html#a5faf6a2d99f50a4655dd390199a8db7b">malloc</a>(sizeof(type)*n);<a class="el" href="calc__flex_8c.html#ad4a65b873df5c05570846b5413b41dfd">if</a>(f==NULL){printf(&quot;ERROR: pointer \&quot;&quot; #f &quot;\&quot; allocation failed\n&quot;);exit(0);}</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -673,7 +671,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="CLIcore_8h.html">CLIcore.h</a></li>
-    <li class="footer">Generated on Tue Sep 2 2014 10:55:59 for Cfits by
+    <li class="footer">Generated on Tue Sep 2 2014 13:40:19 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

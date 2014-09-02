@@ -23,6 +23,8 @@ var COREMOD__memory_8h =
     [ "create_3Dimage_ID_double", "COREMOD__memory_8h.html#a94865ace3bc6d18ed262aa1d643fb1a2", null ],
     [ "create_image_ID", "COREMOD__memory_8h.html#ad5f0d3d48ee638e61a7e71e666da58a9", null ],
     [ "create_variable_ID", "COREMOD__memory_8h.html#a4a64cdffe7e8563c463a8483c9092197", null ],
+    [ "create_variable_long_ID", "COREMOD__memory_8h.html#ab4d2e779c20417a997462e9a99386748", null ],
+    [ "create_variable_string_ID", "COREMOD__memory_8h.html#a0ae925186d7fad61c62286a01a36ba35", null ],
     [ "delete_image_ID", "COREMOD__memory_8h.html#a522d41cb8c1210c034746b0d9b69cfbf", null ],
     [ "delete_image_ID_prefix", "COREMOD__memory_8h.html#acbfc6ae9b2098ec930d58453b5bf2a54", null ],
     [ "delete_variable_ID", "COREMOD__memory_8h.html#a11d69cd578a3f2761418f73a9e5c7ad2", null ],

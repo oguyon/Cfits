@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['name',['name',['../structAOLOOPCONTROL__CONF.html#a89011839e5092011c81356159f76b9ac',1,'AOLOOPCONTROL_CONF::name()'],['../structsymrec.html#a13b3ddedd56ed8a393dfd4b266bb81e1',1,'symrec::name()'],['../structMODULE.html#adecbd02b92ae79ddaaff7be512380dea',1,'MODULE::name()'],['../structIMAGE__KEYWORD.html#aa0fef8b5fce4b24d792d0fc01df9dd8a',1,'IMAGE_KEYWORD::name()'],['../structIMAGE__METADATA.html#acf8d6cd7523aacfacb7639e83496a7b8',1,'IMAGE_METADATA::name()'],['../structVARIABLE.html#a40d583ae511f61e22f3ade6f130a7d58',1,'VARIABLE::name()'],['../structVARIABLELONG.html#ade99ebad634207b5cc9000a0bae817eb',1,'VARIABLELONG::name()']]],
+  ['name',['name',['../structAOLOOPCONTROL__CONF.html#a89011839e5092011c81356159f76b9ac',1,'AOLOOPCONTROL_CONF::name()'],['../structsymrec.html#a13b3ddedd56ed8a393dfd4b266bb81e1',1,'symrec::name()'],['../structMODULE.html#adecbd02b92ae79ddaaff7be512380dea',1,'MODULE::name()'],['../structIMAGE__KEYWORD.html#aa0fef8b5fce4b24d792d0fc01df9dd8a',1,'IMAGE_KEYWORD::name()'],['../structIMAGE__METADATA.html#acf8d6cd7523aacfacb7639e83496a7b8',1,'IMAGE_METADATA::name()'],['../structVARIABLE.html#a40d583ae511f61e22f3ade6f130a7d58',1,'VARIABLE::name()']]],
   ['naxis',['naxis',['../structIMAGE__METADATA.html#a03a561578b6eab9c6566d5961944fb8e',1,'IMAGE_METADATA']]],
   ['nb_5faoloopcontrol',['NB_AOloopcontrol',['../AOloopControl_8c.html#a6c5d5a91e62278861bc96ab43c9c44d9',1,'AOloopControl.c']]],
   ['nb_5faplc_5fstep',['NB_APLC_STEP',['../coronagraphs_8c.html#a0fccf9c2adadd0a03307e7ac0032d693',1,'coronagraphs.c']]],
@@ -16,7 +16,6 @@ var searchData=
   ['nb_5fmax_5fimage',['NB_MAX_IMAGE',['../structDATA.html#a2522406c33b8f890757cfbd8db858f77',1,'DATA']]],
   ['nb_5fmax_5fmodule',['NB_MAX_MODULE',['../structDATA.html#aa3ce94f1c13e2a2b3acc31caca1f3b95',1,'DATA']]],
   ['nb_5fmax_5fvariable',['NB_MAX_VARIABLE',['../structDATA.html#adbdde6182898eaf675b02e337dc93750',1,'DATA']]],
-  ['nb_5fmax_5fvariablelong',['NB_MAX_VARIABLELONG',['../structDATA.html#a13ee2e6cccc1746762217451a5e37759',1,'DATA']]],
   ['nb_5fvariables_5fbuffer',['NB_VARIABLES_BUFFER',['../COREMOD__memory_8h.html#a7c73c51a8d86c7a3509901d402cb72c0',1,'COREMOD_memory.h']]],
   ['nb_5fvariables_5fbuffer_5frealloc',['NB_VARIABLES_BUFFER_REALLOC',['../COREMOD__memory_8h.html#a89506b6cabee1cb5f607d5dfcea35096',1,'COREMOD_memory.h']]],
   ['nbact',['NBact',['../SCExAO__DM_8c.html#a25607f62d39112e158cac8d432488695',1,'SCExAO_DM.c']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['f',['F',['../structIMAGE.html#ac30512e1d0da8b4052f22f4c5f322398',1,'IMAGE']]],
+  ['f',['f',['../structVARIABLE.html#af31bb248155770bb6d7080aa50bdb4fd',1,'VARIABLE::f()'],['../structIMAGE.html#ac30512e1d0da8b4052f22f4c5f322398',1,'IMAGE::F()']]],
   ['f107',['f107',['../structnrlmsise__input.html#aaf339ba3dc1807f2a606215c6ec99502',1,'nrlmsise_input']]],
   ['f107a',['f107A',['../structnrlmsise__input.html#a067d86f0e8c35a6d2b3c9acf0d4a2b40',1,'nrlmsise_input']]],
   ['f_5fevalmask',['f_evalmask',['../PIAACMCsimul_8c.html#a48f58432441d3c3228338b19dc35d9ef',1,'PIAACMCsimul.c']]],
@@ -100,6 +100,7 @@ var searchData=
   ['frame_5fselect_5fpsf',['frame_select_PSF',['../AtmosphericTurbulence_8c.html#aca754dcf8b7185e34073afd3b4fad05e',1,'frame_select_PSF(char *logfile, long NBfiles, float frac):&#160;AtmosphericTurbulence.c'],['../AtmosphericTurbulence_8h.html#aca754dcf8b7185e34073afd3b4fad05e',1,'frame_select_PSF(char *logfile, long NBfiles, float frac):&#160;AtmosphericTurbulence.c']]],
   ['framesave',['framesAve',['../structAOLOOPCONTROL__CONF.html#a58b166cf224e4fd10f35e15beda99b65',1,'AOLOOPCONTROL_CONF']]],
   ['fratio',['Fratio',['../structMIRRORPIAACMCDESIGN.html#a3b0f3173d2d873d123b57107ea7f4118',1,'MIRRORPIAACMCDESIGN']]],
+  ['free',['free',['../calc__bison_8c.html#af07d89f5ceaea0c7c8252cc41fd75f37',1,'calc_bison.c']]],
   ['free_5ffft',['free_fft',['../fft_8c.html#a407aad4a96dd2d7810194e30742a64cd',1,'fft.c']]],
   ['free_5fresnode',['free_resnode',['../kdtree_8c.html#aa809c41131ed043aab5ea2f7806fa458',1,'kdtree.c']]],
   ['fresnel_5fpropagate_5fcube',['Fresnel_propagate_cube',['../WFpropagate_8c.html#a51dd7497bf3731b8d15ba9b251ee33c1',1,'Fresnel_propagate_cube(char *IDcin_name, char *IDout_name_amp, char *IDout_name_pha, double PUPIL_SCALE, double zstart, double zend, long NBzpts, double lambda):&#160;WFpropagate.c'],['../WFpropagate_8h.html#a51dd7497bf3731b8d15ba9b251ee33c1',1,'Fresnel_propagate_cube(char *IDcin_name, char *IDout_name_amp, char *IDout_name_pha, double PUPIL_SCALE, double zstart, double zend, long NBzpts, double lambda):&#160;WFpropagate.c']]],

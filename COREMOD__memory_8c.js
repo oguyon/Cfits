@@ -30,6 +30,8 @@ var COREMOD__memory_8c =
     [ "create_image_shared_cli", "COREMOD__memory_8c.html#a2403c21c1f08e17013ecbb4fac907de0", null ],
     [ "create_ushort_image_shared_cli", "COREMOD__memory_8c.html#a27bcbb2fe73ba3b55da7aae9ef2b9f43", null ],
     [ "create_variable_ID", "COREMOD__memory_8c.html#a4a64cdffe7e8563c463a8483c9092197", null ],
+    [ "create_variable_long_ID", "COREMOD__memory_8c.html#ab4d2e779c20417a997462e9a99386748", null ],
+    [ "create_variable_string_ID", "COREMOD__memory_8c.html#a0ae925186d7fad61c62286a01a36ba35", null ],
     [ "delete_image_ID", "COREMOD__memory_8c.html#a522d41cb8c1210c034746b0d9b69cfbf", null ],
     [ "delete_image_ID_cli", "COREMOD__memory_8c.html#a7c169aeb0108bdc9e8dad258dcc8d0fb", null ],
     [ "delete_image_ID_prefix", "COREMOD__memory_8c.html#acbfc6ae9b2098ec930d58453b5bf2a54", null ],

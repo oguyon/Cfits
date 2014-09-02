@@ -15,11 +15,10 @@ var calc__bison_8h =
     [ "TKNVAR", "calc__bison_8h.html#a152e7ea3d794ca2d5b0c85a7fe7c0e3f", null ],
     [ "TKVAR", "calc__bison_8h.html#a712c85f9ad28338b601446486b173544", null ],
     [ "YYDEBUG", "calc__bison_8h.html#a853b3bfad6d2b2ff693dce81182e0c2e", null ],
-    [ "yystype", "calc__bison_8h.html#a4ccf5315e8f5c1cec48ec67ca1771e3a", null ],
     [ "YYSTYPE_IS_DECLARED", "calc__bison_8h.html#af0232d21120b2cfc5e5f82f0fbadab3c", null ],
     [ "YYSTYPE_IS_TRIVIAL", "calc__bison_8h.html#a2e3dbf169c5ee24cf6af37c61cf3995d", null ],
     [ "YYTOKENTYPE", "calc__bison_8h.html#a69ca0fbcc6d7aa5e8f47b11fc0048208", null ],
-    [ "YYSTYPE", "calc__bison_8h.html#a09fb1f7c65e10ed0f0c1aa8ef7ce16b5", null ],
+    [ "YYSTYPE", "calc__bison_8h.html#ac56824fbd095909aa72c2a98afb4b9f0", null ],
     [ "yytokentype", "calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9", [
       [ "TKNUMl", "calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aa0997abca8c659e982c08f4832d9de07", null ],
       [ "TKNUMf", "calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a201a8ab59571d58582381d4f34f173db", null ],
@@ -48,6 +47,6 @@ var calc__bison_8h =
       [ "TKFUNC_imd_d", "calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9add84060fc0a5a780ef79d3bbede46df0", null ],
       [ "NEG", "calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3", null ]
     ] ],
-    [ "yyparse", "calc__bison_8h.html#acd8617a8f2ac0de8bc1cc032cf449e19", null ],
+    [ "yyparse", "calc__bison_8h.html#a847a2de5c1c28c9d7055a2b89ed7dad7", null ],
     [ "yylval", "calc__bison_8h.html#a539b86ee4bb46824a194f22eb69903d9", null ]
 ];

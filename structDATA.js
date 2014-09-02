@@ -18,7 +18,6 @@ var structDATA =
     [ "NB_MAX_IMAGE", "structDATA.html#a2522406c33b8f890757cfbd8db858f77", null ],
     [ "NB_MAX_MODULE", "structDATA.html#aa3ce94f1c13e2a2b3acc31caca1f3b95", null ],
     [ "NB_MAX_VARIABLE", "structDATA.html#adbdde6182898eaf675b02e337dc93750", null ],
-    [ "NB_MAX_VARIABLELONG", "structDATA.html#a13ee2e6cccc1746762217451a5e37759", null ],
     [ "NBcmd", "structDATA.html#ab3ecb17b2561794d854efcbc47584b19", null ],
     [ "NBKEWORD_DFT", "structDATA.html#aece2a33a30b5f15d8250cee2a8f0aa02", null ],
     [ "NBmodule", "structDATA.html#a4ef780e882fa0d3ad2462be54dc58f4e", null ],
@@ -29,6 +28,5 @@ var structDATA =
     [ "rndgen", "structDATA.html#a819c0e911d771dbb7da0dbf26e993fc2", null ],
     [ "SAVEDIR", "structDATA.html#a883b88f5c5cca024bfc4240cda302dd7", null ],
     [ "SHARED_DFT", "structDATA.html#a64d5b0ed5d5cedf11ff69ebf8d30dc20", null ],
-    [ "variable", "structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b", null ],
-    [ "variablelong", "structDATA.html#a7e6eeb1ee2c3a2b51275aef8ebf659e3", null ]
+    [ "variable", "structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b", null ]
 ];

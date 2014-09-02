@@ -33,6 +33,6 @@ var searchData=
   ['tree',['tree',['../structkdres.html#a76eebf2c192b36e4ee8a320969f02b13',1,'kdres']]],
   ['tselec',['tselec',['../AtmosphericTurbulence_8c.html#a33a1cefdccd2b19639ffdf27c6a7abbd',1,'tselec(struct nrlmsise_flags *flags):&#160;AtmosphericTurbulence.c'],['../nrlmsise-00_8c.html#a33a1cefdccd2b19639ffdf27c6a7abbd',1,'tselec(struct nrlmsise_flags *flags):&#160;nrlmsise-00.c']]],
   ['tstart',['tstart',['../structSCEXAO__DISPCOMB__CONF.html#a2caaa62689a2795eacc0a25d777c61f4',1,'SCEXAO_DISPCOMB_CONF::tstart()'],['../structSCEXAO__DMTURBCONF.html#a56d25fd1fb67d71752743fd4cef0806d',1,'SCEXAO_DMTURBCONF::tstart()']]],
-  ['type',['type',['../structsymrec.html#a3ed0bae32ad0e16423a49153484094f8',1,'symrec::type()'],['../structCMDARGTOKEN.html#a268f75c3a394c9466df7aba70dc76c00',1,'CMDARGTOKEN::type()'],['../structIMAGE__KEYWORD.html#a93acc5dd5d573d8e91129b27332e4ef4',1,'IMAGE_KEYWORD::type()']]],
+  ['type',['type',['../structsymrec.html#a3ed0bae32ad0e16423a49153484094f8',1,'symrec::type()'],['../structCMDARGTOKEN.html#a268f75c3a394c9466df7aba70dc76c00',1,'CMDARGTOKEN::type()'],['../structIMAGE__KEYWORD.html#a93acc5dd5d573d8e91129b27332e4ef4',1,'IMAGE_KEYWORD::type()'],['../structVARIABLE.html#a84814331e54156c3ac9fbe6d2b851daf',1,'VARIABLE::type()']]],
   ['typesize',['TYPESIZE',['../CLIcore_8h.html#aadfaed58c87f621d2863f9f598db072e',1,'CLIcore.h']]]
 ];

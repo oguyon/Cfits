@@ -9,7 +9,6 @@ var CLIcore_8h =
     [ "IMAGE_METADATA", "structIMAGE__METADATA.html", "structIMAGE__METADATA" ],
     [ "IMAGE", "structIMAGE.html", "structIMAGE" ],
     [ "VARIABLE", "structVARIABLE.html", "structVARIABLE" ],
-    [ "VARIABLELONG", "structVARIABLELONG.html", "structVARIABLELONG" ],
     [ "DATA", "structDATA.html", "structDATA" ],
     [ "CDtype", "CLIcore_8h.html#ad49060c0e2f0e4ea39439adba9c2f317", null ],
     [ "CFITSEXIT", "CLIcore_8h.html#ab0fa6bd9911ebb72f34711131116e04d", null ],
