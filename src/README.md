@@ -1,8 +1,12 @@
-# Command Line Interface (CLI) 
+Cfits: source code and development environment for image analysis (and much more) {#mainpage}
+=========
 
 
 
-## COMMAND LINE OPTIONS
+## Command Line Interface (CLI)   
+
+
+### COMMAND LINE OPTIONS
 
 \verbatim
   -h, --help 
@@ -36,17 +40,18 @@
 
 ## SYNTAX RULES, PARSER
 
-Spaces are used to separate arguments. Number of spaces irrelevant.\n
-Comments are written after the special character #\n
-If a command is not found, the input string will be interpreted as an arithmetic operation (See ARITHMETIC OPERATIONS below)\n
- <command> <arg1> <arg2>   # comment\n
+- Spaces are used to separate arguments. Number of spaces irrelevant.
+- Comments are written after the special character #
+- If a command is not found, the input string will be interpreted as an arithmetic operation (See ARITHMETIC OPERATIONS below)
+
+<command> <arg1> <arg2>   # comment
 
 
 ## TAB COMPLETION
 
-Tab completion is provided and behaves as follows:\n
-  first argument:        try to match command, then image, then filename\n
-  additional arguments:  try to match image, then filename\n
+Tab completion is provided and behaves as follows:
+- first argument:        try to match command, then image, then filename
+- additional arguments:  try to match image, then filename
 
 ## INPUT
 
