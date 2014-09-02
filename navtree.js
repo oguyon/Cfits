@@ -1,10 +1,10 @@
 var NAVTREE =
 [
   [ "Cfits", "index.html", [
-    [ "Command line interpreter", "index.html", null ],
     [ "Image analysis tools", "md_README.html", null ],
+    [ "Command line interpreter", "md_src_CLIcore.html", null ],
     [ "PIAACMC coronagraph design", "md_src_PIAACMCsimul_README.html", null ],
-    [ "Command Line Interface (CLI)", "md_src_README.html", null ],
+    [ "Cfits: source code and development environment for image analysis (and much more)", "md_src_README.html", null ],
     [ "Data Structures", null, [
       [ "Data Structures", "annotated.html", "annotated" ],
       [ "Data Structure Index", "classes.html", null ],
