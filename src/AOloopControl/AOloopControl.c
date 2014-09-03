@@ -331,6 +331,7 @@ int AOloopControl_setmultfblock_cli()
 
 
 
+
 int AOloopControl_InjectMode_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
@@ -690,7 +691,7 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
     sprintf(fname, "AOloop%ld.conf", loopnb);
 
     fp = fopen(fname, "w");
-
+	fprintf(fp, "loopname	pyramidSimul	loop name\n");
     fprintf(fp, "DMname		dmdisp1		[shared memory] DM displacement image - command\n");
     fprintf(fp, "DMnameRM	dmdisp2		[shared memory] DM displacement for RM commands\n");
     fprintf(fp, "WFSname		wfs_sim		[shared memory] WFS image\n");
@@ -715,150 +716,161 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
 
 long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1)
 {
-  long ID0;
-  long ID;
-  long k, ii, jj;
+    long ID0;
+    long ID;
+    long k, ii, jj;
 
-  long IDmask;
+    long IDmask;
 
-  double ave;
-  double offset;
-  double totm;
-  double totvm;
-  
-  double a0=0.88;
-  double b0=40.0;
+    double ave;
+    double offset;
+    double totm;
+    double totvm;
 
-  double a1=1.2;
-  double b1=12.0;
+    double a0=0.88;
+    double b0=40.0;
 
-  double x, y, r;
-  double val0, val1, rms;
-  
-  long IDtm, IDem;
-  long IDeModes;
+    double a1=1.2;
+    double b1=12.0;
 
-  long kelim = 20;
-  double coeff;
-  long citer;
-  long NBciter = 200;
-  long IDg;
+    double x, y, r;
+    double val0, val1, rms;
 
-  // if Mmask exists, use it, otherwise create it
-  //
-  IDmask = image_ID("Mmask");
-  if(IDmask==-1)
+    long IDtm, IDem;
+    long IDeModes;
+
+    long kelim = 20;
+    double coeff;
+    long citer;
+    long NBciter = 200;
+    long IDg;
+
+    // if Mmask exists, use it, otherwise create it
+    //
+    IDmask = image_ID("Mmask");
+    if(IDmask==-1)
     {
-      IDmask = create_2Dimage_ID("Mmask", msize, msize);
-      for(ii=0;ii<msize;ii++)
-	for(jj=0;jj<msize;jj++)
-	  {
-	    x = 1.0*ii-xc;
-	    y = 1.0*jj-yc;
-	    r = sqrt(x*x+y*y)/r1;
-	    val1 = 1.0-exp(-pow(a1*r,b1));
-	    r = sqrt(x*x+y*y)/r0;
-	    val0 = exp(-pow(a0*r,b0));
-	    data.image[IDmask].array.F[jj*msize+ii] = val0*val1;
-	  }
-      //      save_fits("Mmask", "!Mmask.fits");    
-    }
-      
-  totm = arith_image_total("Mmask");
-  msize = data.image[IDmask].md[0].size[0];
-
-
-
-  
-
-
-
-
-  linopt_imtools_makeCPAmodes("CPAmodes", msize, CPAmax, deltaCPA, 0.5*msize, 1.2, 0);
-  ID0 = image_ID("CPAmodes");
-  list_image_ID();
-  printf("  %ld %ld %ld\n", msize, msize, data.image[ID0].md[0].size[2]-1 );
-  ID = create_3Dimage_ID(ID_name, msize, msize, data.image[ID0].md[0].size[2]-1);
-  
-  for(k=0;k<data.image[ID0].md[0].size[2]-1;k++)
-    {
-
-      // Remove excluded modes
-      IDeModes = image_ID("emodes");
-      if(IDeModes!=-1)
-	{
-	  IDtm = create_2Dimage_ID("tmpmode", msize, msize);
-	  
-	  
-
-	  for(ii=0;ii<msize*msize;ii++)
-	    data.image[IDtm].array.F[ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
-	  linopt_imtools_image_fitModes("tmpmode", "emodes", "Mmask", 1.0e-5, "lcoeff", 0);
-	  linopt_imtools_image_construct("emodes", "lcoeff", "em00");
-	  delete_image_ID("lcoeff");
-	  IDem = image_ID("em00");
-	  
-	  coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
-	  if(k>2.0*kelim)
-	    coeff = 1.0;
-	  for(ii=0;ii<msize*msize;ii++)
-	    {
-	      data.image[ID].array.F[k*msize*msize+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];	  	  
-	    }
-	  
-	  
-	  delete_image_ID("em00");
-	  delete_image_ID("tmpmode");
-	} 
-      
-      ave = 0.0;
-      totvm = 0.0;
-      for(ii=0;ii<msize*msize;ii++)
-	{	  
-	  //	  data.image[ID].array.F[k*msize*msize+ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];	  
-	  totvm += data.image[ID].array.F[k*msize*msize+ii]*data.image[IDmask].array.F[ii];
-	}
-      offset = totvm/totm;
-      
-      for(ii=0;ii<msize*msize;ii++)
-	{
-	  data.image[ID].array.F[k*msize*msize+ii] -= offset;
-	  data.image[ID].array.F[k*msize*msize+ii] *= data.image[IDmask].array.F[ii];	
-	}
-
-      offset = 0.0;
-      for(ii=0;ii<msize*msize;ii++)
-	offset += data.image[ID].array.F[k*msize*msize+ii];
-      
-      rms = 0.0;
-      for(ii=0;ii<msize*msize;ii++)
-	{
-	  data.image[ID].array.F[k*msize*msize+ii] -= offset/msize/msize;
-	  rms += data.image[ID].array.F[k*msize*msize+ii]*data.image[ID].array.F[k*msize*msize+ii];
-	}
-      rms = sqrt(rms/totm);
-
-      for(ii=0;ii<msize*msize;ii++)
-	data.image[ID].array.F[k*msize*msize+ii] /= sqrt(rms);	  
+        IDmask = create_2Dimage_ID("Mmask", msize, msize);
+        for(ii=0; ii<msize; ii++)
+            for(jj=0; jj<msize; jj++)
+            {
+                x = 1.0*ii-xc;
+                y = 1.0*jj-yc;
+                r = sqrt(x*x+y*y)/r1;
+                val1 = 1.0-exp(-pow(a1*r,b1));
+                r = sqrt(x*x+y*y)/r0;
+                val0 = exp(-pow(a0*r,b0));
+                data.image[IDmask].array.F[jj*msize+ii] = val0*val1;
+            }
+		save_fits("Mmask", "!Mmask.fits");
     }
 
-  for(citer=0;citer<NBciter;citer++)
-    {
-      printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
-      gauss_filter(ID_name, "modeg", 4.0*(NBciter-citer)/NBciter, 5);
-      IDg = image_ID("modeg");
-      for(k=0;k<data.image[ID].md[0].size[2];k++)
-	{
-	  for(ii=0;ii<msize*msize;ii++)
-	    if(data.image[IDmask].array.F[ii]<0.98)
-	      data.image[ID].array.F[k*msize*msize+ii] = data.image[IDg].array.F[k*msize*msize+ii];
-	}
-      delete_image_ID("modeg");
-    }
-    
+    totm = arith_image_total("Mmask");
+    msize = data.image[IDmask].md[0].size[0];
 
-  return(ID);
+
+
+
+
+
+
+
+    linopt_imtools_makeCPAmodes("CPAmodes", msize, CPAmax, deltaCPA, 0.5*msize, 1.2, 0);
+    ID0 = image_ID("CPAmodes");
+    list_image_ID();
+    printf("  %ld %ld %ld\n", msize, msize, data.image[ID0].md[0].size[2]-1 );
+    ID = create_3Dimage_ID(ID_name, msize, msize, data.image[ID0].md[0].size[2]-1);
+
+    for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
+    {
+
+        // Remove excluded modes
+        IDeModes = image_ID("emodes");
+        if(IDeModes!=-1)
+        {
+            IDtm = create_2Dimage_ID("tmpmode", msize, msize);
+
+
+
+            for(ii=0; ii<msize*msize; ii++)
+                data.image[IDtm].array.F[ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
+            linopt_imtools_image_fitModes("tmpmode", "emodes", "Mmask", 1.0e-5, "lcoeff", 0);
+            linopt_imtools_image_construct("emodes", "lcoeff", "em00");
+            delete_image_ID("lcoeff");
+            IDem = image_ID("em00");
+
+            coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+            if(k>2.0*kelim)
+                coeff = 1.0;
+            for(ii=0; ii<msize*msize; ii++)
+            {
+                data.image[ID].array.F[k*msize*msize+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
+            }
+
+
+            delete_image_ID("em00");
+            delete_image_ID("tmpmode");
+        }
+		else
+		{
+			IDtm = create_2Dimage_ID("tmpmode", msize, msize);
+            for(ii=0; ii<msize*msize; ii++)
+                data.image[IDtm].array.F[ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
+ 			 for(ii=0; ii<msize*msize; ii++)
+                data.image[ID].array.F[k*msize*msize+ii] = data.image[IDtm].array.F[ii];
+           delete_image_ID("tmpmode");
+ 		}
+
+
+        ave = 0.0;
+        totvm = 0.0;
+        for(ii=0; ii<msize*msize; ii++)
+        {
+            //	  data.image[ID].array.F[k*msize*msize+ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
+            totvm += data.image[ID].array.F[k*msize*msize+ii]*data.image[IDmask].array.F[ii];
+        }
+        offset = totvm/totm;
+
+        for(ii=0; ii<msize*msize; ii++)
+        {
+            data.image[ID].array.F[k*msize*msize+ii] -= offset;
+            data.image[ID].array.F[k*msize*msize+ii] *= data.image[IDmask].array.F[ii];
+        }
+
+        offset = 0.0;
+        for(ii=0; ii<msize*msize; ii++)
+            offset += data.image[ID].array.F[k*msize*msize+ii];
+
+        rms = 0.0;
+        for(ii=0; ii<msize*msize; ii++)
+        {
+            data.image[ID].array.F[k*msize*msize+ii] -= offset/msize/msize;
+            rms += data.image[ID].array.F[k*msize*msize+ii]*data.image[ID].array.F[k*msize*msize+ii];
+        }
+        rms = sqrt(rms/totm);
+
+        for(ii=0; ii<msize*msize; ii++)
+            data.image[ID].array.F[k*msize*msize+ii] /= sqrt(rms);
+    }
+
+    for(citer=0; citer<NBciter; citer++)
+    {
+        printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
+        gauss_filter(ID_name, "modeg", 4.0*(NBciter-citer)/NBciter, 5);
+        IDg = image_ID("modeg");
+        for(k=0; k<data.image[ID].md[0].size[2]; k++)
+        {
+            for(ii=0; ii<msize*msize; ii++)
+                if(data.image[IDmask].array.F[ii]<0.98)
+                    data.image[ID].array.F[k*msize*msize+ii] = data.image[IDg].array.F[k*msize*msize+ii];
+        }
+        delete_image_ID("modeg");
+    }
+
+
+    return(ID);
 }
+
 
 
 
