@@ -111,14 +111,17 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_README.html','');
 </ul>
 <h2>Step-by-step instruction for typical operation</h2>
 <p>Control loops are numbered - this is how multiple loops can work together. &lt;LOOPNB&gt; can take any positive integer value (0, 1, 2, etc...)</p>
+<p>Important note: some commands below are stand-alone executable scripts, others are commands to be issued within the main execuatable, which are shown starting with "&gt; ".</p>
 <h3>(1) CREATE/EDIT AOloop&lt;LOOPNB&gt;.conf</h3>
 <p>The configuration for running the AO loop is in this file. Shared memory images names are specified, as well as loop configuration paramaters.</p>
 <p>The function <a class="el" href="AOloopControl_8h.html#a5c3b0bdcff0ed83ed3f9f217b14c014d">AOloopControl_makeTemplateAOloopconf(long loopnb)</a> creates a template that can be edited: </p>
-<pre class="fragment">aolmkconf 0
+<pre class="fragment">&lt;executable&gt;
+&gt; aolmkconf 0
 </pre><h3>(2) CREATE MODES</h3>
 <p>For purely Fourier Modes: </p>
 <pre class="fragment">./mkModes &lt;CPAmax&gt;
-</pre><p>The mode file name is fmodes&lt;CPAmax&gt;.fits.</p>
+</pre><p>CPAmax: maximum spatial frequency in the basis of modes, in unit of Cycle Per Aperture.</p>
+<p>The mode file name is fmodes&lt;CPAmax&gt;.fits.</p>
 <p>Make sure this name matches the name specified in APloop&lt;LOOPNB&gt;.conf</p>
 <h3>(3) FINDING LOOP LATENCY (OPTIONAL)</h3>
 <pre class="fragment">./MeasureTD
@@ -136,12 +139,12 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_README.html','');
 <h3>(6) RUN LOOP</h3>
 <p>Start TWO instances of the program</p>
 <p>In process #1, type : </p>
-<pre class="fragment">aolnb &lt;LOOPNB&gt;
-aolrun
+<pre class="fragment">&gt; aolnb &lt;LOOPNB&gt;
+&gt; aolrun
 </pre><p>In process #2, type : </p>
-<pre class="fragment">aolnb &lt;LOOPNB&gt;
-aolsetgain &lt;loopgain&gt;
-aolon
+<pre class="fragment">&gt; aolnb &lt;LOOPNB&gt;
+&gt; aolsetgain &lt;loopgain&gt;
+&gt; aolon
 </pre><p>Other useful commands :</p>
 <ul>
 <li>aolsetmaxlim &lt;maximum value="" for="" each="" mode&gt;=""&gt;</li>
@@ -149,7 +152,7 @@ aolon
 </ul>
 <h3>(7) LAUNCH MONITOR</h3>
 <p>Start new process, type: </p>
-<pre class="fragment">aolmon &lt;frequ[Hz]&gt; &lt;number of columns&gt;
+<pre class="fragment">&gt; aolmon &lt;frequ[Hz]&gt; &lt;number of columns&gt;
 </pre><p>For each mode, the following info is displayed: </p>
 <pre class="fragment">[&lt;gain factor&gt; &lt;limit factor&gt; &lt;multiplier factor&gt;]   &lt;current DM value&gt; &lt;last WFS estimate&gt; &lt;average val&gt; &lt;RMS&gt; 
 </pre> </div></div><!-- contents -->
@@ -157,7 +160,7 @@ aolon
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Sep 2 2014 14:01:43 for Cfits by
+    <li class="footer">Generated on Tue Sep 2 2014 14:09:19 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
