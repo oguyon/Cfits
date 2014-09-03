@@ -128,6 +128,12 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_README.html','');
 </pre><p>CPAmax: maximum spatial frequency in the basis of modes, in unit of Cycle Per Aperture.</p>
 <p>The mode file name is fmodes&lt;CPAmax&gt;.fits.</p>
 <p>Make sure this name matches the name specified in AOloop&lt;LOOPNB&gt;.conf</p>
+<p>This script calls the function <a class="el" href="AOloopControl_8h.html#af026d5c0c10a972e3627d65652cff9e3">AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1)</a> in <a class="el" href="AOloopControl_8c.html">AOloopControl.c</a>.</p>
+<p>Optional input:</p>
+<ul>
+<li>TPmask.fits : telescope pupil mask. If this file is present in the directory, it will be used as a multiplicative mask (with convolotion to avoid sharp transitions) to the modes</li>
+<li>TPind.fits : modes to be excluded from the control</li>
+</ul>
 <p>mkModes source:</p>
 <pre class="fragment"># arg: maxCPA
 
@@ -209,7 +215,7 @@ EOF</pre><h3>(6) RUN LOOP</h3>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Sep 2 2014 14:29:14 for Cfits by
+    <li class="footer">Generated on Tue Sep 2 2014 14:59:26 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
