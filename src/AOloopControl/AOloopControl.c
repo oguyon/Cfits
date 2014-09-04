@@ -2264,360 +2264,368 @@ int set_DM_modesRM(long loop)
 
 
 
-// measures response matrix AND reference 
+// measures response matrix AND reference
 
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)
 {
-  long NBloops;
-  long kloop;
-  long delayus = 0; // delay in us
-  long ii, i, imax;
-  int Verbose = 1;
-  long k1, k, k2;
-  char fname[200];
-  char name0[200];
-  char name[200];
-  
-  long kk;
-  long RespMatNBframes;
-  long IDrmc;
-  long kc;
+    long NBloops;
+    long kloop;
+    long delayus = 0; // delay in us
+    long ii, i, imax;
+    int Verbose = 1;
+    long k1, k, k2;
+    char fname[200];
+    char name0[200];
+    char name[200];
 
-  int recordCube = 1;
-  long IDeigenmodes;
+    long kk;
+    long RespMatNBframes;
+    long IDrmc;
+    long kc;
 
-  long frameDelay = 0;
-  long frameDelayMax = 50;
-  long double RMsig;
-  long double RMsigold;
-  long kc0;
-  FILE *fp;
-  long NBexcl = 2; // number of frames excluded between DM mode changes
-  long kc0min, kc0max;
-  long IDrmtest;
-  int vOK;
+    int recordCube = 1;
+    long IDeigenmodes;
 
-
-  long iter;
-  long IDrmi;
-  float beta = 0.0;
-  float gain = 0.001;
-  long IDrmcumul;
-  long IDrefi;
-  long IDrefcumul;
-
-  long *sizearray;
-
-  long IDrespM;
-  long IDrefWFS;
+    long frameDelay = 0;
+    long frameDelayMax = 50;
+    long double RMsig;
+    long double RMsigold;
+    long kc0;
+    FILE *fp;
+    long NBexcl = 2; // number of frames excluded between DM mode changes
+    long kc0min, kc0max;
+    long IDrmtest;
+    int vOK;
 
 
-  sizearray = (long*) malloc(sizeof(long)*3);
+    long iter;
+    long IDrmi;
+    float beta = 0.0;
+    float gain = 0.001;
+    long IDrmcumul;
+    long IDrefi;
+    long IDrefcumul;
+
+    long *sizearray;
+
+    long IDrespM;
+    long IDrefWFS;
 
 
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(0);
+    sizearray = (long*) malloc(sizeof(long)*3);
 
 
- 
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(0);
 
-  if(fDelay==-1)
+
+
+
+    if(fDelay==-1)
     {
-      kc0min = 0;
-      kc0max = frameDelayMax;
+        kc0min = 0;
+        kc0max = frameDelayMax;
     }
-  else
+    else
     {
-      kc0min = fDelay;
-      kc0max = fDelay+1;
+        kc0min = fDelay;
+        kc0max = fDelay+1;
     }
 
 
-  RespMatNBframes = nbloop*2*AOconf[loop].NBDMmodes*NbAve;
-  //  printf("%ld frames total\n");
-  // fflush(stdout);
+    RespMatNBframes = nbloop*2*AOconf[loop].NBDMmodes*NbAve;
+    //  printf("%ld frames total\n");
+    // fflush(stdout);
 
-  if(recordCube == 1)
-    IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes+kc0max);
-
-
-
-  
-  printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
-  fflush(stdout);
-  sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    if(recordCube == 1)
+        IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes+kc0max);
 
 
 
 
-
-
-  AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-  //exit(0);
-
-	printf("Importing DM response matrix channel shared memory ...\n");
-  aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
-
-printf("Importing WFS camera image shared memory ... \n");
-  aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
-
-
-
-  sprintf(name, "imWFS1RM_%ld", loop);
-  sizearray[0] = AOconf[loop].sizexWFS;
-  sizearray[1] = AOconf[loop].sizeyWFS;
-  aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+    printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
+    fflush(stdout);
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
 
 
 
 
-  
-  sprintf(name, "DMmodes_%ld", loop);
-  aoconfID_DMmodes = read_sharedmem_image(name);
-  
 
-  IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-  IDrmcumul = create_3Dimage_ID("RMcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+    //exit(0);
 
-  IDrefi = create_2Dimage_ID("REFiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-  IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
- 
-  sizearray[0] =  AOconf[loop].NBDMmodes;
-  printf("size = %ld\n", sizearray[0]);
-  fflush(stdout);
-  aoconfID_cmd_modesRM = create_image_ID("RMmodes", 1, sizearray, FLOAT, 1, 0);
-  
-  
-  
-  IDrespM = create_3Dimage_ID("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-  IDrefWFS = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    printf("Importing DM response matrix channel shared memory ...\n");
+    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
 
-
- 
-  for(iter=0;iter<NBiter;iter++)
-    {  
-      NBloops = nbloop;
-      
-      // initialize RMiter to zero
-      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	for(k=0;k<AOconf[loop].NBDMmodes;k++)
-	  data.image[IDrmi].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
-      
-      
-      // initialize reference to zero
-      
-      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	data.image[IDrefi].array.F[ii] = 0.0;
-      
-      
-      printf("\n");
-      printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
-      fflush(stdout);
-      sleep(1);
-      
-      
-      
-      for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
-	data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
-      
-      
-
-  
-      kc = 0;
-      for (kloop = 0; kloop < NBloops; kloop++)
-	{
-	  if(Verbose)
-	    {
-	      printf("\n Loop %ld / %ld (%f)\n", kloop, NBloops, amp);
-	      fflush(stdout);
-	    }
-	  
-	  for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
-	    {	 
-	      for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
-		data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
-	      
-	      // positive 
-	      data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
-	      
-
-	  
-	      set_DM_modesRM(loop);
-	      usleep(delayus);
-	      
-	
-	      for(kk=0;kk<NbAve;kk++)
-		{
-		  Average_cam_frames(loop, 1);
-		  
-		  
-		  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-		    {		      
-		      data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];	
-		      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
-		    }
-		  kc++;
-		}
+    printf("Importing WFS camera image shared memory ... \n");
+    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
 
 
 
-	      // negative
-	      data.image[aoconfID_cmd_modesRM].array.F[k1] = 0.0-amp;
-	      set_DM_modesRM(loop);
-	      
-	      usleep(delayus);
-	      
-	      for(kk=0;kk<NbAve;kk++)
-		{
-		  Average_cam_frames(loop, 1);
-		  
-		  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-		    {
-		      data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
-		      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
-		    }	
-		  kc++;
-		}
-	    }
-	}
-      for(kk=0;kk<kc0max;kk++)
-	{
-	  printf("additional frame %ld [%ld/%ld]... ", kk, kc, RespMatNBframes+kc0max);
-	  fflush(stdout);
-	  Average_cam_frames(loop, 1);
-	  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	    {
-	      data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
-	      data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];	      
-	    }
-	  kc++;
-	  printf("done\n");
-	  fflush(stdout);
-	}
-      
-      
-      for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
-	data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
-      set_DM_modesRM(loop);
-      
-      
-      
+    sprintf(name, "imWFS1RM_%ld", loop);
+    sizearray[0] = AOconf[loop].sizexWFS;
+    sizearray[1] = AOconf[loop].sizeyWFS;
+    aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 
 
 
 
-      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
-	  data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*NbAve);
-      
-      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
-      
-      printf("Acquisition done, compiling results...");
-      fflush(stdout);
-      
-   
-      
-      
-      // PROCESS RMCUBE  
-      fp = fopen("TimeDelayRM.txt", "w");
-      RMsig = 0.0;
-      vOK = 1;
-      IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-      for(kc0=kc0min;kc0<kc0max;kc0++)
-	{
-	  // initialize RM to zero
-	  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	    for(k=0;k<AOconf[loop].NBDMmodes;k++)
-	      data.image[IDrmtest].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
-	  
-	  
-	  // initialize reference to zero  
-	  kc = kc0;
-	  for (kloop = 0; kloop < NBloops; kloop++)
-	    {
-	      for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
-		{	 
-		  // positive
-		  for(kk=0;kk<NbAve-NBexcl;kk++)
-		    {		  
-		      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-			data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
-		      kc++;
-		    }
-		  kc+=NBexcl;
-		  
-		  // negative	  
-		  for(kk=0;kk<NbAve-NBexcl;kk++)
-		    {
-		      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-			data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
-		      kc++;
-		    }
-		  kc+=NBexcl;
-		}
-	    }
-	  RMsigold = RMsig; 
-	  RMsig = 0.0;
-	  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	    for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
-	      {
-		data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*(NbAve-NBexcl));
-		RMsig += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii]*data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
-	      }
-	  
-	  if(RMsig<RMsigold)
-	    vOK = 0;
-	  printf("Delay = %ld frame(s)   ->  RM signal = %lf   %d\n", kc0, (double) RMsig, vOK);
-	  fprintf(fp, "%ld %lf\n", kc0, (double) RMsig);      
-	  if(RMsig<RMsigold)
-	    vOK = 0;
 
-	  if(vOK==1) // ADOPT THIS MATRIX
-	    {
-	      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-		for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
-		  data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];      
-	    }
-	}
-      fclose(fp);
+
+    sprintf(name, "DMmodes_%ld", loop);
+    aoconfID_DMmodes = read_sharedmem_image(name);
+
+
+    IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+    IDrmcumul = create_3Dimage_ID("RMcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+
+    IDrefi = create_2Dimage_ID("REFiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+
+    sizearray[0] =  AOconf[loop].NBDMmodes;
+    printf("size = %ld\n", sizearray[0]);
+    fflush(stdout);
+    aoconfID_cmd_modesRM = create_image_ID("RMmodes", 1, sizearray, FLOAT, 1, 0);
 
 
 
+    IDrespM = create_3Dimage_ID("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+    IDrefWFS = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-      printf("\n");
-      fflush(stdout);
-      delete_image_ID("rmtest");
-  
-	
-      beta = (1.0-gain)*beta + gain;
-      for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-	{
-	  data.image[IDrefcumul].array.F[ii] = (1.0-gain)*data.image[IDrefcumul].array.F[ii] + gain*data.image[IDrefi].array.F[ii];
-	  
-	  data.image[IDrefWFS].array.F[ii] = data.image[IDrefcumul].array.F[ii]/beta;
-	
+
+
+    for(iter=0; iter<NBiter; iter++)
+    {
+        NBloops = nbloop;
+
+        // initialize RMiter to zero
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            for(k=0; k<AOconf[loop].NBDMmodes; k++)
+                data.image[IDrmi].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
+
+
+        // initialize reference to zero
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDrefi].array.F[ii] = 0.0;
+
+
+        printf("\n");
+        printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
+        fflush(stdout);
+        sleep(1);
+
+
+
+        for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
+            data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
+
+
 		
-	  
-	  for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
-	    {
-	      data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] = (1.0-gain)*data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] + gain*data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii];
-	      data.image[IDrespM].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii]/beta;
-	    }
-	}
 
-      save_fits("refwfsacq", "!refwfs.fits");
-      save_fits("respmacq", "!respm.fits");
+        kc = 0;
+        for (kloop = 0; kloop < NBloops; kloop++)
+        {
+            if(Verbose)
+            {
+                printf("\n Loop %ld / %ld (%f)\n", kloop, NBloops, amp);
+                fflush(stdout);
+            }
+
+            for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
+            {
+				printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
+				fflush(stdout);
+				
+                for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
+                    data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
+
+                // positive
+                data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
+
+
+
+                set_DM_modesRM(loop);
+                usleep(delayus);
+
+
+                for(kk=0; kk<NbAve; kk++)
+                {
+                    Average_cam_frames(loop, 1);
+
+
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    {
+                        data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+                        data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+                    }
+                    kc++;
+                }
+
+
+
+                // negative
+                data.image[aoconfID_cmd_modesRM].array.F[k1] = 0.0-amp;
+                set_DM_modesRM(loop);
+
+                usleep(delayus);
+
+                for(kk=0; kk<NbAve; kk++)
+                {
+                    Average_cam_frames(loop, 1);
+
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    {
+                        data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+                        data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+                    }
+                    kc++;
+                }
+            }
+            
+            printf("\n");
+            fflush(stdout);
+        }
+        
+        for(kk=0; kk<kc0max; kk++)
+        {
+            printf("additional frame %ld [%ld/%ld]... ", kk, kc, RespMatNBframes+kc0max);
+            fflush(stdout);
+            Average_cam_frames(loop, 1);
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+                data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+            }
+            kc++;
+            printf("done\n");
+            fflush(stdout);
+        }
+
+
+        for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
+            data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
+        set_DM_modesRM(loop);
+
+
+
+
+
+
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
+                data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*NbAve);
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
+
+        printf("Acquisition done, compiling results...");
+        fflush(stdout);
+
+
+
+
+        // PROCESS RMCUBE
+        fp = fopen("TimeDelayRM.txt", "w");
+        RMsig = 0.0;
+        vOK = 1;
+        IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+        for(kc0=kc0min; kc0<kc0max; kc0++)
+        {
+            // initialize RM to zero
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                for(k=0; k<AOconf[loop].NBDMmodes; k++)
+                    data.image[IDrmtest].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
+
+
+            // initialize reference to zero
+            kc = kc0;
+            for (kloop = 0; kloop < NBloops; kloop++)
+            {
+                for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
+                {
+                    // positive
+                    for(kk=0; kk<NbAve-NBexcl; kk++)
+                    {
+                        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                            data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
+                        kc++;
+                    }
+                    kc+=NBexcl;
+
+                    // negative
+                    for(kk=0; kk<NbAve-NBexcl; kk++)
+                    {
+                        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                            data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
+                        kc++;
+                    }
+                    kc+=NBexcl;
+                }
+            }
+            RMsigold = RMsig;
+            RMsig = 0.0;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
+                {
+                    data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*(NbAve-NBexcl));
+                    RMsig += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii]*data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
+                }
+
+            if(RMsig<RMsigold)
+                vOK = 0;
+            printf("Delay = %ld frame(s)   ->  RM signal = %lf   %d\n", kc0, (double) RMsig, vOK);
+            fprintf(fp, "%ld %lf\n", kc0, (double) RMsig);
+            if(RMsig<RMsigold)
+                vOK = 0;
+
+            if(vOK==1) // ADOPT THIS MATRIX
+            {
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
+                        data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
+            }
+        }
+        fclose(fp);
+
+
+
+
+        printf("\n");
+        fflush(stdout);
+        delete_image_ID("rmtest");
+
+
+        beta = (1.0-gain)*beta + gain;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        {
+            data.image[IDrefcumul].array.F[ii] = (1.0-gain)*data.image[IDrefcumul].array.F[ii] + gain*data.image[IDrefi].array.F[ii];
+
+            data.image[IDrefWFS].array.F[ii] = data.image[IDrefcumul].array.F[ii]/beta;
+
+
+
+            for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
+            {
+                data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] = (1.0-gain)*data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii] + gain*data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii];
+                data.image[IDrespM].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmcumul].array.F[k1*AOconf[loop].sizeWFS+ii]/beta;
+            }
+        }
+
+        save_fits("refwfsacq", "!refwfs.fits");
+        save_fits("respmacq", "!respm.fits");
     }
 
-  
 
-  printf("Done\n");
-  free(sizearray);
 
-  return(0);
+    printf("Done\n");
+    free(sizearray);
+
+    return(0);
 }
+
 
 
 
