@@ -758,17 +758,17 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long IDz;
 
     long zindex[10];
-	double zcpa[10];  /// CPA for each Zernike (somewhat arbitrary... used to sort modes in CPA)
-	long IDfreq;
-	
-	long IDmfcpa; /// modesfreqcpa ID
-	
-	
+    double zcpa[10];  /// CPA for each Zernike (somewhat arbitrary... used to sort modes in CPA)
+    long IDfreq;
+
+    long IDmfcpa; /// modesfreqcpa ID
+
+
     /// if Mmask exists, use it, otherwise create it
-    
+
     IDmask = image_ID("Mmask");
-   
-    
+
+
     if(IDmask==-1)
     {
         IDmask = create_2Dimage_ID("Mmask", msize, msize);
@@ -783,26 +783,26 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                 val0 = exp(-pow(a0*r,b0));
                 data.image[IDmask].array.F[jj*msize+ii] = val0*val1;
             }
-   //     save_fits("Mmask", "!Mmask.fits");
-		xc1 = xc;
-		yc1 = yc;
+        //     save_fits("Mmask", "!Mmask.fits");
+        xc1 = xc;
+        yc1 = yc;
     }
-	else /// extract xc and yc from mask
-	{
-		xc1 = 0.0;
-		yc1 = 0.0;
-		totm = 0.0;
-		  for(ii=0; ii<msize; ii++)
+    else /// extract xc and yc from mask
+    {
+        xc1 = 0.0;
+        yc1 = 0.0;
+        totm = 0.0;
+        for(ii=0; ii<msize; ii++)
             for(jj=0; jj<msize; jj++)
             {
                 xc1 += 1.0*ii*data.image[IDmask].array.F[jj*msize+ii];
                 yc1 += 1.0*jj*data.image[IDmask].array.F[jj*msize+ii];
-				totm += data.image[IDmask].array.F[jj*msize+ii];
-			}
-		xc1 /= totm;
-		yc1 /= totm;
-	}
-	
+                totm += data.image[IDmask].array.F[jj*msize+ii];
+            }
+        xc1 /= totm;
+        yc1 /= totm;
+    }
+
     totm = arith_image_total("Mmask");
     msize = data.image[IDmask].md[0].size[0];
 
@@ -814,48 +814,52 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     zindex[0] = 1; // tip
     zcpa[0] = 0.0;
 
-    zindex[1] = 2; // tilt    
-	zcpa[1] = 0.0;
-	
+    zindex[1] = 2; // tilt
+    zcpa[1] = 0.0;
+
     zindex[2] = 4; // focus
-    zcpa[2] = 0.25; 
-    
+    zcpa[2] = 0.25;
+
     zindex[3] = 3; // astig
-	zcpa[3] = 0.4;
-	
+    zcpa[3] = 0.4;
+
     zindex[4] = 5; // astig
     zcpa[4] = 0.4;
-    
+
     zindex[5] = 7; // coma
     zcpa[5] = 0.6;
-    
+
     zindex[6] = 8; // coma
-	zcpa[6] = 0.6;
-	
+    zcpa[6] = 0.6;
+
     zindex[7] = 6; // trefoil
     zcpa[7] = 1.0;
-    
+
     zindex[8] = 9; // trefoil
     zcpa[8] = 1.0;
-    
-    zindex[9] = 12;
-	zcpa[9] = 1.5;
-	
 
+    zindex[9] = 12;
+    zcpa[9] = 1.5;
+
+
+	
     linopt_imtools_makeCPAmodes("CPAmodes", msize, CPAmax, deltaCPA, 0.5*msize, 1.2, 0);
     ID0 = image_ID("CPAmodes");
-IDfreq	= image_ID("cpamodesfreq");
+    
+    IDfreq	= image_ID("cpamodesfreq");
     list_image_ID();
+    
+    
     printf("  %ld %ld %ld\n", msize, msize, data.image[ID0].md[0].size[2]-1 );
     ID = create_3Dimage_ID(ID_name, msize, msize, data.image[ID0].md[0].size[2]-1+NBZ);
-	
-IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ, 1);
+
+    IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ, 1);
 
     /*** Create TTF first */
     zernike_init();
     for(k=0; k<NBZ; k++)
     {
-		data.image[IDmfcpa].array.F[k] = zcpa[k];
+        data.image[IDmfcpa].array.F[k] = zcpa[k];
         for(ii=0; ii<msize; ii++)
             for(jj=0; jj<msize; jj++)
             {
@@ -863,16 +867,15 @@ IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ,
                 y = 1.0*jj-yc1;
                 r = sqrt(x*x+y*y)/r1;
                 PA = atan2(y,x);
-                data.image[ID].array.F[k*msize*msize+jj*msize+ii] = Zernike_value(zindex[k], r, PA); 
-            }        
+                data.image[ID].array.F[k*msize*msize+jj*msize+ii] = Zernike_value(zindex[k], r, PA);
+            }
     }
     for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
     {
-		data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
+        data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
         for(ii=0; ii<msize*msize; ii++)
             data.image[ID].array.F[(k+NBZ)*msize*msize+ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
     }
-
 
 
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
@@ -899,7 +902,7 @@ IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ,
             delete_image_ID("em00");
             delete_image_ID("tmpmode");
         }
-   
+
 
         ave = 0.0;
         totvm = 0.0;
@@ -927,25 +930,25 @@ IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ,
             rms += data.image[ID].array.F[k*msize*msize+ii]*data.image[ID].array.F[k*msize*msize+ii];
         }
         rms = sqrt(rms/totm);
-printf("Mode %ld   RMS = %lf\n", k, rms);
+        printf("Mode %ld   RMS = %lf\n", k, rms);
         for(ii=0; ii<msize*msize; ii++)
             data.image[ID].array.F[k*msize*msize+ii] /= rms;
     }
 
 
-	   for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
+    for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
     {
-		rms = 0.0;
+        rms = 0.0;
         for(ii=0; ii<msize*msize; ii++)
         {
             data.image[ID].array.F[k*msize*msize+ii] -= offset/msize/msize;
             rms += data.image[ID].array.F[k*msize*msize+ii]*data.image[ID].array.F[k*msize*msize+ii];
         }
         rms = sqrt(rms/totm);
-		printf("Mode %ld   RMS = %lf\n", k, rms);
-	}
-	
- for(citer=0; citer<NBciter; citer++)
+        printf("Mode %ld   RMS = %lf\n", k, rms);
+    }
+
+    for(citer=0; citer<NBciter; citer++)
     {
         printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
         gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), 5);
@@ -962,6 +965,7 @@ printf("Mode %ld   RMS = %lf\n", k, rms);
 
     return(ID);
 }
+
 
 
 
@@ -1725,7 +1729,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       
       
       // Create WFS1 image memory (averaged, dark-subtracted)
-      AOconf[loop].DarkLevel = 100.0;
+	if((ID=variable_ID("AOLCAMDARK"))!=-1)
+		AOconf[loop].DarkLevel = data.variable[ID].value.f;
+      else
+      AOconf[loop].DarkLevel = 0.0;
+
       sprintf(name, "imWFS1_%ld", loop);
       sizearray[0] =  AOconf[loop].sizexWFS;
       sizearray[1] =  AOconf[loop].sizeyWFS;
@@ -2582,11 +2590,15 @@ printf("Importing WFS camera image shared memory ... \n");
       fflush(stdout);
       delete_image_ID("rmtest");
   
+	
       beta = (1.0-gain)*beta + gain;
       for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
 	{
 	  data.image[IDrefcumul].array.F[ii] = (1.0-gain)*data.image[IDrefcumul].array.F[ii] + gain*data.image[IDrefi].array.F[ii];
+	  
 	  data.image[IDrefWFS].array.F[ii] = data.image[IDrefcumul].array.F[ii]/beta;
+	
+		
 	  
 	  for(k1=0;k1<AOconf[loop].NBDMmodes;k1++)
 	    {

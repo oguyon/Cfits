@@ -400,8 +400,9 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
       
       fclose(fp);
     }
+    
   delete_image_ID("cpamodesfreq");
-IDfreq = create_2Dimage_ID("cpamodesfreq", NBfrequ, 1);
+IDfreq = create_2Dimage_ID("cpamodesfreq", NBmax-1, 1);
  
  
   // mode 0 (piston)
