@@ -1038,6 +1038,10 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
 }
 
 
+
+
+
+
 /** \brief Computes control matrix using SVD
  *  
  *        Conventions: 
@@ -2646,6 +2650,7 @@ int AOcompute(long loop)
 
   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - data.image[aoconfID_refWFS].array.F[ii];
+
 
   cnttest = data.image[aoconfID_cmd1_modes].md[0].cnt0;
   data.image[aoconfID_WFS2].md[0].cnt0 ++;
