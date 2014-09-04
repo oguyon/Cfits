@@ -71,6 +71,15 @@ int CLIexecuteCMDready = 0;
 //int ECHO;
 
 char calctmpimname[200];
+char CLIstartupfilename[200] = "CLIstartup.txt";
+
+
+
+
+
+
+
+
 
 /*-----------------------------------------
 *       Forward References 
@@ -431,6 +440,13 @@ int main(int argc, char *argv[])
     char buf0[1];
     char buf1[1024];
 
+	int initstartup = 0; /// becomes 1 after startup 
+
+
+	
+
+
+
 
     TYPESIZE[0] = 0;
     TYPESIZE[1] = sizeof(char);
@@ -573,10 +589,19 @@ int main(int argc, char *argv[])
         compute_image_memory(data);
         compute_nb_image(data);
 
+
+		/** If fifo is on and file CLIstatup.txt exists, load it */
+		if(initstartup == 0)
+			if(data.fifoON==1)
+			{
+			sprintf(command, "cat %s > %s 2> /dev/null", CLIstartupfilename, data.fifoname);
+			r = system(command);
+			}
+		initstartup = 1;
+		
         // -------------------------------------------------------------
         //                 get user input
         // -------------------------------------------------------------
-
 
 
         while(CLIexecuteCMDready == 0)
@@ -1161,6 +1186,7 @@ int command_line( int argc, char **argv)
       {"pname",     required_argument, 0, 'n'},
       {"priority",     required_argument, 0, 'p'},
       {"fifo",      required_argument, 0, 'f'},
+      {"startup",   required_argument, 0, 's'},
       {0, 0, 0, 0}
     };
 
@@ -1169,7 +1195,7 @@ int command_line( int argc, char **argv)
  
   while (1)
     {
-      c = getopt_long (argc, argv, "hiod:m:n:f:",
+      c = getopt_long (argc, argv, "hiod:m:n:f:s:",
 		       long_options, &option_index);
       
       /* Detect the end of the options. */
@@ -1231,6 +1257,11 @@ int command_line( int argc, char **argv)
 	  printf("using input fifo '%s'\n", optarg);
 	  data.fifoON = 1;
 	  strcpy(data.fifoname, optarg);
+	  break;
+	  
+	case 's':
+	  strcpy(CLIstartupfilename, optarg);
+	  printf("Startup file : %s\n", CLIstartupfilename);
 	  break;
 
 	case '?':
