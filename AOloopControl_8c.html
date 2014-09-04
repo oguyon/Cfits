@@ -197,8 +197,9 @@ Functions</h2></td></tr>
 <tr class="separator:a2e80beb04ca5ef7646a34a923f93ff96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abafcddf53edec67a3729837724449116"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#abafcddf53edec67a3729837724449116">AOloopControl_camimage_extract2D_sharedmem_loop</a> (char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)</td></tr>
 <tr class="separator:abafcddf53edec67a3729837724449116"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bb07b993d942771064161db548401cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a7bb07b993d942771064161db548401cf">compute_ControlMatrix</a> (long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name)</td></tr>
-<tr class="separator:a7bb07b993d942771064161db548401cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5623aafb0749edfb120719732214cc4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#aa5623aafb0749edfb120719732214cc4">compute_ControlMatrix</a> (long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta)</td></tr>
+<tr class="memdesc:aa5623aafb0749edfb120719732214cc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes control matrix using SVD.  <a href="#aa5623aafb0749edfb120719732214cc4">More...</a><br/></td></tr>
+<tr class="separator:aa5623aafb0749edfb120719732214cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ceb58dc5d3e50c4fe3a5a35a3f0832c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a5ceb58dc5d3e50c4fe3a5a35a3f0832c">AOloopControl_InitializeMemory</a> (int mode)</td></tr>
 <tr class="separator:a5ceb58dc5d3e50c4fe3a5a35a3f0832c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea1f823ddb827c2d0c2991bc4db15db6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#aea1f823ddb827c2d0c2991bc4db15db6">Average_cam_frames</a> (long loop, long NbAve)</td></tr>
@@ -934,6 +935,12 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>CPA for each Zernike (somewhat arbitrary... used to sort modes in CPA)</p>
+<p>modesfreqcpa ID</p>
+<p>if Mmask exists, use it, otherwise create it</p>
+<p>extract xc and yc from mask</p>
+<p>3: tip, tilt, focus</p>
+<p>Remove excluded modes </p>
 
 </div>
 </div>
@@ -1512,7 +1519,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7bb07b993d942771064161db548401cf"></a>
+<a class="anchor" id="aa5623aafb0749edfb120719732214cc4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1544,7 +1551,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>ID_VTmatrix_name</em>&#160;</td>
+          <td class="paramname"><em>ID_VTmatrix_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Beta</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1553,6 +1566,18 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Computes control matrix using SVD. </p>
+<p>Conventions: m: number of actuators (= NB_MODES); n: number of sensors (= # of pixels) works even for m != n </p>
+<p>gain applied to modes to enhance low orders in SVD</p>
+<p>number of modes removed</p>
+<p>in this procedure, m=number of actuators/modes, n=number of WFS elements</p>
+<p>Write rotation matrix to go from DM modes to eigenmodes</p>
+<p>Compute eigenmodes responses</p>
+<p>eigen mode index</p>
+<p>if modesM exists, compute eigenmodes using rotation matrix</p>
+<p>eigen mode index</p>
+<p>second, build the "inverse" of the diagonal matrix of eigenvalues (matrix1) </p>
 
 </div>
 </div>
@@ -2076,7 +2101,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8c.html">AOloopControl.c</a></li>
-    <li class="footer">Generated on Tue Sep 2 2014 14:59:25 for Cfits by
+    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

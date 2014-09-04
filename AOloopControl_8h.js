@@ -38,7 +38,7 @@ var AOloopControl_8h =
     [ "AOloopControl_showparams", "AOloopControl_8h.html#a393d9b6ae87a47e1d1e4ce32f9078bcd", null ],
     [ "AOloopControl_statusStats", "AOloopControl_8h.html#a44d6b74e377a16df7fc07c6540c028a8", null ],
     [ "Average_cam_frames", "AOloopControl_8h.html#aea1f823ddb827c2d0c2991bc4db15db6", null ],
-    [ "compute_ControlMatrix", "AOloopControl_8h.html#a7bb07b993d942771064161db548401cf", null ],
+    [ "compute_ControlMatrix", "AOloopControl_8h.html#aa5623aafb0749edfb120719732214cc4", null ],
     [ "ControlMatrixMultiply", "AOloopControl_8h.html#a629fc1fdecf7ffcf538a9292ee0f3f08", null ],
     [ "init_AOloopControl", "AOloopControl_8h.html#a8da218e072b44146cdc1d47f80d49e3c", null ],
     [ "Measure_Resp_Matrix", "AOloopControl_8h.html#ab51676f77cfd9e45abd24cb0a68a08e7", null ],
