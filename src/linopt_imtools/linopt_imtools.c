@@ -284,6 +284,7 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
   float eps;
   FILE *fp;
 
+	long IDfreq;
 
   eps = 0.1*deltaCPA;
   printf("size       = %ld\n", size);
@@ -366,9 +367,11 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
   quick_sort3_float(CPArarray, CPAxarray, CPAyarray, NBfrequ);
 
 
+
   
   NBmax = NBfrequ*2;
   ID = create_3Dimage_ID(ID_name, size, size, NBmax-1);
+
 
 
   if(writeMfile==1)
@@ -397,10 +400,12 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
       
       fclose(fp);
     }
-  
-
+  delete_image_ID("cpamodesfreq");
+IDfreq = create_2Dimage_ID("cpamodesfreq", NBfrequ, 1);
+ 
  
   // mode 0 (piston)
+data.image[IDfreq].array.F[0] = 0.0;
   for(ii=0;ii<size2;ii++)
     {
       x = data.image[IDx].array.F[ii];
@@ -424,6 +429,8 @@ long linopt_imtools_makeCPAmodes(char *ID_name, long size, float CPAmax, float d
 	  x = data.image[IDx].array.F[ii];
 	  y = data.image[IDy].array.F[ii];
 	  r = data.image[IDr].array.F[ii];
+		data.image[IDfreq].array.F[k-1] = sqrt(CPAx*CPAx+CPAy*CPAy);
+		data.image[IDfreq].array.F[k] = sqrt(CPAx*CPAx+CPAy*CPAy);
 	  if(r<radfactlim)
 	    {
 	      data.image[ID].array.F[(k-1)*size2+ii] = cos(M_PI*(x*CPAx+y*CPAy));
