@@ -2298,9 +2298,10 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 	
     long IDpos, IDneg;
 	float tot, v1, rms;
+	long *sizea;
 
 
-
+	sizea = (long*) malloc(sizeof(long)*2);
 
     delayus = (long) (1000000.0*delays);
 
@@ -2309,7 +2310,11 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
-    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+//    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+	sizea[0] = AOconf[loop].sizexDM;
+	sizea[1] = AOconf[loop].sizeyDM;
+    IDmap = create_image_ID(WFS_actmap, 2, sizea, FLOAT, 1, 5);
+
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
@@ -2396,6 +2401,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     }
 
     free(arrayf);
+    free(sizea);
 
     return(IDmap);
 }
