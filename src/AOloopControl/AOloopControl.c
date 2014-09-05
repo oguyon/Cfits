@@ -175,6 +175,17 @@ int AOloopControl_setmaxlimit_cli()
     return 1;
 }
 
+int Measure_ActMap_WFS_cli()
+{
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
+		{
+			Measure_ActMap_WFS(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+			return 0;
+    }
+  else
+    return 1;
+}
+
 int AOloopControl_Measure_Resp_Matrix_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
@@ -389,8 +400,9 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].info,"make template configuration file");
   strcpy(data.cmd[data.NBcmd].syntax,"<loopnb [long]>");
   strcpy(data.cmd[data.NBcmd].example,"aolmkconf 2");
-strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_makeTemplateAOloopconf(long loopnb)");
-	 data.NBcmd++;
+  strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_makeTemplateAOloopconf(long loopnb)");
+  data.NBcmd++;
+
 
   strcpy(data.cmd[data.NBcmd].key,"aolmkmodes");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -419,6 +431,16 @@ strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_makeTemplateAOloopconf(lon
   strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <conf file>");
   strcpy(data.cmd[data.NBcmd].example,"AOlooploadconf 1 aoloop1.conf");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loadconfigure(long loopnb, char *fname, 0)");
+  data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"aolmeasactmap");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = Measure_ActMap_WFS_cli;
+  strcpy(data.cmd[data.NBcmd].info,"measure AO loop map of actuator influences");
+  strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay second [float]> <nb frames per position [long]> <output image [string]>");
+  strcpy(data.cmd[data.NBcmd].example,"aolameasactmap 0.05 0.02 20 actmap");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap)");
   data.NBcmd++;
 
 
@@ -2259,6 +2281,125 @@ int set_DM_modesRM(long loop)
 
   return(0);
 }
+
+
+
+
+
+/** Maps amplitude of actuator effect on WFS */
+
+long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap)
+{
+    long IDmap;
+    long act, j, ii, kk;
+    double value;
+    long delayus;
+    float *arrayf;
+	
+    long IDpos, IDneg;
+	float tot, v1, rms;
+
+
+
+
+    delayus = (long) (1000000.0*delays);
+
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(0);
+
+    arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
+
+    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+    IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+
+    for(act=0; act<AOconf[loop].sizeDM; act++)
+    {
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        {
+            data.image[IDpos].array.F[ii] = 0.0;
+            data.image[IDneg].array.F[ii] = 0.0;
+        }
+
+        /** Positive displacement */
+
+        for(j=0; j<AOconf[loop].sizeDM; j++)
+            arrayf[j] = 0.0;
+
+        arrayf[act] = ampl;
+
+        data.image[aoconfID_DMRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_DMRM].md[0].cnt0++;
+        data.image[aoconfID_DMRM].md[0].write = 0;
+        AOconf[loop].DMupdatecnt ++;
+
+        usleep(delayus);
+
+        for(kk=0; kk<NBave; kk++)
+        {
+            Average_cam_frames(loop, 1);
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+        }
+
+       /** Negative displacement */
+
+        for(j=0; j<AOconf[loop].sizeDM; j++)
+            arrayf[j] = 0.0;
+
+        arrayf[act] = -ampl;
+
+        data.image[aoconfID_DMRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_DMRM].md[0].cnt0++;
+        data.image[aoconfID_DMRM].md[0].write = 0;
+        AOconf[loop].DMupdatecnt ++;
+
+        usleep(delayus);
+
+        for(kk=0; kk<NBave; kk++)
+        {
+            Average_cam_frames(loop, 1);
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDneg].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+        }
+
+
+
+		/** compute value */
+		
+		tot = 0.0;
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			tot += data.image[IDpos].array.F[ii];
+		tot /= AOconf[loop].sizeWFS;
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			data.image[IDpos].array.F[ii] -= tot;
+
+		tot = 0.0;
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			tot += data.image[IDneg].array.F[ii];
+		tot /= AOconf[loop].sizeWFS;
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			data.image[IDneg].array.F[ii] -= tot;
+	
+
+		rms = 0.0;
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			{
+				v1 = data.image[IDneg].array.F[ii] - data.image[IDpos].array.F[ii];
+				rms += v1*v1;
+			}
+
+        data.image[IDmap].array.F[act] = sqrt(rms);
+    }
+
+    free(arrayf);
+
+    return(IDmap);
+}
+
 
 
 
