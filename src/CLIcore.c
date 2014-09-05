@@ -47,7 +47,7 @@
 /**
  * @file CLIcore.c
  * @author Olivier Guyon
- * @date Aug 6, 2014
+ * @date Sept 4, 2014
  */
 
 
@@ -476,9 +476,7 @@ int main(int argc, char *argv[])
     r = seteuid(euid_real);
 
 
-	// initialize fifo
-	data.fifoON = 1;
-	 strcpy(data.fifoname, "clififo");
+	
 	
     // initialize readline
     // Tell readline to use custom completion function
@@ -488,7 +486,15 @@ int main(int argc, char *argv[])
     // Get command-line options
     command_line( argc, argv );
 
-    //
+ 	// initialize fifo
+	data.fifoON = 1;
+	sprintf(data.fifoname, "%s.fifo", argv[0]);
+//	 strcpy(data.fifoname, "clififo");
+	printf("fifo name : %s\n", data.fifoname);
+
+
+
+   //
     if( Verbose ) {
         fprintf(stdout, "%s: compiled %s %s\n",__FILE__,__DATE__,__TIME__);
     }
@@ -1243,7 +1249,7 @@ int command_line( int argc, char **argv)
 	  printf("process name '%s'\n", optarg);
 	  memory_monitor(optarg);
    	memcpy((void *)argv[0], optarg, sizeof(optarg));
-	prctl(PR_SET_NAME,optarg,0,0,0);
+	prctl(PR_SET_NAME, optarg, 0, 0, 0);
 	  break;
 	 
 	case 'p':

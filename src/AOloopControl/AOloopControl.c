@@ -1045,7 +1045,6 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
 
 
 
-
 /** \brief Computes control matrix using SVD
  *  
  *        Conventions: 

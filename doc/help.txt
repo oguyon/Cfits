@@ -20,11 +20,20 @@ COMMAND LINE OPTIONS
 	example:
 	<executable> -m /dev/tty2
 	<executable> --mmon=/dev/tty2
+  -n, --pname=PROCESSNAME
+	specify name to be given to process
+	example:
+	<executable> -n exec3
+	note: by default, fifo name is <processname>.fifo
+  -p, --priority=<PR>
+	set process priority to PR (0-99)
   -f, --fifo==FIFONAME
 	specify fifo name
 	example
 	<executable> -f /tmp/fifo24
 	<executable> --fifo=/tmp/fifo24
+  -s, --startup=STARTUPFILE
+	execute specified script on startup
   --nofifo
 	Do not create or use fifo
 

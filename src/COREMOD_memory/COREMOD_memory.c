@@ -861,364 +861,367 @@ int delete_variable_ID(char* varname) /* deletes a variable ID */
 /* all images should be created by this function */
 long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int NBkw)
 {
-  long ID;
-  long i,ii;
-  time_t lt;
-  long nelement;
-  struct timespec timenow;
+    long ID;
+    long i,ii;
+    time_t lt;
+    long nelement;
+    struct timespec timenow;
 
 
-  size_t sharedsize = 0; // shared memory size in bytes
-  int SM_fd; // shared memory file descriptor
-  char SM_fname[200];
-  int result;
-  IMAGE_METADATA *map;
-  char *mapv; // pointed cast in bytes
+    size_t sharedsize = 0; // shared memory size in bytes
+    int SM_fd; // shared memory file descriptor
+    char SM_fname[200];
+    int result;
+    IMAGE_METADATA *map;
+    char *mapv; // pointed cast in bytes
 
-  int kw;
-  char comment[80];
-  char kname[16];
+    int kw;
+    char comment[80];
+    char kname[16];
 
 
-  ID = -1;
-  if(image_ID(name)==-1)
+    ID = -1;
+    if(image_ID(name)==-1)
     {
-      ID = next_avail_image_ID();
-      data.image[ID].used = 1;
-      	
-      nelement = 1;
-      for(i=0;i<naxis;i++)
-	nelement*=size[i];
+        ID = next_avail_image_ID();
+        data.image[ID].used = 1;
 
-      // compute total size to be allocated
-      if(shared==1)
-	{	  
-	  sharedsize = sizeof(IMAGE_METADATA);
+        nelement = 1;
+        for(i=0; i<naxis; i++)
+            nelement*=size[i];
 
-	  if(atype==CHAR)
-	    sharedsize += nelement*sizeof(char);
-	  if(atype==INT)
-	    sharedsize += nelement*sizeof(int);
-	  if(atype==FLOAT)
-	    sharedsize += nelement*sizeof(float);
-	  if(atype==DOUBLE)
-	    sharedsize += nelement*sizeof(double);
-	  if(atype==COMPLEX_FLOAT)
-	    sharedsize += nelement*2*sizeof(float);
-	  if(atype==COMPLEX_DOUBLE)
-	    sharedsize += nelement*2*sizeof(double);
-	  if(atype==USHORT)
-	    sharedsize += nelement*sizeof(unsigned short int);
-	  if(atype==LONG)
-	    sharedsize += nelement*sizeof(long);
+        // compute total size to be allocated
+        if(shared==1)
+        {
+            sharedsize = sizeof(IMAGE_METADATA);
 
-	  sharedsize += NBkw*sizeof(IMAGE_KEYWORD);
-	  
-	  
-	  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
-	  SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-	 
-	  if (SM_fd == -1) {
-	    perror("Error opening file for writing");
-	    exit(0);
-	  }
-	  data.image[ID].shmfd = SM_fd;
-	  data.image[ID].memsize = sharedsize;
+            if(atype==CHAR)
+                sharedsize += nelement*sizeof(char);
+            if(atype==INT)
+                sharedsize += nelement*sizeof(int);
+            if(atype==FLOAT)
+                sharedsize += nelement*sizeof(float);
+            if(atype==DOUBLE)
+                sharedsize += nelement*sizeof(double);
+            if(atype==COMPLEX_FLOAT)
+                sharedsize += nelement*2*sizeof(float);
+            if(atype==COMPLEX_DOUBLE)
+                sharedsize += nelement*2*sizeof(double);
+            if(atype==USHORT)
+                sharedsize += nelement*sizeof(unsigned short int);
+            if(atype==LONG)
+                sharedsize += nelement*sizeof(long);
 
-	  result = lseek(SM_fd, sharedsize-1, SEEK_SET);
-	  if (result == -1) {
-	    close(SM_fd);
-	    perror("Error calling lseek() to 'stretch' the file");
-	    exit(0);
-	  }
-	  
-	  result = write(SM_fd, "", 1);
-	  if (result != 1) {
-	    close(SM_fd);
-	    perror("Error writing last byte of the file");
-	    exit(0);
-	  }
-	  
-	  map = (IMAGE_METADATA*) mmap(0, sharedsize, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
-	  if (map == MAP_FAILED) {
-	    close(SM_fd);
-	    perror("Error mmapping the file");
-	    exit(0);
-	  }
-
-	  data.image[ID].md = (IMAGE_METADATA*) map;
-	  data.image[ID].md[0].shared = 1;
-	}
-      else
-	{
-	  data.image[ID].md = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
-	  data.image[ID].md[0].shared = 0;
-	  data.image[ID].kw = (IMAGE_KEYWORD*) malloc(sizeof(IMAGE_KEYWORD)*NBkw);	  
-	}
-
-      data.image[ID].md[0].atype = atype;
-      data.image[ID].md[0].naxis = naxis;
-      strcpy(data.image[ID].md[0].name, name);	
-      for(i=0;i<naxis;i++)
-	data.image[ID].md[0].size[i] = size[i];
-      data.image[ID].md[0].NBkw = NBkw;
-
-      
+            sharedsize += NBkw*sizeof(IMAGE_KEYWORD);
 
 
-      if(atype==CHAR)
-	{
-	  if(shared==1)
-	    data.image[ID].array.C = (char*) (map + sizeof(IMAGE));
-	  else
-	    data.image[ID].array.C = (char*) calloc ((size_t) nelement, sizeof(char));
+            sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
+            SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+
+            if (SM_fd == -1) {
+                perror("Error opening file for writing");
+                exit(0);
+            }
+            data.image[ID].shmfd = SM_fd;
+            data.image[ID].memsize = sharedsize;
+
+            result = lseek(SM_fd, sharedsize-1, SEEK_SET);
+            if (result == -1) {
+                close(SM_fd);
+                perror("Error calling lseek() to 'stretch' the file");
+                exit(0);
+            }
+
+            result = write(SM_fd, "", 1);
+            if (result != 1) {
+                close(SM_fd);
+                perror("Error writing last byte of the file");
+                exit(0);
+            }
+
+            map = (IMAGE_METADATA*) mmap(0, sharedsize, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+            if (map == MAP_FAILED) {
+                close(SM_fd);
+                perror("Error mmapping the file");
+                exit(0);
+            }
+
+            data.image[ID].md = (IMAGE_METADATA*) map;
+            data.image[ID].md[0].shared = 1;
+        }
+        else
+        {
+            data.image[ID].md = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
+            data.image[ID].md[0].shared = 0;
+            data.image[ID].kw = (IMAGE_KEYWORD*) malloc(sizeof(IMAGE_KEYWORD)*NBkw);
+        }
+
+        data.image[ID].md[0].atype = atype;
+        data.image[ID].md[0].naxis = naxis;
+        strcpy(data.image[ID].md[0].name, name);
+        for(i=0; i<naxis; i++)
+            data.image[ID].md[0].size[i] = size[i];
+        data.image[ID].md[0].NBkw = NBkw;
 
 
-	  if(data.image[ID].array.C == NULL)
-	    {    
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(char));
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);
-	    }
-	}
-      if(atype==INT)
-	{
-	  if(shared==1)
-	    data.image[ID].array.I = (int*) (map + sizeof(IMAGE));
-	  else
-	    data.image[ID].array.I = (int*) calloc ((size_t) nelement,sizeof(int));
-	  
-	  if(data.image[ID].array.I == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(int));
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }
-	}
-      if(atype==LONG)
-	{
-	  if(shared==1)
-	    data.image[ID].array.L = (long*) (map + sizeof(IMAGE));
-	  else
-	    data.image[ID].array.L = (long*) calloc ((size_t) nelement,sizeof(long));
-	  
-	  if(data.image[ID].array.L == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(long));
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }
-	}
-      if(atype==FLOAT)	{
-	  if(shared==1)
-	    {
-	      mapv = (char*) map;
-	      mapv += sizeof(IMAGE_METADATA);
-	      data.image[ID].array.F = (float*) (mapv);
-	      memset(data.image[ID].array.F, '\0', nelement*sizeof(float)); 
-	      mapv += sizeof(float)*nelement;
-	      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
-	    }
-	  else
-	    data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
 
-	  if(data.image[ID].array.F == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(float));
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }
-	}
-      if(atype==DOUBLE)
-	{
-	  if(shared==1)
-	    data.image[ID].array.D = (double*) (map + sizeof(IMAGE));
-	  else
-	    data.image[ID].array.D = (double*) calloc ((size_t) nelement,sizeof(double));
-	  if(data.image[ID].array.D == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double));
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }
-	}
-       if(atype==COMPLEX_FLOAT)
-	{	  
-	  if(shared==1)
-	    data.image[ID].array.CF = (complex_float*) (map + sizeof(IMAGE));
-	  else
-	    data.image[ID].array.CF = (complex_float*) calloc ((size_t) nelement,sizeof(complex_float));
-	  for(ii=0;ii<nelement;ii++)
-	    {
-	      data.image[ID].array.CF[ii].re = 0.0;
-	      data.image[ID].array.CF[ii].im = 0.0;
-	    }
-	  if(data.image[ID].array.CF == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(float)*2);
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }
-	}
-      if(atype==COMPLEX_DOUBLE)
-	{
-	  if(shared==1)
-	    data.image[ID].array.CD = (complex_double*) (map + sizeof(IMAGE));
-	  else
-	    data.image[ID].array.CD = (complex_double*) calloc ((size_t) nelement,sizeof(complex_double));
-	  if(data.image[ID].array.CD == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double)*2);
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }	  
-	}
-      if(atype==USHORT)
-	{
-	  if(shared==1)
-	    {
-	      mapv = (char*) map;
-	      mapv += sizeof(IMAGE_METADATA);
-	      data.image[ID].array.U = (unsigned short*) (mapv);
-	      memset(data.image[ID].array.U, '\0', nelement*sizeof(unsigned short)); 
-	      mapv += sizeof(unsigned short)*nelement;
-	      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
-	    }
-	  else
-	    data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement, sizeof(unsigned short));
 
-	  if(data.image[ID].array.U == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
-	      fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
-	      fprintf(stderr,"Image name = %s\n",name);
-	      fprintf(stderr,"Image size = ");
-	      fprintf(stderr,"%ld",size[0]);
-	      for(i=1;i<naxis;i++)
-		fprintf(stderr,"x%ld",size[i]);
-	      fprintf(stderr,"\n");
-	      fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double)*2);
-	      fprintf(stderr," %c[%d;m",(char) 27, 0);
-	      list_image_ID();
-	      exit(0);   
-	    }	  
-	}
-    
-      clock_gettime(CLOCK_REALTIME, &timenow);
-      data.image[ID].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
-      data.image[ID].md[0].creation_time = data.image[ID].md[0].last_access;
+        if(atype==CHAR)
+        {
+            if(shared==1)
+                data.image[ID].array.C = (char*) (map + sizeof(IMAGE));
+            else
+                data.image[ID].array.C = (char*) calloc ((size_t) nelement, sizeof(char));
 
-      data.image[ID].md[0].nelement = nelement;
+
+            if(data.image[ID].array.C == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(char));
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==INT)
+        {
+            if(shared==1)
+                data.image[ID].array.I = (int*) (map + sizeof(IMAGE));
+            else
+                data.image[ID].array.I = (int*) calloc ((size_t) nelement,sizeof(int));
+
+            if(data.image[ID].array.I == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(int));
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==LONG)
+        {
+            if(shared==1)
+                data.image[ID].array.L = (long*) (map + sizeof(IMAGE));
+            else
+                data.image[ID].array.L = (long*) calloc ((size_t) nelement,sizeof(long));
+
+            if(data.image[ID].array.L == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(long));
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==FLOAT)	{
+            if(shared==1)
+            {
+                mapv = (char*) map;
+                mapv += sizeof(IMAGE_METADATA);
+                data.image[ID].array.F = (float*) (mapv);
+                memset(data.image[ID].array.F, '\0', nelement*sizeof(float));
+                mapv += sizeof(float)*nelement;
+                data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+            }
+            else
+                data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
+
+            if(data.image[ID].array.F == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(float));
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==DOUBLE)
+        {
+            if(shared==1)
+                data.image[ID].array.D = (double*) (map + sizeof(IMAGE));
+            else
+                data.image[ID].array.D = (double*) calloc ((size_t) nelement,sizeof(double));
+            if(data.image[ID].array.D == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double));
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==COMPLEX_FLOAT)
+        {
+            if(shared==1)
+                data.image[ID].array.CF = (complex_float*) (map + sizeof(IMAGE));
+            else
+                data.image[ID].array.CF = (complex_float*) calloc ((size_t) nelement,sizeof(complex_float));
+            for(ii=0; ii<nelement; ii++)
+            {
+                data.image[ID].array.CF[ii].re = 0.0;
+                data.image[ID].array.CF[ii].im = 0.0;
+            }
+            if(data.image[ID].array.CF == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(float)*2);
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==COMPLEX_DOUBLE)
+        {
+            if(shared==1)
+                data.image[ID].array.CD = (complex_double*) (map + sizeof(IMAGE));
+            else
+                data.image[ID].array.CD = (complex_double*) calloc ((size_t) nelement,sizeof(complex_double));
+            if(data.image[ID].array.CD == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double)*2);
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+        if(atype==USHORT)
+        {
+            if(shared==1)
+            {
+                mapv = (char*) map;
+                mapv += sizeof(IMAGE_METADATA);
+                data.image[ID].array.U = (unsigned short*) (mapv);
+                memset(data.image[ID].array.U, '\0', nelement*sizeof(unsigned short));
+                mapv += sizeof(unsigned short)*nelement;
+                data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+            }
+            else
+                data.image[ID].array.U = (unsigned short*) calloc ((size_t) nelement, sizeof(unsigned short));
+
+            if(data.image[ID].array.U == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+                fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
+                fprintf(stderr,"Image name = %s\n",name);
+                fprintf(stderr,"Image size = ");
+                fprintf(stderr,"%ld",size[0]);
+                for(i=1; i<naxis; i++)
+                    fprintf(stderr,"x%ld",size[i]);
+                fprintf(stderr,"\n");
+                fprintf(stderr,"Requested memory size = %ld elements = %f Mb\n",nelement,1.0/1024/1024*nelement*sizeof(double)*2);
+                fprintf(stderr," %c[%d;m",(char) 27, 0);
+                list_image_ID();
+                exit(0);
+            }
+        }
+
+        clock_gettime(CLOCK_REALTIME, &timenow);
+        data.image[ID].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
+        data.image[ID].md[0].creation_time = data.image[ID].md[0].last_access;
+		data.image[ID].md[0].write = 0;
+		data.image[ID].md[0].cnt0 = 0;
+		data.image[ID].md[0].cnt1 = 0;
+        data.image[ID].md[0].nelement = nelement;
     }
-  else
+    else
     {
-      //      printf("Cannot create image : name \"%s\" already in use\n",name);
-      ID = image_ID(name);
+        //      printf("Cannot create image : name \"%s\" already in use\n",name);
+        ID = image_ID(name);
 
-      if(data.image[ID].md[0].atype != atype)
-	{
-	  fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-	  fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong type %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
-	  exit(0);
-	}
-      if(data.image[ID].md[0].naxis != naxis)
-	{
-	  fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-	  fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong naxis %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
-	  exit(0);
-	}
-      
-      for(i=0;i<naxis;i++)
-	if(data.image[ID].md[0].size[i] != size[i])
-	  {
-	    fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-	    fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong size %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
-	    exit(0);
-	  }
+        if(data.image[ID].md[0].atype != atype)
+        {
+            fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong type %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+            exit(0);
+        }
+        if(data.image[ID].md[0].naxis != naxis)
+        {
+            fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong naxis %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+            exit(0);
+        }
+
+        for(i=0; i<naxis; i++)
+            if(data.image[ID].md[0].size[i] != size[i])
+            {
+                fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+                fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong size %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+                exit(0);
+            }
     }
 
 
-  // initialize keywords (test)
-  /*  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
-    {
-      sprintf(kname, "KEY%d", kw);
-      strcpy(data.image[ID].kw[kw].name, kname);	
-      data.image[ID].kw[kw].type = 'D';
-      data.image[ID].kw[kw].value.f.numf = 1.0*kw;
-      sprintf(comment, "this is keyword %d", kw);
-      strcpy(data.image[ID].kw[kw].comment, comment);
-    }
-  */
+    // initialize keywords (test)
+    /*  for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+      {
+        sprintf(kname, "KEY%d", kw);
+        strcpy(data.image[ID].kw[kw].name, kname);
+        data.image[ID].kw[kw].type = 'D';
+        data.image[ID].kw[kw].value.f.numf = 1.0*kw;
+        sprintf(comment, "this is keyword %d", kw);
+        strcpy(data.image[ID].kw[kw].comment, comment);
+      }
+    */
 
 
-  if(MEM_MONITOR == 1)
-    list_image_ID_ncurses();
-  
-  return(ID);
+    if(MEM_MONITOR == 1)
+        list_image_ID_ncurses();
+
+    return(ID);
 }
+
 
 
 
