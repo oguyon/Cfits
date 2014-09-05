@@ -2295,25 +2295,48 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     double value;
     long delayus;
     float *arrayf;
-	
+	char fname[200];
+	char name[200];
     long IDpos, IDneg;
 	float tot, v1, rms;
-	long *sizea;
+	long *sizearray;
 
 
-	sizea = (long*) malloc(sizeof(long)*2);
+	sizearray = (long*) malloc(sizeof(long)*2);
 
     delayus = (long) (1000000.0*delays);
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
+    
+    
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+    //exit(0);
+
+    printf("Importing DM response matrix channel shared memory ...\n");
+    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+
+    printf("Importing WFS camera image shared memory ... \n");
+    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
+
+
+
+    sprintf(name, "imWFS1RM_%ld", loop);
+    sizearray[0] = AOconf[loop].sizexWFS;
+    sizearray[1] = AOconf[loop].sizeyWFS;
+    aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+
+
+sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
 //    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
-	sizea[0] = AOconf[loop].sizexDM;
-	sizea[1] = AOconf[loop].sizeyDM;
-    IDmap = create_image_ID(WFS_actmap, 2, sizea, FLOAT, 1, 5);
+	sizearray[0] = AOconf[loop].sizexDM;
+	sizearray[1] = AOconf[loop].sizeyDM;
+    IDmap = create_image_ID(WFS_actmap, 2, sizearray, FLOAT, 1, 5);
 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -2401,7 +2424,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     }
 
     free(arrayf);
-    free(sizea);
+    free(sizearray);
 
     return(IDmap);
 }
