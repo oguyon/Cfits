@@ -61,7 +61,7 @@ AOsystSim.lo: AOsystSim.c /usr/include/stdc-predef.h \
  /CfitsDev/Cfits-src/src/COREMOD_memory/COREMOD_memory.h \
  /CfitsDev/Cfits-src/src/COREMOD_iofits/COREMOD_iofits.h \
  /CfitsDev/Cfits-src/src/image_filter/image_filter.h \
- /CfitsDev/Cfits-src/src/fft/fft.h \
+ /CfitsDev/Cfits-src/src/fft/fft.h /CfitsDev/Cfits-src/src/info/info.h \
  /CfitsDev/Cfits-src/src/AOsystSim/AOsystSim.h
 
 /usr/include/stdc-predef.h:
@@ -233,5 +233,7 @@ AOsystSim.lo: AOsystSim.c /usr/include/stdc-predef.h \
 /CfitsDev/Cfits-src/src/image_filter/image_filter.h:
 
 /CfitsDev/Cfits-src/src/fft/fft.h:
+
+/CfitsDev/Cfits-src/src/info/info.h:
 
 /CfitsDev/Cfits-src/src/AOsystSim/AOsystSim.h:

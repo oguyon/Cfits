@@ -101,7 +101,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cfits_OBJECTS = cfits-CLIcore.$(OBJEXT) cfits-initmodules.$(OBJEXT) \
 	cfits-calc_bison.$(OBJEXT) cfits-calc_flex.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
-cfits_DEPENDENCIES = AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
+cfits_DEPENDENCIES = cudacomp/libcudacomp.la \
+	AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
 	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
 	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
 	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \
@@ -288,6 +289,8 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
+NVCC = @NVCC@
+NVCCFLAGS = @NVCCFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OPENMP_CFLAGS = @OPENMP_CFLAGS@
@@ -366,6 +369,7 @@ cfits_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-DCONFIGDIR=\"@abs_top_srcdir@/config\" \
 	-DSOURCEDIR=\"@abs_top_srcdir@/src\" \
 	-DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp \
+	-I@abs_top_srcdir@/src/cudacomp \
 	-I@abs_top_srcdir@/src/AtmosphericTurbulence \
 	-I@abs_top_srcdir@/src/psf \
 	-I@abs_top_srcdir@/src/AOloopControl \
@@ -394,13 +398,14 @@ AM_YFLAGS = -d
 AM_LFLAGS = -i 
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
-SUBDIRS = AtmosphericTurbulence psf AOloopControl AOsystSim SCExAO_DM \
-	image_format PIAACMCsimul OptSystProp OpticsMaterials \
-	coronagraphs ZernikePolyn WFpropagate image_basic image_filter \
-	kdtree image_gen linopt_imtools statistic fft info \
-	COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
-	00CORE
-cfits_LDADD = AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
+SUBDIRS = cudacomp AtmosphericTurbulence psf AOloopControl AOsystSim \
+	SCExAO_DM image_format PIAACMCsimul OptSystProp \
+	OpticsMaterials coronagraphs ZernikePolyn WFpropagate \
+	image_basic image_filter kdtree image_gen linopt_imtools \
+	statistic fft info COREMOD_arith COREMOD_iofits COREMOD_memory \
+	COREMOD_tools 00CORE
+cfits_LDADD = cudacomp/libcudacomp.la \
+	AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
 	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
 	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
 	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \

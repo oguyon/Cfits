@@ -13,6 +13,7 @@
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "image_filter/image_filter.h"
 #include "fft/fft.h"
+#include "info/info.h"
 
 #include "AOsystSim/AOsystSim.h"
 
@@ -41,8 +42,8 @@ int AOsystSim_simpleAOfilter_cli()
 
 int AOsystSim_fitTelPup_cli()
 {
-  if(CLI_checkarg(1,4)==0)
-    AOsystSim_fitTelPup(data.cmdargtoken[1].val.string);
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    AOsystSim_fitTelPup(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
 
   return(0);
 }
@@ -358,160 +359,379 @@ int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
 
 // all sizes in actuators on DM
 
-long AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick)
+long AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx)
 {
-  long ID, IDz;
-  long ii,  jj;
-  double x, y, x1, y1, r;
-  long binfact = 8;
-  long size;
-  double PA;
-  double val;
-  long IDindex, IDi;
-  long index;
-  long ii1, jj1;
+    long ID, IDz;
+    long ii,  jj;
+    double x, y, x1, y1, r;
+    long binfact = 8;
+    long size;
+    double PA;
+    double val;
+    long IDindex, IDi;
+    long index;
+    long ii1, jj1;
 
 
-  size = msize*binfact;
-  
-  ID = create_2Dimage_ID("TPmask", msize, msize);
-  IDi = create_3Dimage_ID("TPind", msize, msize, 5);
+    size = msize*binfact;
 
-  IDz = create_2Dimage_ID("telpupDMz", size, size);
-  IDindex = create_2Dimage_ID("telpupDMzindex", size, size);
-  for(ii=0;ii<size;ii++)
-    for(jj=0;jj<size;jj++)
-      {
-	index = 0;
-	val = 1.0;
+    ID = create_2Dimage_ID(ID_name, msize, msize);
+    IDi = create_3Dimage_ID("TPind", msize, msize, 5);
 
-	x = (1.0*ii/binfact);
-	y = (1.0*jj/binfact);
-	x -= xc;
-	y -= yc;
-	r = sqrt(x*x+y*y);
-	PA = atan2(y, x);
-	PA += pupPA;
-	x = r*cos(PA);
-	y = r*sin(PA);
+    IDz = create_2Dimage_ID("telpupDMz", size, size);
+    IDindex = create_2Dimage_ID("telpupDMzindex", size, size);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            index = 0;
+            val = 1.0;
 
-	if(r>rout)
-	  val = 0.0;
-	if(r<rin)
-	  val = 0.0;
-	
-	x1 = x-spideroffset-spiderthick/2.0;
-	y1 = y;
-	PA = atan2(y1,x1);
-	if(fabs(PA)<spiderPA)
-	  index = 1;
+            x = (1.0*ii/binfact);
+            y = (1.0*jj/binfact);
+            x -= xc;
+            y -= yc;
+            r = sqrt(x*x+y*y);
+            PA = atan2(y, x);
+            PA += pupPA;
+            x = r*cos(PA)*stretchx;
+            y = r*sin(PA);
 
+            if(r>rout)
+                val = 0.0;
+            if(r<rin)
+                val = 0.0;
 
-	x1 = x+spideroffset+spiderthick/2.0;
-	y1 = y;
-	PA = atan2(y1,-x1);
-	if(fabs(PA)<spiderPA)
-	  index = 2;
-	
+            x1 = x-spideroffset-spiderthick/2.0;
+            y1 = y;
+            PA = atan2(y1,x1);
+            if(fabs(PA)<spiderPA)
+                index = 1;
 
 
-
-	x1 = x+spideroffset-spiderthick/2.0;
-	y1 = y;
-	PA = atan2(x1,y1);
-	if((fabs(PA)<M_PI/2-spiderPA)&&(x<0))
-	  index = 3;
-	
-	x1 = -x+spideroffset-spiderthick/2.0;
-	y1 = y;
-	PA = atan2(x1,y1);
-	if((fabs(PA)<M_PI/2-spiderPA)&&(x>0))
-	  index = 3;
-	
+            x1 = x+spideroffset+spiderthick/2.0;
+            y1 = y;
+            PA = atan2(y1,-x1);
+            if(fabs(PA)<spiderPA)
+                index = 2;
 
 
 
 
-	x1 = x+spideroffset-spiderthick/2.0;
-	y1 = -y;
-	PA = atan2(x1,y1);
-	if((fabs(PA)<M_PI/2-spiderPA)&&(x<0))
-	  index = 4;
+            x1 = x+spideroffset-spiderthick/2.0;
+            y1 = y;
+            PA = atan2(x1,y1);
+            if((fabs(PA)<M_PI/2-spiderPA)&&(x<0))
+                index = 3;
 
-	x1 = -x+spideroffset-spiderthick/2.0;
-	y1 = -y;
-	PA = atan2(x1,y1);
-	if((fabs(PA)<M_PI/2-spiderPA)&&(x>0))
-	  index = 4;
+            x1 = -x+spideroffset-spiderthick/2.0;
+            y1 = y;
+            PA = atan2(x1,y1);
+            if((fabs(PA)<M_PI/2-spiderPA)&&(x>0))
+                index = 3;
 
-	if(index==0)
-	  val = 0.0;
-	data.image[IDz].array.F[jj*size+ii] = val;
-	data.image[IDindex].array.F[jj*size+ii] = index*val;
 
-	ii1 = (long) (ii/binfact);
-	jj1 = (long) (jj/binfact);
-	
 
-	data.image[ID].array.F[jj1*msize+ii1] += val/binfact/binfact;
-	
-	if(val>0.5)
-	  {
-	    data.image[IDi].array.F[jj1*msize+ii1] = 1;
-	    data.image[IDi].array.F[index*msize*msize+jj1*msize+ii1] = 1;
-	  }
-      }
-  
-  //  save_fits("telpupDMz", "!telpupDMz.fits");
-  //save_fits("telpupDMzindex", "!telpupDMzindex.fits");  
-  delete_image_ID("telpupDMz");
-  delete_image_ID("telpupDMzindex");
 
-  save_fits("TPmask", "!TPmask.fits");
-  save_fits("TPind", "!TPind.fits");
 
-  return(ID);
+            x1 = x+spideroffset-spiderthick/2.0;
+            y1 = -y;
+            PA = atan2(x1,y1);
+            if((fabs(PA)<M_PI/2-spiderPA)&&(x<0))
+                index = 4;
+
+            x1 = -x+spideroffset-spiderthick/2.0;
+            y1 = -y;
+            PA = atan2(x1,y1);
+            if((fabs(PA)<M_PI/2-spiderPA)&&(x>0))
+                index = 4;
+
+            if(index==0)
+                val = 0.0;
+            data.image[IDz].array.F[jj*size+ii] = val;
+            data.image[IDindex].array.F[jj*size+ii] = index*val;
+
+            ii1 = (long) (ii/binfact);
+            jj1 = (long) (jj/binfact);
+
+
+            data.image[ID].array.F[jj1*msize+ii1] += val/binfact/binfact;
+
+            if(val>0.5)
+            {
+                data.image[IDi].array.F[jj1*msize+ii1] = 1;
+                data.image[IDi].array.F[index*msize*msize+jj1*msize+ii1] = 1;
+            }
+        }
+
+    delete_image_ID("telpupDMz");
+    delete_image_ID("telpupDMzindex");
+
+    save_fits("TPind", "!TPind.fits");
+
+    return(ID);
 }
 
 
-long AOsystSim_fitTelPup(char *ID_name)
+
+
+/** fits DM illumination to pupil geometry */
+
+long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
 {
-  long ID;
-  double xc, yc, pupPA, spiderPA, spideroffset, spiderthick, rin, rout;
-  long size;
+    FILE *fp;
+    long ID, ID1, IDt;
+    long IDtelpup;
+    double xc, yc, pupPA, spiderPA, spideroffset, spiderthick, rin, rout, stretchx;
+    long size;
+    double vp10, vp90;
+    double rms;
+    long ii, jj;
+    double v1;
 
-  rout = 21.99;
-  rin = 0.315*rout;
-  pupPA = -0.105;
-  spiderPA = 0.9;
-  spiderthick = 0.06*rout;
-  spideroffset = 0.165*rout;
+    double xc_min, yc_min, pupPA_min, rout_min, stretchx_min, spiderPA_min, spideroffset_min;
+    double xc_max, yc_max, pupPA_max, rout_max, stretchx_max, spiderPA_max, spideroffset_max;
 
-  xc = 24.87;
-  yc = 24.06;
+    double xc1, yc1, pupPA1, rout1, stretchx1, spiderPA1, spideroffset1;
+    long nbstep = 2;
+    double rms1;
 
-  
-  AOsystSim_mkTelPupDM("testpup", 50, xc, yc, rin, rout, pupPA, spiderPA, spideroffset, spiderthick);
+    double xc_range, yc_range, pupPA_range, rout_range, stretchx_range, spiderPA_range, spideroffset_range;
+    long iter;
+    long NBiter = 5;
 
-  /*  ID = image_ID(ID_name);
-  size = data.image[ID].md[0].size[0];
+    /** compensate for illumination gradient */
+    double coeffx, coeffy, coeffx1, coeffy1;
+    double x, y;
+    double val, val1;
 
-  xc = 79.7;
-  yc= 71.125;
+    double eps = 1.0e-8;
 
-  rout = 47.5;
-  rin = 0.315*rout;
-  pupPA = -0.105;
-  spiderPA = 0.9;
-  spiderthick = 0.06*rout;
-  spideroffset = 0.165*rout;
 
-  AOsystSim_mkTelPupDM("testpup", size, xc, yc, rin, rout, pupPA, spiderPA, spideroffset, spiderthick);
-  */
-  //  save_fits("TPmask", "!testpup.fits");
+    coeffx = 0.0;
+    coeffy = 0.0;
 
-  return(ID);
+    rout = 22.15;
+    rin = 0.315*rout;
+    pupPA = -0.105;
+    spiderPA = 0.85;
+    spiderthick = 0.06*rout;
+    spideroffset = 0.15*rout;
+	
+
+    xc = 24.629630;  
+    yc = 23.518519;
+    stretchx = 1.048148;
+
+	rout1 = rout;
+	xc1 = xc;
+    yc1 = yc;
+    pupPA1 = pupPA;
+    stretchx1 = stretchx;
+	spiderPA1 = spiderPA;
+	spideroffset1 = spideroffset;
+
+    /** set percentiles */
+    ID = image_ID(ID_name);
+    size = data.image[ID].md[0].size[0];
+
+
+    vp10 = img_percentile_float(ID_name, 0.1);
+    vp90 = img_percentile_float(ID_name, 0.9);
+    printf("%f %f\n", vp10, vp90);
+    for(ii=0; ii<data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]; ii++)
+        data.image[ID].array.F[ii] = (data.image[ID].array.F[ii]-vp10)/(vp90-vp10);
+
+
+
+    /** compensate for image gradient */
+    ID1 = create_2Dimage_ID("tmpftpim", size, size);
+    val1 = 1000000000000000.0;
+    for(coeffx=-1.5; coeffx < 1.5; coeffx += 0.05)
+        for(coeffy=-1.5; coeffy < 1.5; coeffy += 0.05)
+        {
+            for(ii=0; ii<size; ii++)
+                for(jj=0; jj<size; jj++)
+                {
+                    x = 1.0*ii/size;
+                    y = 1.0*jj/size;
+                    data.image[ID1].array.F[jj*size+ii] =  data.image[ID].array.F[jj*size+ii]*(1.0+coeffx*(x-0.5))*(1.0+coeffy*(y-0.5));
+                }
+            val = img_percentile_float("tmpftpim", 0.9) - img_percentile_float("tmpftpim", 0.7);
+            if(val<val1)
+            {
+                val1 = val;
+                coeffx1 = coeffx;
+                coeffy1 = coeffy;
+            }
+            printf("     %f %f   %g       ( %f %f %g )\n", coeffx, coeffy, val, coeffx1, coeffy1, val1);
+        }
+
+    printf("COEFF : %f %f\n", coeffx1, coeffy1);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            x = 1.0*ii/size;
+            y = 1.0*jj/size;
+            data.image[ID].array.F[jj*size+ii] =  data.image[ID].array.F[jj*size+ii]*(1.0+coeffx1*(x-0.5))*(1.0+coeffy1*(y-0.5));
+        }
+
+
+
+    vp10 = img_percentile_float(ID_name, 0.1);
+    vp90 = img_percentile_float(ID_name, 0.9);
+    printf("%f %f\n", vp10, vp90);
+
+
+
+    for(ii=0; ii<data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]; ii++)
+        data.image[ID].array.F[ii] = (data.image[ID].array.F[ii]-vp10)/(vp90-vp10);
+
+    for(ii=0; ii<size*size; ii++)
+    {
+        if(data.image[ID].array.F[ii]>0.05)
+            data.image[ID].array.F[ii] = pow(data.image[ID].array.F[ii], 0.5);
+        else
+            data.image[ID].array.F[ii] = 0.0;
+    }
+
+    vp10 = img_percentile_float(ID_name, 0.1);
+    vp90 = img_percentile_float(ID_name, 0.9);
+    for(ii=0; ii<data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]; ii++)
+        data.image[ID].array.F[ii] = (data.image[ID].array.F[ii]-vp10)/(vp90-vp10);
+
+
+
+
+    rout_min = rout1*0.9;
+    rout_max = rout1*1.1;
+    xc_min = xc1-2.0;
+    xc_max = xc1+2.0;
+    yc_min = yc1-2.0;
+    yc_max = yc1+2.0;
+    pupPA_min = pupPA1-0.1;
+    pupPA_max = pupPA1+0.1;
+    stretchx_min = stretchx1*0.95;
+    stretchx_max = stretchx1*1.05;
+	spideroffset_min = spideroffset1*0.9;
+ 	spideroffset_max = spideroffset1*1.1;
+	spiderPA_min = spiderPA1-0.1;
+	spiderPA_max = spiderPA1+0.1;
+ 
+    fp = fopen("pupfit.txt", "w");
+    fclose(fp);
+
+
+    rms1 = 1000000000000000000000.0;
+    for(iter=0; iter<NBiter; iter++)
+    {
+        for(spiderPA=spiderPA_min; spiderPA<spiderPA_max+eps; spiderPA += (spiderPA_max-spiderPA_min)/nbstep)
+            for(spideroffset=spideroffset_min; spideroffset<spideroffset_max+eps; spideroffset += (spideroffset_max-spideroffset_min)/nbstep)
+                for(stretchx=stretchx_min; stretchx<stretchx_max+eps; stretchx += (stretchx_max-stretchx_min)/nbstep)
+                    for(rout=rout_min; rout<rout_max+eps; rout += (rout_max-rout_min)/nbstep)
+                        for(xc=xc_min; xc<xc_max+eps; xc += (xc_max-xc_min)/nbstep)
+                            for(yc=yc_min; yc<yc_max+eps; yc += (yc_max-yc_min)/nbstep)
+                                for(pupPA=pupPA_min; pupPA<pupPA_max+eps; pupPA += (pupPA_max-pupPA_min)/nbstep)
+                                {
+                                    rin = 0.305*rout;
+                                    spiderthick = 0.06*rout;
+                                    spideroffset = 0.165*rout;
+                                    AOsystSim_mkTelPupDM("testpup", size, xc, yc, rin, rout, pupPA, spiderPA, spideroffset, spiderthick, stretchx);
+                                    IDt = image_ID("testpup");
+                                    // list_image_ID();
+                                    // save_fits("testpup", "!testpup.fits");
+
+                                    rms = 0.0;
+                                    for(ii=0; ii<size*size; ii++)
+                                    {
+                                        v1 = data.image[ID].array.F[ii] - data.image[IDt].array.F[ii];
+                                        rms += v1*v1;
+                                    }
+
+                                    rms = sqrt(rms/size/size);
+
+                                    if(rms<rms1)
+                                    {
+                                        rms1 = rms;
+                                        rout1 = rout;
+                                        xc1 = xc;
+                                        yc1 = yc;
+                                        pupPA1 = pupPA;
+                                        stretchx1 = stretchx;
+                                        spiderPA1 = spiderPA;
+                                        spideroffset1 = spideroffset;
+                                    }
+                                    delete_image_ID("testpup");
+                                    printf("%f %f %f  %f -> rms = %g\n", rout, xc, yc, pupPA, rms);
+                                    fp = fopen("pupfit.txt", "a");
+                                    fprintf(fp,"%f %f %f %f %g\n", rout, xc, yc, pupPA, rms);
+                                    fclose(fp);
+                                }
+
+        printf("ITERATION %ld    %f %f  %f  %f  ->  %f\n", iter, rout1, xc1, yc1, pupPA1, rms1);
+
+
+        spideroffset_range = spideroffset_max-spideroffset_min;
+        spideroffset_range /= 3.0;
+        spideroffset_min = spideroffset1 - 0.5*spideroffset_range;
+        spideroffset_max = spideroffset1 + 0.5*spideroffset_range;
+
+        spiderPA_range = spiderPA_max-spiderPA_min;
+        spiderPA_range /= 3.0;
+        spiderPA_min = spiderPA1 - 0.5*spiderPA_range;
+        spiderPA_max = spiderPA1 + 0.5*spiderPA_range;
+
+        stretchx_range = stretchx_max-stretchx_min;
+        stretchx_range /= 3.0;
+        stretchx_min = stretchx1 - 0.5*stretchx_range;
+        stretchx_max = stretchx1 + 0.5*stretchx_range;
+
+        rout_range = rout_max-rout_min;
+        rout_range /= 3.0;
+        rout_min = rout1 - 0.5*rout_range;
+        rout_max = rout1 + 0.5*rout_range;
+
+        xc_range = xc_max-xc_min;
+        xc_range /= 3.0;
+        xc_min = xc1 - 0.5*xc_range;
+        xc_max = xc1 + 0.5*xc_range;
+
+        yc_range = yc_max-yc_min;
+        yc_range /= 3.0;
+        yc_min = yc1 - 0.5*yc_range;
+        yc_max = yc1 + 0.5*yc_range;
+
+        pupPA_range = xc_max-xc_min;
+        pupPA_range /= 3.0;
+        pupPA_min = xc1 - 0.5*xc_range;
+        pupPA_max = xc1 + 0.5*pupPA_range;
+    }
+
+
+
+	printf("BEST SOLUTION: \n");
+	printf("     xc            %f\n", xc1);
+	printf("     yc            %f\n", yc1);
+	printf("     rout          %f\n", rout1);
+	printf("     pupPA         %f\n", pupPA1);
+	printf("     spiderPA      %f\n", spiderPA1);
+	printf("     spideroffset  %f\n", spideroffset1);
+	printf("     stretchx      %f\n", stretchx1);
+
+    rout = rout1;
+    rin = 0.315*rout;
+    spiderthick = 0.06*rout;
+
+    AOsystSim_mkTelPupDM(IDtelpup_name, size, xc1, yc1, rin, rout, pupPA1, spiderPA1, spideroffset1, spiderthick, stretchx1);
+
+    return(ID);
 }
+
+
+
+
+
+
+
 
 
 
@@ -519,307 +739,335 @@ long AOsystSim_fitTelPup(char *ID_name)
 
 int AOsystSim_run()
 {
-  long dmxsize = 50;
-  long dmysize = 50;
-  long *dmsize;
-  long twait = 1; // us
-  long long cnt = 0;
-  long long cnt0;
-  float lambda = 0.7; // um
+    long dmxsize = 50;
+    long dmysize = 50;
+    long *dmsize;
+    long twait = 1; // us
+    long long cnt = 0;
+    long long cnt0;
+    float lambda = 0.7; // um
 
 
-  long pupsize = 256;
-  double puprad = 22.0;
-  long IDpupa, IDpupp, IDpuppIR;
-  long IDpyrpha, IDpyramp;
-  double x, y, r;
-  long ii, jj, ii1, jj1;
-  double pcoeff = 0.75;
-  long pupsize2;
-  long ID, IDa, IDp;
-  double lenssize = 1200.0;
+    long pupsize = 256;
+    double puprad = 22.0;
+    long IDpupa, IDpupp, IDpuppIR;
+    long IDpyrpha, IDpyramp;
+    double x, y, r;
+    long ii, jj, ii1, jj1;
+    double pcoeff = 0.75;
+    long pupsize2;
+    long ID, IDa, IDp;
+    double lenssize = 1200.0;
 
-  long wfssize = 120;
-  long *wfssize_array;
-  long ID_wfs, ID_wfe;
-  long offset, offset1;
-  long IDflat, IDdmdisp;
+    long wfssize = 120;
+    long *wfssize_array;
+    long ID_wfs, ID_wfe;
+    long offset, offset1;
+    long IDflat, IDdmdisp;
 
-  long IDatmpha;
-  long iioffset, jjoffset;
-  long IDpuppc, IDpuppcIR;
-  long IDpsf, IDpsfIR;
-  long *pupsize_array;
+    long IDatmpha;
+    long iioffset, jjoffset;
+    long IDpuppc, IDpuppcIR;
+    long IDpsf, IDpsfIR;
+    long *pupsize_array;
 
-  float alphaCorr = 0.8;
-  long IDdmt, IDdmtg;
+    float alphaCorr = 0.8;
+    long IDdmt, IDdmtg;
 
-  long moffset;
-  long msize;
-  long usleeptime = 1000; // delay at each loop
+    long moffset;
+    long msize;
+    long usleeptime = 1000; // delay at each loop
 
-/** Pyramid modulation */
-	long modpt;
-	long NBmodpt = 32;
-	double modr = 0.1;
-	double modPA, modx, mody;
-long IDwfscumul;
-
-  pupsize2 = pupsize*pupsize;
+    /** Pyramid modulation */
+    long modpt;
+    long NBmodpt = 64;
+    double modr = 0.1;
+    double modPA, modx, mody;
+    long IDwfscumul;
 
 
-  printf("Running fake AO system simulation\n");
-
-
-
-  dmsize = (long*) malloc(sizeof(long)*2);
-  wfssize_array = (long*) malloc(sizeof(long)*2);
-  pupsize_array = (long*) malloc(sizeof(long)*2);
-   
-  
-  // INITIALIZE
-  
-  // create wavefront error input
-  dmsize[0] = dmxsize;
-  dmsize[1] = dmysize;
-  ID_wfe = create_2Dimage_ID("pyrwfeinput", dmxsize, dmysize); // input WF error, to DM sampling 
-
-
-/*
-  IDflat = read_sharedmem_image("dmdisp0"); // flat
-  data.image[IDflat].md[0].write = 1;
-  for(ii=0;ii<dmxsize;ii++)
-    for(jj=0;jj<dmysize;jj++)
-      data.image[IDflat].array.F[jj*dmxsize+ii] = 0.5;
-  data.image[IDflat].md[0].cnt0++; 
-  data.image[IDflat].md[0].write = 0;
-*/
-
-  // create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);  
- 
-  // create PSF images
-  pupsize_array[0] = pupsize;
-  pupsize_array[1] = pupsize;
-  IDpsf = create_image_ID("aosimpsf", 2, pupsize_array, FLOAT, 1, 0);  
-  IDpsfIR = create_image_ID("aosimpsfIR", 2, pupsize_array, FLOAT, 1, 0);  
+    long IDpsfnm, IDpsfnmIR;
 
 
 
-  IDatmpha = read_sharedmem_image("outfiltwf"); // [um]
-  
-
-  
-
-  IDdmdisp = read_sharedmem_image("dmdisp");
-
-  // create DM
-  dmsize[0] = dmxsize;
-  dmsize[1] = dmysize;
 
 
-  // create WFS image
-  wfssize_array[0] = wfssize;
-  wfssize_array[1] = wfssize;
-  wfssize_array[2] = 3; // number of slices in rolling buffer
-  ID_wfs = create_image_ID("wfs_sim", 3, wfssize_array, FLOAT, 1, 0);
-  data.image[ID_wfs].md[0].cnt1 = 0; // next slice to write
-
-  IDpuppc = create_image_ID("puppcrop", 2, dmsize, FLOAT, 1, 0);
+    pupsize2 = pupsize*pupsize;
 
 
-  
-  IDpyrpha = create_2Dimage_ID("pyrpha0", pupsize, pupsize);
-  IDpyramp = create_2Dimage_ID("pyramp", pupsize, pupsize);
-  for(ii=0;ii<pupsize;ii++)
-    for(jj=0;jj<pupsize;jj++)
-      {
-	x = 1.0*(ii-pupsize/2);
-	y = 1.0*(jj-pupsize/2);
-
-	data.image[IDpyrpha].array.F[jj*pupsize+ii] = pcoeff*(fabs(x)+fabs(y));
-	if((fabs(x)>lenssize)||(fabs(y)>lenssize))
-	  data.image[IDpyramp].array.F[jj*pupsize+ii] = 0.0;
-	else
-	  data.image[IDpyramp].array.F[jj*pupsize+ii] = 1.0;
-      }
-  gauss_filter("pyrpha0", "pyrpha", 15.0, 20);
-  IDpyrpha = image_ID("pyrpha");
-  save_fits("pyrpha","!pyrpha.fits");
-
-  offset1 = (pupsize-dmxsize)/2;
-  printf("OFFSET = %ld\n", offset);
-  cnt = -1;
-  printf("\n");
+    printf("Running fake AO system simulation\n");
 
 
-  if(ID=image_ID("TpupMask")==-1)
+
+    dmsize = (long*) malloc(sizeof(long)*2);
+    wfssize_array = (long*) malloc(sizeof(long)*2);
+    pupsize_array = (long*) malloc(sizeof(long)*2);
+
+
+    // INITIALIZE
+
+    // create wavefront error input
+    dmsize[0] = dmxsize;
+    dmsize[1] = dmysize;
+    ID_wfe = create_2Dimage_ID("pyrwfeinput", dmxsize, dmysize); // input WF error, to DM sampling
+
+    // create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);
+
+    // create PSF images
+    pupsize_array[0] = pupsize;
+    pupsize_array[1] = pupsize;
+    IDpsf = create_image_ID("aosimpsf", 2, pupsize_array, FLOAT, 1, 0);
+    IDpsfIR = create_image_ID("aosimpsfIR", 2, pupsize_array, FLOAT, 1, 0);
+
+    IDpsfnm = create_image_ID("aosimpsfnm", 2, pupsize_array, FLOAT, 1, 0);
+    IDpsfnmIR = create_image_ID("aosimpsfIRnm", 2, pupsize_array, FLOAT, 1, 0);
+
+
+    IDatmpha = read_sharedmem_image("outfiltwf"); // [um]
+
+
+
+
+    IDdmdisp = read_sharedmem_image("dmdisp");
+
+    // create DM
+    dmsize[0] = dmxsize;
+    dmsize[1] = dmysize;
+
+
+    // create WFS image
+    wfssize_array[0] = wfssize;
+    wfssize_array[1] = wfssize;
+    wfssize_array[2] = 3; // number of slices in rolling buffer
+    ID_wfs = create_image_ID("wfs_sim", 3, wfssize_array, FLOAT, 1, 0);
+    data.image[ID_wfs].md[0].cnt1 = 0; // next slice to write
+
+    IDpuppc = create_image_ID("puppcrop", 2, dmsize, FLOAT, 1, 0);
+
+
+
+    IDpyrpha = create_2Dimage_ID("pyrpha0", pupsize, pupsize);
+    IDpyramp = create_2Dimage_ID("pyramp", pupsize, pupsize);
+    for(ii=0; ii<pupsize; ii++)
+        for(jj=0; jj<pupsize; jj++)
+        {
+            x = 1.0*(ii-pupsize/2);
+            y = 1.0*(jj-pupsize/2);
+
+            data.image[IDpyrpha].array.F[jj*pupsize+ii] = pcoeff*(fabs(x)+fabs(y));
+            if((fabs(x)>lenssize)||(fabs(y)>lenssize))
+                data.image[IDpyramp].array.F[jj*pupsize+ii] = 0.0;
+            else
+                data.image[IDpyramp].array.F[jj*pupsize+ii] = 1.0;
+        }
+    gauss_filter("pyrpha0", "pyrpha", 15.0, 20);
+    IDpyrpha = image_ID("pyrpha");
+    save_fits("pyrpha","!pyrpha.fits");
+
+    offset1 = (pupsize-dmxsize)/2;
+    printf("OFFSET = %ld\n", offset);
+    cnt = -1;
+    printf("\n");
+
+
+    if(ID=image_ID("TpupMask")==-1)
     {
-      IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
-      for(ii=0;ii<pupsize;ii++)
-	for(jj=0;jj<pupsize;jj++)
-	  {
-	    x = (1.0*ii-0.5*pupsize)/puprad;
-	    y = (1.0*jj-0.5*pupsize)/puprad;
-	    r = sqrt(x*x+y*y);
-	    if(r<0.3)
-	      data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
-	    if((fabs(0.5*x+0.5*y)<0.05)||(fabs(0.5*x-0.5*y)<0.05))
-		  data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
-	  }
-    } 
-  else
-    {      
-      msize = data.image[ID].md[0].size[0];
-      IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
-      offset = (pupsize-msize)/2;
-      for(ii=0;ii<msize;ii++)
-	for(jj=0;jj<msize;jj++)
-	  data.image[IDpupa].array.F[(jj+offset)*pupsize+(ii+offset)] = data.image[ID].array.F[jj*msize+ii];	    
+        IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+        for(ii=0; ii<pupsize; ii++)
+            for(jj=0; jj<pupsize; jj++)
+            {
+                x = (1.0*ii-0.5*pupsize)/puprad;
+                y = (1.0*jj-0.5*pupsize)/puprad;
+                r = sqrt(x*x+y*y);
+                if(r<0.3)
+                    data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
+                if((fabs(0.5*x+0.5*y)<0.05)||(fabs(0.5*x-0.5*y)<0.05))
+                    data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
+            }
     }
- 
-  //  save_fits("pupa", "!Tpupa.fits");
-
-	IDwfscumul = create_2Dimage_ID("wfscumul", pupsize, pupsize);
-
-  while(1)
+    else
     {
-      usleep(usleeptime);
-      
-  for(ii=0;ii<pupsize2;ii++)
-		data.image[IDwfscumul].array.F[ii] = 0.0;
-
-      for(modpt=0; modpt<NBmodpt; modpt++)
-      {
-      // IMPORT WF ERROR
-      iioffset = 6;
-      jjoffset = 6;
-      for(ii=0;ii<dmxsize;ii++)
-		for(jj=0;jj<dmysize;jj++)
-	  {
-	    data.image[ID_wfe].array.F[jj*dmxsize+ii] = 0.0;
-	    ii1 = ii+iioffset;
-	    jj1 = jj+jjoffset;
-	    data.image[ID_wfe].array.F[jj*dmxsize+ii] = data.image[IDatmpha].array.F[jj1*data.image[IDatmpha].md[0].size[0]+ii1]; // um
-	    
-	  }
-	        
-      data.image[ID_wfe].md[0].cnt0++;
-      data.image[ID_wfe].md[0].write = 0;
-
-
-   	IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
-	IDpuppIR = create_2Dimage_ID("puppIR", pupsize, pupsize);
-
-	
-
-	  data.image[IDpuppc].md[0].write==1;
-
-	  for(ii=0;ii<dmxsize;ii++)
-	  for(jj=0;jj<dmysize;jj++)
-	    data.image[IDpuppc].array.F[jj*dmxsize+ii] = data.image[ID_wfe].array.F[jj*dmxsize+ii] - 2.0*data.image[IDdmdisp].array.F[jj*dmxsize+ii] + modr*cos(2.0*M_PI*modpt/NBmodpt)*(1.0*ii-0.5*dmxsize) + modr*sin(2.0*M_PI*modpt/NBmodpt)*(1.0*jj-0.5*dmysize);   // [um]
-	    
-	  for(ii=0;ii<dmxsize;ii++)
-	    for(jj=0;jj<dmysize;jj++)
-	      data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;  // [rad]
-	  
-	  data.image[IDpuppc].md[0].cnt0++;
-	  data.image[IDpuppc].md[0].write = 0;
-	  
-	  for(ii=0;ii<dmxsize;ii++)
-	    for(jj=0;jj<dmysize;jj++)
-	      data.image[IDpuppIR].array.F[(jj+offset1)*pupsize+(ii+offset1)] = (lambda/1.65)*data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;
-	  
-
-
-
-	  mk_complex_from_amph("pupa","pupp","pupc");
-	  permut("pupc");
-	  do2dfft("pupc","focc");
-	  delete_image_ID("pupc");
-	  permut("focc");
-	  mk_amph_from_complex("focc", "foca", "focp");
-	  
-	  delete_image_ID("focc");
-	  IDp = image_ID("focp");
-	  IDa = image_ID("foca");
-	 
-
-
-	  data.image[IDpsf].md[0].write = 1;
-	  for(ii=0;ii<pupsize2;ii++)
-	    {
-	      data.image[IDpsf].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
-	      data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
-	      data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
-	    }
-	  data.image[IDpsf].md[0].cnt0++;
-	  data.image[IDpsf].md[0].write = 0;
-
-
-	  mk_complex_from_amph("pupa","puppIR","pupc");
-	  permut("pupc");
-	  do2dfft("pupc","focc");
-	  delete_image_ID("pupc");
-	  permut("focc");
-	  mk_amph_from_complex("focc", "focaIR", "focpIR");
-	  
-	  delete_image_ID("focc");
-	  delete_image_ID("focpIR");
-	  IDa = image_ID("focaIR");
-	  
-
-	  data.image[IDpsfIR].md[0].write = 1;
-	  for(ii=0;ii<pupsize2;ii++)
-	    data.image[IDpsfIR].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
-	  data.image[IDpsfIR].md[0].cnt0++;
-	  data.image[IDpsfIR].md[0].write = 0;
-
-
-
-
-	  mk_complex_from_amph("foca","focp","focc1");
-	  delete_image_ID("foca");
-	  delete_image_ID("focp");
-	  permut("focc1");
-	  do2dfft("focc1","pupc1");
-	  delete_image_ID("focc1");
-	  permut("pupc1");
-	  mk_amph_from_complex("pupc1", "pupa1", "pupp1");
-	  delete_image_ID("pupc1");
-	  delete_image_ID("pupp1");
-	  
-	  ID = image_ID("pupa1");
-	  offset = (pupsize-wfssize)/2;
-	  
-	  for(ii=0;ii<pupsize2;ii++)
-		data.image[IDwfscumul].array.F[ii] += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
-	delete_image_ID("pupa1");
-	  }
-	  
-	  
-	  data.image[ID_wfs].md[0].write = 1;
-	  moffset = data.image[ID_wfs].md[0].cnt1*wfssize*wfssize;
-	  	  for(ii1=0;ii1<wfssize;ii1++)
-	    for(jj1=0;jj1<wfssize;jj1++)	     
-	      data.image[ID_wfs].array.F[moffset+jj1*wfssize+ii1] = data.image[IDwfscumul].array.F[(jj1+offset)*pupsize+ii1+offset]; //*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
-	  data.image[ID_wfs].md[0].cnt1++;
-	  if(data.image[ID_wfs].md[0].cnt1==data.image[ID_wfs].md[0].size[2])
-	    data.image[ID_wfs].md[0].cnt1 = 0;
-	  data.image[ID_wfs].md[0].cnt0++;
-	  data.image[ID_wfs].md[0].write = 0;
-
-
-	  printf("\r%10ld       ", data.image[ID_wfs].md[0].cnt0);
-	  fflush(stdout);
-	  //  cnt = cnt0;
-	  //	}
+        msize = data.image[ID].md[0].size[0];
+        IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
+        offset = (pupsize-msize)/2;
+        for(ii=0; ii<msize; ii++)
+            for(jj=0; jj<msize; jj++)
+                data.image[IDpupa].array.F[(jj+offset)*pupsize+(ii+offset)] = data.image[ID].array.F[jj*msize+ii];
     }
-      
-      delete_image_ID("wfscumul");
-  free(dmsize);
-  free(wfssize_array);
-  free(pupsize_array);
+
+    //  save_fits("pupa", "!Tpupa.fits");
+
+    IDwfscumul = create_2Dimage_ID("wfscumul", pupsize, pupsize);
+
+    while(1)
+    {
+        usleep(usleeptime);
+
+        for(ii=0; ii<pupsize2; ii++)
+            data.image[IDwfscumul].array.F[ii] = 0.0;
+
+        for(modpt=0; modpt<NBmodpt; modpt++)
+        {
+            // IMPORT WF ERROR
+            iioffset = 6;
+            jjoffset = 6;
+            for(ii=0; ii<dmxsize; ii++)
+                for(jj=0; jj<dmysize; jj++)
+                {
+                    data.image[ID_wfe].array.F[jj*dmxsize+ii] = 0.0;
+                    ii1 = ii+iioffset;
+                    jj1 = jj+jjoffset;
+                    data.image[ID_wfe].array.F[jj*dmxsize+ii] = data.image[IDatmpha].array.F[jj1*data.image[IDatmpha].md[0].size[0]+ii1]; // um
+
+                }
+
+            data.image[ID_wfe].md[0].cnt0++;
+            data.image[ID_wfe].md[0].write = 0;
+
+            IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
+
+            /** make WFS PSF (without the modulation) */
+            data.image[IDpuppc].md[0].write==1;
+            for(ii=0; ii<dmxsize; ii++)
+                for(jj=0; jj<dmysize; jj++)
+                    data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[ID_wfe].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;
+
+            mk_complex_from_amph("pupa","pupp","pupc");
+            permut("pupc");
+            do2dfft("pupc","focc");
+            delete_image_ID("pupc");
+            permut("focc");
+            mk_amph_from_complex("focc", "foca", "focp");
+
+            delete_image_ID("focc");
+            delete_image_ID("focp");
+            IDa = image_ID("foca");
 
 
-  return 0;
+            data.image[IDpsfnm].md[0].write = 1;
+            for(ii=0; ii<pupsize2; ii++)
+                data.image[IDpsfnm].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
+            data.image[IDpsfnm].md[0].cnt0++;
+            data.image[IDpsfnm].md[0].write = 0;
+            delete_image_ID("foca");
+
+
+
+
+
+
+            IDpuppIR = create_2Dimage_ID("puppIR", pupsize, pupsize);
+
+
+
+            data.image[IDpuppc].md[0].write==1;
+
+            for(ii=0; ii<dmxsize; ii++)
+                for(jj=0; jj<dmysize; jj++)
+                    data.image[IDpuppc].array.F[jj*dmxsize+ii] = data.image[ID_wfe].array.F[jj*dmxsize+ii] - 2.0*data.image[IDdmdisp].array.F[jj*dmxsize+ii] + modr*cos(2.0*M_PI*modpt/NBmodpt)*(1.0*ii-0.5*dmxsize) + modr*sin(2.0*M_PI*modpt/NBmodpt)*(1.0*jj-0.5*dmysize);   // [um]
+
+            for(ii=0; ii<dmxsize; ii++)
+                for(jj=0; jj<dmysize; jj++)
+                    data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;  // [rad]
+
+            data.image[IDpuppc].md[0].cnt0++;
+            data.image[IDpuppc].md[0].write = 0;
+
+            for(ii=0; ii<dmxsize; ii++)
+                for(jj=0; jj<dmysize; jj++)
+                    data.image[IDpuppIR].array.F[(jj+offset1)*pupsize+(ii+offset1)] = (lambda/1.65)*data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;
+
+
+
+
+            mk_complex_from_amph("pupa","pupp","pupc");
+            permut("pupc");
+            do2dfft("pupc","focc");
+            delete_image_ID("pupc");
+            permut("focc");
+            mk_amph_from_complex("focc", "foca", "focp");
+
+            delete_image_ID("focc");
+            IDp = image_ID("focp");
+            IDa = image_ID("foca");
+
+
+
+            data.image[IDpsf].md[0].write = 1;
+            for(ii=0; ii<pupsize2; ii++)
+            {
+                data.image[IDpsf].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
+                data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
+                data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
+            }
+            data.image[IDpsf].md[0].cnt0++;
+            data.image[IDpsf].md[0].write = 0;
+
+
+            mk_complex_from_amph("pupa","puppIR","pupc");
+            permut("pupc");
+            do2dfft("pupc","focc");
+            delete_image_ID("pupc");
+            permut("focc");
+            mk_amph_from_complex("focc", "focaIR", "focpIR");
+
+            delete_image_ID("focc");
+            delete_image_ID("focpIR");
+            IDa = image_ID("focaIR");
+
+
+            data.image[IDpsfIR].md[0].write = 1;
+            for(ii=0; ii<pupsize2; ii++)
+                data.image[IDpsfIR].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
+            data.image[IDpsfIR].md[0].cnt0++;
+            data.image[IDpsfIR].md[0].write = 0;
+
+
+
+            mk_complex_from_amph("foca","focp","focc1");
+            delete_image_ID("foca");
+            delete_image_ID("focp");
+            permut("focc1");
+            do2dfft("focc1","pupc1");
+            delete_image_ID("focc1");
+            permut("pupc1");
+            mk_amph_from_complex("pupc1", "pupa1", "pupp1");
+            delete_image_ID("pupc1");
+            delete_image_ID("pupp1");
+
+            ID = image_ID("pupa1");
+            offset = (pupsize-wfssize)/2;
+
+            for(ii=0; ii<pupsize2; ii++)
+                data.image[IDwfscumul].array.F[ii] += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+            delete_image_ID("pupa1");
+        }
+
+
+        data.image[ID_wfs].md[0].write = 1;
+        moffset = data.image[ID_wfs].md[0].cnt1*wfssize*wfssize;
+        for(ii1=0; ii1<wfssize; ii1++)
+            for(jj1=0; jj1<wfssize; jj1++)
+                data.image[ID_wfs].array.F[moffset+jj1*wfssize+ii1] = data.image[IDwfscumul].array.F[(jj1+offset)*pupsize+ii1+offset]; //*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
+        data.image[ID_wfs].md[0].cnt1++;
+        if(data.image[ID_wfs].md[0].cnt1==data.image[ID_wfs].md[0].size[2])
+            data.image[ID_wfs].md[0].cnt1 = 0;
+        data.image[ID_wfs].md[0].cnt0++;
+        data.image[ID_wfs].md[0].write = 0;
+
+
+        printf("\r%10ld       ", data.image[ID_wfs].md[0].cnt0);
+        fflush(stdout);
+        //  cnt = cnt0;
+        //	}
+    }
+
+    delete_image_ID("wfscumul");
+    free(dmsize);
+    free(wfssize_array);
+    free(pupsize_array);
+
+
+    return 0;
 }
+

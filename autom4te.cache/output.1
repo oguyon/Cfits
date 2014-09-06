@@ -638,6 +638,8 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIB@&t@OBJS
 EXECNAME
+NVCCFLAGS
+NVCC
 LEXLIB
 LEX_OUTPUT_ROOT
 LEX
@@ -770,6 +772,9 @@ with_sysroot
 enable_libtool_lock
 enable_openmp
 enable_fftwmt
+enable_cuda
+with_cuda
+with_cuda_sdk
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1414,6 +1419,7 @@ Optional Features:
   --disable-openmp        do not use OpenMP
   --enable-fftwmt         Enable FFTW multi-thread  
                           
+  --enable-cuda           enable CUDA support
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1423,6 +1429,8 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld @<:@default=no@:>@
   --with-sysroot=DIR Search for dependent libraries within DIR
                         (or the compiler's sysroot if not specified).
+  --with-cuda=PATH        prefix where CUDA is installed @<:@default=auto@:>@
+  --with-cuda-sdk=PATH    prefix where CUDA SDK is installed @<:@default=auto@:>@
 
 Some influential environment variables:
   CC          C compiler command
@@ -2227,6 +2235,10 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 #AC_CONFIG_HEADER([config.h])
 
 # sanity check a file to see if we're really in the build directory
+
+
+
+
 
 
 
@@ -11934,6 +11946,26 @@ ACX_PTHREAD
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CPPFLAGS="$CPPFLAGS -I/usr/local/include/"
 
 #LDFLAGS="$LDFLAGS -L/usr/lib/"
@@ -12718,12 +12750,94 @@ done
 #AC_MSG_NOTICE([eg:checking if stack overflow is detectable])
 #AC_MSG_FAILURE (error-description, [exit-status])
 
+
+
+
+
+
+
+
+
+
+
+
+#=================================================
+# TO BE EDITED---- DOES NOT WORK CURRENTLY
+# Setup default CUDA paths
+#CUDA_INSTALL_PATH="/usr/local/cuda"
+#CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
+
+# Check: enable CUDA?
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use CUDA library" >&5
+$as_echo_n "checking whether to use CUDA library... " >&6; }
+@%:@ Check whether --enable-cuda was given.
+if test "${enable_cuda+set}" = set; then :
+  enableval=$enable_cuda; cudaval="yes"
+else
+  cudaval="no"
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $cudaval" >&5
+$as_echo "$cudaval" >&6; }
+
+# check to see if CUDA been selected
+if test "$cudaval" == "no"; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Not using CUDA!" >&5
+$as_echo "$as_me: WARNING: Not using CUDA!" >&2;}
+fi
+
+# Setup custom CUDA paths
+
+@%:@ Check whether --with-cuda was given.
+if test "${with_cuda+set}" = set; then :
+  withval=$with_cuda; CUDA_INSTALL_PATH=$withval
+else
+  with_cuda=auto
+fi
+
+
+@%:@ Check whether --with-cuda-sdk was given.
+if test "${with_cuda_sdk+set}" = set; then :
+  withval=$with_cuda_sdk; CUDA_SDK_INSTALL_PATH=$withval
+else
+  with_cuda_sdk=auto
+fi
+
+
+# Setup nvcc flags
+if test  "$cudaval" = "yes"; then
+    NVCCFLAGS="$NVCCFLAGS"
+    CUDA_CFLAGS="$CUDA_CFLAGS"
+    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
+    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include"
+    CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
+    CUDA_LIBS="-lcuda -lcudart -lcufft"
+    NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
+    NVCC="nvcc"
+    
+    
+    
+$as_echo "@%:@define _CUDA 1" >>confdefs.h
+
+    eval "ARRAY${N}='-D_CUDA'"
+    N=`expr $N + 1`
+    LIBS="$LIBS $CUDA_LIBS"
+    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS"
+fi
+
+
+
+
+
 # Create our own a symbol for execname until we can find the right one
 EXECNAME=Cfits
 
 
+#if test  "$cudaval" = "yes"; then
+#	LIBS="$LIBS -lcuda -lcudart -lcufft"
+#fi
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/SCExAO_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphericTurbulence/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/SCExAO_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphericTurbulence/Makefile src/cudacomp/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -13773,6 +13887,7 @@ do
     "src/AOloopControl/Makefile") CONFIG_FILES="$CONFIG_FILES src/AOloopControl/Makefile" ;;
     "src/psf/Makefile") CONFIG_FILES="$CONFIG_FILES src/psf/Makefile" ;;
     "src/AtmosphericTurbulence/Makefile") CONFIG_FILES="$CONFIG_FILES src/AtmosphericTurbulence/Makefile" ;;
+    "src/cudacomp/Makefile") CONFIG_FILES="$CONFIG_FILES src/cudacomp/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -14963,4 +15078,16 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+echo ""
+echo "                       Configure Summary"
+echo "                       ================="
+echo ""
+echo "Compiling Options:"
+echo "------------------"
+echo "                     C Compiler: $CC"
+echo "                         CFLAGS: $CFLAGS"
+
+echo "                        LDFLAGS: $LDFLAGS"
+echo "                           LIBS: $LIBS"
 

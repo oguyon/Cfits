@@ -9,6 +9,10 @@ AC_PREREQ(2.61)
 AC_CONFIG_SRCDIR([src/CLIcore.c])
 
 AC_CONFIG_MACRO_DIR([m4])
+
+
+
+
 # Init Automake
 AM_INIT_AUTOMAKE([foreign -Wall])
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
@@ -38,6 +42,26 @@ ACX_PTHREAD
 #
 # Coerce @prefix@ default from /usr/local/ to fullpath of dir configure is run in
 AC_PREFIX_DEFAULT(`readlink -f .`)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 CPPFLAGS="$CPPFLAGS -I/usr/local/include/"
@@ -220,12 +244,93 @@ AC_CHECK_HEADERS( [fitsio.h],
 #AC_MSG_NOTICE([eg:checking if stack overflow is detectable])
 #AC_MSG_FAILURE (error-description, [exit-status])
 
+
+
+
+
+
+
+
+
+
+
+
+#=================================================
+# Setup default CUDA paths
+#CUDA_INSTALL_PATH="/usr/local/cuda"
+#CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
+
+# Check: enable CUDA?
+AC_MSG_CHECKING([whether to use CUDA library])
+AC_ARG_ENABLE(cuda,
+    [AS_HELP_STRING(--enable-cuda,enable CUDA support)],
+    cudaval="yes",
+    cudaval="no")
+AC_MSG_RESULT([$cudaval])
+
+# check to see if CUDA been selected
+if test "$cudaval" == "no"; then
+    AC_MSG_WARN([Not using CUDA!])
+fi
+
+# Setup custom CUDA paths
+AC_ARG_WITH([cuda],
+   [AS_HELP_STRING(
+        [--with-cuda=PATH],
+        [prefix where CUDA is installed @<:@default=auto@:>@])],
+   [CUDA_INSTALL_PATH=$withval],
+   [with_cuda=auto])
+AC_ARG_WITH([cuda-sdk],
+   [AS_HELP_STRING(
+        [--with-cuda-sdk=PATH],
+        [prefix where CUDA SDK is installed @<:@default=auto@:>@])],
+   [CUDA_SDK_INSTALL_PATH=$withval],
+   [with_cuda_sdk=auto])
+
+# Setup nvcc flags
+if test  "$cudaval" = "yes"; then
+    NVCCFLAGS="$NVCCFLAGS"
+    CUDA_CFLAGS="$CUDA_CFLAGS"
+    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
+    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include"
+    CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
+    CUDA_LIBS="-lcuda -lcudart -lcufft"
+    NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
+    NVCC="nvcc"
+    AC_SUBST(NVCC)
+    AC_SUBST(NVCCFLAGS)
+    AC_DEFINE([_CUDA],[1],[Defined if CUDA should be used])
+    eval "ARRAY${N}='-D_CUDA'"
+    N=`expr $N + 1`
+    LIBS="$LIBS $CUDA_LIBS"
+    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS"
+fi
+
+
+
+
+
 # Create our own a symbol for execname until we can find the right one
 EXECNAME=Cfits
 AC_SUBST(EXECNAME)
 
+#if test  "$cudaval" = "yes"; then
+#	LIBS="$LIBS -lcuda -lcudart -lcufft"
+#fi
 
-AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/SCExAO_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphericTurbulence/Makefile)
+AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/SCExAO_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphericTurbulence/Makefile src/cudacomp/Makefile)
 
 AC_OUTPUT
+
+echo ""
+echo "                       Configure Summary"
+echo "                       ================="
+echo ""
+echo "Compiling Options:"
+echo "------------------"
+echo "                     C Compiler: $CC"
+echo "                         CFLAGS: $CFLAGS"
+
+echo "                        LDFLAGS: $LDFLAGS"
+echo "                           LIBS: $LIBS"
 

@@ -27,6 +27,10 @@ cfits_LDADD =
 ## Core modules last, higher level modules at the top
 
 
+SUBDIRS += cudacomp
+cfits_LDADD += cudacomp/libcudacomp.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/cudacomp
+
 SUBDIRS += AtmosphericTurbulence
 cfits_LDADD += AtmosphericTurbulence/libatmturb.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence

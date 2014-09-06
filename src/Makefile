@@ -101,7 +101,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cfits_OBJECTS = cfits-CLIcore.$(OBJEXT) cfits-initmodules.$(OBJEXT) \
 	cfits-calc_bison.$(OBJEXT) cfits-calc_flex.$(OBJEXT)
 cfits_OBJECTS = $(am_cfits_OBJECTS)
-cfits_DEPENDENCIES = AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
+cfits_DEPENDENCIES = cudacomp/libcudacomp.la \
+	AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
 	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
 	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
 	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \
@@ -254,7 +255,7 @@ CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS =  -I/usr/local/include/
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"Cfits\" -DPACKAGE_TARNAME=\"cfits\" -DPACKAGE_VERSION=\"3.2.00\" -DPACKAGE_STRING=\"Cfits\ 3.2.00\" -DPACKAGE_BUGREPORT=\"oliv.guyon@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"cfits\" -DVERSION=\"3.2.00\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_LIBM=1 -DHAVE_LIBRT=1 -DHAVE_LIBGSLCBLAS=1 -DHAVE_LIBGSL=1 -DHAVE_LIBCFITSIO=1 -DHAVE_READLINE_H=1 -DHAVE_LIBNCURSES=1 -DHAVE_LIBFFTW3F=1 -DHAVE_LIBFFTW3=1 -DHAVE_LIBGOMP=1 -DHAVE_FFTW3_H=1 -DHAVE_FITSIO_H=1
+DEFS = -DPACKAGE_NAME=\"Cfits\" -DPACKAGE_TARNAME=\"cfits\" -DPACKAGE_VERSION=\"3.2.00\" -DPACKAGE_STRING=\"Cfits\ 3.2.00\" -DPACKAGE_BUGREPORT=\"oliv.guyon@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"cfits\" -DVERSION=\"3.2.00\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLT_OBJDIR=\".libs/\" -DHAVE_LIBM=1 -DHAVE_LIBRT=1 -DHAVE_LIBGSLCBLAS=1 -DHAVE_LIBGSL=1 -DHAVE_LIBCFITSIO=1 -DHAVE_READLINE_H=1 -DHAVE_LIBNCURSES=1 -DHAVE_LIBFFTW3F=1 -DHAVE_LIBFFTW3=1 -DHAVE_LIBGOMP=1 -DHAVE_FFTW3_H=1 -DHAVE_FITSIO_H=1 -D_CUDA=1
 DEPDIR = .deps
 DLLTOOL = false
 DSYMUTIL = 
@@ -273,12 +274,12 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS = 
+LDFLAGS =  -L/lib64
 LEX = ${SHELL} /CfitsDev/Cfits-src/missing flex
 LEXLIB = 
 LEX_OUTPUT_ROOT = 
 LIBOBJS = 
-LIBS = -lgomp -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm 
+LIBS = -lgomp -lfftw3 -lfftw3f -lncurses -lreadline -lcfitsio -lgsl -lgslcblas -lrt -lm  -lcuda -lcudart -lcufft
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -288,6 +289,8 @@ MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
+NVCC = nvcc
+NVCCFLAGS =   -I/C/common/inc/ -I/include -L/lib64 -lcuda -lcudart -lcufft
 OBJDUMP = objdump
 OBJEXT = o
 OPENMP_CFLAGS = -fopenmp
@@ -307,7 +310,7 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 3.2.00
-YACC = yacc
+YACC = bison -y
 YFLAGS = 
 abs_builddir = /CfitsDev/Cfits-src/src
 abs_srcdir = /CfitsDev/Cfits-src/src
@@ -366,6 +369,7 @@ cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-DCONFIGDIR=\"/CfitsDev/Cfits-src/config\" \
 	-DSOURCEDIR=\"/CfitsDev/Cfits-src/src\" \
 	-DABSSRCTOPDIR=\"/CfitsDev/Cfits-src\" -fopenmp \
+	-I/CfitsDev/Cfits-src/src/cudacomp \
 	-I/CfitsDev/Cfits-src/src/AtmosphericTurbulence \
 	-I/CfitsDev/Cfits-src/src/psf \
 	-I/CfitsDev/Cfits-src/src/AOloopControl \
@@ -394,13 +398,14 @@ AM_YFLAGS = -d
 AM_LFLAGS = -i 
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
-SUBDIRS = AtmosphericTurbulence psf AOloopControl AOsystSim SCExAO_DM \
-	image_format PIAACMCsimul OptSystProp OpticsMaterials \
-	coronagraphs ZernikePolyn WFpropagate image_basic image_filter \
-	kdtree image_gen linopt_imtools statistic fft info \
-	COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
-	00CORE
-cfits_LDADD = AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
+SUBDIRS = cudacomp AtmosphericTurbulence psf AOloopControl AOsystSim \
+	SCExAO_DM image_format PIAACMCsimul OptSystProp \
+	OpticsMaterials coronagraphs ZernikePolyn WFpropagate \
+	image_basic image_filter kdtree image_gen linopt_imtools \
+	statistic fft info COREMOD_arith COREMOD_iofits COREMOD_memory \
+	COREMOD_tools 00CORE
+cfits_LDADD = cudacomp/libcudacomp.la \
+	AtmosphericTurbulence/libatmturb.la psf/libpsf.la \
 	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
 	SCExAO_DM/libscexaodm.la image_format/libimageformat.la \
 	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \

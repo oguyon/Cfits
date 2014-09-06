@@ -27,6 +27,8 @@ int init_modules()
   init_AOloopControl();
   init_psf();
   init_AtmosphericTurbulence();
+  init_CUDACOMP();
+
 
   return 0;
 }

@@ -6,6 +6,10 @@ long brighter(char *ID_name, double value);
 
 int img_nbpix_flux(char *ID_name);
 
+float img_percentile_float(char *ID_name, float p);
+
+double img_percentile_double(char *ID_name, double p);
+
 double img_percentile(char *ID_name, double p);
 
 int img_histoc(char *ID_name, char *fname);
