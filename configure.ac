@@ -52,18 +52,6 @@ AC_PREFIX_DEFAULT(`readlink -f .`)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 CPPFLAGS="$CPPFLAGS -I/usr/local/include/"
 
 #LDFLAGS="$LDFLAGS -L/usr/lib/"
@@ -305,6 +293,7 @@ if test  "$cudaval" = "yes"; then
     LIBS="$LIBS $CUDA_LIBS"
     LDFLAGS="$LDFLAGS $CUDA_LDFLAGS"
     CFLAGS="$CFLAGS $CUDA_CFLAGS"
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/cuda/lib64/"
 fi
 
 
