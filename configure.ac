@@ -291,7 +291,7 @@ if test  "$cudaval" = "yes"; then
     eval "ARRAY${N}='-D_CUDA'"
     N=`expr $N + 1`
     LIBS="$LIBS $CUDA_LIBS"
-    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS"
+    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS -L/usr/local/cuda/lib64/"
     CFLAGS="$CFLAGS $CUDA_CFLAGS"
     LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/cuda/lib64/"
 fi
