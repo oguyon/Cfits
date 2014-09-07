@@ -4,6 +4,7 @@ var searchData=
   ['idlog0',['IDlog0',['../structAOLOOPCONTROL__CONF.html#a9f247bd5de5cea30c6ceba6c18bf1f89',1,'AOLOOPCONTROL_CONF']]],
   ['idlog1',['IDlog1',['../structAOLOOPCONTROL__CONF.html#a70fd7884138051b6cf69657300e70b30',1,'AOLOOPCONTROL_CONF']]],
   ['idlyotstop',['IDLyotStop',['../structMIRRORPIAACMCDESIGN.html#ac5baf405212024a0d3812f8bb641b4c7',1,'MIRRORPIAACMCDESIGN']]],
+  ['idoutdmmodes',['IDoutdmmodes',['../cudacomp_8c.html#a9de17adf13412ec18749b511f4652dab',1,'cudacomp.c']]],
   ['idpa',['IDPA',['../PIAACMCsimul_8c.html#a26d22afd21e23f4f8a948cdbef674f9f',1,'PIAACMCsimul.c']]],
   ['idprol_5fffrac',['IDprol_ffrac',['../coronagraphs_8c.html#a21f470d640a2ac358415b9a6ba4e43ac',1,'coronagraphs.c']]],
   ['idprol_5ffitapo_5fa',['IDprol_fitapo_a',['../coronagraphs_8c.html#a77954ce241e9dd4b71af46e3eb711ea7',1,'coronagraphs.c']]],

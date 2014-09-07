@@ -1,5 +1,6 @@
 var NAVTREEINDEX11 =
 {
+"structDATA.html":[5,0,10],
 "structDATA.html#a04c14ba8ea1844e3f68888dca0fe3519":[5,0,10,22],
 "structDATA.html#a0a1527cfaff533ba10df8cfdf519002a":[5,0,10,13],
 "structDATA.html#a1072fcd97dbe8660a3b3d7d54b21b300":[5,0,10,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX11 =
 "structsymrec.html#a841939294a168dadc7dc230596f932ca":[5,0,31,0],
 "structsymrec.html#aabe0b508928c6472fcbdf5071c33b61a":[5,0,31,4],
 "structsymrec.html#af3db0c7e569f93a9d7385d5b170578f8":[5,0,31,5],
-"structyy__buffer__state.html":[5,0,34],
-"structyy__buffer__state.html#a06406208824817acfec2183b79080945":[5,0,34,11]
+"structyy__buffer__state.html":[5,0,34]
 };
