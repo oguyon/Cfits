@@ -16,8 +16,9 @@ missing
 *.in
 *.Plo
 ar-lib
+configure
 bin/*
-autom4te.cache/
+autom4te.cache/*
 compile
 config.guess
 config.log
