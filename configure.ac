@@ -304,6 +304,7 @@ if test  "$cudaval" = "yes"; then
     N=`expr $N + 1`
     LIBS="$LIBS $CUDA_LIBS"
     LDFLAGS="$LDFLAGS $CUDA_LDFLAGS"
+    CFLAGS="$CFLAGS $CUDA_CFLAGS"
 fi
 
 

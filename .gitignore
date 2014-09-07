@@ -29,5 +29,6 @@ src/cfits
 libtool
 *.save
 *#
+Makefile
 
 
