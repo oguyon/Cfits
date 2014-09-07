@@ -9,6 +9,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "COREMOD_memory", "dir_3263a6acd0ffe1d4fb8f1f8557ae17b7.html", "dir_3263a6acd0ffe1d4fb8f1f8557ae17b7" ],
     [ "COREMOD_tools", "dir_d5162902b44091c7331edbe97a61fdb6.html", "dir_d5162902b44091c7331edbe97a61fdb6" ],
     [ "coronagraphs", "dir_4f0335b5b113a303a029a7cd754eef60.html", "dir_4f0335b5b113a303a029a7cd754eef60" ],
+    [ "cudacomp", "dir_dca209fe662ec0d146440db0aa5b9932.html", "dir_dca209fe662ec0d146440db0aa5b9932" ],
     [ "fft", "dir_1fbe5abfc91f031908f9b0fcd26c05f0.html", "dir_1fbe5abfc91f031908f9b0fcd26c05f0" ],
     [ "image_basic", "dir_b6897bfb48a1d12c881045d4349aa702.html", "dir_b6897bfb48a1d12c881045d4349aa702" ],
     [ "image_filter", "dir_676befcc5933c2bdc27e94a2782f4631.html", "dir_676befcc5933c2bdc27e94a2782f4631" ],

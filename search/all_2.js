@@ -2,6 +2,7 @@ var searchData=
 [
   ['a',['a',['../structap__array.html#ac8261eba1b3ae612e2361a0979eab92b',1,'ap_array']]],
   ['alloc_5fresnode',['alloc_resnode',['../kdtree_8c.html#aeb41ddbd68313adcb5129add2c4428d0',1,'kdtree.c']]],
+  ['alpha',['alpha',['../cudacomp_8c.html#ab1551d8043c2aa4410fb7dbb1fe3be7b',1,'cudacomp.c']]],
   ['alpha1h2o',['alpha1H2O',['../AtmosphericTurbulence_8c.html#afffc6c2b72cad4313261f240d110479b',1,'AtmosphericTurbulence.c']]],
   ['alt',['alt',['../structnrlmsise__input.html#a102b283f83c88896582614654330d4d7',1,'nrlmsise_input']]],
   ['ampl',['ampl',['../structSCEXAO__DMTURBCONF.html#a876d9ca9cfcf6b6737c802e008fc6215',1,'SCEXAO_DMTURBCONF']]],
@@ -92,9 +93,9 @@ var searchData=
   ['aolooploadconf_5finit',['AOlooploadconf_init',['../AOloopControl_8c.html#a3cab4b1892467d2abeab3bdad99b690c',1,'AOloopControl.c']]],
   ['aosystsim_2ec',['AOsystSim.c',['../AOsystSim_8c.html',1,'']]],
   ['aosystsim_2eh',['AOsystSim.h',['../AOsystSim_8h.html',1,'']]],
-  ['aosystsim_5ffittelpup',['AOsystSim_fitTelPup',['../AOsystSim_8c.html#a84315e640affa33ec579c88d9f9b8a64',1,'AOsystSim_fitTelPup(char *ID_name):&#160;AOsystSim.c'],['../AOsystSim_8h.html#a84315e640affa33ec579c88d9f9b8a64',1,'AOsystSim_fitTelPup(char *ID_name):&#160;AOsystSim.c']]],
+  ['aosystsim_5ffittelpup',['AOsystSim_fitTelPup',['../AOsystSim_8c.html#a00de7b1ef368a9ca1a2e3c8938c8175b',1,'AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name):&#160;AOsystSim.c'],['../AOsystSim_8h.html#a00de7b1ef368a9ca1a2e3c8938c8175b',1,'AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name):&#160;AOsystSim.c']]],
   ['aosystsim_5ffittelpup_5fcli',['AOsystSim_fitTelPup_cli',['../AOsystSim_8c.html#a68e2ed4596ecce3be7ea9571bc2b65e8',1,'AOsystSim.c']]],
-  ['aosystsim_5fmktelpupdm',['AOsystSim_mkTelPupDM',['../AOsystSim_8c.html#a6778411e6af8eaf7ffe09ebbdb224937',1,'AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick):&#160;AOsystSim.c'],['../AOsystSim_8h.html#aa95b317ca6cd1af0ea678d087cc16737',1,'AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick):&#160;AOsystSim.c']]],
+  ['aosystsim_5fmktelpupdm',['AOsystSim_mkTelPupDM',['../AOsystSim_8c.html#a193cf7ab1eb485e1cf7b9e8e2d6772fd',1,'AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx):&#160;AOsystSim.c'],['../AOsystSim_8h.html#a7adbafb61a35772c5c0a5d5d0389ecd0',1,'AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx):&#160;AOsystSim.c']]],
   ['aosystsim_5frun',['AOsystSim_run',['../AOsystSim_8c.html#a10af3c598607324654f1ff281c5beff2',1,'AOsystSim_run():&#160;AOsystSim.c'],['../AOsystSim_8h.html#a10af3c598607324654f1ff281c5beff2',1,'AOsystSim_run():&#160;AOsystSim.c']]],
   ['aosystsim_5frun_5fcli',['AOsystSim_run_cli',['../AOsystSim_8c.html#a48531895373f90c9097189175cdfa8cf',1,'AOsystSim.c']]],
   ['aosystsim_5fsimpleaofilter',['AOsystSim_simpleAOfilter',['../AOsystSim_8c.html#ae997e7e4a3de0baf07316f84dd88013a',1,'AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name):&#160;AOsystSim.c'],['../AOsystSim_8h.html#ae997e7e4a3de0baf07316f84dd88013a',1,'AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name):&#160;AOsystSim.c']]],
@@ -259,5 +260,5 @@ var searchData=
   ['autopiaacmask',['AUTOPIAACMASK',['../coronagraphs_8c.html#afad8554aa8456b1da893a50c7fc01ea2',1,'coronagraphs.c']]],
   ['avcamarraysinit',['avcamarraysInit',['../AOloopControl_8c.html#aff4e5acd229f86129440961b3272ae52',1,'AOloopControl.c']]],
   ['average_5fcam_5fframes',['Average_cam_frames',['../AOloopControl_8c.html#aea1f823ddb827c2d0c2991bc4db15db6',1,'Average_cam_frames(long loop, long NbAve):&#160;AOloopControl.c'],['../AOloopControl_8h.html#aea1f823ddb827c2d0c2991bc4db15db6',1,'Average_cam_frames(long loop, long NbAve):&#160;AOloopControl.c']]],
-  ['ao_20loop_20control',['AO loop control',['../md_src_AOloopControl_README.html',1,'']]]
+  ['ao_20loop_20control_20overview',['AO loop control Overview',['../md_src_AOloopControl_README.html',1,'']]]
 ];

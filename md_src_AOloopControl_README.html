@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cfits: AO loop control</title>
+<title>Cfits: AO loop control Overview</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -96,11 +96,10 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_README.html','');
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AO loop control </div>  </div>
+<div class="title">AO loop control Overview </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2>Overview</h2>
-<p>This module allows control of adaptive optics (AO) control loops.</p>
+<div class="textblock"><p>This module allows control of adaptive optics (AO) control loops.</p>
 <p>Source code in <a class="el" href="AOloopControl_8c.html">AOloopControl.c</a> and <a class="el" href="AOloopControl_8h.html">AOloopControl.h</a></p>
 <p>Main features:</p>
 <ul>
@@ -109,7 +108,7 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_README.html','');
 <li>single process can control multiple loops</li>
 <li>Can use either CPU(s) or GPU(s) for computations</li>
 </ul>
-<h2>Step-by-step instruction for typical operation</h2>
+<h1>Step-by-step instruction for typical operation</h1>
 <p>Control loops are numbered - this is how multiple loops can work together. &lt;LOOPNB&gt; can take any positive integer value (0, 1, 2, etc...)</p>
 <p>Important notes:</p>
 <ul>
@@ -134,7 +133,7 @@ $(document).ready(function(){initNavTree('md_src_AOloopControl_README.html','');
 <li>eigenmodesM_&lt;beta&gt;.fits : eigenmodes</li>
 <li>eigenmodesrespM_&lt;beta&gt;.fits : WFS response to eigenmodes</li>
 <li>TPmask.fits : Telescope pupil mask (optional)</li>
-<li>TPind.fits : modes to be removed from control</li>
+<li>TPind.fits : modes to be removed from control (optional)</li>
 </ul>
 <p>Scripts are used to load and save configurations as follows: </p>
 <pre class="fragment">./saveconf xxx
@@ -151,12 +150,25 @@ cp cmat_*_*.fits ./conf$1/
 cp ./conf$1/refwfs.fits .
 cp ./conf$1/respm.fits .
 cp ./conf$1/cmat.fits .
-</pre><h3>(1) CREATE/EDIT AOloop&lt;LOOPNB&gt;.conf</h3>
+</pre><h3>OPTIONAL VARIABLES</h3>
+<p>The following variables are optional, and may be specified as command line variable:</p>
+<ul>
+<li><p class="startli">AOLCAMDARK: dark level for the camera images. By default, it is assumed that the camera images fed to the software are dark-subtracted. If they are not, it is possible to offset them by a dark value by entering:</p>
+<p class="startli">AOLCAMDARK=100.0</p>
+</li>
+</ul>
+<p>It is best to keep optional variable in the CLI startup script, which is automatically executed by the program upon startup. By default, the file name is 'CLIstartup.txt'. It can also be changed and loaded by using the '-s' option when launching the executable. Example startup script: </p>
+<pre class="fragment">aolnb 1
+AOLCAMDARK=100.0
+</pre><hr/>
+<h2>CONFIGURATION</h2>
+<h3>(1) CREATE/EDIT AOloop&lt;LOOPNB&gt;.conf</h3>
 <p>The configuration for running the AO loop is in this file. Shared memory images names are specified, as well as loop configuration paramaters.</p>
 <p>The function <a class="el" href="AOloopControl_8h.html#a5c3b0bdcff0ed83ed3f9f217b14c014d">AOloopControl_makeTemplateAOloopconf(long loopnb)</a> creates a template that can be edited: </p>
 <pre class="fragment">&lt;executable&gt;
 &gt; aolmkconf &lt;LOOPNB&gt;
 </pre><h3>(2) CREATE MODES</h3>
+<p>If possible, create the TPmask.fits file which contains the DM illumination. Illuminated actuators are set to 1, others to 0.</p>
 <p>For purely Fourier Modes: </p>
 <pre class="fragment">./mkModes &lt;confindex&gt; &lt;CPAmax&gt;
 </pre><p>confindex: index for the configuration, for example, 002 will save modes in conf002 directory CPAmax: maximum spatial frequency in the basis of modes, in unit of Cycle Per Aperture.</p>
@@ -169,12 +181,35 @@ cp ./conf$1/cmat.fits .
 </ul>
 <p>mkModes source:</p>
 <pre class="fragment"># args: &lt;confindex&gt; &lt;maxCPA&gt;
+EXPECTED_ARGS=2
 
-&lt;executable&gt; &lt;&lt; EOF
-loadfits ./conf$1/TPmask.fits Mmask
-loadfits ./conf$1/TPind.fits emodes
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "-------- create control modes ------------"
+  echo "Usage:  $0 &lt;configuration index&gt; &lt;maxCPA&gt;"
+  echo "   INPUT:  &lt;configuration index&gt;  : index, 001, 002, 003 etc.."
+  echo "   INPUT:  &lt;max CPA&gt;              : maximum spatial frequ [cycles per aperture]"
+  echo " EXAMPLE: $0 002 4.0"
+  echo
+  exit
+fi
+
+
+
+
+
+mkdir -p conf$1
+
+echo "MODES_MAX_CPA      $2" &gt; ./conf$1/fmodes.conf.txt
+
+
+Cfits &lt;&lt; EOF
+loadfits "./conf$1/TPmask.fits" Mmask
+loadfits "./conf$1/TPind.fits" emodes
 aolmkmodes fmodes 50 $2 0.8 24.5 24.5 21.0 6.5
 savefits fmodes "!./conf$1/fmodes.fits"
+savefits modesfreqcpa "!./conf$1/modesfreqcpa.fits"
 exit
 EOF
 </pre><h3>(3) FINDING LOOP LATENCY (OPTIONAL)</h3>
@@ -216,7 +251,7 @@ exit
 EOF
 cp respm.fits ./conf$1/
 cp refwfs.fits ./conf$1/
-</pre><h3>(5) COMPUTE CONTROL MATRIX</h3>
+</pre><h3>(5) COMPUTE CONTROL MATRIXES</h3>
 <pre class="fragment">./cmmake &lt;confindex&gt; &lt;beta&gt; &lt;#modes removed&gt;
 </pre><p>output: cmat_&lt;beta&gt;_&lt;#modes removed&gt;.fits</p>
 <p>Also writes eigenvalues in file "eigenv.dat". Check that number of modes removed is consistent with eigenvalues.</p>
@@ -246,7 +281,9 @@ mv eigenv.dat ./conf$1/
 mv eigenmodesM*.fits ./conf$1/
 mv eigenmodesrespM*.fits ./conf$1/
 </pre><p>The script calls <a class="el" href="AOloopControl_8h.html#aa5623aafb0749edfb120719732214cc4" title="Computes control matrix using SVD. ">compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta)</a> in module <a class="el" href="AOloopControl_8c.html">AOloopControl.c</a>.</p>
-<h3>(6) SET UP CONFIGURATION</h3>
+<hr/>
+<h2>RUNNING THE LOOP</h2>
+<h3>(6) SET UP / LOAD CONFIGURATION</h3>
 <p>Steps above can be repeated to create several configurations. When adopting a configuration:</p>
 <ul>
 <li>Choose a control matrix cp conf000/cmat_1.00_003.fits conf000/cmat.fits</li>
@@ -266,7 +303,7 @@ mv eigenmodesrespM*.fits ./conf$1/
 <li>aolsetmaxlim &lt;maximum_value_for_each_mode&gt;</li>
 <li>aolsetmultfb &lt;block_number&gt; &lt;multiplicative_factor&gt;</li>
 </ul>
-<h3>(7) LAUNCH MONITOR</h3>
+<h3>(8) LAUNCH MONITOR</h3>
 <p>Start new process, type: </p>
 <pre class="fragment">&gt; aolmon &lt;frequ[Hz]&gt; &lt;number_of_columns&gt;
 </pre><p>For each mode, the following info is displayed: </p>
@@ -276,7 +313,7 @@ mv eigenmodesrespM*.fits ./conf$1/
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
+    <li class="footer">Generated on Sat Sep 6 2014 20:56:53 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -9,6 +9,8 @@ var searchData=
   ['wfscnt',['WFScnt',['../structAOLOOPCONTROL__CONF.html#aef0d536a3ea46154930a9bf57967c5db',1,'AOLOOPCONTROL_CONF']]],
   ['wfsim_2econf',['WFsim.conf',['../WFsim_8conf.html',1,'']]],
   ['wfsname',['WFSname',['../structAOLOOPCONTROL__CONF.html#a18a75018d87159819342add7bf9e79fb',1,'AOLOOPCONTROL_CONF']]],
+  ['wfsvec',['wfsVec',['../cudacomp_8c.html#ac7199564dac87a7332faac372dbbfb47',1,'cudacomp.c']]],
+  ['wfsvec_5fpart',['wfsVec_part',['../cudacomp_8c.html#a1045fed943ac5ddc786c17172a2757f0',1,'cudacomp.c']]],
   ['while',['while',['../calc__flex_8c.html#a8fdafe3be7e00ce3d4f0cb50a9a5eb39',1,'calc_flex.c']]],
   ['write',['write',['../structIMAGE__METADATA.html#a0a6367366b22e0021e8846fddf2750a7',1,'IMAGE_METADATA']]],
   ['write24bitbmpfile',['write24BitBmpFile',['../image__format_8c.html#a23f2c2eba92e1e4e9338e6411e84fc14',1,'image_format.c']]],

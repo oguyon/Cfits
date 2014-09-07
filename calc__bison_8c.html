@@ -219,7 +219,7 @@ Macros</h2></td></tr>
 <tr class="separator:ac8adfd73c006c1926f387feb1eced3ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afcd15dd0fa87ffba0371c6d6a0cc9631"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#afcd15dd0fa87ffba0371c6d6a0cc9631">YYSTACK_GAP_MAXIMUM</a>&#160;&#160;&#160;(sizeof (union <a class="el" href="unionyyalloc.html">yyalloc</a>) - 1)</td></tr>
 <tr class="separator:afcd15dd0fa87ffba0371c6d6a0cc9631"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40beb355f2cf230a99e2e2bb54909a5a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#a40beb355f2cf230a99e2e2bb54909a5a">YYSTACK_BYTES</a>(N)</td></tr>
+<tr class="memitem:a40beb355f2cf230a99e2e2bb54909a5a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#a40beb355f2cf230a99e2e2bb54909a5a">YYSTACK_BYTES</a>(<a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>)</td></tr>
 <tr class="separator:a40beb355f2cf230a99e2e2bb54909a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b270b13a13550fb9cefc929dad206ac"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#a3b270b13a13550fb9cefc929dad206ac">YYCOPY_NEEDED</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a3b270b13a13550fb9cefc929dad206ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -287,7 +287,7 @@ Macros</h2></td></tr>
 <tr class="separator:aeb1508a3a38ec5d64c27e8eca25330b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14ba2b263c446ffed1c888c4b42ae40c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#a14ba2b263c446ffed1c888c4b42ae40c">YYMAXDEPTH</a>&#160;&#160;&#160;10000</td></tr>
 <tr class="separator:a14ba2b263c446ffed1c888c4b42ae40c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2f9773cd9c031026b2ef4c1ee7be1be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#ad2f9773cd9c031026b2ef4c1ee7be1be">YYPOPSTACK</a>(N)&#160;&#160;&#160;(yyvsp -= (N), yyssp -= (N))</td></tr>
+<tr class="memitem:ad2f9773cd9c031026b2ef4c1ee7be1be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="calc__bison_8c.html#ad2f9773cd9c031026b2ef4c1ee7be1be">YYPOPSTACK</a>(<a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>)&#160;&#160;&#160;(yyvsp -= (<a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>), yyssp -= (<a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>))</td></tr>
 <tr class="separator:ad2f9773cd9c031026b2ef4c1ee7be1be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
@@ -1188,8 +1188,8 @@ Variables</h2></td></tr>
           <td class="memname">#define YYPOPSTACK</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">N</td><td>)</td>
-          <td>&#160;&#160;&#160;(yyvsp -= (N), yyssp -= (N))</td>
+          <td class="paramname"><a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a></td><td>)</td>
+          <td>&#160;&#160;&#160;(yyvsp -= (<a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>), yyssp -= (<a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1315,16 +1315,17 @@ Variables</h2></td></tr>
           <td class="memname">#define YYSTACK_BYTES</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">N</td><td>)</td>
+          <td class="paramname"><a class="el" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">((N) * (<span class="keyword">sizeof</span> (<a class="code" href="calc__bison_8c.html#ade5b97f0021a4f6c5922ead3744ab297">yytype_int16</a>) + <span class="keyword">sizeof</span> (<a class="code" href="calc__bison_8c.html#ac56824fbd095909aa72c2a98afb4b9f0">YYSTYPE</a>)) \</div>
+<b>Value:</b><div class="fragment"><div class="line">((<a class="code" href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a>) * (<span class="keyword">sizeof</span> (<a class="code" href="calc__bison_8c.html#ade5b97f0021a4f6c5922ead3744ab297">yytype_int16</a>) + <span class="keyword">sizeof</span> (<a class="code" href="calc__bison_8c.html#ac56824fbd095909aa72c2a98afb4b9f0">YYSTYPE</a>)) \</div>
 <div class="line">      + <a class="code" href="calc__bison_8c.html#afcd15dd0fa87ffba0371c6d6a0cc9631">YYSTACK_GAP_MAXIMUM</a>)</div>
 <div class="ttc" id="calc__bison_8c_html_ade5b97f0021a4f6c5922ead3744ab297"><div class="ttname"><a href="calc__bison_8c.html#ade5b97f0021a4f6c5922ead3744ab297">yytype_int16</a></div><div class="ttdeci">short int yytype_int16</div><div class="ttdef"><b>Definition:</b> calc_bison.c:207</div></div>
 <div class="ttc" id="calc__bison_8c_html_ac56824fbd095909aa72c2a98afb4b9f0"><div class="ttname"><a href="calc__bison_8c.html#ac56824fbd095909aa72c2a98afb4b9f0">YYSTYPE</a></div><div class="ttdeci">union YYSTYPE YYSTYPE</div><div class="ttdef"><b>Definition:</b> calc_bison.c:154</div></div>
 <div class="ttc" id="calc__bison_8c_html_afcd15dd0fa87ffba0371c6d6a0cc9631"><div class="ttname"><a href="calc__bison_8c.html#afcd15dd0fa87ffba0371c6d6a0cc9631">YYSTACK_GAP_MAXIMUM</a></div><div class="ttdeci">#define YYSTACK_GAP_MAXIMUM</div><div class="ttdef"><b>Definition:</b> calc_bison.c:371</div></div>
+<div class="ttc" id="cudacomp_8c_html_a7722c8ecbb62d99aee7ce68b1752f337"><div class="ttname"><a href="cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337">N</a></div><div class="ttdeci">int N</div><div class="ttdef"><b>Definition:</b> cudacomp.c:67</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -2109,7 +2110,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="calc__bison_8c.html">calc_bison.c</a></li>
-    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
+    <li class="footer">Generated on Sat Sep 6 2014 20:56:53 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

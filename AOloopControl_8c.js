@@ -61,6 +61,8 @@ var AOloopControl_8c =
     [ "compute_ControlMatrix", "AOloopControl_8c.html#aa5623aafb0749edfb120719732214cc4", null ],
     [ "ControlMatrixMultiply", "AOloopControl_8c.html#a629fc1fdecf7ffcf538a9292ee0f3f08", null ],
     [ "init_AOloopControl", "AOloopControl_8c.html#a8da218e072b44146cdc1d47f80d49e3c", null ],
+    [ "Measure_ActMap_WFS", "AOloopControl_8c.html#af9a8f797c451f9636c7e9f9be68e75cd", null ],
+    [ "Measure_ActMap_WFS_cli", "AOloopControl_8c.html#a9c8c7fcfffc2d6dbeda6342c96d22bcb", null ],
     [ "Measure_Resp_Matrix", "AOloopControl_8c.html#ab51676f77cfd9e45abd24cb0a68a08e7", null ],
     [ "set_DM_modes", "AOloopControl_8c.html#a50857db2034c5affb27df150a136098f", null ],
     [ "set_DM_modesRM", "AOloopControl_8c.html#a7ee5e2b6eb33dd3313e93f3e7c0689bb", null ],

@@ -29,6 +29,7 @@ var CLIcore_8c =
     [ "calctmpimname", "CLIcore_8c.html#a5f4566d37ec53f74821f22df71a6fb93", null ],
     [ "CLIexecuteCMDready", "CLIcore_8c.html#a9e041e5e654d85941bd71358b0ef40f5", null ],
     [ "CLImatchMode", "CLIcore_8c.html#a970d70bbebe50d747e96c95a5c5024a3", null ],
+    [ "CLIstartupfilename", "CLIcore_8c.html#a17fbe78d8166c9971c01d8acb0a74ee6", null ],
     [ "data", "CLIcore_8c.html#a9842752e03b4de9b4593f1a3b34364ab", null ],
     [ "line", "CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b", null ],
     [ "Listimfile", "CLIcore_8c.html#ae5371cd7e46f19a56efdff432345b508", null ],

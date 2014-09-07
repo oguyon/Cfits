@@ -216,12 +216,14 @@ Variables</h2></td></tr>
 <tr class="separator:a9e041e5e654d85941bd71358b0ef40f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f4566d37ec53f74821f22df71a6fb93"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a5f4566d37ec53f74821f22df71a6fb93">calctmpimname</a> [200]</td></tr>
 <tr class="separator:a5f4566d37ec53f74821f22df71a6fb93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17fbe78d8166c9971c01d8acb0a74ee6"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a17fbe78d8166c9971c01d8acb0a74ee6">CLIstartupfilename</a> [200] = &quot;CLIstartup.txt&quot;</td></tr>
+<tr class="separator:a17fbe78d8166c9971c01d8acb0a74ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a970d70bbebe50d747e96c95a5c5024a3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CLIcore_8c.html#a970d70bbebe50d747e96c95a5c5024a3">CLImatchMode</a> = 0</td></tr>
 <tr class="separator:a970d70bbebe50d747e96c95a5c5024a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Olivier Guyon </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>Aug 6, 2014 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>Sept 4, 2014 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="afb065d6c0f7798b65614d2d73654c15d"></a>
 <div class="memitem">
@@ -565,6 +567,8 @@ Variables</h2></td></tr>
 . </p>
 <p>uses readline to read user input<br/>
 parsing done with bison and flex </p>
+<p>becomes 1 after startup</p>
+<p>If fifo is on and file CLIstatup.txt exists, load it </p>
 
 </div>
 </div>
@@ -745,6 +749,18 @@ parsing done with bison and flex </p>
 
 </div>
 </div>
+<a class="anchor" id="a17fbe78d8166c9971c01d8acb0a74ee6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char CLIstartupfilename[200] = &quot;CLIstartup.txt&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a9842752e03b4de9b4593f1a3b34364ab"></a>
 <div class="memitem">
 <div class="memproto">
@@ -823,7 +839,7 @@ parsing done with bison and flex </p>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="CLIcore_8c.html">CLIcore.c</a></li>
-    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
+    <li class="footer">Generated on Sat Sep 6 2014 20:56:53 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

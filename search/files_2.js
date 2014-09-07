@@ -21,5 +21,7 @@ var searchData=
   ['coremod_5ftools_2eh',['COREMOD_tools.h',['../COREMOD__tools_8h.html',1,'']]],
   ['coronagraphs_2dutil_2ec',['coronagraphs-util.c',['../coronagraphs-util_8c.html',1,'']]],
   ['coronagraphs_2ec',['coronagraphs.c',['../coronagraphs_8c.html',1,'']]],
-  ['coronagraphs_2eh',['coronagraphs.h',['../coronagraphs_8h.html',1,'']]]
+  ['coronagraphs_2eh',['coronagraphs.h',['../coronagraphs_8h.html',1,'']]],
+  ['cudacomp_2ec',['cudacomp.c',['../cudacomp_8c.html',1,'']]],
+  ['cudacomp_2eh',['cudacomp.h',['../cudacomp_8h.html',1,'']]]
 ];

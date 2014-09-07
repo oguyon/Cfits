@@ -180,7 +180,7 @@ $(document).ready(function(){initNavTree('image__basic_8h_source.html','');});
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keywordtype">long</span> <a class="code" href="image__basic_8h.html#a7b5fa83e4d3dd1f8b863fe95d2b90f1b">basic_cube_center</a>(<span class="keywordtype">char</span> *ID_in_name, <span class="keywordtype">char</span> *ID_out_name);</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keywordtype">long</span> <a class="code" href="image__basic_8h.html#a82904f1f73fcba3b18a22fe85b34f869">cube_average</a>(<span class="keywordtype">char</span> *ID_in_name, <span class="keywordtype">char</span> *ID_out_name, <span class="keywordtype">float</span> alpha);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keywordtype">long</span> <a class="code" href="image__basic_8h.html#a82904f1f73fcba3b18a22fe85b34f869">cube_average</a>(<span class="keywordtype">char</span> *ID_in_name, <span class="keywordtype">char</span> *ID_out_name, <span class="keywordtype">float</span> <a class="code" href="cudacomp_8c.html#ab1551d8043c2aa4410fb7dbb1fe3be7b">alpha</a>);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keywordtype">long</span> <a class="code" href="image__basic_8h.html#a2ed53fd43c53dc630c563862f4eef519">basic_addimagesfiles</a>(<span class="keywordtype">char</span> *strfilter, <span class="keywordtype">char</span> *outname);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
@@ -216,6 +216,7 @@ $(document).ready(function(){initNavTree('image__basic_8h_source.html','');});
 <div class="ttc" id="image__basic_8h_html_a4adb1beed0019c4a8bc45889a956fe71"><div class="ttname"><a href="image__basic_8h.html#a4adb1beed0019c4a8bc45889a956fe71">basic_stretch</a></div><div class="ttdeci">int basic_stretch(char *name_in, char *name_out, float coeff, long Xcenter, long Ycenter)</div><div class="ttdef"><b>Definition:</b> image_basic.c:1581</div></div>
 <div class="ttc" id="image__basic_8h_html_ae9c82393d8168f823ba40238f3acdc21"><div class="ttname"><a href="image__basic_8h.html#ae9c82393d8168f823ba40238f3acdc21">basic_lmax_im</a></div><div class="ttdeci">int basic_lmax_im(char *ID_name, char *out_name)</div><div class="ttdef"><b>Definition:</b> image_basic.c:180</div></div>
 <div class="ttc" id="image__basic_8h_html_abf0963110555655ddcdf07bb4eaeff20"><div class="ttname"><a href="image__basic_8h.html#abf0963110555655ddcdf07bb4eaeff20">basic_translate</a></div><div class="ttdeci">int basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl)</div><div class="ttdef"><b>Definition:</b> image_basic.c:906</div></div>
+<div class="ttc" id="cudacomp_8c_html_ab1551d8043c2aa4410fb7dbb1fe3be7b"><div class="ttname"><a href="cudacomp_8c.html#ab1551d8043c2aa4410fb7dbb1fe3be7b">alpha</a></div><div class="ttdeci">float alpha</div><div class="ttdef"><b>Definition:</b> cudacomp.c:97</div></div>
 <div class="ttc" id="image__basic_8h_html_a032d061cd386e61122514a39f95f5784"><div class="ttname"><a href="image__basic_8h.html#a032d061cd386e61122514a39f95f5784">basic_correlation</a></div><div class="ttdeci">float basic_correlation(char *ID_name1, char *ID_name2)</div><div class="ttdef"><b>Definition:</b> image_basic.c:998</div></div>
 <div class="ttc" id="image__basic_8h_html_ab91a5161eaad5e605193b3902e275fc5"><div class="ttname"><a href="image__basic_8h.html#ab91a5161eaad5e605193b3902e275fc5">basic_rotate_int</a></div><div class="ttdeci">int basic_rotate_int(char *ID_name, char *ID_out_name, long nbstep)</div><div class="ttdef"><b>Definition:</b> image_basic.c:876</div></div>
 <div class="ttc" id="image__basic_8h_html_afaae12b1475489d8eaf9e697e6764330"><div class="ttname"><a href="image__basic_8h.html#afaae12b1475489d8eaf9e697e6764330">gauss_histo_image</a></div><div class="ttdeci">int gauss_histo_image(char *ID_name, char *ID_out_name, float sigma, float center)</div><div class="ttdef"><b>Definition:</b> image_basic.c:1708</div></div>
@@ -252,7 +253,7 @@ $(document).ready(function(){initNavTree('image__basic_8h_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_b6897bfb48a1d12c881045d4349aa702.html">image_basic</a></li><li class="navelem"><a class="el" href="image__basic_8h.html">image_basic.h</a></li>
-    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
+    <li class="footer">Generated on Sat Sep 6 2014 20:56:53 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

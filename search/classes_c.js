@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variable',['VARIABLE',['../structVARIABLE.html',1,'']]]
+  ['thdata',['THDATA',['../structTHDATA.html',1,'']]]
 ];

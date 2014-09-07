@@ -1,6 +1,7 @@
 var searchData=
 [
   ['beamrad',['beamrad',['../structOPTSYST.html#a10d097a25c01cbe9263690707182f0c8',1,'OPTSYST::beamrad()'],['../structMIRRORPIAACMCDESIGN.html#ac91de5d999cb2f909e7cde4e32e201ae',1,'MIRRORPIAACMCDESIGN::beamrad()']]],
+  ['beta',['beta',['../cudacomp_8c.html#aa773d9a6c0ccefaa0fc9ab66fec68ec1',1,'cudacomp.c']]],
   ['bfoffbits',['bfOffBits',['../structBITMAPFILEHEADER.html#a7426a16a6cb6a65bd22b3696376d18dc',1,'BITMAPFILEHEADER']]],
   ['bfreserved1',['bfReserved1',['../structBITMAPFILEHEADER.html#ac01d6a25f6fde8d2427bbee61e03b9ab',1,'BITMAPFILEHEADER']]],
   ['bfreserved2',['bfReserved2',['../structBITMAPFILEHEADER.html#a5e2a8f1c1a537c5570dfdb8d875edc90',1,'BITMAPFILEHEADER']]],
@@ -23,6 +24,7 @@ var searchData=
   ['bl8mask_5fl',['BL8MASK_l',['../coronagraphs_8c.html#ab15adcecfc36d9a4cdaabd1bafec5596',1,'coronagraphs.c']]],
   ['bl8mask_5fm',['BL8MASK_m',['../coronagraphs_8c.html#a9c3688abf95f52f3494889fea4f2a6ae',1,'coronagraphs.c']]],
   ['bl8mode',['BL8MODE',['../coronagraphs_8c.html#a3ae00d725fadecdca5981326bd9c5356',1,'coronagraphs.c']]],
+  ['bufferindex',['bufferindex',['../cudacomp_8c.html#a33971093ed46cccb1f05fc67db90dc66',1,'cudacomp.c']]],
   ['builddate',['BuildDate',['../CLIcore_8h.html#ac3e78a1257c6b5e478a52bf5b478014b',1,'CLIcore.h']]],
   ['buildfile',['BuildFile',['../CLIcore_8h.html#a9ebc4d9af3d9a26f49cccce824a976eb',1,'CLIcore.h']]],
   ['buildtime',['BuildTime',['../CLIcore_8h.html#afeae30b051ddde8c1e7490fa91bc2fc6',1,'CLIcore.h']]],

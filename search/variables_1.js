@@ -1,6 +1,7 @@
 var searchData=
 [
   ['a',['a',['../structap__array.html#ac8261eba1b3ae612e2361a0979eab92b',1,'ap_array']]],
+  ['alpha',['alpha',['../cudacomp_8c.html#ab1551d8043c2aa4410fb7dbb1fe3be7b',1,'cudacomp.c']]],
   ['alpha1h2o',['alpha1H2O',['../AtmosphericTurbulence_8c.html#afffc6c2b72cad4313261f240d110479b',1,'AtmosphericTurbulence.c']]],
   ['alt',['alt',['../structnrlmsise__input.html#a102b283f83c88896582614654330d4d7',1,'nrlmsise_input']]],
   ['ampl',['ampl',['../structSCEXAO__DMTURBCONF.html#a876d9ca9cfcf6b6737c802e008fc6215',1,'SCEXAO_DMTURBCONF']]],

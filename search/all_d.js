@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['m',['M',['../cudacomp_8c.html#a5e78dbd5fd0fc01ba7b98dd15e27221e',1,'cudacomp.c']]],
   ['m_5fpi',['M_PI',['../COREMOD__arith_8c.html#ae71449b1cc6e6250b91f539153a7a0d3',1,'M_PI():&#160;COREMOD_arith.c'],['../image__basic_8c.html#ae71449b1cc6e6250b91f539153a7a0d3',1,'M_PI():&#160;image_basic.c']]],
   ['main',['main',['../nrlmsise-00__test_8c.html#a840291bc02cba5474a4cb46a9b9566fe',1,'main(void):&#160;nrlmsise-00_test.c'],['../CLIcore_8c.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;CLIcore.c']]],
   ['main_5ffree',['main_free',['../CLIcore_8c.html#a5394e0be8c8a46c283f5b905ce8f676c',1,'CLIcore.c']]],
@@ -49,6 +50,7 @@ var searchData=
   ['masksizeld',['MASKSIZELD',['../coronagraphs_8c.html#afcc9085e76acbf4622ad45134b19f960',1,'coronagraphs.c']]],
   ['mat0',['mat0',['../structASPHSURFR.html#a9c6a2f637f66b2911129ec69640f98d2',1,'ASPHSURFR']]],
   ['mat1',['mat1',['../structASPHSURFR.html#a0f31e31171389f94d70cc4ea0610e2a4',1,'ASPHSURFR']]],
+  ['matrixmulcpu',['matrixMulCPU',['../cudacomp_8c.html#a1f85db1f641995b5cdafa2af427c1305',1,'cudacomp.c']]],
   ['max',['max',['../structkdhyperrect.html#aaeaab78eb4536bcd8d4ae4d5e08540f5',1,'kdhyperrect']]],
   ['max_5fnb_5fexclusions',['MAX_NB_EXCLUSIONS',['../CLIcore_8h.html#a74caaf2a5e85d36072159f1f97410c40',1,'CLIcore.h']]],
   ['max_5fnb_5fframename_5fchar',['MAX_NB_FRAMENAME_CHAR',['../CLIcore_8h.html#ac4fdaeb876357d26a97d5ab491cff1b4',1,'CLIcore.h']]],
@@ -58,6 +60,8 @@ var searchData=
   ['maxstroke',['maxstroke',['../structDM__SIM.html#abecbaa72dee8fc92256ae7368e4f48fb',1,'DM_SIM']]],
   ['maxvolt',['MAXVOLT',['../structSCEXAO__DISPCOMB__CONF.html#a37ce120759f6b4c5e2128b8a17405a97',1,'SCEXAO_DISPCOMB_CONF']]],
   ['md',['md',['../structIMAGE.html#a1c587a49713dfc64be950465ce7d5f29',1,'IMAGE']]],
+  ['measure_5factmap_5fwfs',['Measure_ActMap_WFS',['../AOloopControl_8c.html#af9a8f797c451f9636c7e9f9be68e75cd',1,'Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap):&#160;AOloopControl.c'],['../AOloopControl_8h.html#af9a8f797c451f9636c7e9f9be68e75cd',1,'Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap):&#160;AOloopControl.c']]],
+  ['measure_5factmap_5fwfs_5fcli',['Measure_ActMap_WFS_cli',['../AOloopControl_8c.html#a9c8c7fcfffc2d6dbeda6342c96d22bcb',1,'AOloopControl.c']]],
   ['measure_5fenc_5fnrj',['measure_enc_NRJ',['../psf_8c.html#a333ca4e7da003b7a764d2dffdf5f88a5',1,'measure_enc_NRJ(char *ID_name, float xcenter, float ycenter, float fraction):&#160;psf.c'],['../psf_8h.html#a333ca4e7da003b7a764d2dffdf5f88a5',1,'measure_enc_NRJ(char *ID_name, float xcenter, float ycenter, float fraction):&#160;psf.c']]],
   ['measure_5fenc_5fnrj1',['measure_enc_NRJ1',['../psf_8c.html#aaca4c2d408eb3489b630371723f57dd4',1,'measure_enc_NRJ1(char *ID_name, float xcenter, float ycenter, char *filename):&#160;psf.c'],['../psf_8h.html#aaca4c2d408eb3489b630371723f57dd4',1,'measure_enc_NRJ1(char *ID_name, float xcenter, float ycenter, char *filename):&#160;psf.c']]],
   ['measure_5ffwhm',['measure_FWHM',['../psf_8c.html#a0f4c6ab65bafc31f48148840966fd5c4',1,'measure_FWHM(char *ID_name, float xcenter, float ycenter, float step, long nb_step):&#160;psf.c'],['../psf_8h.html#a0f4c6ab65bafc31f48148840966fd5c4',1,'measure_FWHM(char *ID_name, float xcenter, float ycenter, float step, long nb_step):&#160;psf.c']]],

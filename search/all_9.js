@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['handle',['handle',['../cudacomp_8c.html#aad5734e267842a99d659836a5eb398e3',1,'cudacomp.c']]],
   ['help',['help',['../CLIcore_8c.html#a13166be76043b3dfccc0f830c846dc26',1,'CLIcore.c']]],
   ['help_5fcmd',['help_cmd',['../CLIcore_8c.html#a192d7d6900ff6b9ba21cff45f5fc20ed',1,'CLIcore.c']]],
   ['help_5fcommand',['help_command',['../CLIcore_8c.html#afbc465e2fc0350eb1c71c3d11f09d4d7',1,'CLIcore.c']]],

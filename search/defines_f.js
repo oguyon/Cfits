@@ -1,6 +1,7 @@
 var searchData=
 [
   ['test_5falloc',['TEST_ALLOC',['../CLIcore_8h.html#a6ce45abed084638ca9c884a419acd17f',1,'CLIcore.h']]],
+  ['testmode',['TESTMODE',['../cudacomp_8c.html#ad716bb76ce6c332187e14e0b0c7bfe67',1,'cudacomp.c']]],
   ['tkcommand',['TKCOMMAND',['../calc__bison_8c.html#a6251f3df19efa1db5e7998120e020b2b',1,'TKCOMMAND():&#160;calc_bison.c'],['../calc__bison_8h.html#a6251f3df19efa1db5e7998120e020b2b',1,'TKCOMMAND():&#160;calc_bison.h']]],
   ['tkfunc_5fd_5fd',['TKFUNC_d_d',['../calc__bison_8c.html#a4876e1d25d068eb6b34516434fd391bc',1,'TKFUNC_d_d():&#160;calc_bison.c'],['../calc__bison_8h.html#a4876e1d25d068eb6b34516434fd391bc',1,'TKFUNC_d_d():&#160;calc_bison.h']]],
   ['tkfunc_5fdd_5fd',['TKFUNC_dd_d',['../calc__bison_8c.html#a1660a48b7bf3296882490d993f9bc4d6',1,'TKFUNC_dd_d():&#160;calc_bison.c'],['../calc__bison_8h.html#a1660a48b7bf3296882490d993f9bc4d6',1,'TKFUNC_dd_d():&#160;calc_bison.h']]],

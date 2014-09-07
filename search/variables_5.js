@@ -6,6 +6,7 @@ var searchData=
   ['elemtype',['elemtype',['../structOPTSYST.html#a63f311eb16fa637a8e1cd2102540c67d',1,'OPTSYST']]],
   ['elemzpos',['elemZpos',['../structOPTSYST.html#a80079ae1f8045368a8e009e4ceda76a1',1,'OPTSYST']]],
   ['errmsg',['errmsg',['../COREMOD__arith_8c.html#a8bb845778df5ade66dd9af426128a622',1,'errmsg():&#160;COREMOD_arith.c'],['../COREMOD__memory_8c.html#a8bb845778df5ade66dd9af426128a622',1,'errmsg():&#160;COREMOD_memory.c'],['../image__basic_8c.html#a8bb845778df5ade66dd9af426128a622',1,'errmsg():&#160;image_basic.c']]],
+  ['error',['error',['../cudacomp_8c.html#a2bf00f52622132f94d971b3baac4920c',1,'cudacomp.c']]],
   ['errormessage',['errormessage',['../COREMOD__iofits_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207',1,'errormessage():&#160;COREMOD_iofits.c'],['../COREMOD__tools_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207',1,'errormessage():&#160;COREMOD_tools.c']]],
   ['euid_5fcalled',['euid_called',['../CLIcore_8h.html#a8a11142864e6c378d6c8268335b965ec',1,'CLIcore.h']]],
   ['euid_5freal',['euid_real',['../CLIcore_8h.html#afcdbfc486152403a8152045c561db794',1,'CLIcore.h']]],

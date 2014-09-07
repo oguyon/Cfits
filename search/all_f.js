@@ -17,6 +17,7 @@ var searchData=
   ['optsystprop_5fpropagatecube',['OptSystProp_propagateCube',['../OptSystProp_8c.html#abfed4bbe5593d9c8a2e691be59a1eac8',1,'OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop):&#160;OptSystProp.c'],['../OptSystProp_8h.html#abfed4bbe5593d9c8a2e691be59a1eac8',1,'OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop):&#160;OptSystProp.c']]],
   ['optsystprop_5frun',['OptSystProp_run',['../OptSystProp_8c.html#a7409625459eecabd46fd1fdf39b4e435',1,'OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir):&#160;OptSystProp.c'],['../OptSystProp_8h.html#a7409625459eecabd46fd1fdf39b4e435',1,'OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir):&#160;OptSystProp.c']]],
   ['optval0',['optval0',['../coronagraphs_8c.html#ad85356b6d80dbe50ca4030334af4287f',1,'coronagraphs.c']]],
+  ['orientation',['orientation',['../cudacomp_8c.html#a528d22a2a1651a4831eb643884a3c718',1,'cudacomp.c']]],
   ['otherwise',['otherwise',['../WFsim_8conf.html#add9358f1f2e831e2906102c98d66905f',1,'WFsim.conf']]],
   ['outtmp_5farray',['outtmp_array',['../PIAACMCsimul_8c.html#a25bcb59481afd08467dfce3d613ca37e',1,'PIAACMCsimul.c']]],
   ['ovc_5fcharge',['OVC_CHARGE',['../coronagraphs_8c.html#ad41f75f5bb645dedf53c6536835501ec',1,'coronagraphs.c']]],

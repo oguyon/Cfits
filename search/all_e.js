@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['n',['N',['../cudacomp_8c.html#a7722c8ecbb62d99aee7ce68b1752f337',1,'cudacomp.c']]],
   ['name',['name',['../structAOLOOPCONTROL__CONF.html#a89011839e5092011c81356159f76b9ac',1,'AOLOOPCONTROL_CONF::name()'],['../structsymrec.html#a13b3ddedd56ed8a393dfd4b266bb81e1',1,'symrec::name()'],['../structMODULE.html#adecbd02b92ae79ddaaff7be512380dea',1,'MODULE::name()'],['../structIMAGE__KEYWORD.html#aa0fef8b5fce4b24d792d0fc01df9dd8a',1,'IMAGE_KEYWORD::name()'],['../structIMAGE__METADATA.html#acf8d6cd7523aacfacb7639e83496a7b8',1,'IMAGE_METADATA::name()'],['../structVARIABLE.html#a40d583ae511f61e22f3ade6f130a7d58',1,'VARIABLE::name()']]],
   ['naxis',['naxis',['../structIMAGE__METADATA.html#a03a561578b6eab9c6566d5961944fb8e',1,'IMAGE_METADATA']]],
   ['nb_5faoloopcontrol',['NB_AOloopcontrol',['../AOloopControl_8c.html#a6c5d5a91e62278861bc96ab43c9c44d9',1,'AOloopControl.c']]],
@@ -35,6 +36,7 @@ var searchData=
   ['nbparam',['NBPARAM',['../linopt__imtools_8c.html#aa073a770f3d31757fd3886715dc30c66',1,'linopt_imtools.c']]],
   ['nbradpts',['NBradpts',['../structMIRRORPIAACMCDESIGN.html#a7871c2fea933cafa7158544bd84db8d1',1,'MIRRORPIAACMCDESIGN']]],
   ['nbrings',['NBrings',['../structMIRRORPIAACMCDESIGN.html#af9ee3e5b4c055d9442b81047708618dd',1,'MIRRORPIAACMCDESIGN']]],
+  ['nbstreams',['NBstreams',['../cudacomp_8c.html#a9f863cbf4753f34d04c5e8e53e8f17a4',1,'cudacomp.c']]],
   ['nbsubpix',['NBsubPix',['../PIAACMCsimul_8c.html#aa451146b5668b770521ed85d16907c89',1,'PIAACMCsimul.c']]],
   ['neg',['NEG',['../calc__bison_8c.html#aa27c29fc6f203aac29fb3632a0bafda5',1,'NEG():&#160;calc_bison.c'],['../calc__bison_8h.html#aa27c29fc6f203aac29fb3632a0bafda5',1,'NEG():&#160;calc_bison.h'],['../calc__bison_8c.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3',1,'NEG():&#160;calc_bison.c'],['../calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3',1,'NEG():&#160;calc_bison.h']]],
   ['nelement',['nelement',['../structIMAGE__METADATA.html#af8b9bb6de5ffd1524a738b661ab566a9',1,'IMAGE_METADATA']]],
@@ -43,6 +45,7 @@ var searchData=
   ['next_5favail_5fvariable_5fid',['next_avail_variable_ID',['../COREMOD__memory_8c.html#ad811bfe7214051710d028f9989a2c511',1,'next_avail_variable_ID():&#160;COREMOD_memory.c'],['../COREMOD__memory_8h.html#ad811bfe7214051710d028f9989a2c511',1,'next_avail_variable_ID():&#160;COREMOD_memory.c']]],
   ['nfree',['nfree',['../CLIcore_8h.html#a1b0fc1b013b1d44c19e737c1a1344c0d',1,'CLIcore.h']]],
   ['nmalloc',['nmalloc',['../CLIcore_8h.html#a81975fe4df7d378b72206b536008f83d',1,'CLIcore.h']]],
+  ['noffset',['Noffset',['../cudacomp_8c.html#a2ec8e2a20959b73f2819c0094525cd1f',1,'cudacomp.c']]],
   ['nofifo',['Nofifo',['../CLIcore_8c.html#a2a3bac038b0ac5ccbf5cc7d27e6bbe65',1,'CLIcore.c']]],
   ['nrlmsise_2d00_2ec',['nrlmsise-00.c',['../nrlmsise-00_8c.html',1,'']]],
   ['nrlmsise_2d00_2eh',['nrlmsise-00.h',['../nrlmsise-00_8h.html',1,'']]],
@@ -51,6 +54,8 @@ var searchData=
   ['nrlmsise_5fflags',['nrlmsise_flags',['../structnrlmsise__flags.html',1,'']]],
   ['nrlmsise_5finput',['nrlmsise_input',['../structnrlmsise__input.html',1,'']]],
   ['nrlmsise_5foutput',['nrlmsise_output',['../structnrlmsise__output.html',1,'']]],
+  ['nsize',['Nsize',['../cudacomp_8c.html#a55ad9b082be7fa516a2281446d279cee',1,'cudacomp.c']]],
   ['numf',['numf',['../structCMDARGTOKEN.html#a8f29c19d721dbe26248fc92c01c0e497',1,'CMDARGTOKEN::numf()'],['../structIMAGE__KEYWORD.html#ac90e9ede78d5bc3173c2a0adc0a5b0c5',1,'IMAGE_KEYWORD::numf()']]],
-  ['numl',['numl',['../structCMDARGTOKEN.html#a8ef8bd8dde032f117c7c316dee08a7c9',1,'CMDARGTOKEN::numl()'],['../structIMAGE__KEYWORD.html#a6b685359dddb142ca90215549108055d',1,'IMAGE_KEYWORD::numl()']]]
+  ['numl',['numl',['../structCMDARGTOKEN.html#a8ef8bd8dde032f117c7c316dee08a7c9',1,'CMDARGTOKEN::numl()'],['../structIMAGE__KEYWORD.html#a6b685359dddb142ca90215549108055d',1,'IMAGE_KEYWORD::numl()']]],
+  ['numl0',['numl0',['../structTHDATA.html#a709f677a62df7e59ecb8969b5ab1f478',1,'THDATA']]]
 ];

@@ -115,17 +115,17 @@ Functions</h2></td></tr>
 <tr class="memitem:ae997e7e4a3de0baf07316f84dd88013a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#ae997e7e4a3de0baf07316f84dd88013a">AOsystSim_simpleAOfilter</a> (char *IDin_name, char *IDout_name)</td></tr>
 <tr class="memdesc:ae997e7e4a3de0baf07316f84dd88013a"><td class="mdescLeft">&#160;</td><td class="mdescRight">simple AO filtering model using Fourier analysis simulates WFS integration, delay, noise (as a function of spatial frequency)  <a href="#ae997e7e4a3de0baf07316f84dd88013a">More...</a><br/></td></tr>
 <tr class="separator:ae997e7e4a3de0baf07316f84dd88013a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa95b317ca6cd1af0ea678d087cc16737"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#aa95b317ca6cd1af0ea678d087cc16737">AOsystSim_mkTelPupDM</a> (char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick)</td></tr>
-<tr class="separator:aa95b317ca6cd1af0ea678d087cc16737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84315e640affa33ec579c88d9f9b8a64"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#a84315e640affa33ec579c88d9f9b8a64">AOsystSim_fitTelPup</a> (char *ID_name)</td></tr>
-<tr class="separator:a84315e640affa33ec579c88d9f9b8a64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7adbafb61a35772c5c0a5d5d0389ecd0"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#a7adbafb61a35772c5c0a5d5d0389ecd0">AOsystSim_mkTelPupDM</a> (char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx)</td></tr>
+<tr class="separator:a7adbafb61a35772c5c0a5d5d0389ecd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00de7b1ef368a9ca1a2e3c8938c8175b"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#a00de7b1ef368a9ca1a2e3c8938c8175b">AOsystSim_fitTelPup</a> (char *ID_name, char *IDtelpup_name)</td></tr>
+<tr class="separator:a00de7b1ef368a9ca1a2e3c8938c8175b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad63110c83cfc65f22a044cb57709d6f6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#ad63110c83cfc65f22a044cb57709d6f6">init_AOsystSim</a> ()</td></tr>
 <tr class="separator:ad63110c83cfc65f22a044cb57709d6f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10af3c598607324654f1ff281c5beff2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOsystSim_8h.html#a10af3c598607324654f1ff281c5beff2">AOsystSim_run</a> ()</td></tr>
 <tr class="separator:a10af3c598607324654f1ff281c5beff2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a84315e640affa33ec579c88d9f9b8a64"></a>
+<a class="anchor" id="a00de7b1ef368a9ca1a2e3c8938c8175b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -133,15 +133,29 @@ Functions</h2></td></tr>
           <td class="memname">long AOsystSim_fitTelPup </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>ID_name</em></td><td>)</td>
+          <td class="paramname"><em>ID_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>IDtelpup_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>fits DM illumination to pupil geometry </p>
+<p>compensate for illumination gradient</p>
+<p>set percentiles</p>
+<p>compensate for image gradient </p>
 
 </div>
 </div>
-<a class="anchor" id="aa95b317ca6cd1af0ea678d087cc16737"></a>
+<a class="anchor" id="a7adbafb61a35772c5c0a5d5d0389ecd0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -203,7 +217,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>spiderthick</em>&#160;</td>
+          <td class="paramname"><em>spiderthick</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>stretchx</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -227,7 +247,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pyramid modulation </p>
+<p>Pyramid modulation</p>
+<p>make WFS PSF (without the modulation) </p>
 
 </div>
 </div>
@@ -293,7 +314,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_758db70e79e57b1f35df8001f3b0baef.html">AOsystSim</a></li><li class="navelem"><a class="el" href="AOsystSim_8h.html">AOsystSim.h</a></li>
-    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
+    <li class="footer">Generated on Sat Sep 6 2014 20:56:53 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

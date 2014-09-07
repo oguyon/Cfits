@@ -149,6 +149,8 @@ Functions</h2></td></tr>
 <tr class="separator:a5e72831cf0ebfabc5b724c121c4ffdab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50857db2034c5affb27df150a136098f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a50857db2034c5affb27df150a136098f">set_DM_modes</a> (long loop)</td></tr>
 <tr class="separator:a50857db2034c5affb27df150a136098f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9a8f797c451f9636c7e9f9be68e75cd"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#af9a8f797c451f9636c7e9f9be68e75cd">Measure_ActMap_WFS</a> (long loop, double ampl, double delays, long NBave, char *WFS_actmap)</td></tr>
+<tr class="separator:af9a8f797c451f9636c7e9f9be68e75cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab51676f77cfd9e45abd24cb0a68a08e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ab51676f77cfd9e45abd24cb0a68a08e7">Measure_Resp_Matrix</a> (long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)</td></tr>
 <tr class="separator:ab51676f77cfd9e45abd24cb0a68a08e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a629fc1fdecf7ffcf538a9292ee0f3f08"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a629fc1fdecf7ffcf538a9292ee0f3f08">ControlMatrixMultiply</a> (float *cm_array, float *imarray, long m, long n, float *outvect)</td></tr>
@@ -1194,6 +1196,54 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="af9a8f797c451f9636c7e9f9be68e75cd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long Measure_ActMap_WFS </td>
+          <td>(</td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>loop</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>ampl</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delays</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>NBave</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>WFS_actmap</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Maps amplitude of actuator effect on WFS </p>
+<p>Positive displacement</p>
+<p>Negative displacement</p>
+<p>compute value </p>
+
+</div>
+</div>
 <a class="anchor" id="ab51676f77cfd9e45abd24cb0a68a08e7"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1266,7 +1316,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8h.html">AOloopControl.h</a></li>
-    <li class="footer">Generated on Wed Sep 3 2014 15:18:20 for Cfits by
+    <li class="footer">Generated on Sat Sep 6 2014 20:56:53 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
