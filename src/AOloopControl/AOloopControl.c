@@ -2581,7 +2581,10 @@ long double rmsval;
                 phal = NBpha-1;
             if(phal<0)
 				phal = 0;
-				
+			
+			printf("pha = %f -> phal = %ld / %ld\n", pha, phal, NBpha);
+			fflush(stdout);
+			
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
 			
