@@ -3890,15 +3890,18 @@ int AOloopControl_AutoTune()
 
 int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 {
+	FILE *fp;
 	long IDout;
 	long IDc;
+	long IDave;
 	long ii, jj, kk;
 	char fname[2000];
 	char command[2000];
 	long delay1us = 200000; // delay after changing frequency modulation
 	long delay2us = 100000; // delay after changing camera etime
-	double value;
-
+	
+	long double rmsvalue;
+	double total;
 	
 	long fmodulator; // [0.1 Hz]
 	long etimecam; // [us]
@@ -3912,7 +3915,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 	long etimecam_NBstep = 1;
 	
 	
-	long NbAve = 10000; /// number of frames acquired
+	long NbAve = 1000; /// number of frames acquired
 	
 
 
@@ -3933,12 +3936,12 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
   
 
 
-
-
+//	fp = fopen("WFSsync.log", "w");
+//	fclose(fp);
 
 	IDc = create_3Dimage_ID("imWFScube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NbAve);
-	list_image_ID();
-
+	IDave = create_2Dimage_ID("imWFSave", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+	
 	IDout = create_2Dimage_ID(IDout_name, fmodulator_NBstep, etimecam_NBstep);
 	for(ii=0;ii<fmodulator_NBstep; ii++)
 		{
@@ -3950,17 +3953,43 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 			{
 				etimecam = etimecam_start + jj*etimecam_step;
 				usleep(delay2us);
+				
+				for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+					data.image[IDave].array.F[ii] = 0.0;
 
 				/// start collecting frames
 				for(kk=0; kk<NbAve; kk++)
                 {
                     Average_cam_frames(loop, 1);
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                        data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS].array.F[ii];
+                        {
+							data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] = 1.0*data.image[aoconfID_WFS].array.U[ii];
+							data.image[IDave].array.F[ii] += 1.0*data.image[aoconfID_WFS].array.U[ii];
+						}
                 }
+                
+                /// processing
+            
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+					data.image[IDave].array.F[ii] /= NbAve;
+			
+				rmsvalue = 0.0;
+				for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+					{
+						data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] -= data.image[IDave].array.F[ii];
+						rmsvalue += data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii];
+					}
+                rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
+				data.image[IDout].array.F[jj*fmodulator_NBstep+ii] = rmsvalue;
+				printf("%8.1f   %8.6f   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) rmsvalue);
+	fp = fopen("WFSsync.log", "a");
+		fprintf(fp, "%8.1f   %8.6f   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) rmsvalue);
+	fclose(fp);
 			}
 		}
 	save_fits("imWFScube", "!imWFScube.fits");
+	
+	
 	
 	return(0);
 }
