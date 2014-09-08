@@ -3893,6 +3893,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 	long IDout;
 	long IDc;
 	long ii, jj, kk;
+	char fname[2000];
 	char command[2000];
 	long delay1us = 200000; // delay after changing frequency modulation
 	long delay2us = 100000; // delay after changing camera etime
@@ -3918,6 +3919,23 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 	if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+
+    printf("Importing DM response matrix channel shared memory ...\n");
+    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+
+    printf("Importing WFS camera image shared memory ... \n");
+    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
+
+
+
+  
+
+
+
+
+
 	IDc = create_3Dimage_ID("imWFScube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NbAve);
 	list_image_ID();
 
@@ -3938,7 +3956,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
                 {
                     Average_cam_frames(loop, 1);
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                        data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+                        data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS].array.F[ii];
                 }
 			}
 		}
