@@ -2498,8 +2498,8 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     long IDout;
 
     double period; /// in frames
-    double period_start = 500.0;
-    double period_end = 2000.0;
+    double period_start = 1000.0;
+    double period_end = 1200.0;
     double period_step;
     double pha;
     long *phacnt;
