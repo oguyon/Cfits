@@ -2616,8 +2616,11 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     fp = fopen("wfscampe.txt","w");
     fclose(fp);
 
+	period_start = 1.0*p - 10.0;
+	period_end = 1.0*p + 10.0;
+
     phacnt = (long*) malloc(sizeof(long)*NBpha);
-    period_step = (period_end-period_start)/200.0;
+    period_step = (period_end-period_start)/100.0;
     for(period=period_start; period<period_end; period += period_step)
     {
         //		printf("- ");
