@@ -2494,13 +2494,25 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     char fname[200];
     long ii, jj, kk;
     long IDrc, IDrefim;
+    long IDout;
 
+    double period; /// in frames
+    double period_start = 100.0;
+    double period_end = 1.0*NBframes;
+    double period_step;
+    double pha;
+    long *phacnt;
+    long phal;
+long double rmsval;
+	double rmsvalmin;
+	double periodmin;
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
 
     IDrc = create_3Dimage_ID("Rcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBframes);
+    IDout = create_3Dimage_ID(IDout_name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBpha);
 
     printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
@@ -2544,10 +2556,52 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] -= data.image[IDrefim].array.F[ii];
     }
-  save_fits("Rcube", "!R1cube.fits");
+    save_fits("Rcube", "!R1cube.fits");
+
+
+    /** find periodicity */
+	periodmin = 0.0;
+	rmsvalmin = 1.0e50;
+
+    phacnt = (long*) malloc(sizeof(long)*NBpha);
+    period_step = (period_end-period_start)/100.0;
+    for(period=period_start; period<period_end; period += period_step)
+    {
+        for(kk=0; kk<NBframes; kk++)
+        {
+            pha = 1.0*kk/period;
+            pha = modf(pha, NULL);
+            phal = (long) (NBframes*pha);
+            if(phal>NBframes-1)
+                phal = NBframes-1;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
+			phacnt[phal]++;
+		}
+		rmsval = 0.0;
+		for(kk=0;kk<NBpha;kk++)
+		{
+			if(phacnt[kk]>0)
+			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                {
+					data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
+					rmsval = data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii];
+				}		
+		}
+		rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/NBpha);
+		if(rmsval<rmsvalmin)
+			{
+				rmsvalmin = rmsval;
+				periodmin = period;
+			}
+		printf("%20f  %20g     [ %20f  %20g ]\n", period, (double) rmsval, periodmin, rmsvalmin);
+    }
+    free(phacnt);
 
     return(0);
 }
+
+
 
 
 
