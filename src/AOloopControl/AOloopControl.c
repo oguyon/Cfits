@@ -2498,7 +2498,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     long IDout;
 
     double period; /// in frames
-    double period_start = 100.0;
+    double period_start = 500.0;
     double period_end = 2000.0;
     double period_step;
     double pha;
@@ -2507,7 +2507,9 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     long double rmsval;
     double rmsvalmin;
     double periodmin;
-
+	long cnt;
+	
+	
     double intpart;
 
 
@@ -2600,16 +2602,22 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
         }
 
         rmsval = 0.0;
+        cnt = 0;
         for(kk=0; kk<NBpha; kk++)
         {
             if(phacnt[kk]>0)
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                {
+					cnt++;
+					for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 {
                     data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
                     rmsval = data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii];
                 }
+				}
         }
-        rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/NBpha);
+        
+        
+        rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/cnt);
         if(rmsval<rmsvalmin)
         {
             rmsvalmin = rmsval;
