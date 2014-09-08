@@ -110,6 +110,8 @@ long AOloopControl_loadCM(long loop, char *CMfname);
 int AOloopControl_loadconfigure(long loop, char *config_fname, int mode);
 int set_DM_modes(long loop);
 long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap);
+int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name);
+int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha);
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 int AOcompute(long loop);

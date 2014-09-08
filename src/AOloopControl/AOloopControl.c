@@ -79,6 +79,27 @@ long aoconfIDlog1 = -1;
 
 
 
+
+
+/** WFS camera periodic error correction
+ * 
+ * if image WFScamPEcorrC is in memory, this will be enabled by default
+ * 
+ */
+
+int WFS_CAM_PER_CORR = 0; /// 1 if active
+double WFScamPEcorr_pha;     /// phase
+double WFScamPEcorr_pharef;  /// phase reference
+double WFScamPEcorr_period;  /// in camera frame unit
+
+
+
+
+
+
+
+
+
 extern DATA data;
 
 
@@ -1483,6 +1504,7 @@ int AOloopControl_InitializeMemory(int mode)
  * supports ring buffer 
  * puts image from camera buffer aoconfID_WFS into aoconfID_WFS1 (supplied by user)
  * 
+ * i
  */
  
 int Average_cam_frames(long loop, long NbAve)
@@ -1494,6 +1516,7 @@ int Average_cam_frames(long loop, long NbAve)
     int atype;
     long slice;
     char *ptrv;
+    double tmpv1;
 
 
     atype = data.image[aoconfID_WFS].md[0].atype;
@@ -1618,6 +1641,17 @@ int Average_cam_frames(long loop, long NbAve)
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS1].array.F[ii] /= total;
+
+
+
+	if(WFS_CAM_PER_CORR==1)
+	{
+		WFScamPEcorr_pha += 1.0/WFScamPEcorr_period;     
+		WFScamPEcorr_pha = modf(WFScamPEcorr_pha, &tmpv1);
+		
+		AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", WFScamPEcorr_pha);
+	}
+
 
     // total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
 
@@ -2484,8 +2518,9 @@ sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
 
 
-/** Record periodic camera signal (to be used if there is a periodic camera error) 
- * 
+/** Record periodic camera signal (to be used if there is a periodic camera error)
+ *
+ * folds the signal onto one period
  * 
  */
 
@@ -2514,12 +2549,12 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     double tmpv1;
 
     double *coarsermsarray;
-	double rmsvalmin1;
-	int lOK;
-	double level1, level2, level3;
-	int level1OK, level2OK, level3OK;
-	
-	
+    double rmsvalmin1;
+    int lOK;
+    double level1, level2, level3;
+    int level1OK, level2OK, level3OK;
+
+
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
@@ -2665,7 +2700,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     free(coarsermsarray);
 
 
-	printf("APPROXIMATE PERIOD = %ld\n", p1);
+    printf("APPROXIMATE PERIOD = %ld\n", p1);
 
     /** find periodicity ( fine search ) */
 
@@ -2682,6 +2717,12 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     period_step = (period_end-period_start)/100.0;
     for(period=period_start; period<period_end; period += period_step)
     {
+        for(kk=0; kk<NBpha; kk++)
+            phacnt[kk] = 0;
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] = 0.0;
+
         for(kk=0; kk<NBframes; kk++)
         {
             pha = 1.0*kk/period;
@@ -2726,12 +2767,91 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
         fprintf(fp, "%20f %20g\n", period, (double) rmsval);
         fclose(fp);
     }
+
+    printf("EXACT PERIOD = %f\n", periodmin);
+
+
+    /// building phase cube
+    period = periodmin;
+
+    for(kk=0; kk<NBpha; kk++)
+        phacnt[kk] = 0;
+    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] = 0.0;
+
+    for(kk=0; kk<NBframes; kk++)
+    {
+        pha = 1.0*kk/period;
+        pha = modf(pha, &intpart);
+        phal = (long) (1.0*NBpha*pha);
+
+        if(phal>NBpha-1)
+            phal = NBpha-1;
+        if(phal<0)
+            phal = 0;
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
+        phacnt[phal]++;
+    }
+
+    rmsval = 0.0;
+    cnt = 0;
+    for(kk=0; kk<NBpha; kk++)
+    {
+        if(phacnt[kk]>0)
+        {
+            cnt++;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
+            }
+        }
+    }	
+    
+    
+
     free(phacnt);
 
     return(0);
 }
 
 
+
+
+/** remove WFS camera periodic error
+ *
+ * pha: phase from 0.0 to 1.0
+ */
+
+int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha)
+{
+    long IDin;
+    long IDcorr;
+    long phal;
+    long xsize, ysize, zsize, xysize;
+    long ii;
+
+
+    IDin = image_ID(IDin_name);
+    IDcorr = image_ID(IDcorr_name);
+
+    xsize = data.image[IDcorr].md[0].size[0];
+    ysize = data.image[IDcorr].md[0].size[1];
+    zsize = data.image[IDcorr].md[0].size[2];
+    xysize = xsize*ysize;
+
+    phal = (long) (pha*zsize);
+    if(phal>zsize-1)
+        phal -= zsize;
+
+    for(ii=0; ii<xysize; ii++) {
+        data.image[IDin].array.F[ii] -= data.image[IDcorr].array.F[xysize*phal+ii];
+    }
+
+
+    return(0);
+}
 
 
 
@@ -3249,6 +3369,11 @@ int AOloopControl_run()
   sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
   AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
  
+	if((ID = image_ID("WFScamPEcorrC"))!=-1)
+	{
+	}
+	
+	
 
   vOK = 1;
   if(AOconf[loop].init_refWFS==0)
