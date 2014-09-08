@@ -2575,11 +2575,16 @@ long double rmsval;
         {
             pha = 1.0*kk/period;
             pha = modf(pha, NULL);
-            phal = (long) (NBframes*pha);
-            if(phal>NBframes-1)
-                phal = NBframes-1;
+            phal = (long) (1.0*NBpha*pha);
+            
+            if(phal>NBpha-1)
+                phal = NBpha-1;
+            if(phal<0)
+				phal = 0;
+				
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
+			
 			phacnt[phal]++;
 		}
 		printf(".");
