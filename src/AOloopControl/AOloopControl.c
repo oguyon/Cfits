@@ -3897,8 +3897,8 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     long ii, jj, kk;
     char fname[2000];
     char command[2000];
-    long delay1us = 500000; // delay after changing frequency modulation
-    long delay2us = 500000; // delay after changing camera etime
+    long delay1us = 1000000; // delay after changing frequency modulation
+    long delay2us = 1000000; // delay after changing camera etime
 
     long double rmsvalue;
     long double avevalue;
@@ -3907,12 +3907,12 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     long etimecam; // [us]
 
     long fmodulator_start = 4000; // 400 Hz
-    long fmodulator_step = 10;
-    long fmodulator_NBstep = 10;
+    long fmodulator_step = 100;
+    long fmodulator_NBstep = 20;
 
-    long etimecam_start = 0.002; // 500 Hz 
-    long etimecam_step = 100;
-    long etimecam_NBstep = 10;
+    long etimecam_start = 600; // [us] 
+    long etimecam_step = 20;
+    long etimecam_NBstep = 20;
 
     int r;
 
@@ -3989,7 +3989,8 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
                     rmsvalue += data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii];
                 }
             rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
-            data.image[IDout].array.F[jj*fmodulator_NBstep+ii] = rmsvalue;
+			rmsvalue /= avevalue;
+            data.image[IDout].array.F[jj*fmodulator_NBstep+ii] = (double) rmsvalue;
             printf("%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fp = fopen("WFSsync.log", "a");
             fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
