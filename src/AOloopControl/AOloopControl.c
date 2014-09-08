@@ -192,6 +192,22 @@ int Measure_ActMap_WFS_cli()
     return 1;
 }
 
+
+
+int AOloopControl_Measure_WFScam_PeriodicError_cli()
+{
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
+    {
+      AOloopControl_Measure_WFScam_PeriodicError(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 int AOloopControl_Measure_Resp_Matrix_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
@@ -455,6 +471,17 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].example,"aolameasactmap 0.05 0.02 20 actmap");
   strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap)");
   data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"aolacqwfscampe");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFScam_PeriodicError_cli;
+  strcpy(data.cmd[data.NBcmd].info,"acquire WFS camera periodic error");
+  strcpy(data.cmd[data.NBcmd].syntax,"<nbframes [long]> <nb pha [long]> <outcube>");
+  strcpy(data.cmd[data.NBcmd].example,"aolacqwfscampe 10000 100 wfscampe");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name)");
+  data.NBcmd++;
+
 
 
   strcpy(data.cmd[data.NBcmd].key,"aolacqresp");
@@ -1450,160 +1477,166 @@ int AOloopControl_InitializeMemory(int mode)
 
 
 
-//
-// supports ring buffer
-//
+
+/** Read image from WFS camera
+ * 
+ * supports ring buffer 
+ * puts image from camera buffer aoconfID_WFS into aoconfID_WFS1 (supplied by user)
+ * 
+ */
+ 
 int Average_cam_frames(long loop, long NbAve)
 {
-  long imcnt;
-  long ii;
-  double total;
-  char name[200];
-  int atype;
-  long slice;
-  char *ptrv;
- 
+    long imcnt;
+    long ii;
+    double total;
+    char name[200];
+    int atype;
+    long slice;
+    char *ptrv;
 
-  atype = data.image[aoconfID_WFS].md[0].atype;
 
-  if(avcamarraysInit==0)
+    atype = data.image[aoconfID_WFS].md[0].atype;
+
+    if(avcamarraysInit==0)
     {
-      arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
-      arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
-      avcamarraysInit = 1;
+        arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
+        arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
+        avcamarraysInit = 1;
     }
-  
-  if(NbAve>1)
-    for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-      data.image[aoconfID_WFS1].array.F[ii] = 0.0;
-  
-  AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
-  
-  if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
+
+    if(NbAve>1)
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[aoconfID_WFS1].array.F[ii] = 0.0;
+
+    AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+
+    if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
-      switch (atype) {
-      case FLOAT :
-	imcnt = 0;
-	while(imcnt<NbAve)
-	  {
-	    usleep(50);	  
-	    if(data.image[aoconfID_WFS].md[0].write == 0)
-	      {
-		if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
-		  {	      
-		    memcpy (arrayftmp, data.image[aoconfID_WFS].array.F, sizeof(float)*AOconf[loop].sizeWFS);
-		    AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
-		    if(NbAve>1)
-		      {
-			
-			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			  data.image[aoconfID_WFS1].array.F[ii] += arrayftmp[ii];
-		      }
-		    else
-		      memcpy(data.image[aoconfID_WFS1].array.F, arrayftmp,  sizeof(float)*AOconf[loop].sizeWFS);
-		    imcnt++;
-		  }      
-	      }
-	  }
-	break;
-      case USHORT :
-	imcnt = 0;
-	while(imcnt<NbAve)
-	  {
-	    usleep(50);
-	    if(data.image[aoconfID_WFS].md[0].write == 0)
-	      {
-		if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
-		  {
-		    memcpy (arrayutmp, data.image[aoconfID_WFS].array.U, sizeof(unsigned short)*AOconf[loop].sizeWFS);
-		    AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
-		    if(NbAve>1)
-		      {
-			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			  data.image[aoconfID_WFS1].array.F[ii] += arrayutmp[ii]; 
-		      }
-		    else
-		      {
-			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			  data.image[aoconfID_WFS1].array.F[ii] = arrayutmp[ii]; 
-		      }
-		    imcnt++;
-		  }
-	      }
-	  }         
-	break;
-      default :
-	printf("ERROR: DATA TYPE NOT SUPPORTED\n");
-	exit(0);
-	break;
-      }
+        switch (atype) {
+        case FLOAT :
+            imcnt = 0;
+            while(imcnt<NbAve)
+            {
+                usleep(50);
+                if(data.image[aoconfID_WFS].md[0].write == 0)
+                {
+                    if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
+                    {
+                        memcpy (arrayftmp, data.image[aoconfID_WFS].array.F, sizeof(float)*AOconf[loop].sizeWFS);
+                        AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
+                        if(NbAve>1)
+                        {
+
+                            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                                data.image[aoconfID_WFS1].array.F[ii] += arrayftmp[ii];
+                        }
+                        else
+                            memcpy(data.image[aoconfID_WFS1].array.F, arrayftmp,  sizeof(float)*AOconf[loop].sizeWFS);
+                        imcnt++;
+                    }
+                }
+            }
+            break;
+        case USHORT :
+            imcnt = 0;
+            while(imcnt<NbAve)
+            {
+                usleep(50);
+                if(data.image[aoconfID_WFS].md[0].write == 0)
+                {
+                    if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
+                    {
+                        memcpy (arrayutmp, data.image[aoconfID_WFS].array.U, sizeof(unsigned short)*AOconf[loop].sizeWFS);
+                        AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
+                        if(NbAve>1)
+                        {
+                            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                                data.image[aoconfID_WFS1].array.F[ii] += arrayutmp[ii];
+                        }
+                        else
+                        {
+                            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                                data.image[aoconfID_WFS1].array.F[ii] = arrayutmp[ii];
+                        }
+                        imcnt++;
+                    }
+                }
+            }
+            break;
+        default :
+            printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+            exit(0);
+            break;
+        }
     }
-  else // ring buffer mode, only works with NbAve = 1
+    else // ring buffer mode, only works with NbAve = 1
     {
-      while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // new frame exists
-	{
-	  usleep(50);
-	  // do nothing, wait
-	}
-      slice = data.image[aoconfID_WFS].md[0].cnt1-1;
-      if(slice==-1)
-	slice = data.image[aoconfID_WFS].md[0].size[2]-1;
-      
-      //      printf("READING SLICE %ld\n", slice);
-      switch (atype) {
-      case FLOAT :
-	ptrv = (char*) data.image[aoconfID_WFS].array.F;
-	ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
-	memcpy(data.image[aoconfID_WFS1].array.F, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);	
-	break;
-      case USHORT :
-	ptrv = (char*) data.image[aoconfID_WFS].array.U;
-	ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
-       	memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
-	for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-	  data.image[aoconfID_WFS1].array.F[ii] = (float) arrayutmp[ii]; 
-	break;
-      default :
-	printf("ERROR: DATA TYPE NOT SUPPORTED\n");
-	exit(0);
-	break;
-      }
+        while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+        {
+            usleep(50);
+            // do nothing, wait
+        }
+        slice = data.image[aoconfID_WFS].md[0].cnt1-1;
+        if(slice==-1)
+            slice = data.image[aoconfID_WFS].md[0].size[2]-1;
 
-      AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
-	
+        //      printf("READING SLICE %ld\n", slice);
+        switch (atype) {
+        case FLOAT :
+            ptrv = (char*) data.image[aoconfID_WFS].array.F;
+            ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
+            memcpy(data.image[aoconfID_WFS1].array.F, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
+            break;
+        case USHORT :
+            ptrv = (char*) data.image[aoconfID_WFS].array.U;
+            ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
+            memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[aoconfID_WFS1].array.F[ii] = (float) arrayutmp[ii];
+            break;
+        default :
+            printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+            exit(0);
+            break;
+        }
+
+        AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
+
     }
-  AOconf[loop].status = 3;  // 3: NORMALIZE WFS IMAGE
-  
-
-  // Dark subtract
-  for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-    data.image[aoconfID_WFS1].array.F[ii] -= AOconf[loop].DarkLevel; 
-  
-  // Normalize  
-  sprintf(name, "imWFS1_%ld", loop);
-  total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
-     
-     
-  for(ii=0;ii<AOconf[loop].sizeWFS;ii++)
-    data.image[aoconfID_WFS1].array.F[ii] /= total;
-  
-  // total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
-
-  /*
-  printf("SLEEPING ... ");
-  fflush(stdout);
-  sleep(4);
-  printf("done\n");
-  fflush(stdout);
-  */
+    AOconf[loop].status = 3;  // 3: NORMALIZE WFS IMAGE
 
 
-  // save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
-  //sleep(5);
+    // Dark subtract
+    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        data.image[aoconfID_WFS1].array.F[ii] -= AOconf[loop].DarkLevel;
+
+    // Normalize
+    sprintf(name, "imWFS1_%ld", loop);
+    total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
 
 
-  return(0);
+    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        data.image[aoconfID_WFS1].array.F[ii] /= total;
+
+    // total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
+
+    /*
+    printf("SLEEPING ... ");
+    fflush(stdout);
+    sleep(4);
+    printf("done\n");
+    fflush(stdout);
+    */
+
+
+    // save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
+    //sleep(5);
+
+
+    return(0);
 }
+
 
 
 
@@ -2451,7 +2484,63 @@ sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
 
 
-// measures response matrix AND reference
+/** Record periodic camera signal (to be used if there is a periodic camera error) 
+ * 
+ * 
+ */
+
+int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name)
+{
+    char fname[200];
+    long ii, jj, kk;
+    long IDrc;
+
+
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(0);
+
+
+    IDrc = create_3Dimage_ID("Rcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBframes);
+
+    printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
+    fflush(stdout);
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+    //exit(0);
+
+    printf("Importing WFS camera image shared memory ... \n");
+    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
+
+
+
+    /*
+        sprintf(name, "imWFS1RM_%ld", loop);
+        sizearray[0] = AOconf[loop].sizexWFS;
+        sizearray[1] = AOconf[loop].sizeyWFS;
+        aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+    */
+
+    for(kk=0; kk<NBframes; kk++)
+    {
+        Average_cam_frames(loop, 1);
+
+
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+        kk++;
+    }
+
+	save_fits("Rcube", "!Rcube.fits");
+
+    return(0);
+}
+
+
+
+
+
+/** measures response matrix AND reference */
 
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)
 {
@@ -3890,7 +3979,44 @@ int AOloopControl_AutoTune()
 
 int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 {
-    FILE *fp;
+
+    char fname[2000];
+    long IDout, IDave;
+    long *sizearraytmp;
+
+
+
+    sizearraytmp = (long*) malloc(sizeof(long)*2);
+
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(0);
+
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+
+    printf("Importing DM response matrix channel shared memory ...\n");
+    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+
+    printf("Importing WFS camera image shared memory ... \n");
+    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
+
+
+
+
+    IDave = create_2Dimage_ID("imWFSave", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    IDout = create_image_ID(IDout_name,  2, sizearraytmp, FLOAT, 1, 10);
+
+
+
+
+
+
+    free(sizearraytmp);
+
+
+
+
+  /*  FILE *fp;
     long IDout;
     long IDc;
     long IDave;
@@ -4016,7 +4142,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     save_fits("imWFScube", "!imWFScube.fits");
 
 
-
+*/
     return(0);
 }
 
