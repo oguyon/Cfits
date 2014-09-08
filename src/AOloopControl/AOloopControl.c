@@ -3987,7 +3987,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 {
                     data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] -= data.image[IDave].array.F[ii];
-                    rmsvalue += data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii];
+                    rmsvalue += data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii];
                 }
             rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
 			rmsvalue /= avevalue;
