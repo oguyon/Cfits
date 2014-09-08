@@ -3898,7 +3898,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     char fname[2000];
     char command[2000];
     long delay1us = 1000000; // delay after changing frequency modulation
-    long delay2us = 200000; // delay after changing camera etime
+    long delay2us = 1000000; // delay after changing camera etime
 
     long double rmsvalue;
     long double avevalue;
@@ -3910,7 +3910,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     long fmodulator_step = 100;
     long fmodulator_NBstep = 20;
 
-    long etimecam_start = 600; // [us] 
+    long etimecam_start = 600; // [us]
     long etimecam_step = 20;
     long etimecam_NBstep = 20;
 
@@ -3947,24 +3947,27 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     IDout = create_2Dimage_ID(IDout_name, fmodulator_NBstep, etimecam_NBstep);
     for(i=0; i<fmodulator_NBstep; i++)
     {
-        fmodulator = fmodulator_start + i*fmodulator_step;
-        sprintf(command, "modulator frequency %f", 1.0e-7*fmodulator);
+        etimecam = etimecam_start + i*etimecam_step;
+
+        sprintf(command, "zylaetime %f", 0.000570);
         printf("command : %s\n", command);
         r = system(command);
-        usleep(delay1us);
+        usleep(delay2us);
+
+        sprintf(command, "zylaetime %f", 1.0e-6*etimecam);
+        printf("command : %s\n", command);
+        r = system(command);
+        usleep(delay2us);
+
+
         for(j=0; j<etimecam_NBstep; j++)
         {
-            etimecam = etimecam_start + j*etimecam_step;
- 
-            sprintf(command, "zylaetime %f", 0.000570);
+
+            fmodulator = fmodulator_start + j*fmodulator_step;
+            sprintf(command, "modulator frequency %f", 1.0e-7*fmodulator);
             printf("command : %s\n", command);
             r = system(command);
-            usleep(delay2us);
- 
-            sprintf(command, "zylaetime %f", 1.0e-6*etimecam);
-            printf("command : %s\n", command);
-            r = system(command);
-            usleep(delay2us);
+            usleep(delay1us);
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDave].array.F[ii] = 0.0;
@@ -3995,14 +3998,14 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
                     rmsvalue += data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii];
                 }
             rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
-			rmsvalue /= avevalue;
+            rmsvalue /= avevalue;
             data.image[IDout].array.F[j*fmodulator_NBstep+i] = (double) rmsvalue;
             printf("%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fp = fopen("WFSsync.log", "a");
             fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fclose(fp);
-        
-			save_fits(IDout_name, "!WFSsync_out.fits");
+
+            save_fits(IDout_name, "!WFSsync_out.fits");
         }
     }
     save_fits("imWFScube", "!imWFScube.fits");
@@ -4011,4 +4014,5 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
 
     return(0);
 }
+
 
