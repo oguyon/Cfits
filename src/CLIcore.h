@@ -277,6 +277,7 @@ typedef struct
 
   // Command Line Interface (CLI) INPUT 
   int fifoON;
+  char processname[1024];
   char fifoname[1024];
   long NBcmd;
   long NB_MAX_COMMAND;

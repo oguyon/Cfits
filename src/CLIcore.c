@@ -416,7 +416,6 @@ int main(int argc, char *argv[])
     const gsl_rng_type * rndgenType;
     double v1;
     char prompt[200];
-    char promptname[100];
     int terminate = 0;
     char str[200];
     char command[200];
@@ -447,7 +446,7 @@ int main(int argc, char *argv[])
 
 	
 
-
+	strcpy(data.processname, argv[0]);
 
 
     TYPESIZE[0] = 0;
@@ -503,8 +502,8 @@ int main(int argc, char *argv[])
 
     CLIPID = getpid();
 
-    sprintf(promptname, "%s", PACKAGE_NAME);
-    sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, promptname, 0x1B, 0);
+//    sprintf(promptname, "%s", data.processname);
+    sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, data.processname, 0x1B, 0);
     //sprintf(prompt, "%s> ", PACKAGE_NAME);
 
     printf("type \"help\" for instructions\n");
@@ -1249,7 +1248,7 @@ int command_line( int argc, char **argv)
 
 	case 'n':
 	  printf("process name '%s'\n", optarg);
-	  memory_monitor(optarg);
+	strcpy(data.processname, optarg);	
    	memcpy((void *)argv[0], optarg, sizeof(optarg));
 	prctl(PR_SET_NAME, optarg, 0, 0, 0);
 	  break;
@@ -1391,7 +1390,7 @@ int help_command(char *cmdkey)
 	  printf("module    :    %s\n", data.cmd[i].module);
 	  printf("info      :    %s\n", data.cmd[i].info);
 	  printf("syntax    :    %s\n", data.cmd[i].syntax);
-	  printf("example   :    %s\n", data.cmd[i].info);
+	  printf("example   :    %s\n", data.cmd[i].example);
 	  printf("C call    :    %s\n", data.cmd[i].Ccall);
 	  printf("\n");
 	  cOK = 1;

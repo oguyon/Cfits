@@ -141,5 +141,6 @@ int AOloopControl_resetRMSperf();
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
 int AOloopControl_InjectMode( long index, float ampl );
 int AOloopControl_AutoTune();
+int AOloopControl_tuneWFSsync(long loop, char *IDout_name);
 
 #endif

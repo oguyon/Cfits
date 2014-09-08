@@ -11954,18 +11954,6 @@ ACX_PTHREAD
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 CPPFLAGS="$CPPFLAGS -I/usr/local/include/"
 
 #LDFLAGS="$LDFLAGS -L/usr/lib/"
@@ -12088,6 +12076,58 @@ See \`config.log' for more details" "$LINENO" 5; };
 		
 fi
 
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pthread_create.
+		 in -lpthread" >&5
+$as_echo_n "checking for pthread_create.
+		 in -lpthread... " >&6; }
+if ${ac_cv_lib_pthread_pthread_create____+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpthread  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pthread_create.
+		 ();
+int
+main ()
+{
+return pthread_create.
+		 ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_pthread_pthread_create____=yes
+else
+  ac_cv_lib_pthread_pthread_create____=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pthread_pthread_create____" >&5
+$as_echo "$ac_cv_lib_pthread_pthread_create____" >&6; }
+if test "x$ac_cv_lib_pthread_pthread_create____" = xyes; then :
+   echo "Cannot find required library:pthread";
+ 		cat doc/configure.howto;
+		  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "\"FATAL...Cannot find required library:pthread\"
+See \`config.log' for more details" "$LINENO" 5; };
+		  exit 0;
+		
+fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lgslcblas" >&5
@@ -12808,20 +12848,22 @@ if test  "$cudaval" = "yes"; then
     NVCCFLAGS="$NVCCFLAGS"
     CUDA_CFLAGS="$CUDA_CFLAGS"
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
-    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include"
+    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include -I/usr/local/cuda/include/"
     CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
-    CUDA_LIBS="-lcuda -lcudart -lcufft"
+    CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas"
     NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
     NVCC="nvcc"
     
     
     
-$as_echo "@%:@define _CUDA 1" >>confdefs.h
+$as_echo "@%:@define HAVE_CUDA 1" >>confdefs.h
 
     eval "ARRAY${N}='-D_CUDA'"
     N=`expr $N + 1`
     LIBS="$LIBS $CUDA_LIBS"
-    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS"
+    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS -L/usr/local/cuda/lib64/"
+    CFLAGS="$CFLAGS $CUDA_CFLAGS"
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/cuda/lib64/"
 fi
 
 
@@ -12831,6 +12873,8 @@ fi
 # Create our own a symbol for execname until we can find the right one
 EXECNAME=Cfits
 
+
+LIBS="$LIBS -lpthread"
 
 #if test  "$cudaval" = "yes"; then
 #	LIBS="$LIBS -lcuda -lcudart -lcufft"

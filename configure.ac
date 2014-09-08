@@ -86,6 +86,14 @@ AC_CHECK_LIB([rt], [clock],
 		])
 
 
+AC_CHECK_LIB([pthread], [pthread_create].
+		[],
+		[ echo "Cannot find required library:pthread";
+ 		cat doc/configure.howto;
+		  AC_MSG_FAILURE(["FATAL...Cannot find required library:pthread"]);
+		  exit 0;
+		])
+
 AC_CHECK_LIB([gslcblas],[main],
 		[],
 		[ echo "Cannot find required library:gslcblas";
@@ -282,12 +290,12 @@ if test  "$cudaval" = "yes"; then
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include -I/usr/local/cuda/include/"
     CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
-    CUDA_LIBS="-lcuda -lcudart -lcufft"
+    CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas"
     NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
     NVCC="nvcc"
     AC_SUBST(NVCC)
     AC_SUBST(NVCCFLAGS)
-    AC_DEFINE([_CUDA],[1],[Defined if CUDA should be used])
+    AC_DEFINE([HAVE_CUDA],[1],[Defined if CUDA should be used])
     eval "ARRAY${N}='-D_CUDA'"
     N=`expr $N + 1`
     LIBS="$LIBS $CUDA_LIBS"
@@ -303,6 +311,8 @@ fi
 # Create our own a symbol for execname until we can find the right one
 EXECNAME=Cfits
 AC_SUBST(EXECNAME)
+
+LIBS="$LIBS -lpthread"
 
 #if test  "$cudaval" = "yes"; then
 #	LIBS="$LIBS -lcuda -lcudart -lcufft"
