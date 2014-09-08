@@ -2493,7 +2493,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 {
     FILE *fp;
     char fname[200];
-    long ii, jj, kk;
+    long ii, jj, kk, kk1, kkmax;
     long IDrc, IDrefim;
     long IDout;
 
@@ -2508,10 +2508,10 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     double rmsvalmin;
     double periodmin;
 	long cnt;
-	
+	long p, pmin, pmax;
 	
     double intpart;
-
+	double tmpv1;
 
 
     if(AOloopcontrol_meminit==0)
@@ -2566,8 +2566,49 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     save_fits("Rcube", "!R1cube.fits");
 
 
-    /** find periodicity */
+    /** find periodicity ( coarse search ) */
+   fp = fopen("wfscampe_coarse.txt","w");
+    fclose(fp);
+	
+	pmax = (long) NBframes/2;
+	pmin = 0;
+	rmsvalmin = 1.0e20;
+	for(p=1;p<pmax;p++)
+	{
+		rmsval = 0.0;
+		kkmax = 100;
+		if(kkmax+pmax>NBframes)
+			{
+				printf("ERROR: pmax, kkmax not compatible\n");
+				exit(0);
+			}
+		
+		for(kk=0;kk<kkmax;kk++)
+		{
+			kk1 = kk+p;
+			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			{
+				tmpv1 = data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] - data.image[IDrc].array.F[kk1*AOconf[loop].sizeWFS+ii];
+				rmsval += tmpv1*tmpv1;
+			}
+		}
+		rmsval = sqrt(rmsval/kkmax/AOconf[loop].sizeWFS);
+		
+		if(rmsval<rmsvalmin)
+		{
+			rmsvalmin = rmsval;
+			pmin = p;
+		}
+	    printf("%20ld  %20g     [ %20ld  %20g ]\n", p, (double) rmsval, pmin, rmsvalmin);
+        fp = fopen("wfscampe_coarse.txt","a");
+        fprintf(fp, "%20ld %20g\n", p, (double) rmsval);
+        fclose(fp);
 
+	}
+
+
+  
+     /** find periodicity ( fine search ) */
 
     periodmin = 0.0;
     rmsvalmin = 1.0e50;
