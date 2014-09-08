@@ -2491,6 +2491,7 @@ sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
 int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name)
 {
+    FILE *fp;
     char fname[200];
     long ii, jj, kk;
     long IDrc, IDrefim;
@@ -2498,16 +2499,16 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     double period; /// in frames
     double period_start = 100.0;
-    double period_end = 1.0*NBframes;
+    double period_end = 2000.0;
     double period_step;
     double pha;
     long *phacnt;
     long phal;
-long double rmsval;
-	double rmsvalmin;
-	double periodmin;
+    long double rmsval;
+    double rmsvalmin;
+    double periodmin;
 
-	double intpart;
+    double intpart;
 
 
 
@@ -2564,62 +2565,66 @@ long double rmsval;
 
 
     /** find periodicity */
-		
-   
-	periodmin = 0.0;
-	rmsvalmin = 1.0e50;
+
+
+    periodmin = 0.0;
+    rmsvalmin = 1.0e50;
+
+    fp = fopen("wfscampe.txt","w");
+    fclose(fp);
 
     phacnt = (long*) malloc(sizeof(long)*NBpha);
-    period_step = (period_end-period_start)/100.0;
+    period_step = (period_end-period_start)/200.0;
     for(period=period_start; period<period_end; period += period_step)
     {
-//		printf("- ");
-	//	fflush(stdout);
+        //		printf("- ");
+        //	fflush(stdout);
         for(kk=0; kk<NBframes; kk++)
         {
             pha = 1.0*kk/period;
             pha = modf(pha, &intpart);
             phal = (long) (1.0*NBpha*pha);
-            
+
             if(phal>NBpha-1)
                 phal = NBpha-1;
             if(phal<0)
-				phal = 0;
-			
-		//	printf("pha = %f -> phal = %ld / %ld\n", pha, phal, NBpha);
-			//fflush(stdout);
-			
+                phal = 0;
+
+            //	printf("pha = %f -> phal = %ld / %ld\n", pha, phal, NBpha);
+            //fflush(stdout);
+
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
-			
-			phacnt[phal]++;
-		}
-		printf(".");
-		fflush(stdout);
- 
-		
-		rmsval = 0.0;
-		for(kk=0;kk<NBpha;kk++)
-		{
-			if(phacnt[kk]>0)
-			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+
+            phacnt[phal]++;
+        }
+
+        rmsval = 0.0;
+        for(kk=0; kk<NBpha; kk++)
+        {
+            if(phacnt[kk]>0)
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 {
-					data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
-					rmsval = data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii];
-				}		
-		}
-		rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/NBpha);
-		if(rmsval<rmsvalmin)
-			{
-				rmsvalmin = rmsval;
-				periodmin = period;
-			}
-		printf("%20f  %20g     [ %20f  %20g ]\n", period, (double) rmsval, periodmin, rmsvalmin);
+                    data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
+                    rmsval = data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii];
+                }
+        }
+        rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/NBpha);
+        if(rmsval<rmsvalmin)
+        {
+            rmsvalmin = rmsval;
+            periodmin = period;
+        }
+        printf("%20f  %20g     [ %20f  %20g ]\n", period, (double) rmsval, periodmin, rmsvalmin);
+        fp = fopen("wfscampe.txt","a");
+        fprintf(fp, "%20f %20g\n", period, (double) rmsval);
+        fclose(fp);
     }
     free(phacnt);
 
     return(0);
 }
+
 
 
 
