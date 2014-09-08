@@ -2505,15 +2505,21 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     long *phacnt;
     long phal;
     long double rmsval;
-    double rmsvalmin;
+    double rmsvalmin, rmsvalmax;
     double periodmin;
-	long cnt;
-	long p, pmin, pmax;
-	
+    long cnt;
+    long p, p0, p1, pmin, pmax;
+
     double intpart;
-	double tmpv1;
+    double tmpv1;
 
-
+    double *coarsermsarray;
+	double rmsvalmin1;
+	int lOK;
+	double level1, level2, level3;
+	int level1OK, level2OK, level3OK;
+	
+	
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
@@ -2567,48 +2573,101 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
 
     /** find periodicity ( coarse search ) */
-   fp = fopen("wfscampe_coarse.txt","w");
+    fp = fopen("wfscampe_coarse.txt","w");
     fclose(fp);
-	
-	pmax = (long) NBframes/2;
-	pmin = 0;
-	rmsvalmin = 1.0e20;
-	for(p=1;p<pmax;p++)
-	{
-		rmsval = 0.0;
-		kkmax = 100;
-		if(kkmax+pmax>NBframes)
-			{
-				printf("ERROR: pmax, kkmax not compatible\n");
-				exit(0);
-			}
-		
-		for(kk=0;kk<kkmax;kk++)
-		{
-			kk1 = kk+p;
-			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			{
-				tmpv1 = data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] - data.image[IDrc].array.F[kk1*AOconf[loop].sizeWFS+ii];
-				rmsval += tmpv1*tmpv1;
-			}
-		}
-		rmsval = sqrt(rmsval/kkmax/AOconf[loop].sizeWFS);
-		
-		if(rmsval<rmsvalmin)
-		{
-			rmsvalmin = rmsval;
-			pmin = p;
-		}
-	    printf("%20ld  %20g     [ %20ld  %20g ]\n", p, (double) rmsval, pmin, rmsvalmin);
+
+    pmax = (long) NBframes/2;
+    pmin = 0;
+    rmsvalmin = 1.0e20;
+
+
+
+    rmsvalmax = 0.0;
+    p0 = 200;
+    coarsermsarray = (double*) malloc(sizeof(double)*pmax);
+    for(p=p0; p<pmax; p++)
+    {
+        rmsval = 0.0;
+        kkmax = 100;
+        if(kkmax+pmax>NBframes)
+        {
+            printf("ERROR: pmax, kkmax not compatible\n");
+            exit(0);
+        }
+
+        for(kk=0; kk<kkmax; kk++)
+        {
+            kk1 = kk+p;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                tmpv1 = data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] - data.image[IDrc].array.F[kk1*AOconf[loop].sizeWFS+ii];
+                rmsval += tmpv1*tmpv1;
+            }
+        }
+        rmsval = sqrt(rmsval/kkmax/AOconf[loop].sizeWFS);
+
+        if(rmsval<rmsvalmin)
+        {
+            rmsvalmin = rmsval;
+            pmin = p;
+        }
+        if(rmsval>rmsvalmax)
+            rmsvalmax = rmsval;
+
+        coarsermsarray[p] = rmsval;
+
+        printf("%20ld  %20g     [ %20ld  %20g ]\n", p, (double) rmsval, pmin, rmsvalmin);
         fp = fopen("wfscampe_coarse.txt","a");
         fprintf(fp, "%20ld %20g\n", p, (double) rmsval);
         fclose(fp);
+    }
 
-	}
+    level1 = rmsvalmin + 0.2*(rmsvalmax-rmsvalmin);
+    level1OK = 0; /// toggles to 1 when curve first goes above level1
+
+    level2 = rmsvalmin + 0.8*(rmsvalmax-rmsvalmin);
+    level2OK = 0; /// toggles to 1 when curve first goes above level2 after level1OK
+
+    level3 = rmsvalmin + 0.2*(rmsvalmax-rmsvalmin);
+    level3OK = 0; /// toggles to 1 when curve first goes above level3 after level2OK
+
+    p = p0;
+    lOK = 0;
+    rmsvalmin1 = rmsvalmax;
+    while((OK==0)&&(p<pmax))
+    {
+        if(level1OK==0)
+            if(coarsermsarray[p]>level1)
+                level1OK = 1;
+
+        if((level1OK==1)&&(level2OK==0))
+            if(coarsermsarray[p]>level2)
+                level2OK = 1;
+
+        if((level1OK==1)&&(level2OK==1)&&(level3OK==0))
+            if(coarsermsarray[p]<level3)
+                level3OK = 1;
+
+        if((level1OK==1)&&(level2OK==1)&&(level3OK==1))
+        {
+            if(coarsermsarray[p] < rmsvalmin1)
+            {
+                rmsvalmin1 = coarsermsarray[p];
+                p1 = p;
+            }
+
+            if(coarsermsarray[p]>level2)
+                lOK = 1;
+        }
+        p++;
+    }
+
+    free(coarsermsarray);
 
 
-  
-     /** find periodicity ( fine search ) */
+	printf("APPROXIMATE PERIOD = %ld\n", p1);
+
+    /** find periodicity ( fine search ) */
 
     periodmin = 0.0;
     rmsvalmin = 1.0e50;
@@ -2616,15 +2675,13 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     fp = fopen("wfscampe.txt","w");
     fclose(fp);
 
-	period_start = 1.0*p - 10.0;
-	period_end = 1.0*p + 10.0;
+    period_start = 1.0*p1 - 10.0;
+    period_end = 1.0*p1 + 10.0;
 
     phacnt = (long*) malloc(sizeof(long)*NBpha);
     period_step = (period_end-period_start)/100.0;
     for(period=period_start; period<period_end; period += period_step)
     {
-        //		printf("- ");
-        //	fflush(stdout);
         for(kk=0; kk<NBframes; kk++)
         {
             pha = 1.0*kk/period;
@@ -2635,9 +2692,6 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
                 phal = NBpha-1;
             if(phal<0)
                 phal = 0;
-
-            //	printf("pha = %f -> phal = %ld / %ld\n", pha, phal, NBpha);
-            //fflush(stdout);
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
@@ -2650,17 +2704,17 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
         for(kk=0; kk<NBpha; kk++)
         {
             if(phacnt[kk]>0)
-                {
-					cnt++;
-					for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                cnt++;
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 {
                     data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
                     rmsval = data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii];
                 }
-				}
+            }
         }
-        
-        
+
+
         rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/cnt);
         if(rmsval<rmsvalmin)
         {
@@ -2676,6 +2730,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     return(0);
 }
+
 
 
 
