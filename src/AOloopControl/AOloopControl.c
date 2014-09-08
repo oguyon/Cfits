@@ -3898,7 +3898,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     char fname[2000];
     char command[2000];
     long delay1us = 1000000; // delay after changing frequency modulation
-    long delay2us = 1000000; // delay after changing camera etime
+    long delay2us = 200000; // delay after changing camera etime
 
     long double rmsvalue;
     long double avevalue;
@@ -3917,7 +3917,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     int r;
     long i, j;
 
-    long NbAve = 1000; /// number of frames acquired
+    long NbAve = 2000; /// number of frames acquired
 
 
 
@@ -3955,10 +3955,15 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
         for(j=0; j<etimecam_NBstep; j++)
         {
             etimecam = etimecam_start + j*etimecam_step;
+ 
+            sprintf(command, "zylaetime %f", 0.000570);
+            printf("command : %s\n", command);
+            r = system(command);
+            usleep(delay2us);
+ 
             sprintf(command, "zylaetime %f", 1.0e-6*etimecam);
             printf("command : %s\n", command);
             r = system(command);
-
             usleep(delay2us);
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3996,6 +4001,8 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
             fp = fopen("WFSsync.log", "a");
             fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fclose(fp);
+        
+			save_fits(IDout_name, "!WFSsync_out.fits");
         }
     }
     save_fits("imWFScube", "!imWFScube.fits");
