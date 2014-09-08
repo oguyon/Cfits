@@ -3945,7 +3945,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     IDave = create_2Dimage_ID("imWFSave", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     IDout = create_2Dimage_ID(IDout_name, fmodulator_NBstep, etimecam_NBstep);
-    for(i=0; i<fmodulator_NBstep; i++)
+    for(i=0; i<etimecam_NBstep; i++)
     {
         etimecam = etimecam_start + i*etimecam_step;
 
@@ -3960,7 +3960,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
         usleep(delay2us);
 
 
-        for(j=0; j<etimecam_NBstep; j++)
+        for(j=0; j<fmodulator_NBstep; j++)
         {
 
             fmodulator = fmodulator_start + j*fmodulator_step;
@@ -3999,7 +3999,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
                 }
             rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
             rmsvalue /= avevalue;
-            data.image[IDout].array.F[j*fmodulator_NBstep+i] = (double) rmsvalue;
+            data.image[IDout].array.F[j*etimecam_NBstep+i] = (float) rmsvalue;
             printf("%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fp = fopen("WFSsync.log", "a");
             fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
