@@ -3897,8 +3897,8 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     long ii, jj, kk;
     char fname[2000];
     char command[2000];
-    long delay1us = 1000000; // delay after changing frequency modulation
-    long delay2us = 1000000; // delay after changing camera etime
+    long delay1us = 2000000; // delay after changing frequency modulation
+    long delay2us = 2000000; // delay after changing camera etime
 
     long double rmsvalue;
     long double avevalue;
@@ -4001,11 +4001,16 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
             rmsvalue /= avevalue;
             data.image[IDout].array.F[j*etimecam_NBstep+i] = (float) rmsvalue;
             printf("%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
+            fflush(stdout);
             fp = fopen("WFSsync.log", "a");
             fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fclose(fp);
 
+			printf("saving cube ... ");
+			fflush(stdout);
             save_fits(IDout_name, "!WFSsync_out.fits");
+			printf("\n");
+			fflush(stdout);
         }
     }
     save_fits("imWFScube", "!imWFScube.fits");
