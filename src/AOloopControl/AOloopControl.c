@@ -2573,8 +2573,8 @@ long double rmsval;
     period_step = (period_end-period_start)/100.0;
     for(period=period_start; period<period_end; period += period_step)
     {
-		printf("- ");
-		fflush(stdout);
+//		printf("- ");
+	//	fflush(stdout);
         for(kk=0; kk<NBframes; kk++)
         {
             pha = 1.0*kk/period;
@@ -2586,8 +2586,8 @@ long double rmsval;
             if(phal<0)
 				phal = 0;
 			
-			printf("pha = %f -> phal = %ld / %ld\n", pha, phal, NBpha);
-			fflush(stdout);
+		//	printf("pha = %f -> phal = %ld / %ld\n", pha, phal, NBpha);
+			//fflush(stdout);
 			
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
