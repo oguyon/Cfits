@@ -2493,7 +2493,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 {
     char fname[200];
     long ii, jj, kk;
-    long IDrc;
+    long IDrc, IDrefim;
 
 
     if(AOloopcontrol_meminit==0)
@@ -2524,17 +2524,32 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     for(kk=0; kk<NBframes; kk++)
     {
         Average_cam_frames(loop, 1);
-
-
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
-        kk++;
     }
 
-	save_fits("Rcube", "!Rcube.fits");
+    save_fits("Rcube", "!Rcube.fits");
+
+    IDrefim = create_2Dimage_ID("refim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    for(kk=0; kk<NBframes; kk++)
+    {
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDrefim].array.F[ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
+    }
+    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        data.image[IDrefim].array.F[ii] /= NBframes;
+
+    for(kk=0; kk<NBframes; kk++)
+    {
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] -= data.image[IDrefim].array.F[ii];
+    }
+  save_fits("Rcube", "!R1cube.fits");
 
     return(0);
 }
+
+
 
 
 
