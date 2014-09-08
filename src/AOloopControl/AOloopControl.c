@@ -2507,6 +2507,10 @@ long double rmsval;
 	double rmsvalmin;
 	double periodmin;
 
+	double intpart;
+
+
+
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
@@ -2569,12 +2573,12 @@ long double rmsval;
     period_step = (period_end-period_start)/100.0;
     for(period=period_start; period<period_end; period += period_step)
     {
-		printf(".");
+		printf("- ");
 		fflush(stdout);
         for(kk=0; kk<NBframes; kk++)
         {
             pha = 1.0*kk/period;
-            pha = modf(pha, NULL);
+            pha = modf(pha, &intpart);
             phal = (long) (1.0*NBpha*pha);
             
             if(phal>NBpha-1)
