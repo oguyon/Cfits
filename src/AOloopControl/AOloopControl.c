@@ -3919,7 +3919,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
         AOloopControl_InitializeMemory(0);
 
 	IDc = create_3Dimage_ID("imWFScube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NbAve);
-
+	list_image_ID();
 
 	IDout = create_2Dimage_ID(IDout_name, fmodulator_NBstep, etimecam_NBstep);
 	for(ii=0;ii<fmodulator_NBstep; ii++)
