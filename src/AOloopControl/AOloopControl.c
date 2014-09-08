@@ -2560,6 +2560,8 @@ long double rmsval;
 
 
     /** find periodicity */
+		
+   
 	periodmin = 0.0;
 	rmsvalmin = 1.0e50;
 
@@ -2567,6 +2569,8 @@ long double rmsval;
     period_step = (period_end-period_start)/100.0;
     for(period=period_start; period<period_end; period += period_step)
     {
+		printf(".");
+		fflush(stdout);
         for(kk=0; kk<NBframes; kk++)
         {
             pha = 1.0*kk/period;
@@ -2578,6 +2582,10 @@ long double rmsval;
                 data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
 			phacnt[phal]++;
 		}
+		printf(".");
+		fflush(stdout);
+ 
+		
 		rmsval = 0.0;
 		for(kk=0;kk<NBpha;kk++)
 		{
