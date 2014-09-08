@@ -3915,6 +3915,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     long etimecam_NBstep = 20;
 
     int r;
+    long i, j;
 
     long NbAve = 1000; /// number of frames acquired
 
@@ -3944,16 +3945,16 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     IDave = create_2Dimage_ID("imWFSave", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     IDout = create_2Dimage_ID(IDout_name, fmodulator_NBstep, etimecam_NBstep);
-    for(ii=0; ii<fmodulator_NBstep; ii++)
+    for(i=0; i<fmodulator_NBstep; i++)
     {
-        fmodulator = fmodulator_start + ii*fmodulator_step;
+        fmodulator = fmodulator_start + i*fmodulator_step;
         sprintf(command, "modulator frequency %f", 1.0e-7*fmodulator);
         printf("command : %s\n", command);
         r = system(command);
         usleep(delay1us);
-        for(jj=0; jj<etimecam_NBstep; jj++)
+        for(j=0; j<etimecam_NBstep; j++)
         {
-            etimecam = etimecam_start + jj*etimecam_step;
+            etimecam = etimecam_start + j*etimecam_step;
             sprintf(command, "zylaetime %f", 1.0e-6*etimecam);
             printf("command : %s\n", command);
             r = system(command);
@@ -3990,7 +3991,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
                 }
             rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
 			rmsvalue /= avevalue;
-            data.image[IDout].array.F[jj*fmodulator_NBstep+ii] = (double) rmsvalue;
+            data.image[IDout].array.F[j*fmodulator_NBstep+i] = (double) rmsvalue;
             printf("%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
             fp = fopen("WFSsync.log", "a");
             fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
