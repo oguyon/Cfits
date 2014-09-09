@@ -131,19 +131,19 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
             {
                 sprintf(command, "dm_stage x push %ld\n", stepX);
                 printf("command : %s\n", command);
-                //r = system(command);
+                r = system(command);
                 usleep(delayus);
             }
             else
             {
                 sprintf(command, "dm_stage x push %ld\n", stepX-ABoffset);
                 printf("command : %s\n", command);
-                //r = system(command);
+                r = system(command);
                 usleep(delayus);
 
                 sprintf(command, "dm_stage x push %ld\n", ABoffset);
                 printf("command : %s\n", command);
-               // r = system(command);
+                r = system(command);
                 usleep(delayus);
             }
 
@@ -156,19 +156,19 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
             {
                 sprintf(command, "dm_stage y push %ld\n", stepY);
                 printf("command : %s\n", command);
-                //r = system(command);
+                r = system(command);
                 usleep(delayus);
             }
             else
             {
                 sprintf(command, "dm_stage y push %ld\n", stepY-ABoffset);
                 printf("command : %s\n", command);
-               // r = system(command);
+               r = system(command);
                 usleep(delayus);
 
                 sprintf(command, "dm_stage y push %ld\n", ABoffset);
                 printf("command : %s\n", command);
-                // r = system(command);
+                r = system(command);
                 usleep(delayus);
             }
 
