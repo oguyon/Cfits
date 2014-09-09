@@ -390,7 +390,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
     double peak, v;
 
     IDref = image_ID("imref");
-    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 1000);
+    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10000);
 
     tot = 0.0;
     for(ii=0; ii<pXsize*pYsize; ii++)
@@ -399,7 +399,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
         data.image[ID].array.F[ii] /= tot;
 
     /** compute offset */
-    fft_correlation("imref", "imref", "outcorr");
+    fft_correlation("imwfs", "imref", "outcorr");
     IDc = image_ID("outcorr");
 	peak = 0.0;
 	for(ii=0; ii<pXsize*pYsize; ii++)
