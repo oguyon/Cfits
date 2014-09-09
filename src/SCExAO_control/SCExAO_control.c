@@ -43,7 +43,12 @@
 extern DATA data;
 
 
+
+/// CONFIGURATION
 char *WFScam_name = "zyladata";
+long long WFScnt = 0;
+
+
 
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
@@ -102,6 +107,56 @@ int init_SCExAO_control()
   return 0;
 }
 
+
+
+
+int SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
+{
+    long ID;
+    long IDWFScam;
+    int slice;
+    long k;
+    long xsize, ysize, xysize;
+    char *ptrv;
+    unsigned short *arrayutmp;
+    long ii;
+
+
+    IDWFScam = image_ID(WFScam_name);
+    xsize = data.image[IDWFScam].md[0].size[0];
+    ysize = data.image[IDWFScam].md[0].size[1];
+    xysize = xsize*ysize;
+
+    ID = create_2Dimage_ID(IDname, xsize, ysize);
+
+    arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
+
+
+    for(k=0; k<NbAve; k++)
+    {
+        while(WFScnt==data.image[IDWFScam].md[0].cnt0) // test if new frame exists
+        {
+            usleep(50);
+            // do nothing, wait
+        }
+        slice = data.image[IDWFScam].md[0].cnt1-1;
+        if(slice==-1)
+            slice = data.image[IDWFScam].md[0].size[2]-1;
+
+        ptrv = (char*) data.image[IDWFScam].array.U;
+        ptrv += sizeof(unsigned short)*slice* xysize;
+        memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
+        for(ii=0; ii<xysize; ii++)
+            data.image[ID].array.F[ii] += (float) arrayutmp[ii];
+
+
+        WFScnt += data.image[IDWFScam].md[0].cnt0;
+    }
+
+    free(arrayutmp);
+
+    return(ID);
+}
 
 
 
@@ -200,14 +255,14 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 {
-	long IDWFScam;
+	long ID;
 	long xsize, ysize;
 	long ii, jj;
 	double tot00, tot01, tot10, tot11, tot;
 	
-	IDWFScam = image_ID(WFScam_name);
-	xsize = data.image[IDWFScam].md[0].size[0];
-	ysize = data.image[IDWFScam].md[0].size[1];
+
+
+	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
 	
 	tot00 = 0.0;
 	tot01 = 0.0;
@@ -216,19 +271,19 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	
 	for(ii=0;ii<xsize/2;ii++)
 		for(jj=0;jj<ysize/2;jj++)
-			tot00 += data.image[IDWFScam].array.F[jj*xsize+ii];
+			tot00 += data.image[ID].array.F[jj*xsize+ii];
 	
 	for(ii=xsize/2;ii<xsize;ii++)
 		for(jj=0;jj<ysize/2;jj++)
-			tot10 += data.image[IDWFScam].array.F[jj*xsize+ii];
+			tot10 += data.image[ID].array.F[jj*xsize+ii];
 	
 	for(ii=0;ii<xsize/2;ii++)
 		for(jj=ysize/2;jj<ysize;jj++)
-			tot01 += data.image[IDWFScam].array.F[jj*xsize+ii];
+			tot01 += data.image[ID].array.F[jj*xsize+ii];
 	
 	for(ii=xsize/2;ii<xsize;ii++)
 		for(jj=ysize/2;jj<ysize;jj++)
-			tot11 += data.image[IDWFScam].array.F[jj*xsize+ii];
+			tot11 += data.image[ID].array.F[jj*xsize+ii];
 	
 	tot = tot00+tot10+tot01+tot11;
 	tot00 /= tot;
@@ -236,10 +291,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	tot01 /= tot;
 	tot11 /= tot;
 	
-	printf("  %5.3f   %5.3f\n", tot01, tot11);
-	printf("  %5.3f   %5.3f\n", tot00, tot10);
+	printf("  %6.4f   %6.4f\n", tot01, tot11);
+	printf("  %6.4f   %6.4f\n", tot00, tot10);
 	
-	
+	save_fits("imwfs", "!imwfs.fits");
 	
 	return(0);
 }
