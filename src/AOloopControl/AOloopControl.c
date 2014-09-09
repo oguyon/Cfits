@@ -413,7 +413,7 @@ int AOloopControl_tuneWFSsync_cli()
 
 int AOloopControl_setparam_cli()
 {
- if(CLI_checkarg(1,3)+CLI_checkarg(1,1)==0)
+ if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
     {
 		AOloopControl_setparam(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
       return 0;
