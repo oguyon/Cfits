@@ -2715,11 +2715,11 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     fp = fopen("wfscampe.txt","w");
     fclose(fp);
 
-    period_start = 1.0*p1 - 20.0;
-    period_end = 1.0*p1 + 20.0;
+    period_start = 1.0*p1 - 15.0;
+    period_end = 1.0*p1 + 15.0;
 
     phacnt = (long*) malloc(sizeof(long)*NBpha);
-    period_step = (period_end-period_start)/500.0;
+    period_step = (period_end-period_start)/300.0;
     for(period=period_start; period<period_end; period += period_step)
     {
         for(kk=0; kk<NBpha; kk++)
@@ -2855,12 +2855,14 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
     zsize = data.image[IDcorr].md[0].size[2];
     xysize = xsize*ysize;
 
-    phal = (long) (pha*zsize);
+    phal = (long) (1.0*pha*zsize);
     if(phal>zsize-1)
         phal -= zsize;
 
+	
+
     for(ii=0; ii<xysize; ii++) {
-        data.image[IDin].array.F[ii] -= data.image[IDcorr].array.F[xysize*phal+ii];
+        data.image[IDin].array.F[ii] -= 0.0*data.image[IDcorr].array.F[xysize*phal+ii];
     }
 
 
