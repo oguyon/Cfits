@@ -1532,7 +1532,8 @@ int Average_cam_frames(long loop, long NbAve)
     long slice;
     char *ptrv;
     long double tmplv1;
-
+	long NBcoadd;
+	double tmpf;
 
     atype = data.image[aoconfID_WFS].md[0].atype;
 
@@ -1548,6 +1549,11 @@ int Average_cam_frames(long loop, long NbAve)
             data.image[aoconfID_WFS0].array.F[ii] = 0.0;
 
     AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+
+	NBcoadd = data.image[aoconfID_WFS].kw[3].value.numl;
+	if(NBcoadd<1)
+		NBcoadd = 1;
+	
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
@@ -1646,8 +1652,9 @@ int Average_cam_frames(long loop, long NbAve)
 
 
     // Dark subtract
+	tmpf = NBcoadd*AOconf[loop].DarkLevel;
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS0].array.F[ii] -= AOconf[loop].DarkLevel;
+        data.image[aoconfID_WFS0].array.F[ii] -= tmpf;
 
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);

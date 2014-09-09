@@ -147,8 +147,6 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     long ii;
     long NBcoadd;
     long kw;
-	
-		long *tmpl;
 
 
     IDWFScam = image_ID(WFScam_name);
@@ -194,7 +192,7 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     }
 
     for(ii=0; ii<xysize; ii++)
-        data.image[ID].array.F[ii] /= NbAve;
+        data.image[ID].array.F[ii] /= NbAve*NBcoadd;
 
     free(arrayutmp);
 
