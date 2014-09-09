@@ -268,6 +268,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 
 
 	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
+	   xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
+
+	
 	
 	tot00 = 0.0;
 	tot01 = 0.0;
