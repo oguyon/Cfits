@@ -157,4 +157,6 @@ int AOloopControl_InjectMode( long index, float ampl );
 int AOloopControl_AutoTune();
 int AOloopControl_tuneWFSsync(long loop, char *IDout_name);
 
+int AOloopControl_setparam(long loop, char *key, double value);
+
 #endif

@@ -410,6 +410,21 @@ int AOloopControl_tuneWFSsync_cli()
 
 
 
+
+int AOloopControl_setparam_cli()
+{
+ if(CLI_checkarg(1,1)==0)
+    {
+		AOloopControl_setparam(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+
+
 int init_AOloopControl()
 {
   FILE *fp;
@@ -748,6 +763,20 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].example,"aolsyncwfs");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_tuneWFSsync(long loop, char *IDout_name)");
   data.NBcmd++;
+  
+  
+  
+   strcpy(data.cmd[data.NBcmd].key,"aolset");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setparam_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set parameter");
+  strcpy(data.cmd[data.NBcmd].syntax,"<parameter> <value>");
+  strcpy(data.cmd[data.NBcmd].example,"aolset");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setparam(long loop, char *key, double value)");
+  data.NBcmd++;
+
+  
+  
   
 
   // add atexit functions here
@@ -1633,8 +1662,6 @@ int Average_cam_frames(long loop, long NbAve)
         AOconf[loop].WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (AOconf[loop].WFScamPEcorr_period));
         AOconf[loop].WFScamPEcorr_pha = modfl(AOconf[loop].WFScamPEcorr_pha, &tmplv1);
         AOconf[loop].WFScamPEcorr_pha +=  AOconf[loop].WFScamPEcorr_pharef;
-		printf("cnt = %ld   period = %f    pha = %f\n", data.image[aoconfID_WFS].md[0].cnt0, (double) AOconf[loop].WFScamPEcorr_period, (double) AOconf[loop].WFScamPEcorr_pha);
-		fflush(stdout);
         AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) AOconf[loop].WFScamPEcorr_pha);
     }
     else
@@ -4496,3 +4523,21 @@ int AOloopControl_WFScamPEcorr_tryPhaseOffset()
 	return(0);
 }
 
+
+int AOloopControl_setparam(long loop, char *key, double value)
+{
+	int pOK=0;
+	char kstring[200];
+	
+	strcpy(kstring, "PEperiod");
+	if((strncmp (key, kstring, strlen(kstring)) == 0)&&(pOK==0))
+	{
+		AOconf[loop].WFScamPEcorr_period = (long double) value;
+		pOK = 1;
+	}
+	
+	if(pOK==0)
+		printf("Parameter not found\n");
+	
+	return (0);
+}
