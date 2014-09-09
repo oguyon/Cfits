@@ -74,10 +74,18 @@ int init_SCExAO_control()
 {
 
   strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "AO loop control");
+  strcpy(data.module[data.NBmodule].info, "SCExAO control");
   data.NBmodule++;
 
-  
+  strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_mv_DMstage_cli;
+  strcpy(data.cmd[data.NBcmd].info,"move DM TT stage to position");
+  strcpy(data.cmd[data.NBcmd].syntax,"<x pos> <y pos>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaottdmpos");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)");
+  data.NBcmd++;
+
   
 
   // add atexit functions here
