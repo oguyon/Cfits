@@ -53,7 +53,8 @@ long pYsize = 120;
 
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
-
+long SCExAO_Pcam_Xpos = 59000;
+long SCExAO_Pcam_Ypos = 56000;
 
 // CLI commands
 //
@@ -381,6 +382,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 /** assumes imref has been loaded */
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 {
+    FILE *fp;
     long ID, IDc;
     long IDref;
     long ii, jj;
@@ -388,9 +390,17 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
     double totx, toty, tot;
     double alpha = 20.0;
     double peak, v;
-	
+	double gain = 1.0;
 	long stepx, stepy;
-
+	int r;
+	
+	/// read position of stages
+	if((fp = fopen("pcampos.txt", "r"))!=NULL)
+	{
+		r = fscanf(fp, "%ld %ld\n", &SCExAO_Pcam_Xpos, &SCExAO_Pcam_Ypos);
+		fclose(fp);
+	}
+	
     IDref = image_ID("imref");
     ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10000);
 
@@ -433,10 +443,19 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 
     printf("  %6.4f  x  %6.4f\n", totx, toty);
 
-	stepx = (long) (-toty/3.0*400.0);
-	stepy = (long) (-totx/3.0*400.0);
+	stepx = (long) (gain*toty/3.0*400.0);
+	stepy = (long) (gain*totx/3.0*400.0);
 
 	printf("STEP : %ld %ld\n", stepx, stepy);
+
+	SCExAO_Pcam_Xpos += stepx;
+	SCExAO_Pcam_Ypos += stepy;
+
+	/// write stages position
+	fp = fopen("pcampos.txt", "r");
+	fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+	fclose(fp);
+
 
     return(0);
 }
