@@ -48,7 +48,8 @@ extern DATA data;
 char *WFScam_name = "zyladata";
 long long WFScnt = 0;
 
-
+long pXsize = 120;
+long pYsize = 120;
 
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
@@ -369,15 +370,36 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 /** assumes imref has been loaded */
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 {
-	long ID;
+	long ID, IDc;
 	long IDref;
+	long ii, jj;
+	long brad = 20; // box radius
+	double totx, toty, tot;
 	
 	IDref = image_ID("imref");
-	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
+	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 100);
 
 	/** compute offset */
 	fft_correlation("imref", "imwfs", "outcorr");
+	IDc = image_ID("outcorr");
+	
+	totx = 0.0;
+	toty = 0.0;
+	tot = 0.0;
+	for(ii=pXsize/2-brad;ii<pXsize/2+brad;ii++)
+		for(jj=pXsize/2-brad;jj<pXsize/2+brad;jj++)
+			{
+				totx += 1.0*(ii-pXsize/2)*data.image[IDc].array.F[jj*pXsize+ii];
+				toty += 1.0*(jj-pXsize/2)*data.image[IDc].array.F[jj*pYsize+ii];
+				tot += data.image[IDc].array.F[jj*pYsize+ii];
+			}
+	totx /= tot;
+	toty /= tot;
+	
 	save_fits("outcorr", "!outcorr.fits");
+	delete_image_ID("outcorr");
+
+	printf("  %6.4f  x  %6.4f\n", totx, toty);
 
    	return(0);
 }
