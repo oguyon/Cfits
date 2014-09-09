@@ -2538,7 +2538,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     long phal;
     long double rmsval;
     double rmsvalmin, rmsvalmax;
-    double periodmin;
+    double periodopt;
     long cnt;
     long p, p0, p1, pmin, pmax;
 
@@ -2709,8 +2709,8 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     /** find periodicity ( fine search ) */
 
-    periodmin = 0.0;
-    rmsvalmin = 1.0e50;
+    periodopt = 0.0;
+    rmsvalmax = 0.0;
 
     fp = fopen("wfscampe.txt","w");
     fclose(fp);
@@ -2762,30 +2762,30 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
 
         rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/cnt);
-        if(rmsval<rmsvalmin)
+        if(rmsval>rmsvalmax)
         {
-            rmsvalmin = rmsval;
-            periodmin = period;
+            rmsvalmax = rmsval;
+            periodopt = period;
         }
-        printf("%20f  %20g     [ %20f  %20g ]\n", period, (double) rmsval, periodmin, rmsvalmin);
+        printf("%20f  %20g     [ %20f  %20g ]\n", period, (double) rmsval, periodopt, rmsvalmax);
         fp = fopen("wfscampe.txt","a");
         fprintf(fp, "%20f %20g\n", period, (double) rmsval);
         fclose(fp);
     }
 
-    printf("EXACT PERIOD = %f\n", periodmin);
+    printf("EXACT PERIOD = %f\n", periodopt);
 
     kw = 0;
     sprintf(kname, "PERIOD");
     strcpy(data.image[IDout].kw[kw].name, kname);
     data.image[IDout].kw[kw].type = 'D';
-    data.image[IDout].kw[kw].value.numf = (double) periodmin;
+    data.image[IDout].kw[kw].value.numf = (double) periodopt;
     sprintf(comment, "WFS cam error period");
     strcpy(data.image[IDout].kw[kw].comment, comment);
 
 
     /// building phase cube
-    period = periodmin;
+    period = periodopt;
 
     for(kk=0; kk<NBpha; kk++)
         phacnt[kk] = 0;
