@@ -1648,7 +1648,7 @@ int Average_cam_frames(long loop, long NbAve)
         WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (WFScamPEcorr_period));
         WFScamPEcorr_pha = modfl(WFScamPEcorr_pha, &tmplv1);
         WFScamPEcorr_pha +=  WFScamPEcorr_pharef;
-		printf("pha = %f\n", (double) WFScamPEcorr_pha);
+		printf("cnt = %ld   period = %f    pha = %f\n", data.image[aoconfID_WFS].md[0].cnt0, (double) WFScamPEcorr_period, (double) WFScamPEcorr_pha);
 		fflush(stdout);
         AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) WFScamPEcorr_pha);
     }
