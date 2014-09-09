@@ -397,7 +397,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 		data.image[ID].array.F[ii] /= tot;
 
 	/** compute offset */
-	fft_correlation("imref", "imwfs", "outcorr");
+	fft_correlation("imref", "imref", "outcorr");
 	IDc = image_ID("outcorr");
 	
 	totx = 0.0;
