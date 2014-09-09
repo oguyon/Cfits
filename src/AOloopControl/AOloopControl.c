@@ -1643,7 +1643,7 @@ int Average_cam_frames(long loop, long NbAve)
     if(WFS_CAM_PER_CORR==1) /// additional processing step here
     {
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_WFS0].array.F[ii] /= total;
+            data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
         WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (WFScamPEcorr_period));
         WFScamPEcorr_pha = modfl(WFScamPEcorr_pha, &tmplv1);
@@ -2862,7 +2862,7 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
 	
 
     for(ii=0; ii<xysize; ii++) {
-        data.image[IDin].array.F[ii] -= 0.0*data.image[IDcorr].array.F[xysize*phal+ii];
+        data.image[IDin].array.F[ii] -= data.image[IDcorr].array.F[xysize*phal+ii];
     }
 
 
