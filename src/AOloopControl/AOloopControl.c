@@ -2662,9 +2662,10 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     level3OK = 0; /// toggles to 1 when curve first goes above level3 after level2OK
 
     p = p0;
+    p1 = 0;
     lOK = 0;
     rmsvalmin1 = rmsvalmax;
-    while((OK==0)&&(p<pmax))
+    while((lOK==0)&&(p<pmax))
     {
         if(level1OK==0)
             if(coarsermsarray[p]>level1)
@@ -2705,7 +2706,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
 
     printf("APPROXIMATE PERIOD = %ld   [%ld %ld %ld]  [%f %f %f]\n", p1, pp1, pp2, pp3, level1, level2, level3);
-exit(0);
+
     /** find periodicity ( fine search ) */
 
     periodmin = 0.0;
