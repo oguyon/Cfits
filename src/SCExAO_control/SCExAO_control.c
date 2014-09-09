@@ -63,6 +63,19 @@ long SCExAO_DM_STAGE_Ypos = 0;
 // 4: existing image
 //
 
+
+int SCExAOcontrol_TakePyrWFS_image_cli()
+{
+	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+      SCExAOcontrol_TakePyrWFS_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 int SCExAOcontrol_mv_DMstage_cli()
 {
 	 if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
@@ -75,12 +88,24 @@ int SCExAOcontrol_mv_DMstage_cli()
 }
 
 
+
 int init_SCExAO_control()
 {
 
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "SCExAO control");
   data.NBmodule++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaotakepwfsim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_TakePyrWFS_image_cli;
+  strcpy(data.cmd[data.NBcmd].info,"take pyr WFS camera image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<outname> <nbcoadd>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaotakepwfsim imp 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)");
+  data.NBcmd++;
+
 
   strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
