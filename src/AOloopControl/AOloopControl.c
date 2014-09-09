@@ -49,6 +49,7 @@ int wcol, wrow; // window size
 
 
 long aoconfID_WFS = -1;
+long aoconfID_WFS0 = -1;
 long aoconfID_WFS1 = -1;
 long aoconfID_WFS2 = -1;
 long aoconfID_refWFS = -1;
@@ -88,9 +89,9 @@ long aoconfIDlog1 = -1;
  */
 
 int WFS_CAM_PER_CORR = 0; /// 1 if active
-double WFScamPEcorr_pha;     /// phase
-double WFScamPEcorr_pharef;  /// phase reference
-double WFScamPEcorr_period;  /// in camera frame unit
+long double WFScamPEcorr_pha;     /// phase
+long double WFScamPEcorr_pharef = 0.0;  /// phase reference, or offset
+long double WFScamPEcorr_period;  /// in camera frame unit
 
 
 
@@ -1500,13 +1501,13 @@ int AOloopControl_InitializeMemory(int mode)
 
 
 /** Read image from WFS camera
- * 
- * supports ring buffer 
+ *
+ * supports ring buffer
  * puts image from camera buffer aoconfID_WFS into aoconfID_WFS1 (supplied by user)
- * 
+ *
  * i
  */
- 
+
 int Average_cam_frames(long loop, long NbAve)
 {
     long imcnt;
@@ -1516,7 +1517,7 @@ int Average_cam_frames(long loop, long NbAve)
     int atype;
     long slice;
     char *ptrv;
-    double tmpv1;
+    long double tmplv1;
 
 
     atype = data.image[aoconfID_WFS].md[0].atype;
@@ -1530,7 +1531,7 @@ int Average_cam_frames(long loop, long NbAve)
 
     if(NbAve>1)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_WFS1].array.F[ii] = 0.0;
+            data.image[aoconfID_WFS0].array.F[ii] = 0.0;
 
     AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
 
@@ -1552,10 +1553,10 @@ int Average_cam_frames(long loop, long NbAve)
                         {
 
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                                data.image[aoconfID_WFS1].array.F[ii] += arrayftmp[ii];
+                                data.image[aoconfID_WFS0].array.F[ii] += arrayftmp[ii];
                         }
                         else
-                            memcpy(data.image[aoconfID_WFS1].array.F, arrayftmp,  sizeof(float)*AOconf[loop].sizeWFS);
+                            memcpy(data.image[aoconfID_WFS0].array.F, arrayftmp,  sizeof(float)*AOconf[loop].sizeWFS);
                         imcnt++;
                     }
                 }
@@ -1575,12 +1576,12 @@ int Average_cam_frames(long loop, long NbAve)
                         if(NbAve>1)
                         {
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                                data.image[aoconfID_WFS1].array.F[ii] += arrayutmp[ii];
+                                data.image[aoconfID_WFS0].array.F[ii] += arrayutmp[ii];
                         }
                         else
                         {
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                                data.image[aoconfID_WFS1].array.F[ii] = arrayutmp[ii];
+                                data.image[aoconfID_WFS0].array.F[ii] = arrayutmp[ii];
                         }
                         imcnt++;
                     }
@@ -1609,14 +1610,14 @@ int Average_cam_frames(long loop, long NbAve)
         case FLOAT :
             ptrv = (char*) data.image[aoconfID_WFS].array.F;
             ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
-            memcpy(data.image[aoconfID_WFS1].array.F, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
+            memcpy(data.image[aoconfID_WFS0].array.F, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
             break;
         case USHORT :
             ptrv = (char*) data.image[aoconfID_WFS].array.U;
             ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
             memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[aoconfID_WFS1].array.F[ii] = (float) arrayutmp[ii];
+                data.image[aoconfID_WFS0].array.F[ii] = (float) arrayutmp[ii];
             break;
         default :
             printf("ERROR: DATA TYPE NOT SUPPORTED\n");
@@ -1632,41 +1633,29 @@ int Average_cam_frames(long loop, long NbAve)
 
     // Dark subtract
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS1].array.F[ii] -= AOconf[loop].DarkLevel;
+        data.image[aoconfID_WFS0].array.F[ii] -= AOconf[loop].DarkLevel;
 
     // Normalize
-    sprintf(name, "imWFS1_%ld", loop);
-    total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
-
-
-    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS1].array.F[ii] /= total;
+    total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
 
 
-	if(WFS_CAM_PER_CORR==1)
-	{
-		WFScamPEcorr_pha += 1.0/WFScamPEcorr_period;     
-		WFScamPEcorr_pha = modf(WFScamPEcorr_pha, &tmpv1);
-		
-		AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", WFScamPEcorr_pha);
-	}
+    if(WFS_CAM_PER_CORR==1) /// additional processing step here
+    {
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[aoconfID_WFS0].array.F[ii] /= total;
 
+        WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (WFScamPEcorr_period));
+        WFScamPEcorr_pha = modfl(WFScamPEcorr_pha, &tmplv1);
+        WFScamPEcorr_pha +=  WFScamPEcorr_pharef;
 
-    // total = arith_image_total(data.image[aoconfID_WFS1].md[0].name);
-
-    /*
-    printf("SLEEPING ... ");
-    fflush(stdout);
-    sleep(4);
-    printf("done\n");
-    fflush(stdout);
-    */
-
-
-    // save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
-    //sleep(5);
-
+        AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) WFScamPEcorr_pha);
+    }
+    else
+    {
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+    }
 
     return(0);
 }
@@ -1850,15 +1839,20 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       else
       AOconf[loop].DarkLevel = 0.0;
 
+      sprintf(name, "imWFS0_%ld", loop);
+      sizearray[0] =  AOconf[loop].sizexWFS;
+      sizearray[1] =  AOconf[loop].sizeyWFS;
+      aoconfID_WFS0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+      
       sprintf(name, "imWFS1_%ld", loop);
       sizearray[0] =  AOconf[loop].sizexWFS;
       sizearray[1] =  AOconf[loop].sizeyWFS;
       aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
       
+    
       
       
-      
-      // Create WFS1 image memory (averaged, dark-subtracted)
+      // Create WFS2 image memory 
       sprintf(name, "imWFS2_%ld", loop);
       sizearray[0] =  AOconf[loop].sizexWFS;
       sizearray[1] =  AOconf[loop].sizeyWFS;
@@ -2235,6 +2229,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
       aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
     
 
+      sprintf(name, "imWFS0_%ld", loop);
+      aoconfID_WFS0 = read_sharedmem_image(name);
+
       sprintf(name, "imWFS1_%ld", loop);
       aoconfID_WFS1 = read_sharedmem_image(name);
       
@@ -2554,6 +2551,10 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     double level1, level2, level3;
     int level1OK, level2OK, level3OK;
 
+	long kw;
+	char kname[200];
+	char comment[200];
+	
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
@@ -2573,13 +2574,6 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
 
 
-
-    /*
-        sprintf(name, "imWFS1RM_%ld", loop);
-        sizearray[0] = AOconf[loop].sizexWFS;
-        sizearray[1] = AOconf[loop].sizeyWFS;
-        aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-    */
 
     for(kk=0; kk<NBframes; kk++)
     {
@@ -2770,6 +2764,14 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     printf("EXACT PERIOD = %f\n", periodmin);
 
+    kw = 0;
+    sprintf(kname, "PERIOD");
+    strcpy(data.image[IDout].kw[kw].name, kname);
+    data.image[IDout].kw[kw].type = 'D';
+    data.image[IDout].kw[kw].value.numf = (double) periodmin;
+    sprintf(comment, "WFS cam error period");
+    strcpy(data.image[IDout].kw[kw].comment, comment);
+
 
     /// building phase cube
     period = periodmin;
@@ -2807,14 +2809,15 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
                 data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
             }
         }
-    }	
-    
-    
+    }
+
+
 
     free(phacnt);
 
     return(0);
 }
+
 
 
 
@@ -3335,167 +3338,170 @@ int AOcompute(long loop)
 
 int AOloopControl_run()
 {
-  char fname[200];
-  long loop;
-  int vOK;
+    char fname[200];
+    long loop;
+    int vOK;
 
-  long ID;
-  long j, m;
-  struct tm *uttime;
-  time_t t;
-  struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
-  char logfname[1000];
-  char command[1000];
-  int r;
-  int RT_priority = 90; //any number from 0-99
-  struct sched_param schedpar;
-  double a;
-  long cnttest;
+    long ID;
+    long j, m;
+    struct tm *uttime;
+    time_t t;
+    struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    char logfname[1000];
+    char command[1000];
+    int r;
+    int RT_priority = 90; //any number from 0-99
+    struct sched_param schedpar;
+    double a;
+    long cnttest;
 
-  schedpar.sched_priority = RT_priority;
-  r = seteuid(euid_called); //This goes up to maximum privileges
-  sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-  r = seteuid(euid_real);//Go back to normal privileges
+    schedpar.sched_priority = RT_priority;
+    r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    r = seteuid(euid_real);//Go back to normal privileges
 
-  loop = LOOPNUMBER;
-  
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(0);
+    loop = LOOPNUMBER;
 
-  
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(0);
 
 
-  printf("SETTING UP...\n");
-  sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
-  AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
- 
-	if((ID = image_ID("WFScamPEcorrC"))!=-1)
-	{
-	}
-	
-	
 
-  vOK = 1;
-  if(AOconf[loop].init_refWFS==0)
+
+    printf("SETTING UP...\n");
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+
+    if((ID = image_ID("WFScamPEcorrC"))!=-1)
     {
-      printf("ERROR: CANNOT RUN LOOP WITHOUT WFS REFERENCE\n");
-      vOK = 0;
-    }
-  if(AOconf[loop].init_CM==0)
-    {
-      printf("ERROR: CANNOT RUN LOOP WITHOUT CONTROL MATRIX\n");
-      vOK = 0;
-    }
-  
-  if(vOK==1)
-    {
-      
-      AOconf[loop].kill = 0;
-      AOconf[loop].on = 0;
-      printf("\n");
-      while( AOconf[loop].kill == 0)
-	{
-	  printf(" WAITING                    \r");
-	  fflush(stdout);
-	  usleep(1000);
-	  
-	  while(AOconf[loop].on == 1)
-	    {
-	      //	      printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
-	      //	      fflush(stdout);
-	      //usleep(10000);
-	      
-	      cnttest = data.image[aoconfID_DM].md[0].cnt0;
-	      AOcompute(loop);
-	     
-	      AOconf[loop].status = 7; 
-	        
-	      if(fabs(AOconf[loop].gain)>1.0e-6)
-		{
-		  set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
-		
-		  a = 0.1;
-		  while(cnttest==data.image[aoconfID_DM].md[0].cnt0)  // wait for results (only useful for GPU)
-		    {
-		      a = sqrt(a+0.1);
-		    }      
-		}
-	      usleep(100); // max 10000kHz
-
-
-	      AOconf[loop].status = 8; //  LOGGING, part 1
-
-	      clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
-	      AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
-
-	      if(AOconf[loop].logfnb==0)
-		ID = aoconfIDlog0;
-	      else
-		ID = aoconfIDlog1;
-
-	      if(AOconf[loop].logcnt==0)
-		{
-		  AOconf[loop].timeorigin_sec = (long) AOconf[loop].tnow.tv_sec;
-		  data.image[ID].kw[0].value.numl = AOconf[loop].timeorigin_sec;
-		}
-	 	   	      
-	      data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec - 1.0*AOconf[loop].timeorigin_sec;
-	      j = 1;
-	     
-	      for(m=0;m<AOconf[loop].NBDMmodes;m++)
-		{
-		  data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = AOconf[loop].gain;
-		  j++;
-		  data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd1_modes].array.F[m];
-		  j++;
-		  data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd_modes].array.F[m];
-		  j++;		  
-		}
-	  	      
-	      
-	      AOconf[loop].status = 9; //  LOGGING, part 2
-	      
-	      AOconf[loop].logcnt++;
-	      if(AOconf[loop].logcnt==AOconf[loop].logsize)
-		{
-		  if(AOconf[loop].logon == 1) 
-		    {
-		      printf("Saving to disk...\n");
-		      fflush(stdout);
-		      		    
-		      t = time(NULL);
-		      uttime = gmtime(&t);
-		      clock_gettime(CLOCK_REALTIME, thetime);
-		      printf("writing file name\n");
-		      fflush(stdout);
-		      sprintf(logfname, "%s/LOOP%ld_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", AOconf[loop].logdir, LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);		      
-		      printf("writing file name\n");
-		      fflush(stdout);
-		      sprintf(command, "cp /tmp/loop%ldlog%d.im.shm %s &", loop, AOconf[loop].logfnb, logfname);
-		      printf("Executing command : %s\n", command);
-		      fflush(stdout);
-		      r = system(command);
-		    }
-		  AOconf[loop].logfnb++;
-		  AOconf[loop].logcnt = 0;
-		}
-	      if(AOconf[loop].logfnb == 2)
-		  AOconf[loop].logfnb = 0;
-	      
-	      AOconf[loop].cnt++;
-	    
-	      if(AOconf[loop].cnt == AOconf[loop].cntmax)
-		AOconf[loop].on = 0;
-	    }
-	  
-	}
+        WFS_CAM_PER_CORR  = 1;
+        WFScamPEcorr_period = data.image[ID].kw[0].value.numf;
     }
 
-  free(thetime);
 
 
-  return(0);
+    vOK = 1;
+    if(AOconf[loop].init_refWFS==0)
+    {
+        printf("ERROR: CANNOT RUN LOOP WITHOUT WFS REFERENCE\n");
+        vOK = 0;
+    }
+    if(AOconf[loop].init_CM==0)
+    {
+        printf("ERROR: CANNOT RUN LOOP WITHOUT CONTROL MATRIX\n");
+        vOK = 0;
+    }
+
+    if(vOK==1)
+    {
+
+        AOconf[loop].kill = 0;
+        AOconf[loop].on = 0;
+        printf("\n");
+        while( AOconf[loop].kill == 0)
+        {
+            printf(" WAITING                    \r");
+            fflush(stdout);
+            usleep(1000);
+
+            while(AOconf[loop].on == 1)
+            {
+                //	      printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
+                //	      fflush(stdout);
+                //usleep(10000);
+
+                cnttest = data.image[aoconfID_DM].md[0].cnt0;
+                AOcompute(loop);
+
+                AOconf[loop].status = 7;
+
+                if(fabs(AOconf[loop].gain)>1.0e-6)
+                {
+                    set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
+
+                    a = 0.1;
+                    while(cnttest==data.image[aoconfID_DM].md[0].cnt0)  // wait for results (only useful for GPU)
+                    {
+                        a = sqrt(a+0.1);
+                    }
+                }
+                usleep(100); // max 10000kHz
+
+
+                AOconf[loop].status = 8; //  LOGGING, part 1
+
+                clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
+                AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
+
+                if(AOconf[loop].logfnb==0)
+                    ID = aoconfIDlog0;
+                else
+                    ID = aoconfIDlog1;
+
+                if(AOconf[loop].logcnt==0)
+                {
+                    AOconf[loop].timeorigin_sec = (long) AOconf[loop].tnow.tv_sec;
+                    data.image[ID].kw[0].value.numl = AOconf[loop].timeorigin_sec;
+                }
+
+                data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec - 1.0*AOconf[loop].timeorigin_sec;
+                j = 1;
+
+                for(m=0; m<AOconf[loop].NBDMmodes; m++)
+                {
+                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = AOconf[loop].gain;
+                    j++;
+                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd1_modes].array.F[m];
+                    j++;
+                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd_modes].array.F[m];
+                    j++;
+                }
+
+
+                AOconf[loop].status = 9; //  LOGGING, part 2
+
+                AOconf[loop].logcnt++;
+                if(AOconf[loop].logcnt==AOconf[loop].logsize)
+                {
+                    if(AOconf[loop].logon == 1)
+                    {
+                        printf("Saving to disk...\n");
+                        fflush(stdout);
+
+                        t = time(NULL);
+                        uttime = gmtime(&t);
+                        clock_gettime(CLOCK_REALTIME, thetime);
+                        printf("writing file name\n");
+                        fflush(stdout);
+                        sprintf(logfname, "%s/LOOP%ld_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", AOconf[loop].logdir, LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);
+                        printf("writing file name\n");
+                        fflush(stdout);
+                        sprintf(command, "cp /tmp/loop%ldlog%d.im.shm %s &", loop, AOconf[loop].logfnb, logfname);
+                        printf("Executing command : %s\n", command);
+                        fflush(stdout);
+                        r = system(command);
+                    }
+                    AOconf[loop].logfnb++;
+                    AOconf[loop].logcnt = 0;
+                }
+                if(AOconf[loop].logfnb == 2)
+                    AOconf[loop].logfnb = 0;
+
+                AOconf[loop].cnt++;
+
+                if(AOconf[loop].cnt == AOconf[loop].cntmax)
+                    AOconf[loop].on = 0;
+            }
+
+        }
+    }
+
+    free(thetime);
+
+
+    return(0);
 }
+
 
 
 
@@ -4472,4 +4478,14 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     return(0);
 }
 
+
+
+
+
+int AOloopControl_WFScamPEcorr_tryPhaseOffset()
+{
+
+
+	return(0);
+}
 
