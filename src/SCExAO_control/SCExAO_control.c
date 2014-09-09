@@ -388,6 +388,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
     double totx, toty, tot;
     double alpha = 20.0;
     double peak, v;
+	
+	long stepx, stepy;
 
     IDref = image_ID("imref");
     ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10000);
@@ -430,6 +432,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
     delete_image_ID("outcorr");
 
     printf("  %6.4f  x  %6.4f\n", totx, toty);
+
+	stepx = (long) (-toty/3.0*400.0);
+	stepy = (long) (-toty/3.0*400.0);
+
+	printf("STEP : %ld %ld\n", stepx, stepy);
 
     return(0);
 }
