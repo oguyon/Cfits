@@ -60,7 +60,7 @@ long SCExAO_DM_STAGE_Ypos = 0;
 
 int SCExAOcontrol_mv_DMstage_cli()
 {
-	 if(CLI_checkarg(1,2)+CLI_checkarg(2,2))
+	 if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
     {
       SCExAOcontrol_mv_DMstage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
       return 0;
