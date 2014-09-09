@@ -28,7 +28,7 @@ int init_modules()
   init_psf();
   init_AtmosphericTurbulence();
   init_CUDACOMP();
-
+  init_SCExAO_control();
 
   return 0;
 }
