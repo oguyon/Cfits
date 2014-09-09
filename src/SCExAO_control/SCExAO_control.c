@@ -24,7 +24,7 @@
 
 #include "ZernikePolyn/ZernikePolyn.h"
 
-
+#include "SCExAO_control/SCExAO_control.h"
 
 # ifdef _OPENMP
 # include <omp.h>
@@ -43,7 +43,7 @@
 extern DATA data;
 
 
-
+char *WFScam_name = "zyladata";
 
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
@@ -86,7 +86,15 @@ int init_SCExAO_control()
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)");
   data.NBcmd++;
 
-  
+   strcpy(data.cmd[data.NBcmd].key,"scexaopywfsttalign");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_TT;
+  strcpy(data.cmd[data.NBcmd].info,"move DM TT stage to center pyrWFS");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT();");
+  data.NBcmd++;
+
 
   // add atexit functions here
   
@@ -188,11 +196,49 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
 
 
+/** auto aligns tip-tilt by equalizing fluxes between quadrants */
 
-
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *IDref_name, char *IDWFScam_name)
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 {
-	long IDref, IDWFScam;
+	long IDWFScam;
+	long xsize, ysize;
+	long ii, jj;
+	double tot00, tot01, tot10, tot11, tot;
+	
+	IDWFScam = image_ID(WFScam_name);
+	xsize = data.image[IDWFScam].md[0].size[0];
+	ysize = data.image[IDWFScam].md[0].size[1];
+	
+	tot00 = 0.0;
+	tot01 = 0.0;
+	tot10 = 0.0;	
+	tot11 = 0.0;
+	
+	for(ii=0;ii<xsize/2;ii++)
+		for(jj=0;jj<ysize/2;jj++)
+			tot00 += data.image[IDWFScam].array.F[jj*xsize+ii];
+	
+	for(ii=xsize/2;ii<xsize;ii++)
+		for(jj=0;jj<ysize/2;jj++)
+			tot10 += data.image[IDWFScam].array.F[jj*xsize+ii];
+	
+	for(ii=0;ii<xsize/2;ii++)
+		for(jj=ysize/2;jj<ysize;jj++)
+			tot01 += data.image[IDWFScam].array.F[jj*xsize+ii];
+	
+	for(ii=xsize/2;ii<xsize;ii++)
+		for(jj=ysize/2;jj<ysize;jj++)
+			tot11 += data.image[IDWFScam].array.F[jj*xsize+ii];
+	
+	tot = tot00+tot10+tot01+tot11;
+	tot00 /= tot;
+	tot10 /= tot;
+	tot01 /= tot;
+	tot11 /= tot;
+	
+	printf("  %5.3f   %5.3f\n", tot01, tot11);
+	printf("  %5.3f   %5.3f\n", tot00, tot10);
+	
 	
 	
 	return(0);
