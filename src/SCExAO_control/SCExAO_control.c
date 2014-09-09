@@ -265,7 +265,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
     long ii, jj;
     double tot00, tot01, tot10, tot11, tot;
 	double xsig, ysig;
-
+	long ttxpos, ttypos;
+	double gain = 1.0;
 
     ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
     xsize = data.image[ID].md[0].size[0];
@@ -306,6 +307,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	xsig = tot01-tot10;
 	ysig = tot11-tot00;
 	printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
+
+	/// 100 steps -> sig = 0.055 for modulation = 1.0
+	ttxpos = (long) (SCExAO_DM_STAGE_Xpos - gain*100.0*(xsig/0.055));
+	ttypos = (long) (SCExAO_DM_STAGE_Ypos - gain*100.0*(ysig/0.055));
+	
+	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
 
     save_fits("imwfs", "!imwfs.fits");
 
