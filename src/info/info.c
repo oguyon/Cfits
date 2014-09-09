@@ -292,9 +292,9 @@ int printstatus(long ID)
 
 
 
-  printw("write  = %d    ", data.image[ID].md[0].write);
-  printw("status = %2d\n", data.image[ID].md[0].status);
-  printw("cnt0   = %8d      %6.2f Hz\n", data.image[ID].md[0].cnt0, frequ);
+  printw("write %d    ", data.image[ID].md[0].write);
+  printw("status %2d  ", data.image[ID].md[0].status);
+  printw("cnt0 %8d   %6.2f Hz\n", data.image[ID].md[0].cnt0, frequ);
   printw("cnt1   = %8d\n", data.image[ID].md[0].cnt1);
 
   average = arith_image_mean(data.image[ID].md[0].name);
