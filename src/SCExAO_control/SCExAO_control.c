@@ -207,7 +207,10 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
 
 	if((IDv=variable_ID("AOLCAMDARK"))!=-1)
 		{
-			darkv = data.variable[ID].value.f;
+			
+			darkv = data.variable[IDv].value.f;
+			printf("REMOVING DARK VALUE %f\n", darkv);
+			
 			for(ii=0; ii<xysize; ii++)
 				data.image[ID].array.F[ii] -= darkv;
 		}
