@@ -156,7 +156,7 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     if(kw==-1)
         printf("keyword not found\n");
     else
-        printf("NBcoadd = %ld\n", NBcoadd);
+        printf("found [%ld] NBcoadd = %ld\n", kw, NBcoadd);
 
     xsize = data.image[IDWFScam].md[0].size[0];
     ysize = data.image[IDWFScam].md[0].size[1];
