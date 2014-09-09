@@ -393,6 +393,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	double gain = 1.0;
 	long stepx, stepy;
 	int r;
+	char command[200];
+	long delayus = 1000000;
 	
 	/// read position of stages
 	if((fp = fopen("pcampos.txt", "r"))!=NULL)
@@ -455,6 +457,14 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	fp = fopen("pcampos.txt", "w");
 	fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
 	fclose(fp);
+
+	sprintf(command, "pywfs cam x goto %ld\n", SCExAO_Pcam_Xpos);
+	r = system(command);
+	usleep(delayus);
+	
+	sprintf(command, "pywfs cam y goto %ld\n", SCExAO_Pcam_Ypos);
+	r = system(command);
+	usleep(delayus);
 
 
     return(0);
