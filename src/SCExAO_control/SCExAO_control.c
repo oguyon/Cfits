@@ -116,6 +116,7 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
     stepX = stepXpos - SCExAO_DM_STAGE_Xpos;
     stepY = stepYpos - SCExAO_DM_STAGE_Ypos;
 
+	printf("Moving by  %ld x %ld\n", stepX, stepY);
 
     if((fabs(stepX)>500.0)||(fabs(stepY)>500)||(fabs(stepXpos)>1000.0)||(fabs(stepYpos)>1000))
     {
