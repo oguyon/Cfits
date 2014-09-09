@@ -125,6 +125,14 @@ int init_SCExAO_control()
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT();");
   data.NBcmd++;
 
+  strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam;
+  strcpy(data.cmd[data.NBcmd].info,"move Camera to center pyrWFS");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
+  data.NBcmd++;
 
   // add atexit functions here
   
@@ -356,5 +364,21 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
     save_fits("imwfs", "!imwfs.fits");
 
     return(0);
+}
+
+/** assumes imref has been loaded */
+int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
+{
+	long ID;
+	long IDref;
+	
+	IDref = image_ID("imref");
+	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
+
+	/** compute offset */
+	fft_correlation("imref", "imwfs", "outcorr");
+	save_fits("outcorr", "!outcorr.fits");
+
+   	return(0);
 }
 
