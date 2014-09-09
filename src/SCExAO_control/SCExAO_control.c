@@ -395,6 +395,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	int r;
 	char command[200];
 	long delayus = 1000000;
+	long NBframes = 10000;
 	
 	/// read position of stages
 	if((fp = fopen("pcampos.txt", "r"))!=NULL)
@@ -404,8 +405,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	}
 	
     IDref = image_ID("imref");
-    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10000);
-
+    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", NBframes);
+	save_fits("imwfs", "!imwfs.fits");
+	
     tot = 0.0;
     for(ii=0; ii<pXsize*pYsize; ii++)
         tot += data.image[ID].array.F[ii];
