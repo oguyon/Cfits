@@ -1392,7 +1392,7 @@ long image_read_keyword_D(char *IDname, char *kname, double *val)
         if((data.image[ID].kw[kw].type=='D')&&(strncmp(kname, data.image[ID].kw[kw].name ,strlen(kname))==0))
         {
             kw0 = kw;
-			val = &data.image[ID].kw[kw].value.numf;
+			*val = data.image[ID].kw[kw].value.numf;
         }
     }
 
@@ -1412,7 +1412,7 @@ long image_read_keyword_L(char *IDname, char *kname, long *val)
         if((data.image[ID].kw[kw].type=='L')&&(strncmp(kname, data.image[ID].kw[kw].name ,strlen(kname))==0))
         {
             kw0 = kw;
-			val = &data.image[ID].kw[kw].value.numl;
+			*val = data.image[ID].kw[kw].value.numl;
         }
     }
 

@@ -147,12 +147,16 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     long ii;
     long NBcoadd;
     long kw;
+	
+		long *tmpl;
+
 
     IDWFScam = image_ID(WFScam_name);
     if(IDWFScam ==-1)
         IDWFScam = read_sharedmem_image(WFScam_name);
 
     kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
+	
     if(kw==-1)
         printf("keyword not found\n");
     else
