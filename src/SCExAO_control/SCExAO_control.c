@@ -264,7 +264,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
     long xsize, ysize;
     long ii, jj;
     double tot00, tot01, tot10, tot11, tot;
-
+	double xsig, ysig;
 
 
     ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
@@ -302,6 +302,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 
     printf("  %6.4f   %6.4f\n", tot01, tot11);
     printf("  %6.4f   %6.4f\n", tot00, tot10);
+
+	xsig = tot01-tot10;
+	ysig = tot11-tot00;
+	printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
     save_fits("imwfs", "!imwfs.fits");
 
