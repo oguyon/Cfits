@@ -260,50 +260,51 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 {
-	long ID;
-	long xsize, ysize;
-	long ii, jj;
-	double tot00, tot01, tot10, tot11, tot;
-	
+    long ID;
+    long xsize, ysize;
+    long ii, jj;
+    double tot00, tot01, tot10, tot11, tot;
 
 
-	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
-	   xsize = data.image[ID].md[0].size[0];
+
+    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
+    xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
-	
-	
-	tot00 = 0.0;
-	tot01 = 0.0;
-	tot10 = 0.0;	
-	tot11 = 0.0;
-	
-	for(ii=0;ii<xsize/2;ii++)
-		for(jj=0;jj<ysize/2;jj++)
-			tot00 += data.image[ID].array.F[jj*xsize+ii];
-	
-	for(ii=xsize/2;ii<xsize;ii++)
-		for(jj=0;jj<ysize/2;jj++)
-			tot10 += data.image[ID].array.F[jj*xsize+ii];
-	
-	for(ii=0;ii<xsize/2;ii++)
-		for(jj=ysize/2;jj<ysize;jj++)
-			tot01 += data.image[ID].array.F[jj*xsize+ii];
-	
-	for(ii=xsize/2;ii<xsize;ii++)
-		for(jj=ysize/2;jj<ysize;jj++)
-			tot11 += data.image[ID].array.F[jj*xsize+ii];
-	
-	tot = tot00+tot10+tot01+tot11;
-	tot00 /= tot;
-	tot10 /= tot;
-	tot01 /= tot;
-	tot11 /= tot;
-	
-	printf("  %6.4f   %6.4f\n", tot01, tot11);
-	printf("  %6.4f   %6.4f\n", tot00, tot10);
-	
-	save_fits("imwfs", "!imwfs.fits");
-	
-	return(0);
+	printf("%ld x %ld image\n", xsize, ysize);
+
+    tot00 = 0.0;
+    tot01 = 0.0;
+    tot10 = 0.0;
+    tot11 = 0.0;
+
+    for(ii=0; ii<xsize/2; ii++)
+        for(jj=0; jj<ysize/2; jj++)
+            tot00 += data.image[ID].array.F[jj*xsize+ii];
+
+    for(ii=xsize/2; ii<xsize; ii++)
+        for(jj=0; jj<ysize/2; jj++)
+            tot10 += data.image[ID].array.F[jj*xsize+ii];
+
+    for(ii=0; ii<xsize/2; ii++)
+        for(jj=ysize/2; jj<ysize; jj++)
+            tot01 += data.image[ID].array.F[jj*xsize+ii];
+
+    for(ii=xsize/2; ii<xsize; ii++)
+        for(jj=ysize/2; jj<ysize; jj++)
+            tot11 += data.image[ID].array.F[jj*xsize+ii];
+
+    tot = tot00+tot10+tot01+tot11;
+    tot00 /= tot;
+    tot10 /= tot;
+    tot01 /= tot;
+    tot11 /= tot;
+
+    printf("  %6.4f   %6.4f\n", tot01, tot11);
+    printf("  %6.4f   %6.4f\n", tot00, tot10);
+
+    save_fits("imwfs", "!imwfs.fits");
+
+    return(0);
 }
+
