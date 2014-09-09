@@ -3390,6 +3390,7 @@ int AOloopControl_run()
     {
         WFS_CAM_PER_CORR  = 1;
         WFScamPEcorr_period = data.image[ID].kw[0].value.numf;
+		printf("PERIOD = %f\n", WFScamPEcorr_period);
     }
 
 
