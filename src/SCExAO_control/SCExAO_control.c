@@ -116,7 +116,8 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
     stepX = stepXpos - SCExAO_DM_STAGE_Xpos;
     stepY = stepYpos - SCExAO_DM_STAGE_Ypos;
 
-	printf("Moving by  %ld x %ld\n", stepX, stepY);
+   printf("X: %ld -> %ld      Y: %ld -> %ld\n", SCExAO_DM_STAGE_Xpos, stepXpos, SCExAO_DM_STAGE_Ypos, stepYpos);
+   printf("Moving by  %ld x %ld\n", stepX, stepY);
 
     if((fabs(stepX)>500.0)||(fabs(stepY)>500)||(fabs(stepXpos)>1000.0)||(fabs(stepYpos)>1000))
     {
@@ -163,7 +164,7 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
             {
                 sprintf(command, "dm_stage y push %ld\n", stepY-ABoffset);
                 printf("command : %s\n", command);
-               r = system(command);
+                r = system(command);
                 usleep(delayus);
 
                 sprintf(command, "dm_stage y push %ld\n", ABoffset);
@@ -178,6 +179,7 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
     return(0);
 }
+
 
 
 
