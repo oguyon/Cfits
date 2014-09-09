@@ -452,7 +452,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	SCExAO_Pcam_Ypos += stepy;
 
 	/// write stages position
-	fp = fopen("pcampos.txt", "r");
+	fp = fopen("pcampos.txt", "w");
 	fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
 	fclose(fp);
 
