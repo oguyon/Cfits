@@ -145,13 +145,14 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     char *ptrv;
     unsigned short *arrayutmp;
     long ii;
+	long kw, NBkw;
 
-	ID = image_ID(WFScam_name);
-	if(ID==-1)
-		read_sharedmem_image(WFScam_name);
+	IDWFScam = image_ID(WFScam_name);
+	if(IDWFScam ==-1)
+		IDWFScam = read_sharedmem_image(WFScam_name);
 		
-
-    IDWFScam = image_ID(WFScam_name);
+	NBkw = data.image[IDWFScam].md[0].NBkw;
+	
     xsize = data.image[IDWFScam].md[0].size[0];
     ysize = data.image[IDWFScam].md[0].size[1];
     xysize = xsize*ysize;
