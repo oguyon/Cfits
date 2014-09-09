@@ -156,8 +156,10 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     long ii;
     long NBcoadd;
     long kw;
-
-
+	double darkv;
+	long IDv;
+	
+	
     IDWFScam = image_ID(WFScam_name);
     if(IDWFScam ==-1)
         IDWFScam = read_sharedmem_image(WFScam_name);
@@ -203,6 +205,12 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     for(ii=0; ii<xysize; ii++)
         data.image[ID].array.F[ii] /= NbAve*NBcoadd;
 
+	if((IDv=variable_ID("AOLCAMDARK"))!=-1)
+		{
+			darkv = data.variable[ID].value.f;
+			for(ii=0; ii<xysize; ii++)
+				data.image[ID].array.F[ii] -= darkv;
+		}
     free(arrayutmp);
 
     return(ID);
