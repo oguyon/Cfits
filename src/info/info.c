@@ -299,8 +299,8 @@ int printstatus(long ID)
 
   average = arith_image_mean(data.image[ID].md[0].name);
   imtotal = arith_image_total(data.image[ID].md[0].name);
-  printw("  median  = %12g\n", arith_image_median(data.image[ID].md[0].name));
-  printw("  average = %12g    total = %12g\n", imtotal/data.image[ID].md[0].nelement, imtotal);
+  printw("median %12g   ", arith_image_median(data.image[ID].md[0].name));
+  printw("average %12g    total = %12g\n", imtotal/data.image[ID].md[0].nelement, imtotal);
   
   // printw("  RMS var = %g\n", );
 
