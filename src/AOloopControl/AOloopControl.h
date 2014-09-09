@@ -10,93 +10,105 @@
 
 typedef struct
 {
-  struct timespec tnow;  // computed at time of sending DM commands
-  double time_sec; // converted in second
-  
-  // SETUP
-  int init; // has been initialized
-  unsigned long long cnt;
-  unsigned long long cntmax;
-  unsigned long long DMupdatecnt;
-  int kill; // set to 1 to kill computation loop
+    struct timespec tnow;  // computed at time of sending DM commands
+    double time_sec; // converted in second
 
-  char name[80];
-  
-  char WFSname[80];   
-  float DarkLevel;
-  long sizexWFS;
-  long sizeyWFS;
-  long sizeWFS;
-  long long WFScnt;  
+    // SETUP
+    int init; // has been initialized
+    unsigned long long cnt;
+    unsigned long long cntmax;
+    unsigned long long DMupdatecnt;
+    int kill; // set to 1 to kill computation loop
 
-  char DMname[80];
-  char DMnameRM[80];
-  long sizexDM;
-  long sizeyDM;
-  long sizeDM;
+    char name[80];
 
-  int init_refWFS;    // WFS reference image loaded 
-  int init_RM;        // Response Matrix loaded
-  int init_CM;        // Control Matrix loaded
+    char WFSname[80];
+    float DarkLevel;
+    long sizexWFS;
+    long sizeyWFS;
+    long sizeWFS;
+    long long WFScnt;
 
-  
-  long NBDMmodes;  
-  float maxlimit; // maximum absolute value for mode values
-  
+    char DMname[80];
+    char DMnameRM[80];
+    long sizexDM;
+    long sizeyDM;
+    long sizeDM;
 
-  char respMname[80];
-  char contrMname[80];
-  
+    int init_refWFS;    // WFS reference image loaded
+    int init_RM;        // Response Matrix loaded
+    int init_CM;        // Control Matrix loaded
 
-  
 
-  
-  // LOOP CONTROL
-  int on;  // goes to 1 when loop starts, put to 0 to turn loop off
-  float gain; // overall loop gain
-  long framesAve; // number of frames to average
+    long NBDMmodes;
+    float maxlimit; // maximum absolute value for mode values
 
-  int status;
-  // -1: PROGRAM NOT RUNNING
-  // 0: LOOP OFF
-  // 1: WAITING FOR WFS IMAGE
-  // 2: REMOVING DARK
-  // 3: NORMALIZING WFS IMAGE
-  // 4: REMOVING REF
-  // 5: MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
-  // 6: MULTIPLYING BY GAINS
-  // 7: MULTIPLYING BY MODE MATRIX -> COMMANDS SENT TO DM
-  
-  
-  // LOOP TUNING
-  // BLOCKS OF MODES
-  long NBMblocks; // number of mode blocks
-  long indexmaxMB[maxNBMB];
-  float gainMB[maxNBMB];
-  float limitMB[maxNBMB];
-  float multfMB[maxNBMB];
+
+    char respMname[80];
+    char contrMname[80];
+
+
+    // WFS CAMERA PERIODIC ERROR CORRECTION (optional)
+
+    int WFS_CAM_PER_CORR ; /// 1 if active
+    long double WFScamPEcorr_pha;     /// phase
+    long double WFScamPEcorr_pharef;  /// phase reference, or offset
+    long double WFScamPEcorr_period;  /// in camera frame unit
 
 
 
-  int GPU; // 1 if computation done by GPU
 
-  // LOOP TELEMETRY
-  double RMSmodes;
-  double RMSmodesCumul;
-  long long RMSmodesCumulcnt;
 
-  // logs
-  char logdir[80];
-  int logon; // 1 if log is on, 0 if off
-  long logsize;  // # of entries per log
-  long IDlog0;  // image identifyer for log file #1
-  long IDlog1;  // image identifyer for log file #2
-  int logcnt; // current position in log 
-  int logfnb; // current log file number (0 or 1)
-  char userLOGstring[80];
-  long timeorigin_sec;
+    // LOOP CONTROL
+    int on;  // goes to 1 when loop starts, put to 0 to turn loop off
+    float gain; // overall loop gain
+    long framesAve; // number of frames to average
+
+    int status;
+    // -1: PROGRAM NOT RUNNING
+    // 0: LOOP OFF
+    // 1: WAITING FOR WFS IMAGE
+    // 2: REMOVING DARK
+    // 3: NORMALIZING WFS IMAGE
+    // 4: REMOVING REF
+    // 5: MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
+    // 6: MULTIPLYING BY GAINS
+    // 7: MULTIPLYING BY MODE MATRIX -> COMMANDS SENT TO DM
+
+
+    // LOOP TUNING
+    // BLOCKS OF MODES
+    long NBMblocks; // number of mode blocks
+    long indexmaxMB[maxNBMB];
+    float gainMB[maxNBMB];
+    float limitMB[maxNBMB];
+    float multfMB[maxNBMB];
+
+
+
+    int GPU; // 1 if computation done by GPU
+
+    // LOOP TELEMETRY
+    double RMSmodes;
+    double RMSmodesCumul;
+    long long RMSmodesCumulcnt;
+
+    // logs
+    char logdir[80];
+    int logon; // 1 if log is on, 0 if off
+    long logsize;  // # of entries per log
+    long IDlog0;  // image identifyer for log file #1
+    long IDlog1;  // image identifyer for log file #2
+    int logcnt; // current position in log
+    int logfnb; // current log file number (0 or 1)
+    char userLOGstring[80];
+    long timeorigin_sec;
 
 } AOLOOPCONTROL_CONF;
+
+
+
+
 
 long AOloopControl_makeTemplateAOloopconf(long loopnb);
 int init_AOloopControl();

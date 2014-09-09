@@ -82,21 +82,6 @@ long aoconfIDlog1 = -1;
 
 
 
-/** WFS camera periodic error correction
- * 
- * if image WFScamPEcorrC is in memory, this will be enabled by default
- * 
- */
-
-int WFS_CAM_PER_CORR = 0; /// 1 if active
-long double WFScamPEcorr_pha;     /// phase
-long double WFScamPEcorr_pharef = 0.0;  /// phase reference, or offset
-long double WFScamPEcorr_period;  /// in camera frame unit
-
-
-
-
-
 
 
 
@@ -1640,17 +1625,17 @@ int Average_cam_frames(long loop, long NbAve)
 
 
 
-    if(WFS_CAM_PER_CORR==1) /// additional processing step here
+    if(AOconf[loop].WFS_CAM_PER_CORR==1) /// additional processing step here
     {
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
-        WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (WFScamPEcorr_period));
-        WFScamPEcorr_pha = modfl(WFScamPEcorr_pha, &tmplv1);
-        WFScamPEcorr_pha +=  WFScamPEcorr_pharef;
-		printf("cnt = %ld   period = %f    pha = %f\n", data.image[aoconfID_WFS].md[0].cnt0, (double) WFScamPEcorr_period, (double) WFScamPEcorr_pha);
+        AOconf[loop].WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (AOconf[loop].WFScamPEcorr_period));
+        AOconf[loop].WFScamPEcorr_pha = modfl(AOconf[loop].WFScamPEcorr_pha, &tmplv1);
+        AOconf[loop].WFScamPEcorr_pha +=  AOconf[loop].WFScamPEcorr_pharef;
+		printf("cnt = %ld   period = %f    pha = %f\n", data.image[aoconfID_WFS].md[0].cnt0, (double) AOconf[loop].WFScamPEcorr_period, (double) AOconf[loop].WFScamPEcorr_pha);
 		fflush(stdout);
-        AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) WFScamPEcorr_pha);
+        AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) AOconf[loop].WFScamPEcorr_pha);
     }
     else
     {
@@ -3352,6 +3337,7 @@ int AOcompute(long loop)
 
 int AOloopControl_run()
 {
+	FILE *fp;
     char fname[200];
     long loop;
     int vOK;
@@ -3368,6 +3354,8 @@ int AOloopControl_run()
     struct sched_param schedpar;
     double a;
     long cnttest;
+	float tmpf1;
+
 
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
@@ -3388,11 +3376,15 @@ int AOloopControl_run()
 
     if((ID = image_ID("WFScamPEcorrC"))!=-1)
     {
-        WFS_CAM_PER_CORR  = 1;
-        WFScamPEcorr_period = data.image[ID].kw[0].value.numf;
-		printf("PERIOD = %f\n", WFScamPEcorr_period);
+        AOconf[loop].WFS_CAM_PER_CORR  = 1;        
+		fp = fopen("WFScamPEcorrC.period.txt","r");
+		r = fscanf(fp, "%f\n", &tmpf1);
+		fclose(fp);
+		AOconf[loop].WFScamPEcorr_period = (long double) tmpf1;
+		//printf("PERIOD = %f\n", WFScamPEcorr_period);
     }
-
+	else
+		AOconf[loop].WFS_CAM_PER_CORR  = 0;   
 
 
     vOK = 1;
