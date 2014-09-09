@@ -388,7 +388,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	double totx, toty, tot;
 	
 	IDref = image_ID("imref");
-	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 100);
+	ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10000);
 	
 	tot = 0.0;
 	for(ii=0;ii<pXsize*pYsize;ii++)
