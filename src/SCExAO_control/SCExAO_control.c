@@ -110,7 +110,7 @@ int init_SCExAO_control()
 
 
 
-int SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
+long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
 {
     long ID;
     long IDWFScam;
@@ -139,6 +139,7 @@ int SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
             usleep(50);
             // do nothing, wait
         }
+
         slice = data.image[IDWFScam].md[0].cnt1-1;
         if(slice==-1)
             slice = data.image[IDWFScam].md[0].size[2]-1;
@@ -150,13 +151,17 @@ int SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
             data.image[ID].array.F[ii] += (float) arrayutmp[ii];
 
 
-        WFScnt += data.image[IDWFScam].md[0].cnt0;
+        WFScnt = data.image[IDWFScam].md[0].cnt0;
     }
+
+    for(ii=0; ii<xysize; ii++)
+        data.image[ID].array.F[ii] /= NbAve;
 
     free(arrayutmp);
 
     return(ID);
 }
+
 
 
 
