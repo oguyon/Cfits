@@ -1659,10 +1659,11 @@ int Average_cam_frames(long loop, long NbAve)
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
-
+	data.image[aoconfID_WFS0].md[0].cnt0 ++;
 
     if(AOconf[loop].WFS_CAM_PER_CORR==1) /// additional processing step here
     {
+ 	data.image[aoconfID_WFS1].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
@@ -1673,10 +1674,14 @@ int Average_cam_frames(long loop, long NbAve)
     }
     else
     {
+	data.image[aoconfID_WFS1].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+	data.image[aoconfID_WFS1].md[0].cnt0 ++;
+	data.image[aoconfID_WFS1].md[0].write = 0;
     }
-
+    
+    
     return(0);
 }
 
