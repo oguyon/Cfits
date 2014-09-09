@@ -146,6 +146,10 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     unsigned short *arrayutmp;
     long ii;
 
+	ID = image_ID(WFScam_name);
+	if(ID==-1)
+		read_sharedmem_image(WFScam_name);
+		
 
     IDWFScam = image_ID(WFScam_name);
     xsize = data.image[IDWFScam].md[0].size[0];
@@ -292,6 +296,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	double xsig, ysig;
 	long ttxpos, ttypos;
 	double gain = 1.0;
+
 
     ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 10);
     xsize = data.image[ID].md[0].size[0];
