@@ -3019,7 +3019,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             /// save image
             sprintf(iname, "logbuff%d", buffer);
             save_fits(iname, fname);
-
+			printf("Saving %s -> %s\n", iname, fname);
+			fflush(stdout);
 			fclose(fp);
 
             index = 0;
