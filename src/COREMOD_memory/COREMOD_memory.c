@@ -2934,7 +2934,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
         ID = read_sharedmem_image(IDname);
 
     buffer = 0;
-    while(1)
+    while(1==1)
     {
        // while(cnt==data.image[ID].md[0].cnt0)
          //   usleep(10);
