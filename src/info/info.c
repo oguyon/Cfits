@@ -530,7 +530,6 @@ int info_image_monitor(char *ID_name, double frequ)
 
     return 0;
 }
-}
 
 
 
