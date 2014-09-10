@@ -2922,26 +2922,41 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     long index = 0;
     long cnt = -1;
     int buffer;
+	int atype;
+	long *imsizearray;
+	char fname[200];
+	char iname[200];
+	
+	imsizearray = (long*) malloc(sizeof(long)*3);
 
-
-    /** create the 2 buffers */
-    IDb0 = create_3Dimage_ID("logbuff0", xsize, ysize, zsize);
-    IDb1 = create_3Dimage_ID("logbuff1", xsize, ysize, zsize);
 
     read_sharedmem_image(IDname);
 	ID = image_ID(IDname);
+	atype = data.image[ID].md[0].atype;
+	xsize = data.image[ID].md[0].size[0];
+	ysize = data.image[ID].md[0].size[1];
 
+
+   /** create the 2 buffers */
+
+
+    IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
+	IDb1 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
+
+	
     buffer = 0;
     while(1==1)
     {
         while(cnt==data.image[ID].md[0].cnt0)
             usleep(10);
 
-		//printf("%ld\n", (long) data.image[ID].md[0].cnt0);
-		//fflush(stdout);
         index++;
         if(index>zsize-1)
         {
+			/// save image
+			sprintf(fname,"!%s.fits", IDname);
+			sprintf(iname, "logbuff%d", buffer);
+			save_fits(iname, fname);
             index = 0;
             buffer++;
             if(buffer==2)
@@ -2949,9 +2964,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             printf("[%ld -> %d]", cnt, buffer);
             fflush(stdout);
         }
-
         cnt = data.image[ID].md[0].cnt0;
     }
+
+	free(imsizearray);
 
     return(0);
 }
