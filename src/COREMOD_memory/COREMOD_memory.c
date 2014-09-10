@@ -2998,7 +2998,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
         if(index==0)
             {
 				sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-				sprintf(fname_asciilog,"%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+				sprintf(fname_asciilog,"%s_%02d:%02d:%02d.%09ld.txt", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
 				fp = fopen(fname_asciilog, "w");
 			}
 			
