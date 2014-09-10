@@ -1347,9 +1347,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 	printf("COMPUTING CMAT .... \n");
 
 
-	for(NB_MR=0; NB_MR<NB_MODE_REMOVED; NB_MR+=NB_MODE_REMOVED)
+	for(NB_MR=0; NB_MR<NB_MODE_REMOVED; NB_MR+=NB_MODE_REMOVED_STEP)
     {
-		printf("\r Number of modes removed : %5ld / %5ld    ", NB_MR, NB_MODE_REMOVED);
+		printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED, NB_MODE_REMOVED_STEP);
 		fflush(stdout);
     for(ii1=0; ii1<m; ii1++)
         for(jj1=0; jj1<m; jj1++)
