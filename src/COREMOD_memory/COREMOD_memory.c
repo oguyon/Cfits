@@ -2875,24 +2875,40 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 }
 
 
-/** logs a shared memory stream onto disk 
- * 
+/** logs a shared memory stream onto disk
+ *
  * uses data cube to store frames
- * 
+ *
  */
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
 {
-	long ID;
-	long xsize, ysize;
-	long ii;
-	long IDb0, IDb1;
-	
-	
-	
-	/** create the 2 buffers */
-	IDb0 = create_3Dimage_ID("logbuff0", xsize, ysize, zsize);
-	
-	
-	return(0);
+    long ID;
+    long xsize, ysize;
+    long ii;
+    long IDb0, IDb1;
+	long index = 0;
+	long cnt = -1;
+
+    /** create the 2 buffers */
+    IDb0 = create_3Dimage_ID("logbuff0", xsize, ysize, zsize);
+    IDb1 = create_3Dimage_ID("logbuff1", xsize, ysize, zsize);
+
+    ID = image_ID(IDname);
+    if(ID==-1)
+        ID = read_sharedmem_image(IDname);
+
+	while(1)
+	{
+		while(cnt==data.image[ID].md[0].cnt0)
+			usleep(10);
+		
+		printf(".");
+		fflush(stdout);
+		
+		cnt = data.image[ID].md[0].cnt0;
+	}
+
+    return(0);
 }
+
 

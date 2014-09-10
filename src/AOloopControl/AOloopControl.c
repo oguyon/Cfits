@@ -915,7 +915,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
 
 
-    NBZ = 3; /// 3: tip, tilt, focus
+    NBZ = 5; /// 3: tip, tilt, focus
 
     zindex[0] = 1; // tip
     zcpa[0] = 0.0;
