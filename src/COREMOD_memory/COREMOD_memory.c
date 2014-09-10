@@ -2818,93 +2818,94 @@ int check_3Dsize(char *ID_name, long xsize, long ysize, long zsize)
 
 int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 {
-  /* 0 is from x axis */
-  /* 1 is from y axis */
-  long ID,IDout;
-  long xsize,ysize,zsize;
-  long xsize1,ysize1,zsize1;
-  long ii,jj,kk;
-  int atype;
-  int n;
-  
-  ID = image_ID(ID_name);
-  atype = data.image[ID].md[0].atype;
+    /* 0 is from x axis */
+    /* 1 is from y axis */
+    long ID,IDout;
+    long xsize,ysize,zsize;
+    long xsize1,ysize1,zsize1;
+    long ii,jj,kk;
+    int atype;
+    int n;
 
-  if(data.image[ID].md[0].naxis!=3)
+    ID = image_ID(ID_name);
+    atype = data.image[ID].md[0].atype;
+
+    if(data.image[ID].md[0].naxis!=3)
     {
-      n = snprintf(errmsg,SBUFFERSIZE,"Wrong naxis : %ld - should be 3\n",data.image[ID].md[0].naxis);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        n = snprintf(errmsg,SBUFFERSIZE,"Wrong naxis : %ld - should be 3\n",data.image[ID].md[0].naxis);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-      printERROR(__FILE__,__func__,__LINE__,errmsg);
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        exit(0);
     }
-  xsize = data.image[ID].md[0].size[0];
-  ysize = data.image[ID].md[0].size[1];
-  zsize = data.image[ID].md[0].size[2];
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
+    zsize = data.image[ID].md[0].size[2];
 
-  if(atype==FLOAT) // single precision
+    if(atype==FLOAT) // single precision
     {
-      if(orientation==0)
-	{
-	  xsize1 = zsize;
-	  ysize1 = ysize;
-	  zsize1 = xsize;
-	  IDout = create_3Dimage_ID_float(ID_out_name,xsize1,ysize1,zsize1);
-	  for(ii=0;ii<xsize1;ii++)
-	    for(jj=0;jj<ysize1;jj++)
-	      for(kk=0;kk<zsize1;kk++)
-		data.image[IDout].array.F[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.F[ii*xsize*ysize+jj*xsize+kk];
-	}
-      else
-	{
-	  xsize1 = xsize;
-	  ysize1 = zsize;
-	  zsize1 = ysize;
-	  IDout = create_3Dimage_ID_float(ID_out_name,xsize1,ysize1,zsize1);
-	  for(ii=0;ii<xsize1;ii++)
-	    for(jj=0;jj<ysize1;jj++)
-	      for(kk=0;kk<zsize1;kk++)
-		data.image[IDout].array.F[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.F[jj*xsize*ysize+kk*xsize+ii];     
-	}
+        if(orientation==0)
+        {
+            xsize1 = zsize;
+            ysize1 = ysize;
+            zsize1 = xsize;
+            IDout = create_3Dimage_ID_float(ID_out_name,xsize1,ysize1,zsize1);
+            for(ii=0; ii<xsize1; ii++)
+                for(jj=0; jj<ysize1; jj++)
+                    for(kk=0; kk<zsize1; kk++)
+                        data.image[IDout].array.F[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.F[ii*xsize*ysize+jj*xsize+kk];
+        }
+        else
+        {
+            xsize1 = xsize;
+            ysize1 = zsize;
+            zsize1 = ysize;
+            IDout = create_3Dimage_ID_float(ID_out_name,xsize1,ysize1,zsize1);
+            for(ii=0; ii<xsize1; ii++)
+                for(jj=0; jj<ysize1; jj++)
+                    for(kk=0; kk<zsize1; kk++)
+                        data.image[IDout].array.F[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.F[jj*xsize*ysize+kk*xsize+ii];
+        }
     }
-  else if(atype==DOUBLE)
-     {
-      if(orientation==0)
-	{
-	  xsize1 = zsize;
-	  ysize1 = ysize;
-	  zsize1 = xsize;
-	  IDout = create_3Dimage_ID_double(ID_out_name,xsize1,ysize1,zsize1);
-	  for(ii=0;ii<xsize1;ii++)
-	    for(jj=0;jj<ysize1;jj++)
-	      for(kk=0;kk<zsize1;kk++)
-		data.image[IDout].array.D[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.D[ii*xsize*ysize+jj*xsize+kk];
-	}
-      else
-	{
-	  xsize1 = xsize;
-	  ysize1 = zsize;
-	  zsize1 = ysize;
-	  IDout = create_3Dimage_ID_double(ID_out_name,xsize1,ysize1,zsize1);
-	  for(ii=0;ii<xsize1;ii++)
-	    for(jj=0;jj<ysize1;jj++)
-	      for(kk=0;kk<zsize1;kk++)
-		data.image[IDout].array.D[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.D[jj*xsize*ysize+kk*xsize+ii];     
-	}
-    }
-  else
+    else if(atype==DOUBLE)
     {
-      n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        if(orientation==0)
+        {
+            xsize1 = zsize;
+            ysize1 = ysize;
+            zsize1 = xsize;
+            IDout = create_3Dimage_ID_double(ID_out_name,xsize1,ysize1,zsize1);
+            for(ii=0; ii<xsize1; ii++)
+                for(jj=0; jj<ysize1; jj++)
+                    for(kk=0; kk<zsize1; kk++)
+                        data.image[IDout].array.D[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.D[ii*xsize*ysize+jj*xsize+kk];
+        }
+        else
+        {
+            xsize1 = xsize;
+            ysize1 = zsize;
+            zsize1 = ysize;
+            IDout = create_3Dimage_ID_double(ID_out_name,xsize1,ysize1,zsize1);
+            for(ii=0; ii<xsize1; ii++)
+                for(jj=0; jj<ysize1; jj++)
+                    for(kk=0; kk<zsize1; kk++)
+                        data.image[IDout].array.D[kk*ysize1*xsize1+jj*xsize1+ii] = data.image[ID].array.D[jj*xsize*ysize+kk*xsize+ii];
+        }
+    }
+    else
+    {
+        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-      printERROR(__FILE__,__func__,__LINE__,errmsg);
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        exit(0);
     }
 
-  return(0);
+    return(0);
 }
+
 
 
 /** logs a shared memory stream onto disk
@@ -2935,9 +2936,11 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     buffer = 0;
     while(1)
     {
-        while(cnt==data.image[ID].md[0].cnt0)
-            usleep(10);
+       // while(cnt==data.image[ID].md[0].cnt0)
+         //   usleep(10);
 
+		printf("%ld\n", (long) data.image[ID].md[0].cnt0);
+		fflush(stdout);
         index++;
         if(index>zsize-1)
         {
