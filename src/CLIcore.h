@@ -275,6 +275,10 @@ typedef struct
   gsl_rng *rndgen;		// random number generator  
   int precision;		// default precision: 0 for float, 1 for double
 
+	// logging
+	int CLIlogON;
+	char CLIlogname[200];
+	
   // Command Line Interface (CLI) INPUT 
   int fifoON;
   char processname[1024];

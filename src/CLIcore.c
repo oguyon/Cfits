@@ -263,7 +263,12 @@ int CLI_execute_line()
 	long i, j;
 	char *cmdargstring;
     char str[200];
-
+	FILE *fp;
+	time_t t;
+	 struct tm *uttime;
+	 struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+	 
+	 
     if (line[0]=='!')
         {
             line[0] = ' ';
@@ -287,6 +292,18 @@ int CLI_execute_line()
             for(i=0; i<NB_ARG_MAX; i++)
                 data.cmdargtoken[0].type = 0;
 
+			if(data.CLIlogON==1)
+			{
+				t = time(NULL);
+                uttime = gmtime(&t);
+                clock_gettime(CLOCK_REALTIME, thetime);                       
+				
+				sprintf(data.CLIlogname, "~/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, data.processname);
+				                        
+				fp = fopen(data.CLIlogname, "a");
+				fprintf(fp, "%04d/%02d/%02d %02d:%02d:%02d.%09ld %10s %6ld %s\n", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, data.processname, (long) getpid(), line);
+				fclose(fp);
+			}
 
             data.cmdNBarg = 0;
             cmdargstring = strtok (line," ");
@@ -467,6 +484,9 @@ int main(int argc, char *argv[])
     data.SHARED_DFT = 0; // do not allocate shared memory for images
     data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image
     sprintf(data.SAVEDIR, ".");
+
+	data.CLIlogON = 1; // log every command
+	
 
     // to take advantage of kernel priority:
     // owner=root mode=4755
