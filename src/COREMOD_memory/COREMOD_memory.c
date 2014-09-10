@@ -2918,59 +2918,120 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     long ID;
     long xsize, ysize;
     long ii;
-    long IDb0, IDb1;
+    long IDb, IDb0, IDb1;
     long index = 0;
     long cnt = -1;
     int buffer;
-	int atype;
-	long *imsizearray;
-	char fname[200];
-	char iname[200];
-	
-	imsizearray = (long*) malloc(sizeof(long)*3);
+    int atype;
+    long *imsizearray;
+    char fname[200];
+    char iname[200];
+    time_t t;
+    struct tm *uttime;
+    struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+
+    char *ptr0; // source
+    char *ptr1; // destination
+    long framesize; // in bytes
+
+
+    imsizearray = (long*) malloc(sizeof(long)*3);
 
 
     read_sharedmem_image(IDname);
-	ID = image_ID(IDname);
-	atype = data.image[ID].md[0].atype;
-	xsize = data.image[ID].md[0].size[0];
-	ysize = data.image[ID].md[0].size[1];
+    ID = image_ID(IDname);
+    atype = data.image[ID].md[0].atype;
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
 
 
-   /** create the 2 buffers */
+    /** create the 2 buffers */
 
 
     IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
-	IDb1 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
+    IDb1 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
 
-	
+    IDb = IDb0;
+
+    switch ( atype ) {
+    case CHAR:
+        framesize = sizeof(char)*xsize*ysize;
+        break;
+    case INT:
+        framesize = sizeof(int)*xsize*ysize;
+        break;
+    case FLOAT:
+        framesize = sizeof(float)*xsize*ysize;
+        break;
+   case DOUBLE:
+        framesize = sizeof(double)*xsize*ysize;
+        break;
+   case USHORT:
+        framesize = sizeof(unsigned short)*xsize*ysize;
+        break;
+
+    default:
+        printf("ERROR: WRONG DATA TYPE\n");
+        exit(0);
+        break;
+    }
+
+
     buffer = 0;
     while(1==1)
     {
         while(cnt==data.image[ID].md[0].cnt0)
             usleep(10);
 
+        /// measure time
+        t = time(NULL);
+        uttime = gmtime(&t);
+        clock_gettime(CLOCK_REALTIME, thetime);
+
+        if(index==0)
+            sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+
+        ptr0 = (char*) data.image[ID].array.F;
+        ptr1 = (char*) data.image[IDb].array.F;
+        ptr1 += framesize*index;
+
+		memcpy((void *) ptr1, (void *) ptr0, framesize);
+
         index++;
+
+
+
+
         if(index>zsize-1)
         {
-			/// save image
-			sprintf(fname,"!%s.fits", IDname);
-			sprintf(iname, "logbuff%d", buffer);
-			save_fits(iname, fname);
+            /// save image
+            sprintf(iname, "logbuff%d", buffer);
+            save_fits(iname, fname);
+
+
+
             index = 0;
             buffer++;
             if(buffer==2)
                 buffer = 0;
-            printf("[%ld -> %d]", cnt, buffer);
-            fflush(stdout);
+            //            printf("[%ld -> %d]", cnt, buffer);
+            //           fflush(stdout);
+            if(buffer==0)
+                IDb = IDb0;
+            else
+                IDb = IDb1;
         }
+
+
         cnt = data.image[ID].md[0].cnt0;
     }
 
-	free(imsizearray);
+    free(imsizearray);
 
     return(0);
 }
+
+
 
 
 
