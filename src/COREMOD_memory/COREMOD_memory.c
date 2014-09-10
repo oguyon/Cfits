@@ -339,6 +339,27 @@ int mk_amph_from_complex_cli()
 }
 
 
+
+
+int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
+{
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+		COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+
+
+
+
+
+
+
 int init_COREMOD_memory()
 {
   strcpy(data.module[data.NBmodule].name,__FILE__);
@@ -516,7 +537,18 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
   data.NBcmd++;
  
+ 
+  strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_sharedMem_2Dim_log_cli;
+  strcpy(data.cmd[data.NBcmd].info,"logs shared memory stream (run in current directory)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)");
+  data.NBcmd++;
+ 
 
+ 
   // add atexit functions here
 
   return 0;
@@ -2880,7 +2912,7 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
  * uses data cube to store frames
  *
  */
-long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
+long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 {
     long ID;
     long xsize, ysize;
