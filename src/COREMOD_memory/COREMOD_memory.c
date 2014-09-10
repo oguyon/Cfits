@@ -2934,6 +2934,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     char *ptr1; // destination
     long framesize; // in bytes
 
+	FILE *fp;
+	char fname_asciilog[200];
+
+
 
     imsizearray = (long*) malloc(sizeof(long)*3);
 
@@ -2992,17 +2996,22 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
         clock_gettime(CLOCK_REALTIME, thetime);
 
         if(index==0)
-            sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-
+            {
+				sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+				sprintf(fname_asciilog,"%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+				fp = fopen(fname_asciilog, "w");
+			}
+			
         ptr0 = (char*) data.image[ID].array.F;
         ptr1 = (char*) data.image[IDb].array.F;
 		ptr1 += framesize*index;
 
 		memcpy((void *) ptr1, (void *) ptr0, framesize);
 
+		fprintf(fp, "%02d:%02d:%02d.%09ld\n", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+
+
         index++;
-
-
 
 
         if(index>zsize-1)
@@ -3011,7 +3020,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             sprintf(iname, "logbuff%d", buffer);
             save_fits(iname, fname);
 
-
+			fclose(fp);
 
             index = 0;
             buffer++;
