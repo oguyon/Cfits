@@ -486,49 +486,50 @@ int info_pixelstats_smallImage(long ID, long NBpix)
 
 int info_image_monitor(char *ID_name, double frequ)
 {
-  long ID;
-  long mode = 0; // 0 for large image, 1 for small image
-  long NBpix;
-  long npix;
+    long ID;
+    long mode = 0; // 0 for large image, 1 for small image
+    long NBpix;
+    long npix;
 
-  ID = image_ID(ID_name);
-  npix = data.image[ID].md[0].nelement;
-  
-  
-  initscr();		
-  getmaxyx(stdscr, wrow, wcol);
+    ID = image_ID(ID_name);
+    npix = data.image[ID].md[0].nelement;
 
-  if(npix<100)
-    mode = 1;
 
-  NBpix = npix;
-  if(NBpix > wrow)
-    NBpix = wrow-2;
+    initscr();
+    getmaxyx(stdscr, wrow, wcol);
 
-  start_color();
-  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
-  init_pair(2, COLOR_BLACK, COLOR_RED);
-  init_pair(3, COLOR_GREEN, COLOR_BLACK);
-  init_pair(4, COLOR_RED, COLOR_BLACK);
+    if(npix<100)
+        mode = 1;
 
-  while( !kbdhit() )
+    NBpix = npix;
+    if(NBpix > wrow)
+        NBpix = wrow-2;
+
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_BLACK, COLOR_RED);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+
+    while( !kbdhit() )
     {
-      usleep((long) (1000000.0/frequ));
-      clear();
-      attron(A_BOLD);
-      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-      attroff(A_BOLD);
-      
-      if(mode==0)
-	printstatus(ID);
-      else
-	info_pixelstats_smallImage(ID, NBpix);
+        usleep((long) (1000000.0/frequ));
+        clear();
+        attron(A_BOLD);
+        print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+        attroff(A_BOLD);
 
-      refresh();
+        if(mode==0)
+            printstatus(ID);
+        else
+            info_pixelstats_smallImage(ID, NBpix);
+
+        refresh();
     }
- endwin();	
+    endwin();
 
-  return 0;
+    return 0;
+}
 }
 
 

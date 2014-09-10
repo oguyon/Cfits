@@ -2931,7 +2931,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
     ID = image_ID(IDname);
     if(ID==-1)
-        ID = read_sharedmem_image(IDname);
+        read_sharedmem_image(IDname);
+ID = image_ID(IDname);
 
     buffer = 0;
     while(1==1)
