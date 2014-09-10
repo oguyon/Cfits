@@ -2947,6 +2947,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
     /** create the 2 buffers */
 
+	imsizearray[0] = xsize;
+	imsizearray[1] = ysize;
+	imsizearray[2] = zsize;
 
     IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
     IDb1 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
@@ -2993,7 +2996,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
         ptr0 = (char*) data.image[ID].array.F;
         ptr1 = (char*) data.image[IDb].array.F;
-        ptr1 += framesize*index;
+		ptr1 += framesize*index;
 
 		memcpy((void *) ptr1, (void *) ptr0, framesize);
 
