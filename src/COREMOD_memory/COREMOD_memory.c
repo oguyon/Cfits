@@ -2918,29 +2918,41 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     long xsize, ysize;
     long ii;
     long IDb0, IDb1;
-	long index = 0;
-	long cnt = -1;
+    long index = 0;
+    long cnt = -1;
+    int buffer;
+
 
     /** create the 2 buffers */
     IDb0 = create_3Dimage_ID("logbuff0", xsize, ysize, zsize);
     IDb1 = create_3Dimage_ID("logbuff1", xsize, ysize, zsize);
 
+
     ID = image_ID(IDname);
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
 
-	while(1)
-	{
-		while(cnt==data.image[ID].md[0].cnt0)
-			usleep(10);
-		
-		printf(".");
-		fflush(stdout);
-		
-		cnt = data.image[ID].md[0].cnt0;
-	}
+    buffer = 0;
+    while(1)
+    {
+        while(cnt==data.image[ID].md[0].cnt0)
+            usleep(10);
+
+        index++;
+        if(index>zsize-1)
+        {
+            index = 0;
+            buffer++;
+            if(buffer==2)
+                buffer = 0;
+            printf("->");
+        }
+
+        cnt = data.image[ID].md[0].cnt0;
+    }
 
     return(0);
 }
+
 
 

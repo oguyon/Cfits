@@ -243,9 +243,9 @@ int AOloopControl_setframesAve_cli()
 
 int AOloopControl_computeCM_cli()
 {
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,1)==0)
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,2)==0)
     {
-      compute_ControlMatrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, "evecM", data.cmdargtoken[4].val.numf);
+      compute_ControlMatrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, "evecM", data.cmdargtoken[4].val.numf, data.cmdargtoken[4].val.numl);
       save_fits("evecM","!evecM.fits");
       delete_image_ID("evecM");
     }
@@ -1162,7 +1162,7 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
  *  
  */
 
-int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta)
+int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP)
 {
     FILE *fp;
     long ID;
@@ -1347,7 +1347,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 	printf("COMPUTING CMAT .... \n");
 
 
-	for(NB_MR=0; NB_MR<NB_MODE_REMOVED; NB_MR+=10)
+	for(NB_MR=0; NB_MR<NB_MODE_REMOVED; NB_MR+=NB_MODE_REMOVED)
     {
 		printf("\r Number of modes removed : %5ld / %5ld    ", NB_MR, NB_MODE_REMOVED);
 		fflush(stdout);
