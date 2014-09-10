@@ -2947,6 +2947,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             if(buffer==2)
                 buffer = 0;
             printf("[%ld -> %d]", cnt, buffer);
+            fflush(stdout);
         }
 
         cnt = data.image[ID].md[0].cnt0;
