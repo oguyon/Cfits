@@ -267,7 +267,8 @@ int CLI_execute_line()
 	time_t t;
 	 struct tm *uttime;
 	 struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
-	 
+	 char command[200];
+	 int r;
 	 
     if (line[0]=='!')
         {
@@ -298,11 +299,20 @@ int CLI_execute_line()
                 uttime = gmtime(&t);
                 clock_gettime(CLOCK_REALTIME, thetime);                       
 				
-				sprintf(data.CLIlogname, "~/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, data.processname);
+				sprintf(data.CLIlogname, "%s/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, data.processname);
 				                        
 				fp = fopen(data.CLIlogname, "a");
-				fprintf(fp, "%04d/%02d/%02d %02d:%02d:%02d.%09ld %10s %6ld %s\n", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, data.processname, (long) getpid(), line);
+				if(fp==NULL)
+				{
+					printf("ERROR: cannot log into file %s\n", data.CLIlogname);
+					sprintf(command, "mkdir -p %s/logdir/%04d%02d%02d\n", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday);
+					r = system(command);
+				}
+				else
+				{
+					fprintf(fp, "%04d/%02d/%02d %02d:%02d:%02d.%09ld %10s %6ld %s\n", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, data.processname, (long) getpid(), line);
 				fclose(fp);
+				}
 			}
 
             data.cmdNBarg = 0;
