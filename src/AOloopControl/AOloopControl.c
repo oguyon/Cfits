@@ -409,8 +409,6 @@ int AOloopControl_tuneWFSsync_cli()
 }
 
 
-
-
 int AOloopControl_setparam_cli()
 {
  if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
@@ -763,9 +761,8 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].example,"aolsyncwfs");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_tuneWFSsync(long loop, char *IDout_name)");
   data.NBcmd++;
-  
-  
-  
+
+
    strcpy(data.cmd[data.NBcmd].key,"aolset");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_setparam_cli;
@@ -4558,9 +4555,12 @@ int AOloopControl_setparam(long loop, char *key, double value)
 		AOconf[loop].WFScamPEcorr_period = (long double) value;
 		pOK = 1;
 	}
-	
+			
 	if(pOK==0)
 		printf("Parameter not found\n");
+	
+	
+	
 	
 	return (0);
 }

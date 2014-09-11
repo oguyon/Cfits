@@ -86,7 +86,7 @@ typedef struct
 
 
 
-    int GPU; // 1 if computation done by GPU
+    int GPU; // >0 if computation done by GPU
 
     // LOOP TELEMETRY
     double RMSmodes;
