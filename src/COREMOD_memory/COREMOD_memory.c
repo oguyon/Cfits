@@ -45,6 +45,8 @@ char errmsg[SBUFFERSIZE];
 struct savethreadmsg {
     char iname[100];
     char fname[200];
+	int partial; // 1 if partial cube
+    long cubesize; // if partial cube, this is the size of the cube
 };
 long tret; // thread return value
 
@@ -2917,28 +2919,88 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 
 void *save_fits_function( void *ptr )
 {
-	long ID;
-	struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+    long ID;
+    struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+    long *imsizearray;
+    long xsize, ysize;
+    int atype;
+    long IDc;
+    long framesize; // in bytes
+    char *ptr0; // source
+    char *ptr1; // destination
 
-	tmsg = (struct savethreadmsg*) ptr;
-	printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
-	
-	list_image_ID();
-	save_fits(tmsg->iname, tmsg->fname);
 
-	printf(" DONE\n");
+    imsizearray = (long*) malloc(sizeof(long)*3);
 
-	ID = image_ID(tmsg->iname);
-	tret = ID;
-	
-	pthread_exit(&tret);
+    tmsg = (struct savethreadmsg*) ptr;
+    //printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
+
+    if(tmsg->partial==0) // full image
+        save_fits(tmsg->iname, tmsg->fname);
+    else
+    {
+        printf("Saving partial image (zsize = %ld)\n", tmsg->cubesize);
+        ID = image_ID(tmsg->iname);
+        atype = data.image[ID].md[0].atype;
+        xsize = data.image[ID].md[0].size[0];
+        ysize = data.image[ID].md[0].size[1];
+
+        imsizearray[0] = xsize;
+        imsizearray[1] = ysize;
+        imsizearray[2] = tmsg->cubesize;
+
+        IDc = create_image_ID("tmpsavecube", 3, imsizearray, atype, 0, 1);
+        switch ( atype ) {
+        case CHAR:
+            framesize = sizeof(char)*xsize*ysize;
+            break;
+        case INT:
+            framesize = sizeof(int)*xsize*ysize;
+            break;
+        case FLOAT:
+            framesize = sizeof(float)*xsize*ysize;
+            break;
+        case DOUBLE:
+            framesize = sizeof(double)*xsize*ysize;
+            break;
+        case USHORT:
+            framesize = sizeof(unsigned short)*xsize*ysize;
+            break;
+
+        default:
+            printf("ERROR: WRONG DATA TYPE\n");
+            exit(0);
+            break;
+        }
+
+        ptr0 = (char*) data.image[ID].array.F;  // source
+        ptr1 = (char*) data.image[IDc].array.F; // destination
+
+
+        memcpy((void *) ptr1, (void *) ptr0, framesize*tmsg->cubesize);
+		save_fits("tmpsavecube", tmsg->fname);
+        delete_image_ID("tmpsavecube");
+    }
+
+
+    //printf(" DONE\n");
+
+    ID = image_ID(tmsg->iname);
+    tret = ID;
+    free(imsizearray);
+    pthread_exit(&tret);
 }
+
+
+
+
+
 
 
 /** logs a shared memory stream onto disk
  *
  * uses data cube to store frames
- * 
+ *
  */
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 {
@@ -2956,25 +3018,29 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     time_t t;
     struct tm *uttime;
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    long kw;
 
     char *ptr0; // source
     char *ptr1; // destination
     long framesize; // in bytes
 
-	FILE *fp;
-	char fname_asciilog[200];
+    FILE *fp;
+    char fname_asciilog[200];
 
 
-	pthread_t thread_savefits;
-	int tOK = 0;
-	int iret_savefits;
-//	char tmessage[500];
-	struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+    pthread_t thread_savefits;
+    int tOK = 0;
+    int iret_savefits;
+    //	char tmessage[500];
+    struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
 
-	long fnb = 0;
-	long NBfiles = -1; // run forever
-	
-	
+    long fnb = 0;
+    long NBfiles = -1; // run forever
+    long long cntwait;
+    long waitdelayus = 10;
+    long long cntwaitlim = 100000; // 1 sec
+    int wOK;
+    int noframe;
 
     imsizearray = (long*) malloc(sizeof(long)*3);
 
@@ -2988,9 +3054,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
     /** create the 2 buffers */
 
-	imsizearray[0] = xsize;
-	imsizearray[1] = ysize;
-	imsizearray[2] = zsize;
+    imsizearray[0] = xsize;
+    imsizearray[1] = ysize;
+    imsizearray[2] = zsize;
 
     IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
     IDb1 = create_image_ID("logbuff1", 3, imsizearray, atype, 0, 1);
@@ -3007,10 +3073,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     case FLOAT:
         framesize = sizeof(float)*xsize*ysize;
         break;
-   case DOUBLE:
+    case DOUBLE:
         framesize = sizeof(double)*xsize*ysize;
         break;
-   case USHORT:
+    case USHORT:
         framesize = sizeof(unsigned short)*xsize*ysize;
         break;
 
@@ -3020,64 +3086,117 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
         break;
     }
 
+    cnt = data.image[ID].md[0].cnt0;
 
     buffer = 0;
+    index = 0;
     while( fnb != NBfiles )
     {
-        while(cnt==data.image[ID].md[0].cnt0)
+        cntwait = 0;
+        noframe = 0;
+        wOK = 1;
+        // printf("Entering wait loop   index = %ld %d\n", index, noframe);
+        while((cnt==data.image[ID].md[0].cnt0)&&(wOK==1))
+        {
             usleep(10);
+            cntwait++;
+            if(cntwait>cntwaitlim) // save current cube
+            {
+                strcpy(tmsg->iname, iname);
+                strcpy(tmsg->fname, fname);
+                tmsg->partial = 1; // partial cube
+                tmsg->cubesize = index;
+                wOK=0;
+                if(index==0)
+                    noframe = 1;
+                else
+                    noframe = 0;
+                //		printf("Exiting wait loop - %ld %d\n", index, noframe);
+            }
+        }
+        //		printf("Entering main loop   index = %ld %d  [%d]\n", index, noframe, wOK);
 
-        /// measure time
-        t = time(NULL);
-        uttime = gmtime(&t);
-        clock_gettime(CLOCK_REALTIME, thetime);
 
         if(index==0)
+        {
+            /// measure time
+            t = time(NULL);
+            uttime = gmtime(&t);
+            clock_gettime(CLOCK_REALTIME, thetime);
+            sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+            sprintf(fname_asciilog,"%s_%02d:%02d:%02d.%09ld.txt", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+        }
+
+
+        if(wOK==1) // normal step: a frame has arrived
+        {
+            /// measure time
+            t = time(NULL);
+            uttime = gmtime(&t);
+            clock_gettime(CLOCK_REALTIME, thetime);
+
+            if(index==0)
+                fp = fopen(fname_asciilog, "w");
+
+            ptr0 = (char*) data.image[ID].array.F;
+            ptr1 = (char*) data.image[IDb].array.F;
+            ptr1 += framesize*index;
+
+            memcpy((void *) ptr1, (void *) ptr0, framesize);
+
+            fprintf(fp, "%02d:%02d:%02d.%09ld ", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+
+            for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
             {
-				sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-				sprintf(fname_asciilog,"%s_%02d:%02d:%02d.%09ld.txt", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-				fp = fopen(fname_asciilog, "w");
-			}
-			
-        ptr0 = (char*) data.image[ID].array.F;
-        ptr1 = (char*) data.image[IDb].array.F;
-		ptr1 += framesize*index;
- 
-		memcpy((void *) ptr1, (void *) ptr0, framesize);
+                switch (data.image[ID].kw[kw].type) {
+                case 'L' :
+                    fprintf(fp, " %ld", data.image[ID].kw[kw].value.numl);
+                    break;
+                case 'D' :
+                    fprintf(fp, " %f", data.image[ID].kw[kw].value.numf);
+                    break;
+                }
+            }
+            fprintf(fp, "\n");
 
-		fprintf(fp, "%02d:%02d:%02d.%09ld\n", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-
-
-        index++;
+            index++;
+        }
 
 
-        if(index>zsize-1)
+        /// cases:
+        /// index>zsize-1  buffer full
+        /// wOK==0 && index>0
+        if(  (index>zsize-1)  ||  ((wOK==0)&&(index>0)) )
         {
             /// save image
             sprintf(iname, "logbuff%d", buffer);
-            //save_fits(iname, fname);
-			printf("Saving %s -> %s\n", iname, fname);
-			fflush(stdout);
-			strcpy(tmsg->iname, iname);
-			strcpy(tmsg->fname, fname);
-			fclose(fp);
+            //          printf("Saving %s -> %s\n", iname, fname);
+            //         fflush(stdout);
+            if(wOK==1) // image has arrived
+            {
+                strcpy(tmsg->iname, iname);
+                strcpy(tmsg->fname, fname);
+                tmsg->partial = 0; // full cube
+            }
 
-			if(tOK == 1)
-			{
-				printf("WAITING FOR SAVE THREAD TO COMPLETE ...");
-				fflush(stdout);
-				pthread_join(thread_savefits, (void**)&thread_savefits);
-				printf("OK\n");
-				fflush(stdout);
-			}
-			
-			iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
-			tOK = 1;
-			if(iret_savefits)
-			{
-				fprintf(stderr,"Error - pthread_create() return code: %d\n", iret_savefits);
-				exit(EXIT_FAILURE);
-			}
+            fclose(fp);
+
+            if(tOK == 1)
+            {
+                //           printf("WAITING FOR SAVE THREAD TO COMPLETE ...");
+                //          fflush(stdout);
+                pthread_join(thread_savefits, (void**)&thread_savefits);
+                //          printf("OK\n");
+                //          fflush(stdout);
+            }
+
+            iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
+            tOK = 1;
+            if(iret_savefits)
+            {
+                fprintf(stderr,"Error - pthread_create() return code: %d\n", iret_savefits);
+                exit(EXIT_FAILURE);
+            }
 
             index = 0;
             buffer++;
@@ -3090,17 +3209,21 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             else
                 IDb = IDb1;
 
-			fnb++;
-		}
+            fnb++;
+        }
 
 
         cnt = data.image[ID].md[0].cnt0;
-	}
+    }
 
     free(imsizearray);
 
     return(0);
 }
+
+
+
+
 
 
 
