@@ -59,8 +59,8 @@
 
 
 
-int Nofifo = 0;
 int Verbose = 0; 
+int Nofifo = 0; 
 int Listimfile = 0;
 DATA data;
 
@@ -496,7 +496,8 @@ int main(int argc, char *argv[])
     sprintf(data.SAVEDIR, ".");
 
 	data.CLIlogON = 1; // log every command
-	
+		data.fifoON = 1;
+
 
     // to take advantage of kernel priority:
     // owner=root mode=4755
@@ -518,11 +519,10 @@ int main(int argc, char *argv[])
     command_line( argc, argv );
 
  	// initialize fifo
-	data.fifoON = 1;
-	sprintf(data.fifoname, "%s.fifo", argv[0]);
-//	 strcpy(data.fifoname, "clififo");
+if(data.fifoON==1)
+{	sprintf(data.fifoname, "%s.fifo", data.processname);
 	printf("fifo name : %s\n", data.fifoname);
-
+}
 
 
    //
@@ -1206,6 +1206,8 @@ int command_line( int argc, char **argv)
   int option_index = 0;
    struct sched_param schedpar;
    int r;
+
+
 
   static struct option long_options[] =
     {
