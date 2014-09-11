@@ -42,6 +42,11 @@ extern DATA data;
 
 char errmsg[SBUFFERSIZE];
 
+struct savethreadmsg {
+    char iname[100];
+    char fname[200];
+};
+long tret; // thread return value
 
 
 
@@ -2908,6 +2913,28 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 
 
 
+
+
+void *save_fits_function( void *ptr )
+{
+	long ID;
+	struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+
+	tmsg = (struct savethreadmsg*) ptr;
+	printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
+	
+	list_image_ID();
+	save_fits(tmsg->iname, tmsg->fname);
+
+	printf(" DONE\n");
+
+	ID = image_ID(tmsg->iname);
+	tret = ID;
+	
+	pthread_exit(&tret);
+}
+
+
 /** logs a shared memory stream onto disk
  *
  * uses data cube to store frames
@@ -2938,6 +2965,16 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 	char fname_asciilog[200];
 
 
+	pthread_t thread_savefits;
+	int tOK = 0;
+	int iret_savefits;
+//	char tmessage[500];
+	struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+
+	long fnb = 0;
+	long NBfiles = 10;
+	
+	
 
     imsizearray = (long*) malloc(sizeof(long)*3);
 
@@ -2956,7 +2993,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 	imsizearray[2] = zsize;
 
     IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
-    IDb1 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
+    IDb1 = create_image_ID("logbuff1", 3, imsizearray, atype, 0, 1);
 
     IDb = IDb0;
 
@@ -2985,7 +3022,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
 
     buffer = 0;
-    while(1==1)
+    while( fnb < NBfiles )
     {
         while(cnt==data.image[ID].md[0].cnt0)
             usleep(10);
@@ -3005,7 +3042,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
         ptr0 = (char*) data.image[ID].array.F;
         ptr1 = (char*) data.image[IDb].array.F;
 		ptr1 += framesize*index;
-
+ 
 		memcpy((void *) ptr1, (void *) ptr0, framesize);
 
 		fprintf(fp, "%02d:%02d:%02d.%09ld\n", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
@@ -3018,10 +3055,29 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
         {
             /// save image
             sprintf(iname, "logbuff%d", buffer);
-            save_fits(iname, fname);
+            //save_fits(iname, fname);
 			printf("Saving %s -> %s\n", iname, fname);
 			fflush(stdout);
+			strcpy(tmsg->iname, iname);
+			strcpy(tmsg->fname, fname);
 			fclose(fp);
+
+			if(tOK == 1)
+			{
+				printf("WAITING FOR SAVE THREAD TO COMPLETE ...");
+				fflush(stdout);
+				pthread_join(thread_savefits, (void**)&thread_savefits);
+				printf("OK\n");
+				fflush(stdout);
+			}
+			
+			iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
+			tOK = 1;
+			if(iret_savefits)
+			{
+				fprintf(stderr,"Error - pthread_create() return code: %d\n", iret_savefits);
+				exit(EXIT_FAILURE);
+			}
 
             index = 0;
             buffer++;
@@ -3033,11 +3089,13 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
                 IDb = IDb0;
             else
                 IDb = IDb1;
-        }
+
+			fnb++;
+		}
 
 
         cnt = data.image[ID].md[0].cnt0;
-    }
+	}
 
     free(imsizearray);
 
