@@ -2933,23 +2933,34 @@ void *save_fits_function( void *ptr )
     imsizearray = (long*) malloc(sizeof(long)*3);
 
     tmsg = (struct savethreadmsg*) ptr;
-    //printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
-
+   // printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
+//fflush(stdout);
     if(tmsg->partial==0) // full image
         save_fits(tmsg->iname, tmsg->fname);
     else
     {
-        printf("Saving partial image (zsize = %ld)\n", tmsg->cubesize);
+  //      printf("Saving partial image (name = %s   zsize = %ld)\n", tmsg->iname, tmsg->cubesize);
+	
+	//	list_image_ID();
+ 
         ID = image_ID(tmsg->iname);
         atype = data.image[ID].md[0].atype;
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
+		//printf("step00\n");
+		//fflush(stdout);
+		
         imsizearray[0] = xsize;
         imsizearray[1] = ysize;
         imsizearray[2] = tmsg->cubesize;
 
+	
+
         IDc = create_image_ID("tmpsavecube", 3, imsizearray, atype, 0, 1);
+        
+        list_image_ID();
+        
         switch ( atype ) {
         case CHAR:
             framesize = sizeof(char)*xsize*ysize;
@@ -2983,7 +2994,8 @@ void *save_fits_function( void *ptr )
     }
 
 
-    //printf(" DONE\n");
+//    printf(" DONE\n");
+//fflush(stdout);
 
     ID = image_ID(tmsg->iname);
     tret = ID;
@@ -3038,7 +3050,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     long NBfiles = -1; // run forever
     long long cntwait;
     long waitdelayus = 10;
-    long long cntwaitlim = 100000; // 1 sec
+    long long cntwaitlim = 10000; // 1 sec
     int wOK;
     int noframe;
 
@@ -3189,7 +3201,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
                 //          printf("OK\n");
                 //          fflush(stdout);
             }
-
+			
+			strcpy(tmsg->iname, iname);
             iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
             tOK = 1;
             if(iret_savefits)
