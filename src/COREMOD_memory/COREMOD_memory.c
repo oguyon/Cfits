@@ -3049,8 +3049,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     long fnb = 0;
     long NBfiles = -1; // run forever
     long long cntwait;
-    long waitdelayus = 10;
-    long long cntwaitlim = 10000; // 1 sec
+    long waitdelayus = 50;
+    long long cntwaitlim = 200000; // 10 sec
     int wOK;
     int noframe;
 
