@@ -2938,7 +2938,7 @@ void *save_fits_function( void *ptr )
 /** logs a shared memory stream onto disk
  *
  * uses data cube to store frames
- *
+ * 
  */
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 {
@@ -2972,7 +2972,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 	struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
 
 	long fnb = 0;
-	long NBfiles = 10;
+	long NBfiles = -1; // run forever
 	
 	
 
@@ -3022,7 +3022,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
 
     buffer = 0;
-    while( fnb < NBfiles )
+    while( fnb != NBfiles )
     {
         while(cnt==data.image[ID].md[0].cnt0)
             usleep(10);
