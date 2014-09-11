@@ -2959,7 +2959,7 @@ void *save_fits_function( void *ptr )
 
         IDc = create_image_ID("tmpsavecube", 3, imsizearray, atype, 0, 1);
         
-        list_image_ID();
+       // list_image_ID();
         
         switch ( atype ) {
         case CHAR:

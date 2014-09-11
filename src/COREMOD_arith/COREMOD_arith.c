@@ -160,7 +160,7 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = arith_set_pixel_cli;
   strcpy(data.cmd[data.NBcmd].info,"set pixel value");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <sizey> <xstart>");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <x> <y>");
   strcpy(data.cmd[data.NBcmd].example,"setpix im 1.24 100 100");
   strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_pixel(char *ID_name, double value, long x, long y)");
   data.NBcmd++;
