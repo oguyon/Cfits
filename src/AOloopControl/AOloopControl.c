@@ -1532,8 +1532,9 @@ int Average_cam_frames(long loop, long NbAve)
     long slice;
     char *ptrv;
     long double tmplv1;
-	long NBcoadd;
-	double tmpf;
+    long NBcoadd;
+    double tmpf;
+    long IDdark;
 
     atype = data.image[aoconfID_WFS].md[0].atype;
 
@@ -1550,10 +1551,10 @@ int Average_cam_frames(long loop, long NbAve)
 
     AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
 
-	NBcoadd = data.image[aoconfID_WFS].kw[3].value.numl;
-	if(NBcoadd<1)
-		NBcoadd = 1;
-	
+    NBcoadd = data.image[aoconfID_WFS].kw[3].value.numl;
+    if(NBcoadd<1)
+        NBcoadd = 1;
+
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
@@ -1652,18 +1653,27 @@ int Average_cam_frames(long loop, long NbAve)
 
 
     // Dark subtract
-	tmpf = NBcoadd*AOconf[loop].DarkLevel;
-    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS0].array.F[ii] -= tmpf;
+    IDdark = image_ID("wfsdark");
+    if(IDdark!=-1)
+    {
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[aoconfID_WFS0].array.F[ii] -= NBcoadd*data.image[IDdark].array.F[ii];
+    }
+    else
+    {
+        tmpf = NBcoadd*AOconf[loop].DarkLevel;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[aoconfID_WFS0].array.F[ii] -= tmpf;
+    }
 
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
-	data.image[aoconfID_WFS0].md[0].cnt0 ++;
+    data.image[aoconfID_WFS0].md[0].cnt0 ++;
 
     if(AOconf[loop].WFS_CAM_PER_CORR==1) /// additional processing step here
     {
- 	data.image[aoconfID_WFS1].md[0].write = 1;
+        data.image[aoconfID_WFS1].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
@@ -1674,16 +1684,17 @@ int Average_cam_frames(long loop, long NbAve)
     }
     else
     {
-	data.image[aoconfID_WFS1].md[0].write = 1;
+        data.image[aoconfID_WFS1].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
-	data.image[aoconfID_WFS1].md[0].cnt0 ++;
-	data.image[aoconfID_WFS1].md[0].write = 0;
+        data.image[aoconfID_WFS1].md[0].cnt0 ++;
+        data.image[aoconfID_WFS1].md[0].write = 0;
     }
-    
-    
+
+
     return(0);
 }
+
 
 
 
