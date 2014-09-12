@@ -42,6 +42,12 @@ extern DATA data;
 
 char errmsg[SBUFFERSIZE];
 
+
+
+/** data logging of shared memory image stream
+ * 
+ */
+
 struct savethreadmsg {
     char iname[100];
     char fname[200];
@@ -49,6 +55,9 @@ struct savethreadmsg {
     long cubesize; // if partial cube, this is the size of the cube
 };
 long tret; // thread return value
+
+
+
 
 
 
@@ -350,9 +359,9 @@ int mk_amph_from_complex_cli()
 
 int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
-	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
     {
-		COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+		COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
       return 0;
     }
   else
@@ -549,9 +558,9 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = COREMOD_MEMORY_sharedMem_2Dim_log_cli;
   strcpy(data.cmd[data.NBcmd].info,"logs shared memory stream (run in current directory)");
-  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]>");
-  strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]> <logdir>");
+  strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000 /media/data");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)");
   data.NBcmd++;
  
 
@@ -2915,6 +2924,65 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 
 
 
+/// ---------------------------------------- LOGGING FUNCTIONS --------------------------------
+
+
+
+/// creates logshimconf shared memory and loads it
+LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(char *logshimname)
+{
+    int SM_fd;
+    size_t sharedsize = 0; // shared memory size in bytes
+	char SM_fname[200];
+	int result;
+	LOGSHIM_CONF *map;
+	
+	sharedsize = sizeof(LOGSHIM_CONF);
+	
+    sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, logshimname);
+    SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+
+    if (SM_fd == -1) {
+        perror("Error opening file for writing");
+        exit(0);
+    }
+  
+    result = lseek(SM_fd, sharedsize-1, SEEK_SET);
+    if (result == -1) {
+        close(SM_fd);
+        perror("Error calling lseek() to 'stretch' the file");
+        exit(0);
+    }
+
+    result = write(SM_fd, "", 1);
+    if (result != 1) {
+        close(SM_fd);
+        perror("Error writing last byte of the file");
+        exit(0);
+    }
+
+    map = (LOGSHIM_CONF*) mmap(0, sharedsize, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+    if (map == MAP_FAILED) {
+        close(SM_fd);
+        perror("Error mmapping the file");
+        exit(0);
+    }
+
+	map[0].on = 0;
+	map[0].cnt = 0;
+	map[0].filecnt = 0;
+	map[0].interval = 1;
+	map[0].logexit = 0;
+	strcpy(map[0].fname, SM_fname);
+	
+    return(map);
+}
+
+
+
+
+
+
 
 
 void *save_fits_function( void *ptr )
@@ -3011,10 +3079,10 @@ void *save_fits_function( void *ptr )
 
 /** logs a shared memory stream onto disk
  *
- * uses data cube to store frames
+ * uses data cube buffer to store frames
  *
  */
-long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
+long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
 {
     long ID;
     long xsize, ysize;
@@ -3039,7 +3107,6 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     FILE *fp;
     char fname_asciilog[200];
 
-
     pthread_t thread_savefits;
     int tOK = 0;
     int iret_savefits;
@@ -3054,15 +3121,35 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
     int wOK;
     int noframe;
 
-    imsizearray = (long*) malloc(sizeof(long)*3);
+	int is3Dcube = 0; // this is a rolling buffer
 
+
+	LOGSHIM_CONF* logshimconf;
+
+
+	logshimconf = COREMOD_MEMORY_logshim_create_SHMconf(IDname);
+
+	
+	logshimconf[0].on = 1;
+	logshimconf[0].cnt = 0;
+	logshimconf[0].filecnt = 0;
+	logshimconf[0].logexit = 0;
+	logshimconf[0].interval = 1;
+	
+	
+
+    imsizearray = (long*) malloc(sizeof(long)*3);
+	
+	
 
     read_sharedmem_image(IDname);
     ID = image_ID(IDname);
     atype = data.image[ID].md[0].atype;
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
-
+	
+	if(data.image[ID].md[0].naxis==3)
+		is3Dcube = 1;
 
     /** create the 2 buffers */
 
@@ -3102,7 +3189,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 
     buffer = 0;
     index = 0;
-    while( fnb != NBfiles )
+    while( (logshimconf[0].filecnt != NBfiles) && (logshimconf[0].logexit==0) )
     {
         cntwait = 0;
         noframe = 0;
@@ -3135,8 +3222,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             t = time(NULL);
             uttime = gmtime(&t);
             clock_gettime(CLOCK_REALTIME, thetime);
-            sprintf(fname,"!%s_%02d:%02d:%02d.%09ld.fits", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-            sprintf(fname_asciilog,"%s_%02d:%02d:%02d.%09ld.txt", IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+            sprintf(fname,"!%s/%s_%02d:%02d:%02d.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+            sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02d.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
         }
 
 
@@ -3151,6 +3238,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
                 fp = fopen(fname_asciilog, "w");
 
             ptr0 = (char*) data.image[ID].array.F;
+            if(is3Dcube==1)
+				ptr0 += framesize*data.image[ID].md[0].cnt1;
+            
             ptr1 = (char*) data.image[IDb].array.F;
             ptr1 += framesize*index;
 
@@ -3204,6 +3294,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
 			
 			strcpy(tmsg->iname, iname);
             iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
+            
+            logshimconf[0].cnt ++;
+            
             tOK = 1;
             if(iret_savefits)
             {
@@ -3222,7 +3315,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize)
             else
                 IDb = IDb1;
 
-            fnb++;
+			logshimconf[0].filecnt ++;            
         }
 
 

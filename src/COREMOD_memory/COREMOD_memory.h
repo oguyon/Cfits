@@ -15,6 +15,26 @@
 /*void print_sys_mem_info();*/
 
 
+
+
+typedef struct
+{
+	int on; /// 1 if logging, 0 otherwise
+	long long cnt;
+	long long filecnt;
+	long interval; /// log every x frames (default = 1)
+	int logexit; /// toggle to 1 when exiting
+	char fname[200];
+} LOGSHIM_CONF;
+
+
+
+
+
+
+
+
+
 int memory_monitor(char *termttyname);
 
 
@@ -122,6 +142,6 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation);
 
 
 
-long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize);
+long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir);
 
 #endif
