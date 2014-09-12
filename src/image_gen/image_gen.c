@@ -133,6 +133,20 @@ int make_2Dgridpix_cli()
 
 
 
+int make_rnd_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+    {
+		make_rnd(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, ""); 
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+//long make_rnd(char *ID_name, long l1, long l2, char *options)
+
 
 
 
@@ -225,7 +239,16 @@ int init_image_gen()
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double pitchy, double offsetx, double offsety)");
   data.NBcmd++;
 
+  strcpy(data.cmd[data.NBcmd].key,"mkrndim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = make_rnd_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make random image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize>");
+  strcpy(data.cmd[data.NBcmd].example,"mkrndim 512 512");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long make_rnd(char *ID_name, long l1, long l2, char *options)");
+  data.NBcmd++;
 
+//long make_rnd(char *ID_name, long l1, long l2, char *options)
 
  // add atexit functions here
 
