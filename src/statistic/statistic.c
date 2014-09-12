@@ -71,7 +71,8 @@ double ran1()
 {
   double value;
 
-  value = gsl_rng_uniform (data.rndgen);// data.INVRANDMAX*rand();
+  value = data.INVRANDMAX*rand();
+ // gsl_rng_uniform (data.rndgen);// data.INVRANDMAX*rand();
 
   return(value);
 }

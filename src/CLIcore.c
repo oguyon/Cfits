@@ -828,7 +828,7 @@ void main_init()
 
   long tmplong;
   int i;
-  
+  struct timeval t1;
 
    
   /* initialization of the data structure 
@@ -915,7 +915,13 @@ void main_init()
   create_variable_ID("_ly",9.460730472e15);
   create_variable_ID("_AU",1.4959787066e11);
 
-  srand(time(NULL));
+
+
+
+	gettimeofday(&t1, NULL);
+	srand(t1.tv_usec * t1.tv_sec);
+	printf("RAND: %ld\n", t1.tv_usec * t1.tv_sec);
+//  srand(time(NULL));
 
 
 
