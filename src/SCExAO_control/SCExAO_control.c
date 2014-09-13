@@ -391,14 +391,13 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
     double tot00, tot01, tot10, tot11, tot;
     double xsig, ysig;
     long ttxpos, ttypos;
-    double gain = 1.0;
+    double gain = 0.1;
     char command[200];
+	int r; 
 
-    if(1==1)
-        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
-
-    else
-    {
+//        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
+  // exit(0);
+  
 
         ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 5000);
         xsize = data.image[ID].md[0].size[0];
@@ -457,11 +456,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 		sprintf(command, "pywfspztoffset %5.3f %5.3f\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
 		
          //	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
-
-        system(command);
+		printf("%s", command);
+        r = system(command);
 
         save_fits("imwfs", "!imwfs.fits");
-    }
+    
 
     return(0);
 }
