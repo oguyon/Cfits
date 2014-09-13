@@ -3107,7 +3107,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 				
                 for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                     data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
-exit(0);
+
                 // positive
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
 
