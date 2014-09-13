@@ -3008,6 +3008,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     
+	exit(0);
+
+
 
     printf("Importing DM response matrix channel shared memory ...\n");
 	fflush(stdout);
@@ -3042,7 +3045,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
-	exit(0);
+//	exit(0);
 
     sizearray[0] =  AOconf[loop].NBDMmodes;
     printf("size = %ld\n", sizearray[0]);
