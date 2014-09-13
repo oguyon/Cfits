@@ -2965,7 +2965,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         AOloopControl_InitializeMemory(0);
 
 
-	exit(0);
+
 
     if(fDelay==-1)
     {
@@ -2992,19 +2992,15 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
     sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
-
-
-
-
-
-
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
 
     printf("Importing DM response matrix channel shared memory ...\n");
+	fflush(stdout);
     aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
 
     printf("Importing WFS camera image shared memory ... \n");
+	fflush(stdout);
     aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
 
 
