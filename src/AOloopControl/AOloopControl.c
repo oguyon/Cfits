@@ -3066,6 +3066,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 	aoconfID_cmd_modesRM = create_2Dimage_ID("RMmodesloc", AOconf[loop].NBDMmodes, 1);
 	
+exit(0);
+
     for(iter=0; iter<NBiter; iter++)
     {
         NBloops = nbloop;
@@ -3105,7 +3107,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             }
 
 
-	exit(0);
+	//exit(0);
             for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
             {
 				printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
