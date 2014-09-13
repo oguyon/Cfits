@@ -3033,7 +3033,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     aoconfID_cmd_modesRM = create_image_ID("RMmodes", 1, sizearray, FLOAT, 1, 0);
 
 
-exit(0);
+
 
 
     IDrespM = create_3Dimage_ID("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
@@ -3090,7 +3090,7 @@ exit(0);
                 // positive
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
 
-
+exit(0);
 
                 set_DM_modesRM(loop);
                 usleep(delayus);
