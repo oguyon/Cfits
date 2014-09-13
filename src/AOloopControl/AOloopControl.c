@@ -3090,11 +3090,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 // positive
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
 
-exit(0);
+
 
                 set_DM_modesRM(loop);
                 usleep(delayus);
 
+
+				exit(0);
 
                 for(kk=0; kk<NbAve; kk++)
                 {
