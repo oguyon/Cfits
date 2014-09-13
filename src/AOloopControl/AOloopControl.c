@@ -2378,7 +2378,7 @@ int set_DM_modesRM(long loop)
   long i, j;
   float *arrayf;
 
-exit(0);
+
 
   arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
