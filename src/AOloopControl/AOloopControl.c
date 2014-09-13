@@ -1564,6 +1564,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
+		printf("SINGLE BUFFER\n");
+		fflush(stdout);
+			
         switch (atype) {
         case FLOAT :
             imcnt = 0;
