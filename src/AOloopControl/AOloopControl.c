@@ -950,7 +950,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     ID0 = image_ID("CPAmodes");
     
     IDfreq	= image_ID("cpamodesfreq");
-    list_image_ID();
+  //  list_image_ID();
     
     
     printf("  %ld %ld %ld\n", msize, msize, data.image[ID0].md[0].size[2]-1 );
@@ -3120,8 +3120,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 				fflush(stdout);
 				
 				printf("\n\n  aoconfID_cmd_modesRM = %ld   [%ld]\n", aoconfID_cmd_modesRM, AOconf[loop].NBDMmodes);
-				list_image_ID();
-				fflush(stdout);
+				//list_image_ID();
+				//fflush(stdout);
 				
                 for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                     data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
