@@ -1516,10 +1516,11 @@ int AOloopControl_InitializeMemory(int mode)
  * supports ring buffer
  * puts image from camera buffer aoconfID_WFS into aoconfID_WFS1 (supplied by user)
  *
- * i
+ * RM = 1 if response matrix
+ * 
  */
 
-int Average_cam_frames(long loop, long NbAve)
+int Average_cam_frames(long loop, long NbAve, int RM)
 {
     long imcnt;
     long ii;
@@ -1535,6 +1536,8 @@ int Average_cam_frames(long loop, long NbAve)
 
     atype = data.image[aoconfID_WFS].md[0].atype;
 
+
+	
     if(avcamarraysInit==0)
     {
         arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
@@ -1546,7 +1549,10 @@ int Average_cam_frames(long loop, long NbAve)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = 0.0;
 
-    AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+	if(RM==0)
+		AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+	else
+		AOconf[loop].RMstatus = 2; 
 
     NBcoadd = data.image[aoconfID_WFS].kw[3].value.numl;
     if(NBcoadd<1)
@@ -1614,9 +1620,10 @@ int Average_cam_frames(long loop, long NbAve)
     }
     else // ring buffer mode, only works with NbAve = 1
     {
+		
         while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
         {
-            usleep(50);
+            usleep(10);
             // do nothing, wait
         }
         slice = data.image[aoconfID_WFS].md[0].cnt1-1;
@@ -2482,7 +2489,7 @@ sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
         for(kk=0; kk<NBave; kk++)
         {
-            Average_cam_frames(loop, 1);
+            Average_cam_frames(loop, 1, 0);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
         }
@@ -2504,7 +2511,7 @@ sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
 
         for(kk=0; kk<NBave; kk++)
         {
-            Average_cam_frames(loop, 1);
+            Average_cam_frames(loop, 1, 0);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDneg].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
         }
@@ -2611,7 +2618,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     for(kk=0; kk<NBframes; kk++)
     {
-        Average_cam_frames(loop, 1);
+        Average_cam_frames(loop, 1, 0);
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
     }
@@ -3041,6 +3048,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
+	/// local arrays for image acquision
+	aoconfID_WFS0 = create_2Dimage_ID("RMwfs0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+	aoconfID_WFS1 = create_2Dimage_ID("RMwfs1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+	aoconfID_WFS2 = create_2Dimage_ID("RMwfs2", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+	
+	
+	
     for(iter=0; iter<NBiter; iter++)
     {
         NBloops = nbloop;
@@ -3100,7 +3114,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                 for(kk=0; kk<NbAve; kk++)
                 {
-                    Average_cam_frames(loop, 1);
+                    Average_cam_frames(loop, 1, 1);
 
 
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3121,7 +3135,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                 for(kk=0; kk<NbAve; kk++)
                 {
-                    Average_cam_frames(loop, 1);
+                    Average_cam_frames(loop, 1, 1);
 
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     {
@@ -3140,7 +3154,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         {
             printf("additional frame %ld [%ld/%ld]... ", kk, kc, RespMatNBframes+kc0max);
             fflush(stdout);
-            Average_cam_frames(loop, 1);
+            Average_cam_frames(loop, 1, 1);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
@@ -3310,7 +3324,7 @@ int AOcompute(long loop)
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
-    Average_cam_frames(loop, AOconf[loop].framesAve);
+    Average_cam_frames(loop, AOconf[loop].framesAve, 0);
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
 
