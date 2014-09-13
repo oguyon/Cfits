@@ -372,12 +372,16 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	ttxpos = (long) (SCExAO_DM_STAGE_Xpos - gain*100.0*(xsig/0.055));
 	ttypos = (long) (SCExAO_DM_STAGE_Ypos - gain*100.0*(ysig/0.055));
 	
-	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
+//	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
 
     save_fits("imwfs", "!imwfs.fits");
 
     return(0);
 }
+
+
+
+
 
 /** assumes imref has been loaded */
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
