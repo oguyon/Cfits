@@ -3012,12 +3012,14 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-	exit(0);
+
 
 
     sprintf(name, "DMmodes_%ld", loop);
     aoconfID_DMmodes = read_sharedmem_image(name);
 
+
+	exit(0);
 
     IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
     IDrmcumul = create_3Dimage_ID("RMcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
