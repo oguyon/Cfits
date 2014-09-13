@@ -1633,16 +1633,21 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         }
         else
         {
+			printf("wait...");
+			fflush(stdout);
             while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
             {
                 usleep(50);
                 // do nothing, wait
             }
+            printf("done Waiting\n");
+            fflush(stdout);
         }
 
-        slice = data.image[aoconfID_WFS].md[0].cnt1-1;
-        if(slice==-1)
-            slice = data.image[aoconfID_WFS].md[0].size[2]-1;
+        slice = data.image[aoconfID_WFS].md[0].cnt1;
+/*        if(slice==-1)
+            slice = data.image[aoconfID_WFS].md[0].size[2];
+*/
 
         //      printf("READING SLICE %ld\n", slice);
         switch (atype) {
