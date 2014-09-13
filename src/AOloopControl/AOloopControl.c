@@ -1537,7 +1537,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
-	printf("Average cam\n");
+	printf("Average cam  RM=%d\n", RM);
 	fflush(stdout);
 
 
