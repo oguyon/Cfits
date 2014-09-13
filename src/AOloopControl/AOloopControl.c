@@ -2378,13 +2378,16 @@ int set_DM_modesRM(long loop)
   long i, j;
   float *arrayf;
 
+exit(0);
+
   arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
 
 
-	printf("%ld %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes);
+/*	printf("%ld %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes);
 	fflush(stdout);
 	list_image_ID();
+*/
 
   for(j=0;j<AOconf[loop].sizeDM;j++)
     arrayf[j] = 0.0;
@@ -2400,8 +2403,6 @@ int set_DM_modesRM(long loop)
   memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
   data.image[aoconfID_DMRM].md[0].cnt0++;
   data.image[aoconfID_DMRM].md[0].write = 0;
-
-	exit(0);
 
   free(arrayf);
   AOconf[loop].DMupdatecnt ++;
