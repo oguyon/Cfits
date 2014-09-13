@@ -56,6 +56,9 @@ long SCExAO_DM_STAGE_Ypos = 0;
 long SCExAO_Pcam_Xpos = 59000;
 long SCExAO_Pcam_Ypos = 56000;
 
+float SCExAO_PZT_STAGE_Xpos = 5.0;
+float SCExAO_PZT_STAGE_Ypos = 5.0;
+
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -317,7 +320,7 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
 /** auto aligns tip-tilt by equalizing fluxes between quadrants */
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM()
 {
     long ID;
     long xsize, ysize;
@@ -328,7 +331,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	double gain = 1.0;
 
 
-    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 1000);
+    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 5000);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
@@ -372,12 +375,97 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 	ttxpos = (long) (SCExAO_DM_STAGE_Xpos - gain*100.0*(xsig/0.055));
 	ttypos = (long) (SCExAO_DM_STAGE_Ypos - gain*100.0*(ysig/0.055));
 	
-//	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
+	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
 
     save_fits("imwfs", "!imwfs.fits");
 
     return(0);
 }
+
+
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
+{
+    long ID;
+    long xsize, ysize;
+    long ii, jj;
+    double tot00, tot01, tot10, tot11, tot;
+    double xsig, ysig;
+    long ttxpos, ttypos;
+    double gain = 1.0;
+    char command[200];
+
+    if(1==1)
+        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
+
+    else
+    {
+
+        ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 5000);
+        xsize = data.image[ID].md[0].size[0];
+        ysize = data.image[ID].md[0].size[1];
+
+        printf("%ld x %ld image\n", xsize, ysize);
+
+        tot00 = 0.0;
+        tot01 = 0.0;
+        tot10 = 0.0;
+        tot11 = 0.0;
+
+        for(ii=0; ii<xsize/2; ii++)
+            for(jj=0; jj<ysize/2; jj++)
+                tot00 += data.image[ID].array.F[jj*xsize+ii];
+
+        for(ii=xsize/2; ii<xsize; ii++)
+            for(jj=0; jj<ysize/2; jj++)
+                tot10 += data.image[ID].array.F[jj*xsize+ii];
+
+        for(ii=0; ii<xsize/2; ii++)
+            for(jj=ysize/2; jj<ysize; jj++)
+                tot01 += data.image[ID].array.F[jj*xsize+ii];
+
+        for(ii=xsize/2; ii<xsize; ii++)
+            for(jj=ysize/2; jj<ysize; jj++)
+                tot11 += data.image[ID].array.F[jj*xsize+ii];
+
+        tot = tot00+tot10+tot01+tot11;
+        tot00 /= tot;
+        tot10 /= tot;
+        tot01 /= tot;
+        tot11 /= tot;
+
+        printf("  %6.4f   %6.4f\n", tot01, tot11);
+        printf("  %6.4f   %6.4f\n", tot00, tot10);
+
+        xsig = tot01-tot10;
+        ysig = tot11-tot00;
+        printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
+
+        /// 100 steps -> sig = 0.055 for modulation = 1.0
+        SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.13);
+        SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.13);
+
+		if(SCExAO_PZT_STAGE_Xpos<2.0)
+			SCExAO_PZT_STAGE_Xpos = 2.0;
+		if(SCExAO_PZT_STAGE_Xpos>8.0)
+			SCExAO_PZT_STAGE_Xpos = 8.0;
+
+ 		if(SCExAO_PZT_STAGE_Ypos<2.0)
+			SCExAO_PZT_STAGE_Ypos = 2.0;
+		if(SCExAO_PZT_STAGE_Ypos>8.0)
+			SCExAO_PZT_STAGE_Ypos = 8.0;
+
+		sprintf(command, "pywfspztoffset %5.3f %5.3f\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
+		
+         //	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
+
+        system(command);
+
+        save_fits("imwfs", "!imwfs.fits");
+    }
+
+    return(0);
+}
+
 
 
 
