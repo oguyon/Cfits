@@ -3116,7 +3116,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 set_DM_modesRM(loop);
                 usleep(delayus);
 
-		
+		exit(0);
 
 
                 for(kk=0; kk<NbAve; kk++)
