@@ -398,7 +398,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
   // exit(0);
   
-
+while(1)
+{
         ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 5000);
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
@@ -460,7 +461,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
         r = system(command);
 
         save_fits("imwfs", "!imwfs.fits");
-    
+}
 
     return(0);
 }
