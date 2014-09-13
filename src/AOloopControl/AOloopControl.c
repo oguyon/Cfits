@@ -2401,11 +2401,11 @@ int set_DM_modesRM(long loop)
   data.image[aoconfID_DMRM].md[0].cnt0++;
   data.image[aoconfID_DMRM].md[0].write = 0;
 
-	
+	exit(0);
 
   free(arrayf);
   AOconf[loop].DMupdatecnt ++;
-exit(0);
+
 
   return(0);
 }
