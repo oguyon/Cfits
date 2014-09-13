@@ -3041,6 +3041,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     IDrefi = create_2Dimage_ID("REFiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
+
+	exit(0);
+
     sizearray[0] =  AOconf[loop].NBDMmodes;
     printf("size = %ld\n", sizearray[0]);
     fflush(stdout);
@@ -3066,7 +3069,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 	aoconfID_cmd_modesRM = create_2Dimage_ID("RMmodesloc", AOconf[loop].NBDMmodes, 1);
 	
-exit(0);
+//exit(0);
 
     for(iter=0; iter<NBiter; iter++)
     {
