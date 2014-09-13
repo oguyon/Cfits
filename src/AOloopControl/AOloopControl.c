@@ -3101,7 +3101,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 				printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
 				fflush(stdout);
 				
-				printf("\n\n  aoconfID_cmd_modesRM = %ld\n", aoconfID_cmd_modesRM);
+				printf("\n\n  aoconfID_cmd_modesRM = %ld   [%ld]\n", aoconfID_cmd_modesRM, AOconf[loop].NBDMmodes);
 				list_image_ID();
 				fflush(stdout);
 				
