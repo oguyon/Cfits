@@ -3105,7 +3105,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             }
 
 
-
+	exit(0);
             for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
             {
 				printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
@@ -3121,7 +3121,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 // positive
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
 
-		exit(0);
+	
 				
                 set_DM_modesRM(loop);
                 usleep(delayus);
