@@ -81,7 +81,7 @@ long aoconfIDlog1 = -1;
 
 
 
-
+int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
 
 
 
@@ -1517,7 +1517,7 @@ int AOloopControl_InitializeMemory(int mode)
  * puts image from camera buffer aoconfID_WFS into aoconfID_WFS1 (supplied by user)
  *
  * RM = 1 if response matrix
- * 
+ *
  */
 
 int Average_cam_frames(long loop, long NbAve, int RM)
@@ -1537,7 +1537,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
-	
+
     if(avcamarraysInit==0)
     {
         arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
@@ -1549,10 +1549,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = 0.0;
 
-	if(RM==0)
-		AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
-	else
-		AOconf[loop].RMstatus = 2; 
+    if(RM==0)
+        AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+    else
+        AOconf[loop].RMstatus = 2;
 
     NBcoadd = data.image[aoconfID_WFS].kw[3].value.numl;
     if(NBcoadd<1)
@@ -1620,12 +1620,23 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     }
     else // ring buffer mode, only works with NbAve = 1
     {
-		
-        while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+        if(RM==0)
         {
-            usleep(10);
-            // do nothing, wait
+            while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+            {
+                usleep(50);
+                // do nothing, wait
+            }
         }
+        else
+        {
+            while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+            {
+                usleep(50);
+                // do nothing, wait
+            }
+        }
+
         slice = data.image[aoconfID_WFS].md[0].cnt1-1;
         if(slice==-1)
             slice = data.image[aoconfID_WFS].md[0].size[2]-1;
@@ -1649,9 +1660,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             exit(0);
             break;
         }
-
+ if(RM==0)
         AOconf[loop].WFScnt = data.image[aoconfID_WFS].md[0].cnt0;
-
+else
+	AOconf[loop].WFScntRM = data.image[aoconfID_WFS].md[0].cnt0;
     }
     AOconf[loop].status = 3;  // 3: NORMALIZE WFS IMAGE
 
@@ -1698,6 +1710,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     return(0);
 }
+
 
 
 
@@ -2978,7 +2991,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-
+	RMACQUISITION = 1;
 
 
     if(fDelay==-1)

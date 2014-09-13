@@ -28,6 +28,7 @@ typedef struct
     long sizeyWFS;
     long sizeWFS;
     long long WFScnt;
+   long long WFScntRM;
 
     char DMname[80];
     char DMnameRM[80];
