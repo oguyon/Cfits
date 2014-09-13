@@ -3094,6 +3094,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 fflush(stdout);
             }
 
+		exit(0);
+
+
             for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
             {
 				printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
@@ -3111,7 +3114,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 usleep(delayus);
 
 
-				exit(0);
 
                 for(kk=0; kk<NbAve; kk++)
                 {
