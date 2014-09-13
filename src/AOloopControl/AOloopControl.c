@@ -2993,7 +2993,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     fflush(stdout);
     sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-    //exit(0);
+    exit(0);
 
     printf("Importing DM response matrix channel shared memory ...\n");
 	fflush(stdout);
