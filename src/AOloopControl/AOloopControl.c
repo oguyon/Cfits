@@ -2382,6 +2382,10 @@ int set_DM_modesRM(long loop)
 
 
 
+	printf("%ld %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes);
+	fflush(stdout);
+	list_image_ID();
+
   for(j=0;j<AOconf[loop].sizeDM;j++)
     arrayf[j] = 0.0;
 
@@ -2397,9 +2401,11 @@ int set_DM_modesRM(long loop)
   data.image[aoconfID_DMRM].md[0].cnt0++;
   data.image[aoconfID_DMRM].md[0].write = 0;
 
+	
+
   free(arrayf);
   AOconf[loop].DMupdatecnt ++;
-
+exit(0);
 
   return(0);
 }
@@ -3053,7 +3059,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	aoconfID_WFS0 = create_2Dimage_ID("RMwfs0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 	aoconfID_WFS1 = create_2Dimage_ID("RMwfs1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 	aoconfID_WFS2 = create_2Dimage_ID("RMwfs2", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-	
+
+	//aoconfID_DMRM = create_2Dimage_ID("loc", AOconf[loop].NBDMmodes, 1);
+//AOconf[loop].DMnameRM
+
 	aoconfID_cmd_modesRM = create_2Dimage_ID("RMmodesloc", AOconf[loop].NBDMmodes, 1);
 	
     for(iter=0; iter<NBiter; iter++)
