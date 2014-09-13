@@ -2965,7 +2965,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         AOloopControl_InitializeMemory(0);
 
 
-
+	exit(0);
 
     if(fDelay==-1)
     {
