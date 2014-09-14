@@ -1537,8 +1537,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
-	printf("Average cam  RM=%d\n", RM);
-	fflush(stdout);
+	//printf("Average cam  RM=%d\n", RM);
+	//fflush(stdout);
 
 
     if(avcamarraysInit==0)
@@ -1719,8 +1719,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         data.image[aoconfID_WFS1].md[0].write = 0;
     }
     
-	printf("Average cam DONE\n");
-	fflush(stdout);
+	//printf("Average cam DONE\n");
+	//fflush(stdout);
 
 
     return(0);
