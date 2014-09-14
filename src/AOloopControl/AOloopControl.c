@@ -1084,10 +1084,15 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
   int atype;
   long *sizeout;
   long long cnt0;
+  long IDmask;
+  long sizeoutxy;
+  long ii;
+  
   
   sizeout = (long*) malloc(sizeof(long)*2);
   sizeout[0] = size_x;
   sizeout[1] = size_y;
+	sizeoutxy = size_x*size_y;
 
   IDin = image_ID(in_name);
   atype = data.image[IDin].md[0].atype;
@@ -1095,15 +1100,26 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
   // Create shared memory output image 
   IDout = create_image_ID(out_name, 2, sizeout, atype, 1, 0);
   
+  // Check if there is a mask
+  IDmask = image_ID("csmask");
+	if(IDmask!=-1)
+	if((data.image[IDmask].md[0].size[0]!=size_x)||(data.image[IDmask].md[0].size[1]!=size_y))
+	{
+		printf("ERROR: csmask has wrong size\n");
+		exit(0);
+	}
+  
+  
   cnt0 = -1;
 
   switch (atype) {
   case USHORT :
     while(1)
       {
-	usleep(100);
+	usleep(10);
 	if(data.image[IDin].md[0].cnt0!=cnt0)
 	  {
+		data.image[IDout].md[0].write = 1;
 	    cnt0 = data.image[IDin].md[0].cnt0;
 	    for(iiout=0; iiout<size_x; iiout++)
 	      for(jjout=0; jjout<size_y; jjout++)
@@ -1112,16 +1128,22 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
 		  jjin = ystart + jjout;
 		  data.image[IDout].array.U[jjout*size_x+iiout] = data.image[IDin].array.U[jjin*data.image[IDin].md[0].size[0]+iiin];
 		}
+		if(IDmask!=-1)
+			for(ii=0;ii<sizeoutxy;ii++)
+				data.image[IDout].array.U[ii] *= (int) data.image[IDmask].array.F[ii];
+		
 	    data.image[IDout].md[0].cnt0 = cnt0;
+		data.image[IDout].md[0].write = 0;
 	  }
       }
     break;
   case FLOAT :
     while(1)
       {
-	usleep(100);
+	usleep(50);
 	if(data.image[IDin].md[0].cnt0!=cnt0)
 	  {
+		data.image[IDout].md[0].write = 1;
 	    cnt0 = data.image[IDin].md[0].cnt0;
 	    for(iiout=0; iiout<size_x; iiout++)
 	      for(jjout=0; jjout<size_y; jjout++)
@@ -1130,7 +1152,11 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
 		  jjin = ystart + jjout;
 		  data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
 		}
+		if(IDmask!=-1)
+			for(ii=0;ii<sizeoutxy;ii++)
+				data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
 	    data.image[IDout].md[0].cnt0 = cnt0;
+		data.image[IDout].md[0].write = 0;
 	  }
       }
     break;
