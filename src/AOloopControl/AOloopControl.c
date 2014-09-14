@@ -1363,7 +1363,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     matrix1 = gsl_matrix_alloc (m, m);
     matrix2 = gsl_matrix_alloc (m, m);
     arraysizetmp[0] = AOconf[loop].sizexWFS;
-    arraysizetmp[1] = AOconf[loop].sizexWFS;
+    arraysizetmp[1] = AOconf[loop].sizeyWFS;
     arraysizetmp[2] = m;
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, 3, arraysizetmp, FLOAT, 0, 0);
  
