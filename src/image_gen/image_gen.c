@@ -1421,7 +1421,7 @@ long make_cluster(char *ID_name, long l1, long l2, char *options)
       hjj = 3*naxes[1]/4;
     }
 
-  srand(time(NULL));  
+ // srand(time(NULL));  
   i = 0;
   while(i<nb_star)
       { 

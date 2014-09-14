@@ -334,227 +334,232 @@ int read_keyword_alone(char* file_name, char* KEYWORD)
 }
 
 int data_type_code(int bitpix)
-{ 
-  int code;
-  /*
-    bitpix      Datatype             typecode    Mnemonic
-    1           bit, X                   1        TBIT
-    8           byte, B                 11        TBYTE
-                logical, L              14        TLOGICAL
-                ASCII character, A      16        TSTRING
-    16          short integer, I        21        TSHORT
-    32          integer, J              41        TLONG
-   -32          real, E                 42        TFLOAT
-   -64          double precision, D     82        TDOUBLE
-                complex, C              83        TCOMPLEX
-                double complex, M      163        TDBLCOMPLEX
-                */
-  code = 0;
-  if (bitpix==1) code=1;
-  if (bitpix==8) code=11;
-  if (bitpix==16) code=21;
-  if (bitpix==32) code=41;
-  if (bitpix==-32) code=42;
-  if (bitpix==-64) code=82;
-  return(code);
+{
+    int code;
+    /*
+      bitpix      Datatype             typecode    Mnemonic
+      1           bit, X                   1        TBIT
+      8           byte, B                 11        TBYTE
+                  logical, L              14        TLOGICAL
+                  ASCII character, A      16        TSTRING
+      16          short integer, I        21        TSHORT
+      32          integer, J              41        TLONG
+     -32          real, E                 42        TFLOAT
+     -64          double precision, D     82        TDOUBLE
+                  complex, C              83        TCOMPLEX
+                  double complex, M      163        TDBLCOMPLEX
+                  */
+    code = 0;
+    if (bitpix==1) code=1;
+    if (bitpix==8) code=11;
+    if (bitpix==16) code=21;
+    if (bitpix==32) code=41;
+    if (bitpix==-32) code=42;
+    if (bitpix==-64) code=82;
+    return(code);
 }
 
 long load_fits(char *file_name, char ID_name[400])
 {
-  fitsfile *fptr = NULL;       /* pointer to the FITS file; defined in fitsio.h */
-  int nulval, anynul,bitpix;
-  long bitpixl = 0;
-  char keyword[SBUFFERSIZE];
-  char comment[SBUFFERSIZE];
-  char errstr[SBUFFERSIZE];
-  long  fpixel = 1, nelements;
-  long naxis = 0;
-  long naxes[3];
-  long ID = -1;
-  double bscale;
-  double bzero;
-  long i;
-  unsigned char *barray = NULL;
-  long *larray = NULL;
-  unsigned short *sarray = NULL;
-  long ii;
-  long NDR=1; /* non-destructive reads */
-  int n;
+    fitsfile *fptr = NULL;       /* pointer to the FITS file; defined in fitsio.h */
+    int nulval, anynul,bitpix;
+    long bitpixl = 0;
+    char keyword[SBUFFERSIZE];
+    char comment[SBUFFERSIZE];
+    char errstr[SBUFFERSIZE];
+    long  fpixel = 1, nelements;
+    long naxis = 0;
+    long naxes[3];
+    long ID = -1;
+    double bscale;
+    double bzero;
+    long i;
+    unsigned char *barray = NULL;
+    long *larray = NULL;
+    unsigned short *sarray = NULL;
+    long ii;
+    long NDR=1; /* non-destructive reads */
+    int n;
 
-  int LOAD_FITS_ERROR = 0;
+    int LOAD_FITS_ERROR = 0;
 
-  nulval = 0;
-  anynul = 0;
-  bscale = 1;
-  bzero = 0;
+    nulval = 0;
+    anynul = 0;
+    bscale = 1;
+    bzero = 0;
 
-  naxes[0] = 0;
-  naxes[1] = 0;
-  naxes[2] = 0;
-  
-  if (fits_open_file(&fptr,file_name, READONLY, &FITSIO_status))
+    naxes[0] = 0;
+    naxes[1] = 0;
+    naxes[2] = 0;
+
+    if (fits_open_file(&fptr,file_name, READONLY, &FITSIO_status))
     {
-      fprintf(stderr,"%c[%d;%dm ERROR: load_fits: cannot read FITS file \"%s\" %c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
-      check_FITSIO_status(__FILE__,__func__,__LINE__,1);
-      LOAD_FITS_ERROR = 1;
-      ID = -1;
+        fprintf(stderr,"%c[%d;%dm ERROR: load_fits: cannot read FITS file \"%s\" %c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
+        check_FITSIO_status(__FILE__,__func__,__LINE__,1);
+        LOAD_FITS_ERROR = 1;
+        ID = -1;
     }
-  else
+    else
     {
-      fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
-      if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
-	fprintf(stderr,"Error reading keyword \"NAXIS\" in file \"%s\"\n",file_name);
-      for(i=0;i<naxis;i++)
-	{
-	  n = snprintf(keyword,SBUFFERSIZE,"NAXIS%ld",i+1);
-	  if(n >= SBUFFERSIZE) 
-	    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-	  fits_read_key(fptr, TLONG, keyword, &naxes[i], comment, &FITSIO_status);
-	  if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
-	    fprintf(stderr,"Error reading keyword \"%s\" in file \"%s\"\n",keyword,file_name);
-	}
-      fits_read_key(fptr, TLONG, "BITPIX", &bitpixl, comment, &FITSIO_status);    
-      if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
-	fprintf(stderr,"Error reading keyword \"BITPIX\" in file \"%s\"\n",file_name);
-      bitpix = (int) bitpixl;
-      fits_read_key(fptr, TDOUBLE, "BSCALE", &bscale, comment, &FITSIO_status); 
-      if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
-	{
-	  //fprintf(stderr,"Error reading keyword \"BSCALE\" in file \"%s\"\n",file_name);
-	  bscale = 1.0;
-	}
-      fits_read_key(fptr, TDOUBLE, "BZERO", &bzero, comment, &FITSIO_status);
-      if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
-	{
-	  //fprintf(stderr,"Error reading keyword \"BZERO\" in file \"%s\"\n",file_name);
-	  bzero = 0.0;
-	}
-      //      printf("bzero = %lf, bscale = %lf\n",bzero,bscale);
-      
-      /*      fits_set_bscale(fptr, 1.0, 0.0, &status);
-	      if (bs!=0)
-	      bscale = 1.0;
-	      else
-	      fits_read_key(fptr, TDOUBLE, "BSCALE", &bscale, comment, &status);
-	      if (bz!=0)
-	      bzero = 0.0;
-	      else
-	      fits_read_key(fptr, TDOUBLE, "BZERO", &bzero, comment, &status);
-      */   
-      fits_set_bscale(fptr, bscale, bzero, &FITSIO_status);
-      check_FITSIO_status(__FILE__,__func__,__LINE__,1);
+        fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
+            fprintf(stderr,"Error reading keyword \"NAXIS\" in file \"%s\"\n",file_name);
+        for(i=0; i<naxis; i++)
+        {
+            n = snprintf(keyword,SBUFFERSIZE,"NAXIS%ld",i+1);
+            if(n >= SBUFFERSIZE)
+                printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            fits_read_key(fptr, TLONG, keyword, &naxes[i], comment, &FITSIO_status);
+            if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
+                fprintf(stderr,"Error reading keyword \"%s\" in file \"%s\"\n",keyword,file_name);
+        }
+        fits_read_key(fptr, TLONG, "BITPIX", &bitpixl, comment, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)==1)
+            fprintf(stderr,"Error reading keyword \"BITPIX\" in file \"%s\"\n",file_name);
+        bitpix = (int) bitpixl;
+        fits_read_key(fptr, TDOUBLE, "BSCALE", &bscale, comment, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
+        {
+            //fprintf(stderr,"Error reading keyword \"BSCALE\" in file \"%s\"\n",file_name);
+            bscale = 1.0;
+        }
+        fits_read_key(fptr, TDOUBLE, "BZERO", &bzero, comment, &FITSIO_status);
+        if(check_FITSIO_status(__FILE__,__func__,__LINE__,0)==1)
+        {
+            //fprintf(stderr,"Error reading keyword \"BZERO\" in file \"%s\"\n",file_name);
+            bzero = 0.0;
+        }
+        //      printf("bzero = %lf, bscale = %lf\n",bzero,bscale);
 
-      if(1)
-	{
-	  printf("[%ld",naxes[0]);
-	  for(i=1;i<naxis;i++)
-	    printf(",%ld",naxes[i]);
-	  printf("] %d %f %f\n",bitpix,bscale,bzero);
-	  fflush(stdout);
-	}
+        /*      fits_set_bscale(fptr, 1.0, 0.0, &status);
+            if (bs!=0)
+            bscale = 1.0;
+            else
+            fits_read_key(fptr, TDOUBLE, "BSCALE", &bscale, comment, &status);
+            if (bz!=0)
+            bzero = 0.0;
+            else
+            fits_read_key(fptr, TDOUBLE, "BZERO", &bzero, comment, &status);
+        */
+        fits_set_bscale(fptr, bscale, bzero, &FITSIO_status);
+        check_FITSIO_status(__FILE__,__func__,__LINE__,1);
 
-      nelements = 1;
-      for(i=0;i<naxis;i++)
-	nelements*=naxes[i];
-      
-      /* bitpix = -32  TFLOAT */
-      if(bitpix == -32){
-	//tp("1.0");
-	ID = create_image_ID(ID_name, naxis, naxes, FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
-	//tp("2.0");
-	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.F, &anynul, &FITSIO_status); 
-	//tp("3.0");
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
-	//	tp("3.0");
-	fits_close_file (fptr, &FITSIO_status);
-	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-      }
-      
-      /* bitpix = -64  TDOUBLE */
-      if(bitpix == -64){
-	ID = create_image_ID(ID_name, naxis, naxes, DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
-	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.D , &anynul, &FITSIO_status); 
-	if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1)!=0)
-	  fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
-	fits_close_file (fptr, &FITSIO_status);
-	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-      }
-      
-      /* bitpix = 16   TSHORT */ 
-      if(bitpix == 16){
-	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
-	sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);	
-	if(sarray==NULL)
-	  {
-	    printERROR(__FILE__, __func__, __LINE__, "malloc error");
-	    exit(0);
-	  }
-	//	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status); 
-	fits_read_img(fptr, 20, fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
-	
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  {
-	    fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);	    
-	  }
-	fits_close_file (fptr, &FITSIO_status);
-	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-	for (ii = 0; ii < nelements; ii++)
-	  data.image[ID].array.F[ii] = 1.0*sarray[ii];
-	free(sarray);
-	sarray = NULL;
-      }
-      
-      
-      /* bitpix = 32   TLONG */ 
-      if(bitpix == 32){
-	fits_read_key(fptr, TLONG, "NDR", &NDR, comment, &FITSIO_status);
-	if(check_FITSIO_status(__FILE__, __func__, __LINE__, 0)==1)
-	  NDR = 1;
-	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
-	larray = (long*) malloc(sizeof(long)*nelements);
-	if(larray==NULL)
-	  {
-	    printERROR(__FILE__,__func__,__LINE__,"malloc error");
-	    exit(0);
-	  }
-	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, larray, &anynul, &FITSIO_status); 
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	  fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
-	fits_close_file (fptr, &FITSIO_status);
-	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-	
-	for (ii = 0; ii < nelements; ii++) 
-	  data.image[ID].array.F[ii] = ((1.0*larray[ii]*bscale + bzero)/NDR); 
-	free(larray);
-	larray = NULL;
-      }
-      
-      /* bitpix = 8   TBYTE */ 
-      if(bitpix == 8){
-	ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
-	barray = (unsigned char*) malloc(sizeof(unsigned char)*naxes[1]*naxes[0]);
-	if(barray==NULL)
-	  {
-	    printERROR(__FILE__, __func__, __LINE__, "malloc error");
-	    exit(0);
-	  }
-	
-	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, barray, &anynul, &FITSIO_status); 
-	if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
-	   fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
-	fits_close_file (fptr, &FITSIO_status);
-	check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-	
-	for (ii = 0; ii < nelements; ii++)
-	  data.image[ID].array.F[ii] = (1.0*barray[ii]*bscale+bzero); 
-	free(barray);
-	barray = NULL;
-      }
+        if(1)
+        {
+            printf("[%ld",naxes[0]);
+            for(i=1; i<naxis; i++)
+                printf(",%ld",naxes[i]);
+            printf("] %d %f %f\n",bitpix,bscale,bzero);
+            fflush(stdout);
+        }
+
+        nelements = 1;
+        for(i=0; i<naxis; i++)
+            nelements*=naxes[i];
+
+        /* bitpix = -32  TFLOAT */
+        if(bitpix == -32) {
+            //tp("1.0");
+            ID = create_image_ID(ID_name, naxis, naxes, FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
+            //tp("2.0");
+            fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.F, &anynul, &FITSIO_status);
+            //tp("3.0");
+            if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+                fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
+            //	tp("3.0");
+            fits_close_file (fptr, &FITSIO_status);
+            check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
+        }
+
+        /* bitpix = -64  TDOUBLE */
+        if(bitpix == -64) {
+            ID = create_image_ID(ID_name, naxis, naxes, DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
+            fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, data.image[ID].array.D , &anynul, &FITSIO_status);
+            if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1)!=0)
+                fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
+            fits_close_file (fptr, &FITSIO_status);
+            check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
+        }
+
+        /* bitpix = 16   TSHORT */
+        if(bitpix == 16) {
+            ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+            sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);
+            if(sarray==NULL)
+            {
+                printERROR(__FILE__, __func__, __LINE__, "malloc error");
+                exit(0);
+            }
+            //	fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
+            fits_read_img(fptr, 20, fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
+
+            if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+            {
+                fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
+            }
+            fits_close_file (fptr, &FITSIO_status);
+            check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
+            for (ii = 0; ii < nelements; ii++)
+                data.image[ID].array.F[ii] = 1.0*sarray[ii];
+            free(sarray);
+            sarray = NULL;
+        }
+
+
+        /* bitpix = 32   TLONG */
+        if(bitpix == 32) {
+            fits_read_key(fptr, TLONG, "NDR", &NDR, comment, &FITSIO_status);
+            if(check_FITSIO_status(__FILE__, __func__, __LINE__, 0)==1)
+                NDR = 1;
+            ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+            larray = (long*) malloc(sizeof(long)*nelements);
+            if(larray==NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"malloc error");
+                exit(0);
+            }
+            fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, larray, &anynul, &FITSIO_status);
+            if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+                fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
+            fits_close_file (fptr, &FITSIO_status);
+            check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
+	//printf("bzero = %lf\n", bzero);
+			bzero = 0.0;
+            for (ii = 0; ii < nelements; ii++)
+                data.image[ID].array.F[ii] = ((1.0*larray[ii]*bscale + bzero)/NDR);
+            free(larray);
+            larray = NULL;
+        }
+
+        /* bitpix = 8   TBYTE */
+        if(bitpix == 8) {
+            ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+            barray = (unsigned char*) malloc(sizeof(unsigned char)*naxes[1]*naxes[0]);
+            if(barray==NULL)
+            {
+                printERROR(__FILE__, __func__, __LINE__, "malloc error");
+                exit(0);
+            }
+
+            fits_read_img(fptr, data_type_code(bitpix), fpixel, nelements, &nulval, barray, &anynul, &FITSIO_status);
+            if(check_FITSIO_status(__FILE__,__func__,__LINE__,1)!=0)
+                fprintf(stderr,"%c[%d;%dm File name = \"%s\"%c[%d;m\n", (char) 27, 1, 31, file_name, (char) 27, 0);
+            fits_close_file (fptr, &FITSIO_status);
+            check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
+
+            for (ii = 0; ii < nelements; ii++)
+                data.image[ID].array.F[ii] = (1.0*barray[ii]*bscale+bzero);
+            free(barray);
+            barray = NULL;
+        }
     }
 
-  return(ID);
+    return(ID);
 }
+
+
+
+
 
 /* saves an image in a double format */
 
