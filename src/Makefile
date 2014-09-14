@@ -105,8 +105,8 @@ cfits_DEPENDENCIES = SCExAO_control/libscexaocontrol.la \
 	cudacomp/libcudacomp.la AtmosphericTurbulence/libatmturb.la \
 	psf/libpsf.la AOloopControl/libaoloopcontrol.la \
 	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
-	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
-	OptSystProp/liboptsystprop.la \
+	img_reduce/libimgreduce.la image_format/libimageformat.la \
+	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \
@@ -377,6 +377,7 @@ cfits_CPPFLAGS = -I/CfitsDev/Cfits-src/src \
 	-I/CfitsDev/Cfits-src/src/AOloopControl \
 	-I/CfitsDev/Cfits-src/src/AOsystSim \
 	-I/CfitsDev/Cfits-src/src/SCExAO_DM \
+	-I/CfitsDev/Cfits-src/src/img_reduce \
 	-I/CfitsDev/Cfits-src/src/image_format \
 	-I/CfitsDev/Cfits-src/src/PIAACMCsimul \
 	-I/CfitsDev/Cfits-src/src/OptSystProp \
@@ -401,17 +402,17 @@ AM_LFLAGS = -i
 noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
 SUBDIRS = SCExAO_control cudacomp AtmosphericTurbulence psf \
-	AOloopControl AOsystSim SCExAO_DM image_format PIAACMCsimul \
-	OptSystProp OpticsMaterials coronagraphs ZernikePolyn \
-	WFpropagate image_basic image_filter kdtree image_gen \
-	linopt_imtools statistic fft info COREMOD_arith COREMOD_iofits \
-	COREMOD_memory COREMOD_tools 00CORE
+	AOloopControl AOsystSim SCExAO_DM img_reduce image_format \
+	PIAACMCsimul OptSystProp OpticsMaterials coronagraphs \
+	ZernikePolyn WFpropagate image_basic image_filter kdtree \
+	image_gen linopt_imtools statistic fft info COREMOD_arith \
+	COREMOD_iofits COREMOD_memory COREMOD_tools 00CORE
 cfits_LDADD = SCExAO_control/libscexaocontrol.la \
 	cudacomp/libcudacomp.la AtmosphericTurbulence/libatmturb.la \
 	psf/libpsf.la AOloopControl/libaoloopcontrol.la \
 	AOsystSim/libaosystsim.la SCExAO_DM/libscexaodm.la \
-	image_format/libimageformat.la PIAACMCsimul/libpiaacmcsimul.la \
-	OptSystProp/liboptsystprop.la \
+	img_reduce/libimgreduce.la image_format/libimageformat.la \
+	PIAACMCsimul/libpiaacmcsimul.la OptSystProp/liboptsystprop.la \
 	OpticsMaterials/libopticsmaterials.la \
 	coronagraphs/libcoronagraphs.la \
 	ZernikePolyn/libzernikepolyn.la WFpropagate/libwfpropagate.la \

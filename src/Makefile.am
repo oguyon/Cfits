@@ -55,6 +55,10 @@ SUBDIRS += SCExAO_DM
 cfits_LDADD += SCExAO_DM/libscexaodm.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/SCExAO_DM
 
+SUBDIRS += img_reduce
+cfits_LDADD += img_reduce/libimgreduce.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/img_reduce
+
 SUBDIRS += image_format
 cfits_LDADD += image_format/libimageformat.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_format

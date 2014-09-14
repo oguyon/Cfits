@@ -506,6 +506,7 @@ long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)
   return(ID_out);
 }
 
+
 long basic_contract3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
 {
   long ID;
@@ -578,7 +579,7 @@ long basic_contract3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)
 	      for (k = 0; k < n3; k++)
 		{
 		  data.image[ID_out].array.CD[kk*naxes_out[0]*naxes_out[1]+jj*naxes_out[0]+ii].re += data.image[ID].array.CD[(kk*n3+k)*naxes[0]*naxes[1]+(jj*n2+j)*naxes[0]+ii*n1+i].re;
-		  data.image[ID_out].array.CD[kk*naxes_out[0]*naxes_out[1]+jj*naxes_out[0]+ii].im += data.image[ID].array.CD[(kk*n3+k)*naxes[0]*naxes[1]+(jj*n2+j)*naxes[0]+ii*n1+i].im;		  
+		  data.image[ID_out].array.CD[kk*naxes_out[0]*naxes_out[1]+jj*naxes_out[0]+ii].im += data.image[ID].array.CD[(kk*n3+k)*naxes[0]*naxes[1]+(jj*n2+j)*naxes[0]+ii*n1+i].im;
 		}
     break;
   }

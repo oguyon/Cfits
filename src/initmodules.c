@@ -22,6 +22,7 @@ int init_modules()
   init_OptSystProp();
   init_PIAACMCsimul();
   init_image_format();
+  init_img_reduce();
   init_SCExAO_DM();
   init_AOsystSim();
   init_AOloopControl();
@@ -29,6 +30,6 @@ int init_modules()
   init_AtmosphericTurbulence();
   init_CUDACOMP();
   init_SCExAO_control();
-
+ 
   return 0;
 }
