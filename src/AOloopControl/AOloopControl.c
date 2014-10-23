@@ -2416,8 +2416,10 @@ int set_DM_modes(long loop)
     }
     else
     {
+		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
         GPU_loop_MultMat_execute(1);
+        #endif
     }
     AOconf[loop].DMupdatecnt ++;
 
@@ -3431,8 +3433,10 @@ int AOcompute(long loop)
     }
     else
     {
+		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0);
         GPU_loop_MultMat_execute(0);
+		#endif
     }
 
     AOconf[loop].status = 6; //  MULTIPLYING BY GAINS

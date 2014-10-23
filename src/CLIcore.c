@@ -60,7 +60,7 @@
 
 
 int Verbose = 0; 
-int Nofifo = 0; 
+int Nofifo = 1; 
 int Listimfile = 0;
 DATA data;
 
@@ -1219,7 +1219,7 @@ int command_line( int argc, char **argv)
     {
       /* These options set a flag. */
       {"verbose", no_argument,       &Verbose, 1},
-      {"nofifo", no_argument,       &Nofifo, 1},
+  //    {"nofifo", no_argument,       &Nofifo, 1},
       {"listimf", no_argument,       &Listimfile, 1},
       /* These options don't set a flag.
 	 We distinguish them by their indices. */
@@ -1320,7 +1320,7 @@ int command_line( int argc, char **argv)
   
 	if(Nofifo == 1)
 	{
-		printf("No fifo\n");
+		//printf("No fifo\n");
 		data.fifoON = 0;
 	}
 	

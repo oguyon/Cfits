@@ -39,6 +39,11 @@ SUBDIRS += AtmosphericTurbulence
 cfits_LDADD += AtmosphericTurbulence/libatmturb.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
 
+SUBDIRS += AtmosphereModel
+cfits_LDADD += AtmosphereModel/libatmospheremodel.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
+
+
 SUBDIRS += psf
 cfits_LDADD += psf/libpsf.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/psf

@@ -10,6 +10,9 @@
 
 
 
+
+
+
 //
 //
 // phase offset as function of mask thickness and lambda
@@ -20,9 +23,15 @@
 // 3: PMGI
 // 4: PMMA
 // 5: N2 (gas, 1 atm)
+// 6: O2
+// 7: Ar
+// 8: He
+// 9: H2
 // 10: pure H2O vapor (1 atm)
+// 11: CO2
+// 12: O
 
-double OPTICSMATERIALS_n( int material, double lambda)
+double OPTICSMATERIALS_n(int material, double lambda)
 {
     double n;
     long i, i1, i2;
@@ -1278,12 +1287,18 @@ double OPTICSMATERIALS_n( int material, double lambda)
 	
 	// ref: Ciddor, 20 March 1996 @ Vol. 35, No. 9 @ APPLIED OPTICS
 	// ftp://adk.asrc.cestm.albany.edu/pub/sergey/KiedSier/Ciddor.%20Refractive%20index%20of%20air.pdf
+	// 20 C , 1333 Pa
 	case 10 : // H2O vapor
 		w0 = 295.235;
 		w1  = 2.6422;
 		w2 = 20.032380;
 		w3 = 0.004028;
 		n = 1.0 + 1.0e-8*1.022*(w0 + w1/lambdaum/lambdaum + w2/lambdaum/lambdaum/lambdaum/lambdaum + w3/lambdaum/lambdaum/lambdaum/lambdaum/lambdaum/lambdaum);
+	// convert to STP (0 C, 1 atm)
+	LL = (n*n-1)/(n*n+2);
+		LL *= 293.15/273.15;
+		LL *= 101325.0/1333.0;
+		n = sqrt((2.0*LL+1)/(1.0-LL));
 	//	printf("[n=%f] ", n);
 		break;
 
@@ -1298,6 +1313,7 @@ double OPTICSMATERIALS_n( int material, double lambda)
 		//LL *= 293.15/273.15;
 		//n = sqrt((2.0*LL+1)/(1.0-LL));
 		break;
+
 
     // using 2 references:
 	// ref: Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003
