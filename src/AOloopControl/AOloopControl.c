@@ -1911,7 +1911,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 		if((fp=fopen("./conf/conf_loopname.txt","r"))==NULL)
 		{	
-			printf("ERROR: file conf_loopname.txt missing\n");
+			printf("ERROR: file ./conf/conf_loopname.txt missing\n");
 			exit(0);
 		}
 		r = fscanf(fp, "%s", content);
