@@ -2189,6 +2189,8 @@ int list_image_ID_ofp(FILE *fo)
 	fflush(stdout);
 
   sizeb = compute_image_memory();
+	printf("--- test 01 ---\n");
+	fflush(stdout);
 
   clock_gettime(CLOCK_REALTIME, &timenow);
 
