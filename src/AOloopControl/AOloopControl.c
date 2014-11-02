@@ -2095,9 +2095,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 		// VERIFY DM MODES SIZE
         vOK = 0;
-        if(aoconfID_DMmodes == -1)
+        if(aoconfID_DMmodes != -1)
         {
-           
                 vOK = 1;
                 if(data.image[aoconfID_DMmodes].md[0].naxis != 3)
                 {
