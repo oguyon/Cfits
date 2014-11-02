@@ -2370,7 +2370,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		}
 
 
-		list_image_ID();
 
 		sprintf(name, "aol%ld_DMmode_MULTF", loop);
 		aoconfID_MULTF_modes = image_ID(name);
@@ -2395,7 +2394,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		}
 
 
-exit(0);
 
 
 		
