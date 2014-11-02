@@ -2405,7 +2405,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         // Load/Create Response Matrix shared memory
         AOconf[loop].init_RM = 0;
 		aoconfID_respM = image_ID(AOconf[loop].respMname);
-	exit(0);
 	
 		if(aoconfID_respM == -1)
         {
@@ -2415,7 +2414,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					sizearray[0] =  AOconf[loop].sizexWFS;
 					sizearray[1] =  AOconf[loop].sizeyWFS;
 					sizearray[2] =  AOconf[loop].NBDMmodes;
-					aoconfID_respM = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
+					aoconfID_respM = create_image_ID(AOconf[loop].respMname, 3, sizearray, FLOAT, 1, 0);
 					if(aoconfID_respM!=-1)
 						printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].respMname, sizearray[0], sizearray[1], sizearray[2]);
 					else
