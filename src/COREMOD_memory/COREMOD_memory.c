@@ -3142,6 +3142,7 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 	ID = image_ID(IDname);
 	naxis = data.image[ID].md[0].naxis;
 	
+	
 	sizearray = (long*) malloc(sizeof(long)*naxis);
 	atype = data.image[ID].md[0].atype;
 	for(k=0;k<naxis;k++)
@@ -3152,7 +3153,7 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 	free(sizearray);
 
 	//data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
-	//printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
+	printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
 
 	switch (atype) {
 		case FLOAT :
