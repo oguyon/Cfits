@@ -650,19 +650,16 @@ long long compute_image_memory()
     {
 if(data.image[i].used==1)
 {
-		printf("image %ld  %s", i, data.image[i].md[0].name);
+		printf("image %3ld   %12s   ", i, data.image[i].md[0].name);
 		fflush(stdout);
-		
- 		printf("used=%d ", data.image[i].used);
-		fflush(stdout);
-
+	
 		printf("nelement=%ld ", data.image[i].md[0].nelement);
 		fflush(stdout);
 	
-		printf("atype=%d ", data.image[i].md[0].atype);
+		printf("atype = %d ", data.image[i].md[0].atype);
 		fflush(stdout);
 		
-		printf("typesize=%d ", TYPESIZE[data.image[i].md[0].atype]);
+		printf("typesize = %d ", TYPESIZE[data.image[i].md[0].atype]);
 		fflush(stdout);
 		
 		printf("\n");
