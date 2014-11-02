@@ -2006,29 +2006,28 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		//	VERIFY FILE SIZES
         vOK = 0;
         AOconf[loop].init_refWFS = 0;
-        if(is_fits_file(content)==1)
-            if((ID=load_fits(content, "tmprefwfs"))!=-1)
-            {
-                printf("Verifying file\n");
+        if(aoconfID_refWFS!=-1)
+			{
+               printf("Verifying sizes\n");
                 vOK = 1;
-                if(data.image[ID].md[0].naxis!=2)
+                if(data.image[aoconfID_refWFS].md[0].naxis!=2)
                 {
                     printf("refWFS has wrong dimension\n");
                     vOK = 0;
                 }
-                if(data.image[ID].md[0].atype!=FLOAT)
+                if(data.image[aoconfID_refWFS].md[0].atype!=FLOAT)
                 {
                     printf("refWFS has wrong type\n");
                     vOK = 0;
                 }
                 if(vOK==1)
                 {
-                    if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexWFS)
+                    if(data.image[aoconfID_refWFS].md[0].size[0]!=AOconf[loop].sizexWFS)
                     {
                         printf("refWFS has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
                         vOK = 0;
                     }
-                    if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyWFS)
+                    if(data.image[aoconfID_refWFS].md[0].size[1]!=AOconf[loop].sizeyWFS)
                     {
                         printf("refWFS has wrong y size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
                         vOK = 0;
@@ -2036,23 +2035,16 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
                 }
                 if(vOK==1)
                 {
-                    sprintf(name, "refWFS_%ld", loop);
-                    sizearray[0] =  AOconf[loop].sizexWFS;
-                    sizearray[1] =  AOconf[loop].sizeyWFS;
-
-                    //    aoconfID_refWFS = read_sharedmem_image(name);
-                    //if(aoconfID_refWFS == -1)
-                    if(mode==1)
-                        aoconfID_refWFS = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-                    else
-                        aoconfID_refWFS = read_sharedmem_image(name);
-
-
-                    copy_image_ID("tmprefwfs", name);
-                    AOconf[loop].init_refWFS = 1;
+                     AOconf[loop].init_refWFS = 1;
                 }
-                delete_image_ID("tmprefwfs");
             }
+        else
+        {
+			 printf("\n");
+            printf("========== ERROR: NEED refWFS TO START AO LOOP ===========\n");
+            printf("\n");
+            exit(0);
+		}
 	
 
 
