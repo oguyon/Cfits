@@ -2053,7 +2053,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
                 }
                 delete_image_ID("tmprefwfs");
             }
-
+	
 
 
 
@@ -2063,17 +2063,29 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		{
 			printf("connect to %s\n", AOconf[loop].DMname);
 			aoconfID_DM = read_sharedmem_image(AOconf[loop].DMname);
+			if(aoconfID_DM==-1)
+				{
+					printf("ERROR: cannot connect to shared memory %s\n", AOconf[loop].DMname);
+					exit(0);
+				}
 		}
 		AOconf[loop].sizexDM = data.image[aoconfID_DM].md[0].size[0];
 		AOconf[loop].sizeyDM = data.image[aoconfID_DM].md[0].size[1];
 		AOconf[loop].sizeDM = AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
+		
+		
 		
 		aoconfID_DMRM = image_ID(AOconf[loop].DMnameRM);
 		if(aoconfID_DMRM==-1)
 		{
 			printf("connect to %s\n", AOconf[loop].DMnameRM);
 			aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
-		}
+			if(aoconfID_DMRM==-1)
+				{
+					printf("ERROR: cannot connect to shared memory %s\n", AOconf[loop].DMnameRM);
+					exit(0);
+				}
+	}
 
 
 
