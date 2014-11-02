@@ -2243,6 +2243,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 			aoconfID_cmd_modes = read_sharedmem_image(name);
 			if(aoconfID_cmd_modes==-1)
 				{
+					printf("CREATING\n");
+					fflush(stdout);
 					sizearray[0] =  AOconf[loop].NBDMmodes;
 					sizearray[1] =  1;
 					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
