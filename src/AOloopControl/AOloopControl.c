@@ -2242,6 +2242,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         if(aoconfID_cmd_modes==-1)
         {
 			aoconfID_cmd_modes = read_sharedmem_image(name);
+			list_image_ID();
+		exit(0);
 			if(aoconfID_cmd_modes==-1)
 				{
 					sizearray[0] =  AOconf[loop].NBDMmodes;
