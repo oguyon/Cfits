@@ -1538,6 +1538,7 @@ long read_sharedmem_image(char *name)
     {
       ID = -1;
       printf("Cannot import file\n");
+		data.image[ID].used = 0;
     }
   else
     {
