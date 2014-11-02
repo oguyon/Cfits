@@ -2247,6 +2247,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					sizearray[1] =  1;
 					printf("-- Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
 					fflush(stdout);
+					printf("-- test 0 ---\n");
+					fflush(stdout);
 					list_image_ID();
 					fflush(stdout);
 					aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
