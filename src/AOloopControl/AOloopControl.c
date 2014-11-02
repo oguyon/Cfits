@@ -1877,7 +1877,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     int vOK;
     int kw;
     long k;
-
+	int r;
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
@@ -1893,14 +1893,14 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     {
         sizearray = (long*) malloc(sizeof(long)*3);
 
-		if((fp==fopen("conf_loopname.txt","r"))==NULL)
+		if((fp=fopen("conf_loopname.txt","r"))==NULL)
 		{	
 			printf("ERROR: file conf_loopname.txt missing\n");
 			exit(0);
 		}
 //        if(read_config_parameter(config_fname, "loopname", content)==0)
  //           exit(0);
-		fscanf(fp, "%s", content);
+		r = fscanf(fp, "%s", content);
         printf("loop name : %s\n", content);
         fclose(fp);
         fflush(stdout);
