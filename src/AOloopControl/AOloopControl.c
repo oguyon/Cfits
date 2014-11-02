@@ -3039,10 +3039,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
-
+	printf("Initialize\n");
+	fflush(stdout);
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
-
+	printf("Initialization done\n");
+	fflush(stdout);
 
 	RMACQUISITION = 1;
 
