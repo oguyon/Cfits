@@ -1920,7 +1920,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         fflush(stdout);
         strcpy(AOconf[loop].name, content);
 
-		exit(0);
+		
 
         if(read_config_parameter(config_fname, "GPU", content)==0)
             exit(0);
