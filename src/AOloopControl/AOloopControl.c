@@ -1918,10 +1918,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Connect to WFS camera
-        if(read_config_parameter(config_fname, "WFSname", content)==0)
-            exit(0);
-        printf("WFS file name : %s\n", content);
-        fflush(stdout);
+        ssprintf(content, "aol%ld_wfs", LOOPNUMBER);
         strcpy(AOconf[loop].WFSname, content);
         aoconfID_WFS = read_sharedmem_image(content);
         AOconf[loop].sizexWFS = data.image[aoconfID_WFS].md[0].size[0];
@@ -2020,8 +2017,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Connect to DM
-        if(read_config_parameter(config_fname, "DMname", content)==0)
-            exit(0);
+		sprintf(content, "aol%ld_dmC", loop);
         printf("DM file name : %s\n", content);
         strcpy(AOconf[loop].DMname, content);
         aoconfID_DM = read_sharedmem_image(content);
@@ -2029,8 +2025,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         AOconf[loop].sizeyDM = data.image[aoconfID_DM].md[0].size[1];
         AOconf[loop].sizeDM = AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
 
-        if(read_config_parameter(config_fname, "DMnameRM", content)==0)
-            exit(0);
+		sprintf(content, "aol%ld_dmRM", loop);
         printf("DM file name RM: %s\n", content);
         strcpy(AOconf[loop].DMnameRM, content);
         aoconfID_DMRM = read_sharedmem_image(content);
@@ -2494,7 +2489,6 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     long IDpos, IDneg;
 	float tot, v1, rms;
 	long *sizearray;
-
 
 	sizearray = (long*) malloc(sizeof(long)*2);
 
