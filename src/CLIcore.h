@@ -220,7 +220,7 @@ typedef struct			/* structure used to store data arrays */
     unsigned short int *U;
   } array;                      // pointer to data array
  
-  IMAGE_KEYWORD *kw;
+  IMAGE_KEYWORD *kw;  // not supported for shared memory
 
 } IMAGE;
 

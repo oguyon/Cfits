@@ -794,154 +794,156 @@ long next_avail_variable_ID() /* next available ID number */
 
 int delete_image_ID(char* imname) /* deletes an ID */
 {
-  long ID;
-  char command[200];
-  int r; 
+    long ID;
+    char command[200];
+    int r;
 
-  ID = image_ID(imname);
- 
-  if (ID!=-1)
+    ID = image_ID(imname);
+
+    if (ID!=-1)
     {
-      data.image[ID].used = 0;
-      
-      if(data.image[ID].md[0].shared == 1)
-	{	 
-	  if (munmap(data.image[ID].md, data.image[ID].memsize) == -1) {
-	    printf("unmapping ID %ld : %p  %ld\n", ID, data.image[ID].md, data.image[ID].memsize);
-	    perror("Error un-mmapping the file");
-	  }
-	  close(data.image[ID].shmfd);
-	  data.image[ID].md = NULL;
-	  data.image[ID].shmfd = -1;
-	  data.image[ID].memsize = 0;
+        data.image[ID].used = 0;
 
-	  sprintf(command, "rm %s/%s.im.shm", SHAREDMEMDIR, imname);
-	  r = system(command);
-	}
-      else
-	{
+        if(data.image[ID].md[0].shared == 1)
+        {
+            if (munmap(data.image[ID].md, data.image[ID].memsize) == -1) {
+                printf("unmapping ID %ld : %p  %ld\n", ID, data.image[ID].md, data.image[ID].memsize);
+                perror("Error un-mmapping the file");
+            }
+            close(data.image[ID].shmfd);
+            data.image[ID].md = NULL;
+            data.image[ID].kw = NULL;
+            data.image[ID].shmfd = -1;
+            data.image[ID].memsize = 0;
 
-	  if(data.image[ID].md[0].atype==CHAR)
-	    {
-	      if(data.image[ID].array.C == NULL)
-		{
-		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-		  exit(0);
-		}
-	      free(data.image[ID].array.C);
-	      data.image[ID].array.C = NULL;
-	    }	 
-	  if(data.image[ID].md[0].atype==INT)
-	    {
-	      if(data.image[ID].array.I == NULL)
-		{
-		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-		  exit(0);
-		}
-	      free(data.image[ID].array.I);
-	      data.image[ID].array.I = NULL;
-	    }
-	  if(data.image[ID].md[0].atype==FLOAT)
-	    {
-	      if(data.image[ID].array.F == NULL)
-		{
-		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-		  exit(0);
-		}
-	      free(data.image[ID].array.F);
-	      data.image[ID].array.F = NULL;
-	    }
-	  if(data.image[ID].md[0].atype==DOUBLE)
-	    {
-	      if(data.image[ID].array.D == NULL)
-		{
-		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-		  exit(0);
-		}
-	      free(data.image[ID].array.D);
-	      data.image[ID].array.D = NULL;
-	    }
-	  if(data.image[ID].md[0].atype==COMPLEX_FLOAT)
-	    {
-	      if(data.image[ID].array.CF == NULL)
-		{
-		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-		  exit(0);
-		}
-	      free(data.image[ID].array.CF);
-	      data.image[ID].array.CF = NULL;
-	    }
-	  if(data.image[ID].md[0].atype==COMPLEX_DOUBLE)
-	    {
-	      if(data.image[ID].array.CD == NULL)
-		{
-		  printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-		  exit(0);
-		}
-	      free(data.image[ID].array.CD);
-	      data.image[ID].array.CD = NULL;
-	    }
-	  
-      
-	  if(data.image[ID].md == NULL)
-	    {
-	      printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
-	      exit(0);
-	    }
-	  free(data.image[ID].md);
-	  data.image[ID].md = NULL;
-	}
+            sprintf(command, "rm %s/%s.im.shm", SHAREDMEMDIR, imname);
+            r = system(command);
+        }
+        else
+        {
 
-      free(data.image[ID].kw);
-      data.image[ID].kw = NULL;
+            if(data.image[ID].md[0].atype==CHAR)
+            {
+                if(data.image[ID].array.C == NULL)
+                {
+                    printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                    exit(0);
+                }
+                free(data.image[ID].array.C);
+                data.image[ID].array.C = NULL;
+            }
+            if(data.image[ID].md[0].atype==INT)
+            {
+                if(data.image[ID].array.I == NULL)
+                {
+                    printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                    exit(0);
+                }
+                free(data.image[ID].array.I);
+                data.image[ID].array.I = NULL;
+            }
+            if(data.image[ID].md[0].atype==FLOAT)
+            {
+                if(data.image[ID].array.F == NULL)
+                {
+                    printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                    exit(0);
+                }
+                free(data.image[ID].array.F);
+                data.image[ID].array.F = NULL;
+            }
+            if(data.image[ID].md[0].atype==DOUBLE)
+            {
+                if(data.image[ID].array.D == NULL)
+                {
+                    printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                    exit(0);
+                }
+                free(data.image[ID].array.D);
+                data.image[ID].array.D = NULL;
+            }
+            if(data.image[ID].md[0].atype==COMPLEX_FLOAT)
+            {
+                if(data.image[ID].array.CF == NULL)
+                {
+                    printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                    exit(0);
+                }
+                free(data.image[ID].array.CF);
+                data.image[ID].array.CF = NULL;
+            }
+            if(data.image[ID].md[0].atype==COMPLEX_DOUBLE)
+            {
+                if(data.image[ID].array.CD == NULL)
+                {
+                    printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                    exit(0);
+                }
+                free(data.image[ID].array.CD);
+                data.image[ID].array.CD = NULL;
+            }
 
-       /*      free(data.image[ID].size);*/
-       //      data.image[ID].md[0].last_access = 0;
+
+            if(data.image[ID].md == NULL)
+            {
+                printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
+                exit(0);
+            }
+            free(data.image[ID].md);
+            data.image[ID].md = NULL;
+        
+
+        free(data.image[ID].kw);
+        data.image[ID].kw = NULL;
+		}
+        /*      free(data.image[ID].size);*/
+        //      data.image[ID].md[0].last_access = 0;
     }
-  else
-    fprintf(stderr,"%c[%d;%dm WARNING: image %s does not exist [ %s  %s  %d ] %c[%d;m\n", (char) 27, 1, 31, imname, __FILE__, __func__, __LINE__, (char) 27, 0);
+    else
+        fprintf(stderr,"%c[%d;%dm WARNING: image %s does not exist [ %s  %s  %d ] %c[%d;m\n", (char) 27, 1, 31, imname, __FILE__, __func__, __LINE__, (char) 27, 0);
 
 
-  if(MEM_MONITOR == 1)
-    list_image_ID_ncurses();
+    if(MEM_MONITOR == 1)
+        list_image_ID_ncurses();
 
-  return(0);
+    return(0);
 }
 
 
-// delete all images with a prefix 
-int delete_image_ID_prefix(char *prefix) 
+// delete all images with a prefix
+int delete_image_ID_prefix(char *prefix)
 {
-  long i;
-  
-  for (i=0;i<data.NB_MAX_IMAGE;i++)
+    long i;
+
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
     {
-      if(data.image[i].used==1)
-	if((strncmp(prefix,data.image[i].md[0].name,strlen(prefix)))==0)
-	  {
-	    printf("deleting image %s\n",data.image[i].md[0].name);
-	    delete_image_ID(data.image[i].md[0].name);
-	  }
+        if(data.image[i].used==1)
+            if((strncmp(prefix,data.image[i].md[0].name,strlen(prefix)))==0)
+            {
+                printf("deleting image %s\n",data.image[i].md[0].name);
+                delete_image_ID(data.image[i].md[0].name);
+            }
     }
-  return(0);
+    return(0);
 }
 
 
 int delete_variable_ID(char* varname) /* deletes a variable ID */
 {
-  long ID;
-  
-  ID = variable_ID(varname);
-  if (ID!=-1)
-    {
-      data.variable[ID].used = 0;
-      /*      free(data.variable[ID].name);*/
-    }
-  else
-    fprintf(stderr,"%c[%d;%dm WARNING: variable %s does not exist [ %s  %s  %d ] %c[%d;m\n", (char) 27, 1, 31, varname, __FILE__, __func__, __LINE__, (char) 27, 0);
+    long ID;
 
-   return(0);
+    ID = variable_ID(varname);
+    if (ID!=-1)
+    {
+        data.variable[ID].used = 0;
+        /*      free(data.variable[ID].name);*/
+    }
+    else
+        fprintf(stderr,"%c[%d;%dm WARNING: variable %s does not exist [ %s  %s  %d ] %c[%d;m\n", (char) 27, 1, 31, varname, __FILE__, __func__, __LINE__, (char) 27, 0);
+
+    return(0);
 }
+
 
 
 
@@ -1001,6 +1003,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             if(atype==LONG)
                 sharedsize += nelement*sizeof(long);
 
+
             sharedsize += NBkw*sizeof(IMAGE_KEYWORD);
 
 
@@ -1036,7 +1039,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             }
 
             data.image[ID].md = (IMAGE_METADATA*) map;
-            data.image[ID].md[0].shared = 1;
+            data.image[ID].md[0].shared = 1;            
         }
         else
         {
@@ -1133,8 +1136,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
                 data.image[ID].array.F = (float*) (mapv);
                 memset(data.image[ID].array.F, '\0', nelement*sizeof(float));
                 mapv += sizeof(float)*nelement;
-                data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
-            }
+                data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);            
+			}
             else
                 data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
 

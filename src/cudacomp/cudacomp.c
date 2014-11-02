@@ -74,13 +74,13 @@ float beta  = 0.0;
 //
 
 
-//int CUDACOMP_init_cli()
-//{
-//    if(CLI_checkarg(1,2)==0)
-//CUDACOMP_init();
-//  else
-//    return 1;
-//}
+int CUDACOMP_test_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+		GPUcomp_test(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+	else
+		return 1;
+}
 
 
 
@@ -98,6 +98,8 @@ int init_CUDACOMP()
     strcpy(data.module[data.NBmodule].name,__FILE__);
     strcpy(data.module[data.NBmodule].info,"CUDA wrapper for AO loop");
     data.NBmodule++;
+
+
 #ifdef HAVE_CUDA
     strcpy(data.cmd[data.NBcmd].key,"cudacompinit");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -107,6 +109,17 @@ int init_CUDACOMP()
     strcpy(data.cmd[data.NBcmd].example,"cudacompinit");
     strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_init()");
     data.NBcmd++;
+    
+   strcpy(data.cmd[data.NBcmd].key,"cudacomptest");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = CUDACOMP_test_cli;
+    strcpy(data.cmd[data.NBcmd].info,"test CUDA comp");
+    strcpy(data.cmd[data.NBcmd].syntax,"<NB actuators [long]> <NB modes [long]> <NB pixels [long]> <NB GPU [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"cudacomptest");
+    strcpy(data.cmd[data.NBcmd].Ccall,"GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
+    data.NBcmd++;
+		
+    
 #endif
     // add atexit functions here
 
@@ -351,7 +364,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         {
             if(data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1] != gpumatmultconf[index].M)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible\n");
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1], gpumatmultconf[index].M); 
+				printf("gpumatmultconf[index].IDout = %ld\n", gpumatmultconf[index].IDout);
+				list_image_ID();
                 exit(0);
             }
         }
@@ -484,8 +499,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
-        printf("SETUP DONE, READY TO START COMPUTATIONS\n");
-        fflush(stdout);
+ //       printf("SETUP DONE, READY TO START COMPUTATIONS\n");
+   //     fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
@@ -500,7 +515,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         cnt = 0;
         iter = 0;
         gpumatmultconf[index].init = 1;
-    }
+	}
+	printf("SETUP DONE, READY TO START COMPUTATIONS\n");
+    fflush(stdout);
 
     return(0);
 }
@@ -524,6 +541,9 @@ int GPU_loop_MultMat_execute(int index)
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0;
 
+//	printf("Creating threads ...");
+//	fflush(stdout);
+
     /* Create independent threads each of which will execute function */
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
@@ -538,6 +558,8 @@ int GPU_loop_MultMat_execute(int index)
         }
     }
 
+//	printf(" done\n");
+//	fflush(stdout);
 
 
 
@@ -556,7 +578,9 @@ int GPU_loop_MultMat_execute(int index)
 
 //    memcpy(dmVec, dmVecTMP, sizeof(float)*M);
 
- 
+//	printf("Computation done\n");
+//	fflush(stdout);
+	
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     return(0);
@@ -678,12 +702,52 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 {
 	long ID_contrM;
 	long ID_WFS;
+	long ID_cmd_modes;
+	long *cmsize;
+	long *wfssize;
+	long *cmdmodessize;
+
+	long iter;
+	long NBiter = 10000;
 	
 	printf("Testing GPU matrix multiplication speed\n");
 	
-	//GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, GPUcnt, 0);
-    //GPU_loop_MultMat_execute(0);
+	cmsize = (long*) malloc(sizeof(long)*3);
+	cmsize[0] = WFSsize;
+	cmsize[1] = WFSsize;
+	cmsize[2] = NBmodes;
+	ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
+	
+	wfssize = (long*) malloc(sizeof(long)*2);
+	wfssize[0] = WFSsize;
+	wfssize[1] = WFSsize;
+	ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
+	
+	cmdmodessize = (long*) malloc(sizeof(long)*2);
+	cmdmodessize[0] = NBmodes;
+	cmdmodessize[1] = 1;
+	ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
 
+	GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS].md[0].name, data.image[ID_cmd_modes].md[0].name, GPUcnt, 0);
+    
+    
+    
+    for(iter=0;iter<NBiter;iter++)
+		GPU_loop_MultMat_execute(0);
+
+
+
+	printf("done\n");
+	fflush(stdout);
+
+	delete_image_ID("cudatestcm");
+	delete_image_ID("cudatestwfs");
+	delete_image_ID("cudatestcmd");
+	
+	free(cmsize);
+	free(wfssize);
+	free(cmdmodessize);
+	
 	return(0);
 }
 
