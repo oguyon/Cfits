@@ -69,11 +69,11 @@ float SCExAO_PZT_STAGE_Ypos = 5.0;
 //
 
 
-int SCExAOcontrol_TakePyrWFS_image_cli()
+int SCExAOcontrol_Average_image_cli()
 {
-	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
     {
-      SCExAOcontrol_TakePyrWFS_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+      SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
       return 0;
     }
   else
@@ -102,13 +102,13 @@ int init_SCExAO_control()
   data.NBmodule++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaotakepwfsim");
+  strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_TakePyrWFS_image_cli;
-  strcpy(data.cmd[data.NBcmd].info,"take pyr WFS camera image");
-  strcpy(data.cmd[data.NBcmd].syntax,"<outname> <nbcoadd>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaotakepwfsim imp 100");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)");
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
+  strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
+  strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve)");
   data.NBcmd++;
 
 
@@ -148,10 +148,10 @@ int init_SCExAO_control()
 
 
 
-long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
+long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 {
     long ID;
-    long IDWFScam;
+    long IDcam;
     int slice;
     long k;
     long xsize, ysize, xysize;
@@ -162,48 +162,51 @@ long SCExAOcontrol_TakePyrWFS_image(char *IDname, long NbAve)
     long kw;
 	double darkv;
 	long IDv;
+	char imnameave[200];
 	
-	
-    IDWFScam = image_ID(WFScam_name);
-    if(IDWFScam ==-1)
-        IDWFScam = read_sharedmem_image(WFScam_name);
+    IDcam = image_ID(imname);
+    if(IDcam ==-1)
+        IDcam = read_sharedmem_image(imname);
 
     kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
 	
     if(kw==-1)
-        printf("keyword not found\n");
+{
+	        printf("keyword not found\n");
+		NBcoadd = 1;
+   }
     else
         printf("found [%ld] NBcoadd = %ld\n", kw, NBcoadd);
 
-    xsize = data.image[IDWFScam].md[0].size[0];
-    ysize = data.image[IDWFScam].md[0].size[1];
+    xsize = data.image[IDcam].md[0].size[0];
+    ysize = data.image[IDcam].md[0].size[1];
     xysize = xsize*ysize;
 
-    ID = create_2Dimage_ID(IDname, xsize, ysize);
+    ID = create_2Dimage_ID(IDnameout, xsize, ysize);
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
 
     for(k=0; k<NbAve; k++)
     {
-        while(WFScnt==data.image[IDWFScam].md[0].cnt0) // test if new frame exists
+        while(WFScnt==data.image[IDcam].md[0].cnt0) // test if new frame exists
         {
             usleep(50);
             // do nothing, wait
         }
 
-        slice = data.image[IDWFScam].md[0].cnt1-1;
+        slice = data.image[IDcam].md[0].cnt1-1;
         if(slice==-1)
-            slice = data.image[IDWFScam].md[0].size[2]-1;
+            slice = data.image[IDcam].md[0].size[2]-1;
 
-        ptrv = (char*) data.image[IDWFScam].array.U;
+        ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice* xysize;
         memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
         for(ii=0; ii<xysize; ii++)
             data.image[ID].array.F[ii] += (float) arrayutmp[ii];
 
 
-        WFScnt = data.image[IDWFScam].md[0].cnt0;
+        WFScnt = data.image[IDcam].md[0].cnt0;
     }
 
     for(ii=0; ii<xysize; ii++)
@@ -331,7 +334,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM()
 	double gain = 1.0;
 
 
-    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 5000);
+    ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs");
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
@@ -400,7 +403,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
   
 while(1)
 {
-        ID = SCExAOcontrol_TakePyrWFS_image("imwfs", 5000);
+        ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs");
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
@@ -497,7 +500,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
 	}
 	
     IDref = image_ID("imref");
-    ID = SCExAOcontrol_TakePyrWFS_image("imwfs", NBframes);
+    ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
 	save_fits("imwfs", "!imwfs.fits");
 	
     tot = 0.0;
