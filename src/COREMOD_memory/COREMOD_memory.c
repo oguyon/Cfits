@@ -2185,6 +2185,9 @@ int list_image_ID_ofp(FILE *fo)
   struct timespec timenow;
   double timediff;
 
+	printf("--- test 00 ---\n");
+	fflush(stdout);
+
   sizeb = compute_image_memory();
 
   clock_gettime(CLOCK_REALTIME, &timenow);
