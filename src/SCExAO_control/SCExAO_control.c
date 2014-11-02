@@ -71,8 +71,9 @@ float SCExAO_PZT_STAGE_Ypos = 5.0;
 
 int SCExAOcontrol_Average_image_cli()
 {
-	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+(CLI_checkarg(3,3)*CLI_checkarg(3,4))==0)
+	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
     {
+		
       SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
       return 0;
     }
@@ -163,6 +164,10 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 	double darkv;
 	long IDv;
 	char imnameave[200];
+	long long cntref;
+	
+	
+	cntref = -1;
 	
     IDcam = image_ID(imname);
     if(IDcam ==-1)
@@ -189,16 +194,17 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     for(k=0; k<NbAve; k++)
     {
-        while(WFScnt==data.image[IDcam].md[0].cnt0) // test if new frame exists
+        while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
         {
             usleep(50);
             // do nothing, wait
         }
 
-        slice = data.image[IDcam].md[0].cnt1-1;
-        if(slice==-1)
-            slice = data.image[IDcam].md[0].size[2]-1;
-
+        slice = data.image[IDcam].md[0].cnt1;
+//        if(slice==-1)
+  //          slice = data.image[IDcam].md[0].size[2]-1;
+		slice = 0;
+		
         ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice* xysize;
         memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
@@ -206,7 +212,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
             data.image[ID].array.F[ii] += (float) arrayutmp[ii];
 
 
-        WFScnt = data.image[IDcam].md[0].cnt0;
+        cntref = data.image[IDcam].md[0].cnt0;
     }
 
     for(ii=0; ii<xysize; ii++)
