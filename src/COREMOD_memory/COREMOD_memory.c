@@ -2204,19 +2204,12 @@ int list_image_ID_ofp(FILE *fo)
   struct timespec timenow;
   double timediff;
 
-	printf("--- test 00 ---\n");
-	fflush(stdout);
-
 	sizeb = compute_image_memory();
-
-	printf("--- test 01 ---\n");
-	fflush(stdout);
 
   clock_gettime(CLOCK_REALTIME, &timenow);
 
   fprintf(fo, "\n");
   fprintf(fo, "INDEX    NAME         SIZE                    TYPE        SIZE  [percent]    LAST ACCESS\n");
-	fflush(stdout);
   fprintf(fo, "\n");
 
   for (i=0;i<data.NB_MAX_IMAGE;i++)
@@ -2270,7 +2263,6 @@ int list_image_ID_ofp(FILE *fo)
 	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].md[0].last_access;
 	  
 	  fprintf(fo, "%15.9f\n", timediff);
-	  fflush(stdout);
 	}
   fprintf(fo, "\n");
 
@@ -3154,7 +3146,7 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 	free(sizearray);
 
 	//data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
-	printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
+	//printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
 
 	switch (atype) {
 		case FLOAT :
