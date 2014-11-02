@@ -2088,7 +2088,10 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         if(aoconfID_DMmodes == -1)
         {
 			aoconfID_DMmodes = read_sharedmem_image(AOconf[loop].DMMODESname);
-  			printf("reading %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
+			if(aoconfID_DMmodes!=-1)
+				printf("reading %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
+			else
+				
 			fflush(stdout);
 		}
 
