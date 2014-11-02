@@ -2249,6 +2249,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
+			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 		}
@@ -2266,6 +2271,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_cmd1_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
+			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
 		
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_cmd1_modes].array.F[k] = 0.0;
@@ -2284,7 +2294,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_AVE_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
-        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+ 			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
+       for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_AVE_modes].array.F[k] = 0.0;
 		}
 
@@ -2301,7 +2316,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_RMS_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
-        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+  			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
+      for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_RMS_modes].array.F[k] = 0.0;
 		}
 
@@ -2318,7 +2338,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_GAIN_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
-        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+ 			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
+       for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_GAIN_modes].array.F[k] = 0.0;
 		}
 
@@ -2335,7 +2360,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_LIMIT_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
-        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+ 			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
+       for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
 		}
 
@@ -2352,7 +2382,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 					fflush(stdout);
 					aoconfID_MULTF_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 				}
-        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+ 			else
+			{
+				printf("shared memory image %s loaded\n", name);
+				fflush(stdout);
+			}
+       for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
 		}
 
