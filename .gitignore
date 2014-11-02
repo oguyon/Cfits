@@ -31,5 +31,7 @@ libtool
 *.save
 *#
 Makefile
-
+*/Makefile
+*/*/Makefile
+*/*/*/Makefile
 
