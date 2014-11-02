@@ -2219,9 +2219,9 @@ int list_image_ID_ofp(FILE *fo)
 	  tmp_long = ((long long) (data.image[i].md[0].nelement)) * TYPESIZE[atype];
 	  
 	  if(data.image[i].md[0].shared==1)
-	    fprintf(fo, "%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 34, data.image[i].md[0].name, (char) 27, 0);
+	    fprintf(fo, "%4ld %c[%d;%dm%14s%c[%d;m ",i, (char) 27, 1, 34, data.image[i].md[0].name, (char) 27, 0);
 	  else
-	    fprintf(fo, "%4ld %c[%d;%dm%10s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].md[0].name, (char) 27, 0);
+	    fprintf(fo, "%4ld %c[%d;%dm%14s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].md[0].name, (char) 27, 0);
 //fprintf(fo, "%s", str);
 	  
 	  sprintf(str, "[ %6ld",data.image[i].md[0].size[0]);
@@ -2232,7 +2232,7 @@ int list_image_ID_ofp(FILE *fo)
 	    }
 	  sprintf(str, "%s]", str);
 	  
-	  fprintf(fo, "%-28s", str);
+	  fprintf(fo, "%-32s", str);
 	  
 
 	  n = 0;
