@@ -1922,7 +1922,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 		if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
 		{	
-			printf("ERROR: file conf_loopname.txt missing\n");
+			printf("ERROR: file ./conf/conf_GPU.txt missing\n");
 			exit(0);
 		}
 		r = fscanf(fp, "%s", content);
@@ -1950,32 +1950,54 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             AOconf[loop].DarkLevel = 0.0;
 
         sprintf(name, "imWFS0_%ld", loop);
-        sizearray[0] =  AOconf[loop].sizexWFS;
-        sizearray[1] =  AOconf[loop].sizeyWFS;
-        aoconfID_WFS0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
+        aoconfID_WFS0 = image_ID(name);
+        if(aoconfID_WFS0==-1)
+        {
+			printf("Creating %s\n", name);
+			fflush(stdout);
+			sizearray[0] =  AOconf[loop].sizexWFS;
+			sizearray[1] =  AOconf[loop].sizeyWFS;
+			aoconfID_WFS0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		}
+		
+		
         sprintf(name, "imWFS1_%ld", loop);
-        sizearray[0] =  AOconf[loop].sizexWFS;
-        sizearray[1] =  AOconf[loop].sizeyWFS;
-        aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
+        aoconfID_WFS1 = image_ID(name);
+        if(aoconfID_WFS1 == -1)
+        {
+			printf("Creating %s\n", name);
+			fflush(stdout);
+			sizearray[0] =  AOconf[loop].sizexWFS;
+			sizearray[1] =  AOconf[loop].sizeyWFS;
+			aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		}
 
 
 
         // Create WFS2 image memory
         sprintf(name, "imWFS2_%ld", loop);
+        aoconfID_WFS2 = image_ID(name);
+        if(aoconfID_WFS2 == -1)
+        {
+					printf("Creating %s\n", name);
+			fflush(stdout);
         sizearray[0] =  AOconf[loop].sizexWFS;
         sizearray[1] =  AOconf[loop].sizeyWFS;
         aoconfID_WFS2 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
+		}
 
 
         // Create WFSref image memory (averaged, dark-subtracted)
         sprintf(name, "refWFS_%ld", loop);
+        aoconfID_refWFS = image_ID(name);
+        if(aoconfID_WFS2 == -1)
+        {
+		printf("Creating %s\n", name);
+			fflush(stdout);
         sizearray[0] =  AOconf[loop].sizexWFS;
         sizearray[1] =  AOconf[loop].sizeyWFS;
         aoconfID_refWFS = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
+		}
 
         if(read_config_parameter(config_fname, "WFSrefim", content)==0)
             exit(0);
