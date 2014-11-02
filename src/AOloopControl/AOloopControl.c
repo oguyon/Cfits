@@ -1911,7 +1911,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	strcpy(AOconf[loop].respMname, name);
 
     sprintf(name, "aol%ld_ContrM", loop);
-	printf("respM file name: %s\n", name);
+	printf("contrM file name: %s\n", name);
 	strcpy(AOconf[loop].contrMname, name);
 
 
@@ -2405,6 +2405,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         // Load/Create Response Matrix shared memory
         AOconf[loop].init_RM = 0;
 		aoconfID_respM = image_ID(AOconf[loop].respMname);
+	exit(0);
+	
 		if(aoconfID_respM == -1)
         {
 			aoconfID_respM = read_sharedmem_image(AOconf[loop].respMname);
@@ -2425,7 +2427,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 				}
 		}
 
-		
+	
         // check size is vOK
             vOK = 1;
             if(data.image[aoconfID_respM].md[0].naxis!=3)
