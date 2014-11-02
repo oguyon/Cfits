@@ -2324,10 +2324,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     }
     else
     {
-        aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
+		sprintf(name, "aol%ld_wfs", loop);
+        aoconfID_WFS = read_sharedmem_image(name);
 
 
-        sprintf(name, "imWFS0_%ld", loop);
+        sprintf(name, "aol%ld_imWFS0", loop);
         aoconfID_WFS0 = read_sharedmem_image(name);
 
         sprintf(name, "imWFS1_%ld", loop);
@@ -2340,47 +2341,50 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         aoconfID_refWFS = read_sharedmem_image(name);
 
 
-        aoconfID_DM = read_sharedmem_image(AOconf[loop].DMname);
-        aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+		sprintf(name, "aol%ld_dmC", loop);
+        aoconfID_DM = read_sharedmem_image(name);
+        
+        sprintf(fname, "aol%ld_dmRM", loop);
+        aoconfID_DMRM = read_sharedmem_image(name);
 
 
-        sprintf(name, "DMmodes_%ld", loop);
+        sprintf(name, "aol%ld_DMmodes", loop);
         aoconfID_DMmodes = read_sharedmem_image(name);
 
-        sprintf(name, "loop%ldlog0", loop);
+        sprintf(name, "aol%ld_log0", loop);
         aoconfIDlog0 = read_sharedmem_image(name);
 
-        sprintf(name, "loop%ldlog1", loop);
+        sprintf(name, "aol%ld_log1", loop);
         aoconfIDlog1 = read_sharedmem_image(name);
 
 
-        sprintf(name, "DMmode_cmd_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_cmd", loop);
         aoconfID_cmd_modes = read_sharedmem_image(name);
 
-        sprintf(name, "DMmode_cmd1_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_cmd1", loop);
         aoconfID_cmd1_modes = read_sharedmem_image(name);
 
-        sprintf(name, "DMmode_RMS_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_RMS", loop);
         aoconfID_RMS_modes = read_sharedmem_image(name);
 
-        sprintf(name, "DMmode_AVE_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_AVE", loop);
         aoconfID_AVE_modes = read_sharedmem_image(name);
 
-        sprintf(name, "DMmode_GAIN_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_GAIN", loop);
         aoconfID_GAIN_modes = read_sharedmem_image(name);
 
-        sprintf(name, "DMmode_LIMIT_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_LIMIT", loop);
         aoconfID_LIMIT_modes = read_sharedmem_image(name);
 
-        sprintf(name, "DMmode_MULTF_%ld", loop);
+        sprintf(name, "aol%ld_DMmode_MULTF", loop);
         aoconfID_MULTF_modes = read_sharedmem_image(name);
 
 
 
-        sprintf(name, "RespM_%ld", loop);
+        sprintf(name, "aol%ld_RespM", loop);
         aoconfID_respM = read_sharedmem_image(name);
 
-        sprintf(name, "ContrM_%ld", loop);
+        sprintf(name, "aol%ld_ContrM", loop);
         aoconfID_contrM = read_sharedmem_image(name);
     }
 
