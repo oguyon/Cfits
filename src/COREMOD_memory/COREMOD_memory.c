@@ -3148,9 +3148,12 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 	atype = data.image[ID].md[0].atype;
 	for(k=0;k<naxis;k++)
 		sizearray[k] = data.image[ID].md[0].size[k];
+
 				
 	IDshm = create_image_ID(IDshmname, naxis, sizearray, atype, 1, 0);
 	free(sizearray);
+
+	data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
 
 	switch (atype) {
 		case FLOAT :
