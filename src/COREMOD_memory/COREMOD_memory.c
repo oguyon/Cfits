@@ -2191,6 +2191,7 @@ int list_image_ID_ofp(FILE *fo)
 
   fprintf(fo, "\n");
   fprintf(fo, "INDEX    NAME         SIZE                    TYPE        SIZE  [percent]    LAST ACCESS\n");
+	fflush(stdout);
   fprintf(fo, "\n");
 
   for (i=0;i<data.NB_MAX_IMAGE;i++)
@@ -2244,6 +2245,7 @@ int list_image_ID_ofp(FILE *fo)
 	  timediff = (1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec) - data.image[i].md[0].last_access;
 	  
 	  fprintf(fo, "%15.9f\n", timediff);
+	  fflush(stdout);
 	}
   fprintf(fo, "\n");
 
