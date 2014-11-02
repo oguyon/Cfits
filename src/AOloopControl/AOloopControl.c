@@ -1909,7 +1909,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     {
         sizearray = (long*) malloc(sizeof(long)*3);
 
-		if((fp=fopen("conf_loopname.txt","r"))==NULL)
+		if((fp=fopen("./conf/conf_loopname.txt","r"))==NULL)
 		{	
 			printf("ERROR: file conf_loopname.txt missing\n");
 			exit(0);
@@ -1920,11 +1920,14 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         fflush(stdout);
         strcpy(AOconf[loop].name, content);
 
-		
-
-        if(read_config_parameter(config_fname, "GPU", content)==0)
-            exit(0);
+		if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
+		{	
+			printf("ERROR: file conf_loopname.txt missing\n");
+			exit(0);
+		}
+		r = fscanf(fp, "%s", content);
         printf("GPU : %d\n", atoi(content));
+        fclose(fp);
         fflush(stdout);
         AOconf[loop].GPU = atoi(content);
 
