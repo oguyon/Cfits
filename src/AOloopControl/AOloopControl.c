@@ -1887,6 +1887,22 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     printf("mode = %d\n", mode);
 
 
+	// Name definitions
+	
+	sprintf(content, "aol%ld_dmC", loop);
+    printf("DM file name : %s\n", content);
+    strcpy(AOconf[loop].DMname, content);
+
+	sprintf(content, "aol%ld_dmRM", loop);
+    printf("DM RM file name : %s\n", content);
+    strcpy(AOconf[loop].DMnameRM, content);
+
+
+    sprintf(content, "aol%ld_wfs", loop);
+    printf("WFS file name: %s\n", content);
+    strcpy(AOconf[loop].WFSname, content);
+	
+
 
 
     if(mode==1)
@@ -1918,9 +1934,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Connect to WFS camera
-        ssprintf(content, "aol%ld_wfs", LOOPNUMBER);
-        strcpy(AOconf[loop].WFSname, content);
-        aoconfID_WFS = read_sharedmem_image(content);
+        aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
         AOconf[loop].sizexWFS = data.image[aoconfID_WFS].md[0].size[0];
         AOconf[loop].sizeyWFS = data.image[aoconfID_WFS].md[0].size[1];
         //  AOconf[loop].sizezWFS = data.image[aoconfID_WFS].md[0].size[2];
@@ -2017,18 +2031,13 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Connect to DM
-		sprintf(content, "aol%ld_dmC", loop);
-        printf("DM file name : %s\n", content);
-        strcpy(AOconf[loop].DMname, content);
         aoconfID_DM = read_sharedmem_image(content);
         AOconf[loop].sizexDM = data.image[aoconfID_DM].md[0].size[0];
         AOconf[loop].sizeyDM = data.image[aoconfID_DM].md[0].size[1];
         AOconf[loop].sizeDM = AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
 
-		sprintf(content, "aol%ld_dmRM", loop);
-        printf("DM file name RM: %s\n", content);
-        strcpy(AOconf[loop].DMnameRM, content);
-        aoconfID_DMRM = read_sharedmem_image(content);
+	
+        aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
 
 
 
@@ -2321,7 +2330,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     {
 		sprintf(name, "aol%ld_wfs", loop);
         aoconfID_WFS = read_sharedmem_image(name);
-
 
         sprintf(name, "aol%ld_imWFS0", loop);
         aoconfID_WFS0 = read_sharedmem_image(name);
