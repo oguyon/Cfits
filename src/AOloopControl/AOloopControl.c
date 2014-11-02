@@ -2317,8 +2317,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
         free(sizearray);
 
-        AOconf[loop].init = 1;
-
 
         printf("   init_WFSref    %d\n", AOconf[loop].init_refWFS);
         printf("   init_RM        %d\n", AOconf[loop].init_RM);
@@ -3045,6 +3043,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
+
 	RMACQUISITION = 1;
 
 
@@ -3061,8 +3060,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
     RespMatNBframes = nbloop*2*AOconf[loop].NBDMmodes*NbAve;
-    //  printf("%ld frames total\n");
-    // fflush(stdout);
+    printf("%ld frames total\n", RespMatNBframes);
+    fflush(stdout);
 
     if(recordCube == 1)
         IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes+kc0max);
