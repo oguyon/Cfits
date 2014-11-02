@@ -1949,7 +1949,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         else
             AOconf[loop].DarkLevel = 0.0;
 
-        sprintf(name, "imWFS0_%ld", loop);
+        sprintf(name, "aol%ld_imWFS0", loop);
         aoconfID_WFS0 = image_ID(name);
         if(aoconfID_WFS0==-1)
         {
@@ -1961,7 +1961,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		}
 		
 		
-        sprintf(name, "imWFS1_%ld", loop);
+        sprintf(name, "aol%ld_imWFS1", loop);
         aoconfID_WFS1 = image_ID(name);
         if(aoconfID_WFS1 == -1)
         {
@@ -1975,7 +1975,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Create WFS2 image memory
-        sprintf(name, "imWFS2_%ld", loop);
+        sprintf(name, "aol%ld_imWFS2", loop);
         aoconfID_WFS2 = image_ID(name);
         if(aoconfID_WFS2 == -1)
         {
@@ -1988,9 +1988,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Create WFSref image memory (averaged, dark-subtracted)
-        sprintf(name, "refWFS_%ld", loop);
+        sprintf(name, "aol%ld_refWFSim", loop);
         aoconfID_refWFS = image_ID(name);
-        if(aoconfID_WFS2 == -1)
+        if(aoconfID_refWFS == -1)
         {
 		printf("Creating %s\n", name);
 			fflush(stdout);
@@ -1999,9 +1999,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         aoconfID_refWFS = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 		}
 
-        if(read_config_parameter(config_fname, "WFSrefim", content)==0)
-            exit(0);
-        printf("WFS ref file name : %s\n", content);
+		
+		
+		//	VERIFY FILE SIZES
         vOK = 0;
         AOconf[loop].init_refWFS = 0;
         if(is_fits_file(content)==1)
@@ -2051,6 +2051,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
                 }
                 delete_image_ID("tmprefwfs");
             }
+
+
 
 
         // Connect to DM
