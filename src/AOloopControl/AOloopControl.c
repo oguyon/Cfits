@@ -2245,9 +2245,10 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 				{
 					sizearray[0] =  AOconf[loop].NBDMmodes;
 					sizearray[1] =  1;
-					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					printf("-- Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
 					fflush(stdout);
 					list_image_ID();
+					fflush(stdout);
 					aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
 					list_image_ID();
 				}
