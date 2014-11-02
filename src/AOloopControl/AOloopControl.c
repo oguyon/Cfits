@@ -2236,26 +2236,18 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Create modal command vector memory
-		list_image_ID();
 		sprintf(name, "aol%ld_DMmode_cmd", loop);
 		aoconfID_cmd_modes = image_ID(name);
         if(aoconfID_cmd_modes==-1)
         {
 			aoconfID_cmd_modes = read_sharedmem_image(name);
-			list_image_ID();
-		exit(0);
 			if(aoconfID_cmd_modes==-1)
 				{
 					sizearray[0] =  AOconf[loop].NBDMmodes;
 					sizearray[1] =  1;
 					printf("-- Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
 					fflush(stdout);
-					printf("-- test 0 ---\n");
-					fflush(stdout);
-					list_image_ID();
-					fflush(stdout);
 					aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
-					list_image_ID();
 				}
 			else
 			{

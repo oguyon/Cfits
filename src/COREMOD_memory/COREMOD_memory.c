@@ -645,26 +645,8 @@ long long compute_image_memory()
   long i;
   long long total=0;
 
-	printf("\n");
   for(i=0;i<data.NB_MAX_IMAGE;i++)
     {
-if(data.image[i].used==1)
-{
-		printf("image %3ld   %12s   ", i, data.image[i].md[0].name);
-		fflush(stdout);
-	
-		printf("nelement=%ld ", data.image[i].md[0].nelement);
-		fflush(stdout);
-	
-		printf("atype = %d ", data.image[i].md[0].atype);
-		fflush(stdout);
-		
-		printf("typesize = %d ", TYPESIZE[data.image[i].md[0].atype]);
-		fflush(stdout);
-		
-		printf("\n");
-		fflush(stdout);
-	}
      if(data.image[i].used==1)
 		total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
     }
