@@ -71,7 +71,7 @@ float SCExAO_PZT_STAGE_Ypos = 5.0;
 
 int SCExAOcontrol_Average_image_cli()
 {
-	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
+	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+(CLI_checkarg(3,3)*CLI_checkarg(3,4))==0)
     {
       SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
       return 0;
