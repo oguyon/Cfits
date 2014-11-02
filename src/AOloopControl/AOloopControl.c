@@ -1914,8 +1914,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 			printf("ERROR: file conf_loopname.txt missing\n");
 			exit(0);
 		}
-//        if(read_config_parameter(config_fname, "loopname", content)==0)
- //           exit(0);
 		r = fscanf(fp, "%s", content);
         printf("loop name : %s\n", content);
         fclose(fp);
@@ -3039,13 +3037,19 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
-	printf("Initialize\n");
+	printf("Initialize AOconf shared memory\n");
 	fflush(stdout);
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 	printf("Initialization done\n");
 	fflush(stdout);
-
+ 
+ 
+	printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
+    fflush(stdout);
+    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+  
 	RMACQUISITION = 1;
 
 
@@ -3071,11 +3075,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-    printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
-    fflush(stdout);
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
-    AOloopControl_loadconfigure(LOOPNUMBER, fname, 0);
-    
 //	exit(0);
 
 
