@@ -43,16 +43,15 @@ typedef struct
 
 
     int init_refWFS;    // WFS reference image loaded
+
     int init_RM;        // Response Matrix loaded
     int init_CM;        // Control Matrix loaded
+    char respMname[80];
+    char contrMname[80];
 
 
     long NBDMmodes;
     float maxlimit; // maximum absolute value for mode values
-
-
-    char respMname[80];
-    char contrMname[80];
 
 
     // WFS CAMERA PERIODIC ERROR CORRECTION (optional)

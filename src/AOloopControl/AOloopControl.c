@@ -1889,22 +1889,30 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 	// Name definitions
 	
-	sprintf(content, "aol%ld_dmC", loop);
-    printf("DM file name : %s\n", content);
-    strcpy(AOconf[loop].DMname, content);
+	sprintf(name, "aol%ld_dmC", loop);
+    printf("DM file name : %s\n", name);
+    strcpy(AOconf[loop].DMname, name);
 
-	sprintf(content, "aol%ld_dmRM", loop);
-    printf("DM RM file name : %s\n", content);
-    strcpy(AOconf[loop].DMnameRM, content);
+	sprintf(name, "aol%ld_dmRM", loop);
+    printf("DM RM file name : %s\n", name);
+    strcpy(AOconf[loop].DMnameRM, name);
 
 
-    sprintf(content, "aol%ld_wfs", loop);
-    printf("WFS file name: %s\n", content);
-    strcpy(AOconf[loop].WFSname, content);
+    sprintf(name, "aol%ld_wfs", loop);
+    printf("WFS file name: %s\n", name);
+    strcpy(AOconf[loop].WFSname, name);
 	
-	sprintf(content, "aol%ld_DMmodes", loop);
-    printf("DMmodes file name: %s\n", content);
-    strcpy(AOconf[loop].DMMODESname, content);
+	sprintf(name, "aol%ld_DMmodes", loop);
+    printf("DMmodes file name: %s\n", name);
+    strcpy(AOconf[loop].DMMODESname, name);
+
+    sprintf(name, "aol%ld_RespM", loop);
+	printf("respM file name: %s\n", name);
+	strcpy(AOconf[loop].respMname, name);
+
+    sprintf(name, "aol%ld_ContrM", loop);
+	printf("respM file name: %s\n", name);
+	strcpy(AOconf[loop].contrMname, name);
 
 
 
@@ -2228,51 +2236,128 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Create modal command vector memory
-        sprintf(name, "DMmode_cmd_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  1;
-        aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
-
-        sprintf(name, "DMmode_cmd1_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  1;
-        aoconfID_cmd1_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
-        sprintf(name, "DMmode_RMS_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  1;
-        aoconfID_RMS_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		sprintf(name, "aol%ld_DMmode_cmd", loop);
+		aoconfID_cmd_modes = image_ID(name);
+        if(aoconfID_cmd_modes==-1)
+        {
+			aoconfID_cmd_modes = read_sharedmem_image(name);
+			if(aoconfID_cmd_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_cmd_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
-            data.image[aoconfID_RMS_modes].array.F[k] = 0.0;
+            data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+		}
+		
+		sprintf(name, "aol%ld_DMmode_cmd1", loop);
+		aoconfID_cmd1_modes = image_ID(name);
+        if(aoconfID_cmd1_modes==-1)
+        {
+			aoconfID_cmd1_modes = read_sharedmem_image(name);
+			if(aoconfID_cmd1_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_cmd1_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
+		
+        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+            data.image[aoconfID_cmd1_modes].array.F[k] = 0.0;
+		}
 
-        sprintf(name, "DMmode_AVE_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  1;
-        aoconfID_AVE_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		sprintf(name, "aol%ld_DMmode_AVE", loop);
+		aoconfID_AVE_modes = image_ID(name);
+        if(aoconfID_AVE_modes==-1)
+        {
+			aoconfID_AVE_modes = read_sharedmem_image(name);
+			if(aoconfID_AVE_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_AVE_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_AVE_modes].array.F[k] = 0.0;
+		}
 
-        sprintf(name, "DMmode_GAIN_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  2;
-        aoconfID_GAIN_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		sprintf(name, "aol%ld_DMmode_RMS", loop);
+		aoconfID_RMS_modes = image_ID(name);
+        if(aoconfID_RMS_modes==-1)
+        {
+			aoconfID_RMS_modes = read_sharedmem_image(name);
+			if(aoconfID_RMS_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_RMS_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
-            data.image[aoconfID_GAIN_modes].array.F[k] = 1.0;
+            data.image[aoconfID_RMS_modes].array.F[k] = 0.0;
+		}
 
-        sprintf(name, "DMmode_LIMIT_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  1;
-        aoconfID_LIMIT_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		sprintf(name, "aol%ld_DMmode_GAIN", loop);
+		aoconfID_GAIN_modes = image_ID(name);
+        if(aoconfID_GAIN_modes==-1)
+        {
+			aoconfID_GAIN_modes = read_sharedmem_image(name);
+			if(aoconfID_GAIN_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_GAIN_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
+        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+            data.image[aoconfID_GAIN_modes].array.F[k] = 0.0;
+		}
+
+		sprintf(name, "aol%ld_DMmode_LIMIT", loop);
+		aoconfID_LIMIT_modes = image_ID(name);
+        if(aoconfID_LIMIT_modes==-1)
+        {
+			aoconfID_LIMIT_modes = read_sharedmem_image(name);
+			if(aoconfID_LIMIT_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_LIMIT_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
+		}
 
-        sprintf(name, "DMmode_MULTF_%ld", loop);
-        sizearray[0] =  AOconf[loop].NBDMmodes;
-        sizearray[1] =  1;
-        aoconfID_MULTF_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+		sprintf(name, "aol%ld_DMmode_MULTF", loop);
+		aoconfID_MULTF_modes = image_ID(name);
+        if(aoconfID_MULTF_modes==-1)
+        {
+			aoconfID_MULTF_modes = read_sharedmem_image(name);
+			if(aoconfID_MULTF_modes==-1)
+				{
+					sizearray[0] =  AOconf[loop].NBDMmodes;
+					sizearray[1] =  1;
+					printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+					fflush(stdout);
+					aoconfID_MULTF_modes = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);					
+				}
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
+		}
+
+
+
 
 
 		
@@ -2281,46 +2366,55 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
-        // Create Response Matrix shared memory
-        sprintf(name, "RespM_%ld", loop);
-        sizearray[0] =  AOconf[loop].sizexWFS;
-        sizearray[1] =  AOconf[loop].sizeyWFS;
-        sizearray[2] =  AOconf[loop].NBDMmodes;
-        aoconfID_respM = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
-
-
-        // Load response matrix if possible
+        // Load/Create Response Matrix shared memory
         AOconf[loop].init_RM = 0;
-        if(read_config_parameter(config_fname, "RespMatrix", content)==0)
-            exit(0);
-        printf("Response Matrix file name : %s\n", content);
-        if((ID=load_fits(content, "tmprespM"))!=-1)
+		aoconfID_respM = image_ID(AOconf[loop].respMname);
+		if(aoconfID_respM == -1)
         {
-            // check size is vOK
+			aoconfID_respM = read_sharedmem_image(AOconf[loop].respMname);
+			if(aoconfID_respM==-1)
+				{
+					sizearray[0] =  AOconf[loop].sizexWFS;
+					sizearray[1] =  AOconf[loop].sizeyWFS;
+					sizearray[2] =  AOconf[loop].NBDMmodes;
+					aoconfID_respM = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
+					if(aoconfID_respM!=-1)
+						printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].respMname, sizearray[0], sizearray[1], sizearray[2]);
+					else
+						{
+							printf("ERROR: cannot create %s\n", AOconf[loop].respMname);
+							exit(0);
+						}
+					fflush(stdout);
+				}
+		}
+
+		
+        // check size is vOK
             vOK = 1;
-            if(data.image[ID].md[0].naxis!=3)
+            if(data.image[aoconfID_respM].md[0].naxis!=3)
             {
                 printf("Response matrix has wrong dimension\n");
                 vOK = 0;
             }
-            if(data.image[ID].md[0].atype!=FLOAT)
+            if(data.image[aoconfID_respM].md[0].atype!=FLOAT)
             {
                 printf("Response matrix has wrong type\n");
                 vOK = 0;
             }
             if(vOK==1)
             {
-                if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexWFS)
+                if(data.image[aoconfID_respM].md[0].size[0]!=AOconf[loop].sizexWFS)
                 {
                     printf("Response matrix has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
                     vOK = 0;
                 }
-                if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyWFS)
+                if(data.image[aoconfID_respM].md[0].size[1]!=AOconf[loop].sizeyWFS)
                 {
                     printf("Response matrix has wrong y size\n");
                     vOK = 0;
                 }
-                if(data.image[ID].md[0].size[2]!=AOconf[loop].NBDMmodes)
+                if(data.image[aoconfID_respM].md[0].size[2]!=AOconf[loop].NBDMmodes)
                 {
                     printf("Response matrix has wrong z size\n");
                     vOK = 0;
@@ -2329,11 +2423,14 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             if(vOK==1)
             {
                 AOconf[loop].init_RM = 1;
-                sprintf(name, "RespM_%ld", loop);
-                copy_image_ID("tmprespM", name);
             }
-            delete_image_ID("tmprespM");
-        }
+			else
+				{
+					  printf("\n");
+            printf("========== ERROR: RESPONSE MATRIX HAS WRONG SIZE ===========\n");
+            printf("\n");
+            exit(0);
+				}
 
 
 
