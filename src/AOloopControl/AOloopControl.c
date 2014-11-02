@@ -1902,6 +1902,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     printf("WFS file name: %s\n", content);
     strcpy(AOconf[loop].WFSname, content);
 	
+	sprintf(content, "aol%ld_DMmodes", loop);
+    printf("DMmodes file name: %s\n", content);
+    strcpy(AOconf[loop].DMMODESname, content);
 
 
 
@@ -1932,7 +1935,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         AOconf[loop].GPU = atoi(content);
 
 
-
+	
 
         // Connect to WFS camera
         aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
@@ -1953,10 +1956,10 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         aoconfID_WFS0 = image_ID(name);
         if(aoconfID_WFS0==-1)
         {
-			printf("Creating %s\n", name);
-			fflush(stdout);
 			sizearray[0] =  AOconf[loop].sizexWFS;
 			sizearray[1] =  AOconf[loop].sizeyWFS;
+			printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+			fflush(stdout);
 			aoconfID_WFS0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 		}
 		
@@ -1965,13 +1968,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         aoconfID_WFS1 = image_ID(name);
         if(aoconfID_WFS1 == -1)
         {
-			printf("Creating %s\n", name);
-			fflush(stdout);
 			sizearray[0] =  AOconf[loop].sizexWFS;
 			sizearray[1] =  AOconf[loop].sizeyWFS;
+			printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+			fflush(stdout);
 			aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 		}
-
 
 
         // Create WFS2 image memory
@@ -1979,11 +1981,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         aoconfID_WFS2 = image_ID(name);
         if(aoconfID_WFS2 == -1)
         {
-					printf("Creating %s\n", name);
-			fflush(stdout);
         sizearray[0] =  AOconf[loop].sizexWFS;
         sizearray[1] =  AOconf[loop].sizeyWFS;
-        aoconfID_WFS2 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+  			printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+			fflush(stdout);
+      aoconfID_WFS2 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 		}
 
 
@@ -1992,11 +1994,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         aoconfID_refWFS = image_ID(name);
         if(aoconfID_refWFS == -1)
         {
-		printf("Creating %s\n", name);
-			fflush(stdout);
         sizearray[0] =  AOconf[loop].sizexWFS;
         sizearray[1] =  AOconf[loop].sizeyWFS;
-        aoconfID_refWFS = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+  			printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+			fflush(stdout);
+       aoconfID_refWFS = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 		}
 
 		
@@ -2056,48 +2058,61 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Connect to DM
-        aoconfID_DM = read_sharedmem_image(content);
-        AOconf[loop].sizexDM = data.image[aoconfID_DM].md[0].size[0];
-        AOconf[loop].sizeyDM = data.image[aoconfID_DM].md[0].size[1];
-        AOconf[loop].sizeDM = AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
-
-	
-        aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+		aoconfID_DM = image_ID(AOconf[loop].DMname);
+		if(aoconfID_DM==-1)
+		{
+			printf("connect to %s\n", AOconf[loop].DMname);
+			aoconfID_DM = read_sharedmem_image(AOconf[loop].DMname);
+		}
+		AOconf[loop].sizexDM = data.image[aoconfID_DM].md[0].size[0];
+		AOconf[loop].sizeyDM = data.image[aoconfID_DM].md[0].size[1];
+		AOconf[loop].sizeDM = AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
+		
+		aoconfID_DMRM = image_ID(AOconf[loop].DMnameRM);
+		if(aoconfID_DMRM==-1)
+		{
+			printf("connect to %s\n", AOconf[loop].DMnameRM);
+			aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
+		}
 
 
 
 
         // Load DM modes (will exit if not successful)
-        sprintf(fname,"DMmodes_%ld.fits", loop);
-        sprintf(name,"DMmodes_%ld", loop);
-        if(read_config_parameter(config_fname, "DMmodes", content)==0)
-            exit(0);
-        printf("DM modes file name : %s\n", content);
 
+        aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname);
+        if(aoconfID_DMmodes == -1)
+        {
+			aoconfID_DMmodes = read_sharedmem_image(AOconf[loop].DMMODESname);
+  			printf("reading %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
+			fflush(stdout);
+		}
+
+
+		// VERIFY DM MODES SIZE
         vOK = 0;
-        if(is_fits_file(content)==1)
-            if((ID=load_fits(content, "tmpdmmodes"))!=-1)
-            {
-                printf("Verifying file\n");
+        if(aoconfID_DMmodes == -1)
+        {
+           
                 vOK = 1;
-                if(data.image[ID].md[0].naxis != 3)
+                if(data.image[aoconfID_DMmodes].md[0].naxis != 3)
                 {
                     printf("DM modes has wrong dimension\n");
                     vOK = 0;
                 }
-                if(data.image[ID].md[0].atype != FLOAT)
+                if(data.image[aoconfID_DMmodes].md[0].atype != FLOAT)
                 {
                     printf("DM modes has wrong type\n");
                     vOK = 0;
                 }
                 if(vOK==1)
                 {
-                    if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexDM)
+                    if(data.image[aoconfID_DMmodes].md[0].size[0]!=AOconf[loop].sizexDM)
                     {
                         printf("DM modes has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexDM);
                         vOK = 0;
                     }
-                    if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyDM)
+                    if(data.image[aoconfID_DMmodes].md[0].size[1]!=AOconf[loop].sizeyDM)
                     {
                         printf("DM modes has wrong y size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexDM);
                         vOK = 0;
@@ -2105,26 +2120,19 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
                 }
                 if(vOK==1)
                 {
-                    AOconf[loop].NBDMmodes = data.image[ID].md[0].size[2];
-                    sprintf(name, "DMmodes_%ld", loop);
-                    sizearray[0] =  AOconf[loop].sizexDM;
-                    sizearray[1] =  AOconf[loop].sizeyDM;
-                    sizearray[2] =  AOconf[loop].NBDMmodes;
-                    aoconfID_DMmodes = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
-
-                    copy_image_ID("tmpdmmodes", name);
-                }
-                delete_image_ID("tmpdmmodes");
-            }
+                    AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
+					printf("%ld DM modes\n", AOconf[loop].NBDMmodes);
+                }            
+		}
         if(vOK == 0)
         {
             printf("\n");
             printf("========== ERROR: NEED DM MODES TO START AO LOOP ===========\n");
             printf("\n");
             exit(0);
-        }
-
-
+		}
+		
+		
 
         // modes blocks
 
@@ -2210,7 +2218,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
-
+		
 
 
         // Create modal command vector memory
@@ -2261,7 +2269,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
 
 
-
+		
 
 
 
@@ -2417,6 +2425,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     AOconf[loop].init = 1;
 
     return(0);
+	
 }
 
 
@@ -2529,7 +2538,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
         AOloopControl_InitializeMemory(0);
     
     
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
 
@@ -2703,8 +2712,8 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
-
+    
+    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
 
@@ -3074,7 +3083,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
  
 	printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    
+    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
   
 	RMACQUISITION = 1;
@@ -3555,7 +3565,7 @@ int AOloopControl_run()
 
 
     printf("SETTING UP...\n");
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 
     if((ID = image_ID("WFScamPEcorrC"))!=-1)
@@ -4514,7 +4524,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 
     printf("Importing DM response matrix channel shared memory ...\n");

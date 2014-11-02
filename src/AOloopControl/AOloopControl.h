@@ -22,6 +22,7 @@ typedef struct
 
     char name[80];
 
+	// Wavefront sensor camera
     char WFSname[80];
     float DarkLevel;
     long sizexWFS;
@@ -30,11 +31,16 @@ typedef struct
     long long WFScnt;
    long long WFScntRM;
 
+	// DM
     char DMname[80];
     char DMnameRM[80];
     long sizexDM;
     long sizeyDM;
     long sizeDM;
+
+	// Modes
+	char DMMODESname[80];
+
 
     int init_refWFS;    // WFS reference image loaded
     int init_RM;        // Response Matrix loaded
