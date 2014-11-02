@@ -199,7 +199,7 @@ list_image_ID();
     {
         while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
         {
-            usleep(50);
+            usleep(10);
             // do nothing, wait
         }
 
