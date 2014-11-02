@@ -2369,6 +2369,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
 		}
 
+
+		list_image_ID();
+
 		sprintf(name, "aol%ld_DMmode_MULTF", loop);
 		aoconfID_MULTF_modes = image_ID(name);
         if(aoconfID_MULTF_modes==-1)
@@ -2392,7 +2395,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		}
 
 
-
+exit(0);
 
 
 		
@@ -2441,7 +2444,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             {
                 if(data.image[aoconfID_respM].md[0].size[0]!=AOconf[loop].sizexWFS)
                 {
-                    printf("Response matrix has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
+                    printf("Response matrix has wrong x size : is %ld, should be %ld\n", data.image[aoconfID_respM].md[0].size[0], AOconf[loop].sizexWFS);
                     vOK = 0;
                 }
                 if(data.image[aoconfID_respM].md[0].size[1]!=AOconf[loop].sizeyWFS)
