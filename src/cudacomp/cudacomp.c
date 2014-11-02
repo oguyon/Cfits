@@ -96,7 +96,7 @@ int init_CUDACOMP()
 #endif
 
     strcpy(data.module[data.NBmodule].name,__FILE__);
-    strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
+    strcpy(data.module[data.NBmodule].info,"CUDA wrapper for AO loop");
     data.NBmodule++;
 #ifdef HAVE_CUDA
     strcpy(data.cmd[data.NBcmd].key,"cudacompinit");
@@ -671,6 +671,20 @@ void *compute_function( void *ptr )
     gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
   
   pthread_exit(0);
+}
+
+
+int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
+{
+	long ID_contrM;
+	long ID_WFS;
+	
+	printf("Testing GPU matrix multiplication speed\n");
+	
+	//GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, GPUcnt, 0);
+    //GPU_loop_MultMat_execute(0);
+
+	return(0);
 }
 
 

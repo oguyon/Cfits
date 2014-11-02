@@ -796,6 +796,7 @@ int AOsystSim_run()
 
 
     printf("Running fake AO system simulation\n");
+    
 
 
 
@@ -823,12 +824,22 @@ int AOsystSim_run()
     IDpsfnmIR = create_image_ID("aosimpsfIRnm", 2, pupsize_array, FLOAT, 1, 0);
 
 
-    IDatmpha = read_sharedmem_image("outfiltwf"); // [um]
 
+	
+    IDatmpha = read_sharedmem_image("outfiltwf"); // [um]
+	if(IDatmpha == -1)
+		{
+			printf("Running without atmospheric turbulence\n");			
+		}
 
 
 
     IDdmdisp = read_sharedmem_image("dmdisp");
+    if(IDdmdisp==-1)
+		{
+			printf("Please create DM channels\n");
+			exit(0);
+		}
 
     // create DM
     dmsize[0] = dmxsize;

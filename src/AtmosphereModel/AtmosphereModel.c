@@ -27,7 +27,7 @@
 extern DATA data;
 
 
- 
+float ZenithAngle;
 int TimeDayOfYear;
 float TimeLocalSolarTime;
 
@@ -85,7 +85,7 @@ float dens0;
 
 double v_ABSCOEFF = 0.0;  // [m-1]
 double v_TRANSM = 1.0; 
-
+long v_LONG1, v_LONG2;
 
 
 
@@ -96,64 +96,81 @@ double RIA_lambda_min; // [m]
 double RIA_lambda_max; // [m]
 
 int initRIA_N2 = 0;
+double *RIA_N2_lambda;
 double *RIA_N2_ri;
 double *RIA_N2_abs;
 
 int initRIA_O2 = 0;
+double *RIA_O2_lambda;
 double *RIA_O2_ri;
 double *RIA_O2_abs;
 
 int initRIA_Ar = 0;
+double *RIA_Ar_lambda;
 double *RIA_Ar_ri;
 double *RIA_Ar_abs;
 
 int initRIA_H2O = 0;
+double *RIA_H2O_lambda;
 double *RIA_H2O_ri;
 double *RIA_H2O_abs;
 
 int initRIA_CO2 = 0;
+double *RIA_CO2_lambda;
 double *RIA_CO2_ri;
 double *RIA_CO2_abs;
 
 int initRIA_Ne = 0;
+double *RIA_Ne_lambda;
 double *RIA_Ne_ri;
 double *RIA_Ne_abs;
 
 int initRIA_He = 0;
+double *RIA_He_lambda;
 double *RIA_He_ri;
 double *RIA_He_abs;
 
 int initRIA_CH4 = 0;
+double *RIA_CH4_lambda;
 double *RIA_CH4_ri;
 double *RIA_CH4_abs;
 
 int initRIA_Kr = 0;
+double *RIA_Kr_lambda;
 double *RIA_Kr_ri;
 double *RIA_Kr_abs;
 
 int initRIA_H2 = 0;
+double *RIA_H2_lambda;
 double *RIA_H2_ri;
 double *RIA_H2_abs;
 
 int initRIA_O3 = 0;
+double *RIA_O3_lambda;
 double *RIA_O3_ri;
 double *RIA_O3_abs;
 
 int initRIA_N = 0;
+double *RIA_N_lambda;
 double *RIA_N_ri;
 double *RIA_N_abs;
 
 int initRIA_O = 0;
+double *RIA_O_lambda;
 double *RIA_O_ri;
 double *RIA_O_abs;
 
 int initRIA_H = 0;
+double *RIA_H_lambda;
 double *RIA_H_ri;
 double *RIA_H_abs;
 
 
 
-
+long NB_comp_array;
+double *comp_array_lambda;
+long *comp_array_lli;
+int lliprecomp = -1; // if >=0, use this index in array
 
 
 
@@ -291,10 +308,11 @@ int ATMOSPHEREMODEL_loadRIA_readsize(char *fname)
 //
 // load refractive indices and abs coeff
 // fname is the file name (eg. "RIA_O2.dat")
+// lptr is pointer to wavelenght
 // RIptr is pointer to refractive index array
 // absptr is pointer to absorption coeff array
 //
-int ATMOSPHEREMODEL_loadRIA(char *fname, double *RIptr, double *absptr)
+int ATMOSPHEREMODEL_loadRIA(char *fname, double *lptr, double *RIptr, double *absptr)
 {
 	FILE *fp;
 	long nbpt;
@@ -316,6 +334,7 @@ int ATMOSPHEREMODEL_loadRIA(char *fname, double *RIptr, double *absptr)
 	for(i=0;i<nbpt;i++)
 		{
 			r = fscanf(fp, "%lf %lf %lf\n", &v0, &v1, &v2);
+			lptr[i] = v0;
 			RIptr[i] = v1;
 			absptr[i] = v2;
 		}
@@ -2527,248 +2546,590 @@ void gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, struct nrl
 
 //
 // alt [m]
-// lambda [um]
+// lambda [m]
 //
 // computes N = (n-1)
 // absorption coefficient stored in v_ABSCOEFF variable
 //
-float AtmosphereModel_stdAtmModel_N(float alt, float lambdaum)
+float AtmosphereModel_stdAtmModel_N(float alt, float lambda)
 {
-	float dens;
-	float val;
-	double n;
- 	struct nrlmsise_output output; 
-	struct nrlmsise_input input;
-  	struct nrlmsise_flags flags;
-	long i;
-	float ifrac;
-	double LLN2, LLO2, LLAr, LLH2O, LLCO2, LLNe, LLHe, LLCH4, LLKr, LLH2, LLO3, LLN, LLO, LLH;
-	double LoschmidtConstant =  2.6867805e25; // for  1 atm (= 101.325 kPa) and 0 °C (= 273.15 K)
-	double LL;
-	double denstotal;
-	long lli;
-	double tmpc;
-	double abscoeff = 0.0;
+    float dens;
+    float val;
+    double n;
+    struct nrlmsise_output output;
+    struct nrlmsise_input input;
+    struct nrlmsise_flags flags;
+    long i;
+    float ifrac;
+    double LLN2, LLO2, LLAr, LLH2O, LLCO2, LLNe, LLHe, LLCH4, LLKr, LLH2, LLO3, LLN, LLO, LLH;
+    double LoschmidtConstant =  2.6867805e25; // for  1 atm (= 101.325 kPa) and 0 °C (= 273.15 K)
+    double LL;
+    double denstotal;
+    long lli;
+    double tmpc;
+    double abscoeff = 0.0;
 
-	i = (long) (alt/10.0);
-	if(i>9998)
-		i = 9999;
-	ifrac = 1.0*alt/10.0 - i;
+    long llistep;
+    int llidir, lliOK;
+
+
+    i = (long) (alt/10.0);
+    if(i>9998)
+        i = 9999;
+    ifrac = 1.0*alt/10.0 - i;
+
+    if(ifrac<0)
+        ifrac = 0.0;
+
+    if(ifrac>1.0)
+        ifrac = 1.0;
+
+
+    // find lli
+    /*	lli = (long) (RIA_NBpts/2);
+    	llistep = 100;
+    	lliOK = 0;
+    	llidir = 1;  // direction : -1=neg, 1=pos
+    	while(llistep!=1)
+    	{
+    		llistep = (long) (0.3*llistep);
+    		if(llistep==0)
+    			llistep = 1;
+    		while((RIA_N2_lambda[lli]*lldir<lambda*lldir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+    			lli += lldirdir*llistep;
+    		if(RIA_N2_lambda[lli]*lldir>lambda*lldir)
+    			lldir = -lldir;
+    	}*/
+    /*
+    	lli = (long) ( (lambdaum*1e-6-RIA_lambda_min)/(RIA_lambda_max-RIA_lambda_min)*RIA_NBpts );
+    	if(lli<0)
+    		lli = 0;
+    	if(lli>RIA_NBpts-1)
+    		lli = RIA_NBpts-1;
+    	*/
+    //	printf("  %g  [%g %g %ld]  lli = %ld / %ld\n", lambdaum, RIA_lambda_min, RIA_lambda_max, RIA_NBpts, lli, RIA_NBpts);
+    //	fflush(stdout);
+
+    denstotal = 0.0;
+    v_ABSCOEFF = 0.0;
+
+    v_LONG1 = lli;
+    v_LONG2 = RIA_NBpts;
+
+
+	// Use N2 to compute lli
 	
-	if(ifrac<0)
-		ifrac = 0.0;
 	
-	if(ifrac>1.0)
-		ifrac = 1.0;
 
 
-
-	lli = (long) ( (lambdaum*1e-6-RIA_lambda_min)/(RIA_lambda_max-RIA_lambda_min)*RIA_NBpts );
-	if(lli<0)
-		lli = 0;
-	if(lli>RIA_NBpts-1)
-		lli = RIA_NBpts-1;
-		
-//	printf("  %g  [%g %g %ld]  lli = %ld / %ld\n", lambdaum, RIA_lambda_min, RIA_lambda_max, RIA_NBpts, lli, RIA_NBpts);
-//	fflush(stdout);
-		
-	denstotal = 0.0;
-	v_ABSCOEFF = 0.0;
-
-	// N2
-	if(initRIA_N2==1)
-	{
-		n = RIA_N2_ri[lli];
-		abscoeff = RIA_N2_abs[lli];
-	}
-	else
-	{
-		n = 1.0;
-		abscoeff = 0.0;
-	}
-	LLN2 = (n*n-1)/(n*n+2);
-	tmpc = ((1.0-ifrac)*densN2[i]+ifrac*densN2[i+1])/(LoschmidtConstant/1e6);
-	LLN2 *= tmpc;
-	v_ABSCOEFF += tmpc*abscoeff;
-	denstotal += ((1.0-ifrac)*densN2[i]+ifrac*densN2[i+1]);
-	
-	// O2
-	if(initRIA_O2==1)
+    // N2
+    if(initRIA_N2==1)
+    {
+		lli = lliprecomp;
+		if(lli<0)
 		{
-			n = RIA_O2_ri[lli];
-			abscoeff = RIA_O2_abs[lli];
-		}
-	else
-		{
-			n = 1.0;
-			abscoeff = 0.0;
-		}
-	LLO2 = (n*n-1)/(n*n+2);
-	tmpc = ((1.0-ifrac)*densO2[i]+ifrac*densO2[i+1])/(LoschmidtConstant/1e6);
-	LLO2 *= tmpc;
+        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;  // direction : -1=neg, 1=pos
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_N2_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }
+        }
+         v_LONG1 = lli;
+        n = RIA_N2_ri[lli];
+        abscoeff = RIA_N2_abs[lli];
+		v_LONG1 = lli;
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLN2 = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densN2[i]+ifrac*densN2[i+1])/(LoschmidtConstant/1e6);
+    LLN2 *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densN2[i]+ifrac*densN2[i+1]);
+
+
+
+    // O2
+    if(initRIA_O2==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;  
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_O2_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_O2_ri[lli];
+        abscoeff = RIA_O2_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLO2 = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densO2[i]+ifrac*densO2[i+1])/(LoschmidtConstant/1e6);
+    LLO2 *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densO2[i]+ifrac*densO2[i+1]);
+
+
+
+    // Ar
+    if(initRIA_Ar==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_Ar_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_Ar_ri[lli];
+        abscoeff = RIA_Ar_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLAr = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densAr[i]+ifrac*densAr[i+1])/(LoschmidtConstant/1e6);
+    LLAr *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densAr[i]+ifrac*densAr[i+1]);
+
+
+
+
+    // H2O
+    if(initRIA_H2O==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_H2O_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_H2O_ri[lli];
+        abscoeff = RIA_H2O_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLH2O = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densH2O[i]+ifrac*densH2O[i+1])/(LoschmidtConstant/1e6);
+    LLH2O *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densH2O[i]+ifrac*densH2O[i+1]);
+
+
+
+
+    // CO2
+    if(initRIA_CO2==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_CO2_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_CO2_ri[lli];
+        abscoeff = RIA_CO2_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLCO2 = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densCO2[i]+ifrac*densCO2[i+1])/(LoschmidtConstant/1e6);
+    LLCO2 *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densCO2[i]+ifrac*densCO2[i+1]);
+
+
+
+
+    // Ne
+    if(initRIA_Ne==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_Ne_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_Ne_ri[lli];
+        abscoeff = RIA_Ne_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLNe = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densNe[i]+ifrac*densNe[i+1])/(LoschmidtConstant/1e6);
+	LLNe *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densNe[i]+ifrac*densNe[i+1]);
+
+
+
+
+    // He
+    if(initRIA_He==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_He_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_He_ri[lli];
+        abscoeff = RIA_He_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLHe = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densHe[i]+ifrac*densHe[i+1])/(LoschmidtConstant/1e6);
+	LLHe *= tmpc;
+    v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densHe[i]+ifrac*densHe[i+1]);
+
+
+
+
+    // CH4
+    if(initRIA_CH4==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_CH4_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_CH4_ri[lli];
+        abscoeff = RIA_CH4_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLCH4 = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densCH4[i]+ifrac*densCH4[i+1])/(LoschmidtConstant/1e6);
+	LLCH4 *= tmpc;
 	v_ABSCOEFF += tmpc*abscoeff;
-	denstotal += ((1.0-ifrac)*densO2[i]+ifrac*densO2[i+1]);
-	
-	// Ar
-	if(initRIA_Ar==1)
-		{
-		n = RIA_Ar_ri[lli];
-		abscoeff = RIA_Ar_abs[lli];
-		}
-	else
-	{
-		n = 1.0;
-		abscoeff = 0.0;
-	}
-	LLAr = (n*n-1)/(n*n+2);
-	tmpc = ((1.0-ifrac)*densAr[i]+ifrac*densAr[i+1])/(LoschmidtConstant/1e6);
-	LLAr *= tmpc;
+    denstotal += ((1.0-ifrac)*densCH4[i]+ifrac*densCH4[i+1]);
+
+
+
+
+    // Kr
+    if(initRIA_Kr==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_Kr_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_Kr_ri[lli];
+        abscoeff = RIA_Kr_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLKr = (n*n-1)/(n*n+2);
+   tmpc = ((1.0-ifrac)*densKr[i]+ifrac*densKr[i+1])/(LoschmidtConstant/1e6);
+	LLKr *= tmpc;
 	v_ABSCOEFF += tmpc*abscoeff;
-	denstotal += ((1.0-ifrac)*densAr[i]+ifrac*densAr[i+1]);
-	
-	// H2O
-	if(initRIA_H2O==1)
-	{
-		n = RIA_H2O_ri[lli];
-		abscoeff = RIA_H2O_abs[lli];
-	}
-	else
-	{
-		n = 1.0;
-		abscoeff = 0.0;
-	}
-	LLH2O = (n*n-1)/(n*n+2);
-	tmpc = ((1.0-ifrac)*densH2O[i]+ifrac*densH2O[i+1])/(LoschmidtConstant/1e6);
-	LLH2O *= tmpc;
+    denstotal += ((1.0-ifrac)*densKr[i]+ifrac*densKr[i+1]);
+
+
+
+
+
+    // H2
+    if(initRIA_H2==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_H2_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_H2_ri[lli];
+        abscoeff = RIA_H2_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLH2 = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densH2[i]+ifrac*densH2[i+1])/(LoschmidtConstant/1e6);
+	LLH2 *= tmpc;
 	v_ABSCOEFF += tmpc*abscoeff;
-	denstotal += ((1.0-ifrac)*densH2O[i]+ifrac*densH2O[i+1]);
-
-	// CO2
-	if(initRIA_CO2==1)
-		n = RIA_CO2_ri[lli];
-	else
-		n = 1.0;
-	LLCO2 = (n*n-1)/(n*n+2);
-	LLCO2 *= ((1.0-ifrac)*densCO2[i]+ifrac*densCO2[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densCO2[i]+ifrac*densCO2[i+1]);
-
-	// Ne
-	if(initRIA_Ne==1)
-		n = RIA_Ne_ri[lli];
-	else
-		n = 1.0;
-	LLNe = (n*n-1)/(n*n+2);
-	LLNe *= ((1.0-ifrac)*densNe[i]+ifrac*densNe[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densNe[i]+ifrac*densNe[i+1]);
-
-	
-	// He
-	if(initRIA_He==1)
-		n = RIA_He_ri[lli];
-	else
-		n = 1.0;
-	LLHe = (n*n-1)/(n*n+2);
-	LLHe *= ((1.0-ifrac)*densHe[i]+ifrac*densHe[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densHe[i]+ifrac*densHe[i+1]);
-	
-	
-	// CH4
-	if(initRIA_CH4==1)
-		n = RIA_CH4_ri[lli];
-	else
-		n = 1.0;
-	LLCH4 = (n*n-1)/(n*n+2);
-	LLCH4 *= ((1.0-ifrac)*densCH4[i]+ifrac*densCH4[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densCH4[i]+ifrac*densCH4[i+1]);
-
-	// Kr
-	if(initRIA_Kr==1)
-		n = RIA_Kr_ri[lli];
-	else
-		n = 1.0;
-	LLKr = (n*n-1)/(n*n+2);
-	LLKr *= ((1.0-ifrac)*densKr[i]+ifrac*densKr[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densKr[i]+ifrac*densKr[i+1]);
-
-	// H2
-	if(initRIA_H2==1)
-		n = RIA_H2_ri[lli];
-	else
-		n = 1.0;
-	LLH2 = (n*n-1)/(n*n+2);
-	LLH2 *= ((1.0-ifrac)*densH2[i]+ifrac*densH2[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densH2[i]+ifrac*densH2[i+1]);
-	
-	// O3
-	if(initRIA_O3==1)
-		n = RIA_O3_ri[lli];
-	else
-		n = 1.0;
-	LLO3 = (n*n-1)/(n*n+2);
-	LLO3 *= ((1.0-ifrac)*densO3[i]+ifrac*densO3[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densO3[i]+ifrac*densO3[i+1]);
-
-	// N
-	if(initRIA_N==1)
-		n = RIA_N_ri[lli];
-	else
-		n = 1.0;
-	LLN = (n*n-1)/(n*n+2);
-	LLN *= ((1.0-ifrac)*densN[i]+ifrac*densN[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densN[i]+ifrac*densN[i+1]);
-
-	// O
-	if(initRIA_O==1)
-		n = RIA_O_ri[lli];
-	else
-		n = 1.0;
-	LLO = (n*n-1)/(n*n+2);
-	LLO *= ((1.0-ifrac)*densO[i]+ifrac*densO[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densO[i]+ifrac*densO[i+1]);
-
-	// H
-	if(initRIA_H==1)
-		n = RIA_H_ri[lli];
-	else
-		n = 1.0;
-	LLH = (n*n-1)/(n*n+2);
-	LLH *= ((1.0-ifrac)*densH[i]+ifrac*densH[i+1])/(LoschmidtConstant/1e6);
-	denstotal += ((1.0-ifrac)*densH[i]+ifrac*densH[i+1]);
-	
+    denstotal += ((1.0-ifrac)*densH2[i]+ifrac*densH2[i+1]);
 
 
-//	printf("lambdaum = %f  %ld    H2O abs coeff = %f   1m abs coeff = %g\n", lambdaum, lli, RIA_H2O_abs[lli], v_ABSCOEFF);
-//	printf("partial pressure water: %f atm\n", ((1.0-ifrac)*densH2O[i]+ifrac*densH2O[i+1])/(LoschmidtConstant/1e6));
-//	exit(0);
-	
-	LL = LLN2 + LLO2 + LLAr + LLH2O + LLCO2 + LLNe + LLHe + LLCH4 + LLKr + LLH2 + LLO3 + LLN + LLO + LLH;
-	
-	n = sqrt((2.0*LL+1.0)/(1.0-LL));
-	
 
-	// simple model: use overall density 
-//	val = 0.0000834213+0.0240603/(130.0-1.0/pow(lambdaum,2.0))+0.00015997/(38.9-1.0/pow(lambdaum,2.0));
-//	val *= (dens/0.001178);
- 
-	val = n-1.0;
-	
-	
-		
-//	printf("===== %5ld  %10g   %10g  %10g     %10g\n ", i, (double) alt, ifrac, val, LL);
-	
-	
-	//,  1.0+(0.0000834213+0.0240603/(130.0-1.0/pow(lambdaum,2.0))+0.00015997/(38.9-1.0/pow(lambdaum,2.0)))*(dens/0.001178));
-	//(double) densH2O[i], (double) dens0,  densH2O[i]/dens0, val, OPTICSMATERIALS_n(10, lambdaum/1000000.0));
-	
-	//dens = (1.0-ifrac)*densH2O[i] + ifrac*densH2O[i];
-	//val = (1.0-dens/dens0)*val + dens/dens0*(OPTICSMATERIALS_n(10, lambdaum/1000000.0)-1.0);
-	
-	//printf("-> %g  %g [%g %f]\n", val, n-1.0, denstot/(LoschmidtConstant/1e6), output.t[1]);
-	
-//	printf(" [%g %g -> %g %g] ", alt, lambdaum, val, dens/0.001178);
 
-	return(val);
+
+    // O3
+    if(initRIA_O3==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_O3_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_O3_ri[lli];
+        abscoeff = RIA_O3_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLO3 = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densO3[i]+ifrac*densO3[i+1])/(LoschmidtConstant/1e6);
+	LLO3 *= tmpc;
+	v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densO3[i]+ifrac*densO3[i+1]);
+
+
+
+
+
+    // N
+    if(initRIA_N==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1; 
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_N_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_N_ri[lli];
+        abscoeff = RIA_N_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLN = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densN[i]+ifrac*densN[i+1])/(LoschmidtConstant/1e6);
+	LLN *= tmpc;
+	v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densN[i]+ifrac*densN[i+1]);
+
+
+
+
+
+    // O
+    if(initRIA_O==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_O_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_O_ri[lli];
+        abscoeff = RIA_O_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLO = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densO[i]+ifrac*densO[i+1])/(LoschmidtConstant/1e6);
+	LLO *= tmpc;
+	v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densO[i]+ifrac*densO[i+1]);
+
+
+
+
+
+    // H
+    if(initRIA_H==1)
+    {
+/*        lli = (long) (RIA_NBpts/2);
+        llistep = 100;
+        lliOK = 0;
+        llidir = 1;
+        while(llistep!=1)
+        {
+            llistep = (long) (0.3*llistep);
+            if(llistep==0)
+                llistep = 1;
+            while((RIA_H_lambda[lli]*llidir<lambda*llidir)&&(lli<RIA_NBpts-llistep)&&(lli>llistep))
+                lli += llidir*llistep;
+            llidir = -llidir;
+        }*/
+        n = RIA_H_ri[lli];
+        abscoeff = RIA_H_abs[lli];
+    }
+    else
+    {
+        n = 1.0;
+        abscoeff = 0.0;
+    }
+    LLH = (n*n-1)/(n*n+2);
+    tmpc = ((1.0-ifrac)*densH[i]+ifrac*densH[i+1])/(LoschmidtConstant/1e6);
+	LLH *= tmpc;
+	v_ABSCOEFF += tmpc*abscoeff;
+    denstotal += ((1.0-ifrac)*densH[i]+ifrac*densH[i+1]);
+
+
+
+    //	printf("lambdaum = %f  %ld    H2O abs coeff = %f   1m abs coeff = %g\n", lambdaum, lli, RIA_H2O_abs[lli], v_ABSCOEFF);
+    //	printf("partial pressure water: %f atm\n", ((1.0-ifrac)*densH2O[i]+ifrac*densH2O[i+1])/(LoschmidtConstant/1e6));
+    //	exit(0);
+
+    LL = LLN2 + LLO2 + LLAr + LLH2O + LLCO2 + LLNe + LLHe + LLCH4 + LLKr + LLH2 + LLO3 + LLN + LLO + LLH;
+	
+	//printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f\n", LLN2, LLO2, LLAr, LLH2O, LLCO2, LLNe, LLHe, LLCH4, LLKr, LLH2, LLO3, LLN, LLO, LLH);
+
+	//exit(0);
+
+    n = sqrt((2.0*LL+1.0)/(1.0-LL));
+
+
+    // simple model: use overall density
+    //	val = 0.0000834213+0.0240603/(130.0-1.0/pow(lambdaum,2.0))+0.00015997/(38.9-1.0/pow(lambdaum,2.0));
+    //	val *= (dens/0.001178);
+
+    val = n-1.0;
+
+
+
+    //	printf("===== %5ld  %10g   %10g  %10g     %10g\n ", i, (double) alt, ifrac, val, LL);
+
+
+    //,  1.0+(0.0000834213+0.0240603/(130.0-1.0/pow(lambdaum,2.0))+0.00015997/(38.9-1.0/pow(lambdaum,2.0)))*(dens/0.001178));
+    //(double) densH2O[i], (double) dens0,  densH2O[i]/dens0, val, OPTICSMATERIALS_n(10, lambdaum/1000000.0));
+
+    //dens = (1.0-ifrac)*densH2O[i] + ifrac*densH2O[i];
+    //val = (1.0-dens/dens0)*val + dens/dens0*(OPTICSMATERIALS_n(10, lambdaum/1000000.0)-1.0);
+
+    //printf("-> %g  %g [%g %f]\n", val, n-1.0, denstot/(LoschmidtConstant/1e6), output.t[1]);
+
+    //	printf(" [%g %g -> %g %g] ", alt, lambdaum, val, dens/0.001178);
+
+    return(val);
 }
+
+
 
 
 
@@ -3313,6 +3674,15 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 	double n, lambda;
 	FILE *fp;
 	double rangle;
+	int r;
+	long li, lli, llistart, lliend, llistep;
+
+
+
+	strcpy(KEYWORD,"ZENITH_ANGLE");
+	read_config_parameter(CONFFILE,KEYWORD,CONTENT);
+    ZenithAngle = atof(CONTENT);
+
 
     strcpy(KEYWORD,"TIME_DAY_OF_YEAR");
     read_config_parameter(CONFFILE,KEYWORD,CONTENT);
@@ -3384,85 +3754,97 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 
 	ATMOSPHEREMODEL_loadRIA_readsize("./RefractiveIndices/RIA_N2.dat");
 
-
+	RIA_N2_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_N2_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_N2_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_N2.dat", RIA_N2_ri, RIA_N2_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_N2.dat", RIA_N2_lambda, RIA_N2_ri, RIA_N2_abs);
 	initRIA_N2 = 1;
 
+	RIA_O2_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_O2_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_O2_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O2.dat", RIA_O2_ri, RIA_O2_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O2.dat", RIA_O2_lambda, RIA_O2_ri, RIA_O2_abs);
 	initRIA_O2 = 1;
 
-//	RIA_Ar_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	RIA_Ar_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Ar.dat", RIA_Ar_ri, RIA_Ar_abs);
-//	initRIA_Ar = 1;
+	RIA_Ar_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_Ar_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_Ar_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Ar.dat", RIA_Ar_lambda, RIA_Ar_ri, RIA_Ar_abs);
+	initRIA_Ar = 1;
 
-
+	RIA_H2O_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_H2O_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_H2O_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H2O.dat", RIA_H2O_ri, RIA_H2O_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H2O.dat", RIA_H2O_lambda, RIA_H2O_ri, RIA_H2O_abs);
 	initRIA_H2O = 1;
 
+	RIA_CO2_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_CO2_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_CO2_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_CO2.dat", RIA_CO2_ri, RIA_CO2_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_CO2.dat", RIA_CO2_lambda, RIA_CO2_ri, RIA_CO2_abs);
 	initRIA_CO2 = 1;
 
 
-//	RIA_Ne_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	RIA_Ne_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Ne.dat", RIA_Ne_ri, RIA_Ne_abs);
-//	initRIA_Ne = 1;
+	RIA_Ne_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_Ne_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_Ne_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Ne.dat", RIA_Ne_lambda, RIA_Ne_ri, RIA_Ne_abs);
+	initRIA_Ne = 1;
 
+/*
+	RIA_He_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_He_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_He_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_He.dat", RIA_H2_lambda, RIA_He_ri, RIA_He_abs);
+	initRIA_He = 1;
+*/
 
-//	RIA_He_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	RIA_He_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_He.dat", RIA_He_ri, RIA_He_abs);
-//	initRIA_He = 1;
-
-
+	RIA_CH4_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_CH4_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_CH4_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_CH4.dat", RIA_CH4_ri, RIA_CH4_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_CH4.dat", RIA_CH4_lambda, RIA_CH4_ri, RIA_CH4_abs);
 	initRIA_CH4 = 1;
 
 
-//	RIA_Kr_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	RIA_Kr_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Kr.dat", RIA_Kr_ri, RIA_Kr_abs);
-//	initRIA_Kr = 1;
+	RIA_Kr_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_Kr_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
+	RIA_Kr_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Kr.dat", RIA_Kr_lambda, RIA_Kr_ri, RIA_Kr_abs);
+	initRIA_Kr = 1;
 
 
+	RIA_H2_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_H2_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_H2_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H2.dat", RIA_H2_ri, RIA_H2_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H2.dat", RIA_H2_lambda, RIA_H2_ri, RIA_H2_abs);
 	initRIA_H2 = 1;
 
 
+//	RIA_O3_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 //	RIA_O3_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 //	RIA_O3_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O3.dat", RIA_O3_ri, RIA_O3_abs);
+//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O3.dat", RIA_O3_lambda, RIA_O3_ri, RIA_O3_abs);
 //	initRIA_O3 = 1;
 
 
+	RIA_N_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_N_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_N_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_N.dat", RIA_N_ri, RIA_N_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_N.dat", RIA_N_lambda, RIA_N_ri, RIA_N_abs);
 	initRIA_N = 1;
 
 
+	RIA_O_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_O_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_O_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O.dat", RIA_O_ri, RIA_O_abs);
+	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O.dat", RIA_O_lambda, RIA_O_ri, RIA_O_abs);
 	initRIA_O = 1;
 
 
+//	RIA_H_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 //	RIA_H_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 //	RIA_H_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
-//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H.dat", RIA_H_ri, RIA_H_abs);
+//	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H.dat", RIA_H_lambda, RIA_H_ri, RIA_H_abs);
 //	initRIA_H = 1;
 
 
@@ -3484,11 +3866,19 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 //	AtmosphereModel_load_stdAtmModel("atm.txt");
 	//AtmosphericTurbulence_save_stdAtmModel("atm1.txt");
 
-	// refractive index as a function of lambda
+
+
+
+
+
+
+
+	// ***************** refractive index as a function of lambda at site ****************************
+	
 	fp  = fopen("RindexSite.txt", "w");
 	for(lambda=0.9e-6; lambda<RIA_lambda_max; lambda+=(RIA_lambda_max-RIA_lambda_min)*0.0001)
 		{
-			n = 1.0 + AtmosphereModel_stdAtmModel_N(SiteAlt, lambda*1.0e6);
+			n = 1.0 + AtmosphereModel_stdAtmModel_N(SiteAlt, lambda);
 			fprintf(fp, "%g %.10f %.10f\n", lambda, n, v_ABSCOEFF);
 			printf("%g %.10f\n", lambda, n);	
 		}
@@ -3498,23 +3888,67 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 	fp = fopen("Refract.txt", "w");
 	fclose(fp);
 	
-	for(lambda=0.9e-6; lambda<1.4e-6; lambda+= 0.1e-9)
-	{
-		rangle = AtmosphereModel_RefractionPath(lambda*1.0e6, 0.01);
+	
+	
+	// *************** LIGHT PATH THROUGH ATMOSPHERE AT TWO SEPARATE WAVELENGTHS ***********************
+	
+	lliprecomp = -1;
+	
+	AtmosphereModel_RefractionPath(0.6e-6, ZenithAngle, 1);
+	r = system("cp refractpath.txt refractpath1.txt");
+	AtmosphereModel_RefractionPath(1.6e-6, ZenithAngle, 1);
+	r = system("cp refractpath.txt refractpath2.txt");
+
+	
+	
+	
+	
+	// **************** REFRACTION AND TRANSMISSION AS A FUNCTION OF WAVELENGTH *********************
+	
+	// precompute wavelength array and indices
+	llistep = 1;	
+	llistart = 0;
+	while(RIA_N2_lambda[llistart]<4.1e-6)
+		llistart++;
+	lliend = llistart;
+	while(RIA_N2_lambda[lliend]<4.2e-6)
+		lliend++;
+	NB_comp_array = (lliend-llistart)/llistep;
+	comp_array_lambda = (double*) malloc(sizeof(double)*NB_comp_array);
+	comp_array_lli = (long*) malloc(sizeof(double)*NB_comp_array);
+
+	for(li=0;li<NB_comp_array;li++)
+		{
+			lli = llistart + li*llistep;
+			comp_array_lambda[li] = RIA_N2_lambda[lli];
+			comp_array_lli[li] = lli;
+		}
+	
+	for(li=0;li<NB_comp_array;li++)
+		{
+		lambda = comp_array_lambda[li];
+		lliprecomp = comp_array_lli[li];
+		rangle = AtmosphereModel_RefractionPath(lambda, ZenithAngle, 0);
 		fp = fopen("Refract.txt", "a");
 		fprintf(fp, "%g %.12f %.12f\n", lambda, rangle, v_TRANSM);
 		fclose(fp);
 	}
+	lliprecomp = -1;
+	
+	free(comp_array_lambda);
+	free(comp_array_lli);
+	
 	return 0;
 }
 
 
-/// lambda in um
+/// lambda in m
+/// if WritePath = 1, write light path in output ASCII file
 /// return atm refraction value [arcsec]
-double AtmosphereModel_RefractionPath(double lambda, double Zangle)
+double AtmosphereModel_RefractionPath(double lambda, double Zangle, int WritePath)
 {
     double h0, h1; // elevation (from Earth center direction, 0 at Earth surface)
-    double lstep = 10.0; // beam distance step [m]
+    double lstep = 20.0; // beam distance step [m]
     double Re = 6371000.0; // Earth radius [m]
     double alphae; // angle to center of Earth
     double x0, y0, x1, y1; // cartesian coordinates
@@ -3529,7 +3963,6 @@ double AtmosphereModel_RefractionPath(double lambda, double Zangle)
     long iter = 0;
 	double errV = 100000.0;
 	double flux;
-	
 
 
     Zangle0 = Zangle;
@@ -3537,7 +3970,7 @@ double AtmosphereModel_RefractionPath(double lambda, double Zangle)
 
     while((iter<20)&&(errV>0.00001)) 
     {
-		printf("----------------- iter %ld ---------------\n", iter);
+		//printf("----------------- iter %ld ---------------\n", iter);
         // upward path
         x0 = 0.0;
         y0 = 0.0;
@@ -3545,8 +3978,9 @@ double AtmosphereModel_RefractionPath(double lambda, double Zangle)
         h0 = SiteAlt;
         alpha1 = 0.0;
         n0 = 1.0 + AtmosphereModel_stdAtmModel_N(h0, lambda);
-
-        fp = fopen("refractpath.txt", "w");
+		
+		if(WritePath)
+			fp = fopen("refractpath.txt", "w");
         pathl = 0.0;
         h1 = 0.0;
         flux = 1.0;
@@ -3572,21 +4006,23 @@ double AtmosphereModel_RefractionPath(double lambda, double Zangle)
             h0 = h1;
 
             pathl += lstep;
-            fprintf(fp, "%f     %f  %f     %f  %g    %g   %g\n", h0, x0, y0, alpha, alpha-Zangle, (alpha-Zangle)/M_PI*180.0*3600.0, (y0-SiteAlt)*tan(Zangle)-x0 );
+            if(WritePath)
+				fprintf(fp, "%f     %f  %f     %f  %g    %g   %g\n", h0, x0, y0, alpha, alpha-Zangle, (alpha-Zangle)/M_PI*180.0*3600.0, (y0-SiteAlt)*tan(Zangle)-x0 );
         }
-        fclose(fp);
+        if(WritePath)
+			fclose(fp);
         offsetangle = alpha-Zangle;
-        printf("refraction error = %g arcsec\n", offsetangle/M_PI*180.0*3600.0);
-        printf("path = %f\n", pathl);
+        //printf("refraction error = %g arcsec\n", offsetangle/M_PI*180.0*3600.0);
+        //printf("path = %f\n", pathl);
 		Zangle0 -= offsetangle;
 		errV = fabs(offsetangle/M_PI*180.0*3600.0);
         iter++;
     }
-	printf("Atmospheric Refraction = %f arcsec\n", (Zangle-Zangle0)/M_PI*180.0*3600.0);
+	printf("%10.6f um   %12.10f   %10ld/%10ld   Atmospheric Refraction = %10.6f arcsec   ", lambda*1e6, 1.0+AtmosphereModel_stdAtmModel_N(SiteAlt, lambda), v_LONG1, v_LONG2, (Zangle-Zangle0)/M_PI*180.0*3600.0);
     printf("TRANSMISSION = %lf\n", flux);
 	v_TRANSM = flux;
 
     return((Zangle-Zangle0)/M_PI*180.0*3600.0);
 }
 
-	
+

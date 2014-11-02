@@ -14,7 +14,7 @@ int AtmosphereModel_load_stdAtmModel(char *fname);
 int AtmosphereModel_Create_from_CONF(char *CONFFILE);
 
 
-double AtmosphereModel_RefractionPath(double lambda, double Zangle);
+double AtmosphereModel_RefractionPath(double lambda, double Zangle, int WritePath);
 
 
 

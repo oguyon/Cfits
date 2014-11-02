@@ -931,7 +931,7 @@ int make_AtmosphericTurbulence_wavefront_series()
 	//AtmosphericTurbulence_save_stdAtmModel("atm1.txt");
 
 
-	AtmosphereModel_RefractionPath(1.5, Zangle); //79.999/180.0*M_PI);//Zangle);
+	AtmosphereModel_RefractionPath(1.5, Zangle, 0); //79.999/180.0*M_PI);//Zangle);
    	
 
     fp = fopen("Rprof.txt", "w");
