@@ -173,7 +173,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
     if(IDcam ==-1)
         IDcam = read_sharedmem_image(imname);
 
-    kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
+   /* kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
 	
     if(kw==-1)
 {
@@ -182,6 +182,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
    }
     else
         printf("found [%ld] NBcoadd = %ld\n", kw, NBcoadd);
+*/
 
     xsize = data.image[IDcam].md[0].size[0];
     ysize = data.image[IDcam].md[0].size[1];
