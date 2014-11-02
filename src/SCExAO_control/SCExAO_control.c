@@ -208,7 +208,7 @@ list_image_ID();
         slice = data.image[IDcam].md[0].cnt1;
 //        if(slice==-1)
   //          slice = data.image[IDcam].md[0].size[2]-1;
-		slice = 0;
+	//	slice = 0;
 		
         ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice* xysize;
@@ -220,10 +220,10 @@ list_image_ID();
         cntref = data.image[IDcam].md[0].cnt0;
     }
 
-  /*  for(ii=0; ii<xysize; ii++)
+  for(ii=0; ii<xysize; ii++)
         data.image[ID].array.F[ii] /= NbAve*NBcoadd;
 
-	if((IDv=variable_ID("AOLCAMDARK"))!=-1)
+	/*if((IDv=variable_ID("AOLCAMDARK"))!=-1)
 		{
 			
 			darkv = data.variable[IDv].value.f;
