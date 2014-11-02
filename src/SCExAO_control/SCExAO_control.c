@@ -159,7 +159,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
     char *ptrv;
     unsigned short *arrayutmp;
     long ii;
-    long NBcoadd;
+    long NBcoadd = 1;
     long kw;
 	double darkv;
 	long IDv;
@@ -199,7 +199,7 @@ list_image_ID();
     {
         while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
         {
-            usleep(10);
+            usleep(50);
             // do nothing, wait
         }
 
