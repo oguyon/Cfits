@@ -3152,7 +3152,7 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 	free(sizearray);
 
 	//data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
-	printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
+	//printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
 
 	switch (atype) {
 		case FLOAT :

@@ -2236,6 +2236,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
         // Create modal command vector memory
+		list_image_ID();
 		sprintf(name, "aol%ld_DMmode_cmd", loop);
 		aoconfID_cmd_modes = image_ID(name);
         if(aoconfID_cmd_modes==-1)
