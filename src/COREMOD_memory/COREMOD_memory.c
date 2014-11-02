@@ -1536,9 +1536,9 @@ long read_sharedmem_image(char *name)
   SM_fd = open(SM_fname, O_RDWR);
   if(SM_fd==-1)
     {
-      ID = -1;
-      printf("Cannot import file\n");
 		data.image[ID].used = 0;
+      ID = -1;
+      printf("Cannot import file - continuing\n");
     }
   else
     {
