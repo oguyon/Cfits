@@ -2471,6 +2471,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	printf("RespM OK\n");
 	fflush(stdout);
 
+exit(0);
+
 
         // Create Control Matrix shared memory
         sprintf(name, "ContrM_%ld", loop);
