@@ -708,7 +708,10 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 	long *cmdmodessize;
 
 	long iter;
-	long NBiter = 10000;
+	long NBiter = 1000;
+	double time1sec, time2sec;
+	struct timespec tnow;
+
 	
 	printf("Testing GPU matrix multiplication speed\n");
 	
@@ -730,12 +733,16 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
 	GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS].md[0].name, data.image[ID_cmd_modes].md[0].name, GPUcnt, 0);
     
-    
-    
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
     for(iter=0;iter<NBiter;iter++)
 		GPU_loop_MultMat_execute(0);
+ 
+	clock_gettime(CLOCK_REALTIME, &tnow);
+    time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-
+	printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
 
 	printf("done\n");
 	fflush(stdout);
