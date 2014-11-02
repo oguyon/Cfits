@@ -172,6 +172,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
     IDcam = image_ID(imname);
     if(IDcam ==-1)
         IDcam = read_sharedmem_image(imname);
+list_image_ID();
 
    /* kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
 	
