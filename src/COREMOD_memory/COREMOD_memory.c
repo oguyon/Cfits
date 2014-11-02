@@ -356,6 +356,19 @@ int mk_amph_from_complex_cli()
 
 
 
+//long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname);
+int COREMOD_MEMORY_cp2shm_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+		COREMOD_MEMORY_cp2shm(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
 
 int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
@@ -553,6 +566,15 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
   data.NBcmd++;
  
+ 
+  strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_cp2shm_cli;
+  strcpy(data.cmd[data.NBcmd].info,"copy image ot shared memory");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <shared mem image>");
+  strcpy(data.cmd[data.NBcmd].example,"imcp2shm im1 ims1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)");
+  data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -3075,9 +3097,56 @@ void *save_fits_function( void *ptr )
 }
 
 
+/** copy an image to shared memory 
+ * 
+ * 
+ */
+long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
+{
+	long ID;
+	long IDshm;
+	long atype;
+	long naxis;
+	long *sizearray;
+	char *ptr1;
+	char *ptr2;
+	long k;
+	
+	
+	ID = image_ID(IDname);
+	naxis = data.image[ID].md[0].naxis;
+	
+	sizearray = (long*) malloc(sizeof(long)*naxis);
+	atype = data.image[ID].md[0].atype;
+	for(k=0;k<naxis;k++)
+		sizearray[k] = data.image[ID].md[0].size[k];
+				
+	IDshm = create_image_ID(IDshmname, naxis, sizearray, atype, 1, 0);
+	free(sizearray);
 
-
-
+	switch (atype) {
+		case FLOAT :
+			ptr1 = (char*) data.image[ID].array.F;
+			ptr2 = (char*) data.image[IDshm].array.F;
+			memcpy(ptr2, ptr1, sizeof(float)*data.image[ID].md[0].nelement);
+			break;
+		case DOUBLE :
+			ptr1 = (char*) data.image[ID].array.D;
+			ptr2 = (char*) data.image[IDshm].array.D;
+			memcpy(ptr2, ptr1, sizeof(float)*data.image[ID].md[0].nelement);
+			break;
+		case USHORT :
+			ptr1 = (char*) data.image[ID].array.U;
+			ptr2 = (char*) data.image[IDshm].array.U;
+			memcpy(ptr2, ptr1, sizeof(unsigned short)*data.image[ID].md[0].nelement);
+			break;
+		default :
+			printf("data type not supported\n");
+			break;
+	}
+	
+	return(0);
+}
 
 
 /** logs a shared memory stream onto disk

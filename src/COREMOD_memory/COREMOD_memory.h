@@ -140,7 +140,7 @@ int check_3Dsize(char *ID_name, long xsize, long ysize, long zsize);
 
 int rotate_cube(char *ID_name, char *ID_out_name, int orientation);
 
-
+long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname);
 
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir);
 
