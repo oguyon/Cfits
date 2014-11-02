@@ -191,9 +191,12 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
-
+	list_image_ID();
+	
     for(k=0; k<NbAve; k++)
     {
+		printf("k = %ld\n", k);
+		fflush(stdout);
         while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
         {
             usleep(50);
@@ -215,7 +218,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         cntref = data.image[IDcam].md[0].cnt0;
     }
 
-    for(ii=0; ii<xysize; ii++)
+  /*  for(ii=0; ii<xysize; ii++)
         data.image[ID].array.F[ii] /= NbAve*NBcoadd;
 
 	if((IDv=variable_ID("AOLCAMDARK"))!=-1)
@@ -227,6 +230,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 			for(ii=0; ii<xysize; ii++)
 				data.image[ID].array.F[ii] -= darkv;
 		}
+*/
     free(arrayutmp);
 
     return(ID);
