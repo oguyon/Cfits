@@ -645,10 +645,27 @@ long long compute_image_memory()
   long i;
   long long total=0;
 
+	
   for(i=0;i<data.NB_MAX_IMAGE;i++)
     {
-      if(data.image[i].used==1)
-	total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
+		printf("image %ld ", i);
+		fflush(stdout);
+		
+ 		printf("used=%d ", data.image[i].used);
+		fflush(stdout);
+
+		printf("nelement=%ld ", data.image[i].md[0].nelement);
+		fflush(stdout);
+	
+		printf("atype=%d ", data.image[i].md[0].atype);
+		fflush(stdout);
+		
+		printf("typesize=%d ", TYPESIZE[data.image[i].md[0].atype]);
+		fflush(stdout);
+		
+
+     if(data.image[i].used==1)
+		total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
     }
 
   return(total);
@@ -2188,7 +2205,8 @@ int list_image_ID_ofp(FILE *fo)
 	printf("--- test 00 ---\n");
 	fflush(stdout);
 
-  sizeb = compute_image_memory();
+	sizeb = compute_image_memory();
+
 	printf("--- test 01 ---\n");
 	fflush(stdout);
 
