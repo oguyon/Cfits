@@ -3346,7 +3346,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 //	exit(0);
 
 
-
+/*
     printf("Importing DM response matrix channel shared memory ...\n");
 	fflush(stdout);
     aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
@@ -3361,15 +3361,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
     aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
-
-
-
-
-
-    sprintf(name, "DMmodes_%ld", loop);
-    aoconfID_DMmodes = read_sharedmem_image(name);
-
+*/
 
 	
 
@@ -3381,7 +3373,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 //	exit(0);
-
+/*
     sizearray[0] =  AOconf[loop].NBDMmodes;
     printf("size = %ld\n", sizearray[0]);
     fflush(stdout);
@@ -3393,7 +3385,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     IDrespM = create_3Dimage_ID("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
     IDrefWFS = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-
+*/
 
 
 	/// local arrays for image acquision
