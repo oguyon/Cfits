@@ -645,7 +645,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	stepy = (long) (-gain*totx/0.7*10000.0);
 
 	printf("STEP : %ld %ld\n", stepx, stepy);
-
+/*
 	SCExAO_Pcam_Xpos += stepx;
 	SCExAO_Pcam_Ypos += stepy;
 
@@ -663,7 +663,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	printf("%s", command);
 	r = system(command);
 	usleep(delayus);
-
+*/
 
     return(0);
 }
