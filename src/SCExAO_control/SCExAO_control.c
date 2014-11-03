@@ -603,7 +603,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     while(1)
     {    
     ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
-	save_fits("imwfs", "!imwfs.fits");
+	save_fits("imwfs", "!./tmp/imwfs.fits");
 	
     tot = 0.0;
     for(ii=0; ii<pXsize*pYsize; ii++)
@@ -639,7 +639,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     totx /= tot;
     toty /= tot;
 
-    save_fits("outcorr", "!outcorr.fits");
+    save_fits("outcorr", "!./tmp/outcorr.fits");
     delete_image_ID("outcorr");
 
     printf("  %6.4f  x  %6.4f\n", totx, toty);
