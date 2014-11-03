@@ -430,13 +430,17 @@ int SCExAO_DM_CombineChannels(int mode)
             cnt++;
 
             copy_image_ID("dmdisp0", "dmdisptmp");
-            for(ch=1; ch<NBch; ch++)
+			for(ch=1; ch<NBch; ch++)
             {
                 sprintf(name, "dmdisp%ld", ch);
+                printf("+%ld ", ch);
+				fflush(stdout);
                 arith_image_add_inplace("dmdisptmp",name);
             }
             ID1 = image_ID("dmdisptmp");
-
+                         printf("\n");
+			fflush(stdout);
+ 
             dispcombconf[0].status = 4;
 
             // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
