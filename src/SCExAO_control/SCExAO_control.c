@@ -654,7 +654,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
 	fclose(fp);
 
-	sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Xpos);
+	sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
 	printf("%s", command);
 	r = system(command);
 	usleep(delayus);
