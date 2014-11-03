@@ -221,7 +221,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
-	list_image_ID();
+	//list_image_ID();
 	
     for(k=0; k<NbAve; k++)
     {
