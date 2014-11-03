@@ -1663,15 +1663,15 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         }
         else
         {
-			printf("wait...");
-			fflush(stdout);
+//			printf("wait...");
+	//		fflush(stdout);
             while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
             {
                 usleep(50);
                 // do nothing, wait
             }
-            printf("done Waiting\n");
-            fflush(stdout);
+            //printf("done Waiting\n");
+            //fflush(stdout);
         }
 
         slice = data.image[aoconfID_WFS].md[0].cnt1;
@@ -2716,9 +2716,9 @@ int set_DM_modesRM(long loop)
 
 
 
-	printf("============ %ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
-	fflush(stdout);
-	list_image_ID();
+	//printf("============ %ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
+	//fflush(stdout);
+	//list_image_ID();
 
 
   for(j=0;j<AOconf[loop].sizeDM;j++)
