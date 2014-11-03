@@ -481,9 +481,9 @@ while(1)
         ysig = tot11-tot00;
         printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
-        /// 100 steps -> sig = 0.055 for modulation = 1.0
-        SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.13);
-        SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.13);
+        /// 1 V step -> sig = 0.2 for modulation = 0.3
+        SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
+        SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
 
 		if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
 			SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
@@ -495,8 +495,12 @@ while(1)
 		if(SCExAO_PZT_STAGE_Ypos>SCExAO_PZT_STAGE_Ypos_max)
 			SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
 
-		sprintf(command, "analog_output.py %5.3f %5.3f\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
-		
+		// sig X
+		sprintf(command, "analog_output.py D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+		printf("%s", command);
+			
+		// sig Y
+		sprintf(command, "analog_output.py C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
 		printf("%s", command);
 //        r = system(command);
 
