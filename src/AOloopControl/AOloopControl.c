@@ -3562,10 +3562,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
         printf("--- \n");
         fflush(stdout);
-        save_fl_fits("tmtest", "!rmtest.fits");
+        save_fl_fits("rmtest", "!rmtest.fits");
         delete_image_ID("rmtest");
 
 
+		printf("%ld %ld  %ld  %ld\n", IDrefcumul, IDrmcumul, IDrefWFS, IDrespM);
+		
         beta = (1.0-gain)*beta + gain;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         {
