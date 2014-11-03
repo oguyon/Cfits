@@ -599,6 +599,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	}
 	
     IDref = image_ID("imref");
+    
+    while(1)
+    {    
     ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
 	save_fits("imwfs", "!imwfs.fits");
 	
@@ -663,7 +666,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	printf("%s", command);
 	r = system(command);
 	usleep(delayus);
-
+	}
 
     return(0);
 }
