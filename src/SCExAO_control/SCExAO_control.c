@@ -96,7 +96,7 @@ int SCExAOcontrol_mv_DMstage_cli()
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 {
-	 if(CLI_checkarg(1,3)==0)
+	 if(CLI_checkarg(1,4)==0)
     {
       SCExAOcontrol_PyramidWFS_AutoAlign_TT(data.cmdargtoken[1].val.string);
       return 0;
@@ -107,7 +107,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 {
-	 if(CLI_checkarg(1,3)==0)
+	 if(CLI_checkarg(1,4)==0)
     {
       SCExAOcontrol_PyramidWFS_AutoAlign_cam(data.cmdargtoken[1].val.string);
       return 0;
