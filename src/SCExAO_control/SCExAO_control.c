@@ -430,11 +430,15 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     long xsize, ysize;
     long ii, jj;
     double tot00, tot01, tot10, tot11, tot;
+    double tot00x, tot01x, tot10x, tot11x;
+    double tot00y, tot01y, tot10y, tot11y;
     double xsig, ysig;
     long ttxpos, ttypos;
     double gain = 0.1;
     char command[200];
 	int r; 
+	double x, y;
+
 
 //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
   // exit(0);
@@ -454,28 +458,66 @@ while(1)
 
         for(ii=0; ii<xsize/2; ii++)
             for(jj=0; jj<ysize/2; jj++)
-                tot00 += data.image[ID].array.F[jj*xsize+ii];
-
+                {
+					x = 1.0*ii/(xsize/2);
+					y = 1.0*jj/(ysize/2);
+					tot00x += x*data.image[ID].array.F[jj*xsize+ii];
+					tot00y += x*data.image[ID].array.F[jj*xsize+ii];
+					tot00 += data.image[ID].array.F[jj*xsize+ii];
+				}
+				
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=0; jj<ysize/2; jj++)
-                tot10 += data.image[ID].array.F[jj*xsize+ii];
-
+                {
+					x = 1.0*(ii-xsize/2)/(xsize/2);
+					y = 1.0*jj/(ysize/2);
+					tot10x += x*data.image[ID].array.F[jj*xsize+ii];
+					tot10y += x*data.image[ID].array.F[jj*xsize+ii];
+					tot10 += data.image[ID].array.F[jj*xsize+ii];
+				}
+				
         for(ii=0; ii<xsize/2; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
-                tot01 += data.image[ID].array.F[jj*xsize+ii];
-
+                {
+					x = 1.0*ii/(xsize/2);
+					y = 1.0*(jj-ysize/2)/(ysize/2);
+					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
+					tot01y += x*data.image[ID].array.F[jj*xsize+ii];					
+					tot01 += data.image[ID].array.F[jj*xsize+ii];
+				}
+				
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
-                tot11 += data.image[ID].array.F[jj*xsize+ii];
-
+                {
+					x = 1.0*(ii-xsize/2)/(xsize/2);
+					y = 1.0*(jj-ysize/2)/(ysize/2);
+					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
+					tot01y += x*data.image[ID].array.F[jj*xsize+ii];				
+					tot11 += data.image[ID].array.F[jj*xsize+ii];
+				}
+				
         tot = tot00+tot10+tot01+tot11;
         tot00 /= tot;
         tot10 /= tot;
         tot01 /= tot;
         tot11 /= tot;
 
+		tot00x /= tot00;
+        tot10x /= tot10;
+        tot01x /= tot01;
+        tot11x /= tot11;
+
+		tot00y /= tot00;
+        tot10y /= tot10;
+        tot01y /= tot01;
+        tot11y /= tot11;
+
+
         printf("  %6.4f   %6.4f\n", tot01, tot11);
         printf("  %6.4f   %6.4f\n", tot00, tot10);
+
+		printf(" PUP X   %6.4f %6.4f %6.4f %6.4f\n", tot00x, tot01x, tot10x, tot11x);
+		printf(" PUP Y   %6.4f %6.4f %6.4f %6.4f\n", tot00y, tot01y, tot10y, tot11y);
 
         xsig = tot01-tot10;
         ysig = tot11-tot00;
