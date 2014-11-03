@@ -53,8 +53,8 @@ long pYsize = 120;
 
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
-long SCExAO_Pcam_Xpos = 59000;
-long SCExAO_Pcam_Ypos = 56000;
+long SCExAO_Pcam_Xpos = 170000;
+long SCExAO_Pcam_Ypos = 66000;
 
 float SCExAO_PZT_STAGE_Xpos = -5.0;
 float SCExAO_PZT_STAGE_Xpos_min = -6.5;
@@ -641,24 +641,26 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
     printf("  %6.4f  x  %6.4f\n", totx, toty);
 
-	stepx = (long) (gain*toty/3.0*400.0);
-	stepy = (long) (gain*totx/3.0*400.0);
+	stepx = (long) (gain*toty/0.7*10000.0);
+	stepy = (long) (-gain*totx/0.7*10000.0);
 
 	printf("STEP : %ld %ld\n", stepx, stepy);
 
-	SCExAO_Pcam_Xpos += stepx;
-	SCExAO_Pcam_Ypos += stepy;
+	SCExAO_Pcam_Xpos -= stepx;
+	SCExAO_Pcam_Ypos -= stepy;
 
 	/// write stages position
 	fp = fopen("pcampos.txt", "w");
 	fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
 	fclose(fp);
 
-	sprintf(command, "pywfs cam x goto %ld\n", SCExAO_Pcam_Xpos);
+	sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Xpos);
+	printf("%s", command);
 //	r = system(command);
 	usleep(delayus);
 	
-	sprintf(command, "pywfs cam y goto %ld\n", SCExAO_Pcam_Ypos);
+	sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
+	printf("%s", command);
 //	r = system(command);
 	usleep(delayus);
 
