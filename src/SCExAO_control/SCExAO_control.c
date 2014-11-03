@@ -56,8 +56,13 @@ long SCExAO_DM_STAGE_Ypos = 0;
 long SCExAO_Pcam_Xpos = 59000;
 long SCExAO_Pcam_Ypos = 56000;
 
-float SCExAO_PZT_STAGE_Xpos = 5.0;
-float SCExAO_PZT_STAGE_Ypos = 5.0;
+float SCExAO_PZT_STAGE_Xpos = -5.0;
+float SCExAO_PZT_STAGE_Xpos_min = -6.5;
+float SCExAO_PZT_STAGE_Xpos_max = -3.5;
+
+float SCExAO_PZT_STAGE_Ypos = -5.0;
+float SCExAO_PZT_STAGE_Ypos_min = -6.5;
+float SCExAO_PZT_STAGE_Ypos_max = -3.5;
 
 // CLI commands
 //
@@ -436,8 +441,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
   
 while(1)
 {
-        ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs");
-  /*      xsize = data.image[ID].md[0].size[0];
+        ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
+       xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
         printf("%ld x %ld image\n", xsize, ysize);
@@ -480,24 +485,22 @@ while(1)
         SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.13);
         SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.13);
 
-		if(SCExAO_PZT_STAGE_Xpos<2.0)
-			SCExAO_PZT_STAGE_Xpos = 2.0;
-		if(SCExAO_PZT_STAGE_Xpos>8.0)
-			SCExAO_PZT_STAGE_Xpos = 8.0;
+		if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
+			SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
+		if(SCExAO_PZT_STAGE_Xpos>SCExAO_PZT_STAGE_Xpos_max)
+			SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_max;
 
- 		if(SCExAO_PZT_STAGE_Ypos<2.0)
-			SCExAO_PZT_STAGE_Ypos = 2.0;
-		if(SCExAO_PZT_STAGE_Ypos>8.0)
-			SCExAO_PZT_STAGE_Ypos = 8.0;
+ 		if(SCExAO_PZT_STAGE_Ypos<SCExAO_PZT_STAGE_Ypos_min)
+			SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_min;
+		if(SCExAO_PZT_STAGE_Ypos>SCExAO_PZT_STAGE_Ypos_max)
+			SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
 
-		sprintf(command, "pywfspztoffset %5.3f %5.3f\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
+		sprintf(command, "analog_output.py %5.3f %5.3f\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
 		
-         //	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
 		printf("%s", command);
-        r = system(command);*/
+//        r = system(command);
 
         save_fits("imwfs", "!imwfs.fits");
-exit(0);
 }
 
     return(0);
