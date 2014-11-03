@@ -456,53 +456,59 @@ while(1)
         tot10 = 0.0;
         tot11 = 0.0;
 
-        for(ii=0; ii<xsize/2; ii++)
+        tot00x = 0.0;
+        tot01x = 0.0;
+        tot10x = 0.0;
+        tot11x = 0.0;
+ 
+        tot00y = 0.0;
+        tot01y = 0.0;
+        tot10y = 0.0;
+        tot11y = 0.0;
+ 
+      for(ii=0; ii<xsize/2; ii++)
             for(jj=0; jj<ysize/2; jj++)
                 {
-					x = 1.0*ii/(xsize/2);
-					y = 1.0*jj/(ysize/2);
+					x = 1.0*ii/(xsize/2)-0.5;
+					y = 1.0*jj/(ysize/2)-0.5;
 					tot00x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot00y += x*data.image[ID].array.F[jj*xsize+ii];
+					tot00y += y*data.image[ID].array.F[jj*xsize+ii];
 					tot00 += data.image[ID].array.F[jj*xsize+ii];
 				}
 				
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=0; jj<ysize/2; jj++)
                 {
-					x = 1.0*(ii-xsize/2)/(xsize/2);
-					y = 1.0*jj/(ysize/2);
+					x = 1.0*(ii-xsize/2)/(xsize/2)-0.5;
+					y = 1.0*jj/(ysize/2)-0.5;
 					tot10x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot10y += x*data.image[ID].array.F[jj*xsize+ii];
+					tot10y += y*data.image[ID].array.F[jj*xsize+ii];
 					tot10 += data.image[ID].array.F[jj*xsize+ii];
 				}
 				
         for(ii=0; ii<xsize/2; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
                 {
-					x = 1.0*ii/(xsize/2);
-					y = 1.0*(jj-ysize/2)/(ysize/2);
+					x = 1.0*ii/(xsize/2)-0.5;
+					y = 1.0*(jj-ysize/2)/(ysize/2)-0.5;
 					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot01y += x*data.image[ID].array.F[jj*xsize+ii];					
+					tot01y += y*data.image[ID].array.F[jj*xsize+ii];					
 					tot01 += data.image[ID].array.F[jj*xsize+ii];
 				}
 				
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
                 {
-					x = 1.0*(ii-xsize/2)/(xsize/2);
-					y = 1.0*(jj-ysize/2)/(ysize/2);
+					x = 1.0*(ii-xsize/2)/(xsize/2)-0.5;
+					y = 1.0*(jj-ysize/2)/(ysize/2)-0.5;
 					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot01y += x*data.image[ID].array.F[jj*xsize+ii];				
+					tot01y += y*data.image[ID].array.F[jj*xsize+ii];				
 					tot11 += data.image[ID].array.F[jj*xsize+ii];
 				}
 				
         tot = tot00+tot10+tot01+tot11;
-        tot00 /= tot;
-        tot10 /= tot;
-        tot01 /= tot;
-        tot11 /= tot;
-
-		tot00x /= tot00;
+ 
+ 		tot00x /= tot00;
         tot10x /= tot10;
         tot01x /= tot01;
         tot11x /= tot11;
@@ -511,6 +517,12 @@ while(1)
         tot10y /= tot10;
         tot01y /= tot01;
         tot11y /= tot11;
+
+		tot00 /= tot;
+        tot10 /= tot;
+        tot01 /= tot;
+        tot11 /= tot;
+
 
 
         printf("  %6.4f   %6.4f\n", tot01, tot11);
