@@ -584,12 +584,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     double totx, toty, tot;
     double alpha = 20.0;
     double peak, v;
-	double gain = 0.5;
+	double gain = 0.2;
 	long stepx, stepy;
 	int r;
 	char command[200];
 	long delayus = 1000000;
-	long NBframes = 1000;
+	long NBframes = 5000;
 	
 	/// read position of stages
 	if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
