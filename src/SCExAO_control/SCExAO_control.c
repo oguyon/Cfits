@@ -172,7 +172,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
     IDcam = image_ID(imname);
     if(IDcam ==-1)
         IDcam = read_sharedmem_image(imname);
-list_image_ID();
+
 
    /* kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
 	
@@ -414,7 +414,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
 while(1)
 {
         ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs");
-        xsize = data.image[ID].md[0].size[0];
+  /*      xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
         printf("%ld x %ld image\n", xsize, ysize);
@@ -471,9 +471,10 @@ while(1)
 		
          //	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
 		printf("%s", command);
-        r = system(command);
+        r = system(command);*/
 
         save_fits("imwfs", "!imwfs.fits");
+exit(0);
 }
 
     return(0);
