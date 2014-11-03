@@ -355,134 +355,137 @@ int SCEXAO_DM_unloadconf()
 //
 int SCExAO_DM_CombineChannels(int mode)
 {
-  long naxis = 2;
-  long xsize = 50;
-  long ysize = 50;
-  long *size;
-  long ch;
-  char name[200];
-  long *IDch;
-  long NBch = 8;
-  long cnt = 0;
-  long long cntsumold;
-  long long cntsum;
-  long ii;
-  long IDdisp;
-  long IDvolt;
-  double ave;
-  long ID1;
-  int RT_priority = 95; //any number from 0-99
-  struct sched_param schedpar;
-  int r;
+    long naxis = 2;
+    long xsize = 50;
+    long ysize = 50;
+    long *size;
+    long ch;
+    char name[200];
+    long *IDch;
+    long NBch = 8;
+    long cnt = 0;
+    long long cntsumold;
+    long long cntsum;
+    long ii;
+    long IDdisp;
+    long IDvolt;
+    double ave;
+    long ID1;
+    int RT_priority = 95; //any number from 0-99
+    struct sched_param schedpar;
+    int r;
 
-  schedpar.sched_priority = RT_priority;
-  r = seteuid(euid_called); //This goes up to maximum privileges
-  sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-  r = seteuid(euid_real);//Go back to normal privileges
-
-
-  size = (long*) malloc(sizeof(long)*naxis);
-  IDch = (long*) malloc(sizeof(long)*NBch);
-  size[0] = xsize;
-  size[1] = ysize;
+    schedpar.sched_priority = RT_priority;
+    r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    r = seteuid(euid_real);//Go back to normal privileges
 
 
+    size = (long*) malloc(sizeof(long)*naxis);
+    IDch = (long*) malloc(sizeof(long)*NBch);
+    size[0] = xsize;
+    size[1] = ysize;
 
-  SCEXAO_DM_createconf();
-  dispcombconf[0].ON = 1;
-  dispcombconf[0].status = 0;
 
-  printf("Initialize channels\n");  
 
-  for(ch=0;ch<NBch;ch++)
+    SCEXAO_DM_createconf();
+    dispcombconf[0].ON = 1;
+    dispcombconf[0].status = 0;
+
+    printf("Initialize channels\n");
+
+    for(ch=0; ch<NBch; ch++)
     {
-      sprintf(name, "dmdisp%ld", ch);
-      printf("Channel %ld \n", ch);
-      IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
+        sprintf(name, "dmdisp%ld", ch);
+        printf("Channel %ld \n", ch);
+        IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
     }
 
-  IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
- 
-  if(mode==1)
-    IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
+    IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
 
-  cntsumold = 0;
+    if(mode==1)
+        IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
 
-  dispcombconf[0].status = 1;
+    cntsumold = 0;
 
-  while(dispcombconf[0].ON == 1)
-    { 
-      dispcombconf[0].status = 2;
-      usleep(10);
-      cntsum = 0;
+    dispcombconf[0].status = 1;
 
-      for(ch=0;ch<NBch;ch++)
-	cntsum += data.image[IDch[ch]].md[0].cnt0;
+    while(dispcombconf[0].ON == 1)
+    {
+        dispcombconf[0].status = 2;
+        usleep(10);
+        cntsum = 0;
 
-      
-      if(cntsum != cntsumold)
-	{
-	  dispcombconf[0].status = 3;
-	  //	  printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
-	  //fflush(stdout);
-	  cnt++;
+        for(ch=0; ch<NBch; ch++)
+            cntsum += data.image[IDch[ch]].md[0].cnt0;
 
-	  copy_image_ID("dmdisp0", "dmdisptmp");
-	  for(ch=1;ch<NBch;ch++)
-	    {
-	      sprintf(name, "dmdisp%ld", ch);
-	      arith_image_add_inplace("dmdisptmp",name);
-	    }
-	  ID1 = image_ID("dmdisptmp");
-	  
-	  dispcombconf[0].status = 4;
 
-	  // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
-	  ave = 0.0;
-	  for(ii=0;ii<NBact;ii++)
-	    ave += data.image[ID1].array.F[ii];
-	  ave /= NBact;
-	  
-	  dispcombconf[0].status = 5;
+        if(cntsum != cntsumold)
+        {
+            dispcombconf[0].status = 3;
 
-	  for(ii=0;ii<NBact;ii++)
-	    {
-	      data.image[ID1].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
-	      if(data.image[ID1].array.F[ii]<0.0)
-		data.image[ID1].array.F[ii] = 0.0;
-	    }
+            printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
+            fflush(stdout);
 
-	  dispcombconf[0].status = 6;
+            cnt++;
 
-	  data.image[IDdisp].md[0].write = 1;
-	  memcpy (data.image[IDdisp].array.F,data.image[ID1].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
-	  data.image[IDdisp].md[0].cnt0++;
-	  data.image[IDdisp].md[0].write = 0;
+            copy_image_ID("dmdisp0", "dmdisptmp");
+            for(ch=1; ch<NBch; ch++)
+            {
+                sprintf(name, "dmdisp%ld", ch);
+                arith_image_add_inplace("dmdisptmp",name);
+            }
+            ID1 = image_ID("dmdisptmp");
 
-	  dispcombconf[0].status = 7;
-	  
-	  if(mode==1)
-	    SCExAO_DM_disp2V(IDdisp, IDvolt);
+            dispcombconf[0].status = 4;
 
-	  dispcombconf[0].status = 8;
+            // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
+            ave = 0.0;
+            for(ii=0; ii<NBact; ii++)
+                ave += data.image[ID1].array.F[ii];
+            ave /= NBact;
 
-	  cntsumold = cntsum;	  
-	}
+            dispcombconf[0].status = 5;
+
+            for(ii=0; ii<NBact; ii++)
+            {
+                data.image[ID1].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
+                if(data.image[ID1].array.F[ii]<0.0)
+                    data.image[ID1].array.F[ii] = 0.0;
+            }
+
+            dispcombconf[0].status = 6;
+
+            data.image[IDdisp].md[0].write = 1;
+            memcpy (data.image[IDdisp].array.F,data.image[ID1].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
+            data.image[IDdisp].md[0].cnt0++;
+            data.image[IDdisp].md[0].write = 0;
+
+            dispcombconf[0].status = 7;
+
+            if(mode==1)
+                SCExAO_DM_disp2V(IDdisp, IDvolt);
+
+            dispcombconf[0].status = 8;
+
+            cntsumold = cntsum;
+        }
     }
 
-  if(mode==1)
-    arith_image_zero("dmvolt");
-  
+    if(mode==1)
+        arith_image_zero("dmvolt");
 
 
-  printf("LOOP STOPPED\n");
-  fflush(stdout);
 
-  free(size);
-  free(IDch);
+    printf("LOOP STOPPED\n");
+    fflush(stdout);
 
-  return 0;
+    free(size);
+    free(IDch);
+
+    return 0;
 }
+
 
 
 
