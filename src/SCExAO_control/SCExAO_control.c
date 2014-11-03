@@ -501,8 +501,8 @@ while(1)
                 {
 					x = 1.0*(ii-xsize/2)/(xsize/2)-0.5;
 					y = 1.0*(jj-ysize/2)/(ysize/2)-0.5;
-					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot01y += y*data.image[ID].array.F[jj*xsize+ii];				
+					tot11x += x*data.image[ID].array.F[jj*xsize+ii];
+					tot11y += y*data.image[ID].array.F[jj*xsize+ii];				
 					tot11 += data.image[ID].array.F[jj*xsize+ii];
 				}
 				
