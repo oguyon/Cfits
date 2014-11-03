@@ -374,7 +374,13 @@ int SCExAO_DM_CombineChannels(int mode)
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
     int r;
-
+	long sizexy;
+	float *dmdispptr;
+	float *dmdispptr_array[20];
+	long IDdispt;
+	
+	
+	
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -385,7 +391,7 @@ int SCExAO_DM_CombineChannels(int mode)
     IDch = (long*) malloc(sizeof(long)*NBch);
     size[0] = xsize;
     size[1] = ysize;
-
+	sizexy = xsize*ysize;
 
 
     SCEXAO_DM_createconf();
@@ -399,9 +405,13 @@ int SCExAO_DM_CombineChannels(int mode)
         sprintf(name, "dmdisp%ld", ch);
         printf("Channel %ld \n", ch);
         IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
+		dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
     }
 
     IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
+
+	IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
+	dmdispptr = data.image[IDdispt].array.F;
 
     if(mode==1)
         IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
@@ -429,16 +439,19 @@ int SCExAO_DM_CombineChannels(int mode)
 
             cnt++;
 
-            copy_image_ID("dmdisp0", "dmdisptmp");
+//            copy_image_ID("dmdisp0", "dmdisptmp");
+            memcpy (data.image[IDdispt].array.F,data.image[IDdisp].array.F, sizeof(float)*sizexy);
 			for(ch=1; ch<NBch; ch++)
             {
                 sprintf(name, "dmdisp%ld", ch);
                 printf("+%ld ", ch);
 				fflush(stdout);
-                arith_image_add_inplace("dmdisptmp",name);
+				for(ii=0;ii<sizexy;ii++)
+					dmdispptr[ii] += dmdispptr_array[ch][ii];
+//                arith_image_add_inplace("dmdisptmp",name);
             }
-            ID1 = image_ID("dmdisptmp");
-                         printf("\n");
+            //ID1 = image_ID("dmdisptmp");
+            printf("\n");
 			fflush(stdout);
  
             dispcombconf[0].status = 4;
@@ -446,22 +459,22 @@ int SCExAO_DM_CombineChannels(int mode)
             // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
             ave = 0.0;
             for(ii=0; ii<NBact; ii++)
-                ave += data.image[ID1].array.F[ii];
+                ave += data.image[IDdispt].array.F[ii];
             ave /= NBact;
 
             dispcombconf[0].status = 5;
 
             for(ii=0; ii<NBact; ii++)
             {
-                data.image[ID1].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
-                if(data.image[ID1].array.F[ii]<0.0)
-                    data.image[ID1].array.F[ii] = 0.0;
+                data.image[IDdispt].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
+                if(data.image[IDdispt].array.F[ii]<0.0)
+                    data.image[IDdispt].array.F[ii] = 0.0;
             }
 
             dispcombconf[0].status = 6;
 
             data.image[IDdisp].md[0].write = 1;
-            memcpy (data.image[IDdisp].array.F,data.image[ID1].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
+            memcpy (data.image[IDdisp].array.F,data.image[IDdispt].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
             data.image[IDdisp].md[0].cnt0++;
             data.image[IDdisp].md[0].write = 0;
 
