@@ -1678,7 +1678,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 /*        if(slice==-1)
             slice = data.image[aoconfID_WFS].md[0].size[2];
 */
-
+		slice = 0;
+		
         //      printf("READING SLICE %ld\n", slice);
         switch (atype) {
         case FLOAT :
@@ -3342,27 +3343,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-
-//	exit(0);
-
-
-/*
-    printf("Importing DM response matrix channel shared memory ...\n");
-	fflush(stdout);
-    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
-
-    printf("Importing WFS camera image shared memory ... \n");
-	fflush(stdout);
-    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
-
-
-
-    sprintf(name, "imWFS1RM_%ld", loop);
-    sizearray[0] = AOconf[loop].sizexWFS;
-    sizearray[1] = AOconf[loop].sizeyWFS;
-    aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-*/
-
 	
 
     IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
@@ -3372,21 +3352,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
-//	exit(0);
-/*
-    sizearray[0] =  AOconf[loop].NBDMmodes;
-    printf("size = %ld\n", sizearray[0]);
-    fflush(stdout);
-    aoconfID_cmd_modesRM = create_image_ID("RMmodes", 1, sizearray, FLOAT, 1, 0);
-
-
-
-
-
-    IDrespM = create_3Dimage_ID("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-    IDrefWFS = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-*/
-
 
 	/// local arrays for image acquision
 //	aoconfID_WFS = create_2Dimage_ID("RMwfs", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -3394,12 +3359,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	aoconfID_WFS1 = create_2Dimage_ID("RMwfs1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 	aoconfID_WFS2 = create_2Dimage_ID("RMwfs2", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-	//aoconfID_DMRM = create_2Dimage_ID("loc", AOconf[loop].NBDMmodes, 1);
-//AOconf[loop].DMnameRM
 
 	aoconfID_cmd_modesRM = create_2Dimage_ID("RMmodesloc", AOconf[loop].NBDMmodes, 1);
 	
-//exit(0);
 
     for(iter=0; iter<NBiter; iter++)
     {
@@ -3412,22 +3374,17 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
         // initialize reference to zero
-
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrefi].array.F[ii] = 0.0;
 
 
-        printf("\n");
-        printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
-        fflush(stdout);
+//        printf("\n");
+  //      printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
+    //    fflush(stdout);
         sleep(1);
-
-
 
         for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
             data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
-
-
 		
 
         kc = 0;
@@ -3440,13 +3397,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             }
 
 
-	//exit(0);
             for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
             {
 				printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
 				fflush(stdout);
 				
-				printf("\n\n  aoconfID_cmd_modesRM = %ld   [%ld]\n", aoconfID_cmd_modesRM, AOconf[loop].NBDMmodes);
+//				printf("\n\n  aoconfID_cmd_modesRM = %ld   [%ld]\n", aoconfID_cmd_modesRM, AOconf[loop].NBDMmodes);
 				//list_image_ID();
 				//fflush(stdout);
 				
@@ -3457,18 +3413,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
 
 				
-				printf("-- test 00 --\n");
-				fflush(stdout);
-				printf("======== aoconfID_DMmodes = %ld\n", aoconfID_DMmodes);
-				fflush(stdout);
                 set_DM_modesRM(loop);
                 usleep(delayus);
 			
-				printf("-- test 01 --\n");
-				fflush(stdout);
 	
-	
-
 
                 for(kk=0; kk<NbAve; kk++)
                 {
@@ -3482,10 +3430,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     }
                     kc++;
                 }
-
-
-				printf("-- test 02 --\n");
-				fflush(stdout);
 
 
                 // negative
