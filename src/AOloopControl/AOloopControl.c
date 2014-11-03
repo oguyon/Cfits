@@ -2710,10 +2710,10 @@ int set_DM_modesRM(long loop)
 
 
 
-/*	printf("%ld %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes);
+	printf("%ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
 	fflush(stdout);
 	list_image_ID();
-*/
+
 
   for(j=0;j<AOconf[loop].sizeDM;j++)
     arrayf[j] = 0.0;
