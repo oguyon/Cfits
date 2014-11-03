@@ -434,12 +434,11 @@ int SCExAO_DM_CombineChannels(int mode)
         {
             dispcombconf[0].status = 3;
 
-            printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
-            fflush(stdout);
+//            printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
+//          fflush(stdout);
 
             cnt++;
 
-//            copy_image_ID("dmdisp0", "dmdisptmp");
             memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
 			for(ch=1; ch<NBch; ch++)
             {
@@ -448,11 +447,7 @@ int SCExAO_DM_CombineChannels(int mode)
 				fflush(stdout);
 				for(ii=0;ii<sizexy;ii++)
 					dmdispptr[ii] += dmdispptr_array[ch][ii];
-//                arith_image_add_inplace("dmdisptmp",name);
             }
-            //ID1 = image_ID("dmdisptmp");
-            printf("\n");
-			fflush(stdout);
  
             dispcombconf[0].status = 4;
 
