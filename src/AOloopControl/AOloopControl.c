@@ -3319,6 +3319,11 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
   
+  
+	// create output
+	IDrefWFS = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+	IDrefWFS = create_3Dimage_ID_float("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+  
 	RMACQUISITION = 1;
 
 
@@ -3341,7 +3346,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     if(recordCube == 1)
         IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes+kc0max);
 
-
+	
 
 	
 
@@ -3492,7 +3497,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         fflush(stdout);
 
 
-
+ 
 
         // PROCESS RMCUBE
         fp = fopen("TimeDelayRM.txt", "w");
@@ -3566,7 +3571,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         delete_image_ID("rmtest");
 
 
+
+
 		printf("%ld %ld  %ld  %ld\n", IDrefcumul, IDrmcumul, IDrefWFS, IDrespM);
+		
 		
         beta = (1.0-gain)*beta + gain;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
