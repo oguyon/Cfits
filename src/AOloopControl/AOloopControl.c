@@ -3459,11 +3459,16 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 // positive
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = amp;
 
-	
+				
+				printf("-- test 00 --\n");
+				fflush(stdout);
 				
                 set_DM_modesRM(loop);
                 usleep(delayus);
-
+			
+				printf("-- test 01 --\n");
+				fflush(stdout);
+	
 	
 
 
@@ -3480,6 +3485,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     kc++;
                 }
 
+
+				printf("-- test 02 --\n");
+				fflush(stdout);
 
 
                 // negative
