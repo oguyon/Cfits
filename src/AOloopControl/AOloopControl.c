@@ -148,7 +148,7 @@ int AOloopControl_loadconfigure_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,3)==0)
     {
-      AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, 0);
+      AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, 1);
       return 0;
     }
   else
