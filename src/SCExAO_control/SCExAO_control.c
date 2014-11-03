@@ -641,8 +641,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
     printf("  %6.4f  x  %6.4f\n", totx, toty);
 
-	stepx = (long) (gain*toty/0.7*10000.0);
-	stepy = (long) (-gain*totx/0.7*10000.0);
+	stepx = (long) (gain*totx/0.7*10000.0);
+	stepy = (long) (gain*toty/0.7*10000.0);
 
 	printf("STEP : %ld %ld\n", stepx, stepy);
 /*
