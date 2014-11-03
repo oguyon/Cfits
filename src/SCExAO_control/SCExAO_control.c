@@ -655,11 +655,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	fclose(fp);
 
 	sprintf(command, "pywfs cam x goto %ld\n", SCExAO_Pcam_Xpos);
-	r = system(command);
+//	r = system(command);
 	usleep(delayus);
 	
 	sprintf(command, "pywfs cam y goto %ld\n", SCExAO_Pcam_Ypos);
-	r = system(command);
+//	r = system(command);
 	usleep(delayus);
 
 
