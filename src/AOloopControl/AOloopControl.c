@@ -3560,8 +3560,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-        printf("\n");
+        printf("--- \n");
         fflush(stdout);
+        save_fl_fits("tmtest", "!rmtest.fits");
         delete_image_ID("rmtest");
 
 
