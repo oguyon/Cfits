@@ -49,6 +49,7 @@ int wcol, wrow; // window size
 
 
 long aoconfID_WFS = -1;
+long aoconfID_WFSdark = -1;
 long aoconfID_WFS0 = -1;
 long aoconfID_WFS1 = -1;
 long aoconfID_WFS2 = -1;
@@ -1960,6 +1961,17 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             AOconf[loop].DarkLevel = data.variable[ID].value.f;
         else
             AOconf[loop].DarkLevel = 0.0;
+
+        sprintf(name, "aol%ld_wfsdark", loop);
+        aoconfID_WFSdark = image_ID(name);
+        if(aoconfID_WFSdark==-1)
+        {
+            sizearray[0] =  AOconf[loop].sizexWFS;
+            sizearray[1] =  AOconf[loop].sizeyWFS;
+            printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+            fflush(stdout);
+            aoconfID_WFSdark = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+        }
 
         sprintf(name, "aol%ld_imWFS0", loop);
         aoconfID_WFS0 = image_ID(name);
