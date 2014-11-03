@@ -1917,7 +1917,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     strcpy(AOconf[loop].contrMname, name);
 
 
-
+	printf("============ mode = %d\n", mode);
     if(mode==1)
     {
         sizearray = (long*) malloc(sizeof(long)*3);
