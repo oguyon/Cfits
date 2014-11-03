@@ -440,7 +440,7 @@ int SCExAO_DM_CombineChannels(int mode)
             cnt++;
 
 //            copy_image_ID("dmdisp0", "dmdisptmp");
-            memcpy (data.image[IDdispt].array.F,data.image[IDdisp].array.F, sizeof(float)*sizexy);
+            memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
 			for(ch=1; ch<NBch; ch++)
             {
                 sprintf(name, "dmdisp%ld", ch);
