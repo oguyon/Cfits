@@ -592,7 +592,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	long NBframes = 10000;
 	
 	/// read position of stages
-	if((fp = fopen("pcampos.txt", "r"))!=NULL)
+	if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
 	{
 		r = fscanf(fp, "%ld %ld\n", &SCExAO_Pcam_Xpos, &SCExAO_Pcam_Ypos);
 		fclose(fp);

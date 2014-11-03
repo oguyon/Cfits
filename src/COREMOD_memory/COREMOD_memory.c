@@ -1596,6 +1596,8 @@ long read_sharedmem_image(char *name)
 	  if(data.image[ID].kw[kw].type == 'S')
 	    printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);      
 	}
+	
+	strcpy(data.image[ID].md[0].name, name);
       
       if(MEM_MONITOR == 1)
 	list_image_ID_ncurses();
