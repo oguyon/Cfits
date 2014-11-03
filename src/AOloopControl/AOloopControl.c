@@ -2715,7 +2715,7 @@ int set_DM_modesRM(long loop)
 
 
 
-	printf("%ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
+	printf("============ %ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
 	fflush(stdout);
 	list_image_ID();
 
@@ -3467,7 +3467,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 				
 				printf("-- test 00 --\n");
 				fflush(stdout);
-				
+				printf("======== aoconfID_DMmodes = %ld\n", aoconfID_DMmodes);
+				fflush(stdout);
                 set_DM_modesRM(loop);
                 usleep(delayus);
 			
