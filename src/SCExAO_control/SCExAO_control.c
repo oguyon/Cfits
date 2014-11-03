@@ -45,7 +45,7 @@ extern DATA data;
 
 
 /// CONFIGURATION
-char *WFScam_name = "zyladata";
+char WFScam_name[200];
 long long WFScnt = 0;
 
 long pXsize = 120;
@@ -94,6 +94,29 @@ int SCExAOcontrol_mv_DMstage_cli()
 }
 
 
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
+{
+	 if(CLI_checkarg(1,3)==0)
+    {
+      SCExAOcontrol_PyramidWFS_AutoAlign_TT(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
+{
+	 if(CLI_checkarg(1,3)==0)
+    {
+      SCExAOcontrol_PyramidWFS_AutoAlign_cam(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 
 int init_SCExAO_control()
 {
@@ -124,16 +147,16 @@ int init_SCExAO_control()
 
    strcpy(data.cmd[data.NBcmd].key,"scexaopywfsttalign");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_TT;
-  strcpy(data.cmd[data.NBcmd].info,"move DM TT stage to center pyrWFS");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT();");
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli;
+  strcpy(data.cmd[data.NBcmd].info,"move TT to center pyrWFS");
+  strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign wfscam");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam;
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli;
   strcpy(data.cmd[data.NBcmd].info,"move Camera to center pyrWFS");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
   strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
@@ -333,7 +356,7 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
 /** auto aligns tip-tilt by equalizing fluxes between quadrants */
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM()
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
 {
     long ID;
     long xsize, ysize;
@@ -396,7 +419,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM()
 }
 
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT()
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 {
     long ID;
     long xsize, ysize;
@@ -486,7 +509,7 @@ exit(0);
 
 
 /** assumes imref has been loaded */
-int SCExAOcontrol_PyramidWFS_AutoAlign_cam()
+int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 {
     FILE *fp;
     long ID, IDc;
