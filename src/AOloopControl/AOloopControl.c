@@ -1962,6 +1962,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         else
             AOconf[loop].DarkLevel = 0.0;
 
+		list_image_ID();
         sprintf(name, "aol%ld_wfsdark", loop);
         aoconfID_WFSdark = image_ID(name);
         if(aoconfID_WFSdark==-1)
