@@ -3544,7 +3544,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             if(RMsig<RMsigold)
                 vOK = 0;
             printf("Delay = %ld frame(s)   ->  RM signal = %lf   %d\n", kc0, (double) RMsig, vOK);
-            fprintf(fp, "%ld %lf\n", kc0, (double) RMsig);
+            fprintf(fp, "%ld %.12g\n", kc0, (double) RMsig);
             if(RMsig<RMsigold)
                 vOK = 0;
 
