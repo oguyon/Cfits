@@ -764,7 +764,7 @@ int init_AOloopControl()
   data.NBcmd++;
 
 
-   strcpy(data.cmd[data.NBcmd].key,"aolset");
+  strcpy(data.cmd[data.NBcmd].key,"aolset");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_setparam_cli;
   strcpy(data.cmd[data.NBcmd].info,"set parameter");
@@ -1866,8 +1866,8 @@ long AOloopControl_loadCM(long loop, char *CMfname)
 
 //
 // read loop configuration file
-// mode = 0: read
-// mode = 1: create
+// mode = 0: read only (faster)
+// mode = 1: create/check/read
 int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 {
     FILE *fp;
