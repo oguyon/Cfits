@@ -3623,8 +3623,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             }
         }
 
-        save_fits("refwfsacq", "!refwfs.fits");
-        save_fits("respmacq", "!respm.fits");
+        save_fits("refwfsacq", "!./tmp/refwfs.fits");
+        save_fits("respmacq", "!./tmp/respm.fits");
     }
 
 
