@@ -3786,17 +3786,7 @@ int AOloopControl_run()
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 
-    if((ID = image_ID("WFScamPEcorrC"))!=-1)
-    {
-        AOconf[loop].WFS_CAM_PER_CORR  = 1;        
-		fp = fopen("WFScamPEcorrC.period.txt","r");
-		r = fscanf(fp, "%f\n", &tmpf1);
-		fclose(fp);
-		AOconf[loop].WFScamPEcorr_period = (long double) tmpf1;
-		//printf("PERIOD = %f\n", WFScamPEcorr_period);
-    }
-	else
-		AOconf[loop].WFS_CAM_PER_CORR  = 0;   
+   
 
 
     vOK = 1;
