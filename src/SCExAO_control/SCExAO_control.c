@@ -250,15 +250,15 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
   for(ii=0; ii<xysize; ii++)
         data.image[ID].array.F[ii] /= NbAve*NBcoadd;
 
-	/*
+	
 	if((IDdark==image_ID("wfsdark"))!=-1)
 		{			
 			printf("Remove dark\n");
 			fflush(stdout);
 			for(ii=0; ii<xysize; ii++)
-				data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
+				data.image[ID].array.F[ii] -= 400.0; //data.image[IDdark].array.F[ii];
 		}
-*/
+
 
     free(arrayutmp);
 
