@@ -373,6 +373,7 @@ long arith_image_zero(char *ID_name)
   return(ID);
 }
 
+
 int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long cropdim)
 {
   long naxis;
@@ -618,6 +619,7 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
  
  return(0);
 }
+
 
 int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)
 {

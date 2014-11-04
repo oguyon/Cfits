@@ -70,6 +70,9 @@ long tret; // thread return value
 // 4: existing image
 //
 
+
+
+
 int create_image_cli()
 {
   long *imsize;
