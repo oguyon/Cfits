@@ -4054,7 +4054,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
   // load arrays that are required
   if(aoconfID_cmd_modes==-1)
     {
-      sprintf(name, "aol%ls_DMmode_cmd", loop);
+      sprintf(name, "aol%ld_DMmode_cmd", loop);
       aoconfID_cmd_modes = read_sharedmem_image(name);
     }
      
