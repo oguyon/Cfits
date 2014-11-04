@@ -2380,7 +2380,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
                 fflush(stdout);
             }
             for(k=0; k<AOconf[loop].NBDMmodes; k++)
-                data.image[aoconfID_GAIN_modes].array.F[k] = 0.0;
+                data.image[aoconfID_GAIN_modes].array.F[k] = 1.0;
         }
 
         sprintf(name, "aol%ld_DMmode_LIMIT", loop);
@@ -2808,13 +2808,10 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
 
 
-    sprintf(name, "imWFS1RM_%ld", loop);
+    sprintf(name, "aol%ld_imWFS1RM", loop);
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
     aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-
-
-sprintf(fname, "AOloop.conf");
 
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
