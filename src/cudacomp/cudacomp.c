@@ -499,8 +499,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
- //       printf("SETUP DONE, READY TO START COMPUTATIONS\n");
-   //     fflush(stdout);
+		printf("SETUP DONE, READY TO START COMPUTATIONS\n");
+        fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
@@ -516,8 +516,6 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         iter = 0;
         gpumatmultconf[index].init = 1;
 	}
-	printf("SETUP DONE, READY TO START COMPUTATIONS\n");
-    fflush(stdout);
 
     return(0);
 }
