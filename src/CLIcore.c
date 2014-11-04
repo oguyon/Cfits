@@ -60,7 +60,6 @@
 
 
 int Verbose = 0; 
-int Nofifo = 1; 
 int Listimfile = 0;
 DATA data;
 
@@ -518,12 +517,12 @@ int main(int argc, char *argv[])
     // Get command-line options
     command_line( argc, argv );
 
- 	// initialize fifo
-if(data.fifoON==1)
+ 	// initialize fifo to process name
+/*if(data.fifoON==1)
 {	sprintf(data.fifoname, "%s.fifo", data.processname);
 	printf("fifo name : %s\n", data.fifoname);
 }
-
+*/
 
    //
     if( Verbose ) {
@@ -578,8 +577,10 @@ if(data.fifoON==1)
 
     // fifo
     fdmax = fileno(stdin);
+ //   printf("FIFO = %d\n", data.fifoON);
     if(data.fifoON == 1)
     {
+		printf("Creating fifo %s\n", data.fifoname);
         mkfifo(data.fifoname, 0666);
         fifofd = open(data.fifoname, O_RDWR | O_NONBLOCK);
         if (fifofd == -1) {
@@ -1220,7 +1221,6 @@ int command_line( int argc, char **argv)
     {
       /* These options set a flag. */
       {"verbose", no_argument,       &Verbose, 1},
-  //    {"nofifo", no_argument,       &Nofifo, 1},
       {"listimf", no_argument,       &Listimfile, 1},
       /* These options don't set a flag.
 	 We distinguish them by their indices. */
@@ -1238,6 +1238,7 @@ int command_line( int argc, char **argv)
 
 
 
+ data.fifoON = 0; // default
  
   while (1)
     {
@@ -1303,6 +1304,7 @@ int command_line( int argc, char **argv)
 	  printf("using input fifo '%s'\n", optarg);
 	  data.fifoON = 1;
 	  strcpy(data.fifoname, optarg);
+	  printf("FIFO NAME = %s\n", data.fifoname);
 	  break;
 	  
 	case 's':
@@ -1319,11 +1321,6 @@ int command_line( int argc, char **argv)
 	}
     }
   
-	if(Nofifo == 1)
-	{
-		//printf("No fifo\n");
-		data.fifoON = 0;
-	}
 	
 	  // fprintf(stdout, "Object directory:        %s\n", OBJDIR);
 	  //fprintf(stdout, "Source directory:        %s\n", SOURCEDIR);
@@ -1331,6 +1328,7 @@ int command_line( int argc, char **argv)
 
 	  //	  sprintf(command,"more %s/help.txt",DOCDIR);
 
+	
     return 0;
 
 }

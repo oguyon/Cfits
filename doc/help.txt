@@ -34,8 +34,6 @@ COMMAND LINE OPTIONS
 	<executable> --fifo=/tmp/fifo24
   -s, --startup=STARTUPFILE
 	execute specified script on startup
-  --nofifo
-	Do not create or use fifo
 
 -----------------------------------------------------------------------------------
 SYNTAX RULES, PARSER
