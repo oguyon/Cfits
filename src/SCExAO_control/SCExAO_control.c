@@ -593,6 +593,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	char command[200];
 	long delayus = 1000000;
 	long NBframes = 5000;
+	long IDdark;
 	
 	/// read position of stages
 	if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
@@ -603,6 +604,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	
     IDref = image_ID("imref");
     
+    IDdark = image_ID("wfsdark");
+    for(ii=0;ii<500;ii++)
+		printf("[%f] ", data.image[IDdark].array.F[ii]);
+    exit(0);
     while(1)
     {    
     ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
