@@ -563,7 +563,7 @@ while(1)
 		printf("%s", command);
 		r = system(command);
 
-        save_fits("imwfs", "!imwfs.fits");
+        save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
 }
 
     return(0);
