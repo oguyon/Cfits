@@ -1698,8 +1698,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     // Dark subtract
     sprintf(dname, "aol%ld_wfsdark", loop);
 	IDdark = image_ID(dname);
+	printf("IDdark = %ld -----------------------\n", IDdark);
     if(IDdark!=-1)
     {
+		printf("REMOVE DARK-------------------------\n");
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
