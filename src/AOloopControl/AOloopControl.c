@@ -795,18 +795,9 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
     FILE *fp;
     char fname[200];
 
-    sprintf(fname, "AOloop%ld.conf", loopnb);
+    sprintf(fname, "AOloop.conf");
 
     fp = fopen(fname, "w");
-	fprintf(fp, "loopname	pyramidSimul	loop name\n");
-    fprintf(fp, "DMname		dmdisp1		[shared memory] DM displacement image - command\n");
-    fprintf(fp, "DMnameRM	dmdisp2		[shared memory] DM displacement for RM commands\n");
-    fprintf(fp, "WFSname		wfs_sim		[shared memory] WFS image\n");
-    fprintf(fp, "DMmodes		fmodes.fits	[file]		default DM modes to be loaded at startup\n");
-    fprintf(fp, "WFSrefim	refwfs.fits	[file]          default WFS reference image to be loaded at startup\n");
-    fprintf(fp, "RespMatrix	respm.fits	[file]          default response matrix to be loaded at startup\n");
-    fprintf(fp, "ContrMatrix	cmat.fits	[file]          default control matrix to be loaded at startup\n");
-    fprintf(fp, "GPU		0		use GPU\n");
     fprintf(fp, "logsize         1000            number of consecutive entries in single log file\n");
     fprintf(fp, "logdir          ./\n");
     fprintf(fp, "NBMblocks	3		number of modes blocks\n");
@@ -2783,7 +2774,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
         AOloopControl_InitializeMemory(0);
     
     
-    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
 
@@ -2801,7 +2792,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 
 
-sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
+sprintf(fname, "AOloop.conf");
 
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
@@ -2958,7 +2949,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
     
-    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
 
@@ -3329,7 +3320,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
     
-    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
   
   
@@ -3765,7 +3756,7 @@ int AOloopControl_run()
 
 
     printf("SETTING UP...\n");
-    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 
     if((ID = image_ID("WFScamPEcorrC"))!=-1)
@@ -4724,7 +4715,7 @@ int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-    sprintf(fname, "./conf/AOloop%ld.conf", LOOPNUMBER);
+    sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 
     printf("Importing DM response matrix channel shared memory ...\n");
