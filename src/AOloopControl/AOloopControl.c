@@ -1698,6 +1698,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     // Dark subtract
     sprintf(dname, "aol%ld_wfsdark", loop);
 	IDdark = image_ID(dname);
+	list_image_ID();
 	printf("IDdark = %ld -----------------------\n", IDdark);
     if(IDdark!=-1)
     {
