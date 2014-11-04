@@ -1871,6 +1871,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     int kw;
     long k;
     int r;
+	int sizeOK;
+
+
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
@@ -1953,16 +1956,43 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         else
             AOconf[loop].DarkLevel = 0.0;
 
-		list_image_ID();
+		
+		
+		
         sprintf(name, "aol%ld_wfsdark", loop);
         aoconfID_WFSdark = image_ID(name);
         if(aoconfID_WFSdark==-1)
         {
-            sizearray[0] =  AOconf[loop].sizexWFS;
-            sizearray[1] =  AOconf[loop].sizeyWFS;
-            printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
-            fflush(stdout);
-            aoconfID_WFSdark = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+			aoconfID_WFSdark = read_sharedmem_image(name);
+            if(aoconfID_WFSdark!=-1)
+				{
+					sizeOK = 1;
+					if(AOconf[loop].sizexWFS!=data.image[aoconfID_WFSdark].md[0].size[0])
+						{
+							printf("ERROR: File %s has wrong x size  (%ld, should be %ld)\n", name, data.image[aoconfID_WFSdark].md[0].size[0], AOconf[loop].sizexWFS);
+							sizeOK = 0;
+						}
+						if(AOconf[loop].sizeyWFS!=data.image[aoconfID_WFSdark].md[0].size[1])
+						{
+							printf("ERROR: File %s has wrong y size  (%ld, should be %ld)\n", name, data.image[aoconfID_WFSdark].md[0].size[1], AOconf[loop].sizeyWFS);
+							sizeOK = 0;
+						}
+						if(2!=data.image[aoconfID_WFSdark].md[0].naxis)
+						{
+							printf("ERROR: File %s has wrong naxis  (%ld, should be 2)\n", name, data.image[aoconfID_WFSdark].md[0].naxis);
+							sizeOK = 0;
+						}
+						if(sizeOK==0)
+							exit(0);								
+				}
+            else
+				{
+				sizearray[0] =  AOconf[loop].sizexWFS;
+				sizearray[1] =  AOconf[loop].sizeyWFS;
+				printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+				fflush(stdout);
+				aoconfID_WFSdark = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+				}
         }
 
         sprintf(name, "aol%ld_imWFS0", loop);
