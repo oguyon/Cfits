@@ -604,14 +604,20 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	
     IDref = image_ID("imref");
     
-    IDdark = image_ID("wfsdark");
+ /*   IDdark = image_ID("wfsdark");
     for(ii=0;ii<500;ii++)
 		printf("[%f] ", data.image[IDdark].array.F[ii]);
-    exit(0);
+    exit(0);*/
     while(1)
     {    
     ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
 	save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
+	
+	 IDdark = image_ID("wfsdark");
+    for(ii=0;ii<500;ii++)
+		printf("[%f] ", data.image[IDdark].array.F[ii]);
+    exit(0);
+  
 	
     tot = 0.0;
     for(ii=0; ii<pXsize*pYsize; ii++)
