@@ -631,6 +631,7 @@ if(data.fifoON==1)
 		if(initstartup == 0)
 			if(data.fifoON==1)
 			{
+				printf("IMPORTING FILE %s\n", CLIstartupfilename);
 			sprintf(command, "cat %s > %s 2> /dev/null", CLIstartupfilename, data.fifoname);
 			r = system(command);
 			}
