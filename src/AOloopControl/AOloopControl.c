@@ -1869,7 +1869,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     long k;
     int r;
 	int sizeOK;
-
+	char command[500];
 
 
     if(AOloopcontrol_meminit==0)
@@ -2496,13 +2496,21 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         if(vOK==1)
         {
             AOconf[loop].init_RM = 1;
-        }
+			printf("RespM OK\n");
+			fflush(stdout);
+       }
         else
         {
             printf("\n");
-            printf("========== ERROR: RESPONSE MATRIX HAS WRONG SIZE ===========\n");
-            printf("\n");
-            exit(0);
+            printf("========== ERROR: RESPONSE MATRIX HAS WRONG SIZE -> CREATING BLANK RM ===========\n");
+            printf("\n");            
+			delete_image_ID(AOconf[loop].respMname);
+			sprintf(command, "rm /tmp/%s.im.shm", AOconf[loop].respMname);
+			r = system(command);
+            sizearray[0] =  AOconf[loop].sizexWFS;
+            sizearray[1] =  AOconf[loop].sizeyWFS;
+            sizearray[2] =  AOconf[loop].NBDMmodes;
+            aoconfID_respM = create_image_ID(AOconf[loop].respMname, 3, sizearray, FLOAT, 1, 0); 			
         }
 
         printf("RespM OK\n");
@@ -2574,9 +2582,15 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         else
         {
             printf("\n");
-            printf("========== ERROR: CONTROL MATRIX HAS WRONG SIZE ===========\n");
+            printf("========== ERROR: CONTROL MATRIX HAS WRONG SIZE-> CREATING BLANK CM ===========\n");
             printf("\n");
-            exit(0);
+   			delete_image_ID(AOconf[loop].contrMname);
+			sprintf(command, "rm /tmp/%s.im.shm", AOconf[loop].contrMname);
+			r = system(command);
+            sizearray[0] =  AOconf[loop].sizexWFS;
+            sizearray[1] =  AOconf[loop].sizeyWFS;
+            sizearray[2] =  AOconf[loop].NBDMmodes;
+            aoconfID_contrM = create_image_ID(AOconf[loop].contrMname, 3, sizearray, FLOAT, 1, 0); 			
         }
 
         printf("ContrM OK\n");
@@ -2911,6 +2925,10 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     return(IDmap);
 }
+
+
+
+
 
 
 
