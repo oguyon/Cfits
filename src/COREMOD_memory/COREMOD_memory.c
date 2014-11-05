@@ -3160,6 +3160,65 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 }
 
 
+
+long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize)
+{
+	int sizeOK; // 1 if size matches
+	long ID;
+	
+	ID = image_ID(IDname);
+	if(data.image[ID].md[0].naxis != 2)
+		{
+			printf("WARNING : image %s naxis = %ld does not match expected value 2\n", IDname, data.image[ID].md[0].naxis);
+			sizeOK = 0;
+		}
+	if(data.image[ID].md[0].size[0] != xsize)
+		{
+			printf("WARNING : image %s xsize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[0], xsize);
+			sizeOK = 0;
+		}
+	if(data.image[ID].md[0].size[1] != ysize)
+		{
+			printf("WARNING : image %s ysize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[1], ysize);
+			sizeOK = 0;
+		}
+	
+	return sizeOK;
+}
+
+
+
+long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsize)
+{
+	int sizeOK; // 1 if size matches
+	long ID;
+	
+	ID = image_ID(IDname);
+	if(data.image[ID].md[0].naxis != 2)
+		{
+			printf("WARNING : image %s naxis = %ld does not match expected value 2\n", IDname, data.image[ID].md[0].naxis);
+			sizeOK = 0;
+		}
+	if(data.image[ID].md[0].size[0] != xsize)
+		{
+			printf("WARNING : image %s xsize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[0], xsize);
+			sizeOK = 0;
+		}
+	if(data.image[ID].md[0].size[1] != ysize)
+		{
+			printf("WARNING : image %s ysize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[1], ysize);
+			sizeOK = 0;
+		}
+	if(data.image[ID].md[0].size[2] != zsize)
+		{
+			printf("WARNING : image %s zsize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[2], zsize);
+			sizeOK = 0;
+		}
+	
+	return sizeOK;
+}
+
+
 /** logs a shared memory stream onto disk
  *
  * uses data cube buffer to store frames

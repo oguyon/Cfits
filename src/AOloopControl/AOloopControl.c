@@ -1852,6 +1852,9 @@ long AOloopControl_loadCM(long loop, char *CMfname)
 
 
 
+
+
+
 //
 // read loop configuration file
 // mode = 0: read only (faster)
@@ -1870,7 +1873,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     int r;
 	int sizeOK;
 	char command[500];
-
+	int CreateSMim;
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
@@ -1908,7 +1911,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     strcpy(AOconf[loop].contrMname, name);
 
 
-//	printf("============ mode = %d\n", mode);
+	//	printf("============ mode = %d\n", mode);
     if(mode==1)
     {
         sizearray = (long*) malloc(sizeof(long)*3);
@@ -1944,21 +1947,14 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         AOconf[loop].sizeyWFS = data.image[aoconfID_WFS].md[0].size[1];
         AOconf[loop].sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
 
-
-
-        // Create WFS1 image memory (averaged, dark-subtracted)
-        if((ID=variable_ID("AOLCAMDARK"))!=-1)
-            AOconf[loop].DarkLevel = data.variable[ID].value.f;
-        else
-            AOconf[loop].DarkLevel = 0.0;
-
-		
+	
 		
 		
         sprintf(name, "aol%ld_wfsdark", loop);
         aoconfID_WFSdark = image_ID(name);
         if(aoconfID_WFSdark==-1)
         {
+			CreateSMim = 0;
 			aoconfID_WFSdark = read_sharedmem_image(name);
             if(aoconfID_WFSdark!=-1)
 				{
@@ -1979,10 +1975,21 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 							sizeOK = 0;
 						}
 						if(sizeOK==0)
-							exit(0);								
+							{
+					            printf("\n");
+								printf("========== EXISTING DARK HAS WRONG SIZE -> CREATING BLANK DARK ===========\n");
+								printf("\n");            
+								delete_image_ID(name);
+								sprintf(command, "rm /tmp/%s.im.shm", name);
+								r = system(command);
+								CreateSMim = 1;
+							}							
 				}
             else
-				{
+				CreateSMim = 1;
+		
+			if(CreateSMim == 1)
+				{					
 				sizearray[0] =  AOconf[loop].sizexWFS;
 				sizearray[1] =  AOconf[loop].sizeyWFS;
 				printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
@@ -1990,6 +1997,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 				aoconfID_WFSdark = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 				}
         }
+
 
         sprintf(name, "aol%ld_imWFS0", loop);
         aoconfID_WFS0 = image_ID(name);
@@ -2001,6 +2009,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             fflush(stdout);
             aoconfID_WFS0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
         }
+
 
 
         sprintf(name, "aol%ld_imWFS1", loop);
