@@ -4085,7 +4085,7 @@ int AOloopControl_setgainrange(long m0, long m1, float gainval)
 
   if(aoconfID_GAIN_modes==-1)
     {
-      sprintf(name, "DMmode_GAIN_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_GAIN", LOOPNUMBER);
       aoconfID_GAIN_modes = read_sharedmem_image(name);
     }
 
@@ -4112,7 +4112,7 @@ int AOloopControl_setlimitrange(long m0, long m1, float limval)
 
   if(aoconfID_LIMIT_modes==-1)
     {
-      sprintf(name, "DMmode_LIMIT_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_LIMIT", LOOPNUMBER);
       aoconfID_LIMIT_modes = read_sharedmem_image(name);
     }
 
@@ -4138,7 +4138,7 @@ int AOloopControl_setmultfrange(long m0, long m1, float multfval)
 
   if(aoconfID_MULTF_modes==-1)
     {
-      sprintf(name, "DMmode_MULTF_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_MULTF", LOOPNUMBER);
       aoconfID_MULTF_modes = read_sharedmem_image(name);
     }
 
@@ -4164,7 +4164,7 @@ int AOloopControl_setgainblock(long mb, float gainval)
 
   if(aoconfID_GAIN_modes==-1)
     {
-      sprintf(name, "DMmode_GAIN_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_GAIN", LOOPNUMBER);
       aoconfID_GAIN_modes = read_sharedmem_image(name);
     }
 
@@ -4197,7 +4197,7 @@ int AOloopControl_setlimitblock(long mb, float limitval)
 
   if(aoconfID_LIMIT_modes==-1)
     {
-      sprintf(name, "DMmode_LIMIT_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_LIMIT", LOOPNUMBER);
       aoconfID_LIMIT_modes = read_sharedmem_image(name);
     }
 
@@ -4230,7 +4230,7 @@ int AOloopControl_setmultfblock(long mb, float multfval)
 
   if(aoconfID_MULTF_modes==-1)
     {
-      sprintf(name, "DMmode_MULTF_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_MULTF", LOOPNUMBER);
       aoconfID_MULTF_modes = read_sharedmem_image(name);
     }
 
@@ -4286,7 +4286,7 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 
   if(aoconfID_cmd_modes==-1)
     {
-      sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER);
       aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
@@ -4329,7 +4329,7 @@ int AOloopControl_InjectMode( long index, float ampl )
 
  if(aoconfID_DMmodes==-1)
    {
-     sprintf(name, "DMmodes_%ld", LOOPNUMBER);
+     sprintf(name, "aol%ld_DMmodes", LOOPNUMBER);
      aoconfID_DMmodes = read_sharedmem_image(name);
    }
 
@@ -4388,7 +4388,7 @@ int AOloopControl_AutoTune()
   
   if(aoconfID_cmd_modes==-1)
     {
-      sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+      sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER);
       aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
