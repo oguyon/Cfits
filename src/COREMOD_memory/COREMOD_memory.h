@@ -145,6 +145,11 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname);
 long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize);
 long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsize);
 
+
+long COREMOD_MEMORY_image_set_status(char *IDname, int status);
+long COREMOD_MEMORY_image_set_cnt0(char *IDname, int cnt0);
+long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1);
+
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir);
 
 #endif

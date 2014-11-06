@@ -73,6 +73,8 @@ long tret; // thread return value
 
 
 
+
+
 int create_image_cli()
 {
   long *imsize;
@@ -359,6 +361,35 @@ int mk_amph_from_complex_cli()
 
 
 
+
+
+int COREMOD_MEMORY_image_set_status_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
+		COREMOD_MEMORY_image_set_status(data.cmdargtoken[1].val.string, (int) data.cmdargtoken[2].val.numl);
+  else
+    return 1;
+}
+
+
+int COREMOD_MEMORY_image_set_cnt0_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
+		COREMOD_MEMORY_image_set_cnt0(data.cmdargtoken[1].val.string, (int) data.cmdargtoken[2].val.numl);
+  else
+    return 1;
+}
+
+int COREMOD_MEMORY_image_set_cnt1_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
+		COREMOD_MEMORY_image_set_cnt1(data.cmdargtoken[1].val.string, (int) data.cmdargtoken[2].val.numl);
+  else
+    return 1;
+}
+
+
+
 //long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname);
 int COREMOD_MEMORY_cp2shm_cli()
 {
@@ -568,6 +599,35 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].example,"rmall");
   strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
   data.NBcmd++;
+
+  
+  strcpy(data.cmd[data.NBcmd].key,"imsetstatus");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_status_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set image status variable");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"imsetstatus im1 2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_status(char *IDname, int status)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"imsetcnt0");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt0_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set image cnt0 variable");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"imsetcnt0 im1 2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt0(char *IDname, int status)");
+  data.NBcmd++;
+ 
+  strcpy(data.cmd[data.NBcmd].key,"imsetcnt1");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt1_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set image cnt1 variable");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"imsetcnt1 im1 2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(char *IDname, int status)");
+  data.NBcmd++;
+ 
  
  
   strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
@@ -3216,6 +3276,37 @@ long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsiz
 		}
 	
 	return sizeOK;
+}
+
+
+long COREMOD_MEMORY_image_set_status(char *IDname, int status)
+{
+	long ID;
+	
+	ID = image_ID(IDname);
+	data.image[ID].md[0].status = status;
+	
+	return(0);
+}
+
+long COREMOD_MEMORY_image_set_cnt0(char *IDname, int cnt0)
+{
+	long ID;
+	
+	ID = image_ID(IDname);
+	data.image[ID].md[0].cnt0 = cnt0;
+	
+	return(0);
+}
+
+long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1)
+{
+	long ID;
+	
+	ID = image_ID(IDname);
+	data.image[ID].md[0].status = cnt1;
+	
+	return(0);
 }
 
 
