@@ -73,7 +73,7 @@ float beta  = 0.0;
 // 4: existing image
 //
 
-
+#ifdef HAVE_CUDA
 int CUDACOMP_test_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
@@ -81,7 +81,7 @@ int CUDACOMP_test_cli()
 	else
 		return 1;
 }
-
+#endif
 
 
 
