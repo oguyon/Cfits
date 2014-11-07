@@ -1732,10 +1732,10 @@ char sname[200];
     
     
 		// looking for semaphore
-	sprintf(sname, "%ssem", name);
-	printf("looking for semaphore %s\n", sname);
+	sprintf(sname, "%s_sem", name);
+	//printf("looking for semaphore %s\n", sname);
 	if ((data.image[ID].semptr = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
-    printf("No semaphore named \"%s\"\n", sname);
+    //printf("No semaphore named \"%s\"\n", sname);
     data.image[ID].sem = 0;
 	}
 	else
@@ -3400,7 +3400,7 @@ long COREMOD_MEMORY_image_set_createsem(char *IDname)
 	
 	if(data.image[ID].sem == 0)
 	{
-		sprintf(sname, "%ssem", IDname);
+		sprintf(sname, "%s_sem", IDname);
 		if ((data.image[ID].semptr = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
 		perror("semaphore initilization");
 		exit(1);
@@ -3419,7 +3419,7 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname)
 	long ID;
 	
 	ID = image_ID(IDname);
-	printf("sem  = %d\n", data.image[ID].sem);
+	//printf("sem  = %d\n", data.image[ID].sem);
 
 	if(data.image[ID].sem == 1)
 		sem_post(data.image[ID].semptr);
@@ -3435,18 +3435,18 @@ long COREMOD_MEMORY_image_set_semwait(char *IDname)
 	int semval;
 	
 	ID = image_ID(IDname);
-	printf("sem  = %d\n", data.image[ID].sem);
+	//printf("sem  = %d\n", data.image[ID].sem);
 
 	if(data.image[ID].sem == 1)
 	{
 	sem_getvalue(data.image[ID].semptr, &semval);
-	printf("Semaphore value = %d   ->  ", semval);
-	fflush(stdout);
+	//printf("Semaphore value = %d   ->  ", semval);
+	//fflush(stdout);
 
 		sem_wait(data.image[ID].semptr);
 	sem_getvalue(data.image[ID].semptr, &semval);
-	printf("Semaphore value = %d    \n", semval);
-	fflush(stdout);
+	//printf("Semaphore value = %d    \n", semval);
+	//fflush(stdout);
 	}
 	else
 		printf("No semaphore !\n");
