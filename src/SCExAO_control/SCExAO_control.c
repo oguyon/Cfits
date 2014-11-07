@@ -733,7 +733,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	double *kavearray;
 	double *vavearray;
 	long kk;
-	
+	long cnt0;
 
 	IDin = image_ID(IDinname);
 
@@ -817,6 +817,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					}
 					data.image[ID2dtmp].array.F[ii] = 1.0; //v0/v1;
 					cntarray[ii] = 0;					
+					printf("processed %ld pixels ", cnt0);
+					fflush(stdout);
 				}
 				
 			}
