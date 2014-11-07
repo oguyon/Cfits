@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <sched.h>
 #include <ncurses.h>
+#include <semaphore.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
