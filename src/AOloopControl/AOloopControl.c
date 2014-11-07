@@ -1681,8 +1681,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
         //slice = 0;
 
-        printf("READING SLICE %ld\n", slice);
-		fflush(stdout);
+//        printf("READING SLICE %ld\n", slice);
+	//	fflush(stdout);
 		
         switch (atype) {
         case FLOAT :

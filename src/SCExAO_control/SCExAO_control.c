@@ -248,7 +248,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         slice = data.image[IDcam].md[0].cnt1;
         if(slice==-1)
             slice = data.image[IDcam].md[0].size[2]-1;
-		printf("Reading slice %d\n", slice);
+	//	printf("Reading slice %d\n", slice);
 		
         ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice*xysize;
