@@ -790,7 +790,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 			{
 				if(k<cntarray[ii])
 				{
-					v0 = -data.image[IDin].array.F[k*ii];
+					v0 = -data.image[IDin].array.F[k*xysize+ii];
 					if(v0<0)
 						{
 							cntarray[ii] = k;
