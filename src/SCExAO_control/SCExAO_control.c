@@ -215,8 +215,8 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
 
-	if(data.image[IDcam].sem==1)
-		sem_init(data.image[ID].semptr, 0, 0);
+//	if(data.image[IDcam].sem==1)
+	//	sem_init(data.image[ID].semptr, 0, 0);
 	
     for(k=0; k<NbAve; k++)
     {
