@@ -151,6 +151,9 @@ long COREMOD_MEMORY_image_set_cnt0(char *IDname, int cnt0);
 long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1);
 
 long COREMOD_MEMORY_image_set_createsem(char *IDname);
+long COREMOD_MEMORY_image_set_sempost(char *IDname);
+long COREMOD_MEMORY_image_set_semwait(char *IDname);
+
 
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir);
 

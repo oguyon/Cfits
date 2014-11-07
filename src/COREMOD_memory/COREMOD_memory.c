@@ -390,7 +390,34 @@ int COREMOD_MEMORY_image_set_cnt1_cli()
 
 
 
-//long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname);
+int COREMOD_MEMORY_image_set_createsem_cli()
+{
+	if(CLI_checkarg(1,4)==0)
+		COREMOD_MEMORY_image_set_createsem(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+int COREMOD_MEMORY_image_set_sempost_cli()
+{
+	if(CLI_checkarg(1,4)==0)
+		COREMOD_MEMORY_image_set_sempost(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+int COREMOD_MEMORY_image_set_semwait_cli()
+{
+	if(CLI_checkarg(1,4)==0)
+		COREMOD_MEMORY_image_set_semwait(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+
+
+
+
 int COREMOD_MEMORY_cp2shm_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
@@ -628,7 +655,36 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(char *IDname, int status)");
   data.NBcmd++;
  
+
+
+  strcpy(data.cmd[data.NBcmd].key,"imsetcreatesem");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_createsem_cli;
+  strcpy(data.cmd[data.NBcmd].info,"create image semaphore");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+  strcpy(data.cmd[data.NBcmd].example,"imsetcreatesem im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_createsem(char *IDname)");
+  data.NBcmd++;
  
+   strcpy(data.cmd[data.NBcmd].key,"imsetsempost");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_cli;
+  strcpy(data.cmd[data.NBcmd].info,"post image semaphore");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+  strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname)");
+  data.NBcmd++;
+ 
+   strcpy(data.cmd[data.NBcmd].key,"imsetsemwait");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_semwait_cli;
+  strcpy(data.cmd[data.NBcmd].info,"wait image semaphore");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+  strcpy(data.cmd[data.NBcmd].example,"imsetsemwait im1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(char *IDname)");
+  data.NBcmd++;
+ 
+
  
   strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1677,10 +1733,10 @@ char sname[200];
     
 		// looking for semaphore
 	sprintf(sname, "%ssem", name);
+	printf("looking for semaphore %s\n", sname);
 	if ((data.image[ID].semptr = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
-	//O_CREAT, O_RDWR, 0))== SEM_FAILED) {
-	//0644, 0)) == SEM_FAILED) {
-   // printf("No semaphore named \"%s\"\n", sname);
+    printf("No semaphore named \"%s\"\n", sname);
+    data.image[ID].sem = 0;
 	}
 	else
 	{
@@ -3338,17 +3394,62 @@ long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1)
 long COREMOD_MEMORY_image_set_createsem(char *IDname)
 {
 	long ID;
+	char sname[200];
 	
 	ID = image_ID(IDname);
 	
 	if(data.image[ID].sem == 0)
 	{
-		if ((data.image[ID].semptr = sem_open(IDname, O_CREAT, 0644, 1)) == SEM_FAILED) {
+		sprintf(sname, "%ssem", IDname);
+		if ((data.image[ID].semptr = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
 		perror("semaphore initilization");
 		exit(1);
 		}	
 	data.image[ID].sem = 1;
 	}
+	
+	printf("sem  = %d\n", data.image[ID].sem);
+	
+	return(ID);
+}
+
+
+long COREMOD_MEMORY_image_set_sempost(char *IDname)
+{
+	long ID;
+	
+	ID = image_ID(IDname);
+	printf("sem  = %d\n", data.image[ID].sem);
+
+	if(data.image[ID].sem == 1)
+		sem_post(data.image[ID].semptr);
+	else
+		printf("No semaphore !\n");
+		
+	return(ID);
+}
+
+long COREMOD_MEMORY_image_set_semwait(char *IDname)
+{
+	long ID;
+	int semval;
+	
+	ID = image_ID(IDname);
+	printf("sem  = %d\n", data.image[ID].sem);
+
+	if(data.image[ID].sem == 1)
+	{
+	sem_getvalue(data.image[ID].semptr, &semval);
+	printf("Semaphore value = %d   ->  ", semval);
+	fflush(stdout);
+
+		sem_wait(data.image[ID].semptr);
+	sem_getvalue(data.image[ID].semptr, &semval);
+	printf("Semaphore value = %d    \n", semval);
+	fflush(stdout);
+	}
+	else
+		printf("No semaphore !\n");
 	
 	return(ID);
 }
