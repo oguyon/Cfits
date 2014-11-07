@@ -833,7 +833,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 			for(ii=0;ii<xysize;ii++)
 				{
 					cntarray[ii] = zsize;
-					data.image[ID2dtmp].array.F[ii] = 0.0;
+//					data.image[ID2dtmp].array.F[ii] = 0.0;
 				}
 		}
 	}
