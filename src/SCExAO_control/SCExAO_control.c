@@ -725,21 +725,45 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	long k;
 	long IDtmp;
 	long ii, jj;
+	long ID2dtmp, ID3dtmp;
+	float v0;
+	int *cntarray; // set to slice when does the pixel start to saturate, set to 0 when pixel value computed
+	long xysize;
+	double v1, vk, vt, vv;
+	double *kavearray;
+	double *vavearray;
+	long kk;
 	
+
 	IDin = image_ID(IDinname);
-	
+
 	xsize = data.image[IDin].md[0].size[0];
 	ysize = data.image[IDin].md[0].size[1];
 	zsize = data.image[IDin].md[0].size[2];
+	xysize = xsize*ysize;
 
-	sizeoutarray = (long*) malloc(sizeof(long)*2);
+	cntarray = (int*) malloc(sizeof(int)*xysize);
+	
+	kavearray = (double*) malloc(sizeof(double)*xysize);
+	vavearray = (double*) malloc(sizeof(double)*xysize);
+
+	sizeoutarray = (long*) malloc(sizeof(long)*3);
+	sizeoutarray[0] = xsize;
+	sizeoutarray[1] = ysize;
+	sizeoutarray[2] = zsize;
+	
 	coeffarray = (double*) malloc(sizeof(double)*zsize);
 	
 	for(k=0;k<zsize;k++)
-		coeffarray[k] = 1.0/zsize;
+		{
+			coeffarray[k] = 1.0/zsize;
+		}
 	
-	IDtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0);
 	
+	ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 1, 0);
+	ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0);
+
+
 	IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
 	
 	if(data.image[IDin].sem == 0)
@@ -752,16 +776,66 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	while(sem_trywait(data.image[IDin].semptr)==0){}
 	
 	printf("\n");
+
 	while(1)
 	{
 		sem_wait(data.image[IDin].semptr);
-		printf("\r slice %ld written       ", data.image[IDin].md[0].cnt1);
+		k = data.image[IDin].md[0].cnt1;
+		printf("\r slice %ld written       ", k);
 		fflush(stdout);
+		for(ii=0;ii<xysize;ii++)
+			{
+				if(k<cntarray[ii])
+				{
+					v0 = -data.image[IDin].array.F[k*ii];
+					if(v0<0)
+						{
+							cntarray[ii] = k;
+						}
+					else
+						{
+							data.image[ID3dtmp].array.F[k*ii] = v0;
+							kavearray[ii] += 1.0*k;
+							vavearray[ii] += v0;
+						}
+				}
+				else if (cntarray[ii]!=0)
+				{
+					kavearray[ii] /= cntarray[ii];
+					vavearray[ii] /= cntarray[ii];
+					v0 = 0.0;
+					v1 = 0.0;			
+					for(kk=0;kk<cntarray[ii];kk++)
+					{
+						vk = 1.0*k-kavearray[ii];
+						vv = data.image[ID3dtmp].array.F[k*ii]-vavearray[ii];
+						v0 += vk*vv;
+						v1 += vk;
+					}
+					data.image[ID2dtmp].array.F[ii] = v0/v1;
+					cntarray[ii] = 0;
+				}
+				
+			}
+
+		if(k==zsize-1)
+		{
+			printf("CUBE COMPLETED -> 2D image ready\n");
+			
+			for(ii=0;ii<xysize;ii++)
+				{
+					cntarray[ii] = zsize;
+					data.image[ID2dtmp].array.F[ii] = 0.0;
+				}
+		}
 	}
 	printf("\n");
-	
+
 	free(sizeoutarray);
 	free(coeffarray);
 
+		free(kavearray);
+	free(vavearray);
+	
 	return(IDout);
 }
