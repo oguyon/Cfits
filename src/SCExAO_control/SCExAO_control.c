@@ -783,6 +783,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		k = data.image[IDin].md[0].cnt1;
 		printf("\r slice %ld written       ", k);
 		fflush(stdout);
+		data.image[ID2dtmp].md[0].write = 1;
+		data.image[ID3dtmp].md[0].write = 1;
+		
 		for(ii=0;ii<xysize;ii++)
 			{
 				if(k<cntarray[ii])
@@ -813,10 +816,15 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 						v1 += vk;
 					}
 					data.image[ID2dtmp].array.F[ii] = v0/v1;
-					cntarray[ii] = 0;
+					cntarray[ii] = 0;					
 				}
 				
 			}
+		data.image[ID2dtmp].md[0].cnt0++;
+		data.image[ID3dtmp].md[0].cnt0++;
+		
+		data.image[ID2dtmp].md[0].write = 0;
+		data.image[ID3dtmp].md[0].write = 0;
 
 		if(k==zsize-1)
 		{
