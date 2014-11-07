@@ -239,7 +239,8 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 			printf("Waiting for semaphore to post .... ");
 			fflush(stdout);
 			
-			sem_wait(data.image[IDcam].semptr);
+			while(sem_trywait(data.image[IDcam].semptr)==-1){}
+//			sem_wait(data.image[IDcam].semptr);
 			
 			printf(" done\n");
 			fflush(stdout);
