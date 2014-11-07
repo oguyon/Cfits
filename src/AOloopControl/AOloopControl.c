@@ -1611,6 +1611,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
+				
                 usleep(50);
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
@@ -1663,10 +1664,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         }
 
         slice = data.image[aoconfID_WFS].md[0].cnt1;
-/*        if(slice==-1)
+		if(slice==-1)
             slice = data.image[aoconfID_WFS].md[0].size[2];
-*/
-		slice = 0;
+
+		//slice = 0;
 		
         //      printf("READING SLICE %ld\n", slice);
         switch (atype) {

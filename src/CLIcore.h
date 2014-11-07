@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-
+#include <semaphore.h>
 #include <time.h>
 #include <fftw3.h>
 #include <gsl/gsl_rng.h>	// for random numbers
@@ -219,6 +219,9 @@ typedef struct			/* structure used to store data arrays */
     complex_double *CD;
     unsigned short int *U;
   } array;                      // pointer to data array
+  
+  int sem; // 1 if semaphore exists for this image
+  sem_t *semptr; // semaphore for this image
  
   IMAGE_KEYWORD *kw;  // not supported for shared memory
 

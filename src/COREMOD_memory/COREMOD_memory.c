@@ -889,6 +889,12 @@ int delete_image_ID(char* imname) /* deletes an ID */
     {
         data.image[ID].used = 0;
 
+		if(data.image[ID].sem==1)
+			{
+				data.image[ID].sem = 0;
+				sem_close(data.image[ID].semptr);
+			}
+
         if(data.image[ID].md[0].shared == 1)
         {
             if (munmap(data.image[ID].md, data.image[ID].memsize) == -1) {
@@ -1099,6 +1105,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
                 perror("Error opening file for writing");
                 exit(0);
             }
+            
+            data.image[ID].sem = 0; 
             data.image[ID].shmfd = SM_fd;
             data.image[ID].memsize = sharedsize;
 
@@ -1598,6 +1606,7 @@ long read_sharedmem_image(char *name)
       }
       
       data.image[ID].memsize = file_stat.st_size;
+      data.image[ID].sem = 0;
       data.image[ID].shmfd = SM_fd;
       
       data.image[ID].md = map;
@@ -1664,6 +1673,17 @@ long read_sharedmem_image(char *name)
       
       if(MEM_MONITOR == 1)
 	list_image_ID_ncurses();
+    
+    
+		// looking for semaphore
+	if ((data.image[ID].semptr = sem_open(name, 0, 0644, 0)) == SEM_FAILED) {
+    printf("No semaphore\n");
+	}
+	else
+	{
+		printf("Semaphore detected\n");
+		data.image[ID].sem = 1;
+	}
     }
 
   return(ID);
@@ -3308,6 +3328,31 @@ long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1)
 	
 	return(0);
 }
+
+
+
+
+long COREMOD_MEMORY_image_set_createsem(char *IDname)
+{
+	long ID;
+	
+	ID = image_ID(IDname);
+	
+	if(data.image[ID].sem == 0)
+	{
+		if ((data.image[ID].semptr = sem_open(IDname, O_CREAT, 0644, 1)) == SEM_FAILED) {
+		perror("semaphore initilization");
+		exit(1);
+		}	
+	data.image[ID].sem = 1;
+	}
+	
+	return(ID);
+}
+
+
+
+
 
 
 /** logs a shared memory stream onto disk
