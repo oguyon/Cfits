@@ -219,7 +219,7 @@ if(data.image[IDcam].sem==1)
 	fflush(stdout);
 	while(sem_trywait(data.image[IDcam].semptr)==0)
 	{}
-
+}
 /*	if(data.image[IDcam].sem==1)
 		sem_init(data.image[IDcam].semptr, 0, 0);
 	*/
