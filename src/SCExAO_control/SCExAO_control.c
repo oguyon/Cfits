@@ -751,13 +751,14 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	// drive semaphore to zero
 	while(sem_trywait(data.image[IDin].semptr)==0){}
 	
+	printf("\n");
 	while(1)
 	{
 		sem_wait(data.image[IDin].semptr);
-		printf("slice %ld written\n", data.image[IDin].md[0].cnt1);
+		printf("\r slice %ld written       ", data.image[IDin].md[0].cnt1);
 		fflush(stdout);
 	}
-	
+	printf("\n");
 	
 	free(sizeoutarray);
 	free(coeffarray);
