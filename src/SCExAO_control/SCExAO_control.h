@@ -10,4 +10,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout);
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name);
 
+
+int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname);
+
 #endif

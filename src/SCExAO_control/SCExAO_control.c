@@ -123,6 +123,20 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 }
 
 
+//int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
+
+int SCExAOcontrol_SAPHIRA_cam_process_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+      SCExAOcontrol_SAPHIRA_cam_process(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 
 int init_SCExAO_control()
 {
@@ -168,6 +182,18 @@ int init_SCExAO_control()
   strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
   data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaosaphiraproc");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_SAPHIRA_cam_process_cli;
+  strcpy(data.cmd[data.NBcmd].info,"process saphira camera images");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
+  strcpy(data.cmd[data.NBcmd].example,"scexaosaphiraproc");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)");
+  data.NBcmd++;
+
+
+
 
   // add atexit functions here
   
@@ -688,3 +714,53 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 }
 
 
+/** SAPHIRA image */
+int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
+{
+	long IDout;
+	long IDin;
+	long xsize, ysize, zsize;
+	long *sizeoutarray;
+	double *coeffarray;
+	long k;
+	long IDtmp;
+	long ii, jj;
+	
+	IDin = image_ID(IDinname);
+	
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	zsize = data.image[IDin].md[0].size[2];
+
+	sizeoutarray = (long*) malloc(sizeof(long)*2);
+	coeffarray = (double*) malloc(sizeof(double)*zsize);
+	
+	for(k=0;k<zsize;k++)
+		coeffarray[k] = 1.0/zsize;
+	
+	IDtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0);
+	
+	IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
+	
+	if(data.image[IDin].sem == 0)
+		{
+			printf("Error: no semaphore detected\n");
+			exit(0);
+		}
+	
+	// drive semaphore to zero
+	while(sem_trywait(data.image[IDin].semptr)==0){}
+	
+	while(1)
+	{
+		sem_wait(data.image[IDin].semptr);
+		printf("slice %ld written\n", data.image[IDin].md[0].cnt1);
+		fflush(stdout);
+	}
+	
+	
+	free(sizeoutarray);
+	free(coeffarray);
+
+	return(IDout);
+}
