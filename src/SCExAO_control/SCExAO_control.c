@@ -232,12 +232,15 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 		}
 		else
 			{
-sem_getvalue(data.image[IDcam].semptr, &semval);
-	printf("semaphore value = %d   \n", semval);
-	fflush(stdout);
-					printf("Waiting for semaphore to post .... ");
+			sem_getvalue(data.image[IDcam].semptr, &semval);
+			printf("semaphore value = %d   \n", semval);
 			fflush(stdout);
+			
+			printf("Waiting for semaphore to post .... ");
+			fflush(stdout);
+			
 			sem_wait(data.image[IDcam].semptr);
+			
 			printf(" done\n");
 			fflush(stdout);
 			}
