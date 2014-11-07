@@ -214,12 +214,12 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
-if(data.image[IDcam].sem==1)
+/*if(data.image[IDcam].sem==1)
 {	printf("Bringing semaphore to 0\n");
 	fflush(stdout);
 	while(sem_trywait(data.image[IDcam].semptr)==0)
 	{}
-}
+}*/
 /*	if(data.image[IDcam].sem==1)
 		sem_init(data.image[IDcam].semptr, 0, 0);
 	*/
