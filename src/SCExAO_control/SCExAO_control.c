@@ -195,7 +195,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 	long IDv;
 	char imnameave[200];
 	long long cntref;
-	
+	int semval;
 	
 	cntref = -1;
 	
@@ -225,7 +225,10 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 		}
 		else
 			{
-				printf("Waiting for semaphore to post .... ");
+sem_getvalue(data.image[IDcam].semptr, &semval);
+	printf("semaphore value = %d   \n", semval);
+	fflush(stdout);
+					printf("Waiting for semaphore to post .... ");
 			fflush(stdout);
 			sem_wait(data.image[IDcam].semptr);
 			printf(" done\n");
