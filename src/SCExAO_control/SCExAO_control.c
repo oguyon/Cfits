@@ -203,16 +203,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         IDcam = read_sharedmem_image(imname);
 
 
-   /* kw = image_read_keyword_L(WFScam_name, "NBcoadd", &NBcoadd);
-	
-    if(kw==-1)
-{
-	        printf("keyword not found\n");
-		NBcoadd = 1;
-   }
-    else
-        printf("found [%ld] NBcoadd = %ld\n", kw, NBcoadd);
-*/
+ 
 
     xsize = data.image[IDcam].md[0].size[0];
     ysize = data.image[IDcam].md[0].size[1];
@@ -222,20 +213,28 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
-	//list_image_ID();
+
 	
     for(k=0; k<NbAve; k++)
     {
-        while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
-        {
-            usleep(10);
-            // do nothing, wait
-        }
-
+		if(data.image[ID].sem==0)
+		{
+			while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
+				usleep(10);
+		}
+		else
+			{
+				printf("Waiting for semaphore to post .... ");
+			fflush(stdout);
+			sem_wait(data.image[IDcam].semptr);
+			printf(" done\n");
+			fflush(stdout);
+			}
+			
         slice = data.image[IDcam].md[0].cnt1;
-//        if(slice==-1)
-  //          slice = data.image[IDcam].md[0].size[2]-1;
-		slice = 0;
+        if(slice==-1)
+            slice = data.image[IDcam].md[0].size[2]-1;
+		printf("Reading slice %d\n", slice);
 		
         ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice* xysize;
