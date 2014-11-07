@@ -1578,7 +1578,7 @@ long read_sharedmem_image(char *name)
   char *mapv;
   int atype;
   int kw;
-
+char sname[200];
  
   ID = next_avail_image_ID();
   data.image[ID].used = 1;
