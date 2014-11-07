@@ -1071,96 +1071,97 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 //
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)
 {
-  long iiin,jjin, iiout, jjout;
-  long IDin, IDout;
-  int atype;
-  long *sizeout;
-  long long cnt0;
-  long IDmask;
-  long sizeoutxy;
-  long ii;
-  
-  
-  sizeout = (long*) malloc(sizeof(long)*2);
-  sizeout[0] = size_x;
-  sizeout[1] = size_y;
-	sizeoutxy = size_x*size_y;
+    long iiin,jjin, iiout, jjout;
+    long IDin, IDout;
+    int atype;
+    long *sizeout;
+    long long cnt0;
+    long IDmask;
+    long sizeoutxy;
+    long ii;
 
-  IDin = image_ID(in_name);
-  atype = data.image[IDin].md[0].atype;
 
-  // Create shared memory output image 
-  IDout = create_image_ID(out_name, 2, sizeout, atype, 1, 0);
-  
-  // Check if there is a mask
-  IDmask = image_ID("csmask");
-	if(IDmask!=-1)
-	if((data.image[IDmask].md[0].size[0]!=size_x)||(data.image[IDmask].md[0].size[1]!=size_y))
-	{
-		printf("ERROR: csmask has wrong size\n");
-		exit(0);
-	}
-  
-  
-  cnt0 = -1;
+    sizeout = (long*) malloc(sizeof(long)*2);
+    sizeout[0] = size_x;
+    sizeout[1] = size_y;
+    sizeoutxy = size_x*size_y;
 
-  switch (atype) {
-  case USHORT :
-    while(1)
-      {
-	usleep(10);
-	if(data.image[IDin].md[0].cnt0!=cnt0)
-	  {
-		data.image[IDout].md[0].write = 1;
-	    cnt0 = data.image[IDin].md[0].cnt0;
-	    for(iiout=0; iiout<size_x; iiout++)
-	      for(jjout=0; jjout<size_y; jjout++)
-		{
-		  iiin = xstart + iiout;
-		  jjin = ystart + jjout;
-		  data.image[IDout].array.U[jjout*size_x+iiout] = data.image[IDin].array.U[jjin*data.image[IDin].md[0].size[0]+iiin];
-		}
-		if(IDmask!=-1)
-			for(ii=0;ii<sizeoutxy;ii++)
-				data.image[IDout].array.U[ii] *= (int) data.image[IDmask].array.F[ii];
-		
-	    data.image[IDout].md[0].cnt0 = cnt0;
-		data.image[IDout].md[0].write = 0;
-	  }
-      }
-    break;
-  case FLOAT :
-    while(1)
-      {
-	usleep(50);
-	if(data.image[IDin].md[0].cnt0!=cnt0)
-	  {
-		data.image[IDout].md[0].write = 1;
-	    cnt0 = data.image[IDin].md[0].cnt0;
-	    for(iiout=0; iiout<size_x; iiout++)
-	      for(jjout=0; jjout<size_y; jjout++)
-		{
-		  iiin = xstart + iiout;
-		  jjin = ystart + jjout;
-		  data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
-		}
-		if(IDmask!=-1)
-			for(ii=0;ii<sizeoutxy;ii++)
-				data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
-	    data.image[IDout].md[0].cnt0 = cnt0;
-		data.image[IDout].md[0].write = 0;
-	  }
-      }
-    break;
-  default :
-     printf("ERROR: DATA TYPE NOT SUPPORTED\n");
-      exit(0);
-    break;
-  }
-  free(sizeout);
+    IDin = image_ID(in_name);
+    atype = data.image[IDin].md[0].atype;
 
-  return(0);
+    // Create shared memory output image
+    IDout = create_image_ID(out_name, 2, sizeout, atype, 1, 0);
+
+    // Check if there is a mask
+    IDmask = image_ID("csmask");
+    if(IDmask!=-1)
+        if((data.image[IDmask].md[0].size[0]!=size_x)||(data.image[IDmask].md[0].size[1]!=size_y))
+        {
+            printf("ERROR: csmask has wrong size\n");
+            exit(0);
+        }
+
+
+    cnt0 = -1;
+
+    switch (atype) {
+    case USHORT :
+        while(1)
+        {
+            usleep(10);
+            if(data.image[IDin].md[0].cnt0!=cnt0)
+            {
+                data.image[IDout].md[0].write = 1;
+                cnt0 = data.image[IDin].md[0].cnt0;
+                for(iiout=0; iiout<size_x; iiout++)
+                    for(jjout=0; jjout<size_y; jjout++)
+                    {
+                        iiin = xstart + iiout;
+                        jjin = ystart + jjout;
+                        data.image[IDout].array.U[jjout*size_x+iiout] = data.image[IDin].array.U[jjin*data.image[IDin].md[0].size[0]+iiin];
+                    }
+                if(IDmask!=-1)
+                    for(ii=0; ii<sizeoutxy; ii++)
+                        data.image[IDout].array.U[ii] *= (int) data.image[IDmask].array.F[ii];
+
+                data.image[IDout].md[0].cnt0 = cnt0;
+                data.image[IDout].md[0].write = 0;
+            }
+        }
+        break;
+    case FLOAT :
+        while(1)
+        {
+            usleep(50);
+            if(data.image[IDin].md[0].cnt0!=cnt0)
+            {
+                data.image[IDout].md[0].write = 1;
+                cnt0 = data.image[IDin].md[0].cnt0;
+                for(iiout=0; iiout<size_x; iiout++)
+                    for(jjout=0; jjout<size_y; jjout++)
+                    {
+                        iiin = xstart + iiout;
+                        jjin = ystart + jjout;
+                        data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
+                    }
+                if(IDmask!=-1)
+                    for(ii=0; ii<sizeoutxy; ii++)
+                        data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
+                data.image[IDout].md[0].cnt0 = cnt0;
+                data.image[IDout].md[0].write = 0;
+            }
+        }
+        break;
+    default :
+        printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+        exit(0);
+        break;
+    }
+    free(sizeout);
+
+    return(0);
 }
+
 
 
 
@@ -1550,13 +1551,13 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     long double tmplv1;
     double tmpf;
     long IDdark;
-	char dname[200];
-	
+    char dname[200];
+
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
-	//printf("Average cam  RM=%d\n", RM);
-	//fflush(stdout);
+    //printf("Average cam  RM=%d\n", RM);
+    //fflush(stdout);
 
 
     if(avcamarraysInit==0)
@@ -1574,14 +1575,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
     else
         AOconf[loop].RMstatus = 2;
-  
+
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
-	//	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
-	//	list_image_ID();
-	//	fflush(stdout);
-			
+        //	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
+        //	list_image_ID();
+        //	fflush(stdout);
+
         switch (atype) {
         case FLOAT :
             imcnt = 0;
@@ -1611,7 +1612,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
-				
+
                 usleep(50);
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
@@ -1642,6 +1643,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     }
     else // ring buffer mode, only works with NbAve = 1
     {
+		if(data.image[aoconfID_WFS].sem==0)
+		{
         if(RM==0)
         {
             while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
@@ -1652,8 +1655,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         }
         else
         {
-//			printf("wait...");
-	//		fflush(stdout);
+            //			printf("wait...");
+            //		fflush(stdout);
             while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
             {
                 usleep(50);
@@ -1662,14 +1665,25 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             //printf("done Waiting\n");
             //fflush(stdout);
         }
-
+		}
+		else
+		{
+			printf("Waiting for semaphore to post .... ");
+			fflush(stdout);
+			sem_wait(data.image[aoconfID_WFS].semptr);
+			printf(" done\n");
+			fflush(stdout);
+		}
+		
         slice = data.image[aoconfID_WFS].md[0].cnt1;
-		if(slice==-1)
+        if(slice==-1)
             slice = data.image[aoconfID_WFS].md[0].size[2];
 
-		//slice = 0;
+        //slice = 0;
+
+        printf("READING SLICE %ld\n", slice);
+		fflush(stdout);
 		
-        //      printf("READING SLICE %ld\n", slice);
         switch (atype) {
         case FLOAT :
             ptrv = (char*) data.image[aoconfID_WFS].array.F;
@@ -1698,18 +1712,18 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     // Dark subtract
     sprintf(dname, "aol%ld_wfsdark", loop);
-	IDdark = image_ID(dname);
+    IDdark = image_ID(dname);
     if(IDdark!=-1)
     {
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
-/*    else
-    {
-        tmpf = NBcoadd*AOconf[loop].DarkLevel;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_WFS0].array.F[ii] -= tmpf;
-    }*/
+    /*    else
+        {
+            tmpf = NBcoadd*AOconf[loop].DarkLevel;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[aoconfID_WFS0].array.F[ii] -= tmpf;
+        }*/
 
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
@@ -1735,13 +1749,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         data.image[aoconfID_WFS1].md[0].cnt0 ++;
         data.image[aoconfID_WFS1].md[0].write = 0;
     }
-    
-	//printf("Average cam DONE\n");
-	//fflush(stdout);
+
+    //printf("Average cam DONE\n");
+    //fflush(stdout);
 
 
     return(0);
 }
+
 
 
 

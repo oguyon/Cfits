@@ -1678,7 +1678,7 @@ char sname[200];
 		// looking for semaphore
 	sprintf(sname, "%ssem", name);
 	if ((data.image[ID].semptr = sem_open(sname, 0, 0644, 0)) == SEM_FAILED) {
-    printf("No semaphore named \"%s\"\n", sname);
+   // printf("No semaphore named \"%s\"\n", sname);
 	}
 	else
 	{
