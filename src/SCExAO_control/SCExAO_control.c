@@ -905,7 +905,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 data.image[IDavev].array.F[ii] /= data.image[IDavecnt].array.F[ii];
                 v0 = 0.0;
                 v1 = 0.0;
-                for(kk=0; kk<cntarray[ii]; kk++)
+                for(kk=0; kk<data.image[IDavecnt].array.F[ii]; kk++)
                 {
                     vk = 1.0*kk - data.image[IDavek].array.F[ii];
                     vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii];
@@ -917,7 +917,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 cntarray1[ii] = 0;
                 cnt1++;
             }
-			data.image[ID2dtmp].array.F[ii] = 1.0*cntarray1[ii];
+		//	data.image[ID2dtmp].array.F[ii] = 1.0*cntarray1[ii];
         }
 
         printf(" %6ld  %6ld  %6ld   ", cnt2, cnt0, cnt1);
