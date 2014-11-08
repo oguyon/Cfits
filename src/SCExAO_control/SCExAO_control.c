@@ -826,7 +826,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                              v1 += vk*vk;
 							
 							if((iter==2)&&(ii==1000))
-								printf("========= (%ld %f) -> %f %f  -> %f %f -> %f\n", kk, data.image[ID3dtmp].array.F[kk*xysize+ii], vk, vv, v0, v1, v0/v1);
+								printf("========= (%ld %f) -> %f %f  -> %f %f -> %f   [%f %f]\n", kk, data.image[ID3dtmp].array.F[kk*xysize+ii], vk, vv, v0, v1, v0/v1, data.image[IDavek].array.F[ii], data.image[IDavev].array.F[ii]);
                           }
                     
                     
