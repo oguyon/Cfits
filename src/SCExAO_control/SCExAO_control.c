@@ -735,7 +735,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	long kk;
 	long cnt0, cnt1, cnt2;
 	float SATURATION = 16000;
-
+	long kold;
 	
 	
 	
@@ -786,6 +786,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	for(ii=0;ii<xysize;ii++)
 		cntarray[ii] = zsize;
 
+	kold = -1;
 	while(1)
 	{
 		sem_wait(data.image[IDin].semptr);
@@ -853,7 +854,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		data.image[ID2dtmp].md[0].write = 0;
 		data.image[ID3dtmp].md[0].write = 0;
 
-		if(k==zsize-1)
+		if(k<kold)
 		{
 			printf("CUBE COMPLETED -> 2D image ready\n");
 			cnt0 = 0;
@@ -866,6 +867,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					data.image[ID2dtmp].array.F[ii] = 0.0;
 				}
 		}
+		kold = k;
 	}
 	printf("\n");
 
