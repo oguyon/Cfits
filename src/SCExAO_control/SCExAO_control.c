@@ -812,45 +812,30 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		for(ii=0;ii<xysize;ii++)
 			{
 				cnt2++;
-			//	if(k<cntarray[ii])
-			//	{
+			
+			
+				if(k<cntarray[ii])
+				{
 					cnt0++;
-					printf("%ld  /  %ld  ", k*xysize+ii, xysize*zsize);
-					fflush(stdout);
+				//	printf("%ld  /  %ld  ", k*xysize+ii, xysize*zsize);
+				//	fflush(stdout);
 					v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
-					printf(" --\n");
-					fflush(stdout);
+				//	printf(" --\n");
+				//	fflush(stdout);
 	
 				
-					
-				
-				
-				
-					
 	
-	
-			printf("->  [%ld] %ld  /  %ld  ", ID3dtmp, k*xysize+ii, xysize*zsize);
-			fflush(stdout);
-			data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
-	
-	
-	
-	/*
-			if(v0>SATURATION)
-						{
-			cntarray[ii] = k;
-						}
-					else
-						{
-							data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
-							kavearray[ii] += 1.0*k;
-							vavearray[ii] += v0;
-						}
+				if(v0>SATURATION)
+					{
+						cntarray[ii] = k;
+					}
+				else
+					{
+						data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
+						kavearray[ii] += 1.0*k;
+						vavearray[ii] += v0;
+					}
 				}
-
-*/
-				
-				/*
 				else if (cntarray[ii]!=0)
 				{
 					kavearray[ii] /= cntarray[ii];
@@ -864,10 +849,10 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 						v0 += vk*vv;
 						v1 += vk;
 					}
-					data.image[ID2dtmp].array.F[ii] = 1.0; //v0/v1;
+					data.image[ID2dtmp].array.F[ii] = v0/v1;
 					cntarray[ii] = 0;	
 					cnt1++;				
-				}*/
+				}
 				
 			}
 			
