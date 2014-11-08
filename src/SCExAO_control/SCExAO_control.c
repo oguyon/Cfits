@@ -802,7 +802,6 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
 
-
 		for(ii=0;ii<xysize;ii++)
 			{
 				cnt2++;
@@ -844,7 +843,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 				
 			}
 			
-		printf(" %6ld  %6ld  %6ld \n", cnt2, cnt0, cnt1);
+		printf(" %6ld  %6ld  %6ld   ", cnt2, cnt0, cnt1);
 		fflush(stdout);
 		cnt2 = 0;
 	
