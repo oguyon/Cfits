@@ -478,12 +478,22 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 	int r; 
 	double x, y;
 	double totx, toty;
+	char pausefilename[200];
 
 //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
   // exit(0);
   
+  sprintf(pausefilename, "pause_%d.txt", getpid());
+  
 while(1)
 {
+		
+		while (file_exist (pausefilename))
+			usleep(100000);
+			
+  
+			
+  
         ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
        xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
@@ -630,7 +640,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	long delayus = 1000000;
 	long NBframes = 5000;
 
-
+	char pausefilename[200];
+	
 
 	/// read position of stages
 	if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
@@ -641,8 +652,17 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	
     IDref = image_ID("imref");
     
-    while(1)
-    {    
+    
+     sprintf(pausefilename, "pause_%d.txt", getpid());
+  
+  
+  
+while(1)
+{
+	while (file_exist (pausefilename))
+			usleep(100000);
+			
+  
     ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
 	save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
 	

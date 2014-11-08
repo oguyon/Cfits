@@ -6,6 +6,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 
 #include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -162,3 +166,12 @@ double timespec_diff_double(struct timespec start, struct timespec end)
 
   return val;
 }
+
+
+int file_exist (char *filename)
+{
+  struct stat   buffer;   
+  return (stat (filename, &buffer) == 0);
+}
+
+
