@@ -791,6 +791,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		data.image[ID2dtmp].md[0].write = 1;
 		data.image[ID3dtmp].md[0].write = 1;
 		cnt2 = 0;
+
+
 		for(ii=0;ii<xysize;ii++)
 			{
 				cnt2++;
@@ -800,7 +802,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					v0 = 1.0*data.image[IDin].array.F[k*xysize+ii];
 					if(v0>SATURATION)
 						{
-						//	cntarray[ii] = k;
+//						cntarray[ii] = k;
 						}
 					else
 						{
@@ -809,6 +811,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 							vavearray[ii] += v0;
 						}
 				}
+				/*
 				else if (cntarray[ii]!=0)
 				{
 					kavearray[ii] /= cntarray[ii];
@@ -823,9 +826,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 						v1 += vk;
 					}
 					data.image[ID2dtmp].array.F[ii] = 1.0; //v0/v1;
-//					cntarray[ii] = 0;	
+					cntarray[ii] = 0;	
 					cnt1++;				
-				}
+				}*/
 				
 			}
 		printf(" %6ld  %6ld  %6ld  ", cnt2, cnt0, cnt1);
