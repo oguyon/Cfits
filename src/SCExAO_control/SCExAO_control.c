@@ -817,6 +817,10 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					printf(" --\n");
 					fflush(stdout);
 	
+	
+	
+			data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
+	
 	/*
 			if(v0>SATURATION)
 						{
