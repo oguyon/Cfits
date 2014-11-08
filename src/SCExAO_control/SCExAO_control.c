@@ -798,7 +798,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	
 		if(k<kold)
 		{
-			printf("CUBE COMPLETED -> 2D image ready\n");
+			printf("\n CUBE COMPLETED -> 2D image ready\n");
 			cnt0 = 0;
 			cnt1 = 0;
 			cnt2 = 0;
@@ -820,8 +820,6 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		for(ii=0;ii<xysize;ii++)
 			{
 				cnt2++;
-			
-			
 				if(k<cntarray[ii])
 				{
 					cnt0++;
