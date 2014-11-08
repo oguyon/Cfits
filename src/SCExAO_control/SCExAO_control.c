@@ -764,7 +764,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	
 	
 	ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0);
-	ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 1, 0);
+	ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 0, 0);
 
 
 	IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
