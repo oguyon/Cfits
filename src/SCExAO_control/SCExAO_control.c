@@ -736,8 +736,10 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	long cnt0, cnt1, cnt2;
 	float SATURATION = 16000;
 
-
-
+	
+	
+	
+	
 	IDin = image_ID(IDinname);
 
 	xsize = data.image[IDin].md[0].size[0];
@@ -764,7 +766,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	
 	
 	ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0);
-	ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 0, 0);
+	ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 1, 0);
 
 
 	IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
@@ -775,8 +777,10 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 			exit(0);
 		}
 	
-	// drive semaphore to zero
-	while(sem_trywait(data.image[IDin].semptr)==0){}
+	
+		// drive semaphore to zero
+		while(sem_trywait(data.image[IDin].semptr)==0){}
+	
 	
 	printf("\n");
 	for(ii=0;ii<xysize;ii++)
@@ -786,7 +790,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	{
 		sem_wait(data.image[IDin].semptr);
 		while(sem_trywait(data.image[IDin].semptr)==0){}
-		
+			
 		k = data.image[IDin].md[0].cnt1;
 		printf("\r slice %ld written [%ld]       ", k, IDin);
 		fflush(stdout);
@@ -813,9 +817,16 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					cnt0++;
 					printf("%ld  /  %ld  ", k*xysize+ii, xysize*zsize);
 					fflush(stdout);
-					v0 = 1.0*data.image[IDin].array.F[k*xysize+ii];
+					v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
 					printf(" --\n");
 					fflush(stdout);
+	
+				
+					
+				
+				
+				
+					
 	
 	
 			printf("->  [%ld] %ld  /  %ld  ", ID3dtmp, k*xysize+ii, xysize*zsize);
