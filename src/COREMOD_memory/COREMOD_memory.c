@@ -3443,7 +3443,7 @@ long COREMOD_MEMORY_image_set_semwait(char *IDname)
 	//printf("Semaphore value = %d   ->  ", semval);
 	//fflush(stdout);
 
-		sem_wait(data.image[ID].semptr);
+	sem_wait(data.image[ID].semptr);
 	sem_getvalue(data.image[ID].semptr, &semval);
 	//printf("Semaphore value = %d    \n", semval);
 	//fflush(stdout);
