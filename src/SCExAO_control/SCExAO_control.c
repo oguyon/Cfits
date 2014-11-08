@@ -839,6 +839,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
 
+
+			save_fits(IDoutname, "!test.fits");
+exit(0);
+
+
             cnt0 = 0;
             cnt1 = 0;
             cnt2 = 0;
