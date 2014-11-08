@@ -3069,6 +3069,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     long IDrespM;
     long IDrefWFS;
+	
+	int r;
+
+
 
 
     sizearray = (long*) malloc(sizeof(long)*3);
@@ -3138,6 +3142,11 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     for(iter=0; iter<NBiter; iter++)
     {
+		if (file_exist ("stopRM.txt"))
+			{
+				r = system("rm stopRM.txt");
+				iter = NBiter;
+			}
         NBloops = nbloop;
 
         // initialize RMiter to zero
