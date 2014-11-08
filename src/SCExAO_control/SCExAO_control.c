@@ -831,10 +831,10 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 				}*/
 				
 			}
-		printf(" %6ld  %6ld  %6ld ", cnt2, cnt0, cnt1);
+		printf(" %6ld  %6ld  %6ld \n", cnt2, cnt0, cnt1);
 		fflush(stdout);
 		cnt2 = 0;
-		exit(0);
+	
 		data.image[ID2dtmp].md[0].cnt0++;
 		data.image[ID3dtmp].md[0].cnt0++;
 		
