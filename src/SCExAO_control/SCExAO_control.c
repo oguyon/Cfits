@@ -803,6 +803,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
         if(k<kold)
         {
             printf("\n CUBE COMPLETED -> 2D image ready\n");
+            data.image[IDout].md[0].write = 1;
+            memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
+			data.image[IDout].md[0].cnt0 ++;
+			data.image[IDout].md[0].write = 0;
+			
             cnt0 = 0;
             cnt1 = 0;
             cnt2 = 0;
