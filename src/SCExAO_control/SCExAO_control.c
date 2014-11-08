@@ -814,8 +814,19 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             {
                 for(ii=0; ii<xysize; ii++)
                 {
-                    if(data.image[IDcnt1].array.U[ii]==1)
-                    {
+                   data.image[IDavek].array.F[ii] /= data.image[IDavecnt].array.U[ii];
+                   data.image[IDavev].array.F[ii] /= data.image[IDavecnt].array.U[ii];
+                   for(kk=0; kk<data.image[IDavecnt].array.U[ii]; kk++)
+                           {
+                              vk = 1.0*kk - data.image[IDavek].array.F[ii];
+                              vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii] ;
+                              v0 += vk*vv;
+                             v1 += vk;
+                          }
+                   data.image[ID2dtmp].array.F[ii] = v0/v1;
+                   
+                    //if(data.image[IDcnt1].array.U[ii]==1)
+                    //{
                         /*        kavearray[ii] /= cntarray[ii];
                                 vavearray[ii] /= cntarray[ii];
                                 v0 = 0.0;
@@ -832,7 +843,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                                 cntarray1[ii] = 0;*/
 
 
-                    }
+                    //}
                 }
             }
 
