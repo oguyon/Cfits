@@ -785,6 +785,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	while(1)
 	{
 		sem_wait(data.image[IDin].semptr);
+		while(sem_trywait(data.image[IDin].semptr)==0){}
+		
 		k = data.image[IDin].md[0].cnt1;
 		printf("\r slice %ld written       ", k);
 		fflush(stdout);
