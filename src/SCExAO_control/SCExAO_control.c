@@ -737,7 +737,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long cnt0, cnt1, cnt2;
     float SATURATION = 25000;
     long kold;
-
+	long cntstop;
 
 
 
@@ -793,9 +793,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		vavearray[ii] = 0.0;
 		}
 		
+	cntstop = 0;
     kold = -1;
     while(1)
     {
+		cntstop++;
         sem_wait(data.image[IDin].semptr);
         while(sem_trywait(data.image[IDin].semptr)==0) {}
 
@@ -839,10 +841,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
 
-
+if(cntstop==2)
+{
 			save_fits(IDoutname, "!test.fits");
-exit(0);
-
+		exit(0);
+}
 
             cnt0 = 0;
             cnt1 = 0;
