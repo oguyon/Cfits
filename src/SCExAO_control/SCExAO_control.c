@@ -823,7 +823,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                               vk = 1.0*kk - data.image[IDavek].array.F[ii];
                               vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii] ;
                               v0 += vk*vv;
-                             v1 += vk;
+                             v1 += vk*vk;
 							
 							if((iter==2)&&(ii==1000))
 								printf("========= %f %f  -> %f %f -> %f\n", vk, vv, v0, v1, v0/v1);
