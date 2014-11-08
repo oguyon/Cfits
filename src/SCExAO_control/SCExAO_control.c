@@ -801,7 +801,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		printf("H1\n");
 		fflush(stdout);
 
-		for(ii=0;ii<xysize;ii++)
+
+
+
+
+/*		for(ii=0;ii<xysize;ii++)
 			{
 				cnt2++;
 				if(k<cntarray[ii])
@@ -822,7 +826,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 							kavearray[ii] += 1.0*k;
 							vavearray[ii] += v0;
 						}
-				}
+				}*/
+				
 				/*
 				else if (cntarray[ii]!=0)
 				{
