@@ -790,6 +790,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		k = data.image[IDin].md[0].cnt1;
 		printf("\r slice %ld written       ", k);
 		fflush(stdout);
+		list_image_ID();
 		
 		printf("H0\n");
 		fflush(stdout);
