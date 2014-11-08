@@ -728,6 +728,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long ID2dtmp, ID3dtmp;
     float v0;
     int *cntarray; // set to slice when does the pixel start to saturate, set to 0 when pixel value computed
+	int *cntarray1;
     long xysize;
     double v1, vk, vt, vv;
     double *kavearray;
@@ -748,6 +749,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     xysize = xsize*ysize;
 
     cntarray = (int*) malloc(sizeof(int)*xysize);
+    cntarray1 = (int*) malloc(sizeof(int)*xysize);
 
     kavearray = (double*) malloc(sizeof(double)*xysize);
     vavearray = (double*) malloc(sizeof(double)*xysize);
@@ -771,7 +773,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
 
-    if(data.image[IDin].sem == 0)
+	if(data.image[IDin].sem == 0)
     {
         printf("Error: no semaphore detected\n");
         exit(0);
@@ -785,6 +787,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     printf("\n");
     for(ii=0; ii<xysize; ii++)
         cntarray[ii] = zsize;
+  for(ii=0; ii<xysize; ii++)
+        cntarray1[ii] = 1;
 
     kold = -1;
     while(1)
@@ -837,7 +841,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     vavearray[ii] += v0;
                 }
             }
-            else if (cntarray[ii]!=0)
+            else if (cntarray1[ii]!=0)
             {
                 kavearray[ii] /= cntarray[ii];
                 vavearray[ii] /= cntarray[ii];
@@ -851,7 +855,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     v1 += vk;
                 }
                 data.image[ID2dtmp].array.F[ii] = v0/v1;
-               cntarray[ii] = 0;
+				cntarray1[ii] = 0;
                 cnt1++;
             }
 			data.image[ID2dtmp].array.F[ii] = 1.0*cntarray[ii];
@@ -878,6 +882,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     free(kavearray);
     free(vavearray);
 
+	free(cntarray);
+	free(cntarray1);
+	
     return(IDout);
 }
 
