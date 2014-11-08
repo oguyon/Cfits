@@ -806,7 +806,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 						}
 					else
 						{
-							data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
+				//			data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
 							kavearray[ii] += 1.0*k;
 							vavearray[ii] += v0;
 						}
@@ -834,7 +834,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		printf(" %6ld  %6ld  %6ld  ", cnt2, cnt0, cnt1);
 		fflush(stdout);
 					
-							data.image[ID2dtmp].md[0].cnt0++;
+		data.image[ID2dtmp].md[0].cnt0++;
 		data.image[ID3dtmp].md[0].cnt0++;
 		
 		data.image[ID2dtmp].md[0].write = 0;
