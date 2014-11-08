@@ -737,7 +737,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long kold;
 	long iter;
 
-	long IDavek, IDavev;
+	long IDavek, IDavev, IDavecnt;
 	
 
     IDin = image_ID(IDinname);
@@ -769,7 +769,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
     IDavek = create_image_ID("avek", 2, sizeoutarray, FLOAT, 1, 0);
 	IDavev = create_image_ID("avev", 2, sizeoutarray, FLOAT, 1, 0);
-	
+	IDavecnt = create_image_ID("avecnt", 2, sizeoutarray, FLOAT, 1, 0);
 
 
 
@@ -793,6 +793,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
         cntarray1[ii] = 1;
 		data.image[IDavek].array.F[ii] = 0.0;
 		data.image[IDavev].array.F[ii] = 0.0;
+		data.image[IDavecnt].array.F[ii] = 0.0;
 		}
 		
 	iter = 0;
@@ -865,7 +866,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 cntarray1[ii] = 1;
 				data.image[IDavek].array.F[ii] = 0.0;
 				data.image[IDavev].array.F[ii] = 0.0;
-              data.image[ID2dtmp].array.F[ii] = 0.0;
+				data.image[IDavecnt].array.F[ii] = 0.0;
+				data.image[ID2dtmp].array.F[ii] = 0.0;
             }
         }
 
@@ -894,12 +896,13 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
                     data.image[IDavek].array.F[ii] += 1.0*k;
                     data.image[IDavev].array.F[ii] += v0;
+                    data.image[IDavecnt].array.F[ii] += 1.0;
                 }
             }
             else if (cntarray1[ii]==1)
             {
-                data.image[IDavek].array.F[ii] /= cntarray[ii];
-                data.image[IDavev].array.F[ii] /= cntarray[ii];
+                data.image[IDavek].array.F[ii] /= data.image[IDavecnt].array.F[ii];
+                data.image[IDavev].array.F[ii] /= data.image[IDavecnt].array.F[ii];
                 v0 = 0.0;
                 v1 = 0.0;
                 for(kk=0; kk<cntarray[ii]; kk++)
