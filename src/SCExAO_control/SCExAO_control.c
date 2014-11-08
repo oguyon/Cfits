@@ -795,7 +795,22 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		k = data.image[IDin].md[0].cnt1;
 		printf("\r slice %ld written [%ld]       ", k, IDin);
 		fflush(stdout);
-
+	
+		if(k<kold)
+		{
+			printf("CUBE COMPLETED -> 2D image ready\n");
+			cnt0 = 0;
+			cnt1 = 0;
+			cnt2 = 0;
+		
+			for(ii=0;ii<xysize;ii++)
+				{
+					cntarray[ii] = zsize;
+					data.image[ID2dtmp].array.F[ii] = 0.0;
+				}
+		}
+		
+		
 		data.image[ID2dtmp].md[0].write = 1;
 		data.image[ID3dtmp].md[0].write = 1;
 		cnt2 = 0;
@@ -853,19 +868,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		data.image[ID2dtmp].md[0].write = 0;
 		data.image[ID3dtmp].md[0].write = 0;
 
-		if(k<kold)
-		{
-			printf("CUBE COMPLETED -> 2D image ready\n");
-			cnt0 = 0;
-			cnt1 = 0;
-			cnt2 = 0;
 		
-			for(ii=0;ii<xysize;ii++)
-				{
-					cntarray[ii] = zsize;
-					data.image[ID2dtmp].array.F[ii] = 0.0;
-				}
-		}
 		kold = k;
 	}
 	printf("\n");
