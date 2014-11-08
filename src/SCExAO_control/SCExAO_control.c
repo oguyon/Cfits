@@ -734,6 +734,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	double *vavearray;
 	long kk;
 	long cnt0, cnt1;
+	float SATURATION = 16000;
+
+
 
 	IDin = image_ID(IDinname);
 
@@ -791,7 +794,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 				{
 					cnt0++;
 					v0 = 1.0*data.image[IDin].array.F[k*xysize+ii];
-					if(v0<0)
+					if(v0>SATURATION)
 						{
 							cntarray[ii] = k;
 						}
