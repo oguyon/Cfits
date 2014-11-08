@@ -728,7 +728,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long ID2dtmp, ID3dtmp;
     float v0;
     int *cntarray; // set to slice when does the pixel start to saturate, set to 0 when pixel value computed
-	int *cntarray1;
+    int *cntarray1;
     long xysize;
     double v1, vk, vt, vv;
     double *kavearray;
@@ -773,7 +773,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
 
-	if(data.image[IDin].sem == 0)
+    if(data.image[IDin].sem == 0)
     {
         printf("Error: no semaphore detected\n");
         exit(0);
@@ -787,7 +787,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     printf("\n");
     for(ii=0; ii<xysize; ii++)
         cntarray[ii] = zsize;
-   for(ii=0; ii<xysize; ii++)
+    for(ii=0; ii<xysize; ii++)
         cntarray1[ii] = 1;
 
     kold = -1;
@@ -802,12 +802,38 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
         if(k<kold)
         {
+            // complete last cube
+            if(kold>0)
+            {
+                for(ii=0; ii<xysize; ii++)
+                {
+                    if(cntarray1[ii]==1)
+                    {
+                        kavearray[ii] /= cntarray[ii];
+                        vavearray[ii] /= cntarray[ii];
+                        v0 = 0.0;
+                        v1 = 0.0;
+                        for(kk=0; kk<cntarray[ii]; kk++)
+                        {
+                            vk = 1.0*kk - kavearray[ii];
+                            vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii]-vavearray[ii];
+                            v0 += vk*vv;
+                            v1 += vk;
+                        }
+
+                        data.image[ID2dtmp].array.F[ii] = v0/v1;
+                        cntarray1[ii] = 0;
+                    }
+                }
+            }
+
+
             printf("\n CUBE COMPLETED -> 2D image ready\n");
             data.image[IDout].md[0].write = 1;
             memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
-			data.image[IDout].md[0].cnt0 ++;
-			data.image[IDout].md[0].write = 0;
-			
+            data.image[IDout].md[0].cnt0 ++;
+            data.image[IDout].md[0].write = 0;
+
             cnt0 = 0;
             cnt1 = 0;
             cnt2 = 0;
@@ -815,8 +841,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             for(ii=0; ii<xysize; ii++)
             {
                 cntarray[ii] = zsize;
-				cntarray1[ii] = 1;
-				data.image[ID2dtmp].array.F[ii] = 0.0;
+                cntarray1[ii] = 1;
+                data.image[ID2dtmp].array.F[ii] = 0.0;
             }
         }
 
@@ -847,7 +873,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     vavearray[ii] += v0;
                 }
             }
-            else //if (cntarray1[ii]==1)
+            else if (cntarray1[ii]==1)
             {
                 kavearray[ii] /= cntarray[ii];
                 vavearray[ii] /= cntarray[ii];
@@ -860,12 +886,12 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     v0 += vk*vv;
                     v1 += vk;
                 }
-			
+
                 data.image[ID2dtmp].array.F[ii] = v0/v1;
-				cntarray1[ii] = 0;
+                cntarray1[ii] = 0;
                 cnt1++;
             }
-		//	data.image[ID2dtmp].array.F[ii] = 1.0*cntarray[ii];
+            //	data.image[ID2dtmp].array.F[ii] = 1.0*cntarray[ii];
         }
 
         printf(" %6ld  %6ld  %6ld   ", cnt2, cnt0, cnt1);
@@ -889,9 +915,10 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     free(kavearray);
     free(vavearray);
 
-	free(cntarray);
-	free(cntarray1);
-	
+    free(cntarray);
+    free(cntarray1);
+
     return(IDout);
 }
+
 
