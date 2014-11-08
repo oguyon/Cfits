@@ -841,6 +841,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		data.image[ID2dtmp].md[0].write = 0;
 		data.image[ID3dtmp].md[0].write = 0;
 
+		printf("H0\n");
+		fflush(stdout);
+
 		if(k==zsize-1)
 		{
 			printf("CUBE COMPLETED -> 2D image ready\n");
@@ -853,6 +856,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					data.image[ID2dtmp].array.F[ii] = 0.0;
 				}
 		}
+		printf("H1\n");
+		fflush(stdout);
 	}
 	printf("\n");
 
