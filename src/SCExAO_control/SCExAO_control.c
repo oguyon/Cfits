@@ -843,7 +843,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
 
-		if(iter>2)
+		if(iter>3)
 			{
 				save_fits(IDoutname, "!test.fits");
 				save_fits("saphira3dtmp", "!test_saphira3dtmp.fits");
