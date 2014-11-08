@@ -853,7 +853,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 				save_fits("saphira2dtmp", "!test_saphira2dtmp.fits");
 				save_fits("avek", "!test_avek.fits");
 				save_fits("avev", "!test_avev.fits");
-				exit(0);
+				save_fits("avecnt", "!test_avecnt.fits");
+			exit(0);
 			}
 
             cnt0 = 0;
