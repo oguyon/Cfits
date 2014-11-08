@@ -837,13 +837,14 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             }
 
 
-            printf("\n CUBE COMPLETED -> 2D image ready\n");
+			iter++;
+  		          printf("\n CUBE COMPLETED -> 2D image ready\n");
             data.image[IDout].md[0].write = 1;
             memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
 
-		if(iter>3)
+		if(iter>2)
 			{
 				save_fits(IDoutname, "!test.fits");
 				save_fits("saphira3dtmp", "!test_saphira3dtmp.fits");
