@@ -799,7 +799,6 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
     while(1)
     {
-		iter++;
         sem_wait(data.image[IDin].semptr);
         while(sem_trywait(data.image[IDin].semptr)==0) {}
 
