@@ -886,7 +886,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 			v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
 			if((v0>SATURATION)||(v0<0.0))
 				{
-					data.image[ID3dtmp].array.F[k*xysize+ii] = 0.0;
+					data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
 		//			satarray[ii] = 1;
 				}
 			else if (satarray[ii]==0)
