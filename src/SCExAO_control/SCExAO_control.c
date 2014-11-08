@@ -824,8 +824,14 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                               vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii] ;
                               v0 += vk*vv;
                              v1 += vk;
+							
+							if((iter==2)&&(ii=1000))
+								printf("========= %f %f\n", vk, vv);
+                   
                           }
                    data.image[ID2dtmp].array.F[ii] = v0/v1;
+                   
+                   
                    
                     //if(data.image[IDcnt1].array.U[ii]==1)
                     //{
