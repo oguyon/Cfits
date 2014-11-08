@@ -845,12 +845,12 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					v1 = 0.0;			
 					for(kk=0;kk<cntarray[ii];kk++)
 					{
-						vk = 1.0*k-kavearray[ii];
+						vk = 1.0*k - kavearray[ii];
 						vv = data.image[ID3dtmp].array.F[kk*xysize+ii]-vavearray[ii];
 						v0 += vk*vv;
 						v1 += vk;
 					}
-					data.image[ID2dtmp].array.F[ii] = v0/v1;
+					data.image[ID2dtmp].array.F[ii] = 1.0*cntarray[ii]; //v0/v1;
 					cntarray[ii] = 0;	
 					cnt1++;				
 				}
