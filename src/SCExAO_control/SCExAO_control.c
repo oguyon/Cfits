@@ -733,7 +733,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	double *kavearray;
 	double *vavearray;
 	long kk;
-	long cnt0, cnt1;
+	long cnt0, cnt1, cnt2;
 	float SATURATION = 16000;
 
 
