@@ -738,7 +738,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long iter;
 
     long IDavek, IDavev, IDavecnt, IDcnt, IDcnt1;
-
+	int *satarray;
 
     IDin = image_ID(IDinname);
 
@@ -752,6 +752,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     sizeoutarray[0] = xsize;
     sizeoutarray[1] = ysize;
     sizeoutarray[2] = zsize;
+
+	satarray = (int*) malloc(sizeof(long)*xysize);
 
     coeffarray = (double*) malloc(sizeof(double)*zsize);
 
@@ -786,12 +788,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     printf("\n");
     for(ii=0; ii<xysize; ii++)
     {
-//        data.image[IDcnt].array.F[ii] = zsize;
-//		data.image[IDcnt1].array.F[ii] = 1;
         data.image[IDavek].array.F[ii] = 0.0;
         data.image[IDavev].array.F[ii] = 0.0;
         data.image[IDavecnt].array.U[ii] = 1;
-    }
+		satarray[ii] = 0;
+		}
 
     iter = 0;
     kold = -1;
@@ -863,8 +864,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 data.image[IDcnt].array.U[ii] = 1;
                 data.image[IDavek].array.F[ii] = 0.0;
                 data.image[IDavev].array.F[ii] = 0.0;
-                data.image[IDavecnt].array.U[ii] = zsize;
+                data.image[IDavecnt].array.U[ii] = 0;
                 data.image[ID2dtmp].array.F[ii] = 0.0;
+				data.image[ID3dtmp].array.F[ii] = 0.0;
             }
         }
 
@@ -882,13 +884,16 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 		{
 			v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
 			if((v0>SATURATION)||(v0<0.0))
-				data.image[ID3dtmp].array.F[k*xysize+ii] = 0.0;
-			else
+				{
+					data.image[ID3dtmp].array.F[k*xysize+ii] = 0.0;
+					satarray[ii] = 1;
+				}
+			else if (satarray[ii]==0)
 				{
 					data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
 					data.image[IDavek].array.F[ii] += 1.0*k;
 					data.image[IDavev].array.F[ii] += v0;
-                    data.image[IDavecnt].array.U[ii] == k;
+                    data.image[IDavecnt].array.U[ii] = k;
                 }            				
 		}
 
