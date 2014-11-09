@@ -3434,7 +3434,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 			rmsval = 0.0;
 			for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 				rmsval += data.image[IDrespM].array.F[k1*AOconf[loop].sizeWFS+ii]*data.image[IDrespM].array.F[k1*AOconf[loop].sizeWFS+ii];
-			rmsval /= AOconf[loop].sizeWFS;
+
 			data.image[IDoptsignal].array.F[k1] += rmsval;
 			data.image[IDoptcnt].array.F[k1] += 1.0; 
 			
