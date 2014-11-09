@@ -3106,6 +3106,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	double rmsval;
 	char signame[200];
 	
+	double normcoeff, normcoeffcnt;
+
 
 
     sizearray = (long*) malloc(sizeof(long)*3);
@@ -3444,9 +3446,19 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		
 		sprintf(signame, "./tmp/RM_optsign_%06ld.txt", iter);
 
+		normcoeff = 0.0;
+		normcoeffcnt = 0.0;
+		for(k1=AOconf[loop].NBDMmodes/2; k1<AOconf[loop].NBDMmodes; k1++)
+		{
+			normcoeff += data.image[IDoptsignaln].array.F[k1];
+			normcoeffcnt += 1.0;
+		}
+		normcoeff /= normcoeffcnt;
+
+
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
 			{
-				data.image[IDmcoeff].array.F[k1] = 0.8*data.image[IDmcoeff].array.F[k1] + 0.2/data.image[IDoptsignaln].array.F[k1];
+				data.image[IDmcoeff].array.F[k1] = 0.8*data.image[IDmcoeff].array.F[k1] + 0.2/(data.image[IDoptsignaln].array.F[k1]/normcoeff);
 			}
 
 		fp = fopen(signame, "w");
