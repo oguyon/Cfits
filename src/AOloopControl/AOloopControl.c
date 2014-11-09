@@ -3117,7 +3117,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
   
-  
+	
+	printf("step 1\n");
+	fflush(stdout);
+	
 	// create output
 	IDrefWFS = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 	IDrespM = create_3Dimage_ID_float("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
@@ -3135,8 +3138,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 			data.image[IDoptsignaln].array.D[k] = 0.0;
 			data.image[IDmcoeff].array.D[k] = 1.0;
 		}
+
+	list_image_ID();
   
-  
+  	printf("step 1\n");
+	fflush(stdout);
+
   
 	RMACQUISITION = 1;
 
