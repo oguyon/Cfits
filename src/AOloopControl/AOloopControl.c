@@ -1225,7 +1225,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1]; //AOconf[loop].NBDMmodes;
     m = data.image[ID_Rmatrix].md[0].size[2]; //AOconf[loop].sizeWFS;
 
-
+	list_image_ID();
 	
 
     /** in this procedure, m=number of actuators/modes, n=number of WFS elements */
