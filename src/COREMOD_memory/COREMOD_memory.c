@@ -3333,9 +3333,9 @@ long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsiz
 	long ID;
 	
 	ID = image_ID(IDname);
-	if(data.image[ID].md[0].naxis != 2)
+	if(data.image[ID].md[0].naxis != 3)
 		{
-			printf("WARNING : image %s naxis = %ld does not match expected value 2\n", IDname, data.image[ID].md[0].naxis);
+			printf("WARNING : image %s naxis = %ld does not match expected value 3\n", IDname, data.image[ID].md[0].naxis);
 			sizeOK = 0;
 		}
 	if(data.image[ID].md[0].size[0] != xsize)
