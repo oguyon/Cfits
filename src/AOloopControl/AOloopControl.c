@@ -3147,7 +3147,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 				r = system("rm stopRM.txt");
 				iter = NBiter;
 			}
-        NBloops = nbloop;
+		else
+    {
+		    NBloops = nbloop;
 
         // initialize RMiter to zero
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3372,7 +3374,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         save_fits("refwfsacq", "!./tmp/refwfs.fits");
         save_fits("respmacq", "!./tmp/respm.fits");
     }
-
+	}
 
 
     printf("Done\n");
