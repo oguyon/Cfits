@@ -3631,7 +3631,8 @@ int AOloopControl_run()
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-
+	
+	save_fits("aol2_wfs" , "!ttest.fits");
 	list_image_ID();
 	exit(0);
 
