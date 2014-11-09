@@ -483,12 +483,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
   // exit(0);
   
-  sprintf(pausefilename, "pause_%d.txt", getpid());
+ 
   
-while(1)
+while(file_exist("stop_PyAlignTT.txt")==0)
 {
 		
-		while (file_exist (pausefilename))
+		while (file_exist("pause_PyAlignTT.txt"))
 			usleep(100000);
 			
   
@@ -614,6 +614,8 @@ while(1)
         save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
 }
 
+ r = system("rm stop_PyAlignTT.txt");
+
     return(0);
 }
 
@@ -653,13 +655,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     IDref = image_ID("imref");
     
     
-     sprintf(pausefilename, "pause_%d.txt", getpid());
   
   
-  
-while(1)
+while(file_exist ("stop_PyAlignCam.txt")==0)
 {
-	while (file_exist (pausefilename))
+	while (file_exist ("pause_PyAlignCam.txt"))
 			usleep(100000);
 			
   
@@ -729,6 +729,7 @@ while(1)
 	r = system(command);
 	usleep(delayus);
 	}
+	r = system("rm stop_PyAlignCam.txt");
 
     return(0);
 }
