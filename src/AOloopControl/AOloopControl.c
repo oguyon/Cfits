@@ -1381,11 +1381,18 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
                 gsl_matrix_set(matrix1, ii1, jj1, 0.0);
         }
 
+   
+	printf("-");
+	fflush(stdout);
 
     /* third, compute the "inverse" of DtraD */
     gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, matrix_DtraD_evec, matrix1, 0.0, matrix2);
-    gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
-    gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
+ 	printf("-");
+	fflush(stdout);
+	gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
+ 	printf("-");
+	fflush(stdout);
+	gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
 
     /* write result */
 	printf("write result to ID %ld\n", ID_Cmatrix);
