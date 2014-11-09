@@ -2370,6 +2370,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		AOconf[loop].init_CM = 1;
 
 	
+	list_image_ID();
+	
         free(sizearray);
 
 
