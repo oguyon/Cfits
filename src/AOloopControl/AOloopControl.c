@@ -3110,6 +3110,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	printf("Initialization done\n");
 	fflush(stdout);
  
+	list_image_ID();
+ 
  
 	printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
