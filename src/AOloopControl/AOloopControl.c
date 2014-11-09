@@ -2209,6 +2209,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
+		list_image_ID();
 
 
 
