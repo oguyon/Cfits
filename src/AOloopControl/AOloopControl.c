@@ -2294,6 +2294,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         printf("%ld modes\n", AOconf[loop].NBDMmodes);
 
 
+		list_image_ID();
 
 
 
