@@ -3097,7 +3097,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	long IDmcoeff; // multiplicative gain to amplify low-oder modes
 	long IDoptcnt;
 	double rmsval;
-	
+	char signame[200];
 	
 
 
@@ -3426,7 +3426,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		}
 		save_fits("optsignaln","!./tmp/RM_optsign.fits");
 		
-		fp = fopen("./tmp/RM_optsign.txt", "w");
+		sprintf(signame, "./tmp/RM_optsign_%06ld.txt", iter);
+		fp = fopen(signame, "w");
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
 			fprintf(fp, "%ld  %f\n", k1, data.image[IDoptsignaln].array.D[k1]);
 		fclose(fp);
