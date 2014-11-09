@@ -1367,7 +1367,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     {
 		printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED, NB_MODE_REMOVED_STEP);
 		fflush(stdout);
-    for(ii1=0; ii1<m; ii1++)
+		for(ii1=0; ii1<m; ii1++)
         for(jj1=0; jj1<m; jj1++)
         {
             if(ii1==jj1)
@@ -1392,7 +1392,10 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
         for(k=0; k<m; k++) // actuator modes
             data.image[ID_Cmatrix].array.F[k*n+ii] = (float) gsl_matrix_get(matrix_Ds, k, ii)*CPAcoeff[k];
 
+	
 	sprintf(fname, "!cmat_%4.2f_%03ld.fits", Beta, NB_MR);
+	printf("  SAVING -> %s\n", fname);
+	fflush(stdout);
 	save_fits(ID_Cmatrix_name, fname);
 	}
 	printf("\n\n");
