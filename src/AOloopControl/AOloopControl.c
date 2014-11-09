@@ -3459,7 +3459,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
 			{
 				data.image[IDmcoeff].array.F[k1] = 0.8*data.image[IDmcoeff].array.F[k1] + 0.2/(data.image[IDoptsignaln].array.F[k1]/normcoeff);
+				if(data.image[IDmcoeff].array.F[k1]>5.0)
+					data.image[IDmcoeff].array.F[k1] = 5.0;
 			}
+		
 
 		fp = fopen(signame, "w");
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
