@@ -1212,6 +1212,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 	char fname[200];
 	long NB_MR;  /// number of modes removed
 
+	long NB_MODE_REMOVED1;
+
+
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
@@ -1225,7 +1228,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1]; //AOconf[loop].NBDMmodes;
     m = data.image[ID_Rmatrix].md[0].size[2]; //AOconf[loop].sizeWFS;
 
-	list_image_ID();
+
 	
 
     /** in this procedure, m=number of actuators/modes, n=number of WFS elements */
@@ -1234,6 +1237,8 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     printf("m = %ld actuators (modes), n = %ld sensors\n", m, n);
     fflush(stdout);
+
+	NB_MODE_REMOVED1 = m-1;
 
     matrix_DtraD_eval = gsl_vector_alloc (m);
     matrix_D = gsl_matrix_alloc (n,m);
@@ -1364,9 +1369,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 	printf("COMPUTING CMAT .... \n");
 
 
-	for(NB_MR=0; NB_MR<NB_MODE_REMOVED; NB_MR+=NB_MODE_REMOVED_STEP)
+	for(NB_MR=0; NB_MR<NB_MODE_REMOVED1; NB_MR+=NB_MODE_REMOVED_STEP)
     {
-		printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED, NB_MODE_REMOVED_STEP);
+		printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED1, NB_MODE_REMOVED_STEP);
 		fflush(stdout);
 		for(ii1=0; ii1<m; ii1++)
         for(jj1=0; jj1<m; jj1++)
