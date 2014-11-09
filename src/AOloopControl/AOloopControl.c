@@ -3632,8 +3632,8 @@ int AOloopControl_run()
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 
-   
-
+	list_image_ID();
+	exit(0);
 
     vOK = 1;
     if(AOconf[loop].init_refWFS==0)
