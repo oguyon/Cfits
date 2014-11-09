@@ -1245,7 +1245,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 
 	ID = load_fits("modesfreqcpa.fits", "modesfreqcpa");
-
+	list_image_ID();
+	exit(0);
+	
 	CPAcoeff = (double*) malloc(sizeof(double)*m);
 	for(k=0; k<m; k++)
 	{
