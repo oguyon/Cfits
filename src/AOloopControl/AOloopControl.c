@@ -3150,7 +3150,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 	list_image_ID();
   
-  	printf("step 1\n");
+  	printf("step 2\n");
 	fflush(stdout);
 
   
