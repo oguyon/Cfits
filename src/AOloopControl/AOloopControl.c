@@ -1388,6 +1388,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
 
     /* write result */
+	printf("write result to ID %ld\n", ID_Cmatrix);
+	fflush(stdout);
+
     for(ii=0; ii<n; ii++) // sensors
         for(k=0; k<m; k++) // actuator modes
             data.image[ID_Cmatrix].array.F[k*n+ii] = (float) gsl_matrix_get(matrix_Ds, k, ii)*CPAcoeff[k];
