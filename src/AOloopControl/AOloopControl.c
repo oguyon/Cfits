@@ -3445,7 +3445,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		sprintf(signame, "./tmp/RM_optsign_%06ld.txt", iter);
 		fp = fopen(signame, "w");
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
-			fprintf(fp, "%ld  %f\n", k1, data.image[IDoptsignaln].array.F[k1]);
+			fprintf(fp, "%ld  %g  %g  \n", k1, data.image[IDoptsignaln].array.F[k1], data.image[IDoptsignal].array.F[k1]);
 		fclose(fp);
 		
         save_fits("refwfsacq", "!./tmp/refwfs.fits");
