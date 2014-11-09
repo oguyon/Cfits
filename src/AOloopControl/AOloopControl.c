@@ -3632,7 +3632,7 @@ int AOloopControl_run()
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
 	
-	save_fits("aol2_wfs" , "!ttest.fits");
+	save_fits("aol2_wfsdark" , "!ttest.fits");
 
 	list_image_ID();
 	exit(0);
