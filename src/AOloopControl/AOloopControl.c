@@ -3084,7 +3084,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     long iter;
     long IDrmi;
     float beta = 0.0;
-    float gain = 0.001;
+    float gain = 0.0001;
     long IDrmcumul;
     long IDrefi;
     long IDrefcumul;
