@@ -3629,6 +3629,9 @@ int AOcompute(long loop)
     double a;
 
 
+	list_image_ID();
+	exit(0);
+
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
