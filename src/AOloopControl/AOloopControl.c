@@ -3674,6 +3674,8 @@ int AOcompute(long loop)
     AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
     AOconf[loop].RMSmodesCumulcnt ++;
 
+ list_image_ID();
+  exit(0);
 
 
 
@@ -3702,8 +3704,7 @@ int AOcompute(long loop)
 
   data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
 
-  list_image_ID();
-  exit(0);
+  
   return(0);
 }
 
