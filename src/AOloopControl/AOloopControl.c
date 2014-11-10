@@ -3748,7 +3748,7 @@ int AOloopControl_run()
         AOloopControl_InitializeMemory(0);
 
 
-
+	exit(0);
 
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
