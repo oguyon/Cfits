@@ -1659,6 +1659,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
                 list_image_ID();
                 printf("aoconfID_WFS = %ld\n", aoconfID_WFS);
                 printf("aoconfID_WFS0 = %ld\n", aoconfID_WFS0);
+                
+                save_fits("aol0_wfs", "!test0.fits");
+                save_fits("RMwfs0", "!test1.fits");
+                
                 exit(0);
             }
             break;
