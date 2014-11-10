@@ -2282,7 +2282,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         }
         
         
-        if(vOK==0) // create shared memory and put content of file in it
+        if(vOK==0) // create shared memory 
 		{
 		
 			sizearray[0] = AOconf[loop].sizexDM;
@@ -2291,8 +2291,17 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 			printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].DMMODESname, sizearray[0], sizearray[1], sizearray[2]);
 			fflush(stdout);
 			aoconfID_DMmodes = create_image_ID(AOconf[loop].DMMODESname, 3, sizearray, FLOAT, 1, 0);
-			memcpy(data.image[ID1tmp].array.F, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
-		}	
+}
+
+		// put modes into shared memory
+
+		memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
+		
+	//	data.image[ID1tmp].array.F, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
+		
+		
+		
+		
 		
 		delete_image_ID("tmp3Dim");
 	}
