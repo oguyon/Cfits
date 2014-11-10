@@ -1969,7 +1969,8 @@ long AOloopControl_3Dloadcreate_shmim(char *name, long xsize, long ysize, long z
 	long *sizearray;
 	char command[500];
 	int r;
-	
+	long ID1;
+	char fname[200];
 	
     ID = image_ID(name);
     sizearray = (long*) malloc(sizeof(long)*3);
