@@ -3463,7 +3463,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 		fp = fopen(signame, "w");
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
-			fprintf(fp, "%ld  %g  %g  %g\n", k1, data.image[IDoptsignaln].array.F[k1], data.image[IDoptsignal].array.F[k1], data.image[IDmcoeff].array.F[k1]);
+			fprintf(fp, "%ld  %g  %g  %g\n", k1, data.image[IDoptsignaln].array.F[k1], data.image[IDoptcnt].array.F[k1], data.image[IDmcoeff].array.F[k1]*amp);
 		fclose(fp);
 		r = system("cp ./tmp/RM_outsign%06ld.txt ./tmp/RM_outsign.txt");
 
