@@ -3702,8 +3702,7 @@ int AOcompute(long loop)
 
   data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
 
-  list_image_ID();
-  exit(0);
+  
 
   return(0);
 }
@@ -3798,7 +3797,8 @@ int AOloopControl_run()
                 }
                 usleep(100); // max 10000kHz
 	
-	
+				list_image_ID();
+				exit(0);
 
                 AOconf[loop].status = 8; //  LOGGING, part 1
 
