@@ -1576,9 +1576,6 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
-  //  printf("Average cam  RM=%d\n", RM);
-   // fflush(stdout);
-
 
     if(avcamarraysInit==0)
     {
@@ -1599,12 +1596,6 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
-        //	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
-        //	list_image_ID();
-        //	fflush(stdout);
-
-
-
         switch (atype) {
         case FLOAT :
             imcnt = 0;
@@ -1634,9 +1625,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
-				printf("USHORT\n");
-				fflush(stdout);
-                usleep(50);
+               usleep(50);
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
                     if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
@@ -1655,15 +1644,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
                         }
                         imcnt++;
                     }
-                }
-                list_image_ID();
-                printf("aoconfID_WFS = %ld\n", aoconfID_WFS);
-                printf("aoconfID_WFS0 = %ld\n", aoconfID_WFS0);
-                
-                save_fits("aol0_wfs", "!test0.fits");
-                save_fits("RMwfs0", "!test1.fits");
-                
-                exit(0);
+                }           
             }
             break;
         default :
@@ -1686,15 +1667,11 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         }
         else
         {
-            //			printf("wait...");
-            //		fflush(stdout);
             while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
             {
                 usleep(50);
                 // do nothing, wait
             }
-            //printf("done Waiting\n");
-            //fflush(stdout);
         }
 		}
 		else
@@ -1710,10 +1687,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         if(slice==-1)
             slice = data.image[aoconfID_WFS].md[0].size[2];
 
-        //slice = 0;
-
-//        printf("READING SLICE %ld\n", slice);
-	//	fflush(stdout);
+ 
 		
         switch (atype) {
         case FLOAT :
@@ -1749,13 +1723,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
-    /*    else
-        {
-            tmpf = NBcoadd*AOconf[loop].DarkLevel;
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[aoconfID_WFS0].array.F[ii] -= tmpf;
-        }*/
-
+    
+    
+  
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
