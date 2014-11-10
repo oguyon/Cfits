@@ -3445,6 +3445,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
+
+		save_fits("REFiter", "!test0.fits");
+		save_fits("RMiter", "!test1.fits");
+exit(0);
         printf("Acquisition done, compiling results...");
         fflush(stdout);
 
@@ -3783,7 +3787,7 @@ int AOloopControl_run()
 
             while(AOconf[loop].on == 1)
             {
-                 printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
+                printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
                 fflush(stdout);
                 usleep(10000);
 
