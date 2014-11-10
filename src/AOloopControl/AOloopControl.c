@@ -3753,7 +3753,7 @@ int AOloopControl_run()
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-exit(0);	
+	
     vOK = 1;
     if(AOconf[loop].init_refWFS==0)
     {
