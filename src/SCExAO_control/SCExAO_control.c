@@ -530,8 +530,8 @@ while(file_exist("stop_PyAlignTT.txt")==0)
       for(ii=0; ii<xsize/2; ii++)
             for(jj=0; jj<ysize/2; jj++)
                 {
-					x = 1.0*ii/(xsize/2)-0.5;
-					y = 1.0*jj/(ysize/2)-0.5;
+					x = 1.0*(0.5+ii)/(xsize/2)-0.5;
+					y = 1.0*(0.5+jj)/(ysize/2)-0.5;
 					tot00x += x*data.image[ID].array.F[jj*xsize+ii];
 					tot00y += y*data.image[ID].array.F[jj*xsize+ii];
 					tot00 += data.image[ID].array.F[jj*xsize+ii];
@@ -540,8 +540,8 @@ while(file_exist("stop_PyAlignTT.txt")==0)
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=0; jj<ysize/2; jj++)
                 {
-					x = 1.0*(ii-xsize/2)/(xsize/2)-0.5;
-					y = 1.0*jj/(ysize/2)-0.5;
+					x = 1.0*(0.5+ii-xsize/2)/(xsize/2)-0.5;
+					y = 1.0*(0.5+jj)/(ysize/2)-0.5;
 					tot10x += x*data.image[ID].array.F[jj*xsize+ii];
 					tot10y += y*data.image[ID].array.F[jj*xsize+ii];
 					tot10 += data.image[ID].array.F[jj*xsize+ii];
@@ -550,8 +550,8 @@ while(file_exist("stop_PyAlignTT.txt")==0)
         for(ii=0; ii<xsize/2; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
                 {
-					x = 1.0*ii/(xsize/2)-0.5;
-					y = 1.0*(jj-ysize/2)/(ysize/2)-0.5;
+					x = 1.0*(0.5+ii)/(xsize/2)-0.5;
+					y = 1.0*(0.5+jj-ysize/2)/(ysize/2)-0.5;
 					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
 					tot01y += y*data.image[ID].array.F[jj*xsize+ii];					
 					tot01 += data.image[ID].array.F[jj*xsize+ii];
@@ -560,8 +560,8 @@ while(file_exist("stop_PyAlignTT.txt")==0)
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
                 {
-					x = 1.0*(ii-xsize/2)/(xsize/2)-0.5;
-					y = 1.0*(jj-ysize/2)/(ysize/2)-0.5;
+					x = 1.0*(0.5+ii-xsize/2)/(xsize/2)-0.5;
+					y = 1.0*(0.5+jj-ysize/2)/(ysize/2)-0.5;
 					tot11x += x*data.image[ID].array.F[jj*xsize+ii];
 					tot11y += y*data.image[ID].array.F[jj*xsize+ii];				
 					tot11 += data.image[ID].array.F[jj*xsize+ii];
@@ -759,6 +759,18 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
     return(0);
 }
 
+/*
+int SCExAOcontrol_Pyramid_flattenRefWF()
+{
+	long MaxZern = 100;
+	long zi;
+	
+	
+	
+	
+	return(0);
+}
+*/
 
 
 
