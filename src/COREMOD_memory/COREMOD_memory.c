@@ -3504,35 +3504,35 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
     int wOK;
     int noframe;
 
-	int is3Dcube = 0; // this is a rolling buffer
+    int is3Dcube = 0; // this is a rolling buffer
 
 
-	LOGSHIM_CONF* logshimconf;
+    LOGSHIM_CONF* logshimconf;
 
 
-	logshimconf = COREMOD_MEMORY_logshim_create_SHMconf(IDname);
+    logshimconf = COREMOD_MEMORY_logshim_create_SHMconf(IDname);
 
-	
-	logshimconf[0].on = 1;
-	logshimconf[0].cnt = 0;
-	logshimconf[0].filecnt = 0;
-	logshimconf[0].logexit = 0;
-	logshimconf[0].interval = 1;
-	
-	
+
+    logshimconf[0].on = 1;
+    logshimconf[0].cnt = 0;
+    logshimconf[0].filecnt = 0;
+    logshimconf[0].logexit = 0;
+    logshimconf[0].interval = 1;
+
+
 
     imsizearray = (long*) malloc(sizeof(long)*3);
-	
-	
+
+
 
     read_sharedmem_image(IDname);
     ID = image_ID(IDname);
     atype = data.image[ID].md[0].atype;
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
-	
-	if(data.image[ID].md[0].naxis==3)
-		is3Dcube = 1;
+
+    if(data.image[ID].md[0].naxis==3)
+        is3Dcube = 1;
 
     /** create the 2 buffers */
 
@@ -3620,11 +3620,38 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
             if(index==0)
                 fp = fopen(fname_asciilog, "w");
 
-            ptr0 = (char*) data.image[ID].array.F;
+
+            switch ( atype ) {
+            case CHAR:
+                ptr0 = (char*) data.image[ID].array.C;
+                ptr1 = (char*) data.image[IDb].array.C;
+                break;
+            case INT:
+                ptr0 = (char*) data.image[ID].array.I;
+                ptr1 = (char*) data.image[IDb].array.I;
+                break;
+            case FLOAT:
+                ptr0 = (char*) data.image[ID].array.F;
+                ptr1 = (char*) data.image[IDb].array.F;
+                break;
+            case DOUBLE:
+                ptr0 = (char*) data.image[ID].array.D;
+                ptr1 = (char*) data.image[IDb].array.D;
+                break;
+            case USHORT:
+                ptr0 = (char*) data.image[ID].array.U;
+                ptr1 = (char*) data.image[IDb].array.U;
+                break;
+            }
+
+            //  ptr0 = (char*) data.image[ID].array.F;
+
+
+
             if(is3Dcube==1)
-				ptr0 += framesize*data.image[ID].md[0].cnt1;
-            
-            ptr1 = (char*) data.image[IDb].array.F;
+                ptr0 += framesize*data.image[ID].md[0].cnt1;
+
+            //    ptr1 = (char*) data.image[IDb].array.F;
             ptr1 += framesize*index;
 
             memcpy((void *) ptr1, (void *) ptr0, framesize);
@@ -3674,12 +3701,12 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
                 //          printf("OK\n");
                 //          fflush(stdout);
             }
-			
-			strcpy(tmsg->iname, iname);
+
+            strcpy(tmsg->iname, iname);
             iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
-            
+
             logshimconf[0].cnt ++;
-            
+
             tOK = 1;
             if(iret_savefits)
             {
@@ -3698,7 +3725,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
             else
                 IDb = IDb1;
 
-			logshimconf[0].filecnt ++;            
+            logshimconf[0].filecnt ++;
         }
 
 
@@ -3709,6 +3736,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
 
     return(0);
 }
+
 
 
 

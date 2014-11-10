@@ -1961,7 +1961,7 @@ long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 
 
 
-long AOloopControl_3Dloadcreate_shmim(char *name, long xsize, long ysize, long zsize)
+long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize)
 {
 	long ID;
 	int CreateSMim;
@@ -1970,7 +1970,6 @@ long AOloopControl_3Dloadcreate_shmim(char *name, long xsize, long ysize, long z
 	char command[500];
 	int r;
 	long ID1;
-	char fname[200];
 	
     ID = image_ID(name);
     sizearray = (long*) malloc(sizeof(long)*3);
@@ -2024,7 +2023,7 @@ long AOloopControl_3Dloadcreate_shmim(char *name, long xsize, long ysize, long z
 					}
 				else
 					printf("File \"%s\" has wrong size (should be 3-D %ld x %ld, x %ld  is %ld-D %ld x %ld x %ld): ignoring\n", fname, xsize, ysize, zsize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1], data.image[ID1].md[0].size[2]);
-				delete_image_ID("tmp2Dim");
+				delete_image_ID("tmp3Dim");
 			}
 		}
 	
@@ -2053,13 +2052,15 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     int sizeOK;
     char command[500];
     int CreateSMim;
+    long ID1tmp, ID2tmp;
+
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
 
 
-   // printf("mode = %d\n", mode); // not used yet
+    // printf("mode = %d\n", mode); // not used yet
 
 
     // Name definitions for shared memory
@@ -2098,7 +2099,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     sizearray = (long*) malloc(sizeof(long)*3);
 
 
-	// READ LOOP NAME
+    // READ LOOP NAME
 
     if((fp=fopen("./conf/conf_LOOPNAME.txt","r"))==NULL)
     {
@@ -2112,7 +2113,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     strcpy(AOconf[loop].name, content);
 
 
-	// USE GPUs ?
+    // USE GPUs ?
 
     if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
     {
@@ -2136,17 +2137,17 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     AOconf[loop].sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
 
 
-	
-	// The AOloopControl_xDloadcreate_shmim functions work as follows:
-	// If file already loaded, use it (we assume it's already been properly loaded)
-	// If not, attempt to read it from shared memory
-	// If not available in shared memory, create it in shared memory
-	// if "fname" exists, attempt to load it into the shared memory image
-	
+
+    // The AOloopControl_xDloadcreate_shmim functions work as follows:
+    // If file already loaded, use it (we assume it's already been properly loaded)
+    // If not, attempt to read it from shared memory
+    // If not available in shared memory, create it in shared memory
+    // if "fname" exists, attempt to load it into the shared memory image
+
     sprintf(name, "aol%ld_wfsdark", loop);
     sprintf(fname, "./conf/dark.fits");
-    aoconfID_WFSdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);	
-	
+    aoconfID_WFSdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+
 
     sprintf(name, "aol%ld_imWFS0", loop);
     aoconfID_WFS0 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -2158,7 +2159,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_refWFSim", loop);
-	sprintf(fname, "./conf/refwfs.fits");
+    sprintf(fname, "./conf/refwfs.fits");
     aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     AOconf[loop].init_refWFS = 1;
 
@@ -2167,8 +2168,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
     // Connect to DM
-	// Here the DM size is fixed
-	//
+    // Here the DM size is fixed
+    //
     aoconfID_DM = image_ID(AOconf[loop].DMname);
     if(aoconfID_DM==-1)
     {
@@ -2206,26 +2207,131 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
     // Load DM modes (will exit if not successful)
 
-	
-    aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname); // if already exists, adopt it
-    if(aoconfID_DMmodes == -1)
-    {
-        aoconfID_DMmodes = read_sharedmem_image(AOconf[loop].DMMODESname);
+    aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname); // if already exists, trust it and adopt it
 
-        if(aoconfID_DMmodes!=-1)
-            {
-				printf("reading %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
-			}
-        else
+    if(aoconfID_DMmodes==-1) // If not, check file
+    {
+
+
+        // GET SIZE FROM FILE
+        ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim");
+        if(ID1tmp!=-1)
         {
-	        aoconfID_DMmodes = load_fits("./conf/fmodes.fits", "tmp3Dim");
-	        
-	        
-	        
-            printf("ERROR: NO DMmodes\n");
+            printf("ERROR: no file \"./conf/fmodes.fits\"\n");
             exit(0);
         }
 
+        // check size
+        if(data.image[ID1tmp].md[0].naxis != 3)
+        {
+            printf("ERROR: File \"./conf/fmodes.fits\" is not a 3D image (cube)\n");
+            exit(0);
+        }
+        if(data.image[ID1tmp].md[0].size[0] != AOconf[loop].sizexDM)
+        {
+            printf("ERROR: File \"./conf/fmodes.fits\" has wrong x size: should be %ld, is %ld\n", AOconf[loop].sizexDM, data.image[ID1tmp].md[0].size[0]);
+            exit(0);
+        }
+        if(data.image[ID1tmp].md[0].size[1] != AOconf[loop].sizeyDM)
+        {
+            printf("ERROR: File \"./conf/fmodes.fits\" has wrong y size: should be %ld, is %ld\n", AOconf[loop].sizeyDM, data.image[ID1tmp].md[0].size[1]);
+            exit(0);
+        }
+        AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
+
+
+
+        // try to read it from shared memory
+        ID2tmp = read_sharedmem_image(AOconf[loop].DMMODESname);
+        vOK = 0;
+        if(ID2tmp != -1) // if shared memory exists, check its size
+        {
+            vOK = 1;
+            if(data.image[ID2tmp].md[0].naxis != 3)
+            {
+                printf("ERROR: Shared memory File %s is not a 3D image (cube)\n", AOconf[loop].DMMODESname);
+                vOK = 0;
+            }
+            if(data.image[ID2tmp].md[0].size[0] != AOconf[loop].sizexDM)
+            {
+                printf("ERROR: Shared memory File %s has wrong x size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].sizexDM, data.image[ID2tmp].md[0].size[0]);
+                vOK = 0;
+            }
+            if(data.image[ID2tmp].md[0].size[1] != AOconf[loop].sizeyDM)
+            {
+                printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].sizeyDM, data.image[ID2tmp].md[0].size[1]);
+                vOK = 0;
+            }
+            if(data.image[ID2tmp].md[0].size[2] != AOconf[loop].NBDMmodes)
+            {
+                printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].NBDMmodes, data.image[ID2tmp].md[0].size[2]);
+                vOK = 0;
+            }
+
+            if(vOK==1) // if size is OK, adopt it
+                aoconfID_DMmodes = ID2tmp;
+            else // if not, erase shared memory 
+            {
+				printf("SHARED MEM IMAGE HAS WRONG SIZE -> erasing it\n");	
+				delete_image_ID(AOconf[loop].DMMODESname);
+            }
+        }
+        
+        
+        if(vOK==0) // create shared memory and put content of file in it
+		{
+		
+			sizearray[0] = AOconf[loop].sizexDM;
+			sizearray[1] = AOconf[loop].sizeyDM;
+			sizearray[2] = AOconf[loop].NBDMmodes;
+			printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].DMMODESname, sizearray[0], sizearray[1], sizearray[2]);
+			fflush(stdout);
+			aoconfID_DMmodes = create_image_ID(AOconf[loop].DMMODESname, 3, sizearray, FLOAT, 1, 0);
+			memcpy(data.image[ID1tmp].array.F, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
+		}	
+		
+		delete_image_ID("tmp3Dim");
+	}
+
+
+
+
+
+/*
+    if(aoconfID_DMmodes!=-1)
+    {
+
+        printf("reading from shared memory %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
+        AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
+    }
+
+    aoconfID_DMmodes = load_fits("./conf/fmodes.fits", "tmp3Dim");
+    if(aoconfID_DMmodes!=-1)
+    {
+        if(data.image[aoconfID_DMmodes].md[0].naxis != 3)
+        {
+            printf("ERROR: File \"./conf/fmodes.fits\" is not a 3D image (cube)\n");
+            exit(0);
+        }
+        if(data.image[aoconfID_DMmodes].md[0].size[0] != AOconf[loop].sizexDM)
+        {
+            printf("ERROR: File \"./conf/fmodes.fits\" has wrong x size: should be %ld, is %ld\n", AOconf[loop].sizexDM, data.image[aoconfID_DMmodes].md[0].size[0]);
+            exit(0);
+        }
+        if(data.image[aoconfID_DMmodes].md[0].size[1] != AOconf[loop].sizexDM)
+        {
+            printf("ERROR: File \"./conf/fmodes.fits\" has wrong y size: should be %ld, is %ld\n", AOconf[loop].sizeyDM, data.image[aoconfID_DMmodes].md[0].size[1]);
+            exit(0);
+        }
+    }
+
+
+
+
+    if(aoconfID_DMmodes == -1)
+    {
+        printf("ERROR: NO DMmodes\n");
+        exit(0);
     }
 
 
@@ -2271,10 +2377,10 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         printf("\n");
         exit(0);
     }
+*/
 
 
 
-    list_image_ID();
 
 
 
@@ -2359,12 +2465,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     printf("%ld modes\n", AOconf[loop].NBDMmodes);
 
 
-    list_image_ID();
 
 
 
+	// load ref WFS image
     sprintf(name, "aol%ld_refWFSim", loop);
-    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "./conf/refwfs.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
 
@@ -2420,22 +2526,22 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
-    list_image_ID();
+
 
 
 
 
 
     AOconf[loop].init_RM = 0;
-    aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+
+    aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, "./conf/respm.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
     AOconf[loop].init_RM = 1;
 
     AOconf[loop].init_CM = 0;
-    aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+    aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, "./conf/cmat.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
     AOconf[loop].init_CM = 1;
 
 
-    list_image_ID();
 
     free(sizearray);
 
@@ -2449,6 +2555,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     return(0);
 
 }
+
+
 
 
 

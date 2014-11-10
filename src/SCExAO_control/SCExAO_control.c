@@ -496,9 +496,9 @@ while(file_exist("stop_PyAlignTT.txt")==0)
 			
   
 		
-		if(file_exist("gain_PyAlignTT.txt"))
+		if(file_exist("./status/gain_PyAlignTT.txt"))
 			{
-				fp = fopen("gain_PyAlignTT.txt", "r");
+				fp = fopen("./status/gain_PyAlignTT.txt", "r");
 				r = fscanf(fp, "%f", &v0);
 				fclose(fp);
 				if((v0>0.0)&&(v0<1.0))
@@ -678,9 +678,9 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 			
   
   
-	if(file_exist("gain_PyAlignCam.txt"))
+	if(file_exist("./status/gain_PyAlignCam.txt"))
 			{
-				fp = fopen("gain_PyAlignCam.txt", "r");
+				fp = fopen("./status/gain_PyAlignCam.txt", "r");
 				r = fscanf(fp, "%f", &v0);
 				fclose(fp);
 				if((v0>0.0)&&(v0<1.0))
