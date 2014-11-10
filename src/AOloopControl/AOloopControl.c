@@ -3635,7 +3635,7 @@ int AOcompute(long loop)
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
 
-
+	
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - data.image[aoconfID_refWFS].array.F[ii];
@@ -3702,7 +3702,8 @@ int AOcompute(long loop)
 
   data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
 
-  
+  list_image_ID();
+  exit(0);
   return(0);
 }
 
@@ -3781,9 +3782,7 @@ int AOloopControl_run()
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
                 AOcompute(loop);
-				list_image_ID();
-				exit(0);
-
+	
                 AOconf[loop].status = 7;
 
                 if(fabs(AOconf[loop].gain)>1.0e-6)
