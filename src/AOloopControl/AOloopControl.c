@@ -2215,7 +2215,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
         // GET SIZE FROM FILE
         ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim");
-        if(ID1tmp!=-1)
+        if(ID1tmp==-1)
         {
             printf("ERROR: no file \"./conf/fmodes.fits\"\n");
             exit(0);
