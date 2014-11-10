@@ -2150,13 +2150,13 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
     sprintf(name, "aol%ld_imWFS0", loop);
-    aoconfID_WFS0 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_WFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_imWFS1", loop);
-    aoconfID_WFS1 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_WFS1 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_imWFS2", loop);
-    aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_refWFSim", loop);
     sprintf(fname, "./conf/refwfs.fits");
