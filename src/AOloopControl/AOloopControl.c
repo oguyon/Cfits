@@ -2529,7 +2529,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, "./conf/cmat.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
     AOconf[loop].init_CM = 1;
     
-	save_fits("./conf/cmat.fits", "!testcm.fits");
+    printf("saving %s\n", AOconf[loop].contrMname);
+	save_fits(AOconf[loop].contrMname, "!testcm.fits");
 exit(0);
 
     free(sizearray);
