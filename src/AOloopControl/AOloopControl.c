@@ -3766,6 +3766,7 @@ int AOloopControl_run()
         vOK = 0;
     }
 
+
     if(vOK==1)
     {
 
@@ -3780,9 +3781,9 @@ int AOloopControl_run()
 
             while(AOconf[loop].on == 1)
             {
-                //	      printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
-                //	      fflush(stdout);
-                //usleep(10000);
+                 printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
+                fflush(stdout);
+                usleep(10000);
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
                 AOcompute(loop);
