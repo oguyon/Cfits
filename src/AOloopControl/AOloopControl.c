@@ -1599,9 +1599,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
-        	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
+        //	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
         //	list_image_ID();
-        	fflush(stdout);
+        //	fflush(stdout);
 
 
 
@@ -1610,8 +1610,6 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
-				printf("FLOAT\n");
-				fflush(stdout);
                 usleep(50);
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
@@ -1658,6 +1656,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
                         imcnt++;
                     }
                 }
+                list_image_ID();
+                printf("aoconfID_WFS = %ld\n", aoconfID_WFS);
+                printf("aoconfID_WFS0 = %ld\n", aoconfID_WFS0);
+                exit(0);
             }
             break;
         default :
