@@ -2001,8 +2001,9 @@ long AOloopControl_3Dloadcreate_shmim(char *name, long xsize, long ysize, long z
 
 //
 // load / setup configuration
+// mode = 1 loads from ./conf/ directory to shared memory
+// mode = 0 simply connects to shared memory
 //
-// 
 int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 {
     FILE *fp;
