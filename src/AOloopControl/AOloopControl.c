@@ -3795,6 +3795,10 @@ int AOloopControl_run()
                     }
                 }
                 usleep(100); // max 10000kHz
+	
+	
+				list_image_ID();
+				exit(0);
 
 
                 AOconf[loop].status = 8; //  LOGGING, part 1
@@ -3814,9 +3818,7 @@ int AOloopControl_run()
                 }
 
 
-				list_image_ID();
-				exit(0);
-
+	
                 data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec - 1.0*AOconf[loop].timeorigin_sec;
                 j = 1;
 
