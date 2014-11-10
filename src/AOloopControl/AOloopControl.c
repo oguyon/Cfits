@@ -3680,6 +3680,8 @@ int AOcompute(long loop)
 
 	list_image_ID();
 	printf("UPDATING ARRAYS\n");
+	printf("k = %ld\n");
+	fflush(stdout);
 	
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
     {
