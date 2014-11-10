@@ -1889,7 +1889,7 @@ long AOloopControl_loadCM(long loop, char *CMfname)
 
 
 
-long AOloopControl_2Dloadcreate_shmim(char *name, long xsize, long ysize)
+long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize)
 {
 	long ID;
 	int CreateSMim;
@@ -1897,6 +1897,7 @@ long AOloopControl_2Dloadcreate_shmim(char *name, long xsize, long ysize)
 	long *sizearray;
 	char command[500];
 	int r;
+	long ID1;
 	
 	
     ID = image_ID(name);
@@ -1936,6 +1937,22 @@ long AOloopControl_2Dloadcreate_shmim(char *name, long xsize, long ysize)
 		{
 			printf("ERROR: could not load/create %s\n", name);
 			exit(0);
+		}
+	else
+		{
+			ID1 = load_fits(fname, "tmp2Dim");
+			if(ID1!=-1)
+			{
+				sizeOK = COREMOD_MEMORY_check_2Dsize("tmp2Dim", xsize, ysize);
+				if(sizeOK==1)
+					{
+						memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize);
+						printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
+					}
+				else
+					printf("File \"%s\" has wrong size : ignoring\n", fname);
+				delete_image_ID("tmp2Dim");
+			}
 		}
 	
 	return ID;
@@ -2102,24 +2119,33 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 	
+	// The AOloopControl_xDloadcreate_shmim functions work as follows:
+	// If file already loaded, use it (we assume it's already been properly loaded)
+	// If not, attempt to read it from shared memory
+	// If not available in shared memory, create it in shared memory
+	// if "fname" exists, attempt to load it into the shared memory image
+	
     sprintf(name, "aol%ld_wfsdark", loop);
-    aoconfID_WFSdark = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);	
+    sprintf(fname, "./conf/dark.fits");
+    aoconfID_WFSdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);	
+	
+
 	list_image_ID();
 	save_fits(name, "!test.fits");
 	exit(0);
 
 
     sprintf(name, "aol%ld_imWFS0", loop);
-    aoconfID_WFS0 = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_WFS0 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_imWFS1", loop);
-    aoconfID_WFS1 = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_WFS1 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_imWFS2", loop);
-    aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_refWFSim", loop);
-    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     AOconf[loop].init_refWFS = 1;
 
 
@@ -2311,56 +2337,56 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
     sprintf(name, "aol%ld_refWFSim", loop);
-    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
 
     // Load/create modal command vector memory
     sprintf(name, "aol%ld_DMmode_cmd", loop);
     ID = image_ID(name);
-    aoconfID_cmd_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_cmd_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
     sprintf(name, "aol%ld_DMmode_cmd1", loop);
     ID = image_ID(name);
-    aoconfID_cmd1_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_cmd1_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_cmd1_modes].array.F[k] = 0.0;
 
     sprintf(name, "aol%ld_DMmode_AVE", loop);
     ID = image_ID(name);
-    aoconfID_AVE_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_AVE_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_AVE_modes].array.F[k] = 0.0;
 
     sprintf(name, "aol%ld_DMmode_RMS", loop);
     ID = image_ID(name);
-    aoconfID_RMS_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_RMS_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_RMS_modes].array.F[k] = 0.0;
 
     sprintf(name, "aol%ld_DMmode_GAIN", loop);
     ID = image_ID(name);
-    aoconfID_GAIN_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_GAIN_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_GAIN_modes].array.F[k] = 1.0;
 
     sprintf(name, "aol%ld_DMmode_LIMIT", loop);
     ID = image_ID(name);
-    aoconfID_LIMIT_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_LIMIT_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_LIMIT_modes].array.F[k] = 1.0;
 
     sprintf(name, "aol%ld_DMmode_MULTF", loop);
     ID = image_ID(name);
-    aoconfID_MULTF_modes = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].NBDMmodes, 1);
+    aoconfID_MULTF_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
