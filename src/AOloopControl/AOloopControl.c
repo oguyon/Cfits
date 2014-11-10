@@ -2103,6 +2103,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	
     sprintf(name, "aol%ld_wfsdark", loop);
     aoconfID_WFSdark = AOloopControl_2Dloadcreate_shmim(name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);	
+	list_image_ID();
+	save_fits(name, "!test.fits");
 	exit(0);
 
 
