@@ -3781,12 +3781,14 @@ int AOloopControl_run()
                 usleep(10000);
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
+
+
                 AOcompute(loop);
 	
 				list_image_ID();
 				exit(0);
 
-              AOconf[loop].status = 7;
+				AOconf[loop].status = 7;
 
                 if(fabs(AOconf[loop].gain)>1.0e-6)
                 {
