@@ -3783,7 +3783,10 @@ int AOloopControl_run()
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
                 AOcompute(loop);
 	
-                AOconf[loop].status = 7;
+				list_image_ID();
+				exit(0);
+
+              AOconf[loop].status = 7;
 
                 if(fabs(AOconf[loop].gain)>1.0e-6)
                 {
@@ -3797,9 +3800,6 @@ int AOloopControl_run()
                 }
                 usleep(100); // max 10000kHz
 	
-				list_image_ID();
-				exit(0);
-
                 AOconf[loop].status = 8; //  LOGGING, part 1
 
                 clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
