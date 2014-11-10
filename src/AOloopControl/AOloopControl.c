@@ -3629,8 +3629,6 @@ int AOcompute(long loop)
     double a;
 
 
-	list_image_ID();
-	exit(0);
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
@@ -3639,6 +3637,8 @@ int AOcompute(long loop)
     AOconf[loop].status = 4;  // 4: REMOVING REF
 
 
+	list_image_ID();
+	exit(0);
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - data.image[aoconfID_refWFS].array.F[ii];
