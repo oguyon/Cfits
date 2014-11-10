@@ -2240,11 +2240,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
 
 
-
-	save_fits("tmp3Dim", "!test0.fits");
-
-	
-
         // try to read it from shared memory
         ID2tmp = read_sharedmem_image(AOconf[loop].DMMODESname);
         vOK = 0;
@@ -2297,18 +2292,10 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 		memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
 		
-	//	data.image[ID1tmp].array.F, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
-		
-		
-		
-		
 		
 		delete_image_ID("tmp3Dim");
 	}
 
-	printf("Saving %s \n", AOconf[loop].DMMODESname);
-	save_fits(AOconf[loop].DMMODESname, "!test1.fits");
-exit(0);
 
 
 
