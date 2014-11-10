@@ -2241,7 +2241,9 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
+	save_fits("tmp3Dim", "!test0.fits");
 
+	
 
         // try to read it from shared memory
         ID2tmp = read_sharedmem_image(AOconf[loop].DMMODESname);
@@ -2296,7 +2298,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	}
 
 	printf("Saving %s \n", AOconf[loop].DMMODESname);
-	save_fits(AOconf[loop].DMMODESname, "!test0.fits");
+	save_fits(AOconf[loop].DMMODESname, "!test1.fits");
 exit(0);
 
 
