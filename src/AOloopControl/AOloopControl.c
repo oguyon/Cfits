@@ -1950,7 +1950,7 @@ long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 						printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
 					}
 				else
-					printf("File \"%s\" has wrong size (should be 2-D %ld x %ld,  is %d-D %ld x %ld): ignoring\n", fname, xsize, ysize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1]);
+					printf("File \"%s\" has wrong size (should be 2-D %ld x %ld,  is %ld-D %ld x %ld): ignoring\n", fname, xsize, ysize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1]);
 				delete_image_ID("tmp2Dim");
 			}
 		}

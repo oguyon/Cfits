@@ -3302,8 +3302,9 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
 
 long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize)
 {
-	int sizeOK; // 1 if size matches
+	int sizeOK = 1; // 1 if size matches
 	long ID;
+	
 	
 	ID = image_ID(IDname);
 	if(data.image[ID].md[0].naxis != 2)
@@ -3329,7 +3330,7 @@ long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize)
 
 long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsize)
 {
-	int sizeOK; // 1 if size matches
+	int sizeOK = 1; // 1 if size matches
 	long ID;
 	
 	ID = image_ID(IDname);
