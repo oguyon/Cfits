@@ -1752,7 +1752,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         data.image[aoconfID_WFS1].md[0].cnt0 ++;
         data.image[aoconfID_WFS1].md[0].write = 0;
 
-
+		
 
    // }
 
@@ -3432,9 +3432,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
 
-//		save_fits("REFiter", "!test0.fits");
+//	save_fits("REFiter", "!test0.fits");
 	//	save_fits("RMiter", "!test1.fits");
-exit(0);
+//exit(0);
         printf("Acquisition done, compiling results...");
         fflush(stdout);
 
