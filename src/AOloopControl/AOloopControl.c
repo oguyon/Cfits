@@ -3779,9 +3779,6 @@ int AOloopControl_run()
                 fflush(stdout);
                 usleep(10000);
 
-				list_image_ID();
-				exit(0);
-
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
                 AOcompute(loop);
 
@@ -3829,6 +3826,8 @@ int AOloopControl_run()
                     j++;
                 }
 
+				list_image_ID();
+				exit(0);
 
                 AOconf[loop].status = 9; //  LOGGING, part 2
 
