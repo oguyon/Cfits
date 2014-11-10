@@ -3781,10 +3781,16 @@ int AOloopControl_run()
                 usleep(10000);
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
-
-
+				list_image_ID();
+				
+				printf("COMPUTING\n");
+				fflush(stdout);
+				
                 AOcompute(loop);
 	
+				printf("DONE COMPUTING\n");
+				fflush(stdout);
+				
 				list_image_ID();
 				exit(0);
 
