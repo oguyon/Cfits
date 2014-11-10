@@ -3677,12 +3677,15 @@ int AOcompute(long loop)
 
 
 
-
+/*
 	list_image_ID();
 	printf("UPDATING ARRAYS\n");
 	printf("AOconf[loop].NBDMmodes = %ld\n", AOconf[loop].NBDMmodes);
 	printf("IDs:  %ld %ld %ld %ld %ld %ld %ld\n", aoconfID_RMS_modes, aoconfID_cmd1_modes, aoconfID_AVE_modes, aoconfID_cmd_modes, aoconfID_GAIN_modes, aoconfID_LIMIT_modes, aoconfID_MULTF_modes);
 	fflush(stdout);
+	*/
+	
+	
 	
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
     {
@@ -3788,17 +3791,18 @@ int AOloopControl_run()
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
 				
-				list_image_ID();
+		/*		list_image_ID();
 				printf("COMPUTING\n");
 				fflush(stdout);
+			*/
 				
                 AOcompute(loop);
 	
-				printf("DONE COMPUTING\n");
-				fflush(stdout);
+	//			printf("DONE COMPUTING\n");
+		//		fflush(stdout);
 				
-				list_image_ID();
-				exit(0);
+			//	list_image_ID();
+				//exit(0);
 
 				AOconf[loop].status = 7;
 
