@@ -3781,6 +3781,8 @@ int AOloopControl_run()
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
                 AOcompute(loop);
+				list_image_ID();
+				exit(0);
 
                 AOconf[loop].status = 7;
 
@@ -3797,9 +3799,6 @@ int AOloopControl_run()
                 usleep(100); // max 10000kHz
 	
 	
-				list_image_ID();
-				exit(0);
-
 
                 AOconf[loop].status = 8; //  LOGGING, part 1
 
