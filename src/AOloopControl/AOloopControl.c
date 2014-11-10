@@ -2010,6 +2010,22 @@ long AOloopControl_3Dloadcreate_shmim(char *name, long xsize, long ysize, long z
 			printf("ERROR: could not load/create %s\n", name);
 			exit(0);
 		}
+	else
+		{
+			ID1 = load_fits(fname, "tmp3Dim");
+			if(ID1!=-1)
+			{
+				sizeOK = COREMOD_MEMORY_check_3Dsize("tmp3Dim", xsize, ysize, zsize);
+				if(sizeOK==1)
+					{
+						memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize*zsize);
+						printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
+					}
+				else
+					printf("File \"%s\" has wrong size (should be 3-D %ld x %ld, x %ld  is %ld-D %ld x %ld x %ld): ignoring\n", fname, xsize, ysize, zsize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1], data.image[ID1].md[0].size[2]);
+				delete_image_ID("tmp2Dim");
+			}
+		}
 	
 	return ID;
 }
@@ -2055,10 +2071,11 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     printf("DM RM file name : %s\n", name);
     strcpy(AOconf[loop].DMnameRM, name);
 
-
     sprintf(name, "aol%ld_wfs", loop);
     printf("WFS file name: %s\n", name);
     strcpy(AOconf[loop].WFSname, name);
+
+
 
     sprintf(name, "aol%ld_DMmodes", loop);
     printf("DMmodes file name: %s\n", name);
@@ -2130,9 +2147,6 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     aoconfID_WFSdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);	
 	
 
-
-
-
     sprintf(name, "aol%ld_imWFS0", loop);
     aoconfID_WFS0 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
@@ -2143,7 +2157,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     sprintf(name, "aol%ld_refWFSim", loop);
-    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+	sprintf(fname, "./conf/refwfs.fits");
+    aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     AOconf[loop].init_refWFS = 1;
 
 
@@ -2151,6 +2166,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
     // Connect to DM
+	// Here the DM size is fixed
+	//
     aoconfID_DM = image_ID(AOconf[loop].DMname);
     if(aoconfID_DM==-1)
     {
@@ -2188,18 +2205,27 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
     // Load DM modes (will exit if not successful)
 
-    aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname);
+	
+    aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname); // if already exists, adopt it
     if(aoconfID_DMmodes == -1)
     {
         aoconfID_DMmodes = read_sharedmem_image(AOconf[loop].DMMODESname);
+
         if(aoconfID_DMmodes!=-1)
             printf("reading %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
         else
         {
+	        aoconfID_DMmodes = load_fits("./conf/fmodes.fits", "tmp3Dim");
+	        
+	        
+	        
             printf("ERROR: NO DMmodes\n");
             exit(0);
         }
+
     }
+
+
 
     // VERIFY DM MODES SIZE
     vOK = 0;
@@ -3438,7 +3464,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 		for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
 			fprintf(fp, "%ld  %g  %g  %g\n", k1, data.image[IDoptsignaln].array.F[k1], data.image[IDoptsignal].array.F[k1], data.image[IDmcoeff].array.F[k1]);
 		fclose(fp);
-		
+		r = system("cp ./tmp/RM_outsign%06ld.txt ./tmp/RM_outsign.txt");
+
         save_fits("refwfsacq", "!./tmp/refwfs.fits");
         save_fits("respmacq", "!./tmp/respm.fits");
     }
