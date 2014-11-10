@@ -3813,6 +3813,10 @@ int AOloopControl_run()
                     data.image[ID].kw[0].value.numl = AOconf[loop].timeorigin_sec;
                 }
 
+
+				list_image_ID();
+				exit(0);
+
                 data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec - 1.0*AOconf[loop].timeorigin_sec;
                 j = 1;
 
@@ -3826,8 +3830,6 @@ int AOloopControl_run()
                     j++;
                 }
 
-				list_image_ID();
-				exit(0);
 
                 AOconf[loop].status = 9; //  LOGGING, part 2
 
