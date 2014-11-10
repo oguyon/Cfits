@@ -3771,11 +3771,16 @@ int AOloopControl_run()
             fflush(stdout);
             usleep(1000);
 
+			
+
             while(AOconf[loop].on == 1)
             {
                 printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
                 fflush(stdout);
                 usleep(10000);
+
+				list_image_ID();
+				exit(0);
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
                 AOcompute(loop);
