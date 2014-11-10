@@ -1603,11 +1603,15 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         //	list_image_ID();
         	fflush(stdout);
 
+
+
         switch (atype) {
         case FLOAT :
             imcnt = 0;
             while(imcnt<NbAve)
             {
+				printf("FLOAT\n");
+				fflush(stdout);
                 usleep(50);
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
@@ -1632,7 +1636,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
-
+				printf("USHORT\n");
+				fflush(stdout);
                 usleep(50);
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
