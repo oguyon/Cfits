@@ -3107,6 +3107,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
+
+
     sizearray = (long*) malloc(sizeof(long)*3);
 
 	printf("Initialize AOconf shared memory\n");
@@ -3195,6 +3197,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 	aoconfID_cmd_modesRM = create_2Dimage_ID("RMmodesloc", AOconf[loop].NBDMmodes, 1);
+	
+
 	
 
     for(iter=0; iter<NBiter; iter++)
@@ -3472,6 +3476,16 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     }
 	}
 
+
+	fp = fopen("./tmp/rmparams.txt", "w");
+	fprintf(fp, "%5ld		NbAve: number of WFS frames per averaging\n", NbAve);
+	fprintf(fp, "%f			amp: nominal DM amplitude (RMS)\n", amp);
+	fprintf(fp, "%ld		iter: number of iterations\n", iter);
+	fprintf(fp, "%ld		nbloop: number of loops per iteration\n", nbloop);
+	fprintf(fp, "%ld		fDelay: delay number of frames\n", fDelay);
+	fclose(fp);
+
+	
 
     printf("Done\n");
     free(sizearray);
