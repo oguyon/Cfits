@@ -2530,7 +2530,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     AOconf[loop].init_CM = 1;
     
 	save_fits("./conf/cmat.fits", "!testcm.fits");
-
+exit(0);
 
     free(sizearray);
 
