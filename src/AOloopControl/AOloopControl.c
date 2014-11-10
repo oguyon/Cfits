@@ -3679,6 +3679,8 @@ int AOcompute(long loop)
 
 
 	list_image_ID();
+	printf("UPDATING ARRAYS\n");
+	
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
     {
         data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_cmd1_modes].array.F[k]*data.image[aoconfID_cmd1_modes].array.F[k];
