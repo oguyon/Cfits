@@ -465,6 +465,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 {
+	FILE *fp;
     long ID;
     long xsize, ysize;
     long ii, jj;
@@ -479,7 +480,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 	double x, y;
 	double totx, toty;
 	char pausefilename[200];
-
+	float v0;
+	
+	
 //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
   // exit(0);
   
@@ -492,7 +495,16 @@ while(file_exist("stop_PyAlignTT.txt")==0)
 			usleep(100000);
 			
   
-			
+		
+		if(file_exist("gain_PyAlignTT.txt"))
+			{
+				fp = fopen("gain_PyAlignTT.txt", "r");
+				r = fscanf(fp, "%f", &v0);
+				fclose(fp);
+				if((v0>0.0)&&(v0<1.0))
+					gain = v0;
+			}
+		
   
         ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
        xsize = data.image[ID].md[0].size[0];
@@ -641,7 +653,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	char command[200];
 	long delayus = 1000000;
 	long NBframes = 5000;
-
+	float v0;
+	
+	
 	char pausefilename[200];
 	
 
@@ -662,6 +676,17 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 	while (file_exist ("pause_PyAlignCam.txt"))
 			usleep(100000);
 			
+  
+  
+	if(file_exist("gain_PyAlignCam.txt"))
+			{
+				fp = fopen("gain_PyAlignCam.txt", "r");
+				r = fscanf(fp, "%f", &v0);
+				fclose(fp);
+				if((v0>0.0)&&(v0<1.0))
+					gain = v0;
+			}
+
   
     ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
 	save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
