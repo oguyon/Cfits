@@ -3675,6 +3675,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
         }
 
 
+
         /// cases:
         /// index>zsize-1  buffer full
         /// wOK==0 && index>0
