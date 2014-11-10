@@ -1599,9 +1599,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
     {
-        //	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
+        	printf("SINGLE BUFFER  %ld\n", aoconfID_WFS);
         //	list_image_ID();
-        //	fflush(stdout);
+        	fflush(stdout);
 
         switch (atype) {
         case FLOAT :
@@ -1750,7 +1750,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
 
-    if(AOconf[loop].WFS_CAM_PER_CORR==1) /// additional processing step here
+  /*  if(AOconf[loop].WFS_CAM_PER_CORR==1) /// additional processing step here
     {
         data.image[aoconfID_WFS1].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -1762,13 +1762,18 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) AOconf[loop].WFScamPEcorr_pha);
     }
     else
-    {
+    {*/
+       
+       
         data.image[aoconfID_WFS1].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
         data.image[aoconfID_WFS1].md[0].cnt0 ++;
         data.image[aoconfID_WFS1].md[0].write = 0;
-    }
+
+
+
+   // }
 
     //printf("Average cam DONE\n");
     //fflush(stdout);
@@ -3446,8 +3451,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
 
-		save_fits("REFiter", "!test0.fits");
-		save_fits("RMiter", "!test1.fits");
+//		save_fits("REFiter", "!test0.fits");
+	//	save_fits("RMiter", "!test1.fits");
 exit(0);
         printf("Acquisition done, compiling results...");
         fflush(stdout);
