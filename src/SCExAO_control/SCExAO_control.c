@@ -787,21 +787,21 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 	long zi;
 	long ID;
 	long NBframes = 5000;
-	float val;
+	double val;
 	
 	// 60perc of pixels illuminated
 	// perc 70 is median over pupil
 	
-	float p50, p70, p90;
+	double p50, p70, p90;
 
 	while(1)
 	{
 		ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
 		save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
 		
-		p50 = img_percentile_float("imwfs", 0.50);
-		p70 = img_percentile_float("imwfs", 0.70);
-		p90 = img_percentile_float("imwfs", 0.90);
+		p50 = img_percentile("imwfs", 0.50);
+		p70 = img_percentile("imwfs", 0.70);
+		p90 = img_percentile("imwfs", 0.90);
 		val = (p90-p50)/p70;
 		printf("%f %f %f -> %f\n", p50, p70, p90, val);
 	}
