@@ -850,14 +850,12 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 		r = system(command);
 		usleep(200000);
 
-
 		a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
+		printf("============ a = %f\n", a);
 		sprintf(command, "dm_add_zernike %ld %f", zi, a);
 		r = system(command);
 
-		sprintf(command, "dm_add_zernike %ld %f", zi, a);
-		r = system(command);
-		usleep(200000);
+		
 
 
 		}
@@ -867,7 +865,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 				data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
 				data.image[IDdm5].array.F[ii] = 0.0;
 			}
-	
+	exit(0);
+		
 	}
 	
 	
