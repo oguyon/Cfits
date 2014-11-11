@@ -786,17 +786,22 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 	long zimax = 20;
 	long zi;
 	long ID;
-	long NBframes = 5000;
+	long NBframes = 2000;
 	double val, valp, valm, val0;
-	double ampl = 0.1;
+	double ampl = 0.05;
 	double a;
 	char command[200];
 	int r;
+	long IDdm5, IDdm6;
+	long ii;
 	
 	// 60perc of pixels illuminated
 	// perc 70 is median over pupil
 	
 	double p50, p70, p90;
+
+	IDdm5 = read_sharedmem_image("dmdisp5");
+	IDdm6 = read_sharedmem_image("dmdisp6");
 
 	while(1)
 	{
@@ -851,6 +856,12 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 		r = system(command);
 
 		}
+	
+		for(ii=0;ii<2500;ii++)
+			{
+				data.image[IDdm6].array.F[ii] = data.image[IDdm5].array.F[ii];
+				data.image[IDdm5].array.F[ii] = 0.0;
+			}
 	}
 	
 	
