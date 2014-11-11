@@ -860,12 +860,20 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
 		}
 		printf("%ld -> %ld\n", IDdm5, IDdm6);
+		data.image[IDdm5].md[0].write = 1;
+		data.image[IDdm6].md[0].write = 1;
 		for(ii=0;ii<2500;ii++)
 			{
 				data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
 				data.image[IDdm5].array.F[ii] = 0.0;
 			}
-			
+		data.image[IDdm5].md[0].cnt0++;
+		data.image[IDdm6].md[0].cnt0++;
+		data.image[IDdm5].md[0].write = 0;
+		data.image[IDdm6].md[0].write = 0;
+	
+		
+		
 			list_image_ID();
 	exit(0);
 		
