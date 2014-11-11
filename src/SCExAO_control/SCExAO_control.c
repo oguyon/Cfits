@@ -183,6 +183,17 @@ int init_SCExAO_control()
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
   data.NBcmd++;
 
+
+  strcpy(data.cmd[data.NBcmd].key,"scexaopyflatten");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_Pyramid_flattenRefWF;
+  strcpy(data.cmd[data.NBcmd].info,"flatten  pyrWFS");
+  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF();");
+  data.NBcmd++;
+
+
   strcpy(data.cmd[data.NBcmd].key,"scexaosaphiraproc");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = SCExAOcontrol_SAPHIRA_cam_process_cli;
@@ -759,18 +770,36 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
     return(0);
 }
 
-/*
+
 int SCExAOcontrol_Pyramid_flattenRefWF()
 {
 	long MaxZern = 100;
 	long zi;
+	long ID;
+	long NBframes = 5000;
+	float val;
 	
+	// 60perc of pixels illuminated
+	// perc 70 is median over pupil
 	
+	float p50, p70, p90;
+
+	while(1)
+	{
+		ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
+		save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
+		
+		p50 = img_percentile_float("imwfs", 0.50);
+		p70 = img_percentile_float("imwfs", 0.70);
+		p90 = img_percentile_float("imwfs", 0.90);
+		val = (p90-p50)/p70;
+		printf("%f %f %f -> %f\n", p50, p70, p90, val);
+	}
 	
 	
 	return(0);
 }
-*/
+
 
 
 
