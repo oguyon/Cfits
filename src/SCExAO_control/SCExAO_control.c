@@ -783,7 +783,7 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 
 int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 {
-	long zimax = 10;
+	long zimax = 5;
 	long zi;
 	long ID;
 	long NBframes = 2000;
@@ -862,6 +862,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 				data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
 				data.image[IDdm5].array.F[ii] = 0.0;
 			}
+		exit(0);
 	}
 	
 	
