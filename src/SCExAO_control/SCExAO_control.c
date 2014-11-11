@@ -22,7 +22,7 @@
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "linopt_imtools/linopt_imtools.h"
 #include "image_filter/image_filter.h"
-
+#include "info/info.h"
 #include "ZernikePolyn/ZernikePolyn.h"
 
 #include "SCExAO_control/SCExAO_control.h"
