@@ -859,7 +859,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
 
 		}
-	
+		printf("%ld -> %ld\n", IDdm5, IDdm6);
 		for(ii=0;ii<2500;ii++)
 			{
 				data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
