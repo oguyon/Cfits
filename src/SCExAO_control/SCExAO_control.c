@@ -803,7 +803,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 		p70 = img_percentile("imwfs", 0.70);
 		p90 = img_percentile("imwfs", 0.90);
 		val = (p90-p50)/p70;
-		printf("%f %f %f -> %f\n", p50, p70, p90, val);
+		printf("%lf %lf %lf -> %f\n", p50, p70, p90, val);
 	}
 	
 	
