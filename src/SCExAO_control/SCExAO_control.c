@@ -786,7 +786,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 	long zimax = 100;
 	long zi;
 	long ID;
-	long NBframes = 2000;
+	long NBframes = 200;
 	double val, valp, valm, val0;
 	double ampl = 0.05;
 	double a;
