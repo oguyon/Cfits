@@ -122,8 +122,18 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
     return 1;
 }
 
+int SCExAOcontrol_Pyramid_flattenRefWF_cli()
+{
+	 if(CLI_checkarg(1,4)==0)
+    {
+    SCExAOcontrol_Pyramid_flattenRefWF(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
 
-//int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
+
 
 int SCExAOcontrol_SAPHIRA_cam_process_cli()
 {
@@ -178,7 +188,7 @@ int init_SCExAO_control()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli;
   strcpy(data.cmd[data.NBcmd].info,"move Camera to center pyrWFS");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
   strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
   strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
   data.NBcmd++;
@@ -186,11 +196,11 @@ int init_SCExAO_control()
 
   strcpy(data.cmd[data.NBcmd].key,"scexaopyflatten");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_Pyramid_flattenRefWF;
+  data.cmd[data.NBcmd].fp = SCExAOcontrol_Pyramid_flattenRefWF_cli;
   strcpy(data.cmd[data.NBcmd].info,"flatten  pyrWFS");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+  strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
   strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF();");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name);");
   data.NBcmd++;
 
 
@@ -771,7 +781,7 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 }
 
 
-int SCExAOcontrol_Pyramid_flattenRefWF()
+int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 {
 	long MaxZern = 100;
 	long zi;
