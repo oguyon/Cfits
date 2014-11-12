@@ -2563,7 +2563,7 @@ int set_DM_modes(long loop)
     {
 		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
-        AOconf[loop].status = 11;
+        AOconf[loop].status = 8;
         GPU_loop_MultMat_execute(1);
         #endif
     }
@@ -4081,7 +4081,7 @@ int AOloopControl_statusStats()
 {
   long k;
   long NBkiter = 100000;
-  long statusmax = 11;
+  long statusmax = 14;
   long *statuscnt;
   float usec0, usec1;
   int st;
