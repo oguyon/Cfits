@@ -1108,7 +1108,7 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
     case USHORT :
         while(1)
         {
-            usleep(10);
+            usleep(10); // OK FOR NOW (NOT USED BY FAST WFS)
             if(data.image[IDin].md[0].cnt0!=cnt0)
             {
                 data.image[IDout].md[0].write = 1;
@@ -1132,7 +1132,7 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
     case FLOAT :
         while(1)
         {
-            usleep(50);
+            usleep(50); // OK FOR NOW (NOT USED BY FAST WFS)
             if(data.image[IDin].md[0].cnt0!=cnt0)
             {
                 data.image[IDout].md[0].write = 1;
@@ -1601,7 +1601,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
-                usleep(50);
+                usleep(50); // OK FOR NOW (not using single buffer in fast WFS)
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
                     if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
@@ -1625,7 +1625,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             imcnt = 0;
             while(imcnt<NbAve)
             {
-               usleep(50);
+                usleep(50); // OK FOR NOW (not using single buffer in fast WFS)
                 if(data.image[aoconfID_WFS].md[0].write == 0)
                 {
                     if(AOconf[loop].WFScnt!=data.image[aoconfID_WFS].md[0].cnt0)
@@ -1644,7 +1644,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
                         }
                         imcnt++;
                     }
-                }           
+                }
             }
             break;
         default :
@@ -1655,40 +1655,40 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     }
     else // ring buffer mode, only works with NbAve = 1
     {
-		if(data.image[aoconfID_WFS].sem==0)
-		{
-        if(RM==0)
+        if(data.image[aoconfID_WFS].sem==0)
         {
-            while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+            if(RM==0)
             {
-                usleep(50);
-                // do nothing, wait
+                while(AOconf[loop].WFScnt==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+                {
+                    usleep(5);
+                    // do nothing, wait
+                }
+            }
+            else
+            {
+                while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
+                {
+                    usleep(5);
+                    // do nothing, wait
+                }
             }
         }
         else
         {
-            while(AOconf[loop].WFScntRM==data.image[aoconfID_WFS].md[0].cnt0) // test if new frame exists
-            {
-                usleep(50);
-                // do nothing, wait
-            }
+            printf("Waiting for semaphore to post .... ");
+            fflush(stdout);
+            sem_wait(data.image[aoconfID_WFS].semptr);
+            printf(" done\n");
+            fflush(stdout);
         }
-		}
-		else
-		{
-			printf("Waiting for semaphore to post .... ");
-			fflush(stdout);
-			sem_wait(data.image[aoconfID_WFS].semptr);
-			printf(" done\n");
-			fflush(stdout);
-		}
-		
+
         slice = data.image[aoconfID_WFS].md[0].cnt1;
         if(slice==-1)
             slice = data.image[aoconfID_WFS].md[0].size[2];
 
- 
-		
+
+
         switch (atype) {
         case FLOAT :
             ptrv = (char*) data.image[aoconfID_WFS].array.F;
@@ -1723,45 +1723,22 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
-    
-    
-  
+
+
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
 
-  /*  if(AOconf[loop].WFS_CAM_PER_CORR==1) /// additional processing step here
-    {
-        data.image[aoconfID_WFS1].md[0].write = 1;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
-
-        AOconf[loop].WFScamPEcorr_pha = ((long double) (1.0*data.image[aoconfID_WFS].md[0].cnt0))/ ((long double) (AOconf[loop].WFScamPEcorr_period));
-        AOconf[loop].WFScamPEcorr_pha = modfl(AOconf[loop].WFScamPEcorr_pha, &tmplv1);
-        AOconf[loop].WFScamPEcorr_pha +=  AOconf[loop].WFScamPEcorr_pharef;
-        AOloopControl_Remove_WFScamPE(data.image[aoconfID_WFS1].md[0].name, "WFScamPEcorrC", (double) AOconf[loop].WFScamPEcorr_pha);
-    }
-    else
-    {*/
-       
-       
-        data.image[aoconfID_WFS1].md[0].write = 1;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
-        data.image[aoconfID_WFS1].md[0].cnt0 ++;
-        data.image[aoconfID_WFS1].md[0].write = 0;
-
-		
-
-   // }
-
-    //printf("Average cam DONE\n");
-    //fflush(stdout);
+    data.image[aoconfID_WFS1].md[0].write = 1;
+    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+    data.image[aoconfID_WFS1].md[0].cnt0 ++;
+    data.image[aoconfID_WFS1].md[0].write = 0;
 
 
     return(0);
 }
+
 
 
 
@@ -2708,7 +2685,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
         data.image[aoconfID_DMRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
 
-        usleep(delayus);
+        usleep(delayus); // OK (this is for calibration)
 
         for(kk=0; kk<NBave; kk++)
         {
@@ -2730,7 +2707,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
         data.image[aoconfID_DMRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
 
-        usleep(delayus);
+        usleep(delayus); // OK (this is for calibration)
 
         for(kk=0; kk<NBave; kk++)
         {
@@ -3356,7 +3333,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 				
                 set_DM_modesRM(loop);
-                usleep(delayus);
+                usleep(delayus); // OK - this is for calibration
 			
 	
 
@@ -3378,7 +3355,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 data.image[aoconfID_cmd_modesRM].array.F[k1] = 0.0-amp*data.image[IDmcoeff].array.F[k1];
                 set_DM_modesRM(loop);
 
-                usleep(delayus);
+                usleep(delayus);  // OK - this is for calibration
 
                 for(kk=0; kk<NbAve; kk++)
                 {
@@ -3784,24 +3761,14 @@ int AOloopControl_run()
 
             while(AOconf[loop].on == 1)
             {
-           //     printf("LOOP IS RUNNING  %llu  %g      Gain = %f \r", AOconf[loop].cnt, AOconf[loop].RMSmodes, AOconf[loop].gain);
-           //     fflush(stdout);
-               // usleep(10000);
+     
 
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
 				
-		/*		list_image_ID();
-				printf("COMPUTING\n");
-				fflush(stdout);
-			*/
-				
+	
                 AOcompute(loop);
 	
-	//			printf("DONE COMPUTING\n");
-		//		fflush(stdout);
-				
-			//	list_image_ID();
-				//exit(0);
+	
 
 				AOconf[loop].status = 7;
 
@@ -3809,13 +3776,13 @@ int AOloopControl_run()
                 {
                     set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
 
-                    a = 0.1;
-                    while(cnttest==data.image[aoconfID_DM].md[0].cnt0)  // wait for results (only useful for GPU)
-                    {
-                        a = sqrt(a+0.1);
-                    }
+//                    a = 0.1;
+  //                  while(cnttest==data.image[aoconfID_DM].md[0].cnt0)  // wait for results (only useful for GPU)
+    //                {
+      //                  a = sqrt(a+0.1);
+        //            }
                 }
-                usleep(100); // max 10000kHz
+          //      usleep(100); // max 10000kHz
 	
                 AOconf[loop].status = 8; //  LOGGING, part 1
 
@@ -4221,7 +4188,7 @@ int AOloopControl_loopstep(long loop, long NBstep)
   AOconf[loop].on = 1;
 
   while(AOconf[loop].on==1)
-    usleep(100);
+    usleep(100); // THIS WAITING IS OK
 
   // AOloopControl_showparams(loop);
 
