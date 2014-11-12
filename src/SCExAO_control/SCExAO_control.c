@@ -678,7 +678,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	long delayus = 1000000;
 	long NBframes = 5000;
 	float v0;
-	long maxstep = 500;
+	long maxstep = 50;
 	
 	char pausefilename[200];
 	
