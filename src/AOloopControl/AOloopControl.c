@@ -45,6 +45,8 @@
 # endif
 
 
+
+
 int wcol, wrow; // window size
 
 
@@ -1747,6 +1749,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
       #pragma omp for
       # endif
 	*/
+	#pragma omp parallel for
 	for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
@@ -1757,8 +1760,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
 
-    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+  
 
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 0;
