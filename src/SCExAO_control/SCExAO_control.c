@@ -758,6 +758,16 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 	stepx = (long) (-gain*totx/0.7*10000.0);
 	stepy = (long) (gain*toty/0.7*10000.0);
 
+	if(stepx>100)
+		stepx = 100;
+	if(stepx<-100)
+		stepx = -100;
+	if(stepy>100)
+		stepy = 100;
+	if(stepy<-100)
+		stepy = -100;
+		
+		
 	printf("STEP : %ld %ld\n", stepx, stepy);
 
 	SCExAO_Pcam_Xpos += stepx;
