@@ -768,7 +768,7 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 		stepy = -maxstep;
 		
 		
-	printf("STEP : %ld %ld\n", stepx, stepy);
+	printf("STEP     : %ld %ld\n", stepx, stepy);
 
 	SCExAO_Pcam_Xpos += stepx;
 	SCExAO_Pcam_Ypos += stepy;
