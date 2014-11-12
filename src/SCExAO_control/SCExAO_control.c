@@ -678,7 +678,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 	long delayus = 1000000;
 	long NBframes = 5000;
 	float v0;
-	
+	long maxstep = 50;
 	
 	char pausefilename[200];
 	
@@ -758,14 +758,14 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 	stepx = (long) (-gain*totx/0.7*10000.0);
 	stepy = (long) (gain*toty/0.7*10000.0);
 
-	if(stepx>100)
-		stepx = 100;
-	if(stepx<-100)
-		stepx = -100;
-	if(stepy>100)
-		stepy = 100;
-	if(stepy<-100)
-		stepy = -100;
+	if(stepx>maxstep)
+		stepx = maxstep;
+	if(stepx<-maxstep)
+		stepx = -maxstep;
+	if(stepy>maxstep)
+		stepy = maxstep;
+	if(stepy<-maxstep)
+		stepy = -maxstep;
 		
 		
 	printf("STEP : %ld %ld\n", stepx, stepy);
