@@ -1712,11 +1712,11 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         else
             AOconf[loop].WFScntRM = data.image[aoconfID_WFS].md[0].cnt0;
     }
-    AOconf[loop].status = 3;  // 3: NORMALIZE WFS IMAGE
+    AOconf[loop].status = 3;  // 3: DARK SUBTRACT
 
 
     // Dark subtract
-    sprintf(dname, "aol%ld_wfsdark", loop);
+    sprintf(dname, "aol%ld_wfsdark", loop); 
     IDdark = image_ID(dname);
     if(IDdark!=-1)
     {
@@ -1724,11 +1724,16 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
 
-
+	AOconf[loop].status = 4; // 4: COMPUTE TOTAL OF IMAGE
+ 
+ 
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-    data.image[aoconfID_WFS0].md[0].cnt0 ++;
 
+
+	AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
+	
+    data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
@@ -2558,6 +2563,7 @@ int set_DM_modes(long loop)
     {
 		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
+        AOconf[loop].status = 11;
         GPU_loop_MultMat_execute(1);
         #endif
     }
@@ -3610,7 +3616,7 @@ int AOcompute(long loop)
     AOconf[loop].status = 1;  // 1: READING IMAGE
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
 
-    AOconf[loop].status = 4;  // 4: REMOVING REF
+    AOconf[loop].status = 6;  // 4: REMOVING REF
 
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3624,7 +3630,7 @@ int AOcompute(long loop)
     //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
     // sleep(5);
 
-    AOconf[loop].status = 5; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
+    AOconf[loop].status = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
 
     if(AOconf[loop].GPU == 0)
@@ -3636,11 +3642,12 @@ int AOcompute(long loop)
     {
 #ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0);
+		AOconf[loop].status = 8; // execute  
         GPU_loop_MultMat_execute(0);
 #endif
     }
 
-    AOconf[loop].status = 6; //  MULTIPLYING BY GAINS
+    AOconf[loop].status = 9; //  MULTIPLYING BY GAINS
 
 
     AOconf[loop].RMSmodes = 0;
@@ -3770,21 +3777,12 @@ int AOloopControl_run()
 	
 	
 
-				AOconf[loop].status = 7;
+				AOconf[loop].status = 10;
 
-                if(fabs(AOconf[loop].gain)>1.0e-6)
-                {
+                if(fabs(AOconf[loop].gain)>1.0e-6)                
                     set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
-
-//                    a = 0.1;
-  //                  while(cnttest==data.image[aoconfID_DM].md[0].cnt0)  // wait for results (only useful for GPU)
-    //                {
-      //                  a = sqrt(a+0.1);
-        //            }
-                }
-          //      usleep(100); // max 10000kHz
 	
-                AOconf[loop].status = 8; //  LOGGING, part 1
+                AOconf[loop].status = 12; //  LOGGING, part 1
 
                 clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
                 AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
@@ -3816,7 +3814,7 @@ int AOloopControl_run()
                 }
 
 
-                AOconf[loop].status = 9; //  LOGGING, part 2
+                AOconf[loop].status = 13; //  LOGGING, part 2
 
                 AOconf[loop].logcnt++;
                 if(AOconf[loop].logcnt==AOconf[loop].logsize)
