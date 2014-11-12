@@ -791,6 +791,8 @@ double arith_image_total(char *ID_name)
   return((double) value);
 }
 
+
+
 double arith_image_mean(char *ID_name)
 {
   double value;
@@ -1261,6 +1263,89 @@ int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(
 
 
 
+
+int arith_image_function_1_1_byID(long ID, long IDout, double (*pt2function)(double))
+{
+  long *naxes = NULL;
+  long naxis;
+  long ii;
+  long nelement;
+  int atype, atypeout;
+  long i;
+
+  //  printf("arith_image_function_1_1\n");
+
+  atype = data.image[ID].md[0].atype;
+  naxis=data.image[ID].md[0].naxis;
+  naxes = (long*) malloc(sizeof(long)*naxis);
+  if(naxes==NULL)
+     {
+       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+       exit(0);
+     }
+
+
+  for(i=0;i<naxis;i++)
+    {
+      naxes[i] = data.image[ID].md[0].size[i];
+    }
+  
+
+  atypeout = FLOAT;
+  if(atype==DOUBLE)
+    atypeout = DOUBLE;
+
+  free(naxes);
+
+  nelement = data.image[ID].md[0].nelement;
+ 
+ 
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) 
+  {
+  # endif
+
+
+  if(atype==CHAR)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]));
+    }
+  if(atype==INT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]));
+    }
+  if(atype==FLOAT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+      	data.image[IDout].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]));
+    }
+  if(atype==DOUBLE)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[IDout].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]));
+    }
+  # ifdef _OPENMP
+  }
+  # endif
+
+  return(0);
+}
+
+
 int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(double))
 {
   long ID;
@@ -1346,6 +1431,81 @@ int arith_image_function_1_1(char *ID_name, char *ID_out, double (*pt2function)(
   return(0);
 }
 
+
+
+
+
+
+
+// imagein -> imagein (in place)
+int arith_image_function_1_1_inplace_byID(long ID, double (*pt2function)(double))
+{
+  long ii;
+  long nelement;
+  int atype, atypeout;
+
+  // printf("arith_image_function_1_1_inplace\n");
+
+  atype = data.image[ID].md[0].atype;
+
+  atypeout = atype;
+  if(atype==DOUBLE)
+    atypeout = DOUBLE;
+
+  nelement = data.image[ID].md[0].nelement;
+
+  data.image[ID].md[0].write = 0;
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  {
+  #endif
+
+  if(atype==CHAR)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]));
+    }
+  if(atype==INT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]));
+    }
+  if(atype==FLOAT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]));
+    }
+  if(atype==DOUBLE)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]));
+    }
+  
+  # ifdef _OPENMP
+  }
+  # endif
+
+  data.image[ID].md[0].write = 0;
+  data.image[ID].md[0].cnt0++;
+
+  return(0);
+}
+
+
+
+
 // imagein -> imagein (in place)
 int arith_image_function_1_1_inplace(char *ID_name, double (*pt2function)(double))
 {
@@ -1415,6 +1575,12 @@ int arith_image_function_1_1_inplace(char *ID_name, double (*pt2function)(double
 }
 
 
+
+
+
+
+
+
 double Pacos(double a) {return((double) acos(a));}
 double Pasin(double a) {return((double) asin(a));}
 double Patan(double a) {return((double) atan(a));}
@@ -1441,6 +1607,24 @@ return(value);
 }
 
 
+int arith_image_acos_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pacos); return(0);}
+int arith_image_asin_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pasin); return(0);}
+int arith_image_atan_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Patan); return(0);}
+int arith_image_ceil_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pceil); return(0);}
+int arith_image_cos_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pcos); return(0);}
+int arith_image_cosh_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pcosh); return(0);}
+int arith_image_exp_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pexp); return(0);}
+int arith_image_fabs_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pfabs); return(0);}
+int arith_image_floor_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pfloor); return(0);}
+int arith_image_ln_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Pln); return(0);}
+int arith_image_log_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Plog); return(0);}
+int arith_image_sqrt_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Psqrt); return(0);}
+int arith_image_sin_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Psin); return(0);}
+int arith_image_sinh_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Psinh); return(0);}
+int arith_image_tan_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Ptan); return(0);}
+int arith_image_tanh_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Ptanh); return(0);}
+int arith_image_positive_byID(long ID, long IDout){ arith_image_function_1_1_byID(ID,IDout,&Ppositive); return(0);}
+
 int arith_image_acos(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_name,ID_out,&Pacos); return(0);}
 int arith_image_asin(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_name,ID_out,&Pasin); return(0);}
 int arith_image_atan(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_name,ID_out,&Patan); return(0);}
@@ -1458,6 +1642,31 @@ int arith_image_sinh(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_n
 int arith_image_tan(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_name,ID_out,&Ptan); return(0);}
 int arith_image_tanh(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_name,ID_out,&Ptanh); return(0);}
 int arith_image_positive(char *ID_name, char *ID_out){ arith_image_function_1_1(ID_name,ID_out,&Ppositive); return(0);}
+
+
+
+
+
+
+
+
+int arith_image_acos_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pacos); return(0);}
+int arith_image_asin_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pasin); return(0);}
+int arith_image_atan_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Patan); return(0);}
+int arith_image_ceil_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pceil); return(0);}
+int arith_image_cos_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pcos); return(0);}
+int arith_image_cosh_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pcosh); return(0);}
+int arith_image_exp_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pexp); return(0);}
+int arith_image_fabs_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pfabs); return(0);}
+int arith_image_floor_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pfloor); return(0);}
+int arith_image_ln_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Pln); return(0);}
+int arith_image_log_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Plog); return(0);}
+int arith_image_sqrt_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Psqrt); return(0);}
+int arith_image_sin_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Psin); return(0);}
+int arith_image_sinh_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Psinh); return(0);}
+int arith_image_tan_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Ptan); return(0);}
+int arith_image_tanh_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Ptanh); return(0);}
+int arith_image_positive_inplace_byID(long ID){ arith_image_function_1_1_inplace_byID(ID,&Ppositive); return(0);}
 
 int arith_image_acos_inplace(char *ID_name){ arith_image_function_1_1_inplace(ID_name,&Pacos); return(0);}
 int arith_image_asin_inplace(char *ID_name){ arith_image_function_1_1_inplace(ID_name,&Pasin); return(0);}
@@ -1619,6 +1828,11 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
   return(0);
 }
 
+
+
+
+
+
 int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
 {
   long ID1,ID2;
@@ -1718,6 +1932,118 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
 }
 
 
+
+
+
+
+
+
+int arith_image_function_2_1_inplace_byID(long ID1, long ID2, double (*pt2function)(double,double))
+{
+  long ii;
+  long nelement1,nelement2,nelement;
+  int atype1,atype2;
+  int n;
+  
+  atype1 = data.image[ID1].md[0].atype;
+  atype2 = data.image[ID2].md[0].atype;
+  nelement1 = data.image[ID1].md[0].nelement;
+  nelement2 = data.image[ID2].md[0].nelement;
+
+  nelement = nelement1;
+  if(nelement1!=nelement2)
+    {
+      n = snprintf(errmsg,SBUFFERSIZE,"images ID %ld and %ld have different number of elements\n",ID1,ID2);
+      if(n >= SBUFFERSIZE) 
+	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+      printERROR(__FILE__,__func__,__LINE__,errmsg);
+      exit(0);
+    }
+  
+  data.image[ID1].md[0].write = 1;
+  
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  {  
+  # endif
+  if((atype1==CHAR)&&(atype2==CHAR))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID1].array.F[ii] = pt2function((double) (data.image[ID1].array.C[ii]),(double) (data.image[ID2].array.C[ii]));
+    }
+  if((atype1==INT)&&(atype2==INT))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID1].array.F[ii] = pt2function((double) (data.image[ID1].array.I[ii]),(double) (data.image[ID2].array.I[ii]));
+    }
+  if((atype1==FLOAT)&&(atype2==FLOAT))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID1].array.F[ii] = pt2function((double) (data.image[ID1].array.F[ii]),(double) (data.image[ID2].array.F[ii]));
+    }
+  if((atype1==DOUBLE)&&(atype2==DOUBLE))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID1].array.D[ii] = pt2function((double) (data.image[ID1].array.D[ii]),(double) (data.image[ID2].array.D[ii]));
+    }
+
+  if((atype1==COMPLEX_FLOAT)&&(atype2==COMPLEX_FLOAT))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	{
+	  data.image[ID1].array.CF[ii].re = pt2function((double) (data.image[ID1].array.CF[ii].re),(double) (data.image[ID2].array.CF[ii].re));
+	  data.image[ID1].array.CF[ii].im = pt2function((double) (data.image[ID1].array.CF[ii].im),(double) (data.image[ID2].array.CF[ii].im));
+	}
+    }
+
+  if((atype1==COMPLEX_DOUBLE)&&(atype2==COMPLEX_DOUBLE))
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	{
+	  data.image[ID1].array.CD[ii].re = pt2function((double) (data.image[ID1].array.CD[ii].re),(double) (data.image[ID2].array.CD[ii].re));
+	  data.image[ID1].array.CD[ii].im = pt2function((double) (data.image[ID1].array.CD[ii].im),(double) (data.image[ID2].array.CD[ii].im));
+	}
+    }
+
+  # ifdef _OPENMP
+  }
+  # endif
+
+  data.image[ID1].md[0].write = 0;
+  data.image[ID1].md[0].cnt0++;
+
+  return(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 double Pfmod(double a, double b) {return((double) fmod(a,b));}
 double Ppow(double a, double b) {if(b>0){return((double) pow(a,b));}else{return((double) pow(a,-b));}}
 double Padd(double a, double b) {return((double) a+b);}
@@ -1749,12 +2075,24 @@ int arith_image_fmod_inplace(char *ID1_name, char *ID2_name){ arith_image_functi
 int arith_image_pow_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Ppow); return(0);}
 int arith_image_add_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Padd); return(0);}
 int arith_image_sub_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Psub); return(0);}
-int arith_image_mult_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Pmult); return(0);}
+int arith_image_mult_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name, &Pmult); return(0);}
 int arith_image_div_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Pdiv); return(0);}
 int arith_image_minv_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Pminv); return(0);}
 int arith_image_maxv_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Pmaxv); return(0);}
 int arith_image_testlt_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Ptestlt); return(0);}
 int arith_image_testmt_inplace(char *ID1_name, char *ID2_name){ arith_image_function_2_1_inplace(ID1_name,ID2_name,&Ptestmt); return(0);}
+
+
+int arith_image_fmod_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Pfmod); return(0);}
+int arith_image_pow_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Ppow); return(0);}
+int arith_image_add_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Padd); return(0);}
+int arith_image_sub_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Psub); return(0);}
+int arith_image_mult_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2, &Pmult); return(0);}
+int arith_image_div_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Pdiv); return(0);}
+int arith_image_minv_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Pminv); return(0);}
+int arith_image_maxv_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Pmaxv); return(0);}
+int arith_image_testlt_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Ptestlt); return(0);}
+int arith_image_testmt_inplace_byID(long ID1, long ID2){ arith_image_function_2_1_inplace_byID(ID1,ID2,&Ptestmt); return(0);}
 
 
 
@@ -2117,6 +2455,9 @@ int arith_image_function_1f_1(char *ID_name, double f1, char *ID_out, double (*p
   return(0);
 }
 
+
+
+
 int arith_image_function_1f_1_inplace(char *ID_name, double f1, double (*pt2function)(double,double))
 {
   long ID;
@@ -2173,6 +2514,67 @@ int arith_image_function_1f_1_inplace(char *ID_name, double f1, double (*pt2func
 
 
 
+// by ID ... slightly faster
+int arith_image_function_1f_1_inplace_byID(long ID, double f1, double (*pt2function)(double,double))
+{
+  long ii;
+  long nelement;
+  int atype;
+
+  atype = data.image[ID].md[0].atype;
+  nelement = data.image[ID].md[0].nelement;
+  
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  {
+  # endif
+  if(atype==CHAR)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1);
+    }
+  if(atype==INT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1);
+    }
+  if(atype==FLOAT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]),f1);
+    }
+  if(atype==DOUBLE)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.D[ii] = (double) pt2function((double) (data.image[ID].array.D[ii]),f1);
+    }
+  # ifdef _OPENMP
+  }
+  # endif
+
+  return(0);
+}
+
+
+
+
+
+
+
+
+
 int arith_image_cstfmod(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Pfmod); return(0);}
 int arith_image_cstadd(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Padd); return(0);}
 int arith_image_cstsub(char *ID_name, double f1, char *ID_out){ arith_image_function_1f_1(ID_name,f1,ID_out,&Psub); return(0);}
@@ -2197,6 +2599,18 @@ int arith_image_cstmaxv_inplace(char *ID_name, double f1){ arith_image_function_
 int arith_image_cstminv_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Pminv); return(0);}
 int arith_image_csttestlt_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ptestlt); return(0);}
 int arith_image_csttestmt_inplace(char *ID_name, double f1){ arith_image_function_1f_1_inplace(ID_name,f1,&Ptestmt); return(0);}
+
+int arith_image_cstfmod_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Pfmod); return(0);}
+int arith_image_cstadd_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Padd); return(0);}
+int arith_image_cstsub_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Psub); return(0);}
+int arith_image_cstmult_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Pmult); return(0);}
+int arith_image_cstdiv_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Pdiv); return(0);}
+int arith_image_cstdiv1_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Pdiv1); return(0);}
+int arith_image_cstpow_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Ppow); return(0);}
+int arith_image_cstmaxv_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Pmaxv); return(0);}
+int arith_image_cstminv_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Pminv); return(0);}
+int arith_image_csttestlt_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Ptestlt); return(0);}
+int arith_image_csttestmt_inplace_byID(long ID, double f1){ arith_image_function_1f_1_inplace_byID(ID,f1,&Ptestmt); return(0);}
 
 
 
@@ -2334,12 +2748,65 @@ int arith_image_function_1ff_1_inplace(char *ID_name, double f1, double f2, doub
   return(0);
 }
 
+int arith_image_function_1ff_1_inplace_byID(long ID, double f1, double f2, double (*pt2function)(double,double,double))
+{
+  long ii;
+  long nelement;
+  int atype;
+
+  atype = data.image[ID].md[0].atype;
+  nelement = data.image[ID].md[0].nelement;
+  
+  # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  {
+  # endif
+  if(atype==CHAR)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif 
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.C[ii]),f1,f2);
+    }
+  if(atype==INT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif 
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.I[ii]),f1,f2);
+    }
+  if(atype==FLOAT)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif 
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.F[ii]),f1,f2);
+    }
+  if(atype==DOUBLE)
+    {
+      # ifdef _OPENMP
+      #pragma omp for
+      # endif 
+      for (ii = 0; ii < nelement; ii++)
+	data.image[ID].array.F[ii] = pt2function((double) (data.image[ID].array.D[ii]),f1,f2);
+    }
+  # ifdef _OPENMP
+  }
+  # endif
+
+  return(0);
+}
+
 
 double Ptrunc(double a, double b, double c) {double value; value=a; if(a<b){value=b;}; if(a>c){value=c;}; return(value);}
 
 int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out){ arith_image_function_1ff_1(ID_name, f1, f2, ID_out, &Ptrunc); return(0);}
 
 int arith_image_trunc_inplace(char *ID_name, double f1, double f2) { arith_image_function_1ff_1_inplace(ID_name,f1,f2,&Ptrunc); return(0);}
+int arith_image_trunc_inplace_byID(long ID, double f1, double f2) { arith_image_function_1ff_1_inplace_byID(ID,f1,f2,&Ptrunc); return(0);}
 
 
 

@@ -1735,8 +1735,30 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 	
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
+
+//	arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
+
+     # ifdef _OPENMP
+	#pragma omp parallel 
+	{
+	# endif
+
+     # ifdef _OPENMP
+      #pragma omp for
+      # endif
+ for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+
+ # ifdef _OPENMP
+  }
+  # endif
+
+
+
+
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 0;
 
