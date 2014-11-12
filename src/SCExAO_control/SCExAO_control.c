@@ -58,7 +58,7 @@ long SCExAO_Pcam_Xpos0 = 170000;
 long SCExAO_Pcam_Ypos0 = 66000;
 long SCExAO_Pcam_Xpos = 170000;
 long SCExAO_Pcam_Ypos = 66000;
-long SCExAO_Pcam_Range = 5000;
+long SCExAO_Pcam_Range = 20000;
 
 float SCExAO_PZT_STAGE_Xpos = -5.0;
 float SCExAO_PZT_STAGE_Xpos_min = -6.5;
@@ -779,9 +779,9 @@ while(file_exist ("stop_PyAlignCam.txt")==0)
 		SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0+SCExAO_Pcam_Range;
 
 	if (SCExAO_Pcam_Xpos<SCExAO_Pcam_Xpos0-SCExAO_Pcam_Range)
-		SCExAO_Pcam_Xpos = SCExAO_Pcam_Xpos0+SCExAO_Pcam_Range;
+		SCExAO_Pcam_Xpos = SCExAO_Pcam_Xpos0-SCExAO_Pcam_Range;
 	if (SCExAO_Pcam_Ypos<SCExAO_Pcam_Ypos0-SCExAO_Pcam_Range)
-		SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0+SCExAO_Pcam_Range;
+		SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0-SCExAO_Pcam_Range;
 
 	/// write stages position
 	fp = fopen("./status/pcampos.txt", "w");
