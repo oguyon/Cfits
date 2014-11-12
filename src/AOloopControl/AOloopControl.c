@@ -1738,7 +1738,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 //	arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
 
-     # ifdef _OPENMP
+    /* # ifdef _OPENMP
 	#pragma omp parallel 
 	{
 	# endif
@@ -1746,13 +1746,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
      # ifdef _OPENMP
       #pragma omp for
       # endif
- for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+	*/
+	for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
- # ifdef _OPENMP
+/* # ifdef _OPENMP
   }
   # endif
-
+*/
 
 
 
