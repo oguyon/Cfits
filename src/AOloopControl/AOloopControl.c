@@ -1574,6 +1574,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     double tmpf;
     long IDdark;
     char dname[200];
+	long nelem;
 
     atype = data.image[aoconfID_WFS].md[0].atype;
 
@@ -1749,8 +1750,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
       #pragma omp for
       # endif
 	*/
+	nelem = AOconf[loop].sizeWFS;
 	#pragma omp parallel for
-	for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+	for(ii=0; ii<nelem; ii++)
         data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
 
 /* # ifdef _OPENMP
