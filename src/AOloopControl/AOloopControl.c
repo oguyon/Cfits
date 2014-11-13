@@ -2172,6 +2172,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     // Connect to DM
     // Here the DM size is fixed
     //
+    
+    
     aoconfID_DM = image_ID(AOconf[loop].DMname);
     if(aoconfID_DM==-1)
     {
@@ -2214,6 +2216,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     if(aoconfID_DMmodes==-1) // If not, check file
     {
 
+		printf("Checking file ./conf/fmodes.fits\n");
 
         // GET SIZE FROM FILE
         ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim");
@@ -2240,7 +2243,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             exit(0);
         }
         AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
-
+		printf("NUMBER OF MODES = %ld\n", AOconf[loop].NBDMmodes);
 
         // try to read it from shared memory
         ID2tmp = read_sharedmem_image(AOconf[loop].DMMODESname);
