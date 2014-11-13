@@ -1207,7 +1207,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     long xsize_modes, ysize_modes, zsize_modes;
     long IDeigenmodesResp;
     long kk, kk1;
-
+	long ID_RMmask;
 
 	double *CPAcoeff; /// gain applied to modes to enhance low orders in SVD
 	
@@ -1226,10 +1226,21 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
-
-    n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1]; //AOconf[loop].NBDMmodes;
+ 
+ 
+     n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1]; //AOconf[loop].NBDMmodes;
     m = data.image[ID_Rmatrix].md[0].size[2]; //AOconf[loop].sizeWFS;
 
+    
+    ID_RMmask = image_ID("RMmask");
+    if(ID_RMmask!=-1) // apply mask to response matrix
+    {
+		for(kk=0;kk<m;kk++)
+			{
+				for(ii=0;ii<n;ii++)
+					data.image[ID_Rmatrix].array.F[kk*n+ii] *= data.image[ID_RMmask].array.F[ii];
+			}
+	}
 
 	
 
@@ -2586,7 +2597,7 @@ int set_DM_modes(long loop)
     {
 		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
-        AOconf[loop].status = 8;
+        AOconf[loop].status = 11;
         GPU_loop_MultMat_execute(1);
         #endif
     }
