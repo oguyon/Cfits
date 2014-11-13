@@ -1713,8 +1713,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             ptrv = (char*) data.image[aoconfID_WFS].array.U;
             ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
             memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[aoconfID_WFS0].array.F[ii] = (float) arrayutmp[ii];
+         //   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            //    data.image[aoconfID_WFS0].array.F[ii] = (float) arrayutmp[ii];
             break;
         default :
             printf("ERROR: DATA TYPE NOT SUPPORTED\n");
@@ -1732,6 +1732,11 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     // Dark subtract
     sprintf(dname, "aol%ld_wfsdark", loop); 
     IDdark = image_ID(dname);
+ 
+
+	 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+          data.image[aoconfID_WFS0].array.F[ii] = 1.0*arrayutmp[ii]- data.image[IDdark].array.F[ii];
+ 
   //  if(IDdark!=-1)
    // {
     //    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
