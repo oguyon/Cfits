@@ -553,19 +553,19 @@ int GPU_loop_MultMat_execute(int index)
         gpumatmultconf[index].thdata[ptn].thread_no = ptn;
         gpumatmultconf[index].thdata[ptn].numl0 = ptn*ptn;
 		gpumatmultconf[index].thdata[ptn].cindex = index;
-    //    gpumatmultconf[index].iret[ptn] = pthread_create( &gpumatmultconf[index].threadarray[ptn], NULL, compute_function, (void*) &gpumatmultconf[index].thdata[ptn]);
-      /*  if(gpumatmultconf[index].iret[ptn])
+        gpumatmultconf[index].iret[ptn] = pthread_create( &gpumatmultconf[index].threadarray[ptn], NULL, compute_function, (void*) &gpumatmultconf[index].thdata[ptn]);
+        if(gpumatmultconf[index].iret[ptn])
         {
             fprintf(stderr,"Error - pthread_create() return code: %d\n", gpumatmultconf[index].iret[ptn]);
             exit(EXIT_FAILURE);
-        }*/
+        }
     }
 
 
 
-/*    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
-*/
+
 
 
 	for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
@@ -649,6 +649,7 @@ void *compute_function( void *ptr )
     device = thdata->thread_no;
     index = thdata->cindex;
 
+/*
     for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
         gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
 
@@ -703,7 +704,7 @@ void *compute_function( void *ptr )
 
 //    for(m=0; m<gpumatmultconf[index].M; m++)
   //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
-
+*/
     pthread_exit(0);
 }
 
