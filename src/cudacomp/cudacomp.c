@@ -641,7 +641,7 @@ int GPU_loop_MultMat_free(int index)
 
 void *compute_function( void *ptr )
 {
- /*   THDATA *thdata;
+    THDATA *thdata;
     int device;
     int n, m;
     int index;
@@ -705,7 +705,7 @@ void *compute_function( void *ptr )
 
 //    for(m=0; m<gpumatmultconf[index].M; m++)
   //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
-*/
+
     pthread_exit(0);
 }
 
