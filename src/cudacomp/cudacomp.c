@@ -573,6 +573,12 @@ for(m=0; m<gpumatmultconf[index].M; m++)
 			for(m=0; m<gpumatmultconf[index].M; m++)
 				gpumatmultconf[index].dmVecTMP[m] += 1.0+gpumatmultconf[index].dmVec_part[ptn][m];
 		}
+		
+		if(gpumatmultconf[index].NBstreams!=6)
+			{
+				printf("gpumatmultconf[index].NBstreams = %d\n",  gpumatmultconf[index].NBstreams);
+				exit(0);
+			}
 	
 	//for(m=0; m<gpumatmultconf[index].M; m++)
 		//gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
