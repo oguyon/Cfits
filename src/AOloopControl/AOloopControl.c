@@ -1732,11 +1732,11 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     // Dark subtract
     sprintf(dname, "aol%ld_wfsdark", loop); 
     IDdark = image_ID(dname);
-    if(IDdark!=-1)
-    {
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
-    }
+  //  if(IDdark!=-1)
+   // {
+    //    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+     //       data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
+    //}
 
 	AOconf[loop].status = 4; // 4: COMPUTE TOTAL OF IMAGE
  
@@ -2243,6 +2243,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
             exit(0);
         }
         AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
+
 		printf("NUMBER OF MODES = %ld\n", AOconf[loop].NBDMmodes);
 
         // try to read it from shared memory
