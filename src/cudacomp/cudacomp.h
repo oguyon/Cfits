@@ -41,6 +41,9 @@ typedef struct
     int M;
     int N;
 
+
+
+
     // computer memory (host)
     float *cMat;
     float **cMat_part;
