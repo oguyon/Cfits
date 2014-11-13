@@ -546,7 +546,8 @@ int GPU_loop_MultMat_execute(int index)
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.01;
 */
-
+for(m=0; m<gpumatmultconf[index].M; m++)
+		gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.25;
     
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
@@ -574,8 +575,8 @@ int GPU_loop_MultMat_execute(int index)
 				gpumatmultconf[index].dmVecTMP[m] += 1.0+gpumatmultconf[index].dmVec_part[ptn][m];
 		}
 	
-	for(m=0; m<gpumatmultconf[index].M; m++)
-		gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
+	//for(m=0; m<gpumatmultconf[index].M; m++)
+		//gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
 
 /*
      for(m=0;m<M;m++)
