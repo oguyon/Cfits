@@ -559,9 +559,10 @@ int GPU_loop_MultMat_execute(int index)
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-    //	  usleep(100);
+    	  usleep(100);
 
-    /*	  for(m=0;m<M;m++)
+/*
+     for(m=0;m<M;m++)
       tot += dmVec[m]*dmVec[m];
     if(tot<0.0000001)
       printf("DETECTED EMPTY OUTPUT %g\n", tot);
