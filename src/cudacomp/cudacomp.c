@@ -527,6 +527,7 @@ int GPU_loop_MultMat_execute(int index)
     int m;
     int ptn;
 
+	
 	if(index==0) /// main CM multiplication loop
 		if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
 			if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
@@ -537,7 +538,7 @@ int GPU_loop_MultMat_execute(int index)
 				}
 
     for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] = 0.01;
+        gpumatmultconf[index].dmVecTMP[m] = 0.0;
 
 
     /* Create independent threads each of which will execute function */
@@ -560,6 +561,12 @@ int GPU_loop_MultMat_execute(int index)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
     	//  usleep(100);
+
+	for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+		{
+			for(m=0; m<gpumatmultconf[index].M; m++)
+				gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
+		}
 
 /*
      for(m=0;m<M;m++)
@@ -685,8 +692,8 @@ void *compute_function( void *ptr )
         exit(EXIT_FAILURE);
     }
 
-    for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] += 1.0; //gpumatmultconf[index].dmVec_part[device][m];
+//    for(m=0; m<gpumatmultconf[index].M; m++)
+  //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
 
     pthread_exit(0);
 }
