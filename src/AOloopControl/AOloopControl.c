@@ -4115,10 +4115,10 @@ int AOloopControl_statusStats()
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory(1);
   
-  printf("Measyuring loop status distribution \n");
+  printf("Measuring loop status distribution \n");
   fflush(stdout);
 
-  statuscnt = (long*) malloc(sizeof(long));
+  statuscnt = (long*) malloc(sizeof(long)*statusmax);
 
   for(st=0;st<statusmax;st++)
     statuscnt[st] = 0;
