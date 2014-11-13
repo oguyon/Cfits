@@ -1741,28 +1741,24 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 //	arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
 
-    /* # ifdef _OPENMP
-	#pragma omp parallel 
-	{
-	# endif
 
-     # ifdef _OPENMP
+	nelem = AOconf[loop].sizeWFS;
+	//#pragma omp parallel for
+
+ # ifdef _OPENMP
+  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  {  
+  # endif
+
+  # ifdef _OPENMP
       #pragma omp for
       # endif
-	*/
-	nelem = AOconf[loop].sizeWFS;
-	#pragma omp parallel for
 	for(ii=0; ii<nelem; ii++)
         data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
-
-/* # ifdef _OPENMP
+   # ifdef _OPENMP
   }
   # endif
-*/
 
-
-
-  
 
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 0;
