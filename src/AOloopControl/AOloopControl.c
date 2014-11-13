@@ -1746,7 +1746,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 	//#pragma omp parallel for
 
  # ifdef _OPENMP
-  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+  #pragma omp parallel if (nelem>OMP_NELEMENT_LIMIT)
   {  
   # endif
 
