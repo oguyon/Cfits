@@ -3766,9 +3766,9 @@ int AOloopControl_run()
 
 
     schedpar.sched_priority = RT_priority;
-    r = seteuid(euid_called); //This goes up to maximum privileges
+   // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    r = seteuid(euid_real);//Go back to normal privileges
+   // r = seteuid(euid_real);//Go back to normal privileges
 
     loop = LOOPNUMBER;
 
@@ -4128,12 +4128,22 @@ int AOloopControl_statusStats()
   long *statuscnt;
   float usec0, usec1;
   int st;
+  int RT_priority = 91; //any number from 0-99
+  struct sched_param schedpar;
+ 
 
   usec0 = 50.0; 
   usec1 = 150.0;
 
+
+
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory(1);
+  
+    schedpar.sched_priority = RT_priority;
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+
+  
   
   printf("Measuring loop status distribution \n");
   fflush(stdout);
