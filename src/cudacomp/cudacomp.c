@@ -545,7 +545,7 @@ int GPU_loop_MultMat_execute(int index)
 /*	
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.01;
-
+*/
 
     
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
@@ -553,19 +553,19 @@ int GPU_loop_MultMat_execute(int index)
         gpumatmultconf[index].thdata[ptn].thread_no = ptn;
         gpumatmultconf[index].thdata[ptn].numl0 = ptn*ptn;
 		gpumatmultconf[index].thdata[ptn].cindex = index;
-        gpumatmultconf[index].iret[ptn] = pthread_create( &gpumatmultconf[index].threadarray[ptn], NULL, compute_function, (void*) &gpumatmultconf[index].thdata[ptn]);
-        if(gpumatmultconf[index].iret[ptn])
+    //    gpumatmultconf[index].iret[ptn] = pthread_create( &gpumatmultconf[index].threadarray[ptn], NULL, compute_function, (void*) &gpumatmultconf[index].thdata[ptn]);
+      /*  if(gpumatmultconf[index].iret[ptn])
         {
             fprintf(stderr,"Error - pthread_create() return code: %d\n", gpumatmultconf[index].iret[ptn]);
             exit(EXIT_FAILURE);
-        }
+        }*/
     }
 
 
 
-    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+/*    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
-
+*/
 
 
 	for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
@@ -573,7 +573,7 @@ int GPU_loop_MultMat_execute(int index)
 			for(m=0; m<gpumatmultconf[index].M; m++)
 				gpumatmultconf[index].dmVecTMP[m] += 1.0+gpumatmultconf[index].dmVec_part[ptn][m];
 		}
-	*/
+	
 	for(m=0; m<gpumatmultconf[index].M; m++)
 		gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
 
