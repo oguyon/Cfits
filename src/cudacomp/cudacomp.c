@@ -559,7 +559,7 @@ int GPU_loop_MultMat_execute(int index)
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-    	  usleep(100);
+    	//  usleep(100);
 
 /*
      for(m=0;m<M;m++)
@@ -686,7 +686,7 @@ void *compute_function( void *ptr )
     }
 
     for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
+        gpumatmultconf[index].dmVecTMP[m] += 1.0; //gpumatmultconf[index].dmVec_part[device][m];
 
     pthread_exit(0);
 }
