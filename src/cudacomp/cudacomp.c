@@ -528,7 +528,11 @@ int GPU_loop_MultMat_execute(int index)
     int ptn;
 
 	
+	
+	
 	if(index==0) /// main CM multiplication loop
+	{
+		gpumatmultconf[index].NBstreams = 6;
 		if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
 			if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
 				{
@@ -536,7 +540,9 @@ int GPU_loop_MultMat_execute(int index)
 					GPUloadCmat(index);
 					gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
 				}
-
+	}
+	
+	
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.01;
 
