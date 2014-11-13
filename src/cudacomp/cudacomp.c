@@ -644,12 +644,11 @@ void *compute_function( void *ptr )
     int n, m;
     int index;
 
-
+/*
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
     index = thdata->cindex;
 
-/*
     for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
         gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
 
