@@ -542,12 +542,12 @@ int GPU_loop_MultMat_execute(int index)
 				}
 	}
 	
-	
+/*	
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.01;
 
 
-    /* Create independent threads each of which will execute function */
+    
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
         gpumatmultconf[index].thdata[ptn].thread_no = ptn;
@@ -566,14 +566,14 @@ int GPU_loop_MultMat_execute(int index)
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-    	//  usleep(100);
+
 
 	for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
 		{
 			for(m=0; m<gpumatmultconf[index].M; m++)
 				gpumatmultconf[index].dmVecTMP[m] += 1.0+gpumatmultconf[index].dmVec_part[ptn][m];
 		}
-	
+	*/
 	for(m=0; m<gpumatmultconf[index].M; m++)
 		gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.1;
 
