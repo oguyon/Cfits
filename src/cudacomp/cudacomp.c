@@ -528,7 +528,7 @@ int GPU_loop_MultMat_execute(int index)
     int ptn;
 
 	
-	gpumatmultconf[index].NBstreams = 6;
+	//gpumatmultconf[index].NBstreams = 6;
 	
 	if(index==0) /// main CM multiplication loop
 	{
@@ -560,21 +560,19 @@ int GPU_loop_MultMat_execute(int index)
             exit(EXIT_FAILURE);
         }
     }
-
-
  
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
 for(m=0; m<gpumatmultconf[index].M; m++)
-		gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.35;
+		gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
 
-	/*for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+	for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
 		{
 			for(m=0; m<gpumatmultconf[index].M; m++)
 				gpumatmultconf[index].dmVecTMP[m] += 1.0+gpumatmultconf[index].dmVec_part[ptn][m];
-		}*/
+		}
 	
 	//for(m=0; m<gpumatmultconf[index].M; m++)
 		//gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
