@@ -4152,7 +4152,7 @@ int AOloopControl_statusStats()
     }
   
   for(st=0;st<statusmax;st++)
-    printf("STATUS %2d     %5.2f %%\n", st, 100.0*statuscnt[st]/NBkiter);
+    printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ] \n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter);
     
   free(statuscnt);
   
