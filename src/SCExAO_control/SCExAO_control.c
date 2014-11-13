@@ -46,6 +46,7 @@ extern DATA data;
 
 
 /// CONFIGURATION
+/// CONFIGURATION
 char WFScam_name[200];
 long long WFScnt = 0;
 

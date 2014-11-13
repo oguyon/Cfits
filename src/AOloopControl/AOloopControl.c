@@ -4141,7 +4141,7 @@ int AOloopControl_statusStats()
     AOloopControl_InitializeMemory(1);
   
     schedpar.sched_priority = RT_priority;
-    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    sched_setscheduler(0, SCHED_FIFO, &schedpar);
 
   
   
