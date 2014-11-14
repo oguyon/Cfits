@@ -9,6 +9,8 @@ var searchData=
   ['image_5fgen_2dutil_2ec',['image_gen-util.c',['../image__gen-util_8c.html',1,'']]],
   ['image_5fgen_2ec',['image_gen.c',['../image__gen_8c.html',1,'']]],
   ['image_5fgen_2eh',['image_gen.h',['../image__gen_8h.html',1,'']]],
+  ['img_5freduce_2ec',['img_reduce.c',['../img__reduce_8c.html',1,'']]],
+  ['img_5freduce_2eh',['img_reduce.h',['../img__reduce_8h.html',1,'']]],
   ['info_2ec',['info.c',['../info_8c.html',1,'']]],
   ['info_2eh',['info.h',['../info_8h.html',1,'']]],
   ['initmodules_2ec',['initmodules.c',['../initmodules_8c.html',1,'']]],

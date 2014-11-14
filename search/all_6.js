@@ -10,7 +10,6 @@ var searchData=
   ['eob_5fact_5fend_5fof_5ffile',['EOB_ACT_END_OF_FILE',['../calc__flex_8c.html#a7f71d7fa2c403eb4b2f38cb9536f3c63',1,'calc_flex.c']]],
   ['eob_5fact_5flast_5fmatch',['EOB_ACT_LAST_MATCH',['../calc__flex_8c.html#ad1a0b5ebcabffe388e9e9ebb2619c1fb',1,'calc_flex.c']]],
   ['errmsg',['errmsg',['../COREMOD__arith_8c.html#a8bb845778df5ade66dd9af426128a622',1,'errmsg():&#160;COREMOD_arith.c'],['../COREMOD__memory_8c.html#a8bb845778df5ade66dd9af426128a622',1,'errmsg():&#160;COREMOD_memory.c'],['../image__basic_8c.html#a8bb845778df5ade66dd9af426128a622',1,'errmsg():&#160;image_basic.c']]],
-  ['error',['error',['../cudacomp_8c.html#a2bf00f52622132f94d971b3baac4920c',1,'cudacomp.c']]],
   ['errormessage',['errormessage',['../COREMOD__iofits_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207',1,'errormessage():&#160;COREMOD_iofits.c'],['../COREMOD__tools_8c.html#a5d8f2e60f7f536436d04e2f6e5b4d207',1,'errormessage():&#160;COREMOD_tools.c']]],
   ['euid_5fcalled',['euid_called',['../CLIcore_8h.html#a8a11142864e6c378d6c8268335b965ec',1,'CLIcore.h']]],
   ['euid_5freal',['euid_real',['../CLIcore_8h.html#afcdbfc486152403a8152045c561db794',1,'CLIcore.h']]],

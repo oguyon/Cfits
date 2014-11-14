@@ -4,6 +4,7 @@ var structAOLOOPCONTROL__CONF =
     [ "cntmax", "structAOLOOPCONTROL__CONF.html#ad4cb2885deacdf16276144a9384e86fa", null ],
     [ "contrMname", "structAOLOOPCONTROL__CONF.html#a30b003e3e71280aa46e5423021f3c807", null ],
     [ "DarkLevel", "structAOLOOPCONTROL__CONF.html#ab68c979746a1ac6e411a367121fc3633", null ],
+    [ "DMMODESname", "structAOLOOPCONTROL__CONF.html#aae8fddca77092d6c3c92120032ea878c", null ],
     [ "DMname", "structAOLOOPCONTROL__CONF.html#a38c12b5e2727e677d6f1b27e96ac0b9d", null ],
     [ "DMnameRM", "structAOLOOPCONTROL__CONF.html#abcec40ab158c6bb74e9f84a9c9e28ff7", null ],
     [ "DMupdatecnt", "structAOLOOPCONTROL__CONF.html#a2f0776bf6fa997f833865d25ef5b1b93", null ],
@@ -35,6 +36,7 @@ var structAOLOOPCONTROL__CONF =
     [ "RMSmodes", "structAOLOOPCONTROL__CONF.html#ad57090b2c42760337dcf977cd0c18a18", null ],
     [ "RMSmodesCumul", "structAOLOOPCONTROL__CONF.html#a418390c0a9b27dfb88bf290d420b8466", null ],
     [ "RMSmodesCumulcnt", "structAOLOOPCONTROL__CONF.html#aee12f4f173156acefeb6c4705ae6a8b6", null ],
+    [ "RMstatus", "structAOLOOPCONTROL__CONF.html#a8041e3145f9835b6cc5eab30475b3b79", null ],
     [ "sizeDM", "structAOLOOPCONTROL__CONF.html#ae5d0e7cbeb583d44a3f2e6815e8ba7fb", null ],
     [ "sizeWFS", "structAOLOOPCONTROL__CONF.html#a5356d94cbd92bbbd016c7414fab01991", null ],
     [ "sizexDM", "structAOLOOPCONTROL__CONF.html#ae5594424863b939ba332dd90c23945a3", null ],
@@ -46,6 +48,11 @@ var structAOLOOPCONTROL__CONF =
     [ "timeorigin_sec", "structAOLOOPCONTROL__CONF.html#a56b35ee338c3432b48534458768d3cb5", null ],
     [ "tnow", "structAOLOOPCONTROL__CONF.html#ab093c95577638273f80418cc0b881fca", null ],
     [ "userLOGstring", "structAOLOOPCONTROL__CONF.html#ac8f07e95c4e760c68c9b1172f1131ea0", null ],
+    [ "WFS_CAM_PER_CORR", "structAOLOOPCONTROL__CONF.html#a93932f0ff1d75afb187db311afc9a3e2", null ],
+    [ "WFScamPEcorr_period", "structAOLOOPCONTROL__CONF.html#a30a1f7e88438047934caa849566bbf71", null ],
+    [ "WFScamPEcorr_pha", "structAOLOOPCONTROL__CONF.html#a34a89feafe48476e4cfc19c63d5b62f9", null ],
+    [ "WFScamPEcorr_pharef", "structAOLOOPCONTROL__CONF.html#ad62ae31a64f596f76e4b597ed64134ca", null ],
     [ "WFScnt", "structAOLOOPCONTROL__CONF.html#aef0d536a3ea46154930a9bf57967c5db", null ],
+    [ "WFScntRM", "structAOLOOPCONTROL__CONF.html#a63dbde5007af6a25cd505116ce84ad78", null ],
     [ "WFSname", "structAOLOOPCONTROL__CONF.html#a18a75018d87159819342add7bf9e79fb", null ]
 ];

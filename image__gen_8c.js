@@ -31,6 +31,7 @@ var image__gen_8c =
     [ "make_rectangle", "image__gen_8c.html#a2d0868a9f2c2c56b3ebfa899e22bf46d", null ],
     [ "make_rectangle_cli", "image__gen_8c.html#a9a94f5389504fd2db63208818a01b3ee", null ],
     [ "make_rnd", "image__gen_8c.html#a5339e549a2a3d23fa4a93bec2db2ccbb", null ],
+    [ "make_rnd_cli", "image__gen_8c.html#ab90aafd04db5b96df7a75c9d24664dc1", null ],
     [ "make_sectors", "image__gen_8c.html#a32f913039dd98130723e6c445a1428e1", null ],
     [ "make_slopexy", "image__gen_8c.html#a36051cf907d8a0d1413b1226f9b3fbfd", null ],
     [ "make_slopexy_cli", "image__gen_8c.html#a78cc0e00a7d3903ffc6e5b11e1ebb37c", null ],

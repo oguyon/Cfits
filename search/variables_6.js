@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['f',['f',['../structVARIABLE.html#af31bb248155770bb6d7080aa50bdb4fd',1,'VARIABLE::f()'],['../structIMAGE.html#ac30512e1d0da8b4052f22f4c5f322398',1,'IMAGE::F()']]],
+  ['f',['F',['../structIMAGE.html#ac30512e1d0da8b4052f22f4c5f322398',1,'IMAGE::F()'],['../structVARIABLE.html#af31bb248155770bb6d7080aa50bdb4fd',1,'VARIABLE::f()']]],
   ['f107',['f107',['../structnrlmsise__input.html#aaf339ba3dc1807f2a606215c6ec99502',1,'nrlmsise_input']]],
   ['f107a',['f107A',['../structnrlmsise__input.html#a067d86f0e8c35a6d2b3c9acf0d4a2b40',1,'nrlmsise_input']]],
-  ['fifoname',['fifoname',['../structDATA.html#af8f6cef1914558713d691b6f9b7408de',1,'DATA']]],
+  ['fifoname',['fifoname',['../structDATA.html#ac3b98b39c316089481ab31820a1f4b21',1,'DATA']]],
   ['fifoon',['fifoON',['../structDATA.html#a37b44a7ef0d3d29f33bf3700ec28665e',1,'DATA']]],
+  ['filecnt',['filecnt',['../structLOGSHIM__CONF.html#a540e125719be22adb4d4d1c1c87f575d',1,'LOGSHIM_CONF']]],
   ['fitapo_5fa',['fitapo_a',['../coronagraphs_8c.html#a890da3b9806a68ae8110cd596a7fb5cc',1,'coronagraphs.c']]],
   ['fitapo_5fb',['fitapo_b',['../coronagraphs_8c.html#a2185667bf3272ded9cfec2f4a329bdda',1,'coronagraphs.c']]],
   ['fitapo_5fc',['fitapo_c',['../coronagraphs_8c.html#a428b05fe56bb8fb269a7be09c5334569',1,'coronagraphs.c']]],
@@ -19,6 +20,7 @@ var searchData=
   ['fminit',['fmInit',['../linopt__imtools_8c.html#a867bce46990afb113a1ab42430a9e888',1,'linopt_imtools.c']]],
   ['fmodesid',['FmodesID',['../structMIRRORPIAACMCDESIGN.html#a56e82b27d4cb093709a37b7b7daebd41',1,'MIRRORPIAACMCDESIGN']]],
   ['fmsize',['Fmsize',['../structMIRRORPIAACMCDESIGN.html#aafe241fc337a36d133f866871fd54824',1,'MIRRORPIAACMCDESIGN']]],
+  ['fname',['fname',['../structsavethreadmsg.html#a86ce40d969ce095eb8ee5360b3298e8e',1,'savethreadmsg::fname()'],['../structLOGSHIM__CONF.html#aa4b09441bd4b5c40b120b76c075d595d',1,'LOGSHIM_CONF::fname()']]],
   ['fnctptr',['fnctptr',['../structsymrec.html#a841939294a168dadc7dc230596f932ca',1,'symrec::fnctptr()'],['../unionYYSTYPE.html#a2ede02959c9774fe63cc959095e4a50f',1,'YYSTYPE::fnctptr()']]],
   ['focmaskarray',['FOCMASKarray',['../structOPTSYST.html#a518be12873baa4ab7b73cf06fc03bf16',1,'OPTSYST']]],
   ['focmmode',['focmMode',['../PIAACMCsimul_8c.html#ac887adf0ed0f3886ec818d683443dfe6',1,'PIAACMCsimul.c']]],

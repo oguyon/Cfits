@@ -146,15 +146,15 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
 <li>s2tloc
-: <a class="el" href="AtmosphericTurbulence_8c.html#a5b45e3666a7664914c9cdf3abb476960">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#a5b45e3666a7664914c9cdf3abb476960">AtmosphereModel.c</a>
 , <a class="el" href="nrlmsise-00_8c.html#a5b45e3666a7664914c9cdf3abb476960">nrlmsise-00.c</a>
 </li>
 <li>s3tloc
 : <a class="el" href="nrlmsise-00_8c.html#a82a48eaf6f5edce5fa25a760e18a5c04">nrlmsise-00.c</a>
-, <a class="el" href="AtmosphericTurbulence_8c.html#a82a48eaf6f5edce5fa25a760e18a5c04">AtmosphericTurbulence.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#a82a48eaf6f5edce5fa25a760e18a5c04">AtmosphereModel.c</a>
 </li>
 <li>sam
-: <a class="el" href="AtmosphericTurbulence_8c.html#ae391523526f8ec527742657b4f50db0e">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#ae391523526f8ec527742657b4f50db0e">AtmosphereModel.c</a>
 , <a class="el" href="nrlmsise-00_8c.html#ae391523526f8ec527742657b4f50db0e">nrlmsise-00.c</a>
 , <a class="el" href="nrlmsise-00__data_8c.html#ae391523526f8ec527742657b4f50db0e">nrlmsise-00_data.c</a>
 </li>
@@ -170,6 +170,9 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 </li>
 <li>save_fits_cli()
 : <a class="el" href="COREMOD__iofits_8c.html#ab33e8965864979a42b5b1ba747892a87">COREMOD_iofits.c</a>
+</li>
+<li>save_fits_function()
+: <a class="el" href="COREMOD__memory_8c.html#ae1b0a2a5c4a3c31d996df61a2223d669">COREMOD_memory.c</a>
 </li>
 <li>save_fl_fits()
 : <a class="el" href="COREMOD__iofits_8c.html#a74bad39ec9f1a242a3290e3ee4f0284d">COREMOD_iofits.c</a>
@@ -201,8 +204,8 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 , <a class="el" href="WFpropagate_8c.html#a856e9c763f542a6a0b78587b2989c159">WFpropagate.c</a>
 </li>
 <li>scalh()
-: <a class="el" href="AtmosphericTurbulence_8c.html#ac9fa1e29d97fde4cb409270927779d27">AtmosphericTurbulence.c</a>
-, <a class="el" href="nrlmsise-00_8c.html#ac9fa1e29d97fde4cb409270927779d27">nrlmsise-00.c</a>
+: <a class="el" href="nrlmsise-00_8c.html#ac9fa1e29d97fde4cb409270927779d27">nrlmsise-00.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#ac9fa1e29d97fde4cb409270927779d27">AtmosphereModel.c</a>
 </li>
 <li>SCExAO_DM_CombineChannels()
 : <a class="el" href="SCExAO__DM_8c.html#a4acd1f8b2e2ab9eee0e83484a19ed25c">SCExAO_DM.c</a>
@@ -271,9 +274,15 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="SCExAO__DM_8c.html#a2cfa83d911d642e05dbd2fa06a9b8f5c">SCExAO_DM.c</a>
 , <a class="el" href="SCExAO__DM_8h.html#a2cfa83d911d642e05dbd2fa06a9b8f5c">SCExAO_DM.h</a>
 </li>
+<li>SCExAO_DM_STAGE_Xpos
+: <a class="el" href="SCExAO__control_8c.html#ae36ba7cfe80f90453abf74f9ac255b06">SCExAO_control.c</a>
+</li>
+<li>SCExAO_DM_STAGE_Ypos
+: <a class="el" href="SCExAO__control_8c.html#ad40c593500e8af2807d6d6839a5f23be">SCExAO_control.c</a>
+</li>
 <li>SCExAO_DM_turb()
-: <a class="el" href="SCExAO__DM_8h.html#adb37e359a8b5e76ac956c1c1af2b7702">SCExAO_DM.h</a>
-, <a class="el" href="SCExAO__DM_8c.html#adb37e359a8b5e76ac956c1c1af2b7702">SCExAO_DM.c</a>
+: <a class="el" href="SCExAO__DM_8c.html#adb37e359a8b5e76ac956c1c1af2b7702">SCExAO_DM.c</a>
+, <a class="el" href="SCExAO__DM_8h.html#adb37e359a8b5e76ac956c1c1af2b7702">SCExAO_DM.h</a>
 </li>
 <li>SCEXAO_DM_unloadconf()
 : <a class="el" href="SCExAO__DM_8c.html#a940c1c0a734f8fe9068c455aaea12954">SCExAO_DM.c</a>
@@ -286,6 +295,84 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 <li>SCEXAO_DMturb_loadconf()
 : <a class="el" href="SCExAO__DM_8c.html#a8f520c9f142dd6c0b6a4e1230fc7b861">SCExAO_DM.c</a>
 , <a class="el" href="SCExAO__DM_8h.html#a8f520c9f142dd6c0b6a4e1230fc7b861">SCExAO_DM.h</a>
+</li>
+<li>SCExAO_Pcam_Range
+: <a class="el" href="SCExAO__control_8c.html#abcff6c4f0633bf6089dba7e841eba5e0">SCExAO_control.c</a>
+</li>
+<li>SCExAO_Pcam_Xpos
+: <a class="el" href="SCExAO__control_8c.html#a964369f4742c820fbf3d960a382ad59d">SCExAO_control.c</a>
+</li>
+<li>SCExAO_Pcam_Xpos0
+: <a class="el" href="SCExAO__control_8c.html#ad1521b42a12b3115a2a1e5de7b22c2f7">SCExAO_control.c</a>
+</li>
+<li>SCExAO_Pcam_Ypos
+: <a class="el" href="SCExAO__control_8c.html#a4aed83366af9cb39621aa4db6ba00b2b">SCExAO_control.c</a>
+</li>
+<li>SCExAO_Pcam_Ypos0
+: <a class="el" href="SCExAO__control_8c.html#a320797f5b781c3062d99c87c46099a1d">SCExAO_control.c</a>
+</li>
+<li>SCExAO_PZT_STAGE_Xpos
+: <a class="el" href="SCExAO__control_8c.html#a85d96b747e8713afe44858cc16bd346b">SCExAO_control.c</a>
+</li>
+<li>SCExAO_PZT_STAGE_Xpos_max
+: <a class="el" href="SCExAO__control_8c.html#adafc6556b8ac04464cddae8d2adc502b">SCExAO_control.c</a>
+</li>
+<li>SCExAO_PZT_STAGE_Xpos_min
+: <a class="el" href="SCExAO__control_8c.html#a0d56ea76d5532e3348fa9497354d76c7">SCExAO_control.c</a>
+</li>
+<li>SCExAO_PZT_STAGE_Ypos
+: <a class="el" href="SCExAO__control_8c.html#a8133449bef739c8abb09decebb882564">SCExAO_control.c</a>
+</li>
+<li>SCExAO_PZT_STAGE_Ypos_max
+: <a class="el" href="SCExAO__control_8c.html#ad4b3f221b5a1bcd7f616d7772d51ca16">SCExAO_control.c</a>
+</li>
+<li>SCExAO_PZT_STAGE_Ypos_min
+: <a class="el" href="SCExAO__control_8c.html#aab6b7ef6131fa50761804f7a51af07f9">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_Average_image()
+: <a class="el" href="SCExAO__control_8c.html#abc08dafc272221044080df3822555d7b">SCExAO_control.c</a>
+, <a class="el" href="SCExAO__control_8h.html#abc08dafc272221044080df3822555d7b">SCExAO_control.h</a>
+</li>
+<li>SCExAOcontrol_Average_image_cli()
+: <a class="el" href="SCExAO__control_8c.html#aa18ad38dd952d08ff64dc3bac8f4c68e">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_mv_DMstage()
+: <a class="el" href="SCExAO__control_8c.html#abc910925b932861e67f8297b46c0515c">SCExAO_control.c</a>
+, <a class="el" href="SCExAO__control_8h.html#abc910925b932861e67f8297b46c0515c">SCExAO_control.h</a>
+</li>
+<li>SCExAOcontrol_mv_DMstage_cli()
+: <a class="el" href="SCExAO__control_8c.html#a696f14b63d18fd208f25855a85688a20">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_Pyramid_flattenRefWF()
+: <a class="el" href="SCExAO__control_8c.html#a01ef8ad7628beac64fe38d2f1d482381">SCExAO_control.c</a>
+, <a class="el" href="SCExAO__control_8h.html#a07b02c8e9cb50ac407eb9b7915f68184">SCExAO_control.h</a>
+</li>
+<li>SCExAOcontrol_Pyramid_flattenRefWF_cli()
+: <a class="el" href="SCExAO__control_8c.html#ab37ff551071895788148f515f827a07a">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_PyramidWFS_AutoAlign_cam()
+: <a class="el" href="SCExAO__control_8h.html#abb94058be983ed0b8a7d09ce1636cc8e">SCExAO_control.h</a>
+, <a class="el" href="SCExAO__control_8c.html#abb94058be983ed0b8a7d09ce1636cc8e">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
+: <a class="el" href="SCExAO__control_8c.html#a1c7f60ad4270955f655522cb5bce710a">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_PyramidWFS_AutoAlign_TT()
+: <a class="el" href="SCExAO__control_8c.html#a5090a7456b0b5132a30c8f97fe0184ba">SCExAO_control.c</a>
+, <a class="el" href="SCExAO__control_8h.html#a5090a7456b0b5132a30c8f97fe0184ba">SCExAO_control.h</a>
+</li>
+<li>SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
+: <a class="el" href="SCExAO__control_8c.html#a75394a9de36df4dfc350057985f2b287">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM()
+: <a class="el" href="SCExAO__control_8c.html#a12b0e36cd7a643bbbd5fd32bba1a5ffe">SCExAO_control.c</a>
+</li>
+<li>SCExAOcontrol_SAPHIRA_cam_process()
+: <a class="el" href="SCExAO__control_8c.html#a172bc87fc7b3c4ac257f9db054152432">SCExAO_control.c</a>
+, <a class="el" href="SCExAO__control_8h.html#a172bc87fc7b3c4ac257f9db054152432">SCExAO_control.h</a>
+</li>
+<li>SCExAOcontrol_SAPHIRA_cam_process_cli()
+: <a class="el" href="SCExAO__control_8c.html#a1ff5e5ec0349ad46ae1d59993dcaa2c0">SCExAO_control.c</a>
 </li>
 <li>SCORINGMASKTYPE
 : <a class="el" href="PIAACMCsimul_8c.html#a53173049ad667e8cca988a5a9b3ebf2b">PIAACMCsimul.c</a>
@@ -300,8 +387,8 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="CLIcore_8c.html#a0b938eaf8680b1a510e8b24caa121a70">CLIcore.c</a>
 </li>
 <li>set_DM_modes()
-: <a class="el" href="AOloopControl_8h.html#a50857db2034c5affb27df150a136098f">AOloopControl.h</a>
-, <a class="el" href="AOloopControl_8c.html#a50857db2034c5affb27df150a136098f">AOloopControl.c</a>
+: <a class="el" href="AOloopControl_8c.html#a50857db2034c5affb27df150a136098f">AOloopControl.c</a>
+, <a class="el" href="AOloopControl_8h.html#a50857db2034c5affb27df150a136098f">AOloopControl.h</a>
 </li>
 <li>set_DM_modesRM()
 : <a class="el" href="AOloopControl_8c.html#a7ee5e2b6eb33dd3313e93f3e7c0689bb">AOloopControl.c</a>
@@ -317,7 +404,7 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="image__format_8c.html#a0b57531c5d234fdfd2effcfaae392fab">image_format.c</a>
 </li>
 <li>sg0()
-: <a class="el" href="AtmosphericTurbulence_8c.html#a7f68e5f9adad978d8d875e5e927802e2">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#a7f68e5f9adad978d8d875e5e927802e2">AtmosphereModel.c</a>
 , <a class="el" href="nrlmsise-00_8c.html#a7f68e5f9adad978d8d875e5e927802e2">nrlmsise-00.c</a>
 </li>
 <li>SHAREDMEMDIR
@@ -327,13 +414,37 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="coronagraphs_8c.html#a4d008a7219a7d93d19381b9df8e43abd">coronagraphs.c</a>
 </li>
 <li>SiteAlt
-: <a class="el" href="AtmosphericTurbulence_8c.html#a88a8aec3f67e89469d3843c46270eff1">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#a88a8aec3f67e89469d3843c46270eff1">AtmosphereModel.c</a>
+, <a class="el" href="AtmosphericTurbulence_8c.html#a88a8aec3f67e89469d3843c46270eff1">AtmosphericTurbulence.c</a>
+</li>
+<li>SiteH2OMethod
+: <a class="el" href="AtmosphereModel_8c.html#ad2c618edf01028772c7ac13c845a363c">AtmosphereModel.c</a>
+</li>
+<li>SiteLat
+: <a class="el" href="AtmosphericTurbulence_8c.html#a04d1c5a3c14a3778dc9e11c4246c5b47">AtmosphericTurbulence.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#a04d1c5a3c14a3778dc9e11c4246c5b47">AtmosphereModel.c</a>
+</li>
+<li>SiteLong
+: <a class="el" href="AtmosphericTurbulence_8c.html#aae7039a4e5f89a8544bf3ee26ed5147c">AtmosphericTurbulence.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#aae7039a4e5f89a8544bf3ee26ed5147c">AtmosphereModel.c</a>
+</li>
+<li>SitePress
+: <a class="el" href="AtmosphereModel_8c.html#a3d2f9c2a77215284ad0dffa9b2cb15f7">AtmosphereModel.c</a>
 </li>
 <li>SitePWSH
-: <a class="el" href="AtmosphericTurbulence_8c.html#ae42c824d86b2ab0b2e7b1f0f3dd60e54">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#ae42c824d86b2ab0b2e7b1f0f3dd60e54">AtmosphereModel.c</a>
+</li>
+<li>SiteRH
+: <a class="el" href="AtmosphereModel_8c.html#afeb4d1b5c1a1c96fffb032bf78d77b0d">AtmosphereModel.c</a>
+</li>
+<li>SiteTemp
+: <a class="el" href="AtmosphereModel_8c.html#a2668cbc7b2207914267a54852cffe842">AtmosphereModel.c</a>
+</li>
+<li>SiteTPauto
+: <a class="el" href="AtmosphereModel_8c.html#a2cbc5c432c83844c53739df6889532b9">AtmosphereModel.c</a>
 </li>
 <li>SiteTPW
-: <a class="el" href="AtmosphericTurbulence_8c.html#a5503fe9348e93f8c9f1e0f2cb8216211">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#a5503fe9348e93f8c9f1e0f2cb8216211">AtmosphereModel.c</a>
 </li>
 <li>SMfd
 : <a class="el" href="SCExAO__DM_8c.html#ad3fefa8c187fe37b7835f882acb21dda">SCExAO_DM.c</a>
@@ -342,16 +453,16 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="SCExAO__DM_8c.html#aa733da67de0ae3ba855ec77c80a1c73c">SCExAO_DM.c</a>
 </li>
 <li>spline()
-: <a class="el" href="nrlmsise-00_8c.html#ae2e73ba3832c389e53954019ceb47ded">nrlmsise-00.c</a>
-, <a class="el" href="AtmosphericTurbulence_8c.html#ae2e73ba3832c389e53954019ceb47ded">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#ae2e73ba3832c389e53954019ceb47ded">AtmosphereModel.c</a>
+, <a class="el" href="nrlmsise-00_8c.html#ae2e73ba3832c389e53954019ceb47ded">nrlmsise-00.c</a>
 </li>
 <li>splini()
-: <a class="el" href="AtmosphericTurbulence_8c.html#ace413e8af59596333e916355b54a08c7">AtmosphericTurbulence.c</a>
-, <a class="el" href="nrlmsise-00_8c.html#ace413e8af59596333e916355b54a08c7">nrlmsise-00.c</a>
+: <a class="el" href="nrlmsise-00_8c.html#ace413e8af59596333e916355b54a08c7">nrlmsise-00.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#ace413e8af59596333e916355b54a08c7">AtmosphereModel.c</a>
 </li>
 <li>splint()
 : <a class="el" href="nrlmsise-00_8c.html#a219484a4d3318d5361a52365d97cddc3">nrlmsise-00.c</a>
-, <a class="el" href="AtmosphericTurbulence_8c.html#a219484a4d3318d5361a52365d97cddc3">AtmosphericTurbulence.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#a219484a4d3318d5361a52365d97cddc3">AtmosphereModel.c</a>
 </li>
 <li>SQ
 : <a class="el" href="kdtree_8c.html#ac3644f84794a8bfdacf39c4b2c2495fc">kdtree.c</a>
@@ -363,18 +474,12 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="info_8h.html#a3cb1bc9a95ed40447f428ad5451fbc92">info.h</a>
 , <a class="el" href="info_8c.html#a3cb1bc9a95ed40447f428ad5451fbc92">info.c</a>
 </li>
-<li>stat
-: <a class="el" href="cudacomp_8c.html#a397d3af2c5cb21350671b4e31dcda685">cudacomp.c</a>
-</li>
 <li>statistic_putphnoise_cli()
 : <a class="el" href="statistic_8c.html#a6e701b72ef08c2fa72e0a3949d96aa52">statistic.c</a>
 </li>
 <li>stloc
-: <a class="el" href="AtmosphericTurbulence_8c.html#a0f4f8372d2da884c4eb58ae9135f4013">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#a0f4f8372d2da884c4eb58ae9135f4013">AtmosphereModel.c</a>
 , <a class="el" href="nrlmsise-00_8c.html#a0f4f8372d2da884c4eb58ae9135f4013">nrlmsise-00.c</a>
-</li>
-<li>stream
-: <a class="el" href="cudacomp_8c.html#a9f4fd0b5397f65cf8963d5001f0001f3">cudacomp.c</a>
 </li>
 <li>STRIPCOFFSET
 : <a class="el" href="coronagraphs_8c.html#a4f703380a7682024cad4d9b1b8b031b1">coronagraphs.c</a>
@@ -386,18 +491,19 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 : <a class="el" href="CLIcore_8h.html#a4013b1078f89c6a61f5572b3691ce817">CLIcore.h</a>
 </li>
 <li>sumex()
-: <a class="el" href="nrlmsise-00_8c.html#ac607590e0e6c779fc4a6cbb1261975c6">nrlmsise-00.c</a>
-, <a class="el" href="AtmosphericTurbulence_8c.html#ac607590e0e6c779fc4a6cbb1261975c6">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#ac607590e0e6c779fc4a6cbb1261975c6">AtmosphereModel.c</a>
+, <a class="el" href="nrlmsise-00_8c.html#ac607590e0e6c779fc4a6cbb1261975c6">nrlmsise-00.c</a>
 </li>
 <li>SWAP
-: <a class="el" href="info_8c.html#aac9153aee4bdb92701df902e06a74eb3">info.c</a>
+: <a class="el" href="ZernikePolyn_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">ZernikePolyn.c</a>
 , <a class="el" href="image__gen_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">image_gen.c</a>
+, <a class="el" href="AtmosphericTurbulence_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">AtmosphericTurbulence.c</a>
+, <a class="el" href="info_8c.html#aac9153aee4bdb92701df902e06a74eb3">info.c</a>
+, <a class="el" href="coronagraphs_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">coronagraphs.c</a>
+, <a class="el" href="image__basic_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">image_basic.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">AtmosphereModel.c</a>
 , <a class="el" href="image__format_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">image_format.c</a>
 , <a class="el" href="fft_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">fft.c</a>
-, <a class="el" href="image__basic_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">image_basic.c</a>
-, <a class="el" href="coronagraphs_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">coronagraphs.c</a>
-, <a class="el" href="AtmosphericTurbulence_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">AtmosphericTurbulence.c</a>
-, <a class="el" href="ZernikePolyn_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">ZernikePolyn.c</a>
 </li>
 <li>sym_table
 : <a class="el" href="calc_8h.html#ae960d0c72d629cff609d3a1c4f018504">calc.h</a>
@@ -414,7 +520,7 @@ $(document).ready(function(){initNavTree('globals_s.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Sep 6 2014 21:30:20 for Cfits by
+    <li class="footer">Generated on Fri Nov 14 2014 09:55:04 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

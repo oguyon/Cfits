@@ -32,18 +32,19 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "00CORE-util_8c.html",
-"AtmosphericTurbulence_8c.html#ac160033a75c71078f12208e1c7c7f31c",
-"COREMOD__arith_8c.html#aaf0255aa776244db434c91b0c534e7ad",
-"COREMOD__memory_8c.html#a7cdb80f91f07d61d945acd291f54a9f8",
-"PIAACMCsimul_8c.html#a7a37c7de4a47ec2462d85f0fa0134aec",
-"calc__bison_8c.html#a301c3c230589aafa70bae0f866e8af53",
-"calc__flex_8c.html#ac3286b18a2e91b4571b97df96a118e84",
-"coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48",
-"globals_q.html",
-"image__gen-util_8c.html#ae711902bde27e26dc070bda9087c1628",
-"md_README.html",
-"structDATA.html",
-"structyy__buffer__state.html#a06406208824817acfec2183b79080945"
+"AtmosphereModel_8c.html#a3d331ddbf53b6b720388a221d01ffde5",
+"CLIcore_8h.html#aedb03ab482b6c7291fc929f4e7ff3f33",
+"COREMOD__arith_8h.html#a08f70af581609776656a6cb470b5c46e",
+"COREMOD__memory_8c.html#a3ffb95f61b127915041b6e8663efd00a",
+"OpticsMaterials_8h.html#a4178a0c12e630345bb8d9fc1250ca92b",
+"WFpropagate_8h.html#a89a1b7dae2efcb9a9d929e4360bb3c23",
+"calc__flex_8c.html#a1e8856234732c99be24858b0073e1297",
+"coronagraphs_8c.html#a92df5bb1d7e923a95c5697271f5002ab",
+"globals.html",
+"image__format_8c.html#a3ae4c9a246b4cfcab523e5747c070521",
+"kdtree_8c.html#ac9a5303c073ee4d7a9f653dba8c1865d",
+"structAOLOOPCONTROL__CONF.html#a30b003e3e71280aa46e5423021f3c807",
+"structSCEXAO__DISPCOMB__CONF.html#a37ce120759f6b4c5e2128b8a17405a97"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

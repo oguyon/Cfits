@@ -116,6 +116,9 @@ $(document).ready(function(){initNavTree('00CORE_8c.html','');});
 <code>#include &lt;math.h&gt;</code><br/>
 <code>#include &lt;stdlib.h&gt;</code><br/>
 <code>#include &lt;errno.h&gt;</code><br/>
+<code>#include &lt;sys/types.h&gt;</code><br/>
+<code>#include &lt;sys/stat.h&gt;</code><br/>
+<code>#include &lt;unistd.h&gt;</code><br/>
 <code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br/>
 </div><table class="memberdecls">
@@ -137,6 +140,8 @@ Functions</h2></td></tr>
 <tr class="separator:acd8c1457583903d309e19adde6805717"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa333aaba4981442f52ab55df43d76ac5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#aa333aaba4981442f52ab55df43d76ac5">timespec_diff_double</a> (struct timespec start, struct timespec end)</td></tr>
 <tr class="separator:aa333aaba4981442f52ab55df43d76ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a928b1da945af8413e422d1749058d33a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#a928b1da945af8413e422d1749058d33a">file_exist</a> (char *filename)</td></tr>
+<tr class="separator:a928b1da945af8413e422d1749058d33a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -167,6 +172,22 @@ Variables</h2></td></tr>
           <td class="memname">int CLIWritePid </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a928b1da945af8413e422d1749058d33a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int file_exist </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -353,7 +374,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d4b8cfe83cb2a17820bf35e581cf434a.html">00CORE</a></li><li class="navelem"><a class="el" href="00CORE_8c.html">00CORE.c</a></li>
-    <li class="footer">Generated on Sat Sep 6 2014 21:30:20 for Cfits by
+    <li class="footer">Generated on Fri Nov 14 2014 09:55:04 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

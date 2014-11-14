@@ -11,6 +11,8 @@ var structIMAGE =
     [ "L", "structIMAGE.html#aa8880295748522b823bef4732f5df685", null ],
     [ "md", "structIMAGE.html#a1c587a49713dfc64be950465ce7d5f29", null ],
     [ "memsize", "structIMAGE.html#a04126eda05ae8d0317190fb204806502", null ],
+    [ "sem", "structIMAGE.html#a6a50020081f8e319972497690237fb66", null ],
+    [ "semptr", "structIMAGE.html#a834b3af28769972547e952466d8bb559", null ],
     [ "shmfd", "structIMAGE.html#aa1de16f9b739720f6de65389f63d8229", null ],
     [ "U", "structIMAGE.html#a0e75d3dd1879fa0d0fa9caaa80a1074a", null ],
     [ "used", "structIMAGE.html#aca4f71f11b37d19c782813e3be7dee49", null ]

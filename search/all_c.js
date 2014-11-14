@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['l',['l',['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE::l()'],['../structIMAGE.html#aa8880295748522b823bef4732f5df685',1,'IMAGE::L()']]],
+  ['l',['L',['../structIMAGE.html#aa8880295748522b823bef4732f5df685',1,'IMAGE::L()'],['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE::l()']]],
   ['lambdaarray',['lambdaarray',['../structOPTSYST.html#affffe3221582de4166398a84debc5257',1,'OPTSYST']]],
   ['lambdaend',['LAMBDAEND',['../PIAACMCsimul_8c.html#abe53f58d88702734246bbc1ebcd74236',1,'PIAACMCsimul.c']]],
   ['lambdastart',['LAMBDASTART',['../PIAACMCsimul_8c.html#a24e579c2d457f20533ced9a9cffe4121',1,'PIAACMCsimul.c']]],
@@ -47,6 +47,7 @@ var searchData=
   ['listim_5fscr_5fwcol',['listim_scr_wcol',['../COREMOD__memory_8c.html#a1eb50a9cee23de37524836a3433b659e',1,'COREMOD_memory.c']]],
   ['listim_5fscr_5fwrow',['listim_scr_wrow',['../COREMOD__memory_8c.html#a58d431324373b438a591c9aa3d782456',1,'COREMOD_memory.c']]],
   ['listimfile',['Listimfile',['../CLIcore_8c.html#ae5371cd7e46f19a56efdff432345b508',1,'CLIcore.c']]],
+  ['lliprecomp',['lliprecomp',['../AtmosphereModel_8c.html#af31d465b3c5177db2ad0a0db958c42dd',1,'AtmosphereModel.c']]],
   ['load_5ffits',['load_fits',['../COREMOD__iofits_8c.html#a5628e64f819c56ed6a79e0e784beec7b',1,'load_fits(char *file_name, char ID_name[400]):&#160;COREMOD_iofits.c'],['../COREMOD__iofits_8h.html#a18f9af620dba64b0164abf6d7c7774ee',1,'load_fits(char *file_name, char *ID_name):&#160;COREMOD_iofits.h']]],
   ['load_5ffits_5fcli',['load_fits_cli',['../COREMOD__iofits_8c.html#aec6890f2c7df25d09ee8b83166e6ae05',1,'COREMOD_iofits.c']]],
   ['load_5ffitsimages',['load_fitsimages',['../image__basic_8c.html#a975c26922325656c7ffc97be036fa9b2',1,'load_fitsimages(char *strfilter):&#160;image_basic.c'],['../image__basic_8h.html#a975c26922325656c7ffc97be036fa9b2',1,'load_fitsimages(char *strfilter):&#160;image_basic.c']]],
@@ -56,8 +57,10 @@ var searchData=
   ['locoeff',['LOcoeff',['../structSCEXAO__DMTURBCONF.html#ac64131c487da4b74d132f83f37aa7f6a',1,'SCEXAO_DMTURBCONF']]],
   ['logcnt',['logcnt',['../structAOLOOPCONTROL__CONF.html#a0881ef170c0f843b3f8b92a153f800d0',1,'AOLOOPCONTROL_CONF']]],
   ['logdir',['logdir',['../structAOLOOPCONTROL__CONF.html#a42628d1a3e5bdc59bb06605decaa205a',1,'AOLOOPCONTROL_CONF']]],
+  ['logexit',['logexit',['../structLOGSHIM__CONF.html#ade9849e9a2d4a6973b891d0ba46724ed',1,'LOGSHIM_CONF']]],
   ['logfnb',['logfnb',['../structAOLOOPCONTROL__CONF.html#a2e8f072eb2a06279d43ce3446f42dbf6',1,'AOLOOPCONTROL_CONF']]],
   ['logon',['logon',['../structAOLOOPCONTROL__CONF.html#a27de0ac73a2ff6d7ddf2a9498f48e7fd',1,'AOLOOPCONTROL_CONF']]],
+  ['logshim_5fconf',['LOGSHIM_CONF',['../structLOGSHIM__CONF.html',1,'']]],
   ['logsize',['logsize',['../structAOLOOPCONTROL__CONF.html#a928c5ccaad5a554e6b90634c92fde03a',1,'AOLOOPCONTROL_CONF']]],
   ['long',['LONG',['../CLIcore_8h.html#acaa7b8a7167a8214f499c71c413ddcca',1,'CLIcore.h']]],
   ['loopcnt',['loopcnt',['../structSCEXAO__DISPCOMB__CONF.html#a245e53d46cdd4f8172cc82008a5cc5af',1,'SCEXAO_DISPCOMB_CONF::loopcnt()'],['../coronagraphs_8c.html#adfef7b061132317e906e5dfd0fdd1038',1,'LOOPCNT():&#160;coronagraphs.c'],['../PIAACMCsimul_8c.html#adfef7b061132317e906e5dfd0fdd1038',1,'LOOPCNT():&#160;PIAACMCsimul.c']]],

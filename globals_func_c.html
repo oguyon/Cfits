@@ -145,12 +145,12 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 
 <h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
 <li>ccor()
-: <a class="el" href="AtmosphericTurbulence_8c.html#afa1fe6df744c3d47b7b91f851962b3ea">AtmosphericTurbulence.c</a>
+: <a class="el" href="AtmosphereModel_8c.html#afa1fe6df744c3d47b7b91f851962b3ea">AtmosphereModel.c</a>
 , <a class="el" href="nrlmsise-00_8c.html#afa1fe6df744c3d47b7b91f851962b3ea">nrlmsise-00.c</a>
 </li>
 <li>ccor2()
 : <a class="el" href="nrlmsise-00_8c.html#ac2904e7bac2f213922ad6ed41eae2b21">nrlmsise-00.c</a>
-, <a class="el" href="AtmosphericTurbulence_8c.html#ac2904e7bac2f213922ad6ed41eae2b21">AtmosphericTurbulence.c</a>
+, <a class="el" href="AtmosphereModel_8c.html#ac2904e7bac2f213922ad6ed41eae2b21">AtmosphereModel.c</a>
 </li>
 <li>center_PSF()
 : <a class="el" href="psf_8c.html#ae5fb0bbb2ff345eaae0226a55d041fc9">psf.c</a>
@@ -209,6 +209,9 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 <li>chname_image_ID_cli()
 : <a class="el" href="COREMOD__memory_8c.html#a06570650fc7be638166e0fa795f5f1bc">COREMOD_memory.c</a>
 </li>
+<li>clean_bad_pix()
+: <a class="el" href="img__reduce_8c.html#afff5a57c51c2cca646a6bf30ee785573">img_reduce.c</a>
+</li>
 <li>clear_rec()
 : <a class="el" href="kdtree_8c.html#a3a723ee3fd46c27b848aaee6ddd36642">kdtree.c</a>
 </li>
@@ -216,8 +219,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="kdtree_8c.html#a2baf19b18d6e4252972b8d59c4d01e03">kdtree.c</a>
 </li>
 <li>clearall()
-: <a class="el" href="COREMOD__memory_8c.html#af73d65191bfcbdcb58026a0824055d9b">COREMOD_memory.c</a>
-, <a class="el" href="COREMOD__memory_8h.html#af73d65191bfcbdcb58026a0824055d9b">COREMOD_memory.h</a>
+: <a class="el" href="COREMOD__memory_8h.html#af73d65191bfcbdcb58026a0824055d9b">COREMOD_memory.h</a>
+, <a class="el" href="COREMOD__memory_8c.html#af73d65191bfcbdcb58026a0824055d9b">COREMOD_memory.c</a>
 </li>
 <li>CLI_checkarg()
 : <a class="el" href="CLIcore_8c.html#acfa3a12412c06fe66437c5f77f066fa0">CLIcore.c</a>
@@ -250,12 +253,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="CLIcore_8c.html#a08a15eb6d82a4967d50502a18fe5f205">CLIcore.c</a>
 </li>
 <li>compute_ControlMatrix()
-: <a class="el" href="AOloopControl_8c.html#aa5623aafb0749edfb120719732214cc4">AOloopControl.c</a>
-, <a class="el" href="AOloopControl_8h.html#aa5623aafb0749edfb120719732214cc4">AOloopControl.h</a>
-</li>
-<li>compute_function()
-: <a class="el" href="cudacomp_8c.html#a4936bc06a4bdb256be64fac113bc321d">cudacomp.c</a>
-, <a class="el" href="cudacomp_8h.html#a6c436d61ac476cef86c17383bd744dd7">cudacomp.h</a>
+: <a class="el" href="AOloopControl_8c.html#a085d9c27003b37c36e3047a870c5179e">AOloopControl.c</a>
+, <a class="el" href="AOloopControl_8h.html#a085d9c27003b37c36e3047a870c5179e">AOloopControl.h</a>
 </li>
 <li>compute_image_memory()
 : <a class="el" href="COREMOD__memory_8c.html#a5696509ead81f9b911ede55bd616b722">COREMOD_memory.c</a>
@@ -298,6 +297,73 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 </li>
 <li>copy_image_ID_cli()
 : <a class="el" href="COREMOD__memory_8c.html#ab095b57c808604b80ba40c85c1c27e4a">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_check_2Dsize()
+: <a class="el" href="COREMOD__memory_8c.html#a0e574cdf25e9141dcb5af185415f9987">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a0e574cdf25e9141dcb5af185415f9987">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_check_3Dsize()
+: <a class="el" href="COREMOD__memory_8c.html#a877f3702acb9dc08744273617729dab6">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a877f3702acb9dc08744273617729dab6">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_cp2shm()
+: <a class="el" href="COREMOD__memory_8c.html#a453a981419824866a9718c385e459fc7">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a453a981419824866a9718c385e459fc7">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_cp2shm_cli()
+: <a class="el" href="COREMOD__memory_8c.html#a83c413cad03a0facb289a4c5b4cdb553">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_image_set_cnt0()
+: <a class="el" href="COREMOD__memory_8c.html#ad1f16fc180010e7412b3711c0b95334f">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#ad1f16fc180010e7412b3711c0b95334f">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_image_set_cnt0_cli()
+: <a class="el" href="COREMOD__memory_8c.html#a1848aacbd9e3db0dd8266b2a5a2ed9cb">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_image_set_cnt1()
+: <a class="el" href="COREMOD__memory_8c.html#acf381ae5e26676878dbc296f7ff42ddc">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#acf381ae5e26676878dbc296f7ff42ddc">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_image_set_cnt1_cli()
+: <a class="el" href="COREMOD__memory_8c.html#a34ce8073e0a8c4ca720ef09fa2cdbb74">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_image_set_createsem()
+: <a class="el" href="COREMOD__memory_8c.html#aa9234a32623bef57dec5366a36fba715">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#aa9234a32623bef57dec5366a36fba715">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_image_set_createsem_cli()
+: <a class="el" href="COREMOD__memory_8c.html#a7d9455636520592e08733aa6abab956d">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_image_set_sempost()
+: <a class="el" href="COREMOD__memory_8c.html#a3ffb95f61b127915041b6e8663efd00a">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a3ffb95f61b127915041b6e8663efd00a">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_image_set_sempost_cli()
+: <a class="el" href="COREMOD__memory_8c.html#ad56cfee75a59c62d6f11f0a1095acd35">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_image_set_semwait()
+: <a class="el" href="COREMOD__memory_8c.html#a52354e4cb18c81e026c1cb5756becebb">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a52354e4cb18c81e026c1cb5756becebb">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_image_set_semwait_cli()
+: <a class="el" href="COREMOD__memory_8c.html#a09601bc25ed277718f651f95662cf82b">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_image_set_status()
+: <a class="el" href="COREMOD__memory_8c.html#ade9043029643589ae77f00d8f3986553">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#ade9043029643589ae77f00d8f3986553">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_image_set_status_cli()
+: <a class="el" href="COREMOD__memory_8c.html#a41ecef645db50d0d195d4898156cff68">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_logshim_create_SHMconf()
+: <a class="el" href="COREMOD__memory_8c.html#a6077bf93f47d48344a126f5a4e91a623">COREMOD_memory.c</a>
+</li>
+<li>COREMOD_MEMORY_sharedMem_2Dim_log()
+: <a class="el" href="COREMOD__memory_8c.html#a52921c2c2c1abbd90e937800d94c7025">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a52921c2c2c1abbd90e937800d94c7025">COREMOD_memory.h</a>
+</li>
+<li>COREMOD_MEMORY_sharedMem_2Dim_log_cli()
+: <a class="el" href="COREMOD__memory_8c.html#af858957449e185b91656be8ea61a6d00">COREMOD_memory.c</a>
 </li>
 <li>COREMOD_TOOLS_imgdisplay3D()
 : <a class="el" href="COREMOD__tools_8c.html#a8a814beac7a3602f06cacf56a4d59c4e">COREMOD_tools.c</a>
@@ -366,8 +432,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="coronagraphs_8c.html#a9440fc7645d2ef2489887d809b84c4c6">coronagraphs.c</a>
 </li>
 <li>coronagraph_make_2Dprolateld()
-: <a class="el" href="coronagraphs_8c.html#aa570cd296a7e3d48fb66a60fa1e63dad">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#aa570cd296a7e3d48fb66a60fa1e63dad">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#aa570cd296a7e3d48fb66a60fa1e63dad">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#aa570cd296a7e3d48fb66a60fa1e63dad">coronagraphs.c</a>
 </li>
 <li>coronagraph_make_2Dprolateld_cli()
 : <a class="el" href="coronagraphs_8c.html#a54bfefd0c951719f5b6b069dad0f23ca">coronagraphs.c</a>
@@ -376,16 +442,16 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="coronagraphs_8c.html#aa6751101e05cc931db57760bc5456915">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_4QPM()
-: <a class="el" href="coronagraphs_8c.html#a020c6f05dbe59b7fb50f264556b9efc0">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#a020c6f05dbe59b7fb50f264556b9efc0">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#a020c6f05dbe59b7fb50f264556b9efc0">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#a020c6f05dbe59b7fb50f264556b9efc0">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_AIC()
 : <a class="el" href="coronagraphs_8c.html#aa184d627d8d1c644f20004e8e076637f">coronagraphs.c</a>
 , <a class="el" href="coronagraphs_8h.html#aa184d627d8d1c644f20004e8e076637f">coronagraphs.h</a>
 </li>
 <li>coronagraph_simul_AIC_PIAAC()
-: <a class="el" href="coronagraphs_8h.html#a3994dcd6d561eeaa4f4527b3228a5d9f">coronagraphs.h</a>
-, <a class="el" href="coronagraphs_8c.html#a3994dcd6d561eeaa4f4527b3228a5d9f">coronagraphs.c</a>
+: <a class="el" href="coronagraphs_8c.html#a3994dcd6d561eeaa4f4527b3228a5d9f">coronagraphs.c</a>
+, <a class="el" href="coronagraphs_8h.html#a3994dcd6d561eeaa4f4527b3228a5d9f">coronagraphs.h</a>
 </li>
 <li>coronagraph_simul_BL4()
 : <a class="el" href="coronagraphs_8c.html#a5506eae37bcdbea4b3ad0222bc7d1606">coronagraphs.c</a>
@@ -395,8 +461,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 , <a class="el" href="coronagraphs_8h.html#a22cf58b83548f23741d287a25ff555e8">coronagraphs.h</a>
 </li>
 <li>coronagraph_simul_CPA()
-: <a class="el" href="coronagraphs_8c.html#a619cd85339c45cdb2ee0a21078c6ad7b">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#a619cd85339c45cdb2ee0a21078c6ad7b">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#a619cd85339c45cdb2ee0a21078c6ad7b">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#a619cd85339c45cdb2ee0a21078c6ad7b">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_DICC()
 : <a class="el" href="coronagraphs_8c.html#aee70d7d67be8eddd864990c7f1638051">coronagraphs.c</a>
@@ -405,8 +471,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="coronagraphs_8c.html#abba82c0931616c454234d9321be472ad">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_MULTISTEP_APLC()
-: <a class="el" href="coronagraphs_8c.html#a8a2156e21cb9fe04a7bd3a0186fc641e">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#a8a2156e21cb9fe04a7bd3a0186fc641e">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#a8a2156e21cb9fe04a7bd3a0186fc641e">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#a8a2156e21cb9fe04a7bd3a0186fc641e">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_NOCORO()
 : <a class="el" href="coronagraphs_8c.html#a5b6b94b252949987768d52d0de557481">coronagraphs.c</a>
@@ -415,16 +481,16 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="coronagraphs_8c.html#a5bcd871226d99701bba1f6b3287c18ae">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_OVC()
-: <a class="el" href="coronagraphs_8c.html#a54696b76a94c4ba7d925d1cdb5af6537">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#a54696b76a94c4ba7d925d1cdb5af6537">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#a54696b76a94c4ba7d925d1cdb5af6537">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#a54696b76a94c4ba7d925d1cdb5af6537">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_PIAA()
 : <a class="el" href="coronagraphs_8c.html#a14a25003fc2f60b2a003c32f93cb06c6">coronagraphs.c</a>
 , <a class="el" href="coronagraphs_8h.html#a14a25003fc2f60b2a003c32f93cb06c6">coronagraphs.h</a>
 </li>
 <li>coronagraph_simul_PIAAC()
-: <a class="el" href="coronagraphs_8c.html#ab9e4214156ea12ad17519e509d64c93b">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#ab9e4214156ea12ad17519e509d64c93b">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#ab9e4214156ea12ad17519e509d64c93b">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#ab9e4214156ea12ad17519e509d64c93b">coronagraphs.c</a>
 </li>
 <li>coronagraph_simul_PPA()
 : <a class="el" href="coronagraphs_8c.html#ad7d5bd7fc9ce72c98ace7cac4977137d">coronagraphs.c</a>
@@ -450,8 +516,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="coronagraphs_8c.html#a9baf9e0743e83f69f6eef119d5ae0491">coronagraphs.c</a>
 </li>
 <li>coronagraph_transm()
-: <a class="el" href="coronagraphs_8c.html#a0cba1e07cec140e296a20cc9552c5c24">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#a0cba1e07cec140e296a20cc9552c5c24">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#a0cba1e07cec140e296a20cc9552c5c24">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#a0cba1e07cec140e296a20cc9552c5c24">coronagraphs.c</a>
 </li>
 <li>coronagraph_update_2Dprolate()
 : <a class="el" href="coronagraphs_8c.html#a2e85fc32c6d56f6cc4a53eb29446fad4">coronagraphs.c</a>
@@ -510,8 +576,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="COREMOD__arith_8c.html#abe480f992487a61d9acba905ccbf5982">COREMOD_arith.c</a>
 </li>
 <li>CR2toFITS()
-: <a class="el" href="image__format_8c.html#a8ae4dcf84c88fe413ab1d46bc2d08239">image_format.c</a>
-, <a class="el" href="image__format_8h.html#a8ae4dcf84c88fe413ab1d46bc2d08239">image_format.h</a>
+: <a class="el" href="image__format_8h.html#a8ae4dcf84c88fe413ab1d46bc2d08239">image_format.h</a>
+, <a class="el" href="image__format_8c.html#a8ae4dcf84c88fe413ab1d46bc2d08239">image_format.c</a>
 </li>
 <li>CR2toFITS_cli()
 : <a class="el" href="image__format_8c.html#a2cf0d45be17d619adfdf14eaeee958e2">image_format.c</a>
@@ -527,8 +593,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 , <a class="el" href="COREMOD__memory_8c.html#ae7fee555f3f5ae10d4855be9de6f3c1a">COREMOD_memory.c</a>
 </li>
 <li>create_1Dimage_ID()
-: <a class="el" href="COREMOD__memory_8h.html#a7eec0c8861702a5212dc4b5414d607a7">COREMOD_memory.h</a>
-, <a class="el" href="COREMOD__memory_8c.html#a7eec0c8861702a5212dc4b5414d607a7">COREMOD_memory.c</a>
+: <a class="el" href="COREMOD__memory_8c.html#a7eec0c8861702a5212dc4b5414d607a7">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a7eec0c8861702a5212dc4b5414d607a7">COREMOD_memory.h</a>
 </li>
 <li>create_2DCimage_ID()
 : <a class="el" href="COREMOD__memory_8h.html#a6a091113f9faf14cc69d4c069bb80c08">COREMOD_memory.h</a>
@@ -538,8 +604,8 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="COREMOD__memory_8c.html#a9ba5a6d60ad5c50821f875d403ffe511">COREMOD_memory.c</a>
 </li>
 <li>create_2Dimage_ID()
-: <a class="el" href="COREMOD__memory_8h.html#a6d4962ad9f18edbcc6a61daa6814ed9a">COREMOD_memory.h</a>
-, <a class="el" href="COREMOD__memory_8c.html#a6d4962ad9f18edbcc6a61daa6814ed9a">COREMOD_memory.c</a>
+: <a class="el" href="COREMOD__memory_8c.html#a6d4962ad9f18edbcc6a61daa6814ed9a">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a6d4962ad9f18edbcc6a61daa6814ed9a">COREMOD_memory.h</a>
 </li>
 <li>create_2Dimagedouble_ID()
 : <a class="el" href="COREMOD__memory_8h.html#a714156571551dd125e91545b533b7eb3">COREMOD_memory.h</a>
@@ -553,26 +619,26 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 : <a class="el" href="COREMOD__memory_8c.html#a88d317ab8b2fb4b9f851cb7e234572e3">COREMOD_memory.c</a>
 </li>
 <li>create_3Dimage_ID()
-: <a class="el" href="COREMOD__memory_8c.html#abf85207142f563ce390acc8eeb4fccd6">COREMOD_memory.c</a>
-, <a class="el" href="COREMOD__memory_8h.html#abf85207142f563ce390acc8eeb4fccd6">COREMOD_memory.h</a>
+: <a class="el" href="COREMOD__memory_8h.html#abf85207142f563ce390acc8eeb4fccd6">COREMOD_memory.h</a>
+, <a class="el" href="COREMOD__memory_8c.html#abf85207142f563ce390acc8eeb4fccd6">COREMOD_memory.c</a>
 </li>
 <li>create_3Dimage_ID_double()
-: <a class="el" href="COREMOD__memory_8c.html#a94865ace3bc6d18ed262aa1d643fb1a2">COREMOD_memory.c</a>
-, <a class="el" href="COREMOD__memory_8h.html#a94865ace3bc6d18ed262aa1d643fb1a2">COREMOD_memory.h</a>
+: <a class="el" href="COREMOD__memory_8h.html#a94865ace3bc6d18ed262aa1d643fb1a2">COREMOD_memory.h</a>
+, <a class="el" href="COREMOD__memory_8c.html#a94865ace3bc6d18ed262aa1d643fb1a2">COREMOD_memory.c</a>
 </li>
 <li>create_3Dimage_ID_float()
 : <a class="el" href="COREMOD__memory_8c.html#a6aa93d0ef99f639b49848c1beb89e8de">COREMOD_memory.c</a>
 </li>
 <li>create_counter_file()
-: <a class="el" href="COREMOD__tools_8c.html#a79cef364f1beccfdc11221ae217228a9">COREMOD_tools.c</a>
-, <a class="el" href="COREMOD__tools_8h.html#a79cef364f1beccfdc11221ae217228a9">COREMOD_tools.h</a>
+: <a class="el" href="COREMOD__tools_8h.html#a79cef364f1beccfdc11221ae217228a9">COREMOD_tools.h</a>
+, <a class="el" href="COREMOD__tools_8c.html#a79cef364f1beccfdc11221ae217228a9">COREMOD_tools.c</a>
 </li>
 <li>create_image_cli()
 : <a class="el" href="COREMOD__memory_8c.html#ab230fd27b75614b2162083b0265d7f8d">COREMOD_memory.c</a>
 </li>
 <li>create_image_ID()
-: <a class="el" href="COREMOD__memory_8h.html#ad5f0d3d48ee638e61a7e71e666da58a9">COREMOD_memory.h</a>
-, <a class="el" href="COREMOD__memory_8c.html#a9e9a68f84e578628cd84fd0be6464fff">COREMOD_memory.c</a>
+: <a class="el" href="COREMOD__memory_8c.html#a9e9a68f84e578628cd84fd0be6464fff">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#ad5f0d3d48ee638e61a7e71e666da58a9">COREMOD_memory.h</a>
 </li>
 <li>create_image_shared_cli()
 : <a class="el" href="COREMOD__memory_8c.html#a2403c21c1f08e17013ecbb4fac907de0">COREMOD_memory.c</a>
@@ -585,12 +651,12 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 , <a class="el" href="COREMOD__memory_8c.html#a4a64cdffe7e8563c463a8483c9092197">COREMOD_memory.c</a>
 </li>
 <li>create_variable_long_ID()
-: <a class="el" href="COREMOD__memory_8h.html#ab4d2e779c20417a997462e9a99386748">COREMOD_memory.h</a>
-, <a class="el" href="COREMOD__memory_8c.html#ab4d2e779c20417a997462e9a99386748">COREMOD_memory.c</a>
+: <a class="el" href="COREMOD__memory_8c.html#ab4d2e779c20417a997462e9a99386748">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#ab4d2e779c20417a997462e9a99386748">COREMOD_memory.h</a>
 </li>
 <li>create_variable_string_ID()
-: <a class="el" href="COREMOD__memory_8h.html#a0ae925186d7fad61c62286a01a36ba35">COREMOD_memory.h</a>
-, <a class="el" href="COREMOD__memory_8c.html#a0ae925186d7fad61c62286a01a36ba35">COREMOD_memory.c</a>
+: <a class="el" href="COREMOD__memory_8c.html#a0ae925186d7fad61c62286a01a36ba35">COREMOD_memory.c</a>
+, <a class="el" href="COREMOD__memory_8h.html#a0ae925186d7fad61c62286a01a36ba35">COREMOD_memory.h</a>
 </li>
 <li>cube_average()
 : <a class="el" href="image__basic_8c.html#a82904f1f73fcba3b18a22fe85b34f869">image_basic.c</a>
@@ -598,7 +664,6 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 </li>
 <li>CUDACOMP_init()
 : <a class="el" href="cudacomp_8h.html#a7ffa424f97c153a099a633a588629869">cudacomp.h</a>
-, <a class="el" href="cudacomp_8c.html#a7ffa424f97c153a099a633a588629869">cudacomp.c</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -606,7 +671,7 @@ $(document).ready(function(){initNavTree('globals_func_c.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Sep 6 2014 21:30:20 for Cfits by
+    <li class="footer">Generated on Fri Nov 14 2014 09:55:04 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

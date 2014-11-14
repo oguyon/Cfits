@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['zenithangle',['ZenithAngle',['../AtmosphereModel_8c.html#a58f391202e2e3ae1de02f60930370e29',1,'AtmosphereModel.c']]],
   ['zer_5fm',['Zer_m',['../structZERNIKE.html#a92c691d4081cb095e8f006335bf20f08',1,'ZERNIKE']]],
   ['zer_5fn',['Zer_n',['../structZERNIKE.html#a9c1c566a6926ec5c5458614732c6d358',1,'ZERNIKE']]],
   ['zermax',['ZERMAX',['../structZERNIKE.html#a2c37fde142f459b1374da2472151ee29',1,'ZERNIKE']]],
@@ -10,7 +11,7 @@ var searchData=
   ['zernike_5fvalue',['Zernike_value',['../ZernikePolyn_8c.html#a651851e4e65b70c8aed8ff5e5471e0fc',1,'Zernike_value(long j, double r, double PA):&#160;ZernikePolyn.c'],['../ZernikePolyn_8h.html#a651851e4e65b70c8aed8ff5e5471e0fc',1,'Zernike_value(long j, double r, double PA):&#160;ZernikePolyn.c']]],
   ['zernikepolyn_2ec',['ZernikePolyn.c',['../ZernikePolyn_8c.html',1,'']]],
   ['zernikepolyn_2eh',['ZernikePolyn.h',['../ZernikePolyn_8h.html',1,'']]],
-  ['zeta',['zeta',['../AtmosphericTurbulence_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;AtmosphericTurbulence.c'],['../nrlmsise-00_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;nrlmsise-00.c']]],
+  ['zeta',['zeta',['../AtmosphereModel_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a2fec2cce97c98dff8ba8bc5cb3011af1',1,'zeta(double zz, double zl):&#160;nrlmsise-00.c']]],
   ['zfactor',['zfactor',['../structFOCMASK.html#ae4f8bac28f3d485f900c7236b94a0aa2',1,'FOCMASK']]],
   ['zoneaid',['zoneaID',['../structMIRRORPIAACMCDESIGN.html#a36b432bd46d6c72439f3cb5d95efb58f',1,'MIRRORPIAACMCDESIGN']]],
   ['zonez0_5farray',['zonez0_array',['../PIAACMCsimul_8c.html#aab9dd35859cdf6e5343698964391aafc',1,'PIAACMCsimul.c']]],

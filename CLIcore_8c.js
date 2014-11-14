@@ -33,7 +33,6 @@ var CLIcore_8c =
     [ "data", "CLIcore_8c.html#a9842752e03b4de9b4593f1a3b34364ab", null ],
     [ "line", "CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b", null ],
     [ "Listimfile", "CLIcore_8c.html#ae5371cd7e46f19a56efdff432345b508", null ],
-    [ "Nofifo", "CLIcore_8c.html#a2a3bac038b0ac5ccbf5cc7d27e6bbe65", null ],
     [ "rlquit", "CLIcore_8c.html#a4f8be0aef5b7a6c4f308f99f92370d74", null ],
     [ "Verbose", "CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db", null ]
 ];

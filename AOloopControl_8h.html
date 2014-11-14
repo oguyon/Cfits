@@ -134,13 +134,13 @@ Functions</h2></td></tr>
 <tr class="separator:af026d5c0c10a972e3627d65652cff9e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abafcddf53edec67a3729837724449116"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#abafcddf53edec67a3729837724449116">AOloopControl_camimage_extract2D_sharedmem_loop</a> (char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)</td></tr>
 <tr class="separator:abafcddf53edec67a3729837724449116"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5623aafb0749edfb120719732214cc4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aa5623aafb0749edfb120719732214cc4">compute_ControlMatrix</a> (long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta)</td></tr>
-<tr class="memdesc:aa5623aafb0749edfb120719732214cc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes control matrix using SVD.  <a href="#aa5623aafb0749edfb120719732214cc4">More...</a><br/></td></tr>
-<tr class="separator:aa5623aafb0749edfb120719732214cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a085d9c27003b37c36e3047a870c5179e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a085d9c27003b37c36e3047a870c5179e">compute_ControlMatrix</a> (long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP)</td></tr>
+<tr class="memdesc:a085d9c27003b37c36e3047a870c5179e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes control matrix using SVD.  <a href="#a085d9c27003b37c36e3047a870c5179e">More...</a><br/></td></tr>
+<tr class="separator:a085d9c27003b37c36e3047a870c5179e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7071ae48e7bdbd03bc3c13ff143ec017"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a7071ae48e7bdbd03bc3c13ff143ec017">AOloopControl_InitializeMemory</a> ()</td></tr>
 <tr class="separator:a7071ae48e7bdbd03bc3c13ff143ec017"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea1f823ddb827c2d0c2991bc4db15db6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aea1f823ddb827c2d0c2991bc4db15db6">Average_cam_frames</a> (long loop, long NbAve)</td></tr>
-<tr class="separator:aea1f823ddb827c2d0c2991bc4db15db6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebbd9ebfb4bb8e187b37fcf60b453b3d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aebbd9ebfb4bb8e187b37fcf60b453b3d">Average_cam_frames</a> (long loop, long NbAve, int RM)</td></tr>
+<tr class="separator:aebbd9ebfb4bb8e187b37fcf60b453b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc9ab7061d6a728e55bcacd6742448c1"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#acc9ab7061d6a728e55bcacd6742448c1">AOloopControl_MakeDMModes</a> (long loop, long NBmodes, char *IDname)</td></tr>
 <tr class="separator:acc9ab7061d6a728e55bcacd6742448c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a433c21c6619529f2a61c2b4c22a7c287"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a433c21c6619529f2a61c2b4c22a7c287">AOloopControl_loadCM</a> (long loop, char *CMfname)</td></tr>
@@ -151,6 +151,10 @@ Functions</h2></td></tr>
 <tr class="separator:a50857db2034c5affb27df150a136098f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9a8f797c451f9636c7e9f9be68e75cd"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#af9a8f797c451f9636c7e9f9be68e75cd">Measure_ActMap_WFS</a> (long loop, double ampl, double delays, long NBave, char *WFS_actmap)</td></tr>
 <tr class="separator:af9a8f797c451f9636c7e9f9be68e75cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40f5dfb872f856f68b6dec2a72f126bb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a40f5dfb872f856f68b6dec2a72f126bb">AOloopControl_Measure_WFScam_PeriodicError</a> (long loop, long NBframes, long NBpha, char *IDout_name)</td></tr>
+<tr class="separator:a40f5dfb872f856f68b6dec2a72f126bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af46ddde2c87335138a1a11eee3442119"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#af46ddde2c87335138a1a11eee3442119">AOloopControl_Remove_WFScamPE</a> (char *IDin_name, char *IDcorr_name, double pha)</td></tr>
+<tr class="separator:af46ddde2c87335138a1a11eee3442119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab51676f77cfd9e45abd24cb0a68a08e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ab51676f77cfd9e45abd24cb0a68a08e7">Measure_Resp_Matrix</a> (long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)</td></tr>
 <tr class="separator:ab51676f77cfd9e45abd24cb0a68a08e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a629fc1fdecf7ffcf538a9292ee0f3f08"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a629fc1fdecf7ffcf538a9292ee0f3f08">ControlMatrixMultiply</a> (float *cm_array, float *imarray, long m, long n, float *outvect)</td></tr>
@@ -209,6 +213,10 @@ Functions</h2></td></tr>
 <tr class="separator:a15b78cd3a44b44c60cf340e457c421f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbfea6c276731196c933505b60d8ee95"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#afbfea6c276731196c933505b60d8ee95">AOloopControl_AutoTune</a> ()</td></tr>
 <tr class="separator:afbfea6c276731196c933505b60d8ee95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33f4a3dca2f37f19c725de410dd2b409"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a33f4a3dca2f37f19c725de410dd2b409">AOloopControl_tuneWFSsync</a> (long loop, char *IDout_name)</td></tr>
+<tr class="separator:a33f4a3dca2f37f19c725de410dd2b409"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a144da569d55ee48a672152c2ec145846"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a144da569d55ee48a672152c2ec145846">AOloopControl_setparam</a> (long loop, char *key, double value)</td></tr>
+<tr class="separator:a144da569d55ee48a672152c2ec145846"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="ac3be057c7d6b83099b0b9489e43d016c"></a>
@@ -612,6 +620,53 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a40f5dfb872f856f68b6dec2a72f126bb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int AOloopControl_Measure_WFScam_PeriodicError </td>
+          <td>(</td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>loop</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>NBframes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>NBpha</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>IDout_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Record periodic camera signal (to be used if there is a periodic camera error)</p>
+<p>folds the signal onto one period </p>
+<p>in frames</p>
+<p>find periodicity ( coarse search )</p>
+<p>toggles to 1 when curve first goes above level1</p>
+<p>toggles to 1 when curve first goes above level2 after level1OK</p>
+<p>toggles to 1 when curve first goes above level3 after level2OK</p>
+<p>find periodicity ( fine search )</p>
+<p>building phase cube </p>
+
+</div>
+</div>
 <a class="anchor" id="af026d5c0c10a972e3627d65652cff9e3"></a>
 <div class="memitem">
 <div class="memproto">
@@ -703,6 +758,40 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="af46ddde2c87335138a1a11eee3442119"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int AOloopControl_Remove_WFScamPE </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>IDin_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>IDcorr_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>pha</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>remove WFS camera periodic error</p>
+<p>pha: phase from 0.0 to 1.0 </p>
 
 </div>
 </div>
@@ -941,6 +1030,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>append process name with loop number </p>
 
 </div>
 </div>
@@ -1018,6 +1108,38 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a144da569d55ee48a672152c2ec145846"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int AOloopControl_setparam </td>
+          <td>(</td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>loop</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a393d9b6ae87a47e1d1e4ce32f9078bcd"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1049,7 +1171,33 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aea1f823ddb827c2d0c2991bc4db15db6"></a>
+<a class="anchor" id="a33f4a3dca2f37f19c725de410dd2b409"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int AOloopControl_tuneWFSsync </td>
+          <td>(</td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>loop</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>IDout_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aebbd9ebfb4bb8e187b37fcf60b453b3d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1063,7 +1211,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>NbAve</em>&#160;</td>
+          <td class="paramname"><em>NbAve</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>RM</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1072,10 +1226,13 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Read image from WFS camera</p>
+<p>supports ring buffer puts image from camera buffer aoconfID_WFS into aoconfID_WFS1 (supplied by user)</p>
+<p>RM = 1 if response matrix </p>
 
 </div>
 </div>
-<a class="anchor" id="aa5623aafb0749edfb120719732214cc4"></a>
+<a class="anchor" id="a085d9c27003b37c36e3047a870c5179e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1113,7 +1270,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>Beta</em>&#160;</td>
+          <td class="paramname"><em>Beta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>NB_MODE_REMOVED_STEP</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1291,6 +1454,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>measures response matrix AND reference </p>
+<p>local arrays for image acquision </p>
 
 </div>
 </div>
@@ -1316,7 +1481,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8h.html">AOloopControl.h</a></li>
-    <li class="footer">Generated on Sat Sep 6 2014 21:30:20 for Cfits by
+    <li class="footer">Generated on Fri Nov 14 2014 09:55:04 for Cfits by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
