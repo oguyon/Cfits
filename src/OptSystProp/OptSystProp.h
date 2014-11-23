@@ -21,7 +21,6 @@ typedef struct {
   double IFsize; // influence function map size (linear)
   double pixscale; // map pixel scale [m/pix]
   long dispmapID; // points to displacement map    
-
 } DM_SIM;
 
 

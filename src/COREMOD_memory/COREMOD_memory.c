@@ -80,9 +80,11 @@ int create_image_cli()
   long *imsize;
   long naxis = 0;
   long i;
-
+	int atype;
   
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+  
+  
+  if(CLI_checkarg(1,3)+CLI_checkarg_noerrmsg(2,2)==0)
     {
       naxis = 0;
       imsize = (long*) malloc(sizeof(long)*5);
@@ -103,6 +105,86 @@ int create_image_cli()
       }
       free(imsize);
     }
+  else if (CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0) // type option exists
+  {
+	atype = -1;
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "c")==0)
+		{
+		printf("type = CHAR\n");
+		atype = CHAR;
+	}
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "i")==0)
+		{
+		printf("type = INT\n");
+		atype = INT;
+	}
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "f")==0)
+		{
+		printf("type = FLOAT\n");
+		atype = FLOAT;
+	}
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "d")==0)
+		{
+		printf("type = DOUBLE\n");
+		atype = DOUBLE;
+	}
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "cf")==0)
+		{
+		printf("type = COMPLEX_FLOAT\n");
+		atype = COMPLEX_FLOAT;
+	}
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "cd")==0)
+		{
+		printf("type = COMPLEX_DOUBLE\n");
+		atype = COMPLEX_DOUBLE;
+	}
+	
+	if(strcmp(data.cmdargtoken[2].val.string, "u")==0)
+		{
+		printf("type = USHORT\n");
+		atype = USHORT;
+	}
+
+	if(strcmp(data.cmdargtoken[2].val.string, "l")==0)
+		{
+		printf("type = LONG\n");
+		atype = LONG;
+	}
+
+	if(atype==-1)
+		{
+			printf("Data type \"%s\" not recognized\n", data.cmdargtoken[2].val.string);
+			printf("must be : \n");
+			printf("  c : CHAR\n");
+			printf("  i : INT\n");
+			printf("  f : FLOAT\n");
+			printf("  d : DOUBLE\n");
+			printf("  cf: COMPLEX FLOAT\n");
+			printf("  cd: COMPLEX DOUBLE\n");
+			printf("  u : USHORT\n");
+			printf("  l : LONG\n");
+			return 1;
+		}
+	 naxis = 0;
+      imsize = (long*) malloc(sizeof(long)*5);
+      i = 3;
+      while(data.cmdargtoken[i].type==2)
+	{
+	  imsize[naxis] = data.cmdargtoken[i].val.numl;
+	  naxis++;
+	  i++;
+	}
+     
+	create_image_ID(data.cmdargtoken[1].val.string, naxis, imsize, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
+
+      free(imsize);
+  }
   else
     return 1;
 }

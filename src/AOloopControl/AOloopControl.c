@@ -791,20 +791,42 @@ int init_AOloopControl()
 
 
 
-
+/** \brief Creates a blank configuration 
+ *
+ * 
+ * 
+ */
+ 
 long AOloopControl_makeTemplateAOloopconf(long loopnb)
 {
     FILE *fp;
-    char fname[200];
+    char fname[256];
+	int r;
+	char command[256];
+	char line[256];
+	
+	// make configuration directory
+	r = system("mkdir -p ./conf/");
 
-    sprintf(fname, "AOloop.conf");
+    sprintf(fname, "./conf/AOloop.conf");
 
     fp = fopen(fname, "w");
     fprintf(fp, "logsize         1000            number of consecutive entries in single log file\n");
     fprintf(fp, "logdir          ./\n");
     fprintf(fp, "NBMblocks	3		number of modes blocks\n");
-
     fclose(fp);
+    
+    
+    
+    // LOOP NAME
+    printf("Enter loop name: ");
+    if (fgets(line, sizeof(line), stdin)) {
+	printf("LOOP NAME = %s\n", line);
+	}
+	fp = fopen("./conf/conf_LOOPNAME.txt", "w");
+	fprintf(fp, "%s", line);
+	fclose(fp);
+
 
     return(0);
 }
@@ -812,7 +834,7 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
 
 
 
-/*** /brief creates AO control modes
+/*** \brief creates AO control modes
  * 
  *	
  * creates image "modesfreqcpa" which contains CPA value for each mode
@@ -2124,15 +2146,18 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
     if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
     {
-        printf("ERROR: file ./conf/conf_GPU.txt missing\n");
-        exit(0);
+        printf("WARNING: file ./conf/conf_GPU.txt missing\n");
+		printf("Using CPU only\n");
+		AOconf[loop].GPU = 0;
     }
-    r = fscanf(fp, "%s", content);
-    printf("GPU : %d\n", atoi(content));
-    fclose(fp);
-    fflush(stdout);
-    AOconf[loop].GPU = atoi(content);
-
+    else
+    {
+		r = fscanf(fp, "%s", content);
+		printf("GPU : %d\n", atoi(content));
+		fclose(fp);
+		fflush(stdout);
+		AOconf[loop].GPU = atoi(content);
+	}
 
 
 
@@ -4919,6 +4944,9 @@ int AOloopControl_setparam(long loop, char *key, double value)
 	
 	return (0);
 }
+
+
+
 
 
 

@@ -118,6 +118,7 @@ typedef struct
 
 
 int CLI_checkarg(int argnum, int argtype);
+int CLI_checkarg_noerrmsg(int argnum, int argtype);
 
 
 

@@ -63,7 +63,6 @@ double LAMBDAEND = 0.605e-6;
 #define NBLAMBDA 5
 
 MIRRORPIAACMCDESIGN *piaacmc;
-OPTSYST *optsyst;
 
 
 int FORCE_CREATE_Cmodes = 0;
