@@ -1027,6 +1027,11 @@ int AOsystSim_run()
 
 	COREMOD_MEMORY_image_set_semflush("aosimpsfout");
 
+
+
+	printf("I got here !\n");
+	fflush(stdout);
+
 	return(0);
 }
 

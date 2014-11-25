@@ -3549,11 +3549,14 @@ void *waitforsemID(void *ID)
 {
 	pthread_t tid;
 	int t;
+	int s;
 	
+	
+    s = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	tid = pthread_self();
 	
-	printf("Waiting on image %s  (thread %u)...\n", data.image[(long) ID].md[0].name, (int) tid);
-	fflush(stdout);
+//	printf("Waiting on image %s  (thread %u)...\n", data.image[(long) ID].md[0].name, (int) tid);
+//	fflush(stdout);
 	
     sem_wait(data.image[(long) ID].semptr);
 
@@ -3561,12 +3564,13 @@ void *waitforsemID(void *ID)
     {
 		if(tid!=thrarray_semwait[t])
 			{
-				pthread_kill(thrarray_semwait[t], SIGUSR1);
+//				printf("killing thread %u\n", (int) thrarray_semwait[t]);
+				s = pthread_cancel(thrarray_semwait[t]);
 			}
 	}
 
-	printf("Done waiting on image %s\n", data.image[(long) ID].md[0].name);
-	fflush(stdout);
+	//printf("Done waiting on image %s\n", data.image[(long) ID].md[0].name);
+	//fflush(stdout);
 
    pthread_exit(NULL);
 }
@@ -3589,14 +3593,11 @@ long COREMOD_MEMORY_image_set_semwait_OR(long *IDarray, long NB_ID)
 	
 	usleep(100000);
 
-	printf("STEP 00\n");
-	fflush(stdout);
-
 	
 	for(t = 0; t < NB_ID; t++)
    {
-	   printf("Waiting on thread %d to complete\n", t);
-	   fflush(stdout);
+	//   printf("Waiting on thread %d to complete\n", t);
+	 //  fflush(stdout);
 	   pthread_join(thrarray_semwait[t], NULL);
    }
 	
