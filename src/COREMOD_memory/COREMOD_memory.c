@@ -6,11 +6,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-
+#include <pthread.h>
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/mman.h>
-
+#include <signal.h> 
 #include <ncurses.h>
 
 #include "CLIcore.h"
@@ -28,6 +28,11 @@
 #define SBUFFERSIZE 1000
 
 
+
+pthread_t *thrarray_semwait;
+long NB_thrarray_semwait;
+
+	
 // MEMORY MONITOR 
 FILE *listim_scr_fpo;
 FILE *listim_scr_fpi;
@@ -3489,6 +3494,7 @@ long COREMOD_MEMORY_image_set_createsem(char *IDname)
 		exit(1);
 		}	
 	data.image[ID].sem = 1;
+	sem_init(data.image[ID].semptr, 1, 0);
 	}
 	
 	printf("sem  = %d\n", data.image[ID].sem);
@@ -3522,12 +3528,12 @@ long COREMOD_MEMORY_image_set_semwait(char *IDname)
 
 	if(data.image[ID].sem == 1)
 	{
-	sem_getvalue(data.image[ID].semptr, &semval);
+//	sem_getvalue(data.image[ID].semptr, &semval);
 	//printf("Semaphore value = %d   ->  ", semval);
 	//fflush(stdout);
 
 	sem_wait(data.image[ID].semptr);
-	sem_getvalue(data.image[ID].semptr, &semval);
+//	sem_getvalue(data.image[ID].semptr, &semval);
 	//printf("Semaphore value = %d    \n", semval);
 	//fflush(stdout);
 	}
@@ -3536,6 +3542,100 @@ long COREMOD_MEMORY_image_set_semwait(char *IDname)
 	
 	return(ID);
 }
+
+
+
+void *waitforsemID(void *ID)
+{
+	pthread_t tid;
+	int t;
+	
+	tid = pthread_self();
+	
+	printf("Waiting on image %s  (thread %u)...\n", data.image[(long) ID].md[0].name, (int) tid);
+	fflush(stdout);
+	
+    sem_wait(data.image[(long) ID].semptr);
+
+    for(t=0;t<NB_thrarray_semwait;t++)
+    {
+		if(tid!=thrarray_semwait[t])
+			{
+				pthread_kill(thrarray_semwait[t], SIGUSR1);
+			}
+	}
+
+	printf("Done waiting on image %s\n", data.image[(long) ID].md[0].name);
+	fflush(stdout);
+
+   pthread_exit(NULL);
+}
+
+
+
+/// \brief Wait for multiple semaphores [OR]
+long COREMOD_MEMORY_image_set_semwait_OR(long *IDarray, long NB_ID)
+{
+	int t;
+	int semval;
+
+	thrarray_semwait = (pthread_t*) malloc(sizeof(pthread_t)*NB_ID);
+	NB_thrarray_semwait = NB_ID;
+
+	for(t = 0; t < NB_ID; t++)
+	{
+		pthread_create(&thrarray_semwait[t], NULL, waitforsemID, (void *)IDarray[t]);	
+	}
+	
+	usleep(100000);
+
+	printf("STEP 00\n");
+	fflush(stdout);
+
+	
+	for(t = 0; t < NB_ID; t++)
+   {
+	   printf("Waiting on thread %d to complete\n", t);
+	   fflush(stdout);
+	   pthread_join(thrarray_semwait[t], NULL);
+   }
+	
+	free(thrarray_semwait);
+	
+	return(0);
+}
+
+
+/// set semaphore value to 0
+long COREMOD_MEMORY_image_set_semflush(char *IDname)
+{
+	long ID;
+	int semval;
+	long i;
+	
+	ID = image_ID(IDname);
+	//printf("sem  = %d\n", data.image[ID].sem);
+
+	if(data.image[ID].sem == 1)
+	{
+	sem_getvalue(data.image[ID].semptr, &semval);
+	printf("Semaphore value = %d   ->  ", semval);
+	fflush(stdout);
+
+	for(i=0;i<semval;i++)
+		sem_trywait(data.image[ID].semptr);
+
+	sem_getvalue(data.image[ID].semptr, &semval);
+	printf("Semaphore value = %d    \n", semval);
+	fflush(stdout);
+	}
+	else
+		printf("No semaphore !\n");
+	
+	return(ID);
+}
+
+
 
 
 

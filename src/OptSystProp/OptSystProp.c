@@ -84,7 +84,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
     IDout_pha = create_3Dimage_ID(IDout_pha_name, size, size, optsyst[index].nblambda);
 
 
-    for(kl=0; kl<optsyst[0].nblambda; kl++)
+    for(kl=0; kl<optsyst[index].nblambda; kl++)
     {
         printf("kl = %d / %d  %f\n", kl, optsyst[index].nblambda, optsyst[index].lambdaarray[kl]);
         for(ii=0; ii<size2; ii++)
@@ -118,12 +118,17 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
 /// @param[in]	elemstart	starting element index
 /// @param[in]	elemend		ending element index
 /// @param[in]  savedir  directory to which image results are saved
-/// @param[in]	*elemkeepmem	1 if element complex amplitude should be kept in memory after use
-/// 
+///
+/// *elemkeepmem	1 if element complex amplitude should be kept in memory after use
+///
 
 int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir)
 {
     char command[500];
+    char imname[200];
+    char imnameamp[200];
+    char imnamepha[200];
+
     long IDx, IDy, IDr, IDPA;
     double x, y;
     long IDa, IDp;
@@ -167,20 +172,22 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
     int r;
 
-    size = optsyst[0].size;
+    size = optsyst[index].size;
     size2 = size*size;
-    nblambda = optsyst[0].nblambda;
+    nblambda = optsyst[index].nblambda;
 
 
 
     // create base complex amplitude
-    IDa = image_ID("WFamp");
+    sprintf(imname,"WFamp%ld", index);
+    IDa = image_ID(imname);
     if(IDa==-1)
-        IDa = create_3Dimage_ID("WFamp", size, size, nblambda);
+        IDa = create_3Dimage_ID(imname, size, size, nblambda);
 
-    IDp = image_ID("WFpha");
+    sprintf(imname,"WFpha%ld", index);
+    IDp = image_ID(imname);
     if(IDp==-1)
-        IDp = create_3Dimage_ID("WFpha", size, size, nblambda);
+        IDp = create_3Dimage_ID(imname, size, size, nblambda);
 
     for(ii=0; ii<size2; ii++)
         for(kl=0; kl<nblambda; kl++)
@@ -194,13 +201,13 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     {
         if(elemstart1==0)
         {
-            sprintf(imnameamp_in, "WFamp");
-            sprintf(imnamepha_in, "WFpha");
+            sprintf(imnameamp_in, "WFamp%ld", index);
+            sprintf(imnamepha_in, "WFpha%ld", index);
         }
         else
         {
-            sprintf(imnameamp_in, "WFamp_%03ld", elemstart1-1);
-            sprintf(imnamepha_in, "WFpha_%03ld", elemstart1-1);
+            sprintf(imnameamp_in, "WFamp%ld_%03ld", index, elemstart1-1);
+            sprintf(imnamepha_in, "WFpha%ld_%03ld", index, elemstart1-1);
         }
         if(((ID1=image_ID(imnameamp_in))!=-1)&&((ID2=image_ID(imnamepha_in))!=-1)&&(elemstart1<elemstart+1))
         {
@@ -217,26 +224,26 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     printf("STARTING AT ELEMENT %ld\n", elemstart1);
 
     emax = elemend;
-    if(emax>optsyst[0].NBelem)
-        emax = optsyst[0].NBelem;
+    if(emax>optsyst[index].NBelem)
+        emax = optsyst[index].NBelem;
 
     for(elem=elemstart1; elem<emax; elem++)
     {
         if(elem==0)
         {
-            sprintf(imnameamp_in, "WFamp");
-            sprintf(imnamepha_in, "WFpha");
-            sprintf(imnameamp_out, "WFamp_000");
-            sprintf(imnamepha_out, "WFpha_000");
-            propdist = optsyst[0].elemZpos[0];
+            sprintf(imnameamp_in, "WFamp%ld", index);
+            sprintf(imnamepha_in, "WFpha%ld", index);
+            sprintf(imnameamp_out, "WFamp%ld_000", index);
+            sprintf(imnamepha_out, "WFpha%ld_000", index);
+            propdist = optsyst[index].elemZpos[0];
         }
         else
         {
-            sprintf(imnameamp_in, "WFamp_%03ld", elem-1);
-            sprintf(imnamepha_in, "WFpha_%03ld", elem-1);
-            sprintf(imnameamp_out, "WFamp_%03ld", elem);
-            sprintf(imnamepha_out, "WFpha_%03ld", elem);
-            propdist = optsyst[0].elemZpos[elem]-optsyst[0].elemZpos[elem-1];
+            sprintf(imnameamp_in, "WFamp%ld_%03ld", index, elem-1);
+            sprintf(imnamepha_in, "WFpha%ld_%03ld", index, elem-1);
+            sprintf(imnameamp_out, "WFamp%ld_%03ld", index, elem);
+            sprintf(imnamepha_out, "WFpha%ld_%03ld", index, elem);
+            propdist = optsyst[index].elemZpos[elem]-optsyst[index].elemZpos[elem-1];
         }
 
 
@@ -260,22 +267,22 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         IDa = image_ID(imnameamp_out);
         IDp = image_ID(imnamepha_out);
 
-		/// discard element memory after used
-		printf("*********** %ld  -> %d\n", elem-1, optsyst[0].keepMem[elem-1]);	
-		if(optsyst[0].keepMem[elem-1]==0)
-		{
-			printf("********** Deleting element %ld      %s %s\n", elem-1, imnameamp_in, imnamepha_in);
-			delete_image_ID(imnameamp_in);
-			delete_image_ID(imnamepha_in);
-		}
+        /// discard element memory after used
+        printf("*********** %ld  -> %d\n", elem-1, optsyst[index].keepMem[elem-1]);
+        if(optsyst[index].keepMem[elem-1]==0)
+        {
+            printf("********** Deleting element %ld      %s %s\n", elem-1, imnameamp_in, imnamepha_in);
+            delete_image_ID(imnameamp_in);
+            delete_image_ID(imnamepha_in);
+        }
 
         printf("Applying element %ld\n", elem);
         fflush(stdout);
 
-        if(optsyst[0].elemtype[elem]==1)   // OPAQUE MASK
+        if(optsyst[index].elemtype[elem]==1)   // OPAQUE MASK
         {
-            ID = optsyst[0].elemarrayindex[elem];
-           printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].md[0].name);
+            ID = optsyst[index].elemarrayindex[elem];
+            printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].md[0].name);
             fflush(stdout);
 
             if(ID == -1)
@@ -284,64 +291,64 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 exit(0);
             }
 
-		//	save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
-			//save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
+            //	save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
+            //save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
 
             if(data.image[ID].md[0].size[2] != nblambda)
             {
 # ifdef HAVE_LIBGOMP
-    #pragma omp parallel default(shared) private(ii)
-    {
-        #pragma omp for
-# endif				
-            for(kl=0; kl<nblambda; kl++)
-                 for(ii=0; ii<size2; ii++)
-					data.image[IDa].array.F[size2*kl+ii] *= data.image[ID].array.F[ii];
+                #pragma omp parallel default(shared) private(ii)
+                {
+                    #pragma omp for
+# endif
+                    for(kl=0; kl<nblambda; kl++)
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDa].array.F[size2*kl+ii] *= data.image[ID].array.F[ii];
 # ifdef HAVE_LIBGOMP
-    }
+                }
 # endif
             }
             else
             {
- # ifdef HAVE_LIBGOMP
-    #pragma omp parallel 
-    {
-        #pragma omp for
-# endif				
-                for(ii=0; ii<size2*nblambda; ii++)
-                    data.image[IDa].array.F[ii] *= data.image[ID].array.F[ii];
 # ifdef HAVE_LIBGOMP
-    }
+                #pragma omp parallel
+                {
+                    #pragma omp for
+# endif
+                    for(ii=0; ii<size2*nblambda; ii++)
+                        data.image[IDa].array.F[ii] *= data.image[ID].array.F[ii];
+# ifdef HAVE_LIBGOMP
+                }
 # endif
             }
-		
-	//	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
-		
+
+            //	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
+
 
         }
 
-        if(optsyst[0].elemtype[elem]==3)  // MIRROR OR REFRACTIVE SURFACE
+        if(optsyst[index].elemtype[elem]==3)  // MIRROR OR REFRACTIVE SURFACE
         {
             printf("============= Mirror or Refractive surface =======================\n");
             fflush(stdout);
-            ID = optsyst[0].ASPHSURFMarray[optsyst[0].elemarrayindex[elem]].surfID;
-            printf("%d surface ID = %ld\n", optsyst[0].elemarrayindex[elem], ID);
+            ID = optsyst[index].ASPHSURFMarray[optsyst[index].elemarrayindex[elem]].surfID;
+            printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
             fflush(stdout);
- # ifdef HAVE_LIBGOMP
-    #pragma omp parallel default(shared) private(ii)
-    {
-        #pragma omp for
-# endif				
-           for(kl=0; kl<nblambda; kl++)
-				for(ii=0; ii<size2; ii++)
-                    data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[ii]/optsyst[0].lambdaarray[kl];
- # ifdef HAVE_LIBGOMP
-    }
-# endif       
-		}
+# ifdef HAVE_LIBGOMP
+            #pragma omp parallel default(shared) private(ii)
+            {
+                #pragma omp for
+# endif
+                for(kl=0; kl<nblambda; kl++)
+                    for(ii=0; ii<size2; ii++)
+                        data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[ii]/optsyst[index].lambdaarray[kl];
+# ifdef HAVE_LIBGOMP
+            }
+# endif
+        }
 
 
-        if(optsyst[0].elemtype[elem]==5)  // FOCAL PLANE MASK - MASK INPUT IS 1-MASK FOR EFFICIENT DFT
+        if(optsyst[index].elemtype[elem]==5)  // FOCAL PLANE MASK - MASK INPUT IS 1-MASK FOR EFFICIENT DFT
         {
             printf("============= Focal Plane Mask ==============\n");
             fflush(stdout);
@@ -356,13 +363,13 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             delete_image_ID(imnamepha_out);
 
 
-            if(optsyst[0].DFTgridpad>0)
+            if(optsyst[index].DFTgridpad>0)
             {
                 // RESAMPLE ON A SPARSE GRID TO SPEED UP DFT
                 IDre = create_3Dimage_ID("dftgridre", size, size, nblambda);
                 IDim = create_3Dimage_ID("dftgridim", size, size, nblambda);
-                gsize = 2*optsyst[0].DFTgridpad+1; // grid size, odd number - this is the space between pixels
-                offset = optsyst[0].DFTgridpad; // offset from box edge to active pixel
+                gsize = 2*optsyst[index].DFTgridpad+1; // grid size, odd number - this is the space between pixels
+                offset = optsyst[index].DFTgridpad; // offset from box edge to active pixel
 
                 ID = image_ID("_WFctmp");
                 for(kl=0; kl<nblambda; kl++)
@@ -386,23 +393,23 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 delete_image_ID("dftgridim");
 
 
-                i = optsyst[0].elemarrayindex[elem];
-                ID = optsyst[0].FOCMASKarray[i].fpmID;
+                i = optsyst[index].elemarrayindex[elem];
+                ID = optsyst[index].FOCMASKarray[i].fpmID;
                 printf("focm : %s\n", data.image[ID].md[0].name);
                 //	      printf("Saving to testfpm.fits\n");
                 //      fflush(stdout);
                 //	      list_image_ID();
-				mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
-	
-	if(optsyst[0].SAVE == 1)
-{
-				sprintf(fname, "!%s/fpm_ampl.fits", savedir);
-                save_fits("fpma", fname);
- 				sprintf(fname, "!%s/fpm_pha.fits", savedir);
-                save_fits("fpmp", fname);
-}
-               //	      exit(0);
-                fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
+                mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
+
+                if(optsyst[index].SAVE == 1)
+                {
+                    sprintf(fname, "!%s/fpm_ampl.fits", savedir);
+                    save_fits("fpma", fname);
+                    sprintf(fname, "!%s/fpm_pha.fits", savedir);
+                    save_fits("fpmp", fname);
+                }
+                //	      exit(0);
+                fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 delete_image_ID("_WFctmpc");
                 sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
                 r = system(command);
@@ -460,20 +467,20 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             }
             else
             {
-                i = optsyst[0].elemarrayindex[elem];
-                ID = optsyst[0].FOCMASKarray[i].fpmID;
+                i = optsyst[index].elemarrayindex[elem];
+                ID = optsyst[index].FOCMASKarray[i].fpmID;
                 printf("focm : %s\n", data.image[ID].md[0].name);
                 fflush(stdout);
-                fft_DFTinsertFPM("_WFctmp", data.image[ID].md[0].name, optsyst[0].FOCMASKarray[i].zfactor, "_WFcout");
+                fft_DFTinsertFPM("_WFctmp", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
                 r = system(command);
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
                 r = system(command);
             }
 
-            i = optsyst[0].elemarrayindex[elem];
+            i = optsyst[index].elemarrayindex[elem];
 
-            if(optsyst[0].FOCMASKarray[i].mode == 1)
+            if(optsyst[index].FOCMASKarray[i].mode == 1)
             {
                 arith_image_sub_inplace("_WFctmp", "_WFcout");
                 mk_amph_from_complex("_WFctmp", imnameamp_out, imnamepha_out);
@@ -488,61 +495,66 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         }
 
         IDa = image_ID(imnameamp_out);
-        optsyst[0].flux[elem] = 0.0;
+        optsyst[index].flux[elem] = 0.0;
         for(kl=0; kl<nblambda; kl++)
             for(ii=0; ii<size2; ii++)
-                optsyst[0].flux[elem] += data.image[IDa].array.F[kl*size2+ii]*data.image[IDa].array.F[kl*size2+ii];
+                optsyst[index].flux[elem] += data.image[IDa].array.F[kl*size2+ii]*data.image[IDa].array.F[kl*size2+ii];
 
-        printf("Element %ld  [%ld %ld]  Flux = %lf\n", elem, nblambda, size2, optsyst[0].flux[elem]/nblambda);
-		if(isnan(optsyst[0].flux[elem])!=0)
-			exit(0);
+        printf("Element %ld  [%ld %ld]  Flux = %lf\n", elem, nblambda, size2, optsyst[index].flux[elem]/nblambda);
+        if(isnan(optsyst[index].flux[elem])!=0)
+            exit(0);
 
-if(optsyst[0].SAVE == 1)
-{
-       printf("Saving intermediate plane [%ld] ... ", elem);
-        fflush(stdout);
+        if(optsyst[index].SAVE == 1)
+        {
+            printf("Saving intermediate plane [%ld] ... ", elem);
+            fflush(stdout);
 
-      sprintf(fname, "!./%s/WFamp_%03ld.fits", savedir, elem);
-        save_fits(imnameamp_out, fname);
-        sprintf(fname, "!./%s/WFpha_%03ld.fits", savedir, elem);
-        save_fits(imnamepha_out, fname);
+            sprintf(fname, "!./%s/WFamp%ld_%03ld.fits", savedir, index, elem);
+            save_fits(imnameamp_out, fname);
+            sprintf(fname, "!./%s/WFpha%ld_%03ld.fits", savedir, index, elem);
+            save_fits(imnamepha_out, fname);
 
-       printf("done\n");
-        fflush(stdout);
-}
+
+            printf("done\n");
+            fflush(stdout);
+        }
     }
 
-    if(elem==optsyst[0].NBelem) // Compute final focal plane image
+    if((elem==optsyst[index].NBelem)&&(optsyst[index].endmode==0)) // Compute final focal plane image
     {
         printf("COMPUTING FINAL IMAGE AS FFT OF %ld\n", elem-1);
         mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
         permut("_WFctmp");
-        do2dfft("_WFctmp","psfc");
+        sprintf(imname, "psfc%ld", index);
+        do2dfft("_WFctmp", imname);
         delete_image_ID("_WFctmp");
-        permut("psfc");
-        mk_amph_from_complex("psfc", "psfa", "psfp");
+        permut(imname);
+        sprintf(imnameamp, "psfa%ld", index);
+        sprintf(imnamepha, "psfp%ld", index);
+        mk_amph_from_complex(imname, imnameamp, imnamepha);
 
- if(optsyst[0].SAVE == 1)
-{       sprintf(fname, "!%s/psfa.fits", savedir);
-        save_fits("psfa", fname);
+        if(optsyst[index].SAVE == 1)
+        {   sprintf(fname, "!%s/psfa%ld.fits", savedir, index);
+            save_fits(imnameamp, fname);
 
-        sprintf(fname, "!%s/psfp.fits", savedir);
-        save_fits("psfp", fname);
-}
+            sprintf(fname, "!%s/psfp%ld.fits", savedir, index);
+            save_fits(imnamepha, fname);
+        }
 
 
-        ID = image_ID("psfa");
+        ID = image_ID(imnameamp);
         for(ii=0; ii<size2*nblambda; ii++)
-            data.image[ID].array.F[ii] /= sqrt(size2*optsyst[0].flux[0]/nblambda);
+            data.image[ID].array.F[ii] /= sqrt(size2*optsyst[index].flux[0]/nblambda);
 
-        arith_image_mult("psfa", "psfa", "psfi");
-        total = arith_image_total("psfi")/nblambda;
+        sprintf(imname, "psfi%ld", index);
+        arith_image_mult(imnameamp, imnameamp, imname);
+        total = arith_image_total(imname)/nblambda;
         printf("TOTAL = %lf\n", total);
 
-if(optsyst[0].SAVE == 1)
-{        sprintf(fname, "!%s/psfi.fits", savedir);
-        save_fits("psfi", fname);
- }
+        if(optsyst[index].SAVE == 1)
+        {   sprintf(fname, "!%s/psfi%ld.fits", savedir, index);
+            save_fits(imname, fname);
+        }
     }
 
 

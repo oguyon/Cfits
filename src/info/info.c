@@ -244,6 +244,7 @@ int printstatus(long ID)
 
   double RMS01 = 0.0;
   long vcntmax;
+int semval;
 
   printw("%s\n", data.image[ID].md[0].name);
 
@@ -292,10 +293,16 @@ int printstatus(long ID)
 
 
 
-  printw("write %d    ", data.image[ID].md[0].write);
-  printw("status %2d  ", data.image[ID].md[0].status);
-  printw("cnt0 %8d   %6.2f Hz   ", data.image[ID].md[0].cnt0, frequ);
-  printw("cnt1   = %8d\n", data.image[ID].md[0].cnt1);
+  printw("[write %d] ", data.image[ID].md[0].write);
+  printw("[status %2d] ", data.image[ID].md[0].status);
+  printw("[cnt0 %8d] [%6.2f Hz] ", data.image[ID].md[0].cnt0, frequ);
+  printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
+  if(data.image[ID].sem==1)
+  {
+	  sem_getvalue(data.image[ID].semptr, &semval);
+     printw("[Semaphore %3d] ", semval);
+	}
+printw("\n");
 
   average = arith_image_mean(data.image[ID].md[0].name);
   imtotal = arith_image_total(data.image[ID].md[0].name);

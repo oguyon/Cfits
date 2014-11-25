@@ -67,8 +67,8 @@ typedef struct {
 // optical elements are applied sequentially, and consist of amplitude and phase cubes (1 slize per lambda)
 // types of elements :
 // 1: static opaque mask, defined by image identifyer 
-// 2: DM, defined by index in array of DM structures
-// 3: reflective aspheric surface. Defined by OPD map (used for mirrors)
+// 2: -
+// 3: reflective aspheric surface. Defined by OPD map (used for mirrors, including deformable mirrors)
 // 4: refractive aspheric surface. Defined by OPD map, material type (index of refraction) before and after surface
 // 5: focal plane mask 
 //
@@ -83,11 +83,6 @@ typedef struct {
   long DFTgridpad; // 0 for full res DFT, >0 for faster coarser DFTs
   
   // =============== OPTICAL ELEMENTS ===================
-  
-  // predefined arrays that can be used for optical elements
-  long NB_DM; // max number of DMs
-  DM_SIM DMarray[4];
-
   long NB_asphsurfm; // max number of aspheric mirrors
   ASPHSURFM ASPHSURFMarray[4];
 
@@ -97,7 +92,6 @@ typedef struct {
   long NB_focmask; // max number of focal plane masks
   FOCMASK FOCMASKarray[4];
   
- 
   
   long NBelem; // number of optical elements
   int elemtype[100]; // element type
@@ -109,7 +103,9 @@ typedef struct {
   long elem_amp_ID_array[100]; // amplitude map identifyer, multiplicative
   long elem_pha_ID_array[100]; // phase map identifyer, additive
 
-int SAVE; // 1 if intermediate results are saved, 0 otherwise
+  int endmode; // 0: compute PSF at the end of the sequence, 1: no PSF
+
+  int SAVE; // 1 if intermediate results are saved, 0 otherwise
 
 } OPTSYST;
 

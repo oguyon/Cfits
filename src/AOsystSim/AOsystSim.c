@@ -7,6 +7,7 @@
 #include <time.h>
 #include <math.h>
 
+
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -795,7 +796,7 @@ int AOsystSim_propagate()
 
 int AOsystSim_run()
 {
-	long arraysize = 256;
+	long arraysize = 512;
 	long ii, jj;
 	double puprad, dmrad;
 	double dmifscale = 20.0; // scale magnification between full DM map and DM influence function
@@ -813,9 +814,17 @@ int AOsystSim_run()
 	long IDpupm;
 	int elem;
 	long IDdm0shape;
+	long IDfocmask;
+	double r;
+	double dftzoomfact = 2.0;
+	long IDturb;
+	long *dmsizearray;
+	long ID;
+	long IDout;
+	long *IDarray;
 	
-	puprad = 0.3*arraysize;
-	dmrad = 0.32*arraysize;
+	puprad = 0.12*arraysize;
+	dmrad = 0.13*arraysize;
 
 
 	
@@ -887,15 +896,29 @@ int AOsystSim_run()
 		}
 	}
 	free(imsize);
-	save_fits("dmifc","!dmifc.fits");
+//	save_fits("dmifc","!dmifc.fits");
 	printf("\n");
 
 	// INITIALIZE DM CONTROL ARRAY
-	IDdmctrl = create_2Dimage_ID("dmctrl", DMsize, DMsize);
-	for(k=0;k<DMsize*DMsize;k++)
-		data.image[IDdmctrl].array.F[k] = ran1();
+	dmsizearray = (long*) malloc(sizeof(long)*2);
+	dmsizearray[0] = DMsize;
+	dmsizearray[1] = DMsize;
+	IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
+	COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
 
-	AOsystSim_DMshape("dmctrl", "dmifc", "dmdisp");
+	for(k=0;k<DMsize*DMsize;k++)
+		data.image[IDdmctrl].array.F[k] = ran1()*2.0e-7;
+
+
+	// INITIALIZE TURBULENCE SCREEN
+	imsize = (long*) malloc(sizeof(long)*2);
+	imsize[0] = arraysize;
+	imsize[1] = arraysize;
+	IDturb = create_image_ID("WFturb", 2, imsize, FLOAT, 1, 0);
+	free(imsize);
+	COREMOD_MEMORY_image_set_createsem("WFturb");
+	
+	AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
 	IDdm0shape = image_ID("dmdisp");
 	save_fits("dmdisp", "!dmdisp.fits");
 
@@ -906,14 +929,14 @@ int AOsystSim_run()
 	// INITIALIZE OPTICAL SYSTEM
 	
 	optsystsim = (OPTSYST*) malloc(sizeof(OPTSYST)*1);
-	 optsystsim[0].nblambda = 1;
-	 optsystsim[0].lambdaarray[0] = 1.6e-6;
-	 optsystsim[0].beamrad = 0.008; // 8mm
+	optsystsim[0].nblambda = 1;
+	optsystsim[0].lambdaarray[0] = 1.6e-6;
+	optsystsim[0].beamrad = 0.008; // 8mm
 	optsystsim[0].size = arraysize;
     optsystsim[0].pixscale = optsystsim[0].beamrad/50.0;
     optsystsim[0].DFTgridpad = 0;
 
-    optsystsim[0].NB_DM = 0;
+
     optsystsim[0].NB_asphsurfm = 2;
     optsystsim[0].NB_asphsurfr = 0;
 	optsystsim[0].NBelem = 100; // to be updated later
@@ -926,14 +949,84 @@ int AOsystSim_run()
     optsystsim[0].elemZpos[elem] = 0.0;
 	elem++;
 
-	// DM 0
+
+
+	// Turbulence screen 
     optsystsim[0].elemtype[elem] = 3; // reflective surface
     optsystsim[0].elemarrayindex[elem] = 0; // index
-    optsystsim[0].ASPHSURFMarray[0].surfID = IDdm0shape;
+    optsystsim[0].ASPHSURFMarray[0].surfID = IDturb;
     optsystsim[0].elemZpos[elem] = 0.0;
     elem++;
 
+	// DM 0
+    optsystsim[0].elemtype[elem] = 3; // reflective surface
+    optsystsim[0].elemarrayindex[elem] = 1; // index
+    optsystsim[0].ASPHSURFMarray[1].surfID = IDdm0shape;
+    optsystsim[0].elemZpos[elem] = 0.0;
+    elem++;
+
+
+
+   // FOCAL PLANE MASK
+	IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
+	for(ii=0;ii<arraysize;ii++)
+		for(jj=0;jj<arraysize;jj++)
+			{
+				x = 1.0*ii-0.5*arraysize;
+				y = 1.0*jj-0.5*arraysize;
+				r = sqrt(x*x+y*y);
+				if(r<20.0*dftzoomfact)
+				{
+					data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 1.0;  // 1-(CA) : 1.0=opaque 0=transmissive 2.0=phase shifting
+					data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+				}
+				else
+				{
+					data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 0.0;
+					data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+				}
+			}
+
+    optsystsim[0].elemtype[elem] = 5; // focal plane mask
+    optsystsim[0].FOCMASKarray[0].fpmID = IDfocmask;
+    optsystsim[0].FOCMASKarray[0].zfactor = dftzoomfact;
+    optsystsim[0].FOCMASKarray[0].mode = 1;
+    optsystsim[0].elemZpos[elem] = optsystsim[0].elemZpos[elem-1]; // plane from which FT is done
+    elem++;
+
+	optsystsim[0].NBelem = elem;
+
+	optsystsim[0].SAVE = 1;
+
+	// propagate 
+	OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./conf/");
+	ID = image_ID("psfi0");
+	imsize = (long*) malloc(sizeof(long)*2);
+	imsize[0] = data.image[ID].md[0].size[0];
+	imsize[1] = data.image[ID].md[0].size[1];
+	imsize[2] = data.image[ID].md[0].size[2];
+	IDout = create_image_ID("aosimpsfout", 3, imsize, FLOAT, 1, 0);
+	free(imsize);
 	
+	COREMOD_MEMORY_image_set_createsem("aosimpsfout");
+	data.image[IDout].md[0].write = 1;
+	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
+	data.image[IDout].md[0].cnt0++;
+	data.image[IDout].md[0].write = 0;
+	COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+
+	IDarray = (long*) malloc(sizeof(long)*2);
+	IDarray[0] = image_ID("WFturb");
+	IDarray[1] = image_ID("aosimdmctrl");
+	COREMOD_MEMORY_image_set_semwait_OR(IDarray, 2);
+
+
+	COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+
+	COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+
+	COREMOD_MEMORY_image_set_semflush("aosimpsfout");
+
 	return(0);
 }
 

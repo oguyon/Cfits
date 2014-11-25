@@ -671,20 +671,20 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
     optsyst[0].nblambda = design[index].nblambda;
     nblambda = optsyst[0].nblambda;
 
-if(PIAACMC_save==1)
-{
-	    sprintf(fname, "%s/lambdalist.txt", piaacmcconfdir);
-    fp = fopen(fname, "w");
-}
+    if(PIAACMC_save==1)
+    {
+        sprintf(fname, "%s/lambdalist.txt", piaacmcconfdir);
+        fp = fopen(fname, "w");
+    }
 
     for(k=0; k<optsyst[0].nblambda; k++)
     {
         optsyst[0].lambdaarray[k] = LAMBDASTART + (0.5+k)*(LAMBDAEND-LAMBDASTART)/optsyst[0].nblambda;
- if(PIAACMC_save==1)
-        fprintf(fp, "%02ld %20g\n", k, optsyst[0].lambdaarray[k]);
+        if(PIAACMC_save==1)
+            fprintf(fp, "%02ld %20g\n", k, optsyst[0].lambdaarray[k]);
     }
- if(PIAACMC_save==1)
-    fclose(fp);
+    if(PIAACMC_save==1)
+        fclose(fp);
 
     optsyst[0].beamrad = design[index].beamrad; // 8mm
     optsyst[0].size = design[index].size;
@@ -705,17 +705,16 @@ if(PIAACMC_save==1)
 
 
     // define optical elements and locations
-    optsyst[0].NB_DM = 0;
     optsyst[0].NB_asphsurfm = 2;
     optsyst[0].NB_asphsurfr = 0;
 
     optsyst[0].NBelem = 100; // to be updated later
 
-if(PIAACMC_save==1)
-{
-    sprintf(fname, "%s/conjugations.txt", piaacmcconfdir);
-    fp = fopen(fname, "w");
-}
+    if(PIAACMC_save==1)
+    {
+        sprintf(fname, "%s/conjugations.txt", piaacmcconfdir);
+        fp = fopen(fname, "w");
+    }
 
     elem = 0;
     // ------------------- elem 0: input pupil -----------------------
@@ -767,8 +766,8 @@ if(PIAACMC_save==1)
     }
     optsyst[0].elemarrayindex[elem] = IDa;
     optsyst[0].elemZpos[elem] = 0.0;
-if(PIAACMC_save==1)
-    fprintf(fp,"%02ld  %f    Input pupil\n", elem, optsyst[0].elemZpos[elem]);
+    if(PIAACMC_save==1)
+        fprintf(fp,"%02ld  %f    Input pupil\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
 
@@ -786,15 +785,15 @@ if(PIAACMC_save==1)
             data.image[ID].array.F[jj*size+ii] = 0.25*(TTxld*x+TTyld*y)*(LAMBDAEND+LAMBDASTART)*0.5;
         }
 
-   // sprintf(fname, "!%s/TTm.fits", piaacmcconfdir);
-   // save_fits("TTm", fname);
+    // sprintf(fname, "!%s/TTm.fits", piaacmcconfdir);
+    // save_fits("TTm", fname);
 
     optsyst[0].elemtype[elem] = 3; // reflective mirror
     optsyst[0].elemarrayindex[elem] = 0; // index
     optsyst[0].ASPHSURFMarray[0].surfID = ID;
     optsyst[0].elemZpos[elem] = 0.0;
-if(PIAACMC_save==1)
-    fprintf(fp,"%02ld  %f    Fold mirror used to induce pointing offsets\n", elem, optsyst[0].elemZpos[elem]);
+    if(PIAACMC_save==1)
+        fprintf(fp,"%02ld  %f    Fold mirror used to induce pointing offsets\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
 
@@ -807,7 +806,7 @@ if(PIAACMC_save==1)
     optsyst[0].elemarrayindex[elem] = 1; // index
     optsyst[0].ASPHSURFMarray[1].surfID = IDpiaaz0;
     optsyst[0].elemZpos[elem] = 0.702843;
- if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    PIAAM0\n", elem, optsyst[0].elemZpos[elem]);
+    if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    PIAAM0\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
     // ------------------- elem 3: reflective PIAA M1  -----------------------
@@ -815,7 +814,7 @@ if(PIAACMC_save==1)
     optsyst[0].elemarrayindex[elem] = 2;
     optsyst[0].ASPHSURFMarray[2].surfID = IDpiaaz1;
     optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1]+design[index].piaasep;
-if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    PIAAM1\n", elem, optsyst[0].elemZpos[elem]);
+    if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    PIAAM1\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
 
@@ -826,7 +825,7 @@ if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    PIAAM1\n", elem, optsyst[0].elemZ
     optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1];
     //sprintf(fname, "!%s/piaam1mask.fits", piaacmcconfdir);
     //save_fits("piaam1mask", fname);
-if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem, optsyst[0].elemZpos[elem]);
+    if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
 
@@ -845,14 +844,14 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
 
-		exit(0);
+        exit(0);
     }
 
 
 
-    optsyst[0]. FOCMASKarray[0].zfactor = design[index].fpzfactor;
+    optsyst[0].FOCMASKarray[0].zfactor = design[index].fpzfactor;
     optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1]; // plane from which FT is done
-  if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    post-focal plane mask pupil\n", elem, optsyst[0].elemZpos[elem]);
+    if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    post-focal plane mask pupil\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
 
@@ -867,7 +866,7 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         optsyst[0].elemarrayindex[elem] = 2;
         optsyst[0].ASPHSURFMarray[2].surfID = IDpiaaz1;
         optsyst[0].elemZpos[elem] = 0.0;
-     if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    invPIAA1\n", elem, optsyst[0].elemZpos[elem]);
+        if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    invPIAA1\n", elem, optsyst[0].elemZpos[elem]);
         elem++;
 
         // --------------------  elem 9: inv PIAA0 ------------------------
@@ -875,7 +874,7 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         optsyst[0].elemarrayindex[elem] = 1;
         optsyst[0].ASPHSURFMarray[1].surfID = IDpiaaz0;
         optsyst[0].elemZpos[elem] = design[index].piaasep;
-      if(PIAACMC_save==1) fprintf(fp,"%02ld  %f    invPIAA0\n", elem, optsyst[0].elemZpos[elem]);
+        if(PIAACMC_save==1) fprintf(fp,"%02ld  %f    invPIAA0\n", elem, optsyst[0].elemZpos[elem]);
         elem++;
     }
 
@@ -888,7 +887,7 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         optsyst[0].elemarrayindex[elem] = design[index].IDLyotStop[i];
         printf("elem %ld  Lyot mask %ld : %ld\n", elem, i, design[index].IDLyotStop[i]);
         optsyst[0].elemZpos[elem] =  design[index].LyotStop_zpos[i];
-     if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f  Lyot Stop %ld\n", elem, optsyst[0].elemZpos[elem], i);
+        if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f  Lyot Stop %ld\n", elem, optsyst[0].elemZpos[elem], i);
         elem++;
     }
 
@@ -901,7 +900,7 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         optsyst[0].elemarrayindex[elem] = 2;
         optsyst[0].ASPHSURFMarray[2].surfID = IDpiaaz1;
         optsyst[0].elemZpos[elem] = 0.0;
-     if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    invPIAA1\n", elem, optsyst[0].elemZpos[elem]);
+        if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    invPIAA1\n", elem, optsyst[0].elemZpos[elem]);
         elem++;
 
         // --------------------  elem 9: inv PIAA0 ------------------------
@@ -909,7 +908,7 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
         optsyst[0].elemarrayindex[elem] = 1;
         optsyst[0].ASPHSURFMarray[1].surfID = IDpiaaz0;
         optsyst[0].elemZpos[elem] = design[index].piaasep;
-     if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    invPIAA0\n", elem, optsyst[0].elemZpos[elem]);
+        if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    invPIAA0\n", elem, optsyst[0].elemZpos[elem]);
         elem++;
     }
 
@@ -925,7 +924,7 @@ if(PIAACMC_save==1)    fprintf(fp,"%02ld  %f    PIAAM1 edge opaque mask\n", elem
     elem++;
 
     if(PIAACMC_save==1)
-    fclose(fp);
+        fclose(fp);
 
     optsyst[0].NBelem = elem;
 
@@ -2593,8 +2592,6 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             }
             value = value/size/size/optsyst[0].flux[0];
             avContrast = value/(arith_image_total("scoringmask")*focscale*focscale);
-
-
         }
         else
         {
