@@ -37,24 +37,6 @@
 
 
 
-// TRANSMIT/RECEIVE IMAGES OVER NETWORK
-
-typedef struct {
-  long cnt; // counter 
-  char name[80];
-  int lastpacket; // 1 if this is the last packet
-  long pstart; // starting pixel index
-  long psize; // number of pixels
-  int atype; // data type
-  float data[16000];
-} PACKET;
-
-typedef struct {
-	long cnt;
-	long cnt1;
-	long size;
-} RPACKET;
-
 
 
 
@@ -3718,7 +3700,7 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname)
 
 
 
-/** continuously transmits image through TCP link
+/** continuously transmits 2D image through TCP link
  * mode is not currently used
  */
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
@@ -3728,9 +3710,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     int fds_client;
     int flag = 1;
     int result;
-    
-	ID = image_ID(IDname);
-	
+    long long cnt = -1;
+    long framesize;
+    long xsize, ysize;
+    char *ptr0; // source
+
+    ID = image_ID(IDname);
+
     if ( (fds_client=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))<0)
     {
         printf("ERROR creating socket\n");
@@ -3760,37 +3746,97 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         exit(0);
     }
 
-     if (send(fds_client, (void *) data.image[ID].md, sizeof(IMAGE_METADATA), 0) != sizeof(IMAGE_METADATA))
-        {
-            printf("send() sent a different number of bytes than expected %ld\n", sizeof(IMAGE_METADATA));
-            fflush(stdout);
-        }
-
- /*   while(1)
+    if (send(fds_client, (void *) data.image[ID].md, sizeof(IMAGE_METADATA), 0) != sizeof(IMAGE_METADATA))
     {
+        printf("send() sent a different number of bytes than expected %ld\n", sizeof(IMAGE_METADATA));
+        fflush(stdout);
+    }
 
-        if (send(fds_client, packet, sizeof(PACKET), 0) != sizeof(PACKET))
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
+
+
+    switch ( data.image[ID].md[0].atype ) {
+    case CHAR:
+        framesize = sizeof(char)*xsize*ysize;
+        break;
+    case INT:
+        framesize = sizeof(int)*xsize*ysize;
+        break;
+    case FLOAT:
+        framesize = sizeof(float)*xsize*ysize;
+        break;
+    case DOUBLE:
+        framesize = sizeof(double)*xsize*ysize;
+        break;
+    case USHORT:
+        framesize = sizeof(unsigned short)*xsize*ysize;
+        break;
+
+    default:
+        printf("ERROR: WRONG DATA TYPE\n");
+        exit(0);
+        break;
+    }
+
+    printf("image frame size = %ld\n", framesize);
+
+    switch ( data.image[ID].md[0].atype ) {
+    case CHAR:
+        ptr0 = (char*) data.image[ID].array.C;
+        break;
+    case INT:
+        ptr0 = (char*) data.image[ID].array.I;
+        break;
+    case FLOAT:
+        ptr0 = (char*) data.image[ID].array.F;
+        break;
+    case DOUBLE:
+        ptr0 = (char*) data.image[ID].array.D;
+        break;
+    case USHORT:
+        ptr0 = (char*) data.image[ID].array.U;
+        break;
+
+    default:
+        printf("ERROR: WRONG DATA TYPE\n");
+        exit(0);
+        break;
+    }
+
+
+    while(1)
+    {
+        if(data.image[ID].sem==0)
         {
-            printf("send() sent a different number of bytes than expected %ld\n", sizeof(PACKET));
-            fflush(stdout);
+            while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
+            {
+                usleep(5);
+                // do nothing, wait
+            }
+            cnt = data.image[ID].md[0].cnt0;
+
         }
         else
-        {
-            printf("Sent packet # %ld\n", packet[0].cnt);
-            //		fflush(stdout);
-        }
-
-        packet[0].cnt++;
+            sem_wait(data.image[ID].semptr);
+ 
+    if (send(fds_client, ptr0, framesize, 0) != framesize)
+    {
+        printf("send() sent a different number of bytes than expected %ld\n", framesize);
+        fflush(stdout);
     }
-    */
-
+    else
+		printf("SENT IMAGE, %ld bytes\n", framesize);
+	}
+	
     close(fds_client);
-    
-
 
 
     return(ID);
 }
+
+
+
 
 
 
@@ -3801,15 +3847,17 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
     struct sockaddr_in sock_server, sock_client;
     int fds_server, fds_client;
     socklen_t slen_client;
-    PACKET *packet;
     long cnt;
     int flag = 1;
     long recvsize;
     int result;
     long totsize = 0;
-	int MAXPENDING = 5;
+    int MAXPENDING = 5;
     IMAGE_METADATA *imgmd;
-	long ID;
+    long ID;
+    long framesize;
+    long xsize, ysize;
+    char *ptr0; // source
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
@@ -3875,12 +3923,63 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
         exit(0);
     }
 
-	ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+    ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
 
-/*
+
+    switch ( data.image[ID].md[0].atype ) {
+    case CHAR:
+        framesize = sizeof(char)*xsize*ysize;
+        break;
+    case INT:
+        framesize = sizeof(int)*xsize*ysize;
+        break;
+    case FLOAT:
+        framesize = sizeof(float)*xsize*ysize;
+        break;
+    case DOUBLE:
+        framesize = sizeof(double)*xsize*ysize;
+        break;
+    case USHORT:
+        framesize = sizeof(unsigned short)*xsize*ysize;
+        break;
+
+    default:
+        printf("ERROR: WRONG DATA TYPE\n");
+        exit(0);
+        break;
+    }
+
+    printf("image frame size = %ld\n", framesize);
+
+    switch ( data.image[ID].md[0].atype ) {
+    case CHAR:
+        ptr0 = (char*) data.image[ID].array.C;
+        break;
+    case INT:
+        ptr0 = (char*) data.image[ID].array.I;
+        break;
+    case FLOAT:
+        ptr0 = (char*) data.image[ID].array.F;
+        break;
+    case DOUBLE:
+        ptr0 = (char*) data.image[ID].array.D;
+        break;
+    case USHORT:
+        ptr0 = (char*) data.image[ID].array.U;
+        break;
+
+    default:
+        printf("ERROR: WRONG DATA TYPE\n");
+        exit(0);
+        break;
+    }
+
+
     while(1)
     {
-        if ((recvsize = recv(fds_client, packet, sizeof(PACKET), MSG_WAITALL)) < 0)
+        if ((recvsize = recv(fds_client, ptr0, framesize, MSG_WAITALL)) < 0)
         {
             printf("ERROR recv()\n");
             exit(0);
@@ -3889,9 +3988,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
         if(recvsize!=0)
         {
             totsize += recvsize;
-            printf("Received %ld bytes (expected %ld)   [%ld]   tot = %ld (%ld MB)\n", recvsize, sizeof(PACKET), packet[0].cnt, totsize, (long) (totsize/1024/1024));
+            printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
         }
-    }*/
+    }
     close(fds_client);
 
     free(imgmd);
@@ -3899,6 +3998,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
 
     return(ID);
 }
+
+
 
 
 
