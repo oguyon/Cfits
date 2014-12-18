@@ -4,7 +4,7 @@
 \ref code 
 \ref desstep 
 - \ref initrules 
-- \ref step000
+- \ref mode000
 - \ref step001
 - \ref step002
 
@@ -36,8 +36,8 @@ The main function in the source code is PIAACMCsimul_exec(), which takes two arg
 Mode		| Description
 ----------------|-------------------------------------
 0	*	| Compute on-axis propagation for specified configuration. If configuration does not exist, create idealized monochromatic PIAACMC (intended to create a new index) and compute on-axis propagation
-1	*	| Optimize Lyot stop(s) locations
-2	*	| Optimize focal plane mask transmission for idealized monochromatic PIAACMC
+1	*	| Optimize Lyot stop(s) locations (scan) 
+2	*	| Optimize focal plane mask transmission for idealized monochromatic PIAACMC (scan)
 3		| Run without focal plane mask (for testing and calibration)
 4		| Linear optimization around current design, free parameters = PIAA optics cosines shapes (track progress by looking at val.opt file)
 5	*	| Optimize Lyot stops shapes and positions
@@ -63,7 +63,7 @@ PIAACMC_dftgrid		| Sampling interval in DFTs
 PIAACMC_centobs0	| Input central obstruction
 PIAACMC_centobs1	| Output central obstruction
 PIAACMC_nblambda	| Number of wavelength points
-PIAACMC_resolved	| 1 if resolved source
+PIAACMC_resolved	| 1 if resolved source (3 points at r = 0.01 l/D, 120 deg apart)
 PIAACMC_FPMsectors	| Number of sectors in focal plane mask
 PIAACMC_NBrings		| Number of rings in focal plane mask
 PIAACMC_fpmradld	| Focal plane mask outer radius
@@ -122,7 +122,7 @@ The PIAACMC design process is as follows:
 
 
 
-\subsection step000 3.000. STEP 000: Create an idealized centrally obscured apodized PIAACMC monochromatic design
+\subsection mode000 3.000. MODE 000: Create an idealized centrally obscured apodized PIAACMC monochromatic design
 
 This is meant as a starting point for the PIAACMC, which will then be optimized further\n
 Optional parameters are:
@@ -184,14 +184,12 @@ Total light in scoring field = 9.49968e-06  -> Average contrast = 6.88685e-08
 
 ### Output Files
 
-APLCapo.1.400.0.300.info ??
+
 APLCmaskCtransm.txt ??
 fpm_ampl.fits
 fpm_pha.fits
 FPmask.tmp.fits 
-psfa.fits
-psfi.fits
-psfp.fits
+
 
 #### Configuration : 
 
@@ -216,6 +214,7 @@ Fmodes.fits	| Fourier modes (625 modes = 10 CPA, hard coded)
 
 Output file	| Notes
 ----------------|-------------------------------------
+./piaaconfxxx/APLCapo.1.400.0.300.info | file written by prolate generation function coronagraph_make_2Dprolate in coronagraphs.c
 ./piaaconfxxx/apo2Drad.fits	| idealized PIAACMC 2D apodization
 ./piaaconfxxx/piaam0z.fits	| PIAA M0 shape (2D sag)
 ./piaaconfxxx/piaam1z.fits	| PIAA M1 shape (2D sag)
@@ -298,12 +297,6 @@ Plane index	| description
 ./piaaconfxxx/flux.txt	| total intensity at each plane
 
 
-
-
-
-
-
-\subsection step001 3.001. STEP 001 (mode = 0): Compute on-axis PSF, monochromatic, idealized PIAACMC
 
 
 

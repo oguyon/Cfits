@@ -29,6 +29,29 @@
 
 
 
+// TRANSMIT/RECEIVE IMAGES OVER NETWORK
+
+typedef struct {
+  long cnt; // counter 
+  char name[80];
+  int lastpacket; // 1 if this is the last packet
+  long pstart; // starting pixel index
+  long psize; // number of pixels
+  int atype; // data type
+  float data[16000];
+} PACKET;
+
+typedef struct {
+	long cnt;
+	long cnt1;
+	long size;
+} RPACKET;
+
+
+
+
+
+
 pthread_t *thrarray_semwait;
 long NB_thrarray_semwait;
 
@@ -518,6 +541,36 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
+
+//long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int mode);
+//long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode);
+
+
+
+int COREMOD_MEMORY_image_NETWORKtransmit_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+		COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+      return 0;
+    }
+  else
+	return 1;
+}
+
+int COREMOD_MEMORY_image_NETWORKreceive_cli()
+{
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+    {
+		COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+      return 0;
+    }
+  else
+	return 1;
+}
+
+
+
 int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
 	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
@@ -782,6 +835,30 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)");
   data.NBcmd++;
  
+ 
+ 
+  strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
+  strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <mode [int]>");
+  strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
+  data.NBcmd++;
+ 
+ 
+
+  strcpy(data.cmd[data.NBcmd].key,"imnetwreceive");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
+  strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network");
+  strcpy(data.cmd[data.NBcmd].syntax,"<IP addr> <port [long]> <mode [int]>");
+  strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 127.0.0.1 8888 0");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(char *IPaddr, int port, int mode)");
+  data.NBcmd++;
+ 
+ 
+
   strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = COREMOD_MEMORY_sharedMem_2Dim_log_cli;
@@ -3587,11 +3664,7 @@ long COREMOD_MEMORY_image_set_semwait_OR(long *IDarray, long NB_ID)
 	NB_thrarray_semwait = NB_ID;
 
 	for(t = 0; t < NB_ID; t++)
-	{
 		pthread_create(&thrarray_semwait[t], NULL, waitforsemID, (void *)IDarray[t]);	
-	}
-	
-	usleep(100000);
 
 	
 	for(t = 0; t < NB_ID; t++)
@@ -3639,7 +3712,30 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname)
 
 
 
+/** continuously transmits image through UDP link
+ * mode:
+ * 	0: includes acknowledgment
+ */
+long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
+{
+	long ID;
+	
+	printf("transmitting image \"%s\" to %s\n", IDname, IPaddr);
+	
+	
+	
+	return(ID);
+}
 
+
+long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
+{
+	long ID;
+	
+	printf("receiving image\n");
+	
+	return(ID);
+}
 
 
 

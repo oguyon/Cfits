@@ -3791,13 +3791,12 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_Ne.dat", RIA_Ne_lambda, RIA_Ne_ri, RIA_Ne_abs);
 	initRIA_Ne = 1;
 
-/*
+
 	RIA_He_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_He_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_He_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
 	ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_He.dat", RIA_H2_lambda, RIA_He_ri, RIA_He_abs);
 	initRIA_He = 1;
-*/
 
 	RIA_CH4_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
 	RIA_CH4_ri = (double*) malloc(sizeof(double)*RIA_NBpts);

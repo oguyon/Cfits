@@ -113,7 +113,7 @@ double PIAACMCsimul_achromFPMsol_eval(double *fpmresp_array, double *zonez_array
 long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones);
 long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep);
 
-int PIAACMCsimul_run(long confindex, long mode);
+int PIAACMCsimul_run(char *confindex, long mode);
 
 
 #endif

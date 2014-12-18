@@ -772,193 +772,181 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
 
 
 
-/** \brief Simple propagation
- *
- *
- */
-
-int AOsystSim_propagate()
-{
-	
-	return (0);
-}
-
-
 
 
 
 /** \brief simplified AO system simulator (closed loop part)
- * 
- * creates a DM map(s) and a WF error input 
+ *
+ * creates a DM map(s) and a WF error input
  * When either DM map or WF error input changes, compute intensity outputs (images)
- * 
+ *
  */
 
 int AOsystSim_run()
 {
-	long arraysize = 512;
-	long ii, jj;
-	double puprad, dmrad;
-	double dmifscale = 20.0; // scale magnification between full DM map and DM influence function
-	long *imsize;
-	long DMsize = 50;
-	long DMnbact;
-	long mx, my;
-	double x, y, rx, ry;
-	long rxi, ryi;
-	double u, t, v00, v01, v10, v11, ii0f, jj0f, rxif, ryif;
-	long IDif, IDifc;
-	double sig;
-	long k;
-	long IDdmctrl;
-	long IDpupm;
-	int elem;
-	long IDdm0shape;
-	long IDfocmask;
-	double r;
-	double dftzoomfact = 2.0;
-	long IDturb;
-	long *dmsizearray;
-	long ID;
-	long IDout;
-	long *IDarray;
-	
-	puprad = 0.12*arraysize;
-	dmrad = 0.13*arraysize;
+    long arraysize = 512;
+    long ii, jj;
+    double puprad, dmrad;
+    double dmifscale = 20.0; // scale magnification between full DM map and DM influence function
+    long *imsize;
+    long DMsize = 50;
+    long DMnbact;
+    long mx, my;
+    double x, y, rx, ry;
+    long rxi, ryi;
+    double u, t, v00, v01, v10, v11, ii0f, jj0f, rxif, ryif;
+    long IDif, IDifc;
+    double sig;
+    long k;
+    long IDdmctrl;
+    long IDpupm;
+    int elem;
+    long IDdm0shape;
+    long IDfocmask;
+    double r;
+    double dftzoomfact = 2.0;
+    long IDturb;
+    long *dmsizearray;
+    long ID;
+    long IDout;
+    long *IDarray;
 
-
-	
-	// MAKE DM INFLUENCE FUNCTIONS
-
-	// DM influence functions stored as a data cube
-	DMnbact = DMsize*DMsize;
-	imsize = (long*) malloc(sizeof(long)*3);
-	imsize[0] = arraysize;
-	imsize[1] = arraysize;
-	imsize[2] = DMnbact;
-	IDif = create_image_ID("dmif0", 2, imsize, FLOAT, 0, 0);
-	// construct DM influence function (for 1 actuator)
-	// step 1: square
-	// actuator size = dmifscale*(arraysize*2.0*dmrad/DMsize) [pix]
-	printf("actuator pix size = %f pix\n", dmifscale*(2.0*dmrad/DMsize));
-	for(ii=0;ii<arraysize;ii++)
-	for(jj=0;jj<arraysize;jj++)
-	{
-		x = (1.0*ii-0.5*arraysize); // [pix]
-		y = (1.0*jj-0.5*arraysize); // [pix]
-		x /= dmifscale*(2.0*dmrad/DMsize);
-		y /= dmifscale*(2.0*dmrad/DMsize);
-		if((fabs(x)<0.5)&&(fabs(y)<0.5))
-			data.image[IDif].array.F[jj*arraysize+ii] = 1.0;
-		else
-			data.image[IDif].array.F[jj*arraysize+ii] = 0.0;					
-	}
-	// convolve dmif
-	sig = 0.5*dmifscale*(2.0*dmrad/DMsize);
-	gauss_filter("dmif0", "dmif", sig, (long) (2.0*sig));
-	delete_image_ID("dmif0");
-	IDif = image_ID("dmif");
-	
-	save_fits("dmif", "!dmif.fits");
-	
-	IDifc = create_image_ID("dmifc", 3, imsize, FLOAT, 0, 0);
-	printf("\n");
-	for(mx=0;mx<DMsize;mx++)
-	for(my=0;my<DMsize;my++)
-	{
-		printf("\r actuator %2ld %2ld    ", mx, my);
-		fflush(stdout);
-		// actuator center coordinates
-		ii0f = 0.5*arraysize + 2.0*(mx-DMsize/2)/DMsize*dmrad;	
-		jj0f = 0.5*arraysize + 2.0*(my-DMsize/2)/DMsize*dmrad;
-		for(ii=0;ii<arraysize;ii++)
-		for(jj=0;jj<arraysize;jj++)
-		{
-			rx = 1.0*ii-ii0f;			
-			ry = 1.0*jj-jj0f;
-			rx *= dmifscale;
-			ry *= dmifscale;
-			rxif = rx+arraysize/2;
-			ryif = ry+arraysize/2;
-			rxi = (long) (rxif);
-			ryi = (long) (ryif);
-			u = rxif - rxi;
-			t = ryif - ryi;
-			
-			if((rxi>0)&&(rxi<arraysize-1)&&(ryi>0)&&(ryi<arraysize-1))
-				{
-					v00 = data.image[IDif].array.F[ryi*arraysize+rxi];
-					v01 = data.image[IDif].array.F[ryi*arraysize+rxi+1];
-					v10 = data.image[IDif].array.F[(ryi+1)*arraysize+rxi];
-					v11 = data.image[IDif].array.F[(ryi+1)*arraysize+rxi+1];
-					data.image[IDifc].array.F[(my*DMsize+mx)*arraysize*arraysize + jj*arraysize + ii] = (1.0-u)*(1.0-t)*v00 + (1.0-u)*t*v10 + u*(1.0-t)*v01 + u*t*v11;
-				}
-		}
-	}
-	free(imsize);
-//	save_fits("dmifc","!dmifc.fits");
-	printf("\n");
-
-	// INITIALIZE DM CONTROL ARRAY
-	dmsizearray = (long*) malloc(sizeof(long)*2);
-	dmsizearray[0] = DMsize;
-	dmsizearray[1] = DMsize;
-	IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
-	COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
-
-	for(k=0;k<DMsize*DMsize;k++)
-		data.image[IDdmctrl].array.F[k] = ran1()*2.0e-7;
-
-
-	// INITIALIZE TURBULENCE SCREEN
-	imsize = (long*) malloc(sizeof(long)*2);
-	imsize[0] = arraysize;
-	imsize[1] = arraysize;
-	IDturb = create_image_ID("WFturb", 2, imsize, FLOAT, 1, 0);
-	free(imsize);
-	COREMOD_MEMORY_image_set_createsem("WFturb");
-	
-	AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
-	IDdm0shape = image_ID("dmdisp");
-	save_fits("dmdisp", "!dmdisp.fits");
+    puprad = 0.12*arraysize;
+    dmrad = 0.13*arraysize;
 
 
 
+    // MAKE DM INFLUENCE FUNCTIONS
+
+    // DM influence functions stored as a data cube
+    DMnbact = DMsize*DMsize;
+    imsize = (long*) malloc(sizeof(long)*3);
+    imsize[0] = arraysize;
+    imsize[1] = arraysize;
+    imsize[2] = DMnbact;
+    IDif = create_image_ID("dmif0", 2, imsize, FLOAT, 0, 0);
+    // construct DM influence function (for 1 actuator)
+    // step 1: square
+    // actuator size = dmifscale*(arraysize*2.0*dmrad/DMsize) [pix]
+    printf("actuator pix size = %f pix\n", dmifscale*(2.0*dmrad/DMsize));
+    for(ii=0; ii<arraysize; ii++)
+        for(jj=0; jj<arraysize; jj++)
+        {
+            x = (1.0*ii-0.5*arraysize); // [pix]
+            y = (1.0*jj-0.5*arraysize); // [pix]
+            x /= dmifscale*(2.0*dmrad/DMsize);
+            y /= dmifscale*(2.0*dmrad/DMsize);
+            if((fabs(x)<0.5)&&(fabs(y)<0.5))
+                data.image[IDif].array.F[jj*arraysize+ii] = 1.0;
+            else
+                data.image[IDif].array.F[jj*arraysize+ii] = 0.0;
+        }
+    // convolve dmif
+    sig = 0.5*dmifscale*(2.0*dmrad/DMsize);
+    gauss_filter("dmif0", "dmif", sig, (long) (2.0*sig));
+    delete_image_ID("dmif0");
+    IDif = image_ID("dmif");
+
+    save_fits("dmif", "!dmif.fits");
+
+    IDifc = create_image_ID("dmifc", 3, imsize, FLOAT, 0, 0);
+    printf("\n");
+    for(mx=0; mx<DMsize; mx++)
+        for(my=0; my<DMsize; my++)
+        {
+            printf("\r actuator %2ld %2ld    ", mx, my);
+            fflush(stdout);
+            // actuator center coordinates
+            ii0f = 0.5*arraysize + 2.0*(mx-DMsize/2)/DMsize*dmrad;
+            jj0f = 0.5*arraysize + 2.0*(my-DMsize/2)/DMsize*dmrad;
+            for(ii=0; ii<arraysize; ii++)
+                for(jj=0; jj<arraysize; jj++)
+                {
+                    rx = 1.0*ii-ii0f;
+                    ry = 1.0*jj-jj0f;
+                    rx *= dmifscale;
+                    ry *= dmifscale;
+                    rxif = rx+arraysize/2;
+                    ryif = ry+arraysize/2;
+                    rxi = (long) (rxif);
+                    ryi = (long) (ryif);
+                    u = rxif - rxi;
+                    t = ryif - ryi;
+
+                    if((rxi>0)&&(rxi<arraysize-1)&&(ryi>0)&&(ryi<arraysize-1))
+                    {
+                        v00 = data.image[IDif].array.F[ryi*arraysize+rxi];
+                        v01 = data.image[IDif].array.F[ryi*arraysize+rxi+1];
+                        v10 = data.image[IDif].array.F[(ryi+1)*arraysize+rxi];
+                        v11 = data.image[IDif].array.F[(ryi+1)*arraysize+rxi+1];
+                        data.image[IDifc].array.F[(my*DMsize+mx)*arraysize*arraysize + jj*arraysize + ii] = (1.0-u)*(1.0-t)*v00 + (1.0-u)*t*v10 + u*(1.0-t)*v01 + u*t*v11;
+                    }
+                }
+        }
+    free(imsize);
+    //	save_fits("dmifc","!dmifc.fits");
+    printf("\n");
+
+    // INITIALIZE DM CONTROL ARRAY
+    dmsizearray = (long*) malloc(sizeof(long)*2);
+    dmsizearray[0] = DMsize;
+    dmsizearray[1] = DMsize;
+    IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
+
+    for(k=0; k<DMsize*DMsize; k++)
+        data.image[IDdmctrl].array.F[k] = ran1()*2.0e-7;
 
 
-	// INITIALIZE OPTICAL SYSTEM
-	
-	optsystsim = (OPTSYST*) malloc(sizeof(OPTSYST)*1);
-	optsystsim[0].nblambda = 1;
-	optsystsim[0].lambdaarray[0] = 1.6e-6;
-	optsystsim[0].beamrad = 0.008; // 8mm
-	optsystsim[0].size = arraysize;
+    // INITIALIZE TURBULENCE SCREEN
+    imsize = (long*) malloc(sizeof(long)*2);
+    imsize[0] = arraysize;
+    imsize[1] = arraysize;
+    IDturb = create_image_ID("WFturb", 2, imsize, FLOAT, 1, 0);
+    free(imsize);
+    COREMOD_MEMORY_image_set_createsem("WFturb");
+
+    AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
+    IDdm0shape = image_ID("dmdisp");
+    save_fits("dmdisp", "!dmdisp.fits");
+
+
+
+
+
+    // INITIALIZE OPTICAL SYSTEM
+
+    optsystsim = (OPTSYST*) malloc(sizeof(OPTSYST)*1);
+    optsystsim[0].nblambda = 1;
+    optsystsim[0].lambdaarray[0] = 1.6e-6;
+    optsystsim[0].beamrad = 0.008; // 8mm
+    optsystsim[0].size = arraysize;
     optsystsim[0].pixscale = optsystsim[0].beamrad/50.0;
     optsystsim[0].DFTgridpad = 0;
 
 
     optsystsim[0].NB_asphsurfm = 2;
     optsystsim[0].NB_asphsurfr = 0;
-	optsystsim[0].NBelem = 100; // to be updated later
+    optsystsim[0].NBelem = 100; // to be updated later
 
-	// INPUT PUPIL
-	IDpupm = make_disk("pupmask", arraysize, arraysize, 0.5*arraysize, 0.5*arraysize, puprad);
-	elem = 0;
-	optsystsim[0].elemtype[elem] = 1; // pupil mask
-	optsystsim[0].elemarrayindex[elem] = IDpupm;
+    // INPUT PUPIL
+    IDpupm = make_disk("pupmask", arraysize, arraysize, 0.5*arraysize, 0.5*arraysize, puprad);
+    elem = 0;
+    optsystsim[0].elemtype[elem] = 1; // pupil mask
+    optsystsim[0].elemarrayindex[elem] = IDpupm;
     optsystsim[0].elemZpos[elem] = 0.0;
-	elem++;
+    elem++;
 
 
 
-	// Turbulence screen 
+    // Turbulence screen
     optsystsim[0].elemtype[elem] = 3; // reflective surface
     optsystsim[0].elemarrayindex[elem] = 0; // index
     optsystsim[0].ASPHSURFMarray[0].surfID = IDturb;
     optsystsim[0].elemZpos[elem] = 0.0;
     elem++;
 
-	// DM 0
+    // DM 0
     optsystsim[0].elemtype[elem] = 3; // reflective surface
     optsystsim[0].elemarrayindex[elem] = 1; // index
     optsystsim[0].ASPHSURFMarray[1].surfID = IDdm0shape;
@@ -967,25 +955,25 @@ int AOsystSim_run()
 
 
 
-   // FOCAL PLANE MASK
-	IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
-	for(ii=0;ii<arraysize;ii++)
-		for(jj=0;jj<arraysize;jj++)
-			{
-				x = 1.0*ii-0.5*arraysize;
-				y = 1.0*jj-0.5*arraysize;
-				r = sqrt(x*x+y*y);
-				if(r<20.0*dftzoomfact)
-				{
-					data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 1.0;  // 1-(CA) : 1.0=opaque 0=transmissive 2.0=phase shifting
-					data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
-				}
-				else
-				{
-					data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 0.0;
-					data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
-				}
-			}
+    // FOCAL PLANE MASK
+    IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
+    for(ii=0; ii<arraysize; ii++)
+        for(jj=0; jj<arraysize; jj++)
+        {
+            x = 1.0*ii-0.5*arraysize;
+            y = 1.0*jj-0.5*arraysize;
+            r = sqrt(x*x+y*y);
+            if(r<20.0*dftzoomfact)
+            {
+                data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 1.0;  // 1-(CA) : 1.0=opaque 0=transmissive 2.0=phase shifting
+                data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+            }
+            else
+            {
+                data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 0.0;
+                data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+            }
+        }
 
     optsystsim[0].elemtype[elem] = 5; // focal plane mask
     optsystsim[0].FOCMASKarray[0].fpmID = IDfocmask;
@@ -994,46 +982,50 @@ int AOsystSim_run()
     optsystsim[0].elemZpos[elem] = optsystsim[0].elemZpos[elem-1]; // plane from which FT is done
     elem++;
 
-	optsystsim[0].NBelem = elem;
+    optsystsim[0].NBelem = elem;
 
-	optsystsim[0].SAVE = 1;
+    optsystsim[0].SAVE = 1;
 
-	// propagate 
-	OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./conf/");
-	ID = image_ID("psfi0");
-	imsize = (long*) malloc(sizeof(long)*2);
-	imsize[0] = data.image[ID].md[0].size[0];
-	imsize[1] = data.image[ID].md[0].size[1];
-	imsize[2] = data.image[ID].md[0].size[2];
-	IDout = create_image_ID("aosimpsfout", 3, imsize, FLOAT, 1, 0);
-	free(imsize);
-	
-	COREMOD_MEMORY_image_set_createsem("aosimpsfout");
-	data.image[IDout].md[0].write = 1;
-	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
-	data.image[IDout].md[0].cnt0++;
-	data.image[IDout].md[0].write = 0;
-	COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+    // propagate
+    OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./conf/");
+    ID = image_ID("psfi0");
+    imsize = (long*) malloc(sizeof(long)*2);
+    imsize[0] = data.image[ID].md[0].size[0];
+    imsize[1] = data.image[ID].md[0].size[1];
+    imsize[2] = data.image[ID].md[0].size[2];
+    IDout = create_image_ID("aosimpsfout", 3, imsize, FLOAT, 1, 0);
+    free(imsize);
 
-	IDarray = (long*) malloc(sizeof(long)*2);
-	IDarray[0] = image_ID("WFturb");
-	IDarray[1] = image_ID("aosimdmctrl");
-	COREMOD_MEMORY_image_set_semwait_OR(IDarray, 2);
+    COREMOD_MEMORY_image_set_createsem("aosimpsfout");
+    data.image[IDout].md[0].write = 1;
+    memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
+    data.image[IDout].md[0].cnt0++;
+    data.image[IDout].md[0].write = 0;
+    COREMOD_MEMORY_image_set_sempost("aosimpsfout");
 
-
-	COREMOD_MEMORY_image_set_sempost("aosimpsfout");
-
-	COREMOD_MEMORY_image_set_sempost("aosimpsfout");
-
-	COREMOD_MEMORY_image_set_semflush("aosimpsfout");
+    IDarray = (long*) malloc(sizeof(long)*2);
+    IDarray[0] = image_ID("WFturb");
+    IDarray[1] = image_ID("aosimdmctrl");
 
 
 
-	printf("I got here !\n");
-	fflush(stdout);
+    while(1)
+    {
+        COREMOD_MEMORY_image_set_semwait_OR(IDarray, 2);
+        AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
+        OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./conf/");
+        ID = image_ID("psfi0");
+        data.image[IDout].md[0].write = 1;
+        memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+        COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+    }
 
-	return(0);
+
+    return(0);
 }
+
 
 
 
