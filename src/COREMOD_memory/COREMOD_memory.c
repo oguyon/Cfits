@@ -13,6 +13,14 @@
 #include <signal.h> 
 #include <ncurses.h>
 
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <fcntl.h> // for open
+#include <unistd.h> // for close
+
+
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -542,8 +550,6 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
-//long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int mode);
-//long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode);
 
 
 
@@ -3712,30 +3718,189 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname)
 
 
 
-/** continuously transmits image through UDP link
- * mode:
- * 	0: includes acknowledgment
+/** continuously transmits image through TCP link
+ * mode is not currently used
  */
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
 {
-	long ID;
+    long ID;
+    struct sockaddr_in sock_server;
+    int fds_client;
+    int flag = 1;
+    int result;
+    
+	ID = image_ID(IDname);
 	
-	printf("transmitting image \"%s\" to %s\n", IDname, IPaddr);
-	
-	
-	
-	return(ID);
+    if ( (fds_client=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))<0)
+    {
+        printf("ERROR creating socket\n");
+        exit(0);
+    }
+
+    result = setsockopt(fds_client,            /* socket affected */
+                        IPPROTO_TCP,     /* set option at TCP level */
+                        TCP_NODELAY,     /* name of option */
+                        (char *) &flag,  /* the cast is historical cruft */
+                        sizeof(int));    /* length of option value */
+    if (result < 0)
+    {
+        printf("ERROR setsockopt\n");
+        exit(0);
+    }
+
+
+    memset((char *) &sock_server, 0, sizeof(sock_server));
+    sock_server.sin_family = AF_INET;
+    sock_server.sin_port = htons(port);
+    sock_server.sin_addr.s_addr = inet_addr(IPaddr);
+
+    if (connect(fds_client, (struct sockaddr *) &sock_server, sizeof(sock_server)) < 0)
+    {
+        perror("Error  connect() failed: ");
+        exit(0);
+    }
+
+     if (send(fds_client, (void *) data.image[ID].md, sizeof(IMAGE_METADATA), 0) != sizeof(IMAGE_METADATA))
+        {
+            printf("send() sent a different number of bytes than expected %ld\n", sizeof(IMAGE_METADATA));
+            fflush(stdout);
+        }
+
+ /*   while(1)
+    {
+
+        if (send(fds_client, packet, sizeof(PACKET), 0) != sizeof(PACKET))
+        {
+            printf("send() sent a different number of bytes than expected %ld\n", sizeof(PACKET));
+            fflush(stdout);
+        }
+        else
+        {
+            printf("Sent packet # %ld\n", packet[0].cnt);
+            //		fflush(stdout);
+        }
+
+        packet[0].cnt++;
+    }
+    */
+
+    close(fds_client);
+    
+
+
+
+    return(ID);
 }
+
+
+
 
 
 long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
 {
+    struct sockaddr_in sock_server, sock_client;
+    int fds_server, fds_client;
+    socklen_t slen_client;
+    PACKET *packet;
+    long cnt;
+    int flag = 1;
+    long recvsize;
+    int result;
+    long totsize = 0;
+	int MAXPENDING = 5;
+    IMAGE_METADATA *imgmd;
 	long ID;
-	
-	printf("receiving image\n");
-	
-	return(ID);
+
+    imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
+
+    // create TCP socket
+    if((fds_server=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))==-1)
+    {
+        printf("ERROR creating socket\n");
+        exit(0);
+    }
+
+
+    memset((char*) &sock_server, 0, sizeof(sock_server));
+
+    result = setsockopt(fds_server,            /* socket affected */
+                        IPPROTO_TCP,     /* set option at TCP level */
+                        TCP_NODELAY,     /* name of option */
+                        (char *) &flag,  /* the cast is historical cruft */
+                        sizeof(int));    /* length of option value */
+    if (result < 0)
+    {
+        printf("ERROR setsockopt\n");
+        exit(0);
+    }
+
+
+    sock_server.sin_family = AF_INET;
+    sock_server.sin_port = htons(port);
+    sock_server.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    //bind socket to port
+    if( bind(fds_server , (struct sockaddr*)&sock_server, sizeof(sock_server) ) == -1)
+    {
+        printf("ERROR binding socket\n");
+        exit(0);
+    }
+
+
+    if (listen(fds_server, MAXPENDING) < 0)
+    {
+        printf("ERROR listen socket\n");
+        exit(0);
+    }
+
+    cnt = 0;
+
+    /* Set the size of the in-out parameter */
+    slen_client = sizeof(sock_client);
+
+    /* Wait for a client to connect */
+    if ((fds_client = accept(fds_server, (struct sockaddr *) &sock_client, &slen_client)) == -1)
+    {
+        printf("ERROR accept socket\n");
+        exit(0);
+    }
+
+    printf("Client connected\n");
+    fflush(stdout);
+
+    // listen for image metadata
+    if((recvsize = recv(fds_client, imgmd, sizeof(IMAGE_METADATA), MSG_WAITALL)) < 0)
+    {
+        printf("ERROR receiving image metadata\n");
+        exit(0);
+    }
+
+	ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+
+/*
+    while(1)
+    {
+        if ((recvsize = recv(fds_client, packet, sizeof(PACKET), MSG_WAITALL)) < 0)
+        {
+            printf("ERROR recv()\n");
+            exit(0);
+        }
+
+        if(recvsize!=0)
+        {
+            totsize += recvsize;
+            printf("Received %ld bytes (expected %ld)   [%ld]   tot = %ld (%ld MB)\n", recvsize, sizeof(PACKET), packet[0].cnt, totsize, (long) (totsize/1024/1024));
+        }
+    }*/
+    close(fds_client);
+
+    free(imgmd);
+
+
+    return(ID);
 }
+
+
 
 
 
