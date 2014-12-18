@@ -3924,6 +3924,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
     }
 
     ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+	COREMOD_MEMORY_image_set_createsem(imgmd[0].name);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
@@ -3990,6 +3991,10 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
             totsize += recvsize;
             printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
         }
+        data.image[ID].md[0].cnt0++;
+		if(data.image[ID].sem == 1)
+			sem_post(data.image[ID].semptr);
+        
     }
     close(fds_client);
 
