@@ -499,7 +499,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
-		printf("SETUP DONE, READY TO START COMPUTATIONS\n");
+		printf("SETUP DONE, READY TO START COMPUTATIONS  ");
         fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
@@ -515,6 +515,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         cnt = 0;
         iter = 0;
         gpumatmultconf[index].init = 1;
+        
+        printf("...\n");
+        fflush(stdout);
 	}
 
     return(0);
@@ -527,32 +530,32 @@ int GPU_loop_MultMat_execute(int index)
     int m;
     int ptn;
 
-	
-	//gpumatmultconf[index].NBstreams = 6;
-	
-	if(index==0) /// main CM multiplication loop
-	{
-	//	gpumatmultconf[index].NBstreams = 6;
-		if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
-			if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
-				{
-					printf("New CM detected (cnt : %ld)\n", data.image[gpumatmultconf[index].CM_ID].md[0].cnt0);
-					GPUloadCmat(index);
-					gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
-				}
-	}
-	
-/*	
-    for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] = 0.01;
-*/
 
-    
+    //gpumatmultconf[index].NBstreams = 6;
+
+    if(index==0) /// main CM multiplication loop
+    {
+        //	gpumatmultconf[index].NBstreams = 6;
+        if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
+            if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
+            {
+                printf("New CM detected (cnt : %ld)\n", data.image[gpumatmultconf[index].CM_ID].md[0].cnt0);
+                GPUloadCmat(index);
+                gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
+            }
+    }
+
+    /*
+        for(m=0; m<gpumatmultconf[index].M; m++)
+            gpumatmultconf[index].dmVecTMP[m] = 0.01;
+    */
+
+
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
         gpumatmultconf[index].thdata[ptn].thread_no = ptn;
         gpumatmultconf[index].thdata[ptn].numl0 = ptn*ptn;
-		gpumatmultconf[index].thdata[ptn].cindex = index;
+        gpumatmultconf[index].thdata[ptn].cindex = index;
         gpumatmultconf[index].iret[ptn] = pthread_create( &gpumatmultconf[index].threadarray[ptn], NULL, compute_function, (void*) &gpumatmultconf[index].thdata[ptn]);
         if(gpumatmultconf[index].iret[ptn])
         {
@@ -560,47 +563,48 @@ int GPU_loop_MultMat_execute(int index)
             exit(EXIT_FAILURE);
         }
     }
- 
+
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-for(m=0; m<gpumatmultconf[index].M; m++)
-		gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
+    for(m=0; m<gpumatmultconf[index].M; m++)
+        gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
 
-	for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
-		{
-			for(m=0; m<gpumatmultconf[index].M; m++)
-				gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
-		}
-		
-		if(gpumatmultconf[index].NBstreams!=6)
-			{
-				printf("gpumatmultconf[index].NBstreams = %d\n",  gpumatmultconf[index].NBstreams);
-				exit(0);
-			}
-	
-	//for(m=0; m<gpumatmultconf[index].M; m++)
-		//gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
-
+    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+    {
+        for(m=0; m<gpumatmultconf[index].M; m++)
+            gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
+    }
 /*
-     for(m=0;m<M;m++)
-      tot += dmVec[m]*dmVec[m];
-    if(tot<0.0000001)
-      printf("DETECTED EMPTY OUTPUT %g\n", tot);
+    if(gpumatmultconf[index].NBstreams!=6)
+    {
+        printf("gpumatmultconf[index].NBstreams = %d\n",  gpumatmultconf[index].NBstreams);
+        exit(0);
+    }
+*/
+    //for(m=0; m<gpumatmultconf[index].M; m++)
+    //gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
 
-    usleep(10000);
-    */
+    /*
+         for(m=0;m<M;m++)
+          tot += dmVec[m]*dmVec[m];
+        if(tot<0.0000001)
+          printf("DETECTED EMPTY OUTPUT %g\n", tot);
 
-//    memcpy(dmVec, dmVecTMP, sizeof(float)*M);
+        usleep(10000);
+        */
 
-//	printf("Computation done\n");
-//	fflush(stdout);
-	
+    //    memcpy(dmVec, dmVecTMP, sizeof(float)*M);
+
+    //	printf("Computation done\n");
+    //	fflush(stdout);
+
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     return(0);
 }
+
 
 
 
