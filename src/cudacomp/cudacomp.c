@@ -543,8 +543,7 @@ int GPU_loop_MultMat_execute(int index, int *status)
             }
     }
 
-	*status++;
-	statustot += *status;
+	*status = *status + 1;
   
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
@@ -559,14 +558,12 @@ int GPU_loop_MultMat_execute(int index, int *status)
         }
     }
 
-	*status++;
-	statustot += *status;
+	*status = *status + 1;
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-	*status++;
-	statustot += *status;
+	*status = *status + 1;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
@@ -577,8 +574,7 @@ int GPU_loop_MultMat_execute(int index, int *status)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
 
-	*status++;
-	statustot += *status;
+	*status = *status + 1;
 
 /*
     if(gpumatmultconf[index].NBstreams!=6)
@@ -603,9 +599,6 @@ int GPU_loop_MultMat_execute(int index, int *status)
 
     //	printf("Computation done\n");
     //	fflush(stdout);
-
-	if(statustot==0)
-		exit(0);
 
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
