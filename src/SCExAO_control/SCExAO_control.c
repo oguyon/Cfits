@@ -928,7 +928,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     float SATURATION = 32766;
     long kold;
     long iter;
-
+	double eps = 1e-8;
     long IDavek, IDavev, IDavecnt, IDcnt, IDcnt1;
     int *satarray;
 
@@ -1008,8 +1008,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 {
                     v0 = 0.0;
                     v1 = 0.0;
-                    data.image[IDavek].array.F[ii] /= (0.0001+data.image[IDavecnt].array.U[ii]);
-                    data.image[IDavev].array.F[ii] /= (0.0001+data.image[IDavecnt].array.U[ii]);
+                    data.image[IDavek].array.F[ii] /= (data.image[IDavecnt].array.U[ii]);
+                    data.image[IDavev].array.F[ii] /= (data.image[IDavecnt].array.U[ii]);
                     for(kk=1; kk<data.image[IDavecnt].array.U[ii]+1; kk++)
                     {
                         vk = 1.0*kk - data.image[IDavek].array.F[ii];
@@ -1022,7 +1022,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     }
 
 
-                    data.image[ID2dtmp].array.F[ii] = v0/v1;
+                    data.image[ID2dtmp].array.F[ii] = v0/(v1+eps);
 
 
 
