@@ -85,7 +85,7 @@ int CUDACOMP_init();
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N);
 int GPUloadCmat(int index);
 int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation);
-int GPU_loop_MultMat_execute(int index);
+int GPU_loop_MultMat_execute(int index, int *status);
 int GPU_loop_MultMat_free(int index);
 void *compute_function( void *ptr );
 #endif
