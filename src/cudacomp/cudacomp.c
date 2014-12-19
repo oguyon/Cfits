@@ -525,13 +525,11 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
  
 // increments status by 4
-int GPU_loop_MultMat_execute(int index)
+int GPU_loop_MultMat_execute(int index, int *status)
 {
     int m;
     int ptn;
-
-
-   
+	int statustot;
 
     if(index==0) /// main CM multiplication loop
     {
@@ -545,7 +543,8 @@ int GPU_loop_MultMat_execute(int index)
             }
     }
 
-	data.status0++;
+	*status++;
+	statustot += *status;
   
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
@@ -560,12 +559,14 @@ int GPU_loop_MultMat_execute(int index)
         }
     }
 
-	data.status0++;
+	*status++;
+	statustot += *status;
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-	data.status0++;
+	*status++;
+	statustot += *status;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
@@ -576,8 +577,9 @@ int GPU_loop_MultMat_execute(int index)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
 
-	data.status0++;
-	
+	*status++;
+	statustot += *status;
+
 /*
     if(gpumatmultconf[index].NBstreams!=6)
     {
@@ -601,6 +603,9 @@ int GPU_loop_MultMat_execute(int index)
 
     //	printf("Computation done\n");
     //	fflush(stdout);
+
+	if(statustot==0)
+		exit(0);
 
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
@@ -760,7 +765,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
     for(iter=0;iter<NBiter;iter++)
-		GPU_loop_MultMat_execute(0);
+		GPU_loop_MultMat_execute(0, &status);
  
 	clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;

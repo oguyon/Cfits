@@ -1625,7 +1625,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             data.image[aoconfID_WFS0].array.F[ii] = 0.0;
 
     if(RM==0)
-        data.status0 = 2;  // 2: WAIT FOR IMAGE
+        AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
     else
         data.status1 = 2;
 
@@ -1748,7 +1748,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         else
             AOconf[loop].WFScntRM = data.image[aoconfID_WFS].md[0].cnt0;
     }
-    data.status0 = 3;  // 3: DARK SUBTRACT
+    AOconf[loop].status = 3;  // 3: DARK SUBTRACT
 
 
     // Dark subtract
@@ -1765,14 +1765,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
      //       data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     //}
 
-	data.status0 = 4; // 4: COMPUTE TOTAL OF IMAGE
+	AOconf[loop].status = 4; // 4: COMPUTE TOTAL OF IMAGE
  
  
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
 
-	data.status0 = 5;  // 5: NORMALIZE WFS IMAGE
+	AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 	
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
@@ -2631,8 +2631,8 @@ int set_DM_modes(long loop)
     {
 		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
-        data.status0 = 15; 
-        GPU_loop_MultMat_execute(1);
+        AOconf[loop].status = 15; 
+        GPU_loop_MultMat_execute(1, &AOconf[loop].status);
         #endif
     }
     AOconf[loop].DMupdatecnt ++;
@@ -3681,10 +3681,10 @@ int AOcompute(long loop)
 
 
     // get dark-subtracted image
-    data.status0 = 1;  // 1: READING IMAGE
+    AOconf[loop].status = 1;  // 1: READING IMAGE
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
 
-    data.status0 = 6;  // 6: REMOVING REF
+    AOconf[loop].status = 6;  // 6: REMOVING REF
 
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3698,7 +3698,7 @@ int AOcompute(long loop)
     //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
     // sleep(5);
 
-    data.status0 = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
+    AOconf[loop].status = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
 
     if(AOconf[loop].GPU == 0)
@@ -3710,12 +3710,12 @@ int AOcompute(long loop)
     {
 #ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0);
-		data.status0 = 8; // execute  
-        GPU_loop_MultMat_execute(0);
+		AOconf[loop].status = 8; // execute  
+        GPU_loop_MultMat_execute(0, &AOconf[loop].status);
 #endif
     }
 
-    data.status0 = 13; // MULTIPLYING BY GAINS
+    AOconf[loop].status = 13; // MULTIPLYING BY GAINS
 
 
     AOconf[loop].RMSmodes = 0;
@@ -3845,12 +3845,12 @@ int AOloopControl_run()
 	
 	
 
-				data.status0 = 14; 
+				AOconf[loop].status = 14; 
 
                 if(fabs(AOconf[loop].gain)>1.0e-6)                
                     set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
 	
-                data.status0 = 20; //  LOGGING, part 1
+                AOconf[loop].status = 20; //  LOGGING, part 1
 
                 clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
                 AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
@@ -3882,7 +3882,7 @@ int AOloopControl_run()
                 }
 
 
-                data.status0 = 21; //  (13->) LOGGING, part 2
+                AOconf[loop].status = 21; //  (13->) LOGGING, part 2
 
                 AOconf[loop].logcnt++;
                 if(AOconf[loop].logcnt==AOconf[loop].logsize)
@@ -3955,7 +3955,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     printw("log is OFF  ");
   
 
-  printw("STATUS = %d  ", data.status0);
+  printw("STATUS = %d  ", AOconf[loop].status);
   
   kmax = (wrow-3)*(nbcol);
   printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
@@ -4203,7 +4203,7 @@ int AOloopControl_statusStats()
   for(k=0;k<NBkiter;k++)
     {
       usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
-      st = data.status0;
+      st = AOconf[LOOPNUMBER].status;
       if(st<statusmax)
 	statuscnt[st]++;
     }
