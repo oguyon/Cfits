@@ -1598,7 +1598,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 {
     long imcnt;
     long ii;
-    double total;
+    double total, totalinv;
     char name[200];
     int atype;
     long slice;
@@ -1782,6 +1782,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 	nelem = AOconf[loop].sizeWFS;
 	//#pragma omp parallel for
+	totalinv=1.0/total;
 
  # ifdef _OPENMP
   #pragma omp parallel num_threads(4) if (nelem>OMP_NELEMENT_LIMIT)
@@ -1792,7 +1793,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
       #pragma omp for
       # endif
 	for(ii=0; ii<nelem; ii++)
-        data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]/total;
+        data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]*totalinv;
    # ifdef _OPENMP
   }
   # endif
