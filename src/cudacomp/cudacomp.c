@@ -525,7 +525,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
  
 // increments status by 4
-int GPU_loop_MultMat_execute(int index, int *status)
+int GPU_loop_MultMat_execute(int index)
 {
     int m;
     int ptn;
@@ -545,7 +545,7 @@ int GPU_loop_MultMat_execute(int index, int *status)
             }
     }
 
-	*status++;
+	data.status0++;
   
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
@@ -560,12 +560,12 @@ int GPU_loop_MultMat_execute(int index, int *status)
         }
     }
 
-	*status++;
+	data.status0++;
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         pthread_join( gpumatmultconf[index].threadarray[ptn], NULL);
 
-	*status++;
+	data.status0++;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
@@ -576,7 +576,7 @@ int GPU_loop_MultMat_execute(int index, int *status)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
 
-	*status++;
+	data.status0++;
 	
 /*
     if(gpumatmultconf[index].NBstreams!=6)
@@ -760,7 +760,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
     for(iter=0;iter<NBiter;iter++)
-		GPU_loop_MultMat_execute(0, &status);
+		GPU_loop_MultMat_execute(0);
  
 	clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;

@@ -272,59 +272,64 @@ typedef struct
 // THIS IS WHERE EVERYTHING THAT NEEDS TO BE WIDELY ACCESSIBLE GETS STORED
 typedef struct
 {
-  int Debug;
-  int quiet;
-  int overwrite;		// automatically overwrite FITS files
-  double INVRANDMAX;
-  gsl_rng *rndgen;		// random number generator  
-  int precision;		// default precision: 0 for float, 1 for double
+    int Debug;
+    int quiet;
+    int overwrite;		// automatically overwrite FITS files
+    double INVRANDMAX;
+    gsl_rng *rndgen;		// random number generator
+    int precision;		// default precision: 0 for float, 1 for double
 
-	// logging
-	int CLIlogON;
-	char CLIlogname[200];
-	
-  // Command Line Interface (CLI) INPUT 
-  int fifoON;
-  char processname[100];
-  char fifoname[100];
-  long NBcmd;
-  long NB_MAX_COMMAND;
-  CMD *cmd;
-  int parseerror; // 1 if error, 0 otherwise
-  long cmdNBarg;  // number of arguments in last command line
-  CMDARGTOKEN cmdargtoken[NB_ARG_MAX];
-  long cmdindex; // when command is found in command line, holds index of command
-  long calctmp_imindex; // used to create temporary images
-  int CMDexecuted; // 0 if command has not been executed, 1 otherwise
-  long NBmodule;
-  long NB_MAX_MODULE;
-  MODULE *module;
+    // logging
+    int CLIlogON;
+    char CLIlogname[200];
+
+    // Command Line Interface (CLI) INPUT
+    int fifoON;
+    char processname[100];
+    char fifoname[100];
+    long NBcmd;
+    long NB_MAX_COMMAND;
+    CMD *cmd;
+    int parseerror; // 1 if error, 0 otherwise
+    long cmdNBarg;  // number of arguments in last command line
+    CMDARGTOKEN cmdargtoken[NB_ARG_MAX];
+    long cmdindex; // when command is found in command line, holds index of command
+    long calctmp_imindex; // used to create temporary images
+    int CMDexecuted; // 0 if command has not been executed, 1 otherwise
+    long NBmodule;
+    long NB_MAX_MODULE;
+    MODULE *module;
 
 
-  // shared memory default
-  int SHARED_DFT;
+    // shared memory default
+    int SHARED_DFT;
 
-  // Number of keyword per iamge default
-  int NBKEWORD_DFT;
+    // Number of keyword per iamge default
+    int NBKEWORD_DFT;
 
-  // images, variables
-  long NB_MAX_IMAGE;
-  IMAGE *image;
+    // images, variables
+    long NB_MAX_IMAGE;
+    IMAGE *image;
 
-  long NB_MAX_VARIABLE;
-  VARIABLE *variable;
-/*
-  long NB_MAX_VARIABLELONG;
-  VARIABLELONG *variablelong;
-  
-  long NB_MAX_VARIABLESTRING;
-  VARIABLESTRING *variablestring;
-  */
-  
- float FLOATARRAY[1000];	// array to store temporary variables
-  double DOUBLEARRAY[1000];    // for convenience
-	char SAVEDIR[500];
+    long NB_MAX_VARIABLE;
+    VARIABLE *variable;
+    /*
+      long NB_MAX_VARIABLELONG;
+      VARIABLELONG *variablelong;
+
+      long NB_MAX_VARIABLESTRING;
+      VARIABLESTRING *variablestring;
+      */
+
+    float FLOATARRAY[1000];	// array to store temporary variables
+    double DOUBLEARRAY[1000];    // for convenience
+    char SAVEDIR[500];
+
+	// status counter (used for profiling)
+	int status0;
+	int status1;
 } DATA;
+
 
 
 

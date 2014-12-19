@@ -1625,9 +1625,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             data.image[aoconfID_WFS0].array.F[ii] = 0.0;
 
     if(RM==0)
-        AOconf[loop].status = 2;  // 2: WAIT FOR IMAGE
+        data.status0 = 2;  // 2: WAIT FOR IMAGE
     else
-        AOconf[loop].RMstatus = 2;
+        data.status1 = 2;
 
 
     if(data.image[aoconfID_WFS].md[0].naxis==2) // single buffer
@@ -1748,7 +1748,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         else
             AOconf[loop].WFScntRM = data.image[aoconfID_WFS].md[0].cnt0;
     }
-    AOconf[loop].status = 3;  // 3: DARK SUBTRACT
+    data.status0 = 3;  // 3: DARK SUBTRACT
 
 
     // Dark subtract
@@ -1765,14 +1765,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
      //       data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     //}
 
-	AOconf[loop].status = 4; // 4: COMPUTE TOTAL OF IMAGE
+	data.status0 = 4; // 4: COMPUTE TOTAL OF IMAGE
  
  
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
 
-	AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
+	data.status0 = 5;  // 5: NORMALIZE WFS IMAGE
 	
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
@@ -2631,8 +2631,8 @@ int set_DM_modes(long loop)
     {
 		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
-        AOconf[loop].status = 15; 
-        GPU_loop_MultMat_execute(1, &AOconf[loop].status);
+        data.status0 = 15; 
+        GPU_loop_MultMat_execute(1);
         #endif
     }
     AOconf[loop].DMupdatecnt ++;
@@ -3681,10 +3681,10 @@ int AOcompute(long loop)
 
 
     // get dark-subtracted image
-    AOconf[loop].status = 1;  // 1: READING IMAGE
+    data.status0 = 1;  // 1: READING IMAGE
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
 
-    AOconf[loop].status = 6;  // 6: REMOVING REF
+    data.status0 = 6;  // 6: REMOVING REF
 
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3698,7 +3698,7 @@ int AOcompute(long loop)
     //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
     // sleep(5);
 
-    AOconf[loop].status = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
+    data.status0 = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
 
     if(AOconf[loop].GPU == 0)
@@ -3710,12 +3710,12 @@ int AOcompute(long loop)
     {
 #ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0);
-		AOconf[loop].status = 8; // execute  
-        GPU_loop_MultMat_execute(0, &AOconf[loop].status);
+		data.status0 = 8; // execute  
+        GPU_loop_MultMat_execute(0);
 #endif
     }
 
-    AOconf[loop].status = 13; // MULTIPLYING BY GAINS
+    data.status0 = 13; // MULTIPLYING BY GAINS
 
 
     AOconf[loop].RMSmodes = 0;
@@ -3845,12 +3845,12 @@ int AOloopControl_run()
 	
 	
 
-				AOconf[loop].status = 14; 
+				data.status0 = 14; 
 
                 if(fabs(AOconf[loop].gain)>1.0e-6)                
                     set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
 	
-                AOconf[loop].status = 20; //  LOGGING, part 1
+                data.status0 = 20; //  LOGGING, part 1
 
                 clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
                 AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
@@ -3882,7 +3882,7 @@ int AOloopControl_run()
                 }
 
 
-                AOconf[loop].status = 21; //  (13->) LOGGING, part 2
+                data.status0 = 21; //  (13->) LOGGING, part 2
 
                 AOconf[loop].logcnt++;
                 if(AOconf[loop].logcnt==AOconf[loop].logsize)
@@ -3955,7 +3955,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     printw("log is OFF  ");
   
 
-  printw("STATUS = %d  ", AOconf[loop].status);
+  printw("STATUS = %d  ", data.status0);
   
   kmax = (wrow-3)*(nbcol);
   printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
@@ -4158,28 +4158,28 @@ int AOloopControl_statusStats()
   const char *statusdef[22];
 
 
-	statusdef[0] = "\n";
-	statusdef[1] = "READING IMAGE\n";
-	statusdef[2] = "WAIT FOR IMAGE\n";
-	statusdef[3] = "DARK SUBTRACT\n";
-	statusdef[4] = "COMPUTE WFS IMAGE TOTAL\n";
-	statusdef[5] = "NORMALIZE WFS IMAGE\n";
-	statusdef[6] = "SUBTRACT REFERENCE\n";
-	statusdef[7] = "MULTIPLYING BY CONTROL MATRIX -> MODE VALUES : SETUP\n";
-	statusdef[8] = "START CONTROL MATRIX MULTIPLICATION: CHECK IF NEW CM EXISTS\n";
-	statusdef[9] = "CONTROL MATRIX MULT: CREATE COMPUTING THREADS\n";
-	statusdef[10] = "CONTROL MATRIX MULT: WAIT FOR THREADS TO COMPLETE\n";
-	statusdef[11] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS\n";
-	statusdef[12] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION\n";
-	statusdef[13] = "MULTIPLYING BY GAINS\n";
-	statusdef[14] = "ENTER SET DM MODES\n";
-	statusdef[15] = "START DM MODES MATRIX MULTIPLICATION\n";
-	statusdef[16] = "MATRIX MULT: CREATE COMPUTING THREADS\n";
-	statusdef[17] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE\n";
-	statusdef[18] = "MATRIX MULT: COMBINE TRHEADS RESULTS\n";
-	statusdef[19] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION\n";
-	statusdef[20] = "LOG DATA, PART 1\n";
-	statusdef[21] = "LOG DATA, PART 2\n";
+	statusdef[0] = "";
+	statusdef[1] = "READING IMAGE";
+	statusdef[2] = "WAIT FOR IMAGE";
+	statusdef[3] = "DARK SUBTRACT";
+	statusdef[4] = "COMPUTE WFS IMAGE TOTAL";
+	statusdef[5] = "NORMALIZE WFS IMAGE";
+	statusdef[6] = "SUBTRACT REFERENCE";
+	statusdef[7] = "MULTIPLYING BY CONTROL MATRIX -> MODE VALUES : SETUP";
+	statusdef[8] = "START CONTROL MATRIX MULTIPLICATION: CHECK IF NEW CM EXISTS";
+	statusdef[9] = "CONTROL MATRIX MULT: CREATE COMPUTING THREADS";
+	statusdef[10] = "CONTROL MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+	statusdef[11] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
+	statusdef[12] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+	statusdef[13] = "MULTIPLYING BY GAINS";
+	statusdef[14] = "ENTER SET DM MODES";
+	statusdef[15] = "START DM MODES MATRIX MULTIPLICATION";
+	statusdef[16] = "MATRIX MULT: CREATE COMPUTING THREADS";
+	statusdef[17] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+	statusdef[18] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
+	statusdef[19] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+	statusdef[20] = "LOG DATA, PART 1";
+	statusdef[21] = "LOG DATA, PART 2";
 
   usec0 = 50.0; 
   usec1 = 150.0;
@@ -4203,7 +4203,7 @@ int AOloopControl_statusStats()
   for(k=0;k<NBkiter;k++)
     {
       usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
-      st = AOconf[LOOPNUMBER].status;
+      st = data.status0;
       if(st<statusmax)
 	statuscnt[st]++;
     }
