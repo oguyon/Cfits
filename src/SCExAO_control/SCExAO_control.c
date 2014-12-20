@@ -1003,7 +1003,9 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
         printf("%ld   slice %ld written [%ld] \n      ", iter, k, IDin);
         fflush(stdout);
 
-        if(k<kold)
+		
+
+        if(k == zsize-1) //k<kold)
         {
             // process cube
             if(kold>0)
