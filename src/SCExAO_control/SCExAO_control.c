@@ -1014,7 +1014,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                     v1 = 0.0;
                     data.image[IDavek].array.F[ii] /= (data.image[IDavecnt].array.U[ii]);
                     data.image[IDavev].array.F[ii] /= (data.image[IDavecnt].array.U[ii]);
-                    for(kk=1; kk<data.image[IDavecnt].array.U[ii]+1; kk++)
+                    for(kk=0; kk<data.image[IDavecnt].array.U[ii]+1; kk++)
                     {
                         vk = 1.0*kk - data.image[IDavek].array.F[ii];
                         vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii] ;
