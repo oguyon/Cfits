@@ -1032,7 +1032,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
-
+			exit(0);
         
 
             cnt0 = 0;
