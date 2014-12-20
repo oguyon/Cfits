@@ -921,20 +921,26 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long *sizeoutarray;
     double *coeffarray;
     long k;
-    long IDtmp;
+//    long IDtmp;
     long ii, jj;
-    long ID2dtmp, ID3dtmp;
+//    long ID2dtmp, ID3dtmp;
     float v0;
     long xysize;
     double v1, vk, vt, vv;
     long kk;
     long cnt0, cnt1, cnt2;
-    float SATURATION = 32766;
-    long kold;
+    int SATURATION = 32766;
+//    long kold;
     long iter;
 	double eps = 1e-8;
-    long IDavek, IDavev, IDavecnt, IDcnt1;
-    int *satarray;
+//    long IDavek, IDavev, IDavecnt, IDcnt1;
+//    int *satarray;
+	long k1;
+	long IDintmp, IDsatmask, ID2dtmp;
+	unsigned short int pvu, vcnt, vaveku;
+	long vavevu;
+	float vavev, vavek;
+	
 
     IDin = image_ID(IDinname);
 
@@ -949,7 +955,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     sizeoutarray[1] = ysize;
     sizeoutarray[2] = zsize;
 
-    satarray = (int*) malloc(sizeof(long)*xysize);
+ //   satarray = (int*) malloc(sizeof(long)*xysize);
 
     coeffarray = (double*) malloc(sizeof(double)*zsize);
 
@@ -959,13 +965,16 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     }
 
 
+	IDintmp = create_image_ID("intmp", 3, sizeoutarray, USHORT, 1, 0); // temporary buffer
+	IDsatmask = create_image_ID("satmask", 3, sizeoutarray, USHORT, 1, 0); // saturation mask
+	
     ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0); // intermediate resutl
-    ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 1, 0); // 3D cube stores camera image, goes to zero when saturation reached
+   // ID3dtmp = create_image_ID("saphira3dtmp", 3, sizeoutarray, FLOAT, 1, 0); // 3D cube stores camera image, goes to zero when saturation reached
 
 
-    IDavek = create_image_ID("avek", 2, sizeoutarray, FLOAT, 1, 0);
-    IDavev = create_image_ID("avev", 2, sizeoutarray, FLOAT, 1, 0);
-    IDavecnt = create_image_ID("avecnt", 2, sizeoutarray, USHORT, 1, 0); // number of entries per pixel
+   // IDavek = create_image_ID("avek", 2, sizeoutarray, FLOAT, 1, 0);
+   // IDavev = create_image_ID("avev", 2, sizeoutarray, FLOAT, 1, 0);
+   // IDavecnt = create_image_ID("avecnt", 2, sizeoutarray, USHORT, 1, 0); // number of entries per pixel
 
 
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
@@ -982,16 +991,22 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
     printf("\n");
-    for(ii=0; ii<xysize; ii++)
+  /*  for(ii=0; ii<xysize; ii++)
     {
         data.image[IDavek].array.F[ii] = 0.0;
         data.image[IDavev].array.F[ii] = 0.0;
         data.image[IDavecnt].array.U[ii] = 1;
         satarray[ii] = 0;
-    }
+    }*/
 
     iter = 0;
-    kold = -1;
+//    kold = -1;
+
+
+
+
+
+
 
 
     while(1)
@@ -1002,6 +1017,84 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
         k = data.image[IDin].md[0].cnt1;
         printf("%ld   slice %ld written [%ld] \n      ", iter, k, IDin);
         fflush(stdout);
+        
+         if(k == zsize-1)  // process cube
+         {
+			memcpy(data.image[IDintmp].array.U, data.image[IDin].array.U, sizeof(short)*xysize*zsize);
+			//memset(data.image[IDsatmask].array.U, 0, sizeof(short)*xysize*zsize);
+			for(ii=0; ii<xysize; ii++)
+				{
+					k1 = 0;
+					v0 = 0.0;
+					v1 = 0.0;
+					vcnt = 0;
+					vaveku = 0;
+					vavevu = 0;
+					for(k1;k1<zsize;k1++)
+					{
+						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+						if(pvu<SATURATION)
+							{
+								data.image[IDsatmask].array.U[k1*xysize+ii] = 1;
+								vavevu += pvu;
+								vaveku += k1;
+								vcnt++;
+							}
+						else
+							{
+								data.image[IDsatmask].array.U[k1*xysize+ii] = 0;
+							}
+					}
+					vavev = 1.0*vavevu/vcnt;
+					vavek = 1.0*vaveku/vcnt;
+					
+					for(k1;k1<zsize;k1++)
+					{
+						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+						if(data.image[IDsatmask].array.U[k1*xysize+ii]==1)
+						{
+							vk = 1.0*k1 - vavek;
+							vv = 1.0*pvu - vavev;
+							v0 += vk*vv;
+							v1 += vk*vk;							
+						}
+						data.image[ID2dtmp].array.F[ii] = v0/(v1+eps);
+					}
+				}
+			
+			iter++;
+            printf("\n CUBE COMPLETED -> 2D image ready\n");
+            data.image[IDout].md[0].write = 1;
+            memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
+            data.image[IDout].md[0].cnt0 ++;
+            data.image[IDout].md[0].write = 0;
+			exit(0);
+		 }
+	}
+        
+/*        
+       data.image[ID3dtmp].md[0].write = 1;
+       for(ii=0; ii<xysize; ii++)
+        {
+            v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
+            if((v0>SATURATION)||(v0<0.0))
+            {
+                data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
+                satarray[ii] = 1;
+            }
+            else if (satarray[ii]==0)
+            {
+                data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
+                if(k>-1)
+                {
+                    data.image[IDavek].array.F[ii] += 1.0*k;
+                    data.image[IDavev].array.F[ii] += v0;
+                    data.image[IDavecnt].array.U[ii]++;
+                }
+            }
+        }
+   data.image[ID3dtmp].md[0].cnt0++;
+     data.image[ID3dtmp].md[0].write = 0;
 
 		
 
@@ -1062,27 +1155,6 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
 
-        for(ii=0; ii<xysize; ii++)
-        {
-            v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
-            if((v0>SATURATION)||(v0<0.0))
-            {
-                data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
-                satarray[ii] = 1;
-            }
-            else if (satarray[ii]==0)
-            {
-                data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
-                if(k>-1)
-                {
-                    data.image[IDavek].array.F[ii] += 1.0*k;
-                    data.image[IDavev].array.F[ii] += v0;
-                    data.image[IDavecnt].array.U[ii]++;
-                }
-            }
-        }
-
-
         data.image[ID2dtmp].md[0].cnt0++;
         data.image[ID3dtmp].md[0].cnt0++;
 
@@ -1093,7 +1165,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
         kold = k;
     }
     printf("\n");
-
+*/
     free(sizeoutarray);
     free(coeffarray);
 
