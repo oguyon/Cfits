@@ -1057,7 +1057,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 							vk = 1.0*k1 - vavek;
 							vv = 1.0*pvu - vavev;
 							v0 += vk*vv;
-							v1 += vk*vk;							
+							v1 += vk*vk;		
+							printf(".");					
 						}
 					}
 					printf("[%ld %f %f] ", ii, v0, v1);
