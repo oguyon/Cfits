@@ -1033,6 +1033,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					for(k1;k1<zsize;k1++)
 					{
 						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+						printf("[%d] ", pvu);
 						if(pvu<SATURATION)
 							{
 								data.image[IDsatmask].array.U[k1*xysize+ii] = 1;
@@ -1059,7 +1060,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 							v1 += vk*vk;							
 						}
 					}
-					data.image[ID2dtmp].array.F[ii] = 1.2345; //1.0*vcnt; //v0/(v1+eps);
+					data.image[ID2dtmp].array.F[ii] = 1.0*vcnt; //v0/(v1+eps);
 					
 				}
 			
