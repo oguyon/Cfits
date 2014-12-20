@@ -908,7 +908,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
 
 
-/** SAPHIRA image */
+/** SAPHIRA image: process data cube into single frame 
+ * 
+ * full linear regression, up to saturation level
+ * 
+ * */
 int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 {
     long IDout;
@@ -1001,7 +1005,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
         if(k<kold)
         {
-            // complete last cube : compute missing pixels
+            // process cube
             if(kold>0)
             {
                 for(ii=0; ii<xysize; ii++)
@@ -1016,35 +1020,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                         vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii] ;
                         v0 += vk*vv;
                         v1 += vk*vk;
-
-                        if((iter==2)&&(ii==1000))
-                            printf("========= (%ld %f) -> %f %f  -> %f %f -> %f   [%f %f] [%d]\n", kk, data.image[ID3dtmp].array.F[kk*xysize+ii], vk, vv, v0, v1, v0/v1, data.image[IDavek].array.F[ii], data.image[IDavev].array.F[ii], data.image[IDavecnt].array.U[ii]);
                     }
-
-
                     data.image[ID2dtmp].array.F[ii] = v0/(v1+eps);
-
-
-
-                    //if(data.image[IDcnt1].array.U[ii]==1)
-                    //{
-                    /*        kavearray[ii] /= cntarray[ii];
-                            vavearray[ii] /= cntarray[ii];
-                            v0 = 0.0;
-                            v1 = 0.0;
-                            for(kk=0; kk<cntarray[ii]; kk++)
-                            {
-                                vk = 1.0*kk - kavearray[ii];
-                                vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii]-vavearray[ii];
-                                v0 += vk*vv;
-                                v1 += vk;
-                            }
-
-                            data.image[ID2dtmp].array.F[ii] = v0/v1;
-                            cntarray1[ii] = 0;*/
-
-
-                    //}
                 }
             }
 
@@ -1056,18 +1033,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
 
-            /*   if(iter>2)
-               {
-                   save_fits(IDoutname, "!test.fits");
-                   save_fits("saphira3dtmp", "!test_saphira3dtmp.fits");
-                   save_fits("saphira2dtmp", "!test_saphira2dtmp.fits");
-                   save_fits("avek", "!test_avek.fits");
-                   save_fits("avev", "!test_avev.fits");
-                   save_fits("avecnt", "!test_avecnt.fits");
-                   exit(0);
-               }
-            */
-
+        
 
             cnt0 = 0;
             cnt1 = 0;
@@ -1105,7 +1071,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             else if (satarray[ii]==0)
             {
                 data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
-                if(k>0)
+                if(k>-1)
                 {
                     data.image[IDavek].array.F[ii] += 1.0*k;
                     data.image[IDavev].array.F[ii] += v0;
@@ -1114,55 +1080,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             }
         }
 
-        /*
 
-
-                for(ii=0; ii<xysize; ii++)
-                {
-                    cnt2++;
-                    if(k<data.image[IDcnt].array.F[ii])
-                    {
-                        cnt0++;
-                        v0 = 1.0*data.image[IDin].array.U[k*xysize+ii];
-
-                        if((v0>SATURATION))
-                        {
-                            data.image[ID3dtmp].array.F[k*xysize+ii] = 0.0;
-                            cntarray[ii] = k;
-                        }
-                        else
-                        {
-                            data.image[ID3dtmp].array.F[k*xysize+ii] = v0;
-                            data.image[IDavek].array.F[ii] += 1.0*k;
-                            data.image[IDavev].array.F[ii] += v0;
-                            data.image[IDavecnt].array.F[ii] += 1.0;
-                        }
-                    }
-                    else if (data.image[IDcnt1].array.F[ii]==1)
-                    {
-                        data.image[IDavek].array.F[ii] /= data.image[IDavecnt].array.F[ii];
-                        data.image[IDavev].array.F[ii] /= data.image[IDavecnt].array.F[ii];
-                        v0 = 0.0;
-                        v1 = 0.0;
-                        for(kk=0; kk<data.image[IDavecnt].array.F[ii]; kk++)
-                        {
-                            vk = 1.0*kk - data.image[IDavek].array.F[ii];
-                            vv = 1.0*data.image[ID3dtmp].array.F[kk*xysize+ii] - data.image[IDavev].array.F[ii];
-                            v0 += vk*vv;
-                            v1 += vk;
-                        }
-
-                        data.image[ID2dtmp].array.F[ii] = v0/v1;
-                        cntarray1[ii] = 0;
-                        cnt1++;
-                    }
-                    //	data.image[ID2dtmp].array.F[ii] = 1.0*cntarray1[ii];
-                }
-
-                printf(" %6ld  %6ld  %6ld   ", cnt2, cnt0, cnt1);
-                fflush(stdout);
-                cnt2 = 0;
-        */
         data.image[ID2dtmp].md[0].cnt0++;
         data.image[ID3dtmp].md[0].cnt0++;
 
