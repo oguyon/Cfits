@@ -65,7 +65,7 @@ int image_basic_resize_cli()
 
 int image_basic_add_cli()
 {
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(4,2) == 0)
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
     {  
       basic_add(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
       return 0;
@@ -74,40 +74,62 @@ int image_basic_add_cli()
     return 1;
 }
 
+
+int image_basic_streamaverage_cli()
+{
+ if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2) == 0)
+    {  
+      IMAGE_BASIC_streamaverage(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 int init_image_basic()
 {
-  strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "basic image routines");
-  data.NBmodule++;
-  
-
-  
-  strcpy(data.cmd[data.NBcmd].key,"resizeim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = image_basic_resize_cli;
-  strcpy(data.cmd[data.NBcmd].info,"resize 2D image");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <new x size> <new y size>");
-  strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
-  data.NBcmd++; 
-  
-  strcpy(data.cmd[data.NBcmd].key,"addim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = image_basic_add_cli;
-  strcpy(data.cmd[data.NBcmd].info,"add two 2D images of different size");
-  strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
-  strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
-
-  data.NBcmd++; 
-  
-   
-  // add atexit functions here
+    strcpy(data.module[data.NBmodule].name, __FILE__);
+    strcpy(data.module[data.NBmodule].info, "basic image routines");
+    data.NBmodule++;
 
 
-  return 0;
+
+    strcpy(data.cmd[data.NBcmd].key,"resizeim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_resize_cli;
+    strcpy(data.cmd[data.NBcmd].info,"resize 2D image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <new x size> <new y size>");
+    strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"addim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_add_cli;
+    strcpy(data.cmd[data.NBcmd].info,"add two 2D images of different size");
+    strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
+    strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
+
+    strcpy(data.cmd[data.NBcmd].key,"imgstreamave");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_streamaverage_cli;
+    strcpy(data.cmd[data.NBcmd].info,"average stream of images");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imin> <NBcoadd [long]> <imout> <mode>");
+    strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)");
+
+    data.NBcmd++;
+
+
+    // add atexit functions here
+
+    return 0;
 
 }
+
 
 
 
@@ -3237,3 +3259,162 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
 
     return(fitval);
 }
+
+
+
+/** coadd frames from image stream 
+ *  output is by default float type
+ * mode : 
+ *   0 : simple average
+ *   1 : average + std dev (std dev in "imgstreamrms"
+ * 
+ * 
+ * */
+long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)
+{
+    long ID;
+    long cnt;
+    long k;
+    long xsize, ysize;
+    long IDcube;
+    long *imsize;
+    int atype;
+    char *ptrv;
+    long xysize;
+    long k1;
+    long IDout;
+    long ii;
+    long IDrms;
+
+    ID = image_ID(IDname);
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
+    xysize = xsize*ysize;
+
+
+    imsize = (long*) malloc(sizeof(long)*3);
+    imsize[0] = xsize;
+    imsize[1] = ysize;
+    imsize[2] = NBcoadd;
+    atype = data.image[ID].md[0].atype;
+
+	if(mode>0)
+		{
+			IDcube = create_image_ID("tmpstrcoadd", 3, imsize, atype, 0, 0);
+			IDrms = create_2Dimage_ID("imgstreamrms", xsize, ysize);
+		}
+		
+    IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
+
+
+    if(data.image[ID].sem==1) // drive semaphore to zero
+        while(sem_trywait(data.image[ID].semptr)==0) {}
+
+
+
+
+    for(k=0; k<NBcoadd; k++)
+    {
+        if(data.image[ID].sem==0)
+        {
+            while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
+            {
+                usleep(5);
+                // do nothing, wait
+            }
+            cnt = data.image[ID].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[ID].semptr);
+
+        if(data.image[ID].md[0].naxis == 3)
+            k1 = data.image[ID].md[0].cnt1;
+        else
+            k1 = 0;
+
+        switch( atype ) {
+        case CHAR:
+            if(mode>0)
+            {
+                ptrv = (char*) data.image[ID].array.C;
+                ptrv += sizeof(char)*k1*xysize;
+                memcpy (data.image[IDcube].array.C, ptrv, sizeof(char)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[IDrms].array.F[ii] += data.image[ID].array.C[ii]*data.image[ID].array.C[ii];
+            }
+            for(ii=0; ii<xysize; ii++)
+                data.image[IDout].array.F[ii] += data.image[ID].array.C[ii];
+            break;
+        case INT:
+            if(mode>0)
+            {
+                ptrv = (char*) data.image[ID].array.I;
+                ptrv += sizeof(int)*k1*xysize;
+                memcpy (data.image[IDcube].array.I, ptrv, sizeof(int)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[IDrms].array.F[ii] += data.image[ID].array.I[ii]*data.image[ID].array.I[ii];
+            }
+            for(ii=0; ii<xysize; ii++)
+                data.image[IDout].array.F[ii] += data.image[ID].array.I[ii];
+            break;
+        case FLOAT:
+            if(mode>0)
+            {
+                ptrv = (char*) data.image[ID].array.F;
+                ptrv += sizeof(float)*k1*xysize;
+                memcpy (data.image[IDcube].array.F, ptrv, sizeof(float)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[IDrms].array.F[ii] += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+            }
+            for(ii=0; ii<xysize; ii++)
+                data.image[IDout].array.F[ii] += data.image[ID].array.F[ii];
+            break;
+        case DOUBLE:
+            if(mode>0)
+            {
+                ptrv = (char*) data.image[ID].array.D;
+                ptrv += sizeof(double)*k1*xysize;
+                memcpy (data.image[IDcube].array.D, ptrv, sizeof(double)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[IDrms].array.F[ii] += data.image[ID].array.D[ii]*data.image[ID].array.D[ii];
+            }
+            for(ii=0; ii<xysize; ii++)
+                data.image[IDout].array.F[ii] += data.image[ID].array.D[ii];
+            break;
+        case USHORT:
+            if(mode>0)
+            {
+                ptrv = (char*) data.image[ID].array.U;
+                ptrv += sizeof(unsigned short)*k1*xysize;
+                memcpy (data.image[IDcube].array.U, ptrv, sizeof(unsigned short)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[IDrms].array.F[ii] += data.image[ID].array.U[ii]*data.image[ID].array.U[ii];
+            }
+            for(ii=0; ii<xysize; ii++)
+                data.image[IDout].array.F[ii] += data.image[ID].array.U[ii];
+            break;
+        default :
+            printf("ERROR: Data type not supported for function IMAGE_BASIC_streamaverage\n");
+            exit(0);
+            break;
+        }
+    }
+
+
+    for(ii=0; ii<xysize; ii++)
+        data.image[IDout].array.F[ii] /= NBcoadd;
+
+	if(mode>0)
+	{
+		for(ii=0;ii<xysize;ii++)
+			data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/NBcoadd-data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
+		delete_image_ID("tmpstrcoadd");
+		delete_image_ID("tmpstrcoaddrms");	
+	}
+
+
+    return(IDout);
+}
+
+
+

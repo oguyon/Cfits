@@ -267,15 +267,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
-/*if(data.image[IDcam].sem==1)
-{	printf("Bringing semaphore to 0\n");
-	fflush(stdout);
-	while(sem_trywait(data.image[IDcam].semptr)==0)
-	{}
-}*/
-/*	if(data.image[IDcam].sem==1)
-		sem_init(data.image[IDcam].semptr, 0, 0);
-	*/
+
     for(k=0; k<NbAve; k++)
     {
 		if(data.image[IDcam].sem==0)
@@ -285,23 +277,15 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 		}
 		else
 			{
-			sem_getvalue(data.image[IDcam].semptr, &semval);
-			//printf("semaphore value = %d   \n", semval);
-			//fflush(stdout);
-			
-		//	printf("Waiting for semaphore to post .... ");
-		//	fflush(stdout);
-			
+			sem_getvalue(data.image[IDcam].semptr, &semval);		
 			sem_wait(data.image[IDcam].semptr);
-			
-//			printf(" done\n");
-	//		fflush(stdout);
+
 			}
 			
         slice = data.image[IDcam].md[0].cnt1;
         if(slice==-1)
             slice = data.image[IDcam].md[0].size[2]-1;
-	//	printf("Reading slice %d\n", slice);
+	
 		
         ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice*xysize;

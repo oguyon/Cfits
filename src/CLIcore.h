@@ -177,25 +177,25 @@ typedef struct
 
 typedef struct
 {
-  char name[80];               // image name
+  char name[80];                // image name
 
   long naxis;                   // number of axis
   long size[3];                 // image size 
-  long nelement;		// number of elements in image
-  int atype;			// data type code   
+  long nelement;				// number of elements in image
+  int atype;					// data type code   
 
   double creation_time;	        // creation time (since program start)
-  double last_access;		// last time the image was accessed  (since program start)
+  double last_access;			// last time the image was accessed  (since program start)
   struct timespec wtime;
 
-  int shared; // 1 if in shared memory
+  int shared; 					// 1 if in shared memory
 
-  int write;                 // 1 if image is being written  
+  int write;                	// 1 if image is being written  
   int status;
-  long cnt0;                 // counter (incremented if image is updated)
-  long cnt1;
+  long cnt0;               	  	// counter (incremented if image is updated)
+  long cnt1;					// in 3D rolling buffer image, this is the last slice written
   
-  long NBkw; // number of keywords
+  long NBkw; 					// number of keywords
 
 } IMAGE_METADATA;
 
