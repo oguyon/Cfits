@@ -94,7 +94,6 @@ long basic_2Dextrapolate_nearestpixel(char *IDin_name, char *IDmask_name, char *
 double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax);
 
 // Operations on image streams
-
 long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode);
 
 #endif

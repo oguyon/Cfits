@@ -3409,7 +3409,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 		for(ii=0;ii<xysize;ii++)
 			data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/NBcoadd-data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
 		delete_image_ID("tmpstrcoadd");
-		delete_image_ID("tmpstrcoaddrms");	
+	//	delete_image_ID("tmpstrcoaddrms");	
 	}
 
 

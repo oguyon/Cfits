@@ -3990,7 +3990,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
         if(recvsize!=0)
         {
             totsize += recvsize;
-            printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
+         //   printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
         }
         data.image[ID].md[0].cnt0++;
 		if(data.image[ID].sem == 1)
