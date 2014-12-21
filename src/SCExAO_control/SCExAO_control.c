@@ -1053,13 +1053,13 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					for(k1;k1<zsize;k1++)
 					{
 						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
-						if(data.image[IDsatmask].array.U[k1*xysize+ii]==1)
+						if(data.image[IDsatmask].array.U[k1*xysize+ii] == 1)
 						{
 							vk = 1.0*k1 - vavek;
 							vv = 1.0*pvu - vavev;
 							v0 += vk*vv;
 							v1 += vk*vk;		
-							printf(".");					
+							printf(" . ");					
 						}
 					}
 					printf("[%ld %f %f] ", ii, v0, v1);
