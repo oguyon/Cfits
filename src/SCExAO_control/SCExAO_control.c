@@ -1040,6 +1040,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 								vavevu += pvu;
 								vaveku += k1;
 								vcnt++;
+								printf("(%ld)", vcnt);
 							}
 						else
 							{
