@@ -447,8 +447,11 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 			
 
 	free(sizearray);
-	
-	return(ID);
+
+	printf("-3-\n");
+	fflush(stdout);
+
+	return(IDout);
 }
 
 
