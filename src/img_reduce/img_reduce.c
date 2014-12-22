@@ -36,6 +36,16 @@
  */
 
 
+int badpixclean_init = 0;
+long badpixclean_NBop;
+long *badpixclean_array_indexin;
+long *badpixclean_array_indexout;
+float *badpixclean_array_coeff;
+
+long badpixclean_NBbadpix;
+long *badpixclean_indexlist;
+
+
 
 extern DATA data;
 
@@ -72,6 +82,17 @@ int IMG_REDUCE_cubeprocess_cli()
 }
 
 
+int IMG_REDUCE_cleanbadpix_fast_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(1,3)==0)
+        IMG_REDUCE_cleanbadpix_fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+    else
+        return 1;
+
+    return(0);
+}
+
+
 
 int init_img_reduce()
 {
@@ -79,6 +100,16 @@ int init_img_reduce()
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "image analysis for astronomy: basic routines");
   data.NBmodule++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"rmbadpixfast");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMG_REDUCE_cleanbadpix_fast_cli;
+  strcpy(data.cmd[data.NBcmd].info,"remove bad pixels (fast algo)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image> <badpixmap> <output>");
+  strcpy(data.cmd[data.NBcmd].example,"rmbadpixfast im bpmap outim");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutname)");
+  data.NBcmd++;
 
 
   strcpy(data.cmd[data.NBcmd].key,"cubesimplestat");
@@ -252,6 +283,153 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
 
 
 
+
+// pre-compute operations to clean bad pixels
+long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
+{
+    long NBop;
+    long IDbadpix;
+    int left;
+    long NBopmax;
+    long xsize, ysize;
+    long xysize;
+    long ii, jj;
+    long ii1, jj1;
+    long k;
+    long distmax;
+    long NBnearbypix;
+    long NBnearbypix_max;
+    long *nearbypix_array_index;
+    float *nearbypix_array_dist2;
+    float *nearbypix_array_coeff;
+    float coefftot;
+
+    nearbypix_array_index = (long*) malloc(sizeof(long)*xysize);
+    nearbypix_array_dist2 = (float*) malloc(sizeof(float)*xysize);
+    nearbypix_array_coeff = (float*) malloc(sizeof(float)*xysize);
+
+    IDbadpix = image_ID(IDmask_name);
+    xsize = data.image[IDbadpix].md[0].size[0];
+    ysize = data.image[IDbadpix].md[0].size[1];
+    xysize = xsize*ysize;
+    NBopmax = xysize*100;
+
+    badpixclean_init = 1;
+
+    badpixclean_indexlist = (long*) malloc(sizeof(long)*xysize);
+    k = 0;
+    for(ii=0; ii<xysize; ii++)
+    {
+        if (data.image[IDbadpix].array.F[ii]>0.5)
+        {
+            badpixclean_indexlist[k] = ii;
+            k++;
+        }
+    }
+
+    badpixclean_NBbadpix = k;
+
+
+
+
+
+    badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
+    badpixclean_array_indexout = (long*) malloc(sizeof(long)*xysize);
+    badpixclean_array_coeff = (float*) malloc(sizeof(float)*xysize);
+
+    NBop = 0;
+    for(ii=0; ii<xsize; ii++)
+        for(jj=0; jj<ysize; jj++)
+        {
+            if (data.image[IDbadpix].array.F[jj*xsize+ii]>0.5)
+            {
+                // fill up array of nearby pixels
+                k = 0;
+                distmax = 1;
+                while(k<4)
+                {
+                    k = 0;
+                    coefftot = 0.0;
+                    for(ii1=ii-distmax; ii1<ii+distmax+1; ii1++)
+                        for(jj1=jj-distmax; jj1<jj+distmax+1; jj1++)
+                        {
+                            if((ii1>-1)&&(ii1<xsize)&&(jj1>-1)&&(jj1<ysize)&&(data.image[IDbadpix].array.F[jj1*xsize+ii1]>0.5))
+                            {
+                                nearbypix_array_index[k] = jj1*xsize+ii;
+                                nearbypix_array_dist2[k] = (ii1-ii)*(ii1-ii)+(jj1-jj)*(jj1-jj);
+                                nearbypix_array_coeff[k] = pow(1.0/nearbypix_array_dist2[k],2.0);
+                                coefftot += nearbypix_array_coeff[k];
+                                k++;
+                            }
+                        }
+                    distmax++;
+                }
+                NBnearbypix = k;
+                for(k=0; k<NBnearbypix; k++)
+                    nearbypix_array_coeff[k] /= coefftot;
+
+                badpixclean_array_indexin[NBop] = jj1*xsize+ii1;
+                badpixclean_array_indexout[NBop] = jj*xsize+ii;
+                badpixclean_array_coeff[NBop] = nearbypix_array_coeff[k];
+                NBop++;
+            }
+        }
+
+
+    //printf(" %ld bad pixels cleaned. %ld pixels left\n",fixed,left);
+
+    badpixclean_NBop = NBop;
+    printf("%ld operations to remove bad pixels\n", NBop);
+
+    return(NBop);
+}
+
+
+
+
+long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutname)
+{
+	long ID;
+	long *sizearray;
+	long k;
+	long xysize;
+	long IDout;
+	
+	
+	ID = image_ID(IDname);
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = data.image[ID].md[0].size[0];
+	sizearray[1] = data.image[ID].md[0].size[1];
+	xysize = sizearray[0]*sizearray[1];
+	
+	IDout = image_ID(IDoutname);
+	if(IDout==-1)
+		{
+			IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(IDoutname);
+		}
+		
+	if(badpixclean_init==0)
+		IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);	
+	
+	data.image[IDout].md[0].write = 1;
+	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
+	for(k=0;k<badpixclean_NBbadpix;k++)
+		data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
+	for(k=0;k<badpixclean_NBop;k++)
+		data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
+
+	if(data.image[IDout].sem == 1)
+		sem_post(data.image[ID].semptr);
+
+	data.image[IDout].md[0].write = 0;
+	data.image[IDout].md[0].cnt0++;
+	
+	
+	free(sizearray);
+	
+	return(ID);
+}
 
 
 
