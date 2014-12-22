@@ -312,7 +312,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
     nearbypix_array_index = (long*) malloc(sizeof(long)*xysize);
     nearbypix_array_dist2 = (float*) malloc(sizeof(float)*xysize);
     nearbypix_array_coeff = (float*) malloc(sizeof(float)*xysize);
-/*
+
     IDbadpix = image_ID(IDmask_name);
     xsize = data.image[IDbadpix].md[0].size[0];
     ysize = data.image[IDbadpix].md[0].size[1];
@@ -334,7 +334,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
     badpixclean_NBbadpix = k;
 
-
+/*
 
     badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
     badpixclean_array_indexout = (long*) malloc(sizeof(long)*xysize);
