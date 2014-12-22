@@ -3266,8 +3266,8 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
  *  output is by default float type
  * mode : 
  *   0 : simple average
- *   1 : average + std dev (std dev in "imgstreamrms"
- * 
+ *   1 : average + std dev (std dev in "imgstreamrms")
+ *   2 : average + std dev -> badpix map for detector calibration ("badpixmap")
  * 
  * */
 long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)
@@ -3285,7 +3285,11 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     long IDout;
     long ii;
     long IDrms;
-
+	long IDbadpix;
+	float rmsmean;
+	float vmin, vmax;
+	float darkp20, darkp80;
+	
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
@@ -3410,6 +3414,36 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 			data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/NBcoadd-data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
 		delete_image_ID("tmpstrcoadd");
 	//	delete_image_ID("tmpstrcoaddrms");	
+	}
+
+	if(mode==2)
+	{
+		// RMS 
+		// measure median pixel stddev
+		rmsmean = img_percentile_float("imgstreamrms", 0.5);
+		IDbadpix = create_2Dimage_ID("badpixmap", xsize, ysize);
+		vmin = 0.3*rmsmean;
+		vmax = 3.0*rmsmean;
+		for(ii=0;ii<xysize;ii++)
+			{
+				if(data.image[IDrms].array.F[ii]<vmin)
+					data.image[IDbadpix].array.F[ii] = 1.0;
+				if(data.image[IDrms].array.F[ii]>vmax)
+					data.image[IDbadpix].array.F[ii] = 1.0;				
+			}
+		// DARK
+		darkp20 = img_percentile_float(IDout, 0.1);
+		darkp80 = img_percentile_float(IDout, 0.9);
+		vmin = darkp20 - 2.0*(darkp80-darkp20);
+		vmax = darkp80 + 2.0*(darkp80-darkp20);
+		for(ii=0;ii<xysize;ii++)
+			{
+				if(data.image[IDout].array.F[ii]<vmin)
+					data.image[IDbadpix].array.F[ii] = 1.0;
+				if(data.image[IDout].array.F[ii]>vmax)
+					data.image[IDbadpix].array.F[ii] = 1.0;				
+			}
+
 	}
 
 
