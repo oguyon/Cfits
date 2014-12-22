@@ -380,7 +380,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                 NBop++;
             }
         }
-
+	printf("NBnearbypix  = %ld / %ld\n", NBnearbypix, xysize);
 
     //printf(" %ld bad pixels cleaned. %ld pixels left\n",fixed,left);
 
