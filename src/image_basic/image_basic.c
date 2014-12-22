@@ -3435,8 +3435,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 		// DARK
 		darkp20 = img_percentile_float(IDoutname, 0.1);
 		darkp80 = img_percentile_float(IDoutname, 0.9);
-		vmin = darkp20 - 3.0*(darkp80-darkp20);
-		vmax = darkp80 + 3.0*(darkp80-darkp20);
+		vmin = darkp20 - 5.0*(darkp80-darkp20);
+		vmax = darkp80 + 5.0*(darkp80-darkp20);
 		for(ii=0;ii<xysize;ii++)
 			{
 				if(data.image[IDout].array.F[ii]<vmin)
