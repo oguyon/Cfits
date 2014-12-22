@@ -419,11 +419,20 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 	
 	data.image[IDout].md[0].write = 1;
 	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
+
 	for(k=0;k<badpixclean_NBbadpix;k++)
 		data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
-	for(k=0;k<badpixclean_NBop;k++)
-		data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
 
+
+	for(k=0;k<badpixclean_NBop;k++)
+		{
+			printf("Operation %ld     %ld x %f -> %ld", k, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
+			fflush(stdout);
+			data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
+			printf("\n");
+			fflush(stdout);
+		}
+		
 	if(data.image[IDout].sem == 1)
 		sem_post(data.image[ID].semptr);
 
