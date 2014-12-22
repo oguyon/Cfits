@@ -363,7 +363,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                             {
                               //nearbypix_array_index[k] = (long) jj1*xsize+ii;
                                 //nearbypix_array_dist2[k] = (float) (1.0*(ii1-ii)*(ii1-ii)+1.0*(jj1-jj)*(jj1-jj));
-                               // nearbypix_array_coeff[k] = pow(1.0/nearbypix_array_dist2[k],2.0);
+                                nearbypix_array_coeff[k] = pow(1.0/nearbypix_array_dist2[k],2.0);
                                 coefftot += nearbypix_array_coeff[k];
                                 k++;
                             }
