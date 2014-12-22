@@ -371,6 +371,11 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                     distmax++;
                 }
                 NBnearbypix = k;
+                if(NBnearbypix>xysize)
+					{
+						printf("ERROR: NBnearbypix>xysize\n");
+						exit(0);
+					}
                // for(k=0; k<NBnearbypix; k++)
                  //   nearbypix_array_coeff[k] /= coefftot;
 
