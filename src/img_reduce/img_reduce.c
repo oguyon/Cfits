@@ -304,6 +304,9 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
     float *nearbypix_array_coeff;
     float coefftot;
 
+	printf("Pre-computing bad pixel compensation operations\n");
+	fflush(stdout);
+
     nearbypix_array_index = (long*) malloc(sizeof(long)*xysize);
     nearbypix_array_dist2 = (float*) malloc(sizeof(float)*xysize);
     nearbypix_array_coeff = (float*) malloc(sizeof(float)*xysize);
@@ -331,12 +334,13 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
 
 
-
-
     badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
     badpixclean_array_indexout = (long*) malloc(sizeof(long)*xysize);
     badpixclean_array_coeff = (float*) malloc(sizeof(float)*xysize);
 
+
+	printf("Computing operations...\n");
+	fflush(stdout);
     NBop = 0;
     for(ii=0; ii<xsize; ii++)
         for(jj=0; jj<ysize; jj++)
@@ -380,7 +384,8 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
     badpixclean_NBop = NBop;
     printf("%ld operations to remove bad pixels\n", NBop);
-
+	fflush(stdout);
+	
     return(NBop);
 }
 
