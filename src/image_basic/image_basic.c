@@ -3418,10 +3418,11 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
 	if(mode==2)
 	{
+		IDbadpix = create_2Dimage_ID("badpixmap", xsize, ysize);
+
 		// RMS 
 		// measure median pixel stddev
 		rmsmean = img_percentile_float("imgstreamrms", 0.5);
-		IDbadpix = create_2Dimage_ID("badpixmap", xsize, ysize);
 		vmin = 0.3*rmsmean;
 		vmax = 3.0*rmsmean;
 		for(ii=0;ii<xysize;ii++)
@@ -3432,8 +3433,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 					data.image[IDbadpix].array.F[ii] = 1.0;				
 			}
 		// DARK
-	/*	darkp20 = img_percentile_float(IDout, 0.1);
-		darkp80 = img_percentile_float(IDout, 0.9);
+		darkp20 = img_percentile_float(IDoutname, 0.1);
+		darkp80 = img_percentile_float(IDoutname, 0.9);
 		vmin = darkp20 - 2.0*(darkp80-darkp20);
 		vmax = darkp80 + 2.0*(darkp80-darkp20);
 		for(ii=0;ii<xysize;ii++)
@@ -3443,7 +3444,6 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 				if(data.image[IDout].array.F[ii]>vmax)
 					data.image[IDbadpix].array.F[ii] = 1.0;				
 			}
-*/
 	}
 
 
