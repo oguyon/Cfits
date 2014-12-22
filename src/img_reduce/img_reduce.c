@@ -334,13 +334,13 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
     badpixclean_NBbadpix = k;
 
-/*
+
 
     badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
     badpixclean_array_indexout = (long*) malloc(sizeof(long)*xysize);
     badpixclean_array_coeff = (float*) malloc(sizeof(float)*xysize);
 
-
+/*
 	printf("Computing operations...\n");
 	fflush(stdout);
     NBop = 0;
