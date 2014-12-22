@@ -84,7 +84,7 @@ int IMG_REDUCE_cubeprocess_cli()
 
 int IMG_REDUCE_cleanbadpix_fast_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(1,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
         IMG_REDUCE_cleanbadpix_fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
     else
         return 1;
