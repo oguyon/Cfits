@@ -382,6 +382,10 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
     //printf(" %ld bad pixels cleaned. %ld pixels left\n",fixed,left);
 
+	free(nearbypix_array_index);
+	free(nearbypix_array_dist2);
+	free(nearbypix_array_coeff);
+
     badpixclean_NBop = NBop;
     printf("%ld operations to remove bad pixels\n", NBop);
 	fflush(stdout);
