@@ -3432,7 +3432,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 					data.image[IDbadpix].array.F[ii] = 1.0;				
 			}
 		// DARK
-		darkp20 = img_percentile_float(IDout, 0.1);
+	/*	darkp20 = img_percentile_float(IDout, 0.1);
 		darkp80 = img_percentile_float(IDout, 0.9);
 		vmin = darkp20 - 2.0*(darkp80-darkp20);
 		vmax = darkp80 + 2.0*(darkp80-darkp20);
@@ -3443,7 +3443,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 				if(data.image[IDout].array.F[ii]>vmax)
 					data.image[IDbadpix].array.F[ii] = 1.0;				
 			}
-
+*/
 	}
 
 
