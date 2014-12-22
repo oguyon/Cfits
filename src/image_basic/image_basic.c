@@ -17,7 +17,7 @@
 #include "image_gen/image_gen.h"
 #include "statistic/statistic.h"
 #include "linopt_imtools/linopt_imtools.h"
-
+#include "info/info.h"
   
 #include "kdtree/kdtree.h"
 //#include <modules/image_filter/image_filter.h>
