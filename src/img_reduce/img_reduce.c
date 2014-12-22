@@ -374,9 +374,9 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                 for(k=0; k<NBnearbypix; k++)
                     nearbypix_array_coeff[k] /= coefftot;
 
-                badpixclean_array_indexin[NBop] = jj1*xsize+ii1;
-                badpixclean_array_indexout[NBop] = jj*xsize+ii;
-                badpixclean_array_coeff[NBop] = nearbypix_array_coeff[k];
+//                badpixclean_array_indexin[NBop] = jj1*xsize+ii1;
+//                badpixclean_array_indexout[NBop] = jj*xsize+ii;
+//                badpixclean_array_coeff[NBop] = nearbypix_array_coeff[k];
                 NBop++;
             }
         }
