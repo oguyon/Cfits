@@ -24,7 +24,7 @@ typedef struct
 
 
 
-/** \brief This structure holds the GPU computation setup
+/** \brief This structure holds the GPU computation setup for matrix multiplication
  *
  *  By declaring an array of these structures,
  * several parallel computations can be executed

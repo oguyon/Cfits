@@ -642,14 +642,16 @@ void *compute_function( void *ptr )
 
     ptr0 = (char*) gpumatmultconf[index].wfsVec;
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
-    ptr1 = (char*) gpumatmultconf[index].wfsVec_part[device];
-    memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
+//    ptr1 = (char*) gpumatmultconf[index].wfsVec_part[device];
+ //   memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
 
     cudaSetDevice(device);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
-    stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
+    //stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
+
+	stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), (float*) ptr0, 1, gpumatmultconf[index].d_wfsVec[device], 1);
     if (stat != CUBLAS_STATUS_SUCCESS)
     {
         fprintf(stderr, "!!!! device access error (read C)\n");
