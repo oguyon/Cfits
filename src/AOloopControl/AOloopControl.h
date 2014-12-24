@@ -52,7 +52,7 @@ typedef struct
 
     long NBDMmodes;
     float maxlimit; // maximum absolute value for mode values
-
+	float mult; // multiplication coefficient to be applied at each loop iteration
 
     // WFS CAMERA PERIODIC ERROR CORRECTION (optional)
 
@@ -152,6 +152,7 @@ int AOloopControl_logoff();
 int AOloopControl_loopreset();
 int AOloopControl_setgain(float gain);
 int AOloopControl_setmaxlimit(float maxlimit);
+int AOloopControl_setmult(float multcoeff);
 int AOloopControl_setframesAve(long nbframes);
 int AOloopControl_setgainrange(long m0, long m1, float gainval);
 int AOloopControl_setlimitrange(long m0, long m1, float limval);
