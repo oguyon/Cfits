@@ -2667,7 +2667,7 @@ int set_DM_modes(long loop)
 		#ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
         AOconf[loop].status = 15; 
-        GPU_loop_MultMat_execute(1, &AOconf[loop].status);
+        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
         #endif
     }
     AOconf[loop].DMupdatecnt ++;
@@ -3746,7 +3746,7 @@ int AOcompute(long loop)
 #ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0);
 		AOconf[loop].status = 8; // execute  
-        GPU_loop_MultMat_execute(0, &AOconf[loop].status);
+        GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
     }
 
@@ -4183,74 +4183,81 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 
 int AOloopControl_statusStats()
 {
-  long k;
-  long NBkiter = 100000;
-  long statusmax = 22;
-  long *statuscnt;
-  float usec0, usec1;
-  int st;
-  int RT_priority = 91; //any number from 0-99
-  struct sched_param schedpar;
-  const char *statusdef[22];
+    long k;
+    long NBkiter = 10000;
+    long statusmax = 22;
+    long *statuscnt;
+    float usec0, usec1;
+    int st;
+    int RT_priority = 91; //any number from 0-99
+    struct sched_param schedpar;
+    const char *statusdef[22];
+	int gpu;
 
+    statusdef[0] = "";
+    statusdef[1] = "READING IMAGE";
+    statusdef[2] = "WAIT FOR IMAGE";
+    statusdef[3] = "DARK SUBTRACT";
+    statusdef[4] = "COMPUTE WFS IMAGE TOTAL";
+    statusdef[5] = "NORMALIZE WFS IMAGE";
+    statusdef[6] = "SUBTRACT REFERENCE";
+    statusdef[7] = "MULTIPLYING BY CONTROL MATRIX -> MODE VALUES : SETUP";
+    statusdef[8] = "START CONTROL MATRIX MULTIPLICATION: CHECK IF NEW CM EXISTS";
+    statusdef[9] = "CONTROL MATRIX MULT: CREATE COMPUTING THREADS";
+    statusdef[10] = "CONTROL MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+    statusdef[11] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
+    statusdef[12] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+    statusdef[13] = "MULTIPLYING BY GAINS";
+    statusdef[14] = "ENTER SET DM MODES";
+    statusdef[15] = "START DM MODES MATRIX MULTIPLICATION";
+    statusdef[16] = "MATRIX MULT: CREATE COMPUTING THREADS";
+    statusdef[17] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+    statusdef[18] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
+    statusdef[19] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+    statusdef[20] = "LOG DATA, PART 1";
+    statusdef[21] = "LOG DATA, PART 2";
 
-	statusdef[0] = "";
-	statusdef[1] = "READING IMAGE";
-	statusdef[2] = "WAIT FOR IMAGE";
-	statusdef[3] = "DARK SUBTRACT";
-	statusdef[4] = "COMPUTE WFS IMAGE TOTAL";
-	statusdef[5] = "NORMALIZE WFS IMAGE";
-	statusdef[6] = "SUBTRACT REFERENCE";
-	statusdef[7] = "MULTIPLYING BY CONTROL MATRIX -> MODE VALUES : SETUP";
-	statusdef[8] = "START CONTROL MATRIX MULTIPLICATION: CHECK IF NEW CM EXISTS";
-	statusdef[9] = "CONTROL MATRIX MULT: CREATE COMPUTING THREADS";
-	statusdef[10] = "CONTROL MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
-	statusdef[11] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
-	statusdef[12] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
-	statusdef[13] = "MULTIPLYING BY GAINS";
-	statusdef[14] = "ENTER SET DM MODES";
-	statusdef[15] = "START DM MODES MATRIX MULTIPLICATION";
-	statusdef[16] = "MATRIX MULT: CREATE COMPUTING THREADS";
-	statusdef[17] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
-	statusdef[18] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
-	statusdef[19] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
-	statusdef[20] = "LOG DATA, PART 1";
-	statusdef[21] = "LOG DATA, PART 2";
+    usec0 = 50.0;
+    usec1 = 150.0;
 
-  usec0 = 50.0; 
-  usec1 = 150.0;
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
-  
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
 
-  
-  
-  printf("Measuring loop status distribution \n");
-  fflush(stdout);
 
-  statuscnt = (long*) malloc(sizeof(long)*statusmax);
 
-  for(st=0;st<statusmax;st++)
-    statuscnt[st] = 0;
+    printf("Measuring loop status distribution \n");
+    fflush(stdout);
 
-  for(k=0;k<NBkiter;k++)
+    statuscnt = (long*) malloc(sizeof(long)*statusmax);
+
+    for(st=0; st<statusmax; st++)
+        statuscnt[st] = 0;
+
+    for(k=0; k<NBkiter; k++)
     {
-      usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
-      st = AOconf[LOOPNUMBER].status;
-      if(st<statusmax)
-	statuscnt[st]++;
+        usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
+        st = AOconf[LOOPNUMBER].status;
+        if(st<statusmax)
+            statuscnt[st]++;
     }
-  
-  for(st=0;st<statusmax;st++)
-    printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]    %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, statusdef[st]);
-    
-  free(statuscnt);
-  
-  return 0;
+
+    for(st=0; st<statusmax; st++)
+        printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]    %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, statusdef[st]);
+
+
+	for(gpu=0;gpu<AOconf[LOOPNUMBER].GPU;gpu++)
+		printf("GPU %02d    ->  %d\n", gpu, AOconf[LOOPNUMBER].GPUstatus[gpu]);
+
+    free(statuscnt);
+
+
+
+    return 0;
 }
+
 
 
 
@@ -4266,7 +4273,7 @@ int AOloopControl_showparams(long loop)
     printf("log is ON\n");
   else
     printf("log is OFF\n");
-  printf("Gain = %f   maxlim = %f\n  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU);
+  printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
 
   return 0;
 }

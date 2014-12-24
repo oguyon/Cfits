@@ -525,7 +525,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
  
 // increments status by 4
-int GPU_loop_MultMat_execute(int index, int *status)
+int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
 {
     int m;
     int ptn;
@@ -550,6 +550,7 @@ int GPU_loop_MultMat_execute(int index, int *status)
         gpumatmultconf[index].thdata[ptn].thread_no = ptn;
         gpumatmultconf[index].thdata[ptn].numl0 = ptn*ptn;
         gpumatmultconf[index].thdata[ptn].cindex = index;
+        gpumatmultconf[index].thdata[ptn].status = GPUstatus;
         gpumatmultconf[index].iret[ptn] = pthread_create( &gpumatmultconf[index].threadarray[ptn], NULL, compute_function, (void*) &gpumatmultconf[index].thdata[ptn]);
         if(gpumatmultconf[index].iret[ptn])
         {
@@ -633,9 +634,17 @@ void *compute_function( void *ptr )
     char *ptr0; // source
     char *ptr1; // dest
 
+	int *ptrstat;
+
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
     index = thdata->cindex;
+
+
+	ptrstat = thdata->status;
+	ptrstat += (sizeof(int)*index);
+	*ptrstat = 0;
+
 
   //  for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
     //    gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
@@ -646,8 +655,10 @@ void *compute_function( void *ptr )
  //   memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
 
     cudaSetDevice(device);
+	*ptrstat = 1;
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
+	*ptrstat = 2;
 
     //stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
 
@@ -663,6 +674,8 @@ void *compute_function( void *ptr )
             printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
         exit(EXIT_FAILURE);
     }
+    
+	*ptrstat = 3;
 
 
     stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &beta, gpumatmultconf[index].d_dmVec[device], 1);
@@ -682,6 +695,7 @@ void *compute_function( void *ptr )
         exit(EXIT_FAILURE);
     }
 
+	*ptrstat = 4;
 
     stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
     if (stat != CUBLAS_STATUS_SUCCESS)
@@ -695,6 +709,7 @@ void *compute_function( void *ptr )
             printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
         exit(EXIT_FAILURE);
     }
+	*ptrstat = 5;
 
     //    for(m=0; m<gpumatmultconf[index].M; m++)
     //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
@@ -714,6 +729,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 	long *wfssize;
 	long *cmdmodessize;
 	int status;
+	int *GPUstatus;
 	long iter;
 	long NBiter = 10000;
 	double time1sec, time2sec;
@@ -721,6 +737,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
 	
 	printf("Testing GPU matrix multiplication speed\n");
+	
+	GPUstatus = (int*) malloc(sizeof(int)*100);
 	
 	cmsize = (long*) malloc(sizeof(long)*3);
 	cmsize[0] = WFSsize;
@@ -744,7 +762,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
     for(iter=0;iter<NBiter;iter++)
-		GPU_loop_MultMat_execute(0, &status);
+		GPU_loop_MultMat_execute(0, &status, GPUstatus);
  
 	clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
@@ -761,6 +779,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 	free(cmsize);
 	free(wfssize);
 	free(cmdmodessize);
+	
+	free(GPUstatus);
 	
 	return(0);
 }
