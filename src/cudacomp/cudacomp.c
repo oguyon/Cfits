@@ -576,29 +576,6 @@ int GPU_loop_MultMat_execute(int index, int *status)
 
 	*status = *status + 1;
 
-/*
-    if(gpumatmultconf[index].NBstreams!=6)
-    {
-        printf("gpumatmultconf[index].NBstreams = %d\n",  gpumatmultconf[index].NBstreams);
-        exit(0);
-    }
-*/
-    //for(m=0; m<gpumatmultconf[index].M; m++)
-    //gpumatmultconf[index].dmVecTMP[m] = gpumatmultconf[index].NBstreams+0.15;
-
-    /*
-         for(m=0;m<M;m++)
-          tot += dmVec[m]*dmVec[m];
-        if(tot<0.0000001)
-          printf("DETECTED EMPTY OUTPUT %g\n", tot);
-
-        usleep(10000);
-        */
-
-    //    memcpy(dmVec, dmVecTMP, sizeof(float)*M);
-
-    //	printf("Computation done\n");
-    //	fflush(stdout);
 
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
@@ -653,20 +630,26 @@ void *compute_function( void *ptr )
     int device;
     int n, m;
     int index;
-
+    char *ptr0; // source
+    char *ptr1; // dest
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
     index = thdata->cindex;
 
-    for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
-        gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
+  //  for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
+    //    gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
+
+    ptr0 = (char*) gpumatmultconf[index].wfsVec;
+    ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
+    ptr1 = (char*) gpumatmultconf[index].wfsVec_part[device];
+    memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
 
     cudaSetDevice(device);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
-   stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
+    stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
     if (stat != CUBLAS_STATUS_SUCCESS)
     {
         fprintf(stderr, "!!!! device access error (read C)\n");
@@ -711,11 +694,12 @@ void *compute_function( void *ptr )
         exit(EXIT_FAILURE);
     }
 
-//    for(m=0; m<gpumatmultconf[index].M; m++)
-  //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
+    //    for(m=0; m<gpumatmultconf[index].M; m++)
+    //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
 
     pthread_exit(0);
 }
+
 
 
 

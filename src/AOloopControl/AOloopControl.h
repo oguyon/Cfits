@@ -71,15 +71,7 @@ typedef struct
     long framesAve; // number of frames to average
 
     int status;
-    // -1: PROGRAM NOT RUNNING
-    // 0: LOOP OFF
-    // 1: WAITING FOR WFS IMAGE
-    // 2: REMOVING DARK
-    // 3: NORMALIZING WFS IMAGE
-    // 4: REMOVING REF
-    // 5: MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
-    // 6: MULTIPLYING BY GAINS
-    // 7: MULTIPLYING BY MODE MATRIX -> COMMANDS SENT TO DM
+	int GPUstatus[10];
 
 	int RMstatus;
 	// 2: wait for image

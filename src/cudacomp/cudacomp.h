@@ -39,10 +39,7 @@ typedef struct
 	long CM_cnt;
 	
     int M;
-    int N;
-
-
-
+    int N;	
 
     // computer memory (host)
     float *cMat;
