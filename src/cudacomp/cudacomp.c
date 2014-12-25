@@ -644,6 +644,9 @@ void *compute_function( void *ptr )
 	//ptrstat = (char*) thdata->status;
 	ptrstat = (int*) ((char*) thdata->status + sizeof(int)*index);
 	
+	printf("[%d] ", index);
+	fflush(stdout);
+	
 	*ptrstat = 201;
 
 
