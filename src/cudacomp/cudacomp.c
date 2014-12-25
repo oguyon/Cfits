@@ -641,8 +641,9 @@ void *compute_function( void *ptr )
     index = thdata->cindex;
 
 
-	ptrstat = thdata->status;
-	ptrstat += (sizeof(int)*index);
+	//ptrstat = (char*) thdata->status;
+	ptrstat = (int*) ((char*) thdata->status + sizeof(int)*index);
+	
 	*ptrstat = 0;
 
 
@@ -709,7 +710,7 @@ void *compute_function( void *ptr )
             printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
         exit(EXIT_FAILURE);
     }
-	*ptrstat = 5;
+	*ptrstat = index;
 
     //    for(m=0; m<gpumatmultconf[index].M; m++)
     //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
