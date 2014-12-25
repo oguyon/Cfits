@@ -644,7 +644,7 @@ void *compute_function( void *ptr )
 	//ptrstat = (char*) thdata->status;
 	ptrstat = (int*) ((char*) thdata->status + sizeof(int)*index);
 	
-	*ptrstat = 1;
+	*ptrstat = 201;
 
 
   //  for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
@@ -656,10 +656,10 @@ void *compute_function( void *ptr )
  //   memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
 
     cudaSetDevice(device);
-	*ptrstat = 2;
+	*ptrstat = 202;
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
-	*ptrstat = 3;
+	*ptrstat = 203;
 
     //stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
 
@@ -676,7 +676,7 @@ void *compute_function( void *ptr )
         exit(EXIT_FAILURE);
     }
     
-	*ptrstat = 4;
+	*ptrstat = 204;
 
 
     stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &beta, gpumatmultconf[index].d_dmVec[device], 1);
@@ -696,7 +696,7 @@ void *compute_function( void *ptr )
         exit(EXIT_FAILURE);
     }
 
-	*ptrstat = 5;
+	*ptrstat = 205;
 
     stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
     if (stat != CUBLAS_STATUS_SUCCESS)
@@ -710,7 +710,7 @@ void *compute_function( void *ptr )
             printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
         exit(EXIT_FAILURE);
     }
-	*ptrstat = index;
+	*ptrstat = 100+index;
 
     //    for(m=0; m<gpumatmultconf[index].M; m++)
     //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
