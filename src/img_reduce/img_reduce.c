@@ -319,7 +319,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
     xysize = xsize*ysize;
     NBopmax = xysize*100;
 
-    badpixclean_init = 1;
+/*    badpixclean_init = 1;
 
     badpixclean_indexlist = (long*) malloc(sizeof(long)*xysize);
     k = 0;
@@ -333,7 +333,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
     }
 
     badpixclean_NBbadpix = k;
-
+*/
 
 
 //    badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
@@ -372,7 +372,8 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                     distmax++;
                 }
                 NBnearbypix = k;
-                
+                printf("%ld  distmax = %d  -> k = %ld\n", bpcnt, distmax, NBnearbypix);
+                fflush(stdout);
                 
  /*             if(NBnearbypix>xysize)
 					{
