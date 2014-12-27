@@ -377,7 +377,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                     distmax++;
                 }
                 NBnearbypix = k;
-                printf("%ld  distmax = %ld  -> k = %ld\n", bpcnt, distmax, NBnearbypix);
+                printf("%ld  distmax = %ld  -> k = %ld / %ld\n", bpcnt, distmax, NBnearbypix, xysize);
                 fflush(stdout);
                 
  /*             if(NBnearbypix>xysize)
