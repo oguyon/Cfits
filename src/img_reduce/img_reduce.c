@@ -447,6 +447,8 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 	IDout = image_ID(IDoutname);
 	if(IDout==-1)
 		{
+			printf("Creating output image\n");
+			fflush(stdout);
 			IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
 			COREMOD_MEMORY_image_set_createsem(IDoutname);
 		}
