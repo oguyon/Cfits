@@ -662,6 +662,7 @@ void *compute_function( void *ptr )
 	*ptrstat = 2;
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
+
 	*ptrstat = 3;
 
     //stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
@@ -683,7 +684,6 @@ void *compute_function( void *ptr )
 
 
     stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &beta, gpumatmultconf[index].d_dmVec[device], 1);
-
 
     if (stat != CUBLAS_STATUS_SUCCESS)
     {
@@ -713,7 +713,10 @@ void *compute_function( void *ptr )
             printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
         exit(EXIT_FAILURE);
     }
+    
 	*ptrstat = 6;
+
+	printf("%d    %ld -> %d\n", index, gpumatmultconf[index].Nsize[device], gpumatmultconf[index].M);
 
     //    for(m=0; m<gpumatmultconf[index].M; m++)
     //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
