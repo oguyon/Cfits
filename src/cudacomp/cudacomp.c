@@ -395,8 +395,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             gpumatmultconf[index].NBstreams = NBGPUs;
 
 
-        gpumatmultconf[index].Nsize = (long*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].Noffset = (long*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].Nsize = (int*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].Noffset = (int*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].Noffset[0] = 0;
         for(device=1; device<gpumatmultconf[index].NBstreams; device++)
         {
@@ -407,7 +407,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         printf("-----------------------------------------------------\n");
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
-            printf("DEVICE %d  :  %5ld -> %5ld  (%ld)\n", device, gpumatmultconf[index].Noffset[device], gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device], gpumatmultconf[index].Nsize[device]);
+            printf("DEVICE %d  :  %5d -> %5d  (%d)\n", device, gpumatmultconf[index].Noffset[device], gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device], gpumatmultconf[index].Nsize[device]);
         printf("-----------------------------------------------------\n");
 
 
@@ -716,7 +716,7 @@ void *compute_function( void *ptr )
     
 	*ptrstat = 6;
 
-	printf("%d    %ld -> %d\n", index, gpumatmultconf[index].Nsize[device], gpumatmultconf[index].M);
+	printf("%d    %d -> %d\n", index, gpumatmultconf[index].Nsize[device], gpumatmultconf[index].M);
 
     //    for(m=0; m<gpumatmultconf[index].M; m++)
     //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];

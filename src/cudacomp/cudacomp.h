@@ -65,8 +65,8 @@ typedef struct
     cublasHandle_t *handle;
 
     // splitting limits
-    long *Nsize;
-    long *Noffset;
+    int *Nsize;
+    int *Noffset;
 
     int orientation;
     long IDout;
