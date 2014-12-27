@@ -4192,10 +4192,11 @@ int AOloopControl_statusStats()
     int RT_priority = 91; //any number from 0-99
     struct sched_param schedpar;
     const char *statusdef[22];
-	int gpu;
-	int nbgpu;
+    int gpu;
+    int nbgpu;
 
-	long *statusgpucnt;
+    long *statusgpucnt;
+    long *statusgpucnt2;
 
     statusdef[0] = "";
     statusdef[1] = "READING IMAGE";
@@ -4229,7 +4230,7 @@ int AOloopControl_statusStats()
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
 
-	nbgpu = AOconf[LOOPNUMBER].GPU;
+    nbgpu = AOconf[LOOPNUMBER].GPU;
 
 
     printf("Measuring loop status distribution \n");
@@ -4237,14 +4238,17 @@ int AOloopControl_statusStats()
 
     statuscnt = (long*) malloc(sizeof(long)*statusmax);
     statusgpucnt = (long*) malloc(sizeof(long)*nbgpu*10);
+    statusgpucnt2 = (long*) malloc(sizeof(long)*nbgpu*10);
 
 
     for(st=0; st<statusmax; st++)
         statuscnt[st] = 0;
 
-	for(st=0; st<nbgpu*10; st++)
+    for(st=0; st<nbgpu*10; st++)
+    {
         statusgpucnt[st] = 0;
-
+        statusgpucnt2[st] = 0;
+    }
 
     for(k=0; k<NBkiter; k++)
     {
@@ -4252,38 +4256,58 @@ int AOloopControl_statusStats()
         st = AOconf[LOOPNUMBER].status;
         if(st<statusmax)
             statuscnt[st]++;
-		for(gpu=0;gpu<AOconf[LOOPNUMBER].GPU;gpu++)
-		{
-			st = 10*gpu + AOconf[LOOPNUMBER].GPUstatus[gpu];
-			statusgpucnt[st]++;
-		}
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        {
+            // 1st matrix mult
+            st = 10*gpu + AOconf[LOOPNUMBER].GPUstatus[gpu];
+            statusgpucnt[st]++;
+
+            // 2nd matrix mult
+            st = 10*gpu + AOconf[LOOPNUMBER].GPUstatus[10+gpu];
+            statusgpucnt2[st]++;
+        }
     }
 
     for(st=0; st<statusmax; st++)
         printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]    %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, statusdef[st]);
 
-	printf("\n");
-	printf("          ----1--------2--------3--------4--------5--------6----\n");
-	for(gpu=0;gpu<AOconf[LOOPNUMBER].GPU;gpu++)
-		{			
-			printf("GPU %2d  : ", gpu);
-			printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+1]/NBkiter);
-			printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+2]/NBkiter);
-			printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+3]/NBkiter);
-			printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+4]/NBkiter);
-			printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
-			printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
-			//printf("GPU %2d  STATUS  7   %5.2f %%\n", gpu,  100.0*statusgpucnt[10*gpu+7]/NBkiter);
-			//printf("GPU %2d  STATUS  8   %5.2f %%\n", gpu,  100.0*statusgpucnt[10*gpu+8]/NBkiter);
-			//printf("GPU %2d  STATUS  9   %5.2f %%\n", gpu,  100.0*statusgpucnt[10*gpu+9]/NBkiter);
-		}
 
+    if(AOconf[LOOPNUMBER].GPU!=0)
+    {
+        printf("\n");
+        printf("          ----1--------2--------3--------4--------5--------6----\n");
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        {
+            printf("GPU %2d  : ", gpu);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+1]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+2]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+3]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+4]/NBkiter);
+            printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
+            printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
+        }
+
+        printf("\n");
+        printf("          ----1--------2--------3--------4--------5--------6----\n");
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        {
+            printf("GPU %2d  : ", gpu);
+            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+2]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+3]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+4]/NBkiter);
+            printf("  %5.2f %%",   100.0*statusgpucnt2[10*gpu+5]/NBkiter);
+            printf("  %5.2f %%\n",  100.0*statusgpucnt2[10*gpu+6]/NBkiter);
+        }
+    }
     free(statuscnt);
-	free(statusgpucnt);
+    free(statusgpucnt);
+    free(statusgpucnt2);
 
 
     return 0;
 }
+
 
 
 

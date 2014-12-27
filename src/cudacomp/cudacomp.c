@@ -642,7 +642,7 @@ void *compute_function( void *ptr )
 
 
 	//ptrstat = (char*) thdata->status;
-	ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device);
+	ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device + sizeof(int)*10*index);
 	
 //	printf("[%d] ", index);
 //	fflush(stdout);

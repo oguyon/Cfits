@@ -71,7 +71,7 @@ typedef struct
     long framesAve; // number of frames to average
 
     int status;
-	int GPUstatus[10];
+	int GPUstatus[50];
 
 	int RMstatus;
 	// 2: wait for image
