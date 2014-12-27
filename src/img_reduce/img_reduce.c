@@ -454,6 +454,11 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 	if(badpixclean_init==0)
 		IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);	
 	
+	
+	while(1)
+	{
+	sem_wait(data.image[ID].semptr);
+	
 	data.image[IDout].md[0].write = 1;
 	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
 
@@ -478,7 +483,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
 	data.image[IDout].md[0].write = 0;
 	data.image[IDout].md[0].cnt0++;
-	
+	}
 
 	free(sizearray);
 
