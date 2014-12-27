@@ -367,12 +367,17 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                                 nearbypix_array_coeff[k] = pow(1.0/nearbypix_array_dist2[k],2.0);
                                 coefftot += nearbypix_array_coeff[k];
                                 k++;
+								if(k>xysize-1)
+									{
+										printf("ERROR: too many nearby pixels\n");
+										exit(0);
+									}
                             }
                         }
                     distmax++;
                 }
                 NBnearbypix = k;
-                printf("%ld  distmax = %d  -> k = %ld\n", bpcnt, distmax, NBnearbypix);
+                printf("%ld  distmax = %ld  -> k = %ld\n", bpcnt, distmax, NBnearbypix);
                 fflush(stdout);
                 
  /*             if(NBnearbypix>xysize)
