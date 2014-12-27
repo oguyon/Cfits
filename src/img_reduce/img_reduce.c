@@ -427,72 +427,73 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
 long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutname)
 {
-	long ID;
-	long *sizearray;
-	long k;
-	long xysize;
-	long IDout;
-	long IDdark;
-	long ii;
-	
-	ID = image_ID(IDname);
-	sizearray = (long*) malloc(sizeof(long)*2);
-	sizearray[0] = data.image[ID].md[0].size[0];
-	sizearray[1] = data.image[ID].md[0].size[1];
-	xysize = sizearray[0]*sizearray[1];
-	
-	IDdark = image_ID("dark"); // use if it exists
-	
-	
-	IDout = image_ID(IDoutname);
-	if(IDout==-1)
-		{
-			printf("Creating output image\n");
-			fflush(stdout);
-			IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
-			COREMOD_MEMORY_image_set_createsem(IDoutname);
-		}
-		
-	if(badpixclean_init==0)
-		IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);	
-	
-	
-	while(1)
-	{
-		printf("Waiting for incoming image ... \n");
-		fflush(stdout);
-		sem_wait(data.image[ID].semptr);
-	
-	data.image[IDout].md[0].write = 1;
-	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
+    long ID;
+    long *sizearray;
+    long k;
+    long xysize;
+    long IDout;
+    long IDdark;
+    long ii;
 
-	if(IDdark!=-1)
-		for(ii=0;ii<xysize;ii++)
-			data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
+    ID = image_ID(IDname);
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = data.image[ID].md[0].size[0];
+    sizearray[1] = data.image[ID].md[0].size[1];
+    xysize = sizearray[0]*sizearray[1];
 
-	for(k=0;k<badpixclean_NBbadpix;k++)
-		data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
+    IDdark = image_ID("dark"); // use if it exists
 
-	for(k=0;k<badpixclean_NBop;k++)
-		{
-			printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
-			fflush(stdout);
-			data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
-			printf("\n");
-			fflush(stdout);
-		}
-		
-	if(data.image[IDout].sem == 1)
-		sem_post(data.image[IDout].semptr);
 
-	data.image[IDout].md[0].write = 0;
-	data.image[IDout].md[0].cnt0++;
-	}
+    IDout = image_ID(IDoutname);
+    if(IDout==-1)
+    {
+        printf("Creating output image\n");
+        fflush(stdout);
+        IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(IDoutname);
+    }
 
-	free(sizearray);
+    if(badpixclean_init==0)
+        badpixclean_NBop = IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);
 
-	return(IDout);
+
+    while(1)
+    {
+        //	printf("Waiting for incoming image ... \n");
+        //	fflush(stdout);
+        sem_wait(data.image[ID].semptr);
+
+        data.image[IDout].md[0].write = 1;
+        memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
+
+        if(IDdark!=-1)
+            for(ii=0; ii<xysize; ii++)
+                data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
+
+        for(k=0; k<badpixclean_NBbadpix; k++)
+            data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
+
+        for(k=0; k<badpixclean_NBop; k++)
+        {
+            printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
+            fflush(stdout);
+            data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
+            printf("\n");
+            fflush(stdout);
+        }
+
+        if(data.image[IDout].sem == 1)
+            sem_post(data.image[IDout].semptr);
+
+        data.image[IDout].md[0].write = 0;
+        data.image[IDout].md[0].cnt0++;
+    }
+
+    free(sizearray);
+
+    return(IDout);
 }
+
 
 
 
