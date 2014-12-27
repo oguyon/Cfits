@@ -641,7 +641,7 @@ void *compute_function( void *ptr )
 	
 
     thdata = (THDATA*) ptr;
-    device = 1; //thdata->thread_no;
+    device = thdata->thread_no;
     index = thdata->cindex;
 
 
