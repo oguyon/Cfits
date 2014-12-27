@@ -316,31 +316,31 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
     xysize = xsize*ysize;
     NBopmax = xysize*100;
 
-  
+
     nearbypix_array_index = (long*) malloc(sizeof(long)*xysize);
     nearbypix_array_dist2 = (float*) malloc(sizeof(float)*xysize);
     nearbypix_array_coeff = (float*) malloc(sizeof(float)*xysize);
 
-      badpixclean_init = 1;
+    badpixclean_init = 1;
 
-        badpixclean_indexlist = (long*) malloc(sizeof(long)*xysize);
-        k = 0;
-        for(ii=0; ii<xysize; ii++)
+    badpixclean_indexlist = (long*) malloc(sizeof(long)*xysize);
+    k = 0;
+    for(ii=0; ii<xysize; ii++)
+    {
+        if (data.image[IDbadpix].array.F[ii]>0.5)
         {
-            if (data.image[IDbadpix].array.F[ii]>0.5)
-            {
-                badpixclean_indexlist[k] = ii;
-                k++;
-            }
+            badpixclean_indexlist[k] = ii;
+            k++;
         }
+    }
 
-        badpixclean_NBbadpix = k;
-    
+    badpixclean_NBbadpix = k;
 
 
-        badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
-       badpixclean_array_indexout = (long*) malloc(sizeof(long)*xysize);
-      badpixclean_array_coeff = (float*) malloc(sizeof(float)*xysize);
+
+    badpixclean_array_indexin = (long*) malloc(sizeof(long)*xysize);
+    badpixclean_array_indexout = (long*) malloc(sizeof(long)*xysize);
+    badpixclean_array_coeff = (float*) malloc(sizeof(float)*xysize);
 
 
     printf("Computing operations...\n");
@@ -379,30 +379,30 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                     distmax++;
                 }
                 NBnearbypix = k;
-          //      printf("%ld  distmax = %ld  -> k = %ld / %ld\n", bpcnt, distmax, NBnearbypix, xysize);
-            //    fflush(stdout);
+                //      printf("%ld  distmax = %ld  -> k = %ld / %ld\n", bpcnt, distmax, NBnearbypix, xysize);
+                //    fflush(stdout);
 
-                           if(NBnearbypix>xysize)
-                				{
-                				printf("ERROR: NBnearbypix>xysize\n");
-                					exit(0);
-                				}
-
-
-                 for(k=0; k<NBnearbypix; k++)
+                if(NBnearbypix>xysize)
                 {
-					   nearbypix_array_coeff[k] /= coefftot;
+                    printf("ERROR: NBnearbypix>xysize\n");
+                    exit(0);
+                }
 
-                                badpixclean_array_indexin[NBop] = jj1*xsize+ii1;
-                                badpixclean_array_indexout[NBop] = jj*xsize+ii;
-                                badpixclean_array_coeff[NBop] = nearbypix_array_coeff[k];
-                  NBop++;
-				}
+
+                for(k=0; k<NBnearbypix; k++)
+                {
+                    nearbypix_array_coeff[k] /= coefftot;
+
+                    badpixclean_array_indexin[NBop] = jj1*xsize+ii1;
+                    badpixclean_array_indexout[NBop] = jj*xsize+ii;
+                    badpixclean_array_coeff[NBop] = nearbypix_array_coeff[k];
+                    NBop++;
+                }
                 bpcnt++;
             }
         }
     printf("%ld bad pixels\n", bpcnt);
-	printf("%ld / %ld  operations\n", NBop, xysize);
+    printf("%ld / %ld  operations\n", NBop, xysize);
 
 
     printf("free nearbypix_array_index\n");
@@ -424,6 +424,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
 
 
+
 long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutname)
 {
 	long ID;
@@ -431,13 +432,17 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 	long k;
 	long xysize;
 	long IDout;
-	
+	long IDdark;
+	long ii;
 	
 	ID = image_ID(IDname);
 	sizearray = (long*) malloc(sizeof(long)*2);
 	sizearray[0] = data.image[ID].md[0].size[0];
 	sizearray[1] = data.image[ID].md[0].size[1];
 	xysize = sizearray[0]*sizearray[1];
+	
+	IDdark = image_ID("dark"); // use if it exists
+	
 	
 	IDout = image_ID(IDoutname);
 	if(IDout==-1)
@@ -452,9 +457,12 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 	data.image[IDout].md[0].write = 1;
 	memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
 
+	if(IDdark!=-1)
+		for(ii=0;ii<xysize;ii++)
+			data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
+
 	for(k=0;k<badpixclean_NBbadpix;k++)
 		data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
-
 
 	for(k=0;k<badpixclean_NBop;k++)
 		{
@@ -468,20 +476,11 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 	if(data.image[IDout].sem == 1)
 		sem_post(data.image[IDout].semptr);
 
-	printf("-1-\n");
-	fflush(stdout);
-			
 	data.image[IDout].md[0].write = 0;
 	data.image[IDout].md[0].cnt0++;
 	
-	printf("-2-\n");
-	fflush(stdout);
-			
 
 	free(sizearray);
-
-	printf("-3-\n");
-	fflush(stdout);
 
 	return(IDout);
 }
