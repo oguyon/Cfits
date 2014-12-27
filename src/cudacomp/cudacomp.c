@@ -636,6 +636,10 @@ void *compute_function( void *ptr )
 
 	int *ptrstat;
 
+	float *fptr0;
+	float *fptr1;
+	
+
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
     index = thdata->cindex;
@@ -649,6 +653,9 @@ void *compute_function( void *ptr )
 	
 	*ptrstat = 1;
 
+
+	fptr0 = gpumatmultconf[index].d_dmVec[device];
+	fptr1 = gpumatmultconf[index].dmVec_part[device];
 
   //  for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
     //    gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
@@ -701,7 +708,8 @@ void *compute_function( void *ptr )
 
 	*ptrstat = 5;
 
-    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
+//    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
+    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), fptr0, 1, fptr1, 1);
     if (stat != CUBLAS_STATUS_SUCCESS)
     {
         fprintf(stderr, "!!!! device access error (read C)\n");
