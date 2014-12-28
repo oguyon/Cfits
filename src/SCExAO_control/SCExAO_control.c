@@ -476,7 +476,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 {
-	FILE *fp;
+    FILE *fp;
     long ID;
     long xsize, ysize;
     long ii, jj;
@@ -487,38 +487,48 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     long ttxpos, ttypos;
     double gain = 0.1;
     char command[200];
-	int r; 
-	double x, y;
-	double totx, toty;
-	char pausefilename[200];
-	float v0;
+    int r;
+    double x, y;
+    double totx, toty;
+    char pausefilename[200];
+    float v0;
+	long IDshm;
+	long *sizearray;
 	
-	
-//        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
-  // exit(0);
-  
- 
-  
-while(file_exist("stop_PyAlignTT.txt")==0)
-{
-		
-		while (file_exist("pause_PyAlignTT.txt"))
-			usleep(100000);
-			
-  
-		
-		if(file_exist("./status/gain_PyAlignTT.txt"))
-			{
-				fp = fopen("./status/gain_PyAlignTT.txt", "r");
-				r = fscanf(fp, "%f", &v0);
-				fclose(fp);
-				if((v0>0.0)&&(v0<1.0))
-					gain = v0;
-			}
-		
-  
+
+    //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
+    // exit(0);
+
+
+	IDshm = image_ID("pyrTT");
+	if(IDshm == -1)
+		{
+			sizearray = (long*) malloc(sizeof(long)*2);
+			sizearray[0] = 2;
+			sizearray[1] = 1;
+			IDshm = create_image_ID("pyrTT", 2, sizearray, FLOAT, 1, 0);
+		}
+
+    while(file_exist("stop_PyAlignTT.txt")==0)
+    {
+
+        while (file_exist("pause_PyAlignTT.txt"))
+            usleep(100000);
+
+
+
+        if(file_exist("./status/gain_PyAlignTT.txt"))
+        {
+            fp = fopen("./status/gain_PyAlignTT.txt", "r");
+            r = fscanf(fp, "%f", &v0);
+            fclose(fp);
+            if((v0>0.0)&&(v0<1.0))
+                gain = v0;
+        }
+
+
         ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
-       xsize = data.image[ID].md[0].size[0];
+        xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
         printf("%ld x %ld image\n", xsize, ysize);
@@ -532,65 +542,65 @@ while(file_exist("stop_PyAlignTT.txt")==0)
         tot01x = 0.0;
         tot10x = 0.0;
         tot11x = 0.0;
- 
+
         tot00y = 0.0;
         tot01y = 0.0;
         tot10y = 0.0;
         tot11y = 0.0;
- 
-      for(ii=0; ii<xsize/2; ii++)
+
+        for(ii=0; ii<xsize/2; ii++)
             for(jj=0; jj<ysize/2; jj++)
-                {
-					x = 1.0*(0.5+ii)/(xsize/2)-0.5;
-					y = 1.0*(0.5+jj)/(ysize/2)-0.5;
-					tot00x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot00y += y*data.image[ID].array.F[jj*xsize+ii];
-					tot00 += data.image[ID].array.F[jj*xsize+ii];
-				}
-				
+            {
+                x = 1.0*(0.5+ii)/(xsize/2)-0.5;
+                y = 1.0*(0.5+jj)/(ysize/2)-0.5;
+                tot00x += x*data.image[ID].array.F[jj*xsize+ii];
+                tot00y += y*data.image[ID].array.F[jj*xsize+ii];
+                tot00 += data.image[ID].array.F[jj*xsize+ii];
+            }
+
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=0; jj<ysize/2; jj++)
-                {
-					x = 1.0*(0.5+ii-xsize/2)/(xsize/2)-0.5;
-					y = 1.0*(0.5+jj)/(ysize/2)-0.5;
-					tot10x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot10y += y*data.image[ID].array.F[jj*xsize+ii];
-					tot10 += data.image[ID].array.F[jj*xsize+ii];
-				}
-				
+            {
+                x = 1.0*(0.5+ii-xsize/2)/(xsize/2)-0.5;
+                y = 1.0*(0.5+jj)/(ysize/2)-0.5;
+                tot10x += x*data.image[ID].array.F[jj*xsize+ii];
+                tot10y += y*data.image[ID].array.F[jj*xsize+ii];
+                tot10 += data.image[ID].array.F[jj*xsize+ii];
+            }
+
         for(ii=0; ii<xsize/2; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
-                {
-					x = 1.0*(0.5+ii)/(xsize/2)-0.5;
-					y = 1.0*(0.5+jj-ysize/2)/(ysize/2)-0.5;
-					tot01x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot01y += y*data.image[ID].array.F[jj*xsize+ii];					
-					tot01 += data.image[ID].array.F[jj*xsize+ii];
-				}
-				
+            {
+                x = 1.0*(0.5+ii)/(xsize/2)-0.5;
+                y = 1.0*(0.5+jj-ysize/2)/(ysize/2)-0.5;
+                tot01x += x*data.image[ID].array.F[jj*xsize+ii];
+                tot01y += y*data.image[ID].array.F[jj*xsize+ii];
+                tot01 += data.image[ID].array.F[jj*xsize+ii];
+            }
+
         for(ii=xsize/2; ii<xsize; ii++)
             for(jj=ysize/2; jj<ysize; jj++)
-                {
-					x = 1.0*(0.5+ii-xsize/2)/(xsize/2)-0.5;
-					y = 1.0*(0.5+jj-ysize/2)/(ysize/2)-0.5;
-					tot11x += x*data.image[ID].array.F[jj*xsize+ii];
-					tot11y += y*data.image[ID].array.F[jj*xsize+ii];				
-					tot11 += data.image[ID].array.F[jj*xsize+ii];
-				}
-				
+            {
+                x = 1.0*(0.5+ii-xsize/2)/(xsize/2)-0.5;
+                y = 1.0*(0.5+jj-ysize/2)/(ysize/2)-0.5;
+                tot11x += x*data.image[ID].array.F[jj*xsize+ii];
+                tot11y += y*data.image[ID].array.F[jj*xsize+ii];
+                tot11 += data.image[ID].array.F[jj*xsize+ii];
+            }
+
         tot = tot00+tot10+tot01+tot11;
- 
- 		tot00x /= tot00;
+
+        tot00x /= tot00;
         tot10x /= tot10;
         tot01x /= tot01;
         tot11x /= tot11;
 
-		tot00y /= tot00;
+        tot00y /= tot00;
         tot10y /= tot10;
         tot01y /= tot01;
         tot11y /= tot11;
 
-		tot00 /= tot;
+        tot00 /= tot;
         tot10 /= tot;
         tot01 /= tot;
         tot11 /= tot;
@@ -599,12 +609,12 @@ while(file_exist("stop_PyAlignTT.txt")==0)
 
         printf("  %6.4f   %6.4f\n", tot01, tot11);
         printf("  %6.4f   %6.4f\n", tot00, tot10);
-		
-		totx = 0.25*(tot00x+tot10x+tot10x+tot11x);
-		toty = 0.25*(tot00y+tot10y+tot10y+tot11y);
 
-		printf(" PUP X   %+6.4f %+6.4f %+6.4f %+6.4f  -> %+6.4f\n", tot00x, tot01x, tot10x, tot11x, totx);
-		printf(" PUP Y   %+6.4f %+6.4f %+6.4f %+6.4f  -> %+6.4f\n", tot00y, tot01y, tot10y, tot11y, toty);
+        totx = 0.25*(tot00x+tot10x+tot10x+tot11x);
+        toty = 0.25*(tot00y+tot10y+tot10y+tot11y);
+
+        printf(" PUP X   %+6.4f %+6.4f %+6.4f %+6.4f  -> %+6.4f\n", tot00x, tot01x, tot10x, tot11x, totx);
+        printf(" PUP Y   %+6.4f %+6.4f %+6.4f %+6.4f  -> %+6.4f\n", tot00y, tot01y, tot10y, tot11y, toty);
 
         xsig = tot01-tot10;
         ysig = tot11-tot00;
@@ -614,33 +624,41 @@ while(file_exist("stop_PyAlignTT.txt")==0)
         SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
         SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
 
-		if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
-			SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
-		if(SCExAO_PZT_STAGE_Xpos>SCExAO_PZT_STAGE_Xpos_max)
-			SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_max;
+        if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
+            SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
+        if(SCExAO_PZT_STAGE_Xpos>SCExAO_PZT_STAGE_Xpos_max)
+            SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_max;
 
- 		if(SCExAO_PZT_STAGE_Ypos<SCExAO_PZT_STAGE_Ypos_min)
-			SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_min;
-		if(SCExAO_PZT_STAGE_Ypos>SCExAO_PZT_STAGE_Ypos_max)
-			SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
+        if(SCExAO_PZT_STAGE_Ypos<SCExAO_PZT_STAGE_Ypos_min)
+            SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_min;
+        if(SCExAO_PZT_STAGE_Ypos>SCExAO_PZT_STAGE_Ypos_max)
+            SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
 
-		// sig X
-		sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-		printf("%s", command);
-		r = system(command);
-			
-		// sig Y
-		sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-		printf("%s", command);
-		r = system(command);
+        // sig X
+        sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+        printf("%s", command);
+        r = system(command);
+
+        // sig Y
+        sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+        printf("%s", command);
+        r = system(command);
+
+		data.image[IDshm].md[0].write = 1;
+		data.image[IDshm].array.F[0] = SCExAO_PZT_STAGE_Xpos;
+		data.image[IDshm].array.F[1] = SCExAO_PZT_STAGE_Ypos;	
+		data.image[IDshm].md[0].cnt0 ++;
+		data.image[IDshm].md[0].write = 0;
+		
 
         save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
-}
+    }
 
- r = system("rm stop_PyAlignTT.txt");
+    r = system("rm stop_PyAlignTT.txt");
 
     return(0);
 }
+
 
 
 
