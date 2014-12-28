@@ -646,8 +646,6 @@ void *compute_function( void *ptr )
 
 
 
-    for(k=0; k<kmax; k++)
-    {
         *ptrstat = 1;
 
 
@@ -743,7 +741,7 @@ void *compute_function( void *ptr )
 
         //	free(arraytmpf);
 
-    }
+    
     pthread_exit(0);
 }
 
