@@ -635,12 +635,12 @@ void *compute_function( void *ptr )
     char *ptr1; // dest
 
 	int *ptrstat;
-	float *arraytmpf;
+	//float *arraytmpf;
 
 	//float *fptr0;
 	//float *fptr1;
 	
-	arraytmpf = (float*) malloc(sizeof(float)*10000);
+	//arraytmpf = (float*) malloc(sizeof(float)*10000);
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -710,8 +710,7 @@ void *compute_function( void *ptr )
 
 	*ptrstat = 5;
 
-    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, arraytmpf, 1);
-//     gpumatmultconf[index].dmVec_part[device], 1);
+    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
 //    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), fptr0, 1, fptr1, 1);
     if (stat != CUBLAS_STATUS_SUCCESS)
     {
@@ -732,7 +731,7 @@ void *compute_function( void *ptr )
     //    for(m=0; m<gpumatmultconf[index].M; m++)
     //      gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[device][m];
 
-	free(arraytmpf);
+//	free(arraytmpf);
     pthread_exit(0);
 }
 
