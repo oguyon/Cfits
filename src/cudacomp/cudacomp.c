@@ -715,9 +715,8 @@ void *compute_function( void *ptr )
 
 if(index == 1)
     stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
-//else
-
-//stat = cudaMemcpy(gpumatmultconf[index].dmVec_part[device], gpumatmultconf[index].d_dmVec[device], 5 * sizeof(float), cudaMemcpyDeviceToHost);
+else
+stat = cudaMemcpy(gpumatmultconf[index].dmVec_part[device], gpumatmultconf[index].d_dmVec[device], 5 * sizeof(float), cudaMemcpyDeviceToHost);
 
 
 //   stat = cublasGetVector(5, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
