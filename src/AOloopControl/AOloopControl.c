@@ -1312,7 +1312,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 	if(ID==-1)
 	{
 		for(k=0; k<m; k++)
-			CPAcoeff[k] = 0.0;
+			CPAcoeff[k] = 1.0;
 	}
 	else
 	{
