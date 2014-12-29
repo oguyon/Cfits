@@ -14,6 +14,7 @@
 #include <sched.h>
 #include <ncurses.h>
 #include <semaphore.h>
+
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -462,8 +463,13 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
     {
         	printf("Waiting for incoming image ... \n");
         	fflush(stdout);
-        	
-        sem_wait(data.image[ID].semptr);
+        if(data.image[ID].sem==1)
+			sem_wait(data.image[ID].semptr);
+		else
+			{
+				printf("NO SEMAPHORE !!!\n");
+				fflush(stdout);
+			}
 		printf("... done\n");
         	fflush(stdout);
 
