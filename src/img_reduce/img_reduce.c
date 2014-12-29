@@ -502,8 +502,6 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
         if(data.image[IDout].sem == 1)
             sem_post(data.image[IDout].semptr);
-		if(data.image[IDout].sem == 1)
-		sem_post(data.image[IDout].semptr);
         data.image[IDout].md[0].write = 0;
         data.image[IDout].md[0].cnt0++;
     }
