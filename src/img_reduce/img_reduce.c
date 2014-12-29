@@ -405,15 +405,15 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
     printf("%ld / %ld  operations\n", NBop, xysize);
 
 
-    printf("free nearbypix_array_index\n");
+    printf("free nearbypix_array_index ...\n");
     fflush(stdout);
     free(nearbypix_array_index);
 
-    printf("free nearbypix_array_dist2\n");
+    printf("free nearbypix_array_dist2 ...\n");
     fflush(stdout);
     free(nearbypix_array_dist2);
 
-    printf("free nearbypix_array_coeff\n");
+    printf("free nearbypix_array_coeff ...\n");
     fflush(stdout);
     free(nearbypix_array_coeff);
 
@@ -459,8 +459,8 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
     while(1)
     {
-        //	printf("Waiting for incoming image ... \n");
-        //	fflush(stdout);
+        	printf("Waiting for incoming image ... \n");
+        	fflush(stdout);
         sem_wait(data.image[ID].semptr);
 
         data.image[IDout].md[0].write = 1;
