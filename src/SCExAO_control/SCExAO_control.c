@@ -957,6 +957,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 	IDsatmask = create_image_ID("satmask", 3, sizeoutarray, USHORT, 1, 0); // saturation mask	
     ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0); // intermediate resutl
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
+	COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     if(data.image[IDin].sem == 0)
     {

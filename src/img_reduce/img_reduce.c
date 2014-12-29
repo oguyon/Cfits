@@ -469,6 +469,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 			{
 				printf("NO SEMAPHORE !!!\n");
 				fflush(stdout);
+				exit(0);
 			}
 		printf("... done\n");
         	fflush(stdout);
