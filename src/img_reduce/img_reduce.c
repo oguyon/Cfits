@@ -461,7 +461,10 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
     {
         	printf("Waiting for incoming image ... \n");
         	fflush(stdout);
+        	
         sem_wait(data.image[ID].semptr);
+		printf("... done\n");
+        	fflush(stdout);
 
         data.image[IDout].md[0].write = 1;
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
