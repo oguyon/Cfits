@@ -13,7 +13,7 @@
 #include <signal.h> 
 #include <ncurses.h>
 
-
+#include <semaphore.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
