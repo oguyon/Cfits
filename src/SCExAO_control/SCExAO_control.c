@@ -928,7 +928,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     double v1, vk, vt, vv;
     long kk;
     long cnt0, cnt1, cnt2;
-    int SATURATION = 32766;
+    int SATURATION = 65534;
     long iter;
 	double eps = 1e-8;
 	long k1;
