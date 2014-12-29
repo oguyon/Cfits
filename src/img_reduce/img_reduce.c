@@ -363,9 +363,9 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                     for(ii1=ii-distmax; ii1<ii+distmax+1; ii1++)
                         for(jj1=jj-distmax; jj1<jj+distmax+1; jj1++)
                         {
-                            if((ii1>-1)&&(ii1<xsize)&&(jj1>-1)&&(jj1<ysize)&&(data.image[IDbadpix].array.F[jj1*xsize+ii1]>0.5))
+                            if((ii1>-1)&&(ii1<xsize)&&(jj1>-1)&&(jj1<ysize)&&(data.image[IDbadpix].array.F[jj1*xsize+ii1]<0.5))
                             {
-                                if(((ii1!=ii)||(jj1!=jj))&&(data.image[IDbadpix].array.F[jj1*xsize+ii1]<0.5))
+                                if((ii1!=ii)||(jj1!=jj))
                                 {
                                     nearbypix_array_index[k] = (long) (jj1*xsize+ii1);
                                     nearbypix_array_dist2[k] = (float) (1.0*(ii1-ii)*(ii1-ii)+1.0*(jj1-jj)*(jj1-jj));
