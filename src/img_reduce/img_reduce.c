@@ -452,6 +452,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
         IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(IDoutname);
     }
+	COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     if(badpixclean_init==0)
         badpixclean_NBop = IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);
@@ -487,7 +488,8 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
         if(data.image[IDout].sem == 1)
             sem_post(data.image[IDout].semptr);
-
+		if(data.image[IDout].sem == 1)
+		sem_post(data.image[IDout].semptr);
         data.image[IDout].md[0].write = 0;
         data.image[IDout].md[0].cnt0++;
     }
