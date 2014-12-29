@@ -22,24 +22,24 @@ typedef struct
 
     char name[80];
 
-	// Wavefront sensor camera
+    // Wavefront sensor camera
     char WFSname[80];
     float DarkLevel;
     long sizexWFS;
     long sizeyWFS;
     long sizeWFS;
     long long WFScnt;
-   long long WFScntRM;
+    long long WFScntRM;
 
-	// DM
+    // DM
     char DMname[80];
     char DMnameRM[80];
     long sizexDM;
     long sizeyDM;
     long sizeDM;
 
-	// Modes
-	char DMMODESname[80];
+    // Modes
+    char DMMODESname[80];
 
 
     int init_refWFS;    // WFS reference image loaded
@@ -52,17 +52,7 @@ typedef struct
 
     long NBDMmodes;
     float maxlimit; // maximum absolute value for mode values
-	float mult; // multiplication coefficient to be applied at each loop iteration
-
-    // WFS CAMERA PERIODIC ERROR CORRECTION (optional)
-
-    int WFS_CAM_PER_CORR ; /// 1 if active
-    long double WFScamPEcorr_pha;     /// phase
-    long double WFScamPEcorr_pharef;  /// phase reference, or offset
-    long double WFScamPEcorr_period;  /// in camera frame unit
-
-
-
+    float mult; // multiplication coefficient to be applied at each loop iteration
 
 
     // LOOP CONTROL
@@ -71,10 +61,10 @@ typedef struct
     long framesAve; // number of frames to average
 
     int status;
-	int GPUstatus[50];
+    int GPUstatus[50];
 
-	int RMstatus;
-	// 2: wait for image
+    int RMstatus;
+    // 2: wait for image
 
     // LOOP TUNING
     // BLOCKS OF MODES
@@ -87,24 +77,18 @@ typedef struct
 
 
     int GPU; // >0 if computation done by GPU
-
+	int GPUusesem; // 1 if using semaphores to control GPU
+	
     // LOOP TELEMETRY
     double RMSmodes;
     double RMSmodesCumul;
     long long RMSmodesCumulcnt;
 
-    // logs
-/*    char logdir[80];
-    int logon; // 1 if log is on, 0 if off
-    long logsize;  // # of entries per log
-    long IDlog0;  // image identifyer for log file #1
-    long IDlog1;  // image identifyer for log file #2
-    int logcnt; // current position in log
-    int logfnb; // current log file number (0 or 1)
-    char userLOGstring[80];
-    long timeorigin_sec;
-*/
+    // semaphores for communication with GPU computing threads
+    //sem_t *semptr; // semaphore for this image
+
 } AOLOOPCONTROL_CONF;
+
 
 
 
@@ -156,7 +140,7 @@ int AOloopControl_resetRMSperf();
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
 int AOloopControl_InjectMode( long index, float ampl );
 int AOloopControl_AutoTune();
-int AOloopControl_tuneWFSsync(long loop, char *IDout_name);
+
 
 int AOloopControl_setparam(long loop, char *key, double value);
 

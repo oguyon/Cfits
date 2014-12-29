@@ -76,7 +76,8 @@ long aoconfID_MULTF_modes = -1;
 long aoconfID_cmd_modesRM = -1;
 
 long aoconfID_respM = -1;
-long aoconfID_contrM = -1;
+long aoconfID_contrM = -1; // pixels -> modes
+long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
 
 long aoconfIDlog0 = -1;
 long aoconfIDlog1 = -1;
@@ -410,17 +411,6 @@ int AOloopControl_scanGainBlock_cli()
     return 1; 
 }
 
-
-int AOloopControl_tuneWFSsync_cli()
-{
-  if(CLI_checkarg(1,3)==0)
-    {
-      AOloopControl_tuneWFSsync(LOOPNUMBER, data.cmdargtoken[1].val.string);
-      return 0;
-    }
-  else
-    return 1; 
-}
 
 
 int AOloopControl_setparam_cli()
@@ -776,16 +766,6 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].example,"aolautotune");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AutoTune()");
   data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"aolsyncwfs");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_tuneWFSsync_cli;
-  strcpy(data.cmd[data.NBcmd].info,"tune WFS modulation to camera speed");
-  strcpy(data.cmd[data.NBcmd].syntax,"<out image>");
-  strcpy(data.cmd[data.NBcmd].example,"aolsyncwfs");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_tuneWFSsync(long loop, char *IDout_name)");
-  data.NBcmd++;
-
 
   strcpy(data.cmd[data.NBcmd].key,"aolset");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1515,100 +1495,102 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 int AOloopControl_InitializeMemory(int mode)
 {
-  int SM_fd;
-  struct stat file_stat;
-  int create = 0;
-  int result;
-  long loop;
+    int SM_fd;
+    struct stat file_stat;
+    int create = 0;
+    int result;
+    long loop;
 
-  SM_fd = open(AOconfname, O_RDWR);
-  if(SM_fd==-1)
+    SM_fd = open(AOconfname, O_RDWR);
+    if(SM_fd==-1)
     {
-      printf("Cannot import file -> creating file\n");
-      create = 1;
+        printf("Cannot import file -> creating file\n");
+        create = 1;
     }
-  else
+    else
     {
-      fstat(SM_fd, &file_stat);
-      printf("File %s size: %zd\n", AOconfname, file_stat.st_size);
-      if(file_stat.st_size!=sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol)
-	{
-	  printf("File size wrong -> recreating file\n");
-	  create = 1;
-	  close(SM_fd);
-	}
-    }
-  
-  if(create==1)
-    {
-      SM_fd = open(AOconfname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-	 
-      if (SM_fd == -1) {
-	perror("Error opening file for writing");
-	exit(0);
-      }
-
-      result = lseek(SM_fd, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol-1, SEEK_SET);
-      if (result == -1) {
-	close(SM_fd);
-	perror("Error calling lseek() to 'stretch' the file");
-	exit(0);
-      }
-      
-      result = write(SM_fd, "", 1);
-      if (result != 1) {
-	close(SM_fd);
-	perror("Error writing last byte of the file");
-	exit(0);
-      }
+        fstat(SM_fd, &file_stat);
+        printf("File %s size: %zd\n", AOconfname, file_stat.st_size);
+        if(file_stat.st_size!=sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol)
+        {
+            printf("File size wrong -> recreating file\n");
+            create = 1;
+            close(SM_fd);
+        }
     }
 
-  AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
-  if (AOconf == MAP_FAILED) {
-    close(SM_fd);
-    perror("Error mmapping the file");
-    exit(0);
-  }
-  
-  if((mode==0)||(create==1))
-  {
-	AOconf[loop].on = 0;
-	AOconf[loop].cnt = 0;	  
-	AOconf[loop].cntmax = 0;	  
-  }
-  
-  if(create==1)
+    if(create==1)
     {
-      for(loop=0; loop<NB_AOloopcontrol; loop++)
-	{
-	  AOconf[loop].init = 0;
-	  AOconf[loop].on = 0;
-	  AOconf[loop].cnt = 0;	  
-	  AOconf[loop].cntmax = 0;	  
-	  AOconf[loop].maxlimit = 0.3;
-	  AOconf[loop].mult = 1.00;
-	  AOconf[loop].gain = 0.0;
-	  AOconf[loop].framesAve = 1;
-	}
+        SM_fd = open(AOconfname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+
+        if (SM_fd == -1) {
+            perror("Error opening file for writing");
+            exit(0);
+        }
+
+        result = lseek(SM_fd, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol-1, SEEK_SET);
+        if (result == -1) {
+            close(SM_fd);
+            perror("Error calling lseek() to 'stretch' the file");
+            exit(0);
+        }
+
+        result = write(SM_fd, "", 1);
+        if (result != 1) {
+            close(SM_fd);
+            perror("Error writing last byte of the file");
+            exit(0);
+        }
     }
-  else
+
+    AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+    if (AOconf == MAP_FAILED) {
+        close(SM_fd);
+        perror("Error mmapping the file");
+        exit(0);
+    }
+
+    if((mode==0)||(create==1))
     {
-      for(loop=0; loop<NB_AOloopcontrol; loop++)
-	if(AOconf[loop].init == 1)
-	  {
-	    printf("LIST OF ACTIVE LOOPS:\n");
-	    printf("----- Loop %ld   (%s) ----------\n", loop, AOconf[loop].name);
-	    printf("  WFS:  %s  [%ld]  %ld x %ld\n", AOconf[loop].WFSname, aoconfID_WFS, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-	    printf("   DM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].DMname, aoconfID_DM, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
-	    printf("DM RM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].DMnameRM, aoconfID_DM, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
-	  }
+        AOconf[loop].on = 0;
+        AOconf[loop].cnt = 0;
+        AOconf[loop].cntmax = 0;
     }
-  
-  AOloopcontrol_meminit = 1;
+
+    if(create==1)
+    {
+        for(loop=0; loop<NB_AOloopcontrol; loop++)
+        {
+            AOconf[loop].init = 0;
+            AOconf[loop].on = 0;
+            AOconf[loop].cnt = 0;
+            AOconf[loop].cntmax = 0;
+            AOconf[loop].maxlimit = 0.3;
+            AOconf[loop].mult = 1.00;
+            AOconf[loop].gain = 0.0;
+            AOconf[loop].framesAve = 1;
+            AOconf[loop].NBMblocks = 3;
+        }
+    }
+    else
+    {
+        for(loop=0; loop<NB_AOloopcontrol; loop++)
+            if(AOconf[loop].init == 1)
+            {
+                printf("LIST OF ACTIVE LOOPS:\n");
+                printf("----- Loop %ld   (%s) ----------\n", loop, AOconf[loop].name);
+                printf("  WFS:  %s  [%ld]  %ld x %ld\n", AOconf[loop].WFSname, aoconfID_WFS, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+                printf("   DM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].DMname, aoconfID_DM, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+                printf("DM RM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].DMnameRM, aoconfID_DM, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+            }
+    }
+
+    AOloopcontrol_meminit = 1;
 
 
-  return 0;
+    return 0;
 }
+
 
 
 
@@ -2678,6 +2660,8 @@ int set_DM_modes(long loop)
 
         data.image[aoconfID_DM].md[0].write = 1;
         memcpy (data.image[aoconfID_DM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        if(data.image[aoconfID_DM].sem == 1)
+            sem_post(data.image[aoconfID_DM].semptr);
         data.image[aoconfID_DM].md[0].cnt0++;
         data.image[aoconfID_DM].md[0].write = 0;
 
@@ -2685,16 +2669,17 @@ int set_DM_modes(long loop)
     }
     else
     {
-		#ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1);
-        AOconf[loop].status = 15; 
+#ifdef HAVE_CUDA
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, 0);
+        AOconf[loop].status = 15;
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
-        #endif
+#endif
     }
     AOconf[loop].DMupdatecnt ++;
 
     return(0);
 }
+
 
 
 
@@ -3766,7 +3751,7 @@ int AOcompute(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0);
+        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0, 0);
 		AOconf[loop].status = 8; // execute  
         GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
@@ -3898,9 +3883,7 @@ int AOloopControl_run()
                 cnttest = data.image[aoconfID_DM].md[0].cnt0;
 				
 	
-                AOcompute(loop);
-	
-	
+                AOcompute(loop);	
 
 				AOconf[loop].status = 14; 
 
@@ -4907,187 +4890,6 @@ int AOloopControl_AutoTune()
 
 
 
-int AOloopControl_tuneWFSsync(long loop, char *IDout_name)
-{
-
-    char fname[2000];
-    long IDout, IDave;
-    long *sizearraytmp;
-
-
-
-    sizearraytmp = (long*) malloc(sizeof(long)*2);
-
-    if(AOloopcontrol_meminit==0)
-        AOloopControl_InitializeMemory(0);
-
-    sprintf(fname, "./conf/AOloop.conf");
-    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-
-    printf("Importing DM response matrix channel shared memory ...\n");
-    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
-
-    printf("Importing WFS camera image shared memory ... \n");
-    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
-
-
-
-
-    IDave = create_2Dimage_ID("imWFSave", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-    IDout = create_image_ID(IDout_name,  2, sizearraytmp, FLOAT, 1, 10);
-
-
-
-
-
-
-    free(sizearraytmp);
-
-
-
-
-  /*  FILE *fp;
-    long IDout;
-    long IDc;
-    long IDave;
-    long ii, jj, kk;
-    char fname[2000];
-    char command[2000];
-    long delay1us = 2000000; // delay after changing frequency modulation
-    long delay2us = 2000000; // delay after changing camera etime
-
-    long double rmsvalue;
-    long double avevalue;
-
-    long fmodulator; // [0.1 Hz]
-    long etimecam; // [us]
-
-    long fmodulator_start = 4000; // 400 Hz
-    long fmodulator_step = 100;
-    long fmodulator_NBstep = 20;
-
-    long etimecam_start = 600; // [us]
-    long etimecam_step = 20;
-    long etimecam_NBstep = 20;
-
-    int r;
-    long i, j;
-
-    long NbAve = 2000; /// number of frames acquired
-
-
-
-    if(AOloopcontrol_meminit==0)
-        AOloopControl_InitializeMemory(0);
-
-    sprintf(fname, "AOloop%ld.conf", LOOPNUMBER);
-    AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-
-    printf("Importing DM response matrix channel shared memory ...\n");
-    aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
-
-    printf("Importing WFS camera image shared memory ... \n");
-    aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
-
-
-
-
-
-
-    //	fp = fopen("WFSsync.log", "w");
-    //	fclose(fp);
-
-    IDc = create_3Dimage_ID("imWFScube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NbAve);
-    IDave = create_2Dimage_ID("imWFSave", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-
-    IDout = create_2Dimage_ID(IDout_name, fmodulator_NBstep, etimecam_NBstep);
-    for(i=0; i<etimecam_NBstep; i++)
-    {
-        etimecam = etimecam_start + i*etimecam_step;
-
-        sprintf(command, "zylaetime %f", 0.000570);
-        printf("command : %s\n", command);
-        r = system(command);
-        usleep(delay2us);
-
-        sprintf(command, "zylaetime %f", 1.0e-6*etimecam);
-        printf("command : %s\n", command);
-        r = system(command);
-        usleep(delay2us);
-
-
-        for(j=0; j<fmodulator_NBstep; j++)
-        {
-
-            fmodulator = fmodulator_start + j*fmodulator_step;
-            sprintf(command, "modulator frequency %f", 1.0e-7*fmodulator);
-            printf("command : %s\n", command);
-            r = system(command);
-            usleep(delay1us);
-
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDave].array.F[ii] = 0.0;
-
-            /// start collecting frames
-            for(kk=0; kk<NbAve; kk++)
-            {
-                Average_cam_frames(loop, 1);
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] = 1.0*data.image[aoconfID_WFS].array.U[ii];
-                    data.image[IDave].array.F[ii] += 1.0*data.image[aoconfID_WFS].array.U[ii];
-                }
-            }
-
-            /// processing
-            avevalue = 0.0;
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            {
-                data.image[IDave].array.F[ii] /= NbAve;
-                avevalue += data.image[IDave].array.F[ii];
-            }
-            rmsvalue = 0.0;
-            for(kk=0; kk<NbAve; kk++)
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii] -= data.image[IDave].array.F[ii];
-                    rmsvalue += data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDc].array.F[kk*AOconf[loop].sizeWFS+ii];
-                }
-            rmsvalue = sqrt(rmsvalue/AOconf[loop].sizeWFS/NbAve);
-            rmsvalue /= avevalue;
-            data.image[IDout].array.F[j*etimecam_NBstep+i] = (float) rmsvalue;
-            printf("%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
-            fflush(stdout);
-            fp = fopen("WFSsync.log", "a");
-            fprintf(fp, "%8.1f   %8.6f   %g   %g\n", 0.1*fmodulator, 1.0e-6*etimecam, (double) avevalue, (double) rmsvalue);
-            fclose(fp);
-
-			printf("saving cube ... ");
-			fflush(stdout);
-            save_fits(IDout_name, "!WFSsync_out.fits");
-			printf("\n");
-			fflush(stdout);
-        }
-    }
-    save_fits("imWFScube", "!imWFScube.fits");
-
-
-*/
-    return(0);
-}
-
-
-
-
-
-int AOloopControl_WFScamPEcorr_tryPhaseOffset()
-{
-
-
-	return(0);
-}
-
-
 int AOloopControl_setparam(long loop, char *key, double value)
 {
 	int pOK=0;
@@ -5096,7 +4898,7 @@ int AOloopControl_setparam(long loop, char *key, double value)
 	strcpy(kstring, "PEperiod");
 	if((strncmp (key, kstring, strlen(kstring)) == 0)&&(pOK==0))
 	{
-		AOconf[loop].WFScamPEcorr_period = (long double) value;
+		//AOconf[loop].WFScamPEcorr_period = (long double) value;
 		pOK = 1;
 	}
 			

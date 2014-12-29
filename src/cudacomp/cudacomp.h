@@ -42,6 +42,16 @@ typedef struct
     int M;
     int N;	
 
+
+	// synchronization 
+	int sem; // if sem = 1, wait for semaphore to perform computation
+	 // one semaphore per thread
+	sem_t **semptr1; // command to start matrix multiplication (input)
+	sem_t **semptr2; // memory transfer to device completed (output) 
+	sem_t **semptr3; // computation done (output)
+	sem_t **semptr4; // command to start transfer to host (input)
+	sem_t **semptr5; // output transfer to host completed (output)
+	
     // computer memory (host)
     float *cMat;
     float **cMat_part;
@@ -70,6 +80,7 @@ typedef struct
 
     int orientation;
     long IDout;
+    
 
 } GPUMATMULTCONF;
 #endif
@@ -82,7 +93,7 @@ int CUDACOMP_init();
 #ifdef HAVE_CUDA
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N);
 int GPUloadCmat(int index);
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation);
+int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem);
 int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus);
 int GPU_loop_MultMat_free(int index);
 void *compute_function( void *ptr );

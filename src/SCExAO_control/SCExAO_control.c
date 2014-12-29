@@ -910,10 +910,10 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
 
 
-/** SAPHIRA image: process data cube into single frame 
- * 
+/** SAPHIRA image: process data cube into single frame
+ *
  * full linear regression, up to saturation level
- * 
+ *
  * */
 int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 {
@@ -930,13 +930,13 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     long cnt0, cnt1, cnt2;
     int SATURATION = 65534;
     long iter;
-	double eps = 1e-8;
-	long k1;
-	long IDintmp, IDsatmask, ID2dtmp;
-	unsigned short int pvu, vcnt, vaveku;
-	long vavevu;
-	float vavev, vavek;
-	
+    double eps = 1e-8;
+    long k1;
+    long IDintmp, IDsatmask, ID2dtmp;
+    unsigned short int pvu, vcnt, vaveku;
+    long vavevu;
+    float vavev, vavek;
+
 
     IDin = image_ID(IDinname);
 
@@ -953,11 +953,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
 
-	IDintmp = create_image_ID("intmp", 3, sizeoutarray, USHORT, 1, 0); // temporary buffer
-	IDsatmask = create_image_ID("satmask", 3, sizeoutarray, USHORT, 1, 0); // saturation mask	
+    IDintmp = create_image_ID("intmp", 3, sizeoutarray, USHORT, 1, 0); // temporary buffer
+    IDsatmask = create_image_ID("satmask", 3, sizeoutarray, USHORT, 1, 0); // saturation mask
     ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0); // intermediate resutl
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
-	COREMOD_MEMORY_image_set_createsem(IDoutname);
+    COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     if(data.image[IDin].sem == 0)
     {
@@ -982,67 +982,68 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
         k = data.image[IDin].md[0].cnt1;
         printf("%ld   slice %ld written [%ld] \n      ", iter, k, IDin);
         fflush(stdout);
-        
-         if(k == zsize-1)  // process cube
-         {
-			memcpy(data.image[IDintmp].array.U, data.image[IDin].array.U, sizeof(short)*xysize*zsize);
-			for(ii=0; ii<xysize; ii++)
-				{
-					k1 = 0;
-					v0 = 0.0;
-					v1 = 0.0;
-					vcnt = 0;
-					vaveku = 0;
-					vavevu = 0;
-					for(k1=0;k1<zsize;k1++)
-					{
-						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
-					//	printf("[%d %u] ", pvu, pvu);
-						if(pvu<SATURATION)
-							{
-								data.image[IDsatmask].array.U[k1*xysize+ii] = 1;
-								vavevu += pvu;
-								vaveku += k1;
-								vcnt++;
-							}
-						else
-							{
-								data.image[IDsatmask].array.U[k1*xysize+ii] = 0;
-							}
-					}
-					vavev = 1.0*vavevu/vcnt;
-					vavek = 1.0*vaveku/vcnt;
-					
-					for(k1=0;k1<zsize;k1++)
-					{
-						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
-						if(data.image[IDsatmask].array.U[k1*xysize+ii] == 1)
-						{
-							vk = 1.0*k1 - vavek;
-							vv = 1.0*pvu - vavev;
-							v0 += vk*vv;
-							v1 += vk*vk;		
-						}
-					}
-					data.image[ID2dtmp].array.F[ii] = v0/(v1+eps);
-					
-				}
-			
-			iter++;
+
+        if(k == zsize-1)  // process cube
+        {
+            memcpy(data.image[IDintmp].array.U, data.image[IDin].array.U, sizeof(short)*xysize*zsize);
+            for(ii=0; ii<xysize; ii++)
+            {
+                k1 = 0;
+                v0 = 0.0;
+                v1 = 0.0;
+                vcnt = 0;
+                vaveku = 0;
+                vavevu = 0;
+                for(k1=0; k1<zsize; k1++)
+                {
+                    pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+                    //	printf("[%d %u] ", pvu, pvu);
+                    if(pvu<SATURATION)
+                    {
+                        data.image[IDsatmask].array.U[k1*xysize+ii] = 1;
+                        vavevu += pvu;
+                        vaveku += k1;
+                        vcnt++;
+                    }
+                    else
+                    {
+                        data.image[IDsatmask].array.U[k1*xysize+ii] = 0;
+                    }
+                }
+                vavev = 1.0*vavevu/vcnt;
+                vavek = 1.0*vaveku/vcnt;
+
+                for(k1=0; k1<zsize; k1++)
+                {
+                    pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+                    if(data.image[IDsatmask].array.U[k1*xysize+ii] == 1)
+                    {
+                        vk = 1.0*k1 - vavek;
+                        vv = 1.0*pvu - vavev;
+                        v0 += vk*vv;
+                        v1 += vk*vk;
+                    }
+                }
+                data.image[ID2dtmp].array.F[ii] = v0/(v1+eps);
+
+            }
+
+            iter++;
             printf("\n CUBE COMPLETED -> 2D image ready\n");
             data.image[IDout].md[0].write = 1;
             memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
- if(data.image[IDout].sem == 1)
-		sem_post(data.image[IDout].semptr);
-		           data.image[IDout].md[0].cnt0 ++;
+            if(data.image[IDout].sem == 1)
+                sem_post(data.image[IDout].semptr);
+            data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
-		 }
-	}
-       
+        }
+    }
+
     free(sizeoutarray);
 
     return(IDout);
 }
+
 
 
 
