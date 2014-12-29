@@ -829,14 +829,14 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
 	// make configuration directory
 	r = system("mkdir -p ./conf/");
 
-    sprintf(fname, "./conf/AOloop.conf");
+ /*  sprintf(fname, "./conf/AOloop.conf");
 
     fp = fopen(fname, "w");
     fprintf(fp, "logsize         1000            number of consecutive entries in single log file\n");
     fprintf(fp, "logdir          ./\n");
     fprintf(fp, "NBMblocks	3		number of modes blocks\n");
     fclose(fp);
-    
+   */ 
     
     
     // LOOP NAME
