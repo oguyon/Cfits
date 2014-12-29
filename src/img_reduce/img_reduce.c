@@ -442,7 +442,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
     xysize = sizearray[0]*sizearray[1];
 
     IDdark = image_ID("dark"); // use if it exists
-
+	list_image_ID();
 
     IDout = image_ID(IDoutname);
     if(IDout==-1)
