@@ -495,7 +495,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
         {
          //printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
            //fflush(stdout);
-            data.image[IDout].array.F[badpixclean_array_indexout[k]] = 100; //badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
+            data.image[IDout].array.F[badpixclean_array_indexout[k]] = badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
             //printf("\n");
            //fflush(stdout);
         }
