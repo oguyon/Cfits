@@ -2118,6 +2118,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     char command[500];
     int CreateSMim;
     long ID1tmp, ID2tmp;
+    long ii;
 
 
     if(AOloopcontrol_meminit==0)
@@ -2361,9 +2362,20 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 }
 
 		// put modes into shared memory
-
-		memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
 		
+		switch (data.image[ID1tmp].md[0].atype) {
+			case FLOAT :
+				memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
+			break;
+			case DOUBLE :
+				for(ii=0;ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes; ii++)
+					data.image[aoconfID_DMmodes].array.F[ii] = data.image[ID1tmp].array.D[ii];
+			break;
+			default :
+				printf("ERROR: TYPE NOT RECOGNIZED FOR MODES\n");
+				exit(0);
+			break;
+		}
 		
 		delete_image_ID("tmp3Dim");
 	}
