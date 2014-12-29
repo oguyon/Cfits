@@ -1570,6 +1570,7 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].gain = 0.0;
             AOconf[loop].framesAve = 1;
             AOconf[loop].NBMblocks = 3;
+			AOconf[loop].GPUusesem = 1;
         }
     }
     else
@@ -3751,7 +3752,7 @@ int AOcompute(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0, 0);
+        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 		AOconf[loop].status = 8; // execute  
         GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif

@@ -490,7 +490,6 @@ int COREMOD_MEMORY_image_set_cnt1_cli()
 }
 
 
-
 int COREMOD_MEMORY_image_set_createsem_cli()
 {
 	if(CLI_checkarg(1,4)==0)

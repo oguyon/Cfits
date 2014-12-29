@@ -45,6 +45,7 @@ typedef struct
 
 	// synchronization 
 	int sem; // if sem = 1, wait for semaphore to perform computation
+	int gpuinit;
 	 // one semaphore per thread
 	sem_t **semptr1; // command to start matrix multiplication (input)
 	sem_t **semptr2; // memory transfer to device completed (output) 
