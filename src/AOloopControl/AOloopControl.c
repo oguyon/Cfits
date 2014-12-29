@@ -1306,15 +1306,22 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 
 	ID = load_fits("modesfreqcpa.fits", "modesfreqcpa");
-
+	
 	
 	CPAcoeff = (double*) malloc(sizeof(double)*m);
+	if(ID==-1)
+	{
+		for(k=0; k<m; k++)
+			CPAcoeff[k] = 0.0;
+	}
+	else
+	{
 	for(k=0; k<m; k++)
 	{
 		CPAcoeff[k] =  exp(-data.image[ID].array.F[k]*Beta);
 		printf("%5ld %5.3f %g\n", k, data.image[ID].array.F[k], CPAcoeff[k]);
 	}
-	
+	}
 	
     /* write matrix_D */
     for(k=0; k<m; k++)
@@ -2368,7 +2375,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 				memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
 			break;
 			case DOUBLE :
-				for(ii=0;ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes; ii++)
+				for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes; ii++)
 					data.image[aoconfID_DMmodes].array.F[ii] = data.image[ID1tmp].array.D[ii];
 			break;
 			default :
