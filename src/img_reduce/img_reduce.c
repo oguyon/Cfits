@@ -365,9 +365,11 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                         {
                             if((ii1>-1)&&(ii1<xsize)&&(jj1>-1)&&(jj1<ysize)&&(data.image[IDbadpix].array.F[jj1*xsize+ii1]>0.5))
                             {
+							if((ii1!=ii)||(jj1!=jj))
+							{
                                 nearbypix_array_index[k] = (long) (jj1*xsize+ii1);
                                 nearbypix_array_dist2[k] = (float) (1.0*(ii1-ii)*(ii1-ii)+1.0*(jj1-jj)*(jj1-jj));
-                                nearbypix_array_coeff[k] = pow(1.0/nearbypix_array_dist2[k],2.0);
+                                nearbypix_array_coeff[k] = pow(1.0/nearbypix_array_dist2[k],2.0);                                							
                                 coefftot += nearbypix_array_coeff[k];
                                 k++;
                                 if(k>xysize-1)
@@ -376,6 +378,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                                     exit(0);
                                 }
                             }
+							}
                         }
                     distmax++;
                 }
