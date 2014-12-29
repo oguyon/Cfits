@@ -996,6 +996,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 					for(k1=0;k1<zsize;k1++)
 					{
 						pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+						printf("[%d %u] ", pvu, pvu);
 						if(pvu<SATURATION)
 							{
 								data.image[IDsatmask].array.U[k1*xysize+ii] = 1;
