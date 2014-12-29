@@ -751,11 +751,11 @@ void *compute_function( void *ptr )
     {
         if(gpumatmultconf[index].sem==1)
         {
-            printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d ...\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d ...\n", index, device);
+            //fflush(stdout);
             sem_wait(gpumatmultconf[index].semptr1[device]);
-            printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d -> MOVING FORWARD\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d -> MOVING FORWARD\n", index, device);
+            //fflush(stdout);
         }
 
 
@@ -776,8 +776,8 @@ void *compute_function( void *ptr )
 
         if(gpumatmultconf[index].sem==1)
         {
-            printf("GPU SEMAPHORE :  POSTING SEM2     index %d   device %d\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  POSTING SEM2     index %d   device %d\n", index, device);
+            //fflush(stdout);
             sem_post(gpumatmultconf[index].semptr2[device]);
         }
 
@@ -803,8 +803,8 @@ void *compute_function( void *ptr )
 
         if(gpumatmultconf[index].sem==1)
         {
-            printf("GPU SEMAPHORE :  POSTING SEM3     index %d   device %d\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  POSTING SEM3     index %d   device %d\n", index, device);
+            //fflush(stdout);
             sem_post(gpumatmultconf[index].semptr3[device]);
         }
 
@@ -817,11 +817,11 @@ void *compute_function( void *ptr )
 
         if(gpumatmultconf[index].sem==1)
         {
-            printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d ...\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d ...\n", index, device);
+            //fflush(stdout);
             sem_wait(gpumatmultconf[index].semptr4[device]);
-            printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d -> MOVING FORWARD\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d -> MOVING FORWARD\n", index, device);
+            //fflush(stdout);
         }
 
 
@@ -843,8 +843,8 @@ void *compute_function( void *ptr )
 
         if(gpumatmultconf[index].sem==1)
         {
-            printf("GPU SEMAPHORE :  POSTING SEM5     index %d   device %d\n", index, device);
-            fflush(stdout);
+            //printf("GPU SEMAPHORE :  POSTING SEM5     index %d   device %d\n", index, device);
+            //fflush(stdout);
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
         iter++;
