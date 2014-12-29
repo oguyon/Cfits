@@ -94,7 +94,7 @@ typedef struct
     long long RMSmodesCumulcnt;
 
     // logs
-    char logdir[80];
+/*    char logdir[80];
     int logon; // 1 if log is on, 0 if off
     long logsize;  // # of entries per log
     long IDlog0;  // image identifyer for log file #1
@@ -103,7 +103,7 @@ typedef struct
     int logfnb; // current log file number (0 or 1)
     char userLOGstring[80];
     long timeorigin_sec;
-
+*/
 } AOLOOPCONTROL_CONF;
 
 

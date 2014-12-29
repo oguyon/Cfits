@@ -592,7 +592,7 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loopreset()");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"aollogon");
+/*  strcpy(data.cmd[data.NBcmd].key,"aollogon");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_logon;
   strcpy(data.cmd[data.NBcmd].info,"turn log on");
@@ -609,6 +609,7 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].example,"aollogoff");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_logoff()");
   data.NBcmd++;
+  */
   
   strcpy(data.cmd[data.NBcmd].key,"aolsetgain");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -2489,7 +2490,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
     // Allocate / create logging data files/memory
-    if(read_config_parameter(config_fname, "logdir", content)==0)
+ /*   if(read_config_parameter(config_fname, "logdir", content)==0)
     {
         printf("parameter logdir missing\n");
         exit(0);
@@ -2500,12 +2501,13 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         printf("parameter logsize missing\n");
         exit(0);
     }
-    AOconf[loop].logsize = atol(content);
+    AOconf[loop].logsize = atol(content);*/
     // time [s]       (1)
     // gains          ( AOconf[loop].NBDMmodes )
     // ID_cmd_modes   ( AOconf[loop].NBDMmodes )
     // ID_cmd1_modes  ( AOconf[loop].NBDMmodes )
-    sizearray[0] = 1+3*AOconf[loop].NBDMmodes;
+
+/*    sizearray[0] = 1+3*AOconf[loop].NBDMmodes;
     sizearray[1] = AOconf[loop].logsize;
     sprintf(name, "loop%ldlog0", loop);
     aoconfIDlog0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
@@ -2526,13 +2528,13 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     data.image[ID].kw[kw].type = 'L';
     data.image[ID].kw[kw].value.numl = 0;
     strcpy(data.image[ID].kw[kw].comment, "time offset [sec]");
+*/
 
 
-
-    AOconf[loop].logcnt = 0;
+/*    AOconf[loop].logcnt = 0;
     AOconf[loop].logfnb = 0;
     strcpy(AOconf[loop].userLOGstring, "");
-
+*/
     // AOconf[loop].ID_DMmodes = AOloopControl_MakeDMModes(loop, 5, name);
 
     printf("%ld modes\n", AOconf[loop].NBDMmodes);
@@ -3290,7 +3292,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 	printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
-	exit(0);
+	
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -3887,7 +3889,7 @@ int AOloopControl_run()
                     set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
 	
                 AOconf[loop].status = 20; //  LOGGING, part 1
-
+/*
                 clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
                 AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
 
@@ -3916,10 +3918,10 @@ int AOloopControl_run()
                     data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd_modes].array.F[m];
                     j++;
                 }
-
+*/
 
                 AOconf[loop].status = 21; //  (13->) LOGGING, part 2
-
+/*
                 AOconf[loop].logcnt++;
                 if(AOconf[loop].logcnt==AOconf[loop].logsize)
                 {
@@ -3946,7 +3948,7 @@ int AOloopControl_run()
                 }
                 if(AOconf[loop].logfnb == 2)
                     AOconf[loop].logfnb = 0;
-
+*/
                 AOconf[loop].cnt++;
 
                 if(AOconf[loop].cnt == AOconf[loop].cntmax)
@@ -3985,10 +3987,12 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     else
         printw("loop is OFF    ");
 
-    if(AOconf[loop].logon == 1)
+  /*  if(AOconf[loop].logon == 1)
         printw("log is ON   ");
     else
         printw("log is OFF  ");
+
+*/
 
 
     printw("STATUS = %d  ", AOconf[loop].status);
@@ -4317,14 +4321,17 @@ int AOloopControl_statusStats()
 int AOloopControl_showparams(long loop)
 {
   printf("loop number %ld\n", loop);
+
   if(AOconf[loop].on == 1)
     printf("loop is ON\n");
   else
     printf("loop is OFF\n");
-  if(AOconf[loop].logon == 1)
+
+/*  if(AOconf[loop].logon == 1)
     printf("log is ON\n");
   else
-    printf("log is OFF\n");
+    printf("log is OFF\n");*/
+    
   printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
 
   return 0;
@@ -4436,7 +4443,7 @@ int AOloopControl_loopreset()
 
 
 
-
+/*
 int AOloopControl_logon()
 {
   if(AOloopcontrol_meminit==0)
@@ -4447,7 +4454,9 @@ int AOloopControl_logon()
 
   return 0;
 }
+*/
 
+/*
 int AOloopControl_logoff()
 {
   if(AOloopcontrol_meminit==0)
@@ -4458,6 +4467,7 @@ int AOloopControl_logoff()
 
   return 0;
 }
+*/
 
 int AOloopControl_setgain(float gain)
 {
