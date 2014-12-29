@@ -95,11 +95,11 @@ typedef struct {
 
 //int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)
 
-int IMAGE_FORMAT_2Dim_to_ASCII_cli()
+int IMAGE_FORMAT_im_to_ASCII_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
-      IMAGE_FORMAT_2Dim_to_ASCII(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      IMAGE_FORMAT_im_to_ASCII(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
       return 0;
     }
   else
@@ -183,11 +183,11 @@ int init_image_format()
   
   strcpy(data.cmd[data.NBcmd].key,"im2ascii");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_2Dim_to_ASCII_cli;
-  strcpy(data.cmd[data.NBcmd].info,"convert 2D image file to ASCII");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input 2D image> <output ASCII file>");
-  strcpy(data.cmd[data.NBcmd].example,"im2ascii im.fits im.txt");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)");
+  data.cmd[data.NBcmd].fp = IMAGE_FORMAT_im_to_ASCII_cli;
+  strcpy(data.cmd[data.NBcmd].info,"convert image file to ASCII");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output ASCII file>");
+  strcpy(data.cmd[data.NBcmd].example,"im2ascii im im.txt");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int IMAGE_FORMAT_im_to_ASCII(char *IDname, char *fname)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"cr2tofits");
@@ -254,31 +254,68 @@ int init_image_format()
 
 
 
-int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)
+int IMAGE_FORMAT_im_to_ASCII(char *IDname, char *foutname)
 {
-	long ii, jj;
-	long ID;
-	FILE *fp;
+    long ii;
+    long k;
+    long ID;
+    FILE *fpout;
+    long naxis;
+    long *coord;
+    long npix;
+    int kOK;
 	
-	ID = image_ID(IDname);
-	
-	fp = fopen(fname, "w");
-	for(ii=0;ii<data.image[ID].md[0].size[0];ii++)
-		for(jj=0;jj<data.image[ID].md[0].size[1];jj++)
-		{
-			switch(data.image[ID].md[0].atype){
-				case FLOAT:
-				fprintf(fp, "%5ld %5ld %.6g\n", ii, jj, data.image[ID].array.F[jj*data.image[ID].md[0].size[0]+ii]);
-				break;
-				case DOUBLE:
-				fprintf(fp, "%5ld %5ld %.6g\n", ii, jj, data.image[ID].array.D[jj*data.image[ID].md[0].size[0]+ii]);
-				break;
-			}
-		}
-	fclose(fp);
-	
-	return 0;
+    ID = image_ID(IDname);
+    naxis = data.image[ID].md[0].naxis;
+    coord = (long*) malloc(sizeof(long)*naxis);
+    npix = 1;
+    for(k=0; k<naxis; k++)
+    {
+        npix *= data.image[ID].md[0].size[k];
+        coord[k] = 0;
+    }
+
+    fpout = fopen(foutname, "w");
+
+    for(ii=0; ii<npix; ii++)
+    {
+        for(k=0; k<naxis; k++)
+            fprintf(fpout, "%4ld ", coord[k]);
+        switch ( data.image[ID].md[0].atype ) {
+        case CHAR:
+            fprintf(fpout, " %5d\n", data.image[ID].array.C[ii]);
+            break;
+        case INT:
+            fprintf(fpout, " %5d\n", data.image[ID].array.I[ii]);
+            break;
+        case FLOAT:
+            fprintf(fpout, " %f\n", data.image[ID].array.F[ii]);
+            break;
+        case DOUBLE:
+            fprintf(fpout, " %lf\n", data.image[ID].array.D[ii]);
+            break;
+        }
+        coord[0]++;
+
+        k = 0;
+        kOK = 0;
+        while((kOK==0)&&(k<naxis))
+        {
+            if(coord[k]==data.image[ID].md[0].size[k])
+                {
+					coord[k] = 0;
+					coord[k+1]++;
+				}
+            else
+                kOK = 1;
+            k++;
+        }
+    }
+    fclose(fpout);
+
+    return 0;
 }
+
 
 
 

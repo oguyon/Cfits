@@ -391,9 +391,9 @@ static yyconst flex_int16_t yy_accept[105] =
        23,   23,   23,   23,   23,   23,    2,   23,   23,   23,
        23,   23,    4,    5,   23,   23,   23,   23,   23,    7,
        23,    3,   23,    8,   23,   15,   14,    9,   23,   11,
-       12,   23,   20,   23,   19,   18,   22,   10,   23,   17,
+       12,   23,   20,   23,   19,   18,   22,   10,   23,   16,
 
-       13,   21,   16,    0
+       13,   21,   17,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -975,11 +975,11 @@ return TKFUNC_d_d;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 121 "calc_flex.l"
+#line 124 "calc_flex.l"
 {
 if(data.Debug>0){printf("Found function %s\n", yytext);} 
-yylval.fnctptr = trunc;
-return TKFUNC_d_d; 
+yylval.fnctptr = atan2;
+return TKFUNC_dd_d; 
 }
 	YY_BREAK
 case 17:
@@ -987,8 +987,8 @@ YY_RULE_SETUP
 #line 131 "calc_flex.l"
 {
 if(data.Debug>0){printf("Found function %s\n", yytext);} 
-yylval.fnctptr = atan2;
-return TKFUNC_dd_d; 
+yylval.fnctptr = Ptrunc;
+return TKFUNC_ddd_d; 
 }
 	YY_BREAK
 case 18:

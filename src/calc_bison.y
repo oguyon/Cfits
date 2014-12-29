@@ -15,6 +15,10 @@
 extern DATA data;
 
 
+// NOTATIONS
+// d: double
+// im: image
+
  char calctmpimname[200];
 
   %}
@@ -156,7 +160,9 @@ exps:    TKNVAR         {$$ = strdup($1);        data.cmdargtoken[data.cmdNBarg]
 | expl '/' exps      {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstdiv($3,(double) $1, calctmpimname); $$=strdup(calctmpimname); if(data.Debug>0){printf("long - image\n");}}
 | exps '^' expl      {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstpow($1,(double) $3, calctmpimname); $$=strdup(calctmpimname); if(data.Debug>0){printf("image^long\n");}}
 | exps '^' expd      {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_cstpow($1,(double) $3, calctmpimname); $$=strdup(calctmpimname); if(data.Debug>0){printf("image^double\n");}}
-| TKFUNC_d_d exps ')' {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_function_d_d($2, calctmpimname, $1); $$=strdup(calctmpimname); if(data.Debug>0){printf("double_func(double)\n");}}
+| TKFUNC_d_d exps ')'           {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_function_im_im__d_d($2, calctmpimname, $1); $$=strdup(calctmpimname); if(data.Debug>0){printf("double_func(double)\n");}}
+| TKFUNC_dd_d exps ',' expd ')' {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_function_imd_im__dd_d($2, (double) $4, calctmpimname, $1); $$=strdup(calctmpimname); if(data.Debug>0){printf("double_func(double, double)\n");}}
+| TKFUNC_ddd_d exps ',' expd ',' expd ')' {sprintf(calctmpimname,"_tmpcalc%ld",data.calctmp_imindex); data.calctmp_imindex++; arith_image_function_imdd_im__ddd_d($2, (double) $4, (double) $6, calctmpimname, $1); $$=strdup(calctmpimname); if(data.Debug>0){printf("double_func(double, double, double)\n");}}
 | '(' exps ')'         { $$ = strdup($2);                         }
 ;
 

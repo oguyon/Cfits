@@ -112,18 +112,16 @@ int arith_image_tanh_inplace(char *ID_name);
 
 
 
-
+/* Functions for bison / flex    */ 
+double Ptrunc(double a, double b, double c);
+int arith_image_function_im_im__d_d(char *ID_name, char *ID_out, double (*pt2function)(double));
+int arith_image_function_imd_im__dd_d(char *ID_name, double v0, char *ID_out, double (*pt2function)(double, double));
+int arith_image_function_imdd_im__ddd_d(char *ID_name, double v0, double v1, char *ID_out, double (*pt2function)(double, double, double));
 
 
 /* ------------------------------------------------------------------------- */
-/* image, image  -> image                                                    */
+/* predefined functions    image, image  -> image                                                    */
 /* ------------------------------------------------------------------------- */
-
-
-int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(double));
-
-
-
 
 
 int arith_image_fmod_byID(long ID1, long ID2, long IDout);
@@ -164,6 +162,12 @@ int arith_image_mult_inplace(char *ID1_name, char *ID2_name);
 int arith_image_div_inplace(char *ID1_name, char *ID2_name);
 int arith_image_minv_inplace(char *ID1_name, char *ID2_name);
 int arith_image_maxv_inplace(char *ID1_name, char *ID2_name);
+
+
+
+
+
+
 
 
 /* ------------------------------------------------------------------------- */

@@ -3289,8 +3289,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	double normcoeff, normcoeffcnt;
 
 
-
-
+	printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
+	exit(0);
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -3302,7 +3302,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 	fflush(stdout);
  
 	list_image_ID();
- 
+		
+	
  
 	printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);

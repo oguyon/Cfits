@@ -118,13 +118,6 @@ yylval.fnctptr = acos;
 return TKFUNC_d_d; 
 }
 
-"trunc(" {
-if(data.Debug>0){printf("Found function %s\n", yytext);} 
-yylval.fnctptr = trunc;
-return TKFUNC_d_d; 
-}
-
-
 
 
 
@@ -132,6 +125,13 @@ return TKFUNC_d_d;
 if(data.Debug>0){printf("Found function %s\n", yytext);} 
 yylval.fnctptr = atan2;
 return TKFUNC_dd_d; 
+}
+
+
+"trunc(" {
+if(data.Debug>0){printf("Found function %s\n", yytext);} 
+yylval.fnctptr = Ptrunc;
+return TKFUNC_ddd_d; 
 }
 
 

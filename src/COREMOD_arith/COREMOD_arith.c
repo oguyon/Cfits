@@ -1159,107 +1159,321 @@ long arith_image_dy(char *ID_name, char *IDout_name)
 
 
 /* ------------------------------------------------------------------------- */
+/* Functions for bison / flex                                                */
+/* im : image 													
+  d : double
+ 
+  function_<inputformat>_<outputformat>__<math function input>_<math function output> 
+  
+  examples:
+  function_imim__dd_d  : input is (image, image), applies double,double -> double function
+  
+  ------------------------------------------------------------------------- */
+
+
+int arith_image_function_im_im__d_d(char *ID_name, char *ID_out, double (*pt2function)(double))
+{
+    long ID;
+    long IDout;
+    long *naxes = NULL;
+    long naxis;
+    long ii;
+    long nelement;
+    int atype, atypeout;
+    long i;
+
+
+    if(data.Debug>0)
+    {
+        printf("arith_image_function_d_d  %s %s\n", ID_name, ID_out);
+        fflush(stdout);
+    }
+
+    ID = image_ID(ID_name);
+    atype = data.image[ID].md[0].atype;
+    naxis=data.image[ID].md[0].naxis;
+    naxes = (long*) malloc(sizeof(long)*naxis);
+    if(naxes==NULL)
+    {
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
+    }
+
+
+    for(i=0; i<naxis; i++)
+    {
+        naxes[i] = data.image[ID].md[0].size[i];
+    }
+
+
+    atypeout = FLOAT;
+    if(atype==DOUBLE)
+        atypeout = DOUBLE;
+
+    IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
+    free(naxes);
+
+    nelement = data.image[ID].md[0].nelement;
+
+
+# ifdef _OPENMP
+    #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+    {
+# endif
+
+
+        if(atype==CHAR)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.C[ii]));
+        }
+        if(atype==INT)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.I[ii]));
+        }
+        if(atype==FLOAT)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.F[ii]));
+        }
+        if(atype==DOUBLE)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.D[ii] = pt2function(data.image[ID].array.D[ii]);
+        }
+# ifdef _OPENMP
+    }
+# endif
+
+
+    if(data.Debug>0)
+    {
+        printf("arith_image_function_d_d  DONE\n");
+        fflush(stdout);
+    }
+
+
+    return(0);
+}
+
+
+
+
+
+int arith_image_function_imd_im__dd_d(char *ID_name, double v0, char *ID_out, double (*pt2function)(double, double))
+{
+    long ID;
+    long IDout;
+    long *naxes = NULL;
+    long naxis;
+    long ii;
+    long nelement;
+    int atype, atypeout;
+    long i;
+
+
+
+    ID = image_ID(ID_name);
+    atype = data.image[ID].md[0].atype;
+    naxis=data.image[ID].md[0].naxis;
+    naxes = (long*) malloc(sizeof(long)*naxis);
+    if(naxes==NULL)
+    {
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
+    }
+
+
+    for(i=0; i<naxis; i++)
+    {
+        naxes[i] = data.image[ID].md[0].size[i];
+    }
+
+
+    atypeout = FLOAT;
+    if(atype==DOUBLE)
+        atypeout = DOUBLE;
+
+    IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
+    free(naxes);
+
+    nelement = data.image[ID].md[0].nelement;
+
+
+# ifdef _OPENMP
+    #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+    {
+# endif
+
+
+        if(atype==CHAR)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.C[ii]), v0);
+        }
+        if(atype==INT)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.I[ii]), v0);
+        }
+        if(atype==FLOAT)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.F[ii]), v0);
+        }
+        if(atype==DOUBLE)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.D[ii] = pt2function(data.image[ID].array.D[ii], v0);
+        }
+# ifdef _OPENMP
+    }
+# endif
+
+
+    if(data.Debug>0)
+    {
+        printf("arith_image_function_d_d  DONE\n");
+        fflush(stdout);
+    }
+
+
+    return(0);
+}
+
+
+
+
+int arith_image_function_imdd_im__ddd_d(char *ID_name, double v0, double v1, char *ID_out, double (*pt2function)(double, double, double))
+{
+    long ID;
+    long IDout;
+    long *naxes = NULL;
+    long naxis;
+    long ii;
+    long nelement;
+    int atype, atypeout;
+    long i;
+
+
+
+    ID = image_ID(ID_name);
+    atype = data.image[ID].md[0].atype;
+    naxis=data.image[ID].md[0].naxis;
+    naxes = (long*) malloc(sizeof(long)*naxis);
+    if(naxes==NULL)
+    {
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
+    }
+
+
+    for(i=0; i<naxis; i++)
+    {
+        naxes[i] = data.image[ID].md[0].size[i];
+    }
+
+
+    atypeout = FLOAT;
+    if(atype==DOUBLE)
+        atypeout = DOUBLE;
+
+    IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
+    free(naxes);
+
+    nelement = data.image[ID].md[0].nelement;
+
+
+# ifdef _OPENMP
+    #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
+    {
+# endif
+
+
+        if(atype==CHAR)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.C[ii]), v0, v1);
+        }
+        if(atype==INT)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.I[ii]), v0, v1);
+        }
+        if(atype==FLOAT)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.F[ii]), v0, v1);
+        }
+        if(atype==DOUBLE)
+        {
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for (ii = 0; ii < nelement; ii++)
+                data.image[IDout].array.D[ii] = pt2function(data.image[ID].array.D[ii], v0, v1);
+        }
+# ifdef _OPENMP
+    }
+# endif
+
+
+    if(data.Debug>0)
+    {
+        printf("arith_image_function_d_d  DONE\n");
+        fflush(stdout);
+    }
+
+
+    return(0);
+}
+
+
+
+
+
+
+
+
+
+
+/* ------------------------------------------------------------------------- */
 /* image  -> image                                                           */
 /* ------------------------------------------------------------------------- */
-
-
-int arith_image_function_d_d(char *ID_name, char *ID_out, double (*pt2function)(double))
-{
-  long ID;
-  long IDout;
-  long *naxes = NULL;
-  long naxis;
-  long ii;
-  long nelement;
-  int atype, atypeout;
-  long i;
-
-
-  if(data.Debug>0)
-    {
-      printf("arith_image_function_d_d  %s %s\n", ID_name, ID_out);
-      fflush(stdout);
-    }
-
-  ID = image_ID(ID_name);
-  atype = data.image[ID].md[0].atype;
-  naxis=data.image[ID].md[0].naxis;
-  naxes = (long*) malloc(sizeof(long)*naxis);
-  if(naxes==NULL)
-     {
-       printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-       exit(0);
-     }
-
-
-  for(i=0;i<naxis;i++)
-    {
-      naxes[i] = data.image[ID].md[0].size[i];
-    }
-  
-
-  atypeout = FLOAT;
-  if(atype==DOUBLE)
-    atypeout = DOUBLE;
-
-  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
-  free(naxes);
-
-  nelement = data.image[ID].md[0].nelement;
- 
- 
-  # ifdef _OPENMP
-  #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) 
-  {
-  # endif
-
-
-  if(atype==CHAR)
-    {
-      # ifdef _OPENMP
-      #pragma omp for
-      # endif
-      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.C[ii]));
-    }
-  if(atype==INT)
-    {
-      # ifdef _OPENMP
-      #pragma omp for
-      # endif
-      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.I[ii]));
-    }
-  if(atype==FLOAT)
-    {
-      # ifdef _OPENMP
-      #pragma omp for
-      # endif
-      for (ii = 0; ii < nelement; ii++)
-      	data.image[IDout].array.F[ii] = (float) pt2function((double) (data.image[ID].array.F[ii]));
-    }
-  if(atype==DOUBLE)
-    {
-      # ifdef _OPENMP
-      #pragma omp for
-      # endif
-      for (ii = 0; ii < nelement; ii++)
-	data.image[IDout].array.D[ii] = pt2function(data.image[ID].array.D[ii]);
-    }
-  # ifdef _OPENMP
-  }
-  # endif
-
-
-  if(data.Debug>0)
-    {
-      printf("arith_image_function_d_d  DONE\n");
-      fflush(stdout);
-    }
-
-
-  return(0);
-}
 
 
 
@@ -2802,7 +3016,7 @@ int arith_image_function_1ff_1_inplace_byID(long ID, double f1, double f2, doubl
 
 
 double Ptrunc(double a, double b, double c) {double value; value=a; if(a<b){value=b;}; if(a>c){value=c;}; return(value);}
-
+ 
 int arith_image_trunc(char *ID_name, double f1, double f2, char *ID_out){ arith_image_function_1ff_1(ID_name, f1, f2, ID_out, &Ptrunc); return(0);}
 
 int arith_image_trunc_inplace(char *ID_name, double f1, double f2) { arith_image_function_1ff_1_inplace(ID_name,f1,f2,&Ptrunc); return(0);}
