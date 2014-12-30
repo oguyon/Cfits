@@ -550,7 +550,7 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 {
 	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
     {
-		COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+		COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
       return 0;
     }
   else
