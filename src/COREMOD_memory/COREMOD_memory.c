@@ -548,9 +548,9 @@ int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 
 int COREMOD_MEMORY_image_NETWORKreceive_cli()
 {
-	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
     {
-		COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+		COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
       return 0;
     }
   else
@@ -840,9 +840,9 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
   strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network");
-  strcpy(data.cmd[data.NBcmd].syntax,"<IP addr> <port [long]> <mode [int]>");
-  strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 127.0.0.1 8888 0");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(char *IPaddr, int port, int mode)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]>");
+  strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)");
   data.NBcmd++;
  
  
@@ -3845,7 +3845,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
 
 
-long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode)
+long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 {
     struct sockaddr_in sock_server, sock_client;
     int fds_server, fds_client;

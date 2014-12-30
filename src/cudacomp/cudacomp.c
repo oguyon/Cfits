@@ -579,6 +579,8 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     int ptn;
     int statustot;
 
+	*status = *status + 1;
+
     if(index==0) /// main CM multiplication loop
     {
         //	gpumatmultconf[index].NBstreams = 6;
@@ -591,7 +593,6 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
             }
     }
 
-    *status = *status + 1;
 
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
@@ -644,10 +645,10 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
 
-    *status = *status + 1;
-
 
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
+ 
+   *status = *status + 1;
 
     return(0);
 }

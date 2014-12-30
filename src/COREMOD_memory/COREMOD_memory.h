@@ -157,7 +157,7 @@ long COREMOD_MEMORY_image_set_semwait_OR_2(char *IDname1, char *IDname2); // wai
 long COREMOD_MEMORY_image_set_semflush(char *IDname);
 
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode);
-long COREMOD_MEMORY_image_NETWORKreceive(char *IDaddr, int port, int mode);
+long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
 
 
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir);
