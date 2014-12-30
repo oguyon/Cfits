@@ -3893,7 +3893,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     //bind socket to port
     if( bind(fds_server , (struct sockaddr*)&sock_server, sizeof(sock_server) ) == -1)
     {
-        printf("ERROR binding socket\n");
+        printf("ERROR binding socket, port %d\n", port);
         exit(0);
     }
 
