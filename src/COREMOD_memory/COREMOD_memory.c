@@ -4387,7 +4387,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
         noframe = 0;
         wOK = 1;
         // printf("Entering wait loop   index = %ld %d\n", index, noframe);
-        while((cnt==data.image[ID].md[0].cnt0)&&(wOK==1)&&(logshimconf[0].on==1))
+        while((cnt==data.image[ID].md[0].cnt0)&&(wOK==1))
         {
             usleep(10);
             cntwait++;
@@ -4402,10 +4402,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
                     noframe = 1;
                 else
                     noframe = 0;
-                //		printf("Exiting wait loop - %ld %d\n", index, noframe);
             }
         }
-        //		printf("Entering main loop   index = %ld %d  [%d]\n", index, noframe, wOK);
 
 		
 
@@ -4419,7 +4417,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
             sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02d.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
         }
 
-
+		if(logshimconf[0].on == 1)
+		{
         if(wOK==1) // normal step: a frame has arrived
         {
             /// measure time
@@ -4495,7 +4494,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
 
             index++;
         }
-
+		}
 
 
         /// cases:
