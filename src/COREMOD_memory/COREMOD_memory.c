@@ -569,9 +569,6 @@ int COREMOD_MEMORY_logshim_printstatus_cli()
 	return 1;
 }
 
-//int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv);
-//int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv);
-
 
 int COREMOD_MEMORY_logshim_set_on_cli()
 {
@@ -4390,7 +4387,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
         noframe = 0;
         wOK = 1;
         // printf("Entering wait loop   index = %ld %d\n", index, noframe);
-        while((cnt==data.image[ID].md[0].cnt0)&&(wOK==1))
+        while((cnt==data.image[ID].md[0].cnt0)&&(wOK==1)&&(logshimconf[0].on==0))
         {
             usleep(10);
             cntwait++;
@@ -4410,6 +4407,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
         }
         //		printf("Entering main loop   index = %ld %d  [%d]\n", index, noframe, wOK);
 
+		
 
         if(index==0)
         {
