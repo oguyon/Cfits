@@ -3974,8 +3974,12 @@ int AOloopControl_run()
 */
                 AOconf[loop].cnt++;
 				
+				
+				
 				data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
 				data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
+				
+				
 				
                 if(AOconf[loop].cnt == AOconf[loop].cntmax)
                     AOconf[loop].on = 0;

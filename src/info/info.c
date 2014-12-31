@@ -197,290 +197,305 @@ int kbdhit(void)
 
 int print_header(char *str, char c)
 {
-  long n;
-  long i;
+    long n;
+    long i;
 
-  attron(A_BOLD);
-  n = strlen(str);
-  for(i=0;i<(wcol-n)/2;i++)
-    printw("%c",c);
-  printw("%s", str);
-  for(i=0;i<(wcol-n)/2-1;i++)
-    printw("%c",c);
-  printw("\n");
-  attroff(A_BOLD);
+    attron(A_BOLD);
+    n = strlen(str);
+    for(i=0; i<(wcol-n)/2; i++)
+        printw("%c",c);
+    printw("%s", str);
+    for(i=0; i<(wcol-n)/2-1; i++)
+        printw("%c",c);
+    printw("\n");
+    attroff(A_BOLD);
 
-  return(0);
+    return(0);
 }
 
 
 int printstatus(long ID)
 {
-  struct timespec tnow;
-  struct timespec tdiff;
-  double tdiffv;
-  char str[500];
+    struct timespec tnow;
+    struct timespec tdiff;
+    double tdiffv;
+    char str[500];
 
-  long j;
-  double frequ;
-  long NBhistopt = 20;
-  long *vcnt;
-  long h;
-  long cnt, i, ii;
+    long j;
+    double frequ;
+    long NBhistopt = 20;
+    long *vcnt;
+    long h;
+    long cnt, i, ii;
 
-  int customcolor;
+    int customcolor;
 
 
-  float minPV = 60000; 
-  float maxPV = 0;
-  double average;
-  double imtotal;
+    float minPV = 60000;
+    float maxPV = 0;
+    double average;
+    double imtotal;
 
-  int atype;
-  char line1[200];
+    int atype;
+    char line1[200];
 
-  double tmp;
-  double RMS = 0.0;
+    double tmp;
+    double RMS = 0.0;
 
-  double RMS01 = 0.0;
-  long vcntmax;
-int semval;
+    double RMS01 = 0.0;
+    long vcntmax;
+    int semval;
 
-  printw("%s\n", data.image[ID].md[0].name);
+    printw("%s\n", data.image[ID].md[0].name);
 
-  atype = data.image[ID].md[0].atype;
-  if(atype==CHAR)
-    printw("type:  CHAR               ");
-  if(atype==INT)
-     printw("type:  INT               ");
-  if(atype==FLOAT)
-    printw("type:  FLOAT              ");
-  if(atype==DOUBLE)
-    printw("type:  DOUBLE             ");
-  if(atype==COMPLEX_FLOAT)
-    printw("type:  COMPLEX_FLOAT      ");
-  if(atype==COMPLEX_DOUBLE)
-    printw("type:  COMPLEX_DOUBLE     ");
-  if(atype==USHORT)
-    printw("type:  USHORT             ");
-  
-  sprintf(str, "[ %6ld",data.image[ID].md[0].size[0]);
-  
-  for(j=1;j<data.image[ID].md[0].naxis;j++)
+    atype = data.image[ID].md[0].atype;
+    if(atype==CHAR)
+        printw("type:  CHAR               ");
+    if(atype==INT)
+        printw("type:  INT               ");
+    if(atype==FLOAT)
+        printw("type:  FLOAT              ");
+    if(atype==DOUBLE)
+        printw("type:  DOUBLE             ");
+    if(atype==COMPLEX_FLOAT)
+        printw("type:  COMPLEX_FLOAT      ");
+    if(atype==COMPLEX_DOUBLE)
+        printw("type:  COMPLEX_DOUBLE     ");
+    if(atype==USHORT)
+        printw("type:  USHORT             ");
+
+    sprintf(str, "[ %6ld",data.image[ID].md[0].size[0]);
+
+    for(j=1; j<data.image[ID].md[0].naxis; j++)
     {
-      sprintf(str, "%s x %6ld", str, data.image[ID].md[0].size[j]);
+        sprintf(str, "%s x %6ld", str, data.image[ID].md[0].size[j]);
     }
-  sprintf(str, "%s]", str);
-  
-  printw("%-28s\n", str);
+    sprintf(str, "%s]", str);
 
- 
-  /* printw("write  = %d\n", data.image[ID].md[0].write);
-  printw("status = %d\n", data.image[ID].md[0].status);
-  printw("cnt0   = %d\n", data.image[ID].md[0].cnt0);
-  printw("cnt1   = %d\n", data.image[ID].md[0].cnt1);
-  */
-  
+    printw("%-28s\n", str);
 
-  
-  clock_gettime(CLOCK_REALTIME, &tnow);
-  tdiff = info_time_diff(tlast, tnow);
-  clock_gettime(CLOCK_REALTIME, &tlast);
 
-  tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-  frequ = (data.image[ID].md[0].cnt0-cntlast)/tdiffv;
-  cntlast = data.image[ID].md[0].cnt0;
+    /* printw("write  = %d\n", data.image[ID].md[0].write);
+    printw("status = %d\n", data.image[ID].md[0].status);
+    printw("cnt0   = %d\n", data.image[ID].md[0].cnt0);
+    printw("cnt1   = %d\n", data.image[ID].md[0].cnt1);
+    */
 
 
 
-  printw("[write %d] ", data.image[ID].md[0].write);
-  printw("[status %2d] ", data.image[ID].md[0].status);
-  printw("[cnt0 %8d] [%6.2f Hz] ", data.image[ID].md[0].cnt0, frequ);
-  printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
-  if(data.image[ID].sem==1)
-  {
-	  sem_getvalue(data.image[ID].semptr, &semval);
-     printw("[Semaphore %3d] ", semval);
-	}
-	if(data.image[ID].sem1==1)
-  {
-	  sem_getvalue(data.image[ID].semptr1, &semval);
-     printw("[Semaphore 1 %3d] ", semval);
-	}
-	else
-	{
-		printw("[sem1=0]");
-	}
- if(data.image[ID].semlog==1)
-  {
-	  sem_getvalue(data.image[ID].semptrlog, &semval);
-     printw("[Semaphore log %3d] ", semval);
-	}
-else
-	{
-		printw("[semlog=0]");
-	}
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    tdiff = info_time_diff(tlast, tnow);
+    clock_gettime(CLOCK_REALTIME, &tlast);
+
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    frequ = (data.image[ID].md[0].cnt0-cntlast)/tdiffv;
+    cntlast = data.image[ID].md[0].cnt0;
 
 
-printw("\n");
 
-  average = arith_image_mean(data.image[ID].md[0].name);
-  imtotal = arith_image_total(data.image[ID].md[0].name);
-  printw("median %12g   ", arith_image_median(data.image[ID].md[0].name));
-  printw("average %12g    total = %12g\n", imtotal/data.image[ID].md[0].nelement, imtotal);
-  
-  // printw("  RMS var = %g\n", );
-
-
-  /*
-  tdifflast = time_diff(tlast, zylaconf[0].tend);
-  tdiffvlast = 1.0*tdifflast.tv_sec + 1.0e-9*tdifflast.tv_nsec;
-  
-  tlast = zylaconf[0].tend;
-  freq = (zyladata[0].cnt - cntlast)/tdiffvlast;
-  cntlast = zyladata[0].cnt;
-  */
-
-  /*  printw("\n");
-  printw("Run time = %9.3f s\n", tdiffv);
-  printw("Monitor refresh every %6.2f ms  (%5.1f Hz)", 1000.0*tdiffvlast, 1.0/tdiffvlast);
-  printw("\n");
-  printw("Main program PID : %ld\n", (long) zylaconf[0].pid_main);
-  printw("CLI PID          : %ld\n", (long) zylaconf[0].pid_prompt);
-  printw("\n");
-  
-  */
-  
-  /*
-  
-  switch (zylaconf[0].status) {
-  case 0:
-    attron(A_BLINK | A_BOLD | COLOR_PAIR(4));
-    print_header(" CAMERA IS OFF ", ' ');
-    attroff(A_BLINK | A_BOLD | COLOR_PAIR(4));
-    break;
-  case 1:
-    attron(A_BLINK | A_BOLD | COLOR_PAIR(4));
-    print_header(" SETTING UP ", ' ');
-    attroff(A_BLINK | A_BOLD | COLOR_PAIR(4));
-    break;
-  case 2:
-    attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
-    print_header(" CAMERA IS ACQUIRING ", ' ');
-    attroff(A_BLINK | A_BOLD | COLOR_PAIR(3));
-    break;
-  case 3:
-    attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
-    print_header(" PAUSED ", ' ');
-    attroff(A_BLINK | A_BOLD | COLOR_PAIR(3));
-    break;
-  }
-
-  printw("Exposure time    : %.2f ms\n", 1000.0*zylaconf[0].etime);
-  */
-  // printw("Frame %10ld   ", zyladata[0].cnt);
- 
-  /*  attron(A_BOLD);
-  printw("%6.2f Hz\n", freq);
-  attroff(A_BOLD);
-  */
-
- 
-  vcnt = (long*) malloc(sizeof(long)*NBhistopt);
-
-  if(atype==FLOAT)
+    printw("[write %d] ", data.image[ID].md[0].write);
+    printw("[status %2d] ", data.image[ID].md[0].status);
+    printw("[cnt0 %8d] [%6.2f Hz] ", data.image[ID].md[0].cnt0, frequ);
+    printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
+    if(data.image[ID].sem==1)
     {
-      minPV = data.image[ID].array.F[0];
-      maxPV = minPV;
-      
-      for(h=0;h<NBhistopt; h++)
-	vcnt[h] = 0;
-      for(ii=0;ii<data.image[ID].md[0].nelement;ii++)
-	{
-	  if(data.image[ID].array.F[ii]<minPV)
-	    minPV = data.image[ID].array.F[ii];
-	  if(data.image[ID].array.F[ii]>maxPV)
-	    maxPV = data.image[ID].array.F[ii];
-	  tmp = (1.0*data.image[ID].array.F[ii]-average);
-	  RMS += tmp*tmp;
-	  h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.F[ii]-minPV))/(maxPV-minPV));
-	  if((h>-1)&&(h<NBhistopt))
-	    vcnt[h]++;
-	}
+        sem_getvalue(data.image[ID].semptr, &semval);
+        printw("[Semaphore %3d] ", semval);
     }
-  
-  if(atype==USHORT)
+    if(data.image[ID].sem1==1)
     {
-      minPV = data.image[ID].array.U[0];
-      maxPV = minPV;
-      
-      for(h=0;h<NBhistopt; h++)
-	vcnt[h] = 0;
-      for(ii=0;ii<data.image[ID].md[0].nelement;ii++)
-	{
-	  if(data.image[ID].array.U[ii]<minPV)
-	    minPV = data.image[ID].array.U[ii];
-	  if(data.image[ID].array.U[ii]>maxPV)
-	    maxPV = data.image[ID].array.U[ii];
-	  tmp = (1.0*data.image[ID].array.U[ii]-average);
-	  RMS += tmp*tmp;
-	  h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.U[ii]-minPV))/(maxPV-minPV));
-	  if((h>-1)&&(h<NBhistopt))
-	    vcnt[h]++;
-	}
+        sem_getvalue(data.image[ID].semptr1, &semval);
+        printw("[Semaphore 1 %3d] ", semval);
     }
-  
-  
-
-  RMS = sqrt(RMS/data.image[ID].md[0].nelement);
-  RMS01 = 0.9*RMS01 + 0.1*RMS;
-
-  printw("RMS = %12.6g     ->  %12.6g\n", RMS, RMS01);
-
-  print_header(" PIXEL VALUES ", '-');
-  printw("min - max   :   %12.6e - %12.6e\n", minPV, maxPV);
- 
-  
-  /*PVrange = maxPV-minPV;
-  PVmid = 0.5*(maxPV+minPV);
-  minPV = PVmid-;
-  maxPV = 1.1*maxPV;
-  */ 
-
-  vcntmax = 0;
-  for(h=0;h<NBhistopt; h++)
-    if(vcnt[h]>vcntmax)
-      vcntmax = vcnt[h];
-  
-  
-  for(h=0;h<NBhistopt; h++)
+    else
     {
-      customcolor = 1;
-      if(h==NBhistopt-1)
-	customcolor = 2;
-      sprintf(line1, "[%12.4e - %12.4e] %7ld", (minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
-      
-      printw("%s", line1); //(minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
-      attron(COLOR_PAIR(customcolor));
-
-      cnt=0;
-      i = 0;
-      while((cnt<wcol-strlen(line1)-1)&&(i<vcnt[h]))
-	{
-	  printw(" ");
-	  i += (long) (vcntmax/(wcol-strlen(line1)))+1;
-	  cnt++;
-	}
-      attroff(COLOR_PAIR(customcolor));
-      printw("\n");
+        printw("[sem1=0]");
     }
-  
-  
-  free(vcnt);
-  
+    if(data.image[ID].semlog==1)
+    {
+        sem_getvalue(data.image[ID].semptrlog, &semval);
+        printw("[Semaphore log %3d] ", semval);
+    }
+    else
+    {
+        printw("[semlog=0]");
+    }
 
-  return(0);
+
+    printw("\n");
+
+    average = arith_image_mean(data.image[ID].md[0].name);
+    imtotal = arith_image_total(data.image[ID].md[0].name);
+    printw("median %12g   ", arith_image_median(data.image[ID].md[0].name));
+    printw("average %12g    total = %12g\n", imtotal/data.image[ID].md[0].nelement, imtotal);
+
+    // printw("  RMS var = %g\n", );
+
+
+    /*
+    tdifflast = time_diff(tlast, zylaconf[0].tend);
+    tdiffvlast = 1.0*tdifflast.tv_sec + 1.0e-9*tdifflast.tv_nsec;
+
+    tlast = zylaconf[0].tend;
+    freq = (zyladata[0].cnt - cntlast)/tdiffvlast;
+    cntlast = zyladata[0].cnt;
+    */
+
+    /*  printw("\n");
+    printw("Run time = %9.3f s\n", tdiffv);
+    printw("Monitor refresh every %6.2f ms  (%5.1f Hz)", 1000.0*tdiffvlast, 1.0/tdiffvlast);
+    printw("\n");
+    printw("Main program PID : %ld\n", (long) zylaconf[0].pid_main);
+    printw("CLI PID          : %ld\n", (long) zylaconf[0].pid_prompt);
+    printw("\n");
+
+    */
+
+    /*
+
+    switch (zylaconf[0].status) {
+    case 0:
+      attron(A_BLINK | A_BOLD | COLOR_PAIR(4));
+      print_header(" CAMERA IS OFF ", ' ');
+      attroff(A_BLINK | A_BOLD | COLOR_PAIR(4));
+      break;
+    case 1:
+      attron(A_BLINK | A_BOLD | COLOR_PAIR(4));
+      print_header(" SETTING UP ", ' ');
+      attroff(A_BLINK | A_BOLD | COLOR_PAIR(4));
+      break;
+    case 2:
+      attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
+      print_header(" CAMERA IS ACQUIRING ", ' ');
+      attroff(A_BLINK | A_BOLD | COLOR_PAIR(3));
+      break;
+    case 3:
+      attron(A_BLINK | A_BOLD | COLOR_PAIR(3));
+      print_header(" PAUSED ", ' ');
+      attroff(A_BLINK | A_BOLD | COLOR_PAIR(3));
+      break;
+    }
+
+    printw("Exposure time    : %.2f ms\n", 1000.0*zylaconf[0].etime);
+    */
+    // printw("Frame %10ld   ", zyladata[0].cnt);
+
+    /*  attron(A_BOLD);
+    printw("%6.2f Hz\n", freq);
+    attroff(A_BOLD);
+    */
+
+
+    vcnt = (long*) malloc(sizeof(long)*NBhistopt);
+
+    if(atype==FLOAT)
+    {
+        minPV = data.image[ID].array.F[0];
+        maxPV = minPV;
+
+        for(h=0; h<NBhistopt; h++)
+            vcnt[h] = 0;
+        for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
+        {
+            if(data.image[ID].array.F[ii]<minPV)
+                minPV = data.image[ID].array.F[ii];
+            if(data.image[ID].array.F[ii]>maxPV)
+                maxPV = data.image[ID].array.F[ii];
+            tmp = (1.0*data.image[ID].array.F[ii]-average);
+            RMS += tmp*tmp;
+            h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.F[ii]-minPV))/(maxPV-minPV));
+            if((h>-1)&&(h<NBhistopt))
+                vcnt[h]++;
+        }
+    }
+
+    if(atype==USHORT)
+    {
+        minPV = data.image[ID].array.U[0];
+        maxPV = minPV;
+
+        for(h=0; h<NBhistopt; h++)
+            vcnt[h] = 0;
+        for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
+        {
+            if(data.image[ID].array.U[ii]<minPV)
+                minPV = data.image[ID].array.U[ii];
+            if(data.image[ID].array.U[ii]>maxPV)
+                maxPV = data.image[ID].array.U[ii];
+            tmp = (1.0*data.image[ID].array.U[ii]-average);
+            RMS += tmp*tmp;
+            h = (long) (1.0*NBhistopt*((float) (data.image[ID].array.U[ii]-minPV))/(maxPV-minPV));
+            if((h>-1)&&(h<NBhistopt))
+                vcnt[h]++;
+        }
+    }
+
+
+
+    RMS = sqrt(RMS/data.image[ID].md[0].nelement);
+    RMS01 = 0.9*RMS01 + 0.1*RMS;
+
+    printw("RMS = %12.6g     ->  %12.6g\n", RMS, RMS01);
+
+    print_header(" PIXEL VALUES ", '-');
+    printw("min - max   :   %12.6e - %12.6e\n", minPV, maxPV);
+
+    if(data.image[ID].md[0].nelement>10)
+    {
+        vcntmax = 0;
+        for(h=0; h<NBhistopt; h++)
+            if(vcnt[h]>vcntmax)
+                vcntmax = vcnt[h];
+
+
+        for(h=0; h<NBhistopt; h++)
+        {
+            customcolor = 1;
+            if(h==NBhistopt-1)
+                customcolor = 2;
+            sprintf(line1, "[%12.4e - %12.4e] %7ld", (minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
+
+            printw("%s", line1); //(minPV + 1.0*(maxPV-minPV)*h/NBhistopt), (minPV + 1.0*(maxPV-minPV)*(h+1)/NBhistopt), vcnt[h]);
+            attron(COLOR_PAIR(customcolor));
+
+            cnt=0;
+            i = 0;
+            while((cnt<wcol-strlen(line1)-1)&&(i<vcnt[h]))
+            {
+                printw(" ");
+                i += (long) (vcntmax/(wcol-strlen(line1)))+1;
+                cnt++;
+            }
+            attroff(COLOR_PAIR(customcolor));
+            printw("\n");
+        }
+    }
+    else
+    {
+        if(data.image[ID].md[0].atype == FLOAT)
+        {
+            for(ii=0; ii<NBpix; ii++)
+            {
+                printw("%3ld  %f\n", ii, data.image[ID].array.F[ii]);
+            }
+        }
+
+        if(data.image[ID].md[0].atype == USHORT)
+        {
+            for(ii=0; ii<NBpix; ii++)
+            {
+                printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
+            }
+        }
+
+    }
+
+    free(vcnt);
+
+
+    return(0);
 }
+
 
 
 
@@ -546,10 +561,10 @@ int info_image_monitor(char *ID_name, double frequ)
         print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
         attroff(A_BOLD);
 
-        if(mode==0)
-            printstatus(ID);
-        else
-            info_pixelstats_smallImage(ID, NBpix);
+        //if(mode==0)
+        printstatus(ID);
+        //else
+        //  info_pixelstats_smallImage(ID, NBpix);
 
         refresh();
     }
