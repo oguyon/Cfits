@@ -293,7 +293,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     if(gpumatmultconf[index].init == 0)
     {
 
-		printf("STARTING SETUP %d ...\n", index);
+		printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
 
         if(gpumatmultconf[index].alloc == 1)
@@ -306,6 +306,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 			gpumatmultconf[index].sem = 1;
 		else
 			gpumatmultconf[index].sem = 0;
+
+		printf("USEsem = %d\n", USEsem);
+        fflush(stdout);
 
 
         gpumatmultconf[index].orientation = orientation;
