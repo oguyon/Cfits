@@ -561,9 +561,10 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 
 int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
+	sprintf(data.cmdargtoken[4].val.string, "null");
 	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
     {
-		COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+		COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
       return 0;
     }
   else
@@ -4041,13 +4042,14 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 /** logs a shared memory stream onto disk
  *
  * uses data cube buffer to store frames
- *
+ * if an image name logdata exists (should ideally be in shared mem), then this will be included in the timing txt file
  */
-long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
+long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, char *IDlogdata_name)
 {
     long ID;
     long xsize, ysize;
     long ii;
+    long i;
     long IDb, IDb0, IDb1;
     long index = 0;
     long cnt = -1;
@@ -4060,7 +4062,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
     struct tm *uttime;
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
     long kw;
-
+	
+	long IDlogdata;
+	
     char *ptr0; // source
     char *ptr1; // destination
     long framesize; // in bytes
@@ -4088,6 +4092,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
     LOGSHIM_CONF* logshimconf;
 
 
+	IDlogdata = image_ID(IDlogdata_name);
+	if(data.image[IDlogdata].md[0].atype != FLOAT)
+		IDlogdata = -1;
+		
     logshimconf = COREMOD_MEMORY_logshim_create_SHMconf(IDname);
 
 
@@ -4138,6 +4146,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
         break;
     case USHORT:
         framesize = sizeof(unsigned short)*xsize*ysize;
+        break;
+    case LONG:
+        framesize = sizeof(long)*xsize*ysize;
         break;
 
     default:
@@ -4220,7 +4231,11 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
                 ptr0 = (char*) data.image[ID].array.U;
                 ptr1 = (char*) data.image[IDb].array.U;
                 break;
-            }
+              case LONG:
+                ptr0 = (char*) data.image[ID].array.L;
+                ptr1 = (char*) data.image[IDb].array.L;
+                break;
+          }
 
             //  ptr0 = (char*) data.image[ID].array.F;
 
@@ -4236,6 +4251,14 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)
 
             fprintf(fp, "%02d:%02d:%02d.%09ld ", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
 
+			if(IDlogdata!=-1)
+				{
+					
+					fprintf(fp, "%8ld", data.image[IDlogdata].md[0].cnt0);
+					for(i=0;i<data.image[IDlogdata].md[0].nelement;i++)
+						fprintf(fp, "  %f", data.image[IDlogdata].array.F[i]);
+				}
+				
             for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
             {
                 switch (data.image[ID].kw[kw].type) {

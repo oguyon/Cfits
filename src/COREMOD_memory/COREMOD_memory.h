@@ -160,6 +160,6 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
 
 
-long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir);
+long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, char *IDlogdata_name);
 
 #endif

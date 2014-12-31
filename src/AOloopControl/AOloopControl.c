@@ -1500,6 +1500,8 @@ int AOloopControl_InitializeMemory(int mode)
     int create = 0;
     int result;
     long loop;
+    long *sizearray;
+    char cntname[200];
 
     SM_fd = open(AOconfname, O_RDWR);
     if(SM_fd==-1)
@@ -1555,6 +1557,16 @@ int AOloopControl_InitializeMemory(int mode)
         AOconf[loop].on = 0;
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
+
+        sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
+        if((AOconf[loop].logdataID = image_ID(cntname))==-1)
+        {
+            sizearray = (long*) malloc(sizeof(long)*2);
+            sizearray[0] = 1;
+            sizearray[1] = 1;
+            AOconf[loop].logdataID = create_image_ID(cntname, 2, sizearray, FLOAT, 1, 0);
+            free(sizearray);
+        }
     }
 
     if(create==1)
@@ -1570,7 +1582,7 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].gain = 0.0;
             AOconf[loop].framesAve = 1;
             AOconf[loop].NBMblocks = 3;
-			AOconf[loop].GPUusesem = 1;
+            AOconf[loop].GPUusesem = 1;
         }
     }
     else
@@ -1591,6 +1603,7 @@ int AOloopControl_InitializeMemory(int mode)
 
     return 0;
 }
+
 
 
 
@@ -3960,7 +3973,10 @@ int AOloopControl_run()
                     AOconf[loop].logfnb = 0;
 */
                 AOconf[loop].cnt++;
-
+				
+				data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
+				data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
+				
                 if(AOconf[loop].cnt == AOconf[loop].cntmax)
                     AOconf[loop].on = 0;
             }

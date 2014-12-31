@@ -387,7 +387,7 @@ int SCExAO_DM_CombineChannels(int mode)
 	float *dmdispptr_array[20];
 	long IDdispt;
 	char sname[200];
-	long nsecwait = 10000000; // 10000 us
+	long nsecwait = 100000; // 100 us
 	
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges

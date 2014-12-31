@@ -84,6 +84,9 @@ typedef struct
     double RMSmodesCumul;
     long long RMSmodesCumulcnt;
 
+    long logdataID; // image ID containing additional info that can be attached to a image stream log
+
+
     // semaphores for communication with GPU computing threads
     //sem_t *semptr; // semaphore for this image
 

@@ -69,18 +69,18 @@ uid_t suid;
 
 
 typedef struct {
-  char key[100];        // command keyword                 
-  char module[50];      // module name
-  int (* fp) ();         // command function pointer        
-  char info   [1000];     // short description/help         
-  char syntax [1000];   // command syntax
-  char example[1000];  // command example
-  char Ccall[1000];
+    char key[100];        // command keyword
+    char module[50];      // module name
+    int (* fp) ();         // command function pointer
+    char info   [1000];     // short description/help
+    char syntax [1000];   // command syntax
+    char example[1000];  // command example
+    char Ccall[1000];
 } CMD;
 
 typedef struct {
-  char name[50];   // module name
-  char info[1000]; // short description
+    char name[50];   // module name
+    char info[1000]; // short description
 } MODULE;
 
 
@@ -95,24 +95,24 @@ typedef struct {
 /* ---------------------------------------------------------- */
 
 
-// The command line is parsed and 
+// The command line is parsed and
 
 // cmdargtoken type
 // 0 : unsolved
 // 1 : floating point (double precision)
-// 2 : long 
-// 3 : string 
+// 2 : long
+// 3 : string
 // 4 : existing image
 // 5 : command
 typedef struct
 {
-  int type; 
-  union
-  {
-    double numf;
-    long numl;
-    char string[200];
-  } val;
+    int type;
+    union
+    {
+        double numf;
+        long numl;
+        char string[200];
+    } val;
 } CMDARGTOKEN;
 
 
@@ -128,14 +128,14 @@ int CLI_checkarg_noerrmsg(int argnum, int argtype);
 
 typedef struct
 {
-  float re;
-  float im;
+    float re;
+    float im;
 } complex_float;
 
 typedef struct
 {
-  double re;
-  double im;
+    double re;
+    double im;
 } complex_double;
 
 
@@ -163,39 +163,39 @@ int TYPESIZE[9];
 
 typedef struct
 {
-  char name[16];
-  char type; // N: unused, L: long, D: double, S: 16-char string 
-  union {
-    long numl;
-    double numf;
-    char valstr[16];
-  } value;
-  char comment[80];
+    char name[16];
+    char type; // N: unused, L: long, D: double, S: 16-char string
+    union {
+        long numl;
+        double numf;
+        char valstr[16];
+    } value;
+    char comment[80];
 } IMAGE_KEYWORD;
 
 
 
 typedef struct
 {
-  char name[80];                // image name
+    char name[80];                // image name
 
-  long naxis;                   // number of axis
-  long size[3];                 // image size 
-  long nelement;				// number of elements in image
-  int atype;					// data type code   
+    long naxis;                   // number of axis
+    long size[3];                 // image size
+    long nelement;				// number of elements in image
+    int atype;					// data type code
 
-  double creation_time;	        // creation time (since program start)
-  double last_access;			// last time the image was accessed  (since program start)
-  struct timespec wtime;
+    double creation_time;	        // creation time (since program start)
+    double last_access;			// last time the image was accessed  (since program start)
+    struct timespec wtime;
 
-  int shared; 					// 1 if in shared memory
+    int shared; 					// 1 if in shared memory
 
-  int write;                	// 1 if image is being written  
-  int status;
-  long cnt0;               	  	// counter (incremented if image is updated)
-  long cnt1;					// in 3D rolling buffer image, this is the last slice written
-  
-  long NBkw; 					// number of keywords
+    int write;                	// 1 if image is being written
+    int status;
+    long cnt0;               	  	// counter (incremented if image is updated)
+    long cnt1;					// in 3D rolling buffer image, this is the last slice written
+
+    long NBkw; 					// number of keywords
 
 } IMAGE_METADATA;
 
@@ -203,35 +203,35 @@ typedef struct
 
 typedef struct			/* structure used to store data arrays */
 {
-  int used;
-  int shmfd; // if shared memory, file descriptor
-  size_t memsize; // total size in memory if shared 
+    int used;
+    int shmfd; // if shared memory, file descriptor
+    size_t memsize; // total size in memory if shared
 
-  IMAGE_METADATA *md;
+    IMAGE_METADATA *md;
 
-  union
-  {
-    char *C;
-    int *I;
-    long *L;
-    float *F;
-    double *D;
-    complex_float *CF;
-    complex_double *CD;
-    unsigned short int *U;
-  } array;                      // pointer to data array
-  
-  int sem; // 1 if semaphore exists for this image
-  sem_t *semptr; // semaphore for this image
+    union
+    {
+        char *C;
+        int *I;
+        long *L;
+        float *F;
+        double *D;
+        complex_float *CF;
+        complex_double *CD;
+        unsigned short int *U;
+    } array;                      // pointer to data array
 
-  int sem1;
-  sem_t *semptr1; // extra semaphore 
+    int sem; // 1 if semaphore exists for this image
+    sem_t *semptr; // semaphore for this image
 
-  int semlog; // reserved for data logging
-  sem_t *semptrlog;
-  
-  
-  IMAGE_KEYWORD *kw;  // not supported for shared memory
+    int sem1;
+    sem_t *semptr1; // extra semaphore
+
+    int semlog; // reserved for data logging
+    sem_t *semptrlog;
+
+
+    IMAGE_KEYWORD *kw;  // not supported for shared memory
 
 } IMAGE;
 
@@ -242,16 +242,16 @@ typedef struct			/* structure used to store data arrays */
 
 typedef struct
 {
-  int used;
-  char name[80];
-  int type; /** 0: double, 1: long, 2: string */
-  union
-  {
-	double f;
-	long l;
-	char s[80];
-  } value;
-  char comment[200];
+    int used;
+    char name[80];
+    int type; /** 0: double, 1: long, 2: string */
+    union
+    {
+        double f;
+        long l;
+        char s[80];
+    } value;
+    char comment[200];
 } VARIABLE;
 
 
@@ -332,10 +332,11 @@ typedef struct
     double DOUBLEARRAY[1000];    // for convenience
     char SAVEDIR[500];
 
-	// status counter (used for profiling)
-	int status0;
-	int status1;
+    // status counter (used for profiling)
+    int status0;
+    int status1;
 } DATA;
+
 
 
 
