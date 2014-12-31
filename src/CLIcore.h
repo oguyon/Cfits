@@ -221,6 +221,11 @@ typedef struct			/* structure used to store data arrays */
         unsigned short int *U;
     } array;                      // pointer to data array
 
+	IMAGE_KEYWORD *kw; 
+
+	//int *logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
+
+
     int sem; // 1 if semaphore exists for this image
     sem_t *semptr; // semaphore for this image
 
@@ -230,8 +235,7 @@ typedef struct			/* structure used to store data arrays */
     int semlog; // reserved for data logging
     sem_t *semptrlog;
 
-
-    IMAGE_KEYWORD *kw;  // not supported for shared memory
+//	int logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
 
 } IMAGE;
 

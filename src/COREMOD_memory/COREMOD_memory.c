@@ -1207,6 +1207,7 @@ int delete_image_ID(char* imname) /* deletes an ID */
         free(data.image[ID].kw);
         data.image[ID].kw = NULL;
 		}
+		//free(data.image[ID].logstatus);
         /*      free(data.image[ID].size);*/
         //      data.image[ID].md[0].last_access = 0;
     }
@@ -1287,7 +1288,6 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
     {
         ID = next_avail_image_ID();
         data.image[ID].used = 1;
-
         nelement = 1;
         for(i=0; i<naxis; i++)
             nelement*=size[i];
@@ -1370,8 +1370,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             data.image[ID].md[0].size[i] = size[i];
         data.image[ID].md[0].NBkw = NBkw;
 
-
-
+		//data.image[ID].logstatus = (int*) malloc(sizeof(int));
+		//data.image[ID].logstatus[0] = 1; // default value
 
         if(atype==CHAR)
         {
@@ -1801,7 +1801,9 @@ long read_sharedmem_image(char *name)
     int atype;
     int kw;
     char sname[200];
-
+//	int *vint;
+	
+	
     ID = next_avail_image_ID();
     data.image[ID].used = 1;
 
@@ -1879,9 +1881,7 @@ long read_sharedmem_image(char *name)
             mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
         }
 
-
         data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
-
 
         for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
         {
@@ -1893,6 +1893,11 @@ long read_sharedmem_image(char *name)
                 printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);
         }
 
+		mapv += sizeof(IMAGE_KEYWORD)*data.image[ID].md[0].NBkw;
+
+		//vint = (int*) mapv;
+		//data.image[ID].logstatus[0] = *mapv;
+		
         strcpy(data.image[ID].md[0].name, name);
 
         if(MEM_MONITOR == 1)
@@ -3573,7 +3578,7 @@ long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1)
 	long ID;
 	
 	ID = image_ID(IDname);
-	data.image[ID].md[0].status = cnt1;
+	data.image[ID].md[0].cnt1 = cnt1;
 	
 	return(0);
 }
