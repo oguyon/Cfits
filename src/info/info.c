@@ -474,7 +474,7 @@ int printstatus(long ID)
     {
         if(data.image[ID].md[0].atype == FLOAT)
         {
-            for(ii=0; ii<NBpix; ii++)
+            for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
             {
                 printw("%3ld  %f\n", ii, data.image[ID].array.F[ii]);
             }
@@ -482,7 +482,7 @@ int printstatus(long ID)
 
         if(data.image[ID].md[0].atype == USHORT)
         {
-            for(ii=0; ii<NBpix; ii++)
+            for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
             {
                 printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
             }
