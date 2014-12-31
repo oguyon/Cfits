@@ -3975,7 +3975,7 @@ int AOloopControl_run()
                 AOconf[loop].cnt++;
 				
 				
-				listim();
+				list_image_ID();
 				printf("logdataID = %ld\n", AOconf[loop].logdataID);
 				data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
 				data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
