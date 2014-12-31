@@ -1558,7 +1558,7 @@ int AOloopControl_InitializeMemory(int mode)
         AOconf[loop].on = 0;
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
-
+		AOconf[loop].init_CMc == 0;
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
         if((AOconf[loop].logdataID = image_ID(cntname))==-1)
         {
