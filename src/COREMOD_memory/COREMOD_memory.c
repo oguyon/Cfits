@@ -4162,6 +4162,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
 
     buffer = 0;
     index = 0;
+    
+	printf("logdata ID = %ld\n", IDlogdata);
+	list_image_ID();
+    
     while( (logshimconf[0].filecnt != NBfiles) && (logshimconf[0].logexit==0) )
     {
         cntwait = 0;
