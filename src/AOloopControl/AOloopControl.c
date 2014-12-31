@@ -59,7 +59,7 @@ long aoconfID_refWFS = -1;
 long aoconfID_DM = -1;
 long aoconfID_DMRM = -1;
 long aoconfID_DMmodes = -1;
-
+long aoconfID_DMdisp = -1;  // to notify DMcomb that DM maps should be summed
 
 // Fourier Modes
 long aoconfID_cmd_modes = -1;
@@ -2187,6 +2187,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 	}
 
 
+	// this image is read to notify when new dm displacement is ready
+	aoconfID_DMdisp = read_sharedmem_image("dmdisp");
 
     // Connect to WFS camera
     // This is where the size of the WFS is fixed
@@ -2676,6 +2678,10 @@ int set_DM_modes(long loop)
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
     }
+    
+    if(aoconfID_DMdisp!=-1)
+		sem_post(data.image[aoconfID_DMdisp].semptr1);
+    
     AOconf[loop].DMupdatecnt ++;
 
     return(0);
@@ -3889,7 +3895,7 @@ int AOloopControl_run()
 				AOconf[loop].status = 14; 
 
                 if(fabs(AOconf[loop].gain)>1.0e-6)                
-                    set_DM_modes(loop); // note: set_DM_modes will skip computation if GPU=1
+                    set_DM_modes(loop); 
 	
                 AOconf[loop].status = 20; //  LOGGING, part 1
 /*

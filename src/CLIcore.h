@@ -225,6 +225,10 @@ typedef struct			/* structure used to store data arrays */
   sem_t *semptr; // semaphore for this image
   int sem1;
   sem_t *semptr1; // extra semaphore 
+
+  int semlog; // reserved for data logging
+  sem_t *semptrlog;
+  
   
   IMAGE_KEYWORD *kw;  // not supported for shared memory
 
