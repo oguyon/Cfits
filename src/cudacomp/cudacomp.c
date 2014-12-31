@@ -293,7 +293,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     if(gpumatmultconf[index].init == 0)
     {
 
-		printf("STARTING SETUP %d ...", index);
+		printf("STARTING SETUP %d ...\n", index);
         fflush(stdout);
 
         if(gpumatmultconf[index].alloc == 1)
@@ -316,7 +316,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         /// Load Control Matrix
         IDcontrM = image_ID(IDcontrM_name);
+		printf("control matrix loaded: IDcontrM = %ld\n", IDcontrM);
+        fflush(stdout);
 
+		
         if(orientation==0)
         {
             gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[2];
