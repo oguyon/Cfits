@@ -579,7 +579,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     int ptn;
     int statustot;
 
-	*status = *status + 1;
+	*status = *status + 1;  // ->9
 
     if(index==0) /// main CM multiplication loop
     {
@@ -613,7 +613,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
         }
         gpumatmultconf[index].gpuinit = 1;
     }
-    *status = *status + 1;
+    *status = *status + 1;  // -> 10
 
 
     if(gpumatmultconf[index].sem==0)
@@ -634,7 +634,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     }
 
 
-    *status = *status + 1;  
+    *status = *status + 1;  // -> 11
     
 	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
  
@@ -655,7 +655,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
 	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
  
-   *status = *status + 1;
+   *status = *status + 1; // -> 12
 	
     return(0);
 }
@@ -745,7 +745,6 @@ void *compute_function( void *ptr )
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
-    *ptrstat = 3;
 
     //stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
 
@@ -757,6 +756,7 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
+		*ptrstat = 3;
         if(gpumatmultconf[index].sem==1)
         {
             //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d ...\n", index, device);
@@ -847,7 +847,7 @@ void *compute_function( void *ptr )
             exit(EXIT_FAILURE);
         }
 
-        *ptrstat = 6;
+    //    *ptrstat = 6;
 
         if(gpumatmultconf[index].sem==1)
         {
@@ -855,7 +855,8 @@ void *compute_function( void *ptr )
             //fflush(stdout);
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
-        iter++;
+      *ptrstat = 6;
+       iter++;
     }
 
 

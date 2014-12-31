@@ -3901,7 +3901,7 @@ int AOloopControl_run()
             {
      
 
-                cnttest = data.image[aoconfID_DM].md[0].cnt0;
+        //        cnttest = data.image[aoconfID_DM].md[0].cnt0;
 				
 	
                 AOcompute(loop);	
@@ -3912,66 +3912,7 @@ int AOloopControl_run()
                     set_DM_modes(loop); 
 	
                 AOconf[loop].status = 20; //  LOGGING, part 1
-/*
-                clock_gettime(CLOCK_REALTIME, &AOconf[loop].tnow);
-                AOconf[loop].time_sec = 1.0*((long) AOconf[loop].tnow.tv_sec) + 1.0e-9*AOconf[loop].tnow.tv_nsec;
-
-                if(AOconf[loop].logfnb==0)
-                    ID = aoconfIDlog0;
-                else
-                    ID = aoconfIDlog1;
-
-                if(AOconf[loop].logcnt==0)
-                {
-                    AOconf[loop].timeorigin_sec = (long) AOconf[loop].tnow.tv_sec;
-                    data.image[ID].kw[0].value.numl = AOconf[loop].timeorigin_sec;
-                }
-
-
-	
-                data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+0] = AOconf[loop].time_sec - 1.0*AOconf[loop].timeorigin_sec;
-                j = 1;
-
-                for(m=0; m<AOconf[loop].NBDMmodes; m++)
-                {
-                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = AOconf[loop].gain;
-                    j++;
-                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_meas_modes].array.F[m];
-                    j++;
-                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd_modes].array.F[m];
-                    j++;
-                }
-*/
-
                 AOconf[loop].status = 21; //  (13->) LOGGING, part 2
-/*
-                AOconf[loop].logcnt++;
-                if(AOconf[loop].logcnt==AOconf[loop].logsize)
-                {
-                    if(AOconf[loop].logon == 1)
-                    {
-                        printf("Saving to disk...\n");
-                        fflush(stdout);
-
-                        t = time(NULL);
-                        uttime = gmtime(&t);
-                        clock_gettime(CLOCK_REALTIME, thetime);
-                        printf("writing file name\n");
-                        fflush(stdout);
-                        sprintf(logfname, "%s/LOOP%ld_%04d%02d%02d-%02d:%02d:%02d.%09ld%s.log", AOconf[loop].logdir, LOOPNUMBER, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, AOconf[loop].userLOGstring);
-                        printf("writing file name\n");
-                        fflush(stdout);
-                        sprintf(command, "cp /tmp/loop%ldlog%d.im.shm %s &", loop, AOconf[loop].logfnb, logfname);
-                        printf("Executing command : %s\n", command);
-                        fflush(stdout);
-                        r = system(command);
-                    }
-                    AOconf[loop].logfnb++;
-                    AOconf[loop].logcnt = 0;
-                }
-                if(AOconf[loop].logfnb == 2)
-                    AOconf[loop].logfnb = 0;
-*/
                 AOconf[loop].cnt++;
 				
 				
