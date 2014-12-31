@@ -223,7 +223,9 @@ typedef struct			/* structure used to store data arrays */
   
   int sem; // 1 if semaphore exists for this image
   sem_t *semptr; // semaphore for this image
- 
+  int sem1;
+  sem_t *semptr1; // extra semaphore 
+  
   IMAGE_KEYWORD *kw;  // not supported for shared memory
 
 } IMAGE;

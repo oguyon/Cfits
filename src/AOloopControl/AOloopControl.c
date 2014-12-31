@@ -63,7 +63,7 @@ long aoconfID_DMmodes = -1;
 
 // Fourier Modes
 long aoconfID_cmd_modes = -1;
-long aoconfID_cmd1_modes = -1;
+long aoconfID_meas_modes = -1; // measured
 long aoconfID_RMS_modes = -1;
 long aoconfID_AVE_modes = -1;
 long aoconfID_GAIN_modes = -1;
@@ -2507,7 +2507,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     // time [s]       (1)
     // gains          ( AOconf[loop].NBDMmodes )
     // ID_cmd_modes   ( AOconf[loop].NBDMmodes )
-    // ID_cmd1_modes  ( AOconf[loop].NBDMmodes )
+    // ID_meas_modes  ( AOconf[loop].NBDMmodes )
 
 /*    sizearray[0] = 1+3*AOconf[loop].NBDMmodes;
     sizearray[1] = AOconf[loop].logsize;
@@ -2559,12 +2559,12 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
-    sprintf(name, "aol%ld_DMmode_cmd1", loop);
+    sprintf(name, "aol%ld_DMmode_meas", loop);
     ID = image_ID(name);
-    aoconfID_cmd1_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
+    aoconfID_meas_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
     if(ID==-1)
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
-            data.image[aoconfID_cmd1_modes].array.F[k] = 0.0;
+            data.image[aoconfID_meas_modes].array.F[k] = 0.0;
 
     sprintf(name, "aol%ld_DMmode_AVE", loop);
     ID = image_ID(name);
@@ -3734,7 +3734,7 @@ int AOcompute(long loop)
         data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - data.image[aoconfID_refWFS].array.F[ii];
 
 
-    cnttest = data.image[aoconfID_cmd1_modes].md[0].cnt0;
+    cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
     data.image[aoconfID_WFS2].md[0].cnt0 ++;
 
 
@@ -3746,13 +3746,13 @@ int AOcompute(long loop)
 
     if(AOconf[loop].GPU == 0)
     {
-        ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_cmd1_modes].array.F);
-        data.image[aoconfID_cmd1_modes].md[0].cnt0 ++;
+        ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
+        data.image[aoconfID_meas_modes].md[0].cnt0 ++;
     }
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_cmd1_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 		AOconf[loop].status = 8; // execute  
         GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
@@ -3763,7 +3763,7 @@ int AOcompute(long loop)
 
     AOconf[loop].RMSmodes = 0;
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
-        AOconf[loop].RMSmodes += data.image[aoconfID_cmd1_modes].array.F[k]*data.image[aoconfID_cmd1_modes].array.F[k];
+        AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
 
     AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
     AOconf[loop].RMSmodesCumulcnt ++;
@@ -3775,7 +3775,7 @@ int AOcompute(long loop)
 	list_image_ID();
 	printf("UPDATING ARRAYS\n");
 	printf("AOconf[loop].NBDMmodes = %ld\n", AOconf[loop].NBDMmodes);
-	printf("IDs:  %ld %ld %ld %ld %ld %ld %ld\n", aoconfID_RMS_modes, aoconfID_cmd1_modes, aoconfID_AVE_modes, aoconfID_cmd_modes, aoconfID_GAIN_modes, aoconfID_LIMIT_modes, aoconfID_MULTF_modes);
+	printf("IDs:  %ld %ld %ld %ld %ld %ld %ld\n", aoconfID_RMS_modes, aoconfID_meas_modes, aoconfID_AVE_modes, aoconfID_cmd_modes, aoconfID_GAIN_modes, aoconfID_LIMIT_modes, aoconfID_MULTF_modes);
 	fflush(stdout);
 	*/
 	
@@ -3783,10 +3783,10 @@ int AOcompute(long loop)
 	
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
     {
-        data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_cmd1_modes].array.F[k]*data.image[aoconfID_cmd1_modes].array.F[k];
-        data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_cmd1_modes].array.F[k];
+        data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
+        data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k];
 
-        data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k] * data.image[aoconfID_cmd1_modes].array.F[k];
+        data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
 
         if(data.image[aoconfID_cmd_modes].array.F[k] < -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
             data.image[aoconfID_cmd_modes].array.F[k] = -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
@@ -3916,7 +3916,7 @@ int AOloopControl_run()
                 {
                     data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = AOconf[loop].gain;
                     j++;
-                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd1_modes].array.F[m];
+                    data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_meas_modes].array.F[m];
                     j++;
                     data.image[ID].array.F[AOconf[loop].logcnt*data.image[ID].md[0].size[0]+j] = data.image[aoconfID_cmd_modes].array.F[m];
                     j++;
@@ -4062,7 +4062,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
         }
 
         // last reading from WFS
-        printw("%7.4f ", data.image[aoconfID_cmd1_modes].array.F[k]);
+        printw("%7.4f ", data.image[aoconfID_meas_modes].array.F[k]);
 
 
         // Time average
@@ -4122,10 +4122,10 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
       aoconfID_cmd_modes = read_sharedmem_image(name);
     }
      
-  if(aoconfID_cmd1_modes==-1)
+  if(aoconfID_meas_modes==-1)
     {
-      sprintf(name, "aol%ld_DMmode_cmd1", loop);
-      aoconfID_cmd1_modes = read_sharedmem_image(name);
+      sprintf(name, "aol%ld_DMmode_meas", loop);
+      aoconfID_meas_modes = read_sharedmem_image(name);
     }
 
 

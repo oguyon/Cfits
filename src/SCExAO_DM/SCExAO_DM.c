@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <sched.h>
 #include <ncurses.h>
+#include <semaphore.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -25,6 +26,11 @@ extern DATA data;
 
 int wcol, wrow; // window size
 
+
+struct timespec semwaitts;
+	
+	
+	
 
 #define DMSTROKE100 0.7 // um displacement for 100V
 #define NBact 2500
@@ -353,6 +359,8 @@ int SCEXAO_DM_unloadconf()
 //
 // mode = 1 if DM volt computed
 //
+// NOTE: responds immediately to sem1 in dmdisp
+//
 int SCExAO_DM_CombineChannels(int mode)
 {
     long naxis = 2;
@@ -378,8 +386,8 @@ int SCExAO_DM_CombineChannels(int mode)
 	float *dmdispptr;
 	float *dmdispptr_array[20];
 	long IDdispt;
-	
-	
+	char sname[200];
+	long nsecwait = 10000; // 10 uas
 	
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
@@ -420,11 +428,34 @@ int SCExAO_DM_CombineChannels(int mode)
 
     dispcombconf[0].status = 1;
 
+	if(data.image[IDdisp].sem1==0)
+{
+		sprintf(sname, "dmcomb_sem1");
+        if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
+            perror("semaphore initilization");
+            exit(1);
+        }
+}
+
     while(dispcombconf[0].ON == 1)
     {
         dispcombconf[0].status = 2;
-        usleep(10);
+
+	
+		if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
+			perror("clock_gettime");
+			exit(EXIT_FAILURE);
+		}
+		semwaitts.tv_nsec += nsecwait;
+		if(semwaitts.tv_nsec >= 1000000000)
+			semwaitts.tv_sec = semwaitts.tv_sec + 1;
+		
+		sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
+        // usleep(10);
+
         cntsum = 0;
+
+		
 
         for(ch=0; ch<NBch; ch++)
             cntsum += data.image[IDch[ch]].md[0].cnt0;
@@ -433,18 +464,11 @@ int SCExAO_DM_CombineChannels(int mode)
         if(cntsum != cntsumold)
         {
             dispcombconf[0].status = 3;
-
-//            printf("NEW DM SHAPE %ld   %ld %ld\n", cnt, (long) cntsum, (long) cntsumold);
-//          fflush(stdout);
-
             cnt++;
 
             memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
 			for(ch=1; ch<NBch; ch++)
             {
-                sprintf(name, "dmdisp%ld", ch);
-                printf("+%ld ", ch);
-				fflush(stdout);
 				for(ii=0;ii<sizexy;ii++)
 					dmdispptr[ii] += dmdispptr_array[ch][ii];
             }
