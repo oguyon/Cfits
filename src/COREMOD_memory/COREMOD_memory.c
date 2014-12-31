@@ -4273,9 +4273,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     struct tm *uttime;
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
     long kw;
-	
-	long IDlogdata;
-	
+
+    long IDlogdata;
+
     char *ptr0; // source
     char *ptr1; // destination
     long framesize; // in bytes
@@ -4303,15 +4303,15 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     LOGSHIM_CONF* logshimconf;
 
 
-	IDlogdata = image_ID(IDlogdata_name);
-	if(IDlogdata!=-1)
-		{
-			if(data.image[IDlogdata].md[0].atype != FLOAT)
-			IDlogdata = -1;
-		}
-	printf("log data name = %s\n", IDlogdata_name);
-		
-	
+    IDlogdata = image_ID(IDlogdata_name);
+    if(IDlogdata!=-1)
+    {
+        if(data.image[IDlogdata].md[0].atype != FLOAT)
+            IDlogdata = -1;
+    }
+    printf("log data name = %s\n", IDlogdata_name);
+
+
     logshimconf = COREMOD_MEMORY_logshim_create_SHMconf(IDname);
 
 
@@ -4377,19 +4377,21 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
 
     buffer = 0;
     index = 0;
-    
-	printf("logdata ID = %ld\n", IDlogdata);
-	list_image_ID();
-    
+
+    printf("logdata ID = %ld\n", IDlogdata);
+    list_image_ID();
+
     while( (logshimconf[0].filecnt != NBfiles) && (logshimconf[0].logexit==0) )
     {
         cntwait = 0;
         noframe = 0;
         wOK = 1;
         // printf("Entering wait loop   index = %ld %d\n", index, noframe);
-        while((cnt==data.image[ID].md[0].cnt0)&&(wOK==1))
+
+
+        while(((cnt==data.image[ID].md[0].cnt0)||(logshimconf[0].on == 0))&&(wOK==1))
         {
-            usleep(10);
+            usleep(waitdelayus);
             cntwait++;
             if(cntwait>cntwaitlim) // save current cube
             {
@@ -4405,7 +4407,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
             }
         }
 
-		
+
 
         if(index==0)
         {
@@ -4417,84 +4419,84 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
             sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02d.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
         }
 
-		if(logshimconf[0].on == 1)
-		{
-        if(wOK==1) // normal step: a frame has arrived
+        if(logshimconf[0].on == 1)
         {
-            /// measure time
-            t = time(NULL);
-            uttime = gmtime(&t);
-            clock_gettime(CLOCK_REALTIME, thetime);
-
-            if(index==0)
-                fp = fopen(fname_asciilog, "w");
-
-
-            switch ( atype ) {
-            case CHAR:
-                ptr0 = (char*) data.image[ID].array.C;
-                ptr1 = (char*) data.image[IDb].array.C;
-                break;
-            case INT:
-                ptr0 = (char*) data.image[ID].array.I;
-                ptr1 = (char*) data.image[IDb].array.I;
-                break;
-            case FLOAT:
-                ptr0 = (char*) data.image[ID].array.F;
-                ptr1 = (char*) data.image[IDb].array.F;
-                break;
-            case DOUBLE:
-                ptr0 = (char*) data.image[ID].array.D;
-                ptr1 = (char*) data.image[IDb].array.D;
-                break;
-            case USHORT:
-                ptr0 = (char*) data.image[ID].array.U;
-                ptr1 = (char*) data.image[IDb].array.U;
-                break;
-              case LONG:
-                ptr0 = (char*) data.image[ID].array.L;
-                ptr1 = (char*) data.image[IDb].array.L;
-                break;
-          }
-
-            //  ptr0 = (char*) data.image[ID].array.F;
-
-
-
-            if(is3Dcube==1)
-                ptr0 += framesize*data.image[ID].md[0].cnt1;
-
-            //    ptr1 = (char*) data.image[IDb].array.F;
-            ptr1 += framesize*index;
-
-            memcpy((void *) ptr1, (void *) ptr0, framesize);
-
-            fprintf(fp, "%02d:%02d:%02d.%09ld ", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-
-			if(IDlogdata!=-1)
-				{
-					
-					fprintf(fp, "%8ld", data.image[IDlogdata].md[0].cnt0);
-					for(i=0;i<data.image[IDlogdata].md[0].nelement;i++)
-						fprintf(fp, "  %f", data.image[IDlogdata].array.F[i]);
-				}
-				
-            for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+            if(wOK==1) // normal step: a frame has arrived
             {
-                switch (data.image[ID].kw[kw].type) {
-                case 'L' :
-                    fprintf(fp, " %ld", data.image[ID].kw[kw].value.numl);
+                /// measure time
+                t = time(NULL);
+                uttime = gmtime(&t);
+                clock_gettime(CLOCK_REALTIME, thetime);
+
+                if(index==0)
+                    fp = fopen(fname_asciilog, "w");
+
+
+                switch ( atype ) {
+                case CHAR:
+                    ptr0 = (char*) data.image[ID].array.C;
+                    ptr1 = (char*) data.image[IDb].array.C;
                     break;
-                case 'D' :
-                    fprintf(fp, " %f", data.image[ID].kw[kw].value.numf);
+                case INT:
+                    ptr0 = (char*) data.image[ID].array.I;
+                    ptr1 = (char*) data.image[IDb].array.I;
+                    break;
+                case FLOAT:
+                    ptr0 = (char*) data.image[ID].array.F;
+                    ptr1 = (char*) data.image[IDb].array.F;
+                    break;
+                case DOUBLE:
+                    ptr0 = (char*) data.image[ID].array.D;
+                    ptr1 = (char*) data.image[IDb].array.D;
+                    break;
+                case USHORT:
+                    ptr0 = (char*) data.image[ID].array.U;
+                    ptr1 = (char*) data.image[IDb].array.U;
+                    break;
+                case LONG:
+                    ptr0 = (char*) data.image[ID].array.L;
+                    ptr1 = (char*) data.image[IDb].array.L;
                     break;
                 }
-            }
-            fprintf(fp, "\n");
 
-            index++;
+                //  ptr0 = (char*) data.image[ID].array.F;
+
+
+
+                if(is3Dcube==1)
+                    ptr0 += framesize*data.image[ID].md[0].cnt1;
+
+                //    ptr1 = (char*) data.image[IDb].array.F;
+                ptr1 += framesize*index;
+
+                memcpy((void *) ptr1, (void *) ptr0, framesize);
+
+                fprintf(fp, "%02d:%02d:%02d.%09ld ", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+
+                if(IDlogdata!=-1)
+                {
+
+                    fprintf(fp, "%8ld", data.image[IDlogdata].md[0].cnt0);
+                    for(i=0; i<data.image[IDlogdata].md[0].nelement; i++)
+                        fprintf(fp, "  %f", data.image[IDlogdata].array.F[i]);
+                }
+
+                for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+                {
+                    switch (data.image[ID].kw[kw].type) {
+                    case 'L' :
+                        fprintf(fp, " %ld", data.image[ID].kw[kw].value.numl);
+                        break;
+                    case 'D' :
+                        fprintf(fp, " %f", data.image[ID].kw[kw].value.numf);
+                        break;
+                    }
+                }
+                fprintf(fp, "\n");
+
+                index++;
+            }
         }
-		}
 
 
         /// cases:
@@ -4558,6 +4560,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
 
     return(0);
 }
+
 
 
 
