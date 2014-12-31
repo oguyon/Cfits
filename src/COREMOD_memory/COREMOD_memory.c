@@ -4094,9 +4094,13 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
 
 	IDlogdata = image_ID(IDlogdata_name);
 	if(IDlogdata!=-1)
-		if(data.image[IDlogdata].md[0].atype != FLOAT)
+		{
+			if(data.image[IDlogdata].md[0].atype != FLOAT)
 			IDlogdata = -1;
+		}
+	printf("log data name = %s\n", IDlogdata_name);
 		
+	
     logshimconf = COREMOD_MEMORY_logshim_create_SHMconf(IDname);
 
 
