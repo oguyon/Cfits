@@ -297,7 +297,7 @@ int printstatus(long ID)
     printw("[status %2d] ", data.image[ID].md[0].status);
     printw("[cnt0 %8d] [%6.2f Hz] ", data.image[ID].md[0].cnt0, frequ);
     printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
-    printw("[logstatus %2d] ", data.image[ID].logstatus[0]);
+   // printw("[logstatus %2d] ", data.image[ID].logstatus[0]);
  
     if(data.image[ID].sem==1)
     {
