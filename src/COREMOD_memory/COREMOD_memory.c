@@ -4074,7 +4074,7 @@ int COREMOD_MEMORY_logshim_printstatus(char *IDname)
     struct stat file_stat;
 
     // read shared mem
-    sprintf(SM_fname, "%s/%s_logshimconf.im.shm", SHAREDMEMDIR, IDname);
+    sprintf(SM_fname, "%s/%s.logshimconf.im.shm", SHAREDMEMDIR, IDname);
     printf("Importing mmap file \"%s\"\n",SM_fname);
 
     SM_fd = open(SM_fname, O_RDWR);
