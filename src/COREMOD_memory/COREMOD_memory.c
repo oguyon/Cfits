@@ -3288,62 +3288,6 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 
 
 
-/// ---------------------------------------- LOGGING FUNCTIONS --------------------------------
-
-
-
-/// creates logshimconf shared memory and loads it
-LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(char *logshimname)
-{
-    int SM_fd;
-    size_t sharedsize = 0; // shared memory size in bytes
-	char SM_fname[200];
-	int result;
-	LOGSHIM_CONF *map;
-	
-	sharedsize = sizeof(LOGSHIM_CONF);
-	
-    sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, logshimname);
-    SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-
-    if (SM_fd == -1) {
-        perror("Error opening file for writing");
-        exit(0);
-    }
-  
-    result = lseek(SM_fd, sharedsize-1, SEEK_SET);
-    if (result == -1) {
-        close(SM_fd);
-        perror("Error calling lseek() to 'stretch' the file");
-        exit(0);
-    }
-
-    result = write(SM_fd, "", 1);
-    if (result != 1) {
-        close(SM_fd);
-        perror("Error writing last byte of the file");
-        exit(0);
-    }
-
-    map = (LOGSHIM_CONF*) mmap(0, sharedsize, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
-    if (map == MAP_FAILED) {
-        close(SM_fd);
-        perror("Error mmapping the file");
-        exit(0);
-    }
-
-	map[0].on = 0;
-	map[0].cnt = 0;
-	map[0].filecnt = 0;
-	map[0].interval = 1;
-	map[0].logexit = 0;
-	strcpy(map[0].fname, SM_fname);
-	
-    return(map);
-}
-
-
-
 
 
 
@@ -4040,6 +3984,75 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 }
 
 
+
+
+
+/// ---------------------------------------- LOGGING FUNCTIONS --------------------------------
+
+
+
+/// creates logshimconf shared memory and loads it
+LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(char *logshimname)
+{
+    int SM_fd;
+    size_t sharedsize = 0; // shared memory size in bytes
+	char SM_fname[200];
+	int result;
+	LOGSHIM_CONF *map;
+	
+	sharedsize = sizeof(LOGSHIM_CONF);
+	
+    sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, logshimname);
+    SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+
+    if (SM_fd == -1) {
+        perror("Error opening file for writing");
+        exit(0);
+    }
+  
+    result = lseek(SM_fd, sharedsize-1, SEEK_SET);
+    if (result == -1) {
+        close(SM_fd);
+        perror("Error calling lseek() to 'stretch' the file");
+        exit(0);
+    }
+
+    result = write(SM_fd, "", 1);
+    if (result != 1) {
+        close(SM_fd);
+        perror("Error writing last byte of the file");
+        exit(0);
+    }
+
+    map = (LOGSHIM_CONF*) mmap(0, sharedsize, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+    if (map == MAP_FAILED) {
+        close(SM_fd);
+        perror("Error mmapping the file");
+        exit(0);
+    }
+
+	map[0].on = 0;
+	map[0].cnt = 0;
+	map[0].filecnt = 0;
+	map[0].interval = 1;
+	map[0].logexit = 0;
+	strcpy(map[0].fname, SM_fname);
+	
+    return(map);
+}
+
+
+// set the on field in logshim
+// IDname is name of image logged
+int COREMOD_MEMORY_logshim_seton(char *IDname, int on)
+{
+	LOGSHIM_CONF* logshimconf;
+	
+	
+	// read shared mem
+	
+	return(0);
+}
 
 
 

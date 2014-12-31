@@ -191,7 +191,7 @@ typedef struct
     int shared; 					// 1 if in shared memory
 
     int write;                	// 1 if image is being written
-    int status;
+    int status;					// 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) 
     long cnt0;               	  	// counter (incremented if image is updated)
     long cnt1;					// in 3D rolling buffer image, this is the last slice written
 
@@ -223,7 +223,6 @@ typedef struct			/* structure used to store data arrays */
 
 	IMAGE_KEYWORD *kw; 
 
-	//int *logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
 
 
     int sem; // 1 if semaphore exists for this image
