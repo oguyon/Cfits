@@ -741,7 +741,6 @@ void *compute_function( void *ptr )
     //   memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
 
     cudaSetDevice(device);
-    *ptrstat = 2;
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
@@ -756,7 +755,7 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
-		*ptrstat = 3;
+		*ptrstat = 2; // wait for image
         if(gpumatmultconf[index].sem==1)
         {
             //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d ...\n", index, device);
@@ -766,7 +765,7 @@ void *compute_function( void *ptr )
             //fflush(stdout);
         }
 
-
+		*ptrstat = 3; // transfer
         stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), (float*) ptr0, 1, gpumatmultconf[index].d_wfsVec[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)
         {
