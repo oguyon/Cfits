@@ -562,6 +562,7 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
 	sprintf(data.cmdargtoken[4].val.string, "null");
+	CLI_checkarg(4,3);
 	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
     {
 		COREMOD_MEMORY_sharedMem_2Dim_log(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
