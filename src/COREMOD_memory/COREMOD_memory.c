@@ -569,6 +569,33 @@ int COREMOD_MEMORY_logshim_printstatus_cli()
 	return 1;
 }
 
+//int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv);
+//int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv);
+
+
+int COREMOD_MEMORY_logshim_set_on_cli()
+{
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+		COREMOD_MEMORY_logshim_set_on(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+      return 0;
+    }
+  else
+	return 1;
+}
+
+int COREMOD_MEMORY_logshim_set_logexit_cli()
+{
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
+    {
+		COREMOD_MEMORY_logshim_set_logexit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+      return 0;
+    }
+  else
+	return 1;
+}
+
+
 
 int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 {
@@ -869,9 +896,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)");
   data.NBcmd++;
  
-//int COREMOD_MEMORY_logshim_printstatus(char *IDname);
-
-
+ 
   strcpy(data.cmd[data.NBcmd].key,"shmimslogstat");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_printstatus_cli;
@@ -880,6 +905,29 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].example,"shmimslogstat wfscamim");
   strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_printstatus(char *IDname)");
   data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"shmimslogonset");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_on_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set on variable in log shared memory stream");
+  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"shmimslogonset imwfs 1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"shmimslogexitset");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_logexit_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set exit variable in log shared memory stream");
+  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
+  strcpy(data.cmd[data.NBcmd].example,"shmimslogexitset imwfs 1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)");
+  data.NBcmd++;
+
+
+
+
 
  
   // add atexit functions here
@@ -4064,7 +4112,7 @@ LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(char *logshimname)
 }
 
 
-// set the on field in logshim
+
 // IDname is name of image logged
 int COREMOD_MEMORY_logshim_printstatus(char *IDname)
 {
@@ -4100,6 +4148,94 @@ int COREMOD_MEMORY_logshim_printstatus(char *IDname)
         printf(" filecnt = %lld\n", map[0].filecnt);
         printf("interval = %ld\n", map[0].interval);
         printf("logexit  = %d\n", map[0].logexit);
+
+        if (munmap(map, sizeof(LOGSHIM_CONF)) == -1) {
+            printf("unmapping %s\n", SM_fname);
+            perror("Error un-mmapping the file");
+        }
+        close(SM_fd);
+    }
+    return(0);
+}
+
+
+
+// set the on field in logshim
+// IDname is name of image logged
+int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)
+{
+    LOGSHIM_CONF* map;
+    char SM_fname[200];
+    int SM_fd;
+    struct stat file_stat;
+
+    // read shared mem
+    sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, IDname);
+    printf("Importing mmap file \"%s\"\n",SM_fname);
+
+    SM_fd = open(SM_fname, O_RDWR);
+    if(SM_fd==-1)
+    {
+        printf("Cannot import file - continuing\n");
+        exit(0);
+    }
+    else
+    {
+        fstat(SM_fd, &file_stat);
+        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+        map = (LOGSHIM_CONF*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+        if (map == MAP_FAILED) {
+            close(SM_fd);
+            perror("Error mmapping the file");
+            exit(0);
+        }
+        
+        map[0].on = setv;
+
+        if (munmap(map, sizeof(LOGSHIM_CONF)) == -1) {
+            printf("unmapping %s\n", SM_fname);
+            perror("Error un-mmapping the file");
+        }
+        close(SM_fd);
+    }
+    return(0);
+}
+
+
+
+// set the on field in logshim
+// IDname is name of image logged
+int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)
+{
+    LOGSHIM_CONF* map;
+    char SM_fname[200];
+    int SM_fd;
+    struct stat file_stat;
+
+    // read shared mem
+    sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, IDname);
+    printf("Importing mmap file \"%s\"\n",SM_fname);
+
+    SM_fd = open(SM_fname, O_RDWR);
+    if(SM_fd==-1)
+    {
+        printf("Cannot import file - continuing\n");
+        exit(0);
+    }
+    else
+    {
+        fstat(SM_fd, &file_stat);
+        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+        map = (LOGSHIM_CONF*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+        if (map == MAP_FAILED) {
+            close(SM_fd);
+            perror("Error mmapping the file");
+            exit(0);
+        }
+        
+        map[0].logexit = setv;
 
         if (munmap(map, sizeof(LOGSHIM_CONF)) == -1) {
             printf("unmapping %s\n", SM_fname);
