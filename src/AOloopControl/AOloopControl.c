@@ -3934,6 +3934,7 @@ int AOloopControl_run()
         vOK = 0;
     }
 
+	AOconf[loop].init_CMc = 0;
 
     if(vOK==1)
     {
