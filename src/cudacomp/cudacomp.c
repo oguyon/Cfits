@@ -637,6 +637,9 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     *status = *status + 1;
     
     
+    printf("GOT HERE\n");
+	fflush(stdout);
+	
 	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
