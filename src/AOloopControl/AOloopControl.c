@@ -3915,12 +3915,8 @@ int AOloopControl_run()
                 AOconf[loop].status = 21; //  (13->) LOGGING, part 2
                 AOconf[loop].cnt++;
 				
-				
-				list_image_ID();
-				printf("logdataID = %ld\n", AOconf[loop].logdataID);
 				data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
-				data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
-				
+				data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;				
 				
 				
                 if(AOconf[loop].cnt == AOconf[loop].cntmax)
