@@ -435,6 +435,7 @@ int SCExAO_DM_CombineChannels(int mode)
             perror("semaphore initilization");
             exit(1);
         }
+	data.image[IDdisp].sem1 = 1;
 }
 
     while(dispcombconf[0].ON == 1)

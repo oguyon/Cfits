@@ -2680,7 +2680,8 @@ int set_DM_modes(long loop)
     }
     
     if(aoconfID_DMdisp!=-1)
-		sem_post(data.image[aoconfID_DMdisp].semptr1);
+		if(data.image[aoconfID_DMdisp].sem1 == 1)
+			sem_post(data.image[aoconfID_DMdisp].semptr1);
     
     AOconf[loop].DMupdatecnt ++;
 
