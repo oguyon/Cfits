@@ -311,7 +311,11 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         fflush(stdout);
 
 
+
         gpumatmultconf[index].orientation = orientation;
+
+		printf("input CM name : %s\n", IDcontrM_name);
+		fflush(stdout);
         gpumatmultconf[index].CM_ID = image_ID(IDcontrM_name);
         
         printf("CM_ID = %ld\n", gpumatmultconf[index].CM_ID);
