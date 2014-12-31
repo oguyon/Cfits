@@ -302,6 +302,19 @@ int semval;
 	  sem_getvalue(data.image[ID].semptr, &semval);
      printw("[Semaphore %3d] ", semval);
 	}
+ if(data.image[ID].sem1==1)
+  {
+	  sem_getvalue(data.image[ID].semptr1, &semval);
+     printw("[Semaphore 1 %3d] ", semval);
+	}
+ if(data.image[ID].semlog==1)
+  {
+	  sem_getvalue(data.image[ID].semptrlog, &semval);
+     printw("[Semaphore log %3d] ", semval);
+	}
+
+
+
 printw("\n");
 
   average = arith_image_mean(data.image[ID].md[0].name);
