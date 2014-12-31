@@ -577,6 +577,7 @@ int COREMOD_MEMORY_logshim_set_on_cli()
 {
 	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
     {
+		printf("logshim_set_on ----------------------\n");
 		COREMOD_MEMORY_logshim_set_on(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
       return 0;
     }
