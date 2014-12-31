@@ -1102,6 +1102,16 @@ int delete_image_ID(char* imname) /* deletes an ID */
 				data.image[ID].sem = 0;
 				sem_close(data.image[ID].semptr);
 			}
+		if(data.image[ID].sem1==1)
+			{
+				data.image[ID].sem1 = 0;
+				sem_close(data.image[ID].semptr1);
+			}
+		if(data.image[ID].sem==1)
+			{
+				data.image[ID].semlog = 0;
+				sem_close(data.image[ID].semptrlog);
+			}
 
         if(data.image[ID].md[0].shared == 1)
         {
@@ -1780,127 +1790,150 @@ long image_read_keyword_L(char *IDname, char *kname, long *val)
 
 long read_sharedmem_image(char *name)
 {
-  long ID = -1;
-  int SM_fd;
-  struct stat file_stat;
-  char SM_fname[200];
-  IMAGE_METADATA *map;
-  char *mapv;
-  int atype;
-  int kw;
-char sname[200];
- 
-  ID = next_avail_image_ID();
-  data.image[ID].used = 1;
+    long ID = -1;
+    int SM_fd;
+    struct stat file_stat;
+    char SM_fname[200];
+    IMAGE_METADATA *map;
+    char *mapv;
+    int atype;
+    int kw;
+    char sname[200];
 
-  sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name); 	
-  printf("Importing mmap file \"%s\"\n",SM_fname);
-  
-  SM_fd = open(SM_fname, O_RDWR);
-  if(SM_fd==-1)
+    ID = next_avail_image_ID();
+    data.image[ID].used = 1;
+
+    sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
+    printf("Importing mmap file \"%s\"\n",SM_fname);
+
+    SM_fd = open(SM_fname, O_RDWR);
+    if(SM_fd==-1)
     {
-		data.image[ID].used = 0;
-      ID = -1;
-      printf("Cannot import file - continuing\n");
+        data.image[ID].used = 0;
+        ID = -1;
+        printf("Cannot import file - continuing\n");
     }
-  else
+    else
     {
-      fstat(SM_fd, &file_stat);
-      printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
-      
-      map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
-      if (map == MAP_FAILED) {
-	close(SM_fd);
-	perror("Error mmapping the file");
-	exit(0);
-      }
-      
-      data.image[ID].memsize = file_stat.st_size;
-      data.image[ID].sem = 0;
-      data.image[ID].shmfd = SM_fd;
-      
-      data.image[ID].md = map;
-      atype = data.image[ID].md[0].atype;
-      data.image[ID].md[0].shared = 1;
-      
-      printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
-      fflush(stdout);
-      
-      mapv = (char*) map;
-      mapv += sizeof(IMAGE_METADATA);
-      
-      if(atype==CHAR)
-	{
-	  data.image[ID].array.C = (char*) mapv;
-	  mapv += sizeof(char)*data.image[ID].md[0].nelement;
-	}
-      if(atype==INT)
-	{
-	  data.image[ID].array.I = (int*) mapv;
-	  mapv += sizeof(int)*data.image[ID].md[0].nelement;
-	}
-      if(atype==FLOAT)
-	{
-	  data.image[ID].array.F = (float*) mapv;
-	  mapv += sizeof(float)*data.image[ID].md[0].nelement;
-	}      
-      if(atype==DOUBLE)
-	{
-	  data.image[ID].array.D = (double*) mapv;
-	  mapv += sizeof(double)*data.image[ID].md[0].nelement;
-	}      
-      if(atype==COMPLEX_FLOAT)
-	{
-	  data.image[ID].array.CF = (complex_float*) mapv;
-	  mapv += sizeof(complex_float)*data.image[ID].md[0].nelement;
-	}      
-      if(atype==COMPLEX_DOUBLE)
-	{
-	  data.image[ID].array.CD = (complex_double*) mapv;
-	  mapv += sizeof(complex_double)*data.image[ID].md[0].nelement;
-	}      
-      if(atype==USHORT)
-	{
-	  data.image[ID].array.U = (unsigned short*) mapv;
-	  mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
-	}
+        fstat(SM_fd, &file_stat);
+        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+        map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+        if (map == MAP_FAILED) {
+            close(SM_fd);
+            perror("Error mmapping the file");
+            exit(0);
+        }
+
+        data.image[ID].memsize = file_stat.st_size;
+        data.image[ID].sem = 0;
+        data.image[ID].sem1 = 0;
+        data.image[ID].semlog = 0;
+        data.image[ID].shmfd = SM_fd;
+
+        data.image[ID].md = map;
+        atype = data.image[ID].md[0].atype;
+        data.image[ID].md[0].shared = 1;
+
+        printf("image size = %ld %ld\n", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
+        fflush(stdout);
+
+        mapv = (char*) map;
+        mapv += sizeof(IMAGE_METADATA);
+
+        if(atype==CHAR)
+        {
+            data.image[ID].array.C = (char*) mapv;
+            mapv += sizeof(char)*data.image[ID].md[0].nelement;
+        }
+        if(atype==INT)
+        {
+            data.image[ID].array.I = (int*) mapv;
+            mapv += sizeof(int)*data.image[ID].md[0].nelement;
+        }
+        if(atype==FLOAT)
+        {
+            data.image[ID].array.F = (float*) mapv;
+            mapv += sizeof(float)*data.image[ID].md[0].nelement;
+        }
+        if(atype==DOUBLE)
+        {
+            data.image[ID].array.D = (double*) mapv;
+            mapv += sizeof(double)*data.image[ID].md[0].nelement;
+        }
+        if(atype==COMPLEX_FLOAT)
+        {
+            data.image[ID].array.CF = (complex_float*) mapv;
+            mapv += sizeof(complex_float)*data.image[ID].md[0].nelement;
+        }
+        if(atype==COMPLEX_DOUBLE)
+        {
+            data.image[ID].array.CD = (complex_double*) mapv;
+            mapv += sizeof(complex_double)*data.image[ID].md[0].nelement;
+        }
+        if(atype==USHORT)
+        {
+            data.image[ID].array.U = (unsigned short*) mapv;
+            mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
+        }
 
 
-      data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
-      
-      
-      for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
-	{
-	  if(data.image[ID].kw[kw].type == 'L')
-	    printf("%d  %s %ld %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numl, data.image[ID].kw[kw].comment);
-	  if(data.image[ID].kw[kw].type == 'D')
-	    printf("%d  %s %lf %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numf, data.image[ID].kw[kw].comment);
-	  if(data.image[ID].kw[kw].type == 'S')
-	    printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);      
-	}
-	
-	strcpy(data.image[ID].md[0].name, name);
-      
-      if(MEM_MONITOR == 1)
-	list_image_ID_ncurses();
-    
-    
-		// looking for semaphore
-	sprintf(sname, "%s_sem", name);
-	//printf("looking for semaphore %s\n", sname);
-	if ((data.image[ID].semptr = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
-    //printf("No semaphore named \"%s\"\n", sname);
-    data.image[ID].sem = 0;
-	}
-	else
-	{
-		printf("Semaphore detected\n");
-		data.image[ID].sem = 1;
-	}
+        data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+
+
+        for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
+        {
+            if(data.image[ID].kw[kw].type == 'L')
+                printf("%d  %s %ld %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numl, data.image[ID].kw[kw].comment);
+            if(data.image[ID].kw[kw].type == 'D')
+                printf("%d  %s %lf %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.numf, data.image[ID].kw[kw].comment);
+            if(data.image[ID].kw[kw].type == 'S')
+                printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);
+        }
+
+        strcpy(data.image[ID].md[0].name, name);
+
+        if(MEM_MONITOR == 1)
+            list_image_ID_ncurses();
+
+
+        // looking for semaphores
+        sprintf(sname, "%s_sem", name);
+        if ((data.image[ID].semptr = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
+            data.image[ID].sem = 0;
+        }
+        else
+        {
+            printf("Semaphore detected\n");
+            data.image[ID].sem = 1;
+        }
+
+		sprintf(sname, "%s_sem1", name);
+        if ((data.image[ID].semptr1 = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
+            data.image[ID].sem1 = 0;
+        }
+        else
+        {
+            printf("Semaphore 1 detected\n");
+            data.image[ID].sem1 = 1;
+        }
+
+		sprintf(sname, "%s_semlog", name);
+        if ((data.image[ID].semptrlog = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
+            data.image[ID].semlog = 0;
+        }
+        else
+        {
+            printf("Semaphore log detected\n");
+            data.image[ID].semlog = 1;
+        }
+
+
     }
 
-  return(ID);
+    return(ID);
 }
+
 
 
 
@@ -3573,43 +3606,33 @@ long COREMOD_MEMORY_image_set_createsem(char *IDname)
 
 long COREMOD_MEMORY_image_set_sempost(char *IDname)
 {
-	long ID;
-	
-	ID = image_ID(IDname);
-	//printf("sem  = %d\n", data.image[ID].sem);
+    long ID;
 
-	if(data.image[ID].sem == 1)
-		sem_post(data.image[ID].semptr);
-	else
-		printf("No semaphore !\n");
-		
-	return(ID);
+    ID = image_ID(IDname);
+
+    if(data.image[ID].sem == 1)
+        sem_post(data.image[ID].semptr);
+    else
+        printf("No semaphore !\n");
+
+    return(ID);
 }
 
 long COREMOD_MEMORY_image_set_semwait(char *IDname)
 {
-	long ID;
-	int semval;
-	
-	ID = image_ID(IDname);
-	//printf("sem  = %d\n", data.image[ID].sem);
+    long ID;
+    int semval;
 
-	if(data.image[ID].sem == 1)
-	{
-//	sem_getvalue(data.image[ID].semptr, &semval);
-	//printf("Semaphore value = %d   ->  ", semval);
-	//fflush(stdout);
+    ID = image_ID(IDname);
 
-	sem_wait(data.image[ID].semptr);
-//	sem_getvalue(data.image[ID].semptr, &semval);
-	//printf("Semaphore value = %d    \n", semval);
-	//fflush(stdout);
-	}
-	else
-		printf("No semaphore !\n");
-	
-	return(ID);
+    if(data.image[ID].sem == 1)
+        sem_wait(data.image[ID].semptr);
+    else
+        printf("No semaphore !\n");
+
+    return(ID);
 }
+
 
 
 
