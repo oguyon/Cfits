@@ -159,7 +159,7 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname);
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode);
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
 
-
+int COREMOD_MEMORY_logshim_printstatus(char *IDname);
 long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, char *IDlogdata_name);
 
 #endif
