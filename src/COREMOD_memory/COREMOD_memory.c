@@ -1316,6 +1316,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             
             data.image[ID].sem = 0; 
             data.image[ID].sem1 = 0; 
+            data.image[ID].semlog = 0; 
             data.image[ID].shmfd = SM_fd;
             data.image[ID].memsize = sharedsize;
 

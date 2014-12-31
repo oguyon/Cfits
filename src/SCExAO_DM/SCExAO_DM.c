@@ -416,6 +416,7 @@ int SCExAO_DM_CombineChannels(int mode)
 		dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
     }
 
+	
     IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
 
 	IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
@@ -429,14 +430,16 @@ int SCExAO_DM_CombineChannels(int mode)
     dispcombconf[0].status = 1;
 
 	if(data.image[IDdisp].sem1==0)
-{
+	{
 		sprintf(sname, "dmcomb_sem1");
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
-            perror("semaphore initilization");
+            perror("semaphore 1 initilization error");
             exit(1);
         }
+        else
+			printf("semaphore 1 initialized for image dmdisp \n");
 	data.image[IDdisp].sem1 = 1;
-}
+	}
 
     while(dispcombconf[0].ON == 1)
     {
