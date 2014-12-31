@@ -46,6 +46,7 @@ typedef struct
 
     int init_RM;        // Response Matrix loaded
     int init_CM;        // Control Matrix loaded
+    int init_CMc;		// combine control matrix computed
     char respMname[80];
     char contrMname[80];
 

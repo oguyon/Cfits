@@ -78,6 +78,7 @@ long aoconfID_cmd_modesRM = -1;
 long aoconfID_respM = -1;
 long aoconfID_contrM = -1; // pixels -> modes
 long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
+long aoconfID_meas_act = -1;
 
 long aoconfIDlog0 = -1;
 long aoconfIDlog1 = -1;
@@ -3740,8 +3741,11 @@ int AOcompute(long loop)
     // long long wcntmax;
     long cnttest;
     double a;
+	long *sizearray;
 
-
+	float *matrix_cmp;
+	long wfselem, act, mode;
+	
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
@@ -3764,6 +3768,49 @@ int AOcompute(long loop)
     AOconf[loop].status = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
 
+
+	if(AOconf[loop].init_CMc == 0) // compute combined control matrix
+	{
+		printf("COMPUTING COMBINED CONTROL MATRIX .... ");
+		fflush(stdout);
+		if(aoconfID_contrMc==-1)
+			{
+				sizearray = (long*) malloc(sizeof(long)*3);
+				sizearray[0] = AOconf[loop].sizexWFS; 
+				sizearray[1] = AOconf[loop].sizeyWFS;
+				sizearray[2] = AOconf[loop].sizeDM;
+				aoconfID_contrMc = create_image_ID("cmatc", 3, sizearray, FLOAT, 1, 0);
+				free(sizearray);					
+			}
+
+		// control matrix scaled by gains
+		matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+		for(wfselem=0;wfselem<AOconf[loop].sizeWFS;wfselem++)
+			for(mode=0;mode<AOconf[loop].NBDMmodes;mode++)				
+				matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
+				
+		for(wfselem=0;wfselem<AOconf[loop].sizeWFS;wfselem++)
+			for(act=0;act<AOconf[loop].sizeDM;act++)
+			{
+				data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] = 0.0; 
+				for(mode=0;mode<AOconf[loop].NBDMmodes;mode++)
+					data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
+			}
+						
+		if(aoconfID_meas_act==-1)
+			{
+				sizearray = (long*) malloc(sizeof(long)*2);
+				sizearray[0] = AOconf[loop].sizexDM; 
+				sizearray[1] = AOconf[loop].sizeyDM;
+				aoconfID_meas_act = create_image_ID("measact", 2, sizearray, FLOAT, 1, 0);
+				free(sizearray);					
+			}
+		AOconf[loop].init_CMc = 1;		
+		printf(" done\n");
+		fflush(stdout);
+	}
+
+
     if(AOconf[loop].GPU == 0)
     {
         ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
@@ -3775,6 +3822,10 @@ int AOcompute(long loop)
         GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 		AOconf[loop].status = 8; // execute  
         GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+
+		GPU_loop_MultMat_setup(2, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+		AOconf[loop].status = 8; // execute  
+        GPU_loop_MultMat_execute(2, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
     }
 

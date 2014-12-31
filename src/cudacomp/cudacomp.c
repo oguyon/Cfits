@@ -779,7 +779,7 @@ void *compute_function( void *ptr )
             exit(EXIT_FAILURE);
         }
 
-        *ptrstat = 4;
+        *ptrstat = 4; // compute
 
         if(gpumatmultconf[index].sem==1)
         {
@@ -817,7 +817,7 @@ void *compute_function( void *ptr )
 
 
 
-        *ptrstat = 5;
+        *ptrstat = 5; // transfer result
 
 
         //cudaMemcpy(cpu.r, gpu.r, gpumatmultconf[index].M * sizeof(float), cudaMemcpyDeviceToHost);
@@ -831,7 +831,9 @@ void *compute_function( void *ptr )
             //fflush(stdout);
         }
 
-
+		
+		// result is on gpumatmultconf[index].d_dmVec[device]
+		
         stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
 
         if (stat != CUBLAS_STATUS_SUCCESS)
