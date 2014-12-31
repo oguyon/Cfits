@@ -640,7 +640,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     printf("GOT HERE\n");
 	fflush(stdout);
 	
-	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+	//data.image[gpumatmultconf[index].IDout].md[0].write = 0;
  
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
@@ -655,12 +655,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     if(data.image[gpumatmultconf[index].IDout].sem1 == 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr1);
     if(data.image[gpumatmultconf[index].IDout].semlog == 1)
-        sem_post(data.image[gpumatmultconf[index].IDout].semptrlog);*/
-	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+        sem_post(data.image[gpumatmultconf[index].IDout].semptrlog);
+	data.image[gpumatmultconf[index].IDout].md[0].write = 0;*/
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
  
    *status = *status + 1;
-
+   printf("AND HERE\n");
+	fflush(stdout);
+	
     return(0);
 }
 
