@@ -3823,9 +3823,9 @@ int AOcompute(long loop)
 		AOconf[loop].status = 8; // execute  
         GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 
-		GPU_loop_MultMat_setup(2, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-		AOconf[loop].status = 8; // execute  
-        GPU_loop_MultMat_execute(2, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+		//GPU_loop_MultMat_setup(2, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+		//AOconf[loop].status = 8; // execute  
+        //GPU_loop_MultMat_execute(2, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
     }
 
