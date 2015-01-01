@@ -4293,12 +4293,12 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     long NBfiles = -1; // run forever
     long long cntwait;
     long waitdelayus = 50;
-    long long cntwaitlim = 200000; // 10 sec
+    long long cntwaitlim = 20000; // 10 sec
     int wOK;
     int noframe;
 
     int is3Dcube = 0; // this is a rolling buffer
-
+	int exitflag = 0; // toggles to 1 when loop must exit
 
     LOGSHIM_CONF* logshimconf;
 
@@ -4381,13 +4381,14 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     printf("logdata ID = %ld\n", IDlogdata);
     list_image_ID();
 
+	exitflag = 0;
+
     while( (logshimconf[0].filecnt != NBfiles) && (logshimconf[0].logexit==0) )
     {
         cntwait = 0;
         noframe = 0;
         wOK = 1;
         // printf("Entering wait loop   index = %ld %d\n", index, noframe);
-
 
         while(((cnt==data.image[ID].md[0].cnt0)||(logshimconf[0].on == 0))&&(wOK==1))
         {
