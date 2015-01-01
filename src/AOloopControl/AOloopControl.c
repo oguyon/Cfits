@@ -46,7 +46,7 @@
 
 
 
-int GPU_COMPUTATION_MODE = 0; 
+int GPU_COMPUTATION_MODE = 1; 
 // 0: compute sequentially modes and DM commands
 // 1: use combined control matrix
 
