@@ -2692,7 +2692,7 @@ int set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, 0);
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem);
         AOconf[loop].status = 15;
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
@@ -3751,11 +3751,11 @@ int AOcompute(long loop)
     // long long wcntmax;
     long cnttest;
     double a;
-	long *sizearray;
+    long *sizearray;
 
-	float *matrix_cmp;
-	long wfselem, act, mode;
-	
+    float *matrix_cmp;
+    long wfselem, act, mode;
+
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
@@ -3778,48 +3778,48 @@ int AOcompute(long loop)
     AOconf[loop].status = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
 
 
-	//printf("init_CMc = %d\n", AOconf[loop].init_CMc);
-	//fflush(stdout);
-	if(AOconf[loop].init_CMc == 0) // compute combined control matrix
-	{
-		printf("COMPUTING COMBINED CONTROL MATRIX .... ");
-		fflush(stdout);
-		if(aoconfID_contrMc==-1)
-			{
-				sizearray = (long*) malloc(sizeof(long)*3);
-				sizearray[0] = AOconf[loop].sizexWFS; 
-				sizearray[1] = AOconf[loop].sizeyWFS;
-				sizearray[2] = AOconf[loop].sizeDM;
-				aoconfID_contrMc = create_image_ID("cmatc", 3, sizearray, FLOAT, 1, 0);
-				free(sizearray);					
-			}
+    //printf("init_CMc = %d\n", AOconf[loop].init_CMc);
+    //fflush(stdout);
+    if(AOconf[loop].init_CMc == 0) // compute combined control matrix
+    {
+        printf("COMPUTING COMBINED CONTROL MATRIX .... ");
+        fflush(stdout);
+        if(aoconfID_contrMc==-1)
+        {
+            sizearray = (long*) malloc(sizeof(long)*3);
+            sizearray[0] = AOconf[loop].sizexWFS;
+            sizearray[1] = AOconf[loop].sizeyWFS;
+            sizearray[2] = AOconf[loop].sizeDM;
+            aoconfID_contrMc = create_image_ID("cmatc", 3, sizearray, FLOAT, 1, 0);
+            free(sizearray);
+        }
 
-		// control matrix scaled by gains
-		matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-		for(wfselem=0;wfselem<AOconf[loop].sizeWFS;wfselem++)
-			for(mode=0;mode<AOconf[loop].NBDMmodes;mode++)				
-				matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
-				
-		for(wfselem=0;wfselem<AOconf[loop].sizeWFS;wfselem++)
-			for(act=0;act<AOconf[loop].sizeDM;act++)
-			{
-				data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] = 0.0; 
-				for(mode=0;mode<AOconf[loop].NBDMmodes;mode++)
-					data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
-			}
-						
-		if(aoconfID_meas_act==-1)
-			{
-				sizearray = (long*) malloc(sizeof(long)*2);
-				sizearray[0] = AOconf[loop].sizexDM; 
-				sizearray[1] = AOconf[loop].sizeyDM;
-				aoconfID_meas_act = create_image_ID("measact", 2, sizearray, FLOAT, 1, 0);
-				free(sizearray);					
-			}
-		AOconf[loop].init_CMc = 1;		
-		printf(" done\n");
-		fflush(stdout);
-	}
+        // control matrix scaled by gains
+        matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+        for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+                matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
+
+        for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+            for(act=0; act<AOconf[loop].sizeDM; act++)
+            {
+                data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] = 0.0;
+                for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+                    data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
+            }
+
+        if(aoconfID_meas_act==-1)
+        {
+            sizearray = (long*) malloc(sizeof(long)*2);
+            sizearray[0] = AOconf[loop].sizexDM;
+            sizearray[1] = AOconf[loop].sizeyDM;
+            aoconfID_meas_act = create_image_ID("measact", 2, sizearray, FLOAT, 1, 0);
+            free(sizearray);
+        }
+        AOconf[loop].init_CMc = 1;
+        printf(" done\n");
+        fflush(stdout);
+    }
 
 
     if(AOconf[loop].GPU == 0)
@@ -3830,59 +3830,60 @@ int AOcompute(long loop)
     else
     {
 #ifdef HAVE_CUDA
-       if(GPU_COMPUTATION_MODE==0)
-			{
-				GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-				AOconf[loop].status = 8; // execute  
-				GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
-			}
-			else
-			{
-			GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-			AOconf[loop].status = 8; // execute  
-			GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
-			}
+        if(GPU_COMPUTATION_MODE==0)
+        {
+            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+            AOconf[loop].status = 8; // execute
+            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+        }
+        else
+        {
+            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+            AOconf[loop].status = 8; // execute
+            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+        }
 #endif
     }
 
     AOconf[loop].status = 13; // MULTIPLYING BY GAINS
-	if(GPU_COMPUTATION_MODE==0)
-	{
-    AOconf[loop].RMSmodes = 0;
-    for(k=0; k<AOconf[loop].NBDMmodes; k++)
-        AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
-
-    AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
-    AOconf[loop].RMSmodesCumulcnt ++;
-
-	
-    for(k=0; k<AOconf[loop].NBDMmodes; k++)
+    if(GPU_COMPUTATION_MODE==0)
     {
-        data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
-        data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k];
+        AOconf[loop].RMSmodes = 0;
+        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+            AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
 
-        data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
-
-        if(data.image[aoconfID_cmd_modes].array.F[k] < -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
-            data.image[aoconfID_cmd_modes].array.F[k] = -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
-
-        if(data.image[aoconfID_cmd_modes].array.F[k] > AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
-            data.image[aoconfID_cmd_modes].array.F[k] = AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
-
-        data.image[aoconfID_cmd_modes].array.F[k] *= AOconf[loop].mult * data.image[aoconfID_MULTF_modes].array.F[k];
+        AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
+        AOconf[loop].RMSmodesCumulcnt ++;
 
 
-        // update total gain
-   //     data.image[aoconfID_GAIN_modes].array.F[k+AOconf[loop].NBDMmodes] = AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k];
+        for(k=0; k<AOconf[loop].NBDMmodes; k++)
+        {
+            data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
+            data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k];
+
+            data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
+
+            if(data.image[aoconfID_cmd_modes].array.F[k] < -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
+                data.image[aoconfID_cmd_modes].array.F[k] = -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
+
+            if(data.image[aoconfID_cmd_modes].array.F[k] > AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
+                data.image[aoconfID_cmd_modes].array.F[k] = AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
+
+            data.image[aoconfID_cmd_modes].array.F[k] *= AOconf[loop].mult * data.image[aoconfID_MULTF_modes].array.F[k];
+
+
+            // update total gain
+            //     data.image[aoconfID_GAIN_modes].array.F[k+AOconf[loop].NBDMmodes] = AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k];
+        }
+
+
+        data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
     }
-
-
-    data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
-	}
 
 
     return(0);
 }
+
 
 
 
