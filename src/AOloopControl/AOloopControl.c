@@ -3889,11 +3889,11 @@ int AOcompute(long loop)
 
 int AOloopControl_run()
 {
-	FILE *fp;
+    FILE *fp;
     char fname[200];
     long loop;
     int vOK;
-	long ii;
+    long ii;
     long ID;
     long j, m;
     struct tm *uttime;
@@ -3906,13 +3906,13 @@ int AOloopControl_run()
     struct sched_param schedpar;
     double a;
     long cnttest;
-	float tmpf1;
+    float tmpf1;
 
 
     schedpar.sched_priority = RT_priority;
-   // r = seteuid(euid_called); //This goes up to maximum privileges
+    // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-   // r = seteuid(euid_real);//Go back to normal privileges
+    // r = seteuid(euid_real);//Go back to normal privileges
 
     loop = LOOPNUMBER;
 
@@ -3925,7 +3925,7 @@ int AOloopControl_run()
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
-	
+
     vOK = 1;
     if(AOconf[loop].init_refWFS==0)
     {
@@ -3938,7 +3938,7 @@ int AOloopControl_run()
         vOK = 0;
     }
 
-	AOconf[loop].init_CMc = 0;
+    AOconf[loop].init_CMc = 0;
 
     if(vOK==1)
     {
@@ -3952,34 +3952,47 @@ int AOloopControl_run()
             fflush(stdout);
             usleep(1000);
 
-			
+
 
             while(AOconf[loop].on == 1)
             {
-                AOcompute(loop);	
+                AOcompute(loop);
 
-				AOconf[loop].status = 14; 
+                AOconf[loop].status = 14;
 
-             if(GPU_COMPUTATION_MODE==0)
-             {
-                if(fabs(AOconf[loop].gain)>1.0e-6)                
-                    set_DM_modes(loop); 
-			 }
-			 else
-				{
-					for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-						data.image[aoconfID_DM].array.F[ii] -= data.image[aoconfID_meas_act].array.F[ii];					
-				}
-			 
-			 
+                if(GPU_COMPUTATION_MODE==0)
+                {
+                    if(fabs(AOconf[loop].gain)>1.0e-6)
+                        set_DM_modes(loop);
+                }
+                else
+                {
+
+
+                    data.image[aoconfID_DM].md[0].write = 1;
+
+                    for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+                        data.image[aoconfID_DM].array.F[ii] -= data.image[aoconfID_meas_act].array.F[ii];
+                    if(data.image[aoconfID_DM].sem == 1)
+                        sem_post(data.image[aoconfID_DM].semptr);
+                    data.image[aoconfID_DM].md[0].cnt0++;
+                    data.image[aoconfID_DM].md[0].write = 0;
+                    // inform dmdisp that new command is ready in one of the channels
+                    if(aoconfID_DMdisp!=-1)
+                        if(data.image[aoconfID_DMdisp].sem1 == 1)
+                            sem_post(data.image[aoconfID_DMdisp].semptr1);
+
+                    AOconf[loop].DMupdatecnt ++;
+                }
+
                 AOconf[loop].status = 20; //  LOGGING, part 1
                 AOconf[loop].status = 21; //  (13->) LOGGING, part 2
                 AOconf[loop].cnt++;
-				
-				data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
-				data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;				
-				
-				
+
+                data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
+                data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
+
+
                 if(AOconf[loop].cnt == AOconf[loop].cntmax)
                     AOconf[loop].on = 0;
             }
@@ -3992,6 +4005,7 @@ int AOloopControl_run()
 
     return(0);
 }
+
 
 
 
