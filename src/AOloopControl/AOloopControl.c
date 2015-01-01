@@ -46,6 +46,11 @@
 
 
 
+int GPU_COMPUTATION_MODE = 0; 
+// 0: compute sequentially modes and DM commands
+// 1: use combined control matrix
+
+
 
 int wcol, wrow; // window size
 
@@ -3825,19 +3830,24 @@ int AOcompute(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-		AOconf[loop].status = 8; // execute  
-        GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
-
-		GPU_loop_MultMat_setup(2, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-		AOconf[loop].status = 8; // execute  
-        GPU_loop_MultMat_execute(2, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+       if(GPU_COMPUTATION_MODE==0)
+			{
+				GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+				AOconf[loop].status = 8; // execute  
+				GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+			}
+			else
+			{
+			GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+			AOconf[loop].status = 8; // execute  
+			GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+			}
 #endif
     }
 
     AOconf[loop].status = 13; // MULTIPLYING BY GAINS
-
-
+	if(GPU_COMPUTATION_MODE==0)
+	{
     AOconf[loop].RMSmodes = 0;
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
         AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
@@ -3845,18 +3855,6 @@ int AOcompute(long loop)
     AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
     AOconf[loop].RMSmodesCumulcnt ++;
 
-
-
-
-/*
-	list_image_ID();
-	printf("UPDATING ARRAYS\n");
-	printf("AOconf[loop].NBDMmodes = %ld\n", AOconf[loop].NBDMmodes);
-	printf("IDs:  %ld %ld %ld %ld %ld %ld %ld\n", aoconfID_RMS_modes, aoconfID_meas_modes, aoconfID_AVE_modes, aoconfID_cmd_modes, aoconfID_GAIN_modes, aoconfID_LIMIT_modes, aoconfID_MULTF_modes);
-	fflush(stdout);
-	*/
-	
-	
 	
     for(k=0; k<AOconf[loop].NBDMmodes; k++)
     {
@@ -3880,7 +3878,7 @@ int AOcompute(long loop)
 
 
     data.image[aoconfID_cmd_modes].md[0].cnt0 ++;
-
+	}
 
 
     return(0);
@@ -3894,7 +3892,7 @@ int AOloopControl_run()
     char fname[200];
     long loop;
     int vOK;
-
+	long ii;
     long ID;
     long j, m;
     struct tm *uttime;
@@ -3957,18 +3955,22 @@ int AOloopControl_run()
 
             while(AOconf[loop].on == 1)
             {
-     
-
-        //        cnttest = data.image[aoconfID_DM].md[0].cnt0;
-				
-	
                 AOcompute(loop);	
 
 				AOconf[loop].status = 14; 
 
+             if(GPU_COMPUTATION_MODE==0)
+             {
                 if(fabs(AOconf[loop].gain)>1.0e-6)                
                     set_DM_modes(loop); 
-	
+			 }
+			 else
+				{
+					for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+						data.image[aoconfID_DM].array.F[ii] -= data.image[aoconfID_meas_act].array.F[ii];					
+				}
+			 
+			 
                 AOconf[loop].status = 20; //  LOGGING, part 1
                 AOconf[loop].status = 21; //  (13->) LOGGING, part 2
                 AOconf[loop].cnt++;
