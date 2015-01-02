@@ -3973,7 +3973,10 @@ int AOloopControl_run()
                     data.image[aoconfID_DM].md[0].write = 1;
 
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-                        data.image[aoconfID_DM].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
+                        {
+							data.image[aoconfID_DM].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
+							data.image[aoconfID_DM].array.F[ii] *= AOconf[loop].mult;
+						}
                     if(data.image[aoconfID_DM].sem == 1)
                         sem_post(data.image[aoconfID_DM].semptr);
                     data.image[aoconfID_DM].md[0].cnt0++;
