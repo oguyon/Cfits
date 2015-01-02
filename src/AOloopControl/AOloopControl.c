@@ -4337,7 +4337,7 @@ int AOloopControl_statusStats()
 	printf("\n");
 	
     for(st=0; st<statusmax; st++)
-        printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]   [%8.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
+        printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
 
 
     if(AOconf[LOOPNUMBER].GPU!=0)
