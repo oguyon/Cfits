@@ -1,6 +1,9 @@
 #if !defined(INFO_H)
 #define INFO_H
 
+
+struct timespec info_time_diff(struct timespec start, struct timespec end);
+
 long brighter(char *ID_name, double value);
 /* number of pixels brighter than value */
 

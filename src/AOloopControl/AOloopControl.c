@@ -30,7 +30,7 @@
 #include "linopt_imtools/linopt_imtools.h"
 #include "AOloopControl/AOloopControl.h"
 #include "image_filter/image_filter.h"
-
+#include "info/info.h"
 #include "ZernikePolyn/ZernikePolyn.h"
 
 
@@ -4246,10 +4246,14 @@ int AOloopControl_statusStats()
     const char *statusdef[22];
     int gpu;
     int nbgpu;
-
+    struct timespec t1;
+    struct timespec t2;
+	struct timespec tdiff;
+    double tdiffv;
     long *statusgpucnt;
     long *statusgpucnt2;
-
+	double loopiterus;
+	
     statusdef[0] = "";
     statusdef[1] = "READING IMAGE";
     statusdef[2] = "WAIT FOR IMAGE";
@@ -4301,7 +4305,8 @@ int AOloopControl_statusStats()
         statusgpucnt[st] = 0;
         statusgpucnt2[st] = 0;
     }
-
+    
+	clock_gettime(CLOCK_REALTIME, &t1);
     for(k=0; k<NBkiter; k++)
     {
         usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
@@ -4319,7 +4324,14 @@ int AOloopControl_statusStats()
             statusgpucnt2[st]++;
         }
     }
-
+	clock_gettime(CLOCK_REALTIME, &t2);
+    tdiff = info_time_diff(t1, t2);
+	tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+	printf("\n");
+	loopiterus = 1.0e6*tdiffv/NBkiter;
+	printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*NBkiter/tdiffv, loopiterus);		
+	printf("\n");
+	
     for(st=0; st<statusmax; st++)
         printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]    %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, statusdef[st]);
 
@@ -4340,7 +4352,9 @@ int AOloopControl_statusStats()
         }
 
         printf("\n");
-        printf("          ----1--------2--------3--------4--------5--------6----\n");
+		if(GPU_COMPUTATION_MODE == 0) 
+		{
+			        printf("          ----1--------2--------3--------4--------5--------6----\n");
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
         {
             printf("GPU %2d  : ", gpu);
@@ -4351,6 +4365,7 @@ int AOloopControl_statusStats()
             printf("  %5.2f %%",   100.0*statusgpucnt2[10*gpu+5]/NBkiter);
             printf("  %5.2f %%\n",  100.0*statusgpucnt2[10*gpu+6]/NBkiter);
         }
+		}
     }
     free(statuscnt);
     free(statusgpucnt);
