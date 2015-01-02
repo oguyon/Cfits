@@ -816,7 +816,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 	long zimax;
     long zi;
     long ID;
-    long NBframes = 500;
+    long NBframes = 100;
     double val, valp, valm, val0;
     double ampl = 0.05;
     double a;
@@ -852,7 +852,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
             sprintf(command, "dm_add_zernike %ld %f", zi, ampl);
             r = system(command);
-            usleep(100000);
+            usleep(10000);
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
@@ -866,7 +866,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
             sprintf(command, "dm_add_zernike %ld %f", zi, -2.0*ampl);
             r = system(command);
-            usleep(100000);
+            usleep(10000);
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
@@ -885,7 +885,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             printf("== ZERNIKE %ld ========== a = %f\n", zi, a);
             sprintf(command, "dm_add_zernike %ld %f", zi, a+ampl);
             r = system(command);
-            usleep(100000);
+            usleep(10000);
         }
         printf("%ld -> %ld\n", IDdm5, IDdm6);
         data.image[IDdm5].md[0].write = 1;
