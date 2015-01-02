@@ -3780,7 +3780,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 	printf("Creating image stream ...\n");
 	fflush(stdout);
-	list_image_ID();
+
     IDin = image_ID(IDinname);
     naxis = data.image[IDin].md[0].naxis;
     arraysize = (long*) malloc(sizeof(long)*3);
@@ -3832,7 +3832,6 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     }
 
 
-	list_image_ID();
     kk = 0;
     while(1)
     {
