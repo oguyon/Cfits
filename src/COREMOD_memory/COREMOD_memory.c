@@ -531,7 +531,7 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
-long COREMOD_MEMORY_image_streamupdateloop_cli()
+int COREMOD_MEMORY_image_streamupdateloop_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
     {

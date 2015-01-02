@@ -156,7 +156,7 @@ long COREMOD_MEMORY_image_set_semwait(char *IDname);
 long COREMOD_MEMORY_image_set_semwait_OR_2(char *IDname1, char *IDname2); // wait for either of 2 semaphores
 long COREMOD_MEMORY_image_set_semflush(char *IDname);
 
-long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
+int COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
 
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode);
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
