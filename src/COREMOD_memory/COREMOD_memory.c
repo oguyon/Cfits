@@ -3822,6 +3822,8 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
         break;
     }
 
+
+	list_image_ID();
     kk = 0;
     while(1)
     {
