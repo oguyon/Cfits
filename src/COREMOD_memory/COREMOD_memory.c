@@ -3787,6 +3787,8 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     }
     atype = data.image[IDin].md[0].atype;
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
+	list_image_ID();
+
 	COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     switch ( atype ) {
