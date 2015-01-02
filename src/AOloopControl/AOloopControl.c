@@ -4236,7 +4236,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 int AOloopControl_statusStats()
 {
     long k;
-    long NBkiter = 100000;
+    long NBkiter = 200000;
     long statusmax = 22;
     long *statuscnt;
     float usec0, usec1;
@@ -4337,7 +4337,7 @@ int AOloopControl_statusStats()
 	printf("\n");
 	
     for(st=0; st<statusmax; st++)
-        printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]    %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, statusdef[st]);
+        printf("STATUS %2d     %5.2f %%    [   %5ld  /  %5ld  ]   [%8.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
 
 
     if(AOconf[LOOPNUMBER].GPU!=0)
@@ -4353,6 +4353,16 @@ int AOloopControl_statusStats()
             printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+4]/NBkiter);
             printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
             printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
+        }
+       for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        {
+            printf("GPU %2d  : ", gpu);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+1]/NBkiter);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+2]/NBkiter);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+3]/NBkiter);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+4]/NBkiter);
+            printf(" %5.2f us",   loopiterus*statusgpucnt[10*gpu+5]/NBkiter);
+            printf(" %5.2f us\n",  loopiterus*statusgpucnt[10*gpu+6]/NBkiter);
         }
 
         printf("\n");
