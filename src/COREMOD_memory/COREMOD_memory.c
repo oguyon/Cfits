@@ -3796,8 +3796,6 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     atype = data.image[IDin].md[0].atype;
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
 
-	list_image_ID();
-
 	COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     switch ( atype ) {
@@ -3838,8 +3836,6 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     kk = 0;
     while(1)
     {
-		printf("%ld\n", kk);
-		fflush(stdout);
         ptr0 = ptr0s + kk*framesize;
 		data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
