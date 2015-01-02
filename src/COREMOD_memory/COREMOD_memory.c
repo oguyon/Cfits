@@ -3778,6 +3778,9 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     char *ptr1; // dest
     long framesize;
 
+	printf("Creating image sream ...\n");
+	fflush(stdout);
+
     IDin = image_ID(IDinname);
     naxis = data.image[IDin].md[0].naxis;
     if(naxis != 3)
