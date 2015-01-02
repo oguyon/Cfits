@@ -3783,11 +3783,16 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 	list_image_ID();
     IDin = image_ID(IDinname);
     naxis = data.image[IDin].md[0].naxis;
+    arraysize = (long*) malloc(sizeof(long)*3);
     if(naxis != 3)
     {
         printf("ERROR: input image %s should be 3D\n", IDinname);
         exit(0);
     }
+    arraysize[0] = data.image[IDin].md[0].size[0];
+    arraysize[1] = data.image[IDin].md[0].size[1];
+    arraysize[2] = data.image[IDin].md[0].size[2];
+    
     atype = data.image[IDin].md[0].atype;
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
 
