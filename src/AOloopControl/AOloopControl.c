@@ -4253,6 +4253,7 @@ int AOloopControl_statusStats()
     long *statusgpucnt;
     long *statusgpucnt2;
 	double loopiterus;
+	long long loopcnt;
 	
     statusdef[0] = "";
     statusdef[1] = "READING IMAGE";
@@ -4306,6 +4307,7 @@ int AOloopControl_statusStats()
         statusgpucnt2[st] = 0;
     }
     
+    loopcnt = AOconf[LOOPNUMBER].cnt;
 	clock_gettime(CLOCK_REALTIME, &t1);
     for(k=0; k<NBkiter; k++)
     {
@@ -4324,12 +4326,14 @@ int AOloopControl_statusStats()
             statusgpucnt2[st]++;
         }
     }
+    loopcnt = AOconf[LOOPNUMBER].cnt - loopcnt;
 	clock_gettime(CLOCK_REALTIME, &t2);
     tdiff = info_time_diff(t1, t2);
 	tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 	printf("\n");
-	loopiterus = 1.0e6*tdiffv/NBkiter;
-	printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*NBkiter/tdiffv, loopiterus);		
+	loopiterus = 1.0e6*tdiffv/loopcnt;
+	printf("Time diff = %f sec \n", tdiffv);
+	printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);		
 	printf("\n");
 	
     for(st=0; st<statusmax; st++)
