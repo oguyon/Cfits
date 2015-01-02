@@ -531,6 +531,16 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
+long COREMOD_MEMORY_image_streamupdateloop_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
+    {
+		COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+      return 0;
+    }
+  else
+	return 1;
+}
 
 
 
@@ -861,6 +871,16 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)");
   data.NBcmd++;
  
+ 
+
+  strcpy(data.cmd[data.NBcmd].key,"creaimstream");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_cli;
+  strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
+  strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]>");
+  strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)");
+  data.NBcmd++;
  
  
   strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
@@ -3744,7 +3764,83 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname)
 }
 
 
+/// takes a 3D image (circular buffer) and writes slices to a 2D image with time interval specified in us
+long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)
+{
+    long IDin;
+    long IDout;
+    long kk;
+    long *arraysize;
+    long naxis;
+    int atype;
+    char *ptr0s; // source start 3D array ptr
+    char *ptr0; // source
+    char *ptr1; // dest
+    long framesize;
 
+    IDin = image_ID(IDinname);
+    naxis = data.image[IDin].md[0].naxis;
+    if(naxis != 3)
+    {
+        printf("ERROR: input image %s should be 3D\n", IDinname);
+        exit(0);
+    }
+    atype = data.image[IDin].md[0].atype;
+    IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
+	COREMOD_MEMORY_image_set_createsem(IDoutname);
+
+    switch ( atype ) {
+    case CHAR:
+        ptr0s = (char*) data.image[IDin].array.C;
+        ptr1 = (char*) data.image[IDout].array.C;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(char);
+        break;
+    case INT:
+        ptr0s = (char*) data.image[IDin].array.I;
+        ptr1 = (char*) data.image[IDout].array.I;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(int);
+        break;
+    case FLOAT:
+        ptr0s = (char*) data.image[IDin].array.F;
+        ptr1 = (char*) data.image[IDout].array.F;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(float);
+        break;
+    case DOUBLE:
+        ptr0s = (char*) data.image[IDin].array.D;
+        ptr1 = (char*) data.image[IDout].array.D;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(double);
+        break;
+    case USHORT:
+        ptr0s = (char*) data.image[IDin].array.U;
+        ptr1 = (char*) data.image[IDout].array.U;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(unsigned short);
+        break;
+    case LONG:
+        ptr0s = (char*) data.image[IDin].array.L;
+        ptr1 = (char*) data.image[IDout].array.L;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(long);
+        break;
+    }
+
+    kk = 0;
+    while(1)
+    {
+        ptr0 = ptr0s + kk*framesize;
+		data.image[IDout].md[0].write = 1;
+        memcpy((void *) ptr1, (void *) ptr0, framesize);
+		sem_post(data.image[IDout].semptr);
+		data.image[IDout].md[0].cnt0++;
+		data.image[IDout].md[0].write = 0;
+
+        kk++;
+        if(kk==data.image[IDin].md[0].size[2])
+            kk = 0;
+
+        usleep(usperiod);
+    }
+
+    return(IDout);
+}
 
 
 /** continuously transmits 2D image through TCP link
@@ -4050,6 +4146,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
     return(ID);
 }
+
+
+
 
 
 
