@@ -882,7 +882,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             //usleep(200000);
 
             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
-            printf("== ZERNIKE %ld ========== a = %f\n", zi, a);
+            printf("== ZERNIKE %ld / %ld ========== a = %f\n", zi, zimax, a);
             sprintf(command, "dm_add_zernike %ld %f", zi, a+ampl);
             r = system(command);
             usleep(10000);
