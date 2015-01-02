@@ -3816,6 +3816,7 @@ int AOcompute(long loop)
             aoconfID_meas_act = create_image_ID("measact", 2, sizearray, FLOAT, 1, 0);
             free(sizearray);
         }
+        save_fits("cmatc", "!cmatc.fits");
         AOconf[loop].init_CMc = 1;
         printf(" done\n");
         fflush(stdout);
