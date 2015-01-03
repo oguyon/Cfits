@@ -902,6 +902,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
 			usleep(2000);
+			
+			sleep(1);
         }
         
         printf("%ld -> %ld\n", IDdm5, IDdm6);
