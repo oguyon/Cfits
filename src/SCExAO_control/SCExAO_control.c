@@ -1129,8 +1129,8 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
                 data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
 
 			// ++
-			ii1 = ii;
-			jj1 = jj;
+			ii1 = ii+size/2;
+			jj1 = jj+size/2;
             x = xcmm-ii;
             y = ycmm-jj;
             r = sqrt(x*x+y*y);
