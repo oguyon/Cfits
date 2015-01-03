@@ -850,12 +850,13 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
     size = data.image[IDwfs].md[0].size[0];
     size2 = size*size;
 
-
-    ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = size;
     sizearray[1] = size;
-    IDmask = create_2Dimage_ID("pmask", size, size);
+	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
+ 
+ 
+     IDmask = create_2Dimage_ID("pmask", size, size);
 
     for(ii=0; ii<size/2; ii++)
         for(jj=0; jj<size/2; jj++)
@@ -867,9 +868,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
             if((r>prad*centobs)&&(r<prad))
             {
                 data.image[IDmask].array.F[jj*size+ii] = 1.0;
-              //  data.image[IDmask].array.F[(jj+size/2)*size+ii] = 1.0;
-              //  data.image[IDmask].array.F[jj*size+ii+size/2] = 1.0;
-               // data.image[IDmask].array.F[(jj+size/2)*size+ii+size/2] = 1.0;
+                data.image[IDmask].array.F[(jj+size/2)*size+ii] = 1.0;
+                data.image[IDmask].array.F[jj*size+ii+size/2] = 1.0;
+                data.image[IDmask].array.F[(jj+size/2)*size+ii+size/2] = 1.0;
             }
         }
 
