@@ -875,7 +875,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
  	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
 	printf("%s", command);
     r = system(command);
-	IDpp = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfspp");
+	IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
 	
 	
 
@@ -888,7 +888,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
  	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
 	printf("%s", command);
     r = system(command);
-	IDpm = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfspm");
+	IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm");
 
 
 	// - +
@@ -900,7 +900,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
  	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
 	printf("%s", command);
     r = system(command);
-	IDmp = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfsmp");
+	IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp");
 
 
 	// - -
@@ -912,7 +912,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
  	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
 	printf("%s", command);
     r = system(command);
-	IDmm = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfsmm");
+	IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm");
 	
 	
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
