@@ -55,10 +55,11 @@ long pYsize = 120;
 
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
-long SCExAO_Pcam_Xpos0 = 170000;
-long SCExAO_Pcam_Ypos0 = 66000;
-long SCExAO_Pcam_Xpos = 170000;
-long SCExAO_Pcam_Ypos = 66000;
+
+long SCExAO_Pcam_Xpos0 = 150000;
+long SCExAO_Pcam_Ypos0 = 71000;
+long SCExAO_Pcam_Xpos = 150000;
+long SCExAO_Pcam_Ypos = 71000;
 long SCExAO_Pcam_Range = 20000;
 
 float SCExAO_PZT_STAGE_Xpos = -5.0;
@@ -869,8 +870,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	float p10, p90;
 	long ii1, jj1;
 	float xave, yave;
-	
-	
+	FILE *fp;
+	long delayus = 1000000;
+	  
+	  
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];
     size2 = size*size;
@@ -1043,13 +1046,24 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	xave = 0.25*(xcpp+xcpm+xcmp+xcmm);
 	yave = 0.25*(ycpp+ycpm+ycmp+ycmm);
 	
-	printf("AVERAGE OFFSET = %f %f\n", xave, yave);
+	printf("AVERAGE OFFSET = %f %f\n", xave - 0.5*size + 0.5, yave - 0.5*size + 0.5);
 	
 	delete_image_ID("prefsum");
 		
-	      /// write stages position
-        /*fp = fopen("./status/pcampos.txt", "w");
-        fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+		
+	 /// read position of stages
+    if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
+    {
+        r = fscanf(fp, "%ld %ld\n", &SCExAO_Pcam_Xpos, &SCExAO_Pcam_Ypos);
+        fclose(fp);
+    }
+    
+    SCExAO_Pcam_Xpos += (long) (xave*PcamPixScaleAct);
+    SCExAO_Pcam_Ypos -= (long) (yave*PcamPixScaleAct);
+	
+	 /// write stages position
+    fp = fopen("./status/pcampos.txt", "w");
+    fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
         fclose(fp);
 
         sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
