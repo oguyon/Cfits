@@ -1131,8 +1131,8 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 			// ++
 			ii1 = ii+size/2;
 			jj1 = jj+size/2;
-            x = xcmm-ii;
-            y = ycmm-jj;
+            x = xcpp-ii;
+            y = ycpp-jj;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
