@@ -818,7 +818,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     long ID;
     long NBframes = 10;
     double val, valp, valm, val0;
-    double ampl0 = 0.1;
+    double ampl0 = 0.05;
     double ampl;
     double a;
     char command[200];
@@ -864,10 +864,10 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
      
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-//            p50 = img_percentile("imwfs", 0.50);
+            p50 = img_percentile("imwfs", 0.50);
             p70 = img_percentile("imwfs", 0.70);
             p90 = img_percentile("imwfs", 0.90);
-            val = (p90-p70)/(p70+p90);
+            val = (p90-p50)/p70; //+p90);
             printf("%lf %lf -> %f\n", p70, p90, val);
             valp = val;
 
@@ -886,7 +886,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
            // p50 = img_percentile("imwfs", 0.50);
             p70 = img_percentile("imwfs", 0.70);
             p90 = img_percentile("imwfs", 0.90);
-            val = (p90-p70)/(p70+p90);
+            val = (p90-p50)/p70; //+p90);
             printf("%lf %lf -> %f\n", p70, p90, val);
             valm = val;
 
