@@ -834,6 +834,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     IDdm5 = read_sharedmem_image("dmdisp5");
     IDdm6 = read_sharedmem_image("dmdisp6");
 
+	// prepare modes
+	mk_zer_series("zcube", 50, zimaxmax, 25.0);
+	save_fits("zcube", "!zcube.fits");
+	exit(0);
+	
 	zimax = 10;
     while(1)
     {		
@@ -841,16 +846,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
         {
 			ampl = ampl0*pow((1.0 - 0.9*(zimax/zimaxmax)), 2.0);
 
-            /*	ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
-            	save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-            	p50 = img_percentile("imwfs", 0.50);
-            	p70 = img_percentile("imwfs", 0.70);
-            	p90 = img_percentile("imwfs", 0.90);
-            	val = (p90-p50)/p70;
-            	printf("%lf %lf %lf -> %f\n", p50, p70, p90, val);
-            	val0 = val;
-            	*/
-
+            
             sprintf(command, "dm_add_zernike %ld %f", zi, ampl);
             r = system(command);
             usleep(10000);
