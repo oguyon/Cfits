@@ -849,7 +849,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	long cnt;
 	float voltAmpOffset = 2.0;
 	char command[200];
-	long NBframes = 100;
+	long NBframes = 10000;
 	long IDpp, IDpm, IDmp, IDmm;
 	
     IDwfs = image_ID(IDwfsname);
