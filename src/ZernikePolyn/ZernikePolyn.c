@@ -512,8 +512,8 @@ int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
     if(Zernike.init==0)
         zernike_init();
 
-    create_3Dimage_ID(ID_namec, SIZE, SIZE, zer_nb);
-    ID = image_ID("ztmp");
+    ID = create_3Dimage_ID(ID_namec, SIZE, SIZE, zer_nb);
+//    ID = image_ID("ztmp");
 
     r = (double*) malloc(SIZE*SIZE*sizeof(double));
     theta = (double*) malloc(SIZE*SIZE*sizeof(double));
@@ -552,12 +552,11 @@ int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
             {
                 tmp = r[jj*naxes[0]+ii];
                 if(tmp < 1.0)
-                    data.image[ID].array.F[j*SIZE*SIZE+jj*SIZE+ii] = Zernike_value(j,tmp,theta[jj*naxes[0]+ii]);
+                    data.image[ID].array.F[j*SIZE*SIZE + jj*SIZE + ii] = Zernike_value(j,tmp,theta[jj*naxes[0]+ii]);
                 else
-                    data.image[ID].array.F[j*SIZE*SIZE+jj*SIZE+ii] = 0.0;
+                    data.image[ID].array.F[j*SIZE*SIZE + jj*SIZE + ii] = 0.0;
             }
 	}
-
 
     free(r);
     free(theta);
