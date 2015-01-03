@@ -126,6 +126,17 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
     return 1;
 }
 
+int SCExAOcontrol_PyramidWFS_Pcenter_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,1)==0)
+    {
+		SCExAOcontrol_PyramidWFS_Pcenter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 int SCExAOcontrol_Pyramid_flattenRefWF_cli()
 {
 	 if(CLI_checkarg(1,4)==0)
@@ -157,76 +168,86 @@ int SCExAOcontrol_SAPHIRA_cam_process_cli()
 int init_SCExAO_control()
 {
 
-  strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "SCExAO control");
-  data.NBmodule++;
+    strcpy(data.module[data.NBmodule].name, __FILE__);
+    strcpy(data.module[data.NBmodule].info, "SCExAO control");
+    data.NBmodule++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
-  strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
-  strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
+    strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve)");
+    data.NBcmd++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_mv_DMstage_cli;
-  strcpy(data.cmd[data.NBcmd].info,"move DM TT stage to position");
-  strcpy(data.cmd[data.NBcmd].syntax,"<x pos> <y pos>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaottdmpos");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_mv_DMstage_cli;
+    strcpy(data.cmd[data.NBcmd].info,"move DM TT stage to position");
+    strcpy(data.cmd[data.NBcmd].syntax,"<x pos> <y pos>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaottdmpos");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)");
+    data.NBcmd++;
 
-   strcpy(data.cmd[data.NBcmd].key,"scexaopywfsttalign");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli;
-  strcpy(data.cmd[data.NBcmd].info,"move TT to center pyrWFS");
-  strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign wfscam");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"scexaopywfsttalign");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli;
+    strcpy(data.cmd[data.NBcmd].info,"move TT to center pyrWFS");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign wfscam");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli;
-  strcpy(data.cmd[data.NBcmd].info,"move Camera to center pyrWFS");
-  strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli;
+    strcpy(data.cmd[data.NBcmd].info,"move Camera to center pyrWFS");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
+    data.NBcmd++;
 
-
-  strcpy(data.cmd[data.NBcmd].key,"scexaopyflatten");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_Pyramid_flattenRefWF_cli;
-  strcpy(data.cmd[data.NBcmd].info,"flatten  pyrWFS");
-  strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name);");
-  data.NBcmd++;
-
-
-  strcpy(data.cmd[data.NBcmd].key,"scexaosaphiraproc");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAOcontrol_SAPHIRA_cam_process_cli;
-  strcpy(data.cmd[data.NBcmd].info,"process saphira camera images");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaosaphiraproc");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"scexaopypcent");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_Pcenter_cli;
+    strcpy(data.cmd[data.NBcmd].info,"center pyrWFS pupil");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfsimname> <pup radius [float]>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaopypcent wfsim 25.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)");
+    data.NBcmd++;
 
 
+    strcpy(data.cmd[data.NBcmd].key,"scexaopyflatten");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_Pyramid_flattenRefWF_cli;
+    strcpy(data.cmd[data.NBcmd].info,"flatten  pyrWFS");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name);");
+    data.NBcmd++;
 
 
-  // add atexit functions here
-  
-  
-  return 0;
+    strcpy(data.cmd[data.NBcmd].key,"scexaosaphiraproc");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_SAPHIRA_cam_process_cli;
+    strcpy(data.cmd[data.NBcmd].info,"process saphira camera images");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaosaphiraproc");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)");
+    data.NBcmd++;
+
+
+
+
+    // add atexit functions here
+
+
+    return 0;
 }
+
 
 
 
@@ -807,6 +828,72 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
     return(0);
 }
+
+
+/// pupil centering tool
+/// watch pcenter stream
+int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
+{
+    long IDmask;
+    long IDwfs;
+    long size;
+    float centobs = 0.3;
+    long ii, jj;
+    float x, y, r;
+    long *sizearray;
+	long ID;
+	long size2;
+	long cnt;
+	
+	
+    IDwfs = image_ID(IDwfsname);
+    size = data.image[IDwfs].md[0].size[0];
+    size2 = size*size;
+
+
+    ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = size;
+    sizearray[1] = size;
+    IDmask = create_2Dimage_ID("pmask", size, size);
+
+    for(ii=0; ii<size/2; ii++)
+        for(jj=0; jj<size/2; jj++)
+        {
+            x = 0.5+ii-size/2;
+            y = 0.5+jj-size/2;
+            r = sqrt(x*x+y*y);
+            r /= prad;
+            if((r>prad*centobs)&&(r<prad))
+            {
+                data.image[IDmask].array.F[jj*size+ii] = 1.0;
+                data.image[IDmask].array.F[(jj+size/2)*size+ii] = 1.0;
+                data.image[IDmask].array.F[jj*size+ii+size/2] = 1.0;
+                data.image[IDmask].array.F[(jj+size/2)*size+ii+size/2] = 1.0;
+            }
+        }
+
+	cnt = data.image[IDwfs].md[0].cnt0;
+	while (1)
+	{
+		usleep(10);
+		if(cnt != data.image[IDwfs].md[0].cnt0)
+		{
+			cnt = data.image[IDwfs].md[0].cnt0;
+			
+			data.image[ID].md[0].write = 1;
+			for(ii=0;ii<size2;ii++)
+				data.image[ID].array.F[ii] = data.image[IDwfs].array.F[ii]*data.image[IDmask].array.F[ii];
+			data.image[ID].md[0].cnt0++;
+			data.image[ID].md[0].write = 1;
+		}		
+	}
+	
+    free(sizearray);
+
+    return(0);
+}
+
 
 
 
