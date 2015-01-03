@@ -931,6 +931,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	save_fits("imwfsmm", "!imwfsmm.fits");
 
 
+	// going back to reference
 	
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
 	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
@@ -942,7 +943,18 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     r = system(command);
 
 	
-
+	// sum the 4 images
+	arith_image_add("imwfspp", "imwfspm", "prefsum");
+	arith_image_add_inplace("prefsum", "imwfsmp");
+	arith_image_add_inplace("prefsum", "imwfsmm");
+	
+	delete_image_ID("imwfspp");
+	delete_image_ID("imwfspm");
+	delete_image_ID("imwfsmp");
+	delete_image_ID("imwfsmm");
+	
+	save_fits("prefsum", "!prefsum.fits");
+	exit(0);
 	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
  
  
