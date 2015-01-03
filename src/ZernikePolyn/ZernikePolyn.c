@@ -494,7 +494,7 @@ int mk_zer_series(char *ID_name, long SIZE, long zer_nb, float rpix)
 }
 
 
-int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
+long mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
 {
     long ii, jj;
     double *r;
@@ -558,7 +558,7 @@ int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
     free(r);
     free(theta);
 
-    return(0);
+    return(ID);
 }
 
 
