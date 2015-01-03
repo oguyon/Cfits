@@ -865,13 +865,14 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
             y = 0.5+jj-size/2;
             r = sqrt(x*x+y*y);
             r /= prad;
-            if((r>prad*centobs)&&(r<prad))
+            if((r>centobs)&&(r<1.0))
             {
                 data.image[IDmask].array.F[jj*size+ii] = 1.0;
                 data.image[IDmask].array.F[(jj+size/2)*size+ii] = 1.0;
                 data.image[IDmask].array.F[jj*size+ii+size/2] = 1.0;
                 data.image[IDmask].array.F[(jj+size/2)*size+ii+size/2] = 1.0;
             }
+            
         }
 
 
@@ -888,7 +889,7 @@ fflush(stdout);
 			
 			data.image[ID].md[0].write = 1;
 			for(ii=0;ii<size2;ii++)
-				data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.U[ii]; //*data.image[IDmask].array.F[ii];
+				data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.U[ii]*data.image[IDmask].array.F[ii];
 			data.image[ID].md[0].cnt0++;
 			data.image[ID].md[0].write = 1;
 		}		
