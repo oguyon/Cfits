@@ -841,7 +841,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 	
 	// prepare modes
 	IDz = mk_zer_seriescube("zcube", dmsize, zimaxmax, 0.5*dmsize);
-	
+	list_image_ID();
+	printf("IDz = %ld\n", IDz);
 	zimax = 10;
     while(1)
     {		
