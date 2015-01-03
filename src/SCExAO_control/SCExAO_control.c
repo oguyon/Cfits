@@ -888,7 +888,6 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	SCExAO_PZT_STAGE_Xpos_ref = data.image[IDpyrTTref].array.F[0];
 	SCExAO_PZT_STAGE_Ypos_ref = data.image[IDpyrTTref].array.F[1];
 	printf("X = %f   Y = %f\n", SCExAO_PZT_STAGE_Xpos_ref, SCExAO_PZT_STAGE_Ypos_ref);
-	sleep(5);
 	
 	// + +
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
@@ -1046,7 +1045,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	xave = 0.25*(xcpp+xcpm+xcmp+xcmm);
 	yave = 0.25*(ycpp+ycpm+ycmp+ycmm);
 	
-	printf("AVERAGE OFFSET = %f %f\n", xave - 0.5*size + 0.5, yave - 0.5*size + 0.5);
+	printf("AVERAGE PIXEL OFFSET = %f %f\n", xave - 0.5*size + 0.5, yave - 0.5*size + 0.5);
 	
 	delete_image_ID("prefsum");
 		
@@ -1060,13 +1059,23 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     
     SCExAO_Pcam_Xpos += (long) (xave*PcamPixScaleAct);
     SCExAO_Pcam_Ypos -= (long) (yave*PcamPixScaleAct);
+
+	xcpp -= xave;
+	xcpm -= xave;
+	xcmp -= xave;
+	xcmm -= xave;
 	
+	ycpp -= yave;
+	ycpm -= yave;
+	ycmp -= yave;
+	ycmm -= yave;
+
 	 /// write stages position
     fp = fopen("./status/pcampos.txt", "w");
     fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
-        fclose(fp);
+    fclose(fp);
 
-        sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
+    sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
         printf("%s", command);
         r = system(command);
         usleep(delayus);
@@ -1074,10 +1083,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
         sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
         printf("%s", command);
         r = system(command);
-        usleep(delayus);*/
-	exit(0);
-
-
+        usleep(delayus);
 
 
 	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
@@ -1088,19 +1094,47 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     for(ii=0; ii<size/2; ii++)
         for(jj=0; jj<size/2; jj++)
         {
-            x = 0.5+ii-size/4-poffset;
-            y = 0.5+jj-size/4-poffset;
+			// --
+			ii1 = ii;
+			jj1 = jj;
+            x = xcmm-ii;
+            y = ycmm-ii;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
-            {
-                data.image[IDmask].array.F[jj*size+ii] = 1.0;
-                data.image[IDmask].array.F[(size-jj-1)*size+ii] = 1.0;
-                data.image[IDmask].array.F[jj*size+(size-ii-1)] = 1.0;
-                data.image[IDmask].array.F[(size-jj-1)*size+(size-ii-1)] = 1.0;
-            }
+                data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
+
+			// +-
+			ii1 = ii+size/2;
+			jj1 = jj;
+            x = xcpm-ii;
+            y = ycpm-ii;
+            r = sqrt(x*x+y*y);
+            r /= prad;
+            if((r>centobs)&&(r<1.0))
+                data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
+
+			// -+
+			ii1 = ii;
+			jj1 = jj+size/2;
+            x = xcmp-ii;
+            y = ycmp-ii;
+            r = sqrt(x*x+y*y);
+            r /= prad;
+            if((r>centobs)&&(r<1.0))
+                data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
+
+			// ++
+			ii1 = ii;
+			jj1 = jj;
+            x = xcmm-ii;
+            y = ycmm-ii;
+            r = sqrt(x*x+y*y);
+            r /= prad;
+            if((r>centobs)&&(r<1.0))
+                data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
+		}
             
-        }
 
 
 	printf("Applying mask to image ...\n");
