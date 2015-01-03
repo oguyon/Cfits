@@ -1054,6 +1054,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
     {
         r = fscanf(fp, "%ld %ld\n", &SCExAO_Pcam_Xpos, &SCExAO_Pcam_Ypos);
+		printf("CURRENT POSITION : %ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
         fclose(fp);
     }
     
