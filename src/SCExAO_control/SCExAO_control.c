@@ -850,7 +850,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     {		
         for(zi=4; zi<zimax; zi++)
         {
-			ampl = ampl0*pow((1.0 - 0.9*(zimax/zimaxmax)), 2.0);
+			ampl = ampl0; //*pow((1.0 - 0.9*(zimax/zimaxmax)), 2.0);
 
   			data.image[IDdm5].md[0].write = 1;
 			for(ii=0;ii<dmsize2;ii++)
