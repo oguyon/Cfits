@@ -494,6 +494,79 @@ int mk_zer_series(char *ID_name, long SIZE, long zer_nb, float rpix)
 }
 
 
+int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
+{
+    long ii, jj;
+    double *r;
+    double *theta;
+    long ID;
+    long naxes[2];
+    double tmp;
+    char fname[200];
+    long j;
+
+    j=0;
+    naxes[0] = SIZE;
+    naxes[1] = SIZE;
+
+    if(Zernike.init==0)
+        zernike_init();
+
+    create_3Dimage_ID(ID_namec, SIZE, SIZE, zer_nb);
+    ID = image_ID("ztmp");
+
+    r = (double*) malloc(SIZE*SIZE*sizeof(double));
+    theta = (double*) malloc(SIZE*SIZE*sizeof(double));
+
+    if ((r==NULL)||(theta==NULL))
+        printf("error in memory allocation !!!\n");
+
+    /* let's compute the polar coordinates */
+    for (ii=0; ii<SIZE; ii++)
+        for (jj=0; jj<SIZE; jj++)
+        {
+            r[jj*naxes[0]+ii] = sqrt((ii-SIZE/2)*(ii-SIZE/2)+(jj-SIZE/2)*(jj-SIZE/2))/rpix;
+            theta[jj*naxes[0]+ii] = atan2((jj-SIZE/2),(ii-SIZE/2));
+        }
+
+    /* let's make the Zernikes */
+    for (ii=0; ii<SIZE; ii++)
+        for (jj=0; jj<SIZE; jj++)
+        {
+            tmp = r[jj*naxes[0]+ii];
+            if(tmp < 1.0)
+                data.image[ID].array.F[jj*SIZE+ii] = 1.0;
+            else
+                data.image[ID].array.F[jj*SIZE+ii] = 0.0;
+        }
+    sprintf(fname,"%s%ld", ID_namec, j);
+    save_fl_fits("ztmp", fname);
+
+    for (j=1; j<zer_nb; j++)
+    {
+        /*	printf("%ld/%ld\n",j,zer_nb);*/
+//        fflush(stdout);
+
+        for (ii=0; ii<SIZE; ii++)
+            for (jj=0; jj<SIZE; jj++)
+            {
+                tmp = r[jj*naxes[0]+ii];
+                if(tmp < 1.0)
+                    data.image[ID].array.F[j*SIZE*SIZE+jj*SIZE+ii] = Zernike_value(j,tmp,theta[jj*naxes[0]+ii]);
+                else
+                    data.image[ID].array.F[j*SIZE*SIZE+jj*SIZE+ii] = 0.0;
+            }
+	}
+
+
+    free(r);
+    free(theta);
+
+    return(0);
+}
+
+
+
 
 double get_zer(char *ID_name, long zer_nb, double radius)
 {

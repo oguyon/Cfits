@@ -835,7 +835,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     IDdm6 = read_sharedmem_image("dmdisp6");
 
 	// prepare modes
-	mk_zer_series("zcube", 50, zimaxmax, 25.0);
+	nt mk_zer_seriescube("zcube", 50, zimaxmax, 25.0);
+//	mk_zer_series("zcube", 50, zimaxmax, 25.0);
 	save_fits("zcube", "!zcube.fits");
 	exit(0);
 	
