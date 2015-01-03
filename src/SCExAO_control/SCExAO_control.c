@@ -887,7 +887,7 @@ fflush(stdout);
 			
 			data.image[ID].md[0].write = 1;
 			for(ii=0;ii<size2;ii++)
-				data.image[ID].array.F[ii] = data.image[IDwfs].array.F[ii]; //*data.image[IDmask].array.F[ii];
+				data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.U[ii]*data.image[IDmask].array.F[ii];
 			data.image[ID].md[0].cnt0++;
 			data.image[ID].md[0].write = 1;
 		}		
