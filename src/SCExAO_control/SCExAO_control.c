@@ -62,12 +62,14 @@ long SCExAO_Pcam_Ypos = 66000;
 long SCExAO_Pcam_Range = 20000;
 
 float SCExAO_PZT_STAGE_Xpos = -5.0;
-float SCExAO_PZT_STAGE_Xpos_min = -6.5;
-float SCExAO_PZT_STAGE_Xpos_max = -3.5;
+float SCExAO_PZT_STAGE_Xpos_ref = -5.0;
+float SCExAO_PZT_STAGE_Xpos_min = -1.0;
+float SCExAO_PZT_STAGE_Xpos_max = -9.0;
 
 float SCExAO_PZT_STAGE_Ypos = -5.0;
-float SCExAO_PZT_STAGE_Ypos_min = -6.5;
-float SCExAO_PZT_STAGE_Ypos_max = -3.5;
+float SCExAO_PZT_STAGE_Ypos_ref = -5.0;
+float SCExAO_PZT_STAGE_Ypos_min = -1.0;
+float SCExAO_PZT_STAGE_Ypos_max = -9.0;
 
 // CLI commands
 //
@@ -513,22 +515,22 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     double totx, toty;
     char pausefilename[200];
     float v0;
-	long IDshm;
-	long *sizearray;
-	
+    long IDshm;
+    long *sizearray;
+
 
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
 
 
-	IDshm = image_ID("pyrTT");
-	if(IDshm == -1)
-		{
-			sizearray = (long*) malloc(sizeof(long)*2);
-			sizearray[0] = 2;
-			sizearray[1] = 1;
-			IDshm = create_image_ID("pyrTT", 2, sizearray, FLOAT, 1, 0);
-		}
+    IDshm = image_ID("pyrTT");
+    if(IDshm == -1)
+    {
+        sizearray = (long*) malloc(sizeof(long)*2);
+        sizearray[0] = 2;
+        sizearray[1] = 1;
+        IDshm = create_image_ID("pyrTT", 2, sizearray, FLOAT, 1, 0);
+    }
 
     while(file_exist("stop_PyAlignTT.txt")==0)
     {
@@ -665,12 +667,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         printf("%s", command);
         r = system(command);
 
-		data.image[IDshm].md[0].write = 1;
-		data.image[IDshm].array.F[0] = SCExAO_PZT_STAGE_Xpos;
-		data.image[IDshm].array.F[1] = SCExAO_PZT_STAGE_Ypos;	
-		data.image[IDshm].md[0].cnt0 ++;
-		data.image[IDshm].md[0].write = 0;
-		
+        data.image[IDshm].md[0].write = 1;
+        data.image[IDshm].array.F[0] = SCExAO_PZT_STAGE_Xpos;
+        data.image[IDshm].array.F[1] = SCExAO_PZT_STAGE_Ypos;
+        data.image[IDshm].md[0].cnt0 ++;
+        data.image[IDshm].md[0].write = 0;
+
 
         save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
     }
@@ -679,6 +681,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
     return(0);
 }
+
 
 
 
@@ -844,7 +847,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	long ID;
 	long size2;
 	long cnt;
-	
+	float voltAmpOffset = 2.0;
+	char command[200];
+	long NBframes = 100;
+	long IDpp, IDpm, IDmp, IDmm;
 	
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];
@@ -853,10 +859,77 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = size;
     sizearray[1] = size;
+
+
+	// measure reference pupil illumination 
+	SCExAO_PZT_STAGE_Xpos_ref = -5.0;
+	SCExAO_PZT_STAGE_Ypos_ref = -5.0;
+
+	
+	// + +
+	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
+	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref + voltAmpOffset*sqrt(2.0);
+	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+	printf("%s", command);
+    r = system(command);
+ 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+	printf("%s", command);
+    r = system(command);
+	IDpp = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfspp");
+	
+	
+
+	// + -
+	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
+	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
+	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+ 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+	printf("%s", command);
+    r = system(command);
+	IDpm = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfspm");
+
+
+	// - +
+	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
+	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
+	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+ 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+	printf("%s", command);
+    r = system(command);
+	IDmp = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfsmp");
+
+
+	// - -
+	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
+	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref - voltAmpOffset*sqrt(2.0);
+	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+ 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+	printf("%s", command);
+    r = system(command);
+	IDmm = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfsmm");
+	
+	
+	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
+	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
+	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+ 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+	printf("%s", command);
+    r = system(command);
+
+	
+
 	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
  
  
-     IDmask = create_2Dimage_ID("pmask", size, size);
+    IDmask = create_2Dimage_ID("pmask", size, size);
 
     for(ii=0; ii<size/2; ii++)
         for(jj=0; jj<size/2; jj++)
