@@ -855,7 +855,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			sem_post(data.image[IDdm5].semptr);
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
-			usleep(50);
+			usleep(500000);
           
      
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -873,7 +873,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			sem_post(data.image[IDdm5].semptr);
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
-			usleep(50);
+			usleep(500000);
 
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -895,8 +895,9 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			sem_post(data.image[IDdm5].semptr);
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
-			usleep(50);
+			usleep(500000);
         }
+        
         printf("%ld -> %ld\n", IDdm5, IDdm6);
         data.image[IDdm5].md[0].write = 1;
         data.image[IDdm6].md[0].write = 1;
@@ -914,7 +915,6 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 		if(zimax>zimaxmax)
 			zimax = zimaxmax;
     }
-
 
     return(0);
 }
