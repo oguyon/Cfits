@@ -539,9 +539,6 @@ int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
             else
                 data.image[ID].array.F[jj*SIZE+ii] = 0.0;
         }
-    sprintf(fname,"%s%ld", ID_namec, j);
-    save_fl_fits("ztmp", fname);
-
     for (j=1; j<zer_nb; j++)
     {
         /*	printf("%ld/%ld\n",j,zer_nb);*/
