@@ -868,9 +868,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
             if((r>centobs)&&(r<1.0))
             {
                 data.image[IDmask].array.F[jj*size+ii] = 1.0;
-                data.image[IDmask].array.F[(size/2-jj-1)*size+ii] = 1.0;
-                data.image[IDmask].array.F[jj*size+(size/2-ii-1)] = 1.0;
-                data.image[IDmask].array.F[(size/2-jj-1)*size+(size/2-ii-1)] = 1.0;
+                data.image[IDmask].array.F[(size-jj-1)*size+ii] = 1.0;
+                data.image[IDmask].array.F[jj*size+(size-ii-1)] = 1.0;
+                data.image[IDmask].array.F[(size-jj-1)*size+(size-ii-1)] = 1.0;
             }
             
         }
