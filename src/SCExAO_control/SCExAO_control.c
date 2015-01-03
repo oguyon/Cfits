@@ -1102,7 +1102,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 			ii1 = ii;
 			jj1 = jj;
             x = xcmm-ii;
-            y = ycmm-ii;
+            y = ycmm-jj;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
@@ -1112,7 +1112,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 			ii1 = ii+size/2;
 			jj1 = jj;
             x = xcpm-ii;
-            y = ycpm-ii;
+            y = ycpm-jj;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
@@ -1122,7 +1122,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 			ii1 = ii;
 			jj1 = jj+size/2;
             x = xcmp-ii;
-            y = ycmp-ii;
+            y = ycmp-jj;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
@@ -1132,7 +1132,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 			ii1 = ii;
 			jj1 = jj;
             x = xcmm-ii;
-            y = ycmm-ii;
+            y = ycmm-jj;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
