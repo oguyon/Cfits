@@ -862,6 +862,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	char command[200];
 	long NBframes = 10000;
 	long IDpp, IDpm, IDmp, IDmm;
+	long IDpyrTTref;
 	
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];
@@ -872,10 +873,12 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sizearray[1] = size;
 
 
-	// measure reference pupil illumination 
-	SCExAO_PZT_STAGE_Xpos_ref = -4.5;
-	SCExAO_PZT_STAGE_Ypos_ref = -5.0;
-
+	// Read reference pupil illumination 
+	IDpyrTTref = read_sharedmem_image("pyrTT");
+	SCExAO_PZT_STAGE_Xpos_ref = data.image[IDpyrTTref].array.F[0];
+	SCExAO_PZT_STAGE_Ypos_ref = data.image[IDpyrTTref].array.F[1];
+	printf("X = %f   Y = %f\n", SCExAO_PZT_STAGE_Xpos_ref, SCExAO_PZT_STAGE_Ypos_ref);
+	sleep(5);
 	
 	// + +
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
@@ -887,7 +890,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	printf("%s", command);
     r = system(command);
 	IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
-	
+	save_fits("imwfspp", "!imwfspp.fits");
 	
 
 	// + -
@@ -900,7 +903,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	printf("%s", command);
     r = system(command);
 	IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm");
-
+	save_fits("imwfspm", "!imwfspm.fits");
 
 	// - +
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
@@ -912,6 +915,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	printf("%s", command);
     r = system(command);
 	IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp");
+	save_fits("imwfsmp", "!imwfsmp.fits");
 
 
 	// - -
@@ -924,7 +928,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	printf("%s", command);
     r = system(command);
 	IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm");
-	
+	save_fits("imwfsmm", "!imwfsmm.fits");
+
+
 	
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
 	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
