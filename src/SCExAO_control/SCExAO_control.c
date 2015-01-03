@@ -873,6 +873,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
             }
         }
 
+
+printf("Applying mask to image ...\n");
+fflush(stdout);
 	cnt = data.image[IDwfs].md[0].cnt0;
 	while (1)
 	{
