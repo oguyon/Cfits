@@ -979,7 +979,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	totmm = 0.0;
 	
 	flim = p10 + 0.3*(p90-p10);
-
+	ID = image_ID("prefsum");
 	for(ii=0;ii<size/2;ii++)
 		for(jj=0;jj<size/2;jj++)
 		{
@@ -1038,7 +1038,12 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	printf("-+ : %f %f\n", xcmp, ycmp);
 	printf("-- : %f %f\n", xcmm, ycmm);
 	
+	delete_image_ID("prefsum");
 	exit(0);
+
+
+
+
 	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
  
  
