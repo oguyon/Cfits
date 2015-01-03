@@ -896,7 +896,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
            
 			data.image[IDdm5].md[0].write = 1;
 			for(ii=0;ii<dmsize2;ii++)
-				data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+				data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDz].array.F[zi*dmsize2+ii];
 			sem_post(data.image[IDdm5].semptr);
 			sem_post(data.image[IDdisp].semptr1);
 			data.image[IDdm5].md[0].cnt0++;
