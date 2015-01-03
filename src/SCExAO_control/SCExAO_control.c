@@ -862,7 +862,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 
 
 	// measure reference pupil illumination 
-	SCExAO_PZT_STAGE_Xpos_ref = -5.0;
+	SCExAO_PZT_STAGE_Xpos_ref = -4.5;
 	SCExAO_PZT_STAGE_Ypos_ref = -5.0;
 
 	
