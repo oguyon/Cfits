@@ -641,8 +641,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         printf(" PUP X   %+6.4f %+6.4f %+6.4f %+6.4f  -> %+6.4f\n", tot00x, tot01x, tot10x, tot11x, totx);
         printf(" PUP Y   %+6.4f %+6.4f %+6.4f %+6.4f  -> %+6.4f\n", tot00y, tot01y, tot10y, tot11y, toty);
 
-        xsig = tot01-tot10;
-        ysig = tot11-tot00;
+        xsig = (tot10+tot11)-(tot00+tot01); // camera coordinates
+        ysig = (tot01+tot11)-(tot00+tot10);
         printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
 //exit(0);
@@ -653,7 +653,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
 		// New control
 		SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.2);  // C actuator
-        SCExAO_PZT_STAGE_Ypos -= gain*((ysig+xsig)/0.2);  // D actuator
+        SCExAO_PZT_STAGE_Ypos -= gain*((-ysig+xsig)/0.2);  // D actuator
+
+		printf("  --- %f  %f ----\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
 
 
         if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
