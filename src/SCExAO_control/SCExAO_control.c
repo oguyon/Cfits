@@ -818,7 +818,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     long ID;
     long NBframes = 100;
     double val, valp, valm, val0;
-    double ampl0 = 0.2;
+    double ampl0 = 0.1;
     double ampl;
     double a;
     char command[200];
@@ -839,7 +839,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     {		
         for(zi=4; zi<zimax; zi++)
         {
-			ampl = ampl0*(1.0 - 0.3*(zimax/zimaxmax));
+			ampl = ampl0*(1.0 - 0.9*(zimax/zimaxmax));
 
             /*	ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             	save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
