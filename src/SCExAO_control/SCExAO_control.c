@@ -643,6 +643,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         ysig = tot11-tot00;
         printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
+exit(0);
+		
         /// 1 V step -> sig = 0.2 for modulation = 0.3
         SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
         SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
@@ -869,10 +871,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	// + +
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
 	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref + voltAmpOffset*sqrt(2.0);
-	sprintf(command, "ssh scexao@scexao2 \"analog_output.py voltage C %5.3f\"\n", SCExAO_PZT_STAGE_Xpos);
+	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
 	printf("%s", command);
     r = system(command);
- 	sprintf(command, "ssh scexao@scexao2 \"analog_output.py voltage D %5.3f\"\n", SCExAO_PZT_STAGE_Ypos);
+ 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
 	printf("%s", command);
     r = system(command);
 	IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
