@@ -812,7 +812,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
 int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 {
-    long zimaxmax = 100;
+    long zimaxmax = 10;
 	long zimax;
     long zi;
     long ID;
