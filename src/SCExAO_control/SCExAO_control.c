@@ -890,6 +890,12 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             printf("%lf %lf -> %f\n", p70, p90, val);
             valm = val;
 
+		/*	if(valm>valp)
+				a = -amp;
+			else
+				a = amp;
+*/
+
             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
             printf("== ZERNIKE %ld / %ld ========== a = %f\n", zi, zimax, a);
            
@@ -903,7 +909,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			data.image[IDdm5].md[0].write = 0;
 			usleep(2000);
 			
-			sleep(1);
+//			sleep(1);
         }
         
         printf("%ld -> %ld\n", IDdm5, IDdm6);
