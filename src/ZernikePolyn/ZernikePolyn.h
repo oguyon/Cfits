@@ -30,7 +30,7 @@ long mk_zer_unbounded(char *ID_name, long SIZE, long zer_nb, float rpix);
 
 int mk_zer_series(char *ID_name, long SIZE, long zer_nb, float rpix);
 
-nt mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix);
+int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix);
 
 double get_zer(char *ID_name, long zer_nb, double radius);
 
