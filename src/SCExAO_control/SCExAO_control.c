@@ -643,11 +643,16 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         ysig = tot11-tot00;
         printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
-exit(0);
+//exit(0);
 		
         /// 1 V step -> sig = 0.2 for modulation = 0.3
         SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
         SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
+
+		// New control
+		SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.2);  // C actuator
+        SCExAO_PZT_STAGE_Ypos -= gain*((ysig+xsig)/0.2);  // D actuator
+
 
         if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
             SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
