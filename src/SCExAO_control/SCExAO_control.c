@@ -869,10 +869,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	// + +
 	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
 	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref + voltAmpOffset*sqrt(2.0);
-	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+	sprintf(command, "ssh scexao@scexao2 \"analog_output.py voltage C %5.3f\"\n", SCExAO_PZT_STAGE_Xpos);
 	printf("%s", command);
     r = system(command);
- 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+ 	sprintf(command, "ssh scexao@scexao2 \"analog_output.py voltage D %5.3f\"\n", SCExAO_PZT_STAGE_Ypos);
 	printf("%s", command);
     r = system(command);
 	IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
