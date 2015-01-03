@@ -1045,7 +1045,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	xave = 0.25*(xcpp+xcpm+xcmp+xcmm);
 	yave = 0.25*(ycpp+ycpm+ycmp+ycmm);
 	
-	printf("AVERAGE PIXEL OFFSET = %f %f\n", xave - 0.5*size + 0.5, yave - 0.5*size + 0.5);
+	printf("AVERAGE PIXEL OFFSET = %f %f\n", xave - 0.25*size + 0.5, yave - 0.25*size + 0.5);
 	
 	delete_image_ID("prefsum");
 		
