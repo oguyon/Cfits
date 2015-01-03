@@ -772,7 +772,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         if(stepy<-maxstep)
             stepy = -maxstep;
 
-
+	
         printf("STEP     : %ld %ld\n", stepx, stepy);
 
         SCExAO_Pcam_Xpos += stepx;
@@ -882,9 +882,12 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             //	r = system(command);
             //usleep(200000);
 
+//			if(valp<valm)
+	//			a += 
+
             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
             printf("== ZERNIKE %ld / %ld ========== a = %f\n", zi, zimax, a);
-            sprintf(command, "dm_add_zernike %ld %f", zi, a+ampl);
+            sprintf(command, "dm_add_zernike %ld %f", zi, a);
             r = system(command);
             usleep(10000);
         }
