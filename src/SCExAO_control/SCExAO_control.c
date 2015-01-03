@@ -863,6 +863,11 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	long NBframes = 10000;
 	long IDpp, IDpm, IDmp, IDmm;
 	long IDpyrTTref;
+	float xcmm, ycmm, xcpm, ycpm, xcmp, ycmp, xcpp, ycpp;
+	float flim;
+	float totmm, totpm, totmp, totpp;
+	float p10, p90;
+	long ii1, jj1;
 	
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];
@@ -954,6 +959,85 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	delete_image_ID("imwfsmm");
 	
 	save_fits("prefsum", "!prefsum.fits");
+	p10 = img_percentile("prefsum", 0.10);
+	p90 = img_percentile("prefsum", 0.90);
+	
+	xcpp = 0.0;
+	ycpp = 0.0;
+	totpp = 0.0;
+
+	xcmp = 0.0;
+	ycmp = 0.0;
+	totmp = 0.0;
+
+	xcpm = 0.0;
+	ycpm = 0.0;
+	totpm = 0.0;
+
+	xcmm = 0.0;
+	ycmm = 0.0;
+	totmm = 0.0;
+	
+	flim = p10 + 0.3*(p90-p10);
+
+	for(ii=0;ii<size/2;ii++)
+		for(jj=0;jj<size/2;jj++)
+		{
+			if(data.image[ID].array.F[jj*size+ii]>flim)
+				{
+					totmm += 1.0;
+					xcmm += ii;
+					ycmm += jj;
+				}
+			
+			ii1 = ii+size/2;
+			jj1 = jj;
+			if(data.image[ID].array.F[jj1*size+ii1]>flim)
+				{
+					totpm += 1.0;
+					xcpm += ii;
+					ycpm += jj;
+				}
+			
+			ii1 = ii;
+			jj1 = jj+size/2;
+			if(data.image[ID].array.F[jj1*size+ii1]>flim)
+				{
+					totmp += 1.0;
+					xcmp += ii;
+					ycmp += jj;
+				}
+			
+			ii1 = ii+size/2;
+			jj1 = jj+size/2;
+			if(data.image[ID].array.F[jj1*size+ii1]>flim)
+				{
+					totpp += 1.0;
+					xcpp += ii;
+					ycpp += jj;
+				}
+			
+		}
+	
+	xcpp /= totpp;
+	ycpp /= totpp;
+	
+	xcpm /= totpm;
+	ycpm /= totpm;
+	
+	xcmp /= totmp;
+	ycmp /= totmp;
+	
+	xcmm /= totmm;
+	ycmm /= totmm;
+	
+
+	
+	printf("++ : %f %f\n", xcpp, ycpp);
+	printf("+- : %f %f\n", xcpm, ycpm);
+	printf("-+ : %f %f\n", xcmp, ycmp);
+	printf("-- : %f %f\n", xcmm, ycmm);
+	
 	exit(0);
 	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
  
