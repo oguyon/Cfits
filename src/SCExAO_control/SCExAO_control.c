@@ -884,7 +884,6 @@ fflush(stdout);
 		usleep(10);
 		if(cnt != data.image[IDwfs].md[0].cnt0)
 		{
-			printf("new image %ld\n", data.image[IDwfs].md[0].cnt0);
 			cnt = data.image[IDwfs].md[0].cnt0;
 			
 			data.image[ID].md[0].write = 1;
