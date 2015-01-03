@@ -43,7 +43,7 @@
 
 extern DATA data;
 
-
+float PcamPixScaleAct = 0.7*10000.0; // pyramid re-image actuators: step per pixel
 
 /// CONFIGURATION
 /// CONFIGURATION
@@ -795,8 +795,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
         printf("  %6.4f  x  %6.4f\n", totx, toty);
 
-        stepx = (long) (-gain*totx/0.7*10000.0);
-        stepy = (long) (gain*toty/0.7*10000.0);
+        stepx = (long) (-gain*totx/PcamPixScaleAct); // 0.7*10000.0);
+        stepy = (long) (gain*toty/PcamPixScaleAct); //  0.7*10000.0);
 
         if(stepx>maxstep)
             stepx = maxstep;
@@ -868,6 +868,8 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	float totmm, totpm, totmp, totpp;
 	float p10, p90;
 	long ii1, jj1;
+	float xave, yave;
+	
 	
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];
@@ -1038,7 +1040,27 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 	printf("-+ : %f %f\n", xcmp, ycmp);
 	printf("-- : %f %f\n", xcmm, ycmm);
 	
+	xave = 0.25*(xcpp+xcpm+xcmp+xcmm);
+	yave = 0.25*(ycpp+ycpm+ycmp+ycmm);
+	
+	printf("AVERAGE OFFSET = %f %f\n", xave, yave);
+	
 	delete_image_ID("prefsum");
+		
+	      /// write stages position
+        /*fp = fopen("./status/pcampos.txt", "w");
+        fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+        fclose(fp);
+
+        sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
+        printf("%s", command);
+        r = system(command);
+        usleep(delayus);
+
+        sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
+        printf("%s", command);
+        r = system(command);
+        usleep(delayus);*/
 	exit(0);
 
 
