@@ -128,9 +128,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 
 int SCExAOcontrol_PyramidWFS_Pcenter_cli()
 {
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,1)==0)
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
     {
-		SCExAOcontrol_PyramidWFS_Pcenter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
+		SCExAOcontrol_PyramidWFS_Pcenter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf);
       return 0;
     }
   else
@@ -832,7 +832,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
 /// pupil centering tool
 /// watch pcenter stream
-int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
+int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 {
     long IDmask;
     long IDwfs;
@@ -861,23 +861,23 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)
     for(ii=0; ii<size/2; ii++)
         for(jj=0; jj<size/2; jj++)
         {
-            x = 0.5+ii-size/4;
-            y = 0.5+jj-size/4;
+            x = 0.5+ii-size/4-poffset;
+            y = 0.5+jj-size/4-poffset;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
             {
                 data.image[IDmask].array.F[jj*size+ii] = 1.0;
-                data.image[IDmask].array.F[(jj+size/2)*size+ii] = 1.0;
-                data.image[IDmask].array.F[jj*size+ii+size/2] = 1.0;
-                data.image[IDmask].array.F[(jj+size/2)*size+ii+size/2] = 1.0;
+                data.image[IDmask].array.F[(size/2-jj-1)*size+ii] = 1.0;
+                data.image[IDmask].array.F[jj*size+(size/2-ii-1)] = 1.0;
+                data.image[IDmask].array.F[(size/2-jj-1)*size+ii+size/2] = 1.0;
             }
             
         }
 
 
-printf("Applying mask to image ...\n");
-fflush(stdout);
+	printf("Applying mask to image ...\n");
+	fflush(stdout);
 	cnt = data.image[IDwfs].md[0].cnt0;
 	while (1)
 	{
