@@ -828,6 +828,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 	long dmsize;
 	long dmsize2;
 	long IDz;
+	long IDdisp;
 	
     // 60perc of pixels illuminated
     // perc 70 is median over pupil
@@ -836,6 +837,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
     IDdm5 = read_sharedmem_image("dmdisp5");
     IDdm6 = read_sharedmem_image("dmdisp6");
+	IDdisp = read_sharedmem_image("dmdisp");
 	dmsize = data.image[IDdm5].md[0].size[0];
 	dmsize2 = dmsize*dmsize;
 	
@@ -854,9 +856,10 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			for(ii=0;ii<dmsize2;ii++)
 				data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
 			sem_post(data.image[IDdm5].semptr);
+			sem_post(data.image[IDdisp].semptr1);
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
-			usleep(500000);
+			usleep(50);
           
      
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -872,9 +875,10 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			for(ii=0;ii<dmsize2;ii++)
 				data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
 			sem_post(data.image[IDdm5].semptr);
+			sem_post(data.image[IDdisp].semptr1);
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
-			usleep(500000);
+			usleep(50);
 
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -894,9 +898,10 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 			for(ii=0;ii<dmsize2;ii++)
 				data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
 			sem_post(data.image[IDdm5].semptr);
+			sem_post(data.image[IDdisp].semptr1);
 			data.image[IDdm5].md[0].cnt0++;
 			data.image[IDdm5].md[0].write = 0;
-			usleep(500000);
+			usleep(50);
         }
         
         printf("%ld -> %ld\n", IDdm5, IDdm6);
