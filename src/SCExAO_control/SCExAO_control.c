@@ -522,6 +522,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
 
+	SCExAO_PZT_STAGE_Xpos = -5.0;
+	SCExAO_PZT_STAGE_Ypos = -5.0;
 
     IDshm = image_ID("pyrTT");
     if(IDshm == -1)
@@ -646,8 +648,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 //exit(0);
 		
         /// 1 V step -> sig = 0.2 for modulation = 0.3
-        SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
-        SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
+ //       SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
+   //     SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
 
 		// New control
 		SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.2);  // C actuator
