@@ -525,7 +525,7 @@ int mk_zer_seriescube(char *ID_namec, long SIZE, long zer_nb, float rpix)
     for (ii=0; ii<SIZE; ii++)
         for (jj=0; jj<SIZE; jj++)
         {
-            r[jj*naxes[0]+ii] = sqrt((ii-SIZE/2)*(ii-SIZE/2)+(jj-SIZE/2)*(jj-SIZE/2))/rpix;
+            r[jj*naxes[0]+ii] = sqrt((0.5+ii-SIZE/2)*(0.5+ii-SIZE/2)+(0.5+jj-SIZE/2)*(0.5+jj-SIZE/2))/rpix;
             theta[jj*naxes[0]+ii] = atan2((jj-SIZE/2),(ii-SIZE/2));
         }
 
