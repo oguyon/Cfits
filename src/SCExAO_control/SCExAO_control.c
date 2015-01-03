@@ -857,11 +857,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-            p50 = img_percentile("imwfs", 0.50);
+//            p50 = img_percentile("imwfs", 0.50);
             p70 = img_percentile("imwfs", 0.70);
             p90 = img_percentile("imwfs", 0.90);
-            val = (p90-p50)/p70;
-            printf("%lf %lf %lf -> %f\n", p50, p70, p90, val);
+            val = (p90-p70)/(p70+p90);
+            printf("%lf %lf -> %f\n", p70, p90, val);
             valp = val;
 
 
@@ -871,11 +871,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-            p50 = img_percentile("imwfs", 0.50);
+           // p50 = img_percentile("imwfs", 0.50);
             p70 = img_percentile("imwfs", 0.70);
             p90 = img_percentile("imwfs", 0.90);
-            val = (p90-p50)/p70;
-            printf("%lf %lf %lf -> %f\n", p50, p70, p90, val);
+            val = (p90-p70)/(p70+p90);
+            printf("%lf %lf -> %f\n", p70, p90, val);
             valm = val;
 
             //		sprintf(command, "dm_add_zernike %ld %f", zi, ampl);
