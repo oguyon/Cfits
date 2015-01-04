@@ -3762,7 +3762,6 @@ int AOcompute(long loop)
     double tdiffv;
 
 
-
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
@@ -3807,9 +3806,12 @@ int AOcompute(long loop)
         for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
             for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                 matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
-
+		printf("\n");
         for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
         {
+			printf("\r mode %6ld    ", mode);
+			fflush(stdout);
+			
             for(act=0; act<AOconf[loop].sizeDM; act++)
                 for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                     data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
@@ -3832,6 +3834,7 @@ int AOcompute(long loop)
         clock_gettime(CLOCK_REALTIME, &t2);
 		tdiff = info_time_diff(t1, t2);
 		tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+		printf("\n");
 		printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);	
     }
 
