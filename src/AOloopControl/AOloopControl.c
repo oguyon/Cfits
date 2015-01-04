@@ -3846,10 +3846,6 @@ int AOcompute(long loop)
         }
 		aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
 
-		printf("HERE \n");
-		fflush(stdout);
-		sleep(60);
-
         if(aoconfID_contrMc==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*3);
@@ -3859,6 +3855,11 @@ int AOcompute(long loop)
             aoconfID_contrMc = create_image_ID("cmatc", 3, sizearray, FLOAT, 1, 0);
             free(sizearray);
         }
+
+		printf("HERE \n");
+		fflush(stdout);
+		sleep(60);
+
 
         // control matrix scaled by gains
         matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
