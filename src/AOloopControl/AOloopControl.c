@@ -3824,7 +3824,7 @@ int AOcompute(long loop)
 # ifdef _OPENMP
 #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
  {
-	  #pragma omp for schedule (static, chunk)
+	  #pragma omp for schedule (static)
  # endif
        for(mode=0; mode<n_NBDMmodes; mode++)
         {
