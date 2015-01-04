@@ -288,8 +288,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     long iter = 0;
 
 	
-	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
-	fflush(stdout);
+/*	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
+	fflush(stdout);*/
 	//sleep(2);
 	
     if(gpumatmultconf[index].init == 0)
