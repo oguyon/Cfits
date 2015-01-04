@@ -3909,11 +3909,7 @@ int AOcompute(long loop)
        free(matrix_DMmodes);
 
 		printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
-//		printf("HERE \n");
-	//	fflush(stdout);
-		sleep(10);
-
-        /*
+       /*
            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
                 {
         			printf("mode %6ld    \n", mode);
