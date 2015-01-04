@@ -796,8 +796,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
         printf("  %6.4f  x  %6.4f\n", totx, toty);
 
-        stepx = (long) (-gain*totx/PcamPixScaleAct); // 0.7*10000.0);
-        stepy = (long) (gain*toty/PcamPixScaleAct); //  0.7*10000.0);
+        stepx = (long) (-gain*totx*PcamPixScaleAct); // 0.7*10000.0);
+        stepy = (long) (gain*toty*PcamPixScaleAct); //  0.7*10000.0);
 
         if(stepx>maxstep)
             stepx = maxstep;
