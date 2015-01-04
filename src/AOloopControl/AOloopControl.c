@@ -3889,16 +3889,14 @@ int AOcompute(long loop)
 # endif
         memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
-		printf("HERE \n");
-		fflush(stdout);
-		sleep(20);
-
+	
 
         aoconfID_contrMc_active = create_2Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
            {
 			printf("act_active = %ld [%d]\n", act_active, DM_active_map[act_active]);
 			fflush(stdout);
+			sleep(5);
 	    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
             {
 				act = DM_active_map[act_active];
