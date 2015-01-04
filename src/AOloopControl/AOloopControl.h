@@ -28,6 +28,7 @@ typedef struct
     long sizexWFS;
     long sizeyWFS;
     long sizeWFS;
+    long sizeWFS_active; // only takes into account WFS pixels in use/active
     long long WFScnt;
     long long WFScntRM;
 
@@ -37,6 +38,7 @@ typedef struct
     long sizexDM;
     long sizeyDM;
     long sizeDM;
+    long sizeDM_active; // only takes into account DM actuators that are active/in use
 
     // Modes
     char DMMODESname[80];
