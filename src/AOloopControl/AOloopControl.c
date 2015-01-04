@@ -3889,6 +3889,9 @@ int AOcompute(long loop)
 # endif
         memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
+		printf("HERE \n");
+		fflush(stdout);
+		sleep(20);
 
 
         aoconfID_contrMc_active = create_2Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
