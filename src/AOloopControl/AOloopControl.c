@@ -3790,7 +3790,9 @@ int AOcompute(long loop)
 		
         printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
-		clock_gettime(CLOCK_REALTIME, &t2);
+
+		clock_gettime(CLOCK_REALTIME, &t1);
+
         if(aoconfID_contrMc==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*3);
@@ -3809,7 +3811,7 @@ int AOcompute(long loop)
 		printf("\n");
         for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
         {
-			printf("\r mode %6ld    ", mode);
+			printf("mode %6ld    \n", mode);
 			fflush(stdout);
 			
             for(act=0; act<AOconf[loop].sizeDM; act++)
