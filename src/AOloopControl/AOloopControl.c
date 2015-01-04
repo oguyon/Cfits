@@ -3837,7 +3837,7 @@ int AOcompute(long loop)
 		printf("\n");
 		printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);	
     
-		speep(100);
+		sleep(100);
     }
 
 
