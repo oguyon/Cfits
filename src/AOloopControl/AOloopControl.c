@@ -3838,9 +3838,7 @@ int AOcompute(long loop)
 		tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 		printf("\n");
 		printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);	
-    
-		sleep(100);
-    }
+        }
 
 
     if(AOconf[loop].GPU == 0)
