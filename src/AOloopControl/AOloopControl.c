@@ -3969,22 +3969,22 @@ int AOcompute(long loop)
 				else // only use active pixels and actuators
 				{
 					// re-map input vector
-					printf("remapping Vector wfs re\n");
-					fflush(stdout);				
+				//	printf("remapping Vector wfs re\n");
+					//fflush(stdout);				
 					for(wfselem_active=0; wfselem_active<AOconf[loop].sizeDM_active; wfselem_active++)
 						data.image[aoconfID_WFS2_active].array.F[act_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];					
 					data.image[aoconfID_WFS2_active].md[0].cnt0++;
-					printf("Vector wfs re-mapped\n");
-					fflush(stdout);
-					sleep(2);
+					//printf("Vector wfs re-mapped\n");
+					//fflush(stdout);
+					//sleep(2);
 					
 					// perform matrix mult			
 					GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 					AOconf[loop].status = 8; // execute
 			
-					printf("ready to execute\n");
-					fflush(stdout);
-					sleep(10);
+//					printf("ready to execute\n");
+	//				fflush(stdout);
+		//			sleep(10);
 					
 					GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 				

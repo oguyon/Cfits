@@ -290,14 +290,14 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 	
 	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
 	fflush(stdout);
-	sleep(2);
+	//sleep(2);
 	
     if(gpumatmultconf[index].init == 0)
     {
 
 		printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
-sleep(2);
+//sleep(2);
         if(gpumatmultconf[index].alloc == 1)
         {
             GPU_loop_MultMat_free(index);
@@ -311,19 +311,19 @@ sleep(2);
 
 		printf("USEsem = %d\n", USEsem);
         fflush(stdout);
-	sleep(2);
+	//sleep(2);
 
 
         gpumatmultconf[index].orientation = orientation;
 
 		printf("input CM name : %s\n", IDcontrM_name);
 		fflush(stdout);
-	sleep(2);
+	//sleep(2);
         gpumatmultconf[index].CM_ID = image_ID(IDcontrM_name);
         
         printf("CM_ID = %ld\n", gpumatmultconf[index].CM_ID);
         fflush(stdout);
-	sleep(2);
+//	sleep(2);
 
         gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
 
@@ -331,9 +331,9 @@ sleep(2);
 
         /// Load Control Matrix
         IDcontrM = image_ID(IDcontrM_name);
-		printf("control matrix loaded: IDcontrM = %ld\n", IDcontrM);
-        fflush(stdout);
-	sleep(2);
+//		printf("control matrix loaded: IDcontrM = %ld\n", IDcontrM);
+//        fflush(stdout);
+//	sleep(2);
 
 		
         if(orientation==0)
@@ -350,8 +350,6 @@ sleep(2);
             printf("M = %d\n", gpumatmultconf[index].M);
             printf("N = %d\n", gpumatmultconf[index].N);
         }
-        fflush(stdout);
-	sleep(2);
 
         gpumatmultconf[index].cMat =  data.image[IDcontrM].array.F;
 
@@ -368,8 +366,8 @@ sleep(2);
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1], gpumatmultconf[index].N);
              fflush(stdout);
-	sleep(2);
-	   exit(0);
+			sleep(2);
+			exit(0);
             }
         }
         else
@@ -378,8 +376,8 @@ sleep(2);
             if(data.image[IDwfsim].md[0].size[0]!=gpumatmultconf[index].N)
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0], gpumatmultconf[index].N);
-     fflush(stdout);
-	sleep(2);
+			fflush(stdout);
+			sleep(2);
 	           exit(0);
             }
         }
@@ -400,8 +398,8 @@ sleep(2);
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1], gpumatmultconf[index].M);
                 printf("gpumatmultconf[index].IDout = %ld\n", gpumatmultconf[index].IDout);
                 list_image_ID();
-     fflush(stdout);
-	sleep(2);
+				fflush(stdout);
+				sleep(2);
 	           exit(0);
             }
         }
