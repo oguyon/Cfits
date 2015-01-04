@@ -3809,7 +3809,16 @@ int AOcompute(long loop)
             for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                 matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
 		printf("\n");
-        for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+
+# ifdef _OPENMP
+  #pragma omp parallel num_threads(8) 
+  {  
+  # endif
+
+  # ifdef _OPENMP
+      #pragma omp for
+      # endif
+       for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
         {
 			printf("mode %6ld    \n", mode);
 			fflush(stdout);
@@ -3818,6 +3827,13 @@ int AOcompute(long loop)
                 for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                     data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
         }
+    # ifdef _OPENMP
+  }
+  # endif
+
+ 
+
+    
 
 
         if(aoconfID_meas_act==-1)
