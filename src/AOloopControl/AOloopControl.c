@@ -3932,6 +3932,8 @@ int AOcompute(long loop)
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         printf("\n");
         printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);
+        
+        sleep(30);
     }
 
 
@@ -4002,7 +4004,6 @@ int AOcompute(long loop)
                 data.image[aoconfID_cmd_modes].array.F[k] = AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
 
             data.image[aoconfID_cmd_modes].array.F[k] *= AOconf[loop].mult * data.image[aoconfID_MULTF_modes].array.F[k];
-
 
             // update total gain
             //     data.image[aoconfID_GAIN_modes].array.F[k+AOconf[loop].NBDMmodes] = AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k];
