@@ -3960,7 +3960,7 @@ int AOcompute(long loop)
         }
         else // direct pixel -> actuators linear transformation
         {
-			if(1)
+			if(0)
 				{
 					GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 				AOconf[loop].status = 8; // execute
