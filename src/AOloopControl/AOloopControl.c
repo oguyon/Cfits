@@ -3756,6 +3756,12 @@ int AOcompute(long loop)
     float *matrix_cmp;
     long wfselem, act, mode;
 
+    struct timespec t1;
+    struct timespec t2;
+	struct timespec tdiff;
+    double tdiffv;
+
+
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
@@ -3782,8 +3788,10 @@ int AOcompute(long loop)
     //fflush(stdout);
     if(AOconf[loop].init_CMc == 0) // compute combined control matrix
     {
-        printf("COMPUTING COMBINED CONTROL MATRIX .... ");
+		
+        printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
+		clock_gettime(CLOCK_REALTIME, &t2);
         if(aoconfID_contrMc==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*3);
@@ -3796,17 +3804,17 @@ int AOcompute(long loop)
 
         // control matrix scaled by gains
         matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+        for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+            for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                 matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
 
-        for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+        for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+        {
             for(act=0; act<AOconf[loop].sizeDM; act++)
-            {
-                data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] = 0.0;
-                for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+                for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                     data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
-            }
+        }
+
 
         if(aoconfID_meas_act==-1)
         {
@@ -3820,6 +3828,11 @@ int AOcompute(long loop)
         AOconf[loop].init_CMc = 1;
         printf(" done\n");
         fflush(stdout);
+        
+        clock_gettime(CLOCK_REALTIME, &t2);
+		tdiff = info_time_diff(t1, t2);
+		tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+		printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);	
     }
 
 
@@ -3884,6 +3897,7 @@ int AOcompute(long loop)
 
     return(0);
 }
+
 
 
 
