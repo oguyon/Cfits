@@ -3856,11 +3856,6 @@ int AOcompute(long loop)
             free(sizearray);
         }
 
-		printf("HERE \n");
-		fflush(stdout);
-		sleep(60);
-
-
         // control matrix scaled by gains
         matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
         for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
@@ -3893,8 +3888,8 @@ int AOcompute(long loop)
         }
 # endif
         memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        free(matrix_Mc);
-        free(matrix_DMmodes);
+
+
 
         aoconfID_contrMc_active = create_2Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
@@ -3904,8 +3899,13 @@ int AOcompute(long loop)
 				wfselem = WFS_active_map[wfselem_active];
                 matrix_Mc_active[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
             }
+       free(matrix_Mc);
+       free(matrix_DMmodes);
 
 		printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
+//		printf("HERE \n");
+	//	fflush(stdout);
+		sleep(10);
 
         /*
            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
