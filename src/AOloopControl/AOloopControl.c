@@ -3896,12 +3896,16 @@ int AOcompute(long loop)
 
         aoconfID_contrMc_active = create_2Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
-            for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+           {
+			printf("act_active = %ld [%d]\n", act_active, DM_active_map[act_active]);
+			fflush(stdout);
+	    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
             {
 				act = DM_active_map[act_active];
 				wfselem = WFS_active_map[wfselem_active];
                 matrix_Mc_active[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
             }
+		   }
        free(matrix_Mc);
        free(matrix_DMmodes);
 
