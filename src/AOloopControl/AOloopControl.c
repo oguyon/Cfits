@@ -3971,7 +3971,7 @@ int AOcompute(long loop)
 					// re-map input vector
 				//	printf("remapping Vector wfs re\n");
 					//fflush(stdout);				
-					for(wfselem_active=0; wfselem_active<AOconf[loop].sizeDM_active; wfselem_active++)
+					for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
 						data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];					
 					data.image[aoconfID_WFS2_active].md[0].cnt0++;
 					//printf("Vector wfs re-mapped\n");
