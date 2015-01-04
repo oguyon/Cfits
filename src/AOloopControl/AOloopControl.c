@@ -3805,6 +3805,7 @@ int AOcompute(long loop)
 
         clock_gettime(CLOCK_REALTIME, &t1);
 
+
         // build up map for active regions
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
@@ -3825,6 +3826,7 @@ int AOcompute(long loop)
         }
 		aoconfID_WFS2_active = create_2Dimage_ID("wfs2active", AOconf[loop].sizeWFS_active, 1);
 
+
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
         IDmask = image_ID("dmmask");
         if(IDmask==-1)
@@ -3843,6 +3845,10 @@ int AOcompute(long loop)
             AOconf[loop].sizeDM_active = ii1;
         }
 		aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
+
+		printf("HERE \n");
+		fflush(stdout);
+		sleep(60);
 
         if(aoconfID_contrMc==-1)
         {
