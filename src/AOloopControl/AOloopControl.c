@@ -3892,7 +3892,7 @@ int AOcompute(long loop)
 	
 //        matrix_Mc_active = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
-        aoconfID_contrMc_active = create_2Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
+        aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
            {
 	//		printf("act_active = %ld [%d]\n", act_active, DM_active_map[act_active]);
