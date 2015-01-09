@@ -5065,34 +5065,21 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 		if((IDv=variable_ID("PIAACMC_ldoffset"))!=-1)
             ldoffset = data.variable[IDv].value.f;
 		
+		printf("ldoffset = %f\n", ldoffset);
+		//exit(0);
+		
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
-        /*    valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_00_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-
-        valref = PIAACMCsimul_computePSF(1.0, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_10_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        valref = PIAACMCsimul_computePSF(2.0, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_20_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        valref = PIAACMCsimul_computePSF(3.0, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_30_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        valref = PIAACMCsimul_computePSF(4.0, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_40_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);*/
 
         valref = PIAACMCsimul_computePSF(5.0, 0.0, 0, optsyst[0].NBelem);
         sprintf(fname,"!%s/psfi_50_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
+        save_fits("psfi0", fname);
         //		load_fits(fname, "psfi");
 
 
-        ID = image_ID("psfi");
+        ID = image_ID("psfi0");
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
         zsize = data.image[ID].md[0].size[2];
@@ -5115,14 +5102,14 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         }
         avpeak /= zsize;
         free(peakarray);
-        delete_image_ID("psfi");
+        delete_image_ID("psfi0");
 
         valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_00_00.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
+        sprintf(fname,"!%s/psfi0_00_00.fits", piaacmcconfdir);
+        save_fits("psfi0", fname);
         //load_fits(fname, "psfi");
 
-        ID = image_ID("psfi");
+        ID = image_ID("psfi0");
 
 
         /// compute contrast curve
@@ -5176,37 +5163,37 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         IDps = create_3Dimage_ID("starim", piaacmc[0].size, piaacmc[0].size, zsize);
 
         valref = PIAACMCsimul_computePSF(ldoffset, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_p0.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        ID = image_ID("psfi");
+        sprintf(fname,"!%s/psfi0_p0.fits", piaacmcconfdir);
+        save_fits("psfi0", fname);
+        ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
         valref = PIAACMCsimul_computePSF(-ldoffset, 0.0, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_m0.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        ID = image_ID("psfi");
+        sprintf(fname,"!%s/psfi0_m0.fits", piaacmcconfdir);
+        save_fits("psfi0", fname);
+        ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
         valref = PIAACMCsimul_computePSF(0.0, ldoffset, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_0p.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        ID = image_ID("psfi");
+        sprintf(fname,"!%s/psfi0_0p.fits", piaacmcconfdir);
+        save_fits("psfi0", fname);
+        ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
-        valref = PIAACMCsimul_computePSF(0.00, -ldoffset, 0, optsyst[0].NBelem);
-        sprintf(fname,"!%s/psfi_0m.fits", piaacmcconfdir);
-        save_fits("psfi", fname);
-        ID = image_ID("psfi");
+        valref = PIAACMCsimul_computePSF(0.0, -ldoffset, 0, optsyst[0].NBelem);
+        sprintf(fname,"!%s/psfi0_0m.fits", piaacmcconfdir);
+        save_fits("psfi0", fname);
+        ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] /= 4.0;
 
-        sprintf(fname,"!%s/psfi_starim.fits", piaacmcconfdir);
+        sprintf(fname,"!%s/psfi0_starim.fits", piaacmcconfdir);
         save_fits("starim", fname);
 
         /// compute contrast curve
