@@ -2,6 +2,7 @@
 
 \ref overview
 \ref code 
+\ref bashscript
 \ref desstep 
 - \ref initrules 
 - \ref mode000
@@ -25,11 +26,24 @@ Diffraction-based PIAACMC simulation / optimization
 - Polychromatic propagations
 - Fits aspheric PIAA shapes on basis of radial cosines and 2-D Fourier modes
 
+Code is composed of a several layers (from high to low) :
+- high level design script: sim1024 (for 1024x1024 pixel maps)
+- runPIAACMC script
+- C code
+
+
+
+\section sim1024 2. High level scripts
+
+TOP LEVEL SCRIPT: ./sim1024\n
+./sim1024 : Type ./sim1024 with no argument to get help message.
+
+./runPIAACMC: Type ./runPIAACMC with no argument to get help message.
 
 
 
 
-\section code 2. Code description
+\section code 3. C code description
 
 The main function in the source code is PIAACMCsimul_exec(), which takes two arguments: the configuration index (usually a 3 digit integer) and the mode (integer) which describes the operation to be performed to the PIAACMC design.
 
@@ -64,13 +78,16 @@ PIAACMC_centobs0	| Input central obstruction
 PIAACMC_centobs1	| Output central obstruction
 PIAACMC_nblambda	| Number of wavelength points
 PIAACMC_resolved	| 1 if resolved source (3 points at r = 0.01 l/D, 120 deg apart)
+PIAACMC_fpmtype		| 1 if physical mask, 0 if idealized mask
 PIAACMC_FPMsectors	| Number of sectors in focal plane mask
 PIAACMC_NBrings		| Number of rings in focal plane mask
 PIAACMC_fpmradld	| Focal plane mask outer radius
 
 
 
-\section desstep 3. Design Steps for PIAACMC 
+
+\section desstep 4. Design Steps for PIAACMC 
+
 
 
 Directories "./piaacmcconf<nnn>/" hold the default/current configuration settings and files for the PIAACMC. The directory will be automatically created if it does not exist. By copying from/to this directory, you can save/load PIAACMC designs.\n
@@ -261,6 +278,17 @@ fpm_zonea[r][s]_[mr]_[rrr]_[zzz].fits | amplitude for each zone
 fpm_zonea[r][s]_[mr]_[rrr]_[zzz].fits | thickness for each zone
 
 
+IDEALIZED OR PHYSICAL MASK\n
+
+Idealized mask is a single zone mask with thickness adjusted for lambda/2 phase shift and a (non-physical) partial transmission.
+Physical mask consist of 1 or more zones with full transmission. Each zone can have a different thickness.
+
+By default, a non-physical mask is first created with transmission piaacmc[0].fpmaskamptransm read from piaacmcparams.conf.
+Computations indices using a physical mask:
+- set transmission to 1.0:  piaacmc[0].fpmaskamptransm = 1.0.
+- set focal plane mask radius to larger value: piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio * PIAACMC_MASKRADLD
+
+
 #### Lyot stops:
 
 Output file	| Notes
@@ -272,6 +300,7 @@ Output file	| Notes
 #### Amplitude & Phase at planes:
 
 Files are /piaaconfxxx/WFamp_nnn.fits and WFpha_nnn.fits, where nnn is the plane index.\n
+Complex amplitude is shown AFTER the element has been applied, in the plane of the element.\n
 
 Plane index	| description
 ----------------|-------------------------------------

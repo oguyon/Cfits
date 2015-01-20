@@ -30,6 +30,8 @@ typedef struct {
 
   // Wavelength
   int nblambda;
+  double lambda; // central wavelength [m]
+  double lambdaB; // spectral bandwidth [%]
 
 
 
@@ -72,7 +74,8 @@ typedef struct {
   long zoneaID;  // focm zone amplitude transmission, double precision image, named fpmza / fpm_zonea.fits
   double fpzfactor; // focal plane mask DFT zoom factor
 
-  double fpmRad; // outer radius
+  double fpmRad; // outer radius of focal plane mask
+  
   long NBrings; // number of rings
   long fpmarraysize;
   int fpmmaterial; // materials:  1: SiO2  2: Si  3: PMGI  4: PMMA
@@ -97,14 +100,14 @@ long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mod
 void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, double TTyld);
 
 // PIAA optics (geometrical optics) tools
-int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, float centralObs, char *IDapofit_name);
+int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, char *IDapofit_name);
 int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name);
 int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name);
 
 long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout);
 int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int load);
 int PIAACMCsimul_makePIAAshapes();
-double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem);
+double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf);
 int PIAAsimul_savepiaacmcconf(char *dname);
 int PIAAsimul_loadpiaacmcconf(char *dname);
 long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name);

@@ -154,7 +154,7 @@ int arith_image_div_inplace_byID(long ID1,  long ID2);
 int arith_image_minv_inplace_byID(long ID1, long ID2);
 int arith_image_maxv_inplace_byID(long ID1, long ID2);
 
-int arith_image_fmod_inplace(char *ID1_name, char *ID2_name);
+int arith_image_fmod_inplace(char *ID1_name, char *ID2_name);  // ID1 is output
 int arith_image_pow_inplace(char *ID1_name, char *ID2_name);
 int arith_image_add_inplace(char *ID1_name, char *ID2_name);
 int arith_image_sub_inplace(char *ID1_name, char *ID2_name);

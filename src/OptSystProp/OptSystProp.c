@@ -86,7 +86,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
 
     for(kl=0; kl<optsyst[index].nblambda; kl++)
     {
-        printf("kl = %d / %d  %f\n", kl, optsyst[index].nblambda, optsyst[index].lambdaarray[kl]);
+        printf("kl = %d / %d  %g\n", kl, optsyst[index].nblambda, optsyst[index].lambdaarray[kl]);
         for(ii=0; ii<size2; ii++)
         {
             amp = data.image[IDin_amp].array.F[kl*size2+ii];
