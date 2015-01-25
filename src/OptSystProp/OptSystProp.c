@@ -284,7 +284,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             ID = optsyst[index].elemarrayindex[elem];
             printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].md[0].name);
             fflush(stdout);
-
+	//	list_image_ID();
+			
             if(ID == -1)
             {
                 printf("ERROR: ID = -1, missing mask image\n");
@@ -294,8 +295,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             //	save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
             //save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
 
-            if(data.image[ID].md[0].size[2] != nblambda)
+			printf("ID = %ld\n", ID);
+			fflush(stdout);
+			
+			
+            if((data.image[ID].md[0].naxis == 2)||(data.image[ID].md[0].size[2] != nblambda))
             {
+		//		printf("single dim %ld %ld\n", data.image[ID].md[0].size[2], nblambda);
+			//	fflush(stdout);
 # ifdef HAVE_LIBGOMP
                 #pragma omp parallel default(shared) private(ii)
                 {
@@ -310,6 +317,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             }
             else
             {
+			//	printf("multi dim %ld %ld\n", data.image[ID].md[0].size[2], nblambda);
+			//	fflush(stdout);
 # ifdef HAVE_LIBGOMP
                 #pragma omp parallel
                 {
@@ -322,8 +331,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 # endif
             }
 
-            //	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
-
+            	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
+		//	printf("POINT 1.1\n");
+			
 
         }
 

@@ -680,388 +680,389 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
 
 //
 // High definition prolate computation
-// Uses DFT 
+// Uses DFT
 //
 double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, double centralObs, char *outname, long size)
 {
-  FILE *fp;
-  long size2;
-  long IDfpmask, IDfpmaskc, IDfpmaskz;
-  long IDpupa0,IDpupp0,IDpupa0m,IDpupp0m;
-  long ii,jj,ii1;
-  double peak;
-  long IDprol,ID;
-  long double total,total0,total2,v1;
-  long iter;
-  long NBiter = 10;
-  double transm;
-  double x,y,r2;
-  long IDr,IDi,IDrcp,IDicp; //,ID1,ID2;
-  long IDprolr,IDproli,IDprolp;
-  char fname[200];
-  char vname[200];
+    FILE *fp;
+    long size2;
+    long IDfpmask, IDfpmaskc, IDfpmaskz;
+    long IDpupa0,IDpupp0,IDpupa0m,IDpupp0m;
+    long ii,jj,ii1;
+    double peak;
+    long IDprol,ID;
+    long double total,total0,total2,v1;
+    long iter;
+    long NBiter = 10;
+    double transm;
+    double x,y,r2;
+    long IDr,IDi,IDrcp,IDicp; //,ID1,ID2;
+    long IDprolr,IDproli,IDprolp;
+    char fname[200];
+    char vname[200];
 
-  int CentralObstructionFlag = 0;
-  long IDpupa0co;
+    int CentralObstructionFlag = 0;
+    long IDpupa0co;
 
-  double re, im;
+    double re, im;
 
-  // focal plane mask shape perturbations
-  long k;
-  long fpmshape_n = 20;
-  double *fpmshape_ra;
-  double *fpmshape_ka;
-  double *fpmshape_pa;
+    // focal plane mask shape perturbations
+    long k;
+    long fpmshape_n = 20;
+    double *fpmshape_ra;
+    double *fpmshape_ka;
+    double *fpmshape_pa;
 
-  long IDv;
-
-
-  size2 = size * size;
-
-  fpmshape_ra = (double*) malloc(sizeof(double)*fpmshape_n);
-  fpmshape_ka = (double*) malloc(sizeof(double)*fpmshape_n);
-  fpmshape_pa = (double*) malloc(sizeof(double)*fpmshape_n);
+    long IDv;
 
 
-  if((ID=variable_ID("DFTZFACTOR"))!=-1)
-    DFTZFACTOR = data.variable[ID].value.f;
+    size2 = size * size;
 
-  if(centralObs > 0.001)
-    CentralObstructionFlag = 1;
-
-  // SET NUMBER OF ITERATION TO VALUE OTHER THAN DEFAULT IF VARIABLE PNBITER EXISTS
-  ID = variable_ID("PNBITER");
-  if(ID!=-1)
-    NBiter = (long) (1.0*data.variable[ID].value.f+0.01);
-
-  
-  v1 = 0.0;
-  MASKSIZELD = (2.0*beamradpix/size) * fpmradpix;
-  printf("MASK SIZE = %f pixel = %f l/D\n", fpmradpix, MASKSIZELD);
-  printf("PUPIL RADIUS = %f\n", beamradpix);
-  printf("SIZE = %ld\n", size);
-
-  IDproli = create_2Dimage_ID("proli", size, size);
-  IDprolr = create_2Dimage_ID("prolr", size, size);
-  IDprolp = create_2Dimage_ID("prolp", size, size);
+    fpmshape_ra = (double*) malloc(sizeof(double)*fpmshape_n);
+    fpmshape_ka = (double*) malloc(sizeof(double)*fpmshape_n);
+    fpmshape_pa = (double*) malloc(sizeof(double)*fpmshape_n);
 
 
-  // CREATE FOCAL PLANE MASK
-  
-  fpmshape_ra[0] = 0.0;
-  fpmshape_ka[0] = 3.0;
-  fpmshape_pa[0] = M_PI/2.0;
+    if((ID=variable_ID("DFTZFACTOR"))!=-1)
+        DFTZFACTOR = data.variable[ID].value.f;
 
-  for(k=0; k<fpmshape_n; k++)
+    if(centralObs > 0.001)
+        CentralObstructionFlag = 1;
+
+    // SET NUMBER OF ITERATION TO VALUE OTHER THAN DEFAULT IF VARIABLE PNBITER EXISTS
+    ID = variable_ID("PNBITER");
+    if(ID!=-1)
+        NBiter = (long) (1.0*data.variable[ID].value.f+0.01);
+
+
+    v1 = 0.0;
+    MASKSIZELD = (2.0*beamradpix/size) * fpmradpix;
+    printf("MASK SIZE = %f pixel = %f l/D\n", fpmradpix, MASKSIZELD);
+    printf("PUPIL RADIUS = %f\n", beamradpix);
+    printf("SIZE = %ld\n", size);
+
+    IDproli = create_2Dimage_ID("proli", size, size);
+    IDprolr = create_2Dimage_ID("prolr", size, size);
+    IDprolp = create_2Dimage_ID("prolp", size, size);
+
+
+    // CREATE FOCAL PLANE MASK
+
+    fpmshape_ra[0] = 0.0;
+    fpmshape_ka[0] = 3.0;
+    fpmshape_pa[0] = M_PI/2.0;
+
+    for(k=0; k<fpmshape_n; k++)
     {
-      fpmshape_ra[k] = 0.0;
-      fpmshape_ka[k] = 0.0;
-      fpmshape_pa[k] = 0.0;
+        fpmshape_ra[k] = 0.0;
+        fpmshape_ka[k] = 0.0;
+        fpmshape_pa[k] = 0.0;
 
-      sprintf(vname, "FPMSHAPE_%ld_r", k);
-      if((ID=variable_ID(vname))!=-1)
-	fpmshape_ra[k] = data.variable[ID].value.f;
-      
+        sprintf(vname, "FPMSHAPE_%ld_r", k);
+        if((ID=variable_ID(vname))!=-1)
+            fpmshape_ra[k] = data.variable[ID].value.f;
 
-      sprintf(vname, "FPMSHAPE_%ld_k", k);
-      if((ID=variable_ID(vname))!=-1)
-	fpmshape_ka[k] = data.variable[ID].value.f;
 
-      sprintf(vname, "FPMSHAPE_%ld_p", k);
-      if((ID=variable_ID(vname))!=-1)
-	fpmshape_pa[k] = data.variable[ID].value.f;
+        sprintf(vname, "FPMSHAPE_%ld_k", k);
+        if((ID=variable_ID(vname))!=-1)
+            fpmshape_ka[k] = data.variable[ID].value.f;
 
-      printf("FPM SHAPE TERM %02ld : %f %f %f\n", k,  fpmshape_ra[k],  fpmshape_ka[k],  fpmshape_pa[k]);
+        sprintf(vname, "FPMSHAPE_%ld_p", k);
+        if((ID=variable_ID(vname))!=-1)
+            fpmshape_pa[k] = data.variable[ID].value.f;
+
+        printf("FPM SHAPE TERM %02ld : %f %f %f\n", k,  fpmshape_ra[k],  fpmshape_ka[k],  fpmshape_pa[k]);
     }
 
-  IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, fpmradpix);
-  IDfpmaskz = make_subpixdisk_perturb("FPmaskz", size, size, size/2, size/2, fpmradpix*DFTZFACTOR, fpmshape_n, fpmshape_ra, fpmshape_ka, fpmshape_pa);
-  IDfpmaskc = create_2DCimage_ID("_fpmz", size, size);
-  for(ii=0;ii<size2;ii++)
+    IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, fpmradpix);
+    IDfpmaskz = make_subpixdisk_perturb("FPmaskz", size, size, size/2, size/2, fpmradpix*DFTZFACTOR, fpmshape_n, fpmshape_ra, fpmshape_ka, fpmshape_pa);
+    IDfpmaskc = create_2DCimage_ID("_fpmz", size, size);
+    for(ii=0; ii<size2; ii++)
     {
-      data.image[IDfpmask].array.F[ii] = 1.0*data.image[IDfpmaskz].array.F[ii];
-      data.image[IDfpmaskc].array.CF[ii].re = data.image[IDfpmaskz].array.F[ii];
-      data.image[IDfpmaskc].array.CF[ii].im = 0.0;
-      //      if(data.image[IDfpmask].array.F[ii]<0.01)
-      //	data.image[IDfpmask].array.F[ii] = 0.0;
+        data.image[IDfpmask].array.F[ii] = 1.0*data.image[IDfpmaskz].array.F[ii];
+        data.image[IDfpmaskc].array.CF[ii].re = data.image[IDfpmaskz].array.F[ii];
+        data.image[IDfpmaskc].array.CF[ii].im = 0.0;
+        //      if(data.image[IDfpmask].array.F[ii]<0.01)
+        //	data.image[IDfpmask].array.F[ii] = 0.0;
     }
 
-	sprintf(fname, "!%s/FPmask.tmp.fits", data.SAVEDIR);
-  save_fl_fits("FPmask",fname);
+    sprintf(fname, "!%s/FPmask.tmp.fits", data.SAVEDIR);
+    save_fl_fits("FPmask",fname);
 
-  free(fpmshape_ra);
-  free(fpmshape_ka);
-  free(fpmshape_pa);
+    free(fpmshape_ra);
+    free(fpmshape_ka);
+    free(fpmshape_pa);
 
-  //  exit(0);
+    //  exit(0);
 
-  if(0)
+    if(0)
     {
-      mk_amph_from_complex("_fpmz", "_fpmza", "_fpmzp");
-      save_fl_fits("_fpmza", "!_fpmza.fits");
-      save_fl_fits("_fpmzp", "!_fpmzp.fits");
-      delete_image_ID("_fpmza");
-      delete_image_ID("_fpmzp");
+        mk_amph_from_complex("_fpmz", "_fpmza", "_fpmzp");
+        save_fl_fits("_fpmza", "!_fpmza.fits");
+        save_fl_fits("_fpmzp", "!_fpmzp.fits");
+        delete_image_ID("_fpmza");
+        delete_image_ID("_fpmzp");
     }
-  // exit(0);
+    // exit(0);
 
-  IDpupp0 = create_2Dimage_ID("pupp0", size, size);
+    IDpupp0 = create_2Dimage_ID("pupp0", size, size);
 
-  IDpupa0 = image_ID("pupa0");
-  if(IDpupa0!=-1)    
+    IDpupa0 = image_ID("pupa0");
+    if(IDpupa0!=-1)
     {
-      if(data.image[IDpupa0].md[0].size[0]!=size)
-	{
-	  printf("ERROR: pupa0 should be %ld x %ld\n",size,size);
-	  exit(0);
-	}
+        if(data.image[IDpupa0].md[0].size[0]!=size)
+        {
+            printf("ERROR: pupa0 should be %ld x %ld\n",size,size);
+            exit(0);
+        }
     }
-  if(IDpupa0==-1)
+    if(IDpupa0==-1)
     {
-      //      printf("Creating pupil, radius = %f\n", beamradpix);
-      IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, beamradpix);
-      if(CentralObstructionFlag == 1)
-	{
-	  //  printf("Central obstruction = %f\n", beamradpix*centralObs);
-	  IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, beamradpix*centralObs);
-	  for(ii=0;ii<size*size;ii++)
-	    data.image[IDpupa0].array.F[ii] -= data.image[IDpupa0co].array.F[ii];
-	  delete_image_ID("pupa0co");
-	}
-    }
-
-  //  save_fl_fits("pupa0", "!pupa00.fits");
-
-  total0 = 0.0;
-  for(ii=0;ii<size2;ii++)
-    {
-      v1 = data.image[IDpupa0].array.F[ii];
-      total0 += v1*v1;
-    }
-  
-
-  //
-  // INITIALIZE PROLATE
-  //
-  // IDprol : prolate
-  //
-
-  // total0 = arith_image_total("pupa0");
-  IDpupa0m = create_2Dimage_ID("pupa0m",size,size);
-  IDpupp0m = create_2Dimage_ID("pupp0m",size,size);
-
-  IDprol = create_2Dimage_ID(outname, size, size);
-  for(ii=0;ii<size;ii++)
-    for(jj=0;jj<size;jj++)
-      {
-	if(data.image[IDpupa0].array.F[jj*size+ii] > 0.0001)
-	  {
-	    x = 1.0*ii-size/2;
-	    y = 1.0*jj-size/2;
-	    r2 = (x*x+y*y)/beamradpix/beamradpix;
-	    data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*fpmradpix);
-	    data.image[IDproli].array.F[jj*size+ii] = 0.0;
-	    data.image[IDprol].array.F[jj*size+ii] = data.image[IDprolr].array.F[jj*size+ii];
-	  }
-	else
-	  {
-	    data.image[IDprolr].array.F[jj*size+ii] = 0.0;
-	    data.image[IDproli].array.F[jj*size+ii] = 0.0;
-	    data.image[IDprol].array.F[jj*size+ii] = 0.0;
-	  }
-      }
-
-  
-  ID = image_ID("apostart");
-  if(ID!=-1)
-    {
-      for(ii=0;ii<size2;ii++)
-	{
-	  data.image[IDprolr].array.F[ii] = data.image[ID].array.F[ii];
-	  data.image[IDprol].array.F[ii] = data.image[ID].array.F[ii];
-	}
-    }
-  delete_image_ID("apostart");
-
-
-
-  // 
-  // START LOOP 
-  //
-
-  for(iter=0;iter<NBiter;iter++)
-    {
-      printf("[%ld/%ld - %ld] ", iter, NBiter, size2);
-      for(ii=0;ii<size2;ii++)
-	{
-	  data.image[IDpupa0m].array.F[ii] =  data.image[IDpupa0].array.F[ii]*data.image[IDprol].array.F[ii];
-	  data.image[IDpupp0m].array.F[ii] =  data.image[IDpupp0].array.F[ii]+0.0*data.image[IDprolp].array.F[ii];
-	}
-
-      mk_complex_from_amph("pupa0m", "pupp0", "pc1");
-
-
-
-      //
-      // insert focal plane mask
-      // PUPIL -> PUPIL
-      // pc1 -> pc3
-      //
-      // save_fl_fits("pupa0", "!pupa0.fits");
-      //save_fl_fits("pupa0m", "!pupa0m.fits");
-      //save_fl_fits("pupp0", "!pupp0.fits");
-      //printf("DFTZFACTOR = %f\n", DFTZFACTOR);
-
-      fft_DFTinsertFPM( "pc1", "_fpmz", DFTZFACTOR, "pc3");
-   
-      
-      //      exit(0);
-
-
-      // MEASURE OVERALL PROLATE TRANSMISSION -> transm
-      total = 0.0;
-      for(ii=0;ii<size2;ii++)
-	total += data.image[IDprol].array.F[ii]*data.image[IDprol].array.F[ii];      
-      transm = total/total0;
-
-      // MEASURE TOTAL FRACTION OF LIGHT WITHIN MASK -> total
-      total = data.DOUBLEARRAY[0];
-      total /= 1.0*size2*total0;
-
-      
-      // TOTAL LIGHT IN IMAGE -> total2
-      ID = image_ID("pc1");
-      total2 = 0.0;
-      for(ii=0;ii<size2;ii++)
-	{
-	  data.image[ID].array.CF[ii].re *= size;
-	  data.image[ID].array.CF[ii].im *= size;
-	  re = data.image[ID].array.CF[ii].re;
-	  im = data.image[ID].array.CF[ii].im;
-	  total2 += re*re + im*im;
-	}
-      total2 /= 1.0*size2*total0;
-
-    
-
-      printf("%ld/%ld   FPmask throughput = %g    prolate throughput = %.18g\n", iter, NBiter, (double) (total/total2), (double) transm); 
-      
-      mk_reim_from_complex("pc3", "pr2", "pi2");
-
-
-
-      IDr = image_ID("pr2");
-      IDi = image_ID("pi2");
-
-
-
-
-
-      peak = 0.0;
-      for(ii=0;ii<size2;ii++)
-	if(data.image[IDpupa0].array.F[ii] > 0.0001)
-	  if(fabs(data.image[IDr].array.F[ii])>fabs(peak))
-	    peak = data.image[IDr].array.F[ii];
-      printf("%f\n", peak);
-
-
-      
-      // write info file
-      // col 1 is mask size in SYSTEM l/D
-      // col 2 is fraction of light going through FPmask
-      // col 3 is prolate throughput if not done by PIAA
-      // col 4 is peak 
-      // ideal complex transmission for FPM is  MASKCAMULT = -(1.0-peak)/peak;        
-      printf("------- MASK SIZE = %f l/D ------\n", MASKSIZELD);
-      sprintf(fname, "%s/APLCapo.%.3f.%.3f.info", data.SAVEDIR, MASKSIZELD, centralObs);
-      fp = fopen(fname, "w");
-      fprintf(fp,"%f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak);
-      fclose(fp);
-      printf("IDEAL COMPLEX TRANSMISSION = %g\n",-(1.0-peak)/peak);
-
-      IDv = create_variable_ID("APLCmaskCtransm", -(1.0-peak)/peak);
-
-      if(0) // TEST
-	{
-	  save_fl_fits("pr2","!_prol_pr2.fits");
-	  save_fl_fits("pi2","!_prol_pi2.fits");
-	}
-
-      for(ii=0;ii<size2;ii++)
-	if(data.image[IDpupa0].array.F[ii] > 0.0001)
-	  {
-	    data.image[IDprolr].array.F[ii] = 1.0*data.image[IDr].array.F[ii];
-	    data.image[IDproli].array.F[ii] = 1.0*data.image[IDi].array.F[ii];
-	  }
-
-      for(ii=0;ii<size2;ii++)
-	data.image[IDprol].array.F[ii] = sqrt(data.image[IDprolr].array.F[ii]*data.image[IDprolr].array.F[ii] + data.image[IDproli].array.F[ii]*data.image[IDproli].array.F[ii]);
-	
-
-      peak = 0.0;
-      for(ii=0;ii<size2;ii++)
-	if(data.image[IDpupa0].array.F[ii] > 0.0001)
-	  if(fabs(data.image[IDprol].array.F[ii])>fabs(peak))
-	    peak = data.image[IDprol].array.F[ii];
-
-
-      for(ii=0;ii<size2;ii++)
-	{
-	  if(data.image[IDpupa0].array.F[ii] > 0.001)
-	    data.image[IDprol].array.F[ii] /= peak;
-	  else
-	    data.image[IDprol].array.F[ii] = 0.0;
-	}
-
-
-      if (0) // TEST
-	{
-	  mk_amph_from_complex("pc1","pc1_a","pc1_p");
-	  save_fl_fits("pc1_a", "!pc1_a.fits");
-	  save_fl_fits("pc1_p", "!pc1_p.fits");
-	  mk_amph_from_complex("pc3","pc3_a","pc3_p");
-	  save_fl_fits("pc3_a", "!pc3_a.fits");
-	  save_fl_fits("pc3_p", "!pc3_p.fits");
-	  save_fl_fits("pr2", "!pr2.fits");
-	  save_fl_fits("pi2", "!pi2.fits");
-	  delete_image_ID("pc1_a");
-	  delete_image_ID("pc1_p");
-	  delete_image_ID("pc3_a");
-	  delete_image_ID("pc3_p");
-	  save_fl_fits(outname, "!proltmp.fits");
-	  //	  exit(0);
-	}
-
-
-
-      delete_image_ID("pc1");
-      delete_image_ID("pc3"); 
-      delete_image_ID("pr2");
-      delete_image_ID("pi2");
-   
+        //      printf("Creating pupil, radius = %f\n", beamradpix);
+        IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, beamradpix);
+        if(CentralObstructionFlag == 1)
+        {
+            //  printf("Central obstruction = %f\n", beamradpix*centralObs);
+            IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, beamradpix*centralObs);
+            for(ii=0; ii<size*size; ii++)
+                data.image[IDpupa0].array.F[ii] -= data.image[IDpupa0co].array.F[ii];
+            delete_image_ID("pupa0co");
+        }
     }
 
-  for(ii=0;ii<size2;ii++)
-    data.image[IDfpmask].array.F[ii] = 1.0-data.image[IDfpmask].array.F[ii]*(1.0+(1.0-peak)/peak);
+    //  save_fl_fits("pupa0", "!pupa00.fits");
 
-  for(ii=0;ii<size2;ii++)
-    data.image[IDfpmaskz].array.F[ii] = 1.0-data.image[IDfpmaskz].array.F[ii]*(1.0+(1.0-peak)/peak);
+    total0 = 0.0;
+    for(ii=0; ii<size2; ii++)
+    {
+        v1 = data.image[IDpupa0].array.F[ii];
+        total0 += v1*v1;
+    }
 
-  //  save_fl_fits("FPmaskz","!FPmask.fits");
-  delete_image_ID("FPmaskz");
 
-  delete_image_ID("FPmask");
-  delete_image_ID("_fpmz");
-  delete_image_ID("pupp0");
-  delete_image_ID("pupa0");
-  delete_image_ID("pupa0m");
-  delete_image_ID("proli");
-  delete_image_ID("prolr");
-  delete_image_ID("prolp");
-  delete_image_ID("pupp0m");
+    //
+    // INITIALIZE PROLATE
+    //
+    // IDprol : prolate
+    //
 
-  return(transm);
+    // total0 = arith_image_total("pupa0");
+    IDpupa0m = create_2Dimage_ID("pupa0m",size,size);
+    IDpupp0m = create_2Dimage_ID("pupp0m",size,size);
+
+    IDprol = create_2Dimage_ID(outname, size, size);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            if(data.image[IDpupa0].array.F[jj*size+ii] > 0.0001)
+            {
+                x = 1.0*ii-size/2;
+                y = 1.0*jj-size/2;
+                r2 = (x*x+y*y)/beamradpix/beamradpix;
+                data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*fpmradpix);
+                data.image[IDproli].array.F[jj*size+ii] = 0.0;
+                data.image[IDprol].array.F[jj*size+ii] = data.image[IDprolr].array.F[jj*size+ii];
+            }
+            else
+            {
+                data.image[IDprolr].array.F[jj*size+ii] = 0.0;
+                data.image[IDproli].array.F[jj*size+ii] = 0.0;
+                data.image[IDprol].array.F[jj*size+ii] = 0.0;
+            }
+        }
+
+
+    ID = image_ID("apostart");
+    if(ID!=-1)
+    {
+        for(ii=0; ii<size2; ii++)
+        {
+            data.image[IDprolr].array.F[ii] = data.image[ID].array.F[ii];
+            data.image[IDprol].array.F[ii] = data.image[ID].array.F[ii];
+        }
+    }
+    delete_image_ID("apostart");
+
+
+
+    //
+    // START LOOP
+    //
+
+    for(iter=0; iter<NBiter; iter++)
+    {
+        printf("[%ld/%ld - %ld] ", iter, NBiter, size2);
+        for(ii=0; ii<size2; ii++)
+        {
+            data.image[IDpupa0m].array.F[ii] =  data.image[IDpupa0].array.F[ii]*data.image[IDprol].array.F[ii];
+            data.image[IDpupp0m].array.F[ii] =  data.image[IDpupp0].array.F[ii]+0.0*data.image[IDprolp].array.F[ii];
+        }
+
+        mk_complex_from_amph("pupa0m", "pupp0", "pc1");
+
+
+
+        //
+        // insert focal plane mask
+        // PUPIL -> PUPIL
+        // pc1 -> pc3
+        //
+        // save_fl_fits("pupa0", "!pupa0.fits");
+        //save_fl_fits("pupa0m", "!pupa0m.fits");
+        //save_fl_fits("pupp0", "!pupp0.fits");
+        //printf("DFTZFACTOR = %f\n", DFTZFACTOR);
+
+        fft_DFTinsertFPM( "pc1", "_fpmz", DFTZFACTOR, "pc3");
+
+
+        //      exit(0);
+
+
+        // MEASURE OVERALL PROLATE TRANSMISSION -> transm
+        total = 0.0;
+        for(ii=0; ii<size2; ii++)
+            total += data.image[IDprol].array.F[ii]*data.image[IDprol].array.F[ii];
+        transm = total/total0;
+
+        // MEASURE TOTAL FRACTION OF LIGHT WITHIN MASK -> total
+        total = data.DOUBLEARRAY[0];
+        total /= 1.0*size2*total0;
+
+
+        // TOTAL LIGHT IN IMAGE -> total2
+        ID = image_ID("pc1");
+        total2 = 0.0;
+        for(ii=0; ii<size2; ii++)
+        {
+            data.image[ID].array.CF[ii].re *= size;
+            data.image[ID].array.CF[ii].im *= size;
+            re = data.image[ID].array.CF[ii].re;
+            im = data.image[ID].array.CF[ii].im;
+            total2 += re*re + im*im;
+        }
+        total2 /= 1.0*size2*total0;
+
+
+
+        printf("%ld/%ld   FPmask throughput = %g    prolate throughput = %.18g\n", iter, NBiter, (double) (total/total2), (double) transm);
+
+        mk_reim_from_complex("pc3", "pr2", "pi2");
+
+
+
+        IDr = image_ID("pr2");
+        IDi = image_ID("pi2");
+
+
+
+
+
+        peak = 0.0;
+        for(ii=0; ii<size2; ii++)
+            if(data.image[IDpupa0].array.F[ii] > 0.0001)
+                if(fabs(data.image[IDr].array.F[ii])>fabs(peak))
+                    peak = data.image[IDr].array.F[ii];
+        printf("%f\n", peak);
+
+
+
+        // write info file
+        // col 1 is mask size in SYSTEM l/D
+        // col 2 is fraction of light going through FPmask
+        // col 3 is prolate throughput if not done by PIAA
+        // col 4 is peak
+        // ideal complex transmission for FPM is  MASKCAMULT = -(1.0-peak)/peak;
+        printf("------- MASK SIZE = %f l/D ------\n", MASKSIZELD);
+        sprintf(fname, "%s/APLCapo.%.3f.%.3f.info", data.SAVEDIR, MASKSIZELD, centralObs);
+        fp = fopen(fname, "w");
+        fprintf(fp,"%f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak);
+        fclose(fp);
+        printf("IDEAL COMPLEX TRANSMISSION = %g\n",-(1.0-peak)/peak);
+
+        IDv = create_variable_ID("APLCmaskCtransm", -(1.0-peak)/peak);
+
+        if(0) // TEST
+        {
+            save_fl_fits("pr2","!_prol_pr2.fits");
+            save_fl_fits("pi2","!_prol_pi2.fits");
+        }
+
+        for(ii=0; ii<size2; ii++)
+            if(data.image[IDpupa0].array.F[ii] > 0.0001)
+            {
+                data.image[IDprolr].array.F[ii] = 1.0*data.image[IDr].array.F[ii];
+                data.image[IDproli].array.F[ii] = 1.0*data.image[IDi].array.F[ii];
+            }
+
+        for(ii=0; ii<size2; ii++)
+            data.image[IDprol].array.F[ii] = sqrt(data.image[IDprolr].array.F[ii]*data.image[IDprolr].array.F[ii] + data.image[IDproli].array.F[ii]*data.image[IDproli].array.F[ii]);
+
+
+        peak = 0.0;
+        for(ii=0; ii<size2; ii++)
+            if(data.image[IDpupa0].array.F[ii] > 0.0001)
+                if(fabs(data.image[IDprol].array.F[ii])>fabs(peak))
+                    peak = data.image[IDprol].array.F[ii];
+
+
+        for(ii=0; ii<size2; ii++)
+        {
+            if(data.image[IDpupa0].array.F[ii] > 0.001)
+                data.image[IDprol].array.F[ii] /= peak;
+            else
+                data.image[IDprol].array.F[ii] = 0.0;
+        }
+
+
+        if (0) // TEST
+        {
+            mk_amph_from_complex("pc1","pc1_a","pc1_p");
+            save_fl_fits("pc1_a", "!pc1_a.fits");
+            save_fl_fits("pc1_p", "!pc1_p.fits");
+            mk_amph_from_complex("pc3","pc3_a","pc3_p");
+            save_fl_fits("pc3_a", "!pc3_a.fits");
+            save_fl_fits("pc3_p", "!pc3_p.fits");
+            save_fl_fits("pr2", "!pr2.fits");
+            save_fl_fits("pi2", "!pi2.fits");
+            delete_image_ID("pc1_a");
+            delete_image_ID("pc1_p");
+            delete_image_ID("pc3_a");
+            delete_image_ID("pc3_p");
+            save_fl_fits(outname, "!proltmp.fits");
+            //	  exit(0);
+        }
+
+
+
+        delete_image_ID("pc1");
+        delete_image_ID("pc3");
+        delete_image_ID("pr2");
+        delete_image_ID("pi2");
+
+    }
+
+    for(ii=0; ii<size2; ii++)
+        data.image[IDfpmask].array.F[ii] = 1.0-data.image[IDfpmask].array.F[ii]*(1.0+(1.0-peak)/peak);
+
+    for(ii=0; ii<size2; ii++)
+        data.image[IDfpmaskz].array.F[ii] = 1.0-data.image[IDfpmaskz].array.F[ii]*(1.0+(1.0-peak)/peak);
+
+    //  save_fl_fits("FPmaskz","!FPmask.fits");
+    delete_image_ID("FPmaskz");
+
+    delete_image_ID("FPmask");
+    delete_image_ID("_fpmz");
+    delete_image_ID("pupp0");
+    delete_image_ID("pupa0");
+    delete_image_ID("pupa0m");
+    delete_image_ID("proli");
+    delete_image_ID("prolr");
+    delete_image_ID("prolp");
+    delete_image_ID("pupp0m");
+
+    return(transm);
 }
+
 
 
 
