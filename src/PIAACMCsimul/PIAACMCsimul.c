@@ -859,7 +859,7 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
 
     optsyst[0].FOCMASKarray[0].fpmID = PIAACMCsimul_mkFocalPlaneMask("fpmzmap", "piaacmcfpm", focmMode); // if -1, this is 1-fpm; otherwise, this is impulse response from single zone
 
-    if(1)// testing
+    if(0)// testing
     {
         sprintf(fname, "!focma_%d.fits", focmMode);
         mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
@@ -2627,8 +2627,6 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             PIAACMCsimul_makePIAAshapes();
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
 			linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp0");
-			if(savepsf==1)
-				save_fits("psfi0", "!psfi0_pos0.fits");
  			copy_image_ID("psfi0", "psfi0ext");
 
             pha = 2.0*M_PI/3.0;
@@ -2636,22 +2634,18 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             PIAACMCsimul_makePIAAshapes();
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp1");
-			if(savepsf==1)
-				arith_image_add_inplace("psfi0ext","psfi0");
-//			save_fits("psfi0", "!psfi0_pos1.fits");
+			arith_image_add_inplace("psfi0ext","psfi0");
 
             pha = 4.0*M_PI/3.0;
             PIAACMCsimul_init(piaacmc, 0, xld+dld*cos(pha), yld+dld*sin(pha));
             PIAACMCsimul_makePIAAshapes();
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp2");
-			if(savepsf==1)
-				{
-					arith_image_add_inplace("psfi0ext","psfi0");
-					arith_image_cstmult_inplace("psfi0ext", 1.0/3.0);            
-					sprintf(fname, "!%s/psfi0_%d%d_%02ld_%03ld_%03ld.fits", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone);
-					save_fits("psfi0ext", fname);
-				}
+
+			arith_image_add_inplace("psfi0ext","psfi0");
+			arith_image_cstmult_inplace("psfi0ext", 1.0/3.0);            
+			sprintf(fname, "!%s/psfi0_%d%d_%02ld_%03ld_%03ld.fits", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone);
+			save_fits("psfi0ext", fname);
             
             
             
@@ -3191,7 +3185,7 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
                 data.image[IDout].array.F[ii] = 0.0;
 		}
 		
-if(1)
+if(0)
 {
 		ID1 = create_2Dimage_ID("postLMim", xsize, ysize);
 	for(ii=0; ii<xsize*ysize; ii++)
