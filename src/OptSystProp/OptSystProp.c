@@ -331,7 +331,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 # endif
             }
 
-            	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
+            //	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
 		//	printf("POINT 1.1\n");
 			
 
