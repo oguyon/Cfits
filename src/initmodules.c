@@ -23,7 +23,7 @@ int init_modules()
   init_PIAACMCsimul();
   init_image_format();
   init_img_reduce();
-  init_SCExAO_DM();
+  init_AOloopControl_DM();
   init_AOsystSim();
   init_AOloopControl();
   init_psf();

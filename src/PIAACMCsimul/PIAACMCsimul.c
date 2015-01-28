@@ -1409,7 +1409,7 @@ int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name)
 
 
 
-    printf("======== Compute PIAA mirror shapes ============\n");
+    printf("======== Compute PIAA optics shapes ============\n");
     piaaM0z = (double*) malloc(sizeof(double)*piaacmc[0].NBradpts);
     piaaM1z = (double*) malloc(sizeof(double)*piaacmc[0].NBradpts);
 
@@ -1482,7 +1482,7 @@ int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name)
 
 
 //
-// make PIAA shapes from radial sag profile
+// make PIAA OPD screens from radial sag profile
 //
 int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name)
 {
@@ -5436,6 +5436,19 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 		r = system(command);		
 		break;
 
+	case 301 : // remove configuration settings
+		sprintf(command, "rm %s/conf_MASKRADLD.txt", piaacmcconfdir);
+		r = system(command);
+		sprintf(command, "rm %s/conf_FPMsectors.txt", piaacmcconfdir);
+		r = system(command);
+		sprintf(command, "rm %s/conf_NBrings.txt", piaacmcconfdir);
+		r = system(command);
+		sprintf(command, "rm %s/conf_nblambda.txt", piaacmcconfdir);
+		r = system(command);		
+		sprintf(command, "rm %s/conf_resolved.txt", piaacmcconfdir);
+		r = system(command);		
+		break;
+
 /*	case 300 : // remove configuration setting from parent directory
 		sprintf(command, "cp conf_MASKRADLD.txt %s/", piaacmcconfdir);
 		r = system(command);
@@ -5887,7 +5900,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 iterOK = 0;
             if(iter>3)
             {
-                if(val>0.999*oldval)
+                if(val>0.99*oldval)
                     iterOK = 0;
 			}
 			

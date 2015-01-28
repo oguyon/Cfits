@@ -20,7 +20,7 @@
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
 
-#include "SCExAO_DM/SCExAO_DM.h"
+#include "AOloopControl_DM/AOloopControl_DM.h"
 
 extern DATA data;
 
@@ -29,19 +29,22 @@ int wcol, wrow; // window size
 
 struct timespec semwaitts;
 	
-	
-	
+
+
 
 #define DMSTROKE100 0.7 // um displacement for 100V
-#define NBact 2500 // default
+
+long DM_Xsize = 50;
+long DM_Ysize = 50;
+long NBact = 2500; // default
 
 
-SCEXAO_DISPCOMB_CONF *dispcombconf; // configuration
+AOLOOPCONTROL_DM_DISPCOMB_CONF *dispcombconf; // configuration
 int dmdispcomb_loaded = 0;
 int SMfd;
 
 
-SCEXAO_DMTURBCONF *dmturbconf; // DM turbulence configuration
+AOLOOPCONTROL_DMTURBCONF *dmturbconf; // DM turbulence configuration
 int dmturb_loaded = 0;
 int SMturbfd;
 long IDturb;
@@ -59,44 +62,55 @@ long IDturb;
 //
 
 
-int SCExAO_DM_CombineChannels_cli()
+int AOloopControl_DM_setsize_cli()
 {
   if(CLI_checkarg(1,2)==0)
-    SCExAO_DM_CombineChannels(data.cmdargtoken[1].val.numl);
+    AOloopControl_DM_setsize(data.cmdargtoken[1].val.numl);
   else
-    SCExAO_DM_CombineChannels(1);
+    return 1;
+    
+	return 0;
+}
+
+
+int AOloopControl_DM_CombineChannels_cli()
+{
+  if(CLI_checkarg(1,2)==0)
+    AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl);
+  else
+    AOloopControl_DM_CombineChannels(1);
     
     return 1;
 }
 
-int SCExAO_DM_dmturb_wspeed_cli()
+int AOloopControl_DM_dmturb_wspeed_cli()
 {
   if(CLI_checkarg(1,1)==0)
-    SCExAO_DM_dmturb_wspeed(data.cmdargtoken[1].val.numf);
+    AOloopControl_DM_dmturb_wspeed(data.cmdargtoken[1].val.numf);
   else
     return 1;
 }
 
-int SCExAO_DM_dmturb_ampl_cli()
+int AOloopControl_DM_dmturb_ampl_cli()
 {
   if(CLI_checkarg(1,1)==0)
-    SCExAO_DM_dmturb_ampl(data.cmdargtoken[1].val.numf);
+    AOloopControl_DM_dmturb_ampl(data.cmdargtoken[1].val.numf);
   else
     return 1;
 }
 
-int SCExAO_DM_dmturb_LOcoeff_cli()
+int AOloopControl_DM_dmturb_LOcoeff_cli()
 {
   if(CLI_checkarg(1,1)==0)
-    SCExAO_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numf);
+    AOloopControl_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numf);
   else
     return 1;
 }
 
-int SCExAO_DM_dmturb_tint_cli()
+int AOloopControl_DM_dmturb_tint_cli()
 {
   if(CLI_checkarg(1,2)==0)
-    SCExAO_DM_dmturb_tint(data.cmdargtoken[1].val.numl);
+    AOloopControl_DM_dmturb_tint(data.cmdargtoken[1].val.numl);
   else
     return 1;
 }
@@ -105,103 +119,113 @@ int SCExAO_DM_dmturb_tint_cli()
 
 
 
-int init_SCExAO_DM()
+int init_AOloopControl_DM()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "SCExAO DM operation");
+  strcpy(data.module[data.NBmodule].info, "AO loop Control DM operation");
   data.NBmodule++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaoDMcomb");
+  strcpy(data.cmd[data.NBcmd].key,"aolcontroldmsetsize");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_CombineChannels_cli;
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_setsize_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set DM size");
+  strcpy(data.cmd[data.NBcmd].syntax,"linear size (assumes square DM)");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmsetsize 32");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setsize(int size1d)");
+  data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"aolcontrolDMcomb");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_CombineChannels_cli;
   strcpy(data.cmd[data.NBcmd].info,"combine channels");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaoDMcomb");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_CombineChannels(int mode)");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode)");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmcomboff");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcomboff");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmdispcomboff;
+  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcomboff;
   strcpy(data.cmd[data.NBcmd].info,"turn off DM combine");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmcomboff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcomboff()");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcomboff");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcomboff()");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmcombmon");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcombmon");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmdispcombstatus;
+  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcombstatus;
   strcpy(data.cmd[data.NBcmd].info,"monitor DM comb program");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmcombmon");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcombstatus()");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcombmon");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcombstatus()");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmtrigoff");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmtrigoff");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmtrigoff;
+  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmtrigoff;
   strcpy(data.cmd[data.NBcmd].info,"turn off DM trigger");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmtrigoff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmtrigoff()");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmtrigoff");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmtrigoff()");
   data.NBcmd++;
 
 
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaoDMturb");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontrolDMturb");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_turb;
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_turb;
   strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaoDMturb");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_turb()");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_turb()");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmturboff");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturboff");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmturboff;
+  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmturboff;
   strcpy(data.cmd[data.NBcmd].info,"turn off DM turbulence");
   strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturboff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturboff()");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturboff");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturboff()");
   data.NBcmd++;
   
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmturws");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturws");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_wspeed_cli;
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_wspeed_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
   strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturws 5.2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_wspeed(double wspeed);");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturws 5.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_wspeed(double wspeed);");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmturampl");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturampl");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_ampl_cli;
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_ampl_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence amplitude");
   strcpy(data.cmd[data.NBcmd].syntax,"<amplitude [um]>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturampl 0.1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_ampl(double ampl);");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturampl 0.1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_ampl(double ampl);");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmturlo");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturlo");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_LOcoeff_cli;
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_LOcoeff_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence low order coefficient");
   strcpy(data.cmd[data.NBcmd].syntax,"<coeff>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturlo 0.2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturlo 0.2");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_LOcoeff(double LOcoeff);");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmturtint");
+  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturtint");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_dmturb_tint_cli;
+  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_tint_cli;
   strcpy(data.cmd[data.NBcmd].info,"set turbulence interval time");
   strcpy(data.cmd[data.NBcmd].syntax,"<interval time [us] long>");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmturtint 200");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_turb_tint(long tint);");
+  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturtint 200");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_turb_tint(long tint);");
   data.NBcmd++;
 
   
@@ -209,7 +233,7 @@ int init_SCExAO_DM()
 
 
   // add atexit functions here
-  atexit((void*) SCEXAO_DM_unloadconf);
+  atexit((void*) AOloopControl_DM_unloadconf);
   
   return 0;
 }
@@ -236,9 +260,19 @@ struct timespec time_diff(struct timespec start, struct timespec end)
 
 
 
+int AOloopControl_DM_setsize(long size1d)
+{
+	DM_Xsize = size1d;
+	DM_Ysize = size1d;
+	NBact = DM_Xsize*DM_Ysize; // default
+	
+	return 0;
+}
 
 
-int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
+
+
+int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
 {
   long ii;
   float volt;
@@ -265,7 +299,7 @@ int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
 
 
 
-int SCEXAO_DM_createconf()
+int AOloopControl_DM_createconf()
 {
   int result;
 
@@ -279,7 +313,7 @@ int SCEXAO_DM_createconf()
 	exit(EXIT_FAILURE);
       }
       
-      result = lseek(SMfd, sizeof(SCEXAO_DISPCOMB_CONF)-1, SEEK_SET);
+      result = lseek(SMfd, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)-1, SEEK_SET);
       if (result == -1) {
 	close(SMfd);
 	perror("Error calling lseek() to 'stretch' the file");
@@ -293,7 +327,7 @@ int SCEXAO_DM_createconf()
 	exit(EXIT_FAILURE);
       }
       
-      dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+      dispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
       if (dispcombconf == MAP_FAILED) {
 	close(SMfd);
 	perror("Error mmapping the file");
@@ -315,7 +349,7 @@ int SCEXAO_DM_createconf()
 }
 
 
-int SCEXAO_DM_loadconf()
+int AOloopControl_DM_loadconf()
 {
   int result;
 
@@ -328,7 +362,7 @@ int SCEXAO_DM_loadconf()
 	perror("Error opening file for writing");
 	exit(EXIT_FAILURE);
       }      
-      dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+      dispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
       if (dispcombconf == MAP_FAILED) {
 	close(SMfd);
 	perror("Error mmapping the file");
@@ -343,11 +377,11 @@ int SCEXAO_DM_loadconf()
 
 
 
-int SCEXAO_DM_unloadconf()
+int AOloopControl_DM_unloadconf()
 {
   if( dmdispcomb_loaded == 1 ) 
     {
-      if (munmap(dispcombconf, sizeof(SCEXAO_DISPCOMB_CONF)) == -1)
+      if (munmap(dispcombconf, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)) == -1)
 	perror("Error un-mmapping the file");
       close(SMfd);
       dmdispcomb_loaded = 0;
@@ -361,11 +395,11 @@ int SCEXAO_DM_unloadconf()
 //
 // NOTE: responds immediately to sem1 in dmdisp
 //
-int SCExAO_DM_CombineChannels(int mode)
+int AOloopControl_DM_CombineChannels(int mode)
 {
     long naxis = 2;
-    long xsize = 50;
-    long ysize = 50;
+    long xsize = DM_Xsize;
+    long ysize = DM_Ysize;
     long *size;
     long ch;
     char name[200];
@@ -402,7 +436,7 @@ int SCExAO_DM_CombineChannels(int mode)
 	sizexy = xsize*ysize;
 
 
-    SCEXAO_DM_createconf();
+    AOloopControl_DM_createconf();
     dispcombconf[0].ON = 1;
     dispcombconf[0].status = 0;
 
@@ -504,7 +538,7 @@ int SCExAO_DM_CombineChannels(int mode)
             dispcombconf[0].status = 7;
 
             if(mode==1)
-                SCExAO_DM_disp2V(IDdisp, IDvolt);
+                AOloopControl_DM_disp2V(IDdisp, IDvolt);
 
             dispcombconf[0].status = 8;
 
@@ -533,12 +567,12 @@ int SCExAO_DM_CombineChannels(int mode)
 
 
 
-int SCExAO_DM_dmdispcombstatus()
+int AOloopControl_DM_dmdispcombstatus()
 {
   long long mcnt = 0;
 
 
-  SCEXAO_DM_loadconf();
+  AOloopControl_DM_loadconf();
 
   initscr();		
   getmaxyx(stdscr, wrow, wcol);
@@ -576,15 +610,15 @@ int SCExAO_DM_dmdispcombstatus()
 
 
 
-int SCExAO_DM_dmdispcomboff()
+int AOloopControl_DM_dmdispcomboff()
 {
-  SCEXAO_DM_loadconf();
+  AOloopControl_DM_loadconf();
   dispcombconf[0].ON = 0;
 
   return 0;
 }
 
-int SCExAO_DM_dmtrigoff()
+int AOloopControl_DM_dmtrigoff()
 {
   long ID;
   
@@ -618,7 +652,7 @@ int SCExAO_DM_dmtrigoff()
 
 
 
-int SCEXAO_DMturb_createconf()
+int AOloopControl_DMturb_createconf()
 {
   int result;
   long IDc1;
@@ -632,7 +666,7 @@ int SCEXAO_DMturb_createconf()
       if(IDc1 == -1)
 	read_sharedmem_image("dmdisp1");
       
-      IDturb = create_2Dimage_ID("turbs", 50, 50);
+      IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
 
  
       SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
@@ -641,7 +675,7 @@ int SCEXAO_DMturb_createconf()
 	exit(EXIT_FAILURE);
       }
       
-      result = lseek(SMturbfd, sizeof(SCEXAO_DMTURBCONF)-1, SEEK_SET);
+      result = lseek(SMturbfd, sizeof(AOLOOPCONTROL_DMTURBCONF)-1, SEEK_SET);
       if (result == -1) {
 	close(SMturbfd);
 	perror("Error calling lseek() to 'stretch' the file");
@@ -655,7 +689,7 @@ int SCEXAO_DMturb_createconf()
 	exit(EXIT_FAILURE);
       }
       
-      dmturbconf = (SCEXAO_DMTURBCONF*)mmap(0, sizeof(SCEXAO_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
+      dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
       if (dmturbconf == MAP_FAILED) {
 	close(SMturbfd);
 	perror("Error mmapping the file");
@@ -679,7 +713,7 @@ int SCEXAO_DMturb_createconf()
 
 
 
-int SCEXAO_DMturb_loadconf()
+int AOloopControl_DMturb_loadconf()
 {
   int result;
 
@@ -693,7 +727,7 @@ int SCEXAO_DMturb_loadconf()
 	exit(EXIT_FAILURE);
       }      
 
-      dmturbconf = (SCEXAO_DMTURBCONF*)mmap(0, sizeof(SCEXAO_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
+      dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
       if (dmturbconf == MAP_FAILED) {
 	close(SMturbfd);
 	perror("Error mmapping the file");
@@ -708,56 +742,56 @@ int SCEXAO_DMturb_loadconf()
 
 
 
-int SCExAO_DM_dmturboff()
+int AOloopControl_DM_dmturboff()
 {
-  SCEXAO_DMturb_loadconf();
+  AOloopControl_DMturb_loadconf();
   dmturbconf[0].on = 0;
-  SCExAO_DM_dmturb_printstatus();
+  AOloopControl_DM_dmturb_printstatus();
 
   return 0;
 }
 
-int SCExAO_DM_dmturb_wspeed(double wspeed)
+int AOloopControl_DM_dmturb_wspeed(double wspeed)
 {
-  SCEXAO_DMturb_loadconf();
+  AOloopControl_DMturb_loadconf();
   dmturbconf[0].wspeed = wspeed;
-  SCExAO_DM_dmturb_printstatus();
+  AOloopControl_DM_dmturb_printstatus();
 
   return 0;
 }
 
-int SCExAO_DM_dmturb_ampl(double ampl)
+int AOloopControl_DM_dmturb_ampl(double ampl)
 {
-  SCEXAO_DMturb_loadconf();
+  AOloopControl_DMturb_loadconf();
   dmturbconf[0].ampl = ampl;
-  SCExAO_DM_dmturb_printstatus();
+  AOloopControl_DM_dmturb_printstatus();
 
   return 0;
 }
 
-int SCExAO_DM_dmturb_LOcoeff(double LOcoeff)
+int AOloopControl_DM_dmturb_LOcoeff(double LOcoeff)
 {
-  SCEXAO_DMturb_loadconf();
+  AOloopControl_DMturb_loadconf();
   dmturbconf[0].LOcoeff = LOcoeff;
-  SCExAO_DM_dmturb_printstatus();
+  AOloopControl_DM_dmturb_printstatus();
 
   return 0;
 }
 
-int SCExAO_DM_dmturb_tint(long tint)
+int AOloopControl_DM_dmturb_tint(long tint)
 {
-  SCEXAO_DMturb_loadconf();
+  AOloopControl_DMturb_loadconf();
   dmturbconf[0].tint = tint;
-  SCExAO_DM_dmturb_printstatus();
+  AOloopControl_DM_dmturb_printstatus();
 
   return 0;
 }
 
 
 
-int SCExAO_DM_dmturb_printstatus()
+int AOloopControl_DM_dmturb_printstatus()
 {
-  SCEXAO_DMturb_loadconf();
+  AOloopControl_DMturb_loadconf();
 
   printf("Run time = %.3f sec\n", dmturbconf[0].simtime);
   printf("\n");
@@ -780,7 +814,7 @@ int SCExAO_DM_dmturb_printstatus()
 } 
 
 
-int SCExAO_DM_turb()
+int AOloopControl_DM_turb()
 {
   long size_sx; // screen size
   long size_sy;
@@ -812,10 +846,10 @@ int SCExAO_DM_turb()
   // Single actuator ~7 pix 
 
 
-  SCEXAO_DMturb_createconf();
+  AOloopControl_DMturb_createconf();
  
-  IDs1 = load_fits("/home/scexao/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1");
-  IDs2 = load_fits("/home/scexao/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2"); 
+  IDs1 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1");
+  IDs2 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2"); 
   
 
   printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
@@ -844,13 +878,13 @@ int SCExAO_DM_turb()
       dmturbconf[0].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
 
-      for(ii=0;ii<50;ii++)
-	for(jj=0;jj<50;jj++)
+      for(ii=0;ii<DM_Xsize;ii++)
+	for(jj=0;jj<DM_Ysize;jj++)
 	  {
-	    ii1 = jj*50+ii;
+	    ii1 = jj*DM_Xsize+ii;
 	    
-	    x = 10.0*ii/50.0 + screen0_X; // [m]
-	    y = 10.0*jj/50.0 + screen0_Y; // [m]
+	    x = 10.0*ii/DM_Xsize + screen0_X; // [m]
+	    y = 10.0*jj/DM_Ysize + screen0_Y; // [m]
 	    
 	    xpix = 0.5*size_sx + x/pixscale;
 	    ypix = 0.5*size_sy + y/pixscale;
@@ -885,10 +919,10 @@ int SCExAO_DM_turb()
       
       // proccess array
       ave = 0.0;
-      for(ii1=0;ii1<50*50;ii1++)	    
+      for(ii1=0;ii1<DM_Xsize*DM_Ysize;ii1++)	    
 	ave += data.image[IDturb].array.F[ii1];
-      ave /= 2500;
-      for(ii1=0;ii1<50*50;ii1++)	    
+      ave /= NBact;
+      for(ii1=0;ii1<DM_Xsize*DM_Ysize;ii1++)	    
 	  {
 	    data.image[IDturb].array.F[ii1] -= ave;
 	  data.image[IDturb].array.F[ii1] *= coeff;
@@ -897,14 +931,14 @@ int SCExAO_DM_turb()
       RMSval = 0.0;
       RMSvalcnt = 0;
       
-      for(ii=0;ii<50;ii++)	    
-	for(jj=0;jj<50;jj++)
+      for(ii=0;ii<DM_Xsize;ii++)	    
+	for(jj=0;jj<DM_Ysize;jj++)
 	  {
-	    ii1 = 50*jj+ii;
-	    x = 24.5 - ii;
-	    y = 24.5 - jj;
+	    ii1 = DM_Xsize*jj+ii;
+	    x = 0.5*DM_Xsize - 0.5 - ii;
+	    y = 0.5*DM_Ysize - 0.5 - jj;
 	    r = sqrt(x*x+y*y);
-	    if(r<24.0)
+	    if(r<DM_Xsize*0.5-1.0)
 	      {
 		RMSval += data.image[IDturb].array.F[ii1]*data.image[IDturb].array.F[ii1];
 		RMSvalcnt++;

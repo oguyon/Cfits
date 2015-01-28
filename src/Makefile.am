@@ -56,9 +56,9 @@ SUBDIRS += AOsystSim
 cfits_LDADD += AOsystSim/libaosystsim.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim
 
-SUBDIRS += SCExAO_DM
-cfits_LDADD += SCExAO_DM/libscexaodm.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/SCExAO_DM
+SUBDIRS += AOloopControl_DM
+cfits_LDADD += AOloopControl_DM/libaoloopcontroldm.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
 
 SUBDIRS += img_reduce
 cfits_LDADD += img_reduce/libimgreduce.la

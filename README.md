@@ -33,5 +33,14 @@ Written in C.
 The main is a command line interface (CLI). Source code is in CLIcore.c and CLIcore.h.
 Key data structures (such as the image data structure) are declared in CLIcore.h.
 
+## Programing guide
 
-
+### Adding modules
+- create module directory as ./src/modulename
+- required files: ./src/modulename/modulename.c ./src/modulename/modulename/h ./src/modulename/Makefile.am
+- add module in compile line of ./configure.ac file
+- add module in ./src/Makefile.am
+- add module in ./src/initmodules.c
+- (add module to git repository): git add ./src/modulename/modulename.c ./src/modulename/modulename.h ./src/modulename/Makefile.am
+- autoreconf
+- 
