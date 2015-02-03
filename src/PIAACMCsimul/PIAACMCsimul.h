@@ -107,7 +107,7 @@ int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, ch
 long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout);
 int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int load);
 int PIAACMCsimul_makePIAAshapes();
-double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf);
+double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize);
 int PIAAsimul_savepiaacmcconf(char *dname);
 int PIAAsimul_loadpiaacmcconf(char *dname);
 long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name);

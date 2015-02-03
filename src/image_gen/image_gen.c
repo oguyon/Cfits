@@ -208,7 +208,7 @@ int init_image_gen()
   data.cmd[data.NBcmd].fp = make_hexsegpupil_cli;
   strcpy(data.cmd[data.NBcmd].info,"make hexagonal segmented pupil");
   strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <size> <radius> <gap> <step>");
-  strcpy(data.cmd[data.NBcmd].example,"mkhexsegpup 4096 200 2.0 46.3");
+  strcpy(data.cmd[data.NBcmd].example,"mkhexsegpup imhex 4096 200 2.0 46.3");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_hexsegpupil(char *IDname, long size, double radius, double gap, double step)");
   data.NBcmd++;
  
@@ -977,156 +977,204 @@ long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_cent
 
 long make_hexsegpupil(char *IDname, long size, double radius, double gap, double step)
 {
-  long ID,ID1,IDp;
-  long x1, y1;
-  double x2,y2;
-  long IDdisk;
-  long ii;
-  double tot = 0.0;
-  long size2;
+    long ID,ID1,IDp;
+    long x1, y1;
+    double x2,y2;
+    long IDdisk;
+    long ii;
+    double tot = 0.0;
+    long size2;
 
-  int PISTONerr = 0;
-  int errSEGindex = -1;
-  double pampl;
-  double piston;
-  long SEGcnt = 0;
+    int PISTONerr = 0;
+    int errSEGindex = -1;
+    double pampl;
+    double piston;
+    long SEGcnt = 0;
 
-  size2 = size*size;
+	int mkInfluenceFunctions = 1;
+	long IDif;
+	int seg;
+	long kk, jj;
+	float xc, yc, tc;
+
+    size2 = size*size;
 
 
-  ID = variable_ID("HEXPISTONerr");
-  if(ID!=-1)
+    ID = variable_ID("HEXPISTONerr");
+    if(ID!=-1)
     {
-      PISTONerr = 1;
-      pampl = data.variable[ID].value.f;
-      printf("Piston error = %f\n",pampl);
+        PISTONerr = 1;
+        pampl = data.variable[ID].value.f;
+        printf("Piston error = %f\n",pampl);
     }
-  else
-    pampl = 0.0;
+    else
+        pampl = 0.0;
 
 
-  ID = variable_ID("HEXPISTONindex");
-  if(ID!=-1)
+    ID = variable_ID("HEXPISTONindex");
+    if(ID!=-1)
     {
-      errSEGindex = (long) (data.variable[ID].value.f+0.01);
-      printf("SEGMENT INDEX = %ld\n", (long) errSEGindex);
+        errSEGindex = (long) (data.variable[ID].value.f+0.01);
+        printf("SEGMENT INDEX = %ld\n", (long) errSEGindex);
     }
 
 
-  create_2Dimage_ID(IDname,size,size);
-  ID = image_ID(IDname);
-  if(PISTONerr == 1)
-    IDp = create_2Dimage_ID("hexpupPha",size,size);
+    create_2Dimage_ID(IDname,size,size);
+    ID = image_ID(IDname);
+    if(PISTONerr == 1)
+        IDp = create_2Dimage_ID("hexpupPha",size,size);
 
-  IDdisk = make_disk("_TMPdisk",size,size,size/2,size/2,radius);
-  for(ii=0;ii<size2;ii++)
-    data.image[IDdisk].array.F[ii] = 1.0-data.image[IDdisk].array.F[ii];
+    IDdisk = make_disk("_TMPdisk",size,size,size/2,size/2,radius);
+    for(ii=0; ii<size2; ii++)
+        data.image[IDdisk].array.F[ii] = 1.0-data.image[IDdisk].array.F[ii];
+
+
+    SEGcnt = 0;
+    for(x1 = -(long) (2*size/step); x1 < (long) (2*size/step); x1++)
+        for(y1 = -(long) (2*size/step); y1 < (long) (2*size/step); y1++)
+        {
+            x2 = step*x1*3;
+            y2 = step*sqrt(3.0)*y1;
+
+            if(sqrt(x2*x2+y2*y2)<radius)
+            {
+                if(errSEGindex==-1)
+                {
+                    piston = pampl*(1.0-2.0*ran1());
+                }
+                else
+                {
+                    if(errSEGindex==SEGcnt)
+                    {
+                        piston = pampl;
+                    }
+                    else
+                        piston = 0.0;
+                }
+                printf("Hexagon %ld: ", SEGcnt);
+                ID1 = make_hexagon("_TMPhex",size, size, 0.5*size+x2, 0.5*size+y2, (step-gap)*(sqrt(3.0)/2.0));
+                tot = 0.0;
+                for(ii=0; ii<size2; ii++)
+                    tot += data.image[ID1].array.F[ii]*data.image[IDdisk].array.F[ii];
+                if(tot<0.1)
+                {
+                    SEGcnt++;
+                    if(PISTONerr==1)
+                    {
+                        for(ii=0; ii<size2; ii++)
+                            data.image[ID].array.F[ii] += data.image[ID1].array.F[ii];
+                    }
+                    else
+                    {
+                        for(ii=0; ii<size2; ii++)
+                            data.image[ID].array.F[ii] += 1.0*SEGcnt*data.image[ID1].array.F[ii];
+                    }
+
+                    if(PISTONerr == 1)
+                    {
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDp].array.F[ii] += data.image[ID1].array.F[ii]*piston;
+                    }
+                }
+                delete_image_ID("_TMPhex");
+            }
+
+
+
+            x2 += step*1.5;
+            y2 += step*sqrt(3.0)/2.0;
+            if(sqrt(x2*x2+y2*y2)<radius)
+            {
+                // piston = pampl*(1.0-2.0*ran1());
+                if(errSEGindex==-1)
+                {
+                    piston = pampl*(1.0-2.0*ran1());
+                }
+                else
+                {
+                    if(errSEGindex==SEGcnt)
+                    {
+                        piston = pampl;
+                    }
+                    else
+                        piston = 0.0;
+                }
+                printf("Hexagon %ld: ", SEGcnt);
+                ID1 = make_hexagon("_TMPhex",size, size, 0.5*size+x2, 0.5*size+y2, (step-gap)*(sqrt(3.0)/2.0));
+                tot = 0.0;
+                for(ii=0; ii<size2; ii++)
+                    tot += data.image[ID1].array.F[ii]*data.image[IDdisk].array.F[ii];
+                if(tot<0.1)
+                {
+                    SEGcnt++;
+                    if(PISTONerr==1)
+                    {
+                        for(ii=0; ii<size2; ii++)
+                            data.image[ID].array.F[ii] += data.image[ID1].array.F[ii];
+                    }
+                    else
+                        for(ii=0; ii<size2; ii++)
+                            data.image[ID].array.F[ii] += 1.0*SEGcnt*data.image[ID1].array.F[ii];
+
+                    if(PISTONerr == 1)
+                    {
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDp].array.F[ii] += data.image[ID1].array.F[ii]*piston;
+                    }
+                }
+                delete_image_ID("_TMPhex");
+            }
+
+
+        }
+    delete_image_ID("_TMPdisk");
+
+    printf("%ld segments\n",SEGcnt);
     
+    
+    if(mkInfluenceFunctions==1) // TT and focus for each segment
+    {
+		IDif = create_3Dimage_ID("hexpupif", size, size, 3*SEGcnt);
+		for(seg=0;seg<SEGcnt;seg++)
+		{
+			// piston
+			kk = 3*seg; 
+			xc = 0.0;
+			yc = 0.0;
+			tc = 0.0;
+			for(ii=0;ii<size;ii++)
+			for(jj=0;jj<size;jj++)
+				{
+					if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
+						{
+							data.image[IDif].array.F[kk*size2+jj*size+ii] = 1.0;
+							xc += 1.0*ii;
+							yc += 1.0*jj;
+							tc += 1.0;
+						}
+				}
+			xc /= tc;
+			yc /= tc;
+			
+			// tip and tilt
+			for(ii=0;ii<size;ii++)
+			for(jj=0;jj<size;jj++)
+				{
+					if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
+						{
+							
+							data.image[IDif].array.F[(kk+1)*size2+jj*size+ii] = 1.0*ii-xc;
+							data.image[IDif].array.F[(kk+2)*size2+jj*size+ii] = 1.0*jj-yc;
+						}
+				}			
+		}
+	}
 
-  SEGcnt = 0;
-  for(x1 = -(long) (2*size/step); x1 < (long) (2*size/step); x1++)
-    for(y1 = -(long) (2*size/step); y1 < (long) (2*size/step); y1++)
-      {	
-	x2 = step*x1*3;
-	y2 = step*sqrt(3.0)*y1;
-
-	if(sqrt(x2*x2+y2*y2)<radius)
-	  {
-	    if(errSEGindex==-1)
-	      {
-		piston = pampl*(1.0-2.0*ran1());
-	      }
-	    else
-	      {
-		if(errSEGindex==SEGcnt)
-		  {
-		    piston = pampl;
-		  }
-		else
-		  piston = 0.0;
-	      }
-	    printf("Hexagon %ld: ", SEGcnt);
-	    ID1 = make_hexagon("_TMPhex",size, size, 0.5*size+x2, 0.5*size+y2, (step-gap)*(sqrt(3.0)/2.0));
-	    tot = 0.0;
-	    for(ii=0;ii<size2;ii++)
-	      tot += data.image[ID1].array.F[ii]*data.image[IDdisk].array.F[ii];
-	   if(tot<0.1)
-	     {
-	       SEGcnt++;
-		if(PISTONerr==1)
-		  {
-		    for(ii=0;ii<size2;ii++)
-		      data.image[ID].array.F[ii] += data.image[ID1].array.F[ii];
-		  }
-		else		  
-		  {
-		    for(ii=0;ii<size2;ii++)
-		      data.image[ID].array.F[ii] += 1.0*SEGcnt*data.image[ID1].array.F[ii];
-		  }
-		
-		if(PISTONerr == 1)
-		  {
-		    for(ii=0;ii<size2;ii++)
-		      data.image[IDp].array.F[ii] += data.image[ID1].array.F[ii]*piston;
-		  }
-	     }
-	    delete_image_ID("_TMPhex");
-	  }
-
-
-
-	x2 += step*1.5;
-	y2 += step*sqrt(3.0)/2.0;
-	if(sqrt(x2*x2+y2*y2)<radius)
-	  {
-	    // piston = pampl*(1.0-2.0*ran1());
-	    if(errSEGindex==-1)
-	      {
-		piston = pampl*(1.0-2.0*ran1());
-	      }
-	    else
-	      {
-		if(errSEGindex==SEGcnt)
-		  {
-		    piston = pampl;
-		  }
-		else
-		  piston = 0.0;		
-	      }
-	    printf("Hexagon %ld: ", SEGcnt);
-	    ID1 = make_hexagon("_TMPhex",size, size, 0.5*size+x2, 0.5*size+y2, (step-gap)*(sqrt(3.0)/2.0));
-	    tot = 0.0;
-	    for(ii=0;ii<size2;ii++)
-	      tot += data.image[ID1].array.F[ii]*data.image[IDdisk].array.F[ii];
-	    if(tot<0.1)
-	      {
-		SEGcnt++;
-		if(PISTONerr==1)
-		  {
-		    for(ii=0;ii<size2;ii++)
-		      data.image[ID].array.F[ii] += data.image[ID1].array.F[ii];
-		  }
-		else		  
-		  for(ii=0;ii<size2;ii++)
-		    data.image[ID].array.F[ii] += 1.0*SEGcnt*data.image[ID1].array.F[ii];
-	     
-		if(PISTONerr == 1)
-		  {
-		    for(ii=0;ii<size2;ii++)
-		      data.image[IDp].array.F[ii] += data.image[ID1].array.F[ii]*piston;
-		  }
-	      }
-	    delete_image_ID("_TMPhex");
-	  }
-
-
-      }
-  delete_image_ID("_TMPdisk");
-
-  printf("%ld segments\n",SEGcnt);
-
-  return(ID);
+    return(ID);
 }
+
+
+
 
 long make_jacquinot_pupil(char *ID_name, long l1, long l2, double x_center, double y_center, double width, double height)
 {
