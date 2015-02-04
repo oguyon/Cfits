@@ -112,7 +112,8 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
     strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
-
+    data.NBcmd++;
+    
     strcpy(data.cmd[data.NBcmd].key,"imgstreamave");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = image_basic_streamaverage_cli;
@@ -120,7 +121,6 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<imin> <NBcoadd [long]> <imout> <mode>");
     strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)");
-
     data.NBcmd++;
 
 
