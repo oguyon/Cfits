@@ -4479,9 +4479,14 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     printf("thr = %ld\n", thr);
                     fflush(stdout);
 
-                    sprintf(fname, "%s/FPMresp%d%d%d_%02ld_%03ld_%03ld_%02d_mp%02ld_thread%02ld.fits", piaacmcconfdir, SCORINGMASKTYPE, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda, PIAACMC_FPMresp_mp, thr);
-                    ID1 = load_fits(fname, "tmpFPMresp");
-
+					ID1 = -1;
+					while(ID1==-1)
+					{
+						sprintf(fname, "%s/FPMresp%d%d%d_%02ld_%03ld_%03ld_%02d_mp%02ld_thread%02ld.fits", piaacmcconfdir, SCORINGMASKTYPE, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda, PIAACMC_FPMresp_mp, thr);
+						ID1 = load_fits(fname, "tmpFPMresp");
+						sleep(1.0);
+					}
+					
                     list_image_ID();
 
                     printf("piaacmc[0].focmNBzone =                          %ld\n", piaacmc[0].focmNBzone);
