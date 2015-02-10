@@ -582,7 +582,7 @@ double get_zer(char *ID_name, long zer_nb, double radius)
   if((ID=image_ID(fname1))==-1)
     {
       if(file_exists(fname)==1)
-	load_fits(fname,fname1);
+	load_fits(fname,fname1, 1);
       else
 	mk_zer(fname1,SIZE,zer_nb,radius);
     }
@@ -615,7 +615,7 @@ double get_zer_crop(char *ID_name, long zer_nb, double radius, double radius1)
   if((ID=image_ID(fname1))==-1)
     {
       if(file_exists(fname)==1)
-	load_fits(fname,fname1);
+	load_fits(fname,fname1, 1);
       else
 	mk_zer(fname1,SIZE,zer_nb,radius);
     }
@@ -765,7 +765,7 @@ double fit_zer(char *ID_name, long maxzer_nb, double radius, double *zvalue, dou
 	  if((IDZ=image_ID(fname1))==-1)
 	    {
 	      if(file_exists(fname)==1)
-		IDZ = load_fits(fname,fname1);
+		IDZ = load_fits(fname,fname1, 1);
 	      else
 		IDZ = mk_zer(fname1,SIZE,i,radius);
 	    }

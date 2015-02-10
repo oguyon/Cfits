@@ -11,7 +11,7 @@ int read_keyword_alone(char* file_name, char* KEYWORD);
 
 int data_type_code(int bitpix);
 
-long load_fits(char *file_name, char *ID_name); 
+long load_fits(char *file_name, char *ID_name, int errcode); 
 
 int save_db_fits(char *ID_name, char *file_name);
 

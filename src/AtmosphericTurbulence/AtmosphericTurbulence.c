@@ -391,9 +391,9 @@ int contract_wavefront_cube(char *ina_file, char *inp_file, char *outa_file, cha
   for(i=0;i<factor;i++)
     pfactor *= 2;
 
-  load_fits(inp_file,"tmpwfp");
+  load_fits(inp_file, "tmpwfp", 1);
   IDpha=image_ID("tmpwfp");
-  load_fits(ina_file,"tmpwfa");
+  load_fits(ina_file, "tmpwfa", 1);
   IDamp=image_ID("tmpwfa");
   naxes[0] = data.image[IDpha].md[0].size[0];
   naxes[1] = data.image[IDpha].md[0].size[1];
@@ -488,7 +488,7 @@ int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int facto
   for(i=0;i<factor;i++)
     pfactor *= 2;  
 
-  load_fits(inp_file,"tmpwfp");
+  load_fits(inp_file, "tmpwfp", 1);
   IDpha=image_ID("tmpwfp");
   naxes[0] = data.image[IDpha].md[0].size[0];
   naxes[1] = data.image[IDpha].md[0].size[1];
@@ -855,14 +855,14 @@ int make_AtmosphericTurbulence_wavefront_series()
     if(read_config_parameter_exists(CONFFILE,KEYWORD)==1)
     {
         read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-        load_fits(CONTENT,"ST_pa");
+        load_fits(CONTENT, "ST_pa", 1);
     }
 
     strcpy(KEYWORD,"PUPIL_PHA_FILE");
     if(read_config_parameter_exists(CONFFILE,KEYWORD)==1)
     {
         read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-        load_fits(CONTENT,"ST_pp");
+        load_fits(CONTENT, "ST_pp", 1);
     }
 
     strcpy(KEYWORD,"TURBULENCE_REF_WAVEL");
@@ -1364,7 +1364,7 @@ int make_AtmosphericTurbulence_wavefront_series()
     {
         sprintf(fname,"t%ld_%ld",i,MASTER_SIZE);
         sprintf(fname1,"TM%ld",i);
-        if(load_fits(fname,fname1)==-1)
+        if(load_fits(fname, fname1, 1)==-1)
         {
             sprintf(fname,"t%ld_%ld",i,MASTER_SIZE);
             sprintf(fname1,"TM%ld",i);
@@ -2518,10 +2518,10 @@ int contract_wavefront_series(char *in_prefix, char *out_prefix, long NB_files)
     {
         printf("INDEX = %ld/%ld\n",index,NB_files);
         sprintf(fname,"%s%08ld.pha",in_prefix,index);
-        load_fits(fname,"tmpwfp");
+        load_fits(fname, "tmpwfp", 1);
         IDpha=image_ID("tmpwfp");
         sprintf(fname,"%s%08ld.amp",in_prefix,index);
-        load_fits(fname,"tmpwfa");
+        load_fits(fname, "tmpwfa", 1);
         IDamp=image_ID("tmpwfa");
         naxes[0] = data.image[IDpha].md[0].size[0];
         naxes[1] = data.image[IDpha].md[0].size[1];
@@ -2651,7 +2651,7 @@ int measure_wavefront_series(float factor)
     read_config_parameter(CONFFILE,KEYWORD,CONTENT);
     if(image_ID("ST_pa")==-1)
     {
-        load_fits(CONTENT,"ST_pa");
+        load_fits(CONTENT, "ST_pa", 1);
     }
 
     IDpupamp = image_ID("ST_pa");
@@ -2675,7 +2675,7 @@ int measure_wavefront_series(float factor)
 
     strcpy(KEYWORD,"PUPIL_AMPL_FILE");
     read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-    IDamp = load_fits(CONTENT,"pupil");
+    IDamp = load_fits(CONTENT, "pupil", 1);
 
     NBFRAMES = (long) (TIME_SPAN/TIME_STEP);
     naxes[2]=NBFRAMES;
@@ -2694,9 +2694,9 @@ int measure_wavefront_series(float factor)
         replace_char(fnamepha,' ','0');
         sprintf(fnameamp,"%s%8ld.amp",WF_FILE_PREFIX,tspan);
         replace_char(fnameamp,' ','0');
-        IDpha = load_fits(fnamepha,"wfpha");
+        IDpha = load_fits(fnamepha, "wfpha", 1);
         if(amplitude_on==1)
-            IDamp = load_fits(fnameamp,"wfamp");
+            IDamp = load_fits(fnameamp, "wfamp", 1);
 
         for(frame=0; frame<NBFRAMES; frame++)
         {
@@ -2831,7 +2831,7 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
     read_config_parameter(CONFFILE,KEYWORD,CONTENT);
     if(image_ID("ST_pa")==-1)
     {
-        load_fits(CONTENT,"ST_pa");
+        load_fits(CONTENT, "ST_pa", 1);
     }
 
     ID=image_ID("ST_pa");
@@ -2857,7 +2857,7 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
 
     strcpy(KEYWORD,"PUPIL_AMPL_FILE");
     read_config_parameter(CONFFILE,KEYWORD,CONTENT);
-    IDamp = load_fits(CONTENT,"pupil");
+    IDamp = load_fits(CONTENT, "pupil", 1);
 
     NBFRAMES = (long) (TIME_SPAN/TIME_STEP);
     naxes[2]=NBFRAMES;
@@ -2890,12 +2890,12 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
         replace_char(fnamepha,' ','0');
         sprintf(fnameamp,"%s%8ld.amp",WF_FILE_PREFIX,tspan);
         replace_char(fnameamp,' ','0');
-        IDpha = load_fits(fnamepha,"wfpha");
+        IDpha = load_fits(fnamepha, "wfpha", 1);
         if(amplitude_on==1)
         {
             printf("reading amp\n");
             fflush(stdout);
-            IDamp = load_fits(fnameamp,"wfamp");
+            IDamp = load_fits(fnameamp, "wfamp", 1);
         }
 
         for(frame=0; frame<NBFRAMES; frame++)
@@ -3022,10 +3022,10 @@ int frame_select_PSF(char *logfile, long NBfiles, float frac)
         }
 
         if(i==0)
-            load_fits(fname,"PSFc");
+            load_fits(fname, "PSFc", 1);
         else
         {
-            load_fits(fname,"tmppsf");
+            load_fits(fname, "tmppsf", 1);
             execute_arith("PSFc=PSFc+tmppsf");
             delete_image_ID("tmppsf");
         }
@@ -3050,13 +3050,13 @@ int frame_select_PSF(char *logfile, long NBfiles, float frac)
 
         if(i==0)
         {
-            load_fits(fname,"PSFcc");
+            load_fits(fname, "PSFcc", 1);
             Xcenter = xcen[0];
             Ycenter = ycen[0];
         }
         else
         {
-            load_fits(fname,"tmppsf");
+            load_fits(fname, "tmppsf" , 1);
             basic_add("PSFcc","tmppsf","nPSFcc",Xcenter-xcen[i],Ycenter-ycen[i]);
             if(Xcenter<xcen[i])
                 Xcenter = xcen[i];
@@ -3096,14 +3096,14 @@ int frame_select_PSF(char *logfile, long NBfiles, float frac)
             cnt++;
             if(OK==0)
             {
-                load_fits(fname,"PSFccsf");
+                load_fits(fname, "PSFccsf", 1);
                 Xcenter = xcen[i];
                 Ycenter = ycen[i];
                 OK=1;
             }
             else
             {
-                load_fits(fname,"tmppsf");
+                load_fits(fname, "tmppsf", 1);
                 basic_add("PSFccsf","tmppsf","nPSFccsf",Xcenter-xcen[i],Ycenter-ycen[i]);
                 if(Xcenter<xcen[i])
                     Xcenter = xcen[i];
@@ -3144,14 +3144,14 @@ int frame_select_PSF(char *logfile, long NBfiles, float frac)
             cnt++;
             if(OK==0)
             {
-                load_fits(fname,"PSFccse");
+                load_fits(fname, "PSFccse", 1);
                 Xcenter = xcen[i];
                 Ycenter = ycen[i];
                 OK=1;
             }
             else
             {
-                load_fits(fname,"tmppsf");
+                load_fits(fname, "tmppsf", 1);
                 basic_add("PSFccse","tmppsf","nPSFccse",Xcenter-xcen[i],Ycenter-ycen[i]);
                 if(Xcenter<xcen[i])
                     Xcenter = xcen[i];
@@ -3442,7 +3442,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.amp", WFDIRECTORY, WFSLAMBDA, cubeindex0);
             printf("LOADING %s\n", fname);
-            IDac0 = load_fits(fname, imname);
+            IDac0 = load_fits(fname, imname, 1);
         }
         sprintf(imname, "wfa%08ld",cubeindex1);
         IDac1 = image_ID(imname);
@@ -3450,7 +3450,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.amp", WFDIRECTORY, WFSLAMBDA, cubeindex1);
             printf("LOADING %s\n", fname);
-            IDac1 = load_fits(fname, imname);
+            IDac1 = load_fits(fname, imname, 1);
         }
 
         sprintf(imname, "wfp%08ld",cubeindex0);
@@ -3459,7 +3459,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.pha", WFDIRECTORY, WFSLAMBDA, cubeindex0);
             printf("LOADING %s\n", fname);
-            IDpc0 = load_fits(fname, imname);
+            IDpc0 = load_fits(fname, imname, 1);
         }
         sprintf(imname, "wfp%08ld",cubeindex1);
         IDpc1 = image_ID(imname);
@@ -3467,7 +3467,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.pha", WFDIRECTORY, WFSLAMBDA, cubeindex1);
             printf("LOADING %s\n", fname);
-            IDpc1 = load_fits(fname, imname);
+            IDpc1 = load_fits(fname, imname, 1);
         }
 
 
@@ -3479,7 +3479,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.amp", WFDIRECTORY, SCILAMBDA, cubeindex0);
             printf("LOADING %s\n", fname);
-            IDacs0 = load_fits(fname, imname);
+            IDacs0 = load_fits(fname, imname, 1);
         }
         sprintf(imname, "swfa%08ld",cubeindex1);
         IDacs1 = image_ID(imname);
@@ -3487,7 +3487,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.amp", WFDIRECTORY, SCILAMBDA, cubeindex1);
             printf("LOADING %s\n", fname);
-            IDacs1 = load_fits(fname, imname);
+            IDacs1 = load_fits(fname, imname, 1);
         }
 
         sprintf(imname, "swfp%08ld",cubeindex0);
@@ -3496,7 +3496,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.pha", WFDIRECTORY, SCILAMBDA, cubeindex0);
             printf("LOADING %s\n", fname);
-            IDpcs0 = load_fits(fname, imname);
+            IDpcs0 = load_fits(fname, imname, 1);
         }
         sprintf(imname, "swfp%08ld",cubeindex1);
         IDpcs1 = image_ID(imname);
@@ -3504,7 +3504,7 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
         {
             sprintf(fname, "%s/WF%04ld/WF4096/wf_%08ld.pha", WFDIRECTORY, SCILAMBDA, cubeindex1);
             printf("LOADING %s\n", fname);
-            IDpcs1 = load_fits(fname, imname);
+            IDpcs1 = load_fits(fname, imname, 1);
         }
 
 
@@ -4031,7 +4031,7 @@ int AtmosphericTurbulence_WFprocess()
     while(OK==1)
     {
         sprintf(wf_file_name,"wf550_%08ld.pha",k);
-        ID = load_fits(wf_file_name,"tpmwfc");
+        ID = load_fits(wf_file_name, "tpmwfc", 1);
         if(ID==-1)
         {
             OK = 0;

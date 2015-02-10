@@ -1296,7 +1296,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     matrix_DtraD_evec = gsl_matrix_alloc (m,m);
 
 
-	ID = load_fits("modesfreqcpa.fits", "modesfreqcpa");
+	ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
 	
 	
 	CPAcoeff = (double*) malloc(sizeof(double)*m);
@@ -1910,7 +1910,7 @@ long AOloopControl_loadCM(long loop, char *CMfname)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-    if( (ID=load_fits(CMfname, "tmpcontrM")) != -1 )
+    if( (ID = load_fits(CMfname, "tmpcontrM", 1)) != -1 )
     {
 		
         // check size is OK
@@ -2019,7 +2019,7 @@ long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 		}
 	else
 		{
-			ID1 = load_fits(fname, "tmp2Dim");
+			ID1 = load_fits(fname, "tmp2Dim", 1);
 			if(ID1!=-1)
 			{
 				sizeOK = COREMOD_MEMORY_check_2Dsize("tmp2Dim", xsize, ysize);
@@ -2091,7 +2091,7 @@ long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 		}
 	else
 		{
-			ID1 = load_fits(fname, "tmp3Dim");
+			ID1 = load_fits(fname, "tmp3Dim", 1);
 			if(ID1!=-1)
 			{
 				sizeOK = COREMOD_MEMORY_check_3Dsize("tmp3Dim", xsize, ysize, zsize);
@@ -2302,7 +2302,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 		printf("Checking file ./conf/fmodes.fits\n");
 
         // GET SIZE FROM FILE
-        ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim");
+        ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim", 1);
         if(ID1tmp==-1)
         {
             printf("ERROR: no file \"./conf/fmodes.fits\"\n");

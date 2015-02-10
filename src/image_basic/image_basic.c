@@ -20,7 +20,6 @@
 #include "info/info.h"
   
 #include "kdtree/kdtree.h"
-//#include <modules/image_filter/image_filter.h>
 
 
 #include "image_basic/image_basic.h"
@@ -1887,7 +1886,7 @@ long load_fitsimages(char *strfilter)
       fname[strlen(fname)-1] = '\0';
       strncpy(fname1,fname,strlen(fname)-5);
       fname1[strlen(fname)-5] = '\0';
-      load_fits(fname,fname1);
+      load_fits(fname,fname1, 1);
       printf("[%ld] Image %s loaded -> %s\n",cnt,fname,fname1);
       fflush(stdout);
       cnt++;
@@ -1951,13 +1950,13 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
       fname[strlen(fname)-1] = '\0';
        if(cnt == 0)
 	{
-	  ID = load_fits(fname,"imtmplfc");
+	  ID = load_fits(fname, "imtmplfc", 1);
 	  xsize = data.image[ID].md[0].size[0];
 	  ysize = data.image[ID].md[0].size[1];
 	  delete_image_ID("imtmplfc");
 	}
 
-      ID = load_fits(fname,"imtmplfc");
+      ID = load_fits(fname,"imtmplfc", 1);
       if((data.image[ID].md[0].size[0] != xsize)||(data.image[ID].md[0].size[1] != ysize))
 	{
 	  fprintf(stderr,"ERROR in load_fitsimages_cube: not all images have the same size\n");
@@ -1988,7 +1987,7 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
       fname[strlen(fname)-1] = '\0';
       strncpy(fname1,fname,strlen(fname)-5);
       fname1[strlen(fname)-5] = '\0';
-      load_fits(fname,fname1);
+      load_fits(fname,fname1, 1);
       printf("Image %s loaded -> %s\n",fname,fname1);
       ID = image_ID(fname1);
       for(ii=0;ii<xsize*ysize;ii++)
@@ -2202,7 +2201,7 @@ long basic_addimagesfiles(char *strfilter, char *outname)
       fname[strlen(fname)-1] = '\0';
       strncpy(fname1,fname,strlen(fname)-5);
       fname1[strlen(fname)-5] = '\0';
-      ID = load_fits(fname,fname1);
+      ID = load_fits(fname, fname1, 1);
       printf("Image %s loaded -> %s\n",fname,fname1);
       if(init==0)
 	{

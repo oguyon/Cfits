@@ -848,8 +848,8 @@ int AOloopControl_DM_turb()
 
   AOloopControl_DMturb_createconf();
  
-  IDs1 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1");
-  IDs2 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2"); 
+  IDs1 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1", 1);
+  IDs2 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2", 1); 
   
 
   printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);

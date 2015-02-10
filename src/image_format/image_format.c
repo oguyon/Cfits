@@ -1842,10 +1842,10 @@ int CR2tomov()
 
   if(CR2toFITSrgb==1)
     {
-      load_fits("bias.fits","bias");
-      load_fits("dark.fits","dark");
-      load_fits("badpix.fits","badpix");
-      load_fits("flat.fits","flat");
+      load_fits("bias.fits", "bias", 1);
+      load_fits("dark.fits", "dark", 1);
+      load_fits("badpix.fits", "badpix", 1);
+      load_fits("flat.fits", "flat", 1);
       
       sprintf(command,"ls ./CR2/*.CR2 > flist.tmp\n");
       r = system(command);
@@ -1932,9 +1932,9 @@ int CR2tomov()
 		  sprintf(fnameoutr,"./FITS/imr%05ld.fits",cnt);
 		  sprintf(fnameoutg,"./FITS/img%05ld.fits",cnt);
 		  sprintf(fnameoutb,"./FITS/imb%05ld.fits",cnt);		  
-		  load_fits(fnameoutr,"imr");
-		  load_fits(fnameoutg,"img");
-		  load_fits(fnameoutb,"imb");
+		  load_fits(fnameoutr, "imr", 1);
+		  load_fits(fnameoutg, "img", 1);
+		  load_fits(fnameoutb, "imb", 1);
 		}
 
 	      info_image_stats("imr","");
@@ -2205,29 +2205,29 @@ int CR2tomov()
 		      
 		      sprintf(fnamer,"./FITS/imr%05ld.f.fits",i);
 		      if(file_exists(fnamer)==1)
-			IDr = load_fits(fnamer,"imr");
+			IDr = load_fits(fnamer, "imr", 1);
 		      else
 			{
 			  sprintf(fnamer,"./FITS/imr%05ld.fits",i);
-			  IDr = load_fits(fnamer,"imr");
+			  IDr = load_fits(fnamer, "imr", 1);
 			}
 
 		      sprintf(fnameg,"./FITS/img%05ld.f.fits",i);
 		      if(file_exists(fnameg)==1)
-			IDg = load_fits(fnameg,"img");
+			IDg = load_fits(fnameg, "img", 1);
 		      else
 			{
 			  sprintf(fnameg,"./FITS/img%05ld.fits",i);
-			  IDg = load_fits(fnameg,"img");
+			  IDg = load_fits(fnameg, "img", 1);
 			}
 		      
 		      sprintf(fnameb,"./FITS/imb%05ld.f.fits",i);
 		      if(file_exists(fnameb)==1)
-			IDb = load_fits(fnameb,"imb");
+			IDb = load_fits(fnameb, "imb", 1);
 		      else
 			{
 			  sprintf(fnameb,"./FITS/imb%05ld.fits",i);
-			  IDb = load_fits(fnameb,"imb");
+			  IDb = load_fits(fnameb, "imb", 1);
 			}
 		      
 
