@@ -574,15 +574,18 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
 
         /* bitpix = 16   TSHORT */
         if(bitpix == 16) {
-            ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
-            sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);
+           // ID = create_image_ID(ID_name, naxis, naxes, Dtype, data.SHARED_DFT, data.NBKEWORD_DFT);
+            ID = create_image_ID(ID_name, naxis, naxes, USHORT, data.SHARED_DFT, data.NBKEWORD_DFT);
+           
+           /* sarray = (unsigned short*) malloc(sizeof(unsigned short)*nelements);
             if(sarray==NULL)
             {
                 printERROR(__FILE__, __func__, __LINE__, "malloc error");
                 exit(0);
-            }
+            }*/
 
-            fits_read_img(fptr, 20, fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
+ //           fits_read_img(fptr, 20, fpixel, nelements, &nulval, sarray, &anynul, &FITSIO_status);
+            fits_read_img(fptr, 20, fpixel, nelements, &nulval, data.image[ID].array.U, &anynul, &FITSIO_status);
             if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
             {
                 if(errcode!=0)
@@ -611,10 +614,10 @@ long load_fits(char *file_name, char ID_name[400], int errcode)
             }
 
             check_FITSIO_status(__FILE__, __func__, __LINE__, 1);
-            for (ii = 0; ii < nelements; ii++)
+    /*        for (ii = 0; ii < nelements; ii++)
                 data.image[ID].array.F[ii] = 1.0*sarray[ii];
             free(sarray);
-            sarray = NULL;
+            sarray = NULL;*/
         }
 
 

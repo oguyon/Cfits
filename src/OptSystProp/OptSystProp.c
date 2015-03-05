@@ -284,8 +284,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             ID = optsyst[index].elemarrayindex[elem];
             printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].md[0].name);
             fflush(stdout);
-	//	list_image_ID();
-			
+            //	list_image_ID();
+
             if(ID == -1)
             {
                 printf("ERROR: ID = -1, missing mask image\n");
@@ -295,14 +295,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             //	save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
             //save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
 
-			printf("ID = %ld\n", ID);
-			fflush(stdout);
-			
-			
+            printf("ID = %ld\n", ID);
+            fflush(stdout);
+
+
             if((data.image[ID].md[0].naxis == 2)||(data.image[ID].md[0].size[2] != nblambda))
             {
-		//		printf("single dim %ld %ld\n", data.image[ID].md[0].size[2], nblambda);
-			//	fflush(stdout);
+                //		printf("single dim %ld %ld\n", data.image[ID].md[0].size[2], nblambda);
+                //	fflush(stdout);
 # ifdef HAVE_LIBGOMP
                 #pragma omp parallel default(shared) private(ii)
                 {
@@ -317,8 +317,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             }
             else
             {
-			//	printf("multi dim %ld %ld\n", data.image[ID].md[0].size[2], nblambda);
-			//	fflush(stdout);
+                //	printf("multi dim %ld %ld\n", data.image[ID].md[0].size[2], nblambda);
+                //	fflush(stdout);
 # ifdef HAVE_LIBGOMP
                 #pragma omp parallel
                 {
@@ -332,8 +332,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             }
 
             //	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
-		//	printf("POINT 1.1\n");
-			
+            //	printf("POINT 1.1\n");
+
 
         }
 
@@ -365,7 +365,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             // uses 1-fpm
 
             // test
-            //	  save_fits(imnameamp_out, "!TESTamp.fits");
+            //  save_fits(imnameamp_out, "!TESTamp.fits");
             //exit(0);
 
             ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
@@ -406,9 +406,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 i = optsyst[index].elemarrayindex[elem];
                 ID = optsyst[index].FOCMASKarray[i].fpmID;
                 printf("focm : %s\n", data.image[ID].md[0].name);
-                //	      printf("Saving to testfpm.fits\n");
+                //      printf("Saving to testfpm.fits\n");
                 //      fflush(stdout);
-                //	      list_image_ID();
+                //      list_image_ID();
                 mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
 
                 if(optsyst[index].SAVE == 1)
@@ -570,5 +570,6 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
     return(0);
 }
+
 
 
