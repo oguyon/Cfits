@@ -5450,7 +5450,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         sprintf(fname, "%s/ContrastVal%d%d_%02ld_%03ld_%02d_tt000.txt", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].nblambda);
         fp = fopen(fname, "w");
-        fprintf(fp, "%10g %10g %4.2f %4.2f %4.2f %4.2f %04ld %02ld %d %03ld %03ld %02d %03ld\n", valref, aveC/aveCcnt, piaacmc[0].fpmaskradld, PIAACMC_MASKRADLD, piaacmc[0].centObs0, piaacmc[0].centObs1, (long) (piaacmc[0].lambda*1e9), (long) (piaacmc[0].lambdaB+0.1), PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda, (long) 0);
+        fprintf(fp, "%10g %10g %4.2f %4.2f %4.2f %4.2f %04ld %02ld %d %03ld %03ld %02d %03ld %d\n", valref, aveC/aveCcnt, piaacmc[0].fpmaskradld, PIAACMC_MASKRADLD, piaacmc[0].centObs0, piaacmc[0].centObs1, (long) (piaacmc[0].lambda*1e9), (long) (piaacmc[0].lambdaB+0.1), PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda, (long) 0, computePSF_ResolvedTarget);
         fclose(fp);
 
 
@@ -5545,7 +5545,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         sprintf(fname, "%s/ContrastVal%d%d_%02ld_%03ld_%02d_tt%03ld.txt", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].nblambda, (long) (1000.0*ldoffset));
         fp = fopen(fname, "w");
-        fprintf(fp, "%10g %10g %4.2f %4.2f %4.2f %4.2f %04ld %02ld %d %03ld %03ld %02d %03ld\n", valref, aveC/aveCcnt, piaacmc[0].fpmaskradld, PIAACMC_MASKRADLD, piaacmc[0].centObs0, piaacmc[0].centObs1, (long) (piaacmc[0].lambda*1e9), (long) (piaacmc[0].lambdaB+0.1), PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda, (long) (1000.0*ldoffset));
+        fprintf(fp, "%10g %10g %4.2f %4.2f %4.2f %4.2f %04ld %02ld %d %03ld %03ld %02d %03ld %d\n", valref, aveC/aveCcnt, piaacmc[0].fpmaskradld, PIAACMC_MASKRADLD, piaacmc[0].centObs0, piaacmc[0].centObs1, (long) (piaacmc[0].lambda*1e9), (long) (piaacmc[0].lambdaB+0.1), PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda, (long) (1000.0*ldoffset), computePSF_ResolvedTarget);
         fclose(fp);
 
         break;
