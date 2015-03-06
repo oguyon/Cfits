@@ -2220,24 +2220,16 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
     // ============ MAKE FOCAL PLANE MASK ===============
 
-    CREATE_fpmzmap = 0;
+/*    CREATE_fpmzmap = 0;
     if(FORCE_CREATE_fpmzmap == 0)
     {
-        //sprintf(fname, "%s/fpmzmap%d_%03ld_%03ld.fits", piaacmcconfdir, PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone);
         if(image_ID("fpmzmap")==-1)
             {
                 sprintf(fname, "%s/fpmzmap%d_%03ld_%03ld.fits", piaacmcconfdir, PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone);
                 load_fits(fname, "fpmzmap", 1);
-           //     printf("LOADING \"%s\" as fpmzmap", fname);
                 if(image_ID("fpmzmap")==-1)
                     CREATE_fpmzmap = 1;
-              //  PIAACMCsimul_mkFPM_zonemap("fpmzmap");
-              //  sprintf(fname, "!%s/fpmzmap%d_%03ld_%03ld.fits", piaacmcconfdir, PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone);
-               // save_fits("fpmzmap", fname);
             }
-          // load_fits(fname, "fpmzmap", 0);
-        //if(image_ID("fpmzmap")==-1)
-        //    CREATE_fpmzmap = 1;
     }
     else
         CREATE_fpmzmap = 1;
@@ -2248,11 +2240,15 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             delete_image_ID("fpmzmap");
         PIAACMCsimul_mkFPM_zonemap("fpmzmap");
         sprintf(fname, "!%s/fpmzmap%d_%03ld_%03ld.fits", piaacmcconfdir, PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone);
-    //list_image_ID();
-    //    printf("SAVING fpmzmap as %s\n", fname);
         save_fits("fpmzmap", fname);
-    //exit(0);
     }
+*/
+
+     if(image_ID("fpmzmap")==-1)
+        PIAACMCsimul_mkFPM_zonemap("fpmzmap");
+
+
+
 
 
 
