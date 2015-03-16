@@ -902,71 +902,72 @@ void *compute_function( void *ptr )
 
 int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 {
-	long ID_contrM;
-	long ID_WFS;
-	long ID_cmd_modes;
-	long *cmsize;
-	long *wfssize;
-	long *cmdmodessize;
-	int status;
-	int *GPUstatus;
-	long iter;
-	long NBiter = 10000;
-	double time1sec, time2sec;
-	struct timespec tnow;
+    long ID_contrM;
+    long ID_WFS;
+    long ID_cmd_modes;
+    long *cmsize;
+    long *wfssize;
+    long *cmdmodessize;
+    int status;
+    int *GPUstatus;
+    long iter;
+    long NBiter = 10000;
+    double time1sec, time2sec;
+    struct timespec tnow;
 
-	
-	printf("Testing GPU matrix multiplication speed\n");
-	
-	GPUstatus = (int*) malloc(sizeof(int)*100);
-	
-	cmsize = (long*) malloc(sizeof(long)*3);
-	cmsize[0] = WFSsize;
-	cmsize[1] = WFSsize;
-	cmsize[2] = NBmodes;
-	ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
-	
-	wfssize = (long*) malloc(sizeof(long)*2);
-	wfssize[0] = WFSsize;
-	wfssize[1] = WFSsize;
-	ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
-	
-	cmdmodessize = (long*) malloc(sizeof(long)*2);
-	cmdmodessize[0] = NBmodes;
-	cmdmodessize[1] = 1;
-	ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
 
-	GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS].md[0].name, data.image[ID_cmd_modes].md[0].name, GPUcnt, 0, 0);
-    
+    printf("Testing GPU matrix multiplication speed\n");
+
+    GPUstatus = (int*) malloc(sizeof(int)*100);
+
+    cmsize = (long*) malloc(sizeof(long)*3);
+    cmsize[0] = WFSsize;
+    cmsize[1] = WFSsize;
+    cmsize[2] = NBmodes;
+    ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
+
+    wfssize = (long*) malloc(sizeof(long)*2);
+    wfssize[0] = WFSsize;
+    wfssize[1] = WFSsize;
+    ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
+
+    cmdmodessize = (long*) malloc(sizeof(long)*2);
+    cmdmodessize[0] = NBmodes;
+    cmdmodessize[1] = 1;
+    ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
+
+    GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS].md[0].name, data.image[ID_cmd_modes].md[0].name, GPUcnt, 0, 0);
+
     clock_gettime(CLOCK_REALTIME, &tnow);
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-    for(iter=0;iter<NBiter;iter++)
-		GPU_loop_MultMat_execute(0, &status, GPUstatus);
- 
-	clock_gettime(CLOCK_REALTIME, &tnow);
+    for(iter=0; iter<NBiter; iter++)
+        GPU_loop_MultMat_execute(0, &status, GPUstatus);
+
+    clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-	printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
+    printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
 
-	printf("done\n");
-	fflush(stdout);
+    printf("done\n");
+    fflush(stdout);
 
-	delete_image_ID("cudatestcm");
-	delete_image_ID("cudatestwfs");
-	delete_image_ID("cudatestcmd");
-	
-	free(cmsize);
-	free(wfssize);
-	free(cmdmodessize);
-	
-	free(GPUstatus);
-	
-	return(0);
+    delete_image_ID("cudatestcm");
+    delete_image_ID("cudatestwfs");
+    delete_image_ID("cudatestcmd");
+
+    free(cmsize);
+    free(wfssize);
+    free(cmdmodessize);
+
+    free(GPUstatus);
+
+    return(0);
 }
 
 
- #endif
+#endif
+
 
 
 

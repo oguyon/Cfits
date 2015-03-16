@@ -6333,7 +6333,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
         gettimeofday(&start, NULL);
         i = 0;
         loopOK=1;
-        while((loopOK==1)&&(i<100000))
+        while((loopOK==1)&&(i<1000000))
         {
             if((i<1))
                 MODampl = 0.0;
