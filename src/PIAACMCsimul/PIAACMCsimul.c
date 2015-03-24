@@ -424,6 +424,7 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 
 
 
+
 /// @param[in] IDin_name	input image: circular mask design
 /// @param[in] sectfname	text file specifying which zones belong to which rings
 /// @param[out] IDout_name	output sector mask design
@@ -2247,7 +2248,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
      if(image_ID("fpmzmap")==-1)
         PIAACMCsimul_mkFPM_zonemap("fpmzmap");
 
-
+   /* sprintf(fname, "!%s/fpmzmap.fits", piaacmcconfdir);
+    save_fits("fpmzmap", fname);
+    exit(0);*/
 
 
 
@@ -4079,7 +4082,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     double xc, yc, rc;
     long ri;
     long IDps;
-    double xld;
+    double xld, stepld;
     double ldoffset;
 
     // spreading computations over multiple processes for resp matrix
@@ -4106,8 +4109,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
     long tmpNBrings;
     int tmpnblambda;
-
-
+    float dx, dy;
+    
 
 
 
@@ -5568,7 +5571,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         fpt = fopen(fnametransm, "w");
         fclose(fpt);
 
-        for(xld=0.0; xld<10.0; xld+=0.1)
+        stepld = 0.001;
+        for(xld=0.0; xld<10.0; xld+=stepld)
         {
             valref = PIAACMCsimul_computePSF(xld, 0.0, 0, optsyst[0].NBelem, 0, 0);
             ID = image_ID("psfi0");
@@ -5581,16 +5585,27 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             printf("image size = %ld %ld %ld\n", xsize, ysize, zsize);
             val = 0.0;
             for(kk=0; kk<zsize; kk++)
-            {
-                for(ii=0; ii<xsize*ysize; ii++)
-                    val += data.image[ID].array.F[kk*xsize*ysize+ii];
+            {                
+                for(ii=0; ii<xsize; ii++)
+                    for(jj=0; jj<ysize; jj++)
+                    {
+                        dx = 1.0*ii-0.5*xsize;
+                        dy = 1.0*jj-0.5*ysize;
+                        if((dx*dx+dy*dy)<30.0*30.0)
+                            val += data.image[ID].array.F[kk*xsize*ysize+jj*ysize+ii];
+                    }
             }
             val /= zsize;
 
             fpt = fopen(fnametransm, "a");
-            fprintf(fpt, "%10f %f\n", xld, val);
+            fprintf(fpt, "%10f %.18f\n", xld, val);
             fclose(fpt);
             delete_image_ID("psfi0");
+            
+            stepld = 0.001;
+            stepld += 0.1*xld;
+            if(stepld>0.2)
+                stepld = 0.2;
         }
         break;
 

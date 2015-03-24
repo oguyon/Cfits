@@ -74,16 +74,31 @@ int image_basic_add_cli()
 }
 
 
+int image_basic_contract_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2) == 0)
+    {
+        basic_contract(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
 int image_basic_streamaverage_cli()
 {
- if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2) == 0)
-    {  
-      IMAGE_BASIC_streamaverage(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
-      return 0;
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2) == 0)
+    {
+        IMAGE_BASIC_streamaverage(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 
 
@@ -111,6 +126,15 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
     strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imcontract");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_contract_cli;
+    strcpy(data.cmd[data.NBcmd].info,"image binning");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <binx> <biny>");
+    strcpy(data.cmd[data.NBcmd].example,"imcontract im1 outim 4 4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"imgstreamave");
@@ -2414,12 +2438,12 @@ long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysize
                 tf = yf1 - (float) jj1;
                 if((ii1>-1)&&(ii1+1<naxes[0])&&(jj1>-1)&&(jj1+1<naxes[1]))
                 {
-					v00f = data.image[ID].array.F[jj1*naxes[0]+ii1];
-					v01f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1];
-					v10f = data.image[ID].array.F[jj1*naxes[0]+ii1+1];
-					v11f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1+1];
-					data.image[IDout].array.F[jj*naxesout[0]+ii] = (float) (v00f*(1.0-uf)*(1.0-tf)+v10f*uf*(1.0-tf)+v01f*(1.0-uf)*tf+v11f*uf*tf);
-				}
+                    v00f = data.image[ID].array.F[jj1*naxes[0]+ii1];
+                    v01f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1];
+                    v10f = data.image[ID].array.F[jj1*naxes[0]+ii1+1];
+                    v11f = data.image[ID].array.F[(jj1+1)*naxes[0]+ii1+1];
+                    data.image[IDout].array.F[jj*naxesout[0]+ii] = (float) (v00f*(1.0-uf)*(1.0-tf)+v10f*uf*(1.0-tf)+v01f*(1.0-uf)*tf+v11f*uf*tf);
+                }
             }
     }
     else if(atype == DOUBLE)
@@ -2452,6 +2476,7 @@ long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysize
 
     return(0);
 }
+
 
 
 

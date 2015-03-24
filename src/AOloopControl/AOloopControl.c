@@ -46,7 +46,7 @@
 
 
 
-int GPU_COMPUTATION_MODE = 1; 
+int MATRIX_COMPUTATION_MODE = 1; 
 // 0: compute sequentially modes and DM commands
 // 1: use combined control matrix
 
@@ -2042,72 +2042,73 @@ long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 
 long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize)
 {
-	long ID;
-	int CreateSMim;
-	int sizeOK;
-	long *sizearray;
-	char command[500];
-	int r;
-	long ID1;
-	
+    long ID;
+    int CreateSMim;
+    int sizeOK;
+    long *sizearray;
+    char command[500];
+    int r;
+    long ID1;
+
     ID = image_ID(name);
     sizearray = (long*) malloc(sizeof(long)*3);
-        
+
     if(ID==-1)
+    {
+        CreateSMim = 0;
+        ID = read_sharedmem_image(name);
+        if(ID!=-1)
         {
-			CreateSMim = 0;	
-			ID = read_sharedmem_image(name);
-			if(ID!=-1)
-			{
-				sizeOK = COREMOD_MEMORY_check_3Dsize(name, xsize, ysize, zsize);
-				if(sizeOK==0)
-                {
-                    printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
-                    delete_image_ID(name);
-                    sprintf(command, "rm /tmp/%s.im.shm", name);
-                    r = system(command);
-                    CreateSMim = 1;
-                }
-			}
-			else
-				CreateSMim = 1;
-				
-			if(CreateSMim == 1)
+            sizeOK = COREMOD_MEMORY_check_3Dsize(name, xsize, ysize, zsize);
+            if(sizeOK==0)
             {
-				sizearray[0] = xsize;
-				sizearray[1] = ysize;
-				sizearray[2] = zsize;
-				printf("Creating %s   [%ld x %ld x %ld]\n", name, sizearray[0], sizearray[1], sizearray[2]);
-				fflush(stdout);
-				ID = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
-			}
-		}
-	free(sizearray);
-	
-	if(ID==-1)
-		{
-			printf("ERROR: could not load/create %s\n", name);
-			exit(0);
-		}
-	else
-		{
-			ID1 = load_fits(fname, "tmp3Dim", 1);
-			if(ID1!=-1)
-			{
-				sizeOK = COREMOD_MEMORY_check_3Dsize("tmp3Dim", xsize, ysize, zsize);
-				if(sizeOK==1)
-					{
-						memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize*zsize);
-						printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
-					}
-				else
-					printf("File \"%s\" has wrong size (should be 3-D %ld x %ld, x %ld  is %ld-D %ld x %ld x %ld): ignoring\n", fname, xsize, ysize, zsize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1], data.image[ID1].md[0].size[2]);
-				delete_image_ID("tmp3Dim");
-			}
-		}
-	
-	return ID;
+                printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
+                delete_image_ID(name);
+                sprintf(command, "rm /tmp/%s.im.shm", name);
+                r = system(command);
+                CreateSMim = 1;
+            }
+        }
+        else
+            CreateSMim = 1;
+
+        if(CreateSMim == 1)
+        {
+            sizearray[0] = xsize;
+            sizearray[1] = ysize;
+            sizearray[2] = zsize;
+            printf("Creating %s   [%ld x %ld x %ld]\n", name, sizearray[0], sizearray[1], sizearray[2]);
+            fflush(stdout);
+            ID = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
+        }
+    }
+    free(sizearray);
+
+    if(ID==-1)
+    {
+        printf("ERROR: could not load/create %s\n", name);
+        exit(0);
+    }
+    else
+    {
+        ID1 = load_fits(fname, "tmp3Dim", 1);
+        if(ID1!=-1)
+        {
+            sizeOK = COREMOD_MEMORY_check_3Dsize("tmp3Dim", xsize, ysize, zsize);
+            if(sizeOK==1)
+            {
+                memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize*zsize);
+                printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
+            }
+            else
+                printf("File \"%s\" has wrong size (should be 3-D %ld x %ld, x %ld  is %ld-D %ld x %ld x %ld): ignoring\n", fname, xsize, ysize, zsize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1], data.image[ID1].md[0].size[2]);
+            delete_image_ID("tmp3Dim");
+        }
+    }
+
+    return ID;
 }
+
 
 
 
@@ -2292,109 +2293,110 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
-    // Load DM modes (will exit if not successful)
+// Load DM modes (will exit if not successful)
 
-    aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname); // if already exists, trust it and adopt it
+aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname); // if already exists, trust it and adopt it
 
-    if(aoconfID_DMmodes==-1) // If not, check file
+if(aoconfID_DMmodes==-1) // If not, check file
+{
+
+    printf("Checking file ./conf/fmodes.fits\n");
+
+    // GET SIZE FROM FILE
+    ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim", 1);
+    if(ID1tmp==-1)
+    {
+        printf("ERROR: no file \"./conf/fmodes.fits\"\n");
+        exit(0);
+    }
+
+    // check size
+    if(data.image[ID1tmp].md[0].naxis != 3)
+    {
+        printf("ERROR: File \"./conf/fmodes.fits\" is not a 3D image (cube)\n");
+        exit(0);
+    }
+    if(data.image[ID1tmp].md[0].size[0] != AOconf[loop].sizexDM)
+    {
+        printf("ERROR: File \"./conf/fmodes.fits\" has wrong x size: should be %ld, is %ld\n", AOconf[loop].sizexDM, data.image[ID1tmp].md[0].size[0]);
+        exit(0);
+    }
+    if(data.image[ID1tmp].md[0].size[1] != AOconf[loop].sizeyDM)
+    {
+        printf("ERROR: File \"./conf/fmodes.fits\" has wrong y size: should be %ld, is %ld\n", AOconf[loop].sizeyDM, data.image[ID1tmp].md[0].size[1]);
+        exit(0);
+    }
+    AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
+
+    printf("NUMBER OF MODES = %ld\n", AOconf[loop].NBDMmodes);
+
+    // try to read it from shared memory
+    ID2tmp = read_sharedmem_image(AOconf[loop].DMMODESname);
+    vOK = 0;
+    if(ID2tmp != -1) // if shared memory exists, check its size
+    {
+        vOK = 1;
+        if(data.image[ID2tmp].md[0].naxis != 3)
+        {
+            printf("ERROR: Shared memory File %s is not a 3D image (cube)\n", AOconf[loop].DMMODESname);
+            vOK = 0;
+        }
+        if(data.image[ID2tmp].md[0].size[0] != AOconf[loop].sizexDM)
+        {
+            printf("ERROR: Shared memory File %s has wrong x size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].sizexDM, data.image[ID2tmp].md[0].size[0]);
+            vOK = 0;
+        }
+        if(data.image[ID2tmp].md[0].size[1] != AOconf[loop].sizeyDM)
+        {
+            printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].sizeyDM, data.image[ID2tmp].md[0].size[1]);
+            vOK = 0;
+        }
+        if(data.image[ID2tmp].md[0].size[2] != AOconf[loop].NBDMmodes)
+        {
+            printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].NBDMmodes, data.image[ID2tmp].md[0].size[2]);
+            vOK = 0;
+        }
+
+        if(vOK==1) // if size is OK, adopt it
+            aoconfID_DMmodes = ID2tmp;
+        else // if not, erase shared memory
+        {
+            printf("SHARED MEM IMAGE HAS WRONG SIZE -> erasing it\n");
+            delete_image_ID(AOconf[loop].DMMODESname);
+        }
+    }
+
+
+    if(vOK==0) // create shared memory
     {
 
-		printf("Checking file ./conf/fmodes.fits\n");
+        sizearray[0] = AOconf[loop].sizexDM;
+        sizearray[1] = AOconf[loop].sizeyDM;
+        sizearray[2] = AOconf[loop].NBDMmodes;
+        printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].DMMODESname, sizearray[0], sizearray[1], sizearray[2]);
+        fflush(stdout);
+        aoconfID_DMmodes = create_image_ID(AOconf[loop].DMMODESname, 3, sizearray, FLOAT, 1, 0);
+    }
 
-        // GET SIZE FROM FILE
-        ID1tmp = load_fits("./conf/fmodes.fits", "tmp3Dim", 1);
-        if(ID1tmp==-1)
-        {
-            printf("ERROR: no file \"./conf/fmodes.fits\"\n");
-            exit(0);
-        }
+    // put modes into shared memory
 
-        // check size
-        if(data.image[ID1tmp].md[0].naxis != 3)
-        {
-            printf("ERROR: File \"./conf/fmodes.fits\" is not a 3D image (cube)\n");
-            exit(0);
-        }
-        if(data.image[ID1tmp].md[0].size[0] != AOconf[loop].sizexDM)
-        {
-            printf("ERROR: File \"./conf/fmodes.fits\" has wrong x size: should be %ld, is %ld\n", AOconf[loop].sizexDM, data.image[ID1tmp].md[0].size[0]);
-            exit(0);
-        }
-        if(data.image[ID1tmp].md[0].size[1] != AOconf[loop].sizeyDM)
-        {
-            printf("ERROR: File \"./conf/fmodes.fits\" has wrong y size: should be %ld, is %ld\n", AOconf[loop].sizeyDM, data.image[ID1tmp].md[0].size[1]);
-            exit(0);
-        }
-        AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
+    switch (data.image[ID1tmp].md[0].atype) {
+    case FLOAT :
+        memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
+        break;
+    case DOUBLE :
+        for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes; ii++)
+            data.image[aoconfID_DMmodes].array.F[ii] = data.image[ID1tmp].array.D[ii];
+        break;
+    default :
+        printf("ERROR: TYPE NOT RECOGNIZED FOR MODES\n");
+        exit(0);
+        break;
+    }
 
-		printf("NUMBER OF MODES = %ld\n", AOconf[loop].NBDMmodes);
-
-        // try to read it from shared memory
-        ID2tmp = read_sharedmem_image(AOconf[loop].DMMODESname);
-        vOK = 0;
-        if(ID2tmp != -1) // if shared memory exists, check its size
-        {
-            vOK = 1;
-            if(data.image[ID2tmp].md[0].naxis != 3)
-            {
-                printf("ERROR: Shared memory File %s is not a 3D image (cube)\n", AOconf[loop].DMMODESname);
-                vOK = 0;
-            }
-            if(data.image[ID2tmp].md[0].size[0] != AOconf[loop].sizexDM)
-            {
-                printf("ERROR: Shared memory File %s has wrong x size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].sizexDM, data.image[ID2tmp].md[0].size[0]);
-                vOK = 0;
-            }
-            if(data.image[ID2tmp].md[0].size[1] != AOconf[loop].sizeyDM)
-            {
-                printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].sizeyDM, data.image[ID2tmp].md[0].size[1]);
-                vOK = 0;
-            }
-            if(data.image[ID2tmp].md[0].size[2] != AOconf[loop].NBDMmodes)
-            {
-                printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMMODESname, AOconf[loop].NBDMmodes, data.image[ID2tmp].md[0].size[2]);
-                vOK = 0;
-            }
-
-            if(vOK==1) // if size is OK, adopt it
-                aoconfID_DMmodes = ID2tmp;
-            else // if not, erase shared memory 
-            {
-				printf("SHARED MEM IMAGE HAS WRONG SIZE -> erasing it\n");	
-				delete_image_ID(AOconf[loop].DMMODESname);
-            }
-        }
-        
-        
-        if(vOK==0) // create shared memory 
-		{
-		
-			sizearray[0] = AOconf[loop].sizexDM;
-			sizearray[1] = AOconf[loop].sizeyDM;
-			sizearray[2] = AOconf[loop].NBDMmodes;
-			printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].DMMODESname, sizearray[0], sizearray[1], sizearray[2]);
-			fflush(stdout);
-			aoconfID_DMmodes = create_image_ID(AOconf[loop].DMMODESname, 3, sizearray, FLOAT, 1, 0);
+    delete_image_ID("tmp3Dim");
 }
 
-		// put modes into shared memory
-		
-		switch (data.image[ID1tmp].md[0].atype) {
-			case FLOAT :
-				memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
-			break;
-			case DOUBLE :
-				for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes; ii++)
-					data.image[aoconfID_DMmodes].array.F[ii] = data.image[ID1tmp].array.D[ii];
-			break;
-			default :
-				printf("ERROR: TYPE NOT RECOGNIZED FOR MODES\n");
-				exit(0);
-			break;
-		}
-		
-		delete_image_ID("tmp3Dim");
-	}
 
 
 
@@ -2702,11 +2704,11 @@ int set_DM_modes(long loop)
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 #endif
     }
-    
+
     if(aoconfID_DMdisp!=-1)
-		if(data.image[aoconfID_DMdisp].sem1 == 1)
-			sem_post(data.image[aoconfID_DMdisp].semptr1);
-    
+        if(data.image[aoconfID_DMdisp].sem1 == 1)
+            sem_post(data.image[aoconfID_DMdisp].semptr1);
+
     AOconf[loop].DMupdatecnt ++;
 
     return(0);
@@ -2716,44 +2718,46 @@ int set_DM_modes(long loop)
 
 
 
+
 int set_DM_modesRM(long loop)
 {
-  long k;
-  long i, j;
-  float *arrayf;
+    long k;
+    long i, j;
+    float *arrayf;
 
 
 
-  arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
+    arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
 
 
-	//printf("============ %ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
-	//fflush(stdout);
-	//list_image_ID();
+    //printf("============ %ld %ld   %ld\n", aoconfID_cmd_modesRM, aoconfID_DMmodes, AOconf[loop].sizeDM);
+    //fflush(stdout);
+    //list_image_ID();
 
 
-  for(j=0;j<AOconf[loop].sizeDM;j++)
-    arrayf[j] = 0.0;
+    for(j=0; j<AOconf[loop].sizeDM; j++)
+        arrayf[j] = 0.0;
 
-  for(k=0; k < AOconf[loop].NBDMmodes; k++)
+    for(k=0; k < AOconf[loop].NBDMmodes; k++)
     {
-      for(i=0;i<AOconf[loop].sizeDM;i++)
-	arrayf[i] += data.image[aoconfID_cmd_modesRM].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
+        for(i=0; i<AOconf[loop].sizeDM; i++)
+            arrayf[i] += data.image[aoconfID_cmd_modesRM].array.F[k] * data.image[aoconfID_DMmodes].array.F[k*AOconf[loop].sizeDM+i];
     }
 
 
-  data.image[aoconfID_DMRM].md[0].write = 1;
-  memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-  data.image[aoconfID_DMRM].md[0].cnt0++;
-  data.image[aoconfID_DMRM].md[0].write = 0;
+    data.image[aoconfID_DMRM].md[0].write = 1;
+    memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+    data.image[aoconfID_DMRM].md[0].cnt0++;
+    data.image[aoconfID_DMRM].md[0].write = 0;
 
-  free(arrayf);
-  AOconf[loop].DMupdatecnt ++;
+    free(arrayf);
+    AOconf[loop].DMupdatecnt ++;
 
 
-  return(0);
+    return(0);
 }
+
 
 
 
@@ -2768,20 +2772,20 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     double value;
     long delayus;
     float *arrayf;
-	char fname[200];
-	char name[200];
+    char fname[200];
+    char name[200];
     long IDpos, IDneg;
-	float tot, v1, rms;
-	long *sizearray;
+    float tot, v1, rms;
+    long *sizearray;
 
-	sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (long*) malloc(sizeof(long)*2);
 
     delayus = (long) (1000000.0*delays);
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
-    
-    
+
+
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
@@ -2802,9 +2806,9 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
-//    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
-	sizearray[0] = AOconf[loop].sizexDM;
-	sizearray[1] = AOconf[loop].sizeyDM;
+    //    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+    sizearray[0] = AOconf[loop].sizexDM;
+    sizearray[1] = AOconf[loop].sizeyDM;
     IDmap = create_image_ID(WFS_actmap, 2, sizearray, FLOAT, 1, 5);
 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -2841,7 +2845,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
                 data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
         }
 
-       /** Negative displacement */
+        /** Negative displacement */
 
         for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = 0.0;
@@ -2865,29 +2869,29 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
 
 
-		/** compute value */
-		
-		tot = 0.0;
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			tot += data.image[IDpos].array.F[ii];
-		tot /= AOconf[loop].sizeWFS;
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			data.image[IDpos].array.F[ii] -= tot;
+        /** compute value */
 
-		tot = 0.0;
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			tot += data.image[IDneg].array.F[ii];
-		tot /= AOconf[loop].sizeWFS;
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			data.image[IDneg].array.F[ii] -= tot;
-	
+        tot = 0.0;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            tot += data.image[IDpos].array.F[ii];
+        tot /= AOconf[loop].sizeWFS;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDpos].array.F[ii] -= tot;
 
-		rms = 0.0;
-		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-			{
-				v1 = data.image[IDneg].array.F[ii] - data.image[IDpos].array.F[ii];
-				rms += v1*v1;
-			}
+        tot = 0.0;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            tot += data.image[IDneg].array.F[ii];
+        tot /= AOconf[loop].sizeWFS;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[IDneg].array.F[ii] -= tot;
+
+
+        rms = 0.0;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+        {
+            v1 = data.image[IDneg].array.F[ii] - data.image[IDpos].array.F[ii];
+            rms += v1*v1;
+        }
 
         data.image[IDmap].array.F[act] = sqrt(rms);
     }
@@ -2906,10 +2910,11 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
 
 
+
 /** Record periodic camera signal (to be used if there is a periodic camera error)
  *
  * folds the signal onto one period
- * 
+ *
  */
 
 int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name)
@@ -2943,10 +2948,10 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     long pp1, pp2, pp3;
     int level1OK, level2OK, level3OK;
 
-	long kw;
-	char kname[200];
-	char comment[200];
-	
+    long kw;
+    char kname[200];
+    char comment[200];
+
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
@@ -2957,7 +2962,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
     fflush(stdout);
-    
+
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
     //exit(0);
@@ -3060,25 +3065,25 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     {
         if(level1OK==0)
             if(coarsermsarray[p]>level1)
-                {
-					level1OK = 1;
-					pp1 = p;
-				}
-				
+            {
+                level1OK = 1;
+                pp1 = p;
+            }
+
         if((level1OK==1)&&(level2OK==0))
             if(coarsermsarray[p]>level2)
-                {
-					level2OK = 1;
-					pp2 = p;
-				}
-				
+            {
+                level2OK = 1;
+                pp2 = p;
+            }
+
         if((level1OK==1)&&(level2OK==1)&&(level3OK==0))
             if(coarsermsarray[p]<level3)
-				{
-					pp3 = p;
-					level3OK = 1;
-				}
-				
+            {
+                pp3 = p;
+                level3OK = 1;
+            }
+
         if((level1OK==1)&&(level2OK==1)&&(level3OK==1))
         {
             if(coarsermsarray[p] < rmsvalmin1)
@@ -3224,6 +3229,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
 
 
+
 /** remove WFS camera periodic error
  *
  * pha: phase from 0.0 to 1.0
@@ -3250,7 +3256,7 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
     if(phal>zsize-1)
         phal -= zsize;
 
-	
+
 
     for(ii=0; ii<xysize; ii++) {
         data.image[IDin].array.F[ii] -= data.image[IDcorr].array.F[xysize*phal+ii];
@@ -3259,6 +3265,7 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
 
     return(0);
 }
+
 
 
 
@@ -3810,7 +3817,7 @@ int AOcompute(long loop)
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
         if(IDmask==-1)
-			IDmask = create_2Dimage_ID("wfsmask", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+            IDmask = create_2Dimage_ID("wfsmask", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDmask].array.F[ii] = 1.0;
         if(IDmask != -1)
@@ -3824,7 +3831,7 @@ int AOcompute(long loop)
                 }
             AOconf[loop].sizeWFS_active = ii1;
         }
-		aoconfID_WFS2_active = create_2Dimage_ID("wfs2active", AOconf[loop].sizeWFS_active, 1);
+        aoconfID_WFS2_active = create_2Dimage_ID("wfs2active", AOconf[loop].sizeWFS_active, 1);
 
 
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
@@ -3844,7 +3851,7 @@ int AOcompute(long loop)
                 }
             AOconf[loop].sizeDM_active = ii1;
         }
-		aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
+        aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
 
         if(aoconfID_contrMc==-1)
         {
@@ -3889,37 +3896,37 @@ int AOcompute(long loop)
 # endif
         memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
-	
-//        matrix_Mc_active = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+
+        //        matrix_Mc_active = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
         aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
-           {
-	//		printf("act_active = %ld [%d]\n", act_active, DM_active_map[act_active]);
-		//	fflush(stdout);
-		//	sleep(5);
-	    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+        {
+            //		printf("act_active = %ld [%d]\n", act_active, DM_active_map[act_active]);
+            //	fflush(stdout);
+            //	sleep(5);
+            for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
             {
-				act = DM_active_map[act_active];
-				wfselem = WFS_active_map[wfselem_active];
+                act = DM_active_map[act_active];
+                wfselem = WFS_active_map[wfselem_active];
                 data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
             }
-		   }
-       free(matrix_Mc);
-       free(matrix_DMmodes);
+        }
+        free(matrix_Mc);
+        free(matrix_DMmodes);
 
-		printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
-       /*
-           for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
-                {
-        			printf("mode %6ld    \n", mode);
-        			fflush(stdout);
+        printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
+        /*
+            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+                 {
+         			printf("mode %6ld    \n", mode);
+         			fflush(stdout);
 
-                    for(act=0; act<AOconf[loop].sizeDM; act++)
-                        for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                            data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
-                }
-        */
+                     for(act=0; act<AOconf[loop].sizeDM; act++)
+                         for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+                             data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
+                 }
+         */
 
 
 
@@ -3946,13 +3953,16 @@ int AOcompute(long loop)
 
     if(AOconf[loop].GPU == 0)
     {
+        // TO BE FIXED : enable combined control matrix here 
+        
         ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
         data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+
     }
     else
     {
 #ifdef HAVE_CUDA
-        if(GPU_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
             GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
             AOconf[loop].status = 8; // execute
@@ -3960,45 +3970,45 @@ int AOcompute(long loop)
         }
         else // direct pixel -> actuators linear transformation
         {
-			if(0)
-				{
-					GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-				AOconf[loop].status = 8; // execute
-				GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
-				}
-				else // only use active pixels and actuators
-				{
-					// re-map input vector
-				//	printf("remapping Vector wfs re\n");
-					//fflush(stdout);				
-					for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-						data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];					
-					data.image[aoconfID_WFS2_active].md[0].cnt0++;
-					//printf("Vector wfs re-mapped\n");
-					//fflush(stdout);
-					//sleep(2);
-					
-					// perform matrix mult			
-					GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-					AOconf[loop].status = 8; // execute
-			
-//					printf("ready to execute\n");
-	//				fflush(stdout);
-		//			sleep(10);
-					
-					GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
-				
-					// re-map output vector
-					for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
-						data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
-				}
-            
+            if(0)
+            {
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+                AOconf[loop].status = 8; // execute
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+            }
+            else // only use active pixels and actuators
+            {
+                // re-map input vector
+                //	printf("remapping Vector wfs re\n");
+                //fflush(stdout);
+                for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                    data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
+                data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                //printf("Vector wfs re-mapped\n");
+                //fflush(stdout);
+                //sleep(2);
+
+                // perform matrix mult
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+                AOconf[loop].status = 8; // execute
+
+                //					printf("ready to execute\n");
+                //				fflush(stdout);
+                //			sleep(10);
+
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+
+                // re-map output vector
+                for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
+                    data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
+            }
+
         }
 #endif
     }
 
     AOconf[loop].status = 13; // MULTIPLYING BY GAINS
-    if(GPU_COMPUTATION_MODE==0)
+    if(MATRIX_COMPUTATION_MODE==0)
     {
         AOconf[loop].RMSmodes = 0;
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
@@ -4113,7 +4123,7 @@ int AOloopControl_run()
 
                 AOconf[loop].status = 14;
 
-                if(GPU_COMPUTATION_MODE==0)
+                if(MATRIX_COMPUTATION_MODE==0)
                 {
                     if(fabs(AOconf[loop].gain)>1.0e-6)
                         set_DM_modes(loop);
@@ -4125,10 +4135,10 @@ int AOloopControl_run()
                     data.image[aoconfID_DM].md[0].write = 1;
 
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-                        {
-							data.image[aoconfID_DM].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
-							data.image[aoconfID_DM].array.F[ii] *= AOconf[loop].mult;
-						}
+                    {
+                        data.image[aoconfID_DM].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
+                        data.image[aoconfID_DM].array.F[ii] *= AOconf[loop].mult;
+                    }
                     if(data.image[aoconfID_DM].sem == 1)
                         sem_post(data.image[aoconfID_DM].semptr);
                     data.image[aoconfID_DM].md[0].cnt0++;
@@ -4161,6 +4171,7 @@ int AOloopControl_run()
 
     return(0);
 }
+
 
 
 
@@ -4400,13 +4411,13 @@ int AOloopControl_statusStats()
     int nbgpu;
     struct timespec t1;
     struct timespec t2;
-	struct timespec tdiff;
+    struct timespec tdiff;
     double tdiffv;
     long *statusgpucnt;
     long *statusgpucnt2;
-	double loopiterus;
-	long long loopcnt;
-	
+    double loopiterus;
+    long long loopcnt;
+
     statusdef[0] = "";
     statusdef[1] = "READING IMAGE";
     statusdef[2] = "WAIT FOR IMAGE";
@@ -4458,9 +4469,9 @@ int AOloopControl_statusStats()
         statusgpucnt[st] = 0;
         statusgpucnt2[st] = 0;
     }
-    
+
     loopcnt = AOconf[LOOPNUMBER].cnt;
-	clock_gettime(CLOCK_REALTIME, &t1);
+    clock_gettime(CLOCK_REALTIME, &t1);
     for(k=0; k<NBkiter; k++)
     {
         usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
@@ -4479,15 +4490,15 @@ int AOloopControl_statusStats()
         }
     }
     loopcnt = AOconf[LOOPNUMBER].cnt - loopcnt;
-	clock_gettime(CLOCK_REALTIME, &t2);
+    clock_gettime(CLOCK_REALTIME, &t2);
     tdiff = info_time_diff(t1, t2);
-	tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-	printf("\n");
-	loopiterus = 1.0e6*tdiffv/loopcnt;
-	printf("Time diff = %f sec \n", tdiffv);
-	printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);		
-	printf("\n");
-	
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    printf("\n");
+    loopiterus = 1.0e6*tdiffv/loopcnt;
+    printf("Time diff = %f sec \n", tdiffv);
+    printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);
+    printf("\n");
+
     for(st=0; st<statusmax; st++)
         printf("STATUS %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
 
@@ -4506,7 +4517,7 @@ int AOloopControl_statusStats()
             printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
             printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
         }
-       for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
         {
             printf("GPU %2d  : ", gpu);
             printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+1]/NBkiter);
@@ -4518,20 +4529,20 @@ int AOloopControl_statusStats()
         }
 
         printf("\n");
-		if(GPU_COMPUTATION_MODE == 0) 
-		{
-			        printf("          ----1--------2--------3--------4--------5--------6----\n");
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        if(MATRIX_COMPUTATION_MODE == 0)
         {
-            printf("GPU %2d  : ", gpu);
-            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBkiter);
-            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+2]/NBkiter);
-            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+3]/NBkiter);
-            printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+4]/NBkiter);
-            printf("  %5.2f %%",   100.0*statusgpucnt2[10*gpu+5]/NBkiter);
-            printf("  %5.2f %%\n",  100.0*statusgpucnt2[10*gpu+6]/NBkiter);
+            printf("          ----1--------2--------3--------4--------5--------6----\n");
+            for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+            {
+                printf("GPU %2d  : ", gpu);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBkiter);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+2]/NBkiter);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+3]/NBkiter);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+4]/NBkiter);
+                printf("  %5.2f %%",   100.0*statusgpucnt2[10*gpu+5]/NBkiter);
+                printf("  %5.2f %%\n",  100.0*statusgpucnt2[10*gpu+6]/NBkiter);
+            }
         }
-		}
     }
     free(statuscnt);
     free(statusgpucnt);
@@ -4540,6 +4551,7 @@ int AOloopControl_statusStats()
 
     return 0;
 }
+
 
 
 
