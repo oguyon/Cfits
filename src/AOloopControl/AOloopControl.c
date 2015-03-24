@@ -3826,7 +3826,7 @@ int AOcompute(long loop)
 
     //printf("init_CMc = %d\n", AOconf[loop].init_CMc);
     //fflush(stdout);
-    if(AOconf[loop].init_CMc == 0) // compute combined control matrix
+    if((AOconf[loop].init_CMc == 0)&&(MATRIX_COMPUTATION_MODE==0)) // compute combined control matrix
     {
         printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
