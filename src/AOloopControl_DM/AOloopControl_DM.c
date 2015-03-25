@@ -246,28 +246,30 @@ int init_AOloopControl_DM()
 
 struct timespec time_diff(struct timespec start, struct timespec end)
 {
-  struct timespec temp;
-  if ((end.tv_nsec-start.tv_nsec)<0) {
-    temp.tv_sec = end.tv_sec-start.tv_sec-1;
-    temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
-  } else {
-    temp.tv_sec = end.tv_sec-start.tv_sec;
-    temp.tv_nsec = end.tv_nsec-start.tv_nsec;
-  }
-  return temp;
+    struct timespec temp;
+    if ((end.tv_nsec-start.tv_nsec)<0) {
+        temp.tv_sec = end.tv_sec-start.tv_sec-1;
+        temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+    } else {
+        temp.tv_sec = end.tv_sec-start.tv_sec;
+        temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+    }
+    return temp;
 }
+
 
 
 
 
 int AOloopControl_DM_setsize(long size1d)
 {
-	DM_Xsize = size1d;
-	DM_Ysize = size1d;
-	NBact = DM_Xsize*DM_Ysize; // default
-	
-	return 0;
+    DM_Xsize = size1d;
+    DM_Ysize = size1d;
+    NBact = DM_Xsize*DM_Ysize; // default
+
+    return 0;
 }
+
 
 
 
@@ -848,8 +850,8 @@ int AOloopControl_DM_turb()
 
   AOloopControl_DMturb_createconf();
  
-  IDs1 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1", 1);
-  IDs2 = load_fits("/home/aoloopcontrol/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2", 1); 
+  IDs1 = load_fits("~/conf/turb/turbscreen0.fits", "screen1", 1);
+  IDs2 = load_fits("~/conf/turb/turbscreen0g.fits", "screen2", 1); 
   
 
   printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
