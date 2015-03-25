@@ -932,7 +932,7 @@ int AOloopControl_DM_turb()
         {
             data.image[IDturb].array.F[ii1] -= ave;
             data.image[IDturb].array.F[ii1] *= coeff;
-        }
+        } 
 
         RMSval = 0.0;
         RMSvalcnt = 0;
