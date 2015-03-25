@@ -353,42 +353,42 @@ int AOloopControl_DM_createconf()
 
 int AOloopControl_DM_loadconf()
 {
-  int result;
+    int result;
 
-  if( dmdispcomb_loaded == 0 ) 
+    if( dmdispcomb_loaded == 0 )
     {
-      printf("Create/read configuration\n");  
-      
-      SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
-      if (SMfd == -1) {
-	perror("Error opening file for writing");
-	exit(EXIT_FAILURE);
-      }      
-      dispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
-      if (dispcombconf == MAP_FAILED) {
-	close(SMfd);
-	perror("Error mmapping the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      dmdispcomb_loaded = 1; 
+        printf("Create/read configuration\n");
+
+        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
+        if (SMfd == -1) {
+            perror("Error opening file for writing");
+            exit(EXIT_FAILURE);
+        }
+        dispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+        if (dispcombconf == MAP_FAILED) {
+            close(SMfd);
+            perror("Error mmapping the file");
+            exit(EXIT_FAILURE);
+        }
+
+        dmdispcomb_loaded = 1;
     }
 
-  return 0;
+    return 0;
 }
 
 
 
 int AOloopControl_DM_unloadconf()
 {
-  if( dmdispcomb_loaded == 1 ) 
+    if( dmdispcomb_loaded == 1 )
     {
-      if (munmap(dispcombconf, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)) == -1)
-	perror("Error un-mmapping the file");
-      close(SMfd);
-      dmdispcomb_loaded = 0;
+        if (munmap(dispcombconf, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)) == -1)
+            perror("Error un-mmapping the file");
+        close(SMfd);
+        dmdispcomb_loaded = 0;
     }
-  return 0;
+    return 0;
 }
 
 
@@ -418,13 +418,13 @@ int AOloopControl_DM_CombineChannels(int mode)
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
     int r;
-	long sizexy;
-	float *dmdispptr;
-	float *dmdispptr_array[20];
-	long IDdispt;
-	char sname[200];
-	long nsecwait = 100000; // 100 us
-	
+    long sizexy;
+    float *dmdispptr;
+    float *dmdispptr_array[20];
+    long IDdispt;
+    char sname[200];
+    long nsecwait = 100000; // 100 us
+
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -435,7 +435,7 @@ int AOloopControl_DM_CombineChannels(int mode)
     IDch = (long*) malloc(sizeof(long)*NBch);
     size[0] = xsize;
     size[1] = ysize;
-	sizexy = xsize*ysize;
+    sizexy = xsize*ysize;
 
 
     AOloopControl_DM_createconf();
@@ -449,14 +449,14 @@ int AOloopControl_DM_CombineChannels(int mode)
         sprintf(name, "dmdisp%ld", ch);
         printf("Channel %ld \n", ch);
         IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
-		dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
+        dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
     }
 
-	
+
     IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
 
-	IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
-	dmdispptr = data.image[IDdispt].array.F;
+    IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
+    dmdispptr = data.image[IDdispt].array.F;
 
     if(mode==1)
         IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
@@ -465,37 +465,37 @@ int AOloopControl_DM_CombineChannels(int mode)
 
     dispcombconf[0].status = 1;
 
-	if(data.image[IDdisp].sem1==0)
-	{
-		sprintf(sname, "%s_sem1", data.image[IDdisp].md[0].name);
+    if(data.image[IDdisp].sem1==0)
+    {
+        sprintf(sname, "%s_sem1", data.image[IDdisp].md[0].name);
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
             perror("semaphore 1 initilization error");
             exit(1);
         }
         else
-			printf("semaphore 1 initialized for image dmdisp \n");
-	data.image[IDdisp].sem1 = 1;
-	}
+            printf("semaphore 1 initialized for image dmdisp \n");
+        data.image[IDdisp].sem1 = 1;
+    }
 
     while(dispcombconf[0].ON == 1)
     {
         dispcombconf[0].status = 2;
 
-	
-		if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
-			perror("clock_gettime");
-			exit(EXIT_FAILURE);
-		}
-		semwaitts.tv_nsec += nsecwait;
-		if(semwaitts.tv_nsec >= 1000000000)
-			semwaitts.tv_sec = semwaitts.tv_sec + 1;
-		
-		sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
+
+        if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
+            perror("clock_gettime");
+            exit(EXIT_FAILURE);
+        }
+        semwaitts.tv_nsec += nsecwait;
+        if(semwaitts.tv_nsec >= 1000000000)
+            semwaitts.tv_sec = semwaitts.tv_sec + 1;
+
+        sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
         // usleep(10);
 
         cntsum = 0;
 
-		
+
 
         for(ch=0; ch<NBch; ch++)
             cntsum += data.image[IDch[ch]].md[0].cnt0;
@@ -507,12 +507,12 @@ int AOloopControl_DM_CombineChannels(int mode)
             cnt++;
 
             memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
-			for(ch=1; ch<NBch; ch++)
+            for(ch=1; ch<NBch; ch++)
             {
-				for(ii=0;ii<sizexy;ii++)
-					dmdispptr[ii] += dmdispptr_array[ch][ii];
+                for(ii=0; ii<sizexy; ii++)
+                    dmdispptr[ii] += dmdispptr_array[ch][ii];
             }
- 
+
             dispcombconf[0].status = 4;
 
             // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
@@ -569,6 +569,7 @@ int AOloopControl_DM_CombineChannels(int mode)
 
 
 
+
 int AOloopControl_DM_dmdispcombstatus()
 {
   long long mcnt = 0;
@@ -614,28 +615,29 @@ int AOloopControl_DM_dmdispcombstatus()
 
 int AOloopControl_DM_dmdispcomboff()
 {
-  AOloopControl_DM_loadconf();
-  dispcombconf[0].ON = 0;
+    AOloopControl_DM_loadconf();
+    dispcombconf[0].ON = 0;
 
-  return 0;
+    return 0;
 }
 
 int AOloopControl_DM_dmtrigoff()
 {
-  long ID;
-  
-  ID=image_ID("dmvolt");
+    long ID;
 
-  if(ID!=-1)
-    data.image[ID].md[0].status = 101;
-  else
+    ID=image_ID("dmvolt");
+
+    if(ID!=-1)
+        data.image[ID].md[0].status = 101;
+    else
     {
-      ID = read_sharedmem_image("dmvolt");
-      data.image[ID].md[0].status = 101;
+        ID = read_sharedmem_image("dmvolt");
+        data.image[ID].md[0].status = 101;
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 
@@ -656,90 +658,92 @@ int AOloopControl_DM_dmtrigoff()
 
 int AOloopControl_DMturb_createconf()
 {
-  int result;
-  long IDc1;
+    int result;
+    long IDc1;
 
-  if( dmturb_loaded == 0 ) 
+    if( dmturb_loaded == 0 )
     {
-      printf("Create/read configuration\n");  
-      fflush(stdout);
+        printf("Create/read configuration\n");
+        fflush(stdout);
 
-      IDc1 = image_ID("dmdisp1");
-      if(IDc1 == -1)
-	read_sharedmem_image("dmdisp1");
-      
-      IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
+        IDc1 = image_ID("dmdisp1");
+        if(IDc1 == -1)
+            read_sharedmem_image("dmdisp1");
 
- 
-      SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-      if (SMturbfd == -1) {
-	perror("Error opening file for writing");
-	exit(EXIT_FAILURE);
-      }
-      
-      result = lseek(SMturbfd, sizeof(AOLOOPCONTROL_DMTURBCONF)-1, SEEK_SET);
-      if (result == -1) {
-	close(SMturbfd);
-	perror("Error calling lseek() to 'stretch' the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      result = write(SMturbfd, "", 1);
-      if (result != 1) {
-	close(SMturbfd);
-	perror("Error writing last byte of the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
-      if (dmturbconf == MAP_FAILED) {
-	close(SMturbfd);
-	perror("Error mmapping the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      dmturbconf[0].on = 1;
-      dmturbconf[0].ampl = 0.01; // [um]
-      dmturbconf[0].tint = 100; // [us]
-      dmturbconf[0].simtime = 0.0; // sec
-      dmturbconf[0].wspeed = 10.0; // [m/s]
-      dmturbconf[0].LOcoeff = 0.2;
-            
-      dmturb_loaded = 1;
- 
+        IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
+
+
+        SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+        if (SMturbfd == -1) {
+            perror("Error opening file for writing");
+            exit(EXIT_FAILURE);
+        }
+
+        result = lseek(SMturbfd, sizeof(AOLOOPCONTROL_DMTURBCONF)-1, SEEK_SET);
+        if (result == -1) {
+            close(SMturbfd);
+            perror("Error calling lseek() to 'stretch' the file");
+            exit(EXIT_FAILURE);
+        }
+
+        result = write(SMturbfd, "", 1);
+        if (result != 1) {
+            close(SMturbfd);
+            perror("Error writing last byte of the file");
+            exit(EXIT_FAILURE);
+        }
+
+        dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
+        if (dmturbconf == MAP_FAILED) {
+            close(SMturbfd);
+            perror("Error mmapping the file");
+            exit(EXIT_FAILURE);
+        }
+
+        dmturbconf[0].on = 1;
+        dmturbconf[0].ampl = 0.01; // [um]
+        dmturbconf[0].tint = 100; // [us]
+        dmturbconf[0].simtime = 0.0; // sec
+        dmturbconf[0].wspeed = 10.0; // [m/s]
+        dmturbconf[0].LOcoeff = 0.2;
+
+        dmturb_loaded = 1;
+
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 
 
 int AOloopControl_DMturb_loadconf()
 {
-  int result;
+    int result;
 
-  if( dmturb_loaded == 0 ) 
+    if( dmturb_loaded == 0 )
     {
-      printf("Create/read configuration\n");  
-      
-      SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR, (mode_t)0600);
-      if (SMturbfd == -1) {
-	perror("Error opening file for writing");
-	exit(EXIT_FAILURE);
-      }      
+        printf("Create/read configuration\n");
 
-      dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
-      if (dmturbconf == MAP_FAILED) {
-	close(SMturbfd);
-	perror("Error mmapping the file");
-	exit(EXIT_FAILURE);
-      }
-      dmturb_loaded = 1; 
+        SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR, (mode_t)0600);
+        if (SMturbfd == -1) {
+            perror("Error opening file for writing");
+            exit(EXIT_FAILURE);
+        }
+
+        dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
+        if (dmturbconf == MAP_FAILED) {
+            close(SMturbfd);
+            perror("Error mmapping the file");
+            exit(EXIT_FAILURE);
+        }
+        dmturb_loaded = 1;
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 
@@ -818,144 +822,145 @@ int AOloopControl_DM_dmturb_printstatus()
 
 int AOloopControl_DM_turb()
 {
-  long size_sx; // screen size
-  long size_sy;
-  long IDs1, IDs2;
-  
-  struct timespec tlast;  
-  struct timespec tdiff;
-  struct timespec tdiff1;
-  double tdiff1v;
+    long size_sx; // screen size
+    long size_sy;
+    long IDs1, IDs2;
 
-  float screen0_X;
-  float screen0_Y;
-  long ii, jj, ii1;
-  float x, y;
-  float xpix, ypix;
-  float xpixf, ypixf;
-  long xpix1, xpix2, ypix1, ypix2;
-  float ave;
+    struct timespec tlast;
+    struct timespec tdiff;
+    struct timespec tdiff1;
+    double tdiff1v;
 
-  double angle = 1.0;
-  double coeff = 0.001;
+    float screen0_X;
+    float screen0_Y;
+    long ii, jj, ii1;
+    float x, y;
+    float xpix, ypix;
+    float xpixf, ypixf;
+    long xpix1, xpix2, ypix1, ypix2;
+    float ave;
 
-  double RMSval;
-  long RMSvalcnt;
-  double r;
+    double angle = 1.0;
+    double coeff = 0.001;
 
-  float pixscale = 0.1; // [m/pix]
-  // Subaru pupil ~ 80 pix diam
-  // Single actuator ~7 pix 
+    double RMSval;
+    long RMSvalcnt;
+    double r;
 
-
-  AOloopControl_DMturb_createconf();
- 
-  IDs1 = load_fits("~/conf/turb/turbscreen0.fits", "screen1", 1);
-  IDs2 = load_fits("~/conf/turb/turbscreen0g.fits", "screen2", 1); 
-  
-
-  printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
-  size_sx = data.image[IDs1].md[0].size[0];
-  size_sy = data.image[IDs1].md[0].size[1];
-
-  clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tstart);
-  dmturbconf[0].tend = dmturbconf[0].tstart;
+    float pixscale = 0.1; // [m/pix]
+    // Subaru pupil ~ 80 pix diam
+    // Single actuator ~7 pix
 
 
+    AOloopControl_DMturb_createconf();
 
-  while(dmturbconf[0].on == 1) // computation loop
-    {      
-      usleep(dmturbconf[0].tint);
- 
-      tlast = dmturbconf[0].tend;
-      clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tend);
-      tdiff = time_diff(dmturbconf[0].tstart, dmturbconf[0].tend);
-      tdiff1 =  time_diff(tlast, dmturbconf[0].tend);
-      tdiff1v = 1.0*tdiff1.tv_sec + 1.0e-9*tdiff1.tv_nsec;
-     
-      screen0_X += dmturbconf[0].wspeed*tdiff1v*cos(angle); // [m]
-      screen0_Y += dmturbconf[0].wspeed*tdiff1v*sin(angle); // [m]
-      
-
-      dmturbconf[0].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    IDs1 = load_fits("~/conf/turb/turbscreen0.fits", "screen1", 1);
+    IDs2 = load_fits("~/conf/turb/turbscreen0g.fits", "screen2", 1);
 
 
-      for(ii=0;ii<DM_Xsize;ii++)
-	for(jj=0;jj<DM_Ysize;jj++)
-	  {
-	    ii1 = jj*DM_Xsize+ii;
-	    
-	    x = 10.0*ii/DM_Xsize + screen0_X; // [m]
-	    y = 10.0*jj/DM_Ysize + screen0_Y; // [m]
-	    
-	    xpix = 0.5*size_sx + x/pixscale;
-	    ypix = 0.5*size_sy + y/pixscale;
-	    
-	    xpix1 = ((long) xpix)%size_sx;
-	    xpix2 = (xpix1+1)%size_sx;
-	    xpixf = xpix- (long) xpix;
-	    ypix1 = ((long) ypix)%size_sy;
-	    ypix2 = (ypix1+1)%size_sy;
-	    ypixf = ypix - (long) ypix;
-	    
-	    if(xpix1<0)
-	      xpix1 = 0;
-	    if(xpix1>size_sx-1)
-	      xpix1 = size_sx-1;
-	    
-	    if(ypix1<0)
-	      ypix1 = 0;
-	    if(ypix1>size_sy-1)
-	      ypix1 = size_sy-1;
-	    
-	    
-	    
-	    data.image[IDturb].array.F[ii1] = (1.0-xpixf)*(1.0-ypixf)*(data.image[IDs1].array.F[ypix1*size_sx+xpix1]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix1*size_sx+xpix1]);
-	    
-	    data.image[IDturb].array.F[ii1]  +=  (xpixf)*(1.0-ypixf)*(data.image[IDs1].array.F[ypix1*size_sx+xpix2]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix1*size_sx+xpix2]);
-	    
-	    data.image[IDturb].array.F[ii1]  += (1.0-xpixf)*(ypixf)*(data.image[IDs1].array.F[ypix2*size_sx+xpix1]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix2*size_sx+xpix1]);
-	    
-	    data.image[IDturb].array.F[ii1]  += xpixf*ypixf*(data.image[IDs1].array.F[ypix2*size_sx+xpix2]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix2*size_sx+xpix2]);
-	  }
-      
-      // proccess array
-      ave = 0.0;
-      for(ii1=0;ii1<DM_Xsize*DM_Ysize;ii1++)	    
-	ave += data.image[IDturb].array.F[ii1];
-      ave /= NBact;
-      for(ii1=0;ii1<DM_Xsize*DM_Ysize;ii1++)	    
-	  {
-	    data.image[IDturb].array.F[ii1] -= ave;
-	  data.image[IDturb].array.F[ii1] *= coeff;
-	  }
-      
-      RMSval = 0.0;
-      RMSvalcnt = 0;
-      
-      for(ii=0;ii<DM_Xsize;ii++)	    
-	for(jj=0;jj<DM_Ysize;jj++)
-	  {
-	    ii1 = DM_Xsize*jj+ii;
-	    x = 0.5*DM_Xsize - 0.5 - ii;
-	    y = 0.5*DM_Ysize - 0.5 - jj;
-	    r = sqrt(x*x+y*y);
-	    if(r<DM_Xsize*0.5-1.0)
-	      {
-		RMSval += data.image[IDturb].array.F[ii1]*data.image[IDturb].array.F[ii1];
-		RMSvalcnt++;
-	      }
-	  }
-      RMSval = sqrt(RMSval/RMSvalcnt);
-      
-      if(RMSval>dmturbconf[0].ampl)
-	coeff *= 0.999;
-      else
-	coeff *= 1.001;
-      
-      copy_image_ID("turbs", "dmdisp1");
+    printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
+    size_sx = data.image[IDs1].md[0].size[0];
+    size_sy = data.image[IDs1].md[0].size[1];
+
+    clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tstart);
+    dmturbconf[0].tend = dmturbconf[0].tstart;
+
+
+
+    while(dmturbconf[0].on == 1) // computation loop
+    {
+        usleep(dmturbconf[0].tint);
+
+        tlast = dmturbconf[0].tend;
+        clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tend);
+        tdiff = time_diff(dmturbconf[0].tstart, dmturbconf[0].tend);
+        tdiff1 =  time_diff(tlast, dmturbconf[0].tend);
+        tdiff1v = 1.0*tdiff1.tv_sec + 1.0e-9*tdiff1.tv_nsec;
+
+        screen0_X += dmturbconf[0].wspeed*tdiff1v*cos(angle); // [m]
+        screen0_Y += dmturbconf[0].wspeed*tdiff1v*sin(angle); // [m]
+
+
+        dmturbconf[0].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+
+        for(ii=0; ii<DM_Xsize; ii++)
+            for(jj=0; jj<DM_Ysize; jj++)
+            {
+                ii1 = jj*DM_Xsize+ii;
+
+                x = 10.0*ii/DM_Xsize + screen0_X; // [m]
+                y = 10.0*jj/DM_Ysize + screen0_Y; // [m]
+
+                xpix = 0.5*size_sx + x/pixscale;
+                ypix = 0.5*size_sy + y/pixscale;
+
+                xpix1 = ((long) xpix)%size_sx;
+                xpix2 = (xpix1+1)%size_sx;
+                xpixf = xpix- (long) xpix;
+                ypix1 = ((long) ypix)%size_sy;
+                ypix2 = (ypix1+1)%size_sy;
+                ypixf = ypix - (long) ypix;
+
+                if(xpix1<0)
+                    xpix1 = 0;
+                if(xpix1>size_sx-1)
+                    xpix1 = size_sx-1;
+
+                if(ypix1<0)
+                    ypix1 = 0;
+                if(ypix1>size_sy-1)
+                    ypix1 = size_sy-1;
+
+
+
+                data.image[IDturb].array.F[ii1] = (1.0-xpixf)*(1.0-ypixf)*(data.image[IDs1].array.F[ypix1*size_sx+xpix1]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix1*size_sx+xpix1]);
+
+                data.image[IDturb].array.F[ii1]  +=  (xpixf)*(1.0-ypixf)*(data.image[IDs1].array.F[ypix1*size_sx+xpix2]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix1*size_sx+xpix2]);
+
+                data.image[IDturb].array.F[ii1]  += (1.0-xpixf)*(ypixf)*(data.image[IDs1].array.F[ypix2*size_sx+xpix1]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix2*size_sx+xpix1]);
+
+                data.image[IDturb].array.F[ii1]  += xpixf*ypixf*(data.image[IDs1].array.F[ypix2*size_sx+xpix2]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix2*size_sx+xpix2]);
+            }
+
+        // proccess array
+        ave = 0.0;
+        for(ii1=0; ii1<DM_Xsize*DM_Ysize; ii1++)
+            ave += data.image[IDturb].array.F[ii1];
+        ave /= NBact;
+        for(ii1=0; ii1<DM_Xsize*DM_Ysize; ii1++)
+        {
+            data.image[IDturb].array.F[ii1] -= ave;
+            data.image[IDturb].array.F[ii1] *= coeff;
+        }
+
+        RMSval = 0.0;
+        RMSvalcnt = 0;
+
+        for(ii=0; ii<DM_Xsize; ii++)
+            for(jj=0; jj<DM_Ysize; jj++)
+            {
+                ii1 = DM_Xsize*jj+ii;
+                x = 0.5*DM_Xsize - 0.5 - ii;
+                y = 0.5*DM_Ysize - 0.5 - jj;
+                r = sqrt(x*x+y*y);
+                if(r<DM_Xsize*0.5-1.0)
+                {
+                    RMSval += data.image[IDturb].array.F[ii1]*data.image[IDturb].array.F[ii1];
+                    RMSvalcnt++;
+                }
+            }
+        RMSval = sqrt(RMSval/RMSvalcnt);
+
+        if(RMSval>dmturbconf[0].ampl)
+            coeff *= 0.999;
+        else
+            coeff *= 1.001;
+
+      //  copy_image_ID("turbs", "dmdisp1");
     }
-  
 
-  return(0);
+
+    return(0);
 }
+
