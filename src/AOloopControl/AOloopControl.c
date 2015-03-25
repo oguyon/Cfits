@@ -3975,14 +3975,14 @@ int AOcompute(long loop)
     if(AOconf[loop].GPU == 0)
     {
         // TO BE TESTED : enable combined control matrix here 
-        if(MATRIX_COMPUTATION_MODE==0)  
+        if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
+        {
+        ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
+        data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+        }   
+    else
         {
         ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
-        data.image[aoconfID_meas_modes].md[0].cnt0 ++;
-        }
-        else
-        { // goes explicitely through modes, slow but useful for tuning
-        ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
         data.image[aoconfID_meas_modes].md[0].cnt0 ++;
         }
     }
