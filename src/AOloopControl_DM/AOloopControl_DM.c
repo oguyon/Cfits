@@ -867,8 +867,8 @@ int AOloopControl_DM_turb()
 
 
 
-while(dmturbconf[0].on == 1) // computation loop
-   {
+    while(dmturbconf[0].on == 1) // computation loop
+    {
         usleep(dmturbconf[0].tint);
 
         tlast = dmturbconf[0].tend;
@@ -932,7 +932,7 @@ while(dmturbconf[0].on == 1) // computation loop
         {
             data.image[IDturb].array.F[ii1] -= ave;
             data.image[IDturb].array.F[ii1] *= coeff;
-        } 
+        }
 
         RMSval = 0.0;
         RMSvalcnt = 0;
@@ -958,9 +958,11 @@ while(dmturbconf[0].on == 1) // computation loop
             coeff *= 1.001;
 
         copy_image_ID("turbs", "dmdisp1");
-   }
+        save_fits("turbs", "!turbs.fits");
+    }
 
 
     return(0);
 }
+
 
