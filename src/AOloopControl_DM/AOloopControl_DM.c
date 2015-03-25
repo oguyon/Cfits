@@ -852,6 +852,8 @@ int AOloopControl_DM_turb()
     // Single actuator ~7 pix
 
 
+    long IDturbs1;
+
     AOloopControl_DMturb_createconf();
 
     IDs1 = load_fits("~/conf/turb/turbscreen0.fits", "screen1", 1);
@@ -865,7 +867,7 @@ int AOloopControl_DM_turb()
     clock_gettime(CLOCK_REALTIME, &dmturbconf[0].tstart);
     dmturbconf[0].tend = dmturbconf[0].tstart;
 
-
+    IDturbs1 = create_2Dimage_ID("turbs1", DM_Xsize, DM_Ysize);
 
     while(dmturbconf[0].on == 1) // computation loop
     {
@@ -902,9 +904,9 @@ int AOloopControl_DM_turb()
                 ypix2 = (ypix1+1)%size_sy;
                 ypixf = ypix - (long) ypix;
 
-                if(xpix1<0)
+                while(xpix1<0)
                     xpix1 = 0;
-                if(xpix1>size_sx-1)
+                while(xpix1>size_sx-1)
                     xpix1 = size_sx-1;
 
                 if(ypix1<0)
@@ -912,7 +914,7 @@ int AOloopControl_DM_turb()
                 if(ypix1>size_sy-1)
                     ypix1 = size_sy-1;
 
-
+                data.image[IDturbs1].array.F[ii1] = 1.0*xpix1;
 
                 data.image[IDturb].array.F[ii1] = (1.0-xpixf)*(1.0-ypixf)*(data.image[IDs1].array.F[ypix1*size_sx+xpix1]-(1.0-dmturbconf[0].LOcoeff)*data.image[IDs2].array.F[ypix1*size_sx+xpix1]);
 
@@ -959,7 +961,8 @@ int AOloopControl_DM_turb()
 
         copy_image_ID("turbs", "dmdisp1");
         save_fits("turbs", "!turbs.fits");
-    }
+        save_fits("turbs1", "!turbs1.fits");
+   }
 
 
     return(0);
