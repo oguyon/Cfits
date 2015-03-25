@@ -867,8 +867,8 @@ int AOloopControl_DM_turb()
 
 
 
-  //  while(dmturbconf[0].on == 1) // computation loop
-   // {
+while(dmturbconf[0].on == 1) // computation loop
+   {
         usleep(dmturbconf[0].tint);
 
         tlast = dmturbconf[0].tend;
@@ -958,7 +958,7 @@ int AOloopControl_DM_turb()
             coeff *= 1.001;
 
         copy_image_ID("turbs", "dmdisp1");
-  //  }
+   }
 
 
     return(0);
