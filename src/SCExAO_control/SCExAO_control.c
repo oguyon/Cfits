@@ -120,14 +120,15 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 {
-	 if(CLI_checkarg(1,4)==0)
+    if(CLI_checkarg(1,4)==0)
     {
-      SCExAOcontrol_PyramidWFS_AutoAlign_cam(data.cmdargtoken[1].val.string);
-      return 0;
+        SCExAOcontrol_PyramidWFS_AutoAlign_cam(data.cmdargtoken[1].val.string);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 int SCExAOcontrol_PyramidWFS_Pcenter_cli()
 {
@@ -441,16 +442,16 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
     long xsize, ysize;
     long ii, jj;
     double tot00, tot01, tot10, tot11, tot;
-	double xsig, ysig;
-	long ttxpos, ttypos;
-	double gain = 1.0;
+    double xsig, ysig;
+    long ttxpos, ttypos;
+    double gain = 1.0;
 
 
     ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs");
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
-	printf("%ld x %ld image\n", xsize, ysize);
+    printf("%ld x %ld image\n", xsize, ysize);
 
     tot00 = 0.0;
     tot01 = 0.0;
@@ -482,20 +483,21 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
     printf("  %6.4f   %6.4f\n", tot01, tot11);
     printf("  %6.4f   %6.4f\n", tot00, tot10);
 
-	xsig = tot01-tot10;
-	ysig = tot11-tot00;
-	printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
+    xsig = tot01-tot10;
+    ysig = tot11-tot00;
+    printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
-	/// 100 steps -> sig = 0.055 for modulation = 1.0
-	ttxpos = (long) (SCExAO_DM_STAGE_Xpos - gain*100.0*(xsig/0.055));
-	ttypos = (long) (SCExAO_DM_STAGE_Ypos - gain*100.0*(ysig/0.055));
-	
-	SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
+    /// 100 steps -> sig = 0.055 for modulation = 1.0
+    ttxpos = (long) (SCExAO_DM_STAGE_Xpos - gain*100.0*(xsig/0.055));
+    ttypos = (long) (SCExAO_DM_STAGE_Ypos - gain*100.0*(ysig/0.055));
+
+    SCExAOcontrol_mv_DMstage(ttxpos, ttypos);
 
     save_fits("imwfs", "!imwfs.fits");
 
     return(0);
 }
+
 
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
@@ -653,8 +655,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
    //     SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
 
 		// New control
-		SCExAO_PZT_STAGE_Xpos -= gain*(xsig/0.2);  // C actuator
-        SCExAO_PZT_STAGE_Ypos -= gain*((-ysig+xsig)/0.2);  // D actuator
+		SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/0.2);  // C actuator
+        SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/0.2);  // D actuator
 
 		printf("  --- %f  %f ----\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
 

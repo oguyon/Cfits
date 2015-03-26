@@ -1238,6 +1238,11 @@ int delete_image_ID(char* imname) /* deletes an ID */
                     printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
                     exit(0);
                 }
+Code:
+
+#include <fcntl.h>
+
+
                 free(data.image[ID].array.I);
                 data.image[ID].array.I = NULL;
             }

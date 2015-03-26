@@ -503,28 +503,29 @@ int printstatus(long ID)
 
 int info_pixelstats_smallImage(long ID, long NBpix)
 {
-  long ii;
+    long ii;
 
-  if(data.image[ID].md[0].atype == FLOAT)
-    {  
-      for(ii=0;ii<NBpix;ii++)
-	{
-	  printw("%3ld  %f\n", ii, data.image[ID].array.F[ii]);
-	}
+    if(data.image[ID].md[0].atype == FLOAT)
+    {
+        for(ii=0; ii<NBpix; ii++)
+        {
+            printw("%3ld  %f\n", ii, data.image[ID].array.F[ii]);
+        }
     }
 
     if(data.image[ID].md[0].atype == USHORT)
-    {  
-      for(ii=0;ii<NBpix;ii++)
-	{
-	  printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
-	}
+    {
+        for(ii=0; ii<NBpix; ii++)
+        {
+            printw("%3ld  %5u\n", ii, data.image[ID].array.U[ii]);
+        }
     }
 
 
 
-  return(0);
+    return(0);
 }
+
 
 
 

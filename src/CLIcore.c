@@ -12,7 +12,6 @@
 #include <ncurses.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <string.h>
 #include <stdbool.h>
 #include <sys/prctl.h>
 #include <sched.h>
@@ -119,34 +118,34 @@ int help_command(char *cmdkey);
 
 int exitCLI()
 {
-	char command[500];
-	int r;
-	
-  if(data.fifoON == 1)
-	{
-		sprintf(command, "rm %s", data.fifoname);
-		r = system(command);
-	}
-  
-  main_free();
-  
+    char command[500];
+    int r;
 
-  if(Listimfile==1) {
-    if(system("rm imlist.txt")==-1)
-      {
-	printERROR(__FILE__,__func__,__LINE__,"system() error");
-	exit(0);
-      }
-    } 
-    
-	rl_callback_handler_remove();
-  
-  
-  printf("Closing PID %ld (prompt process)\n", (long) getpid());
-  exit(0);
-  return 0;
+    if(data.fifoON == 1)
+    {
+        sprintf(command, "rm %s", data.fifoname);
+        r = system(command);
+    }
+
+    main_free();
+
+
+    if(Listimfile==1) {
+        if(system("rm imlist.txt")==-1)
+        {
+            printERROR(__FILE__,__func__,__LINE__,"system() error");
+            exit(0);
+        }
+    }
+
+    rl_callback_handler_remove();
+
+
+    printf("Closing PID %ld (prompt process)\n", (long) getpid());
+    exit(0);
+    return 0;
 }
- 
+
 int printInfo()
 {
   float f1;

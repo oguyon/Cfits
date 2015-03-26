@@ -19,13 +19,14 @@
 
 typedef struct
 {
-	int on; /// 1 if logging, 0 otherwise
-	long long cnt;
-	long long filecnt;
-	long interval; /// log every x frames (default = 1)
-	int logexit; /// toggle to 1 when exiting
-	char fname[200];
+    int on; /// 1 if logging, 0 otherwise
+    long long cnt;
+    long long filecnt;
+    long interval; /// log every x frames (default = 1)
+    int logexit; /// toggle to 1 when exiting
+    char fname[200];
 } LOGSHIM_CONF;
+
 
 
 

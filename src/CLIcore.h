@@ -191,13 +191,14 @@ typedef struct
     int shared; 					// 1 if in shared memory
 
     int write;                	// 1 if image is being written
-    int status;					// 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) 
+    int status;					// 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2)
     long cnt0;               	  	// counter (incremented if image is updated)
     long cnt1;					// in 3D rolling buffer image, this is the last slice written
 
     long NBkw; 					// number of keywords
 
 } IMAGE_METADATA;
+
 
 
 
@@ -221,7 +222,7 @@ typedef struct			/* structure used to store data arrays */
         unsigned short int *U;
     } array;                      // pointer to data array
 
-	IMAGE_KEYWORD *kw; 
+    IMAGE_KEYWORD *kw;
 
 
 
@@ -234,11 +235,9 @@ typedef struct			/* structure used to store data arrays */
     int semlog; // reserved for data logging
     sem_t *semptrlog;
 
-//	int logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
+    //	int logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
 
 } IMAGE;
-
-
 
 
 
