@@ -325,13 +325,13 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         data.image[ID].array.F[ii] /= NbAve;
 
 
-  /*  if((IDdark=image_ID("wfsdark"))!=-1)
+    if((IDdark=image_ID("wfsdark"))!=-1)
     {
 
         for(ii=0; ii<xysize; ii++)
             data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
-*/
+
 
     free(arrayutmp);
 
