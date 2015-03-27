@@ -482,7 +482,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
 
     printf("  %6.4f   %6.4f\n", tot01, tot11);
     printf("  %6.4f   %6.4f\n", tot00, tot10);
-
+    printf("tot = %f\n", tot);
     xsig = tot01-tot10;
     ysig = tot11-tot00;
     printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
@@ -637,7 +637,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
         printf("  %6.4f   %6.4f\n", tot01, tot11);
         printf("  %6.4f   %6.4f\n", tot00, tot10);
-
+        printf("tot = %f\n", tot);
+    
         totx = 0.25*(tot00x+tot10x+tot10x+tot11x);
         toty = 0.25*(tot00y+tot10y+tot10y+tot11y);
 

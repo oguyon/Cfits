@@ -181,40 +181,41 @@ int CUDACOMP_init()
 
 void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N)
 {
-  long n, m;
-  float sum;
-  long index;
-  long i;
+    long n, m;
+    float sum;
+    long index;
+    long i;
 
-  printf("Conventional mat mult %d %d\n", M, N);
-  for(m=0; m<M; m++)
+    printf("Conventional mat mult %d %d\n", M, N);
+    for(m=0; m<M; m++)
     {
-     dmVec[m] = 0.0;
-      for(n=0; n<N; n++)
-	{
-	  index = m*N+n;
-	  dmVec[m] += cMat[index]*wfsVec[n];	  
-	}
-      //cMat[n*M+m]*wfsVec[n];
+        dmVec[m] = 0.0;
+        for(n=0; n<N; n++)
+        {
+            index = m*N+n;
+            dmVec[m] += cMat[index]*wfsVec[n];
+        }
+        //cMat[n*M+m]*wfsVec[n];
     }
-  
-  printf("cMat  : ");
-  for(i=0;i<5;i++)
-    printf("%f ", cMat[i]);
-  printf(" ... ");
-  for(i=N*M-5;i<N*M;i++)
-    printf("%f ", cMat[i]);
-  printf("\n");
 
-  printf("wfsVec: ");
-  for(n=0;n<5;n++)
-    printf("%f ", wfsVec[n]);
-  printf(" ... ");
-  for(n=N-5;n<N;n++)
-    printf("%f ", wfsVec[n]);
-  printf("\n");
- 
+    printf("cMat  : ");
+    for(i=0; i<5; i++)
+        printf("%f ", cMat[i]);
+    printf(" ... ");
+    for(i=N*M-5; i<N*M; i++)
+        printf("%f ", cMat[i]);
+    printf("\n");
+
+    printf("wfsVec: ");
+    for(n=0; n<5; n++)
+        printf("%f ", wfsVec[n]);
+    printf(" ... ");
+    for(n=N-5; n<N; n++)
+        printf("%f ", wfsVec[n]);
+    printf("\n");
+
 }
+
 
 
 
@@ -224,8 +225,8 @@ void matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N)
 int GPUloadCmat(int index)
 {
     int device;
-	int n, m;
-	
+    int n, m;
+
     printf("LOADING MATRIX TO GPU ... ");
     fflush(stdout);
 
@@ -268,6 +269,7 @@ int GPUloadCmat(int index)
 
 
 
+
 /** setup matrix multiplication using multiple GPUs */
 
 int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem)
@@ -287,43 +289,43 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     long NBiter = 100000;
     long iter = 0;
 
-	
-/*	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
-	fflush(stdout);*/
-	//sleep(2);
-	
+
+    /*	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
+    	fflush(stdout);*/
+    //sleep(2);
+
     if(gpumatmultconf[index].init == 0)
     {
 
-		printf("STARTING SETUP %d .....\n", index);
+        printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
-//sleep(2);
+        
         if(gpumatmultconf[index].alloc == 1)
         {
             GPU_loop_MultMat_free(index);
             gpumatmultconf[index].alloc = 0;
         }
 
-		if(USEsem==1)
-			gpumatmultconf[index].sem = 1;
-		else
-			gpumatmultconf[index].sem = 0;
+        if(USEsem==1)
+            gpumatmultconf[index].sem = 1;
+        else
+            gpumatmultconf[index].sem = 0;
 
-		printf("USEsem = %d\n", USEsem);
+        printf("USEsem = %d\n", USEsem);
         fflush(stdout);
-	//sleep(2);
+        
 
 
         gpumatmultconf[index].orientation = orientation;
 
-		printf("input CM name : %s\n", IDcontrM_name);
-		fflush(stdout);
-	//sleep(2);
+        printf("input CM name : %s\n", IDcontrM_name);
+        fflush(stdout);
+        //sleep(2);
         gpumatmultconf[index].CM_ID = image_ID(IDcontrM_name);
-        
+
         printf("CM_ID = %ld\n", gpumatmultconf[index].CM_ID);
         fflush(stdout);
-//	sleep(2);
+        //	sleep(2);
 
         gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
 
@@ -331,11 +333,11 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         /// Load Control Matrix
         IDcontrM = image_ID(IDcontrM_name);
-//		printf("control matrix loaded: IDcontrM = %ld\n", IDcontrM);
-//        fflush(stdout);
-//	sleep(2);
+        //		printf("control matrix loaded: IDcontrM = %ld\n", IDcontrM);
+        //        fflush(stdout);
+        //	sleep(2);
 
-		
+
         if(orientation==0)
         {
             gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[2];
@@ -365,9 +367,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1]!=gpumatmultconf[index].N)
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1], gpumatmultconf[index].N);
-             fflush(stdout);
-			sleep(2);
-			exit(0);
+                fflush(stdout);
+                sleep(2);
+                exit(0);
             }
         }
         else
@@ -376,9 +378,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             if(data.image[IDwfsim].md[0].size[0]!=gpumatmultconf[index].N)
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0], gpumatmultconf[index].N);
-			fflush(stdout);
-			sleep(2);
-	           exit(0);
+                fflush(stdout);
+                sleep(2);
+                exit(0);
             }
         }
 
@@ -398,9 +400,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1], gpumatmultconf[index].M);
                 printf("gpumatmultconf[index].IDout = %ld\n", gpumatmultconf[index].IDout);
                 list_image_ID();
-				fflush(stdout);
-				sleep(2);
-	           exit(0);
+                fflush(stdout);
+                sleep(2);
+                exit(0);
             }
         }
 
@@ -426,6 +428,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].NBstreams = deviceCount;
         if(NBGPUs<deviceCount)
             gpumatmultconf[index].NBstreams = NBGPUs;
+        
+
 
 
         gpumatmultconf[index].Nsize = (int*) malloc(sizeof(long)*gpumatmultconf[index].NBstreams);
@@ -464,7 +468,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].semptr3 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].semptr4 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].semptr5 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-
+ 
 
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
@@ -600,6 +604,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 }
 
 
+
 // increments status by 4
 int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
 {
@@ -607,7 +612,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     int ptn;
     int statustot;
 
-	*status = *status + 1;  // ->9
+    *status = *status + 1;  // ->9
 
     if(index==0) /// main CM multiplication loop
     {
@@ -651,21 +656,21 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     }
     else
     {
-		for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
-			{
-				sem_post(gpumatmultconf[index].semptr1[ptn]);
-				sem_post(gpumatmultconf[index].semptr4[ptn]);
-			}
-			
+        for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+        {
+            sem_post(gpumatmultconf[index].semptr1[ptn]);
+            sem_post(gpumatmultconf[index].semptr4[ptn]);
+        }
+
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
             sem_wait(gpumatmultconf[index].semptr5[ptn]);
     }
 
 
     *status = *status + 1;  // -> 11
-    
-	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
- 
+
+    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
 
@@ -680,11 +685,11 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr1);
     if(data.image[gpumatmultconf[index].IDout].semlog == 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptrlog);
-	data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
- 
-   *status = *status + 1; // -> 12
-	
+
+    *status = *status + 1; // -> 12
+
     return(0);
 }
 
@@ -759,22 +764,17 @@ void *compute_function( void *ptr )
 
 
 
-    //  for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
-    //    gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
 
     ptr0 = (char*) gpumatmultconf[index].wfsVec;
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
 
-    //    ptr1 = (char*) gpumatmultconf[index].wfsVec_part[device];
-    //   memcpy(ptr1, ptr0, sizeof(float)*gpumatmultconf[index].Nsize[device]);
-
+ 
     cudaSetDevice(device);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
 
-    //stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].wfsVec_part[device], 1, gpumatmultconf[index].d_wfsVec[device], 1);
-
+ 
     if(gpumatmultconf[index].sem==1)
         itermax = -1;
     else
@@ -783,7 +783,7 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
-		*ptrstat = 2; // wait for image
+        *ptrstat = 2; // wait for image
         if(gpumatmultconf[index].sem==1)
         {
             //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d ...\n", index, device);
@@ -793,7 +793,7 @@ void *compute_function( void *ptr )
             //fflush(stdout);
         }
 
-		*ptrstat = 3; // transfer
+        *ptrstat = 3; // transfer
         stat = cublasSetVector(gpumatmultconf[index].Nsize[device], sizeof(float), (float*) ptr0, 1, gpumatmultconf[index].d_wfsVec[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)
         {
@@ -819,7 +819,7 @@ void *compute_function( void *ptr )
 
 
 
-		stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &beta, gpumatmultconf[index].d_dmVec[device], 1);
+        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &beta, gpumatmultconf[index].d_dmVec[device], 1);
 
         if (stat != CUBLAS_STATUS_SUCCESS)
         {
@@ -859,9 +859,9 @@ void *compute_function( void *ptr )
             //fflush(stdout);
         }
 
-		
-		// result is on gpumatmultconf[index].d_dmVec[device]
-		
+
+        // result is on gpumatmultconf[index].d_dmVec[device]
+
         stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
 
         if (stat != CUBLAS_STATUS_SUCCESS)
@@ -876,7 +876,7 @@ void *compute_function( void *ptr )
             exit(EXIT_FAILURE);
         }
 
-    //    *ptrstat = 6;
+        //    *ptrstat = 6;
 
         if(gpumatmultconf[index].sem==1)
         {
@@ -884,8 +884,8 @@ void *compute_function( void *ptr )
             //fflush(stdout);
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
-      *ptrstat = 6;
-       iter++;
+        *ptrstat = 6;
+        iter++;
     }
 
 
@@ -967,6 +967,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
 
 #endif
+
 
 
 

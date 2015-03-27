@@ -3937,17 +3937,18 @@ int AOcompute(long loop)
         free(matrix_DMmodes);
 
         printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
-        /*
-            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
-                 {
-         			printf("mode %6ld    \n", mode);
-         			fflush(stdout);
+ /*
+     for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+          {
+  			printf("mode %6ld    \n", mode);
+  			fflush(stdout);
 
-                     for(act=0; act<AOconf[loop].sizeDM; act++)
-                         for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                             data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
-                 }
-         */
+              for(act=0; act<AOconf[loop].sizeDM; act++)
+                  for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+                      data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
+          }
+  */
+
 
 
 
