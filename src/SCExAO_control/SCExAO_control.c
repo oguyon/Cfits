@@ -661,7 +661,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
 
 
-        if(tot > 20.0*xsize*ysize)
+        if(tot > 10.0*xsize*ysize)
         {
             SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/0.2);  // C actuator
             SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/0.2);  // D actuator
@@ -778,89 +778,90 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         for(ii=0; ii<pXsize*pYsize; ii++)
             data.image[ID].array.F[ii] /= tot;
 
-        if(tot > 20.0*pXsize*pYsize)
+        if(tot > 10.0*pXsize*pYsize)
         {
-        /** compute offset */
-        fft_correlation("imwfs", "imref", "outcorr");
-        IDc = image_ID("outcorr");
-        peak = 0.0;
-        for(ii=0; ii<pXsize*pYsize; ii++)
-            if(data.image[IDc].array.F[ii]>peak)
-                peak = data.image[IDc].array.F[ii];
+            /** compute offset */
+            fft_correlation("imwfs", "imref", "outcorr");
+            IDc = image_ID("outcorr");
+            peak = 0.0;
+            for(ii=0; ii<pXsize*pYsize; ii++)
+                if(data.image[IDc].array.F[ii]>peak)
+                    peak = data.image[IDc].array.F[ii];
 
-        for(ii=0; ii<pXsize*pYsize; ii++)
-            if(data.image[IDc].array.F[ii]>0.0)
-                data.image[IDc].array.F[ii] = pow(data.image[IDc].array.F[ii]/peak,alpha);
-            else
-                data.image[IDc].array.F[ii] = 0.0;
+            for(ii=0; ii<pXsize*pYsize; ii++)
+                if(data.image[IDc].array.F[ii]>0.0)
+                    data.image[IDc].array.F[ii] = pow(data.image[IDc].array.F[ii]/peak,alpha);
+                else
+                    data.image[IDc].array.F[ii] = 0.0;
 
-        totx = 0.0;
-        toty = 0.0;
-        tot = 0.0;
-        for(ii=pXsize/2-brad; ii<pXsize/2+brad; ii++)
-            for(jj=pXsize/2-brad; jj<pXsize/2+brad; jj++)
-            {
-                v = data.image[IDc].array.F[jj*pXsize+ii];
-                totx += 1.0*(ii-pXsize/2)*v;
-                toty += 1.0*(jj-pXsize/2)*v;
-                tot += v;
-            }
-        totx /= tot;
-        toty /= tot;
+            totx = 0.0;
+            toty = 0.0;
+            tot = 0.0;
+            for(ii=pXsize/2-brad; ii<pXsize/2+brad; ii++)
+                for(jj=pXsize/2-brad; jj<pXsize/2+brad; jj++)
+                {
+                    v = data.image[IDc].array.F[jj*pXsize+ii];
+                    totx += 1.0*(ii-pXsize/2)*v;
+                    toty += 1.0*(jj-pXsize/2)*v;
+                    tot += v;
+                }
+            totx /= tot;
+            toty /= tot;
 
-        save_fits("outcorr", "!./tmp/outcorr.fits");
-        delete_image_ID("outcorr");
+            save_fits("outcorr", "!./tmp/outcorr.fits");
+            delete_image_ID("outcorr");
 
-        printf("  %6.4f  x  %6.4f\n", totx, toty);
+            printf("  %6.4f  x  %6.4f\n", totx, toty);
 
-        stepx = (long) (-gain*totx*PcamPixScaleAct); // 0.7*10000.0);
-        stepy = (long) (gain*toty*PcamPixScaleAct); //  0.7*10000.0);
+            stepx = (long) (-gain*totx*PcamPixScaleAct); // 0.7*10000.0);
+            stepy = (long) (gain*toty*PcamPixScaleAct); //  0.7*10000.0);
 
-        if(stepx>maxstep)
-            stepx = maxstep;
-        if(stepx<-maxstep)
-            stepx = -maxstep;
-        if(stepy>maxstep)
-            stepy = maxstep;
-        if(stepy<-maxstep)
-            stepy = -maxstep;
+            if(stepx>maxstep)
+                stepx = maxstep;
+            if(stepx<-maxstep)
+                stepx = -maxstep;
+            if(stepy>maxstep)
+                stepy = maxstep;
+            if(stepy<-maxstep)
+                stepy = -maxstep;
 
-	
-        printf("STEP     : %ld %ld\n", stepx, stepy);
 
-        SCExAO_Pcam_Xpos += stepx;
-        SCExAO_Pcam_Ypos += stepy;
+            printf("STEP     : %ld %ld\n", stepx, stepy);
 
-        if (SCExAO_Pcam_Xpos>SCExAO_Pcam_Xpos0+SCExAO_Pcam_Range)
-            SCExAO_Pcam_Xpos = SCExAO_Pcam_Xpos0+SCExAO_Pcam_Range;
-        if (SCExAO_Pcam_Ypos>SCExAO_Pcam_Ypos0+SCExAO_Pcam_Range)
-            SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0+SCExAO_Pcam_Range;
+            SCExAO_Pcam_Xpos += stepx;
+            SCExAO_Pcam_Ypos += stepy;
 
-        if (SCExAO_Pcam_Xpos<SCExAO_Pcam_Xpos0-SCExAO_Pcam_Range)
-            SCExAO_Pcam_Xpos = SCExAO_Pcam_Xpos0-SCExAO_Pcam_Range;
-        if (SCExAO_Pcam_Ypos<SCExAO_Pcam_Ypos0-SCExAO_Pcam_Range)
-            SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0-SCExAO_Pcam_Range;
+            if (SCExAO_Pcam_Xpos>SCExAO_Pcam_Xpos0+SCExAO_Pcam_Range)
+                SCExAO_Pcam_Xpos = SCExAO_Pcam_Xpos0+SCExAO_Pcam_Range;
+            if (SCExAO_Pcam_Ypos>SCExAO_Pcam_Ypos0+SCExAO_Pcam_Range)
+                SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0+SCExAO_Pcam_Range;
 
-        /// write stages position
-        fp = fopen("./status/pcampos.txt", "w");
-        fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
-        fclose(fp);
+            if (SCExAO_Pcam_Xpos<SCExAO_Pcam_Xpos0-SCExAO_Pcam_Range)
+                SCExAO_Pcam_Xpos = SCExAO_Pcam_Xpos0-SCExAO_Pcam_Range;
+            if (SCExAO_Pcam_Ypos<SCExAO_Pcam_Ypos0-SCExAO_Pcam_Range)
+                SCExAO_Pcam_Ypos = SCExAO_Pcam_Ypos0-SCExAO_Pcam_Range;
 
-        sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
-        printf("%s", command);
-        r = system(command);
-        usleep(delayus);
+            /// write stages position
+            fp = fopen("./status/pcampos.txt", "w");
+            fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+            fclose(fp);
 
-        sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
-        printf("%s", command);
-        r = system(command);
-        usleep(delayus);
+            sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
+            printf("%s", command);
+            r = system(command);
+            usleep(delayus);
+
+            sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
+            printf("%s", command);
+            r = system(command);
+            usleep(delayus);
         }
     }
     r = system("rm stop_PyAlignCam.txt");
 
     return(0);
 }
+
 
 
 /// pupil centering tool
