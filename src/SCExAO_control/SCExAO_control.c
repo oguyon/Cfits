@@ -525,8 +525,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
 
-	SCExAO_PZT_STAGE_Xpos = -5.0;
-	SCExAO_PZT_STAGE_Ypos = -5.0;
+    SCExAO_PZT_STAGE_Xpos = -5.0;
+    SCExAO_PZT_STAGE_Ypos = -5.0;
 
     IDshm = image_ID("pyrTT");
     if(IDshm == -1)
@@ -536,6 +536,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         sizearray[1] = 1;
         IDshm = create_image_ID("pyrTT", 2, sizearray, FLOAT, 1, 0);
     }
+
+    
 
     while(file_exist("stop_PyAlignTT.txt")==0)
     {
@@ -559,7 +561,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
-        save_fits("imwfs", "!imwfs.fits"); // TEST
+        // save_fits("imwfs", "!imwfs.fits"); // TEST
 
         printf("%ld x %ld image\n", xsize, ysize);
 
@@ -640,7 +642,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         printf("  %6.4f   %6.4f\n", tot01, tot11);
         printf("  %6.4f   %6.4f\n", tot00, tot10);
         printf("tot = %f\n", tot);
-    
+
         totx = 0.25*(tot00x+tot10x+tot10x+tot11x);
         toty = 0.25*(tot00y+tot10y+tot10y+tot11y);
 
@@ -651,53 +653,61 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         ysig = (tot01+tot11)-(tot00+tot10);
         printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
 
-//exit(0);
-		
+        //exit(0);
+
         /// 1 V step -> sig = 0.2 for modulation = 0.3
- //       SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
-   //     SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
-
-		// New control
-		SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/0.2);  // C actuator
-        SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/0.2);  // D actuator
-
-		printf("  --- %f  %f ----\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
+        //       SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
+        //     SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
 
 
-        if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
-            SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
-        if(SCExAO_PZT_STAGE_Xpos>SCExAO_PZT_STAGE_Xpos_max)
-            SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_max;
 
-        if(SCExAO_PZT_STAGE_Ypos<SCExAO_PZT_STAGE_Ypos_min)
-            SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_min;
-        if(SCExAO_PZT_STAGE_Ypos>SCExAO_PZT_STAGE_Ypos_max)
-            SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
+        if(tot > 20.0*xsize*ysize)
+        {
+            SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/0.2);  // C actuator
+            SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/0.2);  // D actuator
 
-        // sig X
-        sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-        printf("%s", command);
-        r = system(command);
 
-        // sig Y
-        sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-        printf("%s", command);
-        r = system(command);
 
-        data.image[IDshm].md[0].write = 1;
-        data.image[IDshm].array.F[0] = SCExAO_PZT_STAGE_Xpos;
-        data.image[IDshm].array.F[1] = SCExAO_PZT_STAGE_Ypos;
-        data.image[IDshm].md[0].cnt0 ++;
-        data.image[IDshm].md[0].write = 0;
+            printf("  --- %f  %f ----\n", SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
 
+
+            if(SCExAO_PZT_STAGE_Xpos<SCExAO_PZT_STAGE_Xpos_min)
+                SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_min;
+            if(SCExAO_PZT_STAGE_Xpos>SCExAO_PZT_STAGE_Xpos_max)
+                SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_max;
+
+            if(SCExAO_PZT_STAGE_Ypos<SCExAO_PZT_STAGE_Ypos_min)
+                SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_min;
+            if(SCExAO_PZT_STAGE_Ypos>SCExAO_PZT_STAGE_Ypos_max)
+                SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
+
+            // sig X
+            sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+            printf("%s", command);
+            r = system(command);
+
+            // sig Y
+            sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+            printf("%s", command);
+            r = system(command);
+
+            data.image[IDshm].md[0].write = 1;
+            data.image[IDshm].array.F[0] = SCExAO_PZT_STAGE_Xpos;
+            data.image[IDshm].array.F[1] = SCExAO_PZT_STAGE_Ypos;
+            data.image[IDshm].md[0].cnt0 ++;
+            data.image[IDshm].md[0].write = 0;
+        }
 
         save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
+
     }
 
     r = system("rm stop_PyAlignTT.txt");
 
     return(0);
 }
+
+
 
 
 
@@ -768,6 +778,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         for(ii=0; ii<pXsize*pYsize; ii++)
             data.image[ID].array.F[ii] /= tot;
 
+        if(tot > 20.0*pXsize*pYsize)
+        {
         /** compute offset */
         fft_correlation("imwfs", "imref", "outcorr");
         IDc = image_ID("outcorr");
@@ -843,6 +855,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         printf("%s", command);
         r = system(command);
         usleep(delayus);
+        }
     }
     r = system("rm stop_PyAlignCam.txt");
 
