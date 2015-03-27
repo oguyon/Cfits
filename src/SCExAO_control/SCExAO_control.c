@@ -267,22 +267,21 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
     char *ptrv;
     unsigned short *arrayutmp;
     long ii;
-    long NBcoadd = 1;
     long kw;
-	double darkv;
-	long IDv;
-	char imnameave[200];
-	long long cntref;
-	int semval;
-	
-	cntref = -1;
-	
+    double darkv;
+    long IDv;
+    char imnameave[200];
+    long long cntref;
+    int semval;
+
+    cntref = -1;
+
     IDcam = image_ID(imname);
     if(IDcam ==-1)
         IDcam = read_sharedmem_image(imname);
 
 
- 
+
 
     xsize = data.image[IDcam].md[0].size[0];
     ysize = data.image[IDcam].md[0].size[1];
@@ -295,23 +294,23 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     for(k=0; k<NbAve; k++)
     {
-		if(data.image[IDcam].sem==0)
-		{
-			while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
-				usleep(10);
-		}
-		else
-			{
-			sem_getvalue(data.image[IDcam].semptr, &semval);		
-			sem_wait(data.image[IDcam].semptr);
+        if(data.image[IDcam].sem==0)
+        {
+            while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
+                usleep(10);
+        }
+        else
+        {
+            sem_getvalue(data.image[IDcam].semptr, &semval);
+            sem_wait(data.image[IDcam].semptr);
 
-			}
-			
+        }
+
         slice = data.image[IDcam].md[0].cnt1;
         if(slice==-1)
             slice = data.image[IDcam].md[0].size[2]-1;
-	
-		
+
+
         ptrv = (char*) data.image[IDcam].array.U;
         ptrv += sizeof(unsigned short)*slice*xysize;
         memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
@@ -322,22 +321,23 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         cntref = data.image[IDcam].md[0].cnt0;
     }
 
-  for(ii=0; ii<xysize; ii++)
-        data.image[ID].array.F[ii] /= NbAve*NBcoadd;
+    for(ii=0; ii<xysize; ii++)
+        data.image[ID].array.F[ii] /= NbAve;
 
-	
-	if((IDdark=image_ID("wfsdark"))!=-1)
-		{		
-			
-			for(ii=0; ii<xysize; ii++)
-				data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
-		}
 
+  /*  if((IDdark=image_ID("wfsdark"))!=-1)
+    {
+
+        for(ii=0; ii<xysize; ii++)
+            data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
+    }
+*/
 
     free(arrayutmp);
 
     return(ID);
 }
+
 
 
 
@@ -559,7 +559,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
-        save_fits("imwfs", "!imwfs.fits");
+        save_fits("imwfs", "!imwfs.fits"); // TEST
 
         printf("%ld x %ld image\n", xsize, ysize);
 
