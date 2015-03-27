@@ -777,6 +777,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             tot += data.image[ID].array.F[ii];
         for(ii=0; ii<pXsize*pYsize; ii++)
             data.image[ID].array.F[ii] /= tot;
+        printf("tot = %f   ave = %f \n", tot, tot/pXsize/pYsize);
+
+
 
         if(tot > 10.0*pXsize*pYsize)
         {
