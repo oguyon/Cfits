@@ -559,6 +559,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
+        save_fits("imwfs", "!imwfs.fits");
+
         printf("%ld x %ld image\n", xsize, ysize);
 
         tot00 = 0.0;
