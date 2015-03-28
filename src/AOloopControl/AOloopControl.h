@@ -3,7 +3,7 @@
 
 
 
-#define AOLOOPCONTROL_CONF_FNAME "/tmp/aoloopcontrol.conf.shm"
+
 
 #define maxNBMB 100
 
