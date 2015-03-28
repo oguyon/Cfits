@@ -3885,9 +3885,11 @@ int AOcompute(long loop)
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
         IDmask = image_ID("dmmask");
         if(IDmask==-1)
-            IDmask = create_2Dimage_ID("dmmask", AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
-        for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-            data.image[IDmask].array.F[ii] = 1.0;
+            {
+                IDmask = create_2Dimage_ID("dmmask", AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+            for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+                data.image[IDmask].array.F[ii] = 1.0;
+            }
         if(IDmask != -1)
         {
             ii1 = 0;
