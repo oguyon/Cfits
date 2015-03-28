@@ -3862,9 +3862,12 @@ int AOcompute(long loop)
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
         if(IDmask==-1)
-            IDmask = create_2Dimage_ID("wfsmask", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDmask].array.F[ii] = 1.0;
+            {
+                IDmask = create_2Dimage_ID("wfsmask", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    data.image[IDmask].array.F[ii] = 1.0;
+            }
+
         if(IDmask != -1)
         {
             ii1 = 0;
