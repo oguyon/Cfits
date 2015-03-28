@@ -4783,14 +4783,19 @@ int AOloopControl_setgain(float gain)
 
 int AOloopControl_setWFSnormfloor(float WFSnormfloor)
 {
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  AOconf[LOOPNUMBER].WFSnormfloor = WFSnormfloor;
-  AOloopControl_showparams(LOOPNUMBER);
-
-  return 0;
+    AOconf[LOOPNUMBER].WFSnormfloor = WFSnormfloor;
+    printf("SHOWING PARAMETERS ...\n");
+    fflush(stdout);
+    AOloopControl_showparams(LOOPNUMBER);
+    printf("DONE ...\n");
+    fflush(stdout);
+   
+    return 0;
 }
+
 
 int AOloopControl_setmaxlimit(float maxlimit)
 {
