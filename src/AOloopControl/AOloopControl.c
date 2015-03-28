@@ -118,6 +118,7 @@ float *arrayftmp;
 unsigned short *arrayutmp;
 int avcamarraysInit = 0;
 
+float normfloorcoeff = 1.0;
 
 // CLI commands
 //
@@ -1856,6 +1857,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
     totalinv=1.0/(total + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+    
+    normfloorcoeff = total/(total+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+
 
 # ifdef _OPENMP
     #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
@@ -3836,7 +3840,7 @@ int AOcompute(long loop)
 
 
     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - data.image[aoconfID_refWFS].array.F[ii];
+        data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_refWFS].array.F[ii];
 
 
     cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
