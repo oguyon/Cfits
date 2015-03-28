@@ -83,6 +83,17 @@ int AOloopControl_DM_CombineChannels_cli()
     return 1;
 }
 
+
+int AOloopControl_DM_chan_setgain_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
+        AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+    else        
+        return 1;
+}
+
+
+
 int AOloopControl_DM_dmturb_wspeed_cli()
 {
   if(CLI_checkarg(1,1)==0)
@@ -121,122 +132,134 @@ int AOloopControl_DM_dmturb_tint_cli()
 
 int init_AOloopControl_DM()
 {
-  strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "AO loop Control DM operation");
-  data.NBmodule++;
+    strcpy(data.module[data.NBmodule].name, __FILE__);
+    strcpy(data.module[data.NBmodule].info, "AO loop Control DM operation");
+    data.NBmodule++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"aolcontroldmsetsize");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_setsize_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set DM size");
-  strcpy(data.cmd[data.NBcmd].syntax,"linear size (assumes square DM)");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmsetsize 32");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setsize(int size1d)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"aolcontroldmsetsize");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setsize_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM size");
+    strcpy(data.cmd[data.NBcmd].syntax,"linear size (assumes square DM)");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmsetsize 32");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setsize(int size1d)");
+    data.NBcmd++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"aolcontrolDMcomb");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_CombineChannels_cli;
-  strcpy(data.cmd[data.NBcmd].info,"combine channels");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"aolcontrolDMcomb");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_CombineChannels_cli;
+    strcpy(data.cmd[data.NBcmd].info,"combine channels");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode)");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcomboff");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcomboff;
-  strcpy(data.cmd[data.NBcmd].info,"turn off DM combine");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcomboff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcomboff()");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcombmon");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcombstatus;
-  strcpy(data.cmd[data.NBcmd].info,"monitor DM comb program");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcombmon");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcombstatus()");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmtrigoff");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmtrigoff;
-  strcpy(data.cmd[data.NBcmd].info,"turn off DM trigger");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmtrigoff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmtrigoff()");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"aolcontrolDMchgain");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_chan_setgain_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set gain for DM displacement channel");
+    strcpy(data.cmd[data.NBcmd].syntax,"<chan#> <gain>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMchgain 3 0.2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_chan_setgain(int ch, float gain)");
+    data.NBcmd++;
 
 
 
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontrolDMturb");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_turb;
-  strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_turb()");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcomboff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcomboff;
+    strcpy(data.cmd[data.NBcmd].info,"turn off DM combine");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcomboff");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcomboff()");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturboff");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmturboff;
-  strcpy(data.cmd[data.NBcmd].info,"turn off DM turbulence");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturboff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturboff()");
-  data.NBcmd++;
-  
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturws");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_wspeed_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
-  strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturws 5.2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_wspeed(double wspeed);");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcombmon");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcombstatus;
+    strcpy(data.cmd[data.NBcmd].info,"monitor DM comb program");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcombmon");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcombstatus()");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturampl");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_ampl_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set turbulence amplitude");
-  strcpy(data.cmd[data.NBcmd].syntax,"<amplitude [um]>");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturampl 0.1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_ampl(double ampl);");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturlo");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_LOcoeff_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set turbulence low order coefficient");
-  strcpy(data.cmd[data.NBcmd].syntax,"<coeff>");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturlo 0.2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_LOcoeff(double LOcoeff);");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturtint");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_tint_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set turbulence interval time");
-  strcpy(data.cmd[data.NBcmd].syntax,"<interval time [us] long>");
-  strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturtint 200");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_turb_tint(long tint);");
-  data.NBcmd++;
-
-  
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmtrigoff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmtrigoff;
+    strcpy(data.cmd[data.NBcmd].info,"turn off DM trigger");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmtrigoff");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmtrigoff()");
+    data.NBcmd++;
 
 
 
-  // add atexit functions here
-  atexit((void*) AOloopControl_DM_unloadconf);
-  
-  return 0;
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontrolDMturb");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_turb;
+    strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_turb()");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturboff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmturboff;
+    strcpy(data.cmd[data.NBcmd].info,"turn off DM turbulence");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturboff");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturboff()");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturws");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_wspeed_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wind speed [m/s]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturws 5.2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_wspeed(double wspeed);");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturampl");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_ampl_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set turbulence amplitude");
+    strcpy(data.cmd[data.NBcmd].syntax,"<amplitude [um]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturampl 0.1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_ampl(double ampl);");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturlo");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_LOcoeff_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set turbulence low order coefficient");
+    strcpy(data.cmd[data.NBcmd].syntax,"<coeff>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturlo 0.2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_LOcoeff(double LOcoeff);");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturtint");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_tint_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set turbulence interval time");
+    strcpy(data.cmd[data.NBcmd].syntax,"<interval time [us] long>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturtint 200");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_turb_tint(long tint);");
+    data.NBcmd++;
+
+
+
+
+
+    // add atexit functions here
+    atexit((void*) AOloopControl_DM_unloadconf);
+
+    return 0;
 }
+
 
 
 
@@ -303,52 +326,57 @@ int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
 
 int AOloopControl_DM_createconf()
 {
-  int result;
+    int result;
+    int ch;
 
-  if( dmdispcomb_loaded == 0 ) 
+    if( dmdispcomb_loaded == 0 )
     {
-      printf("Create/read configuration\n");  
-      
-      SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-      if (SMfd == -1) {
-	perror("Error opening file for writing");
-	exit(EXIT_FAILURE);
-      }
-      
-      result = lseek(SMfd, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)-1, SEEK_SET);
-      if (result == -1) {
-	close(SMfd);
-	perror("Error calling lseek() to 'stretch' the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      result = write(SMfd, "", 1);
-      if (result != 1) {
-	close(SMfd);
-	perror("Error writing last byte of the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      dispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
-      if (dispcombconf == MAP_FAILED) {
-	close(SMfd);
-	perror("Error mmapping the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      
-      dispcombconf[0].ON = 1;
-      dispcombconf[0].busy = 0;
-      dispcombconf[0].MAXVOLT = 150.0;
-      dispcombconf[0].moninterval = 30000; // 33Hz
-      dispcombconf[0].status = 0;
+        printf("Create/read configuration\n");
 
-      dmdispcomb_loaded = 1;
- 
+        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+        if (SMfd == -1) {
+            perror("Error opening file for writing");
+            exit(EXIT_FAILURE);
+        }
+
+        result = lseek(SMfd, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)-1, SEEK_SET);
+        if (result == -1) {
+            close(SMfd);
+            perror("Error calling lseek() to 'stretch' the file");
+            exit(EXIT_FAILURE);
+        }
+
+        result = write(SMfd, "", 1);
+        if (result != 1) {
+            close(SMfd);
+            perror("Error writing last byte of the file");
+            exit(EXIT_FAILURE);
+        }
+
+        dispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+        if (dispcombconf == MAP_FAILED) {
+            close(SMfd);
+            perror("Error mmapping the file");
+            exit(EXIT_FAILURE);
+        }
+
+
+        dispcombconf[0].ON = 1;
+        dispcombconf[0].busy = 0;
+        dispcombconf[0].MAXVOLT = 150.0;
+        dispcombconf[0].moninterval = 30000; // 33Hz
+        dispcombconf[0].status = 0;
+        
+        for(ch=0; ch<DM_NUMBER_CHAN; ch++)
+            dispcombconf[0].dmdispgain[ch] = 1.0;
+            
+        dmdispcomb_loaded = 1;
+
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 int AOloopControl_DM_loadconf()
@@ -406,7 +434,6 @@ int AOloopControl_DM_CombineChannels(int mode)
     long ch;
     char name[200];
     long *IDch;
-    long NBch = 8;
     long cnt = 0;
     long long cntsumold;
     long long cntsum;
@@ -432,7 +459,7 @@ int AOloopControl_DM_CombineChannels(int mode)
 
 
     size = (long*) malloc(sizeof(long)*naxis);
-    IDch = (long*) malloc(sizeof(long)*NBch);
+    IDch = (long*) malloc(sizeof(long)*DM_NUMBER_CHAN);
     size[0] = xsize;
     size[1] = ysize;
     sizexy = xsize*ysize;
@@ -444,7 +471,7 @@ int AOloopControl_DM_CombineChannels(int mode)
 
     printf("Initialize channels\n");
 
-    for(ch=0; ch<NBch; ch++)
+    for(ch=0; ch<DM_NUMBER_CHAN; ch++)
     {
         sprintf(name, "dmdisp%ld", ch);
         printf("Channel %ld \n", ch);
@@ -497,7 +524,7 @@ int AOloopControl_DM_CombineChannels(int mode)
 
 
 
-        for(ch=0; ch<NBch; ch++)
+        for(ch=0; ch<DM_NUMBER_CHAN; ch++)
             cntsum += data.image[IDch[ch]].md[0].cnt0;
 
 
@@ -507,10 +534,10 @@ int AOloopControl_DM_CombineChannels(int mode)
             cnt++;
 
             memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
-            for(ch=1; ch<NBch; ch++)
+            for(ch=1; ch<DM_NUMBER_CHAN; ch++)
             {
                 for(ii=0; ii<sizexy; ii++)
-                    dmdispptr[ii] += dmdispptr_array[ch][ii];
+                    dmdispptr[ii] += dispcombconf[0].dmdispgain[ch]*dmdispptr_array[ch][ii];
             }
 
             dispcombconf[0].status = 4;
@@ -567,47 +594,64 @@ int AOloopControl_DM_CombineChannels(int mode)
 
 
 
+int AOloopControl_DM_chan_setgain(int ch, float gain)
+{
+    AOloopControl_DM_loadconf();
+    if(ch<DM_NUMBER_CHAN) 
+        dispcombconf[0].dmdispgain[ch] = gain;
+
+  return 0;
+}
+
+
 
 
 
 int AOloopControl_DM_dmdispcombstatus()
 {
-  long long mcnt = 0;
+    long long mcnt = 0;
+    int ch;
 
+    AOloopControl_DM_loadconf();
 
-  AOloopControl_DM_loadconf();
+    initscr();
+    getmaxyx(stdscr, wrow, wcol);
 
-  initscr();		
-  getmaxyx(stdscr, wrow, wcol);
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_BLACK, COLOR_RED);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
 
-  start_color();
-  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
-  init_pair(2, COLOR_BLACK, COLOR_RED);
-  init_pair(3, COLOR_GREEN, COLOR_BLACK);
-  init_pair(4, COLOR_RED, COLOR_BLACK);
-
-  while( !kbdhit() )
+    while( !kbdhit() )
     {
-      usleep(dispcombconf[0].moninterval);
-      clear();
-      attron(A_BOLD);
-      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-      attroff(A_BOLD);
-      printw("    %ld\n", mcnt);
-      printw("ON         %d\n", dispcombconf[0].ON);
-      printw("cnt       %ld\n", dispcombconf[0].loopcnt);
-      printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
-      printw("busy      %d\n", dispcombconf[0].busy); 
-      printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
-      printw("status    %d\n",  dispcombconf[0].status);
-      printw("moninterval %d\n", dispcombconf[0].moninterval);
-      mcnt++;
-      refresh();
+        usleep(dispcombconf[0].moninterval);
+        clear();
+        attron(A_BOLD);
+        print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+        attroff(A_BOLD);
+        printw("    %ld\n", mcnt);
+        printw("ON         %d\n", dispcombconf[0].ON);
+        printw("cnt       %ld\n", dispcombconf[0].loopcnt);
+        printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
+        printw("busy      %d\n", dispcombconf[0].busy);
+        printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
+        printw("status    %d\n",  dispcombconf[0].status);
+        printw("moninterval %d\n", dispcombconf[0].moninterval);
+        printw("\n");
+        for(ch=0; ch<DM_NUMBER_CHAN; ch++)
+            {
+                printw("  %2d   %5.3f\n", ch, dispcombconf[0].dmdispgain[ch]);
+            }
+            
+        mcnt++;
+        refresh();
     }
-  endwin();	
- 
-  return 0;
+    endwin();
+
+    return 0;
 }
+
 
 
 
@@ -713,6 +757,8 @@ int AOloopControl_DMturb_createconf()
 
     return 0;
 }
+
+
 
 
 

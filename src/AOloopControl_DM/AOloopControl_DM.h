@@ -6,45 +6,48 @@
 #define DISPCOMB_FILENAME_CONF "/tmp/dmdispcombconf.conf.shm"
 #define DMTURBCONF_FILENAME "/tmp/dmturb.conf.shm"
 
-
+#define DM_NUMBER_CHAN 8
 
 typedef struct
 {
-  int ON;
+    int ON;
 
-  long loopcnt;
-  long updatecnt;
-  
-  int busy; // if set to 1, hold off and wait
-  float MAXVOLT; // maximum voltage on DM
+    long loopcnt;
+    long updatecnt;
 
-  int status;
+    int busy; // if set to 1, hold off and wait
+    float MAXVOLT; // maximum voltage on DM
 
-  struct timespec tstart;
-  struct timespec tend;
+    int status;
 
-  long moninterval; // [us]  
+    float dmdispgain[DM_NUMBER_CHAN];
+
+    struct timespec tstart;
+    struct timespec tend;
+
+    long moninterval; // [us]
 } AOLOOPCONTROL_DM_DISPCOMB_CONF;
 
 
 
+
 typedef struct
 {
-  int on;
-  long cnt;
+    int on;
+    long cnt;
 
 
-  double wspeed; // wind speed [m/s]
-  double ampl; // [um RMS]
-  double LOcoeff; // 0 for full correction of low orders, 1 for no correction
+    double wspeed; // wind speed [m/s]
+    double ampl; // [um RMS]
+    double LOcoeff; // 0 for full correction of low orders, 1 for no correction
 
-  long tint; // interval between consecutive DM updates [us]
+    long tint; // interval between consecutive DM updates [us]
 
 
-  double simtime;
+    double simtime;
 
-  struct timespec tstart;
-  struct timespec tend;
+    struct timespec tstart;
+    struct timespec tend;
 
 } AOLOOPCONTROL_DMTURBCONF;
 
@@ -57,6 +60,7 @@ int AOloopControl_DM_createconf();
 int AOloopControl_DM_loadconf();
 int AOloopControl_DM_unloadconf();
 int AOloopControl_DM_CombineChannels(int mode);
+int AOloopControl_DM_chan_setgain(int ch, float gain);
 int AOloopControl_DM_dmdispcombstatus();
 int AOloopControl_DM_dmdispcomboff();
 int AOloopControl_DM_dmtrigoff();
@@ -73,3 +77,4 @@ int AOloopControl_DM_turb();
 
 
 #endif
+
