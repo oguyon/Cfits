@@ -1855,7 +1855,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
-    totalinv=1.0/(total + AOconf[loop].WFSnormfloor);
+    totalinv=1.0/(total + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
 
 # ifdef _OPENMP
     #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
