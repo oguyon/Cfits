@@ -4632,8 +4632,8 @@ int AOloopControl_showparams(long loop)
   else
     printf("log is OFF\n");*/
     
-  printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
-    printw("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
+    printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
+    printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 
   return 0;
 }
