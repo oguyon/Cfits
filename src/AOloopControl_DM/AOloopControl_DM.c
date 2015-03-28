@@ -156,12 +156,12 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode)");
     data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolcontrolDMchgain");
+    strcpy(data.cmd[data.NBcmd].key,"aolcontroldmchgain");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_chan_setgain_cli;
     strcpy(data.cmd[data.NBcmd].info,"set gain for DM displacement channel");
     strcpy(data.cmd[data.NBcmd].syntax,"<chan#> <gain>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMchgain 3 0.2");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmchgain 3 0.2");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_chan_setgain(int ch, float gain)");
     data.NBcmd++;
 
