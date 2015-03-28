@@ -4022,7 +4022,7 @@ int AOcompute(long loop)
         }
         else // direct pixel -> actuators linear transformation
         {
-            if(0)
+            if(1==0)
             {
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                 AOconf[loop].status = 8; // execute
@@ -5072,47 +5072,48 @@ int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, floa
 
 int AOloopControl_InjectMode( long index, float ampl )
 {
-  long i;
-  float *arrayf;
-  char name[200];
+    long i;
+    float *arrayf;
+    char name[200];
 
- if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
- if(aoconfID_DMmodes==-1)
-   {
-     sprintf(name, "aol%ld_DMmodes", LOOPNUMBER);
-     aoconfID_DMmodes = read_sharedmem_image(name);
-   }
-
-  if(aoconfID_DMRM==-1)
-    aoconfID_DMRM = read_sharedmem_image(AOconf[LOOPNUMBER].DMnameRM);
-
-
-  if((index<0)||(index>AOconf[LOOPNUMBER].NBDMmodes-1))
+    if(aoconfID_DMmodes==-1)
     {
-      printf("Invalid mode index... must be between 0 and %ld\n", AOconf[LOOPNUMBER].NBDMmodes);
-    }    
-  else
-    {
-      arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
-      
-      for(i=0;i<AOconf[LOOPNUMBER].sizeDM;i++)
-	arrayf[i] = ampl*data.image[aoconfID_DMmodes].array.F[index*AOconf[LOOPNUMBER].sizeDM+i];
-      
-      
-      
-      data.image[aoconfID_DMRM].md[0].write = 1;
-      memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
-      data.image[aoconfID_DMRM].md[0].cnt0++;
-      data.image[aoconfID_DMRM].md[0].write = 0;
-      
-      free(arrayf);
-      AOconf[LOOPNUMBER].DMupdatecnt ++;
+        sprintf(name, "aol%ld_DMmodes", LOOPNUMBER);
+        aoconfID_DMmodes = read_sharedmem_image(name);
     }
 
-  return(0);
+    if(aoconfID_DMRM==-1)
+        aoconfID_DMRM = read_sharedmem_image(AOconf[LOOPNUMBER].DMnameRM);
+
+
+    if((index<0)||(index>AOconf[LOOPNUMBER].NBDMmodes-1))
+    {
+        printf("Invalid mode index... must be between 0 and %ld\n", AOconf[LOOPNUMBER].NBDMmodes);
+    }
+    else
+    {
+        arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
+
+        for(i=0; i<AOconf[LOOPNUMBER].sizeDM; i++)
+            arrayf[i] = ampl*data.image[aoconfID_DMmodes].array.F[index*AOconf[LOOPNUMBER].sizeDM+i];
+
+
+
+        data.image[aoconfID_DMRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
+        data.image[aoconfID_DMRM].md[0].cnt0++;
+        data.image[aoconfID_DMRM].md[0].write = 0;
+
+        free(arrayf);
+        AOconf[LOOPNUMBER].DMupdatecnt ++;
+    }
+
+    return(0);
 }
+
 
 
 
@@ -5194,24 +5195,25 @@ int AOloopControl_AutoTune()
 
 int AOloopControl_setparam(long loop, char *key, double value)
 {
-	int pOK=0;
-	char kstring[200];
-	
-	strcpy(kstring, "PEperiod");
-	if((strncmp (key, kstring, strlen(kstring)) == 0)&&(pOK==0))
-	{
-		//AOconf[loop].WFScamPEcorr_period = (long double) value;
-		pOK = 1;
-	}
-			
-	if(pOK==0)
-		printf("Parameter not found\n");
-	
-	
-	
-	
-	return (0);
+    int pOK=0;
+    char kstring[200];
+
+    strcpy(kstring, "PEperiod");
+    if((strncmp (key, kstring, strlen(kstring)) == 0)&&(pOK==0))
+    {
+        //AOconf[loop].WFScamPEcorr_period = (long double) value;
+        pOK = 1;
+    }
+
+    if(pOK==0)
+        printf("Parameter not found\n");
+
+
+
+
+    return (0);
 }
+
 
 
 
