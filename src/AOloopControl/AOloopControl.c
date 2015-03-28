@@ -228,14 +228,15 @@ int AOloopControl_setmult_cli()
 
 int Measure_ActMap_WFS_cli()
 {
-	if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
-		{
-			Measure_ActMap_WFS(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
-			return 0;
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
+    {
+        Measure_ActMap_WFS(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 
 
@@ -4267,6 +4268,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 
     kmax = (wrow-3)*(nbcol);
     printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
+    printw("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
     nbl++;
 
     printw("CNT : %lld  / %lld\n", AOconf[loop].cnt, AOconf[loop].cntmax);
@@ -4631,6 +4633,7 @@ int AOloopControl_showparams(long loop)
     printf("log is OFF\n");*/
     
   printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
+    printw("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 
   return 0;
 }
