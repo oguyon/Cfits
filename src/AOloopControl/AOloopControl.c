@@ -192,6 +192,18 @@ int AOloopControl_setgain_cli()
     return 1;
 }
 
+
+int AOloopControl_setWFSnormfloor_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    {
+      AOloopControl_setWFSnormfloor(data.cmdargtoken[1].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 int AOloopControl_setmaxlimit_cli()
 {
   if(CLI_checkarg(1,1)==0)
@@ -619,6 +631,15 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<gain value>");
   strcpy(data.cmd[data.NBcmd].example,"aolsetgain 0.1");
   strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgain(float gain)");
+  data.NBcmd++;
+  
+  strcpy(data.cmd[data.NBcmd].key,"aolsetwfsnormf");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_setWFSnormfloor_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set WFS normalization floor");
+  strcpy(data.cmd[data.NBcmd].syntax,"<floor value (total flux)>");
+  strcpy(data.cmd[data.NBcmd].example,"aolsetwfsnormf 10000.0");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setWFSnormfloor(float WFSnormfloor)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"aolsetmaxlim");
@@ -1591,6 +1612,7 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].maxlimit = 0.3;
             AOconf[loop].mult = 1.00;
             AOconf[loop].gain = 0.0;
+            AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
             AOconf[loop].NBMblocks = 3;
             AOconf[loop].GPUusesem = 1;
@@ -1628,6 +1650,7 @@ int AOloopControl_InitializeMemory(int mode)
  *
  * RM = 1 if response matrix
  *
+ * image is normalized by dividing by (total + AOconf[loop].WFSnormfloor) 
  */
 
 int Average_cam_frames(long loop, long NbAve, int RM)
@@ -1643,7 +1666,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     double tmpf;
     long IDdark;
     char dname[200];
-	long nelem;
+    long nelem;
 
     atype = data.image[aoconfID_WFS].md[0].atype;
 
@@ -1771,7 +1794,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             ptrv = (char*) data.image[aoconfID_WFS].array.U;
             ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
             memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
-         //   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            //   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             //    data.image[aoconfID_WFS0].array.F[ii] = (float) arrayutmp[ii];
             break;
         default :
@@ -1788,64 +1811,64 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Dark subtract
-    sprintf(dname, "aol%ld_wfsdark", loop); 
+    sprintf(dname, "aol%ld_wfsdark", loop);
     IDdark = image_ID(dname);
-	nelem = AOconf[loop].sizeWFS;
+    nelem = AOconf[loop].sizeWFS;
 
 # ifdef _OPENMP
-  #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
-  {  
-  # endif
+    #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+    {
+# endif
 
-  # ifdef _OPENMP
-      #pragma omp for
-      # endif
-	 for(ii=0; ii<nelem; ii++)
-          data.image[aoconfID_WFS0].array.F[ii] = ((float) (arrayutmp[ii])) - data.image[IDdark].array.F[ii];
-    # ifdef _OPENMP
-  }
-  # endif
+# ifdef _OPENMP
+        #pragma omp for
+# endif
+        for(ii=0; ii<nelem; ii++)
+            data.image[aoconfID_WFS0].array.F[ii] = ((float) (arrayutmp[ii])) - data.image[IDdark].array.F[ii];
+# ifdef _OPENMP
+    }
+# endif
 
- 
- 
-  //  if(IDdark!=-1)
-   // {
+
+
+    //  if(IDdark!=-1)
+    // {
     //    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-     //       data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
+    //       data.image[aoconfID_WFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     //}
 
-	AOconf[loop].status = 4; // 4: COMPUTE TOTAL OF IMAGE
- 
- 
+    AOconf[loop].status = 4; // 4: COMPUTE TOTAL OF IMAGE
+
+
     // Normalize
     total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
 
 
-	AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
-	
+    AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
+
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
 
-//	arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
+    //	arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
 
 
-	nelem = AOconf[loop].sizeWFS;
-	//#pragma omp parallel for
-	totalinv=1.0/total;
+    nelem = AOconf[loop].sizeWFS;
+    //#pragma omp parallel for
+    totalinv=1.0/(total + AOconf[loop].WFSnormfloor);
 
- # ifdef _OPENMP
-  #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
-  {  
-  # endif
+# ifdef _OPENMP
+    #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+    {
+# endif
 
-  # ifdef _OPENMP
-      #pragma omp for
-      # endif
-	for(ii=0; ii<nelem; ii++)
-        data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]*totalinv;
-   # ifdef _OPENMP
-  }
-  # endif
+# ifdef _OPENMP
+        #pragma omp for
+# endif
+        for(ii=0; ii<nelem; ii++)
+            data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]*totalinv;
+# ifdef _OPENMP
+    }
+# endif
 
 
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
@@ -1854,6 +1877,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     return(0);
 }
+
 
 
 
@@ -3937,17 +3961,17 @@ int AOcompute(long loop)
         free(matrix_DMmodes);
 
         printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
- /*
-     for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
-          {
-  			printf("mode %6ld    \n", mode);
-  			fflush(stdout);
+        /*
+            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+                 {
+         			printf("mode %6ld    \n", mode);
+         			fflush(stdout);
 
-              for(act=0; act<AOconf[loop].sizeDM; act++)
-                  for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                      data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
-          }
-  */
+                     for(act=0; act<AOconf[loop].sizeDM; act++)
+                         for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+                             data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
+                 }
+         */
 
 
 
@@ -3975,16 +3999,16 @@ int AOcompute(long loop)
 
     if(AOconf[loop].GPU == 0)
     {
-        // TO BE TESTED : enable combined control matrix here 
+        // TO BE TESTED : enable combined control matrix here
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
-        ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
-        data.image[aoconfID_meas_modes].md[0].cnt0 ++;
-        }   
-    else
+            ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
+            data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+        }
+        else
         {
-        ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
-        data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+            ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
+            data.image[aoconfID_meas_modes].md[0].cnt0 ++;
         }
     }
     else
@@ -4072,6 +4096,7 @@ int AOcompute(long loop)
 
     return(0);
 }
+
 
 
 
@@ -4743,6 +4768,17 @@ int AOloopControl_setgain(float gain)
     AOloopControl_InitializeMemory(1);
 
   AOconf[LOOPNUMBER].gain = gain;
+  AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
+}
+
+int AOloopControl_setWFSnormfloor(float WFSnormfloor)
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory(1);
+
+  AOconf[LOOPNUMBER].WFSnormfloor = WFSnormfloor;
   AOloopControl_showparams(LOOPNUMBER);
 
   return 0;

@@ -681,10 +681,13 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus)
     }
     if(data.image[gpumatmultconf[index].IDout].sem == 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr);
+        
     if(data.image[gpumatmultconf[index].IDout].sem1 == 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr1);
+
     if(data.image[gpumatmultconf[index].IDout].semlog == 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptrlog);
+
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
@@ -717,8 +720,6 @@ int GPU_loop_MultMat_free(int index)
         free(gpumatmultconf[index].dmVec_part[device]);
     }
 
-
-
     free(gpumatmultconf[index].cMat_part);
     free(gpumatmultconf[index].dmVec_part);
     free(gpumatmultconf[index].wfsVec_part);
@@ -734,6 +735,25 @@ int GPU_loop_MultMat_free(int index)
 }
 
 
+
+
+
+
+/* 
+ *
+ * sequence of events :
+ * 
+ * wait semptr1
+ * transfer input CPU -> GPU
+ * post semptr2
+ * COMPUTE
+ * post semptr3
+ * wait semptr4
+ * 
+ * 
+ * 
+ *  
+ */
 
 
 void *compute_function( void *ptr )
@@ -885,6 +905,7 @@ void *compute_function( void *ptr )
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
         *ptrstat = 6;
+        
         iter++;
     }
 

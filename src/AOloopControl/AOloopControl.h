@@ -31,6 +31,7 @@ typedef struct
     long sizeWFS_active; // only takes into account WFS pixels in use/active
     long long WFScnt;
     long long WFScntRM;
+    float WFSnormfloor;
 
     // DM
     char DMname[80];
@@ -48,7 +49,7 @@ typedef struct
 
     int init_RM;        // Response Matrix loaded
     int init_CM;        // Control Matrix loaded
-    int init_CMc;		// combine control matrix computed
+    int init_CMc;       // combine control matrix computed
     char respMname[80];
     char contrMname[80];
 
@@ -80,8 +81,8 @@ typedef struct
 
 
     int GPU; // >0 if computation done by GPU
-	int GPUusesem; // 1 if using semaphores to control GPU
-	
+    int GPUusesem; // 1 if using semaphores to control GPU
+
     // LOOP TELEMETRY
     double RMSmodes;
     double RMSmodesCumul;
@@ -94,6 +95,7 @@ typedef struct
     //sem_t *semptr; // semaphore for this image
 
 } AOLOOPCONTROL_CONF;
+
 
 
 
@@ -133,6 +135,7 @@ int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
 int AOloopControl_loopreset();
 int AOloopControl_setgain(float gain);
+int AOloopControl_setWFSnormfloor(float WFSnormfloor);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setmult(float multcoeff);
 int AOloopControl_setframesAve(long nbframes);
