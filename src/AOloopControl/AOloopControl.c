@@ -3555,12 +3555,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     // positive
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
-
-                      sprintf(command, "echo \"%f %f %f\" >> logacqrm.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
-                system(command);
+                    set_DM_modesRM(loop);
+                    
+                      sprintf(command, "echo \"%f %f %f\" > logacqrm1.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
+                    system(command);
+                    save_fits("aol0_DMmodes", "!test_aol0_DMmodes.fits");
                     exit(0);
                     
-                    set_DM_modesRM(loop);
                     usleep(delayus); // OK - this is for calibration
 
 
