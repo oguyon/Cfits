@@ -3376,7 +3376,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     long IDrmtest;
     int vOK;
 
-
     long iter;
     long IDrmi;
     float beta = 0.0;
@@ -3402,8 +3401,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     double normcoeff, normcoeffcnt;
 
 
-	int AdjustAmplitude = 0;
+    int AdjustAmplitude = 0;
     char command[2000];
+
 
     printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
     sprintf(command, "echo \"ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\" > logacqrm.txt\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
@@ -3556,7 +3556,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     // positive
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
 
-
+                      sprintf(command, "echo \"%f %f %f\" >> logacqrm.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
+                system(command);
+                    exit(0);
+                    
                     set_DM_modesRM(loop);
                     usleep(delayus); // OK - this is for calibration
 
@@ -3639,8 +3642,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             printf("Acquisition done, compiling results...");
             fflush(stdout);
 
-            save_fits("RMcube", "!test_RMcube.fits");
-        exit(0);
 
             // PROCESS RMCUBE
             fp = fopen("TimeDelayRM.txt", "w");
@@ -3761,13 +3762,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-			if(AdjustAmplitude==1)				
-				for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
-				{
-                data.image[IDmcoeff].array.F[k1] = 0.8*data.image[IDmcoeff].array.F[k1] + 0.2/(data.image[IDoptsignaln].array.F[k1]/normcoeff);
-                if(data.image[IDmcoeff].array.F[k1]>5.0)
-                    data.image[IDmcoeff].array.F[k1] = 5.0;
-				}
+            if(AdjustAmplitude==1)
+                for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
+                {
+                    data.image[IDmcoeff].array.F[k1] = 0.8*data.image[IDmcoeff].array.F[k1] + 0.2/(data.image[IDoptsignaln].array.F[k1]/normcoeff);
+                    if(data.image[IDmcoeff].array.F[k1]>5.0)
+                        data.image[IDmcoeff].array.F[k1] = 5.0;
+                }
 
             fp = fopen(signame, "w");
             for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
@@ -3796,6 +3797,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     return(0);
 }
+
 
 
 
