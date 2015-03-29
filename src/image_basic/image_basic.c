@@ -3431,7 +3431,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             break;
         }
     }
-
+    printf("\n Processing...\n");
+    fflush(stdout);
 
     for(ii=0; ii<xysize; ii++)
         data.image[IDout].array.F[ii] /= NBcoadd;
