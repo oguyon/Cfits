@@ -3513,12 +3513,19 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     long ID, IDs;
     long xsize, ysize, xysize, zsize;
     long k;
+    long tdelay;
+    
     
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
     xysize = xsize*ysize;
 
+    tdelay = (long) (1000000.0/freq);
+
+    printf("frequ = %f Hz\n", frequ);
+    printf("tdelay = %ld us\n", tdelay);
+    
     IDs = image_ID(streamname);
     if((xsize != data.image[IDs].md[0].size[0])||(ysize != data.image[IDs].md[0].size[1]))
         {
@@ -3537,9 +3544,9 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
         data.image[IDs].md[0].write = 0;
         data.image[IDs].md[0].cnt0++;
 
-        usleep((long) (10000000.0/frequ));
+    //    usleep((long) (10000000.0/frequ));
         
-        usleep ( 2000 );
+        usleep ( tdelay );
         k++;
         if(k>zsize-1)
             k = 0;
