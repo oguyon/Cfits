@@ -101,6 +101,19 @@ int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
 
 
 
+// variables used by functions 
+char Average_cam_frames_dname[200];
+long Average_cam_frames_IDdark = -1;
+long Average_cam_frames_nelem = 1;
+
+
+
+
+
+
+
+
+
 extern DATA data;
 
 
@@ -1678,6 +1691,11 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     {
         arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
         arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
+
+        sprintf(Average_cam_frames_dname, "aol%ld_wfsdark", loop);
+        Average_cam_frames_IDdark = image_ID(dname);
+        Average_cam_frames_nelem = AOconf[loop].sizeWFS;
+
         avcamarraysInit = 1;
     }
 
@@ -1813,12 +1831,12 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Dark subtract and compute total
-    sprintf(dname, "aol%ld_wfsdark", loop);
-    IDdark = image_ID(dname);
-    nelem = AOconf[loop].sizeWFS;
+  //  sprintf(dname, "aol%ld_wfsdark", loop);
+   // IDdark = image_ID(dname);
+   // nelem = AOconf[loop].sizeWFS;
 
 # ifdef _OPENMP
-    #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+    #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
     {
 # endif
 
@@ -1826,7 +1844,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         #pragma omp for
 # endif
         for(ii=0; ii<nelem; ii++)
-            data.image[aoconfID_WFS0].array.F[ii] = (1.0*arrayutmp[ii]) - data.image[IDdark].array.F[ii];
+            data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
 # ifdef _OPENMP
     }
 # endif
