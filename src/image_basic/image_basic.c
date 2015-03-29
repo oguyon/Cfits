@@ -3538,6 +3538,8 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
         data.image[IDs].md[0].cnt0++;
 
         usleep((long) (10000000.0/frequ));
+        
+        usleep ( 2000 );
         k++;
         if(k>zsize-1)
             k = 0;
