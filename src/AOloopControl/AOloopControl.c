@@ -3500,8 +3500,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     aoconfID_cmd_modesRM = create_2Dimage_ID("RMmodesloc", AOconf[loop].NBDMmodes, 1);
 
 
-
-
     for(iter=0; iter<NBiter; iter++)
     {
         if (file_exist ("stopRM.txt"))
@@ -3641,8 +3639,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             printf("Acquisition done, compiling results...");
             fflush(stdout);
 
-
-
+            save_fits("RMcube", "!test_RMcube.fits");
+        exit(0);
 
             // PROCESS RMCUBE
             fp = fopen("TimeDelayRM.txt", "w");
