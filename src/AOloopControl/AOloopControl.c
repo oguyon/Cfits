@@ -1812,7 +1812,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     AOconf[loop].status = 3;  // 3: DARK SUBTRACT
 
 
-    // Dark subtract
+    // Dark subtract and compute total
     sprintf(dname, "aol%ld_wfsdark", loop);
     IDdark = image_ID(dname);
     nelem = AOconf[loop].sizeWFS;
@@ -1826,7 +1826,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         #pragma omp for
 # endif
         for(ii=0; ii<nelem; ii++)
-            data.image[aoconfID_WFS0].array.F[ii] = ((float) (arrayutmp[ii])) - data.image[IDdark].array.F[ii];
+            data.image[aoconfID_WFS0].array.F[ii] = (1.0*arrayutmp[ii]) - data.image[IDdark].array.F[ii];
 # ifdef _OPENMP
     }
 # endif
