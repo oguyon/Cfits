@@ -1876,6 +1876,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     //#pragma omp parallel for
     totalinv=1.0/(total + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     
+    printf("tot : %f %f \n", total, totalinv);
+    exit(0);
     normfloorcoeff = total/(total+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
 
 
