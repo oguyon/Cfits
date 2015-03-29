@@ -1693,7 +1693,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
 
         sprintf(Average_cam_frames_dname, "aol%ld_wfsdark", loop);
-        Average_cam_frames_IDdark = image_ID(dname);
+        Average_cam_frames_IDdark = image_ID(Average_cam_frames_dname);
         Average_cam_frames_nelem = AOconf[loop].sizeWFS;
 
         avcamarraysInit = 1;
