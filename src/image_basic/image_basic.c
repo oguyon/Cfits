@@ -104,7 +104,7 @@ int image_basic_streamaverage_cli()
 
 int image_basic_streamfeed_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4) == 0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1) == 0)
     {
         IMAGE_BASIC_streamfeed(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
         return 0;
