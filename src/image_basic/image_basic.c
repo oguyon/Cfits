@@ -3521,7 +3521,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     ysize = data.image[ID].md[0].size[1];
     xysize = xsize*ysize;
 
-    tdelay = (long) (1000000.0/freq);
+    tdelay = (long) (1000000.0/frequ);
 
     printf("frequ = %f Hz\n", frequ);
     printf("tdelay = %ld us\n", tdelay);
