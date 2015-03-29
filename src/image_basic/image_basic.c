@@ -100,6 +100,19 @@ int image_basic_streamaverage_cli()
 }
 
 
+int image_basic_streamfeed_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4) == 0)
+    {
+        IMAGE_BASIC_streamfeed(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 
 
 int init_image_basic()
@@ -144,6 +157,15 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<imin> <NBcoadd [long]> <imout> <mode>");
     strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imgstreamfeed");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_streamfeed_cli;
+    strcpy(data.cmd[data.NBcmd].info,"feed stream of images");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input image/cube> <stream> <fequ [Hz]>");
+    strcpy(data.cmd[data.NBcmd].example,"imgstreamfeed im imstream 100");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)");
     data.NBcmd++;
 
 
@@ -2196,68 +2218,71 @@ long cube_average(char *ID_in_name, char *ID_out_name, float alpha)
 // return number of images added
 long basic_addimagesfiles(char *strfilter, char *outname)
 {
-  long cnt = 0;
-  char command[SBUFFERSIZE];
-  char fname[SBUFFERSIZE];
-  char fname1[SBUFFERSIZE];
-  FILE *fp;
-  long ID;
-  int init = 0; // becomes 1 when first image encountered
-  int n;
+    long cnt = 0;
+    char command[SBUFFERSIZE];
+    char fname[SBUFFERSIZE];
+    char fname1[SBUFFERSIZE];
+    FILE *fp;
+    long ID;
+    int init = 0; // becomes 1 when first image encountered
+    int n;
 
-  n = snprintf(command,SBUFFERSIZE,"ls %s.fits > flist.tmp\n",strfilter);
-  if(n >= SBUFFERSIZE) 
-    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+    n = snprintf(command,SBUFFERSIZE,"ls %s.fits > flist.tmp\n",strfilter);
+    if(n >= SBUFFERSIZE)
+        printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-  if(system(command)==-1)
+    if(system(command)==-1)
     {
-      printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
-      exit(0);
-    }
-  
-  if((fp = fopen("flist.tmp","r"))==NULL)
-    {
-      printERROR(__FILE__,__func__,__LINE__,"fopen() error");
-      exit(0);
-    }
-  while(fgets(fname,200,fp)!=NULL)
-    {
-      fname[strlen(fname)-1] = '\0';
-      strncpy(fname1,fname,strlen(fname)-5);
-      fname1[strlen(fname)-5] = '\0';
-      ID = load_fits(fname, fname1, 1);
-      printf("Image %s loaded -> %s\n",fname,fname1);
-      if(init==0)
-	{
-	  init = 1;
-	  copy_image_ID(data.image[ID].md[0].name,outname);		
-	}
-      else
-	{
-	  arith_image_add_inplace(outname,data.image[ID].md[0].name);
-	}
-      delete_image_ID(fname1);
-      printf("Image %s added\n",data.image[ID].md[0].name);
-      cnt++;
+        printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
+        exit(0);
     }
 
-  fclose(fp);
-
-  n = snprintf(command,SBUFFERSIZE,"rm flist.tmp");
-  if(n >= SBUFFERSIZE) 
-    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-
-  if(system(command)==-1)
+    if((fp = fopen("flist.tmp","r"))==NULL)
     {
-      printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,"fopen() error");
+        exit(0);
+    }
+    while(fgets(fname,200,fp)!=NULL)
+    {
+        fname[strlen(fname)-1] = '\0';
+        strncpy(fname1,fname,strlen(fname)-5);
+        fname1[strlen(fname)-5] = '\0';
+        ID = load_fits(fname, fname1, 1);
+        printf("Image %s loaded -> %s\n",fname,fname1);
+        if(init==0)
+        {
+            init = 1;
+            copy_image_ID(data.image[ID].md[0].name,outname);
+        }
+        else
+        {
+            arith_image_add_inplace(outname,data.image[ID].md[0].name);
+        }
+        delete_image_ID(fname1);
+        printf("Image %s added\n",data.image[ID].md[0].name);
+        cnt++;
     }
 
-  printf("%ld images coadded (stored in variable imcnt) -> %s\n",cnt,outname);
-  create_variable_ID("imcnt",1.0*cnt);
+    fclose(fp);
 
-  return(cnt);
+    n = snprintf(command,SBUFFERSIZE,"rm flist.tmp");
+    if(n >= SBUFFERSIZE)
+        printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+
+    if(system(command)==-1)
+    {
+        printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
+        exit(0);
+    }
+
+    printf("%ld images coadded (stored in variable imcnt) -> %s\n",cnt,outname);
+    create_variable_ID("imcnt",1.0*cnt);
+
+    return(cnt);
 }
+
+
+
 
 // coadd all images matching strfilter + .fits
 // return number of images added
@@ -3345,7 +3370,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     printf("\n\n");
     for(k=0; k<NBcoadd; k++)
     {
-        printf("\r image # %8ld     ");
+        printf("\r image # %8ld     ", k);
         fflush(stdout);
         if(data.image[ID].sem==0)
         {
@@ -3479,6 +3504,45 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     return(IDout);
 }
 
+// feed image to data stream
+// only works on slice #1
+long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
+{
+    long ID, IDs;
+    long xsize, ysize, xysize, zsize;
+    long k;
+    
+    ID = image_ID(IDname);
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
+    xysize = xsize*ysize;
+
+    IDs = image_ID(streamname);
+    if((xsize != data.image[IDs].md[0].size[0])||(ysize != data.image[IDs].md[0].size[1]))
+        {
+            printf("ERROR: images have different x and y sizes");
+            exit(0);
+        }
+    zsize = data.image[ID].md[0].size[2];
+
+    k = 0;
+    while(1)
+    {
+        data.image[IDs].md[0].write = 1;
+        memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(double)*xysize);
+        if(data.image[IDs].sem == 1)
+            sem_post(data.image[IDs].semptr);
+        data.image[IDs].md[0].write = 0;
+        data.image[IDs].md[0].cnt0++;
+
+        usleep((long) (1000000.0/frequ));
+        k++;
+        if(k>zsize-1)
+            k = 0;
+    }
+
+    return(0);
+}
 
 
 

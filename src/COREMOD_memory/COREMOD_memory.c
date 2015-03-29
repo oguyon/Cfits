@@ -1187,21 +1187,21 @@ int delete_image_ID(char* imname) /* deletes an ID */
     {
         data.image[ID].used = 0;
 
-		if(data.image[ID].sem==1)
-			{
-				data.image[ID].sem = 0;
-				sem_close(data.image[ID].semptr);
-			}
-		if(data.image[ID].sem1==1)
-			{
-				data.image[ID].sem1 = 0;
-				sem_close(data.image[ID].semptr1);
-			}
-		if(data.image[ID].sem==1)
-			{
-				data.image[ID].semlog = 0;
-				sem_close(data.image[ID].semptrlog);
-			}
+        if(data.image[ID].sem==1)
+        {
+            data.image[ID].sem = 0;
+            sem_close(data.image[ID].semptr);
+        }
+        if(data.image[ID].sem1==1)
+        {
+            data.image[ID].sem1 = 0;
+            sem_close(data.image[ID].semptr1);
+        }
+        if(data.image[ID].sem==1)
+        {
+            data.image[ID].semlog = 0;
+            sem_close(data.image[ID].semptrlog);
+        }
 
         if(data.image[ID].md[0].shared == 1)
         {
@@ -1295,12 +1295,12 @@ Code:
             }
             free(data.image[ID].md);
             data.image[ID].md = NULL;
-        
 
-        free(data.image[ID].kw);
-        data.image[ID].kw = NULL;
-		}
-		//free(data.image[ID].logstatus);
+
+            free(data.image[ID].kw);
+            data.image[ID].kw = NULL;
+        }
+        //free(data.image[ID].logstatus);
         /*      free(data.image[ID].size);*/
         //      data.image[ID].md[0].last_access = 0;
     }
@@ -1348,6 +1348,7 @@ int delete_variable_ID(char* varname) /* deletes a variable ID */
 
     return(0);
 }
+
 
 
 
@@ -1894,9 +1895,9 @@ long read_sharedmem_image(char *name)
     int atype;
     int kw;
     char sname[200];
-//	int *vint;
-	
-	
+    //	int *vint;
+
+
     ID = next_avail_image_ID();
     data.image[ID].used = 1;
 
@@ -1986,11 +1987,11 @@ long read_sharedmem_image(char *name)
                 printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);
         }
 
-		mapv += sizeof(IMAGE_KEYWORD)*data.image[ID].md[0].NBkw;
+        mapv += sizeof(IMAGE_KEYWORD)*data.image[ID].md[0].NBkw;
 
-		//vint = (int*) mapv;
-		//data.image[ID].logstatus[0] = *mapv;
-		
+        //vint = (int*) mapv;
+        //data.image[ID].logstatus[0] = *mapv;
+
         strcpy(data.image[ID].md[0].name, name);
 
         if(MEM_MONITOR == 1)
@@ -2008,7 +2009,7 @@ long read_sharedmem_image(char *name)
             data.image[ID].sem = 1;
         }
 
-		sprintf(sname, "%s_sem1", name);
+        sprintf(sname, "%s_sem1", name);
         if ((data.image[ID].semptr1 = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
             data.image[ID].sem1 = 0;
         }
@@ -2018,7 +2019,7 @@ long read_sharedmem_image(char *name)
             data.image[ID].sem1 = 1;
         }
 
-		sprintf(sname, "%s_semlog", name);
+        sprintf(sname, "%s_semlog", name);
         if ((data.image[ID].semptrlog = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
             data.image[ID].semlog = 0;
         }
@@ -2033,6 +2034,7 @@ long read_sharedmem_image(char *name)
 
     return(ID);
 }
+
 
 
 
@@ -2217,79 +2219,84 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
 
 long copy_image_ID(char *name, char *newname)
 {
-  long ID, IDout;
-  long naxis;
-  long *size = NULL;
-  int atype;
-  long nelement;
-  long i;
-  
-  ID = image_ID(name);
-  naxis = data.image[ID].md[0].naxis;
+    long ID, IDout;
+    long naxis;
+    long *size = NULL;
+    int atype;
+    long nelement;
+    long i;
 
-  size = (long*) malloc(sizeof(long)*naxis);
-  if(size==NULL)
+    ID = image_ID(name);
+    naxis = data.image[ID].md[0].naxis;
+
+    size = (long*) malloc(sizeof(long)*naxis);
+    if(size==NULL)
     {
-      printERROR(__FILE__,__func__,__LINE__,"malloc error");
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,"malloc error");
+        exit(0);
     }
 
-  for(i=0;i<naxis;i++)
-    size[i] = data.image[ID].md[0].size[i];
-  atype  = data.image[ID].md[0].atype;
+    for(i=0; i<naxis; i++)
+        size[i] = data.image[ID].md[0].size[i];
+    atype  = data.image[ID].md[0].atype;
 
-  nelement = data.image[ID].md[0].nelement;
+    nelement = data.image[ID].md[0].nelement;
 
-  IDout = image_ID(newname);
-  if(IDout==-1)
+    IDout = image_ID(newname);
+    if(IDout==-1)
     {
-      create_image_ID(newname,naxis,size,atype, data.SHARED_DFT, data.NBKEWORD_DFT);
-      IDout = image_ID(newname);
+        create_image_ID(newname,naxis,size,atype, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = image_ID(newname);
     }
-  else
+    else
     {
-      // verify newname has the right size and type
-      if(data.image[ID].md[0].nelement != data.image[IDout].md[0].nelement)
-	{
-	  fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same size\n",name,newname);
-	  exit(0);
-	}
-      if(data.image[ID].md[0].atype!=data.image[IDout].md[0].atype)
-	{
-	  fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same type\n",name,newname);	
-	  exit(0);
-	}
+        // verify newname has the right size and type
+        if(data.image[ID].md[0].nelement != data.image[IDout].md[0].nelement)
+        {
+            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same size\n",name,newname);
+            exit(0);
+        }
+        if(data.image[ID].md[0].atype!=data.image[IDout].md[0].atype)
+        {
+            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same type\n",name,newname);
+            exit(0);
+        }
     }
-  data.image[IDout].md[0].write = 1;
-  
-  if(atype==CHAR)
-    memcpy (data.image[IDout].array.C,data.image[ID].array.C, sizeof(char)*nelement);
-  
-  if(atype==INT)
-    memcpy (data.image[IDout].array.I,data.image[ID].array.I, sizeof(int)*nelement);
-  
-  if(atype==FLOAT)
-    memcpy (data.image[IDout].array.F,data.image[ID].array.F, sizeof(float)*nelement);
-  
-  if(atype==DOUBLE)
-    memcpy (data.image[IDout].array.D,data.image[ID].array.D, sizeof(double)*nelement);
-  
-  if(atype==COMPLEX_FLOAT)
-    memcpy (data.image[IDout].array.CF,data.image[ID].array.CF, sizeof(float)*2*nelement);
-  
-  if(atype==COMPLEX_DOUBLE)
-    memcpy (data.image[IDout].array.CD,data.image[ID].array.CD, sizeof(double)*2*nelement);
-  
-  if(atype==USHORT)
-    memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
+    data.image[IDout].md[0].write = 1;
 
-  data.image[IDout].md[0].write = 0;
-  data.image[IDout].md[0].cnt0++;
+    if(atype==CHAR)
+        memcpy (data.image[IDout].array.C,data.image[ID].array.C, sizeof(char)*nelement);
 
-  free(size);
+    if(atype==INT)
+        memcpy (data.image[IDout].array.I,data.image[ID].array.I, sizeof(int)*nelement);
 
-  return(IDout);
+    if(atype==FLOAT)
+        memcpy (data.image[IDout].array.F,data.image[ID].array.F, sizeof(float)*nelement);
+
+    if(atype==DOUBLE)
+        memcpy (data.image[IDout].array.D,data.image[ID].array.D, sizeof(double)*nelement);
+
+    if(atype==COMPLEX_FLOAT)
+        memcpy (data.image[IDout].array.CF,data.image[ID].array.CF, sizeof(float)*2*nelement);
+
+    if(atype==COMPLEX_DOUBLE)
+        memcpy (data.image[IDout].array.CD,data.image[ID].array.CD, sizeof(double)*2*nelement);
+
+    if(atype==USHORT)
+        memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
+
+    if(data.image[IDout].sem == 1)
+        sem_post(data.image[IDout].semptr);
+ 
+
+    data.image[IDout].md[0].write = 0;
+    data.image[IDout].md[0].cnt0++;
+
+    free(size);
+
+    return(IDout);
 }
+
 
 
 /* creates floating point variable */

@@ -45,6 +45,10 @@
 # endif
 
 
+int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate thread
+
+
+
 
 int MATRIX_COMPUTATION_MODE = 1; 
 // 0: compute sequentially modes and DM commands
@@ -1861,8 +1865,12 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Normalize
-    total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-
+    if( AOLCOMPUTE_TOTAL_ASYNC == 0 )
+        total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
+    else
+        {
+            
+        }
 
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 

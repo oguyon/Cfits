@@ -96,4 +96,6 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax);
 // Operations on image streams
 long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode);
 
+long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ);
+
 #endif
