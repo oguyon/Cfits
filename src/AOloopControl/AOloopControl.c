@@ -3406,8 +3406,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
     printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
-    sprintf(command, "echo \"ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\" > logacqrm.txt\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
+  /*  sprintf(command, "echo \"ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\" > logacqrm.txt\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
     system(command);
+*/
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -3557,10 +3558,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
                     set_DM_modesRM(loop);
                     
-                      sprintf(command, "echo \"%f %f %f\" > logacqrm1.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
+             /*         sprintf(command, "echo \"%f %f %f\" > logacqrm1.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
                     system(command);
                     save_fits("aol0_DMmodes", "!test_aol0_DMmodes.fits");
-                    exit(0);
+                    exit(0);*/
                     
                     usleep(delayus); // OK - this is for calibration
 
