@@ -45,11 +45,13 @@
 # endif
 
 
-int AOLCOMPUTE_TOTAL_ASYNC = 0; // 1 if WFS image total is computed in separate thread
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
+int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is computed
 
-sem_t AOLCOMPUTE_DARK_SUBSTRACT_sem_name;
+
+int AOLCOMPUTE_SUBTRACT_THREADinit = 0;
+sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 
 
 
@@ -1700,12 +1702,13 @@ void *compute_function_dark_subtract( void *ptr )
 
     while(1)
     {
-        sem_wait(&AOLCOMPUTE_DARK_SUBSTRACT_sem_name);
+        sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
         nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
         IMTOTAL = 0.0;
         for(ii=0; ii<Average_cam_frames_nelem; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
-    }
+        sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
+     }
 }
 
 
@@ -1895,6 +1898,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     //IDdark = image_ID(dname);
     //nelem = AOconf[loop].sizeWFS;
 
+if(1)
+{
 # ifdef _OPENMP
     #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
     {
@@ -1908,7 +1913,19 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 # ifdef _OPENMP
     }
 # endif
-
+}
+else
+{
+    if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
+    {
+        pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+        AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
+        sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
+        sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
+    }
+    sem_post(&AOLCOMPUTE_SUBTRACT_sem_name);
+    sem_wait(&AOLCOMPUTE_SUBTRACT_RESULT_sem_name);
+}
 
 
     //  if(IDdark!=-1)
@@ -1922,9 +1939,11 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     // Normalize
     
-   if(AOLCOMPUTE_TOTAL_ASYNC==0)
+   if((AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0))
    {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
+        AOLCOMPUTE_TOTAL_INIT = 1;
+        IMTOTAL = AOconf[loop].WFStotalflux;
     }
     else 
     {
@@ -2332,6 +2351,22 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         fclose(fp);
         fflush(stdout);
         AOconf[loop].GPU = atoi(content);
+    }
+
+    // TOTAL image done in separate thread ?
+    AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
+    if((fp=fopen("./conf/conf_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt missing\n");
+        printf("using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
+    }
+    else
+    {
+        r = fscanf(fp, "%s", content);
+        printf("AOLCOMPUTE_TOTAL_ASYNC : %d\n", atoi(content));
+        fclose(fp);
+        fflush(stdout);
+        AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = atoi(content);
     }
 
 
@@ -4067,18 +4102,6 @@ int AOcompute(long loop)
         free(matrix_DMmodes);
 
         printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
-        /*
-            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
-                 {
-         			printf("mode %6ld    \n", mode);
-         			fflush(stdout);
-
-                     for(act=0; act<AOconf[loop].sizeDM; act++)
-                         for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                             data.image[aoconfID_contrMc].array.F[act*AOconf[loop].sizeWFS+wfselem] += matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_DMmodes].array.F[mode*AOconf[loop].sizeDM+act];
-                 }
-         */
-
 
 
 
@@ -4768,25 +4791,26 @@ int AOloopControl_loopon()
 
 int AOloopControl_loopstep(long loop, long NBstep)
 {
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  AOconf[loop].cntmax = AOconf[loop].cnt + NBstep;
-  AOconf[LOOPNUMBER].RMSmodesCumul = 0.0;
-  AOconf[LOOPNUMBER].RMSmodesCumulcnt = 0;
+    AOconf[loop].cntmax = AOconf[loop].cnt + NBstep;
+    AOconf[LOOPNUMBER].RMSmodesCumul = 0.0;
+    AOconf[LOOPNUMBER].RMSmodesCumulcnt = 0;
 
-	//  printf("\nLOOP %ld STEP    %lld %ld %lld\n\n", loop, AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
-	//fflush(stdout);
-  
-  AOconf[loop].on = 1;
+    //  printf("\nLOOP %ld STEP    %lld %ld %lld\n\n", loop, AOconf[loop].cnt, NBstep, AOconf[loop].cntmax);
+    //fflush(stdout);
 
-  while(AOconf[loop].on==1)
-    usleep(100); // THIS WAITING IS OK
+    AOconf[loop].on = 1;
 
-  // AOloopControl_showparams(loop);
+    while(AOconf[loop].on==1)
+        usleep(100); // THIS WAITING IS OK
 
-  return 0;
+    // AOloopControl_showparams(loop);
+
+    return 0;
 }
+
 
 
 
@@ -5130,49 +5154,50 @@ int AOloopControl_resetRMSperf()
 
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)
 {
-  long k, kg;
-  float gain;
-  float bestgain= 0.0;
-  float bestval = 10000000.0;
-  float val;
-  char name[200];
+    long k, kg;
+    float gain;
+    float bestgain= 0.0;
+    float bestval = 10000000.0;
+    float val;
+    char name[200];
 
 
- if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  if(aoconfID_cmd_modes==-1)
+    if(aoconfID_cmd_modes==-1)
     {
-      sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER);
-      aoconfID_cmd_modes = read_sharedmem_image(name);
+        sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER);
+        aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
 
-  printf("Block: %ld, NBstep: %ld, gain: %f->%f (%ld septs)\n", NBblock, NBstep, gainStart, gainEnd, NBgain);
+    printf("Block: %ld, NBstep: %ld, gain: %f->%f (%ld septs)\n", NBblock, NBstep, gainStart, gainEnd, NBgain);
 
-  for(kg=0;kg<NBgain;kg++)
+    for(kg=0; kg<NBgain; kg++)
     {
-      for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
-	data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+        for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
+            data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
-      gain = gainStart + 1.0*kg/(NBgain-1)*(gainEnd-gainStart);
-      AOloopControl_setgainblock(NBblock, gain); 
-      AOloopControl_loopstep(LOOPNUMBER, NBstep);
-      val = sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt);
-      printf("%2ld  %6.4f  %10.8lf\n", kg, gain, val);
-      
-      if(val<bestval)
-	{
-	  bestval = val;
-	  bestgain = gain;
-	}
+        gain = gainStart + 1.0*kg/(NBgain-1)*(gainEnd-gainStart);
+        AOloopControl_setgainblock(NBblock, gain);
+        AOloopControl_loopstep(LOOPNUMBER, NBstep);
+        val = sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt);
+        printf("%2ld  %6.4f  %10.8lf\n", kg, gain, val);
+
+        if(val<bestval)
+        {
+            bestval = val;
+            bestgain = gain;
+        }
     }
-  printf("BEST GAIN = %f\n", bestgain);
-  
-  AOloopControl_setgainblock(NBblock, bestgain);
+    printf("BEST GAIN = %f\n", bestgain);
 
-  return(0);
+    AOloopControl_setgainblock(NBblock, bestgain);
+
+    return(0);
 }
+
 
 
 int AOloopControl_InjectMode( long index, float ampl )
