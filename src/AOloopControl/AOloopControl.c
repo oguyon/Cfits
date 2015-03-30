@@ -1929,7 +1929,7 @@ else
 {
     if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
     {
-        pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+        pthread_create( &thread_computetotal_id, NULL, compute_function_dark_subtract, NULL);
         AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
