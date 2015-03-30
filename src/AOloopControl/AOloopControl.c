@@ -1707,8 +1707,8 @@ void *compute_function_dark_subtract( void *ptr )
     nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
     index = (long*) ptr;
     
-    iistart = (long) ((*index-1)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
-    iiend = (long) ((*index)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+    iistart = (long) (*index)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+    iiend = (long) ((*index+1)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
    
     printf("This is thread # %ld     %ld -> %ld  / %ld \n", *index, iistart, iiend, nelem);
    fflush(stdout);
@@ -1932,9 +1932,12 @@ else
 {
     if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
     {
-        for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
+        ti = 0;
+        while(ti<COMPUTE_DARK_SUBTRACT_NBTHREADS)
             {
                 pthread_create( &thread_dark_subtract[ti], NULL, compute_function_dark_subtract, (void*) &ti);
+                usleep(100);
+                ti++;
             }
         AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
