@@ -1932,7 +1932,7 @@ else
 {
     if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
     {
-        for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
+        for(ti=5;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS+5;ti++)
             {
                 pthread_create( &thread_dark_subtract[ti], NULL, compute_function_dark_subtract, (void*) &ti);
             }
