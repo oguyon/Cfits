@@ -141,7 +141,7 @@ int init_img_reduce()
 
 
 /** compute ave, RMS
- * 
+ *
  */
 
 
@@ -153,7 +153,7 @@ long IMG_REDUCE_cubesimplestat(char *IDin_name)
     long ii, jj, kk;
     long offset;
     double tmpf;
-    
+
     long IDave, IDrms;
 
     IDin = image_ID(IDin_name);
@@ -179,12 +179,12 @@ long IMG_REDUCE_cubesimplestat(char *IDin_name)
         }
     }
 
-	for(ii=0; ii<xysize; ii++)
-		{
-			data.image[IDave].array.F[ii] /= zsize;
-			data.image[IDrms].array.F[ii] /= zsize;
-			data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]-data.image[IDave].array.F[ii]*data.image[IDave].array.F[ii]);
-		}
+    for(ii=0; ii<xysize; ii++)
+    {
+        data.image[IDave].array.F[ii] /= zsize;
+        data.image[IDrms].array.F[ii] /= zsize;
+        data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]-data.image[IDave].array.F[ii]*data.image[IDave].array.F[ii]);
+    }
 
     return(IDin);
 }
@@ -200,7 +200,7 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
 {
     long ii, jj, kk;
     long IDin, IDbadpix, IDbadpix1; //, IDouttmp;
-	long xsize, ysize, zsize;
+    long xsize, ysize, zsize;
     double *pix;
     double bpix[3][3];
     long i,j;
@@ -210,22 +210,22 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
 
 
     IDin = image_ID(IDin_name);
-	
-	xsize = data.image[IDin].md[0].size[0];
-	ysize = data.image[IDin].md[0].size[1];
-	zsize = data.image[IDin].md[0].size[2];
-	xysize = xsize*ysize;
-	
-	sum_pix = (double*) malloc(sizeof(double)*zsize);
+
+    xsize = data.image[IDin].md[0].size[0];
+    ysize = data.image[IDin].md[0].size[1];
+    zsize = data.image[IDin].md[0].size[2];
+    xysize = xsize*ysize;
+
+    sum_pix = (double*) malloc(sizeof(double)*zsize);
     pix = (double*) malloc(sizeof(double)*zsize*3*3);
-    
+
     copy_image_ID(IDbadpix_name,"badpix_tmp");
     IDbadpix = image_ID("badpix_tmp");
     copy_image_ID("badpix_tmp", "newbadpix_tmp");
     IDbadpix1 = image_ID("newbadpix_tmp");
 
-//    copy_image_ID(IDin_name, "bpcleaned_tmp");
- //   IDouttmp = image_ID("bpcleaned_tmp");
+    //    copy_image_ID(IDin_name, "bpcleaned_tmp");
+    //   IDouttmp = image_ID("bpcleaned_tmp");
 
 
     left = 1;
@@ -240,25 +240,25 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
                 if (data.image[IDbadpix].array.F[jj*xsize+ii]>0.5)
                 {
                     sum_bpix = 0.0;
-                    for(kk=0;kk<zsize;kk++)
-						sum_pix[kk] = 0.0;
-                    
+                    for(kk=0; kk<zsize; kk++)
+                        sum_pix[kk] = 0.0;
+
                     for (i = 0; i < 3; i++)
                         for (j = 0; j <3; j++)
                         {
-							for(kk=0;kk<zsize;kk++)
-								pix[kk*9+j*3+i] = data.image[IDin].array.F[kk*xysize+(jj-1+j)*xsize+(ii-1+i)];
+                            for(kk=0; kk<zsize; kk++)
+                                pix[kk*9+j*3+i] = data.image[IDin].array.F[kk*xysize+(jj-1+j)*xsize+(ii-1+i)];
                             bpix[i][j] = data.image[IDbadpix].array.F[(jj-1+j)*xsize+(ii-1+i)];
                             sum_bpix += bpix[i][j];
-							for(kk=0;kk<zsize;kk++)
-                            sum_pix[kk] += (1.0-bpix[i][j])*pix[kk*9+j*3+i];
-                        
+                            for(kk=0; kk<zsize; kk++)
+                                sum_pix[kk] += (1.0-bpix[i][j])*pix[kk*9+j*3+i];
+
                         }
                     sum_bpix = 9.0-sum_bpix;
                     if (sum_bpix>2.1)
                     {
-					for(kk=0;kk<zsize;kk++)
-							data.image[IDin].array.F[kk*xysize+jj*xsize+ii] = sum_pix[kk]/sum_bpix;
+                        for(kk=0; kk<zsize; kk++)
+                            data.image[IDin].array.F[kk*xysize+jj*xsize+ii] = sum_pix[kk]/sum_bpix;
                         data.image[IDbadpix1].array.F[jj*xsize+ii] = 0.0;
                         fixed += 1;
                     }
@@ -270,17 +270,18 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
         for (jj = 1; jj < ysize-1; jj++)
             for (ii = 1; ii < xsize-1; ii++)
                 data.image[IDbadpix].array.F[jj*xsize+ii] = data.image[IDbadpix1].array.F[jj*xsize+ii];
-      
+
         printf(" %ld bad pixels cleaned. %ld pixels left\n",fixed,left);
     }
     delete_image_ID("badpix_tmp");
     delete_image_ID("newbadpix_tmp");
-    
-	free(sum_pix);
-	free(pix);
-    
+
+    free(sum_pix);
+    free(pix);
+
     return(0);
 }
+
 
 
 
@@ -501,11 +502,11 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
         
         for(k=0; k<badpixclean_NBop; k++)
         {
-            printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
-            fflush(stdout);
+        //    printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
+         //   fflush(stdout);
             data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
-            printf("\n");
-            fflush(stdout);
+          //  printf("\n");
+          //  fflush(stdout);
         }
 
         if(data.image[IDout].sem == 1)
