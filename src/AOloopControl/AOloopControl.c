@@ -139,7 +139,7 @@ float normfloorcoeff = 1.0;
 
 
 
-THDATA_IMTOTAL totalcomputethdata;
+float IMTOTAL = 0.0;
 
 
 
@@ -1673,7 +1673,7 @@ int AOloopControl_InitializeMemory(int mode)
 
 void *compute_function_imtotal( void *ptr )
 {
-    float total = 0.0;
+    float IMTOTAL = 0.0;
     long ii;
     
     printf("ENTERING THREAD\n");
@@ -1685,9 +1685,6 @@ void *compute_function_imtotal( void *ptr )
 
     
 
-
-    
-    AOconf[loop].WFStotalflux = total;
     
     printf("EXITING THREAD\n");
     fflush(stdout);
@@ -1922,7 +1919,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
         pthread_join(thread_computetotal_id, &status);
  
-        printf("TOTAL = %f\n", AOconf[loop].WFStotalflux);
+        printf("TOTAL = %f\n", IMTOTAL); //AOconf[loop].WFStotalflux);
         fflush(stdout);
     //}
     exit(0);
