@@ -45,7 +45,7 @@
 # endif
 
 
-int AOLCOMPUTE_TOTAL_ASYNC = 0; // 1 if WFS image total is computed in separate thread
+int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate thread
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
@@ -1919,10 +1919,6 @@ int Average_cam_frames(long loop, long NbAve, int RM)
                 sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
             }
         sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
-        
-        
-//        pthread_join(thread_computetotal_id, &status);
-       // AOconf[loop].WFStotalflux = IMTOTAL;
     }
     
 
@@ -1931,8 +1927,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
 
-    //	arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt2function)(double,double))
-
+    
 
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
