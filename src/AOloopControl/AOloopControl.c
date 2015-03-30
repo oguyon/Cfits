@@ -50,7 +50,7 @@ int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
 
-int MATRIX_COMPUTATION_MODE = 1; 
+int MATRIX_COMPUTATION_MODE = 0; 
 // 0: compute sequentially modes and DM commands
 // 1: use combined control matrix
 
@@ -1680,17 +1680,31 @@ void *compute_function_imtotal( void *ptr )
 
     while(1)
     {
-   //     printf("MEASURING IMAGE TOTAL\n");
-   //     fflush(stdout);
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
-        nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
         IMTOTAL = 0.0;
         for(ii=0; ii<nelem; ii++)
             IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
-   //     printf("     -> %f\n", IMTOTAL);
-  //      fflush(stdout);
     }
 }
+
+
+void *compute_function_dark_subtract( void *ptr )
+{
+    long ii;
+    long nelem;
+
+    nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
+
+    while(1)
+    {
+        sem_wait(&AOLCOMPUTE_DARK_SUBSTRACT_sem_name);
+        nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
+        IMTOTAL = 0.0;
+        for(ii=0; ii<Average_cam_frames_nelem; ii++)
+            data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
+    }
+}
+
 
 
 
@@ -4088,7 +4102,6 @@ int AOcompute(long loop)
 
     if(AOconf[loop].GPU == 0)
     {
-        // TO BE TESTED : enable combined control matrix here
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
             ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_WFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
@@ -4120,22 +4133,15 @@ int AOcompute(long loop)
             else // only use active pixels and actuators
             {
                 // re-map input vector
-                //	printf("remapping Vector wfs re\n");
-                //fflush(stdout);
                 for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                     data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
                 data.image[aoconfID_WFS2_active].md[0].cnt0++;
                 //printf("Vector wfs re-mapped\n");
-                //fflush(stdout);
-                //sleep(2);
+ 
 
                 // perform matrix mult
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                 AOconf[loop].status = 8; // execute
-
-                //					printf("ready to execute\n");
-                //				fflush(stdout);
-                //			sleep(10);
 
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
 
