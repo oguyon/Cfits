@@ -1684,6 +1684,7 @@ void *compute_function_imtotal( void *ptr )
         fflush(stdout);
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
+        IMTOTAL = 0.0;
         for(ii=0; ii<nelem; ii++)
             IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
         printf("     -> %f\n", IMTOTAL);
