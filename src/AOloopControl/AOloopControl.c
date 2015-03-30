@@ -1899,7 +1899,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     //IDdark = image_ID(dname);
     //nelem = AOconf[loop].sizeWFS;
 
-if(1)
+if(0)
 {
 # ifdef _OPENMP
     #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
