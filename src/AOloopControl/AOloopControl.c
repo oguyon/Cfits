@@ -51,10 +51,14 @@ int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is co
 
 
 int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
+int COMPUTE_DARK_SUBTRACT_NBTHREADS = 4;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
 
+
+
+long ti; // thread index
 
 int MATRIX_COMPUTATION_MODE = 0; 
 // 0: compute sequentially modes and DM commands
@@ -1696,16 +1700,22 @@ void *compute_function_imtotal( void *ptr )
 
 void *compute_function_dark_subtract( void *ptr )
 {
-    long ii;
+    long ii, iistart, iiend;
     long nelem;
-
+    long *index;
+    
     nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
-
+    index = (long*) ptr;
+    
+    iistart = (long) (*index*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+    iiend = (long) ((*index+1)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+   
+    printf("This is thread # %ld     %ld -> %ld  / %ld \n", *index, iistart, iiend, nelem);
+   fflush(stdout);
+   
     while(1)
     {
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
-
-        nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
         IMTOTAL = 0.0;
         for(ii=0; ii<Average_cam_frames_nelem; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
@@ -1743,6 +1753,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     char dname[200];
     long nelem;
     pthread_t thread_computetotal_id;
+    pthread_t thread_dark_subtract[20];
     float resulttotal;
 
  
@@ -1921,14 +1932,20 @@ else
 {
     if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
     {
-        pthread_create( &thread_computetotal_id, NULL, compute_function_dark_subtract, NULL);
+        for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
+            {
+                pthread_create( &thread_dark_subtract[ti], NULL, compute_function_dark_subtract, (void*) &ti);
+            }
         AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
     }
-    sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+    
+    for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
+        sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
 
-    sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
+    for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
+        sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
 }
 
 
