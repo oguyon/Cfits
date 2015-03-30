@@ -36,7 +36,7 @@
 
 #ifdef HAVE_CUDA
 #include "cudacomp/cudacomp.h"
-#endifASYNC
+#endif
 
 
 # ifdef _OPENMP
