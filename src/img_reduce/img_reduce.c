@@ -450,7 +450,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
     xysize = sizearray[0]*sizearray[1];
 
     IDdark = image_ID("dark"); // use if it exists
-	list_image_ID();
+    list_image_ID();
 
     IDout = image_ID(IDoutname);
     if(IDout==-1)
@@ -460,7 +460,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
         IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(IDoutname);
     }
-	COREMOD_MEMORY_image_set_createsem(IDoutname);
+    COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     if(badpixclean_init==0)
         badpixclean_NBop = IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);
@@ -468,37 +468,53 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
     while(1)
     {
-        	printf("Waiting for incoming image ... \n");
-        	fflush(stdout);
+        printf("Waiting for incoming image ... \n");
+        fflush(stdout);
         if(data.image[ID].sem==1)
-			sem_wait(data.image[ID].semptr);
-		else
-			{
-				printf("NO SEMAPHORE !!!\n");
-				fflush(stdout);
-				exit(0);
-			}
-		printf("... done\n");
-        	fflush(stdout);
+            sem_wait(data.image[ID].semptr);
+        else
+        {
+            printf("NO SEMAPHORE !!!\n");
+            fflush(stdout);
+            exit(0);
+        }
+        printf("... done\n");
+        fflush(stdout);
 
         data.image[IDout].md[0].write = 1;
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
+    
+        printf("step 01\n");
+        fflush(stdout);
 
         if(IDdark!=-1)
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
+    
+        printf("step 02\n");
+        fflush(stdout);
 
         for(k=0; k<badpixclean_NBbadpix; k++)
             data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
 
+    
+        printf("step 03\n");
+        fflush(stdout);
+
+
         for(k=0; k<badpixclean_NBop; k++)
         {
-			//printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
-           //fflush(stdout);
+            //printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
+            //fflush(stdout);
             data.image[IDout].array.F[badpixclean_array_indexout[k]] += badpixclean_array_coeff[k]*data.image[IDout].array.F[badpixclean_array_indexin[k]];
             //printf("\n");
-           //fflush(stdout);
+            //fflush(stdout);
         }
+
+    
+        printf("step 04\n");
+        fflush(stdout);
+
 
         if(data.image[IDout].sem == 1)
             sem_post(data.image[IDout].semptr);
@@ -510,6 +526,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
     return(IDout);
 }
+
 
 
 
