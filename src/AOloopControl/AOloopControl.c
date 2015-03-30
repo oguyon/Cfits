@@ -1676,19 +1676,18 @@ void *compute_function_imtotal( void *ptr )
     long ii;
     long nelem;
     
-    printf("ENTERING THREAD\n");
-    fflush(stdout);
+    //printf("ENTERING THREAD\n");
+    //fflush(stdout);
     
 
     nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
     for(ii=0;ii<nelem;ii++)
         IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
-    printf("ID = %ld     name = %s   nelem = %ld\n", aoconfID_WFS0, data.image[aoconfID_WFS0].md[0].name, nelem);
-    fflush(stdout);
+    //printf("ID = %ld     name = %s   nelem = %ld\n", aoconfID_WFS0, data.image[aoconfID_WFS0].md[0].name, nelem);
+    //fflush(stdout);
      
-    printf("EXITING THREAD\n");
-    fflush(stdout);
-  
+  //  printf("EXITING THREAD\n");
+   // fflush(stdout);
 }
 
 
@@ -1902,27 +1901,17 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Normalize
-    //    if( AOLCOMPUTE_TOTAL_ASYNC == 0 )
-
-//    if(AOLCOMPUTE_TOTAL_ASYNC==0)
-  //  {
+   if(AOLCOMPUTE_TOTAL_ASYNC==0)
+   {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-
-         printf("  --- TOTAL = %f\n", AOconf[loop].WFStotalflux);
-        fflush(stdout);
-    //}
-    //else
-    //{
-        printf(" creating thread\n");
-        fflush(stdout);
-
+    }
+    else
+    {
         pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
         pthread_join(thread_computetotal_id, &status);
- 
-        printf("TOTAL = %f\n", IMTOTAL); //AOconf[loop].WFStotalflux);
-        fflush(stdout);
-    //}
-    exit(0);
+        AOconf[loop].WFStotalflux) = IMTOTAL;
+    }
+    
 
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 
