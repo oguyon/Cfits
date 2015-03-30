@@ -396,15 +396,21 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
                 for(k=0; k<NBnearbypix; k++)
                 {
                     nearbypix_array_coeff[k] /= coefftot;
-				
-               
+
+
                     badpixclean_array_indexin[NBop] = nearbypix_array_index[k];
                     badpixclean_array_indexout[NBop] = jj*xsize+ii;
                     badpixclean_array_coeff[NBop] = nearbypix_array_coeff[k];
                     NBop++;
-				}
-				
-				
+                
+                    if(NBop>xysize-1)
+                    {
+                        printf("ERROR: TOO MANY BAD PIXELS .... sorry... you need a better detector.\n");
+                        exit(0);
+                    }
+                }
+
+
                 bpcnt++;
             }
         }
@@ -426,6 +432,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
     return(NBop);
 }
+
 
 
 
@@ -478,30 +485,20 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
             fflush(stdout);
             exit(0);
         }
-        printf("... done\n");
-        fflush(stdout);
-
+     
         data.image[IDout].md[0].write = 1;
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*xysize);
-    
-        printf("step 01\n");
-        fflush(stdout);
-
+  
         if(IDdark!=-1)
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
-    
-        printf("step 02\n");
-        fflush(stdout);
 
         for(k=0; k<badpixclean_NBbadpix; k++)
             data.image[IDout].array.F[badpixclean_indexlist[k]] = 0.0;
 
-    
-        printf("step 03\n");
-        fflush(stdout);
 
 
+        
         for(k=0; k<badpixclean_NBop; k++)
         {
             printf("Operation %ld / %ld    %ld x %f -> %ld", k, badpixclean_NBop, badpixclean_array_indexin[k], badpixclean_array_coeff[k], badpixclean_array_indexout[k]);
@@ -510,11 +507,6 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
             printf("\n");
             fflush(stdout);
         }
-
-    
-        printf("step 04\n");
-        fflush(stdout);
-
 
         if(data.image[IDout].sem == 1)
             sem_post(data.image[IDout].semptr);
