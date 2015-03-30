@@ -1909,7 +1909,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     {
         pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
         pthread_join(thread_computetotal_id, &status);
-        AOconf[loop].WFStotalflux) = IMTOTAL;
+        AOconf[loop].WFStotalflux = IMTOTAL;
     }
     
 
