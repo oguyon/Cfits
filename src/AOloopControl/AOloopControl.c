@@ -1675,6 +1675,7 @@ void *compute_function_imtotal( void *ptr )
 {
     float IMTOTAL = 0.0;
     long ii;
+    long nelem;
     
     printf("ENTERING THREAD\n");
     fflush(stdout);
@@ -1683,8 +1684,9 @@ void *compute_function_imtotal( void *ptr )
     //total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
     fflush(stdout);
 
-    
-
+    nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
+    for(ii=0;ii<nelem;ii++)
+        IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
     
     printf("EXITING THREAD\n");
     fflush(stdout);
