@@ -32,6 +32,7 @@ typedef struct
     long long WFScnt;
     long long WFScntRM;
     float WFSnormfloor;
+    float WFStotalflux; // after dark subtraction
 
     // DM
     char DMname[80];
@@ -98,6 +99,14 @@ typedef struct
 
 
 
+
+// data passed to each thread
+typedef struct
+{
+    long nelem;
+    float *arrayptr;
+    float *result; // where to white status
+} THDATA_IMTOTAL;
 
 
 

@@ -1657,8 +1657,26 @@ int AOloopControl_InitializeMemory(int mode)
 }
 
 
+void *compute_function_imtotal( void *ptr )
+{
+    THDATA_IMTOTAL *thdata_imtotal;
+    long ii;
+    float total = 0;
+    float *arrayptr;
+    float *result;
+    long nelem;
+    
+    
+    thdata_imtotal = (THDATA_IMTOTAL*) ptr;
+    arrayptr = thdata_imtotal->arrayptr;
+    nelem = thdata_imtotal->nelem;
+    result = thdata_imtotal->result;
+    
+    for(ii=0;ii<nelem;ii++)
+        total += arrayptr[ii];
 
-
+    *result = total;
+}
 
 
 
@@ -1676,7 +1694,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 {
     long imcnt;
     long ii;
-    double total, totalinv;
+    double totalinv;
     char name[200];
     int atype;
     long slice;
@@ -1686,7 +1704,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     long IDdark;
     char dname[200];
     long nelem;
+    pthread_t thread_computetotal_id;
+    THDATA_IMTOTAL* totalcomputethdata;
+    float resulttotal;
+    
+    totalcomputethdata = (THDATA_IMTOTAL*) malloc(sizeof(THDATA_IMTOTAL));
+    void *status = 0;
 
+    
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
@@ -1866,10 +1891,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     // Normalize
     if( AOLCOMPUTE_TOTAL_ASYNC == 0 )
-        total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
+        AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
     else
         {
-            
+            totalcomputethdata->nelem = AOconf[loop].sizeWFS;
+            totalcomputethdata->arrayptr = data.image[aoconfID_WFS0].array.F;
+            pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, (void*) &totalcomputethdata);
+            AOconf[loop].WFStotalflux = *totalcomputethdata->result;
+            pthread_join(thread_computetotal_id, &status);
         }
 
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
@@ -1882,9 +1911,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
-    totalinv=1.0/(total + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+    totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     
-    normfloorcoeff = total/(total+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+    normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
 
 
 # ifdef _OPENMP
@@ -1905,6 +1934,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 0;
 
+    free(totalcomputethdata);
 
     return(0);
 }
