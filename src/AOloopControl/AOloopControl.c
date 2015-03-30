@@ -1672,12 +1672,15 @@ void *compute_function_imtotal( void *ptr )
     thdata_imtotal = (THDATA_IMTOTAL*) ptr;
     arrayptr = thdata_imtotal->arrayptr;
     nelem = thdata_imtotal->nelem;
-   
+    
+    printf("nelem = %ld\n", nelem);
+    fflush(stdout);
+ 
     
     for(ii=0;ii<nelem;ii++)
         total += arrayptr[ii];
 
-    printf("entering thread\n");
+    printf("exiting thread\n");
     fflush(stdout);
 
     *thdata_imtotal->result = total;
