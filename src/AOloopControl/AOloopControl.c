@@ -1712,7 +1712,7 @@ void *compute_function_dark_subtract( void *ptr )
    
     printf("This is thread # %ld     %ld -> %ld  / %ld \n", *index, iistart, iiend, nelem);
    fflush(stdout);
-   
+   sleep(5.0);
     while(1)
     {
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
