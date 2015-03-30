@@ -1717,7 +1717,7 @@ void *compute_function_dark_subtract( void *ptr )
     {
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
         IMTOTAL = 0.0;
-        for(ii=0; ii<Average_cam_frames_nelem; ii++)
+        for(ii=iistart; ii<iiend; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
 
         sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
