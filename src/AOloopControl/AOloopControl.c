@@ -1680,8 +1680,14 @@ void *compute_function_imtotal( void *ptr )
     fflush(stdout);
     
     printf("ID = %ld     name = %s\n", aoconfID_WFS0, data.image[aoconfID_WFS0].md[0].name);
-    //arith_image_total(data.image[aoconfID_WFS0].md[0].name);
+    //total = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
     fflush(stdout);
+
+    
+
+
+    
+    AOconf[loop].WFStotalflux = total;
     
     printf("EXITING THREAD\n");
     fflush(stdout);
