@@ -1707,8 +1707,8 @@ void *compute_function_dark_subtract( void *ptr )
     nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
     index = (long*) ptr;
     
-    iistart = (long) (*index*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
-    iiend = (long) ((*index+1)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+    iistart = (long) ((*index-1)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
+    iiend = (long) ((*index)*nelem/COMPUTE_DARK_SUBTRACT_NBTHREADS);
    
     printf("This is thread # %ld     %ld -> %ld  / %ld \n", *index, iistart, iiend, nelem);
    fflush(stdout);
