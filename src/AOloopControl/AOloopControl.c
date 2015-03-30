@@ -137,6 +137,20 @@ int avcamarraysInit = 0;
 
 float normfloorcoeff = 1.0;
 
+
+
+THDATA_IMTOTAL totalcomputethdata;
+
+
+
+
+
+
+
+
+
+
+
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -1659,31 +1673,19 @@ int AOloopControl_InitializeMemory(int mode)
 
 void *compute_function_imtotal( void *ptr )
 {
-    THDATA_IMTOTAL *thdata_imtotal;
+    float total = 0.0;
     long ii;
-    float total = 0;
-    float *arrayptr;
-    float *result;
-    long nelem;
     
-    printf("entering thread\n");
+    printf("ENTERING THREAD\n");
     fflush(stdout);
     
-    thdata_imtotal = (THDATA_IMTOTAL*) ptr;
-    arrayptr = thdata_imtotal->arrayptr;
-    nelem = thdata_imtotal->nelem;
-    
-    printf("nelem = %ld\n", nelem);
+    printf("ID = %ld     name = %s\n", aoconfID_WFS0, data.image[aoconfID_WFS0].md[0].name);
+    //arith_image_total(data.image[aoconfID_WFS0].md[0].name);
     fflush(stdout);
- 
     
-    for(ii=0;ii<nelem;ii++)
-        total += arrayptr[ii];
-
-    printf("exiting thread\n");
+    printf("EXITING THREAD\n");
     fflush(stdout);
-
-    *thdata_imtotal->result = total;
+  
 }
 
 
@@ -1695,7 +1697,7 @@ void *compute_function_imtotal( void *ptr )
  *
  * RM = 1 if response matrix
  *
- * image is normalized by dividing by (total + AOconf[loop].WFSnormfloor) 
+ * image is normalized by dividing by (total + AOconf[loop].WFSnormfloor)
  */
 
 int Average_cam_frames(long loop, long NbAve, int RM)
@@ -1713,13 +1715,12 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     char dname[200];
     long nelem;
     pthread_t thread_computetotal_id;
-    THDATA_IMTOTAL* totalcomputethdata;
     float resulttotal;
-    
-    totalcomputethdata = (THDATA_IMTOTAL*) malloc(sizeof(THDATA_IMTOTAL));
+
+ 
     void *status = 0;
 
-    
+
     atype = data.image[aoconfID_WFS].md[0].atype;
 
 
@@ -1868,9 +1869,9 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Dark subtract and compute total
-  //sprintf(dname, "aol%ld_wfsdark", loop);
-   //IDdark = image_ID(dname);
-   //nelem = AOconf[loop].sizeWFS;
+    //sprintf(dname, "aol%ld_wfsdark", loop);
+    //IDdark = image_ID(dname);
+    //nelem = AOconf[loop].sizeWFS;
 
 # ifdef _OPENMP
     #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
@@ -1898,28 +1899,27 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Normalize
-//    if( AOLCOMPUTE_TOTAL_ASYNC == 0 )
-  
- if(AOLCOMPUTE_TOTAL_ASYNC==0)
- {
-    AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-  
-  //  printf("  --- TOTAL = %f\n", AOconf[loop].WFStotalflux);
-    //fflush(stdout);
-}
-else
-{
-            totalcomputethdata->nelem = AOconf[loop].sizeWFS;
-            totalcomputethdata->arrayptr = data.image[aoconfID_WFS0].array.F;
-      printf(" creating thread\n");
-    fflush(stdout);
+    //    if( AOLCOMPUTE_TOTAL_ASYNC == 0 )
 
-            pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, (void*) &totalcomputethdata);
-            AOconf[loop].WFStotalflux = *totalcomputethdata->result;
-            pthread_join(thread_computetotal_id, &status);
+//    if(AOLCOMPUTE_TOTAL_ASYNC==0)
+  //  {
+        AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
+
+         printf("  --- TOTAL = %f\n", AOconf[loop].WFStotalflux);
+        fflush(stdout);
+    //}
+    //else
+    //{
+        printf(" creating thread\n");
+        fflush(stdout);
+
+        pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+        pthread_join(thread_computetotal_id, &status);
+ 
         printf("TOTAL = %f\n", AOconf[loop].WFStotalflux);
-    fflush(stdout);
-}    
+        fflush(stdout);
+    //}
+    exit(0);
 
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 
@@ -1932,7 +1932,7 @@ else
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
     totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-    
+
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
 
 
@@ -1954,10 +1954,11 @@ else
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 0;
 
-    free(totalcomputethdata);
+    
 
     return(0);
 }
+
 
 
 
