@@ -1703,12 +1703,22 @@ void *compute_function_dark_subtract( void *ptr )
 
     while(1)
     {
+        printf("sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name)");
+        fflush(stdout);
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+    printf(" done\n");
+    fflush(stdout);    
+
         nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
         IMTOTAL = 0.0;
         for(ii=0; ii<Average_cam_frames_nelem; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
+
+        printf("sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name)");
+        fflush(stdout);
         sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
+    printf(" done\n");
+    fflush(stdout);    
      }
 }
 
@@ -1924,8 +1934,17 @@ else
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
     }
+    printf("sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name)");
+    fflush(stdout);
     sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+    printf(" done\n");
+    fflush(stdout);    
+
+    printf("sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name)");
+    fflush(stdout);    
     sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
+    printf(" done\n");
+    fflush(stdout);    
 }
 
 
