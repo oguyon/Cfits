@@ -36,7 +36,7 @@
 
 #ifdef HAVE_CUDA
 #include "cudacomp/cudacomp.h"
-#endif
+#endifASYNC
 
 
 # ifdef _OPENMP
@@ -45,7 +45,7 @@
 # endif
 
 
-int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate thread
+int AOLCOMPUTE_TOTAL_ASYNC = 0; // 1 if WFS image total is computed in separate thread
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
@@ -1680,15 +1680,15 @@ void *compute_function_imtotal( void *ptr )
 
     while(1)
     {
-        printf("MEASURING IMAGE TOTAL\n");
-        fflush(stdout);
+   //     printf("MEASURING IMAGE TOTAL\n");
+   //     fflush(stdout);
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
         IMTOTAL = 0.0;
         for(ii=0; ii<nelem; ii++)
             IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
-        printf("     -> %f\n", IMTOTAL);
-        fflush(stdout);
+   //     printf("     -> %f\n", IMTOTAL);
+  //      fflush(stdout);
     }
 }
 
@@ -1909,7 +1909,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
    {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
     }
-    else
+    else 
     {
         AOconf[loop].WFStotalflux = IMTOTAL; // from last loop 
         if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
@@ -2948,7 +2948,6 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     for(act=0; act<AOconf[loop].sizeDM; act++)
     {
-
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         {
             data.image[IDpos].array.F[ii] = 0.0;

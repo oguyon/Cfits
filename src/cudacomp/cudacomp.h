@@ -34,25 +34,25 @@ typedef struct
 
 typedef struct
 {
-	int init; /// 1 if initialized
-	int alloc; /// 1 if memory has been allocated
-	long CM_ID;
-	long CM_cnt;
-	
+    int init; /// 1 if initialized
+    int alloc; /// 1 if memory has been allocated
+    long CM_ID;
+    long CM_cnt;
+
     int M;
-    int N;	
+    int N;
 
 
-	// synchronization 
-	int sem; // if sem = 1, wait for semaphore to perform computation
-	int gpuinit;
-	 // one semaphore per thread
-	sem_t **semptr1; // command to start matrix multiplication (input)
-	sem_t **semptr2; // memory transfer to device completed (output) 
-	sem_t **semptr3; // computation done (output)
-	sem_t **semptr4; // command to start transfer to host (input)
-	sem_t **semptr5; // output transfer to host completed (output)
-	
+    // synchronization
+    int sem; // if sem = 1, wait for semaphore to perform computation
+    int gpuinit;
+    // one semaphore per thread
+    sem_t **semptr1; // command to start matrix multiplication (input)
+    sem_t **semptr2; // memory transfer to device completed (output)
+    sem_t **semptr3; // computation done (output)
+    sem_t **semptr4; // command to start transfer to host (input)
+    sem_t **semptr5; // output transfer to host completed (output)
+
     // computer memory (host)
     float *cMat;
     float **cMat_part;
@@ -81,10 +81,11 @@ typedef struct
 
     int orientation;
     long IDout;
-    
+
 
 } GPUMATMULTCONF;
 #endif
+
 
 
 
