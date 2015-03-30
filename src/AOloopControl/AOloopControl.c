@@ -45,7 +45,7 @@
 # endif
 
 
-int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate thread
+int AOLCOMPUTE_TOTAL_ASYNC = 0; // 1 if WFS image total is computed in separate thread
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
