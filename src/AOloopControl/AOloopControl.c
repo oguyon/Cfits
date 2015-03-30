@@ -50,8 +50,9 @@ sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is computed
 
 
-int AOLCOMPUTE_SUBTRACT_THREADinit = 0;
+int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
+sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
 
 
@@ -1923,8 +1924,8 @@ else
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
         sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
     }
-    sem_post(&AOLCOMPUTE_SUBTRACT_sem_name);
-    sem_wait(&AOLCOMPUTE_SUBTRACT_RESULT_sem_name);
+    sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+    sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
 }
 
 
@@ -1939,7 +1940,7 @@ else
 
     // Normalize
     
-   if((AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0))
+   if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0))
    {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
         AOLCOMPUTE_TOTAL_INIT = 1;
