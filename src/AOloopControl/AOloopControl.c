@@ -49,6 +49,9 @@ int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate 
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
+sem_t AOLCOMPUTE_DARK_SUBSTRACT_sem_name;
+
+
 
 int MATRIX_COMPUTATION_MODE = 0; 
 // 0: compute sequentially modes and DM commands
