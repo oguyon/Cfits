@@ -56,8 +56,8 @@ GPUMATMULTCONF gpumatmultconf[10]; // supports up to 10 configurations
 
 cudaError_t error;
 cublasStatus_t stat;
-float alpha = 1.0;
-float beta  = 0.0;
+float cublasSgemv_alpha = 1.0;
+float cublasSgemv_beta  = 0.0;
 
 
 #endif
@@ -840,7 +840,7 @@ void *compute_function( void *ptr )
 
 
 
-        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &beta, gpumatmultconf[index].d_dmVec[device], 1);
+        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
 
         if (stat != CUBLAS_STATUS_SUCCESS)
         {

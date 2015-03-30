@@ -84,7 +84,9 @@ typedef struct
     int GPU; // >0 if computation done by GPU
     int GPUusesem; // 1 if using semaphores to control GPU
 
+    
     int AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
+    
 
     // LOOP TELEMETRY
     double RMSmodes;

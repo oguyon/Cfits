@@ -51,7 +51,7 @@ int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is co
 
 
 int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
-int COMPUTE_DARK_SUBTRACT_NBTHREADS = 16;
+int COMPUTE_DARK_SUBTRACT_NBTHREADS = 8;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
@@ -2135,72 +2135,73 @@ long AOloopControl_loadCM(long loop, char *CMfname)
 
 long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize)
 {
-	long ID;
-	int CreateSMim;
-	int sizeOK;
-	long *sizearray;
-	char command[500];
-	int r;
-	long ID1;
-	
-	
+    long ID;
+    int CreateSMim;
+    int sizeOK;
+    long *sizearray;
+    char command[500];
+    int r;
+    long ID1;
+
+
     ID = image_ID(name);
     sizearray = (long*) malloc(sizeof(long)*2);
-        
+
     if(ID==-1)
+    {
+        CreateSMim = 0;
+        ID = read_sharedmem_image(name);
+        if(ID!=-1)
         {
-			CreateSMim = 0;	
-			ID = read_sharedmem_image(name);
-			if(ID!=-1)
-			{
-				sizeOK = COREMOD_MEMORY_check_2Dsize(name, xsize, ysize);
-				if(sizeOK==0)
-                {
-                    printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
-                    delete_image_ID(name);
-                    sprintf(command, "rm /tmp/%s.im.shm", name);
-                    r = system(command);
-                    CreateSMim = 1;
-                }
-			}
-			else
-				CreateSMim = 1;
-				
-			if(CreateSMim == 1)
+            sizeOK = COREMOD_MEMORY_check_2Dsize(name, xsize, ysize);
+            if(sizeOK==0)
             {
-				sizearray[0] =  xsize;
-				sizearray[1] =  ysize;
-				printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
-				fflush(stdout);
-				ID = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-			}
-		}
-	free(sizearray);
-	
-	if(ID==-1)
-		{
-			printf("ERROR: could not load/create %s\n", name);
-			exit(0);
-		}
-	else
-		{
-			ID1 = load_fits(fname, "tmp2Dim", 1);
-			if(ID1!=-1)
-			{
-				sizeOK = COREMOD_MEMORY_check_2Dsize("tmp2Dim", xsize, ysize);
-				if(sizeOK==1)
-					{
-						memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize);
-						printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
-					}
-				else
-					printf("File \"%s\" has wrong size (should be 2-D %ld x %ld,  is %ld-D %ld x %ld): ignoring\n", fname, xsize, ysize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1]);
-				delete_image_ID("tmp2Dim");
-			}
-		}
-	
-	return ID;
+                printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
+                delete_image_ID(name);
+                sprintf(command, "rm /tmp/%s.im.shm", name);
+                r = system(command);
+                CreateSMim = 1;
+            }
+        }
+        else
+            CreateSMim = 1;
+
+        if(CreateSMim == 1)
+        {
+            sizearray[0] =  xsize;
+            sizearray[1] =  ysize;
+            printf("Creating %s   [%ld x %ld]\n", name, sizearray[0], sizearray[1]);
+            fflush(stdout);
+            ID = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+        }
+    }
+    free(sizearray);
+
+    if(ID==-1)
+    {
+        printf("ERROR: could not load/create %s\n", name);
+        exit(0);
+    }
+    else
+    {
+        ID1 = load_fits(fname, "tmp2Dim", 1);
+        if(ID1!=-1)
+        {
+            sizeOK = COREMOD_MEMORY_check_2Dsize("tmp2Dim", xsize, ysize);
+            if(sizeOK==1)
+            {
+                memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize);
+                printf("loaded file \"%s\" to shared memory \"%s\"\n", fname, name);
+            }
+            else
+                printf("File \"%s\" has wrong size (should be 2-D %ld x %ld,  is %ld-D %ld x %ld): ignoring\n", fname, xsize, ysize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1]);
+            delete_image_ID("tmp2Dim");
+        }
+    }
+
+    return ID;
 }
+
 
 
 
