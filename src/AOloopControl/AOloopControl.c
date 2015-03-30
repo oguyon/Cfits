@@ -45,7 +45,7 @@
 # endif
 
 
-int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate thread
+int AOLCOMPUTE_TOTAL_ASYNC = 0; // 1 if WFS image total is computed in separate thread
 
 
 
@@ -1900,13 +1900,15 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     // Normalize
 //    if( AOLCOMPUTE_TOTAL_ASYNC == 0 )
   
-    
+ if(AOLCOMPUTE_TOTAL_ASYNC==0)
+ {
     AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-    printf("  --- TOTAL = %f\n", AOconf[loop].WFStotalflux);
-    fflush(stdout);
-    
-   
-   
+  
+  //  printf("  --- TOTAL = %f\n", AOconf[loop].WFStotalflux);
+    //fflush(stdout);
+}
+else
+{
             totalcomputethdata->nelem = AOconf[loop].sizeWFS;
             totalcomputethdata->arrayptr = data.image[aoconfID_WFS0].array.F;
       printf(" creating thread\n");
@@ -1917,7 +1919,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             pthread_join(thread_computetotal_id, &status);
         printf("TOTAL = %f\n", AOconf[loop].WFStotalflux);
     fflush(stdout);
-    
+}    
 
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 
