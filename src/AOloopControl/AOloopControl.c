@@ -1666,16 +1666,21 @@ void *compute_function_imtotal( void *ptr )
     float *result;
     long nelem;
     
+    printf("entering thread\n");
+    fflush(stdout);
     
     thdata_imtotal = (THDATA_IMTOTAL*) ptr;
     arrayptr = thdata_imtotal->arrayptr;
     nelem = thdata_imtotal->nelem;
-    result = thdata_imtotal->result;
+   
     
     for(ii=0;ii<nelem;ii++)
         total += arrayptr[ii];
 
-    *result = total;
+    printf("entering thread\n");
+    fflush(stdout);
+
+    *thdata_imtotal->result = total;
 }
 
 
@@ -1894,11 +1899,16 @@ int Average_cam_frames(long loop, long NbAve, int RM)
   
     
     AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
-    printf("TOTAL = %f\n", AOconf[loop].WFStotalflux);
+    printf("  --- TOTAL = %f\n", AOconf[loop].WFStotalflux);
     fflush(stdout);
     
+   
+   
             totalcomputethdata->nelem = AOconf[loop].sizeWFS;
             totalcomputethdata->arrayptr = data.image[aoconfID_WFS0].array.F;
+      printf(" creating thread\n");
+    fflush(stdout);
+
             pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, (void*) &totalcomputethdata);
             AOconf[loop].WFStotalflux = *totalcomputethdata->result;
             pthread_join(thread_computetotal_id, &status);
