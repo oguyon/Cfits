@@ -51,7 +51,7 @@ int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is co
 
 
 int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
-int COMPUTE_DARK_SUBTRACT_NBTHREADS = 4;
+int COMPUTE_DARK_SUBTRACT_NBTHREADS = 8;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
@@ -1716,7 +1716,6 @@ void *compute_function_dark_subtract( void *ptr )
     while(1)
     {
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
-        IMTOTAL = 0.0;
         for(ii=iistart; ii<iiend; ii++)
             data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
 
