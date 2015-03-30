@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <sched.h>
 #include <ncurses.h>
-
+#include <semaphore.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
@@ -46,8 +46,8 @@
 
 
 int AOLCOMPUTE_TOTAL_ASYNC = 1; // 1 if WFS image total is computed in separate thread
-
-
+int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
+sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
 
 int MATRIX_COMPUTATION_MODE = 1; 
@@ -1677,9 +1677,20 @@ void *compute_function_imtotal( void *ptr )
     long nelem;
 
     nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
-    //for(ii=0;ii<nelem;ii++)
-      //  IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
+
+    while(1)
+    {
+        printf("MEASURING IMAGE TOTAL\n");
+        fflush(stdout);
+        sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+        nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
+        for(ii=0; ii<nelem; ii++)
+            IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
+        printf("     -> %f\n", IMTOTAL);
+        fflush(stdout);
+    }
 }
+
 
 
 
@@ -1892,15 +1903,25 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
 
     // Normalize
+    
    if(AOLCOMPUTE_TOTAL_ASYNC==0)
    {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
     }
     else
     {
-        pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
-        pthread_join(thread_computetotal_id, &status);
-        AOconf[loop].WFStotalflux = IMTOTAL;
+        AOconf[loop].WFStotalflux = IMTOTAL; // from last loop 
+        if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
+            {
+                pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+                AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
+                sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
+            }
+        sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+        
+        
+//        pthread_join(thread_computetotal_id, &status);
+       // AOconf[loop].WFStotalflux = IMTOTAL;
     }
     
 
