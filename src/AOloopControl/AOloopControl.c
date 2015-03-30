@@ -1675,19 +1675,10 @@ void *compute_function_imtotal( void *ptr )
 {
     long ii;
     long nelem;
-    
-    //printf("ENTERING THREAD\n");
-    //fflush(stdout);
-    
 
     nelem = data.image[aoconfID_WFS0].md[0].size[0]*data.image[aoconfID_WFS0].md[0].size[1];
-    for(ii=0;ii<nelem;ii++)
-        IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
-    //printf("ID = %ld     name = %s   nelem = %ld\n", aoconfID_WFS0, data.image[aoconfID_WFS0].md[0].name, nelem);
-    //fflush(stdout);
-     
-  //  printf("EXITING THREAD\n");
-   // fflush(stdout);
+    //for(ii=0;ii<nelem;ii++)
+      //  IMTOTAL += data.image[aoconfID_WFS0].array.F[ii];
 }
 
 
