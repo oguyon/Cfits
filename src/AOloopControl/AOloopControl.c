@@ -55,6 +55,7 @@ int COMPUTE_DARK_SUBTRACT_NBTHREADS = 8;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
+int COMPUTE_GPU_SCALING = 1; // perform scaling inside GPU instead of CPU
 
 
 
@@ -1755,7 +1756,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     pthread_t thread_dark_subtract[20];
     float resulttotal;
 
- 
+
     void *status = 0;
 
 
@@ -1911,44 +1912,44 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     //IDdark = image_ID(dname);
     //nelem = AOconf[loop].sizeWFS;
 
-if(0)
-{
-# ifdef _OPENMP
-    #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
+    if(0)
     {
+# ifdef _OPENMP
+        #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
+        {
 # endif
 
 # ifdef _OPENMP
-        #pragma omp for
+            #pragma omp for
 # endif
-        for(ii=0; ii<Average_cam_frames_nelem; ii++)
-            data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
+            for(ii=0; ii<Average_cam_frames_nelem; ii++)
+                data.image[aoconfID_WFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
 # ifdef _OPENMP
-    }
+        }
 # endif
-}
-else
-{
-    if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
+    }
+    else
     {
-        ti = 0;
-        while(ti<COMPUTE_DARK_SUBTRACT_NBTHREADS)
+        if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
+        {
+            ti = 0;
+            while(ti<COMPUTE_DARK_SUBTRACT_NBTHREADS)
             {
                 pthread_create( &thread_dark_subtract[ti], NULL, compute_function_dark_subtract, (void*) &ti);
                 usleep(100);
                 ti++;
             }
-        AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
-        sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
-        sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
-    }
-    
-    for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
-        sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+            AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
+            sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
+            sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
+        }
 
-    for(ti=0;ti<COMPUTE_DARK_SUBTRACT_NBTHREADS;ti++)
-        sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
-}
+        for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
+            sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+
+        for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
+            sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
+    }
 
 
     //  if(IDdark!=-1)
@@ -1961,32 +1962,32 @@ else
 
 
     // Normalize
-    
-   if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0))
-   {
+
+    if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0))
+    {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
         AOLCOMPUTE_TOTAL_INIT = 1;
         IMTOTAL = AOconf[loop].WFStotalflux;
     }
-    else 
+    else
     {
-        AOconf[loop].WFStotalflux = IMTOTAL; // from last loop 
+        AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
         if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
-            {
-                pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
-                AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
-                sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
-            }
+        {
+            pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+            AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
+            sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
+        }
         sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
     }
-    
+
 
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 1;
 
-    
+
 
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
@@ -1995,6 +1996,13 @@ else
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
 
 
+    if(COMPUTE_GPU_SCALING==1)
+    {
+        // scale reference, offline
+
+    }
+    //else // scale image
+    //   {
 # ifdef _OPENMP
     #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
     {
@@ -2008,12 +2016,10 @@ else
 # ifdef _OPENMP
     }
 # endif
-
-
     data.image[aoconfID_WFS1].md[0].cnt0 ++;
     data.image[aoconfID_WFS1].md[0].write = 0;
+    //}
 
-    
 
     return(0);
 }
@@ -2034,32 +2040,35 @@ else
 
 
 
+
+
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname)
 {
-  long ID;
-  long IDtmp;
-  long ii, jj;
-  double x, y;
-  long size = AOconf[loop].sizexDM;
-  long m;
-  float rpix;
-  long size2;
+    long ID;
+    long IDtmp;
+    long ii, jj;
+    double x, y;
+    long size = AOconf[loop].sizexDM;
+    long m;
+    float rpix;
+    long size2;
 
-  size2 = size*size;
-  rpix = 0.5*size;
+    size2 = size*size;
+    rpix = 0.5*size;
 
-  ID = create_3Dimage_ID_float(IDname, size, size, NBmodes);
-  
-  for(m=0;m<NBmodes;m++)
+    ID = create_3Dimage_ID_float(IDname, size, size, NBmodes);
+
+    for(m=0; m<NBmodes; m++)
     {
-      IDtmp = mk_zer("zertmp", size, m+1, rpix);
-      for(ii=0;ii<size2;ii++)
-	data.image[ID].array.F[size2*m+ii] = data.image[IDtmp].array.F[ii];
-      delete_image_ID("zertmp");
+        IDtmp = mk_zer("zertmp", size, m+1, rpix);
+        for(ii=0; ii<size2; ii++)
+            data.image[ID].array.F[size2*m+ii] = data.image[IDtmp].array.F[ii];
+        delete_image_ID("zertmp");
     }
 
-  return(ID);
+    return(ID);
 }
+
 
 
 
@@ -2077,7 +2086,7 @@ long AOloopControl_loadCM(long loop, char *CMfname)
 
     if( (ID = load_fits(CMfname, "tmpcontrM", 1)) != -1 )
     {
-		
+
         // check size is OK
         vOK = 1;
         if(data.image[ID].md[0].naxis!=3)
@@ -2108,8 +2117,8 @@ long AOloopControl_loadCM(long loop, char *CMfname)
                 vOK = 0;
             }
         }
-        
-        
+
+
         if(vOK==1)
         {
             AOconf[loop].init_CM = 1;
@@ -2122,13 +2131,15 @@ long AOloopControl_loadCM(long loop, char *CMfname)
             for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].NBDMmodes; ii++)
                 data.image[ID].array.F[ii] = data.image[ID0].array.F[ii];
             data.image[ID].md[0].write  = 0;
-			data.image[ID].md[0].cnt0++;
+            data.image[ID].md[0].cnt0++;
         }
         delete_image_ID("tmpcontrM");
     }
 
     return(ID);
 }
+
+
 
 
 
@@ -2206,6 +2217,7 @@ long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 
 
 
+
 long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize)
 {
     long ID;
@@ -2274,6 +2286,7 @@ long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 
     return ID;
 }
+
 
 
 
@@ -2394,7 +2407,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     }
 
 
-    // NMatrix mult mode 
+    // NMatrix mult mode
     // 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
     // 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
 
@@ -2872,6 +2885,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
+
 int set_DM_modes(long loop)
 {
     long k;
@@ -2922,6 +2936,7 @@ int set_DM_modes(long loop)
 
 
 
+
 int set_DM_modesRM(long loop)
 {
     long k;
@@ -2960,6 +2975,7 @@ int set_DM_modesRM(long loop)
 
     return(0);
 }
+
 
 
 
@@ -3103,6 +3119,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     return(IDmap);
 }
+
 
 
 
@@ -3432,6 +3449,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
 
 
+
 /** remove WFS camera periodic error
  *
  * pha: phase from 0.0 to 1.0
@@ -3467,6 +3485,7 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
 
     return(0);
 }
+
 
 
 
@@ -3540,9 +3559,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
     printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
-  /*  sprintf(command, "echo \"ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\" > logacqrm.txt\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
-    system(command);
-*/
+    /*  sprintf(command, "echo \"ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\" > logacqrm.txt\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
+      system(command);
+    */
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -3691,12 +3710,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     // positive
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
                     set_DM_modesRM(loop);
-                    
-             /*         sprintf(command, "echo \"%f %f %f\" > logacqrm1.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
-                    system(command);
-                    save_fits("aol0_DMmodes", "!test_aol0_DMmodes.fits");
-                    exit(0);*/
-                    
+
+                    /*         sprintf(command, "echo \"%f %f %f\" > logacqrm1.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
+                           system(command);
+                           save_fits("aol0_DMmodes", "!test_aol0_DMmodes.fits");
+                           exit(0);*/
+
                     usleep(delayus); // OK - this is for calibration
 
 
@@ -3943,14 +3962,17 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
+
+
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect)
 {
-  long i;
+    long i;
 
-  cblas_sgemv (CblasRowMajor, CblasNoTrans, m, n, 1.0, cm_array, n, imarray, 1, 0.0, outvect, 1);
+    cblas_sgemv (CblasRowMajor, CblasNoTrans, m, n, 1.0, cm_array, n, imarray, 1, 0.0, outvect, 1);
 
-  return(0);
+    return(0);
 }
+
 
 
 
@@ -4022,11 +4044,11 @@ int AOcompute(long loop)
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
         if(IDmask==-1)
-            {
-                IDmask = create_2Dimage_ID("wfsmask", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    data.image[IDmask].array.F[ii] = 1.0;
-            }
+        {
+            IDmask = create_2Dimage_ID("wfsmask", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDmask].array.F[ii] = 1.0;
+        }
 
         if(IDmask != -1)
         {
@@ -4045,11 +4067,11 @@ int AOcompute(long loop)
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
         IDmask = image_ID("dmmask");
         if(IDmask==-1)
-            {
-                IDmask = create_2Dimage_ID("dmmask", AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+        {
+            IDmask = create_2Dimage_ID("dmmask", AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
             for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                 data.image[IDmask].array.F[ii] = 1.0;
-            }
+        }
         if(IDmask != -1)
         {
             ii1 = 0;
@@ -4187,7 +4209,7 @@ int AOcompute(long loop)
                     data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
                 data.image[aoconfID_WFS2_active].md[0].cnt0++;
                 //printf("Vector wfs re-mapped\n");
- 
+
 
                 // perform matrix mult
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
@@ -4241,6 +4263,7 @@ int AOcompute(long loop)
 
     return(0);
 }
+
 
 
 
@@ -4378,6 +4401,7 @@ int AOloopControl_run()
 
 
 
+
 int AOloopControl_printloopstatus(long loop, long nbcol)
 {
     long k, kmax;
@@ -4395,12 +4419,12 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     else
         printw("loop is OFF    ");
 
-  /*  if(AOconf[loop].logon == 1)
-        printw("log is ON   ");
-    else
-        printw("log is OFF  ");
+    /*  if(AOconf[loop].logon == 1)
+          printw("log is ON   ");
+      else
+          printw("log is OFF  ");
 
-*/
+    */
 
 
     printw("STATUS = %d  ", AOconf[loop].status);
@@ -4511,87 +4535,89 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 
 
 
+
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 {
-  char name[200];
+    char name[200];
 
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  printf("MEMORY HAS BEEN INITIALIZED\n");
-  fflush(stdout);
+    printf("MEMORY HAS BEEN INITIALIZED\n");
+    fflush(stdout);
 
-  // load arrays that are required
-  if(aoconfID_cmd_modes==-1)
+    // load arrays that are required
+    if(aoconfID_cmd_modes==-1)
     {
-      sprintf(name, "aol%ld_DMmode_cmd", loop);
-      aoconfID_cmd_modes = read_sharedmem_image(name);
+        sprintf(name, "aol%ld_DMmode_cmd", loop);
+        aoconfID_cmd_modes = read_sharedmem_image(name);
     }
-     
-  if(aoconfID_meas_modes==-1)
+
+    if(aoconfID_meas_modes==-1)
     {
-      sprintf(name, "aol%ld_DMmode_meas", loop);
-      aoconfID_meas_modes = read_sharedmem_image(name);
+        sprintf(name, "aol%ld_DMmode_meas", loop);
+        aoconfID_meas_modes = read_sharedmem_image(name);
     }
 
 
-   if(aoconfID_RMS_modes==-1)
-     {
-       sprintf(name, "aol%ld_DMmode_RMS", loop);
-       aoconfID_RMS_modes = read_sharedmem_image(name);
-     }
-   
-   if(aoconfID_AVE_modes==-1)
+    if(aoconfID_RMS_modes==-1)
     {
-      sprintf(name, "aol%ld_DMmode_AVE", loop);
-      aoconfID_AVE_modes = read_sharedmem_image(name);
+        sprintf(name, "aol%ld_DMmode_RMS", loop);
+        aoconfID_RMS_modes = read_sharedmem_image(name);
     }
-   
-   if(aoconfID_GAIN_modes==-1)
-     {
-       sprintf(name, "aol%ld_DMmode_GAIN", loop);
-       aoconfID_GAIN_modes = read_sharedmem_image(name);
+
+    if(aoconfID_AVE_modes==-1)
+    {
+        sprintf(name, "aol%ld_DMmode_AVE", loop);
+        aoconfID_AVE_modes = read_sharedmem_image(name);
     }
-   
-   if(aoconfID_LIMIT_modes==-1)
-     {
-       sprintf(name, "aol%ld_DMmode_LIMIT", loop);
-       aoconfID_LIMIT_modes = read_sharedmem_image(name);
-     }
 
-   if(aoconfID_MULTF_modes==-1)
-     {
-       sprintf(name, "aol%ld_DMmode_MULTF", loop);
-       aoconfID_MULTF_modes = read_sharedmem_image(name);
-     }
+    if(aoconfID_GAIN_modes==-1)
+    {
+        sprintf(name, "aol%ld_DMmode_GAIN", loop);
+        aoconfID_GAIN_modes = read_sharedmem_image(name);
+    }
 
-  
-   initscr();		
-   getmaxyx(stdscr, wrow, wcol);
-   
+    if(aoconfID_LIMIT_modes==-1)
+    {
+        sprintf(name, "aol%ld_DMmode_LIMIT", loop);
+        aoconfID_LIMIT_modes = read_sharedmem_image(name);
+    }
 
-   start_color();
-   init_pair(1, COLOR_BLUE, COLOR_BLACK); 
-   init_pair(2, COLOR_RED, COLOR_BLACK);
-   init_pair(3, COLOR_GREEN, COLOR_BLACK);
-   init_pair(4, COLOR_RED, COLOR_BLACK);
-   
-   while( !kbdhit() )
-     {
-       usleep((long) (1000000.0/frequ));
-       clear();
-       attron(A_BOLD);
-       print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-       attroff(A_BOLD);
-       
-       AOloopControl_printloopstatus(loop, nbcol);
-       
-       refresh();
-     }
-   endwin();	
-   
-   return 0;
+    if(aoconfID_MULTF_modes==-1)
+    {
+        sprintf(name, "aol%ld_DMmode_MULTF", loop);
+        aoconfID_MULTF_modes = read_sharedmem_image(name);
+    }
+
+
+    initscr();
+    getmaxyx(stdscr, wrow, wcol);
+
+
+    start_color();
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_RED, COLOR_BLACK);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+
+    while( !kbdhit() )
+    {
+        usleep((long) (1000000.0/frequ));
+        clear();
+        attron(A_BOLD);
+        print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+        attroff(A_BOLD);
+
+        AOloopControl_printloopstatus(loop, nbcol);
+
+        refresh();
+    }
+    endwin();
+
+    return 0;
 }
+
 
 
 
@@ -4757,6 +4783,7 @@ int AOloopControl_statusStats()
 
 
 
+
 int AOloopControl_showparams(long loop)
 {
   printf("loop number %ld\n", loop);
@@ -4765,11 +4792,6 @@ int AOloopControl_showparams(long loop)
     printf("loop is ON\n");
   else
     printf("loop is OFF\n");
-
-/*  if(AOconf[loop].logon == 1)
-    printf("log is ON\n");
-  else
-    printf("log is OFF\n");*/
     
     printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
     printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
@@ -4790,28 +4812,37 @@ int AOloopControl_setLoopNumber(long loop)
   return 0;
 }
 
+
+
 int AOloopControl_loopkill()
 {
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  AOconf[LOOPNUMBER].kill = 1;
+    AOconf[LOOPNUMBER].kill = 1;
 
-  return 0;
+    return 0;
 }
+
+
+
+
 
 int AOloopControl_loopon()
 {
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  AOconf[LOOPNUMBER].cntmax = AOconf[LOOPNUMBER].cnt-1;
+    AOconf[LOOPNUMBER].cntmax = AOconf[LOOPNUMBER].cnt-1;
 
-  AOconf[LOOPNUMBER].on = 1;
-  AOloopControl_showparams(LOOPNUMBER);
+    AOconf[LOOPNUMBER].on = 1;
+    AOloopControl_showparams(LOOPNUMBER);
 
-  return 0;
+    return 0;
 }
+
+
+
 
 int AOloopControl_loopstep(long loop, long NBstep)
 {
@@ -4838,77 +4869,53 @@ int AOloopControl_loopstep(long loop, long NBstep)
 
 
 
+
 int AOloopControl_loopoff()
 {
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  AOconf[LOOPNUMBER].on = 0;
-  AOloopControl_showparams(LOOPNUMBER);
+    AOconf[LOOPNUMBER].on = 0;
+    AOloopControl_showparams(LOOPNUMBER);
 
-  return 0;
+    return 0;
 }
+
 
 
 
 int AOloopControl_loopreset()
 {
-  char name[200];
-  long k;
-  long mb;
+    char name[200];
+    long k;
+    long mb;
 
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
-  if(aoconfID_cmd_modes==-1)
+    if(aoconfID_cmd_modes==-1)
     {
-      sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
-      aoconfID_cmd_modes = read_sharedmem_image(name);
+        sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER);
+        aoconfID_cmd_modes = read_sharedmem_image(name);
     }
 
-  AOconf[LOOPNUMBER].on = 0;
-  for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
-    data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
+    AOconf[LOOPNUMBER].on = 0;
+    for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
+        data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
-  for(mb=0;mb<AOconf[LOOPNUMBER].NBMblocks;mb)
+    for(mb=0; mb<AOconf[LOOPNUMBER].NBMblocks; mb)
     {
-      AOloopControl_setgainblock(mb, 0.0);
-      AOloopControl_setlimitblock(mb, 0.01);
-      AOloopControl_setmultfblock(mb, 0.95);
+        AOloopControl_setgainblock(mb, 0.0);
+        AOloopControl_setlimitblock(mb, 0.01);
+        AOloopControl_setmultfblock(mb, 0.95);
     }
 
-  return 0;
+    return 0;
 }
 
 
 
 
-
-/*
-int AOloopControl_logon()
-{
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
-
-  AOconf[LOOPNUMBER].logon = 1;
-  AOloopControl_showparams(LOOPNUMBER);
-
-  return 0;
-}
-*/
-
-/*
-int AOloopControl_logoff()
-{
-  if(AOloopcontrol_meminit==0)
-    AOloopControl_InitializeMemory(1);
-
-  AOconf[LOOPNUMBER].logon = 0;
-  AOloopControl_showparams(LOOPNUMBER);
-
-  return 0;
-}
-*/
 
 int AOloopControl_setgain(float gain)
 {

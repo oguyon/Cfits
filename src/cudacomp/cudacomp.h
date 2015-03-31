@@ -35,6 +35,7 @@ typedef struct
 typedef struct
 {
     int init; /// 1 if initialized
+    int refWFSinit; /// reference init
     int alloc; /// 1 if memory has been allocated
     long CM_ID;
     long CM_cnt;
@@ -58,6 +59,8 @@ typedef struct
     float **cMat_part;
     float *wfsVec;
     float **wfsVec_part;
+    float *wfsRef;
+    float **wfsRef_part;
     float *dmVec;
     float *dmVecTMP;
     float **dmVec_part;
@@ -66,6 +69,8 @@ typedef struct
     float **d_cMat;
     float **d_wfsVec;
     float **d_dmVec;
+    float **d_wfsRef;
+    float **d_dmRef;
 
     // threads
     THDATA *thdata;

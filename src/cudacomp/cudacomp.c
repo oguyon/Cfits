@@ -60,6 +60,9 @@ float cublasSgemv_alpha = 1.0;
 float cublasSgemv_beta  = 0.0;
 
 
+
+
+
 #endif
 
 
@@ -256,7 +259,7 @@ int GPUloadCmat(int index)
         error = cublasSetMatrix (gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].cMat_part[device], gpumatmultconf[index].M, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M);
         if (error != cudaSuccess)
         {
-            printf("cudaMemcpy d_cMat cMat returned error code %d, line(%d)\n", error, __LINE__);
+            printf("cudblasSetMatrix returned error code %d, line(%d)\n", error, __LINE__);
             exit(EXIT_FAILURE);
         }
     }
@@ -272,10 +275,17 @@ int GPUloadCmat(int index)
 
 
 /** setup matrix multiplication using multiple GPUs */
+/*
+ * 
+ *  IDoutdmmodes_name  = alpha * IDcontrM_name x IDwfsim_name
+ * 
+ * upon setup, output array contains the WFS ref
+ * 
+*/
 
 int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem)
 {
-    long IDcontrM, IDwfsim;
+    long IDcontrM, IDwfsim, IDwfsref;
     long *sizearraytmp;
     int device;
     struct cudaDeviceProp deviceProp;
@@ -358,9 +368,11 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
-        /// Load Input vector
+        /// Load Input vectors
         IDwfsim = image_ID(IDwfsim_name);
         gpumatmultconf[index].wfsVec = data.image[IDwfsim].array.F;
+        IDwfsref = image_ID(IDoutdmmodes_name);
+        gpumatmultconf[index].wfsRef = data.image[IDwfsref].array.F;
 
         if(orientation == 0)
         {
@@ -451,18 +463,24 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
-
+        // device (GPU)
         gpumatmultconf[index].d_cMat = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].d_wfsVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].d_dmVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].d_wfsRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
 
         gpumatmultconf[index].stream = (cudaStream_t*) malloc(sizeof(cudaStream_t)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].handle = (cublasHandle_t*) malloc(sizeof(cublasHandle_t)*gpumatmultconf[index].NBstreams);
 
 
+        // host (computer)
         gpumatmultconf[index].cMat_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].wfsVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].dmVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        gpumatmultconf[index].wfsRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+
+
+
 
         gpumatmultconf[index].semptr1 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].semptr2 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
@@ -475,6 +493,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         {
             gpumatmultconf[index].cMat_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M*gpumatmultconf[index].Nsize[device]);
             gpumatmultconf[index].wfsVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
+            gpumatmultconf[index].wfsRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
             gpumatmultconf[index].dmVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
 
             sprintf(sname, "i%d_gpu%d_sem1", index, device);
@@ -544,10 +563,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 exit(EXIT_FAILURE);
             }
 
-            error = cudaMemcpy(gpumatmultconf[index].d_wfsVec[device], gpumatmultconf[index].wfsVec_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
+            error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsRef[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
             if (error != cudaSuccess)
             {
-                printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+                printf("cudaMalloc d_wfsRef returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
 
@@ -570,11 +589,28 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
             for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
-                gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
+                {
+                    gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
+                    gpumatmultconf[index].wfsRef_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsRef[n];
+                }
 
-
-
-
+    // copy memory to devices
+        for(device=0; device<gpumatmultconf[index].NBstreams; device++)
+        {
+            error = cudaMemcpy(gpumatmultconf[index].d_wfsVec[device], gpumatmultconf[index].wfsVec_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
+            if (error != cudaSuccess)
+            {
+                printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            
+              error = cudaMemcpy(gpumatmultconf[index].d_wfsRef[device], gpumatmultconf[index].wfsRef_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
+            if (error != cudaSuccess)
+            {
+                printf("cudaMemcpy d_wfsRef wfsRef returned error code %d, line(%d)\n", error, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+        }
 
         GPUloadCmat(index);
 
@@ -804,6 +840,39 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
+        if(gpumatmultconf[index].refWFSinit == 0)
+        {
+        // initialization: compute dm ref from wfs ref
+        cublasSgemv_alpha = 1.0;
+        cublasSgemv_beta = 0.0;
+        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsRef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
+        if (stat != CUBLAS_STATUS_SUCCESS)
+        {
+            printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+            if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+            if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+            if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+            exit(EXIT_FAILURE);
+        }
+        gpumatmultconf[index].refWFSinit = 1;
+        }
+
+        error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
+            if (error != cudaSuccess)
+            {
+                printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+            
+        
+        
+        
+        
         *ptrstat = 2; // wait for image
         if(gpumatmultconf[index].sem==1)
         {
