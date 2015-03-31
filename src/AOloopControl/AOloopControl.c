@@ -3120,7 +3120,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
                 rms += v1*v1;
             }
 
-            data.image[IDmap].array.F[iter*AOconf[loop].sizeWFS+act] = sqrt(rms);
+            data.image[IDmap].array.F[iter*AOconf[loop].sizeDM+act] = sqrt(rms);
         }
         save_fits(WFS_actmap, "!tmpDMactmap.fits");
     }
