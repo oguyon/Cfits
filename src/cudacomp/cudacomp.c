@@ -468,6 +468,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].d_wfsVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].d_dmVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].d_wfsRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+        gpumatmultconf[index].d_dmRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference
 
         gpumatmultconf[index].stream = (cudaStream_t*) malloc(sizeof(cudaStream_t)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].handle = (cublasHandle_t*) malloc(sizeof(cublasHandle_t)*gpumatmultconf[index].NBstreams);
@@ -577,6 +578,12 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 exit(EXIT_FAILURE);
             }
 
+            error = cudaMalloc((void **) &gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M);
+            if (error != cudaSuccess)
+            {
+                printf("cudaMalloc d_dmVec returned error code %d, line(%d)\n", error, __LINE__);
+                exit(EXIT_FAILURE);
+            }
 
 
             stat = cublasCreate(&gpumatmultconf[index].handle[device]);
@@ -746,6 +753,8 @@ int GPU_loop_MultMat_free(int index)
     cudaFree(gpumatmultconf[index].d_cMat);
     cudaFree(gpumatmultconf[index].d_dmVec);
     cudaFree(gpumatmultconf[index].d_wfsVec);
+    cudaFree(gpumatmultconf[index].d_wfsRef);
+    cudaFree(gpumatmultconf[index].d_dmRef);
     free(gpumatmultconf[index].stream);
 
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
