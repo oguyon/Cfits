@@ -838,13 +838,13 @@ void *compute_function( void *ptr )
     ptr0 = (char*) gpumatmultconf[index].wfsVec;
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
 
- 
+
     cudaSetDevice(device);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
 
- 
+
     if(gpumatmultconf[index].sem==1)
         itermax = -1;
     else
@@ -855,37 +855,37 @@ void *compute_function( void *ptr )
     {
         if(gpumatmultconf[index].refWFSinit == 0)
         {
-        // initialization: compute dm ref from wfs ref
-        cublasSgemv_alpha = 1.0;
-        cublasSgemv_beta = 0.0;
-        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsRef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
-        if (stat != CUBLAS_STATUS_SUCCESS)
-        {
-            printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-            if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-            exit(EXIT_FAILURE);
-        }
-        gpumatmultconf[index].refWFSinit = 1;
+            // initialization: compute dm ref from wfs ref
+            cublasSgemv_alpha = 1.0;
+            cublasSgemv_beta = 0.0;
+            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsRef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                exit(EXIT_FAILURE);
+            }
+            gpumatmultconf[index].refWFSinit = 1;
         }
 
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
-            if (error != cudaSuccess)
-            {
-                printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            
-        
-        
-        
-        
+        if (error != cudaSuccess)
+        {
+            printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+
+
+
+
+
         *ptrstat = 2; // wait for image
         if(gpumatmultconf[index].sem==1)
         {
@@ -922,7 +922,7 @@ void *compute_function( void *ptr )
 
 
 
-        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
+     //   stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
 
         if (stat != CUBLAS_STATUS_SUCCESS)
         {
@@ -988,13 +988,14 @@ void *compute_function( void *ptr )
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
         *ptrstat = 6;
-        
+
         iter++;
     }
 
 
     pthread_exit(0);
 }
+
 
 
 
