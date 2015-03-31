@@ -4083,7 +4083,10 @@ int AOcompute(long loop)
                 }
             AOconf[loop].sizeDM_active = ii1;
         }
+     
+     
         aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
+
 
         if(aoconfID_contrMc==-1)
         {
@@ -4209,6 +4212,14 @@ int AOcompute(long loop)
                     data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
                 data.image[aoconfID_WFS2_active].md[0].cnt0++;
                 //printf("Vector wfs re-mapped\n");
+
+                if(initWFSref_GPU==0)
+                {
+                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                        data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];                        
+                    data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                    initWFSref_GPU = 1;
+                }
 
 
                 // perform matrix mult

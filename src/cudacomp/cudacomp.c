@@ -279,7 +279,7 @@ int GPUloadCmat(int index)
  * 
  *  IDoutdmmodes_name  = alpha * IDcontrM_name x IDwfsim_name
  * 
- * upon setup, output array contains the WFS ref
+ * upon setup, IDwfsim_name the WFS ref
  * 
 */
 
@@ -371,7 +371,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         /// Load Input vectors
         IDwfsim = image_ID(IDwfsim_name);
         gpumatmultconf[index].wfsVec = data.image[IDwfsim].array.F;
-        IDwfsref = image_ID(IDoutdmmodes_name);
+        IDwfsref = image_ID(IDwfsim_name);
         gpumatmultconf[index].wfsRef = data.image[IDwfsref].array.F;
 
         if(orientation == 0)
