@@ -2996,7 +2996,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     float tot, v1, rms;
     long *sizearray;
 
-    long NBiter = 10;
+    long NBiter = 30;
     long iter;
 
 
@@ -3024,7 +3024,6 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     sprintf(name, "aol%ld_imWFS1RM", loop);
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
-    sizearray[2] = NBiter;
     aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 
 
@@ -3033,7 +3032,8 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     //    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
     sizearray[0] = AOconf[loop].sizexDM;
     sizearray[1] = AOconf[loop].sizeyDM;
-    IDmap = create_image_ID(WFS_actmap, 2, sizearray, FLOAT, 1, 5);
+    sizearray[2] = NBiter;
+    IDmap = create_image_ID(WFS_actmap, 3, sizearray, FLOAT, 1, 5);
 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -3122,6 +3122,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
             data.image[IDmap].array.F[iter*AOconf[loop].sizeWFS+act] = sqrt(rms);
         }
+        save_fits(WFS_actmap, "!tmpDMactmap.fits");
     }
     
     free(arrayf);
