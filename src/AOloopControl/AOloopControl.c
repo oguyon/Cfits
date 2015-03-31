@@ -4350,7 +4350,7 @@ int AOloopControl_run()
         AOloopControl_InitializeMemory(0);
 
     
-    COMPUTE_GPU_SCALING = 1;
+    COMPUTE_GPU_SCALING = 0;
 
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
