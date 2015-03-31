@@ -4778,6 +4778,9 @@ int AOloopControl_statusStats()
     {
         printf("\n");
         printf("          ----1--------2--------3--------4--------5--------6----\n");
+        printf("                   wait im | ->GPU |     COMPUTE     |   ->CPU  \n");
+        printf("          ------------------------------------------------------\n");
+
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
         {
             printf("GPU %2d  : ", gpu);
