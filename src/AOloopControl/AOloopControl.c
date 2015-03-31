@@ -55,7 +55,7 @@ int COMPUTE_DARK_SUBTRACT_NBTHREADS = 6;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
-int COMPUTE_GPU_SCALING = 1; // perform scaling inside GPU instead of CPU
+int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
 int initWFSref_GPU = 0;
 float GPU_alpha = 0.0;
 float GPU_beta = 0.0;
@@ -2996,7 +2996,12 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     float tot, v1, rms;
     long *sizearray;
 
-    sizearray = (long*) malloc(sizeof(long)*2);
+    long NBiter = 10;
+    long iter;
+
+
+
+    sizearray = (long*) malloc(sizeof(long)*3);
 
     delayus = (long) (1000000.0*delays);
 
@@ -3019,6 +3024,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     sprintf(name, "aol%ld_imWFS1RM", loop);
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
+    sizearray[2] = NBiter;
     aoconfID_WFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 
 
@@ -3032,92 +3038,103 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-    for(act=0; act<AOconf[loop].sizeDM; act++)
+
+    for(iter=0; iter<NBiter; iter++)
     {
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+
+        for(act=0; act<AOconf[loop].sizeDM; act++)
         {
-            data.image[IDpos].array.F[ii] = 0.0;
-            data.image[IDneg].array.F[ii] = 0.0;
-        }
-
-        /** Positive displacement */
-
-        for(j=0; j<AOconf[loop].sizeDM; j++)
-            arrayf[j] = 0.0;
-
-        arrayf[act] = ampl;
-
-        data.image[aoconfID_DMRM].md[0].write = 1;
-        memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-        data.image[aoconfID_DMRM].md[0].cnt0++;
-        data.image[aoconfID_DMRM].md[0].write = 0;
-        AOconf[loop].DMupdatecnt ++;
-
-        usleep(delayus); // OK (this is for calibration)
-
-        for(kk=0; kk<NBave; kk++)
-        {
-            Average_cam_frames(loop, 1, 0);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
-        }
+            {
+                data.image[IDpos].array.F[ii] = 0.0;
+                data.image[IDneg].array.F[ii] = 0.0;
+            }
 
-        /** Negative displacement */
+            /** Positive displacement */
 
-        for(j=0; j<AOconf[loop].sizeDM; j++)
-            arrayf[j] = 0.0;
+            for(j=0; j<AOconf[loop].sizeDM; j++)
+                arrayf[j] = 0.0;
 
-        arrayf[act] = -ampl;
+            arrayf[act] = ampl;
 
-        data.image[aoconfID_DMRM].md[0].write = 1;
-        memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-        data.image[aoconfID_DMRM].md[0].cnt0++;
-        data.image[aoconfID_DMRM].md[0].write = 0;
-        AOconf[loop].DMupdatecnt ++;
+            data.image[aoconfID_DMRM].md[0].write = 1;
+            memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+            data.image[aoconfID_DMRM].md[0].cnt0++;
+            data.image[aoconfID_DMRM].md[0].write = 0;
+            AOconf[loop].DMupdatecnt ++;
 
-        usleep(delayus); // OK (this is for calibration)
+            usleep(delayus); // OK (this is for calibration)
 
-        for(kk=0; kk<NBave; kk++)
-        {
-            Average_cam_frames(loop, 1, 0);
+            for(kk=0; kk<NBave; kk++)
+            {
+                Average_cam_frames(loop, 1, 0);
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+            }
+
+            /** Negative displacement */
+
+            for(j=0; j<AOconf[loop].sizeDM; j++)
+                arrayf[j] = 0.0;
+
+            arrayf[act] = -ampl;
+
+            data.image[aoconfID_DMRM].md[0].write = 1;
+            memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+            data.image[aoconfID_DMRM].md[0].cnt0++;
+            data.image[aoconfID_DMRM].md[0].write = 0;
+            AOconf[loop].DMupdatecnt ++;
+
+            usleep(delayus); // OK (this is for calibration)
+
+            for(kk=0; kk<NBave; kk++)
+            {
+                Average_cam_frames(loop, 1, 0);
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    data.image[IDneg].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+            }
+
+
+
+            /** compute value */
+
+            tot = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDneg].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
+                tot += data.image[IDpos].array.F[ii];
+            tot /= AOconf[loop].sizeWFS;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDpos].array.F[ii] -= tot;
+
+            tot = 0.0;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                tot += data.image[IDneg].array.F[ii];
+            tot /= AOconf[loop].sizeWFS;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDneg].array.F[ii] -= tot;
+
+
+            rms = 0.0;
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                v1 = data.image[IDneg].array.F[ii] - data.image[IDpos].array.F[ii];
+                rms += v1*v1;
+            }
+
+            data.image[IDmap].array.F[iter*AOconf[loop].sizeWFS+act] = sqrt(rms);
         }
-
-
-
-        /** compute value */
-
-        tot = 0.0;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            tot += data.image[IDpos].array.F[ii];
-        tot /= AOconf[loop].sizeWFS;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDpos].array.F[ii] -= tot;
-
-        tot = 0.0;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            tot += data.image[IDneg].array.F[ii];
-        tot /= AOconf[loop].sizeWFS;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDneg].array.F[ii] -= tot;
-
-
-        rms = 0.0;
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        {
-            v1 = data.image[IDneg].array.F[ii] - data.image[IDpos].array.F[ii];
-            rms += v1*v1;
-        }
-
-        data.image[IDmap].array.F[act] = sqrt(rms);
     }
-
+    
     free(arrayf);
     free(sizearray);
 
+
     return(IDmap);
 }
+
+
+
+
+
 
 
 
@@ -4332,8 +4349,8 @@ int AOloopControl_run()
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-
-
+    
+    COMPUTE_GPU_SCALING = 1;
 
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
