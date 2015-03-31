@@ -56,7 +56,7 @@ sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
 int COMPUTE_GPU_SCALING = 1; // perform scaling inside GPU instead of CPU
-
+int initWFSref_GPU = 0;
 
 
 long ti; // thread index
