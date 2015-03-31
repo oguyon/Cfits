@@ -4238,8 +4238,8 @@ int AOcompute(long loop)
 
                 if(COMPUTE_GPU_SCALING==1)
                 {
-                    printf("GPU_alpha = %g\n", GPU_alpha); // TEST
-                    printf("GPU_beta = %f\n", GPU_beta); // TEST
+                  //  printf("GPU_alpha = %g\n", GPU_alpha); // TEST
+                  //  printf("GPU_beta = %f\n", GPU_beta); // TEST
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
                 }
                 else
