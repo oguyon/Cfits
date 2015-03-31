@@ -1997,33 +1997,29 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
 
 
-    if(COMPUTE_GPU_SCALING==1)
+    if(COMPUTE_GPU_SCALING==0)
     {
-        // scale reference, offline
-
-    }
-    //else // scale image
-    //   {
 # ifdef _OPENMP
-    #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
-    {
+        #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+        {
 # endif
 
 # ifdef _OPENMP
-        #pragma omp for
+            #pragma omp for
 # endif
-        for(ii=0; ii<nelem; ii++)
-            data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]*totalinv;
+            for(ii=0; ii<nelem; ii++)
+                data.image[aoconfID_WFS1].array.F[ii] = data.image[aoconfID_WFS0].array.F[ii]*totalinv;
 # ifdef _OPENMP
-    }
+        }
 # endif
-    data.image[aoconfID_WFS1].md[0].cnt0 ++;
-    data.image[aoconfID_WFS1].md[0].write = 0;
-    //}
+        data.image[aoconfID_WFS1].md[0].cnt0 ++;
+        data.image[aoconfID_WFS1].md[0].write = 0;
+    }
 
 
     return(0);
 }
+
 
 
 
@@ -4017,13 +4013,13 @@ int AOcompute(long loop)
     AOconf[loop].status = 6;  // 6: REMOVING REF
 
 
-    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_refWFS].array.F[ii];
-
-
-    cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
-    data.image[aoconfID_WFS2].md[0].cnt0 ++;
-
+    if(COMPUTE_GPU_SCALING==0)
+        {
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_refWFS].array.F[ii];
+            cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
+            data.image[aoconfID_WFS2].md[0].cnt0 ++;
+        }
 
     //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
     // sleep(5);
@@ -4209,26 +4205,41 @@ int AOcompute(long loop)
             else // only use active pixels and actuators
             {
                 // re-map input vector
-                for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                    data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
-                data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                
+                if(COMPUTE_GPU_SCALING==1)
+                    {
+                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
+                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                    }
+                    else
+                    {
+                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
+                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                    }
                 //printf("Vector wfs re-mapped\n");
 
-                if(initWFSref_GPU==0)
-                {
-                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                        data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];                        
-                    data.image[aoconfID_WFS2_active].md[0].cnt0++;
-                    initWFSref_GPU = 1;
-                }
+                if(COMPUTE_GPU_SCALING==1)
+                    if(initWFSref_GPU==0)
+                    {
+                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];                        
+                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                        initWFSref_GPU = 1;
+                    }
 
 
                 // perform matrix mult
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                 AOconf[loop].status = 8; // execute
 
-                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
-
+                if(COMPUTE_GPU_SCALING==1)
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+                else
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+                    
+                    
                 // re-map output vector
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
