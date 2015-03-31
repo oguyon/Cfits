@@ -4237,7 +4237,7 @@ int AOcompute(long loop)
                 AOconf[loop].status = 8; // execute
 
                 if(COMPUTE_GPU_SCALING==1)
-                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
                 else
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
                     
