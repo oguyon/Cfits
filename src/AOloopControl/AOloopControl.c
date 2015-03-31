@@ -55,7 +55,7 @@ int COMPUTE_DARK_SUBTRACT_NBTHREADS = 8;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
-int COMPUTE_GPU_SCALING = 1; // perform scaling inside GPU instead of CPU
+int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
 int initWFSref_GPU = 0;
 float GPU_alpha = 0.0;
 float GPU_beta = 0.0;
@@ -4238,8 +4238,8 @@ int AOcompute(long loop)
 
                 if(COMPUTE_GPU_SCALING==1)
                 {
-                    printf("GPU_alpha = %f\n", GPU_alpha);
-                    printf("GPU_beta = %f\n", GPU_beta);
+                    printf("GPU_alpha = %g\n", GPU_alpha); // TEST
+                    printf("GPU_beta = %f\n", GPU_beta); // TEST
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
                 }
                 else
