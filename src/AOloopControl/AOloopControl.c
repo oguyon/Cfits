@@ -57,7 +57,8 @@ sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
 int COMPUTE_GPU_SCALING = 1; // perform scaling inside GPU instead of CPU
 int initWFSref_GPU = 0;
-
+float GPU_alpha = 0.0;
+float GPU_beta = 0.0;
 
 long ti; // thread index
 
@@ -1993,9 +1994,10 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     nelem = AOconf[loop].sizeWFS;
     //#pragma omp parallel for
     totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-
+    GPU_alpha = totalinv;
+    
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-
+    GPU_beta = normfloorcoeff;
 
     if(COMPUTE_GPU_SCALING==0)
     {
