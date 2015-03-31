@@ -1306,14 +1306,14 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     long xsize_modes, ysize_modes, zsize_modes;
     long IDeigenmodesResp;
     long kk, kk1;
-	long ID_RMmask;
+    long ID_RMmask;
 
-	double *CPAcoeff; /// gain applied to modes to enhance low orders in SVD
-	
-	char fname[200];
-	long NB_MR;  /// number of modes removed
+    double *CPAcoeff; /// gain applied to modes to enhance low orders in SVD
 
-	long NB_MODE_REMOVED1;
+    char fname[200];
+    long NB_MR;  /// number of modes removed
+
+    long NB_MODE_REMOVED1;
 
 
 
@@ -1325,23 +1325,23 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
- 
- 
-     n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1]; //AOconf[loop].NBDMmodes;
+
+
+    n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1]; //AOconf[loop].NBDMmodes;
     m = data.image[ID_Rmatrix].md[0].size[2]; //AOconf[loop].sizeWFS;
 
-    
+
     ID_RMmask = image_ID("RMmask");
     if(ID_RMmask!=-1) // apply mask to response matrix
     {
-		for(kk=0;kk<m;kk++)
-			{
-				for(ii=0;ii<n;ii++)
-					data.image[ID_Rmatrix].array.F[kk*n+ii] *= data.image[ID_RMmask].array.F[ii];
-			}
-	}
+        for(kk=0; kk<m; kk++)
+        {
+            for(ii=0; ii<n; ii++)
+                data.image[ID_Rmatrix].array.F[kk*n+ii] *= data.image[ID_RMmask].array.F[ii];
+        }
+    }
 
-	
+
 
     /** in this procedure, m=number of actuators/modes, n=number of WFS elements */
     //  long m = smao[0].NBmode;
@@ -1350,7 +1350,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     printf("m = %ld actuators (modes), n = %ld sensors\n", m, n);
     fflush(stdout);
 
-	NB_MODE_REMOVED1 = m-1;
+    NB_MODE_REMOVED1 = m-1;
 
     matrix_DtraD_eval = gsl_vector_alloc (m);
     matrix_D = gsl_matrix_alloc (n,m);
@@ -1361,30 +1361,30 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     matrix_DtraD_evec = gsl_matrix_alloc (m,m);
 
 
-	ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
-	
-	
-	CPAcoeff = (double*) malloc(sizeof(double)*m);
-	if(ID==-1)
-	{
-		for(k=0; k<m; k++)
-			CPAcoeff[k] = 1.0;
-	}
-	else
-	{
-	for(k=0; k<m; k++)
-	{
-		CPAcoeff[k] =  exp(-data.image[ID].array.F[k]*Beta);
-		printf("%5ld %5.3f %g\n", k, data.image[ID].array.F[k], CPAcoeff[k]);
-	}
-	}
-	
+    ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
+
+
+    CPAcoeff = (double*) malloc(sizeof(double)*m);
+    if(ID==-1)
+    {
+        for(k=0; k<m; k++)
+            CPAcoeff[k] = 1.0;
+    }
+    else
+    {
+        for(k=0; k<m; k++)
+        {
+            CPAcoeff[k] =  exp(-data.image[ID].array.F[k]*Beta);
+            printf("%5ld %5.3f %g\n", k, data.image[ID].array.F[k], CPAcoeff[k]);
+        }
+    }
+
     /* write matrix_D */
     for(k=0; k<m; k++)
     {
         for(ii=0; ii<n; ii++)
             gsl_matrix_set (matrix_D, ii, k, data.image[ID_Rmatrix].array.F[k*n+ii]*CPAcoeff[k]);
-	}
+    }
     /* compute DtraD */
     gsl_blas_dgemm (CblasTrans, CblasNoTrans, 1.0, matrix_D, matrix_D, 0.0, matrix_DtraD);
 
@@ -1440,8 +1440,8 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
         }
     }
     sprintf(fname, "!eigenmodesrespM_%4.2f.fits", Beta);
-    save_fits("eigenmodesrespM", fname); 
-   printf("\n");
+    save_fits("eigenmodesrespM", fname);
+    printf("\n");
 
 
     /// if modesM exists, compute eigenmodes using rotation matrix
@@ -1456,7 +1456,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
         else
         {
             IDeigenmodes = create_3Dimage_ID("eigenmodesM", xsize_modes, ysize_modes, m);
-		//	list_image_ID();
+            //	list_image_ID();
             printf("Computing eigenmodes .... \n");
             for(kk=0; kk<m; kk++) /// eigen mode index
             {
@@ -1468,15 +1468,15 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
                         data.image[IDeigenmodes].array.F[kk*xsize_modes*ysize_modes + ii] += data.image[ID_VTmatrix].array.F[kk1*m+kk]*data.image[IDmodes].array.F[kk1*xsize_modes*ysize_modes + ii];
                 }
             }
-			printf("\n");
-        }	
+            printf("\n");
+        }
         sprintf(fname, "!eigenmodesM_%4.2f.fits", Beta);
-		save_fits("eigenmodesM", fname); 
+        save_fits("eigenmodesM", fname);
     }
-    
-    
-    
-    
+
+
+
+
     /// second, build the "inverse" of the diagonal matrix of eigenvalues (matrix1)
     matrix1 = gsl_matrix_alloc (m, m);
     matrix2 = gsl_matrix_alloc (m, m);
@@ -1484,61 +1484,61 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     arraysizetmp[1] = AOconf[loop].sizeyWFS;
     arraysizetmp[2] = m;
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, 3, arraysizetmp, FLOAT, 0, 0);
- 
-	printf("COMPUTING CMAT .... \n");
+
+    printf("COMPUTING CMAT .... \n");
 
 
-	for(NB_MR=0; NB_MR<NB_MODE_REMOVED1; NB_MR+=NB_MODE_REMOVED_STEP)
+    for(NB_MR=0; NB_MR<NB_MODE_REMOVED1; NB_MR+=NB_MODE_REMOVED_STEP)
     {
-		printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED1, NB_MODE_REMOVED_STEP);
-		fflush(stdout);
-		for(ii1=0; ii1<m; ii1++)
-        for(jj1=0; jj1<m; jj1++)
-        {
-            if(ii1==jj1)
+        printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED1, NB_MODE_REMOVED_STEP);
+        fflush(stdout);
+        for(ii1=0; ii1<m; ii1++)
+            for(jj1=0; jj1<m; jj1++)
             {
-                if((m-ii1-1)<NB_MR)
-                    gsl_matrix_set(matrix1, ii1, jj1, 0.0);
+                if(ii1==jj1)
+                {
+                    if((m-ii1-1)<NB_MR)
+                        gsl_matrix_set(matrix1, ii1, jj1, 0.0);
+                    else
+                        gsl_matrix_set(matrix1, ii1, jj1, 1.0/gsl_vector_get(matrix_DtraD_eval,ii1));
+                }
                 else
-                    gsl_matrix_set(matrix1, ii1, jj1, 1.0/gsl_vector_get(matrix_DtraD_eval,ii1));
+                    gsl_matrix_set(matrix1, ii1, jj1, 0.0);
             }
-            else
-                gsl_matrix_set(matrix1, ii1, jj1, 0.0);
-        }
 
-   
-	printf("-");
-	fflush(stdout);
 
-    /* third, compute the "inverse" of DtraD */
-    gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, matrix_DtraD_evec, matrix1, 0.0, matrix2);
- 	printf("-");
-	fflush(stdout);
-	gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
- 	printf("-");
-	fflush(stdout);
-	gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
+        printf("-");
+        fflush(stdout);
 
-    /* write result */
-	printf("write result to ID %ld   [%ld %ld]\n", ID_Cmatrix, n, m);
-	fflush(stdout);
-	list_image_ID();
+        /* third, compute the "inverse" of DtraD */
+        gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, matrix_DtraD_evec, matrix1, 0.0, matrix2);
+        printf("-");
+        fflush(stdout);
+        gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
+        printf("-");
+        fflush(stdout);
+        gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
 
-    for(ii=0; ii<n; ii++) // sensors
-        for(k=0; k<m; k++) // actuator modes
-            data.image[ID_Cmatrix].array.F[k*n+ii] = (float) gsl_matrix_get(matrix_Ds, k, ii)*CPAcoeff[k];
+        /* write result */
+        printf("write result to ID %ld   [%ld %ld]\n", ID_Cmatrix, n, m);
+        fflush(stdout);
+        list_image_ID();
 
-	
-	sprintf(fname, "!cmat_%4.2f_%03ld.fits", Beta, NB_MR);
-	printf("  SAVING -> %s\n", fname);
-	fflush(stdout);
-	save_fits(ID_Cmatrix_name, fname);
-	}
-	printf("\n\n");
-	
+        for(ii=0; ii<n; ii++) // sensors
+            for(k=0; k<m; k++) // actuator modes
+                data.image[ID_Cmatrix].array.F[k*n+ii] = (float) gsl_matrix_get(matrix_Ds, k, ii)*CPAcoeff[k];
+
+
+        sprintf(fname, "!cmat_%4.2f_%03ld.fits", Beta, NB_MR);
+        printf("  SAVING -> %s\n", fname);
+        fflush(stdout);
+        save_fits(ID_Cmatrix_name, fname);
+    }
+    printf("\n\n");
+
     gsl_matrix_free(matrix1);
     gsl_matrix_free(matrix2);
- 
+
     gsl_vector_free(matrix_DtraD_eval);
     gsl_matrix_free(matrix_D);
     gsl_matrix_free(matrix_Ds);
@@ -1549,11 +1549,12 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     free(arraysizetmp);
 
-	free(CPAcoeff);
+    free(CPAcoeff);
 
 
     return(ID_Cmatrix);
 }
+
 
 
 
@@ -2918,7 +2919,7 @@ int set_DM_modes(long loop)
 #ifdef HAVE_CUDA
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem);
         AOconf[loop].status = 15;
-        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
 #endif
     }
 
@@ -4195,7 +4196,7 @@ int AOcompute(long loop)
         {
             GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
             AOconf[loop].status = 8; // execute
-            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
         }
         else // direct pixel -> actuators linear transformation
         {
@@ -4203,7 +4204,7 @@ int AOcompute(long loop)
             {
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                 AOconf[loop].status = 8; // execute
-                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
             }
             else // only use active pixels and actuators
             {
@@ -4226,7 +4227,7 @@ int AOcompute(long loop)
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                 AOconf[loop].status = 8; // execute
 
-                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0]);
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
 
                 // re-map output vector
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
