@@ -55,7 +55,7 @@ int COMPUTE_DARK_SUBTRACT_NBTHREADS = 8;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name;
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name;
 
-int COMPUTE_GPU_SCALING = 1; // perform scaling inside GPU instead of CPU
+int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
 int initWFSref_GPU = 0;
 float GPU_alpha = 0.0;
 float GPU_beta = 0.0;
