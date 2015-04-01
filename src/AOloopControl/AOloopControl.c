@@ -3154,6 +3154,9 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
         istart = (long) (1.0*iter*0.2);
         iend = (long) (1.0*iter*0.8);
         icnt = iend-istart;
+
+    printf("%ld - %ld   %ld\n", istart, iend, icnt);
+sleep(2.0);
         if(icnt > 1)
         {
             for(ii=0; ii<AOconf[loop].sizeDM; ii++)
