@@ -2985,7 +2985,7 @@ int set_DM_modesRM(long loop)
 
 long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char *WFS_actmap)
 {
-    long IDmap;
+    long IDmap, IDmapcube;
     long act, j, ii, kk;
     double value;
     long delayus;
@@ -2998,9 +2998,11 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     long NBiter = 30;
     long iter;
+    float *arraypix;
+    long i;
+    long istart, iend, icnt;
 
-
-
+    arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
 
     delayus = (long) (1000000.0*delays);
@@ -3033,12 +3035,13 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     sizearray[0] = AOconf[loop].sizexDM;
     sizearray[1] = AOconf[loop].sizeyDM;
     sizearray[2] = NBiter;
-    IDmap = create_image_ID(WFS_actmap, 3, sizearray, FLOAT, 1, 5);
+    IDmapcube = create_image_ID("actmap_cube", 3, sizearray, FLOAT, 1, 5);
+    IDmap = create_image_ID(WFS_actmap, 2, sizearray, FLOAT, 1, 5);
 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-
+/*
     for(iter=0; iter<NBiter; iter++)
     {
 
@@ -3050,7 +3053,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
                 data.image[IDneg].array.F[ii] = 0.0;
             }
 
-            /** Positive displacement */
+           
 
             for(j=0; j<AOconf[loop].sizeDM; j++)
                 arrayf[j] = 0.0;
@@ -3063,7 +3066,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
             data.image[aoconfID_DMRM].md[0].write = 0;
             AOconf[loop].DMupdatecnt ++;
 
-            usleep(delayus); // OK (this is for calibration)
+            usleep(delayus); /
 
             for(kk=0; kk<NBave; kk++)
             {
@@ -3072,7 +3075,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
                     data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
             }
 
-            /** Negative displacement */
+           
 
             for(j=0; j<AOconf[loop].sizeDM; j++)
                 arrayf[j] = 0.0;
@@ -3085,7 +3088,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
             data.image[aoconfID_DMRM].md[0].write = 0;
             AOconf[loop].DMupdatecnt ++;
 
-            usleep(delayus); // OK (this is for calibration)
+            usleep(delayus); 
 
             for(kk=0; kk<NBave; kk++)
             {
@@ -3096,7 +3099,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
 
 
-            /** compute value */
+          
 
             tot = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3120,17 +3123,70 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
                 rms += v1*v1;
             }
 
-            data.image[IDmap].array.F[iter*AOconf[loop].sizeDM+act] = sqrt(rms);
+            data.image[IDmapcube].array.F[iter*AOconf[loop].sizeDM+act] = sqrt(rms);
         }
-        save_fits(WFS_actmap, "!tmpDMactmap.fits");
+        save_fits("actmap_cube", "!tmpDMactmap_cube.fits");
+
+        
+        istart = (long) (1.0*iter*0.2);
+        iend = (long) (1.0*iter*0.8);
+        icnt = iend-istart;
+        if(icnt > 1)
+        {
+            for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+            {
+                for(i=0; i<iter; i++)
+                    arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
+                quick_sort_float(arrayf, iter);
+
+                for(i=istart; i<iend; i++)
+                    data.image[IDmap].array.F[ii] += arraypix[i];
+                data.image[IDmap].array.F[ii] /= icnt;
+            }
+        }
     }
+*/
+
+
+    IDmapcube = load_fits("tmpDMactmap.fits", "actmap_cube");
+    iter = 7;
+         // compute clipped average
+        istart = (long) (1.0*iter*0.2);
+        iend = (long) (1.0*iter*0.8);
+        icnt = iend-istart;
+        if(icnt > 1)
+        {
+            for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+            {
+                for(i=0; i<iter; i++)
+                    arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
+                quick_sort_float(arrayf, iter);
+
+                for(i=istart; i<iend; i++)
+                    data.image[IDmap].array.F[ii] += arraypix[i];
+                data.image[IDmap].array.F[ii] /= icnt;
+            }
+        }
+
     
+
+
     free(arrayf);
     free(sizearray);
+    free(arraypix);
+
+
+
 
 
     return(IDmap);
 }
+
+
+
+
+
+
 
 
 
