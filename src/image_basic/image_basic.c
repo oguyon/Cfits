@@ -89,6 +89,17 @@ int image_basic_contract_cli()
 
 
 
+int image_basic_cubecollapse_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3) == 0)
+    {
+        cube_collapse(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 int image_basic_streamaverage_cli()
 {
@@ -150,6 +161,15 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <binx> <biny>");
     strcpy(data.cmd[data.NBcmd].example,"imcontract im1 outim 4 4");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)");
+    data.NBcmd++;
+    
+    strcpy(data.cmd[data.NBcmd].key,"cubecollapse");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_cubecollapse_cli;
+    strcpy(data.cmd[data.NBcmd].info,"collapse a cube along z");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim>");
+    strcpy(data.cmd[data.NBcmd].example,"cubecollapse im1 outim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long cube_collapse(char *ID_in_name, char *ID_out_name)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"imgstreamave");
@@ -2066,80 +2086,83 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
 // images are recentered by integer number of pixels
 long basic_cube_center(char *ID_in_name, char *ID_out_name)
 {
-  long IDin,IDout;
-  long xsize,ysize,ksize;
-  long ii,jj,kk,ii1,jj1;
-  double tot,totii,totjj;
-  long index0,index1,index;
-  double v;
-  long *tx = NULL;
-  long *ty = NULL;
-  
-  IDin = image_ID(ID_in_name);
-  xsize = data.image[IDin].md[0].size[0];
-  ysize = data.image[IDin].md[0].size[1];
-  ksize = data.image[IDin].md[0].size[2];
+    long IDin,IDout;
+    long xsize,ysize,ksize;
+    long ii,jj,kk,ii1,jj1;
+    double tot,totii,totjj;
+    long index0,index1,index;
+    double v;
+    long *tx = NULL;
+    long *ty = NULL;
 
-  tx = (long*) malloc(sizeof(long)*ksize);
-  if(tx==NULL)
+    IDin = image_ID(ID_in_name);
+    xsize = data.image[IDin].md[0].size[0];
+    ysize = data.image[IDin].md[0].size[1];
+    ksize = data.image[IDin].md[0].size[2];
+
+    tx = (long*) malloc(sizeof(long)*ksize);
+    if(tx==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  ty = (long*) malloc(sizeof(long)*ksize);
-  if(ty==NULL)
+    ty = (long*) malloc(sizeof(long)*ksize);
+    if(ty==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
 
-  IDout = create_3Dimage_ID(ID_out_name,xsize,ysize,ksize);
-  
-  for(kk=0;kk<ksize;kk++)
+    IDout = create_3Dimage_ID(ID_out_name,xsize,ysize,ksize);
+
+    for(kk=0; kk<ksize; kk++)
     {
-      tot = 0.0;
-      totii = 0.0;
-      totjj = 0.0;
-      index0 = kk*xsize*ysize;
+        tot = 0.0;
+        totii = 0.0;
+        totjj = 0.0;
+        index0 = kk*xsize*ysize;
 
-      for(jj=0;jj<ysize;jj++)
-	{
-	  index1 = index0 + jj*xsize;
-	  for(ii=0;ii<xsize;ii++)
-	    {
-	      index = index1 + ii; 
-	      v = data.image[IDin].array.F[index];
-	      totii += v*ii;
-	      totjj += v*jj;
-	      tot += v;
-	    }
-	}
-      totii /= tot;
-      totjj /= tot;
-      tx[kk] = ((long) (totii+0.5)) - xsize/2;
-      ty[kk] = ((long) (totjj+0.5)) - ysize/2;      
+        for(jj=0; jj<ysize; jj++)
+        {
+            index1 = index0 + jj*xsize;
+            for(ii=0; ii<xsize; ii++)
+            {
+                index = index1 + ii;
+                v = data.image[IDin].array.F[index];
+                totii += v*ii;
+                totjj += v*jj;
+                tot += v;
+            }
+        }
+        totii /= tot;
+        totjj /= tot;
+        tx[kk] = ((long) (totii+0.5)) - xsize/2;
+        ty[kk] = ((long) (totjj+0.5)) - ysize/2;
 
-      for(ii=0;ii<xsize;ii++)
-	for(jj=0;jj<ysize;jj++)
-	  {
-	    ii1 = ii+tx[kk];
-	    jj1 = jj+ty[kk];
-	    if((ii1>-1)&&(ii1<xsize)&&(jj1>-1)&&(jj1<ysize))
-	      data.image[IDout].array.F[index0+jj*xsize+ii] = data.image[IDin].array.F[index0+jj1*xsize+ii1];
-	    else
-	      data.image[IDout].array.F[index0+jj*xsize+ii] = 0.0;
-	  }
+        for(ii=0; ii<xsize; ii++)
+            for(jj=0; jj<ysize; jj++)
+            {
+                ii1 = ii+tx[kk];
+                jj1 = jj+ty[kk];
+                if((ii1>-1)&&(ii1<xsize)&&(jj1>-1)&&(jj1<ysize))
+                    data.image[IDout].array.F[index0+jj*xsize+ii] = data.image[IDin].array.F[index0+jj1*xsize+ii1];
+                else
+                    data.image[IDout].array.F[index0+jj*xsize+ii] = 0.0;
+            }
     }
 
-  free(tx);
-  free(ty);
+    free(tx);
+    free(ty);
 
-  return(0);
+    return(0);
 }
+
+
+
 
 //
 // average frames in a cube
@@ -2148,72 +2171,102 @@ long basic_cube_center(char *ID_in_name, char *ID_out_name)
 //
 long cube_average(char *ID_in_name, char *ID_out_name, float alpha)
 {
-  long IDin,IDout,IDrms;
-  long xsize,ysize,ksize;
-  long ii,kk;
-  double *array = NULL;
-  double ave,ave1,rms;
-  long cnt;
-  long cnt1;
+    long IDin,IDout,IDrms;
+    long xsize,ysize,ksize;
+    long ii,kk;
+    double *array = NULL;
+    double ave,ave1,rms;
+    long cnt;
+    long cnt1;
 
-  IDin = image_ID(ID_in_name);
-  xsize = data.image[IDin].md[0].size[0];
-  ysize = data.image[IDin].md[0].size[1];
-  ksize = data.image[IDin].md[0].size[2];
+    IDin = image_ID(ID_in_name);
+    xsize = data.image[IDin].md[0].size[0];
+    ysize = data.image[IDin].md[0].size[1];
+    ksize = data.image[IDin].md[0].size[2];
 
-  IDout = create_2Dimage_ID(ID_out_name,xsize,ysize);
-  IDrms = create_2Dimage_ID("rmsim",xsize,ysize);
+    IDout = create_2Dimage_ID(ID_out_name,xsize,ysize);
+    IDrms = create_2Dimage_ID("rmsim",xsize,ysize);
 
-  array = (double*) malloc(sizeof(double)*ksize); 
-  if(array==NULL)
+    array = (double*) malloc(sizeof(double)*ksize);
+    if(array==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  cnt1 = 0;
-  for(ii=0;ii<xsize*ysize;ii++)
+    cnt1 = 0;
+    for(ii=0; ii<xsize*ysize; ii++)
     {
-      for(kk=0;kk<ksize;kk++)
-	array[kk] = (double) data.image[IDin].array.F[kk*xsize*ysize+ii];
-      
-      ave = 0.0;
-      for(kk=0;kk<ksize;kk++)
-	ave += array[kk];
-      ave /= ksize;
-      
-      rms = 0.0;
-      for(kk=0;kk<ksize;kk++)
-	rms += (array[kk]-ave)*(array[kk]-ave);
-      rms = sqrt(rms/ksize);
+        for(kk=0; kk<ksize; kk++)
+            array[kk] = (double) data.image[IDin].array.F[kk*xsize*ysize+ii];
 
-      data.image[IDrms].array.F[ii] = (float) rms;
-      
-      ave1 = 0.0;
-      cnt = 0;
-      for(kk=0;kk<ksize;kk++)
-	{
-	  if(fabs(array[kk]-ave)<alpha*rms)
-	    {
-	      ave1 += array[kk];
-	      cnt ++;
-	    }	  
-	}
-      if(cnt>0.5)
-	data.image[IDout].array.F[ii] = (float) (ave1/cnt);
-      else
-	data.image[IDout].array.F[ii] = (float) ave;
-      cnt1 += cnt;
+        ave = 0.0;
+        for(kk=0; kk<ksize; kk++)
+            ave += array[kk];
+        ave /= ksize;
+
+        rms = 0.0;
+        for(kk=0; kk<ksize; kk++)
+            rms += (array[kk]-ave)*(array[kk]-ave);
+        rms = sqrt(rms/ksize);
+
+        data.image[IDrms].array.F[ii] = (float) rms;
+
+        ave1 = 0.0;
+        cnt = 0;
+        for(kk=0; kk<ksize; kk++)
+        {
+            if(fabs(array[kk]-ave)<alpha*rms)
+            {
+                ave1 += array[kk];
+                cnt ++;
+            }
+        }
+        if(cnt>0.5)
+            data.image[IDout].array.F[ii] = (float) (ave1/cnt);
+        else
+            data.image[IDout].array.F[ii] = (float) ave;
+        cnt1 += cnt;
     }
 
-  free(array);
-  
-  printf("(alpha = %f) fraction of pixel values selected = %ld/%ld = %.20g\n", alpha, cnt1, xsize*ysize*ksize, (double) (1.0*cnt1/(xsize*ysize*ksize)));
-  printf("RMS written into image rmsim\n");
-  
-  return(IDout);
+    free(array);
+
+    printf("(alpha = %f) fraction of pixel values selected = %ld/%ld = %.20g\n", alpha, cnt1, xsize*ysize*ksize, (double) (1.0*cnt1/(xsize*ysize*ksize)));
+    printf("RMS written into image rmsim\n");
+
+    return(IDout);
 }
+
+
+
+
+
+long cube_collapse(char *ID_in_name, char *ID_out_name)
+{
+    long IDin, IDout;
+    long xsize, ysize, ksize;
+    long ii,kk;
+
+    IDin = image_ID(ID_in_name);
+    xsize = data.image[IDin].md[0].size[0];
+    ysize = data.image[IDin].md[0].size[1];
+    ksize = data.image[IDin].md[0].size[2];
+
+    IDout = create_2Dimage_ID(ID_out_name, xsize, ysize);
+
+    for(ii=0; ii<xsize*ysize; ii++)
+    {
+        for(kk=0; kk<ksize; kk++)
+            data.image[IDout].array.F[ii] += data.image[IDin].array.F[kk*xsize*ysize+ii];
+    }
+
+    return(IDout);
+}
+
+
+
+
 
 
 // coadd all images matching strfilter + .fits

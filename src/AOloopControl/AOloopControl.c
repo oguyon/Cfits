@@ -974,9 +974,6 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     IDmask = image_ID("Mmask");
 
 
-    printf("IDmask = %ld \n", IDmask);
-sleep(10);
-
     if(IDmask==-1)
     {
         IDmask = create_2Dimage_ID("Mmask", msize, msize);

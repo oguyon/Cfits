@@ -75,6 +75,8 @@ long basic_cube_center(char *ID_in_name, char *ID_out_name);
 
 long cube_average(char *ID_in_name, char *ID_out_name, float alpha);
 
+long cube_collapse(char *ID_in_name, char *ID_out_name);
+
 long basic_addimagesfiles(char *strfilter, char *outname);
 
 long basic_pasteimages(char *prefix, long NBcol, char *IDout_name);
