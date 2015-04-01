@@ -3148,7 +3148,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 */
 
 
-    IDmapcube = load_fits("tmpDMactmap.fits", "actmap_cube");
+    IDmapcube = load_fits("tmpDMactmap.fits", "actmap_cube", 1);
     iter = 7;
          // compute clipped average
         istart = (long) (1.0*iter*0.2);
