@@ -485,14 +485,15 @@ int AOloopControl_scanGainBlock_cli()
 
 int AOloopControl_setparam_cli()
 {
- if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
     {
-		AOloopControl_setparam(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
-      return 0;
+        AOloopControl_setparam(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
+        return 0;
     }
-  else
-    return 1; 
+    else
+        return 1;
 }
+
 
 
 
@@ -3045,19 +3046,17 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
-    //    IDmap = create_2Dimage_ID(WFS_actmap, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
     sizearray[0] = AOconf[loop].sizexDM;
     sizearray[1] = AOconf[loop].sizeyDM;
     sizearray[2] = NBiter;
     IDmapcube = create_image_ID("actmap_cube", 3, sizearray, FLOAT, 1, 5);
     IDmap = create_image_ID(WFS_actmap, 2, sizearray, FLOAT, 1, 5);
-
+/*
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     for(iter=0; iter<NBiter; iter++)
     {
-
         for(act=0; act<AOconf[loop].sizeDM; act++)
         {
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3150,7 +3149,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
             {
                 for(i=0; i<iter; i++)
                     arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
-                quick_sort_float(arrayf, iter);
+                quick_sort_float(arraypix, iter);
 
                 for(i=istart; i<iend; i++)
                     data.image[IDmap].array.F[ii] += arraypix[i];
@@ -3162,10 +3161,29 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     free(arrayf);
     free(sizearray);
     free(arraypix);
+*/
 
+    IDmapcube = load_fits("tmpDMactmap_cube.fits", "tmpact2d", 1);
+    
+    iter = 14;
 
+    istart = (long) (1.0*iter*0.2);
+        iend = (long) (1.0*iter*0.8);
+        icnt = iend-istart;
+        if(icnt > 1)
+        {
+            for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+            {
+                for(i=0; i<iter; i++)
+                    arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
+                quick_sort_float(arraypix, iter);
 
-
+                for(i=istart; i<iend; i++)
+                    data.image[IDmap].array.F[ii] += arraypix[i];
+                data.image[IDmap].array.F[ii] /= icnt;
+            }
+        }
+ free(arraypix);
 
     return(IDmap);
 }
