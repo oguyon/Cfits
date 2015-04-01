@@ -1342,7 +1342,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     unsigned short int pvu, vcnt, vaveku;
     long vavevu;
     float vavev, vavek;
-
+    long k1start;
 
     IDin = image_ID(IDinname);
 
@@ -1351,6 +1351,11 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     zsize = data.image[IDin].md[0].size[2];
     xysize = xsize*ysize;
 
+
+    if(zsize<3)
+        k1start = 1;
+    else
+        k1start = 0;
 
     sizeoutarray = (long*) malloc(sizeof(long)*3);
     sizeoutarray[0] = xsize;
@@ -1400,7 +1405,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 vcnt = 0;
                 vaveku = 0;
                 vavevu = 0;
-                for(k1=0; k1<zsize; k1++)
+                for(k1=k1start; k1<zsize; k1++)
                 {
                     pvu = data.image[IDintmp].array.U[k1*xysize+ii];
                     //	printf("[%d %u] ", pvu, pvu);
@@ -1419,7 +1424,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
                 vavev = 1.0*vavevu/vcnt;
                 vavek = 1.0*vaveku/vcnt;
 
-                for(k1=0; k1<zsize; k1++)
+                for(k1=k1start; k1<zsize; k1++)
                 {
                     pvu = data.image[IDintmp].array.U[k1*xysize+ii];
                     if(data.image[IDsatmask].array.U[k1*xysize+ii] == 1)
