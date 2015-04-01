@@ -3041,7 +3041,6 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-/*
     for(iter=0; iter<NBiter; iter++)
     {
 
@@ -3145,31 +3144,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
             }
         }
     }
-*/
 
-
-    IDmapcube = load_fits("tmpDMactmap.fits", "actmap_cube", 1);
-    iter = 7;
-         // compute clipped average
-        istart = (long) (1.0*iter*0.2);
-        iend = (long) (1.0*iter*0.8);
-        icnt = iend-istart;
-
-    printf("%ld - %ld   %ld\n", istart, iend, icnt);
-sleep(2.0);
-        if(icnt > 1)
-        {
-            for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-            {
-                for(i=0; i<iter; i++)
-                    arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
-                quick_sort_float(arraypix, iter);
-
-                for(i=istart; i<iend; i++)
-                    data.image[IDmap].array.F[ii] += arraypix[i];
-                data.image[IDmap].array.F[ii] /= icnt;
-            }
-        }
 
     
 
