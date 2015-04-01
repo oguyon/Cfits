@@ -184,11 +184,13 @@ int AOloopControl_makeTemplateAOloopconf_cli()
 
 int AOloopControl_mkModes_cli()
 { 
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)==0)
-    AOloopControl_mkModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf);
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,2)==0)
+    AOloopControl_mkModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numl);
   else
     return 1;      
 }
+
+
 
 int AOloopControl_camimage_extract2D_sharedmem_loop_cli()
 {
@@ -529,9 +531,9 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_mkModes_cli;
   strcpy(data.cmd[data.NBcmd].info,"make control modes");
-  strcpy(data.cmd[data.NBcmd].syntax,"<output modes> <size> <max CPA> <delta CPA> <cx> <cy> <r0> <r1>");
-  strcpy(data.cmd[data.NBcmd].example,"aolmkmodes modes 50 5.0 0.8");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<output modes> <size> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode>");
+  strcpy(data.cmd[data.NBcmd].example,"aolmkmodes modes 50 5.0 0.8 1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode)");
   data.NBcmd++;
 
 
@@ -913,13 +915,19 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
 
 
 /*** \brief creates AO control modes
- * 
- *	
+ *
+ *
  * creates image "modesfreqcpa" which contains CPA value for each mode
- * 
+ *
+ *
+ * if Mmask exists, measure xc, yc from it, otherwise use values given to function
+ *
+ * MaskMode = 0  : tapered masking
+ * MaskMode = 1  : STRICT masking
+ *
  */
 
-long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1)
+long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode)
 {
     long ID0;
     long ID;
@@ -1039,14 +1047,14 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     zcpa[9] = 1.5;
 
 
-	
+
     linopt_imtools_makeCPAmodes("CPAmodes", msize, CPAmax, deltaCPA, 0.5*msize, 1.2, 0);
     ID0 = image_ID("CPAmodes");
-    
+
     IDfreq	= image_ID("cpamodesfreq");
-  //  list_image_ID();
-    
-    
+    //  list_image_ID();
+
+
     printf("  %ld %ld %ld\n", msize, msize, data.image[ID0].md[0].size[2]-1 );
     ID = create_3Dimage_ID(ID_name, msize, msize, data.image[ID0].md[0].size[2]-1+NBZ);
 
@@ -1145,23 +1153,28 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         printf("Mode %ld   RMS = %lf\n", k, rms);
     }
 
-    for(citer=0; citer<NBciter; citer++)
-    {
-        printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
-        gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), 5);
-        IDg = image_ID("modeg");
-        for(k=0; k<data.image[ID].md[0].size[2]; k++)
-        {
-            for(ii=0; ii<msize*msize; ii++)
-                if(data.image[IDmask].array.F[ii]<0.98)
-                    data.image[ID].array.F[k*msize*msize+ii] = data.image[IDg].array.F[k*msize*msize+ii];
-        }
-        delete_image_ID("modeg");
-    }
 
+    if(MaskMode==0)
+    {
+        for(citer=0; citer<NBciter; citer++)
+        {
+            printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
+            gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), 5);
+            IDg = image_ID("modeg");
+            for(k=0; k<data.image[ID].md[0].size[2]; k++)
+            {
+                for(ii=0; ii<msize*msize; ii++)
+                    if(data.image[IDmask].array.F[ii]<0.98)
+                        data.image[ID].array.F[k*msize*msize+ii] = data.image[IDg].array.F[k*msize*msize+ii];
+            }
+            delete_image_ID("modeg");
+        }
+    }
 
     return(ID);
 }
+
+
 
 
 
@@ -1270,14 +1283,14 @@ int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_nam
 
 
 /** \brief Computes control matrix using SVD
- *  
- *        Conventions: 
- * 				m: number of actuators (= NB_MODES);  
+ *
+ *        Conventions:
+ * 				m: number of actuators (= NB_MODES);
  * 				n: number of sensors  (= # of pixels)
  *	works even for m != n
- * 
- * 
- *  
+ *
+ *
+ *
  */
 
 int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP)
@@ -1555,6 +1568,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     return(ID_Cmatrix);
 }
+
 
 
 
@@ -3065,7 +3079,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
             data.image[aoconfID_DMRM].md[0].write = 0;
             AOconf[loop].DMupdatecnt ++;
 
-            usleep(delayus); /
+            usleep(delayus); 
 
             for(kk=0; kk<NBave; kk++)
             {
@@ -3144,10 +3158,6 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
             }
         }
     }
-
-
-    
-
 
     free(arrayf);
     free(sizearray);
