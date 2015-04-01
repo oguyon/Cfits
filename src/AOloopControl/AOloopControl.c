@@ -3165,7 +3165,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
 
     IDmapcube = load_fits("tmpDMactmap_cube.fits", "tmpact2d", 1);
     
-    iter = 14;
+    iter = 15;
 
     istart = (long) (1.0*iter*0.2);
         iend = (long) (1.0*iter*0.8);
