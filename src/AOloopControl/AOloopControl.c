@@ -2002,20 +2002,18 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     AOconf[loop].status = 5;  // 5: NORMALIZE WFS IMAGE
 
     data.image[aoconfID_WFS0].md[0].cnt0 ++;
-    data.image[aoconfID_WFS1].md[0].write = 1;
-
-
 
     nelem = AOconf[loop].sizeWFS;
-    //#pragma omp parallel for
+
     totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_alpha = totalinv;
     
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-    GPU_beta = normfloorcoeff;
+    GPU_beta = -normfloorcoeff;
 
-    if(COMPUTE_GPU_SCALING==0)
+    if(COMPUTE_GPU_SCALING==0)  // normalize WFS image by totalinv
     {
+    data.image[aoconfID_WFS1].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
         {
@@ -2404,7 +2402,25 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
         AOconf[loop].GPU = atoi(content);
     }
 
-    // TOTAL image done in separate thread ?
+    // Skip CPU image scaling and go straight to GPUs ?
+
+    if((fp=fopen("./conf/conf_GPUall.txt","r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_GPUall.txt missing\n");
+        printf("Using CPU for image scaling\n");
+        AOconf[loop].GPUall = 0;
+    }
+    else
+    {
+        r = fscanf(fp, "%s", content);
+        printf("GPUall : %d\n", atoi(content));
+        fclose(fp);
+        fflush(stdout);
+        AOconf[loop].GPUall = atoi(content);
+    }
+
+
+   // TOTAL image done in separate thread ?
     AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
     if((fp=fopen("./conf/conf_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
     {
@@ -3051,7 +3067,7 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
     sizearray[2] = NBiter;
     IDmapcube = create_image_ID("actmap_cube", 3, sizearray, FLOAT, 1, 5);
     IDmap = create_image_ID(WFS_actmap, 2, sizearray, FLOAT, 1, 5);
-/*
+
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
@@ -3156,34 +3172,13 @@ long Measure_ActMap_WFS(long loop, double ampl, double delays, long NBave, char 
                 data.image[IDmap].array.F[ii] /= icnt;
             }
         }
+        save_fits(WFS_actmap, "!tmp_WFS_actmap.fits");
     }
 
     free(arrayf);
     free(sizearray);
     free(arraypix);
-*/
 
-    IDmapcube = load_fits("tmpDMactmap_cube.fits", "tmpact2d", 1);
-    
-    iter = 15;
-
-    istart = (long) (1.0*iter*0.2);
-        iend = (long) (1.0*iter*0.8);
-        icnt = iend-istart;
-        if(icnt > 1)
-        {
-            for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-            {
-                for(i=0; i<iter; i++)
-                    arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
-                quick_sort_float(arraypix, iter);
-
-                for(i=istart; i<iend; i++)
-                    data.image[IDmap].array.F[ii] += arraypix[i];
-                data.image[IDmap].array.F[ii] /= icnt;
-            }
-        }
- free(arraypix);
 
     return(IDmap);
 }
@@ -4097,10 +4092,12 @@ int AOcompute(long loop)
 
     if(COMPUTE_GPU_SCALING==0)
         {
+            data.image[aoconfID_WFS2].md[0].write = 1;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_refWFS].array.F[ii];
             cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
             data.image[aoconfID_WFS2].md[0].cnt0 ++;
+            data.image[aoconfID_WFS2].md[0].write = 0;
         }
 
     //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
@@ -4413,11 +4410,12 @@ int AOloopControl_run()
         AOloopControl_InitializeMemory(0);
 
     
-    COMPUTE_GPU_SCALING = 0;
 
     printf("SETTING UP...\n");
     sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, fname, 1);
+
+    COMPUTE_GPU_SCALING = AOconf[loop].GPUall; 
 
     vOK = 1;
     if(AOconf[loop].init_refWFS==0)

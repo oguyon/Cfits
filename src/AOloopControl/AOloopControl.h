@@ -81,7 +81,8 @@ typedef struct
 
 
     // COMPUTATION
-    int GPU; // >0 if computation done by GPU
+    int GPU; // 1 if matrix multiplication  done by GPU
+    int GPUall; // 1 if scaling computations done by GPU
     int GPUusesem; // 1 if using semaphores to control GPU
 
     
