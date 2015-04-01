@@ -3163,7 +3163,7 @@ sleep(2.0);
             {
                 for(i=0; i<iter; i++)
                     arraypix[i] = data.image[IDmapcube].array.F[i*AOconf[loop].sizeDM+ii];
-                quick_sort_float(arrayf, iter);
+                quick_sort_float(arraypix, iter);
 
                 for(i=istart; i<iend; i++)
                     data.image[IDmap].array.F[ii] += arraypix[i];
