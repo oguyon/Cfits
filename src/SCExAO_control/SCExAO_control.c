@@ -1311,7 +1311,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
     return(0);
 }
-}
+
 
 
 
