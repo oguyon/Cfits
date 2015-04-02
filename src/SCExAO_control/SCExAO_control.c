@@ -878,24 +878,24 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     long ii, jj;
     float x, y, r;
     long *sizearray;
-	long ID;
-	long size2;
-	long cnt;
-	float voltAmpOffset = 2.0;
-	char command[200];
-	long NBframes = 10000;
-	long IDpp, IDpm, IDmp, IDmm;
-	long IDpyrTTref;
-	float xcmm, ycmm, xcpm, ycpm, xcmp, ycmp, xcpp, ycpp;
-	float flim;
-	float totmm, totpm, totmp, totpp;
-	float p10, p90;
-	long ii1, jj1;
-	float xave, yave;
-	FILE *fp;
-	long delayus = 1000000;
-	  
-	  
+    long ID;
+    long size2;
+    long cnt;
+    float voltAmpOffset = 2.0;
+    char command[200];
+    long NBframes = 10000;
+    long IDpp, IDpm, IDmp, IDmm;
+    long IDpyrTTref;
+    float xcmm, ycmm, xcpm, ycpm, xcmp, ycmp, xcpp, ycpp;
+    float flim;
+    float totmm, totpm, totmp, totpp;
+    float p10, p90;
+    long ii1, jj1;
+    float xave, yave;
+    FILE *fp;
+    long delayus = 1000000;
+
+
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];
     size2 = size*size;
@@ -905,224 +905,224 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sizearray[1] = size;
 
 
-	// Read reference pupil illumination 
-	IDpyrTTref = read_sharedmem_image("pyrTT");
-	SCExAO_PZT_STAGE_Xpos_ref = data.image[IDpyrTTref].array.F[0];
-	SCExAO_PZT_STAGE_Ypos_ref = data.image[IDpyrTTref].array.F[1];
-	printf("X = %f   Y = %f\n", SCExAO_PZT_STAGE_Xpos_ref, SCExAO_PZT_STAGE_Ypos_ref);
-	
-	// + +
-	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
-	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
-	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-	printf("%s", command);
-    r = system(command);
- 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-	printf("%s", command);
-    r = system(command);
-	IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
-	save_fits("imwfspp", "!imwfspp.fits");
-	
+    // Read reference pupil illumination
+    IDpyrTTref = read_sharedmem_image("pyrTT");
+    SCExAO_PZT_STAGE_Xpos_ref = data.image[IDpyrTTref].array.F[0];
+    SCExAO_PZT_STAGE_Ypos_ref = data.image[IDpyrTTref].array.F[1];
+    printf("X = %f   Y = %f\n", SCExAO_PZT_STAGE_Xpos_ref, SCExAO_PZT_STAGE_Ypos_ref);
 
-	// + -
-	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
-	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref + 2.0*voltAmpOffset;
-	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    // + +
+    SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
+    SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
+    sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
     printf("%s", command);
     r = system(command);
- 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-	printf("%s", command);
-    r = system(command);
-	IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm");
-	save_fits("imwfspm", "!imwfspm.fits");
-
-	// - +
-	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
-	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref - 2.0*voltAmpOffset;
-	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
     printf("%s", command);
     r = system(command);
- 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-	printf("%s", command);
-    r = system(command);
-	IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp");
-	save_fits("imwfsmp", "!imwfsmp.fits");
+    IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
+    save_fits("imwfspp", "!imwfspp.fits");
 
 
-	// - -
-	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
-	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
-	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    // + -
+    SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
+    SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref + 2.0*voltAmpOffset;
+    sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
     printf("%s", command);
     r = system(command);
- 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-	printf("%s", command);
-    r = system(command);
-	IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm");
-	save_fits("imwfsmm", "!imwfsmm.fits");
-
-
-	// going back to reference
-	
-	SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
-	SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
-	sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
     printf("%s", command);
     r = system(command);
- 	sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-	printf("%s", command);
+    IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm");
+    save_fits("imwfspm", "!imwfspm.fits");
+
+    // - +
+    SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
+    SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref - 2.0*voltAmpOffset;
+    sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+    sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+    printf("%s", command);
+    r = system(command);
+    IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp");
+    save_fits("imwfsmp", "!imwfsmp.fits");
+
+
+    // - -
+    SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
+    SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
+    sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+    sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+    printf("%s", command);
+    r = system(command);
+    IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm");
+    save_fits("imwfsmm", "!imwfsmm.fits");
+
+
+    // going back to reference
+
+    SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
+    SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
+    sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+    printf("%s", command);
+    r = system(command);
+    sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+    printf("%s", command);
     r = system(command);
 
-	
-	// sum the 4 images
-	arith_image_add("imwfspp", "imwfspm", "prefsum");
-	arith_image_add_inplace("prefsum", "imwfsmp");
-	arith_image_add_inplace("prefsum", "imwfsmm");
-	
-	delete_image_ID("imwfspp");
-	delete_image_ID("imwfspm");
-	delete_image_ID("imwfsmp");
-	delete_image_ID("imwfsmm");
-	
-	save_fits("prefsum", "!prefsum.fits");
-	p10 = img_percentile("prefsum", 0.10);
-	p90 = img_percentile("prefsum", 0.90);
-	
-	xcpp = 0.0;
-	ycpp = 0.0;
-	totpp = 0.0;
 
-	xcmp = 0.0;
-	ycmp = 0.0;
-	totmp = 0.0;
+    // sum the 4 images
+    arith_image_add("imwfspp", "imwfspm", "prefsum");
+    arith_image_add_inplace("prefsum", "imwfsmp");
+    arith_image_add_inplace("prefsum", "imwfsmm");
 
-	xcpm = 0.0;
-	ycpm = 0.0;
-	totpm = 0.0;
+    delete_image_ID("imwfspp");
+    delete_image_ID("imwfspm");
+    delete_image_ID("imwfsmp");
+    delete_image_ID("imwfsmm");
 
-	xcmm = 0.0;
-	ycmm = 0.0;
-	totmm = 0.0;
-	
-	flim = p10 + 0.3*(p90-p10);
-	ID = image_ID("prefsum");
-	for(ii=0;ii<size/2;ii++)
-		for(jj=0;jj<size/2;jj++)
-		{
-			if(data.image[ID].array.F[jj*size+ii]>flim)
-				{
-					totmm += 1.0;
-					xcmm += ii;
-					ycmm += jj;
-				}
-			
-			ii1 = ii+size/2;
-			jj1 = jj;
-			if(data.image[ID].array.F[jj1*size+ii1]>flim)
-				{
-					totpm += 1.0;
-					xcpm += ii;
-					ycpm += jj;
-				}
-			
-			ii1 = ii;
-			jj1 = jj+size/2;
-			if(data.image[ID].array.F[jj1*size+ii1]>flim)
-				{
-					totmp += 1.0;
-					xcmp += ii;
-					ycmp += jj;
-				}
-			
-			ii1 = ii+size/2;
-			jj1 = jj+size/2;
-			if(data.image[ID].array.F[jj1*size+ii1]>flim)
-				{
-					totpp += 1.0;
-					xcpp += ii;
-					ycpp += jj;
-				}
-			
-		}
-	
-	xcpp /= totpp;
-	ycpp /= totpp;
-	
-	xcpm /= totpm;
-	ycpm /= totpm;
-	
-	xcmp /= totmp;
-	ycmp /= totmp;
-	
-	xcmm /= totmm;
-	ycmm /= totmm;
-	
+    save_fits("prefsum", "!prefsum.fits");
+    p10 = img_percentile("prefsum", 0.10);
+    p90 = img_percentile("prefsum", 0.90);
 
-	
-	printf("++ : %f %f\n", xcpp, ycpp);
-	printf("+- : %f %f\n", xcpm, ycpm);
-	printf("-+ : %f %f\n", xcmp, ycmp);
-	printf("-- : %f %f\n", xcmm, ycmm);
-	
-	xave = 0.25*(xcpp+xcpm+xcmp+xcmm);
-	yave = 0.25*(ycpp+ycpm+ycmp+ycmm);
-	
-	xave = xave - 0.25*size + 0.5;
-	yave = yave - 0.25*size + 0.5;
-	printf("AVERAGE PIXEL OFFSET = %f %f\n", xave, yave);
-	
-	delete_image_ID("prefsum");
-		
-		
-	 /// read position of stages
+    xcpp = 0.0;
+    ycpp = 0.0;
+    totpp = 0.0;
+
+    xcmp = 0.0;
+    ycmp = 0.0;
+    totmp = 0.0;
+
+    xcpm = 0.0;
+    ycpm = 0.0;
+    totpm = 0.0;
+
+    xcmm = 0.0;
+    ycmm = 0.0;
+    totmm = 0.0;
+
+    flim = p10 + 0.3*(p90-p10);
+    ID = image_ID("prefsum");
+    for(ii=0; ii<size/2; ii++)
+        for(jj=0; jj<size/2; jj++)
+        {
+            if(data.image[ID].array.F[jj*size+ii]>flim)
+            {
+                totmm += 1.0;
+                xcmm += ii;
+                ycmm += jj;
+            }
+
+            ii1 = ii+size/2;
+            jj1 = jj;
+            if(data.image[ID].array.F[jj1*size+ii1]>flim)
+            {
+                totpm += 1.0;
+                xcpm += ii;
+                ycpm += jj;
+            }
+
+            ii1 = ii;
+            jj1 = jj+size/2;
+            if(data.image[ID].array.F[jj1*size+ii1]>flim)
+            {
+                totmp += 1.0;
+                xcmp += ii;
+                ycmp += jj;
+            }
+
+            ii1 = ii+size/2;
+            jj1 = jj+size/2;
+            if(data.image[ID].array.F[jj1*size+ii1]>flim)
+            {
+                totpp += 1.0;
+                xcpp += ii;
+                ycpp += jj;
+            }
+
+        }
+
+    xcpp /= totpp;
+    ycpp /= totpp;
+
+    xcpm /= totpm;
+    ycpm /= totpm;
+
+    xcmp /= totmp;
+    ycmp /= totmp;
+
+    xcmm /= totmm;
+    ycmm /= totmm;
+
+
+
+    printf("++ : %f %f\n", xcpp, ycpp);
+    printf("+- : %f %f\n", xcpm, ycpm);
+    printf("-+ : %f %f\n", xcmp, ycmp);
+    printf("-- : %f %f\n", xcmm, ycmm);
+
+    xave = 0.25*(xcpp+xcpm+xcmp+xcmm);
+    yave = 0.25*(ycpp+ycpm+ycmp+ycmm);
+
+    xave = xave - 0.25*size + 0.5;
+    yave = yave - 0.25*size + 0.5;
+    printf("AVERAGE PIXEL OFFSET = %f %f\n", xave, yave);
+
+    delete_image_ID("prefsum");
+
+
+    /// read position of stages
     if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
     {
         r = fscanf(fp, "%ld %ld\n", &SCExAO_Pcam_Xpos, &SCExAO_Pcam_Ypos);
-		printf("CURRENT POSITION : %ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+        printf("CURRENT POSITION : %ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
         fclose(fp);
     }
-    
+
     SCExAO_Pcam_Xpos += (long) (xave*PcamPixScaleAct);
     SCExAO_Pcam_Ypos -= (long) (yave*PcamPixScaleAct);
-	printf("NEW POSITION : %ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+    printf("NEW POSITION : %ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
 
-	xcpp -= xave;
-	xcpm -= xave;
-	xcmp -= xave;
-	xcmm -= xave;
-	
-	ycpp -= yave;
-	ycpm -= yave;
-	ycmp -= yave;
-	ycmm -= yave;
+    xcpp -= xave;
+    xcpm -= xave;
+    xcmp -= xave;
+    xcmm -= xave;
 
-	 /// write stages position
+    ycpp -= yave;
+    ycpm -= yave;
+    ycmp -= yave;
+    ycmm -= yave;
+
+    /// write stages position
     fp = fopen("./status/pcampos.txt", "w");
     fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
     fclose(fp);
 
     sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
-        printf("%s", command);
-        r = system(command);
-        usleep(delayus);
+    printf("%s", command);
+    r = system(command);
+    usleep(delayus);
 
-        sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
-        printf("%s", command);
-        r = system(command);
-        usleep(delayus);
+    sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
+    printf("%s", command);
+    r = system(command);
+    usleep(delayus);
 
 
-	ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
- 
- 
+    ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
+
+
     IDmask = create_2Dimage_ID("pmask", size, size);
 
     for(ii=0; ii<size/2; ii++)
         for(jj=0; jj<size/2; jj++)
         {
-			// --
-			ii1 = ii;
-			jj1 = jj;
+            // --
+            ii1 = ii;
+            jj1 = jj;
             x = xcmm-ii;
             y = ycmm-jj;
             r = sqrt(x*x+y*y);
@@ -1130,9 +1130,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
             if((r>centobs)&&(r<1.0))
                 data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
 
-			// +-
-			ii1 = ii+size/2;
-			jj1 = jj;
+            // +-
+            ii1 = ii+size/2;
+            jj1 = jj;
             x = xcpm-ii;
             y = ycpm-jj;
             r = sqrt(x*x+y*y);
@@ -1140,9 +1140,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
             if((r>centobs)&&(r<1.0))
                 data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
 
-			// -+
-			ii1 = ii;
-			jj1 = jj+size/2;
+            // -+
+            ii1 = ii;
+            jj1 = jj+size/2;
             x = xcmp-ii;
             y = ycmp-jj;
             r = sqrt(x*x+y*y);
@@ -1150,37 +1150,37 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
             if((r>centobs)&&(r<1.0))
                 data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
 
-			// ++
-			ii1 = ii+size/2;
-			jj1 = jj+size/2;
+            // ++
+            ii1 = ii+size/2;
+            jj1 = jj+size/2;
             x = xcpp-ii;
             y = ycpp-jj;
             r = sqrt(x*x+y*y);
             r /= prad;
             if((r>centobs)&&(r<1.0))
                 data.image[IDmask].array.F[jj1*size+ii1] = 1.0;
-		}
-            
+        }
 
 
-	printf("Applying mask to image ...\n");
-	fflush(stdout);
-	cnt = data.image[IDwfs].md[0].cnt0;
-	while (1)
-	{
-		usleep(10);
-		if(cnt != data.image[IDwfs].md[0].cnt0)
-		{
-			cnt = data.image[IDwfs].md[0].cnt0;
-			
-			data.image[ID].md[0].write = 1;
-			for(ii=0;ii<size2;ii++)
-				data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.U[ii]*data.image[IDmask].array.F[ii];
-			data.image[ID].md[0].cnt0++;
-			data.image[ID].md[0].write = 1;
-		}		
-	}
-	
+
+    printf("Applying mask to image ...\n");
+    fflush(stdout);
+    cnt = data.image[IDwfs].md[0].cnt0;
+    while (1)
+    {
+        usleep(10);
+        if(cnt != data.image[IDwfs].md[0].cnt0)
+        {
+            cnt = data.image[IDwfs].md[0].cnt0;
+
+            data.image[ID].md[0].write = 1;
+            for(ii=0; ii<size2; ii++)
+                data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.U[ii]*data.image[IDmask].array.F[ii];
+            data.image[ID].md[0].cnt0++;
+            data.image[ID].md[0].write = 1;
+        }
+    }
+
     free(sizearray);
 
     return(0);
@@ -1192,7 +1192,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 {
     long zimaxmax = 10;
-	long zimax;
+    long zimax;
     long zi;
     long ID;
     long NBframes = 10;
@@ -1204,11 +1204,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     int r;
     long IDdm5, IDdm6;
     long ii;
-	long dmsize;
-	long dmsize2;
-	long IDz;
-	long IDdisp;
-	
+    long dmsize;
+    long dmsize2;
+    long IDz;
+    long IDdisp;
+
     // 60perc of pixels illuminated
     // perc 70 is median over pupil
 
@@ -1216,31 +1216,31 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
 
     IDdm5 = read_sharedmem_image("dmdisp5");
     IDdm6 = read_sharedmem_image("dmdisp6");
-	IDdisp = read_sharedmem_image("dmdisp");
-	dmsize = data.image[IDdm5].md[0].size[0];
-	dmsize2 = dmsize*dmsize;
-	
-	// prepare modes
-	IDz = mk_zer_seriescube("zcube", dmsize, zimaxmax, 0.5*dmsize);
-	list_image_ID();
-	printf("IDz = %ld\n", IDz);
-	zimax = 10;
+    IDdisp = read_sharedmem_image("dmdisp");
+    dmsize = data.image[IDdm5].md[0].size[0];
+    dmsize2 = dmsize*dmsize;
+
+    // prepare modes
+    IDz = mk_zer_seriescube("zcube", dmsize, zimaxmax, 0.5*dmsize);
+    list_image_ID();
+    printf("IDz = %ld\n", IDz);
+    zimax = 10;
     while(1)
-    {		
+    {
         for(zi=4; zi<zimax; zi++)
         {
-			ampl = ampl0; //*pow((1.0 - 0.9*(zimax/zimaxmax)), 2.0);
+            ampl = ampl0; //*pow((1.0 - 0.9*(zimax/zimaxmax)), 2.0);
 
-  			data.image[IDdm5].md[0].write = 1;
-			for(ii=0;ii<dmsize2;ii++)
-				data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
-			sem_post(data.image[IDdm5].semptr);
-			sem_post(data.image[IDdisp].semptr1);
-			data.image[IDdm5].md[0].cnt0++;
-			data.image[IDdm5].md[0].write = 0;
-			usleep(2000);
-          
-     
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+            sem_post(data.image[IDdm5].semptr);
+            sem_post(data.image[IDdisp].semptr1);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+            usleep(2000);
+
+
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
             p50 = img_percentile("imwfs", 0.50);
@@ -1250,14 +1250,14 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             printf("%lf %lf -> %f\n", p70, p90, val);
             valp = val;
 
-			data.image[IDdm5].md[0].write = 1;
-			for(ii=0;ii<dmsize2;ii++)
-				data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
-			sem_post(data.image[IDdm5].semptr);
-			sem_post(data.image[IDdisp].semptr1);
-			data.image[IDdm5].md[0].cnt0++;
-			data.image[IDdm5].md[0].write = 0;
-			usleep(2000);
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+            sem_post(data.image[IDdm5].semptr);
+            sem_post(data.image[IDdisp].semptr1);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+            usleep(2000);
 
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -1269,28 +1269,28 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             printf("%lf %lf -> %f\n", p70, p90, val);
             valm = val;
 
-		/*	if(valm>valp)
-				a = -amp;
-			else
-				a = amp;
-*/
+            /*	if(valm>valp)
+            		a = -amp;
+            	else
+            		a = amp;
+            */
 
             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
             printf("== ZERNIKE %ld / %ld ========== a = %f\n", zi, zimax, a);
-           
-           
-			data.image[IDdm5].md[0].write = 1;
-			for(ii=0;ii<dmsize2;ii++)
-				data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDz].array.F[zi*dmsize2+ii];
-			sem_post(data.image[IDdm5].semptr);
-			sem_post(data.image[IDdisp].semptr1);
-			data.image[IDdm5].md[0].cnt0++;
-			data.image[IDdm5].md[0].write = 0;
-			usleep(2000);
-			
-//			sleep(1);
+
+
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDz].array.F[zi*dmsize2+ii];
+            sem_post(data.image[IDdm5].semptr);
+            sem_post(data.image[IDdisp].semptr1);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+            usleep(2000);
+
+            //			sleep(1);
         }
-        
+
         printf("%ld -> %ld\n", IDdm5, IDdm6);
         data.image[IDdm5].md[0].write = 1;
         data.image[IDdm6].md[0].write = 1;
@@ -1303,13 +1303,14 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
         data.image[IDdm6].md[0].cnt0++;
         data.image[IDdm5].md[0].write = 0;
         data.image[IDdm6].md[0].write = 0;
-		
-		zimax ++;
-		if(zimax>zimaxmax)
-			zimax = zimaxmax;
+
+        zimax ++;
+        if(zimax>zimaxmax)
+            zimax = zimaxmax;
     }
 
     return(0);
+}
 }
 
 
