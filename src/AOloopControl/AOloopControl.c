@@ -1730,7 +1730,8 @@ void *compute_function_dark_subtract( void *ptr )
    
     printf("This is thread # %ld     %ld -> %ld  / %ld \n", *index, iistart, iiend, nelem);
    fflush(stdout);
-
+    sleep(8);
+    
     while(1)
     {
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
@@ -1929,7 +1930,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     //IDdark = image_ID(dname);
     //nelem = AOconf[loop].sizeWFS;
 
-    if(loop == 0)
+    if(1)
     {
 # ifdef _OPENMP
         #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
