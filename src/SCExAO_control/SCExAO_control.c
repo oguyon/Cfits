@@ -1352,7 +1352,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     xysize = xsize*ysize;
 
 
-    if(zsize<3)
+    if(zsize>3)
         k1start = 1;
     else
         k1start = 0;
