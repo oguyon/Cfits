@@ -1929,7 +1929,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     //IDdark = image_ID(dname);
     //nelem = AOconf[loop].sizeWFS;
 
-    if(0)
+    if(1)
     {
 # ifdef _OPENMP
         #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
@@ -1958,11 +1958,13 @@ int Average_cam_frames(long loop, long NbAve, int RM)
             }
             AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
             sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
-            sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);
+            sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);            
         }
 
         for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
             sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name);
+
+
 
         for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name);
