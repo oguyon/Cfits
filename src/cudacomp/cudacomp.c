@@ -706,15 +706,17 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     {
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         {
-            sem_post(gpumatmultconf[index].semptr1[ptn]);
+            sem_post(gpumatmultconf[index].semptr1[ptn]); // START COMPUTATION
             sem_post(gpumatmultconf[index].semptr4[ptn]);
         }
 
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
-            sem_wait(gpumatmultconf[index].semptr5[ptn]);
+            sem_wait(gpumatmultconf[index].semptr5[ptn]); // WAIT FOR RESULT
     }
 
 
+
+    // SUM RESULTS FROM SEPARATE GPUs
     *status = *status + 1;  // -> 11
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
@@ -988,6 +990,12 @@ void *compute_function( void *ptr )
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
         *ptrstat = 6;
+
+
+        // START MODE VALUES COMPUTATION
+        
+        
+        
 
         iter++;
     }
