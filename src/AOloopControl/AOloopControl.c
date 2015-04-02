@@ -4458,8 +4458,6 @@ int AOloopControl_run()
                 }
                 else
                 {
-
-
                     data.image[aoconfID_DM].md[0].write = 1;
 
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
