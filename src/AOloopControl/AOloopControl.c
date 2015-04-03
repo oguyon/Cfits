@@ -3989,8 +3989,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
             // SAVE RMCUBE
             save_fits("RMcube", "!RMcube.fits");
-            
+            // remove average
             IDrmc1 = create_3Dimage_ID("RMcube1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube, average removed
+   
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 valave = 0.0;
@@ -3998,14 +3999,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     valave += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
                 valave /= RespMatNBframes;
                 for(kc=0;kc<RespMatNBframes;kc++)
-                    data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] -= valave;
+                    data.image[IDrmc1].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[IDrmc1].array.F[kc*AOconf[loop].sizeWFS+ii] - valave;
             }
             save_fits("RMcube1", "!RMcube1.fits");
             
 
-            // remove average
-            
-            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
+       
 
 
             // PROCESS RMCUBE
