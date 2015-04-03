@@ -120,7 +120,7 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb);
 int init_AOloopControl();
 long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode);
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
-int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP);
+int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim);
 int AOloopControl_InitializeMemory();
 int Average_cam_frames(long loop, long NbAve, int RM);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
