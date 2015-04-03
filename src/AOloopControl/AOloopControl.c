@@ -986,7 +986,9 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     char imname[200];
     char fname[200];
     
-    
+    float value;
+    long msize2;
+    long m0, mblock0;
     
         
     /// if Mmask exists, use it, otherwise create it
@@ -1225,7 +1227,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             if(mblock>NBmblock)
                 NBmblock = mblock;
             
-            printf("%ld %f  -> %ld\n", m, cpa, mblock);
+        //    printf("%ld %f  -> %ld\n", m, cpa, mblock);
         }
         
     NBmblock++;
@@ -1261,6 +1263,32 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             MBLOCK_NBmode[mblock]++;  
         }
         
+    
+    
+    // remove previous modes from each block
+    
+    for(mblock=1; mblock<NBmblock; mblock++)
+        {
+            for(m=0;m<MBLOCK_NBmode[mblock];m++)
+                {
+                    for(mblock0=0; mblock0<NBmblock; mblock0++)
+                    {
+                        for(m0=0;m0<MBLOCK_NBmode[mblock0];m0++)
+                            {
+                                printf("Removing [%3ld %3ld] from [%3ld %3ld]    ", m0, mblock0, m, mblock);
+                                
+                                value = 0.0;
+                                for(ii=0;ii<msize2;ii++)
+                                    {
+                                        value += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];                                        
+                                    }
+                                printf("%f\n", value);
+                            }
+                    }
+            }
+        }
+    
+    
     
     for(mblock=0;mblock<MAX_MBLOCK;mblock++)
     {
