@@ -1037,6 +1037,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
 
 
+    
+
     NBZ = 5; /// 3: tip, tilt, focus
 
     zindex[0] = 1; // tip
@@ -1068,6 +1070,14 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
     zindex[9] = 12;
     zcpa[9] = 1.5;
+
+    
+    NBZ = 0;
+    for(i=0;i<10;i++)
+    {
+        if(zcpa[i]<CPAmax)
+            NBZ++;
+    }
 
 
 
