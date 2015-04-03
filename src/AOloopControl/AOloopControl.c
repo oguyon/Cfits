@@ -3733,7 +3733,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     long kloop;
     long delayus = 0; // delay in us
     long ii, i, imax;
-    int Verbose = 1;
+    int Verbose = 0;
     long k1, k, k2;
     char fname[200];
     char name0[200];
@@ -3838,8 +3838,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     list_image_ID();
 
-    printf("step 2\n");
-    fflush(stdout);
+   // printf("step 2\n");
+   // fflush(stdout);
 
 
     RMACQUISITION = 1;
@@ -3847,8 +3847,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
     RespMatNBframes = 2*AOconf[loop].NBDMmodes*NbAve;  // *nbloop
-    printf("%ld frames total\n", RespMatNBframes);
-    fflush(stdout);
+ //   printf("%ld frames total\n", RespMatNBframes);
+ //   fflush(stdout);
 
     IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube
 
@@ -3917,8 +3917,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                 for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
                 {
-                    printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
-                    fflush(stdout);
+                 //   printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
+                  //  fflush(stdout);
 
   
                     for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
@@ -4025,8 +4025,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     for(k=0; k<AOconf[loop].NBDMmodes; k++)
                         data.image[IDrmtest].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
 
-    printf("step 0\n");
-    fflush(stdout);
+    //printf("step 0\n");
+    //fflush(stdout);
 
                 // initialize reference to zero
                 kc = kc0;
