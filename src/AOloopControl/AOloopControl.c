@@ -3725,6 +3725,7 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
 
 
 /** measures response matrix AND reference */
+// scan delay up to fDelay
 
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)
 {
@@ -3841,31 +3842,20 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     RMACQUISITION = 1;
 
 
-    if(fDelay==-1)
-    {
-        kc0min = 0;
-        kc0max = frameDelayMax;
-    }
-    else
-    {
-        kc0min = fDelay;
-        kc0max = fDelay+1;
-    }
-
 
     RespMatNBframes = 2*AOconf[loop].NBDMmodes*NbAve;  // *nbloop
     printf("%ld frames total\n", RespMatNBframes);
     fflush(stdout);
 
     if(recordCube == 1)
-        IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); //+kc0max);
+        IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube
 
 
 
 
 
-    IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-    IDrmcumul = create_3Dimage_ID("RMcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+    IDrmi = create_3Dimage_ID("RMiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);    // Response matrix for 1 iteration
+    IDrmcumul = create_3Dimage_ID("RMcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);  // Cumulative Response matrix
 
     IDrefi = create_2Dimage_ID("REFiter", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDrefcumul = create_2Dimage_ID("REFcumul", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -3894,10 +3884,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             NBloops = nbloop;
 
             // initialize RMiter to zero
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+         /*   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 for(k=0; k<AOconf[loop].NBDMmodes; k++)
                     data.image[IDrmi].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
-
+*/
 
             // initialize reference to zero
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3983,10 +3973,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
             set_DM_modesRM(loop);
 
-
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            
+      /*      for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
                     data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*data.image[IDmcoeff].array.F[k1]*NbAve);
+*/
+
+
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
@@ -3995,6 +3988,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             //	save_fits("REFiter", "!test0.fits");
             //	save_fits("RMiter", "!test1.fits");
             //exit(0);
+          
+          
             printf("Acquisition done, compiling results...");
             fflush(stdout);
 
@@ -4004,12 +3999,17 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
             // PROCESS RMCUBE
-            fp = fopen("TimeDelayRM.txt", "w");
+          //  fp = fopen("TimeDelayRM.txt", "w");
             RMsig = 0.0;
             vOK = 1;
             IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
-            for(kc0=kc0min; kc0<kc0max; kc0++)
-            {
+        
+        
+       // for(kc0=0; kc0<fDelay; kc0++)
+         //   {
+                
+             kc0 = fDelay;   
+                
                 // initialize RM to zero
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     for(k=0; k<AOconf[loop].NBDMmodes; k++)
@@ -4028,6 +4028,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                                 data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
                             kc++;
+                            if(kc==data.image[IDrmc].md[0].size[2])
+                                kc -= data.image[IDrmc].md[0].size[2];
                         }
                         kc+=NBexcl;
 
@@ -4037,11 +4039,16 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                                 data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
                             kc++;
-                        }
+                            if(kc==data.image[IDrmc].md[0].size[2])
+                                kc -= data.image[IDrmc].md[0].size[2];
+                         }                         
                         kc+=NBexcl;
                     }
                 }
-                RMsigold = RMsig;
+                
+                
+                
+           /*     RMsigold = RMsig;
                 RMsig = 0.0;
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
@@ -4056,21 +4063,24 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 fprintf(fp, "%ld %.12g\n", kc0, (double) RMsig);
                 if(RMsig<RMsigold)
                     vOK = 0;
-
-                if(vOK==1) // ADOPT THIS MATRIX
-                {
+                    
+                sprintf(fname, "!RMtest_delay%ld.fits", kc0);
+                save_fits("rmtest", fname);
+*/
+  //              if(vOK==1) // ADOPT THIS MATRIX
+    //            {
+        
+        
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
                             data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
-                }
-            }
-            fclose(fp);
+      //          }
+           // }
+ 
+ 
+     //       fclose(fp);
 
-
-
-
-            printf("--- \n");
-            fflush(stdout);
+           
             save_fl_fits("rmtest", "!rmtest.fits");
             delete_image_ID("rmtest");
 
