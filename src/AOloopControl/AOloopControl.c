@@ -4041,7 +4041,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                                 data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
                             kc++;
-                            if(kc==data.image[IDrmc].md[0].size[2])
+                            if(kc > data.image[IDrmc].md[0].size[2]-1)
                                 kc -= data.image[IDrmc].md[0].size[2];
                         }
                         kc+=NBexcl;
@@ -4052,7 +4052,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                                 data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
                             kc++;
-                            if(kc==data.image[IDrmc].md[0].size[2])
+                            if(kc > data.image[IDrmc].md[0].size[2]-1)
                                 kc -= data.image[IDrmc].md[0].size[2];
                          }                         
                         kc+=NBexcl;
