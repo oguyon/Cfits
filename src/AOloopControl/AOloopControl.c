@@ -1264,9 +1264,17 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             fflush(stdout);
     
                
-            printf("  %ld %ld/%ld\n", MBLOCK_ID[mblock], MBLOCK_NBmode[mblock], data.image[MBLOCK_ID[mblock]].md[0].size[2]);
+            printf("  %ld ", MBLOCK_ID[mblock]);
             fflush(stdout);
   
+  
+             printf("%ld\n", MBLOCK_NBmode[mblock]);
+            fflush(stdout);
+
+            printf("/%ld\n", data.image[MBLOCK_ID[mblock]].md[0].size[2]);
+            fflush(stdout);
+
+
   
             ptr0 = (char*) data.image[ID].array.F;
             ptr0 += m*sizeof(float)*msize*msize;
