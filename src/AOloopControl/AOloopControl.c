@@ -3853,12 +3853,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     }
 
 
-    RespMatNBframes = nbloop*2*AOconf[loop].NBDMmodes*NbAve;
+    RespMatNBframes = 2*AOconf[loop].NBDMmodes*NbAve;  // *nbloop
     printf("%ld frames total\n", RespMatNBframes);
     fflush(stdout);
 
     if(recordCube == 1)
-        IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes+kc0max);
+        IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); //+kc0max);
 
 
 
@@ -3913,9 +3913,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
 
 
-            kc = 0;
             for (kloop = 0; kloop < NBloops; kloop++)
             {
+                kc = 0;
                 if(Verbose)
                 {
                     printf("\n Loop %ld / %ld (%f)\n", kloop, NBloops, amp);
@@ -3928,10 +3928,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
                     fflush(stdout);
 
-                    //				printf("\n\n  aoconfID_cmd_modesRM = %ld   [%ld]\n", aoconfID_cmd_modesRM, AOconf[loop].NBDMmodes);
-                    //list_image_ID();
-                    //fflush(stdout);
-
+  
                     for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                         data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
 
@@ -3939,12 +3936,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
                     set_DM_modesRM(loop);
 
-                    /*         sprintf(command, "echo \"%f %f %f\" > logacqrm1.txt\n", data.image[aoconfID_cmd_modesRM].array.F[k1], amp, data.image[IDmcoeff].array.F[k1]);
-                           system(command);
-                           save_fits("aol0_DMmodes", "!test_aol0_DMmodes.fits");
-                           exit(0);*/
-
-                    usleep(delayus); // OK - this is for calibration
+         
+                   // usleep(delayus); // OK - this is for calibration
 
 
 
@@ -3956,7 +3949,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
                             data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
-                            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+                            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] += data.image[aoconfID_WFS1].array.F[ii];
                         }
                         kc++;
                     }
@@ -3966,7 +3959,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = 0.0-amp*data.image[IDmcoeff].array.F[k1];
                     set_DM_modesRM(loop);
 
-                    usleep(delayus);  // OK - this is for calibration
+                  //  usleep(delayus);  // OK - this is for calibration
 
                     for(kk=0; kk<NbAve; kk++)
                     {
@@ -3975,40 +3968,20 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
                             data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
-                            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
+                            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] += data.image[aoconfID_WFS1].array.F[ii];
                         }
                         kc++;
                     }
                 }
-
-                printf("\n");
-                fflush(stdout);
-            }
-
-            for(kk=0; kk<kc0max; kk++)
-            {
-                printf("additional frame %ld [%ld/%ld]... ", kk, kc, RespMatNBframes+kc0max);
-                fflush(stdout);
-                Average_cam_frames(loop, 1, 1);
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[IDrefi].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
-                    data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_WFS1].array.F[ii];
-                }
-                kc++;
-                printf("done\n");
-                fflush(stdout);
             }
 
 
+        
+
+            // set DM to zero
             for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                 data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
             set_DM_modesRM(loop);
-
-
-
-
-
 
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -4024,6 +3997,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             //exit(0);
             printf("Acquisition done, compiling results...");
             fflush(stdout);
+
+
+            // SAVE RMCUBE
+            save_fits("RMcube", "!RMcube.fits");
 
 
             // PROCESS RMCUBE
@@ -4166,11 +4143,11 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
     fp = fopen("./tmp/rmparams.txt", "w");
-    fprintf(fp, "%5ld		NbAve: number of WFS frames per averaging\n", NbAve);
-    fprintf(fp, "%f			amp: nominal DM amplitude (RMS)\n", amp);
-    fprintf(fp, "%ld		iter: number of iterations\n", iter);
-    fprintf(fp, "%ld		nbloop: number of loops per iteration\n", nbloop);
-    fprintf(fp, "%ld		fDelay: delay number of frames\n", fDelay);
+    fprintf(fp, "%5ld       NbAve: number of WFS frames per averaging\n", NbAve);
+    fprintf(fp, "%f	        amp: nominal DM amplitude (RMS)\n", amp);
+    fprintf(fp, "%ld        iter: number of iterations\n", iter);
+    fprintf(fp, "%ld        nbloop: number of loops per iteration\n", nbloop);
+    fprintf(fp, "%ld        fDelay: delay number of frames\n", fDelay);
     fclose(fp);
 
 
