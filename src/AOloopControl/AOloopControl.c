@@ -3895,6 +3895,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDrefi].array.F[ii] = 0.0;
 
+        for(ii=0; ii<AOconf[loop].sizeWFS*RespMatNBframes; ii++)
+            data.image[IDrmc].array.F[ii] = 0.0;
+
 
             //        printf("\n");
             //      printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
@@ -3967,6 +3970,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 }
             }
 
+       for(ii=0; ii<AOconf[loop].sizeWFS*RespMatNBframes; ii++)
+            data.image[IDrmc].array.F[ii] /= NBloops;
 
         
 
@@ -3980,7 +3985,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
+                data.image[IDrefi].array.F[ii] /= RespMatNBframes; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
   
           
