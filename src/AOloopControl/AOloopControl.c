@@ -1227,12 +1227,13 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             sprintf(imname, "fmodes_%02ld", mblock);
             MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msize, msize, MBLOCK_NBmode[mblock]);
         }
+    list_image_ID();
 
-
-
+    
     for(mblock=0;mblock<MAX_MBLOCK;mblock++)
         MBLOCK_NBmode[mblock] = 0;
-     for(m=0; m<data.image[ID].md[0].size[2]; m++)
+    
+    for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
             cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
@@ -1250,12 +1251,14 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             MBLOCK_NBmode[mblock]++;  
         }
         
+    
     for(mblock=0;mblock<MAX_MBLOCK;mblock++)
     {
         sprintf(imname, "fmodes_%02ld", mblock);
         sprintf(fname, "!fmodes_%02ld.fits", mblock);
         save_fits(imname, fname);
     }
+
 
     return(ID);
 }
