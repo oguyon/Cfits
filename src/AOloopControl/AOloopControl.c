@@ -1291,7 +1291,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                         }
                         
                         for(ii=0; ii<msize2; ii++)
-                            data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/sqrt(value0)*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                            data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/value0*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
                         printf("%g  %g\n", value, value/sqrt(value0*value1));
                         
                     }
