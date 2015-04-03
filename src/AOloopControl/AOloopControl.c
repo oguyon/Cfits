@@ -1214,9 +1214,9 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         {
             cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
-            while (cpa < CPAblocklim[mblock])
+            while (cpa > CPAblocklim[mblock])
                 {
-                    printf("[%ld  %f %f -> +]\n", mblock, cpa, CPAblocklim[mblock]);
+                //    printf("[%ld  %f %f -> +]\n", mblock, cpa, CPAblocklim[mblock]);
                     mblock++;
                 }
                 
