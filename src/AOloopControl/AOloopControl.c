@@ -1276,9 +1276,9 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             {
                 for(m0=0; m0<MBLOCK_NBmode[mblock0]; m0++)
                 {
-                    for(iter=0; iter<2; iter++)
-                    {
-                        printf("Removing [%3ld %3ld] from [%3ld %3ld]    ", m0, mblock0, m, mblock);
+                    //for(iter=0; iter<2; iter++)
+                    //{
+                   //     printf("Removing [%3ld %3ld] from [%3ld %3ld]    ", m0, mblock0, m, mblock);
 
                         value = 0.0;
                         value0 = 0.0;
@@ -1298,11 +1298,11 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                         for(ii=0; ii<msize2; ii++)
                             data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] /= rms;
                             
-                         printf("Mode %ld   RMS = %lf\n", k, rms);
+               //          printf("Mode %ld   RMS = %lf\n", k, rms);
                             
-                        printf("%g  %g\n", value/sqrt(value0), value, rms);
+                 //       printf("%g  %g\n", value/sqrt(value0), value, rms);
                         
-                    }
+                    //}
                 }
             }
         }
