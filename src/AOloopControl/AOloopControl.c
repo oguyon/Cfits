@@ -990,6 +990,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long msize2;
     long m0, mblock0;
     
+    long iter;
+    
         
     /// if Mmask exists, use it, otherwise create it
     IDmask = image_ID("Mmask");
@@ -1264,14 +1266,15 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         }
         
     
-    
+ for(iter=0;iter<2;iter++)
+ {   
     // remove previous modes from each block
     msize2 = msize*msize;
     for(mblock=1; mblock<NBmblock; mblock++)
         {
             for(m=0;m<MBLOCK_NBmode[mblock];m++)
                 {
-                    for(mblock0=0; mblock0<NBmblock; mblock0++)
+                    for(mblock0=0; mblock0<mblock; mblock0++)
                     {
                         for(m0=0;m0<MBLOCK_NBmode[mblock0];m0++)
                             {
@@ -1286,12 +1289,14 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                                         value0 += data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];  
                                         value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];  
                                     }
+                                for(ii=0;ii<msize2;ii++)
+                                    data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/sqrt(value0*value1)*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
                                 printf("%g  %g\n", value, value/sqrt(value0*value1));
                             }
                     }
             }
         }
-    
+    }
     
     
     for(mblock=0;mblock<MAX_MBLOCK;mblock++)
