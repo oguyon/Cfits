@@ -4030,7 +4030,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                 // initialize reference to zero
                 kc = kc0;
-                kc = 0;
+                
                // for (kloop = 0; kloop < NBloops; kloop++)
                 //{
                     for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
