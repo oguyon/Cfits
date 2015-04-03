@@ -1235,6 +1235,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             MBLOCK_NBmode[mblock]++;
             sprintf(imname, "fmodes_%02ld", mblock);
             MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msize, msize, MBLOCK_NBmode[mblock]);
+            MBLOCK_ID[mblock] = image_ID("imname");
         }
     list_image_ID();
 
@@ -1255,7 +1256,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             ptr1 = (char*) data.image[MBLOCK_ID[mblock]].array.F;
             ptr1 += MBLOCK_NBmode[mblock]*sizeof(float)*msize*msize;
             
-            printf("memcpy   %ld %ld/%ld  <-  %ld %ld/%ld\n", ID, m, data.image[ID].md[0].size[2], MBLOCK_ID[mblock], MBLOCK_NBmode[mblock], data.image[MBLOCK_ID[mblock]].md[0].size[2]);
+            printf("memcpy   %ld %ld/%ld  ->  %ld %ld/%ld\n", ID, m, data.image[ID].md[0].size[2], MBLOCK_ID[mblock], MBLOCK_NBmode[mblock], data.image[MBLOCK_ID[mblock]].md[0].size[2]);
             
             memcpy(ptr1, ptr0, sizeof(float)*msize*msize);
             
