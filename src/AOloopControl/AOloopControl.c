@@ -985,7 +985,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
     char imname[200];
     char fname[200];
-
+    char command[1000];
+    
     float value, value0, value1;
     long msize2;
     long m0, mblock0;
@@ -1276,50 +1277,43 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             {
                 for(m0=0; m0<MBLOCK_NBmode[mblock0]; m0++)
                 {
-                    //for(iter=0; iter<2; iter++)
-                    //{
-                   //     printf("Removing [%3ld %3ld] from [%3ld %3ld]    ", m0, mblock0, m, mblock);
+                    value = 0.0;
+                    value0 = 0.0;
 
-                        value = 0.0;
-                        value0 = 0.0;
-                        
-                        for(ii=0; ii<msize2; ii++)
-                        {
-                            value += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
-                            value0 += data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
-                        }
-                        value1 = 0.0;
-                        for(ii=0; ii<msize2; ii++)
-                            {
-                                data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/value0*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
-                                value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];
-                            }
-                        rms = sqrt(value1/totm);
-                        for(ii=0; ii<msize2; ii++)
-                            data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] /= rms;
-                            
-               //          printf("Mode %ld   RMS = %lf\n", k, rms);
-                            
-                 //       printf("%g  %g\n", value/sqrt(value0), value, rms);
-                        
-                    //}
+                    for(ii=0; ii<msize2; ii++)
+                    {
+                        value += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                        value0 += data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                    }
+                    value1 = 0.0;
+                    for(ii=0; ii<msize2; ii++)
+                    {
+                        data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/value0*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                        value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];
+                    }
+                    rms = sqrt(value1/totm);
+                    for(ii=0; ii<msize2; ii++)
+                        data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] /= rms;
                 }
             }
         }
     }
 
-
-
-    for(mblock=0; mblock<MAX_MBLOCK; mblock++)
+    sprintf(command, "echo \"%ld\" > ./tmp/fmodes_nb.txt", NBmblock);
+    system(command);
+    
+    system("rm ./tmp/fmodes_*.fits");
+    for(mblock=0; mblock<NBmblock; mblock++)
     {
         sprintf(imname, "fmodes_%03ld", mblock);
-        sprintf(fname, "!fmodes_%03ld.fits", mblock);
+        sprintf(fname, "!./tmp/fmodes_%03ld.fits", mblock);
         save_fits(imname, fname);
     }
 
 
     return(ID);
 }
+
 
 
 
