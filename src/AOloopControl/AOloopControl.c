@@ -1257,6 +1257,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             ptr1 += MBLOCK_NBmode[mblock]*sizeof(float)*msize*msize;
             
             printf("memcpy   %ld %ld/%ld  ->  %ld %ld/%ld\n", ID, m, data.image[ID].md[0].size[2], MBLOCK_ID[mblock], MBLOCK_NBmode[mblock], data.image[MBLOCK_ID[mblock]].md[0].size[2]);
+            fflush(stdout);
             
             memcpy(ptr1, ptr0, sizeof(float)*msize*msize);
             
