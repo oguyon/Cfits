@@ -3985,7 +3985,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDrefi].array.F[ii] /= RespMatNBframes; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
+                data.image[IDrefi].array.F[ii] /= RespMatNBframes*NBloops; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
   
           
