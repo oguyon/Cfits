@@ -3776,7 +3776,7 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname)
 }
 
 
-/// takes a 3D image (circular buffer) and writes slices to a 2D image with time interval specified in us
+/// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)
 {
     long IDin;
@@ -3790,8 +3790,8 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     char *ptr1; // dest
     long framesize;
 
-	printf("Creating image stream ...\n");
-	fflush(stdout);
+    printf("Creating image stream ...\n");
+    fflush(stdout);
 
     IDin = image_ID(IDinname);
     naxis = data.image[IDin].md[0].naxis;
@@ -3804,11 +3804,11 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     arraysize[0] = data.image[IDin].md[0].size[0];
     arraysize[1] = data.image[IDin].md[0].size[1];
     arraysize[2] = data.image[IDin].md[0].size[2];
-    
+
     atype = data.image[IDin].md[0].atype;
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
 
-	COREMOD_MEMORY_image_set_createsem(IDoutname);
+    COREMOD_MEMORY_image_set_createsem(IDoutname);
 
     switch ( atype ) {
     case CHAR:
@@ -3848,11 +3848,11 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     while(1)
     {
         ptr0 = ptr0s + kk*framesize;
-		data.image[IDout].md[0].write = 1;
+        data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
-		sem_post(data.image[IDout].semptr);
-		data.image[IDout].md[0].cnt0++;
-		data.image[IDout].md[0].write = 0;
+        sem_post(data.image[IDout].semptr);
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
 
         kk++;
         if(kk==data.image[IDin].md[0].size[2])
@@ -3863,6 +3863,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
     return(IDout);
 }
+
 
 
 /** continuously transmits 2D image through TCP link

@@ -44,6 +44,8 @@
 #define OMP_NELEMENT_LIMIT 1000000
 # endif
 
+#define MAX_MBLOCK 12
+
 
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
@@ -970,10 +972,25 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long IDmfcpa; /// modesfreqcpa ID
 
 
+    long mblock, m;
+    long NBmblock;
+    float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+    long MBLOCK_NBmode[MAX_MBLOCK]; // number of blocks
+    long MBLOCK_ID[MAX_MBLOCK];
+    float MBLOCK_CPA[MAX_MBLOCK];
+    float cpa;
+    
+    char *ptr0;
+    char *ptr1;
+    
+    char imname[200];
+    char fname[200];
+    
+    
+    
+        
     /// if Mmask exists, use it, otherwise create it
-
     IDmask = image_ID("Mmask");
-
 
     if(IDmask==-1)
     {
@@ -1170,6 +1187,74 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             }
             delete_image_ID("modeg");
         }
+    }
+    
+    
+    
+    CPAblocklim[0] = 0.1; // tip and tilt
+    CPAblocklim[1] = 0.3; // focus
+    CPAblocklim[2] = 1.6; // other Zernikes
+    CPAblocklim[3] = 3.0; 
+    CPAblocklim[4] = 5.0;
+    CPAblocklim[5] = 7.0;
+    CPAblocklim[6] = 9.0;
+    CPAblocklim[7] = 11.0;
+    CPAblocklim[8] = 13.0;
+    CPAblocklim[9] = 15.0;
+    CPAblocklim[10] = 17.0;
+    CPAblocklim[11] = 100.0;
+  
+    for(mblock=0;mblock<MAX_MBLOCK;mblock++)
+        MBLOCK_NBmode[mblock] = 0;
+    
+        
+    
+    NBmblock = 0;
+    for(m=0; m<data.image[ID].md[0].size[2]; m++)
+        {
+            cpa = data.image[IDmfcpa].array.F[m];
+            mblock = 0;
+            while (cpa < CPAblocklim[mblock])
+                mblock++;  
+            MBLOCK_NBmode[mblock]++;                    
+            if(mblock>NBmblock)
+                NBmblock = mblock;
+        }
+    NBmblock++;
+    
+    for(mblock=0;mblock<NBmblock;mblock++)
+        {  
+            sprintf(imname, "fmodes_%02ld", mblock);
+            MBLOCK_ID[mblock] = create_3Dimage_ID(fname, msize, msize, MBLOCK_NBmode[mblock]);
+        }
+
+
+
+    for(mblock=0;mblock<MAX_MBLOCK;mblock++)
+        MBLOCK_NBmode[mblock] = 0;
+     for(m=0; m<data.image[ID].md[0].size[2]; m++)
+        {
+            cpa = data.image[IDmfcpa].array.F[m];
+            mblock = 0;
+            while (cpa < CPAblocklim[mblock])
+                mblock++;  
+            
+            ptr0 = (char*) data.image[ID].array.F;
+            ptr0 += m*sizeof(float)*msize*msize;
+            
+            ptr1 = (char*) data.image[MBLOCK_ID[mblock]].array.F;
+            ptr1 += MBLOCK_NBmode[mblock]*sizeof(float)*msize*msize;
+            
+            memcpy(ptr1, ptr0, sizeof(float)*msize*msize);
+            
+            MBLOCK_NBmode[mblock]++;  
+        }
+        
+    for(mblock=0;mblock<MAX_MBLOCK;mblock++)
+    {
+        sprintf(imname, "fmodes_%02ld", mblock);
+        sprintf(fname, "!fmodes_%02ld.fits", mblock);
+        save_fits(imname, fname);
     }
 
     return(ID);
@@ -4111,7 +4196,7 @@ int AOcompute(long loop)
 
     //printf("init_CMc = %d\n", AOconf[loop].init_CMc);
     //fflush(stdout);
-    if((AOconf[loop].init_CMc == 0)&&(MATRIX_COMPUTATION_MODE==1)) // compute combined control matrix
+    if((AOconf[loop].init_CMc == 0)&&(MATRIX_COMPUTATION_MODE==1)) // compute combined control matrix or matrices
     {
         printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
@@ -4211,14 +4296,10 @@ int AOcompute(long loop)
         memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
 
-        //        matrix_Mc_active = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
 
         aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
         {
-            //		printf("act_active = %ld [%d]\n", act_active, DM_active_map[act_active]);
-            //	fflush(stdout);
-            //	sleep(5);
             for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
             {
                 act = DM_active_map[act_active];
