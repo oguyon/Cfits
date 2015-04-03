@@ -1233,7 +1233,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     for(mblock=0;mblock<NBmblock;mblock++)
         {  
             MBLOCK_NBmode[mblock]++;
-            sprintf(imname, "fmodes_%02ld", mblock);
+            sprintf(imname, "fmodes_%03ld", mblock);
             MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msize, msize, MBLOCK_NBmode[mblock]);
             MBLOCK_ID[mblock] = image_ID("imname");
         }
@@ -1243,8 +1243,12 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     for(mblock=0;mblock<MAX_MBLOCK;mblock++)
         MBLOCK_NBmode[mblock] = 0;
     
+    
+    
     for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
+            printf("IDmfcpa = %ld\n", IDmfcpa);
+            fflush(stdout);
             cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
@@ -1267,8 +1271,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     
     for(mblock=0;mblock<MAX_MBLOCK;mblock++)
     {
-        sprintf(imname, "fmodes_%02ld", mblock);
-        sprintf(fname, "!fmodes_%02ld.fits", mblock);
+        sprintf(imname, "fmodes_%03ld", mblock);
+        sprintf(fname, "!fmodes_%03ld.fits", mblock);
         save_fits(imname, fname);
     }
 
