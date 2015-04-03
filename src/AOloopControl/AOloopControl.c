@@ -3988,10 +3988,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
             // SAVE RMCUBE
-            save_fits("RMcube", "!RMcube.fits");
+        //    save_fits("RMcube", "!RMcube.fits");
          
             // remove average
-            IDrmc1 = create_3Dimage_ID("RMcube1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube, average removed
+          if(0)
+          {
+                IDrmc1 = create_3Dimage_ID("RMcube1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube, average removed
    
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
@@ -4002,22 +4004,15 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 for(kc=0;kc<RespMatNBframes;kc++)
                     data.image[IDrmc1].array.F[kc*AOconf[loop].sizeWFS+ii] = data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] - valave;
             }
-            save_fits("RMcube1", "!RMcube1.fits");
-            
+        save_fits("RMcube1", "!RMcube1.fits");
+       }     
             
        
 
 
-            // PROCESS RMCUBE
-          //  fp = fopen("TimeDelayRM.txt", "w");
-         //   RMsig = 0.0;
-          //  vOK = 1;
-            IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+                 IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         
-        
-       // for(kc0=0; kc0<fDelay; kc0++)
-         //   {
-                
+                 
              kc0 = fDelay;   
                 
                 // initialize RM to zero
@@ -4025,14 +4020,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     for(k=0; k<AOconf[loop].NBDMmodes; k++)
                         data.image[IDrmtest].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
 
-    //printf("step 0\n");
-    //fflush(stdout);
-
                 // initialize reference to zero
                 kc = kc0;
                 
-               // for (kloop = 0; kloop < NBloops; kloop++)
-                //{
                     for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
                     {
                         // positive
@@ -4060,44 +4050,14 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                         if(kc > data.image[IDrmc].md[0].size[2]-1)
                             kc -= data.image[IDrmc].md[0].size[2];
                     }
-                //}
-                
-                
-                
-           /*     RMsigold = RMsig;
-                RMsig = 0.0;
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
-                    {
-                        data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*data.image[IDmcoeff].array.F[k1]*(NbAve-NBexcl));
-                        RMsig += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii]*data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
-                    }
-
-                if(RMsig<RMsigold)
-                    vOK = 0;
-                printf("Delay = %ld frame(s)   ->  RM signal = %lf   %d\n", kc0, (double) RMsig, vOK);
-                fprintf(fp, "%ld %.12g\n", kc0, (double) RMsig);
-                if(RMsig<RMsigold)
-                    vOK = 0;
-                    
-                sprintf(fname, "!RMtest_delay%ld.fits", kc0);
-                save_fits("rmtest", fname);
-*/
-  //              if(vOK==1) // ADOPT THIS MATRIX
-    //            {
-        
+         
         
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
                             data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
-      //          }
-           // }
- 
- 
-     //       fclose(fp);
-
+    
            
-            save_fl_fits("rmtest", "!rmtest.fits");
+    //        save_fl_fits("rmtest", "!rmtest.fits");
             delete_image_ID("rmtest");
 
 
