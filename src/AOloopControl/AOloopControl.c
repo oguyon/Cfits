@@ -3744,7 +3744,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     long IDrmc;
     long kc;
 
-    int recordCube = 1;
     long IDeigenmodes;
 
     long frameDelay = 0;
@@ -3786,6 +3785,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     int AdjustAmplitude = 0;
     char command[2000];
 
+    float valave;
+    long IDrmc1;
+    
+    
 
     printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
     /*  sprintf(command, "echo \"ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\" > logacqrm.txt\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
@@ -3847,8 +3850,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     printf("%ld frames total\n", RespMatNBframes);
     fflush(stdout);
 
-    if(recordCube == 1)
-        IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube
+    IDrmc = create_3Dimage_ID("RMcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube
 
 
 
@@ -3974,28 +3976,36 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             set_DM_modesRM(loop);
 
             
-      /*      for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
-                    data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] /= (NBloops*2.0*amp*data.image[IDmcoeff].array.F[k1]*NbAve);
-*/
-
+  
 
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDrefi].array.F[ii] /= RespMatNBframes+kc0max; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
 
-
-            //	save_fits("REFiter", "!test0.fits");
-            //	save_fits("RMiter", "!test1.fits");
-            //exit(0);
+  
           
-          
-            printf("Acquisition done, compiling results...");
-            fflush(stdout);
+    
 
 
             // SAVE RMCUBE
             save_fits("RMcube", "!RMcube.fits");
+            
+            IDrmc1 = create_3Dimage_ID("RMcube1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube, average removed
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                valave = 0.0;
+                for(kc=0;kc<RespMatNBframes;kc++)
+                    valave += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
+                valave /= RespMatNBframes;
+                for(kc=0;kc<RespMatNBframes;kc++)
+                    data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] -= valave;
+            }
+            save_fits("RMcube1", "!RMcube1.fits");
+            
+
+            // remove average
+            
+            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
 
 
             // PROCESS RMCUBE
@@ -4073,7 +4083,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
         
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
-                            data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
+                            data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
       //          }
            // }
  
