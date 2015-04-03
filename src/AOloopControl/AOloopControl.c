@@ -1266,7 +1266,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     
     
     // remove previous modes from each block
-    
+    msize2 = msize*msize;
     for(mblock=1; mblock<NBmblock; mblock++)
         {
             for(m=0;m<MBLOCK_NBmode[mblock];m++)
