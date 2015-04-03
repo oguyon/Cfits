@@ -4045,7 +4045,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                                 kc -= data.image[IDrmc].md[0].size[2];
                         }
                         kc+=NBexcl;
-
+                        if(kc > data.image[IDrmc].md[0].size[2]-1)
+                                kc -= data.image[IDrmc].md[0].size[2];
                         // negative
                         for(kk=0; kk<NbAve-NBexcl; kk++)
                         {
@@ -4056,6 +4057,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                                 kc -= data.image[IDrmc].md[0].size[2];
                          }                         
                         kc+=NBexcl;
+                        if(kc > data.image[IDrmc].md[0].size[2]-1)
+                            kc -= data.image[IDrmc].md[0].size[2];
                     }
                 //}
                 
