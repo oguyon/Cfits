@@ -1219,7 +1219,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             MBLOCK_NBmode[mblock]++;                    
             if(mblock>NBmblock)
                 NBmblock = mblock;
-            printf("%ld -> %ld\n", m, mblock);
+            printf("%ld %f  -> %ld\n", m, cpa, mblock);
         }
         
     NBmblock++;
