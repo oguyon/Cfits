@@ -4010,8 +4010,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
             // PROCESS RMCUBE
           //  fp = fopen("TimeDelayRM.txt", "w");
-            RMsig = 0.0;
-            vOK = 1;
+         //   RMsig = 0.0;
+          //  vOK = 1;
             IDrmtest = create_3Dimage_ID("rmtest", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         
         
@@ -4025,11 +4025,13 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     for(k=0; k<AOconf[loop].NBDMmodes; k++)
                         data.image[IDrmtest].array.F[k*AOconf[loop].sizeWFS+ii] = 0.0;
 
+    printf("step 0\n");
+    fflush(stdout);
 
                 // initialize reference to zero
                 kc = kc0;
-                for (kloop = 0; kloop < NBloops; kloop++)
-                {
+               // for (kloop = 0; kloop < NBloops; kloop++)
+                //{
                     for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
                     {
                         // positive
@@ -4054,7 +4056,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                          }                         
                         kc+=NBexcl;
                     }
-                }
+                //}
                 
                 
                 
