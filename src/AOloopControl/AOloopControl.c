@@ -1282,17 +1282,25 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
                         value = 0.0;
                         value0 = 0.0;
-                        value1 = 0.0;
+                        
                         for(ii=0; ii<msize2; ii++)
                         {
                             value += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
                             value0 += data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
-                            value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];
                         }
-                        
+                        value1 = 0.0;
                         for(ii=0; ii<msize2; ii++)
-                            data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/value0*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
-                        printf("%g  %g\n", value, value/sqrt(value0*value1));
+                            {
+                                data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/value0*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                                value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];
+                            }
+                        rms = sqrt(value1/totm);
+                        for(ii=0; ii<msize2; ii++)
+                            data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] /= rms;
+                            
+                         printf("Mode %ld   RMS = %lf\n", k, rms);
+                            
+                        printf("%g  %g\n", value/sqrt(value0), value, rms);
                         
                     }
                 }
