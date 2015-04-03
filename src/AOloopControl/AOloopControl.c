@@ -1232,6 +1232,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     
     for(mblock=0;mblock<NBmblock;mblock++)
         {  
+            MBLOCK_NBmode[mblock]++;
             sprintf(imname, "fmodes_%02ld", mblock);
             MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msize, msize, MBLOCK_NBmode[mblock]);
         }
