@@ -1073,9 +1073,9 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
     
     NBZ = 0;
-    for(i=0;i<10;i++)
+    for(m=0;m<10;m++)
     {
-        if(zcpa[i]<CPAmax)
+        if(zcpa[m]<CPAmax)
             NBZ++;
     }
 
