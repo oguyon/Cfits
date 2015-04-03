@@ -979,20 +979,20 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long MBLOCK_ID[MAX_MBLOCK];
     float MBLOCK_CPA[MAX_MBLOCK];
     float cpa;
-    
+
     char *ptr0;
     char *ptr1;
-    
+
     char imname[200];
     char fname[200];
-    
+
     float value, value0, value1;
     long msize2;
     long m0, mblock0;
-    
+
     long iter;
-    
-        
+
+
     /// if Mmask exists, use it, otherwise create it
     IDmask = image_ID("Mmask");
 
@@ -1192,13 +1192,13 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             delete_image_ID("modeg");
         }
     }
-    
-    
-    
+
+
+
     CPAblocklim[0] = 0.1; // tip and tilt
     CPAblocklim[1] = 0.3; // focus
     CPAblocklim[2] = 1.6; // other Zernikes
-    CPAblocklim[3] = 3.0; 
+    CPAblocklim[3] = 3.0;
     CPAblocklim[4] = 5.0;
     CPAblocklim[5] = 7.0;
     CPAblocklim[6] = 9.0;
@@ -1207,99 +1207,100 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     CPAblocklim[9] = 15.0;
     CPAblocklim[10] = 17.0;
     CPAblocklim[11] = 100.0;
-  
-    for(mblock=0;mblock<MAX_MBLOCK;mblock++)
+
+    for(mblock=0; mblock<MAX_MBLOCK; mblock++)
         MBLOCK_NBmode[mblock] = 0;
-    
-        
-    
+
+
+
     NBmblock = 0;
     for(m=0; m<data.image[ID].md[0].size[2]; m++)
+    {
+        cpa = data.image[IDmfcpa].array.F[m];
+        mblock = 0;
+        while (cpa > CPAblocklim[mblock])
         {
-            cpa = data.image[IDmfcpa].array.F[m];
-            mblock = 0;
-            while (cpa > CPAblocklim[mblock])
-                {
-                //    printf("[%ld  %f %f -> +]\n", mblock, cpa, CPAblocklim[mblock]);
-                    mblock++;
-                }
-                
-            MBLOCK_NBmode[mblock]++;                    
-            
-            if(mblock>NBmblock)
-                NBmblock = mblock;
-            
+            //    printf("[%ld  %f %f -> +]\n", mblock, cpa, CPAblocklim[mblock]);
+            mblock++;
+        }
+
+        MBLOCK_NBmode[mblock]++;
+
+        if(mblock>NBmblock)
+            NBmblock = mblock;
+
         //    printf("%ld %f  -> %ld\n", m, cpa, mblock);
-        }
-        
+    }
+
     NBmblock++;
-    
-    for(mblock=0;mblock<NBmblock;mblock++)
-        {  
-            sprintf(imname, "fmodes_%03ld", mblock);
-            MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msize, msize, MBLOCK_NBmode[mblock]);
-            MBLOCK_ID[mblock] = image_ID(imname);
-        }
+
+    for(mblock=0; mblock<NBmblock; mblock++)
+    {
+        sprintf(imname, "fmodes_%03ld", mblock);
+        MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msize, msize, MBLOCK_NBmode[mblock]);
+        MBLOCK_ID[mblock] = image_ID(imname);
+    }
     list_image_ID();
 
-    
-    for(mblock=0;mblock<MAX_MBLOCK;mblock++)
+
+    for(mblock=0; mblock<MAX_MBLOCK; mblock++)
         MBLOCK_NBmode[mblock] = 0;
-    
+
     for(m=0; m<data.image[ID].md[0].size[2]; m++)
-        {
-            
-            cpa = data.image[IDmfcpa].array.F[m];
-            mblock = 0;
-            while (cpa > CPAblocklim[mblock])
-                mblock++;  
-  
-            ptr0 = (char*) data.image[ID].array.F;
-            ptr0 += m*sizeof(float)*msize*msize;
-            
-            ptr1 = (char*) data.image[MBLOCK_ID[mblock]].array.F;
-            ptr1 += MBLOCK_NBmode[mblock]*sizeof(float)*msize*msize;
-                      
-            memcpy(ptr1, ptr0, sizeof(float)*msize*msize);
-            
-            MBLOCK_NBmode[mblock]++;  
-        }
-        
-    
- for(iter=0;iter<2;iter++)
- {   
+    {
+
+        cpa = data.image[IDmfcpa].array.F[m];
+        mblock = 0;
+        while (cpa > CPAblocklim[mblock])
+            mblock++;
+
+        ptr0 = (char*) data.image[ID].array.F;
+        ptr0 += m*sizeof(float)*msize*msize;
+
+        ptr1 = (char*) data.image[MBLOCK_ID[mblock]].array.F;
+        ptr1 += MBLOCK_NBmode[mblock]*sizeof(float)*msize*msize;
+
+        memcpy(ptr1, ptr0, sizeof(float)*msize*msize);
+
+        MBLOCK_NBmode[mblock]++;
+    }
+
+
     // remove previous modes from each block
     msize2 = msize*msize;
     for(mblock=1; mblock<NBmblock; mblock++)
+    {
+        for(m=0; m<MBLOCK_NBmode[mblock]; m++)
         {
-            for(m=0;m<MBLOCK_NBmode[mblock];m++)
+            for(mblock0=0; mblock0<mblock; mblock0++)
+            {
+                for(m0=0; m0<MBLOCK_NBmode[mblock0]; m0++)
                 {
-                    for(mblock0=0; mblock0<mblock; mblock0++)
+                    for(iter=0; iter<2; iter++)
                     {
-                        for(m0=0;m0<MBLOCK_NBmode[mblock0];m0++)
-                            {
-                                printf("Removing [%3ld %3ld] from [%3ld %3ld]    ", m0, mblock0, m, mblock);
-                                
-                                value = 0.0;
-                                value0 = 0.0;
-                                value1 = 0.0;
-                                for(ii=0;ii<msize2;ii++)
-                                    {
-                                        value += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];                                        
-                                        value0 += data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];  
-                                        value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];  
-                                    }
-                                for(ii=0;ii<msize2;ii++)
-                                    data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/sqrt(value0*value1)*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
-                                printf("%g  %g\n", value, value/sqrt(value0*value1));
-                            }
+                        printf("Removing [%3ld %3ld] from [%3ld %3ld]    ", m0, mblock0, m, mblock);
+
+                        value = 0.0;
+                        value0 = 0.0;
+                        value1 = 0.0;
+                        for(ii=0; ii<msize2; ii++)
+                        {
+                            value += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                            value0 += data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii]*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                            value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii];
+                        }
+                        for(ii=0; ii<msize2; ii++)
+                            data.image[MBLOCK_ID[mblock]].array.F[m*msize2+ii] -= value/sqrt(value0*value1)*data.image[MBLOCK_ID[mblock0]].array.F[m0*msize2+ii];
+                        printf("%g  %g\n", value, value/sqrt(value0*value1));
                     }
+                }
             }
         }
     }
-    
-    
-    for(mblock=0;mblock<MAX_MBLOCK;mblock++)
+
+
+
+    for(mblock=0; mblock<MAX_MBLOCK; mblock++)
     {
         sprintf(imname, "fmodes_%03ld", mblock);
         sprintf(fname, "!fmodes_%03ld.fits", mblock);
@@ -1309,6 +1310,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
     return(ID);
 }
+
 
 
 
