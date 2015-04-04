@@ -4481,7 +4481,8 @@ int AOcompute(long loop)
 
         clock_gettime(CLOCK_REALTIME, &t1);
 
-
+        
+        
         // build up map for active regions
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
@@ -4529,7 +4530,9 @@ int AOcompute(long loop)
      
         aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
 
-
+        aoconfID_contrMc = image_ID("cmatc");
+        aoconfID_contrMc_active = image_ID("cmatcact");
+ 
         if(aoconfID_contrMc==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*3);
@@ -4538,7 +4541,8 @@ int AOcompute(long loop)
             sizearray[2] = AOconf[loop].sizeDM;
             aoconfID_contrMc = create_image_ID("cmatc", 3, sizearray, FLOAT, 1, 0);
             free(sizearray);
-        }
+        
+            
 
         // control matrix scaled by gains
         matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
@@ -4572,9 +4576,11 @@ int AOcompute(long loop)
         }
 # endif
         memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+}
 
 
-
+        if(aoconfID_contrMc_active==-1)
+        {
         aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
         for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
         {
@@ -4589,7 +4595,7 @@ int AOcompute(long loop)
         free(matrix_DMmodes);
 
         printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
-
+}
 
 
         if(aoconfID_meas_act==-1)
