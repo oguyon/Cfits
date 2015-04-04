@@ -4379,7 +4379,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
 // reduce matrix size to active elements
-    IDcmatc_active = create_3Dimage_ID("cmatc_active", sizeWFS_active, 1, sizeDM_active);
+    IDcmatc_active = create_2Dimage_ID("cmatc_active", sizeWFS_active, sizeDM_active);
     for(act_active=0; act_active<sizeDM_active; act_active++)
     {
         for(wfselem_active=0; wfselem_active<sizeWFS_active; wfselem_active++)
@@ -4393,37 +4393,6 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     free(matrix_DMmodes);
 
     printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", sizeWFS, sizeDM, sizeWFS_active, sizeDM_active);
-
-
-
-/*
-
-     n_sizeDM = AOconf[loop].sizeDM;
-        n_NBDMmodes = AOconf[loop].NBDMmodes;
-        n_sizeWFS = AOconf[loop].sizeWFS;
-        matrix_Mc = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        matrix_DMmodes = (float*) malloc(sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
-        memcpy(matrix_DMmodes, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
-
-# ifdef _OPENMP
-        #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
-        {
-            #pragma omp for schedule (static)
-# endif
-            for(mode=0; mode<n_NBDMmodes; mode++)
-            {
-                printf("mode %6ld    \n", mode);
-                fflush(stdout);
-                for(act=0; act<n_sizeDM; act++)
-                    for(wfselem=0; wfselem<n_sizeWFS; wfselem++)
-                        matrix_Mc[act*n_sizeWFS+wfselem] += matrix_cmp[mode*n_sizeWFS+wfselem]*matrix_DMmodes[mode*n_sizeDM+act];
-            }
-# ifdef _OPENMP
-        }
-# endif
-*/
-
 
 
 
