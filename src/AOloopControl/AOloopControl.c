@@ -4605,8 +4605,8 @@ int AOcompute(long loop)
                 {
                     act = DM_active_map[act_active];
                     wfselem = WFS_active_map[wfselem_active];
-                    //printf("%ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
-                    //fflush(stdout);
+                    printf("%ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
+                    fflush(stdout);
                     data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
                 }
             }
