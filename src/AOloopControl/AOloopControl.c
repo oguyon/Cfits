@@ -1485,7 +1485,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     long MB_MR_end;
     long MB_MR_step;
 
-
+    int ret;
     char command[200];
 
 
@@ -1735,6 +1735,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
         {
             save_fits(ID_Cmatrix_name, "!cmat.fits");
             sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES_RM.txt", NBMODES_REMOVED_EIGENVLIM);
+            ret = system(command);
         }
         else
         {
