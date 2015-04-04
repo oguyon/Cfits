@@ -1320,12 +1320,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         save_fits(imname, fname);
     }
 
-
     return(ID);
 }
-
-
-
 
 
 
