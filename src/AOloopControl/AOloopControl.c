@@ -2147,13 +2147,13 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     // Normalize
 
-    if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0))
+    if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RMACQUISITION == 1)) // do it in main thread
     {
         AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
         AOLCOMPUTE_TOTAL_INIT = 1;
         IMTOTAL = AOconf[loop].WFStotalflux;
     }
-    else
+    else  // do it in other threads
     {
         AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
         if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
@@ -2178,6 +2178,8 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_beta = -normfloorcoeff;
 
+ 
+ 
     if(COMPUTE_GPU_SCALING==0)  // normalize WFS image by totalinv
     {
     data.image[aoconfID_WFS1].md[0].write = 1;
