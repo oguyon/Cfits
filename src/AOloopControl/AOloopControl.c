@@ -4598,6 +4598,7 @@ int AOcompute(long loop)
             aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
             
             list_image_ID();
+            n_sizeWFS = AOconf[loop].sizeWFS;
             
             for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
             {
@@ -4605,8 +4606,8 @@ int AOcompute(long loop)
                 {
                     act = DM_active_map[act_active];
                     wfselem = WFS_active_map[wfselem_active];
-                    printf("%ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
-                    fflush(stdout);
+                 //   printf("[%ld]  %ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", aoconfID_contrMc_active, act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
+                   // fflush(stdout);
                     data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
                 }
             }
