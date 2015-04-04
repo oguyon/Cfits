@@ -4003,7 +4003,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             //    save_fits("RMcube", "!RMcube.fits");
 
             // remove average
-            if(0)
+            if(1)
             {
                 IDrmc1 = create_3Dimage_ID("RMcube1", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, RespMatNBframes); // this is the main cube, average removed
 
