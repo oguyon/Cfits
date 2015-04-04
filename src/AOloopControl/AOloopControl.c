@@ -4583,14 +4583,17 @@ int AOcompute(long loop)
             }
 # endif
             memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+            free(matrix_Mc);
         }
-
 
         if(aoconfID_contrMc_active==-1)
         {
             printf("Build  cmatcactive ...\n");
             fflush(stdout);
             
+            matrix_Mc = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+            memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+          
             aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
             for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
             {
