@@ -4584,7 +4584,8 @@ int AOcompute(long loop)
 # endif
             memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
             free(matrix_Mc);
-        }
+            free(matrix_DMmodes);
+      }
 
         if(aoconfID_contrMc_active==-1)
         {
@@ -4595,6 +4596,9 @@ int AOcompute(long loop)
             memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
           
             aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
+            
+            list_image_ID();
+            
             for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
             {
                 for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
@@ -4605,8 +4609,7 @@ int AOcompute(long loop)
                 }
             }
             free(matrix_Mc);
-            free(matrix_DMmodes);
-
+ 
             printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
         }
         else
