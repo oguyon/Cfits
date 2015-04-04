@@ -4274,7 +4274,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
     list_image_ID();
 
-    // build up map for active regions
+    // initialize size of arrays
     IDwfsmask = image_ID(IDwfsmask_name);
     sizexWFS = data.image[IDwfsmask].md[0].size[0];
     sizeyWFS = data.image[IDwfsmask].md[0].size[1];
@@ -4285,7 +4285,9 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     sizeyDM = data.image[IDdmmask].md[0].size[1];
     sizeDM = sizexDM*sizeyDM;
  
- 
+    IDmodes = image_ID(IDmodes_name);
+    NBDMmodes = data.image[IDmodes].md[0].size[2];
+    
     // allocate array for combined matrix
     sizearray = (long*) malloc(sizeof(long)*3);
     sizearray[0] = sizexWFS;
@@ -4310,18 +4312,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     matrix_cmp = (float*) malloc(sizeof(float)*sizeWFS*NBDMmodes);
     memcpy(matrix_cmp, data.image[IDcmat].array.F, sizeof(float)*sizeWFS*NBDMmodes);
 
-// control matrix scaled by gains
-/*        matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
-            for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
-        printf("\n");
-*/
-
-
     // copy modes matrix to matrix_DMmodes
-    IDmodes = image_ID(IDmodes_name);
-    NBDMmodes = data.image[IDmodes].md[0].size[2];
     matrix_DMmodes = (float*) malloc(sizeof(float)*NBDMmodes*sizeDM);
     memcpy(matrix_DMmodes, data.image[IDmodes].array.F, sizeof(float)*NBDMmodes*sizeDM);
    
@@ -4342,13 +4333,11 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
             fflush(stdout);
             for(act=0; act<sizeDM; act++)
                 {
-                    printf(" [%ld/%ld]", act, sizeDM);
-                    fflush(stdout);
                     for(wfselem=0; wfselem<sizeWFS; wfselem++)
                     {
                     //   printf("-   [%ld/%ld %ld/%ld %ld/%ld] \n", mode, act, wfselem);
                     // fflush(stdout);
-                        matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]; //*matrix_DMmodes[mode*sizeDM+act];
+                        matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]*matrix_DMmodes[mode*sizeDM+act];
                     }
                 }
         }
