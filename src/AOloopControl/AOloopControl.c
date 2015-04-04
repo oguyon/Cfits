@@ -1533,25 +1533,32 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     matrix_DtraD_evec = gsl_matrix_alloc (m,m);
 
 
-    ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
-
-
-    CPAcoeff = (double*) malloc(sizeof(double)*m);
-    if(ID==-1)
+    if(Beta>0.000001)
+    {
+        ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
+        CPAcoeff = (double*) malloc(sizeof(double)*m);
+        if(ID==-1)
+        {
+            for(k=0; k<m; k++)
+                CPAcoeff[k] = 1.0;
+        }
+        else
+        {
+            for(k=0; k<m; k++)
+            {
+                CPAcoeff[k] =  exp(-data.image[ID].array.F[k]*Beta);
+                printf("%5ld %5.3f %g\n", k, data.image[ID].array.F[k], CPAcoeff[k]);
+            }
+        }
+    }
+    else 
     {
         for(k=0; k<m; k++)
             CPAcoeff[k] = 1.0;
     }
-    else
-    {
-        for(k=0; k<m; k++)
-        {
-            CPAcoeff[k] =  exp(-data.image[ID].array.F[k]*Beta);
-            printf("%5ld %5.3f %g\n", k, data.image[ID].array.F[k], CPAcoeff[k]);
-        }
-    }
+
     exit(0);
-    
+
     /* write matrix_D */
     for(k=0; k<m; k++)
     {
@@ -1758,6 +1765,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     return(ID_Cmatrix);
 }
+
 
 
 
