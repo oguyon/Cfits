@@ -3917,6 +3917,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                   
 
             // positive
+            k1 = 0;
             data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
             set_DM_modesRM(loop);
 
