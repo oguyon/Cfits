@@ -4605,6 +4605,8 @@ int AOcompute(long loop)
                 {
                     act = DM_active_map[act_active];
                     wfselem = WFS_active_map[wfselem_active];
+                    printf("%ld / %ld  %ld / %ld   \n", act_active, AOconf[loop].sizeDM_active, wfselem_active, AOconf[loop].sizeWFS_active);
+                    fflush(stdout);
                     data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
                 }
             }
@@ -4615,7 +4617,6 @@ int AOcompute(long loop)
         else
         {
             printf("USING PRE_COMPUTED COMBINED ACTIVE CONTROL MATRIX \n");
-            
         }
 
 
