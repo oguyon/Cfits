@@ -4330,6 +4330,15 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     matrix_cmp = (float*) malloc(sizeof(float)*sizeWFS*NBDMmodes);
     memcpy(matrix_cmp, data.image[IDcmat].array.F, sizeof(float)*sizeWFS*NBDMmodes);
 
+// control matrix scaled by gains
+/*        matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+        for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+            for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+                matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
+        printf("\n");
+*/
+
+
     // copy modes matrix to matrix_DMmodes
     IDmodes = image_ID(IDmodes_name);
     NBDMmodes = data.image[IDmodes].md[0].size[2];
@@ -4352,7 +4361,11 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
             fflush(stdout);
             for(act=0; act<sizeDM; act++)
                 for(wfselem=0; wfselem<sizeWFS; wfselem++)
-                    matrix_Mc[act*sizeWFS+wfselem] += 1.0; //matrix_cmp[mode*sizeWFS+wfselem]; //*matrix_DMmodes[mode*sizeDM+act];
+                {
+                    printf("-   [%ld %ld %ld] \n", mode, act, wfselem);
+                    fflush(stdout);
+                    matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]; //*matrix_DMmodes[mode*sizeDM+act];
+                }
         }
 //# ifdef _OPENMP
 //    }
@@ -4379,6 +4392,41 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     free(matrix_DMmodes);
 
     printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", sizeWFS, sizeDM, sizeWFS_active, sizeDM_active);
+
+
+
+/*
+
+     n_sizeDM = AOconf[loop].sizeDM;
+        n_NBDMmodes = AOconf[loop].NBDMmodes;
+        n_sizeWFS = AOconf[loop].sizeWFS;
+        matrix_Mc = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+        memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+        matrix_DMmodes = (float*) malloc(sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
+        memcpy(matrix_DMmodes, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
+
+# ifdef _OPENMP
+        #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
+        {
+            #pragma omp for schedule (static)
+# endif
+            for(mode=0; mode<n_NBDMmodes; mode++)
+            {
+                printf("mode %6ld    \n", mode);
+                fflush(stdout);
+                for(act=0; act<n_sizeDM; act++)
+                    for(wfselem=0; wfselem<n_sizeWFS; wfselem++)
+                        matrix_Mc[act*n_sizeWFS+wfselem] += matrix_cmp[mode*n_sizeWFS+wfselem]*matrix_DMmodes[mode*n_sizeDM+act];
+            }
+# ifdef _OPENMP
+        }
+# endif
+*/
+
+
+
+
+
 
 
     clock_gettime(CLOCK_REALTIME, &t2);
