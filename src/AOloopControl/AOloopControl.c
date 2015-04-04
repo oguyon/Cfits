@@ -4352,7 +4352,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
             fflush(stdout);
             for(act=0; act<sizeDM; act++)
                 for(wfselem=0; wfselem<sizeWFS; wfselem++)
-                    matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]; //*matrix_DMmodes[mode*sizeDM+act];
+                    matrix_Mc[act*sizeWFS+wfselem] += 1.0; //matrix_cmp[mode*sizeWFS+wfselem]; //*matrix_DMmodes[mode*sizeDM+act];
         }
 //# ifdef _OPENMP
 //    }
