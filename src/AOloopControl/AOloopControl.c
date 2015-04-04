@@ -4478,12 +4478,16 @@ int AOcompute(long loop)
     {
         printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
-
+        listim_ID();
+        
+        
         clock_gettime(CLOCK_REALTIME, &t1);
 
 
 
-        // build up map for active regions
+        printf("Build up map for active regions...\n");
+        fflush(stdout);
+        
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
         if(IDmask==-1)
@@ -4535,6 +4539,9 @@ int AOcompute(long loop)
 
         if(aoconfID_contrMc==-1)
         {
+            printf("Build  cmatc ...\n");
+            fflush(stdout);
+ 
             sizearray = (long*) malloc(sizeof(long)*3);
             sizearray[0] = AOconf[loop].sizexWFS;
             sizearray[1] = AOconf[loop].sizeyWFS;
@@ -4581,6 +4588,9 @@ int AOcompute(long loop)
 
         if(aoconfID_contrMc_active==-1)
         {
+            printf("Build  cmatcactive ...\n");
+            fflush(stdout);
+            
             aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
             for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
             {
