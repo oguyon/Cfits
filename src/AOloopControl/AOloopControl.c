@@ -1550,7 +1550,8 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
             printf("%5ld %5.3f %g\n", k, data.image[ID].array.F[k], CPAcoeff[k]);
         }
     }
-
+    exit(0);
+    
     /* write matrix_D */
     for(k=0; k<m; k++)
     {
