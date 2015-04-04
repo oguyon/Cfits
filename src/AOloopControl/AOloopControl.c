@@ -4279,33 +4279,13 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     sizexWFS = data.image[IDwfsmask].md[0].size[0];
     sizeyWFS = data.image[IDwfsmask].md[0].size[1];
     sizeWFS = sizexWFS*sizeyWFS;
-    WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS);
-    ii1 = 0;
-    for(ii=0; ii<sizeWFS; ii++)
-        if(data.image[IDwfsmask].array.F[ii]>0.1)
-        {
-            WFS_active_map[ii1] = ii;
-            ii1++;
-        }
-    sizeWFS_active = ii1;
-    aoconfID_WFS2_active = create_2Dimage_ID("wfs2active", sizeWFS_active, 1);
 
     IDdmmask = image_ID(IDdmmask_name);
     sizexDM = data.image[IDdmmask].md[0].size[0];
     sizeyDM = data.image[IDdmmask].md[0].size[1];
     sizeDM = sizexDM*sizeyDM;
-    DM_active_map = (int*) malloc(sizeof(int)*sizeDM);
-    ii1 = 0;
-    for(ii=0; ii<sizeDM; ii++)
-        if(data.image[IDdmmask].array.F[ii]>0.1)
-        {
-            DM_active_map[ii1] = ii;
-            ii1++;
-        }
-    sizeDM_active = ii1;
-    aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
-
-
+ 
+ 
     // allocate array for combined matrix
     sizearray = (long*) malloc(sizeof(long)*3);
     sizearray[0] = sizexWFS;
@@ -4348,8 +4328,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     printf("START MATRIX MULT\n");
     fflush(stdout);
 
-    list_image_ID();
-    exit(0);
+   
 
 // computing combine matrix (full size)
 //# ifdef _OPENMP
@@ -4381,6 +4360,33 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
  
     printf("REDUCE MATRIX SIZE\n");
     fflush(stdout);
+
+
+   WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS);
+    ii1 = 0;
+    for(ii=0; ii<sizeWFS; ii++)
+        if(data.image[IDwfsmask].array.F[ii]>0.1)
+        {
+            WFS_active_map[ii1] = ii;
+            ii1++;
+        }
+    sizeWFS_active = ii1;
+    aoconfID_WFS2_active = create_2Dimage_ID("wfs2active", sizeWFS_active, 1);
+
+
+    DM_active_map = (int*) malloc(sizeof(int)*sizeDM);
+    ii1 = 0;
+    for(ii=0; ii<sizeDM; ii++)
+        if(data.image[IDdmmask].array.F[ii]>0.1)
+        {
+            DM_active_map[ii1] = ii;
+            ii1++;
+        }
+    sizeDM_active = ii1;
+    aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
+
+
+
 
 
 // reduce matrix size to active elements
