@@ -4024,7 +4024,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
                             data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
-                            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] += 1.0;
+                       //     data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] += 1.0;
                         }
                     kc++;
                     if(kc > data.image[IDrmc].md[0].size[2]-1)
@@ -4043,7 +4043,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
                             data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
-                            data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] -= 1.0;
+                          //  data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii] -= 1.0;
                         }
                     kc++;
                     if(kc > data.image[IDrmc].md[0].size[2]-1)
@@ -4054,8 +4054,8 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     kc -= data.image[IDrmc].md[0].size[2];
             }
 
-            save_fits("RMcube", "!RMcube2.fits");
-            exit(0);
+          //  save_fits("RMcube", "!RMcube2.fits");
+          //  exit(0);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 for(k1=0; k1<AOconf[loop].NBDMmodes; k1++)
                     data.image[IDrmi].array.F[k1*AOconf[loop].sizeWFS+ii] = data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii];
