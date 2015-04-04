@@ -4457,14 +4457,14 @@ int AOcompute(long loop)
 
 
     if(COMPUTE_GPU_SCALING==0)
-        {
-            data.image[aoconfID_WFS2].md[0].write = 1;
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_refWFS].array.F[ii];
-            cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
-            data.image[aoconfID_WFS2].md[0].cnt0 ++;
-            data.image[aoconfID_WFS2].md[0].write = 0;
-        }
+    {
+        data.image[aoconfID_WFS2].md[0].write = 1;
+        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            data.image[aoconfID_WFS2].array.F[ii] = data.image[aoconfID_WFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_refWFS].array.F[ii];
+        cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
+        data.image[aoconfID_WFS2].md[0].cnt0 ++;
+        data.image[aoconfID_WFS2].md[0].write = 0;
+    }
 
     //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
     // sleep(5);
@@ -4481,8 +4481,8 @@ int AOcompute(long loop)
 
         clock_gettime(CLOCK_REALTIME, &t1);
 
-        
-        
+
+
         // build up map for active regions
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
@@ -4526,13 +4526,13 @@ int AOcompute(long loop)
                 }
             AOconf[loop].sizeDM_active = ii1;
         }
-     
-     
+
+
         aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
 
         aoconfID_contrMc = image_ID("cmatc");
         aoconfID_contrMc_active = image_ID("cmatcact");
- 
+
         if(aoconfID_contrMc==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*3);
@@ -4541,61 +4541,66 @@ int AOcompute(long loop)
             sizearray[2] = AOconf[loop].sizeDM;
             aoconfID_contrMc = create_image_ID("cmatc", 3, sizearray, FLOAT, 1, 0);
             free(sizearray);
-        
-            
 
-        // control matrix scaled by gains
-        matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
-            for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
-        printf("\n");
 
-        n_sizeDM = AOconf[loop].sizeDM;
-        n_NBDMmodes = AOconf[loop].NBDMmodes;
-        n_sizeWFS = AOconf[loop].sizeWFS;
-        matrix_Mc = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-        matrix_DMmodes = (float*) malloc(sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
-        memcpy(matrix_DMmodes, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
+
+            // control matrix scaled by gains
+            matrix_cmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+            for(mode=0; mode<AOconf[loop].NBDMmodes; mode++)
+                for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+                    matrix_cmp[mode*AOconf[loop].sizeWFS+wfselem] = data.image[aoconfID_contrM].array.F[mode*AOconf[loop].sizeWFS+wfselem]*data.image[aoconfID_GAIN_modes].array.F[mode];
+            printf("\n");
+
+            n_sizeDM = AOconf[loop].sizeDM;
+            n_NBDMmodes = AOconf[loop].NBDMmodes;
+            n_sizeWFS = AOconf[loop].sizeWFS;
+            matrix_Mc = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+            memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+            matrix_DMmodes = (float*) malloc(sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
+            memcpy(matrix_DMmodes, data.image[aoconfID_DMmodes].array.F, sizeof(float)*AOconf[loop].NBDMmodes*AOconf[loop].sizeDM);
 
 # ifdef _OPENMP
-        #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
-        {
-            #pragma omp for schedule (static)
-# endif
-            for(mode=0; mode<n_NBDMmodes; mode++)
+            #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
             {
-                printf("mode %6ld    \n", mode);
-                fflush(stdout);
-                for(act=0; act<n_sizeDM; act++)
-                    for(wfselem=0; wfselem<n_sizeWFS; wfselem++)
-                        matrix_Mc[act*n_sizeWFS+wfselem] += matrix_cmp[mode*n_sizeWFS+wfselem]*matrix_DMmodes[mode*n_sizeDM+act];
-            }
-# ifdef _OPENMP
-        }
+                #pragma omp for schedule (static)
 # endif
-        memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-}
+                for(mode=0; mode<n_NBDMmodes; mode++)
+                {
+                    printf("mode %6ld    \n", mode);
+                    fflush(stdout);
+                    for(act=0; act<n_sizeDM; act++)
+                        for(wfselem=0; wfselem<n_sizeWFS; wfselem++)
+                            matrix_Mc[act*n_sizeWFS+wfselem] += matrix_cmp[mode*n_sizeWFS+wfselem]*matrix_DMmodes[mode*n_sizeDM+act];
+                }
+# ifdef _OPENMP
+            }
+# endif
+            memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
+        }
 
 
         if(aoconfID_contrMc_active==-1)
         {
-        aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
-        for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
-        {
-            for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+            aoconfID_contrMc_active = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
+            for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
             {
-                act = DM_active_map[act_active];
-                wfselem = WFS_active_map[wfselem_active];
-                data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
+                for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                {
+                    act = DM_active_map[act_active];
+                    wfselem = WFS_active_map[wfselem_active];
+                    data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
+                }
             }
-        }
-        free(matrix_Mc);
-        free(matrix_DMmodes);
+            free(matrix_Mc);
+            free(matrix_DMmodes);
 
-        printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
-}
+            printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
+        }
+        else
+        {
+            printf("USING PRE_COMPUTED COMBINED ACTIVE CONTROL MATRIX \n");
+            
+        }
 
 
         if(aoconfID_meas_act==-1)
@@ -4652,26 +4657,26 @@ int AOcompute(long loop)
             else // only use active pixels and actuators
             {
                 // re-map input vector
-                
+
                 if(COMPUTE_GPU_SCALING==1)
-                    {
-                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
-                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
-                    }
-                    else
-                    {
-                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
-                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
-                    }
+                {
+                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                        data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
+                    data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                }
+                else
+                {
+                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                        data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
+                    data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                }
                 //printf("Vector wfs re-mapped\n");
 
                 if(COMPUTE_GPU_SCALING==1)
                     if(initWFSref_GPU==0)
                     {
                         for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];                        
+                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];
                         data.image[aoconfID_WFS2_active].md[0].cnt0++;
                         initWFSref_GPU = 1;
                     }
@@ -4683,14 +4688,14 @@ int AOcompute(long loop)
 
                 if(COMPUTE_GPU_SCALING==1)
                 {
-                  //  printf("GPU_alpha = %g\n", GPU_alpha); // TEST
-                  //  printf("GPU_beta = %f\n", GPU_beta); // TEST
+                    //  printf("GPU_alpha = %g\n", GPU_alpha); // TEST
+                    //  printf("GPU_beta = %f\n", GPU_beta); // TEST
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
                 }
                 else
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
-                    
-                    
+
+
                 // re-map output vector
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
@@ -4737,6 +4742,7 @@ int AOcompute(long loop)
 
     return(0);
 }
+
 
 
 
