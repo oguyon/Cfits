@@ -4272,6 +4272,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     clock_gettime(CLOCK_REALTIME, &t1);
 
 
+    list_image_ID();
 
     // build up map for active regions
     IDwfsmask = image_ID(IDwfsmask_name);
@@ -4314,7 +4315,11 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     free(sizearray);
 
 
+    list_image_ID();
+    printf("PREPARE MATRIX MULT\n");
+    fflush(stdout);
 
+    
 
     // init matrix_Mc
     matrix_Mc = (float*) malloc(sizeof(float)*sizeWFS*sizeDM);
@@ -4330,6 +4335,9 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     NBDMmodes = data.image[IDmodes].md[0].size[2];
     matrix_DMmodes = (float*) malloc(sizeof(float)*NBDMmodes*sizeDM);
     memcpy(matrix_DMmodes, data.image[IDmodes].array.F, sizeof(float)*NBDMmodes*sizeDM);
+   
+    printf("START MATRIX MULT\n");
+    fflush(stdout);
 
 
 // computing combine matrix (full size)
@@ -4350,6 +4358,10 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     }
 # endif
     memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
+
+ 
+    printf("REDUCE MATRIX SIZE\n");
+    fflush(stdout);
 
 
 // reduce matrix size to active elements
