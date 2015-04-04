@@ -4322,15 +4322,15 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
    
 
 // computing combine matrix (full size)
-//# ifdef _OPENMP
-//   #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
-//    {
-//        #pragma omp for schedule (static)
-//# endif
+# ifdef _OPENMP
+   #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
+    {
+        #pragma omp for schedule (static)
+# endif
         for(mode=0; mode<NBDMmodes; mode++)
         {
-            printf("mode %6ld   [%ld %ld %ld] \n", mode, NBDMmodes, sizeDM, sizeWFS);
-            fflush(stdout);
+          //  printf("mode %6ld   [%ld %ld %ld] \n", mode, NBDMmodes, sizeDM, sizeWFS);
+          //  fflush(stdout);
             for(act=0; act<sizeDM; act++)
                 {
                     for(wfselem=0; wfselem<sizeWFS; wfselem++)
@@ -4341,9 +4341,9 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
                     }
                 }
         }
-//# ifdef _OPENMP
-//    }
-//# endif
+# ifdef _OPENMP
+    }
+# endif
     memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
 
  
