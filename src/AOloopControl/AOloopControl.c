@@ -3916,9 +3916,9 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                   
 
-            // positive
-            k1 = 0;
-            data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
+            // set DM to last mode, neg 
+            k1 = AOconf[loop].NBDMmodes-1;
+            data.image[aoconfID_cmd_modesRM].array.F[k1] = -amp*data.image[IDmcoeff].array.F[k1];
             set_DM_modesRM(loop);
 
 
@@ -4041,7 +4041,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
             {
                 // positive
-                for(kk=0; kk<NbAve-NBexcl; kk++)
+                kc += NBexcl;
+                if(kc > data.image[IDrmc].md[0].size[2]-1)
+                    kc -= data.image[IDrmc].md[0].size[2];
+                for(kk=NBexcl; kk<NbAve-NBexcl; kk++)
                 {
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] += data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
@@ -4052,8 +4055,12 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 kc+=NBexcl;
                 if(kc > data.image[IDrmc].md[0].size[2]-1)
                     kc -= data.image[IDrmc].md[0].size[2];
+
                 // negative
-                for(kk=0; kk<NbAve-NBexcl; kk++)
+                kc+=NBexcl;
+                if(kc > data.image[IDrmc].md[0].size[2]-1)
+                    kc -= data.image[IDrmc].md[0].size[2];               
+                for(kk=NBexcl; kk<NbAve-NBexcl; kk++)
                 {
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDrmtest].array.F[k1*AOconf[loop].sizeWFS+ii] -= data.image[IDrmc].array.F[kc*AOconf[loop].sizeWFS+ii];
