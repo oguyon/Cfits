@@ -3746,7 +3746,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 {
     long NBloops;
     long kloop;
-    long delayus = 0; // delay in us
+    long delayus = 10000; // delay in us
     long ii, i, imax;
     int Verbose = 0;
     long k1, k, k2;
@@ -3914,6 +3914,14 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                 data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
 
+                  
+
+            // positive
+            data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
+            set_DM_modesRM(loop);
+
+
+            usleep(delayus); 
 
             for (kloop = 0; kloop < NBloops; kloop++)
             {
@@ -3927,10 +3935,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                 for(k1 = 0; k1 < AOconf[loop].NBDMmodes; k1++)
                 {
-                    //   printf("\r  mode %ld / %ld   ", k1, AOconf[loop].NBDMmodes);
-                    //  fflush(stdout);
-
-
                     for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                         data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;
 
@@ -3938,8 +3942,6 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = amp*data.image[IDmcoeff].array.F[k1];
                     set_DM_modesRM(loop);
 
-
-                    // usleep(delayus); // OK - this is for calibration
 
 
 
@@ -3961,7 +3963,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                     data.image[aoconfID_cmd_modesRM].array.F[k1] = 0.0-amp*data.image[IDmcoeff].array.F[k1];
                     set_DM_modesRM(loop);
 
-                    //  usleep(delayus);  // OK - this is for calibration
+                   
 
                     for(kk=0; kk<NbAve; kk++)
                     {
@@ -3992,7 +3994,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDrefi].array.F[ii] /= RespMatNBframes*NBloops; //(NBloops*2.0*AOconf[loop].NBDMmodes*NbAve);
+                data.image[IDrefi].array.F[ii] /= RespMatNBframes*NBloops; 
 
 
 
