@@ -4348,7 +4348,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 //# endif
         for(mode=0; mode<NBDMmodes; mode++)
         {
-            printf("mode %6ld   [%ld %ld %ld] \n", mode, NBDMmode, sizeDM, sizeWFS);
+            printf("mode %6ld   [%ld %ld %ld] \n", mode, NBDMmodes, sizeDM, sizeWFS);
             fflush(stdout);
             for(act=0; act<sizeDM; act++)
                 for(wfselem=0; wfselem<sizeWFS; wfselem++)
