@@ -4605,14 +4605,15 @@ int AOcompute(long loop)
                 {
                     act = DM_active_map[act_active];
                     wfselem = WFS_active_map[wfselem_active];
-                    printf("%ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
-                    fflush(stdout);
+                    //printf("%ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
+                    //fflush(stdout);
                     data.image[aoconfID_contrMc_active].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
                 }
             }
             free(matrix_Mc);
  
             printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
+            fflush(stdout);
         }
         else
         {
