@@ -314,6 +314,17 @@ int AOloopControl_Measure_Resp_Matrix_cli()
 }
 
 
+int AOloopControl_compute_CombinedControlMatrix_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)+CLI_checkarg(6,3)==0)
+    {
+      compute_CombinedControlMatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+//long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name)
 
 
 int AOloopControl_setframesAve_cli()
@@ -588,6 +599,16 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<ave# [long]> <ampl [float]> <nbloop [long]> <frameDelay [long]> <NBiter [long]>");
   strcpy(data.cmd[data.NBcmd].example,"aolacqresp 50 0.1 5 2");
   strcpy(data.cmd[data.NBcmd].Ccall,"int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)");
+  data.NBcmd++;
+
+
+strcpy(data.cmd[data.NBcmd].key,"aolcompcmatc");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_compute_CombinedControlMatrix_cli;
+  strcpy(data.cmd[data.NBcmd].info,"compute combined control matrix");
+  strcpy(data.cmd[data.NBcmd].syntax,"<modal control matrix> <modes> <wfs mask> <dm mask> <combined cmat> <combined cmat, only active elements>");
+  strcpy(data.cmd[data.NBcmd].example,"aolcompcmatc cmat fmodes wfsmask dmmask cmatc cmatcact");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name)");
   data.NBcmd++;
 
 
@@ -1736,7 +1757,9 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
             save_fits(ID_Cmatrix_name, "!cmat.fits");
             sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES_RM.txt", NBMODES_REMOVED_EIGENVLIM);
             ret = system(command);
-        }
+            sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES.txt",  m);
+            ret = system(command);
+       }
         else
         {
             sprintf(fname, "!cmat_%4.2f_%03ld.fits", Beta, NB_MR);
@@ -4204,6 +4227,161 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 
     return(0);
 }
+
+
+
+
+// computes combined control matrix
+//
+//
+
+
+long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name)
+{
+    long ID;
+    struct timespec t1;
+    struct timespec t2;
+    struct timespec tdiff;
+    double tdiffv;
+
+    float *matrix_cmp;
+    long wfselem, act, mode;
+    //    long n_sizeDM, n_NBDMmodes, n_sizeWFS;
+    float *matrix_Mc, *matrix_DMmodes;
+    long act_active, wfselem_active;
+    int chunk = 10;
+
+    long IDwfsmask, IDdmmask;
+    long sizexWFS, sizeyWFS, sizeWFS, sizeWFS_active;
+    long ii, ii1;
+    long sizexDM, sizeyDM;
+    long sizeDM_active;
+    long *sizearray;
+    long IDcmat;
+    long IDcmatc;
+    long IDmodes;
+    long NBDMmodes;
+    long sizeDM;
+    long IDcmatc_active;
+
+    
+
+    printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
+    fflush(stdout);
+
+    clock_gettime(CLOCK_REALTIME, &t1);
+
+
+
+    // build up map for active regions
+    IDwfsmask = image_ID(IDwfsmask_name);
+    sizexWFS = data.image[IDwfsmask].md[0].size[0];
+    sizeyWFS = data.image[IDwfsmask].md[0].size[1];
+    sizeWFS = sizexWFS*sizeyWFS;
+    WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS);
+    ii1 = 0;
+    for(ii=0; ii<sizeWFS; ii++)
+        if(data.image[IDwfsmask].array.F[ii]>0.1)
+        {
+            WFS_active_map[ii1] = ii;
+            ii1++;
+        }
+    sizeWFS_active = ii1;
+    aoconfID_WFS2_active = create_2Dimage_ID("wfs2active", sizeWFS_active, 1);
+
+    IDdmmask = image_ID(IDdmmask_name);
+    sizexDM = data.image[IDdmmask].md[0].size[0];
+    sizeyDM = data.image[IDdmmask].md[0].size[1];
+    sizeDM = sizexDM*sizeyDM;
+    DM_active_map = (int*) malloc(sizeof(int)*sizeDM);
+    ii1 = 0;
+    for(ii=0; ii<sizeDM; ii++)
+        if(data.image[IDdmmask].array.F[ii]>0.1)
+        {
+            DM_active_map[ii1] = ii;
+            ii1++;
+        }
+    sizeDM_active = ii1;
+    aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
+
+
+    // allocate array for combined matrix
+    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray[0] = sizexWFS;
+    sizearray[1] = sizeyWFS;
+    sizearray[2] = sizeDM;
+    IDcmatc = create_image_ID(IDcmatc_name, 3, sizearray, FLOAT, 1, 0);
+    free(sizearray);
+
+
+
+
+    // init matrix_Mc
+    matrix_Mc = (float*) malloc(sizeof(float)*sizeWFS*sizeDM);
+    memcpy(matrix_Mc, data.image[IDcmatc].array.F, sizeof(float)*sizeWFS*sizeDM);
+
+    // copy modal control matrix to matrix_cmp
+    IDcmat = image_ID(IDcmat_name);
+    matrix_cmp = (float*) malloc(sizeof(float)*sizeWFS*NBDMmodes);
+    memcpy(matrix_cmp, data.image[IDcmat].array.F, sizeof(float)*sizeWFS*NBDMmodes);
+
+    // copy modes matrix to matrix_DMmodes
+    IDmodes = image_ID(IDmodes_name);
+    NBDMmodes = data.image[IDmodes].md[0].size[2];
+    matrix_DMmodes = (float*) malloc(sizeof(float)*NBDMmodes*sizeDM);
+    memcpy(matrix_DMmodes, data.image[IDmodes].array.F, sizeof(float)*NBDMmodes*sizeDM);
+
+
+// computing combine matrix (full size)
+# ifdef _OPENMP
+    #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
+    {
+        #pragma omp for schedule (static)
+# endif
+        for(mode=0; mode<NBDMmodes; mode++)
+        {
+            printf("mode %6ld    \n", mode);
+            fflush(stdout);
+            for(act=0; act<sizeDM; act++)
+                for(wfselem=0; wfselem<sizeWFS; wfselem++)
+                    matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]*matrix_DMmodes[mode*sizeDM+act];
+        }
+# ifdef _OPENMP
+    }
+# endif
+    memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
+
+
+// reduce matrix size to active elements
+    IDcmatc_active = create_3Dimage_ID("cmatc_active", sizeWFS_active, 1, sizeDM_active);
+    for(act_active=0; act_active<sizeDM_active; act_active++)
+    {
+        for(wfselem_active=0; wfselem_active<sizeWFS_active; wfselem_active++)
+        {
+            act = DM_active_map[act_active];
+            wfselem = WFS_active_map[wfselem_active];
+            data.image[IDcmatc_active].array.F[act_active*sizeWFS_active+wfselem_active] = matrix_Mc[act*sizeWFS+wfselem];
+        }
+    }
+    free(matrix_Mc);
+    free(matrix_DMmodes);
+
+    printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", sizeWFS, sizeDM, sizeWFS_active, sizeDM_active);
+
+
+    clock_gettime(CLOCK_REALTIME, &t2);
+    tdiff = info_time_diff(t1, t2);
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    printf("\n");
+    printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);
+
+
+    return(ID);
+}
+
+
+
+
 
 
 
