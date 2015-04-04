@@ -4478,7 +4478,7 @@ int AOcompute(long loop)
     {
         printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
-        listim_ID();
+        list_image_ID();
         
         
         clock_gettime(CLOCK_REALTIME, &t1);
