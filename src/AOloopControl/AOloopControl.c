@@ -4348,6 +4348,8 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     printf("START MATRIX MULT\n");
     fflush(stdout);
 
+    list_image_ID();
+    exit(0);
 
 // computing combine matrix (full size)
 //# ifdef _OPENMP
