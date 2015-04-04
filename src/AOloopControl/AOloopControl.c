@@ -724,12 +724,12 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_computeCM_cli;
   strcpy(data.cmd[data.NBcmd].info,"make control matrix");
-  strcpy(data.cmd[data.NBcmd].syntax,"<NBmodes removed> <RespMatrix> <ContrMatrix>");
+  strcpy(data.cmd[data.NBcmd].syntax,"<NBmodes removed> <RespMatrix> <ContrMatrix> <beta> <nbremovedstep> <eigenvlim>");
   strcpy(data.cmd[data.NBcmd].example,"aolcmmake 8 respm cmat");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim)");
   data.NBcmd++;
 
-
+ 
   strcpy(data.cmd[data.NBcmd].key,"aolloadcm");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AOloopControl_loadCM_cli;
@@ -970,7 +970,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long IDfreq;
 
     long IDmfcpa; /// modesfreqcpa ID
-
+    int ret;
 
     long mblock, m;
     long NBmblock;
@@ -1310,9 +1310,9 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     }
 
     sprintf(command, "echo \"%ld\" > ./tmp/fmodes_nb.txt", NBmblock);
-    system(command);
+    ret = system(command);
     
-    system("rm ./tmp/fmodes_*.fits");
+    ret = system("rm ./tmp/fmodes_*.fits");
     for(mblock=0; mblock<NBmblock; mblock++)
     {
         sprintf(imname, "fmodes_%03ld", mblock);
@@ -1482,9 +1482,11 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     long NB_MODE_REMOVED1;
     float eigenvmin=0.0;
     long NBMODES_REMOVED_EIGENVLIM = 0;
-    
 
 
+    long MB_MR_start;
+    long MB_MR_end;
+    long MB_MR_step;
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
@@ -1586,14 +1588,14 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     NBMODES_REMOVED_EIGENVLIM = 0;
     for(k=0; k<m; k++)
-        {
-            printf("Mode %ld eigenvalue = %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
-            if(gsl_vector_get(matrix_DtraD_eval,k) < eigenvmin)
-                NBMODES_REMOVED_EIGENVLIM++;
-        }
+    {
+        printf("Mode %ld eigenvalue = %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
+        if(gsl_vector_get(matrix_DtraD_eval,k) < eigenvmin)
+            NBMODES_REMOVED_EIGENVLIM++;
+    }
 
-    
-        
+
+
 
     /** Write rotation matrix to go from DM modes to eigenmodes */
     arraysizetmp[0] = m;
@@ -1665,54 +1667,67 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     printf("COMPUTING CMAT .... \n");
 
+
+    if(NB_MODE_REMOVED_STEP==0)
+        {
+            MB_MR_start = NBMODES_REMOVED_EIGENVLIM;
+            MB_MR_end = NBMODES_REMOVED_EIGENVLIM+1;
+            MB_MR_step = 10;
+        }
+        else
+        {
+            MB_MR_start = 0;
+            MB_MR_end = NB_MODE_REMOVED1;
+            MB_MR_step = NB_MODE_REMOVED_STEP;
+        }
     
-
-    for(NB_MR=0; NB_MR<NB_MODE_REMOVED1; NB_MR+=NB_MODE_REMOVED_STEP)
-    {
-        printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED1, NB_MODE_REMOVED_STEP);
-        fflush(stdout);
-        for(ii1=0; ii1<m; ii1++)
-            for(jj1=0; jj1<m; jj1++)
-            {
-                if(ii1==jj1)
+        for(NB_MR=MB_MR_start; NB_MR<MB_MR_end; NB_MR+=MB_MR_step)
+        {
+            printf("\r Number of modes removed : %5ld / %5ld  (step %ld)  ", NB_MR, NB_MODE_REMOVED1, NB_MODE_REMOVED_STEP);
+            fflush(stdout);
+            for(ii1=0; ii1<m; ii1++)
+                for(jj1=0; jj1<m; jj1++)
                 {
-                    if((m-ii1-1)<NB_MR)
-                        gsl_matrix_set(matrix1, ii1, jj1, 0.0);
+                    if(ii1==jj1)
+                    {
+                        if((m-ii1-1)<NB_MR)
+                            gsl_matrix_set(matrix1, ii1, jj1, 0.0);
+                        else
+                            gsl_matrix_set(matrix1, ii1, jj1, 1.0/gsl_vector_get(matrix_DtraD_eval,ii1));
+                    }
                     else
-                        gsl_matrix_set(matrix1, ii1, jj1, 1.0/gsl_vector_get(matrix_DtraD_eval,ii1));
+                        gsl_matrix_set(matrix1, ii1, jj1, 0.0);
                 }
-                else
-                    gsl_matrix_set(matrix1, ii1, jj1, 0.0);
-            }
 
 
-        printf("-");
-        fflush(stdout);
+            printf("-");
+            fflush(stdout);
 
-        /* third, compute the "inverse" of DtraD */
-        gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, matrix_DtraD_evec, matrix1, 0.0, matrix2);
-        printf("-");
-        fflush(stdout);
-        gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
-        printf("-");
-        fflush(stdout);
-        gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
+            /* third, compute the "inverse" of DtraD */
+            gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, matrix_DtraD_evec, matrix1, 0.0, matrix2);
+            printf("-");
+            fflush(stdout);
+            gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
+            printf("-");
+            fflush(stdout);
+            gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
 
-        /* write result */
-        printf("write result to ID %ld   [%ld %ld]\n", ID_Cmatrix, n, m);
-        fflush(stdout);
-        list_image_ID();
+            /* write result */
+            printf("write result to ID %ld   [%ld %ld]\n", ID_Cmatrix, n, m);
+            fflush(stdout);
+            list_image_ID();
 
-        for(ii=0; ii<n; ii++) // sensors
-            for(k=0; k<m; k++) // actuator modes
-                data.image[ID_Cmatrix].array.F[k*n+ii] = (float) gsl_matrix_get(matrix_Ds, k, ii)*CPAcoeff[k];
+            for(ii=0; ii<n; ii++) // sensors
+                for(k=0; k<m; k++) // actuator modes
+                    data.image[ID_Cmatrix].array.F[k*n+ii] = (float) gsl_matrix_get(matrix_Ds, k, ii)*CPAcoeff[k];
 
 
-        sprintf(fname, "!cmat_%4.2f_%03ld.fits", Beta, NB_MR);
-        printf("  SAVING -> %s\n", fname);
-        fflush(stdout);
-        save_fits(ID_Cmatrix_name, fname);
-    }
+            sprintf(fname, "!cmat_%4.2f_%03ld.fits", Beta, NB_MR);
+            printf("  SAVING -> %s\n", fname);
+            fflush(stdout);
+            save_fits(ID_Cmatrix_name, fname);
+        }
+    
     printf("\n\n");
 
     gsl_matrix_free(matrix1);
@@ -1733,6 +1748,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 
     return(ID_Cmatrix);
 }
+
 
 
 
