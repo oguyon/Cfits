@@ -1533,10 +1533,11 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
     matrix_DtraD_evec = gsl_matrix_alloc (m,m);
 
 
-    if(Beta>0.000001)
+    CPAcoeff = (double*) malloc(sizeof(double)*m);
+    
+     if(Beta>0.000001)
     {
         ID = load_fits("modesfreqcpa.fits", "modesfreqcpa", 1);
-        CPAcoeff = (double*) malloc(sizeof(double)*m);
         if(ID==-1)
         {
             for(k=0; k<m; k++)
@@ -1557,7 +1558,6 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
             CPAcoeff[k] = 1.0;
     }
 
-    exit(0);
 
     /* write matrix_D */
     for(k=0; k<m; k++)
