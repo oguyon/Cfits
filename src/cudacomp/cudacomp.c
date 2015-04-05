@@ -299,7 +299,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
     long NBiter = 100000;
     long iter = 0;
-
+    
+    int cmatdim = 2; // 2 or 3
+    
 
     /*	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
     	fflush(stdout);*/
@@ -351,15 +353,36 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         if(orientation==0)
         {
-            gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[2];
-            gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
+            if(data.image[IDcontrM].md[0].naxis==3)
+                {
+                    gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[2];
+                    gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
+                    cmatdim = 3;
+                }
+            else
+                {
+                    gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[1];
+                    gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0];
+                    cmatdim = 2;
+               }
             printf("M = %d\n", gpumatmultconf[index].M);
             printf("N = %d\n", gpumatmultconf[index].N);
         }
         else
         {
-            gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
-            gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[2];
+            if(data.image[IDcontrM].md[0].naxis==3)
+            {
+                gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
+                gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[2];
+                cmatdim = 3;
+            }
+            else
+            {
+                  gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[0];
+                gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[1];              
+                cmatdim = 2;
+            }
+
             printf("M = %d\n", gpumatmultconf[index].M);
             printf("N = %d\n", gpumatmultconf[index].N);
         }
@@ -376,7 +399,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         if(orientation == 0)
         {
+            
             printf("Input vector size: %ld %ld\n", data.image[IDwfsim].md[0].size[0], data.image[IDwfsim].md[0].size[1]);
+            
             if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1]!=gpumatmultconf[index].N)
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1], gpumatmultconf[index].N);
