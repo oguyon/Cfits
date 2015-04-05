@@ -400,7 +400,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         if(orientation == 0)
         {
             
-            printf("Input vector size: %ld %ld\n", data.image[IDwfsim].md[0].size[0], data.image[IDwfsim].md[0].size[1]);
+            printf("[0] Input vector size: %ld %ld\n", data.image[IDwfsim].md[0].size[0], data.image[IDwfsim].md[0].size[1]);
             
             if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1]!=gpumatmultconf[index].N)
             {
@@ -412,7 +412,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         }
         else
         {
-            printf("Input vector size: %ld \n", data.image[IDwfsim].md[0].size[0]);
+            printf("[1] Input vector size: %ld \n", data.image[IDwfsim].md[0].size[0]);
             if(data.image[IDwfsim].md[0].size[0]!=gpumatmultconf[index].N)
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0], gpumatmultconf[index].N);
