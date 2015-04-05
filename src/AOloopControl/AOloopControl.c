@@ -4643,12 +4643,14 @@ int AOcompute(long loop)
         printf("\n");
         printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);
         
+        printf("CREATING SHARED MEMORY CMATCACT\n");
         sizearray = (long*) malloc(sizeof(long)*2);
         sizearray[0] = data.image[aoconfID_contrMc_active].md[0].size[0];
         sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1];
         IDcmatca_shm = create_image_ID("aol%d_cmatca", 2, sizearray, FLOAT, 1, 0);
         free(sizearray);
         memcpy(data.image[IDcmatca_shm].array.F, data.image[aoconfID_contrMc_active].array.F, sizeof(float)*data.image[aoconfID_contrMc_active].md[0].size[0]*data.image[aoconfID_contrMc_active].md[0].size[1]);
+        sleep(10);
     }
 
 
