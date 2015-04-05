@@ -362,320 +362,321 @@ int init_coronagraphs()
 
 double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double centralObs, char *outname, long size)
 {
-  FILE *fp;
-  long size2;
-  long IDfpmask;
-  long IDpupa0,IDpupp0,IDpupa0m,IDpupp0m;
-  long ii,jj,ii1;
-  double peak;
-  long IDprol,ID;
-  long double total,total0,total2,v1;
-  long iter;
-  long NBiter = 40;
-  double transm;
-  double x,y,r2;
-  long IDr,IDi,IDrcp,IDicp; //,ID1,ID2;
-  long IDprolr,IDproli,IDprolp;
-  char fname[200];
+    FILE *fp;
+    long size2;
+    long IDfpmask;
+    long IDpupa0,IDpupp0,IDpupa0m,IDpupp0m;
+    long ii,jj,ii1;
+    double peak;
+    long IDprol,ID;
+    long double total,total0,total2,v1;
+    long iter;
+    long NBiter = 40;
+    double transm;
+    double x,y,r2;
+    long IDr,IDi,IDrcp,IDicp; //,ID1,ID2;
+    long IDprolr,IDproli,IDprolp;
+    char fname[200];
 
-  int CentralObstructionFlag = 0;
-  long IDpupa0co;
-    
-  size2 = size*size;
+    int CentralObstructionFlag = 0;
+    long IDpupa0co;
 
-  if(centralObs > 0.001)
-    CentralObstructionFlag = 1;
+    size2 = size*size;
+
+    if(centralObs > 0.001)
+        CentralObstructionFlag = 1;
 
 
-  ID = variable_ID("PNBITER");
-  if(ID!=-1)
+    ID = variable_ID("PNBITER");
+    if(ID!=-1)
     {
-      NBiter = (long) (1.0*data.variable[ID].value.f+0.01);
+        NBiter = (long) (1.0*data.variable[ID].value.f+0.01);
     }
 
-  v1 = 0.0;
-  
+    v1 = 0.0;
 
 
-  MASKSIZELD = (2.0*beamradpix/size)*fpmradpix;
-  printf("MASK RADIUS = %f pix = %f l/D\n", fpmradpix, MASKSIZELD);
-  printf("PUPIL RADIUS = %f\n", beamradpix);
-  printf("SIZE = %ld\n", size);
 
-  IDproli = create_2Dimage_ID("proli", size, size);
-  IDprolr = create_2Dimage_ID("prolr", size, size);
-  IDprolp = create_2Dimage_ID("prolp", size, size);
-	
+    MASKSIZELD = (2.0*beamradpix/size)*fpmradpix;
+    printf("MASK RADIUS = %f pix = %f l/D\n", fpmradpix, MASKSIZELD);
+    printf("PUPIL RADIUS = %f\n", beamradpix);
+    printf("SIZE = %ld\n", size);
 
-  IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, fpmradpix);
-  for(ii=0;ii<size2;ii++)
+    IDproli = create_2Dimage_ID("proli", size, size);
+    IDprolr = create_2Dimage_ID("prolr", size, size);
+    IDprolp = create_2Dimage_ID("prolp", size, size);
+
+
+    IDfpmask = make_subpixdisk("FPmask", size, size, size/2, size/2, fpmradpix);
+    for(ii=0; ii<size2; ii++)
     {
-      data.image[IDfpmask].array.F[ii] = 1.0*data.image[IDfpmask].array.F[ii];
-      //      if(data.image[IDfpmask].array.F[ii]<0.01)
-      //	data.image[IDfpmask].array.F[ii] = 0.0;
+        data.image[IDfpmask].array.F[ii] = 1.0*data.image[IDfpmask].array.F[ii];
+        //      if(data.image[IDfpmask].array.F[ii]<0.01)
+        //	data.image[IDfpmask].array.F[ii] = 0.0;
     }
 
-  //  save_fl_fits("FPmask","!FPmask.tmp.fits");
-  // exit(0);
+    //  save_fl_fits("FPmask","!FPmask.tmp.fits");
+    // exit(0);
 
-  IDpupp0 = create_2Dimage_ID("pupp0", size, size);
+    IDpupp0 = create_2Dimage_ID("pupp0", size, size);
 
-  IDpupa0 = image_ID("pupa0");
-  if(IDpupa0!=-1)
+    IDpupa0 = image_ID("pupa0");
+    if(IDpupa0!=-1)
     {
-      if(data.image[IDpupa0].md[0].size[0]!=size)
-	{
-	  printf("ERROR: pupa0 should be %ld x %ld\n", size, size);
-	  exit(0);
-	}
+        if(data.image[IDpupa0].md[0].size[0]!=size)
+        {
+            printf("ERROR: pupa0 should be %ld x %ld\n", size, size);
+            exit(0);
+        }
     }
-  if(IDpupa0==-1)
+    if(IDpupa0==-1)
     {
-      IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, beamradpix);
-      if(CentralObstructionFlag == 1)
-	{
-	  IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, beamradpix*centralObs);
-	  for(ii=0;ii<size*size;ii++)
-	    data.image[IDpupa0].array.F[ii] -= data.image[IDpupa0co].array.F[ii];
-	  delete_image_ID("pupa0co");
-	}
-    }
-
-
-  total0 = 0.0;
-  for(ii=0;ii<size2;ii++)
-    {
-      v1 = data.image[IDpupa0].array.F[ii];
-      total0 += v1*v1;
-    }
-  
-
-  //
-  // INITIALIZE PROLATE
-  //
-  // IDprol : prolate
-  //
-
-  // total0 = arith_image_total("pupa0");
-  IDpupa0m = create_2Dimage_ID("pupa0m",size,size);
-  IDpupp0m = create_2Dimage_ID("pupp0m",size,size);
-
-  IDprol = create_2Dimage_ID(outname,size,size);
-  for(ii=0;ii<size;ii++)
-    for(jj=0;jj<size;jj++)
-      {
-	if(data.image[IDpupa0].array.F[jj*size+ii] > 0.01)
-	  {
-	    x = 1.0*ii-size/2;
-	    y = 1.0*jj-size/2;
-	    r2 = (x*x+y*y)/beamradpix/beamradpix;
-	    data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*fpmradpix);
-	    data.image[IDproli].array.F[jj*size+ii] = 0.0;
-	    data.image[IDprol].array.F[jj*size+ii] = data.image[IDprolr].array.F[jj*size+ii];
-	  }
-	else
-	  {
-	    data.image[IDprolr].array.F[jj*size+ii] = 0.0;
-	    data.image[IDproli].array.F[jj*size+ii] = 0.0;
-	    data.image[IDprol].array.F[jj*size+ii] = 0.0;
-	  }
-      }
-
-  
-  ID = image_ID("apostart");
-  if(ID!=-1)
-    {
-      for(ii=0;ii<size2;ii++)
-	{
-	  data.image[IDprolr].array.F[ii] = data.image[ID].array.F[ii];
-	  data.image[IDprol].array.F[ii] = data.image[ID].array.F[ii];
-	}
-    }
-  delete_image_ID("apostart");
-
-
-
-  // 
-  // START LOOP 
-  //
-
-  for(iter=0;iter<NBiter;iter++)
-    {
-      for(ii=0;ii<size2;ii++)
-	{
-	  data.image[IDpupa0m].array.F[ii] =  data.image[IDpupa0].array.F[ii]*data.image[IDprol].array.F[ii];
-	  data.image[IDpupp0m].array.F[ii] =  data.image[IDpupp0].array.F[ii]+0.0*data.image[IDprolp].array.F[ii];
-	}
-
-      mk_complex_from_amph("pupa0m","pupp0","pc1");
-      permut("pc1");
-      do2dfft("pc1","fc1");
-      permut("fc1");
-      mk_amph_from_complex("fc1","fa1","fp1");
-      
-      execute_arith("fa1m=fa1*FPmask");
-
-      total = 0.0;
-      for(ii=0;ii<size2;ii++)
-	total += data.image[IDprol].array.F[ii]*data.image[IDprol].array.F[ii];      
-      transm = total/total0;
-
-      ID = image_ID("fa1m");
-      total = 0.0;
-      for(ii=0;ii<size2;ii++)
-	total += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
-      total /= 1.0*size2*total0;
-
-      ID = image_ID("fa1");
-      total2 = 0.0;
-      for(ii=0;ii<size2;ii++)
-	total2 += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
-      total2 /= 1.0*size2*total0;
-
-      printf("%ld/%ld   FPmask throughput = %g    prolate throughput = %.18g\n",iter,NBiter,(double) (total/total2),(double) transm);
-
-      ID = image_ID("fp1");
-      //      for(ii=0;ii<size2;ii++)
-      //	data.image[ID].array.F[ii] = 0.0;
-
-      mk_complex_from_amph("fa1m","fp1","fc2");
-      permut("fc2");
-      do2dfft("fc2","pc2");
-      permut("pc2");
- 
-      
-
-      mk_reim_from_complex("pc2","pr2","pi2");
-
-      IDr = image_ID("pr2");
-      copy_image_ID("pr2","pr2cp");
-      IDrcp = image_ID("pr2cp");
-      for(ii=0;ii<size;ii++)
-	for(jj=0;jj<size;jj++)
-	  data.image[IDr].array.F[jj*size+ii] = 0.0;
-
-      for(ii=1;ii<size;ii++)
-	for(jj=1;jj<size;jj++)
-	  data.image[IDr].array.F[jj*size+ii] = data.image[IDrcp].array.F[(size-jj)*size+(size-ii)]/size2;
-      peak = data.image[IDr].array.F[(size/2)*size+size/2];
-      delete_image_ID("pr2cp");
-      
-      IDi = image_ID("pi2");
-      copy_image_ID("pi2","pi2cp");
-      IDicp = image_ID("pi2cp");
-      for(ii=0;ii<size;ii++)
-	for(jj=0;jj<size;jj++)
-	  data.image[IDi].array.F[jj*size+ii] = 0.0;
-
-      for(ii=1;ii<size;ii++)
-	for(jj=1;jj<size;jj++)
-	  data.image[IDi].array.F[jj*size+ii] = data.image[IDicp].array.F[(size-jj)*size+(size-ii)]/size2;
-
-      printf("PEAK =  %f ", peak);
-      peak = 0.0;
-      for(ii=0;ii<size2;ii++)
-	if(data.image[IDpupa0].array.F[ii] > 0.01)
-	  if(fabs(data.image[IDr].array.F[ii])>fabs(peak))
-	    peak = data.image[IDr].array.F[ii];
-      printf(" %f\n", peak);
-
-    
-      
-      // write info file
-      // col 1 is mask size in SYSTEM l/D
-      // col 2 is fraction of light going through FPmask
-      // col 3 is prolate throughput if not done by PIAA
-      // col 4 is peak 
-      // ideal complex transmission for FPM is  MASKCAMULT = -(1.0-peak)/peak;        
-      printf("------- MASK SIZE = %f l/D ------\n", MASKSIZELD);
-      sprintf(fname, "%s/APLCapo.%.3f.%.3f.info", data.SAVEDIR, MASKSIZELD, centralObs);
-      fp = fopen(fname, "w");
-      fprintf(fp,"%f %.18f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak, centralObs);
-      fclose(fp);
-      printf("IDEAL COMPLEX TRANSMISSION = %g\n", -(1.0-peak)/peak);
-
-      //      save_fl_fits("pr2","!pr2.tmp.fits");
-      // save_fl_fits("pi2","!pi2.tmp.fits");
-  
-      //      printf("peak = %f\n",peak);
-
-
-      for(ii=0;ii<size2;ii++)
-	if(data.image[IDpupa0].array.F[ii] > 0.01)
-	  {
-	    data.image[IDprolr].array.F[ii] = 1.0*data.image[IDr].array.F[ii];
-	    data.image[IDproli].array.F[ii] = 1.0*data.image[IDi].array.F[ii];
-	  }
-
-      //      for(ii=0;ii<size2;ii++)
-      //	data.image[IDprol].array.F[ii] = data.image[IDprolr].array.F[ii];
-      for(ii=1;ii<size-1;ii++)
-	for(jj=1;jj<size-1;jj++)
-	  {
-	    ii1 = jj*size+ii;
-	    data.image[IDprol].array.F[jj*size+ii] = sqrt(data.image[IDprolr].array.F[ii1]*data.image[IDprolr].array.F[ii1]+data.image[IDproli].array.F[ii1]*data.image[IDproli].array.F[ii1]);
-	    data.image[IDprolp].array.F[jj*size+ii] = -atan2(data.image[IDproli].array.F[ii1],data.image[IDprolr].array.F[ii1]);
-	  }
-
-      peak = 0.0;
-      for(ii=0;ii<size2;ii++)
-	if(data.image[IDpupa0].array.F[ii] > 0.01)
-	  if(fabs(data.image[IDprol].array.F[ii])>fabs(peak))
-	    peak = data.image[IDprol].array.F[ii];
-
-      //      printf("peak = %f\n",peak);
-      for(ii=0;ii<size2;ii++)
-	{
-	  if(data.image[IDpupa0].array.F[ii] > 0.001)
-	    data.image[IDprol].array.F[ii] /= peak;
-	  else
-	    data.image[IDprol].array.F[ii] = 0.0;
-	}
-
-
-      if (0) // TEST
-	{
-	  mk_amph_from_complex("pc1","pc1_a","pc1_p");
-	  save_fl_fits("pc1_a", "!pc1_a.1.fits");
-	  save_fl_fits("pc1_p", "!pc1_p.1.fits");
-	  save_fl_fits("pr2", "!pr2.1.fits");
-	  save_fl_fits("pi2", "!pi2.1.fits");
-	  delete_image_ID("pc1_a");
-	  delete_image_ID("pc1_p");
-	  save_fl_fits(outname, "!proltmp.1.fits");
-	}
-
-
-      delete_image_ID("pc1");
-      delete_image_ID("fc1");
-      delete_image_ID("fa1");
-      delete_image_ID("fp1");
-      delete_image_ID("fa1m");
-      delete_image_ID("fc2");
-      delete_image_ID("pc2");
-      delete_image_ID("pr2");
-      delete_image_ID("pi2");
+        IDpupa0 = make_disk("pupa0", size, size, size/2, size/2, beamradpix);
+        if(CentralObstructionFlag == 1)
+        {
+            IDpupa0co = make_disk("pupa0co", size, size, size/2, size/2, beamradpix*centralObs);
+            for(ii=0; ii<size*size; ii++)
+                data.image[IDpupa0].array.F[ii] -= data.image[IDpupa0co].array.F[ii];
+            delete_image_ID("pupa0co");
+        }
     }
 
-  for(ii=0;ii<size2;ii++)
-    data.image[IDfpmask].array.F[ii] = 1.0-data.image[IDfpmask].array.F[ii]*(1.0+(1.0-peak)/peak);
-   
 
-  //  save_fl_fits("FPmask","!FPmask.fits");
-
-  delete_image_ID("FPmask");
-  delete_image_ID("pupp0");
-  delete_image_ID("pupa0");
-  delete_image_ID("pupa0m");
-
-  delete_image_ID("proli");
-  delete_image_ID("prolr");
-  delete_image_ID("prolp");
-  delete_image_ID("pupp0m");
+    total0 = 0.0;
+    for(ii=0; ii<size2; ii++)
+    {
+        v1 = data.image[IDpupa0].array.F[ii];
+        total0 += v1*v1;
+    }
 
 
-  return(transm);
+    //
+    // INITIALIZE PROLATE
+    //
+    // IDprol : prolate
+    //
+
+    // total0 = arith_image_total("pupa0");
+    IDpupa0m = create_2Dimage_ID("pupa0m",size,size);
+    IDpupp0m = create_2Dimage_ID("pupp0m",size,size);
+
+    IDprol = create_2Dimage_ID(outname,size,size);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            if(data.image[IDpupa0].array.F[jj*size+ii] > 0.01)
+            {
+                x = 1.0*ii-size/2;
+                y = 1.0*jj-size/2;
+                r2 = (x*x+y*y)/beamradpix/beamradpix;
+                data.image[IDprolr].array.F[jj*size+ii] = exp(-r2*0.73/5.0*fpmradpix);
+                data.image[IDproli].array.F[jj*size+ii] = 0.0;
+                data.image[IDprol].array.F[jj*size+ii] = data.image[IDprolr].array.F[jj*size+ii];
+            }
+            else
+            {
+                data.image[IDprolr].array.F[jj*size+ii] = 0.0;
+                data.image[IDproli].array.F[jj*size+ii] = 0.0;
+                data.image[IDprol].array.F[jj*size+ii] = 0.0;
+            }
+        }
+
+
+    ID = image_ID("apostart");
+    if(ID!=-1)
+    {
+        for(ii=0; ii<size2; ii++)
+        {
+            data.image[IDprolr].array.F[ii] = data.image[ID].array.F[ii];
+            data.image[IDprol].array.F[ii] = data.image[ID].array.F[ii];
+        }
+    }
+    delete_image_ID("apostart");
+
+
+
+    //
+    // START LOOP
+    //
+
+    for(iter=0; iter<NBiter; iter++)
+    {
+        for(ii=0; ii<size2; ii++)
+        {
+            data.image[IDpupa0m].array.F[ii] =  data.image[IDpupa0].array.F[ii]*data.image[IDprol].array.F[ii];
+            data.image[IDpupp0m].array.F[ii] =  data.image[IDpupp0].array.F[ii]+0.0*data.image[IDprolp].array.F[ii];
+        }
+
+        mk_complex_from_amph("pupa0m","pupp0","pc1");
+        permut("pc1");
+        do2dfft("pc1","fc1");
+        permut("fc1");
+        mk_amph_from_complex("fc1","fa1","fp1");
+
+        execute_arith("fa1m=fa1*FPmask");
+
+        total = 0.0;
+        for(ii=0; ii<size2; ii++)
+            total += data.image[IDprol].array.F[ii]*data.image[IDprol].array.F[ii];
+        transm = total/total0;
+
+        ID = image_ID("fa1m");
+        total = 0.0;
+        for(ii=0; ii<size2; ii++)
+            total += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+        total /= 1.0*size2*total0;
+
+        ID = image_ID("fa1");
+        total2 = 0.0;
+        for(ii=0; ii<size2; ii++)
+            total2 += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+        total2 /= 1.0*size2*total0;
+
+        printf("%ld/%ld   FPmask throughput = %g    prolate throughput = %.18g\n",iter,NBiter,(double) (total/total2),(double) transm);
+
+        ID = image_ID("fp1");
+        //      for(ii=0;ii<size2;ii++)
+        //	data.image[ID].array.F[ii] = 0.0;
+
+        mk_complex_from_amph("fa1m","fp1","fc2");
+        permut("fc2");
+        do2dfft("fc2","pc2");
+        permut("pc2");
+
+
+
+        mk_reim_from_complex("pc2","pr2","pi2");
+
+        IDr = image_ID("pr2");
+        copy_image_ID("pr2", "pr2cp", 0);
+        IDrcp = image_ID("pr2cp");
+        for(ii=0; ii<size; ii++)
+            for(jj=0; jj<size; jj++)
+                data.image[IDr].array.F[jj*size+ii] = 0.0;
+
+        for(ii=1; ii<size; ii++)
+            for(jj=1; jj<size; jj++)
+                data.image[IDr].array.F[jj*size+ii] = data.image[IDrcp].array.F[(size-jj)*size+(size-ii)]/size2;
+        peak = data.image[IDr].array.F[(size/2)*size+size/2];
+        delete_image_ID("pr2cp");
+
+        IDi = image_ID("pi2");
+        copy_image_ID("pi2", "pi2cp", 0);
+        IDicp = image_ID("pi2cp");
+        for(ii=0; ii<size; ii++)
+            for(jj=0; jj<size; jj++)
+                data.image[IDi].array.F[jj*size+ii] = 0.0;
+
+        for(ii=1; ii<size; ii++)
+            for(jj=1; jj<size; jj++)
+                data.image[IDi].array.F[jj*size+ii] = data.image[IDicp].array.F[(size-jj)*size+(size-ii)]/size2;
+
+        printf("PEAK =  %f ", peak);
+        peak = 0.0;
+        for(ii=0; ii<size2; ii++)
+            if(data.image[IDpupa0].array.F[ii] > 0.01)
+                if(fabs(data.image[IDr].array.F[ii])>fabs(peak))
+                    peak = data.image[IDr].array.F[ii];
+        printf(" %f\n", peak);
+
+
+
+        // write info file
+        // col 1 is mask size in SYSTEM l/D
+        // col 2 is fraction of light going through FPmask
+        // col 3 is prolate throughput if not done by PIAA
+        // col 4 is peak
+        // ideal complex transmission for FPM is  MASKCAMULT = -(1.0-peak)/peak;
+        printf("------- MASK SIZE = %f l/D ------\n", MASKSIZELD);
+        sprintf(fname, "%s/APLCapo.%.3f.%.3f.info", data.SAVEDIR, MASKSIZELD, centralObs);
+        fp = fopen(fname, "w");
+        fprintf(fp,"%f %.18f %.18f %.18f %.18f\n", MASKSIZELD, (double) (total/total2), (double) transm, peak, centralObs);
+        fclose(fp);
+        printf("IDEAL COMPLEX TRANSMISSION = %g\n", -(1.0-peak)/peak);
+
+        //      save_fl_fits("pr2","!pr2.tmp.fits");
+        // save_fl_fits("pi2","!pi2.tmp.fits");
+
+        //      printf("peak = %f\n",peak);
+
+
+        for(ii=0; ii<size2; ii++)
+            if(data.image[IDpupa0].array.F[ii] > 0.01)
+            {
+                data.image[IDprolr].array.F[ii] = 1.0*data.image[IDr].array.F[ii];
+                data.image[IDproli].array.F[ii] = 1.0*data.image[IDi].array.F[ii];
+            }
+
+        //      for(ii=0;ii<size2;ii++)
+        //	data.image[IDprol].array.F[ii] = data.image[IDprolr].array.F[ii];
+        for(ii=1; ii<size-1; ii++)
+            for(jj=1; jj<size-1; jj++)
+            {
+                ii1 = jj*size+ii;
+                data.image[IDprol].array.F[jj*size+ii] = sqrt(data.image[IDprolr].array.F[ii1]*data.image[IDprolr].array.F[ii1]+data.image[IDproli].array.F[ii1]*data.image[IDproli].array.F[ii1]);
+                data.image[IDprolp].array.F[jj*size+ii] = -atan2(data.image[IDproli].array.F[ii1],data.image[IDprolr].array.F[ii1]);
+            }
+
+        peak = 0.0;
+        for(ii=0; ii<size2; ii++)
+            if(data.image[IDpupa0].array.F[ii] > 0.01)
+                if(fabs(data.image[IDprol].array.F[ii])>fabs(peak))
+                    peak = data.image[IDprol].array.F[ii];
+
+        //      printf("peak = %f\n",peak);
+        for(ii=0; ii<size2; ii++)
+        {
+            if(data.image[IDpupa0].array.F[ii] > 0.001)
+                data.image[IDprol].array.F[ii] /= peak;
+            else
+                data.image[IDprol].array.F[ii] = 0.0;
+        }
+
+
+        if (0) // TEST
+        {
+            mk_amph_from_complex("pc1","pc1_a","pc1_p");
+            save_fl_fits("pc1_a", "!pc1_a.1.fits");
+            save_fl_fits("pc1_p", "!pc1_p.1.fits");
+            save_fl_fits("pr2", "!pr2.1.fits");
+            save_fl_fits("pi2", "!pi2.1.fits");
+            delete_image_ID("pc1_a");
+            delete_image_ID("pc1_p");
+            save_fl_fits(outname, "!proltmp.1.fits");
+        }
+
+
+        delete_image_ID("pc1");
+        delete_image_ID("fc1");
+        delete_image_ID("fa1");
+        delete_image_ID("fp1");
+        delete_image_ID("fa1m");
+        delete_image_ID("fc2");
+        delete_image_ID("pc2");
+        delete_image_ID("pr2");
+        delete_image_ID("pi2");
+    }
+
+    for(ii=0; ii<size2; ii++)
+        data.image[IDfpmask].array.F[ii] = 1.0-data.image[IDfpmask].array.F[ii]*(1.0+(1.0-peak)/peak);
+
+
+    //  save_fl_fits("FPmask","!FPmask.fits");
+
+    delete_image_ID("FPmask");
+    delete_image_ID("pupp0");
+    delete_image_ID("pupa0");
+    delete_image_ID("pupa0m");
+
+    delete_image_ID("proli");
+    delete_image_ID("prolr");
+    delete_image_ID("prolp");
+    delete_image_ID("pupp0m");
+
+
+    return(transm);
 }
+
 
 
 //
@@ -1095,7 +1096,7 @@ int coronagraph_make_2Dprolate_CS(double masksize, double beamradpix, char *outn
   long size = CORONAGRAPHS_ARRAYSIZE;
   long IDout;
 
-  copy_image_ID("pupaCS", "pupa0");
+  copy_image_ID("pupaCS", "pupa0", 0);
   coronagraph_make_2Dprolate_DFT(masksize, beamradpix, 0.0, "outapo", size);
   IDout = image_ID("outapo");
   list_image_ID();
@@ -5831,8 +5832,8 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
   
   if(PIAALOWFS==1)
     {
-      copy_image_ID("pc3","pc3p");
-      copy_image_ID("pc3","pc3m");
+      copy_image_ID("pc3", "pc3p", 0);
+      copy_image_ID("pc3", "pc3m", 0);
       IDp = image_ID("pc3p");
       IDm = image_ID("pc3m");
       ID = image_ID("pc3");
@@ -6039,7 +6040,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
 
   mk_amph_from_complex("pc3","pa3","pp3");
   /*save_fl_fits("pa3","!pa3");*/
-  copy_image_ID("pp3","pp3b");
+  copy_image_ID("pp3", "pp3b", 0);
   IDb = image_ID("pp3b");
   for(ii=0;ii<size*size;ii++)
     {
@@ -6049,7 +6050,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
 	tmp1 -= 2.0*PI;
       data.image[IDb].array.F[ii] = tmp1;
     }
-  copy_image_ID("pp3","pp3c");
+  copy_image_ID("pp3", "pp3c", 0);
   IDc = image_ID("pp3c");
   for(ii=0;ii<size*size;ii++)
     {
@@ -7266,7 +7267,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
       if(WriteFiles==1)
 	save_fl_fits("pa3","!pa3.fits");
       
-      copy_image_ID("pp3","pp3b");
+      copy_image_ID("pp3", "pp3b", 0);
       IDb = image_ID("pp3b");
       for(ii=0;ii<size*size;ii++)
 	{
@@ -7276,7 +7277,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 	    tmp1 -= 2.0*PI;
 	  data.image[IDb].array.F[ii] = tmp1;
 	}
-      copy_image_ID("pp3","pp3c");
+      copy_image_ID("pp3", "pp3c", 0);
       IDc = image_ID("pp3c");
       for(ii=0;ii<size*size;ii++)
 	{

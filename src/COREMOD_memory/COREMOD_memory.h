@@ -103,7 +103,7 @@ long create_3Dimage_ID_double(char *ID_name, long xsize, long ysize, long zsize)
 
 long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize);
 
-long copy_image_ID(char *name, char *newname);
+long copy_image_ID(char *name, char *newname, int shared);
 
 long create_variable_ID(char *name, double value);
 

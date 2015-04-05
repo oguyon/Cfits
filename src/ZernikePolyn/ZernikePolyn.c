@@ -664,7 +664,7 @@ int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
   long ID;
   long SIZE;
 
-  copy_image_ID(ID_name,ID_name_out);
+  copy_image_ID(ID_name, ID_name_out, 0);
   ID = image_ID(ID_name);
   SIZE = data.image[ID].md[0].size[0];
   for(i=0;i<max_zer;i++)
@@ -674,7 +674,7 @@ int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius)
       arith_image_cstmult_inplace("zer_tmp",coeff);
       arith_image_add(ID_name_out,"zer_tmp","tmp");
       delete_image_ID(ID_name_out);
-      copy_image_ID("tmp",ID_name_out);
+      copy_image_ID("tmp", ID_name_out, 0);
       delete_image_ID("tmp");
       delete_image_ID("zer_tmp");
     }
@@ -689,7 +689,7 @@ int remove_TTF(char *ID_name, char *ID_name_out, double radius)
   long SIZE;
 
   //  printf("-- %s  --- %s --\n",ID_name,ID_name_out);
-  copy_image_ID(ID_name,ID_name_out);
+  copy_image_ID(ID_name, ID_name_out, 0);
   ID = image_ID(ID_name);
   SIZE = data.image[ID].md[0].size[0];
   make_disk("disktmpttf",SIZE,SIZE,0.5*SIZE,0.5*SIZE,radius);
@@ -709,7 +709,7 @@ int remove_TTF(char *ID_name, char *ID_name_out, double radius)
 	  //	  basic_add(ID_name_out,"zer_tmpu","tmp",0,0);
 	  arith_image_add(ID_name_out,"zer_tmpu","tmp");
 	  delete_image_ID(ID_name_out);
-	  copy_image_ID("tmp",ID_name_out);
+	  copy_image_ID("tmp", ID_name_out, 0);
 	  delete_image_ID("tmp");
 	  delete_image_ID("zer_tmp");
 	  delete_image_ID("zer_tmpu");
@@ -739,7 +739,7 @@ double fit_zer(char *ID_name, long maxzer_nb, double radius, double *zvalue, dou
   NBpass = 10;
 
   ID0 = image_ID(ID_name);
-  copy_image_ID(ID_name,"resid");  
+  copy_image_ID(ID_name, "resid", 0);  
 
   ID = image_ID("resid");
   SIZE = data.image[ID].md[0].size[0];

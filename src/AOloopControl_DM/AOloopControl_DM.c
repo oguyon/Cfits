@@ -1005,7 +1005,7 @@ int AOloopControl_DM_turb()
         else
             coeff *= 1.001;
 
-        copy_image_ID("turbs", "dmdisp1");
+        copy_image_ID("turbs", "dmdisp1", 0);
         save_fits("turbs", "!turbs.fits");
         save_fits("turbs1", "!turbs1.fits");
    }

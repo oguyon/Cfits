@@ -151,50 +151,51 @@ double fast_poisson(double mu){
 
 // better_poisson seems to give a very weird value every once in a while
 // probability this happens is ~1e-8 to 1e-9
-double better_poisson(double mu){
-  /* a better poisson distribution generator... see num. rec. section 7.3. */
-  double logmu;
-  double inv_randmax;
-  double sq,em,g,y,t;
-  
-  inv_randmax = 1.0/RAND_MAX;
+double better_poisson(double mu) {
+    /* a better poisson distribution generator... see num. rec. section 7.3. */
+    double logmu;
+    double inv_randmax;
+    double sq,em,g,y,t;
 
-  em = 0;
-  if(mu<100)
-    em = (double) poisson(mu);
-  else
+    inv_randmax = 1.0/RAND_MAX;
+
+    em = 0;
+    if(mu<100)
+        em = (double) poisson(mu);
+    else
     {
-      sq = sqrt(2*mu);
-      logmu = log(mu);
-      g = mu*logmu-cfits_gammaln(mu+1);
-  
+        sq = sqrt(2*mu);
+        logmu = log(mu);
+        g = mu*logmu-cfits_gammaln(mu+1);
 
-      y = tan(PI*(inv_randmax*rand()));
-      em = sq*y+mu;
-      while(em<0)
-	{
-	  y = tan(PI*(inv_randmax*rand()));
-	  em = sq*y+mu;
-	}
-      em = (int) em;
-      t = 0.9*(1+y*y)*exp(em*logmu-cfits_gammaln(em+1)-g);
 
-      while ( (inv_randmax*rand()) > t)
-	{
-	  y = tan(PI*(inv_randmax*rand()));
-	  em = sq*y+mu;
-	  while(em<0)
-	    {
-	      y = tan(PI*(inv_randmax*rand()));
-	      em = sq*y+mu;
-	    }
-	  em = (long) em;
-	  t = 0.9*(1+y*y)*exp(em*logmu-cfits_gammaln(em+1)-g);
-	}
+        y = tan(PI*(inv_randmax*rand()));
+        em = sq*y+mu;
+        while(em<0)
+        {
+            y = tan(PI*(inv_randmax*rand()));
+            em = sq*y+mu;
+        }
+        em = (int) em;
+        t = 0.9*(1+y*y)*exp(em*logmu-cfits_gammaln(em+1)-g);
+
+        while ( (inv_randmax*rand()) > t)
+        {
+            y = tan(PI*(inv_randmax*rand()));
+            em = sq*y+mu;
+            while(em<0)
+            {
+                y = tan(PI*(inv_randmax*rand()));
+                em = sq*y+mu;
+            }
+            em = (long) em;
+            t = 0.9*(1+y*y)*exp(em*logmu-cfits_gammaln(em+1)-g);
+        }
     }
- 
-  return(1.0*em);  
+
+    return(1.0*em);
 }
+
 
 int put_poisson_noise(char *ID_in_name, char *ID_out_name)
 {
@@ -211,7 +212,7 @@ int put_poisson_noise(char *ID_in_name, char *ID_out_name)
   for(i=0;i<naxis;i++)
     nelements*=data.image[ID_in].md[0].size[i];
 
-  copy_image_ID(ID_in_name,ID_out_name);
+  copy_image_ID(ID_in_name, ID_out_name, 0);
 
   ID_out = image_ID(ID_out_name);
   //  srand(time(NULL));

@@ -74,45 +74,46 @@ int init_image_filter()
 
 int median_filter(char *ID_name, char *out_name, int filter_size)
 {
-  long ID,ID_out;
-  float *array;
-  long ii,jj;
-  long naxes[2];
-  int i,j;
+    long ID,ID_out;
+    float *array;
+    long ii,jj;
+    long naxes[2];
+    int i,j;
 
-  /*  printf("Median filter...");
-      fflush(stdout);*/
-  save_fl_fits(ID_name,"!mf_in.fits");
+    /*  printf("Median filter...");
+        fflush(stdout);*/
+    save_fl_fits(ID_name,"!mf_in.fits");
 
-  array = (float*) malloc((2*filter_size+1)*(2*filter_size+1)*sizeof(float));
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  printf("name = %s, ID = %ld, Size = %ld %ld (%d)\n",ID_name,ID,naxes[0],naxes[1],filter_size);
-  fflush(stdout);
-  copy_image_ID(ID_name,out_name);
-  ID_out = image_ID(out_name);
+    array = (float*) malloc((2*filter_size+1)*(2*filter_size+1)*sizeof(float));
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    printf("name = %s, ID = %ld, Size = %ld %ld (%d)\n",ID_name,ID,naxes[0],naxes[1],filter_size);
+    fflush(stdout);
+    copy_image_ID(ID_name, out_name, 0);
+    ID_out = image_ID(out_name);
 
-  for (jj = filter_size; jj < naxes[1]-filter_size; jj++) 
-    for (ii = filter_size; ii < naxes[0]-filter_size; ii++)
-      {
-	for (i=0;i<(2*filter_size+1);i++)
-	  for (j=0;j<(2*filter_size+1);j++)
-	    {
-	      array[i*(2*filter_size+1)+j] = data.image[ID].array.F[(jj-filter_size+j)*naxes[0]+(ii-filter_size+i)];
-	    }
-	quick_sort_float(array,(2*filter_size+1)*(2*filter_size+1));
-	data.image[ID_out].array.F[jj*naxes[0]+ii] = array[((2*filter_size+1)*(2*filter_size+1)-1)/2];
-      }
-  free(array);
+    for (jj = filter_size; jj < naxes[1]-filter_size; jj++)
+        for (ii = filter_size; ii < naxes[0]-filter_size; ii++)
+        {
+            for (i=0; i<(2*filter_size+1); i++)
+                for (j=0; j<(2*filter_size+1); j++)
+                {
+                    array[i*(2*filter_size+1)+j] = data.image[ID].array.F[(jj-filter_size+j)*naxes[0]+(ii-filter_size+i)];
+                }
+            quick_sort_float(array,(2*filter_size+1)*(2*filter_size+1));
+            data.image[ID_out].array.F[jj*naxes[0]+ii] = array[((2*filter_size+1)*(2*filter_size+1)-1)/2];
+        }
+    free(array);
 
-  save_fl_fits(out_name,"!mf_out.fits");
+    save_fl_fits(out_name,"!mf_out.fits");
 
-  /*  printf("Done\n");
-      fflush(stdout);*/
+    /*  printf("Done\n");
+        fflush(stdout);*/
 
-  return(0);
+    return(0);
 }
+
 
 
 long FILTER_percentile_interpol_fast(char *ID_name, char *IDout_name, double perc, long boxrad)
@@ -402,10 +403,10 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 
     if(naxis==2)
         naxes[2] = 1;
-    copy_image_ID(ID_name,out_name);
+    copy_image_ID(ID_name, out_name, 0);
     arith_image_zero(out_name);
     ID_tmp = create_2Dimage_ID("gtmp", naxes[0], naxes[1]);
-    //  copy_image_ID(ID_name,"gtmp");
+    //  copy_image_ID(ID_name,"gtmp", 0);
     // arith_image_zero("gtmp");
     // save_fl_fits("gtmp","!gtmp0");
     // ID_tmp = image_ID("gtmp");
@@ -522,11 +523,11 @@ int gauss_3Dfilter(char *ID_name, char *out_name, float sigma, int filter_size)
   naxes[1] = data.image[ID].md[0].size[1]; 
   naxes[2] = data.image[ID].md[0].size[2]; 
 
-  copy_image_ID(ID_name,out_name);
+  copy_image_ID(ID_name, out_name, 0);
   arith_image_zero(out_name);
-  copy_image_ID(ID_name,"gtmp");
+  copy_image_ID(ID_name, "gtmp", 0);
   arith_image_zero("gtmp");
-  copy_image_ID("gtmp","gtmp1");
+  copy_image_ID("gtmp", "gtmp1", 0);
   ID_tmp = image_ID("gtmp");
   ID_tmp1 = image_ID("gtmp1");  
   ID_out = image_ID(out_name);  

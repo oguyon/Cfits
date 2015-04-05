@@ -4648,7 +4648,7 @@ int AOcompute(long loop)
         sizearray = (long*) malloc(sizeof(long)*2);
         sizearray[0] = data.image[aoconfID_contrMc_active].md[0].size[0];
         sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1];
-        sprintf(imname, "aol%d_cmatca", loop);
+        sprintf(imname, "aol%ld_cmatca", loop);
         IDcmatca_shm = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
         free(sizearray);
         memcpy(data.image[IDcmatca_shm].array.F, data.image[aoconfID_contrMc_active].array.F, sizeof(float)*data.image[aoconfID_contrMc_active].md[0].size[0]*data.image[aoconfID_contrMc_active].md[0].size[1]);

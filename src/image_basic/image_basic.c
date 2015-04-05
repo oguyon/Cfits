@@ -1386,7 +1386,7 @@ int basic_rotate2(char *ID_name_in, char *ID_name_out, float angle)
     {
       basic_rotate90(ID_name_in,"tmprot");
       delete_image_ID(ID_name_in);
-      copy_image_ID("tmprot",ID_name_in);
+      copy_image_ID("tmprot", ID_name_in, 0);
       delete_image_ID("tmprot");
       rotangle -= M_PI/2.0;
     }
@@ -2307,7 +2307,7 @@ long basic_addimagesfiles(char *strfilter, char *outname)
         if(init==0)
         {
             init = 1;
-            copy_image_ID(data.image[ID].md[0].name,outname);
+            copy_image_ID(data.image[ID].md[0].name, outname, 0);
         }
         else
         {
@@ -2369,7 +2369,7 @@ long basic_addimages(char *prefix, char *ID_out)
 	      {
 		init = 1;
 		nelements = data.image[i].md[0].nelement;
-		copy_image_ID(data.image[i].md[0].name, ID_out);		
+		copy_image_ID(data.image[i].md[0].name, ID_out, 0);		
 	      }
 	    else
 	      arith_image_add_inplace(ID_out,data.image[i].md[0].name);

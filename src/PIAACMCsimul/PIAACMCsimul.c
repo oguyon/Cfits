@@ -2691,7 +2691,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             PIAACMCsimul_makePIAAshapes();
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp0");
-            copy_image_ID("psfi0", "psfi0ext");
+            copy_image_ID("psfi0", "psfi0ext", 0);
 
             pha = 2.0*M_PI/3.0;
             PIAACMCsimul_init(piaacmc, 0, xld+dld*cos(pha), yld+dld*sin(pha));

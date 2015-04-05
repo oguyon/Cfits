@@ -293,7 +293,7 @@ double WFpropagate_TestLyot(long NBmask, double *maskpos)
   // input image is imc (complex amplitude) 
   // masks are mask0, mask1 etc...
  
-  copy_image_ID("imc", "imc0");
+  copy_image_ID("imc", "imc0", 0);
   for(k=0; k<NBmask; k++)
     {
       sprintf(fname, "mask%ld", k);

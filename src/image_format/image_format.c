@@ -1087,7 +1087,7 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
 	data.image[IDbadpix].array.F[ii] = 0.0;
     }
 
-  copy_image_ID("badpix","badpix1");
+  copy_image_ID("badpix", "badpix1", 0);
   IDbp = image_ID("badpix1");
   
   // flat field

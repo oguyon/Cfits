@@ -377,10 +377,24 @@ int copy_image_ID_cli()
       return -1;
     }
   
-  copy_image_ID(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+  copy_image_ID(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, 0);
 
   return 0;
 }
+
+int copy_image_ID_sharedmem_cli()
+{
+  if(data.cmdargtoken[1].type != 4)
+    {
+      printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
+      return -1;
+    }
+  
+  copy_image_ID(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, 1);
+
+  return 0;
+}
+
 
 int chname_image_ID_cli()
 {
@@ -749,6 +763,15 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
   data.NBcmd++;
  
+  strcpy(data.cmd[data.NBcmd].key,"cpsh");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = copy_image_ID_sharedmem_cli;
+  strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
+  strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
+  strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long copy_sharedmem_image_ID(char *name, char *newname)");
+  data.NBcmd++;
+  
   strcpy(data.cmd[data.NBcmd].key,"mv");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = chname_image_ID_cli;
@@ -2217,7 +2240,8 @@ long create_3DCimage_ID(char *ID_name, long xsize, long ysize, long zsize)
 }
 
 
-long copy_image_ID(char *name, char *newname)
+
+long copy_image_ID(char *name, char *newname, int shared)
 {
     long ID, IDout;
     long naxis;
@@ -2245,7 +2269,7 @@ long copy_image_ID(char *name, char *newname)
     IDout = image_ID(newname);
     if(IDout==-1)
     {
-        create_image_ID(newname,naxis,size,atype, data.SHARED_DFT, data.NBKEWORD_DFT);
+        create_image_ID(newname,naxis,size,atype, shared, data.NBKEWORD_DFT);
         IDout = image_ID(newname);
     }
     else

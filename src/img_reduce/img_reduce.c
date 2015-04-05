@@ -219,9 +219,9 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
     sum_pix = (double*) malloc(sizeof(double)*zsize);
     pix = (double*) malloc(sizeof(double)*zsize*3*3);
 
-    copy_image_ID(IDbadpix_name,"badpix_tmp");
+    copy_image_ID(IDbadpix_name, "badpix_tmp", 0);
     IDbadpix = image_ID("badpix_tmp");
-    copy_image_ID("badpix_tmp", "newbadpix_tmp");
+    copy_image_ID("badpix_tmp", "newbadpix_tmp", 0);
     IDbadpix1 = image_ID("newbadpix_tmp");
 
     //    copy_image_ID(IDin_name, "bpcleaned_tmp");

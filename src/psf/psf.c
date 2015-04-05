@@ -604,7 +604,7 @@ int center_PSF_alone(char *ID_name)
   box_size = naxes[0]/3 - 1;
 
   /*remove_cosmics(ID_name,"tmpcen");*/
-  copy_image_ID(ID_name,"tmpcen");
+  copy_image_ID(ID_name, "tmpcen", 0);
 
   arith_image_trunc("tmpcen",img_percentile("tmpcen",0.99),img_percentile("tmpcen",1.0),"tmpcen1");
   delete_image_ID("tmpcen");
@@ -896,7 +896,7 @@ float get_sigma_alone(char *ID_name)
   box_size = xcenter[0]/2-1;
 
   /*  remove_cosmics(ID_name,"tmpcen");*/
-  copy_image_ID(ID_name,"tmpcen");
+  copy_image_ID(ID_name, "tmpcen", 0);
 
   if(FAST==0)
     {
@@ -942,7 +942,7 @@ int extract_psf(char *ID_name, char *out_name, long size)
   ycenter[0] = naxes[1]/2;
   box_size = naxes[0]/2 - 1;
   /*remove_cosmics(ID_name,"tmpcen");*/
-  copy_image_ID(ID_name,"tmpcen");
+  copy_image_ID(ID_name, "tmpcen", 0);
   arith_image_trunc("tmpcen",img_percentile("tmpcen",0.99),img_percentile("tmpcen",1.0),"tmpcen1");
   delete_image_ID("tmpcen");
   center_PSF("tmpcen1",xcenter,ycenter,box_size);  
@@ -1151,7 +1151,7 @@ float psf_measure_SR(char *ID_name, float factor, float r1, float r2)
   box_size = naxes[0]/3 - 1;
 
   /*remove_cosmics(ID_name,"tmpcen");*/
-  copy_image_ID(ID_name,"tmpcen");
+  copy_image_ID(ID_name, "tmpcen", 0);
   background = img_percentile("tmpcen",0.5);
   
   arith_image_trunc("tmpcen",img_percentile("tmpcen",0.99),img_percentile("tmpcen",1.0),"tmpcen1");

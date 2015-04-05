@@ -1015,10 +1015,10 @@ int do2dfft(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpyname_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, -1, FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1042,10 +1042,10 @@ int do2dfft(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpyname_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],-1, FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1117,10 +1117,10 @@ int do2dffti(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpyname_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, 1,FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1141,10 +1141,10 @@ int do2dffti(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpyname_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],1,FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1292,10 +1292,10 @@ int do2drfft(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpy_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_dft_r2c_2d(naxes[1],naxes[0],data.image[IDin].array.F,(fftwf_complex*) data.image[IDtmp].array.CF,FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1338,10 +1338,10 @@ int do2drfft(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpy_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_many_dft_r2c(2,naxes,naxes[2],data.image[IDin].array.F,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1416,10 +1416,10 @@ int do2drffti(char *in_name, char *out_name)
             fflush(stdout);
 
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpy_%d",(int) getpid());
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_dft_r2c_2d(naxes[1],naxes[0],data.image[IDin].array.F,(fftwf_complex*) data.image[IDout].array.CF,FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");
@@ -1449,10 +1449,10 @@ int do2drffti(char *in_name, char *out_name)
             n = snprintf(ffttmpcpyname,SBUFFERSIZE,"_ffttmpcpy_%d",(int) getpid());
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            copy_image_ID(in_name,ffttmpcpyname);
+            copy_image_ID(in_name, ffttmpcpyname, 0);
 
             plan = fftwf_plan_many_dft_r2c(2,naxes,naxes[2],data.image[IDin].array.F,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],FFTWOPTMODE);
-            copy_image_ID(ffttmpcpyname,in_name);
+            copy_image_ID(ffttmpcpyname, in_name, 0);
             delete_image_ID(ffttmpcpyname);
             export_wisdom();
             fprintf(stdout,"\n");

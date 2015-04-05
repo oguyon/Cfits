@@ -261,8 +261,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         }
         else
         {
-            copy_image_ID(imnameamp_in, imnameamp_out);
-            copy_image_ID(imnamepha_in, imnamepha_out);
+            copy_image_ID(imnameamp_in, imnameamp_out, 0);
+            copy_image_ID(imnamepha_in, imnamepha_out, 0);
         }
         IDa = image_ID(imnameamp_out);
         IDp = image_ID(imnamepha_out);
