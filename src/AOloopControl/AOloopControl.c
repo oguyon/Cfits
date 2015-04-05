@@ -4447,7 +4447,7 @@ int AOcompute(long loop)
     long IDmask;
     long act_active, wfselem_active;
     float *matrix_Mc_active;
-
+    long IDcmatca_shm;
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
@@ -4642,6 +4642,13 @@ int AOcompute(long loop)
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         printf("\n");
         printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);
+        
+        sizearray = (long*) malloc(sizeof(long)*2);
+        sizearray[0] = data.image[aoconfID_contrMc_active].md[0].size[0];
+        sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1];
+        IDcmatca_shm = create_image_ID("aol%d_cmatca", 2, sizearray, FLOAT, 1, 0);
+        free(sizearray);
+        memcpy(data.image[IDcmatca_shm].array.F, data.image[aoconfID_contrMc_active].array.F, sizeof(float)*data.image[aoconfID_contrMc_active].md[0].size[0]*data.image[aoconfID_contrMc_active].md[0].size[1]);
     }
 
 
@@ -4846,12 +4853,12 @@ int AOloopControl_run()
 
                 AOconf[loop].status = 14;
 
-                if(MATRIX_COMPUTATION_MODE==0)
+                if(MATRIX_COMPUTATION_MODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
                     if(fabs(AOconf[loop].gain)>1.0e-6)
                         set_DM_modes(loop);
                 }
-                else
+                else // 1 step: WFS -> DM act
                 {
                     data.image[aoconfID_DM].md[0].write = 1;
 
