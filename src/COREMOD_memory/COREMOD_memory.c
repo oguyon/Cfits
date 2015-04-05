@@ -2249,7 +2249,8 @@ long copy_image_ID(char *name, char *newname, int shared)
     int atype;
     long nelement;
     long i;
-
+    int newim = 0;
+    
     ID = image_ID(name);
     naxis = data.image[ID].md[0].naxis;
 
@@ -2267,6 +2268,31 @@ long copy_image_ID(char *name, char *newname, int shared)
     nelement = data.image[ID].md[0].nelement;
 
     IDout = image_ID(newname);
+    
+    if(IDout!=-1)
+    {
+        // verify newname has the right size and type
+        if(data.image[ID].md[0].nelement != data.image[IDout].md[0].nelement)
+        {
+            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same size -> deleting and re-creating image\n",name,newname);
+            newim = 1;
+        }
+        if(data.image[ID].md[0].atype!=data.image[IDout].md[0].atype)
+        {
+            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same type -> deleting and re-creating image\n",name,newname);
+            newim = 1;
+        }
+        
+        if(newim == 1)
+            {
+                delete_image_ID(newname);
+                IDout = -1;
+            }
+        }
+    
+    
+    
+    
     if(IDout==-1)
     {
         create_image_ID(newname,naxis,size,atype, shared, data.NBKEWORD_DFT);
