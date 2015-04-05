@@ -4533,8 +4533,8 @@ int AOcompute(long loop)
 
 
         aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
-        printf("AOconf[loop].sizeDM_active = %ld\n", AOconf[loop].sizeDM_active);
-        exit(0);
+       // printf("AOconf[loop].sizeDM_active = %ld\n", AOconf[loop].sizeDM_active);
+       // exit(0);
 
         aoconfID_contrMc = image_ID("cmatc");
         aoconfID_contrMc_active = image_ID("cmatcact");
