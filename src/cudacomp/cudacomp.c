@@ -240,7 +240,7 @@ int GPUloadCmat(int index)
     ID = create_2Dimage_ID("mgputest", gpumatmultconf[index].N, gpumatmultconf[index].M);
     for(n=0;n<gpumatmultconf[index].N;n++)
         for(m=0;m<gpumatmultconf[index].M;m++)
-            data.image[ID].array.F[n*gpumatmultconf[index].M+m] = gpumatmultconf[index].cMat[m*gpumatmultconf[index].N+n];
+            data.image[ID].array.F[m*gpumatmultconf[index].N+n] = gpumatmultconf[index].cMat[m*gpumatmultconf[index].N+n];
     save_fits("mgputest","!MgpuTest.fits");
     delete_image_ID("mgputest");
     
