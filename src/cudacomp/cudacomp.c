@@ -230,10 +230,20 @@ int GPUloadCmat(int index)
 {
     int device;
     int n, m;
-
+    long ID;
+    
+    
     printf("LOADING MATRIX TO GPU ... ");
     fflush(stdout);
 
+    // TEST
+    ID = create_2Dimage_ID("mgputest", gpumatmultconf[index].N, gpumatmultconf[index].M);
+    for(n=0;n<gpumatmultconf[index].N;n++)
+        for(m=0;m<gpumatmultconf[index].M;m++)
+            data.image[ID].array.F[n*gpumatmultconf[index].M+m] = gpumatmultconf[index].cMat[m*gpumatmultconf[index].N+n];
+    save_fits("mgputest","!MgpuTest");
+    delete_image_ID("mgputest");
+    
 
     for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
     {
