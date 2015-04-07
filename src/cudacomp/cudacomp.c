@@ -923,7 +923,7 @@ void *compute_function( void *ptr )
 
            sprintf(imname, "test_wfsRef_part%d", device);
             IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
-            for(m=0;m<gpumatmultconf[index].Nsize[device];n++)
+            for(n=0;n<gpumatmultconf[index].Nsize[device];n++)
                 data.image[IDtest].array.F[n] = 1.0; //gpumatmultconf[index].wfsRef_part[device][n];
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
