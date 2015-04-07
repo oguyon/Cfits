@@ -2240,7 +2240,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_beta = -normfloorcoeff;
 
-    GPU_beta = 0.0; // test
+//    GPU_beta = 0.0; // test
 
  //   printf("----------- alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
   //  fflush(stdout);
