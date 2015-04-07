@@ -4458,7 +4458,7 @@ int AOcompute(long loop)
     long IDcmatca_shm;
     char imname[200];
         
-    
+    float imtot;
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
