@@ -917,8 +917,8 @@ void *compute_function( void *ptr )
 
 
         // TEST
-        printf("[%d] TEST : STORING DM ref\n", device);
-        fflush(stdout);
+     //   printf("[%d] TEST : STORING DM ref\n", device);
+     //   fflush(stdout);
                    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
@@ -980,8 +980,8 @@ void *compute_function( void *ptr )
             printf("[%d] TOTAL wfsREF = %g\n", device, imtot);
             
             // initialization: compute dm ref from wfs ref
-            printf("[%d] Compute new reference response [0/3]\n", device);
-            fflush(stdout);
+        //    printf("[%d] Compute new reference response [0/3]\n", device);
+        //    fflush(stdout);
 
             // d_wfsRef -> wfsRef_part
             stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
@@ -997,8 +997,8 @@ void *compute_function( void *ptr )
                 exit(EXIT_FAILURE);
             }
 
-            printf("[%d] Compute new reference response [1/3]\n", device);
-            fflush(stdout);
+       //     printf("[%d] Compute new reference response [1/3]\n", device);
+        //    fflush(stdout);
 
 
             sprintf(imname, "test_wfsRef_part%d", device);
@@ -1012,8 +1012,8 @@ void *compute_function( void *ptr )
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
 
-            printf("[%d] Compute new reference response [2/3]\n", device);
-            fflush(stdout);
+    //        printf("[%d] Compute new reference response [2/3]\n", device);
+     //       fflush(stdout);
 
 
             // input : gpumatmultconf[index].d_wfsRef[device]
