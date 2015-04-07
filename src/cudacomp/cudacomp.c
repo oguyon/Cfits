@@ -902,7 +902,7 @@ void *compute_function( void *ptr )
 
             printf("[%d] Compute new reference response\n", device);
             fflush(stdout);
-            
+       /*     
  
                   stat = cublasGetVector(gpumatmultconf[index].N, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)  
@@ -923,7 +923,7 @@ void *compute_function( void *ptr )
                 data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
- 
+ */
  
  
             // input : gpumatmultconf[index].d_wfsRef[device]
