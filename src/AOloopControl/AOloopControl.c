@@ -3174,7 +3174,7 @@ int set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem);
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1);
         AOconf[loop].status = 15;
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
 #endif
@@ -4449,6 +4449,10 @@ int AOcompute(long loop)
     float *matrix_Mc_active;
     long IDcmatca_shm;
     char imname[200];
+    
+    long refWFScnt0;
+    
+    
 
     // get dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
@@ -4673,7 +4677,7 @@ int AOcompute(long loop)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
-            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
             AOconf[loop].status = 8; // execute
             GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
         }
@@ -4681,7 +4685,7 @@ int AOcompute(long loop)
         {
             if(1==0)
             {
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
                 AOconf[loop].status = 8; // execute
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
             }
@@ -4704,24 +4708,28 @@ int AOcompute(long loop)
                 //printf("Vector wfs re-mapped\n");
 
                 if(COMPUTE_GPU_SCALING==1)
-                    if(initWFSref_GPU==0)
                     {
-                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];
-                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
-                        initWFSref_GPU = 1;
+                        if(data.image[aoconfID_refWFS].md[0].cnt0 != refWFScnt0)
+                            {
+                                initWFSref_GPU = 0;
+                                refWFScnt0 = data.image[aoconfID_refWFS].md[0].cnt0;
+                            }
+                        if(initWFSref_GPU==0) // initialize WFS reference
+                        {
+                            for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                                data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];
+                            data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                        }
                     }
-
 
                 // perform matrix mult
                 //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-                GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+                GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
+                initWFSref_GPU = 1;
                 AOconf[loop].status = 8; // execute
 
                 if(COMPUTE_GPU_SCALING==1)
                 {
-                    //  printf("GPU_alpha = %g\n", GPU_alpha); // TEST
-                    //  printf("GPU_beta = %f\n", GPU_beta); // TEST
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
                 }
                 else

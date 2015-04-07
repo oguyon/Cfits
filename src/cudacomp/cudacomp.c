@@ -289,11 +289,11 @@ int GPUloadCmat(int index)
  * 
  *  IDoutdmmodes_name  = alpha * IDcontrM_name x IDwfsim_name
  * 
- * upon setup, IDwfsim_name the WFS ref
+ * upon setup, IDwfsim_name is the WFS ref and initWFSref = 0
  * 
 */
 
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem)
+int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem, int initWFSref)
 {
     long IDcontrM, IDwfsim, IDwfsref;
     long *sizearraytmp;
@@ -310,13 +310,11 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     long NBiter = 100000;
     long iter = 0;
     
-    int cmatdim = 2; // 2 or 3
+    int cmatdim = 2; // 2D or 3D
     
 
-    /*	printf("SETUP : %s %s %s\n", IDcontrM_name, IDwfsim_name, IDoutdmmodes_name);
-    	fflush(stdout);*/
-    //sleep(2);
-
+    gpumatmultconf[index].refWFSinit = initWFSref;
+    
     if(gpumatmultconf[index].init == 0)
     {
 
@@ -893,6 +891,10 @@ void *compute_function( void *ptr )
         if(gpumatmultconf[index].refWFSinit == 0)
         {
             // initialization: compute dm ref from wfs ref
+
+            printf("Computer new reference response ...");
+            fflush(stdout);
+            
             cublasSgemv_alpha = 1.0;
             cublasSgemv_beta = 0.0;
             stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsRef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
@@ -910,7 +912,13 @@ void *compute_function( void *ptr )
                 exit(EXIT_FAILURE);
             }
             gpumatmultconf[index].refWFSinit = 1;
+
+
+            printf(" done\n");
+            fflush(stdout);
         }
+
+
 
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
         if (error != cudaSuccess)
@@ -1084,7 +1092,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     cmdmodessize[1] = 1;
     ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
 
-    GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS].md[0].name, data.image[ID_cmd_modes].md[0].name, GPUcnt, 0, 0);
+    GPU_loop_MultMat_setup(0, data.image[ID_contrM].md[0].name, data.image[ID_WFS].md[0].name, data.image[ID_cmd_modes].md[0].name, GPUcnt, 0, 0, 1);
 
     clock_gettime(CLOCK_REALTIME, &tnow);
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
