@@ -1105,7 +1105,7 @@ void *compute_function( void *ptr )
         imtot = 0.0;
          for(n=0;n<gpumatmultconf[index].Nsize[device];n++)
                 imtot += gpumatmultconf[index].wfsRef_part[device][n];
-        printf("[%d]      TOT WFS  ref = %g\n", device, imtot);
+        printf("[%d]   %g   TOT WFS  ref = %g\n", device, cublasSgemv_alpha, imtot);
 
 
 
