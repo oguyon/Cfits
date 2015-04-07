@@ -1086,7 +1086,7 @@ void *compute_function( void *ptr )
 
 
         // d_wfsRef -> wfsRef_part
-        stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+  /*      stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)
         {
             fprintf(stderr, "!!!! device access error (read C)\n");
@@ -1102,7 +1102,7 @@ void *compute_function( void *ptr )
         for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
             imtot += gpumatmultconf[index].wfsRef_part[device][n];
         printf("[%d]   %g   TOT WFS  ref = %g\n", device, cublasSgemv_alpha, imtot);
-
+*/
 
 
 
