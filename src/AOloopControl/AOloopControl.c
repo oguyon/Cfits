@@ -2241,7 +2241,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     GPU_beta = -normfloorcoeff;
 
 
-    printf("alpha = %g     beta = %g\n", alpha, beta);
+    printf("alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
     fflush(stdout);
 
  
