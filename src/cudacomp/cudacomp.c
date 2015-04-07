@@ -917,9 +917,22 @@ void *compute_function( void *ptr )
 
 
         // TEST
+                   stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                fprintf(stderr, "!!!! device access error (read C)\n");
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                exit(EXIT_FAILURE);
+            }
+
         imtot = 0.0;
          for(m=0;m<gpumatmultconf[index].M; m++)
-                imtot += gpumatmultconf[index].d_dmRef[device][m]*gpumatmultconf[index].d_dmRef[device][m];
+                imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
         printf("[%d] TOTAL DM ref = %g\n", device, imtot);
 
 
