@@ -935,7 +935,7 @@ void *compute_function( void *ptr )
         imtot = 0.0;
          for(m=0;m<gpumatmultconf[index].M; m++)
                 imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
-  //      printf("[%d] TOTAL DM ref = %g\n", device, imtot);
+        printf("[%d] RMS DM ref = %g\n", device, sqrt(imtot));
 
 
 
