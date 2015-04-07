@@ -923,7 +923,7 @@ void *compute_function( void *ptr )
                 data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
- */
+ 
  
  
             // input : gpumatmultconf[index].d_wfsRef[device]
