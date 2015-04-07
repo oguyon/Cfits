@@ -4726,6 +4726,10 @@ int AOcompute(long loop)
                         if(initWFSref_GPU==0) // initialize WFS reference
                         {           
                             imtot = 0.0;                 
+                            
+                            // save reference (TEST)
+                            save_fits(data.image[aoconfID_refWFS].md[0].name, "!test_reftogpu.fits");
+                            
                             for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                                 {
                                     data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];
