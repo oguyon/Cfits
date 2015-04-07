@@ -117,6 +117,8 @@ long aoconfID_WFS2_active;
 int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
 
 
+long refWFScnt0 = -1;
+
 
 
 // variables used by functions 
@@ -4449,9 +4451,7 @@ int AOcompute(long loop)
     float *matrix_Mc_active;
     long IDcmatca_shm;
     char imname[200];
-    
-    long refWFScnt0;
-    
+        
     
 
     // get dark-subtracted image
