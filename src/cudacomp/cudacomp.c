@@ -903,8 +903,8 @@ void *compute_function( void *ptr )
             printf("[%d] Compute new reference response\n", device);
             fflush(stdout);
             
- /*
-                  stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].d_dmRef[device], 1);
+ 
+                  stat = cublasGetVector(gpumatmultconf[index].N, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)  
         {
             fprintf(stderr, "!!!! device access error (read C)\n");
@@ -917,13 +917,13 @@ void *compute_function( void *ptr )
             exit(EXIT_FAILURE);
         }
 
-            sprintf(imname, "test0_dmRef_part%d", device);
-            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
-            for(m=0;m<gpumatmultconf[index].M;m++)
-                data.image[IDtest].array.F[m] = gpumatmultconf[index].dmRef_part[device][m];
-            sprintf(fname, "!test0_dmRef_part%d.fits", device);
+            sprintf(imname, "test_wfsRef_part%d", device);
+            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].N, 1);
+            for(m=0;m<gpumatmultconf[index].N;n++)
+                data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
+            sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
- */
+ 
  
  
             // input : gpumatmultconf[index].d_wfsRef[device]
