@@ -35,7 +35,7 @@ typedef struct
 typedef struct
 {
     int init; /// 1 if initialized
-    int refWFSinit; /// reference init
+    int *refWFSinit; /// reference init
     int alloc; /// 1 if memory has been allocated
     long CM_ID;
     long CM_cnt;

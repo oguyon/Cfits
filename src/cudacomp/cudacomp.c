@@ -313,8 +313,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     int cmatdim = 2; // 2D or 3D
     
 
-    gpumatmultconf[index].refWFSinit = initWFSref;
-    
+     
     if(gpumatmultconf[index].init == 0)
     {
 
@@ -513,7 +512,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].dmVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].wfsRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
 
-
+        gpumatmultconf[index].refWFSinit = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
 
 
         gpumatmultconf[index].semptr1 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
@@ -676,6 +675,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         printf("...\n");
         fflush(stdout);
     }
+    
+    for(device=0; device<gpumatmultconf[index].NBstreams; device++)
+       gpumatmultconf[index].refWFSinit[device] = initWFSref;
+
 
     return(0);
 }
@@ -816,6 +819,8 @@ int GPU_loop_MultMat_free(int index)
     free(gpumatmultconf[index].threadarray);
     free(gpumatmultconf[index].thdata);
 
+    free(gpumatmultconf[index].refWFSinit);
+
     return(0);
 }
 
@@ -888,11 +893,11 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
-        if(gpumatmultconf[index].refWFSinit == 0)
+        if(gpumatmultconf[index].refWFSinit[device] == 0)
         {
             // initialization: compute dm ref from wfs ref
 
-            printf("Computer new reference response ...");
+            printf("[%d] Compute new reference response\n", device);
             fflush(stdout);
             
             cublasSgemv_alpha = 1.0;
@@ -911,11 +916,7 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
                 exit(EXIT_FAILURE);
             }
-            gpumatmultconf[index].refWFSinit = 1;
-
-
-            printf(" done\n");
-            fflush(stdout);
+            gpumatmultconf[index].refWFSinit[device] = 1;
         }
 
 
