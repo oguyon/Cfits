@@ -904,7 +904,7 @@ void *compute_function( void *ptr )
             fflush(stdout);
         
             // d_wfsRef -> wfsRef_part
-            stat = cublasGetVector(gpumatmultconf[index].N, sizeof(float), gpumatmultconf[index].d_wfsRef[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+            stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsRef[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)  
         {
             fprintf(stderr, "!!!! device access error (read C)\n");
@@ -918,8 +918,8 @@ void *compute_function( void *ptr )
         }
 
             sprintf(imname, "test_wfsRef_part%d", device);
-            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].N, 1);
-            for(m=0;m<gpumatmultconf[index].N;n++)
+            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
+            for(m=0;m<gpumatmultconf[index].Nsize[device];n++)
                 data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
