@@ -982,8 +982,12 @@ void *compute_function( void *ptr )
 
             sprintf(imname, "test_wfsRef_part%d", device);
             IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
+             printf("[%d] Compute new reference response [1a/3]\n", device);
+            fflush(stdout);
             for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
-                data.image[IDtest].array.F[n] = 1.0; //gpumatmultconf[index].wfsRef_part[device][n];
+                data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
+             printf("[%d] Compute new reference response [1b/3]\n", device);
+            fflush(stdout);
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
 
