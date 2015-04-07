@@ -956,7 +956,7 @@ void *compute_function( void *ptr )
             imtot = 0.0;
             for(n=0;n<gpumatmultconf[index].Nsize[device]; n++)
                 imtot += ptr0f[n];
-            printf("[%d] TOTAL wfsREF = %g\n", imtot);
+            printf("[%d] TOTAL wfsREF = %g\n", device, imtot);
             
             // initialization: compute dm ref from wfs ref
             printf("[%d] Compute new reference response [0/3]\n", device);
