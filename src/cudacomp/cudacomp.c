@@ -935,7 +935,7 @@ void *compute_function( void *ptr )
         imtot = 0.0;
          for(m=0;m<gpumatmultconf[index].M; m++)
                 imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
-        printf("[%d] TOTAL DM ref = %g\n", device, imtot);
+  //      printf("[%d] TOTAL DM ref = %g\n", device, imtot);
 
 
 
@@ -1064,8 +1064,8 @@ void *compute_function( void *ptr )
 
 
 
-        printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
-        fflush(stdout);
+   //     printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
+    //    fflush(stdout);
 
 
 
