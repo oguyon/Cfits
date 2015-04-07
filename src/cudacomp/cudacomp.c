@@ -903,11 +903,32 @@ void *compute_function( void *ptr )
             printf("[%d] Compute new reference response\n", device);
             fflush(stdout);
             
+ /*
+                  stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].d_dmRef[device], 1);
+        if (stat != CUBLAS_STATUS_SUCCESS)  
+        {
+            fprintf(stderr, "!!!! device access error (read C)\n");
+            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+            if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+            exit(EXIT_FAILURE);
+        }
+
+            sprintf(imname, "test0_dmRef_part%d", device);
+            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
+            for(m=0;m<gpumatmultconf[index].M;m++)
+                data.image[IDtest].array.F[m] = gpumatmultconf[index].dmRef_part[device][m];
+            sprintf(fname, "!test0_dmRef_part%d.fits", device);
+            save_fits(imname, fname);
+ */
  
-        
  
- 
- 
+            // input : gpumatmultconf[index].d_wfsRef[device]
+            // ouput : gpumatmultconf[index].d_dmRef[device]
+            
             cublasSgemv_alpha = 1.0;
             cublasSgemv_beta = 0.0;
             stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsRef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
@@ -927,7 +948,7 @@ void *compute_function( void *ptr )
             gpumatmultconf[index].refWFSinit[device] = 1;
             
             
-            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
+            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)  
         {
             fprintf(stderr, "!!!! device access error (read C)\n");
