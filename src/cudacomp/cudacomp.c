@@ -870,7 +870,9 @@ void *compute_function( void *ptr )
     long long iter;
     long long itermax = 1;
     float imtot;
-
+    float alphatmp;
+    float betatmp;
+    
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -1017,7 +1019,8 @@ void *compute_function( void *ptr )
             // input : gpumatmultconf[index].d_wfsRef[device]
             // ouput : gpumatmultconf[index].d_dmRef[device]
 
-
+            alphatmp = cublasSgemv_alpha;
+            betatmp = cublasSgemv_beta;
 
             cublasSgemv_alpha = 1.0;
             cublasSgemv_beta = 0.0;
@@ -1035,7 +1038,12 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
                 exit(EXIT_FAILURE);
             }
+            cublasSgemv_alpha = alphatmp;
+            cublasSgemv_beta = betatmp;
+
             gpumatmultconf[index].refWFSinit[device] = 1;
+
+
 
             // copy d_dmRef -> dmRef_part
             stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
