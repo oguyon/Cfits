@@ -917,6 +917,8 @@ void *compute_function( void *ptr )
 
 
         // TEST
+        printf("[%d] TEST : STORING DM ref\n", device);
+        fflush(stdout);
                    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
