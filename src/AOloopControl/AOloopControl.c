@@ -4735,7 +4735,7 @@ int AOcompute(long loop)
                             
                             for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                                 {
-                                    data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];
+                                    data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[[WFS_active_map[wfselem_active]];
                                     imtot += data.image[aoconfID_refWFS].array.F[wfselem_active];
                                 }
                             data.image[aoconfID_WFS2_active].md[0].cnt0++;
