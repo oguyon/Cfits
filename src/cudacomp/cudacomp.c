@@ -907,7 +907,7 @@ void *compute_function( void *ptr )
     {
 
 
-        // copy DM reference to output to prepare computation
+        // copy DM reference to output to prepare computation:   d_dmVec <- d_dmRef
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
         if (error != cudaSuccess)
         {
@@ -1085,6 +1085,30 @@ void *compute_function( void *ptr )
             //fflush(stdout);
             sem_post(gpumatmultconf[index].semptr2[device]);
         }
+
+
+
+
+// d_wfsRef -> wfsRef_part
+          stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                fprintf(stderr, "!!!! device access error (read C)\n");
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                exit(EXIT_FAILURE);
+            }
+        imtot = 0.0;
+         for(n=0;n<gpumatmultconf[index].Nsize[device];n++)
+                imtot += gpumatmultconf[index].wfsRef_part[device][n];
+        printf("[%d]      TOT WFS  ref = %g\n", device, imtot);
+
+
+
 
 
 
