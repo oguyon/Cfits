@@ -2235,7 +2235,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     nelem = AOconf[loop].sizeWFS;
 
     totalinv=1.0/(AOconf[loop].WFStotalflux + 0.0*AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-    printf("totalinv = %f\n", totalinv);
+    printf("totalinv = %g\n", totalinv);
     fflush(stdout);
     GPU_alpha = totalinv;
     
