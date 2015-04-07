@@ -4702,6 +4702,9 @@ int AOcompute(long loop)
 
                 if(COMPUTE_GPU_SCALING==1)
                 {
+                    // save reference (TEST)
+                    save_fits(data.image[aoconfID_refWFS0].md[0].name, "!test_imtogpu.fits");
+                    
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
                     data.image[aoconfID_WFS2_active].md[0].cnt0++;
