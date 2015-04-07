@@ -905,8 +905,6 @@ void *compute_function( void *ptr )
     {
 
 
-
-
         // copy DM reference to output to prepare computation
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
         if (error != cudaSuccess)
