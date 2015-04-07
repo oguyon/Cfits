@@ -1164,7 +1164,7 @@ void *compute_function( void *ptr )
         }
 
         //    *ptrstat = 6;
-
+}
         if(gpumatmultconf[index].sem==1)
         {
             //printf("GPU SEMAPHORE :  POSTING SEM5     index %d   device %d\n", index, device);
@@ -1172,7 +1172,7 @@ void *compute_function( void *ptr )
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
         *ptrstat = 6;
-}
+
         // START MODE VALUES COMPUTATION
         iter++;
     }
