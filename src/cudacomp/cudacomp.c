@@ -963,7 +963,7 @@ void *compute_function( void *ptr )
             fflush(stdout);
 
             // d_wfsRef -> wfsRef_part
-            stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsRef[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+            stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
                 fprintf(stderr, "!!!! device access error (read C)\n");
