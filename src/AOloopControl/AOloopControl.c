@@ -2235,7 +2235,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     nelem = AOconf[loop].sizeWFS;
 
     totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-    GPU_alpha = totalinv;
+    GPU_alpha = 1.0; //totalinv;
     
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_beta = -normfloorcoeff;
