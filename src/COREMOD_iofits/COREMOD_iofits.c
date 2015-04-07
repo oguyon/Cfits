@@ -21,6 +21,7 @@ char errormessage[SBUFFERSIZE];
 long load_fits(char *file_name, char ID_name[400], int errcode);
 int save_fl_fits(char *ID_name, char *file_name);
 int save_db_fits(char *ID_name, char *file_name);
+int save_sh_fits(char *ID_name, char *file_name);
 int save_fits(char *ID_name, char *file_name);
 int break_cube(char *ID_name);
 int images_to_cube(char *img_name, long nbframes, char *cube_name);
@@ -69,6 +70,23 @@ int save_db_fits_cli()
   case 2:
     sprintf(fname, "%s.fits", data.cmdargtoken[1].val.string);
     save_db_fits( data.cmdargtoken[1].val.string, fname);
+    break;
+  }
+  
+  return 0;
+}
+
+int save_sh_fits_cli()
+{
+  char fname[200];
+  
+  switch(data.cmdNBarg){
+  case 3:
+    save_sh_fits( data.cmdargtoken[1].val.string,  data.cmdargtoken[2].val.string);
+    break;
+  case 2:
+    sprintf(fname, "%s.fits", data.cmdargtoken[1].val.string);
+    save_sh_fits( data.cmdargtoken[1].val.string, fname);
     break;
   }
   
@@ -153,6 +171,15 @@ int init_COREMOD_iofits()
   strcpy(data.cmd[data.NBcmd].syntax,"input output");
   strcpy(data.cmd[data.NBcmd].example,"savedbfits im im.fits");
   strcpy(data.cmd[data.NBcmd].Ccall,"int save_db_fits(char *ID_name, char *file_name)");
+  data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"savedshfits");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = save_sh_fits_cli;
+  strcpy(data.cmd[data.NBcmd].info,"save FITS format file, short");
+  strcpy(data.cmd[data.NBcmd].syntax,"input output");
+  strcpy(data.cmd[data.NBcmd].example,"saveshfits im im.fits");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int save_sh_fits(char *ID_name, char *file_name)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"savefits");

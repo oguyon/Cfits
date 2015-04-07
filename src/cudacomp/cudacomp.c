@@ -919,24 +919,24 @@ void *compute_function( void *ptr )
         // TEST
         //   printf("[%d] TEST : STORING DM ref\n", device);
         //   fflush(stdout);
-    /*    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
-        if (stat != CUBLAS_STATUS_SUCCESS)
-        {
-            fprintf(stderr, "!!!! device access error (read C)\n");
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-            exit(EXIT_FAILURE);
-        }
+        /*    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                fprintf(stderr, "!!!! device access error (read C)\n");
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                exit(EXIT_FAILURE);
+            }
 
-        imtot = 0.0;
-        for(m=0; m<gpumatmultconf[index].M; m++)
-            imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
-        printf("[%d]  [%g %g]  RMS DM ref = %g\n", device, cublasSgemv_alpha, cublasSgemv_beta, sqrt(imtot));
-*/
+            imtot = 0.0;
+            for(m=0; m<gpumatmultconf[index].M; m++)
+                imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
+            printf("[%d]  [%g %g]  RMS DM ref = %g\n", device, cublasSgemv_alpha, cublasSgemv_beta, sqrt(imtot));
+        */
 
 
 
@@ -974,40 +974,40 @@ void *compute_function( void *ptr )
         if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
 
-        /*    imtot = 0.0;
-            for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
-                imtot += ptr0f[n];
-            printf("[%d] TOTAL wfsREF = %g\n", device, imtot);
-*/
+            /*    imtot = 0.0;
+                for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
+                    imtot += ptr0f[n];
+                printf("[%d] TOTAL wfsREF = %g\n", device, imtot);
+            */
             // initialization: compute dm ref from wfs ref
-    /*
-             d_wfsRef -> wfsRef_part
-            stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                fprintf(stderr, "!!!! device access error (read C)\n");
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-                exit(EXIT_FAILURE);
-            }
+            /*
+                     d_wfsRef -> wfsRef_part
+                    stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+                    if (stat != CUBLAS_STATUS_SUCCESS)
+                    {
+                        fprintf(stderr, "!!!! device access error (read C)\n");
+                        if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                            printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                        if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                            printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                        if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                            printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                        exit(EXIT_FAILURE);
+                    }
 
-           
 
-            sprintf(imname, "test_wfsRef_part%d", device);
-            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
-            printf("[%d] Compute new reference response [1a/3]\n", device);
-            fflush(stdout);
-            for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
-                data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
-            printf("[%d] Compute new reference response [1b/3]\n", device);
-            fflush(stdout);
-            sprintf(fname, "!test_wfsRef_part%d.fits", device);
-            save_fits(imname, fname);
-*/
+
+                    sprintf(imname, "test_wfsRef_part%d", device);
+                    IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
+                    printf("[%d] Compute new reference response [1a/3]\n", device);
+                    fflush(stdout);
+                    for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
+                        data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
+                    printf("[%d] Compute new reference response [1b/3]\n", device);
+                    fflush(stdout);
+                    sprintf(fname, "!test_wfsRef_part%d.fits", device);
+                    save_fits(imname, fname);
+            */
             //        printf("[%d] Compute new reference response [2/3]\n", device);
             //       fflush(stdout);
 
@@ -1055,116 +1055,116 @@ void *compute_function( void *ptr )
                 exit(EXIT_FAILURE);
             }
 
-           /* sprintf(imname, "test_dmRef_part%d", device);
-            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
-            for(m=0; m<gpumatmultconf[index].M; m++)
-                data.image[IDtest].array.F[m] = gpumatmultconf[index].dmRef_part[device][m];
-            sprintf(fname, "!test_dmRef_part%d.fits", device);
-            save_fits(imname, fname);*/
+            /* sprintf(imname, "test_dmRef_part%d", device);
+             IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
+             for(m=0; m<gpumatmultconf[index].M; m++)
+                 data.image[IDtest].array.F[m] = gpumatmultconf[index].dmRef_part[device][m];
+             sprintf(fname, "!test_dmRef_part%d.fits", device);
+             save_fits(imname, fname);*/
         }
-    else
-    {
-        //     printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
-        //    fflush(stdout);
-
-
-
-
-
-        *ptrstat = 4; // compute
-
-        if(gpumatmultconf[index].sem==1)
+        else
         {
-            //printf("GPU SEMAPHORE :  POSTING SEM2     index %d   device %d\n", index, device);
-            //fflush(stdout);
-            sem_post(gpumatmultconf[index].semptr2[device]);
+            //     printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
+            //    fflush(stdout);
+
+
+
+
+
+            *ptrstat = 4; // compute
+
+            if(gpumatmultconf[index].sem==1)
+            {
+                //printf("GPU SEMAPHORE :  POSTING SEM2     index %d   device %d\n", index, device);
+                //fflush(stdout);
+                sem_post(gpumatmultconf[index].semptr2[device]);
+            }
+
+
+
+
+            // d_wfsRef -> wfsRef_part
+            /*      stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+                  if (stat != CUBLAS_STATUS_SUCCESS)
+                  {
+                      fprintf(stderr, "!!!! device access error (read C)\n");
+                      if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                          printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                      if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                          printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                      if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                          printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                      exit(EXIT_FAILURE);
+                  }
+                  imtot = 0.0;
+                  for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
+                      imtot += gpumatmultconf[index].wfsRef_part[device][n];
+                  printf("[%d]   %g   TOT WFS  ref = %g\n", device, cublasSgemv_alpha, imtot);
+            */
+
+
+
+
+
+
+            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
+
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                exit(EXIT_FAILURE);
+            }
+
+
+            if(gpumatmultconf[index].sem==1)
+            {
+                //printf("GPU SEMAPHORE :  POSTING SEM3     index %d   device %d\n", index, device);
+                //fflush(stdout);
+                sem_post(gpumatmultconf[index].semptr3[device]);
+            }
+
+
+
+            *ptrstat = 5; // transfer result
+
+
+            //cudaMemcpy(cpu.r, gpu.r, gpumatmultconf[index].M * sizeof(float), cudaMemcpyDeviceToHost);
+
+            if(gpumatmultconf[index].sem==1)
+            {
+                //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d ...\n", index, device);
+                //fflush(stdout);
+                sem_wait(gpumatmultconf[index].semptr4[device]);
+                //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d -> MOVING FORWARD\n", index, device);
+                //fflush(stdout);
+            }
+
+
+            // result is on gpumatmultconf[index].d_dmVec[device]
+
+            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
+            if (stat != CUBLAS_STATUS_SUCCESS)
+            {
+                fprintf(stderr, "!!!! device access error (read C)\n");
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+                exit(EXIT_FAILURE);
+            }
+
+            //    *ptrstat = 6;
         }
-
-
-
-
-        // d_wfsRef -> wfsRef_part
-  /*      stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
-        if (stat != CUBLAS_STATUS_SUCCESS)
-        {
-            fprintf(stderr, "!!!! device access error (read C)\n");
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-            exit(EXIT_FAILURE);
-        }
-        imtot = 0.0;
-        for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
-            imtot += gpumatmultconf[index].wfsRef_part[device][n];
-        printf("[%d]   %g   TOT WFS  ref = %g\n", device, cublasSgemv_alpha, imtot);
-*/
-
-
-
-
-
-
-        stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmVec[device], 1);
-
-        if (stat != CUBLAS_STATUS_SUCCESS)
-        {
-            printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-            if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-            exit(EXIT_FAILURE);
-        }
-
-
-        if(gpumatmultconf[index].sem==1)
-        {
-            //printf("GPU SEMAPHORE :  POSTING SEM3     index %d   device %d\n", index, device);
-            //fflush(stdout);
-            sem_post(gpumatmultconf[index].semptr3[device]);
-        }
-
-
-
-        *ptrstat = 5; // transfer result
-
-
-        //cudaMemcpy(cpu.r, gpu.r, gpumatmultconf[index].M * sizeof(float), cudaMemcpyDeviceToHost);
-
-        if(gpumatmultconf[index].sem==1)
-        {
-            //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d ...\n", index, device);
-            //fflush(stdout);
-            sem_wait(gpumatmultconf[index].semptr4[device]);
-            //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d -> MOVING FORWARD\n", index, device);
-            //fflush(stdout);
-        }
-
-
-        // result is on gpumatmultconf[index].d_dmVec[device]
-
-        stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
-        if (stat != CUBLAS_STATUS_SUCCESS)
-        {
-            fprintf(stderr, "!!!! device access error (read C)\n");
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-            exit(EXIT_FAILURE);
-        }
-
-        //    *ptrstat = 6;
-}
         if(gpumatmultconf[index].sem==1)
         {
             //printf("GPU SEMAPHORE :  POSTING SEM5     index %d   device %d\n", index, device);
@@ -1180,6 +1180,7 @@ void *compute_function( void *ptr )
 
     pthread_exit(0);
 }
+
 
 
 
