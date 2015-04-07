@@ -902,9 +902,9 @@ void *compute_function( void *ptr )
 
             printf("[%d] Compute new reference response\n", device);
             fflush(stdout);
-       /*     
- 
-                  stat = cublasGetVector(gpumatmultconf[index].N, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+        
+            // d_wfsRef -> wfsRef_part
+            stat = cublasGetVector(gpumatmultconf[index].N, sizeof(float), gpumatmultconf[index].d_wfsRef[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
         if (stat != CUBLAS_STATUS_SUCCESS)  
         {
             fprintf(stderr, "!!!! device access error (read C)\n");
@@ -928,6 +928,9 @@ void *compute_function( void *ptr )
  
             // input : gpumatmultconf[index].d_wfsRef[device]
             // ouput : gpumatmultconf[index].d_dmRef[device]
+            
+            
+            
             
             cublasSgemv_alpha = 1.0;
             cublasSgemv_beta = 0.0;
