@@ -2240,7 +2240,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_beta = -normfloorcoeff;
 
-    GPU_beta = 0.0; // test
+  //  GPU_beta = 0.0; // test
 
     printf("alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
     fflush(stdout);
@@ -4723,7 +4723,7 @@ int AOcompute(long loop)
                                 refWFScnt0 = data.image[aoconfID_refWFS].md[0].cnt0;
                             }
                         if(initWFSref_GPU==0) // initialize WFS reference
-                        {
+                        {                            
                             for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                                 data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[wfselem_active];
                             data.image[aoconfID_WFS2_active].md[0].cnt0++;
