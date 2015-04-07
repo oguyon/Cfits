@@ -971,7 +971,7 @@ void *compute_function( void *ptr )
 
 
 
-        if(gpumatmultconf[index].refWFSinit[device] == 0)
+        if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
 
         /*    imtot = 0.0;
@@ -1062,10 +1062,8 @@ void *compute_function( void *ptr )
             sprintf(fname, "!test_dmRef_part%d.fits", device);
             save_fits(imname, fname);*/
         }
-
-
-
-
+    else
+    {
         //     printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
         //    fflush(stdout);
 
@@ -1174,7 +1172,7 @@ void *compute_function( void *ptr )
             sem_post(gpumatmultconf[index].semptr5[device]);
         }
         *ptrstat = 6;
-
+}
         // START MODE VALUES COMPUTATION
         iter++;
     }
