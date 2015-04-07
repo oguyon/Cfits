@@ -934,8 +934,7 @@ void *compute_function( void *ptr )
  
             // input : gpumatmultconf[index].d_wfsRef[device]
             // ouput : gpumatmultconf[index].d_dmRef[device]
-            
-            
+                        
             
             
             cublasSgemv_alpha = 1.0;
