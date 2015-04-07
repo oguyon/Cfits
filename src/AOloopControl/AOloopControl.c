@@ -2242,7 +2242,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
   //  GPU_beta = 0.0; // test
 
-    printf("alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
+    printf("----------- alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
     fflush(stdout);
 
  
