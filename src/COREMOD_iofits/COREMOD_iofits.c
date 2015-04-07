@@ -173,7 +173,7 @@ int init_COREMOD_iofits()
   strcpy(data.cmd[data.NBcmd].Ccall,"int save_db_fits(char *ID_name, char *file_name)");
   data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"savedshfits");
+  strcpy(data.cmd[data.NBcmd].key,"saveshfits");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = save_sh_fits_cli;
   strcpy(data.cmd[data.NBcmd].info,"save FITS format file, short");
