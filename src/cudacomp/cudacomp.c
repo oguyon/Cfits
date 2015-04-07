@@ -872,7 +872,7 @@ void *compute_function( void *ptr )
     float imtot;
     float alphatmp;
     float betatmp;
-    
+
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -917,26 +917,26 @@ void *compute_function( void *ptr )
 
 
         // TEST
-     //   printf("[%d] TEST : STORING DM ref\n", device);
-     //   fflush(stdout);
-                   stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                fprintf(stderr, "!!!! device access error (read C)\n");
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-                exit(EXIT_FAILURE);
-            }
+        //   printf("[%d] TEST : STORING DM ref\n", device);
+        //   fflush(stdout);
+    /*    stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
+        if (stat != CUBLAS_STATUS_SUCCESS)
+        {
+            fprintf(stderr, "!!!! device access error (read C)\n");
+            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+            if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+            exit(EXIT_FAILURE);
+        }
 
         imtot = 0.0;
-         for(m=0;m<gpumatmultconf[index].M; m++)
-                imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
+        for(m=0; m<gpumatmultconf[index].M; m++)
+            imtot += gpumatmultconf[index].dmRef_part[device][m]*gpumatmultconf[index].dmRef_part[device][m];
         printf("[%d]  [%g %g]  RMS DM ref = %g\n", device, cublasSgemv_alpha, cublasSgemv_beta, sqrt(imtot));
-
+*/
 
 
 
@@ -971,19 +971,17 @@ void *compute_function( void *ptr )
 
 
 
-                if(gpumatmultconf[index].refWFSinit[device] == 0)
+        if(gpumatmultconf[index].refWFSinit[device] == 0)
         {
-            
-            imtot = 0.0;
-            for(n=0;n<gpumatmultconf[index].Nsize[device]; n++)
+
+        /*    imtot = 0.0;
+            for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
                 imtot += ptr0f[n];
             printf("[%d] TOTAL wfsREF = %g\n", device, imtot);
-            
+*/
             // initialization: compute dm ref from wfs ref
-        //    printf("[%d] Compute new reference response [0/3]\n", device);
-        //    fflush(stdout);
-
-            // d_wfsRef -> wfsRef_part
+    /*
+             d_wfsRef -> wfsRef_part
             stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
@@ -997,23 +995,21 @@ void *compute_function( void *ptr )
                 exit(EXIT_FAILURE);
             }
 
-       //     printf("[%d] Compute new reference response [1/3]\n", device);
-        //    fflush(stdout);
-
+           
 
             sprintf(imname, "test_wfsRef_part%d", device);
             IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
-             printf("[%d] Compute new reference response [1a/3]\n", device);
+            printf("[%d] Compute new reference response [1a/3]\n", device);
             fflush(stdout);
             for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
                 data.image[IDtest].array.F[n] = gpumatmultconf[index].wfsRef_part[device][n];
-             printf("[%d] Compute new reference response [1b/3]\n", device);
+            printf("[%d] Compute new reference response [1b/3]\n", device);
             fflush(stdout);
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
-
-    //        printf("[%d] Compute new reference response [2/3]\n", device);
-     //       fflush(stdout);
+*/
+            //        printf("[%d] Compute new reference response [2/3]\n", device);
+            //       fflush(stdout);
 
 
             // input : gpumatmultconf[index].d_wfsRef[device]
@@ -1059,19 +1055,19 @@ void *compute_function( void *ptr )
                 exit(EXIT_FAILURE);
             }
 
-            sprintf(imname, "test_dmRef_part%d", device);
+           /* sprintf(imname, "test_dmRef_part%d", device);
             IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
             for(m=0; m<gpumatmultconf[index].M; m++)
                 data.image[IDtest].array.F[m] = gpumatmultconf[index].dmRef_part[device][m];
             sprintf(fname, "!test_dmRef_part%d.fits", device);
-            save_fits(imname, fname);
+            save_fits(imname, fname);*/
         }
 
 
 
 
-   //     printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
-    //    fflush(stdout);
+        //     printf("GPU_alpha = %g   GPU_beta = %g\n", cublasSgemv_alpha, cublasSgemv_beta);
+        //    fflush(stdout);
 
 
 
@@ -1089,22 +1085,22 @@ void *compute_function( void *ptr )
 
 
 
-// d_wfsRef -> wfsRef_part
-          stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
-            if (stat != CUBLAS_STATUS_SUCCESS)
-            {
-                fprintf(stderr, "!!!! device access error (read C)\n");
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_MAPPING_ERROR)
-                    printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
-                exit(EXIT_FAILURE);
-            }
+        // d_wfsRef -> wfsRef_part
+        stat = cublasGetVector(gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].d_wfsVec[device], 1, gpumatmultconf[index].wfsRef_part[device], 1);
+        if (stat != CUBLAS_STATUS_SUCCESS)
+        {
+            fprintf(stderr, "!!!! device access error (read C)\n");
+            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+            if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+            exit(EXIT_FAILURE);
+        }
         imtot = 0.0;
-         for(n=0;n<gpumatmultconf[index].Nsize[device];n++)
-                imtot += gpumatmultconf[index].wfsRef_part[device][n];
+        for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
+            imtot += gpumatmultconf[index].wfsRef_part[device][n];
         printf("[%d]   %g   TOT WFS  ref = %g\n", device, cublasSgemv_alpha, imtot);
 
 
@@ -1186,6 +1182,7 @@ void *compute_function( void *ptr )
 
     pthread_exit(0);
 }
+
 
 
 

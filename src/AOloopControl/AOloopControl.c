@@ -4703,7 +4703,7 @@ int AOcompute(long loop)
                 if(COMPUTE_GPU_SCALING==1)
                 {
                     // save reference (TEST)
-                    save_fits(data.image[aoconfID_WFS0].md[0].name, "!test_imtogpu.fits");
+                   // save_fits(data.image[aoconfID_WFS0].md[0].name, "!test_imtogpu.fits");
                     
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
@@ -4728,18 +4728,18 @@ int AOcompute(long loop)
                             }
                         if(initWFSref_GPU==0) // initialize WFS reference
                         {           
-                            imtot = 0.0;                 
+                       //     imtot = 0.0;                 
                             
                             // save reference (TEST)
-                            save_fits(data.image[aoconfID_refWFS].md[0].name, "!test_reftogpu.fits");
+                        //    save_fits(data.image[aoconfID_refWFS].md[0].name, "!test_reftogpu.fits");
                             
                             for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                                 {
                                     data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_refWFS].array.F[WFS_active_map[wfselem_active]];
-                                    imtot += data.image[aoconfID_refWFS].array.F[wfselem_active];
+                     //               imtot += data.image[aoconfID_refWFS].array.F[wfselem_active];
                                 }
                             data.image[aoconfID_WFS2_active].md[0].cnt0++;
-                            printf("imtot = %g\n", imtot);
+                         //   printf("imtot = %g\n", imtot);
                             fflush(stdout);
                         }
                     }
