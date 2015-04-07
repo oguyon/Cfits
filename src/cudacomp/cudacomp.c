@@ -900,7 +900,7 @@ void *compute_function( void *ptr )
         {
             // initialization: compute dm ref from wfs ref
 
-            printf("[%d] Compute new reference response\n", device);
+            printf("[%d] Compute new reference response [0/3]\n", device);
             fflush(stdout);
         
             // d_wfsRef -> wfsRef_part
@@ -917,14 +917,20 @@ void *compute_function( void *ptr )
             exit(EXIT_FAILURE);
         }
 
-            sprintf(imname, "test_wfsRef_part%d", device);
+             printf("[%d] Compute new reference response [1/3]\n", device);
+            fflush(stdout);
+
+
+           sprintf(imname, "test_wfsRef_part%d", device);
             IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].Nsize[device], 1);
             for(m=0;m<gpumatmultconf[index].Nsize[device];n++)
                 data.image[IDtest].array.F[n] = 1.0; //gpumatmultconf[index].wfsRef_part[device][n];
             sprintf(fname, "!test_wfsRef_part%d.fits", device);
             save_fits(imname, fname);
  
- 
+            printf("[%d] Compute new reference response [2/3]\n", device);
+            fflush(stdout);
+
  
             // input : gpumatmultconf[index].d_wfsRef[device]
             // ouput : gpumatmultconf[index].d_dmRef[device]
