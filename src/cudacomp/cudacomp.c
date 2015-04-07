@@ -1021,9 +1021,9 @@ void *compute_function( void *ptr )
 
 
 
-            cublasSgemv_alpha = 0.0;
+            cublasSgemv_alpha = 1.0;
             cublasSgemv_beta = 0.0;
-            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsRef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
+            stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVef[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
                 printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
