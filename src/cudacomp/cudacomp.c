@@ -645,6 +645,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 exit(EXIT_FAILURE);
             }
             
+            
+            
+            printf("COPY wfsRef_part to d_wfsRef\n");
+            fflush(stdout);
               error = cudaMemcpy(gpumatmultconf[index].d_wfsRef[device], gpumatmultconf[index].wfsRef_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
             if (error != cudaSuccess)
             {
