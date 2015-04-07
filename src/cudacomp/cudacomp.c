@@ -511,6 +511,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].wfsVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].dmVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].wfsRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+        gpumatmultconf[index].dmRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference (for checking only)
 
         gpumatmultconf[index].refWFSinit = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
 
@@ -528,6 +529,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             gpumatmultconf[index].wfsVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
             gpumatmultconf[index].wfsRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
             gpumatmultconf[index].dmVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
+            gpumatmultconf[index].dmRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
 
             sprintf(sname, "i%d_gpu%d_sem1", index, device);
             if ((gpumatmultconf[index].semptr1[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
@@ -855,10 +857,11 @@ void *compute_function( void *ptr )
     char *ptr0; // source
     char *ptr1; // dest
     int *ptrstat;
-
+    long IDtest;
     int k;
     int kmax = 10;
-
+    char imname[200];
+    char fname[200];
     long long iter;
     long long itermax = 1;
 
@@ -917,8 +920,28 @@ void *compute_function( void *ptr )
                 exit(EXIT_FAILURE);
             }
             gpumatmultconf[index].refWFSinit[device] = 1;
+            
+            
+            stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
+        if (stat != CUBLAS_STATUS_SUCCESS)  
+        {
+            fprintf(stderr, "!!!! device access error (read C)\n");
+            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+            if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+            if(stat == CUBLAS_STATUS_MAPPING_ERROR)
+                printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
+            exit(EXIT_FAILURE);
         }
 
+            sprintf(imname, "test_dmRef_part%d", device);
+            IDtest = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
+            for(m=0;m<gpumatmultconf[index].M;m++)
+                data.image[IDtest].array.F[m] = gpumatmultconf[index].dmRef_part[device][m];
+            sprintf(fname, "!test_dmRef_part%d.fits", device);
+            save_fits(imname, fname);
+        }
 
 
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
@@ -1012,7 +1035,6 @@ void *compute_function( void *ptr )
         // result is on gpumatmultconf[index].d_dmVec[device]
 
         stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
-
         if (stat != CUBLAS_STATUS_SUCCESS)
         {
             fprintf(stderr, "!!!! device access error (read C)\n");

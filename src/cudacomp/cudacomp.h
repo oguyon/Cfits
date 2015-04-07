@@ -64,6 +64,7 @@ typedef struct
     float *dmVec;
     float *dmVecTMP;
     float **dmVec_part;
+    float **dmRef_part;
 
     // GPU memory (device)
     float **d_cMat;
