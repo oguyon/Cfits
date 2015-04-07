@@ -860,6 +860,7 @@ void *compute_function( void *ptr )
     int index;
     char *ptr0; // source
     char *ptr1; // dest
+    float *ptr0f; // test
     int *ptrstat;
     long IDtest;
     int k;
@@ -868,6 +869,8 @@ void *compute_function( void *ptr )
     char fname[200];
     long long iter;
     long long itermax = 1;
+    float imtot;
+
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -884,7 +887,7 @@ void *compute_function( void *ptr )
 
     ptr0 = (char*) gpumatmultconf[index].wfsVec;
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
-
+    ptr0f = (float*) ptr0;
 
     cudaSetDevice(device);
 
@@ -949,6 +952,12 @@ void *compute_function( void *ptr )
 
                 if(gpumatmultconf[index].refWFSinit[device] == 0)
         {
+            
+            imtot = 0.0;
+            for(n=0;n<gpumatmultconf[index].Nsize[device]; n++)
+                imtot += ptr0f[n];
+            printf("[%d] TOTAL wfsREF = %g\n", imtot);
+            
             // initialization: compute dm ref from wfs ref
             printf("[%d] Compute new reference response [0/3]\n", device);
             fflush(stdout);
