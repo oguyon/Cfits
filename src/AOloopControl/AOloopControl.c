@@ -2234,14 +2234,14 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     nelem = AOconf[loop].sizeWFS;
 
-    totalinv=1.0/(AOconf[loop].WFStotalflux); // + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+    totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_alpha = totalinv;
     
     normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
     GPU_beta = -normfloorcoeff;
 
     
-    GPU_beta = -1.0; // test
+    //GPU_beta = -1.0; // test
 
  //   printf("----------- alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
   //  fflush(stdout);
