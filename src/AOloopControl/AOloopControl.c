@@ -4711,6 +4711,8 @@ int AOcompute(long loop)
                     {
                         if(data.image[aoconfID_refWFS].md[0].cnt0 != refWFScnt0)
                             {
+                                printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_refWFS].md[0].cnt0, refWFScnt0);
+                                fflush(stdout);
                                 initWFSref_GPU = 0;
                                 refWFScnt0 = data.image[aoconfID_refWFS].md[0].cnt0;
                             }
