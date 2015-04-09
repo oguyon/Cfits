@@ -88,6 +88,17 @@ int image_basic_contract_cli()
 }
 
 
+int image_basic_load_fitsimages_cube_cli()
+{
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,3) == 0)
+    {
+        load_fitsimages_cube(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 int image_basic_cubecollapse_cli()
 {
@@ -99,6 +110,8 @@ int image_basic_cubecollapse_cli()
     else
         return 1;
 }
+
+
 
 
 int image_basic_streamaverage_cli()
@@ -123,8 +136,6 @@ int image_basic_streamfeed_cli()
     else
         return 1;
 }
-
-
 
 
 
@@ -162,6 +173,16 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].example,"imcontract im1 outim 4 4");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)");
     data.NBcmd++;
+    
+    strcpy(data.cmd[data.NBcmd].key,"loadfitsimgcube");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_load_fitsimages_cube_cli;
+    strcpy(data.cmd[data.NBcmd].info,"load multiple images into a single cube");
+    strcpy(data.cmd[data.NBcmd].syntax,"<string pattern> <outputcube>");
+    strcpy(data.cmd[data.NBcmd].example,"loadfitsimgcube im out");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long load_fitsimages_cube(char *strfilter, char *ID_out_name)");
+    data.NBcmd++;
+    
     
     strcpy(data.cmd[data.NBcmd].key,"cubecollapse");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1976,110 +1997,113 @@ long load_fitsimages(char *strfilter)
   return(cnt);
 }
 
+
+
 // load all images matching strfilter + .fits into a data cube
 // return number of images loaded
 // image name in buffer is same as file name without extension
 long load_fitsimages_cube(char *strfilter, char *ID_out_name)
 {
-  long cnt = 0;
-  char command[SBUFFERSIZE];
-  char fname[SBUFFERSIZE];
-  char fname1[SBUFFERSIZE];
-  FILE *fp;
-  long xsize,ysize;
-  long ii;
-  long ID,IDout;
-  int n;
+    long cnt = 0;
+    char command[SBUFFERSIZE];
+    char fname[SBUFFERSIZE];
+    char fname1[SBUFFERSIZE];
+    FILE *fp;
+    long xsize,ysize;
+    long ii;
+    long ID,IDout;
+    int n;
 
-  printf("Filter = %s\n",strfilter);
+    printf("Filter = %s\n",strfilter);
 
-  n = snprintf(command,SBUFFERSIZE,"ls %s.fits > flist.tmp\n",strfilter);
-  if(n >= SBUFFERSIZE) 
-    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-  
-  if(system(command)==-1)
+    n = snprintf(command,SBUFFERSIZE,"ls %s.fits > flist.tmp\n",strfilter);
+    if(n >= SBUFFERSIZE)
+        printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+
+    if(system(command)==-1)
     {
-      printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
-      exit(0);
+        printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
+        exit(0);
     }
 
-  xsize = 0;
-  ysize = 0;
+    xsize = 0;
+    ysize = 0;
 
-  if((fp = fopen("flist.tmp","r"))==NULL)
-     {
-       C_ERRNO = errno;
-       printERROR(__FILE__,__func__,__LINE__,"fopen() error");
-       exit(0);
-     }
-
-  while(fgets(fname,200,fp)!=NULL)
+    if((fp = fopen("flist.tmp","r"))==NULL)
     {
-      fname[strlen(fname)-1] = '\0';
-       if(cnt == 0)
-	{
-	  ID = load_fits(fname, "imtmplfc", 1);
-	  xsize = data.image[ID].md[0].size[0];
-	  ysize = data.image[ID].md[0].size[1];
-	  delete_image_ID("imtmplfc");
-	}
-
-      ID = load_fits(fname,"imtmplfc", 1);
-      if((data.image[ID].md[0].size[0] != xsize)||(data.image[ID].md[0].size[1] != ysize))
-	{
-	  fprintf(stderr,"ERROR in load_fitsimages_cube: not all images have the same size\n");
-	  exit(0);
-	}
-      delete_image_ID("imtmplfc");
-      cnt++;
-    }
-  fclose(fp);
-
-  printf("Creating 3D cube ... ");
-  fflush(stdout);
-  IDout = create_3Dimage_ID(ID_out_name,xsize,ysize,cnt);
-  printf("\n");
-  fflush(stdout);
-
-  cnt = 0;
-  if((fp = fopen("flist.tmp","r"))==NULL)
-     {
-       C_ERRNO = errno;
-       printERROR(__FILE__,__func__,__LINE__,"fopen() error");
-       exit(0);
-     }
-
-
-  while(fgets(fname,200,fp)!=NULL)
-    {
-      fname[strlen(fname)-1] = '\0';
-      strncpy(fname1,fname,strlen(fname)-5);
-      fname1[strlen(fname)-5] = '\0';
-      load_fits(fname,fname1, 1);
-      printf("Image %s loaded -> %s\n",fname,fname1);
-      ID = image_ID(fname1);
-      for(ii=0;ii<xsize*ysize;ii++)
-	data.image[IDout].array.F[xsize*ysize*cnt+ii] = data.image[ID].array.F[ii];
-      delete_image_ID(fname1);
-      cnt++;
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"fopen() error");
+        exit(0);
     }
 
-  fclose(fp);
-  n = snprintf(command,SBUFFERSIZE,"rm flist.tmp");
-  if(n >= SBUFFERSIZE) 
-    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-
-  if(system(command)==-1)
+    while(fgets(fname,200,fp)!=NULL)
     {
-      printf("WARNING: system(\"%s\") failed [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
-      //exit(0);
+        fname[strlen(fname)-1] = '\0';
+        if(cnt == 0)
+        {
+            ID = load_fits(fname, "imtmplfc", 1);
+            xsize = data.image[ID].md[0].size[0];
+            ysize = data.image[ID].md[0].size[1];
+            delete_image_ID("imtmplfc");
+        }
+
+        ID = load_fits(fname,"imtmplfc", 1);
+        if((data.image[ID].md[0].size[0] != xsize)||(data.image[ID].md[0].size[1] != ysize))
+        {
+            fprintf(stderr,"ERROR in load_fitsimages_cube: not all images have the same size\n");
+            exit(0);
+        }
+        delete_image_ID("imtmplfc");
+        cnt++;
     }
-  
+    fclose(fp);
 
-  printf("%ld images loaded into cube %s\n",cnt,ID_out_name);
+    printf("Creating 3D cube ... ");
+    fflush(stdout);
+    IDout = create_3Dimage_ID(ID_out_name,xsize,ysize,cnt);
+    printf("\n");
+    fflush(stdout);
 
-  return(cnt);
+    cnt = 0;
+    if((fp = fopen("flist.tmp","r"))==NULL)
+    {
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"fopen() error");
+        exit(0);
+    }
+
+
+    while(fgets(fname,200,fp)!=NULL)
+    {
+        fname[strlen(fname)-1] = '\0';
+        strncpy(fname1,fname,strlen(fname)-5);
+        fname1[strlen(fname)-5] = '\0';
+        load_fits(fname,fname1, 1);
+        printf("Image %s loaded -> %s\n",fname,fname1);
+        ID = image_ID(fname1);
+        for(ii=0; ii<xsize*ysize; ii++)
+            data.image[IDout].array.F[xsize*ysize*cnt+ii] = data.image[ID].array.F[ii];
+        delete_image_ID(fname1);
+        cnt++;
+    }
+
+    fclose(fp);
+    n = snprintf(command,SBUFFERSIZE,"rm flist.tmp");
+    if(n >= SBUFFERSIZE)
+        printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+
+    if(system(command)==-1)
+    {
+        printf("WARNING: system(\"%s\") failed [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
+        //exit(0);
+    }
+
+
+    printf("%ld images loaded into cube %s\n",cnt,ID_out_name);
+
+    return(cnt);
 }
+
 
 
 // recenter cube frames such that the photocenter is on the central pixel

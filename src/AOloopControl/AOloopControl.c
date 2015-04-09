@@ -3054,7 +3054,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
 
 
 
-
+    // REMOVE ??
     // load ref WFS image
     sprintf(name, "aol%ld_refWFSim", loop);
     aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "./conf/refwfs.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);

@@ -1173,7 +1173,10 @@ void *compute_function( void *ptr )
         }
         *ptrstat = 6;
 
-        // START MODE VALUES COMPUTATION
+        // START MODE VALUES COMPUTATION HERE
+        
+        
+        
         iter++;
     }
 
