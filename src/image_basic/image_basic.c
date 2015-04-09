@@ -2016,7 +2016,7 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
 
     printf("Filter = %s\n",strfilter);
 
-    n = snprintf(command,SBUFFERSIZE,"ls %s.fits > flist.tmp\n",strfilter);
+    n = snprintf(command,SBUFFERSIZE,"ls %s > flist.tmp\n",strfilter);
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
