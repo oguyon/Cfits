@@ -2088,7 +2088,7 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
     }
 
     fclose(fp);
-    n = snprintf(command,SBUFFERSIZE,"rm flist.tmp");
+  /*  n = snprintf(command,SBUFFERSIZE,"rm flist.tmp");
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
@@ -2098,7 +2098,7 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
         //exit(0);
     }
 
-
+*/
     printf("%ld images loaded into cube %s\n",cnt,ID_out_name);
 
     return(cnt);
