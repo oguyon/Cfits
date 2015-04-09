@@ -2020,6 +2020,8 @@ long load_fitsimages_cube(char *strfilter, char *ID_out_name)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
+    printf("command: %s\n", command);
+
     if(system(command)==-1)
     {
         printf("ERROR: system(\"%s\") [function: %s  file: %s  line: %d ]\n",command,__func__,__FILE__,__LINE__);
