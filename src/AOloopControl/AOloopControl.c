@@ -4655,7 +4655,7 @@ int AOcompute(long loop)
         printf("\n");
         printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);
         
-        printf("CREATING SHARED MEMORY CMATCACT\n");
+        printf("CREATING SHARED MEMORY CMATCACT  from ID %ld\n", aoconfID_contrMc_active);
         sizearray = (long*) malloc(sizeof(long)*2);
         sizearray[0] = data.image[aoconfID_contrMc_active].md[0].size[0];
         sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1];
@@ -4663,6 +4663,7 @@ int AOcompute(long loop)
         IDcmatca_shm = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
         free(sizearray);
         memcpy(data.image[IDcmatca_shm].array.F, data.image[aoconfID_contrMc_active].array.F, sizeof(float)*data.image[aoconfID_contrMc_active].md[0].size[0]*data.image[aoconfID_contrMc_active].md[0].size[1]);
+        list_image_ID();
     }
 
 
@@ -4750,7 +4751,9 @@ int AOcompute(long loop)
                 
                 list_image_ID();
                 printf("%s %s %s\n", data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name);
-                exit(0);
+                exit(0); // TESTING
+                
+                
                 GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
                 
                 
