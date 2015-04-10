@@ -372,8 +372,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                     gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0];
                     cmatdim = 2;
                }
-            printf("M = %d\n", gpumatmultconf[index].M);
-            printf("N = %d\n", gpumatmultconf[index].N);
+            printf("[0] [%ld] M = %d\n", IDcontrM, gpumatmultconf[index].M);
+            printf("[0] [%ld] N = %d\n", IDcontrM, gpumatmultconf[index].N);
         }
         else
         {
@@ -390,8 +390,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 cmatdim = 2;
             }
 
-            printf("M = %d\n", gpumatmultconf[index].M);
-            printf("N = %d\n", gpumatmultconf[index].N);
+            printf("[1] [%ld] M = %d\n", IDcontrM, gpumatmultconf[index].M);
+            printf("[1] [%ld] N = %d\n", IDcontrM, gpumatmultconf[index].N);
         }
 
         gpumatmultconf[index].cMat =  data.image[IDcontrM].array.F;
