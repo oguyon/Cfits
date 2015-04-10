@@ -4747,7 +4747,13 @@ int AOcompute(long loop)
                 // perform matrix mult
                 //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                
+                
+                list_image_ID();
+                printf("%s %s %s\n", data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name);
+                exit(0);
                 GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
+                
+                
                 initWFSref_GPU = 1;
                 AOconf[loop].status = 8; // execute
 
