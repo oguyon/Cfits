@@ -4587,8 +4587,8 @@ int AOcompute(long loop)
 # endif
                 for(mode=0; mode<n_NBDMmodes; mode++)
                 {
-                    printf("mode %6ld    \n", mode);
-                    fflush(stdout);
+                 //   printf("mode %6ld    \n", mode);
+                  //  fflush(stdout);
                     for(act=0; act<n_sizeDM; act++)
                         for(wfselem=0; wfselem<n_sizeWFS; wfselem++)
                             matrix_Mc[act*n_sizeWFS+wfselem] += matrix_cmp[mode*n_sizeWFS+wfselem]*matrix_DMmodes[mode*n_sizeDM+act];
@@ -4667,8 +4667,6 @@ int AOcompute(long loop)
         IDcmatca_shm = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
         free(sizearray);
         memcpy(data.image[IDcmatca_shm].array.F, data.image[aoconfID_contrMc_active].array.F, sizeof(float)*data.image[aoconfID_contrMc_active].md[0].size[0]*data.image[aoconfID_contrMc_active].md[0].size[1]);
-        list_image_ID();
-        exit(0);
     }
 
 
