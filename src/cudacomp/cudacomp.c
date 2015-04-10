@@ -396,7 +396,6 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         gpumatmultconf[index].cMat =  data.image[IDcontrM].array.F;
         
- 
 
         /// Load Input vectors
         IDwfsim = image_ID(IDwfsim_name);

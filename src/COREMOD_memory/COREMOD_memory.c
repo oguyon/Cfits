@@ -561,14 +561,15 @@ int COREMOD_MEMORY_image_streamupdateloop_cli()
 
 int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
     {
-		COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
-      return 0;
+        COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        return 0;
     }
-  else
-	return 1;
+    else
+        return 1;
 }
+
 
 int COREMOD_MEMORY_image_NETWORKreceive_cli()
 {
@@ -3930,6 +3931,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     long framesize;
     long xsize, ysize;
     char *ptr0; // source
+    char *ptr1; // source - offset by slice
 
     ID = image_ID(IDname);
 
@@ -4035,21 +4037,23 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         }
         else
             sem_wait(data.image[ID].semptr);
- 
-    if (send(fds_client, ptr0, framesize, 0) != framesize)
-    {
-        printf("send() sent a different number of bytes than expected %ld\n", framesize);
-        fflush(stdout);
+
+        ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
+        if (send(fds_client, ptr1, framesize, 0) != framesize)
+        {
+            printf("send() sent a different number of bytes than expected %ld\n", framesize);
+            fflush(stdout);
+        }
+        else
+            printf("SENT IMAGE, %ld bytes\n", framesize);
     }
-    else
-		printf("SENT IMAGE, %ld bytes\n", framesize);
-	}
-	
+
     close(fds_client);
 
 
     return(ID);
 }
+
 
 
 
