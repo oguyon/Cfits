@@ -4664,6 +4664,7 @@ int AOcompute(long loop)
         free(sizearray);
         memcpy(data.image[IDcmatca_shm].array.F, data.image[aoconfID_contrMc_active].array.F, sizeof(float)*data.image[aoconfID_contrMc_active].md[0].size[0]*data.image[aoconfID_contrMc_active].md[0].size[1]);
         list_image_ID();
+        exit(0);
     }
 
 
