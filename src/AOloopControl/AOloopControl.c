@@ -4657,8 +4657,12 @@ int AOcompute(long loop)
         
         printf("CREATING SHARED MEMORY CMATCACT  from ID %ld\n", aoconfID_contrMc_active);
         sizearray = (long*) malloc(sizeof(long)*2);
+        
         sizearray[0] = data.image[aoconfID_contrMc_active].md[0].size[0];
-        sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1];
+        if(data.image[aoconfID_contrMc_active].md[0].naxis==2)
+            sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1];
+        else
+            sizearray[1] = data.image[aoconfID_contrMc_active].md[0].size[1]*data.image[aoconfID_contrMc_active].md[0].size[2];
         sprintf(imname, "aol%ld_cmatca", loop);
         IDcmatca_shm = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
         free(sizearray);
