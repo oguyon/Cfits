@@ -42,6 +42,13 @@ typedef struct {
   float pixscale; // [m/pix]
   float piaasep;// separation between PIAA surfaces [m]
 
+
+  // ========== WAVEFRONT CONTROL ==================
+  int nbDMs; // number of deformable mirrors (10 max)
+  double DMpos[10]; // DM conjugation in collimated space
+  long ID_DM[10];  // DM image identifier 
+
+
   // ========= LYOT STOPS ============
   long NBLyotStop;
   long IDLyotStop[10];
@@ -97,7 +104,7 @@ long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_na
 long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mode);
 
 // initializes the optsyst structure to simulate reflective PIAACMC system
-void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, double TTyld);
+void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, double TTyld );
 
 // PIAA optics (geometrical optics) tools
 int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, char *IDapofit_name);
@@ -105,7 +112,7 @@ int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name);
 int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name);
 
 long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout);
-int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int load);
+int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int WFCmode, int load);
 int PIAACMCsimul_makePIAAshapes();
 double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode);
 int PIAAsimul_savepiaacmcconf(char *dname);

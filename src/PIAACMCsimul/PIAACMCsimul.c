@@ -714,6 +714,7 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
     char fname[200];
     long IDv;
     long IDopderr;
+    long iDM; // DM index
 
     optsyst[0].nblambda = design[index].nblambda;
     nblambda = optsyst[0].nblambda;
@@ -725,11 +726,11 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
     }
 
 
-	printf("lambda = %g\n", piaacmc[0].lambda);
-	printf("LAMBDASTART = %g\n", LAMBDASTART);
-	printf("LAMBDAEND = %g\n", LAMBDAEND);
-	
-	
+    printf("lambda = %g\n", piaacmc[0].lambda);
+    printf("LAMBDASTART = %g\n", LAMBDASTART);
+    printf("LAMBDAEND = %g\n", LAMBDAEND);
+
+
     for(k=0; k<optsyst[0].nblambda; k++)
     {
         optsyst[0].lambdaarray[k] = LAMBDASTART + (0.5+k)*(LAMBDAEND-LAMBDASTART)/optsyst[0].nblambda;
@@ -739,7 +740,7 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
     if(PIAACMC_save==1)
         fclose(fp);
 
-	//exit(0); // TEST
+    //exit(0); // TEST
 
 
 
@@ -763,7 +764,7 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
 
 
     // define optical elements and locations
-    optsyst[0].NB_asphsurfm = 2;
+    optsyst[0].NB_asphsurfm = 2+design[index].nbDMs;
     optsyst[0].NB_asphsurfr = 0;
 
     optsyst[0].NBelem = 100; // to be updated later
@@ -773,6 +774,10 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
         sprintf(fname, "%s/conjugations.txt", piaacmcconfdir);
         fp = fopen(fname, "w");
     }
+
+
+
+
 
     elem = 0;
     // ------------------- elem 0: input pupil -----------------------
@@ -847,15 +852,15 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
     // add OPD error if it exists
     IDopderr = image_ID("opderr");
     if(IDopderr != -1)
-        {
-               for(ii=0; ii<size; ii++)
-        for(jj=0; jj<size; jj++)
-        {
-            x = (1.0*ii-0.5*size)/beamradpix;
-            y = (1.0*jj-0.5*size)/beamradpix;
-            data.image[ID].array.F[jj*size+ii] += data.image[IDopderr].array.F[jj*size+ii];
-        }
-        }
+    {
+        for(ii=0; ii<size; ii++)
+            for(jj=0; jj<size; jj++)
+            {
+                x = (1.0*ii-0.5*size)/beamradpix;
+                y = (1.0*jj-0.5*size)/beamradpix;
+                data.image[ID].array.F[jj*size+ii] += data.image[IDopderr].array.F[jj*size+ii];
+            }
+    }
 
     // sprintf(fname, "!%s/TTm.fits", piaacmcconfdir);
     // save_fits("TTm", fname);
@@ -869,9 +874,24 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
     elem++;
 
 
+
+    for(iDM=0; iDM<design[index].nbDMs; iDM++)
+    {
+        // ----------------- DM (s) -----------------------------------------------
+        optsyst[0].elemtype[elem] = 3; // reflective element
+        optsyst[0].elemarrayindex[elem] = 3+iDM; // index
+        optsyst[0].ASPHSURFMarray[optsyst[0].elemarrayindex[elem]].surfID = design[index].ID_DM[iDM];
+        optsyst[0].elemZpos[elem] = design[index].DMpos[iDM];
+        if(PIAACMC_save==1)  fprintf(fp,"%02ld  %f    DM %ld\n", elem, optsyst[0].elemZpos[elem], iDM);
+        elem++;
+    }
+
+
+
+
+
     IDpiaaz0 = image_ID("piaa0z");
     IDpiaaz1 = image_ID("piaa1z");
-
 
     // ------------------- elem 2: reflective PIAA M0  -----------------------
     optsyst[0].elemtype[elem] = 3; // reflective PIAA M0
@@ -916,8 +936,8 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
     }
-    
-    
+
+
 
     optsyst[0].FOCMASKarray[0].zfactor = design[index].fpzfactor;
     optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1]; // plane from which FT is done
@@ -1001,6 +1021,7 @@ void PIAACMCsimul_init( MIRRORPIAACMCDESIGN *design, long index, double TTxld, d
 
     optsystinit = 1;
 }
+
 
 
 
@@ -1103,6 +1124,7 @@ int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, cha
 
     return 0;
 }
+
 
 
 
@@ -1706,15 +1728,17 @@ long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout)
  * @param[in] fpmradld     Focal plane mask nominal radius
  * @param[in] centobs0     Input central obstruction
  * @param[in] centobs1     Output central obstruction
+ * @param[in] WFSmode      Number of DMs (0: no WFC)
  * @param[in] load         if 1, attempt to load configuration from file
  * 
  * piaacmctype:
  * - 0: if configuration does not exist, create Monochromatic idealized PIAACMC, otherwise, read configuration
  * - 1: physical mask
  *
+ * 
  */
 
-int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int load)
+int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int WFCmode, int load)
 {
     FILE *fp;
     float beamradpix;
@@ -1741,7 +1765,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     double tmplf;
 
     int IDlscumul;
-
+    long iDM; // DM index
+    long *sizearray;
 
     if(piaacmc == NULL)
     {
@@ -1783,6 +1808,16 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         piaacmc[0].NBradpts = 50000;
         piaacmc[0].r0lim = 1.15; //1425; // outer radius after extrapolation, piaa mirror 0
         piaacmc[0].r1lim = 1.5; // outer radius after extrapolation, piaa mirror 1
+
+
+        /// Wavefront control
+        piaacmc[0].nbDMs = WFCmode; // number of deformable mirrors (10 max)
+        for(iDM; iDM<piaacmc[0].nbDMs; iDM++)
+        {
+            piaacmc[0].DMpos[iDM] = 0.0 + 0.6*iDM/(0.01+piaacmc[0].nbDMs-1.0); // DM conjugation in collimated space
+            piaacmc[0].ID_DM[iDM] = -1;  // DM image identifier - to be updated later
+        }
+
 
         piaacmc[0].NBLyotStop = 2;
         for(i=0; i<10; i++)
@@ -1872,6 +1907,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     printf("LAMBDASTART = %g\n", LAMBDASTART);
     printf("LAMBDAEND = %g\n", LAMBDAEND);
 
+
+    
+
+
+
+
     // create modes for aspheric optical surfaces description
     beamradpix = piaacmc[0].beamrad/piaacmc[0].pixscale;
     size = piaacmc[0].size;
@@ -1893,6 +1934,23 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             data.image[IDr].array.F[jj*size+ii] = sqrt(x*x+y*y);
             data.image[IDPA].array.F[jj*size+ii] = atan2(y,x);
         }
+
+
+    // ==================== CREATE DMs ===============
+    for(iDM; iDM<piaacmc[0].nbDMs; iDM++)
+        {
+            sprintf(fname, "wfcDM%ld", iDM);
+            piaacmc[0].ID_DM[iDM] = image_ID(fname);  // DM image identifier - to be updated later
+            if(piaacmc[0].ID_DM[iDM] == -1)
+                {
+                    sizearray = (long*) malloc(sizeof(long)*2);
+                    sizearray[0] = size;
+                    sizearray[1] = size;
+                    piaacmc[0].ID_DM[iDM] = create_image_ID(fname, 2, sizearray, FLOAT, 1, 0);
+                    free(sizearray);
+                }
+        }
+
 
 
 
@@ -4239,7 +4297,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         printf("PIAACMC_fpmtype = %d\n", PIAACMC_fpmtype);
 
         FORCE_CREATE_fpmza = 1;
-        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
 
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -4260,7 +4318,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 1 : // optimize Lyot stop positions
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
@@ -4345,7 +4403,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 2 : // optimize focal plane mask transmission for monochromatic idealized PIAACMC
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
@@ -4370,7 +4428,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             while(loopOK==1)
             {
                 FORCE_CREATE_fpmza = 1;
-                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0);
+                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
                 val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
 
                 if(val<valbest)
@@ -4407,7 +4465,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         }
 
         piaacmc[0].fpmaskamptransm = parambest[0];
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
         PIAAsimul_savepiaacmcconf(piaacmcconfdir);
         FORCE_CREATE_fpmza = 0;
         break;
@@ -4418,7 +4476,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 3 : // calibrate, no focal plane mask
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
@@ -4426,12 +4484,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         piaacmc[0].fpmaskamptransm = -1.0;  // Remove focal plane mask
         FORCE_CREATE_fpmza = 1;
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
         val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
 
         // restore original configuration
         piaacmc[0].fpmaskamptransm = paramref[0];
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
         PIAAsimul_savepiaacmcconf(piaacmcconfdir);
         FORCE_CREATE_fpmza = 0;
 
@@ -4442,7 +4500,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 4 : // optimize PIAA optics shapes, cosine modes only
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
             NBiter = (long) data.variable[IDv].value.f+0.01;
@@ -4490,7 +4548,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 5 : // optimize Lyot stops shapes and positions
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
@@ -4580,7 +4638,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 6: // test off-axis performance
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
         PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
@@ -4591,14 +4649,14 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 10 : // setup multizone physical ring mask
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
         //  piaacmc[0].fpmaskamptransm = 1.0;
         piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio * PIAACMC_MASKRADLD;
         FORCE_CREATE_fpmzmap = 1;
         FORCE_CREATE_fpmza = 1;
         FORCE_CREATE_fpmzt = 1;
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
 
         PIAAsimul_savepiaacmcconf(piaacmcconfdir);
         break;
@@ -4653,7 +4711,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 FORCE_CREATE_fpmzmap = 1;
                 FORCE_CREATE_fpmzt = 1;
                 FORCE_CREATE_fpmza = 1;
-                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
             }
             else
             {
@@ -4661,7 +4719,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 FORCE_CREATE_fpmzmap = 0;
                 FORCE_CREATE_fpmzt = 0;
                 FORCE_CREATE_fpmza = 0;
-                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
             }
 
 
@@ -4700,7 +4758,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
                 //piaacmc[0].fpmaskamptransm = 1.0;
                 piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio * PIAACMC_MASKRADLD; // PIAACMC_MASKRADLD l/D radius at central lambda
-                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0);
+                PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
                 PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
 
 
@@ -4857,7 +4915,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 12 : // search for best mask solution using FPMresp
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // 1-fpm
@@ -5219,7 +5277,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 13 : // optimize focal plane mask zones only
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
 
         sprintf(fname,"%s/flux.txt", piaacmcconfdir);
@@ -5295,7 +5353,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         printf("PIAACMC_fpmtype = %d\n", PIAACMC_fpmtype);
 
-        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
             NBiter = (long) data.variable[IDv].value.f+0.01;
@@ -5411,7 +5469,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
 
         FORCE_CREATE_fpmza = 1;
-        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
 
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -5635,7 +5693,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
 
         FORCE_CREATE_fpmza = 1;
-        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
 
         PIAACMCsimul_makePIAAshapes();
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -5689,7 +5747,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 200 : // make focal plane mask OPD map
-        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 1);
+        PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_mkFocalPlaneMaskOPD("fpmzmap", "fpmOPD");
         sprintf(fname, "!%s/fpmOPD_%02d_%d_%d_%03ld_%03ld.fits", piaacmcconfdir, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone);
         save_fits("fpmOPD", fname);
