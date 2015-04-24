@@ -35,6 +35,12 @@ struct kdtree;
 struct kdres;
 
 
+
+
+int init_kdtree();
+
+
+
 /* create a kd-tree for "k"-dimensional data */
 struct kdtree *kd_create(int k);
 

@@ -169,7 +169,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
     long elemstart1 = 0;
     int elemOK;
-
+    double n0, n1; // refractive indices
     int r;
 
     size = optsyst[index].size;
@@ -337,13 +337,16 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
         }
 
-        if(optsyst[index].elemtype[elem]==3)  // MIRROR OR REFRACTIVE SURFACE
+        if(optsyst[index].elemtype[elem]==3)  // MIRROR SURFACE - STORED AS OPD MAP AS A SINGLE MAP (ACHROMATIC) OR A CUBE (CHROMATIC)
         {
-            printf("============= Mirror or Refractive surface =======================\n");
+            printf("============= Mirror surface =======================\n");
             fflush(stdout);
             ID = optsyst[index].ASPHSURFMarray[optsyst[index].elemarrayindex[elem]].surfID;
             printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
             fflush(stdout);
+
+if(data.image[ID].md[0].naxis==2)
+{
 # ifdef HAVE_LIBGOMP
             #pragma omp parallel default(shared) private(ii)
             {
@@ -355,7 +358,83 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 # ifdef HAVE_LIBGOMP
             }
 # endif
+}
+else
+{
+   # ifdef HAVE_LIBGOMP
+            #pragma omp parallel default(shared) private(ii)
+            {
+                #pragma omp for
+# endif
+                for(kl=0; kl<nblambda; kl++)
+                    for(ii=0; ii<size2; ii++)
+                        data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[size2*kl+ii]/optsyst[index].lambdaarray[kl];
+# ifdef HAVE_LIBGOMP
+            }
+# endif 
+}
         }
+
+
+
+        if(optsyst[index].elemtype[elem]==4)  // REFRACTIVE SURFACE - STORED AS SAG MAP AS A SINGLE MAP (ACHROMATIC) OR A CUBE (CHROMATIC)
+        {
+            printf("============= Refractive surface =======================\n");
+            fflush(stdout);
+            ID = optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].surfID;
+            printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
+            fflush(stdout);
+            
+            if(optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].init!=1)
+            {
+                for(kl=0; kl<nblambda; kl++)
+                {
+                    n0 = OPTICSMATERIALS_n( optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].mat0, optsyst[index].lambdaarray[kl]);
+                    n1 = OPTICSMATERIALS_n( optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].mat1, optsyst[index].lambdaarray[kl]);
+                    optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl] = 2.0*M_PI*(n0-n1)/optsyst[index].lambdaarray[kl];
+                }
+                optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].init = 1;
+            }
+            
+
+if(data.image[ID].md[0].naxis==2)
+{
+# ifdef HAVE_LIBGOMP
+            #pragma omp parallel default(shared) private(ii)
+            {
+                #pragma omp for
+# endif
+                for(kl=0; kl<nblambda; kl++)
+                    for(ii=0; ii<size2; ii++)
+                        data.image[IDp].array.F[size2*kl+ii] += data.image[ID].array.F[ii] * optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl];
+# ifdef HAVE_LIBGOMP
+            }
+# endif
+}
+else
+{
+   # ifdef HAVE_LIBGOMP
+            #pragma omp parallel default(shared) private(ii)
+            {
+                #pragma omp for
+# endif
+                for(kl=0; kl<nblambda; kl++)
+                    for(ii=0; ii<size2; ii++)
+                        data.image[IDp].array.F[size2*kl+ii] += data.image[ID].array.F[size2*kl+ii] * optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl];
+# ifdef HAVE_LIBGOMP
+            }
+# endif 
+}
+        }
+
+
+
+
+
+
+
+
+
 
 
         if(optsyst[index].elemtype[elem]==5)  // FOCAL PLANE MASK - MASK INPUT IS 1-MASK FOR EFFICIENT DFT

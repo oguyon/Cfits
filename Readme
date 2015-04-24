@@ -10,7 +10,7 @@ of Linux, OS-X)
 
 o REQUIRED LIBRARIES
 
-You will need the following static libraries:
+static libraries:
 - readline
 - fitsio
 - fftw3 (install both single and double precision)
@@ -52,6 +52,18 @@ The executable is ./bin/Cfits
 
 
 
+
+
+o DOCUMENTATION
+
+# Documentation is based on doxygen:
+sudo apt-get install doxygen
+
+
+# To create documentation:
+doxygen
+
+# documentation is in ./html/index.html
 
 
 

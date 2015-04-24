@@ -89,7 +89,7 @@ int CUDACOMP_test_cli()
 
 
 
-int init_CUDACOMP()
+int init_cudacomp()
 {
     long i;
 #ifdef HAVE_CUDA

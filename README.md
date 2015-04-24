@@ -1,4 +1,4 @@
-# Image analysis tools	
+# Image analysis tools - full development package
 
 
 ## Downloading source code

@@ -94,7 +94,7 @@ typedef struct
 
 
 
-
+int init_cudacomp();
 
 int CUDACOMP_init();
 

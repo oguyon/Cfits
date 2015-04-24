@@ -39,8 +39,10 @@ typedef struct {
 // using same sampling as nominal beam
 //
 typedef struct {
-  long mat0; // material before surface
+  long mat0; // material before surface - see codes in OpticsMaterial.c
   long mat1; // material after surface
+  int init; // has refractive index been computed ?
+  double ncoeff[100]; // for each wavelength (max 100), multiplicative coeff between sag and induced OPD 
   long surfID; // surface Z sag
 } ASPHSURFR;
 
@@ -84,13 +86,13 @@ typedef struct {
   
   // =============== OPTICAL ELEMENTS ===================
   long NB_asphsurfm; // max number of aspheric mirrors
-  ASPHSURFM ASPHSURFMarray[4];
+  ASPHSURFM ASPHSURFMarray[100];
 
   long NB_asphsurfr; // max number of aspheric refractive surfaces
-  ASPHSURFM ASPHSURFRarray[4];
+  ASPHSURFR ASPHSURFRarray[100];
 
   long NB_focmask; // max number of focal plane masks
-  FOCMASK FOCMASKarray[4];
+  FOCMASK FOCMASKarray[100];
   
   
   long NBelem; // number of optical elements

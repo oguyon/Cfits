@@ -1,6 +1,8 @@
 #ifndef _00CORE_H
 #define _00CORE_H
 
+int init_00CORE();
+
 
 int printRED(char *string);
 

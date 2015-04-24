@@ -29,6 +29,15 @@ extern DATA data;
 */
 
 
+
+
+int init_00CORE()
+{
+    return 0;
+}
+
+
+
 int printRED(char *string)
 {
   printf("%c[%d;%dm %s %c[%d;m\n", (char) 27, 1, 31, string, (char) 27, 0);

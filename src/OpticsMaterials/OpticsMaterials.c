@@ -8,6 +8,10 @@
 
 
 
+int init_OpticsMaterials()
+{
+return(0);
+}
 
 
 
@@ -16,8 +20,9 @@
 //
 //
 // phase offset as function of mask thickness and lambda
-// 
+//
 // materials:
+// 0: Mirror
 // 1: SiO2
 // 2: Si
 // 3: PMGI
@@ -30,17 +35,19 @@
 // 10: pure H2O vapor (1 atm)
 // 11: CO2
 // 12: O
-
+// 100: Vacuum
+// 101: Air (1 atm)
+//
 double OPTICSMATERIALS_n(int material, double lambda)
 {
     double n;
     long i, i1, i2;
     double ifrac;
-	double w0, w1, w2, w3;
-	double LL; // Lorentz-Lorenz number
-	double LoschmidtConstant =  2.6867805e25;
-	double A, pol;
-	
+    double w0, w1, w2, w3;
+    double LL; // Lorentz-Lorenz number
+    double LoschmidtConstant =  2.6867805e25;
+    double A, pol;
+
     // SiO2
     double SiO2_n0 = 1.28604141;
     double SiO2_B1 = 1.07044083;
@@ -69,13 +76,21 @@ double OPTICSMATERIALS_n(int material, double lambda)
 
     lambdaum = lambda*1.0e6;
     lambdanm = lambda*1.0e9;
-	lambdaa = lambdanm*10;
+    lambdaa = lambdanm*10;
 
     n = 1.0;
 
     switch (material) {
 
-    case 0 : // mirror
+    case 100 : // vacuum
+        n = 1.0;
+        break;
+        
+    case 101 : // air, 1 atm
+        n = 1.0 + 1.0 * ( (5792105.0e-8/(238.0185-1.0/(lambdaum*lambdaum))) + (167917.0e-8/(57.362-1.0/(lambdaum*lambdaum))) );;
+        break;
+
+    case 0 : // Mirror
         n = 3.0;
         break;
 
@@ -1228,53 +1243,53 @@ double OPTICSMATERIALS_n(int material, double lambda)
         n = pmma_n[i1]*(1.0-ifrac) + pmma_n[i2]*ifrac;
         break;
 
-	// ref 1: E. R. Peck and B. N. Khanna. Dispersion of Nitrogen, J. Opt. Soc. Am. 56, 1059–1063 (1963), 0.4 to 2.0 um, 0C, 1 atm
+    // ref 1: E. R. Peck and B. N. Khanna. Dispersion of Nitrogen, J. Opt. Soc. Am. 56, 1059–1063 (1963), 0.4 to 2.0 um, 0C, 1 atm
 
-	// ref 2: J. Zhang, Z. H. Lu, and L. J. Wang. Precision refractive index measurements of air, N2, O2, Ar, and CO2 with a frequency comb, Appl. Opt. 47, 3143-3151 (2008)
-    // 	
-	// 20 C, 101325 Pa, 0.4 - 0.8um
-	case 5 : // N2
-//		n = 1.0 + 1e-8*(8736.28 + 2398095.2 / (128.7 - 1.0/(lambdaum*lambdaum)));
-		n = 1.0 + 63.8623e-6 + (30212.83e-6*lambdaum*lambdaum)/(144*lambdaum*lambdaum-1); // 0C ,1 atm, ref 1
-		
-		// convert to STP (0 C) - for ref2
-		//LL = (n*n-1)/(n*n+2);
-		//LL *= 293.15/273.15;
-		//n = sqrt((2.0*LL+1)/(1.0-LL));
-		break;
-	
-	
-	
-	// ref : J. Zhang, Z. H. Lu, and L. J. Wang. Precision refractive index measurements of air, N2, O2, Ar, and CO2 with a frequency comb, Appl. Opt. 47, 3143-3151 (2008)
-    // 	
-	// 20 C, 101325 Pa, 0.6 - 0.9 um
-	case 6 : // O2
-		n = 1.0 + 1e-8*(15532.45 + 456402.97/(50.0 - 1.0/(lambdaum*lambdaum)));
-	//	n = 1.0 + 1.181494e-4 + 9.708931e-3/(75.4 - 1.0/(lambdaum*lambdaum));
-		// convert to STP (0 C)
-		LL = (n*n-1)/(n*n+2);
-		LL *= 293.15/273.15;
-		n = sqrt((2.0*LL+1)/(1.0-LL));
-		break;
-	
-	
-	
-	// ref: Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003
-	// 0 C, 1 atm, 0.14-2.1 um
-	
-	// [1] ref: E.R. Peck and D.J. Fisher, 
-	// 0C, 760 Torr, 0.46 to 2.0 um
-	case 7 : // Ar
-		n = 1.0 + 1.0e-8*( 6322.05 + 2811641.7/(144.0-1.0/(lambdaum*lambdaum))); // [1]
-//		n = 1.0 + 0.012055 * (0.2075*lambdaum*lambdaum/(91.012*lambdaum*lambdaum - 1.0) + 0.0415*lambdaum*lambdaum/(87.892*lambdaum*lambdaum - 1.0) + 4.3330*lambdaum*lambdaum/(214.02*lambdaum*lambdaum - 1.0));
-		break;
-	
-	// Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003 
-	// 0 C
-	case 8 : // He
-		n = 1.0 + 0.01470091 / (423.98 - 1.0/(lambdaum*lambdaum));
-		break;
-    
+    // ref 2: J. Zhang, Z. H. Lu, and L. J. Wang. Precision refractive index measurements of air, N2, O2, Ar, and CO2 with a frequency comb, Appl. Opt. 47, 3143-3151 (2008)
+    //
+    // 20 C, 101325 Pa, 0.4 - 0.8um
+    case 5 : // N2
+        //		n = 1.0 + 1e-8*(8736.28 + 2398095.2 / (128.7 - 1.0/(lambdaum*lambdaum)));
+        n = 1.0 + 63.8623e-6 + (30212.83e-6*lambdaum*lambdaum)/(144*lambdaum*lambdaum-1); // 0C ,1 atm, ref 1
+
+        // convert to STP (0 C) - for ref2
+        //LL = (n*n-1)/(n*n+2);
+        //LL *= 293.15/273.15;
+        //n = sqrt((2.0*LL+1)/(1.0-LL));
+        break;
+
+
+
+    // ref : J. Zhang, Z. H. Lu, and L. J. Wang. Precision refractive index measurements of air, N2, O2, Ar, and CO2 with a frequency comb, Appl. Opt. 47, 3143-3151 (2008)
+    //
+    // 20 C, 101325 Pa, 0.6 - 0.9 um
+    case 6 : // O2
+        n = 1.0 + 1e-8*(15532.45 + 456402.97/(50.0 - 1.0/(lambdaum*lambdaum)));
+        //	n = 1.0 + 1.181494e-4 + 9.708931e-3/(75.4 - 1.0/(lambdaum*lambdaum));
+        // convert to STP (0 C)
+        LL = (n*n-1)/(n*n+2);
+        LL *= 293.15/273.15;
+        n = sqrt((2.0*LL+1)/(1.0-LL));
+        break;
+
+
+
+    // ref: Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003
+    // 0 C, 1 atm, 0.14-2.1 um
+
+    // [1] ref: E.R. Peck and D.J. Fisher,
+    // 0C, 760 Torr, 0.46 to 2.0 um
+    case 7 : // Ar
+        n = 1.0 + 1.0e-8*( 6322.05 + 2811641.7/(144.0-1.0/(lambdaum*lambdaum))); // [1]
+        //		n = 1.0 + 0.012055 * (0.2075*lambdaum*lambdaum/(91.012*lambdaum*lambdaum - 1.0) + 0.0415*lambdaum*lambdaum/(87.892*lambdaum*lambdaum - 1.0) + 4.3330*lambdaum*lambdaum/(214.02*lambdaum*lambdaum - 1.0));
+        break;
+
+    // Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003
+    // 0 C
+    case 8 : // He
+        n = 1.0 + 0.01470091 / (423.98 - 1.0/(lambdaum*lambdaum));
+        break;
+
     // P. J. Leonard. Refractive indices, Verdet constants, and polarizabilities of the inert gases, Atomic Data and Nuclear Data Tables 14, 21–37 (1974)
     // note: OG fit to values between 0.23 um and 0.67 um
     // 0 C, 1 atm, 0.23-0.67 um
@@ -1282,56 +1297,56 @@ double OPTICSMATERIALS_n(int material, double lambda)
     // "THE REFRACTIVE INDEX OF HYDROGEN AS A FUNCTION OF PRESSURE" ARTHUR L. RUOFF and KOUROS GHANDEHARI, Mod. Phys. Lett. B Volume 07, Issue 13n14, June 20, 1993  gives:
     // nH2 = 1 + 3.046 ρ + 2.6 ρ2
     case 9 : // H2
-		n = 1.0 + 0.0175329 / (128.905 - 1.0/(lambdaum*lambdaum));
-		break;
-	
-	// ref: Ciddor, 20 March 1996 @ Vol. 35, No. 9 @ APPLIED OPTICS
-	// ftp://adk.asrc.cestm.albany.edu/pub/sergey/KiedSier/Ciddor.%20Refractive%20index%20of%20air.pdf
-	// 20 C , 1333 Pa
-	case 10 : // H2O vapor
-		w0 = 295.235;
-		w1  = 2.6422;
-		w2 = 20.032380;
-		w3 = 0.004028;
-		n = 1.0 + 1.0e-8*1.022*(w0 + w1/lambdaum/lambdaum + w2/lambdaum/lambdaum/lambdaum/lambdaum + w3/lambdaum/lambdaum/lambdaum/lambdaum/lambdaum/lambdaum);
-	// convert to STP (0 C, 1 atm)
-	LL = (n*n-1)/(n*n+2);
-		LL *= 293.15/273.15;
-		LL *= 101325.0/1333.0;
-		n = sqrt((2.0*LL+1)/(1.0-LL));
-	//	printf("[n=%f] ", n);
-		break;
+        n = 1.0 + 0.0175329 / (128.905 - 1.0/(lambdaum*lambdaum));
+        break;
+
+    // ref: Ciddor, 20 March 1996 @ Vol. 35, No. 9 @ APPLIED OPTICS
+    // ftp://adk.asrc.cestm.albany.edu/pub/sergey/KiedSier/Ciddor.%20Refractive%20index%20of%20air.pdf
+    // 20 C , 1333 Pa
+    case 10 : // H2O vapor
+        w0 = 295.235;
+        w1  = 2.6422;
+        w2 = 20.032380;
+        w3 = 0.004028;
+        n = 1.0 + 1.0e-8*1.022*(w0 + w1/lambdaum/lambdaum + w2/lambdaum/lambdaum/lambdaum/lambdaum + w3/lambdaum/lambdaum/lambdaum/lambdaum/lambdaum/lambdaum);
+        // convert to STP (0 C, 1 atm)
+        LL = (n*n-1)/(n*n+2);
+        LL *= 293.15/273.15;
+        LL *= 101325.0/1333.0;
+        n = sqrt((2.0*LL+1)/(1.0-LL));
+        //	printf("[n=%f] ", n);
+        break;
 
 
-	// ref: A. Bideau-Mehu, Y. Guern, R. Abjean and A. Johannin-Gilles. Interferometric determination of the refractive index of carbon dioxide in the ultraviolet region, Opt. Commun. 9, 432-434 (1973)
-	// 273K 0.18 - 1.7 um
-	
-	case 11 : // CO2
-		n = 1.0 + 0.06991/(166.175-1.0/lambdaum/lambdaum) + 0.00144720/(79.609-1.0/lambdaum/lambdaum) + 0.0000642941/(56.3064-1.0/lambdaum/lambdaum) + 0.0000521306/(46.0196-1.0/lambdaum/lambdaum) + 0.00000146847/(0.0584738-1.0/lambdaum/lambdaum);
-		// convert to STP (0 C)
-	//	LL = (n*n-1)/(n*n+2);
-		//LL *= 293.15/273.15;
-		//n = sqrt((2.0*LL+1)/(1.0-LL));
-		break;
+    // ref: A. Bideau-Mehu, Y. Guern, R. Abjean and A. Johannin-Gilles. Interferometric determination of the refractive index of carbon dioxide in the ultraviolet region, Opt. Commun. 9, 432-434 (1973)
+    // 273K 0.18 - 1.7 um
+
+    case 11 : // CO2
+        n = 1.0 + 0.06991/(166.175-1.0/lambdaum/lambdaum) + 0.00144720/(79.609-1.0/lambdaum/lambdaum) + 0.0000642941/(56.3064-1.0/lambdaum/lambdaum) + 0.0000521306/(46.0196-1.0/lambdaum/lambdaum) + 0.00000146847/(0.0584738-1.0/lambdaum/lambdaum);
+        // convert to STP (0 C)
+        //	LL = (n*n-1)/(n*n+2);
+        //LL *= 293.15/273.15;
+        //n = sqrt((2.0*LL+1)/(1.0-LL));
+        break;
 
 
     // using 2 references:
-	// ref: Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003
-	// ref: A. Bideau-Mehu, Y. Guern, R. Abjean and A. Johannin-Gilles. Measurement of refractive indices of neon, argon, krypton and xenon in the 253.7–140.4 nm wavelength range. Dispersion relations and estimated oscillator strengths of the resonance lines. J. Quant. Spectrosc. Rad. Transfer 25, 395-402 (1981)
-	// 0 C
+    // ref: Handbook of Optical Materials, Marvin J. Weber. CRC Press 2003
+    // ref: A. Bideau-Mehu, Y. Guern, R. Abjean and A. Johannin-Gilles. Measurement of refractive indices of neon, argon, krypton and xenon in the 253.7–140.4 nm wavelength range. Dispersion relations and estimated oscillator strengths of the resonance lines. J. Quant. Spectrosc. Rad. Transfer 25, 395-402 (1981)
+    // 0 C
     case 12 : // Ne
-		n = 1.0 + 0.012055 * (   0.1063*lambdaum*lambdaum/(184.661*lambdaum*lambdaum - 1.0)  +  1.8290*lambdaum*lambdaum/(376.840*lambdaum*lambdaum - 1.0) ) ;
-		break;
-    
-    
+        n = 1.0 + 0.012055 * (   0.1063*lambdaum*lambdaum/(184.661*lambdaum*lambdaum - 1.0)  +  1.8290*lambdaum*lambdaum/(376.840*lambdaum*lambdaum - 1.0) ) ;
+        break;
+
+
     // ref: Calculation of the refraction and dispersion of heated atomic oxygen, Ivanova, A.V. and Kologrivov, V.N., 1970
-    // using Lorentz-Lorenz equation 
+    // using Lorentz-Lorenz equation
     case 13 : // O (atomic oxygen)
-		pol = 4.5e-30*(1.0+6.2e5/lambdaa/lambdaa); // polarizability [m3]
-		A = 4.0*M_PI/3*pol*LoschmidtConstant;
-		n = sqrt((2.0*A+1)/(1.0-A));
-		break;
-    
+        pol = 4.5e-30*(1.0+6.2e5/lambdaa/lambdaa); // polarizability [m3]
+        A = 4.0*M_PI/3*pol*LoschmidtConstant;
+        n = sqrt((2.0*A+1)/(1.0-A));
+        break;
+
     default:
         n = 0;
         printf("Material not found\n");
@@ -1341,6 +1356,7 @@ double OPTICSMATERIALS_n(int material, double lambda)
 
     return(n);
 }
+
 
 
 
