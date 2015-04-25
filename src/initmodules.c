@@ -29,7 +29,7 @@ int init_modules()
   init_psf();
   init_AtmosphereModel();
   init_AtmosphericTurbulence();
-  init_CUDACOMP();
+  init_cudacomp();
   init_SCExAO_control();
  
   return 0;

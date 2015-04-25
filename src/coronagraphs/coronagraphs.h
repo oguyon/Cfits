@@ -51,6 +51,6 @@ int coronagraph_userfunc();
 
 int coronagraph_compute_limitcoeff();
 
-int CORONAGRAPHS_scanPIAACMC_centObs_perf( double obs0input );
+int coronagraph_scanPIAACMC_centObs_perf( double obs0input );
 
 #endif

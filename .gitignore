@@ -7,6 +7,7 @@ compileREADME.txt
 *.la
 *.Po
 *.Plo
+*.bak
 sync
 TBE
 html/
