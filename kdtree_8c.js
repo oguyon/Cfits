@@ -16,6 +16,7 @@ var kdtree_8c =
     [ "hyperrect_duplicate", "kdtree_8c.html#a60e33de48594f1c05b8e4fbf0e09c63a", null ],
     [ "hyperrect_extend", "kdtree_8c.html#ae40ba7676a399077d5f3ea087206ce99", null ],
     [ "hyperrect_free", "kdtree_8c.html#a3b2f9e214225dc2584f43e5da6b4cda6", null ],
+    [ "init_kdtree", "kdtree_8c.html#a3786e783ecc937350056466a1237208b", null ],
     [ "insert_rec", "kdtree_8c.html#af66eaa308d53bca4aba8149b78f43864", null ],
     [ "kd_clear", "kdtree_8c.html#a354bb35c5b031992cd0972dc53ad5d4f", null ],
     [ "kd_create", "kdtree_8c.html#a0267f17ca84a70322af662b16a625c16", null ],

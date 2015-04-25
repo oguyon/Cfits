@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['piaacmc_20coronagraph_20design',['PIAACMC coronagraph design',['../md_src_PIAACMCsimul_README.html',1,'']]]
+  ['piaacmc_20design',['PIAACMC design',['../md_src_PIAACMCsimul_README.html',1,'']]]
 ];

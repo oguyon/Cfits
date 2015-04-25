@@ -31,5 +31,7 @@ var structDATA =
     [ "rndgen", "structDATA.html#a819c0e911d771dbb7da0dbf26e993fc2", null ],
     [ "SAVEDIR", "structDATA.html#a883b88f5c5cca024bfc4240cda302dd7", null ],
     [ "SHARED_DFT", "structDATA.html#a64d5b0ed5d5cedf11ff69ebf8d30dc20", null ],
+    [ "status0", "structDATA.html#a14eafa363f5cd5dd7ff9ca0744029565", null ],
+    [ "status1", "structDATA.html#acc1a46fa384934e24a89660d8d0c9f7a", null ],
     [ "variable", "structDATA.html#a38336f0ef793c2aef2a6f3a20e3e361b", null ]
 ];

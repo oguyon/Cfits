@@ -12,6 +12,7 @@ var info_8h =
     [ "img_percentile_double", "info_8h.html#a4f2b87273df90f0c3e4a987ee99ad08f", null ],
     [ "img_percentile_float", "info_8h.html#a4fcbed12aef4748fcd6aee9824e3ee36", null ],
     [ "info_image_stats", "info_8h.html#ad86196d613af285e872be94d5c42696e", null ],
+    [ "info_time_diff", "info_8h.html#a6fb9173b416d4ca64e84793024c86a9e", null ],
     [ "make_histogram", "info_8h.html#afa6b1421bd1e815ae868ac277b0650d9", null ],
     [ "printpix", "info_8h.html#af472e2378db84ed0853c9c2544e7854b", null ],
     [ "profile", "info_8h.html#a0a70fd9ed7f3b3cc865a6d88b0f82cf9", null ],

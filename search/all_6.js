@@ -6,6 +6,7 @@ var searchData=
   ['elemarrayindex',['elemarrayindex',['../structOPTSYST.html#a32962b27534c2f242eeb7183237f319f',1,'OPTSYST']]],
   ['elemtype',['elemtype',['../structOPTSYST.html#a63f311eb16fa637a8e1cd2102540c67d',1,'OPTSYST']]],
   ['elemzpos',['elemZpos',['../structOPTSYST.html#a80079ae1f8045368a8e009e4ceda76a1',1,'OPTSYST']]],
+  ['endmode',['endmode',['../structOPTSYST.html#a98b8c66b45d6534f830d5cfe9fb39b17',1,'OPTSYST']]],
   ['eob_5fact_5fcontinue_5fscan',['EOB_ACT_CONTINUE_SCAN',['../calc__flex_8c.html#adf4b0db227e07782e28ade353a7ba7a1',1,'calc_flex.c']]],
   ['eob_5fact_5fend_5fof_5ffile',['EOB_ACT_END_OF_FILE',['../calc__flex_8c.html#a7f71d7fa2c403eb4b2f38cb9536f3c63',1,'calc_flex.c']]],
   ['eob_5fact_5flast_5fmatch',['EOB_ACT_LAST_MATCH',['../calc__flex_8c.html#ad1a0b5ebcabffe388e9e9ebb2619c1fb',1,'calc_flex.c']]],

@@ -2,6 +2,8 @@ var CLIcore_8c =
 [
     [ "cfits_usleep_cli", "CLIcore_8c.html#afb065d6c0f7798b65614d2d73654c15d", null ],
     [ "CLI_checkarg", "CLIcore_8c.html#acfa3a12412c06fe66437c5f77f066fa0", null ],
+    [ "CLI_checkarg0", "CLIcore_8c.html#ab547559fc45f1fdbdd9d61c41ea621b1", null ],
+    [ "CLI_checkarg_noerrmsg", "CLIcore_8c.html#a8b68e72c423d42662e9c37f450ced2df", null ],
     [ "CLI_completion", "CLIcore_8c.html#abdbce5b31d8dee481297ecec70cb210b", null ],
     [ "CLI_execute_line", "CLIcore_8c.html#a545e2eb87dada15cc88f19899c6a021d", null ],
     [ "CLI_generator", "CLIcore_8c.html#a000ddfcf96caf86a1900c586fbeb0b1c", null ],

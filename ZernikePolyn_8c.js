@@ -12,6 +12,7 @@ var ZernikePolyn_8c =
     [ "mk_zer", "ZernikePolyn_8c.html#a23edc5ac562c111891ca32e78fd5cf0c", null ],
     [ "mk_zer_cli", "ZernikePolyn_8c.html#a7e855044d955099878163e1a3cd39633", null ],
     [ "mk_zer_series", "ZernikePolyn_8c.html#aa662334d11fb92e1defc17bb7ff53a63", null ],
+    [ "mk_zer_seriescube", "ZernikePolyn_8c.html#ab719b0ba2ffadeb43ab8db276048c07a", null ],
     [ "mk_zer_unbounded", "ZernikePolyn_8c.html#a784ef1fa4c4c8cd702442f02118ce6d2", null ],
     [ "mk_zer_unbounded1", "ZernikePolyn_8c.html#a6bc199ea7371c9c2ed93fdc860f5f739", null ],
     [ "remove_TTF", "ZernikePolyn_8c.html#ae107e629cfc67b92728bcd803c89fd63", null ],

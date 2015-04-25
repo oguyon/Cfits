@@ -5,7 +5,7 @@ var COREMOD__iofits_8h =
     [ "file_exists", "COREMOD__iofits_8h.html#a3a7512c105c2a9787ce88115e7f292f7", null ],
     [ "images_to_cube", "COREMOD__iofits_8h.html#a827fcdd209904872ce19822f3298aebe", null ],
     [ "is_fits_file", "COREMOD__iofits_8h.html#a641a12bab3be6f1de076d108cb32a4f8", null ],
-    [ "load_fits", "COREMOD__iofits_8h.html#a18f9af620dba64b0164abf6d7c7774ee", null ],
+    [ "load_fits", "COREMOD__iofits_8h.html#a675c8d0c47c2548f69096d33ba9dd05a", null ],
     [ "read_keyword", "COREMOD__iofits_8h.html#a7b9f887d91a883600e169d23b7e36b60", null ],
     [ "read_keyword_alone", "COREMOD__iofits_8h.html#ad08f97b8022587fc91f323c90077cdb4", null ],
     [ "save_db_fits", "COREMOD__iofits_8h.html#a86665c391740e8f78c2a534ff3f9acb4", null ],

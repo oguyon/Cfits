@@ -39,9 +39,12 @@ var image__basic_8h =
     [ "basic_trunc_circ", "image__basic_8h.html#ac7916f0a9ec6f3346d03cb8a009b740e", null ],
     [ "basic_zoom2", "image__basic_8h.html#ae66cd8a2a829a89c071cb31c9c2ae905", null ],
     [ "cube_average", "image__basic_8h.html#a82904f1f73fcba3b18a22fe85b34f869", null ],
+    [ "cube_collapse", "image__basic_8h.html#a4e2f3451f50ee65833130f3d5dfa4493", null ],
     [ "gauss_histo_image", "image__basic_8h.html#afaae12b1475489d8eaf9e697e6764330", null ],
     [ "get_assym_component", "image__basic_8h.html#a187bfb37c377ae323eee4d3beb879c9d", null ],
     [ "get_sym_component", "image__basic_8h.html#a27c45a4c0688ba1037155b2713e186c1", null ],
+    [ "IMAGE_BASIC_streamaverage", "image__basic_8h.html#a967029e85e9269e656d5509b91e3352d", null ],
+    [ "IMAGE_BASIC_streamfeed", "image__basic_8h.html#a2cb85fb1b0a43235f5f2febbca8e4299", null ],
     [ "init_image_basic", "image__basic_8h.html#a4abcb12d1c88071d57c8259388174da2", null ],
     [ "load_fitsimages", "image__basic_8h.html#a975c26922325656c7ffc97be036fa9b2", null ],
     [ "load_fitsimages_cube", "image__basic_8h.html#a297d775947e563c2b467229047fccd76", null ]

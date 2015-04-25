@@ -32,6 +32,7 @@ var SCExAO__DM_8c =
     [ "dmturb_loaded", "SCExAO__DM_8c.html#a7b2a11ec6d4b0abdc6f15be21e49b6cf", null ],
     [ "dmturbconf", "SCExAO__DM_8c.html#a953fcf3078096a1b81a5562be4f2f9ab", null ],
     [ "IDturb", "SCExAO__DM_8c.html#aafd827949108347d0afbc92c4486b128", null ],
+    [ "semwaitts", "SCExAO__DM_8c.html#a70cdcb3b0cb701bcd287cded71391140", null ],
     [ "SMfd", "SCExAO__DM_8c.html#ad3fefa8c187fe37b7835f882acb21dda", null ],
     [ "SMturbfd", "SCExAO__DM_8c.html#aa733da67de0ae3ba855ec77c80a1c73c", null ],
     [ "wcol", "SCExAO__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7", null ],

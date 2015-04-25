@@ -1,6 +1,13 @@
 var searchData=
 [
   ['background_5fphoton_5fnoise',['background_photon_noise',['../info_8c.html#a5561ebe26f242fb3f18210efc6c33c2a',1,'background_photon_noise(char *ID_name):&#160;info.c'],['../info_8h.html#a5561ebe26f242fb3f18210efc6c33c2a',1,'background_photon_noise(char *ID_name):&#160;info.c']]],
+  ['badpixclean_5farray_5fcoeff',['badpixclean_array_coeff',['../img__reduce_8c.html#a6083ac6424a2cfc28962c693a1fc437f',1,'img_reduce.c']]],
+  ['badpixclean_5farray_5findexin',['badpixclean_array_indexin',['../img__reduce_8c.html#aa84d9d5a0af4b049bf9ed1af59adcba2',1,'img_reduce.c']]],
+  ['badpixclean_5farray_5findexout',['badpixclean_array_indexout',['../img__reduce_8c.html#a0746a7b3bbaa6e5f45899a0547f7d744',1,'img_reduce.c']]],
+  ['badpixclean_5findexlist',['badpixclean_indexlist',['../img__reduce_8c.html#a79cfc6d5350eba73228ce589400240de',1,'img_reduce.c']]],
+  ['badpixclean_5finit',['badpixclean_init',['../img__reduce_8c.html#aceca24b1e53bd0a44dd8e53bde1f5d37',1,'img_reduce.c']]],
+  ['badpixclean_5fnbbadpix',['badpixclean_NBbadpix',['../img__reduce_8c.html#a09119447635dca00a8e363699be085a6',1,'img_reduce.c']]],
+  ['badpixclean_5fnbop',['badpixclean_NBop',['../img__reduce_8c.html#ac9d78e77de56d2a097c0344ac6e2c065',1,'img_reduce.c']]],
   ['basic_5f2dextrapolate_5fnearestpixel',['basic_2Dextrapolate_nearestpixel',['../image__basic_8c.html#a4333392d52801f822056bbe9f8e698c5',1,'basic_2Dextrapolate_nearestpixel(char *IDin_name, char *IDmask_name, char *IDout_name):&#160;image_basic.c'],['../image__basic_8h.html#a4333392d52801f822056bbe9f8e698c5',1,'basic_2Dextrapolate_nearestpixel(char *IDin_name, char *IDmask_name, char *IDout_name):&#160;image_basic.c']]],
   ['basic_5fadd',['basic_add',['../image__basic_8c.html#a5a917465e30bd44cb6825814718bd954',1,'basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2):&#160;image_basic.c'],['../image__basic_8h.html#a5ab9a2f54c8d3ab162f2d1263b99c746',1,'basic_add(char *ID1_name, char *ID2_name, char *ID3_name, long off1, long off2):&#160;image_basic.c']]],
   ['basic_5fadd_5fcst',['basic_add_cst',['../image__basic_8c.html#ae0cb9a7f0b3db0c31754ceea145865b9',1,'image_basic.c']]],
@@ -41,7 +48,7 @@ var searchData=
   ['basic_5ftranslate',['basic_translate',['../image__basic_8c.html#abf0963110555655ddcdf07bb4eaeff20',1,'basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl):&#160;image_basic.c'],['../image__basic_8h.html#abf0963110555655ddcdf07bb4eaeff20',1,'basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl):&#160;image_basic.c']]],
   ['basic_5ftrunc_5fcirc',['basic_trunc_circ',['../image__basic_8c.html#ac7916f0a9ec6f3346d03cb8a009b740e',1,'basic_trunc_circ(char *ID_name, float f1):&#160;image_basic.c'],['../image__basic_8h.html#ac7916f0a9ec6f3346d03cb8a009b740e',1,'basic_trunc_circ(char *ID_name, float f1):&#160;image_basic.c']]],
   ['basic_5fzoom2',['basic_zoom2',['../image__basic_8c.html#ae66cd8a2a829a89c071cb31c9c2ae905',1,'basic_zoom2(char *ID_name, char *ID_name_out):&#160;image_basic.c'],['../image__basic_8h.html#ae66cd8a2a829a89c071cb31c9c2ae905',1,'basic_zoom2(char *ID_name, char *ID_name_out):&#160;image_basic.c']]],
-  ['beamrad',['beamrad',['../structOPTSYST.html#a10d097a25c01cbe9263690707182f0c8',1,'OPTSYST::beamrad()'],['../structMIRRORPIAACMCDESIGN.html#ac91de5d999cb2f909e7cde4e32e201ae',1,'MIRRORPIAACMCDESIGN::beamrad()']]],
+  ['beamrad',['beamrad',['../structOPTSYST.html#a10d097a25c01cbe9263690707182f0c8',1,'OPTSYST::beamrad()'],['../structOPTPIAACMCDESIGN.html#ac90bf363beaa0d44651ae1c69268de15',1,'OPTPIAACMCDESIGN::beamrad()']]],
   ['begin',['BEGIN',['../calc__flex_8c.html#ab766bbbee08d04b67e3fe599d6900873',1,'calc_flex.c']]],
   ['better_5fpoisson',['better_poisson',['../statistic_8c.html#a617f9bb1c07595bb869077d862cf4c73',1,'better_poisson(double mu):&#160;statistic.c'],['../statistic_8h.html#a617f9bb1c07595bb869077d862cf4c73',1,'better_poisson(double mu):&#160;statistic.c']]],
   ['bfoffbits',['bfOffBits',['../structBITMAPFILEHEADER.html#a7426a16a6cb6a65bd22b3696376d18dc',1,'BITMAPFILEHEADER']]],
@@ -82,5 +89,5 @@ var searchData=
   ['builddate',['BuildDate',['../CLIcore_8h.html#ac3e78a1257c6b5e478a52bf5b478014b',1,'CLIcore.h']]],
   ['buildfile',['BuildFile',['../CLIcore_8h.html#a9ebc4d9af3d9a26f49cccce824a976eb',1,'CLIcore.h']]],
   ['buildtime',['BuildTime',['../CLIcore_8h.html#afeae30b051ddde8c1e7490fa91bc2fc6',1,'CLIcore.h']]],
-  ['busy',['busy',['../structSCEXAO__DISPCOMB__CONF.html#af7eb2773d849a1f281b645ab236836b5',1,'SCEXAO_DISPCOMB_CONF']]]
+  ['busy',['busy',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a00c9df4a16dad4698649e7cc56d99541',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::busy()'],['../structSCEXAO__DISPCOMB__CONF.html#af7eb2773d849a1f281b645ab236836b5',1,'SCEXAO_DISPCOMB_CONF::busy()']]]
 ];

@@ -95,7 +95,9 @@ var COREMOD__arith_8h =
     [ "arith_image_fmod_byID", "COREMOD__arith_8h.html#aa7ca70fbd2396eca073a3b4fc41844f1", null ],
     [ "arith_image_fmod_inplace", "COREMOD__arith_8h.html#aa6097bfff4f148b95ef71afaf21afca9", null ],
     [ "arith_image_fmod_inplace_byID", "COREMOD__arith_8h.html#a41076a786cd6dc3d5bda9952140e6f2e", null ],
-    [ "arith_image_function_d_d", "COREMOD__arith_8h.html#a33cff27e3c6141a6a6b77fc0cf966071", null ],
+    [ "arith_image_function_im_im__d_d", "COREMOD__arith_8h.html#a1cb0d59794f150254e6152309af343da", null ],
+    [ "arith_image_function_imd_im__dd_d", "COREMOD__arith_8h.html#ab358d7b67407d0e3bfc2fe3e21045dff", null ],
+    [ "arith_image_function_imdd_im__ddd_d", "COREMOD__arith_8h.html#a7219db1c6c57ba2ce463662c0146d222", null ],
     [ "arith_image_ln", "COREMOD__arith_8h.html#ab55299f3fd5c25fcb806f85337918925", null ],
     [ "arith_image_ln_byID", "COREMOD__arith_8h.html#ac3ab1e8b3261131aa9f9dd1b208ca779", null ],
     [ "arith_image_ln_inplace", "COREMOD__arith_8h.html#ae3dc57cf28f306342b5477f90f5fbdd2", null ],
@@ -159,5 +161,6 @@ var COREMOD__arith_8h =
     [ "arith_set_col", "COREMOD__arith_8h.html#ad250a9e362ccb8f636fa795b55803d6d", null ],
     [ "arith_set_pixel", "COREMOD__arith_8h.html#a0334577698dbf73bbd722a63771eb0e9", null ],
     [ "arith_set_row", "COREMOD__arith_8h.html#ace8c3afefefcd8d80fc436a26322d1b6", null ],
-    [ "execute_arith", "COREMOD__arith_8h.html#a8c1ca3f0f2b679a2af4250f031c9cda1", null ]
+    [ "execute_arith", "COREMOD__arith_8h.html#a8c1ca3f0f2b679a2af4250f031c9cda1", null ],
+    [ "Ptrunc", "COREMOD__arith_8h.html#af6427f827bed4e0526cf80a1e1f54956", null ]
 ];

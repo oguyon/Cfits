@@ -32,6 +32,7 @@ var CLIcore_8h =
     [ "TEST_ALLOC", "CLIcore_8h.html#a6ce45abed084638ca9c884a419acd17f", null ],
     [ "USHORT", "CLIcore_8h.html#aea50feaf24fd53b7ffab0e9b62ff30a6", null ],
     [ "CLI_checkarg", "CLIcore_8h.html#acfa3a12412c06fe66437c5f77f066fa0", null ],
+    [ "CLI_checkarg_noerrmsg", "CLIcore_8h.html#a8b68e72c423d42662e9c37f450ced2df", null ],
     [ "BuildDate", "CLIcore_8h.html#ac3e78a1257c6b5e478a52bf5b478014b", null ],
     [ "BuildFile", "CLIcore_8h.html#a9ebc4d9af3d9a26f49cccce824a976eb", null ],
     [ "BuildTime", "CLIcore_8h.html#afeae30b051ddde8c1e7490fa91bc2fc6", null ],
