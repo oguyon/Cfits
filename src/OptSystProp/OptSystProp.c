@@ -343,36 +343,36 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             fflush(stdout);
             ID = optsyst[index].ASPHSURFMarray[optsyst[index].elemarrayindex[elem]].surfID;
             printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
-            fflush(stdout);
 
-if(data.image[ID].md[0].naxis==2)
-{
-# ifdef HAVE_LIBGOMP
-            #pragma omp parallel default(shared) private(ii)
+            
+            if(data.image[ID].md[0].naxis==2)
             {
-                #pragma omp for
-# endif
-                for(kl=0; kl<nblambda; kl++)
-                    for(ii=0; ii<size2; ii++)
-                        data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[ii]/optsyst[index].lambdaarray[kl];
 # ifdef HAVE_LIBGOMP
-            }
+                #pragma omp parallel default(shared) private(ii)
+                {
+                    #pragma omp for
 # endif
-}
-else
-{
-   # ifdef HAVE_LIBGOMP
-            #pragma omp parallel default(shared) private(ii)
+                    for(kl=0; kl<nblambda; kl++)
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[ii]/optsyst[index].lambdaarray[kl];
+# ifdef HAVE_LIBGOMP
+                }
+# endif
+            }
+            else // chromatic "mirror"
             {
-                #pragma omp for
-# endif
-                for(kl=0; kl<nblambda; kl++)
-                    for(ii=0; ii<size2; ii++)
-                        data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[size2*kl+ii]/optsyst[index].lambdaarray[kl];
 # ifdef HAVE_LIBGOMP
+                #pragma omp parallel default(shared) private(ii)
+                {
+                    #pragma omp for
+# endif
+                    for(kl=0; kl<nblambda; kl++)
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDp].array.F[size2*kl+ii] -= 4.0*M_PI*data.image[ID].array.F[size2*kl+ii]/optsyst[index].lambdaarray[kl];
+# ifdef HAVE_LIBGOMP
+                }
+# endif
             }
-# endif 
-}
         }
 
 
@@ -384,7 +384,7 @@ else
             ID = optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].surfID;
             printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
             fflush(stdout);
-            
+
             if(optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].init!=1)
             {
                 for(kl=0; kl<nblambda; kl++)
@@ -395,36 +395,36 @@ else
                 }
                 optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].init = 1;
             }
-            
 
-if(data.image[ID].md[0].naxis==2)
-{
-# ifdef HAVE_LIBGOMP
-            #pragma omp parallel default(shared) private(ii)
+
+            if(data.image[ID].md[0].naxis==2)
             {
-                #pragma omp for
-# endif
-                for(kl=0; kl<nblambda; kl++)
-                    for(ii=0; ii<size2; ii++)
-                        data.image[IDp].array.F[size2*kl+ii] += data.image[ID].array.F[ii] * optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl];
 # ifdef HAVE_LIBGOMP
-            }
+                #pragma omp parallel default(shared) private(ii)
+                {
+                    #pragma omp for
 # endif
-}
-else
-{
-   # ifdef HAVE_LIBGOMP
-            #pragma omp parallel default(shared) private(ii)
+                    for(kl=0; kl<nblambda; kl++)
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDp].array.F[size2*kl+ii] += data.image[ID].array.F[ii] * optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl];
+# ifdef HAVE_LIBGOMP
+                }
+# endif
+            }
+            else
             {
-                #pragma omp for
-# endif
-                for(kl=0; kl<nblambda; kl++)
-                    for(ii=0; ii<size2; ii++)
-                        data.image[IDp].array.F[size2*kl+ii] += data.image[ID].array.F[size2*kl+ii] * optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl];
 # ifdef HAVE_LIBGOMP
+                #pragma omp parallel default(shared) private(ii)
+                {
+                    #pragma omp for
+# endif
+                    for(kl=0; kl<nblambda; kl++)
+                        for(ii=0; ii<size2; ii++)
+                            data.image[IDp].array.F[size2*kl+ii] += data.image[ID].array.F[size2*kl+ii] * optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].ncoeff[kl];
+# ifdef HAVE_LIBGOMP
+                }
+# endif
             }
-# endif 
-}
         }
 
 
@@ -485,9 +485,11 @@ else
                 i = optsyst[index].elemarrayindex[elem];
                 ID = optsyst[index].FOCMASKarray[i].fpmID;
                 printf("focm : %s\n", data.image[ID].md[0].name);
+                
                 //      printf("Saving to testfpm.fits\n");
                 //      fflush(stdout);
-                //      list_image_ID();
+                
+                
                 mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
 
                 if(optsyst[index].SAVE == 1)
@@ -649,6 +651,7 @@ else
 
     return(0);
 }
+
 
 
 

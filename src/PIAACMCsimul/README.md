@@ -33,17 +33,34 @@ Code is composed of a several layers (from high to low) :
 
 
 
-\section sim1024 2. High level scripts
+\section scripts 2. High level scripts
 
-TOP LEVEL SCRIPT: ./sim1024\n
-./sim1024 : Type ./sim1024 with no argument to get help message.
+Scripts are located in src/PIAACMCsimul/scripts
 
-./runPIAACMC: Type ./runPIAACMC with no argument to get help message.
+TOP LEVEL SCRIPT: \n
+./runopt\n
+This script can optimize a PIAACMC design or run an existing design\n
+Type command with no argument to get help
 
+runopt calls lower level scripts sim1024
+
+./sim1024\n
+This script sequences operations\n
+Type ./sim1024 with no argument to get help message.
+
+sim1024 calls runPIAACMC
+
+./runPIAACMC\n
+This is the lower-level script calling the C-written executable\n
+Type ./runPIAACMC with no argument to get help message.
 
 
 
 \section code 3. C code description
+
+\subpage PIAACMC_designcodes
+
+
 
 The main function in the source code is PIAACMCsimul_exec(), which takes two arguments: the configuration index (usually a 3 digit integer) and the mode (integer) which describes the operation to be performed to the PIAACMC design.
 

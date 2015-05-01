@@ -416,562 +416,563 @@ long make_disk(char *ID_name, long l1, long l2, double x_center, double y_center
 
 long make_subpixdisk(char *ID_name, long l1, long l2, double x_center, double y_center, double radius) // creates a disk
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
-  int i,j;
-  double r;
-  double tot;
-  int subgrid=55;
-  double grid[55]; // same number of points as subgrid
-  double x,y;
-  long x1,x2,y1,y2;
-  long x1i,x2i,y1i,y2i;
-  double r2,r2ref;
-  double xdiff,ydiff;
-  double subgrid2;
+    long ID;
+    long ii,jj;
+    long naxes[2];
+    int i,j;
+    double r;
+    double tot;
+    int subgrid=55;
+    double grid[55]; // same number of points as subgrid
+    double x,y;
+    long x1,x2,y1,y2;
+    long x1i,x2i,y1i,y2i;
+    double r2,r2ref;
+    double xdiff,ydiff;
+    double subgrid2;
 
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
- 
-  x1 = (long) (x_center-radius-2);
-  x2 = (long) (x_center+radius+2);
-  y1 = (long) (y_center-radius-2);
-  y2 = (long) (y_center+radius+2);
-  x1i = (long) (x_center-0.707106781*radius+2);
-  x2i = (long) (x_center+0.707106781*radius-2);
-  y1i = (long) (y_center-0.707106781*radius+2);
-  y2i = (long) (y_center+0.707106781*radius-2);
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
 
-
-  if(x1<0)
-    x1 = 0;
-  if(x1>naxes[0])
-    x1 = naxes[0];
-  if(x2<0)
-    x2 = 0;
-  if(x2>naxes[0])
-    x2 = naxes[0];
-
-  if(y1<0)
-    y1 = 0;
-  if(y1>naxes[1])
-    y1 = naxes[1];
-  if(y2<0)
-    y2 = 0;
-  if(y2>naxes[1])
-    y2 = naxes[1];
-
-  if(x1i<0)
-    x1i = 0;
-  if(x1i>naxes[0]-1)
-    x1i = naxes[0]-1;
-  if(x2i<0)
-    x2i = 0;
-  if(x2i>naxes[0]-1)
-    x2i = naxes[0]-1;
-
-  if(y1i<0)
-    y1i = 0;
-  if(y1i>naxes[1]-1)
-    y1i = naxes[1]-1;
-  if(y2i<0)
-    y2i = 0;
-  if(y2i>naxes[1]-1)
-    y2i = naxes[1]-1;
-  
-  
-  r2ref = radius*radius;
-  subgrid2 = subgrid*subgrid;
+    x1 = (long) (x_center-radius-2);
+    x2 = (long) (x_center+radius+2);
+    y1 = (long) (y_center-radius-2);
+    y2 = (long) (y_center+radius+2);
+    x1i = (long) (x_center-0.707106781*radius+2);
+    x2i = (long) (x_center+0.707106781*radius-2);
+    y1i = (long) (y_center-0.707106781*radius+2);
+    y2i = (long) (y_center+0.707106781*radius-2);
 
 
-  for (ii = x1i; ii < x2i; ii++) 
-    for (jj = y1i; jj < y2i; jj++)
-      data.image[ID].array.F[jj*naxes[0]+ii] = 1;
+    if(x1<0)
+        x1 = 0;
+    if(x1>naxes[0])
+        x1 = naxes[0];
+    if(x2<0)
+        x2 = 0;
+    if(x2>naxes[0])
+        x2 = naxes[0];
 
-  for (i = 0; i < subgrid; i++) 
-    grid[i] = (0.5-0.5/subgrid-1.0*i/subgrid);
+    if(y1<0)
+        y1 = 0;
+    if(y1>naxes[1])
+        y1 = naxes[1];
+    if(y2<0)
+        y2 = 0;
+    if(y2>naxes[1])
+        y2 = naxes[1];
 
-  for (ii = x1; ii < x1i; ii++) 
-    for (jj = y1; jj < y2; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  r = x*x+y*y;
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
+    if(x1i<0)
+        x1i = 0;
+    if(x1i>naxes[0]-1)
+        x1i = naxes[0]-1;
+    if(x2i<0)
+        x2i = 0;
+    if(x2i>naxes[0]-1)
+        x2i = naxes[0]-1;
+
+    if(y1i<0)
+        y1i = 0;
+    if(y1i>naxes[1]-1)
+        y1i = naxes[1]-1;
+    if(y2i<0)
+        y2i = 0;
+    if(y2i>naxes[1]-1)
+        y2i = naxes[1]-1;
 
 
-  for (ii = x2i; ii < x2; ii++) 
-    for (jj = y1; jj < y2; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  r = x*x+y*y;
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
-  
-  for (ii = x1i; ii < x2i; ii++) 
-    for (jj = y1; jj < y1i; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  r = x*x+y*y;
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
- 
-  
-  for (ii = x1i; ii < x2i; ii++) 
-    for (jj = y2i; jj < y2; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  r = x*x+y*y;
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
+    r2ref = radius*radius;
+    subgrid2 = subgrid*subgrid;
 
-  return(ID);
+
+    for (ii = x1i; ii < x2i; ii++)
+        for (jj = y1i; jj < y2i; jj++)
+            data.image[ID].array.F[jj*naxes[0]+ii] = 1;
+
+    for (i = 0; i < subgrid; i++)
+        grid[i] = (0.5-0.5/subgrid-1.0*i/subgrid);
+
+    for (ii = x1; ii < x1i; ii++)
+        for (jj = y1; jj < y2; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            r2 = xdiff*xdiff+ydiff*ydiff;
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        r = x*x+y*y;
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+
+    for (ii = x2i; ii < x2; ii++)
+        for (jj = y1; jj < y2; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            r2 = xdiff*xdiff+ydiff*ydiff;
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        r = x*x+y*y;
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+    for (ii = x1i; ii < x2i; ii++)
+        for (jj = y1; jj < y1i; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            r2 = xdiff*xdiff+ydiff*ydiff;
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        r = x*x+y*y;
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+
+    for (ii = x1i; ii < x2i; ii++)
+        for (jj = y2i; jj < y2; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            r2 = xdiff*xdiff+ydiff*ydiff;
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        r = x*x+y*y;
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+    return(ID);
 }
 
 
 // creates a shape with contour described by sum of sine waves
-// 
+//
 // r = radius + SUM[ ra[i] * cos( ka[i]*PA/2.0/PI + pa[i]) ]
 
 long make_subpixdisk_perturb(char *ID_name, long l1, long l2, double x_center, double y_center, double radius, long n, double *ra, double *ka, double *pa)
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
-  int i,j;
-  double r;
-  double tot;
-  int subgrid=55;
-  double grid[55]; // same number of points as subgrid
-  double x,y;
-  long x1,x2,y1,y2;
-  long x1i,x2i,y1i,y2i;
-  double r2,r2ref;
-  double xdiff,ydiff;
-  double subgrid2;
-  double PA;
-  double v0;
-  long k;
+    long ID;
+    long ii,jj;
+    long naxes[2];
+    int i,j;
+    double r;
+    double tot;
+    int subgrid=55;
+    double grid[55]; // same number of points as subgrid
+    double x,y;
+    long x1,x2,y1,y2;
+    long x1i,x2i,y1i,y2i;
+    double r2,r2ref;
+    double xdiff,ydiff;
+    double subgrid2;
+    double PA;
+    double v0;
+    long k;
 
-  double radius1, radius2;
-  
-  radius1 = radius;
-  radius2 = radius;
-  for(k=0;k<n;k++)
-    radius1 += radius*fabs(ra[k]);
-  for(k=0;k<n;k++)
-    radius2 -= radius*fabs(ra[k]);
-  if(radius2<0.0)
-    radius2 = 0.0;
+    double radius1, radius2;
 
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
- 
-  x1 = (long) (x_center-radius1-2);
-  x2 = (long) (x_center+radius1+2);
-  y1 = (long) (y_center-radius1-2);
-  y2 = (long) (y_center+radius1+2);
-  x1i = (long) (x_center-0.707106781*radius2+2);
-  x2i = (long) (x_center+0.707106781*radius2-2);
-  y1i = (long) (y_center-0.707106781*radius2+2);
-  y2i = (long) (y_center+0.707106781*radius2-2);
+    radius1 = radius;
+    radius2 = radius;
+    for(k=0; k<n; k++)
+        radius1 += radius*fabs(ra[k]);
+    for(k=0; k<n; k++)
+        radius2 -= radius*fabs(ra[k]);
+    if(radius2<0.0)
+        radius2 = 0.0;
 
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
 
-  if(x1<0)
-    x1 = 0;
-  if(x1>naxes[0])
-    x1 = naxes[0];
-  if(x2<0)
-    x2 = 0;
-  if(x2>naxes[0])
-    x2 = naxes[0];
-
-  if(y1<0)
-    y1 = 0;
-  if(y1>naxes[1])
-    y1 = naxes[1];
-  if(y2<0)
-    y2 = 0;
-  if(y2>naxes[1])
-    y2 = naxes[1];
-
-  if(x1i<0)
-    x1i = 0;
-  if(x1i>naxes[0]-1)
-    x1i = naxes[0]-1;
-  if(x2i<0)
-    x2i = 0;
-  if(x2i>naxes[0]-1)
-    x2i = naxes[0]-1;
-
-  if(y1i<0)
-    y1i = 0;
-  if(y1i>naxes[1]-1)
-    y1i = naxes[1]-1;
-  if(y2i<0)
-    y2i = 0;
-  if(y2i>naxes[1]-1)
-    y2i = naxes[1]-1;
-  
-  
-  r2ref = radius*radius;
-  subgrid2 = subgrid*subgrid;
+    x1 = (long) (x_center-radius1-2);
+    x2 = (long) (x_center+radius1+2);
+    y1 = (long) (y_center-radius1-2);
+    y2 = (long) (y_center+radius1+2);
+    x1i = (long) (x_center-0.707106781*radius2+2);
+    x2i = (long) (x_center+0.707106781*radius2-2);
+    y1i = (long) (y_center-0.707106781*radius2+2);
+    y2i = (long) (y_center+0.707106781*radius2-2);
 
 
-  for (ii = x1i; ii < x2i; ii++) 
-    for (jj = y1i; jj < y2i; jj++)
-      data.image[ID].array.F[jj*naxes[0]+ii] = 1;
+    if(x1<0)
+        x1 = 0;
+    if(x1>naxes[0])
+        x1 = naxes[0];
+    if(x2<0)
+        x2 = 0;
+    if(x2>naxes[0])
+        x2 = naxes[0];
 
-  for (i = 0; i < subgrid; i++) 
-    grid[i] = (0.5-0.5/subgrid-1.0*i/subgrid);
+    if(y1<0)
+        y1 = 0;
+    if(y1>naxes[1])
+        y1 = naxes[1];
+    if(y2<0)
+        y2 = 0;
+    if(y2>naxes[1])
+        y2 = naxes[1];
 
-  for (ii = x1; ii < x1i; ii++) 
-    for (jj = y1; jj < y2; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	PA = atan2(ydiff, xdiff);
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	
-	v0 = radius;
-	for(k=0; k<n; k++)
-	  v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-	r2ref = v0*v0;
-	
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  PA = atan2(y,x);
-		  r = x*x+y*y;
-		  
-		  v0 = radius;
-		  for(k=0; k<n; k++)
-		    v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-		  r2ref = v0*v0;
+    if(x1i<0)
+        x1i = 0;
+    if(x1i>naxes[0]-1)
+        x1i = naxes[0]-1;
+    if(x2i<0)
+        x2i = 0;
+    if(x2i>naxes[0]-1)
+        x2i = naxes[0]-1;
 
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
+    if(y1i<0)
+        y1i = 0;
+    if(y1i>naxes[1]-1)
+        y1i = naxes[1]-1;
+    if(y2i<0)
+        y2i = 0;
+    if(y2i>naxes[1]-1)
+        y2i = naxes[1]-1;
 
 
-  for (ii = x2i; ii < x2; ii++) 
-    for (jj = y1; jj < y2; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	PA = atan2(ydiff, xdiff);
-	r2 = xdiff*xdiff+ydiff*ydiff;
+    r2ref = radius*radius;
+    subgrid2 = subgrid*subgrid;
 
-	v0 = radius;
-	for(k=0; k<n; k++)
-	  v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-	r2ref = v0*v0;
 
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  r = x*x+y*y;
-		  PA = atan2(y,x);
-		  v0 = radius;
-		  for(k=0; k<n; k++)
-		    v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-		  r2ref = v0*v0;
+    for (ii = x1i; ii < x2i; ii++)
+        for (jj = y1i; jj < y2i; jj++)
+            data.image[ID].array.F[jj*naxes[0]+ii] = 1;
 
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
-  
-  for (ii = x1i; ii < x2i; ii++) 
-    for (jj = y1; jj < y1i; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	PA = atan2(ydiff,xdiff);
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	v0 = radius;
-	for(k=0; k<n; k++)
-	  v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-	r2ref = v0*v0;
+    for (i = 0; i < subgrid; i++)
+        grid[i] = (0.5-0.5/subgrid-1.0*i/subgrid);
 
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  PA = atan2(y,x);
-		  r = x*x+y*y;
-		  v0 = radius;
-		  for(k=0; k<n; k++)
-		    v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-		  r2ref = v0*v0;		  
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
- 
-  
-  for (ii = x1i; ii < x2i; ii++) 
-    for (jj = y2i; jj < y2; jj++)
-      {
-	xdiff = x_center-ii;
-	ydiff = y_center-jj;
-	PA = atan2(ydiff, xdiff);
-	r2 = xdiff*xdiff+ydiff*ydiff;
-	v0 = radius;
-	for(k=0; k<n; k++)
-	  v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-	r2ref = v0*v0;
+    for (ii = x1; ii < x1i; ii++)
+        for (jj = y1; jj < y2; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            PA = atan2(ydiff, xdiff);
+            r2 = xdiff*xdiff+ydiff*ydiff;
 
-	if(r2<r2ref)
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
-	  {
-	    tot = 0;
-	    for (j = 0; j < subgrid; j++) 
-	      for (i = 0; i < subgrid; i++) 
-		{
-		  x = xdiff+grid[i];
-		  y = ydiff+grid[j];
-		  PA = atan2(y,x);
-		  r = x*x+y*y;
-		  v0 = radius;
-		  for(k=0; k<n; k++)
-		    v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
-		  r2ref = v0*v0;
-		  if (r < r2ref)
-		    tot += 1.0;
-		}
-	    tot = tot/subgrid2;
-	    data.image[ID].array.F[jj*naxes[0]+ii] = tot;
-	  }
-      }
+            v0 = radius;
+            for(k=0; k<n; k++)
+                v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+            r2ref = v0*v0;
 
-  return(ID);
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        PA = atan2(y,x);
+                        r = x*x+y*y;
+
+                        v0 = radius;
+                        for(k=0; k<n; k++)
+                            v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+                        r2ref = v0*v0;
+
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+
+    for (ii = x2i; ii < x2; ii++)
+        for (jj = y1; jj < y2; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            PA = atan2(ydiff, xdiff);
+            r2 = xdiff*xdiff+ydiff*ydiff;
+
+            v0 = radius;
+            for(k=0; k<n; k++)
+                v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+            r2ref = v0*v0;
+
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        r = x*x+y*y;
+                        PA = atan2(y,x);
+                        v0 = radius;
+                        for(k=0; k<n; k++)
+                            v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+                        r2ref = v0*v0;
+
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+    for (ii = x1i; ii < x2i; ii++)
+        for (jj = y1; jj < y1i; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            PA = atan2(ydiff,xdiff);
+            r2 = xdiff*xdiff+ydiff*ydiff;
+            v0 = radius;
+            for(k=0; k<n; k++)
+                v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+            r2ref = v0*v0;
+
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        PA = atan2(y,x);
+                        r = x*x+y*y;
+                        v0 = radius;
+                        for(k=0; k<n; k++)
+                            v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+                        r2ref = v0*v0;
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+
+    for (ii = x1i; ii < x2i; ii++)
+        for (jj = y2i; jj < y2; jj++)
+        {
+            xdiff = x_center-ii;
+            ydiff = y_center-jj;
+            PA = atan2(ydiff, xdiff);
+            r2 = xdiff*xdiff+ydiff*ydiff;
+            v0 = radius;
+            for(k=0; k<n; k++)
+                v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+            r2ref = v0*v0;
+
+            if(r2<r2ref)
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            if(fabs(sqrt(r2)-sqrt(r2ref))<1.5)
+            {
+                tot = 0;
+                for (j = 0; j < subgrid; j++)
+                    for (i = 0; i < subgrid; i++)
+                    {
+                        x = xdiff+grid[i];
+                        y = ydiff+grid[j];
+                        PA = atan2(y,x);
+                        r = x*x+y*y;
+                        v0 = radius;
+                        for(k=0; k<n; k++)
+                            v0 += radius*ra[k]*cos(ka[k]*PA + pa[k]);
+                        r2ref = v0*v0;
+                        if (r < r2ref)
+                            tot += 1.0;
+                    }
+                tot = tot/subgrid2;
+                data.image[ID].array.F[jj*naxes[0]+ii] = tot;
+            }
+        }
+
+    return(ID);
 }
 
 
 long make_square(char *ID_name, long l1, long l2, double x_center, double y_center, double radius) /* creates a square */
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
+    long ID;
+    long ii,jj;
+    long naxes[2];
 
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      { 
-	if ((((ii-x_center)*(ii-x_center))<(radius*radius))&&(((jj-y_center)*(jj-y_center))<(radius*radius)))
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1;
-      } 
-  
-  return(ID);
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            if ((((ii-x_center)*(ii-x_center))<(radius*radius))&&(((jj-y_center)*(jj-y_center))<(radius*radius)))
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1;
+        }
+
+    return(ID);
 }
 
 long make_rectangle(char *ID_name, long l1, long l2, double x_center, double y_center, double radius1, double radius2) /* creates a square */
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
+    long ID;
+    long ii,jj;
+    long naxes[2];
 
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      { 
-	if ((((ii-x_center)*(ii-x_center))<(radius1*radius1))&&(((jj-y_center)*(jj-y_center))<(radius2*radius2)))
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1;
-      } 
-  
-  return(ID);
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            if ((((ii-x_center)*(ii-x_center))<(radius1*radius1))&&(((jj-y_center)*(jj-y_center))<(radius2*radius2)))
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1;
+        }
+
+    return(ID);
 }
 
 // line of thickness t from (x1,y1) to (x2,y2)
 long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, double y2, double t)
 {
-  long ID;
-  long ii,jj;
-  double x, y, xr, yr, r0;
-  double r, PA0;
-  long naxes[2];
+    long ID;
+    long ii,jj;
+    double x, y, xr, yr, r0;
+    double r, PA0;
+    long naxes[2];
 
-  create_2Dimage_ID(IDname,l1,l2);
-  ID = image_ID(IDname);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
+    create_2Dimage_ID(IDname,l1,l2);
+    ID = image_ID(IDname);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
 
-  r0 = sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-  PA0 = atan2((y2-y1),(x2-x1));
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      {
-	x = 1.0*ii;
-	y = 1.0*jj;
-	x -= x1;
-	y -= y1;
-	xr = x*cos(PA0)+y*sin(PA0);
-	yr = -x*sin(PA0)+y*cos(PA0);
-	r=sqrt(xr*xr+yr*yr);
-	xr /= r0;
-	yr /= r0;
-	if((xr>0)&&(xr<1.0)&&(yr<0.5*t/r0)&&(yr>-0.5*t/r0))
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
-	else
-	  data.image[ID].array.F[jj*naxes[0]+ii] = 0.0;
-      }
+    r0 = sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+    PA0 = atan2((y2-y1),(x2-x1));
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            x = 1.0*ii;
+            y = 1.0*jj;
+            x -= x1;
+            y -= y1;
+            xr = x*cos(PA0)+y*sin(PA0);
+            yr = -x*sin(PA0)+y*cos(PA0);
+            r=sqrt(xr*xr+yr*yr);
+            xr /= r0;
+            yr /= r0;
+            if((xr>0)&&(xr<1.0)&&(yr<0.5*t/r0)&&(yr>-0.5*t/r0))
+                data.image[ID].array.F[jj*naxes[0]+ii] = 1.0;
+            else
+                data.image[ID].array.F[jj*naxes[0]+ii] = 0.0;
+        }
 
-  return(ID);
+    return(ID);
 }
 
 long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_center, double radius)
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
-  double x, y, r;
-  double value;
+    long ID;
+    long ii,jj;
+    long naxes[2];
+    double x, y, r;
+    double value;
 
-  printf("Making hexagon at %f x %f\n",x_center,y_center);
+    printf("Making hexagon at %f x %f\n",x_center,y_center);
 
-  create_2Dimage_ID(IDname,l1,l2);
-  ID = image_ID(IDname);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      {
-	value = 1.0;
-	x = 1.0*ii-x_center;
-	y = 1.0*jj-y_center;
-	
-	r = y;
-	if(fabs(r)>radius)
-	  value = 0.0;
+    create_2Dimage_ID(IDname,l1,l2);
+    ID = image_ID(IDname);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
 
-	// vect: cos(pi/6), sin(pi/6)
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            value = 1.0;
+            x = 1.0*ii-x_center;
+            y = 1.0*jj-y_center;
 
-	r = cos(PI/6.0)*x + sin(PI/6.0)*y;
-	if(fabs(r)>radius)
-	  value = 0.0;
-	r = cos(-PI/6.0)*x + sin(-PI/6.0)*y;
-	if(fabs(r)>radius)
-	  value = 0.0;	
-	data.image[ID].array.F[jj*naxes[0]+ii] = value;
-      }
-  
+            r = y;
+            if(fabs(r)>radius)
+                value = 0.0;
 
-  return(ID);
+            // vect: cos(pi/6), sin(pi/6)
+
+            r = cos(PI/6.0)*x + sin(PI/6.0)*y;
+            if(fabs(r)>radius)
+                value = 0.0;
+            r = cos(-PI/6.0)*x + sin(-PI/6.0)*y;
+            if(fabs(r)>radius)
+                value = 0.0;
+            data.image[ID].array.F[jj*naxes[0]+ii] = value;
+        }
+
+
+    return(ID);
 }
+
 
 
 

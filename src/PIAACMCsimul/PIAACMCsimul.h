@@ -40,11 +40,12 @@ typedef struct {
     float beamrad; // [m]
     long size;
     float pixscale; // [m/pix]
+    float piaa0pos; // conjugation (z) of first PIAA surface [m]
     float piaasep;// separation between PIAA surfaces [m]
 
 
     // ========== WAVEFRONT CONTROL ==================
-    int nbDMs; // number of deformable mirrors (10 max)
+    int nbDM; // number of deformable mirrors (10 max)
     double DMpos[10]; // DM conjugation in collimated space
     long ID_DM[10];  // DM image identifier
 
@@ -55,8 +56,8 @@ typedef struct {
     double LyotStop_zpos[10];
 
     // ======= Optics shapes modes ============
-    int piaacmcopttype; // PIAA optics type. 0: mirrors, 1: lenses, aspheric surfaces facing each other, flat surfaces on outside
-
+    char PIAAmaterial_name[10]; 
+    int PIAAmaterial_code; 
     long CmodesID; // Cosine radial mode
     long Cmsize; // cosine modes size
     long NBCmodes;
@@ -86,8 +87,9 @@ typedef struct {
 
     long NBrings; // number of rings
     long fpmarraysize;
-    int fpmmaterial; // materials:  1: SiO2  2: Si  3: PMGI  4: PMMA
-
+    char fpmmaterial_name[10]; 
+    int fpmmaterial_code; 
+ 
 } OPTPIAACMCDESIGN;
 
 

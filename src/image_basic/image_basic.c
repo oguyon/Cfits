@@ -87,6 +87,28 @@ int image_basic_contract_cli()
         return 1;
 }
 
+int IMAGE_BASIC_get_assym_component_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1) == 0)
+        {
+            IMAGE_BASIC_get_assym_component(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, "");
+            return 0;
+        }
+    else
+        return 1;
+}
+
+int IMAGE_BASIC_get_sym_component_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1) == 0)
+        {
+            IMAGE_BASIC_get_sym_component(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf);
+            return 0;
+        }
+    else
+        return 1;
+}
+
 
 int image_basic_load_fitsimages_cube_cli()
 {
@@ -173,6 +195,25 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].example,"imcontract im1 outim 4 4");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract(char *ID_name, char *ID_name_out, int n1, int n2)");
     data.NBcmd++;
+    
+    strcpy(data.cmd[data.NBcmd].key,"imgetcircassym");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = IMAGE_BASIC_get_assym_component_cli;
+    strcpy(data.cmd[data.NBcmd].info,"extract non-circular symmetric part of image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <xcenter> <ycenter>");
+    strcpy(data.cmd[data.NBcmd].example,"imcgetcircassym imin imout 256.0 230.5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options)");    
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imgetcircsym");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = IMAGE_BASIC_get_sym_component_cli;
+    strcpy(data.cmd[data.NBcmd].info,"extract circular symmetric part of image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <xcenter> <ycenter>");
+    strcpy(data.cmd[data.NBcmd].example,"imcgetcircsym imin imout 256.0 230.5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter)");    
+    data.NBcmd++;
+
     
     strcpy(data.cmd[data.NBcmd].key,"loadfitsimgcube");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1135,226 +1176,247 @@ float basic_correlation(char *ID_name1, char *ID_name2)
   return(correl);
 }
 
-int get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options)
+
+
+
+long IMAGE_BASIC_get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options)
 {
-  float step = 1.0;
-  int ID;
-  long ii,jj;
-  long naxes[2];
-  long nelements;
-  float distance;
-  float *dist;
-  float *mean;
-  float *rms;
-  long *counts;
-  long i;
-  long nb_step;
-  int IDout;
-  char input[50];
-  int str_pos;
-  float perc;
-  
-  if (strstr(options,"-perc ")!=NULL)
+    float step = 1.0;
+    int ID;
+    long ii,jj;
+    long naxes[2];
+    long nelements;
+    float distance;
+    float *dist;
+    float *mean;
+    float *rms;
+    long *counts;
+    long i;
+    long nb_step;
+    int IDout;
+    char input[50];
+    int str_pos;
+    float perc;
+    float ifloat, x;
+
+    printf("get non-circular symmetric component from image %s\n", ID_name);
+    fflush(stdout);
+
+    if (strstr(options,"-perc ")!=NULL)
     {
-      str_pos=strstr(options,"-perc ")-options;
-      str_pos = str_pos + strlen("-perc ");
-      i=0;
-      while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
-	{
-	  input[i] = options[i+str_pos];
-	  i++;
-	}
-      input[i] = '\0';
-      perc = atof(input);
-      printf("percentile is %f\n",perc);
+        str_pos=strstr(options,"-perc ")-options;
+        str_pos = str_pos + strlen("-perc ");
+        i=0;
+        while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
+        {
+            input[i] = options[i+str_pos];
+            i++;
+        }
+        input[i] = '\0';
+        perc = atof(input);
+        printf("percentile is %f\n",perc);
     }
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-  nelements = naxes[0] * naxes[1]; 
-  nb_step = naxes[0]/2;
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    nelements = naxes[0] * naxes[1];
+    nb_step = naxes[0]/2;
 
-  dist = (float*) malloc(sizeof(float)*nb_step);
-  if(dist==NULL)
+    dist = (float*) malloc(sizeof(float)*nb_step);
+    if(dist==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  mean = (float*) malloc(sizeof(float)*nb_step);
-  if(mean==NULL)
+    mean = (float*) malloc(sizeof(float)*nb_step);
+    if(mean==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  rms = (float*) malloc(sizeof(float)*nb_step);
-  if(rms==NULL)
+    rms = (float*) malloc(sizeof(float)*nb_step);
+    if(rms==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  counts = (long*) malloc(sizeof(long)*nb_step);
-  if(counts==NULL)
+    counts = (long*) malloc(sizeof(long)*nb_step);
+    if(counts==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  for (i=0;i<nb_step;i++)
+    for (i=0; i<nb_step; i++)
     {
-      dist[i] = 0;
-      mean[i] = 0;
-      rms[i] = 0;
-      counts[i] = 0;
+        dist[i] = 0;
+        mean[i] = 0;
+        rms[i] = 0;
+        counts[i] = 0;
     }
 
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
-      i = (long) distance/step;
-      if(i<nb_step)
-	{
-	  dist[i] += distance;
-	  mean[i] += data.image[ID].array.F[jj*naxes[0]+ii];
-	  rms[i] += data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
-	  counts[i] += 1;
-	}
-    }
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
+            i = (long) (1.0*distance/step+0.5);
+            if(i<nb_step)
+            {
+                dist[i] += distance;
+                mean[i] += data.image[ID].array.F[jj*naxes[0]+ii];
+                rms[i] += data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
+                counts[i] += 1;
+            }
+        }
 
-  for (i=0;i<nb_step;i++)
+    for (i=0; i<nb_step; i++)
     {
-      dist[i] /= counts[i];
-      mean[i] /= counts[i];
-      rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
+        dist[i] /= counts[i];
+        mean[i] /= counts[i];
+        rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
     }
-  
-  printf("%ld %ld\n",naxes[0],naxes[1]);
-  create_2Dimage_ID(ID_out_name,naxes[0],naxes[1]);
-  IDout = image_ID(ID_out_name);
-   for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
-      i = (long) distance/step;
-      if((i+1)<nb_step)
-	data.image[IDout].array.F[jj*naxes[0]+ii] = (data.image[ID].array.F[jj*naxes[0]+ii] - ((1.0-(distance/step-1.0*i))*mean[i]+(distance/step-1.0*i)*mean[i+1]));
-      /* ((1.0-(distance/step-1.0*i))*mean[i]+(distance/step-1.0*i)*mean[i+1]);*/
-	} 
 
-  free(counts);
-  free(dist);
-  free(mean);
-  free(rms);
+    printf("%ld %ld\n",naxes[0],naxes[1]);
+    create_2Dimage_ID(ID_out_name,naxes[0],naxes[1]);
+    IDout = image_ID(ID_out_name);
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
+            i = (long) (1.0*distance/step);
+            ifloat = 1.0*distance/step;
+            x = ifloat-i;
+            
+            if((i+1)<nb_step)
+                data.image[IDout].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[jj*naxes[0]+ii] - ((1.0-x)*mean[i] + x*mean[i+1]);
+        }
 
-  return(0);
+    free(counts);
+    free(dist);
+    free(mean);
+    free(rms);
+
+    return(IDout);
 }
 
-int get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter)
+
+
+long IMAGE_BASIC_get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter)
 {
-  float step = 1.0;
-  int ID;
-  long ii,jj;
-  long naxes[2];
-  long nelements;
-  float distance;
-  float *dist;
-  float *mean;
-  float *rms;
-  long *counts;
-  long i;
-  long nb_step;
-  int IDout;
+    float step = 1.0;
+    int ID;
+    long ii,jj;
+    long naxes[2];
+    long nelements;
+    float distance;
+    float *dist;
+    float *mean;
+    float *rms;
+    long *counts;
+    long i;
+    long nb_step;
+    int IDout;
+    float ifloat, x;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-  nelements = naxes[0] * naxes[1]; 
-  nb_step = naxes[0]/2;
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    nelements = naxes[0] * naxes[1];
+    nb_step = naxes[0]/2;
 
-  dist = (float*) malloc(sizeof(float)*nb_step);
-  if(dist==NULL)
+    dist = (float*) malloc(sizeof(float)*nb_step);
+    if(dist==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  mean = (float*) malloc(sizeof(float)*nb_step);
-  if(mean==NULL)
+    mean = (float*) malloc(sizeof(float)*nb_step);
+    if(mean==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  rms = (float*) malloc(sizeof(float)*nb_step);
-  if(rms==NULL)
+    rms = (float*) malloc(sizeof(float)*nb_step);
+    if(rms==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  counts = (long*) malloc(sizeof(long)*nb_step);
-  if(counts==NULL)
+    counts = (long*) malloc(sizeof(long)*nb_step);
+    if(counts==NULL)
     {
-      C_ERRNO = errno;
-      printERROR(__FILE__,__func__,__LINE__,"malloc() error");
-      exit(0);
+        C_ERRNO = errno;
+        printERROR(__FILE__,__func__,__LINE__,"malloc() error");
+        exit(0);
     }
 
-  for (i=0;i<nb_step;i++)
+    for (i=0; i<nb_step; i++)
     {
-      dist[i] = 0;
-      mean[i] = 0;
-      rms[i] = 0;
-      counts[i] = 0;
+        dist[i] = 0;
+        mean[i] = 0;
+        rms[i] = 0;
+        counts[i] = 0;
     }
 
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
-      i = (long) distance/step;
-      if(i<nb_step)
-	{
-	  dist[i] += distance;
-	  mean[i] += data.image[ID].array.F[jj*naxes[0]+ii];
-	  rms[i] += data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
-	  counts[i] += 1;
-	}
-    }
 
-  for (i=0;i<nb_step;i++)
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
+            i = (long) (1.0*distance/step+0.5);
+            if(i<nb_step)
+            {
+                dist[i] += distance;
+                mean[i] += data.image[ID].array.F[jj*naxes[0]+ii];
+                rms[i] += data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
+                counts[i] += 1;
+            }
+        }
+
+    for (i=0; i<nb_step; i++)
     {
-      dist[i] /= counts[i];
-      mean[i] /= counts[i];
-      rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
+        dist[i] /= counts[i];
+        mean[i] /= counts[i];
+        rms[i] = sqrt(rms[i]-1.0*counts[i]*mean[i]*mean[i])/sqrt(counts[i]);
     }
-  
-  create_2Dimage_ID(ID_out_name,naxes[0],naxes[1]);
-  IDout = image_ID(ID_out_name);
-   for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
-      i = (long) distance/step;
-      if((i+1)<nb_step)
-	data.image[IDout].array.F[jj*naxes[0]+ii] = mean[i];
-      /*/((1.0-(distance/step-1.0*i))*mean[i]+(distance/step-1.0*i)*mean[i+1]);*/
-	} 
 
-  free(counts);
-  free(dist);
-  free(mean);
-  free(rms);
+    printf("%ld %ld\n",naxes[0],naxes[1]);
+    create_2Dimage_ID(ID_out_name,naxes[0],naxes[1]);
+    IDout = image_ID(ID_out_name);
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            distance = sqrt((1.0*ii-xcenter)*(1.0*ii-xcenter)+(1.0*jj-ycenter)*(1.0*jj-ycenter));
+            i = (long) (1.0*distance/step);
+            ifloat = 1.0*distance/step;
+            x = ifloat-i;
+            
+            if((i+1)<nb_step)
+                data.image[IDout].array.F[jj*naxes[0]+ii] = ((1.0-x)*mean[i] + x*mean[i+1]);
+        }
 
-  return(0);
+
+
+    free(counts);
+    free(dist);
+    free(mean);
+    free(rms);
+
+    return(IDout);
 }
+
+
+
 
 /* rotation that keeps photometry - angle is in radians */
 int basic_rotate2(char *ID_name_in, char *ID_name_out, float angle)

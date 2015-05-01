@@ -14,6 +14,85 @@ return(0);
 }
 
 
+struct MaterialIndex {
+    char *name;
+    int code;
+};
+
+
+/// name is 6 char long max
+const struct MaterialIndex MatCode[] = {
+    { "Mirror",   0 },
+    {   "SiO2",   1 },
+    {     "Si",   2 },
+    {   "PMGI",   3 },
+    {   "PMMA",   4 },
+    {     "N2",   5 },
+    {     "O2",   6 },
+    {     "Ar",   7 },
+    {     "He",   8 },
+    {     "H2",   9 },
+    {   "H2Og",  10 },
+    {    "CO2",  11 },
+    {     "Ne",  12 },
+    {      "O",  13 },
+    {   "CaF2",  14 },
+    { "Vacuum", 100 },
+    {    "Air", 101 },
+    { NULL, 0 }  /* end marker */
+};
+
+
+
+
+
+
+int OPTICSMATERIALS_code(char *name)
+{
+    int code = -1;
+    int i;
+ 
+    for (i = 0; MatCode[i].name != NULL; i++) {
+    if (strcmp(name, MatCode[i].name) == 0) {
+        printf("Material \"%s\" -> code = %d\n",  name, MatCode[i].code);
+        return MatCode[i].code;
+    }
+    }
+ 
+    if(code < 0)
+        {
+            printf("ERROR: Material name \"%s\" not recognized", name);
+            exit(0);
+        }
+    
+    return(code);
+}
+
+char* OPTICSMATERIALS_name(int code)
+{
+    char *name;
+    int OK = -1;
+    int i;
+    
+    for (i = 0; MatCode[i].name != NULL; i++) {
+    if (code == MatCode[i].code) {
+        printf("Material code %d -> name = \"%s\" \n",  MatCode[i].code, MatCode[i].name);
+        OK = 1;
+        return MatCode[i].name;
+    }
+    }
+ 
+    if(OK < 0)
+        {
+            printf("ERROR: Material code \"%d\" not recognized", code);
+            exit(0);
+        }
+
+    
+    return name;
+}
+
+
 
 
 
@@ -21,22 +100,6 @@ return(0);
 //
 // phase offset as function of mask thickness and lambda
 //
-// materials:
-// 0: Mirror
-// 1: SiO2
-// 2: Si
-// 3: PMGI
-// 4: PMMA
-// 5: N2 (gas, 1 atm)
-// 6: O2
-// 7: Ar
-// 8: He
-// 9: H2
-// 10: pure H2O vapor (1 atm)
-// 11: CO2
-// 12: O
-// 100: Vacuum
-// 101: Air (1 atm)
 //
 double OPTICSMATERIALS_n(int material, double lambda)
 {
@@ -63,7 +126,15 @@ double OPTICSMATERIALS_n(int material, double lambda)
     double Si_B3 = 1.54133408;
     double Si_C3 = 1104.0;
 
+    // CaF2
+    double CaF2_B1 = 0.69913;
+    double CaF2_C1 = 0.09374;
+    double CaF2_B2 = 0.11994;
+    double CaF2_C2 = 21.18;
+    double CaF2_B3 = 4.35181;
+    double CaF2_C3 = 38.46;
 
+ 
 
     // PMGI
     double pmgi_n[1000];
@@ -1346,6 +1417,12 @@ double OPTICSMATERIALS_n(int material, double lambda)
         A = 4.0*M_PI/3*pol*LoschmidtConstant;
         n = sqrt((2.0*A+1)/(1.0-A));
         break;
+
+   case 14 : // CaF2
+        n = sqrt(1.33973 + (CaF2_B1*lambdaum*lambdaum)/(lambdaum*lambdaum-CaF2_C1*CaF2_C1) + (CaF2_B2*lambdaum*lambdaum)/(lambdaum*lambdaum-CaF2_C2*CaF2_C2) + (CaF2_B3*lambdaum*lambdaum)/(lambdaum*lambdaum-CaF2_C3*CaF2_C3));
+        break;
+
+
 
     default:
         n = 0;

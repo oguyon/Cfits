@@ -51,9 +51,9 @@ int basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl);
 
 float basic_correlation(char *ID_name1, char *ID_name2);
 
-int get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options);
+long IMAGE_BASIC_get_assym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter, char *options);
 
-int get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter);
+long IMAGE_BASIC_get_sym_component(char *ID_name, char *ID_out_name, float xcenter, float ycenter);
 
 int basic_rotate2(char *ID_name_in, char *ID_name_out, float angle);
 
