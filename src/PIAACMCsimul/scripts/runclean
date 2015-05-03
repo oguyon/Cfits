@@ -1,0 +1,6 @@
+rm piaacmc*/*thread0*.fits
+rm piaacmc*/*thread0*.fits.tmp
+rm piaacmc*/WFamp0*.fits
+rm piaacmc*/WFpha0*.fits
+rm piaacmc*/psfi*.fits
+rm piaacmc*/LMintC.fits
