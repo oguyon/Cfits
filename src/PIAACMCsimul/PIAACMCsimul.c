@@ -915,7 +915,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     IDpiaaz0 = image_ID("piaa0z");
     IDpiaaz1 = image_ID("piaa1z");
-    
+    list_image_ID();
     
     // if refractive, load sag maps scaled from monochromatic OPD maps
     if(design[index].PIAAmaterial_code != 0) 
@@ -923,6 +923,8 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         
         IDpiaaz0sag = image_ID("piaa0zsag");
         IDpiaaz1sag = image_ID("piaa1zsag");
+        
+
         
         if(IDpiaaz0sag==-1)
         {
@@ -935,15 +937,23 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
             IDpiaaz1sag = load_fits(fname, "piaa1zsag", 1);
         }
        
-        
+                list_image_ID();
+
         ri0 = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, design[index].lambda); // refractive index at central lambda
+        printf("code = %d    lambda  = %g      ri0 = %f    -> %f\n", design[index].PIAAmaterial_code, design[index].lambda, ri0, 2.0/(ri0-1.0));
         
+        
+        save_fits("piaa0z", "!test_piaa0z.fits");
+        save_fits("piaa1z", "!test_piaa1z.fits");
+       
+       list_image_ID();
+       
         if(IDpiaaz0sag==-1)
         {
             IDpiaaz0sag = create_2Dimage_ID("piaa0zsag", size, size);
             for(ii=0;ii<size*size;ii++)
                 data.image[IDpiaaz0sag].array.F[ii] = data.image[IDpiaaz0].array.F[ii]*2.0/(ri0-1.0);
-            sprintf(fname, "%s/piaa0zsag.fits", piaacmcconfdir);
+            sprintf(fname, "!%s/piaa0zsag.fits", piaacmcconfdir);
             save_fits("piaa0zsag", fname);
         }
         if(IDpiaaz1sag==-1)
@@ -951,10 +961,12 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
             IDpiaaz1sag = create_2Dimage_ID("piaa1zsag", size, size);
             for(ii=0;ii<size*size;ii++)
                 data.image[IDpiaaz1sag].array.F[ii] = data.image[IDpiaaz1].array.F[ii]*2.0/(ri0-1.0);                        
-            sprintf(fname, "%s/piaa1zsag.fits", piaacmcconfdir);
+            sprintf(fname, "!%s/piaa1zsag.fits", piaacmcconfdir);
             save_fits("piaa1zsag", fname);
        }
     }
+  //printf("EXIT PT 969\n"); // TEST
+//exit(0);
 
 
     // ------------------- elem 2: reflective PIAA M0  -----------------------
@@ -2405,7 +2417,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             sprintf(fname, "!%s/piaa0Cz.fits", piaacmcconfdir);
             save_fits("piaa0Cz", fname);
         }
-
+        save_fits("piaa0Cz", "!test1_piaa0Cz.fits"); // TEST
+ 
 
         linopt_imtools_image_construct("Cmodes", "piaa1Cmodescoeff", "piaa1Cz");
 
@@ -2428,6 +2441,11 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             sprintf(fname, "!%s/piaa0Cres.fits", piaacmcconfdir);
             save_fits("piaa0Cres", fname);
         }
+        save_fits("piaam0z", "!test1_piaam0z.fits"); // TEST
+        save_fits("piaa0Cres", "!test1_piaa0Cres.fits"); // TEST
+
+
+
 
         ID0 = image_ID("piaa1Cz");
         size0 = data.image[ID0].md[0].size[0];
@@ -2706,7 +2724,7 @@ int PIAACMCsimul_makePIAAshapes()
     MAKE_PIAA0shape = 0;
     if(FORCE_MAKE_PIAA0shape == 0)
     {
-        ID = image_ID("piaa0z");
+        ID = image_ID("piaam0z");
         if(ID==-1)
             MAKE_PIAA0shape = 1;
     }
@@ -2760,7 +2778,7 @@ int PIAACMCsimul_makePIAAshapes()
     MAKE_PIAA1shape = 0;
     if(FORCE_MAKE_PIAA1shape == 0)
     {
-        ID = image_ID("piaa1z");
+        ID = image_ID("piaam1z");
         if(ID==-1)
             MAKE_PIAA1shape = 1;
     }
