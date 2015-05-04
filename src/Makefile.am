@@ -36,7 +36,7 @@ cfits_LDADD += cudacomp/libcudacomp.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/cudacomp
 
 SUBDIRS += AtmosphericTurbulence
-cfits_LDADD += AtmosphericTurbulence/libatmturb.la
+cfits_LDADD += AtmosphericTurbulence/libatmosphericturbulence.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
 
 SUBDIRS += AtmosphereModel
