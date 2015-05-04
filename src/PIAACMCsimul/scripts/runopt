@@ -106,7 +106,7 @@ fi
 
 NBARGS=7
 
-if [ ! "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
     echo "Illegal number of parameters (7 params required)"
     exit
 fi
