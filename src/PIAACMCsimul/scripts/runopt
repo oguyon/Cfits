@@ -78,24 +78,24 @@ if [ "$1" = "help" ] || [ "$#" -lt 1 ]; then
 	echo ""
 	echo ""
 	echo ""
-	echo "Scan focal plane mask radius for a fixed output central obstruction (coout): "
-	echo "   $0 optscan <nbrings> <coout>"
+#	echo "Scan focal plane mask radius for a fixed output central obstruction (coout): "
+#	echo "   $0 optscan <nbrings> <coout>"
 	echo ""
 	echo "Optimize a specific configuration :"
-	echo "   $0 optsingle <nbrings> <coout> <fpmr> <maskradld>"
+	echo "   $0 optsingle <nbrings> <coout> <fpmr> <maskradld> <ssize[10x log]> <extmode>"
 	echo ""
 	echo ""
 	echo "Evaluate a pre-existing solution:"
 	echo ""
 	echo " compute contrast (only on-axis contrast and PSF):"
-	echo "   $0 eval0 <nbrings> <coout> <fpmr> <maskradld>"
+	echo "   $0 eval0 <nbrings> <coout> <fpmr> <maskradld> <ssize[10x log]> <extmode>"
 	echo " compute contrasts (compute on-axis and resolved source PSFs and contrasts):"
-	echo "   $0 eval1 <nbrings> <coout> <fpmr> <maskradld>"
+	echo "   $0 eval1 <nbrings> <coout> <fpmr> <maskradld> <ssize[10x log]> <extmode>"
 	echo " conpute contrasts, transmission curve:"
-	echo "   $0 eval2 <nbrings> <coout> <fpmr> <maskradld>"
+	echo "   $0 eval2 <nbrings> <coout> <fpmr> <maskradld> <ssize[10x log]> <extmode>"
 	echo ""
 	echo " loop PSF computation (to be used for WFC):"
-	echo "   $0 psfcomploop <nbrings> <coout> <fpmr> <maskradld>"
+	echo "   $0 psfcomploop <nbrings> <coout> <fpmr> <maskradld> <ssize[10x log]> <extmode>"
 	echo "will compute PSF every time a file named looppsfcomp appears"
 	echo "loop will stop when file loopstop appears" 
 	echo "Files will appear in shared memory"
@@ -103,10 +103,17 @@ if [ "$1" = "help" ] || [ "$#" -lt 1 ]; then
 	exit
 fi
 
-if [ "$#" -gt 5 ]; then
-    echo "Illegal number of parameters (5 params max)"
+
+NBARGS=7
+
+if [ ! "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters (7 params required)"
     exit
 fi
+
+
+ssize=$6
+extmode=$7
 
 
 loopmode=0
@@ -194,6 +201,8 @@ fi
 
 
 
+
+
 if [ $inputmode -eq 0 ]; then
 	echo "ERROR: command $1 not recognized"
 	exit
@@ -227,7 +236,7 @@ maxssize=20
 
 
 NBlambda=20
-ssize=20   # 0.01 l/D
+
 
 
 
@@ -257,15 +266,15 @@ echo "$NBlambda" > conf_nblambda.txt
 echo "$ssize" > conf_resolved.txt   # optimize for ssize l/D jitter
 echo "1" > conf_extmode.txt   # 6 points
 
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 800 000   # set configuration settings
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 101 000   # compute FPMresp if not present
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 800 000   # set configuration settings
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 101 000   # compute FPMresp if not present
 
 #./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 210 000   # co-optimize fpm and PIAA shapes
 #exit
 
 # Search for optimal solution
 echo "$searchtime" > searchtime.txt
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 102 000
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 102 000
 
 
 
@@ -299,28 +308,28 @@ if [ $computecontrast -eq 1 ]
 then
 execcode=$(( 720 + 10*$nbDM ))
 echo "execcode = $execcode"
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial $execcode 000
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial $execcode 000
 fi
 
 
 
 if [ $computecontrast -gt 1 ]
 then
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 721 000
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 721 000
 fi
 
 
 
 if [ $computecontrast -eq 3 ]
 then
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 722 000
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 722 000
 fi
 
 
 if [ $computetransmcurve -eq 1 ]
 then
 echo "computing transmission curve"
-./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 750 000
+./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 750 000
 fi
 
 touch looppsfcomp_done  # letting know other process that the PSF has been computed
@@ -400,27 +409,27 @@ else
 		
 	# if directory does not exist but monochromatic design reference exists, adopt it
 	# otherwise, do nothing	
-	./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 501 000
-	echo "./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 501 000"
+	./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 501 000
+	echo "./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 501 000"
 	
 	
 	# PHASE 1: COMPUTE MONOCHROMATIC IDEAL PIAACMC
 	# will skip if already computed
-	./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 801 000 # removes polychromatic conf
-	./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial $MdesignStepMax 000 
+	./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 801 000 # removes polychromatic conf
+	./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial $MdesignStepMax 000 
 
 	# copy solution as master reference (if it does not exist) for other lambda / lambdaB
-	./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 500 000
+	./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 500 000
 
 	
 	# COMPUTE ON-AXIS PSF with idealized focal plane mask	
-	./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 700 000
-	echo "./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 700 000"
+	./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 700 000
+	echo "./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 700 000"
 	
 	#./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 701 000
 	touch $file1
 	
-	./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 802 000 # restores polychromatic conf
+	./sim$size $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 802 000 # restores polychromatic conf
 fi
 
 

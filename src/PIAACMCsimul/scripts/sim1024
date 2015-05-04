@@ -45,8 +45,9 @@ coin=$2
 coout=$3
 
 rmode=$4
-
 emode=$5
+
+
 
 tmp=$6
 sprange=$(echo $tmp | sed 's/^0*//')

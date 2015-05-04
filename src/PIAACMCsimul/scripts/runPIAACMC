@@ -26,7 +26,7 @@ fi
 	echo "	arg5: mask radius [l/D]  (idealized)           $5"
 	echo "	arg6: centobs 0                                $6"
 	echo "	arg7: centobs 1                                $7"
-	echo "	arg8: resolved source code (00=unresolved)     $8"  # not used 
+	echo "	arg8: resolved source code (00=unresolved)     $8" 
 	echo "  arg9: extended source mode                     $9"
 	echo "	arg10: spectral range [%]                      ${10}" 
 	echo "	arg11: central lambda [nm]                     ${11}"
@@ -186,28 +186,9 @@ echo "nblambda = $nblambda"
 
 
 
-PIAACMC_resolved=0 # default
-file="./$1/conf_resolved.txt"
-if [ -f $file ]
-	then
-	PIAACMC_resolved=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "PIAACMC_resolved = $PIAACMC_resolved"
+PIAACMC_resolved=$8
 
-
-PIAACMC_extmode=0 # default
-file="./$1/conf_extmode.txt"
-if [ -f $file ]
-	then
-	PIAACMC_extmode=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "PIAACMC_extmode = $PIAACMC_extmode"
+PIAACMC_extmode=$9 
 
 
 
