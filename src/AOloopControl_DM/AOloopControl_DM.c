@@ -28,7 +28,8 @@ int wcol, wrow; // window size
 
 
 struct timespec semwaitts;
-	
+
+
 
 
 
@@ -64,31 +65,33 @@ long IDturb;
 
 int AOloopControl_DM_setsize_cli()
 {
-  if(CLI_checkarg(1,2)==0)
-    AOloopControl_DM_setsize(data.cmdargtoken[1].val.numl);
-  else
-    return 1;
-    
-	return 0;
+    if(CLI_checkarg(1,2)==0)
+        AOloopControl_DM_setsize(data.cmdargtoken[1].val.numl);
+    else
+        return 1;
+
+    return 0;
 }
+
 
 
 int AOloopControl_DM_CombineChannels_cli()
 {
-  if(CLI_checkarg(1,2)==0)
-    AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl);
-  else
-    AOloopControl_DM_CombineChannels(1);
-    
+    if(CLI_checkarg(1,2)==0)
+        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl);
+    else
+        AOloopControl_DM_CombineChannels(1);
+
     return 1;
 }
+
 
 
 int AOloopControl_DM_chan_setgain_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
         AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
-    else        
+    else
         return 1;
 }
 
@@ -96,34 +99,34 @@ int AOloopControl_DM_chan_setgain_cli()
 
 int AOloopControl_DM_dmturb_wspeed_cli()
 {
-  if(CLI_checkarg(1,1)==0)
-    AOloopControl_DM_dmturb_wspeed(data.cmdargtoken[1].val.numf);
-  else
-    return 1;
+    if(CLI_checkarg(1,1)==0)
+        AOloopControl_DM_dmturb_wspeed(data.cmdargtoken[1].val.numf);
+    else
+        return 1;
 }
 
 int AOloopControl_DM_dmturb_ampl_cli()
 {
-  if(CLI_checkarg(1,1)==0)
-    AOloopControl_DM_dmturb_ampl(data.cmdargtoken[1].val.numf);
-  else
-    return 1;
+    if(CLI_checkarg(1,1)==0)
+        AOloopControl_DM_dmturb_ampl(data.cmdargtoken[1].val.numf);
+    else
+        return 1;
 }
 
 int AOloopControl_DM_dmturb_LOcoeff_cli()
 {
-  if(CLI_checkarg(1,1)==0)
-    AOloopControl_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numf);
-  else
-    return 1;
+    if(CLI_checkarg(1,1)==0)
+        AOloopControl_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numf);
+    else
+        return 1;
 }
 
 int AOloopControl_DM_dmturb_tint_cli()
 {
-  if(CLI_checkarg(1,2)==0)
-    AOloopControl_DM_dmturb_tint(data.cmdargtoken[1].val.numl);
-  else
-    return 1;
+    if(CLI_checkarg(1,2)==0)
+        AOloopControl_DM_dmturb_tint(data.cmdargtoken[1].val.numl);
+    else
+        return 1;
 }
 
 
@@ -299,26 +302,26 @@ int AOloopControl_DM_setsize(long size1d)
 
 int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
 {
-  long ii;
-  float volt;
+    long ii;
+    float volt;
 
 
 
-  data.image[IDvolt].md[0].write = 1;
-  for(ii=0;ii<NBact;ii++)
+    data.image[IDvolt].md[0].write = 1;
+    for(ii=0; ii<NBact; ii++)
     {
-      volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
-      if(volt>dispcombconf[0].MAXVOLT)
-	volt = dispcombconf[0].MAXVOLT;
-      data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*65536.0);
+        volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
+        if(volt>dispcombconf[0].MAXVOLT)
+            volt = dispcombconf[0].MAXVOLT;
+        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*65536.0);
     }
 
-  data.image[IDvolt].md[0].write = 0;
-  data.image[IDvolt].md[0].cnt0++;
+    data.image[IDvolt].md[0].write = 0;
+    data.image[IDvolt].md[0].cnt0++;
 
-  
 
-  return 0;
+
+    return 0;
 }
 
 
@@ -366,10 +369,10 @@ int AOloopControl_DM_createconf()
         dispcombconf[0].MAXVOLT = 150.0;
         dispcombconf[0].moninterval = 30000; // 33Hz
         dispcombconf[0].status = 0;
-        
+
         for(ch=0; ch<DM_NUMBER_CHAN; ch++)
             dispcombconf[0].dmdispgain[ch] = 1.0;
-            
+
         dmdispcomb_loaded = 1;
 
     }
@@ -597,10 +600,10 @@ int AOloopControl_DM_CombineChannels(int mode)
 int AOloopControl_DM_chan_setgain(int ch, float gain)
 {
     AOloopControl_DM_loadconf();
-    if(ch<DM_NUMBER_CHAN) 
+    if(ch<DM_NUMBER_CHAN)
         dispcombconf[0].dmdispgain[ch] = gain;
 
-  return 0;
+    return 0;
 }
 
 
@@ -640,10 +643,10 @@ int AOloopControl_DM_dmdispcombstatus()
         printw("moninterval %d\n", dispcombconf[0].moninterval);
         printw("\n");
         for(ch=0; ch<DM_NUMBER_CHAN; ch++)
-            {
-                printw("  %2d   %5.3f\n", ch, dispcombconf[0].dmdispgain[ch]);
-            }
-            
+        {
+            printw("  %2d   %5.3f\n", ch, dispcombconf[0].dmdispgain[ch]);
+        }
+
         mcnt++;
         refresh();
     }
@@ -796,74 +799,74 @@ int AOloopControl_DMturb_loadconf()
 
 int AOloopControl_DM_dmturboff()
 {
-  AOloopControl_DMturb_loadconf();
-  dmturbconf[0].on = 0;
-  AOloopControl_DM_dmturb_printstatus();
+    AOloopControl_DMturb_loadconf();
+    dmturbconf[0].on = 0;
+    AOloopControl_DM_dmturb_printstatus();
 
-  return 0;
+    return 0;
 }
 
 int AOloopControl_DM_dmturb_wspeed(double wspeed)
 {
-  AOloopControl_DMturb_loadconf();
-  dmturbconf[0].wspeed = wspeed;
-  AOloopControl_DM_dmturb_printstatus();
+    AOloopControl_DMturb_loadconf();
+    dmturbconf[0].wspeed = wspeed;
+    AOloopControl_DM_dmturb_printstatus();
 
-  return 0;
+    return 0;
 }
 
 int AOloopControl_DM_dmturb_ampl(double ampl)
 {
-  AOloopControl_DMturb_loadconf();
-  dmturbconf[0].ampl = ampl;
-  AOloopControl_DM_dmturb_printstatus();
+    AOloopControl_DMturb_loadconf();
+    dmturbconf[0].ampl = ampl;
+    AOloopControl_DM_dmturb_printstatus();
 
-  return 0;
+    return 0;
 }
 
 int AOloopControl_DM_dmturb_LOcoeff(double LOcoeff)
 {
-  AOloopControl_DMturb_loadconf();
-  dmturbconf[0].LOcoeff = LOcoeff;
-  AOloopControl_DM_dmturb_printstatus();
+    AOloopControl_DMturb_loadconf();
+    dmturbconf[0].LOcoeff = LOcoeff;
+    AOloopControl_DM_dmturb_printstatus();
 
-  return 0;
+    return 0;
 }
 
 int AOloopControl_DM_dmturb_tint(long tint)
 {
-  AOloopControl_DMturb_loadconf();
-  dmturbconf[0].tint = tint;
-  AOloopControl_DM_dmturb_printstatus();
+    AOloopControl_DMturb_loadconf();
+    dmturbconf[0].tint = tint;
+    AOloopControl_DM_dmturb_printstatus();
 
-  return 0;
+    return 0;
 }
 
 
 
 int AOloopControl_DM_dmturb_printstatus()
 {
-  AOloopControl_DMturb_loadconf();
+    AOloopControl_DMturb_loadconf();
 
-  printf("Run time = %.3f sec\n", dmturbconf[0].simtime);
-  printf("\n");
-  printf("cnt              : %ld   (ave frequ = %.2f kHz)\n", dmturbconf[0].cnt, 0.001*dmturbconf[0].cnt/dmturbconf[0].simtime);
-  printf("\n");
+    printf("Run time = %.3f sec\n", dmturbconf[0].simtime);
+    printf("\n");
+    printf("cnt              : %ld   (ave frequ = %.2f kHz)\n", dmturbconf[0].cnt, 0.001*dmturbconf[0].cnt/dmturbconf[0].simtime);
+    printf("\n");
 
-  if(dmturbconf[0].on == 1)
-    printf("LOOP IS ON\n");
-  else 
-    printf("LOOP IS OFF\n");
+    if(dmturbconf[0].on == 1)
+        printf("LOOP IS ON\n");
+    else
+        printf("LOOP IS OFF\n");
 
-  printf("ampl    =  %.2f um\n", dmturbconf[0].ampl);
-  printf("wspeed  =  %.2f m/s\n", dmturbconf[0].wspeed);
-  printf("tint    =  %ld us\n", dmturbconf[0].tint);
-  printf("Requested uptdate frequ = %.2f kHz\n", 0.001/(1.0e-6*dmturbconf[0].tint));
-  printf("\n");
-  printf("\n");
+    printf("ampl    =  %.2f um\n", dmturbconf[0].ampl);
+    printf("wspeed  =  %.2f m/s\n", dmturbconf[0].wspeed);
+    printf("tint    =  %ld us\n", dmturbconf[0].tint);
+    printf("Requested uptdate frequ = %.2f kHz\n", 0.001/(1.0e-6*dmturbconf[0].tint));
+    printf("\n");
+    printf("\n");
 
-  return(0);
-} 
+    return(0);
+}
 
 
 int AOloopControl_DM_turb()
@@ -1008,10 +1011,11 @@ int AOloopControl_DM_turb()
         copy_image_ID("turbs", "dmdisp1", 0);
         save_fits("turbs", "!turbs.fits");
         save_fits("turbs1", "!turbs1.fits");
-   }
+    }
 
 
     return(0);
 }
+
 
 

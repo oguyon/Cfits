@@ -683,112 +683,117 @@ int read_BMPimage(char* filename, char *IDname_R, char *IDname_G, char *IDname_B
 // written to read output of "dcraw -t 0 -D -4 xxx.CR2" into FITS
 int read_PGMimage(char *fname, char *ID_name)
 {
-  FILE *fp;
-  char line1[100];
-  long xsize,ysize;
-  long maxval;
-  long ID;
-  double val;
-  long ii,jj;
-  int r;
+    FILE *fp;
+    char line1[100];
+    long xsize,ysize;
+    long maxval;
+    long ID;
+    double val;
+    long ii,jj;
+    int r;
 
-  if((fp=fopen(fname,"r"))==NULL)
+    if((fp=fopen(fname,"r"))==NULL)
     {
-      fprintf(stderr,"ERROR: cannot open file \"%s\"\n",fname);
+        fprintf(stderr,"ERROR: cannot open file \"%s\"\n",fname);
     }
-  else
+    else
     {
-      r = fscanf(fp,"%s",line1);
-      if(strcmp(line1,"P5")!=0)
-	fprintf(stderr,"ERROR: File is not PGM image\n");
-      else
-	{
-	  r = fscanf(fp,"%ld %ld",&xsize,&ysize);
-	  printf("PGM image size: %ld x %ld\n",xsize,ysize);
-	  r = fscanf(fp,"%ld",&maxval);
-	  if(maxval!=65535)
-	    fprintf(stderr,"Not 16-bit image. Cannot read\n");
-	  else
-	    {
-	      printf("Reading PGM image\n");
-	      ID = create_2Dimage_ID(ID_name,xsize,ysize);
-	      fgetc(fp);
-	      for(jj=0;jj<ysize;jj++)
-		{
-		  for(ii=0;ii<xsize;ii++)
-		    {
-		      val = 256.0*((int) fgetc(fp)) + 1.0*((int) fgetc(fp));
-		      data.image[ID].array.F[(ysize-jj-1)*xsize+ii] = val;
-		    }
-		}
-	    }
-	}
-      fclose(fp);
+        r = fscanf(fp,"%s",line1);
+        if(strcmp(line1,"P5")!=0)
+            fprintf(stderr,"ERROR: File is not PGM image\n");
+        else
+        {
+            r = fscanf(fp,"%ld %ld",&xsize,&ysize);
+            printf("PGM image size: %ld x %ld\n",xsize,ysize);
+            r = fscanf(fp,"%ld",&maxval);
+            if(maxval!=65535)
+                fprintf(stderr,"Not 16-bit image. Cannot read\n");
+            else
+            {
+                printf("Reading PGM image\n");
+                ID = create_2Dimage_ID(ID_name,xsize,ysize);
+                fgetc(fp);
+                for(jj=0; jj<ysize; jj++)
+                {
+                    for(ii=0; ii<xsize; ii++)
+                    {
+                        val = 256.0*((int) fgetc(fp)) + 1.0*((int) fgetc(fp));
+                        data.image[ID].array.F[(ysize-jj-1)*xsize+ii] = val;
+                    }
+                }
+            }
+        }
+        fclose(fp);
     }
-     
-  return(0);
+
+    return(0);
 }
+
+
 
 // assumes dcraw is installed
 int CR2toFITS(char *fnameCR2, char *fnameFITS)
 {
-  char command[200];
-  FILE *fp;
+    char command[200];
+    FILE *fp;
 
-  float iso;
-  float shutter;
-  float aperture;
-  long ID;
-  long xsize,ysize;
-  long ii;
-  int r;
+    float iso;
+    float shutter;
+    float aperture;
+    long ID;
+    long xsize,ysize;
+    long ii;
+    int r;
 
-  sprintf(command,"dcraw -t 0 -D -4 -c %s > _tmppgm.pgm",fnameCR2);
-  r = system(command);
-  
+    sprintf(command,"dcraw -t 0 -D -4 -c %s > _tmppgm.pgm",fnameCR2);
+    r = system(command);
 
-  read_PGMimage("_tmppgm.pgm","tmpfits1");
-  r = system("rm _tmppgm.pgm");
 
-  if(CR2toFITS_NORM==1)
+    read_PGMimage("_tmppgm.pgm","tmpfits1");
+    r = system("rm _tmppgm.pgm");
+
+    if(CR2toFITS_NORM==1)
     {
-      sprintf(command,"dcraw -i -v %s | grep \"ISO speed\"| awk '{print $3}' > iso_tmp.txt",fnameCR2);
-      r = system(command);
-      fp = fopen("iso_tmp.txt","r");
-      r = fscanf(fp,"%f\n",&iso);
-      fclose(fp);
-      r = system("rm iso_tmp.txt");
-      printf("iso = %f\n",iso);
-      
-      sprintf(command,"dcraw -i -v %s | grep \"Shutter\"| awk '{print $2}' > shutter_tmp.txt",fnameCR2);
-      r = system(command);
-      fp = fopen("shutter_tmp.txt","r");
-      r = fscanf(fp,"%f\n",&shutter);
-      fclose(fp);
-      r = system("rm shutter_tmp.txt");
-      printf("shutter = %f\n",shutter);
-      
-      sprintf(command,"dcraw -i -v %s | grep \"Aperture\"| awk '{print $2}' > aperture_tmp.txt",fnameCR2);
-      r = system(command);
-      fp = fopen("aperture_tmp.txt","r");
-      r = fscanf(fp,"f/%f\n",&aperture);
-      fclose(fp);
-      r = system("rm aperture_tmp.txt");
-      printf("aperture = %f\n",aperture);
+        sprintf(command,"dcraw -i -v %s | grep \"ISO speed\"| awk '{print $3}' > iso_tmp.txt",fnameCR2);
+        r = system(command);
+        fp = fopen("iso_tmp.txt","r");
+        r = fscanf(fp,"%f\n",&iso);
+        fclose(fp);
+        r = system("rm iso_tmp.txt");
+        printf("iso = %f\n",iso);
 
-      ID = image_ID("tmpfits1");
-      xsize = data.image[ID].md[0].size[0];
-      ysize = data.image[ID].md[0].size[1];
-      
-      for(ii=0;ii<xsize*ysize;ii++)
-	data.image[ID].array.F[ii] /= (shutter*aperture*aperture*iso);      
+        sprintf(command,"dcraw -i -v %s | grep \"Shutter\"| awk '{print $2}' > shutter_tmp.txt",fnameCR2);
+        r = system(command);
+        fp = fopen("shutter_tmp.txt","r");
+        r = fscanf(fp,"%f\n",&shutter);
+        fclose(fp);
+        r = system("rm shutter_tmp.txt");
+        printf("shutter = %f\n",shutter);
+
+        sprintf(command,"dcraw -i -v %s | grep \"Aperture\"| awk '{print $2}' > aperture_tmp.txt",fnameCR2);
+        r = system(command);
+        fp = fopen("aperture_tmp.txt","r");
+        r = fscanf(fp,"f/%f\n",&aperture);
+        fclose(fp);
+        r = system("rm aperture_tmp.txt");
+        printf("aperture = %f\n",aperture);
+
+        ID = image_ID("tmpfits1");
+        xsize = data.image[ID].md[0].size[0];
+        ysize = data.image[ID].md[0].size[1];
+
+        for(ii=0; ii<xsize*ysize; ii++)
+            data.image[ID].array.F[ii] /= (shutter*aperture*aperture*iso);
     }
 
-  save_fl_fits("tmpfits1",fnameFITS);
-  delete_image_ID("tmpfits1");
+    save_fl_fits("tmpfits1",fnameFITS);
+    delete_image_ID("tmpfits1");
 
-  return(0);
+    return(0);
 }
+
+
+
 
 // assumes dcraw is installed
 long loadCR2(char *fnameCR2, char *IDname)

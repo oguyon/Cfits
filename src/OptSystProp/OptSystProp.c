@@ -343,7 +343,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             fflush(stdout);
             ID = optsyst[index].ASPHSURFMarray[optsyst[index].elemarrayindex[elem]].surfID;
             printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
-
+            
             
             if(data.image[ID].md[0].naxis==2)
             {
@@ -444,7 +444,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             // uses 1-fpm
 
             // test
-            //  save_fits(imnameamp_out, "!TESTamp.fits");
+           // save_fits(imnameamp_out, "!TESTamp.fits");
             //exit(0);
 
             ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");

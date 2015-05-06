@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# ====================== USER EDITS THIS PART =======================
+# ====================== USER EDITS THIS SECTION =======================
 
 
 LOOPNAME="pyramid" # name of the control loop
@@ -43,6 +43,27 @@ dm_update_channel 5 dmpyoffset.fits
 ocampid=$(ps aux | grep '[o]cam' | awk '{print $2}')
 echo $ocampid
 chrt -f -p 50 $ocampid
+
+
+# ======================== END OF USER EDIT SECTION =====================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # =============== LIST OF VARIABLES ==============================

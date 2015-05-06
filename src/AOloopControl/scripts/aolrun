@@ -6,8 +6,6 @@ confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 pname0=$0
 pname=${pname0#"./"}-$loopnb
 
-#ocamstopacq
-sleep 0.1 
 
 Cfits -n $pname << EOF
 aolnb $loopnb

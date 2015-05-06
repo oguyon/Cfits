@@ -33,6 +33,14 @@ Files CLIcore.c and CLIcore.h contain the source code for the command line inter
 	higher number: higher priority
 	example:
 	<executable> -p 90
+  -f, --fifo==FIFONAME
+        specify fifo name
+        example
+        <executable> -f /tmp/fifo24
+        <executable> --fifo=/tmp/fifo24
+  -s, --startup=STARTUPFILE
+        execute specified script on startup
+        requires the -f option, as the script is loaded into fifo
 \endverbatim
 
 ## SYNTAX RULES, PARSER

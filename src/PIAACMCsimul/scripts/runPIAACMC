@@ -3,52 +3,114 @@ unset TMUX
 
 pid=$$
 
-exitcode=0
 NBthreadsFPMresp=4 
-NBlyotstop=4
 
 
-
-
-if [ "$#" -ne 13 ]; then
-echo " "
-echo " "
-echo "$# arguments, but 13 expected"
-echo "$@"
-echo " "
-exitcode=1
-fi
-    echo "main PIAACMC design scrit"
-	echo "	arg1: directory name                           $1"
-	echo "	arg2: size (1024, 2048, 4096 etc...)           $2"
-	echo "	arg3: pupil scale (m/pix)                      $3"
-	echo "	arg4: pupil file                               $4"
-	echo "	arg5: mask radius [l/D]  (idealized)           $5"
-	echo "	arg6: centobs 0                                $6"
-	echo "	arg7: centobs 1                                $7"
-	echo "	arg8: resolved source code (00=unresolved)     $8" 
-	echo "  arg9: extended source mode                     $9"
-	echo "	arg10: spectral range [%]                      ${10}" 
-	echo "	arg11: central lambda [nm]                     ${11}"
-	echo "  arg12: PIAA material (string)                  ${12}" 
-	echo "	arg13: perform design steps until this step    ${13}"
-	echo ""
-if [ $exitcode = "1" ]; then
-echo "WRONG NUMBER OF ARGS... EXITING"
+errorfile="errorstatus.txt"
+checkerrorstatus ()
+{
+if [ -f ${errorfile} ]
+then
+echo ""
+echo "****** [$(date)] FATAL ERROR: script $0 : $(cat ${errorfile})"
+echo "****** exit script $0"
+echo "****** Manually remove file $errorfile to unlock"
+echo "****** bye !"
+echo ""
 exit
 fi
+}
 
 
 
 
 
 
+printhelp ()
+{
+    echo "main PIAACMC design scrit"
+	echo "	arg1 : directory name                           $1"
+	echo "	arg2 : size (1024, 2048, 4096 etc...)           $2"
+	echo "	arg3 : pupil scale (m/pix)                      $3"
+	echo "	arg4 : pupil file                               $4"
+	echo "	arg5 : centobs 0                                $5"
+	echo "	arg6 : centobs 1                                $6"
+	echo "	arg7 : mask radius [l/D]  (idealized)           $7"	
+	echo "	arg8 : design lambda                            $8"	
+	echo "	arg9 : PIAA material                            $9"
+	echo "	arg10: Lyot Stop transm                         ${10}"
+	echo "	arg11: Number of Lyot Stops                     ${11}"
+	echo "	arg12: mask lambda                              ${12}"
+	echo "	arg13: mask spectral bandwidth                  ${13}"
+	echo "	arg14: mask number of rings                     ${14}"
+	echo "	arg15: mask physical radius [l/D]               ${15}"
+	echo "	arg16: resolved source size (00=unresolved)     ${16}" 
+	echo "	arg17: extended source mode                     ${17}"
+	echo "	arg18: focal plane material                     ${18}" 
+	echo "	arg19: index                                    ${19}"
+	echo "	arg20: design step                              ${20}"
+	echo ""
+}
+
+
+
+
+NBARGS=20
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+	printhelp $@
+if [ "$#" -ne $NBARGS ]; then
+	echo "$0: Illegal number of parameters ($NBARGS params required, $# entered)"
+	echo "$0: Illegal number of parameters ($NBARGS params required, $# entered)" > $errorfile
+	checkerrorstatus 
+fi
+	exit
+fi
+
+
+
+
+
+size=$2
+pscale=$3
+centobs0=$5
+centobs1=$6
+fpmradld=$7
+lambda=$8
+
+echo "$9" > $1/conf_PIAAmaterial_name.txt
+
+LStransm=${10}
+NBlyotstop=${11}
+mlambda=${12}
+mlambdaB=${13}
+NBrings=${14}
+FPM_MASKRADLD=${15}
+PIAACMC_resolved=${16}
+PIAACMC_extmode=${17}
+
+echo "${18}" > $1/conf_fpmmaterial_name.txt
+
+index=${19}
 
 # STEP PRE-PROCESSING
+rstep=${20}
 
-rstep=${13}
 
-PIAAmaterial=${12}
+
+
+
+PIAACMC_nbiter=20
+
+
+PIAACMC_dftgrid=2
+PIAACMC_maxoptCterm=10
+PIAACMC_maxoptFterm=5
+
+
+checkerrorstatus
+
+
 
 # default
 state=$rstep
@@ -56,24 +118,21 @@ statestop=$rstep
 
 
 
-# if $11 in [0-99]
-# run steps from 0 to $11
+# if $20 in [0-99]
+# run steps from 0 to $20
 if ((rstep >= 0 && rstep <= 99)); then
 echo ""
 state=0
-statestop=${13}
+statestop=${rstep}
 fi
 
-
-# if $11 in [100-109]
-# run steps from 100 to $11
+# if $20 in [100-109]
+# run steps from 100 to $20
 if ((rstep >= 100 && rstep <= 109)); then
 echo ""
 state=100
-statestop=${13}
+statestop=${rstep}
 fi
-
-
 
 
 
@@ -85,111 +144,105 @@ echo "statestop = $statestop"
 
 
 
-
-
-
-
-
 mkdir -p ./$1
 
 
-# Read Lyot Stop transmission(s)
-LStransm=0.8 # default
-file="./conf_LStransm.txt"
-if [ -f $file ]
-	then
-	LStransm=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "LStransm = $LStransm"
 
 LStransm0=0.6
-LStrasm2=$LStransmLS
-transm1=$( echo "($LStransm0+$LStransm2)*0.5" | bc -l )
-
-
-
-# read number of Lyot Stops
-NBlyotstop=3
-file="./conf_NBlyotstop.txt"
-if [ -f $file ]
-	then
-	NBlyotstop=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "NBlyotstop = $NBlyotstop"
+LStransm2=$LStransm
+LStransm1=$( echo "($LStransm0+$LStransm2)*0.5" | bc -l )
 
 
 
 
-
-# write material in directory
-echo "$PIAAmaterial" > ./$1/conf_PIAAmaterial_name.txt
-echo "PIAA material : $PIAAmaterial" 
-
-FPM_MASKRADLD=2.0 # default
-file="./$1/conf_MASKRADLD.txt"
-if [ -f $file ]
-	then
-	FPM_MASKRADLD=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "FPM_MASKRADLD = $FPM_MASKRADLD"
 
 
 
 
 FPMsectors=1 # default
-file="./$1/conf_FPMsectors.txt"
-if [ -f $file ]
-	then
-	FPMsectors=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "FPMsectors = $FPMsectors"
-
-
-
-
-NBrings=6 # default
-file="./$1/conf_NBrings.txt"
-if [ -f $file ]
-	then
-	NBrings=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "NBrings = $NBrings"
-
-
-
 
 nblambda=10 # default
-file="./$1/conf_nblambda.txt"
+file="conf_nblambda.txt"
 if [ -f $file ]
 	then
 	nblambda=$(echo "$(cat $file)")
 	else
-	echo "CANNOT READ FILE ${file}"
+	#echo "CANNOT READ FILE ${file}"
 	ok=0
 fi
 echo "nblambda = $nblambda"
 
 
+beamrad=0.01 # default
+file="conf_PIAAbeamrad.txt"
+if [ -f $file ]
+	then
+	beamrad=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "beamrad = $beamrad"
 
-PIAACMC_resolved=$8
 
-PIAACMC_extmode=$9 
+Fratio=80 # default
+file="conf_Fratio.txt"
+if [ -f $file ]
+	then
+	Fratio=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "Fratio = $Fratio"
 
+
+piaar0lim=1.15 # default
+file="conf_PIAAr0lim.txt"
+if [ -f $file ]
+	then
+	piaar0lim=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "piaar0lim = $piaar0lim"
+
+
+piaaar1lim=1.50 # default
+file="conf_PIAAr1lim.txt"
+if [ -f $file ]
+	then
+	piaar1lim=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "piaar1lim = ${piaar1lim}"
+
+
+piaasep=1.00 # default
+file="conf_PIAAsep.txt"
+if [ -f $file ]
+	then
+	piaasep=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "piaasep = $piaasep"
+
+
+piaa0pos=1.00 # default
+file="conf_PIAA0pos.txt"
+if [ -f $file ]
+	then
+	piaa0pos=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "piaa0pos = $piaa0pos"
 
 
 
@@ -203,37 +256,49 @@ SCORINGMASKTYPE=1
 
 
 
-
-### SUMMARY OF MODES
-
-
-
-
-
-### numbering 
-#
-# sprintf(fname, "%s/FPMresp%d%d%d_%02ld_%03ld_%03ld_%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone, piaacmc[0].nblambda);
-
-#
-# sprintf(fname, "!%s/fpm_zonez%d%d_%02ld_%03ld_%03ld.fits", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, piaacmc[0].focmNBzone);
-#
-# sprintf(fname, "%s/mode13_%d%d_%03ld_%03ld.opt.txt", piaacmcconfdir, computePSF_ResolvedTarget, PIAACMC_FPMsectors, piaacmc[0].NBrings, piaacmc[0].focmNBzone);
-#
-
-
-# change executable name as needed for your build
-execname=Cfits
-
-
-
-
-
-
-
-
+# PARAMETER LOAD SCRIPT TO BE EXECUTED - DEFAULT VALUES
+startupfile="clistartup$pid.txt"
+echo "PIAACMC_size=${size}" > $startupfile  #2
+echo "PIAACMC_pixscale=${pscale}" >> $startupfile  #3
+echo "PIAACMC_centobs0=${centobs0}" >> $startupfile #5
+echo "PIAACMC_centobs1=${centobs1}" >> $startupfile #6
+echo "PIAACMC_fpmradld=${fpmradld}" >> $startupfile #7
+echo "PIAACMC_LStransm0=$LStransm0" >> $startupfile #10
+echo "PIAACMC_LStransm1=$LStransm1" >> $startupfile #10
+echo "PIAACMC_LStransm2=$LStransm2" >> $startupfile #10
+echo "PIAACMC_nblstop=$NBlyotstop" >> $startupfile #11
+echo "PIAACMC_lambda=${mlambda}" >> $startupfile #12
+echo "PIAACMC_lambdaB=${mlambdaB}" >> $startupfile #13
+echo "PIAACMC_NBrings=$NBrings" >> $startupfile #14
+echo "PIAACMC_MASKRADLD=${FPM_MASKRADLD}" >> $startupfile #15
+echo "PIAACMC_resolved=$PIAACMC_resolved" >> $startupfile #16
+echo "PIAACMC_extmode=$PIAACMC_extmode" >> $startupfile #17
+echo "PIAACMC_dftgrid=2" >> $startupfile
+echo "PIAACMC_nblambda=${nblambda}" >> $startupfile
+echo "PIAACMC_beamrad=${beamrad}" >> $startupfile
+echo "PIAACMC_Fratio=${Fratio}" >> $startupfile
+echo "PIAACMC_r0lim=${piaar0lim}" >> $startupfile
+echo "PIAACMC_r1lim=${piaar1lim}" >> $startupfile
+echo "PIAACMC_piaasep=${piaasep}" >> $startupfile
+echo "PIAACMC_piaa0pos=${piaa0pos}" >> $startupfile
+fifoname="runPIAACMCfifo$pid"
 
 
 
+execname="Cfits -s $startupfile -f $fifoname"
+
+
+
+
+
+
+
+
+cleanup ()
+{
+#rm $startupfile
+rm $fifoname
+}
 
 
 
@@ -267,18 +332,8 @@ if [ 210 -eq ${state} ]; then
 echo "210" > ./$1/runstep
 touch ./$1/step210.run.txt
 $execname -n step210 << EOF
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=20
-PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=10
 PIAACMC_maxoptFterm=5
 piaacmcsimrun $1 40
@@ -293,6 +348,7 @@ cp ./$1/piaa1Fmodes.fits ./$1/piaa1Fmodes_step$step.fits
 cp ./$1/fpm_zonez.fits ./$1/fpm_zonez_step$step.fits
 cp ./$1/fpm_zonea.fits ./$1/fpm_zonea_step$step.fits
 cp ./$1/linoptval.txt ./$1/linoptval_step007.txt
+cleanup
 exit
 fi
 
@@ -319,12 +375,13 @@ fi
 
 
 # STEP 500: copy point source mask to extended mask
-
+## TBM
 if [ 500 -eq ${state} ]
 then
 echo "cp fpm_zonea00_20_001_001.fits fpm_zonea10_20_001_001.fits"
 echo "cp fpm_zonez00_20_001_001.fits fpm_zonez10_20_001_001.fits"
 printf "Copy monochromatic mask to polychromatic extended mask\n" 
+cleanup
 exit
 fi
 
@@ -361,27 +418,21 @@ echo "700" > ./$1/runstep
 touch ./$1/step700.run.txt
 cp ./$1/piaacmcparams_idealmonomask.conf ./$1/piaacmcparams.conf
 $execname -n step700 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 loadfits "OPDerr.fits" opderr
 PIAACMC_fpmtype=0
 PIAACMC_FPMsectors=0
 PIAACMC_NBrings=1
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-
 SCORINGMASKTYPE=$SCORINGMASKTYPE
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 0
 exit
 EOF
 mv ./$1/psfi0.fits ./$1/psfi0_step700.fits
+cleanup
 exit
 fi
 
@@ -401,21 +452,12 @@ PIAACMC_fpmtype=0
 PIAACMC_FPMsectors=0
 PIAACMC_NBrings=1
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 100
 exit
 EOF
 mv ./$1/psfi0_starim.fits ./$1/psfi0_step701.fits
+cleanup
 exit
 fi
 fi
@@ -431,24 +473,14 @@ then
 echo "702" > ./$1/runstep
 touch ./$1/step702.run.txt
 $execname -n step702 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_FPMsectors=0
 PIAACMC_NBrings=1
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 PIAACMC_resolved=1
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 0
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -468,25 +500,13 @@ then
 echo "720" > ./$1/runstep
 touch ./$1/step720.run.txt
 $execname -n step720 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 0
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -499,26 +519,14 @@ then
 echo "730" > ./$1/runstep
 touch ./$1/step730.run.txt
 $execname -n step730 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
 PIAACMC_WFCmode=1
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 0
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -539,27 +547,15 @@ echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 
 echo "721" > ./$1/runstep
 touch ./$1/step721.run.txt
 $execname -n step721 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
 PIAACMC_ldoffset=0.01
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 100
 exit
 EOF
 mv ./$1/psfi0_starim.fits ./$1/psfi0_step721.fits
+cleanup
 exit
 fi
 fi
@@ -579,27 +575,15 @@ echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 
 echo "722" > ./$1/runstep
 touch ./$1/step721.run.txt
 $execname -n step722 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
 PIAACMC_ldoffset=0.03
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 100
 exit
 EOF
 mv ./$1/psfi0_starim.fits ./$1/psfi0_step722.fits
+cleanup
 exit
 fi
 fi
@@ -621,25 +605,13 @@ echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $PIAAC
 echo "750" > ./$1/runstep
 touch ./$1/step750.run.txt
 $execname -n step750 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 101
 exit
 EOF
+cleanup
 exit
 fi
 fi
@@ -657,22 +629,11 @@ echo "111" > ./$1/runstep
 touch ./$1/step111.run.txt
 $execname -n step111 << EOF
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 100
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -685,22 +646,12 @@ echo "112" > ./$1/runstep
 touch ./$1/step112.run.txt
 $execname -n step112 << EOF
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 100
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -714,22 +665,12 @@ echo "113" > ./$1/runstep
 touch ./$1/step113.run.txt
 $execname -n step113 << EOF
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 100
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -742,22 +683,11 @@ echo "114" > ./$1/runstep
 touch ./$1/step114.run.txt
 $execname -n step114 << EOF
 PIAACMC_FPMsectors=0
-PIAACMC_NBrings=10
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 101
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -791,25 +721,12 @@ then
 touch ./$1/step800.run.txt
 echo "800" > ./$1/runstep
 $execname -n step800 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
-PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 300
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -822,25 +739,12 @@ then
 echo "801" > ./$1/runstep
 touch ./$1/step801.run.txt
 $execname -n step801 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
-PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 301
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -853,25 +757,13 @@ then
 echo "802" > ./$1/runstep
 touch ./$1/step802.run.txt
 $execname -n step802 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_NBrings=$NBrings
-PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 piaacmcsimrun $1 302
 exit
 EOF
+cleanup
 exit
 fi
 
@@ -916,14 +808,12 @@ fi
 
 
 
-
-
 # =========================================================================================================
 # STEP 000: make monochromatic PIAACMC idealized design, circular central obstruction, assume point source
 # =========================================================================================================
 #
 
-if [ 000 -eq ${state} ]
+if [ 0 -eq ${state} ]
 then
  if [ ! -f ./$1/step000.txt ]
  then
@@ -931,15 +821,11 @@ then
 echo "000" > ./$1/runstep
 touch ./$1/step000.run.txt
 $execname -n step000 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
 exit
 EOF
@@ -947,13 +833,14 @@ mv ./$1/psfi0.fits ./$1/psfi0_step000.fits
 touch ./$1/step000.txt
 else
  printf "skip step 000 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration)\n"
- fi
+  fi
 state=001
 fi
 
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (000)"
+cleanup
 exit
 fi
 
@@ -969,7 +856,7 @@ fi
 # -> piaacmcparams_01.conf
 # 
 
-if [ 001 -eq ${state} ]
+if [ 1 -eq ${state} ]
 then
  if [ ! -f ./$1/step001.txt ]
  then
@@ -977,15 +864,11 @@ then
 echo "001" > ./$1/runstep
 touch ./$1/step001.run.txt
 $execname -n step001 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
 exit
 EOF
@@ -1006,6 +889,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (001)"
+cleanup
 exit
 fi
 
@@ -1033,6 +917,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (002)"
+cleanup
 exit
 fi
 
@@ -1054,15 +939,11 @@ then
 echo "003" > ./$1/runstep
 touch ./$1/step003.run.txt
 $execname -n step003 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
 exit
 EOF
@@ -1077,6 +958,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (003)"
+cleanup
 exit
 fi
 
@@ -1102,17 +984,12 @@ then
 echo "004" > ./$1/runstep
 touch ./$1/step004.run.txt
 $execname -n step004 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nblstop=$NBlyotstop
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=50
 piaacmcsimrun $1 5
 exit
@@ -1129,6 +1006,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (004)"
+cleanup
 exit
 fi
 
@@ -1150,15 +1028,11 @@ then
 echo "005" > ./$1/runstep
 touch ./$1/step006.run.txt
 $execname -n step005 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 2
 exit
 EOF
@@ -1174,6 +1048,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (005)"
+cleanup
 exit
 fi
 
@@ -1199,17 +1074,12 @@ then
 echo "006" > ./$1/runstep
 touch ./$1/step006.run.txt
 $execname -n step006 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nblstop=$NBlyotstop
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_lstransm=$LStransm0
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=100
 piaacmcsimrun $1 5
 exit
@@ -1226,6 +1096,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (006)"
+cleanup
 exit
 fi
 
@@ -1243,18 +1114,13 @@ then
 echo "007" > ./$1/runstep
 touch ./$1/step007.run.txt
 $execname -n step007 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+IAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=10
 PIAACMC_maxoptFterm=5
 piaacmcsimrun $1 40
@@ -1279,6 +1145,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (007)"
+cleanup
 exit
 fi
 
@@ -1290,7 +1157,7 @@ fi
 
 
 
-# STEP 008: tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+# STEP 008: tune PIAA shapes and focal plane mask transm, 20 cosine modes, 10 Fourier modes
 # -> linoptval.txt
 
 if [ 8 -eq ${state} ]
@@ -1300,21 +1167,15 @@ then
 echo "008" > ./$1/runstep
 touch ./$1/step008.run.txt
 $execname -n step008 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nbiter=20
+IAACMC_nbiter=20
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
-PIAACMC_maxoptCterm=10
-PIAACMC_maxoptFterm=10
-#60 625 
+PIAACMC_lambda=${lambda}
+PIAACMC_maxoptCterm=20
+PIAACMC_maxoptFterm=20
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1338,6 +1199,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (008)"
+cleanup
 exit
 fi
 
@@ -1358,17 +1220,12 @@ step=009
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step009 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nblstop=$NBlyotstop
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_lstransm=$LStransm0
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=100
 piaacmcsimrun $1 5
 exit
@@ -1385,6 +1242,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (009)"
+cleanup
 exit
 fi
 
@@ -1404,17 +1262,12 @@ step=010
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step010 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nblstop=$NBlyotstop
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_lstransm=$LStransm1
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=100
 piaacmcsimrun $1 1
 exit
@@ -1431,6 +1284,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (010)"
+cleanup
 exit
 fi
 
@@ -1439,7 +1293,7 @@ fi
 
 
 
-# STEP 011: Tune PIAA shapes and focal plane mask transm
+# STEP 011: Tune PIAA shapes and focal plane mask transm, 20, 20
 # -> linoptval.txt
 
 if [ 011 -eq ${state} ]
@@ -1451,22 +1305,16 @@ step=011
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step011 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
+PIAACMC_lambda=${lambda}
 PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
-# TEST -> change back to 20, 20
 PIAACMC_maxoptCterm=20
 PIAACMC_maxoptFterm=20
-#60 625 
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1489,6 +1337,7 @@ fi
 if [ $state -eq $statestop ]
 then 
 echo "STATE STOP POINT (011)"
+cleanup
 exit
 fi
 
@@ -1507,18 +1356,13 @@ step=012
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step012 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=10
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=40
 PIAACMC_maxoptFterm=150
 #60 625 
@@ -1545,6 +1389,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (012)"
+cleanup
 exit
 fi
 
@@ -1565,17 +1410,12 @@ step=013
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step013 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nblstop=$NBlyotstop
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=100
 PIAACMC_save=1
 piaacmcsimrun $1 5
@@ -1594,6 +1434,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (013)"
+cleanup
 exit
 fi
 
@@ -1612,17 +1453,12 @@ step=014
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step014 << EOF
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_nblstop=$NBlyotstop
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=100
 piaacmcsimrun $1 1
 exit
@@ -1640,6 +1476,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (014)"
+cleanup
 exit
 fi
 
@@ -1660,21 +1497,15 @@ step=015
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step015 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=20
 PIAACMC_maxoptFterm=20
-#60 625 
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1698,6 +1529,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (015)"
+cleanup
 exit
 fi
 
@@ -1722,21 +1554,15 @@ step=016
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execname -n step016 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=10
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=40
 PIAACMC_maxoptFterm=150
-#60 625 
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1760,6 +1586,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (016)"
+cleanup
 exit
 fi
 
@@ -1778,21 +1605,15 @@ step=017
 echo "$step" > ./$1/runstep
 touch ./piaacmcconf$1/step$step.run.txt
 $execname -n step017 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
 PIAACMC_resolved=0
-PIAACMC_extmode=$PIAACMC_extmode
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
 PIAACMC_nbiter=10
 PIAACMC_nblambda=1
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
+PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=40
 PIAACMC_maxoptFterm=625
-#60 625 
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1813,9 +1634,10 @@ touch ./$1/step017.txt
 state=018
 fi
 
-if [ $state -eq $statestop ] 
+if [ ${state} -eq ${statestop} ] 
 then
 echo "STATE STOP POINT (017)"
+cleanup
 exit
 fi
 
@@ -1825,6 +1647,7 @@ fi
 
 if [ 018 -eq ${state} ]
 then
+cleanup
 exit
 fi
 
@@ -1874,16 +1697,16 @@ echo "STARTING COMPONENT $thread"
 echo "waitforfile initOK_${pid}" > script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
 echo "$execname -n ${pid}FPMt${thread}n${NBthreadsFPMresp} << EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_MASKRADLD=${FPM_MASKRADLD}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_MASKRADLD=${FPM_MASKRADLD}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_fpmtype=1" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_FPMsectors=$FPMsectors" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_NBrings=$NBrings" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_nblambda=$nblambda" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_lambdaB=${10}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_lambda=${11}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_NBrings=$NBrings" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_nblambda=$nblambda" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_lambdaB=${mlambdaB}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_lambda=${mlambda}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "SCORINGMASKTYPE=$SCORINGMASKTYPE" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_resolved=$PIAACMC_resolved" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_extmode=$PIAACMC_extmode" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_resolved=$PIAACMC_resolved" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_extmode=$PIAACMC_extmode" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
 echo "# Number of threads" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_FPMresp_mp=${NBthreadsFPMresp}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
@@ -1892,12 +1715,12 @@ echo "# Current thread ( if thread > mp, then combine results)" >> script${pid}F
 echo "PIAACMC_FPMresp_thread=${thread}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
 echo "PIAACMC_save=0" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_size=$2" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_pixscale=$3" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_dftgrid=2" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_fpmradld=$5" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_centobs0=$6" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-echo "PIAACMC_centobs1=$7" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_size=$size" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_pixscale=$pscale" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_dftgrid=2" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_fpmradld=$fpmradld" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_centobs0=$centobs0" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+#echo "PIAACMC_centobs1=$centobs1" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "piaacmcsimrun $1 11" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "exit" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
@@ -1920,30 +1743,16 @@ then
 touch teststep_002
 thread=${NBthreadsFPMresp} # this thread waits for the other ones to complete
 $execname -n ${pid}FPMt${thread}n${NBthreadsFPMresp} << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
-PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 SCORINGMASKTYPE=$SCORINGMASKTYPE
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
 
 # Number of threads
 PIAACMC_FPMresp_mp=${NBthreadsFPMresp}
 
 # Current thread ( if thread > mp, then combine results)
 PIAACMC_FPMresp_thread=${thread}
-
 PIAACMC_save=0
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 PID=${pid}
 piaacmcsimrun $1 11
 exit
@@ -1977,6 +1786,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (100)"
+cleanup
 exit
 fi
 
@@ -2000,24 +1810,10 @@ step="101"
 echo "$step" > ./$1/runstep
 touch ./piaacmcconf$1/step$step.run.txt
 $execname -n step101 << EOF
-PIAACMC_MASKRADLD=${FPM_MASKRADLD}
 PIAACMC_fpmtype=1
 PIAACMC_FPMsectors=$FPMsectors
-PIAACMC_NBrings=$NBrings
-PIAACMC_nblambda=$nblambda
-PIAACMC_lambdaB=${10}
-PIAACMC_lambda=${11}
 SCORINGMASKTYPE=$SCORINGMASKTYPE
-PIAACMC_resolved=$PIAACMC_resolved
-PIAACMC_extmode=$PIAACMC_extmode
-
 PIAACMC_save=0
-PIAACMC_size=$2
-PIAACMC_pixscale=$3
-PIAACMC_dftgrid=2
-PIAACMC_fpmradld=$5
-PIAACMC_centobs0=$6
-PIAACMC_centobs1=$7
 PIAACMC_nbiterSA=10000
 PIAACMC_nbiterDS=100
 piaacmcsimrun $1 13
@@ -2035,6 +1831,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (101)"
+cleanup
 exit
 fi
 
@@ -2047,6 +1844,7 @@ fi
 
 if [ 102 -eq ${state} ]
 then
+cleanup
 exit
 fi
 
@@ -2069,11 +1867,14 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (FINAL)"
+cleanup
 exit
 fi
 
-====================================== END OF STATE MACHINE ==============================================
 
+
+====================================== END OF STATE MACHINE ==============================================
+cleanup
 
 
 

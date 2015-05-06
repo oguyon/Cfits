@@ -136,54 +136,54 @@ int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
 
     float loopgain = 0.001;
     float multr0 = 0.2;
-    
-    float wfsetime = 0.001; /**< WFS exposure time */
-	float timedelay = 0.0005;/**< time delay between wavefront sensor measurement (end of exposure) and DM correction [sec] */
-	long size2;
-	double tnowdouble = 0.0;
-	double time_wfse0 = 0.0;
-	long wfsecnt = 0;
 
-	double rmask;
-	double r1;
-	double WFrms0 = 0.0;
-	double WFrms = 0.0;
-	long WFrmscnt = 0;
-	
-	double noiselevel = 0.3; // noise level per WFS measurement [um] - only white noise is currently supported
-	
-	/** wavefront correction buffer to implement time delay */
-	long IDwfcbuff;
-	long wfcbuff_size = 10000;
-	double *wfcbuff_time;
-	long *wfcbuff_status; // 1 : waiting to be applied
-	long k, k0, k1;
-	long wfsecnt1;
-	
-	double dmmovetime = 0.001; /**< time it takes for DM to move */
-	long dmmoveNBpt = 10;
-	
+    float wfsetime = 0.001; /**< WFS exposure time */
+    float timedelay = 0.0005;/**< time delay between wavefront sensor measurement (end of exposure) and DM correction [sec] */
+    long size2;
+    double tnowdouble = 0.0;
+    double time_wfse0 = 0.0;
+    long wfsecnt = 0;
+
+    double rmask;
+    double r1;
+    double WFrms0 = 0.0;
+    double WFrms = 0.0;
+    long WFrmscnt = 0;
+
+    double noiselevel = 0.3; // noise level per WFS measurement [um] - only white noise is currently supported
+
+    /** wavefront correction buffer to implement time delay */
+    long IDwfcbuff;
+    long wfcbuff_size = 10000;
+    double *wfcbuff_time;
+    long *wfcbuff_status; // 1 : waiting to be applied
+    long k, k0, k1;
+    long wfsecnt1;
+
+    double dmmovetime = 0.001; /**< time it takes for DM to move */
+    long dmmoveNBpt = 10;
+
     sizearray = (long*) malloc(sizeof(long)*2);
 
     IDin = read_sharedmem_image(IDin_name);  /**< turbulence channel */
     sizearray[0] = data.image[IDin].md[0].size[0];
     sizearray[1] = data.image[IDin].md[0].size[1];
-	size2 = sizearray[0]*sizearray[1];
+    size2 = sizearray[0]*sizearray[1];
 
-	IDwfcbuff = create_3Dimage_ID("wfcbuff", sizearray[0], sizearray[1], wfcbuff_size);
-	wfcbuff_time = (double*) malloc(sizeof(double)*wfcbuff_size);
-	wfcbuff_status = (long*) malloc(sizeof(long)*wfcbuff_size);
-	for(k=0;k<wfcbuff_size;k++)
-		wfcbuff_status[k] = 0;
+    IDwfcbuff = create_3Dimage_ID("wfcbuff", sizearray[0], sizearray[1], wfcbuff_size);
+    wfcbuff_time = (double*) malloc(sizeof(double)*wfcbuff_size);
+    wfcbuff_status = (long*) malloc(sizeof(long)*wfcbuff_size);
+    for(k=0; k<wfcbuff_size; k++)
+        wfcbuff_status[k] = 0;
 
-	rmask = 0.4*sizearray[0];
+    rmask = 0.4*sizearray[0];
 
     IDaosf_noise = create_2Dimage_ID("aosf_noise", sizearray[0], sizearray[1]);
     IDaosf_mult = create_2Dimage_ID("aosf_mult", sizearray[0], sizearray[1]);
     IDaosf_gain = create_2Dimage_ID("aosf_gain", sizearray[0], sizearray[1]);
 
-	IDmask = create_2Dimage_ID("aosf_mask", sizearray[0], sizearray[1]);
-	
+    IDmask = create_2Dimage_ID("aosf_mask", sizearray[0], sizearray[1]);
+
 
     for(ii=0; ii<sizearray[0]; ii++)
         for(jj=0; jj<sizearray[1]; jj++)
@@ -191,43 +191,43 @@ int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
             x = 1.0*ii-0.5*sizearray[0];
             y = 1.0*jj-0.5*sizearray[1];
             r = sqrt(x*x+y*y);
-			r1 = (r-rmask)/(0.5*sizearray[0]-rmask);
-			
-			if(r1<0.0)
-				data.image[IDmask].array.F[jj*sizearray[0]+ii] = 1.0;
-			else if (r1>1.0)
-				data.image[IDmask].array.F[jj*sizearray[0]+ii] = 0.0;
-			else
-				data.image[IDmask].array.F[jj*sizearray[0]+ii] = 0.5*(cos(r1*M_PI)+1.0);
-			
+            r1 = (r-rmask)/(0.5*sizearray[0]-rmask);
+
+            if(r1<0.0)
+                data.image[IDmask].array.F[jj*sizearray[0]+ii] = 1.0;
+            else if (r1>1.0)
+                data.image[IDmask].array.F[jj*sizearray[0]+ii] = 0.0;
+            else
+                data.image[IDmask].array.F[jj*sizearray[0]+ii] = 0.5*(cos(r1*M_PI)+1.0);
+
             data.image[IDaosf_gain].array.F[jj*sizearray[0]+ii] = loopgain;
             data.image[IDaosf_mult].array.F[jj*sizearray[0]+ii] = exp(-pow(r/(multr0*sizearray[0]),8.0));
             if(r>multr0*sizearray[0])
-				data.image[IDaosf_mult].array.F[jj*sizearray[0]+ii] = 0.0;
+                data.image[IDaosf_mult].array.F[jj*sizearray[0]+ii] = 0.0;
             data.image[IDaosf_noise].array.F[jj*sizearray[0]+ii] = 0.0;
         }
     save_fits("aosf_noise", "!aosf_noise.fits");
     save_fits("aosf_mult", "!aosf_mult.fits");
     save_fits("aosf_gain", "!aosf_gain.fits");
 
-	permut("aosf_mult");
-	permut("aosf_noise");
-	permut("aosf_gain");
+    permut("aosf_mult");
+    permut("aosf_noise");
+    permut("aosf_gain");
 
-	
-	
+
+
 
     IDdm = create_image_ID("aofiltdm", 2, sizearray, FLOAT, 1, 0);
     IDwfe = create_image_ID("aofiltwfe", 2, sizearray, FLOAT, 1, 0);
 
     IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
-	strcpy(data.image[IDout].kw[0].name, "TIME");	
-	data.image[IDout].kw[0].type = 'D';
-	data.image[IDout].kw[0].value.numf = 0.0;
-	strcpy(data.image[IDout].kw[0].comment, "Physical time [sec]");
-    
-	IDin1 = create_image_ID("aofiltin", 2, sizearray, FLOAT, 1, 0);
- 
+    strcpy(data.image[IDout].kw[0].name, "TIME");
+    data.image[IDout].kw[0].type = 'D';
+    data.image[IDout].kw[0].value.numf = 0.0;
+    strcpy(data.image[IDout].kw[0].comment, "Physical time [sec]");
+
+    IDin1 = create_image_ID("aofiltin", 2, sizearray, FLOAT, 1, 0);
+
     printf("%s -> %s\n", IDin_name, IDout_name);
     cnt0 = -1;
     time_wfse0 = data.image[IDin].kw[0].value.numf; /** start of WFS exposure */
@@ -235,33 +235,33 @@ int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
     wfsecnt1 = 0;
     while(1)
     {
-		usleep(10);
+        usleep(10);
         if(data.image[IDin].md[0].cnt0!=cnt0)
         {
-			/** input masking */
-			for(ii=0; ii<size2; ii++)
+            /** input masking */
+            for(ii=0; ii<size2; ii++)
                 data.image[IDin1].array.F[ii] = data.image[IDin].array.F[ii] * data.image[IDmask].array.F[ii];
-			
-			/** Wavefront correction & measurement */
-			WFrms0 = 0.0;
-			WFrms = 0.0;
-			WFrmscnt = 0;
+
+            /** Wavefront correction & measurement */
+            WFrms0 = 0.0;
+            WFrms = 0.0;
+            WFrmscnt = 0;
             for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
             {
                 data.image[IDout].array.F[ii] = data.image[IDin1].array.F[ii] - data.image[IDdm].array.F[ii];
-				if(data.image[IDmask].array.F[ii]>0.99)
-					{
-						WFrms0 += data.image[IDin1].array.F[ii]*data.image[IDin1].array.F[ii];
-						WFrms += data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii];
-						WFrmscnt ++;
-					}
-			}
-			WFrms0 = sqrt(WFrms0/WFrmscnt);
-			WFrms = sqrt(WFrms/WFrmscnt);
-			data.image[IDout].kw[0].value.numf = tnowdouble;
+                if(data.image[IDmask].array.F[ii]>0.99)
+                {
+                    WFrms0 += data.image[IDin1].array.F[ii]*data.image[IDin1].array.F[ii];
+                    WFrms += data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii];
+                    WFrmscnt ++;
+                }
+            }
+            WFrms0 = sqrt(WFrms0/WFrmscnt);
+            WFrms = sqrt(WFrms/WFrmscnt);
+            data.image[IDout].kw[0].value.numf = tnowdouble;
 
- 
- 			tnowdouble = data.image[IDin].kw[0].value.numf;
+
+            tnowdouble = data.image[IDin].kw[0].value.numf;
             printf("\r Time : %.6lf    WFSexposure time:  %.6f   [%5ld]    %10.5lf -> %10.5lf ", tnowdouble, tnowdouble-time_wfse0, wfsecnt, WFrms0, WFrms);
             fflush(stdout);
             cnt0 = data.image[IDin].md[0].cnt0;
@@ -278,71 +278,72 @@ int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
             do2dffti("aosf_tmpfft", "testo");
             delete_image_ID("aosf_tmpfft");
             ID = image_ID("testo");
-          
-			/** Wavefront estimation */
-             for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
+
+            /** Wavefront estimation */
+            for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
                 data.image[IDwfe].array.F[ii] += data.image[ID].array.CF[ii].re;
-			delete_image_ID("testo");       
-			wfsecnt ++;
-			
-			if((tnowdouble-time_wfse0) > wfsetime)
-			{
-				if(wfsecnt>0)
-					for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
-						data.image[IDwfe].array.F[ii] /= wfsecnt;
-	
-				
-				/** write entries in buffer */
-				for(k1=0;k1<dmmoveNBpt;k1++)
-				{
-				k0 = 0;
-				while((wfcbuff_status[k0]==1)&&(k0<wfcbuff_size))
-					k0++;
-				if(k0>wfcbuff_size-1)
-				{
-					printf("\n WFC buffer full [%ld]\n", k0);
-					exit(0);
-				}
-						
-				for(ii=0; ii<size2; ii++)
-					data.image[IDwfcbuff].array.F[k0*size2+ii] = data.image[IDwfe].array.F[ii]/dmmoveNBpt;
-				wfcbuff_time[k0] = tnowdouble + timedelay + 1.0*k1/(dmmoveNBpt-1)*dmmovetime;
-				wfcbuff_status[k0] = 1;
-				}
-				
-				for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
-							data.image[IDwfe].array.F[ii] = 0.0;
-						time_wfse0 += wfsetime;
-						wfsecnt = 0;
-									wfsecnt1++;		
-			}
-				
-				
-				
-			for(k=0; k<wfcbuff_size; k++)
-				{
-					if(wfcbuff_status[k]==1)
-						if(wfcbuff_time[k]<tnowdouble)
-							{
-					//			printf("Reading WFC buffer slice %ld  [%5ld %5ld]\n", k, wfsecnt1, wfsecnt);
-								/** update DM shape */
-								for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
-									data.image[IDdm].array.F[ii] += data.image[IDaosf_gain].array.F[ii]*data.image[IDwfcbuff].array.F[k*size2+ii];
-								wfcbuff_status[k] = 0;
-							}		
-				}	
+            delete_image_ID("testo");
+            wfsecnt ++;
+
+            if((tnowdouble-time_wfse0) > wfsetime)
+            {
+                if(wfsecnt>0)
+                    for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
+                        data.image[IDwfe].array.F[ii] /= wfsecnt;
+
+
+                /** write entries in buffer */
+                for(k1=0; k1<dmmoveNBpt; k1++)
+                {
+                    k0 = 0;
+                    while((wfcbuff_status[k0]==1)&&(k0<wfcbuff_size))
+                        k0++;
+                    if(k0>wfcbuff_size-1)
+                    {
+                        printf("\n WFC buffer full [%ld]\n", k0);
+                        exit(0);
+                    }
+
+                    for(ii=0; ii<size2; ii++)
+                        data.image[IDwfcbuff].array.F[k0*size2+ii] = data.image[IDwfe].array.F[ii]/dmmoveNBpt;
+                    wfcbuff_time[k0] = tnowdouble + timedelay + 1.0*k1/(dmmoveNBpt-1)*dmmovetime;
+                    wfcbuff_status[k0] = 1;
+                }
+
+                for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
+                    data.image[IDwfe].array.F[ii] = 0.0;
+                time_wfse0 += wfsetime;
+                wfsecnt = 0;
+                wfsecnt1++;
+            }
+
+
+
+            for(k=0; k<wfcbuff_size; k++)
+            {
+                if(wfcbuff_status[k]==1)
+                    if(wfcbuff_time[k]<tnowdouble)
+                    {
+                        //			printf("Reading WFC buffer slice %ld  [%5ld %5ld]\n", k, wfsecnt1, wfsecnt);
+                        /** update DM shape */
+                        for(ii=0; ii<sizearray[0]*sizearray[1]; ii++)
+                            data.image[IDdm].array.F[ii] += data.image[IDaosf_gain].array.F[ii]*data.image[IDwfcbuff].array.F[k*size2+ii];
+                        wfcbuff_status[k] = 0;
+                    }
+            }
             data.image[IDout].md[0].cnt0 = cnt0;
         }
     }
-	
-	delete_image_ID("circbuff");
-	
+
+    delete_image_ID("circbuff");
+
     free(sizearray);
-	free(wfcbuff_time);
-	free(wfcbuff_status);
-	
+    free(wfcbuff_time);
+    free(wfcbuff_status);
+
     return(0);
 }
+
 
 
 
@@ -521,19 +522,19 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
     spiderPA = 0.85;
     spiderthick = 0.06*rout;
     spideroffset = 0.15*rout;
-	
 
-    xc = 24.629630;  
+
+    xc = 24.629630;
     yc = 23.518519;
     stretchx = 1.048148;
 
-	rout1 = rout;
-	xc1 = xc;
+    rout1 = rout;
+    xc1 = xc;
     yc1 = yc;
     pupPA1 = pupPA;
     stretchx1 = stretchx;
-	spiderPA1 = spiderPA;
-	spideroffset1 = spideroffset;
+    spiderPA1 = spiderPA;
+    spideroffset1 = spideroffset;
 
     /** set percentiles */
     ID = image_ID(ID_name);
@@ -617,11 +618,11 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
     pupPA_max = pupPA1+0.1;
     stretchx_min = stretchx1*0.95;
     stretchx_max = stretchx1*1.05;
-	spideroffset_min = spideroffset1*0.9;
- 	spideroffset_max = spideroffset1*1.1;
-	spiderPA_min = spiderPA1-0.1;
-	spiderPA_max = spiderPA1+0.1;
- 
+    spideroffset_min = spideroffset1*0.9;
+    spideroffset_max = spideroffset1*1.1;
+    spiderPA_min = spiderPA1-0.1;
+    spiderPA_max = spiderPA1+0.1;
+
     fp = fopen("pupfit.txt", "w");
     fclose(fp);
 
@@ -713,14 +714,14 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
 
 
 
-	printf("BEST SOLUTION: \n");
-	printf("     xc            %f\n", xc1);
-	printf("     yc            %f\n", yc1);
-	printf("     rout          %f\n", rout1);
-	printf("     pupPA         %f\n", pupPA1);
-	printf("     spiderPA      %f\n", spiderPA1);
-	printf("     spideroffset  %f\n", spideroffset1);
-	printf("     stretchx      %f\n", stretchx1);
+    printf("BEST SOLUTION: \n");
+    printf("     xc            %f\n", xc1);
+    printf("     yc            %f\n", yc1);
+    printf("     rout          %f\n", rout1);
+    printf("     pupPA         %f\n", pupPA1);
+    printf("     spiderPA      %f\n", spiderPA1);
+    printf("     spideroffset  %f\n", spideroffset1);
+    printf("     stretchx      %f\n", stretchx1);
 
     rout = rout1;
     rin = 0.315*rout;
@@ -740,33 +741,33 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
 
 int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
 {
-	long IDdmctrl, IDdmifc, IDdm;
-	long dmsizex, dmsizey, DMnbact;
-	long ii, jj;
-	long dmact;
+    long IDdmctrl, IDdmifc, IDdm;
+    long dmsizex, dmsizey, DMnbact;
+    long ii, jj;
+    long dmact;
 
-	IDdmctrl = image_ID(IDdmctrl_name);
+    IDdmctrl = image_ID(IDdmctrl_name);
 
-	IDdmifc = image_ID(IDdmifc_name);
-	dmsizex = data.image[IDdmifc].md[0].size[0];
-	dmsizey = data.image[IDdmifc].md[0].size[1];
-	DMnbact = data.image[IDdmifc].md[0].size[2];
+    IDdmifc = image_ID(IDdmifc_name);
+    dmsizex = data.image[IDdmifc].md[0].size[0];
+    dmsizey = data.image[IDdmifc].md[0].size[1];
+    DMnbact = data.image[IDdmifc].md[0].size[2];
 
-	IDdm = image_ID(IDdm_name);
-	if(IDdm==-1)
-	{
-		IDdm = create_2Dimage_ID(IDdm_name, dmsizex, dmsizey);
-	}
-	for(ii=0;ii<dmsizex*dmsizey;ii++)
-		data.image[IDdm].array.F[ii] = 0.0;
-	
-	for(dmact=0;dmact<DMnbact;dmact++)
-	{
-		for(ii=0;ii<dmsizex*dmsizey;ii++)
-			data.image[IDdm].array.F[ii] += data.image[IDdmctrl].array.F[dmact]*data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii];
-	}
-	
-	return (0);
+    IDdm = image_ID(IDdm_name);
+    if(IDdm==-1)
+    {
+        IDdm = create_2Dimage_ID(IDdm_name, dmsizex, dmsizey);
+    }
+    for(ii=0; ii<dmsizex*dmsizey; ii++)
+        data.image[IDdm].array.F[ii] = 0.0;
+
+    for(dmact=0; dmact<DMnbact; dmact++)
+    {
+        for(ii=0; ii<dmsizex*dmsizey; ii++)
+            data.image[IDdm].array.F[ii] += data.image[IDdmctrl].array.F[dmact]*data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii];
+    }
+
+    return (0);
 }
 
 
@@ -1070,7 +1071,7 @@ int AOsystSim_run()
     long msize;
     long usleeptime = 1000; // delay at each loop
 
-    // Pyramid modulation 
+    // Pyramid modulation
     long modpt;
     long NBmodpt = 64;
     double modr = 0.1;
@@ -1088,7 +1089,7 @@ int AOsystSim_run()
 
 
     printf("Running fake AO system simulation\n");
-    
+
 
 
 
@@ -1117,11 +1118,11 @@ int AOsystSim_run()
 
 
 
-	
+
     IDatmpha = read_sharedmem_image("outfiltwf"); // [um]
 	if(IDatmpha == -1)
 		{
-			printf("Running without atmospheric turbulence\n");			
+			printf("Running without atmospheric turbulence\n");
 		}
 
 
@@ -1229,7 +1230,7 @@ int AOsystSim_run()
 
             IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
 
-            // make WFS PSF (without the modulation) 
+            // make WFS PSF (without the modulation)
             data.image[IDpuppc].md[0].write==1;
             for(ii=0; ii<dmxsize; ii++)
                 for(jj=0; jj<dmysize; jj++)
@@ -1374,3 +1375,4 @@ int AOsystSim_run()
     return 0;
 }
 */
+

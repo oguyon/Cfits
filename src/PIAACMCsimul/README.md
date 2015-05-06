@@ -27,8 +27,9 @@ Diffraction-based PIAACMC simulation / optimization
 - Fits aspheric PIAA shapes on basis of radial cosines and 2-D Fourier modes
 
 Code is composed of a several layers (from high to low) :
-- high level design script: sim1024 (for 1024x1024 pixel maps)
-- runPIAACMC script
+- high level design script: script "runopt"
+- script "sim1024"
+- script "runPIAACMC"
 - C code
 
 
@@ -56,10 +57,20 @@ Type ./runPIAACMC with no argument to get help message.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 \section code 3. C code description
 
 \subpage PIAACMC_designcodes
-
 
 
 The main function in the source code is PIAACMCsimul_exec(), which takes two arguments: the configuration index (usually a 3 digit integer) and the mode (integer) which describes the operation to be performed to the PIAACMC design.

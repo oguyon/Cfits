@@ -433,7 +433,7 @@ void rl_cb(char* linein)
 
 int main(int argc, char *argv[])
 {
-	FILE *fp;
+    FILE *fp;
     long i, j;
     int quiet=0;
     long tmplong;
@@ -466,12 +466,12 @@ int main(int argc, char *argv[])
     char buf0[1];
     char buf1[1024];
 
-	int initstartup = 0; /// becomes 1 after startup 
+    int initstartup = 0; /// becomes 1 after startup
 
 
-	
 
-	strcpy(data.processname, argv[0]);
+
+    strcpy(data.processname, argv[0]);
 
 
     TYPESIZE[0] = 0;
@@ -493,8 +493,8 @@ int main(int argc, char *argv[])
     data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image
     sprintf(data.SAVEDIR, ".");
 
-	data.CLIlogON = 1; // log every command
-		data.fifoON = 1;
+    data.CLIlogON = 1; // log every command
+    data.fifoON = 1;
 
 
     // to take advantage of kernel priority:
@@ -506,8 +506,8 @@ int main(int argc, char *argv[])
     r = seteuid(euid_real);
 
 
-	
-	
+
+
     // initialize readline
     // Tell readline to use custom completion function
     rl_attempted_completion_function = CLI_completion;
@@ -516,21 +516,21 @@ int main(int argc, char *argv[])
     // Get command-line options
     command_line( argc, argv );
 
- 	// initialize fifo to process name
-/*if(data.fifoON==1)
-{	sprintf(data.fifoname, "%s.fifo", data.processname);
-	printf("fifo name : %s\n", data.fifoname);
-}
-*/
+    // initialize fifo to process name
+    /*if(data.fifoON==1)
+    {	sprintf(data.fifoname, "%s.fifo", data.processname);
+    	printf("fifo name : %s\n", data.fifoname);
+    }
+    */
 
-   //
+    //
     if( Verbose ) {
         fprintf(stdout, "%s: compiled %s %s\n",__FILE__,__DATE__,__TIME__);
     }
 
     CLIPID = getpid();
 
-//    sprintf(promptname, "%s", data.processname);
+    //    sprintf(promptname, "%s", data.processname);
     sprintf(prompt,"%c[%d;%dm%s >%c[%dm ",0x1B, 1, 36, data.processname, 0x1B, 0);
     //sprintf(prompt, "%s> ", PACKAGE_NAME);
 
@@ -576,10 +576,10 @@ int main(int argc, char *argv[])
 
     // fifo
     fdmax = fileno(stdin);
- //   printf("FIFO = %d\n", data.fifoON);
+    //   printf("FIFO = %d\n", data.fifoON);
     if(data.fifoON == 1)
     {
-		printf("Creating fifo %s\n", data.fifoname);
+        printf("Creating fifo %s\n", data.fifoname);
         mkfifo(data.fifoname, 0666);
         fifofd = open(data.fifoname, O_RDWR | O_NONBLOCK);
         if (fifofd == -1) {
@@ -606,8 +606,8 @@ int main(int argc, char *argv[])
 
         if(Listimfile==1) {
             fp = fopen("imlist.txt", "w");
-			list_image_ID_ofp_simple(fp);
-			fclose(fp);            
+            list_image_ID_ofp_simple(fp);
+            fclose(fp);
         }
 
         /* Keep the number of image addresses available
@@ -627,16 +627,16 @@ int main(int argc, char *argv[])
         compute_nb_image(data);
 
 
-		/** If fifo is on and file CLIstatup.txt exists, load it */
-		if(initstartup == 0)
-			if(data.fifoON==1)
-			{
-				printf("IMPORTING FILE %s\n", CLIstartupfilename);
-			sprintf(command, "cat %s > %s 2> /dev/null", CLIstartupfilename, data.fifoname);
-			r = system(command);
-			}
-		initstartup = 1;
-		
+        /** If fifo is on and file CLIstatup.txt exists, load it */
+        if(initstartup == 0)
+            if(data.fifoON==1)
+            {
+                printf("IMPORTING FILE %s\n", CLIstartupfilename);
+                sprintf(command, "cat %s > %s 2> /dev/null", CLIstartupfilename, data.fifoname);
+                r = system(command);
+            }
+        initstartup = 1;
+
         // -------------------------------------------------------------
         //                 get user input
         // -------------------------------------------------------------
@@ -717,84 +717,85 @@ int main(int argc, char *argv[])
 static char** CLI_completion( const char * text , int start,  int end)
 {
     char **matches;
- 
+
     matches = (char **)NULL;
- 
+
     if (start == 0)
-      CLImatchMode = 0; // try to match with command first
+        CLImatchMode = 0; // try to match with command first
     else
-      CLImatchMode = 1; // do not try to match with command
+        CLImatchMode = 1; // do not try to match with command
 
     matches = rl_completion_matches ((char*)text, &CLI_generator);
 
     //    else
     //  rl_bind_key('\t',rl_abort);
- 
+
     return (matches);
- 
+
 }
- 
+
 char* CLI_generator(const char* text, int state)
 {
-  static int list_index, list_index1, len;
-  char *name;
-  char *strtmp;
-  int iok = 0;
-  
-  if (!state) {
-    list_index = 0;
-    list_index1 = 0;
-    len = strlen (text);
-  }
+    static int list_index, list_index1, len;
+    char *name;
+    char *strtmp;
+    int iok = 0;
 
-  if(CLImatchMode==0) 
-    while (list_index<data.NBcmd) 
-      {
-	name = data.cmd[list_index].key;
-	list_index++;
-	if (strncmp (name, text, len) == 0)
-	  return (dupstr(name));
-      }
-  
-  while (list_index1<data.NB_MAX_IMAGE) 
-    {
-      iok = data.image[list_index1].used;
-      if(iok == 1)
-	{
-	  name = data.image[list_index1].md[0].name;
-	  //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].md[0].name, name);
-	}
-      list_index1++;
-      if(iok == 1)
-	{
-	  if (strncmp (name, text, len) == 0)
-	    return (dupstr(name));
-	}      
+    if (!state) {
+        list_index = 0;
+        list_index1 = 0;
+        len = strlen (text);
     }
-  return ((char *)NULL);
-  
+
+    if(CLImatchMode==0)
+        while (list_index<data.NBcmd)
+        {
+            name = data.cmd[list_index].key;
+            list_index++;
+            if (strncmp (name, text, len) == 0)
+                return (dupstr(name));
+        }
+
+    while (list_index1<data.NB_MAX_IMAGE)
+    {
+        iok = data.image[list_index1].used;
+        if(iok == 1)
+        {
+            name = data.image[list_index1].md[0].name;
+            //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].md[0].name, name);
+        }
+        list_index1++;
+        if(iok == 1)
+        {
+            if (strncmp (name, text, len) == 0)
+                return (dupstr(name));
+        }
+    }
+    return ((char *)NULL);
+
 }
- 
+
 char * dupstr (char* s) {
-  char *r;
- 
-  r = (char*) xmalloc ((strlen (s) + 1));
-  strcpy (r, s);
-  return (r);
+    char *r;
+
+    r = (char*) xmalloc ((strlen (s) + 1));
+    strcpy (r, s);
+    return (r);
 }
- 
+
 void * xmalloc (int size)
 {
     void *buf;
- 
+
     buf = malloc (size);
     if (!buf) {
         fprintf (stderr, "Error: Out of memory. Exiting.'n");
         exit (1);
     }
- 
+
     return buf;
 }
+
 
 
 
@@ -1194,143 +1195,144 @@ int re_alloc()
 
 
 /*^-----------------------------------------------------------------------------
-| static PF 
-| command_line  : parse unix command line options. 
+| static PF
+| command_line  : parse unix command line options.
 |
 |   int argc    :
-|   char **argv :  
+|   char **argv :
 |
-|   TO DO : allow option values. eg: debug=3 
+|   TO DO : allow option values. eg: debug=3
 +-----------------------------------------------------------------------------*/
 int command_line( int argc, char **argv)
 {
-  FILE *fp;
-  // int i;
-  // char startup_info[1024];
-  struct tm *ptr;
-  time_t tm;
-  int c;
-  int option_index = 0;
-   struct sched_param schedpar;
-   int r;
+    FILE *fp;
+    // int i;
+    // char startup_info[1024];
+    struct tm *ptr;
+    time_t tm;
+    int c;
+    int option_index = 0;
+    struct sched_param schedpar;
+    int r;
 
 
 
-  static struct option long_options[] =
+    static struct option long_options[] =
     {
-      /* These options set a flag. */
-      {"verbose", no_argument,       &Verbose, 1},
-      {"listimf", no_argument,       &Listimfile, 1},
-      /* These options don't set a flag.
-	 We distinguish them by their indices. */
-      {"help",       no_argument,       0, 'h'},
-      {"info",       no_argument,       0, 'i'},
-      {"overwrite",  no_argument,       0, 'o'},
-      {"debug",      required_argument, 0, 'd'},
-      {"mmon",      required_argument, 0, 'm'},
-      {"pname",     required_argument, 0, 'n'},
-      {"priority",     required_argument, 0, 'p'},
-      {"fifo",      required_argument, 0, 'f'},
-      {"startup",   required_argument, 0, 's'},
-      {0, 0, 0, 0}
+        /* These options set a flag. */
+        {"verbose", no_argument,       &Verbose, 1},
+        {"listimf", no_argument,       &Listimfile, 1},
+        /* These options don't set a flag.
+        We distinguish them by their indices. */
+        {"help",       no_argument,       0, 'h'},
+        {"info",       no_argument,       0, 'i'},
+        {"overwrite",  no_argument,       0, 'o'},
+        {"debug",      required_argument, 0, 'd'},
+        {"mmon",      required_argument, 0, 'm'},
+        {"pname",     required_argument, 0, 'n'},
+        {"priority",     required_argument, 0, 'p'},
+        {"fifo",      required_argument, 0, 'f'},
+        {"startup",   required_argument, 0, 's'},
+        {0, 0, 0, 0}
     };
 
 
 
- data.fifoON = 0; // default
- 
-  while (1)
+    data.fifoON = 0; // default
+
+    while (1)
     {
-      c = getopt_long (argc, argv, "hiod:m:n:f:s:",
-		       long_options, &option_index);
-      
-      /* Detect the end of the options. */
-      if (c == -1)
-	break;
-      
-      switch (c)
-	{
-	case 0:
-	  /* If this option set a flag, do nothing else now. */
-	  if (long_options[option_index].flag != 0)
-	    break;
-	  printf ("option %s", long_options[option_index].name);
-	  if (optarg)
-	    printf (" with arg %s", optarg);
-	  printf ("\n");
-	  break;
-	  
-	case 'h':
-	  help();
-	  exit(0);
-	 break;
-	  
-	case 'i':
-	  printInfo();
-	  exit(0);
-	  break;
+        c = getopt_long (argc, argv, "hiod:m:n:f:s:",
+                         long_options, &option_index);
 
-	case 'd':
-	  data.Debug = atoi(optarg);
-	  printf ("Debug = %d\n", data.Debug);
-	  break;
-	  
-	case 'o':
-	  puts ("CAUTION - WILL OVERWRITE EXISTING FITS FILES\n");
-	 data.overwrite = 1;
-	 break;
+        /* Detect the end of the options. */
+        if (c == -1)
+            break;
 
-	case 'm':
-	  printf("Starting memory monitor on '%s'\n", optarg);
-	  memory_monitor(optarg);
-	  break;
+        switch (c)
+        {
+        case 0:
+            /* If this option set a flag, do nothing else now. */
+            if (long_options[option_index].flag != 0)
+                break;
+            printf ("option %s", long_options[option_index].name);
+            if (optarg)
+                printf (" with arg %s", optarg);
+            printf ("\n");
+            break;
 
-	case 'n':
-	  printf("process name '%s'\n", optarg);
-	strcpy(data.processname, optarg);	
-   	memcpy((void *)argv[0], optarg, sizeof(optarg));
-	prctl(PR_SET_NAME, optarg, 0, 0, 0);
-	  break;
-	 
-	case 'p':
-		 schedpar.sched_priority = atoi(optarg);
-		r = seteuid(euid_called); //This goes up to maximum privileges
-		sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-		r = seteuid(euid_real);//Go back to normal privileges
-		break;
+        case 'h':
+            help();
+            exit(0);
+            break;
 
-	case 'f':
-	  printf("using input fifo '%s'\n", optarg);
-	  data.fifoON = 1;
-	  strcpy(data.fifoname, optarg);
-	  printf("FIFO NAME = %s\n", data.fifoname);
-	  break;
-	  
-	case 's':
-	  strcpy(CLIstartupfilename, optarg);
-	  printf("Startup file : %s\n", CLIstartupfilename);
-	  break;
+        case 'i':
+            printInfo();
+            exit(0);
+            break;
 
-	case '?':
-	  /* getopt_long already printed an error message. */
-	  break;
-	  
-	default:
-	  abort ();
-	}
+        case 'd':
+            data.Debug = atoi(optarg);
+            printf ("Debug = %d\n", data.Debug);
+            break;
+
+        case 'o':
+            puts ("CAUTION - WILL OVERWRITE EXISTING FITS FILES\n");
+            data.overwrite = 1;
+            break;
+
+        case 'm':
+            printf("Starting memory monitor on '%s'\n", optarg);
+            memory_monitor(optarg);
+            break;
+
+        case 'n':
+            printf("process name '%s'\n", optarg);
+            strcpy(data.processname, optarg);
+            memcpy((void *)argv[0], optarg, sizeof(optarg));
+            prctl(PR_SET_NAME, optarg, 0, 0, 0);
+            break;
+
+        case 'p':
+            schedpar.sched_priority = atoi(optarg);
+            r = seteuid(euid_called); //This goes up to maximum privileges
+            sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+            r = seteuid(euid_real);//Go back to normal privileges
+            break;
+
+        case 'f':
+            printf("using input fifo '%s'\n", optarg);
+            data.fifoON = 1;
+            strcpy(data.fifoname, optarg);
+            printf("FIFO NAME = %s\n", data.fifoname);
+            break;
+
+        case 's':
+            strcpy(CLIstartupfilename, optarg);
+            printf("Startup file : %s\n", CLIstartupfilename);
+            break;
+
+        case '?':
+            /* getopt_long already printed an error message. */
+            break;
+
+        default:
+            abort ();
+        }
     }
-  
-	
-	  // fprintf(stdout, "Object directory:        %s\n", OBJDIR);
-	  //fprintf(stdout, "Source directory:        %s\n", SOURCEDIR);
-	  //fprintf(stdout, "Documentation directory: %s\n", DOCDIR);
 
-	  //	  sprintf(command,"more %s/help.txt",DOCDIR);
 
-	
+    // fprintf(stdout, "Object directory:        %s\n", OBJDIR);
+    //fprintf(stdout, "Source directory:        %s\n", SOURCEDIR);
+    //fprintf(stdout, "Documentation directory: %s\n", DOCDIR);
+
+    //	  sprintf(command,"more %s/help.txt",DOCDIR);
+
+
     return 0;
 
 }
+
 
 
 /*^-----------------------------------------------------------------------------
