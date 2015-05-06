@@ -36,41 +36,42 @@ printhelp ()
 	echo ""
 	echo ""
 	echo "Syntax:"
-	echo " $0 <1:designstep> <2:coin> <3:coout> <4:fpmrad> <5:lambda> <6:PIAAmaterial> <7:LStransm> <8:NBlyotstop> <9:mlambda> <10:mlambdaB> <11:NBrings> <12:maskradld> <13:ssize> <14:extmode> <15:fpmmaterial> <16:index>" 
+	echo " $0 <1:designstep> <2:pscale> <3:coin> <4:coout> <5:fpmrad> <6:lambda> <7:PIAAmaterial> <8:LStransm> <9:NBlyotstop> <10:mlambda> <11:mlambdaB> <12:NBrings> <13:maskradld> <14:ssize> <15:extmode> <16:fpmmaterial> <17:index>" 
 	echo "Example : "
-	echo " $0 optsingle    0.30     0.29         1.10       650          Mirror         0.75            4           850          10            22           1.60          15           0          Mirror      001"
+	echo " $0 optsingle    0.00011       0.30     0.29         1.10       650          Mirror         0.75            4           850          10            22           1.60          15           0          Mirror      001"
 	echo ""
 	echo " 1     designstep  : see documentation"
 	echo
 	echo "Arguments specific to PIAACMC design excluding focal plane mask :"
-	echo " 2    coin         : input central obstruction"
-	echo " 3    coout        : output central obstruction"
-	echo " 4    fpmrad       : nominal PIAACMC focal plane mask radius"
-	echo " 5    lambda       : design wavelength"
-	echo " 6    PIAAmaterial : PIAA optics material"
-	echo " 7    LStransm     : Lyot stops geometric transmission"
-	echo " 8    NBlyotstop   : Number of Lyot stops"
+	echo " 2    pscale       : pixel scale in pupil (Note: should be adjusted to have 200 pix radius beam)"
+	echo " 3    coin         : input central obstruction"
+	echo " 4    coout        : output central obstruction"
+	echo " 5    fpmrad       : nominal PIAACMC focal plane mask radius"
+	echo " 6    lambda       : design wavelength"
+	echo " 7    PIAAmaterial : PIAA optics material"
+	echo " 8    LStransm     : Lyot stops geometric transmission"
+	echo " 9    NBlyotstop   : Number of Lyot stops"
 	echo "Note: other settings are specified as conf_.txt files:"
 	echo "            conf_size.txt            [default = 1024]  : array size                                $size pix"
 	echo "            conf_MdesignStepMax.txt  [default = 13]    : max design step for monochromatic design  $MdesignStepMax" 
 	echo ""
 	echo ""
 	echo "Arguments specific to PIAACMC focal plane mask :" 
-	echo " 9    mlambda      : mask wavelength [nm]"
-	echo " 10   mlambdaB     : mask bandwidth [%]"
-	echo " 11   NBrings      : number of rings in the focal plane mask"
-	echo " 12   maskradld    : physical mask radius [l/D]"
-	echo " 13   ssize        : extended source radius [-10 log(rad)]. 00 if point source"
-	echo " 14   extmode      : extended source mode (0: 3pts, 1: 6pts)"
-	echo " 15   fpmmaterial  : material used for the focal plane mask"
+	echo " 10   mlambda      : mask wavelength [nm]"
+	echo " 11   mlambdaB     : mask bandwidth [%]"
+	echo " 12   NBrings      : number of rings in the focal plane mask"
+	echo " 13   maskradld    : physical mask radius [l/D]"
+	echo " 14   ssize        : extended source radius [-10 log(rad)]. 00 if point source"
+	echo " 15   extmode      : extended source mode (0: 3pts, 1: 6pts)"
+	echo " 16   fpmmaterial  : material used for the focal plane mask"
 	echo ""
-	echo " 16   index"
+	echo " 17   index"
 	echo ""
 	echo "------------------------------------------------------------------------------"
 	echo ""
 }
 
-NBARGS=16
+NBARGS=17
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp
@@ -96,30 +97,31 @@ fi
 designstep=$1
 
 # arguments related to PIAACMC optical design, expect focal plane mask
-coin=$2   # input central obstruction (linear)
-coout=$3  # output central obstruction (linear)
-fpmrad=$4   # nominal PIAA focal plane mask radius
-tmp=$5
+pscale=$2
+coin=$3   # input central obstruction (linear)
+coout=$4  # output central obstruction (linear)
+fpmrad=$5   # nominal PIAA focal plane mask radius
+tmp=$6
 lambda=$(echo $tmp | sed 's/^0*//')
-PIAAmaterial="$6"
-LStransm=$7
-NBlyotstop=$8
+PIAAmaterial="$7"
+LStransm=$8
+NBlyotstop=$9
 
 # arguments related to focal plane mask design
-tmp=$9
+tmp=${10}
 mlambda=$(echo $tmp | sed 's/^0*//')
 
-tmp=${10}
+tmp=${11}
 mlambdaB=$(echo $tmp | sed 's/^0*//')
 
-NBrings=${11}
-maskradld=${12}
-ssize=${13}
-extmode=${14}
-fpmmaterial="${15}"
+NBrings=${12}
+maskradld=${13}
+ssize=${14}
+extmode=${15}
+fpmmaterial="${16}"
 
 # configuration index
-index=${16}
+index=${17}
 
 
 
@@ -200,10 +202,10 @@ exit
 fi
 
 
-echo "====== EXECUTING: ./runPIAACMC $dirname $size 0.00011 $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index $designstep"
+echo "====== EXECUTING: ./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index $designstep"
 
 # $fpmrad $coin $coout $rmode $emode $sprange $lambda $PIAAmaterial $designstep"
-./runPIAACMC $dirname $size 0.00011 $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index $designstep
+./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index $designstep
 #$fpmrad $coin $coout ${rmode} ${emode} ${sprange} $lambda $PIAAmaterial $designstep
 
 #cp -rf $dirname ${dirname}_step$designstep
