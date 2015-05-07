@@ -143,7 +143,7 @@ dircode1=$(printf "1_coin%5.3f_coout%5.3f_fpmr%5.3f" "$coin" "$coout" "$fpmrad")
 dirname1="piaacmcconf_$dircode1"
 echo "$dirname1" > dirname1.txt
 if [ ! -d $dirname1 ]; then
-echo "CREARING DIRECTORY $dirname1"
+echo "CREATING DIRECTORY $dirname1"
 mkdir -p $dirname1
 cp $dirname/pupa0_1024.fits $dirname1/
 cp $dirname/piaa0Cmodes.fits $dirname1/

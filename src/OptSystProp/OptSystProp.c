@@ -500,6 +500,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                     save_fits("fpmp", fname);
                 }
                 //	      exit(0);
+                list_image_ID();
+                printf("fft_DFTinsertFPM  args :  %s %f\n", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor);
+                sleep(10); // TEST
                 fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 delete_image_ID("_WFctmpc");
                 sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
