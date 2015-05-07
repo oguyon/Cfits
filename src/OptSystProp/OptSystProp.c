@@ -510,11 +510,15 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
                 r = system(command);
 
+                // TEST
                 mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
                 sprintf(fname, "!%s/test_twfre.fits", savedir);
                 save_fits("_twfre", fname);
                 sprintf(fname, "!%s/test_twfim.fits", savedir);
                 save_fits("_twfim", fname);
+                delete_image_ID("_twfre");
+                delete_image_ID("_twfim");
+
                 //
                 // INTERPOLATE SPARSE RESULT ON CONTINUOUS GRID
                 //
@@ -553,8 +557,13 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                                     data.image[IDim1].array.F[size2*kl+jj*size+ii] += im*convkern[j*(2*gsize+1)+i];
                                 }
                         }
-                //save_fits("dftgridre1", "!dftgridre1.fits");
-                //save_fits("dftgridim1", "!dftgridim1.fits");
+                // TEST
+                sprintf(fname, "!%s/test_dftgridre1.fits", savedir);
+                save_fits("dftgridre1", fname);
+                sprintf(fname, "!%s/test_dftgridim1.fits", savedir);
+                save_fits("dftgridim1", fname);
+                
+                
                 free(convkern);
                 delete_image_ID("_WFcout");
                 mk_complex_from_reim("dftgridre1", "dftgridim1", "_WFcout");
