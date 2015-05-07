@@ -558,9 +558,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                                 }
                         }
                 // TEST
-                sprintf(fname, "!%s/test_dftgridre1.fits", savedir);
+                sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
                 save_fits("dftgridre1", fname);
-                sprintf(fname, "!%s/test_dftgridim1.fits", savedir);
+                sprintf(fname, "!%s/test_dftgridim1.elem%ld.fits", savedir, elem);
                 save_fits("dftgridim1", fname);
                 
                 
