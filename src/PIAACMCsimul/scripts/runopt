@@ -406,7 +406,6 @@ then
 			
 else
 	echo "file ${file1} does not exist"
-	sleep 5
 	
 	# if directory does not exist but monochromatic design reference exists, adopt it
 	# otherwise, do nothing	

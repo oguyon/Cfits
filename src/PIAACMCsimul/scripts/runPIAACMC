@@ -296,7 +296,7 @@ execname="Cfits -s $startupfile -f $fifoname"
 
 cleanup ()
 {
-#rm $startupfile
+rm $startupfile
 rm $fifoname
 }
 
