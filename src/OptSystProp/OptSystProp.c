@@ -572,6 +572,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 mk_complex_from_reim("dftgridre1", "dftgridim1", "_WFcout");
                 delete_image_ID("dftgridre1");
                 delete_image_ID("dftgridim1");
+                
             }
             else
             {
@@ -600,6 +601,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             delete_image_ID("_WFctmp");
             delete_image_ID("_WFcout");
             //  delete_image_ID("dftgrid");
+
+            exit(0); // TEST
         }
 
         IDa = image_ID(imnameamp_out);
