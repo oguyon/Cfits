@@ -344,7 +344,6 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             ID = optsyst[index].ASPHSURFMarray[optsyst[index].elemarrayindex[elem]].surfID;
             printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
             
-            
             if(data.image[ID].md[0].naxis==2)
             {
 # ifdef HAVE_LIBGOMP
@@ -444,10 +443,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             // uses 1-fpm
 
             // TEST
-            sprintf(fname, "!%s/test_inamp_%02ld.fits", savedir, elem);
+      /*      sprintf(fname, "!%s/test_inamp_%02ld.fits", savedir, elem);
             save_fits(imnameamp_out, fname);
             sprintf(fname, "!%s/test_inpha_%02ld.fits", savedir, elem);
-            save_fits(imnamepha_out, fname);
+            save_fits(imnamepha_out, fname);*/
             //exit(0);
 
             ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
@@ -503,7 +502,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                     save_fits("fpmp", fname);
                 }
                 //	      exit(0);
-                list_image_ID();
+           /*     list_image_ID();
                 printf("fft_DFTinsertFPM  args :  %s %f\n", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor);
                 sleep(10); // TEST
                 fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
@@ -512,15 +511,16 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 r = system(command);
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
                 r = system(command);
-
+*/
                 // TEST
-                mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
+  /*              mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
                 sprintf(fname, "!%s/test_twfre.fits", savedir);
                 save_fits("_twfre", fname);
                 sprintf(fname, "!%s/test_twfim.fits", savedir);
                 save_fits("_twfim", fname);
                 delete_image_ID("_twfre");
                 delete_image_ID("_twfim");
+*/
 
                 //
                 // INTERPOLATE SPARSE RESULT ON CONTINUOUS GRID
@@ -561,11 +561,11 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                                 }
                         }
                 // TEST
-                sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
+        /*        sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
                 save_fits("dftgridre1", fname);
                 sprintf(fname, "!%s/test_dftgridim1.elem%ld.fits", savedir, elem);
                 save_fits("dftgridim1", fname);
-                
+          */      
                 
                 free(convkern);
                 delete_image_ID("_WFcout");
@@ -602,7 +602,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             delete_image_ID("_WFcout");
             //  delete_image_ID("dftgrid");
 
-            exit(0); // TEST
+           // exit(0); // TEST
         }
 
         IDa = image_ID(imnameamp_out);

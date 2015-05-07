@@ -1087,10 +1087,16 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         if(PIAACMC_save==1)   save_fl_fits("piaar1zsag", fname);
         printf("Saved piaar1zsag to %s\n", fname);
         
-        optsyst[0].ASPHSURFMarray[1].surfID = IDpiaar0zsag;        
+        optsyst[0].ASPHSURFMarray[2].surfID = IDpiaar1zsag;        
     }
 
-    
+    if(optsyst[0].ASPHSURFMarray[2].surfID==-1)
+        {
+            printf("ERROR: surface 1 not identified\n");
+            list_image_ID();
+            exit(0);
+        }
+ 
     if(PIAACMC_save==1)   fprintf(fp,"%02ld  %f    PIAAM1\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
 
