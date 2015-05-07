@@ -510,9 +510,11 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
                 r = system(command);
 
-                //mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
-                //save_fits("_twfre", "!_twfre.fits");
-                //save_fits("_twfim", "!_twfim.fits");
+                mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
+                sprintf(fname, "!%s/test_twfre.fits", savedir);
+                save_fits("_twfre", fname);
+                sprintf(fname, "!%s/test_twfim.fits", savedir);
+                save_fits("_twfim", fname);
                 //
                 // INTERPOLATE SPARSE RESULT ON CONTINUOUS GRID
                 //
