@@ -443,8 +443,11 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             fflush(stdout);
             // uses 1-fpm
 
-            // test
-           // save_fits(imnameamp_out, "!TESTamp.fits");
+            // TEST
+            sprintf(fname, "!%s/test_inamp_%02ld.fits", savedir, elem);
+            save_fits(imnameamp_out, fname);
+            sprintf(fname, "!%s/test_inpha_%02ld.fits", savedir, elem);
+            save_fits(imnamepha_out, fname);
             //exit(0);
 
             ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
