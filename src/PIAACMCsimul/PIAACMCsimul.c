@@ -1043,9 +1043,11 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     optsyst[0].elemarrayindex[elem] = 2;
     optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1]+design[index].piaasep;
     
-    if(design[index].PIAAmaterial_code == 0) // mirror
-       optsyst[0].ASPHSURFMarray[2].surfID = IDpiaam1z;
-    else // make mirror OPD cube from sag map to take into account chromaticity - The refractive surface is represented as a pre-computed chromatic mirror surface
+ //   if(design[index].PIAAmaterial_code == 0) // mirror
+    
+    optsyst[0].ASPHSURFMarray[2].surfID = IDpiaam1z;
+    
+    /*else // make mirror OPD cube from sag map to take into account chromaticity - The refractive surface is represented as a pre-computed chromatic mirror surface
     {
 
         // if piaar0zsag does not exist or is wrong size, create it
@@ -1089,6 +1091,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         
         optsyst[0].ASPHSURFMarray[2].surfID = IDpiaar1zsag;        
     }
+    */
 
     if(optsyst[0].ASPHSURFMarray[2].surfID==-1)
         {
