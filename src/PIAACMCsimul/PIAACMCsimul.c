@@ -2112,6 +2112,21 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         LAMBDAEND = piaacmc[0].lambda * (1.0 + 0.005*piaacmc[0].lambdaB);
 
 
+    if((IDv=variable_ID("PIAACMC_nblambda"))!=-1)
+        piaacmc[0].nblambda = data.variable[IDv].value.f;
+
+    if((IDv=variable_ID("PIAACMC_NBrings"))!=-1)
+        piaacmc[0].NBrings = data.variable[IDv].value.f;
+
+    if((IDv=variable_ID("PIAACMC_size"))!=-1)
+        piaacmc[0].size = (long) (data.variable[IDv].value.f+0.01);
+
+    if((IDv=variable_ID("PIAACMC_pixscale"))!=-1)
+        piaacmc[0].pixscale = data.variable[IDv].value.f;
+
+
+
+
 
         if(piaacmctype==0) // idealized focal plane mask
         {
@@ -2142,6 +2157,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     }
 
 
+ 
+
    if(load==1)
     {
         printf("Loading PIAACMC configuration\n");
@@ -2158,10 +2175,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     }
 
     
-
-
-
-
 
 
     
@@ -2210,17 +2223,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
 
 
-    if((IDv=variable_ID("PIAACMC_nblambda"))!=-1)
-        piaacmc[0].nblambda = data.variable[IDv].value.f;
-
-    if((IDv=variable_ID("PIAACMC_NBrings"))!=-1)
-        piaacmc[0].NBrings = data.variable[IDv].value.f;
-
-    if((IDv=variable_ID("PIAACMC_size"))!=-1)
-        piaacmc[0].size = (long) (data.variable[IDv].value.f+0.01);
-
-    if((IDv=variable_ID("PIAACMC_pixscale"))!=-1)
-        piaacmc[0].pixscale = data.variable[IDv].value.f;
 
     printf("lambda = %g\n", piaacmc[0].lambda);
     printf("LAMBDASTART = %g\n", LAMBDASTART);
