@@ -1133,7 +1133,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
     }
-    printf("========= TEST =============\n"); // TEST
+    printf("========= TEST === %ld ==========\n", piaacmc[0].NBrings); // TEST
     save_fits("fpmzmap", "!test_fpmzmap.fits");
     sleep(20);
 
