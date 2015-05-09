@@ -2801,6 +2801,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     if(saveconf==1)
         PIAAsimul_savepiaacmcconf(piaacmcconfdir);
 
+    printf("EXIT: piaacmc[0].NBrings = %ld\n", piaacmc[0].NBrings);
+    sleep(10);
+
     return(0);
 }
 
