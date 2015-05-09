@@ -1124,7 +1124,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     optsyst[0].FOCMASKarray[0].fpmID = PIAACMCsimul_mkFocalPlaneMask("fpmzmap", "piaacmcfpm", focmMode); // if -1, this is 1-fpm; otherwise, this is impulse response from single zone
 
-    if(1)// testing
+    if(0)// testing
     {
         sprintf(fname, "!focma_%d.fits", focmMode);
         mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
@@ -1133,10 +1133,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
     }
-    printf("========= TEST === %ld ===== %d =====\n", piaacmc[0].NBrings, PIAACMC_fpmtype); // TEST
-    save_fits("fpmzmap", "!test_fpmzmap.fits");
-    sleep(20);
-
+   
 
     optsyst[0].FOCMASKarray[0].zfactor = design[index].fpzfactor;
     optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1]; // plane from which FT is done
@@ -2134,7 +2131,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             piaacmc[0].NBrings = 1;
             piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio*fpmradld;  // [l/D] radius
             printf("Idealized focal plane mask  radius = %f l/D  = %g m    [lambda = %g - %g]\n", fpmradld, piaacmc[0].fpmRad, LAMBDASTART, LAMBDAEND);
-            sleep(10);
         }
         else
         {
@@ -2143,7 +2139,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
             piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio * PIAACMC_MASKRADLD;
             printf("Physical focal plane mask - rad = %f l/D -> %g    [lambda = %g - %g]\n", PIAACMC_MASKRADLD, piaacmc[0].fpmRad, LAMBDASTART, LAMBDAEND);
-            sleep(10);
         }
 
         piaacmc[0].CmodesID = -1; // Cosine radial mode
@@ -2802,9 +2797,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
     if(saveconf==1)
         PIAAsimul_savepiaacmcconf(piaacmcconfdir);
-
-    printf("EXIT: piaacmc[0].NBrings = %ld\n", piaacmc[0].NBrings);
-    sleep(10);
 
     return(0);
 }
