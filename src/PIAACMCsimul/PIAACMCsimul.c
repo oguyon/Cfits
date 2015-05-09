@@ -1970,6 +1970,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
     if(piaacmc == NULL)
     {
+        
+        
         piaacmc = (OPTPIAACMCDESIGN*) malloc(sizeof(OPTPIAACMCDESIGN)*NBpiaacmcdesign);
 
 
@@ -2117,6 +2119,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             piaacmc[0].NBrings = 1;
             piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio*fpmradld;  // [l/D] radius
             printf("Idealized focal plane mask  radius = %f l/D  = %g m    [lambda = %g - %g]\n", fpmradld, piaacmc[0].fpmRad, LAMBDASTART, LAMBDAEND);
+            sleep(10);
         }
         else
         {
@@ -2125,6 +2128,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
             piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio * PIAACMC_MASKRADLD;
             printf("Physical focal plane mask - rad = %f l/D -> %g    [lambda = %g - %g]\n", PIAACMC_MASKRADLD, piaacmc[0].fpmRad, LAMBDASTART, LAMBDAEND);
+            sleep(10);
         }
 
         piaacmc[0].CmodesID = -1; // Cosine radial mode
