@@ -824,6 +824,7 @@ $execname -n step000 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
@@ -867,6 +868,7 @@ $execname -n step001 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
@@ -942,6 +944,7 @@ $execname -n step003 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
@@ -987,6 +990,7 @@ $execname -n step004 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
@@ -1031,6 +1035,7 @@ $execname -n step005 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 2
@@ -1077,6 +1082,7 @@ $execname -n step006 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
@@ -1223,6 +1229,7 @@ $execname -n step009 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
@@ -1265,6 +1272,7 @@ $execname -n step010 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm1
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
