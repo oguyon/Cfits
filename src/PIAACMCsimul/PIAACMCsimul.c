@@ -1133,7 +1133,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
     }
-    printf("========= TEST === %ld ==========\n", piaacmc[0].NBrings); // TEST
+    printf("========= TEST === %ld ===== %d =====\n", piaacmc[0].NBrings, PIAACMC_fpmtype); // TEST
     save_fits("fpmzmap", "!test_fpmzmap.fits");
     sleep(20);
 
@@ -5744,9 +5744,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     
         PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
 
-        printf("STOP POINT\n");
-        sleep(30);
-        
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
             NBiter = (long) data.variable[IDv].value.f+0.01;
