@@ -1124,7 +1124,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     optsyst[0].FOCMASKarray[0].fpmID = PIAACMCsimul_mkFocalPlaneMask("fpmzmap", "piaacmcfpm", focmMode); // if -1, this is 1-fpm; otherwise, this is impulse response from single zone
 
-    if(0)// testing
+    if(1)// testing
     {
         sprintf(fname, "!focma_%d.fits", focmMode);
         mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
@@ -1133,7 +1133,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
     }
-
+    exit(0);
 
 
     optsyst[0].FOCMASKarray[0].zfactor = design[index].fpzfactor;
