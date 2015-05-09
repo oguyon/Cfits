@@ -1133,7 +1133,8 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         delete_image_ID("fpma");
         delete_image_ID("fpmp");
     }
-    exit(0);
+    printf("========= TEST =============\n"); // TEST
+    sleep(20);
 
 
     optsyst[0].FOCMASKarray[0].zfactor = design[index].fpzfactor;
