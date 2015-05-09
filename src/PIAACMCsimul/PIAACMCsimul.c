@@ -5741,7 +5741,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
 
         printf("PIAACMC_fpmtype = %d\n", PIAACMC_fpmtype);
-
+        sleep(10);
+    
         PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
