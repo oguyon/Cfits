@@ -1134,6 +1134,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         delete_image_ID("fpmp");
     }
     printf("========= TEST =============\n"); // TEST
+    save_fits("fpmzmap", "!test_fpmzmap.fits");
     sleep(20);
 
 
