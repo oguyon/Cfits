@@ -1126,7 +1126,7 @@ PIAACMC_MASKRADLD=0.0
 PIAACMC_resolved=0
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
-IAACMC_lambda=${lambda}
+PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=10
 PIAACMC_maxoptFterm=5
 piaacmcsimrun $1 40
@@ -1215,7 +1215,7 @@ fi
 
 
 
-# STEP 009: Compute Lyot stops shapes and locations, 2nd pass, ~60% throughput
+# STEP 009: Compute Lyot stops shapes and locations, 2nd pass, throughput = LStransm1
 
 if [ 009 -eq ${state} ]
 then
@@ -1230,7 +1230,7 @@ $execname -n step009 << EOF
 PIAACMC_MASKRADLD=0.0 
 
 PIAACMC_resolved=0
-PIAACMC_lstransm=$LStransm0
+PIAACMC_lstransm=$LStransm1
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=100
@@ -1321,8 +1321,8 @@ PIAACMC_nbiter=20
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 #PIAACMC_dftgrid=2
-PIAACMC_maxoptCterm=5
-PIAACMC_maxoptFterm=5
+PIAACMC_maxoptCterm=20
+PIAACMC_maxoptFterm=20
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1428,6 +1428,7 @@ $execname -n step013 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
@@ -1471,6 +1472,7 @@ $execname -n step014 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 
+PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
