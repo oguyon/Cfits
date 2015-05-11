@@ -435,7 +435,6 @@ else
 	
 	#./sim$size 802 $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index # restores polychromatic conf
 	#checkerrorstatus
-	exit
 fi
 
 

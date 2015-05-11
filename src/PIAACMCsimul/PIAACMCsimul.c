@@ -141,6 +141,10 @@ long PIAACMC_FPMresp_thread;
 long PIAACMC_MAXRINGOPTNB = 100; // maximum number of rings to optimize, from inside out
 long PIAACMC_RINGOPTNB;
 
+int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
+
+
+
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
