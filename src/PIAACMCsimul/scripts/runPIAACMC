@@ -1710,7 +1710,6 @@ step=100
 for thread in `seq 0 1 ${NBthreadsFPMrespm1}`;
 do
 echo "STARTING COMPONENT $thread"
-
 echo "waitforfile initOK_${pid}" > script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
 echo "$execname -n ${pid}FPMt${thread}n${NBthreadsFPMresp} << EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}

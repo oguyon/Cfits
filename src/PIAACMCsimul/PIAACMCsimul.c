@@ -1031,7 +1031,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     
     if(optsyst[0].ASPHSURFMarray[1].surfID==-1)
         {
-            printf("ERROR: surface 1 not identified\n");
+            printf("ERROR: surface 0 not identified\n");
             list_image_ID();
             exit(0);
         }
@@ -5071,12 +5071,14 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         sprintf(fname, "%s/FPMresp%d_%02d_%d_%d_%02ld_%03ld_%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), tmpNBrings, tmpnblambda);
         printf("fname = %s\n", fname);
         fflush(stdout);
+        
+  
 
         ID = load_fits(fname, "FPMresp", 1);
         if(ID==-1)
         {
 
-
+            
             PIAACMC_FPMresp_mp = 1; // 1: all computations on a single thread
             if((IDv=variable_ID("PIAACMC_FPMresp_mp"))!=-1) // multi threaded
                 PIAACMC_FPMresp_mp = (long) data.variable[IDv].value.f+0.01;
@@ -5084,7 +5086,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
             printf("STEP02\n");
             fflush(stdout);
-
+            
+   
+            
             PIAACMC_FPMresp_thread = 0;
             if((IDv=variable_ID("PIAACMC_FPMresp_thread"))!=-1) // multi threaded
                 PIAACMC_FPMresp_thread = (long) data.variable[IDv].value.f+0.01;
@@ -5095,7 +5099,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
             //    if(PIAACMC_FPMresp_thread>PIAACMC_FPMresp_mp-1)
             //      PIAAsimul_savepiaacmcconf(piaacmcconfdir);
-
 
 
             index = 0;
@@ -5114,6 +5117,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 FORCE_CREATE_fpmza = 0;
                 PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
             }
+
+
+           
 
 
             if((PIAACMC_FPMresp_mp==1)||(PIAACMC_FPMresp_thread>PIAACMC_FPMresp_mp-1))
@@ -5140,23 +5146,22 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 IDcomb = load_fits(fnamecomb, "FPMresp", 1);
             }
 
+  
 
 
             if((IDcomb==-1)&&(ID==-1))
             {
 
                 printf("File \"%s\" does not exist: creating\n", fname);
-
+  
 
                 optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
                 //piaacmc[0].fpmaskamptransm = 1.0;
                 piaacmc[0].fpmRad = 0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio * PIAACMC_MASKRADLD; // PIAACMC_MASKRADLD l/D radius at central lambda
                 PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
+                PIAACMCsimul_makePIAAshapes(piaacmc, 0);
+     
                 PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
-
-
-
-
 
                 PIAACMCsimul_makePIAAshapes(piaacmc, 0);
                 focmMode = data.image[piaacmc[0].zonezID].md[0].size[0]+10;  // response for no focal plane mask
