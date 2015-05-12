@@ -1971,7 +1971,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
     if(piaacmc == NULL)
     {
-        
+        printf("ALLOCATING PIAACMC =================\n");
+        sleep(10);
         
         piaacmc = (OPTPIAACMCDESIGN*) malloc(sizeof(OPTPIAACMCDESIGN)*NBpiaacmcdesign);
 
