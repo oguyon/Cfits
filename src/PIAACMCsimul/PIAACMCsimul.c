@@ -433,7 +433,7 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
         piaacmc[0].focmNBzone = nbsectorcumul[piaacmc[0].NBrings-1];
 
     printf("piaacmc[0].focmNBzone  =  %ld   (%ld)\n", piaacmc[0].focmNBzone, piaacmc[0].NBrings);
-    sleep(10);
+ //   sleep(10);
 
     free(nbsector);
     free(nbsectorcumul);
@@ -2645,7 +2645,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             save_fits("fpmzmap", fname);
         }
     */
-
+    printf("Make zonemap ...\n");
     if(image_ID("fpmzmap")==-1)
         PIAACMCsimul_mkFPM_zonemap("fpmzmap");
 
@@ -3550,13 +3550,6 @@ int PIAAsimul_savepiaacmcconf(char *dname)
     if(piaacmc[0].zoneaID!=-1)
         save_fits(data.image[piaacmc[0].zoneaID].md[0].name, fname);
 
-
-
-    fprintf(fp, "%10.6f   fpzfactor\n", piaacmc[0].fpzfactor);
-    //   fprintf(fp, "%10.6g   fpmRad\n", piaacmc[0].fpmRad);
-     fprintf(fp, "%10ld    fpmarraysize \n", piaacmc[0].fpmarraysize);
- 
-
     fclose(fp);
 
     return(0);
@@ -3652,12 +3645,6 @@ int PIAAsimul_loadpiaacmcconf(char *dname)
 
         r = fscanf(fp, "%f   fpmaskamptransm\n",    &tmpf);
         piaacmc[0].fpmaskamptransm = tmpf;
-
-        r = fscanf(fp, "%f   fpzfactor\n",   &tmpf);
-        piaacmc[0].fpzfactor = tmpf;
-
-        r = fscanf(fp, "%ld    fpmarraysize \n", &tmpl);
-        piaacmc[0].fpmarraysize = tmpl;
 
         r = 1;
 

@@ -258,6 +258,7 @@ checkerrorstatus
 #$fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 800 000   # set configuration settings
 ./sim$size 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index # compute FPMresp if not present
 checkerrorstatus
+exit
 
 # $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 101 000   # compute FPMresp if not present
 
