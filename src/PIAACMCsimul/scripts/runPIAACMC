@@ -284,8 +284,9 @@ echo "PIAACMC_piaa0pos=${piaa0pos}" >> $startupfile
 fifoname="runPIAACMCfifo$pid"
 
 
+progname="Cfits"
 
-execname="Cfits -s $startupfile -f $fifoname"
+execname="$progname -s $startupfile -f $fifoname"
 
 
 
@@ -1712,7 +1713,11 @@ do
 echo "STARTING COMPONENT $thread"
 echo "waitforfile initOK_${pid}" > script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
-echo "$execname -n ${pid}FPMt${thread}n${NBthreadsFPMresp} << EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
+fifoname1="${fifoname}t${thread}n${NBthreadsFPMresp}"
+execname1="$progname -s $startupfile -f $fifoname1"
+
+
+echo "$execname1 -n ${pid}FPMt${thread}n${NBthreadsFPMresp} << EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 #echo "PIAACMC_MASKRADLD=${FPM_MASKRADLD}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_fpmtype=1" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_FPMsectors=$FPMsectors" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
@@ -1774,6 +1779,8 @@ piaacmcsimrun $1 11
 exit
 EOF
 rm initOK_${pid}
+
+exit
 
 # clean up threads and temporary files
 for thread in `seq 0 1 ${NBthreadsFPMrespm1}`;
