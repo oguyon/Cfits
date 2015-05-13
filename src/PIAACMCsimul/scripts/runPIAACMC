@@ -1780,7 +1780,7 @@ exit
 EOF
 rm initOK_${pid}
 
-exit
+
 
 # clean up threads and temporary files
 for thread in `seq 0 1 ${NBthreadsFPMrespm1}`;

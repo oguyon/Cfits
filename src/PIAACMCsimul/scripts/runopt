@@ -259,8 +259,6 @@ checkerrorstatus
 ./sim$size 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index # compute FPMresp if not present
 checkerrorstatus
 
-exit
-
 # $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 101 000   # compute FPMresp if not present
 
 #./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 210 000   # co-optimize fpm and PIAA shapes
