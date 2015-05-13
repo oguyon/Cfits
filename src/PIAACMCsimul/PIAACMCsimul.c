@@ -5733,11 +5733,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
     case 13 : // optimize focal plane mask zones only
         PIAAsimul_initpiaacmcconf(1, fpmradld, centobs0, centobs1, 0, 1);
+        PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
-        printf("STARTING STEP 13\n");
-        fflush(stdout);
-        sleep(10);
-        
+       
         sprintf(fname,"%s/flux.txt", piaacmcconfdir);
         fp = fopen(fname, "r");
         for(elem=0; elem<optsyst[0].NBelem; elem++)

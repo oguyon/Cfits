@@ -269,6 +269,9 @@ checkerrorstatus
 echo "$searchtime" > searchtime.txt
 ./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 checkerrorstatus
+
+echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index"
+exit
 # $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 102 000
 
 
