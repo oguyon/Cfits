@@ -18,7 +18,6 @@ then
 echo ""
 echo "****** [$(date)] FATAL ERROR: script $0 : $(cat ${errorfile})"
 echo "****** exit script $0"
-echo "****** Manually remove file $errorfile to unlock"
 echo "****** bye !"
 echo ""
 exit
@@ -77,6 +76,8 @@ if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp
 if [ "$#" -ne $NBARGS ]; then
 	echo "$0: Illegal number of parameters ($NBARGS params required, $# entered)"
+	echo "Command string: "
+	echo " $0 $@"
 	echo "$0: Illegal number of parameters ($NBARGS params required, $# entered)" > $errorfile
 	checkerrorstatus
 fi

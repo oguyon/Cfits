@@ -271,7 +271,6 @@ echo "$searchtime" > searchtime.txt
 checkerrorstatus
 
 echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index"
-exit
 # $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 102 000
 
 
@@ -308,7 +307,6 @@ execcode=$(( 720 + 10*$nbDM ))
 echo "execcode = $execcode"
 ./sim$size $execcode $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 checkerrorstatus
-# $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial $execcode 000
 fi
 
 
@@ -317,7 +315,6 @@ if [ $computecontrast -gt 1 ]
 then
 ./sim$size 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 checkerrorstatus
-#$fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 721 000
 fi
 
 
@@ -326,7 +323,6 @@ if [ $computecontrast -eq 3 ]
 then
 ./sim$size 722 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 checkerrorstatus
-# $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 722 000
 fi
 
 
@@ -335,7 +331,6 @@ then
 echo "computing transmission curve"
 ./sim$size 750 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 checkerrorstatus
-#$fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 750 000
 fi
 
 touch looppsfcomp_done  # letting know other process that the PSF has been computed
@@ -475,10 +470,7 @@ fi
 
 # eval single
 if [ $inputmode -eq 3 ]; then
-	reoptimize=1
-	echo "Evaluating for fpmr = $maskradinput"
-	fpmrad=$maskradinput
-	echo "$fpmrad"			
+	reoptimize=1		
 	funcprocess							
 	checkerrorstatus
 fi
