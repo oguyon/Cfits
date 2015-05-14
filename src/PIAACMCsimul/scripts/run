@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# Designing PIAACMC
+
+
+printhelp ()
+{
+echo "------------------------------------------------------------------------"
+echo "                 PIAACMC DESIGN"
+echo " Edit script to set PIAACMC design parameters"
+echo " "
+echo " Usage :"
+echo " $0 <command>"
+echo "  command : "
+echo "     optsingle : optimize"
+echo "     eval0 : level 0 evaluation"
+echo "     eval1 : level 1 evaluation"
+echo "     eval2 : level 2 evaluation"
+echo "------------------------------------------------------------------------"
+}
+
+NBARGS=1
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+	printhelp
+if [ "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+fi
+	exit
+fi
+
+runoptcmd=$1
+
+
+
+
+coin=0.300
+coout=0.290
+
+fpmradld=1.100
+PIAAmaterial="Mirror"
+
+LStransm=0.60
+NBls=4
+lambda=550
+mlambda=550
+mlambdaB=15
+NBrings=5 #22
+maskradld=1.60
+ssize=20
+extmode=0 # 3 pts
+fpmmaterial="Si"
+
+
+
+# OPTIONAL ARGUMENTS
+
+beamrad=0.022
+pscale=0.00011
+Fratio=80.0
+r0lim=1.15
+r1lim=1.50 
+piaasep=2.302606
+piaa0pos=0.702843
+
+echo "$beamrad" > conf_PIAAbeamrad.txt
+echo "$Fratio" > conf_Fratio.txt
+echo "$r0lim" > conf_PIAAr0lim.txt
+echo "$r1lim" > conf_PIAAr1lim.txt
+echo "$piaasep" > conf_PIAAsep.txt
+echo "$piaa0pos" > conf_PIAA0pos.txt
+
+
+echo "18" > conf_MdesignStepMax.txt
+
+# 5   1.1381e-05
+# 6   3.0694e-08
+# 7   2.71137e-08
+# 8   1.19138e-08 
+# 9   1.51187e-09
+#10   3.40822e-09 
+#11   1.97517e-09 
+#12   1.81428e-09 
+#13   1.61474e-10  
+#14   1.02717e-10
+#15   3.6649e-10 
+#16   1.86966e-10
+#17   8.20368e-11 
+#18   3.6e-12 
+
+
+cmdOK=0
+
+./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial 000
+
