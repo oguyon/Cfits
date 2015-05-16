@@ -2674,7 +2674,7 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     }
 
 
-    // NMatrix mult mode
+    // CMatrix mult mode
     // 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
     // 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
 
@@ -4823,8 +4823,9 @@ int AOcompute(long loop)
 
 
 
-
-
+///
+/// main routine
+///
 
 int AOloopControl_run()
 {

@@ -62,7 +62,10 @@ printhelp ()
 	echo "   psfcomploop     : loop PSF computation (to be used for WFC)"
 	echo "                   will compute PSF every time a file named looppsfcomp appears"
 	echo "                   loop will stop when file loopstop appears"
-	echo "                   Files will appear in shared memory"
+	echo "                   Following files will appear in shared memory: "
+	echo "                        psfout : PSF intensity image"
+	echo "                        psfout_re: real part"
+	echo "                        psfout_im: imaginary part"
 	echo
 	echo "Arguments specific to PIAACMC design excluding focal plane mask :"
 	echo " 2    pscale       : pupil plane pixel scale"
@@ -96,7 +99,7 @@ NBARGS=17
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp
-if [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ] && [ ! "$1" == "help" ]; then
     echo "Illegal number of parameters ($NBARGS params required, $# entered)"
 	echo "Illegal number of parameters ($NBARGS params required, $# entered)" > $errorfile
 	checkerrorstatus
@@ -260,19 +263,13 @@ checkerrorstatus
 checkerrorstatus
 
 
-# $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 101 000   # compute FPMresp if not present
-
-#./sim$size $fpmrad $coin $coout 00 0 $lambdaB $lambda $PIAAmaterial 210 000   # co-optimize fpm and PIAA shapes
-#exit
-
 # Search for optimal solution
 echo "$searchtime" > searchtime.txt
 ./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 
-echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index"
-# $fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 102 000
 
+echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index"
 
 
 # LOOP STUFF
@@ -409,42 +406,29 @@ then
 else
 	echo "file ${file1} does not exist"
 	
-	# if directory does not exist but monochromatic design reference exists, adopt it
-	# otherwise, do nothing	
+	# if directory does not exist but monochromatic design reference exists, adopt it, otherwise, do nothing	
 	./sim$size 501 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
-
 	
 	# PHASE 1: COMPUTE MONOCHROMATIC IDEAL PIAACMC
-
-	# remove configuration settings : OBSOLETE will skip if already computed
-#	./sim$size 801 $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
-#	checkerrorstatus
 	
 	./sim$size $MdesignStepMax $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
-#	exit # TEST
 	
 	# copy solution as master reference (if it does not exist) for other lambda / lambdaB
 	./sim$size 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus	
 	
-	# COMPUTE ON-AXIS PSF with idealized focal plane mask	
+	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
 	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
-	
+
 	#touch $file1
-	
-	#./sim$size 802 $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index # restores polychromatic conf
-	#checkerrorstatus
 fi
 
 
 
-
-# PHASE 2: POLYCHROMATIC, PHYSICAL MASKS
 echo "POLYCHROMATIC MASK COMPUTATION"		
-
 mzfpmoptimize
 }
 
@@ -464,6 +448,7 @@ rm status/design_coin${coin}_coout${coout}_fpmrad${fpmrad}_l${lambda}_${PIAAmate
 if [ $inputmode -eq 2 ]; then
 	reoptimize=1
 	funcprocess								
+	checkerrorstatus
 fi
 
 
@@ -476,7 +461,3 @@ if [ $inputmode -eq 3 ]; then
 fi
 
 
-
-
-
-	

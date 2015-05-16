@@ -11,6 +11,37 @@ Main features:
 - Can use either CPU(s) or GPU(s) for computations
 
 
+
+# Top-level script: aolrun
+
+The top-level script is aolrun.
+
+Script aolrun initializes the control loop by reading configuration input parameters, and then responds to changes in the "wavefront sensor input" image. 
+Control loops are numbered. The loop number is read from local file LOOPNUMBER.
+
+
+## Required input for aolrun, prior setup
+
+The following table lists all input / files required prior to running aolrun
+
+Variable Name                       | Description                                      | Setting location
+------------------------------------|--------------------------------------------------|-----------------------------------
+LOOPNUMBER                          | loop number [integer]                            | local file LOOPNUMBER
+AOconf[loop].DMname                 | shared memory DM image (for correction)          | image aol<LOOPNUMBER>_dmC 
+AOconf[loop].DMnameRM               | shared memory DM image (for response matrix acq) | image aol<LOOPNUMBER>_dmRM 
+AOconf[loop].WFSname                | shared memory WFS image                          | image aol<LOOPNUMBER>_wfs 
+AOconf[loop].DMMODESname            | DM modes                                         | image aol<LOOPNUMBER>_DMmodes 
+AOconf[loop].respMname              | response matrix                                  | image aol<LOOPNUMBER>_RespM 
+AOconf[loop].contrMname             | control matrix                                   | image aol<LOOPNUMBER>_ContrM 
+AOconf[loop].name                   | loop name                                        | local file ./conf/conf_LOOPNAME.txt
+AOconf[loop].GPU                    | number of GPUs used                              | local file ./conf/conf_GPU.txt
+AOconf[loop].GPUall                 | skip CPU image scaling and go straight to CPU ?  | local file ./conf/conf_GPUall.txt
+AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC | compute image total in separate thread ?         | local file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt
+MATRIX_COMPUTATION_MODE             | use single combined act-wfs matrix ?             | local file ./conf/conf_CMmode.txt
+
+
+
+
 # Step-by-step instruction for typical operation
 
 Control loops are numbered - this is how multiple loops can work together. <LOOPNB> can take any positive integer value (0, 1, 2, etc...)

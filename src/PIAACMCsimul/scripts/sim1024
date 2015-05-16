@@ -10,6 +10,11 @@ errorstatus=0 # if 1, stop code, print error message and it in file "errorstatus
 
 
 
+# save command string to filesystem (useful for debugging)
+echo "$0 $@" > $0_cmdstring.txt
+
+
+
 errorfile="errorstatus.txt"
 checkerrorstatus ()
 {
