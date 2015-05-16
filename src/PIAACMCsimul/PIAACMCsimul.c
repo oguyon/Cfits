@@ -3048,7 +3048,7 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
 /// PSF is held in shared memory by default
 ///
 
-double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode)
+double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode, int outsave)
 {
     FILE *fp;
     FILE *fpflux;
@@ -3240,8 +3240,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp2");
             arith_image_add_inplace("psfi0ext","psfi0");
-            arith_image_cstmult_inplace("psfi0ext", 1.0/3.0);
-
+  
             if (extmode==1)
             {
                 pha = M_PI/3.0;
@@ -3268,14 +3267,14 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 arith_image_cstmult_inplace("psfi0ext", 0.5);
             }
 
+           arith_image_cstmult_inplace("psfi0ext", 1.0/3.0);
 
-            //  sprintf(fname, "!%s/psfi0_%02d_%d_%d_%02ld_%03ld_ss%d_ext%d.fits", piaacmcconfdir, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, PIAACMC_FPMsectors, (long) (10.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBrings, sourcesize, extmode);
 
-            sprintf(fname, "!%s/psfi0__exsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-
-            if(savepsf==1)
+            if(outsave==1)
+            {
+                sprintf(fname, "!%s/psfi0__exsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);            
                 save_fits("psfi0ext", fname);
-
+            }
 
 
             ID = image_ID("imvectp0");
@@ -3342,16 +3341,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                     for(ii=0; ii<offset; ii++)
                         data.image[ID].array.F[kl*offset1+5*offset+ii] = data.image[ID1].array.F[kl*offset+ii]*normcoeff;
                 delete_image_ID("imvectp5");
-            }
-
-
-
-            list_image_ID();
-
+            }        
 
             //linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
-
-
             value = 0.0;
             peakcontrast = 0.0;
             ID = image_ID("imvect");
@@ -3362,20 +3354,21 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 if(tmpv>peakcontrast)
                     peakcontrast = tmpv;
             }
-            //        value = value/size/size/optsyst[0].flux[0];
-            //       avContrast = value/(arith_image_total("scoringmask")*focscale*focscale);
 
             for(elem=0; elem<optsyst[0].NBelem; elem++)
                 printf("    FLUX %3ld   %12.4lf %8.6lf\n", elem, optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0]);
 
             //            sprintf(fname,"%s/flux.txt", piaacmcconfdir);
-            sprintf(fname, "%s/flux_extsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-            fpflux = fopen(fname, "w");
-            for(elem=0; elem<optsyst[0].NBelem; elem++)
-                fprintf(fpflux, "%18.16lf %18.16lf  %d\n", optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0], optsyst[0].nblambda);
-            fprintf(fpflux, "W0  %d\n", optsyst[0].nblambda);
-            fclose(fpflux);
-
+            
+            if(outsave==1)
+            {
+                sprintf(fname, "%s/flux_extsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+                fpflux = fopen(fname, "w");
+                for(elem=0; elem<optsyst[0].NBelem; elem++)
+                    fprintf(fpflux, "%18.16lf %18.16lf  %d\n", optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0], optsyst[0].nblambda);
+                fprintf(fpflux, "W0  %d\n", optsyst[0].nblambda);
+                fclose(fpflux);
+            }
 
 
 
@@ -3399,13 +3392,13 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             printf("Peak constrast (rough estimate)= %g\n", peakcontrast/size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
             printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(arith_image_total("scoringmask")*focscale*focscale));
 
-
-            sprintf(fname, "%s/contrast_extsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-            fp = fopen(fname, "w");
-            fprintf(fp, "%g", avContrast);
-            fclose(fp);
-            //         save_fits("scoringmask", "!scoringmask_test0.fits");
-            //     exit(0);
+            if(outsave==1)
+            {
+                sprintf(fname, "%s/contrast_extsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+                fp = fopen(fname, "w");
+                fprintf(fp, "%g", avContrast);
+                fclose(fp);
+            }
         }
         else
         {
@@ -3422,20 +3415,16 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             // ============ perform propagations ================
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
 
-            if(savepsf==1)
+            if(outsave==1)
             {
                 sprintf(fname, "!%s/psfi0_ptsrc_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
                save_fits("psfi0", fname);
             }
 
 
-
-
  //           list_image_ID();
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
             //save_fits("imvect", "!imvect.fits");
-
-
 
             value = 0.0;
             peakcontrast = 0.0;
@@ -3452,7 +3441,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 printf("    FLUX %3ld   %12.4lf %8.6lf\n", elem, optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0]);
             value = value/size/size/optsyst[0].flux[0];
 
-            if(WRITE_OK==1)
+            if(outsave==1)
             {
                 sprintf(fname, "%s/flux_ptsrc_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
                 fpflux = fopen(fname, "w");
@@ -3477,14 +3466,13 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             printf("Peak constrast (rough estimate)= %g\n", peakcontrast/size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
             printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(arith_image_total("scoringmask")*focscale*focscale));
 
-
-            //   save_fits("scoringmask", "!scoringmask_test1.fits");
-            //   exit(0);
-
-            sprintf(fname, "%s/contrast_ptsrc_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-            fp = fopen(fname, "w");
-            fprintf(fp, "%g", avContrast);
-            fclose(fp);
+            if(outsave==1)
+            {
+                sprintf(fname, "%s/contrast_ptsrc_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+                fp = fopen(fname, "w");
+                fprintf(fp, "%g", avContrast);
+                fclose(fp);
+            }
         }
     }
 
@@ -4692,7 +4680,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
-        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0);
+        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
         printf("valref = %g\n", valref);
         break;
 
@@ -4746,12 +4734,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     if(invPIAAmode == 2) // invPIAA -> Lyot masks
                     {
                         optsyst[0].keepMem[8] = 1;
-                        val = PIAACMCsimul_computePSF(0.0, 0.0, 8, optsyst[0].NBelem, 0, 0, 0);
+                        val = PIAACMCsimul_computePSF(0.0, 0.0, 8, optsyst[0].NBelem, 0, 0, 0, 0);
                     }
                     else // Lyot masks -> invPIAA
                     {
                         optsyst[0].keepMem[6] = 1;
-                        val = PIAACMCsimul_computePSF(0.0, 0.0, 6, optsyst[0].NBelem, 0, 0, 0);
+                        val = PIAACMCsimul_computePSF(0.0, 0.0, 6, optsyst[0].NBelem, 0, 0, 0, 0);
                     }
 
                     if(val<valbest)
@@ -4819,7 +4807,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             {
                 FORCE_CREATE_fpmza = 1;
                 PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
-                val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+                val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
 
                 if(val<valbest)
                 {
@@ -4875,7 +4863,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         piaacmc[0].fpmaskamptransm = -1.0;  // Remove focal plane mask
         FORCE_CREATE_fpmza = 1;
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 0);
-        val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
 
         // restore original configuration
         piaacmc[0].fpmaskamptransm = paramref[0];
@@ -4957,7 +4945,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             optsyst[0].keepMem[7] = 1;
         else
             optsyst[0].keepMem[5] = 1;
-        PIAACMCsimul_computePSF(3.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        PIAACMCsimul_computePSF(3.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
 
         if(invPIAAmode==2)
             IDa = image_ID("WFamp0_007");
@@ -4972,7 +4960,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             for(k=0; k<optsyst[0].nblambda; k++)
                 data.image[ID].array.F[ii] += data.image[IDa].array.F[k*xsize*ysize+ii]*data.image[IDa].array.F[k*xsize*ysize+ii]/4;
 
-        PIAACMCsimul_computePSF(-3.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        PIAACMCsimul_computePSF(-3.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         if(invPIAAmode==2)
             IDa = image_ID("WFamp0_007");
         else
@@ -4981,7 +4969,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             for(k=0; k<optsyst[0].nblambda; k++)
                 data.image[ID].array.F[ii] += data.image[IDa].array.F[k*xsize*ysize+ii]*data.image[IDa].array.F[k*xsize*ysize+ii]/4;
 
-        PIAACMCsimul_computePSF(0.0, 3.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        PIAACMCsimul_computePSF(0.0, 3.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         if(invPIAAmode==2)
             IDa = image_ID("WFamp0_007");
         else
@@ -4990,7 +4978,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             for(k=0; k<optsyst[0].nblambda; k++)
                 data.image[ID].array.F[ii] += data.image[IDa].array.F[k*xsize*ysize+ii]*data.image[IDa].array.F[k*xsize*ysize+ii]/4;
 
-        PIAACMCsimul_computePSF(0.0, -3.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        PIAACMCsimul_computePSF(0.0, -3.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         if(invPIAAmode==2)
             IDa = image_ID("WFamp0_007");
         else
@@ -5002,7 +4990,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         sprintf(fname, "!%s/OAincoh.fits", piaacmcconfdir);
         save_fits("OAincoh", fname);
 
-        PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         if(invPIAAmode==2)
             PIAACMCsimul_optimizeLyotStop("WFamp0_007", "WFpha0_007", "OAincoh", -3.5, 0.5, lstransm, NBpropstep, piaacmc[0].NBLyotStop);
         else
@@ -5028,7 +5016,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
-        PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+        PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 1);
         break;
 
 
@@ -5212,7 +5200,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
                 focmMode = data.image[piaacmc[0].zonezID].md[0].size[0]+10;  // response for no focal plane mask
                 optsyst[0].FOCMASKarray[0].mode = 1; // 1-fpm
-                val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+                val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
                 printf("val = %g\n", val);
                 ID = image_ID("imvect");
 
@@ -5341,7 +5329,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                         //  sleep(100);
 
 
-                        val = PIAACMCsimul_computePSF(0.0, 0.0, 4, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+                        val = PIAACMCsimul_computePSF(0.0, 0.0, 4, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
                         for(k=0; k<piaacmc[0].nblambda; k++)
                             for(ii=0; ii<data.image[ID].md[0].size[0]; ii++)
@@ -5402,7 +5390,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         ret = fscanf(fp, "%lf", &CnormFactor);
         fclose(fp);
 
-        /*      val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0);
+        /*      val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0);
         valbest = val;
         val0 = val;
 
@@ -5462,7 +5450,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             dphadz_array[k] = OPTICSMATERIALS_pha_lambda(piaacmc[0].fpmmaterial_code, 1.0, optsyst[0].lambdaarray[k]);
         outtmp_array = (double*) malloc(sizeof(double)*(vsize*piaacmc[0].nblambda+data.image[piaacmc[0].zonezID].md[0].size[0]));
 
-        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
 
         printf("Preparing optimization ... \n");
@@ -5962,7 +5950,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-        valref = PIAACMCsimul_computePSF(5.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0);
+        valref = PIAACMCsimul_computePSF(5.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_x50_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         //load_fits(fname, "psfi");
@@ -5993,7 +5981,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         free(peakarray);
         delete_image_ID("psfi0");
 
-        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0);
+        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
         sprintf(fname,"!%s/psfi0_x00_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         //load_fits(fname, "psfi");
@@ -6064,28 +6052,28 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         // measure pointing sensitivity
         IDps = create_3Dimage_ID("starim", piaacmc[0].size, piaacmc[0].size, zsize);
 
-        valref = 0.25*PIAACMCsimul_computePSF(ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        valref = 0.25*PIAACMCsimul_computePSF(ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_p0.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
-        valref += 0.25*PIAACMCsimul_computePSF(-ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+        valref += 0.25*PIAACMCsimul_computePSF(-ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_m0.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
-        valref += 0.25*PIAACMCsimul_computePSF(0.0, ldoffset, 0, optsyst[0].NBelem, 0, 0, 0);
+        valref += 0.25*PIAACMCsimul_computePSF(0.0, ldoffset, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_0p.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
 
-        valref += 0.25*PIAACMCsimul_computePSF(0.0, -ldoffset, 0, optsyst[0].NBelem, 0, 0, 0);
+        valref += 0.25*PIAACMCsimul_computePSF(0.0, -ldoffset, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_0m.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
@@ -6177,7 +6165,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
 
-        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0);
+        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 0);
         sprintf(fname,"!%s/psfi0test_x00_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
 
@@ -6189,7 +6177,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         stepld = 0.001;
         for(xld=0.0; xld<10.0; xld+=stepld)
         {
-            valref = PIAACMCsimul_computePSF(xld, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
+            valref = PIAACMCsimul_computePSF(xld, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
             ID = image_ID("psfi0");
             //            sprintf(fname, "!psfi0transm_%04.1f.fits", xld);
             //           save_fits("psfi0", fname);
@@ -6318,7 +6306,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         // Compute Reference
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
-        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+        valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
 
         sprintf(dirname, "%s_linopt", piaacmcconfdir);
@@ -6350,7 +6338,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         {
             sleep(2);
             computePSF_FAST_FPMresp = 0;
-            valref1 = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+            valref1 = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
             ID1 = image_ID("imvect");
 
             v1 = 0.0;
@@ -6474,12 +6462,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     if(paramtype[i]==FLOAT)
                     {
                         *(paramvalf[i]) += (float) paramdelta[i];
-                        val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+                        val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
                     }
                     else
                     {
                         *(paramval[i]) += paramdelta[i];
-                        val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+                        val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
                     }
 
                     //      sprintf(fname,"!%s/imvect_%02ld.fits", piaacmcconfdir, i);
@@ -6597,7 +6585,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     valold = val;
 
 
-                    val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+                    val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
 
                     sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
@@ -6676,7 +6664,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
              valold = val;
 
 
-             val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0);
+             val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0);
              printf("gain: %lf -> val = %20g\n", bestgain, val);
             */
 
@@ -6696,7 +6684,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             valold = val;
 
 
-            val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode);
+            val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
             printf("gain: %lf -> val = %20g\n", bestgain, val);
 
 

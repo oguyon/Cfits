@@ -58,7 +58,7 @@ printhelp ()
 	echo "   optsingle       : (create and) optimize a configuration until processes is killed" 
 	echo "   eval0           : compute contrast (only on-axis contrast and PSF)"
 	echo "   eval1           : compute contrasts (compute on-axis and resolved source PSFs and contrasts)"
-	echo "   eval2           : compute contrasts, transmission curve"
+	echo "   eval2           : compute all contrasts, transmission curve"
 	echo "   psfcomploop     : loop PSF computation (to be used for WFC)"
 	echo "                   will compute PSF every time a file named looppsfcomp appears"
 	echo "                   loop will stop when file loopstop appears"
