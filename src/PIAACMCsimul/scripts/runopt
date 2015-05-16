@@ -432,7 +432,7 @@ fi
 echo "POLYCHROMATIC MASK COMPUTATION"		
 mzfpmoptimize
 
-while [ optimizeloop -eq 1 ]
+while [ $optimizeloop -eq 1 ]
 do
 mzfpmoptimize
 done
