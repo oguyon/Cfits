@@ -3,16 +3,16 @@
 
 # ====================== USER EDITS THIS SECTION =======================
 
-execname="AOloopControl"
+execname="Cfits"
+
+# default parameters
 
 LOOPNAME="pyramid" # name of the control loop
 LOOPNUMBER_default=2  # loop number
-CONFSELECTED_default="001" # default configuration number to be selected
+
 dmC="dmdisp3" # DM control channel
 dmRM="dmdisp7" # DM actuation channel for RM matrix
-wfsimcam="ocam2k" # WFS camera image
-NUMAnode=1 # for numactl
-xtermopt="-fa 'Monospace' -fs 6"
+wfsimcam="imcam" # WFS camera image
 
 
 
@@ -36,7 +36,6 @@ xtermopt="-fa 'Monospace' -fs 6"
 LOOPNUMBER_file="LOOPNUMBER"
 confnbfile="./conf/conf_CONFNUMBER.txt"
 
-sudo adduser scexao dialout
 mkdir -p conf
 mkdir -p status
 
@@ -84,28 +83,11 @@ echo "$LOOPNAME" > ./conf/conf_LOOPNAME.txt
 echo "loop name : $LOOPNAME"
 
 
-
-
-# set IO files
-
-# DM correction channel
-echo "linking to dm correction channel"
-rm /tmp/aol${LOOPNUMBER}_dmC.im.shm 
-ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
-
-# DM response matrix channel
-echo "linking to dm resp mat channel"
-rm /tmp/aol${LOOPNUMBER}_dmRM.im.shm 
-ln -s /tmp/${dmRM}.im.shm /tmp/aol${LOOPNUMBER}_dmRM.im.shm
-
 # WFS raw image
 echo "linking to WFS camera"
 rm /tmp/aol${LOOPNUMBER}_wfs.im.shm
 ln -s /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfs.im.shm
 
-# copy configuration variables
-cp ./conf$1/conf_*.txt ./conf/
-cp ./conf$1/AOloop.conf ./conf/
 
 
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
@@ -121,9 +103,33 @@ trap "rm -f $tempfile" 0 1 2 5 15
 
 
 # ================ FREQUENTLY USED FUNCTIONS ===================
+
 echo "FUNCTIONS..."
 
-# arg 1: conf#
+
+
+
+
+
+function TestModeStart {
+mkdir -p testconf
+echo "$execname -n aol${LOOPNUMBER}test << EOF" > script_aol${LOOPNUMBER}test 
+echo "AOsystsim" >> script_aol${LOOPNUMBER}test 
+chmod +x script_aol${LOOPNUMBER}test 
+
+tmux new-session -d -s aol${LOOPNUMBER}test
+echo "ON" > ./status/testloopstatus.txt
+tmux send-keys -t aol${LOOPNUMBER}test "./script_aol${LOOPNUMBER}test" C-m
+}
+
+function TestModeStop {
+pkill aol${LOOPNUMBER}test
+echo "OFF" > ./status/testloopstatus.txt
+}
+
+
+
+
 
 
 function Fits2shm {
@@ -187,6 +193,54 @@ fi
 
 
 
+function ReaddmCname {
+file="./conf/conf_dmC_name.txt"
+if [ -a $file ]
+	then
+	dmC=$(echo "$(cat $file)")
+	else
+	dmC="dmC" #default
+fi
+# DM correction channel
+echo "linking to dm correction channel"
+rm /tmp/aol${LOOPNUMBER}_dmC.im.shm 
+ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
+}
+
+
+function ReaddmRMname {
+file="./conf/conf_dmRM_name.txt"
+if [ -a $file ]
+	then
+	dmRM=$(echo "$(cat $file)")
+	else
+	dmRM="dmRM" #default
+fi
+# DM response matrix channel
+echo "linking to dm resp mat channel"
+rm /tmp/aol${LOOPNUMBER}_dmRM.im.shm 
+ln -s /tmp/${dmRM}.im.shm /tmp/aol${LOOPNUMBER}_dmRM.im.shm
+}
+
+
+function Readwfsimcamname {
+file="./conf/conf_wfsim_name.txt"
+if [ -a $file ]
+	then
+	wfsimcam=$(echo "$(cat $file)")
+	else
+	wfsimcam="wfsimcam" #default
+fi
+# WFS raw image
+echo "linking to WFS camera"
+rm /tmp/aol${LOOPNUMBER}_wfs.im.shm
+ln -s /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfs.im.shm
+}
+
+
+
+
+
 function ReadLoopGain {
 file="./conf/conf_loopgain.txt"
 if [ -a $file ]
@@ -196,7 +250,6 @@ if [ -a $file ]
 	loopgain="0.000" #default
 fi
 }
-
 
 
 function ReadLoopMaxLim {
@@ -258,9 +311,14 @@ sleep 2
 
 
 # =================== READ CONFIGURATION====================================
+ReaddmCname
+ReaddmRMname
+Readwfsimcamname
+
 ReadLoopGain
 ReadLoopMaxLim
 ReadLoopMultCoeff
+
 
 
 
@@ -298,13 +356,14 @@ menuname="TOP MENU \n [Active conf = ${confselected}]"
 
 menuitems=( "C" "Configure AO loop" )
 menuitems+=( "L" "Control AO loop" )
+menuitems+=( "T" "Test mode: simulated AO system" )
 
 
 
 dialog --title "AO loop top menu" \
 --ok-label "Select" \
 --cancel-label "Exit" \
---default-item '${confnb}' \
+--default-item "${menutop_default}" \
  --menu "$menuname" \
  50 80 100 "${menuitems[@]}"  2> $tempfile
 
@@ -314,8 +373,18 @@ choiceval=$(cat $tempfile)
 case $retval in
    0) # button
 	case $choiceval in
-   	 C) state="menuconfigureloop";;   
-   	 L) state="menucontrolloop";;   
+   	 C) 
+menutop_default="C"
+state="menuconfigureloop"
+;;   
+   	 L) 
+menutop_default="L"
+state="menucontrolloop"
+;;
+   	 T) 
+menutop_default="T"
+state="menutestmode"   
+;;
 	esac;;
    1) state="menuexit";;   
    255) state="menuexit";;
@@ -373,6 +442,9 @@ menuitems+=( "wfs" "[${wfsimcamOKstr}] WFS camera image   = ${wfsimcam}" )
 
 
 
+
+menuitems+=( "-" " " )
+
 menuitems+=( "g" "loop gain    =   ${loopgain}" )
 menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
 menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
@@ -397,6 +469,35 @@ choiceval=$(cat $tempfile)
 case $retval in
    0) # button
 	case $choiceval in
+	-)
+state="menuconfigureloop"
+;;
+	dmC)
+exec 3>&1;
+dmC=$(dialog --inputbox test 0 0 2>&1 1>&3);
+#exitcode=$?;
+exec 3>&-;
+#echo $result $exitcode;
+echo "$dmC" > ./conf/conf_dmC_name.txt
+ReaddmCname
+state="menuconfigureloop"
+;;
+	dmRM)
+exec 3>&1;
+dmRM=$(dialog --inputbox test 0 0 2>&1 1>&3);
+exec 3>&-;
+echo "$dmRM" > ./conf/conf_dmRM_name.txt
+ReaddmRMname
+state="menuconfigureloop"
+;;
+	wfs)
+exec 3>&1;
+wfsimcam=$(dialog --inputbox test 0 0 2>&1 1>&3);
+exec 3>&-;
+echo "$wfsimcam" > ./conf/conf_wfsim_name.txt
+Readwfsimcamname
+state="menuconfigureloop"
+;;
   	 g) 
 menucontrolloop_default="g"
 state="menucontrolloop_setgain"
@@ -422,8 +523,6 @@ esac
 
 
 fi
-
-
 
 
 
@@ -585,6 +684,97 @@ esac
 
 
 fi
+
+
+
+
+
+
+
+
+
+
+
+#  TEST MODE
+if [ $state = "menutestmode" ]; then
+stateok=1
+
+testloopstatus="OFF"
+
+file="./status/testloopstatus.txt"
+if [ -a $file ]
+	then
+	testloopstatus=$(echo "$(cat $file)")
+	else
+	testloopstatus="OFF"
+fi
+
+
+
+menuname="TEST MODE [${testloopstatus}] - LOOP ${LOOPNUMBER}"
+
+
+
+menuitems=( "H" "help" )
+menuitems+=( "-" " " )
+menuitems+=( "Start" "Start test mode" )
+menuitems+=( "Stop" "Stop test mode" )
+
+
+
+dialog --title "TEST MODE" \
+--ok-label "Select" \
+--cancel-label "Top" \
+--help-button --help-label "Exit" \
+--default-item "${menutestmode_default}" \
+ --menu "$menuname" \
+ 50 80 100 "${menuitems[@]}"  2> $tempfile
+
+retval=$?
+choiceval=$(cat $tempfile)
+
+case $retval in
+   0) # button
+	case $choiceval in
+   	 H)
+dialog --title "Help" --msgbox 'Simulation mode\n
+\n
+Creates shared memory arrays: \n
+   aosimdmctrl   : DM control map (50x50)\n
+   WFturb        : Wavefront phase turbulence (512x512)\n
+   aosimpsfout   : output PSF (intensity)\n
+   aosimwfsim    : output WFS image (intensity)\n
+\n
+Recomputes aosimpsfout when either aosimdmctrl or WFturb changes' 40 80
+menutestmode_default="H"
+;;
+   	 Start)
+if [ $testloopstatus = "OFF" ]; then
+TestModeStart
+menutestmode_default="Start"
+fi
+state="menutestmode"
+;;   
+   	 Stop) 
+if [ $testloopstatus = "ON" ]; then
+TestModeStop
+menutestmode_default="Stop"
+fi
+state="menutestmode"
+;;  
+	esac;;
+   1) state="menutop";;   
+  2) state="menuexit";;
+   255) state="menuexit";;
+esac
+
+fi
+
+
+
+
+
+
 
 
 

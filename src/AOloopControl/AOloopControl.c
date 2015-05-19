@@ -2697,6 +2697,8 @@ int AOloopControl_loadconfigure(long loop, char *config_fname, int mode)
     // this image is read to notify when new dm displacement is ready
     aoconfID_DMdisp = read_sharedmem_image("dmdisp");
 
+
+
     // Connect to WFS camera
     // This is where the size of the WFS is fixed
     aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);

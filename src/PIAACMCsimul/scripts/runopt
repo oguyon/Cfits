@@ -59,7 +59,7 @@ printhelp ()
 	echo "   eval0           : compute contrast (only on-axis contrast and PSF)"
 	echo "   eval1           : compute contrasts (compute on-axis and resolved source PSFs and contrasts)"
 	echo "   eval2           : compute all contrasts, transmission curve"
-	echo "   psfcomploop     : loop PSF computation (to be used for WFC)"
+	echo "   psfcomploop1    : loop PSF computation (to be used for WFC)"
 	echo "                   will compute PSF every time a file named looppsfcomp appears"
 	echo "                   loop will stop when file loopstop appears"
 	echo "                   Following files will appear in shared memory: "
@@ -165,8 +165,17 @@ if [ $1 == "optsingle" ]; then
 	searchtime=7200.0
 	computecontrast=0
 	inputmode=2
+fi
+
+
+if [ $1 == "optloop" ]; then
+	echo "optimize single configuration (loop)"
+	searchtime=7200.0
+	computecontrast=0
+	inputmode=2
 	optimizeloop=1
 fi
+
 
 if [ $1 == "eval0" ]; then
 	echo "Evaluate Solution"

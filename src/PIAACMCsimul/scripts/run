@@ -16,6 +16,13 @@ echo "     optsingle : optimize"
 echo "     eval0 : level 0 evaluation"
 echo "     eval1 : level 1 evaluation"
 echo "     eval2 : level 2 evaluation"
+	echo "   psfcomploop1    : loop PSF computation (to be used for WFC)"
+	echo "                   will compute PSF every time a file named looppsfcomp appears"
+	echo "                   loop will stop when file loopstop appears"
+	echo "                   Following files will appear in shared memory: "
+	echo "                        psfout : PSF intensity image"
+	echo "                        psfout_re: real part"
+	echo "                        psfout_im: imaginary part"
 echo "------------------------------------------------------------------------"
 }
 

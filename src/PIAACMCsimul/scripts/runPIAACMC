@@ -595,6 +595,24 @@ exit
 fi
 
 
+if [ 740 -eq ${state} ]
+then
+ echo "Compute on-axis polychromatic PSF, includes WFC with 1 DM"
+echo "730" > ./$1/runstep
+touch ./$1/step730.run.txt
+$execname -n step730 << EOF
+PIAACMC_fpmtype=1 
+PIAACMC_FPMsectors=$FPMsectors
+PIAACMC_nblambda=$nblambda
+PIAACMC_WFCmode=2
+piaacmcsimrun $1 0
+exit
+EOF
+cleanup
+exit
+fi
+
+
 
 
 

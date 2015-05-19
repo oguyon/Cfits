@@ -773,6 +773,165 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
 
 
 
+int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
+{
+    long ID_inWFc, ID_outWFSim;
+    long arraysize;
+    long *imsize;
+    long IDa, IDp;
+    long ID_inWFccp;
+    long arraysize2;
+    long IDpyramp, IDpyrpha;
+    double lenssize;
+    double pcoeff = 1.0;
+    double x, y;
+    long ii, jj;
+    char pnamea[200];
+    char pnamep[200];
+    char pfnamea[200];
+    char pfnamep[200];
+
+    long PYRMOD_nbpts = 8;
+    long pmodpt;
+    double PYRMOD_rad = 5.0;
+    double xc, yc, PA;
+
+    ID_inWFc = image_ID(inWFc_name);
+    arraysize = data.image[ID_inWFc].md[0].size[0];
+    arraysize2 = arraysize*arraysize;
+    lenssize = 0.4*arraysize;
+
+
+    printf("STEP 000\n");
+    fflush(stdout);
+
+
+    for(pmodpt=0; pmodpt<PYRMOD_nbpts; pmodpt++)
+    {
+        sprintf(pnamea, "pyramp_%03ld", pmodpt);
+        sprintf(pnamep, "pyrpha_%03ld", pmodpt);
+        IDpyramp = image_ID(pnamea);
+        IDpyrpha = image_ID(pnamep);
+        if((IDpyramp==-1)||(IDpyrpha==-1))
+        {
+            imsize = (long*) malloc(sizeof(long)*2);
+            imsize[0] = arraysize;
+            imsize[1] = arraysize;
+            IDpyramp = create_image_ID(pnamea, 2, imsize, FLOAT, 0, 0);
+            IDpyrpha = create_image_ID("pyrpha0", 2, imsize, FLOAT, 0, 0);
+            free(imsize);
+
+            PA = 2.0*M_PI*pmodpt/PYRMOD_nbpts;
+            xc = PYRMOD_rad * cos(PA);
+            yc = PYRMOD_rad * sin(PA);
+
+            for(ii=0; ii<arraysize; ii++)
+                for(jj=0; jj<arraysize; jj++)
+                {
+                    x = 1.0*(ii-arraysize/2) - xc;
+                    y = 1.0*(jj-arraysize/2) - yc;
+
+                    data.image[IDpyrpha].array.F[jj*arraysize+ii] = pcoeff*(fabs(x)+fabs(y));
+                    if((fabs(x)>lenssize)||(fabs(y)>lenssize))
+                        data.image[IDpyramp].array.F[jj*arraysize+ii] = 0.0;
+                    else
+                        data.image[IDpyramp].array.F[jj*arraysize+ii] = 1.0;
+                }
+            gauss_filter("pyrpha0", pnamep, 1.0, 10);
+            delete_image_ID("pyrpha0");
+
+            sprintf(pfnamea, "!pyramp_%03ld.fits", pmodpt);
+            sprintf(pfnamep, "!pyrpha_%03ld.fits", pmodpt);
+
+            printf("SAVING: %s -> %s\n", pnamea, pfnamea);
+            save_fits(pnamea, pfnamea);
+            save_fits(pnamep, pfnamep);
+        }
+    }
+
+    printf("STEP 010\n");
+    fflush(stdout);
+
+
+    ID_outWFSim = image_ID(outWFSim_name);
+    if(ID_outWFSim==-1)
+    {
+        imsize = (long*) malloc(sizeof(long)*2);
+        imsize[0] = arraysize;
+        imsize[1] = arraysize;
+        ID_outWFSim = create_image_ID(outWFSim_name, 2, imsize, FLOAT, 1, 0);
+        free(imsize);
+    }
+
+    ID_inWFccp = image_ID("pyrwfcin");
+    if(ID_inWFccp==-1)
+    {
+        imsize = (long*) malloc(sizeof(long)*2);
+        imsize[0] = arraysize;
+        imsize[1] = arraysize;
+        ID_inWFccp = create_image_ID("pyrwfcin", 2, imsize, COMPLEX_FLOAT, 0, 0);
+        free(imsize);
+    }
+
+
+    data.image[ID_outWFSim].md[0].write = 1;
+    for(ii=0; ii<arraysize2; ii++)
+        data.image[ID_outWFSim].array.F[ii] = 0.0;
+
+    for(pmodpt=0; pmodpt<PYRMOD_nbpts; pmodpt++)
+    {
+        memcpy(data.image[ID_inWFccp].array.CF, data.image[ID_inWFc].array.CF, sizeof(complex_float)*arraysize*arraysize);
+
+
+
+        permut("pyrwfcin");
+        do2dfft("pyrwfcin","pyrpsfcin");
+        permut("pyrpsfcin");
+        mk_amph_from_complex("pyrpsfcin", "pyrpsfa", "pyrpsfp");
+        delete_image_ID("pyrpsfcin");
+
+        sprintf(pnamea, "pyramp_%03ld", pmodpt);
+        sprintf(pnamep, "pyrpha_%03ld", pmodpt);
+        IDpyramp = image_ID(pnamea);
+        IDpyrpha = image_ID(pnamep);
+        IDa = image_ID("pyrpsfa");
+        IDp = image_ID("pyrpsfp");
+
+        for(ii=0; ii<arraysize2; ii++)
+        {
+            data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
+            data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
+        }
+
+
+        mk_complex_from_amph("pyrpsfa", "pyrpsfp", "pyrpsfc");
+        delete_image_ID("pyrpsfa");
+        delete_image_ID("pyrpsfp");
+
+        permut("pyrpsfc");
+        do2dfft("pyrpsfc","pyrwfs_pupc");
+        delete_image_ID("pyrpsfc");
+        permut("pyrwfs_pupc");
+        mk_amph_from_complex("pyrwfs_pupc", "pyrwfs_pupa", "pyrwfs_pupp");
+
+        delete_image_ID("pyrwfs_pupp");
+        delete_image_ID("pyrwfs_pupc");
+
+        IDa = image_ID("pyrwfs_pupa");
+
+        for(ii=0; ii<arraysize2; ii++)
+            data.image[ID_outWFSim].array.F[ii] += data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii]/PYRMOD_nbpts;
+        delete_image_ID("pyrwfs_pupa");
+    }
+    data.image[ID_outWFSim].md[0].cnt0++;
+    data.image[ID_outWFSim].md[0].write = 0;
+
+    return (0);
+}
+
+
+
+
 
 
 
@@ -785,12 +944,12 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
 
 int AOsystSim_run()
 {
-    long arraysize = 512;
+    long arraysize = 128;
     long ii, jj;
     double puprad, dmrad;
     double dmifscale = 20.0; // scale magnification between full DM map and DM influence function
     long *imsize;
-    long DMsize = 50;
+    long DMsize = 20;
     long DMnbact;
     long mx, my;
     double x, y, rx, ry;
@@ -811,6 +970,9 @@ int AOsystSim_run()
     long ID;
     long IDout;
     long *IDarray;
+
+    int COROmode = 0; // 1 if coronagraph
+
 
     puprad = 0.12*arraysize;
     dmrad = 0.13*arraysize;
@@ -848,7 +1010,7 @@ int AOsystSim_run()
     delete_image_ID("dmif0");
     IDif = image_ID("dmif");
 
-    save_fits("dmif", "!dmif.fits");
+  //  save_fits("dmif", "!dmif.fits");
 
     IDifc = create_image_ID("dmifc", 3, imsize, FLOAT, 0, 0);
     printf("\n");
@@ -888,6 +1050,9 @@ int AOsystSim_run()
     //	save_fits("dmifc","!dmifc.fits");
     printf("\n");
 
+
+
+
     // INITIALIZE DM CONTROL ARRAY
     dmsizearray = (long*) malloc(sizeof(long)*2);
     dmsizearray[0] = DMsize;
@@ -896,7 +1061,7 @@ int AOsystSim_run()
     COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
 
     for(k=0; k<DMsize*DMsize; k++)
-        data.image[IDdmctrl].array.F[k] = ran1()*2.0e-7;
+        data.image[IDdmctrl].array.F[k] = ran1()*2.0e-8;
 
 
     // INITIALIZE TURBULENCE SCREEN
@@ -930,7 +1095,7 @@ int AOsystSim_run()
     optsystsim[0].NB_asphsurfr = 0;
     optsystsim[0].NBelem = 100; // to be updated later
 
-    // INPUT PUPIL
+    // 0: INPUT PUPIL
     IDpupm = make_disk("pupmask", arraysize, arraysize, 0.5*arraysize, 0.5*arraysize, puprad);
     elem = 0;
     optsystsim[0].elemtype[elem] = 1; // pupil mask
@@ -940,24 +1105,26 @@ int AOsystSim_run()
 
 
 
-    // Turbulence screen
+    // 1: Turbulence screen
     optsystsim[0].elemtype[elem] = 3; // reflective surface
     optsystsim[0].elemarrayindex[elem] = 0; // index
     optsystsim[0].ASPHSURFMarray[0].surfID = IDturb;
     optsystsim[0].elemZpos[elem] = 0.0;
     elem++;
 
-    // DM 0
+    // 2: DM 0
     optsystsim[0].elemtype[elem] = 3; // reflective surface
     optsystsim[0].elemarrayindex[elem] = 1; // index
     optsystsim[0].ASPHSURFMarray[1].surfID = IDdm0shape;
     optsystsim[0].elemZpos[elem] = 0.0;
+    optsystsim[0].keepMem[elem] = 1;
     elem++;
 
 
 
-    // FOCAL PLANE MASK
-    IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
+    if(COROmode==1)    // FOCAL PLANE MASK
+  {
+        IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
     for(ii=0; ii<arraysize; ii++)
         for(jj=0; jj<arraysize; jj++)
         {
@@ -982,13 +1149,15 @@ int AOsystSim_run()
     optsystsim[0].FOCMASKarray[0].mode = 1;
     optsystsim[0].elemZpos[elem] = optsystsim[0].elemZpos[elem-1]; // plane from which FT is done
     elem++;
+}
 
     optsystsim[0].NBelem = elem;
 
     optsystsim[0].SAVE = 1;
 
     // propagate
-    OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./conf/");
+    OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
+    list_image_ID();
     ID = image_ID("psfi0");
     imsize = (long*) malloc(sizeof(long)*2);
     imsize[0] = data.image[ID].md[0].size[0];
@@ -1012,15 +1181,22 @@ int AOsystSim_run()
 
     while(1)
     {
-        COREMOD_MEMORY_image_set_semwait_OR(IDarray, 2);
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
-        OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./conf/");
+        OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
+
+        list_image_ID();
+        mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
+        list_image_ID();
+        AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim");
+        delete_image_ID("wfc");
+
         ID = image_ID("psfi0");
         data.image[IDout].md[0].write = 1;
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+        COREMOD_MEMORY_image_set_semwait_OR(IDarray, 2);
     }
 
 
