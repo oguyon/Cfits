@@ -3482,13 +3482,10 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                     fprintf(fpflux, "%18.16lf %18.16lf  %d\n", optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0], optsyst[0].nblambda);
                 fprintf(fpflux, "W1\n");
                 fclose(fpflux);
-                
-                printf("STEP 1000\n"); // TEST
-                fflush(stdout);
+        
                 sprintf(command, "cp %s %s/flux.txt", fname, piaacmcconfdir);
                 ret = system(command);
-                 printf("STEP 1001\n"); // TEST
-                fflush(stdout);
+
            }
 
             avContrast = value/(SCORINGTOTAL*focscale*focscale);
@@ -5789,21 +5786,13 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
     case 13 : // optimize focal plane mask zones only
-        printf("STEP 010\n"); // TEST
-        sleep(10);
         PIAAsimul_initpiaacmcconf(1, fpmradld, centobs0, centobs1, 0, 1);
-       printf("STEP 011\n"); // TEST
-        sleep(10);
 
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-       printf("STEP 012\n"); // TEST
-        sleep(10);
-
+ 
 
         PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
-              printf("STEP 013\n"); // TEST
-        sleep(10);
-
+ 
         sprintf(fname,"%s/flux.txt", piaacmcconfdir);
         fp = fopen(fname, "r");
         for(elem=0; elem<optsyst[0].NBelem; elem++)
@@ -5813,17 +5802,11 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         }
         fclose(fp);
 
-        printf("STEP 014\n"); // TEST
-        sleep(10);
-
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
             NBiter = (long) data.variable[IDv].value.f+0.01;
         else
             NBiter = 50;
-
-        printf("STEP 015\n"); // TEST
-        sleep(10);
 
         sprintf(fname, "%s/FPMresp%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
 
@@ -5846,9 +5829,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         computePSF_FAST_FPMresp = 1;
 
-        printf("STEP 015\n"); // TEST
-        sleep(10);
-
 
         sprintf(fname, "%s/CnormFactor.txt", piaacmcconfdir);
         fp = fopen(fname, "r");
@@ -5870,10 +5850,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             NBparam++;
         }
         PIAACMC_FPM_FASTDERIVATIVES = 1; // for fast execution
-        
-        printf("STEP 020\n"); // TEST
-        sleep(10);
-        
         
         break;
 
