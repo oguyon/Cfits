@@ -3481,6 +3481,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                     fprintf(fpflux, "%18.16lf %18.16lf  %d\n", optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0], optsyst[0].nblambda);
                 fprintf(fpflux, "W1\n");
                 fclose(fpflux);
+                sprintf(command, "cp %s %s/flux.txt", fname, piaacmcconfdir);
+                ret = system(command);
             }
 
             avContrast = value/(SCORINGTOTAL*focscale*focscale);
