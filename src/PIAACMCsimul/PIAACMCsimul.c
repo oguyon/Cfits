@@ -5845,6 +5845,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             NBparam++;
         }
         PIAACMC_FPM_FASTDERIVATIVES = 1; // for fast execution
+        
+        printf("STEP 010\n"); // TEST
+        sleep(10);
         break;
 
 
