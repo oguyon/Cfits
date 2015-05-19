@@ -165,6 +165,7 @@ if [ $1 == "optsingle" ]; then
 	searchtime=7200.0
 	computecontrast=0
 	inputmode=2
+	exit
 fi
 
 
