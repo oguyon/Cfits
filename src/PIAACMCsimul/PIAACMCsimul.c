@@ -5805,6 +5805,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         }
         fclose(fp);
 
+        printf("STEP 014\n"); // TEST
+        sleep(10);
 
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
@@ -5812,7 +5814,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         else
             NBiter = 50;
 
-        printf("STEP 014\n"); // TEST
+        printf("STEP 015\n"); // TEST
         sleep(10);
 
         sprintf(fname, "%s/FPMresp%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
