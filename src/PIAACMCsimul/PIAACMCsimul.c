@@ -3135,6 +3135,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
     double pha;
 
     int ret;
+    char command[200];
     double rad1, rad2;
 
 
