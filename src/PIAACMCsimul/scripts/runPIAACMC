@@ -1864,7 +1864,6 @@ PIAACMC_nbiterSA=10000
 PIAACMC_nbiterDS=100
 piaacmcsimrun $1 13
 exit
-sleep 1000
 EOF
  else
  echo "skip step 101 [ 13] search for optimal solution"
@@ -1873,6 +1872,7 @@ fi
 state=102
 fi
 
+sleep 1000
 
 
 if [ $state -eq $statestop ] 
