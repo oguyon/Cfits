@@ -161,11 +161,10 @@ optimizeloop=0
 
 
 if [ $1 == "optsingle" ]; then
-	echo "optimize single configuration (loop)"
+	echo "optimize single configuration"
 	searchtime=7200.0
 	computecontrast=0
 	inputmode=2
-	exit
 fi
 
 
