@@ -591,7 +591,7 @@ long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name, int mode
             printf("LAMBDA = %10.5g m    SCALE = %10.5g m/pix   size=%4ld  rad=%g\n", optsyst[0].lambdaarray[k], fpscale, size, piaacmc[0].fpmRad);
             printf("Zone 0 amplitude [%ld]: %lf\n", piaacmc[0].zoneaID, data.image[piaacmc[0].zoneaID].array.D[0]);
             printf("Zone 0 thickness: %g\n", data.image[piaacmc[0].zonezID].array.D[0]);
-        
+  
             for(ii=0; ii<size; ii++)
                 for(jj=0; jj<size; jj++)
                 {
@@ -2796,6 +2796,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         save_fits("fpmza", fname);
     }
 
+    printf(" piaacmc[0].fpmaskamptransm = %f \n", piaacmc[0].fpmaskamptransm);
+    
 
 
 

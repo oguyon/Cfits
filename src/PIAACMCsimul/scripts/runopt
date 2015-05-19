@@ -431,7 +431,6 @@ else
 	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
 	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
-
 	#touch $file1
 fi
 
