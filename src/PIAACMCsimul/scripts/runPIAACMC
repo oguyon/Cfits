@@ -1872,7 +1872,6 @@ fi
 state=102
 fi
 
-sleep 1000
 
 
 if [ $state -eq $statestop ] 
