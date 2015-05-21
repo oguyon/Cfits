@@ -432,7 +432,7 @@ else
 	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 	#touch $file1
-	exit
+	exit # TEST
 fi
 
 
