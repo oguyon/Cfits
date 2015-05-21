@@ -432,7 +432,6 @@ else
 	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 	#touch $file1
-	exit # TEST
 fi
 
 
@@ -473,5 +472,8 @@ if [ $inputmode -eq 3 ]; then
 	funcprocess							
 	checkerrorstatus
 fi
+
+
+# lambdaarray initialized in PIAACMCsimul_init
 
 
