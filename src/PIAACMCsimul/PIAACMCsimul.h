@@ -32,7 +32,7 @@ typedef struct {
     int nblambda;
     double lambda; // central wavelength [m]
     double lambdaB; // spectral bandwidth [%]
-
+    double lambdaarray[2000]; // [m]  lambdaarray is also defined in OptSystProp structure
 
 
     // ====== Overall OPTICAL Geometry ===============

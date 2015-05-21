@@ -2211,13 +2211,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     }
 
     
-
-
-    
-
-
-
-
     sprintf(fname, "%s/conf_PIAAmaterial_name.txt", piaacmcconfdir );
     if( (fp = fopen(fname, "r")) != NULL)
     {
@@ -2263,6 +2256,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     printf("LAMBDAEND = %g\n", LAMBDAEND);
 
 
+    for(k=0; k<piaacmc[0].nblambda; k++)
+        piaacmc[0].lambdaarray[k] = LAMBDASTART + (0.5+k)*(LAMBDAEND-LAMBDASTART)/piaacmc[0].nblambda;
 
 
 
@@ -3046,12 +3041,12 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
             }
             ri0 = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, design[index].lambda); // refractive index at central lambda
             sag2opd_coeff0 = (ri0-1.0)/2.0;
-            for(k=0; k<design[index].nblambda; k++)
+            for(k=0; k<piaacmc[0].nblambda; k++)
             {
                 // sag to OPD coeff
-                ri = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, optsyst[0].lambdaarray[k]); // refractive index
+                ri = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, piaacmc[0].lambdaarray[k]); // refractive index
                 sag2opd_coeff = (ri-1.0)/2.0;
-                fprintf(fpri, "%g %.16f %.16f %.16f %.16f\n", optsyst[0].lambdaarray[k], ri, ri0, sag2opd_coeff, sag2opd_coeff/sag2opd_coeff0);
+                fprintf(fpri, "%g %.16f %.16f %.16f %.16f\n", piaacmc[0].lambdaarray[k], ri, ri0, sag2opd_coeff, sag2opd_coeff/sag2opd_coeff0);
                 for(ii=0; ii<size*size; ii++)
                     data.image[IDpiaar1zsag].array.F[k*size*size+ii] = sag2opd_coeff * data.image[IDpiaam1z].array.F[ii] / sag2opd_coeff0;
             }
