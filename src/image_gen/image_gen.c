@@ -992,14 +992,18 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
     double piston;
     long SEGcnt = 0;
 
-	int mkInfluenceFunctions = 1;
-	long IDif;
-	int seg;
-	long kk, jj;
-	float xc, yc, tc;
+    int mkInfluenceFunctions = 1;
+    long IDif;
+    int seg;
+    long kk, jj;
+    float xc, yc, tc;
 
     size2 = size*size;
 
+
+    ID = variable_ID("hexpupnoif");
+    if(ID!=-1)
+        mkInfluenceFunctions = 0;
 
     ID = variable_ID("HEXPISTONerr");
     if(ID!=-1)
@@ -1131,48 +1135,49 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
     delete_image_ID("_TMPdisk");
 
     printf("%ld segments\n",SEGcnt);
-    
-    
+
+
     if(mkInfluenceFunctions==1) // TT and focus for each segment
     {
-		IDif = create_3Dimage_ID("hexpupif", size, size, 3*SEGcnt);
-		for(seg=0;seg<SEGcnt;seg++)
-		{
-			// piston
-			kk = 3*seg; 
-			xc = 0.0;
-			yc = 0.0;
-			tc = 0.0;
-			for(ii=0;ii<size;ii++)
-			for(jj=0;jj<size;jj++)
-				{
-					if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
-						{
-							data.image[IDif].array.F[kk*size2+jj*size+ii] = 1.0;
-							xc += 1.0*ii;
-							yc += 1.0*jj;
-							tc += 1.0;
-						}
-				}
-			xc /= tc;
-			yc /= tc;
-			
-			// tip and tilt
-			for(ii=0;ii<size;ii++)
-			for(jj=0;jj<size;jj++)
-				{
-					if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
-						{
-							
-							data.image[IDif].array.F[(kk+1)*size2+jj*size+ii] = 1.0*ii-xc;
-							data.image[IDif].array.F[(kk+2)*size2+jj*size+ii] = 1.0*jj-yc;
-						}
-				}			
-		}
-	}
+        IDif = create_3Dimage_ID("hexpupif", size, size, 3*SEGcnt);
+        for(seg=0; seg<SEGcnt; seg++)
+        {
+            // piston
+            kk = 3*seg;
+            xc = 0.0;
+            yc = 0.0;
+            tc = 0.0;
+            for(ii=0; ii<size; ii++)
+                for(jj=0; jj<size; jj++)
+                {
+                    if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
+                    {
+                        data.image[IDif].array.F[kk*size2+jj*size+ii] = 1.0;
+                        xc += 1.0*ii;
+                        yc += 1.0*jj;
+                        tc += 1.0;
+                    }
+                }
+            xc /= tc;
+            yc /= tc;
+
+            // tip and tilt
+            for(ii=0; ii<size; ii++)
+                for(jj=0; jj<size; jj++)
+                {
+                    if(fabs(data.image[ID].array.F[jj*size+ii]-(seg+1.0))<0.01)
+                    {
+
+                        data.image[IDif].array.F[(kk+1)*size2+jj*size+ii] = 1.0*ii-xc;
+                        data.image[IDif].array.F[(kk+2)*size2+jj*size+ii] = 1.0*jj-yc;
+                    }
+                }
+        }
+    }
 
     return(ID);
 }
+
 
 
 

@@ -14,7 +14,7 @@ dmC="dmdisp3" # DM control channel
 dmRM="dmdisp7" # DM actuation channel for RM matrix
 wfsimcam="imcam" # WFS camera image
 
-
+shmimviewexec="shmimview"
 
 
 # ======================== END OF USER EDIT SECTION =====================
@@ -357,6 +357,7 @@ menuname="TOP MENU \n [Active conf = ${confselected}]"
 menuitems=( "C" "Configure AO loop" )
 menuitems+=( "L" "Control AO loop" )
 menuitems+=( "T" "Test mode: simulated AO system" )
+menuitems+=( "V" "View / monitor" )
 
 
 
@@ -384,6 +385,10 @@ state="menucontrolloop"
    	 T) 
 menutop_default="T"
 state="menutestmode"   
+;;
+   	 V) 
+menutop_default="V"
+state="menuview"   
 ;;
 	esac;;
    1) state="menuexit";;   
@@ -772,6 +777,70 @@ fi
 
 
 
+
+
+
+
+
+
+
+
+#  VIEW MODE
+if [ $state = "menuview" ]; then
+stateok=1
+
+
+
+menuname="VIEW MODE - LOOP ${LOOPNUMBER}"
+
+
+
+menuitems=( "H" "help" )
+menuitems+=( "-" " " )
+menuitems+=( "wfsv" "View wavefront sensor image stream" )
+menuitems+=( "dmcv" "View DM control stream" )
+
+
+
+dialog --title "TEST MODE" \
+--ok-label "Select" \
+--cancel-label "Top" \
+--help-button --help-label "Exit" \
+--default-item "${menutestmode_default}" \
+ --menu "$menuname" \
+ 50 80 100 "${menuitems[@]}"  2> $tempfile
+
+retval=$?
+choiceval=$(cat $tempfile)
+
+case $retval in
+   0) # button
+	case $choiceval in
+   	 H)
+dialog --title "Help" --msgbox 'View shared memory streams / monitor loop\n
+\n
+executable to view shared memory streams: $shmimviewexec\n
+' 40 80
+menutestmode_default="H"
+;;
+   	 wfsv)
+$shmimviewexec /tmp/aol$LOOPNUMBER_.im.shm
+state="menuview"
+;;   
+   	 Stop) 
+if [ $testloopstatus = "ON" ]; then
+TestModeStop
+menutestmode_default="Stop"
+fi
+state="menutestmode"
+;;  
+	esac;;
+   1) state="menutop";;   
+  2) state="menuexit";;
+   255) state="menuexit";;
+esac
+
+fi
 
 
 
