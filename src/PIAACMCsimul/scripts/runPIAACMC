@@ -254,7 +254,7 @@ echo "piaa0pos = $piaa0pos"
 SCORINGMASKTYPE=1
 
 
-
+NBpropStep=100
 
 # PARAMETER LOAD SCRIPT TO BE EXECUTED - DEFAULT VALUES
 startupfile="clistartup$pid.txt"
@@ -995,6 +995,9 @@ fi
 
 
 
+
+
+
 #
 # STEP 004: compute Lyot stops shapes and locations
 # This is done in monochromatic light 
@@ -1019,11 +1022,19 @@ PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_nbpropstep=50
+PIAACMC_nbpropstep=$NBpropStep
 piaacmcsimrun $1 5
 exit
 EOF
+
 mv ./$1/psfi0.fits ./$1/psfi0_step004.fits
+
+cp ./$1/LMintC.fits ./$1/LMintC_step004.fits
+cp ./$1/LyotStop0.fits ./$1/LyotStop0_step004.fits
+cp ./$1/LyotStop1.fits ./$1/LyotStop1_step004.fits
+cp ./$1/LyotStop2.fits ./$1/LyotStop2_step004.fits
+cp ./$1/LyotStop3.fits ./$1/LyotStop3_step004.fits
+
 cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_step004.conf
 touch ./$1/step004.txt
  else
@@ -1038,7 +1049,6 @@ echo "STATE STOP POINT (004)"
 cleanup
 exit
 fi
-
 
 
 
@@ -1085,9 +1095,6 @@ fi
 
 
 
-
-
-
 # STEP 006: compute Lyot stops shapes and locations, 2nd pass, ~60% throughput)
 # This is done in monochromatic light 
 #
@@ -1111,12 +1118,19 @@ PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_nbpropstep=100
+PIAACMC_nbpropstep=$NBpropStep
 piaacmcsimrun $1 5
 exit
 EOF
 mv ./$1/psfi0.fits ./$1/psfi0_step006.fits
 cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_step006.conf
+
+cp ./$1/LMintC.fits ./$1/LMintC_step006.fits
+cp ./$1/LyotStop0.fits ./$1/LyotStop0_step006.fits
+cp ./$1/LyotStop1.fits ./$1/LyotStop1_step006.fits
+cp ./$1/LyotStop2.fits ./$1/LyotStop2_step006.fits
+cp ./$1/LyotStop3.fits ./$1/LyotStop3_step006.fits
+
 touch ./$1/step006.txt
  else
  printf "skip step 006 [  5] (Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput)\n"
@@ -1130,8 +1144,6 @@ echo "STATE STOP POINT (006)"
 cleanup
 exit
 fi
-
-
 
 
 # STEP 007: tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
@@ -1179,7 +1191,6 @@ echo "STATE STOP POINT (007)"
 cleanup
 exit
 fi
-
 
 
 
@@ -1258,12 +1269,20 @@ PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm1
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_nbpropstep=100
+PIAACMC_nbpropstep=$NBpropStep
 piaacmcsimrun $1 5
 exit
 EOF
 mv ./$1/psfi0.fits ./$1/psfi0_step009.fits
 cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_step009.conf
+
+cp ./$1/LMintC.fits ./$1/LMintC_step009.fits
+cp ./$1/OAincoh.fits ./$1/OAincoh_step009.fits 
+cp ./$1/LyotStop0.fits ./$1/LyotStop0_step009.fits
+cp ./$1/LyotStop1.fits ./$1/LyotStop1_step009.fits
+cp ./$1/LyotStop2.fits ./$1/LyotStop2_step009.fits
+cp ./$1/LyotStop3.fits ./$1/LyotStop3_step009.fits
+
 touch ./$1/step009.txt
  else
  printf "skip step 009 [  5] (Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput)\n"
@@ -1301,7 +1320,7 @@ PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm1
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_nbpropstep=100
+PIAACMC_nbpropstep=$NBpropStep
 piaacmcsimrun $1 1
 exit
 EOF
@@ -1320,7 +1339,6 @@ echo "STATE STOP POINT (010)"
 cleanup
 exit
 fi
-
 
 
 
@@ -1375,6 +1393,9 @@ exit
 fi
 
 
+
+echo "TEST STOP"
+sleep 3600000 # TEST
 
 
 
@@ -1457,7 +1478,7 @@ PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_nbpropstep=100
+PIAACMC_nbpropstep=$NBpropStep
 PIAACMC_save=1
 piaacmcsimrun $1 5
 exit
@@ -1465,6 +1486,14 @@ EOF
 mv ./$1/psfi0.fits ./$1/psfi0_step$step.fits
 cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_step$step.conf
 cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_idealmonomask.conf
+
+cp ./$1/LMintC.fits ./$1/LMintC_step013.fits
+cp ./$1/OAincoh.fits ./$1/OAincoh_step013.fits 
+cp ./$1/LyotStop0.fits ./$1/LyotStop0_step013.fits
+cp ./$1/LyotStop1.fits ./$1/LyotStop1_step013.fits
+cp ./$1/LyotStop2.fits ./$1/LyotStop2_step013.fits
+cp ./$1/LyotStop3.fits ./$1/LyotStop3_step013.fits
+
 touch ./$1/step013.txt
  else
  printf "skip step 013 [  5] (Compute Lyot stops shapes and locations, 3rd pass, 70%% throughput)\n"
@@ -1501,7 +1530,7 @@ PIAACMC_resolved=0
 PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_nbpropstep=100
+PIAACMC_nbpropstep=$NBpropStep
 piaacmcsimrun $1 1
 exit
 EOF
