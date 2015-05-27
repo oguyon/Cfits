@@ -1394,8 +1394,6 @@ fi
 
 
 
-echo "TEST STOP"
-sleep 3600000 # TEST
 
 
 
