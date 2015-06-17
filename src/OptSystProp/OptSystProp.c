@@ -477,8 +477,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                                 data.image[IDim].array.F[size2*kl+jj1*size+ii1] += im;
                             }
                         }
-                // save_fits("dftgridre", "!dftgridre.fits");
-                // save_fits("dftgridim", "!dftgridim.fits");
+                
+                save_fits("dftgridre", "!dftgridre.fits");
+                save_fits("dftgridim", "!dftgridim.fits");
+                
                 mk_complex_from_reim("dftgridre", "dftgridim", "_WFctmpc");
                 delete_image_ID("dftgridre");
                 delete_image_ID("dftgridim");
@@ -507,20 +509,21 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 sleep(10); // TEST*/
                 fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 delete_image_ID("_WFctmpc");
-/*                sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
+
+                sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
                 r = system(command);
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
                 r = system(command);
-*/
+
                 // TEST
-  /*              mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
+                mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
                 sprintf(fname, "!%s/test_twfre.fits", savedir);
                 save_fits("_twfre", fname);
                 sprintf(fname, "!%s/test_twfim.fits", savedir);
                 save_fits("_twfim", fname);
                 delete_image_ID("_twfre");
                 delete_image_ID("_twfim");
-*/
+
 
                 //
                 // INTERPOLATE SPARSE RESULT ON CONTINUOUS GRID
@@ -560,12 +563,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                                     data.image[IDim1].array.F[size2*kl+jj*size+ii] += im*convkern[j*(2*gsize+1)+i];
                                 }
                         }
+          
                 // TEST
-        /*        sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
+          
+                sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
                 save_fits("dftgridre1", fname);
-                sprintf(fname, "!%s/test_dftgridim1.elem%ld.fits", savedir, elem);
+                sprintf(fname, "!%s/test_dftgridim1_elem%ld.fits", savedir, elem);
                 save_fits("dftgridim1", fname);
-          */      
+                
                 
                 free(convkern);
                 delete_image_ID("_WFcout");

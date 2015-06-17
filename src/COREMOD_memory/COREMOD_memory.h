@@ -154,7 +154,8 @@ long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1);
 long COREMOD_MEMORY_image_set_createsem(char *IDname);
 long COREMOD_MEMORY_image_set_sempost(char *IDname);
 long COREMOD_MEMORY_image_set_semwait(char *IDname);
-long COREMOD_MEMORY_image_set_semwait_OR_2(char *IDname1, char *IDname2); // wait for either of 2 semaphores
+long COREMOD_MEMORY_image_set_semwait_OR_IDarray(long *IDarray, long NB_ID);
+long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID);
 long COREMOD_MEMORY_image_set_semflush(char *IDname);
 
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);

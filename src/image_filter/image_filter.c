@@ -391,15 +391,24 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
     long i,j, k;
     float sum;
     double tot;
-
+    long jmax;
+    
+    
     // printf("sigma = %f\n",sigma);
     // printf("filter size = %d\n",filter_size);
+
+    printf("STEP 000\n"); 
+    fflush(stdout);
 
     array = (float*) malloc((2*filter_size+1)*sizeof(float));
     ID = image_ID(ID_name);
     naxis = data.image[ID].md[0].naxis;
     for(kk=0; kk<naxis; kk++)
         naxes[kk] = data.image[ID].md[0].size[kk];
+
+
+    printf("STEP 010\n"); 
+    fflush(stdout);
 
     if(naxis==2)
         naxes[2] = 1;
@@ -411,6 +420,10 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
     // save_fl_fits("gtmp","!gtmp0");
     // ID_tmp = image_ID("gtmp");
     ID_out = image_ID(out_name);
+    list_image_ID();
+
+    printf("STEP 020\n"); 
+    fflush(stdout);
 
     sum=0.0;
     for (i=0; i<(2*filter_size+1); i++)
@@ -427,6 +440,8 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
         //    printf("%ld %f\n",i,array[i]);
     }
 
+    printf("STEP 030\n"); 
+    fflush(stdout);
 
     for(k=0; k<naxes[2]; k++)
     {
@@ -463,21 +478,36 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 
         }
 
+    printf("STEP 040\n");
+    fflush(stdout);
 
 
         for (ii = 0; ii < naxes[0]; ii++)
         {
+         //   printf("A jj : 0 -> %ld/%ld\n", naxes[1]-(2*filter_size+1), naxes[1]);
+         //   fflush(stdout);
             for (jj = 0; jj < naxes[1]-(2*filter_size+1); jj++)
             {
+         //       printf("00: %ld/%ld\n", k*naxes[0]*naxes[1]+(jj+filter_size)*naxes[0]+ii, naxes[0]*naxes[1]*naxes[2]);
+         //       printf("01: %ld/%ld\n", (jj+j)*naxes[0]+ii, naxes[0]*naxes[1]);
+                fflush(stdout);
                 for (j=0; j<(2*filter_size+1); j++)
                     data.image[ID_out].array.F[k*naxes[0]*naxes[1]+(jj+filter_size)*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj+j)*naxes[0]+ii];
             }
 
+        //    printf("B jj : 0 -> %d/%ld\n", filter_size, naxes[1]);
+        //    fflush(stdout);
             for (jj=0; jj<filter_size; jj++)
             {
                 tot = 0.0;
-                for(j=filter_size-jj; j<(2*filter_size+1); j++)
+                jmax = (2*filter_size+1);
+                if(jj-filter_size+jmax > naxes[1])
+                    jmax = naxes[1]-jj+filter_size;
+                for(j=filter_size-jj; j<jmax; j++)
                 {
+         //           printf("02: %ld/%ld\n", k*naxes[0]*naxes[1]+jj*naxes[0]+ii, naxes[0]*naxes[1]*naxes[2]);
+         //           printf("03: %ld/%ld\n", (jj-filter_size+j)*naxes[0]+ii, naxes[0]*naxes[1]);
+                    fflush(stdout);                                              
                     data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj-filter_size+j)*naxes[0]+ii];
                     tot += array[j];
                 }
@@ -497,6 +527,9 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
         }
 
     }
+    
+    printf("STEP 100\n"); 
+    fflush(stdout);
 
 
     //  save_fl_fits("gtmp","!gtmp");

@@ -62,7 +62,7 @@ int Verbose = 0;
 int Listimfile = 0;
 DATA data;
 
-  char *line;
+char *line;
 int rlquit = false;
 int CLIexecuteCMDready = 0;
 
@@ -148,31 +148,32 @@ int exitCLI()
 
 int printInfo()
 {
-  float f1;
+    float f1;
 
-  printf("--------------- GENERAL ----------------------\n");
-  printf("%s VERSION   %s\n",  PACKAGE_NAME, PACKAGE_VERSION );
-  printf("%s BUILT   %s %s\n", __FILE__,__DATE__,__TIME__);
-  printf("\n");
-  printf("--------------- SETTINGS ---------------------\n");
-  if(data.precision==0)
-    printf("Default precision upon startup : float\n");
-  if(data.precision==1)
-    printf("Default precision upon startup : double\n");
-  printf("\n");
-  printf("--------------- LIBRARIES --------------------\n");
-  printf("READLINE : version %x\n",RL_READLINE_VERSION);
+    printf("--------------- GENERAL ----------------------\n");
+    printf("%s VERSION   %s\n",  PACKAGE_NAME, PACKAGE_VERSION );
+    printf("%s BUILT   %s %s\n", __FILE__,__DATE__,__TIME__);
+    printf("\n");
+    printf("--------------- SETTINGS ---------------------\n");
+    if(data.precision==0)
+        printf("Default precision upon startup : float\n");
+    if(data.precision==1)
+        printf("Default precision upon startup : double\n");
+    printf("\n");
+    printf("--------------- LIBRARIES --------------------\n");
+    printf("READLINE : version %x\n",RL_READLINE_VERSION);
 # ifdef _OPENMP
-  printf("OPENMP   : Compiled by an OpenMP-compliant implementation.\n");
+    printf("OPENMP   : Compiled by an OpenMP-compliant implementation.\n");
 # endif
-  printf("CFITSIO  : version %f\n", fits_get_version(&f1));
-  printf("\n");
-  printf("--------------- DIRECTORIES ------------------\n");
-  printf("CONFIGDIR = %s\n", CONFIGDIR);
-  printf("SOURCEDIR = %s\n", SOURCEDIR);
- 
-  return(0);
+    printf("CFITSIO  : version %f\n", fits_get_version(&f1));
+    printf("\n");
+    printf("--------------- DIRECTORIES ------------------\n");
+    printf("CONFIGDIR = %s\n", CONFIGDIR);
+    printf("SOURCEDIR = %s\n", SOURCEDIR);
+
+    return(0);
 }
+
 
 int help()
 {
@@ -213,20 +214,23 @@ int help_cmd()
   return 0;
 }
 
+
+
 int help_module()
 {
-  long i;
+    long i;
 
-  if(data.cmdargtoken[1].type == 3)
-    list_commands_module(data.cmdargtoken[1].val.string);
-  else
+    if(data.cmdargtoken[1].type == 3)
+        list_commands_module(data.cmdargtoken[1].val.string);
+    else
     {
-      for(i=0;i<data.NBmodule;i++)
-	printf("%5ld  %20s    %s\n", i, data.module[i].name, data.module[i].info);
+        for(i=0; i<data.NBmodule; i++)
+            printf("%5ld  %20s    %s\n", i, data.module[i].name, data.module[i].info);
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 int set_default_precision_single()
@@ -235,11 +239,16 @@ int set_default_precision_single()
   return 0;
 }
 
+
+
+
 int set_default_precision_double()
 {
   data.precision  = 1;
   return 0;
 }
+
+
 
 int cfits_usleep_cli()
 {
@@ -258,140 +267,141 @@ int cfits_usleep_cli()
 
 int CLI_execute_line()
 {
-	long i, j;
-	char *cmdargstring;
+    long i, j;
+    char *cmdargstring;
     char str[200];
-	FILE *fp;
-	time_t t;
-	 struct tm *uttime;
-	 struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
-	 char command[200];
-	 int r;
-	 
+    FILE *fp;
+    time_t t;
+    struct tm *uttime;
+    struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    char command[200];
+    int r;
+
     if (line[0]=='!')
+    {
+        line[0] = ' ';
+        if(system(line)==-1)
         {
-            line[0] = ' ';
-            if(system(line)==-1)
-            {
-                printERROR(__FILE__,__func__,__LINE__,"system call error");
-                exit(1);
-            }
-            data.CMDexecuted = 1;
+            printERROR(__FILE__,__func__,__LINE__,"system call error");
+            exit(1);
         }
-        else if (line[0]=='#')
+        data.CMDexecuted = 1;
+    }
+    else if (line[0]=='#')
+    {
+        // do nothing... this is a comment
+        data.CMDexecuted = 1;
+    }
+    else
+    {
+        // some initialization
+        data.parseerror = 0;
+        data.calctmp_imindex = 0;
+        for(i=0; i<NB_ARG_MAX; i++)
+            data.cmdargtoken[0].type = 0;
+
+        if(data.CLIlogON==1)
         {
-            // do nothing... this is a comment
-            data.CMDexecuted = 1;
+            t = time(NULL);
+            uttime = gmtime(&t);
+            clock_gettime(CLOCK_REALTIME, thetime);
+
+            sprintf(data.CLIlogname, "%s/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, data.processname);
+
+            fp = fopen(data.CLIlogname, "a");
+            if(fp==NULL)
+            {
+                printf("ERROR: cannot log into file %s\n", data.CLIlogname);
+                sprintf(command, "mkdir -p %s/logdir/%04d%02d%02d\n", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday);
+                r = system(command);
+            }
+            else
+            {
+                fprintf(fp, "%04d/%02d/%02d %02d:%02d:%02d.%09ld %10s %6ld %s\n", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, data.processname, (long) getpid(), line);
+                fclose(fp);
+            }
         }
-        else
+
+        data.cmdNBarg = 0;
+        cmdargstring = strtok (line," ");
+        while (cmdargstring!= NULL)
         {
-            // some initialization
-            data.parseerror = 0;
-            data.calctmp_imindex = 0;
-            for(i=0; i<NB_ARG_MAX; i++)
-                data.cmdargtoken[0].type = 0;
-
-			if(data.CLIlogON==1)
-			{
-				t = time(NULL);
-                uttime = gmtime(&t);
-                clock_gettime(CLOCK_REALTIME, thetime);                       
-				
-				sprintf(data.CLIlogname, "%s/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, data.processname);
-				                        
-				fp = fopen(data.CLIlogname, "a");
-				if(fp==NULL)
-				{
-					printf("ERROR: cannot log into file %s\n", data.CLIlogname);
-					sprintf(command, "mkdir -p %s/logdir/%04d%02d%02d\n", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday);
-					r = system(command);
-				}
-				else
-				{
-					fprintf(fp, "%04d/%02d/%02d %02d:%02d:%02d.%09ld %10s %6ld %s\n", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec, data.processname, (long) getpid(), line);
-				fclose(fp);
-				}
-			}
-
-            data.cmdNBarg = 0;
-            cmdargstring = strtok (line," ");
-            while (cmdargstring!= NULL)
+            if((cmdargstring[0]=='\"')&&(cmdargstring[strlen(cmdargstring)-1]=='\"'))
             {
-                if((cmdargstring[0]=='\"')&&(cmdargstring[strlen(cmdargstring)-1]=='\"'))
-                {
-                    printf("Unprocessed string : ");
-                    for(j=0; j<strlen(cmdargstring)-2; j++)
-                        cmdargstring[j] = cmdargstring[j+1];
-                    cmdargstring[j] = '\0';
-                    printf("%s\n", cmdargstring);
-                    data.cmdargtoken[data.cmdNBarg].type = 6;
-                    sprintf(data.cmdargtoken[data.cmdNBarg].val.string, "%s", cmdargstring);
-                }
-                else
-                {
-                    sprintf(str,"%s\n", cmdargstring);
-                    yy_scan_string(str);
-                    data.calctmp_imindex = 0;
-                    yyparse ();
-                }
-                cmdargstring = strtok (NULL, " ");
-                data.cmdNBarg++;
+                printf("Unprocessed string : ");
+                for(j=0; j<strlen(cmdargstring)-2; j++)
+                    cmdargstring[j] = cmdargstring[j+1];
+                cmdargstring[j] = '\0';
+                printf("%s\n", cmdargstring);
+                data.cmdargtoken[data.cmdNBarg].type = 6;
+                sprintf(data.cmdargtoken[data.cmdNBarg].val.string, "%s", cmdargstring);
             }
-            data.cmdargtoken[data.cmdNBarg].type = 0;
-            yylex_destroy();
-
-            i=0;
-            if(data.Debug==1)
-                while(data.cmdargtoken[i].type != 0)
-                {
-                    printf("TOKEN %ld type : %d\n", i, data.cmdargtoken[i].type);
-                    if(data.cmdargtoken[i].type==1) // double
-                        printf("\t double : %g\n", data.cmdargtoken[i].val.numf);
-                    if(data.cmdargtoken[i].type==2) // long
-                        printf("\t long   : %ld\n", data.cmdargtoken[i].val.numl);
-                    if(data.cmdargtoken[i].type==3) // new variable/image
-                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-                    if(data.cmdargtoken[i].type==4) // existing image
-                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-                    if(data.cmdargtoken[i].type==5) // command
-                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-                    if(data.cmdargtoken[i].type==6) // unprocessed string
-                        printf("\t string : %s\n", data.cmdargtoken[i].val.string);
-                    i++;
-                }
-            if(data.parseerror==0)
+            else
             {
-                if(data.cmdargtoken[0].type==5)
-                {
-                    if(data.Debug==1)
-                        printf("EXECUTING COMMAND %ld (%s)\n", data.cmdindex, data.cmd[data.cmdindex].key);
-                    data.cmd[data.cmdindex].fp();
-                    data.CMDexecuted = 1;
-                }
+                sprintf(str,"%s\n", cmdargstring);
+                yy_scan_string(str);
+                data.calctmp_imindex = 0;
+                yyparse ();
             }
-            for(i=0; i<data.calctmp_imindex; i++)
+            cmdargstring = strtok (NULL, " ");
+            data.cmdNBarg++;
+        }
+        data.cmdargtoken[data.cmdNBarg].type = 0;
+        yylex_destroy();
+
+        i=0;
+        if(data.Debug==1)
+            while(data.cmdargtoken[i].type != 0)
             {
-                sprintf(calctmpimname,"_tmpcalc%ld",i);
-                if(image_ID(calctmpimname)!=-1)
-                {
-                    if(data.Debug==1)
-                        printf("Deleting %s\n", calctmpimname);
-                    delete_image_ID(calctmpimname);
-                }
+                printf("TOKEN %ld type : %d\n", i, data.cmdargtoken[i].type);
+                if(data.cmdargtoken[i].type==1) // double
+                    printf("\t double : %g\n", data.cmdargtoken[i].val.numf);
+                if(data.cmdargtoken[i].type==2) // long
+                    printf("\t long   : %ld\n", data.cmdargtoken[i].val.numl);
+                if(data.cmdargtoken[i].type==3) // new variable/image
+                    printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                if(data.cmdargtoken[i].type==4) // existing image
+                    printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                if(data.cmdargtoken[i].type==5) // command
+                    printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                if(data.cmdargtoken[i].type==6) // unprocessed string
+                    printf("\t string : %s\n", data.cmdargtoken[i].val.string);
+                i++;
             }
-
-
-            if(!((data.cmdargtoken[0].type==3)||(data.cmdargtoken[0].type==6)))
+        if(data.parseerror==0)
+        {
+            if(data.cmdargtoken[0].type==5)
+            {
+                if(data.Debug==1)
+                    printf("EXECUTING COMMAND %ld (%s)\n", data.cmdindex, data.cmd[data.cmdindex].key);
+                data.cmd[data.cmdindex].fp();
                 data.CMDexecuted = 1;
+            }
+        }
+        for(i=0; i<data.calctmp_imindex; i++)
+        {
+            sprintf(calctmpimname,"_tmpcalc%ld",i);
+            if(image_ID(calctmpimname)!=-1)
+            {
+                if(data.Debug==1)
+                    printf("Deleting %s\n", calctmpimname);
+                delete_image_ID(calctmpimname);
+            }
+        }
 
 
-       add_history(line);
+        if(!((data.cmdargtoken[0].type==3)||(data.cmdargtoken[0].type==6)))
+            data.CMDexecuted = 1;
 
-		}
+
+        add_history(line);
+
+    }
 
 
-	return(0);
+    return(0);
 }
+
 
 
 
@@ -493,7 +503,7 @@ int main(int argc, char *argv[])
     data.NBKEWORD_DFT = 10; // allocate memory for 10 keyword per image
     sprintf(data.SAVEDIR, ".");
 
-    data.CLIlogON = 1; // log every command
+    data.CLIlogON = 0; // log every command
     data.fifoON = 1;
 
 
@@ -1446,152 +1456,201 @@ int help_command(char *cmdkey)
 
 int CLI_checkarg0(int argnum, int argtype, int errmsg)
 {
-  int rval; // 0 if OK, 1 if not
+    int rval; // 0 if OK, 1 if not
+    long IDv;
 
+    rval = 2;
 
-  rval = 2;
+    switch (argtype) {
 
-  switch (argtype) {
+    case 1:  // should be floating point
+        switch (data.cmdargtoken[argnum].type) {
+        case 1:
+            rval = 0;
+            break;
+        case 2: // convert long to float
+            if(data.Debug>0)
+                printf("Converting arg %d to floating point number\n", argnum);
+            data.cmdargtoken[argnum].val.numf = (double) data.cmdargtoken[argnum].val.numl;
+            data.cmdargtoken[argnum].type = 1;
+            rval = 0;
+            break;
+        case 3:
+            IDv = variable_ID(data.cmdargtoken[argnum].val.string);
+            if(IDv == -1)
+                {
+                    if(errmsg==1)
+                        printf("arg %d is string (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
+                    rval = 1;
+                }
+            else
+                {
+                    switch (data.variable[IDv].type) {
+                        case 0: // double
+                            data.cmdargtoken[argnum].val.numf = data.variable[IDv].value.f;
+                            data.cmdargtoken[argnum].type = 1;
+                            rval = 0;
+                            break;
+                        case 1: // long
+                            data.cmdargtoken[argnum].val.numf = 1.0*data.variable[IDv].value.l;
+                            data.cmdargtoken[argnum].type = 1;
+                            rval = 0;
+                            break;
+                        default:
+                            if(errmsg==1)
+                            printf("arg %d is string (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
+                            rval = 1;
+                            break;
+                        }
+                }
+            break;
+        case 4:
+            if(errmsg==1)
+                printf("arg %d is image (=\"%s\"), but should be floating point number\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 5:
+            if(errmsg==1)
+                printf("arg %d is command (=\"%s\"), but should be floating point number\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 6:
+            data.cmdargtoken[argnum].val.numf = atof(data.cmdargtoken[argnum].val.string);
+            data.cmdargtoken[argnum].type = 1;
+            rval = 0;
+            break;
+        }
+        break;
 
-  case 1:  // should be floating point
-    switch (data.cmdargtoken[argnum].type) {
-    case 1:
-      rval = 0;
-      break;
-    case 2: // convert long to float
-      if(data.Debug>0)
-		printf("Converting arg %d to floating point number\n", argnum);
-      data.cmdargtoken[argnum].val.numf = (double) data.cmdargtoken[argnum].val.numl;
-      data.cmdargtoken[argnum].type = 1;
-      rval = 0;
-      break;
-    case 3:
-      if(errmsg==1)
-		printf("arg %d is string (=\"%s\"), but should be floating point number\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 4:
-     if(errmsg==1)
-           printf("arg %d is image (=\"%s\"), but should be floating point number\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 5:
-      if(errmsg==1)
-           printf("arg %d is command (=\"%s\"), but should be floating point number\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;      
-    case 6:
-      data.cmdargtoken[argnum].val.numf = atof(data.cmdargtoken[argnum].val.string);
-      data.cmdargtoken[argnum].type = 1;
-      rval = 0;
-      break;
+    case 2:  // should be integer
+        switch (data.cmdargtoken[argnum].type) {
+        case 1:
+            if(errmsg==1)
+                printf("converting floating point arg %d to integer\n", argnum);
+            data.cmdargtoken[argnum].val.numl = (long) (data.cmdargtoken[argnum].val.numf+0.5);
+            data.cmdargtoken[argnum].type = 2;
+            rval = 0;
+            break;
+        case 2:
+            rval = 0;
+            break;
+        case 3:
+            IDv = variable_ID(data.cmdargtoken[argnum].val.string);
+            if(IDv == -1)
+                {
+                    if(errmsg==1)
+                        printf("arg %d is string (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
+                    rval = 1;
+                }
+            else
+                {
+                    switch (data.variable[IDv].type) {
+                        case 0: // double
+                            data.cmdargtoken[argnum].val.numl = (long) (data.variable[IDv].value.f);
+                            data.cmdargtoken[argnum].type = 2;
+                            rval = 0;
+                            break;
+                        case 1: // long
+                            data.cmdargtoken[argnum].val.numl = data.variable[IDv].value.l;
+                            data.cmdargtoken[argnum].type = 2;
+                            rval = 0;
+                            break;
+                        default:
+                            if(errmsg==1)
+                            printf("arg %d is string (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
+                            rval = 1;
+                            break;
+                        }
+                }
+            break;
+        case 4:
+            if(errmsg==1)
+                printf("arg %d is image (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 5:
+            if(errmsg==1)
+                printf("arg %d is command (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        }
+        break;
+
+    case 3:  // should be string
+        switch (data.cmdargtoken[argnum].type) {
+        case 1:
+            if(errmsg==1)
+                printf("arg %d is floating point, but should be string\n", argnum);
+            rval = 1;
+            break;
+        case 2:
+            if(errmsg==1)
+                printf("arg %d is integer, but should be string\n", argnum);
+            rval = 1;
+            break;
+        case 3:
+            rval = 0;
+            break;
+        case 4:
+            if(errmsg==1)
+                printf("arg %d is existing image (=\"%s\"), but should be string\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 5:
+            printf("arg %d is command (=\"%s\"), but should be string\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 6:
+            rval = 0;
+            break;
+        }
+        break;
+
+    case 4:  // should be existing image
+        switch (data.cmdargtoken[argnum].type) {
+        case 1:
+            if(errmsg==1)
+                printf("arg %d is floating point, but should be image\n", argnum);
+            rval = 1;
+            break;
+        case 2:
+            if(errmsg==1)
+                printf("arg %d is integer, but should be image\n", argnum);
+            rval = 1;
+            break;
+        case 3:
+            if(errmsg==1)
+                printf("arg %d is string, but should be image\n", argnum);
+            rval = 1;
+            break;
+        case 4:
+            rval = 0;
+            break;
+        case 5:
+            if(errmsg==1)
+                printf("arg %d is command (=\"%s\"), but should be image\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 6:
+            rval = 0;
+            break;
+        }
+        break;
+
     }
-    break;
-      
-  case 2:  // should be integer
-    switch (data.cmdargtoken[argnum].type) {
-    case 1:
-      if(errmsg==1)
-           printf("converting floating point arg %d to integer\n", argnum);
-      data.cmdargtoken[argnum].val.numl = (long) (data.cmdargtoken[argnum].val.numf+0.5);
-      data.cmdargtoken[argnum].type = 2;
-      rval = 0;
-      break;
-    case 2: 
-      rval = 0;
-      break;
-    case 3:
-      if(errmsg==1)
-           printf("arg %d is string (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 4:
-      if(errmsg==1)
-           printf("arg %d is image (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 5:
-      if(errmsg==1)
-           printf("arg %d is command (=\"%s\"), but should be integer\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    }
-    break;
-    
-  case 3:  // should be string
-    switch (data.cmdargtoken[argnum].type) {
-    case 1:
-      if(errmsg==1)
-           printf("arg %d is floating point, but should be string\n", argnum);
-      rval = 1;
-      break;
-    case 2: 
-      if(errmsg==1)
-           printf("arg %d is integer, but should be string\n", argnum);
-      rval = 1;
-      break;
-    case 3:
-      rval = 0;
-      break;
-    case 4:
-      if(errmsg==1)
-           printf("arg %d is existing image (=\"%s\"), but should be string\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 5:
-      printf("arg %d is command (=\"%s\"), but should be string\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 6:
-      rval = 0;
-      break;
-    }
-    break;
 
-  case 4:  // should be existing image
-    switch (data.cmdargtoken[argnum].type) {
-    case 1:
-      if(errmsg==1)
-           printf("arg %d is floating point, but should be image\n", argnum);
-      rval = 1;
-      break;
-    case 2: 
-      if(errmsg==1)
-           printf("arg %d is integer, but should be image\n", argnum);
-      rval = 1;
-      break;
-    case 3:
-      if(errmsg==1)
-           printf("arg %d is string, but should be image\n", argnum);
-      rval = 1;
-      break;
-    case 4:
-      rval = 0;
-      break;
-    case 5:
-     if(errmsg==1)
-           printf("arg %d is command (=\"%s\"), but should be image\n", argnum, data.cmdargtoken[argnum].val.string);
-      rval = 1;
-      break;
-    case 6:
-      rval = 0;
-      break;
-    }
-    break;
 
-  }
-  
-
-  if(rval==2)
+    if(rval==2)
     {
-      if(errmsg==1)
-           printf("arg %d: wrong arg type %d :  %d\n", argnum, argtype, data.cmdargtoken[argnum].type);
-      rval = 1;
+        if(errmsg==1)
+            printf("arg %d: wrong arg type %d :  %d\n", argnum, argtype, data.cmdargtoken[argnum].type);
+        rval = 1;
     }
 
 
-  return rval;
+    return rval;
 }
+
 
 
 // check that input CLI argument matches required argument type 

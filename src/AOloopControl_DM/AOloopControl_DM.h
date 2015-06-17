@@ -55,6 +55,9 @@ typedef struct
 
 
 int init_AOsystSim();
+
+int AOloopControl_DM_setsize(long size1d);
+int AOloopControl_DM_setname(char *name);
 int AOloopControl_DM_disp2V(long IDdisp, long IDvolt);
 int AOloopControl_DM_createconf();
 int AOloopControl_DM_loadconf();

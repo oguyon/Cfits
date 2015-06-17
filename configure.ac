@@ -1,7 +1,7 @@
 #
 # Process this file with autoconf to produce a configure script.
 #
-AC_INIT([Cfits], [3.2.00], [oliv.guyon@gmail.com])
+AC_INIT([Cfits], [3.3.00], [oliv.guyon@gmail.com])
 AC_PREREQ(2.61)
 #AC_CONFIG_HEADER([config.h])
 

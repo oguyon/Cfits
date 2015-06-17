@@ -16,11 +16,22 @@
 #include "fft/fft.h"
 #include "info/info.h"
 #include "statistic/statistic.h"
+#include "OpticsMaterials/OpticsMaterials.h"
+#include "image_filter/image_filter.h"
 
 #include "OptSystProp/OptSystProp.h"
 #include "AOsystSim/AOsystSim.h"
 
 extern DATA data;
+
+
+// non-null pixels in DM influence function (to speed up computing time)
+int DMifpixarray_init = 0;
+float *DMifpixarray_val;
+long *DMifpixarray_index; // which actuator
+long *DMifpixarray_pixindex; // which pixel
+long DMifpixarray_NBpix;
+
 
 OPTSYST *optsystsim;
 
@@ -69,42 +80,53 @@ int AOsystSim_run_cli()
 
 int init_AOsystSim()
 {
-  strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "conversion between image format, I/O");
-  data.NBmodule++;
+    strcpy(data.module[data.NBmodule].name, __FILE__);
+    strcpy(data.module[data.NBmodule].info, "conversion between image format, I/O");
+    data.NBmodule++;
 
-   strcpy(data.cmd[data.NBcmd].key,"AOsimfilt");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOsystSim_simpleAOfilter_cli;
-  strcpy(data.cmd[data.NBcmd].info,"AO simple filtering");
-  strcpy(data.cmd[data.NBcmd].syntax,"<input WF> <output WF>");
-  strcpy(data.cmd[data.NBcmd].example,"AOsimfilt wfin wfout");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"AOsimfilt");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_simpleAOfilter_cli;
+    strcpy(data.cmd[data.NBcmd].info,"AO simple filtering");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input WF> <output WF>");
+    strcpy(data.cmd[data.NBcmd].example,"AOsimfilt wfin wfout");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)");
+    data.NBcmd++;
 
-strcpy(data.cmd[data.NBcmd].key,"AOsystsfitpup");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOsystSim_fitTelPup_cli;
-  strcpy(data.cmd[data.NBcmd].info,"fit telescope pupil");
-  strcpy(data.cmd[data.NBcmd].syntax,"tel pupil file");
-  strcpy(data.cmd[data.NBcmd].example,"AOsystfitpup");
-  strcpy(data.cmd[data.NBcmd].Ccall,"AOsystSim_fitTelPup(char *ID_name)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"AOsystsfitpup");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_fitTelPup_cli;
+    strcpy(data.cmd[data.NBcmd].info,"fit telescope pupil");
+    strcpy(data.cmd[data.NBcmd].syntax,"tel pupil file");
+    strcpy(data.cmd[data.NBcmd].example,"AOsystfitpup");
+    strcpy(data.cmd[data.NBcmd].Ccall,"AOsystSim_fitTelPup(char *ID_name)");
+    data.NBcmd++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"AOsystsim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AOsystSim_run_cli;
-  strcpy(data.cmd[data.NBcmd].info,"run fake AO system");
-  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-  strcpy(data.cmd[data.NBcmd].example,"AOsystsim");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_run()");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"AOsystsim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_run_cli;
+    strcpy(data.cmd[data.NBcmd].info,"run fake AO system");
+    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].example,"AOsystsim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_run()");
+    data.NBcmd++;
 
- // add atexit functions here
+    strcpy(data.cmd[data.NBcmd].key,"AOsystexaosim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_extremeAO_contrast_sim;
+    strcpy(data.cmd[data.NBcmd].info,"run extremeAO analysis");
+    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].example,"AOsystexaosim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_extremeAO_contrast_sim()");
+    data.NBcmd++;
 
-  return 0;
+
+    // add atexit functions here
+
+    return 0;
 }
+
 
 
 
@@ -745,6 +767,9 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     long dmsizex, dmsizey, DMnbact;
     long ii, jj;
     long dmact;
+    double eps=1.0e-12;
+    long k;
+    
 
     IDdmctrl = image_ID(IDdmctrl_name);
 
@@ -753,6 +778,30 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     dmsizey = data.image[IDdmifc].md[0].size[1];
     DMnbact = data.image[IDdmifc].md[0].size[2];
 
+
+    
+    if(DMifpixarray_init==0)
+    {
+        DMifpixarray_NBpix = 0.0;
+        for(dmact=0; dmact<DMnbact; dmact++)
+            for(ii=0; ii<dmsizex*dmsizey; ii++)
+                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii])>eps)
+                    DMifpixarray_NBpix++;
+        DMifpixarray_val = (float*) malloc(sizeof(float)*DMifpixarray_NBpix);
+        DMifpixarray_index = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
+        DMifpixarray_pixindex = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
+        DMifpixarray_NBpix = 0.0;
+        for(dmact=0; dmact<DMnbact; dmact++)
+            for(ii=0; ii<dmsizex*dmsizey; ii++)
+                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii])>eps)
+                    {
+                        DMifpixarray_val[DMifpixarray_NBpix] = data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii];
+                        DMifpixarray_index[DMifpixarray_NBpix] = dmact;
+                        DMifpixarray_pixindex[DMifpixarray_NBpix] = ii;
+                        DMifpixarray_NBpix++;
+                    }
+    }
+    
     IDdm = image_ID(IDdm_name);
     if(IDdm==-1)
     {
@@ -760,20 +809,24 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     }
     for(ii=0; ii<dmsizex*dmsizey; ii++)
         data.image[IDdm].array.F[ii] = 0.0;
-
+/*
     for(dmact=0; dmact<DMnbact; dmact++)
     {
         for(ii=0; ii<dmsizex*dmsizey; ii++)
             data.image[IDdm].array.F[ii] += data.image[IDdmctrl].array.F[dmact]*data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii];
     }
+*/
 
+    for(k=0;k<DMifpixarray_NBpix;k++)
+        data.image[IDdm].array.F[DMifpixarray_pixindex[k]] += data.image[IDdmctrl].array.F[DMifpixarray_index[k]] * DMifpixarray_val[k];
+    
     return (0);
 }
 
 
 
 
-int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
+int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modampl, long modnbpts)
 {
     long ID_inWFc, ID_outWFSim;
     long arraysize;
@@ -783,7 +836,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
     long arraysize2;
     long IDpyramp, IDpyrpha;
     double lenssize;
-    double pcoeff = 1.0;
+    double pcoeff = 1.4;
     double x, y;
     long ii, jj;
     char pnamea[200];
@@ -795,15 +848,17 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
     long pmodpt;
     double PYRMOD_rad = 5.0;
     double xc, yc, PA;
-
+    long ID_outWFSim_tmp;
+    
+    PYRMOD_nbpts = modnbpts;
+    PYRMOD_rad = modampl;
+    
+    
+    
     ID_inWFc = image_ID(inWFc_name);
     arraysize = data.image[ID_inWFc].md[0].size[0];
     arraysize2 = arraysize*arraysize;
     lenssize = 0.4*arraysize;
-
-
-    printf("STEP 000\n");
-    fflush(stdout);
 
 
     for(pmodpt=0; pmodpt<PYRMOD_nbpts; pmodpt++)
@@ -849,9 +904,6 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
         }
     }
 
-    printf("STEP 010\n");
-    fflush(stdout);
-
 
     ID_outWFSim = image_ID(outWFSim_name);
     if(ID_outWFSim==-1)
@@ -860,6 +912,16 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
         imsize[0] = arraysize;
         imsize[1] = arraysize;
         ID_outWFSim = create_image_ID(outWFSim_name, 2, imsize, FLOAT, 1, 0);
+        free(imsize);
+    }
+
+    ID_outWFSim_tmp = image_ID("outpwfsimtmp");
+    if(ID_outWFSim_tmp==-1)
+    {
+        imsize = (long*) malloc(sizeof(long)*2);
+        imsize[0] = arraysize;
+        imsize[1] = arraysize;
+        ID_outWFSim_tmp = create_image_ID("outpwfsimtmp", 2, imsize, FLOAT, 1, 0);
         free(imsize);
     }
 
@@ -876,7 +938,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
 
     data.image[ID_outWFSim].md[0].write = 1;
     for(ii=0; ii<arraysize2; ii++)
-        data.image[ID_outWFSim].array.F[ii] = 0.0;
+        data.image[ID_outWFSim_tmp].array.F[ii] = 0.0;
 
     for(pmodpt=0; pmodpt<PYRMOD_nbpts; pmodpt++)
     {
@@ -920,9 +982,10 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
         IDa = image_ID("pyrwfs_pupa");
 
         for(ii=0; ii<arraysize2; ii++)
-            data.image[ID_outWFSim].array.F[ii] += data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii]/PYRMOD_nbpts;
+            data.image[ID_outWFSim_tmp].array.F[ii] += data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii]/PYRMOD_nbpts;
         delete_image_ID("pyrwfs_pupa");
     }
+    memcpy(data.image[ID_outWFSim].array.F, data.image[ID_outWFSim_tmp].array.F, sizeof(float)*arraysize*arraysize);
     data.image[ID_outWFSim].md[0].cnt0++;
     data.image[ID_outWFSim].md[0].write = 0;
 
@@ -935,7 +998,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name)
 
 
 
-/** \brief simplified AO system simulator (closed loop part)
+/** \brief simplified AO system simulator (DM command -> WFS image part)
  *
  * creates a DM map(s) and a WF error input
  * When either DM map or WF error input changes, compute intensity outputs (images)
@@ -947,9 +1010,9 @@ int AOsystSim_run()
     long arraysize = 128;
     long ii, jj;
     double puprad, dmrad;
-    double dmifscale = 20.0; // scale magnification between full DM map and DM influence function
+    double dmifscale = 2.0; // scale magnification between full DM map and DM influence function
     long *imsize;
-    long DMsize = 20;
+    long DMsize = 50; // default
     long DMnbact;
     long mx, my;
     double x, y, rx, ry;
@@ -974,10 +1037,31 @@ int AOsystSim_run()
     int COROmode = 0; // 1 if coronagraph
 
 
-    puprad = 0.12*arraysize;
-    dmrad = 0.13*arraysize;
+    puprad = 0.17*arraysize;
+    dmrad = 0.20*arraysize;
 
 
+    // INITIALIZE DM CONTROL ARRAY IF DOESN'T EXIST
+    IDdmctrl = image_ID("aosimdmctrl");
+    if(IDdmctrl==-1)
+        IDdmctrl = read_sharedmem_image("aosimdmctrl");
+    if(IDdmctrl==-1)
+    {
+        dmsizearray = (long*) malloc(sizeof(long)*2);
+        dmsizearray[0] = DMsize;
+        dmsizearray[1] = DMsize;
+        IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
+        free(dmsizearray);
+        COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
+    }
+    else
+        DMsize = data.image[IDdmctrl].md[0].size[0];
+
+    for(k=0; k<DMsize*DMsize; k++)
+        data.image[IDdmctrl].array.F[k] = ran1()*2.0e-8;
+
+    dmifscale = 0.5*DMsize;
+    
 
     // MAKE DM INFLUENCE FUNCTIONS
 
@@ -991,7 +1075,10 @@ int AOsystSim_run()
     // construct DM influence function (for 1 actuator)
     // step 1: square
     // actuator size = dmifscale*(arraysize*2.0*dmrad/DMsize) [pix]
+    printf("DM size = %ld x %ld actuators\n", DMsize, DMsize);
     printf("actuator pix size = %f pix\n", dmifscale*(2.0*dmrad/DMsize));
+
+    list_image_ID();
     for(ii=0; ii<arraysize; ii++)
         for(jj=0; jj<arraysize; jj++)
         {
@@ -1000,17 +1087,25 @@ int AOsystSim_run()
             x /= dmifscale*(2.0*dmrad/DMsize);
             y /= dmifscale*(2.0*dmrad/DMsize);
             if((fabs(x)<0.5)&&(fabs(y)<0.5))
-                data.image[IDif].array.F[jj*arraysize+ii] = 1.0;
+                data.image[IDif].array.F[jj*arraysize+ii] = 1.0e-6;
             else
                 data.image[IDif].array.F[jj*arraysize+ii] = 0.0;
         }
+    printf("convolve\n");
+    fflush(stdout);
     // convolve dmif
+    save_fits("dmif0", "!dmif0.fits");
     sig = 0.5*dmifscale*(2.0*dmrad/DMsize);
+    printf("gauss filter   %lf %ld\n", sig, (long) (2.0*sig));
+    fflush(stdout);
     gauss_filter("dmif0", "dmif", sig, (long) (2.0*sig));
+    list_image_ID();
     delete_image_ID("dmif0");
     IDif = image_ID("dmif");
 
-  //  save_fits("dmif", "!dmif.fits");
+
+    list_image_ID();
+    save_fits("dmif", "!dmif.fits");
 
     IDifc = create_image_ID("dmifc", 3, imsize, FLOAT, 0, 0);
     printf("\n");
@@ -1020,6 +1115,7 @@ int AOsystSim_run()
             printf("\r actuator %2ld %2ld    ", mx, my);
             fflush(stdout);
             // actuator center coordinates
+            // center: mx = DMsize/2-0.5  4 -> 1.5
             ii0f = 0.5*arraysize + 2.0*(mx-DMsize/2)/DMsize*dmrad;
             jj0f = 0.5*arraysize + 2.0*(my-DMsize/2)/DMsize*dmrad;
             for(ii=0; ii<arraysize; ii++)
@@ -1047,21 +1143,12 @@ int AOsystSim_run()
                 }
         }
     free(imsize);
-    //	save_fits("dmifc","!dmifc.fits");
+    save_fits("dmifc","!dmifc.fits");
     printf("\n");
 
 
 
 
-    // INITIALIZE DM CONTROL ARRAY
-    dmsizearray = (long*) malloc(sizeof(long)*2);
-    dmsizearray[0] = DMsize;
-    dmsizearray[1] = DMsize;
-    IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
-    COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
-
-    for(k=0; k<DMsize*DMsize; k++)
-        data.image[IDdmctrl].array.F[k] = ran1()*2.0e-8;
 
 
     // INITIALIZE TURBULENCE SCREEN
@@ -1123,33 +1210,33 @@ int AOsystSim_run()
 
 
     if(COROmode==1)    // FOCAL PLANE MASK
-  {
+    {
         IDfocmask = create_2DCimage_ID("focpm", arraysize, arraysize);
-    for(ii=0; ii<arraysize; ii++)
-        for(jj=0; jj<arraysize; jj++)
-        {
-            x = 1.0*ii-0.5*arraysize;
-            y = 1.0*jj-0.5*arraysize;
-            r = sqrt(x*x+y*y);
-            if(r<20.0*dftzoomfact)
+        for(ii=0; ii<arraysize; ii++)
+            for(jj=0; jj<arraysize; jj++)
             {
-                data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 1.0;  // 1-(CA) : 1.0=opaque 0=transmissive 2.0=phase shifting
-                data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+                x = 1.0*ii-0.5*arraysize;
+                y = 1.0*jj-0.5*arraysize;
+                r = sqrt(x*x+y*y);
+                if(r<20.0*dftzoomfact)
+                {
+                    data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 1.0;  // 1-(CA) : 1.0=opaque 0=transmissive 2.0=phase shifting
+                    data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+                }
+                else
+                {
+                    data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 0.0;
+                    data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
+                }
             }
-            else
-            {
-                data.image[IDfocmask].array.CF[jj*arraysize+ii].re = 0.0;
-                data.image[IDfocmask].array.CF[jj*arraysize+ii].im = 0.0;
-            }
-        }
 
-    optsystsim[0].elemtype[elem] = 5; // focal plane mask
-    optsystsim[0].FOCMASKarray[0].fpmID = IDfocmask;
-    optsystsim[0].FOCMASKarray[0].zfactor = dftzoomfact;
-    optsystsim[0].FOCMASKarray[0].mode = 1;
-    optsystsim[0].elemZpos[elem] = optsystsim[0].elemZpos[elem-1]; // plane from which FT is done
-    elem++;
-}
+        optsystsim[0].elemtype[elem] = 5; // focal plane mask
+        optsystsim[0].FOCMASKarray[0].fpmID = IDfocmask;
+        optsystsim[0].FOCMASKarray[0].zfactor = dftzoomfact;
+        optsystsim[0].FOCMASKarray[0].mode = 1;
+        optsystsim[0].elemZpos[elem] = optsystsim[0].elemZpos[elem-1]; // plane from which FT is done
+        elem++;
+    }
 
     optsystsim[0].NBelem = elem;
 
@@ -1157,7 +1244,7 @@ int AOsystSim_run()
 
     // propagate
     OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
-    list_image_ID();
+
     ID = image_ID("psfi0");
     imsize = (long*) malloc(sizeof(long)*2);
     imsize[0] = data.image[ID].md[0].size[0];
@@ -1184,10 +1271,8 @@ int AOsystSim_run()
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
 
-        list_image_ID();
         mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
-        list_image_ID();
-        AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim");
+        AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim", 0.0, 1);
         delete_image_ID("wfc");
 
         ID = image_ID("psfi0");
@@ -1196,7 +1281,8 @@ int AOsystSim_run()
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout");
-        COREMOD_MEMORY_image_set_semwait_OR(IDarray, 2);
+        COREMOD_MEMORY_image_set_semwait_OR_IDarray(IDarray, 2);
+        COREMOD_MEMORY_image_set_semflush_IDarray(IDarray, 2);
     }
 
 
@@ -1207,348 +1293,312 @@ int AOsystSim_run()
 
 
 
-/*
-     long dmxsize = 50;
-    long dmysize = 50;
-    long *dmsize;
-    long twait = 1; // us
-    long long cnt = 0;
-    long long cnt0;
-    float lambda = 0.7; // um
-
-
-    long pupsize = 256;
-    double puprad = 22.0;
-    long IDpupa, IDpupp, IDpuppIR;
-    long IDpyrpha, IDpyramp;
-    double x, y, r;
-    long ii, jj, ii1, jj1;
-    double pcoeff = 0.75;
-    long pupsize2;
-    long ID, IDa, IDp;
-    double lenssize = 1200.0;
-
-    long wfssize = 120;
-    long *wfssize_array;
-    long ID_wfs, ID_wfe;
-    long offset, offset1;
-    long IDflat, IDdmdisp;
-
-    long IDatmpha;
-    long iioffset, jjoffset;
-    long IDpuppc, IDpuppcIR;
-    long IDpsf, IDpsfIR;
-    long *pupsize_array;
-
-    float alphaCorr = 0.8;
-    long IDdmt, IDdmtg;
-
-    long moffset;
-    long msize;
-    long usleeptime = 1000; // delay at each loop
-
-    // Pyramid modulation
-    long modpt;
-    long NBmodpt = 64;
-    double modr = 0.1;
-    double modPA, modx, mody;
-    long IDwfscumul;
-
-
-    long IDpsfnm, IDpsfnmIR;
 
 
 
 
 
-    pupsize2 = pupsize*pupsize;
 
 
-    printf("Running fake AO system simulation\n");
+int AOsystSim_extremeAO_contrast_sim()
+{
+    EXAOSIMCONF *exaosimconf;
+    long CN2layer;
+    double tmpv1, tmpv2, tmpv3, tmpv4;
+    double tmpC;
+
+    double lambda_V = 0.545e-6;
+    double zeropt_V = 9.9690e10;
+
+    double lambda_R = 0.638e-6;
+    double zeropt_R = 7.2384e10;
+
+    double lambda_I = 0.797e-6;
+    double zeropt_I = 4.5825e10;
+
+    double lambda_J = 1.22e-6;
+    double zeropt_J = 1.9422e10;
+
+    double lambda_H = 1.63e-6;
+    double zeropt_H = 9.4440e9;
+
+    double lambda_K = 2.19e-6;
+    double zeropt_K = 4.3829e9;
+
+    double lambda_L = 3.45e-6;
+    double zeropt_L = 1.2292e9;
+
+    double zeroptWFS;
+    double zeroptWFSsci;
+
+    double sourcemag_wfs;
+    double sourcemag_sci;
+    double lambdaBwfs = 0.4; // dlambda/lambda
+    double lambdaBsci = 0.4; // dlambda/lambda
+   double systemEfficiency = 0.3;
+
+    double coeff;
+    FILE *fp;
+    double tmpA, tmpB;
+    double dsa;
+
+    double nwfs,nsci; // refractive indices
+
+    double tobs = 3600.0; // observation time
+    double crosstime;
+
+    double WFStlim = 0.0000; // WFS min exposure time
+    double sciWFStlim = 0.0000; // sci WFS min exposure time
+    double IWAld = 1.3;
+    int OK;
+    double att2;
 
 
+    exaosimconf = (EXAOSIMCONF*) malloc(sizeof(EXAOSIMCONF));
+
+    // initialization
+    exaosimconf[0].lambda0 = 0.55e-6;
+    exaosimconf[0].lambdai = 1.6e-6;
+    exaosimconf[0].lambdawfs = 0.8e-6;
+    exaosimconf[0].D = 30.0;
+    exaosimconf[0].r0 = 0.15;
+    exaosimconf[0].windspeed = 10.0;
+    exaosimconf[0].betapWFS = sqrt(2.0);
+    exaosimconf[0].betaaWFS = sqrt(2.0);
+    exaosimconf[0].betapWFSsci = 2.0;
+    exaosimconf[0].betaaWFSsci = 2.0;
+    exaosimconf[0].framedelay = 1.5;
+    nwfs = OPTICSMATERIALS_n( OPTICSMATERIALS_code("Air"), exaosimconf[0].lambdawfs);
+    nsci = OPTICSMATERIALS_n( OPTICSMATERIALS_code("Air"), exaosimconf[0].lambdai);
+
+    printf("n = %f %f\n", nwfs, nsci);
+
+    for(CN2layer=0; CN2layer<20; CN2layer++)
+    {
+        exaosimconf[0].CN2layer_h[CN2layer] = 0.0;
+        exaosimconf[0].CN2layer_coeff[CN2layer] = 0.0;
+    }
+    exaosimconf[0].CN2layer_h[0] = 500.0;
+    exaosimconf[0].CN2layer_coeff[0] = 0.2283;
+    exaosimconf[0].CN2layer_h[1] = 1000.0;
+    exaosimconf[0].CN2layer_coeff[1] = 0.0883;
+    exaosimconf[0].CN2layer_h[2] = 2000.0;
+    exaosimconf[0].CN2layer_coeff[2] = 0.0666;
+    exaosimconf[0].CN2layer_h[3] = 4000.0;
+    exaosimconf[0].CN2layer_coeff[3] = 0.1458;
+    exaosimconf[0].CN2layer_h[4] = 8000.0;
+    exaosimconf[0].CN2layer_coeff[4] = 0.3350;
+    exaosimconf[0].CN2layer_h[5] = 16000.0;
+    exaosimconf[0].CN2layer_coeff[5] = 0.1350;
 
 
-    dmsize = (long*) malloc(sizeof(long)*2);
-    wfssize_array = (long*) malloc(sizeof(long)*2);
-    pupsize_array = (long*) malloc(sizeof(long)*2);
+    zeroptWFS = zeropt_I;
+    exaosimconf[0].lambdawfs = lambda_I;
+  
+    zeroptWFSsci = zeropt_H;
+    exaosimconf[0].lambdai = lambda_H;
 
+    sourcemag_wfs = 8.0;
+    sourcemag_sci = 6.0;
+    exaosimconf[0].Fwfs = zeroptWFS*1.0e6*(exaosimconf[0].lambdawfs*lambdaBwfs)*pow(100.0, -0.2*sourcemag_wfs)*lambdaBwfs*systemEfficiency;
+    exaosimconf[0].Fsci = zeroptWFSsci*1.0e6*(exaosimconf[0].lambdai*lambdaBsci)*pow(100.0, -0.2*sourcemag_sci)*lambdaBsci*systemEfficiency;
 
-    // INITIALIZE
+    exaosimconf[0].alpha_arcsec=0.25;
 
-    // create wavefront error input
-    dmsize[0] = dmxsize;
-    dmsize[1] = dmysize;
-    ID_wfe = create_2Dimage_ID("pyrwfeinput", dmxsize, dmysize); // input WF error, to DM sampling
+    fp = fopen("result.out.txt", "w");
 
-    // create_image_ID("dm_wfe_sim", 2, dmsize, FLOAT, 1, 0);
-
-    // create PSF images
-    pupsize_array[0] = pupsize;
-    pupsize_array[1] = pupsize;
-    IDpsf = create_image_ID("aosimpsf", 2, pupsize_array, FLOAT, 1, 0);
-    IDpsfIR = create_image_ID("aosimpsfIR", 2, pupsize_array, FLOAT, 1, 0);
-
-    IDpsfnm = create_image_ID("aosimpsfnm", 2, pupsize_array, FLOAT, 1, 0);
-    IDpsfnmIR = create_image_ID("aosimpsfIRnm", 2, pupsize_array, FLOAT, 1, 0);
-
-
-
-
-    IDatmpha = read_sharedmem_image("outfiltwf"); // [um]
-	if(IDatmpha == -1)
-		{
-			printf("Running without atmospheric turbulence\n");
-		}
-
-
-
-    IDdmdisp = read_sharedmem_image("dmdisp");
-    if(IDdmdisp==-1)
-		{
-			printf("Please create DM channels\n");
-			exit(0);
-		}
-
-    // create DM
-    dmsize[0] = dmxsize;
-    dmsize[1] = dmysize;
-
-
-    // create WFS image
-    wfssize_array[0] = wfssize;
-    wfssize_array[1] = wfssize;
-    wfssize_array[2] = 3; // number of slices in rolling buffer
-    ID_wfs = create_image_ID("wfs_sim", 3, wfssize_array, FLOAT, 1, 0);
-    data.image[ID_wfs].md[0].cnt1 = 0; // next slice to write
-
-    IDpuppc = create_image_ID("puppcrop", 2, dmsize, FLOAT, 1, 0);
-
-
-
-    IDpyrpha = create_2Dimage_ID("pyrpha0", pupsize, pupsize);
-    IDpyramp = create_2Dimage_ID("pyramp", pupsize, pupsize);
-    for(ii=0; ii<pupsize; ii++)
-        for(jj=0; jj<pupsize; jj++)
+    for(exaosimconf[0].alpha_arcsec=0.010; exaosimconf[0].alpha_arcsec<0.25; exaosimconf[0].alpha_arcsec+=0.001)
+    {
+        OK = 0;
+        while(OK==0)
         {
-            x = 1.0*(ii-pupsize/2);
-            y = 1.0*(jj-pupsize/2);
-
-            data.image[IDpyrpha].array.F[jj*pupsize+ii] = pcoeff*(fabs(x)+fabs(y));
-            if((fabs(x)>lenssize)||(fabs(y)>lenssize))
-                data.image[IDpyramp].array.F[jj*pupsize+ii] = 0.0;
+            exaosimconf[0].alpha = exaosimconf[0].alpha_arcsec/3600/180*M_PI;
+            exaosimconf[0].alpha_ld = exaosimconf[0].alpha / (exaosimconf[0].lambdai / exaosimconf[0].D);
+            exaosimconf[0].f = exaosimconf[0].alpha/exaosimconf[0].lambdai;
+            if(exaosimconf[0].alpha_ld>IWAld)
+                OK = 1;
             else
-                data.image[IDpyramp].array.F[jj*pupsize+ii] = 1.0;
+                exaosimconf[0].alpha_arcsec+=0.001;
         }
-    gauss_filter("pyrpha0", "pyrpha", 15.0, 20);
-    IDpyrpha = image_ID("pyrpha");
-    save_fits("pyrpha","!pyrpha.fits");
 
-    offset1 = (pupsize-dmxsize)/2;
-    printf("OFFSET = %ld\n", offset);
-    cnt = -1;
-    printf("\n");
-
-
-    if(ID=image_ID("TpupMask")==-1)
-    {
-        IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
-        for(ii=0; ii<pupsize; ii++)
-            for(jj=0; jj<pupsize; jj++)
-            {
-                x = (1.0*ii-0.5*pupsize)/puprad;
-                y = (1.0*jj-0.5*pupsize)/puprad;
-                r = sqrt(x*x+y*y);
-                if(r<0.3)
-                    data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
-                if((fabs(0.5*x+0.5*y)<0.05)||(fabs(0.5*x-0.5*y)<0.05))
-                    data.image[IDpupa].array.F[jj*pupsize+ii] = 0.0;
-            }
-    }
-    else
-    {
-        msize = data.image[ID].md[0].size[0];
-        IDpupa = make_disk("pupa", pupsize, pupsize, 0.5*pupsize, 0.5*pupsize, puprad);
-        offset = (pupsize-msize)/2;
-        for(ii=0; ii<msize; ii++)
-            for(jj=0; jj<msize; jj++)
-                data.image[IDpupa].array.F[(jj+offset)*pupsize+(ii+offset)] = data.image[ID].array.F[jj*msize+ii];
-    }
-
-    //  save_fits("pupa", "!Tpupa.fits");
-
-    IDwfscumul = create_2Dimage_ID("wfscumul", pupsize, pupsize);
-
-    while(1)
-    {
-        usleep(usleeptime);
-
-        for(ii=0; ii<pupsize2; ii++)
-            data.image[IDwfscumul].array.F[ii] = 0.0;
-
-        for(modpt=0; modpt<NBmodpt; modpt++)
+        if(0) // SHWFS
         {
-            // IMPORT WF ERROR
-            iioffset = 6;
-            jjoffset = 6;
-            for(ii=0; ii<dmxsize; ii++)
-                for(jj=0; jj<dmysize; jj++)
-                {
-                    data.image[ID_wfe].array.F[jj*dmxsize+ii] = 0.0;
-                    ii1 = ii+iioffset;
-                    jj1 = jj+jjoffset;
-                    data.image[ID_wfe].array.F[jj*dmxsize+ii] = data.image[IDatmpha].array.F[jj1*data.image[IDatmpha].md[0].size[0]+ii1]; // um
-
-                }
-
-            data.image[ID_wfe].md[0].cnt0++;
-            data.image[ID_wfe].md[0].write = 0;
-
-            IDpupp = create_2Dimage_ID("pupp", pupsize, pupsize);
-
-            // make WFS PSF (without the modulation)
-            data.image[IDpuppc].md[0].write==1;
-            for(ii=0; ii<dmxsize; ii++)
-                for(jj=0; jj<dmysize; jj++)
-                    data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[ID_wfe].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;
-
-            mk_complex_from_amph("pupa","pupp","pupc");
-            permut("pupc");
-            do2dfft("pupc","focc");
-            delete_image_ID("pupc");
-            permut("focc");
-            mk_amph_from_complex("focc", "foca", "focp");
-
-            delete_image_ID("focc");
-            delete_image_ID("focp");
-            IDa = image_ID("foca");
-
-
-            data.image[IDpsfnm].md[0].write = 1;
-            for(ii=0; ii<pupsize2; ii++)
-                data.image[IDpsfnm].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
-            data.image[IDpsfnm].md[0].cnt0++;
-            data.image[IDpsfnm].md[0].write = 0;
-            delete_image_ID("foca");
-
-
-
-
-
-
-            IDpuppIR = create_2Dimage_ID("puppIR", pupsize, pupsize);
-
-
-
-            data.image[IDpuppc].md[0].write==1;
-
-            for(ii=0; ii<dmxsize; ii++)
-                for(jj=0; jj<dmysize; jj++)
-                    data.image[IDpuppc].array.F[jj*dmxsize+ii] = data.image[ID_wfe].array.F[jj*dmxsize+ii] - 2.0*data.image[IDdmdisp].array.F[jj*dmxsize+ii] + modr*cos(2.0*M_PI*modpt/NBmodpt)*(1.0*ii-0.5*dmxsize) + modr*sin(2.0*M_PI*modpt/NBmodpt)*(1.0*jj-0.5*dmysize);   // [um]
-
-            for(ii=0; ii<dmxsize; ii++)
-                for(jj=0; jj<dmysize; jj++)
-                    data.image[IDpupp].array.F[(jj+offset1)*pupsize+(ii+offset1)] = data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;  // [rad]
-
-            data.image[IDpuppc].md[0].cnt0++;
-            data.image[IDpuppc].md[0].write = 0;
-
-            for(ii=0; ii<dmxsize; ii++)
-                for(jj=0; jj<dmysize; jj++)
-                    data.image[IDpuppIR].array.F[(jj+offset1)*pupsize+(ii+offset1)] = (lambda/1.65)*data.image[IDpuppc].array.F[jj*dmxsize+ii]/lambda*M_PI*2.0;
-
-
-
-
-            mk_complex_from_amph("pupa","pupp","pupc");
-            permut("pupc");
-            do2dfft("pupc","focc");
-            delete_image_ID("pupc");
-            permut("focc");
-            mk_amph_from_complex("focc", "foca", "focp");
-
-            delete_image_ID("focc");
-            IDp = image_ID("focp");
-            IDa = image_ID("foca");
-
-
-
-            data.image[IDpsf].md[0].write = 1;
-            for(ii=0; ii<pupsize2; ii++)
-            {
-                data.image[IDpsf].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
-                data.image[IDa].array.F[ii] *= data.image[IDpyramp].array.F[ii];
-                data.image[IDp].array.F[ii] += data.image[IDpyrpha].array.F[ii];
-            }
-            data.image[IDpsf].md[0].cnt0++;
-            data.image[IDpsf].md[0].write = 0;
-
-
-            mk_complex_from_amph("pupa","puppIR","pupc");
-            permut("pupc");
-            do2dfft("pupc","focc");
-            delete_image_ID("pupc");
-            permut("focc");
-            mk_amph_from_complex("focc", "focaIR", "focpIR");
-
-            delete_image_ID("focc");
-            delete_image_ID("focpIR");
-            IDa = image_ID("focaIR");
-
-
-            data.image[IDpsfIR].md[0].write = 1;
-            for(ii=0; ii<pupsize2; ii++)
-                data.image[IDpsfIR].array.F[ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
-            data.image[IDpsfIR].md[0].cnt0++;
-            data.image[IDpsfIR].md[0].write = 0;
-
-
-
-            mk_complex_from_amph("foca","focp","focc1");
-            delete_image_ID("foca");
-            delete_image_ID("focp");
-            permut("focc1");
-            do2dfft("focc1","pupc1");
-            delete_image_ID("focc1");
-            permut("pupc1");
-            mk_amph_from_complex("pupc1", "pupa1", "pupp1");
-            delete_image_ID("pupc1");
-            delete_image_ID("pupp1");
-
-            ID = image_ID("pupa1");
-            offset = (pupsize-wfssize)/2;
-
-            for(ii=0; ii<pupsize2; ii++)
-                data.image[IDwfscumul].array.F[ii] += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
-            delete_image_ID("pupa1");
+            dsa=0.15;
+            exaosimconf[0].betapWFS = 1.48/(exaosimconf[0].f*dsa)*sqrt(1.0+(dsa*dsa/exaosimconf[0].r0/exaosimconf[0].r0));
         }
 
+        exaosimconf[0].f_wfs = exaosimconf[0].alpha/exaosimconf[0].lambdawfs;
+        exaosimconf[0].f_0 = exaosimconf[0].alpha/exaosimconf[0].lambda0;
 
-        data.image[ID_wfs].md[0].write = 1;
-        moffset = data.image[ID_wfs].md[0].cnt1*wfssize*wfssize;
-        for(ii1=0; ii1<wfssize; ii1++)
-            for(jj1=0; jj1<wfssize; jj1++)
-                data.image[ID_wfs].array.F[moffset+jj1*wfssize+ii1] = data.image[IDwfscumul].array.F[(jj1+offset)*pupsize+ii1+offset]; //*data.image[ID].array.F[(jj1+offset)*pupsize+ii1+offset];
-        data.image[ID_wfs].md[0].cnt1++;
-        if(data.image[ID_wfs].md[0].cnt1==data.image[ID_wfs].md[0].size[2])
-            data.image[ID_wfs].md[0].cnt1 = 0;
-        data.image[ID_wfs].md[0].cnt0++;
-        data.image[ID_wfs].md[0].write = 0;
+        exaosimconf[0].hf = 0.22 * exaosimconf[0].lambda0 / (pow(exaosimconf[0].f, 11.0/6.0) * exaosimconf[0].D * pow(exaosimconf[0].r0, 5.0/6.0));
+
+        exaosimconf[0].X = 0.0;
+        exaosimconf[0].dX = 0.0;
+        exaosimconf[0].dY = 0.0;
+        for(CN2layer=0; CN2layer<20; CN2layer++)
+        {
+            tmpv1 = cos( M_PI * exaosimconf[0].CN2layer_h[CN2layer] * exaosimconf[0].f * exaosimconf[0].f * exaosimconf[0].lambdai);
+            tmpv2 = cos( M_PI * exaosimconf[0].CN2layer_h[CN2layer] * exaosimconf[0].f * exaosimconf[0].f * exaosimconf[0].lambdawfs);
+            tmpv3 = sin( M_PI * exaosimconf[0].CN2layer_h[CN2layer] * exaosimconf[0].f * exaosimconf[0].f * exaosimconf[0].lambdai);
+            tmpv4 = sin( M_PI * exaosimconf[0].CN2layer_h[CN2layer] * exaosimconf[0].f * exaosimconf[0].f * exaosimconf[0].lambdawfs);
+            exaosimconf[0].X += exaosimconf[0].CN2layer_coeff[CN2layer] * tmpv1 * tmpv1;
+            exaosimconf[0].dX += exaosimconf[0].CN2layer_coeff[CN2layer] * (tmpv1-tmpv2) * (tmpv1-tmpv2);
+            exaosimconf[0].dY += exaosimconf[0].CN2layer_coeff[CN2layer] * (tmpv3-tmpv4) * (tmpv3-tmpv4);
+        }
+        exaosimconf[0].Y = sqrt(1.0 - exaosimconf[0].X*exaosimconf[0].X);
+
+        exaosimconf[0].C0 = pow(M_PI*exaosimconf[0].hf/exaosimconf[0].lambdai, 2.0) * exaosimconf[0].X;
+        exaosimconf[0].C1 = pow(M_PI*exaosimconf[0].hf/exaosimconf[0].lambdai, 2.0) * exaosimconf[0].Y;
+
+        tmpA = 2.0*M_PI*exaosimconf[0].hf*exaosimconf[0].windspeed*exaosimconf[0].f*exaosimconf[0].framedelay;
+        tmpB = exaosimconf[0].lambdawfs/M_PI * exaosimconf[0].betapWFS / sqrt(exaosimconf[0].Fwfs * M_PI) / exaosimconf[0].D;
+        exaosimconf[0].twfs_opt = pow(0.5*tmpB/tmpA*tmpB/tmpA, 1.0/3.0);
+        exaosimconf[0].twfs = exaosimconf[0].twfs_opt;
+
+        if(exaosimconf[0].twfs<WFStlim)
+            exaosimconf[0].twfs = WFStlim;
+
+        exaosimconf[0].hfca = tmpA * exaosimconf[0].twfs;   // lag
+        exaosimconf[0].hfcb = tmpB / sqrt(exaosimconf[0].twfs);  // noise
+
+        exaosimconf[0].hfc = sqrt(exaosimconf[0].hfca*exaosimconf[0].hfca + exaosimconf[0].hfcb*exaosimconf[0].hfcb);
+
+        exaosimconf[0].C2 = pow(M_PI*exaosimconf[0].hfc/exaosimconf[0].lambdai, 2.0);
+        exaosimconf[0].C2_wfs = exaosimconf[0].C2 * pow( exaosimconf[0].lambdai/exaosimconf[0].lambdawfs,2.0);
+
+        exaosimconf[0].twfs_opt_amp = exaosimconf[0].twfs_opt*pow(exaosimconf[0].X/exaosimconf[0].Y, 1.0/3.0)*pow(exaosimconf[0].betaaWFS/exaosimconf[0].betapWFS,2.0/3.0);
+        exaosimconf[0].C3 = exaosimconf[0].C2*pow(exaosimconf[0].Y/exaosimconf[0].X, 1.0/3.0)*pow(exaosimconf[0].betaaWFS/exaosimconf[0].betapWFS,4.0/3.0);
+
+        exaosimconf[0].C4 = exaosimconf[0].C0*exaosimconf[0].dX;
+        exaosimconf[0].C5 = exaosimconf[0].C1*exaosimconf[0].dY;
+
+        exaosimconf[0].C6 = exaosimconf[0].C0 * pow((nwfs-nsci)/(1.0-0.5*(nwfs+nsci)), 2.0);
 
 
-        printf("\r%10ld       ", data.image[ID_wfs].md[0].cnt0);
-        fflush(stdout);
-        //  cnt = cnt0;
-        //	}
+
+        printf("alpha_ld = %.2lf l/D\n", exaosimconf[0].alpha_ld);
+        printf("f = %f  -> p = %g m\n", exaosimconf[0].f, 1.0/exaosimconf[0].f);
+        printf("X = %g\n", exaosimconf[0].X);
+        printf("Y = %g\n", exaosimconf[0].Y);
+        printf("dX = %g\n", exaosimconf[0].dX);
+        printf("dY = %g\n", exaosimconf[0].dY);
+        printf("OPTIMAL WFS exposure time = %g sec  -> %.3lf kHz\n", exaosimconf[0].twfs_opt, 0.001/exaosimconf[0].twfs_opt);
+        printf("single frequ WF error: %g -> %g  (%g + %g)\n", exaosimconf[0].hf, exaosimconf[0].hfc, exaosimconf[0].hfca, exaosimconf[0].hfcb);
+        printf("WFS total flux per frame = %lf ph\n", exaosimconf[0].twfs*exaosimconf[0].Fwfs*exaosimconf[0].D*exaosimconf[0].D/4.0);
+        crosstime = exaosimconf[0].D/exaosimconf[0].windspeed;
+        printf("C0 contrast = %20g\n", exaosimconf[0].C0);
+        printf("C1 contrast = %20g\n", exaosimconf[0].C1);
+        printf("C2 contrast = %20g \n", exaosimconf[0].C2);
+        printf("   WFS  lag = %20g    %20g\n", pow(M_PI*exaosimconf[0].hfca/exaosimconf[0].lambdai, 2.0), pow(M_PI*exaosimconf[0].hfca/exaosimconf[0].lambdai, 2.0)/sqrt(tobs/crosstime)*2.0);
+        printf("   WFS noise= %20g    %20g\n", pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0), pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0)/sqrt(tobs/exaosimconf[0].twfs)*2.0);
+        printf("C3 contrast = %20g    %20g\n", exaosimconf[0].C3, exaosimconf[0].C3/sqrt(tobs/crosstime)*2.0);
+        printf("C4 contrast = %20g    %20g\n", exaosimconf[0].C4, exaosimconf[0].C4/sqrt(tobs/crosstime)*2.0);
+        printf("C5 contrast = %20g    %20g\n", exaosimconf[0].C5, exaosimconf[0].C5/sqrt(tobs/crosstime)*2.0);
+        printf("C6 contrast = %20g    %20g\n", exaosimconf[0].C6, exaosimconf[0].C6/sqrt(tobs/crosstime)*2.0);
+        exaosimconf[0].Csum = exaosimconf[0].C2+exaosimconf[0].C3+exaosimconf[0].C4+exaosimconf[0].C5+exaosimconf[0].C6;
+        exaosimconf[0].Csum_detection = pow(M_PI*exaosimconf[0].hfca/exaosimconf[0].lambdai, 2.0)/sqrt(tobs/crosstime)*2.0 + pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0)/sqrt(tobs/exaosimconf[0].twfs)*2.0 + exaosimconf[0].C3/sqrt(tobs/crosstime)*2.0 + exaosimconf[0].C4/sqrt(tobs/crosstime)*2.0 + exaosimconf[0].C5/sqrt(tobs/crosstime)*2.0+exaosimconf[0].C6/sqrt(tobs/crosstime)*2.0;
+        printf("TOTAL CONTRAST = %20g   %20g\n", exaosimconf[0].Csum, exaosimconf[0].Csum_detection);
+        printf("WFS speckle  contrast = %g    ph per WFS speckle per frame = %g\n", exaosimconf[0].C2_wfs, exaosimconf[0].C2_wfs*exaosimconf[0].twfs_opt*exaosimconf[0].Fwfs*exaosimconf[0].D*exaosimconf[0].D/4.0);
+        printf("Time lag speckle lifetime = %.4f sec (intensity), %.4f sec (complex amplitude)\n", exaosimconf[0].D/exaosimconf[0].windspeed, (1.0/exaosimconf[0].f)/exaosimconf[0].windspeed/2.0/M_PI);
+
+
+        // NEAR-IR LOOP
+        
+
+        // time lag attenuation
+        tmpA = 2.0*M_PI*exaosimconf[0].hfca*exaosimconf[0].windspeed*exaosimconf[0].f*exaosimconf[0].framedelay;
+        tmpB = exaosimconf[0].lambdai/M_PI * exaosimconf[0].betapWFSsci / sqrt(exaosimconf[0].Fsci * M_PI) / exaosimconf[0].D;
+        exaosimconf[0].twfssci_opt = pow(0.5*tmpB/tmpA*tmpB/tmpA, 1.0/3.0);
+        exaosimconf[0].twfssci = exaosimconf[0].twfssci_opt;
+        if(exaosimconf[0].twfssci<sciWFStlim)
+            exaosimconf[0].twfssci = sciWFStlim;
+        exaosimconf[0].TL_hfca = tmpA * exaosimconf[0].twfssci;   // lag
+        exaosimconf[0].TL_hfcb = tmpB / sqrt(exaosimconf[0].twfssci);  // noise
+        exaosimconf[0].TL_hfc = sqrt(exaosimconf[0].TL_hfca*exaosimconf[0].TL_hfca + exaosimconf[0].TL_hfcb*exaosimconf[0].TL_hfcb);
+        exaosimconf[0].C7 = pow(M_PI*exaosimconf[0].TL_hfc/exaosimconf[0].lambdai, 2.0);
+  
+        exaosimconf[0].C8 = (exaosimconf[0].C7+pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0))*pow(exaosimconf[0].Y/exaosimconf[0].X, 1.0/3.0)*pow(exaosimconf[0].betaaWFS/exaosimconf[0].betapWFS,4.0/3.0);
+        att2 = (exaosimconf[0].C7+pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0))/exaosimconf[0].C2;
+  
+  
+        exaosimconf[0].C9 = att2*exaosimconf[0].C4;
+         exaosimconf[0].C10 = att2*exaosimconf[0].C5;
+ 
+        // refractive index chromaticity attenuation
+        tmpA = 2.0*M_PI*exaosimconf[0].hf*(nwfs-nsci)/(1.0-0.5*(nwfs+nsci))*exaosimconf[0].windspeed*exaosimconf[0].f*exaosimconf[0].framedelay;
+        tmpB = exaosimconf[0].lambdai/M_PI * exaosimconf[0].betapWFSsci / sqrt(exaosimconf[0].Fsci * M_PI) / exaosimconf[0].D;
+        exaosimconf[0].twfssci_opt = pow(0.5*tmpB/tmpA*tmpB/tmpA, 1.0/3.0);
+        exaosimconf[0].twfssci = exaosimconf[0].twfssci_opt;
+        if(exaosimconf[0].twfssci<sciWFStlim)
+            exaosimconf[0].twfssci = sciWFStlim;
+        exaosimconf[0].RIC_hfca = tmpA * exaosimconf[0].twfssci;   // lag
+        exaosimconf[0].RIC_hfcb = tmpB / sqrt(exaosimconf[0].twfssci);  // noise
+        exaosimconf[0].RIC_hfc = sqrt(exaosimconf[0].RIC_hfca*exaosimconf[0].RIC_hfca + exaosimconf[0].RIC_hfcb*exaosimconf[0].RIC_hfcb);
+        exaosimconf[0].C11 = pow(M_PI*exaosimconf[0].RIC_hfc/exaosimconf[0].lambdai, 2.0);
+        
+
+        exaosimconf[0].Csum2 = 0.0;
+        exaosimconf[0].Csum2 += exaosimconf[0].C7;
+        exaosimconf[0].Csum2 += pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0);
+        exaosimconf[0].Csum2 += exaosimconf[0].C8;
+        exaosimconf[0].Csum2 += exaosimconf[0].C9;
+        
+        exaosimconf[0].Csum2ave = 0.0;
+        exaosimconf[0].Csum2ave += exaosimconf[0].C7/sqrt(tobs/exaosimconf[0].twfssci)*2.0;
+        exaosimconf[0].Csum2ave += pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0)/sqrt(tobs/exaosimconf[0].twfs)*2.0;
+        exaosimconf[0].Csum2ave += exaosimconf[0].C8/sqrt(tobs/exaosimconf[0].twfssci)*2.0;
+        exaosimconf[0].Csum2ave += exaosimconf[0].C9/sqrt(tobs/exaosimconf[0].twfssci)*2.0;
+        // #1 : arcsec
+        // #2 : C0
+        // #3 : C1
+        // #4 : C2
+        // #5 : C3
+        // #6 : C4
+        // #7 : C5
+        // #8 : C6
+        // #9 : Csum
+        // #10 : Csum_detection [5 sig]
+        // #11 : wfs etime
+        // #12 : ph/frame
+
+        // #13 : C7  time lag correction residual (C2 ->)
+        // #14 : C8 (C3->)
+        // #15 : C9 (C4->)
+        // #16 : C10 (C5->)
+        // #17 : C11 (C6->)
+        // #18 : RAW CONTRAST
+        // #19 : Detection limit [5 sig]
+        // #20 : Photon noise limit 1hr [5 sig]
+        // #21 : wfs etime
+        // #22 : near-IR ph/speckle/frame
+
+        // #23 : photon noise limit loop 1
+ 
+        
+        fprintf(fp, "%f %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g %15g\n", exaosimconf[0].alpha_arcsec, log10(exaosimconf[0].C0), log10(exaosimconf[0].C1), log10(exaosimconf[0].C2), log10(exaosimconf[0].C3), log10(exaosimconf[0].C4), log10(exaosimconf[0].C5), log10(exaosimconf[0].C6), log10(exaosimconf[0].Csum), log10(exaosimconf[0].Csum_detection*5), exaosimconf[0].twfs, exaosimconf[0].twfs*exaosimconf[0].Fwfs*exaosimconf[0].D*exaosimconf[0].D/4.0, log10(exaosimconf[0].C7), log10(exaosimconf[0].C8), log10(exaosimconf[0].C9), log10(exaosimconf[0].C10), log10(exaosimconf[0].C11), log10(exaosimconf[0].Csum2), log10(exaosimconf[0].Csum2ave*5), log10(5.0*exaosimconf[0].Csum2/sqrt(tobs*exaosimconf[0].Fsci*exaosimconf[0].D*exaosimconf[0].D/4.0*exaosimconf[0].Csum2)), exaosimconf[0].twfssci, exaosimconf[0].twfssci*exaosimconf[0].Fsci*exaosimconf[0].D*exaosimconf[0].D/4.0*exaosimconf[0].Csum2, log10(5.0*exaosimconf[0].Csum/sqrt(tobs*exaosimconf[0].Fsci*exaosimconf[0].D*exaosimconf[0].D/4.0*exaosimconf[0].Csum)));
+        printf("Nphoton Sci = %g\n",tobs*exaosimconf[0].Fsci*exaosimconf[0].D*exaosimconf[0].D/4.0*exaosimconf[0].Csum2);
+        //pow(M_PI*exaosimconf[0].hfca/exaosimconf[0].lambdai, 2.0), pow(M_PI*exaosimconf[0].hfcb/exaosimconf[0].lambdai, 2.0));
     }
+    fclose(fp);
 
-    delete_image_ID("wfscumul");
-    free(dmsize);
-    free(wfssize_array);
-    free(pupsize_array);
+    fp = fopen("printcmd", "w");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "\n");
+    fclose(fp);
 
 
-    return 0;
+    free(exaosimconf);
+
+    return(0);
 }
-*/
+
+
+
+
 

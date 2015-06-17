@@ -21,6 +21,10 @@
 #include "COREMOD_iofits/COREMOD_iofits.h"
 
 #include "AOloopControl_DM/AOloopControl_DM.h"
+#include "AtmosphericTurbulence/AtmosphericTurbulence.h"
+
+
+
 
 extern DATA data;
 
@@ -38,7 +42,7 @@ struct timespec semwaitts;
 long DM_Xsize = 50;
 long DM_Ysize = 50;
 long NBact = 2500; // default
-
+char DMname[200];
 
 AOLOOPCONTROL_DM_DISPCOMB_CONF *dispcombconf; // configuration
 int dmdispcomb_loaded = 0;
@@ -73,6 +77,16 @@ int AOloopControl_DM_setsize_cli()
     return 0;
 }
 
+
+int AOloopControl_DM_setname_cli()
+{
+    if(CLI_checkarg(1,3)==0)
+        AOloopControl_DM_setname(data.cmdargtoken[1].val.string);
+    else
+        return 1;
+
+    return 0;
+}
 
 
 int AOloopControl_DM_CombineChannels_cli()
@@ -137,6 +151,7 @@ int init_AOloopControl_DM()
 {
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "AO loop Control DM operation");
+    sprintf(DMname, "dmdisp");
     data.NBmodule++;
 
 
@@ -145,10 +160,19 @@ int init_AOloopControl_DM()
     data.cmd[data.NBcmd].fp = AOloopControl_DM_setsize_cli;
     strcpy(data.cmd[data.NBcmd].info,"set DM size");
     strcpy(data.cmd[data.NBcmd].syntax,"linear size (assumes square DM)");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmsetsize 32");
+    strcpy(data.cmd[data.NBcmd].example,"aolcontroldmsetsize 32");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setsize(int size1d)");
     data.NBcmd++;
 
+
+    strcpy(data.cmd[data.NBcmd].key,"aolcontroldmsetname");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setname_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM name");
+    strcpy(data.cmd[data.NBcmd].syntax,"replaces default dmdisp name");
+    strcpy(data.cmd[data.NBcmd].example,"aolcontroldmsetname dmtestdisp_");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setname(char *name)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolcontrolDMcomb");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -292,6 +316,15 @@ int AOloopControl_DM_setsize(long size1d)
     DM_Xsize = size1d;
     DM_Ysize = size1d;
     NBact = DM_Xsize*DM_Ysize; // default
+
+    return 0;
+}
+
+
+
+int AOloopControl_DM_setname(char *name)
+{
+    sprintf(DMname, "%s", name);
 
     return 0;
 }
@@ -476,14 +509,14 @@ int AOloopControl_DM_CombineChannels(int mode)
 
     for(ch=0; ch<DM_NUMBER_CHAN; ch++)
     {
-        sprintf(name, "dmdisp%ld", ch);
+        sprintf(name, "%s%ld", DMname, ch);
         printf("Channel %ld \n", ch);
         IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
         dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
     }
 
 
-    IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
+    IDdisp = create_image_ID(DMname, naxis, size, FLOAT, 1, 10);
 
     IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
     dmdispptr = data.image[IDdispt].array.F;
@@ -495,6 +528,8 @@ int AOloopControl_DM_CombineChannels(int mode)
 
     dispcombconf[0].status = 1;
 
+  COREMOD_MEMORY_image_set_createsem(DMname);
+
     if(data.image[IDdisp].sem1==0)
     {
         sprintf(sname, "%s_sem1", data.image[IDdisp].md[0].name);
@@ -503,14 +538,16 @@ int AOloopControl_DM_CombineChannels(int mode)
             exit(1);
         }
         else
-            printf("semaphore 1 initialized for image dmdisp \n");
+            printf("semaphore 1 initialized for image %s \n", DMname);
         data.image[IDdisp].sem1 = 1;
     }
+    else
+        printf("image %s already has semaphore\n", DMname);
+
 
     while(dispcombconf[0].ON == 1)
     {
         dispcombconf[0].status = 2;
-
 
         if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
             perror("clock_gettime");
@@ -521,7 +558,6 @@ int AOloopControl_DM_CombineChannels(int mode)
             semwaitts.tv_sec = semwaitts.tv_sec + 1;
 
         sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
-        // usleep(10);
 
         cntsum = 0;
 
@@ -531,6 +567,8 @@ int AOloopControl_DM_CombineChannels(int mode)
             cntsum += data.image[IDch[ch]].md[0].cnt0;
 
 
+        
+            
         if(cntsum != cntsumold)
         {
             dispcombconf[0].status = 3;
@@ -565,8 +603,10 @@ int AOloopControl_DM_CombineChannels(int mode)
             data.image[IDdisp].md[0].write = 1;
             memcpy (data.image[IDdisp].array.F,data.image[IDdispt].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
             data.image[IDdisp].md[0].cnt0++;
-            data.image[IDdisp].md[0].write = 0;
-
+            data.image[IDdisp].md[0].write = 0;            
+            sem_post(data.image[IDdisp].semptr);
+ 
+ 
             dispcombconf[0].status = 7;
 
             if(mode==1)
@@ -707,18 +747,31 @@ int AOloopControl_DMturb_createconf()
 {
     int result;
     long IDc1;
-
+    char name[200];
+    
     if( dmturb_loaded == 0 )
     {
         printf("Create/read configuration\n");
         fflush(stdout);
 
-        IDc1 = image_ID("dmdisp1");
+        sprintf(name, "%s1", DMname);
+        IDc1 = image_ID(name);
         if(IDc1 == -1)
-            read_sharedmem_image("dmdisp1");
+            IDc1 = read_sharedmem_image(name);
+        
+        if(IDc1==-1)
+        {
+            IDc1 = create_2Dimage_ID("turbch", DM_Xsize, DM_Ysize);
+        }
+        else
+        {
+            DM_Xsize = data.image[IDc1].md[0].size[0];
+            DM_Ysize = data.image[IDc1].md[0].size[1];
+        }
 
         IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
 
+        
 
         SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
         if (SMturbfd == -1) {
@@ -874,6 +927,7 @@ int AOloopControl_DM_turb()
     long size_sx; // screen size
     long size_sy;
     long IDs1, IDs2;
+    char name[200];
 
     struct timespec tlast;
     struct timespec tdiff;
@@ -903,11 +957,23 @@ int AOloopControl_DM_turb()
 
     long IDturbs1;
 
+
+
+
     AOloopControl_DMturb_createconf();
 
     IDs1 = load_fits("~/conf/turb/turbscreen0.fits", "screen1", 1);
     IDs2 = load_fits("~/conf/turb/turbscreen0g.fits", "screen2", 1);
-
+   
+    if(IDs1==-1)
+    {
+        make_master_turbulence_screen("screen1", "screen2", 2048, 200.0, 1.0);
+        IDs1 = image_ID("screen1");
+        IDs2 = image_ID("screen2");
+        save_fits("screen1", "!screen1.fits");
+        save_fits("screen2", "!screen2.fits");
+    }
+    
 
     printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
     size_sx = data.image[IDs1].md[0].size[0];
@@ -1007,8 +1073,9 @@ int AOloopControl_DM_turb()
             coeff *= 0.999;
         else
             coeff *= 1.001;
-
-        copy_image_ID("turbs", "dmdisp1", 0);
+        
+        sprintf(name, "%s1", DMname);
+        copy_image_ID("turbs", name, 0);
         save_fits("turbs", "!turbs.fits");
         save_fits("turbs1", "!turbs1.fits");
     }

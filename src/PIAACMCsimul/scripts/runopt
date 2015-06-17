@@ -2,7 +2,6 @@
 
 
 
-
 size=1024 # central lambda [nm]
 file="conf_size.txt"
 if [ -f $file ]
@@ -21,6 +20,11 @@ if [ -f $file ]
 	echo "Monochromatic Max design Step  = $MdesignStepMax %"
 	ok=0
 fi
+
+
+# save command string to filesystem (useful for debugging)
+echo "$0 $@" > $0_cmdstring.txt
+echo "$0 $@"
 
 
 errorfile="errorstatus.txt"
@@ -291,7 +295,7 @@ rm looppsfcomp_done
 initlooppsf=0
 
 while [ $loopOK -eq 1 ]; do
-waitforfile looppsfcomp
+./waitforfile1 looppsfcomp loopstop
 rm looppsfcomp
 echo "loopOK $loopcnt"
 sleep 1
@@ -306,7 +310,7 @@ echo "dirname = $dirname"
 
 
 
-# compute polychromatic PSF
+# compute polychromatic PSF on-axis
 if [ $computecontrast -eq 1 ]
 then
 execcode=$(( 720 + 10*$nbDM ))
@@ -316,7 +320,7 @@ checkerrorstatus
 fi
 
 
-
+# compute polychromatic PSF for extended source
 if [ $computecontrast -gt 1 ]
 then
 ./sim$size 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index

@@ -51,22 +51,23 @@ int OPTICSMATERIALS_code(char *name)
 {
     int code = -1;
     int i;
- 
+
     for (i = 0; MatCode[i].name != NULL; i++) {
-    if (strcmp(name, MatCode[i].name) == 0) {
-        printf("Material \"%s\" -> code = %d\n",  name, MatCode[i].code);
-        return MatCode[i].code;
-    }
-    }
- 
-    if(code < 0)
-        {
-            printf("ERROR: Material name \"%s\" not recognized", name);
-            exit(0);
+        if (strcmp(name, MatCode[i].name) == 0) {
+            //printf("Material \"%s\" -> code = %d\n",  name, MatCode[i].code);
+            return MatCode[i].code;
         }
-    
+    }
+
+    if(code < 0)
+    {
+        printf("ERROR: Material name \"%s\" not recognized\n", name);
+        exit(0);
+    }
+
     return(code);
 }
+
 
 char* OPTICSMATERIALS_name(int code)
 {
