@@ -478,8 +478,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                             }
                         }
                 
-                save_fits("dftgridre", "!dftgridre.fits");
-                save_fits("dftgridim", "!dftgridim.fits");
+           //     save_fits("dftgridre", "!dftgridre.fits");
+           //     save_fits("dftgridim", "!dftgridim.fits");
                 
                 mk_complex_from_reim("dftgridre", "dftgridim", "_WFctmpc");
                 delete_image_ID("dftgridre");
@@ -510,20 +510,22 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 delete_image_ID("_WFctmpc");
 
-                sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
+                /*sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
                 r = system(command);
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
                 r = system(command);
+                */
+
 
                 // TEST
-                mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
+                /*mk_reim_from_complex("_WFcout", "_twfre", "_twfim");
                 sprintf(fname, "!%s/test_twfre.fits", savedir);
                 save_fits("_twfre", fname);
                 sprintf(fname, "!%s/test_twfim.fits", savedir);
                 save_fits("_twfim", fname);
                 delete_image_ID("_twfre");
                 delete_image_ID("_twfim");
-
+                */
 
                 //
                 // INTERPOLATE SPARSE RESULT ON CONTINUOUS GRID
@@ -566,11 +568,11 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
           
                 // TEST
           
-                sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
+       /*         sprintf(fname, "!%s/test_dftgridre1_elem%ld.fits", savedir, elem);
                 save_fits("dftgridre1", fname);
                 sprintf(fname, "!%s/test_dftgridim1_elem%ld.fits", savedir, elem);
                 save_fits("dftgridim1", fname);
-                
+         */       
                 
                 free(convkern);
                 delete_image_ID("_WFcout");

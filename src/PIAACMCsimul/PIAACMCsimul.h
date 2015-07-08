@@ -75,6 +75,15 @@ typedef struct {
 
     // ========= Focal Plane Mask =============
 
+    // sprintf(fname, "%s/fpm_zonez_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+
+    // sprintf(fname, "!%s/psfi0_exsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);    
+
+   // sprintf(fname, "%s/FPMresp%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+
+  //  sprintf(fname, "!%s/ContrastCurve_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d_tt000.txt", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda); 
+  
+
     double fpmaskradld; // mask radius [l/d] for the idealized PIAACMC starting point
     long focmNBzone; // number of zones
     double Fratio; // beam Fratio at focal plane
@@ -83,12 +92,37 @@ typedef struct {
     long zoneaID;  // focm zone amplitude transmission, double precision image, named fpmza / fpm_zonea.fits
     double fpzfactor; // focal plane mask DFT zoom factor
 
-    double fpmRad; // outer radius of focal plane mask
+    double fpmRad; // outer radius of physical focal plane mask [m]
 
     long NBrings; // number of rings
+    double fpmminsag; // [m]
+    double fpmmaxsag; // [m]
+    long NBringCentCone; // number of rings that the central cone occupies
+    double fpmCentConeRad; // [m]
+    double fpmCentConeZ; // peak sag of central cone [m]
+    double fpmOuterConeZ; // outer sag offset [m]
+    double fpmOuterConeRadld; // outer radius (end of outer cone) [lambda/D] 
+    double fpmOuterConeRad; // [m]
     long fpmarraysize;
     char fpmmaterial_name[10]; 
     int fpmmaterial_code; 
+ 
+    // Mask description
+    //
+    // CENTRAL CONE
+    // inner zone (optional) is a cone, covering the central NBringCentCone rings (set to zero for no central cone)
+    // The outer edge of the central cone is at sag = 0, and the central peak of the cone is at sag fpmCentConeZ
+    //
+    // SECTORS
+    // The next zone outwards consists of sectors arranged in rings. Each sector has its own sag
+    // The zones are between sag fpmminsag and fpmmaxsag
+    // 
+    // OUTER CONE
+    // The outer cone starts at the outer edge of the sectors, where it has sag=0
+    // Its outer is at sag fpmOuterZ
+    // outside of the outer cone, the sag is constant at fpmOuterZ
+    //
+ 
  
 } OPTPIAACMCDESIGN;
 
@@ -105,7 +139,7 @@ void  PIAACMCsimul_free( void );
 // Focal plane mask
 long PIAACMCsimul_mkFPM_zonemap(char *IDname);
 long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_name);
-long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mode);
+long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mode, int saveMask);
 
 // initializes the optsyst structure to simulate reflective PIAACMC system
 void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, double TTyld );

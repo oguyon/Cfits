@@ -29,33 +29,39 @@ fi
 printhelp ()
 {
     echo "main PIAACMC design scrit"
-	echo "	arg1 : directory name                           $1"
-	echo "	arg2 : size (1024, 2048, 4096 etc...)           $2"
-	echo "	arg3 : pupil scale (m/pix)                      $3"
-	echo "	arg4 : pupil file                               $4"
-	echo "	arg5 : centobs 0                                $5"
-	echo "	arg6 : centobs 1                                $6"
-	echo "	arg7 : mask radius [l/D]  (idealized)           $7"	
-	echo "	arg8 : design lambda                            $8"	
-	echo "	arg9 : PIAA material                            $9"
-	echo "	arg10: Lyot Stop transm                         ${10}"
-	echo "	arg11: Number of Lyot Stops                     ${11}"
-	echo "	arg12: mask lambda                              ${12}"
-	echo "	arg13: mask spectral bandwidth                  ${13}"
-	echo "	arg14: mask number of rings                     ${14}"
-	echo "	arg15: mask physical radius [l/D]               ${15}"
-	echo "	arg16: resolved source size (00=unresolved)     ${16}" 
-	echo "	arg17: extended source mode                     ${17}"
-	echo "	arg18: focal plane material                     ${18}" 
-	echo "	arg19: index                                    ${19}"
-	echo "	arg20: design step                              ${20}"
+	echo "  arg1 : directory name                           $1"
+	echo "  arg2 : size (1024, 2048, 4096 etc...)           $2"
+	echo "  arg3 : pupil scale (m/pix)                      $3"
+	echo "  arg4 : pupil file                               $4"
+	echo "  arg5 : centobs 0                                $5"
+	echo "  arg6 : centobs 1                                $6"
+	echo "  arg7 : mask radius [l/D]  (idealized)           $7"	
+	echo "  arg8 : design lambda                            $8"	
+	echo "  arg9 : PIAA material                            $9"
+	echo "  arg10: Lyot Stop transm                         ${10}"
+	echo "  arg11: Number of Lyot Stops                     ${11}"
+	echo "  arg12: mask lambda                              ${12}"
+	echo "  arg13: mask spectral bandwidth                  ${13}"
+	echo "  arg14: mask number of rings                     ${14}"
+	echo "  arg15: mask physical radius [l/D]               ${15}"
+	echo "  arg16: resolved source size (00=unresolved)     ${16}"
+	echo "  arg17: extended source mode                     ${17}"
+	echo "  arg18: focal plane material                     ${18}"
+	echo "  arg19: min sag [m]                              ${19}"
+	echo "  arg20: max sag [m]                              ${20}"
+	echo "  arg21: center cone nb rings                     ${21}"
+	echo "  arg22: center cone sag                          ${22}"
+	echo "  arg23: outer cone rad [l/D]                     ${23}"
+	echo "  arg24: outer sag offset [m]                     ${24}"
+	echo "  arg25: index                                    ${25}"
+	echo "  arg26: design step                              ${26}"
 	echo ""
 }
 
 
 
 
-NBARGS=20
+NBARGS=26
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp $@
@@ -91,10 +97,19 @@ PIAACMC_extmode=${17}
 
 echo "${18}" > $1/conf_fpmmaterial_name.txt
 
-index=${19}
+fpmminsag=${19}
+fpmmaxsag=${20}
+fpmccnbr=${21}
+fpmccz=${22}
+fpmocr=${23}
+fpmocz=${24}
+
+
+
+index=${25}
 
 # STEP PRE-PROCESSING
-rstep=${20}
+rstep=${26}
 
 
 
@@ -118,16 +133,16 @@ statestop=$rstep
 
 
 
-# if $20 in [0-99]
-# run steps from 0 to $20
+# if $26 in [0-99]
+# run steps from 0 to $26
 if ((rstep >= 0 && rstep <= 99)); then
 echo ""
 state=0
 statestop=${rstep}
 fi
 
-# if $20 in [100-109]
-# run steps from 100 to $20
+# if $26 in [100-109]
+# run steps from 100 to $26
 if ((rstep >= 100 && rstep <= 109)); then
 echo ""
 state=100
@@ -273,6 +288,13 @@ echo "PIAACMC_NBrings=$NBrings" >> $startupfile #14
 echo "PIAACMC_MASKRADLD=${FPM_MASKRADLD}" >> $startupfile #15
 echo "PIAACMC_resolved=$PIAACMC_resolved" >> $startupfile #16
 echo "PIAACMC_extmode=$PIAACMC_extmode" >> $startupfile #17
+echo "PIAACMC_fpmminsag=${fpmminsag}" >> $startupfile #19
+echo "PIAACMC_fpmmaxsag=${fpmmaxsag}" >> $startupfile #20
+echo "PIAACMC_NBringCentCone=${fpmccnbr}" >> $startupfile #21
+echo "PIAACMC_fpmCentConeZ=${fpmccz}" >> $startupfile #22
+echo "PIAACMC_fpmOuterConeRadld=${fpmocr}" >> $startupfile #23
+echo "PIAACMC_fpmOuterConeZ=${fpmocz}" >> $startupfile #24
+
 echo "PIAACMC_dftgrid=2" >> $startupfile
 echo "PIAACMC_nblambda=${nblambda}" >> $startupfile
 echo "PIAACMC_beamrad=${beamrad}" >> $startupfile
@@ -504,6 +526,7 @@ $execname -n step720 << EOF
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
+PIAACMC_SAVE_fpm=1
 piaacmcsimrun $1 0
 exit
 EOF
@@ -1763,22 +1786,14 @@ for thread in `seq 0 1 ${NBthreadsFPMrespm1}`;
 do
 echo "STARTING COMPONENT $thread"
 echo "waitforfile initOK_${pid}" > script${pid}FPMt${thread}n${NBthreadsFPMresp}
-
+ 
 fifoname1="${fifoname}t${thread}n${NBthreadsFPMresp}"
 execname1="$progname -s $startupfile -f $fifoname1"
 
-
 echo "$execname1 -n ${pid}FPMt${thread}n${NBthreadsFPMresp} << EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_MASKRADLD=${FPM_MASKRADLD}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_fpmtype=1" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_FPMsectors=$FPMsectors" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_NBrings=$NBrings" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_nblambda=$nblambda" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_lambdaB=${mlambdaB}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_lambda=${mlambda}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "SCORINGMASKTYPE=$SCORINGMASKTYPE" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_resolved=$PIAACMC_resolved" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_extmode=$PIAACMC_extmode" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
 echo "# Number of threads" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "PIAACMC_FPMresp_mp=${NBthreadsFPMresp}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
@@ -1787,12 +1802,6 @@ echo "# Current thread ( if thread > mp, then combine results)" >> script${pid}F
 echo "PIAACMC_FPMresp_thread=${thread}" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 
 echo "PIAACMC_save=0" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_size=$size" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_pixscale=$pscale" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_dftgrid=2" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_fpmradld=$fpmradld" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_centobs0=$centobs0" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
-#echo "PIAACMC_centobs1=$centobs1" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "piaacmcsimrun $1 11" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "exit" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}
 echo "EOF" >> script${pid}FPMt${thread}n${NBthreadsFPMresp}

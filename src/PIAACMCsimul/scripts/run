@@ -16,13 +16,6 @@ echo "     optsingle : optimize"
 echo "     eval0 : level 0 evaluation"
 echo "     eval1 : level 1 evaluation"
 echo "     eval2 : level 2 evaluation"
-	echo "   psfcomploop1    : loop PSF computation (to be used for WFC)"
-	echo "                   will compute PSF every time a file named looppsfcomp appears"
-	echo "                   loop will stop when file loopstop appears"
-	echo "                   Following files will appear in shared memory: "
-	echo "                        psfout : PSF intensity image"
-	echo "                        psfout_re: real part"
-	echo "                        psfout_im: imaginary part"
 echo "------------------------------------------------------------------------"
 }
 
@@ -41,34 +34,40 @@ runoptcmd=$1
 
 
 
-coin=0.300
+coin=0.315
 coout=0.290
 
-fpmradld=1.100
-PIAAmaterial="Mirror"
+fpmradld=1.000
+PIAAmaterial="CaF2"
 
-LStransm=0.60
-NBls=4
-lambda=550
-mlambda=550
-mlambdaB=15
-NBrings=5 #22
-maskradld=1.60
+LStransm=0.70
+NBls=3
+lambda=1600
+mlambda=1630
+mlambdaB=20
+NBrings=16
+maskradld=1.50
 ssize=20
 extmode=0 # 3 pts
 fpmmaterial="Si"
 
+fpmminsag="-1e-5"
+fpmmaxsag="1e-5"
+fpmccnbr=5
+fpmccz=$fpmmaxsag
+fpmocradld=50.0
+fpmocz=$fpmmaxsag
 
 
 # OPTIONAL ARGUMENTS
 
-beamrad=0.022
-pscale=0.00011
-Fratio=80.0
+beamrad=0.009
+pscale=0.000045
+Fratio=26.0
 r0lim=1.15
 r1lim=1.50 
-piaasep=2.302606
-piaa0pos=0.702843
+piaasep=0.096
+piaa0pos=0.200
 
 echo "$beamrad" > conf_PIAAbeamrad.txt
 echo "$Fratio" > conf_Fratio.txt
@@ -80,23 +79,6 @@ echo "$piaa0pos" > conf_PIAA0pos.txt
 
 echo "18" > conf_MdesignStepMax.txt
 
-# 5   1.1381e-05
-# 6   3.0694e-08
-# 7   2.71137e-08
-# 8   1.19138e-08 
-# 9   1.51187e-09
-#10   3.40822e-09 
-#11   1.97517e-09 
-#12   1.81428e-09 
-#13   1.61474e-10  
-#14   1.02717e-10
-#15   3.6649e-10 
-#16   1.86966e-10
-#17   8.20368e-11 
-#18   3.6e-12 
 
-
-cmdOK=0
-
-./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial 000
+./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
 

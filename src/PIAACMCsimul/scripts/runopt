@@ -94,12 +94,19 @@ printhelp ()
 	echo " 15   extmode      : extended source mode (0: 3pts, 1: 6pts)"
 	echo " 16   fpmmaterial  : material used for the focal plane mask"
 	echo ""
-	echo " 17   index"
+	echo " 17   fpmminsag    : min sag [m]"   
+	echo " 18   fpmmaxsag    : max sag [m]"   
+	echo " 19   fpmccnbr     : center cone nb rings"  
+	echo " 20   fpmccz       : center cone sag" 
+	echo " 21   fpmocradld   : outer cone rad [l/D]"   
+	echo " 22   fpmocz       : outer sag offset [m]" 
+	echo ""
+	echo " 23   index"
 	echo ""
 	echo "------------------------------------------------------------------------------"
 }
 
-NBARGS=17
+NBARGS=23
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp
@@ -136,8 +143,15 @@ ssize=${14}
 extmode=${15}
 fpmmaterial="${16}"
 
+fpmminsag=${17}
+fpmmaxsag=${18}
+fpmccnbr=${19}
+fpmccz=${20}
+fpmocradld=${21}
+fpmocz=${22}
+
 # configuration index
-index=${17}
+index=${23}
 
 # list of arguments passed to sim1024 :
 # $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
@@ -161,7 +175,6 @@ computecontrast=2
 
 inputmode=0
 optimizeloop=0
-
 
 
 if [ $1 == "optsingle" ]; then
@@ -266,23 +279,22 @@ then
 echo "1" > conf_FPMsectors.txt
 echo "$NBlambda" > conf_nblambda.txt
 
-
-./sim$size 800 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index # set configuration settings
+./sim$size 800 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index # set configuration settings
 checkerrorstatus
 
 
 #$fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 800 000   # set configuration settings
-./sim$size 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index # compute FPMresp if not present
+./sim$size 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index # compute FPMresp if not present
 checkerrorstatus
 
 
 # Search for optimal solution
 echo "$searchtime" > searchtime.txt
-./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 
 
-echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index"
+echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index"
 
 
 # LOOP STUFF
@@ -315,7 +327,7 @@ if [ $computecontrast -eq 1 ]
 then
 execcode=$(( 720 + 10*$nbDM ))
 echo "execcode = $execcode"
-./sim$size $execcode $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+./sim$size $execcode $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 fi
 
@@ -323,7 +335,7 @@ fi
 # compute polychromatic PSF for extended source
 if [ $computecontrast -gt 1 ]
 then
-./sim$size 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+./sim$size 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 fi
 
@@ -331,7 +343,7 @@ fi
 
 if [ $computecontrast -eq 3 ]
 then
-./sim$size 722 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+./sim$size 722 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index
 checkerrorstatus
 fi
 
@@ -339,7 +351,7 @@ fi
 if [ $computetransmcurve -eq 1 ]
 then
 echo "computing transmission curve"
-./sim$size 750 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+./sim$size 750 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index
 checkerrorstatus
 fi
 
@@ -419,22 +431,25 @@ then
 else
 	echo "file ${file1} does not exist"
 	
+	
 	# if directory does not exist but monochromatic design reference exists, adopt it, otherwise, do nothing	
-	./sim$size 501 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+	./sim$size 501 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
+	
 	
 	# PHASE 1: COMPUTE MONOCHROMATIC IDEAL PIAACMC
 	
-	./sim$size $MdesignStepMax $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+	./sim$size $MdesignStepMax $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
-	
+
 	# copy solution as master reference (if it does not exist) for other lambda / lambdaB
-	./sim$size 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+	./sim$size 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus	
 	
 	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
-	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
+	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
+
 	#touch $file1
 fi
 

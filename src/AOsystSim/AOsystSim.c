@@ -1522,7 +1522,8 @@ int AOsystSim_extremeAO_contrast_sim()
   
   
         exaosimconf[0].C9 = att2*exaosimconf[0].C4;
-         exaosimconf[0].C10 = att2*exaosimconf[0].C5;
+        exaosimconf[0].C10 = att2*exaosimconf[0].C5;
+ 
  
         // refractive index chromaticity attenuation
         tmpA = 2.0*M_PI*exaosimconf[0].hf*(nwfs-nsci)/(1.0-0.5*(nwfs+nsci))*exaosimconf[0].windspeed*exaosimconf[0].f*exaosimconf[0].framedelay;
