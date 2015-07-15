@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Designing PIAACMC
+# Designing PIAACMC 
+
+
+
 
 
 printhelp ()
@@ -22,52 +25,75 @@ echo "------------------------------------------------------------------------"
 NBARGS=1
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
-	printhelp
+        printhelp
 if [ "$#" -ne $NBARGS ]; then
     echo "Illegal number of parameters ($NBARGS params required, $# entered)"
 fi
-	exit
+        exit
 fi
+
 
 runoptcmd=$1
 
 
 
 
-coin=0.315
-coout=0.290
 
-fpmradld=1.000
-PIAAmaterial="CaF2"
 
-LStransm=0.70
-NBls=3
-lambda=1600
-mlambda=1630
-mlambdaB=20
-NBrings=16
-maskradld=1.50
-ssize=20
-extmode=0 # 3 pts
-fpmmaterial="Si"
 
-fpmminsag="-1e-5"
-fpmmaxsag="1e-5"
-fpmccnbr=5
+
+
+
+
+coin=0.300            # central obstruction at input beam [beam radius]
+coout=0.290           # central obstrcution at output beam [beam radius]
+
+fpmradld=1.100
+PIAAmaterial="Mirror"
+
+LStransm=0.70         # Geometric Lyot stops throughput
+NBls=4                # number of  Lyot stops
+lambda=565            # design wavelength for achromatic design
+mlambda=565           # central wavelength [nm]
+mlambdaB=10           # bandwidth [%]
+NBrings=22            # number of rings in focal plane mask
+maskradld=1.60        # mask outer radius at central wavelength 
+ssize=20              # source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)
+extmode=0             # source extent mode (0: 3 points; 1: 6 points)
+
+
+
+fpmmaterial="Mirror"  # focal plane mask material
+fpmminsag="-1e-6"     # min focal plane mask sag
+fpmmaxsag="1e-6"      # max focal plane mask sag
+
+# fpm central cone
+# how many central rings replaced by cone
+fpmccnbr=0            # set to 0 if no central cone
+# sag at cone center
 fpmccz=$fpmmaxsag
-fpmocradld=50.0
-fpmocz=$fpmmaxsag
+# sag at cone edge will be midpoint between minsag and maxsag
+
+# fpm outer cone
+# outer cone outer radius
+fpmocradld=8.0        # outer cone outer radius [l/D]
+# sag at inner edge of outer cone (sag = 0 at outer edge)
+fpmocz="0.0"          # set to 0 if no outer cone
+
+
+
 
 
 # OPTIONAL ARGUMENTS
+# Note: design is simulated in collimated beam geometry
 
-beamrad=0.009
-pscale=0.000045
-Fratio=26.0
-r0lim=1.15
-r1lim=1.50 
-piaasep=0.096
-piaa0pos=0.200
+beamrad=0.022         # beam radius [mm]
+pscale=0.00011        # pixel scale in pupil [m/pix]
+Fratio=80.0           # F ratio at focal plane mask
+r0lim=1.15            # outer edge of PIAA optic 0 [beam radius unit]
+r1lim=1.50            # outer edge of PIAA optic 1 [beam radius unit]
+piaasep=2.302606      # distance between PIAA optics [m]
+piaa0pos=0.702843     # PIAA optic 0 distance from pupil plane [m]
 
 echo "$beamrad" > conf_PIAAbeamrad.txt
 echo "$Fratio" > conf_Fratio.txt
@@ -80,5 +106,23 @@ echo "$piaa0pos" > conf_PIAA0pos.txt
 echo "18" > conf_MdesignStepMax.txt
 
 
+
+
+# 5  4.62845e-06
+# 6  2.73012e-07
+# 7  1.2657e-07
+# 8  5.73497e-08    #2.89903e-06
+# 9  4.82752e-08    #5.04682e-07
+#10  5.74245e-08    #5.15738e-07
+#11  5.76306e-08    #5.19874e-07
+#12  5.47897e-08    #6.15752e-05
+#13  7.87868e-09    #6.57179e-05
+#14  1.08568e-07    #6.88505e-05
+#15  8.74249e-08
+#16  4.1511e-08 
+#17  1.56353e-08
+#18  
+
 ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
+
 

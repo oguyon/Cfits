@@ -2901,7 +2901,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         {
           //  sprintf(fname, "%s/fpm_zonea_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
 
-            sprintf(fname, "%s/fpm_zonez_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_ccnbr%03ld_ccz%06ld_ocr%04ld_ocz%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRadld+0.1), (long) (1.0e9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+            sprintf(fname, "%s/fpm_zonea_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_ccnbr%03ld_ccz%06ld_ocr%04ld_ocz%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRadld+0.1), (long) (1.0e9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
 
             printf("LOADING FILE NAME : \"%s\"\n", fname);
             piaacmc[0].zoneaID = load_fits(fname, "fpmza", 1);
@@ -2913,6 +2913,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     else
         CREATE_fpmza = 1;
 
+
+    
     if(CREATE_fpmza == 1)
     {
         if(piaacmc[0].zoneaID != -1)
@@ -2921,11 +2923,13 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
         if(PIAACMC_MASKRADLD>0.2) // physical mask
         {
+            printf("PHYSICAL MASK ... %ld zones\n", piaacmc[0].focmNBzone);
             for(ii=0; ii<piaacmc[0].focmNBzone; ii++)
                 data.image[piaacmc[0].zoneaID].array.D[ii] = 1.0;
         }
         else // idealized mask
         {
+            printf("IDEALIZED MASK ... %ld zones\n", piaacmc[0].focmNBzone);
             for(ii=0; ii<piaacmc[0].focmNBzone; ii++)
                 data.image[piaacmc[0].zoneaID].array.D[ii] = piaacmc[0].fpmaskamptransm;
         }
@@ -2938,9 +2942,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         save_fits("fpmza", fname);
     }
 
-    printf(" piaacmc[0].fpmaskamptransm = %f \n", piaacmc[0].fpmaskamptransm);
-    
-
+ //   printf("%d piaacmc[0].fpmaskamptransm = %f       %lf\n", CREATE_fpmza, piaacmc[0].fpmaskamptransm, data.image[piaacmc[0].zoneaID].array.D[0]);
+ //   sleep(10);
 
 
     // ============= MAKE LYOT STOPS =======================
@@ -6292,7 +6295,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         printf("PIAACMC_fpmtype = %d\n", PIAACMC_fpmtype);
 
         PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
-
+ //       printf("data.image[piaacmc[0].zoneaID].array.D[0] = %lf\n", data.image[piaacmc[0].zoneaID].array.D[0]);
+//        sleep(10);
+        
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
             NBiter = (long) data.variable[IDv].value.f+0.01;
@@ -6318,12 +6323,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         NBparam = 0;
 
-        if(PIAACMC_fpmtype==0)
+        if(PIAACMC_fpmtype==0) // ideal mask
         {
             paramtype[NBparam] = DOUBLE;
             paramval[NBparam] = &data.image[piaacmc[0].zoneaID].array.D[0];
-            paramdelta[NBparam] = 1.0e-2;
-            parammaxstep[NBparam] = 1.0e-1;
+            paramdelta[NBparam] = 1.0e-3;
+            parammaxstep[NBparam] = 2.0e-1;
             parammin[NBparam] = -1.0;
             parammax[NBparam] = 1.0;
             NBparam++;
@@ -6337,9 +6342,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     paramtype[NBparam] = DOUBLE;
                     paramval[NBparam] = &data.image[piaacmc[0].zonezID].array.D[mz];
                     paramdelta[NBparam] = 1.0e-9;
-                    parammaxstep[NBparam] = 1.0e-8;
-                    parammin[NBparam] = -1.0e-6;
-                    parammax[NBparam] = 1.0e-6;
+                    parammaxstep[NBparam] = 5.0e-8;
+                    parammin[NBparam] = -2.0e-6;
+                    parammax[NBparam] = 2.0e-6;
                     NBparam++;
                 }
             }
@@ -6350,10 +6355,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         {
             paramtype[NBparam] = FLOAT;
             paramvalf[NBparam] = &data.image[piaacmc[0].piaa0CmodesID].array.F[k];
-            paramdelta[NBparam] = 1.0e-9;
-            parammaxstep[NBparam] = 1.0e-8;
-            parammin[NBparam] = -1.0e-7;
-            parammax[NBparam] = 1.0e-7;
+            paramdelta[NBparam] = 1.0e-10;
+            parammaxstep[NBparam] = 1.0e-7;
+            parammin[NBparam] = -1.0e-3;
+            parammax[NBparam] = 1.0e-3;
             NBparam++;
         }
 
@@ -6361,10 +6366,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         {
             paramtype[NBparam] = FLOAT;
             paramvalf[NBparam] = &data.image[piaacmc[0].piaa1CmodesID].array.F[k];
-            paramdelta[NBparam] = 1.0e-9;
-            parammaxstep[NBparam] = 1.0e-8;
-            parammin[NBparam] = -1.0e-7;
-            parammax[NBparam] = 1.0e-7;
+            paramdelta[NBparam] = 1.0e-10;
+            parammaxstep[NBparam] = 1.0e-7;
+            parammin[NBparam] = -1.0e-3;
+            parammax[NBparam] = 1.0e-3;
             NBparam++;
         }
 
@@ -6372,10 +6377,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         {
             paramtype[NBparam] = FLOAT;
             paramvalf[NBparam] = &data.image[piaacmc[0].piaa0FmodesID].array.F[k];
-            paramdelta[NBparam] = 1.0e-9;
-            parammaxstep[NBparam] = 1.0e-8;
-            parammin[NBparam] = -1.0e-7;
-            parammax[NBparam] = 1.0e-7;
+            paramdelta[NBparam] = 1.0e-10;
+            parammaxstep[NBparam] = 1.0e-7;
+            parammin[NBparam] = -1.0e-3;
+            parammax[NBparam] = 1.0e-3;
             NBparam++;
         }
 
@@ -6383,10 +6388,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         {
             paramtype[NBparam] = FLOAT;
             paramvalf[NBparam] = &data.image[piaacmc[0].piaa1FmodesID].array.F[k];
-            paramdelta[NBparam] = 1.0e-9;
-            parammaxstep[NBparam] = 1.0e-8;
-            parammin[NBparam] = -1.0e-7;
-            parammax[NBparam] = 1.0e-7;
+            paramdelta[NBparam] = 1.0e-10;
+            parammaxstep[NBparam] = 1.0e-7;
+            parammin[NBparam] = -1.0e-3;
+            parammax[NBparam] = 1.0e-3;
             NBparam++;
         }
 
@@ -6923,7 +6928,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             IDmodes = create_3Dimage_ID("DHmodes", size1Dvec, 1, NBparam);
 
 
-            printf("PIAACMC_FPM_FASTDERIVATIVES = %d\n", PIAACMC_FPM_FASTDERIVATIVES);
+            sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
+            fp = fopen(fname, "a");
+            fprintf(fp, "### PIAACMC_FPM_FASTDERIVATIVES = %d\n", PIAACMC_FPM_FASTDERIVATIVES);
+            fclose(fp);
+            
+
             // compute local derivatives
             if(PIAACMC_FPM_FASTDERIVATIVES == 1)
             {
@@ -6963,7 +6973,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
                     sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
                     fp = fopen(fname, "a");
-                    fprintf(fp, "# %5ld/%5ld %5ld/%5ld %20.15g %20.15g %20.15g \n", iter, NBiter, i, NBparam, paramdelta[i], val, valref);
+                    fprintf(fp, "# %5ld/%5ld %5ld/%5ld %20.15g %20.15g %20.15g      %20.15g\n", iter, NBiter, i, NBparam, paramdelta[i], val, valref, bestval);
                     fclose(fp);
 
                     // re-package vector into 1D array and add regularization terms
@@ -7015,11 +7025,17 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     delete_image_ID("DHmodes2D");
                 }
             }
+            
+            sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
+            fp = fopen(fname, "a");
+            fprintf(fp, "### scanning gain \n");
+            fprintf(fp, "### <alphareg>  <gain>  <contrast>\n");
+            fclose(fp);
 
 
             //    linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-4, "optcoeff4", 0);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-5, "optcoeff0", 0);
-            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-6, "optcoeff1", 0);
+            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-7, "optcoeff1", 0);
 
             IDoptvec = arith_image_cstmult("optcoeff0", 0.0, "optvec"); // create optimal vector
 
@@ -7029,8 +7045,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
             NBlinoptgain = 0;
-            for(alphareg=0.0; alphareg<1.01; alphareg += 0.2)
+            for(alphareg=0.0; alphareg<1.01; alphareg += 0.01)
             {
+                alphareg *= 1.5;
                 arith_image_cstmult("optcoeff0", alphareg, "optcoeff0m");
                 arith_image_cstmult("optcoeff1", 1.0-alphareg, "optcoeff1m");
                 arith_image_add("optcoeff0m", "optcoeff1m", "optcoeff");
@@ -7049,6 +7066,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 while(linscanOK==1)
                 {
                     // compute offsets
+ 
                     linoptlimflagarray[k] = 0;
                     for(i=0; i<NBparam; i++)
                     {
@@ -7063,8 +7081,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                             paramdeltaval[i] = parammaxstep[i];
                             linoptlimflagarray[k] = 1;
                         }
+
                         // apply offsets
-                        if(paramtype[i]==FLOAT)
+                           if(paramtype[i]==FLOAT)
                             {
                                 
                             if(  *(paramvalf[i]) + (float) paramdeltaval[i]  > parammax[i] )
@@ -7088,26 +7107,23 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     }
                     valold = val;
 
-
+           
                     val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
 
                     sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
                     fp = fopen(fname, "a");
-                    fprintf(fp, "##  %5.3f   %20lf %20g", alphareg, scangain, val);
+                    fprintf(fp, "##  %5.3f   %20lf %20g   [%d]", alphareg, scangain, val, linoptlimflagarray[k]);
+                    fclose(fp);
 
+                    fp = fopen(fname, "a");
                     if(val<bestval)
                     {
-                        if(paramtype[i]==FLOAT)
-                        {
-                            for(i=0; i<NBparam; i++)
-                            data.image[IDoptvec].array.F[i] = *(paramvalf[i]);
-                        }
-                        else
-                        {                        
                         for(i=0; i<NBparam; i++)
+                        if(paramtype[i]==FLOAT)
+                            data.image[IDoptvec].array.F[i] = *(paramvalf[i]);
+                        else
                             data.image[IDoptvec].array.F[i] = (float) *(paramval[i]); //paramdeltaval[i];
-                        }
                         bestval = val;
                         fprintf(fp, " BEST VECTOR\n");
                     }

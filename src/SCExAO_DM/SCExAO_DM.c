@@ -28,9 +28,7 @@ int wcol, wrow; // window size
 
 
 struct timespec semwaitts;
-	
-	
-	
+
 
 #define DMSTROKE100 0.7 // um displacement for 100V
 #define NBact 2500 // default
@@ -240,27 +238,28 @@ struct timespec time_diff(struct timespec start, struct timespec end)
 
 int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
 {
-  long ii;
-  float volt;
+    long ii;
+    float volt;
 
 
 
-  data.image[IDvolt].md[0].write = 1;
-  for(ii=0;ii<NBact;ii++)
+    data.image[IDvolt].md[0].write = 1;
+    for(ii=0; ii<NBact; ii++)
     {
-      volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
-      if(volt>dispcombconf[0].MAXVOLT)
-	volt = dispcombconf[0].MAXVOLT;
-      data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*65536.0);
+        volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
+        if(volt>dispcombconf[0].MAXVOLT)
+            volt = dispcombconf[0].MAXVOLT;
+        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*32768); //65536.0);
     }
 
-  data.image[IDvolt].md[0].write = 0;
-  data.image[IDvolt].md[0].cnt0++;
+    data.image[IDvolt].md[0].write = 0;
+    data.image[IDvolt].md[0].cnt0++;
 
-  
 
-  return 0;
+
+    return 0;
 }
+
 
 
 

@@ -443,7 +443,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             // uses 1-fpm
 
             // TEST
-      /*      sprintf(fname, "!%s/test_inamp_%02ld.fits", savedir, elem);
+        /*   sprintf(fname, "!%s/test_inamp_%02ld.fits", savedir, elem);
             save_fits(imnameamp_out, fname);
             sprintf(fname, "!%s/test_inpha_%02ld.fits", savedir, elem);
             save_fits(imnamepha_out, fname);*/
@@ -498,11 +498,13 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
                 if(optsyst[index].SAVE == 1)
                 {
-                    sprintf(fname, "!%s/fpm_ampl.fits", savedir);
+                    sprintf(fname, "!%s/fpm__ampl.fits", savedir);
                     save_fits("fpma", fname);
-                    sprintf(fname, "!%s/fpm_pha.fits", savedir);
+                    sprintf(fname, "!%s/fpm__pha.fits", savedir);
                     save_fits("fpmp", fname);
                 }
+                
+                
                 //	      exit(0);
            /*     list_image_ID();
                 printf("fft_DFTinsertFPM  args :  %s %f\n", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor);

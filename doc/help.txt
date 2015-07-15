@@ -13,6 +13,9 @@ COMMAND LINE OPTIONS
 	Set debug level at startup
   -o, --overwrite         
 	Automatically overwrite files if necessary (USE WITH CAUTION - WILL OVERWRITE EXISTING FITS FILES)
+  -e, --idle
+	Only run process when X is idle (WARNING: PREVENTS INTERACTIVE USER INPUT)
+	Requires script runidle
   --listimfile	  
 	Keeps a list of images in file imlist.txt
   -m, --mmon=TTYDEVICE
