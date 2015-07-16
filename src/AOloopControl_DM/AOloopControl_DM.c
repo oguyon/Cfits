@@ -346,7 +346,7 @@ int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
         volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
         if(volt>dispcombconf[0].MAXVOLT)
             volt = dispcombconf[0].MAXVOLT;
-        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*65536.0);
+        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
     }
 
     data.image[IDvolt].md[0].write = 0;
