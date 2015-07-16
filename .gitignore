@@ -36,4 +36,5 @@ Makefile
 */Makefile
 */*/Makefile
 */*/*/Makefile
+src/fft/config/*
 
