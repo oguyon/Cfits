@@ -220,16 +220,17 @@ int init_SCExAO_DM()
 
 struct timespec time_diff(struct timespec start, struct timespec end)
 {
-  struct timespec temp;
-  if ((end.tv_nsec-start.tv_nsec)<0) {
-    temp.tv_sec = end.tv_sec-start.tv_sec-1;
-    temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
-  } else {
-    temp.tv_sec = end.tv_sec-start.tv_sec;
-    temp.tv_nsec = end.tv_nsec-start.tv_nsec;
-  }
-  return temp;
+    struct timespec temp;
+    if ((end.tv_nsec-start.tv_nsec)<0) {
+        temp.tv_sec = end.tv_sec-start.tv_sec-1;
+        temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+    } else {
+        temp.tv_sec = end.tv_sec-start.tv_sec;
+        temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+    }
+    return temp;
 }
+
 
 
 
@@ -249,7 +250,7 @@ int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
         volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
         if(volt>dispcombconf[0].MAXVOLT)
             volt = dispcombconf[0].MAXVOLT;
-        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*32768); //65536.0);
+        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
     }
 
     data.image[IDvolt].md[0].write = 0;
@@ -266,93 +267,97 @@ int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
 
 int SCEXAO_DM_createconf()
 {
-  int result;
+    int result;
 
-  if( dmdispcomb_loaded == 0 ) 
+    if( dmdispcomb_loaded == 0 )
     {
-      printf("Create/read configuration\n");  
-      
-      SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-      if (SMfd == -1) {
-	perror("Error opening file for writing");
-	exit(EXIT_FAILURE);
-      }
-      
-      result = lseek(SMfd, sizeof(SCEXAO_DISPCOMB_CONF)-1, SEEK_SET);
-      if (result == -1) {
-	close(SMfd);
-	perror("Error calling lseek() to 'stretch' the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      result = write(SMfd, "", 1);
-      if (result != 1) {
-	close(SMfd);
-	perror("Error writing last byte of the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
-      if (dispcombconf == MAP_FAILED) {
-	close(SMfd);
-	perror("Error mmapping the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      
-      dispcombconf[0].ON = 1;
-      dispcombconf[0].busy = 0;
-      dispcombconf[0].MAXVOLT = 150.0;
-      dispcombconf[0].moninterval = 30000; // 33Hz
-      dispcombconf[0].status = 0;
+        printf("Create/read configuration\n");
 
-      dmdispcomb_loaded = 1;
- 
+        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+        if (SMfd == -1) {
+            perror("Error opening file for writing");
+            exit(EXIT_FAILURE);
+        }
+
+        result = lseek(SMfd, sizeof(SCEXAO_DISPCOMB_CONF)-1, SEEK_SET);
+        if (result == -1) {
+            close(SMfd);
+            perror("Error calling lseek() to 'stretch' the file");
+            exit(EXIT_FAILURE);
+        }
+
+        result = write(SMfd, "", 1);
+        if (result != 1) {
+            close(SMfd);
+            perror("Error writing last byte of the file");
+            exit(EXIT_FAILURE);
+        }
+
+        dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+        if (dispcombconf == MAP_FAILED) {
+            close(SMfd);
+            perror("Error mmapping the file");
+            exit(EXIT_FAILURE);
+        }
+
+
+        dispcombconf[0].ON = 1;
+        dispcombconf[0].busy = 0;
+        dispcombconf[0].MAXVOLT = 150.0;
+        dispcombconf[0].moninterval = 30000; // 33Hz
+        dispcombconf[0].status = 0;
+
+        dmdispcomb_loaded = 1;
+
     }
 
-  return 0;
+    return 0;
 }
+
+
 
 
 int SCEXAO_DM_loadconf()
 {
-  int result;
+    int result;
 
-  if( dmdispcomb_loaded == 0 ) 
+    if( dmdispcomb_loaded == 0 )
     {
-      printf("Create/read configuration\n");  
-      
-      SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
-      if (SMfd == -1) {
-	perror("Error opening file for writing");
-	exit(EXIT_FAILURE);
-      }      
-      dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
-      if (dispcombconf == MAP_FAILED) {
-	close(SMfd);
-	perror("Error mmapping the file");
-	exit(EXIT_FAILURE);
-      }
-      
-      dmdispcomb_loaded = 1; 
+        printf("Create/read configuration\n");
+
+        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
+        if (SMfd == -1) {
+            perror("Error opening file for writing");
+            exit(EXIT_FAILURE);
+        }
+        dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+        if (dispcombconf == MAP_FAILED) {
+            close(SMfd);
+            perror("Error mmapping the file");
+            exit(EXIT_FAILURE);
+        }
+
+        dmdispcomb_loaded = 1;
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 
 int SCEXAO_DM_unloadconf()
 {
-  if( dmdispcomb_loaded == 1 ) 
+    if( dmdispcomb_loaded == 1 )
     {
-      if (munmap(dispcombconf, sizeof(SCEXAO_DISPCOMB_CONF)) == -1)
-	perror("Error un-mmapping the file");
-      close(SMfd);
-      dmdispcomb_loaded = 0;
+        if (munmap(dispcombconf, sizeof(SCEXAO_DISPCOMB_CONF)) == -1)
+            perror("Error un-mmapping the file");
+        close(SMfd);
+        dmdispcomb_loaded = 0;
     }
-  return 0;
+    return 0;
 }
+
 
 
 //
@@ -381,13 +386,13 @@ int SCExAO_DM_CombineChannels(int mode)
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
     int r;
-	long sizexy;
-	float *dmdispptr;
-	float *dmdispptr_array[20];
-	long IDdispt;
-	char sname[200];
-	long nsecwait = 100000; // 100 us
-	
+    long sizexy;
+    float *dmdispptr;
+    float *dmdispptr_array[20];
+    long IDdispt;
+    char sname[200];
+    long nsecwait = 100000; // 100 us
+
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -398,7 +403,7 @@ int SCExAO_DM_CombineChannels(int mode)
     IDch = (long*) malloc(sizeof(long)*NBch);
     size[0] = xsize;
     size[1] = ysize;
-	sizexy = xsize*ysize;
+    sizexy = xsize*ysize;
 
 
     SCEXAO_DM_createconf();
@@ -412,14 +417,14 @@ int SCExAO_DM_CombineChannels(int mode)
         sprintf(name, "dmdisp%ld", ch);
         printf("Channel %ld \n", ch);
         IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
-		dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
+        dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
     }
 
-	
+
     IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
 
-	IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
-	dmdispptr = data.image[IDdispt].array.F;
+    IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
+    dmdispptr = data.image[IDdispt].array.F;
 
     if(mode==1)
         IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
@@ -428,37 +433,37 @@ int SCExAO_DM_CombineChannels(int mode)
 
     dispcombconf[0].status = 1;
 
-	if(data.image[IDdisp].sem1==0)
-	{
-		sprintf(sname, "%s_sem1", data.image[IDdisp].md[0].name);
+    if(data.image[IDdisp].sem1==0)
+    {
+        sprintf(sname, "%s_sem1", data.image[IDdisp].md[0].name);
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
             perror("semaphore 1 initilization error");
             exit(1);
         }
         else
-			printf("semaphore 1 initialized for image dmdisp \n");
-	data.image[IDdisp].sem1 = 1;
-	}
+            printf("semaphore 1 initialized for image dmdisp \n");
+        data.image[IDdisp].sem1 = 1;
+    }
 
     while(dispcombconf[0].ON == 1)
     {
         dispcombconf[0].status = 2;
 
-	
-		if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
-			perror("clock_gettime");
-			exit(EXIT_FAILURE);
-		}
-		semwaitts.tv_nsec += nsecwait;
-		if(semwaitts.tv_nsec >= 1000000000)
-			semwaitts.tv_sec = semwaitts.tv_sec + 1;
-		
-		sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
+
+        if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
+            perror("clock_gettime");
+            exit(EXIT_FAILURE);
+        }
+        semwaitts.tv_nsec += nsecwait;
+        if(semwaitts.tv_nsec >= 1000000000)
+            semwaitts.tv_sec = semwaitts.tv_sec + 1;
+
+        sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
         // usleep(10);
 
         cntsum = 0;
 
-		
+
 
         for(ch=0; ch<NBch; ch++)
             cntsum += data.image[IDch[ch]].md[0].cnt0;
@@ -470,12 +475,12 @@ int SCExAO_DM_CombineChannels(int mode)
             cnt++;
 
             memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
-			for(ch=1; ch<NBch; ch++)
+            for(ch=1; ch<NBch; ch++)
             {
-				for(ii=0;ii<sizexy;ii++)
-					dmdispptr[ii] += dmdispptr_array[ch][ii];
+                for(ii=0; ii<sizexy; ii++)
+                    dmdispptr[ii] += dmdispptr_array[ch][ii];
             }
- 
+
             dispcombconf[0].status = 4;
 
             // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
@@ -534,41 +539,41 @@ int SCExAO_DM_CombineChannels(int mode)
 
 int SCExAO_DM_dmdispcombstatus()
 {
-  long long mcnt = 0;
+    long long mcnt = 0;
 
 
-  SCEXAO_DM_loadconf();
+    SCEXAO_DM_loadconf();
 
-  initscr();		
-  getmaxyx(stdscr, wrow, wcol);
+    initscr();
+    getmaxyx(stdscr, wrow, wcol);
 
-  start_color();
-  init_pair(1, COLOR_BLACK, COLOR_WHITE); 
-  init_pair(2, COLOR_BLACK, COLOR_RED);
-  init_pair(3, COLOR_GREEN, COLOR_BLACK);
-  init_pair(4, COLOR_RED, COLOR_BLACK);
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_BLACK, COLOR_RED);
+    init_pair(3, COLOR_GREEN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
 
-  while( !kbdhit() )
+    while( !kbdhit() )
     {
-      usleep(dispcombconf[0].moninterval);
-      clear();
-      attron(A_BOLD);
-      print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-      attroff(A_BOLD);
-      printw("    %ld\n", mcnt);
-      printw("ON         %d\n", dispcombconf[0].ON);
-      printw("cnt       %ld\n", dispcombconf[0].loopcnt);
-      printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
-      printw("busy      %d\n", dispcombconf[0].busy); 
-      printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
-      printw("status    %d\n",  dispcombconf[0].status);
-      printw("moninterval %d\n", dispcombconf[0].moninterval);
-      mcnt++;
-      refresh();
+        usleep(dispcombconf[0].moninterval);
+        clear();
+        attron(A_BOLD);
+        print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+        attroff(A_BOLD);
+        printw("    %ld\n", mcnt);
+        printw("ON         %d\n", dispcombconf[0].ON);
+        printw("cnt       %ld\n", dispcombconf[0].loopcnt);
+        printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
+        printw("busy      %d\n", dispcombconf[0].busy);
+        printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
+        printw("status    %d\n",  dispcombconf[0].status);
+        printw("moninterval %d\n", dispcombconf[0].moninterval);
+        mcnt++;
+        refresh();
     }
-  endwin();	
- 
-  return 0;
+    endwin();
+
+    return 0;
 }
 
 
@@ -577,28 +582,29 @@ int SCExAO_DM_dmdispcombstatus()
 
 int SCExAO_DM_dmdispcomboff()
 {
-  SCEXAO_DM_loadconf();
-  dispcombconf[0].ON = 0;
+    SCEXAO_DM_loadconf();
+    dispcombconf[0].ON = 0;
 
-  return 0;
+    return 0;
 }
 
 int SCExAO_DM_dmtrigoff()
 {
-  long ID;
-  
-  ID=image_ID("dmvolt");
+    long ID;
 
-  if(ID!=-1)
-    data.image[ID].md[0].status = 101;
-  else
+    ID=image_ID("dmvolt");
+
+    if(ID!=-1)
+        data.image[ID].md[0].status = 101;
+    else
     {
-      ID = read_sharedmem_image("dmvolt");
-      data.image[ID].md[0].status = 101;
+        ID = read_sharedmem_image("dmvolt");
+        data.image[ID].md[0].status = 101;
     }
 
-  return 0;
+    return 0;
 }
+
 
 
 
