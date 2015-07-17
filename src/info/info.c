@@ -246,7 +246,7 @@ int printstatus(long ID)
     long vcntmax;
     int semval;
 
-    printw("%s\n", data.image[ID].md[0].name);
+    printw("%s\n", data.image[ID].name);
 
     atype = data.image[ID].md[0].atype;
     if(atype==CHAR)
@@ -326,9 +326,9 @@ int printstatus(long ID)
 
     printw("\n");
 
-    average = arith_image_mean(data.image[ID].md[0].name);
-    imtotal = arith_image_total(data.image[ID].md[0].name);
-    printw("median %12g   ", arith_image_median(data.image[ID].md[0].name));
+    average = arith_image_mean(data.image[ID].name);
+    imtotal = arith_image_total(data.image[ID].name);
+    printw("median %12g   ", arith_image_median(data.image[ID].name));
     printw("average %12g    total = %12g\n", imtotal/data.image[ID].md[0].nelement, imtotal);
 
     // printw("  RMS var = %g\n", );

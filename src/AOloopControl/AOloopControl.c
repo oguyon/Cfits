@@ -166,9 +166,6 @@ float IMTOTAL = 0.0;
 
 
 
-
-
-
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -214,7 +211,7 @@ int AOloopControl_loadconfigure_cli()
 {
   if(CLI_checkarg(1,2)==0)
     {
-      AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1);
+      AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1, 10);
       return 0;
     }
   else
@@ -571,7 +568,7 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].info,"load AO loop configuration");
   strcpy(data.cmd[data.NBcmd].syntax,"<loop #>");
   strcpy(data.cmd[data.NBcmd].example,"AOlooploadconf 1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loadconfigure(long loopnb, 1)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_loadconfigure(long loopnb, 1, 10)");
   data.NBcmd++;
 
 
@@ -2253,7 +2250,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
 
     if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RMACQUISITION == 1)) // do it in main thread
     {
-        AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].md[0].name);
+        AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_WFS0].name);
         AOLCOMPUTE_TOTAL_INIT = 1;
         IMTOTAL = AOconf[loop].WFStotalflux;
     }
@@ -2591,7 +2588,12 @@ long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 // mode = 1 loads from ./conf/ directory to shared memory
 // mode = 0 simply connects to shared memory
 //
-int AOloopControl_loadconfigure(long loop, int mode)
+// level :
+// 
+//  2   zonal only 
+// 10+  load ALL
+//
+int AOloopControl_loadconfigure(long loop, int mode, int level)
 {
     FILE *fp;
     char content[200];
@@ -2621,8 +2623,12 @@ int AOloopControl_loadconfigure(long loop, int mode)
     // Name definitions for shared memory
 
     sprintf(name, "aol%ld_dmC", loop);
-    printf("DM file name : %s\n", name);
+    printf("DM control file name : %s\n", name);
     strcpy(AOconf[loop].DMname, name);
+
+    sprintf(name, "aol%ld_dmdisp", loop); // used to notify dm combine that a new displacement should be computed
+    printf("DM displacement file name : %s\n", name);
+    strcpy(AOconf[loop].DMdispname, name);
 
     sprintf(name, "aol%ld_dmRM", loop);
     printf("DM RM file name : %s\n", name);
@@ -2645,9 +2651,6 @@ int AOloopControl_loadconfigure(long loop, int mode)
     sprintf(name, "aol%ld_ContrM", loop);
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
-
-
-
 
 
 
@@ -2740,10 +2743,17 @@ int AOloopControl_loadconfigure(long loop, int mode)
     }
 
 
+  printf("wait 2  - reading %s\n", AOconf[loop].DMdispname);
+    sleep(2);
+ 
+
     // this image is read to notify when new dm displacement is ready
-    aoconfID_DMdisp = read_sharedmem_image("dmdisp");
+    aoconfID_DMdisp = read_sharedmem_image(AOconf[loop].DMdispname);
 
 
+ printf("wait 3\n");
+    sleep(2);
+ 
 
     // Connect to WFS camera
     // This is where the size of the WFS is fixed
@@ -2751,6 +2761,7 @@ int AOloopControl_loadconfigure(long loop, int mode)
     AOconf[loop].sizexWFS = data.image[aoconfID_WFS].md[0].size[0];
     AOconf[loop].sizeyWFS = data.image[aoconfID_WFS].md[0].size[1];
     AOconf[loop].sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
+
 
 
 
@@ -2820,9 +2831,8 @@ int AOloopControl_loadconfigure(long loop, int mode)
 
 
 
-
-    // Load DM modes (will exit if not successful)
-
+    if(level>=10) // Load DM modes (will exit if not successful)
+    {
     aoconfID_DMmodes = image_ID(AOconf[loop].DMMODESname); // if already exists, trust it and adopt it
 
     if(aoconfID_DMmodes==-1) // If not, check file
@@ -2924,7 +2934,7 @@ int AOloopControl_loadconfigure(long loop, int mode)
 
         delete_image_ID("tmp3Dim");
     }
-
+    }
 
 
 
@@ -3100,13 +3110,14 @@ int AOloopControl_loadconfigure(long loop, int mode)
 
 
 
-    // REMOVE ??
+
     // load ref WFS image
     sprintf(name, "aol%ld_refWFSim", loop);
     aoconfID_refWFS = AOloopControl_2Dloadcreate_shmim(name, "./conf/refwfs.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
-
+if(level>=10)
+{
     // Load/create modal command vector memory
     sprintf(name, "aol%ld_DMmode_cmd", loop);
     ID = image_ID(name);
@@ -3166,7 +3177,7 @@ int AOloopControl_loadconfigure(long loop, int mode)
     AOconf[loop].init_CM = 0;
     aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, "./conf/cmat.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
     AOconf[loop].init_CM = 1;
-  
+  }
     free(sizearray);
 
 
@@ -3222,7 +3233,7 @@ int set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].md[0].name, data.image[aoconfID_cmd_modes].md[0].name, data.image[aoconfID_DM].md[0].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1);
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_DM].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1);
         AOconf[loop].status = 15;
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
 #endif
@@ -3323,8 +3334,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
 
     //  sprintf(fname, "./conf/AOloop.conf");
-    AOloopControl_loadconfigure(LOOPNUMBER, 1);
- 
+
+    AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
+           
 
     printf("Importing DM response matrix channel shared memory ...\n");
     aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
@@ -3333,8 +3345,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
 
 
-
-
+           
     sprintf(name, "aol%ld_imWFS1RM", loop);
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
@@ -3350,7 +3361,6 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDneg = create_2Dimage_ID("wfsnegim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
     sizearray[2] = AOconf[loop].sizeDM;
@@ -3359,14 +3369,17 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     ID_WFSrefn = create_image_ID(WFSref_name, 2, sizearray, FLOAT, 1, 5);
     IDzrespm = create_image_ID("zrespm", 3, sizearray, FLOAT, 0, 5); // Zonal response matrix
     IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, FLOAT, 0, 5); // Zonal response matrix normalized
- 
-    list_image_ID();
+
+//    list_image_ID();
 
     cntn = 0;
     for(iter=0; iter<NBiter; iter++)
     {
         for(act=0; act<AOconf[loop].sizeDM; act++)
         {
+            printf("iter %ld / %ld    act %ld / %ld\n", iter, NBiter, act, AOconf[loop].sizeDM);//TEST
+            fflush(stdout);
+            
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDpos].array.F[ii] = 0.0;
@@ -3386,6 +3399,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             AOconf[loop].DMupdatecnt ++;
 
             usleep(delayus);
+ 
 
             for(kk=0; kk<NBave; kk++)
             {
@@ -3394,10 +3408,10 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                     data.image[IDpos].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
             }
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
-                    data.image[ID_WFSref].array.F[ii] += data.image[IDpos].array.F[ii];
-                }          
+            {
+                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
+                data.image[ID_WFSref].array.F[ii] += data.image[IDpos].array.F[ii];
+            }
 
 
 
@@ -3413,7 +3427,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             AOconf[loop].DMupdatecnt ++;
 
             usleep(delayus);
-
+ 
             for(kk=0; kk<NBave; kk++)
             {
                 Average_cam_frames(loop, 1, 0);
@@ -3421,10 +3435,10 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                     data.image[IDneg].array.F[ii] += data.image[aoconfID_WFS1].array.F[ii];
             }
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
-                    data.image[ID_WFSref].array.F[ii] += data.image[IDneg].array.F[ii];
-                }
+            {
+                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
+                data.image[ID_WFSref].array.F[ii] += data.image[IDneg].array.F[ii];
+            }
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
@@ -3432,11 +3446,11 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 data.image[IDneg].array.F[ii] = 0.0;
             }
 
-
-       
         }
         cntn += NBave;
- 
+
+
+
         for(act=0; act<AOconf[loop].sizeDM; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/NBave;
@@ -3447,7 +3461,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             data.image[ID_WFSrefn].array.F[ii] = data.image[ID_WFSref].array.F[ii]/NBave/cntn;
         sprintf(fname, "!%s.fits", WFSref_name);
         save_fits(WFSref_name, fname);
-    
+
 
         for(act=0; act<AOconf[loop].sizeDM; act++)
         {
@@ -3461,6 +3475,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
         }
         sprintf(fname, "!%s.fits", DMmap_name);
         save_fits(DMmap_name, fname);
+
 
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
         {
@@ -3484,6 +3499,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     return(ID_WFSmap);
 }
+
 
 
 
@@ -3560,7 +3576,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
     fflush(stdout);
 
   //  sprintf(fname, "./conf/AOloop.conf");
-    AOloopControl_loadconfigure(LOOPNUMBER, 1);
+    AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
     //exit(0);
 
     printf("Importing WFS camera image shared memory ... \n");
@@ -3951,7 +3967,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
      if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
  //   sprintf(fname, "./conf/AOloop.conf");
-    AOloopControl_loadconfigure(LOOPNUMBER, 1);
+    AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
 
     // create output
@@ -4544,7 +4560,7 @@ int AOcompute(long loop)
         data.image[aoconfID_WFS2].md[0].write = 0;
     }
 
-    //  save_fits(data.image[aoconfID_WFS].md[0].name, "!testim.fits");
+    //  save_fits(data.image[aoconfID_WFS].name, "!testim.fits");
     // sleep(5);
 
     AOconf[loop].status = 7; // MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
@@ -4754,7 +4770,7 @@ int AOcompute(long loop)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
-            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
+            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_WFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
             AOconf[loop].status = 8; // execute
             GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
         }
@@ -4762,7 +4778,7 @@ int AOcompute(long loop)
         {
             if(1==0)
             {
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].md[0].name, data.image[aoconfID_WFS2].md[0].name, data.image[aoconfID_meas_act].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_WFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
                 AOconf[loop].status = 8; // execute
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
             }
@@ -4773,7 +4789,7 @@ int AOcompute(long loop)
                 if(COMPUTE_GPU_SCALING==1)
                 {
                     // save reference (TEST)
-                   // save_fits(data.image[aoconfID_WFS0].md[0].name, "!test_imtogpu.fits");
+                   // save_fits(data.image[aoconfID_WFS0].name, "!test_imtogpu.fits");
                     
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
@@ -4801,7 +4817,7 @@ int AOcompute(long loop)
                        //     imtot = 0.0;                 
                             
                             // save reference (TEST)
-                        //    save_fits(data.image[aoconfID_refWFS].md[0].name, "!test_reftogpu.fits");
+                        //    save_fits(data.image[aoconfID_refWFS].name, "!test_reftogpu.fits");
                             
                             for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                                 {
@@ -4815,15 +4831,15 @@ int AOcompute(long loop)
                     }
 
                 // perform matrix mult
-                //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+                //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc_active].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
                
                 
             /*    list_image_ID();
-                printf("%s %s %s\n", data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name);
+                printf("%s %s %s\n", data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name);
                 exit(0); // TESTING
               */  
                 
-                GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].md[0].name, data.image[aoconfID_WFS2_active].md[0].name, data.image[aoconfID_meas_act_active].md[0].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
+                GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
                 
                 
                 initWFSref_GPU = 1;
@@ -4929,7 +4945,7 @@ int AOloopControl_run()
 
     printf("SETTING UP...\n");
  //   sprintf(fname, "./conf/AOloop.conf");
-    AOloopControl_loadconfigure(LOOPNUMBER, 1);
+    AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall; 
 

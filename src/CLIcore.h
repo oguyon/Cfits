@@ -211,7 +211,8 @@ typedef struct			/* structure used to store data arrays */
     int used;
     int shmfd; // if shared memory, file descriptor
     size_t memsize; // total size in memory if shared
-
+    char name[80]; // local name (can be different from name in shared memory)
+    
     IMAGE_METADATA *md;
 
     union

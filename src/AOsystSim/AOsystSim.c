@@ -1268,12 +1268,29 @@ int AOsystSim_run()
 
     while(1)
     {
+        printf("step 1000\n");
+        fflush(stdout); 
+        
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
+
+        printf("step 1001\n");
+        fflush(stdout); 
+        
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
 
+        printf("step 1002\n");
+        fflush(stdout); 
+
         mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
+
+        printf("step 1003\n");
+        fflush(stdout); 
+
         AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim", 0.0, 1);
         delete_image_ID("wfc");
+
+        printf("step 1004\n");
+        fflush(stdout); 
 
         ID = image_ID("psfi0");
         data.image[IDout].md[0].write = 1;
@@ -1281,8 +1298,18 @@ int AOsystSim_run()
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+
+        list_image_ID();
+        printf("Waiting for IDs : %ld %ld\n", IDarray[0], IDarray[1]);
+        fflush(stdout); 
+
         COREMOD_MEMORY_image_set_semwait_OR_IDarray(IDarray, 2);
         COREMOD_MEMORY_image_set_semflush_IDarray(IDarray, 2);
+    
+        printf("step 1006\n");
+        fflush(stdout); 
+
+    
     }
 
 

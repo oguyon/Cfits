@@ -1366,29 +1366,30 @@ int save_ush_fits(char *ID_name, char *file_name)
 
 int save_fits(char *ID_name, char *file_name)
 {
-  long ID;
-  int atype;
+    long ID;
+    int atype;
 
-  ID = image_ID(ID_name);
-  
-  if (ID!=-1)
+    ID = image_ID(ID_name);
+
+    if (ID!=-1)
     {
-      atype = data.image[ID].md[0].atype;
-      switch(atype) {
-      case FLOAT:
-	save_fl_fits(ID_name, file_name);
-	break;
-      case DOUBLE:
-	save_db_fits(ID_name, file_name);
-	break;
-      case USHORT:
-	save_sh_fits(ID_name, file_name);
-	break;	
-      }
-    }  
+        atype = data.image[ID].md[0].atype;
+        switch(atype) {
+        case FLOAT:
+            save_fl_fits(ID_name, file_name);
+            break;
+        case DOUBLE:
+            save_db_fits(ID_name, file_name);
+            break;
+        case USHORT:
+            save_sh_fits(ID_name, file_name);
+            break;
+        }
+    }
 
-  return 0;
+    return 0;
 }
+
 
 
 int saveall_fl_fits()
@@ -1397,45 +1398,48 @@ int saveall_fl_fits()
 
   for (i=0;i<data.NB_MAX_IMAGE;i++)
     if(data.image[i].used==1) 
-      save_fl_fits(data.image[i].md[0].name,data.image[i].md[0].name);
+      save_fl_fits(data.image[i].name, data.image[i].name);
 
   return(0);
 }
+
+
 
 int break_cube(char *ID_name)
 {
-  long ID,ID1;
-  long naxes[3];
-  long ii,jj,kk;
-  char framename[SBUFFERSIZE];
-  long i;
-  int n;
+    long ID,ID1;
+    long naxes[3];
+    long ii,jj,kk;
+    char framename[SBUFFERSIZE];
+    long i;
+    int n;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];
-  naxes[2] = data.image[ID].md[0].size[2];
-  
-  for(kk=0;kk<naxes[2];kk++)
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    naxes[2] = data.image[ID].md[0].size[2];
+
+    for(kk=0; kk<naxes[2]; kk++)
     {
-      n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
-      if(n >= SBUFFERSIZE) 
-	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      for(i=0;i<(long) strlen(framename);i++)
-	{
-	  if(framename[i] == ' ')
-	    framename[i] = '0';
-	}
-      ID1 = create_2Dimage_ID(framename,naxes[0],naxes[1]);
-      for(ii=0;ii<naxes[0];ii++)
-	for(jj=0;jj<naxes[1];jj++)
-	  {
-	    data.image[ID1].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
-	  }
+        n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        for(i=0; i<(long) strlen(framename); i++)
+        {
+            if(framename[i] == ' ')
+                framename[i] = '0';
+        }
+        ID1 = create_2Dimage_ID(framename,naxes[0],naxes[1]);
+        for(ii=0; ii<naxes[0]; ii++)
+            for(jj=0; jj<naxes[1]; jj++)
+            {
+                data.image[ID1].array.F[jj*naxes[0]+ii] = data.image[ID].array.F[kk*naxes[0]*naxes[1]+jj*naxes[0]+ii];
+            }
     }
-  
-  return(0);
+
+    return(0);
 }
+
 
 
 

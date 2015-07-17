@@ -1007,151 +1007,159 @@ int init_COREMOD_memory()
 
 long compute_nb_image()
 {
-  long i;
-  long total=0;
+    long i;
+    long total=0;
 
-  for(i=0;i<data.NB_MAX_IMAGE;i++)
+    for(i=0; i<data.NB_MAX_IMAGE; i++)
     {
-      if(data.image[i].used==1)
-	total += 1;
+        if(data.image[i].used==1)
+            total += 1;
     }
-  return(total);
+    return(total);
 }
 
 long compute_nb_variable()
 {
-  long i;
-  long total=0;
+    long i;
+    long total=0;
 
-  for(i=0;i<data.NB_MAX_VARIABLE;i++)
+    for(i=0; i<data.NB_MAX_VARIABLE; i++)
     {
-      if(data.variable[i].used==1)
-	total += 1;
+        if(data.variable[i].used==1)
+            total += 1;
     }
-  return(total);
+    return(total);
 }
 
 long long compute_image_memory()
 {
-  long i;
-  long long total=0;
+    long i;
+    long long total=0;
 
-  for(i=0;i<data.NB_MAX_IMAGE;i++)
+    for(i=0; i<data.NB_MAX_IMAGE; i++)
     {
-     if(data.image[i].used==1)
-		total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
+        if(data.image[i].used==1)
+            total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
     }
 
-  return(total);
+    return(total);
 }
 
 long compute_variable_memory()
 {
-  long i;
-  long total=0;
+    long i;
+    long total=0;
 
-  for(i=0;i<data.NB_MAX_VARIABLE;i++)
+    for(i=0; i<data.NB_MAX_VARIABLE; i++)
     {
-      total += sizeof(VARIABLE);
-      if(data.variable[i].used==1)
-	{
-	  total += 0;
-	}
+        total += sizeof(VARIABLE);
+        if(data.variable[i].used==1)
+        {
+            total += 0;
+        }
     }
-  return(total);
+    return(total);
 }
+
+
+
 
 long image_ID(char *name) /* ID number corresponding to a name */
 {
-  long i,ID;
-  int found;
-  long tmp = 0;
-  struct timespec timenow;
+    long i,ID;
+    int found;
+    long tmp = 0;
+    struct timespec timenow;
 
-  i = 0;
-  found = 0;
-  while(found == 0)
+    i = 0;
+    found = 0;
+    while(found == 0)
     {
-      if(data.image[i].used == 1)
-	{
-	  if((strncmp(name,data.image[i].md[0].name,strlen(name))==0)&&(data.image[i].md[0].name[strlen(name)]=='\0'))
-	    {
-	      found = 1;
-	      tmp = i;
-	      clock_gettime(CLOCK_REALTIME, &timenow);
-	      data.image[i].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;	      
-	    }
-	}
-      i++;
-      if(i == data.NB_MAX_IMAGE)
-	{
-	  found = 1;
-	  tmp = -1;
-	}}
-  ID = tmp;
-  
-  return(tmp);    
+        if(data.image[i].used == 1)
+        {
+            if((strncmp(name,data.image[i].name,strlen(name))==0)&&(data.image[i].name[strlen(name)]=='\0'))
+            {
+                found = 1;
+                tmp = i;
+                clock_gettime(CLOCK_REALTIME, &timenow);
+                data.image[i].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
+            }
+        }
+        i++;
+        if(i == data.NB_MAX_IMAGE)
+        {
+            found = 1;
+            tmp = -1;
+        }
+    }
+    ID = tmp;
+
+    return(tmp);
 }
+
 
 long image_ID_noaccessupdate(char *name) /* ID number corresponding to a name */
 {
-  long i,ID;
-  int found;
-  long tmp = 0;
+    long i,ID;
+    int found;
+    long tmp = 0;
 
-  i = 0;
-  found = 0;
-  while(found == 0)
+    i = 0;
+    found = 0;
+    while(found == 0)
     {
-      if(data.image[i].used == 1)
-	{
-	  if((strncmp(name,data.image[i].md[0].name,strlen(name))==0)&&(data.image[i].md[0].name[strlen(name)]=='\0'))
-	    {
-	      found = 1;
-	      tmp = i;
-	    }
-	}
-      i++;
-      if(i == data.NB_MAX_IMAGE)
-	{
-	  found = 1;
-	  tmp = -1;
-	}}
-  ID = tmp;
-  
-  return(tmp);    
+        if(data.image[i].used == 1)
+        {
+            if((strncmp(name,data.image[i].name,strlen(name))==0)&&(data.image[i].name[strlen(name)]=='\0'))
+            {
+                found = 1;
+                tmp = i;
+            }
+        }
+        i++;
+        if(i == data.NB_MAX_IMAGE)
+        {
+            found = 1;
+            tmp = -1;
+        }
+    }
+    ID = tmp;
+
+    return(tmp);
 }
+
 
 long variable_ID(char *name) /* ID number corresponding to a name */
 {
-  long i,ID;
-  int found;
-  long tmp = -1;
+    long i,ID;
+    int found;
+    long tmp = -1;
 
-  i = 0;
-  found = 0;
-  while(found == 0)
+    i = 0;
+    found = 0;
+    while(found == 0)
     {
-      if(data.variable[i].used == 1)
-	{
-	  if((strncmp(name,data.variable[i].name,strlen(name))==0)&&(data.variable[i].name[strlen(name)]=='\0'))
-	    {
-	      found = 1;
-	      tmp = i;
-	    }
-	}
-      i++;
-      if(i == data.NB_MAX_VARIABLE)
-	{
-	  found = 1;
-	  tmp = -1;
-	}
+        if(data.variable[i].used == 1)
+        {
+            if((strncmp(name,data.variable[i].name,strlen(name))==0)&&(data.variable[i].name[strlen(name)]=='\0'))
+            {
+                found = 1;
+                tmp = i;
+            }
+        }
+        i++;
+        if(i == data.NB_MAX_VARIABLE)
+        {
+            found = 1;
+            tmp = -1;
+        }
     }
-  ID = tmp;
-  
-  /*  if(tmp==-1) printf("error : no variable named \"%s\" in memory\n", name);*/
-  return(tmp);    
+    ID = tmp;
+
+    /*  if(tmp==-1) printf("error : no variable named \"%s\" in memory\n", name);*/
+    return(tmp);
 }
+
 
 
 long next_avail_image_ID() /* next available ID number */
@@ -1348,10 +1356,10 @@ int delete_image_ID_prefix(char *prefix)
     for (i=0; i<data.NB_MAX_IMAGE; i++)
     {
         if(data.image[i].used==1)
-            if((strncmp(prefix,data.image[i].md[0].name,strlen(prefix)))==0)
+            if((strncmp(prefix,data.image[i].name,strlen(prefix)))==0)
             {
-                printf("deleting image %s\n",data.image[i].md[0].name);
-                delete_image_ID(data.image[i].md[0].name);
+                printf("deleting image %s\n",data.image[i].name);
+                delete_image_ID(data.image[i].name);
             }
     }
     return(0);
@@ -1485,6 +1493,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
         data.image[ID].md[0].atype = atype;
         data.image[ID].md[0].naxis = naxis;
+        strcpy(data.image[ID].name, name); // local name
         strcpy(data.image[ID].md[0].name, name);
         for(i=0; i<naxis; i++)
             data.image[ID].md[0].size[i] = size[i];
@@ -1924,12 +1933,13 @@ long read_sharedmem_image(char *name)
     char sname[200];
     //	int *vint;
 
-
     ID = next_avail_image_ID();
     data.image[ID].used = 1;
 
+
     sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
     printf("Importing mmap file \"%s\"\n",SM_fname);
+
 
     SM_fd = open(SM_fname, O_RDWR);
     if(SM_fd==-1)
@@ -1942,6 +1952,7 @@ long read_sharedmem_image(char *name)
     {
         fstat(SM_fd, &file_stat);
         printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
 
         map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
         if (map == MAP_FAILED) {
@@ -1978,7 +1989,6 @@ long read_sharedmem_image(char *name)
                 printf("IMAGE \"%s\" AXIS SIZE < 1... ABORTING\n", name);
                 exit(0);
             }
-
 
         mapv = (char*) map;
         mapv += sizeof(IMAGE_METADATA);
@@ -2031,16 +2041,13 @@ long read_sharedmem_image(char *name)
                 printf("%d  %s %s %s\n", kw, data.image[ID].kw[kw].name, data.image[ID].kw[kw].value.valstr, data.image[ID].kw[kw].comment);
         }
 
+
         mapv += sizeof(IMAGE_KEYWORD)*data.image[ID].md[0].NBkw;
 
-        //vint = (int*) mapv;
-        //data.image[ID].logstatus[0] = *mapv;
-
-        strcpy(data.image[ID].md[0].name, name);
+      strcpy(data.image[ID].name, name);
 
         if(MEM_MONITOR == 1)
             list_image_ID_ncurses();
-
 
         // looking for semaphores
         sprintf(sname, "%s_sem", name);
@@ -2549,7 +2556,7 @@ int list_image_ID_ncurses()
                 attron(A_BOLD | COLOR_PAIR(9));
             else
                 attron(A_BOLD | COLOR_PAIR(6));
-            sprintf(str, "%10s ", data.image[i].md[0].name);
+            sprintf(str, "%10s ", data.image[i].name);
             printw(str);
 
             if(data.image[i].md[0].shared == 1)
@@ -2710,9 +2717,9 @@ int list_image_ID_ofp(FILE *fo)
             tmp_long = ((long long) (data.image[i].md[0].nelement)) * TYPESIZE[atype];
 
             if(data.image[i].md[0].shared==1)
-                fprintf(fo, "%4ld %c[%d;%dm%14s%c[%d;m ",i, (char) 27, 1, 34, data.image[i].md[0].name, (char) 27, 0);
+                fprintf(fo, "%4ld %c[%d;%dm%14s%c[%d;m ",i, (char) 27, 1, 34, data.image[i].name, (char) 27, 0);
             else
-                fprintf(fo, "%4ld %c[%d;%dm%14s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].md[0].name, (char) 27, 0);
+                fprintf(fo, "%4ld %c[%d;%dm%14s%c[%d;m ",i, (char) 27, 1, 33, data.image[i].name, (char) 27, 0);
             //fprintf(fo, "%s", str);
 
             sprintf(str, "[ %6ld",data.image[i].md[0].size[0]);
@@ -2807,7 +2814,7 @@ int list_image_ID_ofp_simple(FILE *fo)
             atype = data.image[i].md[0].atype;
             tmp_long = ((long long) (data.image[i].md[0].nelement)) * TYPESIZE[atype];
 
-            fprintf(fo, "%20s %d %ld %d %4ld", data.image[i].md[0].name, atype, data.image[i].md[0].naxis, data.image[i].md[0].shared, data.image[i].md[0].size[0]);
+            fprintf(fo, "%20s %d %ld %d %4ld", data.image[i].name, atype, data.image[i].md[0].naxis, data.image[i].md[0].shared, data.image[i].md[0].size[0]);
 
             for(j=1; j<data.image[i].md[0].naxis; j++)
                 fprintf(fo, " %4ld", data.image[i].md[0].size[j]);
@@ -2859,7 +2866,7 @@ int list_image_ID_file(char *fname)
         if(data.image[i].used == 1)
         {
             atype = data.image[i].md[0].atype;
-            fprintf(fp,"%ld %s",i, data.image[i].md[0].name);
+            fprintf(fp,"%ld %s",i, data.image[i].name);
             fprintf(fp," %ld",data.image[i].md[0].naxis);
             for(j=0; j<data.image[i].md[0].naxis; j++)
                 fprintf(fp," %ld",data.image[i].md[0].size[j]);
@@ -2927,7 +2934,7 @@ long chname_image_ID(char *ID_name, char *new_name)
     if((image_ID(new_name)==-1)&&(variable_ID(new_name)==-1))
     {
         ID = image_ID(ID_name);
-        strcpy(data.image[ID].md[0].name, new_name);
+        strcpy(data.image[ID].name, new_name);
         //      if ( Debug > 0 ) { printf("change image name %s -> %s\n",ID_name,new_name);}
     }
     else
@@ -3301,7 +3308,7 @@ int clearall()
     for(ID=0; ID<data.NB_MAX_IMAGE; ID++)
     {
         if(data.image[ID].used==1)
-            delete_image_ID(data.image[ID].md[0].name);
+            delete_image_ID(data.image[ID].name);
     }
     for(ID=0; ID<data.NB_MAX_VARIABLE; ID++)
     {
@@ -3769,18 +3776,26 @@ void *waitforsemID(void *ID)
     pthread_t tid;
     int t;
     int s;
-
-
+//    int semval;
+    
+    
     s = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     tid = pthread_self();
 
 
+//    sem_getvalue(data.image[(long) ID].semptr, &semval);
+//    printf("tid %u waiting for sem ID %ld   sem = %d   (%s)\n", (unsigned int) tid, (long) ID, semval, data.image[(long) ID].name);
+//    fflush(stdout);
     sem_wait(data.image[(long) ID].semptr);
+//    printf("tid %u sem ID %ld done\n", (unsigned int) tid, (long) ID);
+//    fflush(stdout);
 
     for(t=0; t<NB_thrarray_semwait; t++)
     {
         if(tid!=thrarray_semwait[t])
         {
+//            printf("tid %u cancel thread %d tid %u\n", (unsigned int) tid, t, (unsigned int) (thrarray_semwait[t]));
+//           fflush(stdout);
             s = pthread_cancel(thrarray_semwait[t]);
         }
     }
@@ -3797,18 +3812,31 @@ long COREMOD_MEMORY_image_set_semwait_OR_IDarray(long *IDarray, long NB_ID)
     int t;
     int semval;
 
+ //   printf("======== ENTER COREMOD_MEMORY_image_set_semwait_OR_IDarray [%ld] =======\n", NB_ID);
+ //   fflush(stdout);
+    
     thrarray_semwait = (pthread_t*) malloc(sizeof(pthread_t)*NB_ID);
     NB_thrarray_semwait = NB_ID;
 
     for(t = 0; t < NB_ID; t++)
+    {
+  //      printf("thread %d create, ID = %ld\n", t, IDarray[t]);
+  //      fflush(stdout);
         pthread_create(&thrarray_semwait[t], NULL, waitforsemID, (void *)IDarray[t]);
-
+    }
 
     for(t = 0; t < NB_ID; t++)
-        pthread_join(thrarray_semwait[t], NULL);
+    {
+   //         printf("thread %d tid %u join waiting\n", t, (unsigned int) thrarray_semwait[t]);
+        //fflush(stdout);
+            pthread_join(thrarray_semwait[t], NULL);
+    //    printf("thread %d tid %u joined\n", t, (unsigned int) thrarray_semwait[t]);
+    }
 
     free(thrarray_semwait);
-
+   // printf("======== EXIT COREMOD_MEMORY_image_set_semwait_OR_IDarray =======\n");
+//fflush(stdout);
+ 
     return(0);
 }
 

@@ -282,7 +282,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         if(optsyst[index].elemtype[elem]==1)   // OPAQUE MASK
         {
             ID = optsyst[index].elemarrayindex[elem];
-            printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].md[0].name);
+            printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].name);
             fflush(stdout);
             //	list_image_ID();
 
@@ -292,8 +292,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 exit(0);
             }
 
-            //	save_fits(data.image[ID].md[0].name, "!opmask.fits"); //TEST
-            //save_fits(data.image[IDa].md[0].name, "!opmask1.fits"); //TEST
+            //	save_fits(data.image[ID].name, "!opmask.fits"); //TEST
+            //save_fits(data.image[IDa].name, "!opmask1.fits"); //TEST
 
             printf("ID = %ld\n", ID);
             fflush(stdout);
@@ -331,7 +331,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 # endif
             }
 
-            //	save_fits(data.image[IDa].md[0].name, "!opmask2.fits"); //TEST
+            //	save_fits(data.image[IDa].name, "!opmask2.fits"); //TEST
             //	printf("POINT 1.1\n");
 
 
@@ -488,7 +488,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
                 i = optsyst[index].elemarrayindex[elem];
                 ID = optsyst[index].FOCMASKarray[i].fpmID;
-                printf("focm : %s\n", data.image[ID].md[0].name);
+                printf("focm : %s\n", data.image[ID].name);
                 
                 //      printf("Saving to testfpm.fits\n");
                 //      fflush(stdout);
@@ -507,9 +507,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 
                 //	      exit(0);
            /*     list_image_ID();
-                printf("fft_DFTinsertFPM  args :  %s %f\n", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor);
+                printf("fft_DFTinsertFPM  args :  %s %f\n", data.image[ID].name, optsyst[index].FOCMASKarray[i].zfactor);
                 sleep(10); // TEST*/
-                fft_DFTinsertFPM("_WFctmpc", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
+                fft_DFTinsertFPM("_WFctmpc", data.image[ID].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 delete_image_ID("_WFctmpc");
 
                 /*sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
@@ -587,9 +587,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             {
                 i = optsyst[index].elemarrayindex[elem];
                 ID = optsyst[index].FOCMASKarray[i].fpmID;
-                printf("focm : %s\n", data.image[ID].md[0].name);
+                printf("focm : %s\n", data.image[ID].name);
                 fflush(stdout);
-                fft_DFTinsertFPM("_WFctmp", data.image[ID].md[0].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
+                fft_DFTinsertFPM("_WFctmp", data.image[ID].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
                 sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
                 r = system(command);
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);

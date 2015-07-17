@@ -36,6 +36,7 @@ typedef struct
 
     // DM
     char DMname[80];
+    char DMdispname[80];
     char DMnameRM[80];
     long sizexDM;
     long sizeyDM;
@@ -125,7 +126,7 @@ int AOloopControl_InitializeMemory();
 int Average_cam_frames(long loop, long NbAve, int RM);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
 long AOloopControl_loadCM(long loop, char *CMfname);
-int AOloopControl_loadconfigure(long loop, int mode);
+int AOloopControl_loadconfigure(long loop, int mode, int level);
 int set_DM_modes(long loop);
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name);
 int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name);

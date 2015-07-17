@@ -11,6 +11,7 @@ LOOPNAME="pyramid" # name of the control loop
 LOOPNUMBER_default=2  # loop number
 
 dmC="dmdisp3" # DM control channel
+dmdisp="dmdisp" # total DM displacement channel
 dmRM="dmdisp7" # DM actuation channel for RM matrix
 wfsimcam="imcam" # WFS camera image
 
@@ -188,6 +189,20 @@ rm /tmp/aol${LOOPNUMBER}_dmC.im.shm
 ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
 }
 
+
+function Readdmdispname {
+file="./conf/conf_dmdisp_name.txt"
+if [ -a $file ]
+	then
+	dmdisp=$(echo "$(cat $file)")
+	else
+	dmdisp="dmdisp" #default
+fi
+# DM correction channel
+echo "linking to dm correction channel"
+rm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm 
+ln -s /tmp/${dmdisp}.im.shm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm
+}
 
 function ReaddmRMname {
 file="./conf/conf_dmRM_name.txt"
@@ -379,6 +394,22 @@ tmux send-keys -t DMturbamp "exit" C-m
 }
 
 
+function ReadDMturbws {
+file="./conf/conf_dmturbws.txt"
+if [ -a $file ]
+	then
+	dmturbws=$(echo "$(cat $file)")
+	else
+	dmturbws=1.0 #default
+fi
+tmux new-session -d -s DMturbws
+tmux send-keys -t DMturbws "$execname " C-m
+tmux send-keys -t DMturbws "aoloopcontroldmturws $dmturbws" C-m
+tmux send-keys -t DMturbws "exit" C-m
+tmux send-keys -t DMturbws "exit" C-m
+}
+
+
 function ReadDMturbtint {
 file="./conf/conf_dmturbtint.txt"
 if [ -a $file ]
@@ -405,6 +436,16 @@ if [ -a $file ]
 	else
 	testdmsize=20 #default
 fi
+}
+
+function initDM {
+file="./conf/conf_testdmsize.txt"
+if [ -a $file ]
+	then
+	testdmsize=$(echo "$(cat $file)")
+	else
+	testdmsize=20 #default
+fi
 # start DM channels
 tmux kill-session -t aosim${LOOPNUMBER}dmcomb
 tmux new-session -d -s aosim${LOOPNUMBER}dmcomb 
@@ -413,6 +454,9 @@ tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb" C-m
 }
+
+
+
 
 
 function CheckLoopConfiguration {
@@ -460,6 +504,8 @@ sleep 2
 
 function TestModeStart {
 
+echo "TEST MODE START"
+
 # start DM channels
 tmux kill-session -t aosim${LOOPNUMBER}dmcomb
 tmux new-session -d -s aosim${LOOPNUMBER}dmcomb 
@@ -468,17 +514,20 @@ tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb" C-m
 
+
 mkdir -p testconf
 echo "$execname -n aol${LOOPNUMBER}test << EOF" > script_aol${LOOPNUMBER}test 
 echo "AOsystsim" >> script_aol${LOOPNUMBER}test 
 chmod +x script_aol${LOOPNUMBER}test 
 
 tmux new-session -d -s aol${LOOPNUMBER}test
-echo "ON" > ./status/testloopstatus.txt
+echo " ON" > ./status/testloopstatus.txt
 tmux send-keys -t aol${LOOPNUMBER}test "./script_aol${LOOPNUMBER}test" C-m
 
 echo "aosimdmctrl2" > ./conf/conf_dmC_name.txt
 ReaddmCname
+echo "aosimdmctrl" > ./conf/conf_dmdisp_name.txt
+Readdmdispname
 echo "aosimdmctrl3" > ./conf/conf_dmRM_name.txt
 ReaddmRMname
 echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
@@ -501,6 +550,7 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 function TestStartTurb {
+echo " ON" > ./status/testdmturbstatus.txt
 mkdir -p ./conf/turb
 tmux kill-session -t aosim${LOOPNUMBER}dmturb
 tmux new-session -d -s aosim${LOOPNUMBER}dmturb 
@@ -521,6 +571,7 @@ tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturlo 0.0" C-m
 
 function TestStopTurb {
 tmux kill-session -t aosim${LOOPNUMBER}dmturb
+echo "OFF" > ./status/testdmturbstatus.txt
 }
 
 
@@ -530,6 +581,7 @@ tmux kill-session -t aosim${LOOPNUMBER}dmturb
 
 # hardware I/O [shared memory]
 ReaddmCname
+Readdmdispname
 ReaddmRMname
 Readwfsimcamname
 ReadLoopDelay
@@ -589,7 +641,7 @@ stateok=0
 if [ $state = "menutop" ]; then
 stateok=1
 confselected=$(cat "./conf/conf_CONFNUMBER.txt")
-menuname="TOP MENU \n [Active conf = ${confselected}]"
+menuname="TOP MENU\n [Active conf = ${confselected}]"
 
 
 menuitems=( "C" "Configure/link AO loop" )
@@ -599,7 +651,7 @@ menuitems+=( "V" "View / monitor" )
 
 
 
-dialog --title "AO loop top menu" \
+dialog --title "AO loop top menu  - LOOP ${LOOPNUMBER}" \
 --ok-label "Select" \
 --cancel-label "Exit" \
 --default-item "${menutop_default}" \
@@ -689,6 +741,16 @@ dmCOKstr="\Z1\Zb  MISSING \Zn"
 confOK=0
 fi
 menuitems+=( "dmC" "[${dmCOKstr}] DM control channel    {\Z4${dmC}\Zn}" )
+
+
+dmdispfile="/tmp/${dmdisp}.im.shm"
+if [ -f $dmdispfile ]; then
+dmdispOKstr="\Z2    OK    \Zn"
+else
+dmdispOKstr="\Z1\Zb  MISSING \Zn"
+confOK=0
+fi
+menuitems+=( "dmdisp" "[${dmdispOKstr}] DM total displacement {\Z4${dmdisp}\Zn}" )
 
 
 dmRMfile="/tmp/${dmRM}.im.shm"
@@ -796,12 +858,11 @@ fi
 
 if [ "${zrespstat}" = "OFF" ];
 then
-menuitems+=( "zresp_on" "             START zonal RM acquisition" )
-fi
-
-if [ "${zrespstat}" = " ON" ];
-then
+menuitems+=( "zresp_on" "             START zonal RM acquisition      " )
+menuitems+=( "-" " " )
+else
 menuitems+=( "zrespoff" "\Z1\Zr             STOP zonal RM acquisition             \Zn" )
+menuitems+=( "zrespmon" "             Monitor tmux session zresp${LOOPNUMBER}" )
 fi
 
 
@@ -908,7 +969,7 @@ menuitems+=( "c" "check configuration" )
 state="menutop"
 
 
-dialog --colors --title "LOOP CONFIGURATION" \
+dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNUMBER}" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \
@@ -936,6 +997,17 @@ exec 3>&-;
 echo "$dmC" > ./conf/conf_dmC_name.txt
 ReaddmCname
 menucontrolloop_default="dmC"
+state="menuconfigureloop"
+;;
+	dmdisp)
+exec 3>&1;
+dmdisp=$(dialog --inputbox "dmdisp" 0 0 "$dmdisp" 2>&1 1>&3);
+#exitcode=$?;
+exec 3>&-;
+#echo $result $exitcode;
+echo "$dmdisp" > ./conf/conf_dmdisp_name.txt
+Readdmdispname
+menucontrolloop_default="dmdisp"
 state="menuconfigureloop"
 ;;
 	dmRM)
@@ -1037,21 +1109,23 @@ state="menuconfigureloop"
 	zresp_on)
 zrespstat=" ON"
 echo " ON" > ./status/stat_zresp.txt
-tmux new-session -d -s zresp
-tmux send-keys -t zresp "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmnbfr}" C-m
+tmux new-session -d -s zresp${LOOPNUMBER}
+tmux send-keys -t zresp${LOOPNUMBER} "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
 state="menuconfigureloop"
 ;;
 	zrespoff)
 zrespstat="OFF"
 echo "OFF" > ./status/stat_zresp.txt
-tmux kill-session -t zresp
+tmux kill-session -t zresp${LOOPNUMBER}
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
-
-
-
+	zrespmon)
+tmux a -t zresp${LOOPNUMBER}
+menucontrolloop_default="zrespmon"
+state="menuconfigureloop"
+;;
 	wfsM)
 exec 3>&1;
 wfsmaskfname=$(dialog --title "Select WFS pixel mask file name" --stdout  --fselect "${wfsmaskfname}" $nbwlines $nbwcols)
@@ -1227,7 +1301,7 @@ menuitems+=( "L" "Control Loop" )
 state="menutop"
 
 
-dialog --title "LOOP CONTROL" \
+dialog --title "LOOP CONTROL  - LOOP ${LOOPNUMBER}" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \
@@ -1355,11 +1429,16 @@ fi
 
 
 
-#  TEST MODE
+
+
+# =====================================================
+# ======== TEST MODE ==================================
+# =====================================================
 if [ $state = "menutestmode" ]; then
 stateok=1
 
 testloopstatus="OFF"
+testdmturbstatus="OFF"
 
 file="./status/testloopstatus.txt"
 if [ -a $file ]
@@ -1369,35 +1448,85 @@ if [ -a $file ]
 	testloopstatus="OFF"
 fi
 
+file="./status/testdmturbstatus.txt"
+if [ -a $file ]
+	then
+	testdmturbstatus=$(echo "$(cat $file)")
+	else
+	testdmturbstatus="OFF"
+fi
 
 
-menuname="TEST MODE [${testloopstatus}] - LOOP ${LOOPNUMBER}"
+ReadTestDMsize
 
+ReadDMturbampl
+ReadDMturbws
+ReadDMturbtint
+
+menuname="TEST MODE [${testloopstatus}]"
 
 
 menuitems=( "H" "help" )
 menuitems+=( "-" " " )
+menuitems+=( "1 ->" "\Zb\Zr         SETTINGS                                           \Zn" )
 menuitems+=( "dms" "[${testdmsize}] test mode DM size" )
+menuitems+=( "initDM" "init DM" )
 menuitems+=( "-" " " )
-menuitems+=( "Start" "Start test mode" )
-menuitems+=( "Stop" "Stop test mode" )
-menuitems+=( "-" " " )
-menuitems+=( "DMton" "DM turbulence ON" )
-menuitems+=( "DMtoff" "DM turbulence OFF" )
-menuitems+=( "DMtamp" "DM turbulence amplitude = ${dmturbampl} um" )
-menuitems+=( "DMttint" "DM turbulence interval = ${dmturbtint} us" )
+
+
+menuitems+=( "2 ->" "\Zb\Zr        TURBULENCE      (tmux aosim${LOOPNUMBER}dmturb)                 \Zn" )
+
+if [ "${testdmturbstatus}" = "OFF" ];
+then
+menuitems+=( "DMton" "             START simulated turbulence" )
+menuitems+=( "-" " ")
+menuitems+=( "-" " ")
+else
+menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
+menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
+menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
+fi
+
+
+menuitems+=( "DMtamp" "DM turbulence amplitude  = ${dmturbampl} um" )
+menuitems+=( "DMtws" "DM turbulence wind speed = ${dmturbws} m/s" )
+menuitems+=( "DMttint" "DM turbulence interval  = ${dmturbtint} us" )
+
 menuitems+=( "dm1v" "View DM chan 1 (turbulence) stream" )
 menuitems+=( "dm1m" "Monitor DM chan 1 (turbulence) stream" )
 
 
 
-dialog --title "TEST MODE" \
+menuitems+=( "-" " " )
+
+menuitems+=( "3 ->" "\Zb\Zr         START/STOP     (tmux ao${LOOPNUMBER}test)                      \Zn" )
+
+
+#if [ "${testdmturbstatus}" = "OFF" ];
+#then
+#menuitems+=( "-" " Need turbulence scrren to be running to start")
+#menuitems+=( "-" " ")
+#else
+if [ "${testloopstatus}" = "OFF" ];
+then
+menuitems+=( "Start" "             START simulated WFS               " )
+menuitems+=( "-" " ")
+else
+menuitems+=( "Stop" "\Z1\Zr             STOP simulated WFS                             \Zn" )
+menuitems+=( "tv" "view tmux session aol${LOOPNUMBER}test (type CTRL-B + D to exit)")
+fi
+#fi
+
+
+
+
+dialog --colors --title "TEST MODE  - LOOP ${LOOPNUMBER}" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \
 --default-item "${menutestmode_default}" \
  --menu "$menuname" \
- 50 80 100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
 
 retval=$?
 choiceval=$(cat $tempfile)
@@ -1420,48 +1549,74 @@ menutestmode_default="H"
 	dms)
 exec 3>&1;testdmsize=$(dialog --inputbox "test mode DM size" 0 0 "$testdmsize" 2>&1 1>&3);
 exec 3>&-;
+
 echo "$testdmsize" > ./conf/conf_testdmsize.txt
-ReadTestDMsize
+initDM
 menutestmode_default="dms"
 state="menutestmode"
 ;;
+	initDM)
+initDM
+menutestmode_default="initDM"
+state="menutestmode"
+;;
    	 Start)
-if [ $testloopstatus = "OFF" ]; then
+#if [ $testloopstatus = "OFF" ]; then
 TestModeStart
-fi
-menutestmode_default="Start"
+#fi
+menutestmode_default="Stop"
 state="menutestmode"
 ;;   
    	 Stop) 
-if [ $testloopstatus = "ON" ]; then
+#if [ $testloopstatus = " ON" ]; then
 TestModeStop
-fi
-menutestmode_default="Stop"
+#fi
+menutestmode_default="Start"
 state="menutestmode"
 ;;  
+	tv)
+tmux a -t aol${LOOPNUMBER}test
+menutestmode_default="tv"
+state="menutestmode"
+;;
 	DMton)
 TestStartTurb
-menutestmode_default="DMton"
+menutestmode_default="DMtoff"
 state="menutestmode"
 ;;
 	DMtoff)
 TestStopTurb
-menutestmode_default="DMtoff"
+menutestmode_default="DMton"
+state="menutestmode"
+;;
+	tvdmt)
+tmux a -t aosim${LOOPNUMBER}dmturb
+menutestmode_default="tvdmt"
+state="menutestmode"
+;;
+	tvdmtc)
+tmux a -t aosim${LOOPNUMBER}dmturbctrl
+menutestmode_default="tvdmtc"
 state="menutestmode"
 ;;
 	DMtamp)
 exec 3>&1;dmturbampl=$(dialog --inputbox "DM turbulence amplitude [um]" 0 0 "$dmturbampl" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmturbampl" > ./conf/conf_dmturbampl.txt
-ReadDMturbampl
 menutestmode_default="DMtamp"
+state="menutestmode"
+;;
+	DMtws)
+exec 3>&1;dmturbws=$(dialog --inputbox "DM turbulence wind speed [m/s]" 0 0 "$dmturbws" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmturbws" > ./conf/conf_dmturbws.txt
+menutestmode_default="DMtws"
 state="menutestmode"
 ;;
 	DMttint)
 exec 3>&1;dmturbtint=$(dialog --inputbox "DM turbulence interval [us]" 0 0 "$dmturbtint" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmturbtint" > ./conf/conf_dmturbtint.txt
-ReadDMturbtint
 menutestmode_default="DMttint"
 state="menutestmode"
 ;;
@@ -1502,7 +1657,7 @@ stateok=1
 
 
 
-menuname="VIEW MODE - LOOP ${LOOPNUMBER}"
+menuname="VIEW MODE"
 
 
 
@@ -1517,7 +1672,7 @@ menuitems+=( "-" " " )
 
 
 
-dialog --title "TEST MODE" \
+dialog --title "VIEW MODE  - LOOP ${LOOPNUMBER}" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \

@@ -435,7 +435,7 @@ int SCExAO_DM_CombineChannels(int mode)
 
     if(data.image[IDdisp].sem1==0)
     {
-        sprintf(sname, "%s_sem1", data.image[IDdisp].md[0].name);
+        sprintf(sname, "%s_sem1", data.image[IDdisp].name);
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
             perror("semaphore 1 initilization error");
             exit(1);

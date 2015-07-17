@@ -771,8 +771,8 @@ char* CLI_generator(const char* text, int state)
         iok = data.image[list_index1].used;
         if(iok == 1)
         {
-            name = data.image[list_index1].md[0].name;
-            //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].md[0].name, name);
+            name = data.image[list_index1].name;
+            //	  printf("  name %d = %s %s\n", list_index1, data.image[list_index1].name, name);
         }
         list_index1++;
         if(iok == 1)

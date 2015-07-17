@@ -2395,14 +2395,14 @@ long basic_addimagesfiles(char *strfilter, char *outname)
         if(init==0)
         {
             init = 1;
-            copy_image_ID(data.image[ID].md[0].name, outname, 0);
+            copy_image_ID(data.image[ID].name, outname, 0);
         }
         else
         {
-            arith_image_add_inplace(outname,data.image[ID].md[0].name);
+            arith_image_add_inplace(outname,data.image[ID].name);
         }
         delete_image_ID(fname1);
-        printf("Image %s added\n",data.image[ID].md[0].name);
+        printf("Image %s added\n",data.image[ID].name);
         cnt++;
     }
 
@@ -2439,113 +2439,117 @@ long basic_aveimagesfiles(char *strfilter, char *outname)
   return(cnt);
 }
 
+
+
 // add all images starting with prefix
 // return number of images added
 long basic_addimages(char *prefix, char *ID_out)
 {
-  long i;
-  int init = 0; // becomes 1 when first image encountered
-  long cnt = 0;
-  long nelements;
+    long i;
+    int init = 0; // becomes 1 when first image encountered
+    long cnt = 0;
+    long nelements;
 
-  for (i=0;i<data.NB_MAX_IMAGE;i++)
-    if(data.image[i].used == 1) 
-      {
-	if(strncmp(prefix,data.image[i].md[0].name, strlen(prefix)) == 0)
-	  {
-	    if(init==0)
-	      {
-		init = 1;
-		nelements = data.image[i].md[0].nelement;
-		copy_image_ID(data.image[i].md[0].name, ID_out, 0);		
-	      }
-	    else
-	      arith_image_add_inplace(ID_out,data.image[i].md[0].name);
-	    printf("Image %s added\n",data.image[i].md[0].name);
-	    cnt ++;
-	  }
-      }
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+        if(data.image[i].used == 1)
+        {
+            if(strncmp(prefix,data.image[i].name, strlen(prefix)) == 0)
+            {
+                if(init==0)
+                {
+                    init = 1;
+                    nelements = data.image[i].md[0].nelement;
+                    copy_image_ID(data.image[i].name, ID_out, 0);
+                }
+                else
+                    arith_image_add_inplace(ID_out,data.image[i].name);
+                printf("Image %s added\n",data.image[i].name);
+                cnt ++;
+            }
+        }
 
-  return(cnt);
+    return(cnt);
 }
+
 
 // paste all images starting with prefix
 long basic_pasteimages(char *prefix, long NBcol, char *IDout_name)
 {
-  long i;
-  long cnt = 0;
-  long row = 0;
-  long col = 0;
-  long colmax = 0;
-  long xsizeout = 0;
-  long ysizeout = 0;
-  long xsize1max = 0;
-  long ysize1max = 0;
-  long xsize1,ysize1;
-  long iioffset,jjoffset;
-  long ii,jj,ii1,jj1;
-  long IDout;
+    long i;
+    long cnt = 0;
+    long row = 0;
+    long col = 0;
+    long colmax = 0;
+    long xsizeout = 0;
+    long ysizeout = 0;
+    long xsize1max = 0;
+    long ysize1max = 0;
+    long xsize1,ysize1;
+    long iioffset,jjoffset;
+    long ii,jj,ii1,jj1;
+    long IDout;
 
-  for (i=0;i<data.NB_MAX_IMAGE;i++)
-    if(data.image[i].used == 1) 
-      {
-	if(strncmp(prefix,data.image[i].md[0].name,strlen(prefix))==0)
-	  {
-	    if(data.image[i].md[0].size[0]>xsize1max)
-	      xsize1max = data.image[i].md[0].size[0];
-	    if(data.image[i].md[0].size[1]>ysize1max)
-	      ysize1max = data.image[i].md[0].size[1];
-	    
-	    if(col==NBcol)
-	      {
-		col = 0;
-		row ++;
-	      }
-	    if(col>colmax)
-	      colmax = col;
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+        if(data.image[i].used == 1)
+        {
+            if(strncmp(prefix,data.image[i].name,strlen(prefix))==0)
+            {
+                if(data.image[i].md[0].size[0]>xsize1max)
+                    xsize1max = data.image[i].md[0].size[0];
+                if(data.image[i].md[0].size[1]>ysize1max)
+                    ysize1max = data.image[i].md[0].size[1];
 
-	    printf("Image %s[%ld] will be pasted at [%ld %ld]\n",data.image[i].md[0].name,cnt,row,col);
-	    col ++;
-	  }
-      }
-  xsizeout = (colmax+1)*xsize1max;
-  ysizeout = (row+1)*ysize1max;
-  IDout = create_2Dimage_ID(IDout_name,xsizeout,ysizeout);
+                if(col==NBcol)
+                {
+                    col = 0;
+                    row ++;
+                }
+                if(col>colmax)
+                    colmax = col;
+
+                printf("Image %s[%ld] will be pasted at [%ld %ld]\n",data.image[i].name,cnt,row,col);
+                col ++;
+            }
+        }
+    xsizeout = (colmax+1)*xsize1max;
+    ysizeout = (row+1)*ysize1max;
+    IDout = create_2Dimage_ID(IDout_name,xsizeout,ysizeout);
 
 
-  col = 0;
-  row = 0;
-  for (i=0;i<data.NB_MAX_IMAGE;i++)
-    if(data.image[i].used == 1) 
-      {
-	if(strncmp(prefix,data.image[i].md[0].name,strlen(prefix))==0)
-	  {
-	    if(col==NBcol)
-	      {
-		col = 0;
-		row ++;
-	      }
+    col = 0;
+    row = 0;
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+        if(data.image[i].used == 1)
+        {
+            if(strncmp(prefix,data.image[i].name,strlen(prefix))==0)
+            {
+                if(col==NBcol)
+                {
+                    col = 0;
+                    row ++;
+                }
 
-	    iioffset = col*xsize1max;
-	    jjoffset = row*ysize1max;
+                iioffset = col*xsize1max;
+                jjoffset = row*ysize1max;
 
-	    xsize1 = data.image[i].md[0].size[0];
-	    ysize1 = data.image[i].md[0].size[1];
-	    for(ii=0;ii<xsize1;ii++)
-	      for(jj=0;jj<ysize1;jj++)
-		{
-		  ii1 = ii + iioffset;
-		  jj1 = jj + jjoffset;
-		  data.image[IDout].array.F[jj1*xsizeout+ii1] = data.image[i].array.F[jj*xsize1+ii];
-		}
+                xsize1 = data.image[i].md[0].size[0];
+                ysize1 = data.image[i].md[0].size[1];
+                for(ii=0; ii<xsize1; ii++)
+                    for(jj=0; jj<ysize1; jj++)
+                    {
+                        ii1 = ii + iioffset;
+                        jj1 = jj + jjoffset;
+                        data.image[IDout].array.F[jj1*xsizeout+ii1] = data.image[i].array.F[jj*xsize1+ii];
+                    }
 
-	    printf("Image %s[%ld] pasted at [%ld %ld]\n",data.image[i].md[0].name,cnt,row,col);
-	    col ++;
-	  }
-      }  
+                printf("Image %s[%ld] pasted at [%ld %ld]\n",data.image[i].name,cnt,row,col);
+                col ++;
+            }
+        }
 
-  return(cnt);
+    return(cnt);
 }
+
 
 
 // average all images starting with prefix
