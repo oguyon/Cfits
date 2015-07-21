@@ -268,6 +268,10 @@ typedef struct
 // THIS IS WHERE EVERYTHING THAT NEEDS TO BE WIDELY ACCESSIBLE GETS STORED
 typedef struct
 {
+    // signals toggle flags
+    int signal_USR1;
+    int signal_USR2;
+    
     int Debug;
     int quiet;
     int overwrite;		// automatically overwrite FITS files

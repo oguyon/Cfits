@@ -68,10 +68,13 @@ int AOsystSim_fitTelPup_cli()
 
 int AOsystSim_run_cli()
 {
-  
-  AOsystSim_run();
-
-  return 0;
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
+    {
+        AOsystSim_run(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        return 0;
+    }
+    else
+        return 1;
 }
 
 
@@ -1003,9 +1006,15 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
  * creates a DM map(s) and a WF error input
  * When either DM map or WF error input changes, compute intensity outputs (images)
  *
+ * syncmode:
+ * 0: sync to turbulence
+ * 1: sync to DM
+ * 2: sync to both
+ * default: use delayus
+ * 
  */
 
-int AOsystSim_run()
+int AOsystSim_run(int syncmode, long delayus)
 {
     long arraysize = 128;
     long ii, jj;
@@ -1268,29 +1277,15 @@ int AOsystSim_run()
 
     while(1)
     {
-        printf("step 1000\n");
-        fflush(stdout); 
-        
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
 
-        printf("step 1001\n");
-        fflush(stdout); 
-        
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
-
-        printf("step 1002\n");
-        fflush(stdout); 
 
         mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
 
-        printf("step 1003\n");
-        fflush(stdout); 
-
         AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim", 0.0, 1);
+       // COREMOD_MEMORY_image_set_sempost("aosimwfsim");
         delete_image_ID("wfc");
-
-        printf("step 1004\n");
-        fflush(stdout); 
 
         ID = image_ID("psfi0");
         data.image[IDout].md[0].write = 1;
@@ -1299,17 +1294,22 @@ int AOsystSim_run()
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout");
 
-        list_image_ID();
-        printf("Waiting for IDs : %ld %ld\n", IDarray[0], IDarray[1]);
-        fflush(stdout); 
-
-        COREMOD_MEMORY_image_set_semwait_OR_IDarray(IDarray, 2);
+        switch (syncmode) {
+            case 0 : // sync to turbulence
+            waitforsemID(IDarray[0]);
+            break;
+            case 1 : // sync to DM
+            waitforsemID(IDarray[1]);
+            break;
+            case 2 :
+            COREMOD_MEMORY_image_set_semwait_OR_IDarray(IDarray, 2);
+            break;
+            default :
+            usleep(delayus);
+            break;
+        }
+        
         COREMOD_MEMORY_image_set_semflush_IDarray(IDarray, 2);
-    
-        printf("step 1006\n");
-        fflush(stdout); 
-
-    
     }
 
 

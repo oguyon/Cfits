@@ -219,7 +219,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = image_basic_load_fitsimages_cube_cli;
     strcpy(data.cmd[data.NBcmd].info,"load multiple images into a single cube");
-    strcpy(data.cmd[data.NBcmd].syntax,"<string pattern> <outputcube>");
+    strcpy(data.cmd[data.NBcmd].syntax,"loadfitsimgcube <string pattern> <outputcube>");
     strcpy(data.cmd[data.NBcmd].example,"loadfitsimgcube im out");
     strcpy(data.cmd[data.NBcmd].Ccall,"long load_fitsimages_cube(char *strfilter, char *ID_out_name)");
     data.NBcmd++;
@@ -229,7 +229,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = image_basic_cubecollapse_cli;
     strcpy(data.cmd[data.NBcmd].info,"collapse a cube along z");
-    strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim>");
+    strcpy(data.cmd[data.NBcmd].syntax,"cubecollapse <inim> <outim>");
     strcpy(data.cmd[data.NBcmd].example,"cubecollapse im1 outim");
     strcpy(data.cmd[data.NBcmd].Ccall,"long cube_collapse(char *ID_in_name, char *ID_out_name)");
     data.NBcmd++;
@@ -238,7 +238,7 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = image_basic_streamaverage_cli;
     strcpy(data.cmd[data.NBcmd].info,"average stream of images");
-    strcpy(data.cmd[data.NBcmd].syntax,"<imin> <NBcoadd [long]> <imout> <mode>");
+    strcpy(data.cmd[data.NBcmd].syntax,"imgstreamave <imin> <NBcoadd [long]> <imout> <mode>");
     strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)");
     data.NBcmd++;
@@ -3458,6 +3458,8 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
 
 
 
+
+
 /** coadd frames from image stream
  *  output is by default float type
  * mode :
@@ -3465,6 +3467,8 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
  *   1 : average + std dev (std dev in "imgstreamrms")
  *   2 : average + std dev -> badpix map for detector calibration ("badpixmap")
  *
+ *   NOTE: averaging will stop when receiving signal SIGUSR1
+ * 
  * */
 long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)
 {
@@ -3505,17 +3509,16 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     }
 
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
-
-
     
 
     if(data.image[ID].sem==1) // drive semaphore to zero
         while(sem_trywait(data.image[ID].semptr)==0) {}
 
 
-
     printf("\n\n");
-    for(k=0; k<NBcoadd; k++)
+    k = 0;
+//    for(k=0; k<NBcoadd; k++)
+    while ((k<NBcoadd)&&(data.signal_USR1==0))
     {
         printf("\r image # %8ld     ", k);
         fflush(stdout);
@@ -3530,6 +3533,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
         }
         else
             sem_wait(data.image[ID].semptr);
+
+        k++;
 
         if(data.image[ID].md[0].naxis == 3)
             k1 = data.image[ID].md[0].cnt1;
@@ -3606,13 +3611,15 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     printf("\n Processing...\n");
     fflush(stdout);
 
+    
+
     for(ii=0; ii<xysize; ii++)
-        data.image[IDout].array.F[ii] /= NBcoadd;
+        data.image[IDout].array.F[ii] /= k;
 
     if(mode>0)
     {
         for(ii=0; ii<xysize; ii++)
-            data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/NBcoadd-data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
+            data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/k - data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
         delete_image_ID("tmpstrcoadd");
         //	delete_image_ID("tmpstrcoaddrms");
     }
@@ -3650,6 +3657,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
     return(IDout);
 }
+
+
 
 // feed image to data stream
 // only works on slice #1

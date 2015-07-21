@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <time.h>
 #include <math.h>
 #include <sys/types.h>
@@ -277,9 +278,9 @@ int AOloopControl_setmult_cli()
 
 int Measure_zonalRM_cli()
 {
-    if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)==0)
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,2)==0)
     {
-        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string);
+        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.numl);
         return 0;
     }
     else
@@ -576,9 +577,9 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = Measure_zonalRM_cli;
   strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
-  strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay second [float]> <nb frames per position [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]>");
-  strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 0.02 20 zrm wfsref wfsmap dmmap");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay second [float]> <nb frames per position [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode>");
+  strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 0.02 20 zrm wfsref wfsmap dmmap 1");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)");
   data.NBcmd++;
 
 
@@ -951,6 +952,8 @@ long AOloopControl_makeTemplateAOloopconf(long loopnb)
  * MaskMode = 0  : tapered masking
  * MaskMode = 1  : STRICT masking
  *
+ * OPTIONAL : if file zrespM exists, WFS modes will be computed
+ * 
  */
 
 long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode)
@@ -1015,7 +1018,11 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long m0, mblock0;
 
     long iter;
+    long kernsize;
 
+    long IDzrespM;
+    
+    
 
     /// if Mmask exists, use it, otherwise create it
     IDmask = image_ID("Mmask");
@@ -1034,7 +1041,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                 val0 = exp(-pow(a0*r,b0));
                 data.image[IDmask].array.F[jj*msize+ii] = val0*val1;
             }
-        //     save_fits("Mmask", "!Mmask.fits");
+        save_fits("Mmask", "!Mmask.fits");
         xc1 = xc;
         yc1 = yc;
     }
@@ -1056,8 +1063,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
     totm = arith_image_total("Mmask");
     msize = data.image[IDmask].md[0].size[0];
-
-
+   
 
 
     
@@ -1210,12 +1216,16 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     }
 
 
-    if(MaskMode==0)
+
+    if(MaskMode==1)
     {
+        kernsize = 5;
+        if(2*kernsize>msize)
+            kernsize = msize/2;
         for(citer=0; citer<NBciter; citer++)
         {
             printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
-            gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), 5);
+            gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), kernsize);
             IDg = image_ID("modeg");
             for(k=0; k<data.image[ID].md[0].size[2]; k++)
             {
@@ -2742,18 +2752,9 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
         MATRIX_COMPUTATION_MODE = atoi(content);
     }
 
-
-  printf("wait 2  - reading %s\n", AOconf[loop].DMdispname);
-    sleep(2);
- 
-
     // this image is read to notify when new dm displacement is ready
     aoconfID_DMdisp = read_sharedmem_image(AOconf[loop].DMdispname);
 
-
- printf("wait 3\n");
-    sleep(2);
- 
 
     // Connect to WFS camera
     // This is where the size of the WFS is fixed
@@ -3301,9 +3302,15 @@ int set_DM_modesRM(long loop)
 
 /** Measures zonal response matrix
  * -> collapses it to DM response map and WFS response map 
- * (both maps show amplitude of actuator effect on WFS) */
+ * (both maps show amplitude of actuator effect on WFS) 
+ * 
+ * mode : 
+ *  0: compute WFSmap and DMmap 
+ *  1: compute WFSmap, DMmap, WFSmask and DMmask  -> images wfsmask and dmmask
+ * 
+ * */
 
-long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name)
+long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)
 {
     long ID_WFSmap, ID_WFSref, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSrefn;
     long act, j, ii, kk;
@@ -3316,13 +3323,16 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     float tot, v1, rms;
     long *sizearray;
 
-    long NBiter = 30;
+    long NBiter = LONG_MAX; // runs until USR1 signal received
     long iter;
     float *arraypix;
     long i;
     long istart, iend, icnt;
     long cntn;
     double tmpv;
+
+    long ID_WFSmask, ID_DMmask;
+    float lim;
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
@@ -3336,7 +3346,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     //  sprintf(fname, "./conf/AOloop.conf");
 
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
-           
+
 
     printf("Importing DM response matrix channel shared memory ...\n");
     aoconfID_DMRM = read_sharedmem_image(AOconf[loop].DMnameRM);
@@ -3345,7 +3355,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     aoconfID_WFS = read_sharedmem_image(AOconf[loop].WFSname);
 
 
-           
+
     sprintf(name, "aol%ld_imWFS1RM", loop);
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
@@ -3370,16 +3380,37 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     IDzrespm = create_image_ID("zrespm", 3, sizearray, FLOAT, 0, 5); // Zonal response matrix
     IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, FLOAT, 0, 5); // Zonal response matrix normalized
 
-//    list_image_ID();
+    if(mode==1)
+    {
+        sizearray[0] = AOconf[loop].sizexWFS;
+        sizearray[1] = AOconf[loop].sizeyWFS;
+        ID_WFSmask = create_image_ID("wfsmask", 2, sizearray, FLOAT, 1, 5);
+        
+        sizearray[0] = AOconf[loop].sizexDM;
+        sizearray[1] = AOconf[loop].sizeyDM;
+        ID_DMmask = create_image_ID("dmmask", 2, sizearray, FLOAT, 1, 5);
+    }
+
 
     cntn = 0;
-    for(iter=0; iter<NBiter; iter++)
+    iter = 0;
+
+
+    //    for(iter=0; iter<NBiter; iter++)
+
+    while((iter<NBiter)&&(data.signal_USR1==0))
     {
-        for(act=0; act<AOconf[loop].sizeDM; act++)
+        printf("\r iteration # %8ld     ", iter);
+        fflush(stdout);
+        iter++;
+
+        //        for(act=0; act<AOconf[loop].sizeDM; act++)
+
+
+        act = 0;
+        while ((act < AOconf[loop].sizeDM)&&(data.signal_USR1==0))
         {
-            printf("iter %ld / %ld    act %ld / %ld\n", iter, NBiter, act, AOconf[loop].sizeDM);//TEST
-            fflush(stdout);
-            
+
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDpos].array.F[ii] = 0.0;
@@ -3399,7 +3430,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             AOconf[loop].DMupdatecnt ++;
 
             usleep(delayus);
- 
+
 
             for(kk=0; kk<NBave; kk++)
             {
@@ -3427,7 +3458,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             AOconf[loop].DMupdatecnt ++;
 
             usleep(delayus);
- 
+
             for(kk=0; kk<NBave; kk++)
             {
                 Average_cam_frames(loop, 1, 0);
@@ -3445,50 +3476,86 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 data.image[IDpos].array.F[ii] = 0.0;
                 data.image[IDneg].array.F[ii] = 0.0;
             }
-
+            act++;
         }
         cntn += NBave;
 
 
+            for(j=0; j<AOconf[loop].sizeDM; j++)
+                arrayf[j] = 0.0;
 
-        for(act=0; act<AOconf[loop].sizeDM; act++)
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/NBave;
-        sprintf(fname, "!%s.fits", zrespm_name);
-        save_fits(zrespm_name, fname);
-
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[ID_WFSrefn].array.F[ii] = data.image[ID_WFSref].array.F[ii]/NBave/cntn;
-        sprintf(fname, "!%s.fits", WFSref_name);
-        save_fits(WFSref_name, fname);
+            data.image[aoconfID_DMRM].md[0].write = 1;
+            memcpy (data.image[aoconfID_DMRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+            data.image[aoconfID_DMRM].md[0].cnt0++;
+            data.image[aoconfID_DMRM].md[0].write = 0;
+            AOconf[loop].DMupdatecnt ++;
 
 
-        for(act=0; act<AOconf[loop].sizeDM; act++)
+        if(data.signal_USR1==0)
         {
-            rms = 0.0;
+            for(act=0; act<AOconf[loop].sizeDM; act++)
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/NBave;
+            sprintf(fname, "!%s.fits", zrespm_name);
+            save_fits(zrespm_name, fname);
+
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            {
-                tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
-                rms += tmpv*tmpv;
-            }
-            data.image[ID_DMmap].array.F[act] = rms;
-        }
-        sprintf(fname, "!%s.fits", DMmap_name);
-        save_fits(DMmap_name, fname);
+                data.image[ID_WFSrefn].array.F[ii] = data.image[ID_WFSref].array.F[ii]/NBave/cntn;
+            sprintf(fname, "!%s.fits", WFSref_name);
+            save_fits(WFSref_name, fname);
 
 
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        {
-            rms = 0.0;
             for(act=0; act<AOconf[loop].sizeDM; act++)
             {
-                tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
-                rms += tmpv*tmpv;
+                rms = 0.0;
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                {
+                    tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
+                    rms += tmpv*tmpv;
+                }
+                data.image[ID_DMmap].array.F[act] = rms;
             }
-            data.image[ID_WFSmap].array.F[ii] = rms;
+            sprintf(fname, "!%s.fits", DMmap_name);
+            save_fits(DMmap_name, fname);
+
+
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+            {
+                rms = 0.0;
+                for(act=0; act<AOconf[loop].sizeDM; act++)
+                {
+                    tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
+                    rms += tmpv*tmpv;
+                }
+                data.image[ID_WFSmap].array.F[ii] = rms;
+            }
+            sprintf(fname, "!%s.fits", WFSmap_name);
+            save_fits(WFSmap_name, fname);
+            
+            if(mode==1) // compute WFSmask and DMmask
+            {
+                // WFSmask : select pixels >20% of 50-percentile
+                lim = 0.2*img_percentile(WFSmap_name, 0.5);
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    {
+                        if(data.image[ID_WFSmap].array.F[ii]<lim)
+                            data.image[ID_WFSmask].array.F[ii] = 0.0;
+                        else
+                            data.image[ID_WFSmask].array.F[ii] = 1.0;
+                    }
+                
+                // DMmask: select pixels >10% of 50-percentile
+                lim = 0.1*img_percentile(DMmap_name, 0.5);
+                for(act=0; act<AOconf[loop].sizeDM; act++)
+                    {
+                         if(data.image[ID_DMmap].array.F[act]<lim)
+                            data.image[ID_DMmask].array.F[act] = 0.0;
+                        else
+                            data.image[ID_DMmask].array.F[act] = 1.0;
+                    }
+            }
+            
         }
-        sprintf(fname, "!%s.fits", WFSmap_name);
-        save_fits(WFSmap_name, fname);
     }
 
     free(arrayf);
@@ -3499,6 +3566,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     return(ID_WFSmap);
 }
+
 
 
 
@@ -4039,10 +4107,10 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
                 data.image[IDrmc].array.F[ii] = 0.0;
 
 
-            printf("\n");
-            printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
-            fflush(stdout);
-            sleep(1);
+//            printf("\n");
+//            printf("Testing (in measure_resp_matrix function) :,  NBloops = %ld, NBmode = %ld\n",  NBloops, AOconf[loop].NBDMmodes);
+//            fflush(stdout);
+//            sleep(1);
 
             for(k2 = 0; k2 < AOconf[loop].NBDMmodes; k2++)
                 data.image[aoconfID_cmd_modesRM].array.F[k2] = 0.0;

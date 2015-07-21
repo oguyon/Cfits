@@ -63,16 +63,17 @@ char errmsg[SBUFFERSIZE];
 
 
 /** data logging of shared memory image stream
- * 
+ *
  */
 
 struct savethreadmsg {
     char iname[100];
     char fname[200];
-	int partial; // 1 if partial cube
+    int partial; // 1 if partial cube
     long cubesize; // if partial cube, this is the size of the cube
 };
 long tret; // thread return value
+
 
 
 
