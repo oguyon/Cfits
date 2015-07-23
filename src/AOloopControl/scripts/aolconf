@@ -269,6 +269,20 @@ ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
 }
 
 
+
+function ReadzrespMfname {
+file="./conf/conf_zrespM_fname.txt"
+if [ -a $file ]
+	then
+	zrespMfname=$(echo "$(cat $file)")
+	else
+	zrespMfname="zrespM.fits" #default
+fi
+rm /tmp/aol${LOOPNUMBER}_zrespM.im.shm
+Fits2shm ${zrespMfname} aol${LOOPNUMBER}_zrespM
+ln -s $PWD/${zrespMfname} conf/aol${LOOPNUMBER}_zrespM.fits
+}
+
 function ReadWFSmaskfname {
 file="./conf/conf_wfsmask_fname.txt"
 if [ -a $file ]
@@ -643,6 +657,9 @@ ReadLoopDelay
 
 # I/O pre-processing [FITS files]
 ReadWFSdarkfname
+
+# SYSTEM CALIBRATION
+ReadzrespMfname
 ReadWFSmaskfname
 ReadDMmaskfname
 ReadWFSreffname

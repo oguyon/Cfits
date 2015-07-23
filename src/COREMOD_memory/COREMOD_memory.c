@@ -357,19 +357,20 @@ int list_variable_ID_file_cli()
 
 int delete_image_ID_cli()
 {
-  long i = 1;
-  printf("%ld : %d\n", i, data.cmdargtoken[i].type);
-  while(data.cmdargtoken[i].type != 0)
+    long i = 1;
+    printf("%ld : %d\n", i, data.cmdargtoken[i].type);
+    while(data.cmdargtoken[i].type != 0)
     {
-      if(data.cmdargtoken[i].type == 4)
-	delete_image_ID(data.cmdargtoken[i].val.string);
-      else
-	printf("Image %s does not exist\n", data.cmdargtoken[i].val.string);
-      i++;
+        if(data.cmdargtoken[i].type == 4)
+            delete_image_ID(data.cmdargtoken[i].val.string);
+        else
+            printf("Image %s does not exist\n", data.cmdargtoken[i].val.string);
+        i++;
     }
 
-  return 0;
+    return 0;
 }
+
 
 int copy_image_ID_cli()
 {
@@ -1042,7 +1043,6 @@ long long compute_image_memory()
         if(data.image[i].used==1)
             total += data.image[i].md[0].nelement*TYPESIZE[data.image[i].md[0].atype];
     }
-
     return(total);
 }
 
@@ -1165,52 +1165,55 @@ long variable_ID(char *name) /* ID number corresponding to a name */
 
 long next_avail_image_ID() /* next available ID number */
 {
-  long i;
-  long ID = -1;
-  int found = 0;
+    long i;
+    long ID = -1;
+    int found = 0;
 
 # ifdef _OPENMP
-#pragma omp critical
-  {
-#endif
-  for (i=0;i<data.NB_MAX_IMAGE;i++)
+    #pragma omp critical
     {
-      if((data.image[i].used == 0)&&(found == 0))
-	{
-	  ID = i;
-	  found = 1;
-	}
-    }
+#endif
+        for (i=0; i<data.NB_MAX_IMAGE; i++)
+        {
+            if((data.image[i].used == 0)&&(found == 0))
+            {
+                ID = i;
+                found = 1;
+            }
+        }
 # ifdef _OPENMP
-  }
+    }
 # endif
 
-  if(ID==-1)
-    ID = data.NB_MAX_IMAGE;
-  
-  return(ID);
+    if(ID==-1)
+        ID = data.NB_MAX_IMAGE;
+
+    return(ID);
 }
+
+
 
 long next_avail_variable_ID() /* next available ID number */
 {
-  long i;
-  long ID = -1;
-  int found = 0;
+    long i;
+    long ID = -1;
+    int found = 0;
 
-  for (i=0;i<data.NB_MAX_VARIABLE;i++)
+    for (i=0; i<data.NB_MAX_VARIABLE; i++)
     {
-      if((data.variable[i].used == 0)&&(found == 0))
-	{
-	  ID = i;
-	  found = 1;
-	}
+        if((data.variable[i].used == 0)&&(found == 0))
+        {
+            ID = i;
+            found = 1;
+        }
     }
-  if(ID==-1)
+    if(ID==-1)
     {
-      ID = data.NB_MAX_VARIABLE;
+        ID = data.NB_MAX_VARIABLE;
     }
-  return(ID);
+    return(ID);
 }
+
 
 
 
@@ -1259,7 +1262,6 @@ int delete_image_ID(char* imname) /* deletes an ID */
         }
         else
         {
-
             if(data.image[ID].md[0].atype==CHAR)
             {
                 if(data.image[ID].array.C == NULL)
@@ -1331,8 +1333,12 @@ int delete_image_ID(char* imname) /* deletes an ID */
             data.image[ID].md = NULL;
 
 
+        if(data.image[ID].kw!=NULL)
+        {
             free(data.image[ID].kw);
             data.image[ID].kw = NULL;
+        }
+
         }
         //free(data.image[ID].logstatus);
         /*      free(data.image[ID].size);*/
@@ -1344,7 +1350,7 @@ int delete_image_ID(char* imname) /* deletes an ID */
 
     if(MEM_MONITOR == 1)
         list_image_ID_ncurses();
-
+    
     return(0);
 }
 
@@ -1489,7 +1495,10 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
         {
             data.image[ID].md = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
             data.image[ID].md[0].shared = 0;
-            data.image[ID].kw = (IMAGE_KEYWORD*) malloc(sizeof(IMAGE_KEYWORD)*NBkw);
+            if(NBkw>0)
+                data.image[ID].kw = (IMAGE_KEYWORD*) malloc(sizeof(IMAGE_KEYWORD)*NBkw);
+            else
+                data.image[ID].kw = NULL;
         }
 
         data.image[ID].md[0].atype = atype;
@@ -2704,6 +2713,7 @@ int list_image_ID_ofp(FILE *fo)
     double timediff;
 
     sizeb = compute_image_memory();
+
 
     clock_gettime(CLOCK_REALTIME, &timenow);
 

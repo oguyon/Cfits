@@ -638,86 +638,87 @@ int img_nbpix_flux(char *ID_name)
 
 float img_percentile_float(char *ID_name, float p)
 {
-  int ID;
-  long ii;
-  long naxes[2];
-  float value = 0;
-  float *array;
-  long nelements;
-  long n;
+    int ID;
+    long ii;
+    long naxes[2];
+    float value = 0;
+    float *array;
+    long nelements;
+    long n;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-  nelements = naxes[0]*naxes[1];
-  
-  array = (float*) malloc(nelements*sizeof(float));
-  for (ii = 0; ii < nelements; ii++) 
-    array[ii] = data.image[ID].array.F[ii];
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    nelements = naxes[0]*naxes[1];
 
-  quick_sort_float(array, nelements);
-  
-  n = (long) (p*naxes[1]*naxes[0]);
-  if(n>(nelements-1))
-    n = (nelements-1);
-  if(n<0)
-    n = 0;
-  value = array[n];
-  free(array);
+    array = (float*) malloc(nelements*sizeof(float));
+    for (ii = 0; ii < nelements; ii++)
+        array[ii] = data.image[ID].array.F[ii];
 
-	printf("percentile %f = %f (%ld)\n", p, value, n);
+    quick_sort_float(array, nelements);
 
-  return(value);
+    n = (long) (p*naxes[1]*naxes[0]);
+    if(n>(nelements-1))
+        n = (nelements-1);
+    if(n<0)
+        n = 0;
+    value = array[n];
+    free(array);
+
+    printf("percentile %f = %f (%ld)\n", p, value, n);
+
+    return(value);
 }
 
 double img_percentile_double(char *ID_name, double p)
 {
-  int ID;
-  long ii;
-  long naxes[2];
-  double value = 0;
-  double *array;
-  long nelements;
-  long n;
+    int ID;
+    long ii;
+    long naxes[2];
+    double value = 0;
+    double *array;
+    long nelements;
+    long n;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-  nelements = naxes[0]*naxes[1];
-  
-  array = (double*) malloc(nelements*sizeof(double));
-  for (ii = 0; ii < nelements; ii++) 
-    array[ii] = data.image[ID].array.F[ii];
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    nelements = naxes[0]*naxes[1];
 
-  quick_sort_double(array, nelements);
-  
-  n = (long) (p*naxes[1]*naxes[0]);
-  if(n>(nelements-1))
-    n = (nelements-1);
-  if(n<0)
-    n = 0;
-  value = array[n];
-  free(array);
+    array = (double*) malloc(nelements*sizeof(double));
+    for (ii = 0; ii < nelements; ii++)
+        array[ii] = data.image[ID].array.F[ii];
 
-  return(value);
+    quick_sort_double(array, nelements);
+
+    n = (long) (p*naxes[1]*naxes[0]);
+    if(n>(nelements-1))
+        n = (nelements-1);
+    if(n<0)
+        n = 0;
+    value = array[n];
+    free(array);
+
+    return(value);
 }
 
 double img_percentile(char *ID_name, double p)
 {
-  long ID;
-  int atype;
-  double value = 0.0;
+    long ID;
+    int atype;
+    double value = 0.0;
 
-  ID = image_ID(ID_name);
-  atype = data.image[ID].md[0].atype;
+    ID = image_ID(ID_name);
+    atype = data.image[ID].md[0].atype;
 
-  if(atype==FLOAT)
-    value = (double) img_percentile_float(ID_name, (float) p);
-  if(atype==DOUBLE)
-    value = img_percentile_double(ID_name, p);
+    if(atype==FLOAT)
+        value = (double) img_percentile_float(ID_name, (float) p);
+    if(atype==DOUBLE)
+        value = img_percentile_double(ID_name, p);
 
-  return value;
+    return value;
 }
+
 
 
 int img_histoc_float(char *ID_name, char *fname)
