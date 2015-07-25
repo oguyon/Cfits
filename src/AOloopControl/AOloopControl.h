@@ -47,7 +47,7 @@ typedef struct
     char DMMODESname[80];
 
 
-    int init_refWFS;    // WFS reference image loaded
+    int init_wfsref;    // WFS reference image loaded
 
     int init_RM;        // Response Matrix loaded
     int init_CM;        // Control Matrix loaded

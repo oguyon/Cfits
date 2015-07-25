@@ -3517,7 +3517,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
     printf("\n\n");
     k = 0;
-//    for(k=0; k<NBcoadd; k++)
+
     while ((k<NBcoadd)&&(data.signal_USR1==0))
     {
         printf("\r image # %8ld     ", k);
@@ -3532,8 +3532,11 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             cnt = data.image[ID].md[0].cnt0;
         }
         else
+        {
+            printf("[sem]...");
             sem_wait(data.image[ID].semptr);
-
+        }
+        
         k++;
 
         if(data.image[ID].md[0].naxis == 3)
@@ -3618,10 +3621,9 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
     if(mode>0)
     {
+        
         for(ii=0; ii<xysize; ii++)
             data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/k - data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
-        delete_image_ID("tmpstrcoadd");
-        //	delete_image_ID("tmpstrcoaddrms");
     }
 
     if(mode==2)
@@ -3653,6 +3655,10 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
                 data.image[IDbadpix].array.F[ii] = 1.0;
         }
     }
+    
+    save_fits("tmpstrcoadd", "!tmpstrcoadd.fits");
+    delete_image_ID("tmpstrcoadd");
+
 
 
     return(IDout);

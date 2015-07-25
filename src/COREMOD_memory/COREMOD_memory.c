@@ -778,7 +778,7 @@ int init_COREMOD_memory()
   strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
   strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
   strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long copy_sharedmem_image_ID(char *name, char *newname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"mv");
@@ -2312,12 +2312,12 @@ long copy_image_ID(char *name, char *newname, int shared)
         // verify newname has the right size and type
         if(data.image[ID].md[0].nelement != data.image[IDout].md[0].nelement)
         {
-            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same size -> deleting and re-creating image\n",name,newname);
+            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same size -> deleting and re-creating image\n", name, newname);
             newim = 1;
         }
         if(data.image[ID].md[0].atype!=data.image[IDout].md[0].atype)
         {
-            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same type -> deleting and re-creating image\n",name,newname);
+            fprintf(stderr,"ERROR [copy_image_ID]: images %s and %s do not have the same type -> deleting and re-creating image\n", name, newname);
             newim = 1;
         }
 

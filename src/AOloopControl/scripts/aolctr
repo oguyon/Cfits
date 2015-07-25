@@ -4,8 +4,9 @@ loopnb=$(cat LOOPNUMBER)
 confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 
 pname0=$0
-pname=${pname0#"./"}-$loopnb
+pname="${pname0#"./"}-$loopnb"
 
+echo "pname = $pname"
 
 echo "aolnb ${loopnb}" > aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_refWFSim" >> aol${loopnb}startup.txt
@@ -37,8 +38,7 @@ echo "readshmim aol${loopnb}_DMmode_MULTF" >> aol${loopnb}startup.txt
 #echo "cp refwfs aol${loopnb}_refWFSim" >> aol${loopnb}startup.txt
 #echo "cp cmat aol${loopnb}_ContrM" >> aol${loopnb}startup.txt
 
-
-
+rm ${pname}-fifo
 Cfits -n $pname --startup="aol${loopnb}startup.txt" -f ${pname}-fifo
  
 
