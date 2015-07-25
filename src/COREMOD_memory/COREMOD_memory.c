@@ -2039,7 +2039,7 @@ long read_sharedmem_image(char *name)
             mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
         }
 
-
+/*
         printf("%ld keywords\n", data.image[ID].md[0].NBkw);
         fflush(stdout);
         
@@ -2057,7 +2057,7 @@ long read_sharedmem_image(char *name)
 
 
         mapv += sizeof(IMAGE_KEYWORD)*data.image[ID].md[0].NBkw;
-
+*/
       strcpy(data.image[ID].name, name);
 
         if(MEM_MONITOR == 1)
