@@ -2003,6 +2003,8 @@ long read_sharedmem_image(char *name)
         mapv = (char*) map;
         mapv += sizeof(IMAGE_METADATA);
 
+
+        printf("atype = %d\n", atype);
         if(atype==CHAR)
         {
             printf("atype = CHAR\n");
