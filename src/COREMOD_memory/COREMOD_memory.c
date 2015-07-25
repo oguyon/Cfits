@@ -2005,6 +2005,7 @@ long read_sharedmem_image(char *name)
 
 
         printf("atype = %d\n", atype);
+        fflush(stdout);
         if(atype==CHAR)
         {
             printf("atype = CHAR\n");
