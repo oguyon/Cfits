@@ -3520,7 +3520,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
     while ((k<NBcoadd)&&(data.signal_USR1==0))
     {
-        printf("\r image # %8ld     ", k);
+        printf("\r image number %8ld     ", k);
         fflush(stdout);
         if(data.image[ID].sem==0)
         {
