@@ -3467,9 +3467,9 @@ double basic_measure_transl( char *ID_name1, char *ID_name2, long tmax)
  *   1 : average + std dev (std dev in "imgstreamrms")
  *   2 : average + std dev -> badpix map for detector calibration ("badpixmap")
  *   3 : average + cube
- * 
+ *
  *   NOTE: averaging will stop when receiving signal SIGUSR1
- * 
+ *
  * */
 long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int mode)
 {
@@ -3491,6 +3491,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     float rmsmean;
     float vmin, vmax;
     float darkp20, darkp80;
+    int createim;
+
 
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
@@ -3506,12 +3508,31 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
     if(mode>0)
         IDrms = create_2Dimage_ID("imgstreamrms", xsize, ysize);
+
+
     if(mode==3)
-        IDcube = create_image_ID("tmpstrcoadd", 3, imsize, atype, 0, 0);
-    
+    {
+        createim = 0;
+        IDcube = image_ID("tmpstrcoadd");
+        if(IDcube!=-1)
+        {
+            if((data.image[IDcube].md[0].naxis==3)&&(data.image[IDcube].md[0].size[0]==imsize[0])&&(data.image[IDcube].md[0].size[1]==imsize[1])&&(data.image[IDcube].md[0].size[2]==imsize[2]))
+            {
+                createim = 0;
+            }
+            else
+            {
+                delete_image_ID("tmpstrcoadd");
+                createim = 1;
+            }
+        }
+
+        if(createim == 1)
+            IDcube = create_image_ID("tmpstrcoadd", 3, imsize, atype, 0, 0);
+    }
 
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
-    
+
 
     if(data.image[ID].sem==1) // drive semaphore to zero
         while(sem_trywait(data.image[ID].semptr)==0) {}
@@ -3549,13 +3570,13 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             if(mode>0)
             {
                 if(mode==3)
-                    {
-                        ptrv = (char*) data.image[ID].array.C;
-                ptrv += sizeof(char)*k1*xysize;
-                ptrcv = (char*) data.image[IDcube].array.C;
-                ptrcv += sizeof(char)*k*xysize;
-                memcpy (ptrcv, ptrv, sizeof(char)*xysize);
-            }
+                {
+                    ptrv = (char*) data.image[ID].array.C;
+                    ptrv += sizeof(char)*k1*xysize;
+                    ptrcv = (char*) data.image[IDcube].array.C;
+                    ptrcv += sizeof(char)*k*xysize;
+                    memcpy (ptrcv, ptrv, sizeof(char)*xysize);
+                }
                 for(ii=0; ii<xysize; ii++)
                     data.image[IDrms].array.F[ii] += data.image[ID].array.C[ii]*data.image[ID].array.C[ii];
             }
@@ -3567,11 +3588,11 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             {
                 if(mode == 3)
                 {
-                ptrv = (char*) data.image[ID].array.I;
-                ptrv += sizeof(int)*k1*xysize;
-                ptrcv = (char*) data.image[IDcube].array.I;
-                ptrcv += sizeof(int)*k*xysize;
-                memcpy (ptrcv, ptrv, sizeof(int)*xysize);
+                    ptrv = (char*) data.image[ID].array.I;
+                    ptrv += sizeof(int)*k1*xysize;
+                    ptrcv = (char*) data.image[IDcube].array.I;
+                    ptrcv += sizeof(int)*k*xysize;
+                    memcpy (ptrcv, ptrv, sizeof(int)*xysize);
                 }
                 for(ii=0; ii<xysize; ii++)
                     data.image[IDrms].array.F[ii] += data.image[ID].array.I[ii]*data.image[ID].array.I[ii];
@@ -3585,10 +3606,10 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
                 if(mode == 3)
                 {
                     ptrv = (char*) data.image[ID].array.F;
-                ptrv += sizeof(float)*k1*xysize;
-                ptrcv = (char*) data.image[IDcube].array.F;
-                ptrcv += sizeof(float)*k*xysize;
-                memcpy (ptrcv, ptrv, sizeof(float)*xysize);
+                    ptrv += sizeof(float)*k1*xysize;
+                    ptrcv = (char*) data.image[IDcube].array.F;
+                    ptrcv += sizeof(float)*k*xysize;
+                    memcpy (ptrcv, ptrv, sizeof(float)*xysize);
                 }
                 for(ii=0; ii<xysize; ii++)
                     data.image[IDrms].array.F[ii] += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
@@ -3602,10 +3623,10 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
                 if(mode==3)
                 {
                     ptrv = (char*) data.image[ID].array.D;
-                ptrv += sizeof(double)*k1*xysize;
-                ptrcv = (char*) data.image[IDcube].array.D;
-                ptrcv += sizeof(double)*k*xysize;
-                memcpy (ptrcv, ptrv, sizeof(double)*xysize);
+                    ptrv += sizeof(double)*k1*xysize;
+                    ptrcv = (char*) data.image[IDcube].array.D;
+                    ptrcv += sizeof(double)*k*xysize;
+                    memcpy (ptrcv, ptrv, sizeof(double)*xysize);
                 }
                 for(ii=0; ii<xysize; ii++)
                     data.image[IDrms].array.F[ii] += data.image[ID].array.D[ii]*data.image[ID].array.D[ii];
@@ -3619,10 +3640,10 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
                 if(mode==3)
                 {
                     ptrv = (char*) data.image[ID].array.U;
-                ptrv += sizeof(unsigned short)*k1*xysize;
-                ptrcv = (char*) data.image[IDcube].array.U;
-                ptrcv += sizeof(unsigned short)*k*xysize;
-                memcpy (ptrcv, ptrv, sizeof(unsigned short)*xysize);
+                    ptrv += sizeof(unsigned short)*k1*xysize;
+                    ptrcv = (char*) data.image[IDcube].array.U;
+                    ptrcv += sizeof(unsigned short)*k*xysize;
+                    memcpy (ptrcv, ptrv, sizeof(unsigned short)*xysize);
                 }
                 for(ii=0; ii<xysize; ii++)
                     data.image[IDrms].array.F[ii] += data.image[ID].array.U[ii]*data.image[ID].array.U[ii];
@@ -3635,20 +3656,20 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             exit(0);
             break;
         }
-        
+
         k++;
     }
     printf("\n Processing...\n");
     fflush(stdout);
 
-    
+
 
     for(ii=0; ii<xysize; ii++)
         data.image[IDout].array.F[ii] /= k;
 
     if(mode>0)
     {
-        
+
         for(ii=0; ii<xysize; ii++)
             data.image[IDrms].array.F[ii] = sqrt(data.image[IDrms].array.F[ii]/k - data.image[IDout].array.F[ii]*data.image[IDout].array.F[ii]);
     }
@@ -3682,14 +3703,11 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
                 data.image[IDbadpix].array.F[ii] = 1.0;
         }
     }
-    
-    if(mode!=3)
-        delete_image_ID("tmpstrcoadd");
-
 
 
     return(IDout);
 }
+
 
 
 
