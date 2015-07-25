@@ -181,11 +181,11 @@ typedef struct
 
     long naxis;                   // number of axis
     long size[3];                 // image size
-    long nelement;				// number of elements in image
-    int atype;					// data type code
+    long nelement;              // number of elements in image
+    int atype;                  // data type code
 
-    double creation_time;	        // creation time (since program start)
-    double last_access;			// last time the image was accessed  (since program start)
+    double creation_time;       // creation time (since program start)
+    double last_access;         // last time the image was accessed  (since program start)
     struct timespec wtime;
 
     int shared; 					// 1 if in shared memory
@@ -211,7 +211,6 @@ typedef struct			/* structure used to store data arrays */
     int used;
     int shmfd; // if shared memory, file descriptor
     size_t memsize; // total size in memory if shared
-    char name[80]; // local name (can be different from name in shared memory)
     
     IMAGE_METADATA *md;
 
@@ -229,7 +228,8 @@ typedef struct			/* structure used to store data arrays */
 
     IMAGE_KEYWORD *kw;
 
-
+   char name[80]; // local name (can be different from name in shared memory)
+ 
 
     int sem; // 1 if semaphore exists for this image
     sem_t *semptr; // semaphore for this image
