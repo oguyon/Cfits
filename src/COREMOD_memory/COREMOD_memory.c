@@ -2005,41 +2005,48 @@ long read_sharedmem_image(char *name)
 
         if(atype==CHAR)
         {
+            printf("atype = CHAR\n");
             data.image[ID].array.C = (char*) mapv;
             mapv += sizeof(char)*data.image[ID].md[0].nelement;
         }
         if(atype==INT)
         {
+            printf("atype = INT\n");
             data.image[ID].array.I = (int*) mapv;
             mapv += sizeof(int)*data.image[ID].md[0].nelement;
         }
         if(atype==FLOAT)
         {
-            data.image[ID].array.F = (float*) mapv;
+            printf("atype = FLOAT\n");
+             data.image[ID].array.F = (float*) mapv;
             mapv += sizeof(float)*data.image[ID].md[0].nelement;
         }
         if(atype==DOUBLE)
         {
+             printf("atype = DOUBLE\n");
             data.image[ID].array.D = (double*) mapv;
             mapv += sizeof(double)*data.image[ID].md[0].nelement;
         }
         if(atype==COMPLEX_FLOAT)
         {
-            data.image[ID].array.CF = (complex_float*) mapv;
+            printf("atype = COMPLEX_FLOAT\n");
+             data.image[ID].array.CF = (complex_float*) mapv;
             mapv += sizeof(complex_float)*data.image[ID].md[0].nelement;
         }
         if(atype==COMPLEX_DOUBLE)
         {
-            data.image[ID].array.CD = (complex_double*) mapv;
+            printf("atype = COMPLEX_DOUBLE\n");
+             data.image[ID].array.CD = (complex_double*) mapv;
             mapv += sizeof(complex_double)*data.image[ID].md[0].nelement;
         }
         if(atype==USHORT)
         {
-            data.image[ID].array.U = (unsigned short*) mapv;
+            printf("atype = USHORT\n");
+             data.image[ID].array.U = (unsigned short*) mapv;
             mapv += sizeof(unsigned short)*data.image[ID].md[0].nelement;
         }
 
-/*
+
         printf("%ld keywords\n", data.image[ID].md[0].NBkw);
         fflush(stdout);
         
@@ -2057,7 +2064,7 @@ long read_sharedmem_image(char *name)
 
 
         mapv += sizeof(IMAGE_KEYWORD)*data.image[ID].md[0].NBkw;
-*/
+
       strcpy(data.image[ID].name, name);
 
         if(MEM_MONITOR == 1)
