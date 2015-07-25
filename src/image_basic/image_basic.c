@@ -3517,20 +3517,21 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
         if(IDcube!=-1)
         {
             if((data.image[IDcube].md[0].naxis==3)&&(data.image[IDcube].md[0].size[0]==imsize[0])&&(data.image[IDcube].md[0].size[1]==imsize[1])&&(data.image[IDcube].md[0].size[2]==imsize[2]))
-            {
                 createim = 0;
-            }
             else
             {
                 delete_image_ID("tmpstrcoadd");
                 createim = 1;
             }
         }
+        else
+            createim = 1;
 
         if(createim == 1)
             IDcube = create_image_ID("tmpstrcoadd", 3, imsize, atype, 0, 0);
+    
+        list_image_ID();
     }
-
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
 
 
@@ -3707,6 +3708,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
     return(IDout);
 }
+
+
 
 
 
