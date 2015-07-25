@@ -3529,8 +3529,6 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
 
         if(createim == 1)
             IDcube = create_image_ID("tmpstrcoadd", 3, imsize, atype, 0, 0);
-    
-        list_image_ID();
     }
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
 
