@@ -3597,7 +3597,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             if(mode>0)
             {
                 ptrv = (char*) data.image[ID].array.U;
-                ptrv += sizeof(unsigned short)*k1*xysize;
+                ptrv += sizeof(unsigned short)*k*xysize;
                 memcpy (data.image[IDcube].array.U, ptrv, sizeof(unsigned short)*xysize);
                 for(ii=0; ii<xysize; ii++)
                     data.image[IDrms].array.F[ii] += data.image[ID].array.U[ii]*data.image[ID].array.U[ii];
