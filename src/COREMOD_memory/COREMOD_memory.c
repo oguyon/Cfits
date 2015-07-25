@@ -2041,7 +2041,6 @@ long read_sharedmem_image(char *name)
 
 
         printf("%ld keywords\n", data.image[ID].md[0].NBkw);
-        
         fflush(stdout);
         
         data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);

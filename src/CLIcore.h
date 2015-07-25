@@ -188,14 +188,14 @@ typedef struct
     double last_access;         // last time the image was accessed  (since program start)
     struct timespec wtime;
 
-    int shared; 					// 1 if in shared memory
+    int shared;                 // 1 if in shared memory
 
-    int write;                	// 1 if image is being written
-    int status;					// 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2)
-    long cnt0;               	  	// counter (incremented if image is updated)
-    long cnt1;					// in 3D rolling buffer image, this is the last slice written
+    int write;               // 1 if image is being written
+    int status;              // 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2)
+    long cnt0;               // counter (incremented if image is updated)
+    long cnt1;               // in 3D rolling buffer image, this is the last slice written
 
-    long NBkw; 					// number of keywords
+    long NBkw;                  // number of keywords
 
 } IMAGE_METADATA;
 
@@ -206,12 +206,12 @@ typedef struct
 
 
 
-typedef struct			/* structure used to store data arrays */
+typedef struct          /* structure used to store data arrays */
 {
     int used;
     int shmfd; // if shared memory, file descriptor
     size_t memsize; // total size in memory if shared
-    
+
     IMAGE_METADATA *md;
 
     union
@@ -228,9 +228,6 @@ typedef struct			/* structure used to store data arrays */
 
     IMAGE_KEYWORD *kw;
 
-   char name[80]; // local name (can be different from name in shared memory)
- 
-
     int sem; // 1 if semaphore exists for this image
     sem_t *semptr; // semaphore for this image
 
@@ -240,9 +237,13 @@ typedef struct			/* structure used to store data arrays */
     int semlog; // reserved for data logging
     sem_t *semptrlog;
 
+   char name[80]; // local name (can be different from name in shared memory)
+
+
     //	int logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
 
 } IMAGE;
+
 
 
 
