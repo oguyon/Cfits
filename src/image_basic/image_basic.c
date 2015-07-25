@@ -3537,8 +3537,6 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             printf("[sem]...");
             sem_wait(data.image[ID].semptr);
         }
-        
-        k++;
 
         if(data.image[ID].md[0].naxis == 3)
             k1 = data.image[ID].md[0].cnt1;
@@ -3621,6 +3619,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
             exit(0);
             break;
         }
+        
+        k++;
     }
     printf("\n Processing...\n");
     fflush(stdout);
