@@ -962,7 +962,7 @@ fi
 
 if [ "${zrespMstat}" = "OFF" ];
 then
-menuitems+=( "zresp_on" "             START zonal RM acquisition" )
+menuitems+=( "zresp_on" "START zonal RM acquisition" )
 menuitems+=( "zrespoff" "            PROCESS zrespM" )
 else
 menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )

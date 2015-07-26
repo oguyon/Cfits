@@ -28,7 +28,7 @@ pname="aol${loopnb}zrespM"
 
 Cfits -n $pname << EOF
 aolnb $loopnb
-aolmeaszrm $1 $2 $3 zrespmat wfsref wfsmap dmmap 1
+aolmeaszrm $1 $2 $3 zrespmat wfsref0 wfsmap dmmap 1
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmask.fits"
 listim
