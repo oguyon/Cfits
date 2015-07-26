@@ -23,7 +23,7 @@ fi
 
 
 
-execname="AOloopControl"
+execname="Cfits"
 
 if [ ! -f "LOOPNUMBER" ]; then
 echo ""
