@@ -1401,6 +1401,7 @@ pkill -USR1 aol${LOOPNUMBER}zrespM
 #tmux send-keys -t zrespM${LOOPNUMBER} "savefits dmmask dmmask.fits" C-m
 mkdir -p zrespM
 mkdir -p wfsref
+mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
 mkdir -p wfsmask
