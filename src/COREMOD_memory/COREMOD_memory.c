@@ -3959,13 +3959,18 @@ long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID)
     long i, cnt;
     int semval;
     long s;
-    
+
+    list_image_ID();
     for(i=0; i<NB_ID; i++)
     {
         for(s=0;s<data.image[IDarray[i]].sem;s++)
+        {
             sem_getvalue(data.image[IDarray[i]].semptr[s], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(data.image[IDarray[i]].semptr[s]);
+           printf("sem %ld/%ld of %s [%ld] = %d\n", s, data.image[IDarray[i]].sem, data.image[IDarray[i]].name, IDarray[i], semval);
+            fflush(stdout); 
+            for(cnt=0; cnt<semval; cnt++)
+                sem_trywait(data.image[IDarray[i]].semptr[s]);
+        }
     }
 
     return(0);
