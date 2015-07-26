@@ -1305,7 +1305,7 @@ int AOsystSim_run(int syncmode, long delayus)
     while(1)
     {
         printf("\n---------------------------- AOsystSim_DMshape --------------------------\n");
-        fflush(stdout);
+        fflush(stdout); 
   
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
 
