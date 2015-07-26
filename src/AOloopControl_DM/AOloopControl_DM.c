@@ -92,9 +92,9 @@ int AOloopControl_DM_setname_cli()
 int AOloopControl_DM_CombineChannels_cli()
 {
     if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl);
+        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
     else
-        AOloopControl_DM_CombineChannels(1);
+        AOloopControl_DM_CombineChannels(1, "dmvolt"); // DEFAULT
 
     return 1;
 }
@@ -103,8 +103,8 @@ int AOloopControl_DM_CombineChannels_cli()
 
 int AOloopControl_DM_chan_setgain_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
-        AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+        AOloopControl_DM_chan_setgain(data.cmdargtoken[1].val.string, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
     else
         return 1;
 }
@@ -359,16 +359,20 @@ int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
 
 
 
-int AOloopControl_DM_createconf()
+int AOloopControl_DM_createconf(char *name)
 {
     int result;
     int ch;
+    char fname[200];
+
+
+    sprintf(fname, "/tmp/dmdispcombconf_%s.conf.shm", name);
 
     if( dmdispcomb_loaded == 0 )
     {
         printf("Create/read configuration\n");
 
-        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+        SMfd = open(fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
         if (SMfd == -1) {
             perror("Error opening file for writing");
             exit(EXIT_FAILURE);
@@ -414,15 +418,18 @@ int AOloopControl_DM_createconf()
 
 
 
-int AOloopControl_DM_loadconf()
+int AOloopControl_DM_loadconf(char *name)
 {
     int result;
+    char fname[200];
+
+    sprintf(fname, "/tmp/dmdispcombconf_%s.conf.shm", name);
 
     if( dmdispcomb_loaded == 0 )
     {
         printf("Create/read configuration\n");
 
-        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
+        SMfd = open(fname, O_RDWR, (mode_t)0600);
         if (SMfd == -1) {
             perror("Error opening file for writing");
             exit(EXIT_FAILURE);
@@ -460,7 +467,7 @@ int AOloopControl_DM_unloadconf()
 //
 // NOTE: responds immediately to sem[1] in dmdisp
 //
-int AOloopControl_DM_CombineChannels(int mode)
+int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name)
 {
     long naxis = 2;
     long xsize = DM_Xsize;
@@ -486,7 +493,8 @@ int AOloopControl_DM_CombineChannels(int mode)
     long IDdispt;
     char sname[200];
     long nsecwait = 100000; // 100 us
-
+    int vOK;
+    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -500,9 +508,11 @@ int AOloopControl_DM_CombineChannels(int mode)
     sizexy = xsize*ysize;
 
 
-    AOloopControl_DM_createconf();
+    AOloopControl_DM_createconf(IDvolt_name);
     dispcombconf[0].ON = 1;
     dispcombconf[0].status = 0;
+    
+
 
     printf("Initialize channels\n");
 
@@ -521,17 +531,34 @@ int AOloopControl_DM_CombineChannels(int mode)
     dmdispptr = data.image[IDdispt].array.F;
 
     if(mode==1)
-        IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
+    {
+        IDvolt = image_ID(IDvolt_name);
+        vOK = 0;
+        if(IDvolt!=-1)
+            {
+                if((data.image[IDvolt].md[0].atype==USHORT)&&(data.image[IDvolt].md[0].naxis==2)&&(data.image[IDvolt].md[0].size[0]==xsize)&&(data.image[IDvolt].md[0].size[1]==ysize))
+                        vOK = 1;
+                else
+                    delete_image_ID(IDvolt_name);
+            }
+        if(vOK==0)
+        {
+            IDvolt = create_image_ID(IDvolt_name, naxis, size, USHORT, 1, 10);
+            COREMOD_MEMORY_image_set_createsem(IDvolt_name, 2);
+         }
+            
+    }
 
     cntsumold = 0;
 
+    
     dispcombconf[0].status = 1;
 
-  COREMOD_MEMORY_image_set_createsem(DMname, 2);
+    COREMOD_MEMORY_image_set_createsem(DMname, 2);
 
     if(data.image[IDdisp].sem<2)
     {
-        printf("ERROR: image %s semaphore %ld missing\n", data.image[IDdisp].name, 1);
+        printf("ERROR: image %s semaphore %d missing\n", data.image[IDdisp].name, 1);
         exit(0);
 /*        sprintf(sname, "%s_sem1", data.image[IDdisp].name);
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
@@ -636,9 +663,11 @@ int AOloopControl_DM_CombineChannels(int mode)
 
 
 
-int AOloopControl_DM_chan_setgain(int ch, float gain)
+int AOloopControl_DM_chan_setgain(char *name, int ch, float gain)
 {
-    AOloopControl_DM_loadconf();
+    
+    AOloopControl_DM_loadconf(name);
+ 
     if(ch<DM_NUMBER_CHAN)
         dispcombconf[0].dmdispgain[ch] = gain;
 
@@ -649,12 +678,12 @@ int AOloopControl_DM_chan_setgain(int ch, float gain)
 
 
 
-int AOloopControl_DM_dmdispcombstatus()
+int AOloopControl_DM_dmdispcombstatus(char *name)
 {
     long long mcnt = 0;
     int ch;
 
-    AOloopControl_DM_loadconf();
+    AOloopControl_DM_loadconf(name);
 
     initscr();
     getmaxyx(stdscr, wrow, wcol);
@@ -699,9 +728,9 @@ int AOloopControl_DM_dmdispcombstatus()
 
 
 
-int AOloopControl_DM_dmdispcomboff()
+int AOloopControl_DM_dmdispcomboff(char *name)
 {
-    AOloopControl_DM_loadconf();
+    AOloopControl_DM_loadconf(name);
     dispcombconf[0].ON = 0;
 
     return 0;

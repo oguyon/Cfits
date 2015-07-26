@@ -566,7 +566,7 @@ tmux new-session -d -s aosim${LOOPNUMBER}dmcomb
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execname" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 0" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 dmtestvolt" C-m
 }
 
 
