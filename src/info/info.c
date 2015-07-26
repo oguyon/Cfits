@@ -247,7 +247,7 @@ int printstatus(long ID)
     int semval;
     long s;
 
-    printw("%s\n", data.image[ID].name);
+    printw("%s  ", data.image[ID].name);
 
     atype = data.image[ID].md[0].atype;
     if(atype==CHAR)
