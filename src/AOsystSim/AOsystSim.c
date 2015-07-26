@@ -1306,7 +1306,13 @@ int AOsystSim_run(int syncmode, long delayus)
     {
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
 
+
+        printf("---------------------------- START PROPAGATION --------------------------\n");
+        fflush(stdout);
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
+        printf("---------------------------- STOP PROPAGATION --------------------------\n");
+        fflush(stdout);
+
 
         mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
 
