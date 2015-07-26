@@ -1374,8 +1374,8 @@ echo "$zrespMfname" > ./conf/conf_zrespM_fname.txt
 ReadConfFile "zrespM"
 ;;
 	1)
-imname=$( cat ./conf/conf_zrespM_fname.txt )
 ds9 $imname &
+imname=$( cat ./conf/conf_zrespM_fname.txt )
 ;;
 esac
 menucontrolloop_default="zmatn"
