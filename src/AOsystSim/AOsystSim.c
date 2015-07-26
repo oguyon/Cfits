@@ -1337,7 +1337,7 @@ int AOsystSim_run(int syncmode, long delayus)
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout", -1);
 
-       printf("\n---------------------------- WAIT--------------------------\n");
+       printf("\n---------------------------- WAIT [%d]--------------------------\n", syncmode);
         fflush(stdout);
  
 
