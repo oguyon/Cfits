@@ -1392,6 +1392,7 @@ state="menuconfigureloop"
 	zrespoff)
 zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
+tmux new-session -d -s aol${LOOPNUMBER}zrespM
 #rm wfsmask.fits
 #rm dmmask.fits
 pkill -USR1 aol${LOOPNUMBER}zrespM
