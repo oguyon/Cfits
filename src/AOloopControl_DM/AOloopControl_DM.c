@@ -350,7 +350,7 @@ int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
     }
     data.image[IDvolt].md[0].write = 0;
     data.image[IDvolt].md[0].cnt0++;
-    COREMOD_MEMORY_image_set_sempost(IDdisp, -1);
+    COREMOD_MEMORY_image_set_sempost(data.image[IDdisp].name, -1);
 
 
     return 0;
