@@ -1307,10 +1307,10 @@ int AOsystSim_run(int syncmode, long delayus)
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
 
 
-        printf("---------------------------- START PROPAGATION --------------------------\n");
+        printf("\n---------------------------- START PROPAGATION --------------------------\n");
         fflush(stdout);
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
-        printf("---------------------------- STOP PROPAGATION --------------------------\n");
+        printf("\n---------------------------- STOP PROPAGATION --------------------------\n");
         fflush(stdout);
 
 
