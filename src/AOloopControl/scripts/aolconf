@@ -963,7 +963,7 @@ fi
 if [ "${zrespMstat}" = "OFF" ];
 then
 menuitems+=( "zresp_on" "             START zonal RM acquisition" )
-menuitems+=( " " " " )
+menuitems+=( "zrespmoff" "            PROCESS zrespM" )
 else
 menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
 menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
