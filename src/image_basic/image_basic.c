@@ -3532,9 +3532,8 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
 
 
-    if(data.image[ID].sem==1) // drive semaphore to zero
-        while(sem_trywait(data.image[ID].semptr)==0) {}
-
+    if(data.image[ID].sem>0) // drive semaphore to zero
+        while(sem_trywait(data.image[ID].semptr[0])==0) {}
 
     printf("\n\n");
     k = 0;
@@ -3555,7 +3554,7 @@ long IMAGE_BASIC_streamaverage(char *IDname, long NBcoadd, char *IDoutname, int 
         else
         {
             printf("[sem]...");
-            sem_wait(data.image[ID].semptr);
+            sem_wait(data.image[ID].semptr[0]);
         }
 
         if(data.image[ID].md[0].naxis == 3)
@@ -3732,8 +3731,8 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     {
         data.image[IDs].md[0].write = 1;
         memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(double)*xysize);
-        if(data.image[IDs].sem == 1)
-            sem_post(data.image[IDs].semptr);
+        if(data.image[IDs].sem > 0)
+            sem_post(data.image[IDs].semptr[0]);
         data.image[IDs].md[0].write = 0;
         data.image[IDs].md[0].cnt0++;
 

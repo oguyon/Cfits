@@ -81,6 +81,7 @@ long aoconfID_WFSdark = -1;
 long aoconfID_WFS0 = -1;
 long aoconfID_WFS1 = -1;
 long aoconfID_WFS2 = -1;
+long aoconfID_wfsref0 = -1;
 long aoconfID_wfsref = -1;
 long aoconfID_DM = -1;
 long aoconfID_DMRM = -1;
@@ -298,7 +299,16 @@ int Measure_zonalRM_cli()
         return 1;
 }
 
-
+int AOloopControl_WFSzpupdate_loop_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0)
+    {
+        AOloopControl_WFSzpupdate_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
 
 
 int AOloopControl_Measure_WFScam_PeriodicError_cli()
@@ -602,6 +612,16 @@ int init_AOloopControl()
   strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay second [float]> <nb frames per position [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode>");
   strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 0.02 20 zrm wfsref wfsmap dmmap 1");
   strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)");
+  data.NBcmd++;
+
+
+  strcpy(data.cmd[data.NBcmd].key,"aolzpwfsloop");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = AOloopControl_WFSzpupdate_loop_cli;
+  strcpy(data.cmd[data.NBcmd].info,"WFS zero point offset loop");
+  strcpy(data.cmd[data.NBcmd].syntax,"<dm offset [shared mem]> <zonal resp M [shared mem]> <nominal WFS reference>  <modified WFS reference>");
+  strcpy(data.cmd[data.NBcmd].example,"aolzpwfsloop dmZP zrespM wfsref0 wfsref");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name");
   data.NBcmd++;
 
 
@@ -1348,7 +1368,10 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         }
     }
 
-
+      save_fits(ID_name, "!./tmp/fmodes0all.fits");
+    
+    
+    
 
     /// STEP 2: SEPARATE MODES INTO BLOCKS
     msize2 = msize*msize;
@@ -2775,7 +2798,7 @@ int Average_cam_frames(long loop, long NbAve, int RM)
         {
             printf("Waiting for semaphore to post .... ");
             fflush(stdout);
-            sem_wait(data.image[aoconfID_WFS].semptr);
+            sem_wait(data.image[aoconfID_WFS].semptr[0]);
             printf(" done\n");
             fflush(stdout);
         }
@@ -3353,6 +3376,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     FILE *fp;
     char content[200];
     char name[200];
+    char name1[200];
     char fname[200];
     long ID;
     long *sizearray;
@@ -3563,11 +3587,14 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     sprintf(name, "aol%ld_imWFS2", loop);
     aoconfID_WFS2 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-    sprintf(name, "aol%ld_wfsref", loop);
-    sprintf(fname, "./conf/wfsref.fits");
-    aoconfID_wfsref = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-    AOconf[loop].init_wfsref = 1;
-
+    sprintf(name, "aol%ld_wfsref0", loop);
+    sprintf(fname, "./conf/wfsref0.fits");
+    aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    AOconf[loop].init_wfsref0 = 1;
+    
+    sprintf(name1, "aol%ld_wfsref", loop);
+    aoconfID_wfsref = copy_image_ID(name, name1, 1);
+    COREMOD_MEMORY_image_set_createsem(name1, 2);
 
 
     // Connect to DM
@@ -3968,7 +3995,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     free(sizearray);
 
 
-    printf("   init_WFSref    %d\n", AOconf[loop].init_wfsref);
+    printf("   init_WFSref0    %d\n", AOconf[loop].init_wfsref0);
     printf("   init_RM        %d\n", AOconf[loop].init_RM);
     printf("   init_CM        %d\n", AOconf[loop].init_CM);
 
@@ -4014,8 +4041,8 @@ int set_DM_modes(long loop)
 
         data.image[aoconfID_DM].md[0].write = 1;
         memcpy (data.image[aoconfID_DM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-        if(data.image[aoconfID_DM].sem == 1)
-            sem_post(data.image[aoconfID_DM].semptr);
+        if(data.image[aoconfID_DM].sem > 0)
+            sem_post(data.image[aoconfID_DM].semptr[0]);
         data.image[aoconfID_DM].md[0].cnt0++;
         data.image[aoconfID_DM].md[0].write = 0;
 
@@ -4031,8 +4058,8 @@ int set_DM_modes(long loop)
     }
 
     if(aoconfID_DMdisp!=-1)
-        if(data.image[aoconfID_DMdisp].sem1 == 1)
-            sem_post(data.image[aoconfID_DMdisp].semptr1);
+        if(data.image[aoconfID_DMdisp].sem > 1)
+            sem_post(data.image[aoconfID_DMdisp].semptr[1]);
 
     AOconf[loop].DMupdatecnt ++;
 
@@ -4100,9 +4127,9 @@ int set_DM_modesRM(long loop)
  * 
  * */
 
-long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)
+long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode)
 {
-    long ID_WFSmap, ID_WFSref, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSrefn;
+    long ID_WFSmap, ID_WFSref0, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n;
     long act, j, ii, kk;
     double value;
     long delayus;
@@ -4167,8 +4194,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     sizearray[1] = AOconf[loop].sizeyWFS;
     sizearray[2] = AOconf[loop].sizeDM;
     ID_WFSmap = create_image_ID(WFSmap_name, 2, sizearray, FLOAT, 1, 5);
-    ID_WFSref = create_image_ID("tmpwfsref", 2, sizearray, FLOAT, 1, 5);
-    ID_WFSrefn = create_image_ID(WFSref_name, 2, sizearray, FLOAT, 1, 5);
+    ID_WFSref0 = create_image_ID("tmpwfsref0", 2, sizearray, FLOAT, 1, 5);
+    ID_WFSref0n = create_image_ID(WFSref0_name, 2, sizearray, FLOAT, 1, 5);
     IDzrespm = create_image_ID("zrespm", 3, sizearray, FLOAT, 0, 5); // Zonal response matrix
     IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, FLOAT, 0, 5); // Zonal response matrix normalized
 
@@ -4233,7 +4260,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
-                data.image[ID_WFSref].array.F[ii] += data.image[IDpos].array.F[ii];
+                data.image[ID_WFSref0].array.F[ii] += data.image[IDpos].array.F[ii];
             }
 
 
@@ -4260,7 +4287,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
-                data.image[ID_WFSref].array.F[ii] += data.image[IDneg].array.F[ii];
+                data.image[ID_WFSref0].array.F[ii] += data.image[IDneg].array.F[ii];
             }
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -4294,14 +4321,14 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             total = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 {
-                    data.image[ID_WFSrefn].array.F[ii] = data.image[ID_WFSref].array.F[ii]/NBave/cntn;
-                    total += data.image[ID_WFSrefn].array.F[ii];
+                    data.image[ID_WFSref0n].array.F[ii] = data.image[ID_WFSref0].array.F[ii]/NBave/cntn;
+                    total += data.image[ID_WFSref0n].array.F[ii];
                 }
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[ID_WFSrefn].array.F[ii] /= total;
+                data.image[ID_WFSref0n].array.F[ii] /= total;
                 
-            sprintf(fname, "!%s.fits", WFSref_name);
-            save_fits(WFSref_name, fname);
+            sprintf(fname, "!%s.fits", WFSref0_name);
+            save_fits(WFSref0_name, fname);
 
 
             for(act=0; act<AOconf[loop].sizeDM; act++)
@@ -4361,7 +4388,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     free(sizearray);
     free(arraypix);
 
-    delete_image_ID("tmpwfsref");
+    delete_image_ID("tmpwfsref0");
 
     return(ID_WFSmap);
 }
@@ -4371,26 +4398,42 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 //
 // args:
 //  DM offset (shared memory)
-//  zonal resp matrix 
-//  nominal wfs reference without offset (NOT shared memory)
+//  zonal resp matrix (shared memory)
+//  nominal wfs reference without offset (shared memory)
 //  wfs reference to be updated (shared memory)
+//
+// computation triggered on semaphore wait on semaphore #1 of DM offset
+//
+// will run until SIGUSR1 received
 //
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name)
 {
     long IDzpdm, IDzrespM, IDwfsref, IDwfsref0;
-    long dmxsize, dmysize;
-    long wfsxsize, wfsysize;
+    long dmxsize, dmysize, dmxysize;
+    long wfsxsize, wfsysize, wfsxysize;
+    long IDtmp;
+    long elem, act;
     
     
     IDzpdm = image_ID(IDzpdm_name);
+    
+    if(data.image[IDzpdm].sem<2) // if semaphore #1 does not exist, create it
+        COREMOD_MEMORY_image_set_createsem(IDzpdm_name, 2);
+    
+    
     IDzrespM = image_ID(IDzrespM_name);
     IDwfsref0 = image_ID(IDwfsref0_name);
     IDwfsref = image_ID(IDwfsref_name);
    
+   
+    // array sizes extracted from IDzpdm and IDwfsref
+   
     dmxsize = data.image[IDzpdm].md[0].size[0];
     dmysize = data.image[IDzpdm].md[0].size[1];
+    dmxysize = dmxsize*dmysize;
     wfsxsize = data.image[IDwfsref].md[0].size[0];
     wfsysize = data.image[IDwfsref].md[0].size[1];
+    wfsxysize = wfsxsize*wfsysize;
     
     // VERIFY SIZES
     
@@ -4402,19 +4445,58 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         }
     if(data.image[IDzrespM].md[0].size[1]!=wfsysize)
         {
-            printf("ERROR: zrespM xsize %ld does not match wfsxsize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
+            printf("ERROR: zrespM ysize %ld does not match wfsysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
             exit(0);
         }
-     if(data.image[IDzrespM].md[0].size[1]!=wfsysize)
+     if(data.image[IDzrespM].md[0].size[2]!=dmxysize)
         {
-            printf("ERROR: zrespM xsize %ld does not match wfsxsize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
+            printf("ERROR: zrespM zsize %ld does not match wfsxysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsxysize);
             exit(0);
         }
     
     
+    // verify wfsref0
+       if(data.image[IDwfsref0].md[0].size[0]!=wfsxsize)
+        {
+            printf("ERROR: wfsref0 xsize %ld does not match wfsxsize %ld\n", data.image[IDzrespM].md[0].size[0], wfsxsize);
+            exit(0);
+        }
+    if(data.image[IDwfsref0].md[0].size[1]!=wfsysize)
+        {
+            printf("ERROR: wfsref0 ysize %ld does not match wfsysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
+            exit(0);
+        }
+
+    IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
     
     
+    if(data.image[IDzpdm].sem > 1) // drive semaphore #1 to zero
+        while(sem_trywait(data.image[IDzpdm].semptr[1])==0) {}
+    else
+        {
+            printf("ERROR: semaphore #1 missing from image %s\n", IDzpdm_name);
+            exit(0);
+        }
     
+    while(data.signal_USR1==0)
+    {
+        memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
+
+        sem_wait(data.image[IDzpdm].semptr[1]);
+        printf("WFS zero point offset update \n");
+        fflush(stdout);
+        
+        for(act=0;act<dmxysize;act++)
+            for(elem=0;elem<wfsxysize;elem++)
+                data.image[IDtmp].array.F[elem] += data.image[IDzpdm].array.F[act]*data.image[IDzrespM].array.F[act*wfsxysize+elem];
+        
+        // copy results to IDwfsref
+        data.image[IDwfsref].md[0].write = 1;
+        memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
+        data.image[IDwfsref].md[0].cnt0 ++;
+        data.image[IDwfsref].md[0].write = 0;
+        COREMOD_MEMORY_image_set_sempost(IDwfsref_name, -1);
+    }
     
     
     return 0;
@@ -4836,7 +4918,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
     long *sizearray;
 
     long IDrespM;
-    long IDwfsref;
+    long IDwfsref0;
 
     int r;
 
@@ -4874,7 +4956,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
     // create output
-    IDwfsref = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    IDwfsref0 = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     IDrespM = create_3Dimage_ID_float("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
 
 
@@ -5120,7 +5202,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
 
 
-            printf("%ld %ld  %ld  %ld\n", IDrefcumul, IDrmcumul, IDwfsref, IDrespM);
+            printf("%ld %ld  %ld  %ld\n", IDrefcumul, IDrmcumul, IDwfsref0, IDrespM);
 
 
             beta = (1.0-gain)*beta + gain;
@@ -5128,7 +5210,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
             {
                 data.image[IDrefcumul].array.F[ii] = (1.0-gain)*data.image[IDrefcumul].array.F[ii] + gain*data.image[IDrefi].array.F[ii];
 
-                data.image[IDwfsref].array.F[ii] = data.image[IDrefcumul].array.F[ii]/beta;
+                data.image[IDwfsref0].array.F[ii] = data.image[IDrefcumul].array.F[ii]/beta;
 
 
 
@@ -5849,7 +5931,7 @@ int AOloopControl_run()
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall; 
 
     vOK = 1;
-    if(AOconf[loop].init_wfsref==0)
+    if(AOconf[loop].init_wfsref0==0)
     {
         printf("ERROR: CANNOT RUN LOOP WITHOUT WFS REFERENCE\n");
         vOK = 0;
@@ -5922,14 +6004,14 @@ int AOloopControl_run()
                         data.image[aoconfID_DM].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
                         data.image[aoconfID_DM].array.F[ii] *= AOconf[loop].mult;
                     }
-                    if(data.image[aoconfID_DM].sem == 1)
-                        sem_post(data.image[aoconfID_DM].semptr);
+                    if(data.image[aoconfID_DM].sem > 0)
+                        sem_post(data.image[aoconfID_DM].semptr[0]);
                     data.image[aoconfID_DM].md[0].cnt0++;
                     data.image[aoconfID_DM].md[0].write = 0;
                     // inform dmdisp that new command is ready in one of the channels
                     if(aoconfID_DMdisp!=-1)
-                        if(data.image[aoconfID_DMdisp].sem1 == 1)
-                            sem_post(data.image[aoconfID_DMdisp].semptr1);
+                        if(data.image[aoconfID_DMdisp].sem > 1)
+                            sem_post(data.image[aoconfID_DMdisp].semptr[1]);
 
                     AOconf[loop].DMupdatecnt ++;
                 }

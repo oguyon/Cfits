@@ -1710,8 +1710,8 @@ int make_AtmosphericTurbulence_wavefront_series()
             
             if(WAITFORSEM==1) // wait for semaphore to advance to next WF step
             {
-                printf("WAITING for semaphore \"%s\" ...\n", WAITSEMIMNAME);
-                COREMOD_MEMORY_image_set_semwait(WAITSEMIMNAME);
+                printf("WAITING for semaphore #0 \"%s\" ...\n", WAITSEMIMNAME);
+                COREMOD_MEMORY_image_set_semwait(WAITSEMIMNAME, 0);
                 printf("Done\n");
             }
 

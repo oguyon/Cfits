@@ -397,18 +397,12 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
     // printf("sigma = %f\n",sigma);
     // printf("filter size = %d\n",filter_size);
 
-    printf("STEP 000\n"); 
-    fflush(stdout);
-
     array = (float*) malloc((2*filter_size+1)*sizeof(float));
     ID = image_ID(ID_name);
     naxis = data.image[ID].md[0].naxis;
     for(kk=0; kk<naxis; kk++)
         naxes[kk] = data.image[ID].md[0].size[kk];
 
-
-    printf("STEP 010\n"); 
-    fflush(stdout);
 
     if(naxis==2)
         naxes[2] = 1;
@@ -422,8 +416,6 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
     ID_out = image_ID(out_name);
     list_image_ID();
 
-    printf("STEP 020\n"); 
-    fflush(stdout);
 
     sum=0.0;
     for (i=0; i<(2*filter_size+1); i++)
@@ -439,9 +431,6 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
         array[i] /= sum;
         //    printf("%ld %f\n",i,array[i]);
     }
-
-    printf("STEP 030\n"); 
-    fflush(stdout);
 
     for(k=0; k<naxes[2]; k++)
     {
@@ -477,9 +466,6 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
             }
 
         }
-
-    printf("STEP 040\n");
-    fflush(stdout);
 
 
         for (ii = 0; ii < naxes[0]; ii++)
@@ -528,9 +514,6 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 
     }
     
-    printf("STEP 100\n"); 
-    fflush(stdout);
-
 
     //  save_fl_fits("gtmp","!gtmp");
     delete_image_ID("gtmp");

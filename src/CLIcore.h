@@ -228,14 +228,10 @@ typedef struct          /* structure used to store data arrays */
 
     IMAGE_KEYWORD *kw;
 
-    int sem; // 1 if semaphore exists for this image
-    sem_t *semptr; // semaphore for this image
+    int sem; // number of semaphores in use     
+    sem_t **semptr; // semaphore array
 
-    int sem1;
-    sem_t *semptr1; // extra semaphore
-
-    int semlog; // reserved for data logging
-    sem_t *semptrlog;
+    sem_t *semlog; // semaphore for logging
 
    char name[80]; // local name (can be different from name in shared memory)
 

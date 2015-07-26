@@ -47,7 +47,7 @@ typedef struct
     char DMMODESname[80];
 
 
-    int init_wfsref;    // WFS reference image loaded
+    int init_wfsref0;    // WFS reference image loaded
 
     int init_RM;        // Response Matrix loaded
     int init_CM;        // Control Matrix loaded
@@ -130,6 +130,7 @@ long AOloopControl_loadCM(long loop, char *CMfname);
 int AOloopControl_loadconfigure(long loop, int mode, int level);
 int set_DM_modes(long loop);
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode);
+int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);
 int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name);
 int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha);
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);

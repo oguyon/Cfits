@@ -466,9 +466,9 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
         printf("Creating output image\n");
         fflush(stdout);
         IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
-        COREMOD_MEMORY_image_set_createsem(IDoutname);
+        COREMOD_MEMORY_image_set_createsem(IDoutname, 2);
     }
-    COREMOD_MEMORY_image_set_createsem(IDoutname);
+    COREMOD_MEMORY_image_set_createsem(IDoutname, 2);
 
     if(badpixclean_init==0)
         badpixclean_NBop = IMG_REDUCE_cleanbadpix_fast_precompute(IDbadpix_name);
@@ -478,8 +478,8 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
     {
         printf("Waiting for incoming image ... \n");
         fflush(stdout);
-        if(data.image[ID].sem==1)
-            sem_wait(data.image[ID].semptr);
+        if(data.image[ID].sem>0)
+            sem_wait(data.image[ID].semptr[0]);
         else
         {
             printf("NO SEMAPHORE !!!\n");
@@ -509,8 +509,8 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
           //  fflush(stdout);
         }
 
-        if(data.image[IDout].sem == 1)
-            sem_post(data.image[IDout].semptr);
+        if(data.image[IDout].sem > 0)
+            sem_post(data.image[IDout].semptr[0]);
         data.image[IDout].md[0].write = 0;
         data.image[IDout].md[0].cnt0++;
     }

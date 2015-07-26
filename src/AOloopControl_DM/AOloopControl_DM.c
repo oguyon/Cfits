@@ -348,10 +348,9 @@ int AOloopControl_DM_disp2V(long IDdisp, long IDvolt)
             volt = dispcombconf[0].MAXVOLT;
         data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
     }
-
     data.image[IDvolt].md[0].write = 0;
     data.image[IDvolt].md[0].cnt0++;
-
+    COREMOD_MEMORY_image_set_sempost(IDdisp, -1);
 
 
     return 0;
@@ -459,7 +458,7 @@ int AOloopControl_DM_unloadconf()
 //
 // mode = 1 if DM volt computed
 //
-// NOTE: responds immediately to sem1 in dmdisp
+// NOTE: responds immediately to sem[1] in dmdisp
 //
 int AOloopControl_DM_CombineChannels(int mode)
 {
@@ -528,21 +527,21 @@ int AOloopControl_DM_CombineChannels(int mode)
 
     dispcombconf[0].status = 1;
 
-  COREMOD_MEMORY_image_set_createsem(DMname);
+  COREMOD_MEMORY_image_set_createsem(DMname, 2);
 
-    if(data.image[IDdisp].sem1==0)
+    if(data.image[IDdisp].sem<2)
     {
-        sprintf(sname, "%s_sem1", data.image[IDdisp].name);
+        printf("ERROR: image %s semaphore %ld missing\n", data.image[IDdisp].name, 1);
+        exit(0);
+/*        sprintf(sname, "%s_sem1", data.image[IDdisp].name);
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
             perror("semaphore 1 initilization error");
             exit(1);
         }
         else
             printf("semaphore 1 initialized for image %s \n", DMname);
-        data.image[IDdisp].sem1 = 1;
+        data.image[IDdisp].sem1 = 1;*/
     }
-    else
-        printf("image %s already has semaphore\n", DMname);
 
 
     while(dispcombconf[0].ON == 1)
@@ -557,7 +556,7 @@ int AOloopControl_DM_CombineChannels(int mode)
         if(semwaitts.tv_nsec >= 1000000000)
             semwaitts.tv_sec = semwaitts.tv_sec + 1;
 
-        sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
+        sem_timedwait(data.image[IDdisp].semptr[1], &semwaitts);
 
         cntsum = 0;
 
@@ -604,7 +603,7 @@ int AOloopControl_DM_CombineChannels(int mode)
             memcpy (data.image[IDdisp].array.F,data.image[IDdispt].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
             data.image[IDdisp].md[0].cnt0++;
             data.image[IDdisp].md[0].write = 0;            
-            sem_post(data.image[IDdisp].semptr);
+            sem_post(data.image[IDdisp].semptr[0]);
  
  
             dispcombconf[0].status = 7;

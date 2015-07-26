@@ -301,8 +301,8 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         }
         else
         {
-            sem_getvalue(data.image[IDcam].semptr, &semval);
-            sem_wait(data.image[IDcam].semptr);
+            sem_getvalue(data.image[IDcam].semptr[0], &semval);
+            sem_wait(data.image[IDcam].semptr[0]);
 
         }
 
@@ -1234,8 +1234,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
-            sem_post(data.image[IDdm5].semptr);
-            sem_post(data.image[IDdisp].semptr1);
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
             usleep(2000);
@@ -1253,8 +1253,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
-            sem_post(data.image[IDdm5].semptr);
-            sem_post(data.image[IDdisp].semptr1);
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
             usleep(2000);
@@ -1282,8 +1282,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDz].array.F[zi*dmsize2+ii];
-            sem_post(data.image[IDdm5].semptr);
-            sem_post(data.image[IDdisp].semptr1);
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
             usleep(2000);
@@ -1369,7 +1369,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
     IDsatmask = create_image_ID("satmask", 3, sizeoutarray, USHORT, 1, 0); // saturation mask
     ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0); // intermediate resutl
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(IDoutname);
+    COREMOD_MEMORY_image_set_createsem(IDoutname, 4);
 
     if(data.image[IDin].sem == 0)
     {
@@ -1379,7 +1379,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
     // drive semaphore to zero
-    while(sem_trywait(data.image[IDin].semptr)==0) {}
+    while(sem_trywait(data.image[IDin].semptr[0])==0) {}
 
 
 
@@ -1388,8 +1388,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
     while(1)
     {
-        sem_wait(data.image[IDin].semptr);
-        while(sem_trywait(data.image[IDin].semptr)==0) {}
+        sem_wait(data.image[IDin].semptr[0]);
+        while(sem_trywait(data.image[IDin].semptr[0])==0) {}
 
         k = data.image[IDin].md[0].cnt1;
         printf("%ld   slice %ld written [%ld] \n      ", iter, k, IDin);
@@ -1444,8 +1444,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
             printf("\n CUBE COMPLETED -> 2D image ready\n");
             data.image[IDout].md[0].write = 1;
             memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
-            if(data.image[IDout].sem == 1)
-                sem_post(data.image[IDout].semptr);
+            if(data.image[IDout].sem > 0)
+                sem_post(data.image[IDout].semptr[0]);
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;
         }

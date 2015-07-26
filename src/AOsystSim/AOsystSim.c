@@ -772,6 +772,7 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     long dmact;
     double eps=1.0e-12;
     long k;
+    long DMifpixarray_NBpix0;
     
 
     IDdmctrl = image_ID(IDdmctrl_name);
@@ -781,35 +782,48 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     dmsizey = data.image[IDdmifc].md[0].size[1];
     DMnbact = data.image[IDdmifc].md[0].size[2];
 
-
-    
+  
     if(DMifpixarray_init==0)
     {
         DMifpixarray_NBpix = 0.0;
         for(dmact=0; dmact<DMnbact; dmact++)
             for(ii=0; ii<dmsizex*dmsizey; ii++)
-                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii])>eps)
+                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
                     DMifpixarray_NBpix++;
-        DMifpixarray_val = (float*) malloc(sizeof(float)*DMifpixarray_NBpix);
+        
+        if(DMifpixarray_val!=NULL)
+            {
+                printf("WARNING: array DMifpixarray_val is not NULL");
+                fflush(stdout);
+            }
+        if((DMifpixarray_val = (float*) malloc(sizeof(float)*DMifpixarray_NBpix))==NULL)
+            {
+                printf("ERROR: could not allocate array DMifpixarray_val\n");
+                exit(0);
+            }
+       
         DMifpixarray_index = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
         DMifpixarray_pixindex = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
-        DMifpixarray_NBpix = 0.0;
+        DMifpixarray_NBpix0 = DMifpixarray_NBpix;
+        DMifpixarray_NBpix = 0;
         for(dmact=0; dmact<DMnbact; dmact++)
             for(ii=0; ii<dmsizex*dmsizey; ii++)
-                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii])>eps)
+                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
                     {
-                        DMifpixarray_val[DMifpixarray_NBpix] = data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+jj*dmsizex+ii];
+              //          printf("%ld / %ld \n", DMifpixarray_NBpix, DMifpixarray_NBpix0);
+                        DMifpixarray_val[DMifpixarray_NBpix] = data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii];
                         DMifpixarray_index[DMifpixarray_NBpix] = dmact;
                         DMifpixarray_pixindex[DMifpixarray_NBpix] = ii;
                         DMifpixarray_NBpix++;
                     }
     }
-    
+
+   
     IDdm = image_ID(IDdm_name);
     if(IDdm==-1)
-    {
         IDdm = create_2Dimage_ID(IDdm_name, dmsizex, dmsizey);
-    }
+   
+ 
     for(ii=0; ii<dmsizex*dmsizey; ii++)
         data.image[IDdm].array.F[ii] = 0.0;
 /*
@@ -1061,10 +1075,15 @@ int AOsystSim_run(int syncmode, long delayus)
         dmsizearray[1] = DMsize;
         IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
         free(dmsizearray);
-        COREMOD_MEMORY_image_set_createsem("aosimdmctrl");
+        COREMOD_MEMORY_image_set_createsem("aosimdmctrl", 2);
     }
     else
-        DMsize = data.image[IDdmctrl].md[0].size[0];
+        {
+            DMsize = data.image[IDdmctrl].md[0].size[0];
+            COREMOD_MEMORY_image_set_createsem("aosimdmctrl", 2);
+        }
+        
+    
 
     for(k=0; k<DMsize*DMsize; k++)
         data.image[IDdmctrl].array.F[k] = ran1()*2.0e-8;
@@ -1118,6 +1137,12 @@ int AOsystSim_run(int syncmode, long delayus)
 
     IDifc = create_image_ID("dmifc", 3, imsize, FLOAT, 0, 0);
     printf("\n");
+ 
+ 
+    list_image_ID();
+    printf("dmifc = %ld   %ld %ld %ld    %ld %ld\n", IDifc, data.image[IDifc].md[0].size[0], data.image[IDifc].md[0].size[1], data.image[IDifc].md[0].size[2], arraysize, arraysize);
+
+ 
     for(mx=0; mx<DMsize; mx++)
         for(my=0; my<DMsize; my++)
         {
@@ -1161,12 +1186,14 @@ int AOsystSim_run(int syncmode, long delayus)
 
 
     // INITIALIZE TURBULENCE SCREEN
+        
     imsize = (long*) malloc(sizeof(long)*2);
     imsize[0] = arraysize;
     imsize[1] = arraysize;
     IDturb = create_image_ID("WFturb", 2, imsize, FLOAT, 1, 0);
     free(imsize);
-    COREMOD_MEMORY_image_set_createsem("WFturb");
+    COREMOD_MEMORY_image_set_createsem("WFturb", 2);
+    list_image_ID();
 
     AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
     IDdm0shape = image_ID("dmdisp");
@@ -1176,7 +1203,7 @@ int AOsystSim_run(int syncmode, long delayus)
 
 
 
-    // INITIALIZE OPTICAL SYSTEM
+     // INITIALIZE OPTICAL SYSTEM
 
     optsystsim = (OPTSYST*) malloc(sizeof(OPTSYST)*1);
     optsystsim[0].nblambda = 1;
@@ -1262,12 +1289,12 @@ int AOsystSim_run(int syncmode, long delayus)
     IDout = create_image_ID("aosimpsfout", 3, imsize, FLOAT, 1, 0);
     free(imsize);
 
-    COREMOD_MEMORY_image_set_createsem("aosimpsfout");
+    COREMOD_MEMORY_image_set_createsem("aosimpsfout", 2);
     data.image[IDout].md[0].write = 1;
     memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
     data.image[IDout].md[0].cnt0++;
     data.image[IDout].md[0].write = 0;
-    COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+    COREMOD_MEMORY_image_set_sempost("aosimpsfout", -1);
 
     IDarray = (long*) malloc(sizeof(long)*2);
     IDarray[0] = image_ID("WFturb");
@@ -1284,7 +1311,7 @@ int AOsystSim_run(int syncmode, long delayus)
         mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
 
         AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim", 0.0, 1);
-       // COREMOD_MEMORY_image_set_sempost("aosimwfsim");
+       // COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
         delete_image_ID("wfc");
 
         ID = image_ID("psfi0");
@@ -1292,7 +1319,7 @@ int AOsystSim_run(int syncmode, long delayus)
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
-        COREMOD_MEMORY_image_set_sempost("aosimpsfout");
+        COREMOD_MEMORY_image_set_sempost("aosimpsfout", -1);
 
         switch (syncmode) {
             case 0 : // sync to turbulence

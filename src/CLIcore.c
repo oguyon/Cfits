@@ -1206,6 +1206,8 @@ int re_alloc()
             data.image[i].used = 0;
             data.image[i].shmfd = -1;
             data.image[i].memsize = 0;
+            data.image[i].semptr = NULL;
+            data.image[i].semlog = NULL;
         }
     }
 
