@@ -102,6 +102,9 @@ long aoconfID_MULTF_modes = -1;
 
 long aoconfID_cmd_modesRM = -1;
 
+long aoconfID_wfsmask = -1;
+long aoconfID_dmmask = -1;
+
 long aoconfID_respM = -1;
 long aoconfID_contrM = -1; // pixels -> modes
 long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
@@ -3983,13 +3986,32 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
                 data.image[aoconfID_MULTF_modes].array.F[k] = 1.0;
 
 
+
+
+       sprintf(name, "aol%ld_wfsmask", loop);
+        ID = image_ID(name);
+        aoconfID_wfsmask = AOloopControl_2Dloadcreate_shmim(name, "./conf/conf_wfsmask.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+        if(ID==-1)
+            for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS; ii++)
+                data.image[aoconfID_wfsmask].array.F[k] = 1.0;
+
+       sprintf(name, "aol%ld_dmask", loop);
+        ID = image_ID(name);
+        aoconfID_dmmask = AOloopControl_2Dloadcreate_shmim(name, "./conf/conf_dmmask.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+        if(ID==-1)
+            for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
+                data.image[aoconfID_dmmask].array.F[k] = 1.0;
+
+
+
+
         AOconf[loop].init_RM = 0;
-        aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, "./conf/respM.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+        aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, "./conf/conf_respM.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_RM = 1;
 
 
         AOconf[loop].init_CM = 0;
-        aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, "./conf/contrM.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+        aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, "./conf/conf_contrM.fits", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_CM = 1;
     }
     free(sizearray);
@@ -5571,6 +5593,7 @@ int AOcompute(long loop)
         fflush(stdout);
 
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
+        
         IDmask = image_ID("wfsmask");
         if(IDmask==-1)
         {
