@@ -4055,7 +4055,7 @@ int set_DM_modes(long loop)
         fflush(stdout);
         //TEST
         for(k=0; k < AOconf[loop].NBDMmodes; k++)
-            printf("[%ld %f]  ", data.image[aoconfID_cmd_modes].array.F[k]);
+            printf("[%ld %f]  ", k, data.image[aoconfID_cmd_modes].array.F[k]);
         printf("\n");
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_DM].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1);
         AOconf[loop].status = 15;
