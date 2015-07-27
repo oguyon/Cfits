@@ -5565,7 +5565,8 @@ int AOcompute(long loop)
         clock_gettime(CLOCK_REALTIME, &t1);
 
 
-
+        list_image_ID();
+        sleep(10);
         printf("Build up map for active regions...\n");
         fflush(stdout);
 
