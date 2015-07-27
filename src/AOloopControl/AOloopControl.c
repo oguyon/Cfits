@@ -4031,10 +4031,10 @@ int set_DM_modes(long loop)
 
     if(AOconf[loop].GPU == 0)
     {
-        for(k=0; k < AOconf[loop].NBDMmodes; k++)
-        printf("[%ld %f]  ", k, data.image[aoconfID_cmd_modes].array.F[k]);
+  /*      for(k=0; k < AOconf[loop].NBDMmodes; k++)
+        printf("[%ld %f]  ", k, data.image[aoconfID_cmd_modes].array.F[k]);//TEST
         printf("\n");
- 
+ */
         
         arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
         for(j=0; j<AOconf[loop].sizeDM; j++)
@@ -4056,12 +4056,12 @@ int set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
-        printf("GPU DM modes setup\n");
+        printf("GPU setup\n");
         fflush(stdout);
-        //TEST
+  /*      //TEST
         for(k=0; k < AOconf[loop].NBDMmodes; k++)
             printf("[%ld %f]  ", k, data.image[aoconfID_cmd_modes].array.F[k]);
-        printf("\n");
+        printf("\n");*/
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_DM].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1);
         AOconf[loop].status = 15;
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
@@ -5528,7 +5528,7 @@ int AOcompute(long loop)
     float *matrix_Mc_active;
     long IDcmatca_shm;
     char imname[200];
-        
+
     float imtot;
 
     // get dark-subtracted image
@@ -5560,15 +5560,15 @@ int AOcompute(long loop)
     {
         printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
         fflush(stdout);
-        
-        
+
+
         clock_gettime(CLOCK_REALTIME, &t1);
 
 
 
         printf("Build up map for active regions...\n");
         fflush(stdout);
-        
+
         WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
         IDmask = image_ID("wfsmask");
         if(IDmask==-1)
@@ -5614,8 +5614,8 @@ int AOcompute(long loop)
 
 
         aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
-       // printf("AOconf[loop].sizeDM_active = %ld\n", AOconf[loop].sizeDM_active);
-       // exit(0);
+        // printf("AOconf[loop].sizeDM_active = %ld\n", AOconf[loop].sizeDM_active);
+        // exit(0);
 
         aoconfID_contrMc = image_ID("cmatc");
         aoconfID_contrMcact = image_ID("cmatcact");
@@ -5624,7 +5624,7 @@ int AOcompute(long loop)
         {
             printf("Build  cmatc ...\n");
             fflush(stdout);
- 
+
             sizearray = (long*) malloc(sizeof(long)*3);
             sizearray[0] = AOconf[loop].sizexWFS;
             sizearray[1] = AOconf[loop].sizeyWFS;
@@ -5656,8 +5656,8 @@ int AOcompute(long loop)
 # endif
                 for(mode=0; mode<n_NBDMmodes; mode++)
                 {
-                 //   printf("mode %6ld    \n", mode);
-                  //  fflush(stdout);
+                    //   printf("mode %6ld    \n", mode);
+                    //  fflush(stdout);
                     for(act=0; act<n_sizeDM; act++)
                         for(wfselem=0; wfselem<n_sizeWFS; wfselem++)
                             matrix_Mc[act*n_sizeWFS+wfselem] += matrix_cmp[mode*n_sizeWFS+wfselem]*matrix_DMmodes[mode*n_sizeDM+act];
@@ -5668,33 +5668,33 @@ int AOcompute(long loop)
             memcpy(data.image[aoconfID_contrMc].array.F, matrix_Mc, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
             free(matrix_Mc);
             free(matrix_DMmodes);
-      }
+        }
 
         if(aoconfID_contrMcact==-1)
         {
             printf("Build  cmatcactive ...\n");
             fflush(stdout);
-            
+
             matrix_Mc = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
             memcpy(matrix_Mc, data.image[aoconfID_contrMc].array.F, sizeof(float)*AOconf[loop].sizeWFS*AOconf[loop].sizeDM);
-          
+
             aoconfID_contrMcact = create_3Dimage_ID("cmatc_active", AOconf[loop].sizeWFS_active, 1, AOconf[loop].sizeDM_active);
-            
+
             n_sizeWFS = AOconf[loop].sizeWFS;
-            
+
             for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
             {
                 for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                 {
                     act = DM_active_map[act_active];
                     wfselem = WFS_active_map[wfselem_active];
-                 //   printf("[%ld]  %ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", aoconfID_contrMcact, act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
-                   // fflush(stdout);
+                    //   printf("[%ld]  %ld / %ld -> %ld / %ld     %ld / %ld  -> %ld / %ld\n", aoconfID_contrMcact, act_active, AOconf[loop].sizeDM_active, act, AOconf[loop].sizeDM, wfselem_active, AOconf[loop].sizeWFS_active, wfselem, AOconf[loop].sizeWFS);
+                    // fflush(stdout);
                     data.image[aoconfID_contrMcact].array.F[act_active*AOconf[loop].sizeWFS_active+wfselem_active] = matrix_Mc[act*n_sizeWFS+wfselem];
                 }
             }
             free(matrix_Mc);
- 
+
             printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", AOconf[loop].sizeWFS, AOconf[loop].sizeDM, AOconf[loop].sizeWFS_active, AOconf[loop].sizeDM_active);
             fflush(stdout);
         }
@@ -5722,10 +5722,10 @@ int AOcompute(long loop)
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         printf("\n");
         printf("TIME TO COMPUTE MATRIX = %f sec\n", tdiffv);
-        
+
         printf("CREATING SHARED MEMORY CMATCACT  from ID %ld\n", aoconfID_contrMcact);
         sizearray = (long*) malloc(sizeof(long)*2);
-        
+
         sizearray[0] = data.image[aoconfID_contrMcact].md[0].size[0];
         if(data.image[aoconfID_contrMcact].md[0].naxis==2)
             sizearray[1] = data.image[aoconfID_contrMcact].md[0].size[1];
@@ -5759,7 +5759,7 @@ int AOcompute(long loop)
             printf("status -> 8a\n"); //TEST
             fflush(stdout);
             GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_WFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
-            
+
             AOconf[loop].status = 8; // execute
             GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
         }
@@ -5779,7 +5779,7 @@ int AOcompute(long loop)
                 {
                     // save reference (TEST)
                     save_fits(data.image[aoconfID_WFS0].name, "!test_imtogpu.fits");
-                    
+
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
                     data.image[aoconfID_WFS2_active].md[0].cnt0++;
@@ -5790,55 +5790,55 @@ int AOcompute(long loop)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
                     data.image[aoconfID_WFS2_active].md[0].cnt0++;
                 }
-                printf("Vector wfs re-mapped\n");
+                printf("Vector wfs re-mapped into %ld active pixels\n", AOconf[loop].sizeWFS_active);
                 fflush(stdout);
-                
+
                 if(COMPUTE_GPU_SCALING==1)
+                {
+                    if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)
                     {
-                        if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)
-                            {
-                                printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
-                                fflush(stdout);
-                                initWFSref_GPU = 0;
-                                wfsrefcnt0 = data.image[aoconfID_wfsref].md[0].cnt0;
-                            }
-                        if(initWFSref_GPU==0) // initialize WFS reference
-                        {           
-                       //     imtot = 0.0;                 
-                            
-                            // save reference (TEST)
-                        //    save_fits(data.image[aoconfID_wfsref].name, "!test_reftogpu.fits");
-                            
-                            for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                                {
-                                    data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[wfselem_active]];
-                     //               imtot += data.image[aoconfID_wfsref].array.F[wfselem_active];
-                                }
-                            data.image[aoconfID_WFS2_active].md[0].cnt0++;
-                         //   printf("imtot = %g\n", imtot);
-                            fflush(stdout);
-                        }
+                        printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
+                        fflush(stdout);
+                        initWFSref_GPU = 0;
+                        wfsrefcnt0 = data.image[aoconfID_wfsref].md[0].cnt0;
                     }
+                    if(initWFSref_GPU==0) // initialize WFS reference
+                    {
+                        //     imtot = 0.0;
+
+                        // save reference (TEST)
+                        //    save_fits(data.image[aoconfID_wfsref].name, "!test_reftogpu.fits");
+
+                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
+                        {
+                            data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[wfselem_active]];
+                            //               imtot += data.image[aoconfID_wfsref].array.F[wfselem_active];
+                        }
+                        data.image[aoconfID_WFS2_active].md[0].cnt0++;
+                        //   printf("imtot = %g\n", imtot);
+                        fflush(stdout);
+                    }
+                }
 
                 // perform matrix mult
                 //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-               
-                
-            /*    list_image_ID();
-                printf("%s %s %s\n", data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name);
-                exit(0); // TESTING
-              */  
+
+
+                /*    list_image_ID();
+                    printf("%s %s %s\n", data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name);
+                    exit(0); // TESTING
+                  */
                 printf("status -> 8b\n");//TEST
                 fflush(stdout);
                 GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
-                
-                
+
+
                 initWFSref_GPU = 1;
                 AOconf[loop].status = 8; // execute
-  
+
                 printf("status 8c\n");//TEST
                 fflush(stdout);
-  
+
                 if(COMPUTE_GPU_SCALING==1)
                 {
                     printf("status 8c1\n");//TEST
@@ -5847,20 +5847,20 @@ int AOcompute(long loop)
                 }
                 else
                 {
-                 printf("status 8c2\n");//TEST
-                fflush(stdout);
+                    printf("status 8c2\n");//TEST
+                    fflush(stdout);
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
                 }
                 printf("status 8d\n");//TEST
                 fflush(stdout);
- 
+
                 // re-map output vector
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
- 
-                 printf("status 8e\n");//TEST
+
+                printf("status 8e\n");//TEST
                 fflush(stdout);
- 
+
             }
 
         }
@@ -5904,6 +5904,7 @@ int AOcompute(long loop)
 
     return(0);
 }
+
 
 
 
