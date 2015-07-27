@@ -84,7 +84,7 @@ long image_list_keywords(char *IDname);
 long image_read_keyword_D(char *IDname, char *kname, double *val);
 long image_read_keyword_L(char *IDname, char *kname, long *val);
 
-
+long read_sharedmem_image_size(char *name, char *fname);
 long read_sharedmem_image(char *name);
 
 long create_1Dimage_ID(char *ID_name, long xsize);

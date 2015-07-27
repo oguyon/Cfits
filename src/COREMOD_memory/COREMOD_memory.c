@@ -230,6 +230,15 @@ int image_list_keywords_cli()
 }
 
 
+//long read_sharedmem_image_size(char *name, char *fname)
+int read_sharedmem_image_size_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,3)==0)
+    read_sharedmem_image_size(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+  else
+    return 1;
+}
+
 
 int read_sharedmem_image_cli()
 {
@@ -651,339 +660,351 @@ int COREMOD_MEMORY_sharedMem_2Dim_log_cli()
 
 int init_COREMOD_memory()
 {
-  strcpy(data.module[data.NBmodule].name,__FILE__);
-  strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
-  data.NBmodule++;
+    strcpy(data.module[data.NBmodule].name,__FILE__);
+    strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
+    data.NBmodule++;
 
-  strcpy(data.cmd[data.NBcmd].key,"listim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = list_image_ID;
-  strcpy(data.cmd[data.NBcmd].info,"list images in memory");
-  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-  strcpy(data.cmd[data.NBcmd].example,"listim");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int list_image_ID()");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"mmon");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = memory_monitor_cli;
-  strcpy(data.cmd[data.NBcmd].info,"Monitor memory content");
-  strcpy(data.cmd[data.NBcmd].syntax,"terminal tty name");
-  strcpy(data.cmd[data.NBcmd].example,"mmon /dev/pts/4");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int memory_monitor(char *ttyname)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"listvar");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = list_variable_ID;
-  strcpy(data.cmd[data.NBcmd].info,"list variables in memory");
-  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-  strcpy(data.cmd[data.NBcmd].example,"listvar");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID()");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"listvarf");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = list_variable_ID_file_cli;
-  strcpy(data.cmd[data.NBcmd].info,"list variables in memory, write to file");
-  strcpy(data.cmd[data.NBcmd].syntax,"<file name>");
-  strcpy(data.cmd[data.NBcmd].example,"listvarf var.txt");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID_file()");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"creaim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = create_image_cli;
-  strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
-  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
-  strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"imwritekwL");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = image_write_keyword_L_cli;
-  strcpy(data.cmd[data.NBcmd].info,"write long type keyword");
-  strcpy(data.cmd[data.NBcmd].syntax,"<imname> <kname> <value [long]> <comment>");
-  strcpy(data.cmd[data.NBcmd].example,"imwritekwL im1 kw2 34 my_keyword_comment");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long image_write_keyword_L(char *IDname, char *kname, long value, char *comment)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"imlistkw");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = image_list_keywords_cli;
-  strcpy(data.cmd[data.NBcmd].info,"list image keywords");
-  strcpy(data.cmd[data.NBcmd].syntax,"<imname>");
-  strcpy(data.cmd[data.NBcmd].example,"imlistkw im1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long image_list_keywords(char *IDname)");
-  data.NBcmd++;
- 
-   strcpy(data.cmd[data.NBcmd].key,"readshmim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = read_sharedmem_image_cli;
-  strcpy(data.cmd[data.NBcmd].info,"read shared memory image");
-  strcpy(data.cmd[data.NBcmd].syntax,"<name>");
-  strcpy(data.cmd[data.NBcmd].example,"readshmim im1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image(char *name)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"creaimshm");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = create_image_shared_cli;
-  strcpy(data.cmd[data.NBcmd].info,"create image in shared mem, default precision");
-  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
-  strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"creaushortimshm");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = create_ushort_image_shared_cli;
-  strcpy(data.cmd[data.NBcmd].info,"create unsigned short image in shared mem");
-  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
-  strcpy(data.cmd[data.NBcmd].example,"creaushortimshm imname 512 512");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, USHORT, 0, 10)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"crea3dim");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = create_3Dimage_float;
-  strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
-  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
-  strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT, 0, 10)");
-  data.NBcmd++;
-  
-  strcpy(data.cmd[data.NBcmd].key,"rm");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = delete_image_ID_cli;
-  strcpy(data.cmd[data.NBcmd].info,"remove image(s)");
-  strcpy(data.cmd[data.NBcmd].syntax,"list of images");
-  strcpy(data.cmd[data.NBcmd].example,"rm im1 im4");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int delete_image_ID(char* imname)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"cp");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = copy_image_ID_cli;
-  strcpy(data.cmd[data.NBcmd].info,"copy image");
-  strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
-  strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"cpsh");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = copy_image_ID_sharedmem_cli;
-  strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
-  strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
-  strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
-  data.NBcmd++;
-  
-  strcpy(data.cmd[data.NBcmd].key,"mv");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = chname_image_ID_cli;
-  strcpy(data.cmd[data.NBcmd].info,"change image name");
-  strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
-  strcpy(data.cmd[data.NBcmd].example,"mv im1 im4");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long chname_image_ID(char *name, char *newname)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"ri2c");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = mk_complex_from_reim_cli;
-  strcpy(data.cmd[data.NBcmd].info,"real, imaginary -> complex");
-  strcpy(data.cmd[data.NBcmd].syntax,"real imaginary complex");
-  strcpy(data.cmd[data.NBcmd].example,"ri2c imr imi imc");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"ap2c");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = mk_complex_from_amph_cli;
-  strcpy(data.cmd[data.NBcmd].info,"ampl, pha -> complex");
-  strcpy(data.cmd[data.NBcmd].syntax,"ampl pha complex");
-  strcpy(data.cmd[data.NBcmd].example,"ap2c ima imp imc");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"c2ri");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = mk_reim_from_complex_cli;
-  strcpy(data.cmd[data.NBcmd].info,"complex -> real, imaginary");
-  strcpy(data.cmd[data.NBcmd].syntax,"complex real imaginary");
-  strcpy(data.cmd[data.NBcmd].example,"c2ri imc imr imi");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_reim_from_complex(char *re_name, char *im_name, char *out_name)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"c2ap");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = mk_amph_from_complex_cli;
-  strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
-  strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
-  strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(char *re_name, char *im_name, char *out_name)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"rmall");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = clearall;
-  strcpy(data.cmd[data.NBcmd].info,"remove all images");
-  strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-  strcpy(data.cmd[data.NBcmd].example,"rmall");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"listim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = list_image_ID;
+    strcpy(data.cmd[data.NBcmd].info,"list images in memory");
+    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].example,"listim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int list_image_ID()");
+    data.NBcmd++;
 
-  
-  strcpy(data.cmd[data.NBcmd].key,"imsetstatus");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_status_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set image status variable");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
-  strcpy(data.cmd[data.NBcmd].example,"imsetstatus im1 2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_status(char *IDname, int status)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"imsetcnt0");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt0_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set image cnt0 variable");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
-  strcpy(data.cmd[data.NBcmd].example,"imsetcnt0 im1 2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt0(char *IDname, int status)");
-  data.NBcmd++;
- 
-  strcpy(data.cmd[data.NBcmd].key,"imsetcnt1");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt1_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set image cnt1 variable");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
-  strcpy(data.cmd[data.NBcmd].example,"imsetcnt1 im1 2");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(char *IDname, int status)");
-  data.NBcmd++;
- 
+    strcpy(data.cmd[data.NBcmd].key,"mmon");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = memory_monitor_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Monitor memory content");
+    strcpy(data.cmd[data.NBcmd].syntax,"terminal tty name");
+    strcpy(data.cmd[data.NBcmd].example,"mmon /dev/pts/4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int memory_monitor(char *ttyname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"listvar");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = list_variable_ID;
+    strcpy(data.cmd[data.NBcmd].info,"list variables in memory");
+    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].example,"listvar");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID()");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"listvarf");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = list_variable_ID_file_cli;
+    strcpy(data.cmd[data.NBcmd].info,"list variables in memory, write to file");
+    strcpy(data.cmd[data.NBcmd].syntax,"<file name>");
+    strcpy(data.cmd[data.NBcmd].example,"listvarf var.txt");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID_file()");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"creaim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = create_image_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
+    strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imwritekwL");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_write_keyword_L_cli;
+    strcpy(data.cmd[data.NBcmd].info,"write long type keyword");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <kname> <value [long]> <comment>");
+    strcpy(data.cmd[data.NBcmd].example,"imwritekwL im1 kw2 34 my_keyword_comment");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_write_keyword_L(char *IDname, char *kname, long value, char *comment)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imlistkw");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_list_keywords_cli;
+    strcpy(data.cmd[data.NBcmd].info,"list image keywords");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname>");
+    strcpy(data.cmd[data.NBcmd].example,"imlistkw im1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_list_keywords(char *IDname)");
+    data.NBcmd++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"imsetcreatesem");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_createsem_cli;
-  strcpy(data.cmd[data.NBcmd].info,"create image semaphore");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image> <NBsem>");
-  strcpy(data.cmd[data.NBcmd].example,"imsetcreatesem im1 5");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)");
-  data.NBcmd++;
- 
-   strcpy(data.cmd[data.NBcmd].key,"imsetsempost");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_cli;
-  strcpy(data.cmd[data.NBcmd].info,"post image semaphore");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
-  strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname)");
-  data.NBcmd++;
- 
-   strcpy(data.cmd[data.NBcmd].key,"imsetsemwait");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_semwait_cli;
-  strcpy(data.cmd[data.NBcmd].info,"wait image semaphore");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image>");
-  strcpy(data.cmd[data.NBcmd].example,"imsetsemwait im1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(char *IDname)");
-  data.NBcmd++;
- 
-
- 
-  strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_cp2shm_cli;
-  strcpy(data.cmd[data.NBcmd].info,"copy image ot shared memory");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image> <shared mem image>");
-  strcpy(data.cmd[data.NBcmd].example,"imcp2shm im1 ims1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)");
-  data.NBcmd++;
- 
- 
-
-  strcpy(data.cmd[data.NBcmd].key,"creaimstream");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_cli;
-  strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]>");
-  strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)");
-  data.NBcmd++;
- 
- 
-  strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
-  strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
-  strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <mode [int]>");
-  strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
-  data.NBcmd++;
- 
- 
-
-  strcpy(data.cmd[data.NBcmd].key,"imnetwreceive");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
-  strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network");
-  strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]>");
-  strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)");
-  data.NBcmd++;
- 
- 
-
-  strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_sharedMem_2Dim_log_cli;
-  strcpy(data.cmd[data.NBcmd].info,"logs shared memory stream (run in current directory)");
-  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]> <logdir>");
-  strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000 /media/data");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)");
-  data.NBcmd++;
- 
- 
-  strcpy(data.cmd[data.NBcmd].key,"shmimslogstat");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_printstatus_cli;
-  strcpy(data.cmd[data.NBcmd].info,"print log shared memory stream status");
-  strcpy(data.cmd[data.NBcmd].syntax,"<shm image>");
-  strcpy(data.cmd[data.NBcmd].example,"shmimslogstat wfscamim");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_printstatus(char *IDname)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"readshmimsize");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = read_sharedmem_image_size_cli;
+    strcpy(data.cmd[data.NBcmd].info,"read shared memory image size");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name> <output file>");
+    strcpy(data.cmd[data.NBcmd].example,"readshmim im1 imsize.txt");
+    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image_size(char *name, char *fname)");
+    data.NBcmd++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"shmimslogonset");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_on_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set on variable in log shared memory stream");
-  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
-  strcpy(data.cmd[data.NBcmd].example,"shmimslogonset imwfs 1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"readshmim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = read_sharedmem_image_cli;
+    strcpy(data.cmd[data.NBcmd].info,"read shared memory image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name>");
+    strcpy(data.cmd[data.NBcmd].example,"readshmim im1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image(char *name)");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"shmimslogexitset");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_logexit_cli;
-  strcpy(data.cmd[data.NBcmd].info,"set exit variable in log shared memory stream");
-  strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
-  strcpy(data.cmd[data.NBcmd].example,"shmimslogexitset imwfs 1");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"creaimshm");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = create_image_shared_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create image in shared mem, default precision");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, int atype, 0, 10)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"creaushortimshm");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = create_ushort_image_shared_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create unsigned short image in shared mem");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
+    strcpy(data.cmd[data.NBcmd].example,"creaushortimshm imname 512 512");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, USHORT, 0, 10)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"crea3dim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = create_3Dimage_float;
+    strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
+    strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(char *name, long naxis, long *size, FLOAT, 0, 10)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"rm");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = delete_image_ID_cli;
+    strcpy(data.cmd[data.NBcmd].info,"remove image(s)");
+    strcpy(data.cmd[data.NBcmd].syntax,"list of images");
+    strcpy(data.cmd[data.NBcmd].example,"rm im1 im4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int delete_image_ID(char* imname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"cp");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = copy_image_ID_cli;
+    strcpy(data.cmd[data.NBcmd].info,"copy image");
+    strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
+    strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"cpsh");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = copy_image_ID_sharedmem_cli;
+    strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
+    strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
+    strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(char *name, char *newname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"mv");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = chname_image_ID_cli;
+    strcpy(data.cmd[data.NBcmd].info,"change image name");
+    strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
+    strcpy(data.cmd[data.NBcmd].example,"mv im1 im4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long chname_image_ID(char *name, char *newname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"ri2c");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = mk_complex_from_reim_cli;
+    strcpy(data.cmd[data.NBcmd].info,"real, imaginary -> complex");
+    strcpy(data.cmd[data.NBcmd].syntax,"real imaginary complex");
+    strcpy(data.cmd[data.NBcmd].example,"ri2c imr imi imc");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"ap2c");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = mk_complex_from_amph_cli;
+    strcpy(data.cmd[data.NBcmd].info,"ampl, pha -> complex");
+    strcpy(data.cmd[data.NBcmd].syntax,"ampl pha complex");
+    strcpy(data.cmd[data.NBcmd].example,"ap2c ima imp imc");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"c2ri");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = mk_reim_from_complex_cli;
+    strcpy(data.cmd[data.NBcmd].info,"complex -> real, imaginary");
+    strcpy(data.cmd[data.NBcmd].syntax,"complex real imaginary");
+    strcpy(data.cmd[data.NBcmd].example,"c2ri imc imr imi");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_reim_from_complex(char *re_name, char *im_name, char *out_name)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"c2ap");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = mk_amph_from_complex_cli;
+    strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
+    strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
+    strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(char *re_name, char *im_name, char *out_name)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"rmall");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = clearall;
+    strcpy(data.cmd[data.NBcmd].info,"remove all images");
+    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].example,"rmall");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"imsetstatus");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_status_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set image status variable");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetstatus im1 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_status(char *IDname, int status)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imsetcnt0");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt0_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set image cnt0 variable");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetcnt0 im1 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt0(char *IDname, int status)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imsetcnt1");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt1_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set image cnt1 variable");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetcnt1 im1 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(char *IDname, int status)");
+    data.NBcmd++;
 
 
 
+    strcpy(data.cmd[data.NBcmd].key,"imsetcreatesem");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_createsem_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create image semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <NBsem>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetcreatesem im1 5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imsetsempost");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_cli;
+    strcpy(data.cmd[data.NBcmd].info,"post image semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imsetsemwait");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_semwait_cli;
+    strcpy(data.cmd[data.NBcmd].info,"wait image semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetsemwait im1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(char *IDname)");
+    data.NBcmd++;
 
 
- 
-  // add atexit functions here
 
-  return 0;
+    strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_cp2shm_cli;
+    strcpy(data.cmd[data.NBcmd].info,"copy image ot shared memory");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <shared mem image>");
+    strcpy(data.cmd[data.NBcmd].example,"imcp2shm im1 ims1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)");
+    data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"creaimstream");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
+    strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <mode [int]>");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
+    data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"imnetwreceive");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
+    strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network");
+    strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]>");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)");
+    data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_sharedMem_2Dim_log_cli;
+    strcpy(data.cmd[data.NBcmd].info,"logs shared memory stream (run in current directory)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]> <logdir>");
+    strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000 /media/data");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"shmimslogstat");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_printstatus_cli;
+    strcpy(data.cmd[data.NBcmd].info,"print log shared memory stream status");
+    strcpy(data.cmd[data.NBcmd].syntax,"<shm image>");
+    strcpy(data.cmd[data.NBcmd].example,"shmimslogstat wfscamim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_printstatus(char *IDname)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"shmimslogonset");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_on_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set on variable in log shared memory stream");
+    strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"shmimslogonset imwfs 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"shmimslogexitset");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_logexit_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set exit variable in log shared memory stream");
+    strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"shmimslogexitset imwfs 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)");
+    data.NBcmd++;
+
+
+
+
+
+
+    // add atexit functions here
+
+    return 0;
 }
+
 
 
 
@@ -1443,18 +1464,18 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
         if(shared==1)
         {
             // create semlog
-            
+
             sprintf(sname, "%s_semlog", name);
             remove(sname);
             data.image[ID].semlog = NULL;
-            
+
             if ((data.image[ID].semlog = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED)
                 perror("semaphore creation / initilization");
             else
                 sem_init(data.image[ID].semlog, 1, 0);
-      
-            
-            
+
+
+
             sharedsize = sizeof(IMAGE_METADATA);
 
             if(atype==CHAR)
@@ -1485,8 +1506,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
                 perror("Error opening file for writing");
                 exit(0);
             }
-            
-            data.image[ID].sem = 0; 
+
+            data.image[ID].sem = 0;
             data.image[ID].shmfd = SM_fd;
             data.image[ID].memsize = sharedsize;
 
@@ -1512,7 +1533,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             }
 
             data.image[ID].md = (IMAGE_METADATA*) map;
-            data.image[ID].md[0].shared = 1;            
+            data.image[ID].md[0].shared = 1;
         }
         else
         {
@@ -1532,8 +1553,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             data.image[ID].md[0].size[i] = size[i];
         data.image[ID].md[0].NBkw = NBkw;
 
-		//data.image[ID].logstatus = (int*) malloc(sizeof(int));
-		//data.image[ID].logstatus[0] = 1; // default value
+        //data.image[ID].logstatus = (int*) malloc(sizeof(int));
+        //data.image[ID].logstatus[0] = 1; // default value
 
         if(atype==CHAR)
         {
@@ -1613,8 +1634,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
                 data.image[ID].array.F = (float*) (mapv);
                 memset(data.image[ID].array.F, '\0', nelement*sizeof(float));
                 mapv += sizeof(float)*nelement;
-                data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);            
-			}
+                data.image[ID].kw = (IMAGE_KEYWORD*) (mapv);
+            }
             else
                 data.image[ID].array.F = (float*) calloc ((size_t) nelement, sizeof(float));
 
@@ -1739,9 +1760,9 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
         clock_gettime(CLOCK_REALTIME, &timenow);
         data.image[ID].md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
         data.image[ID].md[0].creation_time = data.image[ID].md[0].last_access;
-		data.image[ID].md[0].write = 0;
-		data.image[ID].md[0].cnt0 = 0;
-		data.image[ID].md[0].cnt1 = 0;
+        data.image[ID].md[0].write = 0;
+        data.image[ID].md[0].cnt0 = 0;
+        data.image[ID].md[0].cnt1 = 0;
         data.image[ID].md[0].nelement = nelement;
     }
     else
@@ -1774,16 +1795,16 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
     // initialize keywords (test)
     for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
-		data.image[ID].kw[kw].type = 'N';
-/*      {
-        sprintf(kname, "KEY%d", kw);
-        strcpy(data.image[ID].kw[kw].name, kname);
-        data.image[ID].kw[kw].type = 'D';
-        data.image[ID].kw[kw].value.f.numf = 1.0*kw;
-        sprintf(comment, "this is keyword %d", kw);
-        strcpy(data.image[ID].kw[kw].comment, comment);
-      }
-    */
+        data.image[ID].kw[kw].type = 'N';
+    /*      {
+            sprintf(kname, "KEY%d", kw);
+            strcpy(data.image[ID].kw[kw].name, kname);
+            data.image[ID].kw[kw].type = 'D';
+            data.image[ID].kw[kw].value.f.numf = 1.0*kw;
+            sprintf(comment, "this is keyword %d", kw);
+            strcpy(data.image[ID].kw[kw].comment, comment);
+          }
+        */
 
 
     if(MEM_MONITOR == 1)
@@ -1791,6 +1812,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
 
     return(ID);
 }
+
 
 
 
@@ -1948,6 +1970,55 @@ long image_read_keyword_L(char *IDname, char *kname, long *val)
 }
 
 
+
+
+
+
+
+long read_sharedmem_image_size(char *name, char *fname)
+{
+    int SM_fd;
+    struct stat file_stat;
+    char SM_fname[200];
+    IMAGE_METADATA *map;
+    int naxis;
+    int i;
+    FILE *fp;
+
+
+    sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
+
+    SM_fd = open(SM_fname, O_RDWR);
+    if(SM_fd==-1)
+        printf("Cannot import file - continuing\n");
+    else
+    {
+        fstat(SM_fd, &file_stat);
+//        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+        map = (IMAGE_METADATA*) mmap(0, sizeof(IMAGE_METADATA), PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
+        if (map == MAP_FAILED) {
+            close(SM_fd);
+            perror("Error mmapping the file");
+            exit(0);
+        }
+        
+        fp = fopen(fname, "w");
+        for(i=0;i<map[0].naxis;i++)
+            fprintf(fp, "%ld ", map[0].size[i]);
+        fprintf(fp, "\n"); 
+        fclose(fp);
+ 
+ 
+        if (munmap(map, sizeof(IMAGE_METADATA)) == -1) {
+            printf("unmapping %s\n", SM_fname);
+            perror("Error un-mmapping the file");
+        }
+        close(SM_fd);
+    }
+    
+    return 0;
+}
 
 
 
@@ -3379,6 +3450,8 @@ int clearall()
     return(0);
 }
 
+
+//  check only is size > 0
 int check_2Dsize(char *ID_name, long xsize, long ysize)
 {
     int value;
@@ -3390,9 +3463,9 @@ int check_2Dsize(char *ID_name, long xsize, long ysize)
         value=0;
     if(value==1)
     {
-        if(data.image[ID].md[0].size[0]!=xsize)
+        if((xsize>0)&&(data.image[ID].md[0].size[0]!=xsize))
             value = 0;
-        if(data.image[ID].md[0].size[1]!=ysize)
+        if((ysize>0)&&(data.image[ID].md[0].size[1]!=ysize))
             value = 0;
     }
 
@@ -3413,17 +3486,17 @@ int check_3Dsize(char *ID_name, long xsize, long ysize, long zsize)
     }
     if(value==1)
     {
-        if(data.image[ID].md[0].size[0]!=xsize)
+        if((xsize>0)&&(data.image[ID].md[0].size[0]!=xsize))
         {
             /*	  printf("Wrong xsize : %ld - should be %ld\n",data.image[ID].md[0].size[0],xsize);*/
             value = 0;
         }
-        if(data.image[ID].md[0].size[1]!=ysize)
+        if((ysize>0)&&(data.image[ID].md[0].size[1]!=ysize))
         {
             /*	  printf("Wrong ysize : %ld - should be %ld\n",data.image[ID].md[0].size[1],ysize);*/
             value = 0;
         }
-        if(data.image[ID].md[0].size[2]!=zsize)
+        if((zsize>0)&&(data.image[ID].md[0].size[2]!=zsize))
         {
             /*	  printf("Wrong zsize : %ld - should be %ld\n",data.image[ID].md[0].size[2],zsize);*/
             value = 0;
@@ -3688,12 +3761,12 @@ long COREMOD_MEMORY_check_2Dsize(char *IDname, long xsize, long ysize)
         printf("WARNING : image %s naxis = %ld does not match expected value 2\n", IDname, data.image[ID].md[0].naxis);
         sizeOK = 0;
     }
-    if(data.image[ID].md[0].size[0] != xsize)
+    if((xsize>0)&&(data.image[ID].md[0].size[0] != xsize))
     {
         printf("WARNING : image %s xsize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[0], xsize);
         sizeOK = 0;
     }
-    if(data.image[ID].md[0].size[1] != ysize)
+    if((ysize>0)&&(data.image[ID].md[0].size[1] != ysize))
     {
         printf("WARNING : image %s ysize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[1], ysize);
         sizeOK = 0;
@@ -3715,17 +3788,17 @@ long COREMOD_MEMORY_check_3Dsize(char *IDname, long xsize, long ysize, long zsiz
         printf("WARNING : image %s naxis = %ld does not match expected value 3\n", IDname, data.image[ID].md[0].naxis);
         sizeOK = 0;
     }
-    if(data.image[ID].md[0].size[0] != xsize)
+    if((xsize>0)&&(data.image[ID].md[0].size[0] != xsize))
     {
         printf("WARNING : image %s xsize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[0], xsize);
         sizeOK = 0;
     }
-    if(data.image[ID].md[0].size[1] != ysize)
+    if((ysize>0)&&(data.image[ID].md[0].size[1] != ysize))
     {
         printf("WARNING : image %s ysize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[1], ysize);
         sizeOK = 0;
     }
-    if(data.image[ID].md[0].size[2] != zsize)
+    if((zsize>0)&&(data.image[ID].md[0].size[2] != zsize))
     {
         printf("WARNING : image %s zsize = %ld does not match expected value %ld\n", IDname, data.image[ID].md[0].size[2], zsize);
         sizeOK = 0;
@@ -3958,7 +4031,7 @@ long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID)
 {
     long i, cnt;
     int semval;
-    long s;
+    int s;
 
     list_image_ID();
     for(i=0; i<NB_ID; i++)
@@ -3966,7 +4039,7 @@ long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID)
         for(s=0;s<data.image[IDarray[i]].sem;s++)
         {
             sem_getvalue(data.image[IDarray[i]].semptr[s], &semval);
-           printf("sem %ld/%ld of %s [%ld] = %d\n", s, data.image[IDarray[i]].sem, data.image[IDarray[i]].name, IDarray[i], semval);
+           printf("sem %d/%d of %s [%ld] = %d\n", s, data.image[IDarray[i]].sem, data.image[IDarray[i]].name, IDarray[i], semval);
             fflush(stdout); 
             for(cnt=0; cnt<semval; cnt++)
                 sem_trywait(data.image[IDarray[i]].semptr[s]);

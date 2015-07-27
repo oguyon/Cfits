@@ -28,6 +28,7 @@ typedef struct
     long sizexWFS;
     long sizeyWFS;
     long sizeWFS;
+    long activeWFScnt; // number of active WFS pixels
     long sizeWFS_active; // only takes into account WFS pixels in use/active
     long long WFScnt;
     long long WFScntRM;
@@ -35,23 +36,26 @@ typedef struct
     float WFStotalflux; // after dark subtraction
 
     // DM
-    char DMname[80];
-    char DMdispname[80];
-    char DMnameRM[80];
+    char dmCname[80];
+    char dmdispname[80];
+    char dmRMname[80];
     long sizexDM;
     long sizeyDM;
     long sizeDM;
+    long activeDMcnt; // number of active actuators
     long sizeDM_active; // only takes into account DM actuators that are active/in use
 
     // Modes
-    char DMMODESname[80];
-
+    char DMmodesname[80];
+    long DMmodesNBblock; // number of mode blocks
+    long NBmodes_block[100]; // number of modes within each block
 
     int init_wfsref0;    // WFS reference image loaded
 
     int init_RM;        // Response Matrix loaded
     int init_CM;        // Control Matrix loaded
     int init_CMc;       // combine control matrix computed
+    int initmapping;
     char respMname[80];
     char contrMname[80];
 

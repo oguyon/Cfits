@@ -1304,42 +1304,21 @@ int AOsystSim_run(int syncmode, long delayus)
 
     while(1)
     {
-        printf("\n---------------------------- AOsystSim_DMshape --------------------------\n");
-        fflush(stdout); 
-  
         AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
-
-
-        printf("\n---------------------------- START PROPAGATION --------------------------\n");
-        fflush(stdout);
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
-        printf("\n---------------------------- STOP PROPAGATION --------------------------\n");
-        fflush(stdout);
-
 
         mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
-
-
-        printf("\n---------------------------- AOsystSim_WFSsim_Pyramid --------------------------\n");
-        fflush(stdout);
   
         AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim", 0.0, 1);
        // COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
         delete_image_ID("wfc");
     
-        printf("\n---------------------------- UPDATE IDout--------------------------\n");
-        fflush(stdout);
- 
         ID = image_ID("psfi0");
         data.image[IDout].md[0].write = 1;
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout", -1);
-
-       printf("\n---------------------------- WAIT [%d]--------------------------\n", syncmode);
-        fflush(stdout);
- 
 
         switch (syncmode) {
             case 0 : // sync to turbulence

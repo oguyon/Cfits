@@ -109,11 +109,41 @@ trap "rm -f $tempfile" 0 1 2 5 15
 echo "FUNCTIONS..."
 
 
+
 function stringcenter {
 line=$1
     let " col1 = $nbwcols-35"
     columns="$col1"
     string=$(printf "%*s%*s\n" $(( (${#line} + columns) / 2)) "$line" $(( (columns - ${#line}) / 2)) " ")
+}
+
+
+
+function getshmimsize {
+$execname << EOF
+readshmimsize $1 _size.txt
+quit
+EOF
+sizestring=$( cat _size.txt )
+sizestring=$(printf "%+12s\n" "$sizestring" )
+rm _size.txt
+}
+
+
+
+function makemenuitemstringaolshm {
+name="$1"
+textfield=$( printf " %-20s" "$2" )
+tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
+fname=$( cat ./conf/conf_${name}_fname.txt )
+if [ -f "$fname" ] && [ -f "./conf/conf_${name}_fname.txt" ]; then
+getshmimsize "aol${LOOPNUMBER}_${name}"
+OKstr="\Z2\Zr$sizestring\Zn"
+menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
+else
+OKstr="\Z1   MISSING  \Zn"
+menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu\Z1${fname}\Zn"
+fi
 }
 
 
@@ -820,18 +850,20 @@ menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 dmCfile="/tmp/${dmC}.im.shm"
 if [ -f $dmCfile ]; then
-dmCOKstr="\Z2    OK    \Zn"
-menuitems+=( "dmC" "[${dmCOKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${dmC}\Zn" )
+getshmimsize ${dmC}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${dmC}\Zn" )
 else
-dmCOKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmC" "[${dmCOKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z1${dmC}\Zn" )
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmC" "[${COKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z1${dmC}\Zn" )
 confOK=0
 fi
 
 
 dmZPfile="/tmp/${dmZP}.im.shm"
 if [ -f $dmZPfile ]; then
-OKstr="\Z2    OK    \Zn"
+getshmimsize ${dmZP}
+OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP\Zn -> \Z4${dmZP}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
@@ -843,33 +875,36 @@ fi
 
 dmdispfile="/tmp/${dmdisp}.im.shm"
 if [ -f $dmdispfile ]; then
-dmdispOKstr="\Z2    OK    \Zn"
-menuitems+=( "dmdisp" "[${dmdispOKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z4${dmdisp}\Zn" )
+getshmimsize ${dmdisp}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z4${dmdisp}\Zn" )
 else
-dmdispOKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmdisp" "[${dmdispOKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z1${dmdisp}\Zn" )
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z1${dmdisp}\Zn" )
 confOK=0
 fi
 
 
 dmRMfile="/tmp/${dmRM}.im.shm"
 if [ -f $dmRMfile ]; then
-dmRMOKstr="\Z2    OK    \Zn"
-menuitems+=( "dmRM" "[${dmRMOKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${dmRM}\Zn" )
+getshmimsize ${dmRM}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${dmRM}\Zn" )
 else
-dmRMOKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmRM" "[${dmRMOKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmRM\Zn -> \Z1${dmRM}\Z1" )
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmRM\Zn -> \Z1${dmRM}\Z1" )
 confOK=0
 fi
 
 
 wfsimcamfile="/tmp/${wfsimcam}.im.shm"
 if [ -f $wfsimcamfile ]; then
-wfsimcamOKstr="\Z2    OK    \Zn"
-menuitems+=( "wfs" "[${wfsimcamOKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z4${wfsimcam}\Zn" )
+getshmimsize ${wfsimcam}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z4${wfsimcam}\Zn" )
 else
-wfsimcamOKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "wfs" "[${wfsimcamOKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z1${wfsimcam}\Zn" )
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z1${wfsimcam}\Zn" )
 confOK=0
 fi
 
@@ -887,12 +922,14 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 wfsdarkfname=$( cat ./conf/conf_wfsdark_fname.txt )
 if [ -f "$wfsdarkfname" ] && [ -f "./conf/conf_wfsdark_fname.txt" ]; then
-wfsdarkfnameOKstr="\Z2    OK    \Zn"
+#wfsdarkfnameOKstr="\Z2    OK    \Zn"
+getshmimsize "wfsdark"
+OKstr="\Z2\Zr$sizestring\Zn"
 else
-wfsdarkfnameOKstr="\Z5 OPTIONAL \Zn"
+OKstr="\Z5 OPTIONAL \Zn"
 confOK=0
 fi
-menuitems+=( "dark" "[${wfsdarkfnameOKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
+menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
 
 
 
@@ -940,16 +977,8 @@ fi
 menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frames" )
 
 
-
-zrespMfname=$( cat ./conf/conf_zrespM_fname.txt )
-if [ -f "$zrespMfname" ] && [ -f "./conf/conf_zrespM_fname.txt" ]; then
-zrespMfnameOKstr="\Z2    OK    \Zn"
-menuitems+=( "zmatn" "[${zrespMfnameOKstr}] Zonal RM name          \Z4\Zbaol${LOOPNUMBER}_zrespM\Zn <- \Zu${zrespMfname}\Zn" ) 
-else
-zrespMfnameOKstr="\Z5 OPTIONAL \Zn"
-menuitems+=( "zmatn" "[${zrespMfnameOKstr}] Zonal RM name          \Z4\Zbaol${LOOPNUMBER}_zrespM\Zn <- \Zu\Z1${zrespMfname}\Zn" ) 
-confOK=0
-fi
+makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
+menuitems+=( "zrespM" "$menustring" )
 
 
 zrespMstat=$( cat ./status/stat_zrespM.txt )
@@ -971,41 +1000,15 @@ fi
 
 
 
+makemenuitemstringaolshm "wfsmask" "WFS pixel mask"
+menuitems+=( "wfsM" "$menustring" )
 
-  
-wfsmaskfname=$( cat ./conf/conf_wfsmask_fname.txt )
-if [ -f "$wfsmaskfname" ] && [ -f "./conf/conf_wfsmask_fname.txt" ]; then
-wfsmaskfnameOKstr="\Z2    OK    \Zn"
-menuitems+=( "wfsM" "[${wfsmaskfnameOKstr}] WFS pixel mask        \Z4\Zbaol${LOOPNUMBER}_wfsmask\Zn <- \Zu${wfsmaskfname}\Zn" )
-else
-wfsmaskfnameOKstr="\Z5 OPTIONAL \Zn"
-menuitems+=( "wfsM" "[${wfsmaskfnameOKstr}] WFS pixel mask        \Z4\Zbaol${LOOPNUMBER}_wfsmask\Zn <- \Zu\Z1${wfsmaskfname}\Zn" )
-confOK=0
-fi
+makemenuitemstringaolshm "dmmask" "DM actuator mask"
+menuitems+=( "dmM" "$menustring" )
 
+makemenuitemstringaolshm "wfsref0" "WFS reference"
+menuitems+=( "wfsref0" "$menustring" )
 
-dmmaskfname=$( cat ./conf/conf_dmmask_fname.txt )
-if [ -f "$dmmaskfname" ] && [ -f "./conf/conf_dmmask_fname.txt" ]; then
-dmmaskfnameOKstr="\Z2    OK    \Zn"
-menuitems+=( "dmM" "[${dmmaskfnameOKstr}] DM pixel mask          \Z4\Zbaol${LOOPNUMBER}_dmmask\Zn <- \Zu${dmmaskfname}\Zn" )
-else
-dmmaskfnameOKstr="\Z5 OPTIONAL \Zn"
-menuitems+=( "dmM" "[${dmmaskfnameOKstr}] DM pixel mask          \Z4\Zbaol${LOOPNUMBER}_dmmask\Zn <- \Zu\Z1${dmmaskfname}\Zn" )
-confOK=0
-fi
-
-
-
-
-wfsref0fname=$( cat ./conf/conf_wfsref0_fname.txt )
-if [ -f $wfsref0fname ] && [ -f "./conf/conf_wfsref0_fname.txt" ]; then
-wfsref0fnameOKstr="\Z2    OK    \Zn"
-menuitems+=( "wfsref0" "[${wfsref0fnameOKstr}] WFS reference         \Z4\Zbaol${LOOPNUMBER}_wfsref0\Zn <- \Zu${wfsref0fname}\Zn" )
-else
-wfsref0fnameOKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "wfsref0" "[${wfsref0fnameOKstr}] WFS reference         \Z4\Zbaol${LOOPNUMBER}_wfsref0\Zn <- \Zu\Z1${wfsref0fname}\Zn" )
-confOK=0
-fi
 
 
 acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
@@ -1041,48 +1044,24 @@ menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
 
-mkmodesdatestr=$(stat -c %y ./conf/fmodes_NBblocks.txt)
+mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
-NBblocks=$( cat ./conf/fmodes_NBblocks.txt )
+NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 NBmodes=$( cat ./conf/fmodes_NBmodes.txt )
 menuitems+=( "mkModes" "<$mkmodesdatestr>  [$NBblocks blocks, $NBmodes modes] Create DM control modes file, control matrices" )
 
 
-fname="./conf/conf_DMmodes_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "DMmodes" "[${OKstr}] DM control modes      \Z4\Zbaol${LOOPNUMBER}_DMmodes\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "DMmodes" "[${OKstr}] DM control modes      \Z4\Zbaol${LOOPNUMBER}_DMmodes\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
+
+makemenuitemstringaolshm "DMmodes" "DM control modes"
+menuitems+=( "DMmodes" "$menustring" )
+
+makemenuitemstringaolshm "respM" "Modal Response Matrix"
+menuitems+=( "RM" "$menustring" )
+
+makemenuitemstringaolshm "contrM" "Modal Control Matrix"
+menuitems+=( "CM" "$menustring" )
 
 
-fname="./conf/conf_respM_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "RM" "[${OKstr}] Modal response Matrix   \Z4\Zbaol${LOOPNUMBER}_respM\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "RM" "[${OKstr}] Modal response Matrix   \Z4\Zbaol${LOOPNUMBER}_respM\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
-
-
-
-fname="./conf/conf_contrM_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "CM" "[${OKstr}] Modal control Matrix   \Z4\Zbaol${LOOPNUMBER}_contrM\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "CM" "[${OKstr}] Modal control Matrix   \Z4\Zbaol${LOOPNUMBER}_contrM\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
 
 
 
@@ -1093,62 +1072,20 @@ i2=$(printf "%02d" "$i")
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
 
-fname="./conf/conf_DMmodes${i2}_fname.txt"
-#blockDMmodesfname=$( cat ./conf/conf_DMmodes${i2}_fname.txt )
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "DMm${i2}" "[${OKstr}] DM control modes    \Z4\Zbaol${LOOPNUMBER}_DMmodes${i2}\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "DMm${i2}" "[${OKstr}] DM control modes    \Z4\Zbaol${LOOPNUMBER}_DMmodes${i2}\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
+makemenuitemstringaolshm "DMmodes${i2}" "DM control modes"
+menuitems+=( "DMm${i2}" "$menustring" )
 
-fname="./conf/conf_respM${i2}_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "RM${i2}" "[${OKstr}] Modal resp mat        \Z4\Zbaol${LOOPNUMBER}_respM${i2}\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "RM${i2}" "[${OKstr}] Modal resp mat        \Z4\Zbaol${LOOPNUMBER}_respM${i2}\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
+makemenuitemstringaolshm "respM${i2}" "Modal Resp matrix"
+menuitems+=( "RMm${i2}" "$menustring" )
 
-fname="./conf/conf_contrM${i2}_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "CM${i2}" "[${OKstr}] Modal contr mat      \Z4\Zbaol${LOOPNUMBER}_contrM${i2}\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "CM${i2}" "[${OKstr}] Modal contr mat      \Z4\Zbaol${LOOPNUMBER}_contrM${i2}\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
+makemenuitemstringaolshm "contrM${i2}" "Modal Contr matrix"
+menuitems+=( "CMm${i2}" "$menustring" )
 
-fname="./conf/conf_contrMc${i2}_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "CMc${i2}" "[${OKstr}] Zonal contr mat     \Z4\Zbaol${LOOPNUMBER}_contrMc${i2}\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "CMc${i2}" "[${OKstr}] Zonal contr mat     \Z4\Zbaol${LOOPNUMBER}_contrMc${i2}\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
+makemenuitemstringaolshm "contrMc${i2}" "Zonal Contr matrix"
+menuitems+=( "CMmc${i2}" "$menustring" )
 
-fname="./conf/conf_contrMcact${i2}_fname.txt"
-ffname=$( cat $fname )
-if [ -f "$fname" ] && [ -f "$ffname" ]; then
-OKstr="\Z2    OK    \Zn"
-menuitems+=( "CMca${i2}" "[${OKstr}] Zonal act cmat   \Z4\Zbaol${LOOPNUMBER}_contrMcact${i2}\Zn <-  \Zu${ffname}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "CMca${i2}" "[${OKstr}] Zonal act cmat   \Z4\Zbaol${LOOPNUMBER}_contrMcact${i2}\Zn <-  \Zu\Z1${ffname}\Zn" )
-confOK=0
-fi
-
+makemenuitemstringaolshm "contrMcact${i2}" "Zonal act Cmat"
+menuitems+=( "CMmca${i2}" "$menustring" )
 
 
 done
@@ -2031,7 +1968,7 @@ if [ "${CMmode}" = "0" ];
 then
 menuitems+=( "CMm1" "[CMmode is OFF]    CURRENTLY USING SEPARATE MATRICES     -> Switch to combined control matrix" )
 else
-menuitems+=( "CMm0" "\Z5\Zr[CMmode is  ON]\Zn    CURRENTLY USING COMBINED MATRIX       -> Switch to separate control matices" )
+menuitems+=( "CMm0" "\Z5\Zr[CMmode is  ON]\Zn    CURRENTLY USING COMBINED MATRIX       -> Switch to separate control matrices" )
 fi
 
 
