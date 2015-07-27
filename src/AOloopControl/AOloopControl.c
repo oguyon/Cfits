@@ -5830,6 +5830,8 @@ int AOcompute(long loop)
                   */
                 printf("status -> 8b\n");//TEST
                 fflush(stdout);
+                
+                save_fits(data.image[IDcmatca_shm].name, "!test_cmatca.fits");
                 GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
 
 
