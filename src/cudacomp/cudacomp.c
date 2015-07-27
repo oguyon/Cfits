@@ -677,13 +677,15 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         iter = 0;
         gpumatmultconf[index].init = 1;
 
-        printf("...\n");
+        printf(". . . \n");
         fflush(stdout);
     }
     
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
        gpumatmultconf[index].refWFSinit[device] = initWFSref;
-
+    
+    printf("...\n");
+    fflush(stdout);
 
     return(0);
 }
