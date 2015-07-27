@@ -2198,12 +2198,14 @@ sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 sleep 2
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
+menucontrolloop_default="K"
 ;; 
    	 K)
 echo "OFF" > ./status/stat_procON.txt
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
+menucontrolloop_default="S"
 ;;
 
    	 Nloopon)

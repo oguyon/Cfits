@@ -5745,6 +5745,8 @@ int AOcompute(long loop)
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
             GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_WFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
+            printf("status -> 8a\n");
+            fflush(stdout);
             AOconf[loop].status = 8; // execute
             GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
         }
@@ -5763,7 +5765,7 @@ int AOcompute(long loop)
                 if(COMPUTE_GPU_SCALING==1)
                 {
                     // save reference (TEST)
-                   // save_fits(data.image[aoconfID_WFS0].name, "!test_imtogpu.fits");
+                    save_fits(data.image[aoconfID_WFS0].name, "!test_imtogpu.fits");
                     
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS0].array.F[WFS_active_map[wfselem_active]];
@@ -5775,8 +5777,9 @@ int AOcompute(long loop)
                         data.image[aoconfID_WFS2_active].array.F[wfselem_active] = data.image[aoconfID_WFS2].array.F[WFS_active_map[wfselem_active]];
                     data.image[aoconfID_WFS2_active].md[0].cnt0++;
                 }
-                //printf("Vector wfs re-mapped\n");
-
+                printf("Vector wfs re-mapped\n");
+                fflush(stdout);
+                
                 if(COMPUTE_GPU_SCALING==1)
                     {
                         if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)
