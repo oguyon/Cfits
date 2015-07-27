@@ -5831,11 +5831,16 @@ int AOcompute(long loop)
   
                 if(COMPUTE_GPU_SCALING==1)
                 {
+                    printf("status 8c1\n");//TEST
+                    fflush(stdout);
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
                 }
                 else
+                {
+                 printf("status 8c2\n");//TEST
+                fflush(stdout);
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
-
+                }
                 printf("status 8d\n");//TEST
                 fflush(stdout);
  
