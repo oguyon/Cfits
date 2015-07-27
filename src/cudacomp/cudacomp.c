@@ -803,8 +803,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     fflush(stdout);
 
 
-//    if(data.image[gpumatmultconf[index].IDout].semlog == 1)
-    sem_post(data.image[gpumatmultconf[index].IDout].semlog);
+//    sem_post(data.image[gpumatmultconf[index].IDout].semlog);
 
    printf("--- 005\n");//TEST
     fflush(stdout);
