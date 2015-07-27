@@ -5818,14 +5818,17 @@ int AOcompute(long loop)
                 printf("%s %s %s\n", data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name);
                 exit(0); // TESTING
               */  
-                printf("status -> 8b\n");
+                printf("status -> 8b\n");//TEST
                 fflush(stdout);
                 GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
                 
                 
                 initWFSref_GPU = 1;
                 AOconf[loop].status = 8; // execute
-
+  
+                printf("status 8c\n");//TEST
+                fflush(stdout);
+  
                 if(COMPUTE_GPU_SCALING==1)
                 {
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
@@ -5833,10 +5836,16 @@ int AOcompute(long loop)
                 else
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
 
-
+                printf("status 8d\n");//TEST
+                fflush(stdout);
+ 
                 // re-map output vector
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
+ 
+                 printf("status 8e\n");//TEST
+                fflush(stdout);
+ 
             }
 
         }
