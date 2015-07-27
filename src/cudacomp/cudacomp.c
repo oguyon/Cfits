@@ -772,6 +772,8 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             sem_wait(gpumatmultconf[index].semptr5[ptn]); // WAIT FOR RESULT
     }
 
+   printf("--- 002\n");//TEST
+    fflush(stdout);
 
 
     // SUM RESULTS FROM SEPARATE GPUs
@@ -782,6 +784,10 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
 
+   printf("--- 003\n");//TEST
+    fflush(stdout);
+
+
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
         for(m=0; m<gpumatmultconf[index].M; m++)
@@ -791,15 +797,27 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
         
     if(data.image[gpumatmultconf[index].IDout].sem > 1)
-        sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
+        sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
+
+   printf("--- 004\n");//TEST
+    fflush(stdout);
+
 
 //    if(data.image[gpumatmultconf[index].IDout].semlog == 1)
     sem_post(data.image[gpumatmultconf[index].IDout].semlog);
+
+   printf("--- 005\n");//TEST
+    fflush(stdout);
+
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     *status = *status + 1; // -> 12
+
+   printf("--- 006\n");//TEST
+    fflush(stdout);
+
 
     return(0);
 }
