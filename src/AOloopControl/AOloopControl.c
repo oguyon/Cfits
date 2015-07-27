@@ -4031,6 +4031,11 @@ int set_DM_modes(long loop)
 
     if(AOconf[loop].GPU == 0)
     {
+        for(k=0; k < AOconf[loop].NBDMmodes; k++)
+        printf("[%ld %f]  ", k, data.image[aoconfID_cmd_modes].array.F[k]);
+        printf("\n");
+ 
+        
         arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
         for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = 0.0;
