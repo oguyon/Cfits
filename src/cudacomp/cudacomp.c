@@ -707,6 +707,9 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
     if(index==0) /// main CM multiplication loop
     {
+        printf("CM load\n");//TEST
+        fflush(stdout);
+ 
         //	gpumatmultconf[index].NBstreams = 6;
         if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
             if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
@@ -715,13 +718,20 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
                 GPUloadCmat(index);
                 gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
             }
+        
     }
-
+    
+       printf("--- 000\n");//TEST
+        fflush(stdout);
+ 
 
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
     if((gpumatmultconf[index].sem==0)||(gpumatmultconf[index].gpuinit==0))
     {
+        printf("GPU pthread create\n");//TEST
+        fflush(stdout);
+                
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         {
             gpumatmultconf[index].thdata[ptn].thread_no = ptn;
@@ -738,6 +748,11 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         gpumatmultconf[index].gpuinit = 1;
     }
     *status = *status + 1;  // -> 10
+
+
+    printf("--- 001\n");//TEST
+    fflush(stdout);
+
 
 
     if(gpumatmultconf[index].sem==0)
