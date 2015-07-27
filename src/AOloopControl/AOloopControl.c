@@ -4051,6 +4051,8 @@ int set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
+        printf("GPU DM modes setup\n");
+        fflush(stdout);
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_DM].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1);
         AOconf[loop].status = 15;
         GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
@@ -5744,9 +5746,10 @@ int AOcompute(long loop)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
-            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_WFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
-            printf("status -> 8a\n");
+            printf("status -> 8a\n"); //TEST
             fflush(stdout);
+            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_WFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
+            
             AOconf[loop].status = 8; // execute
             GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
         }
@@ -5815,7 +5818,8 @@ int AOcompute(long loop)
                 printf("%s %s %s\n", data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name);
                 exit(0); // TESTING
               */  
-                
+                printf("status -> 8b\n");
+                fflush(stdout);
                 GPU_loop_MultMat_setup(0, data.image[IDcmatca_shm].name, data.image[aoconfID_WFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
                 
                 
