@@ -1256,8 +1256,10 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
         {
 //            ampl = ampl0; //*pow((1.0 - 0.9*(zimax/zimaxmax)), 2.0);
 
-            ampl *= 0.9;
-
+            ampl *= 0.95;
+            if(ampl<0.1*ampl0)
+                ampl = 0.1*ampl0;
+                
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
