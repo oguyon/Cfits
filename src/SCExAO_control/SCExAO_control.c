@@ -144,9 +144,9 @@ int SCExAOcontrol_PyramidWFS_Pcenter_cli()
 
 int SCExAOcontrol_Pyramid_flattenRefWF_cli()
 {
-    if(CLI_checkarg(1,4)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
     {
-        SCExAOcontrol_Pyramid_flattenRefWF(data.cmdargtoken[1].val.string);
+        SCExAOcontrol_Pyramid_flattenRefWF(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
         return 0;
     }
     else
@@ -231,9 +231,9 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_Pyramid_flattenRefWF_cli;
     strcpy(data.cmd[data.NBcmd].info,"flatten  pyrWFS");
-    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
-    strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name);");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname> <NB zern>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten wfsim 20");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax);");
     data.NBcmd++;
 
 
@@ -1192,9 +1192,8 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 
 
 
-int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
+int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax)
 {
-    long zimaxmax = 10;
     long zimax;
     long zi;
     long ID;
@@ -1229,7 +1228,9 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     IDz = mk_zer_seriescube("zcube", dmsize, zimaxmax, 0.5*dmsize);
     list_image_ID();
     printf("IDz = %ld\n", IDz);
+
     zimax = 10;
+
     while(1)
     {
         for(zi=4; zi<zimax; zi++)
