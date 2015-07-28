@@ -1197,7 +1197,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     long zimax;
     long zi;
     long ID;
-    long NBframes = 1000;
+    long NBframes = 200;
     double val, valp, valm, val0;
     double ampl;
     double a;
@@ -1209,7 +1209,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     long dmsize2;
     long IDz;
     long IDdisp;
-    long sleeptimeus = 200000; // 200ms
+    long sleeptimeus = 20000; // 20ms
 
 
     // 60perc of pixels illuminated
