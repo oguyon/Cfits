@@ -12,6 +12,7 @@ LOOPNUMBER_default=2  # loop number
 
 dmC="dmdisp3" # DM control channel
 dmdisp="dmdisp" # total DM displacement channel
+                                                     
 dmRM="dmdisp7" # DM actuation channel for RM matrix
 wfsimcam="imcam" # WFS camera image
 
@@ -20,6 +21,7 @@ shmimmonexec="shmimmon"
 
 
 # ======================== END OF USER EDIT SECTION =====================
+
 
 
 
@@ -155,6 +157,42 @@ imcp2shm im $2
 quit
 EOF
 }
+
+
+
+function SelectValue01 {
+vali=$( echo $value| awk '{printf("%03d",1000.0*$1)}' )
+menuitems1=( "000" "0.000" )
+i="1"
+while [ $i -lt "$1" ]
+do
+str0=$( echo $i|awk '{printf("%03d",$1)}')
+str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
+i=$[$i+$i]
+menuitems1+=( "$str0" "$str1" )
+done
+
+for i in `seq $1 $3 $2 `;
+        do
+if [[ "$i" -lt "$2" && "$i" -gt "001" ]]; then
+str0=$( echo $i|awk '{printf("%03d",$1)}')
+str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
+menuitems1+=( "$str0" "$str1" )
+fi
+done 
+
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+value1=$("${cmd[@]}" 2>&1 >/dev/tty)
+value=$( echo $value1 | awk '{printf("%5.3f", $1*0.001)}' )
+echo $value
+}
+
+
+
+
+
+
+
 
 
 
@@ -748,6 +786,8 @@ menuconfmanage_default=0
 
 echo "START STATE MACHINE"
 
+
+
 while true; do
 
 stateok=0
@@ -810,6 +850,9 @@ fi
 
 
 
+
+
+echo "STEP1"
 
 
 
@@ -1087,7 +1130,6 @@ menuitems+=( "CMmc${i2}" "$menustring" )
 makemenuitemstringaolshm "contrMcact${i2}" "Zonal act Cmat"
 menuitems+=( "CMmca${i2}" "$menustring" )
 
-
 done
 
 
@@ -1157,9 +1199,7 @@ case $amode in
 	0)
 exec 3>&1;
 dmC=$(dialog --inputbox "dmC" 0 0 "$dmC" 2>&1 1>&3);
-#exitcode=$?;
 exec 3>&-;
-#echo $result $exitcode;
 echo "$dmC" > ./conf/conf_dmC_name.txt
 ReaddmCname
 ;;
@@ -1782,6 +1822,11 @@ fi
 
 
 
+
+
+
+
+
 # =====================================================
 # ======== Make Modal Modes  ========================
 # =====================================================
@@ -1901,6 +1946,7 @@ fi
 
 
 
+
 # =====================================================
 # ======== CONTROL AO LOOP ============================
 # =====================================================
@@ -1920,28 +1966,38 @@ loopmultcoeff=$(echo "$(cat ./conf/conf_loopmultcoeff.txt)")
 stringcenter "LOOP CONFIGURATION"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
+
+
 GPUmode=$( cat ./conf/conf_GPU.txt )
-if [[ -f "./conf/conf_GPU.txt" && ( "$GPUmode" = "1" || "$GPUmode" = "0" ) ]]; then
+if [[ -f "./conf/conf_GPU.txt" && ( "$GPUmode" = "0" || "$GPUmode" = "1" || "$GPUmode" = "2" || "$GPUmode" = "3" || "$GPUmode" = "4" || "$GPUmode" = "5" ) ]]; then
 echo "OK"
 else
-echo "OFF" > ./conf/conf_GPU.txt
+echo "0" > ./conf/conf_GPU.txt
 fi
+
 echo "GPU mode = $GPUmode"
 
 if [ "${GPUmode}" = "0" ];
 then
-menuitems+=( "GPUon" "[ GPU is OFF  ]    CURRENTLY USING CPU(s)                -> Turn on GPU mode" )
+menuitems+=( "GPUsel" "[ GPU is OFF  ]    CURRENTLY USING CPU(s)                -> Turn on GPU mode" )
 else
-menuitems+=( "GPUoff" "\Z5\Zr[Using $GPUmode GPUs ]\Zn    CURRENTLY USING GPU(S)                -> Turn off GPU mode" )
+menuitems+=( "GPUsel" "\Z5\Zr[Using $GPUmode GPUs ]\Zn    CURRENTLY USING GPU(S)" )
 fi
 
-if [ "$GPUmode" = "1" ]; then
+
+
+CMmode=$( cat ./conf/conf_CMmode.txt )
+
+
+if [[ "${GPUmode}" -ne "0" && "${CMmode}" = "1" ]]; then
 GPUallmode=$( cat ./conf/conf_GPUall.txt )
+
 if [[ -f "./conf/conf_GPUall.txt" && ( "$GPUallmode" = "1" || "$GPUallmode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > ./conf/conf_GPUall.txt
 fi
+
 echo "GPUsll mode = $GPUallmode"
 
 if [ "${GPUallmode}" = "0" ];
@@ -1951,12 +2007,13 @@ else
 menuitems+=( "GPUaoff" "\Z5\Zr[GPUall is  ON]\Zn    CURRENTLY USING GPU(S) FOR ALL        -> Turn off GPUall mode" )
 fi
 else
-menuitems+=( " " " " )
+menuitems+=( " " " GPUall = 0" )
+echo "0" > ./conf/conf_GPUall.txt
 fi
 
 
 
-CMmode=$( cat ./conf/conf_CMmode.txt )
+
 if [[ -f "./conf/conf_CMmode.txt" && ( "$CMmode" = "1" || "$CMmode" = "0" ) ]]; then
 echo "OK"
 else
@@ -1975,8 +2032,6 @@ fi
 
 
 menuitems+=( " " " " )
-
-
 stringcenter "LOOP PROCESSES"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
@@ -2001,6 +2056,7 @@ menuitems+=( " " " " )
 stringcenter "LOOP CONTROL "
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
+if [ "$procONstat" = " ON" ]; then
 loopONstat=$( cat ./status/stat_loopON.txt )
 if [[ -f "./status/stat_loopON.txt" && ( "$loopONstat" = " ON" || "$loopONstat" = "OFF" ) ]]; then
 echo "OK"
@@ -2013,6 +2069,9 @@ then
 menuitems+=( "Nloopon" "   START control loop" )
 else
 menuitems+=( "Floopoff" "\Z1\ZrSTOP control loop\Zn" )
+fi
+else
+menuitems+=( " " "Processes need to be ON o turn loop ON/OFF ")
 fi
 
 
@@ -2042,9 +2101,34 @@ menuitems+=( "g" "loop gain    =   ${loopgain}" )
 menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
 menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
 
+
+menuitems+=( " " " " )
+stringcenter "MODAL BLOCK GAINS"
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
+
+NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+
+for i in `seq 0 $(( $NBblocks - 1 ))`;
+do
+i2=$(printf "%02d" "$i")
+
+NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
+#menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
+
+fname="conf/conf_gainb${i2}.txt"
+if [ -f "$fname" ]; then
+gainb[${i2}]=$( cat ${fname} )
+else
+gainb[${i2}]="1.000"
+fi
+string=$( printf "% 3d" "${NBblockmodes}" )
+menuitems+=( "gb${i2}" "[ ${gainb[${i2}]} ] Modal block ${i2} gain  ($string modes)" )
+done
+
+
 menuitems+=( " " " " )
 stringcenter "ZERO POINT OFFSET"
-menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
 zploopONstat=$( cat ./status/stat_zploopON.txt )
 if [[ -f "./status/stat_zploopON.txt" && ( "$zploopONstat" = " ON" || "$zploopONstat" = "OFF" ) ]]; then
 echo "OK"
@@ -2058,6 +2142,11 @@ menuitems+=( "zplon" "   START zero point offset loop" )
 else
 menuitems+=( "zploff" "\Z1\ZrSTOP zero point offset loop\Zn" )
 fi
+
+
+
+
+
 
 menuitems+=( "zpinj" "Inject Fourier mode to DM zero point" )
 menuitems+=( "zpz" "Zero DM zero point" )
@@ -2084,6 +2173,17 @@ case $retval in
 
 
 # LOOP CONFIGURATION
+
+
+
+
+	GPUsel)
+exec 3>&1;
+nbGPU=$(dialog --inputbox "Number of GPU(s) (0 = CPU mode)" 0 0 "$nbGPU" 2>&1 1>&3);
+exec 3>&-;
+echo "$nbGPU" > ./conf/conf_GPU.txt
+;;
+
 
 	GPUon)
 echo "1" > ./conf/conf_GPU.txt
@@ -2135,6 +2235,16 @@ sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 sleep 2
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
+#for i in `seq 0 $(( $NBblocks - 1 ))`;
+#do
+#i2=$( printf "%02d" "$i" )
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMc${i2}" C-m
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMcact${i2}" C-m
+#done
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMc" C-m
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMcact" C-m
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_gainb" C-m
 menucontrolloop_default="K"
 ;; 
    	 K)
@@ -2142,17 +2252,19 @@ echo "OFF" > ./status/stat_procON.txt
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
+pkill -9 aolrun-${LOOPNUMBER}
 menucontrolloop_default="S"
 ;;
-
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
-echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
+tmux send-keys -t aol${LOOPNUMBER}-ct "aolon" C-m
+#echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
-echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
+tmux send-keys -t aol${LOOPNUMBER}-ct "aoloff" C-m
+#echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Nloopon"
 ;; 
   	 Z)
@@ -2171,9 +2283,127 @@ echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
 	ctrmon) tmux a -t aol${LOOPNUMBER}-ctr ;;
 	runmon) tmux a -t aol${LOOPNUMBER}-run ;;
 
-  	 g) state="menucontrolloop_setgain";; 
-   	 m) state="menucontrolloop_setmaxlim";;  
-   	 e) state="menucontrolloop_setmult";;   
+  	 g)
+  	 value=${loopgain}
+	 SelectValue01 100 1200 50
+  	 loopgain=${value}
+  	 echo "$loopgain" > ./conf/conf_loopgain.txt
+  	 ;; 
+   	 m)
+   	 value=${loopmaxlim}
+   	SelectValue01 0 1200 50
+ 	loopmaxlim=${value}
+ 	echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
+   	 ;;  
+   	 e) 
+   	 value=${loopmultcoeff}
+   	SelectValue01 900 1001 10
+ 	loopmultcoeff=${value}
+ 	echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
+     	 ;;   
+
+  	 gb00)
+  	 gi="00"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb01)
+  	 gi="01"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb02)
+  	 gi="02"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb03)
+  	 gi="03"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb04)
+  	 gi="04"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb05)
+  	 gi="05"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb06)
+  	 gi="06"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb07)
+  	 gi="07"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb08)
+  	 gi="08"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb09)
+  	 gi="09"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+  	 gb10)
+  	 gi="10"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 ;; 
+
+
+
+
 
 	zplon)
 echo " ON" > ./status/stat_zploopON.txt
@@ -2207,6 +2437,8 @@ tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
 tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 	;;
+
+
 	zpz)
 tmuxname="aol${LOOPNUMBER}zpzero"
 tmux new-session -d -s $tmuxname
@@ -2215,8 +2447,8 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 	;;
-
-	esac;;
+esac
+;;
    1) state="menutop";;   
    2) state="menuexit";;
    255) state="menuexit";;
@@ -2224,6 +2456,24 @@ esac
 
 
 fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2555,8 +2805,8 @@ menutestmode_default="H"
    	 imWFS0)shmimview /tmp/aol${LOOPNUMBER}_imWFS0.im.shm > /dev/null &;;
    	 imWFS1)shmimview /tmp/aol${LOOPNUMBER}_imWFS1.im.shm > /dev/null &;;
    	 imWFS2)shmimview /tmp/aol${LOOPNUMBER}_imWFS2.im.shm > /dev/null &;;
-   	 dmC)shmimview /tmp/aol${LOOPNUMBER}_dmC.im.shm > /dev/null &;;
-   	 dmdisp)shmimview /tmp/aol${LOOPNUMBER}_dmdisp.im.shm > /dev/null &;;
+   	 dmC)shmimview /tmp/aol${LOOPNUMBER}_dmC.im.shm 8 > /dev/null &;;
+   	 dmdisp)shmimview /tmp/aol${LOOPNUMBER}_dmdisp.im.shm 8 > /dev/null &;;
 
 esac
 ;; 
@@ -2588,169 +2838,8 @@ fi
 
 
 
-#  SET CONTROL LOOP GAIN
-if [ $state = "menucontrolloop_setgain" ]; then
-stateok=1
-menuname="SET LOOP GAIN - LOOP ${LOOPNUMBER}"
-
-ReadLoopGain
 
 
-loopgain3=$(echo "scale=0; $loopgain*1000/1" | bc -q 2>/dev/null |awk '{printf("%03d", $1)}')
-
-menuitems=()
-menuitems+=( "000" "0.000" )
-menuitems+=( "001" "0.001" )
-menuitems+=( "005" "0.005" )
-menuitems+=( "010" "0.010" )
-for i in `seq 50 50 950 `;
-        do
-str0=$( echo $i|awk '{printf("%03d",$1)}')
-str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
-menuitems+=( "$str0" "$str1" )
-done 
-
-
-dialog --title "Control loop gain" \
---ok-label "Select" \
---cancel-label "Cancel" \
---help-button --help-label "Exit" \
---default-item ${loopgain3} \
---menu "$menuname" \
- 50 80 100 "${menuitems[@]}"  2> $tempfile
-
-
-retval=$?
-
-case $retval in
-   0) state="menucontrolloop"
-loopgain=$(cat $tempfile|awk '{printf("%5.3f", $1*0.001)}')
-echo "$loopgain" > ./conf/conf_loopgain.txt
-echo "aolsetgain ${loopgain}" >> aolctr-${LOOPNUMBER}-fifo
-;; # button 1:
-   1) state="menucontrolloop";; 
-   2) state="menuexit";; 
-   255) state="menuexit";;
-esac
-
-
-fi
-
-
-
-
-
-
-
-
-
-
-#  SET CONTROL LOOP MAX LIM
-if [ $state = "menucontrolloop_setmaxlim" ]; then
-stateok=1
-menuname="SET LOOP MAX LIMIT - LOOP ${LOOPNUMBER}"
-
-ReadLoopMaxLim
-
-loopmaxlim3=$(echo "scale=0; $loopmaxlim*1000/1" | bc -q 2>/dev/null |awk '{printf("%03d", $1)}')
-
-menuitems=()
-menuitems+=( "000" "0.000" )
-menuitems+=( "001" "0.001" )
-menuitems+=( "005" "0.005" )
-menuitems+=( "010" "0.010" )
-for i in `seq 50 50 950 `;
-        do
-str0=$( echo $i|awk '{printf("%03d",$1)}')
-str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
-menuitems+=( "$str0" "$str1" )
-done 
-
-
-
-dialog --title "Control loop max limit" \
---ok-label "Select" \
---cancel-label "Cancel" \
---help-button --help-label "Exit" \
---default-item ${loopmaxlim3} \
---menu "$menuname" \
- 50 80 100 "${menuitems[@]}"  2> $tempfile
-
-retval=$?
-
-case $retval in
-   0) state="menucontrolloop"
-loopmaxlim=$(cat $tempfile|awk '{printf("%5.3f", $1*0.001)}')
-echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
-echo "aolsetmaxlim ${loopmaxlim}" >> aolctr-${LOOPNUMBER}-fifo
-;; # button 1:
-   1) state="menucontrolloop";; 
-   2) state="menuexit";; 
-   255) state="menuexit";;
-esac
-
-fi
-
-
-
-
-
-#  SET MULT COEFF
-if [ $state = "menucontrolloop_setmult" ]; then
-stateok=1
-menuname="SET LOOP MULT COEFF - LOOP ${LOOPNUMBER}"
-
-ReadLoopMultCoeff
-
-loopmultcoeff3=$(echo "scale=0; $loopmultcoeff*1000/1" | bc -q 2>/dev/null |awk '{printf("%03d", $1)}')
-
-menuitems=()
-for i in `seq 000 100 800 `;
-        do
-str0=$( echo $i|awk '{printf("%03d",$1)}')
-str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
-menuitems+=( "$str0" "$str1" )
-done 
-menuitems+=( "" "" )
-for i in `seq 900 10 980 `;
-        do
-str0=$( echo $i|awk '{printf("%03d",$1)}')
-str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
-menuitems+=( "$str0" "$str1" )
-done 
-menuitems+=( "" "" )
-for i in `seq 990 1 999 `;
-        do
-str0=$( echo $i|awk '{printf("%03d",$1)}')
-str1=$( echo $i|awk '{printf("%5.3f", $1*0.001)}')
-menuitems+=( "$str0" "$str1" )
-done 
-menuitems+=( "" "" )
-menuitems+=( "1000" "1.000" )
-
-
-dialog --title "Control loop mult coeff" \
---ok-label "Select" \
---cancel-label "Cancel" \
---help-button --help-label "Exit" \
---default-item ${loopmultcoeff3} \
---menu "$menuname" \
- 50 80 100 "${menuitems[@]}"  2> $tempfile
-
-retval=$?
-
-case $retval in
-   0) state="menucontrolloop"
-loopmultcoeff=$(cat $tempfile|awk '{printf("%5.3f", $1*0.001)}')
-echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
-echo "aolsetmult ${loopmultcoeff}" >> aolctr-${LOOPNUMBER}-fifo
-;; # button 1:
-   1) state="menucontrolloop";; 
-   2) state="menuexit";; 
-   255) state="menuexit";;
-esac
-
-fi
 
 
 
@@ -2778,8 +2867,8 @@ echo "state \"$state\" not recognized ... exit"
 exit
 fi
 
-
 done
+
 
 
 

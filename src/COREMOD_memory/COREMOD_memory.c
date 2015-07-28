@@ -4694,6 +4694,7 @@ int COREMOD_MEMORY_logshim_set_logexit(char *IDname, int setv)
 
 
 /** logs a shared memory stream onto disk
+ * uses semlog semaphore
  *
  * uses data cube buffer to store frames
  * if an image name logdata exists (should ideally be in shared mem), then this will be included in the timing txt file

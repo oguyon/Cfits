@@ -119,24 +119,33 @@ typedef struct
 } THDATA_IMTOTAL;
 
 
+int init_AOloopControl();
 
 
 long AOloopControl_makeTemplateAOloopconf(long loopnb);
-int init_AOloopControl();
 long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name);
 long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode);
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
 int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim);
 int AOloopControl_InitializeMemory();
+void *compute_function_imtotal( void *ptr );
+void *compute_function_dark_subtract( void *ptr );
 int Average_cam_frames(long loop, long NbAve, int RM);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
 long AOloopControl_loadCM(long loop, char *CMfname);
+
+long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize);
+long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize);
 int AOloopControl_loadconfigure(long loop, int mode, int level);
+
+int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain);// modal blocks
+
 int set_DM_modes(long loop);
+int set_DM_modesRM(long loop);
+
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);
-int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name);
-int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha);
+
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
@@ -161,6 +170,11 @@ int AOloopControl_setWFSnormfloor(float WFSnormfloor);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setmult(float multcoeff);
 int AOloopControl_setframesAve(long nbframes);
+
+
+
+
+// "old" blocks (somewhat obsolete)
 int AOloopControl_setgainrange(long m0, long m1, float gainval);
 int AOloopControl_setlimitrange(long m0, long m1, float limval);
 int AOloopControl_setmultfrange(long m0, long m1, float multfval);
@@ -169,10 +183,17 @@ int AOloopControl_setlimitblock(long mb, float limitval);
 int AOloopControl_setmultfblock(long mb, float multfval);
 int AOloopControl_resetRMSperf();
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
+
 int AOloopControl_InjectMode( long index, float ampl );
 int AOloopControl_AutoTune();
 
 
 int AOloopControl_setparam(long loop, char *key, double value);
+
+
+
+int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name); // OBSOLETE
+int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha); // OBSOLETE
+
 
 #endif

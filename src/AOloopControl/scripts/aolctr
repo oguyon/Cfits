@@ -9,9 +9,9 @@ pname="${pname0#"./"}-$loopnb"
 echo "pname = $pname"
 
 echo "aolnb ${loopnb}" > aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_refWFSim" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_RespM" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_ContrM" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_wfsref" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_respM" >> aol${loopnb}startup.txt
+echo "readshmim aol${loopnb}_contrM" >> aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_DMmodes" >> aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_wfsdark" >> aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_imWFS0" >> aol${loopnb}startup.txt
