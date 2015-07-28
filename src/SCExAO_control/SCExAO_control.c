@@ -1229,7 +1229,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax)
     list_image_ID();
     printf("IDz = %ld\n", IDz);
 
-    zimax = 10;
+    zimax = zimaxmax;
 
     while(1)
     {
