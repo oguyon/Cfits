@@ -4455,8 +4455,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     {
         printf("\r iteration # %8ld     ", iter);
         fflush(stdout);
-        iter++;
-
+ 
         for(act=0; act<AOconf[loop].sizeDM; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0; 
@@ -4619,6 +4618,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             }
             
         }
+        
+        iter++;
     }
 
     free(arrayf);
