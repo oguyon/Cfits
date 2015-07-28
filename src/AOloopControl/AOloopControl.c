@@ -4563,7 +4563,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[ID_WFSref0n].array.F[ii] /= total;
                 
-            sprintf(fname, "!./zrespmtmp/%s_%03ld.fits", WFSref0_name, iter);
+            sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter);
             save_fits(WFSref0_name, fname);
 
 
@@ -4577,7 +4577,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 }
                 data.image[ID_DMmap].array.F[act] = rms;
             }
-            sprintf(fname, "!./zrespmtmp/%s_%03ld.fits", DMmap_name, iter);
+            sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
             save_fits(DMmap_name, fname);
 
 
