@@ -63,6 +63,7 @@ sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[32];
 
 int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
 int initWFSref_GPU = 0;
+int initcontrMcact_GPU = 0;
 float GPU_alpha = 0.0;
 float GPU_beta = 0.0;
 
@@ -4217,6 +4218,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
     for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
         {
             printf("adding %ld / %ld  (%g)\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk]);
+
             sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
             ID = image_ID(name);
             for(ii=0;ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;ii++)
@@ -4242,6 +4244,8 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
     memcpy(data.image[aoconfID_contrMcact].array.F, data.image[IDcontrMcact0].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
     data.image[aoconfID_contrMcact].md[0].cnt0++;
     data.image[aoconfID_contrMcact].md[0].write = 0;
+
+    initcontrMcact_GPU = 0;
 
     save_fits("contrMc0", "!test_contrMc0.fits");//TEST
     save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
@@ -5539,10 +5543,13 @@ int AOcompute(long loop)
                 // perform matrix mult
                 //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 
+                if(initcontrMcact_GPU==0)
+                    initWFSref_GPU = 0;
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU );
 
 
                 initWFSref_GPU = 1;
+                initcontrMcact_GPU = 1;
                 AOconf[loop].status = 8; // execute
 
 
