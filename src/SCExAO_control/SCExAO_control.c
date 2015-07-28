@@ -1257,6 +1257,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax)
             printf("%lf %lf -> %f\n", p70, p90, val);
             valp = val;
 
+
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
@@ -1284,7 +1285,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax)
             */
 
             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
-            printf("== ZERNIKE %ld / %ld ========== a = %f\n", zi, zimax, a);
+            printf("== ZERNIKE %ld / %ld ========== %f %f -> a = %f\n", zi, zimax, valp, valm, a);
 
 
             data.image[IDdm5].md[0].write = 1;
