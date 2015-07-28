@@ -1197,7 +1197,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     long zimax;
     long zi;
     long ID;
-    long NBframes = 10;
+    long NBframes = 1000;
     double val, valp, valm, val0;
     double ampl;
     double a;
@@ -1229,6 +1229,20 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     printf("IDz = %ld\n", IDz);
 
     zimax = zimaxmax;
+
+
+    
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
+            save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
+            p50 = img_percentile("imwfs", 0.50);
+            p70 = img_percentile("imwfs", 0.70);
+            p90 = img_percentile("imwfs", 0.95);
+            val = (p90-p50)/p70; //+p90);
+            printf("%lf %lf -> %f\n", p70, p90, val);
+            val0 = val;
+
+    
+    
 
     while(1)
     {
@@ -1284,7 +1298,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
             */
 
             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
-            printf("== ZERNIKE %ld / %ld ========== %f %f -> a = %f\n", zi, zimax, valp, valm, a);
+            printf("== ZERNIKE %ld / %ld ========== %f %f -> a = %f  ( %f <- %f)\n", zi, zimax, valp, valm, a, 0.5*(valp+valm), val0);
 
 
             data.image[IDdm5].md[0].write = 1;
