@@ -132,38 +132,41 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 
 int SCExAOcontrol_PyramidWFS_Pcenter_cli()
 {
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
     {
-		SCExAOcontrol_PyramidWFS_Pcenter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf);
-      return 0;
+        SCExAOcontrol_PyramidWFS_Pcenter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 int SCExAOcontrol_Pyramid_flattenRefWF_cli()
 {
-	 if(CLI_checkarg(1,4)==0)
+    if(CLI_checkarg(1,4)==0)
     {
-    SCExAOcontrol_Pyramid_flattenRefWF(data.cmdargtoken[1].val.string);
-      return 0;
+        SCExAOcontrol_Pyramid_flattenRefWF(data.cmdargtoken[1].val.string);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 
 
 int SCExAOcontrol_SAPHIRA_cam_process_cli()
 {
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
-      SCExAOcontrol_SAPHIRA_cam_process(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
-      return 0;
+        SCExAOcontrol_SAPHIRA_cam_process(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 
 
@@ -1208,6 +1211,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
     long dmsize2;
     long IDz;
     long IDdisp;
+    long sleeptimeus = 20000; // 20ms
+
 
     // 60perc of pixels illuminated
     // perc 70 is median over pupil
@@ -1238,7 +1243,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
-            usleep(2000);
+           
+            usleep(sleeptimeus);
 
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -1257,7 +1263,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
-            usleep(2000);
+           
+            usleep(sleeptimeus);
 
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
@@ -1286,7 +1293,8 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name)
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
-            usleep(2000);
+
+            usleep(sleeptimeus);
 
             //			sleep(1);
         }

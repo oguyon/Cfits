@@ -199,40 +199,6 @@ echo $value
 
 
 
-
-
-
-
-
-# SetDark <confnb> <camgain>
-function SetDark {
-file="./conf$1/conf_pyrloopfrequ.txt"
-ok=1
-
-if [ -f $file ]
-	then
-	pyfreq=$(echo "$(cat $file)")
-	else
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-
-file="$PWD/darks/dark_${pyfreq}_$2.fits"
-if [ ! -f $file ]
-	then
-	echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-
-if [ ${ok} -eq 1 ]
-then
-ln -snf ${file} "$PWD/conf/dark.fits" &> ${outmesg}
-Fits2shm "./conf/dark.fits" aol${LOOPNUMBER}_wfsdark &> ${outmesg}
-fi
-
-}
-
-
 # SetDMmodes <confnb>
 function SetDMmodes {
 file="./conf$1/fmodes.fits"
