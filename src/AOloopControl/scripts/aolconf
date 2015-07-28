@@ -20,6 +20,13 @@ shmimviewexec="shmimview"
 shmimmonexec="shmimmon"
 
 
+# CUSTOM USER-PROVIDED SCRIPTS:
+. AOloopsetup.bash # executed here
+# script AOloopAlign.bash : to be executed when menu entry sected
+
+
+
+
 # ======================== END OF USER EDIT SECTION =====================
 
 
@@ -808,6 +815,8 @@ menuitems=( "C" "Configure/link AO loop" )
 menuitems+=( "L" "Control AO loop" )
 menuitems+=( "T" "Test mode: simulated AO system" )
 menuitems+=( "V" "View / monitor" )
+menuitems+=( " " " ")
+menuitems+=( "A" "Align")
 
 
 
@@ -840,6 +849,12 @@ state="menutestmode"
 menutop_default="V"
 state="menuview"   
 ;;
+   	 A) 
+menutop_default="A"
+state="menualign"   
+;;
+
+
 	esac;;
    1) state="menuexit";;   
    255) state="menuexit";;
@@ -852,9 +867,12 @@ fi
 
 
 
-echo "STEP1"
 
-
+if [ $state = "menualign" ]; then
+stateok=1
+./AOloopAlign.bash
+state="menutop"
+fi
 
 
 
@@ -2071,7 +2089,7 @@ else
 menuitems+=( "Floopoff" "\Z1\ZrSTOP control loop\Zn" )
 fi
 else
-menuitems+=( " " "Processes need to be ON o turn loop ON/OFF ")
+menuitems+=( " " "Processes need to be ON to turn loop ON/OFF ")
 fi
 
 
@@ -2257,20 +2275,24 @@ menucontrolloop_default="S"
 ;;
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
-tmux send-keys -t aol${LOOPNUMBER}-ct "aolon" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 #echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
-tmux send-keys -t aol${LOOPNUMBER}-ct "aoloff" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 #echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Nloopon"
 ;; 
   	 Z)
-echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
-echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
-echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
+tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
+#echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
+#echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
+#echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
+
 ;;
    	 t1) echo "aolstep 1" >> aolctr-${LOOPNUMBER}-fifo ;;   
    	 t3) echo "aolstep 3" >> aolctr-${LOOPNUMBER}-fifo ;;   
