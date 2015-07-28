@@ -4382,6 +4382,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     long ID_WFSmask, ID_DMmask;
     float lim;
     double total;
+    int r;
 
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
@@ -4447,6 +4448,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
 
     //    for(iter=0; iter<NBiter; iter++)
+    r = system("mkdir -p zresptmp");
 
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
@@ -4454,7 +4456,10 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
         fflush(stdout);
         iter++;
 
-        //        for(act=0; act<AOconf[loop].sizeDM; act++)
+        for(act=0; act<AOconf[loop].sizeDM; act++)
+            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0; 
+
 
 
         act = 0;
@@ -4546,7 +4551,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(act=0; act<AOconf[loop].sizeDM; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/cntn;
-            sprintf(fname, "!%s.fits", zrespm_name);
+            sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
             save_fits(zrespm_name, fname);
 
             total = 0.0;
@@ -4558,7 +4563,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 data.image[ID_WFSref0n].array.F[ii] /= total;
                 
-            sprintf(fname, "!%s.fits", WFSref0_name);
+            sprintf(fname, "!./zrespmtmp/%s_%03ld.fits", WFSref0_name, iter);
             save_fits(WFSref0_name, fname);
 
 
@@ -4572,7 +4577,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 }
                 data.image[ID_DMmap].array.F[act] = rms;
             }
-            sprintf(fname, "!%s.fits", DMmap_name);
+            sprintf(fname, "!./zrespmtmp/%s_%03ld.fits", DMmap_name, iter);
             save_fits(DMmap_name, fname);
 
 
@@ -4586,7 +4591,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 }
                 data.image[ID_WFSmap].array.F[ii] = rms;
             }
-            sprintf(fname, "!%s.fits", WFSmap_name);
+            sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSmap_name, iter);
             save_fits(WFSmap_name, fname);
             
             if(mode==1) // compute WFSmask and DMmask
