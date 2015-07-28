@@ -1215,7 +1215,13 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     // 60perc of pixels illuminated
     // perc 70 is median over pupil
 
-    double p50, p70, p90;
+    double p0, p1, p2;
+    float level0, level1, level2;
+
+    level0 = 0.50;
+    level1 = 0.70;
+    level2 = 0.95;
+    
 
     IDdm5 = read_sharedmem_image("dmdisp5");
     IDdm6 = read_sharedmem_image("dmdisp6");
@@ -1234,11 +1240,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-            p50 = img_percentile("imwfs", 0.50);
-            p70 = img_percentile("imwfs", 0.70);
-            p90 = img_percentile("imwfs", 0.95);
-            val = (p90-p50)/p70; //+p90);
-            printf("%lf %lf -> %f\n", p70, p90, val);
+            p0 = img_percentile("imwfs", level0);
+            p1 = img_percentile("imwfs", level1);
+            p2 = img_percentile("imwfs", level2);
+            val = (p2-p0)/p1; //+p90);
+            printf("%lf %lf %lf -> %f\n", p0, p1, p2, val);
             val0 = val;
 
     
@@ -1263,11 +1269,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-            p50 = img_percentile("imwfs", 0.50);
-            p70 = img_percentile("imwfs", 0.70);
-            p90 = img_percentile("imwfs", 0.95);
-            val = (p90-p50)/p70; //+p90);
-            printf("%lf %lf -> %f\n", p70, p90, val);
+            p0 = img_percentile("imwfs", level0);
+            p1 = img_percentile("imwfs", level1);
+            p2 = img_percentile("imwfs", level2);
+            val = (p2-p0)/p1; //+p90);
+            printf("%lf %lf %lf -> %f\n", p0, p1, p2, val);
             valp = val;
 
 
@@ -1284,11 +1290,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
-            p50 = img_percentile("imwfs", 0.50);
-            p70 = img_percentile("imwfs", 0.70);
-            p90 = img_percentile("imwfs", 0.95);
-            val = (p90-p50)/p70; //+p90);
-            printf("%lf %lf -> %f\n", p70, p90, val);
+            p0 = img_percentile("imwfs", level0);
+            p1 = img_percentile("imwfs", level1);
+            p2 = img_percentile("imwfs", level2);
+            val = (p2-p0)/p1; //+p90);
+            printf("%lf %lf %lf -> %f\n", p0, p1, p2, val);
             valm = val;
 
             /*	if(valm>valp)
