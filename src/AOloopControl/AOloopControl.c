@@ -4449,6 +4449,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     //    for(iter=0; iter<NBiter; iter++)
     r = system("mkdir -p zresptmp");
+    system("rm ./zresptmp/*.fits");
 
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
@@ -4533,7 +4534,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             }
             act++;
         }
-        cntn += 2*NBave; // Number of images
+        cntn = 2*NBave; // Number of images
 
 
             for(j=0; j<AOconf[loop].sizeDM; j++)
@@ -4628,6 +4629,14 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     return(ID_WFSmap);
 }
+
+
+int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
+{
+    
+    return(0);
+}
+
 
 
 // zero point offset loop
