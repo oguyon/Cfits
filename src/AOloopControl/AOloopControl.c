@@ -4745,7 +4745,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             fluxneg = 0.0;
             for(ii=0; ii<sizeWFS; ii++)
             {
-                if(isnan(data.image[IDzrespfp].array.F[ii])!=0)
+                if(isnan(data.image[IDzrespfp].array.F[act*sizeWFS+ii])!=0)
                     {
                         printf("element %ld is NAN -> replacing by 0\n", ii);
                         data.image[IDzrespfp].array.F[ii] = 0.0;
@@ -4754,7 +4754,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             }
             for(ii=0; ii<sizeWFS; ii++)
              {
-                 if(isnan(data.image[IDzrespfm].array.F[ii])!=0)
+                 if(isnan(data.image[IDzrespfm].array.F[act*sizeWFS+ii])!=0)
                     {
                         printf("element %ld is NAN -> replacing by 0\n", ii);
                         data.image[IDzrespfm].array.F[ii] = 0.0;
