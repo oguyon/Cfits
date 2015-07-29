@@ -724,7 +724,6 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 {
     FILE *fp;
     long ID, IDc;
-    long IDref;
     long ii, jj;
     long brad = 30; // box radius
     double totx, toty, tot;
@@ -748,10 +747,6 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         r = fscanf(fp, "%ld %ld\n", &SCExAO_Pcam_Xpos, &SCExAO_Pcam_Ypos);
         fclose(fp);
     }
-
-    IDref = image_ID("imref");
-
-
 
 
     while(file_exist ("stop_PyAlignCam.txt")==0)
@@ -789,6 +784,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             /** compute offset */
             fft_correlation("imwfs", "imref", "outcorr");
             IDc = image_ID("outcorr");
+            list_image_ID();
             peak = 0.0;
             for(ii=0; ii<pXsize*pYsize; ii++)
                 if(data.image[IDc].array.F[ii]>peak)
