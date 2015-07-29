@@ -2395,7 +2395,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gi="07"
   	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
-  	 gainb[${gi}]=${value}
+  	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
@@ -2413,7 +2413,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gi="09"
   	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
-  	 gainb[${gi}]=${value}
+  	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
