@@ -4675,6 +4675,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     long NBmat; // number of matrices to average
     FILE *fp;
     int r;
+    char name[200];
     char fname[200];
     char zrname[200];
     long kmat;
@@ -4694,66 +4695,67 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     long IDWFSmask, IDDMmask;
     float lim, rms;
     double tmpv;
-    
-    
+
+
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
-        {
-            printf("ERROR: cannot open file \"%s\"\n", fname);
-            exit(0);
-        }
+    {
+        printf("ERROR: cannot open file \"%s\"\n", fname);
+        exit(0);
+    }
     else
-        {
-            r = fscanf(fp, "%ld", &NBmat);
-            fclose(fp);
-        }
-    
+    {
+        r = fscanf(fp, "%ld", &NBmat);
+        fclose(fp);
+    }
+
     printf("Processing %ld matrices\n", NBmat);
-    
+
     IDzresp_array = (long*) malloc(sizeof(long)*NBmat);
     IDWFSrefc_array = (long*) malloc(sizeof(long)*NBmat);
-    
+
     // STEP 1: build individually cleaned RM
     for(kmat=0; kmat<NBmat; kmat++)
+    {
+        r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
+        IDzrespfp = load_fits(fname, "zrespfp", 2);
+        r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
+        IDzrespfm = load_fits(fname, "zrespfm", 2);
+
+        sizexWFS = data.image[IDzrespfp].md[0].size[0];
+        sizeyWFS = data.image[IDzrespfp].md[0].size[1];
+        sizeDM = data.image[IDzrespfp].md[0].size[2];
+        sizeWFS = sizexWFS*sizeyWFS;
+
+        r = sprintf(name, "wfsrefc%03ld", kmat);
+        IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, sizeDM);
+
+        r = sprintf(zrname, "zrespm%03ld", kmat);
+        IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, sizeDM);
+
+        for(act=0; act<sizeDM; act++)
         {
-            r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
-            IDzrespfp = load_fits(fname, "zrespfp", 2);
-            r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
-            IDzrespfm = load_fits(fname, "zrespfm", 2);
+            fluxpos = 0.0;
+            fluxneg = 0.0;
+            for(ii=0; ii<sizeWFS; ii++)
+                fluxpos += data.image[IDzrespfp].array.F[act*sizeWFS+ii];
+            for(ii=0; ii<sizeWFS; ii++)
+                fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];
+            //     printf("   %12g   %12g\n", fluxpos, fluxneg);
 
-            sizexWFS = data.image[IDzrespfp].md[0].size[0];
-            sizeyWFS = data.image[IDzrespfp].md[0].size[1];
-            sizeDM = data.image[IDzrespfp].md[0].size[2];
-            sizeWFS = sizexWFS*sizeyWFS;
-
-            IDWFSrefc_array[kmat] = create_3Dimage_ID("WFSrefcube", sizexWFS, sizeyWFS, sizeDM);
-
-            r = sprintf(zrname, "zrespm%03ld", kmat);
-            IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, sizeDM);
-            
-            for(act=0; act<sizeDM; act++)
-                {
-                    fluxpos = 0.0;
-                    fluxneg = 0.0;
-                    for(ii=0;ii<sizeWFS;ii++)
-                        fluxpos += data.image[IDzrespfp].array.F[act*sizeWFS+ii];
-                    for(ii=0;ii<sizeWFS;ii++)
-                        fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];
-               //     printf("   %12g   %12g\n", fluxpos, fluxneg);
-
-                    for(ii=0;ii<sizeWFS;ii++)
-                        {
-                            data.image[IDzrespfp].array.F[act*sizeWFS+ii] /= fluxpos;
-                            data.image[IDzrespfm].array.F[act*sizeWFS+ii] /= fluxneg;
-                            data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]-data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
-                            data.image[IDWFSrefc_array[kmat]].array.F[ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]+data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
-                        }                        
-                }
-            delete_image_ID("zrespfp");
-            delete_image_ID("zrespfm");           
+            for(ii=0; ii<sizeWFS; ii++)
+            {
+                data.image[IDzrespfp].array.F[act*sizeWFS+ii] /= fluxpos;
+                data.image[IDzrespfm].array.F[act*sizeWFS+ii] /= fluxneg;
+                data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]-data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
+                data.image[IDWFSrefc_array[kmat]].array.F[ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]+data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
+            }
         }
-        
-        
+        delete_image_ID("zrespfp");
+        delete_image_ID("zrespfm");
+    }
+
+
     // STEP 2: average / median each pixel
     IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, sizeDM);
     IDWFSref = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
@@ -4761,98 +4763,97 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     IDDMmap = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
     IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
     IDDMmask = create_2Dimage_ID("dmmask", sizexWFS, sizeyWFS);
-  
-    
-    pixvalarray = (float*) malloc(sizeof(float)*NBmat);    
+
+
+    pixvalarray = (float*) malloc(sizeof(float)*NBmat);
     kband = 0;
     kband = (long) (0.2*NBmat);
 
-            kmin = kband;
-            kmax = NBmat-kband;
-        
+    kmin = kband;
+    kmax = NBmat-kband;
+
     for(act=0; act<sizeDM; act++)
+    {
+        printf("\r act %ld / %ld        ", act, sizeDM);
+        fflush(stdout);
+        for(ii=0; ii<sizeWFS; ii++)
         {
-            printf("\r act %ld / %ld        ", act, sizeDM);
-            fflush(stdout);
-            for(ii=0;ii<sizeWFS;ii++)
-            {
-                for(kmat=0; kmat<NBmat; kmat++)
-                    pixvalarray[kmat] = data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] ;
-                quick_sort_float(pixvalarray, kmat);
-                ave = 0.0;
-                for(k=kmin;k<kmax;k++)
-                    ave += pixvalarray[k];
-                ave /= (kmax-kmin);
-                data.image[IDzrm].array.F[act*sizeWFS+ii] = ave;
-                
-                for(kmat=0; kmat<NBmat; kmat++)
-                    pixvalarray[kmat] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
-                quick_sort_float(pixvalarray, kmat);
-                ave = 0.0;
-                for(k=kmin;k<kmax;k++)
-                    ave += pixvalarray[k];
-                ave /= (kmax-kmin);
-                data.image[IDWFSref].array.F[act*sizeWFS+ii] = ave;
-            }
+            for(kmat=0; kmat<NBmat; kmat++)
+                pixvalarray[kmat] = data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] ;
+            quick_sort_float(pixvalarray, kmat);
+            ave = 0.0;
+            for(k=kmin; k<kmax; k++)
+                ave += pixvalarray[k];
+            ave /= (kmax-kmin);
+            data.image[IDzrm].array.F[act*sizeWFS+ii] = ave;
+
+            for(kmat=0; kmat<NBmat; kmat++)
+                pixvalarray[kmat] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
+            quick_sort_float(pixvalarray, kmat);
+            ave = 0.0;
+            for(k=kmin; k<kmax; k++)
+                ave += pixvalarray[k];
+            ave /= (kmax-kmin);
+            data.image[IDWFSref].array.F[act*sizeWFS+ii] = ave;
         }
-        
+    }
+
     free(IDzresp_array);
     free(IDWFSrefc_array);
-    
-    free(pixvalarray);
-    
-    
-    
-    
-            for(act=0; act<sizeDM; act++)
-            {
-                rms = 0.0;
-                for(ii=0; ii<sizeWFS; ii++)
-                {
-                    tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
-                    rms += tmpv*tmpv;
-                }
-                data.image[IDDMmap].array.F[act] = rms;
-            }
- 
 
-            for(ii=0; ii<sizeWFS; ii++)
-            {
-                rms = 0.0;
-                for(act=0; act<sizeDM; act++)
-                {
-                    tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
-                    rms += tmpv*tmpv;
-                }
-                data.image[IDWFSmap].array.F[ii] = rms;
-            }
-            
-                // WFSmask : select pixels >20% of 50-percentile
-                lim = 0.2*img_percentile(WFSmap_name, 0.5);
-                for(ii=0; ii<sizeWFS; ii++)
-                    {
-                        if(data.image[IDWFSmap].array.F[ii]<lim)
-                            data.image[IDWFSmask].array.F[ii] = 0.0;
-                        else
-                            data.image[IDWFSmask].array.F[ii] = 1.0;
-                    }
-                
-                // DMmask: select pixels >10% of 50-percentile
-                lim = 0.1*img_percentile(DMmap_name, 0.5);
-                for(act=0; act<AOconf[loop].sizeDM; act++)
-                    {
-                         if(data.image[IDDMmap].array.F[act]<lim)
-                            data.image[IDDMmask].array.F[act] = 0.0;
-                        else
-                            data.image[IDDMmask].array.F[act] = 1.0;
-                    }    
-    
-    
-    
+    free(pixvalarray);
+
+
+
+
+    for(act=0; act<sizeDM; act++)
+    {
+        rms = 0.0;
+        for(ii=0; ii<sizeWFS; ii++)
+        {
+            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
+            rms += tmpv*tmpv;
+        }
+        data.image[IDDMmap].array.F[act] = rms;
+    }
+
+
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        rms = 0.0;
+        for(act=0; act<sizeDM; act++)
+        {
+            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
+            rms += tmpv*tmpv;
+        }
+        data.image[IDWFSmap].array.F[ii] = rms;
+    }
+
+    // WFSmask : select pixels >20% of 50-percentile
+    lim = 0.2*img_percentile(WFSmap_name, 0.5);
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        if(data.image[IDWFSmap].array.F[ii]<lim)
+            data.image[IDWFSmask].array.F[ii] = 0.0;
+        else
+            data.image[IDWFSmask].array.F[ii] = 1.0;
+    }
+
+    // DMmask: select pixels >10% of 50-percentile
+    lim = 0.1*img_percentile(DMmap_name, 0.5);
+    for(act=0; act<AOconf[loop].sizeDM; act++)
+    {
+        if(data.image[IDDMmap].array.F[act]<lim)
+            data.image[IDDMmask].array.F[act] = 0.0;
+        else
+            data.image[IDDMmask].array.F[act] = 1.0;
+    }
+
     list_image_ID();
-    
+
     return(0);
 }
+
 
 
 
