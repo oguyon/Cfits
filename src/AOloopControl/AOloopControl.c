@@ -4868,7 +4868,7 @@ list_image_ID();
     fflush(stdout);    
      // DMmask: select pixels >10% of 50-percentile
     lim = 0.1*img_percentile(DMmap_name, 0.5);
-    for(act=0; act<AOconf[loop].sizeDM; act++)
+    for(act=0; act<sizeDM; act++)
     {
         if(data.image[IDDMmap].array.F[act]<lim)
             data.image[IDDMmask].array.F[act] = 0.0;
