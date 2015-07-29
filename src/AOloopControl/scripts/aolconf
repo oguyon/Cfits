@@ -295,19 +295,6 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 }
 
 
-function ReadLoopDelay {
-file="./conf/conf_loopdelayms.txt"
-if [ -a $file ]
-	then
-	loopdelayms=$(echo "$(cat $file)")
-	else
-	loopdelayms=10.0 #default
-fi
-}
-
-
-
-
 
 
 
@@ -777,16 +764,23 @@ confselected=$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]"
 
 
-menuitems=( "C" "Configure/link AO loop" )
+
+stringcenter "AO CONFIGURE AND CONTROL"
+menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+
+menuitems+=( "C" "Configure/link AO loop" )
 menuitems+=( "L" "Control AO loop" )
 menuitems+=( "T" "Test mode: simulated AO system" )
 menuitems+=( "V" "View / monitor" )
 menuitems+=( " " " ")
+
+stringcenter "CUSTOM EXTERNAL SCRIPTS"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "A" "Align")
 
 
 
-dialog --title "AO loop top menu  - LOOP ${LOOPNUMBER}" \
+dialog --colors --title "AO loop top menu  - LOOP ${LOOPNUMBER}" \
 --ok-label "Select" \
 --cancel-label "Exit" \
 --default-item "${menutop_default}" \
@@ -1261,18 +1255,6 @@ esac
 menucontrolloop_default="wfs"
 state="menuconfigureloop"
 ;;
-
-	delay)
-exec 3>&1;
-loopdelayms=$(dialog --inputbox "Loop Delay [ms]" 0 0 "$loopdelayms" 2>&1 1>&3);
-exec 3>&-;
-echo "$loopdelayms" > ./conf/conf_loopdelayms.txt
-ReadLoopDelay
-menucontrolloop_default="delay"
-state="menuconfigureloop"
-;;
-
-
 
 	dark)
 exec 3>&1;
@@ -2128,6 +2110,9 @@ menuitems+=( " " " " )
 stringcenter "MODAL BLOCK GAINS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
+
+menuitems+=( "gball" "Set all block to same gain")
+
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -2331,13 +2316,25 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
      	 ;;  
 
+	 gball)
+	 value=${gainallb}
+	 SelectValue01 100 1200 50 
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	do
+	 gi=$(printf "%02d" "$i")
+	gainb[10#${gi}]=${value}
+	echo "${gainb[#10${gi}]}" > ./conf/conf_gainb${gi}.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[#10${gi}]}" C-m
+	done
+	 ;;
+	 
   	 gb00)
   	 gi="00"
   	 value=${gainb[${gi}]}
 	 SelectValue01 100 1200 50
-  	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 gainb[${#10gi}]=${value}
+  	 echo "${gainb[#10${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[#10${gi}]}" C-m
   	 ;; 
 
   	 gb01)
