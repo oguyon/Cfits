@@ -4789,6 +4789,8 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
         }
     }
     free(pixvalarray);
+    
+    printf("\n");
 
     pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
     kband = 0;
@@ -4798,7 +4800,9 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
 
     for(ii=0; ii<sizeWFS; ii++)
     {
-        for(act=0; act<sizeDM; act++)
+        printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
+        fflush(stdout);
+               for(act=0; act<sizeDM; act++)
             for(kmat=0; kmat<NBmat; kmat++)
                 pixvalarray[kmat*sizeDM+act] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
         quick_sort_float(pixvalarray, kmat*NBmat);
@@ -4818,7 +4822,8 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
 
 
 
-
+    printf("Preparing DM map ... ");
+    fflush(stdout);    
     for(act=0; act<sizeDM; act++)
     {
         rms = 0.0;
@@ -4829,8 +4834,13 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
         }
         data.image[IDDMmap].array.F[act] = rms;
     }
+    printf("done\n");
+    fflush(stdout);
 
 
+
+    printf("Preparing WFS map ... ");
+    fflush(stdout);    
     for(ii=0; ii<sizeWFS; ii++)
     {
         rms = 0.0;
@@ -4841,18 +4851,16 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
         }
         data.image[IDWFSmap].array.F[ii] = rms;
     }
+    printf("done\n");
+    fflush(stdout);
 
-    // WFSmask : select pixels >20% of 50-percentile
-    lim = 0.2*img_percentile(WFSmap_name, 0.5);
-    for(ii=0; ii<sizeWFS; ii++)
-    {
-        if(data.image[IDWFSmap].array.F[ii]<lim)
-            data.image[IDWFSmask].array.F[ii] = 0.0;
-        else
-            data.image[IDWFSmask].array.F[ii] = 1.0;
-    }
 
-    // DMmask: select pixels >10% of 50-percentile
+
+
+
+   printf("Preparing DM mask ... ");
+    fflush(stdout);    
+     // DMmask: select pixels >10% of 50-percentile
     lim = 0.1*img_percentile(DMmap_name, 0.5);
     for(act=0; act<AOconf[loop].sizeDM; act++)
     {
@@ -4861,6 +4869,25 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
         else
             data.image[IDDMmask].array.F[act] = 1.0;
     }
+   printf("done\n");
+    fflush(stdout);
+
+
+
+    // WFSmask : select pixels >20% of 50-percentile
+   printf("Preparing WFS mask ... ");
+    fflush(stdout);    
+     lim = 0.2*img_percentile(WFSmap_name, 0.5);
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        if(data.image[IDWFSmap].array.F[ii]<lim)
+            data.image[IDWFSmask].array.F[ii] = 0.0;
+        else
+            data.image[IDWFSmask].array.F[ii] = 1.0;
+    }
+   printf("done\n");
+    fflush(stdout);
+
 
     list_image_ID();
 
