@@ -4716,7 +4716,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
             sizeWFS = sizexWFS*sizeyWFS;
 
             r = sprintf(zrname, "zrespm%03ld", kmat);
-            IDzresp_array[kmat] = create_3Dimage_ID("zrepm", sizexWFS, sizeyWFS, sizeDM);
+            IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, sizeDM);
             
             for(act=0; act<sizeDM; act++)
                 {
