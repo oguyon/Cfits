@@ -4383,7 +4383,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     float lim;
     double total;
     int r;
-
+    long IDzrespfp, IDzrespfm;
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
@@ -4431,6 +4431,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     IDzrespm = create_image_ID("zrespm", 3, sizearray, FLOAT, 0, 5); // Zonal response matrix
     IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, FLOAT, 0, 5); // Zonal response matrix normalized
 
+    IDzrespfp = create_image_ID("zrespfp", 3, sizearray, FLOAT, 0, 5); // positive poke image
+    IDzrespfm = create_image_ID("zrespfm", 3, sizearray, FLOAT, 0, 5); // negative poke image
+
     if(mode==1)
     {
         sizearray[0] = AOconf[loop].sizexWFS;
@@ -4449,7 +4452,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     //    for(iter=0; iter<NBiter; iter++)
     r = system("mkdir -p zresptmp");
-    system("rm ./zresptmp/*.fits");
+    r = system("rm ./zresptmp/*.fits");
 
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
@@ -4458,8 +4461,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
  
         for(act=0; act<AOconf[loop].sizeDM; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0; 
-
+                    data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0; 
+                    
 
 
         act = 0;
@@ -4496,6 +4499,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
+                data.image[IDzrespfp].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDpos].array.F[ii];
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDpos].array.F[ii];
             }
 
@@ -4523,6 +4527,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
+                data.image[IDzrespfm].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDpos].array.F[ii];
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDneg].array.F[ii];
             }
 
@@ -4580,6 +4585,11 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
             save_fits(DMmap_name, fname);
 
+            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", DMmap_name, iter);
+            save_fits("zrespfp", fname);
+           r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", DMmap_name, iter);
+            save_fits("zrespfm", fname);
+
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
@@ -4632,8 +4642,13 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 }
 
 
+//
+// median-averages multiple response matrices to create a better one
+//
 int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
 {
+    
+    
     
     return(0);
 }
