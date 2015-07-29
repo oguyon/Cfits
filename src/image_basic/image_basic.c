@@ -3830,7 +3830,7 @@ long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)
     ptr = (char*) data.image[ID].array.F;
     while(kk!=NBframes)
     {
-        while(cnt>data.image[ID].md[0].cnt0)
+        while(cnt>data.image[IDstream].md[0].cnt0)
                 usleep(waitdelayus);
 
         cnt++;
