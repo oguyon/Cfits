@@ -4863,7 +4863,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
-
+list_image_ID();
    printf("Preparing DM mask ... ");
     fflush(stdout);    
      // DMmask: select pixels >10% of 50-percentile
