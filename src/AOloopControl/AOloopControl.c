@@ -4676,6 +4676,15 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     FILE *fp;
     int r;
     char fname[200];
+    char zrname[200];
+    long kmat;
+    long IDzrespfp, IDzrespfm;
+    long sizexWFS, sizeyWFS, sizeDM, sizeWFS;
+    long *IDzresp_array;
+    long act, ii;
+    double fluxpos, fluxneg;
+    
+    
     
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
@@ -4691,7 +4700,41 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     
     printf("Processing %ld matrices\n", NBmat);
     
+    IDzresp_array = (long*) malloc(sizeof(long)*NBmat);
     
+    // STEP 1: build individually cleaned RM
+    for(kmat=0; kmat<NBmat; kmat++)
+        {
+            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
+            IDzrespfp = load_fits(fname, "zrespfp", 2);
+            r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
+            IDzrespfm = load_fits(fname, "zrespfm", 2);
+
+            sizexWFS = data.image[IDzrespfp].md[0].size[0];
+            sizeyWFS = data.image[IDzrespfp].md[0].size[1];
+            sizeDM = data.image[IDzrespfp].md[0].size[2];
+            sizeWFS = sizexWFS*sizeyWFS;
+
+            r = sprintf(zrname, "zrespm%03ld", kmat);
+            IDzresp_array[kmat] = create_3Dimage_ID("zrepm", sizexWFS, sizeyWFS, sizeDM);
+            
+            for(act=0; act<sizeDM; act++)
+                {
+                    fluxpos = 0.0;
+                    fluxneg = 0.0;
+                    for(ii=0;ii<sizeWFS;ii++)
+                        fluxpos += data.image[IDzrespfp].array.F[act*sizeWFS+ii];
+                    for(ii=0;ii<sizeWFS;ii++)
+                        fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];
+                    printf("   %12g   %12g\n", fluxpos, fluxneg);
+                }
+            delete_image_ID("zrespfp");
+            delete_image_ID("zrespfm");           
+        }
+        
+    free(IDzresp_array);
+    
+    list_image_ID();
     
     return(0);
 }
