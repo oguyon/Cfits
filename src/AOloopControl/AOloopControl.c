@@ -4768,7 +4768,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
     IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
     IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
-    IDDMmask = create_2Dimage_ID("dmmask", sizexWFS, sizeyWFS);
+    IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
 
 
     pixvalarray = (float*) malloc(sizeof(float)*NBmat);
