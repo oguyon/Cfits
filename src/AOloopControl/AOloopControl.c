@@ -4786,17 +4786,30 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
                 ave += pixvalarray[k];
             ave /= (kmax-kmin);
             data.image[IDzrm].array.F[act*sizeWFS+ii] = ave;
-
-            for(kmat=0; kmat<NBmat; kmat++)
-                pixvalarray[kmat] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
-            quick_sort_float(pixvalarray, kmat);
-            ave = 0.0;
-            for(k=kmin; k<kmax; k++)
-                ave += pixvalarray[k];
-            ave /= (kmax-kmin);
-            data.image[IDWFSref].array.F[act*sizeWFS+ii] = ave;
         }
     }
+    free(pixvalarray);
+
+    pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
+    kband = 0;
+    kband = (long) (0.2*NBmat*sizeDM);
+    kmin = kband;
+    kmax = NBmat*sizeDM-kband;
+
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        for(act=0; act<sizeDM; act++)
+            for(kmat=0; kmat<NBmat; kmat++)
+                pixvalarray[kmat*sizeDM+act] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
+        quick_sort_float(pixvalarray, kmat*NBmat);
+        ave = 0.0;
+        for(k=kmin; k<kmax; k++)
+            ave += pixvalarray[k];
+        ave /= (kmax-kmin);
+        data.image[IDWFSref].array.F[ii] = ave;
+    }
+
+
 
     free(IDzresp_array);
     free(IDWFSrefc_array);
@@ -4853,6 +4866,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
 
     return(0);
 }
+
 
 
 
