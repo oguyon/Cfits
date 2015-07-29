@@ -287,12 +287,11 @@ int Measure_zonalRM_cli()
         return 1;
 }
 
-//int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
 int AOloopControl_ProcessZrespM_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)==0)
     {
-        AOloopControl_ProcessZrespM(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+        AOloopControl_ProcessZrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
         return 0;
     }
     else
@@ -680,7 +679,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].info,"clean zonal resp mat, WFS ref, DM and WFS response maps");
     strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS ref fname [string]>  <output WFS response map fname [string]>  <output DM response map fname [string]>");
     strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm zrm wfsref wfsmap dmmap");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)");
     data.NBcmd++;
 
 
