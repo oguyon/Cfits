@@ -4747,7 +4747,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             {
                 if(isnan(data.image[IDzrespfp].array.F[act*sizeWFS+ii])!=0)
                     {
-                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfp, ii);
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfp, act*sizeWFS+ii);
                         data.image[IDzrespfp].array.F[act*sizeWFS+ii] = 0.0;
                     }
                 fluxpos += data.image[IDzrespfp].array.F[act*sizeWFS+ii];
@@ -4756,7 +4756,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
              {
                  if(isnan(data.image[IDzrespfm].array.F[act*sizeWFS+ii])!=0)
                     {
-                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfm, ii);
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfm, act*sizeWFS+ii);
                         data.image[IDzrespfm].array.F[act*sizeWFS+ii] = 0.0;
                     }
                     fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];                    
@@ -4769,7 +4769,18 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                 data.image[IDzrespfp].array.F[act*sizeWFS+ii] /= fluxpos;
                 data.image[IDzrespfm].array.F[act*sizeWFS+ii] /= fluxneg;
                 data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]-data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
-                data.image[IDWFSrefc_array[kmat]].array.F[ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]+data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
+                data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]+data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
+
+                if(isnan(data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii])!=0)
+                    {
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzresp_array[kmat], act*sizeWFS+ii);
+                        data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.0;
+                    }
+            if(isnan(data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii])!=0)
+                    {
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDWFSrefc_array[kmat], act*sizeWFS+ii);
+                        data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] = 0.0;
+                    }
             }
         }
         delete_image_ID("zrespfp");
