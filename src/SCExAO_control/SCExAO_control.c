@@ -737,7 +737,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     long NBframes = 5000;
     float v0;
     long maxstep = 500;
-
+    float ave;
     char pausefilename[200];
 
 
@@ -775,12 +775,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             tot += data.image[ID].array.F[ii];
         for(ii=0; ii<pXsize*pYsize; ii++)
             data.image[ID].array.F[ii] /= tot;
-        printf("tot = %f   ave = %f \n", tot, tot/pXsize/pYsize);
-
+        ave =  tot/pXsize/pYsize;
+        printf("tot = %f   ave = %f \n", tot, ave);
 
         list_image_ID();
 
-        if(ave > 30.0)
+        if(ave > 10.0)
         {
             /** compute offset */
             fft_correlation("imwfs", "imref", "outcorr");
