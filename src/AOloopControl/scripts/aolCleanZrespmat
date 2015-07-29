@@ -30,8 +30,8 @@ aolnb $loopnb
 aolcleanzrm zrespmat wfsref0 wfsmap dmmap 
 savefits zrespmat "!zrespmat.fits"
 savefits wfsref0 "!wfsref0.fits"
-savefits wfsmask "!wfsmask.fits"
-savefits dmmask "!dmmask.fits"
+savefits wfsmap "!wfsmap.fits"
+savefits dmmap "!dmmap.fits"
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmask.fits"
 listim
