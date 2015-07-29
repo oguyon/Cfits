@@ -1355,7 +1355,7 @@ state="menuconfigureloop"
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrepMc"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "./aolCleanZrespmat" C-m
+tmux send-keys -t ${tmuxname} "./aolCleanZrespmat ${rmamplum}" C-m
 ;;
 	zrespoff)
 zrespMstat="OFF"
