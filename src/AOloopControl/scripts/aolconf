@@ -2375,56 +2375,92 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
 
   	 gb05)
   	 gi="05"
-  	 value=${gainb[${gi}]}
+  	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
   	 gb06)
   	 gi="06"
-  	 value=${gainb[${gi}]}
+  	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
   	 gb07)
   	 gi="07"
-  	 value=${gainb[${gi}]}
+  	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
   	 gb08)
   	 gi="08"
-  	 value=${gainb[${gi}]}
+  	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
   	 gb09)
   	 gi="09"
-  	 value=${gainb[${gi}]}
+  	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
   	 gb10)
   	 gi="10"
-  	 value=${gainb[${gi}]}
+  	 value=${gainb[10#${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${gi}]=${value}
-  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+  	 ;; 
+
+  	 gb11)
+  	 gi="11"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+  	 ;; 
+
+  	 gb12)
+  	 gi="12"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+  	 ;; 
+
+  	 gb13)
+  	 gi="13"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+  	 ;; 
+
+  	 gb14)
+  	 gi="14"
+  	 value=${gainb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 gainb[${gi}]=${value}
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
 
