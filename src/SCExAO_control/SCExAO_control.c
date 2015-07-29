@@ -778,6 +778,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         printf("tot = %f   ave = %f \n", tot, tot/pXsize/pYsize);
 
 
+        list_image_ID();
 
         if(tot > 10.0*pXsize*pYsize)
         {
@@ -857,6 +858,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             printf("%s", command);
             r = system(command);
             usleep(delayus);
+        }
+        else
+        {
+            printf("Not enough light on detector... waiting... \n");
         }
     }
     r = system("rm stop_PyAlignCam.txt");
