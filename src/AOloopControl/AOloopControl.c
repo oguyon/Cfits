@@ -5522,7 +5522,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     long NBDMmodes;
     long sizeDM;
     long IDcmatc_active;
-
+    char name[200];
     
 
     printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
@@ -5622,9 +5622,13 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
             ii1++;
         }
     sizeDM_active = ii1;
-    aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
-
-
+ //   aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = sizeDM_active;
+    sizearray[1] = 1;
+    sprintf(name, "aol%ld_meas_act_active", LOOPNUMBER);
+    aoconfID_meas_act_active = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+    free(sizearray);
 
 
 
@@ -5759,13 +5763,23 @@ int AOcompute(long loop)
             AOconf[loop].sizeDM_active = ii1;
         }
 
-        aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
+//        aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = AOconf[loop].sizeDM_active;
+    sizearray[1] = 1;
+    sprintf(imname, "aol%ld_meas_act_active", LOOPNUMBER);
+    aoconfID_meas_act_active = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+    free(sizearray);
+
+
+
         if(aoconfID_meas_act==-1)
         {
             sizearray = (long*) malloc(sizeof(long)*2);
             sizearray[0] = AOconf[loop].sizexDM;
             sizearray[1] = AOconf[loop].sizeyDM;
-            aoconfID_meas_act = create_image_ID("measact", 2, sizearray, FLOAT, 1, 0);
+            sprintf(imname, "aol%ld_meas_act", LOOPNUMBER);
+            aoconfID_meas_act = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
             free(sizearray);
         }
   
