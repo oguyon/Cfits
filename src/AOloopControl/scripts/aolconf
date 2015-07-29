@@ -2958,17 +2958,17 @@ case $retval in
    	mkdir -p ./rec
   	tmuxname="aol${LOOPNUMBER}-ctr"
 	rm ./rec/imWFS0rec.fits
-  	tmux send-keys -t "rm imWFS0rec" C-m
-	tmux send-keys -t "imgstreamrec aol${LOOPNUMBER}_imWFS0 1000 imWFS0rec " C-m	
-	tmux send-keys -t "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
+  	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
+	tmux send-keys -t $tmuxname"imgstreamrec aol${LOOPNUMBER}_imWFS0 1000 imWFS0rec " C-m	
+	tmux send-keys -t $tmuxname"savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
 ;;
   	rec4)
 	mkdir -p ./rec
   	tmuxname="aol${LOOPNUMBER}-ctr"
 	rm ./rec/imWFS0rec.fits
-  	tmux send-keys -t "rm imWFS0rec" C-m
-	tmux send-keys -t "imgstreamrec aol${LOOPNUMBER}_imWFS0 10000 imWFS0rec " C-m
-	tmux send-keys -t "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
+  	tmux send-keys -t $tmuxname"rm imWFS0rec" C-m
+	tmux send-keys -t $tmuxname"imgstreamrec aol${LOOPNUMBER}_imWFS0 10000 imWFS0rec " C-m
+	tmux send-keys -t $tmuxname"savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
 esac
 ;; 
    1) state="menutop";;   
