@@ -4268,8 +4268,8 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
 
     initcontrMcact_GPU = 0;
 
-    save_fits("contrMc0", "!test_contrMc0.fits");//TEST
-    save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
+   // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
+   // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
     
     return(0);
 }
@@ -5827,9 +5827,6 @@ int AOcompute(long loop)
                         data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_imWFS2].array.F[WFS_active_map[wfselem_active]];
                     data.image[aoconfID_imWFS2_active].md[0].cnt0++;
                 }
-                printf("Vector wfs re-mapped into %ld active pixels\n", AOconf[loop].sizeWFS_active);
-                fflush(stdout);
-
                 if(COMPUTE_GPU_SCALING==1)
                 {
                     if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)

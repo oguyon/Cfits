@@ -684,9 +684,6 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
        gpumatmultconf[index].refWFSinit[device] = initWFSref;
     
-    printf("...\n");
-    fflush(stdout);
-
     return(0);
 }
 
@@ -707,9 +704,6 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
     if(index==0) /// main CM multiplication loop
     {
-        printf("CM load\n");//TEST
-        fflush(stdout);
- 
         //	gpumatmultconf[index].NBstreams = 6;
         if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
             if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
@@ -718,13 +712,9 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
                 GPUloadCmat(index);
                 gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
             }
-        
     }
     
-       printf("--- 000\n");//TEST
-        fflush(stdout);
  
-
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
     if((gpumatmultconf[index].sem==0)||(gpumatmultconf[index].gpuinit==0))
@@ -750,10 +740,6 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     *status = *status + 1;  // -> 10
 
 
-    printf("--- 001\n");//TEST
-    fflush(stdout);
-
-
 
     if(gpumatmultconf[index].sem==0)
     {
@@ -772,9 +758,6 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             sem_wait(gpumatmultconf[index].semptr5[ptn]); // WAIT FOR RESULT
     }
 
-   printf("--- 002\n");//TEST
-    fflush(stdout);
-
 
     // SUM RESULTS FROM SEPARATE GPUs
     *status = *status + 1;  // -> 11
@@ -783,9 +766,6 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
-
-   printf("--- 003\n");//TEST
-    fflush(stdout);
 
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
@@ -799,24 +779,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     if(data.image[gpumatmultconf[index].IDout].sem > 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
 
-   printf("--- 004\n");//TEST
-    fflush(stdout);
-
 
 //    sem_post(data.image[gpumatmultconf[index].IDout].semlog);
-
-   printf("--- 005\n");//TEST
-    fflush(stdout);
 
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     *status = *status + 1; // -> 12
-
-   printf("--- 006\n");//TEST
-    fflush(stdout);
-
 
     return(0);
 }
