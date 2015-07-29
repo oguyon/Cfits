@@ -2132,16 +2132,16 @@ NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
 do
-i2=$(printf "%02d" "$i")
+i2=$(printf "%0d" "$i")
 
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 #menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
 
 fname="conf/conf_gainb${i2}.txt"
 if [ -f "$fname" ]; then
-gainb[${i2}]=$( cat ${fname} )
+gainb[10#${i2}]=$( cat ${fname} )
 else
-gainb[${i2}]="1.000"
+gainb[10#${i2}]="1.000"
 fi
 string=$( printf "% 3d" "${NBblockmodes}" )
 menuitems+=( "gb${i2}" "[ ${gainb[${i2}]} ] Modal block ${i2} gain  ($string modes)" )
