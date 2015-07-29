@@ -2132,7 +2132,7 @@ NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
 do
-i2=$(printf "%0d" "$i")
+i2=$(printf "%02d" "$i")
 
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 #menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
