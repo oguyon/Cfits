@@ -4705,9 +4705,9 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     // STEP 1: build individually cleaned RM
     for(kmat=0; kmat<NBmat; kmat++)
         {
-            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
+            r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
             IDzrespfp = load_fits(fname, "zrespfp", 2);
-            r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
+            r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
             IDzrespfm = load_fits(fname, "zrespfm", 2);
 
             sizexWFS = data.image[IDzrespfp].md[0].size[0];
