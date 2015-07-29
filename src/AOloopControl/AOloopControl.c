@@ -4759,13 +4759,13 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                         printf("element %ld is NAN -> replacing by 0\n", ii);
                         data.image[IDzrespfm].array.F[act*sizeWFS+ii] = 0.0;
                     }
-                    fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];
-                    
+                    fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];                    
                 }
             //     printf("   %12g   %12g\n", fluxpos, fluxneg);
 
             for(ii=0; ii<sizeWFS; ii++)
             {
+        
                 data.image[IDzrespfp].array.F[act*sizeWFS+ii] /= fluxpos;
                 data.image[IDzrespfm].array.F[act*sizeWFS+ii] /= fluxneg;
                 data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]-data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
