@@ -4670,7 +4670,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 //
 // median-averages multiple response matrices to create a better one
 //
-int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
+int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
 {
     long NBmat; // number of matrices to average
     FILE *fp;
@@ -4681,6 +4681,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     long kmat;
     long IDzrespfp, IDzrespfm;
     long sizexWFS, sizeyWFS, sizeDM, sizeWFS;
+    long sizexDM, sizeyDM;
     long *IDzresp_array;
     long act, ii;
     double fluxpos, fluxneg;
@@ -4695,7 +4696,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     long IDWFSmask, IDDMmask;
     float lim, rms;
     double tmpv;
-
+    long IDdm;
 
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
@@ -4710,6 +4711,11 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     }
 
     printf("Processing %ld matrices\n", NBmat);
+
+    sprintf(name, "aol%ld_dmC", loop);
+    IDdm = read_sharedmem_image(name);
+    sizexDM = data.image[IDdm].md[0].size[0];
+    sizeyDM = data.image[IDdm].md[0].size[1];
 
     IDzresp_array = (long*) malloc(sizeof(long)*NBmat);
     IDWFSrefc_array = (long*) malloc(sizeof(long)*NBmat);
@@ -4759,8 +4765,8 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     // STEP 2: average / median each pixel
     IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, sizeDM);
     IDWFSref = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
-    IDWFSmap = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
-    IDDMmap = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
+    IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
+    IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
     IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
     IDDMmask = create_2Dimage_ID("dmmask", sizexWFS, sizeyWFS);
 
@@ -4812,7 +4818,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
         ave /= (kmax-kmin);
         data.image[IDWFSref].array.F[ii] = ave;
     }
-
+    printf("\n\n");
 
 
     free(IDzresp_array);
