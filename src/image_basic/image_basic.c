@@ -3837,7 +3837,9 @@ long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)
         
         memcpy(ptr, data.image[IDstream].array.F, sizeof(float)*xysize);
         ptr += sizeof(float)*xysize;
+        kk++;
     }
+    printf("\n\n");
 
     return(ID);
 }
