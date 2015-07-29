@@ -3831,7 +3831,10 @@ long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)
     while(kk!=NBframes)
     {
         while(cnt==data.image[ID].md[0].cnt0)
-            usleep(waitdelayus);
+            {
+                usleep(waitdelayus);
+            }
+        cnt = data.image[ID].md[0].cnt0;
         printf("\r%ld / %ld       ", kk, NBframes);
         fflush(stdout);
         
