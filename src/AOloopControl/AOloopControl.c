@@ -4727,6 +4727,13 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
                     for(ii=0;ii<sizeWFS;ii++)
                         fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];
                     printf("   %12g   %12g\n", fluxpos, fluxneg);
+
+                    for(ii=0;ii<sizeWFS;ii++)
+                        {
+                            data.image[IDzrespfp].array.F[act*sizeWFS+ii] /= fluxpos;
+                            data.image[IDzrespfm].array.F[act*sizeWFS+ii] /= fluxneg;
+                            data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]-data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
+                        }                        
                 }
             delete_image_ID("zrespfp");
             delete_image_ID("zrespfm");           
