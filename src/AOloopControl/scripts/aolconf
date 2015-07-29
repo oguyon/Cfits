@@ -764,9 +764,8 @@ confselected=$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]"
 
 
-
 stringcenter "AO CONFIGURE AND CONTROL"
-menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "C" "Configure/link AO loop" )
 menuitems+=( "L" "Control AO loop" )
@@ -774,10 +773,14 @@ menuitems+=( "T" "Test mode: simulated AO system" )
 menuitems+=( "V" "View / monitor" )
 menuitems+=( " " " ")
 
-stringcenter "CUSTOM EXTERNAL SCRIPTS"
+stringcenter "DATA LOGGING / ANALYSIS"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
-menuitems+=( "A" "Align")
+menuitems+=( "R" "Record / analyze")
+menuitems+=( " " " ")
 
+stringcenter "CUSTOM EXTERNAL SCRIPTS"
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "A" "Align")
 
 
 dialog --colors --title "AO loop top menu  - LOOP ${LOOPNUMBER}" \
@@ -785,35 +788,23 @@ dialog --colors --title "AO loop top menu  - LOOP ${LOOPNUMBER}" \
 --cancel-label "Exit" \
 --default-item "${menutop_default}" \
  --menu "$menuname" \
- 50 80 100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+
 
 retval=$?
 choiceval=$(cat $tempfile)
-
+menutop_default="$choiceval"
 case $retval in
    0) # button
 	case $choiceval in
-   	 C) 
-menutop_default="C"
-state="menuconfigureloop"
-;;   
-   	 L) 
-menutop_default="L"
-state="menucontrolloop"
-;;
-   	 T) 
-menutop_default="T"
-state="menutestmode"   
-;;
-   	 V) 
-menutop_default="V"
-state="menuview"   
-;;
-   	 A) 
-menutop_default="A"
-state="menualign"   
-;;
+   	 C) state="menuconfigureloop";;   
+   	 L) state="menucontrolloop";;
+   	 T) state="menutestmode"   ;;
+   	 V) state="menuview" ;;
 
+ 	R) state="menurecord" ;;
+
+   	 A) state="menualign";;
 
 	esac;;
    1) state="menuexit";;   
@@ -833,6 +824,28 @@ stateok=1
 ./AOloopAlign.bash
 state="menutop"
 fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2323,8 +2336,8 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
       	do
 	 gi=$(printf "%02d" "$i")
 	gainb[10#${gi}]=${value}
-	echo "${gainb[#10${gi}]}" > ./conf/conf_gainb${gi}.txt
-	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[#10${gi}]}" C-m
+	echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
 	done
 	 ;;
 	 
@@ -2333,8 +2346,8 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 value=${gainb[${gi}]}
 	 SelectValue01 100 1200 50
   	 gainb[${#10gi}]=${value}
-  	 echo "${gainb[#10${gi}]}" > ./conf/conf_gainb${gi}.txt
-  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[#10${gi}]}" C-m
+  	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
   	 ;; 
 
   	 gb01)
@@ -2878,6 +2891,93 @@ esac
 esac
 
 fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# =====================================================
+# ======== RECORD/ANALYZE  ============================
+# =====================================================
+
+if [ $state = "menurecord" ]; then
+stateok=1
+
+
+
+menuname="RECORD / ANALYZE"
+
+
+stringcenter "HELP"
+menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
+menuitems+=( " " " " )
+
+
+stringcenter "RECORD"
+menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "rec3" "Record   1000 frames" )
+menuitems+=( "rec4" "Record  10000 frames" )
+
+
+dialog --colors --title "RECORD / ANALYZE  - LOOP ${LOOPNUMBER}" \
+--ok-label " Select " \
+--cancel-label "Top" \
+--help-button --help-label "Exit" \
+--default-item "${menurecord_default}" \
+ --menu "$menuname" \
+ $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+
+
+retval=$?
+choiceval=$(cat $tempfile)
+menurecord_default="$choiceval"
+state="menurecord"
+case $retval in
+   0) # Monitor
+	case $choiceval in
+   	rec3)
+   	mkdir -p ./rec
+  	tmuxname="aol${LOOPNUMBER}-ctr"
+	rm ./rec/imWFS0rec.fits
+  	tmux send-keys -t "rm imWFS0rec" C-m
+	tmux send-keys -t "imgstreamrec aol${LOOPNUMBER}_imWFS0 1000 imWFS0rec " C-m	
+	tmux send-keys -t "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
+;;
+  	rec4)
+	mkdir -p ./rec
+  	tmuxname="aol${LOOPNUMBER}-ctr"
+	rm ./rec/imWFS0rec.fits
+  	tmux send-keys -t "rm imWFS0rec" C-m
+	tmux send-keys -t "imgstreamrec aol${LOOPNUMBER}_imWFS0 10000 imWFS0rec " C-m
+	tmux send-keys -t "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
+esac
+;; 
+   1) state="menutop";;   
+  2) state="menuexit";;
+   255) state="menuexit";;
+esac
+
+fi
+
 
 
 

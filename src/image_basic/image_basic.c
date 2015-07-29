@@ -159,6 +159,24 @@ int image_basic_streamfeed_cli()
         return 1;
 }
 
+int IMAGE_BASIC_streamrecord_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,4) == 0)
+    {
+        IMAGE_BASIC_streamrecord(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
+
+
+
+
 
 
 int init_image_basic()
@@ -251,6 +269,19 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].example,"imgstreamfeed im imstream 100");
     strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)");
     data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imgstreamrec");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = IMAGE_BASIC_streamrecord_cli;
+    strcpy(data.cmd[data.NBcmd].info,"record stream of images");
+    strcpy(data.cmd[data.NBcmd].syntax,"<stream> <# frames> <output>");
+    strcpy(data.cmd[data.NBcmd].example,"imgstreamrec imstream 100 imrec");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)");
+    data.NBcmd++;
+
+
+
+
 
 
     // add atexit functions here
@@ -3747,5 +3778,42 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     return(0);
 }
 
+
+// works only for floats
+//
+long IMAGE_BASIC_streamrecord(char *streamname, long NBframes, char *IDname)
+{
+    long ID;
+    long IDstream;
+    long xsize, ysize, zsize, xysize;
+    long cnt;
+    long waitdelayus = 50;
+    long ii, jj, kk;
+    char *ptr;
+    
+    
+    IDstream = image_ID(streamname);
+    xsize = data.image[IDstream].md[0].size[0];
+    ysize = data.image[IDstream].md[0].size[1];
+    zsize = NBframes;
+    xysize = xsize*ysize;
+    
+    ID = create_3Dimage_ID(IDname, xsize, ysize, zsize);
+    cnt = data.image[IDstream].md[0].cnt0;
+    
+    kk = 0;
+    
+    ptr = (char*) data.image[ID].array.F;
+    while(kk!=NBframes)
+    {
+        while(cnt==data.image[ID].md[0].cnt0)
+            usleep(waitdelayus);
+        
+        memcpy(ptr, data.image[IDstream].array.F, sizeof(float)*xysize);
+        ptr += sizeof(float)*xysize;
+    }
+
+    return(ID);
+}
 
 
