@@ -161,7 +161,7 @@ int image_basic_streamfeed_cli()
 
 int IMAGE_BASIC_streamrecord_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,4) == 0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3) == 0)
     {
         IMAGE_BASIC_streamrecord(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
         return 0;
