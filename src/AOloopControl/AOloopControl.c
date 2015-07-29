@@ -4817,7 +4817,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             for(k=kmin; k<kmax; k++)
                 ave += pixvalarray[k];
             ave /= (kmax-kmin);
-            data.image[IDzrm].array.F[act*sizeWFS+ii] = ave;
+            data.image[IDzrm].array.F[act*sizeWFS+ii] = ave/rmampl;
         }
     }
     free(pixvalarray);
