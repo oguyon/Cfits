@@ -4367,6 +4367,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     float *arrayf;
     char fname[200];
     char name[200];
+    char command[200];
     long IDpos, IDneg;
     float tot, v1, rms;
     long *sizearray;
@@ -4558,6 +4559,12 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/cntn;
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
             save_fits(zrespm_name, fname);
+            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
+            save_fits("zrespfp", fname);
+           r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter);
+            save_fits("zrespfm", fname);
+
+
 
             total = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -4585,11 +4592,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
             save_fits(DMmap_name, fname);
 
-            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", DMmap_name, iter);
-            save_fits("zrespfp", fname);
-           r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", DMmap_name, iter);
-            save_fits("zrespfm", fname);
-
+ 
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
@@ -4601,7 +4604,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 }
                 data.image[ID_WFSmap].array.F[ii] = rms;
             }
-            sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSmap_name, iter);
+            sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
             save_fits(WFSmap_name, fname);
             
             if(mode==1) // compute WFSmask and DMmask
@@ -4628,7 +4631,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             }
             
         }
-        
+        r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
+        r = system(command);
         iter++;
     }
 
@@ -4647,6 +4651,10 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 //
 int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
 {
+    long NBiter;
+    
+    
+    
     
     
     
