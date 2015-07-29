@@ -2144,7 +2144,7 @@ else
 gainb[10#${i2}]="1.000"
 fi
 string=$( printf "% 3d" "${NBblockmodes}" )
-menuitems+=( "gb${i2}" "[ ${gainb[${i2}]} ] Modal block ${i2} gain  ($string modes)" )
+menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
 done
 
 
