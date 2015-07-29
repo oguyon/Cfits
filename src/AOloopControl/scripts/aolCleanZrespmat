@@ -1,0 +1,37 @@
+#! /bin/bash
+
+EXPECTED_ARGS=0
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Measure zonal resp matrix ------"
+  echo
+  echo "  $0"
+  echo
+  echo "Default output: "
+  echo "  zrespmat.fits : zonal response matrix"
+  echo "  wfsref0.fits   : wfs reference"
+  echo "  wfsmap.fits   : WFS response map"
+  echo "  dmmap.fits    : DM response map"
+  echo
+  echo "Cleans zonal response matrices in ./zresptmp/ directory"
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname="aol${loopnb}zrespM"
+
+
+Cfits -n $pname << EOF
+aolnb $loopnb
+aolcleanzrm zrespmat wfsref0 wfsmap dmmap 
+savefits wfsmask "!wfsmask.fits"
+savefits dmmask "!dmmask.fits"
+listim
+exit
+EOF
+
+

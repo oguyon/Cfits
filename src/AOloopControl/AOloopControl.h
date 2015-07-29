@@ -144,6 +144,7 @@ int set_DM_modes(long loop);
 int set_DM_modesRM(long loop);
 
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode);
+int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);
 
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);

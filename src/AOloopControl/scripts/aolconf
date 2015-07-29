@@ -1019,9 +1019,11 @@ fi
 if [ "${zrespMstat}" = "OFF" ];
 then
 menuitems+=( "zresp_on" "START zonal RM acquisition" )
+menuitems+=( "zrespc" "CLEAN zonal RM")
 menuitems+=( "zrespoff" "            PROCESS zrespM" )
 else
 menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
+menuitems+=( "zrespc" "CLEAN zonal RM")
 menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
 fi
 
@@ -1349,6 +1351,11 @@ tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
 state="menuconfigureloop"
+;;
+	zrespc) # clean zrespm
+tmuxname="aol${LOOPNUMBER}zrepMc"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} "./aolCleanZrespmat" C-m
 ;;
 	zrespoff)
 zrespMstat="OFF"
