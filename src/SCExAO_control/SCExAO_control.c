@@ -780,7 +780,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
         list_image_ID();
 
-        if(tot > 10.0*pXsize*pYsize)
+        if(ave > 30.0)
         {
             /** compute offset */
             fft_correlation("imwfs", "imref", "outcorr");
