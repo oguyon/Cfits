@@ -1,13 +1,13 @@
 #! /bin/bash
 
-EXPECTED_ARGS=0
+EXPECTED_ARGS=1
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo
   echo "------ Measure zonal resp matrix ------"
   echo
-  echo "  $0"
+  echo "  $0 <rm ampl[um]>"
   echo
   echo "Default output: "
   echo "  zrespmat.fits : zonal response matrix"
@@ -27,7 +27,7 @@ pname="aol${loopnb}zrespM"
 
 Cfits -n $pname << EOF
 aolnb $loopnb
-aolcleanzrm zrespmat wfsref0 wfsmap dmmap 
+aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1
 savefits zrespmat "!zrespmat.fits"
 savefits wfsref0 "!wfsref0.fits"
 savefits wfsmap "!wfsmap.fits"

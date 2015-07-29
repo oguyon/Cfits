@@ -289,9 +289,9 @@ int Measure_zonalRM_cli()
 
 int AOloopControl_ProcessZrespM_cli()
 {
-    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)==0)
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,1)==0)
     {
-        AOloopControl_ProcessZrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+        AOloopControl_ProcessZrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numf);
         return 0;
     }
     else
@@ -677,9 +677,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_ProcessZrespM_cli;
     strcpy(data.cmd[data.NBcmd].info,"clean zonal resp mat, WFS ref, DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS ref fname [string]>  <output WFS response map fname [string]>  <output DM response map fname [string]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm zrm wfsref wfsmap dmmap");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS ref fname [string]>  <output WFS response map fname [string]>  <output DM response map fname [string]> <RM ampl [um]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolcleanzrm zrm wfsref wfsmap dmmap 0.05");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double ampl)");
     data.NBcmd++;
 
 
@@ -4670,7 +4670,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 //
 // median-averages multiple response matrices to create a better one
 //
-int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name)
+int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl)
 {
     long NBmat; // number of matrices to average
     FILE *fp;
