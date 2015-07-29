@@ -1356,11 +1356,16 @@ state="menuconfigureloop"
 tmuxname="aol${LOOPNUMBER}zrepMc"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./aolCleanZrespmat ${rmamplum}" C-m
+rm cleanZresp.run
+tmux send-keys -t  ${tmuxname} "touch cleanZresp.run" C-m
+waitforfile cleanZresp.run
+rm cleanZresp.run
 ;;
 	zrespoff)
 zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
+tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolCleanZrespmat ${rmamplum}" C-m
 #rm wfsmask.fits
 #rm dmmask.fits
 pkill -USR1 aol${LOOPNUMBER}zrespM
@@ -1394,8 +1399,11 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmap/dmmap_${datestr}.fi
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "exit" C-m
-echo "Processing....\n"
-sleep 1.0
+tmux send-keys -t $ "./aolCleanZrespmat ${rmamplum}" C-m
+rm cleanZresp.run
+tmux send-keys -t aol${LOOPNUMBER}zrespM "touch cleanZresp.run" C-m
+waitforfile cleanZresp.run
+rm cleanZresp.run
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
