@@ -27,7 +27,7 @@
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
-#include "COREMOD_iofits/COREMOD_iofits.h"
+#include "COREMOD_tools/COREMOD_tools.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "linopt_imtools/linopt_imtools.h"
 #include "AOloopControl/AOloopControl.h"
@@ -4683,8 +4683,10 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
     long *IDzresp_array;
     long act, ii;
     double fluxpos, fluxneg;
-    
-    
+    float *pixvalarray;
+    long k, kmin, kmax, kband;
+    long IDzrm;
+    float ave;
     
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
@@ -4726,7 +4728,7 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
                         fluxpos += data.image[IDzrespfp].array.F[act*sizeWFS+ii];
                     for(ii=0;ii<sizeWFS;ii++)
                         fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];
-                    printf("   %12g   %12g\n", fluxpos, fluxneg);
+               //     printf("   %12g   %12g\n", fluxpos, fluxneg);
 
                     for(ii=0;ii<sizeWFS;ii++)
                         {
@@ -4739,7 +4741,31 @@ int AOloopControl_ProcessZrespM(int loop, char *zrespm_name, char *WFSref0_name,
             delete_image_ID("zrespfm");           
         }
         
+        
+    // STEP 2: average / median each pixel
+    IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, sizeDM);
+    pixvalarray = (float*) malloc(sizeof(float)*NBmat);    
+    kband = 0;
+    kband = (long) (0.3*NBmat);
+
+            kmin = kband;
+            kmax = NBmat-kband;
+        
+    for(act=0; act<sizeDM; act++)
+        for(ii=0;ii<sizeWFS;ii++)
+            {
+                for(kmat=0; kmat<NBmat; kmat++)
+                    pixvalarray[kmat] = data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] ;
+                quick_sort_float(pixvalarray, kmat);
+                ave = 0.0;
+                for(k=kmin;k<kmax;k++)
+                    ave += pixvalarray[k];
+                ave /= (kmax-kmin);
+                data.image[IDzrm].array.F[act*sizeWFS+ii] = ave;
+            }
+        
     free(IDzresp_array);
+    free(pixvalarray);
     
     list_image_ID();
     
