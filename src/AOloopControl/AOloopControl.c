@@ -5839,9 +5839,8 @@ int AOcompute(long loop)
                     if(initWFSref_GPU==0) // initialize WFS reference
                     {
                         for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                        {
                             data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[wfselem_active]];
-                        }
+                    
                         data.image[aoconfID_imWFS2_active].md[0].cnt0++;
                         fflush(stdout);
                     }
