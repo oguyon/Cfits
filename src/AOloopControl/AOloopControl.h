@@ -142,7 +142,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain);// mod
 
 int set_DM_modes(long loop);
 int set_DM_modesRM(long loop);
-
+long AOloopControl_mkHadamardModes50(char *outname);
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode);
 int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);
@@ -153,6 +153,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 int AOcompute(long loop);
 int AOloopControl_run();
 
+long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *outname);
 int AOloopControl_printloopstatus(long loop, long nbcol);
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
 int AOloopControl_statusStats();

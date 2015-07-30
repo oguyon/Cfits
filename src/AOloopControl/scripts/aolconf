@@ -851,6 +851,87 @@ fi
 
 
 
+function UpdateModes {
+
+value=${SVDlim[10#${mb}]}
+SelectValue01 100 1001 50
+SVDlim[10#${mb}]=${value}
+echo "${SVDlim[10#${mb}]}" > ./conf/conf_SVDlim${mb}.txt
+tmuxname="aol${LOOPNUMBER}mkmodes"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} ${mb} ${SVDlim[10#${mb}]}" C-m
+	
+tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
+waitforfile mkmodes.run0
+rm mkmodes.run0
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
+echo "DMmodes/DMmodes_${datestr}.fits" > ./conf/conf_DMmodes_fname.txt
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
+echo "respM/respM_${datestr}.fits" > ./conf/conf_respM_fname.txt
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat.fits contrM/contrM_${datestr}.fits" C-m
+echo "contrM/contrM_${datestr}.fits" > ./conf/conf_contrM_fname.txt
+
+
+i2="$mb"
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits" C-m
+echo "DMmodes/DMmodes${i2}_${datestr}.fits" > ./conf/conf_DMmodes${i2}_fname.txt
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits" C-m
+echo "respM/respM${i2}_${datestr}.fits" > ./conf/conf_respM${i2}_fname.txt
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits" C-m
+echo "contrM/contrM${i2}_${datestr}.fits" > ./conf/conf_contrM${i2}_fname.txt
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits" C-m
+echo "contrMc/contrMc${i2}_${datestr}.fits" > ./conf/conf_contrMc${i2}_fname.txt
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits" C-m
+echo "contrMcact/contrMcact${i2}_${datestr}.fits" > ./conf/conf_contrMcact${i2}_fname.txt
+
+
+
+tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run" C-m
+waitforfile mkmodes.run
+
+
+ReadConfFile "DMmodes"
+ReadConfFile "respM"
+ReadConfFile "contrM"
+
+i2="${mb}"
+ReadConfFile "DMmodes${i2}"
+ReadConfFile "respM${i2}"
+ReadConfFile "contrM${i2}"
+ReadConfFile "contrMc${i2}"
+ReadConfFile "contrMcact${i2}"
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1580,16 +1661,44 @@ menucontrolloop_default="CM"
 state="menuconfigureloop"
 ;;
 
-	SetSVD00)
-  	mb="00"
-  	value=${SVDlim[10#${mb}]}
-	SelectValue01 100 1001 50
-  	SVDlim[10#${mb}]=${value}
- 	echo "${SVDlim[10#${mb}]}" > ./conf/conf_SVDlim${mb}.txt
-  	tmuxname="aol${LOOPNUMBER}mkmodes"
-  	tmux new-session -d -s $tmuxname
-	tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} ${mb} ${SVDlim[10#${mb}]}" C-m
-;;
+	SetSVD00) mb="00"
+  	UpdateModes ;;
+
+	SetSVD01) mb="01"
+  	UpdateModes ;;
+
+	SetSVD02) mb="02"
+  	UpdateModes ;;
+
+	SetSVD03) mb="03"
+  	UpdateModes ;;
+
+	SetSVD04) mb="04"
+  	UpdateModes ;;
+
+	SetSVD05) mb="05"
+  	UpdateModes ;;
+
+	SetSVD06) mb="06"
+  	UpdateModes ;;
+
+	SetSVD07) mb="07"
+  	UpdateModes ;;
+
+	SetSVD08) mb="08"
+  	UpdateModes ;;
+
+	SetSVD09) mb="09"
+  	UpdateModes ;;
+
+	SetSVD10) mb="10"
+  	UpdateModes ;;
+
+	SetSVD11) mb="11"
+  	UpdateModes ;;
+
+	SetSVD12) mb="12"
+  	UpdateModes ;;
 
 
 	DMm00)
@@ -2984,8 +3093,8 @@ menuitems+=( " " " " )
 
 stringcenter "RECORD"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
-menuitems+=( "rec3" "Record   1000 frames" )
-menuitems+=( "rec4" "Record  10000 frames" )
+menuitems+=( "rec3" "Record / analyze   1000 WFS frames" )
+menuitems+=( "rec4" "Record / analyze  10000 WFS frames" )
 
 
 dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
