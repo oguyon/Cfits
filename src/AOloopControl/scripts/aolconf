@@ -420,7 +420,15 @@ ln -s $PWD/${respMfname} conf/aol${LOOPNUMBER}_respM.fits
 }
 
 
+
+
+
 # arg1 : image/stream name
+#
+# Reads conf/conf_XXX_fname.txt
+# -> moves file to shared mem under aol#_XXX stream
+# -> makes sym link to conf/aol#_XXX.fits
+#
 function ReadConfFile {
 file="./conf/conf_$1_fname.txt"
 if [ -a $file ]
@@ -1023,15 +1031,27 @@ echo "OFF" > ./status/stat_zrespM.txt
 fi
 
 
+
+zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 if [ "${zrespMstat}" = "OFF" ];
 then
-menuitems+=( "zresp_on" "START zonal RM acquisition" )
-menuitems+=( "zrespc" "CLEAN zonal RM")
+menuitems+=( "zresp_on" "START zonal RMs acquisition" )
+if [ "${zrespmatnbiter}" -lt 4 ]; then
+menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
+else
+menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
+fi
+
 #menuitems+=( "zrespoff" "            PROCESS zrespM" )
 menuitems+=( " " " ")
 else
 menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
-menuitems+=( "zrespc" "CLEAN currently accumulated zonal RM")
+if [ "${zrespmatnbiter}" -lt 4 ]; then
+menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
+else
+menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
+fi
+
 menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
 fi
 
@@ -1106,8 +1126,14 @@ for i in `seq 0 $(( $NBblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
+
+#menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
+
+
+SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
-menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
+
+menuitems+=( "SetSVD${i2}" "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes - SVD = ${SVDlim[10#${i2}]}\Zn")
 
 makemenuitemstringaolshm "DMmodes${i2}" "DM control modes"
 menuitems+=( "DMm${i2}" "$menustring" )
@@ -1372,17 +1398,23 @@ echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
 echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
-tmux send-keys -t ${tmuxname} "./fits2shmim zrespM/zrespM_${datestr}.fits aol${LOOPNUMBER}_zrespm" C-m
-tmux send-keys -t ${tmuxname} "./fits2shmim wfsref0/wfsref0_${datestr}.fits aol${LOOPNUMBER}_wfsref0" C-m
-tmux send-keys -t ${tmuxname} "./fits2shmim wfsmap/wfsmap_${datestr}.fits aol${LOOPNUMBER}_wfsmap" C-m
-tmux send-keys -t ${tmuxname} "./fits2shmim dmmap/dmmap_${datestr}.fits aol${LOOPNUMBER}_dmmap" C-m
-tmux send-keys -t ${tmuxname} "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
-tmux send-keys -t ${tmuxname} "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
+#tmux send-keys -t ${tmuxname} "./fits2shmim zrespM/zrespM_${datestr}.fits aol${LOOPNUMBER}_zrespm" C-m
+#tmux send-keys -t ${tmuxname} "./fits2shmim wfsref0/wfsref0_${datestr}.fits aol${LOOPNUMBER}_wfsref0" C-m
+#tmux send-keys -t ${tmuxname} "./fits2shmim wfsmap/wfsmap_${datestr}.fits aol${LOOPNUMBER}_wfsmap" C-m
+#tmux send-keys -t ${tmuxname} "./fits2shmim dmmap/dmmap_${datestr}.fits aol${LOOPNUMBER}_dmmap" C-m
+#tmux send-keys -t ${tmuxname} "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
+#tmux send-keys -t ${tmuxname} "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
 rm cleanZresp.run
 tmux send-keys -t  ${tmuxname} "touch cleanZresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanZresp.run
 rm cleanZresp.run
+ReadConfFile "zrespM"
+ReadConfFile "wfsref0"
+ReadConfFile "wfsmap"
+ReadConfFile "dmmap"
+ReadConfFile "wfsmask"
+ReadConfFile "dmmask"
 sleep 0.5
 ;;
 	zrespoff)
@@ -1411,17 +1443,23 @@ echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
 echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
-tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim zrespM/zrespM_${datestr}.fits aol${LOOPNUMBER}_zrespm" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsref0/wfsref0_${datestr}.fits aol${LOOPNUMBER}_wfsref0" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmap/wfsmap_${datestr}.fits aol${LOOPNUMBER}_wfsmap" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmap/dmmap_${datestr}.fits aol${LOOPNUMBER}_dmmap" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim zrespM/zrespM_${datestr}.fits aol${LOOPNUMBER}_zrespm" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsref0/wfsref0_${datestr}.fits aol${LOOPNUMBER}_wfsref0" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmap/wfsmap_${datestr}.fits aol${LOOPNUMBER}_wfsmap" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmap/dmmap_${datestr}.fits aol${LOOPNUMBER}_dmmap" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
 rm cleanZresp.run
 tmux send-keys -t aol${LOOPNUMBER}zrespM "touch cleanZresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "exit" C-m
 waitforfile cleanZresp.run
 rm cleanZresp.run
+ReadConfFile "zrespM"
+ReadConfFile "wfsref0"
+ReadConfFile "wfsmap"
+ReadConfFile "dmmap"
+ReadConfFile "wfsmask"
+ReadConfFile "dmmask"
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
@@ -1540,6 +1578,17 @@ echo "$fname" > ./conf/conf_contrM_fname.txt
 ReadConfFile "contrM"
 menucontrolloop_default="CM"
 state="menuconfigureloop"
+;;
+
+	SetSVD00)
+  	mb="00"
+  	value=${SVDlim[10#${mb}]}
+	SelectValue01 100 1001 50
+  	SVDlim[10#${mb}]=${value}
+ 	echo "${SVDlim[10#${mb}]}" > ./conf/conf_SVDlim${mb}.txt
+  	tmuxname="aol${LOOPNUMBER}mkmodes"
+  	tmux new-session -d -s $tmuxname
+	tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} ${mb} ${SVDlim[10#${mb}]}" C-m
 ;;
 
 
@@ -1888,41 +1937,42 @@ echo "$cpamax" > ./conf/conf_cpamax.txt
 rm mkmodes.run
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax}" C-m
+tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} -1 0.05" C-m
 tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 
-tmux send-keys -t $tmuxname "cp ./tmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
 echo "DMmodes/DMmodes_${datestr}.fits" > ./conf/conf_DMmodes_fname.txt
 
-tmux send-keys -t $tmuxname "cp ./tmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
+
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
 echo "respM/respM_${datestr}.fits" > ./conf/conf_respM_fname.txt
 
-tmux send-keys -t $tmuxname "cp ./tmp/cmat.fits contrM/contrM_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat.fits contrM/contrM_${datestr}.fits" C-m
 echo "contrM/contrM_${datestr}.fits" > ./conf/conf_contrM_fname.txt
 
 
 for i in `seq 0 99`;
 do
 i2=$(printf "%02d" "$i")
-fname="tmp/fmodes_${i2}.fits"
+fname="mkmodestmp/fmodes_${i2}.fits"
 if [ -e "$fname" ]; then
-tmux send-keys -t $tmuxname "cp ./tmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits" C-m
 echo "DMmodes/DMmodes${i2}_${datestr}.fits" > ./conf/conf_DMmodes${i2}_fname.txt
 
-tmux send-keys -t $tmuxname "cp ./tmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits" C-m
 echo "respM/respM${i2}_${datestr}.fits" > ./conf/conf_respM${i2}_fname.txt
 
-tmux send-keys -t $tmuxname "cp ./tmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits" C-m
 echo "contrM/contrM${i2}_${datestr}.fits" > ./conf/conf_contrM${i2}_fname.txt
 
-tmux send-keys -t $tmuxname "cp ./tmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits" C-m
 echo "contrMc/contrMc${i2}_${datestr}.fits" > ./conf/conf_contrMc${i2}_fname.txt
 
-tmux send-keys -t $tmuxname "cp ./tmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits" C-m
 echo "contrMcact/contrMcact${i2}_${datestr}.fits" > ./conf/conf_contrMcact${i2}_fname.txt
 fi
 done
@@ -1938,7 +1988,7 @@ ReadConfFile "contrM"
 for i in `seq 0 99`;
 do
 i2=$(printf "%02d" "$i")
-fname="tmp/fmodes_${i2}.fits"
+fname="mkmodestmp/fmodes_${i2}.fits"
 if [ -e "$fname" ]; then
 ReadConfFile "DMmodes${i2}"
 ReadConfFile "respM${i2}"
@@ -2505,7 +2555,7 @@ modenb="00030"
 tmuxname="aol${LOOPNUMBER}zpinject"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zpin" C-m
-tmux send-keys -t $tmuxname "loadfits \"tmp/fmodes0all.fits\" modec" C-m
+tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
 tmux send-keys -t $tmuxname "breakcube modec" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
@@ -2939,10 +2989,6 @@ menuitems+=( "rec4" "Record  10000 frames" )
 
 
 dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
-
-
-
-#dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNUMBER}" --ok-label "Select" --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menucontrolloop_default}" --menu "$menuname"  $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
 
 
 

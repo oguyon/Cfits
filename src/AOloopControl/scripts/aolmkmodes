@@ -1,18 +1,20 @@
 #! /bin/bash
 # args: <confindex> <maxCPA>
 
-EXPECTED_ARGS=1
+EXPECTED_ARGS=3
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo
   echo "------ CREATE MODES FOR AO LOOP ----"
   echo
-  echo "Usage: $0 <maxCPA>"
+  echo "Usage: $0 <maxCPA> <Block> <SVDlim>"
   echo
-  echo "  INPUT <maxCPA>     : maximum spatial frequency in cycles per aperture"
+  echo "  INPUT <maxCPA>      : maximum spatial frequency in cycles per aperture"
+  echo "  INPUT <Block>       : if -1, perform full comp. Otherwise, update block number only"
+  echo "  INPUT <SVDlim>      : SVD limit, relative to strongest mode"
   echo
-  echo "EXAMPLE: $0 2.0"
+  echo "EXAMPLE: $0 2.0 -1 0.03"
   echo
   echo "  OUTPUT: ./conf<confindex>/fmodes.fits"
   echo "  OUTPUT: ./conf<confindex>/modescpa.fits"
@@ -51,7 +53,7 @@ cx=0.5*imsize0-0.5
 cy=0.5*imsize1-0.5
 od=0.42*imsize0
 id=0.13*imsize0
-aolmkmodes fmodes imsize0 $1 0.8 cx cy od id 0
+aolmkmodes fmodes imsize0 $1 0.8 cx cy od id 0 $2 $3
 #listim
 #savefits fmodes "!./Cmodes/fmodes_$1.fits"
 exit
