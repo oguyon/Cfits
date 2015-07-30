@@ -6029,15 +6029,15 @@ int AOloopControl_run()
                         clock_gettime(CLOCK_REALTIME, &t1);
                         timerinit = 1;
                         printf("\n");
+                        printf("LOOP CLOSED  ");
+                        fflush(stdout);
                      }
                  
-                 clock_gettime(CLOCK_REALTIME, &t2);
-  
-                tdiff = info_time_diff(t1, t2);
-                tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-  
-                printf(" LOOP CLOSED  %20.3lf sec        %10lld   \r", tdiffv, AOconf[loop].cnt);
-                fflush(stdout);
+                // clock_gettime(CLOCK_REALTIME, &t2);
+                //tdiff = info_time_diff(t1, t2);
+                //tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+             //   printf(" LOOP CLOSED  %20.3lf sec        %10lld   \r", tdiffv, AOconf[loop].cnt);
+              //  fflush(stdout);
                 
                 AOcompute(loop);
 
