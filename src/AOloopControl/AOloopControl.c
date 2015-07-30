@@ -4476,6 +4476,10 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     r = system("mkdir -p zresptmp");
     r = system("rm ./zresptmp/*.fits");
 
+    r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
+    r = system(command);
+ 
+
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
         printf("\r iteration # %8ld     ", iter);
