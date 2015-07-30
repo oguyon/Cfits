@@ -2938,13 +2938,12 @@ menuitems+=( "rec3" "Record   1000 frames" )
 menuitems+=( "rec4" "Record  10000 frames" )
 
 
-dialog --colors --title "RECORD / ANALYZE  - LOOP ${LOOPNUMBER}" \
---ok-label " Select " \
---cancel-label "Top" \
---help-button --help-label "Exit" \
---default-item "${menurecord_default}" \
- --menu "$menuname" \
- $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+
+
+
+#dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNUMBER}" --ok-label "Select" --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menucontrolloop_default}" --menu "$menuname"  $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+
 
 
 retval=$?
@@ -2969,6 +2968,7 @@ case $retval in
   	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
 	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 10000 imWFS0rec " C-m
 	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
+;;
 esac
 ;; 
    1) state="menutop";;   
