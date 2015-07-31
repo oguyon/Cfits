@@ -286,7 +286,20 @@ int AOloopControl_mkHadamardModes50_cli()
     return 1;
 }
 
-//long AOloopControl_mkHadamardModes50(char outname)
+
+
+//long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname)
+int AOloopControl_Hadamard_decodeRM_cli() //(char *inname, char *Hmatname, char *outname)
+{
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    {   
+        AOloopControl_Hadamard_decodeRM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 int Measure_zonalRM_cli()
 {
@@ -716,6 +729,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].syntax,"<output fname [string]>");
     strcpy(data.cmd[data.NBcmd].example,"aolmkH50 h50pokec");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkHadamardModes50(char outname)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolHaddec");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_Hadamard_decodeRM_cli;
+    strcpy(data.cmd[data.NBcmd].info,"decode Hadamard matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input RM> <Hadamard matrix> <output RM>");
+    strcpy(data.cmd[data.NBcmd].example,"aolHaddec imRMh Hmat imRM");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname)");
     data.NBcmd++;
 
 
@@ -4598,7 +4621,40 @@ long AOloopControl_mkHadamardModes50(char *outname)
 }
 
 
-
+long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname)
+{
+    long IDin, IDhad, IDout;
+    long NBact, NBframes, sizexwfs, sizeywfs, sizewfs;
+    long kk0, kk1, ii;
+    
+    IDin = image_ID(inname);
+    sizexwfs = data.image[IDin].md[0].size[0];
+    sizeywfs = data.image[IDin].md[0].size[1];
+    sizewfs = sizexwfs*sizeywfs;
+    NBframes = data.image[IDin].md[0].size[2];
+    
+    
+    
+    IDout = create_3Dimage_ID(outname, sizexwfs, sizeywfs, NBframes);
+    
+    IDhad = image_ID(Hmatname);
+    if((data.image[IDhad].md[0].size[0]!=NBframes)||(data.image[IDhad].md[0].size[1]!=NBframes))
+    {
+        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames\n", data.image[IDhad].md[0].size[0], data.image[IDhad].md[0].size[1]);
+        exit(0);
+    }
+    
+    for(kk0=0; kk0<NBframes; kk0++) // output frame
+        {
+            for(kk1=0; kk1<NBframes; kk1++)
+                {
+                    for(ii=0;ii<sizewfs;ii++)
+                        data.image[IDout].array.F[kk0*NBframes+ii] += data.image[IDin].array.F[kk1*NBframes+ii]*data.image[IDhad].array.F[kk0*NBframes+kk1];
+                }
+        }
+    
+    return(IDout);
+}
 
 
 /** Measures zonal response matrix
@@ -6080,7 +6136,7 @@ int AOcompute(long loop)
             ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
             data.image[aoconfID_meas_modes].md[0].cnt0 ++;
         }
-        else
+        else // (*)
         {
             ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
             data.image[aoconfID_meas_modes].md[0].cnt0 ++;
@@ -6104,7 +6160,7 @@ int AOcompute(long loop)
                 AOconf[loop].status = 8; // execute
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
             }
-            else // only use active pixels and actuators
+            else // only use active pixels and actuators (*)
             {
                 // re-map input vector
 
