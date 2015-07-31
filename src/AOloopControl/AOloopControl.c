@@ -4664,25 +4664,26 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
     IDout = create_3Dimage_ID(outname, sizexwfs, sizeywfs, zsizeout);
 
 
-    for(kk0=0; kk0<NBframes; kk0++) // output frame
+    for(kk=0; kk<zsizeout; kk++) // output frame
     {
-        printf("\r  frame %5ld / %5ld     ", kk0, NBframes);
-        fflush(stdout);
-        for(kk1=0; kk1<NBframes; kk1++)
-        {
-            for(ii=0; ii<sizewfs; ii++)
-                data.image[IDout].array.F[kk0*sizewfs+ii] += data.image[IDin].array.F[kk1*sizewfs+ii]*data.image[IDhad].array.F[kk0*NBframes+kk1];
+
+        kk0 = (long) (data.image[IDindex].array.F[kk]+0.1);
+        if(kk0 > -1)
+        {   printf("\r  frame %5ld / %5ld     ", kk0, NBframes);
+            fflush(stdout);
+            for(kk1=0; kk1<NBframes; kk1++)
+            {
+                for(ii=0; ii<sizewfs; ii++)
+                    data.image[IDout].array.F[kk*sizewfs+ii] += data.image[IDin].array.F[kk1*sizewfs+ii]*data.image[IDhad].array.F[kk0*NBframes+kk1];
+            }
         }
     }
 
     for(kk=0; kk<zsizeout; kk++)
     {
-        kk0 = (long) (data.image[IDindex].array.F[kk]+0.1);
-        if(kk0 > -1)
-        {
-            for(ii=0; ii<sizewfs; ii++)
-                data.image[IDout].array.F[kk*sizewfs+ii] /= 2.0*NBframes;
-        }
+        for(ii=0; ii<sizewfs; ii++)
+            data.image[IDout].array.F[kk*sizewfs+ii] /= 2.0*NBframes;
+        
     }
 
     printf("\n\n");
@@ -4691,6 +4692,7 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
 
     return(IDout);
 }
+
 
 
 
@@ -5223,6 +5225,14 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     free(IDWFSrefc_array);
 
     free(pixvalarray);
+
+
+
+
+    
+
+
+
 
 
 
