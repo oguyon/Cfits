@@ -6554,7 +6554,7 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WF
     fp  = fopen("mode_stats.txt", "w");
     for(m=0;m<NBmodes;m++)
     {
-        mcoeff_rms[m] = sqrt( (mcoeff_rms[m]-mcoeff_ave[m]*mcoeff_ave[m])/NBframes );
+        mcoeff_rms[m] = sqrt( mcoeff_rms[m]/NBframes );
         mcoeff_ave[m] /= NBframes;
         fprintf(fp, "%4ld  %12g %12g\n", m, mcoeff_ave[m], mcoeff_rms[m]);
     }
