@@ -1087,6 +1087,27 @@ menuitems+=( "zrespM" "$menustring" )
 
 
 
+
+
+if [ -f "./conf/conf_RMpokeMode.txt" ]; then
+RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
+else
+RMpokeMode="0" # default
+fi
+if [ "${RMpokeMode}" -eq "0" ]; then
+rm RMpokeCube.fits
+else
+cp ./conf/Hpoke50.fits RMpokeCube.fits
+fi
+
+if [ "${RMpokeMode}" -eq "0" ]; then
+menuitems+=( "Hon" "Turn Hadamard mode on")
+else
+menuitems+=( "Hoff" "Turn Hadamard mode off")
+fi
+
+
+
 zrespMstat=$( cat ./status/stat_zrespM.txt )
 if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" = "OFF" ) ]]; then
 echo "OK"
@@ -1096,10 +1117,13 @@ fi
 
 
 
+
+
+
 zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 if [ "${zrespMstat}" = "OFF" ];
 then
-menuitems+=( "zresp_on" "START zonal RMs acquisition" )
+menuitems+=( "zresp_on" "[${RMpokeMode}] START zonal RMs acquisition" )
 if [ "${zrespmatnbiter}" -lt 4 ]; then
 menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
 else
@@ -1526,19 +1550,22 @@ imname=$( cat ./conf/conf_zrespM_fname.txt )
 ;;
 esac
 ;;
+
+
+
+	Hon)
+echo "1" > ./conf/conf_RMpokeMode.txt
+menucontrolloop_default="Hoff"
+;;
+	Hoff)
+echo "0" > ./conf/conf_RMpokeMode.txt
+menucontrolloop_default="Hon"
+;;
+
+
 	zresp_on)
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
-if [ -f "./conf/conf_RMpokeMode.txt" ]; then
-RMpokeMode=$( echo "./conf/conf_RMpokeMode.txt" )
-else
-RMpoleMode="0" # default
-fi
-if [ "${RMpokeMode}" -eq "0" ]; then
-rm RMpokeCube.fits
-else
-cp ./conf/Hpoke50.fits RMpokeCube.fits
-fi
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
@@ -2468,6 +2495,7 @@ menucontrolloop_default="CMm0"
 echo "0" > ./conf/conf_CMmode.txt
 menucontrolloop_default="CMm1"
 ;;
+
 
 
 
