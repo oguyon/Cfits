@@ -199,25 +199,6 @@ echo $value
 
 
 
-# SetDMmodes <confnb>
-function SetDMmodes {
-file="./conf$1/fmodes.fits"
-ok=1
-if [ -f $file ]
-then
-ln -snf $PWD/conf$1/fmodes.fits $PWD/conf/fmodes.fits
-ln -snf $PWD/conf$1/modesfreqcpa.fits $PWD/conf/modesfreqcpa.fits
-Fits2shm "./conf/fmodes.fits" "aol${LOOPNUMBER}_DMmodes"
-else
-echo "CANNOT READ FILE ${file}"
-fi
-}
-
-
-
-
-
-
 
 
 function ReaddmCname {
@@ -856,7 +837,7 @@ function UpdateModes {
 value=${SVDlim[10#${mb}]}
 SelectValue01 100 1001 50
 SVDlim[10#${mb}]=${value}
-echo "${SVDlim[10#${mb}]}" > ./conf/conf_SVDlim${mb}.txt
+echo "${SVDlim[10#${mb}]}" > ./conf/block${mb}_SVDlim.txt
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} ${mb} ${SVDlim[10#${mb}]}" C-m
@@ -978,7 +959,7 @@ OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${dmC}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmC" "[${COKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z1${dmC}\Zn" )
+menuitems+=( "dmC" "[${OKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z1${dmC}\Zn" )
 confOK=0
 fi
 
@@ -1185,7 +1166,7 @@ menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/fmodes_NBmodes.txt )
+NBmodes=$( cat ./conf/conf_NBmodes.txt )
 menuitems+=( "mkModes" "<$mkmodesdatestr>  [$NBblocks blocks, $NBmodes modes] Create DM control modes file, control matrices" )
 
 
@@ -1269,9 +1250,7 @@ esac
 case $retval in
    0) # button
 	case $choiceval in
-	-)
-state="menuconfigureloop"
-;;
+	-);;
 	H)
 dialog --title "Help" --msgbox '
 Loop configuration is stored in ./conf/ directory\n
@@ -1340,8 +1319,6 @@ Readdmdispname
 shmimmon aol${LOOPNUMBER}_dmdisp
 ;;
 esac
-menucontrolloop_default="dmdisp"
-state="menuconfigureloop"
 ;;
 	dmRM)
 case $amode in
@@ -1356,8 +1333,6 @@ ReaddmRMname
 shmimmon aol${LOOPNUMBER}_dmRM
 ;;
 esac
-menucontrolloop_default="dmRM"
-state="menuconfigureloop"
 ;;
 	wfs)
 case $amode in
@@ -1372,8 +1347,6 @@ Readwfsimcamname
 shmimmon aol${LOOPNUMBER}_wfsim
 ;;
 esac
-menucontrolloop_default="wfs"
-state="menuconfigureloop"
 ;;
 
 	dark)
@@ -1381,8 +1354,6 @@ exec 3>&1;
 wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
 echo "$wfsdarkfname" > ./conf/conf_wfsdark_fname.txt
 ReadWFSdarkfname
-menucontrolloop_default="dark"
-state="menuconfigureloop"
 ;;
 	adark_on)
 acqdarkstat=" ON"
@@ -1390,19 +1361,133 @@ echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
 #tmux send-keys -t adark "./aol" C-m
 menucontrolloop_default="adarkoff"
-state="menuconfigureloop"
 ;;
 	adarkoff)
 acqdarkstat="OFF"
 echo "OFF" > ./status/stat_acqudark.txt
 tmux kill-session -t adark
 menucontrolloop_default="adark_on"
-state="menuconfigureloop"
 ;;
 
 
 
+	Sconf)
+mkdir -p ./CONF
+exec 3>&1;
+confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
+exec 3>&-;
+echo "${confname}" > ./confname.txt
+mkdir -p "${confname}"
+cp conf/aol${LOOPNUMBER}_zrespM.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_dmmap.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_wfsmap.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_dmmask.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_wfsmask.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_wfsref0.fits "${confname}"
 
+
+cp conf/aol${LOOPNUMBER}_contrM*.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_contrMc*.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_contrMcact*.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_DMmodes*.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_respM*.fits "${confname}"
+
+cp conf/conf_NBmodeblocks.txt "${confname}"
+cp conf/conf_NBmodes.txt "${confname}"
+cp conf/block*.txt "${confname}"
+cp conf/conf_gainb*.txt "${confname}"
+
+
+cp conf/conf_AOsystsimsync.txt "${confname}"
+cp conf/conf_AOsystsimWFSdelayus.txt "${confname}"
+cp conf/conf_GPU.txt "${confname}"
+cp conf/conf_GPUall.txt "${confname}"
+cp conf/conf_CMmode.txt "${confname}"
+cp conf/conf_cpamax.txt "${confname}"
+
+cp conf/conf_loopgain.txt "${confname}"
+cp conf/conf_loopmaxlim.txt "${confname}"
+cp conf/conf_loopmultcoeff.txt "${confname}"
+
+
+cp conf/conf_dmC_name.txt "${confname}"
+cp conf/conf_dmdisp_name.txt "${confname}"
+cp conf/conf_dmRM_name.txt "${confname}"
+cp conf/conf_dmZP_name.txt "${confname}"
+cp conf/conf_wfsim_name.txt "${confname}"
+;;
+
+	Lconf)
+mkdir -p ./CONF
+exec 3>&1;
+confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
+exec 3>&-;
+echo "${confname}" > confname.txt
+
+for name in dmC dmdisp dmRM dmZP wfsim
+do
+	cp "${confname}"/conf_${name}_name.txt ./conf/conf_${name}_name.txt
+	lname=$( echo "./conf/conf_${name}_name.txt" )
+	rm /tmp/aol${LOOPNUMBER}_${name}.im.shm
+	ln -s /tmp/${lname}.im.shm /tmp/aol${LOOPNUMBER}_${name}.im.shm
+done
+
+
+
+for name in zrespM dmmap dmmask wfsmap wfsmask wfsref0
+do
+	cp "${confname}"/aol${LOOPNUMBER}_${name}.fits ./conf/conf_${name}.txt
+	echo "${confname}/aol${LOOPNUMBER}_${name}.fits" > ./conf/conf_${name}_fname.txt
+done
+
+for namet in contrM contrMc contrMcact DMmodes respM
+do
+for i in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14
+do
+	name1="${namet}${i}"
+	name="${confname}/aol${LOOPNUMBER}_${name1}.fits"
+	if [ -f "$name" ]; then
+	cp "${confname}"/aol${LOOPNUMBER}_${name1}.fits ./conf/conf_${name1}.txt
+	echo "${confname}/aol${LOOPNUMBER}_${name1}.fits" > ./conf/conf_${name1}_fname.txt
+	fi
+done
+done
+
+
+for name in contrM DMmodes respM
+do
+	cp "${confname}"/aol${LOOPNUMBER}_${name}.fits ./conf/conf_${name}.txt
+	echo "${confname}/aol${LOOPNUMBER}_${name}.fits" > ./conf/conf_${name}_fname.txt
+done
+
+
+
+
+cp "${confname}"/conf_NBmodeblocks.txt ./conf/
+cp "${confname}"/conf_NBmodes.txt ./conf/
+cp "${confname}"/block*.txt ./conf/
+cp "${confname}"/conf_gainb*.txt ./conf/
+
+cp "${confname}"/conf_AOsystsimsync.txt ./conf/
+cp "${confname}"/conf_AOsystsimWFSdelayus.txt ./conf/
+cp "${confname}"/conf_GPU.txt ./conf/
+cp "${confname}"/conf_GPUall.txt ./conf/
+cp "${confname}"/conf_CMmode.txt ./conf/
+cp "${confname}"/conf_cpamax.txt ./conf/
+
+cp "${confname}"/conf_loopgain.txt ./conf/
+cp "${confname}"/conf_loopmaxlim.txt ./conf/
+cp "${confname}"/conf_loopmultcoeff.txt ./conf/
+
+exit
+
+#for name in "dmC" "dmdisp" "dmRM" "dmZP" "wfsim" 
+#do
+#	cp "${confname}"/conf_${name}_fname.txt ./conf/
+#done
+
+
+;;
 
 
 	rmamp)
@@ -1410,24 +1495,18 @@ exec 3>&1;
 rmamplum=$(dialog --inputbox "RM amplitude [um]" 0 0 "$rmamplum" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmamplum" > ./conf/conf_RMamplum.txt
-menucontrolloop_default="rmamp"
-state="menuconfigureloop"
 ;;
 	rmdelay)
 exec 3>&1;
 rmdelays=$(dialog --inputbox "RM time delay [s]" 0 0 "$rmdelays" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmdelays" > ./conf/conf_RMdelays.txt
-menucontrolloop_default="rmdelay"
-state="menuconfigureloop"
 ;;
 	rmnbfr)
 exec 3>&1;
 rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmfrave" > ./conf/conf_RMfrave.txt
-menucontrolloop_default="rmnbfr"
-state="menuconfigureloop"
 ;;
 
 
@@ -1444,8 +1523,6 @@ ds9 $imname &
 imname=$( cat ./conf/conf_zrespM_fname.txt )
 ;;
 esac
-menucontrolloop_default="zmatn"
-state="menuconfigureloop"
 ;;
 	zresp_on)
 zrespMstat=" ON"
@@ -1453,7 +1530,6 @@ echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
-state="menuconfigureloop"
 ;;
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrepMc"

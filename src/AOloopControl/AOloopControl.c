@@ -2215,7 +2215,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         save_fits("cmat", "!./mkmodestmp/cmat.fits");
 
 
-        sprintf(command, "echo \"%ld\" > ./conf/fmodes_NBmodes.txt", cnt);
+        sprintf(command, "echo \"%ld\" > ./conf/conf_NBmodes.txt", cnt);
         ret = system(command);
 
     }
@@ -4577,7 +4577,7 @@ long AOloopControl_mkHadamardModes50(char *outname)
         for(jj=0; jj<Hsize; jj++)    
             data.image[IDtest].array.F[jj*Hsize+ii] = Hmat[jj*Hsize+ii];
     
-    save_fits("Htest", "!Htest.fits");
+    save_fits("Htest", "!H50mat.fits");
     
     
     IDout = create_3Dimage_ID(outname, xsize, ysize, Hsize);
