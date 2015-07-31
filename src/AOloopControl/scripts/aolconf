@@ -1529,6 +1529,16 @@ esac
 	zresp_on)
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
+if [ -f "./conf/conf_RMpokeMode.txt" ]; then
+RMpokeMode=$( echo "./conf/conf_RMpokeMode.txt" )
+else
+RMpoleMode="0" # default
+fi
+if [ "${RMpokeMode}" -eq "0" ]; then
+rm RMpokeCube.fits
+else
+cp ./conf/Hpoke50.fits RMpokeCube.fits
+fi
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
