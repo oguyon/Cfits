@@ -5246,7 +5246,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         }
 
 
-
+    // update sizeDM
+    sizeDM = data.image[IDzrm].md[0].size[2];
 
 
     printf("Preparing DM map ... ");
