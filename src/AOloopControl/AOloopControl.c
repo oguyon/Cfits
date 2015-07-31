@@ -4681,7 +4681,7 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
         if(kk0 > -1)
         {
             for(ii=0; ii<sizewfs; ii++)
-                data.image[IDout].array.F[kk0*sizewfs+ii] /= 2.0*NBframes;
+                data.image[IDout].array.F[kk*sizewfs+ii] /= 2.0*NBframes;
         }
     }
 
