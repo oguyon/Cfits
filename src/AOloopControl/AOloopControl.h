@@ -154,7 +154,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 int AOcompute(long loop);
 int AOloopControl_run();
 
-long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *outname);
+long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);
 int AOloopControl_printloopstatus(long loop, long nbcol);
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
 int AOloopControl_statusStats();

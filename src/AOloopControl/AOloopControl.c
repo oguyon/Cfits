@@ -359,14 +359,11 @@ int AOloopControl_compute_CombinedControlMatrix_cli()
 }
 
 
-
-// long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *outname);
-
 int AOloopControl_sig2Modecoeff_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
     {
-      AOloopControl_sig2Modecoeff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+      AOloopControl_sig2Modecoeff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string,  data.cmdargtoken[4].val.string);
       return 0;
     }
   else
@@ -793,9 +790,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_sig2Modecoeff_cli;
     strcpy(data.cmd[data.NBcmd].info,"convert signals to mode coeffs");
-    strcpy(data.cmd[data.NBcmd].syntax,"<signal data cube> <Modes data cube> <output image>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsig2mcoeff wfsdata wfsmodes outim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *outname)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<signal data cube> <reference> <Modes data cube> <output image>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsig2mcoeff wfsdata wfsref wfsmodes outim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"aolnb");
@@ -2143,7 +2140,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
 
 
-        /// WFS MODES, MODAL CONTROL MATRIXES
+        /// WFS MODES, MODAL CONTROL MATRICES
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             printf(".... BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
@@ -2156,7 +2153,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
-                printf("COMPUTING WFS MODES, MODAL CONTROL MATRIXES: block %ld  ( %ld %ld )\n", mblock, wfsxsize, wfsysize);
+                printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld %ld )\n", mblock, wfsxsize, wfsysize);
                 fflush(stdout);
                 
                    if(MBLOCK_NBmode[mblock]>0)
@@ -2175,7 +2172,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                         sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
                         save_fits(imname, fname);
 
-                        // COMPUTE MODAL CONTROL MATRIXES
+                        // COMPUTE MODAL CONTROL MATRICES
                         linopt_compute_reconstructionMatrix(imname, imnameCM, SVDlim1*0.01, "VTmat");
                         delete_image_ID("VTmat");
                         sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
@@ -2194,7 +2191,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
             }
             else
             { 
-                printf("LOADING WFS MODES, MODAL CONTROL MATRIXES: block %ld\n", mblock);
+                printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
                 fflush(stdout);
                 
                 sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
@@ -6486,16 +6483,18 @@ int AOloopControl_run()
 
 
 //
-// assumes the WFS mode basis is already orth.
+// assumes the WFS mode basis is already orthogonall
+// removes reference from each frame
 //
-long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *outname)
+long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)
 {
     long IDout;
-    long IDwfs, IDmodes;
+    long IDwfs, IDmodes, IDwfsref;
     long wfsxsize, wfsysize, wfssize, NBmodes, NBframes;    
-    double totim;
+    double totim, totref;
     float coeff;
     long ii, m, kk;
+    
     
     IDwfs = image_ID(WFSim_name);
     wfsxsize = data.image[IDwfs].md[0].size[0];
@@ -6503,10 +6502,19 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *ou
     NBframes = data.image[IDwfs].md[0].size[2];
     wfssize = wfsxsize*wfsysize;
     
+    IDwfsref = image_ID(IDwfsref_name);
+    
     IDmodes = image_ID(WFSmodes_name);
     NBmodes = data.image[IDmodes].md[0].size[2];
     
     IDout = create_2Dimage_ID(outname, NBframes, NBmodes);
+    
+    totref = 0.0;
+   
+    for(ii=0; ii<wfssize; ii++)
+        totref += data.image[IDwfsref].array.F[ii];
+    for(ii=0; ii<wfssize; ii++)
+        data.image[IDwfsref].array.F[ii] /= totref;
     
     for(kk=0; kk<NBframes; kk++)
     {
@@ -6514,8 +6522,11 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *WFSmodes_name, char *ou
         for(ii=0; ii<wfssize; ii++)
             totim += data.image[IDwfs].array.F[ii];
         for(ii=0; ii<wfssize; ii++)
+        {
             data.image[IDwfs].array.F[ii] /= totim;
-
+            data.image[IDwfs].array.F[ii] -= data.image[IDwfsref].array.F[ii];
+        }
+        
         coeff = 0.0;
         for(m=0;m<NBmodes;m++)
             {
