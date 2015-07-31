@@ -4536,7 +4536,7 @@ int set_DM_modesRM(long loop)
 // output:
 // Hadamard modes (outname)
 // Hadamard matrix ("H50mat.fits")
-// pixel indexes ("H50pixindex.fits", long)
+// pixel indexes ("H50pixindex.fits", float, to be converted to long)
 long AOloopControl_mkHadamardModes50(char *outname)
 {
     long IDout;
@@ -4564,11 +4564,11 @@ long AOloopControl_mkHadamardModes50(char *outname)
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = xsize;
     sizearray[1] = ysize;
-    IDindex = create_image_ID("H50pixindex", 2, sizearray, LONG, 0, 0);
+    IDindex = create_image_ID("H50pixindex", 2, sizearray, FLOAT, 0, 0);
     free(sizearray);
 
     for(ii=0;ii<xysize;ii++)
-        data.image[IDindex].array.L[ii] = -1;
+        data.image[IDindex].array.F[ii] = -10.0;
     
     index = 0;
     for(k=0;k<Hsize;k++)
@@ -4578,9 +4578,9 @@ long AOloopControl_mkHadamardModes50(char *outname)
             {
                 
                 indexarray[index] = ii;
-                printf("(%ld %ld)  ", index, ii);
+               // printf("(%ld %ld)  ", index, ii);
                 
-                data.image[IDindex].array.L[ii] = index;
+                data.image[IDindex].array.F[ii] = 1.0*index;
                 
                 index++;
             }
@@ -4677,8 +4677,8 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
 
     for(kk=0; kk<zsizeout; kk++)
     {
-        kk0 = data.image[IDindex].array.L[kk];
-        if(kk0 != -1)
+        kk0 = (long) (data.image[IDindex].array.F[kk]+0.1);
+        if(kk0 > -1)
         {
             for(ii=0; ii<sizewfs; ii++)
                 data.image[IDout].array.F[kk0*sizewfs+ii] /= 2.0*NBframes;

@@ -1046,6 +1046,7 @@ int save_fl_fits(char *ID_name, char *file_name)
 
 
 
+
 /* saves an image in a short int format */
 
 int save_sh_fits(char *ID_name, char *file_name)
