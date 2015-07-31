@@ -287,13 +287,11 @@ int AOloopControl_mkHadamardModes50_cli()
 }
 
 
-
-//long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname)
-int AOloopControl_Hadamard_decodeRM_cli() //(char *inname, char *Hmatname, char *outname)
+int AOloopControl_Hadamard_decodeRM_cli() 
 {
-     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
     {   
-        AOloopControl_Hadamard_decodeRM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+        AOloopControl_Hadamard_decodeRM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
         return 0;
     }
     else
@@ -736,9 +734,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_Hadamard_decodeRM_cli;
     strcpy(data.cmd[data.NBcmd].info,"decode Hadamard matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input RM> <Hadamard matrix> <output RM>");
-    strcpy(data.cmd[data.NBcmd].example,"aolHaddec imRMh Hmat imRM");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input RM> <Hadamard matrix> <DMpix index frame> <output RM>");
+    strcpy(data.cmd[data.NBcmd].example,"aolHaddec imRMh Hmat pixiind imRM");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)");
     data.NBcmd++;
 
 
@@ -4535,7 +4533,10 @@ int set_DM_modesRM(long loop)
 
 
 
-
+// output:
+// Hadamard modes (outname)
+// Hadamard matrix ("H50mat.fits")
+// pixel indexes ("H50pixindex.fits", long)
 long AOloopControl_mkHadamardModes50(char *outname)
 {
     long IDout;
@@ -4548,6 +4549,8 @@ long AOloopControl_mkHadamardModes50(char *outname)
     long IDtest;
     int *Hmat;
     long k, ii, jj, n, n2, i, j;
+    long IDindex;
+    long *sizearray;
     
     
     indexarray = (long*) malloc(sizeof(long)*Hsize);
@@ -4556,7 +4559,16 @@ long AOloopControl_mkHadamardModes50(char *outname)
     ysize = 50;
     xysize = xsize*ysize;
     IDdisk = make_disk("tmpdisk", xsize, ysize, 24.5, 24.5, 25.6);
-    //save_fits("tmpdisk", "!tmpdisk.fits");
+
+
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = xsize;
+    sizearray[1] = ysize;
+    IDindex = create_image_ID("H50pixindex", 2, sizearray, LONG, 0, 0);
+    free(sizearray);
+
+    for(ii=0;ii<xysize;ii++)
+        data.image[IDindex].array.L[ii] = -1;
     
     index = 0;
     for(k=0;k<Hsize;k++)
@@ -4567,9 +4579,12 @@ long AOloopControl_mkHadamardModes50(char *outname)
                 
                 indexarray[index] = ii;
                 printf("(%ld %ld)  ", index, ii);
+                
+                data.image[IDindex].array.L[ii] = index;
+                
                 index++;
             }
-    
+    save_fits("H50pixindex", "!H50pixindex.fits");
     
     Hmat = (int*) malloc(sizeof(int)*Hsize*Hsize);
     
@@ -4621,48 +4636,62 @@ long AOloopControl_mkHadamardModes50(char *outname)
 }
 
 
-long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname)
+long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)
 {
-    long IDin, IDhad, IDout;
+    long IDin, IDhad, IDout, IDindex;
     long NBact, NBframes, sizexwfs, sizeywfs, sizewfs;
-    long kk0, kk1, ii;
-    
+    long kk, kk0, kk1, ii;
+    long zsizeout;
+
     IDin = image_ID(inname);
     sizexwfs = data.image[IDin].md[0].size[0];
     sizeywfs = data.image[IDin].md[0].size[1];
     sizewfs = sizexwfs*sizeywfs;
     NBframes = data.image[IDin].md[0].size[2];
-    
-    
-    
-    IDout = create_3Dimage_ID(outname, sizexwfs, sizeywfs, NBframes);
-    
+
+    IDindex = image_ID(indexname);
+
+
+
     IDhad = image_ID(Hmatname);
     if((data.image[IDhad].md[0].size[0]!=NBframes)||(data.image[IDhad].md[0].size[1]!=NBframes))
     {
         printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames\n", data.image[IDhad].md[0].size[0], data.image[IDhad].md[0].size[1]);
         exit(0);
     }
-    
+
+    zsizeout = data.image[IDindex].md[0].size[0]*data.image[IDindex].md[0].size[1];
+    IDout = create_3Dimage_ID(outname, sizexwfs, sizeywfs, zsizeout);
+
+
     for(kk0=0; kk0<NBframes; kk0++) // output frame
+    {
+        printf("\r  frame %5ld / %5ld     ", kk0, NBframes);
+        fflush(stdout);
+        for(kk1=0; kk1<NBframes; kk1++)
         {
-            printf("\r  frame %5ld / %5ld     ", kk0, NBframes);
-            fflush(stdout);
-            for(kk1=0; kk1<NBframes; kk1++)
-                {
-                    for(ii=0;ii<sizewfs;ii++)
-                        data.image[IDout].array.F[kk0*sizewfs+ii] += data.image[IDin].array.F[kk1*sizewfs+ii]*data.image[IDhad].array.F[kk0*NBframes+kk1];
-                }
+            for(ii=0; ii<sizewfs; ii++)
+                data.image[IDout].array.F[kk0*sizewfs+ii] += data.image[IDin].array.F[kk1*sizewfs+ii]*data.image[IDhad].array.F[kk0*NBframes+kk1];
         }
-    
-    for(kk0=0; kk0<NBframes; kk0++)
-        for(ii=0;ii<sizewfs;ii++)
-            data.image[IDout].array.F[kk0*sizewfs+ii] /= 2.0*NBframes;
-            
+    }
+
+    for(kk=0; kk<zsizeout; kk++)
+    {
+        kk0 = data.image[IDindex].array.L[kk];
+        if(kk0 != -1)
+        {
+            for(ii=0; ii<sizewfs; ii++)
+                data.image[IDout].array.F[kk0*sizewfs+ii] /= 2.0*NBframes;
+        }
+    }
+
     printf("\n\n");
-    
+
+
+
     return(IDout);
 }
+
 
 
 /** Measures zonal response matrix
