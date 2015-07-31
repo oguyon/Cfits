@@ -1563,7 +1563,6 @@ fi
 cp H50poke.fits RMpokeCube.fits
 cp H50pixindex.fits RMpixindex.fits
 cp H50mat.fits RMHmat.fits 
-fi
 
 menucontrolloop_default="Hoff"
 ;;
