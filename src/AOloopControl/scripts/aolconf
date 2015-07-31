@@ -3184,7 +3184,19 @@ fi
 
 
 
+function recordanalizeWFS {
+NBframes="$1"
+   	mkdir -p ./rec
+  	tmuxname="aol${LOOPNUMBER}-ctr"
+	rm ./rec/imWFS0rec.fits
+  	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
+	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 $1 imWFS0rec " C-m	
+	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
+	tmux send-keys -t $tmuxname "loadfits \"./conf/conf${LOOPNUMBER}_wfsref0.fits\" wfsref0" C-m
+	tmux send-keys -t $tmuxname "loadfits \"./conf/conf${LOOPNUMBER}_fmodesWFS.fits\" fmodes" C-m
+	tmux send-keys -t $tmuxname "aolsig2mcoeff imWFS0rec wfsref0 fmodes outcoeff" C-m
 
+}
 
 
 
@@ -3225,22 +3237,8 @@ state="menurecord"
 case $retval in
    0) # Monitor
 	case $choiceval in
-   	rec3)
-   	mkdir -p ./rec
-  	tmuxname="aol${LOOPNUMBER}-ctr"
-	rm ./rec/imWFS0rec.fits
-  	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
-	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 1000 imWFS0rec " C-m	
-	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
-;;
-  	rec4)
-	mkdir -p ./rec
-  	tmuxname="aol${LOOPNUMBER}-ctr"
-	rm ./rec/imWFS0rec.fits
-  	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
-	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 10000 imWFS0rec " C-m
-	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
-;;
+   	rec3) recordanalizeWFS 1000;;
+   	rec4) recordanalizeWFS 10000;;
 esac
 ;; 
    1) state="menutop";;   
