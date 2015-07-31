@@ -4655,6 +4655,10 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *outname
                 }
         }
     
+    for(kk0=0; kk0<NBframes; kk0++)
+        for(ii=0;ii<sizewfs;ii++)
+            data.image[IDout].array.F[kk0*sizewfs+ii] /= 2.0*NBframes;
+            
     printf("\n\n");
     
     return(IDout);
