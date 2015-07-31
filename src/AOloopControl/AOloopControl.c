@@ -5235,11 +5235,14 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     
     if((image_ID("Hmat")!=-1)&&(image_ID("pixindexim")!=-1))
         {
-            AOloopControl_Hadamard_decodeRM(zrespm_name, "Hmat", "pixindexim", "zrespH");
-            ID1 = image_ID("zrespH");
-            for(ii=0; ii<sizexWFS*sizeyWFS*sizeDM; ii++)
-                data.image[IDzrm].array.F[ii] = data.image[ID1].array.F[ii];
-            delete_image_ID("zrespH");
+            chname_image_ID(zrespm_name, "tmprm");
+            AOloopControl_Hadamard_decodeRM("tmprm", "Hmat", "pixindexim", zrespm_name);
+            delete_image_ID("tmprm");
+//            ID1 = image_ID("zrespH");
+  //          for(ii=0; ii<sizexWFS*sizeyWFS*sizeDM; ii++)
+    //            data.image[IDzrm].array.F[ii] = data.image[ID1].array.F[ii];
+      //      delete_image_ID("zrespH");
+            IDzrm = image_ID(zrespm_name);
         }
 
 
@@ -5281,7 +5284,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
-list_image_ID();
+    list_image_ID();
    printf("Preparing DM mask ... ");
     fflush(stdout);    
      // DMmask: select pixels >10% of 50-percentile
