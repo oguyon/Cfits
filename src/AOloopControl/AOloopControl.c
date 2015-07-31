@@ -5034,6 +5034,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 //
 // median-averages multiple response matrices to create a better one
 //
+// if images "Hmat" AND "pixindexim" are provided, decode the image
+//
 int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl)
 {
     long NBmat; // number of matrices to average
@@ -5062,7 +5064,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     double tmpv;
     long IDdm;
     long NBmatlim = 3;
-    
+    long ID1;
 
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
@@ -5229,8 +5231,16 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
+    // DECODE MAPS (IF REQUIRED)
     
-
+    if((image_ID("Hmat")!=-1)&&(image_ID("pixindexim")!=-1))
+        {
+            AOloopControl_Hadamard_decodeRM(zrespm_name, "Hmat", "pixindexim", "zrespH");
+            ID1 = image_ID("zrespH");
+            for(ii=0; ii<sizexWFS*sizeyWFS*sizeDM; ii++)
+                data.image[IDzrm].array.F[ii] = data.image[ID1].array.F[ii];
+            delete_image_ID("zrespH");
+        }
 
 
 
