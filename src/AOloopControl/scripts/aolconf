@@ -1085,6 +1085,8 @@ makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
 menuitems+=( "zrespM" "$menustring" )
 
 
+
+
 zrespMstat=$( cat ./status/stat_zrespM.txt )
 if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" = "OFF" ) ]]; then
 echo "OK"
@@ -1555,12 +1557,6 @@ echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
 echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
-#tmux send-keys -t ${tmuxname} "./fits2shmim zrespM/zrespM_${datestr}.fits aol${LOOPNUMBER}_zrespm" C-m
-#tmux send-keys -t ${tmuxname} "./fits2shmim wfsref0/wfsref0_${datestr}.fits aol${LOOPNUMBER}_wfsref0" C-m
-#tmux send-keys -t ${tmuxname} "./fits2shmim wfsmap/wfsmap_${datestr}.fits aol${LOOPNUMBER}_wfsmap" C-m
-#tmux send-keys -t ${tmuxname} "./fits2shmim dmmap/dmmap_${datestr}.fits aol${LOOPNUMBER}_dmmap" C-m
-#tmux send-keys -t ${tmuxname} "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
-#tmux send-keys -t ${tmuxname} "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
 rm cleanZresp.run
 tmux send-keys -t  ${tmuxname} "touch cleanZresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
@@ -1600,12 +1596,6 @@ echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
 echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
-#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim zrespM/zrespM_${datestr}.fits aol${LOOPNUMBER}_zrespm" C-m
-#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsref0/wfsref0_${datestr}.fits aol${LOOPNUMBER}_wfsref0" C-m
-#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmap/wfsmap_${datestr}.fits aol${LOOPNUMBER}_wfsmap" C-m
-#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmap/dmmap_${datestr}.fits aol${LOOPNUMBER}_dmmap" C-m
-#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim wfsmask/wfsmask_${datestr}.fits aol${LOOPNUMBER}_wfsmask" C-m
-#tmux send-keys -t aol${LOOPNUMBER}zrespM "./fits2shmim dmmask/dmmask_${datestr}.fits aol${LOOPNUMBER}_dmmask" C-m
 rm cleanZresp.run
 tmux send-keys -t aol${LOOPNUMBER}zrespM "touch cleanZresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "exit" C-m
