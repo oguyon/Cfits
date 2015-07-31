@@ -6520,11 +6520,11 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WF
     {
         totim = 0.0;
         for(ii=0; ii<wfssize; ii++)
-            totim += data.image[IDwfs].array.F[ii];
+            totim += data.image[IDwfs].array.F[kk*wfssize+ii];
         for(ii=0; ii<wfssize; ii++)
         {
-            data.image[IDwfs].array.F[ii] /= totim;
-            data.image[IDwfs].array.F[ii] -= data.image[IDwfsref].array.F[ii];
+            data.image[IDwfs].array.F[kk*wfssize+ii] /= totim;
+            data.image[IDwfs].array.F[kk*wfssize+ii] -= data.image[IDwfsref].array.F[ii];
         }
         
         coeff = 0.0;
