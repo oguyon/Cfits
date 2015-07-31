@@ -6527,9 +6527,10 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WF
             data.image[IDwfs].array.F[kk*wfssize+ii] -= data.image[IDwfsref].array.F[ii];
         }
         
-        coeff = 0.0;
+
         for(m=0;m<NBmodes;m++)
             {
+                coeff = 0.0;
                 for(ii=0;ii<wfssize;ii++)
                     coeff += data.image[IDmodes].array.F[m*wfssize+ii] * data.image[IDwfs].array.F[kk*wfssize+ii];
                 data.image[IDout].array.F[m*NBframes+kk] = coeff;
