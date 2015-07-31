@@ -1032,10 +1032,6 @@ confOK=0
 fi
 
 
-menuitems+=( "delay" "             LOOP delay                      ${loopdelayms} ms" )
-
-
-
 
 
 menuitems+=( " " " " )
@@ -1080,6 +1076,10 @@ fi
 menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (ZONAL)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+
+menuitems+=( "Sconf" " SAVE CURRENT SYSTEM CALIBRATION" )
+menuitems+=( "Lconf" " LOAD CURRENT SYSTEM CALIBRATION" )
+
 
 rmamplum=0.05
 if [ -f "./conf/conf_RMamplum.txt" ]; then
