@@ -4554,7 +4554,7 @@ long AOloopControl_mkHadamardModes50(char *outname)
     
     
     indexarray = (long*) malloc(sizeof(long)*Hsize);
-    
+ 
     xsize = 50;
     ysize = 50;
     xysize = xsize*ysize;
