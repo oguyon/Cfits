@@ -1555,10 +1555,23 @@ esac
 
 	Hon)
 echo "1" > ./conf/conf_RMpokeMode.txt
+if [ -f "RMpokeCube.fits" ]; then
+echo "OK"
+else
+./mkH50poke
+fi
+cp H50poke.fits RMpokeCube.fits
+cp H50pixindex.fits RMpixindex.fits
+cp H50mat.fits RMHmat.fits 
+fi
+
 menucontrolloop_default="Hoff"
 ;;
 	Hoff)
 echo "0" > ./conf/conf_RMpokeMode.txt
+rm RMpokeCube.fits
+rm RMpixindex.fits
+rm RMHmat.fits
 menucontrolloop_default="Hon"
 ;;
 
@@ -1625,6 +1638,7 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "cp zrespmat.fits zrespM/zrespM_${dates
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_fname.txt

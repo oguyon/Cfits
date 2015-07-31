@@ -16,6 +16,9 @@ then
   echo "  dmmap.fits    : DM response map"
   echo
   echo "Cleans zonal response matrices in ./zresptmp/ directory"
+  echo "if images RMpixindex.fits RMHmat.fits exist, use Hadamard coding/decoding"
+  echo
+  echo
   exit
 fi
 
@@ -27,6 +30,8 @@ pname="aol${loopnb}zrespM"
 
 Cfits -n $pname << EOF
 aolnb $loopnb
+loadfits "RMHmat.fits" Hmat
+loadfits "RMpixindex.fits" pixindexim
 aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1
 savefits zrespmat "!zrespmat.fits"
 savefits wfsref0 "!wfsref0.fits"
