@@ -2599,7 +2599,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
    	 ;;  
    	 e) 
    	 value=${loopmultcoeff}
-   	SelectValue01 900 1001 5
+   	SelectValue01 900 1001 2
  	loopmultcoeff=${value}
  	echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
