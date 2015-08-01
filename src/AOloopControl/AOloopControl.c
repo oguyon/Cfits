@@ -130,6 +130,7 @@ int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
 
 
 long wfsrefcnt0 = -1;
+long contrMcactcnt0 = -1;
 
 
 
@@ -6220,9 +6221,9 @@ int AOcompute(long loop)
             }
             else // only use active pixels and actuators (*)
             {
-                // re-map input vector
+                // re-map input vector into imWFS2_active
 
-                if(COMPUTE_GPU_SCALING==1)
+                if(COMPUTE_GPU_SCALING==1) // (*)
                 {
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                         data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_imWFS0].array.F[WFS_active_map[wfselem_active]];
@@ -6234,8 +6235,16 @@ int AOcompute(long loop)
                         data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_imWFS2].array.F[WFS_active_map[wfselem_active]];
                     data.image[aoconfID_imWFS2_active].md[0].cnt0++;
                 }
-                if(COMPUTE_GPU_SCALING==1)
+                if(COMPUTE_GPU_SCALING==1) // (*)
                 {
+                    if(data.image[aoconfID_contrMcact].md[0].cnt0 != contrMcactcnt0)
+                        {
+                            printf("NEW CONTROL MATRIX DETECTED -> RECOMPUTE REFERENCE x MATRIX\n");
+                            fflush(stdout);
+                            initWFSref_GPU = 0;
+                            contrMcactcnt0 = data.image[aoconfID_contrMcact].md[0].cnt0;
+                        }
+                    
                     if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)
                     {
                         printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
@@ -6245,6 +6254,9 @@ int AOcompute(long loop)
                     }
                     if(initWFSref_GPU==0) // initialize WFS reference
                     {
+                        printf("\nINITIALIZE WFS REFERENCE: COPY NEW REF (WFSREF) TO imWFS2_active\n"); //TEST
+                        fflush(stdout);
+                        
                         for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
                             data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[wfselem_active]];
                     
@@ -6255,6 +6267,8 @@ int AOcompute(long loop)
 
                 // perform matrix mult
                 //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+
+                // 
 
                 if(initcontrMcact_GPU==0)
                     initWFSref_GPU = 0;

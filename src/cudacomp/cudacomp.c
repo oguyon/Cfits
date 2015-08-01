@@ -1021,6 +1021,9 @@ void *compute_function( void *ptr )
             alphatmp = cublasSgemv_alpha;
             betatmp = cublasSgemv_beta;
 
+
+
+        // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOIS LOOP PAUSE ??
             cublasSgemv_alpha = 1.0;
             cublasSgemv_beta = 0.0;
             stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &cublasSgemv_alpha, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &cublasSgemv_beta, gpumatmultconf[index].d_dmRef[device], 1);
