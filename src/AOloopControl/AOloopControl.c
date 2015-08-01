@@ -4734,6 +4734,18 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     long IDpokeC;
     long NBpoke;
 
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+    
+
+    schedpar.sched_priority = RT_priority;
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+
+
+
+
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
