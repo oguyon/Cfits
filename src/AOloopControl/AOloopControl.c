@@ -5319,6 +5319,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     if((image_ID("Hmat")!=-1)&&(image_ID("pixindexim")!=-1))
         {
             chname_image_ID(zrespm_name, "tmprm");
+            save_fits("tmprm", "!zrespm_Hadamard.fits");
             AOloopControl_Hadamard_decodeRM("tmprm", "Hmat", "pixindexim", zrespm_name);
             delete_image_ID("tmprm");
             IDzrm = image_ID(zrespm_name);
