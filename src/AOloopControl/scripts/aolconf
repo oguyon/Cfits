@@ -3203,12 +3203,12 @@ NBframes="$1"
         tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_respM" C-m
         tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_DMmodes" C-m
         tmux send-keys -t $tmuxname "savefits outcoeff" C-m
-	tmux send-keys -t $tmuxname "mv imWFS0rec.fits ./rec/rec_${datestr}_imWFS0.fits" C-m
-	tmux send-keys -t $tmuxname "mv aol${LOOPNUMBER}_wfsref0.fits ./rec/rec_${datestr}_wfsref0.fits" C-m
-	tmux send-keys -t $tmuxname "mv aol${LOOPNUMBER}_respM.fits ./rec/rec_${datestr}_respM.fits" C-m
-	tmux send-keys -t $tmuxname "mv aol${LOOPNUMBER}_DMmodes.fits ./rec/rec_${datestr}_DMmodes.fits" C-m
-	tmux send-keys -t $tmuxname "mv outcoeff.fits ./rec/rec_${datestr}_mcoeffs.fits" C-m
-	tmux send-keys -t $tmuxname "mv mode_stats.txt ./rec/rec_${datestr}_modestats.txt" C-m
+	tmux send-keys -t $tmuxname "!mv imWFS0rec.fits ./rec/rec_${datestr}_imWFS0.fits" C-m
+	tmux send-keys -t $tmuxname "!mv aol${LOOPNUMBER}_wfsref0.fits ./rec/rec_${datestr}_wfsref0.fits" C-m
+	tmux send-keys -t $tmuxname "!mv aol${LOOPNUMBER}_respM.fits ./rec/rec_${datestr}_respM.fits" C-m
+	tmux send-keys -t $tmuxname "!mv aol${LOOPNUMBER}_DMmodes.fits ./rec/rec_${datestr}_DMmodes.fits" C-m
+	tmux send-keys -t $tmuxname "!mv outcoeff.fits ./rec/rec_${datestr}_mcoeffs.fits" C-m
+	tmux send-keys -t $tmuxname "!mv mode_stats.txt ./rec/rec_${datestr}_modestats.txt" C-m
 }
 
 
