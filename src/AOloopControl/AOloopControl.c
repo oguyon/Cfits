@@ -4748,7 +4748,6 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
     
     while(1)
     {
-        usleep(delayus);
         for(kk=0;kk<NBpts;kk++)
             {
                 ptr = (char*) data.image[ID1].array.F;
@@ -4757,6 +4756,7 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
                 memcpy(data.image[IDdm].array.F, ptr, sizeof(float)*dmsize);
                 data.image[IDdm].md[0].write = 0;
                 data.image[IDdm].md[0].cnt0 ++;
+                usleep(delayus);
             }
     }
     
