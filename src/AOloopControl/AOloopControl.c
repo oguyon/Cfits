@@ -4765,6 +4765,39 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
 
 
 
+
+long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
+{
+    long IDdm;
+    long dmxsize, dmysize, dmsize;
+    long IDwfs;
+    long wfsxsize, wfsysize, wfssize;
+ 
+    struct timespec tstart, tnow;
+    double tnowdouble;
+    double tlastupdatedouble;
+
+    double dt_update; // time since start
+
+    IDdm = image_ID(dmname);
+    dmxsize = data.image[IDdm].md[0].size[0];
+    dmysize = data.image[IDdm].md[0].size[1];
+    dmsize = dmxsize*dmysize;
+   
+   
+    IDwfs = image_ID(wfsname);
+    wfsxsize = data.image[IDwfs].md[0].size[0];
+    wfsysize = data.image[IDwfs].md[0].size[1];
+    wfssize = wfsxsize*wfsysize;
+ 
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    tnowdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+    
+    return 0;
+}
+
+
+
 /** Measures zonal response matrix
  * -> collapses it to DM response map and WFS response map 
  * (both maps show amplitude of actuator effect on WFS) 
