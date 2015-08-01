@@ -4752,7 +4752,7 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
         for(kk=0;kk<NBpts;kk++)
             {
                 ptr = (char*) data.image[ID1].array.F;
-                ptr += sizeof(float)*dmsize;
+                ptr += sizeof(float)*dmsize*kk;
                 data.image[IDdm].md[0].write = 1;
                 memcpy(data.image[IDdm].array.F, ptr, sizeof(float)*dmsize);
                 data.image[IDdm].md[0].write = 0;
