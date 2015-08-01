@@ -5531,11 +5531,20 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
 //
 // tweak zonal response matrix in accordance to WFS response to modes
 // 
+// INPUT :
+//    ZRMimname   : starting response matrix
+//    DMimCname   : cube of DM displacements
+//    WFSimCname  : cube of WFS signal
+//    DMmaskname  : DM pixel mask
+//    WFSmaskname : WFS pixel mask
+//
+// OUTPUT: 
+//    RMoutname   : output response matrix
 //
 
 long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, char *DMmaskname, char *WFSmaskname, char *RMoutname)
 {
-    long IDout, IDzrmin, IDdmin, IDwfsin, IDwfsmask, DMdmmask;
+    long IDout, IDzrmin, IDdmin, IDwfsin, IDwfsmask, IDdmmask;
     long wfsxsize, wfsysize, wfssize;
     long dmxsize, dmysize, dmsize;
     long NBframes;
@@ -5563,8 +5572,19 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
     
     // input WFS frames
     IDwfsin = image_ID(WFSinCname);
+    if((data.image[IDwfsin].md[0].size[0] != wfsxsize) || (data.image[IDwfsin].md[0].size[1] != wfsysize) || (data.image[IDwfsin].md[0].size[2] != NBframes))
+        {
+            printf("ERROR: size of image \"%s\" (%ld %ld %ld) does not match expected size (%ld %ld %ld)\n", WFSmaskname, data.image[IDwfsin].md[0].size[0], data.image[IDwfsin].md[0].size[1], data.image[IDwfsin].md[0].size[2], wfsxsize, wfsysize, NBframes);
+            exit(0);
+        }
     
-    
+    // DM mask
+    IDdmmask = image_ID(DMmaskname);
+    if((data.image[IDdmmask].md[0].size[0] != dmxsize) || (data.image[IDdmmask].md[0].size[1] != dmysize))
+    {
+        printf("ERROR: size of DM mask image \"%s\" (%ld %ld) does not match expected size (%ld %ld)\n", DMmaskname, data.image[IDdmmask].md[0].size[0], data.image[IDdmmask].md[0].size[1], dmxsize, dmysize);
+        exit(0);
+    } 
     
     
 
