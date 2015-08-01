@@ -4772,29 +4772,43 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     long dmxsize, dmysize, dmsize;
     long IDwfs;
     long wfsxsize, wfsysize, wfssize;
- 
+    long twait0us = 100000;
     struct timespec tstart, tnow;
     double tnowdouble;
-    double tlastupdatedouble;
-
-    double dt_update; // time since start
+    double tstartdouble;
+    long long cnt;
+    double dtmax;
 
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
     dmysize = data.image[IDdm].md[0].size[1];
     dmsize = dmxsize*dmysize;
-   
-   
+
+
     IDwfs = image_ID(wfsname);
     wfsxsize = data.image[IDwfs].md[0].size[0];
     wfsysize = data.image[IDwfs].md[0].size[1];
     wfssize = wfsxsize*wfsysize;
- 
+
     clock_gettime(CLOCK_REALTIME, &tnow);
-    tnowdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+    tstartdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+
+
+    cnt = 0;
+    dt = 0.0;
+    while(dt<dtmax)
+    {
+        cnt++;
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tnowdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+        dt = tnowdouble - tstartdouble;
+    }
     
+    printf("cnt = %lld   ->  %10.2 ns \n", cnt, 1.0e9*cnt/dtmax);
+
     return 0;
 }
+
 
 
 
