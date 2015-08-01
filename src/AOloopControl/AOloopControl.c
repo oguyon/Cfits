@@ -5033,6 +5033,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 // median-averages multiple response matrices to create a better one
 //
 // if images "Hmat" AND "pixindexim" are provided, decode the image
+// TEST: if "RMpokeC" exists, decode it as well
 //
 int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl)
 {
@@ -5063,6 +5064,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     long IDdm;
     long NBmatlim = 3;
     long ID1;
+    long IDrmpokec;
 
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
@@ -5236,11 +5238,14 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             chname_image_ID(zrespm_name, "tmprm");
             AOloopControl_Hadamard_decodeRM("tmprm", "Hmat", "pixindexim", zrespm_name);
             delete_image_ID("tmprm");
-//            ID1 = image_ID("zrespH");
-  //          for(ii=0; ii<sizexWFS*sizeyWFS*sizeDM; ii++)
-    //            data.image[IDzrm].array.F[ii] = data.image[ID1].array.F[ii];
-      //      delete_image_ID("zrespH");
             IDzrm = image_ID(zrespm_name);
+
+            if((IDrmpokec = image_ID("RMpokeC"))!=-1)   
+                {
+                    AOloopControl_Hadamard_decodeRM("RMpokeC", "Hmat", "pixindexim", "RMpokeC1");
+                    save_fits("RMpokeC1", "!test_RMpokeC1.fits");
+                }
+            
         }
 
 
