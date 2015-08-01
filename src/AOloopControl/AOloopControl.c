@@ -4748,7 +4748,7 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
     
     while(1)
     {
-        
+        usleep(delayus);
         for(kk=0;kk<NBpts;kk++)
             {
                 ptr = (char*) data.image[ID1].array.F;
