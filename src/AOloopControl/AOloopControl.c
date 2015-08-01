@@ -5574,7 +5574,7 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
     IDwfsin = image_ID(WFSinCname);
     if((data.image[IDwfsin].md[0].size[0] != wfsxsize) || (data.image[IDwfsin].md[0].size[1] != wfsysize) || (data.image[IDwfsin].md[0].size[2] != NBframes))
         {
-            printf("ERROR: size of image \"%s\" (%ld %ld %ld) does not match expected size (%ld %ld %ld)\n", WFSmaskname, data.image[IDwfsin].md[0].size[0], data.image[IDwfsin].md[0].size[1], data.image[IDwfsin].md[0].size[2], wfsxsize, wfsysize, NBframes);
+            printf("ERROR: size of WFS mask image \"%s\" (%ld %ld %ld) does not match expected size (%ld %ld %ld)\n", WFSmaskname, data.image[IDwfsin].md[0].size[0], data.image[IDwfsin].md[0].size[1], data.image[IDwfsin].md[0].size[2], wfsxsize, wfsysize, NBframes);
             exit(0);
         }
     
@@ -5585,6 +5585,12 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
         printf("ERROR: size of DM mask image \"%s\" (%ld %ld) does not match expected size (%ld %ld)\n", DMmaskname, data.image[IDdmmask].md[0].size[0], data.image[IDdmmask].md[0].size[1], dmxsize, dmysize);
         exit(0);
     } 
+    
+    
+    
+    // ARRANGE DATA IN MATRICES 
+    
+    
     
     
 
@@ -6119,11 +6125,11 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
    
 
 // computing combine matrix (full size)
-# ifdef _OPENMP
-   #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
-    {
-        #pragma omp for schedule (static)
-# endif
+//# ifdef _OPENMP
+//   #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
+  //  {
+//        #pragma omp for schedule (static)
+//# endif
         for(mode=0; mode<NBDMmodes; mode++)
         {
             for(act=0; act<sizeDM; act++)
@@ -6132,9 +6138,9 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
                         matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]*matrix_DMmodes[mode*sizeDM+act];
                 }
         }
-# ifdef _OPENMP
-    }
-# endif
+//# ifdef _OPENMP
+//    }
+//# endif
     memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
 
  
