@@ -300,6 +300,18 @@ int AOloopControl_Hadamard_decodeRM_cli()
 }
 
 
+int AOcontrolLoop_TestDMSpeed_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0)
+    {
+        AOcontrolLoop_TestDMSpeed( data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
 int Measure_zonalRM_cli()
 {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,2)==0)
@@ -735,6 +747,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].syntax,"<input RM> <Hadamard matrix> <DMpix index frame> <output RM>");
     strcpy(data.cmd[data.NBcmd].example,"aolHaddec imRMh Hmat pixiind imRM");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aoldmtestsp");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOcontrolLoop_TestDMSpeed_cli;
+    strcpy(data.cmd[data.NBcmd].info,"test DM speed by sending circular tip-tilt");
+    strcpy(data.cmd[data.NBcmd].syntax,"<dmname> <delay us [long]> <NB pts> <ampl>");
+    strcpy(data.cmd[data.NBcmd].example,"aoldmtestsp dmdisp2 100 20 0.1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl)");
     data.NBcmd++;
 
 
@@ -4694,6 +4716,55 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
 
 
 
+long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl)
+{
+    long IDdm;
+    long dmxsize, dmysize, dmsize;
+    long ii, jj, kk;
+    long ID1;
+    float pha;
+    float x, y, x1;
+    char *ptr;
+    
+    IDdm = image_ID(dmname);
+    dmxsize = data.image[IDdm].md[0].size[0];
+    dmysize = data.image[IDdm].md[0].size[1];
+    dmsize = dmxsize*dmysize;
+    
+    ID1 = create_3Dimage_ID("dmpokeseq", dmxsize, dmysize, NBpts);
+    for(kk=0;kk<NBpts;kk++)
+        {
+            pha = 2.0*M_PI*kk/NBpts;
+            for(ii=0;ii<dmxsize;ii++)
+                for(jj=0;jj<dmysize;jj++)
+                    {
+                        x = (2.0*ii/dmxsize)-1.0;
+                        y = (2.0*jj/dmysize)-1.0;                      
+                        x1 = x*cos(pha)-y*sin(pha);
+                        data.image[ID1].array.F[kk*dmsize+jj*dmxsize+ii] = ampl*x1;                        
+                    }
+        }
+    
+    
+    while(1)
+    {
+        
+        for(kk=0;kk<NBpts;kk++)
+            {
+                ptr = (char*) data.image[ID1].array.F;
+                ptr += sizeof(float)*dmsize;
+                data.image[IDdm].md[0].write = 1;
+                memcpy(data.image[IDdm].array.F, ptr, sizeof(float)*dmsize);
+                data.image[IDdm].md[0].write = 0;
+                data.image[IDdm].md[0].cnt0 ++;
+            }
+    }
+    
+    return(0);
+}
+
+
+
 /** Measures zonal response matrix
  * -> collapses it to DM response map and WFS response map 
  * (both maps show amplitude of actuator effect on WFS) 
@@ -5457,9 +5528,41 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
 
 
 
+//
+// tweak zonal response matrix in accordance to WFS response to modes
+// 
+//
 
+long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, char *DMmaskname, char *WFSmaskname, char *RMoutname)
+{
+    long IDout, IDzrmin, IDdmin, IDwfsin;
+    long wfsxsize, wfsysize, wfssize;
+    long dmxsize, dmysize, dmsize;
+    long NBframes;
+    
+    IDzrmin = image_ID(ZRMinname);
+    wfsxsize = data.image[IDzrmin].md[0].size[0];
+    wfsysize = data.image[IDzrmin].md[0].size[1];
 
+    IDdmin = image_ID(DMinCname);
+    dmxsize = data.image[IDdmin].md[0].size[0];
+    dmysize = data.image[IDdmin].md[0].size[1];
+    dmsize = dmxsize*dmysize;
+    
+    if(dmsize != data.image[IDzrmin].md[0].size[2])
+        {
+            printf("ERROR: total number of DM actuators (%ld) does not match zsize of RM (%ld)\n", dmsize, data.image[IDzrmin].md[0].size[2]);
+            exit(0);
+        }
+    
+    NBframes = data.image[IDdmin].md[0].size[2];
+    
+    
+    
+    
 
+    return(IDout);
+}
 
 
 
