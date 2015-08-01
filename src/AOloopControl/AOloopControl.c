@@ -5535,15 +5535,18 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
 
 long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, char *DMmaskname, char *WFSmaskname, char *RMoutname)
 {
-    long IDout, IDzrmin, IDdmin, IDwfsin;
+    long IDout, IDzrmin, IDdmin, IDwfsin, IDwfsmask, DMdmmask;
     long wfsxsize, wfsysize, wfssize;
     long dmxsize, dmysize, dmsize;
     long NBframes;
+
     
+    // input response matrix
     IDzrmin = image_ID(ZRMinname);
     wfsxsize = data.image[IDzrmin].md[0].size[0];
     wfsysize = data.image[IDzrmin].md[0].size[1];
 
+    // DM input frames
     IDdmin = image_ID(DMinCname);
     dmxsize = data.image[IDdmin].md[0].size[0];
     dmysize = data.image[IDdmin].md[0].size[1];
@@ -5556,6 +5559,10 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
         }
     
     NBframes = data.image[IDdmin].md[0].size[2];
+    
+    
+    // input WFS frames
+    IDwfsin = image_ID(WFSinCname);
     
     
     

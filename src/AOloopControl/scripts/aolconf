@@ -3189,13 +3189,27 @@ NBframes="$1"
    	mkdir -p ./rec
   	tmuxname="aol${LOOPNUMBER}-ctr"
 	rm ./rec/imWFS0rec.fits
+	tmux new-session -d -s $tmuxname
   	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
+	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+	tmux send-keys -t $tmuxname "$execname -n aol2rec" C-m
 	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 $1 imWFS0rec " C-m	
 	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/imWFS0rec.fits\"" C-m
-	tmux send-keys -t $tmuxname "loadfits \"./conf/conf${LOOPNUMBER}_wfsref0.fits\" wfsref0" C-m
-	tmux send-keys -t $tmuxname "loadfits \"./conf/conf${LOOPNUMBER}_fmodesWFS.fits\" fmodes" C-m
-	tmux send-keys -t $tmuxname "aolsig2mcoeff imWFS0rec wfsref0 fmodes outcoeff" C-m
-
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_DMmodes" C-m
+	tmux send-keys -t $tmuxname "aolsig2mcoeff imWFS0rec aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_respM outcoeff" C-m
+	tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_wfsref0" C-m
+        tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_respM" C-m
+        tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_DMmodes" C-m
+        tmux send-keys -t $tmuxname "savefits outcoeff" C-m
+	tmux send-keys -t $tmuxname "exit" C-m
+	tmux send-keys -t $tmuxname "mv ./rec/imWFS0rec.fits ./rec/rec_${datestr}_imWFS0.fits" C-m
+	tmux send-keys -t $tmuxname "mv ./rec/aol${LOOPNUMBER}_wfsref0.fits ./rec/rec_${datestr}_wfsref0.fits" C-m
+	tmux send-keys -t $tmuxname "mv ./rec/aol${LOOPNUMBER}_respM.fits ./rec/rec_${datestr}_respM.fits" C-m
+	tmux send-keys -t $tmuxname "mv ./rec/aol${LOOPNUMBER}_DMmodes.fits ./rec/rec_${datestr}_DMmodes.fits" C-m
+	tmux send-keys -t $tmuxname "mv ./rec/outcoeff.fits ./rec/rec_${datestr}_mcoeffs.fits" C-m
+	tmux send-keys -t $tmuxname "mv mode_stats.txt ./rec/rec_${datestr}_modestats.txt" C-m
 }
 
 
@@ -3299,11 +3313,11 @@ echo "state \"$state\" not recognized ... exit"
 exit
 fi
 
+
+
+
+
 done
-
-
-
-
 
 
 
