@@ -3194,7 +3194,7 @@ NBframes="$1"
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 	tmux send-keys -t $tmuxname "$execname -n aol2rec" C-m
 	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 $1 imWFS0rec " C-m	
-	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/rec_$datestr}_imWFS0rec.fits\"" C-m
+	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/rec_${datestr}_imWFS0rec.fits\"" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_DMmodes" C-m
