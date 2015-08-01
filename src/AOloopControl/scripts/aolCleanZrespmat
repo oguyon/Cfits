@@ -30,6 +30,7 @@ pname="aol${loopnb}zrespM"
 
 Cfits -n $pname << EOF
 aolnb $loopnb
+loadfits "RMpokeCube.fits" RMpokeC
 loadfits "RMHmat.fits" Hmat
 loadfits "RMpixindex.fits" pixindexim
 aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1
