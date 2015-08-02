@@ -152,7 +152,7 @@ textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
 fname=$( cat ./conf/conf_${name}_fname.txt )
 if [ -f "$fname" ] && [ -f "./conf/conf_${name}_fname.txt" ]; then
-$execprefix getshmimsize "aol${LOOPNUMBER}_${name}"
+getshmimsize "aol${LOOPNUMBER}_${name}"
 OKstr="\Z2\Zr$sizestring\Zn"
 menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
 else
