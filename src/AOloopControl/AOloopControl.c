@@ -4806,11 +4806,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double dt, dt1;
     double *dtarray;
     double a, b;
-  
+
     long IDdm0, IDdm1; // DM shapes
     long ii, jj;
     float x, y;
- 
+
     long IDwfsc;
     long wfs_NBframesmax = 30;
     long wfsframe;
@@ -4827,11 +4827,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double valmax, valmaxdt;
     double tmp;
     double dtoffset;
- 
+
     long NBiter = 10;
-    long iter;   
-    
- 
+    long iter;
+
+
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
     dmysize = data.image[IDdm].md[0].size[1];
@@ -4839,21 +4839,21 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
 
     IDdm0 = create_2Dimage_ID("_testdm0", dmxsize, dmysize);
     IDdm1 = create_2Dimage_ID("_testdm1", dmxsize, dmysize);
-    for(ii=0;ii<dmxsize; ii++)
+    for(ii=0; ii<dmxsize; ii++)
         for(jj=0; jj<dmysize; jj++)
-            {
-                x = (2.0*ii-1.0*dmxsize)/dmxsize;
-                y = (2.0*jj-1.0*dmxsize)/dmysize;
-                data.image[IDdm0].array.F[jj*dmxsize+ii] = 0.0;
-                data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.5*x;
-            }
+        {
+            x = (2.0*ii-1.0*dmxsize)/dmxsize;
+            y = (2.0*jj-1.0*dmxsize)/dmysize;
+            data.image[IDdm0].array.F[jj*dmxsize+ii] = 0.0;
+            data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.5*x;
+        }
 
 
     IDwfs = image_ID(wfsname);
     wfsxsize = data.image[IDwfs].md[0].size[0];
     wfsysize = data.image[IDwfs].md[0].size[1];
     wfssize = wfsxsize*wfsysize;
-    
+
 
     IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
 
@@ -4862,99 +4862,102 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
 
 
-for(iter=0;iter<NBiter;iter++)
-{
-
-    clock_gettime(CLOCK_REALTIME, &tstart);
-    tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
-    tlastdouble = tstartdouble;
-
-
-
-    copy_image_ID("_testdm0", dmname, 1);
-    dmstate = 0;
-    usleep(twaitus);
-    dt = 0.0;
-  
-    wfsframe = 0;
-    wfscnt0 = data.image[IDwfs].md[0].cnt0;
-    printf("\n");
-    while((dt < dtmax)&&(wfsframe<wfs_NBframesmax))
+    for(iter=0; iter<NBiter; iter++)
     {
-        // WAITING for image
-       while(wfscnt0==data.image[IDwfs].md[0].cnt0)
+    printf("ITERATION %5ld / %5ld\n", iter, NBiter);
+    fflush(stdout);
+    
+        clock_gettime(CLOCK_REALTIME, &tstart);
+        tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
+        tlastdouble = tstartdouble;
+
+
+
+        copy_image_ID("_testdm0", dmname, 1);
+        dmstate = 0;
+        usleep(twaitus);
+        dt = 0.0;
+
+        wfsframe = 0;
+        wfscnt0 = data.image[IDwfs].md[0].cnt0;
+        printf("\n");
+        while((dt < dtmax)&&(wfsframe<wfs_NBframesmax))
+        {
+            // WAITING for image
+            while(wfscnt0==data.image[IDwfs].md[0].cnt0)
             {
-              //  printf("\r [%8ld] Waiting for image cnt0 = %8ld      ", wfsframe, wfscnt0);
-              //  fflush(stdout);
+                //  printf("\r [%8ld] Waiting for image cnt0 = %8ld      ", wfsframe, wfscnt0);
+                //  fflush(stdout);
                 usleep(50);
             }
-        wfscnt0 = data.image[IDwfs].md[0].cnt0;
-        printf("\r[%8ld]    ", wfsframe);
-        fflush(stdout);
-        // copy image to cube slice
-        ptr = (char*) data.image[IDwfsc].array.F;
-        ptr += sizeof(float)*wfsframe*wfssize;
-        memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
-        wfsframe++;
- 
- 
-        clock_gettime(CLOCK_REALTIME, &tarray[wfsframe]);
+            wfscnt0 = data.image[IDwfs].md[0].cnt0;
+            printf("\r[%8ld]    ", wfsframe);
+            fflush(stdout);
+            // copy image to cube slice
+            ptr = (char*) data.image[IDwfsc].array.F;
+            ptr += sizeof(float)*wfsframe*wfssize;
+            memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
+            wfsframe++;
 
-        tdouble = 1.0*tarray[wfsframe].tv_sec + 1.0e-9*tarray[wfsframe].tv_nsec;
-        dt = tdouble - tstartdouble;
-        dt1 = tdouble - tlastdouble;
-        dtarray[wfsframe] = dt;
-        tlastdouble = tdouble;
-        
-        // apply DM pattern #1
-        if((dmstate==0)&&(dt>dtoffset0))
+
+            clock_gettime(CLOCK_REALTIME, &tarray[wfsframe]);
+
+            tdouble = 1.0*tarray[wfsframe].tv_sec + 1.0e-9*tarray[wfsframe].tv_nsec;
+            dt = tdouble - tstartdouble;
+            dt1 = tdouble - tlastdouble;
+            dtarray[wfsframe] = dt;
+            tlastdouble = tdouble;
+
+            // apply DM pattern #1
+            if((dmstate==0)&&(dt>dtoffset0))
             {
                 printf("\nDM STATE CHANGED ON ITERATION %ld\n\n", wfsframe);
                 dtoffset = dt;
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
             }
-    }
-    printf("\n\n %ld frames recorded\n", wfsframe);
-    fflush(stdout);
-    copy_image_ID("_testdm0", dmname, 1);
-    dmstate = 0;
+        }
+        printf("\n\n %ld frames recorded\n", wfsframe);
+        fflush(stdout);
+        copy_image_ID("_testdm0", dmname, 1);
+        dmstate = 0;
 
-    
-    // Computing difference between consecutive images
-    NBwfsframe = wfsframe;
-    valarray = (double*) malloc(sizeof(double)*NBwfsframe);
-    valmax = 0.0;
-    valmaxdt = 0.0;
-    for(kk=1;kk<NBwfsframe;kk++)
-    {
-        valarray[kk] = 0.0;
-        for(ii=0;ii<wfssize;ii++)
-           {                
+
+        // Computing difference between consecutive images
+        NBwfsframe = wfsframe;
+        valarray = (double*) malloc(sizeof(double)*NBwfsframe);
+        valmax = 0.0;
+        valmaxdt = 0.0;
+        for(kk=1; kk<NBwfsframe; kk++)
+        {
+            valarray[kk] = 0.0;
+            for(ii=0; ii<wfssize; ii++)
+            {
                 tmp = data.image[IDwfsc].array.F[kk*wfssize+ii] - data.image[IDwfsc].array.F[(kk-1)*wfssize+ii];
                 valarray[kk] += tmp*tmp;
             }
-        if(valarray[kk]>valmax)
+            if(valarray[kk]>valmax)
             {
                 valmax = valarray[kk];
                 valmaxdt = dtarray[wfsframe];
             }
-    }
-    
-    
+        }
 
-    for(wfsframe=0; wfsframe<NBwfsframe; wfsframe++)
-        printf("%ld   %10.2f us       %g\n", wfsframe, 1.0e6*(dtarray[wfsframe]-dtoffset), valarray[wfsframe]);
-    
-    printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
-   free(valarray);
- }
+
+
+        for(wfsframe=0; wfsframe<NBwfsframe; wfsframe++)
+            printf("%ld   %10.2f us       %g\n", wfsframe, 1.0e6*(dtarray[wfsframe]-dtoffset), valarray[wfsframe]);
+
+        printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
+        free(valarray);
+    }
 
     free(dtarray);
     free(tarray);
-    
+
     return 0;
 }
+
 
 
 
