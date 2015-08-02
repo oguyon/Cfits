@@ -4828,7 +4828,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double tmp;
     double dtoffset;
 
-    long NBiter = 10;
+    long NBiter = 1;
     long iter;
 
 
@@ -4949,7 +4949,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
             printf("%ld   %10.2f us       %g\n", wfsframe, 1.0e6*(dtarray[wfsframe]-dtoffset), valarray[wfsframe]);
 
         printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
+        fflush(stdout);
         free(valarray);
+        
     }
 
     free(dtarray);
