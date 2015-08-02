@@ -4818,9 +4818,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     long wfsframe;
     long NBwfsframe;
     long twaitus = 10000; // 10 ms
-    double toffset0 = 0.002; // 2 ms
+    double dtoffset0 = 0.002; // 2 ms
 
-    double toffset;
     long IDwfsref;
     unsigned int dmstate;
     unsigned long wfscnt0;
@@ -4908,9 +4907,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         tlastdouble = tdouble;
         
         // apply DM pattern #1
-        if((dmstate==0)&&(dt>toffset0))
+        if((dmstate==0)&&(dt>dtoffset0))
             {
-                toffset = dt;
+                dtoffset = dt;
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
             }
