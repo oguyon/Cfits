@@ -3,7 +3,13 @@
 
 # ====================== USER EDITS THIS SECTION =======================
 
-execname="Cfits"
+
+NUMAnode=0 # for numactl
+NUMAnodeRT=1 # for numactl
+execprefix="numactl --cpunodebind=${NUMAnode} --membind=${NUMAnode}"
+execprefixRT="numactl --cpunodebind=${NUMAnodeRT} --membind=${NUMAnodeRT}"
+execname="$execprefix Cfits"
+execnameRT="$execprefixRT Cfits"
 
 # default parameters
 
@@ -146,7 +152,7 @@ textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
 fname=$( cat ./conf/conf_${name}_fname.txt )
 if [ -f "$fname" ] && [ -f "./conf/conf_${name}_fname.txt" ]; then
-getshmimsize "aol${LOOPNUMBER}_${name}"
+$execprefix getshmimsize "aol${LOOPNUMBER}_${name}"
 OKstr="\Z2\Zr$sizestring\Zn"
 menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
 else
@@ -2520,12 +2526,12 @@ echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
 
 tmux new-session -d -s aol${LOOPNUMBER}-ctr
-tmux send-keys -t aol${LOOPNUMBER}-ctr "./aolctr" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefix ./aolctr" C-m
 
 #$xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolctr &
 sleep 1
 tmux new-session -d -s aol${LOOPNUMBER}-run
-tmux send-keys -t aol${LOOPNUMBER}-run "./aolrun" C-m
+tmux send-keys -t aol${LOOPNUMBER}-run "$execprefixRT ./aolrun" C-m
 #xterm $xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolrun &
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
