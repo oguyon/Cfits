@@ -4928,7 +4928,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         valarray[kk] = 0.0;
         for(ii=0;ii<wfssize;ii++)
            {                
-                tmp = data.image[IDwfs].array.F[kk*wfssize+ii] - data.image[IDwfs].array.F[(kk-1)*wfssize+ii];
+                tmp = data.image[IDwfsc].array.F[kk*wfssize+ii] - data.image[IDwfsc].array.F[(kk-1)*wfssize+ii];
                 valarray[kk] += tmp*tmp;
             }
         if(valarray[kk]>valmax)
@@ -4941,9 +4941,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     
 
     for(wfsframe=0; wfsframe<NBwfsframe; wfsframe++)
-        printf("%lld   %10.2f ns       %g\n", cnt, 1.0e9*dtarray[cnt], valarray[cnt]);
+        printf("%ld   %10.2f ns       %g\n", wfsframe, 1.0e9*dtarray[wfsframe], valarray[wfsframe]);
     
-    printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*dt/cntmax, a);
+    printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*dt/NBwfsframe, a);
 
 
     free(valarray);
