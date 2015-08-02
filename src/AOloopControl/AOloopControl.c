@@ -4962,8 +4962,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         
         free(valarray);
         
-        printf("Latency = %f ms\n", 1000.0*valmaxdt);        
-        fprintf(fp, "%5ld  %8.6f\n", iter, valmaxdt);
+        printf("Latency = %f ms\n", 1000.0*(valmaxdt-dtoffset));        
+        fprintf(fp, "%5ld  %8.6f\n", iter, (valmaxdt-dtoffset));
     }
     fclose(fp);
 
