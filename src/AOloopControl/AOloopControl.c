@@ -4828,7 +4828,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double tmp;
     double dtoffset;
 
-    long NBiter = 100;
+    long NBiter = 1000;
     long iter;
     
     FILE *fp;
