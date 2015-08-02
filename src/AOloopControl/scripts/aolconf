@@ -3238,6 +3238,7 @@ menuitems+=( " " " " )
 
 stringcenter "RECORD"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "rins" "Record single instantaneous loop state to ./recinst/ directory" )
 menuitems+=( "rec3" "Record / analyze   1000 WFS frames" )
 menuitems+=( "rec4" "Record / analyze  10000 WFS frames" )
 
