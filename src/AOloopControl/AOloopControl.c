@@ -4944,7 +4944,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     for(wfsframe=0; wfsframe<NBwfsframe; wfsframe++)
         printf("%ld   %10.2f ns       %g\n", wfsframe, 1.0e9*dtarray[wfsframe], valarray[wfsframe]);
     
-    printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*dt/NBwfsframe, a);
+    printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
 
 
     free(valarray);
