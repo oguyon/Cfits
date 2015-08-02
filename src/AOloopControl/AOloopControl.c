@@ -4830,7 +4830,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
 
     long NBiter = 1;
     long iter;
+    
+    FILE *fp;
 
+
+    
 
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
@@ -4861,6 +4865,12 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
     dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
 
+
+    if ((fp=fopen("latency.txt", "w"))==NULL)
+        {
+            printf("ERROR: cannot open file \"latency.txt\"\\n");
+            exit(0);
+        }
 
     for(iter=0; iter<NBiter; iter++)
     {
@@ -4952,9 +4962,10 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         
         free(valarray);
         
-        printf("Latency = %f msec\n", 1000.0*valmaxdt);
-        
+        printf("Latency = %f ms\n", 1000.0*valmaxdt);        
+        fprintf(fp, "%5ld  %8.6f\n", valmaxdt);
     }
+    fclose(fp);
 
     free(dtarray);
     free(tarray);
