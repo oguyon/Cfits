@@ -4815,7 +4815,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     long wfs_NBframesmax = 40;
     long wfsframe;
     long NBwfsframe;
-    long twaitus = 10000; // 10 ms
+    long twaitus = 30000; // 30 ms
     double dtoffset0 = 0.002; // 2 ms
 
     long IDwfsref;
