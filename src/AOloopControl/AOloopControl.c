@@ -4887,6 +4887,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
               //  fflush(stdout);
                 usleep(50);
             }
+        wfscnt0 = data.image[IDwfs].md[0].cnt0;
         printf("\r[%8ld]    ", wfsframe);
         fflush(stdout);
         // copy image to cube slice
