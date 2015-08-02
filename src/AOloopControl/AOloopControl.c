@@ -6430,8 +6430,6 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
 
-
-
     clock_gettime(CLOCK_REALTIME, &t2);
     tdiff = info_time_diff(t1, t2);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6840,6 +6838,15 @@ int AOloopControl_run()
                 {
                     data.image[aoconfID_dmC].md[0].write = 1;
 
+                    for(ii=0; ii<AOconf[loop].sizeDM; ii++)//TEST
+                    {
+                         if(isnan(data.image[aoconfID_meas_act].array.F[ii])!=0)
+                            {
+                            printf("image aol2_meas_act  element %ld is NAN -> replacing by 0\n", ii);
+                            data.image[aoconfID_meas_act].array.F[ii] = 0.0;
+                            }
+                    }
+                    
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                     {
                         data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
