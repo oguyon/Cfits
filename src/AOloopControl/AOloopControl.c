@@ -4868,7 +4868,6 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     dmstate = 0;
     usleep(twaitus);
 
-    
 
     
     cnt = 0;
@@ -4909,6 +4908,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         // apply DM pattern #1
         if((dmstate==0)&&(dt>dtoffset0))
             {
+                printf("\nDM STATE CHANGED ON ITERATION %ld\n\n", wfsframe);
                 dtoffset = dt;
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
