@@ -4877,7 +4877,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     dtarray = (double*) malloc(sizeof(double)*cntmax);
     wfsframe = 0;
     wfscnt0 = data.image[IDwfs].md[0].cnt0;
-    
+    printf("\n");
     while((dt < dtmax)&&(wfsframe<wfs_NBframesmax))
     {
         // WAITING for image
@@ -4887,7 +4887,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
               //  fflush(stdout);
                 usleep(50);
             }
-        printf("\r");
+        printf("\r[%8ld]    ", wfsframe);
+        fflush(stdout);
         // copy image to cube slice
         ptr = (char*) data.image[IDwfsc].array.F;
         ptr += sizeof(float)*wfsframe*wfssize;
@@ -4900,7 +4901,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         tdouble = 1.0*tarray[cnt].tv_sec + 1.0e-9*tarray[cnt].tv_nsec;
         dt = tdouble - tstartdouble;
         dt1 = tdouble - tlastdouble;
-        dtarray[cnt] = dt1;
+        dtarray[wfsframe] = dt1;
         tlastdouble = tdouble;
         
         // apply DM pattern #1
@@ -4910,10 +4911,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
             }
-        
-        cnt++;
     }
-    
+    printf("\n\n %ld frames recorded\n", wfsframe);
+    fflush(stdout);
     copy_image_ID("_testdm0", dmname, 1);
     dmstate = 0;
 
