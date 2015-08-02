@@ -6,7 +6,7 @@
 
 
 #define maxNBMB 100
-
+#define MAX_NUMBER_TIMER 100
 
 typedef struct
 {
@@ -72,7 +72,9 @@ typedef struct
 
     int status;
     int GPUstatus[50];
-
+    unsigned int NBtimer; // number of active timers - 1 timer per status value
+    struct timespec timer[MAX_NUMBER_TIMER];
+    
     int RMstatus;
     // 2: wait for image
 
@@ -92,6 +94,8 @@ typedef struct
 
     
     int AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
+    
+
     
 
     // LOOP TELEMETRY
@@ -145,6 +149,7 @@ int set_DM_modesRM(long loop);
 long AOloopControl_mkHadamardModes50(char *outname);
 long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname);
 long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl);
+long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname);
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode);
 int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);

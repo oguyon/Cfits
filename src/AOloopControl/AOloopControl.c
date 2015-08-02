@@ -312,6 +312,20 @@ int AOcontrolLoop_TestDMSpeed_cli()
 }
 
 
+
+
+int AOcontrolLoop_TestSystemLatency_cli()
+{
+      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)==0)
+    {
+        AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
 int Measure_zonalRM_cli()
 {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,2)==0)
@@ -758,7 +772,15 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aoldmtestsp dmdisp2 100 20 0.1");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl)");
     data.NBcmd++;
-
+    
+    strcpy(data.cmd[data.NBcmd].key,"aoltestlat");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOcontrolLoop_TestSystemLatency_cli;
+    strcpy(data.cmd[data.NBcmd].info,"test system latency");
+    strcpy(data.cmd[data.NBcmd].syntax,"<dm stream> <wfs stream>");
+    strcpy(data.cmd[data.NBcmd].example,"aoltestlat");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -4726,10 +4748,14 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
     float x, y, x1;
     char *ptr;
     
+    long IDdm0, IDdm1; // DM shapes
+    
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
     dmysize = data.image[IDdm].md[0].size[1];
     dmsize = dmxsize*dmysize;
+    
+ 
     
     ID1 = create_3Dimage_ID("dmpokeseq", dmxsize, dmysize, NBpts);
     for(kk=0;kk<NBpts;kk++)
@@ -4744,8 +4770,7 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
                         data.image[ID1].array.F[kk*dmsize+jj*dmxsize+ii] = ampl*x1;                        
                     }
         }
-    
-    
+        
     while(1)
     {
         for(kk=0;kk<NBpts;kk++)
@@ -4773,39 +4798,154 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     long IDwfs;
     long wfsxsize, wfsysize, wfssize;
     long twait0us = 100000;
-    struct timespec tstart, tnow;
-    double tnowdouble;
+    struct timespec tstart;
+    struct timespec *tarray;
+    double tdouble, tlastdouble;
     double tstartdouble;
     long long cnt;
-    double dtmax;
-
+    long long cntmax;
+    double dtmax = 1.0;
+    double dt, dt1;
+    double *dtarray;
+    double a, b;
+  
+    long IDdm0, IDdm1; // DM shapes
+    long ii, jj;
+    float x, y;
+ 
+    long IDwfsc;
+    long wfs_NBframesmax = 20;
+    long wfsframe;
+    long NBwfsframe;
+    long twaitus = 10000; // 10 ms
+    double toffset0 = 0.01; //10 ms
+    double toffset;
+    long IDwfsref;
+    unsigned int dmstate;
+    unsigned long wfscnt0;
+    char *ptr;
+    long kk;
+    double *valarray;
+    double valmax, valmaxdt;
+    double tmp;
+    
+    
+ 
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
     dmysize = data.image[IDdm].md[0].size[1];
     dmsize = dmxsize*dmysize;
+
+    IDdm0 = create_2Dimage_ID("_testdm0", dmxsize, dmysize);
+    IDdm1 = create_2Dimage_ID("_testdm1", dmxsize, dmysize);
+    for(ii=0;ii<dmxsize; ii++)
+        for(jj=0; jj<dmysize; jj++)
+            {
+                x = 2.0*ii-0.5*dmxsize;
+                y = 2.0*jj-0.5*dmxsize;
+                data.image[IDdm0].array.F[jj*dmxsize+ii] = 0.0;
+                data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.5*x;
+            }
 
 
     IDwfs = image_ID(wfsname);
     wfsxsize = data.image[IDwfs].md[0].size[0];
     wfsysize = data.image[IDwfs].md[0].size[1];
     wfssize = wfsxsize*wfsysize;
+    
 
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tstartdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+    IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
 
 
+    clock_gettime(CLOCK_REALTIME, &tstart);
+    tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
+    tlastdouble = tstartdouble;
+
+
+
+    copy_image_ID("_testdm0", dmname, 1);
+    dmstate = 0;
+    usleep(twaitus);
+
+    
+
+    
     cnt = 0;
+    cntmax = 100;
     dt = 0.0;
-    while(dt<dtmax)
+    tarray = (struct timespec *) malloc(sizeof(struct timespec)*cntmax);
+    dtarray = (double*) malloc(sizeof(double)*cntmax);
+    wfsframe = 0;
+    wfscnt0 = data.image[IDwfs].md[0].cnt0;
+    
+    while((dt < dtmax)&&(wfsframe<wfs_NBframesmax))
     {
+        // WAITING for image
+       while(wfscnt0!=data.image[IDwfs].md[0].cnt0)
+            usleep(50);
+        
+        // copy image to cube slice
+        ptr = (char*) data.image[IDwfsc].array.F;
+        ptr += sizeof(float)*wfsframe*wfssize;
+        memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
+        wfsframe++;
+ 
+ 
+        clock_gettime(CLOCK_REALTIME, &tarray[cnt]);
+
+        tdouble = 1.0*tarray[cnt].tv_sec + 1.0e-9*tarray[cnt].tv_nsec;
+        dt = tdouble - tstartdouble;
+        dt1 = tdouble - tlastdouble;
+        dtarray[cnt] = dt1;
+        tlastdouble = tdouble;
+        
+        // apply DM pattern #1
+        if((dmstate==0)&&(dt>toffset0))
+            {
+                toffset = dt;
+                dmstate = 1;
+                copy_image_ID("_testdm1", dmname, 1);
+            }
+        
         cnt++;
-        clock_gettime(CLOCK_REALTIME, &tnow);
-        tnowdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
-        dt = tnowdouble - tstartdouble;
     }
     
-    printf("cnt = %lld   ->  %10.2 ns \n", cnt, 1.0e9*cnt/dtmax);
+    copy_image_ID("_testdm0", dmname, 1);
+    dmstate = 0;
 
+    
+    // Computing difference between consecutive images
+    NBwfsframe = wfsframe;
+    valarray = (double*) malloc(sizeof(double)*NBwfsframe);
+    valmax = 0.0;
+    valmaxdt = 0.0;
+    for(kk=1;kk<NBwfsframe;kk++)
+    {
+        valarray[kk] = 0.0;
+        for(ii=0;ii<wfssize;ii++)
+           {                
+                tmp = data.image[IDwfs].array.F[kk*wfssize+ii] - data.image[IDwfs].array.F[(kk-1)*wfssize+ii];
+                valarray[kk] += tmp*tmp;
+            }
+        if(valarray[kk]>valmax)
+            {
+                valmax = valarray[kk];
+                valmaxdt = dtarray[wfsframe];
+            }
+    }
+    
+    
+
+    for(wfsframe=0; wfsframe<NBwfsframe; wfsframe++)
+        printf("%lld   %10.2f ns       %g\n", cnt, 1.0e9*dtarray[cnt], valarray[cnt]);
+    
+    printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*dt/cntmax, a);
+
+
+    free(valarray);
+    free(dtarray);
+    free(tarray);
+    
     return 0;
 }
 
@@ -6674,8 +6814,7 @@ int AOloopControl_run()
                     AOconf[loop].DMupdatecnt ++;
                 }
 
-                AOconf[loop].status = 20; //  LOGGING, part 1
-                AOconf[loop].status = 21; //  (13->) LOGGING, part 2
+                AOconf[loop].status = 20;
                 AOconf[loop].cnt++;
 
                 data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
@@ -7009,13 +7148,13 @@ int AOloopControl_statusStats()
 {
     long k;
     long NBkiter = 200000;
-    long statusmax = 22;
+    long statusmax = 21;
     long *statuscnt;
     float usec0, usec1;
     int st;
     int RT_priority = 91; //any number from 0-99
     struct sched_param schedpar;
-    const char *statusdef[22];
+    const char *statusdef[21];
     int gpu;
     int nbgpu;
     struct timespec t1;
@@ -7047,9 +7186,8 @@ int AOloopControl_statusStats()
     statusdef[17] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
     statusdef[18] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
     statusdef[19] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
-    statusdef[20] = "LOG DATA, PART 1";
-    statusdef[21] = "LOG DATA, PART 2";
-
+    statusdef[20] = "LOG DATA";
+ 
     usec0 = 50.0;
     usec1 = 150.0;
 
