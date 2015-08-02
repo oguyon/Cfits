@@ -4812,7 +4812,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     float x, y;
 
     long IDwfsc;
-    long wfs_NBframesmax = 30;
+    long wfs_NBframesmax = 40;
     long wfsframe;
     long NBwfsframe;
     long twaitus = 10000; // 10 ms
@@ -4828,8 +4828,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double tmp;
     double dtoffset;
 
-    long NBiter = 5000;
+    long NBiter = 2000;
     long iter;
+    
+    double latencymax = 0.0;
+    
     
     FILE *fp;
     int RT_priority = 80; //any number from 0-99
@@ -4971,7 +4974,13 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         
         free(valarray);
         
-        printf("Latency = %f ms\n", 1000.0*(valmaxdt-dtoffset));        
+        latency = valmaxdt-dtoffset;
+        printf("Latency = %f ms\n", 1000.0*latency);
+        if(latency > latencymax)
+        {
+            latencymax = latency;
+            save_fits("_testwfsc", "!maxlatencyseq.fits");
+        }        
         fprintf(fp, "%5ld  %8.6f\n", iter, (valmaxdt-dtoffset));
     }
     fclose(fp);
