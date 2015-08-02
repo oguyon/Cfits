@@ -4837,6 +4837,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     FILE *fp;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
+    double latency;
     
 
     schedpar.sched_priority = RT_priority;
