@@ -3259,7 +3259,7 @@ mkdir -p recinst
 tmuxname="aol${LOOPNUMBER}-ctr"
 for name in contrM contrMc contrMcact dmC dmdisp dmmap dmmask DMmodes dmRM dmZP gainb imWFS0 imWFS1 imWFS1RM imWFS2 meas_act_active meas_act respM wfsdark wfsim wfsmap wfsmask wfsref0 wfsref zrespM
 do
-tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_ \"./recinst/aol${LOOPNUMBER}_${name}.fits\"" C-m
+tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_${name} \"./recinst/aol${LOOPNUMBER}_${name}.fits\"" C-m
 done
 ;;
    	rec3) recordanalizeWFS 1000;;
