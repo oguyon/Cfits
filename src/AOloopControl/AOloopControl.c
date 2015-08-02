@@ -4843,8 +4843,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     for(ii=0;ii<dmxsize; ii++)
         for(jj=0; jj<dmysize; jj++)
             {
-                x = 2.0*ii-0.5*dmxsize;
-                y = 2.0*jj-0.5*dmxsize;
+                x = (2.0*ii-1.0*dmxsize)/dmxsize;
+                y = (2.0*jj-1.0*dmxsize)/dmysize;
                 data.image[IDdm0].array.F[jj*dmxsize+ii] = 0.0;
                 data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.5*x;
             }
@@ -4904,7 +4904,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         tdouble = 1.0*tarray[cnt].tv_sec + 1.0e-9*tarray[cnt].tv_nsec;
         dt = tdouble - tstartdouble;
         dt1 = tdouble - tlastdouble;
-        dtarray[wfsframe] = dt1;
+        dtarray[wfsframe] = dt;
         tlastdouble = tdouble;
         
         // apply DM pattern #1
