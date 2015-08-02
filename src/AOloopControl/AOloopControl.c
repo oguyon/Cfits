@@ -4832,6 +4832,15 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     long iter;
     
     FILE *fp;
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+    
+
+    schedpar.sched_priority = RT_priority;
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+
 
 
     
