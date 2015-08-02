@@ -4802,8 +4802,6 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     struct timespec *tarray;
     double tdouble, tlastdouble;
     double tstartdouble;
-    long long cnt;
-    long long cntmax;
     double dtmax = 1.0;
     double dt, dt1;
     double *dtarray;
@@ -4829,7 +4827,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double valmax, valmaxdt;
     double tmp;
     double dtoffset;
-    
+ 
+    long NBiter = 10;
+    long iter;   
     
  
     IDdm = image_ID(dmname);
@@ -4858,6 +4858,13 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
 
 
+    tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
+    dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
+
+
+for(iter=0;iter<NBiter;iter++)
+{
+
     clock_gettime(CLOCK_REALTIME, &tstart);
     tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
     tlastdouble = tstartdouble;
@@ -4867,14 +4874,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     copy_image_ID("_testdm0", dmname, 1);
     dmstate = 0;
     usleep(twaitus);
-
-
-    
-    cnt = 0;
-    cntmax = 100;
     dt = 0.0;
-    tarray = (struct timespec *) malloc(sizeof(struct timespec)*cntmax);
-    dtarray = (double*) malloc(sizeof(double)*cntmax);
+  
     wfsframe = 0;
     wfscnt0 = data.image[IDwfs].md[0].cnt0;
     printf("\n");
@@ -4897,9 +4898,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         wfsframe++;
  
  
-        clock_gettime(CLOCK_REALTIME, &tarray[cnt]);
+        clock_gettime(CLOCK_REALTIME, &tarray[wfsframe]);
 
-        tdouble = 1.0*tarray[cnt].tv_sec + 1.0e-9*tarray[cnt].tv_nsec;
+        tdouble = 1.0*tarray[wfsframe].tv_sec + 1.0e-9*tarray[wfsframe].tv_nsec;
         dt = tdouble - tstartdouble;
         dt1 = tdouble - tlastdouble;
         dtarray[wfsframe] = dt;
@@ -4946,9 +4947,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         printf("%ld   %10.2f us       %g\n", wfsframe, 1.0e6*(dtarray[wfsframe]-dtoffset), valarray[wfsframe]);
     
     printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
+   free(valarray);
+ }
 
-
-    free(valarray);
     free(dtarray);
     free(tarray);
     
