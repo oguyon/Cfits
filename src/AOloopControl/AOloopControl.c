@@ -4881,7 +4881,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         wfsframe = 0;
         wfscnt0 = data.image[IDwfs].md[0].cnt0;
         printf("\n");
-        while((dt < dtmax)&&(wfsframe<wfs_NBframesmax))
+        while( (dt < dtmax) && (wfsframe<wfs_NBframesmax) )
         {
             // WAITING for image
             while(wfscnt0==data.image[IDwfs].md[0].cnt0)
@@ -4897,8 +4897,6 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
             ptr = (char*) data.image[IDwfsc].array.F;
             ptr += sizeof(float)*wfsframe*wfssize;
             memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
-            wfsframe++;
-
 
             clock_gettime(CLOCK_REALTIME, &tarray[wfsframe]);
 
@@ -4916,6 +4914,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
             }
+           wfsframe++;
         }
         printf("\n\n %ld frames recorded\n", wfsframe);
         fflush(stdout);
