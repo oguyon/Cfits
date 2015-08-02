@@ -4828,6 +4828,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double *valarray;
     double valmax, valmaxdt;
     double tmp;
+    double dtoffset;
     
     
  
