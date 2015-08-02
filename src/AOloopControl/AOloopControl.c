@@ -4882,8 +4882,12 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     {
         // WAITING for image
        while(wfscnt0!=data.image[IDwfs].md[0].cnt0)
-            usleep(50);
-        
+            {
+                printf("\r [%8ld] Waiting for image cnt0 = %8ld      ", wfsframe, wfscnt0);
+                fflush(stdout);
+                usleep(50);
+            }
+        printf("\r");
         // copy image to cube slice
         ptr = (char*) data.image[IDwfsc].array.F;
         ptr += sizeof(float)*wfsframe*wfssize;
