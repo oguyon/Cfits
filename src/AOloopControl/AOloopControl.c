@@ -4860,7 +4860,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     double latency;
-
+    int ret;
     float minlatency, maxlatency;
 
     schedpar.sched_priority = RT_priority;
@@ -5028,11 +5028,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
         }
     latencyave /= NBiter;
     
-    printf("AVERAGE LATENCY = %8.3f ms", latencyave);
-    printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency, maxlatency);
+    printf("AVERAGE LATENCY = %8.3f ms\n", latencyave*1000.0);
+    printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
     
-    sprintf(command, "echo %f > conf/conf_hardwlatency.txt", latencyave, minlatency, maxlatency);
-    system(command);
+    ret = sprintf(command, "echo %f > conf/conf_hardwlatency.txt", latencyave, minlatency, maxlatency);
+    ret = system(command);
     
     free(latencyarray);
     
@@ -6530,8 +6530,21 @@ int AOcompute(long loop)
     int r;
     float imtot;
 
-    // get dark-subtracted image
+
+    // waiting for dark-subtracted image
     AOconf[loop].status = 1;  // 1: READING IMAGE
+
+    clock_gettime(CLOCK_REALTIME, &data.image[aoconfID_looptiming].md[0].wtime);
+    
+// md[0].wtime is absolute time at beginning of iteration
+//
+// pixel 0 is dt since last iteration
+//
+// pixel 1 is time from beginning of loop to status 01
+// pixel 2 is time from beginning of loop to status 02
+
+
+
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
 
     AOconf[loop].status = 6;  // 6: REMOVING REF

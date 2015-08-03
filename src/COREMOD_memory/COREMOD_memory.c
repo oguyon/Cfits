@@ -4199,19 +4199,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     long xsize, ysize;
     char *ptr0; // source
     char *ptr1; // source - offset by slice
-  //  unsigned int frind;
-    
     
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     
 
     schedpar.sched_priority = RT_priority;
-    // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    // r = seteuid(euid_real);//Go back to normal privileges
-
-
 
     ID = image_ID(IDname);
 
@@ -4318,20 +4312,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         else
             sem_wait(data.image[ID].semptr[0]);
 
+       ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
 
-//        frind = data.image[ID].md[0].cnt1+3;
-//       while(frind>data.image[ID].md[0].size[2]-1)
-//         frind -= data.image[ID].md[0].size[2];
-        ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
-        
-        
         if (send(fds_client, ptr1, framesize, 0) != framesize)
         {
             printf("send() sent a different number of bytes than expected %ld\n", framesize);
             fflush(stdout);
         }
-     //   else
-     //       printf("SENT IMAGE, %ld bytes\n", framesize);
     }
 
     close(fds_client);
