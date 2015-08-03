@@ -4199,7 +4199,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     long xsize, ysize;
     char *ptr0; // source
     char *ptr1; // source - offset by slice
-    unsigned int frind;
+  //  unsigned int frind;
     
     
     int RT_priority = 80; //any number from 0-99
@@ -4319,10 +4319,10 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             sem_wait(data.image[ID].semptr[0]);
 
 
-        frind = data.image[ID].md[0].cnt1+3;
-        while(frind>data.image[ID].md[0].size[2]-1)
-            frind -= data.image[ID].md[0].size[2];
-        ptr1 = ptr0 + framesize*frind; //data.image[ID].md[0].cnt1; // frame that was just written
+//        frind = data.image[ID].md[0].cnt1+3;
+//       while(frind>data.image[ID].md[0].size[2]-1)
+//         frind -= data.image[ID].md[0].size[2];
+        ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
         
         
         if (send(fds_client, ptr1, framesize, 0) != framesize)
