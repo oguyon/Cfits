@@ -121,7 +121,9 @@ long aoconfID_looptiming = -1; // control loop timing data. Pixel values corresp
 // currently has 20 timing slots
 // beginning of iteration is defined when entering "wait for image"
 // md[0].wtime is absolute time at beginning of iteration
+//
 // pixel 0 is dt since last iteration
+//
 // pixel 1 is time from beginning of loop to status 01
 // pixel 2 is time from beginning of loop to status 02
 // ...
@@ -3849,6 +3851,12 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
         fprintf(fplog, "MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
     }
 
+
+    sprintf(name, "aol%ld_looptiming", loop);
+    aoconfID_looptiming = AOloopControl_2Dloadcreate_shmim(name, " ", NBtimers, 1);
+
+
+
     // this image is read to notify when new dm displacement is ready
     aoconfID_dmdisp = read_sharedmem_image(AOconf[loop].dmdispname);
     if(aoconfID_dmdisp==-1)
@@ -4845,7 +4853,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     long iter;
     
     double latencymax = 0.0;
-    
+    float *latencyarray;
     
     FILE *fp;
     int RT_priority = 80; //any number from 0-99
@@ -4859,7 +4867,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     // r = seteuid(euid_real);//Go back to normal privileges
 
 
-
+    latencyarray = (float*) malloc(sizeof(float)*NBiter);
     
 
     IDdm = image_ID(dmname);
@@ -4996,12 +5004,20 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
             save_fits("_testwfsc", "!maxlatencyseq.fits");
         }        
         fprintf(fp, "%5ld  %8.6f\n", iter, (valmaxdt-dtoffset));
+        latencyarray[iter] = (valmaxdt-dtoffset);
     }
     fclose(fp);
 
     free(dtarray);
     free(tarray);
 
+    latencyave = 0.0;
+    for(iter=0;iter<NBiter;iter++)
+        latencyave += latencyarray[iter];
+    latencyave /= 
+
+    free(latencyarray);
+    
     return 0;
 }
 
