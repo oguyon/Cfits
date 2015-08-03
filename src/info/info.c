@@ -452,7 +452,7 @@ int printstatus(long ID)
     print_header(" PIXEL VALUES ", '-');
     printw("min - max   :   %12.6e - %12.6e\n", minPV, maxPV);
 
-    if(data.image[ID].md[0].nelement>10)
+    if(data.image[ID].md[0].nelement>25)
     {
         vcntmax = 0;
         for(h=0; h<NBhistopt; h++)
@@ -531,10 +531,9 @@ int info_pixelstats_smallImage(long ID, long NBpix)
         }
     }
 
-
-
     return(0);
 }
+
 
 
 
@@ -816,67 +815,69 @@ int img_histoc_double(char *ID_name, char *fname)
 
 int make_histogram(char *ID_name, char *ID_out_name, double min, double max, long nbsteps)
 {
-  int ID,ID_out;
-  long ii,jj;
-  long naxes[2];
-  long n;
+    int ID,ID_out;
+    long ii,jj;
+    long naxes[2];
+    long n;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
 
-  create_2Dimage_ID(ID_out_name,nbsteps,1);
-  ID_out = image_ID(ID_out_name);
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      {
-	n = (long) ((data.image[ID].array.F[jj*naxes[0]+ii]-min)/(max-min)*nbsteps);
-	if((n>0)&&(n<nbsteps))
-	  data.image[ID_out].array.F[n] += 1;
-      }
-  return(0);
+    create_2Dimage_ID(ID_out_name,nbsteps,1);
+    ID_out = image_ID(ID_out_name);
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            n = (long) ((data.image[ID].array.F[jj*naxes[0]+ii]-min)/(max-min)*nbsteps);
+            if((n>0)&&(n<nbsteps))
+                data.image[ID_out].array.F[n] += 1;
+        }
+    return(0);
 }
+
 
 double ssquare(char *ID_name)
 {
-  int ID;
-  long ii,jj;
-  long naxes[2];
-  double ssquare;
+    int ID;
+    long ii,jj;
+    long naxes[2];
+    double ssquare;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-    
-  ssquare = 0;
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      ssquare = ssquare + data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
-    }
-  return(ssquare);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    ssquare = 0;
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            ssquare = ssquare + data.image[ID].array.F[jj*naxes[0]+ii]*data.image[ID].array.F[jj*naxes[0]+ii];
+        }
+    return(ssquare);
 }
 
 double rms_dev(char *ID_name)
 {
-  int ID;
-  long ii,jj;
-  long naxes[2];
-  double ssquare,rms;
-  double constant;
+    int ID;
+    long ii,jj;
+    long naxes[2];
+    double ssquare,rms;
+    double constant;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-    
-  ssquare = 0;
-  constant = arith_image_total(ID_name)/naxes[0]/naxes[1];
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      ssquare = ssquare + (data.image[ID].array.F[jj*naxes[0]+ii]-constant)*(data.image[ID].array.F[jj*naxes[0]+ii]-constant);
-    }
-  rms = sqrt(ssquare/naxes[1]/naxes[0]);
-  return(rms);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    ssquare = 0;
+    constant = arith_image_total(ID_name)/naxes[0]/naxes[1];
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            ssquare = ssquare + (data.image[ID].array.F[jj*naxes[0]+ii]-constant)*(data.image[ID].array.F[jj*naxes[0]+ii]-constant);
+        }
+    rms = sqrt(ssquare/naxes[1]/naxes[0]);
+    return(rms);
 }
+
 
 
 
@@ -921,7 +922,7 @@ int info_image_stats(char *ID_name, char *options)
         printf("% ld",data.image[ID].md[0].size[0]);
         j = 0;
         sprintf(vname,"imsize%ld",j);
-                
+
         create_variable_ID(vname,1.0*data.image[ID].md[0].size[j]);
         for(j=1; j<data.image[ID].md[0].naxis; j++)
         {
@@ -931,7 +932,7 @@ int info_image_stats(char *ID_name, char *options)
         }
         printf(" ]\n");
 
-		printf("write = %d   cnt0 = %ld   cnt1 = %ld\n", data.image[ID].md[0].write, data.image[ID].md[0].cnt0, data.image[ID].md[0].cnt1);
+        printf("write = %d   cnt0 = %ld   cnt1 = %ld\n", data.image[ID].md[0].write, data.image[ID].md[0].cnt0, data.image[ID].md[0].cnt1);
 
 
         if(atype==CHAR)
@@ -1111,6 +1112,7 @@ int info_image_stats(char *ID_name, char *options)
 
     return(0);
 }
+
 
 
 
