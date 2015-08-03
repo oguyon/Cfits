@@ -4301,7 +4301,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         exit(0);
         break;
     }
-
+ 
 
     while(1)
     {
