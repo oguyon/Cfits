@@ -4200,6 +4200,18 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     char *ptr0; // source
     char *ptr1; // source - offset by slice
     unsigned int frind;
+    
+    
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+    
+
+    schedpar.sched_priority = RT_priority;
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+
+
 
     ID = image_ID(IDname);
 
@@ -4307,7 +4319,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             sem_wait(data.image[ID].semptr[0]);
 
 
-        frind = data.image[ID].md[0].cnt1+2;
+        frind = data.image[ID].md[0].cnt1+0;
         while(frind>data.image[ID].md[0].size[2]-1)
             frind -= data.image[ID].md[0].size[2];
         ptr1 = ptr0 + framesize*frind; //data.image[ID].md[0].cnt1; // frame that was just written
@@ -4354,6 +4366,19 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     char *ptr0; // source
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
+
+
+
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+    
+
+    schedpar.sched_priority = RT_priority;
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+
+
 
     // create TCP socket
     if((fds_server=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))==-1)
