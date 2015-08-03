@@ -6,8 +6,10 @@
 
 NUMAnode=0 # for numactl
 NUMAnodeRT=1 # for numactl
-execprefix="numactl --cpunodebind=${NUMAnode} --membind=${NUMAnode}"
-execprefixRT="numactl --cpunodebind=${NUMAnodeRT} --membind=${NUMAnodeRT}"
+#execprefix="numactl --cpunodebind=${NUMAnode} --membind=${NUMAnode}"
+execprefix=""
+#execprefixRT="numactl --cpunodebind=${NUMAnodeRT} --membind=${NUMAnodeRT}"
+execprefixRT=""
 execname="$execprefix Cfits"
 execnameRT="$execprefixRT Cfits"
 
