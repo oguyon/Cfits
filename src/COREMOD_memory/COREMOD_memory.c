@@ -4307,7 +4307,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             sem_wait(data.image[ID].semptr[0]);
 
 
-        frind = data.image[ID].md[0].cnt1+1;
+        frind = data.image[ID].md[0].cnt1+2;
         while(frind>data.image[ID].md[0].size[2]-1)
             frind -= data.image[ID].md[0].size[2];
         ptr1 = ptr0 + framesize*frind; //data.image[ID].md[0].cnt1; // frame that was just written
@@ -4318,8 +4318,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             printf("send() sent a different number of bytes than expected %ld\n", framesize);
             fflush(stdout);
         }
-        else
-            printf("SENT IMAGE, %ld bytes\n", framesize);
+     //   else
+     //       printf("SENT IMAGE, %ld bytes\n", framesize);
     }
 
     close(fds_client);
