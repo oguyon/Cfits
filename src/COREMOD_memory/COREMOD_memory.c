@@ -4263,7 +4263,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         printf("ERROR: WRONG DATA TYPE\n");
         exit(0);
         break;
-    }
+    } 
 
     printf("image frame size = %ld\n", framesize);
 
