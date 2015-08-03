@@ -4307,7 +4307,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             sem_wait(data.image[ID].semptr[0]);
 
 
-        frind = data.image[ID].md[0].cnt1;
+        frind = data.image[ID].md[0].cnt1+1;
         while(frind>data.image[ID].md[0].size[2]-1)
             frind -= data.image[ID].md[0].size[2];
         ptr1 = ptr0 + framesize*frind; //data.image[ID].md[0].cnt1; // frame that was just written
