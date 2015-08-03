@@ -116,6 +116,11 @@ long aoconfID_meas_act = -1;
 long aoconfID_contrMcact = -1;
 long aoconfID_gainb = -1; // block modal gains
 
+
+long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
+
+
+
 long aoconfIDlog0 = -1;
 long aoconfIDlog1 = -1;
 
