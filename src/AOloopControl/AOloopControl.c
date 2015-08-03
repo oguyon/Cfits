@@ -4841,7 +4841,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double tmp;
     double dtoffset;
 
-    long NBiter = 10000;
+    long NBiter = 5000;
     long iter;
     
     double latencymax = 0.0;
