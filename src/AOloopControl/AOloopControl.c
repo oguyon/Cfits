@@ -118,6 +118,14 @@ long aoconfID_gainb = -1; // block modal gains
 
 
 long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
+// currently has 20 timing slots
+// beginning of iteration is defined when entering "wait for image"
+// md[0].wtime is absolute time at beginning of iteration
+// pixel 0 is dt since last iteration
+// pixel 1 is time from beginning of loop to status 01
+// pixel 2 is time from beginning of loop to status 02
+// ...
+long NBtimers = 21; 
 
 
 
@@ -4833,7 +4841,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double tmp;
     double dtoffset;
 
-    long NBiter = 2000;
+    long NBiter = 10000;
     long iter;
     
     double latencymax = 0.0;
@@ -6761,6 +6769,11 @@ int AOloopControl_run()
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     // r = seteuid(euid_real);//Go back to normal privileges
+
+
+
+
+
 
     loop = LOOPNUMBER;
 
