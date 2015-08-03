@@ -4827,7 +4827,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double dt, dt1;
     double *dtarray;
     double a, b;
-
+    char command[200];
     long IDdm0, IDdm1; // DM shapes
     long ii, jj;
     float x, y;
@@ -4854,12 +4854,14 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     
     double latencymax = 0.0;
     float *latencyarray;
+    float latencyave;
     
     FILE *fp;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     double latency;
-    
+
+    float minlatency, maxlatency;
 
     schedpar.sched_priority = RT_priority;
     // r = seteuid(euid_called); //This goes up to maximum privileges
@@ -5012,10 +5014,26 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     free(tarray);
 
     latencyave = 0.0;
+    minlatency = latencyarray[0];
+    maxlatency = latencyarray[0];
     for(iter=0;iter<NBiter;iter++)
-        latencyave += latencyarray[iter];
-    latencyave /= 
-
+        {
+            if(latencyarray[iter]>maxlatency)
+                maxlatency = latencyarray[iter];
+                                
+            if(latencyarray[iter]<minlatency)
+                minlatency = latencyarray[iter];
+                        
+            latencyave += latencyarray[iter];
+        }
+    latencyave /= NBiter;
+    
+    printf("AVERAGE LATENCY = %8.3f ms", latencyave);
+    printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency, maxlatency);
+    
+    sprintf(command, "echo %f > conf/conf_hardwlatency.txt", latencyave, minlatency, maxlatency);
+    system(command);
+    
     free(latencyarray);
     
     return 0;
