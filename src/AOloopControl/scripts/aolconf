@@ -10,7 +10,7 @@ NUMAnodeRT=1 # for numactl
 
 execprefix=""
 # the aollog and aolrun cpusets are on the same node
-execprefixRT="cset proc -s aolrun -e "
+execprefixRT="cset proc -s aolRT -e "
 execprefixLOG="" #cset proc -s aollog -e "
 
 execname="$execprefix Cfits"  
