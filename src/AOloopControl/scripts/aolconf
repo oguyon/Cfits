@@ -147,7 +147,7 @@ quit
 EOF
 sizestring=$( cat _size.txt )
 sizestring=$(printf "%+12s\n" "$sizestring" )
-rm _size.txt
+sudo rm _size.txt
 }
 
 
