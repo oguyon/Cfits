@@ -10,12 +10,12 @@ NUMAnodeRT=1 # for numactl
 
 execprefix=""
 # the aollog and aolrun cpusets are on the same node
-execprefixRT="" #sudo cset proc -s aolrun -e "
-execprefixLOG="" #sudo cset proc -s aollog -e "
+execprefixRT="cset proc -s aolrun -e "
+execprefixLOG="" #cset proc -s aollog -e "
 
-execname="$execprefix Cfits"
-execnameRT="$execprefixRT Cfits"
-execnameLOG="$execprefixLOG Cfits"
+execname="$execprefix Cfits"  
+execnameRT="$execprefixRT Cfits" # real time control process
+execnameLOG="$execprefixLOG Cfits" # 
 
 # default parameters
 
@@ -1591,13 +1591,13 @@ menucontrolloop_default="Hon"
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefixRT} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrepMc"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "${execprefixRT} ./aolCleanZrespmat ${rmamplum}" C-m
+tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanZrespmat ${rmamplum}" C-m
 mkdir -p zrespM
 mkdir -p wfsref
 mkdir -p wfsref0
@@ -1635,7 +1635,7 @@ sleep 0.5
 zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefixRT} ./aolCleanZrespmat ${rmamplum}" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolCleanZrespmat ${rmamplum}" C-m
 pkill -USR1 aol${LOOPNUMBER}zrespM
 mkdir -p zrespM
 mkdir -p wfsref
@@ -2174,7 +2174,7 @@ echo "$cpamax" > ./conf/conf_cpamax.txt
 rm mkmodes.run
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "${execprefixRT} ./aolmkmodes ${cpamax} -1 0.15" C-m
+tmux send-keys -t $tmuxname "${execprefix} ./aolmkmodes ${cpamax} -1 0.15" C-m
 tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
@@ -2532,7 +2532,7 @@ echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
 
 tmux new-session -d -s aol${LOOPNUMBER}-ctr
-tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefixRT ./aolctr" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefix ./aolctr" C-m
 
 #$xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolctr &
 sleep 1
