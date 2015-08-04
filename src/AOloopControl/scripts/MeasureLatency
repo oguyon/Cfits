@@ -3,7 +3,7 @@
 EXPECTED_ARGS=0
 
 
-if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help ]
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
 then
   echo
   echo "------ Measure System Response Latency ------"
