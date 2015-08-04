@@ -6,10 +6,16 @@
 
 NUMAnode=0 # for numactl
 NUMAnodeRT=1 # for numactl
+
+
 execprefix=""
+# the aollog and aolrun cpusets are on the same node
 execprefixRT="sudo cset proc -s aolrun -e "
+execprefixLOG="sudo cset proc -s aollog -e "
+
 execname="$execprefix Cfits"
 execnameRT="$execprefixRT Cfits"
+execnameLOG="$execprefixLOG Cfits"
 
 # default parameters
 
@@ -135,7 +141,7 @@ line=$1
 
 
 function getshmimsize {
-$execname << EOF
+$execnameLOG << EOF
 readshmimsize $1 _size.txt
 quit
 EOF
@@ -164,7 +170,7 @@ fi
 
 
 function Fits2shm {
-$execname << EOF # move file to shared memory
+$execnameLOG << EOF # move file to shared memory
 loadfits "$1" im
 imcp2shm im $2
 quit
@@ -497,7 +503,7 @@ if [ -a $file ]
 	dmturbampl=0.1 #default
 fi
 tmux new-session -d -s DMturbamp
-tmux send-keys -t DMturbamp "$execname " C-m
+tmux send-keys -t DMturbamp "$execnameLOG " C-m
 tmux send-keys -t DMturbamp "aoloopcontroldmturampl $dmturbampl" C-m
 tmux send-keys -t DMturbamp "exit" C-m
 tmux send-keys -t DMturbamp "exit" C-m
@@ -513,7 +519,7 @@ if [ -a $file ]
 	dmturbws=1.0 #default
 fi
 tmux new-session -d -s DMturbws
-tmux send-keys -t DMturbws "$execname " C-m
+tmux send-keys -t DMturbws "$execnameLOG " C-m
 tmux send-keys -t DMturbws "aoloopcontroldmturws $dmturbws" C-m
 tmux send-keys -t DMturbws "exit" C-m
 tmux send-keys -t DMturbws "exit" C-m
@@ -529,7 +535,7 @@ if [ -a $file ]
 	dmturbtint=0.1 #default
 fi
 tmux new-session -d -s DMturbtint
-tmux send-keys -t DMturbtint "$execname " C-m
+tmux send-keys -t DMturbtint "$execnameLOG " C-m
 tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${dmturbtint}" C-m
 tmux send-keys -t DMturbtint "exit" C-m
 tmux send-keys -t DMturbtint "exit" C-m
@@ -586,7 +592,7 @@ fi
 # start DM channels
 tmux kill-session -t aosim${LOOPNUMBER}dmcomb
 tmux new-session -d -s aosim${LOOPNUMBER}dmcomb 
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execname" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execnameLOG" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 dmtestvolt" C-m
@@ -611,14 +617,14 @@ echo "TEST MODE START"
 # start DM channels
 tmux kill-session -t aosim${LOOPNUMBER}dmcomb
 tmux new-session -d -s aosim${LOOPNUMBER}dmcomb 
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execname" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execnameLOG" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 dmtestvolt" C-m
 
 
 mkdir -p testconf
-echo "$execname -n aol${LOOPNUMBER}test << EOF" > script_aol${LOOPNUMBER}test 
+echo "$execnameLOG -n aol${LOOPNUMBER}test << EOF" > script_aol${LOOPNUMBER}test 
 echo "AOsystsim ${AOsystsimsync} ${AOsystsimWFSdelayus}" >> script_aol${LOOPNUMBER}test 
 chmod +x script_aol${LOOPNUMBER}test 
 
@@ -658,14 +664,14 @@ echo " ON" > ./status/testdmturbstatus.txt
 mkdir -p ./conf/turb
 tmux kill-session -t aosim${LOOPNUMBER}dmturb
 tmux new-session -d -s aosim${LOOPNUMBER}dmturb 
-tmux send-keys -t aosim${LOOPNUMBER}dmturb "$execname" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dmturb "$execnameLOG" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmturb "aolcontroldmsetsize ${testdmsize}" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmturb "aolcontroldmsetname aosimdmctrl" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmturb "aoloopcontrolDMturb" C-m
 
 tmux kill-session -t aosim${LOOPNUMBER}dmturbctrl
 tmux new-session -d -s aosim${LOOPNUMBER}dmturbctrl
-tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "$execname" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "$execnameLOG" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturampl 0.1" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturtint 10000" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturws 1.0" C-m
@@ -1724,7 +1730,7 @@ acquwfsref0stat=" ON"
 echo " ON" > ./status/stat_acquwfsref0.txt
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux new-session -d -s $tmuxsname
-tmux send-keys -t $tmuxsname "$execname -n awfsref0${LOOPNUMBER}" C-m
+tmux send-keys -t $tmuxsname "$execnameRT -n awfsref0${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 0" C-m
 menucontrolloop_default="awfsref0off"
@@ -2766,7 +2772,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
 echo " ON" > ./status/stat_zploopON.txt
 tmuxname="aol${LOOPNUMBER}zploop"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop" C-m
+tmux send-keys -t $tmuxname "$execnameRT -n aol${LOOPNUMBER}zploop" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
@@ -2786,7 +2792,7 @@ ampl="0.03"
 modenb="00030"
 tmuxname="aol${LOOPNUMBER}zpinject"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zpin" C-m
+tmux send-keys -t $tmuxname "$execnameRT -n aol${LOOPNUMBER}zpin" C-m
 tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
 tmux send-keys -t $tmuxname "breakcube modec" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
@@ -2799,7 +2805,7 @@ tmux send-keys -t $tmuxname "exit" C-m
 	zpz)
 tmuxname="aol${LOOPNUMBER}zpzero"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "$execnameRT -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
@@ -3198,7 +3204,7 @@ NBframes="$1"
 	tmux new-session -d -s $tmuxname
   	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-	tmux send-keys -t $tmuxname "$execname -n aol2rec" C-m
+	tmux send-keys -t $tmuxname "$execnameLOG -n aol2rec" C-m
 	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 $1 imWFS0rec " C-m	
 	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/rec_${datestr}_imWFS0rec.fits\"" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
