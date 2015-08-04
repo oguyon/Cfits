@@ -1591,7 +1591,7 @@ menucontrolloop_default="Hon"
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefixRT} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm
