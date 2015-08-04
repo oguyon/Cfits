@@ -33,7 +33,7 @@
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_arith/COREMOD_arith.h"
-
+#include "info/info.h"
 #include "cudacomp/cudacomp.h"
 
 # ifdef _OPENMP
@@ -47,9 +47,13 @@
 
 extern DATA data;
 
+    struct timespec tnow;
+    struct timespec tdiff;
+    double tdiffv;
 
 int IDtimerinit = 0;
-long aoconfID_looptiming = -1;
+long IDtiming = -1; // index to image where timing should be written
+
 
 
 
@@ -331,7 +335,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         if(IDtimerinit == 0)
             {
                 sprintf(name, "aol%ld_looptiming", loopnb);
-                aoconfID_looptiming = image_ID(name);
+                IDtiming = image_ID(name);
             }
     
  
@@ -714,10 +718,16 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     int statustot;
 
 
+
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
     *status = *status + 1;  // ->7
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    data.image[IDtiming].array.F[*status] = tdiffv;
+    
 
     if(index==0) /// main CM multiplication loop
     {
@@ -755,7 +765,11 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         gpumatmultconf[index].gpuinit = 1;
     }
     *status = *status + 1;  // -> 8
-
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    data.image[IDtiming].array.F[*status] = tdiffv;
+ 
 
 
     if(gpumatmultconf[index].sem==0)
@@ -778,7 +792,11 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
     // SUM RESULTS FROM SEPARATE GPUs
     *status = *status + 1;  // -> 9
-
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    data.image[IDtiming].array.F[*status] = tdiffv;
+ 
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
@@ -804,7 +822,12 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     *status = *status + 1; // -> 10
-
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    data.image[IDtiming].array.F[*status] = tdiffv;
+ 
+ 
     return(0);
 }
 

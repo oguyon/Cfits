@@ -4574,7 +4574,7 @@ int set_DM_modes(long loop)
         printf("GPU setup\n");
         fflush(stdout);
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, 1, AOconf[loop].GPUusesem, 1, loop);
-        AOconf[loop].status = 012; 
+        AOconf[loop].status = 12; 
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
