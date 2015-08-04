@@ -48,6 +48,11 @@
 extern DATA data;
 
 
+int IDtimerinit = 0;
+long aoconfID_looptiming = -1;
+
+
+
 #ifdef HAVE_CUDA
 int deviceCount;
 
@@ -293,7 +298,7 @@ int GPUloadCmat(int index)
  * 
 */
 
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem, int initWFSref)
+int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int orientation, int USEsem, int initWFSref, long loopnb)
 {
     long IDcontrM, IDwfsim, IDwfsref;
     long *sizearraytmp;
@@ -313,12 +318,24 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     int cmatdim = 2; // 2D or 3D
     
 
+    
+
      
     if(gpumatmultconf[index].init == 0)
     {
 
         printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
+    
+ 
+        if(IDtimerinit == 0)
+            {
+                sprintf(name, "aol%ld_looptiming", loopnb);
+                aoconfID_looptiming = image_ID(name);
+            }
+    
+ 
+ 
         
         if(gpumatmultconf[index].alloc == 1)
         {
