@@ -6564,7 +6564,7 @@ int AOcompute(long loop)
 
 
     // waiting for dark-subtracted image
-    AOconf[loop].status = 019;  // 1 -> 019: READING IMAGE
+    AOconf[loop].status = 19;  //  19: WAITING FOR IMAGE
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6583,7 +6583,7 @@ int AOcompute(long loop)
 
     Average_cam_frames(loop, AOconf[loop].framesAve, 0);
 
-    AOconf[loop].status = 004;  // 6->004: REMOVING REF
+    AOconf[loop].status = 4;  // 4: REMOVING REF
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6601,7 +6601,7 @@ int AOcompute(long loop)
     }
 
 
-    AOconf[loop].status = 005; // 7->005 MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
+    AOconf[loop].status = 5; // 5 MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6696,7 +6696,7 @@ int AOcompute(long loop)
         {
             GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
 
-            AOconf[loop].status = 006; // 8 -> 006 execute
+            AOconf[loop].status = 6; // 6 execute
             
             clock_gettime(CLOCK_REALTIME, &tnow);
             tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
@@ -6710,7 +6710,7 @@ int AOcompute(long loop)
             if(1==0)
             {
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, 1);
-                AOconf[loop].status = 006; // 8->006 execute
+                AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6776,7 +6776,7 @@ int AOcompute(long loop)
 
                 initWFSref_GPU = 1;
                 initcontrMcact_GPU = 1;
-                AOconf[loop].status = 006; // 8->006 execute
+                AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6797,7 +6797,7 @@ int AOcompute(long loop)
 #endif
     }
 
-    AOconf[loop].status = 011; // 13->011 MULTIPLYING BY GAINS
+    AOconf[loop].status = 11; // 11 MULTIPLYING BY GAINS
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -6957,7 +6957,7 @@ int AOloopControl_run()
                 AOcompute(loop);
 
 
-                AOconf[loop].status = 012; // 14->012
+                AOconf[loop].status = 12; // 12
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -7000,7 +7000,7 @@ int AOloopControl_run()
                     AOconf[loop].DMupdatecnt ++;
                 }
 
-                AOconf[loop].status = 018; // 20->018
+                AOconf[loop].status = 18; // 18
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -7358,27 +7358,27 @@ int AOloopControl_statusStats()
     long long loopcnt;
 
     statusdef[0] = "";
-    statusdef[1] = "READING IMAGE";
-    statusdef[2] = "WAIT FOR IMAGE";
-    statusdef[3] = "DARK SUBTRACT";
-    statusdef[4] = "COMPUTE WFS IMAGE TOTAL";
-    statusdef[5] = "NORMALIZE WFS IMAGE";
-    statusdef[6] = "SUBTRACT REFERENCE";
-    statusdef[7] = "MULTIPLYING BY CONTROL MATRIX -> MODE VALUES : SETUP";
-    statusdef[8] = "START CONTROL MATRIX MULTIPLICATION: CHECK IF NEW CM EXISTS";
-    statusdef[9] = "CONTROL MATRIX MULT: CREATE COMPUTING THREADS";
-    statusdef[10] = "CONTROL MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
-    statusdef[11] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
-    statusdef[12] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
-    statusdef[13] = "MULTIPLYING BY GAINS";
-    statusdef[14] = "ENTER SET DM MODES";
-    statusdef[15] = "START DM MODES MATRIX MULTIPLICATION";
-    statusdef[16] = "MATRIX MULT: CREATE COMPUTING THREADS";
-    statusdef[17] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
-    statusdef[18] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
-    statusdef[19] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
-    statusdef[20] = "LOG DATA";
- 
+    statusdef[1] = "DARK SUBTRACT";
+    statusdef[2] = "COMPUTE WFS IMAGE TOTAL";
+    statusdef[3] = "NORMALIZE WFS IMAGE";
+    statusdef[4] = "SUBTRACT REFERENCE";
+    statusdef[5] = "MULTIPLYING BY CONTROL MATRIX -> MODE VALUES : SETUP";
+    statusdef[6] = "START CONTROL MATRIX MULTIPLICATION: CHECK IF NEW CM EXISTS";
+    statusdef[7] = "CONTROL MATRIX MULT: CREATE COMPUTING THREADS";
+    statusdef[8] = "CONTROL MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+    statusdef[9] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
+    statusdef[10] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+    statusdef[11] = "MULTIPLYING BY GAINS";
+    statusdef[12] = "ENTER SET DM MODES";
+    statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
+    statusdef[14] = "MATRIX MULT: CREATE COMPUTING THREADS";
+    statusdef[15] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+    statusdef[16] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
+    statusdef[17] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+    statusdef[18] = "LOG DATA";
+    statusdef[19] = "READING IMAGE";
+    statusdef[20] = "WAIT FOR IMAGE";
+
     usec0 = 50.0;
     usec1 = 150.0;
 
