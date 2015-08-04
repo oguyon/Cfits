@@ -306,7 +306,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     struct cudaDeviceProp deviceProp;
     int n, m;
     char sname[200];
-
+    char name[200];
     int ptn;
 
     long cnt0;
