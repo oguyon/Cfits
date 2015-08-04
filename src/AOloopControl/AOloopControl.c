@@ -3134,13 +3134,17 @@ int Average_cam_frames(long loop, long NbAve, int RM)
     }
     
     
-    data.image[aoconfID_looptiming].md[0].wtime = tnow; 
+//    data.image[aoconfID_looptiming].md[0].wtime = tnow; 
+  
+    // THIS IS THE STARTING POINT FOR THE LOOP
+    
     AOconf[loop].status = 001;  // 3->001: DARK SUBTRACT
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[aoconfID_looptiming].array.F[1] = tdiffv;
+    data.image[aoconfID_looptiming].array.F[0] = tdiffv;
     
+    data.image[aoconfID_looptiming].md[0].wtime = tnow; 
     
     
     // Dark subtract and compute total
