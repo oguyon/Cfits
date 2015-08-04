@@ -1255,7 +1255,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     cmdmodessize[1] = 1;
     ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
 
-    GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, 0, 0, 1);
+    GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, 0, 0, 1, 0);
 
     clock_gettime(CLOCK_REALTIME, &tnow);
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
