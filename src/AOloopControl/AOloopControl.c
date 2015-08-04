@@ -6591,7 +6591,7 @@ int AOcompute(long loop)
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[aoconfID_looptiming].array.F[6] = tdiffv;
+    data.image[aoconfID_looptiming].array.F[4] = tdiffv;
 
 
     if(COMPUTE_GPU_SCALING==0)
