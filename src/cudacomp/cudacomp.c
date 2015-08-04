@@ -700,7 +700,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
-    *status = *status + 1;  // ->9
+    *status = *status + 1;  // ->7
 
     if(index==0) /// main CM multiplication loop
     {
@@ -737,7 +737,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         }
         gpumatmultconf[index].gpuinit = 1;
     }
-    *status = *status + 1;  // -> 10
+    *status = *status + 1;  // -> 8
 
 
 
@@ -760,7 +760,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
 
     // SUM RESULTS FROM SEPARATE GPUs
-    *status = *status + 1;  // -> 11
+    *status = *status + 1;  // -> 9
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
 
@@ -786,7 +786,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
-    *status = *status + 1; // -> 12
+    *status = *status + 1; // -> 10
 
     return(0);
 }
