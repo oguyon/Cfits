@@ -5176,6 +5176,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
     
     IDcoeffarray = create_2Dimage_ID("_coeffarray", NBmodes, NBave);
     
+    
     for(kk=0;kk<NBmodes;kk++)
         {
             // APPLY MODE TO DM            
@@ -5208,7 +5209,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
 
                     IDcoeff = image_ID("dmcoeffs");
                     for(kk1=0;kk1<NBmodes;kk1++)
-                        data.image[IDcoeffarray].array.F[i*NBave+kk1] = data.image[IDcoeff].array.F[kk1];
+                        data.image[IDcoeffarray].array.F[kk1*NBave+i] = data.image[IDcoeff].array.F[kk1];
                     delete_image_ID("dmcoeffs");                    
                     i++;
                 }
