@@ -5101,12 +5101,126 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
 }
 
 
-long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl)
+// Measures PSD (measurement and rejection)
+//
+long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name)
 {
     long IDout;
+    long IDmodes, IDdmmask, IDdmin, IDdmout;
+    long dmxsize, dmysize, dmsize, NBmodes;
+    float f;
+    struct timespec tstart;
+    long nbf;
+    float runtime;
+    long IDrec_dmout, IDrec_dmmeas;
+    long ii, k, kk, kmax;
+    long IDdmtmp;
+    float fstep = 1.1;
+    float pha, coeff;
+    
+    
+    IDmodes = image_ID(DMmodes_name);
+    IDdmin = image_ID(DMstream_in_name);
+    IDdmout = image_ID(DMstream_out_name);
+    IDdmmask = image_ID(DMmask_name);
+    
+    dmxsize = data.image[IDmodes].md[0].size[0];
+    dmysize = data.image[IDmodes].md[0].size[1];
+    dmsize = dmxsize*dmysize;
+    NBmodes = data.image[IDmodes].md[0].size[2];
+ 
+    
+    if(data.image[IDdmin].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
+        {
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            exit(0);
+        }
+    
+    if(data.image[IDdmin].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            exit(0);
+        }
+
+    if(data.image[IDdmout].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            exit(0);
+        }
+
+    if(data.image[IDdmout].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            exit(0);
+        }
+
+   if(data.image[IDdmmask].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            exit(0);
+        }
+
+    if(data.image[IDdmmask].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            exit(0);
+        }
+
+
+
+    nbf = 0;
+    for(f=fmin; f<fmax; f*=fstep)
+        nbf++;
+
+    // SET UP RECORDING CUBES
+    kmax = (long) (avetime/(1.0e-6*dtus));
+    
+    IDrec_dmout = create_3Dimage_ID("_tmprecdmout", dmxsize, dmysize, kmax);
+    IDrec_dmmeas = create_3Dimage_ID("_tmprecdmmeas", dmxsize, dmysize, kmax);
+ 
+    
+
+    IDout = create_2Dimage_ID(IDout_name, nbf, NBmodes);
+    IDdmtmp = create_2Dimage_ID("_tmpdm", dmxsize, dmysize);
+    kk = index;
+    for(f=fmin; f<fmax; f*=fstep)
+    {
+        runtime = 0.0;
+        clock_gettime(CLOCK_REALTIME, &tstart);
+        k = 0;
+        while((runtime < avetime)&&(k<kmax))
+        {
+            clock_gettime(CLOCK_REALTIME, &tnow);
+            tdiff = info_time_diff(tstart, tnow);
+            runtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+            pha = 2.0*M_PI*runtime;
+            coeff = ampl*cos(pha);
+            
+            // APPLY MODE TO DM            
+            data.image[IDdmin].md[0].write = 1;
+            for(ii=0;ii<dmsize;ii++)
+                data.image[IDdmin].array.F[ii] = coeff*data.image[IDmodes].array.F[kk*dmsize+ii];
+            data.image[IDdmin].md[0].cnt0++;
+            data.image[IDdmin].md[0].write = 0;
+
+            // RECORD 
+            
+            
+            usleep(dtus);
+            k++;
+        }
+        
+    
+    }
+
+    delete_image_ID("_tmpdm");
+    
     
     return(IDout);
 }
+
+
+
 
 
 long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name)
