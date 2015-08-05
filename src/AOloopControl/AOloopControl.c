@@ -6953,8 +6953,11 @@ int AOcompute(long loop)
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
 
                 // re-map output vector
+               data.image[aoconfID_meas_act].md[0].write = 1;
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
+                data.image[aoconfID_meas_act].md[0].cnt0++;
+                data.image[aoconfID_meas_act].md[0].write = 0;
             }
 
         }
