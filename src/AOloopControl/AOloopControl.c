@@ -7307,8 +7307,8 @@ int AOloopControl_run()
     double tdiffv;
     int timerinit;
     float tmpv, tmpv1, tmpv2;
-    float range1 = 0.1; // limit single iteration motion
-    float rangec = 0.2; // limit cumulative motion
+    float range1 = 0.3; // limit single iteration motion
+    float rangec = 0.6; // limit cumulative motion
     
     
     schedpar.sched_priority = RT_priority;
