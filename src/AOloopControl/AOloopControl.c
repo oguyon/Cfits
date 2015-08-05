@@ -5297,8 +5297,14 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
     printf("done\n");
     fflush(stdout);
     
+    printf("\n\n");
+    
     for(kk=0;kk<NBmodes;kk++)
         {
+         
+            printf("\r Mode %5ld / %5ld       ", kk, NBmodes);
+            fflush(stdout);
+            
             // APPLY MODE TO DM            
             data.image[IDdmin].md[0].write = 1;
             for(ii=0;ii<dmsize;ii++)
@@ -5387,6 +5393,8 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
                 }
             
         }
+    printf("\n\n");
+    fflush(stdout);
 
     delete_image_ID("_tmpdm");
     delete_image_ID("_coeffarray");
