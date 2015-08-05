@@ -5,6 +5,6 @@ readshmim aol2_dmRM
 readshmim aol2_meas_act
 aoltestdmrec aol2_DMmodes 0.05 aol2_dmmask aol2_dmRM aol2_meas_act 3000 50 outave outrms
 savefits outave "!test_DMmodesRec.fits"
-savefits outrms "!test_DMmdoesRec_RMS.fits"
+savefits outrms "!test_DMmodesRec_RMS.fits"
 exit
 EOF
