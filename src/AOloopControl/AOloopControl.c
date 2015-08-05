@@ -5176,6 +5176,12 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
     
     IDcoeffarray = create_2Dimage_ID("_coeffarray", NBmodes, NBave);
     
+    printf("Initialize SVD ... ");
+    fflush(stdout);
+    linopt_imtools_image_fitModes("_tmpdm", DMmodes_name, DMmask_name, SVDeps, "dmcoeffs", SVDreuse);
+    SVDreuse = 1;
+    printf("done\n");
+    fflush(stdout);
     
     for(kk=0;kk<NBmodes;kk++)
         {
@@ -5191,45 +5197,79 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
             
 
             // RECORD DM SHAPES INTO MODES
+
+            // POSITIVE 
             cntdmout = 0;
             i = 0;
             while(i<NBave)
                 {
                     while(cntdmout==data.image[IDdmout].md[0].cnt0)
-                        {
-                            usleep(20);
-                        }
+                        usleep(20);
+                    
                     cntdmout =  data.image[IDdmout].md[0].cnt0;
                     
                     
                     memcpy(data.image[IDdmtmp].array.F, data.image[IDdmout].array.F, sizeof(float)*dmsize);
                     // decompose in modes
                     linopt_imtools_image_fitModes("_tmpdm", DMmodes_name, DMmask_name, SVDeps, "dmcoeffs", SVDreuse);
-                    SVDreuse = 1;
 
                     IDcoeff = image_ID("dmcoeffs");
                     for(kk1=0;kk1<NBmodes;kk1++)
-                        data.image[IDcoeffarray].array.F[kk1*NBave+i] = data.image[IDcoeff].array.F[kk1];
+                        data.image[IDcoeffarray].array.F[kk1*NBave+i] = 0.5*data.image[IDcoeff].array.F[kk1];
                     delete_image_ID("dmcoeffs");                    
                     i++;
                 }
+                
+            // NEGATIVE
+            
+            // APPLY MODE TO DM            
+            data.image[IDdmin].md[0].write = 1;
+            for(ii=0;ii<dmsize;ii++)
+                data.image[IDdmin].array.F[ii] = -ampl*data.image[IDmodes].array.F[kk*dmsize+ii];
+            data.image[IDdmin].md[0].cnt0++;
+            data.image[IDdmin].md[0].write = 0;
+
+            // WAIT
+            usleep(tlagus);
+            
+            cntdmout = 0;
+            i = 0;
+            while(i<NBave)
+                {
+                    while(cntdmout==data.image[IDdmout].md[0].cnt0)
+                        usleep(20);
+                    
+                    cntdmout =  data.image[IDdmout].md[0].cnt0;
+                    
+                    
+                    memcpy(data.image[IDdmtmp].array.F, data.image[IDdmout].array.F, sizeof(float)*dmsize);
+                    // decompose in modes
+                    linopt_imtools_image_fitModes("_tmpdm", DMmodes_name, DMmask_name, SVDeps, "dmcoeffs", SVDreuse);
+
+                    IDcoeff = image_ID("dmcoeffs");
+                    for(kk1=0;kk1<NBmodes;kk1++)
+                        data.image[IDcoeffarray].array.F[kk1*NBave+i] -= 0.5*data.image[IDcoeff].array.F[kk1];
+                    delete_image_ID("dmcoeffs");                    
+                    i++;
+                }
+            
             
             // PROCESSS
             
             for(kk1=0;kk1<NBmodes;kk1++)
                 {
-                    data.image[IDout].array.F[kk*NBmodes+kk1] = 0.0;
-                    data.image[IDoutrms].array.F[kk*NBmodes+kk1] = 0.0;
+                    data.image[IDout].array.F[kk1*NBmodes+kk] = 0.0;
+                    data.image[IDoutrms].array.F[kk1*NBmodes+kk] = 0.0;
                 }
             for(kk1=0;kk1<NBmodes;kk1++)
                 {
                     for(i=0;i<NBave;i++)
                     {
-                        data.image[IDout].array.F[kk*NBmodes+kk1] += data.image[IDcoeffarray].array.F[i*NBave+kk1];
-                        data.image[IDoutrms].array.F[kk*NBmodes+kk1] += data.image[IDcoeffarray].array.F[i*NBave+kk1]*data.image[IDcoeffarray].array.F[i*NBave+kk1];
+                        data.image[IDout].array.F[kk1*NBmodes+kk] += data.image[IDcoeffarray].array.F[kk1*NBave+i];
+                        data.image[IDoutrms].array.F[kk1*NBmodes+kk] += data.image[IDcoeffarray].array.F[kk1*NBave+i]*data.image[IDcoeffarray].array.F[kk1*NBave+i];
                     }
-                    data.image[IDout].array.F[kk*NBmodes+kk1] /= NBave;
-                    data.image[IDoutrms].array.F[kk*NBmodes+kk1] = sqrt(data.image[IDoutrms].array.F[kk*NBmodes+kk1]/NBave);
+                    data.image[IDout].array.F[kk1*NBmodes+kk] /= NBave;
+                    data.image[IDoutrms].array.F[kk1*NBmodes+kk] = sqrt(data.image[IDoutrms].array.F[kk1*NBmodes+kk]/NBave);
                 }
             
         }
