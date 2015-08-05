@@ -6959,7 +6959,6 @@ int AOcompute(long loop)
                 data.image[aoconfID_meas_act].md[0].cnt0++;
                 data.image[aoconfID_meas_act].md[0].write = 0;
             }
-
         }
 #endif
     }
