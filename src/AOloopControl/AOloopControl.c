@@ -5127,6 +5127,10 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
 }
 
 
+
+
+
+
 // Measures PSD (measurement and rejection)
 //
 long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name)
@@ -5145,7 +5149,15 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     float pha, coeff;
     float *timearray;
     char *ptr;
+    long k1;
+    long IDcoeff;
+    float SVDeps = 1.0e-6;
+    int SVDreuse = 0;
+    long IDcoeffarray;
+    long m;
+    float coscoeff, sincoeff;
     
+    FILE *fp;
     
     
     IDmodes = image_ID(DMmodes_name);
@@ -5208,13 +5220,22 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     IDrec_dmout = create_3Dimage_ID("_tmprecdmout", dmxsize, dmysize, kmax);
     IDrec_dmmeas = create_3Dimage_ID("_tmprecdmmeas", dmxsize, dmysize, kmax);
  
+    IDcoeffarray = create_2Dimage_ID("_tmpcoeffarray", kmax, NBmodes);
     
+    sprintf(fname, 
+    if( (fp = fopen("PSD.txt", "w"))==NULL)
+        {
+            printf("ERROR: cannot create file PSD.txt");
+            exit(0);
+        }
 
     IDout = create_2Dimage_ID(IDout_name, nbf, NBmodes);
     IDdmtmp = create_2Dimage_ID("_tmpdm", dmxsize, dmysize);
     kk = index;
     for(f=fmin; f<fmax; f*=100000.0) //fstep)
     {
+
+
         runtime = 0.0;
         clock_gettime(CLOCK_REALTIME, &tstart);
         k = 0;
@@ -5245,12 +5266,49 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             usleep(dtus);
             k++;
         }
+        k1 = k;
         save_fits("_tmprecdmout", "!_tmprecdmout.fits"); //TEST
         save_fits("_tmprecdmmeas", "!_tmprecdmmeas.fits");//TEST
+
+    
+        // PROCESS RECORDED DATA
+        for(k=0;k<k1;k++)
+        {
+            ptr = (char*) data.image[IDrec_dmout].array.F;
+            ptr += sizeof(float)*k*dmsize;
+            memcpy(data.image[IDdmtmp].array.F, ptr, sizeof(float)*dmsize);
+            // decompose in modes
+            linopt_imtools_image_fitModes("_tmpdm", DMmodes_name, DMmask_name, SVDeps, "dmcoeffs", SVDreuse);
+            SVDreuse = 1;
+            IDcoeff = image_ID("dmcoeffs");
+            for(m=0;m<NBmodes;m++)
+                data.image[IDcoeffarray].array.F[m*kmax+k] = data.image[IDcoeff].array.F[k];
+            delete_image_ID("dmcoeffs");                    
+        }
+
+        save_fits("_tmpcoeffarray", "!_tmpcoeffarray.fits");
+
+        // EXTRACT AMPLITUDE AND PHASE
+        coscoeff = 0.0;
+        sincoeff = 0.0;
+         for(k=0;k<k1;k++)
+        {
+            pha = 2.0*M_PI*timearray[k];
+            coscoeff += cos(pha)*data.image[IDcoeffarray].array.F[kk*kmax+k];
+            sincoeff += sin(pha)*data.image[IDcoeffarray].array.F[kk*kmax+k];
+        }
+        coscoeff /= (0.5*k1);
+        sincoeff /= (0.5*k1);
+        
+        PSDamp = coscoeff*coscoeff + sincoeff*sincoeff;
+        PSDpha = atan2(sincoeff, coscoeff);
+        
+        
     }
 
     delete_image_ID("_tmpdm");
-    
+
+    free(timearray);
     
     return(IDout);
 }
@@ -5265,7 +5323,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
     long IDmodes, IDdmmask, IDdmin, IDdmout;
     long dmxsize, dmysize, dmsize, NBmodes;
     long kk;
-    char IDdmtmp;
+    long IDdmtmp;
     int SVDreuse = 0;
     float SVDeps = 1.0e-6;
     long IDcoeffarray;
@@ -6064,10 +6122,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
-    // WFSmask : select pixels >20% of 50-percentile
+    // WFSmask : select pixels >30% of 60-percentile
    printf("Preparing WFS mask ... ");
     fflush(stdout);    
-     lim = 0.2*img_percentile(WFSmap_name, 0.5);
+     lim = 0.45*img_percentile(WFSmap_name, 0.8);
     for(ii=0; ii<sizeWFS; ii++)
     {
         if(data.image[IDWFSmap].array.F[ii]<lim)
@@ -6077,6 +6135,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     }
    printf("done\n");
     fflush(stdout);
+
+
 
 
     list_image_ID();
