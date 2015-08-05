@@ -7306,7 +7306,11 @@ int AOloopControl_run()
     struct timespec tdiff;
     double tdiffv;
     int timerinit;
-
+    float tmpv, tmpv1, tmpv2;
+    float range1 = 0.1; // limit single iteration motion
+    float rangec = 0.1; // limit cumulative motion
+    
+    
     schedpar.sched_priority = RT_priority;
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -7411,10 +7415,23 @@ int AOloopControl_run()
                             data.image[aoconfID_meas_act].array.F[ii] = 0.0;
                             }
                     }
+
+                    
+                    
+                    
                     
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                     {
-                        data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
+                        tmpv = data.image[aoconfID_meas_act].array.F[ii]/range1;
+                        tmpv2 = tmpv*tmpv;
+                        tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*range1;
+                        
+                        //data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * tmpv1; //data.image[aoconfID_meas_act].array.F[ii];
+                        tmpv = data.image[aoconfID_dmC].array.F[ii] - AOconf[loop].gain * tmpv1;
+                        tmpv /= rangec;
+                        tmpv2 = tmpv*tmpv;
+                        tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*rangec;
+                                             
                         data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;
                     }
                         
