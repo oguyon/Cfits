@@ -7432,7 +7432,9 @@ int AOloopControl_run()
                         tmpv2 = tmpv*tmpv;
                         tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*rangec;
                                              
-                        data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;
+                        //data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;                         
+                        data.image[aoconfID_dmC].array.F[ii] = tmpv1*AOconf[loop].mult;
+
                     }
                         
                    if(data.image[aoconfID_dmC].sem > 0)
