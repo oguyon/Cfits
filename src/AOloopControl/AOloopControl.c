@@ -5156,9 +5156,13 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     long IDcoeffarray;
     long m;
     float coscoeff, sincoeff;
-    
+    float PSDamp, PSDpha;
     FILE *fp;
+    char fname[200];
     
+    
+       
+    kk = index;
     
     IDmodes = image_ID(DMmodes_name);
     IDdmin = image_ID(DMstream_in_name);
@@ -5222,16 +5226,16 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
  
     IDcoeffarray = create_2Dimage_ID("_tmpcoeffarray", kmax, NBmodes);
     
-    sprintf(fname, 
-    if( (fp = fopen("PSD.txt", "w"))==NULL)
+    sprintf(fname, "mode%03ld_PSD.txt", kk);
+    if( (fp = fopen(fname, "w"))==NULL)
         {
-            printf("ERROR: cannot create file PSD.txt");
+            printf("ERROR: cannot create file \"%s\"", fname);
             exit(0);
         }
 
     IDout = create_2Dimage_ID(IDout_name, nbf, NBmodes);
     IDdmtmp = create_2Dimage_ID("_tmpdm", dmxsize, dmysize);
-    kk = index;
+
     for(f=fmin; f<fmax; f*=100000.0) //fstep)
     {
 
@@ -5302,8 +5306,9 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
         
         PSDamp = coscoeff*coscoeff + sincoeff*sincoeff;
         PSDpha = atan2(sincoeff, coscoeff);
-        
-        
+        fp = fopen(fname, "a");
+        fprintf(fp, "%20f %20f %20f\n", f, PSDamp, PSDpha);
+        fclose(fp);        
     }
 
     delete_image_ID("_tmpdm");
