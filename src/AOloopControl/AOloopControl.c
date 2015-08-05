@@ -835,7 +835,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].key,"aoltestmpsd");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodePSD_cli;
-    strcpy(data.cmd[data.NBcmd].info,"Measure system PDF for a single mode");
+    strcpy(data.cmd[data.NBcmd].info,"Measure system PSD for a single mode");
     strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <meas. time [sec]> <time step [us]> <DM mask> <DM in [2D stream]> <DM out [2D stream]> <measurement stream [2D im]> <output [2D im]>"); 
     strcpy(data.cmd[data.NBcmd].example,"aoltestmpsd DMmodesC 5 0.05 10.0 100.0 1.0 1000 dmmask dmdisp3 dmC dm_meas out");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name)");
@@ -5132,7 +5132,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
 long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name)
 {
     long IDout;
-    long IDmodes, IDdmmask, IDdmin, IDdmout;
+    long IDmodes, IDdmmask, IDdmin, IDdmout, IDdmmeas;
     long dmxsize, dmysize, dmsize, NBmodes;
     float f;
     struct timespec tstart;
@@ -5143,11 +5143,15 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     long IDdmtmp;
     float fstep = 1.1;
     float pha, coeff;
+    float *timearray;
+    char *ptr;
+    
     
     
     IDmodes = image_ID(DMmodes_name);
     IDdmin = image_ID(DMstream_in_name);
     IDdmout = image_ID(DMstream_out_name);
+    IDdmmeas = image_ID(DMstream_meas_name);
     IDdmmask = image_ID(DMmask_name);
     
     dmxsize = data.image[IDmodes].md[0].size[0];
@@ -5200,7 +5204,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
 
     // SET UP RECORDING CUBES
     kmax = (long) (avetime/(1.0e-6*dtus));
-    
+    timearray = (float*) malloc(sizeof(float)*kmax);
     IDrec_dmout = create_3Dimage_ID("_tmprecdmout", dmxsize, dmysize, kmax);
     IDrec_dmmeas = create_3Dimage_ID("_tmprecdmmeas", dmxsize, dmysize, kmax);
  
@@ -5209,7 +5213,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     IDout = create_2Dimage_ID(IDout_name, nbf, NBmodes);
     IDdmtmp = create_2Dimage_ID("_tmpdm", dmxsize, dmysize);
     kk = index;
-    for(f=fmin; f<fmax; f*=fstep)
+    for(f=fmin; f<fmax; f*=100000.0) //fstep)
     {
         runtime = 0.0;
         clock_gettime(CLOCK_REALTIME, &tstart);
@@ -5230,13 +5234,19 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             data.image[IDdmin].md[0].write = 0;
 
             // RECORD 
-            
+            ptr = (char*) data.image[IDrec_dmout].array.F;
+            ptr += sizeof(float)*k*dmsize;
+            memcpy(ptr, data.image[IDdmout].array.F, sizeof(float)*dmsize);
+            ptr = (char*) data.image[IDrec_dmmeas].array.F;
+            ptr += sizeof(float)*k*dmsize;
+            memcpy(ptr, data.image[IDdmmeas].array.F, sizeof(float)*dmsize);
+            timearray[k] = runtime;
             
             usleep(dtus);
             k++;
         }
-        
-    
+        save_fits("_tmprecdmout", "!_tmprecdmout.fits"); //TEST
+        save_fits("_tmprecdmmeas", "!_tmprecdmmeas.fits");//TEST
     }
 
     delete_image_ID("_tmpdm");

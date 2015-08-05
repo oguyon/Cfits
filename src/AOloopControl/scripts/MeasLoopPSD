@@ -1,0 +1,50 @@
+#!/bin/bash
+
+EXPECTED_ARGS=3
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ CREATE MODES FOR AO LOOP ----"
+  echo
+  echo "Usage: $0 <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <runtime [sec]>"
+  echo
+  echo "  INPUT <mode #>        : mode to be tested"
+  echo "  INPUT <ampl [um]>     : modulation amplitude"
+  echo "  INPUT <fmin [Hz]>     : minimum modulation frequency"
+  echo "  INPUT <fmax [Hz]>     : maximum modulation frequency"
+  echo "  INPUT <runtime [sec]> : dwell time per point of the PSD"
+  echo
+  echo "EXAMPLE: $0 5 0.05 10.0 100.0 2.0"
+  echo
+  echo "  OUTPUT: ./conf<confindex>/fmodes.fits"
+  echo "  OUTPUT: ./conf<confindex>/modescpa.fits"
+  echo
+  echo "NOTES :"
+  echo "  Loop must be running"
+  echo
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+mode="$1"
+ampl="$2"
+fmin="$3"
+fmax="$4"
+runtime="$5"
+tstep_us=100
+
+Cfits << EOF
+readshmim aol${loopnb}_DMmodes
+readshmim aol${loopnb}_dmmask
+readshmim aol${loopnb}_dmRM
+readshmim aol${loopnb}_meas_act
+readshmim aol${loopnb}_dmC
+readshmim aol${loopnb}_meas_act
+
+aoltestmpsd aol${loopnb}_DMmodes $mode $ampl $fmin $fmax $runtime 100 aol${loopnb}_dmmask aol${loopnb}_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act out
+
+savefits out "!test_PSD_m${mode}.fits"
+exit
+EOF
