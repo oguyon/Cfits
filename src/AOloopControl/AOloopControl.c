@@ -820,8 +820,8 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodes_Recovery_cli;
     strcpy(data.cmd[data.NBcmd].info,"Test system DM modes recover");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <DM mask [2D im]> <DM in [2D stream]> <DM out [2D stream]> <lag time [us]>  <NB averages [long]>  <out ave [2D im]> <out rms [2D im]>");
-    strcpy(data.cmd[data.NBcmd].example,"aoltestdmrec DMmodesC DMmask dmsisp2 dmoutr 2000  20 outave outrms");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <ampl [um]> <DM mask [2D im]> <DM in [2D stream]> <DM out [2D stream]> <lag time [us]>  <NB averages [long]>  <out ave [2D im]> <out rms [2D im]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoltestdmrec DMmodesC 0.05 DMmask dmsisp2 dmoutr 2000  20 outave outrms");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name)");
     data.NBcmd++;
 
