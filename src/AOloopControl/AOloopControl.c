@@ -831,6 +831,17 @@ int init_AOloopControl()
     data.NBcmd++;
 
 
+
+    strcpy(data.cmd[data.NBcmd].key,"aoltestmpsd");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodePSD_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Measure system PDF for a single mode");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <meas. time [sec]> <time step [us]> <DM mask> <DM in [2D stream]> <DM out [2D stream]> <measurement stream [2D im]> <output [2D im]>"); 
+    strcpy(data.cmd[data.NBcmd].example,"aoltestdmrec DMmodesC 0.05 10.0 100.0 1.0 1000 dmmask dmdisp3 dmC dm_meas out");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name)");
+    data.NBcmd++;
+
+
     strcpy(data.cmd[data.NBcmd].key,"aoltestdmrec");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodes_Recovery_cli;
