@@ -492,7 +492,7 @@ int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name)
     float *dmdispptr_array[20];
     long IDdispt;
     char sname[200];
-    long nsecwait = 100000; // 100 us
+    long nsecwait = 10000; // 10 us
     int vOK;
     
     schedpar.sched_priority = RT_priority;

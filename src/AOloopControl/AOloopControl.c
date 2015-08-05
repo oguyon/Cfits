@@ -347,6 +347,18 @@ int AOcontrolLoop_TestSystemLatency_cli()
 }
 
 
+int AOloopControl_TestDMmodes_Recovery_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)+CLI_checkarg(8,3)+CLI_checkarg(9,3)==0)
+    {
+        AOloopControl_TestDMmodes_Recovery(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
 int Measure_zonalRM_cli()
 {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,2)==0)
@@ -802,6 +814,17 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aoltestlat");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)");
     data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aoltestdmrec");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodes_Recovery_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Test system DM modes recover");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <DM mask [2D im]> <DM in [2D stream]> <DM out [2D stream]> <lag time [us]>  <NB averages [long]>  <out ave [2D im]> <out rms [2D im]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoltestdmrec DMmodesC DMmask dmsisp2 dmoutr 2000  20 outave outrms");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name)");
+    data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -5078,6 +5101,144 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
 }
 
 
+long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl)
+{
+    long IDout;
+    
+    return(IDout);
+}
+
+
+long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name)
+{
+    long IDout, IDoutrms;
+    long IDmodes, IDdmmask, IDdmin, IDdmout;
+    long dmxsize, dmysize, dmsize, NBmodes;
+    long kk;
+    char IDdmtmp;
+    int SVDreuse = 0;
+    float SVDeps = 1.0e-6;
+    long IDcoeffarray;
+    long cntdmout;
+    long IDcoeff;
+    long ii, i, kk1;
+    
+    IDmodes = image_ID(DMmodes_name);
+    IDdmin = image_ID(DMstream_in_name);
+    IDdmout = image_ID(DMstream_out_name);
+    IDdmmask = image_ID(DMmask_name);
+    
+    dmxsize = data.image[IDmodes].md[0].size[0];
+    dmysize = data.image[IDmodes].md[0].size[1];
+    dmsize = dmxsize*dmysize;
+    NBmodes = data.image[IDmodes].md[0].size[2];
+    
+    if(data.image[IDdmin].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
+        {
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            exit(0);
+        }
+    
+    if(data.image[IDdmin].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            exit(0);
+        }
+
+    if(data.image[IDdmout].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            exit(0);
+        }
+
+    if(data.image[IDdmout].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            exit(0);
+        }
+
+   if(data.image[IDdmmask].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            exit(0);
+        }
+
+    if(data.image[IDdmmask].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
+        {
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            exit(0);
+        }
+
+    
+    IDout = create_2Dimage_ID(IDout_name, NBmodes, NBmodes);
+    IDoutrms = create_2Dimage_ID(IDoutrms_name, NBmodes, NBmodes);
+    IDdmtmp = create_2Dimage_ID("_tmpdm", dmxsize, dmysize);
+    
+    IDcoeffarray = create_2Dimage_ID("_coeffarray", NBmodes, NBave);
+    
+    for(kk=0;kk<NBmodes;kk++)
+        {
+            // APPLY MODE TO DM            
+            data.image[IDdmin].md[0].write = 1;
+            for(ii=0;ii<dmsize;ii++)
+                data.image[IDdmin].array.F[ii] = ampl*data.image[IDmodes].array.F[kk*dmsize+ii];
+            data.image[IDdmin].md[0].cnt0++;
+            data.image[IDdmin].md[0].write = 0;
+
+            // WAIT
+            usleep(tlagus);
+            
+
+            // RECORD DM SHAPES INTO MODES
+            cntdmout = 0;
+            i = 0;
+            while(i<NBave)
+                {
+                    while(cntdmout==data.image[IDdmout].md[0].cnt0)
+                        {
+                            usleep(20);
+                        }
+                    cntdmout =  data.image[IDdmout].md[0].cnt0;
+                    
+                    
+                    memcpy(data.image[IDdmtmp].array.F, data.image[IDdmout].array.F, sizeof(float)*dmsize);
+                    // decompose in modes
+                    linopt_imtools_image_fitModes("_tmpdm", DMmodes_name, DMmask_name, SVDeps, "dmcoeffs", SVDreuse);
+                    SVDreuse = 1;
+
+                    IDcoeff = image_ID("dmcoeffs");
+                    for(kk1=0;kk1<NBmodes;kk1++)
+                        data.image[IDcoeffarray].array.F[i*NBave+kk1] = data.image[IDcoeff].array.F[kk1];
+                    delete_image_ID("dmcoeffs");                    
+                    i++;
+                }
+            
+            // PROCESSS
+            
+            for(kk1=0;kk1<NBmodes;kk1++)
+                {
+                    data.image[IDout].array.F[kk*NBmodes+kk1] = 0.0;
+                    data.image[IDoutrms].array.F[kk*NBmodes+kk1] = 0.0;
+                }
+            for(kk1=0;kk1<NBmodes;kk1++)
+                {
+                    for(i=0;i<NBave;i++)
+                    {
+                        data.image[IDout].array.F[kk*NBmodes+kk1] += data.image[IDcoeffarray].array.F[i*NBave+kk1];
+                        data.image[IDoutrms].array.F[kk*NBmodes+kk1] += data.image[IDcoeffarray].array.F[i*NBave+kk1]*data.image[IDcoeffarray].array.F[i*NBave+kk1];
+                    }
+                    data.image[IDout].array.F[kk*NBmodes+kk1] /= NBave;
+                    data.image[IDoutrms].array.F[kk*NBmodes+kk1] = sqrt(data.image[IDoutrms].array.F[kk*NBmodes+kk1]/NBave);
+                }
+            
+        }
+
+    delete_image_ID("_tmpdm");
+    delete_image_ID("_coeffarray");
+    return IDout;
+}
+
+
 
 
 
@@ -5126,12 +5287,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     
 
     schedpar.sched_priority = RT_priority;
-    // r = seteuid(euid_called); //This goes up to maximum privileges
-    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    // r = seteuid(euid_real);//Go back to normal privileges
-
-
-
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); 
+   
 
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
@@ -5265,6 +5422,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             data.image[aoconfID_dmRM].md[0].write = 0;
             AOconf[loop].DMupdatecnt ++;
 
+
             usleep(delayus);
 
 
@@ -5295,7 +5453,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             data.image[aoconfID_dmRM].md[0].write = 0;
             AOconf[loop].DMupdatecnt ++;
 
+
             usleep(delayus);
+
 
             for(kk=0; kk<NBave; kk++)
             {
