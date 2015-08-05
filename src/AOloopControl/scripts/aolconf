@@ -1709,6 +1709,18 @@ esac
 menucontrolloop_default="dmM"
 state="menuconfigureloop"
 ;;
+	dmSlM)
+case $amode in
+        0)
+./mkDMslaveAct ./conf/aol2_dmmap.fits 0.7
+;;
+        1)
+ds9 conf/dmmask_slaved.fits &
+;;
+esac
+menucontrolloop_default="dmM"
+state="menuconfigureloop"
+;;
 	wfsref0)
 case $amode in
 	0)

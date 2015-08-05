@@ -1452,9 +1452,6 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
   if(BlockNB<0)
     {
-  
-
-
         NBZ = 5; /// 3: tip, tilt, focus
 
         zindex[0] = 1; // tip
@@ -7306,10 +7303,10 @@ int AOloopControl_run()
     struct timespec tdiff;
     double tdiffv;
     int timerinit;
-    float tmpv, tmpv1, tmpv2;
+/*    float tmpv, tmpv1, tmpv2;
     float range1 = 0.1; // limit single iteration motion
     float rangec = 0.3; // limit cumulative motion
-    
+  */  
     
     schedpar.sched_priority = RT_priority;
     // r = seteuid(euid_called); //This goes up to maximum privileges
@@ -7422,18 +7419,18 @@ int AOloopControl_run()
                     
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                     {
-                        tmpv = data.image[aoconfID_meas_act].array.F[ii]/range1;
-                        tmpv2 = tmpv*tmpv;
-                        tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*range1;
+                        //tmpv = data.image[aoconfID_meas_act].array.F[ii]/range1;
+                        //tmpv2 = tmpv*tmpv;
+                        //tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*range1;
                         
-                        //data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * tmpv1; //data.image[aoconfID_meas_act].array.F[ii];
-                        tmpv = data.image[aoconfID_dmC].array.F[ii] - AOconf[loop].gain * tmpv1;
-                        tmpv /= rangec;
-                        tmpv2 = tmpv*tmpv;
-                        tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*rangec;
+                        data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
+                        //tmpv = data.image[aoconfID_dmC].array.F[ii] - AOconf[loop].gain * tmpv1;
+                        //tmpv /= rangec;
+                        //tmpv2 = tmpv*tmpv;
+                        //tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*rangec;
                                              
-                        //data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;                         
-                        data.image[aoconfID_dmC].array.F[ii] = tmpv1*AOconf[loop].mult;
+                        data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;                         
+                        //data.image[aoconfID_dmC].array.F[ii] = tmpv1*AOconf[loop].mult;
 
                     }
                         
