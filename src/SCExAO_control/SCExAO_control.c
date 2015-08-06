@@ -56,10 +56,10 @@ long pYsize = 120;
 long SCExAO_DM_STAGE_Xpos = 0;
 long SCExAO_DM_STAGE_Ypos = 0;
 
-long SCExAO_Pcam_Xpos0 = 110000;
-long SCExAO_Pcam_Ypos0 = 80000;
-long SCExAO_Pcam_Xpos = 110000;
-long SCExAO_Pcam_Ypos = 80000;
+long SCExAO_Pcam_Xpos0 = 60000;
+long SCExAO_Pcam_Ypos0 = 62000;
+long SCExAO_Pcam_Xpos = 60000;
+long SCExAO_Pcam_Ypos = 62000;
 long SCExAO_Pcam_Range = 50000;
 
 float SCExAO_PZT_STAGE_Xpos = -5.0;
