@@ -937,7 +937,7 @@ void *compute_function( void *ptr )
     float betatmp;
     int semval;
     long cnt;
-    long ID;
+    long IDa[10];
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -1060,8 +1060,8 @@ void *compute_function( void *ptr )
             sprintf(fnamea[device],"!GPUtest_dmRef_part_%d.fits", device);
             printf("device %d : fname = %s\n", device, fnamea[device]);
             sprintf(imnamea[device], "_gputest%d", device);
-            ID[device] = create_2Dimage_ID(imnamea[device], gpumatmultconf[index].M, 1);
-            memcpy(data.image[ID[device]].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
+            IDa[device] = create_2Dimage_ID(imnamea[device], gpumatmultconf[index].M, 1);
+            memcpy(data.image[IDa[device]].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
             save_fits(imnamea[device], fnamea[device]);
             delete_image_ID(imnamea[device]);
         }
