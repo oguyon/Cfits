@@ -1654,8 +1654,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                             }
                         }
                     for(ii=0;ii<msize*msize;ii++)
-                        if((data.image[IDmask].array.F[ii]<0.5)&&(data.image[IDslaved].array.F[ii]<0.5))
-                            data.image[IDtmp].array.F[ii] = 0.0;
+                        if(data.image[IDmask].array.F[ii]>0.5)
+                            data.image[ID].array.F[m*msize*msize+ii] = data.image[IDtmp].array.F[ii];
                 }
         }
         
