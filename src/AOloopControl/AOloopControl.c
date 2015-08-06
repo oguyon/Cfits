@@ -1631,6 +1631,9 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         
         
         
+        
+        
+        
         /// SLAVED ACTUATORS 
         IDslaved = image_ID("dmslaved");
         ID = image_ID(ID_name);
@@ -1651,6 +1654,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                             {
                                 if((data.image[IDmask].array.F[ii]>0.5)&&(data.image[IDslaved].array.F[ii]<0.5))
                                     data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msize*msize+ii];
+                                else
+                                    data.image[IDtmp].array.F[ii] = data.image[IDtmpg].array.F[ii];
                             }
                         }
                     for(ii=0;ii<msize*msize;ii++)
@@ -1661,7 +1666,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         
         
         
-        printf("SAVING %s...\n", ID_name);
+        printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
         printf("DONE SAVING\n");
 
