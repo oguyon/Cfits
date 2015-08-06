@@ -43,6 +43,7 @@ mkdir -p tmp
 
 Cfits -n $pname << EOF
 aolnb $loopnb
+loadfits "./conf/aol${loopnb}_dmslaved.fits" dmslaved
 loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
 loadfits "./conf/aol${loopnb}_dmmask.fits" dmmask
 loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
