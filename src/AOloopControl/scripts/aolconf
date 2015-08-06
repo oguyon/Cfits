@@ -2796,7 +2796,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
 echo " ON" > ./status/stat_zploopON.txt
 tmuxname="aol${LOOPNUMBER}zploop"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execnameRT -n aol${LOOPNUMBER}zploop" C-m
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
@@ -2816,7 +2816,7 @@ ampl="0.03"
 modenb="00030"
 tmuxname="aol${LOOPNUMBER}zpinject"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execnameRT -n aol${LOOPNUMBER}zpin" C-m
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zpin" C-m
 tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
 tmux send-keys -t $tmuxname "breakcube modec" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
@@ -2829,7 +2829,7 @@ tmux send-keys -t $tmuxname "exit" C-m
 	zpz)
 tmuxname="aol${LOOPNUMBER}zpzero"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execnameRT -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
