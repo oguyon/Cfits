@@ -2310,7 +2310,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
-                printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld %ld )   %ld modes\n", mblock, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
+                printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld x %ld = %ld - %ld )   %ld modes [ %ld <- %ld %ld ]\n", mblock, wfsxsize, wfsysize, wfssize, msize2, MBLOCK_NBmode[mblock], IDwfsMresp, MBLOCK_ID[mblock], IDzrespM);
                 fflush(stdout);
                 
                    if(MBLOCK_NBmode[mblock]>0)
