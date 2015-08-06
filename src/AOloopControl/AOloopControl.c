@@ -6235,6 +6235,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     long IDtmp;
     long elem, act;
     long zpcnt = 0;
+    long zpcnt0;
     
     IDzpdm = image_ID(IDzpdm_name);
     
@@ -6291,6 +6292,8 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
     
     
+    zpcnt0 = 0;
+    
     if(data.image[IDzpdm].sem > 1) // drive semaphore #1 to zero
         while(sem_trywait(data.image[IDzpdm].semptr[1])==0) {}
     else
@@ -6303,7 +6306,14 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     {
         memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
 
+        while(zpcnt0 == data.image[IDzpdm].md[0].cnt0)
+            usleep(10);
+        
+        zpcnt0 = data.image[IDzpdm].md[0].cnt0;
+        
         sem_wait(data.image[IDzpdm].semptr[1]);
+
+
         
         printf("WFS zero point offset update  # %8ld       (%s -> %s)  \n", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
         fflush(stdout);
