@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_ARGS=3
+EXPECTED_ARGS=5
 
 if [ $# -ne $EXPECTED_ARGS ]
 then

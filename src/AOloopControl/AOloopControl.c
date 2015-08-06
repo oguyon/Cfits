@@ -4889,7 +4889,7 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
     for(kk=0; kk<zsizeout; kk++)
     {
         for(ii=0; ii<sizewfs; ii++)
-            data.image[IDout].array.F[kk*sizewfs+ii] /= 2.0*NBframes;
+            data.image[IDout].array.F[kk*sizewfs+ii] /= NBframes;
         
     }
 
@@ -5544,7 +5544,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
                         data.image[IDout].array.F[kk1*NBmodes+kk] += data.image[IDcoeffarray].array.F[kk1*NBave+i];
                         data.image[IDoutrms].array.F[kk1*NBmodes+kk] += data.image[IDcoeffarray].array.F[kk1*NBave+i]*data.image[IDcoeffarray].array.F[kk1*NBave+i];
                     }
-                    data.image[IDout].array.F[kk1*NBmodes+kk] /= NBave;
+                    data.image[IDout].array.F[kk1*NBmodes+kk] /= NBave*ampl;
                     data.image[IDoutrms].array.F[kk1*NBmodes+kk] = sqrt(data.image[IDoutrms].array.F[kk1*NBmodes+kk]/NBave);
                 }
             
@@ -5729,11 +5729,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 data.image[IDneg].array.F[ii] = 0.0;
             }
 
-
+            // POSITIVE POKE
             for(j=0; j<AOconf[loop].sizeDM; j++)
-                arrayf[j] = ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j]; //0.0;
-
-//            arrayf[act] = ampl;
+                arrayf[j] = ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j]; 
 
             data.image[aoconfID_dmRM].md[0].write = 1;
             memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
@@ -5759,13 +5757,10 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             }
 
 
-
+            // NEGATIVE POKE
             for(j=0; j<AOconf[loop].sizeDM; j++)
                 arrayf[j] = -ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j];
-                //0.0;
-
-//            arrayf[act] = -ampl;
-
+ 
             data.image[aoconfID_dmRM].md[0].write = 1;
             memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
             data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -5811,7 +5806,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
         if(data.signal_USR1==0)
         {
-            for(act=0; act<NBpoke; act++) //AOconf[loop].sizeDM; act++)
+            for(act=0; act<NBpoke; act++) 
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/cntn;
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
@@ -6123,8 +6118,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                 {
                     AOloopControl_Hadamard_decodeRM("RMpokeC", "Hmat", "pixindexim", "RMpokeC1");
                     save_fits("RMpokeC1", "!test_RMpokeC1.fits");
-                }
-            
+                }            
         }
 
 
