@@ -2323,7 +2323,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                             fflush(stdout);
                             for(act=0; act<msize2; act++)
                             {
-                                printf("act = %ld\n", act);
+                                printf("act = %ld / %ld\n", act, msize2);
                                 fflush(stdout);
                                 for(wfselem=0; wfselem<wfssize; wfselem++)
                                 {
