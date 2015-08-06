@@ -5306,7 +5306,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             pha = 2.0*M_PI*runtime;
             coeff = ampl*cos(pha);
             
-            printf("mode %4ld    runtime = %10.3f sec    coeff = %f\n", kk, runtime, coeff);
+            printf("mode %4ld    runtime = %10.3f sec    ampl = %f   pha = %f   coeff = %f\n", kk, runtime, ampl, pha, coeff);
             fflush(stdout);
             
             // APPLY MODE TO DM            
