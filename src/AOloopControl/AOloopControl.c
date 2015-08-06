@@ -346,8 +346,6 @@ int AOcontrolLoop_TestSystemLatency_cli()
         return 1;
 }
 
-//                                            1               2        3            4            5            6            7             8                     9                   10                    11                       12
-//long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name)
 
 
 int AOloopControl_TestDMmodePSD_cli()
@@ -5307,6 +5305,8 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             runtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
             pha = 2.0*M_PI*runtime;
             coeff = ampl*cos(pha);
+            
+            printf("runtile = %10.3 sec    coeff = %f\n", runtime, coeff);
             
             // APPLY MODE TO DM            
             data.image[IDdmin].md[0].write = 1;
