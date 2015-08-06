@@ -1896,7 +1896,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     }
 
 
-
+    IDzrespM = image_ID("zrespM");
+    
     if(IDzrespM!=-1) // compute WFS response to DM modes
     {
         if(BlockNB<0)
