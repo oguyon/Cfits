@@ -35,6 +35,9 @@ fmax="$4"
 runtime="$5"
 tstep_us=100
 
+echo "aoltestmpsd aol${loopnb}_DMmodes $mode $ampl $fmin $fmax $runtime 100 aol${loopnb}_dmmask aol${loopnb}_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act out"
+
+
 Cfits << EOF
 readshmim aol${loopnb}_DMmodes
 readshmim aol${loopnb}_dmmask
