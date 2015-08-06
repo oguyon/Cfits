@@ -1051,9 +1051,8 @@ void *compute_function( void *ptr )
             // TEST
             sprintf(fname,"!GPUtest_dmRef_part_%d.fits", device);
             ID = create_2Dimage_ID("_gputest", gpumatmultconf[index].M, 1);
-            memcpy(data.image[ID].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
-            save_fits("_gputest", fname);
-
+           memcpy(data.image[ID].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);/           save_fits("_gputest", fname);
+            delete_image_ID("_gputest");
         }
         else
         {
