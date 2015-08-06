@@ -6318,7 +6318,6 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         // TO BE DONE
       //  sem_wait(data.image[IDzpdm].semptr[1]);
  
-
         
         printf("WFS zero point offset update  # %8ld       (%s -> %s)  ", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
         fflush(stdout);
@@ -6341,7 +6340,6 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         // copy results to IDwfsref
         data.image[IDwfsref].md[0].write = 1;
         memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
-        usleep(1000);
         data.image[IDwfsref].md[0].cnt0 ++;
         data.image[IDwfsref].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost(IDwfsref_name, -1);
@@ -7286,7 +7284,13 @@ int AOcompute(long loop)
 
                 if(initcontrMcact_GPU==0)
                     initWFSref_GPU = 0;
+                    
+                
+                
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU, loop);
+                
+                if(initWFSref_GPU == 0)
+                    usleep(10000);
 
 
                 initWFSref_GPU = 1;

@@ -1088,8 +1088,6 @@ void *compute_function( void *ptr )
             gpumatmultconf[index].refWFSinit[device] = 1;
 
 
-            usleep(100); // NOT SURE WHY NEEDED
-
             // copy d_dmRef -> dmRef_part
             stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
