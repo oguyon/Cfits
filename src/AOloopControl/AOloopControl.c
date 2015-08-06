@@ -6292,7 +6292,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
             printf("ERROR: wfsref0 ysize %ld does not match wfsysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
             exit(0);
         }
-
+ 
     IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
     
     
