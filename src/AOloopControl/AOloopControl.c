@@ -5277,6 +5277,9 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
 
     // SET UP RECORDING CUBES
     kmax = (long) (avetime/(1.0e-6*dtus));
+    if(kmax>100000)
+        kmax = 10000;
+        
     timearray = (float*) malloc(sizeof(float)*kmax);
     IDrec_dmout = create_3Dimage_ID("_tmprecdmout", dmxsize, dmysize, kmax);
     IDrec_dmmeas = create_3Dimage_ID("_tmprecdmmeas", dmxsize, dmysize, kmax);
@@ -5334,10 +5337,14 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
         save_fits("_tmprecdmout", "!_tmprecdmout.fits"); //TEST
         save_fits("_tmprecdmmeas", "!_tmprecdmmeas.fits");//TEST
 
+
+        printf("\n\n");
     
         // PROCESS RECORDED DATA
         for(k=0;k<k1;k++)
         {
+            printf("\r  %5ld / %5ld     ", k, k1);
+            fflush(stdout);
             ptr = (char*) data.image[IDrec_dmout].array.F;
             ptr += sizeof(float)*k*dmsize;
             memcpy(data.image[IDdmtmp].array.F, ptr, sizeof(float)*dmsize);
@@ -5349,6 +5356,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
                 data.image[IDcoeffarray].array.F[m*kmax+k] = data.image[IDcoeff].array.F[k];
             delete_image_ID("dmcoeffs");                    
         }
+        printf("\n\n");
 
         save_fits("_tmpcoeffarray", "!_tmpcoeffarray.fits");
 
