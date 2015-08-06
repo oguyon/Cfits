@@ -123,8 +123,8 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].example,"cudacompinit");
     strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_init()");
     data.NBcmd++;
-    
-   strcpy(data.cmd[data.NBcmd].key,"cudacomptest");
+
+    strcpy(data.cmd[data.NBcmd].key,"cudacomptest");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = CUDACOMP_test_cli;
     strcpy(data.cmd[data.NBcmd].info,"test CUDA comp");
@@ -132,13 +132,14 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].example,"cudacomptest");
     strcpy(data.cmd[data.NBcmd].Ccall,"GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
     data.NBcmd++;
-		
-    
+
+
 #endif
     // add atexit functions here
 
     return 0;
 }
+
 
 
 
@@ -171,6 +172,7 @@ int CUDACOMP_init()
 
     return(0);
 }
+
 
 
 
@@ -711,6 +713,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 
+
+
+
+
 // increments status by 4
 int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta)
 {
@@ -842,6 +848,8 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
  
     return(0);
 }
+
+
 
 
 
@@ -1050,9 +1058,10 @@ void *compute_function( void *ptr )
             
             // TEST
             sprintf(fname,"!GPUtest_dmRef_part_%d.fits", device);
-            ID = create_2Dimage_ID("_gputest", gpumatmultconf[index].M, 1);
-           memcpy(data.image[ID].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);/           save_fits("_gputest", fname);
-            delete_image_ID("_gputest");
+            sprintf(imname, "_gputest%d", device);
+            ID = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
+            memcpy(data.image[ID].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);/           save_fits("_gputest", fname);
+            delete_image_ID(imname);
         }
         else
         {
