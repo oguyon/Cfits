@@ -415,7 +415,7 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
     // save_fl_fits("gtmp","!gtmp0");
     // ID_tmp = image_ID("gtmp");
     ID_out = image_ID(out_name);
-    list_image_ID();
+
 
 
     sum=0.0;
