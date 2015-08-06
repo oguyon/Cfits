@@ -6311,8 +6311,9 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         
         zpcnt0 = data.image[IDzpdm].md[0].cnt0;
         
-        sem_wait(data.image[IDzpdm].semptr[1]);
-
+        // TO BE DONE
+      //  sem_wait(data.image[IDzpdm].semptr[1]);
+ 
 
         
         printf("WFS zero point offset update  # %8ld       (%s -> %s)  \n", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
