@@ -928,8 +928,8 @@ void *compute_function( void *ptr )
     long IDtest;
     int k;
     int kmax = 10;
-    char imname[200];
-    char fname[200];
+    char imnamea[10][200];
+    char fnamea[10][200];
     long long iter;
     long long itermax = 1;
     float imtot;
@@ -1057,13 +1057,13 @@ void *compute_function( void *ptr )
             }
             
             // TEST
-            sprintf(fname,"!GPUtest_dmRef_part_%d.fits", device);
-            printf("device %d : fname = %s\n", device, fname);
-            sprintf(imname, "_gputest%d", device);
-            ID = create_2Dimage_ID(imname, gpumatmultconf[index].M, 1);
-            memcpy(data.image[ID].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
-            save_fits(imname, fname);
-            delete_image_ID(imname);
+            sprintf(fnamea[device],"!GPUtest_dmRef_part_%d.fits", device);
+            printf("device %d : fname = %s\n", device, fnamea[device]);
+            sprintf(imnamea[device], "_gputest%d", device);
+            ID[device] = create_2Dimage_ID(imnamea[device], gpumatmultconf[index].M, 1);
+            memcpy(data.image[ID[device]].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
+            save_fits(imnamea[device], fnamea[device]);
+            delete_image_ID(imnamea[device]);
         }
         else
         {
