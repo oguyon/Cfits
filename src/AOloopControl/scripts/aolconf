@@ -1716,7 +1716,7 @@ state="menuconfigureloop"
 case $amode in
         0)
 ./mkDMslaveAct ./conf/aol2_dmmap.fits 0.7
-echo "conf/aol2_dmslaved.fits" > ./conf/conf_dmslaved_fname.txt
+echo "conf/dmslaved.fits" > ./conf/conf_dmslaved_fname.txt
 ReadConfFile "dmslaved"
 ;;
         1)

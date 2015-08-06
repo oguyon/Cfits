@@ -14,7 +14,7 @@ then
   echo
   echo "EXAMPLE: $0 dmmap 0.7"
   echo
-  echo "  OUTPUT: ./conf/dmmask_slaved.fits"
+  echo "  OUTPUT: ./conf/dmslaved.fits"
   echo
   exit
 fi
@@ -38,7 +38,7 @@ dmmap6=dmmap5/0.2
 imtrunc dmmap6 0.0 1.01 dmmap6t
 dmmap7=floor(dmmap6t)
 dmmapsl=dmmap7*(1.0-dmmask)
-savefits dmmapsl "!./conf/dmmask_slaved.fits"
+savefits dmmapsl "!./conf/dmslaved.fits"
 exit
 EOF
 
