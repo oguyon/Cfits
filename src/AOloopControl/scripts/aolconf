@@ -1164,7 +1164,7 @@ makemenuitemstringaolshm "dmmask" "DM actuator mask"
 menuitems+=( "dmM" "$menustring" )
 
 makemenuitemstringaolshm "dmslaved" "DM slaved actuators mask"
-menuitems+=( "dmSlM" "Make and load DM slaved actuators map" )
+menuitems+=( "dmSlM" "$menustring" )
 
 makemenuitemstringaolshm "wfsref0" "WFS reference"
 menuitems+=( "wfsref0" "$menustring" )
