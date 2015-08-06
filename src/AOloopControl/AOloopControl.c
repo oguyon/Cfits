@@ -5216,9 +5216,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     char fname[200];
     
     
-    
-    printf("ampl = %f\n", ampl);
-    exit(0);
+
     
        
     kk = index;
