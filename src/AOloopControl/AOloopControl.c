@@ -2323,11 +2323,13 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                             fflush(stdout);
                             for(act=0; act<msize2; act++)
                             {
-                                printf("act = %ld / %ld\n", act, msize2);
+                                printf("m = %ld /%ld      act = %ld / %ld\n", m, MBLOCK_NBmode[mblock], act, msize2);
                                 fflush(stdout);
                                 for(wfselem=0; wfselem<wfssize; wfselem++)
                                 {
-                                    data.image[IDwfsMresp].array.F[m*wfssize+wfselem] += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
+                                printf("m = %ld /%ld      act = %ld / %ld      wfselem = %ld / %ld\n", m, MBLOCK_NBmode[mblock], act, msize2, wfselem, wfssize);
+                                fflush(stdout);
+                                   data.image[IDwfsMresp].array.F[m*wfssize+wfselem] += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
                                 }
                             }
                         }
