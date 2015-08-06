@@ -5362,7 +5362,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             SVDreuse = 1;
             IDcoeff = image_ID("dmcoeffs");
             for(m=0;m<NBmodes;m++)
-                data.image[IDcoeffarray].array.F[m*kmax+k] = data.image[IDcoeff].array.F[k];
+                data.image[IDcoeffarray].array.F[m*kmax+k] = data.image[IDcoeff].array.F[m];
             delete_image_ID("dmcoeffs");                    
         }
         printf("\n\n");
