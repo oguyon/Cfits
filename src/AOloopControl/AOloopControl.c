@@ -1670,8 +1670,6 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
         printf("DONE SAVING\n");
 
-exit(0);
-
         /// STEP 2: SEPARATE MODES INTO BLOCKS
         msize2 = msize*msize;
 
