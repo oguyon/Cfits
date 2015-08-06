@@ -2328,12 +2328,18 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                         }
                         sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
                         save_fits(imname, fname);
+                        
+                        printf("-- COMPUTE MODAL CONTROL MATRICES\n");
+                        fflush(stdout);
 
                         // COMPUTE MODAL CONTROL MATRICES
                         linopt_compute_reconstructionMatrix(imname, imnameCM, SVDlim1*0.01, "VTmat");
                         delete_image_ID("VTmat");
                         sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
                         save_fits(imnameCM, fname);
+
+                        printf("-- COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX\n");
+                        fflush(stdout);
 
                         // COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX
                         sprintf(imname, "fmodes_%02ld", mblock);
@@ -2342,6 +2348,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                         save_fits(imnameCMc, fname);
                         sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
                         save_fits(imnameCMcact, fname);
+
                         list_image_ID();
                     }
                 
