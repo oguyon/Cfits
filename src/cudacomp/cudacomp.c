@@ -1017,7 +1017,7 @@ void *compute_function( void *ptr )
         if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
 
-            printf("%d  GPU %d: compute reference produce\n", index, device);
+            printf("%d  GPU %d: compute reference product\n", index, device);
             fflush(stdout);
             /*    imtot = 0.0;
                 for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
@@ -1088,6 +1088,7 @@ void *compute_function( void *ptr )
             gpumatmultconf[index].refWFSinit[device] = 1;
 
 
+            usleep(100); // NOT SURE WHY NEEDED
 
             // copy d_dmRef -> dmRef_part
             stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
