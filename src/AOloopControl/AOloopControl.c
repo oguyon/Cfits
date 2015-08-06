@@ -2316,7 +2316,7 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                         IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
                        printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld x %ld = %ld - %ld )   %ld modes [ %ld <- %ld %ld ]\n", mblock, wfsxsize, wfsysize, wfssize, msize2, MBLOCK_NBmode[mblock], IDwfsMresp, MBLOCK_ID[mblock], IDzrespM);
                         fflush(stdout);
-                        list_image_ID();
+                  //      list_image_ID();
                 
                         for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                         {
@@ -2328,8 +2328,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
   //                              fflush(stdout);
                                 for(wfselem=0; wfselem<wfssize; wfselem++)
                                 {
-                                    printf("\r  m = %ld /%ld      act = %ld / %ld      wfselem = %ld / %ld          ", m, MBLOCK_NBmode[mblock], act, msize2, wfselem, wfssize);
-                                    fflush(stdout);
+                                //    printf("\r  m = %ld /%ld      act = %ld / %ld      wfselem = %ld / %ld          ", m, MBLOCK_NBmode[mblock], act, msize2, wfselem, wfssize);
+                                 //   fflush(stdout);
                                    data.image[IDwfsMresp].array.F[m*wfssize+wfselem] += data.image[MBLOCK_ID[mblock]].array.F[m*msize2+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
                                 }
                             }
