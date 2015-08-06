@@ -1657,11 +1657,13 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                                 else
                                     data.image[IDtmp].array.F[ii] = data.image[IDtmpg].array.F[ii];
                             }
+                            delete_image_ID("_tmpinterpolg");
                         }
                     for(ii=0;ii<msize*msize;ii++)
                         if(data.image[IDmask].array.F[ii]>0.5)
                             data.image[ID].array.F[m*msize*msize+ii] = data.image[IDtmp].array.F[ii];
                 }
+            delete_image_ID("_tmpinterpol");
         }
         
         
