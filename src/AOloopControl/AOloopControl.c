@@ -6334,7 +6334,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         tdiff = info_time_diff(t1, t2);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-        printf(" [ %10.3f ms]", 1e6*tdiffv);
+        printf(" [ %10.3f ms]\n", 1e3*tdiffv);
         fflush(stdout);
  
         
