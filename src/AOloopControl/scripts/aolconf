@@ -1203,6 +1203,12 @@ stringcenter "SYSTEM MODAL RESPONSE AND CONTROL"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
+SVDlimall=0.01
+if [ -f "./conf/conf_SVDlimall.txt" ]; then
+SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
+fi
+menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
+
 
 mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
@@ -1776,6 +1782,12 @@ state="menuconfigureloop"
 ;;
 
 
+	SVDla)
+exec 3>&1;
+SVDlimall=$(dialog --inputbox "SVD limit for full built" 0 0 "$SVDlimall" 2>&1 1>&3);
+exec 3>&-;
+echo "$SVDlimall" > ./conf/conf_SVDlimall.txt
+;;
 	mkModes)
 
 menucontrolloop_default="mkModes"
@@ -2191,7 +2203,7 @@ echo "$cpamax" > ./conf/conf_cpamax.txt
 rm mkmodes.run
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "${execprefix} ./aolmkmodes ${cpamax} -1 0.01" C-m
+tmux send-keys -t $tmuxname "${execprefix} ./aolmkmodes ${cpamax} -1 ${SVDlimall}" C-m
 tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
