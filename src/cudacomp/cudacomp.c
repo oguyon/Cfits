@@ -1012,6 +1012,11 @@ void *compute_function( void *ptr )
 
         if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
+            *ptrstat = 4; // compute
+
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr2[device]);
+
 
             printf("%d  GPU %d: compute reference product\n", index, device);
             fflush(stdout);
@@ -1042,6 +1047,23 @@ void *compute_function( void *ptr )
             gpumatmultconf[index].refWFSinit[device] = 1;
 
 
+           if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr3[device]);
+
+            *ptrstat = 5; // transfer result
+
+            if(gpumatmultconf[index].sem==1)
+            {
+                sem_wait(gpumatmultconf[index].semptr4[device]);
+                if(FORCESEMINIT==1)
+                    {
+                        sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                        for(cnt=0; cnt<semval; cnt++)
+                            sem_trywait(gpumatmultconf[index].semptr4[device]);
+                    }
+            }
+
+
             // copy d_dmRef -> dmRef_part
             stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmRef[device], 1, gpumatmultconf[index].dmRef_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
@@ -1066,6 +1088,15 @@ void *compute_function( void *ptr )
             delete_image_ID(imnamea[device]);
             printf("END %d  GPU %d: compute reference product\n", index, device);
             fflush(stdout);
+ 
+ 
+         if(gpumatmultconf[index].sem==1)
+            sem_post(gpumatmultconf[index].semptr5[device]);
+
+        *ptrstat = 6;
+
+
+ 
         }
         else
         {
