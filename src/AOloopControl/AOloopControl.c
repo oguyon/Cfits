@@ -5214,7 +5214,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
     float PSDamp, PSDpha;
     FILE *fp;
     char fname[200];
-    
+    long kmaxmax = 1000;
     
 
     
@@ -5277,8 +5277,8 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
 
     // SET UP RECORDING CUBES
     kmax = (long) (avetime/(1.0e-6*dtus));
-    if(kmax>100000)
-        kmax = 10000;
+    if(kmax>kmaxmax)
+        kmax = kmaxmax;
         
     timearray = (float*) malloc(sizeof(float)*kmax);
     IDrec_dmout = create_3Dimage_ID("_tmprecdmout", dmxsize, dmysize, kmax);
