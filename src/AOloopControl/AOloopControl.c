@@ -2314,11 +2314,13 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                     {
                         IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
                        printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld x %ld = %ld - %ld )   %ld modes [ %ld <- %ld %ld ]\n", mblock, wfsxsize, wfsysize, wfssize, msize2, MBLOCK_NBmode[mblock], IDwfsMresp, MBLOCK_ID[mblock], IDzrespM);
-                fflush(stdout);
-                list_image_ID();
+                        fflush(stdout);
+                        list_image_ID();
                 
-                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+                        for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                         {
+                            printf("m = %ld\n", m);
+                            fflush(stdout);
                             for(act=0; act<msize2; act++)
                             {
                                 for(wfselem=0; wfselem<wfssize; wfselem++)
