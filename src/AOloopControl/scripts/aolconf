@@ -1235,10 +1235,6 @@ for i in `seq 0 $(( $NBblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-
-#menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
-
-
 SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 
@@ -1789,7 +1785,6 @@ exec 3>&-;
 echo "$SVDlimall" > ./conf/conf_SVDlimall.txt
 ;;
 	mkModes)
-
 menucontrolloop_default="mkModes"
 state="menu_mkFModes"
 ;;

@@ -1017,6 +1017,8 @@ void *compute_function( void *ptr )
         if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
 
+            printf("%d  GPU %d: compute reference produce\n", index, device);
+            fflush(stdout);
             /*    imtot = 0.0;
                 for(n=0; n<gpumatmultconf[index].Nsize[device]; n++)
                     imtot += ptr0f[n];

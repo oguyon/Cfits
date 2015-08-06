@@ -6234,7 +6234,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     long wfsxsize, wfsysize, wfsxysize;
     long IDtmp;
     long elem, act;
-    
+    long zpcnt = 0;
     
     IDzpdm = image_ID(IDzpdm_name);
     
@@ -6304,12 +6304,16 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
 
         sem_wait(data.image[IDzpdm].semptr[1]);
-        printf("WFS zero point offset update \n");
+        
+        printf("WFS zero point offset update  # %8ld       (%s -> %s)  \n", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
         fflush(stdout);
+        
         
         for(act=0;act<dmxysize;act++)
             for(elem=0;elem<wfsxysize;elem++)
                 data.image[IDtmp].array.F[elem] += data.image[IDzpdm].array.F[act]*data.image[IDzrespM].array.F[act*wfsxysize+elem];
+        
+        
         
         // copy results to IDwfsref
         data.image[IDwfsref].md[0].write = 1;
@@ -6317,6 +6321,8 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         data.image[IDwfsref].md[0].cnt0 ++;
         data.image[IDwfsref].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost(IDwfsref_name, -1);
+    
+        zpcnt++;
     }
     
     
@@ -7229,7 +7235,7 @@ int AOcompute(long loop)
                             contrMcactcnt0 = data.image[aoconfID_contrMcact].md[0].cnt0;
                         }
                     
-                    if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)
+                    if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)  // (*)
                     {
                         printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
                         fflush(stdout);
