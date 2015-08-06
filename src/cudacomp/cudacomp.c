@@ -939,7 +939,7 @@ void *compute_function( void *ptr )
     FILE *fptest;
     long ii;
 
-    
+    float alpharef, betaref;
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
