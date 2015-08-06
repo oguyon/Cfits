@@ -1079,7 +1079,7 @@ void *compute_function( void *ptr )
             }
             
             // TEST
-            sprintf(fnamea[device],"!GPUtest_dmRef_part_%d.fits", device);
+     /*       sprintf(fnamea[device],"!GPUtest_dmRef_part_%d.fits", device);
             printf("device %d : fname = %s\n", device, fnamea[device]);
             sprintf(imnamea[device], "_gputest%d", device);
             IDa[device] = create_2Dimage_ID(imnamea[device], gpumatmultconf[index].M, 1);
@@ -1088,7 +1088,7 @@ void *compute_function( void *ptr )
             delete_image_ID(imnamea[device]);
             printf("END %d  GPU %d: compute reference product\n", index, device);
             fflush(stdout);
- 
+ */
  
          if(gpumatmultconf[index].sem==1)
             sem_post(gpumatmultconf[index].semptr5[device]);
