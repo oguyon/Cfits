@@ -7289,9 +7289,6 @@ int AOcompute(long loop)
                 
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU, loop);
                 
-                if(initWFSref_GPU == 0)
-                    usleep(10000); // NOT SURE WHY THIS IS NEEDED
-
 
                 initWFSref_GPU = 1;
                 initcontrMcact_GPU = 1;
