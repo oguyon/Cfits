@@ -5333,6 +5333,15 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             usleep(dtus);
             k++;
         }
+        
+        // ZERO DM            
+            data.image[IDdmin].md[0].write = 1;
+            for(ii=0;ii<dmsize;ii++)
+                data.image[IDdmin].array.F[ii] = 0.0;
+            data.image[IDdmin].md[0].cnt0++;
+            data.image[IDdmin].md[0].write = 0;
+        
+        
         k1 = k;
         save_fits("_tmprecdmout", "!_tmprecdmout.fits"); //TEST
         save_fits("_tmprecdmmeas", "!_tmprecdmmeas.fits");//TEST
