@@ -1064,6 +1064,8 @@ void *compute_function( void *ptr )
             memcpy(data.image[IDa[device]].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
             save_fits(imnamea[device], fnamea[device]);
             delete_image_ID(imnamea[device]);
+            printf("END %d  GPU %d: compute reference product\n", index, device);
+            fflush(stdout);
         }
         else
         {
