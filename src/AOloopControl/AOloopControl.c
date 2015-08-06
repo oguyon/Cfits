@@ -2320,8 +2320,8 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                 
                         for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                         {
-                            printf("m = %ld\n", m);
-                            fflush(stdout);
+                           // printf("m = %ld\n", m);
+                           // fflush(stdout);
                             for(act=0; act<msize2; act++)
                             {
 //                                printf("\r   m = %ld /%ld      act = %ld / %ld           ", m, MBLOCK_NBmode[mblock], act, msize2);
