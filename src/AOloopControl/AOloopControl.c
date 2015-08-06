@@ -5307,6 +5307,7 @@ long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, flo
             coeff = ampl*cos(pha);
             
             printf("runtile = %10.3 sec    coeff = %f\n", runtime, coeff);
+            fflush(stdout);
             
             // APPLY MODE TO DM            
             data.image[IDdmin].md[0].write = 1;
