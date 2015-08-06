@@ -41,6 +41,7 @@
 #define OMP_NELEMENT_LIMIT 1000000
 # endif
 
+int FORCESEMINIT = 0;
 
 
 
@@ -716,7 +717,8 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     int m;
     int ptn;
     int statustot;
-
+    int semval;
+    long cnt;
 
 
     cublasSgemv_alpha = alpha;
@@ -787,6 +789,16 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
             sem_wait(gpumatmultconf[index].semptr5[ptn]); // WAIT FOR RESULT
+
+        // for safety, set semaphores to zerosem_getvalue(data.image[IDarray[i]].semptr[s], &semval);
+        if(FORCESEMINIT==1)
+            for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+            {
+                sem_getvalue(gpumatmultconf[index].semptr5[ptn], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr5[ptn]);
+            }
+
     }
 
 
