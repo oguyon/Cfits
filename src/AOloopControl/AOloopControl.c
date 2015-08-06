@@ -6341,6 +6341,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         // copy results to IDwfsref
         data.image[IDwfsref].md[0].write = 1;
         memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
+        usleep(1000);
         data.image[IDwfsref].md[0].cnt0 ++;
         data.image[IDwfsref].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost(IDwfsref_name, -1);
