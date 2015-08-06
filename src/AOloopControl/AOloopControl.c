@@ -6237,6 +6237,10 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     long zpcnt = 0;
     long zpcnt0;
     
+    struct timespec t1;
+    struct timespec t2;
+    
+    
     IDzpdm = image_ID(IDzpdm_name);
     
     if(data.image[IDzpdm].sem<2) // if semaphore #1 does not exist, create it
@@ -6316,15 +6320,23 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
  
 
         
-        printf("WFS zero point offset update  # %8ld       (%s -> %s)  \n", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
+        printf("WFS zero point offset update  # %8ld       (%s -> %s)  ", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
         fflush(stdout);
         
         
+        clock_gettime(CLOCK_REALTIME, &t1);
+
         for(act=0;act<dmxysize;act++)
             for(elem=0;elem<wfsxysize;elem++)
                 data.image[IDtmp].array.F[elem] += data.image[IDzpdm].array.F[act]*data.image[IDzrespM].array.F[act*wfsxysize+elem];
-        
-        
+
+        clock_gettime(CLOCK_REALTIME, &t2);
+        tdiff = info_time_diff(t1, t2);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+        printf(" [ %10.3f ms]", 1e6*tdiffv);
+        fflush(stdout);
+ 
         
         // copy results to IDwfsref
         data.image[IDwfsref].md[0].write = 1;
