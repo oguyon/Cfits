@@ -41,7 +41,7 @@
 #define OMP_NELEMENT_LIMIT 1000000
 # endif
 
-int FORCESEMINIT = 0;
+int FORCESEMINIT = 1;
 
 
 
@@ -795,8 +795,8 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
             {
                 sem_getvalue(gpumatmultconf[index].semptr5[ptn], &semval);
-                    for(cnt=0; cnt<semval; cnt++)
-                        sem_trywait(gpumatmultconf[index].semptr5[ptn]);
+                for(cnt=0; cnt<semval; cnt++)
+                    sem_trywait(gpumatmultconf[index].semptr5[ptn]);
             }
 
     }
@@ -927,7 +927,8 @@ void *compute_function( void *ptr )
     float imtot;
     float alphatmp;
     float betatmp;
-
+    int semval;
+    long cnt;
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -1001,6 +1002,14 @@ void *compute_function( void *ptr )
             //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d ...\n", index, device);
             //fflush(stdout);
             sem_wait(gpumatmultconf[index].semptr1[device]);
+            
+                   // for safety, set semaphores to zerosem_getvalue(data.image[IDarray[i]].semptr[s], &semval);
+            if(FORCESEMINIT==1)
+            {
+                sem_getvalue(gpumatmultconf[index].semptr1[device], &semval);
+                for(cnt=0; cnt<semval; cnt++)
+                    sem_trywait(gpumatmultconf[index].semptr1[device]);
+            }
             //printf("GPU SEMAPHORE :  WAITING FOR SEM1     index %d   device %d -> MOVING FORWARD\n", index, device);
             //fflush(stdout);
         }
@@ -1202,6 +1211,14 @@ void *compute_function( void *ptr )
                 //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d ...\n", index, device);
                 //fflush(stdout);
                 sem_wait(gpumatmultconf[index].semptr4[device]);
+                       // for safety, set semaphores to zerosem_getvalue(data.image[IDarray[i]].semptr[s], &semval);
+                if(FORCESEMINIT==1)
+                    {
+                        sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                        for(cnt=0; cnt<semval; cnt++)
+                            sem_trywait(gpumatmultconf[index].semptr4[device]);
+                    }
+
                 //printf("GPU SEMAPHORE :  WAITING FOR SEM4     index %d   device %d -> MOVING FORWARD\n", index, device);
                 //fflush(stdout);
             }
