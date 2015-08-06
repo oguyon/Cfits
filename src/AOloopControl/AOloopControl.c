@@ -1270,7 +1270,8 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
  *
  *
  * if Mmask exists, measure xc, yc from it, otherwise use values given to function
- *
+ * if "dmslaved" image exists, force these actuators to be slaved to neighbors
+ * 
  * MaskMode = 0  : tapered masking
  * MaskMode = 1  : STRICT masking
  *
@@ -1393,6 +1394,12 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
     long kk, kk1;
     long ID_VTmatrix;
     long cnt1;
+    
+    long IDslaved, IDtmp, IDtmpg;
+    long conviter;
+    long NBconviter = 10;
+    float sigma;
+    
 
 
 
@@ -1620,12 +1627,45 @@ long AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaC
                 delete_image_ID("modeg");
             }
         }
-        list_image_ID();
+        
+        
+        
+        
+        /// SLAVED ACTUATORS 
+        IDslaved = image_ID("dmslaved");
+        ID = image_ID(ID_name);
+        if((IDslaved != -1)&&(IDmask!=-1))
+        {           
+            IDtmp = create_2Dimage_ID("_tmpinterpol", msize, msize); 
+            for(m=0;m<data.image[ID].md[0].size[2];m++)
+                {
+                    for(ii=0;ii<msize*msize;ii++)
+                        data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msize*msize+ii];
+                   
+                    for(conviter=0;conviter<NBconviter;conviter++)
+                        {
+                            sigma = 0.5*NBconviter/(1.0+conviter);
+                            gauss_filter("_tmpinterpol", "_tmpinterpolg", 1.0, 2);
+                            IDtmpg = image_ID("_tmpinterpolg");
+                            for(ii=0;ii<msize*msize;ii++)
+                            {
+                                if((data.image[IDmask].array.F[ii]>0.5)&&(data.image[IDslaved].array.F[ii]<0.5))
+                                    data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msize*msize+ii];
+                            }
+                        }
+                    for(ii=0;ii<msize*msize;ii++)
+                        if((data.image[IDmask].array.F[ii]<0.5)&&(data.image[IDslaved].array.F[ii]<0.5))
+                            data.image[IDtmp].array.F[ii] = 0.0;
+                }
+        }
+        
+        
+        
         printf("SAVING %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
         printf("DONE SAVING\n");
 
-
+exit(0);
 
         /// STEP 2: SEPARATE MODES INTO BLOCKS
         msize2 = msize*msize;

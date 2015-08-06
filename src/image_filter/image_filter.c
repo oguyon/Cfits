@@ -118,132 +118,133 @@ int median_filter(char *ID_name, char *out_name, int filter_size)
 
 long FILTER_percentile_interpol_fast(char *ID_name, char *IDout_name, double perc, long boxrad)
 {
-  long ID, ID1, IDout;
-  long IDpermask;
-  long step;
-  long ii, jj, ii1, jj1, ii2, jj2;
-  long iis, iie, jjs, jje;
-  long xsize, ysize, xsize1, ysize1;
-  double *array;
-  double v00, v01, v10, v11;
-  double u, t, ii1f, jj1f, x, y;
-  long cnt;
-  long pixstep = 5;
-  long IDpercmask; // optional mask file
+    long ID, ID1, IDout;
+    long IDpermask;
+    long step;
+    long ii, jj, ii1, jj1, ii2, jj2;
+    long iis, iie, jjs, jje;
+    long xsize, ysize, xsize1, ysize1;
+    double *array;
+    double v00, v01, v10, v11;
+    double u, t, ii1f, jj1f, x, y;
+    long cnt;
+    long pixstep = 5;
+    long IDpercmask; // optional mask file
 
 
-  step = (long) (0.7*boxrad);
-  if(step<1)
-    step = 1;
-  
+    step = (long) (0.7*boxrad);
+    if(step<1)
+        step = 1;
 
-  ID = image_ID(ID_name);
-  xsize = data.image[ID].md[0].size[0];
-  ysize = data.image[ID].md[0].size[1];
 
-  xsize1 = (long) (xsize/step);
-  ysize1 = (long) (ysize/step);
+    ID = image_ID(ID_name);
+    xsize = data.image[ID].md[0].size[0];
+    ysize = data.image[ID].md[0].size[1];
 
-  ID1 = create_2Dimage_ID("_tmppercintf",xsize1,ysize1);
-  
-  // identify mask if it exists
-  IDpercmask = image_ID("_percmask");
+    xsize1 = (long) (xsize/step);
+    ysize1 = (long) (ysize/step);
 
-  array = (double*) malloc(sizeof(double)*boxrad*boxrad*4);
+    ID1 = create_2Dimage_ID("_tmppercintf",xsize1,ysize1);
 
-  for(ii1=0;ii1<xsize1;ii1++)
-    for(jj1=0;jj1<ysize1;jj1++)
-      {
-	x = 1.0*(ii1+0.5)/xsize1*xsize;
-	y = 1.0*(jj1+0.5)/ysize1*ysize;
+    // identify mask if it exists
+    IDpercmask = image_ID("_percmask");
 
-	iis = (long) ( x - boxrad );
-	if(iis<0)
-	  iis = 0;
-	
-	iie = (long) ( x + boxrad );
-	if(iie>xsize)
-	  iie = xsize;
+    array = (double*) malloc(sizeof(double)*boxrad*boxrad*4);
 
-	jjs = (long) ( y - boxrad );
-	if(jjs<0)
-	  jjs = 0;
-	  
-	jje = (long) ( y + boxrad );	
-	if(jje>ysize)
-	  jje = ysize;
-	  
+    for(ii1=0; ii1<xsize1; ii1++)
+        for(jj1=0; jj1<ysize1; jj1++)
+        {
+            x = 1.0*(ii1+0.5)/xsize1*xsize;
+            y = 1.0*(jj1+0.5)/ysize1*ysize;
 
-	cnt = 0;
-	if(IDpercmask==-1)
-	  {
-	    for(ii=iis;ii<iie;ii+=pixstep)
-	      for(jj=jjs;jj<jje;jj+=pixstep)
-		{	      
-		  array[cnt] = data.image[ID].array.F[jj*xsize+ii];
-		  cnt ++;
-		}
-	  }
-	else
-	  {
-	    for(ii=iis;ii<iie;ii+=pixstep)
-	      for(jj=jjs;jj<jje;jj+=pixstep)
-		{
-		  if(data.image[IDpercmask].array.F[jj*xsize+ii]>0.5)
-		    {
-		      array[cnt] = data.image[ID].array.F[jj*xsize+ii];
-		      cnt ++;
-		    }
-		}
-	  }
-	quick_sort_double(array,cnt);
+            iis = (long) ( x - boxrad );
+            if(iis<0)
+                iis = 0;
 
-	data.image[ID1].array.F[jj1*xsize1+ii1] = array[(long) (perc*cnt)];
-	//	data.image[IDx].array.F[jj1*xsize1+ii1] = 0.5*(iis+iie);
-	//data.image[IDy].array.F[jj1*xsize1+ii1] = 0.5*(jjs+jje);
-      }
-  free(array);
+            iie = (long) ( x + boxrad );
+            if(iie>xsize)
+                iie = xsize;
 
-  IDout = create_2Dimage_ID(IDout_name,xsize,ysize);
-  
-  for(ii=0;ii<xsize;ii++)
-    for(jj=0;jj<ysize;jj++)
-      {
-	ii1f = 1.0*ii/xsize*xsize1;
-	jj1f = 1.0*jj/ysize*ysize1;
-	ii1 = (long) (ii1f);
-	jj1 = (long) (jj1f);
-	
-	ii2 = ii1+1;
-	jj2 = jj1+1;
+            jjs = (long) ( y - boxrad );
+            if(jjs<0)
+                jjs = 0;
 
-	while(ii2>xsize1-1)
-	  {
-	    ii1--;
-	    ii2--;
-	  }
+            jje = (long) ( y + boxrad );
+            if(jje>ysize)
+                jje = ysize;
 
-	while(jj2>ysize1-1)
-	  {
-	    jj1--;
-	    jj2--;
-	  }
-	
-	u = ii1f - ii1;
-	t = jj1f - jj1;
-	
-	v00 = data.image[ID1].array.F[jj1*xsize1+ii1];
-	v10 = data.image[ID1].array.F[jj1*xsize1+ii2];
-	v01 = data.image[ID1].array.F[jj2*xsize1+ii1];
-	v11 = data.image[ID1].array.F[jj2*xsize1+ii2];
 
-	data.image[IDout].array.F[jj*xsize+ii] = (1.0-u)*(1.0-t)*v00 + (1.0-u)*t*v01 + u*(1.0-t)*v10 + u*t*v11;
-      }
+            cnt = 0;
+            if(IDpercmask==-1)
+            {
+                for(ii=iis; ii<iie; ii+=pixstep)
+                    for(jj=jjs; jj<jje; jj+=pixstep)
+                    {
+                        array[cnt] = data.image[ID].array.F[jj*xsize+ii];
+                        cnt ++;
+                    }
+            }
+            else
+            {
+                for(ii=iis; ii<iie; ii+=pixstep)
+                    for(jj=jjs; jj<jje; jj+=pixstep)
+                    {
+                        if(data.image[IDpercmask].array.F[jj*xsize+ii]>0.5)
+                        {
+                            array[cnt] = data.image[ID].array.F[jj*xsize+ii];
+                            cnt ++;
+                        }
+                    }
+            }
+            quick_sort_double(array,cnt);
 
-  delete_image_ID("_tmppercintf");
-  
-  return(IDout);
+            data.image[ID1].array.F[jj1*xsize1+ii1] = array[(long) (perc*cnt)];
+            //	data.image[IDx].array.F[jj1*xsize1+ii1] = 0.5*(iis+iie);
+            //data.image[IDy].array.F[jj1*xsize1+ii1] = 0.5*(jjs+jje);
+        }
+    free(array);
+
+    IDout = create_2Dimage_ID(IDout_name,xsize,ysize);
+
+    for(ii=0; ii<xsize; ii++)
+        for(jj=0; jj<ysize; jj++)
+        {
+            ii1f = 1.0*ii/xsize*xsize1;
+            jj1f = 1.0*jj/ysize*ysize1;
+            ii1 = (long) (ii1f);
+            jj1 = (long) (jj1f);
+
+            ii2 = ii1+1;
+            jj2 = jj1+1;
+
+            while(ii2>xsize1-1)
+            {
+                ii1--;
+                ii2--;
+            }
+
+            while(jj2>ysize1-1)
+            {
+                jj1--;
+                jj2--;
+            }
+
+            u = ii1f - ii1;
+            t = jj1f - jj1;
+
+            v00 = data.image[ID1].array.F[jj1*xsize1+ii1];
+            v10 = data.image[ID1].array.F[jj1*xsize1+ii2];
+            v01 = data.image[ID1].array.F[jj2*xsize1+ii1];
+            v11 = data.image[ID1].array.F[jj2*xsize1+ii2];
+
+            data.image[IDout].array.F[jj*xsize+ii] = (1.0-u)*(1.0-t)*v00 + (1.0-u)*t*v01 + u*(1.0-t)*v10 + u*t*v11;
+        }
+
+    delete_image_ID("_tmppercintf");
+
+    return(IDout);
 }
+
 
 
 //
