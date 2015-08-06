@@ -928,8 +928,7 @@ void *compute_function( void *ptr )
     long IDtest;
     int k;
     int kmax = 10;
-    char imnamea[10][200];
-    char fnamea[10][200];
+    char fname[200];
     long long iter;
     long long itermax = 1;
     float imtot;
@@ -937,7 +936,8 @@ void *compute_function( void *ptr )
     float betatmp;
     int semval;
     long cnt;
-    long IDa[10];
+    FILE *fptest;
+    long ii;
 
     thdata = (THDATA*) ptr;
     device = thdata->thread_no;
@@ -1079,16 +1079,22 @@ void *compute_function( void *ptr )
             }
             
             // TEST
-     /*       sprintf(fnamea[device],"!GPUtest_dmRef_part_%d.fits", device);
-            printf("device %d : fname = %s\n", device, fnamea[device]);
-            sprintf(imnamea[device], "_gputest%d", device);
-            IDa[device] = create_2Dimage_ID(imnamea[device], gpumatmultconf[index].M, 1);
-            memcpy(data.image[IDa[device]].array.F, gpumatmultconf[index].dmRef_part[device], sizeof(float)*gpumatmultconf[index].M);
-            save_fits(imnamea[device], fnamea[device]);
-            delete_image_ID(imnamea[device]);
-            printf("END %d  GPU %d: compute reference product\n", index, device);
+    
+            sprintf(fname, "gputest%d.txt", device);
+            if((fptest = fopen(fname, "w"))==NULL)
+            {
+                printf("ERROR: cannot create file \"%s\"\n", fname);
+                exit(0);
+            }
+            printf("Writing test file \"%s\"\n", fname);
             fflush(stdout);
- */
+            for(ii=0;ii<gpumatmultconf[index].M;ii++)
+                fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
+            fclose(fptest);
+            
+            
+            
+ 
  
          if(gpumatmultconf[index].sem==1)
             sem_post(gpumatmultconf[index].semptr5[device]);
