@@ -1,12 +1,16 @@
 #!/bin/bash
 
 # copy PIAACMC design scripts to local directory
+execname=PIAACMCdesign
 
-srcdir="$HOME/src/PIAACMCdesign/src/PIAACMCsimul/scripts"
+srcdir=$( $execname -i| grep SOURCEDIR| awk '{ print $NF }')
+
+#srcdir="$HOME/src/PIAACMCdesign/src/PIAACMCsimul/scripts"
+
+
 currdir=$( pwd )
 echo "Current directory : $currdir"
 echo "Source directory  : $srcdir" 
-
 
 
 
