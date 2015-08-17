@@ -179,7 +179,7 @@ LStransm1=$( echo "($LStransm0+$LStransm2)*0.5" | bc -l )
 FPMsectors=1 # default
 
 nblambda=10 # default
-file="conf_nblambda.txt"
+file="conf/conf_nblambda.txt"
 if [ -f $file ]
 	then
 	nblambda=$(echo "$(cat $file)")
@@ -191,7 +191,7 @@ echo "nblambda = $nblambda"
 
 
 beamrad=0.01 # default
-file="conf_PIAAbeamrad.txt"
+file="conf/conf_PIAAbeamrad.txt"
 if [ -f $file ]
 	then
 	beamrad=$(echo "$(cat $file)")
@@ -203,7 +203,7 @@ echo "beamrad = $beamrad"
 
 
 Fratio=80 # default
-file="conf_Fratio.txt"
+file="conf/conf_Fratio.txt"
 if [ -f $file ]
 	then
 	Fratio=$(echo "$(cat $file)")
@@ -215,7 +215,7 @@ echo "Fratio = $Fratio"
 
 
 piaar0lim=1.15 # default
-file="conf_PIAAr0lim.txt"
+file="conf/conf_PIAAr0lim.txt"
 if [ -f $file ]
 	then
 	piaar0lim=$(echo "$(cat $file)")
@@ -227,7 +227,7 @@ echo "piaar0lim = $piaar0lim"
 
 
 piaaar1lim=1.50 # default
-file="conf_PIAAr1lim.txt"
+file="conf/conf_PIAAr1lim.txt"
 if [ -f $file ]
 	then
 	piaar1lim=$(echo "$(cat $file)")
@@ -239,7 +239,7 @@ echo "piaar1lim = ${piaar1lim}"
 
 
 piaasep=1.00 # default
-file="conf_PIAAsep.txt"
+file="conf/conf_PIAAsep.txt"
 if [ -f $file ]
 	then
 	piaasep=$(echo "$(cat $file)")
@@ -251,7 +251,7 @@ echo "piaasep = $piaasep"
 
 
 piaa0pos=1.00 # default
-file="conf_PIAA0pos.txt"
+file="conf/conf_PIAA0pos.txt"
 if [ -f $file ]
 	then
 	piaa0pos=$(echo "$(cat $file)")

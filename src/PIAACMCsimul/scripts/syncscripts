@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# copy PIAACMC design scripts to local directory
+
+srcdir="$HOME/src/PIAACMCdesign/src/PIAACMCsimul/scripts"
+currdir=$( pwd )
+echo "Current directory : $currdir"
+echo "Source directory  : $srcdir" 
+
+
+
+
+if [ ! -f "piaacmcscriptsinit.txt" ]; then
+sudo apt-get install inotify-tools
+sudo cp $srcdir/waitforfile /usr/local/bin/
+touch piaacmcscriptsinit.txt
+fi
+
+for sname in run runclean runopt runPIAACMC sim1024
+do
+ln -s $srcdir/$sname $currdir/$sname
+done
+
+

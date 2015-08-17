@@ -435,7 +435,7 @@ int mk_complex_from_reim_cli()
       return -1;
     }
 
-  mk_complex_from_reim(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+  mk_complex_from_reim(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, 0);
 
   return 0;
 }
@@ -454,7 +454,7 @@ int mk_complex_from_amph_cli()
       return -1;
     }
 
-  mk_complex_from_amph(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+  mk_complex_from_amph(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, 0);
 
   return 0;
 }
@@ -468,7 +468,7 @@ int mk_reim_from_complex_cli()
       return -1;
     }
 
-  mk_reim_from_complex(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+  mk_reim_from_complex(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, 0);
 
   return 0;
 }
@@ -481,7 +481,7 @@ int mk_amph_from_complex_cli()
       return -1;
     }
 
-  mk_amph_from_complex(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+  mk_amph_from_complex(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, 0);
 
   return 0;
 }
@@ -825,7 +825,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"ampl, pha -> complex");
     strcpy(data.cmd[data.NBcmd].syntax,"ampl pha complex");
     strcpy(data.cmd[data.NBcmd].example,"ap2c ima imp imc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(char *re_name, char *im_name, char *out_name, int sharedmem)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"c2ri");
@@ -843,7 +843,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
     strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
     strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(char *re_name, char *im_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(char *re_name, char *im_name, char *out_name, int sharedmem)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"rmall");
@@ -3077,7 +3077,7 @@ long chname_image_ID(char *ID_name, char *new_name)
 
 
 
-int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
+int mk_complex_from_reim(char *re_name, char *im_name, char *out_name, int sharedmem)
 {
     long IDre,IDim,IDout;
     long *naxes = NULL;
@@ -3110,7 +3110,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
     if((atype_re==FLOAT)&&(atype_im==FLOAT))
     {
         atype_out = COMPLEX_FLOAT;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
         for(ii=0; ii<nelement; ii++)
         {
             data.image[IDout].array.CF[ii].re = data.image[IDre].array.F[ii];
@@ -3120,7 +3120,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
     else if((atype_re==FLOAT)&&(atype_im==DOUBLE))
     {
         atype_out = COMPLEX_DOUBLE;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
         for(ii=0; ii<nelement; ii++)
         {
             data.image[IDout].array.CD[ii].re = data.image[IDre].array.F[ii];
@@ -3130,7 +3130,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
     else if((atype_re==DOUBLE)&&(atype_im==FLOAT))
     {
         atype_out = COMPLEX_DOUBLE;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
         for(ii=0; ii<nelement; ii++)
         {
             data.image[IDout].array.CD[ii].re = data.image[IDre].array.D[ii];
@@ -3140,7 +3140,7 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
     else if((atype_re==DOUBLE)&&(atype_im==DOUBLE))
     {
         atype_out = COMPLEX_DOUBLE;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
         for(ii=0; ii<nelement; ii++)
         {
             data.image[IDout].array.CD[ii].re = data.image[IDre].array.D[ii];
@@ -3163,7 +3163,11 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name)
     return(0);
 }
 
-int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
+
+
+
+
+int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name, int sharedmem)
 {
     long IDam,IDph,IDout;
     long naxes[3];
@@ -3187,7 +3191,9 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
     if((atype_am==FLOAT)&&(atype_ph==FLOAT))
     {
         atype_out = COMPLEX_FLOAT;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
+        
+        data.image[IDout].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
@@ -3201,11 +3207,15 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+
     }
     else if((atype_am==FLOAT)&&(atype_ph==DOUBLE))
     {
         atype_out = COMPLEX_DOUBLE;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
+        data.image[IDout].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
@@ -3219,11 +3229,14 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
     }
     else if((atype_am==DOUBLE)&&(atype_ph==FLOAT))
     {
         atype_out = COMPLEX_DOUBLE;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name,naxis,naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
+        data.image[IDout].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
@@ -3237,11 +3250,15 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+
     }
     else if((atype_am==DOUBLE)&&(atype_ph==DOUBLE))
     {
         atype_out = COMPLEX_DOUBLE;
-        IDout = create_image_ID(out_name,naxis,naxes,atype_out, data.SHARED_DFT, data.NBKEWORD_DFT);
+        IDout = create_image_ID(out_name, naxis, naxes,atype_out, sharedmem, data.NBKEWORD_DFT);
+        data.image[IDout].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
@@ -3255,6 +3272,8 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
     }
     else
     {
@@ -3269,7 +3288,7 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name)
     return(0);
 }
 
-int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
+int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int sharedmem)
 {
     long IDre,IDim,IDin;
     long naxes[3];
@@ -3289,9 +3308,11 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
 
     if(atype == COMPLEX_FLOAT) // single precision
     {
-        IDre = create_image_ID(re_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
-        IDim = create_image_ID(im_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
-
+        IDre = create_image_ID(re_name,naxis,naxes,FLOAT, sharedmem, data.NBKEWORD_DFT);
+        IDim = create_image_ID(im_name,naxis,naxes,FLOAT, sharedmem, data.NBKEWORD_DFT);
+        
+        data.image[IDre].md[0].write = 1;
+        data.image[IDim].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
@@ -3305,12 +3326,17 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDre].md[0].cnt0++;
+        data.image[IDim].md[0].cnt0++;
+        data.image[IDre].md[0].write = 0;
+        data.image[IDim].md[0].write = 0;
     }
     else if(atype==COMPLEX_DOUBLE) // double precision
     {
-        IDre = create_image_ID(re_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
-        IDim = create_image_ID(im_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
-
+        IDre = create_image_ID(re_name,naxis,naxes,DOUBLE, sharedmem, data.NBKEWORD_DFT);
+        IDim = create_image_ID(im_name,naxis,naxes,DOUBLE, sharedmem, data.NBKEWORD_DFT);
+        data.image[IDre].md[0].write = 1;
+        data.image[IDim].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
@@ -3324,6 +3350,11 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDre].md[0].cnt0++;
+        data.image[IDim].md[0].cnt0++;
+        data.image[IDre].md[0].write = 0;
+        data.image[IDim].md[0].write = 0;
+
     }
     else
     {
@@ -3339,7 +3370,7 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name)
     return(0);
 }
 
-int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
+int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int sharedmem)
 {
     long IDam,IDph,IDin;
     long naxes[3];
@@ -3362,9 +3393,10 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
 
     if(atype==COMPLEX_FLOAT) // single precision
     {
-        IDam = create_image_ID(am_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
-        IDph = create_image_ID(ph_name,naxis,naxes,FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
-
+        IDam = create_image_ID(am_name,naxis,naxes,FLOAT, sharedmem, data.NBKEWORD_DFT);
+        IDph = create_image_ID(ph_name,naxis,naxes,FLOAT, sharedmem, data.NBKEWORD_DFT);
+        data.image[IDam].md[0].write = 1;
+        data.image[IDph].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) private(ii,amp_f,pha_f)
         {
@@ -3380,12 +3412,17 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDam].md[0].cnt0++;
+        data.image[IDph].md[0].cnt0++;
+        data.image[IDam].md[0].write = 0;
+        data.image[IDph].md[0].write = 0;
     }
     else if(atype==COMPLEX_DOUBLE) // double precision
     {
-        IDam = create_image_ID(am_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
-        IDph = create_image_ID(ph_name,naxis,naxes,DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
-
+        IDam = create_image_ID(am_name,naxis,naxes,DOUBLE, sharedmem, data.NBKEWORD_DFT);
+        IDph = create_image_ID(ph_name,naxis,naxes,DOUBLE, sharedmem, data.NBKEWORD_DFT);
+        data.image[IDam].md[0].write = 1;
+        data.image[IDph].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT) private(ii,amp_d,pha_d)
         {
@@ -3401,6 +3438,10 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
 # ifdef _OPENMP
         }
 # endif
+        data.image[IDam].md[0].cnt0++;
+        data.image[IDph].md[0].cnt0++;
+        data.image[IDam].md[0].write = 0;
+        data.image[IDph].md[0].write = 0;
     }
     else
     {
@@ -3414,19 +3455,19 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name)
     return(0);
 }
 
-int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name)
+int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name, int sharedmem)
 {
-    mk_complex_from_amph(am_name,ph_name,"Ctmp");
-    mk_reim_from_complex("Ctmp",re_out_name,im_out_name);
+    mk_complex_from_amph(am_name, ph_name, "Ctmp", 0);
+    mk_reim_from_complex("Ctmp", re_out_name, im_out_name, sharedmem);
     delete_image_ID("Ctmp");
 
     return(0);
 }
 
-int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name)
+int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name, int sharedmem)
 {
-    mk_complex_from_reim(re_name,im_name,"Ctmp");
-    mk_amph_from_complex("Ctmp",am_out_name, ph_out_name);
+    mk_complex_from_reim(re_name, im_name, "Ctmp", 0);
+    mk_amph_from_complex("Ctmp",am_out_name, ph_out_name, sharedmem);
     delete_image_ID("Ctmp");
 
     return(0);

@@ -47,7 +47,7 @@ printhelp ()
 {
 	echo "------------------------------------------------------------------------------"
 	echo ""
-	echo "         TOP LEVEL SCRIPT FOR PIAACMC DESIGN AND EVALUATION"
+	echo "               SCRIPT FOR PIAACMC DESIGN AND EVALUATION"
 	echo "               SEQUENCES OPERATIONS TO SCRIPT sim1024"
 	echo "                MOST PARAMETERS ARE PASSED TO sim1024"
 	echo ""

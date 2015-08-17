@@ -73,7 +73,7 @@ long create_variable_string_ID(char *name, char *value);
 long create_image_ID(char *name, long naxis, long *size, int atype, int shared, int nbkw);
 
 
-
+ 
 
 long image_write_keyword_L(char *IDname, char *kname, long value, char *comment);
 long image_write_keyword_D(char *IDname, char *kname, double value, char *comment);
@@ -121,17 +121,17 @@ int list_variable_ID_file(char *fname);
 
 long chname_image_ID(char *ID_name, char *new_name);
 
-int mk_complex_from_reim(char *re_name, char *im_name, char *out_name);
+int mk_complex_from_reim(char *re_name, char *im_name, char *out_name, int sharedmem);
 
-int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name);
+int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name, int sharedmem);
 
-int mk_reim_from_complex(char *in_name, char *re_name, char *im_name);
+int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int sharedmem);
 
-int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name);
+int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int sharedmem);
 
-int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name);
+int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name, int sharedmem);
 
-int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name);
+int mk_amph_from_reim(char *re_name, char *im_name, char *am_out_name, char *ph_out_name, int sharedmem);
 
 int clearall();
 

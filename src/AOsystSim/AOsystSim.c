@@ -966,7 +966,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
         permut("pyrwfcin");
         do2dfft("pyrwfcin","pyrpsfcin");
         permut("pyrpsfcin");
-        mk_amph_from_complex("pyrpsfcin", "pyrpsfa", "pyrpsfp");
+        mk_amph_from_complex("pyrpsfcin", "pyrpsfa", "pyrpsfp", 0);
         delete_image_ID("pyrpsfcin");
 
         sprintf(pnamea, "pyramp_%03ld", pmodpt);
@@ -983,7 +983,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
         }
 
 
-        mk_complex_from_amph("pyrpsfa", "pyrpsfp", "pyrpsfc");
+        mk_complex_from_amph("pyrpsfa", "pyrpsfp", "pyrpsfc", 0);
         delete_image_ID("pyrpsfa");
         delete_image_ID("pyrpsfp");
 
@@ -991,7 +991,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
         do2dfft("pyrpsfc","pyrwfs_pupc");
         delete_image_ID("pyrpsfc");
         permut("pyrwfs_pupc");
-        mk_amph_from_complex("pyrwfs_pupc", "pyrwfs_pupa", "pyrwfs_pupp");
+        mk_amph_from_complex("pyrwfs_pupc", "pyrwfs_pupa", "pyrwfs_pupp", 0);
 
         delete_image_ID("pyrwfs_pupp");
         delete_image_ID("pyrwfs_pupc");
@@ -1008,6 +1008,43 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
 
     return (0);
 }
+
+
+
+
+//AOsystSim_runWFS(2, "aosimwfsim");
+
+int AOsystSim_runWFS(long index, char *IDout_name)
+{
+    long cnt0;
+    long IDinamp;
+    char imnameamp[200];
+    char imnamepha[200];
+    int ret;
+    
+    ret = sprintf(imnameamp, "WFamp0_%03ld", index);
+    ret = sprintf(imnamepha, "WFpha0_%03ld", index);
+    IDinamp = image_ID(imnameamp);
+
+    cnt0 = 0;
+    
+    while(1)
+    {
+        while(cnt0 == data.image[IDinamp].md[0].cnt0)
+            usleep(50);
+        cnt0 = data.image[IDinamp].md[0].cnt0;
+        
+        mk_complex_from_amph(imnameamp, imnamepha, "_tmpwfc", 0);
+        AOsystSim_WFSsim_Pyramid("_tmpwfc", IDout_name, 0.0, 1);
+        
+        delete_image_ID("_tmpwfc");
+    }
+    
+    
+    return(0);
+}
+
+
 
 
 
@@ -1056,6 +1093,14 @@ int AOsystSim_run(int syncmode, long delayus)
     long ID;
     long IDout;
     long *IDarray;
+    long iter;
+    
+    long *dhsizearray;
+    long IDdh;
+    long dhxsize, dhysize;
+    long dhxoffset, dhyoffset;
+    long IDre, IDim;
+    char imdhname[200];
 
     int COROmode = 0; // 1 if coronagraph
 
@@ -1195,9 +1240,9 @@ int AOsystSim_run(int syncmode, long delayus)
     COREMOD_MEMORY_image_set_createsem("WFturb", 2);
     list_image_ID();
 
-    AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
-    IDdm0shape = image_ID("dmdisp");
-    save_fits("dmdisp", "!dmdisp.fits");
+    AOsystSim_DMshape("aosimdmctrl", "dmifc", "dm2Ddisp");
+    IDdm0shape = image_ID("dm2Ddisp");
+    save_fits("dm2Ddisp", "!dm2Ddisp.fits");
 
 
 
@@ -1279,7 +1324,7 @@ int AOsystSim_run(int syncmode, long delayus)
     optsystsim[0].SAVE = 1;
 
     // propagate
-    OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
+    OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
 
     ID = image_ID("psfi0");
     imsize = (long*) malloc(sizeof(long)*2);
@@ -1300,18 +1345,28 @@ int AOsystSim_run(int syncmode, long delayus)
     IDarray[0] = image_ID("WFturb");
     IDarray[1] = image_ID("aosimdmctrl");
 
+    sprintf(imdhname, "dhfield");
+    dhxsize = arraysize/8;
+    dhysize = arraysize/4;
+    dhxoffset = arraysize/2 + 8; 
+    dhyoffset = arraysize/2 - arraysize/8;
+    dhsizearray = (long*) malloc(sizeof(long)*2);
+    dhsizearray[0] = dhxsize*2;
+    dhsizearray[1] = dhysize;
 
-
+    iter = 0;
     while(1)
     {
-        AOsystSim_DMshape("aosimdmctrl", "dmifc", "dmdisp");
-        OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/");
+//        printf("ITERATION %6ld   \n", iter);
+  //      fflush(stdout);
+        
+        AOsystSim_DMshape("aosimdmctrl", "dmifc", "dm2Ddisp");
+        OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
 
-        mk_complex_from_amph("WFamp0_002", "WFpha0_002", "wfc");
   
-        AOsystSim_WFSsim_Pyramid("wfc", "aosimwfsim", 0.0, 1);
+        
        // COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
-        delete_image_ID("wfc");
+     //   delete_image_ID("wfc");
     
         ID = image_ID("psfi0");
         data.image[IDout].md[0].write = 1;
@@ -1319,6 +1374,23 @@ int AOsystSim_run(int syncmode, long delayus)
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost("aosimpsfout", -1);
+
+        
+
+        // CREATE DARK HOLE FIELD
+        IDre = image_ID("psfre0");
+        IDim = image_ID("psfim0");
+        IDdh = create_image_ID(imdhname, 2, dhsizearray, FLOAT, 1, 0);
+        data.image[IDdh].md[0].write = 1;
+        for(ii=0;ii<dhxsize;ii++)
+            for(jj=0;jj<dhysize;jj++)
+                {
+                    data.image[IDdh].array.F[jj*(2*dhxsize)+ii] = data.image[IDre].array.F[(jj+dhyoffset)*arraysize + (ii+dhxoffset)];
+                    data.image[IDdh].array.F[jj*(2*dhxsize)+(ii+dhxsize)] = data.image[IDim].array.F[(jj+dhyoffset)*arraysize + (ii+dhxoffset)];
+                }
+        data.image[IDdh].md[0].cnt0++;
+        data.image[IDdh].md[0].write = 0;
+        
 
         switch (syncmode) {
             case 0 : // sync to turbulence
@@ -1336,8 +1408,10 @@ int AOsystSim_run(int syncmode, long delayus)
         }
         
         COREMOD_MEMORY_image_set_semflush_IDarray(IDarray, 2);
+        iter++;
     }
 
+    free(dhsizearray);
 
     return(0);
 }

@@ -278,13 +278,13 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, flo
     delete_image_ID("tmpg");
     delete_image_ID("tmpd1");
     arith_set_pixel("tmpamp", 0.0, size/2, size/2);
-    mk_complex_from_amph("tmpamp", "tmppha1", "tmpc");
+    mk_complex_from_amph("tmpamp", "tmppha1", "tmpc", 0);
     delete_image_ID("tmpamp");
     delete_image_ID("tmppha1");
     permut("tmpc");
     do2dfft("tmpc","tmpcf");
     delete_image_ID("tmpc");
-    mk_reim_from_complex("tmpcf", "tmpo1", "tmpo2");
+    mk_reim_from_complex("tmpcf", "tmpo1", "tmpo2", 0);
     delete_image_ID("tmpcf");
 
     /* compute the scaling factor in the power law of the structure function */
@@ -348,13 +348,13 @@ int make_master_turbulence_screen_pow(char *ID_name1, char *ID_name2, long size,
     delete_image_ID("tmpg");
     delete_image_ID("tmpd1");
     arith_set_pixel("tmpamp",0.0,size/2,size/2);
-    mk_complex_from_amph("tmpamp","tmppha1","tmpc");
+    mk_complex_from_amph("tmpamp","tmppha1","tmpc", 0);
     delete_image_ID("tmpamp");
     delete_image_ID("tmppha1");
     permut("tmpc");
     do2dfft("tmpc","tmpcf");
     delete_image_ID("tmpc");
-    mk_reim_from_complex("tmpcf","tmpo1","tmpo2");
+    mk_reim_from_complex("tmpcf","tmpo1","tmpo2", 0);
     delete_image_ID("tmpcf");
 
     /* compute the scaling factor in the power law of the structure function */
@@ -3820,17 +3820,17 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
 
         //      tp("0.5");
 
-        mk_reim_from_amph("pupa","pupp", "pupre","pupim");
+        mk_reim_from_amph("pupa", "pupp", "pupre", "pupim", 0);
         basic_contract("pupre","pupre1",BINFACTOR,BINFACTOR);
         basic_contract("pupim","pupim1",BINFACTOR,BINFACTOR);
         delete_image_ID("pupre");
         delete_image_ID("pupim");
-        mk_complex_from_reim("pupre1", "pupim1", "pupc");
+        mk_complex_from_reim("pupre1", "pupim1", "pupc", 0);
         permut("pupc");
         do2dfft("pupc","focc");
         permut("focc");
         delete_image_ID("pupc");
-        mk_amph_from_complex("focc","foca","focp");
+        mk_amph_from_complex("focc", "foca", "focp", 0);
         delete_image_ID("focc");
         delete_image_ID("focp");
         execute_arith("foci=foca*foca");
@@ -3882,12 +3882,12 @@ double AtmosphericTurbulence_makePSF(double Kp, double Ki, double Kd, double Kdg
                 data.image[IDim].array.F[ii] -= imave;
             }
         }
-        mk_complex_from_reim("pupre1", "pupim1", "pupc");
+        mk_complex_from_reim("pupre1", "pupim1", "pupc", 0);
         permut("pupc");
         do2dfft("pupc","focc");
         permut("focc");
         delete_image_ID("pupc");
-        mk_amph_from_complex("focc","foca","focp");
+        mk_amph_from_complex("focc", "foca", "focp", 0);
         delete_image_ID("focc");
         delete_image_ID("focp");
         execute_arith("focic=foca*foca");

@@ -2,7 +2,7 @@
 
 EXPECTED_ARGS=2
 
-if [ $# -ne $EXPECTED_ARGS || "$1" == "help" ]
+if [ $# -ne $EXPECTED_ARGS ]
 then
   echo
   echo "------ CREATE DM SLAVED ACTUATORS MAP ----"

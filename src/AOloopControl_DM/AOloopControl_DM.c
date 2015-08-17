@@ -92,9 +92,9 @@ int AOloopControl_DM_setname_cli()
 int AOloopControl_DM_CombineChannels_cli()
 {
     if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
+        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
     else
-        AOloopControl_DM_CombineChannels(1, "dmvolt"); // DEFAULT
+        AOloopControl_DM_CombineChannels(1, 1, "dmvolt"); // DEFAULT
 
     return 1;
 }
@@ -180,7 +180,7 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].info,"combine channels");
     strcpy(data.cmd[data.NBcmd].syntax,"no arg");
     strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolcontroldmchgain");
@@ -462,12 +462,19 @@ int AOloopControl_DM_unloadconf()
 }
 
 
+
+
+
 //
 // mode = 1 if DM volt computed
 //
+// AveMode: averaging mode 
+//      0: do not DC offset command to average
+//      1: apply DC offset to remove average
+//
 // NOTE: responds immediately to sem[1] in dmdisp
 //
-int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name)
+int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name)
 {
     long naxis = 2;
     long xsize = DM_Xsize;
@@ -609,12 +616,13 @@ int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name)
 
             dispcombconf[0].status = 4;
 
-            // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
             ave = 0.0;
-            for(ii=0; ii<NBact; ii++)
-                ave += data.image[IDdispt].array.F[ii];
-            ave /= NBact;
-
+            if(AveMode == 1) // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
+                {
+                    for(ii=0; ii<NBact; ii++)
+                        ave += data.image[IDdispt].array.F[ii];
+                    ave /= NBact;
+                }
             dispcombconf[0].status = 5;
 
             for(ii=0; ii<NBact; ii++)

@@ -507,11 +507,11 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
             data.image[IDpupp0m].array.F[ii] =  data.image[IDpupp0].array.F[ii]+0.0*data.image[IDprolp].array.F[ii];
         }
 
-        mk_complex_from_amph("pupa0m","pupp0","pc1");
+        mk_complex_from_amph("pupa0m", "pupp0", "pc1", 0);
         permut("pc1");
         do2dfft("pc1","fc1");
         permut("fc1");
-        mk_amph_from_complex("fc1","fa1","fp1");
+        mk_amph_from_complex("fc1", "fa1", "fp1", 0);
 
         execute_arith("fa1m=fa1*FPmask");
 
@@ -538,14 +538,14 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
         //      for(ii=0;ii<size2;ii++)
         //	data.image[ID].array.F[ii] = 0.0;
 
-        mk_complex_from_amph("fa1m","fp1","fc2");
+        mk_complex_from_amph("fa1m", "fp1", "fc2", 0);
         permut("fc2");
         do2dfft("fc2","pc2");
         permut("pc2");
 
 
 
-        mk_reim_from_complex("pc2","pr2","pi2");
+        mk_reim_from_complex("pc2", "pr2", "pi2", 0);
 
         IDr = image_ID("pr2");
         copy_image_ID("pr2", "pr2cp", 0);
@@ -635,7 +635,7 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
 
         if (0) // TEST
         {
-            mk_amph_from_complex("pc1","pc1_a","pc1_p");
+            mk_amph_from_complex("pc1", "pc1_a", "pc1_p", 0);
             save_fl_fits("pc1_a", "!pc1_a.1.fits");
             save_fl_fits("pc1_p", "!pc1_p.1.fits");
             save_fl_fits("pr2", "!pr2.1.fits");
@@ -798,7 +798,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
 
     if(0)
     {
-        mk_amph_from_complex("_fpmz", "_fpmza", "_fpmzp");
+        mk_amph_from_complex("_fpmz", "_fpmza", "_fpmzp", 0);
         save_fl_fits("_fpmza", "!_fpmza.fits");
         save_fl_fits("_fpmzp", "!_fpmzp.fits");
         delete_image_ID("_fpmza");
@@ -899,7 +899,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
             data.image[IDpupp0m].array.F[ii] =  data.image[IDpupp0].array.F[ii]+0.0*data.image[IDprolp].array.F[ii];
         }
 
-        mk_complex_from_amph("pupa0m", "pupp0", "pc1");
+        mk_complex_from_amph("pupa0m", "pupp0", "pc1", 0);
 
 
 
@@ -947,7 +947,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
 
         printf("%ld/%ld   FPmask throughput = %g    prolate throughput = %.18g\n", iter, NBiter, (double) (total/total2), (double) transm);
 
-        mk_reim_from_complex("pc3", "pr2", "pi2");
+        mk_reim_from_complex("pc3", "pr2", "pi2", 0);
 
 
 
@@ -1017,10 +1017,10 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
 
         if (0) // TEST
         {
-            mk_amph_from_complex("pc1","pc1_a","pc1_p");
+            mk_amph_from_complex("pc1", "pc1_a", "pc1_p", 0);
             save_fl_fits("pc1_a", "!pc1_a.fits");
             save_fl_fits("pc1_p", "!pc1_p.fits");
-            mk_amph_from_complex("pc3","pc3_a","pc3_p");
+            mk_amph_from_complex("pc3", "pc3_a", "pc3_p", 0);
             save_fl_fits("pc3_a", "!pc3_a.fits");
             save_fl_fits("pc3_p", "!pc3_p.fits");
             save_fl_fits("pr2", "!pr2.fits");
@@ -3972,7 +3972,7 @@ int coronagraph_simul_SHEAR4(double xld, double yld, char *psfname)
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2", "fa2", "fp2", 0);
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
@@ -4225,7 +4225,7 @@ int coronagraph_simul_DICC(double xld, double yld, char *psfname)
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2", "fa2", "fp2", 0);
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
@@ -4305,7 +4305,7 @@ int coronagraph_simul_AIC(double xld, double yld, char *psfname)
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2", "fa2", "fp2", 0);
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
@@ -4378,7 +4378,7 @@ int coronagraph_simul_4QPM(double xld, double yld, char *psfname)
             data.image[IDp1].array.F[ii] += data.image[ID].array.F[ii];
     }
 
-    mk_complex_from_amph("pa1","pp1","pc2");
+    mk_complex_from_amph("pa1", "pp1", "pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -4442,7 +4442,7 @@ int coronagraph_simul_4QPM(double xld, double yld, char *psfname)
     permut("pc3");
     do2dfft("pc3","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
     arith_image_mult("fa4","fa4",psfname);
     ID = image_ID(psfname);
@@ -4542,7 +4542,7 @@ int coronagraph_simul_ODC(double xld, double yld, char *psfname)
             data.image[IDp1].array.F[ii] += data.image[ID].array.F[ii];
     }
 
-    mk_complex_from_amph("pa1","pp1","pc2");
+    mk_complex_from_amph("pa1", "pp1", "pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -4602,17 +4602,17 @@ int coronagraph_simul_ODC(double xld, double yld, char *psfname)
     }
 
 
-    /*  mk_amph_from_complex("pc3","fa","fp");
+    /*  mk_amph_from_complex("pc3", "fa", "fp", 0);
     save_fl_fits("fa","!fa");
     exit(0);*/
 
 
     permut("pc3");
-    do2dfft("pc3","fc4");
+    do2dfft("pc3", "fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
-    arith_image_mult("fa4","fa4",psfname);
+    arith_image_mult("fa4", "fa4", psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
     delete_image_ID("fc2");
@@ -4736,9 +4736,9 @@ int coronagraph_simul_BL8(double xld, double yld, char *psfname)
             data.image[IDp1].array.F[ii] += data.image[ID].array.F[ii];
     }
 
-    mk_complex_from_amph("pa1","pp1","pc2");
+    mk_complex_from_amph("pa1", "pp1", "pc2", 0);
     permut("pc2");
-    do2dfft("pc2","fc2");
+    do2dfft("pc2", "fc2");
     permut("fc2");
     ID = image_ID("fc2");
     for(ii=0; ii<size2; ii++)
@@ -4824,17 +4824,17 @@ int coronagraph_simul_BL8(double xld, double yld, char *psfname)
     }
 
 
-    /*  mk_amph_from_complex("pc3","fa","fp");
-    save_fl_fits("fa","!fa");
+    /*  mk_amph_from_complex("pc3", "fa", "fp", 0);
+    save_fl_fits("fa", "!fa");
     exit(0);*/
 
 
     permut("pc3");
     do2dfft("pc3","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
-    arith_image_mult("fa4","fa4",psfname);
+    arith_image_mult("fa4", "fa4", psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
     delete_image_ID("fc2");
@@ -4936,9 +4936,9 @@ int coronagraph_simul_BL4(double xld, double yld, char *psfname)
             data.image[IDp1].array.F[ii] += data.image[ID].array.F[ii];
     }
 
-    mk_complex_from_amph("pa1","pp1","pc2");
+    mk_complex_from_amph("pa1", "pp1", "pc2", 0);
     permut("pc2");
-    do2dfft("pc2","fc2");
+    do2dfft("pc2", "fc2");
     permut("fc2");
     ID = image_ID("fc2");
     for(ii=0; ii<size2; ii++)
@@ -4999,17 +4999,17 @@ int coronagraph_simul_BL4(double xld, double yld, char *psfname)
     }
 
 
-    /*  mk_amph_from_complex("pc3","fa","fp");
-    save_fl_fits("fa","!fa");
+    /*  mk_amph_from_complex("pc3", "fa", "fp", 0);
+    save_fl_fits("fa", "!fa");
     exit(0);*/
 
 
     permut("pc3");
     do2dfft("pc3","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
-    arith_image_mult("fa4","fa4",psfname);
+    arith_image_mult("fa4", "fa4", psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
     delete_image_ID("fc2");
@@ -5158,7 +5158,7 @@ int coronagraph_simul_RRPM(double xld, double yld, char *psfname)
         delete_image_ID("pp2");
     }
 
-    mk_complex_from_amph("pa2","pp1","pc2");
+    mk_complex_from_amph("pa2", "pp1", "pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -5212,15 +5212,15 @@ int coronagraph_simul_RRPM(double xld, double yld, char *psfname)
         }
     }
 
-    /*  mk_amph_from_complex("pc3","fa","fp");
-    save_fl_fits("fa","!fa");
+    /*  mk_amph_from_complex("pc3", "fa", "fp", 0);
+    save_fl_fits("fa", "!fa");
     exit(0);*/
 
 
     permut("pc3");
     do2dfft("pc3","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
     arith_image_mult("fa4","fa4",psfname);
     ID = image_ID(psfname);
@@ -5345,7 +5345,7 @@ int coronagraph_simul_OVC(double xld, double yld, char *psfname)
             data.image[IDp1].array.F[ii] += data.image[ID].array.F[ii];
     }
 
-    mk_complex_from_amph("pa1","pp1","pc2");
+    mk_complex_from_amph("pa1","pp1","pc2", 0);
     if(0==0)
     {
         save_fl_fits("pa1","!pa1");
@@ -5361,7 +5361,7 @@ int coronagraph_simul_OVC(double xld, double yld, char *psfname)
 
     if(0==0)
     {
-        mk_amph_from_complex("fc2","fa2","fp2");
+        mk_amph_from_complex("fc2", "fa2", "fp2", 0);
         save_fl_fits("fa2","!fa2");
         save_fl_fits("fp2","!fp2");
     }
@@ -5392,9 +5392,9 @@ int coronagraph_simul_OVC(double xld, double yld, char *psfname)
 
     if(0==0)
     {
-        mk_amph_from_complex("pc3","pc3a","pc3p");
-        save_fl_fits("pc3a","!pc3a");
-        save_fl_fits("pc3p","!pc3p");
+        mk_amph_from_complex("pc3", "pc3a", "pc3p", 0);
+        save_fl_fits("pc3a", "!pc3a");
+        save_fl_fits("pc3p", "!pc3p");
         delete_image_ID("pc3a");
         delete_image_ID("pc3p");
     }
@@ -5457,17 +5457,17 @@ int coronagraph_simul_OVC(double xld, double yld, char *psfname)
 
 
 
-    /*  mk_amph_from_complex("pc3","fa","fp");
-    save_fl_fits("fa","!fa");
+    /*  mk_amph_from_complex("pc3", "fa", "fp", 0);
+    save_fl_fits("fa", "!fa");
     exit(0);*/
 
 
     permut("pc3");
-    do2dfft("pc3","fc4");
+    do2dfft("pc3", "fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
-    arith_image_mult("fa4","fa4",psfname);
+    arith_image_mult("fa4", "fa4", psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
     delete_image_ID("fc2");
@@ -5528,7 +5528,7 @@ int coronagraph_simul_CPA(double xld, double yld, char *psfname)
         data.image[IDa2].array.F[ii] = data.image[IDa1].array.F[ii] * data.image[IDref].array.F[ii];
 
     /*save_fl_fits("pa2","!pa2");*/
-    mk_complex_from_amph("pa2","pp1","pc2");
+    mk_complex_from_amph("pa2", "pp1", "pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -5567,7 +5567,7 @@ int coronagraph_simul_CPA(double xld, double yld, char *psfname)
         }
 
 
-    /*  mk_amph_from_complex("pc3","fa","fp");
+    /*  mk_amph_from_complex("pc3","fa","fp", 0);
     save_fl_fits("fa","!fa");
     exit(0);*/
 
@@ -5575,9 +5575,9 @@ int coronagraph_simul_CPA(double xld, double yld, char *psfname)
     permut("pc3");
     do2dfft("pc3","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
-    arith_image_mult("fa4","fa4",psfname);
+    arith_image_mult("fa4", "fa4", psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
     delete_image_ID("fc2");
@@ -5695,13 +5695,13 @@ int coronagraph_simul_PPA(double xld, double yld, char *psfname)
 
     /*save_fl_fits("pa2","!pa2");
       save_fl_fits("pp1","!pp1");*/
-    mk_complex_from_amph("pa2","pp1","pc2");
+    mk_complex_from_amph("pa2","pp1","pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
 
 
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2","fa2","fp2", 0);
 
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
@@ -5743,13 +5743,13 @@ int coronagraph_simul_NOCORO(double xld, double yld, char *psfname)
 
     /*save_fl_fits("pa2","!pa2");
       save_fl_fits("pp1","!pp1");*/
-    mk_complex_from_amph("pa1","pp1","pc2");
+    mk_complex_from_amph("pa1","pp1","pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
 
 
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2","fa2","fp2", 0);
 
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
@@ -5801,7 +5801,7 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
 
     coronagraphs_PIAA_apodize_beam("pa1","pp1","pa2","pp2");
 
-    mk_complex_from_amph("pa2","pp2","pc2");
+    mk_complex_from_amph("pa2","pp2","pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -5891,7 +5891,7 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
         permut("pc3p");
         do2dfft("pc3p","fc4p");
         permut("fc4p");
-        mk_amph_from_complex("fc4p","fa4p","fp4p");
+        mk_amph_from_complex("fc4p","fa4p","fp4p", 0);
         arith_image_mult("fa4p","fa4p","psfWFSp");
         ID = image_ID("psfWFSp");
         for(ii=0; ii<size2; ii++)
@@ -5904,7 +5904,7 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
         permut("pc3m");
         do2dfft("pc3m","fc4m");
         permut("fc4m");
-        mk_amph_from_complex("fc4m","fa4m","fp4m");
+        mk_amph_from_complex("fc4m","fa4m","fp4m", 0);
         arith_image_mult("fa4m","fa4m","psfWFSm");
         ID = image_ID("psfWFSm");
         for(ii=0; ii<size2; ii++)
@@ -5915,7 +5915,7 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
         delete_image_ID("fp4m");
     }
 
-    /* mk_amph_from_complex("pc3","fa","fp");
+    /* mk_amph_from_complex("pc3","fa","fp", 0);
     save_fl_fits("fa","!fa");
     exit(0);*/
 
@@ -5923,7 +5923,7 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
     permut("pc3");
     do2dfft("pc3","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4","fa4","fp4", 0);
 
 
     arith_image_mult("fa4","fa4",psfname);
@@ -5996,7 +5996,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
     //  save_fl_fits("pp2","!pp2");
     //  exit(0);
 
-    mk_complex_from_amph("pa2","pp2","pc2");
+    mk_complex_from_amph("pa2","pp2","pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -6041,7 +6041,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
             }
     }
 
-    /*  mk_amph_from_complex("fc2","tfa2","tfp2");
+    /*  mk_amph_from_complex("fc2","tfa2","tfp2", 0);
     save_fl_fits("tfa2","!tfa2");
     delete_image_ID("tfa2");
     delete_image_ID("tfp2");
@@ -6051,7 +6051,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
     do2dfft("fc2","pc3");
     permut("pc3");
     ID = image_ID("pc3");
-    mk_amph_from_complex("pc3","pa3t","pp3t");
+    mk_amph_from_complex("pc3","pa3t","pp3t", 0);
     //  save_fl_fits("pa3t","!pa3t");
     delete_image_ID("pa3t");
     delete_image_ID("pp3t");
@@ -6069,7 +6069,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
             }
         }
 
-    mk_amph_from_complex("pc3","pa3","pp3");
+    mk_amph_from_complex("pc3","pa3","pp3", 0);
     /*save_fl_fits("pa3","!pa3");*/
     copy_image_ID("pp3", "pp3b", 0);
     IDb = image_ID("pp3b");
@@ -6158,14 +6158,14 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
             }
     }
 
-    mk_complex_from_amph("pa4","pp4","pc4");
+    mk_complex_from_amph("pa4","pp4","pc4", 0);
 
     /*  save_fl_fits("pa4","!pa4");*/
 
     permut("pc4");
     do2dfft("pc4","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4","fa4","fp4", 0);
 
     arith_image_mult("fa4","fa4",psfname);
     ID = image_ID(psfname);
@@ -6283,7 +6283,7 @@ int coronagraph_simul_STRIPC(double xld, double yld, char *psfname)
 
     /*  printf("T = %f\n",totcnt/(PI/4*trad_pix*trad_pix));*/
 
-    mk_amph_from_complex("pc2","pa2","pp2");
+    mk_amph_from_complex("pc2","pa2","pp2", 0);
     /* save_fl_fits("pa2","!pa2");
        save_fl_fits("pp2","!pp2");*/
     delete_image_ID("pa2");
@@ -6292,7 +6292,7 @@ int coronagraph_simul_STRIPC(double xld, double yld, char *psfname)
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2","fa2","fp2", 0);
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
@@ -6374,7 +6374,7 @@ int coronagraph_simul_SIMXY(double xld, double yld, char *psfname)
         }
     }
 
-    mk_amph_from_complex("pc2","pa2","pp2");
+    mk_amph_from_complex("pc2","pa2","pp2", 0);
     /*save_fl_fits("pa2","!pa2");
       save_fl_fits("pp2","!pp2");*/
     delete_image_ID("pa2");
@@ -6383,7 +6383,7 @@ int coronagraph_simul_SIMXY(double xld, double yld, char *psfname)
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2","fa2","fp2", 0);
     arith_image_mult("fa2","fa2",psfname);
     ID = image_ID(psfname);
     delete_image_ID("pc2");
@@ -6435,7 +6435,7 @@ int coronagraph_simul_AIC_PIAAC(double xld, double yld, char *psfname)
     piaaconfdirection = 0;
     coronagraphs_PIAA_apodize_beam("pa1","pp1","pa2","pp2");
 
-    mk_complex_from_amph("pa2","pp2","pc2");
+    mk_complex_from_amph("pa2","pp2","pc2", 0);
     permut("pc2");
     do2dfft("pc2","fc2");
     permut("fc2");
@@ -6479,16 +6479,16 @@ int coronagraph_simul_AIC_PIAAC(double xld, double yld, char *psfname)
             }
         }
 
-    mk_amph_from_complex("pc3","pa3","pp3");
+    mk_amph_from_complex("pc3","pa3","pp3", 0);
     piaaconfdirection = 1;
     coronagraphs_PIAA_apodize_beam("pa3","pp3","pa4","pp4");
     piaaconfdirection = 0;
-    mk_complex_from_amph("pa4","pp4","pc4");
+    mk_complex_from_amph("pa4","pp4","pc4", 0);
 
     permut("pc4");
     do2dfft("pc4","fc4");
     permut("fc4");
-    mk_amph_from_complex("fc4","fa4","fp4");
+    mk_amph_from_complex("fc4","fa4","fp4", 0);
 
     arith_image_mult("fa4","fa4","psfPIAAC");
     ID = image_ID("psfPIAAC");
@@ -7021,7 +7021,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
                 data.image[IDa1].array.F[ii] *= data.image[IDapo].array.F[ii];
         }
 
-        mk_complex_from_amph("pa1","pp1","pc1");
+        mk_complex_from_amph("pa1","pp1","pc1", 0);
         delete_image_ID("pa1");
         delete_image_ID("pp1");
 
@@ -7107,7 +7107,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
             }
         }
 
-        mk_complex_from_amph("pa1a","pp1a","pc1");
+        mk_complex_from_amph("pa1a","pp1a","pc1", 0);
         if(WriteFiles==1)
         {
             save_fl_fits("pa1a","!pa1a");
@@ -7153,7 +7153,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
             }
 
 
-            mk_amph_from_complex("fc1","fc1_a","fc1_p");
+            mk_amph_from_complex("fc1","fc1_a","fc1_p", 0);
 
             if(WriteFiles==1)
             {
@@ -7173,7 +7173,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
             if(WriteFiles==1)
             {
-                mk_amph_from_complex("pc1","pc1a","pc1p");
+                mk_amph_from_complex("pc1","pc1a","pc1p", 0);
                 save_fl_fits("pc1a","!pc1a.fits");
                 save_fl_fits("pc1p","!pc1p.fits");
                 delete_image_ID("pc1a");
@@ -7204,7 +7204,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
             if(WriteFiles==1)
             {
                 //	      save_fl_fits("pa0","!pa0_mask.fits");
-                mk_amph_from_complex("pc1","pc1am","pc1pm");
+                mk_amph_from_complex("pc1","pc1am","pc1pm", 0);
                 save_fl_fits("pc1am","!pc1am.fits");
                 save_fl_fits("pc1pm","!pc1pm.fits");
                 delete_image_ID("pc1am");
@@ -7230,7 +7230,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
             if((IDfpm_a!=-1)&&(IDfpm_p!=-1))
             {
                 printf("============= USING CUSTOM COMPLEX FOCAL PLANE MASK ============\n");
-                mk_complex_from_amph("aplcfpm_a", "aplcfpm_p", "aplcfpm_c");
+                mk_complex_from_amph("aplcfpm_a", "aplcfpm_p", "aplcfpm_c", 0);
                 ID = image_ID("aplcfpm_c");
                 for(ii=0; ii<size2; ii++)
                 {
@@ -7246,17 +7246,17 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
             if(0) // testing
             {
-                mk_amph_from_complex("pc1", "dftia", "dftip");
+                mk_amph_from_complex("pc1", "dftia", "dftip", 0);
                 save_fl_fits("dftia", "!dftia.fits");
                 save_fl_fits("dftip", "!dftip.fits");
                 delete_image_ID("dftia");
                 delete_image_ID("dftip");
-                mk_amph_from_complex("pc2", "dftoa", "dftop");
+                mk_amph_from_complex("pc2", "dftoa", "dftop", 0);
                 save_fl_fits("dftoa", "!dftoa.fits");
                 save_fl_fits("dftop", "!dftop.fits");
                 delete_image_ID("dftoa");
                 delete_image_ID("dftop");
-                //mk_amph_from_complex("aplcfpm1", "dftfpma", "dftfpmp");
+                //mk_amph_from_complex("aplcfpm1", "dftfpma", "dftfpmp", 0);
                 save_fl_fits("aplcfpm1", "!dftfpma.fits");
                 //	      save_fl_fits("dftfpmp", "!dftfpmp.fits");
                 // delete_image_ID("dftfpma");
@@ -7285,7 +7285,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
             delete_image_ID("pc2");
             if(WriteFiles==1)
             {
-                mk_amph_from_complex("pc1","pc1a","pc1p");
+                mk_amph_from_complex("pc1","pc1a","pc1p", 0);
                 save_fl_fits("pc1a","!pc1a_01.fits");
                 save_fl_fits("pc1p","!pc1p_01.fits");
                 delete_image_ID("pc1a");
@@ -7297,7 +7297,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
     if(APLC_PIAA==2)  // INVERSE PIAA
     {
-        mk_amph_from_complex("pc1","pa3","pp3");
+        mk_amph_from_complex("pc1","pa3","pp3", 0);
 
         if(WriteFiles==1)
             save_fl_fits("pa3","!pa3.fits");
@@ -7424,7 +7424,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
                 }
         }
 
-        mk_complex_from_amph("pa4","pp4","pc4");
+        mk_complex_from_amph("pa4","pp4","pc4", 0);
         if(WriteFiles==1)
         {
             save_fl_fits("pa4","!pa4.fits");
@@ -7458,7 +7458,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
                     data.image[ID].array.CF[jj2*size+ii2].im = im;
                 }
         }
-        mk_amph_from_complex("fc4", "fa4", "fp4");
+        mk_amph_from_complex("fc4", "fa4", "fp4", 0);
 
         arith_image_mult("fa4", "fa4", psfname);
         ID = image_ID(psfname);
@@ -7507,7 +7507,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
                 }
         }
 
-        mk_amph_from_complex("fc2","fa2","fp2");
+        mk_amph_from_complex("fc2","fa2","fp2", 0);
 
         ID = image_ID("fa2");
         delete_image_ID("fp2");
@@ -7547,7 +7547,7 @@ int coronagraph_init_EXTERNAL_OCCULTER(double D, double l, double lambda, long F
     printf("pix:  %g  %g\n",trad_pix/(D/2.0)*PARAM_a,trad_pix/(D/2.0)*PARAM_b);
     save_fl_fits("extocc","!extocc");
     create_2Dimage_ID("zero",size*FACTOR,size*FACTOR);
-    mk_complex_from_amph("extocc","zero","extocc_c");
+    mk_complex_from_amph("extocc","zero","extocc_c", 0);
     printf("pixscale = %g    l = %g    lambda = %g\n",pixscale,l,lambda);
     Fresnel_propagate_wavefront("extocc_c","extoccp",pixscale,l,lambda);
     ID = image_ID("extoccp");
@@ -7585,7 +7585,7 @@ int coronagraph_simul_EXTERNAL_OCCULTER(double xld, double yld, char *psfname)
         IDocc = coronagraph_init_EXTERNAL_OCCULTER(D,l,lambda,FACTOR);
     }
 
-    mk_amph_from_complex("extoccp","exta","extp");
+    mk_amph_from_complex("extoccp","exta","extp", 0);
     IDocca = image_ID("exta");
     IDoccp = image_ID("extp");
     //  save_fl_fits("exta","!exta");
@@ -7631,10 +7631,10 @@ int coronagraph_simul_EXTERNAL_OCCULTER(double xld, double yld, char *psfname)
         }
 
     //  save_fl_fits("pa1","!pa1");
-    mk_complex_from_amph("pa1","pp1","pc1");
+    mk_complex_from_amph("pa1","pp1","pc1", 0);
     do2dfft("pc1","fc2");
     permut("fc2");
-    mk_amph_from_complex("fc2","fa2","fp2");
+    mk_amph_from_complex("fc2","fa2","fp2", 0);
 
     ID = image_ID("fa2");
     delete_image_ID("fp2");

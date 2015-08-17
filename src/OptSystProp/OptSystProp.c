@@ -58,7 +58,7 @@ int init_OptSystProp()
 
 
 
-int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop)
+int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop, int sharedmem)
 {
     int kl;
     long ii;
@@ -67,7 +67,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
     long IDin_amp, IDin_pha;
     long IDc_in, IDc_out;
     long IDout_amp, IDout_pha;
-
+    long *imsizearray;
     double amp, pha, re, im;
 
 
@@ -80,10 +80,27 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
     size2 = size*size;
     IDc_in = create_2DCimage_ID("tmppropCin", size, size);
 
-    IDout_amp = create_3Dimage_ID(IDout_amp_name, size, size, optsyst[index].nblambda);
-    IDout_pha = create_3Dimage_ID(IDout_pha_name, size, size, optsyst[index].nblambda);
+
+   
+    imsizearray = (long*) malloc(sizeof(long)*3);
+    imsizearray[0] = size;
+    imsizearray[1] = size;
+    imsizearray[2] = optsyst[index].nblambda;
+    
+    IDout_amp = image_ID(IDout_amp_name);
+
+    if(IDout_amp==-1)
+            IDout_amp = create_image_ID(IDout_amp_name, 3, imsizearray, FLOAT, sharedmem, 0);
+            
+    
+    IDout_pha = image_ID(IDout_pha_name);
+    if(IDout_pha==-1)
+        IDout_pha = create_image_ID(IDout_pha_name, 3, imsizearray, FLOAT, sharedmem, 0);
 
 
+    data.image[IDout_amp].md[0].write = 1;
+    data.image[IDout_pha].md[0].write = 1;
+    
     for(kl=0; kl<optsyst[index].nblambda; kl++)
     {
         printf("kl = %d / %d  %g\n", kl, optsyst[index].nblambda, optsyst[index].lambdaarray[kl]);
@@ -108,7 +125,13 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
         }
         delete_image_ID("tmppropCout");
     }
-
+    
+    data.image[IDout_amp].md[0].cnt0++;
+    data.image[IDout_pha].md[0].cnt0++;
+    
+    data.image[IDout_amp].md[0].write = 0;
+    data.image[IDout_pha].md[0].write = 0;
+ 
 
     return 0;
 }
@@ -122,12 +145,14 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
 /// *elemkeepmem	1 if element complex amplitude should be kept in memory after use
 ///
 
-int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir)
+int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir, int sharedmem)
 {
     char command[500];
     char imname[200];
     char imnameamp[200];
     char imnamepha[200];
+    char imnamere[200];
+    char imnameim[200];
 
     long IDx, IDy, IDr, IDPA;
     double x, y;
@@ -172,23 +197,34 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     double n0, n1; // refractive indices
     int r;
 
+    long *imsizearray;
+
     size = optsyst[index].size;
     size2 = size*size;
     nblambda = optsyst[index].nblambda;
 
-
+    imsizearray = (long*) malloc(sizeof(long)*3);
 
     // create base complex amplitude
+    imsizearray[0] = size;
+    imsizearray[1] = size;
+    imsizearray[2] = nblambda;
+    
     sprintf(imname,"WFamp%ld", index);
     IDa = image_ID(imname);
     if(IDa==-1)
-        IDa = create_3Dimage_ID(imname, size, size, nblambda);
-
+    {
+        IDa = create_image_ID(imname, 3, imsizearray, FLOAT, sharedmem, 0);
+    //    create_3Dimage_ID(imname, size, size, nblambda);
+    }
     sprintf(imname,"WFpha%ld", index);
     IDp = image_ID(imname);
     if(IDp==-1)
-        IDp = create_3Dimage_ID(imname, size, size, nblambda);
-
+    {
+        IDp = create_image_ID(imname, 3, imsizearray, FLOAT, sharedmem, 0);
+        //create_3Dimage_ID(imname, size, size, nblambda);
+    }
+    
     for(ii=0; ii<size2; ii++)
         for(kl=0; kl<nblambda; kl++)
             data.image[IDa].array.F[size2*kl+ii] = 1.0;
@@ -247,29 +283,29 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         }
 
 
-        if(image_ID(imnameamp_out)!=-1)
+        if((image_ID(imnameamp_out)!=-1)&&(sharedmem==0))
             delete_image_ID(imnameamp_out);
 
-        if(image_ID(imnamepha_out)!=-1)
+        if((image_ID(imnamepha_out)!=-1)&&(sharedmem==0))
             delete_image_ID(imnamepha_out);
 
 
         if( fabs(propdist)>proplim )
         {
             printf("Propagating to element %ld  (%lf m)\n", elem,  propdist);
-            OptSystProp_propagateCube(optsyst, 0, imnameamp_in, imnamepha_in, imnameamp_out, imnamepha_out, propdist);
+            OptSystProp_propagateCube(optsyst, 0, imnameamp_in, imnamepha_in, imnameamp_out, imnamepha_out, propdist, sharedmem);
         }
         else
         {
-            copy_image_ID(imnameamp_in, imnameamp_out, 0);
-            copy_image_ID(imnamepha_in, imnamepha_out, 0);
+            copy_image_ID(imnameamp_in, imnameamp_out, sharedmem);
+            copy_image_ID(imnamepha_in, imnamepha_out, sharedmem);
         }
         IDa = image_ID(imnameamp_out);
         IDp = image_ID(imnamepha_out);
 
         /// discard element memory after used
         printf("*********** %ld  -> %d\n", elem-1, optsyst[index].keepMem[elem-1]);
-        if(optsyst[index].keepMem[elem-1]==0)
+        if((optsyst[index].keepMem[elem-1]==0)&&(sharedmem==0))
         {
             printf("********** Deleting element %ld      %s %s\n", elem-1, imnameamp_in, imnamepha_in);
             delete_image_ID(imnameamp_in);
@@ -449,10 +485,12 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             save_fits(imnamepha_out, fname);*/
             //exit(0);
 
-            ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
-            delete_image_ID(imnameamp_out);
-            delete_image_ID(imnamepha_out);
-
+            ID = mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp", 0);
+            if(sharedmem==0)
+                {
+                    delete_image_ID(imnameamp_out);
+                    delete_image_ID(imnamepha_out);
+                }
 
             if(optsyst[index].DFTgridpad>0)
             {
@@ -481,7 +519,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
            //     save_fits("dftgridre", "!dftgridre.fits");
            //     save_fits("dftgridim", "!dftgridim.fits");
                 
-                mk_complex_from_reim("dftgridre", "dftgridim", "_WFctmpc");
+                mk_complex_from_reim("dftgridre", "dftgridim", "_WFctmpc", 0);
                 delete_image_ID("dftgridre");
                 delete_image_ID("dftgridim");
 
@@ -494,7 +532,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 //      fflush(stdout);
                 
                 
-                mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
+                mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp", 0);
 
                 if(optsyst[index].SAVE == 1)
                 {
@@ -578,7 +616,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 
                 free(convkern);
                 delete_image_ID("_WFcout");
-                mk_complex_from_reim("dftgridre1", "dftgridim1", "_WFcout");
+                mk_complex_from_reim("dftgridre1", "dftgridim1", "_WFcout", 0);
                 delete_image_ID("dftgridre1");
                 delete_image_ID("dftgridim1");
                 
@@ -601,10 +639,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             if(optsyst[index].FOCMASKarray[i].mode == 1)
             {
                 arith_image_sub_inplace("_WFctmp", "_WFcout");
-                mk_amph_from_complex("_WFctmp", imnameamp_out, imnamepha_out);
+                mk_amph_from_complex("_WFctmp", imnameamp_out, imnamepha_out, 0);
             }
             else
-                mk_amph_from_complex("_WFcout", imnameamp_out, imnamepha_out);
+                mk_amph_from_complex("_WFcout", imnameamp_out, imnamepha_out, 0);
 
 
             delete_image_ID("_WFctmp");
@@ -643,22 +681,32 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     if((elem==optsyst[index].NBelem)&&(optsyst[index].endmode==0)) // Compute final focal plane image
     {
         printf("COMPUTING FINAL IMAGE AS FFT OF %ld\n", elem-1);
-        mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp");
+        mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp", 0);
         permut("_WFctmp");
         sprintf(imname, "psfc%ld", index);
         do2dfft("_WFctmp", imname);
         delete_image_ID("_WFctmp");
         permut(imname);
         sprintf(imnameamp, "psfa%ld", index);
-        sprintf(imnamepha, "psfp%ld", index);
-        mk_amph_from_complex(imname, imnameamp, imnamepha);
+        sprintf(imnamepha, "psfp%ld", index);        
+        sprintf(imnamere, "psfre%ld", index);
+        sprintf(imnameim, "psfim%ld", index);        
+ 
+        mk_reim_from_complex(imname, imnamere, imnameim, sharedmem);
+        mk_amph_from_complex(imname, imnameamp, imnamepha, sharedmem);
 
+        
         if(optsyst[index].SAVE == 1)
-        {   sprintf(fname, "!%s/psfa%ld.fits", savedir, index);
+        {  
+            sprintf(fname, "!%s/psfa%ld.fits", savedir, index);
             save_fits(imnameamp, fname);
-
             sprintf(fname, "!%s/psfp%ld.fits", savedir, index);
             save_fits(imnamepha, fname);
+
+            sprintf(fname, "!%s/psfre%ld.fits", savedir, index);
+            save_fits(imnamere, fname);
+            sprintf(fname, "!%s/psfim%ld.fits", savedir, index);
+            save_fits(imnameim, fname);
         }
 
 
@@ -677,6 +725,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         }
     }
 
+
+    free(imsizearray);
 
     return(0);
 }

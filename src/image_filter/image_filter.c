@@ -393,18 +393,24 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
     float sum;
     double tot;
     long jmax;
-    
+    int filtersizec;
     
     // printf("sigma = %f\n",sigma);
-    // printf("filter size = %d\n",filter_size);
+    // printf("filter size = %d\n",filtersizec);
 
-    array = (float*) malloc((2*filter_size+1)*sizeof(float));
     ID = image_ID(ID_name);
     naxis = data.image[ID].md[0].naxis;
     for(kk=0; kk<naxis; kk++)
         naxes[kk] = data.image[ID].md[0].size[kk];
 
+    filtersizec = filter_size;
+    if(filtersizec > data.image[ID].md[0].size[0]/2)
+        filtersizec = data.image[ID].md[0].size[0]/2;
+    if(filtersizec > data.image[ID].md[0].size[1]/2)
+        filtersizec = data.image[ID].md[0].size[1]/2;
 
+    array = (float*) malloc((2*filtersizec+1)*sizeof(float));
+ 
     if(naxis==2)
         naxes[2] = 1;
     copy_image_ID(ID_name, out_name, 0);
@@ -419,15 +425,15 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 
 
     sum=0.0;
-    for (i=0; i<(2*filter_size+1); i++)
+    for (i=0; i<(2*filtersizec+1); i++)
     {
-        array[i] = exp(-((i-filter_size)*(i-filter_size))/sigma/sigma);
+        array[i] = exp(-((i-filtersizec)*(i-filtersizec))/sigma/sigma);
         sum += array[i];
     }
 
 
 
-    for (i=0; i<(2*filter_size+1); i++)
+    for (i=0; i<(2*filtersizec+1); i++)
     {
         array[i] /= sum;
         //    printf("%ld %f\n",i,array[i]);
@@ -440,27 +446,27 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 
         for (jj = 0; jj < naxes[1]; jj++)
         {
-            for (ii = 0; ii < naxes[0]-(2*filter_size+1); ii++)
+            for (ii = 0; ii < naxes[0]-(2*filtersizec+1); ii++)
             {
-                for (i=0; i<(2*filter_size+1); i++)
-                    data.image[ID_tmp].array.F[jj*naxes[0]+(ii+filter_size)] += array[i]*data.image[ID].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+(ii+i)];
+                for (i=0; i<(2*filtersizec+1); i++)
+                    data.image[ID_tmp].array.F[jj*naxes[0]+(ii+filtersizec)] += array[i]*data.image[ID].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+(ii+i)];
             }
-            for (ii=0; ii<filter_size; ii++)
+            for (ii=0; ii<filtersizec; ii++)
             {
                 tot = 0.0;
-                for(i=filter_size-ii; i<(2*filter_size+1); i++)
+                for(i=filtersizec-ii; i<(2*filtersizec+1); i++)
                 {
-                    data.image[ID_tmp].array.F[jj*naxes[0]+ii] += array[i]*data.image[ID].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+(ii-filter_size+i)];
+                    data.image[ID_tmp].array.F[jj*naxes[0]+ii] += array[i]*data.image[ID].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+(ii-filtersizec+i)];
                     tot += array[i];
                 }
                 data.image[ID_tmp].array.F[jj*naxes[0]+ii] /= tot;
             }
-            for (ii=naxes[0]-filter_size-1; ii<naxes[0]; ii++)
+            for (ii=naxes[0]-filtersizec-1; ii<naxes[0]; ii++)
             {
                 tot = 0.0;
-                for(i=0; i<(2*filter_size+1)-(ii-naxes[0]+filter_size+1); i++)
+                for(i=0; i<(2*filtersizec+1)-(ii-naxes[0]+filtersizec+1); i++)
                 {
-                    data.image[ID_tmp].array.F[jj*naxes[0]+ii] += array[i]*data.image[ID].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+(ii-filter_size+i)];
+                    data.image[ID_tmp].array.F[jj*naxes[0]+ii] += array[i]*data.image[ID].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+(ii-filtersizec+i)];
                     tot += array[i];
                 }
                 data.image[ID_tmp].array.F[jj*naxes[0]+ii] /= tot;
@@ -471,42 +477,42 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
 
         for (ii = 0; ii < naxes[0]; ii++)
         {
-         //   printf("A jj : 0 -> %ld/%ld\n", naxes[1]-(2*filter_size+1), naxes[1]);
+         //   printf("A jj : 0 -> %ld/%ld\n", naxes[1]-(2*filtersizec+1), naxes[1]);
          //   fflush(stdout);
-            for (jj = 0; jj < naxes[1]-(2*filter_size+1); jj++)
+            for (jj = 0; jj < naxes[1]-(2*filtersizec+1); jj++)
             {
-         //       printf("00: %ld/%ld\n", k*naxes[0]*naxes[1]+(jj+filter_size)*naxes[0]+ii, naxes[0]*naxes[1]*naxes[2]);
+         //       printf("00: %ld/%ld\n", k*naxes[0]*naxes[1]+(jj+filtersizec)*naxes[0]+ii, naxes[0]*naxes[1]*naxes[2]);
          //       printf("01: %ld/%ld\n", (jj+j)*naxes[0]+ii, naxes[0]*naxes[1]);
                 fflush(stdout);
-                for (j=0; j<(2*filter_size+1); j++)
-                    data.image[ID_out].array.F[k*naxes[0]*naxes[1]+(jj+filter_size)*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj+j)*naxes[0]+ii];
+                for (j=0; j<(2*filtersizec+1); j++)
+                    data.image[ID_out].array.F[k*naxes[0]*naxes[1]+(jj+filtersizec)*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj+j)*naxes[0]+ii];
             }
 
-        //    printf("B jj : 0 -> %d/%ld\n", filter_size, naxes[1]);
+        //    printf("B jj : 0 -> %d/%ld\n", filtersizec, naxes[1]);
         //    fflush(stdout);
-            for (jj=0; jj<filter_size; jj++)
+            for (jj=0; jj<filtersizec; jj++)
             {
                 tot = 0.0;
-                jmax = (2*filter_size+1);
-                if(jj-filter_size+jmax > naxes[1])
-                    jmax = naxes[1]-jj+filter_size;
-                for(j=filter_size-jj; j<jmax; j++)
+                jmax = (2*filtersizec+1);
+                if(jj-filtersizec+jmax > naxes[1])
+                    jmax = naxes[1]-jj+filtersizec;
+                for(j=filtersizec-jj; j<jmax; j++)
                 {
          //           printf("02: %ld/%ld\n", k*naxes[0]*naxes[1]+jj*naxes[0]+ii, naxes[0]*naxes[1]*naxes[2]);
-         //           printf("03: %ld/%ld\n", (jj-filter_size+j)*naxes[0]+ii, naxes[0]*naxes[1]);
+         //           printf("03: %ld/%ld\n", (jj-filtersizec+j)*naxes[0]+ii, naxes[0]*naxes[1]);
                     fflush(stdout);                                              
-                    data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj-filter_size+j)*naxes[0]+ii];
+                    data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj-filtersizec+j)*naxes[0]+ii];
                     tot += array[j];
                 }
                 data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] /= tot;
             }
 
-            for (jj=naxes[1]-filter_size-1; jj<naxes[1]; jj++)
+            for (jj=naxes[1]-filtersizec-1; jj<naxes[1]; jj++)
             {
                 tot = 0.0;
-                for(j=0; j<(2*filter_size+1)-(jj-naxes[1]+filter_size+1); j++)
+                for(j=0; j<(2*filtersizec+1)-(jj-naxes[1]+filtersizec+1); j++)
                 {
-                    data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj-filter_size+j)*naxes[0]+ii];
+                    data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] += array[j]*data.image[ID_tmp].array.F[(jj-filtersizec+j)*naxes[0]+ii];
                     tot += array[j];
                 }
                 data.image[ID_out].array.F[k*naxes[0]*naxes[1]+jj*naxes[0]+ii] /= tot;
@@ -638,136 +644,139 @@ int f_filter(char *ID_name, char *ID_out, float f1, float f2)
 
 long fconvolve(char *name_in, char *name_ke, char *name_out)
 {
-  long ID_in,ID_ke;
-  long naxes[2];
-  long IDout;
+    long ID_in,ID_ke;
+    long naxes[2];
+    long IDout;
 
-  ID_in = image_ID(name_in);
-  naxes[0]=data.image[ID_in].md[0].size[0];
-  naxes[1]=data.image[ID_in].md[0].size[1];
-  ID_ke = image_ID(name_ke);
-  if((naxes[0] != data.image[ID_ke].md[0].size[0])||(naxes[1] != data.image[ID_ke].md[0].size[1]))
+    ID_in = image_ID(name_in);
+    naxes[0]=data.image[ID_in].md[0].size[0];
+    naxes[1]=data.image[ID_in].md[0].size[1];
+    ID_ke = image_ID(name_ke);
+    if((naxes[0] != data.image[ID_ke].md[0].size[0])||(naxes[1] != data.image[ID_ke].md[0].size[1]))
     {
-      fprintf(stderr,"ERROR in function fconvolve: image and kernel have different sizes\n");
-      exit(0);
+        fprintf(stderr,"ERROR in function fconvolve: image and kernel have different sizes\n");
+        exit(0);
     }
-  //  save_fl_fits(name_in,"!test1.fits");
-  // save_fl_fits(name_ke,"!test2.fits");
-  
-  do2drfft(name_in,"infft");
-  do2drfft(name_ke,"kefft");
+    //  save_fl_fits(name_in,"!test1.fits");
+    // save_fl_fits(name_ke,"!test2.fits");
 
-  arith_image_Cmult("infft","kefft","outfft");
-  delete_image_ID("infft");
-  delete_image_ID("kefft");
-  do2dffti("outfft","outfft1");
-  delete_image_ID("outfft");
-  mk_reim_from_complex("outfft1","tmpre","tmpim");
-  
-  //  save_fl_fits("tmpre","!tmpre.fits");
-  // save_fl_fits("tmpim","!tmpim.fits");
+    do2drfft(name_in,"infft");
+    do2drfft(name_ke,"kefft");
 
-  delete_image_ID("outfft1");
-  delete_image_ID("tmpim");
-  arith_image_cstmult("tmpre",1.0/naxes[0]/naxes[1],name_out);
-  delete_image_ID("tmpre");
-  permut(name_out);
+    arith_image_Cmult("infft","kefft","outfft");
+    delete_image_ID("infft");
+    delete_image_ID("kefft");
+    do2dffti("outfft","outfft1");
+    delete_image_ID("outfft");
+    mk_reim_from_complex("outfft1","tmpre","tmpim", 0);
 
-  IDout = image_ID(name_out);
+    //  save_fl_fits("tmpre","!tmpre.fits");
+    // save_fl_fits("tmpim","!tmpim.fits");
 
-  return(IDout);
+    delete_image_ID("outfft1");
+    delete_image_ID("tmpim");
+    arith_image_cstmult("tmpre",1.0/naxes[0]/naxes[1],name_out);
+    delete_image_ID("tmpre");
+    permut(name_out);
+
+    IDout = image_ID(name_out);
+
+    return(IDout);
 }
+
 
 // to avoid edge effects
 long fconvolve_padd(char *name_in, char *name_ke, long paddsize, char *name_out)
 {
-  long ID_in,ID_ke,ID1,ID2,ID3,IDout;
-  long naxes[2];
-  long naxespadd[2];
-  long ii,jj;
+    long ID_in,ID_ke,ID1,ID2,ID3,IDout;
+    long naxes[2];
+    long naxespadd[2];
+    long ii,jj;
 
-  ID_in = image_ID(name_in);
-  naxes[0] = data.image[ID_in].md[0].size[0];
-  naxes[1] = data.image[ID_in].md[0].size[1];
-  ID_ke = image_ID(name_ke);
-  if((naxes[0] != data.image[ID_ke].md[0].size[0])||(naxes[1] != data.image[ID_ke].md[0].size[1]))
+    ID_in = image_ID(name_in);
+    naxes[0] = data.image[ID_in].md[0].size[0];
+    naxes[1] = data.image[ID_in].md[0].size[1];
+    ID_ke = image_ID(name_ke);
+    if((naxes[0] != data.image[ID_ke].md[0].size[0])||(naxes[1] != data.image[ID_ke].md[0].size[1]))
     {
-      fprintf(stderr,"ERROR in function fconvolve: image and kernel have different sizes\n");
-      exit(0);
+        fprintf(stderr,"ERROR in function fconvolve: image and kernel have different sizes\n");
+        exit(0);
     }
 
-  naxespadd[0] = naxes[0]+2*paddsize;
-  naxespadd[1] = naxes[1]+2*paddsize;
+    naxespadd[0] = naxes[0]+2*paddsize;
+    naxespadd[1] = naxes[1]+2*paddsize;
 
-  // printf("new axes : %ld %ld\n",naxespadd[0],naxespadd[1]);
+    // printf("new axes : %ld %ld\n",naxespadd[0],naxespadd[1]);
 
-  ID1 = create_2Dimage_ID("tmpimpadd",naxespadd[0],naxespadd[1]);
-  ID2 = create_2Dimage_ID("tmpkepadd",naxespadd[0],naxespadd[1]);
-  ID3 = create_2Dimage_ID("tmpim1padd",naxespadd[0],naxespadd[1]);
+    ID1 = create_2Dimage_ID("tmpimpadd",naxespadd[0],naxespadd[1]);
+    ID2 = create_2Dimage_ID("tmpkepadd",naxespadd[0],naxespadd[1]);
+    ID3 = create_2Dimage_ID("tmpim1padd",naxespadd[0],naxespadd[1]);
 
-  for(ii=0;ii<naxes[0];ii++)
-    for(jj=0;jj<naxes[1];jj++)
-      {
-	data.image[ID1].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)] = data.image[ID_in].array.F[jj*naxes[0]+ii];
-	data.image[ID2].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)] = data.image[ID_ke].array.F[jj*naxes[0]+ii];	
-	data.image[ID3].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)] = 1.0;
-      }
-  
-  //  list_image_ID();
-  //  printf("Doing convolutions...");
-  //  fflush(stdout);
+    for(ii=0; ii<naxes[0]; ii++)
+        for(jj=0; jj<naxes[1]; jj++)
+        {
+            data.image[ID1].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)] = data.image[ID_in].array.F[jj*naxes[0]+ii];
+            data.image[ID2].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)] = data.image[ID_ke].array.F[jj*naxes[0]+ii];
+            data.image[ID3].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)] = 1.0;
+        }
 
-  fconvolve("tmpimpadd","tmpkepadd","tmpconv1");
-  fconvolve("tmpim1padd","tmpkepadd","tmpconv2");
+    //  list_image_ID();
+    //  printf("Doing convolutions...");
+    //  fflush(stdout);
 
-  //  printf(" done\n");
-  // fflush(stdout);
+    fconvolve("tmpimpadd","tmpkepadd","tmpconv1");
+    fconvolve("tmpim1padd","tmpkepadd","tmpconv2");
 
-  delete_image_ID("tmpimpadd");
-  delete_image_ID("tmpkepadd");
-  delete_image_ID("tmpim1padd");
+    //  printf(" done\n");
+    // fflush(stdout);
 
-  ID1 = image_ID("tmpconv1");
-  ID2 = image_ID("tmpconv2");
-  IDout = create_2Dimage_ID(name_out,naxes[0],naxes[1]);
-  
-  for(ii=0;ii<naxes[0];ii++)
-    for(jj=0;jj<naxes[1];jj++)
-      {
-	data.image[IDout].array.F[jj*naxes[0]+ii] = data.image[ID1].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)]/data.image[ID2].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)];
-      }
-  delete_image_ID("tmpconv1");
-  delete_image_ID("tmpconv2");
+    delete_image_ID("tmpimpadd");
+    delete_image_ID("tmpkepadd");
+    delete_image_ID("tmpim1padd");
 
-  return(IDout);
+    ID1 = image_ID("tmpconv1");
+    ID2 = image_ID("tmpconv2");
+    IDout = create_2Dimage_ID(name_out,naxes[0],naxes[1]);
+
+    for(ii=0; ii<naxes[0]; ii++)
+        for(jj=0; jj<naxes[1]; jj++)
+        {
+            data.image[IDout].array.F[jj*naxes[0]+ii] = data.image[ID1].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)]/data.image[ID2].array.F[(jj+paddsize)*naxespadd[0]+(ii+paddsize)];
+        }
+    delete_image_ID("tmpconv1");
+    delete_image_ID("tmpconv2");
+
+    return(IDout);
 }
+
 
 
 int fconvolve_1(char *name_in, char *kefft, char *name_out)
 {
-  /* FFT of kernel has already been done */
-  long ID_in;
-  long naxes[2];
+    /* FFT of kernel has already been done */
+    long ID_in;
+    long naxes[2];
 
-  ID_in=image_ID(name_in);
-  naxes[0]=data.image[ID_in].md[0].size[0];
-  naxes[1]=data.image[ID_in].md[0].size[1];
+    ID_in=image_ID(name_in);
+    naxes[0]=data.image[ID_in].md[0].size[0];
+    naxes[1]=data.image[ID_in].md[0].size[1];
 
-  do2drfft(name_in,"infft");
+    do2drfft(name_in,"infft");
 
-  arith_image_Cmult("infft",kefft,"outfft");
-  delete_image_ID("infft");
-  do2dffti("outfft","outfft1");
-  delete_image_ID("outfft");
-  mk_reim_from_complex("outfft1","tmpre","tmpim");
-  delete_image_ID("outfft1");
-  delete_image_ID("tmpim");
-  arith_image_cstmult("tmpre",1.0/naxes[0]/naxes[1],name_out);
-  delete_image_ID("tmpre");
-  permut(name_out);
+    arith_image_Cmult("infft",kefft,"outfft");
+    delete_image_ID("infft");
+    do2dffti("outfft","outfft1");
+    delete_image_ID("outfft");
+    mk_reim_from_complex("outfft1","tmpre","tmpim", 0);
+    delete_image_ID("outfft1");
+    delete_image_ID("tmpim");
+    arith_image_cstmult("tmpre",1.0/naxes[0]/naxes[1],name_out);
+    delete_image_ID("tmpre");
+    permut(name_out);
 
-  return(0);
+    return(0);
 }
+
 
 // if blocksize = 512, for images > 512x512, break image in 512x512 overlapping blocks
 // kernel image must be blocksize

@@ -62,7 +62,7 @@ int AOloopControl_DM_disp2V(long IDdisp, long IDvolt);
 int AOloopControl_DM_createconf(char *name);
 int AOloopControl_DM_loadconf(char *name);
 int AOloopControl_DM_unloadconf();
-int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name);
+int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name);
 int AOloopControl_DM_chan_setgain(char *name, int ch, float gain);
 int AOloopControl_DM_dmdispcombstatus(char *name);
 int AOloopControl_DM_dmdispcomboff();

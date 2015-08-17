@@ -32,6 +32,7 @@ typedef struct
     long sizeWFS_active; // only takes into account WFS pixels in use/active
     long long WFScnt;
     long long WFScntRM;
+    int WFSnormalize; // 1 if each WFS frame should be normalized to 1
     float WFSnormfloor;
     float WFStotalflux; // after dark subtraction
 
@@ -134,7 +135,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 int AOloopControl_InitializeMemory();
 void *compute_function_imtotal( void *ptr );
 void *compute_function_dark_subtract( void *ptr );
-int Average_cam_frames(long loop, long NbAve, int RM);
+int Average_cam_frames(long loop, long NbAve, int RM, int normalize);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
 long AOloopControl_loadCM(long loop, char *CMfname);
 
@@ -150,16 +151,16 @@ long AOloopControl_mkHadamardModes50(char *outname);
 long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname);
 long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl);
 long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname);
-long AOloopControl_TestDMmodePSD(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name);
+long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name);
 long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name);
-long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode);
-int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl);
+long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize);
+int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl, int normalize);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);
 
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
-int AOcompute(long loop);
+int AOcompute(long loop, int normalize);
 int AOloopControl_run();
 
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);

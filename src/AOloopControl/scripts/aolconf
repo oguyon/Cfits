@@ -10,7 +10,7 @@ NUMAnodeRT=1 # for numactl
 
 execprefix=""
 # the aollog and aolrun cpusets are on the same node
-execprefixRT="cset proc -s aolRT -e "
+execprefixRT="" #cset proc -s aolRT -e "
 execprefixLOG="" #cset proc -s aollog -e "
 
 execname="$execprefix Cfits"  
@@ -147,7 +147,7 @@ quit
 EOF
 sizestring=$( cat _size.txt )
 sizestring=$(printf "%+12s\n" "$sizestring" )
-sudo rm _size.txt
+rm _size.txt
 }
 
 
@@ -595,7 +595,7 @@ tmux new-session -d -s aosim${LOOPNUMBER}dmcomb
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execnameLOG" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C-m
 tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 dmtestvolt" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 0 dmtestvolt" C-m
 }
 
 
@@ -640,7 +640,8 @@ echo "aosimdmctrl" > ./conf/conf_dmdisp_name.txt
 Readdmdispname
 echo "aosimdmctrl3" > ./conf/conf_dmRM_name.txt
 ReaddmRMname
-echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
+#echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
+echo "dhfield" > ./conf/conf_wfsim_name.txt
 Readwfsimcamname
 
 echo "0.1" > ./conf/conf_loopgain.txt
@@ -1120,6 +1121,20 @@ fi
 
 
 
+if [ -f "./conf/conf_WFSnormalize.txt" ]; then
+WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
+else
+WFSnorm="0" # default
+fi
+
+if [ "${WFSnorm}" -eq "0" ]; then
+menuitems+=( "WFSNon" "Turn WFS normalization on")
+else
+menuitems+=( "WFSNoff" "Turn WFS normalization off")
+fi
+
+
+
 zrespMstat=$( cat ./status/stat_zrespM.txt )
 if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" = "OFF" ) ]]; then
 echo "OK"
@@ -1135,7 +1150,7 @@ fi
 zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 if [ "${zrespMstat}" = "OFF" ];
 then
-menuitems+=( "zresp_on" "[${RMpokeMode}] START zonal RMs acquisition" )
+menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] START zonal RMs acquisition" )
 if [ "${zrespmatnbiter}" -lt 4 ]; then
 menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
 else
@@ -1592,17 +1607,26 @@ menucontrolloop_default="Hon"
 ;;
 
 
+    WFSNon)
+echo "1" > ./conf/conf_WFSnormalize.txt
+menucontrolloop_default="WFSNoff"
+;;
+    WFSNoff)
+echo "0" > ./conf/conf_WFSnormalize.txt
+menucontrolloop_default="WFSNon"
+;;
+
 	zresp_on)
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave}" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave} ${WFSnorm}" C-m
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrepMc"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanZrespmat ${rmamplum}" C-m
+tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
 mkdir -p zrespM
 mkdir -p wfsref
 mkdir -p wfsref0
@@ -1640,7 +1664,7 @@ sleep 0.5
 zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolCleanZrespmat ${rmamplum}" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
 pkill -USR1 aol${LOOPNUMBER}zrespM
 mkdir -p zrespM
 mkdir -p wfsref
@@ -2289,6 +2313,12 @@ loopmultcoeff=$(echo "$(cat ./conf/conf_loopmultcoeff.txt)")
 
 
 
+if [ -f "./conf/conf_WFSnormalize.txt" ]; then
+WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
+else
+WFSnorm="0" # default
+fi
+
 
 
 stringcenter "LOOP CONFIGURATION"
@@ -2458,7 +2488,7 @@ done
 
 
 menuitems+=( " " " " )
-stringcenter "ZERO POINT OFFSET"
+stringcenter "ZERO POINT"
 menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
 zploopONstat=$( cat ./status/stat_zploopON.txt )
 if [[ -f "./status/stat_zploopON.txt" && ( "$zploopONstat" = " ON" || "$zploopONstat" = "OFF" ) ]]; then
@@ -2918,12 +2948,12 @@ menuitems+=( "-" " " )
 
 stringcenter "SETTINGS"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
-menuitems+=( "dms" "[${testdmsize}] test mode DM size" )
-menuitems+=( "initDM" "init DM" )
+menuitems+=( "dms" "[${testdmsize}] Set test mode DM size and init DM channels" )
+menuitems+=( "initDM" "Init DM channels (-> aolsimdmctrl0..7  dmdisp)" )
 menuitems+=( "-" " " )
 
 
-stringcenter "TURBULENCE      (tmux aosim${LOOPNUMBER}dmturb)"
+stringcenter "TURBULENCE  -> aolsimdmctrl1   (tmux aosim${LOOPNUMBER}dmturb)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
@@ -2947,7 +2977,7 @@ menuitems+=( "dm1v" "View DM chan 1 (turbulence) stream" )
 menuitems+=( "dm1m" "Monitor DM chan 1 (turbulence) stream" )
 
 menuitems+=( "-" " " )
-stringcenter "START/STOP     (tmux ao${LOOPNUMBER}test)"
+stringcenter "START/STOP SIMULATOR   (tmux ao${LOOPNUMBER}test)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
@@ -2970,8 +3000,61 @@ menuitems+=( "TMdelay" "[${AOsystsimWFSdelayus} us] WFS delay")
 
 
 menuitems+=( "-" " " )
-stringcenter "MONITORING"
+stringcenter "SYSTEM RESPONSE TEST / CALIBRATION"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
+
+file="./conf/conf_testModeNb.txt"
+if [ -a $file ]
+	then
+	testModeNb=$(echo "$(cat $file)")
+	else
+	testModeNb="1"
+fi
+menuitems+=( "settmn" "[${testModeNb}] Set test mode number" )
+
+file="./conf/conf_testModeAmp.txt"
+if [ -a $file ]
+	then
+	testModeAmp=$(echo "$(cat $file)")
+	else
+	testModeAmp="0.1"
+fi
+menuitems+=( "settma" "[${testModeAmp}] Set test mode amplitude" )
+
+file="./conf/conf_testModefmin.txt"
+if [ -a $file ]
+	then
+	testModefmin=$(echo "$(cat $file)")
+	else
+	testModefmin="0.1"
+fi
+menuitems+=( "settmf0" "[${testModefmin}] Set test mode min temporal frequ" )
+
+file="./conf/conf_testModefmax.txt"
+if [ -a $file ]
+	then
+	testModefmax=$(echo "$(cat $file)")
+	else
+	testModefmax="1.0"
+fi
+menuitems+=( "settmf1" "[${testModefmax}] Set test mode max temporal frequ" )
+
+file="./conf/conf_testModeetime.txt"
+if [ -a $file ]
+	then
+	testModeetime=$(echo "$(cat $file)")
+	else
+	testModeetime="2.0"
+fi
+menuitems+=( "settmet" "[${testModeetime}] Set test mode measurement time per frequ" )
+
+menuitems+=( "dmmtr" "DM mode temporal response test")
+
+
+menuitems+=( "-" " " )
+stringcenter "MONITORING"
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "psfv" "PSF view")
 
 
@@ -3079,6 +3162,40 @@ exec 3>&-;
 echo "$AOsystsimWFSdelayus" > ./conf/conf_AOsystsimWFSdelayus.txt
 menutestmode_default="TMdelay"
 ;;
+
+	settmn)
+exec 3>&1;testModeNb=$(dialog --inputbox "Set test DM mode number" 0 0 "$testModeNb" 2>&1 1>&3);
+exec 3>&-;
+echo "$testModeNb" > ./conf/conf_testModeNb.txt
+;;
+	settma)
+exec 3>&1;testModeAmp=$(dialog --inputbox "Set test DM mode amplitude" 0 0 "$testModeAmp" 2>&1 1>&3);
+exec 3>&-;
+echo "$testModeAmp" > ./conf/conf_testModeAmp.txt
+;;
+	settmf0)
+exec 3>&1;testModefmin=$(dialog --inputbox "Set test DM mode freq min" 0 0 "$testModefmin" 2>&1 1>&3);
+exec 3>&-;
+echo "$testModefmin" > ./conf/conf_testModefmin.txt
+;;
+	settmf1)
+exec 3>&1;testModefmax=$(dialog --inputbox "Set test DM mode freq max" 0 0 "$testModefmax" 2>&1 1>&3);
+exec 3>&-;
+echo "$testModefmax" > ./conf/conf_testModefmax.txt
+;;
+	settmet)
+exec 3>&1;testModeetime=$(dialog --inputbox "Set test DM mode measurement time" 0 0 "$testModeetime" 2>&1 1>&3);
+exec 3>&-;
+echo "$testModeetime" > ./conf/conf_testModeetime.txt
+;;
+
+    dmmtr)
+tmuxname="aol${LOOPNUMBER}testmresp"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} "./MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModeetime}" C-m
+;;
+
+
    	 psfv)
 shmimview /tmp/aosimpsfout.im.shm > /dev/null &
 #menutestmode_default="psfv"

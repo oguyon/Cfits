@@ -1112,124 +1112,128 @@ int basic_rotate_int(char *ID_name, char *ID_out_name, long nbstep)
 
 int basic_translate(char *ID_name, char *ID_out, float xtransl, float ytransl)
 {
-  int ID;
-  long naxes[2];
-  long onaxes[2];
-  long ii,jj;
-  int n0,n1;
-  float coeff;
+    int ID;
+    long naxes[2];
+    long onaxes[2];
+    long ii,jj;
+    int n0,n1;
+    float coeff;
 
-  /*  printf("basic translate\n");*/
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];
-  onaxes[0] = naxes[0];
-  onaxes[1] = naxes[1];
-  n0 = (int) ((log10(naxes[0])/log10(2))+0.01);
-  n1 = (int) ((log10(naxes[0])/log10(2))+0.01);
-  /*  printf("(test --- %ld %ld   %d %d   %d %d)\n",naxes[0],naxes[1],n0,n1,(int) pow(2,n0),(int) pow(2,n1));*/
+    /*  printf("basic translate\n");*/
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    onaxes[0] = naxes[0];
+    onaxes[1] = naxes[1];
+    n0 = (int) ((log10(naxes[0])/log10(2))+0.01);
+    n1 = (int) ((log10(naxes[0])/log10(2))+0.01);
+    /*  printf("(test --- %ld %ld   %d %d   %d %d)\n",naxes[0],naxes[1],n0,n1,(int) pow(2,n0),(int) pow(2,n1));*/
 
-  if ((n0==n1)&&(naxes[0]==(int) pow(2,n0))&&(naxes[1]==(int) pow(2,n1)))
+    if ((n0==n1)&&(naxes[0]==(int) pow(2,n0))&&(naxes[1]==(int) pow(2,n1)))
     {
-      create_2Dimage_ID("zero_tmp",naxes[0],naxes[1]);
-      pupfft(ID_name,"zero_tmp","out_transl_re_tmp","out_transl_im_tmp","-reim");
-      delete_image_ID("zero_tmp");
-      mk_amph_from_reim("out_transl_re_tmp","out_transl_im_tmp","out_transl_ampl_tmp","out_transl_pha_tmp");
-      delete_image_ID("out_transl_re_tmp");
-      delete_image_ID("out_transl_im_tmp");
-      
-      ID = image_ID("out_transl_pha_tmp");
-      for (jj = 1; jj < naxes[1]; jj++) 
-	for (ii = 1; ii < naxes[0]; ii++)
-	  data.image[ID].array.F[jj*naxes[0]+ii] -= xtransl*2.0*M_PI/naxes[0]*(ii-naxes[0]/2)+ytransl*2.0*M_PI/naxes[1]*(jj-naxes[1]/2);
+        create_2Dimage_ID("zero_tmp",naxes[0],naxes[1]);
+        pupfft(ID_name,"zero_tmp","out_transl_re_tmp","out_transl_im_tmp","-reim");
+        delete_image_ID("zero_tmp");
+        mk_amph_from_reim("out_transl_re_tmp","out_transl_im_tmp","out_transl_ampl_tmp","out_transl_pha_tmp", 0);
+        delete_image_ID("out_transl_re_tmp");
+        delete_image_ID("out_transl_im_tmp");
 
-      coeff = 1.0/(naxes[0]*naxes[1]);
-      ID = image_ID("out_transl_ampl_tmp");
-      for (jj = 0; jj < naxes[1]; jj++) 
-	for (ii = 0; ii < naxes[0]; ii++)
-	  data.image[ID].array.F[jj*naxes[0]+ii] *= coeff;
-      
-     
-      mk_reim_from_amph("out_transl_ampl_tmp","out_transl_pha_tmp","out_re_tmp","out_im_tmp");
-      delete_image_ID("out_transl_ampl_tmp");
-      delete_image_ID("out_transl_pha_tmp");
-      pupfft("out_re_tmp","out_im_tmp",ID_out,"tbe_tmp","-reim -inv");
-      delete_image_ID("out_re_tmp");
-      delete_image_ID("out_im_tmp");
-      delete_image_ID("tbe_tmp");
+        ID = image_ID("out_transl_pha_tmp");
+        for (jj = 1; jj < naxes[1]; jj++)
+            for (ii = 1; ii < naxes[0]; ii++)
+                data.image[ID].array.F[jj*naxes[0]+ii] -= xtransl*2.0*M_PI/naxes[0]*(ii-naxes[0]/2)+ytransl*2.0*M_PI/naxes[1]*(jj-naxes[1]/2);
+
+        coeff = 1.0/(naxes[0]*naxes[1]);
+        ID = image_ID("out_transl_ampl_tmp");
+        for (jj = 0; jj < naxes[1]; jj++)
+            for (ii = 0; ii < naxes[0]; ii++)
+                data.image[ID].array.F[jj*naxes[0]+ii] *= coeff;
+
+
+        mk_reim_from_amph("out_transl_ampl_tmp","out_transl_pha_tmp","out_re_tmp","out_im_tmp", 0);
+        delete_image_ID("out_transl_ampl_tmp");
+        delete_image_ID("out_transl_pha_tmp");
+        pupfft("out_re_tmp","out_im_tmp",ID_out,"tbe_tmp","-reim -inv");
+        delete_image_ID("out_re_tmp");
+        delete_image_ID("out_im_tmp");
+        delete_image_ID("tbe_tmp");
     }
-  else
+    else
     {
-      basic_add(ID_name,ID_name,"tmp1t",naxes[0],0);
-      basic_add("tmp1t","tmp1t","tmp2t",0,naxes[1]);
-      delete_image_ID("tmp1t");
-      basic_extract("tmp2t","tmp3t",pow(2,n0+1),pow(2,n1+1),0,0);
-      delete_image_ID("tmp2t");
-      ID = image_ID("tmp3t");
-      naxes[0] = data.image[ID].md[0].size[0];
-      naxes[1] = data.image[ID].md[0].size[1];
-      create_2Dimage_ID("zero_tmp",naxes[0],naxes[1]);
-      
-      pupfft("tmp3t","zero_tmp","out_transl_re_tmp","out_transl_im_tmp","-reim");
-      delete_image_ID("zero_tmp");
-      delete_image_ID("tmp3t");
-      mk_amph_from_reim("out_transl_re_tmp","out_transl_im_tmp","out_transl_ampl_tmp","out_transl_pha_tmp");
-      delete_image_ID("out_transl_re_tmp");
-      delete_image_ID("out_transl_im_tmp");
-      
-      ID = image_ID("out_transl_pha_tmp");
-      for (jj = 1; jj < naxes[1]; jj++) 
-	for (ii = 1; ii < naxes[0]; ii++)
-	  data.image[ID].array.F[jj*naxes[0]+ii] -= xtransl*2.0*M_PI/naxes[0]*(ii-naxes[0]/2)+ytransl*2.0*M_PI/naxes[1]*(jj-naxes[1]/2);
-      coeff = 1.0/(naxes[0]*naxes[1]);
-      ID = image_ID("out_transl_ampl_tmp");
-      for (jj = 0; jj < naxes[1]; jj++) 
-	for (ii = 0; ii < naxes[0]; ii++)
-	  data.image[ID].array.F[jj*naxes[0]+ii] *= coeff;
-      
-      mk_reim_from_amph("out_transl_ampl_tmp","out_transl_pha_tmp","out_re_tmp","out_im_tmp");
-      delete_image_ID("out_transl_ampl_tmp");
-      delete_image_ID("out_transl_pha_tmp");
-      pupfft("out_re_tmp","out_im_tmp","outtmp","tbe_tmp","-reim -inv");
-      delete_image_ID("out_re_tmp");
-      delete_image_ID("out_im_tmp");
-      delete_image_ID("tbe_tmp");
+        basic_add(ID_name,ID_name,"tmp1t",naxes[0],0);
+        basic_add("tmp1t","tmp1t","tmp2t",0,naxes[1]);
+        delete_image_ID("tmp1t");
+        basic_extract("tmp2t","tmp3t",pow(2,n0+1),pow(2,n1+1),0,0);
+        delete_image_ID("tmp2t");
+        ID = image_ID("tmp3t");
+        naxes[0] = data.image[ID].md[0].size[0];
+        naxes[1] = data.image[ID].md[0].size[1];
+        create_2Dimage_ID("zero_tmp",naxes[0],naxes[1]);
 
-      basic_extract("outtmp",ID_out,onaxes[0],onaxes[1],0,0);
-      delete_image_ID("outtmp");
+        pupfft("tmp3t","zero_tmp","out_transl_re_tmp","out_transl_im_tmp","-reim");
+        delete_image_ID("zero_tmp");
+        delete_image_ID("tmp3t");
+        mk_amph_from_reim("out_transl_re_tmp","out_transl_im_tmp","out_transl_ampl_tmp","out_transl_pha_tmp", 0);
+        delete_image_ID("out_transl_re_tmp");
+        delete_image_ID("out_transl_im_tmp");
+
+        ID = image_ID("out_transl_pha_tmp");
+        for (jj = 1; jj < naxes[1]; jj++)
+            for (ii = 1; ii < naxes[0]; ii++)
+                data.image[ID].array.F[jj*naxes[0]+ii] -= xtransl*2.0*M_PI/naxes[0]*(ii-naxes[0]/2)+ytransl*2.0*M_PI/naxes[1]*(jj-naxes[1]/2);
+        coeff = 1.0/(naxes[0]*naxes[1]);
+        ID = image_ID("out_transl_ampl_tmp");
+        for (jj = 0; jj < naxes[1]; jj++)
+            for (ii = 0; ii < naxes[0]; ii++)
+                data.image[ID].array.F[jj*naxes[0]+ii] *= coeff;
+
+        mk_reim_from_amph("out_transl_ampl_tmp","out_transl_pha_tmp","out_re_tmp","out_im_tmp", 0);
+        delete_image_ID("out_transl_ampl_tmp");
+        delete_image_ID("out_transl_pha_tmp");
+        pupfft("out_re_tmp","out_im_tmp","outtmp","tbe_tmp","-reim -inv");
+        delete_image_ID("out_re_tmp");
+        delete_image_ID("out_im_tmp");
+        delete_image_ID("tbe_tmp");
+
+        basic_extract("outtmp",ID_out,onaxes[0],onaxes[1],0,0);
+        delete_image_ID("outtmp");
     }
 
-  return(0);
+    return(0);
 }
+
+
+
 
 float basic_correlation(char *ID_name1, char *ID_name2)
 {
-  float correl;
-  int ID1,ID2;
-  long naxes1[2];
-  long naxes2[2];
-  long ii,jj;
+    float correl;
+    int ID1,ID2;
+    long naxes1[2];
+    long naxes2[2];
+    long ii,jj;
 
-  ID1 = image_ID(ID_name1);
-  naxes1[0] = data.image[ID1].md[0].size[0];
-  naxes1[1] = data.image[ID1].md[0].size[1];    
-  ID2 = image_ID(ID_name2);
-  naxes2[0] = data.image[ID2].md[0].size[0];
-  naxes2[1] = data.image[ID2].md[0].size[1];    
-  
-  if((naxes1[0]!=naxes2[0])||(naxes1[1]!=naxes2[1]))
+    ID1 = image_ID(ID_name1);
+    naxes1[0] = data.image[ID1].md[0].size[0];
+    naxes1[1] = data.image[ID1].md[0].size[1];
+    ID2 = image_ID(ID_name2);
+    naxes2[0] = data.image[ID2].md[0].size[0];
+    naxes2[1] = data.image[ID2].md[0].size[1];
+
+    if((naxes1[0]!=naxes2[0])||(naxes1[1]!=naxes2[1]))
     {
-      printf("correlation : file size do not match\n");
-      exit(1);
+        printf("correlation : file size do not match\n");
+        exit(1);
     }
-  correl = 0;
+    correl = 0;
 
-  for (jj = 0; jj < naxes1[1]; jj++) 
-    for (ii = 0; ii < naxes1[0]; ii++)
-	correl += (data.image[ID1].array.F[jj*naxes1[0]+ii]-data.image[ID2].array.F[jj*naxes1[0]+ii])*(data.image[ID1].array.F[jj*naxes1[0]+ii]-data.image[ID2].array.F[jj*naxes1[0]+ii]);
+    for (jj = 0; jj < naxes1[1]; jj++)
+        for (ii = 0; ii < naxes1[0]; ii++)
+            correl += (data.image[ID1].array.F[jj*naxes1[0]+ii]-data.image[ID2].array.F[jj*naxes1[0]+ii])*(data.image[ID1].array.F[jj*naxes1[0]+ii]-data.image[ID2].array.F[jj*naxes1[0]+ii]);
 
-  return(correl);
+    return(correl);
 }
+
 
 
 

@@ -1,13 +1,13 @@
 #! /bin/bash
 
-EXPECTED_ARGS=1
+EXPECTED_ARGS=2
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo
   echo "------ Measure zonal resp matrix ------"
   echo
-  echo "  $0 <rm ampl[um]>"
+  echo "  $0 <rm ampl[um]> <normalize>"
   echo
   echo "Default output: "
   echo "  zrespmat.fits : zonal response matrix"
@@ -33,7 +33,7 @@ aolnb $loopnb
 loadfits "RMpokeCube.fits" RMpokeC
 loadfits "RMHmat.fits" Hmat
 loadfits "RMpixindex.fits" pixindexim
-aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1
+aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1 $2
 savefits zrespmat "!zrespmat.fits"
 savefits wfsref0 "!wfsref0.fits"
 savefits wfsmap "!wfsmap.fits"

@@ -775,7 +775,7 @@ long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name, int mode
                 }
 
 
-        mk_amph_from_complex("fpmCA", "tfpma", "tfpmp");
+        mk_amph_from_complex("fpmCA", "tfpma", "tfpmp", 0);
         delete_image_ID("fpmCA");
         save_fits("tfpma", "!tmp_fpmCA_ampl.fits");
         save_fits("tfpmp", "!tmp_fpmCA_pha.fits");
@@ -3403,21 +3403,21 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
             PIAACMCsimul_init(piaacmc, 0, xld+rad1, yld);
             PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp0");
             copy_image_ID("psfi0", "psfi0ext", 0);
 
             pha = 2.0*M_PI/3.0;
             PIAACMCsimul_init(piaacmc, 0, xld+rad1*cos(pha), yld+rad1*sin(pha));
             PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp1");
             arith_image_add_inplace("psfi0ext","psfi0");
 
             pha = 4.0*M_PI/3.0;
             PIAACMCsimul_init(piaacmc, 0, xld+rad1*cos(pha), yld+rad1*sin(pha));
             PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp2");
             arith_image_add_inplace("psfi0ext","psfi0");
   
@@ -3426,21 +3426,21 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 pha = M_PI/3.0;
                 PIAACMCsimul_init(piaacmc, 0, xld+rad2*cos(pha), yld+rad2*sin(pha));
                 PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-                OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+                OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp3");
                 arith_image_add_inplace("psfi0ext","psfi0");
 
                 pha = 2.0*M_PI/3.0 + M_PI/3.0;
                 PIAACMCsimul_init(piaacmc, 0, xld+rad2*cos(pha), yld+rad2*sin(pha));
                 PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-                OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+                OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp4");
                 arith_image_add_inplace("psfi0ext","psfi0");
 
                 pha = 4.0*M_PI/3.0 + M_PI/3.0;
                 PIAACMCsimul_init(piaacmc, 0, xld+rad2*cos(pha), yld+rad2*sin(pha));
                 PIAACMCsimul_makePIAAshapes(piaacmc, 0);
-                OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+                OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvectp5");
                 arith_image_add_inplace("psfi0ext","psfi0");
 
@@ -3601,7 +3601,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
 
             // ============ perform propagations ================
-            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir);
+            OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
 
             if(outsave==1)
             {
@@ -4071,7 +4071,7 @@ long PIAACMCsimul_CA2propCubeInt(char *IDamp_name, char *IDpha_name, float zmin,
         fflush(stdout);
         
         zprop = zarray[l];
-        OptSystProp_propagateCube(optsyst, 0, IDamp_name, IDpha_name, "_tmppropamp", "_tmpproppha", zprop);
+        OptSystProp_propagateCube(optsyst, 0, IDamp_name, IDpha_name, "_tmppropamp", "_tmpproppha", zprop, 0);
 
         // collapse broadband intensities
         IDa = image_ID("_tmppropamp");
@@ -4312,7 +4312,7 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
         sprintf(nameamp, "LMPamp%02ld", l);
         sprintf(namepha, "LMPpha%02ld", l);
         zprop = zarray[l];
-        OptSystProp_propagateCube(optsyst, 0, IDamp_name, IDpha_name, nameamp, namepha, zprop);
+        OptSystProp_propagateCube(optsyst, 0, IDamp_name, IDpha_name, nameamp, namepha, zprop, 0);
 
      
         IDa = image_ID(nameamp);
@@ -5866,7 +5866,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         save_fits("imvect", fname);
 
 
-        mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp");
+        mk_amph_from_complex("piaacmcfpm", "fpma", "fpmp", 0);
         sprintf(fname, "!%s/piaacmcfpma.fits", piaacmcconfdir);
         save_fits("fpma", fname);
         sprintf(fname, "!%s/piaacmcfpmp.fits", piaacmcconfdir);

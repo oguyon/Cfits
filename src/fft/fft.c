@@ -1198,11 +1198,11 @@ int pupfft(char *ID_name_ampl, char *ID_name_pha, char *ID_name_ampl_out, char *
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
     if (reim==0)
     {
-        mk_complex_from_amph(ID_name_ampl,ID_name_pha,Ctmpname);
+        mk_complex_from_amph(ID_name_ampl,ID_name_pha,Ctmpname, 0);
     }
     else
     {
-        mk_complex_from_reim(ID_name_ampl,ID_name_pha,Ctmpname);
+        mk_complex_from_reim(ID_name_ampl,ID_name_pha,Ctmpname, 0);
     }
 
     permut(Ctmpname);
@@ -1221,11 +1221,11 @@ int pupfft(char *ID_name_ampl, char *ID_name_pha, char *ID_name_ampl_out, char *
     {
         /* if this line is removed, the program crashes... why ??? */
         /*	list_image_ID(data); */
-        mk_amph_from_complex(C1tmpname,ID_name_ampl_out,ID_name_pha_out);
+        mk_amph_from_complex(C1tmpname,ID_name_ampl_out,ID_name_pha_out, 0);
     }
     else
     {
-        mk_reim_from_complex(C1tmpname,ID_name_ampl_out,ID_name_pha_out);
+        mk_reim_from_complex(C1tmpname,ID_name_ampl_out,ID_name_pha_out, 0);
     }
 
     delete_image_ID(C1tmpname);
@@ -1528,8 +1528,8 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_amph_from_complex(ft1name,fta1name,ftp1name);
-    mk_amph_from_complex(ft2name,fta2name,ftp2name);
+    mk_amph_from_complex(ft1name,fta1name,ftp1name, 0);
+    mk_amph_from_complex(ft2name,fta2name,ftp2name, 0);
     delete_image_ID(ft1name);
     delete_image_ID(ft2name);
 
@@ -1546,7 +1546,7 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_complex_from_amph(fta12name,ftp12name,fftname);
+    mk_complex_from_amph(fta12name,ftp12name,fftname, 0);
     delete_image_ID(fta12name);
     delete_image_ID(ftp12name);
 
@@ -1561,7 +1561,7 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_amph_from_complex(fft1name,ID_nameout,fft1pname);
+    mk_amph_from_complex(fft1name,ID_nameout,fft1pname, 0);
     permut(ID_nameout);
     delete_image_ID(fft1name);
     delete_image_ID(fft1pname);
@@ -1601,7 +1601,7 @@ int autocorrelation(char *ID_name, char *ID_out)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_amph_from_complex(atmp1name,aampname,aphaname);
+    mk_amph_from_complex(atmp1name,aampname,aphaname, 0);
 
     n = snprintf(sqaampname,SBUFFERSIZE,"_sqaamp_%d",(int) getpid());
     if(n >= SBUFFERSIZE)
@@ -1619,7 +1619,7 @@ int autocorrelation(char *ID_name, char *ID_out)
     arith_image_cstmult(sqaampname,1.0/sqrt(nelement)/(1.0*nelement),sqaamp1name);
     delete_image_ID(sqaampname);
     do2drfft(sqaamp1name,atmp1name);
-    mk_reim_from_complex(atmp1name,ID_out,aphaname);
+    mk_reim_from_complex(atmp1name,ID_out,aphaname, 0);
     delete_image_ID(sqaamp1name);
     delete_image_ID(atmp1name);
     delete_image_ID(aphaname);
@@ -1739,7 +1739,7 @@ int fftzoom(char *ID_name, char *ID_out, long factor)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_reim_from_complex(tmpz2name,ID_out,tbename);
+    mk_reim_from_complex(tmpz2name,ID_out,tbename, 0);
 
     delete_image_ID(tbename);
     delete_image_ID(tmpz2name);
@@ -2152,7 +2152,7 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
                 }
             printf("  ->   %.18lf %.18lf", tx/tcx, ty/tcy);
 
-            mk_amph_from_complex("_foc0","_foc0_amp","_foc0_pha");
+            mk_amph_from_complex("_foc0","_foc0_amp","_foc0_pha", 0);
             save_fl_fits("_foc0_amp", "!_foc_amp.fits");
             save_fl_fits("_foc0_pha", "!_foc_pha.fits");
             delete_image_ID("_foc0_amp");
@@ -2182,7 +2182,7 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
 
         if(0) // TEST
         {
-            mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
+            mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p", 0);
             save_fl_fits("tmp_foc0_a", "!_DFT_foca");
             save_fl_fits("tmp_foc0_p", "!_DFT_focp");
             delete_image_ID("tmp_foc0_a");
@@ -2299,7 +2299,7 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
 
     if(1) // TEST
     {
-        mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p");
+        mk_amph_from_complex("_foc0", "tmp_foc0_a", "tmp_foc0_p", 0);
         sprintf(fname, "!%s/_DFT_foca", data.SAVEDIR);
 		save_fl_fits("tmp_foc0_a", fname);
         sprintf(fname, "!%s/_DFT_focp", data.SAVEDIR);		
@@ -2365,19 +2365,19 @@ int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytra
     //  if ((n0==n1)&&(naxes[0]==(int) pow(2,n0))&&(naxes[1]==(int) pow(2,n1)))
     // {
     do2drfft(ID_name,"ffttmp1");
-    mk_amph_from_complex("ffttmp1","amptmp","phatmp");
+    mk_amph_from_complex("ffttmp1","amptmp","phatmp", 0);
     delete_image_ID("ffttmp1");
     arith_make_slopexy("sltmp", naxes[0], naxes[1], xtransl*2.0*M_PI/naxes[0], ytransl*2.0*M_PI/naxes[1]);
     permut("sltmp");
     arith_image_add("phatmp","sltmp","phatmp1");
     delete_image_ID("phatmp");
     delete_image_ID("sltmp");
-    mk_complex_from_amph("amptmp","phatmp1","ffttmp2");
+    mk_complex_from_amph("amptmp","phatmp1","ffttmp2", 0);
     delete_image_ID("amptmp");
     delete_image_ID("phatmp1");
     do2dffti("ffttmp2","ffttmp3");
     delete_image_ID("ffttmp2");
-    mk_reim_from_complex("ffttmp3","retmp","imtmp");
+    mk_reim_from_complex("ffttmp3","retmp","imtmp", 0);
     arith_image_cstmult("retmp", 1.0/naxes[0]/naxes[1], ID_out);
     delete_image_ID("ffttmp3");
     delete_image_ID("retmp");
