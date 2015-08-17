@@ -22,7 +22,7 @@ fi
 
 for sname in run runclean runopt runPIAACMC sim1024
 do
-ln -s $srcdir/$sname $currdir/$sname
+ln -s $srcdir/PIAACMCsimul/scripts/$sname $currdir/$sname
 done
 
 
