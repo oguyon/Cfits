@@ -16,7 +16,7 @@ echo "Source directory  : $srcdir"
 
 if [ ! -f "piaacmcscriptsinit.txt" ]; then
 sudo apt-get install inotify-tools
-sudo cp $srcdir/waitforfile /usr/local/bin/
+sudo cp $srcdir/PIAACMCsimul/scripts/waitforfile /usr/local/bin/
 touch piaacmcscriptsinit.txt
 fi
 
