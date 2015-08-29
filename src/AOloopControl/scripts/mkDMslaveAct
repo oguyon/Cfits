@@ -25,7 +25,9 @@ fi
 Cfits << EOF
 loadfits "$1" dmmap
 gaussfilt dmmap dmmapg 5.0 24
+savefits dmmapg "!test_dmmapg.fits"
 dmmap1=dmmap/dmmapg
+savefits dmmap1 "!_test_dmmap1.fits"
 a=$2
 b=$2*0.99
 imtrunc dmmap1 0.0 a dmmap2

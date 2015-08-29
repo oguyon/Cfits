@@ -404,10 +404,10 @@ long gauss_filter(char *ID_name, char *out_name, float sigma, int filter_size)
         naxes[kk] = data.image[ID].md[0].size[kk];
 
     filtersizec = filter_size;
-    if(filtersizec > data.image[ID].md[0].size[0]/2)
-        filtersizec = data.image[ID].md[0].size[0]/2;
-    if(filtersizec > data.image[ID].md[0].size[1]/2)
-        filtersizec = data.image[ID].md[0].size[1]/2;
+    if(filtersizec > data.image[ID].md[0].size[0]/2-1)
+        filtersizec = data.image[ID].md[0].size[0]/2-1;
+    if(filtersizec > data.image[ID].md[0].size[1]/2-1)
+        filtersizec = data.image[ID].md[0].size[1]/2-1;
 
     array = (float*) malloc((2*filtersizec+1)*sizeof(float));
  

@@ -25,6 +25,15 @@ fi
 
 
 
+function loadparam() {
+file="conf/conf_$1.txt"
+if [ ! -f $file ]; then
+echo "$2" > $file
+fi
+var=$( cat "$file" )
+eval "$1=$var"
+}
+
 
 
 
@@ -77,6 +86,10 @@ fi
 
 
 
+# READ CONFIGURATION FILES
+loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fourier modes)
+
+
 
 
 size=$2
@@ -121,8 +134,15 @@ PIAACMC_nbiter=20
 
 
 PIAACMC_dftgrid=2
-PIAACMC_maxoptCterm=10
-PIAACMC_maxoptFterm=5
+kmaxC=10
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=5
+fi
+
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 
 
 checkerrorstatus
@@ -350,6 +370,12 @@ rm $fifoname
 
 # STEP 210: tune PIAA shapes and focal plane mask zones, 10 cosine modes, 5 Fourier modes
 # -> linoptval.txt
+kmaxC=10
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=5
+fi
 
 if [ 210 -eq ${state} ]; then
  echo "step 210"
@@ -358,8 +384,8 @@ touch ./$1/step210.run.txt
 $execnamestring -n step210 << EOF
 PIAACMC_nbiter=20
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=10
-PIAACMC_maxoptFterm=5
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1172,6 +1198,12 @@ fi
 
 # STEP 007: tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 # -> linoptval.txt
+kmaxC=10
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=5
+fi
 
 if [ 007 -eq ${state} ]
 then
@@ -1188,8 +1220,8 @@ PIAACMC_resolved=0
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=10
-PIAACMC_maxoptFterm=5
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1225,6 +1257,12 @@ fi
 
 # STEP 008: tune PIAA shapes and focal plane mask transm, 20 cosine modes, 10 Fourier modes
 # -> linoptval.txt
+kmaxC=20
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=20
+fi
 
 if [ 8 -eq ${state} ]
 then
@@ -1240,8 +1278,8 @@ PIAACMC_resolved=0
 IAACMC_nbiter=20
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=20
-PIAACMC_maxoptFterm=20
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1371,6 +1409,13 @@ fi
 # STEP 011: Tune PIAA shapes and focal plane mask transm, 20, 20
 # -> linoptval.txt
 
+kmaxC=20
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=20
+fi
+
 if [ 011 -eq ${state} ]
 then
  if [ ! -f ./$1/step011.txt ]
@@ -1388,8 +1433,8 @@ PIAACMC_nbiter=20
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 #PIAACMC_dftgrid=2
-PIAACMC_maxoptCterm=20
-PIAACMC_maxoptFterm=20
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1429,6 +1474,12 @@ fi
 
 # STEP 012: tune PIAA shapes and focal plane mask transm
 # -> linoptval.txt
+kmaxC=40
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=150
+fi
 
 if [ 012 -eq ${state} ]
 then
@@ -1446,8 +1497,8 @@ PIAACMC_resolved=0
 PIAACMC_nbiter=10
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=40
-PIAACMC_maxoptFterm=150
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 #60 625 
 piaacmcsimrun $1 40
 exit
@@ -1580,6 +1631,12 @@ fi
 
 # STEP 015 : tune PIAA shapes and focal plane mask transm
 # -> linoptval.txt
+kmaxC=20
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=20
+fi
 
 if [ 015 -eq ${state} ]
 then
@@ -1597,8 +1654,8 @@ PIAACMC_resolved=0
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=20
-PIAACMC_maxoptFterm=20
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1637,6 +1694,12 @@ fi
 
 # STEP 016: tune PIAA shapes and focal plane mask transm
 # -> linoptval.txt
+kmaxC=40
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=150
+fi
 
 if [ 016 -eq ${state} ]
 then
@@ -1654,8 +1717,8 @@ PIAACMC_resolved=0
 PIAACMC_nbiter=10
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=40
-PIAACMC_maxoptFterm=150
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1688,6 +1751,12 @@ fi
 
 # STEP 017: tune PIAA shapes and focal plane mask transm
 # -> linoptval.txt
+kmaxC=40
+
+kmaxF=0
+if [ "$PIAAcirc" -eq "0" ]; then
+kmaxF=625
+fi
 
 if [ 017 -eq ${state} ]
 then
@@ -1705,8 +1774,8 @@ PIAACMC_resolved=0
 PIAACMC_nbiter=10
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-PIAACMC_maxoptCterm=40
-PIAACMC_maxoptFterm=625
+PIAACMC_maxoptCterm=${kmaxC}
+PIAACMC_maxoptFterm=${kmaxF}
 piaacmcsimrun $1 40
 exit
 EOF

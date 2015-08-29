@@ -1068,14 +1068,14 @@ int AOsystSim_runWFS(long index, char *IDout_name)
 int AOsystSim_run(int syncmode, long delayus)
 {
     long arraysize = 128;
-    long ii, jj;
+    long ii, jj, ii1, jj1;
     double puprad, dmrad;
     double dmifscale = 2.0; // scale magnification between full DM map and DM influence function
     long *imsize;
     long DMsize = 50; // default
     long DMnbact;
     long mx, my;
-    double x, y, rx, ry;
+    double x, y, rx, ry, ii1ld, rld;
     long rxi, ryi;
     double u, t, v00, v01, v10, v11, ii0f, jj0f, rxif, ryif;
     long IDif, IDifc;
@@ -1096,17 +1096,21 @@ int AOsystSim_run(int syncmode, long delayus)
     long iter;
     
     long *dhsizearray;
-    long IDdh;
-    long dhxsize, dhysize;
+    long IDdh, IDdhmask;
+    long dhxsize, dhysize, dhsize;
     long dhxoffset, dhyoffset;
     long IDre, IDim;
     char imdhname[200];
 
     int COROmode = 0; // 1 if coronagraph
+    
+    float pupradcoeff = 0.17;
+    float dmradcoeff = 0.20;
+    float iwald = 2.0;
 
 
-    puprad = 0.17*arraysize;
-    dmrad = 0.20*arraysize;
+    puprad = pupradcoeff*arraysize;
+    dmrad = dmradcoeff*arraysize;
 
 
     // INITIALIZE DM CONTROL ARRAY IF DOESN'T EXIST
@@ -1346,13 +1350,30 @@ int AOsystSim_run(int syncmode, long delayus)
     IDarray[1] = image_ID("aosimdmctrl");
 
     sprintf(imdhname, "dhfield");
-    dhxsize = arraysize/8;
-    dhysize = arraysize/4;
-    dhxoffset = arraysize/2 + 8; 
-    dhyoffset = arraysize/2 - arraysize/8;
+    dhsize = (long) (0.5/pupradcoeff * DMsize*(pupradcoeff/dmradcoeff)*0.5);
+    dhxsize = dhsize;
+    dhysize = dhsize*2;
+    dhxoffset = arraysize/2; 
+    dhyoffset = arraysize/2 - dhsize;
     dhsizearray = (long*) malloc(sizeof(long)*2);
     dhsizearray[0] = dhxsize*2;
     dhsizearray[1] = dhysize;
+    
+    IDdhmask = create_2Dimage_ID("dhmask", dhxsize, dhysize);
+    for(ii=0;ii<dhxsize;ii++)
+        for(jj=0;jj<dhysize;jj++)
+            {
+                data.image[IDdhmask].array.F[jj*dhxsize+ii] = 1.0;
+                ii1 = (ii + dhxoffset) - arraysize/2;
+                jj1 = (jj + dhyoffset) - arraysize/2;
+                ii1ld = 2.0*ii1*pupradcoeff;
+                r = sqrt(ii1*ii1+jj1*jj1);
+                rld = r*pupradcoeff*2.0;
+                if((ii1ld<0.5)||(rld<iwald))
+                    data.image[IDdhmask].array.F[jj*dhxsize+ii] = 0.0;
+            }
+
+    save_fits("dhmask", "!dhmask.fits");
 
     iter = 0;
     while(1)
@@ -1385,8 +1406,8 @@ int AOsystSim_run(int syncmode, long delayus)
         for(ii=0;ii<dhxsize;ii++)
             for(jj=0;jj<dhysize;jj++)
                 {
-                    data.image[IDdh].array.F[jj*(2*dhxsize)+ii] = data.image[IDre].array.F[(jj+dhyoffset)*arraysize + (ii+dhxoffset)];
-                    data.image[IDdh].array.F[jj*(2*dhxsize)+(ii+dhxsize)] = data.image[IDim].array.F[(jj+dhyoffset)*arraysize + (ii+dhxoffset)];
+                    data.image[IDdh].array.F[jj*(2*dhxsize)+ii] = data.image[IDre].array.F[(jj+dhyoffset)*arraysize + (ii+dhxoffset)] * data.image[IDdhmask].array.F[jj*dhxsize+ii];
+                    data.image[IDdh].array.F[jj*(2*dhxsize)+(ii+dhxsize)] = data.image[IDim].array.F[(jj+dhyoffset)*arraysize + (ii+dhxoffset)] * data.image[IDdhmask].array.F[jj*dhxsize+ii];
                 }
         data.image[IDdh].md[0].cnt0++;
         data.image[IDdh].md[0].write = 0;

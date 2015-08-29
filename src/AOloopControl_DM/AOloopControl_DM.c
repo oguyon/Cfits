@@ -981,11 +981,12 @@ int AOloopControl_DM_turb()
 
     double angle = 1.0;
     double coeff = 0.001;
-
+    double x1, fx1;
+    
     double RMSval;
     long RMSvalcnt;
     double r;
-
+    
     float pixscale = 0.1; // [m/pix]
     // Subaru pupil ~ 80 pix diam
     // Single actuator ~7 pix
@@ -1105,10 +1106,18 @@ int AOloopControl_DM_turb()
             }
         RMSval = sqrt(RMSval/RMSvalcnt);
 
-        if(RMSval>dmturbconf[0].ampl)
-            coeff *= 0.999;
-        else
-            coeff *= 1.001;
+        x1 = log10(RMSval/dmturbconf[0].ampl);
+        fx1 = 1.0 + 50.0*exp(-5.0*x1*x1);
+        coeff /= pow(10.0,x1/fx1);
+
+//        if(RMSval>dmturbconf[0].ampl)
+ //           coeff *= 0.999;
+  //      else
+    //        coeff *= 1.001;
+  
+  
+        
+        
         
         sprintf(name, "%s1", DMname);
         copy_image_ID("turbs", name, 0);

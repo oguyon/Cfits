@@ -27,6 +27,7 @@ printf "%20s  [%10s]  %s\n" "$1" "$var" "$2"
 # loading parameters
 # 2nd arg is default value
 
+# MAIN FUNCTION ARGUMENTS
 loadparam coin 0.300
 loadparam coout 0.290
 loadparam fpmradld 1.100
@@ -59,30 +60,43 @@ loadparam PIAAsep 2.302606
 loadparam PIAA0pos 0.702843 
 
 
+# CONFIGURATION FLAGS/PARAMETERS
+loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fourier modes)
+
+
 
 function printvarall() {
 
+
+echo "PIAA OPTICS DESIGN"
 printvar "coin" "central obstruction at input beam [beam radius]"
 printvar "coout" "central obstrcution at output beam [beam radius]"
 printvar "fpmradld" "focal plane mask radius [l/D]"
 printvar "PIAAmaterial" "PIAA optics material"
+printvar "PIAAcirc" "FLAG: are PIAA shapes circular (no Fourier modes)"
+
+echo "LYOT STOP(S) DESIGN"
 printvar "LStransm" "Lyot stop transmission"
 printvar "NBls" "Number of Lyot stops"
 printvar "lambda" "Wavelength for monochromatic design [nm]"
-printvar "mlambda" "central wavelength for polychromatic design [nm]"
-printvar "mlambdaB" "spectral bandwidth [%]"
-printvar "NBrings" "number of rings in focal plane mask"
-printvar "maskradld" "mask outer radius at central wavelength [l/D]"
-printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
-printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
+
 echo "FOCAL PLANE MASK DESIGN:"
 printvar "fpmmaterial" "focal plane mask material"
+printvar "NBrings" "number of rings in focal plane mask"
+printvar "maskradld" "mask outer radius at central wavelength [l/D]"
 printvar "fpmminsag" "min focal plane mask sag"
 printvar "fpmmaxsag" "max focal plane mask sag"
 printvar "fpmccnbr" "how many central rings replaced by cone (set to 0 if no central cone)"
 printvar "fpmccz" "sag at cone center (sag at cone edge will be midpoint between minsag and maxsag)"
 printvar "fpmocradld" "outer cone outer radius [l/D]"
 printvar "fpmocz" "ag at inner edge of outer cone (sag = 0 at outer edge), set to 0 if no outer cone"
+
+echo "OPTIMIZATION PARAMETERS"
+printvar "mlambda" "central wavelength for polychromatic design [nm]"
+printvar "mlambdaB" "spectral bandwidth [%]"
+printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
+printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
+
 echo "OPTICAL DESIGN:"
 printvar "PIAAbeamrad" "beam radius [mm]"
 printvar "pscale" "pixel scale in pupil [m/pix]"
@@ -135,6 +149,8 @@ echo "18" > conf_MdesignStepMax.txt
 
 
 
+
+
 # 5  4.62845e-06
 # 6  2.73012e-07
 # 7  1.2657e-07
@@ -149,6 +165,8 @@ echo "18" > conf_MdesignStepMax.txt
 #16  4.1511e-08 
 #17  1.56353e-08
 #18  
+
+
 
 ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
 
