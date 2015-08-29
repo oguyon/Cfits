@@ -92,9 +92,9 @@ int AOloopControl_DM_setname_cli()
 int AOloopControl_DM_CombineChannels_cli()
 {
     if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string,  data.cmdargtoken[4].val.numf);
     else
-        AOloopControl_DM_CombineChannels(1, 1, "dmvolt"); // DEFAULT
+        AOloopControl_DM_CombineChannels(1, 1, "dmvolt", 150.0); // DEFAULT
 
     return 1;
 }
@@ -178,9 +178,9 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_CombineChannels_cli;
     strcpy(data.cmd[data.NBcmd].info,"combine channels");
-    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode, char *IDvolt_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode (1=dmvolt computed)> <AvemMode (1=if average level removed)> <dmvoltname> <maxvolt [V]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb 1 0 dmvolt 120.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name, float maxvolt);");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolcontroldmchgain");
@@ -469,12 +469,13 @@ int AOloopControl_DM_unloadconf()
 // mode = 1 if DM volt computed
 //
 // AveMode: averaging mode 
-//      0: do not DC offset command to average
+//      0: do not appy DC offset command to average
 //      1: apply DC offset to remove average
 //
+// NOTE: DM displacement is biased to mid displacement
 // NOTE: responds immediately to sem[1] in dmdisp
 //
-int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name)
+int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name, float maxvolt)
 {
     long naxis = 2;
     long xsize = DM_Xsize;
@@ -501,6 +502,8 @@ int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name)
     char sname[200];
     long nsecwait = 10000; // 10 us
     int vOK;
+    float maxmaxvolt = 150.0;
+    
     
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
@@ -577,7 +580,10 @@ int AOloopControl_DM_CombineChannels(int mode, int AveMode, char *IDvolt_name)
         data.image[IDdisp].sem1 = 1;*/
     }
 
-
+    dispcombconf[0].MAXVOLT = maxvolt;
+    if(dispcombconf[0].MAXVOLT>maxmaxvolt)
+        dispcombconf[0].MAXVOLT = maxvolt;
+    
     while(dispcombconf[0].ON == 1)
     {
         dispcombconf[0].status = 2;
