@@ -337,7 +337,7 @@ int AOcontrolLoop_TestDMSpeed_cli()
 
 int AOcontrolLoop_TestSystemLatency_cli()
 {
-      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)==0)
+      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
     {
         AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
         return 0;
