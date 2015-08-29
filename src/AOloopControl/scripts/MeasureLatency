@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_ARGS=0
+EXPECTED_ARGS=1
 
 
 if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
@@ -8,7 +8,11 @@ then
   echo
   echo "------ Measure System Response Latency ------"
   echo 
-  echo "Usage: $0 "
+  echo "Usage: $0 <NBiter>"
+  echo 
+  echo " INPUT <NBiter>   : Number of interations" 
+  echo 
+  echo "Example: $0 5000"
   echo 
   exit
 fi
@@ -21,7 +25,7 @@ loopnb=$(cat LOOPNUMBER)
 Cfits -n aol${loopnb}latency << EOF
 readshmim aol${loopnb}_imWFS0
 readshmim dmdisp1 
-aoltestlat dmdisp1 aol${loopnb}_imWFS0
+aoltestlat dmdisp1 aol${loopnb}_imWFS0 $1
 savefits _testwfsc "!test_latencyC.fits"
 listim
 exit

@@ -337,9 +337,9 @@ int AOcontrolLoop_TestDMSpeed_cli()
 
 int AOcontrolLoop_TestSystemLatency_cli()
 {
-      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)==0)
+      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)==0)
     {
-        AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
         return 0;
     }
     else
@@ -822,9 +822,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOcontrolLoop_TestSystemLatency_cli;
     strcpy(data.cmd[data.NBcmd].info,"test system latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<dm stream> <wfs stream>");
-    strcpy(data.cmd[data.NBcmd].example,"aoltestlat");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<dm stream> <wfs stream> <NBiter>");
+    strcpy(data.cmd[data.NBcmd].example,"aoltestlat 5000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)");
     data.NBcmd++;
 
 
@@ -5025,7 +5025,7 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
 
 
 
-long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
+long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 {
     long IDdm;
     long dmxsize, dmysize, dmsize;
@@ -5062,7 +5062,6 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname)
     double tmp;
     double dtoffset;
 
-    long NBiter = 5000;
     long iter;
     
     double latencymax = 0.0;

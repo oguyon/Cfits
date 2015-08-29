@@ -150,7 +150,7 @@ int set_DM_modesRM(long loop);
 long AOloopControl_mkHadamardModes50(char *outname);
 long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname);
 long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl);
-long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname);
+long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter);
 long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, char *IDout_name);
 long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name);
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize);
