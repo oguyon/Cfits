@@ -25,7 +25,7 @@ loopnb=$(cat LOOPNUMBER)
 Cfits -n aol${loopnb}latency << EOF
 readshmim aol${loopnb}_imWFS0
 readshmim dmdisp1 
-aoltestlat dmdisp1 aol${loopnb}_imWFS0 $1
+aoltestlat dmdisp1 aol${loopnb}_wfsim $1
 savefits _testwfsc "!test_latencyC.fits"
 listim
 exit
