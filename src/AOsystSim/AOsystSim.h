@@ -11,7 +11,7 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name);
 
 int init_AOsystSim();
 
-int AOsystSim_run(int syncmode, long delayus);
+int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
 
 

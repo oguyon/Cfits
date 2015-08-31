@@ -68,9 +68,9 @@ int AOsystSim_fitTelPup_cli()
 
 int AOsystSim_run_cli()
 {
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
     {
-        AOsystSim_run(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        AOsystSim_run(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
         return 0;
     }
     else
@@ -110,9 +110,9 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOsystSim_run_cli;
     strcpy(data.cmd[data.NBcmd].info,"run fake AO system");
-    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].syntax,"<syncmode> <DMindex> <delayus>");
     strcpy(data.cmd[data.NBcmd].example,"AOsystsim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_run()");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_run(int syncmode, long DMindex, long delayus)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"AOsystexaosim");
@@ -1065,7 +1065,7 @@ int AOsystSim_runWFS(long index, char *IDout_name)
  * 
  */
 
-int AOsystSim_run(int syncmode, long delayus)
+int AOsystSim_run(int syncmode, long DMindex, long delayus)
 {
     long arraysize = 128;
     long ii, jj, ii1, jj1;
@@ -1101,35 +1101,40 @@ int AOsystSim_run(int syncmode, long delayus)
     long dhxoffset, dhyoffset;
     long IDre, IDim;
     char imdhname[200];
-
+    char name[200];
     int COROmode = 0; // 1 if coronagraph
     
     float pupradcoeff = 0.17;
     float dmradcoeff = 0.20;
     float iwald = 2.0;
 
+    char imnameamp[200];
+    char imnamepha[200];
+    int ret;
+    long index;
 
     puprad = pupradcoeff*arraysize;
     dmrad = dmradcoeff*arraysize;
 
 
     // INITIALIZE DM CONTROL ARRAY IF DOESN'T EXIST
-    IDdmctrl = image_ID("aosimdmctrl");
+    sprintf(name, "dm%lddisp", DMindex);
+    IDdmctrl = image_ID(name);
     if(IDdmctrl==-1)
-        IDdmctrl = read_sharedmem_image("aosimdmctrl");
+        IDdmctrl = read_sharedmem_image(name);
     if(IDdmctrl==-1)
     {
         dmsizearray = (long*) malloc(sizeof(long)*2);
         dmsizearray[0] = DMsize;
         dmsizearray[1] = DMsize;
-        IDdmctrl = create_image_ID("aosimdmctrl", 2, dmsizearray, FLOAT, 1, 0);
+        IDdmctrl = create_image_ID(name, 2, dmsizearray, FLOAT, 1, 0);
         free(dmsizearray);
-        COREMOD_MEMORY_image_set_createsem("aosimdmctrl", 2);
+        COREMOD_MEMORY_image_set_createsem(name, 2);
     }
     else
         {
             DMsize = data.image[IDdmctrl].md[0].size[0];
-            COREMOD_MEMORY_image_set_createsem("aosimdmctrl", 2);
+            COREMOD_MEMORY_image_set_createsem(name, 2);
         }
         
     
@@ -1244,7 +1249,8 @@ int AOsystSim_run(int syncmode, long delayus)
     COREMOD_MEMORY_image_set_createsem("WFturb", 2);
     list_image_ID();
 
-    AOsystSim_DMshape("aosimdmctrl", "dmifc", "dm2Ddisp");
+    sprintf(name, "dm%lddisp", DMindex);
+    AOsystSim_DMshape(name, "dmifc", "dm2Ddisp");
     IDdm0shape = image_ID("dm2Ddisp");
     save_fits("dm2Ddisp", "!dm2Ddisp.fits");
 
@@ -1347,7 +1353,8 @@ int AOsystSim_run(int syncmode, long delayus)
 
     IDarray = (long*) malloc(sizeof(long)*2);
     IDarray[0] = image_ID("WFturb");
-    IDarray[1] = image_ID("aosimdmctrl");
+    sprintf(name, "dm%lddisp", DMindex);
+    IDarray[1] = image_ID(name);
 
     sprintf(imdhname, "dhfield");
     dhsize = (long) (0.5/pupradcoeff * DMsize*(pupradcoeff/dmradcoeff)*0.5);
@@ -1380,13 +1387,18 @@ int AOsystSim_run(int syncmode, long delayus)
     {
 //        printf("ITERATION %6ld   \n", iter);
   //      fflush(stdout);
-        
-        AOsystSim_DMshape("aosimdmctrl", "dmifc", "dm2Ddisp");
+          sprintf(name, "dm%lddisp", DMindex);
+        AOsystSim_DMshape(name, "dmifc", "dm2Ddisp");
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
 
-  
-        
-       // COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
+    index = 2;
+        ret = sprintf(imnameamp, "WFamp0_%03ld", index);
+        ret = sprintf(imnamepha, "WFpha0_%03ld", index);
+        mk_complex_from_amph(imnameamp, imnamepha, "_tmpwfc", 0);
+        AOsystSim_WFSsim_Pyramid("_tmpwfc", "aosimwfsim", 0.0, 1);
+        delete_image_ID("_tmpwfc");
+
+     //   COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
      //   delete_image_ID("wfc");
     
         ID = image_ID("psfi0");
