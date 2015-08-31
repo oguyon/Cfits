@@ -12,6 +12,10 @@ then
   echo 
   echo " INPUT <NBiter>   : Number of iterations" 
   echo 
+  echo " OUTPUT FILES:"
+  echo "   latency.txt      : measured latency values" 
+  echo " maxlatencyseq.fits : imwfs sequence with longest latency"
+  echo 
   echo "Example: $0 5000"
   echo 
   exit
@@ -27,6 +31,5 @@ readshmim aol${loopnb}_wfsim
 readshmim dmdisp1 
 aoltestlat dmdisp1 aol${loopnb}_wfsim $1
 savefits _testwfsc "!test_latencyC.fits"
-listim
 exit
 EOF

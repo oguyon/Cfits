@@ -6405,7 +6405,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 // zero point offset loop
 //
 // args:
-//  DM offset (shared memory)
+//  DM offset channel (shared memory)
 //  zonal resp matrix (shared memory)
 //  nominal wfs reference without offset (shared memory)
 //  wfs reference to be updated (shared memory)
@@ -6529,13 +6529,95 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
         data.image[IDwfsref].md[0].cnt0 ++;
         data.image[IDwfsref].md[0].write = 0;
-        COREMOD_MEMORY_image_set_sempost(IDwfsref_name, -1);
+        COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
     
         zpcnt++;
     }
     
     
     return 0;
+}
+
+
+
+//
+// Create zero point channels
+// watch semaphore 1 on output (IDwfsref_name) -> sum all channels to update WFS zero point
+// runs in separate process
+//
+int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)
+{
+    long wfsxsize, wfsysize, wfsxysize;
+    long IDwfsref, IDwfsref0;
+    long *IDwfszparray;
+    long cntsum, cntsumold;
+    int RT_priority = 95; //any number from 0-99
+    struct sched_param schedpar;
+    long nsecwait = 10000; // 10 us
+    int r;
+    struct timespec semwaitts;
+    long ch;
+    long IDtmp;
+    long ii;
+
+
+
+    schedpar.sched_priority = RT_priority;
+    r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    r = seteuid(euid_real);//Go back to normal privileges
+
+
+    wfsxsize = data.image[IDwfsref].md[0].size[0];
+    wfsysize = data.image[IDwfsref].md[0].size[1];
+    wfsxysize = wfsxsize*wfsysize;
+    IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
+    IDwfsref0 = image_ID(IDwfsref0_name);
+    IDwfsref = image_ID(IDwfsref_name);  
+
+    if(data.image[IDwfsref].sem > 1) // drive semaphore #1 to zero
+        while(sem_trywait(data.image[IDwfsref].semptr[1])==0) {}
+    else
+        {
+            printf("ERROR: semaphore #1 missing from image %s\n", IDwfsref_name);
+            exit(0);
+        }
+
+    cntsumold = 0;
+    while(1 == 1)
+    {
+        if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
+            perror("clock_gettime");
+            exit(EXIT_FAILURE);
+        }
+        semwaitts.tv_nsec += nsecwait;
+        if(semwaitts.tv_nsec >= 1000000000)
+            semwaitts.tv_sec = semwaitts.tv_sec + 1;
+
+        sem_timedwait(data.image[IDwfsref].semptr[1], &semwaitts);
+
+        cntsum = 0;
+        for(ch=0; ch<NBzp; ch++)
+            cntsum += data.image[IDwfszparray[ch]].md[0].cnt0;
+            
+        if(cntsum != cntsumold)
+        {
+            memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
+            for(ch=0; ch<NBzp; ch++)
+                for(ii=0;ii<wfsxysize;ii++)
+                    data.image[IDtmp].array.F[ii] += data.image[IDwfszparray[ch]].array.F[ii];
+            
+            // copy results to IDwfsref
+            data.image[IDwfsref].md[0].write = 1;
+            memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
+            data.image[IDwfsref].md[0].cnt0 ++;
+            data.image[IDwfsref].md[0].write = 0;
+            COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
+        }
+    }
+
+
+    return(0);
 }
 
 

@@ -2402,8 +2402,15 @@ long copy_image_ID(char *name, char *newname, int shared)
     long i;
     int newim = 0;
     long s;
+    char errstr[200];
 
     ID = image_ID(name);
+    if(ID==-1)
+        {
+            sprintf(errstr, "image \"%s\" does not exist", name);
+            printERROR(__FILE__,__func__,__LINE__, errstr);
+            exit(0);
+        }
     naxis = data.image[ID].md[0].naxis;
 
     size = (long*) malloc(sizeof(long)*naxis);

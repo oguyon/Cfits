@@ -23,12 +23,15 @@ execnameLOG="$execprefixLOG Cfits" #
 LOOPNAME="pyramid" # name of the control loop
 LOOPNUMBER_default=2  # loop number
 
-dmC="dmdisp3" # DM control channel
-dmO="dmdisp0" # DM offset channel
-dmdisp="dmdisp" # total DM displacement channel
+dmC="dm00disp3" # DM control channel
+dmO="dm00disp0" # DM offset channel
+dmdisp="dm00disp" # total DM displacement channel
 dmoffset="dmoffset" # DM offset                                                      
-dmRM="dmdisp7" # DM actuation channel for RM matrix
+dmRM="dm00disp7" # DM actuation channel for RM matrix
 wfsimcam="imcam" # WFS camera image
+
+DMindextest=10 # DM index used for tests
+DMindex=00 
 
 shmimviewexec="shmimview"
 shmimmonexec="shmimmon"
@@ -49,8 +52,8 @@ shmimmonexec="shmimmon"
 
 
 # ===================== TEST MODE ========================
-testdmsize=20
-
+dmxsize=32
+dmysize=32
 
 
 
@@ -229,6 +232,20 @@ rm /tmp/aol${LOOPNUMBER}_dmC.im.shm
 ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
 }
 
+# DM output of loop to another loop
+function Readdm2dmOname {
+file="./conf/conf_dm2dmO_name.txt"
+if [ -a $file ]
+	then
+	dm2dmO=$(echo "$(cat $file)")
+	else
+	dm2dmO="dmO" #default
+fi
+# DM ouput to other loop
+echo "linking DM output to loop / channel"
+rm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm 
+ln -s /tmp/${dm2dmO}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm
+}
 
 function ReaddmOname {
 file="./conf/conf_dmO_name.txt"
@@ -267,7 +284,7 @@ if [ -a $file ]
 	then
 	dmdisp=$(echo "$(cat $file)")
 	else
-	dmdisp="dmdisp" #default
+	dmdisp="dm00disp" #default
 fi
 # DM correction channel
 echo "linking to dm correction channel"
@@ -520,7 +537,7 @@ if [ -a $file ]
 fi
 tmux new-session -d -s DMturbamp
 tmux send-keys -t DMturbamp "$execnameLOG " C-m
-tmux send-keys -t DMturbamp "aoloopcontroldmturampl $dmturbampl" C-m
+tmux send-keys -t DMturbamp "aoloopcontroldmturampl ${DMindex} $dmturbampl" C-m
 tmux send-keys -t DMturbamp "exit" C-m
 tmux send-keys -t DMturbamp "exit" C-m
 }
@@ -536,7 +553,7 @@ if [ -a $file ]
 fi
 tmux new-session -d -s DMturbws
 tmux send-keys -t DMturbws "$execnameLOG " C-m
-tmux send-keys -t DMturbws "aoloopcontroldmturws $dmturbws" C-m
+tmux send-keys -t DMturbws "aoloopcontroldmturws ${DMindex} $dmturbws" C-m
 tmux send-keys -t DMturbws "exit" C-m
 tmux send-keys -t DMturbws "exit" C-m
 }
@@ -552,7 +569,7 @@ if [ -a $file ]
 fi
 tmux new-session -d -s DMturbtint
 tmux send-keys -t DMturbtint "$execnameLOG " C-m
-tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${dmturbtint}" C-m
+tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
 tmux send-keys -t DMturbtint "exit" C-m
 tmux send-keys -t DMturbtint "exit" C-m
 }
@@ -583,35 +600,27 @@ fi
 
 
 
-
-
-
-
-function ReadTestDMsize {
-file="./conf/conf_testdmsize.txt"
-if [ -a $file ]
-	then
-	testdmsize=$(echo "$(cat $file)")
-	else
-	testdmsize=20 #default
-fi
-}
-
 function initDM {
-file="./conf/conf_testdmsize.txt"
+file="./conf/conf_dm${DMindex}xsize.txt"
 if [ -a $file ]
 	then
-	testdmsize=$(echo "$(cat $file)")
+	dmxsize=$(echo "$(cat $file)")
 	else
-	testdmsize=20 #default
+	dmxsize=32 #default
 fi
-# start DM channels
-tmux kill-session -t aosim${LOOPNUMBER}dmcomb
-tmux new-session -d -s aosim${LOOPNUMBER}dmcomb 
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execnameLOG" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 0 dmtestvolt" C-m
+file="./conf/conf_dm${DMindex}ysize.txt"
+if [ -a $file ]
+	then
+	dmysize=$(echo "$(cat $file)")
+	else
+	dmysize=32 #default
+fi
+
+# start main DM channels
+tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}comb
+tmux new-session -d -s aosim${LOOPNUMBER}dm${DMindex}comb 
+tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}comb "$execnameLOG" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}comb "aolcontrolDMcomb ${DMindextest} ${dmxsize} ${dmysize} 8 1 0 dmtestvolt 150.0" C-m
 }
 
 
@@ -631,12 +640,10 @@ function TestModeStart {
 echo "TEST MODE START"
 
 # start DM channels
-tmux kill-session -t aosim${LOOPNUMBER}dmcomb
-tmux new-session -d -s aosim${LOOPNUMBER}dmcomb 
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "$execnameLOG" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetsize ${testdmsize}" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontroldmsetname aosimdmctrl" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmcomb "aolcontrolDMcomb 1 dmtestvolt" C-m
+tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}comb
+tmux new-session -d -s aosim${LOOPNUMBER}dm${DMindex}comb 
+tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}comb "$execnameLOG" C-m
+tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}comb "aolcontrolDMcomb ${DMindex} ${testdmsize} ${testdmsize} 8 1 0 dmtestvolt 150.0" C-m
 
 
 mkdir -p testconf
@@ -649,16 +656,6 @@ tmux new-session -d -s aol${LOOPNUMBER}test
 echo " ON" > ./status/testloopstatus.txt
 tmux send-keys -t aol${LOOPNUMBER}test "./script_aol${LOOPNUMBER}test" C-m
 
-echo "aosimdmctrl2" > ./conf/conf_dmC_name.txt
-ReaddmCname
-echo "aosimdmctrl0" > ./conf/conf_dmO_name.txt
-ReaddmOname
-echo "aosimdmctrl1" > ./conf/conf_dmZP_name.txt
-ReaddmZPname
-echo "aosimdmctrl" > ./conf/conf_dmdisp_name.txt
-Readdmdispname
-echo "aosimdmctrl3" > ./conf/conf_dmRM_name.txt
-ReaddmRMname
 #echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
 echo "dhfield" > ./conf/conf_wfsim_name.txt
 Readwfsimcamname
@@ -685,28 +682,31 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 function TestStartTurb {
-echo " ON" > ./status/testdmturbstatus.txt
+echo " ON" > ./status/testdm${DMindex}turbstatus.txt
 mkdir -p ./conf/turb
-tmux kill-session -t aosim${LOOPNUMBER}dmturb
-tmux new-session -d -s aosim${LOOPNUMBER}dmturb 
-tmux send-keys -t aosim${LOOPNUMBER}dmturb "$execnameLOG" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturb "aolcontroldmsetsize ${testdmsize}" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturb "aolcontroldmsetname aosimdmctrl" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturb "aoloopcontrolDMturb" C-m
+tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname 
+tmux send-keys -t $tmuxname "$execnameLOG" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturb ${DMindex}" C-m
 
-tmux kill-session -t aosim${LOOPNUMBER}dmturbctrl
-tmux new-session -d -s aosim${LOOPNUMBER}dmturbctrl
-tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "$execnameLOG" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturampl 0.1" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturtint 10000" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturws 1.0" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dmturbctrl "aoloopcontroldmturlo 0.0" C-m
+tmuxname="aosim${LOOPNUMBER}dm${DMindex}turbctrl"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execnameLOG" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} 0.1" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturtint ${DMindex} 10000" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturws ${DMindex} 1.0" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} 0.0" C-m
 
 }
 
 function TestStopTurb {
-tmux kill-session -t aosim${LOOPNUMBER}dmturb
-echo "OFF" > ./status/testdmturbstatus.txt
+tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}turbctrl "exit" C-m
+tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
+
+tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}turb
+echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
 }
 
 
@@ -789,12 +789,158 @@ if [ $state = "menutop" ]; then
 stateok=1
 confselected=$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]"
+
+
+DMindex=$(cat "./conf/conf_DMindex.txt")
+echo "dm${DMindex}disp03" > ./conf/conf_dmC_name.txt # DM control channel
+ReaddmCname
+echo "dm${DMindex}disp00" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
+ReaddmOname
+echo "dm${DMindex}disp07" > ./conf/conf_dmZP_name.txt
+ReaddmZPname
+echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
+Readdmdispname
+echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
+ReaddmRMname
+
+
+
+
+
+
 menuitems+=( " " " ")
 menuitems+=( " " " ")
+
+
+stringcenter "MODES, DM OUTPUT LINK"
+menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+
+menuitems+=( "S" "[${DMindex}] Set DM index" )
+
+dmxsize=$(cat "./conf/conf_dm${DMindex}xsize.txt")
+menuitems+=( "dmxs" "[${dmxsize}] Set DM x size (if modal control, = number of modes)" )
+dmysize=$(cat "./conf/conf_dm${DMindex}ysize.txt")
+menuitems+=( "dmys" "[${dmysize}] Set DM y size (1 if modal control)" )
+
+menuitems+=( " " " " )
+menuitems+=( "nolink" "Auto-configure main DM (no link)" )
+menuitems+=( "dmolink" "Auto-configure link DM output to loop number" )
+
+
+file="./conf/conf_dm2dm_mode.txt"
+dm2dm_mode=$( cat $file )
+if [[ -f "$file" && ( "$dm2dm_mode" = "1" || "$dm2dm_mode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dm2dm_mode=0
+fi
+
+file="./conf/conf_dm2dmModes_name.txt"
+dm2dmModesMast=$( cat $file )
+
+menuitems+=( " " " ")
+if [ "${dm2dm_mode}" = "0" ];
+then
+menuitems+=( "dm2dm1" " [  OFF  ] Activate virtual (modal) DM to physical DM mode" )
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+fi
+if [ "${dm2dm_mode}" = "1" ];
+then
+menuitems+=( "dm2dm0" " [   ON  ] De-activate DM to DM mode" )
+
+makemenuitemstringaolshm "dm2dmM" "DM modes (${dmxsize} modes used)"
+menuitems+=( "dm2dmM" "$menustring" )
+
+
+dm2dmOfile="/tmp/${dm2dmO}.im.shm"
+if [ -f $dm2dmOfile ]; then
+getshmimsize ${dm2dmO}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${dm2dmO}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dm2dmO" "[${OKstr}] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${dm2dmO}\Zn" )
+fi
+
+
+fi
+
+
+
+file="./conf/conf_dmwfsref_mode.txt"
+dmwfsrefmode=$( cat $file )
+if [[ -f "$file" && ( "$dmwfsrefmode" = "1" || "$dmwfsrefmode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dmwfsrefmode=0
+fi
+
+menuitems+=( " " " ")
+if [ "${dmwfsrefmode}" = "0" ];
+then
+menuitems+=( "dmwref1" " [  OFF  ] Activate WFS ref DM mode (DM ouput applied as WFS offset)" )
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+fi
+if [ "${dmwfsrefmode}" = "1" ];
+then
+menuitems+=( "dmwref0" " [   ON  ] De-activate WFS ref DM mode" )
+
+
+dmwrefRMfile="/tmp/${dmwrefRM}.im.shm"
+if [ -f $dmwrefRMfile ]; then
+getshmimsize ${dmwrefRM}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${dmwrefRM}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${dmwrefRM}\Zn" )
+fi
+
+
+dmwrefOfile="/tmp/${dmwrefO}.im.shm"
+if [ -f $dmwrefOfile ]; then
+getshmimsize ${dmwrefO}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmwrefO" "[${OKstr}] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
+fi
+
+
+fi
+
+
+file="./conf/conf_dmvolt_mode.txt"
+dmvoltmode=$( cat $file )
+if [[ -f "$file" && ( "$dmvoltmode" = "1" || "$dmvoltmode" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dmvoltmode=0
+fi
+
+menuitems+=( " " " ")
+if [ "${dmvoltmode}" = "0" ];
+then
+menuitems+=( "dmvolt1" " [  OFF  ] Activate DM volt output [-> dmvolt]" )
+fi
+if [ "${dmvoltmode}" = "1" ];
+then
+menuitems+=( "dmvolt0" " [   ON  ] De-activate DM volt output [-> dmvolt]" )
+fi
+
+menuitems+=( " " " ")
+menuitems+=( "initDM" "Init DM channels, DM links, DMcomb (-> dm${DMindex}disp00..07  dm${DMindex}disp)" )
+menuitems+=( "-" " " )
 
 
 stringcenter "AO CONFIGURE AND CONTROL"
-menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "C" "Configure/link AO loop" )
 menuitems+=( "L" "Control AO loop" )
@@ -804,20 +950,20 @@ menuitems+=( " " " ")
 
 
 stringcenter "TEST AND MONITOR"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "T" "Test mode: simulated AO system" )
 menuitems+=( "V" "View / monitor" )
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 
 stringcenter "DATA LOGGING / ANALYSIS"
-menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "R" "Record / analyze")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 
 stringcenter "CUSTOM EXTERNAL SCRIPTS"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "A" "Align")
 
 
@@ -835,6 +981,121 @@ menutop_default="$choiceval"
 case $retval in
    0) # button
 	case $choiceval in
+     S) 
+vali=$( echo $DMindex )
+menuitems1=( "00" "DM index = 00" )
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19;
+        do
+menuitems1+=( "$i" "DM index = $i" )
+done 
+
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+DMindex=$("${cmd[@]}" 2>&1 >/dev/tty)
+echo "$DMindex" > ./conf/conf_DMindex.txt
+;;
+	dmxs)
+exec 3>&1;dmxsize=$(dialog --inputbox "DM xsize" 0 0 "$dmxsize" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmxsize" > ./conf/conf_dm${DMindex}xsize.txt
+;;
+	dmys)
+exec 3>&1;dmysize=$(dialog --inputbox "DM ysize" 0 0 "$dmysize" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmysize" > ./conf/conf_dm${DMindex}ysize.txt
+;;
+
+    nolink)
+echo "0" > "./conf/conf_dm2dm_mode.txt"
+echo "0" > "./conf/conf_dmwfsref_mode.txt"
+echo "1" > "./conf/conf_dmvolt_mode.txt"
+;;
+
+    dmolink)
+echo "1" > "./conf/conf_dm2dm_mode.txt"
+echo "1" > "./conf/conf_dmwfsref_mode.txt"
+echo "0" > "./conf/conf_dmvolt_mode.txt"
+
+menuitems1=( "0" "loop 0" )
+for i in 1 2 3 4 5;
+        do
+menuitems1+=( "$i" "loop $i" )
+done 
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
+
+menuitems1=( "00" "offset channel 00" )
+for i in 01 02 03;
+        do
+menuitems1+=( "$i" "offset channel $i" )
+done 
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
+
+dm2dmMfname="../loop${dmolinknb}/mkmodestmp/fmodes0all.fits"
+echo "$dm2dmMfname" > ./conf/conf_dm2dmM_fname.txt
+
+
+dmnb=$( cat ../loop${dmolinknb}/conf/conf_DMindex.txt )
+dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
+dm2dmO="dm${dmnb}disp${dmolinkchan1}"
+echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
+
+dmwrefRM="aol${dmolinknb}_zrespM"
+echo "$dmwrefRM" > ./conf/conf_dmwrefRM_fname.txt
+
+dmwrefO="aol${dmolinknb}_wfsref${dmolinkchan}"
+echo "$dmwrefO" > ./conf/conf_dmwrefO_fname.txt
+;;
+
+
+   dm2dm0)
+echo "0" > "./conf/conf_dm2dm_mode.txt"
+menutop_default="dm2dm1"
+;;
+    dm2dm1)
+echo "1" > "./conf/conf_dm2dm_mode.txt"
+menutop_default="dm2dm0"
+;;
+    dm2dmM)
+exec 3>&1;
+dm2dmMfname=$(dialog --title "Select DM modes file name" --stdout --fselect "${dm2dmMfname}" $nbwlines $nbwcols)
+echo "$dm2dmMfname" > ./conf/conf_dm2dmM_fname.txt
+ReadConfFile "dm2dmM"
+;;
+
+    dm2dmO)
+exec 3>&1;
+dm2dmO=$(dialog --inputbox "dm2dmO" 0 0 "$dm2dmO" 2>&1 1>&3);
+exec 3>&-;
+echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
+Readdm2dmOname
+;;
+
+    dmwref0)
+echo "0" > "./conf/conf_dmwfsref_mode.txt"
+menutop_default="dmwref1"
+;;
+    dmwref1)
+echo "1" > "./conf/conf_dmwfsref_mode.txt"
+menutop_default="dmwref0"
+;;
+
+    dmvolt0)
+echo "0" > "./conf/conf_dmvolt_mode.txt"
+menutop_default="dmvolt1"
+;;
+    dmvolt1)
+echo "1" > "./conf/conf_dmvolt_mode.txt"
+menutop_default="dmvolt0"
+;;
+
+
+	initDM)
+initDM
+;;
+
+
+
    	 C) state="menuconfigureloop";;   
    	 L) state="menucontrolloop";;
    	 T) state="menutestmode"   ;;
@@ -3022,7 +3283,7 @@ if [ -a $file ]
 	testloopstatus="OFF"
 fi
 
-file="./status/testdmturbstatus.txt"
+file="./status/testdm${DMindex}turbstatus.txt"
 if [ -a $file ]
 	then
 	testdmturbstatus=$(echo "$(cat $file)")
@@ -3047,14 +3308,8 @@ menuitems=( "H" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "-" " " )
 
-stringcenter "SETTINGS"
-menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
-menuitems+=( "dms" "[${testdmsize}] Set test mode DM size and init DM channels" )
-menuitems+=( "initDM" "Init DM channels (-> aolsimdmctrl0..7  dmdisp)" )
-menuitems+=( "-" " " )
 
-
-stringcenter "TURBULENCE  -> aosimdmctrl1   (tmux aosim${LOOPNUMBER}dmturb)"
+stringcenter "TURBULENCE  -> dm${DMindex}disp01  (tmux aosim${LOOPNUMBER}dm${DMindex}turb)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
@@ -3218,22 +3473,12 @@ case $retval in
 dialog --title "Help" --msgbox 'Simulation mode\n
 \n
 Creates shared memory arrays: \n
-   aosimdmctrl   : DM control map\n
+   dm10disp      : DM control map\n
    WFturb        : Wavefront phase turbulence (512x512)\n
    aosimpsfout   : output PSF (intensity)\n
    aosimwfsim    : output WFS image (intensity)\n
 \n
-Recomputes aosimpsfout when either aosimdmctrl or WFturb changes' 40 80
-;;
-	dms)
-exec 3>&1;testdmsize=$(dialog --inputbox "test mode DM size" 0 0 "$testdmsize" 2>&1 1>&3);
-exec 3>&-;
-
-echo "$testdmsize" > ./conf/conf_testdmsize.txt
-initDM
-;;
-	initDM)
-initDM
+Recomputes aosimpsfout when either dm${DMindex}disp01 or WFturb changes' 40 80
 ;;
 	tv)
 tmux a -t aol${LOOPNUMBER}test
@@ -3247,10 +3492,10 @@ TestStopTurb
 menutestmode_default="DMton"
 ;;
 	tvdmt)
-tmux a -t aosim${LOOPNUMBER}dmturb
+tmux a -t aosim${LOOPNUMBER}dm${DMindex}turb
 ;;
 	tvdmtc)
-tmux a -t aosim${LOOPNUMBER}dmturbctrl
+tmux a -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
 ;;
 	DMtamp)
 exec 3>&1;dmturbampl=$(dialog --inputbox "DM turbulence amplitude [um]" 0 0 "$dmturbampl" 2>&1 1>&3);
@@ -3270,11 +3515,11 @@ echo "$dmturbtint" > ./conf/conf_dmturbtint.txt
 
 
 	dm1v)
-$shmimviewexec /tmp/aosimdmctrl1.im.shm 4 &> /dev/null &
+$shmimviewexec /tmp/dm${DMindex}disp01.im.shm 4 &> /dev/null &
 menutestmode_default="dm1v"
 ;;   
 	dm1m)
-$shmimmonexec aosimdmctrl1
+$shmimmonexec dm${DMindex}disp01
 menutestmode_default="dm1m"
 ;;   
    	 Start)
