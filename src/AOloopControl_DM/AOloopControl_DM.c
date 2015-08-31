@@ -647,6 +647,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     if(voltmode==1)
     {
         IDvolt = image_ID(dmdispcombconf[DMindex].voltname);
+        
         vOK = 0;
         if(IDvolt!=-1)
             {
@@ -655,6 +656,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 else
                     delete_image_ID(dmdispcombconf[DMindex].voltname);
             }
+        
+        printf("vOK = %d\n", vOK);
         if(vOK==0)
         {
             dmdispcombconf[DMindex].IDvolt = create_image_ID(dmdispcombconf[DMindex].voltname, naxis, size, USHORT, 1, 10);

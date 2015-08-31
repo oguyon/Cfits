@@ -284,7 +284,7 @@ if [ -a $file ]
 	then
 	dmdisp=$(echo "$(cat $file)")
 	else
-	dmdisp="dm00disp" #default
+	dmdisp="dm0disp" #default
 fi
 # DM correction channel
 echo "linking to dm correction channel"
@@ -633,6 +633,7 @@ tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG" C-m
+tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
 tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 $dm2dm_mode ${dmmodes} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
