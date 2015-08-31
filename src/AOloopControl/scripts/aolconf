@@ -983,7 +983,7 @@ case $retval in
 	case $choiceval in
      S) 
 vali=$( echo $DMindex )
-menuitems1=( "00" "DM index = 0" )
+menuitems1=( "0" "DM index = 0" )
 for i in 1 2 3 4 5 6 7 8 9;
         do
 menuitems1+=( "$i" "DM index = $i" )
