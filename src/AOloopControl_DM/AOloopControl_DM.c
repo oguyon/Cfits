@@ -663,7 +663,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             dmdispcombconf[DMindex].IDvolt = create_image_ID(dmdispcombconf[DMindex].voltname, naxis, size, USHORT, 1, 10);
             COREMOD_MEMORY_image_set_createsem(dmdispcombconf[DMindex].voltname, 5);
          }
-            
+         else
+            dmdispcombconf[DMindex].IDvolt = image_ID(dmdispcombconf[DMindex].voltname);
     }
 
     cntsumold = 0;
