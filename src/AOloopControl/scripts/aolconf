@@ -3520,11 +3520,11 @@ echo "$dmturbtint" > ./conf/conf_dmturbtint.txt
 
 
 	dm1v)
-$shmimviewexec /tmp/dm${DMindex}disp01.im.shm 4 &> /dev/null &
+$shmimviewexec /tmp/dm${DMindex}disp1.im.shm 4 &> /dev/null &
 menutestmode_default="dm1v"
 ;;   
 	dm1m)
-$shmimmonexec dm${DMindex}disp01
+$shmimmonexec dm${DMindex}disp1
 menutestmode_default="dm1m"
 ;;   
    	 Start)
