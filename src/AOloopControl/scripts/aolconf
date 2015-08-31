@@ -663,8 +663,8 @@ tmux new-session -d -s aol${LOOPNUMBER}test
 echo " ON" > ./status/testloopstatus.txt
 tmux send-keys -t aol${LOOPNUMBER}test "./script_aol${LOOPNUMBER}test" C-m
 
-#echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
-echo "dhfield" > ./conf/conf_wfsim_name.txt
+echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
+#echo "dhfield" > ./conf/conf_wfsim_name.txt
 Readwfsimcamname
 
 echo "0.1" > ./conf/conf_loopgain.txt
