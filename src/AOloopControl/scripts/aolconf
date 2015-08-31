@@ -617,7 +617,7 @@ if [ -a $file ]
 fi
 
 # start main DM channels
-tmuxname="aosim${LOOPNUMBER}dm${DMindex}comb"
+tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG" C-m
