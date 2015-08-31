@@ -617,10 +617,11 @@ if [ -a $file ]
 fi
 
 # start main DM channels
-tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}comb
-tmux new-session -d -s aosim${LOOPNUMBER}dm${DMindex}comb 
-tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}comb "$execnameLOG" C-m
-tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}comb "aolcontrolDMcomb ${DMindextest} ${dmxsize} ${dmysize} 8 1 0 dmtestvolt 150.0" C-m
+tmuxname="aosim${LOOPNUMBER}dm${DMindex}comb"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execnameLOG" C-m
+tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 ${dm2dm_mode} dmmodes ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
 
@@ -935,7 +936,7 @@ menuitems+=( "dmvolt0" " [   ON  ] De-activate DM volt output [-> dmvolt]" )
 fi
 
 menuitems+=( " " " ")
-menuitems+=( "initDM" "Init DM channels, DM links, DMcomb (-> dm${DMindex}disp00..07  dm${DMindex}disp)" )
+menuitems+=( "initDM" "Init DM channels, DM links, DMcomb (-> dm${DMindex}disp0..7  dm${DMindex}disp)" )
 menuitems+=( "-" " " )
 
 
@@ -1036,7 +1037,7 @@ echo "$dm2dmMfname" > ./conf/conf_dm2dmM_fname.txt
 
 
 dmnb=$( cat ../loop${dmolinknb}/conf/conf_DMindex.txt )
-dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%2ld", $1+4)}')
+dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%ld", $1+4)}')
 dm2dmO="dm${dmnb}disp${dmolinkchan1}"
 echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
 
