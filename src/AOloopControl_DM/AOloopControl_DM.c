@@ -189,8 +189,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_CombineChannels_cli;
     strcpy(data.cmd[data.NBcmd].info,"create and combine DM channels");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)> <xsize> <ysize> <NBchannel> <AveMode (1=if average level removed)> <dm2dm mode> <DMmodes> <outdm stream> <wfsref mode> <WFS resp mat> <wfsref stream> <voltmode (1=dmvolt computed)> <dmvoltname> <maxvolt [V]>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb 00 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 120.0");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <xsize> <ysize> <NBchannel> <AveMode (1=if average level removed)> <dm2dm mode> <DMmodes> <outdm stream> <wfsref mode> <WFS resp mat> <wfsref stream> <voltmode (1=dmvolt computed)> <dmvoltname> <maxvolt [V]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 120.0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float maxvolt)");
     data.NBcmd++;
 
@@ -198,8 +198,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_chan_setgain_cli;
     strcpy(data.cmd[data.NBcmd].info,"set gain for DM displacement channel");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)> <chan#> <gain>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmchgain 00 3 0.2");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <chan#> <gain>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmchgain 0 3 0.2");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain)");
     data.NBcmd++;
 
@@ -209,8 +209,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcomboff_cli;
     strcpy(data.cmd[data.NBcmd].info,"turn off DM combine");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcomboff 00");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcomboff 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcomboff(long DMindex)");
     data.NBcmd++;
 
@@ -218,8 +218,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmdispcombstatus_cli;
     strcpy(data.cmd[data.NBcmd].info,"monitor DM comb program");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcombmon 00");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmcombmon 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmdispcombstatus(long DMindex)");
     data.NBcmd++;
 
@@ -227,8 +227,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmtrigoff_cli;
     strcpy(data.cmd[data.NBcmd].info,"turn off DM trigger");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmtrigoff 00");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmtrigoff 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmtrigoff(long DMindex)");
     data.NBcmd++;
 
@@ -238,8 +238,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_cli;
     strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb 00");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex)");
     data.NBcmd++;
 
@@ -247,8 +247,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp =  AOloopControl_DM_dmturboff_cli;
     strcpy(data.cmd[data.NBcmd].info,"turn off DM turbulence");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturboff 00");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturboff 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturboff(long DMindex)");
     data.NBcmd++;
 
@@ -256,8 +256,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_wspeed_cli;
     strcpy(data.cmd[data.NBcmd].info,"set turbulence wind speed");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)> <wind speed [m/s]>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturws 00 5.2");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <wind speed [m/s]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturws 0 5.2");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_wspeed(long DMindex, double wspeed);");
     data.NBcmd++;
 
@@ -265,8 +265,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_ampl_cli;
     strcpy(data.cmd[data.NBcmd].info,"set turbulence amplitude");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)> <amplitude [um]>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturampl 00 0.1");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <amplitude [um]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturampl 0 0.1");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_ampl(long DMindex, double ampl);");
     data.NBcmd++;
 
@@ -274,8 +274,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_LOcoeff_cli;
     strcpy(data.cmd[data.NBcmd].info,"set turbulence low order coefficient");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)> <coeff>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturlo 00 0.2");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <coeff>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturlo 0 0.2");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_LOcoeff(long DMindex, double LOcoeff);");
     data.NBcmd++;
 
@@ -283,8 +283,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_tint_cli;
     strcpy(data.cmd[data.NBcmd].info,"set turbulence interval time");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-99)> <interval time [us] long>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturtint 00 200");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <interval time [us] long>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturtint 0 200");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb_tint(long DMindex, long tint);");
     data.NBcmd++;
 
