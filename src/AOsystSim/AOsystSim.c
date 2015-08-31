@@ -1390,17 +1390,17 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
           sprintf(name, "dm%lddisp", DMindex);
         AOsystSim_DMshape(name, "dmifc", "dm2Ddisp");
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
-
-    index = 2;
+    
+        // PYWFS code
+        index = 2;
         ret = sprintf(imnameamp, "WFamp0_%03ld", index);
         ret = sprintf(imnamepha, "WFpha0_%03ld", index);
         mk_complex_from_amph(imnameamp, imnamepha, "_tmpwfc", 0);
         AOsystSim_WFSsim_Pyramid("_tmpwfc", "aosimwfsim", 0.0, 1);
         delete_image_ID("_tmpwfc");
+        COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
 
-     //   COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
-     //   delete_image_ID("wfc");
-    
+     
         ID = image_ID("psfi0");
         data.image[IDout].md[0].write = 1;
         memcpy(data.image[IDout].array.F, data.image[ID].array.F, sizeof(FLOAT)*data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1]*data.image[ID].md[0].size[2]);
