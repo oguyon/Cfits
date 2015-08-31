@@ -23,15 +23,15 @@ execnameLOG="$execprefixLOG Cfits" #
 LOOPNAME="pyramid" # name of the control loop
 LOOPNUMBER_default=2  # loop number
 
-dmC="dm00disp3" # DM control channel
-dmO="dm00disp0" # DM offset channel
-dmdisp="dm00disp" # total DM displacement channel
+dmC="dm0disp3" # DM control channel
+dmO="dm0disp0" # DM offset channel
+dmdisp="dm0disp" # total DM displacement channel
 dmoffset="dmoffset" # DM offset                                                      
-dmRM="dm00disp7" # DM actuation channel for RM matrix
+dmRM="dm0disp7" # DM actuation channel for RM matrix
 wfsimcam="imcam" # WFS camera image
 
-DMindextest=10 # DM index used for tests
-DMindex=00 
+DMindextest=6 # DM index used for tests
+DMindex=0 
 
 shmimviewexec="shmimview"
 shmimmonexec="shmimmon"
@@ -983,8 +983,8 @@ case $retval in
 	case $choiceval in
      S) 
 vali=$( echo $DMindex )
-menuitems1=( "00" "DM index = 00" )
-for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19;
+menuitems1=( "00" "DM index = 0" )
+for i in 1 2 3 4 5 6 7 8 9;
         do
 menuitems1+=( "$i" "DM index = $i" )
 done 
@@ -1023,8 +1023,8 @@ done
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
 
-menuitems1=( "00" "offset channel 00" )
-for i in 01 02 03;
+menuitems1=( "0" "offset channel 0" )
+for i in 1 2 3;
         do
 menuitems1+=( "$i" "offset channel $i" )
 done 
@@ -1036,7 +1036,7 @@ echo "$dm2dmMfname" > ./conf/conf_dm2dmM_fname.txt
 
 
 dmnb=$( cat ../loop${dmolinknb}/conf/conf_DMindex.txt )
-dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
+dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%2ld", $1+4)}')
 dm2dmO="dm${dmnb}disp${dmolinkchan1}"
 echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
 
