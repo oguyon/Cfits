@@ -616,12 +616,24 @@ if [ -a $file ]
 	dmysize=32 #default
 fi
 
+echo "dm2dm_mode = $dm2dm_mode"
+if [ ! "$dm2dm_mode" = "1" ]; then
+dmmodes="empty"
+dm2dmO="empty"
+fi
+echo "dmwfsrefmode = $dmwfsrefmode"
+if [ ! "$dmwfsrefmode" = "1" ]; then
+dmwrefRM="empty"
+dmwrefO="empty"
+fi
+
+
 # start main DM channels
 tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG" C-m
-tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 ${dm2dm_mode} dmmodes ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
+tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 $dm2dm_mode ${dmmodes} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
 

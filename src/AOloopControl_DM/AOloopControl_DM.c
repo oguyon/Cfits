@@ -39,7 +39,7 @@ struct timespec semwaitts;
 
 #define DMSTROKE100 0.7 // um displacement for 100V
 
-long NB_DMindex = 20;
+long NB_DMindex = 9;
 
 AOLOOPCONTROL_DM_DISPCOMB_CONF *dmdispcombconf; // configuration
 int dmdispcomb_loaded = 0;
@@ -350,7 +350,7 @@ int AOloopControl_printDMconf()
     printf("ind on  x   y Nbch busy maxvolt  monint stat IDdisp IDvolt voltname\n");
     for(DMindex=0; DMindex<NB_DMindex; DMindex++)
         {
-            printf("%02ld  %d  %3ld %3ld  %02ld %d  %6f  %8ld  %02d  %3ld %3ld  %s\n", DMindex, dmdispcombconf[DMindex].ON, dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].NBchannel, dmdispcombconf[DMindex].busy, dmdispcombconf[DMindex].MAXVOLT, dmdispcombconf[DMindex].moninterval, dmdispcombconf[DMindex].status, dmdispcombconf[DMindex].IDdisp, dmdispcombconf[DMindex].IDvolt, dmdispcombconf[DMindex].voltname);
+            printf("%ld  %d  %3ld %3ld  %02ld %d  %6f  %8ld  %02d  %3ld %3ld  %s\n", DMindex, dmdispcombconf[DMindex].ON, dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].NBchannel, dmdispcombconf[DMindex].busy, dmdispcombconf[DMindex].MAXVOLT, dmdispcombconf[DMindex].moninterval, dmdispcombconf[DMindex].status, dmdispcombconf[DMindex].IDdisp, dmdispcombconf[DMindex].IDvolt, dmdispcombconf[DMindex].voltname);
         }
     
     return(0);
@@ -550,6 +550,9 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     dmdispcombconf[DMindex].DClevel = 0.5*(DMSTROKE100*dmdispcombconf[DMindex].MAXVOLT/100.0*dmdispcombconf[DMindex].MAXVOLT/100.0);
 
+    printf("maxvolt = %f\n", maxvolt);
+
+
     size = (long*) malloc(sizeof(long)*naxis);
     size[0] = xsize;
     size[1] = ysize;
@@ -625,7 +628,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
     for(ch=0; ch<dmdispcombconf[DMindex].NBchannel; ch++)
     {
-        sprintf(name, "dm%02lddisp%02ld", DMindex, ch);
+        sprintf(name, "dm%lddisp%ld", DMindex, ch);
         printf("Channel %ld \n", ch);
         dmdispcombconf[DMindex].dmdispID[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
         COREMOD_MEMORY_image_set_createsem(name, 5);
@@ -633,11 +636,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     }
 
 
-    sprintf(name, "dm%02lddisp", DMindex);
+    sprintf(name, "dm%lddisp", DMindex);
     dmdispcombconf[DMindex].IDdisp = create_image_ID(name, naxis, size, FLOAT, 1, 10);
     COREMOD_MEMORY_image_set_createsem(name, 5);
     
-    sprintf(name, "dm%02lddispt", DMindex);
+    sprintf(name, "dm%lddispt", DMindex);
     IDdispt = create_image_ID(name, naxis, size, FLOAT, 0, 0);
     dmdispptr = data.image[IDdispt].array.F;
 
@@ -665,7 +668,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     dmdispcombconf[0].status = 1;
 
-    sprintf(name, "dm%02lddisp", DMindex);
+    sprintf(name, "dm%lddisp", DMindex);
     COREMOD_MEMORY_image_set_createsem(name, 5);
 
     if(data.image[dmdispcombconf[DMindex].IDdisp].sem<2)
@@ -677,6 +680,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[DMindex].MAXVOLT = maxvolt;
     if(dmdispcombconf[DMindex].MAXVOLT>maxmaxvolt)
         dmdispcombconf[DMindex].MAXVOLT = maxvolt;
+    
+    
+     AOloopControl_printDMconf();
+
+    
     
     while(dmdispcombconf[DMindex].ON == 1)
     {
@@ -886,7 +894,7 @@ int AOloopControl_printDMturbconf()
     printf("ind on  ampl [um]  tint [us]  simtime [s]  wspeed [m/s]  LOcoeff\n");
     for(DMindex=0; DMindex<NB_DMindex; DMindex++)
         {
-            printf("%02ld  %d  %10f  %10ld  %10f %5f  %5f\n", DMindex, dmturbconf[DMindex].on, dmturbconf[DMindex].ampl, dmturbconf[DMindex].tint, dmturbconf[DMindex].simtime, dmturbconf[DMindex].wspeed, dmturbconf[DMindex].LOcoeff);
+            printf("%ld  %d  %10f  %10ld  %10f %5f  %5f\n", DMindex, dmturbconf[DMindex].on, dmturbconf[DMindex].ampl, dmturbconf[DMindex].tint, dmturbconf[DMindex].simtime, dmturbconf[DMindex].wspeed, dmturbconf[DMindex].LOcoeff);
         }
     
     return 0;
