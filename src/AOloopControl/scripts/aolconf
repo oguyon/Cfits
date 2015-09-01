@@ -3485,9 +3485,15 @@ fi
 menuitems+=( "settaa" "[${testActa}] Set test actuator Amplitude" )
 
 
-menuitems+=( "testact1" "[${testActy}] Set test actuator y coord" )
-menuitems+=( "testact0" "[${testActy}] Set test actuator y coord" )
 
+
+
+testactstat=$( cat ./status/stat_testact.txt )
+if [[ -f "./status/stat_testact.txt" && ( "$testactstat" = "1" || "$testactstat" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > ./status/stat_testact.txt
+fi
 
 if [ "${testactstat}" = "0" ];
 then
