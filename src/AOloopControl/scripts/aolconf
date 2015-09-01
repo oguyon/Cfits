@@ -3480,7 +3480,7 @@ if [ -a $file ]
 	then
 	testActa=$(echo "$(cat $file)")
 	else
-	testActa="1"
+	testActa="0.1"
 fi
 menuitems+=( "settaa" "[${testActa}] Set test actuator Amplitude" )
 
@@ -3501,9 +3501,6 @@ menuitems+=( "testact1" "             Apply actuator command               " )
 else
 menuitems+=( "testact0" "             Reset actuator" )
 fi
-
-
-
 
 
 
@@ -3703,6 +3700,52 @@ exec 3>&-;
 echo "$AOsystsimWFSdelayus" > ./conf/conf_AOsystsimWFSdelayus.txt
 menutestmode_default="TMdelay"
 ;;
+
+
+
+
+
+    settax)
+exec 3>&1; testActx=$(dialog --inputbox "Set test actuator x" 0 0 "$testActx" 2>&1 1>&3);
+exec 3>&-;
+echo "$testActx" > ./conf/conf_testActx.txt
+;;
+
+    settay)
+exec 3>&1; testActy=$(dialog --inputbox "Set test actuator y" 0 0 "$testActx" 2>&1 1>&3);
+exec 3>&-;
+echo "$testActy" > ./conf/conf_testActy.txt
+;;
+
+    settaa)
+exec 3>&1; testActa=$(dialog --inputbox "Set test actuator a" 0 0 "$testActa" 2>&1 1>&3);
+exec 3>&-;
+echo "$testActa" > ./conf/conf_testActa.txt
+;;
+
+
+    testact1)
+$execname << EOF
+readshmim ${dmRM}
+setpix ${dmRM} $testActa $testActx $testActy
+exit
+EOF
+echo "1" > ./status/stat_testact.txt
+menutestmode_default="testact0"
+;;
+
+   testact0)
+$execname << EOF
+readshmim ${dmRM}
+setpix ${dmRM} 0.0 $testActx $testActy
+exit
+EOF
+echo "0" > ./status/stat_testact.txt
+menutestmode_default="testact1"
+;;
+
+
+
 
 	settmn)
 exec 3>&1;testModeNb=$(dialog --inputbox "Set test DM mode number" 0 0 "$testModeNb" 2>&1 1>&3);
