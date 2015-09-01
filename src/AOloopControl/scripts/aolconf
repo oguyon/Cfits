@@ -940,6 +940,7 @@ menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix               \Z4\Zbaol${LOO
 fi
 
 
+ReaddmwrefOname
 dmwrefOfile="/tmp/${dmwrefO}.im.shm"
 if [ -f $dmwrefOfile ]; then
 getshmimsize ${dmwrefO}
