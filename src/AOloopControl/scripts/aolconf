@@ -1076,11 +1076,11 @@ echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
 Readdm2dmOname
 
 dmwrefRM="aol${dmolinknb}_zrespM"
-echo "$dmwrefRM" > ./conf/conf_dmwrefRM_fname.txt
+echo "$dmwrefRM" > ./conf/conf_dmwrefRM_name.txt
 ReaddmwrefRMname
 
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
-echo "$dmwrefO" > ./conf/conf_dmwrefO_fname.txt
+echo "$dmwrefO" > ./conf/conf_dmwrefO_name.txt
 ;;
 
 
