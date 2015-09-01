@@ -897,9 +897,17 @@ if [ "${dm2dm_mode}" = "1" ];
 then
 menuitems+=( "dm2dm0" " [   ON  ] De-activate DM to DM mode" )
 
-makemenuitemstringaolshm "dm2dmM" "DM modes (${dmxsize} modes used)"
-menuitems+=( "dm2dmM" "$menustring" )
 
+Readdm2dmMname
+dm2dmMfile="/tmp/${dm2dmM}.im.shm"
+if [ -f $dm2dmMfile ]; then
+getshmimsize ${dm2dmM}
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn]  DM to DM modes                 \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${dm2dmM}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM modes                 \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${dm2dmM}\Zn" )
+fi
 
 
 Readdm2dmOname
@@ -1128,9 +1136,9 @@ menutop_default="dm2dm0"
 ;;
     dm2dmM)
 exec 3>&1;
-dm2dmMfname=$(dialog --title "Select DM modes file name" --stdout --fselect "${dm2dmMfname}" $nbwlines $nbwcols)
-echo "$dm2dmMfname" > ./conf/conf_dm2dmM_fname.txt
-ReadConfFile "dm2dmM"
+dm2dmM=$(dialog --inputbox "dm2dmM" 0 0 "$dm2dmM" 2>&1 1>&3);
+echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
+Readdm2dmMname
 ;;
 
     dm2dmO)
