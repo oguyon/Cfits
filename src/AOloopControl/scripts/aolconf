@@ -247,6 +247,19 @@ rm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm
 ln -s /tmp/${dm2dmO}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm
 }
 
+function Readdm2dmMname {
+file="./conf/conf_dm2dmM_name.txt"
+if [ -a $file ]
+	then
+	dm2dmM=$(echo "$(cat $file)")
+	else
+	dm2dmM="empty" #default
+fi
+rm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm 
+ln -s /tmp/${dm2dmM}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm
+}
+
+
 function ReaddmwrefRMname {
 file="./conf/conf_dmwrefRM_name.txt"
 if [ -a $file ]
@@ -255,8 +268,6 @@ if [ -a $file ]
 	else
 	dmwrefRM="empty" #default
 fi
-# DM ouput to other loop
-echo "linking DM output to loop / channel"
 rm /tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm 
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
 }
@@ -269,8 +280,6 @@ if [ -a $file ]
 	else
 	dmwrefO="empty" #default
 fi
-# DM ouput to other loop
-echo "linking DM output to loop / channel"
 rm /tmp/aol${LOOPNUMBER}_dmwrefO.im.shm 
 ln -s /tmp/${dmwrefO}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefO.im.shm
 }
@@ -1082,9 +1091,16 @@ done
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
 
-dm2dmMfname="../loop${dmolinknb}/mkmodestmp/fmodes0all.fits"
-echo "$dm2dmMfname" > ./conf/conf_dm2dmM_fname.txt
 
+Cfits << EOF
+loadfits "../loop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$dmxsize]" im
+savefits im "!./conf/conf_dm2dmM.fits" 
+cpsh im aol${dmolinknb}_modes0_$dmxsize
+quit
+EOF
+dm2dmM="aol${dmolinknb}_modes0_$dmxsize"
+echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
+Readdm2dmMname
 
 dmnb=$( cat ../loop${dmolinknb}/conf/conf_DMindex.txt )
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%ld", $1+4)}')
