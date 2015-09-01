@@ -2954,15 +2954,15 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
-#for i in `seq 0 $(( $NBblocks - 1 ))`;
-#do
-#i2=$( printf "%02d" "$i" )
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMc${i2}" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMcact${i2}" C-m
-#done
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMc" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_contrMcact" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_gainb" C-m
+sleep 2
+
+tmuxname="aol${LOOPNUMBER}wfszpo"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execnameLOG -n aol${LOOPNUMBER}wfszpo"
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszp 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref"
 menucontrolloop_default="K"
 ;; 
    	 K)

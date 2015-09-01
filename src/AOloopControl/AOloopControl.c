@@ -6616,9 +6616,6 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
     }
 
 
-    printf("TEST 00\n");
-    fflush(stdout);
-
     cntsumold = 0;
     while(1 == 1)
     {
@@ -6640,10 +6637,6 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
         
         if(cntsum != cntsumold)
         {
-            printf("update wfsref\n");
-            fflush(stdout);
-
-        
             memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
             for(ch=0; ch<NBzp; ch++)
                 for(ii=0;ii<wfsxysize;ii++)
