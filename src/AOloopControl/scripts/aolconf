@@ -842,7 +842,6 @@ file="./conf/conf_dm2dmModes_name.txt"
 dm2dmModesMast=$( cat $file )
 
 
-Readdm2dmOname
 
 
 menuitems+=( " " " ")
@@ -859,6 +858,11 @@ menuitems+=( "dm2dm0" " [   ON  ] De-activate DM to DM mode" )
 makemenuitemstringaolshm "dm2dmM" "DM modes (${dmxsize} modes used)"
 menuitems+=( "dm2dmM" "$menustring" )
 
+
+
+
+echo "dm2dmO = $dm2dmO"
+exit
 
 dm2dmOfile="/tmp/${dm2dmO}.im.shm"
 if [ -f $dm2dmOfile ]; then
