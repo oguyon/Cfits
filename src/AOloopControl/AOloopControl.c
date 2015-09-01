@@ -396,9 +396,9 @@ int AOloopControl_ProcessZrespM_cli()
 
 int AOloopControl_WFSzpupdate_loop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)==0)
     {
-        AOloopControl_WFSzpupdate_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+        AOloopControl_WFSzpupdate_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
         return 0;
     }
     else
@@ -6439,9 +6439,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 //
 // will run until SIGUSR1 received
 //
-int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref_name)
+int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name)
 {
-    long IDzpdm, IDzrespM, IDwfsref;
+    long IDzpdm, IDzrespM, IDwfszp;
     long dmxsize, dmysize, dmxysize;
     long wfsxsize, wfsysize, wfsxysize;
     long IDtmp;
@@ -6460,7 +6460,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     
     
     IDzrespM = image_ID(IDzrespM_name);
-    IDwfsref = image_ID(IDwfsref_name);
+    IDwfszp = image_ID(IDwfszp_name);
    
    
     // array sizes extracted from IDzpdm and IDwfsref
@@ -6468,8 +6468,8 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     dmxsize = data.image[IDzpdm].md[0].size[0];
     dmysize = data.image[IDzpdm].md[0].size[1];
     dmxysize = dmxsize*dmysize;
-    wfsxsize = data.image[IDwfsref].md[0].size[0];
-    wfsysize = data.image[IDwfsref].md[0].size[1];
+    wfsxsize = data.image[IDwfszp].md[0].size[0];
+    wfsysize = data.image[IDwfszp].md[0].size[1];
     wfsxysize = wfsxsize*wfsysize;
     
     // VERIFY SIZES
@@ -6508,8 +6508,8 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     
     while(data.signal_USR1==0)
     {
-        memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
-
+        memset(data.image[IDtmp].array.F, '\0', sizeof(float)*wfsxysize);
+        
         while(zpcnt0 == data.image[IDzpdm].md[0].cnt0)
             usleep(10);
         
@@ -6519,7 +6519,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
       //  sem_wait(data.image[IDzpdm].semptr[1]);
  
         
-        printf("WFS zero point offset update  # %8ld       (%s -> %s)  ", zpcnt, data.image[IDzpdm].name, data.image[IDwfsref].name);
+        printf("WFS zero point offset update  # %8ld       (%s -> %s)  ", zpcnt, data.image[IDzpdm].name, data.image[IDwfszp].name);
         fflush(stdout);
         
         
@@ -6538,12 +6538,11 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
  
         
         // copy results to IDwfsref
-        data.image[IDwfsref].md[0].write = 1;
-        memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
-        data.image[IDwfsref].md[0].cnt0 ++;
-        data.image[IDwfsref].md[0].write = 0;
-        COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
-    
+        data.image[IDwfszp].md[0].write = 1;
+        memcpy(data.image[IDwfszp].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
+        data.image[IDwfszp].md[0].cnt0 ++;
+        data.image[IDwfszp].md[0].write = 0;
+        COREMOD_MEMORY_image_set_sempost(IDwfszp_name, 0);    
         zpcnt++;
     }
     

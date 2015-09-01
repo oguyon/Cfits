@@ -2962,7 +2962,7 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG -n aol${LOOPNUMBER}wfszpo" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
-tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszp 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
+tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
 menucontrolloop_default="K"
 ;; 
    	 K)
@@ -3205,7 +3205,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
 menucontrolloop_default="zploff"
 ;; 
 	zploff)
