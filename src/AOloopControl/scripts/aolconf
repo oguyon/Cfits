@@ -689,7 +689,7 @@ if [ "${dmwfsrefmode}" = "1" ]; then
     tmux send-keys -t $tmuxname "readshmim ${dmwrefRM}" C-m
     tmux send-keys -t $tmuxname "readshmim ${dmwrefO}" C-m
 fi
-    tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmavecombmode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
+    tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
 
