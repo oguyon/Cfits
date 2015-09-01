@@ -3428,11 +3428,7 @@ stringcenter "START/STOP SIMULATOR   (tmux ao${LOOPNUMBER}test)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-#if [ "${testdmturbstatus}" = "OFF" ];
-#then
-#menuitems+=( "-" " Need turbulence scrren to be running to start")
-#menuitems+=( "-" " ")
-#else
+
 if [ "${testloopstatus}" = "OFF" ];
 then
 menuitems+=( "Start" "             START simulated WFS               " )
@@ -3446,9 +3442,73 @@ menuitems+=( "TMsync" "[${AOsystsimsync}] WFS sync mode")
 menuitems+=( "TMdelay" "[${AOsystsimWFSdelayus} us] WFS delay")
 
 
+
+
+
+
+
+
+
+
+
+menuitems+=( "-" " " )
+stringcenter "SINGLE ACTUATOR POKE"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
+
+file="./conf/conf_testActx.txt"
+if [ -a $file ]
+	then
+	testActx=$(echo "$(cat $file)")
+	else
+	testActx="1"
+fi
+menuitems+=( "settax" "[${testActx}] Set test actuator x coord" )
+
+file="./conf/conf_testActy.txt"
+if [ -a $file ]
+	then
+	testActy=$(echo "$(cat $file)")
+	else
+	testActy="1"
+fi
+menuitems+=( "settay" "[${testActy}] Set test actuator y coord" )
+
+
+file="./conf/conf_testActa.txt"
+if [ -a $file ]
+	then
+	testActa=$(echo "$(cat $file)")
+	else
+	testActa="1"
+fi
+menuitems+=( "settaa" "[${testActa}] Set test actuator Amplitude" )
+
+
+menuitems+=( "testact1" "[${testActy}] Set test actuator y coord" )
+menuitems+=( "testact0" "[${testActy}] Set test actuator y coord" )
+
+
+if [ "${testactstat}" = "0" ];
+then
+menuitems+=( "testact1" "             Apply actuator command               " )
+else
+menuitems+=( "testact0" "             Reset actuator" )
+fi
+
+
+
+
+
+
+
+
+
+
+
 menuitems+=( "-" " " )
 stringcenter "SYSTEM RESPONSE TEST / CALIBRATION"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 
 file="./conf/conf_testModeNb.txt"
@@ -3539,7 +3599,7 @@ menuitems+=( "dmmtr" "DM mode temporal response test")
 
 menuitems+=( "-" " " )
 stringcenter "MONITORING"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "psfv" "PSF view")
 
 
