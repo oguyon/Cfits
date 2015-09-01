@@ -235,11 +235,18 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
 
+  //  printf("Setting pixel %ld %ld of image %s [%ld] to %f\n", x, y, ID_name, ID, (float) value);
+
     data.image[ID].md[0].write = 1;
     if(atype == FLOAT)
-        data.image[ID].array.F[y*naxes[0]+x] = value;
+    {
+        data.image[ID].array.F[y*naxes[0]+x] = (float) value;
+    //    printf("float -> %f\n", data.image[ID].array.F[y*naxes[0]+x]);
+    }
     else if(atype == DOUBLE)
+    {
         data.image[ID].array.D[y*naxes[0]+x] = value;
+    }
     else
     {
         n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
