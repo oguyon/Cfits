@@ -406,6 +406,22 @@ int AOloopControl_WFSzpupdate_loop_cli()
 }
 
 
+// int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name);
+
+int AOloopControl_WFSzeropoint_sum_update_loop_cli()
+{
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0)
+    {
+        AOloopControl_WFSzeropoint_sum_update_loop(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 int AOloopControl_Measure_Resp_Matrix_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
@@ -866,6 +882,15 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].syntax,"<dm offset [shared mem]> <zonal resp M [shared mem]> <nominal WFS reference>  <modified WFS reference>");
     strcpy(data.cmd[data.NBcmd].example,"aolzpwfsloop dmZP zrespM wfsref0 wfsref");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aolzpwfscloop");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_WFSzeropoint_sum_update_loop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"WFS zero point offset loop: combine multiple input channels");
+    strcpy(data.cmd[data.NBcmd].syntax,"<name prefix> <number of channels> <wfsref0> <wfsref>");
+    strcpy(data.cmd[data.NBcmd].example,"aolzpwfscloop wfs2zpoffset 4 wfsref0 wfsref");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)");
     data.NBcmd++;
 
 
@@ -6559,22 +6584,20 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
     long ch;
     long IDtmp;
     long ii;
-
-
+    char name[200];
 
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges
 
-
+    IDwfsref = image_ID(IDwfsref_name);
     wfsxsize = data.image[IDwfsref].md[0].size[0];
     wfsysize = data.image[IDwfsref].md[0].size[1];
     wfsxysize = wfsxsize*wfsysize;
     IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
     IDwfsref0 = image_ID(IDwfsref0_name);
-    IDwfsref = image_ID(IDwfsref_name);  
-
+   
     if(data.image[IDwfsref].sem > 1) // drive semaphore #1 to zero
         while(sem_trywait(data.image[IDwfsref].semptr[1])==0) {}
     else
@@ -6582,6 +6605,19 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
             printf("ERROR: semaphore #1 missing from image %s\n", IDwfsref_name);
             exit(0);
         }
+
+    IDwfszparray = (long*) malloc(sizeof(long)*NBzp);
+    // create / read channels
+    for(ch=0; ch<NBzp; ch++)
+    {
+        sprintf(name, "%s%ld", ID_WFSzp_name, ch);
+        AOloopControl_2Dloadcreate_shmim(name, "", wfsxsize, wfsysize);
+        IDwfszparray[ch] = image_ID(name);
+    }
+
+
+    printf("TEST 00\n");
+    fflush(stdout);
 
     cntsumold = 0;
     while(1 == 1)
@@ -6599,9 +6635,15 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
         cntsum = 0;
         for(ch=0; ch<NBzp; ch++)
             cntsum += data.image[IDwfszparray[ch]].md[0].cnt0;
-            
+        
+        
+        
         if(cntsum != cntsumold)
         {
+            printf("update wfsref\n");
+            fflush(stdout);
+
+        
             memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
             for(ch=0; ch<NBzp; ch++)
                 for(ii=0;ii<wfsxysize;ii++)
@@ -6613,10 +6655,13 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
             data.image[IDwfsref].md[0].cnt0 ++;
             data.image[IDwfsref].md[0].write = 0;
             COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
+
+            cntsumold = cntsum;
         }
     }
 
-
+    free(IDwfszparray);
+    
     return(0);
 }
 

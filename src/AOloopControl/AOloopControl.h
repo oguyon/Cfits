@@ -156,6 +156,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
 long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize);
 int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl, int normalize);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name);
+int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name);
 
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);

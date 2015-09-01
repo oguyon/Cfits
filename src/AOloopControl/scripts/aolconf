@@ -2074,7 +2074,7 @@ state="menuconfigureloop"
 	dmSlM)
 case $amode in
         0)
-./mkDMslaveAct ./conf/aol${LOOPNUMBER}_dmmap.fits 0.1
+./mkDMslaveAct ./conf/aol${LOOPNUMBER}_dmmap.fits 0.7
 echo "conf/dmslaved.fits" > ./conf/conf_dmslaved_fname.txt
 ReadConfFile "dmslaved"
 ;;
