@@ -597,7 +597,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             
         IDtmpoutdm = create_2Dimage_ID("_tmpoutdm", dmdispcombconf[DMindex].xsizeout, dmdispcombconf[DMindex].ysizeout); 
         sizexyDMout = dmdispcombconf[DMindex].xsizeout*dmdispcombconf[DMindex].ysizeout;
+        printf("done\n\n");
+        fflush(stdout);
    }
+   
+   
    
     dmdispcombconf[DMindex].wfsrefmode = wfsrefmode;
     if(wfsrefmode == 1) 
@@ -630,6 +634,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             }
         IDtmpoutref = create_2Dimage_ID("_tmpoutref", dmdispcombconf[DMindex].xsizewfsref, dmdispcombconf[DMindex].ysizewfsref);
         sizexywfsref = dmdispcombconf[DMindex].xsizewfsref*dmdispcombconf[DMindex].ysizewfsref;
+        printf("done\n\n");
+        fflush(stdout);
     }
 
     printf("Initialize channels\n");
