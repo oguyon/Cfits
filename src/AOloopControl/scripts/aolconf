@@ -239,7 +239,7 @@ if [ -a $file ]
 	then
 	dm2dmO=$(echo "$(cat $file)")
 	else
-	dm2dmO="dmO" #default
+	dm2dmO="empty" #default
 fi
 # DM ouput to other loop
 echo "linking DM output to loop / channel"
@@ -253,12 +253,26 @@ if [ -a $file ]
 	then
 	dmwrefRM=$(echo "$(cat $file)")
 	else
-	dmwrefRM="dmO" #default
+	dmwrefRM="empty" #default
 fi
 # DM ouput to other loop
 echo "linking DM output to loop / channel"
 rm /tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm 
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
+}
+
+function ReaddmwrefOname {
+file="./conf/conf_dmwrefO_name.txt"
+if [ -a $file ]
+	then
+	dmwrefO=$(echo "$(cat $file)")
+	else
+	dmwrefO="empty" #default
+fi
+# DM ouput to other loop
+echo "linking DM output to loop / channel"
+rm /tmp/aol${LOOPNUMBER}_dmwrefO.im.shm 
+ln -s /tmp/${dmwrefO}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefO.im.shm
 }
 
 
@@ -1081,6 +1095,7 @@ ReaddmwrefRMname
 
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
 echo "$dmwrefO" > ./conf/conf_dmwrefO_name.txt
+ReaddmwrefOname
 ;;
 
 
