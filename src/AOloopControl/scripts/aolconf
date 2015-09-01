@@ -3200,8 +3200,7 @@ echo " ON" > ./status/stat_zploopON.txt
 tmuxname="aol${LOOPNUMBER}zploop"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
