@@ -347,10 +347,10 @@ int AOloopControl_printDMconf()
 {
     long DMindex;
     
-    printf("ind on  x   y Nbch busy maxvolt  monint stat IDdisp IDvolt voltname\n");
+    printf("DM on   x   y Nbch busy maxvolt  monint stat IDdisp IDvolt voltname\n");
     for(DMindex=0; DMindex<NB_DMindex; DMindex++)
         {
-            printf("%ld  %d  %3ld %3ld  %02ld %d  %6f  %8ld  %02d  %3ld %3ld  %s\n", DMindex, dmdispcombconf[DMindex].ON, dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].NBchannel, dmdispcombconf[DMindex].busy, dmdispcombconf[DMindex].MAXVOLT, dmdispcombconf[DMindex].moninterval, dmdispcombconf[DMindex].status, dmdispcombconf[DMindex].IDdisp, dmdispcombconf[DMindex].IDvolt, dmdispcombconf[DMindex].voltname);
+            printf("%ld  %d  %3ld %3ld  %02ld %d  %6.2f  %8ld  %02d  %3ld %3ld  %s\n", DMindex, dmdispcombconf[DMindex].ON, dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].NBchannel, dmdispcombconf[DMindex].busy, dmdispcombconf[DMindex].MAXVOLT, dmdispcombconf[DMindex].moninterval, dmdispcombconf[DMindex].status, dmdispcombconf[DMindex].IDdisp, dmdispcombconf[DMindex].IDvolt, dmdispcombconf[DMindex].voltname);
         }
     
     return(0);
