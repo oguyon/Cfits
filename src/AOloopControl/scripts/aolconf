@@ -860,10 +860,10 @@ dm2dmOfile="/tmp/${dm2dmO}.im.shm"
 if [ -f $dm2dmOfile ]; then
 getshmimsize ${dm2dmO}
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn]  DM output stream     \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${dm2dmO}\Zn" )
+menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn]  DM output stream            \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${dm2dmO}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dm2dmO" "[${OKstr}]  DM output stream     \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${dm2dmO}\Zn" )
+menuitems+=( "dm2dmO" "[${OKstr}]  DM output stream            \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${dm2dmO}\Zn" )
 fi
 
 
@@ -896,10 +896,10 @@ dmwrefRMfile="/tmp/${dmwrefRM}.im.shm"
 if [ -f $dmwrefRMfile ]; then
 getshmimsize ${dmwrefRM}
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${dmwrefRM}\Zn" )
+menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${dmwrefRM}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${dmwrefRM}\Zn" )
+menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${dmwrefRM}\Zn" )
 fi
 
 
@@ -907,10 +907,10 @@ dmwrefOfile="/tmp/${dmwrefO}.im.shm"
 if [ -f $dmwrefOfile ]; then
 getshmimsize ${dmwrefO}
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
 fi
 
 
@@ -1050,9 +1050,11 @@ dmnb=$( cat ../loop${dmolinknb}/conf/conf_DMindex.txt )
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%ld", $1+4)}')
 dm2dmO="dm${dmnb}disp${dmolinkchan1}"
 echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
+Readdm2dmOname
 
 dmwrefRM="aol${dmolinknb}_zrespM"
 echo "$dmwrefRM" > ./conf/conf_dmwrefRM_fname.txt
+
 
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
 echo "$dmwrefO" > ./conf/conf_dmwrefO_fname.txt
