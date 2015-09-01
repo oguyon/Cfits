@@ -560,82 +560,87 @@ tmux send-keys -t DMturbws "exit" C-m
 
 
 function ReadDMturbtint {
-file="./conf/conf_dmturbtint.txt"
-if [ -a $file ]
-	then
-	dmturbtint=$(echo "$(cat $file)")
-	else
-	dmturbtint=0.1 #default
-fi
-tmux new-session -d -s DMturbtint
-tmux send-keys -t DMturbtint "$execnameLOG " C-m
-tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
-tmux send-keys -t DMturbtint "exit" C-m
-tmux send-keys -t DMturbtint "exit" C-m
+    file="./conf/conf_dmturbtint.txt"
+    if [ -a $file ]
+        then
+        dmturbtint=$(echo "$(cat $file)")
+        else
+        dmturbtint=0.1 #default
+                fi
+                tmux new-session -d -s DMturbtint
+                tmux send-keys -t DMturbtint "$execnameLOG " C-m
+                tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
+                tmux send-keys -t DMturbtint "exit" C-m
+                tmux send-keys -t DMturbtint "exit" C-m
 }
 
 
+
 function ReadTMsync {
-file="./conf/conf_AOsystsimsync.txt"
-if [ -a $file ]
-	then
-	AOsystsimsync=$(echo "$(cat $file)")
-	else
-	AOsystsimsync=2 #default
-fi
+    file="./conf/conf_AOsystsimsync.txt"
+    if [ -a $file ]
+        then
+        AOsystsimsync=$(echo "$(cat $file)")
+        else
+        AOsystsimsync=2 #default
+                fi
 }
 
 
 function ReadTMdelayus {
-file="./conf/conf_AOsystsimWFSdelayus.txt"
-if [ -a $file ]
-	then
-	AOsystsimWFSdelayus=$(echo "$(cat $file)")
-	else
-	AOsystsimWFSdelayus=100000 #default
-fi
+    file="./conf/conf_AOsystsimWFSdelayus.txt"
+    if [ -a $file ]
+        then
+        AOsystsimWFSdelayus=$(echo "$(cat $file)")
+        else
+        AOsystsimWFSdelayus=100000 #default
+                fi
 }
+
 
 
 
 
 
 function initDM {
-file="./conf/conf_dm${DMindex}xsize.txt"
-if [ -a $file ]
-	then
-	dmxsize=$(echo "$(cat $file)")
-	else
-	dmxsize=32 #default
-fi
-file="./conf/conf_dm${DMindex}ysize.txt"
-if [ -a $file ]
-	then
-	dmysize=$(echo "$(cat $file)")
-	else
-	dmysize=32 #default
-fi
+    file="./conf/conf_dm${DMindex}xsize.txt"
+    if [ -a $file ]
+        then
+        dmxsize=$(echo "$(cat $file)")
+        else
+        dmxsize=32 #default
+                fi
+                file="./conf/conf_dm${DMindex}ysize.txt"
+                if [ -a $file ]
+                    then
+                    dmysize=$(echo "$(cat $file)")
+                    else
+                    dmysize=32 #default
+                            fi
 
-echo "dm2dm_mode = $dm2dm_mode"
-if [ ! "$dm2dm_mode" = "1" ]; then
-dmmodes="empty"
-dm2dmO="empty"
-fi
-echo "dmwfsrefmode = $dmwfsrefmode"
-if [ ! "$dmwfsrefmode" = "1" ]; then
-dmwrefRM="empty"
-dmwrefO="empty"
-fi
+                            echo "dm2dm_mode = $dm2dm_mode"
+                            if [ ! "$dm2dm_mode" = "1" ];
+    then
+    dmmodes="empty"
+    dm2dmO="empty"
+    fi
+    echo "dmwfsrefmode = $dmwfsrefmode"
+    if [ ! "$dmwfsrefmode" = "1" ];
+    then
+    dmwrefRM="empty"
+    dmwrefO="empty"
+    fi
 
 
 # start main DM channels
-tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
-tmux kill-session -t $tmuxname
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execnameLOG" C-m
-tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
-tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 $dm2dm_mode ${dmmodes} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
+    tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
+    tmux kill-session -t $tmuxname
+    tmux new-session -d -s $tmuxname
+    tmux send-keys -t $tmuxname "$execnameLOG" C-m
+    tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
+    tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 $dm2dm_mode ${dmmodes} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
+
 
 
 
@@ -902,10 +907,10 @@ dmwrefOfile="/tmp/${dmwrefO}.im.shm"
 if [ -f $dmwrefOfile ]; then
 getshmimsize ${dmwrefO}
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefO" "[${OKstr}] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
 fi
 
 
@@ -1049,7 +1054,7 @@ echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
 dmwrefRM="aol${dmolinknb}_zrespM"
 echo "$dmwrefRM" > ./conf/conf_dmwrefRM_fname.txt
 
-dmwrefO="aol${dmolinknb}_wfsref${dmolinkchan}"
+dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
 echo "$dmwrefO" > ./conf/conf_dmwrefO_fname.txt
 ;;
 
