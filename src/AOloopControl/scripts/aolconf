@@ -860,8 +860,8 @@ menuitems+=( "dm2dmM" "$menustring" )
 
 
 
-
-echo "dm2dmO = $dm2dmO"
+Readdm2dmOname
+echo "dm2dmO    = $dm2dmO"
 exit
 
 dm2dmOfile="/tmp/${dm2dmO}.im.shm"
