@@ -571,7 +571,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         printf("INITIALIZATION AND VERIFICATION FOR dm2dm MODE\n");
         fflush(stdout);
 
-           dmdispcombconf[DMindex].ID_dm2dm_DMmodes = image_ID(dm2dm_DMmodes);
+        dmdispcombconf[DMindex].ID_dm2dm_DMmodes = image_ID(dm2dm_DMmodes);
         if(data.image[dmdispcombconf[DMindex].ID_dm2dm_DMmodes].md[0].naxis != 3)
             {
                 sprintf(errstr, "image \"%s\" should have naxis = 3", dm2dm_DMmodes);
