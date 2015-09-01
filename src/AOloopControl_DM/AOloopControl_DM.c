@@ -564,9 +564,14 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[DMindex].ysizeout = 0;
 
     dmdispcombconf[DMindex].dm2dm_mode = dm2dm_mode;
-   if(dm2dm_mode == 1) // INITIALIZATION AND VERIFICATION FOR dm2dm MODE
+    
+
+   if(dm2dm_mode == 1) 
    {
-        dmdispcombconf[DMindex].ID_dm2dm_DMmodes = image_ID(dm2dm_DMmodes);
+        printf("INITIALIZATION AND VERIFICATION FOR dm2dm MODE\n");
+        fflush(stdout);
+
+           dmdispcombconf[DMindex].ID_dm2dm_DMmodes = image_ID(dm2dm_DMmodes);
         if(data.image[dmdispcombconf[DMindex].ID_dm2dm_DMmodes].md[0].naxis != 3)
             {
                 sprintf(errstr, "image \"%s\" should have naxis = 3", dm2dm_DMmodes);
@@ -595,8 +600,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
    }
    
     dmdispcombconf[DMindex].wfsrefmode = wfsrefmode;
-    if(wfsrefmode == 1) // INITIALIZATION AND VERIFICATION FOR wfsref MODE
+    if(wfsrefmode == 1) 
     {
+        printf("INITIALIZATION AND VERIFICATION FOR wfsref MODE\n");
+        fflush(stdout);
+    
         dmdispcombconf[DMindex].ID_wfsref_RespMat = image_ID(wfsref_WFSRespMat);
         if(data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].md[0].naxis != 3)
             {
@@ -626,6 +634,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
     printf("Initialize channels\n");
     printf("Max DM stroke = %f um\n", DMSTROKE100*dmdispcombconf[0].MAXVOLT/100.0*dmdispcombconf[0].MAXVOLT/100.0);
+    fflush(stdout);
 
     for(ch=0; ch<dmdispcombconf[DMindex].NBchannel; ch++)
     {
