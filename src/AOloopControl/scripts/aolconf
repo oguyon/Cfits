@@ -841,6 +841,10 @@ fi
 file="./conf/conf_dm2dmModes_name.txt"
 dm2dmModesMast=$( cat $file )
 
+
+Readdm2dmOname
+
+
 menuitems+=( " " " ")
 if [ "${dm2dm_mode}" = "0" ];
 then
