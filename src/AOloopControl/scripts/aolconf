@@ -674,6 +674,8 @@ function initDM {
 
 # start main DM channels
     tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
+    echo "tmux session :  $tmuxname"
+    exit
     tmux kill-session -t $tmuxname
     tmux new-session -d -s $tmuxname
     tmux send-keys -t $tmuxname "$execnameLOG" C-m
