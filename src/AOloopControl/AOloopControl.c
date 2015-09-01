@@ -6439,9 +6439,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 //
 // will run until SIGUSR1 received
 //
-int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref0_name, char *IDwfsref_name)
+int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfsref_name)
 {
-    long IDzpdm, IDzrespM, IDwfsref, IDwfsref0;
+    long IDzpdm, IDzrespM, IDwfsref;
     long dmxsize, dmysize, dmxysize;
     long wfsxsize, wfsysize, wfsxysize;
     long IDtmp;
@@ -6460,7 +6460,6 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     
     
     IDzrespM = image_ID(IDzrespM_name);
-    IDwfsref0 = image_ID(IDwfsref0_name);
     IDwfsref = image_ID(IDwfsref_name);
    
    
@@ -6492,18 +6491,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
             exit(0);
         }
     
-    
-    // verify wfsref0
-       if(data.image[IDwfsref0].md[0].size[0]!=wfsxsize)
-        {
-            printf("ERROR: wfsref0 xsize %ld does not match wfsxsize %ld\n", data.image[IDzrespM].md[0].size[0], wfsxsize);
-            exit(0);
-        }
-    if(data.image[IDwfsref0].md[0].size[1]!=wfsysize)
-        {
-            printf("ERROR: wfsref0 ysize %ld does not match wfsysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
-            exit(0);
-        }
+  
  
     IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
     

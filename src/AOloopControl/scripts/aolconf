@@ -2962,7 +2962,7 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG -n aol${LOOPNUMBER}wfszpo" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
-tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszp 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref"
+tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszp 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
 menucontrolloop_default="K"
 ;; 
    	 K)
@@ -2971,6 +2971,11 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
 pkill -9 aolrun-${LOOPNUMBER}
+
+pkill -9 aol${LOOPNUMBER}wfszpo
+tmuxname="aol${LOOPNUMBER}wfszpo"
+tmux kill-session -t $tmuxname
+
 menucontrolloop_default="S"
 ;;
    	 Nloopon)
