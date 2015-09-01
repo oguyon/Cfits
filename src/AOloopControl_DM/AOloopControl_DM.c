@@ -485,8 +485,9 @@ int AOloopControl_DM_unloadconf()
 // voltmode = 1 if DM volt computed
 //
 // AveMode: averaging mode 
-//      0: do not appy DC offset command to average
+//      0: do not appy DC offset command to average, but offset combined average to mid-range, and clip displacement at >0.0
 //      1: apply DC offset to remove average
+//      2: do not apply DC offset, do not offset sum, do not clip
 //
 // NOTE: DM displacement is biased to mid displacement
 // NOTE: responds immediately to sem[1] in dmdisp
@@ -753,13 +754,15 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 }
             dmdispcombconf[DMindex].status = 5;
 
-            for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+            if(AveMode < 2)
             {
-                data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel-ave;
-                if(data.image[IDdispt].array.F[ii]<0.0)
-                    data.image[IDdispt].array.F[ii] = 0.0;
+                    for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+                {
+                    data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel-ave;
+                    if(data.image[IDdispt].array.F[ii]<0.0)
+                        data.image[IDdispt].array.F[ii] = 0.0;
+                }
             }
-
             dmdispcombconf[DMindex].status = 6;
 
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].write = 1;
