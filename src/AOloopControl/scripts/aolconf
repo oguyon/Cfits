@@ -861,9 +861,6 @@ menuitems+=( "dm2dmM" "$menustring" )
 
 
 Readdm2dmOname
-echo "dm2dmO    = $dm2dmO"
-exit
-
 dm2dmOfile="/tmp/${dm2dmO}.im.shm"
 if [ -f $dm2dmOfile ]; then
 getshmimsize ${dm2dmO}
