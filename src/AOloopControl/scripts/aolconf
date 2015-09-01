@@ -668,7 +668,9 @@ function initDM {
     tmux kill-session -t $tmuxname
     tmux new-session -d -s $tmuxname
     tmux send-keys -t $tmuxname "$execnameLOG" C-m
+if [ "$dmvoltmode" = "1" ]; then 
     tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
+fi
     tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 0 $dm2dm_mode ${dmmodes} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
