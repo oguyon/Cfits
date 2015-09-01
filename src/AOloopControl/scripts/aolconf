@@ -2959,7 +2959,7 @@ sleep 2
 tmuxname="aol${LOOPNUMBER}wfszpo"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execnameLOG -n aol${LOOPNUMBER}wfszpo"
+tmux send-keys -t $tmuxname "$execnameLOG -n aol${LOOPNUMBER}wfszpo" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszp 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref"
