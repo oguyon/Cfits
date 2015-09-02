@@ -1842,7 +1842,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-exit(0);
+
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
@@ -1943,6 +1943,8 @@ exit(0);
         }
         save_fits("fmodes2all", "!./mkmodestmp/fmodes2all.fits");
 
+
+exit(0);
 
         /// STEP 5: COMPUTE WFS RESPONSE TO MODES -> fmodesWFS0all.fits
         // WFS modes
