@@ -1157,6 +1157,7 @@ int AOloopControl_DM_dmturb(long DMindex)
             totim += data.image[IDs2].array.F[ii];
         for(ii=0;ii<imsize*imsize;ii++)
             data.image[IDs2].array.F[ii] /= totim;
+        IDs2 = fconvolve("screen1", "kernim", "screen2");
         delete_image_ID("kernim");
       //  IDs2 = gauss_filter("screen1", "screen2", 20.0, 50);
         save_fits("screen1", "!turbscreen1.fits");
