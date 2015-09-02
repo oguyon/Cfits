@@ -1156,7 +1156,7 @@ Readdm2dmOname
 
 
 Cfits << EOF
-loadfits "../loop${dmolinknb}/mkmodestmp/fmodesWFS0all.fits[*,*,1:$dmxsize]" im
+loadfits "../loop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$dmxsize]" im
 savefits im "!./conf/conf_dmwrefRM.fits" 
 cpsh im aol${dmolinknb}_modesWFS0_$dmxsize
 quit
