@@ -1091,6 +1091,7 @@ int AOloopControl_DM_dmturb_printstatus(long DMindex)
     printf("ampl    =  %.2f um\n", dmturbconf[DMindex].ampl);
     printf("wspeed  =  %.2f m/s\n", dmturbconf[DMindex].wspeed);
     printf("tint    =  %ld us\n", dmturbconf[DMindex].tint);
+    printf("LOcoeff =  %.2f\n", dmturbconf[DMindex].LOcoeff);
     printf("Requested uptdate frequ = %.2f kHz\n", 0.001/(1.0e-6*dmturbconf[DMindex].tint));
     printf("\n");
     printf("\n");
