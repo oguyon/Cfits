@@ -807,7 +807,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].cnt0++;
                 data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].write = 0;            
                 sem_post(data.image[dmdispcombconf[DMindex].ID_wfsref_out].semptr[0]);   
-                
+                printf("Done\n");
+                fflush(stdout);
             }
             
             
