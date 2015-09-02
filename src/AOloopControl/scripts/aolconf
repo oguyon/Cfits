@@ -1284,7 +1284,7 @@ echo "${SVDlim[10#${mb}]}" > ./conf/block${mb}_SVDlim.txt
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} ${mb} ${SVDlim[10#${mb}]}" C-m
-	
+exit
 tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
