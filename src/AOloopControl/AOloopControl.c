@@ -1514,7 +1514,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
     }
     else
-        totm = msizex*msizey;
+        totm = 1.0;
 
     if(BlockNB<0)
     {
