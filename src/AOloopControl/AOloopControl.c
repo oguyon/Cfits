@@ -1727,7 +1727,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
       /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
-
+        ID = image_ID(ID_name);
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
             {
                 printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
@@ -1737,65 +1737,22 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             wfsxsize = data.image[IDzrespM].md[0].size[0];
             wfsysize = data.image[IDzrespM].md[0].size[1];
             wfssize = wfsxsize*wfsysize;
+        IDm = create_3Dimage_ID("fmodesWFS00all", wfsxsize, wfsysize, data.image[ID].md[0].size[2]);
 
-
-            /// Load ... or create WFS mask
-            IDwfsmask = image_ID("wfsmask");
-            if((wfsxsize!=data.image[IDwfsmask].md[0].size[0])||(wfsysize!=data.image[IDwfsmask].md[0].size[1]))
-            {
-                printf("ERROR: File wfsmask has wrong size\n");
-                exit(0);
-            }
-            if(IDwfsmask==-1)
-            {
-                IDwfsmask = create_2Dimage_ID("wfsmask", wfsxsize, wfsysize);
-                for(ii=0; ii<wfssize; ii++)
-                    data.image[IDwfsmask].array.F[ii] = 1.0;
-            }
-
-
-            for(mblock=0; mblock<NBmblock; mblock++)
-            {
-                printf("BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
-                fflush(stdout);
-                sprintf(imname, "fmodesWFS00_%02ld", mblock);
-                if(MBLOCK_NBmode[mblock]>0)
-                {
-                    IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
-                    for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+                    for(m=0; m<data.image[ID].md[0].size[2]; m++)
                     {
                         for(act=0; act<msizexy; act++)
                         {
                             for(wfselem=0; wfselem<wfssize; wfselem++)
                             {
-                                data.image[IDwfsMresp].array.F[m*wfssize+wfselem] += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
+                                data.image[IDm].array.F[m*wfssize+wfselem] += data.image[ID].array.F[m*msizexy+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
                             }
                         }
                     }
-                    sprintf(fname, "!./mkmodestmp/fmodesWFS00_%02ld.fits", mblock);
-                    save_fits(imname, fname);
-                }
-            }
-
-            cnt = 0;
-            for(mblock=0; mblock<NBmblock; mblock++)
-                cnt += MBLOCK_NBmode[mblock];
-            IDm = create_3Dimage_ID("fmodesWFS00all", wfsxsize, wfsysize, cnt);
-            cnt = 0;
-            for(mblock=0; mblock<NBmblock; mblock++)
-            {
-                sprintf(imname, "fmodesWFS00_%02ld", mblock);
-                IDmwfs = image_ID(imname);
-                for(m=0; m<MBLOCK_NBmode[mblock]; m++)
-                {
-                    for(ii=0; ii<wfssize; ii++)
-                        data.image[IDm].array.F[cnt*wfssize+ii] = data.image[IDmwfs].array.F[m*wfssize+ii];
-                    cnt++;
-                }
-            }
-            save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
-
-
+                    save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
+       
+        
+    
 
 
 
