@@ -635,6 +635,9 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             }
         IDtmpoutref = create_2Dimage_ID("_tmpoutref", dmdispcombconf[DMindex].xsizewfsref, dmdispcombconf[DMindex].ysizewfsref);
         sizexywfsref = dmdispcombconf[DMindex].xsizewfsref*dmdispcombconf[DMindex].ysizewfsref;
+
+        COREMOD_MEMORY_image_set_createsem(dmdispcombconf[DMindex].ID_wfsref_out, 5);
+
         printf("done\n\n");
         fflush(stdout);
     }
