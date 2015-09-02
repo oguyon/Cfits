@@ -1726,46 +1726,39 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-      /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
-    msizexy = msizex*msizey;
+        /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
+        msizexy = msizex*msizey;
         ID = image_ID(ID_name);
-            IDzrespM = image_ID("zrespM");
-            save_fits("zrespM", "!_test_zrespM.fits");
-            save_fits(ID_name, "!_test_name.fits");
-            if(data.image[IDzrespM].md[0].size[2]!=msizexy)
-            {
-                printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
-                exit(0);
-            }
+        IDzrespM = image_ID("zrespM");
+        save_fits("zrespM", "!_test_zrespM.fits");
+        save_fits(ID_name, "!_test_name.fits");
+        if(data.image[IDzrespM].md[0].size[2]!=msizexy)
+        {
+            printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
+            exit(0);
+        }
 
-            wfsxsize = data.image[IDzrespM].md[0].size[0];
-            wfsysize = data.image[IDzrespM].md[0].size[1];
-            wfssize = wfsxsize*wfsysize;
+        wfsxsize = data.image[IDzrespM].md[0].size[0];
+        wfsysize = data.image[IDzrespM].md[0].size[1];
+        wfssize = wfsxsize*wfsysize;
         IDm = create_3Dimage_ID("fmodesWFS00all", wfsxsize, wfsysize, data.image[ID].md[0].size[2]);
 
         printf("size: %ld %ld %ld\n", data.image[ID].md[0].size[2], msizexy, wfssize);
-                     printf("\n");
-                                       for(m=0; m<data.image[ID].md[0].size[2]; m++)
-                    {
-                        printf("\r %5ld / %5ld   ", m, data.image[ID].md[0].size[2]);
-                        fflush(stdout);
-                        for(act=0; act<msizexy; act++)
-                        {
-                            for(wfselem=0; wfselem<wfssize; wfselem++)
-                            {
-                                data.image[IDm].array.F[m*wfssize+wfselem] += data.image[ID].array.F[m*msizexy+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
-                            }
-                        }
-                    }
-                    printf("\n");
-                    save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
-       
-        
-    
-exit(0);
-
-
-    
+        printf("\n");
+        for(m=0; m<data.image[ID].md[0].size[2]; m++)
+        {
+            printf("\r %5ld / %5ld   ", m, data.image[ID].md[0].size[2]);
+            fflush(stdout);
+            for(act=0; act<msizexy; act++)
+            {
+                for(wfselem=0; wfselem<wfssize; wfselem++)
+                {
+                    data.image[IDm].array.F[m*wfssize+wfselem] += data.image[ID].array.F[m*msizexy+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
+                }
+            }
+        }
+        printf("\n");
+        save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
 
 
@@ -2540,6 +2533,7 @@ exit(0);
 
     return(ID);
 }
+
 
 
 
