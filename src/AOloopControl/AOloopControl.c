@@ -1730,6 +1730,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     msizexy = msizex*msizey;
         ID = image_ID(ID_name);
             IDzrespM = image_ID("zrespM");
+            save_fits("zrespM", "!_test_zrespM.fits");
+            save_fits(ID_name, "!_test_name.fits");
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
             {
                 printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
@@ -1741,6 +1743,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             wfssize = wfsxsize*wfsysize;
         IDm = create_3Dimage_ID("fmodesWFS00all", wfsxsize, wfsysize, data.image[ID].md[0].size[2]);
 
+        printf("size: %ld %ld %ld\n", data.image[ID].md[0].size[2], msizexy, wfssize);
                     for(m=0; m<data.image[ID].md[0].size[2]; m++)
                     {
                         for(act=0; act<msizexy; act++)
@@ -1755,7 +1758,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
        
         
     
-
+exit(0);
 
 
     
