@@ -7795,7 +7795,6 @@ int AOloopControl_run()
     
 
     printf("SETTING UP...\n");
- //   sprintf(fname, "./conf/AOloop.conf");
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
     
@@ -7900,6 +7899,12 @@ int AOloopControl_run()
                         //tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*rangec;
                                              
                         data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;                         
+
+                        if(data.image[aoconfID_dmC].array.F[ii] > AOconf[loop].maxlimit)
+                            data.image[aoconfID_dmC].array.F[ii] = AOconf[loop].maxlimit;
+                        if(data.image[aoconfID_dmC].array.F[ii] < -AOconf[loop].maxlimit)
+                            data.image[aoconfID_dmC].array.F[ii] = -AOconf[loop].maxlimit;
+                        
                         //data.image[aoconfID_dmC].array.F[ii] = tmpv1*AOconf[loop].mult;
 
                     }
