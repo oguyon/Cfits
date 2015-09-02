@@ -6637,6 +6637,7 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
     {
         sprintf(name, "%s%ld", ID_WFSzp_name, ch);
         AOloopControl_2Dloadcreate_shmim(name, "", wfsxsize, wfsysize);
+        COREMOD_MEMORY_image_set_createsem(name, 5);
         IDwfszparray[ch] = image_ID(name);
     }
 
