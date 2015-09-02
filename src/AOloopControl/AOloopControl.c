@@ -1727,6 +1727,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
       /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
+    msizexy = msizex*msizey;
         ID = image_ID(ID_name);
             IDzrespM = image_ID("zrespM");
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
