@@ -7888,15 +7888,7 @@ int AOloopControl_run()
                     
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                     {
-                        //tmpv = data.image[aoconfID_meas_act].array.F[ii]/range1;
-                        //tmpv2 = tmpv*tmpv;
-                        //tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*range1;
-                        
                         data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
-                        //tmpv = data.image[aoconfID_dmC].array.F[ii] - AOconf[loop].gain * tmpv1;
-                        //tmpv /= rangec;
-                        //tmpv2 = tmpv*tmpv;
-                        //tmpv1 = tmpv/pow(1.0+tmpv2*tmpv2, 0.25)*rangec;
                                              
                         data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;                         
 
@@ -7904,9 +7896,6 @@ int AOloopControl_run()
                             data.image[aoconfID_dmC].array.F[ii] = AOconf[loop].maxlimit;
                         if(data.image[aoconfID_dmC].array.F[ii] < -AOconf[loop].maxlimit)
                             data.image[aoconfID_dmC].array.F[ii] = -AOconf[loop].maxlimit;
-                        
-                        //data.image[aoconfID_dmC].array.F[ii] = tmpv1*AOconf[loop].mult;
-
                     }
                         
                    if(data.image[aoconfID_dmC].sem > 0)
