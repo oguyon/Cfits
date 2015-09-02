@@ -1141,16 +1141,16 @@ int AOloopControl_DM_dmturb(long DMindex)
 
     AOloopControl_DMturb_createconf();
 
-    IDs1 = load_fits("~/conf/turb/turbscreen0.fits", "screen1", 1);
-    IDs2 = load_fits("~/conf/turb/turbscreen0g.fits", "screen2", 1);
+    IDs1 = load_fits("turbscreen1.fits", "screen1", 1);
+    IDs2 = load_fits("turbscreen2.fits", "screen2", 1);
    
     if(IDs1==-1)
     {
         make_master_turbulence_screen("screen1", "screen2", 2048, 200.0, 1.0);
         IDs1 = image_ID("screen1");
-        IDs2 = image_ID("screen2");
-        save_fits("screen1", "!screen1.fits");
-        save_fits("screen2", "!screen2.fits");
+        IDs2 = gauss_filter("screen1", "screen2", 20.0, 50);
+        save_fits("screen1", "!turbscreen1.fits");
+        save_fits("screen2", "!turbscreen2.fits");
     }
     
 
