@@ -1889,7 +1889,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     {
                         mok[m] = 0;
                     }
-                    printf("  %12g\n", rms);
+                    printf("  %12g (%g %g)\n", rms, value1, totm);
                 }
             }
             cnt = 0;
