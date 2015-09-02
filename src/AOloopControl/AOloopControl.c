@@ -1782,7 +1782,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
-
             cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
@@ -1808,7 +1807,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
                 if(data.image[IDSVDcoeff].array.F[m]>SVDlim0*svdcoeff0)
                     cnt++;
-            printf("BLOCK %ld: keeping %ld / %ld modes\n", mblock, cnt, m);
+            printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             sprintf(imname1, "fmodes1_%02ld", mblock);
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
             IDSVDmodes = image_ID("svdmodes");
