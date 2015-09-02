@@ -787,6 +787,24 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 sem_post(data.image[dmdispcombconf[DMindex].ID_dm2dm_outdisp].semptr[0]);                
             }
             
+            if(wfsrefmode==1)
+            {
+                memset(data.image[IDtmpoutref].array.F, '\0', sizeof(float)*sizexywfsref);
+                for(kk=0;kk<data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement;kk++)
+                    {
+                        for(ii=0;ii<sizexywfsref;ii++)
+                            data.image[IDtmpoutref].array.F[ii] += data.image[dmdispcombconf[DMindex].IDdisp].array.F[kk] * data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].array.F[kk*sizexywfsref+ii];
+                    }
+                    
+                data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].write = 1;
+                memcpy (data.image[dmdispcombconf[DMindex].ID_wfsref_out].array.F,data.image[IDtmpoutref].array.F, sizeof(float)*sizexywfsref);
+                data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].cnt0++;
+                data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].write = 0;            
+                sem_post(data.image[dmdispcombconf[DMindex].ID_wfsref_out].semptr[0]);   
+                
+            }
+            
+            
             dmdispcombconf[DMindex].status = 7;
 
             if(voltmode==1)
