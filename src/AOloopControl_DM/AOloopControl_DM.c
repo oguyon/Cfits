@@ -1106,7 +1106,7 @@ int AOloopControl_DM_dmturb(long DMindex)
     long size_sy;
     long IDs1, IDs2;
     char name[200];
-
+    long imsize = 2048;
     struct timespec tlast;
     struct timespec tdiff;
     struct timespec tdiff1;
@@ -1137,6 +1137,7 @@ int AOloopControl_DM_dmturb(long DMindex)
 
     long IDturbs1;
     long IDturb;
+    double totim;
 
 
     AOloopControl_DMturb_createconf();
@@ -1146,9 +1147,18 @@ int AOloopControl_DM_dmturb(long DMindex)
    
     if(IDs1==-1)
     {
-        make_master_turbulence_screen("screen1", "screen2", 2048, 200.0, 1.0);
+        make_master_turbulence_screen("screen1", "screen2", imsize, 200.0, 1.0);
         IDs1 = image_ID("screen1");
-        IDs2 = gauss_filter("screen1", "screen2", 20.0, 50);
+        make_gauss("kernim", imsize, imsize, 20.0, 1.0);
+
+        IDs2 = fconvolve("screen1", "kernim", "screen2");
+        totim = 0.0;
+        for(ii=0;ii<imsize*imsize;ii++)
+            totim += data.image[IDs2].array.F[ii];
+        for(ii=0;ii<imsize*imsize;ii++)
+            data.image[IDs2].array.F[ii] /= totim;
+        delete_image_ID("kernim");
+      //  IDs2 = gauss_filter("screen1", "screen2", 20.0, 50);
         save_fits("screen1", "!turbscreen1.fits");
         save_fits("screen2", "!turbscreen2.fits");
     }
