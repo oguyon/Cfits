@@ -793,15 +793,15 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 list_image_ID();
                 printf("kkmax = %ld\n", data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement);
                 printf("iimax = %ld\n", sizexywfsref);
-                printf("ID RespMat = %ld  (%ld)\n", dmdispcombconf[DMindex].ID_wfsref_RespMat, kk*sizexywfsref+ii);
+                printf("ID RespMat = %ld  (%ld)\n", dmdispcombconf[DMindex].ID_wfsref_RespMat, (data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement-1)*sizexywfsref + sizexywfsref-1);
                 fflush(stdout);
                 for(kk=0;kk<data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement;kk++)
                     {
                         for(ii=0;ii<sizexywfsref;ii++)
                             data.image[IDtmpoutref].array.F[ii] += data.image[dmdispcombconf[DMindex].IDdisp].array.F[kk] * data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].array.F[kk*sizexywfsref+ii];
                     }
-                 printf("Updating Zero Point\n");
-                 fflush(stdout);   
+                printf("Updating Zero Point  %ld <- %ld\n", dmdispcombconf[DMindex].ID_wfsref_out, IDtmpoutref);
+                fflush(stdout);   
                 data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].write = 1;
                 memcpy (data.image[dmdispcombconf[DMindex].ID_wfsref_out].array.F,data.image[IDtmpoutref].array.F, sizeof(float)*sizexywfsref);
                 data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].cnt0++;
