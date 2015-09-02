@@ -1946,20 +1946,15 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodes2all", "!./mkmodestmp/fmodes2all.fits");
 
 
-exit(0);
-
-        /// STEP 5: COMPUTE WFS RESPONSE TO MODES -> fmodesWFS0all.fits
-        // WFS modes
-        IDzrespM = image_ID("zrespM");
-
     }
+    
 
-
+    // WFS modes
     IDzrespM = image_ID("zrespM");
-
     if(IDzrespM!=-1) // compute WFS response to DM modes
     {
-        if(BlockNB<0)
+            /// STEP 5: COMPUTE WFS RESPONSE TO MODES -> fmodesWFS0all.fits
+            if(BlockNB<0)
         {   // check size
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
             {
