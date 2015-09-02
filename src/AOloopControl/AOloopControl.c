@@ -1728,6 +1728,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
       /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
         ID = image_ID(ID_name);
+            IDzrespM = image_ID("zrespM");
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
             {
                 printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
