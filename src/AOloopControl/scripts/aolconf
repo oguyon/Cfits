@@ -611,7 +611,7 @@ tmux new-session -d -s DMturblo
 tmux send-keys -t DMturblo "$execnameLOG " C-m
 tmux send-keys -t DMturblo "aoloopcontroldmturlo ${DMindex} $dmturblo" C-m
 tmux send-keys -t DMturblo "exit" C-m
-tmux send-keys -t DMturblo "exit" C-m
+#tmux send-keys -t DMturblo "exit" C-m
 }
 
 
