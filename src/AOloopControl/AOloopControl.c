@@ -1744,8 +1744,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         IDm = create_3Dimage_ID("fmodesWFS00all", wfsxsize, wfsysize, data.image[ID].md[0].size[2]);
 
         printf("size: %ld %ld %ld\n", data.image[ID].md[0].size[2], msizexy, wfssize);
-                    for(m=0; m<data.image[ID].md[0].size[2]; m++)
+                     printf("\n");
+                                       for(m=0; m<data.image[ID].md[0].size[2]; m++)
                     {
+                        printf("\r %5ld / %5ld   ", m, data.image[ID].md[0].size[2]);
+                        fflush(stdout);
                         for(act=0; act<msizexy; act++)
                         {
                             for(wfselem=0; wfselem<wfssize; wfselem++)
@@ -1754,6 +1757,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             }
                         }
                     }
+                    printf("\n");
                     save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
        
         
