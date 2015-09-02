@@ -1823,7 +1823,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             delete_image_ID("svdcoeff");
         }
 
-exit(0);
+
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
@@ -1842,7 +1842,7 @@ exit(0);
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-
+exit(0);
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
