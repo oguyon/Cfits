@@ -1823,7 +1823,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             delete_image_ID("svdcoeff");
         }
 
-
+exit(0);
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
