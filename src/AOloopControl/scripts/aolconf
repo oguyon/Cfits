@@ -3704,7 +3704,7 @@ echo "$dmturbws" > ./conf/conf_dmturbws.txt
     DMtlo)
 exec 3>&1;dmturblo=$(dialog --inputbox "DM turbulence low order coeff" 0 0 "$dmturblo" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbws" > ./conf/conf_dmturblo.txt
+echo "$dmturblo" > ./conf/conf_dmturblo.txt
 ;;
 	DMttint)
 exec 3>&1;dmturbtint=$(dialog --inputbox "DM turbulence interval [us]" 0 0 "$dmturbtint" 2>&1 1>&3);
