@@ -1153,7 +1153,15 @@ dm2dmO="dm${dmnb}disp${dmolinkchan1}"
 echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
 Readdm2dmOname
 
-dmwrefRM="aol${dmolinknb}_zrespM"
+
+
+Cfits << EOF
+loadfits "../loop${dmolinknb}/mkmodestmp/fmodesWFS0all.fits[*,*,1:$dmxsize]" im
+savefits im "!./conf/conf_dmwrefRM.fits" 
+cpsh im aol${dmolinknb}_modesWFS0_$dmxsize
+quit
+EOF
+dmwrefRM="aol${dmolinknb}_modesWFS0_$dmxsize"
 echo "$dmwrefRM" > ./conf/conf_dmwrefRM_name.txt
 ReaddmwrefRMname
 
