@@ -798,11 +798,14 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 printf("iimax = %ld\n", sizexywfsref);
                 printf("ID RespMat = %ld  (%ld)\n", dmdispcombconf[DMindex].ID_wfsref_RespMat, (data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement-1)*sizexywfsref + sizexywfsref-1);
                 fflush(stdout);
+                save_fits(wfsref_WFSRespMat, "!_test_wfsref_WFSRespMat.fits");
                 for(kk=0;kk<data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement;kk++)
                     {
+                        printf("(%ld %g) ", kk, data.image[dmdispcombconf[DMindex].IDdisp].array.F[kk]);
                         for(ii=0;ii<sizexywfsref;ii++)
                             data.image[IDtmpoutref].array.F[ii] += data.image[dmdispcombconf[DMindex].IDdisp].array.F[kk] * data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].array.F[kk*sizexywfsref+ii];
                     }
+                printf("\n");
                 printf("Updating Zero Point  %ld <- %ld\n", dmdispcombconf[DMindex].ID_wfsref_out, IDtmpoutref);
                 fflush(stdout);   
                 data.image[dmdispcombconf[DMindex].ID_wfsref_out].md[0].write = 1;
