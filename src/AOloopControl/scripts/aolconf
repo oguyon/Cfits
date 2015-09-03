@@ -4076,7 +4076,7 @@ stringcenter "DATA LOGGING"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
-$savedir=$( cat ./conf/conf_savedir_name.txt)
+savedir=$( cat ./conf/conf_savedir_name.txt )
 menuitems+=( "sdir" "[${savedir}] Save directory prefix ")
 
 file="./status/stat_logwfsim.txt"
