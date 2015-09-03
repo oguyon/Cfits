@@ -4086,13 +4086,30 @@ fi
 
 if [ "${logwfsimstat}" = "0" ];
 then
-menuitems+=( "lwfsim1" "START logging " )
+menuitems+=( "lwfsim1" "START logging $wfsimcam" )
 else
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging \Zn" )
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging $wfsimcam\Zn" )
 fi
 
 
 
+file="./status/stat_logdmdisp.txt"
+logdmdispstat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdispstat" = "0" || "$logdmdispstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+fi
+
+if [ "${logdmdispstat}" = "0" ];
+then
+menuitems+=( "ldmdisp1" "START logging dm${DMindex}disp" )
+else
+menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn" )
+fi
+
+
+menuitems+=( " " " " )
 
 stringcenter "RECORD TIME SEQUENCES"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
@@ -4122,7 +4139,14 @@ echo "1" > ./status/stat_logwfsim.txt
 logwfsimstat=0
 echo "0" > ./status/stat_logwfsim.txt
 ;;
-
+    ldmdisp1)
+logdmdispstat=1
+echo "1" > ./status/stat_logdmdisp.txt
+;;
+    ldmdisp0)
+logdmdispstat=0
+echo "0" > ./status/stat_logdmdisp.txt
+;;
     rins) 
 mkdir -p recinst
 tmuxname="aol${LOOPNUMBER}-ctr"
