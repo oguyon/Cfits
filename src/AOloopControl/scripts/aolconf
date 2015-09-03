@@ -4146,21 +4146,38 @@ echo "$savedir" > ./conf/conf_savedir_name.txt
     lwfsim1)
 logwfsimstat=1
 echo "1" > ./status/stat_logwfsim.txt
+$execnameLOG << EOF
+shmimslogonset $wfsimcam 1
+exit
+EOF
 menurecord_default="lwfsim0"
 ;;
     lwfsim0)
 logwfsimstat=0
+$execnameLOG << EOF
+shmimslogonset $wfsimcam 0
+exit
+EOF
 echo "0" > ./status/stat_logwfsim.txt
+
 menurecord_default="lwfsim1"
 ;;
     ldmdisp1)
 logdmdispstat=1
 echo "1" > ./status/stat_logdmdisp.txt
+$execnameLOG << EOF
+shmimslogonset dm${DMindex}disp 1
+exit
+EOF
 menurecord_default="ldmdisp0"
 ;;
     ldmdisp0)
 logdmdispstat=0
 echo "0" > ./status/stat_logdmdisp.txt
+$execnameLOG << EOF
+shmimslogonset dm${DMindex}disp 0
+exit
+EOF
 menurecord_default="ldmdisp1"
 ;;
     rins) 
