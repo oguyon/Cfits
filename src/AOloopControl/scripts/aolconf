@@ -1841,7 +1841,7 @@ shmimmon aol${LOOPNUMBER}_dmdisp
 ;;
 esac
 ;;
-	dmRM)
+    dmRM)
 case $amode in
 	0)
 exec 3>&1;
@@ -4076,7 +4076,7 @@ stringcenter "DATA LOGGING"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
-
+$savedir=$( cat ./conf/conf_savedir_name.txt)
 menuitems+=( "sdir" "[${savedir}] Save directory prefix ")
 
 file="./status/stat_logwfsim.txt"
@@ -4134,6 +4134,14 @@ state="menurecord"
 case $retval in
    0) # Monitor
 	case $choiceval in
+
+    sdir)
+exec 3>&1;
+savedir=$(dialog --inputbox "savedir" 0 0 "$savedir" 2>&1 1>&3);
+exec 3>&-;
+echo "$savedir" > ./conf/conf_savedir_name.txt
+;;
+
     lwfsim1)
 logwfsimstat=1
 echo "1" > ./status/stat_logwfsim.txt
