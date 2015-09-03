@@ -4134,18 +4134,22 @@ case $retval in
     lwfsim1)
 logwfsimstat=1
 echo "1" > ./status/stat_logwfsim.txt
+menurecord_default="lwfsim0"
 ;;
     lwfsim0)
 logwfsimstat=0
 echo "0" > ./status/stat_logwfsim.txt
+menurecord_default="lwfsim1"
 ;;
     ldmdisp1)
 logdmdispstat=1
 echo "1" > ./status/stat_logdmdisp.txt
+menurecord_default="ldmdisp0"
 ;;
     ldmdisp0)
 logdmdispstat=0
 echo "0" > ./status/stat_logdmdisp.txt
+menurecord_default="ldmdisp1"
 ;;
     rins) 
 mkdir -p recinst
