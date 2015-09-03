@@ -4077,7 +4077,8 @@ menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
 savedir=$( cat ./conf/conf_savedir_name.txt )
-menuitems+=( "sdir" "[${savedir}] Save directory prefix ")
+datestr=`date -u +%Y%m%d`
+menuitems+=( "sdir" "[${savedir}] Save directory prefix -> $savedir/$datestr")
 
 file="./status/stat_logwfsim.txt"
 logwfsimstat=$( cat $file )
