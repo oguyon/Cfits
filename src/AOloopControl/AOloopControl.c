@@ -7882,10 +7882,8 @@ int AOloopControl_run()
                             }
                     }
 
-                    
-                    
-                    
-                    
+
+
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                     {
                         data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
