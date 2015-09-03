@@ -2865,7 +2865,7 @@ fi
 
 if [ "${procONstat}" = "OFF" ];
 then
-menuitems+=( "S" "Start loop processes" )
+menuitems+=( "S" "START loop processes" )
 else
 menuitems+=( "K" "\Z1\ZrSTOP loop processes\Zn" )
 fi
@@ -4072,8 +4072,30 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " " )
 
 
-stringcenter "RECORD"
+stringcenter "DATA LOGGING"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+
+
+file="./status/stat_logwfsim.txt"
+logwfsimstat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsimstat" = "0" || "$logwfsimstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+fi
+
+if [ "${logwfsimstat}" = "0" ];
+then
+menuitems+=( "lwfsim1" "START logging " )
+else
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging \Zn" )
+fi
+
+
+
+
+stringcenter "RECORD TIME SEQUENCES"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "rins" "Record / analyze single instantaneous loop state to ./recinst/ directory" )
 menuitems+=( "rec1" "Record / analyze     10 WFS frames" )
 menuitems+=( "rec2" "Record / analyze    100 WFS frames" )
@@ -4092,7 +4114,16 @@ state="menurecord"
 case $retval in
    0) # Monitor
 	case $choiceval in
-	rins) 
+    lwfsim1)
+logwfsimstat=1
+echo "1" > ./status/stat_logwfsim.txt
+;;
+    lwfsim0)
+logwfsimstat=0
+echo "0" > ./status/stat_logwfsim.txt
+;;
+
+    rins) 
 mkdir -p recinst
 tmuxname="aol${LOOPNUMBER}-ctr"
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act_active" C-m
