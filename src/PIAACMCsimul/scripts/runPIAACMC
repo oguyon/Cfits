@@ -282,6 +282,92 @@ fi
 echo "piaa0pos = $piaa0pos"
 
 
+prepiaa0maskpos=1.00 # default
+file="conf/conf_prePIAA0maskpos.txt"
+if [ -f $file ]
+	then
+	prepiaa0maskpos=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "prepiaa0maskpos = $prepiaa0maskpos"
+
+
+postpiaa0maskpos=1.00 # default
+file="conf/conf_postPIAA0maskpos.txt"
+if [ -f $file ]
+	then
+	postpiaa0maskpos=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "postpiaa0maskpos = $postpiaa0maskpos"
+
+
+
+piaaNBCmodesmax=40 # default
+file="conf/conf_piaaNBCmodesmax.txt"
+if [ -f $file ]
+	then
+	piaaNBCmodesmax=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "piaaNBCmodesmax = $piaaNBCmodesmax"
+
+
+
+piaaCPAmax=10.0 # default
+file="conf/conf_piaaCPAmax.txt"
+if [ -f $file ]
+	then
+	piaaCPAmax=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "piaaCPAmax = $piaaCPAmax"
+
+
+LyotZmin=-2.5 # default
+file="conf/conf_LyotZmin.txt"
+if [ -f $file ]
+	then
+	LyotZmin=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "LyotZmin = $LyotZmin"
+
+
+LyotZmax=-2.5 # default
+file="conf/conf_LyotZmax.txt"
+if [ -f $file ]
+	then
+	LyotZmax=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "LyotZmax = $LyotZmax"
+
+
+
+invPIAAmode=1 # default
+file="conf/conf_invPIAAmode.txt"
+if [ -f $file ]
+	then
+	invPIAAmode=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "invPIAAmode = $invPIAAmode"
+
 
 
 
@@ -325,6 +411,13 @@ echo "PIAACMC_r0lim=${piaar0lim}" >> $startupfile
 echo "PIAACMC_r1lim=${piaar1lim}" >> $startupfile
 echo "PIAACMC_piaasep=${piaasep}" >> $startupfile
 echo "PIAACMC_piaa0pos=${piaa0pos}" >> $startupfile
+echo "PIAACMC_invPIAAmode=${invPIAAmode}" >> $startupfile
+echo "PIAACMC_prepiaa0maskpos=${prepiaa0maskpos}" >> $startupfile
+echo "PIAACMC_postpiaa0maskpos=${postpiaa0maskpos}" >> $startupfile
+echo "PIAACMC_piaaNBCmodesmax=${piaaNBCmodesmax}" >> $startupfile
+echo "PIAACMC_piaaCPAmax=${piaaCPAmax}" >> $startupfile
+echo "PIAACMC_LyotZmin=${LyotZmin}" >> $startupfile
+echo "PIAACMC_LyotZmax=${LyotZmax}" >> $startupfile
 fifoname="runPIAACMCfifo$pid"
 
 

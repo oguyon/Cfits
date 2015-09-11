@@ -7906,6 +7906,7 @@ int AOloopControl_run()
                             sem_post(data.image[aoconfID_dmdisp].semptr[1]);
 
                     AOconf[loop].DMupdatecnt ++;
+                    AOconf[loop].DMupdatecnt ++;
                 }
 
                 AOconf[loop].status = 18; // 18

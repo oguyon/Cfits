@@ -18,7 +18,6 @@
 //
 typedef struct {
 
-
     // ======= SEED RADIAL PIAACMC PARAMETERS ======
 
     double centObs0; // input central obstruction
@@ -42,7 +41,13 @@ typedef struct {
     float pixscale; // [m/pix]
     float piaa0pos; // conjugation (z) of first PIAA surface [m]
     float piaasep;// separation between PIAA surfaces [m]
-
+    int prepiaa0mask; // 1 if mask before PIAA surface 0
+    float prepiaa0maskpos; // position of mask before PIAA surface 0 [m]
+    int postpiaa0mask; // 1 if mask after PIAA surface 0
+    float postpiaa0maskpos; // position of mask after PIAA surface 0 [m]
+    int invPIAAmode; // 0: no inv PIAA, 1: inv PIAA after Lyot stops, 2: inv PIAA before Lyot stops
+    float LyotZmin;
+    float LyotZmax;
 
     // ========== WAVEFRONT CONTROL ==================
     int nbDM; // number of deformable mirrors (10 max)
@@ -61,10 +66,12 @@ typedef struct {
     long CmodesID; // Cosine radial mode
     long Cmsize; // cosine modes size
     long NBCmodes;
+    long piaaNBCmodesmax; // maximum number of radial cosine modes for PIAA optics
 
     long FmodesID; // Fourier 2D modes
     long Fmsize;
     long NBFmodes;
+    float piaaCPAmax; // maximum spatial frequency (CPA) for PIAA optics
 
     long piaa0CmodesID;
     long piaa0FmodesID;
