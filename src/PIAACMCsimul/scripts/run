@@ -157,14 +157,14 @@ echo "------------------------------------------------------------------------"
 echo "                      USAGE"
 echo " $0 <command>"
 echo "  command : "
-echo "     optsingle : optimize"
-echo "     eval0 : level 0 evaluation"
-echo "     eval1 : level 1 evaluation"
-echo "     eval2 : level 2 evaluation"
+echo "     optsingle <stepstop>: optimize up to step <stepstop>. mstep>18 for full optimization"
+echo "     eval0 <arg>: level 0 evaluation, <arg> not currently used"
+echo "     eval1 <arg>: level 1 evaluation, <arg> not currently used"
+echo "     eval2 <arg>: level 2 evaluation, <arg> not currently used"
 echo "------------------------------------------------------------------------"
 }
 
-NBARGS=1
+NBARGS=2
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
         printhelp
@@ -181,6 +181,8 @@ runoptcmd=$1
 
 echo "18" > conf_MdesignStepMax.txt
 
+
+echo "$2" > conf_exitpt.txt
 
 
 

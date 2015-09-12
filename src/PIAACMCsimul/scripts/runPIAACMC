@@ -34,7 +34,14 @@ var=$( cat "$file" )
 eval "$1=$var"
 }
 
-
+function checkexit() {
+if [ $state -eq $exitpt ] 
+then
+echo "REACHED STATE EXIT POINT ($exitpt)" > errorstatus.txt
+cleanup
+exit
+fi	
+}
 
 
 printhelp ()
@@ -176,6 +183,16 @@ fi
 echo "state = $state"
 echo "statestop = $statestop"
 
+exitpt="100000" #default
+file="conf_exitpt.txt"
+if [ -f $file ]
+	then
+	exitpt=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "exitpt = $exitpt"
 
 
 
@@ -981,6 +998,11 @@ fi
 # =========================================================================================================
 #
 
+
+checkexit
+
+
+
 if [ 0 -eq ${state} ]
 then
  if [ ! -f ./$1/step000.txt ]
@@ -1014,8 +1036,7 @@ exit
 fi
 
 
-
-
+checkexit
 
 
 
@@ -1064,7 +1085,7 @@ exit
 fi
 
 
-
+checkexit
 
 
 
@@ -1092,7 +1113,7 @@ exit
 fi
 
 
-
+checkexit
 
 
 
@@ -1135,7 +1156,7 @@ fi
 
 
 
-
+checkexit
 
 
 
@@ -1194,6 +1215,7 @@ exit
 fi
 
 
+checkexit
 
 
 
@@ -1235,6 +1257,8 @@ cleanup
 exit
 fi
 
+
+checkexit
 
 
 
@@ -1287,6 +1311,11 @@ echo "STATE STOP POINT (006)"
 cleanup
 exit
 fi
+
+
+checkexit
+
+
 
 
 # STEP 007: tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
@@ -1342,6 +1371,7 @@ exit
 fi
 
 
+checkexit
 
 
 
@@ -1400,7 +1430,7 @@ cleanup
 exit
 fi
 
-
+checkexit
 
 
 
@@ -1455,6 +1485,8 @@ fi
 
 
 
+checkexit
+
 
 
 # STEP 010: Tune Lyot stops conjugations
@@ -1497,6 +1529,7 @@ fi
 
 
 
+checkexit
 
 
 # STEP 011: Tune PIAA shapes and focal plane mask transm, 20, 20
@@ -1557,6 +1590,7 @@ fi
 
 
 
+checkexit
 
 
 
@@ -1623,6 +1657,9 @@ fi
 
 
 
+checkexit
+
+
 
 
 
@@ -1675,6 +1712,8 @@ exit
 fi
 
 
+checkexit
+
 
 
 
@@ -1717,6 +1756,9 @@ cleanup
 exit
 fi
 
+
+
+checkexit
 
 
 
@@ -1777,6 +1819,7 @@ exit
 fi
 
 
+checkexit
 
 
 
@@ -1841,6 +1884,9 @@ fi
 
 
 
+checkexit
+
+
 
 # STEP 017: tune PIAA shapes and focal plane mask transm
 # -> linoptval.txt
@@ -1896,6 +1942,8 @@ cleanup
 exit
 fi
 
+
+checkexit
 
 
 # STEP 18: exit
