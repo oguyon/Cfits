@@ -2292,6 +2292,15 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         if((IDv=variable_ID("PIAACMC_postpiaa0maskpos"))!=-1)
             piaacmc[0].postpiaa0maskpos = data.variable[IDv].value.f; // post piaa elem 0 mask position
 
+
+        piaacmc[0].LyotZmin = -3.0;
+        if((IDv=variable_ID("PIAACMC_LyotZmin"))!=-1)
+            piaacmc[0].LyotZmin = data.variable[IDv].value.f;
+        piaacmc[0].LyotZmax = 3.0;
+        if((IDv=variable_ID("PIAACMC_LyotZmax"))!=-1)
+            piaacmc[0].LyotZmax = data.variable[IDv].value.f;
+
+
         if((IDv=variable_ID("PIAACMC_piaaNBCmodesmax"))!=-1)
             piaacmc[0].piaaNBCmodesmax = (long) (data.variable[IDv].value.f +0.01); // max number of Cosine terms
          if((IDv=variable_ID("PIAACMC_piaaCPAmax"))!=-1)
@@ -5424,7 +5433,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         NBkr = 5;
         
         printf("z range = %f -> %f\n", piaacmc[0].LyotZmin, piaacmc[0].LyotZmax);
-        sleep(1000000);
+        sleep(1000000);//TBR
         
         ID1 = PIAACMCsimul_CA2propCubeInt(fnamea, fnamep, zmin, zmax, NBpropstep, sigma, "iproptmp");
         IDa = image_ID(fnamea);
