@@ -5432,10 +5432,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         NBincpt = 15;
         NBkr = 5;
         
-        printf("z range = %f -> %f\n", piaacmc[0].LyotZmin, piaacmc[0].LyotZmax);
-        list_variable_ID();
-        sleep(1000000);//TBR
-        
+
         ID1 = PIAACMCsimul_CA2propCubeInt(fnamea, fnamep, zmin, zmax, NBpropstep, sigma, "iproptmp");
         IDa = image_ID(fnamea);
 
