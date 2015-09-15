@@ -22,7 +22,10 @@ Please consult the [online documentation]{http://oguyon.github.io/Cfits/index.ht
 
 ## Libraries
 The following libraries are used:
+- libtool
+- automake
 - readline, for reading the command line input
+- ncurses-dev
 - flex, for parsing the command line input
 - bison, to interpret the command line input
 - fftw, for performing Fourier Transforms

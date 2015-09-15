@@ -291,7 +291,12 @@ int export_wisdom()
     char wisdom_file_double[SBUFFERSIZE];
     char errmessg[SBUFFERSIZE];
     int n;
-
+    char command[200];
+    int ret;
+    
+    sprintf(command, "mkdir -p %s", FFTCONFIGDIR);
+    ret = system(command);
+    
 # ifdef FFTWMT
     n = snprintf(wisdom_file_single, SBUFFERSIZE, "%s/fftwf_mt_wisdom.dat", FFTCONFIGDIR);
     if(n >= SBUFFERSIZE)

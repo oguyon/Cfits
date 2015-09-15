@@ -703,7 +703,7 @@ int read_PGMimage(char *fname, char *ID_name)
             fprintf(stderr,"ERROR: File is not PGM image\n");
         else
         {
-            r = fscanf(fp,"%ld %ld",&xsize,&ysize);
+            r = fscanf(fp,"%ld %ld", &xsize, &ysize);
             printf("PGM image size: %ld x %ld\n",xsize,ysize);
             r = fscanf(fp,"%ld",&maxval);
             if(maxval!=65535)
@@ -711,7 +711,7 @@ int read_PGMimage(char *fname, char *ID_name)
             else
             {
                 printf("Reading PGM image\n");
-                ID = create_2Dimage_ID(ID_name,xsize,ysize);
+                ID = create_2Dimage_ID(ID_name, xsize, ysize);
                 fgetc(fp);
                 for(jj=0; jj<ysize; jj++)
                 {
@@ -786,7 +786,7 @@ int CR2toFITS(char *fnameCR2, char *fnameFITS)
             data.image[ID].array.F[ii] /= (shutter*aperture*aperture*iso);
     }
 
-    save_fl_fits("tmpfits1",fnameFITS);
+    save_fl_fits("tmpfits1", fnameFITS);
     delete_image_ID("tmpfits1");
 
     return(0);

@@ -1262,7 +1262,7 @@ checkexit
 
 
 
-# STEP 006: compute Lyot stops shapes and locations, 2nd pass, ~60% throughput)
+# STEP 006: compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
 # This is done in monochromatic light 
 #
 # output:
