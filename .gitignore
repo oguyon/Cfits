@@ -18,7 +18,6 @@ missing
 *.in
 *.Plo
 ar-lib
-configure
 bin/*
 autom4te.cache/*
 compile
