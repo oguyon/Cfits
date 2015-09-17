@@ -44,9 +44,72 @@ fi
 }
 
 
+printhelp_designsteps()
+{
+	echo ""
+	echo "---------- PIAACMC SIMULATION STEPS -------------"
+	echo " "
+	echo "STEP 000 ----------------------------------------"
+	echo ""
+	echo "    Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration"
+	echo ""
+	echo "  OUTPUT:"
+	echo "      Cmodes_1024.fits         : Circular radial cosine modes"
+	echo "      Fmodes_1024.fits         : Fourier modes"
+	echo "Inside directory piaacmcconf_1_coin<coin>_coout<coout>_fpmr<fpmr>_l<lambda>_<material>_lt<LyotTransm>_ls<#LyotStops>_i000 :"
+	echo "      APLCapo.1.100.0.290.info : file written by prolate generation function coronagraph_make_2Dprolate in coronagraphs.c"
+	echo "      apo2Drad.fits            : Idealized PIAACMC 2D apodization (amplitude)"
+	echo "      piaam0z.fits             : PIAA M0/L0 shape (2D sag [m])"
+	echo "      piaam1z.fits             : PIAA M1/L1 shape (2D sag [m])"
+	echo "      PIAA_Mshapes.txt         : PIAA shapes (radial txt file, cols: r0, z0, r1, z1)"
+	echo "      piaa0Cmodes.fits         : idealized PIAACMC mirror/lens 0 cosine modes (copied from ./piaaref/) "
+	echo "      piaa0Fmodes.fits         : idealized PIAACMC mirror/lens 0 Fourier modes (copied from ./piaaref/) "
+	echo "      piaa1Cmodes.fits         : idealized PIAACMC mirror/lens 1 cosine modes (copied from ./piaaref/) "
+	echo "      piaa1Fmodes.fits         : idealized PIAACMC mirror/lens 1 Fourier modes (copied from ./piaaref/) "
+	echo "      piaa0Cres.fits           : idealized PIAA M0/L0 cosine fit residual"
+	echo "      piaa1Cres.fits           : idealized PIAA M1/L1 cosine fit residual"
+	echo "      piaa0Cz.fits             : idealized PIAA M0/L0 cosine fit sag "
+	echo "      piaa1Cz.fits             : idealized PIAA M1/L1 cosine fit sag "
+	echo "      piaa0Fz.fits             : idealized PIAA M0/L0 Fourier fit sag"
+	echo "      piaa1Fz.fits             : idealized PIAA M1/L1 Fourier fit sag"
+	echo "STEP 001 ----------------------------------------"
+	
+	echo ""
+	echo "STEP 002 ----------------------------------------"
+
+	echo ""
+	echo "STEP 003 ----------------------------------------"
+
+	echo ""
+	echo "STEP 004 ----------------------------------------"
+
+	echo ""
+	echo "STEP 005 ----------------------------------------"
+
+	echo ""
+	echo "STEP 006 ----------------------------------------"
+
+	echo ""
+	echo "STEP 007 ----------------------------------------"
+}
+
+
+
+
+
+
 printhelp ()
 {
-    echo "main PIAACMC design scrit"
+	
+	echo ""
+	echo "main PIAACMC design scrit"
+
+	echo ""
+	echo "Print description of design steps:"
+	echo "	$0 helpsteps"
+	echo ""
+
+	echo "EXPECTED INPUT:"
 	echo "  arg1 : directory name                           $1"
 	echo "  arg2 : size (1024, 2048, 4096 etc...)           $2"
 	echo "  arg3 : pupil scale (m/pix)                      $3"
@@ -80,6 +143,13 @@ printhelp ()
 
 
 NBARGS=26
+
+
+if [ "$1" = "helpsteps" ]; then
+	printhelp_designsteps
+	exit
+fi
+
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp $@

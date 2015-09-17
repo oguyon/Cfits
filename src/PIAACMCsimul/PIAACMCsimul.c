@@ -2522,6 +2522,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         if(piaacmc[0].CmodesID!=-1)
             delete_image_ID("Cmodes");
         Cmsize = (long) (beamradpix*4);
+        // make sure Cmsize if even
+        if (Cmsize%2 == 1)
+            Cmsize++;
         piaacmc[0].Cmsize = Cmsize;
         linopt_imtools_makeCosRadModes("Cmodes", Cmsize, piaacmc[0].piaaNBCmodesmax, ApoFitCosFact*beamradpix, 2.0);
         piaacmc[0].CmodesID = image_ID("Cmodes");
