@@ -216,8 +216,6 @@ rstep=${26}
 
 
 
-echo "rstep = $rstep"
-sleep 10
 
 PIAACMC_nbiter=20
 
@@ -1118,6 +1116,9 @@ exit
 fi
 
 
+echo "proceeding to step 001"
+sleep 10
+
 checkexit
 
 
@@ -1166,6 +1167,8 @@ cleanup
 exit
 fi
 
+echo "proceeding to step 002"
+sleep 10
 
 checkexit
 
@@ -1194,6 +1197,8 @@ cleanup
 exit
 fi
 
+echo "proceeding to step 003"
+sleep 10
 
 checkexit
 
