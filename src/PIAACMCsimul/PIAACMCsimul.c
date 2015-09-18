@@ -3696,7 +3696,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
             for(elem=0; elem<optsyst[0].NBelem; elem++)
                 printf("    FLUX %3ld   %12.4lf %8.6lf\n", elem, optsyst[0].flux[elem], optsyst[0].flux[elem]/optsyst[0].flux[0]);
-            value = value/size/size/optsyst[0].flux[0];
+//            value = value/size/size/optsyst[0].flux[0];
 
             if(outsave==1)
             {
@@ -3717,8 +3717,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
            }
 
-            avContrast = value/(SCORINGTOTAL*focscale*focscale);
-
+  //          avContrast = value/(SCORINGTOTAL*focscale*focscale);
+            avContrast =  value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL;
+                
             //         CnormFactor = size*size*optsyst[0].flux[0]*arith_image_total("scoringmask")*focscale*focscale; // /optsyst[0].nblambda;
             CnormFactor = focscale*focscale*size*size*optsyst[0].flux[0]/optsyst[0].nblambda;
             sprintf(fname, "%s/CnormFactor.txt", piaacmcconfdir);
@@ -3731,7 +3732,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             printf("COMPUTING UNRESOLVED SOURCE PSF -*- [%f x %f]\n", xld, yld);
             printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/(optsyst[0].flux[0]*optsyst[0].flux[0]));
 //            size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
-            printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/arith_image_total("scoringmask"));
+            printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL); //arith_image_total("scoringmask"));
 //            arith_image_total("scoringmask")*focscale*focscale*normcoeff*normcoeff));
 
             if(outsave==1)
