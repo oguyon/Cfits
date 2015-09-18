@@ -179,7 +179,7 @@ runoptcmd=$1
 
 
 
-echo "18" > conf_MdesignStepMax.txt
+echo "1" > conf_MdesignStepMax.txt
 
 
 echo "$2" > conf_exitpt.txt
