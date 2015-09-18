@@ -79,6 +79,8 @@ typedef struct {
     long piaa1CmodesID;
     long piaa1FmodesID;
 
+    // PSF flux calib
+    float peakPSF;
 
 
     // ========= Focal Plane Mask =============

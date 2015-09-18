@@ -887,6 +887,9 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     beamradpix = optsyst[0].beamrad/optsyst[0].pixscale;
 
+
+    
+
     list_variable_ID();
 
     // printf("BEAM RADIUS = %f / %f  = %f pix,   piaacmc[0].beamrad = %f\n", optsyst[0].beamrad, optsyst[0].pixscale, beamradpix, piaacmc[0].beamrad );
@@ -2230,6 +2233,17 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         piaacmc[0].fpmaskamptransm = 1.0;
 
 
+        if((fp = fopen("conf/conf_peakPSF.txt", "r"))!=NULL)
+        {
+            ret = fscanf(fp, "%f", &piaacmc[0].peakPSF);
+            fclose(fp);
+        }
+        else
+            piaacmc[0].peakPSF = -1.0;
+        
+
+
+
         piaacmc[0].invPIAAmode = 1;
         if((IDv=variable_ID("PIAACMC_invPIAAmode"))!=-1)
             piaacmc[0].invPIAAmode = (long) (data.variable[IDv].value.f+0.001);
@@ -3354,7 +3368,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
     char command[1000];
     double rad1, rad2;
 
-    float peakPSF, val;
+    float val;
     long IDv;
 
     size = piaacmc[0].size;
@@ -3747,22 +3761,28 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             if((IDv=variable_ID("PIAACMC_NOFPM"))!=-1)
                 {
                     ID = image_ID("psfc0");
-                    peakPSF = 0.0;
+                    piaacmc[0].peakPSF = 0.0;
                     for(ii=0;ii<size*size;ii++)
                         {
                             val = data.image[ID].array.CF[ii].re*data.image[ID].array.CF[ii].re + data.image[ID].array.CF[ii].im*data.image[ID].array.CF[ii].im;
-                            if(val>peakPSF)
-                                peakPSF = val;
+                            if(val>piaacmc[0].peakPSF)
+                                piaacmc[0].peakPSF = val;
                         }
 
-                    fp = fopen("calib_PSFpeak_noFPM.txt", "w");
-                    fprintf(fp, "%g\n", peakPSF);
+                    fp = fopen("conf/conf_peakPSF.txt", "w");
+                    fprintf(fp, "%g\n", piaacmc[0].peakPSF);
                     fclose(fp);
                 }
-            printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/(optsyst[0].flux[0]*optsyst[0].flux[0]));
-//            size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
-            printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL); //arith_image_total("scoringmask"));
-//            arith_image_total("scoringmask")*focscale*focscale*normcoeff*normcoeff));
+            if(piaacmc[0].peakPSF<1.0)
+                {
+                    printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/(optsyst[0].flux[0]*optsyst[0].flux[0]));
+                    printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL); 
+                }
+            else
+                {
+                    printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/piaacmc[0].peakPSF);
+                    printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/piaacmc[0].peakPSF/SCORINGTOTAL); 
+                }
 
             if(outsave==1)
             {
