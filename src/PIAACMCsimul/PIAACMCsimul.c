@@ -3675,6 +3675,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
             //save_fits("imvect", "!imvect.fits");
             save_fits("psfc0", "!test_psfc0.fits");
+            list_image_ID();
             printf("saved -> test_psfc0.fits\n");
             fflush(stdout);
             
@@ -3723,7 +3724,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             fclose(fp);
 
 
-            printf("COMPUTING UNRESOLVED SOURCE PSF -- [%f x %f]\n", xld, yld);
+            printf("COMPUTING UNRESOLVED SOURCE PSF -*- [%f x %f]\n", xld, yld);
             printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
             printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(arith_image_total("scoringmask")*focscale*focscale*normcoeff*normcoeff));
 
