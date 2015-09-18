@@ -495,7 +495,11 @@ rm status/design_coin${coin}_coout${coout}_fpmrad${fpmrad}_l${lambda}_${PIAAmate
 
 
 
-# optmono
+
+
+
+
+# designmono
 if [ $inputmode -eq 1 ]; then
 	reoptimize=1
 	funcprocess								

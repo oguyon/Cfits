@@ -81,6 +81,7 @@ printhelp_designsteps()
 	echo "  DESCRIPTION:"
 	echo "    Computes prolate spheroidal apodization for a centrally obscured aperture (->apo2Drad.fits)"
 	echo "    Computes remapping and PIAA shapes to achieve the desired apodization (->PIAA_Mshapes.txt)"
+	echo "    "
 	echo ""
 	echo "STEP 001 ----------------------------------------"
 	
