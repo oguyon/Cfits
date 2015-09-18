@@ -3675,7 +3675,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
             //save_fits("imvect", "!imvect.fits");
             
-            mk_amph_from_complex("psfc0", "psfc0a", "psfc0p");
+            mk_amph_from_complex("psfc0", "psfc0a", "psfc0p", 0);
             save_fits("psfc0a", "!test_psfc0a.fits");
             list_image_ID();
             delete_image_ID("psfc0a");
