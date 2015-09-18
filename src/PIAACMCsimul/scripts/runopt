@@ -468,7 +468,7 @@ echo "$MdesignStepMax"
 	checkerrorstatus
 	
 	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
-	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	#./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 
 	#touch $file1
