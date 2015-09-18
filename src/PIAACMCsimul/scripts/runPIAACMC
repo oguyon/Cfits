@@ -1111,6 +1111,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (000)"
+sleep 5
 cleanup
 exit
 fi
@@ -1163,6 +1164,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (001)"
+sleep 5
 cleanup
 exit
 fi
@@ -1193,6 +1195,7 @@ fi
 if [ $state -eq $statestop ] 
 then
 echo "STATE STOP POINT (002)"
+sleep 5
 cleanup
 exit
 fi
