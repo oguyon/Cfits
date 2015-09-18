@@ -3674,7 +3674,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
  //           list_image_ID();
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
             //save_fits("imvect", "!imvect.fits");
-
+            save_fits("psfc0", "!test_psfc0.fits");
+            
             value = 0.0;
             peakcontrast = 0.0;
             ID = image_ID("imvect");
