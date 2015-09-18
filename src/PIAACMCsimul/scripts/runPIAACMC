@@ -638,6 +638,34 @@ fi
 
 
 
+# 600 : compute off-axis PSF (monochromatic), idelized focal plane mask
+if [ 600 -eq ${state} ]
+then
+ echo "600: Compute on-axis monochromatic PSF - idealized PIAACMC"
+echo "600" > ./$1/runstep
+touch ./$1/step600.run.txt
+cp ./$1/piaacmcparams_idealmonomask.conf ./$1/piaacmcparams.conf
+$execnamestring -n step600 << EOF
+# idealized mask
+PIAACMC_MASKRADLD=0.0 
+
+loadfits "OPDerr.fits" opderr
+PIAACMC_fpmtype=0
+PIAACMC_FPMsectors=0
+PIAACMC_NBrings=1
+PIAACMC_nblambda=1
+PIAACMC_resolved=0
+SCORINGMASKTYPE=$SCORINGMASKTYPE
+piaacmcsimrun $1 0
+exit
+EOF
+mv ./$1/psfi0.fits ./$1/psfi0_step600.fits
+cleanup
+exit
+fi
+
+
+
 
 
 

@@ -3720,7 +3720,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
             printf("COMPUTING UNRESOLVED SOURCE PSF - [%f x %f]\n", xld, yld);
             printf("Peak constrast (rough estimate)= %g\n", peakcontrast/size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
-            printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(arith_image_total("scoringmask")*focscale*focscale));
+            printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(arith_image_total("scoringmask")*focscale*focscale*size*size*normcoeff*normcoeff*optsyst[0].flux[0]));
 
             if(outsave==1)
             {
