@@ -3647,7 +3647,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
         }
         else
         {
-            printf("COMPUTING UNRESOLVED SOURCE PSF\n");
+            printf("COMPUTING UNRESOLVED SOURCE PSF [%f x %f]\n", xld, yld);
 
 
             // ========== initializes optical system to piaacmc design ===========
