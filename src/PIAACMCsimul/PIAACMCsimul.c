@@ -1193,7 +1193,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     sprintf(optsyst[0].name[elem], "PIAA optics 1");
     optsyst[0].elemtype[elem] = 3; // reflective PIAA M1
     optsyst[0].elemarrayindex[elem] = 2;
-    optsyst[0].elemZpos[elem] = optsyst[0].elemZpos[elem-1]+design[index].piaasep;
+    optsyst[0].elemZpos[elem] = design[index].piaa0pos+design[index].piaasep;
 
     if(design[index].PIAAmaterial_code == 0) // point to mirror
         optsyst[0].ASPHSURFMarray[2].surfID = IDpiaam1z;
