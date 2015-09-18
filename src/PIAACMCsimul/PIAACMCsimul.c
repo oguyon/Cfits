@@ -1378,7 +1378,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     // --------------------  elem 9: back end mask  ------------------------
 
-    sprintf(optsyst[0].name[elem], "back end pupil stop");
+    sprintf(optsyst[0].name[elem], "back end pupil stop  (rad = %f)", design[index].pupoutmaskrad);
     optsyst[0].elemtype[elem] = 1;
     ID = make_disk("pupoutmask", size, size, 0.5*size, 0.5*size, design[index].pupoutmaskrad*design[index].beamrad/design[index].pixscale);
     optsyst[0].elemarrayindex[elem] = ID;
