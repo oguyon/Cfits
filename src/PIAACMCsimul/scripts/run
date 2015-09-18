@@ -71,7 +71,7 @@ loadparam piaaNBCmodesmax 40
 loadparam piaaCPAmax 10.0
 loadparam LyotZmin -2.5
 loadparam LyotZmax 0.5
-
+loadparam pupoutmaskrad 0.92
 
 # CONFIGURATION FLAGS/PARAMETERS
 loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fourier modes)
@@ -127,6 +127,7 @@ printvar "piaaNBCmodesmax" "maximum number of radial cosine modes for PIAA optic
 printvar "piaaCPAmax" "maximum spatial frequency (CPA) for PIAA optics"
 printvar "LyotZmin" "minimum value for Lyot stop(s) conjugation range [m]"
 printvar "LyotZmax" "maximum value for Lyot stop(s) conjugation range [m]"
+printvar "pupoutmaskrad" "output pupil mask radius (scaled to pupil radius)"
 echo " "
 }
 

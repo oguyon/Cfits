@@ -515,6 +515,7 @@ echo "PIAACMC_piaaNBCmodesmax=${piaaNBCmodesmax}" >> $startupfile
 echo "PIAACMC_piaaCPAmax=${piaaCPAmax}" >> $startupfile
 echo "PIAACMC_LyotZmin=${LyotZmin}" >> $startupfile
 echo "PIAACMC_LyotZmax=${LyotZmax}" >> $startupfile
+echo "PIAACMC_pupoutmaskrad=${pupoutmaskrad}" >> $startupfile
 fifoname="runPIAACMCfifo$pid"
 
 

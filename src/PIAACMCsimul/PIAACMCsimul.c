@@ -1380,7 +1380,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     sprintf(optsyst[0].name[elem], "back end pupil stop");
     optsyst[0].elemtype[elem] = 1;
-    ID = make_disk("outmask", size, size, 0.5*size, 0.5*size, 0.92*design[index].beamrad/design[index].pixscale);
+    ID = make_disk("outmask", size, size, 0.5*size, 0.5*size, design[index].pupoutmaskrad*design[index].beamrad/design[index].pixscale);
     optsyst[0].elemarrayindex[elem] = ID;
     optsyst[0].elemZpos[elem] =  optsyst[0].elemZpos[elem-1];
     if(PIAACMC_save==1)
@@ -2301,6 +2301,12 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         piaacmc[0].LyotZmax = 3.0;
         if((IDv=variable_ID("PIAACMC_LyotZmax"))!=-1)
             piaacmc[0].LyotZmax = data.variable[IDv].value.f;
+
+       piaacmc[0].LyotZmax = 0.95;
+        if((IDv=variable_ID("PIAACMC_pupoutmaskrad"))!=-1)
+            piaacmc[0].pupoutmaskrad = data.variable[IDv].value.f;
+
+
 
 
         if((IDv=variable_ID("PIAACMC_piaaNBCmodesmax"))!=-1)
