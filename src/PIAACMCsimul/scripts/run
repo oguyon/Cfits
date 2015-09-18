@@ -184,7 +184,6 @@ echo "18" > conf_MdesignStepMax.txt
 
 if [ "$runoptcmd" = "designmono" ]; then
 echo "$2" > conf_MdesignStepMax.txt
-exit
 fi
 
 echo "$2" > conf_exitpt.txt
