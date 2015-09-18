@@ -3342,7 +3342,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
     // how to measure quality
     float focscale; // l/D per pix
-    float scoringIWA = -1.5; // 1.5
+    float scoringIWA = 1.5; 
     float scoringOWA = 20.0;
     float scoringOWAhr = 8.0;
     float scoringIWAx = -20.5;
