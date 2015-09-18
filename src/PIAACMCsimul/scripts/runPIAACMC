@@ -216,7 +216,8 @@ rstep=${26}
 
 
 
-
+echo "rstep = $rstep"
+sleep 10
 
 PIAACMC_nbiter=20
 
