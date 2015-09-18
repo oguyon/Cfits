@@ -3675,6 +3675,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
             //save_fits("imvect", "!imvect.fits");
             save_fits("psfc0", "!test_psfc0.fits");
+            printf("saved -> test_psfc0.fits\n");
+            fflush(stdout);
             
             value = 0.0;
             peakcontrast = 0.0;
