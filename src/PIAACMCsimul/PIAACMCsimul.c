@@ -1275,6 +1275,8 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
 
     // --------------------  elem 5: focal plane mask ------------------------
+    if((IDv=variable_ID("PIAACMC_NOFPM"))=-1)
+{
     sprintf(optsyst[0].name[elem], "post focal plane mask pupil");
     optsyst[0].elemtype[elem] = 5; // focal plane mask
     optsyst[0].elemarrayindex[elem] = 0;
@@ -1298,7 +1300,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         fprintf(fp,"%02ld  %f    %s\n", elem, optsyst[0].elemZpos[elem], optsyst[0].name[elem]);
     //      fprintf(fp,"%02ld  %f    post-focal plane mask pupil\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
-
+}
 
 
 
