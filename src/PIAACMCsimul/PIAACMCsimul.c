@@ -3318,7 +3318,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
     // how to measure quality
     float focscale; // l/D per pix
-    float scoringIWA = 1.5;
+    float scoringIWA = 0.0; // 1.5
     float scoringOWA = 20.0;
     float scoringOWAhr = 8.0;
     float scoringIWAx = -20.5;
@@ -3686,9 +3686,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             value = 0.0;
             peakcontrast = 0.0;
             ID = image_ID("imvect");
-            for(ii=0; ii<data.image[ID].md[0].nelement; ii++)
+            for(ii=0; ii<data.image[ID].md[0].nelement; ii+=2)
             {
-                tmpv = data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+                tmpv = data.image[ID].array.F[ii]*data.image[ID].array.F[ii] + data.image[ID].array.F[ii+1]*data.image[ID].array.F[ii+1];
                 value += tmpv;
                 if(tmpv>peakcontrast)
                     peakcontrast = tmpv;
