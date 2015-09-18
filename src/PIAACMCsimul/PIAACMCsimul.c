@@ -1380,13 +1380,16 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     sprintf(optsyst[0].name[elem], "back end pupil stop");
     optsyst[0].elemtype[elem] = 1;
-    ID = make_disk("outmask", size, size, 0.5*size, 0.5*size, design[index].pupoutmaskrad*design[index].beamrad/design[index].pixscale);
+    ID = make_disk("pupoutmask", size, size, 0.5*size, 0.5*size, design[index].pupoutmaskrad*design[index].beamrad/design[index].pixscale);
     optsyst[0].elemarrayindex[elem] = ID;
     optsyst[0].elemZpos[elem] =  optsyst[0].elemZpos[elem-1];
     if(PIAACMC_save==1)
         fprintf(fp,"%02ld  %f    %s\n", elem, optsyst[0].elemZpos[elem], optsyst[0].name[elem]);
     //     fprintf(fp,"%02ld  %f   back end mask\n", elem, optsyst[0].elemZpos[elem]);
     elem++;
+
+
+
 
     if(PIAACMC_save==1)
         fclose(fp);
@@ -3350,6 +3353,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
     char command[1000];
     double rad1, rad2;
 
+    float peakPSF, val;
+    long IDv;
 
     size = piaacmc[0].size;
     size2 = size*size;
@@ -3679,6 +3684,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
  //           list_image_ID();
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", "imvect");
+           
+           
             save_fits("imvect", "!test_imvect.fits");
             
             mk_amph_from_complex("psfc0", "psfc0a", "psfc0p", 0);
@@ -3736,6 +3743,21 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
 
             printf("COMPUTING UNRESOLVED SOURCE PSF -*- [%f x %f]\n", xld, yld);
+            if((IDv=variable_ID("PIAACMC_NOFPM"))!=-1)
+                {
+                    ID = image_ID("psfc0");
+                    peakPSF = 0.0;
+                    for(ii=0;ii<size*size;ii++)
+                        {
+                            val = data.image[ID].array.CF[ii].re*data.image[ID].array.CF[ii].re + data.image[ID].array.CF[ii].im*data.image[ID].array.CF[ii].im;
+                            if(val>peakPSF)
+                                peakPSF = val;
+                        }
+
+                    fp = fopen("calib_PSFpeak_noFPM.txt", "w");
+                    fprintf(fp, "%g\n", peakPSF);
+                    fclose(fp);
+                }
             printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/(optsyst[0].flux[0]*optsyst[0].flux[0]));
 //            size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
             printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL); //arith_image_total("scoringmask"));

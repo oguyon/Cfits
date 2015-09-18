@@ -463,7 +463,7 @@ echo "$MdesignStepMax"
 	./sim$size 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus	
 	
-	# COMPUTE ON-AXIS PSF with NO focal plane mask, monochromatic	
+	# COMPUTE ON-AXIS PSF with NO focal plane mask, monochromatic -> CONTRAST CALIBRATION
 	./sim$size 699 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 	

@@ -649,8 +649,6 @@ cp ./$1/piaacmcparams_idealmonomask.conf ./$1/piaacmcparams.conf
 $execnamestring -n step699 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
-
-loadfits "OPDerr.fits" opderr
 PIAACMC_NOFPM=1
 PIAACMC_fpmtype=0
 PIAACMC_FPMsectors=0
