@@ -454,6 +454,20 @@ echo "LyotZmax = $LyotZmax"
 
 
 
+pupoutmaskrad=0.99 # default
+file="conf/conf_pupoutmaskrad.txt"
+if [ -f $file ]
+	then
+	pupoutmaskrad=$(echo "$(cat $file)")
+	else
+	#echo "CANNOT READ FILE ${file}"
+	ok=0
+fi
+echo "pupoutmaskrad = $pupoutmaskrad"
+
+
+
+
 invPIAAmode=1 # default
 file="conf/conf_invPIAAmode.txt"
 if [ -f $file ]

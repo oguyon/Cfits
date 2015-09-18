@@ -2310,7 +2310,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         if((IDv=variable_ID("PIAACMC_LyotZmax"))!=-1)
             piaacmc[0].LyotZmax = data.variable[IDv].value.f;
 
-       piaacmc[0].LyotZmax = 0.95;
+       piaacmc[0].pupoutmaskrad = 0.95;
         if((IDv=variable_ID("PIAACMC_pupoutmaskrad"))!=-1)
             piaacmc[0].pupoutmaskrad = data.variable[IDv].value.f;
 
