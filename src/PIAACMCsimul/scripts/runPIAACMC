@@ -1117,8 +1117,6 @@ exit
 fi
 
 
-echo "proceeding to step 001"
-sleep 10
 
 checkexit
 
@@ -1169,8 +1167,6 @@ cleanup
 exit
 fi
 
-echo "proceeding to step 002"
-sleep 10
 
 checkexit
 
@@ -1200,8 +1196,6 @@ cleanup
 exit
 fi
 
-echo "proceeding to step 003"
-sleep 10
 
 checkexit
 
