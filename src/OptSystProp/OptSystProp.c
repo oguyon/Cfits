@@ -230,13 +230,6 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             data.image[IDa].array.F[size2*kl+ii] = 1.0;
 
 
-    
-
-    printf("CHECK----- : %d %ld\n", 1, optsyst[0].ASPHSURFMarray[1].surfID);
-    sleep(10.0);
-
-
-
 
 
     elemstart1 = 0;
@@ -428,8 +421,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             printf("index %ld    %d surface ID : %ld \n", index, optsyst[index].elemarrayindex[elem], ID);
             fflush(stdout);
 
-            printf("CHECK----+ : %ld %ld    %ld   %ld %ld \n", index, optsyst[index].ASPHSURFMarray[1].surfID, optsyst[index].elemarrayindex[elem],  optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].surfID, ID);
-            sleep(10.0);
+         
 
             list_image_ID();
             
