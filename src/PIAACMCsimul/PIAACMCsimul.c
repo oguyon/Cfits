@@ -1158,8 +1158,8 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
           */
         optsyst[0].elemtype[elem] = 4;
         optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].surfID = image_ID("piaar0zsag"); //IDpiaar0zsag;
-        optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat0 = design[0].PIAAmaterial_code;
-        optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat1 = 100; // vacuum
+        optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat0 = 100;
+        optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat1 = design[0].PIAAmaterial_code; // vacuum
     }
 
     if(optsyst[0].ASPHSURFMarray[1].surfID==-1)
