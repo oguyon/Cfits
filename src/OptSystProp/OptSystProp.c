@@ -427,6 +427,10 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             ID = optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].surfID;
             printf("%d surface ID : %ld \n", optsyst[index].elemarrayindex[elem], ID);
             fflush(stdout);
+
+            printf("CHECK----+ : %d %ld\n", 1, optsyst[0].ASPHSURFMarray[1].surfID);
+            sleep(10.0);
+
             list_image_ID();
             
             if(optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].init!=1)
