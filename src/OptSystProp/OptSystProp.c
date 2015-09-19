@@ -417,7 +417,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             printf("============= Refractive surface =======================\n");
             fflush(stdout);
             ID = optsyst[index].ASPHSURFRarray[optsyst[index].elemarrayindex[elem]].surfID;
-            printf("%d surface ID = %ld\n", optsyst[index].elemarrayindex[elem], ID);
+            printf("%d surface ID = %ld \n", optsyst[index].elemarrayindex[elem]);
             fflush(stdout);
             list_image_ID();
             
