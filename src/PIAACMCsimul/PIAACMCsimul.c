@@ -3172,7 +3172,7 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
                 }
             }
             if(mkpiaar0zsag == 1)
-                IDpiaar0zsag = create_2Dimage_ID("piaar0zsag"); //, size, size, design[index].nblambda);
+                IDpiaar0zsag = create_2Dimage_ID("piaar0zsag", size, size); //, design[index].nblambda);
 
 
 
