@@ -1112,50 +1112,10 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     optsyst[0].elemarrayindex[elem] = 1; // index
     optsyst[0].elemZpos[elem] = design[index].piaa0pos;
 
-    if(design[index].PIAAmaterial_code == 0) // point to mirror
+    if(design[index].PIAAmaterial_code == 0) // mirror
         optsyst[0].ASPHSURFMarray[optsyst[0].elemarrayindex[elem]].surfID = IDpiaam0z;
-    else // make mirror OPD cube from sag map to take into account chromaticity - The refractive surface is represented as a pre-computed chromatic mirror surface
+    else // lens
     {
-
-        // if piaar0zsag does not exist or is wrong size, create it
-        /*       IDpiaar0zsag = image_ID("piaar0zsag");
-               if(IDpiaar0zsag == -1)
-                   mkpiaar0zsag = 1;
-               else
-                   {
-                       if((data.image[IDpiaar0zsag].md[0].size[0] != size)||(data.image[IDpiaar0zsag].md[0].size[1] != size)||(data.image[IDpiaar0zsag].md[0].size[2] != design[index].nblambda))
-                       {
-                           delete_image_ID("piaar0zsag");
-                           mkpiaar0zsag = 1;
-                       }
-                   }
-               if(mkpiaar0zsag == 1)
-                   IDpiaar0zsag = create_3Dimage_ID("piaar0zsag", size, size, design[index].nblambda);
-
-
-
-               sprintf(fname, "%s/ri_array.txt", piaacmcconfdir);
-               if( (fpri=fopen(fname, "w")) == NULL)
-                   {
-                       printf("ERROR: cannot open file \"%s\"\n", fname);
-                       exit(0);
-                   }
-               ri0 = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, design[index].lambda); // refractive index at central lambda
-               sag2opd_coeff0 = (ri0-1.0)/2.0;
-               for(k=0;k<design[index].nblambda;k++)
-                   {
-                       // sag to OPD coeff
-                       ri = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, optsyst[0].lambdaarray[k]); // refractive index
-                       sag2opd_coeff = (ri-1.0)/2.0;
-                       fprintf(fpri, "%g %.16f %.16f %.16f %.16f\n", optsyst[0].lambdaarray[k], ri, ri0, sag2opd_coeff, sag2opd_coeff/sag2opd_coeff0);
-                       for(ii=0;ii<size*size;ii++)
-                           data.image[IDpiaar0zsag].array.F[k*size*size+ii] = sag2opd_coeff * data.image[IDpiaam0z].array.F[ii] / sag2opd_coeff0;
-                   }
-               fclose(fpri);
-               sprintf(fname, "!%s/piaar0zsag.fits", piaacmcconfdir);
-               if(PIAACMC_save==1)   save_fl_fits("piaar0zsag", fname);
-               printf("Saved piaar0zsag to %s\n", fname);
-          */
         optsyst[0].elemtype[elem] = 4;
         optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].surfID = image_ID("piaar0zsag"); //IDpiaar0zsag;
         optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat0 = 100;
@@ -1200,50 +1160,10 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     optsyst[0].elemarrayindex[elem] = 2;
     optsyst[0].elemZpos[elem] = design[index].piaa0pos+design[index].piaasep;
 
-    if(design[index].PIAAmaterial_code == 0) // point to mirror
+    if(design[index].PIAAmaterial_code == 0) // mirror
         optsyst[0].ASPHSURFMarray[2].surfID = IDpiaam1z;
-    else // make mirror OPD cube from sag map to take into account chromaticity - The refractive surface is represented as a pre-computed chromatic mirror surface
+    else // lens
     {
-
-        // if piaar1zsag does not exist or is wrong size, create it
-        /*    IDpiaar1zsag = image_ID("piaar1zsag");
-            if(IDpiaar1zsag == -1)
-                mkpiaar1zsag = 1;
-            else
-                {
-                    if((data.image[IDpiaar1zsag].md[0].size[0] != size)||(data.image[IDpiaar1zsag].md[0].size[1] != size)||(data.image[IDpiaar1zsag].md[0].size[2] != design[index].nblambda))
-                    {
-                        delete_image_ID("piaar1zsag");
-                        mkpiaar1zsag = 1;
-                    }
-                }
-            if(mkpiaar1zsag == 1)
-                IDpiaar1zsag = create_3Dimage_ID("piaar1zsag", size, size, design[index].nblambda);
-
-
-
-            sprintf(fname, "%s/ri_array.txt", piaacmcconfdir);
-            if( (fpri=fopen(fname, "w")) == NULL)
-                {
-                    printf("ERROR: cannot open file \"%s\"\n", fname);
-                    exit(0);
-                }
-            ri0 = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, design[index].lambda); // refractive index at central lambda
-            sag2opd_coeff0 = (ri0-1.0)/2.0;
-            for(k=0;k<design[index].nblambda;k++)
-                {
-                    // sag to OPD coeff
-                    ri = OPTICSMATERIALS_n(design[index].PIAAmaterial_code, optsyst[0].lambdaarray[k]); // refractive index
-                    sag2opd_coeff = (ri-1.0)/2.0;
-                    fprintf(fpri, "%g %.16f %.16f %.16f %.16f\n", optsyst[0].lambdaarray[k], ri, ri0, sag2opd_coeff, sag2opd_coeff/sag2opd_coeff0);
-                    for(ii=0;ii<size*size;ii++)
-                        data.image[IDpiaar1zsag].array.F[k*size*size+ii] = sag2opd_coeff * data.image[IDpiaam1z].array.F[ii] / sag2opd_coeff0;
-                }
-            fclose(fpri);
-            sprintf(fname, "!%s/piaar1zsag.fits", piaacmcconfdir);
-            if(PIAACMC_save==1)   save_fl_fits("piaar1zsag", fname);
-            printf("Saved piaar1zsag to %s\n", fname);
-          */
         optsyst[0].elemtype[elem] = 4;
         optsyst[0].ASPHSURFRarray[2].surfID = image_ID("piaar1zsag"); //IDpiaar0zsag;
         optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat0 = 100; // vacuum
@@ -1337,7 +1257,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         if(design[index].PIAAmaterial_code == 0) // point to mirror
             optsyst[0].elemtype[elem] = 3; // reflective PIAA M/L 0
         else
-            optsyst[0].elemtype[elem] = 4; // reflective PIAA M/L 0
+            optsyst[0].elemtype[elem] = 4; // refractive PIAA M/L 0
 
         optsyst[0].elemarrayindex[elem] = 1;
         optsyst[0].elemZpos[elem] = design[index].piaasep;
