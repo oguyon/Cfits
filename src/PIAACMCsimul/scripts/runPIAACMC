@@ -142,9 +142,11 @@ printhelp_designsteps()
 	echo ""
 	cecho "STEP 002 ----------------------------------------" $bwhite
 	echo ""
+	echo "     Specify input pupil geometry"
 	echo ""
 	cecho "STEP 003 ----------------------------------------" $bwhite
-
+	echo ""
+	echo "     Compute on-axis PSF"
 	echo ""
 	cecho "STEP 004 ----------------------------------------" $bwhite
 
