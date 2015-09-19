@@ -1113,7 +1113,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     optsyst[0].elemZpos[elem] = design[index].piaa0pos;
 
     if(design[index].PIAAmaterial_code == 0) // point to mirror
-        optsyst[0].ASPHSURFMarray[1].surfID = IDpiaam0z;
+        optsyst[0].ASPHSURFMarray[optsyst[0].elemarrayindex[elem]].surfID = IDpiaam0z;
     else // make mirror OPD cube from sag map to take into account chromaticity - The refractive surface is represented as a pre-computed chromatic mirror surface
     {
 

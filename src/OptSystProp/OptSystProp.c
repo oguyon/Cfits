@@ -230,6 +230,14 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             data.image[IDa].array.F[size2*kl+ii] = 1.0;
 
 
+    
+
+    printf("CHECK----- : %d %ld\n", 1, optsyst[0].ASPHSURFMarray[1].surfID);
+    sleep(10.0);
+
+
+
+
 
     elemstart1 = 0;
     elemOK = 1;
