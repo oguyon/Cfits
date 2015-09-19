@@ -139,6 +139,7 @@ printhelp_designsteps()
 	echo "    Make actual 2D shapes for fitted mirror coefficients (function PIAACMCsimul_makePIAAshapes) IF LENSES, MULTIPLY SHAPE BY 2/(n-1) : COEFFICIENTS ARE FOR MIRROR EQUIVALENT SHAPES"
 	echo "           -> piaam0z.fits piaam1z.fits (for mirrors)"
 	echo "           -> piaar0zsag.fits piaar1zsag.fits (for lenses)"
+	echo "    Set up optical configuration and propagate light"
 	echo ""
 	cecho "STEP 001 ----------------------------------------" $bwhite
 	echo ""
