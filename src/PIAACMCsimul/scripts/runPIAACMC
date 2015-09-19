@@ -24,6 +24,54 @@ fi
 }
 
 
+black='\E[30;40m'
+red='\E[31;40m'
+green='\E[32;40m'
+yellow='\E[33;40m'
+blue='\E[34;40m'
+magenta='\E[35;40m'
+cyan='\E[36;40m'
+white='\E[37;40m'
+bblack='\E[1;30;40m'
+bred='\E[1;31;40m'
+bgreen='\E[1;32;40m'
+byellow='\E[1;33;40m'
+bblue='\E[1;34;40m'
+bmagenta='\E[1;35;40m'
+bcyan='\E[1;36;40m'
+bwhite='\E[1;37;40m'
+
+
+alias Reset="tput sgr0"      #  Reset text attributes to normal
+                             #+ without clearing screen.
+
+
+
+
+
+
+cecho ()                     # Color-echo.
+                             # Argument $1 = message
+                             # Argument $2 = color
+{
+local default_msg="No message passed."
+                             # Doesn't really need to be a local variable.
+
+message=${1:-$default_msg}   # Defaults to default message.
+color=${2:-$black}           # Defaults to black, if not specified.
+
+#  echo -e "$color"
+  echo -e "$color $message \033[0m"
+#  echo -e "\033[0m"  
+                      # Reset to normal.
+  tput sgr0
+  return
+}  
+
+
+
+
+
 
 function loadparam() {
 file="conf/conf_$1.txt"
@@ -47,61 +95,66 @@ fi
 printhelp_designsteps()
 {
 	echo ""
-	echo "---------- PIAACMC SIMULATION STEPS -------------"
+	cecho "---------- PIAACMC SIMULATION STEPS -------------" $bwhite
 	echo " "
-	echo "STEP 000 ----------------------------------------"
+	cecho "STEP 000 ----------------------------------------" $bwhite
 	echo ""
 	echo "    Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration"
 	echo ""
 	echo "  OUTPUT:"
-	echo "      Cmodes_1024.fits         : Circular radial cosine modes"
-	echo "      Fmodes_1024.fits         : Fourier modes"
+	echo -e "     \033[1m Cmodes_1024.fits \033[0m       : Circular radial cosine modes"
+	echo -e "     \033[1m Fmodes_1024.fits \033[0m       : Fourier modes"
 	echo "Inside directory piaacmcconf_1_coin<coin>_coout<coout>_fpmr<fpmr>_l<lambda>_<material>_lt<LyotTransm>_ls<#LyotStops>_i000 :"
 	echo "   Apodization and PIAA optics:"
-	echo "      APLCapo.1.100.0.290.info : file written by prolate generation function coronagraph_make_2Dprolate in coronagraphs.c"
-	echo "      apo2Drad.fits            : Idealized PIAACMC 2D apodization (amplitude)"
-	echo "      piaam0z.fits             : PIAA M0/L0 shape (2D sag [m])"
-	echo "      piaam1z.fits             : PIAA M1/L1 shape (2D sag [m])"
-	echo "      PIAA_Mshapes.txt         : PIAA shapes (radial txt file, cols: r0, z0, r1, z1)"
-	echo "      piaa0Cmodes.fits         : idealized PIAACMC mirror/lens 0 cosine modes (copied from ./piaaref/) "
-	echo "      piaa0Fmodes.fits         : idealized PIAACMC mirror/lens 0 Fourier modes (copied from ./piaaref/) "
-	echo "      piaa1Cmodes.fits         : idealized PIAACMC mirror/lens 1 cosine modes (copied from ./piaaref/) "
-	echo "      piaa1Fmodes.fits         : idealized PIAACMC mirror/lens 1 Fourier modes (copied from ./piaaref/) "
-	echo "      piaa0Cres.fits           : idealized PIAA M0/L0 cosine fit residual"
-	echo "      piaa1Cres.fits           : idealized PIAA M1/L1 cosine fit residual"
-	echo "      piaa0Cz.fits             : idealized PIAA M0/L0 cosine fit sag "
-	echo "      piaa1Cz.fits             : idealized PIAA M1/L1 cosine fit sag "
-	echo "      piaa0Fz.fits             : idealized PIAA M0/L0 Fourier fit sag"
-	echo "      piaa1Fz.fits             : idealized PIAA M1/L1 Fourier fit sag"
+	echo -e "     \033[1m APLCapo.1.100.0.290.info \033[0m : file written by prolate generation function coronagraph_make_2Dprolate in coronagraphs.c"
+	echo -e "     \033[1m apo2Drad.fits            \033[0m : Idealized PIAACMC 2D apodization (amplitude)"
+	echo -e "     \033[1m piaam0z.fits             \033[0m : PIAA M0/L0 shape (2D sag [m])"
+	echo -e "     \033[1m piaam1z.fits             \033[0m : PIAA M1/L1 shape (2D sag [m])"
+	echo -e "     \033[1m PIAA_Mshapes.txt         \033[0m : PIAA shapes (radial txt file, cols: r0, z0, r1, z1)"
+	echo -e "     \033[1m piaa0Cmodes.fits         \033[0m : idealized PIAACMC mirror/lens 0 cosine modes (copied from ./piaaref/) "
+	echo -e "     \033[1m piaa0Fmodes.fits         \033[0m : idealized PIAACMC mirror/lens 0 Fourier modes (copied from ./piaaref/) "
+	echo -e "     \033[1m piaa1Cmodes.fits         \033[0m : idealized PIAACMC mirror/lens 1 cosine modes (copied from ./piaaref/) "
+	echo -e "     \033[1m piaa1Fmodes.fits         \033[0m : idealized PIAACMC mirror/lens 1 Fourier modes (copied from ./piaaref/) "
+	echo -e "     \033[1m piaa0Cres.fits           \033[0m : idealized PIAA M0/L0 cosine fit residual"
+	echo -e "     \033[1m piaa1Cres.fits           \033[0m : idealized PIAA M1/L1 cosine fit residual"
+	echo -e "     \033[1m piaa0Cz.fits             \033[0m : idealized PIAA M0/L0 cosine fit sag "
+	echo -e "     \033[1m piaa1Cz.fits             \033[0m : idealized PIAA M1/L1 cosine fit sag "
+	echo -e "     \033[1m piaa0Fz.fits             \033[0m : idealized PIAA M0/L0 Fourier fit sag"
+	echo -e "     \033[1m piaa1Fz.fits             \033[0m : idealized PIAA M1/L1 Fourier fit sag"
 	echo "   Other files:"
-	echo "      LyorStop<#>.fits         : Lyot stop number #"
-	echo "      flux.txt                 : total flux at each step of the propagation"
-	echo "      psfi0_step000.fits       : PSF intensity"
+	echo -e "     \033[1m LyorStop<#>.fits         \033[0m : Lyot stop number #"
+	echo -e "     \033[1m flux.txt                 \033[0m : total flux at each step of the propagation"
+	echo -e "     \033[1m psfi0_step000.fits       \033[0m : PSF intensity"
+	echo -e "     \033[1m WFamp###.fits            \033[0m : Amplitude at plane ###"
+	echo -e "     \033[1m WFpha###.fits            \033[0m : Phase at plane ###"
+	echo -e "     \033[1m scoringmask0.fits        \033[0m : Set of focal plane points used for contrast optimization"
+	echo -e "     \033[1m lambdalist.txt           \033[0m : List of wavelength values"
+	echo -e "     \033[1m conjugations.txt         \033[0m : List of planes and conjugation values"
 	echo ""
-	echo "  DESCRIPTION:"
+	echo -e "\E[1;32m  DESCRIPTION:\E[0m" 
 	echo "    Computes prolate spheroidal apodization for a centrally obscured aperture (->apo2Drad.fits)"
 	echo "    Computes remapping and PIAA shapes to achieve the desired apodization (->PIAA_Mshapes.txt)"
 	echo "    "
 	echo ""
-	echo "STEP 001 ----------------------------------------"
+	cecho "STEP 001 ----------------------------------------" $bwhite
 	
 	echo ""
-	echo "STEP 002 ----------------------------------------"
+	cecho "STEP 002 ----------------------------------------" $bwhite
 
 	echo ""
-	echo "STEP 003 ----------------------------------------"
+	cecho "STEP 003 ----------------------------------------" $bwhite
 
 	echo ""
-	echo "STEP 004 ----------------------------------------"
+	cecho "STEP 004 ----------------------------------------" $bwhite
 
 	echo ""
-	echo "STEP 005 ----------------------------------------"
+	cecho "STEP 005 ----------------------------------------" $bwhite
 
 	echo ""
-	echo "STEP 006 ----------------------------------------"
+	cecho "STEP 006 ----------------------------------------" $bwhite
 
 	echo ""
-	echo "STEP 007 ----------------------------------------"
+	cecho "STEP 007 ----------------------------------------" $bwhite
 }
 
 
@@ -331,28 +384,28 @@ fi
 echo "Fratio = $Fratio"
 
 
-piaar0lim=1.15 # default
-file="conf/conf_PIAAr0lim.txt"
+r0lim=1.15 # default
+file="conf/conf_r0lim.txt"
 if [ -f $file ]
 	then
-	piaar0lim=$(echo "$(cat $file)")
+	r0lim=$(echo "$(cat $file)")
 	else
 	#echo "CANNOT READ FILE ${file}"
 	ok=0
 fi
-echo "piaar0lim = $piaar0lim"
+echo "r0lim = $r0lim"
 
 
-piaaar1lim=1.50 # default
-file="conf/conf_PIAAr1lim.txt"
+r1lim=1.50 # default
+file="conf/conf_r1lim.txt"
 if [ -f $file ]
 	then
-	piaar1lim=$(echo "$(cat $file)")
+	r1lim=$(echo "$(cat $file)")
 	else
 	#echo "CANNOT READ FILE ${file}"
 	ok=0
 fi
-echo "piaar1lim = ${piaar1lim}"
+echo "r1lim = ${r1lim}"
 
 
 piaasep=1.00 # default
@@ -518,8 +571,8 @@ echo "PIAACMC_dftgrid=2" >> $startupfile
 echo "PIAACMC_nblambda=${nblambda}" >> $startupfile
 echo "PIAACMC_beamrad=${beamrad}" >> $startupfile
 echo "PIAACMC_Fratio=${Fratio}" >> $startupfile
-echo "PIAACMC_r0lim=${piaar0lim}" >> $startupfile
-echo "PIAACMC_r1lim=${piaar1lim}" >> $startupfile
+echo "PIAACMC_r0lim=${r0lim}" >> $startupfile
+echo "PIAACMC_r1lim=${r1lim}" >> $startupfile
 echo "PIAACMC_piaasep=${piaasep}" >> $startupfile
 echo "PIAACMC_piaa0pos=${piaa0pos}" >> $startupfile
 echo "PIAACMC_invPIAAmode=${invPIAAmode}" >> $startupfile

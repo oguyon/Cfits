@@ -3780,8 +3780,14 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 }
             else
                 {
-                    printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/piaacmc[0].peakPSF);
-                    printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/piaacmc[0].peakPSF/SCORINGTOTAL); 
+                    printf("Peak constrast = %g -> %g\n", peakcontrast, peakcontrast/piaacmc[0].peakPSF);
+                    printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/piaacmc[0].peakPSF/SCORINGTOTAL);
+                    
+                    if((fp=fopen("PSFcontrastval.txt","w"))!=NULL)
+                    {
+                        fprintf(fp, "%g %g\n", peakcontrast/piaacmc[0].peakPSF, value/piaacmc[0].peakPSF/SCORINGTOTAL);
+                        fclose(fp);
+                    }
                 }
 
             if(outsave==1)
