@@ -137,10 +137,11 @@ printhelp_designsteps()
 	echo "    "
 	echo ""
 	cecho "STEP 001 ----------------------------------------" $bwhite
-	
+	echo ""
+	echo "    Repeat above step to compute on-axis PSF"
 	echo ""
 	cecho "STEP 002 ----------------------------------------" $bwhite
-
+	echo ""
 	echo ""
 	cecho "STEP 003 ----------------------------------------" $bwhite
 

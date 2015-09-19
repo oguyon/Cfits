@@ -506,8 +506,9 @@ rm status/design_coin${coin}_coout${coout}_fpmrad${fpmrad}_l${lambda}_${PIAAmate
 # designmono
 if [ $inputmode -eq 1 ]; then
 	reoptimize=1
-	funcprocess	
-	cp PSFcontrastval.txt PSFcontrastval_step$MdesignStepMax.txt			
+	funcprocess
+	i=$( echo "$MdesignStepMax" | awk '{print $1-1}')
+	cp PSFcontrastval.txt PSFcontrastval_step$i.txt			
 	checkerrorstatus
 fi
 
