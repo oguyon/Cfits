@@ -1244,8 +1244,10 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
             if(PIAACMC_save==1)   save_fl_fits("piaar1zsag", fname);
             printf("Saved piaar1zsag to %s\n", fname);
           */
-        
-        optsyst[0].ASPHSURFMarray[2].surfID = image_ID("piaar1zsag");// IDpiaar1zsag;
+        optsyst[0].elemtype[elem] = 4;
+        optsyst[0].ASPHSURFMarray[2].surfID = image_ID("piaar1zsag"); //IDpiaar0zsag;
+        optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat0 = design[0].PIAAmaterial_code;
+        optsyst[0].ASPHSURFRarray[optsyst[0].elemarrayindex[elem]].mat1 = 100; // vacuum
     }
 
 
