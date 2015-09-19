@@ -1318,9 +1318,13 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     {
         // --------------------  elem 8: inv PIAA1 ------------------------
         sprintf(optsyst[0].name[elem], "invPIAA optics 1");
-        optsyst[0].elemtype[elem] = 3; // reflective PIAA M1
+
+        if(design[index].PIAAmaterial_code == 0) // point to mirror
+            optsyst[0].elemtype[elem] = 3; // reflective PIAA M/L 1
+        else
+            optsyst[0].elemtype[elem] = 4; // refractive PIAA M/L 1
+
         optsyst[0].elemarrayindex[elem] = 2;
-        //       optsyst[0].ASPHSURFMarray[2].surfID = IDpiaaz1;
         optsyst[0].elemZpos[elem] = 0.0;
         if(PIAACMC_save==1)
             fprintf(fp,"%02ld  %f    %s\n", elem, optsyst[0].elemZpos[elem], optsyst[0].name[elem]);
@@ -1329,9 +1333,13 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
         // --------------------  elem 9: inv PIAA0 ------------------------
         sprintf(optsyst[0].name[elem], "invPIAA optics 0");
-        optsyst[0].elemtype[elem] = 3; // reflective PIAA M0
+        
+        if(design[index].PIAAmaterial_code == 0) // point to mirror
+            optsyst[0].elemtype[elem] = 3; // reflective PIAA M/L 0
+        else
+            optsyst[0].elemtype[elem] = 4; // reflective PIAA M/L 0
+
         optsyst[0].elemarrayindex[elem] = 1;
-        //       optsyst[0].ASPHSURFMarray[1].surfID = IDpiaaz0;
         optsyst[0].elemZpos[elem] = design[index].piaasep;
         if(PIAACMC_save==1)
             fprintf(fp,"%02ld  %f    %s\n", elem, optsyst[0].elemZpos[elem], optsyst[0].name[elem]);
