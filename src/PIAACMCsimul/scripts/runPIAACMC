@@ -181,6 +181,43 @@ printhelp_designsteps()
 	echo ""
 	echo "    Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 10 Fourier modes"
 	echo ""
+	cecho "STEP 009 ----------------------------------------" $bwhite
+	echo ""
+	echo "    Compute Lyot stops shapes and locations, 2nd pass, throughput = LStransm1"
+	echo ""
+	cecho "STEP 010 ----------------------------------------" $bwhite
+	echo ""
+	echo "    Tune Lyot Stops locations"
+	echo ""
+	cecho "STEP 011 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Tune PIAA shapes and focal plane mask transm, 20, 20"
+	echo ""
+	cecho "STEP 012 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Tune PIAA shapes and focal plane mask transm"
+	echo ""
+	cecho "STEP 013 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Compute Lyot stops shapes and locations, 3rd pass, 80% throughput"
+	echo ""
+	cecho "STEP 014 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Tune Lyot stops conjugation"
+	echo ""
+	cecho "STEP 015 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Tune PIAA shapes and focal plane mask transm # modes: 20, 20"
+	echo ""
+	cecho "STEP 016 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Tune PIAA shapes and focal plane mask transm, # modes: 40, 150"
+	echo ""
+	cecho "STEP 017 ----------------------------------------" $bwhite
+	echo ""
+	echo "     Tune PIAA shapes and focal plane mask transm, # modes: 40, 625"
+	echo ""
+
 }
 
 
@@ -1531,6 +1568,10 @@ kmaxF=0
 if [ "$PIAAcirc" -eq "0" ]; then
 kmaxF=5
 fi
+echo "PIAAcirc = $PIAAcirc"
+echo "kmaxF = $kmaxF"
+
+sleep 10000000
 
 if [ 007 -eq ${state} ]
 then

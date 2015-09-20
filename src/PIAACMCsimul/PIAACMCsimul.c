@@ -6391,8 +6391,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         if(kmaxF>data.image[piaacmc[0].piaa0FmodesID].md[0].size[0])
             kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
 
-
-
+        printf("kmaxF = %ld\n", kmaxF);
+        sleep(100000.0);
+    
         NBparam = 0;
 
         if(PIAACMC_fpmtype==0) // ideal mask
