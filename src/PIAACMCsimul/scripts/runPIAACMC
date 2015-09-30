@@ -1239,6 +1239,15 @@ fi
 
 checkexit
 
+#kmaxC=20
+
+#kmaxF=0
+#if [ "$PIAAcirc" -eq "0" ]; then
+#kmaxF=20
+#fi
+
+
+echo "kmaxF = $kmaxF"
 
 
 if [ 0 -eq ${state} ]
@@ -1571,7 +1580,7 @@ fi
 echo "PIAAcirc = $PIAAcirc"
 echo "kmaxF = $kmaxF"
 
-sleep 10000000
+#sleep 10000000
 
 if [ 007 -eq ${state} ]
 then

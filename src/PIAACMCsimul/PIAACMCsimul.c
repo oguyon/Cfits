@@ -2538,7 +2538,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     if((piaacmc[0].piaa0CmodesID==-1)||( piaacmc[0].piaa0FmodesID==-1)||(piaacmc[0].piaa1CmodesID==-1)||( piaacmc[0].piaa1FmodesID==-1))
     {
         sprintf(fname, "%s/piaaref/piaa0Cmodes.fits", piaacmcconfdir);
-        piaacmc[0].piaa0CmodesID= load_fits(fname, "piaa0Cmodescoeff", 1);
+        piaacmc[0].piaa0CmodesID = load_fits(fname, "piaa0Cmodescoeff", 1);
 
         sprintf(fname, "%s/piaaref/piaa0Fmodes.fits", piaacmcconfdir);
         piaacmc[0].piaa0FmodesID = load_fits(fname, "piaa0Fmodescoeff", 1);
@@ -2547,7 +2547,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         piaacmc[0].piaa1CmodesID = load_fits(fname, "piaa1Cmodescoeff", 1);
 
         sprintf(fname, "%s/piaaref/piaa1Fmodes.fits", piaacmcconfdir);
-        piaacmc[0].piaa1FmodesID =load_fits(fname, "piaa1Fmodescoeff", 1);
+        piaacmc[0].piaa1FmodesID = load_fits(fname, "piaa1Fmodescoeff", 1);
 
         sprintf(fname, "%s/piaaref/APLCmaskCtransm.txt", piaacmcconfdir);
         fp = fopen(fname, "r");
@@ -6383,17 +6383,19 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         if(kmaxC>data.image[piaacmc[0].piaa0CmodesID].md[0].size[0])
             kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
 
-
+        list_variable_ID();
+     
         kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
+    
         if((IDv=variable_ID("PIAACMC_maxoptFterm"))!=-1)
             kmaxF = (long) data.variable[IDv].value.f+0.01;
 
+
+ 
         if(kmaxF>data.image[piaacmc[0].piaa0FmodesID].md[0].size[0])
             kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
+        
 
-        printf("kmaxF = %ld\n", kmaxF);
-        sleep(100000.0);
-    
         NBparam = 0;
 
         if(PIAACMC_fpmtype==0) // ideal mask
