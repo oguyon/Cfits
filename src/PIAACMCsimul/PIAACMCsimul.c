@@ -1106,6 +1106,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     else
         design[index].prepiaa0mask = 0;
 
+
     // ------------------- elem 2:  PIAA M/L 0  -----------------------
     sprintf(optsyst[0].name[elem], "PIAA optics 0");
     optsyst[0].elemtype[elem] = 3; // reflective PIAA M0
@@ -1134,7 +1135,6 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     elem++;
 
 
-    
 
     // ------------------- [OPTIONAL] opaque mask after PIAA elem 0  -----------------------
     ID = load_fits("postPIAA0mask.fits", "postPIAA0mask", 1);
@@ -1152,6 +1152,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     }
     else
         design[index].postpiaa0mask = 0;
+
 
 
     // ------------------- elem 3: reflective PIAA M1  -----------------------
@@ -2090,7 +2091,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
     if(piaacmc == NULL)
     {
-      
         piaacmc = (OPTPIAACMCDESIGN*) malloc(sizeof(OPTPIAACMCDESIGN)*NBpiaacmcdesign);
 
 
@@ -2178,6 +2178,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         else
             piaacmc[0].peakPSF = -1.0;
         
+
+
+
 
 
 
@@ -2523,7 +2526,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     piaacmc[0].Fmsize = data.image[piaacmc[0].FmodesID].md[0].size[0];
 
 
-
+     
 
     // =================== IMPORT / CREATE PIAA SHAPES =====================
 
@@ -2662,7 +2665,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             sprintf(fname, "!%s/piaam1z.fits", piaacmcconfdir);
             save_fits("piaam1z", fname);
         }
-
 
         // crop piaam0z and piaam1z to Cmodes size
         ID0 = image_ID("Cmodes");
@@ -2803,8 +2805,6 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         sprintf(command, "cp %s/piaaref/* %s/", piaacmcconfdir, piaacmcconfdir);
         ret = system(command);
     }
-
-
 
 
     // ============ MAKE FOCAL PLANE MASK ===============
@@ -3039,6 +3039,12 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
 
     // ============ construct PIAA shapes from fitting coefficients ==================
 
+
+
+
+
+
+
     MAKE_PIAA0shape = 0;
     if(FORCE_MAKE_PIAA0shape == 0)
     {
@@ -3048,6 +3054,24 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
     }
     else
         MAKE_PIAA0shape = 1;
+
+
+
+    
+
+
+    MAKE_PIAA1shape = 0;
+    if(FORCE_MAKE_PIAA1shape == 0)
+    {
+        ID = image_ID("piaam1z");
+        if(ID==-1)
+            MAKE_PIAA1shape = 1;
+    }
+    else
+        MAKE_PIAA1shape = 1;
+
+
+
 
 
 
@@ -3144,15 +3168,7 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
     }
 
 
-    MAKE_PIAA1shape = 0;
-    if(FORCE_MAKE_PIAA1shape == 0)
-    {
-        ID = image_ID("piaam1z");
-        if(ID==-1)
-            MAKE_PIAA1shape = 1;
-    }
-    else
-        MAKE_PIAA1shape = 1;
+
 
     if(MAKE_PIAA1shape == 1)
     {
@@ -3176,11 +3192,11 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
         {   sprintf(fname, "!%s/piaa1Cz.fits", piaacmcconfdir);
             save_fits("piaa1Cz", fname);
 
-            sprintf(fname, "!%s/piaaF1z.fits", piaacmcconfdir);
+            sprintf(fname, "!%s/piaa1Fz.fits", piaacmcconfdir);
             save_fits("piaa1Fz", fname);
 
             sprintf(fname, "!%s/piaam1z.fits", piaacmcconfdir);
-            save_fits("piaa1z", fname);
+            save_fits("piaam1z", fname);
         }
         delete_image_ID("piaa1Cz");
         delete_image_ID("piaa1Fz");
@@ -3236,6 +3252,9 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
 
         }
     }
+    
+    
+    
 
     return 0;
 }
