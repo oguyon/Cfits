@@ -60,6 +60,7 @@ printhelp ()
 	echo ""
 	echo " 1 command:"
 	echo "   designmono      : design monochromatic PIAACMC system"
+	echo "   propmono        : monochromatic propagation"
 	echo "   optsingle       : (create and) optimize a configuration / polychromatic mask until processes is killed" 
 	echo "   eval0           : compute contrast (only on-axis contrast and PSF)"
 	echo "   eval1           : compute contrasts (compute on-axis and resolved source PSFs and contrasts)"
@@ -193,6 +194,14 @@ if [ $1 == "designmono" ]; then
 	inputmode=1
 fi
 
+
+
+if [ $1 == "propmono" ]; then
+	echo "monochromatic PIAACMC design propagation"
+	searchtime=0.0
+	computecontrast=0
+	inputmode=10
+fi
 
 
 if [ $1 == "optsingle" ]; then
@@ -509,6 +518,14 @@ if [ $inputmode -eq 1 ]; then
 	funcprocess
 	i=$( echo "$MdesignStepMax" | awk '{print $1-1}')
 	cp PSFcontrastval.txt PSFcontrastval_step$i.txt			
+	checkerrorstatus
+fi
+
+
+# propmono
+if [ $inputmode -eq 10 ]; then
+	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
+	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 fi
 
