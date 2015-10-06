@@ -13,6 +13,9 @@ int init_AOsystSim();
 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
+int AOSystSim_FPWFS_sensitivityAnalysis(int mode);
+
+
 
 
 typedef struct {

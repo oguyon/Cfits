@@ -60,7 +60,8 @@ printhelp ()
 	echo ""
 	echo " 1 command:"
 	echo "   designmono      : design monochromatic PIAACMC system"
-	echo "   propmono        : monochromatic propagation"
+	echo "   propmono        : monochromatic propagation point source"
+	echo "   proppoly        : polychromatic propagation point source"
 	echo "   optsingle       : (create and) optimize a configuration / polychromatic mask until processes is killed" 
 	echo "   eval0           : compute contrast (only on-axis contrast and PSF)"
 	echo "   eval1           : compute contrasts (compute on-axis and resolved source PSFs and contrasts)"
@@ -204,6 +205,14 @@ if [ $1 == "propmono" ]; then
 fi
 
 
+if [ $1 == "proppoly" ]; then
+	echo "polychromatic PIAACMC design propagation"
+	searchtime=0.0
+	computecontrast=0
+	inputmode=11
+fi
+
+
 if [ $1 == "optsingle" ]; then
 	echo "optimize single configuration"
 	searchtime=7200.0
@@ -306,11 +315,12 @@ then
 echo "1" > conf_FPMsectors.txt
 echo "$NBlambda" > conf_nblambda.txt
 
+#NOTE: this does nothing... can be removed ?
 ./sim$size 800 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index # set configuration settings
 checkerrorstatus
 
 
-#$fpmrad $coin $coout $ssize $extmode $lambdaB $lambda $PIAAmaterial 800 000   # set configuration settings
+
 ./sim$size 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index # compute FPMresp if not present
 checkerrorstatus
 
@@ -472,17 +482,16 @@ echo "$MdesignStepMax"
 	./sim$size 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus	
 	
-	# COMPUTE ON-AXIS PSF with NO focal plane mask, monochromatic -> CONTRAST CALIBRATION
+	# COMPUTE MONOCHROMATIC ON-AXIS PSF with NO focal plane mask -> CONTRAST CALIBRATION
 	./sim$size 699 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
-	
-	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
+
+	# COMPUTE MONOCHROMATIC ON-AXIS PSF with idealized focal plane mask	
 	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 
 	#touch $file1
 fi
-
 
 if [ $inputmode -gt 1 ]; then
 	echo "POLYCHROMATIC MASK COMPUTATION"		
@@ -529,6 +538,13 @@ if [ $inputmode -eq 10 ]; then
 	checkerrorstatus
 fi
 
+
+# proppoly
+if [ $inputmode -eq 11 ]; then
+	# COMPUTE ON-AXIS PSF polychromatic	
+	./sim$size 720 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	checkerrorstatus
+fi
 
 
 # optsingle

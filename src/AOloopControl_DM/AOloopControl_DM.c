@@ -363,6 +363,7 @@ int AOloopControl_DM_createconf()
     int ch;
     char fname[200];
     long DMindex;
+    char errstr[200];
 
     sprintf(fname, "/tmp/dmdispcombconf.conf.shm");
 
@@ -372,7 +373,8 @@ int AOloopControl_DM_createconf()
 
         SMfd = open(fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
         if (SMfd == -1) {
-            perror("Error opening file for writing");
+            sprintf(errstr, "Error opening (O_RDWR | O_CREAT | O_TRUNC) file \"%s\", function AOloopControl_DM_createconf", fname);
+            perror(errstr);
             exit(EXIT_FAILURE);
         }
 
@@ -434,6 +436,7 @@ int AOloopControl_DM_loadconf()
 {
     int result;
     char fname[200];
+    char errstr[200];
 
     sprintf(fname, "/tmp/dmdispcombconf.conf.shm");
 
@@ -443,7 +446,8 @@ int AOloopControl_DM_loadconf()
 
         SMfd = open(fname, O_RDWR, (mode_t)0600);
         if (SMfd == -1) {
-            perror("Error opening file for writing");
+            sprintf(errstr, "Error opening (O_RDWR) file \"%s\"", fname);
+            perror(errstr);
             exit(EXIT_FAILURE);
         }
         dmdispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)*NB_DMindex, PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
@@ -967,6 +971,7 @@ int AOloopControl_DMturb_createconf()
     long IDc1;
     char name[200];
     long DMindex;
+    char errstr[200];
     
     AOloopControl_DM_loadconf();
 
@@ -978,7 +983,8 @@ int AOloopControl_DMturb_createconf()
 
         SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
         if (SMturbfd == -1) {
-            perror("Error opening file for writing");
+            sprintf(errstr, "Error opening (O_RDWR | O_CREAT | O_TRUNC) file \"%s\"", name);
+            perror(errstr);
             exit(EXIT_FAILURE);
         }
 
@@ -1031,6 +1037,7 @@ int AOloopControl_DMturb_createconf()
 int AOloopControl_DMturb_loadconf(long DMindex)
 {
     int result;
+    char errstr[200];
 
     if( dmturb_loaded == 0 )
     {
@@ -1038,7 +1045,8 @@ int AOloopControl_DMturb_loadconf(long DMindex)
 
         SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR, (mode_t)0600);
         if (SMturbfd == -1) {
-            perror("Error opening file for writing");
+            sprintf(errstr, "Error opening (O_RDWR) file \"%s\" in function AOloopControl_DMturb_loadconf", DMTURBCONF_FILENAME);
+            perror(errstr);
             exit(EXIT_FAILURE);
         }
 

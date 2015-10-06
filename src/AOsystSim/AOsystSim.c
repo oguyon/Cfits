@@ -77,6 +77,16 @@ int AOsystSim_run_cli()
         return 1;
 }
 
+int AOsystSim_FPWFS_sensitivityAnalysis_cli()
+{
+     if(CLI_checkarg(1,2)==0)
+    {   
+        AOSystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl);
+        return 0;
+    }
+    else
+        return 1;      
+}
 
 
 
@@ -124,6 +134,14 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_extremeAO_contrast_sim()");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"AOsystFPWFSan");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_FPWFS_sensitivityAnalysis_cli;
+    strcpy(data.cmd[data.NBcmd].info,"run focal plane WFS sensitivity analysis");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode>");
+    strcpy(data.cmd[data.NBcmd].example,"AOsystFPWFSan");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOSystSim_FPWFS_sensitivityAnalysis(int mode)");
+    data.NBcmd++;
 
     // add atexit functions here
 
@@ -1755,6 +1773,95 @@ int AOsystSim_extremeAO_contrast_sim()
 
 
     free(exaosimconf);
+
+    return(0);
+}
+
+
+//
+// explore optimal theoretical sensitivity for focal plane WFS
+//
+int AOSystSim_FPWFS_sensitivityAnalysis(int mode)
+{
+    // conventions
+    // CA : complex amplitude
+    //
+    // CA of point to be measured is uniformly distributed in unit circle
+    double ptre, ptim; // real/imaginary components of point to be probed
+    long NBprobes;
+    double probe_re[100]; // 100 probes maximum
+    double probe_im[100];
+
+    double probe_noise_prop = 0.10;
+    double nprobe_re[100]; // noisy probe
+    double nprobe_im[100];
+
+    double probe_mflux[100]; // measured flux (ideal, no noise)
+    double probe_mflux_dre[100]; // derivative against ptre
+    double probe_mflux_dim[100]; // derivative against ptim
+    double probe_mflux_dI[100]; // derivative against Iflux
+    
+    double probe_nmflux[100]; // measured flux (noisy)
+    double probeamp;
+    int pr;
+    double Cflux = 1000.0; // coherent flux, ph for CA unity circle
+    double Iflux = 0.0; // incoherent flux
+    double re, im;
+    double eps = 1.0e-8;
+
+    long k;
+
+
+    // mode 1: perfectly calibrated system
+    NBprobes = 3;
+    probeamp = 0.5;
+    for(pr=0; pr<NBprobes; pr++)
+    {
+        probe_re[pr] = probeamp*cos(2.0*M_PI/NBprobes*pr);
+        probe_im[pr] = probeamp*sin(2.0*M_PI/NBprobes*pr);
+    }
+
+
+
+    for(pr=0; pr<NBprobes; pr++)
+        printf("PROBE %2d : %10lf %10lf\n", pr, probe_re[pr], probe_im[pr]);
+
+
+    for(k=0; k<1; k++)
+    {
+        ptre = 2.0*ran1()-1.0;
+        ptim = 2.0*ran1()-1.0;
+
+        for(pr=0; pr<NBprobes; pr++)
+        {
+            nprobe_re[pr] = probe_re[pr] + probe_noise_prop*probeamp*(2.0*ran1()-1.0);
+            nprobe_im[pr] = probe_im[pr] + probe_noise_prop*probeamp*(2.0*ran1()-1.0);
+        }
+
+
+
+        printf("ptre, ptim = %f, %f\n", ptre, ptim);
+        // compute flux
+        for(pr=0; pr<NBprobes; pr++)
+        {
+            // ideal measurements (no noise)
+            re = probe_re[pr] - ptre;
+            im = probe_im[pr] - ptim;
+            probe_mflux[pr] = Iflux + Cflux*(re*re+im*im);
+            
+            // derivatives
+            
+            
+            // noisy measurements
+            re = nprobe_re[pr] - ptre;
+            im = nprobe_im[pr] - ptim;
+            probe_nmflux[pr] = Iflux + Cflux*(re*re+im*im);
+            printf("  NO NOISE:  probe %3d  normalized flux = %8.5lf  (%g ph)\n", pr, probe_mflux[pr]/Cflux, probe_mflux[pr]);
+            printf("WITH NOISE:             normalized flux = %8.5lf  (%g ph)\n",     probe_nmflux[pr]/Cflux, probe_nmflux[pr]);
+        }
+    }
+
+
 
     return(0);
 }
