@@ -365,7 +365,7 @@ int AOloopControl_DM_createconf()
     long DMindex;
     char errstr[200];
 
-    sprintf(fname, "/tmp/dmdispcombconf.conf.shm");
+    sprintf(fname, "/tmp/dmdisp%ldcombconf.conf.shm", DMindex);
 
     if( dmdispcomb_loaded == 0 )
     {
@@ -440,30 +440,38 @@ int AOloopControl_DM_loadconf()
 
     sprintf(fname, "/tmp/dmdispcombconf.conf.shm");
 
+
+
     if( dmdispcomb_loaded == 0 )
     {
         printf("Create/read DM configuration\n");
 
         SMfd = open(fname, O_RDWR, (mode_t)0600);
         if (SMfd == -1) {
-            sprintf(errstr, "Error opening (O_RDWR) file \"%s\"", fname);
-            perror(errstr);
-            exit(EXIT_FAILURE);
-        }
-        dmdispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)*NB_DMindex, PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
-        if (dmdispcombconf == MAP_FAILED) {
-            close(SMfd);
-            printf("Error mmapping the file -> creating it\n");
             AOloopControl_DM_createconf();
-//            exit(EXIT_FAILURE);
+            //            sprintf(errstr, "Error opening (O_RDWR) file \"%s\"", fname);
+            //            perror(errstr);
+            //            exit(EXIT_FAILURE);
+        }
+        else
+        {
+            dmdispcombconf = (AOLOOPCONTROL_DM_DISPCOMB_CONF*)mmap(0, sizeof(AOLOOPCONTROL_DM_DISPCOMB_CONF)*NB_DMindex, PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
+            if (dmdispcombconf == MAP_FAILED) {
+                close(SMfd);
+                printf("Error mmapping the file -> creating it\n");
+                AOloopControl_DM_createconf();
+                //            exit(EXIT_FAILURE);
+            }
         }
 
         dmdispcomb_loaded = 1;
     }
     AOloopControl_printDMconf();
-   
+
     return 0;
 }
+
+
 
 
 
@@ -484,7 +492,7 @@ int AOloopControl_DM_unloadconf()
 
 
 //
-// DMindex is a unique DM identifier (00-99), so multiple instances can coexist
+// DMindex is a unique DM identifier (0-9), so multiple instances can coexist
 //
 // voltmode = 1 if DM volt computed
 //
