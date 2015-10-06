@@ -80,7 +80,7 @@ int AOloopControl_DM_CombineChannels_cli()
     // 12 int voltmode
     // 13 char *IDvolt_name
     // 14 float maxvolt
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,2)+CLI_checkarg(10,3)+CLI_checkarg(11,3)+CLI_checkarg(12,2)+CLI_checkarg(13,3)+CLI_checkarg(14,1)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,2)+CLI_checkarg(10,3)+CLI_checkarg(11,3)+CLI_checkarg(12,2)+(CLI_checkarg(13,3)*CLI_checkarg(13,4))+CLI_checkarg(14,1)==0)
         AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.string, data.cmdargtoken[14].val.numf);
     else
         {// DEFAULT: no dm2dm, no wfsref, dmvolt output
