@@ -124,7 +124,12 @@ void sig_handler(int signo)
 {
     switch ( signo ) {
         case SIGINT:
-            printf("received SIGINT\n");
+           printf("received SIGINT\n");
+           data.signal_INT = 1;
+        break;
+        case SIGTERM:
+           printf("received SIGTERM\n");
+           data.signal_TERM = 1;
         break;
         case SIGUSR1:
              printf("received SIGUSR1\n");
@@ -134,12 +139,28 @@ void sig_handler(int signo)
              printf("received SIGUSR2\n");
            data.signal_USR2 = 1;
         break;
-    }
+         case SIGBUS:
+           printf("received SIGBUS\n");
+           data.signal_BUS = 1;
+        break;
+        case SIGABRT:
+             printf("received SIGABRT\n");
+           data.signal_ABRT = 1;
+        break;
+        case SIGSEGV:
+             printf("received SIGSEGV\n");
+           data.signal_SEGV = 1;
+        break;
+        case SIGHUP:
+             printf("received SIGHUP\n");
+           data.signal_HUP = 1;
+        break;
+         case SIGPIPE:
+             printf("received SIGPIPE\n");
+           data.signal_PIPE = 1;
+        break;
+   }
 }
-
-
-
-
 
 /// CLI functions
 
@@ -538,17 +559,28 @@ int main(int argc, char *argv[])
 
 
     // signal handling
+    
+    data.sigact.sa_handler = sig_handler;
+    sigemptyset(&data.sigact.sa_mask);
+    data.sigact.sa_flags = 0;
 
     data.signal_USR1 = 0;
     data.signal_USR2 = 0;
+    data.signal_TERM = 0;
+    data.signal_INT = 0;
+    data.signal_BUS = 0;
+    data.signal_SEGV = 0;
+    data.signal_ABRT = 0;
+    data.signal_HUP = 0;
+    data.signal_PIPE = 0;
     
- //   if (signal(SIGINT, sig_handler) == SIG_ERR)
-   //     printf("\ncan't catch SIGINT\n");
-    if (signal(SIGUSR1, sig_handler) == SIG_ERR)
+   // if (signal(SIGINT, sig_handler) == SIG_ERR)
+     //   printf("\ncan't catch SIGINT\n");
+    if (sigaction(SIGUSR1, &data.sigact, NULL) == -1)
         printf("\ncan't catch SIGUSR1\n");
-    if (signal(SIGUSR2, sig_handler) == SIG_ERR)
+    if (sigaction(SIGUSR2, &data.sigact, NULL) == -1)
         printf("\ncan't catch SIGUSR2\n");
-
+   
 
 
 

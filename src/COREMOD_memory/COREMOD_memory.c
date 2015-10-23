@@ -4235,6 +4235,10 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 /** continuously transmits 2D image through TCP link
  * mode is not currently used
  */
+ 
+
+ 
+ 
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
 {
     long ID;
@@ -4243,15 +4247,19 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     int flag = 1;
     int result;
     long long cnt = -1;
+    long long iter = 0;
     long framesize;
     long xsize, ysize;
     char *ptr0; // source
     char *ptr1; // source - offset by slice
-    
+    int rs;
+    int sockOK;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
+    struct timespec ts;
+    long scnt;
+    int semval;
     
-
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
 
@@ -4282,7 +4290,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
     if (connect(fds_client, (struct sockaddr *) &sock_server, sizeof(sock_server)) < 0)
     {
-        perror("Error  connect() failed: ");
+        perror("Error  connect() failed ");
+        printf("port = %d\n", port);
         exit(0);
     }
 
@@ -4337,15 +4346,47 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     case USHORT:
         ptr0 = (char*) data.image[ID].array.U;
         break;
-
+ 
     default:
         printf("ERROR: WRONG DATA TYPE\n");
         exit(0);
         break;
     }
- 
+  
 
-    while(1)
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+   if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+  if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+
+
+    sockOK = 1;
+    while(sockOK==1)
     {
         if(data.image[ID].sem==0)
         {
@@ -4357,19 +4398,47 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             cnt = data.image[ID].md[0].cnt0;
         }
         else
-            sem_wait(data.image[ID].semptr[0]);
+            {
+                if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+                perror("clock_gettime");
+                exit(EXIT_FAILURE);
+                }
+                ts.tv_sec += 1;
+                
+            //    printf("%lld   sem wait   ...", iter);
+           //     fflush(stdout);
+                sem_timedwait(data.image[ID].semptr[0], &ts);
+                //sem_wait(data.image[ID].semptr[0]);
+            //    printf(" done\n");
+             //   fflush(stdout);
+                
+                if(iter == 0)                
+                {
+                    sem_getvalue(data.image[ID].semptr[0], &semval);
+                    for(scnt=0; scnt<semval; scnt++)
+                        sem_trywait(data.image[ID].semptr[0]);
+                }
+            }
+        ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
+        rs = send(fds_client, ptr1, framesize, 0);
 
-       ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
-
-        if (send(fds_client, ptr1, framesize, 0) != framesize)
+        if ( rs != framesize)
         {
-            printf("send() sent a different number of bytes than expected %ld\n", framesize);
+            printf("send() sent a different number of bytes (%d) than expected %ld\n", rs, framesize);
             fflush(stdout);
+            sockOK = 0;
         }
+
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            sockOK = 0;
+        
+
+        iter++;
     }
 
     close(fds_client);
-
+    printf("port %d closed\n", port);
+    fflush(stdout);
 
     return(ID);
 }
@@ -4380,8 +4449,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
 
 
-
-
+// mode 0 : re-use incoming sream name
+// mode 1 : test (write on stream )
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 {
     struct sockaddr_in sock_server, sock_client;
@@ -4398,6 +4467,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     long framesize;
     long xsize, ysize;
     char *ptr0; // source
+    char fname[200];
 
     int socketOpen = 1; // 0 if socket is closed
 
@@ -4478,8 +4548,17 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         exit(0);
     }
 
-    ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-    COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
+    if(mode==0)
+        {
+            ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+            COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
+        }
+    else
+    {
+        sprintf(fname, "sock%d_stream", port);
+        ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+        COREMOD_MEMORY_image_set_createsem(fname, 4);
+    }
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
@@ -4532,13 +4611,45 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         break;
     }
 
+
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+   if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+  if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+  if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+
+
     socketOpen = 1;
     while(socketOpen==1)
     {
         if ((recvsize = recv(fds_client, ptr0, framesize, MSG_WAITALL)) < 0)
         {
             printf("ERROR recv()\n");
-            exit(0);
+            socketOpen = 0;
         }
 
         if(recvsize!=0)
@@ -4552,9 +4663,14 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         data.image[ID].md[0].cnt0++;
         if(data.image[ID].sem > 0)
             sem_post(data.image[ID].semptr[0]);
+
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            socketOpen = 0;
     }
     
     close(fds_client);
+    printf("port %d closed\n", port);
+    fflush(stdout);
 
     free(imgmd);
 

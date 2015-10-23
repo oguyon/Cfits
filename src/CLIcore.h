@@ -11,6 +11,7 @@
 #include <time.h>
 #include <fftw3.h>
 #include <gsl/gsl_rng.h>	// for random numbers
+#include <signal.h>
 
 
 #define PI 3.14159265358979323846264338328
@@ -265,9 +266,17 @@ typedef struct
 // THIS IS WHERE EVERYTHING THAT NEEDS TO BE WIDELY ACCESSIBLE GETS STORED
 typedef struct
 {
+    struct sigaction sigact; 
     // signals toggle flags
     int signal_USR1;
     int signal_USR2;
+    int signal_TERM;
+    int signal_INT;
+    int signal_SEGV;
+    int signal_ABRT;
+    int signal_BUS;
+    int signal_HUP;
+    int signal_PIPE;
     
     int Debug;
     int quiet;
@@ -337,7 +346,7 @@ typedef struct
 #define MAX_NB_EXCLUSIONS 40
 
 
-
+void sig_handler(int signo);
 
 
 
