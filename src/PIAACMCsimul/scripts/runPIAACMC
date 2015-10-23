@@ -5,8 +5,8 @@ pid=$$
 
 NBthreadsFPMresp=4 
 
-#execname="PIAACMCdesign -e"  # only run program if X is inactive (prevents slowing down user)
-execname="PIAACMCdesign"
+execname="PIAACMCdesign -e"  # only run program if X is inactive (prevents slowing down user)
+#execname="PIAACMCdesign"
 
 errorfile="errorstatus.txt"
 checkerrorstatus ()
@@ -85,7 +85,7 @@ eval "$1=$var"
 function checkexit() {
 if [ $state -eq $exitpt ] 
 then
-echo "REACHED STATE EXIT POINT ($exitpt)" > errorstatus.txt
+echo "$0 REACHED STATE EXIT POINT ($exitpt)" > errorstatus.txt
 cleanup
 exit
 fi	
@@ -379,6 +379,8 @@ fi
 echo "state = $state"
 echo "statestop = $statestop"
 
+
+
 exitpt="100000" #default
 file="conf_exitpt.txt"
 if [ -f $file ]
@@ -664,11 +666,6 @@ cleanup ()
 rm $startupfile
 rm $fifoname
 }
-
-
-
-
-
 
 
 
@@ -1220,12 +1217,6 @@ fi
 
 
 
-
-
-
-
-
-
 # ========================================================= BEGIN MAIN DESIGN SCRIPT ==============================================================================
 
 
@@ -1237,6 +1228,8 @@ fi
 
 
 checkexit
+
+
 
 #kmaxC=20
 
@@ -1273,6 +1266,7 @@ else
   fi
 state=001
 fi
+
 
 if [ $state -eq $statestop ] 
 then
@@ -1364,6 +1358,8 @@ fi
 
 
 checkexit
+
+
 
 
 

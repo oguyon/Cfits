@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_multimin.h>
 
 
 #include "CLIcore.h"
@@ -31,6 +33,20 @@ float *DMifpixarray_val;
 long *DMifpixarray_index; // which actuator
 long *DMifpixarray_pixindex; // which pixel
 long DMifpixarray_NBpix;
+
+
+
+long NBprobesG = 3;
+long NBoptVar;
+long double probe_re[100]; // 100 probes maximum
+long double probe_im[100];
+long double probe_tflux[100]; // test point computed flux
+long double Cflux = 1.0; // coherent flux, ph for CA unity circle
+long double probe_nmflux[100]; // measured flux (noisy)
+
+
+
+
 
 
 OPTSYST *optsystsim;
@@ -79,9 +95,9 @@ int AOsystSim_run_cli()
 
 int AOsystSim_FPWFS_sensitivityAnalysis_cli()
 {
-     if(CLI_checkarg(1,2)==0)
+     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
     {   
-        AOSystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl);
+        AOSystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
         return 0;
     }
     else
@@ -138,7 +154,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOsystSim_FPWFS_sensitivityAnalysis_cli;
     strcpy(data.cmd[data.NBcmd].info,"run focal plane WFS sensitivity analysis");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode>");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode> <optmode> <NBprobes>");
     strcpy(data.cmd[data.NBcmd].example,"AOsystFPWFSan");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOSystSim_FPWFS_sensitivityAnalysis(int mode)");
     data.NBcmd++;
@@ -1778,21 +1794,337 @@ int AOsystSim_extremeAO_contrast_sim()
 }
 
 
+
+
+
+
+
+
+
+
+
+double f_eval (const gsl_vector *v, void *params)
+{
+    double *p = (double *)params;
+    long double value;
+    long k;
+    long pr;
+
+    long double ptre_test;
+    long double ptim_test;
+    long double Iflux_test;
+    long double are_test = 1.0;
+    long double aim_test = 0.0;
+    long double e_test = 1.0;
+    long double ai;
+    long double re, im, x, y, tmp1;
+
+
+    ptre_test = gsl_vector_get(v, 0);
+    ptim_test = gsl_vector_get(v, 1);
+    Iflux_test = gsl_vector_get(v, 2);
+    
+    are_test = 1.0; 
+    aim_test = 0.0;
+    e_test = 1.0;
+    if(NBoptVar>3)
+        are_test = gsl_vector_get(v, 3);
+    if(NBoptVar>4)
+    {
+        aim_test = gsl_vector_get(v, 4);
+        e_test = gsl_vector_get(v, 5);
+    }
+
+    value = 0.0;
+    for(pr=0; pr<NBprobesG; pr++)
+    {
+        re = probe_re[pr] - ptre_test;
+        im = probe_im[pr] - ptim_test;
+        if(NBoptVar>3)
+        {
+            x = re*are_test+im*aim_test;
+            y = -re*aim_test+im*are_test;
+            y = y*e_test;
+            probe_tflux[pr] = Iflux_test + Cflux*(x*x+y*y);
+        }
+        else
+            probe_tflux[pr] = Iflux_test + Cflux*(re*re+im*im);
+
+        tmp1 = probe_tflux[pr]-probe_nmflux[pr];
+        value += tmp1*tmp1;
+    }
+
+   // penalize large (pte)
+    value += pow(0.01*ptre_test*ptre_test, 4.0);
+    // penalize large (ptim)
+    value += pow(0.01*ptim_test*ptim_test, 4.0);
+ 
+ 
+    if(NBoptVar>4)
+        {
+            ai = are_test*are_test + aim_test*aim_test;
+            value += 0.01*pow((ai-1.0)*(ai-1.0), 8.0);
+        
+            // penalize large (e-1)
+            value += 0.1*pow((e_test-1.0)*(e_test-1.0), 8.0);
+        }
+   // printf("%lf %lf %lf    %lf %lf %lf   -> %g\n", (double) ptre_test, (double) ptim_test, (double) Iflux_test, (double) are_test, (double) aim_test, (double) e_test, value);
+   // fflush(stdout);
+   // usleep(100000);
+    //exit(0);
+
+    return ((double) value);
+
+}
+
+
+
+long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp)
+{
+    long size = 256;
+    double puprad = 50.0;
+    long IDpupa;
+    long IDwf0; // initial WF
+    long IDwfA; // probe A
+    long IDwfB; // probe B
+    long IDwf;
+    long IDpsfC; // PSF cube
+    long pr;
+    long IDa;
+    long ii, jj, ii1, jj1;
+    double coeffA, coeffB;
+    double x, y, x1, y1;
+    double sincx, sincy;
+    double CPAx, CPAy;
+    double CPAstep;
+    long ID, ID1;
+    long xsize, ysize, xmin, xmax, ymin, ymax;
+
+    double tot1 = 0.0;
+    double totFlux = 1e12; // 1e12 // Total number of photon for all images combined
+    double peak = 0.0;
+
+    // define WFS probe area
+    double CPAxmin, CPAxmax, CPAymin, CPAymax;
+    double pixscaleld;
+    long IDtmp;
+    char fname[200];
+    double probeAmultcoeff = 1.0;
+    double probeBmultcoeff = 1.0;
+    double probeBphaseoffset = 0.0;
+    
+
+
+    printf("Creating images .... \n");
+    fflush(stdout);
+    
+    IDpupa = make_subpixdisk("pupa", size, size, 0.5*size, 0.5*size, puprad);
+   
+
+    IDwf0 = create_2Dimage_ID("wf0", size, size);
+    for(ii=0; ii<size*size; ii++)
+        data.image[IDwf0].array.F[ii] = wferramp*(1.0-2.0*ran1());
+
+
+    IDwfA = create_2Dimage_ID("wfA", size, size);
+    IDwfB = create_2Dimage_ID("wfB", size, size);
+    IDwf = create_2Dimage_ID("wf", size, size);
+
+    IDpsfC = create_3Dimage_ID("psfC", size, size, NBprobesG);
+
+    // initialize wf0
+
+    // initialize wfA and wfB
+    CPAxmin = 4.0;
+    CPAxmax = 20.0;
+    CPAymin = 0.0;
+    CPAymax = 20.0;
+    CPAstep = 0.2;
+    
+    probeAmultcoeff = 1.0; // 1.1
+    probeBmultcoeff = 1.0; // 0.9
+    probeBphaseoffset = 1.0*M_PI/2.0; // 0.8
+
+
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            x = (1.0*ii-0.5*size)/puprad;
+            y = (1.0*jj-0.5*size)/puprad;
+            for(CPAx=CPAxmin; CPAx<CPAxmax; CPAx += CPAstep)
+                for(CPAy=CPAymin; CPAy<CPAymax; CPAy += CPAstep)
+                {
+                    data.image[IDwfA].array.F[jj*size+ii] += probeAmultcoeff*probeamp*CPAstep*CPAstep*cos(M_PI*(x*CPAx+y*CPAy));
+                    data.image[IDwfB].array.F[jj*size+ii] += probeBmultcoeff*probeamp*CPAstep*CPAstep*cos(M_PI*(x*CPAx+y*CPAy)+probeBphaseoffset);
+                }
+        }
+    
+    
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+            {
+                data.image[IDwfA].array.F[jj*size+ii] *= data.image[IDpupa].array.F[jj*size+ii];
+                data.image[IDwfB].array.F[jj*size+ii] *= data.image[IDpupa].array.F[jj*size+ii];
+            }
+    save_fl_fits("wfA", "!wfA.fits");
+    save_fl_fits("wfB", "!wfB.fits");
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            x = (1.0*ii-0.5*size)/puprad;
+            y = (1.0*jj-0.5*size)/puprad;
+            data.image[IDpupa].array.F[jj*size+ii] *= exp(-6.0*(x*x+y*y));
+        }
+    save_fl_fits("pupa", "!pupa.fits");
+    
+    
+    for(pr=0; pr<NBprobesG; pr++)
+    {
+        if(pr==0)
+        {
+            coeffA = 0.0;
+            coeffB = 0.0;
+        }
+        else
+        {
+            coeffA = cos(2.0*M_PI/(NBprobesG-1)*(pr-1));
+            coeffB = sin(2.0*M_PI/(NBprobesG-1)*(pr-1));
+        }
+
+        for(ii=0; ii<size*size; ii++)
+            data.image[IDwf].array.F[ii] = data.image[IDwf0].array.F[ii] + coeffA*data.image[IDwfA].array.F[ii] + coeffB*data.image[IDwfB].array.F[ii];
+        
+        sprintf(fname, "!DMprobe%02ld.fits", pr);
+        save_fl_fits("wf", fname);
+        
+        mk_complex_from_amph("pupa", "wf", "wfc", 0);
+        permut("wfc");
+        do2dfft("wfc", "imc");
+        permut("imc");
+        mk_amph_from_complex("imc", "ima", "imp", 0);
+        delete_image_ID("imc");
+        delete_image_ID("imp");
+        IDa = image_ID("ima");
+        for(ii=0; ii<size*size; ii++)
+        {
+            data.image[IDpsfC].array.F[pr*size*size+ii] = data.image[IDa].array.F[ii]*data.image[IDa].array.F[ii];
+            tot1 += data.image[IDpsfC].array.F[pr*size*size+ii];
+        }
+        delete_image_ID("ima");
+    }
+
+    // ADD COMPANION
+    printf("Adding companion\n");
+    fflush(stdout);
+    IDtmp = create_3Dimage_ID("tmp3dim", size, size, NBprobesG);
+    for(ii=0; ii<size*size*NBprobesG; ii++)
+        data.image[IDtmp].array.F[ii] = data.image[IDpsfC].array.F[ii];
+
+    for(pr=0; pr<NBprobesG; pr++)
+    {
+        for(ii=0; ii<size; ii++)
+            for(jj=0; jj<size; jj++)
+            {
+                ii1 = ii + (long) sepx;
+                jj1 = jj + (long) sepy;
+                if((ii1>0)&&(ii1<size)&&(jj1>0)&&(jj1<size))
+                    data.image[IDpsfC].array.F[pr*size*size+jj1*size+ii1] += contrast * data.image[IDtmp].array.F[pr*size*size+jj*size+ii];
+            }
+    }
+    delete_image_ID("tmp3dim");
+
+
+    for(ii=0; ii<size*size*NBprobesG; ii++)
+        data.image[IDpsfC].array.F[ii] *= totFlux/tot1;
+    peak = 0.0;
+    for(ii=0; ii<size*size; ii++)
+        if(data.image[IDpsfC].array.F[ii]>peak)
+            peak = data.image[IDpsfC].array.F[ii];
+
+
+    pixscaleld = size/(2.0*puprad);
+    xmin = 0.5*size + pixscaleld*CPAxmin;
+    xmax = 0.5*size + pixscaleld*CPAxmax;
+    ymin = 0.5*size + pixscaleld*CPAymin;
+    ymax = 0.5*size + pixscaleld*CPAymax;
+    xsize = xmax-xmin;
+    ysize = ymax-ymin;
+
+
+    // CREATE PROBE AMPLITUDE IMAGE IN FOCAL PLANE
+    
+    
+    
+    
+
+    printf("Cropping and adding photon noise\n");
+    fflush(stdout);
+
+    ID = create_3Dimage_ID("psfCcrop", xsize, ysize, NBprobesG);
+    tot1 = 0.0;
+    for(pr=0; pr<NBprobesG; pr++)
+        for(ii1=0; ii1<xsize; ii1++)
+            for(jj1=0; jj1<ysize; jj1++)
+            {
+                ii = ii1+xmin;
+                jj = jj1+ymin;
+                data.image[ID].array.F[pr*xsize*ysize+jj1*xsize+ii1] = data.image[IDpsfC].array.F[pr*size*size+jj*size+ii];
+
+                tot1 += data.image[ID].array.F[pr*xsize*ysize+jj1*xsize+ii1];
+            }
+    
+    // CREATE PROBE AMPLITUDE IMAGE IN FOCAL PLANE
+    ID1 = create_2Dimage_ID("psfprobeampC", xsize, ysize);
+
+    for(ii1=0; ii1<xsize; ii1++)
+        for(jj1=0; jj1<ysize; jj1++)
+        {
+            tot1 = 0.0;
+            for(pr=1; pr<NBprobesG; pr++)
+                tot1 += data.image[ID].array.F[pr*xsize*ysize+jj1*xsize+ii1]/peak;
+            tot1 /= (NBprobesG-1);
+            data.image[ID1].array.F[jj1*xsize+ii1] = tot1 - data.image[ID].array.F[jj1*xsize+ii1]/peak;
+        }
+    save_fl_fits("psfprobeampC", "!psfprobeampC.fits");
+
+    put_poisson_noise("psfCcrop", "psfCcropn");
+    save_fl_fits("psfCcrop", "!psfCcrop.fits");
+    save_fl_fits("psfCcropn", "!psfCcropn.fits");
+
+    ID = image_ID("psfCcropn");
+    ID1 =  create_3Dimage_ID("psfCcropnC", xsize, ysize, NBprobesG);
+    for(pr=0; pr<NBprobesG; pr++)
+        for(ii1=0; ii1<xsize; ii1++)
+            for(jj1=0; jj1<ysize; jj1++)
+                data.image[ID1].array.F[pr*xsize*ysize+jj1*xsize+ii1] = data.image[ID].array.F[pr*xsize*ysize+jj1*xsize+ii1]/peak;
+    save_fl_fits("psfCcropnC", "!psfCcropnC.fits");
+
+    printf("PSFs creation is complete\n");
+    fflush(stdout);
+
+    return(ID1);
+}
+
+
+
+
+
 //
 // explore optimal theoretical sensitivity for focal plane WFS
 //
-int AOSystSim_FPWFS_sensitivityAnalysis(int mode)
+// optmode:
+// 1: 3 free parameters: ptre, ptim, Iflux
+// 2: 6 free parameters: ptre, ptim, Iflux, are, aim, e
+//
+int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
 {
     // conventions
     // CA : complex amplitude
     //
     // CA of point to be measured is uniformly distributed in unit circle
     double ptre, ptim; // real/imaginary components of point to be probed
-    long NBprobes;
-    double probe_re[100]; // 100 probes maximum
-    double probe_im[100];
 
-    double probe_noise_prop = 0.10;
+    double probe_noise_prop = 0.2;
     double nprobe_re[100]; // noisy probe
     double nprobe_im[100];
 
@@ -1800,71 +2132,461 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode)
     double probe_mflux_dre[100]; // derivative against ptre
     double probe_mflux_dim[100]; // derivative against ptim
     double probe_mflux_dI[100]; // derivative against Iflux
-    
-    double probe_nmflux[100]; // measured flux (noisy)
+
     double probeamp;
     int pr;
-    double Cflux = 1000.0; // coherent flux, ph for CA unity circle
     double Iflux = 0.0; // incoherent flux
     double re, im;
     double eps = 1.0e-8;
 
-    long k;
+    double re_re, re_im, im_re, im_im;
+    long k, ks;
+    double tmp1;
+    int execmode;
+
+    // solver
+    double ptre_test, ptim_test, Iflux_test, are_test, aim_test, e_test;
+    double ptre_best, ptim_best, Iflux_best, are_best, aim_best, e_best;
+    double value, bvalue, value0;
+    double x, y;
+
+    double optampl;
+    long ksmax = 100000000;
+
+    int mapmode = 1; // 1 if building error map
+    double mapampl = 2.0;
+    long mapsize = 40; // map size (linear)
+    long mapxsize, mapysize;
+    long mapzsize = 1000; // number of slices (independant realizations of probe noise)
+    long kx, ky;
+
+    long IDmap;
+
+    // output solution
+    long IDmap_ptre;
+    long IDmap_ptim;
+    long IDmap_ptre_in;
+    long IDmap_ptim_in;
+    long IDmap_Iflux;
+    long IDmap_are;
+    long IDmap_aim;
+    long IDmap_e;
+
+    long mapz;
 
 
-    // mode 1: perfectly calibrated system
-    NBprobes = 3;
-    probeamp = 0.5;
-    for(pr=0; pr<NBprobes; pr++)
+    long st;
+    long optvar;
+    const gsl_multimin_fminimizer_type *T = gsl_multimin_fminimizer_nmsimplex2;
+    gsl_multimin_fminimizer *s = NULL;
+    gsl_vector *ss, *xvect;
+    gsl_multimin_function feval_func;
+    int status;
+    long iter;
+    long iterMax = 100000;
+    double optsize;
+    double bestvalue;
+    double tmp;
+
+    double FLUXph = 1.0e4; // total number of photon per cycle
+
+    int imSimulMode = 1; // 1 if real image simulated
+    long IDpsfC;
+
+    long avecnt;
+    double ave;
+    long ii, jj;
+    long kxtest = 10;
+    long kytest = 17;
+
+    long IDprobampC = -1;
+
+
+
+    NBprobesG = NBprobes;
+
+    if(imSimulMode == 1)
     {
-        probe_re[pr] = probeamp*cos(2.0*M_PI/NBprobes*pr);
-        probe_im[pr] = probeamp*sin(2.0*M_PI/NBprobes*pr);
+        IDpsfC = AOSystSim_FPWFS_imsimul(0.0001, 30.0, 30.0, 5.0e-18, 0.0);
+        IDprobampC = image_ID("psfprobeampC");
+        save_fl_fits("psfC", "!psfC.fits");
+        
+    //    IDpsfC = load_fits("psfCcropnC.fits", "psfCcropnC", 1);        
+    //    IDprobampC = load_fits("psfprobeampC.fits", "psfprobeampC", 1);
+        list_image_ID();
+        ave = 0.0;
+        avecnt = 0;
+
+        for(pr=1; pr<NBprobes; pr++)
+        {
+            for(ii=0; ii<data.image[IDpsfC].md[0].size[0]; ii++)
+                for(jj=0; jj<data.image[IDpsfC].md[0].size[1]; jj++)
+                {
+                    ave += data.image[IDpsfC].array.F[pr*data.image[IDpsfC].md[0].size[0]*data.image[IDpsfC].md[0].size[1]+jj*data.image[IDpsfC].md[0].size[0]+ii];
+                    avecnt++;
+                }
+        }
+        ave /= avecnt;
+        printf("ave = %g\n", ave);
+/*
+        for(pr=0; pr<NBprobes; pr++)
+            for(ii=0; ii<data.image[IDpsfC].md[0].size[0]; ii++)
+                for(jj=0; jj<data.image[IDpsfC].md[0].size[1]; jj++)
+                    data.image[IDpsfC].array.F[pr*data.image[IDpsfC].md[0].size[0]*data.image[IDpsfC].md[0].size[1]+jj*data.image[IDpsfC].md[0].size[0]+ii] /= ave;
+        ii = 10;
+        jj = 9;
+        for(pr=0; pr<NBprobes; pr++)
+            printf("%d %f\n", pr, data.image[IDpsfC].array.F[pr*data.image[IDpsfC].md[0].size[0]*data.image[IDpsfC].md[0].size[1]+jj*data.image[IDpsfC].md[0].size[0]+ii]);
+*/
+        //exit(0);
+        mapmode = 2; // use existing file
+    }
+
+    
+
+    probeamp = 1.0;
+    probe_re[pr] = 0.0;
+    probe_im[pr] = 0.0;
+    for(pr=1; pr<NBprobes; pr++)
+    {
+        probe_re[pr] = probeamp*cos(2.0*M_PI/(NBprobes-1)*(pr-1));
+        probe_im[pr] = probeamp*sin(2.0*M_PI/(NBprobes-1)*(pr-1));
+    }
+    execmode = 1;
+
+
+    
+
+
+    if(mapmode==0)
+    {
+        mapzsize = 1;
+        mapsize = 1;
+    }
+
+    mapxsize = mapsize;
+    mapysize = mapsize;
+
+    if(mapmode == 2)
+    {
+        mapxsize = data.image[IDpsfC].md[0].size[0];
+        mapysize = data.image[IDpsfC].md[0].size[1];
+        mapzsize = 1;
     }
 
 
-
-    for(pr=0; pr<NBprobes; pr++)
-        printf("PROBE %2d : %10lf %10lf\n", pr, probe_re[pr], probe_im[pr]);
-
-
-    for(k=0; k<1; k++)
+    if(mapmode>0)
     {
-        ptre = 2.0*ran1()-1.0;
-        ptim = 2.0*ran1()-1.0;
+        IDmap = create_3Dimage_ID("WFSerrmap", mapxsize, mapysize, mapzsize);
+        IDmap_ptre = create_3Dimage_ID("WFSsol_ptre", mapxsize, mapysize, mapzsize);
+        IDmap_ptim = create_3Dimage_ID("WFSsol_ptim", mapxsize, mapysize, mapzsize);
+        IDmap_ptre_in = create_3Dimage_ID("WFSsol_ptre_in", mapxsize, mapysize, mapzsize);
+        IDmap_ptim_in = create_3Dimage_ID("WFSsol_ptim_in", mapxsize, mapysize, mapzsize);
+        IDmap_Iflux = create_3Dimage_ID("WFSsol_Iflux", mapxsize, mapysize, mapzsize);
+        IDmap_are = create_3Dimage_ID("WFSsol_are", mapxsize, mapysize, mapzsize);
+        IDmap_aim = create_3Dimage_ID("WFSsol_aim", mapxsize, mapysize, mapzsize);
+        IDmap_e = create_3Dimage_ID("WFSsol_e", mapxsize, mapysize, mapzsize);
+    }
+    else
+        IDmap = -1;
 
+    list_image_ID();
+
+
+    switch (mode) {
+    case 1 :    // mode 1: perfectly calibrated system -> no probe noise
+        for(pr=0; pr<NBprobes; pr++)
+        {
+            nprobe_re[pr] = probe_re[pr];
+            nprobe_im[pr] = probe_im[pr];
+        }
+        break;
+    case 2 : // mode 2: uncorrelated probes noise
         for(pr=0; pr<NBprobes; pr++)
         {
             nprobe_re[pr] = probe_re[pr] + probe_noise_prop*probeamp*(2.0*ran1()-1.0);
             nprobe_im[pr] = probe_im[pr] + probe_noise_prop*probeamp*(2.0*ran1()-1.0);
         }
-
-
-
-        printf("ptre, ptim = %f, %f\n", ptre, ptim);
-        // compute flux
+        break;
+    case 3 : // noise on probe axes
+        re_re = 1.0 + (2.0*ran1()-1.0)*probe_noise_prop;
+        re_im = 0.0 + (2.0*ran1()-1.0)*probe_noise_prop;
+        im_re = 0.0 + (2.0*ran1()-1.0)*probe_noise_prop;
+        im_im = 1.0 + (2.0*ran1()-1.0)*probe_noise_prop;
         for(pr=0; pr<NBprobes; pr++)
         {
-            // ideal measurements (no noise)
-            re = probe_re[pr] - ptre;
-            im = probe_im[pr] - ptim;
-            probe_mflux[pr] = Iflux + Cflux*(re*re+im*im);
-            
-            // derivatives
-            
-            
-            // noisy measurements
-            re = nprobe_re[pr] - ptre;
-            im = nprobe_im[pr] - ptim;
-            probe_nmflux[pr] = Iflux + Cflux*(re*re+im*im);
-            printf("  NO NOISE:  probe %3d  normalized flux = %8.5lf  (%g ph)\n", pr, probe_mflux[pr]/Cflux, probe_mflux[pr]);
-            printf("WITH NOISE:             normalized flux = %8.5lf  (%g ph)\n",     probe_nmflux[pr]/Cflux, probe_nmflux[pr]);
+            nprobe_re[pr] = probe_re[pr]*re_re + probe_im[pr]*im_re;
+            nprobe_im[pr] = probe_re[pr]*re_im + probe_im[pr]*im_im;
         }
+        break;
+    default :
+        printf("ERROR: mode not supported\n");
+        execmode = 0;
+        break;
     }
 
 
+    printf("mode     = %d\n", mode);
+    printf("mapmode  = %d\n", mapmode);
+    printf("mapsize  = %ld   %ld   %ld\n", mapxsize, mapysize, mapzsize);
+    printf("execmode = %d\n", execmode);
+    
+    
+    
+    if(IDprobampC==-1)
+        IDprobampC = create_2Dimage_ID("psfprobeamp", mapxsize, mapysize);
+
+    printf("\n\n");
+    for(mapz=0; mapz<mapzsize; mapz++)
+    {
+        if(mapmode==0)
+        {
+            printf("Preparing optimization ... \n");
+            fflush(stdout);
+        }
+        switch (optmode) {
+        case 0 :
+            NBoptVar = 3;
+            break;
+        case 1 :
+            NBoptVar = 4;
+            break;
+        case 2 :
+            NBoptVar = 6;
+            break;
+        }
+
+        xvect = gsl_vector_alloc (NBoptVar);
+        ss = gsl_vector_alloc (NBoptVar);
+        feval_func.n = NBoptVar;  /* number of function components */
+        feval_func.f = &f_eval;
+        feval_func.params = (void *) NULL;
+        s = gsl_multimin_fminimizer_alloc (T, NBoptVar);
+
+
+        if(execmode>0)
+        {
+            if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                for(pr=0; pr<NBprobes; pr++)
+                    printf("PROBE %2d : %10lf %10lf\n", pr, (double) probe_re[pr], (double) probe_im[pr]);
+
+
+            for(kx=0; kx<mapxsize; kx++)
+                for(ky=0; ky<mapysize; ky++)
+                {
+                    printf("\r slice %ld    pixel %5ld %5ld       ", mapz, kx, ky);
+                    fflush(stdout);
+                    if(mapmode==0)
+                    {
+                        ptre = 2.0*ran1()-1.0;
+                        ptim = 2.0*ran1()-1.0;
+                    }
+                    else
+                    {
+                        ptre = mapampl*(2.0*kx/mapxsize-1.0);
+                        ptim = mapampl*(2.0*ky/mapysize-1.0);
+                    }
+                    if(mapmode==2)
+                    {
+                        ptre = 0.0;
+                        ptim = 0.0;
+                    }
+
+                    if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                        printf("ptre, ptim = %f, %f\n", ptre, ptim);
+                    // compute flux
+                    for(pr=0; pr<NBprobes; pr++)
+                    {
+                        // ideal measurements (no noise)
+                        re = probe_re[pr] - ptre;
+                        im = probe_im[pr] - ptim;
+                        probe_mflux[pr] = Iflux + Cflux*(re*re+im*im);
+
+
+
+                        // noisy measurements
+                        re = nprobe_re[pr] - ptre;
+                        im = nprobe_im[pr] - ptim;
+                        probe_nmflux[pr] = fast_poisson((Iflux + Cflux*(re*re+im*im))*FLUXph/NBprobes)/(FLUXph/NBprobes);
+                        if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                        {
+                            printf("  NO NOISE:  probe %3d  normalized flux = %8.5lf  (%g ph)\n", pr, (double) (probe_mflux[pr]/Cflux), (double) probe_mflux[pr]);
+                            printf("WITH NOISE:             normalized flux = %8.5lf  (%g ph)\n",     (double) (probe_nmflux[pr]/Cflux), (double) probe_nmflux[pr]);
+                            fflush(stdout);
+                        }
+
+
+                        if(imSimulMode == 1)
+                        {
+                            probe_nmflux[pr] = data.image[IDpsfC].array.F[pr*mapxsize*mapysize+ky*mapxsize+kx] / data.image[IDprobampC].array.F[ky*mapxsize+kx]; // unit : normalized contrast
+                        }
+                    }
+
+                    if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                        fflush(stdout);
+
+                    // SOLVER
+
+
+                    for(optvar=0; optvar<NBoptVar; optvar++)
+                        gsl_vector_set (xvect, optvar, 0.0);
+
+                    gsl_vector_set (xvect, 0, ptre);
+                    gsl_vector_set (xvect, 1, ptim);
+                    
+                    if(NBoptVar>3)
+                        gsl_vector_set (xvect, 3, 1.0);
+
+                   
+                    if(NBoptVar>4)
+                    {
+                        gsl_vector_set (xvect, 4, 0.0);
+                        gsl_vector_set (xvect, 5, 1.0);
+                    }
+
+                    /* Set initial step sizes  */
+                    gsl_vector_set_all (ss, 0.1);
+
+                    /* Initialize method and iterate */
+                    iter = 0;
+                    bestvalue = 100000.0;
+
+
+                    gsl_multimin_fminimizer_set (s, &feval_func, xvect, ss);
+
+        
+                    do
+                    {
+                        iter++;
+                        status = gsl_multimin_fminimizer_iterate(s);
+                        if (status)
+                            break;
+
+                        optsize = gsl_multimin_fminimizer_size (s);
+                        // printf("Iteration %ld   %g\n", iter, optsize);
+                        status = gsl_multimin_test_size (optsize, 1.0/pow(10.0, 10.0-4.0*iter/iterMax)); //1.0e-10);
+
+
+                        //printf ("............[%05ld] ->  %e   (%e)\n", iter, s->fval, bestvalue);
+                    if (status == GSL_SUCCESS)
+                        {
+                            if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                            {
+                                printf ("  ->  %e [%5ld]  (%e)", s->fval, iter, bestvalue);
+                                printf("\n");
+                            }
+                            ptre_best = gsl_vector_get(s->x, 0);
+                            ptim_best = gsl_vector_get(s->x, 1);
+                            Iflux_best = gsl_vector_get(s->x, 2);
+                            if(NBoptVar>3)
+                                are_best = gsl_vector_get(s->x, 3);
+                            if(NBoptVar>4)
+                            {
+                                aim_best = gsl_vector_get(s->x, 4);
+                                e_best = gsl_vector_get(s->x, 5);
+
+                                if(e_best>1.0)
+                                {
+                                    e_best = 1.0/e_best;
+                                    tmp = are_best;
+                                    are_best = aim_best;
+                                    aim_best = -tmp;
+                                }
+                            }
+
+
+
+                            if(s->fval < bestvalue)
+                                bestvalue = s->fval;
+                        }
+                    }
+                    while (status == GSL_CONTINUE && iter < iterMax );
+                    if(iter>iterMax-1) {
+                        printf("Max number of iteration reached (optsize = %g)\n", optsize);
+                    }
+
+                    ptre_best = gsl_vector_get(s->x, 0);
+                    ptim_best = gsl_vector_get(s->x, 1);
+                    Iflux_best = gsl_vector_get(s->x, 2);
+                    if(NBoptVar>3)
+                        are_best = gsl_vector_get(s->x, 3);
+                    if(NBoptVar>4)
+                    {
+                        aim_best = gsl_vector_get(s->x, 4);
+                        e_best = gsl_vector_get(s->x, 5);
+                        if(e_best>1.0)
+                        {
+                            e_best = 1.0/e_best;
+                            tmp = are_best;
+                            are_best = aim_best;
+                            aim_best = -tmp;
+                        }
+                    }
+
+                    if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                    {
+                        printf("OPTIMAL SOLUTION  [ %6ld / %6ld  %g ]: \n", iter, iterMax, optsize);
+                        printf("       ptre = %.18f\n", ptre_best);
+                        printf("       ptim = %.18f\n", ptim_best);
+                        printf("      Iflux = %.18f\n", Iflux_best);
+                        if(NBoptVar>3)
+                            printf("        are = %.18f\n", are_best);
+                        if(NBoptVar>4)
+                        {
+                            printf("        aim = %.18f\n", aim_best);
+                            printf("          e = %.18f\n", e_best);
+                        }
+                    }
+
+
+                    if(mapmode>0)
+                    {
+                        data.image[IDmap].array.F[mapz*mapxsize*mapysize+ky*mapxsize+kx] = Iflux_best*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+
+                        data.image[IDmap_ptre].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = ptre_best*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+                        data.image[IDmap_ptim].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = ptim_best*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+                        data.image[IDmap_ptre_in].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = ptre*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+                        data.image[IDmap_ptim_in].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = ptim*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+                        data.image[IDmap_Iflux].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = Iflux_best*data.image[IDprobampC].array.F[ky*mapxsize+kx];
+                        if(NBoptVar>3)
+                            data.image[IDmap_are].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = are_best*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+                        if(NBoptVar>4)
+                        {
+                            data.image[IDmap_aim].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = aim_best*sqrt(data.image[IDprobampC].array.F[ky*mapxsize+kx]);
+                            data.image[IDmap_e].array.F[mapz*mapysize*mapxsize+ky*mapxsize+kx] = e_best;
+                        }
+                    }
+                }
+        }
+        if(mapmode>0)
+        {
+            save_fits("WFSerrmap", "!WFSerrmap.fits");
+            save_fits("WFSsol_ptre", "!WFSsol_ptre.fits");
+            save_fits("WFSsol_ptim", "!WFSsol_ptim.fits");
+            save_fits("WFSsol_ptre_in", "!WFSsol_ptre_in.fits");
+            save_fits("WFSsol_ptim_in", "!WFSsol_ptim_in.fits");
+            save_fits("WFSsol_Iflux", "!WFSsol_Iflux.fits");
+            if(NBoptVar>3)
+                save_fits("WFSsol_are", "!WFSsol_are.fits");
+            if(NBoptVar>4)
+            {
+                save_fits("WFSsol_aim", "!WFSsol_aim.fits");
+                save_fits("WFSsol_e", "!WFSsol_e.fits");
+            }
+        }
+    }
 
     return(0);
 }
+
+
+
+
+
+
+
+
+
 
 
 

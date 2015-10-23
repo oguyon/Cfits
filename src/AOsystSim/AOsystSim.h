@@ -13,7 +13,8 @@ int init_AOsystSim();
 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
-int AOSystSim_FPWFS_sensitivityAnalysis(int mode);
+long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp);
+int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes);
 
 
 

@@ -4355,7 +4355,6 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                 // do nothing, wait
             }
             cnt = data.image[ID].md[0].cnt0;
-
         }
         else
             sem_wait(data.image[ID].semptr[0]);
@@ -4399,6 +4398,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     long framesize;
     long xsize, ysize;
     char *ptr0; // source
+
+    int socketOpen = 1; // 0 if socket is closed
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
@@ -4531,8 +4532,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         break;
     }
 
-
-    while(1)
+    socketOpen = 1;
+    while(socketOpen==1)
     {
         if ((recvsize = recv(fds_client, ptr0, framesize, MSG_WAITALL)) < 0)
         {
@@ -4545,11 +4546,14 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             totsize += recvsize;
             //   printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
         }
+        else
+            socketOpen = 0;
+            
         data.image[ID].md[0].cnt0++;
         if(data.image[ID].sem > 0)
             sem_post(data.image[ID].semptr[0]);
-
     }
+    
     close(fds_client);
 
     free(imgmd);
