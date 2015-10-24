@@ -3901,7 +3901,6 @@ long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)
 
     ID = image_ID(IDname);
 
-
     if(data.image[ID].sem!=NBsem)
     {
         for(s=0; s<data.image[ID].sem; s++)
@@ -3941,11 +3940,6 @@ long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem)
 
         }
     }
-
-
-
-
-
 
     //printf("sem  = %d\n", data.image[ID].sem);
 
@@ -4449,8 +4443,6 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
 
 
-// mode 0 : re-use incoming sream name
-// mode 1 : test (write on stream )
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 {
     struct sockaddr_in sock_server, sock_client;
@@ -4548,17 +4540,13 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         exit(0);
     }
 
-    if(mode==0)
-        {
+
             ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
             COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
-        }
-    else
-    {
-        sprintf(fname, "sock%d_stream", port);
+/*        sprintf(fname, "sock%d_stream", port);
         ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
         COREMOD_MEMORY_image_set_createsem(fname, 4);
-    }
+   */
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
