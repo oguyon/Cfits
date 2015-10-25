@@ -1422,6 +1422,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long NBconviter = 10;
     float sigma;
 
+    long act1, act2;
+
 
     int MODAL; // 1 if "pixels" of DM are already modes
 
@@ -1747,13 +1749,17 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("\n");
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
+            m1 = m*wfssize;
+            
             printf("\r %5ld / %5ld   ", m, data.image[ID].md[0].size[2]);
             fflush(stdout);
             for(act=0; act<msizexy; act++)
             {
+                act1 = m*msizexy+act;
+                act2 = act*wfssize;
                 for(wfselem=0; wfselem<wfssize; wfselem++)
                 {
-                    data.image[IDm].array.F[m*wfssize+wfselem] += data.image[ID].array.F[m*msizexy+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
+                    data.image[IDm].array.F[m1+wfselem] += data.image[ID].array.F[act1] * data.image[IDzrespM].array.F[act2+wfselem];
                 }
             }
         }
