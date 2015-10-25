@@ -1749,9 +1749,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("\n");
         
         # ifdef _OPENMP
-                #pragma omp parallel 
-                {
-                #pragma omp for
+                #pragma omp parallel for private(act,act1,act2)
                 # endif
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
@@ -1769,9 +1767,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 } 
             }
         }
-        # ifdef _OPENMP
-        }
-        # endif
+
         printf("\n");
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
