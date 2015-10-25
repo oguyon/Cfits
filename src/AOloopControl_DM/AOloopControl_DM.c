@@ -367,7 +367,7 @@ int AOloopControl_DM_createconf()
     long DMindex;
     char errstr[200];
 
-    sprintf(fname, "/tmp/dmdisp%ldcombconf.conf.shm", DMindex);
+    sprintf(fname, "/tmp/dmdispcombconf.conf.shm");
 
     if( dmdispcomb_loaded == 0 )
     {
@@ -451,9 +451,6 @@ int AOloopControl_DM_loadconf()
         SMfd = open(fname, O_RDWR, (mode_t)0600);
         if (SMfd == -1) {
             AOloopControl_DM_createconf();
-            //            sprintf(errstr, "Error opening (O_RDWR) file \"%s\"", fname);
-            //            perror(errstr);
-            //            exit(EXIT_FAILURE);
         }
         else
         {
