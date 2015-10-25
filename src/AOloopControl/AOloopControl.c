@@ -1849,6 +1849,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -> fmodes1all.fits
         for(mblock=0; mblock<NBmblock; mblock++)
         {
+            printf("MODE BLOCK %ld\n", mblock);
+            fflush(stdout);
+            
             sprintf(imname, "fmodes0_%02ld", mblock);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
             cnt = 0;
@@ -1858,6 +1861,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 if(data.image[IDSVDcoeff].array.F[m]>SVDlim0*svdcoeff0)
                     cnt++;
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
+            fflush(stdout);
             sprintf(imname1, "fmodes1_%02ld", mblock);
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
             IDSVDmodes = image_ID("svdmodes");
