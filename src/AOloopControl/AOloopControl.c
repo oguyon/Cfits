@@ -1963,6 +1963,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             if(cnt>0)
             {
                 sprintf(imname, "fmodes2_%02ld", mblock);
+                printf("saving result %s \n", imname);
+                fflush(stdout);
                 IDm = create_3Dimage_ID(imname, msizex, msizey, cnt);
                 m1 = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
@@ -1972,6 +1974,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         for(ii=0; ii<msizexy; ii++)
                             data.image[IDm].array.F[m1*msizex*msizey+ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                         printf("BLOCK %ld   [%ld]  m1 = %ld / %ld\n", mblock, IDm, m1, cnt);
+                        fflush(stdout);
                         m1++;
                     }
                 }
