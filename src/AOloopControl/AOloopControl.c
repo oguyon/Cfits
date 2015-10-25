@@ -2057,6 +2057,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 if(MBLOCK_NBmode[mblock]>0)
                 {
                     IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
+                    
+                # ifdef _OPENMP
+                #pragma omp parallel for private(m,act,wfselem)
+                # endif                    
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
                         for(act=0; act<msizexy; act++)
