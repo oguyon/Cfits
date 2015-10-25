@@ -702,11 +702,15 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     matrix_save = gsl_matrix_alloc (m,m);
     gsl_matrix_memcpy(matrix_save, matrix_DtraD);
     gsl_eigen_symmv (matrix_save, matrix_DtraD_eval, matrix_DtraD_evec, w);
+
+    printf(" 03 ");
+    fflush(stdout);
+
     gsl_matrix_free(matrix_save);
     gsl_eigen_symmv_free(w);
     gsl_eigen_symmv_sort (matrix_DtraD_eval, matrix_DtraD_evec, GSL_EIGEN_SORT_ABS_DESC);
 
-    printf(" 03 ");
+    printf(" 04 ");
     fflush(stdout);
 
     IDcoeff = create_2Dimage_ID(IDcoeff_name, m, 1);
@@ -728,7 +732,7 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
         for(k=0; k<m; k++) // modes
             data.image[ID_VTmatrix].array.F[k*m+ii] = (float) gsl_matrix_get( matrix_DtraD_evec, k, ii);
 
-    printf(" 04 ");
+    printf(" 05 ");
     fflush(stdout);
 
     /// Compute SVD decomp
@@ -745,7 +749,7 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
         }
     }
     
-    printf(" 05 ");
+    printf(" 06 ");
     fflush(stdout);
     
  //   delete_image_ID("SVD_VTm");
