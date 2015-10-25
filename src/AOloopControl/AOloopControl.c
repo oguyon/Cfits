@@ -1925,8 +1925,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
-                    printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-                    fflush(stdout);
+                   // printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
+                   // fflush(stdout);
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     sprintf(imname, "fmodes1_%02ld", mblock0);
@@ -1952,14 +1952,14 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     {
                         mok[m] = 0;
                     }
-                    printf("  %12g (%g %g)\n", rms, value1, totm);
+                    //printf("  %12g (%g %g)\n", rms, value1, totm);
                 }
             }
             cnt = 0;
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 cnt += mok[m];
             printf("====== BLOCK %ld : keeping %ld / %ld modes\n", mblock, cnt, MBLOCK_NBmode[mblock]);
-
+            fflush(stdout);
             if(cnt>0)
             {
                 sprintf(imname, "fmodes2_%02ld", mblock);
