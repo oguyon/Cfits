@@ -1192,7 +1192,7 @@ int AOloopControl_DM_dmturb(long DMindex)
     IDs1 = load_fits("turbscreen1.fits", "screen1", 1);
     IDs2 = load_fits("turbscreen2.fits", "screen2", 1);
     list_image_ID();
-    exit(0);
+    
     if(IDs1==-1)
     {
         make_master_turbulence_screen("screen1", "screen2", imsize, 200.0, 1.0);
