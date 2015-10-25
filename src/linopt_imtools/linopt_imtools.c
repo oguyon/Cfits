@@ -724,8 +724,10 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
 
 
     /// Compute SVD decomp
+    printf(" -- ");
+    fflush(stdout);
+    
     IDout = create_3Dimage_ID(IDout_name, data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
-
     for(kk=0; kk<m; kk++) /// eigen mode index
     {
         printf("eigenmode %4ld / %4ld  %g\n", kk, m, data.image[IDcoeff].array.F[kk]);
@@ -736,6 +738,9 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
                 data.image[IDout].array.F[kk*n + ii] += data.image[ID_VTmatrix].array.F[kk1*m+kk]*data.image[IDin].array.F[kk1*n + ii];
         }
     }
+    
+    printf(" -- ");
+    fflush(stdout);
     
  //   delete_image_ID("SVD_VTm");
 
