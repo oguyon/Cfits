@@ -2012,7 +2012,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     }
 
-    exit(0);
+    
 
 
 
