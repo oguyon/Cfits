@@ -1902,7 +1902,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-exit(0);
+
 
 
 
@@ -2008,6 +2008,9 @@ exit(0);
 
 
     }
+
+    exit(0);
+
 
 
     // WFS modes
