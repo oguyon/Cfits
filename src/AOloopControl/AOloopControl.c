@@ -2109,6 +2109,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             for(m=0; m<NBmm; m++)
                 mok[m] = 1;
 
+
+            
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 rmsarray = (float*) malloc(sizeof(float)*MBLOCK_NBmode[mblock]);
@@ -2124,6 +2126,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     mok[m] = 1;
+                    
+                    
                 for(mblock0=0; mblock0<mblock; mblock0++)
                 {
                     reuse = 0;
@@ -2301,7 +2305,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         }
 
-        exit(0);
+    
 
 
         if(BlockNB<0)
