@@ -2259,7 +2259,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
             free(mok);
 
-            exit(0);
+            
 
 
             cnt = 0;
@@ -2300,6 +2300,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
         }
+
+        exit(0);
+
 
         if(BlockNB<0)
         {
