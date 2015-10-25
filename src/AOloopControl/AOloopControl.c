@@ -1853,7 +1853,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             fflush(stdout);
             
             sprintf(imname, "fmodes0_%02ld", mblock);
+            printf("SVD decomp ...");
+            fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
+            printf("DONE\n");
+            fflush(stdout);
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
             svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
