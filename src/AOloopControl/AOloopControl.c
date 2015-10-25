@@ -1749,7 +1749,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("\n");
         
         # ifdef _OPENMP
-                #pragma omp parallel for private(m,act,act1,act2,wfselem)
+                #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
                 # endif
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
