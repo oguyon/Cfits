@@ -1757,10 +1757,18 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             {
                 act1 = m*msizexy+act;
                 act2 = act*wfssize;
+                # ifdef _OPENMP
+                #pragma omp parallel 
+                {
+                #pragma omp for
+                # endif
                 for(wfselem=0; wfselem<wfssize; wfselem++)
                 {
                     data.image[IDm].array.F[m1+wfselem] += data.image[ID].array.F[act1] * data.image[IDzrespM].array.F[act2+wfselem];
+                } 
+                # ifdef _OPENMP
                 }
+                # endif
             }
         }
         printf("\n");
