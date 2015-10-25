@@ -1772,8 +1772,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
 
-    exit(0);
-
 
 
 
@@ -1846,7 +1844,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
 
 
-
+exit(0);
 
         /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -> fmodes1all.fits
         for(mblock=0; mblock<NBmblock; mblock++)
