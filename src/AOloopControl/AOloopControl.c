@@ -2014,8 +2014,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     
 
-
-    exit(0);
+// 1:17
 
     // WFS modes
     IDzrespM = image_ID("zrespM");
@@ -2091,7 +2090,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
             save_fits("fmodesWFS0all", "!./mkmodestmp/fmodesWFS0all.fits");
 
-
+    exit(0);
 
 
             /// STEP 6: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
