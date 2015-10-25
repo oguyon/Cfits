@@ -1792,7 +1792,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         CPAblocklim[8] = 13.0;
         CPAblocklim[9] = 15.0;
         CPAblocklim[10] = 17.0;
-        CPAblocklim[11] = 100.0;
+        CPAblocklim[11] = 19.0;
+        CPAblocklim[12] = 22.0;
+        CPAblocklim[13] = 100.0;
 
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
             MBLOCK_NBmode[mblock] = 0;
