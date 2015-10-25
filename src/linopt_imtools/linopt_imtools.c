@@ -679,6 +679,8 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     matrix_DtraD = gsl_matrix_alloc (m,m);
     matrix_DtraD_evec = gsl_matrix_alloc (m,m);
 
+    printf(" 01 ");
+    fflush(stdout);
 
    
     /* write matrix_D */
@@ -690,6 +692,8 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     /* compute DtraD */
     gsl_blas_dgemm (CblasTrans, CblasNoTrans, 1.0, matrix_D, matrix_D, 0.0, matrix_DtraD);
 
+    printf(" 02 ");
+    fflush(stdout);
 
     /* compute the inverse of DtraD */
 
@@ -702,6 +706,8 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     gsl_eigen_symmv_free(w);
     gsl_eigen_symmv_sort (matrix_DtraD_eval, matrix_DtraD_evec, GSL_EIGEN_SORT_ABS_DESC);
 
+    printf(" 03 ");
+    fflush(stdout);
 
     IDcoeff = create_2Dimage_ID(IDcoeff_name, m, 1);
     
@@ -722,16 +728,16 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
         for(k=0; k<m; k++) // modes
             data.image[ID_VTmatrix].array.F[k*m+ii] = (float) gsl_matrix_get( matrix_DtraD_evec, k, ii);
 
+    printf(" 04 ");
+    fflush(stdout);
 
     /// Compute SVD decomp
-    printf(" -- ");
-    fflush(stdout);
     
     IDout = create_3Dimage_ID(IDout_name, data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
     for(kk=0; kk<m; kk++) /// eigen mode index
     {
-        printf("eigenmode %4ld / %4ld  %g\n", kk, m, data.image[IDcoeff].array.F[kk]);
-        fflush(stdout);
+//        printf("eigenmode %4ld / %4ld  %g\n", kk, m, data.image[IDcoeff].array.F[kk]);
+//       fflush(stdout);
         for(kk1=0; kk1<m; kk1++)
         {
             for(ii=0; ii<n; ii++)
@@ -739,7 +745,7 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
         }
     }
     
-    printf(" -- ");
+    printf(" 05 ");
     fflush(stdout);
     
  //   delete_image_ID("SVD_VTm");
