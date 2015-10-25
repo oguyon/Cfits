@@ -2081,6 +2081,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 cnt += MBLOCK_NBmode[mblock];
             IDm = create_3Dimage_ID("fmodesWFS0all", wfsxsize, wfsysize, cnt);
             cnt = 0;
+            
+            
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 sprintf(imname, "fmodesWFS0_%02ld", mblock);
@@ -2127,8 +2129,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     reuse = 0;
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
-                        printf("WFS REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-                        fflush(stdout);
+//                        printf("WFS REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
+//                       fflush(stdout);
 
                         sprintf(imname, "fmodesWFS0_%02ld", mblock);
                         IDmwfs = image_ID(imname);
@@ -2148,10 +2150,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         linopt_imtools_image_construct(imnameDM, "modecoeff", "SVDmode1DM");
                         IDSVDmode1 = image_ID("SVDmode1");
                         IDSVDmode1DM = image_ID("SVDmode1DM");
-                        printf("[");
+                   /*     printf("[");
                         for(ii=0; ii<data.image[IDSVDcoeff].md[0].size[0]; ii++)
                             printf(" % 5.3f", data.image[IDSVDcoeff].array.F[ii]);
-                        printf(" ]");
+                        printf(" ]");*/
                         delete_image_ID("modecoeff");
 
                         value1 = 0.0;
@@ -2171,7 +2173,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         {
                             mok[m] = 0;
                         }
-                        printf("  %12g\n", rms/rmsarray[m]);
+//                        printf("  %12g\n", rms/rmsarray[m]);
                     }
                 }
                 cnt = 0;
