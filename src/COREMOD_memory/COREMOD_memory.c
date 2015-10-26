@@ -4254,9 +4254,9 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     long scnt;
     int semval;
     
-    TCP_BUFFER_METADATA *frame_md;
-    long framesize1; // pixel data + metadata
-    char *buff; // transmit buffer
+  //  TCP_BUFFER_METADATA *frame_md;
+  //  long framesize1; // pixel data + metadata
+  //  char *buff; // transmit buffer
     
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -4384,9 +4384,9 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     }
 
 
-    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
-    framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
-    buff = (char*) malloc(sizeof(char)*framesize1);
+  //  frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+ //   framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
+ //   buff = (char*) malloc(sizeof(char)*framesize1);
     
     sockOK = 1;
     while(sockOK==1)
@@ -4422,13 +4422,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                         sem_trywait(data.image[ID].semptr[0]);
                 }
             }
-        frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
-        frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
+    //    frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
+    //    frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
         ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
-        memcpy(buff, ptr1, framesize);
+  //      memcpy(buff, ptr1, framesize);
        // memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
         
-        rs = send(fds_client, buff, framesize, 0);
+        rs = send(fds_client, ptr1, framesize, 0);
 
         if ( rs != framesize)
         {
@@ -4444,8 +4444,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         iter++;
     }
     
-    free(frame_md);
-    free(buff);
+//    free(frame_md);
+//    free(buff);
     close(fds_client);
     printf("port %d closed\n", port);
     fflush(stdout);
@@ -4481,9 +4481,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
-    TCP_BUFFER_METADATA *frame_md;
-    long framesize1; // pixel data + metadata
-    char *buff; // transmit buffer
+//    TCP_BUFFER_METADATA *frame_md;
+//    long framesize1; // pixel data + metadata
+//    char *buff; // buffer
    
 
     int RT_priority = 80; //any number from 0-99
@@ -4648,11 +4648,11 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         exit(EXIT_FAILURE);
     }
 
-    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
-    framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
-    buff = (char*) malloc(sizeof(char)*framesize1);
+//    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+//    framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
+//    buff = (char*) malloc(sizeof(char)*framesize1);
 
-    frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
+//    frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
 
     socketOpen = 1;
     while(socketOpen==1)
@@ -4685,8 +4685,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             socketOpen = 0;
     }
     
-    free(frame_md);
-    free(buff);
+  //  free(frame_md);
+  //  free(buff);
     close(fds_client);
     printf("port %d closed\n", port);
     fflush(stdout);
