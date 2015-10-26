@@ -4426,11 +4426,11 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
         ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
         memcpy(buff, ptr1, framesize);
-        memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
+       // memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
         
-        rs = send(fds_client, buff, framesize1, 0);
+        rs = send(fds_client, buff, framesize, 0);
 
-        if ( rs != framesize1)
+        if ( rs != framesize)
         {
             printf("send() sent a different number of bytes (%d) than expected %ld\n", rs, framesize);
             fflush(stdout);
@@ -4657,7 +4657,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     socketOpen = 1;
     while(socketOpen==1)
     {
-        if ((recvsize = recv(fds_client, buff, framesize1, MSG_WAITALL)) < 0)
+        if ((recvsize = recv(fds_client, buff, framesize, MSG_WAITALL)) < 0)
         {
             printf("ERROR recv()\n");
             socketOpen = 0;
@@ -4673,7 +4673,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         
     //    frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
        // data.image[ID].md[0].cnt0 = frame_md[0].cnt0;
-        data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
+//        data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
 
         memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
         
