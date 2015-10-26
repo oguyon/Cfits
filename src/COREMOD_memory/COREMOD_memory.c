@@ -4421,10 +4421,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         if(data.image[ID].sem==0)
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
-            {
-                usleep(5);
-                // do nothing, wait
-            }
+                usleep(5);            
             cnt = data.image[ID].md[0].cnt0;
         }
         else
@@ -4587,8 +4584,11 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     }
 
 
-            ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-            COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
+    ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+    COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
+    printf("Created image stream %s\n", imgmd[0].name);
+    list_image_ID();
+
 /*        sprintf(fname, "sock%d_stream", port);
         ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
         COREMOD_MEMORY_image_set_createsem(fname, 4);
@@ -4865,12 +4865,10 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
         slice = data.image[IDin].md[0].cnt1;
         data.image[IDout].md[0].write = 1;
         data.image[IDout].md[0].cnt0 ++;
-        //for(slice=0; slice<NBslice; slice++)
-       // {
-            sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
-            for(ii=0; ii<nbpixslice[slice]; ii++)
-                data.image[IDout].array.U[ data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
-        //}
+     
+        sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
+        for(ii=0; ii<nbpixslice[slice]; ii++)
+            data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
         data.image[IDout].md[0].cnt1 = slice;
         sem_post(data.image[IDout].semptr[0]);
         data.image[IDout].md[0].write = 0;
