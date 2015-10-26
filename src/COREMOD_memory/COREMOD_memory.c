@@ -4430,7 +4430,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         
         rs = send(fds_client, buff, framesize1, 0);
 
-        if ( rs != framesize)
+        if ( rs != framesize1)
         {
             printf("send() sent a different number of bytes (%d) than expected %ld\n", rs, framesize);
             fflush(stdout);
