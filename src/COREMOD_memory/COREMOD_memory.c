@@ -4428,7 +4428,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         memcpy(buff, ptr1, framesize);
         memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
         
-        rs = send(fds_client, ptr1, framesize1, 0);
+        rs = send(fds_client, buff, framesize1, 0);
 
         if ( rs != framesize1)
         {
