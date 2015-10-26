@@ -591,28 +591,29 @@ int info_image_monitor(char *ID_name, double frequ)
 
 long brighter(char *ID_name, double value) /* number of pixels brighter than value */
 {
-  int ID;
-  long ii,jj;
-  long naxes[2];
-  long brighter, fainter;
+    int ID;
+    long ii,jj;
+    long naxes[2];
+    long brighter, fainter;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];    
-    
-  brighter = 0;
-  fainter = 0;
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++){
-      if(data.image[ID].array.F[jj*naxes[0]+ii]>value)
-	brighter++;
-      else
-	fainter++;
-    }
-  printf("brighter %ld   fainter %ld\n", brighter, fainter );
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
 
-  return(brighter);
+    brighter = 0;
+    fainter = 0;
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++) {
+            if(data.image[ID].array.F[jj*naxes[0]+ii]>value)
+                brighter++;
+            else
+                fainter++;
+        }
+    printf("brighter %ld   fainter %ld\n", brighter, fainter );
+
+    return(brighter);
 }
+
 
 int img_nbpix_flux(char *ID_name)
 {

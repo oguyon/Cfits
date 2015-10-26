@@ -7457,9 +7457,11 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
 
-
-
-int AOcompute(long loop, int normalize)
+//
+// FrameIndex defines a group of pixels to be processed
+// FrameIndex = 0 -> all pixels of the image will be processed
+//
+int AOcompute(long loop, int normalize, int FrameIndex)
 {
     float total = 0.0;
     long k, k1, k2;
@@ -7897,7 +7899,7 @@ int AOloopControl_run()
                      }
               
   
-                AOcompute(loop, AOconf[loop].WFSnormalize);
+                AOcompute(loop, AOconf[loop].WFSnormalize, 0);
                
  
 

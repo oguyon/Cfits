@@ -599,6 +599,24 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 }
 
 
+
+//long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_name)
+int COREMOD_MEMORY_PixMapDecode_U_cli()
+{
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,4)+CLI_checkarg(6,3)+CLI_checkarg(7,3)==0)
+    {
+        COREMOD_MEMORY_PixMapDecode_U(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
+
+
 int COREMOD_MEMORY_logshim_printstatus_cli()
 {
     if(CLI_checkarg(1,3)==0)
@@ -955,6 +973,15 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)");
     data.NBcmd++;
 
+
+    strcpy(data.cmd[data.NBcmd].key,"impixdecodeU");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_PixMapDecode_U_cli;
+    strcpy(data.cmd[data.NBcmd].info,"decode image stream");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <xsize [long]> <ysize [long]> <nbpix per slice [ASCII file]> <decode map> <out stream> <out image slice index [FITS]>");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_name)");
+    data.NBcmd++;
 
 
     strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
@@ -4696,6 +4723,169 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
     return(ID);
 }
+
+
+
+
+// pixel decode for unsigned short 
+long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_name)
+{
+    long IDout;
+    long IDin;
+    long IDmap;
+    long slice, sliceii;
+    long NBslice;
+    long *nbpixslice;
+    long xsizein, ysizein;
+    FILE *fp;
+    long *sizearray;
+    long IDout_pixslice;
+    int loopOK;
+    long ii;
+    long cnt;
+    int RT_priority = 60; //any number from 0-99
+
+    struct sched_param schedpar;
+    struct timespec ts;
+    long scnt;
+    int semval;
+    long iter;
+    int r;
+
+
+    sizearray = (long*) malloc(sizeof(long)*3);
+
+    IDin = image_ID(inputstream_name);
+    IDmap = image_ID(IDmap_name);
+
+    xsizein = data.image[IDin].md[0].size[0];
+    ysizein = data.image[IDin].md[0].size[1];
+
+    if(xsizein != data.image[IDmap].md[0].size[0])
+    {
+        printf("ERROR: xsize for %s (%ld) does not match xsize for %s (%ld)\n", inputstream_name, xsizein, IDmap_name, data.image[IDmap].md[0].size[0]);
+        exit(0);
+    }
+    if(ysizein != data.image[IDmap].md[0].size[1])
+    {
+        printf("ERROR: xsize for %s (%ld) does not match xsize for %s (%ld)\n", inputstream_name, ysizein, IDmap_name, data.image[IDmap].md[0].size[1]);
+        exit(0);
+    }
+    sizearray[0] = xsizeim;
+    sizearray[1] = ysizeim;
+    IDout = create_image_ID(IDout_name, 2, sizearray, data.image[IDin].md[0].atype, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 4);
+    IDout_pixslice = create_image_ID(IDout_pixslice_name, 2, sizearray, USHORT, 0, 0);
+
+    NBslice = data.image[IDin].md[0].size[2];
+    nbpixslice = (long*) malloc(sizeof(long)*NBslice);
+    if((fp=fopen(NBpix_fname,"r"))==NULL)
+    {
+        printf("ERROR : cannor open file \"%s\"\n", NBpix_fname);
+        exit(0);
+    }
+
+    for(slice=0; slice<NBslice; slice++)
+        r = fscanf(fp, "%ld\n", &nbpixslice[slice]);
+    fclose(fp);
+
+    for(slice=0; slice<NBslice; slice++)
+        printf("Slice %5ld   : %5ld pix\n", slice, nbpixslice[slice]);
+
+
+
+
+    for(slice=0;slice<NBslice;slice++)
+    {
+         sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
+            for(ii=0; ii<nbpixslice[slice]; ii++)
+                data.image[IDout_pixslice].array.U[ data.image[IDmap].array.U[sliceii + ii] ] = (unsigned short) slice;
+    }
+
+
+
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+
+    iter = 0;
+    loopOK = 1;
+    while(loopOK == 1)
+    {
+        if(data.image[IDin].sem==0)
+        {
+            while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
+                usleep(5);
+            cnt = data.image[IDin].md[0].cnt0;
+        }
+        else
+        {
+            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+                perror("clock_gettime");
+                exit(EXIT_FAILURE);
+            }
+            ts.tv_sec += 1;
+            sem_timedwait(data.image[IDin].semptr[0], &ts);
+
+            if(iter == 0)
+            {
+                sem_getvalue(data.image[IDin].semptr[0], &semval);
+                for(scnt=0; scnt<semval; scnt++)
+                    sem_trywait(data.image[IDin].semptr[0]);
+            }
+        }
+
+        slice = data.image[IDin].md[0].cnt1;
+        data.image[IDout].md[0].write = 1;
+        data.image[IDout].md[0].cnt0 ++;
+        for(slice=0; slice<NBslice; slice++)
+        {
+            sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
+            for(ii=0; ii<nbpixslice[slice]; ii++)
+                data.image[IDout].array.U[ data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
+        }
+        data.image[IDout].md[0].cnt1 = slice;
+        sem_post(data.image[IDout].semptr[0]);
+        data.image[IDout].md[0].write = 0;
+
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            loopOK = 0;
+        iter++;
+    }
+
+    free(nbpixslice);
+    free(sizearray);
+
+
+    return(IDout);
+}
+
 
 
 

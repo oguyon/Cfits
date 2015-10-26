@@ -161,7 +161,7 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
-int AOcompute(long loop, int normalize);
+int AOcompute(long loop, int normalize, int FrameIndex);
 int AOloopControl_run();
 
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);
