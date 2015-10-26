@@ -4751,7 +4751,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     int semval;
     long iter;
     int r;
-
+    long tmpl0, tmpl1;
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -4786,7 +4786,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     }
 
     for(slice=0; slice<NBslice; slice++)
-        r = fscanf(fp, "%ld\n", &nbpixslice[slice]);
+        r = fscanf(fp, "%ld %ld %ld\n", &tmpl0, &nbpixslice[slice], &tmpl1);
     fclose(fp);
 
     for(slice=0; slice<NBslice; slice++)
