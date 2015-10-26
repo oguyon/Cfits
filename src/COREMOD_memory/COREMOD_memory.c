@@ -4671,10 +4671,10 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             socketOpen = 0;
         
         frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
-        data.image[ID].md[0].cnt0 = frame_md[0].cnt0;
+       // data.image[ID].md[0].cnt0 = frame_md[0].cnt0;
         data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
 
-        memcpy(ptr0, buff, framesize);
+        memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
         
         data.image[ID].md[0].cnt0++;
         if(data.image[ID].sem > 0)
