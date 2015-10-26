@@ -29,9 +29,11 @@ typedef struct
 
 
 
-
-
-
+typedef struct
+{
+    long cnt0;
+    long cnt1;
+} TCP_BUFFER_METADATA;
 
 
 

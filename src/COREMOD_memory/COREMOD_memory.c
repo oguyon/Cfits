@@ -4242,7 +4242,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     int result;
     long long cnt = -1;
     long long iter = 0;
-    long framesize;
+    long framesize; // pixel data only
     long xsize, ysize;
     char *ptr0; // source
     char *ptr1; // source - offset by slice
@@ -4253,6 +4253,10 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     struct timespec ts;
     long scnt;
     int semval;
+    
+    TCP_BUFFER_METADATA *frame_md;
+    long framesize1; // pixel data + metadata
+    char *buff; // transmit buffer
     
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -4294,6 +4298,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         printf("send() sent a different number of bytes than expected %ld\n", sizeof(IMAGE_METADATA));
         fflush(stdout);
     }
+
+
 
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
@@ -4378,7 +4384,10 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     }
 
 
-
+    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+    framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
+    buff = (char*) malloc(sizeof(char)*framesize1);
+    
     sockOK = 1;
     while(sockOK==1)
     {
@@ -4413,8 +4422,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                         sem_trywait(data.image[ID].semptr[0]);
                 }
             }
+        frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
+        frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
         ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
-        rs = send(fds_client, ptr1, framesize, 0);
+        memcpy(buff, ptr1, framesize);
+        memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
+        
+        rs = send(fds_client, ptr1, framesize1, 0);
 
         if ( rs != framesize)
         {
@@ -4429,7 +4443,9 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
         iter++;
     }
-
+    
+    free(frame_md);
+    free(buff);
     close(fds_client);
     printf("port %d closed\n", port);
     fflush(stdout);
@@ -4465,7 +4481,10 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
-
+    TCP_BUFFER_METADATA *frame_md;
+    long framesize1; // pixel data + metadata
+    char *buff; // transmit buffer
+   
 
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
@@ -4629,12 +4648,15 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         exit(EXIT_FAILURE);
     }
 
+    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+    framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
+    buff = (char*) malloc(sizeof(char)*framesize1);
 
 
     socketOpen = 1;
     while(socketOpen==1)
     {
-        if ((recvsize = recv(fds_client, ptr0, framesize, MSG_WAITALL)) < 0)
+        if ((recvsize = recv(fds_client, buff, framesize1, MSG_WAITALL)) < 0)
         {
             printf("ERROR recv()\n");
             socketOpen = 0;
@@ -4647,7 +4669,13 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         }
         else
             socketOpen = 0;
-            
+        
+        frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
+        data.image[ID].md[0].cnt0 = frame_md[0].cnt0;
+        data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
+
+        memcpy(ptr0, buff, framesize);
+        
         data.image[ID].md[0].cnt0++;
         if(data.image[ID].sem > 0)
             sem_post(data.image[ID].semptr[0]);
@@ -4656,6 +4684,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             socketOpen = 0;
     }
     
+    free(frame_md);
+    free(buff);
     close(fds_client);
     printf("port %d closed\n", port);
     fflush(stdout);
