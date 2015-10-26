@@ -600,7 +600,7 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 
 
 
-//long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_name)
+//long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)
 int COREMOD_MEMORY_PixMapDecode_U_cli()
 {
      if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,4)+CLI_checkarg(6,3)+CLI_checkarg(7,3)==0)
@@ -979,8 +979,8 @@ int init_COREMOD_memory()
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_PixMapDecode_U_cli;
     strcpy(data.cmd[data.NBcmd].info,"decode image stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <xsize [long]> <ysize [long]> <nbpix per slice [ASCII file]> <decode map> <out stream> <out image slice index [FITS]>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_name)");
+    strcpy(data.cmd[data.NBcmd].example,"impixdecodeU streamin 120 120 pixsclienb.txt decmap outim outsliceindex.fits");
+    strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)");
     data.NBcmd++;
 
 
@@ -4728,7 +4728,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
 
 // pixel decode for unsigned short 
-long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_name)
+long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)
 {
     long IDout;
     long IDin;
@@ -4775,7 +4775,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     sizearray[1] = ysizeim;
     IDout = create_image_ID(IDout_name, 2, sizearray, data.image[IDin].md[0].atype, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDout_name, 4);
-    IDout_pixslice = create_image_ID(IDout_pixslice_name, 2, sizearray, USHORT, 0, 0);
+    IDout_pixslice = create_image_ID("outpixsl", 2, sizearray, USHORT, 0, 0);
 
     NBslice = data.image[IDin].md[0].size[2];
     nbpixslice = (long*) malloc(sizeof(long)*NBslice);
@@ -4802,7 +4802,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 data.image[IDout_pixslice].array.U[ data.image[IDmap].array.U[sliceii + ii] ] = (unsigned short) slice;
     }
 
-
+    save_fits("outpixsl", IDout_pixslice_fname);
+    delete_image_ID("outpixsl");
 
     if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
         perror("sigaction");
