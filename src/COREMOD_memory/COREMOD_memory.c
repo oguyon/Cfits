@@ -4910,6 +4910,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             data.image[IDout].md[0].cnt1 = slice;
             sem_post(data.image[IDout].semptr[1]);
             data.image[IDout].md[0].write = 0;
+            oldslice = slice;
         }
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
