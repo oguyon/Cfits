@@ -4883,7 +4883,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             if(slice==NBslice-1)
             {
                 sem_post(data.image[IDout].semptr[0]);
-          //      data.image[IDout].md[0].cnt0 ++;
+                data.image[IDout].md[0].cnt0 ++;
             }
 
             data.image[IDout].md[0].cnt1 = slice;
