@@ -4726,8 +4726,12 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
 
 
-
+//
 // pixel decode for unsigned short 
+// sem0, cnt0 gets updated at each full frame
+// sem1 gets updated for each slice
+// cnt1 contains the slice index that was just written
+//
 long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)
 {
     long IDout;
@@ -4864,14 +4868,22 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
         slice = data.image[IDin].md[0].cnt1;
         data.image[IDout].md[0].write = 1;
-        data.image[IDout].md[0].cnt0 ++;
      
         sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
         for(ii=0; ii<nbpixslice[slice]; ii++)
             data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
+
+        if(slice==NBslice)
+            {
+                sem_post(data.image[IDout].semptr[0]);
+                data.image[IDout].md[0].cnt0 ++;
+            }
+    
         data.image[IDout].md[0].cnt1 = slice;
-        sem_post(data.image[IDout].semptr[0]);
+        sem_post(data.image[IDout].semptr[1]);
         data.image[IDout].md[0].write = 0;
+
+        
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
