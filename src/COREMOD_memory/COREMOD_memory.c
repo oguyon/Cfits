@@ -4462,7 +4462,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                     slice = 0;;
 
             printf("[%ld -> %ld] ", oldslice, slice); // TEST
-
+            frame_md[0].cnt1 = slice;
             if(slice == 0)
             {
                 printf("\n");
@@ -4471,6 +4471,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
             ptr1 = ptr0 + framesize*slice; //data.image[ID].md[0].cnt1; // frame that was just written
             memcpy(buff, ptr1, framesize);
+            
             memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
 
             rs = send(fds_client, buff, framesize1, 0);
