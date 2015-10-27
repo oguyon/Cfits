@@ -4463,7 +4463,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
             printf("[%ld -> %ld] ", oldslice, slice); // TEST
 
-            if(data.image[ID].md[0].cnt1 == 0)
+            if(slice == 0)
             {
                 printf("\n");
                 fflush(stdout);
