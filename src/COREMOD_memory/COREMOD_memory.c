@@ -4466,7 +4466,6 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         iter++;
     }
     
-    free(frame_md);
     free(buff);
     close(fds_client);
     printf("port %d closed\n", port);
@@ -4711,9 +4710,11 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             socketOpen = 0;
     }
     
-    free(frame_md);
+    
     free(buff);
+
     close(fds_client);
+
     printf("port %d closed\n", port);
     fflush(stdout);
 
