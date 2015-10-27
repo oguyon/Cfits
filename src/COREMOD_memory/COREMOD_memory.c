@@ -4447,14 +4447,14 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
             frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
             
-         /*   printf("[%d] ", data.image[ID].md[0].cnt1); // TEST
+            printf("[%d] ", data.image[ID].md[0].cnt1); // TEST
             
            if(data.image[ID].md[0].cnt1 == 0)
                 {
                     printf("\n");
                     fflush(stdout);
                 }
-            */
+            
             ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
             memcpy(buff, ptr1, framesize);
             memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
@@ -4709,13 +4709,13 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             {
                 frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
                 data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
-/*                printf("[%d]", data.image[ID].md[0].cnt1); // TEST
+                printf("[%d]", data.image[ID].md[0].cnt1); // TEST
 
                 if(data.image[ID].md[0].cnt1==0)
                     {
                         printf("\n"); // TEST
                         fflush(stdout);
-                    }*/
+                    }
                 memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
         
                 data.image[ID].md[0].cnt0++;
@@ -4894,13 +4894,13 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 for(ii=0; ii<nbpixslice[slice]; ii++)
                     data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
             }
-//            printf("[%d] ", slice); //TEST
+            printf("[%d] ", slice); //TEST
 
             if(slice==NBslice-1)
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
-/*                printf("\n");//TEST
+               printf("\n");//TEST
                 fflush(stdout);*/
             }
 

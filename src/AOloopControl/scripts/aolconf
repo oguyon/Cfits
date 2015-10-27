@@ -20,7 +20,7 @@ execnameLOG="$execprefixLOG Cfits" #
 
 # default parameters
 
-LOOPNAME="pyramid" # name of the control loop
+LOOPNAME="PyWFS" # name of the control loop
 LOOPNUMBER_default=2  # loop number
 
 dmC="dm0disp3" # DM control channel
@@ -1881,12 +1881,14 @@ acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
 #tmux send-keys -t adark "./aol" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: taking dark"
 menucontrolloop_default="adarkoff"
 ;;
 	adarkoff)
 acqdarkstat="OFF"
 echo "OFF" > ./status/stat_acqudark.txt
 tmux kill-session -t adark
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: stopping dark"
 menucontrolloop_default="adark_on"
 ;;
 
@@ -2239,6 +2241,7 @@ tmux new-session -d -s $tmuxsname
 tmux send-keys -t $tmuxsname "$execnameRT -n awfsref0${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 0" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: taking reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
 ;;
@@ -2254,6 +2257,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t $tmuxsname "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_fname.txt
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: stopping reference"
 menucontrolloop_default="awfsref0_on"
 state="menuconfigureloop"
 ;;
@@ -3113,12 +3117,14 @@ menucontrolloop_default="S"
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: loop on"
 #echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: loop off"
 #echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Nloopon"
 ;; 
@@ -3126,6 +3132,7 @@ menucontrolloop_default="Nloopon"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
 #echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
 #echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
 #echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
@@ -3148,32 +3155,36 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 loopgain=${value}
   	 echo "$loopgain" > ./conf/conf_loopgain.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: gain ${loopgain}"
   	 ;; 
    	 m)
    	 value=${loopmaxlim}
-   	SelectValue01 0 1200 50
- 	loopmaxlim=${value}
- 	echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
+   	 SelectValue01 0 1200 50
+ 	 loopmaxlim=${value}
+ 	 echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: max limit ${loopmaxlim}"
    	 ;;  
    	 e) 
    	 value=${loopmultcoeff}
-   	SelectValue01 900 1001 2
- 	loopmultcoeff=${value}
- 	echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
-	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
+   	 SelectValue01 900 1001 2
+ 	 loopmultcoeff=${value}
+ 	 echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
+	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: mult coeff ${loopmultcoeff}"
      	 ;;  
 
 	 gball)
 	 value=${gainallb}
 	 SelectValue01 100 1200 50 
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
-      	do
-	 gi=$(printf "%02d" "$i")
-	gainb[10#${gi}]=${value}
-	echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
-	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	done
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=${value}
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 done
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: set all gains to ${value}"
 	 ;;
 	 
   	 gb00)
@@ -3183,6 +3194,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${10#gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb01)
@@ -3192,6 +3204,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb02)
@@ -3201,6 +3214,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb03)
@@ -3210,6 +3224,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb04)
@@ -3219,6 +3234,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb05)
@@ -3228,6 +3244,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb06)
@@ -3237,6 +3254,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb07)
@@ -3246,6 +3264,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb08)
@@ -3255,6 +3274,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb09)
@@ -3264,6 +3284,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb10)
@@ -3273,6 +3294,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb11)
@@ -3282,6 +3304,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb12)
@@ -3291,6 +3314,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb13)
@@ -3300,6 +3324,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb14)
@@ -3309,6 +3334,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
+	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
   	 ;; 
 
 
@@ -3325,6 +3351,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "wfsref=${zpmult}*wfsref0"
 tmux send-keys -t $tmuxname "exit" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: multiply ref by ${value}"
 ;;
 
 	zplon)
@@ -3338,12 +3365,14 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
 tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
 menucontrolloop_default="zploff"
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: start zero-point offset loop"
 ;; 
 	zploff)
 echo "OFF" > ./status/stat_zploopON.txt
 tmuxname="aol${LOOPNUMBER}zploop"
 tmux kill-session -t $tmuxname 
 menucontrolloop_default="zplon"
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: stop zero-point offset loop"
 	;;
 	zpinj)
 ampl="0.03"
@@ -3357,6 +3386,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
 tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: inject fourier mode to zero-point"
 	;;
 
 
@@ -3367,6 +3397,7 @@ tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
+ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zero the zero-point offset"
 	;;
 esac
 ;;
@@ -3377,7 +3408,6 @@ esac
 
 
 fi
-
 
 
 
