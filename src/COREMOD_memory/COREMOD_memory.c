@@ -4259,7 +4259,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
  
 
  
- 
+
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
 {
     long ID;
@@ -4281,11 +4281,11 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     long scnt;
     int semval;
     int semr;
-    
+
     TCP_BUFFER_METADATA *frame_md;
     long framesize1; // pixel data + metadata
     char *buff; // transmit buffer
-    
+
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
 
@@ -4354,7 +4354,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         printf("ERROR: WRONG DATA TYPE\n");
         exit(0);
         break;
-    } 
+    }
 
     printf("image frame size = %ld\n", framesize);
 
@@ -4374,13 +4374,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     case USHORT:
         ptr0 = (char*) data.image[ID].array.U;
         break;
- 
+
     default:
         printf("ERROR: WRONG DATA TYPE\n");
         exit(0);
         break;
     }
-  
+
 
     if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
         perror("sigaction");
@@ -4398,11 +4398,11 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
-   if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+    if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
-  if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+    if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
@@ -4415,57 +4415,57 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
     framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
     buff = (char*) malloc(sizeof(char)*framesize1);
-    
+
     sockOK = 1;
     while(sockOK==1)
     {
         if(data.image[ID].sem==0)
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
-                usleep(5);            
+                usleep(5);
             cnt = data.image[ID].md[0].cnt0;
-            semr = 0; 
+            semr = 0;
         }
         else
-            {
-                if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+        {
+            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);
-                }
-                ts.tv_sec += 1;
-                semr = sem_timedwait(data.image[ID].semptr[0], &ts);
-                    
-                if(iter == 0)                
-                {
-                    sem_getvalue(data.image[ID].semptr[0], &semval);
-                    for(scnt=0; scnt<semval; scnt++)
-                        sem_trywait(data.image[ID].semptr[0]);
-                }
             }
+            ts.tv_sec += 1;
+            semr = sem_timedwait(data.image[ID].semptr[0], &ts);
+
+            if(iter == 0)
+            {
+                sem_getvalue(data.image[ID].semptr[0], &semval);
+                for(scnt=0; scnt<semval; scnt++)
+                    sem_trywait(data.image[ID].semptr[0]);
+            }
+        }
         if(semr==0)
         {
-        frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
-        frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
-        ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
-        memcpy(buff, ptr1, framesize);
-        memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
-        
-        rs = send(fds_client, buff, framesize1, 0);
+            frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
+            frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
+            ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
+            memcpy(buff, ptr1, framesize);
+            memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
 
-        if ( rs != framesize1)
-        {
-            printf("send() sent a different number of bytes (%d) than expected %ld\n", rs, framesize);
-            fflush(stdout);
-            sockOK = 0;
-        }
+            rs = send(fds_client, buff, framesize1, 0);
+
+            if ( rs != framesize1)
+            {
+                printf("send() sent a different number of bytes (%d) than expected %ld\n", rs, framesize);
+                fflush(stdout);
+                sockOK = 0;
+            }
         }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             sockOK = 0;
-        
+
 
         iter++;
     }
-    
+
     free(buff);
     close(fds_client);
     printf("port %d closed\n", port);
@@ -4473,6 +4473,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
     return(ID);
 }
+
 
 
 
@@ -4727,7 +4728,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
 
 //
-// pixel decode for unsigned short 
+// pixel decode for unsigned short
 // sem0, cnt0 gets updated at each full frame
 // sem1 gets updated for each slice
 // cnt1 contains the slice index that was just written
@@ -4747,7 +4748,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     int loopOK;
     long ii;
     long cnt;
-    int RT_priority = 60; //any number from 0-99
+    int RT_priority = 80; //any number from 0-99
 
     struct sched_param schedpar;
     struct timespec ts;
@@ -4756,7 +4757,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     long iter;
     int r;
     long tmpl0, tmpl1;
-
+    int semr;
+    
     sizearray = (long*) malloc(sizeof(long)*3);
 
     IDin = image_ID(inputstream_name);
@@ -4799,11 +4801,11 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
 
 
-    for(slice=0;slice<NBslice;slice++)
+    for(slice=0; slice<NBslice; slice++)
     {
-         sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
-            for(ii=0; ii<nbpixslice[slice]; ii++)
-                data.image[IDout_pixslice].array.U[ data.image[IDmap].array.U[sliceii + ii] ] = (unsigned short) slice;
+        sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
+        for(ii=0; ii<nbpixslice[slice]; ii++)
+            data.image[IDout_pixslice].array.U[ data.image[IDmap].array.U[sliceii + ii] ] = (unsigned short) slice;
     }
 
     save_fits("outpixsl", IDout_pixslice_fname);
@@ -4856,7 +4858,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 exit(EXIT_FAILURE);
             }
             ts.tv_sec += 1;
-            sem_timedwait(data.image[IDin].semptr[0], &ts);
+            semr = sem_timedwait(data.image[IDin].semptr[0], &ts);
 
             if(iter == 0)
             {
@@ -4866,27 +4868,28 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             }
         }
 
+        if(semr==0)
+{
         slice = data.image[IDin].md[0].cnt1;
         data.image[IDout].md[0].write = 1;
-     
-     if(slice<NBslice)
-{
+
+        if(slice<NBslice)
+        {
             sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
-        for(ii=0; ii<nbpixslice[slice]; ii++)
-            data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
-}
+            for(ii=0; ii<nbpixslice[slice]; ii++)
+                data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
+        }
 
         if(slice==NBslice-1)
-            {
-                sem_post(data.image[IDout].semptr[0]);
-                data.image[IDout].md[0].cnt0 ++;
-            }
-  
+        {
+            sem_post(data.image[IDout].semptr[0]);
+            data.image[IDout].md[0].cnt0 ++;
+        }
+
         data.image[IDout].md[0].cnt1 = slice;
         sem_post(data.image[IDout].semptr[1]);
         data.image[IDout].md[0].write = 0;
-
-        
+}
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
@@ -4899,6 +4902,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
     return(IDout);
 }
+
 
 
 
