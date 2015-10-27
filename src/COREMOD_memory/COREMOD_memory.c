@@ -4876,10 +4876,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
 }
 
-        if(slice==NBslice)
+        if(slice==NBslice-1)
             {
-                printf("\n\n slice = %d / %d\n\n", slice, NBslice);
-                fflush(stdout);
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
             }
