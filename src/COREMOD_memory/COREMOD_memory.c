@@ -4879,11 +4879,14 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 for(ii=0; ii<nbpixslice[slice]; ii++)
                     data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
             }
+        printf("[%d] ", slice);
 
             if(slice==NBslice-1)
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
+                printf("\n");
+                fflush(stdout);
             }
 
             data.image[IDout].md[0].cnt1 = slice;
@@ -4894,10 +4897,6 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
             
-            
-        // TESTING
-        printf("[%d] ", slice);
-        
         iter++;
     }
 
