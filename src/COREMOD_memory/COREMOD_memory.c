@@ -4896,7 +4896,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             
             
         // TESTING
-        
+        printf("[%d] ", slice);
         
         iter++;
     }
