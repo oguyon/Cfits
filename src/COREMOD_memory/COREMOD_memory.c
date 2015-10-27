@@ -4754,11 +4754,11 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     struct timespec ts;
     long scnt;
     int semval;
-    long iter;
+    long long iter;
     int r;
     long tmpl0, tmpl1;
     int semr;
-    
+
     sizearray = (long*) malloc(sizeof(long)*3);
 
     IDin = image_ID(inputstream_name);
@@ -4869,30 +4869,35 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
         }
 
         if(semr==0)
-{
-        slice = data.image[IDin].md[0].cnt1;
-        data.image[IDout].md[0].write = 1;
-
-        if(slice<NBslice)
         {
-            sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
-            for(ii=0; ii<nbpixslice[slice]; ii++)
-                data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
-        }
+            slice = data.image[IDin].md[0].cnt1;
+            data.image[IDout].md[0].write = 1;
 
-        if(slice==NBslice-1)
-        {
-            sem_post(data.image[IDout].semptr[0]);
-            data.image[IDout].md[0].cnt0 ++;
-        }
+            if(slice<NBslice)
+            {
+                sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
+                for(ii=0; ii<nbpixslice[slice]; ii++)
+                    data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
+            }
 
-        data.image[IDout].md[0].cnt1 = slice;
-        sem_post(data.image[IDout].semptr[1]);
-        data.image[IDout].md[0].write = 0;
-}
+            if(slice==NBslice-1)
+            {
+                sem_post(data.image[IDout].semptr[0]);
+          //      data.image[IDout].md[0].cnt0 ++;
+            }
+
+            data.image[IDout].md[0].cnt1 = slice;
+            sem_post(data.image[IDout].semptr[1]);
+            data.image[IDout].md[0].write = 0;
+        }
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
+            
+            
+        // TESTING
+        
+        
         iter++;
     }
 
@@ -4902,6 +4907,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
     return(IDout);
 }
+
 
 
 
