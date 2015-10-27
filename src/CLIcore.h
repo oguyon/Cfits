@@ -233,9 +233,10 @@ typedef struct          /* structure used to store data arrays */
     sem_t **semptr; // semaphore array
 
     sem_t *semlog; // semaphore for logging
-
-   char name[80]; // local name (can be different from name in shared memory)
-
+    
+    
+    char name[80]; // local name (can be different from name in shared memory)
+    long cnt00; // custom counter
 
     //	int logstatus; // 0: do not log this image (pause), 1: log me (default), 2: log program should nicely exit
 
