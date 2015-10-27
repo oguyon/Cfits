@@ -4519,7 +4519,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
 
     // create TCP socket
-    if((fds_server=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))==-1)
+    if((fds_server=socket(PF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP))==-1)
     {
         printf("ERROR creating socket\n");
         exit(0);

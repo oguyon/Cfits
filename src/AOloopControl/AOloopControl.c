@@ -7279,7 +7279,7 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 
 
 
-
+//
 // computes combined control matrix
 //
 //
@@ -7422,7 +7422,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
 
-// reduce matrix size to active elements
+    // reduce matrix size to active elements
     IDcmatc_active = create_2Dimage_ID(IDcmatc_active_name, sizeWFS_active, sizeDM_active);
     for(act_active=0; act_active<sizeDM_active; act_active++)
     {
@@ -7438,7 +7438,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
     printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", sizeWFS, sizeDM, sizeWFS_active, sizeDM_active);
 
-
+    
 
 
     clock_gettime(CLOCK_REALTIME, &t2);
@@ -7827,8 +7827,6 @@ int AOloopControl_run()
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     // r = seteuid(euid_real);//Go back to normal privileges
-
-
 
 
 
