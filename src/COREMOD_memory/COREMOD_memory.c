@@ -4889,9 +4889,12 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             slice = data.image[IDin].md[0].cnt1;
             if(slice>oldslice+1)
                 slice = oldslice+1;
+            if(oldslice==NBslice-1)
+                slice = 0;
+            
             data.image[IDout].md[0].write = 1;
 
-            if(slice<NBslice)
+            if((slice<NBslice))
             {
                 sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
                 for(ii=0; ii<nbpixslice[slice]; ii++)
