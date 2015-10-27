@@ -4901,7 +4901,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
                printf("\n");//TEST
-                fflush(stdout);*/
+                fflush(stdout);
             }
 
             data.image[IDout].md[0].cnt1 = slice;
