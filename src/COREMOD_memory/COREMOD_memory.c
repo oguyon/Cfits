@@ -4280,6 +4280,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     struct timespec ts;
     long scnt;
     int semval;
+    int semr;
     
     TCP_BUFFER_METADATA *frame_md;
     long framesize1; // pixel data + metadata
@@ -4423,6 +4424,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);            
             cnt = data.image[ID].md[0].cnt0;
+            semr = 0; 
         }
         else
             {
@@ -4431,14 +4433,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                 exit(EXIT_FAILURE);
                 }
                 ts.tv_sec += 1;
-                
-            //    printf("%lld   sem wait   ...", iter);
-           //     fflush(stdout);
-                sem_timedwait(data.image[ID].semptr[0], &ts);
-                //sem_wait(data.image[ID].semptr[0]);
-            //    printf(" done\n");
-             //   fflush(stdout);
-                
+                semr = sem_timedwait(data.image[ID].semptr[0], &ts);
+                    
                 if(iter == 0)                
                 {
                     sem_getvalue(data.image[ID].semptr[0], &semval);
@@ -4446,6 +4442,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                         sem_trywait(data.image[ID].semptr[0]);
                 }
             }
+        if(semr==0)
+        {
         frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
         frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
         ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
@@ -4460,7 +4458,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             fflush(stdout);
             sockOK = 0;
         }
-
+        }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             sockOK = 0;
         
@@ -4698,16 +4696,17 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         else
             socketOpen = 0;
         
-        frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
-  //      data.image[ID].md[0].cnt0 = frame_md[0].cnt0;
-        data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
+        if(socketOpen==1)
+            {
+                frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
+                data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
 
-        memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
+                memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
         
-        data.image[ID].md[0].cnt0++;
-        if(data.image[ID].sem > 0)
-            sem_post(data.image[ID].semptr[0]);
-
+                data.image[ID].md[0].cnt0++;
+                if(data.image[ID].sem > 0)
+                    sem_post(data.image[ID].semptr[0]);
+            }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             socketOpen = 0;
     }
