@@ -4281,7 +4281,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     long scnt;
     int semval;
     int semr;
-
+    int slice, oldslice;
+    int NBslices;
     TCP_BUFFER_METADATA *frame_md;
     long framesize1; // pixel data + metadata
     char *buff; // transmit buffer
@@ -4331,7 +4332,11 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
-
+    NBslices = 1;
+    if(data.image[ID].md[0].naxis>2)
+        if(data.image[ID].md[0].size[2]>1)
+            NBslices = data.image[ID].md[0].size[2];
+            
 
     switch ( data.image[ID].md[0].atype ) {
     case CHAR:
@@ -4416,6 +4421,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
     buff = (char*) malloc(sizeof(char)*framesize1);
 
+    oldslice = 0;
     sockOK = 1;
     while(sockOK==1)
     {
@@ -4446,15 +4452,23 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         {
             frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
             frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
+
             
-            printf("[%d] ", data.image[ID].md[0].cnt1); // TEST
-            
-           if(data.image[ID].md[0].cnt1 == 0)
-                {
-                    printf("\n");
-                    fflush(stdout);
-                }
-            
+            slice = data.image[ID].md[0].cnt1;
+            if(slice>oldslice+1)
+                slice = oldslice+1;
+            if(NBslices>1)
+                if(oldslice==NBslices-1)
+                    slice = 0;;
+
+            printf("[%ld] ", data.image[ID].md[0].cnt1); // TEST
+
+            if(data.image[ID].md[0].cnt1 == 0)
+            {
+                printf("\n");
+                fflush(stdout);
+            }
+
             ptr1 = ptr0 + framesize*data.image[ID].md[0].cnt1; // frame that was just written
             memcpy(buff, ptr1, framesize);
             memcpy(buff+framesize, frame_md, sizeof(TCP_BUFFER_METADATA));
@@ -4467,6 +4481,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                 fflush(stdout);
                 sockOK = 0;
             }
+            oldslice = slice;
         }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             sockOK = 0;
@@ -4482,6 +4497,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
     return(ID);
 }
+
 
 
 
@@ -4507,7 +4523,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     long xsize, ysize;
     char *ptr0; // source
     char fname[200];
-
+    long NBslices;
     int socketOpen = 1; // 0 if socket is closed
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
@@ -4595,6 +4611,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
     printf("Created image stream %s\n", imgmd[0].name);
     list_image_ID();
+    
+    
+    
 
 /*        sprintf(fname, "sock%d_stream", port);
         ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
@@ -4602,7 +4621,10 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
    */
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
-
+    NBslices = 1;
+    if(data.image[ID].md[0].naxis>2)
+        if(data.image[ID].md[0].size[2]>1)
+            NBslices = data.image[ID].md[0].size[2];
 
     switch ( data.image[ID].md[0].atype ) {
     case CHAR:
@@ -4708,16 +4730,21 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         if(socketOpen==1)
             {
                 frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
+            
                 data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
-                printf("[%d]", data.image[ID].md[0].cnt1); // TEST
+                
+                    
+                printf("[%ld]", data.image[ID].md[0].cnt1); // TEST
 
                 if(data.image[ID].md[0].cnt1==0)
                     {
                         printf("\n"); // TEST
                         fflush(stdout);
                     }
-                memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
-        
+                if(NBslices>1)
+                    memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
+                else
+                     memcpy(ptr0, buff, framesize);
                 data.image[ID].md[0].cnt0++;
                 if(data.image[ID].sem > 0)
                     sem_post(data.image[ID].semptr[0]);
@@ -4900,7 +4927,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 for(ii=0; ii<nbpixslice[slice]; ii++)
                     data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
             }
-            printf("[%d] ", slice); //TEST
+            printf("[%ld] ", slice); //TEST
 
             if(slice==NBslice-1)
             {
