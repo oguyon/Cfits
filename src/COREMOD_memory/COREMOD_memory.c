@@ -4802,6 +4802,10 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     int r;
     long tmpl0, tmpl1;
     int semr;
+    
+    double *dtarray;
+    struct timespec *tarray;
+    long slice1;
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -4828,6 +4832,11 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     IDout_pixslice = create_image_ID("outpixsl", 2, sizearray, USHORT, 0, 0);
 
     NBslice = data.image[IDin].md[0].size[2];
+    
+    dtarray = (double*) malloc(sizeof(double)*NBslice);
+    tarray = (struct timespec *) malloc(sizeof(struct timespec)*NBslice);
+    
+    
     nbpixslice = (long*) malloc(sizeof(long)*NBslice);
     if((fp=fopen(NBpix_fname,"r"))==NULL)
     {
@@ -4920,6 +4929,9 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             if(oldslice==NBslice-1)
                 slice = 0;
             
+            
+            clock_gettime(CLOCK_REALTIME, &tarray[slice]);
+          
             data.image[IDout].md[0].write = 1;
 
             if((slice<NBslice))
@@ -4934,13 +4946,23 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
-               printf("\n");//TEST
+                
+                printf("[[ Timimg [us] :   ");
+                for(slice1=1;slice1<NBslice;slice1++)
+                    {
+                        dtarray[slice1] -= dtarray[0];
+                        printf("%6ld ", (long) (1.0e6*dtarray[slice1]));
+                    }
+                printf("]]");
+                printf("\n");//TEST
                 fflush(stdout);
             }
 
             data.image[IDout].md[0].cnt1 = slice;
             sem_post(data.image[IDout].semptr[1]);
             data.image[IDout].md[0].write = 0;
+
+            dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
             oldslice = slice;
         }
 
@@ -4952,7 +4974,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
     free(nbpixslice);
     free(sizearray);
-
+    free(dtarray);
 
     return(IDout);
 }
