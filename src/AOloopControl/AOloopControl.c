@@ -5104,9 +5104,11 @@ long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexna
     IDout = create_3Dimage_ID(outname, sizexwfs, sizeywfs, zsizeout);
 
 
+    # ifdef _OPENMP
+    #pragma omp parallel for private(kk0,kk1,ii)
+    # endif
     for(kk=0; kk<zsizeout; kk++) // output frame
     {
-
         kk0 = (long) (data.image[IDindex].array.F[kk]+0.1);
         if(kk0 > -1)
         {   printf("\r  frame %5ld / %5ld     ", kk0, NBframes);
