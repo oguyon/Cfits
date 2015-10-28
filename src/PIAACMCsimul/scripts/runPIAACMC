@@ -2338,9 +2338,6 @@ fi
 
 
 
-
-
-
 # STEP 101: search for optimal solution
 
 if [ 101 -eq ${state} ]

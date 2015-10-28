@@ -29,7 +29,7 @@ typedef struct
     long sizeyWFS;
     long sizeWFS;
     long activeWFScnt; // number of active WFS pixels
-    long sizeWFS_active; // only takes into account WFS pixels in use/active
+    long sizeWFS_active[100]; // only takes into account WFS pixels in use/active for each slice
     long long WFScnt;
     long long WFScntRM;
     int WFSnormalize; // 1 if each WFS frame should be normalized to 1
@@ -135,7 +135,7 @@ int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name
 int AOloopControl_InitializeMemory();
 void *compute_function_imtotal( void *ptr );
 void *compute_function_dark_subtract( void *ptr );
-int Average_cam_frames(long loop, long NbAve, int RM, int normalize);
+int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelStreamMode);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
 long AOloopControl_loadCM(long loop, char *CMfname);
 
@@ -161,7 +161,7 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
 int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
 int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
-int AOcompute(long loop, int normalize, int FrameIndex);
+int AOcompute(long loop, int normalize);
 int AOloopControl_run();
 
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);

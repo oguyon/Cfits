@@ -1881,14 +1881,14 @@ acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
 #tmux send-keys -t adark "./aol" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: taking dark"
+AOlog "taking dark"
 menucontrolloop_default="adarkoff"
 ;;
 	adarkoff)
 acqdarkstat="OFF"
 echo "OFF" > ./status/stat_acqudark.txt
 tmux kill-session -t adark
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: stopping dark"
+AOlog "stopping dark"
 menucontrolloop_default="adark_on"
 ;;
 
@@ -2241,7 +2241,7 @@ tmux new-session -d -s $tmuxsname
 tmux send-keys -t $tmuxsname "$execnameRT -n awfsref0${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 0" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: taking reference"
+AOlog "taking reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
 ;;
@@ -2257,7 +2257,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t $tmuxsname "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_fname.txt
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: stopping reference"
+AOlog "stopping reference"
 menucontrolloop_default="awfsref0_on"
 state="menuconfigureloop"
 ;;
@@ -3117,14 +3117,14 @@ menucontrolloop_default="S"
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: loop on"
+AOlog "loop on"
 #echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: loop off"
+AOlog "loop off"
 #echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Nloopon"
 ;; 
@@ -3132,7 +3132,7 @@ menucontrolloop_default="Nloopon"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
+AOlog "zeroing loop"
 #echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
 #echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
 #echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
@@ -3155,7 +3155,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 loopgain=${value}
   	 echo "$loopgain" > ./conf/conf_loopgain.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: gain ${loopgain}"
+	 AOlog "gain ${loopgain}"
   	 ;; 
    	 m)
    	 value=${loopmaxlim}
@@ -3163,7 +3163,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
  	 loopmaxlim=${value}
  	 echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: max limit ${loopmaxlim}"
+	 AOlog "max limit ${loopmaxlim}"
    	 ;;  
    	 e) 
    	 value=${loopmultcoeff}
@@ -3171,7 +3171,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
  	 loopmultcoeff=${value}
  	 echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
 	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: mult coeff ${loopmultcoeff}"
+	 AOlog "mult coeff ${loopmultcoeff}"
      	 ;;  
 
 	 gball)
@@ -3184,7 +3184,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
 	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
 	 done
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: set all gains to ${value}"
+	 AOlog "set all gains to ${value}"
 	 ;;
 	 
   	 gb00)
@@ -3194,7 +3194,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${10#gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb01)
@@ -3204,7 +3204,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb02)
@@ -3214,7 +3214,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb03)
@@ -3224,7 +3224,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb04)
@@ -3234,7 +3234,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb05)
@@ -3244,7 +3244,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb06)
@@ -3254,7 +3254,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb07)
@@ -3264,7 +3264,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb08)
@@ -3274,7 +3274,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb09)
@@ -3284,7 +3284,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb10)
@@ -3294,7 +3294,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb11)
@@ -3304,7 +3304,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb12)
@@ -3314,7 +3314,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb13)
@@ -3324,7 +3324,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb14)
@@ -3334,7 +3334,7 @@ ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zeroing loop"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]}" C-m
-	 ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: block ${gi} set gain to ${value}"
+	 AOlog "block ${gi} set gain to ${value}"
   	 ;; 
 
 
@@ -3351,7 +3351,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "wfsref=${zpmult}*wfsref0"
 tmux send-keys -t $tmuxname "exit" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: multiply ref by ${value}"
+AOlog "multiply ref by ${value}"
 ;;
 
 	zplon)
@@ -3365,14 +3365,14 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
 tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
 menucontrolloop_default="zploff"
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: start zero-point offset loop"
+AOlog "start zero-point offset loop"
 ;; 
 	zploff)
 echo "OFF" > ./status/stat_zploopON.txt
 tmuxname="aol${LOOPNUMBER}zploop"
 tmux kill-session -t $tmuxname 
 menucontrolloop_default="zplon"
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: stop zero-point offset loop"
+AOlog "stop zero-point offset loop"
 	;;
 	zpinj)
 ampl="0.03"
@@ -3386,7 +3386,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
 tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: inject fourier mode to zero-point"
+AOlog "inject fourier mode to zero-point"
 	;;
 
 
@@ -3397,7 +3397,7 @@ tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP" C-m
 tmux send-keys -t $tmuxname "exit" C-m
-ssh scexao@scexao2 "/home/scexao/bin/log ${LOOPNAME}: zero the zero-point offset"
+AOlog "zero the zero-point offset"
 	;;
 esac
 ;;

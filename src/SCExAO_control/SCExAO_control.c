@@ -84,39 +84,42 @@ float SCExAO_PZT_STAGE_Ypos_max = -1.0;
 
 int SCExAOcontrol_Average_image_cli()
 {
-	 if(CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
+    if(CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
     {
-		
-      SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
-      return 0;
+
+        SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 
 int SCExAOcontrol_mv_DMstage_cli()
 {
-	 if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
     {
-      SCExAOcontrol_mv_DMstage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
-      return 0;
+        SCExAOcontrol_mv_DMstage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 {
-	 if(CLI_checkarg(1,4)==0)
+    if(CLI_checkarg(1,4)==0)
     {
-      SCExAOcontrol_PyramidWFS_AutoAlign_TT(data.cmdargtoken[1].val.string);
-      return 0;
+        SCExAOcontrol_PyramidWFS_AutoAlign_TT(data.cmdargtoken[1].val.string);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
+
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 {
@@ -540,15 +543,15 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         IDshm = create_image_ID("pyrTT", 2, sizearray, FLOAT, 1, 0);
     }
 
-    
 
+    printf("step 00\n");
+    fflush(stdout);
+    
     while(file_exist("stop_PyAlignTT.txt")==0)
     {
 
         while (file_exist("pause_PyAlignTT.txt"))
             usleep(100000);
-
-
 
         if(file_exist("./status/gain_PyAlignTT.txt"))
         {
@@ -559,6 +562,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
                 gain = v0;
         }
 
+        printf("step 01\n");
+        fflush(stdout);
 
         ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
         xsize = data.image[ID].md[0].size[0];
@@ -582,6 +587,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         tot01y = 0.0;
         tot10y = 0.0;
         tot11y = 0.0;
+
+    printf("step 02\n");
+    fflush(stdout);
+
+
 
         for(ii=0; ii<xsize/2; ii++)
             for(jj=0; jj<ysize/2; jj++)
@@ -709,6 +719,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
     return(0);
 }
+
 
 
 

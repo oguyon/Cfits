@@ -58,6 +58,8 @@ struct timespec tdiff;
 double tdiffv;
 
 
+
+
 int AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 0;
 sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 int AOLCOMPUTE_TOTAL_INIT = 0; // toggles to 1 AFTER total for first image is computed
@@ -69,10 +71,17 @@ sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name[32];
 sem_t AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[32];
 
 int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
-int initWFSref_GPU = 0;
-int initcontrMcact_GPU = 0;
+int initWFSref_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int initcontrMcact_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 float GPU_alpha = 0.0;
 float GPU_beta = 0.0;
+
+
+int COMPUTE_PIXELSTREAMING = 0; // multiple pixel groups 
+long PIXSTREAM_NBSLICES = 1; // number of image slices (= pixel groups)
+long PIXSTREAM_SLICE; // slice index 0 = all pixels
+
+
 
 long ti; // thread index
 
@@ -119,8 +128,13 @@ long aoconfID_respM = -1;
 long aoconfID_contrM = -1; // pixels -> modes
 long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
 long aoconfID_meas_act = -1;
-long aoconfID_contrMcact = -1;
+long aoconfID_contrMcact[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 long aoconfID_gainb = -1; // block modal gains
+
+
+// pixel streaming
+long aoconfID_pixstream_wfspixindex; // index of WFS pixels
+
 
 
 long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
@@ -144,14 +158,14 @@ long aoconfIDlog1 = -1;
 int *WFS_active_map; // used to map WFS pixels into active array
 int *DM_active_map; // used to map DM actuators into active array
 long aoconfID_meas_act_active;
-long aoconfID_imWFS2_active;
+long aoconfID_imWFS2_active[100];
 
 
 int RMACQUISITION = 0;  // toggles to 1 when resp matrix is being acquired
 
 
 long wfsrefcnt0 = -1;
-long contrMcactcnt0 = -1;
+long contrMcactcnt0[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};;
 
 
 
@@ -3237,9 +3251,11 @@ void *compute_function_dark_subtract( void *ptr )
  * RM = 1 if response matrix
  *
  * if normalize == 1, image is normalized by dividing by (total + AOconf[loop].WFSnormfloor)
+ * if PixelStreamMode = 1, read on semaphore 1, return slice index
+ * 
  */
 
-int Average_cam_frames(long loop, long NbAve, int RM, int normalize)
+int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelStreamMode)
 {
     long imcnt;
     long ii;
@@ -4707,8 +4723,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
         aoconfID_contrMc = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizeDM);
  
         sprintf(name, "aol%ld_contrMcact", loop);
-        sprintf(fname, "conf/aol%ld_contrMcact.fits", loop);
-        aoconfID_contrMcact = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
+        sprintf(fname, "conf/aol%ld_contrMcact_00.fits", loop);
+        aoconfID_contrMcact[0] = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
         
         
         sprintf(name, "aol%ld_gainb", loop);
@@ -4746,15 +4762,15 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
                     data.image[aoconfID_contrMc].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
               
                 
-                sprintf(name, "aol%ld_contrMcact%02ld", loop, kk);
+                sprintf(name, "aol%ld_contrMcact%02ld_00", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
                 ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                if(kk==0)
                     for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
-                        data.image[aoconfID_contrMcact].array.F[ii] = 0.0;
+                        data.image[aoconfID_contrMcact[0]].array.F[ii] = 0.0;
                     
                 for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
-                    data.image[aoconfID_contrMcact].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
+                    data.image[aoconfID_contrMcact[0]].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
                                 
             }                    
     }
@@ -4844,14 +4860,14 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
     data.image[aoconfID_contrMc].md[0].write = 0;
 
 
-    // for GPU more
+    // for GPU mode
     printf("UPDATING Mc matrix (GPU mode)\n");
-    data.image[aoconfID_contrMcact].md[0].write = 1;
-    memcpy(data.image[aoconfID_contrMcact].array.F, data.image[IDcontrMcact0].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
-    data.image[aoconfID_contrMcact].md[0].cnt0++;
-    data.image[aoconfID_contrMcact].md[0].write = 0;
+    data.image[aoconfID_contrMcact[0]].md[0].write = 1;
+    memcpy(data.image[aoconfID_contrMcact[0]].array.F, data.image[IDcontrMcact0].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
+    data.image[aoconfID_contrMcact[0]].md[0].cnt0++;
+    data.image[aoconfID_contrMcact[0]].md[0].write = 0;
 
-    initcontrMcact_GPU = 0;
+    initcontrMcact_GPU[0] = 0;
 
    // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
    // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
@@ -6063,7 +6079,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
             for(kk=0; kk<NBave; kk++)
             {
-                Average_cam_frames(loop, 1, 0, normalize);
+                Average_cam_frames(loop, 1, 0, normalize, 0);
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDpos].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
             }
@@ -6091,7 +6107,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
             for(kk=0; kk<NBave; kk++)
             {
-                Average_cam_frames(loop, 1, 0, normalize);
+                Average_cam_frames(loop, 1, 0, normalize, 0);
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDneg].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
             }
@@ -7039,7 +7055,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     for(kk=0; kk<NbAve; kk++)
                     {
-                        Average_cam_frames(loop, 1, 1, 1);
+                        Average_cam_frames(loop, 1, 1, 1, 0);
 
 
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -7059,7 +7075,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     for(kk=0; kk<NbAve; kk++)
                     {
-                        Average_cam_frames(loop, 1, 1, 1);
+                        Average_cam_frames(loop, 1, 1, 1, 0);
 
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
@@ -7301,7 +7317,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     int chunk = 10;
 
     long IDwfsmask, IDdmmask;
-    long sizexWFS, sizeyWFS, sizeWFS, sizeWFS_active;
+    long sizexWFS, sizeyWFS, sizeWFS, sizeWFS_active[100];
     long ii, ii1;
     long sizexDM, sizeyDM;
     long sizeDM_active;
@@ -7311,9 +7327,10 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     long IDmodes;
     long NBDMmodes;
     long sizeDM;
-    long IDcmatc_active;
+    long IDcmatc_active[100];
     char name[200];
-    
+    char imname[200];
+    int slice;
 
     printf("COMPUTING COMBINED CONTROL MATRIX .... \n");
     fflush(stdout);
@@ -7390,17 +7407,34 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     printf("REDUCE MATRIX SIZE\n");
     fflush(stdout);
 
+    
 
-   WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS);
-    ii1 = 0;
-    for(ii=0; ii<sizeWFS; ii++)
-        if(data.image[IDwfsmask].array.F[ii]>0.1)
+   WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS*PIXSTREAM_NBSLICES);
+    for(slice=0;slice<PIXSTREAM_NBSLICES;slice++)
         {
-            WFS_active_map[ii1] = ii;
-            ii1++;
+            ii1 = 0;
+            for(ii=0; ii<sizeWFS; ii++)
+                if(data.image[IDwfsmask].array.F[ii]>0.1)
+                    {                        
+                        if(slice==0)
+                        {
+                            WFS_active_map[ii1] = ii;
+                            ii1++;
+                        }
+                        else
+                        {
+                            if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii]==slice+1)
+                                {
+                                     WFS_active_map[slice*sizeWFS+ii1] = ii;
+                                    ii1++;
+                                }
+                        }
+                    }
+            sizeWFS_active[slice] = ii1;
+            sprintf(imname, "wfs2active_%02d", slice);
+            aoconfID_imWFS2_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], 1);
         }
-    sizeWFS_active = ii1;
-    aoconfID_imWFS2_active = create_2Dimage_ID("wfs2active", sizeWFS_active, 1);
+
 
 
     DM_active_map = (int*) malloc(sizeof(int)*sizeDM);
@@ -7422,23 +7456,31 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
 
+
+
+
     // reduce matrix size to active elements
-    IDcmatc_active = create_2Dimage_ID(IDcmatc_active_name, sizeWFS_active, sizeDM_active);
+    for(slice=0;slice<PIXSTREAM_NBSLICES;slice++)
+    {
+    sprintf(imname, "%s_%02d", IDcmatc_active_name, slice);
+    IDcmatc_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], sizeDM_active);
     for(act_active=0; act_active<sizeDM_active; act_active++)
     {
-        for(wfselem_active=0; wfselem_active<sizeWFS_active; wfselem_active++)
+        for(wfselem_active=0; wfselem_active<sizeWFS_active[slice]; wfselem_active++)
         {
             act = DM_active_map[act_active];
-            wfselem = WFS_active_map[wfselem_active];
-            data.image[IDcmatc_active].array.F[act_active*sizeWFS_active+wfselem_active] = matrix_Mc[act*sizeWFS+wfselem];
+            wfselem = WFS_active_map[slice*sizeWFS+wfselem_active];
+            data.image[IDcmatc_active[slice]].array.F[act_active*sizeWFS_active[slice]+wfselem_active] = matrix_Mc[act*sizeWFS+wfselem];
         }
     }
+       printf("PIXEL SLICE %d     Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", slice, sizeWFS, sizeDM, sizeWFS_active[slice], sizeDM_active);
+
+    
+    }
+    
     free(matrix_Mc);
     free(matrix_DMmodes);
 
-    printf("Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", sizeWFS, sizeDM, sizeWFS_active, sizeDM_active);
-
-    
 
 
     clock_gettime(CLOCK_REALTIME, &t2);
@@ -7457,11 +7499,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
 
-//
-// FrameIndex defines a group of pixels to be processed
-// FrameIndex = 0 -> all pixels of the image will be processed
-//
-int AOcompute(long loop, int normalize, int FrameIndex)
+int AOcompute(long loop, int normalize)
 {
     float total = 0.0;
     long k, k1, k2;
@@ -7494,6 +7532,8 @@ int AOcompute(long loop, int normalize, int FrameIndex)
     int r;
     float imtot;
 
+    int slice;
+
 
     // waiting for dark-subtracted image
     AOconf[loop].status = 19;  //  19: WAITING FOR IMAGE
@@ -7513,7 +7553,17 @@ int AOcompute(long loop, int normalize, int FrameIndex)
 
 
 
-    Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize);
+    if(COMPUTE_PIXELSTREAMING==0) // no pixel streaming
+    {
+        Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 0);
+        PIXSTREAM_SLICE = 0;
+    }
+    else
+    {
+        PIXSTREAM_SLICE = 1 + Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 1);
+    }
+
+
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
     clock_gettime(CLOCK_REALTIME, &tnow);
@@ -7545,23 +7595,45 @@ int AOcompute(long loop, int normalize, int FrameIndex)
         printf("COMPUTING MAPPING ARRAYS .... \n");
         fflush(stdout);
 
-
         clock_gettime(CLOCK_REALTIME, &t1);
 
-        // create WFS active map
-        WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS);
+        //
+        // There is one mapping array per WFS slice
+        // WFS slice 0 = all active pixels
+        //
+        WFS_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeWFS*PIXSTREAM_NBSLICES);
         if(aoconfID_wfsmask != -1)
         {
-            ii1 = 0;
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                if(data.image[aoconfID_wfsmask].array.F[ii]>0.1)
-                {
-                    WFS_active_map[ii1] = ii;
-                    ii1++;
-                }
-            AOconf[loop].sizeWFS_active = ii1;
+            for(slice=0; slice<PIXSTREAM_NBSLICES; slice++)
+            {
+                ii1 = 0;
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    if(data.image[aoconfID_wfsmask].array.F[ii]>0.1)
+                    {
+                        if(slice==0)
+                        {
+                            WFS_active_map[slice*AOconf[loop].sizeWFS+ii1] = ii;
+                            ii1++;
+                        }
+                        else if (data.image[aoconfID_pixstream_wfspixindex].array.U[ii]==slice+1)
+                        {
+                            WFS_active_map[slice*AOconf[loop].sizeWFS+ii1] = ii;
+                            ii1++;
+                        }
+                    }
+                AOconf[loop].sizeWFS_active[slice] = ii1;
+                sprintf(imname, "wfs2active_%02d", slice);
+                aoconfID_imWFS2_active[slice] = create_2Dimage_ID(imname, AOconf[loop].sizeWFS_active[slice], 1);
+            }
         }
-        aoconfID_imWFS2_active = create_2Dimage_ID("wfs2active", AOconf[loop].sizeWFS_active, 1);
+        else
+        {
+            printf("ERROR: aoconfID_wfsmask = -1\n");
+            fflush(stdout);
+            exit(0);
+        }
+
+
 
         // create DM active map
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
@@ -7577,7 +7649,9 @@ int AOcompute(long loop, int normalize, int FrameIndex)
             AOconf[loop].sizeDM_active = ii1;
         }
 
-        //        aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", AOconf[loop].sizeDM_active, 1);
+
+
+
         sizearray = (long*) malloc(sizeof(long)*2);
         sizearray[0] = AOconf[loop].sizeDM_active;
         sizearray[1] = 1;
@@ -7617,12 +7691,8 @@ int AOcompute(long loop, int normalize, int FrameIndex)
         }
         else // (*)
         {
-          
- 
             ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
             data.image[aoconfID_meas_modes].md[0].cnt0 ++;
-            
-       
         }
     }
     else
@@ -7654,67 +7724,67 @@ int AOcompute(long loop, int normalize, int FrameIndex)
 
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
             }
-            else // only use active pixels and actuators (*)
+            else // only use active pixels and actuators (**)
             {
                 // re-map input vector into imWFS2_active
 
-                if(COMPUTE_GPU_SCALING==1) // (*)
+                if(COMPUTE_GPU_SCALING==1) // (**)
                 {
-                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                        data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_imWFS0].array.F[WFS_active_map[wfselem_active]];
-                    data.image[aoconfID_imWFS2_active].md[0].cnt0++;
+                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
+                        data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_imWFS0].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
                 }
                 else
                 {
-                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                        data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_imWFS2].array.F[WFS_active_map[wfselem_active]];
-                    data.image[aoconfID_imWFS2_active].md[0].cnt0++;
+                    for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
+                        data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_imWFS2].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
                 }
-                if(COMPUTE_GPU_SCALING==1) // (*)
+                if(COMPUTE_GPU_SCALING==1) // (**)
                 {
-                    if(data.image[aoconfID_contrMcact].md[0].cnt0 != contrMcactcnt0)
+                    if(data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0 != contrMcactcnt0[PIXSTREAM_SLICE])
                     {
                         printf("NEW CONTROL MATRIX DETECTED -> RECOMPUTE REFERENCE x MATRIX\n");
                         fflush(stdout);
-                        initWFSref_GPU = 0;
-                        contrMcactcnt0 = data.image[aoconfID_contrMcact].md[0].cnt0;
+                        initWFSref_GPU[PIXSTREAM_SLICE] = 0;
+                        contrMcactcnt0[PIXSTREAM_SLICE] = data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0;
                     }
 
                     if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)  // (*)
                     {
                         printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
                         fflush(stdout);
-                        initWFSref_GPU = 0;
+                        initWFSref_GPU[PIXSTREAM_SLICE] = 0;
                         wfsrefcnt0 = data.image[aoconfID_wfsref].md[0].cnt0;
                     }
-                    if(initWFSref_GPU==0) // initialize WFS reference
+                    if(initWFSref_GPU[PIXSTREAM_SLICE]==0) // initialize WFS reference
                     {
                         printf("\nINITIALIZE WFS REFERENCE: COPY NEW REF (WFSREF) TO imWFS2_active\n"); //TEST
                         fflush(stdout);
 
-                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active; wfselem_active++)
-                            data.image[aoconfID_imWFS2_active].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[wfselem_active]];
+                        for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
+                            data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
 
-                        data.image[aoconfID_imWFS2_active].md[0].cnt0++;
+                        data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
                         fflush(stdout);
                     }
                 }
 
                 // perform matrix mult
-                //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
+                //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
 
                 //
 
-                if(initcontrMcact_GPU==0)
-                    initWFSref_GPU = 0;
+                if(initcontrMcact_GPU[PIXSTREAM_SLICE]==0)
+                    initWFSref_GPU[PIXSTREAM_SLICE] = 0;
 
 
 
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU, loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
 
 
-                initWFSref_GPU = 1;
-                initcontrMcact_GPU = 1;
+                initWFSref_GPU[PIXSTREAM_SLICE] = 1;
+                initcontrMcact_GPU[PIXSTREAM_SLICE] = 1;
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
@@ -7788,6 +7858,7 @@ int AOcompute(long loop, int normalize, int FrameIndex)
 
 
 
+
 ///
 /// main routine
 ///
@@ -7812,6 +7883,8 @@ int AOloopControl_run()
     double a;
     long cnttest;
     float tmpf1;
+
+    long xsize, ysize;
 
     struct timespec t1;
     struct timespec t2;
@@ -7844,6 +7917,39 @@ int AOloopControl_run()
     
 
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall; 
+
+    // pixel streaming ?
+    COMPUTE_PIXELSTREAMING = 1;
+
+    if(COMPUTE_GPU_SCALING == 0)
+        COMPUTE_PIXELSTREAMING = 0;
+
+    if(COMPUTE_PIXELSTREAMING == 1)
+        aoconfID_pixstream_wfspixindex = load_fits("pixstream_wfspixindex.fits", "pixstream", 1);
+
+    if(aoconfID_pixstream_wfspixindex == -1)
+        COMPUTE_PIXELSTREAMING = 0;
+
+    // check data type
+    if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != USHORT)
+        COMPUTE_PIXELSTREAMING = 0;
+    
+    if(COMPUTE_PIXELSTREAMING == 1)
+    {
+        xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
+        ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
+        PIXSTREAM_NBSLICES = 0;
+        for(ii=0;ii<xsize*ysize;ii++)
+            if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii] > PIXSTREAM_NBSLICES)
+                PIXSTREAM_NBSLICES = data.image[aoconfID_pixstream_wfspixindex].array.U[ii];
+        PIXSTREAM_NBSLICES++;
+        printf("PIXEL STREAMING:   %ld image slices\n", PIXSTREAM_NBSLICES);
+    }
+    
+    
+    COMPUTE_PIXELSTREAMING = 0; // TEST
+    
+    
 
     vOK = 1;
     if(AOconf[loop].init_wfsref0==0)
@@ -7897,7 +8003,7 @@ int AOloopControl_run()
                      }
               
   
-                AOcompute(loop, AOconf[loop].WFSnormalize, 0);
+                AOcompute(loop, AOconf[loop].WFSnormalize);
                
  
 
@@ -9111,7 +9217,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     for(kk=0; kk<NBframes; kk++)
     {
-        Average_cam_frames(loop, 1, 0, 1);
+        Average_cam_frames(loop, 1, 0, 1, 0);
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_imWFS1].array.F[ii];
     }
