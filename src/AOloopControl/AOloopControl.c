@@ -4846,7 +4846,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
             for(ii=0;ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;ii++)
                 data.image[IDcontrMc0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
         
-            sprintf(name, "aol%ld_contrMcact%02ld", loop, kk);
+            sprintf(name, "aol%ld_contrMcact%02ld_00", loop, kk);
             ID = image_ID(name);
             for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
                     data.image[IDcontrMcact0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
