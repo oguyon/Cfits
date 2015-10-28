@@ -2719,7 +2719,7 @@ tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i
 echo "contrMc/contrMc${i2}_${datestr}.fits" > ./conf/conf_contrMc${i2}_fname.txt
 
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits" C-m
-echo "contrMcact/contrMcact${i2}_${datestr}.fits" > ./conf/conf_contrMcact${i2}_fname.txt
+echo "contrMcact/contrMcact${i2}_${datestr}.fits" > ./conf/conf_contrMcact${i2}_00_fname.txt
 fi
 done
 
