@@ -302,6 +302,9 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     for(k=0; k<NbAve; k++)
     {
+        printf("k = %ld\n", k);
+        fflush(stdout);
+        
         if(data.image[IDcam].sem==0)
         {
             while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
