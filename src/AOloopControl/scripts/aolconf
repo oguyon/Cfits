@@ -2740,7 +2740,7 @@ ReadConfFile "DMmodes${i2}"
 ReadConfFile "respM${i2}"
 ReadConfFile "contrM${i2}"
 ReadConfFile "contrMc${i2}"
-ReadConfFile "contrMcact${i2}"
+ReadConfFile "contrMcact${i2}_00"
 fi
 done
 
