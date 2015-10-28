@@ -1500,15 +1500,15 @@ else
 echo "OFF" > ./status/stat_acqudark.txt
 fi
 
-acqudarkstat=$( cat ./status/stat_acqudark.txt )
-if [ "${acqudarkstat}" = "OFF" ];
-then
-menuitems+=( "adark_on" "             START acquire WFS dark acquisition" )
-fi
-if [ "${acqudarkstat}" = " ON" ];
-then
-menuitems+=( "adarkoff" "\Z1\Zr             STOP WFS dark acquisition                     \Zn" )
-fi
+#acqudarkstat=$( cat ./status/stat_acqudark.txt )
+#if [ "${acqudarkstat}" = "OFF" ];
+#then
+menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames)" )
+#fi
+#if [ "${acqudarkstat}" = " ON" ];
+#then
+#menuitems+=( "adarkoff" "\Z1\Zr             STOP WFS dark acquisition                     \Zn" )
+#fi
 
 
 
@@ -1880,17 +1880,17 @@ ReadWFSdarkfname
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
-#tmux send-keys -t adark "./aol" C-m
+tmux send-keys -t adark "./takedark 10000" C-m
 AOlog "taking dark"
-menucontrolloop_default="adarkoff"
-;;
-	adarkoff)
-acqdarkstat="OFF"
-echo "OFF" > ./status/stat_acqudark.txt
-tmux kill-session -t adark
-AOlog "stopping dark"
 menucontrolloop_default="adark_on"
 ;;
+#	adarkoff)
+#acqdarkstat="OFF"
+#echo "OFF" > ./status/stat_acqudark.txt
+#tmux kill-session -t adark
+#AOlog "stopping dark"
+#menucontrolloop_default="adark_on"
+#;;
 
 
 
