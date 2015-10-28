@@ -4926,12 +4926,14 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             slice = data.image[IDin].md[0].cnt1;
             if(slice>oldslice+1)
                 slice = oldslice+1;
+          
+          
             if(oldslice==NBslice-1)
                 slice = 0;
             
             
             clock_gettime(CLOCK_REALTIME, &tarray[slice]);
-          
+          dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
             data.image[IDout].md[0].write = 1;
 
             if((slice<NBslice))
@@ -4962,7 +4964,6 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             sem_post(data.image[IDout].semptr[1]);
             data.image[IDout].md[0].write = 0;
 
-            dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
             oldslice = slice;
         }
 
