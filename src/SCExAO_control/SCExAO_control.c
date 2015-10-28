@@ -674,8 +674,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
         if(tot > 10.0*xsize*ysize)
         {
-            SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/0.2);  // C actuator
-            SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/0.2);  // D actuator
+            SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/1.0);  // C actuator
+            SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/1.0);  // D actuator
 
 
 
