@@ -7710,7 +7710,7 @@ int AOcompute(long loop, int normalize)
             data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
             GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
-        }im
+        }
         else // direct pixel -> actuators linear transformation
         {
             if(1==0)
