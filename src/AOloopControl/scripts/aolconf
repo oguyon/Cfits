@@ -1480,30 +1480,21 @@ stringcenter "I/O PRE-PROCESSING [FITS files] "
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
  
 
-wfsdarkfname=$( cat ./conf/conf_wfsdark_fname.txt )
-if [ -f "$wfsdarkfname" ] && [ -f "./conf/conf_wfsdark_fname.txt" ]; then
-#wfsdarkfnameOKstr="\Z2    OK    \Zn"
-getshmimsize "wfsdark"
+wfsdarkfname="/tmp/aol${LOOPNUMBER}_wfsdark.im.shm"
+if [ -f "$wfsdarkfname" ]; then
+getshmimsize ${wfsdarkfname}
 OKstr="\Z2\Zr$sizestring\Zn"
 else
 OKstr="\Z5 OPTIONAL \Zn"
+menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
 confOK=0
 fi
-menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
 
-
-
-acqudarkstat=$( cat ./status/stat_acqudark.txt )
-if [[ -f "./status/stat_acqudark.txt" && ( "$acqudarkstat" = " ON" || "$acqudarkstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_acqudark.txt
-fi
 
 #acqudarkstat=$( cat ./status/stat_acqudark.txt )
 #if [ "${acqudarkstat}" = "OFF" ];
 #then
-menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames)" )
+menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LOOPNUMBER}_dark" )
 #fi
 #if [ "${acqudarkstat}" = " ON" ];
 #then
