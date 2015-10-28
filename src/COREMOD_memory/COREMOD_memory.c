@@ -1481,7 +1481,11 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
     ID = -1;
     if(image_ID(name)==-1)
     {
+        # ifdef _OPENMP
+        #pragma omp atomic
+        #endif
         ID = next_avail_image_ID();
+        
         data.image[ID].used = 1;
         nelement = 1;
         for(i=0; i<naxis; i++)
