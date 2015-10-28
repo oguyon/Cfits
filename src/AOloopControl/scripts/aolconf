@@ -2245,7 +2245,7 @@ pkill -USR1 awfsref0${LOOPNUMBER}
 rm wfsref0.fits
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
-tmux send-keys -t $tmuxsname "savefits imave wfsref0.fits" C-m
+tmux send-keys -t $tmuxsname "savefits imave1 wfsref0.fits" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t $tmuxsname "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
