@@ -295,15 +295,15 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     ID = create_2Dimage_ID(IDnameout, xsize, ysize);
 
-    list_image_ID();
+//    list_image_ID();
 
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
 
     for(k=0; k<NbAve; k++)
     {
-        printf("k = %ld\n", k);
-        fflush(stdout);
+        //printf("k = %ld\n", k);
+        //fflush(stdout);
         
         if(data.image[IDcam].sem==0)
         {
@@ -314,20 +314,19 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         {
             sem_getvalue(data.image[IDcam].semptr[0], &semval);
             sem_wait(data.image[IDcam].semptr[0]);
-
         }
 
-        slice = data.image[IDcam].md[0].cnt1;
-        if(slice==-1)
-            slice = data.image[IDcam].md[0].size[2]-1;
+        //slice = data.image[IDcam].md[0].cnt1;
+        //if(slice==-1)
+         //   slice = data.image[IDcam].md[0].size[2]-1;
 
+        
 
         ptrv = (char*) data.image[IDcam].array.U;
-        ptrv += sizeof(unsigned short)*slice*xysize;
+        //ptrv += sizeof(unsigned short)*slice*xysize;
         memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
         for(ii=0; ii<xysize; ii++)
             data.image[ID].array.F[ii] += (float) arrayutmp[ii];
-
 
         cntref = data.image[IDcam].md[0].cnt0;
     }
