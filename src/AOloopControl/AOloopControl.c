@@ -2112,7 +2112,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
             save_fits("fmodesWFS0all", "!./mkmodestmp/fmodesWFS0all.fits");
 
-// time : 01:48
+// time : 02:00
 
 
             /// STEP 6: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
@@ -2274,10 +2274,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             free(mok);
 
 
-
-printf("LINE %d\n", __LINE__);
-exit(0);
-      
+// time : 
+     
 
 
             cnt = 0;
@@ -2320,7 +2318,9 @@ exit(0);
         }
 
     
-
+printf("LINE %d\n", __LINE__);
+exit(0);
+ // time : 
 
         if(BlockNB<0)
         {
