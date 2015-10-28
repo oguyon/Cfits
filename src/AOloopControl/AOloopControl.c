@@ -2530,15 +2530,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     // COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX
                     sprintf(imname, "fmodes_%02ld", mblock);
                     compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
-                    list_image_ID();
-                    
-                    printf(" =========== STEP =============\n");
-                    sleep(60);
+                
 
                     sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
                     save_fits(imnameCMc, fname);
                     sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
-                    save_fits(imnameCMcact, fname);
+                    sprintf(imname1, "%s_00", imnameCMcact);
+                    save_fits(imname1, fname);
 
                     list_image_ID();
                 }
