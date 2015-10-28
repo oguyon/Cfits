@@ -6224,8 +6224,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             
             if(mode>0) // compute WFSmask and DMmask
             {
-                // WFSmask : select pixels >20% of 50-percentile
-                lim = 0.2*img_percentile(WFSmap_name, 0.5);
+                // WFSmask : select pixels >30% of 70-percentile
+                lim = 0.3*img_percentile(WFSmap_name, 0.7);
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     {
                         if(data.image[ID_WFSmap].array.F[ii]<lim)
