@@ -757,7 +757,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         fclose(fp);
     }
 
-
+    SCExAO_Pcam_Xpos0 = SCExAO_Pcam_Xpos;
+    SCExAO_Pcam_Ypos0 = SCExAO_Pcam_Ypos;
+    
     while(file_exist ("stop_PyAlignCam.txt")==0)
     {
         while (file_exist ("pause_PyAlignCam.txt"))
