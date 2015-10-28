@@ -1738,8 +1738,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
         printf("DONE SAVING\n");
 
+// time : 0:04
 
-exit(0);
 
         /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
         msizexy = msizex*msizey;
@@ -1785,7 +1785,7 @@ exit(0);
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
 
-
+exit(0);
 
 
 
