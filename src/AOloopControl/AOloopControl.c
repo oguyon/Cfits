@@ -2027,8 +2027,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     }
 
-    printf("LINE %d\n", __LINE__);
-exit(0);
+
 
 
 // 1:17
@@ -2112,6 +2111,9 @@ exit(0);
                 }
             }
             save_fits("fmodesWFS0all", "!./mkmodestmp/fmodesWFS0all.fits");
+
+printf("LINE %d\n", __LINE__);
+exit(0);
 
     // 1:48
 
