@@ -7778,8 +7778,10 @@ int AOcompute(long loop, int normalize)
                 if(initcontrMcact_GPU[PIXSTREAM_SLICE]==0)
                     initWFSref_GPU[PIXSTREAM_SLICE] = 0;
 
-
-
+                
+                
+                printf("PIXSTREAM_SLICE = %d\n", PIXSTREAM_SLICE);
+                printf("GPU_loop_MultMat_setup   %s %s %s\n", data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name);
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
 
 
