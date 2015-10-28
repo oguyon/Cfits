@@ -6345,6 +6345,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         r = sprintf(zrname, "zrespm%03ld", kmat);
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, sizeDM);
 
+        # ifdef _OPENMP
+        #pragma omp parallel for private(fluxpos,fluxneg,ii)
+        # endif 
         for(act=0; act<sizeDM; act++)
         {
             fluxpos = 0.0;
@@ -6384,7 +6387,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                         printf("%ld element %ld is NAN -> replacing by 0\n", IDzresp_array[kmat], act*sizeWFS+ii);
                         data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.0;
                     }
-            if(isnan(data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii])!=0)
+                if(isnan(data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii])!=0)
                     {
                         printf("%ld element %ld is NAN -> replacing by 0\n", IDWFSrefc_array[kmat], act*sizeWFS+ii);
                         data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] = 0.0;
