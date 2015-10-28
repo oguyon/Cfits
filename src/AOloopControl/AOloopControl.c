@@ -6543,9 +6543,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
     // WFSmask : select pixels >30% of 60-percentile
-   printf("Preparing WFS mask ... ");
+    printf("Preparing WFS mask ... ");
     fflush(stdout);    
-     lim = 0.3*img_percentile(WFSmap_name, 0.6);
+    lim = 0.4*img_percentile(WFSmap_name, 0.7);
     for(ii=0; ii<sizeWFS; ii++)
     {
         if(data.image[IDWFSmap].array.F[ii]<lim)
