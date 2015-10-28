@@ -2531,7 +2531,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     sprintf(imname, "fmodes_%02ld", mblock);
                     compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
                     list_image_ID();
+                    
+                    printf(" =========== STEP =============\n");
                     sleep(60);
+
                     sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
                     save_fits(imnameCMc, fname);
                     sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
