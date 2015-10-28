@@ -2530,6 +2530,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     // COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX
                     sprintf(imname, "fmodes_%02ld", mblock);
                     compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
+                    list_image_ID();
+                    sleep(60);
                     sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
                     save_fits(imnameCMc, fname);
                     sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
@@ -7311,7 +7313,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     long ID;
     struct timespec t1;
     struct timespec t2;
-   struct timespec tdiff;
+    struct timespec tdiff;
     double tdiffv;
 
     float *matrix_cmp;
@@ -7353,10 +7355,10 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     sizexDM = data.image[IDdmmask].md[0].size[0];
     sizeyDM = data.image[IDdmmask].md[0].size[1];
     sizeDM = sizexDM*sizeyDM;
- 
+
     IDmodes = image_ID(IDmodes_name);
     NBDMmodes = data.image[IDmodes].md[0].size[2];
-    
+
     // allocate array for combined matrix
     sizearray = (long*) malloc(sizeof(long)*3);
     sizearray[0] = sizexWFS;
@@ -7369,7 +7371,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     printf("PREPARE MATRIX MULT\n");
     fflush(stdout);
 
-    
+
 
     // init matrix_Mc
     matrix_Mc = (float*) malloc(sizeof(float)*sizeWFS*sizeDM);
@@ -7383,62 +7385,62 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     // copy modes matrix to matrix_DMmodes
     matrix_DMmodes = (float*) malloc(sizeof(float)*NBDMmodes*sizeDM);
     memcpy(matrix_DMmodes, data.image[IDmodes].array.F, sizeof(float)*NBDMmodes*sizeDM);
-   
+
     printf("START MATRIX MULT\n");
     fflush(stdout);
 
-   
 
-// computing combine matrix (full size)
-//# ifdef _OPENMP
-//   #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
-  //  {
-//        #pragma omp for schedule (static)
-//# endif
-        for(mode=0; mode<NBDMmodes; mode++)
+
+    // computing combine matrix (full size)
+    //# ifdef _OPENMP
+    //   #pragma omp parallel shared(matrix_Mc, matrix_cmp, matrix_DMmodes ,chunk) private( mode, act, wfselem)
+    //  {
+    //        #pragma omp for schedule (static)
+    //# endif
+    for(mode=0; mode<NBDMmodes; mode++)
+    {
+        for(act=0; act<sizeDM; act++)
         {
-            for(act=0; act<sizeDM; act++)
-                {
-                    for(wfselem=0; wfselem<sizeWFS; wfselem++)
-                        matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]*matrix_DMmodes[mode*sizeDM+act];
-                }
+            for(wfselem=0; wfselem<sizeWFS; wfselem++)
+                matrix_Mc[act*sizeWFS+wfselem] += matrix_cmp[mode*sizeWFS+wfselem]*matrix_DMmodes[mode*sizeDM+act];
         }
-//# ifdef _OPENMP
-//    }
-//# endif
+    }
+    //# ifdef _OPENMP
+    //    }
+    //# endif
     memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
 
- 
+
     printf("REDUCE MATRIX SIZE\n");
     fflush(stdout);
 
-    
 
-   WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS*PIXSTREAM_NBSLICES);
-    for(slice=0;slice<PIXSTREAM_NBSLICES;slice++)
-        {
-            ii1 = 0;
-            for(ii=0; ii<sizeWFS; ii++)
-                if(data.image[IDwfsmask].array.F[ii]>0.1)
-                    {                        
-                        if(slice==0)
-                        {
-                            WFS_active_map[ii1] = ii;
-                            ii1++;
-                        }
-                        else
-                        {
-                            if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii]==slice+1)
-                                {
-                                     WFS_active_map[slice*sizeWFS+ii1] = ii;
-                                    ii1++;
-                                }
-                        }
+
+    WFS_active_map = (int*) malloc(sizeof(int)*sizeWFS*PIXSTREAM_NBSLICES);
+    for(slice=0; slice<PIXSTREAM_NBSLICES; slice++)
+    {
+        ii1 = 0;
+        for(ii=0; ii<sizeWFS; ii++)
+            if(data.image[IDwfsmask].array.F[ii]>0.1)
+            {
+                if(slice==0)
+                {
+                    WFS_active_map[ii1] = ii;
+                    ii1++;
+                }
+                else
+                {
+                    if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii]==slice+1)
+                    {
+                        WFS_active_map[slice*sizeWFS+ii1] = ii;
+                        ii1++;
                     }
-            sizeWFS_active[slice] = ii1;
-            sprintf(imname, "wfs2active_%02d", slice);
-            aoconfID_imWFS2_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], 1);
-        }
+                }
+            }
+        sizeWFS_active[slice] = ii1;
+        sprintf(imname, "wfs2active_%02d", slice);
+        aoconfID_imWFS2_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], 1);
+    }
 
 
 
@@ -7451,7 +7453,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
             ii1++;
         }
     sizeDM_active = ii1;
- //   aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
+    //   aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = sizeDM_active;
     sizearray[1] = 1;
@@ -7465,24 +7467,24 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
 
     // reduce matrix size to active elements
-    for(slice=0;slice<PIXSTREAM_NBSLICES;slice++)
+    for(slice=0; slice<PIXSTREAM_NBSLICES; slice++)
     {
-    sprintf(imname, "%s_%02d", IDcmatc_active_name, slice);
-    IDcmatc_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], sizeDM_active);
-    for(act_active=0; act_active<sizeDM_active; act_active++)
-    {
-        for(wfselem_active=0; wfselem_active<sizeWFS_active[slice]; wfselem_active++)
+        sprintf(imname, "%s_%02d", IDcmatc_active_name, slice);
+        IDcmatc_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], sizeDM_active);
+        for(act_active=0; act_active<sizeDM_active; act_active++)
         {
-            act = DM_active_map[act_active];
-            wfselem = WFS_active_map[slice*sizeWFS+wfselem_active];
-            data.image[IDcmatc_active[slice]].array.F[act_active*sizeWFS_active[slice]+wfselem_active] = matrix_Mc[act*sizeWFS+wfselem];
+            for(wfselem_active=0; wfselem_active<sizeWFS_active[slice]; wfselem_active++)
+            {
+                act = DM_active_map[act_active];
+                wfselem = WFS_active_map[slice*sizeWFS+wfselem_active];
+                data.image[IDcmatc_active[slice]].array.F[act_active*sizeWFS_active[slice]+wfselem_active] = matrix_Mc[act*sizeWFS+wfselem];
+            }
         }
-    }
-       printf("PIXEL SLICE %d     Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", slice, sizeWFS, sizeDM, sizeWFS_active[slice], sizeDM_active);
+        printf("PIXEL SLICE %d     Keeping only active pixels / actuators : %ld x %ld   ->   %ld x %ld\n", slice, sizeWFS, sizeDM, sizeWFS_active[slice], sizeDM_active);
 
-    
+
     }
-    
+
     free(matrix_Mc);
     free(matrix_DMmodes);
 
@@ -7497,6 +7499,7 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
 
     return(ID);
 }
+
 
 
 
@@ -7646,7 +7649,7 @@ int AOcompute(long loop, int normalize)
         {
             ii1 = 0;
             for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-                if(data.image[aoconfID_dmmask].array.F[ii]>0.1)
+                if(data.image[aoconfID_dmmask].array.F[ii]>0.5)
                 {
                     DM_active_map[ii1] = ii;
                     ii1++;
