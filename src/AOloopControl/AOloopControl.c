@@ -2318,9 +2318,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
 
     
-printf("LINE %d\n", __LINE__);
-exit(0);
- // time : 
+ // time : 04:36
 
         if(BlockNB<0)
         {
