@@ -6439,14 +6439,13 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     kmax = NBmat*sizeDM-kband;
 
 
-    # ifdef _OPENMP
-    #pragma omp parallel for private(act,kmat,pixvalarray,ave)
-    # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
         fflush(stdout);
-        
+        # ifdef _OPENMP
+        #pragma omp parallel for private(kmat)
+        # endif 
         for(act=0; act<sizeDM; act++)
             for(kmat=0; kmat<NBmat; kmat++)
                 pixvalarray[kmat*sizeDM+act] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
