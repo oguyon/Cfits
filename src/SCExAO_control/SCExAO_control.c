@@ -295,6 +295,8 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
 
     ID = create_2Dimage_ID(IDnameout, xsize, ysize);
 
+    list_image_ID();
+
     arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
 
@@ -544,8 +546,6 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     }
 
 
-    printf("step 00\n");
-    fflush(stdout);
     
     while(file_exist("stop_PyAlignTT.txt")==0)
     {
@@ -562,8 +562,6 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
                 gain = v0;
         }
 
-        printf("step 01\n");
-        fflush(stdout);
 
         ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
         xsize = data.image[ID].md[0].size[0];
@@ -588,9 +586,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         tot10y = 0.0;
         tot11y = 0.0;
 
-    printf("step 02\n");
-    fflush(stdout);
-
+   
 
 
         for(ii=0; ii<xsize/2; ii++)
