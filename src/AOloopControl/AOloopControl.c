@@ -2494,20 +2494,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
                     printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld x %ld = %ld - %ld )   %ld modes [ %ld <- %ld %ld ]\n", mblock, wfsxsize, wfsysize, wfssize, msizexy, MBLOCK_NBmode[mblock], IDwfsMresp, MBLOCK_ID[mblock], IDzrespM);
                     fflush(stdout);
-                    //      list_image_ID();
 
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
-                        // printf("m = %ld\n", m);
-                        // fflush(stdout);
                         for(act=0; act<msizexy; act++)
                         {
-                            //                                printf("\r   m = %ld /%ld      act = %ld / %ld           ", m, MBLOCK_NBmode[mblock], act, msizexy);
-                            //                              fflush(stdout);
                             for(wfselem=0; wfselem<wfssize; wfselem++)
                             {
-                                //    printf("\r  m = %ld /%ld      act = %ld / %ld      wfselem = %ld / %ld          ", m, MBLOCK_NBmode[mblock], act, msizexy, wfselem, wfssize);
-                                //   fflush(stdout);
                                 data.image[IDwfsMresp].array.F[m*wfssize+wfselem] += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+act] * data.image[IDzrespM].array.F[act*wfssize+wfselem];
                             }
                         }
@@ -6671,9 +6664,14 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         
         clock_gettime(CLOCK_REALTIME, &t1);
 
+        # ifdef _OPENMP
+        #pragma omp parallel for private(elem)
+        # endif
         for(act=0;act<dmxysize;act++)
             for(elem=0;elem<wfsxysize;elem++)
                 data.image[IDtmp].array.F[elem] += data.image[IDzpdm].array.F[act]*data.image[IDzrespM].array.F[act*wfsxysize+elem];
+
+
 
         clock_gettime(CLOCK_REALTIME, &t2);
         tdiff = info_time_diff(t1, t2);
