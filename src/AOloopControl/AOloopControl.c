@@ -6408,17 +6408,22 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
 
 
-    pixvalarray = (float*) malloc(sizeof(float)*NBmat);
     kband = 0;
     kband = (long) (0.2*NBmat);
 
     kmin = kband;
     kmax = NBmat-kband;
 
+    # ifdef _OPENMP
+    #pragma omp parallel for private(ii,kmat,ave,k,pixvalarray)
+    # endif 
     for(act=0; act<sizeDM; act++)
     {
         printf("\r act %ld / %ld        ", act, sizeDM);
         fflush(stdout);
+    
+        pixvalarray = (float*) malloc(sizeof(float)*NBmat);
+     
         for(ii=0; ii<sizeWFS; ii++)
         {
             for(kmat=0; kmat<NBmat; kmat++)
@@ -6430,8 +6435,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             ave /= (kmax-kmin);
             data.image[IDzrm].array.F[act*sizeWFS+ii] = ave/rmampl;
         }
+        free(pixvalarray);
     }
-    free(pixvalarray);
     
     printf("\n");
 
