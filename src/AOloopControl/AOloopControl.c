@@ -4764,6 +4764,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
                 
                 sprintf(name, "aol%ld_contrMcact%02ld_00", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
+             //   sprintf(fname, "conf/aol%ld_contrMcact%02ld_00", loop, kk);
                 ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                if(kk==0)
                     for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)

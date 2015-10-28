@@ -1337,7 +1337,7 @@ ReadConfFile "DMmodes${i2}"
 ReadConfFile "respM${i2}"
 ReadConfFile "contrM${i2}"
 ReadConfFile "contrMc${i2}"
-ReadConfFile "contrMcact${i2}"
+ReadConfFile "contrMcact${i2}_00"
 
 }
 
@@ -1706,7 +1706,7 @@ menuitems+=( "CMm${i2}" "$menustring" )
 makemenuitemstringaolshm "contrMc${i2}" "Zonal Contr matrix"
 menuitems+=( "CMmc${i2}" "$menustring" )
 
-makemenuitemstringaolshm "contrMcact${i2}" "Zonal act Cmat"
+makemenuitemstringaolshm "contrMcact${i2}_00" "Zonal act Cmat"
 menuitems+=( "CMmca${i2}" "$menustring" )
 
 done
@@ -2552,52 +2552,52 @@ state="menuconfigureloop"
 
 
 	CMca00)
-SelectConfFile "contrMcact00"
+SelectConfFile "contrMcact00_00"
 menucontrolloop_default="CMca00"
 state="menuconfigureloop"
 ;;
 	CMca01)
-SelectConfFile "contrMcact01"
+SelectConfFile "contrMcact01_00"
 menucontrolloop_default="CMca01"
 state="menuconfigureloop"
 ;;
 	CMca02)
-SelectConfFile "contrMcact02"
+SelectConfFile "contrMcact02_00"
 menucontrolloop_default="CMca02"
 state="menuconfigureloop"
 ;;
 	CMca03)
-SelectConfFile "contrMcact03"
+SelectConfFile "contrMcact03_00"
 menucontrolloop_default="CMca03"
 state="menuconfigureloop"
 ;;
 	CMca04)
-SelectConfFile "contrMcact04"
+SelectConfFile "contrMcact04_00"
 menucontrolloop_default="CMca04"
 state="menuconfigureloop"
 ;;
 	CMca05)
-SelectConfFile "contrMcact05"
+SelectConfFile "contrMcact05_00"
 menucontrolloop_default="CMca05"
 state="menuconfigureloop"
 ;;
 	CMca06)
-SelectConfFile "contrMcact06"
+SelectConfFile "contrMcact06_00"
 menucontrolloop_default="CMca06"
 state="menuconfigureloop"
 ;;
 	CMca07)
-SelectConfFile "contrMcact07"
+SelectConfFile "contrMcact07_00"
 menucontrolloop_default="CMca07"
 state="menuconfigureloop"
 ;;
 	CMca08)
-SelectConfFile "contrMcact08"
+SelectConfFile "contrMcact08_00"
 menucontrolloop_default="CMca08"
 state="menuconfigureloop"
 ;;
 	CMca09)
-SelectConfFile "contrMcact09"
+SelectConfFile "contrMcact09_00"
 menucontrolloop_default="CMca09"
 state="menuconfigureloop"
 ;;
