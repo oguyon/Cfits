@@ -6435,29 +6435,36 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     
     printf("\n");
 
-    pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
+  //  pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
     kband = 0;
     kband = (long) (0.2*NBmat*sizeDM);
     kmin = kband;
     kmax = NBmat*sizeDM-kband;
 
 
+    # ifdef _OPENMP
+    #pragma omp parallel for private(act,kmat,pixvalarray)
+    # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
         fflush(stdout);
-        # ifdef _OPENMP
-        #pragma omp parallel for private(kmat)
-        # endif 
+        
+        pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
+        
         for(act=0; act<sizeDM; act++)
             for(kmat=0; kmat<NBmat; kmat++)
                 pixvalarray[kmat*sizeDM+act] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
+
         quick_sort_float(pixvalarray, kmat*NBmat);
+
         ave = 0.0;
         for(k=kmin; k<kmax; k++)
             ave += pixvalarray[k];
         ave /= (kmax-kmin);
         data.image[IDWFSref].array.F[ii] = ave;
+        
+        free(pixvalarray);
     }
     printf("\n\n");
 
@@ -6465,7 +6472,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     free(IDzresp_array);
     free(IDWFSrefc_array);
 
-    free(pixvalarray);
+//    free(pixvalarray);
 
 
 
