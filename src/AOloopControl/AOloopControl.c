@@ -2030,7 +2030,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-// 1:17
+// 1:25
 
     // WFS modes
     IDzrespM = image_ID("zrespM");
@@ -2112,10 +2112,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
             save_fits("fmodesWFS0all", "!./mkmodestmp/fmodesWFS0all.fits");
 
-printf("LINE %d\n", __LINE__);
-exit(0);
-
-    // 1:48
+// time : 01:48
 
 
             /// STEP 6: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
@@ -2152,9 +2149,6 @@ exit(0);
                     reuse = 0;
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
-//                        printf("WFS REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-//                       fflush(stdout);
-
                         sprintf(imname, "fmodesWFS0_%02ld", mblock);
                         IDmwfs = image_ID(imname);
                         sprintf(imnameDM, "fmodes2_%02ld", mblock);
@@ -2173,10 +2167,7 @@ exit(0);
                         linopt_imtools_image_construct(imnameDM, "modecoeff", "SVDmode1DM");
                         IDSVDmode1 = image_ID("SVDmode1");
                         IDSVDmode1DM = image_ID("SVDmode1DM");
-                   /*     printf("[");
-                        for(ii=0; ii<data.image[IDSVDcoeff].md[0].size[0]; ii++)
-                            printf(" % 5.3f", data.image[IDSVDcoeff].array.F[ii]);
-                        printf(" ]");*/
+                   
                         delete_image_ID("modecoeff");
 
                         value1 = 0.0;
@@ -2282,7 +2273,11 @@ exit(0);
 
             free(mok);
 
-            
+
+
+printf("LINE %d\n", __LINE__);
+exit(0);
+      
 
 
             cnt = 0;
