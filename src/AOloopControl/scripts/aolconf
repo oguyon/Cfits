@@ -4250,6 +4250,7 @@ menurecord_default="ldmdisp0"
 ;;
     ldmdisp0)
 logdmdispstat=0
+echo "0" > ./status/stat_logdmdisp.txt
 tmuxname="dmlog"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp" C-m
