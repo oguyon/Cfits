@@ -4219,7 +4219,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/ocam2d/
-tmux send-keys -t $tmuxnameC "logshim $wfsimcam 10000 $savedir/$datestr/ocam2d/" C-m
+tmux send-keys -t $tmuxnameC "logshim $wfsimcam 100000 $savedir/$datestr/ocam2d/" C-m
 tmuxname="wfsimlog"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon $wfsimcam" C-m
@@ -4236,19 +4236,24 @@ menurecord_default="lwfsim1"
     ldmdisp1)
 logdmdispstat=1
 echo "1" > ./status/stat_logdmdisp.txt
-$execnameLOG << EOF
-shmimslogonset dm${DMindex}disp 1
-exit
-EOF
+tmuxnameC="dmlogC"
+echo "1" > ./status/stat_logdm.txt
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+mkdir -p $savedir/$datestr/dmdisp/
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp 100000 $savedir/$datestr/dmdisp/" C-m
+tmuxname="dmlog"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp" C-m
 menurecord_default="ldmdisp0"
 ;;
     ldmdisp0)
 logdmdispstat=0
-echo "0" > ./status/stat_logdmdisp.txt
-$execnameLOG << EOF
-shmimslogonset dm${DMindex}disp 0
-exit
-EOF
+tmuxname="dmlog"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp" C-m
+echo "0" > ./status/stat_logwfsim.txt
 menurecord_default="ldmdisp1"
 ;;
     rins) 
