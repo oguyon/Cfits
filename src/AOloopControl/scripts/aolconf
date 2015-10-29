@@ -4218,6 +4218,7 @@ echo "1" > ./status/stat_logwfsim.txt
 tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
+mkdir -p $savedir/$datestr/ocam2d/
 tmux send-keys -t $tmuxnameC "logshim $wfsimcam 10000 $savedir/$datestr/ocam2d/" C-m
 tmuxname="wfsimlog"
 tmux new-session -d -s $tmuxname
