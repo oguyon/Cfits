@@ -4215,6 +4215,7 @@ echo "$savedir" > ./conf/conf_savedir_name.txt
 logwfsimstat=1
 tmuxname="wfsimlog"
 echo "1" > ./status/stat_logwfsim.txt
+tmux new-session -d -s $tmuxname
 tmux a -t $tmuxname "$execnameLOG" C-m
 tmux a -t $tmuxname "shmimslogonset $wfsimcam 1" C-m
 tmux a -t $tmuxname "exit" C-m
@@ -4224,6 +4225,7 @@ menurecord_default="lwfsim0"
     lwfsim0)
 logwfsimstat=0
 tmuxname="wfsimlog"
+tmux new-session -d -s $tmuxname
 tmux a -t $tmuxname "$execnameLOG" C-m
 tmux a -t $tmuxname "shmimslogonset $wfsimcam 0" C-m
 tmux a -t $tmuxname "exit" C-m
