@@ -7959,22 +7959,27 @@ int AOloopControl_run()
 
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall; 
 
+
+
     // pixel streaming ?
     COMPUTE_PIXELSTREAMING = 1;
 
     if(COMPUTE_GPU_SCALING == 0)
         COMPUTE_PIXELSTREAMING = 0;
 
+
+    printf("pixel streaming ?\n");
+    fflush(stdout);
+    
     if(COMPUTE_PIXELSTREAMING == 1)
         aoconfID_pixstream_wfspixindex = load_fits("pixstream_wfspixindex.fits", "pixstream", 1);
 
     if(aoconfID_pixstream_wfspixindex == -1)
         COMPUTE_PIXELSTREAMING = 0;
-
-    // check data type
-    if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != USHORT)
-        COMPUTE_PIXELSTREAMING = 0;
-    
+    else    
+        if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != USHORT)
+            COMPUTE_PIXELSTREAMING = 0;
+  
     if(COMPUTE_PIXELSTREAMING == 1)
     {
         xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
@@ -7990,8 +7995,7 @@ int AOloopControl_run()
     
     COMPUTE_PIXELSTREAMING = 0; // TEST
     
-    exit(0);
-    
+   
     
 
     vOK = 1;
