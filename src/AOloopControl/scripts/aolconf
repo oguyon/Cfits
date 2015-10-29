@@ -4219,7 +4219,6 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG" C-m
 tmux send-keys -t $tmuxname "shmimslogonset $wfsimcam 1" C-m
 tmux send-keys -t $tmuxname "exit" C-m
-tmux send-keys -t $tmuxname "EOF" C-m
 menurecord_default="lwfsim0"
 ;;
     lwfsim0)
@@ -4229,7 +4228,6 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execnameLOG" C-m
 tmux send-keys -t $tmuxname "shmimslogonset $wfsimcam 0" C-m
 tmux send-keys -t $tmuxname "exit" C-m
-tmux send-keys -t $tmuxname "EOF" C-m
 echo "0" > ./status/stat_logwfsim.txt
 
 menurecord_default="lwfsim1"
