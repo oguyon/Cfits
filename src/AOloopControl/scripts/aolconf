@@ -2936,7 +2936,8 @@ menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 
 menuitems+=( "gball" "Set all block to same gain")
-menuitems+=( "gball1" "Custom gain set 1")
+menuitems+=( "gball1" "Custom gain set 1 (alpha = 1)")
+menuitems+=( "gball1" "Custom gain set 2 (alpha = 2)")
 
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
@@ -3188,7 +3189,20 @@ AOlog "zeroing loop"
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i| awk '{printf("%5.3f",1.0/(1+$1))}' )
+	     gainb[10#${gi}]=$( echo $i| awk '{printf("%5.3f",1.0/(1+10.0*$1/$NBblocks))}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to ${value}"
+	 ;;
+
+    gball2)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i| awk '{printf("%5.3f",1.0/(1+10.0*$1/$NBblocks)**2.0)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
