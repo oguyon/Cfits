@@ -3189,7 +3189,7 @@ AOlog "zeroing loop"
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i| awk '{printf("%5.3f",1.0/(1+10.0*$1/$NBblocks))}' )
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2))}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -3202,7 +3202,7 @@ AOlog "zeroing loop"
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i| awk '{printf("%5.3f",1.0/(1+10.0*$1/$NBblocks)**2.0)}' )
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**2.0)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
