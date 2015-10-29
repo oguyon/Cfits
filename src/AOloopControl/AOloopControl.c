@@ -4848,10 +4848,16 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
                 printf("adding %ld / %ld  (%g)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
 
                 ID = image_ID(name);
+                # ifdef _OPENMP
+                #pragma omp parallel for 
+                # endif
                 for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
                     data.image[IDcontrMc0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
 
                 ID = image_ID(name1);
+                # ifdef _OPENMP
+                #pragma omp parallel for 
+                # endif
                 for(ii=0; ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt; ii++)
                     data.image[IDcontrMcact0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
             }
