@@ -4815,70 +4815,71 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
     char name1[200];
     long ID;
     double eps=1e-6;
-    
-    
+
+
     sprintf(name, "aol%ld_gainb", loop);
     aoconfID_gainb = image_ID(name);
     if((blocknb<AOconf[loop].DMmodesNBblock)&&(blocknb>-1))
         data.image[aoconfID_gainb].array.F[blocknb] = gain;
-  
- 
-    
+
+
+
     if(add==1)
     {
-    IDcontrMc0 = image_ID("contrMc0");
-    if(IDcontrMc0==-1)
-        IDcontrMc0 = create_3Dimage_ID("contrMc0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
-    
-    IDcontrMcact0 = image_ID("contrMcact0");
-    if(IDcontrMcact0==-1)
-        IDcontrMcact0 = create_2Dimage_ID("contrMcact0", AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
-    
-    arith_image_zero("contrMc0");
-    arith_image_zero("contrMcact0");
-    
-  
-    for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
+        IDcontrMc0 = image_ID("contrMc0");
+        if(IDcontrMc0==-1)
+            IDcontrMc0 = create_3Dimage_ID("contrMc0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
+
+        IDcontrMcact0 = image_ID("contrMcact0");
+        if(IDcontrMcact0==-1)
+            IDcontrMcact0 = create_2Dimage_ID("contrMcact0", AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
+
+        arith_image_zero("contrMc0");
+        arith_image_zero("contrMcact0");
+
+
+        for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
         {
             if(data.image[aoconfID_gainb].array.F[kk]>eps)
             {
-            sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
-            sprintf(name1, "aol%ld_contrMcact%02ld_00", loop, kk);
+                sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
+                sprintf(name1, "aol%ld_contrMcact%02ld_00", loop, kk);
 
-            printf("adding %ld / %ld  (%g)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
+                printf("adding %ld / %ld  (%g)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
 
-            ID = image_ID(name);
-            for(ii=0;ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;ii++)
-                data.image[IDcontrMc0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
-        
-            ID = image_ID(name1);
-           for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
+                ID = image_ID(name);
+                for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
+                    data.image[IDcontrMc0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
+
+                ID = image_ID(name1);
+                for(ii=0; ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt; ii++)
                     data.image[IDcontrMcact0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
             }
         }
 
-    // for CPU mode
-    printf("UPDATING Mc matrix (CPU mode)\n");
-    data.image[aoconfID_contrMc].md[0].write = 1;
-    memcpy(data.image[aoconfID_contrMc].array.F, data.image[IDcontrMc0].array.F, sizeof(float)*AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
-    data.image[aoconfID_contrMc].md[0].cnt0++;
-    data.image[aoconfID_contrMc].md[0].write = 0;
+        // for CPU mode
+        printf("UPDATING Mc matrix (CPU mode)\n");
+        data.image[aoconfID_contrMc].md[0].write = 1;
+        memcpy(data.image[aoconfID_contrMc].array.F, data.image[IDcontrMc0].array.F, sizeof(float)*AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
+        data.image[aoconfID_contrMc].md[0].cnt0++;
+        data.image[aoconfID_contrMc].md[0].write = 0;
 
 
-    // for GPU mode
-    printf("UPDATING Mc matrix (GPU mode)\n");
-    data.image[aoconfID_contrMcact[0]].md[0].write = 1;
-    memcpy(data.image[aoconfID_contrMcact[0]].array.F, data.image[IDcontrMcact0].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
-    data.image[aoconfID_contrMcact[0]].md[0].cnt0++;
-    data.image[aoconfID_contrMcact[0]].md[0].write = 0;
+        // for GPU mode
+        printf("UPDATING Mc matrix (GPU mode)\n");
+        data.image[aoconfID_contrMcact[0]].md[0].write = 1;
+        memcpy(data.image[aoconfID_contrMcact[0]].array.F, data.image[IDcontrMcact0].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
+        data.image[aoconfID_contrMcact[0]].md[0].cnt0++;
+        data.image[aoconfID_contrMcact[0]].md[0].write = 0;
 
-    initcontrMcact_GPU[0] = 0;
+        initcontrMcact_GPU[0] = 0;
     }
-   // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
-   // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
-    
+    // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
+    // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
+
     return(0);
 }
+
 
 
 
