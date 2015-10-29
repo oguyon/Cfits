@@ -7990,6 +7990,8 @@ int AOloopControl_run()
     
     COMPUTE_PIXELSTREAMING = 0; // TEST
     
+    exit(0);
+    
     
 
     vOK = 1;

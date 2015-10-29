@@ -818,6 +818,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
 
+    
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
