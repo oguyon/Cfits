@@ -4213,19 +4213,21 @@ echo "$savedir" > ./conf/conf_savedir_name.txt
 
     lwfsim1)
 logwfsimstat=1
+tmuxname="wfsimlog"
 echo "1" > ./status/stat_logwfsim.txt
-$execnameLOG << EOF
-shmimslogonset $wfsimcam 1
-exit
-EOF
+tmux a -t $tmuxname "$execnameLOG" C-m
+tmux a -t $tmuxname "shmimslogonset $wfsimcam 1" C-m
+tmux a -t $tmuxname "exit" C-m
+tmux a -t $tmuxname "EOF" C-m
 menurecord_default="lwfsim0"
 ;;
     lwfsim0)
 logwfsimstat=0
-$execnameLOG << EOF
-shmimslogonset $wfsimcam 0
-exit
-EOF
+tmuxname="wfsimlog"
+tmux a -t $tmuxname "$execnameLOG" C-m
+tmux a -t $tmuxname "shmimslogonset $wfsimcam 0" C-m
+tmux a -t $tmuxname "exit" C-m
+tmux a -t $tmuxname "EOF" C-m
 echo "0" > ./status/stat_logwfsim.txt
 
 menurecord_default="lwfsim1"
