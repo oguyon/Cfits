@@ -302,9 +302,9 @@ int AOloopControl_loadconfigure_cli()
 
 int AOloopControl_set_modeblock_gain_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
     {
-        AOloopControl_set_modeblock_gain(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+        AOloopControl_set_modeblock_gain(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
         return 0;
     }
     else
@@ -804,9 +804,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_set_modeblock_gain_cli;
     strcpy(data.cmd[data.NBcmd].info,"set modal block gain");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <gain>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetmbgain 2 0.2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <gain> <compute sum flag>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetmbgain 2 0.2 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)");
     data.NBcmd++;
 
 
@@ -4806,7 +4806,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
+int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)
 {
     long IDcontrMc0; // local storage
     long IDcontrMcact0; // local storage
@@ -4823,7 +4823,8 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
   
  
     
-
+    if(add==1)
+    {
     IDcontrMc0 = image_ID("contrMc0");
     if(IDcontrMc0==-1)
         IDcontrMc0 = create_3Dimage_ID("contrMc0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
@@ -4835,7 +4836,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
     arith_image_zero("contrMc0");
     arith_image_zero("contrMcact0");
     
-    
+  
     for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
         {
             sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
@@ -4848,7 +4849,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
                 data.image[IDcontrMc0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
         
             ID = image_ID(name1);
-            for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
+           for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
                     data.image[IDcontrMcact0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
         }
 
@@ -4868,7 +4869,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain)
     data.image[aoconfID_contrMcact[0]].md[0].write = 0;
 
     initcontrMcact_GPU[0] = 0;
-
+    }
    // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
    // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
     

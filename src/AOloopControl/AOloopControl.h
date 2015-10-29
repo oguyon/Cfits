@@ -143,7 +143,7 @@ long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long 
 long AOloopControl_3Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize, long zsize);
 int AOloopControl_loadconfigure(long loop, int mode, int level);
 
-int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain);// modal blocks
+int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add);// modal blocks
 
 int set_DM_modes(long loop);
 int set_DM_modesRM(long loop);
