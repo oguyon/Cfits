@@ -565,7 +565,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         }
 
 
-        ID = SCExAOcontrol_Average_image(WFScam_name, 1000, "imwfs");
+        ID = SCExAOcontrol_Average_image(WFScam_name, 20000, "imwfs");
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
@@ -743,7 +743,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     int r;
     char command[200];
     long delayus = 1000000;
-    long NBframes = 5000;
+    long NBframes = 20000;
     float v0;
     long maxstep = 500;
     float ave;
