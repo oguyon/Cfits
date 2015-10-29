@@ -4216,20 +4216,20 @@ logwfsimstat=1
 tmuxname="wfsimlog"
 echo "1" > ./status/stat_logwfsim.txt
 tmux new-session -d -s $tmuxname
-tmux a -t $tmuxname "$execnameLOG" C-m
-tmux a -t $tmuxname "shmimslogonset $wfsimcam 1" C-m
-tmux a -t $tmuxname "exit" C-m
-tmux a -t $tmuxname "EOF" C-m
+tmux send-keys -t $tmuxname "$execnameLOG" C-m
+tmux send-keys -t $tmuxname "shmimslogonset $wfsimcam 1" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux send-keys -t $tmuxname "EOF" C-m
 menurecord_default="lwfsim0"
 ;;
     lwfsim0)
 logwfsimstat=0
 tmuxname="wfsimlog"
 tmux new-session -d -s $tmuxname
-tmux a -t $tmuxname "$execnameLOG" C-m
-tmux a -t $tmuxname "shmimslogonset $wfsimcam 0" C-m
-tmux a -t $tmuxname "exit" C-m
-tmux a -t $tmuxname "EOF" C-m
+tmux send-keys -t $tmuxname "$execnameLOG" C-m
+tmux send-keys -t $tmuxname "shmimslogonset $wfsimcam 0" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux send-keys -t $tmuxname "EOF" C-m
 echo "0" > ./status/stat_logwfsim.txt
 
 menurecord_default="lwfsim1"
