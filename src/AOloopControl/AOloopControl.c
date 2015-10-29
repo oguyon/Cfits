@@ -7968,7 +7968,7 @@ int AOloopControl_run()
         COMPUTE_PIXELSTREAMING = 0;
 
 
-    printf("pixel streaming ?\n");
+    printf("============ pixel streaming ? =============\n");
     fflush(stdout);
     
     if(COMPUTE_PIXELSTREAMING == 1)
@@ -7977,9 +7977,13 @@ int AOloopControl_run()
     if(aoconfID_pixstream_wfspixindex == -1)
         COMPUTE_PIXELSTREAMING = 0;
     else    
+    {
+        printf("Testing data type\n");
+        fflush(stdout);
         if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != USHORT)
             COMPUTE_PIXELSTREAMING = 0;
-  
+    }
+    
     if(COMPUTE_PIXELSTREAMING == 1)
     {
         xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
@@ -7992,6 +7996,11 @@ int AOloopControl_run()
         printf("PIXEL STREAMING:   %ld image slices\n", PIXSTREAM_NBSLICES);
     }
     
+    
+    
+    printf("============ pixel streaming ?\n");
+    fflush(stdout);
+
     
     COMPUTE_PIXELSTREAMING = 0; // TEST
     
