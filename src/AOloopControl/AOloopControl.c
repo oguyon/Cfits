@@ -4763,7 +4763,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
              //   sprintf(fname, "conf/aol%ld_contrMcact%02ld_00", loop, kk);
                 printf("LOADING %s to %s  size %ld %ld\n", fname, name,  AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                 ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
-                sleep(10);
+//                sleep(10);
                if(kk==0)
                     for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
                         data.image[aoconfID_contrMcact[0]].array.F[ii] = 0.0;
