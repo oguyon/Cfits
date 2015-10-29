@@ -6219,8 +6219,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             
             if(mode>0) // compute WFSmask and DMmask
             {
-                // WFSmask : select pixels >30% of 70-percentile
-                lim = 0.3*img_percentile(WFSmap_name, 0.7);
+                // WFSmask : select pixels >40% of 85-percentile
+                lim = 0.4*img_percentile(WFSmap_name, 0.7);
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     {
                         if(data.image[ID_WFSmap].array.F[ii]<lim)
@@ -6556,10 +6556,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
-    // WFSmask : select pixels >30% of 60-percentile
+    // WFSmask : select pixels >40% of 85-percentile
     printf("Preparing WFS mask ... ");
     fflush(stdout);    
-    lim = 0.4*img_percentile(WFSmap_name, 0.7);
+    lim = 0.4*img_percentile(WFSmap_name, 0.85);
     for(ii=0; ii<sizeWFS; ii++)
     {
         if(data.image[IDWFSmap].array.F[ii]<lim)
