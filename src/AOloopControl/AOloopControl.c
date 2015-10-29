@@ -4814,6 +4814,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
     char name[200];
     char name1[200];
     long ID;
+    double eps=1e-6;
     
     
     sprintf(name, "aol%ld_gainb", loop);
@@ -4839,6 +4840,8 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
   
     for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
         {
+            if(data.image[aoconfID_gainb].array.F[kk]>eps)
+            {
             sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
             sprintf(name1, "aol%ld_contrMcact%02ld_00", loop, kk);
 
@@ -4851,6 +4854,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
             ID = image_ID(name1);
            for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
                     data.image[IDcontrMcact0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
+            }
         }
 
     // for CPU mode
