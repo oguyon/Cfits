@@ -4213,14 +4213,14 @@ echo "$savedir" > ./conf/conf_savedir_name.txt
 
     lwfsim1)
 logwfsimstat=1
-tmuxname="wfsimlogC"
+tmuxnameC="wfsimlogC"
 echo "1" > ./status/stat_logwfsim.txt
 tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 tmux send-keys -t $tmuxnameC "logshim $wfsimcam 10000 $savedir" C-m
 tmuxname="wfsimlog"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxnameC "logshimon $wfsimcam" C-m
+tmux send-keys -t $tmuxname "logshimon $wfsimcam" C-m
 menurecord_default="lwfsim0"
 ;;
     lwfsim0)
