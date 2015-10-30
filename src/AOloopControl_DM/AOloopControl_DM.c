@@ -552,8 +552,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges
 
-    AOloopControl_DM_createconf();
-    exit(0);
+   // AOloopControl_DM_createconf();
     
     AOloopControl_DM_loadconf();
     
