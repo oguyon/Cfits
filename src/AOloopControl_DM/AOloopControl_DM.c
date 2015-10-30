@@ -884,8 +884,6 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
     free(size);
  
-    delete_image_ID("_tmpoutdm");
-    delete_image_ID("_tmpoutref");
 
     return 0;
 }
