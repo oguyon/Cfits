@@ -874,8 +874,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             dmdispcombconf[DMindex].ON = 0;
     }
 
-    if(voltmode==1)
-        arith_image_zero(dmdispcombconf[DMindex].voltname);
+  //  if(voltmode==1)
+    //    arith_image_zero(dmdispcombconf[DMindex].voltname);
 
 
 
