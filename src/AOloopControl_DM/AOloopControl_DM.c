@@ -545,7 +545,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     
     printf("Setting up DM #%ld\n", DMindex); 
-    exit(0);   
+    
     
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
