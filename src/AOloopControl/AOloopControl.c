@@ -6061,14 +6061,14 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
         printf("\r iteration # %8ld     ", iter);
         fflush(stdout);
  
-        for(act=0; act<NBpoke; act++) //AOconf[loop].sizeDM; act++)
+        for(act=0; act<NBpoke; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0; 
                     
 
 
         act = 0;
-        while ((act < NBpoke)&&(data.signal_USR1==0))//AOconf[loop].sizeDM)&&(data.signal_USR1==0))
+        while ((act < NBpoke)&&(data.signal_USR1==0))
         {
 
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)

@@ -1673,7 +1673,7 @@ int CLI_checkarg0(int argnum, int argtype, int errmsg)
         }
         break;
 
-    case 3:  // should be string
+    case 3:  // should be string, but not image
         switch (data.cmdargtoken[argnum].type) {
         case 1:
             if(errmsg==1)
@@ -1732,7 +1732,34 @@ int CLI_checkarg0(int argnum, int argtype, int errmsg)
             rval = 0;
             break;
         }
-        break;
+    case 5: // should be string (image or not)
+        switch (data.cmdargtoken[argnum].type) {
+        case 1:
+            if(errmsg==1)
+                printf("arg %d is floating point, but should be string or image\n", argnum);
+            rval = 1;
+            break;
+        case 2:
+            if(errmsg==1)
+                printf("arg %d is integer, but should be string or image\n", argnum);
+            rval = 1;
+            break;
+        case 3:
+            rval = 0;
+            break;
+        case 4:
+            rval = 0;
+            break;
+        case 5:
+            if(errmsg==1)
+                printf("arg %d is command (=\"%s\"), but should be image\n", argnum, data.cmdargtoken[argnum].val.string);
+            rval = 1;
+            break;
+        case 6:
+            rval = 0;
+            break;
+        }
+    break;
 
     }
 
