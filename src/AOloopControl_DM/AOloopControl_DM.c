@@ -553,6 +553,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     r = seteuid(euid_real);//Go back to normal privileges
 
     AOloopControl_DM_createconf();
+    exit(0);
+    
     AOloopControl_DM_loadconf();
     
     dmdispcombconf[DMindex].ON = 1;
