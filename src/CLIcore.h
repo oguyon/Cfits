@@ -46,7 +46,7 @@ int C_ERRNO;			// C errno (from errno.h)
 #define SHAREDMEMDIR "/tmp"
 
 
-
+#define SEMAPHORE_MAX       1000
 #define NB_ARG_MAX                 20
 
 
