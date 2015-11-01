@@ -6483,9 +6483,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     kmax = NBmat*sizeDM-kband;
 
 
-    # ifdef _OPENMP
-    #pragma omp parallel for private(act,kmat,pixvalarray)
-    # endif 
+  //  # ifdef _OPENMP
+ //   #pragma omp parallel for private(act,kmat,pixvalarray)
+  //  # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);

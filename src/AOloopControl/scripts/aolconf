@@ -2089,7 +2089,7 @@ menucontrolloop_default="zrespoff"
 tmuxname="aol${LOOPNUMBER}zrepMc"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
-echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" > aolcmd.txt
+echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
 mkdir -p zrespM
 mkdir -p wfsref
 mkdir -p wfsref0
@@ -2128,6 +2128,7 @@ zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
+echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
 pkill -USR1 aol${LOOPNUMBER}zrespM
 mkdir -p zrespM
 mkdir -p wfsref
