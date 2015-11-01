@@ -6509,7 +6509,11 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         ave /= (kmax-kmin);
         data.image[IDWFSref].array.F[ii] = ave;
         
+        printf("free pixvalarray : %ld x %ld\n", NBmat, sizeDM);
+        fflush(stdout);
         free(pixvalarray);
+        printf("done\n");
+        fflush(stdout);
     }
     printf("\n\n");
 
