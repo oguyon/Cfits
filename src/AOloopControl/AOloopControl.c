@@ -3334,6 +3334,9 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
             imcnt = 0;
             while(imcnt<NbAve)
             {
+                
+                printf("HERE\n");
+                fflush(stdout);
                 usleep(50); // OK FOR NOW (not using single buffer in fast WFS)
                 if(data.image[aoconfID_wfsim].md[0].write == 0)
                 {
