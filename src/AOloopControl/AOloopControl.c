@@ -3269,11 +3269,12 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
     float resulttotal;
     int sval0, sval;
     void *status = 0;
-
-
+    long i;
+    int semval;
+ 
+ 
+ 
     WFSatype = data.image[aoconfID_wfsim].md[0].atype;
-
-
 
     if(avcamarraysInit==0)
     {
@@ -3284,6 +3285,15 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
         Average_cam_frames_IDdark = image_ID(Average_cam_frames_dname);
         Average_cam_frames_nelem = AOconf[loop].sizeWFS;
 
+        if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups  
+            {
+                // set semaphore 1 to 0
+                sem_getvalue(data.image[aoconfID_wfsim].semptr[1], &semval);
+                for(i=0; i<semval; i++)
+                    sem_trywait(data.image[aoconfID_wfsim].semptr[1]);
+
+                PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;    // set semaphore 1 to 0
+            }
         avcamarraysInit = 1;
     }
 

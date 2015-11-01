@@ -85,9 +85,9 @@ long tret; // thread return value
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
-//
+// 5: string
 
 
 
@@ -540,9 +540,13 @@ int COREMOD_MEMORY_image_set_semwait_cli()
         return 1;
 }
 
-
-
-
+int COREMOD_MEMORY_image_set_semflush_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
+        COREMOD_MEMORY_image_set_semflush(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl);
+    else
+        return 1;
+}
 
 
 
@@ -600,7 +604,6 @@ int COREMOD_MEMORY_image_NETWORKreceive_cli()
 
 
 
-//long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)
 int COREMOD_MEMORY_PixMapDecode_U_cli()
 {
      if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,4)+CLI_checkarg(6,3)+CLI_checkarg(7,3)==0)
@@ -930,6 +933,14 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(char *IDname)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"imsetsemflush");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_semflush_cli;
+    strcpy(data.cmd[data.NBcmd].info,"flush image semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetsemflush im1 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)");
+    data.NBcmd++;
 
 
     strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
@@ -4152,12 +4163,10 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
             printf("ERROR: image %s semaphore # %ld does not exist\n", IDname, index);
         else
         {
-            for(s=0; s<data.image[ID].sem; s++)
-            {
+            s = index;
                 sem_getvalue(data.image[ID].semptr[s], &semval);
                 for(i=0; i<semval; i++)
                     sem_trywait(data.image[ID].semptr[s]);
-            }
 
         }
     }
@@ -4910,7 +4919,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
         }
         else
         {
-            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+        if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);
             }
@@ -4936,8 +4945,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 slice = 0;
             
             
-            clock_gettime(CLOCK_REALTIME, &tarray[slice]);
-          dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
+         //   clock_gettime(CLOCK_REALTIME, &tarray[slice]);
+        //  dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
             data.image[IDout].md[0].write = 1;
 
             if((slice<NBslice))
@@ -4946,22 +4955,22 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 for(ii=0; ii<nbpixslice[slice]; ii++)
                     data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
             }
-            printf("[%ld] ", slice); //TEST
+       //     printf("[%ld] ", slice); //TEST
 
             if(slice==NBslice-1)
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
                 
-                printf("[[ Timimg [us] :   ");
-                for(slice1=1;slice1<NBslice;slice1++)
-                    {
-                        dtarray[slice1] -= dtarray[0];
-                        printf("%6ld ", (long) (1.0e6*dtarray[slice1]));
-                    }
-                printf("]]");
-                printf("\n");//TEST
-                fflush(stdout);
+           //     printf("[[ Timimg [us] :   ");
+              //  for(slice1=1;slice1<NBslice;slice1++)
+              //      {
+          //              dtarray[slice1] -= dtarray[0];
+             //           printf("%6ld ", (long) (1.0e6*dtarray[slice1]));
+              //      }
+               // printf("]]");
+              //  printf("\n");//TEST
+               // fflush(stdout);
             }
 
             data.image[IDout].md[0].cnt1 = slice;
