@@ -2081,6 +2081,7 @@ zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave} ${WFSnorm}" C-m
+echo "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave} ${WFSnorm}" > aolcmd.txt
 AOlog "Start RM amplitude $rmamplum um, time delay $rmdelays sec, NB frame average $rmfrave frames"
 menucontrolloop_default="zrespoff"
 ;;
