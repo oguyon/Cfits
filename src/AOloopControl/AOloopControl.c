@@ -6450,9 +6450,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     kmin = kband;
     kmax = NBmat-kband;
 
-    # ifdef _OPENMP
-    #pragma omp parallel for private(ii,kmat,ave,k,pixvalarray)
-    # endif 
+ //   # ifdef _OPENMP
+ //   #pragma omp parallel for private(ii,kmat,ave,k,pixvalarray)
+ //   # endif 
     for(act=0; act<sizeDM; act++)
     {
         printf("\r act %ld / %ld        ", act, sizeDM);
