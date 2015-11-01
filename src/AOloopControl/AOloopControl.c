@@ -6500,10 +6500,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                 printf("ERROR: cannot allocate pixvalarray, size = %ld x %ld\n", NBmat, sizeDM);
                 exit(0);
             }
-        
+/*        
         for(act=0; act<sizeDM; act++)
             for(kmat=0; kmat<NBmat; kmat++)
-                pixvalarray[kmat*sizeDM+act] = 1.0; // data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
+                pixvalarray[kmat*sizeDM+act] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
 
         quick_sort_float(pixvalarray, kmat*NBmat);
 
@@ -6512,7 +6512,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             ave += pixvalarray[k];
         ave /= (kmax-kmin);
         data.image[IDWFSref].array.F[ii] = ave;
-        
+  */      
         printf("free pixvalarray : %ld x %ld\n", NBmat, sizeDM);
         fflush(stdout);
         free(pixvalarray);
