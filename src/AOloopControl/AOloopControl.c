@@ -3689,7 +3689,9 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
 
     IDout_AC = create_image_ID(IDname_out_ave, 2, sizearray, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 2);
-    
+     
+    free(sizearray);
+   
     OKloop = 1;
     while(OKloop==1)
     {
@@ -3700,7 +3702,7 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
                 for(ii=0;ii<xsize*ysize;ii++)
                     {
                         data.image[IDout_ave].array.F[ii] = (1.0-alpha)*data.image[IDout_ave].array.F[ii] + alpha * data.image[IDin].array.F[ii];
-                        data.image[IDout_AC].array.F[ii] = data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii];
+                        data.image[IDout_AC].array.F[ii] += alpha * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]) * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]);
                     }
                 data.image[IDout_ave].md[0].cnt0++;
                 data.image[IDout_AC].md[0].cnt0++;
@@ -3711,7 +3713,6 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
         usleep(delayus);
     }
     
-    free(sizearray);
     
     return(0);
 }
