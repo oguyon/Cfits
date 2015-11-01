@@ -3670,7 +3670,7 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
     long IDout_AC;
     long xsize, ysize;
     long *sizearray;
-    long long cnt0old;
+    long cnt0old;
     long delayus = 100;
     int OKloop;
     long ii;
@@ -6051,6 +6051,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
+    int ret;
+    
     
 
     schedpar.sched_priority = RT_priority;
@@ -6117,7 +6119,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
 
     sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke);
-    system(command);
+    ret = system(command);
 //    sleep(10);
 
     sizearray[0] = AOconf[loop].sizexWFS;

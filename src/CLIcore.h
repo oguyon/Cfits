@@ -193,8 +193,8 @@ typedef struct
 
     int write;               // 1 if image is being written
     int status;              // 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2)
-    long long cnt0;               // counter (incremented if image is updated)
-    long long cnt1;               // in 3D rolling buffer image, this is the last slice written
+    long cnt0;               // counter (incremented if image is updated)
+    long cnt1;               // in 3D rolling buffer image, this is the last slice written
 
     long NBkw;                  // number of keywords
 
