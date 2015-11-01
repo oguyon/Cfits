@@ -3687,7 +3687,7 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
     IDout_ave = create_image_ID(IDname_out_ave, 2, sizearray, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 2);
 
-    IDout_AC = create_image_ID(IDname_out_ave, 2, sizearray, FLOAT, 1, 0);
+    IDout_AC = create_image_ID(IDname_out_AC, 2, sizearray, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 2);
      
     free(sizearray);
