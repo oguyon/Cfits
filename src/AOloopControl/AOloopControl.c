@@ -46,7 +46,7 @@
 
 # ifdef _OPENMP
 # include <omp.h>
-#define OMP_NELEMENT_LIMIT 1000000
+#define OMP_NELEMENT_LIMIT 1000000 
 # endif
 
 #define MAX_MBLOCK 14
@@ -78,8 +78,8 @@ float GPU_beta = 0.0;
 
 
 int COMPUTE_PIXELSTREAMING = 0; // multiple pixel groups 
-long PIXSTREAM_NBSLICES = 1; // number of image slices (= pixel groups)
-long PIXSTREAM_SLICE; // slice index 0 = all pixels
+int PIXSTREAM_NBSLICES = 1; // number of image slices (= pixel groups)
+int PIXSTREAM_SLICE; // slice index 0 = all pixels
 
 
 
@@ -3257,7 +3257,7 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
     long ii;
     double totalinv;
     char name[200];
-    long slice;
+    int slice;
     char *ptrv;
     long double tmplv1;
     double tmpf;
@@ -7591,13 +7591,15 @@ int AOcompute(long loop, int normalize)
     // pixel 2 is time from beginning of loop to status 02
 
 
-    slice = Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 0);
+    Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 0);
+    
+    slice = PIXSTREAM_SLICE;
     if(COMPUTE_PIXELSTREAMING==0) // no pixel streaming
         PIXSTREAM_SLICE = 0;
-    else
-        PIXSTREAM_SLICE = 1 + slice;
+//    else
+//        PIXSTREAM_SLICE = 1 + slice;
 
-    printf("slice = %d\n", slice);
+    printf("slice = %d  ->  %d\n", slice, PIXSTREAM_SLICE);
     fflush(stdout);
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
@@ -7989,15 +7991,13 @@ int AOloopControl_run()
             if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii] > PIXSTREAM_NBSLICES)
                 PIXSTREAM_NBSLICES = data.image[aoconfID_pixstream_wfspixindex].array.U[ii];
         PIXSTREAM_NBSLICES++;
-        printf("PIXEL STREAMING:   %ld image slices\n", PIXSTREAM_NBSLICES);
+        printf("PIXEL STREAMING:   %d image slices\n", PIXSTREAM_NBSLICES);
     }
     
     
     
-    printf("============ pixel streaming ?\n");
+    printf("============ FORCE pixel streaming = 0\n");
     fflush(stdout);
-
-    
     COMPUTE_PIXELSTREAMING = 0; // TEST
     
    
