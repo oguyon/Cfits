@@ -6077,6 +6077,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
     r = system(command);
  
+ 
+    printf("STARTING RM...\n");
+    fflush(stdout);
 
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
