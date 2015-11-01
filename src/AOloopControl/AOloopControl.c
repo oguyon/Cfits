@@ -263,6 +263,17 @@ int AOloopControl_camimage_extract2D_sharedmem_loop_cli()
 }
 
 
+int AOloopControl_AveStream_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)==0)
+    {
+      AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+    }
+  else
+    return 1;
+}
+
+
 int AOloopControl_computeCM_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,1)==0)
@@ -788,6 +799,18 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"cropshim imin imout");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
     data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aveACshmim");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_AveStream_cli;
+    strcpy(data.cmd[data.NBcmd].info,"average and AC shared mem image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <coeff> <output image ave> <output AC>");
+    strcpy(data.cmd[data.NBcmd].example,"aveACshmim imin 0.01 outave outAC");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC)");
+    data.NBcmd++;
+
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"aolloadconf");
@@ -3637,10 +3660,61 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
 
 
 
+// alpha is averaging coefficient
+// uses cnt0
 
+int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC)
+{
+    long IDin;
+    long IDout_ave;
+    long IDout_AC;
+    long xsize, ysize;
+    long *sizearray;
+    long long cnt0old;
+    long delayus = 100;
+    int OKloop;
+    long ii;
+    
+    
+    IDin = image_ID(IDname);
+    xsize = data.image[IDin].md[0].size[0];
+    ysize = data.image[IDin].md[0].size[1];
+    
+    sizearray = (long*) malloc(sizeof(long)*xsize*ysize);
+    sizearray[0] = xsize;
+    sizearray[1] = ysize;
+    
+    IDout_ave = create_image_ID(IDname_out_ave, 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 2);
 
-
-
+    IDout_AC = create_image_ID(IDname_out_ave, 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 2);
+    
+    OKloop = 1;
+    while(OKloop==1)
+    {
+        if(data.image[IDin].md[0].cnt0 != cnt0old)
+            {
+                data.image[IDout_ave].md[0].write = 1;
+                data.image[IDout_AC].md[0].write = 1;
+                for(ii=0;ii<xsize*ysize;ii++)
+                    {
+                        data.image[IDout_ave].array.F[ii] = (1.0-alpha)*data.image[IDout_ave].array.F[ii] + alpha * data.image[IDin].array.F[ii];
+                        data.image[IDout_AC].array.F[ii] = data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii];
+                    }
+                data.image[IDout_ave].md[0].cnt0++;
+                data.image[IDout_AC].md[0].cnt0++;
+                data.image[IDout_ave].md[0].write = 0;
+                data.image[IDout_AC].md[0].write = 0;
+                cnt0old = data.image[IDin].md[0].cnt0;
+            }
+        usleep(delayus);
+    }
+    
+    free(sizearray);
+    
+    return(0);
+}
 
 
 

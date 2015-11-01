@@ -137,6 +137,7 @@ void *compute_function_imtotal( void *ptr );
 void *compute_function_dark_subtract( void *ptr );
 int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelStreamMode);
 long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
+int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC);
 long AOloopControl_loadCM(long loop, char *CMfname);
 
 long AOloopControl_2Dloadcreate_shmim(char *name, char *fname, long xsize, long ysize);
