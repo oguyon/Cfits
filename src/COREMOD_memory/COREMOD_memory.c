@@ -3996,6 +3996,8 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
 {
     long ID;
     long s;
+    int semval;
+    
     
     ID = image_ID(IDname);
 
@@ -4005,7 +4007,11 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
     if(index<0)
         {
             for(s=0; s<data.image[ID].sem; s++)
-                sem_post(data.image[ID].semptr[s]);
+            {
+                sem_getvalue(data.image[ID].semptr[s], &semval);
+                if(semval<SEMAPHORE_MAX)
+                    sem_post(data.image[ID].semptr[s]);
+            }
         }
     else
         {
