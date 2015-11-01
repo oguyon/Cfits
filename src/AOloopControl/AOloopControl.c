@@ -6032,6 +6032,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
         NBpoke = AOconf[loop].sizeDM;
 
 
+    sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke);
+//    sleep(10);
 
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
