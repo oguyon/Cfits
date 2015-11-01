@@ -7591,18 +7591,14 @@ int AOcompute(long loop, int normalize)
     // pixel 2 is time from beginning of loop to status 02
 
 
-
+    slice = Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 0);
     if(COMPUTE_PIXELSTREAMING==0) // no pixel streaming
-    {
-        Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 0);
         PIXSTREAM_SLICE = 0;
-    }
     else
-    {
-        PIXSTREAM_SLICE = 1 + Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 1);
-    }
+        PIXSTREAM_SLICE = 1 + slice;
 
-
+    printf("slice = %d\n", slice);
+    fflush(stdout);
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
     clock_gettime(CLOCK_REALTIME, &tnow);
@@ -9568,6 +9564,72 @@ int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha
 
 
 
+
+// optimize LO - uses simulated downhill simplex
+int AOloopControl_OptimizePSF_LO(char *psfstream_name, char *IDmodes_name, char *dmstream_name, long delayframe, long NBframes)
+{
+    long IDpsf;
+    long IDmodes;
+    long IDdmstream;
+    long IDdm;
+    long psfxsize, psfysize;
+    long dmxsize, dmysize;
+    long NBmodes;
+    long mode;
+    double ampl;
+    double x;
+    long ii, jj;
+    
+    long IDdmbest;
+    long IDpsfarray;
+    
+    
+    
+    ampl = 0.01; // modulation amplitude
+    
+    IDpsf = image_ID(psfstream_name);
+    IDmodes = image_ID(IDmodes_name);
+    IDdmstream = image_ID(dmstream_name);
+    
+    psfxsize = data.image[IDpsf].md[0].size[0];
+    psfysize = data.image[IDpsf].md[0].size[1];
+
+    IDdmbest = create_2Dimage_ID("dmbest", dmxsize, dmysize);
+    IDdm = create_2Dimage_ID("dmcurr", dmxsize, dmysize);
+    
+    dmxsize = data.image[IDdm].md[0].size[0];
+    dmysize = data.image[IDdm].md[0].size[1];
+    
+    NBmodes = data.image[IDmodes].md[0].size[2];
+    
+    for(ii=0;ii<dmxsize*dmysize;ii++)
+        data.image[IDdmbest].array.F[ii] = data.image[IDdm].array.F[ii];
+    
+    
+    for(mode=0; mode<NBmodes; mode ++)
+        {
+            for(x=-ampl; x<1.01*ampl; x += ampl)
+                {
+                    // apply DM pattern
+                    for(ii=0;ii<dmxsize*dmysize;ii++)
+                        data.image[IDdm].array.F[ii] = data.image[IDdmbest].array.F[ii]+ampl*data.image[IDmodes].array.F[dmxsize*dmysize*mode+ii];
+                    
+                    data.image[IDdmstream].md[0].write = 1;
+                    memcpy(data.image[IDdmstream].array.F, data.image[IDdm].array.F, sizeof(float)*dmxsize*dmysize);
+                    data.image[IDdmstream].md[0].cnt0++;
+                    data.image[IDdmstream].md[0].write = 0;
+                    
+                    
+                    
+                }
+        }
+    
+    
+    
+    
+    
+    return(0);
+}
 
 
 

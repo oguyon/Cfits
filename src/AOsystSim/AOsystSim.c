@@ -57,9 +57,9 @@ OPTSYST *optsystsim;
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string (not image)
 // 4: existing image
-//
+// 5: string
 
 
 int AOsystSim_simpleAOfilter_cli()
@@ -92,6 +92,18 @@ int AOsystSim_run_cli()
     else
         return 1;
 }
+
+int AOsystSim_FPWFS_mkprobes_CLI()
+{
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,2)==0)
+    {
+        AOsystSim_FPWFS_mkprobes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 int AOsystSim_FPWFS_sensitivityAnalysis_cli()
 {
@@ -149,7 +161,16 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].example,"AOsystexaosim");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_extremeAO_contrast_sim()");
     data.NBcmd++;
-
+    
+    strcpy(data.cmd[data.NBcmd].key,"AOsystmkABprobes");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_FPWFS_mkprobes_CLI;
+    strcpy(data.cmd[data.NBcmd].info,"make AB probes for focal plane sensing and coherence measurement");
+    strcpy(data.cmd[data.NBcmd].syntax, "AOsystmkABprobes prA prB 50 50 0.7 0.1 0.7 0.1 1");
+    strcpy(data.cmd[data.NBcmd].example,"AOsystmkABprobes");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom)");
+    data.NBcmd++;
+ 
     strcpy(data.cmd[data.NBcmd].key,"AOsystFPWFSan");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOsystSim_FPWFS_sensitivityAnalysis_cli;
@@ -2107,6 +2128,209 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
 
 
 
+
+
+// modegeom:
+// 
+// last digit
+// 0  : horizontal
+// 1  : vertical 
+// 2  : quadrants #1
+// 3  : quadrants #2
+//
+//
+//
+//
+int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom)
+{
+    long IDdmA, IDdmB;
+    double CPAstep = 0.1;
+    double x, y, r;
+    double CPAx, CPAy, CPAr;
+    double CPAxmin, CPAxmax;
+    double CPAymin, CPAymax;
+    long dmsize;
+    long ii, jj;
+    double rms;
+    long ID;
+    long imsize;
+    double pha;
+    
+    IDdmA = create_2Dimage_ID(IDprobeA_name, dmxsize, dmysize);
+    IDdmB = create_2Dimage_ID(IDprobeB_name, dmxsize, dmysize);
+    
+    switch (modegeom) {
+    case 0 :    // mode 1: horizontal
+        CPAxmin = 0.5;
+        CPAxmax = CPAmax;
+        CPAymin = -CPAmax;
+        CPAymax = CPAmax;
+        break;
+    case 1 : // mode 2: vertical
+        CPAxmin = -CPAmax;
+        CPAxmax = CPAmax;
+        CPAymin = 0.5;
+        CPAymax = CPAmax;
+        break;
+    case 2 : // quadrants #1
+        CPAxmin = 0.5;
+        CPAxmax = CPAmax;
+        CPAymin = 0.5;
+        CPAymax = CPAmax;
+        break;
+    case 3 : // quadrants #1
+        CPAxmin = 0.5;
+        CPAxmax = CPAmax;
+        CPAymin = -0.5;
+        CPAymax = -CPAmax;
+        break;
+    default :
+        printf("ERROR: mode not supported\n");
+        exit(0);
+        break;
+    }
+
+    dmsize = dmxsize;
+    if(dmysize>dmxsize)
+        dmsize = dmysize;
+
+    for(CPAx=CPAxmin; CPAx<CPAmax; CPAx += CPAstep)
+        for(CPAy=CPAymin;CPAy<CPAymax; CPAy += CPAstep)
+            {
+                CPAr = sqrt(CPAx*CPAx+CPAy*CPAy);
+                if((CPAr>CPArmin)&&(CPAr<CPArmax))
+                    {
+                        pha = 1.7*CPAx;
+                        for(ii=0;ii<dmxsize;ii++)
+                            for(jj=0;jj<dmysize;jj++)
+                                {
+                                    x = 2.0*(1.0*ii-0.5*dmxsize)/dmsize;
+                                    y = 2.0*(1.0*jj-0.5*dmysize)/dmsize;
+                                    data.image[IDdmA].array.F[jj*dmxsize+ii] += cos(M_PI*(x*CPAx+y*CPAy)+pha);
+                                    data.image[IDdmB].array.F[jj*dmxsize+ii] += cos(M_PI*(x*CPAx+y*CPAy)+M_PI/2+pha);
+                                }
+                    }
+            }
+
+    rms = 0.0;
+    for(ii=0;ii<dmxsize*dmysize;ii++)
+        rms += data.image[IDdmA].array.F[ii]*data.image[IDdmA].array.F[ii];
+    rms = sqrt(rms/(dmxsize*dmysize));
+    
+    for(ii=0;ii<dmxsize*dmysize;ii++)
+        {
+            data.image[IDdmA].array.F[ii] *= RMSampl/rms;
+            data.image[IDdmB].array.F[ii] *= RMSampl/rms;
+        }
+    
+    
+    // TEST
+    imsize = 5*dmsize;
+    ID = make_disk("pupa", imsize, imsize, 0.5*imsize, 0.5*imsize, 0.45*dmsize);
+    for(ii=0;ii<imsize;ii++)
+        for(jj=0;jj<imsize;jj++)
+        {
+            x = (1.0*ii-0.5*imsize)/(0.45*dmsize);
+            y = (1.0*jj-0.5*imsize)/(0.45*dmsize);
+            r = sqrt(x*x+y*y);
+            data.image[ID].array.F[jj*imsize+ii] *= 1.0; //exp(-r*r*4.0);
+            if(r<0.3)
+                data.image[ID].array.F[jj*imsize+ii] = 0.0;
+        }
+    ID = create_2Dimage_ID("pupp", imsize, imsize);
+    for(ii=0;ii<dmxsize;ii++)
+        for(jj=0;jj<dmysize;jj++)
+            data.image[ID].array.F[(jj+(imsize-dmysize)/2)*imsize+(ii+(imsize-dmxsize)/2)] = data.image[IDdmA].array.F[jj*dmxsize+ii];
+    
+    mk_complex_from_amph("pupa", "pupp", "pupc", 0);
+    permut("pupc");
+    do2dfft("pupc","focc");
+    permut("focc");
+    mk_amph_from_complex("focc","foca","focp", 0);
+    save_fits("pupa", "!test_pupa.fits");
+    save_fits("pupp", "!test_pupp_A.fits");
+    save_fits("foca", "!test_foca_A.fits");
+    delete_image_ID("pupc");
+    delete_image_ID("focc");
+    delete_image_ID("foca");
+    delete_image_ID("focp");
+ 
+    
+    
+   ID = image_ID("pupp");
+    for(ii=0;ii<dmxsize;ii++)
+        for(jj=0;jj<dmysize;jj++)
+            data.image[ID].array.F[(jj+(imsize-dmysize)/2)*imsize+(ii+(imsize-dmxsize)/2)] = data.image[IDdmB].array.F[jj*dmxsize+ii];
+       mk_complex_from_amph("pupa", "pupp", "pupc", 0);
+    permut("pupc");
+    do2dfft("pupc","focc");
+    permut("focc");
+    mk_amph_from_complex("focc","foca","focp", 0);
+    save_fits("pupp", "!test_pupp_B.fits");
+    save_fits("foca", "!test_foca_B.fits");
+    delete_image_ID("pupc");
+    delete_image_ID("focc");
+    delete_image_ID("foca");
+    delete_image_ID("focp");
+ 
+
+  ID = image_ID("pupp");
+    for(ii=0;ii<dmxsize;ii++)
+        for(jj=0;jj<dmysize;jj++)
+            data.image[ID].array.F[(jj+(imsize-dmysize)/2)*imsize+(ii+(imsize-dmxsize)/2)] = -data.image[IDdmA].array.F[jj*dmxsize+ii];
+       mk_complex_from_amph("pupa", "pupp", "pupc", 0);
+    permut("pupc");
+    do2dfft("pupc","focc");
+    permut("focc");
+    mk_amph_from_complex("focc","foca","focp", 0);
+    save_fits("pupp", "!test_pupp_mA.fits");
+    save_fits("foca", "!test_foca_mA.fits");
+    delete_image_ID("pupc");
+    delete_image_ID("focc");
+    delete_image_ID("foca");
+    delete_image_ID("focp");
+ 
+ 
+  ID = image_ID("pupp");
+    for(ii=0;ii<dmxsize;ii++)
+        for(jj=0;jj<dmysize;jj++)
+            data.image[ID].array.F[(jj+(imsize-dmysize)/2)*imsize+(ii+(imsize-dmxsize)/2)] = -data.image[IDdmB].array.F[jj*dmxsize+ii];
+       mk_complex_from_amph("pupa", "pupp", "pupc", 0);
+    permut("pupc");
+    do2dfft("pupc","focc");
+    permut("focc");
+    mk_amph_from_complex("focc","foca","focp", 0);
+    save_fits("pupp", "!test_pupp_mB.fits");
+    save_fits("foca", "!test_foca_mB.fits");
+    delete_image_ID("pupc");
+    delete_image_ID("focc");
+    delete_image_ID("foca");
+    delete_image_ID("focp");
+
+   
+   
+ 
+    ID = image_ID("pupp");
+    for(ii=0;ii<dmxsize;ii++)
+        for(jj=0;jj<dmysize;jj++)
+            data.image[ID].array.F[(jj+(imsize-dmysize)/2)*imsize+(ii+(imsize-dmxsize)/2)] = 0.0;
+    mk_complex_from_amph("pupa", "pupp", "pupc", 0);
+    permut("pupc");
+    do2dfft("pupc","focc");
+    permut("focc");
+    mk_amph_from_complex("focc","foca","focp", 0);
+    save_fits("pupp", "!test_pupp_00.fits");
+    save_fits("foca", "!test_foca_00.fits");
+    delete_image_ID("pupc");
+    delete_image_ID("focc");
+    delete_image_ID("foca");
+    delete_image_ID("focp");
+
+   
+   
+    
+    return(0);
+}
 
 
 //

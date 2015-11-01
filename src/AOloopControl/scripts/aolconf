@@ -695,17 +695,17 @@ function initDM {
     tmux new-session -d -s $tmuxname
     tmux send-keys -t $tmuxname "$execnameLOG" C-m
 if [ "$dmvoltmode" = "1" ]; then 
-    tmux send-keys -t $tmuxname "#readshmim dmvolt" C-m
+    tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
 fi
 if [ "$dm2dm_mode" = "1" ]; then
-    tmux send-keys -t $tmuxname "#readshmim ${dm2dmM}" C-m
-    tmux send-keys -t $tmuxname "#readshmim ${dm2dmO}" C-m
+    tmux send-keys -t $tmuxname "readshmim ${dm2dmM}" C-m
+    tmux send-keys -t $tmuxname "readshmim ${dm2dmO}" C-m
 fi
 if [ "${dmwfsrefmode}" = "1" ]; then
-    tmux send-keys -t $tmuxname "#readshmim ${dmwrefRM}" C-m
-    tmux send-keys -t $tmuxname "#readshmim ${dmwrefO}" C-m
+    tmux send-keys -t $tmuxname "readshmim ${dmwrefRM}" C-m
+    tmux send-keys -t $tmuxname "readshmim ${dmwrefO}" C-m
 fi
-    tmux send-keys -t $tmuxname "#aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
+    tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
 
@@ -2010,18 +2010,21 @@ exec 3>&1;
 rmamplum=$(dialog --inputbox "RM amplitude [um]" 0 0 "$rmamplum" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmamplum" > ./conf/conf_RMamplum.txt
+AOlog "RM amplitude $rmamplum um"
 ;;
 	rmdelay)
 exec 3>&1;
 rmdelays=$(dialog --inputbox "RM time delay [s]" 0 0 "$rmdelays" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmdelays" > ./conf/conf_RMdelays.txt
+AOlog "RM time delay $rmdelays sec"
 ;;
 	rmnbfr)
 exec 3>&1;
 rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmfrave" > ./conf/conf_RMfrave.txt
+AOlog "RM NB frame average $rmfrave frames"
 ;;
 
 
@@ -2078,6 +2081,7 @@ zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave} ${WFSnorm}" C-m
+AOlog "Start RM amplitude $rmamplum um, time delay $rmdelays sec, NB frame average $rmfrave frames"
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm
@@ -2155,6 +2159,7 @@ ReadConfFile "wfsmap"
 ReadConfFile "dmmap"
 ReadConfFile "wfsmask"
 ReadConfFile "dmmask"
+AOlog "Stop RM"
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
@@ -2936,9 +2941,13 @@ menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 
 menuitems+=( "gball" "Set all block to same gain")
-menuitems+=( "gball1" "Custom gain set 1 (alpha = 1)")
-menuitems+=( "gball2" "Custom gain set 2 (alpha = 2)")
-menuitems+=( "gball3" "Custom gain set 3 (alpha = 0.5)")
+menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
+menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
+menuitems+=( "gball04" "Custom gain set 04 (alpha = 0.4)")
+menuitems+=( "gball08" "Custom gain set 08 (alpha = 0.8)")
+menuitems+=( "gball12" "Custom gain set 12 (alpha = 1.2)")
+menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
+menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
 
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
@@ -3040,7 +3049,7 @@ echo "0" > ./conf/conf_GPU.txt
 menucontrolloop_default="GPUon"
 ;;
 
-
+ 
 	GPUaon)
 echo "1" > ./conf/conf_GPUall.txt
 menucontrolloop_default="GPUaoff"
@@ -3113,6 +3122,7 @@ menucontrolloop_default="S"
 ;;
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
+customfunction_startloop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 AOlog "loop on"
 #echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
@@ -3120,6 +3130,7 @@ menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
+customfunction_stoploop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 AOlog "loop off"
 #echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
@@ -3171,7 +3182,7 @@ AOlog "zeroing loop"
 	 AOlog "mult coeff ${loopmultcoeff}"
      	 ;;  
 
-	 gball)
+	 gball) 
 	 value=${gainallb}
 	 SelectValue01 100 1200 50 
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -3186,18 +3197,95 @@ AOlog "zeroing loop"
 	 AOlog "set all gains to ${value}"
 	 ;;
 	 
-    gball1)
+    gball01)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2))}' )
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**0.1)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 AOlog "set all gains to custom set 1 (alpha = 1)"
+	 AOlog "set all gains to custom set 01 (alpha = 0.1)"
 	 ;;
+   gball02)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**0.2)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to custom set 02 (alpha = 0.2)"
+	 ;;
+   gball04)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**0.4)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to custom set 04 (alpha = 0.4)"
+	 ;;
+   gball08)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**0.8)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to custom set 08 (alpha = 0.8)"
+	 ;;
+   gball12)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**1.2)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to custom set 12 (alpha = 1.2)"
+	 ;;
+   gball16)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**1.6)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to custom set 16 (alpha = 1.6)"
+	 ;;
+   gball20)
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)**2.0)}' )
+	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+	 AOlog "set all gains to custom set 20 (alpha = 2.0)"
+	 ;;
+
+
+
+
+
 
     gball2)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -4106,11 +4194,13 @@ NBframes="$1"
 	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 $1 imWFS0rec " C-m	
 	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/rec_${datestr}_imWFS0rec.fits\"" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
 	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_DMmodes" C-m
 	tmux send-keys -t $tmuxname "rm outcoeff" C-m
-	tmux send-keys -t $tmuxname "aolsig2mcoeff imWFS0rec aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_respM outcoeff" C-m
+	tmux send-keys -t $tmuxname "aolsig2mcoeff imWFS0rec aol${LOOPNUMBER}_wfsref aol${LOOPNUMBER}_respM outcoeff" C-m
 	tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_wfsref0 \"./rec/rec_${datestr}_aol${LOOPNUMBER}_wfsref0.fits\"" C-m
+	tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_wfsref \"./rec/rec_${datestr}_aol${LOOPNUMBER}_wfsref.fits\"" C-m
     tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_respM \"./rec/rec_${datestr}_aol${LOOPNUMBER}_respM.fits\"" C-m
     tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_DMmodes \"./rec/rec_${datestr}_aol${LOOPNUMBER}_DMmodes.fits\"" C-m
     tmux send-keys -t $tmuxname "savefits outcoeff \"./rec/rec_${datestr}_mcoeffs.fits\"" C-m
