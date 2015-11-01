@@ -3335,9 +3335,11 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
             while(imcnt<NbAve)
             {
                 
-                printf("HERE\n");
-                fflush(stdout);
+                /*printf("HERE\n");
+                fflush(stdout);*/
                 usleep(50); // OK FOR NOW (not using single buffer in fast WFS)
+                
+                
                 if(data.image[aoconfID_wfsim].md[0].write == 0)
                 {
                     if(AOconf[loop].WFScnt!=data.image[aoconfID_wfsim].md[0].cnt0)
@@ -7613,8 +7615,8 @@ int AOcompute(long loop, int normalize)
 //    else
 //        PIXSTREAM_SLICE = 1 + slice;
 
-    printf("slice = %d  ->  %d\n", slice, PIXSTREAM_SLICE);
-    fflush(stdout);
+//    printf("slice = %d  ->  %d\n", slice, PIXSTREAM_SLICE);
+//    fflush(stdout);
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
     clock_gettime(CLOCK_REALTIME, &tnow);
