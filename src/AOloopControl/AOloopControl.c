@@ -3421,6 +3421,16 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
     }
     
     
+    
+ 
+    if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
+        {
+            PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
+        }
+
+    
+    
+    
 //    data.image[aoconfID_looptiming].md[0].wtime = tnow; 
   
     // THIS IS THE STARTING POINT FOR THE LOOP
@@ -3578,6 +3588,8 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
  //   printf("----------- alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
   //  fflush(stdout);
 
+ 
+ 
  
  
     if(COMPUTE_GPU_SCALING==0)  // normalize WFS image by totalinv
