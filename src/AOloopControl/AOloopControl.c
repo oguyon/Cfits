@@ -3423,10 +3423,9 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
     
     
  
-    if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
-        {
-            PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
-        }
+ //   if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
+    PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
+    
 
     
     
