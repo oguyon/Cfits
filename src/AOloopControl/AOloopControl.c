@@ -6025,15 +6025,18 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
                 data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+act] = 1.0;
             }
             save_fits("RMpokeCube", "!RMpokeCube.fits");
+    
+        NBpoke = data.image[IDpokeC].md[0].size[2];
     }
-    NBpoke = data.image[IDpokeC].md[0].size[2];
-
+    else
+        NBpoke = AOconf[loop].sizeDM;
 
 
 
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
     sizearray[2] = NBpoke; //AOconf[loop].sizeDM;
+
     ID_WFSmap = create_image_ID(WFSmap_name, 2, sizearray, FLOAT, 1, 5);
     ID_WFSref0 = create_image_ID("tmpwfsref0", 2, sizearray, FLOAT, 1, 5);
     ID_WFSref0n = create_image_ID(WFSref0_name, 2, sizearray, FLOAT, 1, 5);
