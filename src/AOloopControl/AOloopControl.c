@@ -9808,7 +9808,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     for(k=0;k<NBprobes;k++)
     {
         for(act=0;act<dmsize;act++)
-            data.image[IDdmC].array.F[k*dmsize+act] = coeffA[k]*data.image[IDprobeA].array.F[act] + coeffA[k]*data.image[IDprobeB].array.F[act];
+            data.image[IDdmC].array.F[k*dmsize+act] = coeffA[k]*data.image[IDprobeA].array.F[act] + coeffB[k]*data.image[IDprobeB].array.F[act];
 
         for(wfselem=0;wfselem<wfssize;wfselem++)
             for(act=0;act<dmsize;act++)
