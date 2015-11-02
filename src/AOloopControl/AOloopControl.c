@@ -218,9 +218,9 @@ FILE *loadcreateshm_fplog;
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
-//
+// 5: string 
 
 
 int AOloopControl_makeTemplateAOloopconf_cli()
@@ -713,27 +713,28 @@ int AOloopControl_setparam_cli()
 }
 
 
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string, not existing image
+// 4: existing image
+// 5: string 
 
 
-
-
-
-
-
-
-
-/*
-int AOloopControl_Measure_WFScam_PeriodicError_cli()
+int AOloopControl_DMmodulateAB_cli()
 {
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)==0)
     {
-      AOloopControl_Measure_WFScam_PeriodicError(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
-      return 0;
+        AOloopControl_DMmodulateAB(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl);
+        return 0;
     }
-  else
-    return 1;
+    else
+        return 1;
 }
-*/
+
+
 
 
 
@@ -1210,20 +1211,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aolset");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setparam(long loop, char *key, double value)");
     data.NBcmd++;
-
-
-
-
-    /*
-      strcpy(data.cmd[data.NBcmd].key,"aolacqwfscampe");
-      strcpy(data.cmd[data.NBcmd].module,__FILE__);
-      data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFScam_PeriodicError_cli;
-      strcpy(data.cmd[data.NBcmd].info,"acquire WFS camera periodic error");
-      strcpy(data.cmd[data.NBcmd].syntax,"<nbframes [long]> <nb pha [long]> <outcube>");
-      strcpy(data.cmd[data.NBcmd].example,"aolacqwfscampe 10000 100 wfscampe");
-      strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name)");
-      data.NBcmd++;
-    */
+    
+    strcpy(data.cmd[data.NBcmd].key,"aoldmmodAB");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DMmodulateAB_cli;
+    strcpy(data.cmd[data.NBcmd].info,"module DM with linear combination of probes A and B");
+    strcpy(data.cmd[data.NBcmd].syntax,"<probeA> <probeB> <dmstream> <WFS resp mat> <WFS ref stream> <delay [sec]> <NB probes>");
+    strcpy(data.cmd[data.NBcmd].example,"aoldmmodAB probeA probeB wfsrespmat wfsref 0.1 6");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes)");
+    data.NBcmd++;
+    
 
 
     // add atexit functions here
@@ -3724,34 +3721,6 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
 
 
 
-long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname)
-{
-    long ID;
-    long IDtmp;
-    long ii, jj;
-    double x, y;
-    long size = AOconf[loop].sizexDM;
-    long m;
-    float rpix;
-    long size2;
-
-    size2 = size*size;
-    rpix = 0.5*size;
-
-    ID = create_3Dimage_ID_float(IDname, size, size, NBmodes);
-
-    for(m=0; m<NBmodes; m++)
-    {
-        IDtmp = mk_zer("zertmp", size, m+1, rpix);
-        for(ii=0; ii<size2; ii++)
-            data.image[ID].array.F[size2*m+ii] = data.image[IDtmp].array.F[ii];
-        delete_image_ID("zertmp");
-    }
-
-    return(ID);
-}
-
-
 
 
 
@@ -4686,7 +4655,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].logfnb = 0;
         strcpy(AOconf[loop].userLOGstring, "");
     */
-    // AOconf[loop].ID_DMmodes = AOloopControl_MakeDMModes(loop, 5, name);
+    
 
     printf("%ld modes\n", AOconf[loop].NBDMmodes);
 
@@ -6855,7 +6824,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
 //
 // Create zero point channels
 // watch semaphore 1 on output (IDwfsref_name) -> sum all channels to update WFS zero point
-// runs in separate process
+// runs in separate process from RT computation
 //
 int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)
 {
@@ -9749,11 +9718,170 @@ int AOloopControl_OptimizePSF_LO(char *psfstream_name, char *IDmodes_name, char 
         }
     
     
+    return(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ======================== FOCAL PLANE SPECKLE MODULATION / CONTROL ===========================
+
+
+//
+// modulate using linear combination of two probes A and B
+//
+//
+// delay is in sec
+//
+int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes)
+{
+    long IDprobeA;
+    long IDprobeB;
+    long dmxsize, dmysize;
+    long dmsize;
+    long IDdmstream;
+    
+    long IDrespmat;
+    long IDwfsrefstream;
+    long wfsxsize, wfsysize;
+    long wfssize;
+    
+    long IDdmC;
+    long IDwfsrefC;
+    
+    float *coeffA;
+    float *coeffB;
+    int k;
+    long act, wfselem;
+    
+    char *ptr0;
+    FILE *fp;
+    char flogname[200];
+    
+    long dmframesize, wfsframesize;
+    char timestr[200];
+      time_t t;
+    struct tm *uttime;
+     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    
+    IDprobeA = image_ID(IDprobeA_name);
+    dmxsize = data.image[IDprobeA].md[0].size[0];
+    dmysize = data.image[IDprobeA].md[0].size[1];
+    dmsize = dmxsize*dmysize;
+    
+    IDprobeB = image_ID(IDprobeB_name);
+    IDdmstream = image_ID(IDdmstream_name);
+    IDrespmat = image_ID(IDrespmat_name);
+    IDwfsrefstream = image_ID(IDwfsrefstream_name);
+    wfsxsize = data.image[IDwfsrefstream].md[0].size[0];
+    wfsysize = data.image[IDwfsrefstream].md[0].size[1];
+    wfssize = wfsxsize*wfsysize;
+    
+    coeffA = (float*) malloc(sizeof(float)*NBprobes);
+    coeffB = (float*) malloc(sizeof(float)*NBprobes);
+    
+    IDdmC = create_3Dimage_ID("MODdmC", dmxsize, dmysize, NBprobes);
+    IDwfsrefC = create_3Dimage_ID("WFSrefC", wfsxsize, wfsysize, NBprobes);
+    
+    coeffA[0] = 0.0;
+    coeffB[0] = 0.0;
+    for(k=1;k<NBprobes;k++)
+        {
+            coeffA[k] = cos(2.0*M_PI*(k-1)/(NBprobes-1));
+            coeffB[k] = sin(2.0*M_PI*(k-1)/(NBprobes-1));
+        }
     
     
+    // prepare MODdmC and WFSrefC
+    for(k=0;k<NBprobes;k++)
+    {
+        for(act=0;act<dmsize;act++)
+            data.image[IDdmC].array.F[k*dmsize+act] = coeffA[k]*data.image[IDprobeA].array.F[act] + coeffA[k]*data.image[IDprobeB].array.F[act];
+
+        for(wfselem=0;wfselem<wfssize;wfselem++)
+            for(act=0;act<dmsize;act++)
+                data.image[IDwfsrefC].array.F[k*wfssize+act] += data.image[IDdmC].array.F[k*dmsize+act]*data.image[IDrespmat].array.F[act*wfssize+wfselem];
+    }
+    
+    save_fl_fits("MODdmC", "!test_MODdmC.fits");
+    save_fl_fits("WFSrefC", "!test_WFSrefC.fits");
+    
+    uttime = gmtime(&t);
+    sprintf(flogname, "logfpwfs_%04d%02d%02d_%02d:%02d:%02d.txt", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec);
+    if((fp=fopen(flogname,"w"))==NULL)
+    {
+        printf("ERROR: cannot create file \"%s\"\n", flogname);
+        exit(0);
+    }
+    fclose(fp);
+    
+    
+    dmframesize = sizeof(float)*dmsize;
+    wfsframesize = sizeof(float)*wfssize;    
+    if(0)
+    {
+    
+    k = 0;
+    while(1)
+    {
+        // apply probe
+        ptr0 = (char*) data.image[IDdmC].array.F;
+        ptr0 += k*dmframesize;
+        data.image[IDdmstream].md[0].write = 1;
+        memcpy(data.image[IDdmstream].array.F, (void*) ptr0, dmframesize);
+        sem_post(data.image[IDdmstream].semptr[0]);
+        data.image[IDdmstream].md[0].cnt0++;
+        data.image[IDdmstream].md[0].write = 0;
+        
+        
+        // apply wfsref offset
+        ptr0 = (char*) data.image[IDwfsrefC].array.F;
+        ptr0 += k*wfsframesize;
+        data.image[IDwfsrefstream].md[0].write = 1;
+        memcpy(data.image[IDwfsrefstream].array.F, (void*) ptr0, wfsframesize);
+        sem_post(data.image[IDwfsrefstream].semptr[0]);
+        data.image[IDwfsrefstream].md[0].cnt0++;
+        data.image[IDwfsrefstream].md[0].write = 0;
+       
+        // write time in log
+        uttime = gmtime(&t);
+        clock_gettime(CLOCK_REALTIME, thetime);
+        sprintf(timestr, "%02d %02d %02d.%09ld", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+        if((fp = fopen(flogname, "a"))==NULL)
+        {
+            printf("ERROR: cannot open file \"%s\"\n", flogname);
+            exit(0);
+        }
+        fprintf(fp, "%s %2d %10f %10f\n", timestr, k, coeffA[k], coeffB[k]);
+        fclose(fp);
+        
+        usleep((long) (1.0e6*delay));
+        k++;
+        if(k==NBprobes)
+            k = 0;
+    }
+    
+    
+}
+    
+    free(coeffA);
+    free(coeffB);
     
     return(0);
 }
+
 
 
 

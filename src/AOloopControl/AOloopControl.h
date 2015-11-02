@@ -136,7 +136,7 @@ int AOloopControl_InitializeMemory();
 void *compute_function_imtotal( void *ptr );
 void *compute_function_dark_subtract( void *ptr );
 int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelStreamMode);
-long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
+//long AOloopControl_MakeDMModes(long loop, long NBmodes, char *IDname);
 int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC);
 long AOloopControl_loadCM(long loop, char *CMfname);
 
@@ -209,5 +209,7 @@ int AOloopControl_setparam(long loop, char *key, double value);
 int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name); // OBSOLETE
 int AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha); // OBSOLETE
 
+
+int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes);
 
 #endif

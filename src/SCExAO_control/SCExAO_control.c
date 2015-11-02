@@ -909,7 +909,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     float xave, yave;
     FILE *fp;
     long delayus = 1000000;
-
+  
 
     IDwfs = image_ID(IDwfsname);
     size = data.image[IDwfs].md[0].size[0];

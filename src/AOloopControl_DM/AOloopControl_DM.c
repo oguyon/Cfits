@@ -493,7 +493,9 @@ int AOloopControl_DM_unloadconf()
 //
 // DMindex is a unique DM identifier (0-9), so multiple instances can coexist
 //
-// voltmode = 1 if DM volt computed
+// xsize, ysize is DM pixel size
+//
+// NBchannel : number of channels. All channels co-added
 //
 // AveMode: averaging mode 
 //      0: do not appy DC offset command to average, but offset combined average to mid-range, and clip displacement at >0.0
@@ -504,6 +506,24 @@ int AOloopControl_DM_unloadconf()
 // NOTE: responds immediately to sem[1] in dmdisp
 // dmdisp files have 5 semaphores
 //
+// dm2dm_mode: 1 if this DM controls an output DM
+// 
+// dm2dm_DMmodes: data cube containting linear relationship between current DM and the output DM it controls
+//
+// dm2dm_outdisp: data stream to which output DM is written
+//
+// wfsrefmode: 1 if offset to WFS reference
+//
+// wfsref_WFSRespMat: response matrix of output loop
+//
+// wfsref_out : output wfsreference
+//
+// voltmode = 1 if DM volt computed
+// 
+// IDvolt_name : name of DM volt stream
+//
+// maxvolt: maximum volt for DM volt
+// 
 int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float maxvolt)
 {
     long naxis = 2;
