@@ -4273,6 +4273,42 @@ else
 menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn" )
 fi
 
+if [ "${logdmdisp3stat}" = "0" ];
+then
+menuitems+=( "ldmdisp31" "START logging dm${DMindex}disp3" )
+else
+menuitems+=( "ldmdisp30" "\Z1\ZrSTOP logging dm${DMindex}disp3\Zn" )
+fi
+
+
+if [ "${logdmdisp5stat}" = "0" ];
+then
+menuitems+=( "ldmdisp51" "START logging dm${DMindex}disp5" )
+else
+menuitems+=( "ldmdisp50" "\Z1\ZrSTOP logging dm${DMindex}disp5\Zn" )
+fi
+
+
+if [ "${logdmdisp6stat}" = "0" ];
+then
+menuitems+=( "ldmdisp61" "START logging dm${DMindex}disp6" )
+else
+menuitems+=( "ldmdisp60" "\Z1\ZrSTOP logging dm${DMindex}disp6\Zn" )
+fi
+
+
+if [ "${logdmdisp7stat}" = "0" ];
+then
+menuitems+=( "ldmdisp71" "START logging dm${DMindex}disp7" )
+else
+menuitems+=( "ldmdisp70" "\Z1\ZrSTOP logging dm${DMindex}disp7\Zn" )
+fi
+
+
+
+
+
+
 
 menuitems+=( " " " " )
 
@@ -4326,6 +4362,8 @@ tmux send-keys -t $tmuxname "logshimoff $wfsimcam" C-m
 echo "0" > ./status/stat_logwfsim.txt
 menurecord_default="lwfsim1"
 ;;
+
+
     ldmdisp1)
 logdmdispstat=1
 echo "1" > ./status/stat_logdmdisp.txt
@@ -4347,9 +4385,88 @@ echo "0" > ./status/stat_logdmdisp.txt
 tmuxname="dmlog"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp" C-m
-echo "0" > ./status/stat_logwfsim.txt
+echo "0" > ./status/stat_logdmdisp.txt
 menurecord_default="ldmdisp1"
 ;;
+
+    ldmdisp31)
+logdmdisp3stat=1
+echo "1" > ./status/stat_logdmdisp3.txt
+tmuxnameC="dmdisp3logC"
+echo "1" > ./status/stat_logdmdisp3.txt
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+mkdir -p $savedir/$datestr/dmdisp3/
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp3 100000 $savedir/$datestr/dmdisp3/" C-m
+tmuxname="dmdisp3log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp3" C-m
+menurecord_default="ldmdisp30"
+;;
+    ldmdisp30)
+logdmdisp3stat=0
+echo "0" > ./status/stat_logdmdisp3.txt
+tmuxname="dmdisp3log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp3" C-m
+echo "0" > ./status/stat_logdmdisp3.txt
+menurecord_default="ldmdisp31"
+;;
+
+
+    ldmdisp61)
+logdmdisp6stat=1
+echo "1" > ./status/stat_logdmdisp6.txt
+tmuxnameC="dmdisp6logC"
+echo "1" > ./status/stat_logdmdisp6.txt
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+mkdir -p $savedir/$datestr/dmdisp6/
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp6 100000 $savedir/$datestr/dmdisp6/" C-m
+tmuxname="dmdisp6log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp6" C-m
+menurecord_default="ldmdisp60"
+;;
+    ldmdisp60)
+logdmdisp6stat=0
+echo "0" > ./status/stat_logdmdisp6.txt
+tmuxname="dmdisp6log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp6" C-m
+echo "0" > ./status/stat_logdmdisp6.txt
+menurecord_default="ldmdisp61"
+;;
+
+
+    ldmdisp71)
+logdmdisp7stat=1
+echo "1" > ./status/stat_logdmdisp7.txt
+tmuxnameC="dmdisp7logC"
+echo "1" > ./status/stat_logdmdisp7.txt
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+mkdir -p $savedir/$datestr/dmdisp7/
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp7 100000 $savedir/$datestr/dmdisp6/" C-m
+tmuxname="dmdisp7log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp7" C-m
+menurecord_default="ldmdisp70"
+;;
+    ldmdisp70)
+logdmdisp7stat=0
+echo "0" > ./status/stat_logdmdisp6.txt
+tmuxname="dmdisp6log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp7" C-m
+echo "0" > ./status/stat_logdmdisp7.txt
+menurecord_default="ldmdisp71"
+;;
+
+
     rins) 
 mkdir -p recinst
 tmuxname="aol${LOOPNUMBER}-ctr"
