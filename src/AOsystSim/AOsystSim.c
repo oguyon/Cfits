@@ -2200,7 +2200,7 @@ int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxs
                 CPAr = sqrt(CPAx*CPAx+CPAy*CPAy);
                 if((CPAr>CPArmin)&&(CPAr<CPArmax))
                     {
-                        pha = 1.7*CPAx;
+                        pha = 1.6*CPAx;
                         for(ii=0;ii<dmxsize;ii++)
                             for(jj=0;jj<dmysize;jj++)
                                 {
