@@ -9919,7 +9919,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     }
     
     data.image[IDdmstream].md[0].write = 1;
-    for(ii=0;ii<dmframesize;ii++)
+    for(ii=0;ii<dmsize;ii++)
         data.image[IDdmstream].array.F[ii] = 0.0;
     sem_post(data.image[IDdmstream].semptr[0]);
     data.image[IDdmstream].md[0].cnt0++;
@@ -9927,15 +9927,13 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
  
     
     data.image[IDwfsrefstream].md[0].write = 1;
-    for(ii=0;ii<wfsframesize;ii++)
+    for(ii=0;ii<wfssize;ii++)
         data.image[IDwfsrefstream].array.F[ii] = 0.0;
     sem_post(data.image[IDwfsrefstream].semptr[0]);
     data.image[IDwfsrefstream].md[0].cnt0++;
     data.image[IDwfsrefstream].md[0].write = 0;
- 
 
     
-
     
     free(coeffA);
     free(coeffB);
