@@ -4638,7 +4638,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp7/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp7 100 $savedir/$datestr/dmdisp6/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp7 100 $savedir/$datestr/dmdisp7/" C-m
 tmuxname="dmdisp7log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp7" C-m
@@ -4646,7 +4646,7 @@ menurecord_default="ldmdisp70"
 ;;
     ldmdisp70)
 logdmdisp7stat=0
-echo "0" > ./status/stat_logdmdisp6.txt
+echo "0" > ./status/stat_logdmdisp7.txt
 tmuxname="dmdisp6log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp7" C-m
