@@ -9850,10 +9850,10 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
-    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+ /*   if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
         perror("sigaction");
         exit(EXIT_FAILURE);
-    }
+    }*/
     if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
         perror("sigaction");
         exit(EXIT_FAILURE);
@@ -9871,6 +9871,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     
     k = 0;
     loopOK = 1;
+    
     while(loopOK == 1)
     {
         printf("Applying probe # %d   %ld %ld\n", k, IDdmstream, IDwfsrefstream);
@@ -9915,7 +9916,6 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
                         
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
-        
     }
     
     data.image[IDdmstream].md[0].write = 1;
