@@ -9830,8 +9830,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     
     dmframesize = sizeof(float)*dmsize;
     wfsframesize = sizeof(float)*wfssize;    
-    if(0)
-    {
+ 
     
     k = 0;
     while(1)
@@ -9874,7 +9873,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     }
     
     
-}
+
     
     free(coeffA);
     free(coeffB);
