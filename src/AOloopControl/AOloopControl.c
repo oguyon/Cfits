@@ -9821,7 +9821,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     save_fl_fits("WFSrefC", "!test_WFSrefC.fits");
     
     uttime = gmtime(&t);
-    sprintf(flogname, "logfpwfs_%04d%02d%02d_%02d:%02d:%02d.txt", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec);
+    sprintf(flogname, "logfpwfs_%04d-%02d-%02d_%02d:%02d:%02d.txt", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec);
     if((fp=fopen(flogname,"w"))==NULL)
     {
         printf("ERROR: cannot create file \"%s\"\n", flogname);
