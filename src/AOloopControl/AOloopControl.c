@@ -9835,21 +9835,28 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     k = 0;
     while(1)
     {
+        printf("Applying probe # %d\n", k);
+        fflush(stdout);
+
         // apply probe
-        ptr0 = (char*) data.image[IDdmC].array.F;
-        ptr0 += k*dmframesize;
+ //       ptr0 = (char*) data.image[IDdmC].array.F;
+ //       ptr0 += k*dmframesize;
         data.image[IDdmstream].md[0].write = 1;
-        memcpy(data.image[IDdmstream].array.F, (void*) ptr0, dmframesize);
+        for(ii=0;ii<dmsize;ii++)
+            data.image[IDdmstream].array.F[ii] = data.image[IDdmC].array.F[k*dmsize+ii];
+//        memcpy(data.image[IDdmstream].array.F, (void*) ptr0, dmframesize);
         sem_post(data.image[IDdmstream].semptr[0]);
         data.image[IDdmstream].md[0].cnt0++;
         data.image[IDdmstream].md[0].write = 0;
         
         
         // apply wfsref offset
-        ptr0 = (char*) data.image[IDwfsrefC].array.F;
-        ptr0 += k*wfsframesize;
+//        ptr0 = (char*) data.image[IDwfsrefC].array.F;
+//        ptr0 += k*wfsframesize;
         data.image[IDwfsrefstream].md[0].write = 1;
-        memcpy(data.image[IDwfsrefstream].array.F, (void*) ptr0, wfsframesize);
+        for(ii=0;ii<dmsize;ii++)
+            data.image[IDwfsrefstream].array.F[ii] = data.image[IDwfsrefC].array.F[k*dmsize+ii];
+//        memcpy(data.image[IDwfsrefstream].array.F, (void*) ptr0, wfsframesize);
         sem_post(data.image[IDwfsrefstream].semptr[0]);
         data.image[IDwfsrefstream].md[0].cnt0++;
         data.image[IDwfsrefstream].md[0].write = 0;
