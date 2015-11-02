@@ -9836,8 +9836,42 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
  
     list_image_ID();
     
+    
+    
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+    
+    
     k = 0;
-    while(1)
+    loopOK = 1;
+    while(loopOK == 1)
     {
         printf("Applying probe # %d   %ld %ld\n", k, IDdmstream, IDwfsrefstream);
         fflush(stdout);
@@ -9878,8 +9912,29 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         k++;
         if(k==NBprobes)
             k = 0;
+                        
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            loopOK = 0;
+        
     }
     
+    data.image[IDdmstream].md[0].write = 1;
+    for(ii=0;ii<dmframesize;ii++)
+        data.image[IDdmstream].array.F[ii] = 0.0;
+    sem_post(data.image[IDdmstream].semptr[0]);
+    data.image[IDdmstream].md[0].cnt0++;
+    data.image[IDdmstream].md[0].write = 0;
+ 
+    
+    data.image[IDwfsrefstream].md[0].write = 1;
+    or(ii=0;ii<wfsframesize;ii++)
+        data.image[IDwfsrefstream].array.F[ii] = 0.0;
+    sem_post(data.image[IDwfsrefstream].semptr[0]);
+    data.image[IDwfsrefstream].md[0].cnt0++;
+    data.image[IDwfsrefstream].md[0].write = 0;
+ 
+    
+    for(ii=0;ii<dmframesize;ii++
     
 
     
