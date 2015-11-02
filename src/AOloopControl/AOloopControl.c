@@ -9820,6 +9820,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     save_fl_fits("MODdmC", "!test_MODdmC.fits");
     save_fl_fits("WFSrefC", "!test_WFSrefC.fits");
     
+    t = time(NULL);
     uttime = gmtime(&t);
     sprintf(flogname, "logfpwfs_%04d-%02d-%02d_%02d:%02d:%02d.txt", 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday, uttime->tm_hour, uttime->tm_min, uttime->tm_sec);
     if((fp=fopen(flogname,"w"))==NULL)
@@ -9860,6 +9861,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         data.image[IDwfsrefstream].md[0].write = 0;
       
         // write time in log
+        t = time(NULL);
         uttime = gmtime(&t);
         clock_gettime(CLOCK_REALTIME, thetime);
         sprintf(timestr, "%02d %02d %02d.%09ld", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
