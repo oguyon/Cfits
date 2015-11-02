@@ -9933,8 +9933,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     data.image[IDwfsrefstream].md[0].cnt0++;
     data.image[IDwfsrefstream].md[0].write = 0;
  
-    
-    for(ii=0;ii<dmframesize;ii++
+
     
 
     
