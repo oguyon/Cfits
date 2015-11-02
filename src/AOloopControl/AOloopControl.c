@@ -9812,7 +9812,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
 
         for(wfselem=0;wfselem<wfssize;wfselem++)
             for(act=0;act<dmsize;act++)
-                data.image[IDwfsrefC].array.F[k*wfssize+act] += data.image[IDdmC].array.F[k*dmsize+act]*data.image[IDrespmat].array.F[act*wfssize+wfselem];
+                data.image[IDwfsrefC].array.F[k*wfssize+wfselem] += data.image[IDdmC].array.F[k*dmsize+act]*data.image[IDrespmat].array.F[act*wfssize+wfselem];
     }
     
     save_fl_fits("MODdmC", "!test_MODdmC.fits");
