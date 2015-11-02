@@ -9774,7 +9774,9 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     char timestr[200];
       time_t t;
     struct tm *uttime;
-     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    long ii;
+    
     
     IDprobeA = image_ID(IDprobeA_name);
     dmxsize = data.image[IDprobeA].md[0].size[0];
