@@ -9769,7 +9769,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     char *ptr0;
     FILE *fp;
     char flogname[200];
-    
+    int loopOK;
     long dmframesize, wfsframesize;
     char timestr[200];
       time_t t;
@@ -9927,7 +9927,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
  
     
     data.image[IDwfsrefstream].md[0].write = 1;
-    or(ii=0;ii<wfsframesize;ii++)
+    for(ii=0;ii<wfsframesize;ii++)
         data.image[IDwfsrefstream].array.F[ii] = 0.0;
     sem_post(data.image[IDwfsrefstream].semptr[0]);
     data.image[IDwfsrefstream].md[0].cnt0++;
