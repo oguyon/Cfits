@@ -9845,8 +9845,6 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         ptr0 = (char*) data.image[IDdmC].array.F;
         ptr0 += k*dmframesize;
         data.image[IDdmstream].md[0].write = 1;
- //       for(ii=0;ii<dmsize;ii++)
-   //         data.image[IDdmstream].array.F[ii] = data.image[IDdmC].array.F[k*dmsize+ii];
         memcpy(data.image[IDdmstream].array.F, (void*) ptr0, dmframesize);
         sem_post(data.image[IDdmstream].semptr[0]);
         data.image[IDdmstream].md[0].cnt0++;
@@ -9856,8 +9854,6 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         ptr0 = (char*) data.image[IDwfsrefC].array.F;
         ptr0 += k*wfsframesize;
         data.image[IDwfsrefstream].md[0].write = 1;
-//        for(ii=0;ii<dmsize;ii++)
-//            data.image[IDwfsrefstream].array.F[ii] = data.image[IDwfsrefC].array.F[k*dmsize+ii];
         memcpy(data.image[IDwfsrefstream].array.F, (void*) ptr0, wfsframesize);
         sem_post(data.image[IDwfsrefstream].semptr[0]);
         data.image[IDwfsrefstream].md[0].cnt0++;
@@ -9867,6 +9863,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         uttime = gmtime(&t);
         clock_gettime(CLOCK_REALTIME, thetime);
         sprintf(timestr, "%02d %02d %02d.%09ld", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+        printf("time = %s\n", timestr);
         if((fp = fopen(flogname, "a"))==NULL)
         {
             printf("ERROR: cannot open file \"%s\"\n", flogname);
