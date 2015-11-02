@@ -9833,11 +9833,12 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     dmframesize = sizeof(float)*dmsize;
     wfsframesize = sizeof(float)*wfssize;    
  
+    list_image_ID();
     
     k = 0;
     while(1)
     {
-        printf("Applying probe # %d\n", k);
+        printf("Applying probe # %d   %ld %ld\n", k, IDdmstream, IDwfsrefstream);
         fflush(stdout);
 
         // apply probe
@@ -9864,7 +9865,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         data.image[IDwfsrefstream].md[0].write = 0;
        
         // write time in log
-        uttime = gmtime(&t);
+      /*  uttime = gmtime(&t);
         clock_gettime(CLOCK_REALTIME, thetime);
         sprintf(timestr, "%02d %02d %02d.%09ld", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
         if((fp = fopen(flogname, "a"))==NULL)
@@ -9874,7 +9875,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         }
         fprintf(fp, "%s %2d %10f %10f\n", timestr, k, coeffA[k], coeffB[k]);
         fclose(fp);
-        
+       */ 
         usleep((long) (1.0e6*delay));
         k++;
         if(k==NBprobes)
