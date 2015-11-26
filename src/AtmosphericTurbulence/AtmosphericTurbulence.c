@@ -4,7 +4,27 @@
 #include <malloc.h>
 #include <ctype.h>
 #include <math.h>
+
+
+#ifdef __MACH__
+#include <mach/mach_time.h>
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+int clock_gettime(int clk_id, struct timespec *t){
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    uint64_t time;
+    time = mach_absolute_time();
+    double nseconds = ((double)time * (double)timebase.numer)/((double)timebase.denom);
+    double seconds = ((double)time * (double)timebase.numer)/((double)timebase.denom * 1e9);
+    t->tv_sec = seconds;
+    t->tv_nsec = nseconds;
+    return 0;
+}
+#else
 #include <time.h>
+#endif
+
 
 
 #include "CLIcore.h"
@@ -100,6 +120,13 @@ int make_AtmosphericTurbulence_wavefront_series_cli()
 }
 
 
+int make_AtmosphericTurbulence_vonKarmanWind_cli()
+{
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
+        make_AtmosphericTurbulence_vonKarmanWind(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string);
+    else
+        return 1;
+}   
 
 
 int AtmosphericTurbulence_mkmastert_cli()
@@ -115,9 +142,9 @@ int AtmosphericTurbulence_mkmastert_cli()
 
 int AtmosphericTurbulence_makeHV_CN2prof_cli()
 {
-  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)==0)
+  if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
     {
-      AtmosphericTurbulence_makeHV_CN2prof(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.string);
+      AtmosphericTurbulence_makeHV_CN2prof(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string);
     }
   else
     return 1;
@@ -145,6 +172,18 @@ int init_AtmosphericTurbulence()
   data.NBcmd++;
 
 
+    strcpy(data.cmd[data.NBcmd].key,"mkvonKarmanWind");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = make_AtmosphericTurbulence_vonKarmanWind_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make vonKarman wind model");
+  strcpy(data.cmd[data.NBcmd].syntax,"<pixscale [m/pix]> <sigma windspeed [m/s]> <scale [m]> <size [long]> <output name>");
+  strcpy(data.cmd[data.NBcmd].example,"mkvonKarmanWind 0.1 20.0 50.0 512 vKmodel");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long make_AtmosphericTurbulence_vonKarmanWind(float pixscale, float sigmawind, float Lwind, long size, char *IDout_name)");
+  data.NBcmd++;
+
+ 
+
+
   strcpy(data.cmd[data.NBcmd].key,"mkmastert");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AtmosphericTurbulence_mkmastert_cli;
@@ -159,9 +198,9 @@ int init_AtmosphericTurbulence()
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = AtmosphericTurbulence_makeHV_CN2prof_cli;
   strcpy(data.cmd[data.NBcmd].info,"make Hufnager-Valley turbulence profile");
-  strcpy(data.cmd[data.NBcmd].syntax,"<high wind speed [m/s]> <r0 [m]> <site alt [m]> <output file>");
-  strcpy(data.cmd[data.NBcmd].example,"mkHVturbprof 21.0 0.15 4200 turbHV.prof");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, char *outfile)");
+  strcpy(data.cmd[data.NBcmd].syntax,"<high wind speed [m/s]> <r0 [m]> <site alt [m]> <NBlayers> <output file>");
+  strcpy(data.cmd[data.NBcmd].example,"mkHVturbprof 21.0 0.15 4200 100 turbHV.prof");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile)");
   data.NBcmd++;
 
 
@@ -195,8 +234,159 @@ int AtmosphericTurbulence_change_configuration_file(char *fname)
 
 
 
+
+
+
+//
+// pixscale [m/pix]
+// sigmawind [m/s]
+// Lwind [m]
+//
+long make_AtmosphericTurbulence_vonKarmanWind(float pixscale, float sigmawind, float Lwind, long size, char *IDout_name)
+{
+    long ID, IDc;
+    long ii, jj;
+    double dx, dy, r;
+    double Lwindpix;
+    double rms = 0.0;
+    
+    double sigmau, sigmav, sigmaw;
+    
+    IDc = create_3Dimage_ID(IDout_name, size, size, 3);
+    sigmau = sigmawind;
+    sigmav = sigmawind;
+    sigmaw = sigmawind;
+    
+    // longitudinal (u)
+    make_rnd("tmppha0",size,size,"");
+    arith_image_cstmult("tmppha0", 2.0*PI,"tmppha");
+    delete_image_ID("tmppha0");
+  
+    ID = create_2Dimage_ID("tmpamp0", size, size);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            dx = 1.0*ii-size/2;
+            dy = 1.0*jj-size/2;
+            r = sqrt(dx*dx + dy*dy);            
+            data.image[ID].array.F[jj*size+ii] = sqrt( 1.0/pow(1.0 + pow(1.339*2.0*M_PI*r/(size*pixscale)*Lwind,2.0), 5.0/6.0) );
+        }
+    make_rnd("tmpg",size,size,"-gauss");
+    arith_image_mult("tmpg", "tmpamp0", "tmpamp");
+    delete_image_ID("tmpamp0");
+    delete_image_ID("tmpg");
+    arith_set_pixel("tmpamp", 0.0, size/2, size/2);
+    mk_complex_from_amph("tmpamp", "tmppha", "tmpc", 0);
+    delete_image_ID("tmpamp");
+    delete_image_ID("tmppha");
+    permut("tmpc");
+    do2dfft("tmpc","tmpcf");
+    delete_image_ID("tmpc");
+    mk_reim_from_complex("tmpcf", "tmpo1", "tmpo2", 0);
+    delete_image_ID("tmpcf");
+    delete_image_ID("tmpo2");
+    ID = image_ID("tmpo1");
+    rms = 0.0;
+    for(ii=0; ii<size*size; ii++)
+        rms += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+    rms = sqrt(rms/(size*size));
+    
+    for(ii=0; ii<size*size; ii++)
+        data.image[IDc].array.F[ii] = data.image[ID].array.F[ii]/rms*sigmau;
+    delete_image_ID("tmpo1");
+
+  
+     // tangential (v)
+    make_rnd("tmppha0",size,size,"");
+    arith_image_cstmult("tmppha0", 2.0*PI,"tmppha");
+    delete_image_ID("tmppha0");
+  
+    ID = create_2Dimage_ID("tmpamp0", size, size);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            dx = 1.0*ii-size/2;
+            dy = 1.0*jj-size/2;
+            r = sqrt(dx*dx + dy*dy);            
+            data.image[ID].array.F[jj*size+ii] = sqrt( (1.0 + 8.0/3.0*pow(2.678*2.0*M_PI*r/(size*pixscale)*Lwind,2.0)) /pow(1.0 + pow(2.678*2.0*M_PI*r/(size*pixscale)*Lwind,2.0), 11.0/6.0) );
+        }
+    make_rnd("tmpg",size,size,"-gauss");
+    arith_image_mult("tmpg", "tmpamp0", "tmpamp");
+    delete_image_ID("tmpamp0");
+    delete_image_ID("tmpg");
+    arith_set_pixel("tmpamp", 0.0, size/2, size/2);
+    mk_complex_from_amph("tmpamp", "tmppha", "tmpc", 0);
+    delete_image_ID("tmpamp");
+    delete_image_ID("tmppha");
+    permut("tmpc");
+    do2dfft("tmpc","tmpcf");
+    delete_image_ID("tmpc");
+    mk_reim_from_complex("tmpcf", "tmpo1", "tmpo2", 0);
+    delete_image_ID("tmpcf");
+    delete_image_ID("tmpo2");
+    ID = image_ID("tmpo1");
+    rms = 0.0;
+    for(ii=0; ii<size*size; ii++)
+        rms += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+    rms = sqrt(rms/(size*size));
+    
+    for(ii=0; ii<size*size; ii++)
+        data.image[IDc].array.F[size*size+ii] = data.image[ID].array.F[ii]/rms*sigmav;
+    delete_image_ID("tmpo1");
+      
+      
+      
+      
+    // vertical (w)
+    make_rnd("tmppha0",size,size,"");
+    arith_image_cstmult("tmppha0", 2.0*PI,"tmppha");
+    delete_image_ID("tmppha0");
+  
+    ID = create_2Dimage_ID("tmpamp0", size, size);
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            dx = 1.0*ii-size/2;
+            dy = 1.0*jj-size/2;
+            r = sqrt(dx*dx + dy*dy);            
+            data.image[ID].array.F[jj*size+ii] = sqrt( (1.0 + 8.0/3.0*pow(2.678*2.0*M_PI*r/(size*pixscale)*Lwind,2.0)) /pow(1.0 + pow(2.678*2.0*M_PI*r/(size*pixscale)*Lwind,2.0), 11.0/6.0) );
+        }
+    make_rnd("tmpg",size,size,"-gauss");
+    arith_image_mult("tmpg", "tmpamp0", "tmpamp");
+    delete_image_ID("tmpamp0");
+    delete_image_ID("tmpg");
+    arith_set_pixel("tmpamp", 0.0, size/2, size/2);
+    mk_complex_from_amph("tmpamp", "tmppha", "tmpc", 0);
+    delete_image_ID("tmpamp");
+    delete_image_ID("tmppha");
+    permut("tmpc");
+    do2dfft("tmpc","tmpcf");
+    delete_image_ID("tmpc");
+    mk_reim_from_complex("tmpcf", "tmpo1", "tmpo2", 0);
+    delete_image_ID("tmpcf");
+    delete_image_ID("tmpo2");
+    ID = image_ID("tmpo1");
+    rms = 0.0;
+    for(ii=0; ii<size*size; ii++)
+        rms += data.image[ID].array.F[ii]*data.image[ID].array.F[ii];
+    rms = sqrt(rms/(size*size));
+    
+    for(ii=0; ii<size*size; ii++)
+        data.image[IDc].array.F[size*size*2+ii] = data.image[ID].array.F[ii]/rms*sigmav;
+    delete_image_ID("tmpo1");
+
+    
+    
+    
+    return(IDc);
+}
+
+
+
+
 //
 // innerscale and outerscale in pixel
+// von Karman spectrum
 //
 int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outerscale, float innerscale)
 {
@@ -231,10 +421,10 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, flo
     }
 
     OUTERscale_f0 = 1.0*size/outerscale; // [1/pix] in F plane
-    INNERscale_f0 = 1.0*size/innerscale;
+    INNERscale_f0 = (5.92/(2.0*M_PI))*size/innerscale;
 
     make_rnd("tmppha",size,size,"");
-    arith_image_cstmult("tmppha",2.0*PI,"tmppha1");
+    arith_image_cstmult("tmppha", 2.0*PI,"tmppha1");
     delete_image_ID("tmppha");
     //  make_dist("tmpd",size,size,size/2,size/2);
     ID = create_2Dimage_ID("tmpd",size,size);
@@ -269,7 +459,7 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, flo
             dx = 1.0*ii-size/2;
             dy = 1.0*jj-size/2;
             iscoeff = exp(-(dx*dx+dy*dy)/INNERscale_f0/INNERscale_f0);
-            data.image[ID].array.F[jj*size+ii] *= iscoeff;
+            data.image[ID].array.F[jj*size+ii] *= sqrt(iscoeff); // power -> amplitude : sqrt 
         }
 
     arith_image_cstpow("tmpd", 11.0/6.0, "tmpd1");
@@ -666,12 +856,15 @@ int make_AtmosphericTurbulence_wavefront_series()
     char line[2000];
     char word[200];
     char fname[200];
+    char name[200];
     float *LAYER_ALT;
     float *LAYER_CN2;
     float *LAYER_SPD;
     float *LAYER_DIR;
     float *LAYER_OUTERSCALE;
     float *LAYER_INNERSCALE;
+    float *LAYER_SIGMAWSPEED;
+    float *LAYER_LWIND;
     int stop;
 
     long *naxes;
@@ -688,7 +881,7 @@ int make_AtmosphericTurbulence_wavefront_series()
     long vindex;
     long frame;
     long NBFRAMES;
-    float fl1, fl2, fl3, fl4, fl5, fl6;
+    float fl1, fl2, fl3, fl4, fl5, fl6, fl7, fl8;
     long ii, jj, iim, jjm, ii1, jj1;
     float value;
     float coeff=0.0;
@@ -769,6 +962,11 @@ int make_AtmosphericTurbulence_wavefront_series()
     double plim = 0.0;
     double pcoeff2 = 0.15;
     long chcnt0cnt = 0;
+
+
+    long WSPEEDsize;
+    double WSPEEDpixscale;
+
 
 
     naxes = (long*) malloc(sizeof(long)*3);
@@ -1022,6 +1220,8 @@ int make_AtmosphericTurbulence_wavefront_series()
     naxes[0]=atol(CONTENT);
     naxes[1]=atol(CONTENT);
 
+    
+
     //  pfactor = naxes[0]/WFsize;
     pfactor = 1;
     contraction_factor = 4;
@@ -1148,7 +1348,7 @@ int make_AtmosphericTurbulence_wavefront_series()
 
 
     strcpy(KEYWORD,"MASTER_SIZE");
-    read_config_parameter(CONFFILE,KEYWORD,CONTENT);
+    read_config_parameter(CONFFILE, KEYWORD,CONTENT);
     MASTER_SIZE = atol(CONTENT);
     naxes_MASTER[0] = MASTER_SIZE;
     naxes_MASTER[1] = MASTER_SIZE;
@@ -1157,7 +1357,7 @@ int make_AtmosphericTurbulence_wavefront_series()
     stop=1;
     while(stop)
     {
-        sprintf(fname,"t%ld_%ld",master,MASTER_SIZE);
+        sprintf(fname,"t%ld_%ld",master, MASTER_SIZE);
         if(!file_exists(fname))
         {
             stop=0;
@@ -1194,6 +1394,9 @@ int make_AtmosphericTurbulence_wavefront_series()
     LAYER_DIR = (float*) malloc(NBLAYERS*sizeof(float));
     LAYER_OUTERSCALE = (float*) malloc(NBLAYERS*sizeof(float));
     LAYER_INNERSCALE = (float*) malloc(NBLAYERS*sizeof(float));
+    LAYER_SIGMAWSPEED = (float*) malloc(NBLAYERS*sizeof(float));    
+    LAYER_LWIND = (float*) malloc(NBLAYERS*sizeof(float));
+    
     if((fp=fopen(CONTENT,"r"))==NULL)
     {
         printf("Cannot open turbulence profile file \"%s\"\n",CONTENT);
@@ -1205,7 +1408,7 @@ int make_AtmosphericTurbulence_wavefront_series()
         sscanf(line,"%s",word);
         if(isdigit(word[0]))
         {
-            sscanf(line,"%f %f %f %f %f %f", &fl1, &fl2, &fl3, &fl4, &fl5, &fl6);
+            sscanf(line,"%f %f %f %f %f %f %f %f", &fl1, &fl2, &fl3, &fl4, &fl5, &fl6, &fl7, &fl8);
             if(fl1>SiteAlt-0.1)
             {
                 LAYER_ALT[layer] = fl1;
@@ -1214,6 +1417,8 @@ int make_AtmosphericTurbulence_wavefront_series()
                 LAYER_DIR[layer] = fl4;
                 LAYER_OUTERSCALE[layer] = fl5;
                 LAYER_INNERSCALE[layer] = fl6;
+                LAYER_SIGMAWSPEED[layer] = fl7;
+                LAYER_LWIND[layer] = fl8;
                 layer+=1;
             }
         }
@@ -1241,8 +1446,12 @@ int make_AtmosphericTurbulence_wavefront_series()
 
     for(layer=0; layer<NBLAYERS; layer++)
     {
-        printf("Turbulence layer %ld : alt = %f m   CN2 = %f   V = %f m/s   Angle = %f rad   outerscale = %f m    innerscale = %f m\n",layer,LAYER_ALT[layer],LAYER_CN2[layer],LAYER_SPD[layer],LAYER_DIR[layer], LAYER_OUTERSCALE[layer], LAYER_INNERSCALE[layer]);
+        printf("Turbulence layer %ld : alt = %f m   CN2 = %f   V = %f m/s   Angle = %f rad   outerscale = %f m    innerscale = %f m  sigmaWind = %f m/s  Lwind = %f m\n",layer,LAYER_ALT[layer],LAYER_CN2[layer],LAYER_SPD[layer],LAYER_DIR[layer], LAYER_OUTERSCALE[layer], LAYER_INNERSCALE[layer], LAYER_SIGMAWSPEED[layer], LAYER_LWIND[layer]);
     }
+
+
+    
+
 
     SLAYER_ALT = (float*) malloc(NBLAYERS*sizeof(float));
     SLAYER_CN2 = (float*) malloc(NBLAYERS*sizeof(float));
@@ -1620,12 +1829,24 @@ int make_AtmosphericTurbulence_wavefront_series()
             }
         }
     }
-    printf("Start TSPAN = %ld\n",start_tspan);
+    printf("Start TSPAN = %ld\n", start_tspan);
 
 
-
-
-
+    WSPEEDsize = naxes[0];
+    WSPEEDpixscale = PUPIL_SCALE;
+    for(layer=0; layer<NBLAYERS; layer++)
+    {
+        sprintf(fname, "wspeed_%03ld.fits", layer);
+        sprintf(name, "wspeed_%03ld", layer);
+        ID = load_fits(fname, name, 1);
+        if(ID==-1)
+        {
+            make_AtmosphericTurbulence_vonKarmanWind(WSPEEDpixscale, LAYER_SIGMAWSPEED[layer], LAYER_LWIND[layer], WSPEEDsize, name);
+            sprintf(fname, "!wspeed_%03ld.fits", layer);
+            save_fits(name, fname);
+        }
+    }
+exit(0);
     vindex = 0;
 
 
@@ -1770,11 +1991,14 @@ int make_AtmosphericTurbulence_wavefront_series()
                     xpos[layer] = xpos0[layer] + vxpix[layer]*tnowdouble + 1.0*xposfcnt[layer]*naxes_MASTER[0];
                     ypos[layer] = ypos0[layer] + vypix[layer]*tnowdouble + 1.0*yposfcnt[layer]*naxes_MASTER[0];
                 }
-                else
+                else // non real time
                 {
-                    xpos[layer] += vxpix[layer]*TIME_STEP;// + vpix*cos(PA);
-                    ypos[layer] += vypix[layer]*TIME_STEP;// + vpix*sin(PA);
+                    
+                    xpos[layer] += vxpix[layer]*TIME_STEP;
+                    ypos[layer] += vypix[layer]*TIME_STEP;
                 }
+
+
 
                 xref = (long) (xpos[layer]);
                 yref = (long) (ypos[layer]);
@@ -2526,6 +2750,8 @@ int make_AtmosphericTurbulence_wavefront_series()
     free(LAYER_DIR);
     free(LAYER_OUTERSCALE);
     free(LAYER_INNERSCALE);
+    free(LAYER_SIGMAWSPEED);
+    free(LAYER_LWIND);
     free(ID_TM);
     free(ID_TML);
 
@@ -4110,7 +4336,7 @@ int AtmosphericTurbulence_WFprocess()
 }
 
 
-int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, char *outfile)
+int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile)
 {
     FILE *fp;
     double h;
@@ -4124,13 +4350,14 @@ int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double siteal
     long iter;
     double Astep;
     long k;
-    
-    long NBlayer = 10;
+    double l0, L0;
     double *layerarray_h;
     double *layerarray_CN2frac;
+    double *layerarray_Wspeed;
+    double *layerarray_sigmaWindSpeed;
+    double *layerarray_Lwind;
     
-    
-    hmax = 20000.0;
+    hmax = 30000.0;
     hstep = 1.0;
     A0 = 1.7e-14;
 
@@ -4162,7 +4389,10 @@ int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double siteal
 
     layerarray_h = (double*) malloc(sizeof(double)*NBlayer);
     layerarray_CN2frac = (double*) malloc(sizeof(double)*NBlayer);
-
+    layerarray_Wspeed = (double*) malloc(sizeof(double)*NBlayer);
+    layerarray_sigmaWindSpeed = (double*) malloc(sizeof(double)*NBlayer);
+    layerarray_Lwind = (double*) malloc(sizeof(double)*NBlayer);
+    
     for(k=0;k<NBlayer;k++)
         {
             layerarray_h[k] = sitealt + pow(1.0*k/(NBlayer-1), 2.0)*(hmax-sitealt);
@@ -4178,18 +4408,33 @@ int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double siteal
         }
     
     fp = fopen(outfile, "w");
-    fprintf(fp, "# altitude(m)   relativeCN2     speed(m/s)      direction(rad)   outerscale[m]	innerscale[m]\n");
+    fprintf(fp, "# altitude(m)   relativeCN2     speed(m/s)   direction(rad) outerscale[m] innerscale[m] sigmaWsp[m/s] Lwind[m]\n");
     fprintf(fp, "\n");
     for(k=0;k<NBlayer;k++)
         {
             layerarray_CN2frac[k] /= CN2sum;
-            fprintf(fp, "%12f  %12f  %12f  %12f  %12f  %12f\n", layerarray_h[k], layerarray_CN2frac[k], wspeed*(0.3+0.8*sqrt(1.0*k/(1.0+NBlayer))), 2.0*M_PI*k/(1.0+NBlayer), 20.0, 0.01);
+            
+            l0 = 0.008 + 0.072*pow(layerarray_h[k]/20000.0,1.6);
+            
+            if(layerarray_h[k]<14000.0)
+                L0 = pow(10.0, 2.0 - 0.9*(layerarray_h[k]/14000.0) );
+            else
+                L0 = pow(10.0, 1.1 + 0.3*(layerarray_h[k]-14000.0)/6000.0);
+            
+            layerarray_Wspeed[k] = wspeed*(0.3+0.8*sqrt(1.0*k/(1.0+NBlayer)));
+            layerarray_sigmaWindSpeed[k] = 0.1*layerarray_Wspeed[k];
+            layerarray_Lwind[k] = 500.0;
+            
+            fprintf(fp, "%12f  %12f  %12f  %12f  %12f  %12f  %12f  %12f\n", layerarray_h[k], layerarray_CN2frac[k], layerarray_Wspeed[k], 2.0*M_PI*k/(1.0+NBlayer), L0, l0, layerarray_sigmaWindSpeed[k], layerarray_Lwind[k]);
         }
     fclose(fp);
     
     free(layerarray_h);
     free(layerarray_CN2frac);
-
+    free(layerarray_Wspeed);
+    free(layerarray_sigmaWindSpeed);
+    free(layerarray_Lwind);
+    
     return(0);
 }
 

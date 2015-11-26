@@ -2,8 +2,8 @@
 #include <string.h>
 #include <malloc.h>
 #include <math.h>
-#include <time.h>
 #include <stdlib.h>
+
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -1257,7 +1257,7 @@ long make_rnd(char *ID_name, long l1, long l2, char *options)
   naxes[0] = data.image[ID].md[0].size[0];
   naxes[1] = data.image[ID].md[0].size[1]; 
   nelement=naxes[0]*naxes[1];
-  /*  srand(time(NULL));*/
+ 
 
 
   // openMP is slow when calling gsl random number generator : do not use openMP here
@@ -1344,160 +1344,162 @@ int make_rnd1(char *ID_name, long l1, long l2, char *options)
 */
 long make_gauss(char *ID_name, long l1, long l2, double a, double A)
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
-  double distsq;
+    long ID;
+    long ii,jj;
+    long naxes[2];
+    double distsq;
 
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      { 
-	distsq = (ii-naxes[0]/2)*(ii-naxes[0]/2)+(jj-naxes[1]/2)*(jj-naxes[1]/2);
-	data.image[ID].array.F[jj*naxes[0]+ii] = (double) A*exp(-distsq/a/a);
-      } 
-  /*  printf("FWHM = %f\n",2.0*a*sqrt(log(2)));*/
-  return(ID);
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            distsq = (ii-naxes[0]/2)*(ii-naxes[0]/2)+(jj-naxes[1]/2)*(jj-naxes[1]/2);
+            data.image[ID].array.F[jj*naxes[0]+ii] = (double) A*exp(-distsq/a/a);
+        }
+    /*  printf("FWHM = %f\n",2.0*a*sqrt(log(2)));*/
+    return(ID);
 }
 
 long make_2axis_gauss(char *ID_name, long l1, long l2, double a, double A, double E, double PA)
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
-  double distsq;
-  double iin,jjn;
+    long ID;
+    long ii,jj;
+    long naxes[2];
+    double distsq;
+    double iin,jjn;
 
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  
-  for (jj = 0; jj < naxes[1]; jj++) 
-    for (ii = 0; ii < naxes[0]; ii++)
-      { 
-	iin=1.0*(ii-naxes[0]/2)*cos(PA)+1.0*(jj-naxes[1]/2)*sin(PA);
-	jjn=1.0*(jj-naxes[1]/2)*cos(PA)-1.0*(ii-naxes[0]/2)*sin(PA);
-	distsq = iin*iin+(1.0/(1.0+E))*jjn*jjn;
-	data.image[ID].array.F[jj*naxes[0]+ii] = (double) A*exp(-distsq/a/a);
-      } 
-  
-  return(ID);
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+        {
+            iin=1.0*(ii-naxes[0]/2)*cos(PA)+1.0*(jj-naxes[1]/2)*sin(PA);
+            jjn=1.0*(jj-naxes[1]/2)*cos(PA)-1.0*(ii-naxes[0]/2)*sin(PA);
+            distsq = iin*iin+(1.0/(1.0+E))*jjn*jjn;
+            data.image[ID].array.F[jj*naxes[0]+ii] = (double) A*exp(-distsq/a/a);
+        }
+
+    return(ID);
 }
 
 long make_cluster(char *ID_name, long l1, long l2, char *options)
 {
-  long ID;
-  long ii,jj;
-  long naxes[2];
-  long nb_star = 3000;
-  double cluster_size = 0.1; /* relative to the FOV */
-  double concentration = 1.0;
-  long i;
-  double tmp,dist,angle;
-  char input[50];
-  int str_pos;
-  int sim = 0;
-  long lii,ljj,hii,hjj;
+    long ID;
+    long ii,jj;
+    long naxes[2];
+    long nb_star = 3000;
+    double cluster_size = 0.1; /* relative to the FOV */
+    double concentration = 1.0;
+    long i;
+    double tmp,dist,angle;
+    char input[50];
+    int str_pos;
+    int sim = 0;
+    long lii,ljj,hii,hjj;
 
-  if (strstr(options,"-nbstars ")!=NULL)
+    if (strstr(options,"-nbstars ")!=NULL)
     {
-      str_pos=strstr(options,"-nbstars ")-options;
-      str_pos = str_pos + strlen("-nbstars ");
-      i=0;
-      while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
-	{
-	  input[i] = options[i+str_pos];
-	  i++;
-	}
-      input[i] = '\0';
-      nb_star = atol(input);
-      printf("number of stars is %ld\n",nb_star);
+        str_pos=strstr(options,"-nbstars ")-options;
+        str_pos = str_pos + strlen("-nbstars ");
+        i=0;
+        while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
+        {
+            input[i] = options[i+str_pos];
+            i++;
+        }
+        input[i] = '\0';
+        nb_star = atol(input);
+        printf("number of stars is %ld\n",nb_star);
     }
 
-  if (strstr(options,"-conc ")!=NULL)
+    if (strstr(options,"-conc ")!=NULL)
     {
-      str_pos=strstr(options,"-conc ")-options;
-      str_pos = str_pos + strlen("-conc ");
-      i=0;
-      while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
-	{
-	  input[i] = options[i+str_pos];
-	  i++;
-	}
-      input[i] = '\0';
-      concentration = atof(input);
-      printf("concentration is %f\n",concentration);
+        str_pos=strstr(options,"-conc ")-options;
+        str_pos = str_pos + strlen("-conc ");
+        i=0;
+        while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
+        {
+            input[i] = options[i+str_pos];
+            i++;
+        }
+        input[i] = '\0';
+        concentration = atof(input);
+        printf("concentration is %f\n",concentration);
     }
 
-  if (strstr(options,"-size ")!=NULL)
+    if (strstr(options,"-size ")!=NULL)
     {
-      str_pos=strstr(options,"-size ")-options;
-      str_pos = str_pos + strlen("-size ");
-      i=0;
-      while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
-	{
-	  input[i] = options[i+str_pos];
-	  i++;
-	}
-      input[i] = '\0';
-      cluster_size = atof(input);
-      printf("cluster size is %f\n",cluster_size);
+        str_pos=strstr(options,"-size ")-options;
+        str_pos = str_pos + strlen("-size ");
+        i=0;
+        while((options[i+str_pos]!=' ')&&(options[i+str_pos]!='\n')&&(options[i+str_pos]!='\0'))
+        {
+            input[i] = options[i+str_pos];
+            i++;
+        }
+        input[i] = '\0';
+        cluster_size = atof(input);
+        printf("cluster size is %f\n",cluster_size);
     }
 
     if(strstr(options,"-sim")!=NULL)
-      {
-	printf("all sources in the central half array \n");
-	sim = 1;
-      }
-
-  create_2Dimage_ID(ID_name,l1,l2);
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1]; 
-  
-  if (sim==0)
     {
-      lii = 0;
-      ljj = 0;
-      hii = naxes[0];
-      hjj = naxes[1];
-    }
-  else
-    {
-      lii = naxes[0]/4;
-      ljj = naxes[1]/4;
-      hii = 3*naxes[0]/4;
-      hjj = 3*naxes[1]/4;
+        printf("all sources in the central half array \n");
+        sim = 1;
     }
 
- // srand(time(NULL));  
-  i = 0;
-  while(i<nb_star)
-      { 
-	dist = gauss();
-	dist = sqrt(sqrt(dist*dist));
-	dist = pow(dist,concentration);
-	angle = 2*PI*ran1();
-	ii = (long) (naxes[0]/2+(cluster_size*naxes[0]/2)*dist*cos(angle));
-	jj = (long) (naxes[1]/2+(cluster_size*naxes[1]/2)*dist*sin(angle));
-	
-	if ((ii>lii)&&(jj>ljj)&&(ii<hii)&&(jj<hjj))
-	  {
-	    tmp = gauss();
-	    data.image[ID].array.F[jj*naxes[0]+ii] += tmp*tmp;
-	    i++;
-	  }
+    create_2Dimage_ID(ID_name,l1,l2);
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    if (sim==0)
+    {
+        lii = 0;
+        ljj = 0;
+        hii = naxes[0];
+        hjj = naxes[1];
+    }
+    else
+    {
+        lii = naxes[0]/4;
+        ljj = naxes[1]/4;
+        hii = 3*naxes[0]/4;
+        hjj = 3*naxes[1]/4;
+    }
+
+    i = 0;
+    while(i<nb_star)
+    {
+        dist = gauss();
+        dist = sqrt(sqrt(dist*dist));
+        dist = pow(dist,concentration);
+        angle = 2*PI*ran1();
+        ii = (long) (naxes[0]/2+(cluster_size*naxes[0]/2)*dist*cos(angle));
+        jj = (long) (naxes[1]/2+(cluster_size*naxes[1]/2)*dist*sin(angle));
+
+        if ((ii>lii)&&(jj>ljj)&&(ii<hii)&&(jj<hjj))
+        {
+            tmp = gauss();
+            data.image[ID].array.F[jj*naxes[0]+ii] += tmp*tmp;
+            i++;
+        }
 
 
-      } 
-  
-  return(ID);
+    }
+
+    return(ID);
 }
+
+
+
 
 long make_galaxy(char *ID_name, long l1, long l2, double S_radius, double S_L0, double S_ell, double S_PA, double E_radius, double E_L0, double E_ell, double E_PA)
 {

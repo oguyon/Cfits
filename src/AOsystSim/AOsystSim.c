@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 #include <math.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
@@ -45,7 +44,7 @@ long double Cflux = 1.0; // coherent flux, ph for CA unity circle
 long double probe_nmflux[100]; // measured flux (noisy)
 
 
-
+double tmpvalue1, tmpvalue2;
 
 
 
@@ -1875,6 +1874,8 @@ double f_eval (const gsl_vector *v, void *params)
         value += tmp1*tmp1;
     }
 
+    tmpvalue1 = value;
+    
    // penalize large (pte)
     value += pow(0.01*ptre_test*ptre_test, 4.0);
     // penalize large (ptim)
@@ -1884,23 +1885,27 @@ double f_eval (const gsl_vector *v, void *params)
     if(NBoptVar>4)
         {
             ai = are_test*are_test + aim_test*aim_test;
-            value += 0.01*pow((ai-1.0)*(ai-1.0), 8.0);
-        
+            value += 0.0001*pow((ai-1.0)*(ai-1.0), 4.0);
+
+            tmpvalue2 = value;
+            
             // penalize large (e-1)
-            value += 0.1*pow((e_test-1.0)*(e_test-1.0), 8.0);
+            value += 0.01*pow((e_test-1.0)*(e_test-1.0)*1.0, 8.0);
         }
    // printf("%lf %lf %lf    %lf %lf %lf   -> %g\n", (double) ptre_test, (double) ptim_test, (double) Iflux_test, (double) are_test, (double) aim_test, (double) e_test, value);
    // fflush(stdout);
    // usleep(100000);
     //exit(0);
-
+    
+   // value = tmpvalue1;// no regularization
+    
     return ((double) value);
 
 }
 
 
 
-long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp)
+long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux)
 {
     long size = 256;
     double puprad = 50.0;
@@ -1922,29 +1927,36 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
     long xsize, ysize, xmin, xmax, ymin, ymax;
 
     double tot1 = 0.0;
-    double totFlux = 1e12; // 1e12 // Total number of photon for all images combined
     double peak = 0.0;
 
     // define WFS probe area
     double CPAxmin, CPAxmax, CPAymin, CPAymax;
     double pixscaleld;
     long IDtmp;
+    char imname[200];
     char fname[200];
     double probeAmultcoeff = 1.0;
     double probeBmultcoeff = 1.0;
     double probeBphaseoffset = 0.0;
     
-
-
+    double dmactgain;
+    double dmgainerr = 0.1;
+    
+    
     printf("Creating images .... \n");
     fflush(stdout);
     
     IDpupa = make_subpixdisk("pupa", size, size, 0.5*size, 0.5*size, puprad);
    
-
+    
+    IDwf0 = image_ID("wf0");
+    if(IDwf0==-1)
+    {
     IDwf0 = create_2Dimage_ID("wf0", size, size);
     for(ii=0; ii<size*size; ii++)
         data.image[IDwf0].array.F[ii] = wferramp*(1.0-2.0*ran1());
+    save_fl_fits("wf0", "!wf0.fits");
+    }
 
 
     IDwfA = create_2Dimage_ID("wfA", size, size);
@@ -1978,6 +1990,15 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
                     data.image[IDwfA].array.F[jj*size+ii] += probeAmultcoeff*probeamp*CPAstep*CPAstep*cos(M_PI*(x*CPAx+y*CPAy));
                     data.image[IDwfB].array.F[jj*size+ii] += probeBmultcoeff*probeamp*CPAstep*CPAstep*cos(M_PI*(x*CPAx+y*CPAy)+probeBphaseoffset);
                 }
+        }
+    
+    // DM gain error
+    for(ii=0; ii<size; ii++)
+        for(jj=0; jj<size; jj++)
+        {
+            dmactgain = 1.0 + dmgainerr*(1.0-2.0*ran1());
+            data.image[IDwfA].array.F[jj*size+ii]*= dmactgain;
+            data.image[IDwfB].array.F[jj*size+ii]*= dmactgain;
         }
     
     
@@ -2120,6 +2141,20 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
                 data.image[ID1].array.F[pr*xsize*ysize+jj1*xsize+ii1] = data.image[ID].array.F[pr*xsize*ysize+jj1*xsize+ii1]/peak;
     save_fl_fits("psfCcropnC", "!psfCcropnC.fits");
 
+    for(pr=0;pr<NBprobesG;pr++)
+    {
+        sprintf(imname, "psfC_%03ld", pr);
+        ID = create_2Dimage_ID(imname, size, size);
+        for(ii=0;ii<size;ii++)
+            for(jj=0;jj<size;jj++)
+                {
+                    data.image[ID].array.F[jj*size+ii] = data.image[IDpsfC].array.F[pr*size*size+jj*size+ii]/peak;
+                }
+    
+    sprintf(fname, "!psfC_%03ld.fits", pr);
+    save_fl_fits(imname, fname);
+    }
+    
     printf("PSFs creation is complete\n");
     fflush(stdout);
 
@@ -2420,18 +2455,53 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     long avecnt;
     double ave;
     long ii, jj;
-    long kxtest = 10;
-    long kytest = 17;
+    long kxtest = 21;
+    long kytest = 11;
 
     long IDprobampC = -1;
 
+    long vID;
+    double probeampl;
+    double WFerr;
+    double contrast;
+    double totFlux;
 
 
     NBprobesG = NBprobes;
 
     if(imSimulMode == 1)
     {
-        IDpsfC = AOSystSim_FPWFS_imsimul(0.0001, 30.0, 30.0, 5.0e-18, 0.0);
+        probeampl = 0.0001;
+        if((vID=variable_ID("probeampl"))!=-1)
+            {
+                probeampl = data.variable[vID].value.f;
+                printf("probeamp = %f rad\n", probeampl);
+            }
+        
+        contrast = 5.0e-8;
+        if((vID=variable_ID("contrast"))!=-1)
+            {
+                contrast = data.variable[vID].value.f;
+                printf("contrast = %e\n", contrast);
+            }
+         
+        WFerr = 0.000;
+        if((vID=variable_ID("WFerr"))!=-1)
+            {
+                WFerr = data.variable[vID].value.f;
+                printf("WFerr = %f rad\n", WFerr);
+            }
+
+        totFlux= 1e12;
+        if((vID=variable_ID("totFlux"))!=-1)
+            {
+                totFlux = data.variable[vID].value.f;
+                printf("totFlux = %f ph\n", totFlux);
+            }
+       
+        sleep(1);
+         
+        IDpsfC = AOSystSim_FPWFS_imsimul(probeampl, 30.0, 30.0, contrast, WFerr, totFlux);
         IDprobampC = image_ID("psfprobeampC");
         save_fl_fits("psfC", "!psfC.fits");
         
@@ -2590,7 +2660,7 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
 
         if(execmode>0)
         {
-            if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+            if((mapmode==0)&&((kx==kxtest)&&(ky==kytest)))
                 for(pr=0; pr<NBprobes; pr++)
                     printf("PROBE %2d : %10lf %10lf\n", pr, (double) probe_re[pr], (double) probe_im[pr]);
 
@@ -2616,8 +2686,8 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
                         ptim = 0.0;
                     }
 
-                    if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
-                        printf("ptre, ptim = %f, %f\n", ptre, ptim);
+                    if((mapmode==0)||((kx==kxtest)&&(ky==kytest))||((kx==kxtest+1)&&(ky==kytest)))
+                        printf("\n\n ptre, ptim = %g, %g\n", ptre, ptim);
                     // compute flux
                     for(pr=0; pr<NBprobes; pr++)
                     {
@@ -2627,15 +2697,14 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
                         probe_mflux[pr] = Iflux + Cflux*(re*re+im*im);
 
 
-
                         // noisy measurements
                         re = nprobe_re[pr] - ptre;
                         im = nprobe_im[pr] - ptim;
                         probe_nmflux[pr] = fast_poisson((Iflux + Cflux*(re*re+im*im))*FLUXph/NBprobes)/(FLUXph/NBprobes);
-                        if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                        if((mapmode==0)&&(((kx==kxtest)&&(ky==kytest))||((kx==kxtest+1)&&(ky==kytest))))
                         {
-                            printf("  NO NOISE:  probe %3d  normalized flux = %8.5lf  (%g ph)\n", pr, (double) (probe_mflux[pr]/Cflux), (double) probe_mflux[pr]);
-                            printf("WITH NOISE:             normalized flux = %8.5lf  (%g ph)\n",     (double) (probe_nmflux[pr]/Cflux), (double) probe_nmflux[pr]);
+                            printf("M0    NO NOISE:  probe %3d  normalized flux = %8.5lf  (%g ph)\n", pr, (double) (probe_mflux[pr]/Cflux), (double) probe_mflux[pr]);
+                            printf("M0  WITH NOISE:             normalized flux = %8.5lf  (%g ph)\n",     (double) (probe_nmflux[pr]/Cflux), (double) probe_nmflux[pr]);
                             fflush(stdout);
                         }
 
@@ -2643,10 +2712,12 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
                         if(imSimulMode == 1)
                         {
                             probe_nmflux[pr] = data.image[IDpsfC].array.F[pr*mapxsize*mapysize+ky*mapxsize+kx] / data.image[IDprobampC].array.F[ky*mapxsize+kx]; // unit : normalized contrast
+                            if(((kx==kxtest)&&(ky==kytest))||((kx==kxtest+1)&&(ky==kytest)))
+                                printf("PROBE %d   -> %g\n", pr, (double) probe_nmflux[pr]);
                         }
                     }
 
-                    if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                    if((mapmode==0)&&((kx==kxtest)&&(ky==kytest))||((kx==kxtest+1)&&(ky==kytest)))
                         fflush(stdout);
 
                     // SOLVER
@@ -2694,7 +2765,7 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
                         //printf ("............[%05ld] ->  %e   (%e)\n", iter, s->fval, bestvalue);
                     if (status == GSL_SUCCESS)
                         {
-                            if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                            if(((kx==kxtest)&&(ky==kytest))||((kx==kxtest+1)&&(ky==kytest)))
                             {
                                 printf ("  ->  %e [%5ld]  (%e)", s->fval, iter, bestvalue);
                                 printf("\n");
@@ -2747,9 +2818,10 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
                         }
                     }
 
-                    if((mapmode==0)||(kx==kxtest)&&(ky==kytest))
+                    if((mapmode==0)||((kx==kxtest)&&(ky==kytest))||((kx==kxtest+1)&&(ky==kytest)))
                     {
-                        printf("OPTIMAL SOLUTION  [ %6ld / %6ld  %g ]: \n", iter, iterMax, optsize);
+                         printf("\n\n");
+                       printf("[%3ld %3ld] OPTIMAL SOLUTION  [ %6ld / %6ld  %g ]: \n", kx, ky, iter, iterMax, optsize);
                         printf("       ptre = %.18f\n", ptre_best);
                         printf("       ptim = %.18f\n", ptim_best);
                         printf("      Iflux = %.18f\n", Iflux_best);
@@ -2760,6 +2832,8 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
                             printf("        aim = %.18f\n", aim_best);
                             printf("          e = %.18f\n", e_best);
                         }
+                        printf("OPT VALUES :  %g  %g  %g\n", tmpvalue1, tmpvalue2, bestvalue);
+                        printf("\n\n");
                     }
 
 

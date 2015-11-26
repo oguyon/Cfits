@@ -8,7 +8,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <semaphore.h>
-#include <time.h>
 #include <fftw3.h>
 #include <gsl/gsl_rng.h>	// for random numbers
 #include <signal.h>

@@ -3,7 +3,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fftw3.h>
+
+
+#ifdef __MACH__
+#include <mach/mach_time.h>
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+int clock_gettime(int clk_id, struct timespec *t){
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    uint64_t time;
+    time = mach_absolute_time();
+    double nseconds = ((double)time * (double)timebase.numer)/((double)timebase.denom);
+    double seconds = ((double)time * (double)timebase.numer)/((double)timebase.denom * 1e9);
+    t->tv_sec = seconds;
+    t->tv_nsec = nseconds;
+    return 0;
+}
+#else
 #include <time.h>
+#endif
+
+
 
 //#ifdef _OPENMP
 # ifdef HAVE_LIBGOMP
@@ -73,6 +94,22 @@ int fft_permut_cli()
 }
 
 
+//int do2dfft(char *in_name, char *out_name);
+
+int fft_do2dfft_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+        do2dfft(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
 int test_fftspeed_cli()
 {
     if(CLI_checkarg(1,2)==0)
@@ -140,6 +177,17 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].example,"initfft");
     strcpy(data.cmd[data.NBcmd].Ccall,"int init_fftw_plans0()");
     data.NBcmd++;
+    
+    
+    strcpy(data.cmd[data.NBcmd].key,"dofft");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = fft_do2dfft_cli;
+    strcpy(data.cmd[data.NBcmd].info,"perform FFT");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
+    strcpy(data.cmd[data.NBcmd].example,"fofft in out");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int do2dfft(char *in_name, char *out_name)");
+    data.NBcmd++;
+   
 
     strcpy(data.cmd[data.NBcmd].key,"permut");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);

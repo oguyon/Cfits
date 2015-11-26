@@ -6,6 +6,7 @@ int init_AtmosphericTurbulence();
 
 int AtmosphericTurbulence_change_configuration_file(char *fname);
 
+long make_AtmosphericTurbulence_vonKarmanWind(float pixscale, float sigmawind, float Lwind, long size, char *IDout_name);
 
 int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outerscale, float innerscale);
 
@@ -29,6 +30,6 @@ int frame_select_PSF(char *logfile, long NBfiles, float frac);
 
 int AtmosphericTurbulence_WFprocess();
 
-int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, char *outfile);
+int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile);
 
 #endif
