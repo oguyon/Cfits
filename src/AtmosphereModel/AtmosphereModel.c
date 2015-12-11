@@ -3705,6 +3705,8 @@ int AtmosphereModel_load_stdAtmModel(char *fname)
 
 
 /// read configuration file and create atmosphere model
+//
+//
 
 int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 {
@@ -3842,8 +3844,8 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
         initRIA_CO2 = 1;
     }
 
-    printf("Reading Refractive Index and Abs for N2\n");
-    if(ATMOSPHEREMODEL_loadRIA_readsize("./RefractiveIndices/RIA_N2.dat")==1)
+    printf("Reading Refractive Index and Abs for Ne\n");
+    if(ATMOSPHEREMODEL_loadRIA_readsize("./RefractiveIndices/RIA_Ne.dat")==1)
     {
         RIA_Ne_lambda = (double*) malloc(sizeof(double)*RIA_NBpts);
         RIA_Ne_ri = (double*) malloc(sizeof(double)*RIA_NBpts);
@@ -3931,7 +3933,7 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
     RIA_H_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
     ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_H.dat", RIA_H_lambda, RIA_H_ri, RIA_H_abs);
     initRIA_H = 1;
-}
+    }
 
 
 
@@ -3942,13 +3944,8 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 
 
 
-    //	printf("Building reference atmoshpere model ...\n");
-
+    printf("Building reference atmoshpere model ...\n");
     AtmosphereModel_build_stdAtmModel("atm.txt");
-
-    // load atmosphere model
-    //	AtmosphereModel_load_stdAtmModel("atm.txt");
-    //AtmosphericTurbulence_save_stdAtmModel("atm1.txt");
 
 
 
@@ -3960,7 +3957,7 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
     // ***************** refractive index as a function of lambda at site ****************************
 
     fp  = fopen("RindexSite.txt", "w");
-    for(lambda=0.5e-6; lambda<2.0e-6; lambda*=1.01)
+    for(lambda=0.05e-6; lambda<2.0e-6; lambda*=1.01)
     {
         n = 1.0 + AtmosphereModel_stdAtmModel_N(SiteAlt, lambda);
         fprintf(fp, "%g %.10f %.10f\n", lambda, n, v_ABSCOEFF);

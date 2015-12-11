@@ -3,7 +3,8 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <pthread.h>
+//#include <pthread_np.h>
 
 #ifdef __MACH__
 #include <mach/mach_time.h>
@@ -1418,7 +1419,12 @@ int command_line( int argc, char **argv)
             printf("process name '%s'\n", optarg);
             strcpy(data.processname, optarg);
             memcpy((void *)argv[0], optarg, sizeof(optarg));
-            prctl(PR_SET_NAME, optarg, 0, 0, 0);
+#ifdef __linux__
+     prctl(PR_SET_NAME, optarg, 0, 0, 0);
+#elif defined(HAVE_PTHREAD_SETNAME_NP) && defined(OS_IS_DARWIN)
+    pthread_setname_np(optarg);
+#endif
+//            prctl(PR_SET_NAME, optarg, 0, 0, 0);
             break;
 
         case 'p':

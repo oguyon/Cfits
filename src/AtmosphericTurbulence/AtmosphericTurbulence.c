@@ -1149,15 +1149,14 @@ int make_AtmosphericTurbulence_wavefront_series()
 
 
 
-    //	printf("Building reference atmoshpere model ...\n");
-    AtmosphereModel_build_stdAtmModel("atm.txt");
-//    AtmosphericTurbulence_build_stdAtmModel("atm.txt");
 
-    // load atmosphere model
-   // AtmosphereModel_load_stdAtmModel("atm.txt");
-    //AtmosphericTurbulence_save_stdAtmModel("atm1.txt");
+    printf("Building reference atmosphere model ...\n");
+    // create atm.txt file with concentrations as function of altitude
+    // load RIA (Refractive index and Absorption) files if available 
+    AtmosphereModel_Create_from_CONF(CONFFILE);
 
-    
+
+    // SOME TESTING
     AtmosphereModel_RefractionPath(1.5, Zangle, 0); //79.999/180.0*M_PI);//Zangle);
  
 
@@ -1179,11 +1178,8 @@ int make_AtmosphericTurbulence_wavefront_series()
     printf("Zangle = %f  alt = %f\n", Zangle, SiteAlt);
 
 
-
     for(Temp=173.0; Temp<373.0; Temp+=5.0)
         printf("T= %lf K    Ps(H2O) [Pa] = %g\n", Temp, AtmosphereModel_H2O_Saturation(Temp));
-
-
 
 
 
@@ -1357,7 +1353,7 @@ int make_AtmosphericTurbulence_wavefront_series()
     stop=1;
     while(stop)
     {
-        sprintf(fname,"t%ld_%ld",master, MASTER_SIZE);
+        sprintf(fname,"t%03ld_%ld",master, MASTER_SIZE);
         if(!file_exists(fname))
         {
             stop=0;
@@ -1616,11 +1612,11 @@ int make_AtmosphericTurbulence_wavefront_series()
     ID_TM = (long*) malloc(sizeof(long)*NBMASTERS);
     for(i=0; i<NBMASTERS; i++)
     {
-        sprintf(fname,"t%ld_%ld",i,MASTER_SIZE);
+        sprintf(fname,"t%03ld_%ld",i,MASTER_SIZE);
         sprintf(fname1,"TM%ld",i);
         if(load_fits(fname, fname1, 1)==-1)
         {
-            sprintf(fname,"t%ld_%ld",i,MASTER_SIZE);
+            sprintf(fname,"t%03ld_%ld",i,MASTER_SIZE);
             sprintf(fname1,"TM%ld",i);
             printf("CREATING %s   (%f - %f)\n", fname, LAYER_OUTERSCALE[i]/PUPIL_SCALE, LAYER_INNERSCALE[i]/PUPIL_SCALE);
             make_master_turbulence_screen(fname1, "tursctmp", MASTER_SIZE, LAYER_OUTERSCALE[i]/PUPIL_SCALE, LAYER_INNERSCALE[i]/PUPIL_SCALE);
@@ -1846,7 +1842,7 @@ int make_AtmosphericTurbulence_wavefront_series()
             save_fits(name, fname);
         }
     }
-exit(0);
+//exit(0);
     vindex = 0;
 
 

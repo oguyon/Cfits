@@ -3119,7 +3119,6 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
         // make lense shapes if applicable
         if(design[index].PIAAmaterial_code != 0) // refractive PIAA
         {
-
             // if piaar0zsag does not exist or is wrong size, create it
             IDpiaar0zsag = image_ID("piaar0zsag");
             if(IDpiaar0zsag == -1)
