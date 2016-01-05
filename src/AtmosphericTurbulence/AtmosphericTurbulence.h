@@ -6,7 +6,7 @@ int init_AtmosphericTurbulence();
 
 int AtmosphericTurbulence_change_configuration_file(char *fname);
 
-long make_AtmosphericTurbulence_vonKarmanWind(float pixscale, float sigmawind, float Lwind, long size, char *IDout_name);
+long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, char *IDout_name);
 
 int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outerscale, float innerscale);
 

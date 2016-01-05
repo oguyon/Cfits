@@ -412,6 +412,17 @@ LStransm1=$( echo "($LStransm0+$LStransm2)*0.5" | bc -l )
 
 
 FPMsectors=1 # default
+file="conf/conf_FPMsectors.txt"
+if [ -f $file ]
+        then
+        FPMsectors=$(echo "$(cat $file)")
+        else
+        #echo "CANNOT READ FILE ${file}"
+        ok=0
+fi
+echo "FPMsectors = $FPMsectors"
+
+
 
 nblambda=10 # default
 file="conf/conf_nblambda.txt"

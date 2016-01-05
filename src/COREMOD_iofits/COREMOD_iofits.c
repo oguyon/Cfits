@@ -776,9 +776,9 @@ int save_db_fits(char *ID_name, char *file_name)
     }
     else
     {
-        n = snprintf(file_name1,SBUFFERSIZE,"%s",file_name);
+        n = snprintf(file_name1, SBUFFERSIZE, "%s", file_name);
         if(n >= SBUFFERSIZE)
-            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");
     }
 
     ID = image_ID(ID_name);
@@ -789,11 +789,15 @@ int save_db_fits(char *ID_name, char *file_name)
         naxis = data.image[ID].md[0].naxis;
         for(i=0; i<naxis; i++)
             naxes[i] = data.image[ID].md[0].size[i];
+  
+  
+     
 
         nelements = 1;
         for(i=0; i<naxis; i++)
             nelements *= naxes[i];
 
+    
         switch (atype)
         {
         case CHAR :
@@ -823,7 +827,7 @@ int save_db_fits(char *ID_name, char *file_name)
                 printERROR(__FILE__,__func__,__LINE__,"malloc error");
                 exit(0);
             }
-            for (ii = 0; ii < nelements; i++)
+            for (ii = 0; ii < nelements; ii++)
                 array[ii] = (double) data.image[ID].array.F[ii];
             break;
         case DOUBLE :
@@ -832,6 +836,11 @@ int save_db_fits(char *ID_name, char *file_name)
             printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
             break;
         }
+
+
+        
+    printf("creating file \"%s\"\n", file_name1);
+    fflush(stdout);
 
         fits_create_file(&fptr, file_name1, &FITSIO_status);
         if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
