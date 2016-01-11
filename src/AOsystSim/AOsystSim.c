@@ -2620,7 +2620,7 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     }
 
 
-    printf("mode     = %d\n", mode);
+    printf("mode     = %d (%f)\n", mode, probe_noise_prop);
     printf("mapmode  = %d\n", mapmode);
     printf("mapsize  = %ld   %ld   %ld\n", mapxsize, mapysize, mapzsize);
     printf("execmode = %d\n", execmode);

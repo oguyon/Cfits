@@ -875,7 +875,7 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     // Write eigenvalues
 
 
-    /*sprintf(fname, "%s/eigenv.dat", data.SAVEDIR);
+    sprintf(fname, "eigenv.dat");
     if((fp=fopen(fname, "w"))==NULL)
       {
         printf("ERROR: cannot create file \"%s\"\n", fname);
@@ -884,7 +884,7 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     for(k=0; k<m; k++)
       fprintf(fp,"%ld %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
     fclose(fp);
-    */
+    
 
 
     //  for(k=0; k<m; k++)
@@ -1213,255 +1213,259 @@ void linopt_imtools_opt_fdf (const gsl_vector *x, void *params, double *f, gsl_v
 
 
 
+
 //
 // match a single image (ID_name) to a linear sum of images within IDref_name
 // result is a 1D array of coefficients in IDsol_name
 //
 double linopt_imtools_match_slow(char *ID_name, char *IDref_name, char *IDmask_name, char *IDsol_name, char *IDout_name)
 {
-  long ID, IDref, IDmask, IDsol, IDout;
-  long naxes[2];
-  long n; // number of reference frames
-  long ii,k,l;
-  
-  long double val;
-  long double valbest;
+    long ID, IDref, IDmask, IDsol, IDout;
+    long naxes[2];
+    long n; // number of reference frames
+    long ii,k,l;
 
-  // initial random search
-  long riter;
-  long riterMax = 1000000;
-   
-  long double v0;
-  long double *tarray = NULL; // temporary array to store values for fixed pixel
+    long double val;
+    long double valbest;
 
+    // initial random search
+    long riter;
+    long riterMax = 1000000;
 
-  // ref image coefficients (solutions)
-  long double *alpha = NULL;
-  long double *alphabest = NULL;
-  long double ampl;
-  
-  /*
-    the optimization problem is first rewritten as a 2nd degree polynomial of alpha values
-    val = V0 + SUM_{k=0...n-1}{polycoeff1[k]*alpha[k] + SUM_{k=0...n-1}{l=0...k}{polycoeff2[k,l]*alpha[k]*alpha[l]}
-   */
-  
-  long iter = 0;
-  double *params;
-  const gsl_multimin_fdfminimizer_type *T; 
-  gsl_multimin_fdfminimizer *sminimizer; 
-  long i;
-  gsl_vector *x;
-  gsl_multimin_function_fdf opt_func; 
-  int status;
-
-  //  printf("Input params : %s %s %s\n",ID_name,IDref_name,IDsol_name);
+    long double v0;
+    long double *tarray = NULL; // temporary array to store values for fixed pixel
 
 
+    // ref image coefficients (solutions)
+    long double *alpha = NULL;
+    long double *alphabest = NULL;
+    long double ampl;
 
-  ID = image_ID(ID_name);
-  naxes[0] = data.image[ID].md[0].size[0];
-  naxes[1] = data.image[ID].md[0].size[1];
+    /*
+      the optimization problem is first rewritten as a 2nd degree polynomial of alpha values
+      val = V0 + SUM_{k=0...n-1}{polycoeff1[k]*alpha[k] + SUM_{k=0...n-1}{l=0...k}{polycoeff2[k,l]*alpha[k]*alpha[l]}
+     */
 
-  IDmask = image_ID(IDmask_name);
-  IDref = image_ID(IDref_name);
-  n = data.image[IDref].md[0].size[2];
+    long iter = 0;
+    double *params;
+    const gsl_multimin_fdfminimizer_type *T;
+    gsl_multimin_fdfminimizer *sminimizer;
+    long i;
+    gsl_vector *x;
+    gsl_multimin_function_fdf opt_func;
+    int status;
 
-  printf("Number of points = %ld x %ld\n",naxes[0]*naxes[1],n);
+    //  printf("Input params : %s %s %s\n",ID_name,IDref_name,IDsol_name);
 
 
-  alpha = (long double*) malloc(sizeof(long double)*n);
-  if(alpha==NULL)
+
+    ID = image_ID(ID_name);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+
+    IDmask = image_ID(IDmask_name);
+    IDref = image_ID(IDref_name);
+    n = data.image[IDref].md[0].size[2];
+
+    printf("Number of points = %ld x %ld\n",naxes[0]*naxes[1],n);
+
+
+    alpha = (long double*) malloc(sizeof(long double)*n);
+    if(alpha==NULL)
     {
-      printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
+        exit(0);
     }
-  alphabest = (long double*) malloc(sizeof(long double)*n);
-  if(alphabest==NULL)
+    alphabest = (long double*) malloc(sizeof(long double)*n);
+    if(alphabest==NULL)
     {
-      printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
-      exit(0);
-    }
-
-
-  
-  polycoeff1 = (long double*) malloc(sizeof(long double)*n);
-  if(polycoeff1==NULL)
-    {
-      printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
-      exit(0);
-    }
-  polycoeff2 = (long double*) malloc(sizeof(long double)*n*n);
-  if(polycoeff2==NULL)
-    {
-      printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
+        exit(0);
     }
 
-  tarray = (long double*) malloc(sizeof(long double)*n);
-  if(tarray==NULL)
+
+
+    polycoeff1 = (long double*) malloc(sizeof(long double)*n);
+    if(polycoeff1==NULL)
     {
-      printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
-      exit(0);
+        printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
+        exit(0);
+    }
+    polycoeff2 = (long double*) malloc(sizeof(long double)*n*n);
+    if(polycoeff2==NULL)
+    {
+        printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
+        exit(0);
     }
 
-  
-
-  // initialize all coeffs to zero
-  C0 = 0.0;
-  for(k=0;k<n;k++)
+    tarray = (long double*) malloc(sizeof(long double)*n);
+    if(tarray==NULL)
     {
-      alpha[k] = 1.0/n;
-      polycoeff1[k] = 0.0;
-      for(l=0;l<n;l++)
-	polycoeff2[l*n+k] = 0.0;
-    }
-  
-  // compute polynomial coefficients
-  for(ii=0;ii<naxes[0]*naxes[1];ii++)
-    {
-      v0 = (long double) (data.image[ID].array.F[ii]*data.image[IDmask].array.F[ii]);
-      for(k=0;k<n;k++)
-	tarray[k] = (long double) (data.image[IDref].array.F[naxes[0]*naxes[1]*k+ii]*data.image[IDmask].array.F[ii]);
-      C0 += v0*v0;
-      for(k=0;k<n;k++)
-	polycoeff1[k] += -2.0*v0*tarray[k];
-      for(k=0;k<n;k++)
-	for(l=0;l<n;l++)
-	  polycoeff2[l*n+k] += tarray[k]*tarray[l];
+        printERROR(__FILE__,__func__,__LINE__,"Cannot allocate memory");
+        exit(0);
     }
 
-  // find solution
-  /*   val = C0 + SUM_{k=0...n-1}{polycoeff1[k]*alpha[k] + SUM_{k=0...n-1}{l=0...k}{polycoeff2[k,l]*alpha[k]*alpha[l]}
-   */
-  val = C0;
-  for(k=0;k<n;k++)
-    val += polycoeff1[k]*alpha[k];
-  for(k=0;k<n;k++)
-    for(l=0;l<n;l++)
-      val += polycoeff2[l*n+k]*alpha[k]*alpha[l];
 
 
-  for(k=0;k<n;k++)
-    printf("%g ", (double) alpha[k]);
-  printf("-> %g\n", (double) val);
-  for(k=0;k<n;k++)
-    alphabest[k] = alpha[k];
-  valbest = val;
-
-
-
-
-
-  for(riter=0;riter<riterMax;riter++)
+    // initialize all coeffs to zero
+    C0 = 0.0;
+    for(k=0; k<n; k++)
     {
-      ampl = pow(ran1(),4.0);
-      for(k=0;k<n;k++)
-	alpha[k] = alphabest[k] + ampl*(1.0-2.0*ran1())/n;
-      
-      val = C0;
-      for(k=0;k<n;k++)
-	val += polycoeff1[k]*alpha[k];
-      for(k=0;k<n;k++)
-	for(l=0;l<n;l++)
-	  val += polycoeff2[l*n+k]*alpha[k]*alpha[l];
-      if(val<valbest)
-	{
-	  //printf("[%ld/%ld] ",riter,riterMax);
-	  //for(k=0;k<n;k++)
-	  //  printf(" %g ", (double) alpha[k]);
-	  //printf("-> %g\n", (double) val);
-	  for(k=0;k<n;k++)
-	    alphabest[k] = alpha[k];
-	  valbest = val;
-	}
+        alpha[k] = 1.0/n;
+        polycoeff1[k] = 0.0;
+        for(l=0; l<n; l++)
+            polycoeff2[l*n+k] = 0.0;
     }
 
-  NBPARAM = n;
+    // compute polynomial coefficients
+    for(ii=0; ii<naxes[0]*naxes[1]; ii++)
+    {
+        v0 = (long double) (data.image[ID].array.F[ii]*data.image[IDmask].array.F[ii]);
+        for(k=0; k<n; k++)
+            tarray[k] = (long double) (data.image[IDref].array.F[naxes[0]*naxes[1]*k+ii]*data.image[IDmask].array.F[ii]);
+        C0 += v0*v0;
+        for(k=0; k<n; k++)
+            polycoeff1[k] += -2.0*v0*tarray[k];
+        for(k=0; k<n; k++)
+            for(l=0; l<n; l++)
+                polycoeff2[l*n+k] += tarray[k]*tarray[l];
+    }
 
-  x = gsl_vector_alloc (n); 
+    // find solution
+    /*   val = C0 + SUM_{k=0...n-1}{polycoeff1[k]*alpha[k] + SUM_{k=0...n-1}{l=0...k}{polycoeff2[k,l]*alpha[k]*alpha[l]}
+     */
+    val = C0;
+    for(k=0; k<n; k++)
+        val += polycoeff1[k]*alpha[k];
+    for(k=0; k<n; k++)
+        for(l=0; l<n; l++)
+            val += polycoeff2[l*n+k]*alpha[k]*alpha[l];
 
-  for(i=0;i<n;i++)
-    gsl_vector_set(x, i, alphabest[i]);
-  printf("Value = %g\n", linopt_imtools_opt_f (x, params));
 
-
-  
-  opt_func.n = n; 
-  opt_func.f = &linopt_imtools_opt_f; 
-  opt_func.df = &linopt_imtools_opt_df; 
-  opt_func.fdf = &linopt_imtools_opt_fdf; 
-  opt_func.params = &params; 
-
-  x = gsl_vector_alloc (n); 
-
-  for(i=0;i<n;i++)
-    gsl_vector_set(x, i, alphabest[i]);
-
-  T = gsl_multimin_fdfminimizer_vector_bfgs2; 
-  sminimizer = gsl_multimin_fdfminimizer_alloc (T, n); 
-
-  gsl_multimin_fdfminimizer_set (sminimizer, &opt_func, x, 1.0e-5, 0.1); 
-  
-  do 
-    { 
-      iter++;
-      dfcnt = 0;
-      status = gsl_multimin_fdfminimizer_iterate (sminimizer); 
-      if (status) 
-	break;
-      status = gsl_multimin_test_gradient (sminimizer->gradient, 1e-5); 
-      if (status == GSL_SUCCESS) 
-	{
-	  printf ("Minimum found at:\n"); 
-	  printf ("%5ld : ", iter); 
-	  //for(i=0;i<n;i++)
-	  // printf("%.8f ",gsl_vector_get(sminimizer->x, i));
-	  printf ("    %10.8f\n", sminimizer->f); 
-	}
-    } 
-  while (status == GSL_CONTINUE && iter < 1000); 
-
-  for(i=0;i<n;i++)
-    alphabest[i] = gsl_vector_get(sminimizer->x, i);
-
-  for(i=0;i<n;i++)
-    gsl_vector_set(x, i, alphabest[i]);
-  printf("Value after minimization = %g\n", linopt_imtools_opt_f (x, params));
-
-  gsl_multimin_fdfminimizer_free (sminimizer); 
-  gsl_vector_free (x); 
-  
-
-  IDsol = create_2Dimage_ID(IDsol_name,n,1);
-  for(i=0;i<n;i++)
-    data.image[IDsol].array.F[i] = alphabest[i];
+    for(k=0; k<n; k++)
+        printf("%g ", (double) alpha[k]);
+    printf("-> %g\n", (double) val);
+    for(k=0; k<n; k++)
+        alphabest[k] = alpha[k];
+    valbest = val;
 
 
 
-  // compute residual
-
-  IDout = create_2Dimage_ID(IDout_name, naxes[0], naxes[1]);
-
-  for(ii=0;ii<naxes[0]*naxes[1];ii++)
-    data.image[IDout].array.F[ii] = 0.0;
-  for (k=0;k<n;k++)
-    for(ii=0;ii<naxes[0]*naxes[1];ii++)
-      data.image[IDout].array.F[ii] += alphabest[k]*data.image[IDref].array.F[naxes[0]*naxes[1]*k+ii];
 
 
-  free(alpha);
-  alpha = NULL;
-  free(alphabest);
-  alphabest = NULL;
-  free(polycoeff1);
-  polycoeff1 = NULL;
-  free(polycoeff2);
-  polycoeff2 = NULL;
-  free(tarray);
-  tarray = NULL;
+    for(riter=0; riter<riterMax; riter++)
+    {
+        ampl = pow(ran1(),4.0);
+        for(k=0; k<n; k++)
+            alpha[k] = alphabest[k] + ampl*(1.0-2.0*ran1())/n;
 
-  return((double) val);
+        val = C0;
+        for(k=0; k<n; k++)
+            val += polycoeff1[k]*alpha[k];
+        for(k=0; k<n; k++)
+            for(l=0; l<n; l++)
+                val += polycoeff2[l*n+k]*alpha[k]*alpha[l];
+        if(val<valbest)
+        {
+            //printf("[%ld/%ld] ",riter,riterMax);
+            //for(k=0;k<n;k++)
+            //  printf(" %g ", (double) alpha[k]);
+            //printf("-> %g\n", (double) val);
+            for(k=0; k<n; k++)
+                alphabest[k] = alpha[k];
+            valbest = val;
+        }
+    }
+
+    NBPARAM = n;
+
+    x = gsl_vector_alloc (n);
+
+    for(i=0; i<n; i++)
+        gsl_vector_set(x, i, alphabest[i]);
+    printf("Value = %g\n", linopt_imtools_opt_f (x, params));
+
+
+
+    opt_func.n = n;
+    opt_func.f = &linopt_imtools_opt_f;
+    opt_func.df = &linopt_imtools_opt_df;
+    opt_func.fdf = &linopt_imtools_opt_fdf;
+    opt_func.params = &params;
+
+    x = gsl_vector_alloc (n);
+
+    for(i=0; i<n; i++)
+        gsl_vector_set(x, i, alphabest[i]);
+
+    T = gsl_multimin_fdfminimizer_vector_bfgs2;
+    sminimizer = gsl_multimin_fdfminimizer_alloc (T, n);
+
+    gsl_multimin_fdfminimizer_set (sminimizer, &opt_func, x, 1.0e-5, 0.1);
+
+    do
+    {
+        iter++;
+        dfcnt = 0;
+        status = gsl_multimin_fdfminimizer_iterate (sminimizer);
+        if (status)
+            break;
+        status = gsl_multimin_test_gradient (sminimizer->gradient, 1e-5);
+        if (status == GSL_SUCCESS)
+        {
+            printf ("Minimum found at:\n");
+            printf ("%5ld : ", iter);
+            //for(i=0;i<n;i++)
+            // printf("%.8f ",gsl_vector_get(sminimizer->x, i));
+            printf ("    %10.8f\n", sminimizer->f);
+        }
+    }
+    while (status == GSL_CONTINUE && iter < 1000);
+
+    for(i=0; i<n; i++)
+        alphabest[i] = gsl_vector_get(sminimizer->x, i);
+
+    for(i=0; i<n; i++)
+        gsl_vector_set(x, i, alphabest[i]);
+    printf("Value after minimization = %g\n", linopt_imtools_opt_f (x, params));
+
+    gsl_multimin_fdfminimizer_free (sminimizer);
+    gsl_vector_free (x);
+
+
+    IDsol = create_2Dimage_ID(IDsol_name,n,1);
+    for(i=0; i<n; i++)
+        data.image[IDsol].array.F[i] = alphabest[i];
+
+
+
+    // compute residual
+
+    IDout = create_2Dimage_ID(IDout_name, naxes[0], naxes[1]);
+
+    for(ii=0; ii<naxes[0]*naxes[1]; ii++)
+        data.image[IDout].array.F[ii] = 0.0;
+    for (k=0; k<n; k++)
+        for(ii=0; ii<naxes[0]*naxes[1]; ii++)
+            data.image[IDout].array.F[ii] += alphabest[k]*data.image[IDref].array.F[naxes[0]*naxes[1]*k+ii];
+
+
+    free(alpha);
+    alpha = NULL;
+    free(alphabest);
+    alphabest = NULL;
+    free(polycoeff1);
+    polycoeff1 = NULL;
+    free(polycoeff2);
+    polycoeff2 = NULL;
+    free(tarray);
+    tarray = NULL;
+
+    return((double) val);
 }
+
+
+
 
 
 // match a single image (ID_name) to a linear sum of images within IDref_name

@@ -3288,6 +3288,9 @@ int AtmosphereModel_save_stdAtmModel(char *fname)
     FILE *fp;
 
     fp = fopen(fname, "w");
+    
+     fprintf(fp, "#  1:alt[m]  2:denstot[part/cm3] 3:N2  4:O2  5:Ar  6:H2O  7:CO2  8:Ne  9:He  10:CH4  11:Kr  12:H2  13:N  14:O  15:H    16:density[g/cm3]  17:temperature[K] 18:pressure[stdatm]  19:RH\n");
+    
     for (i=0; i<10000; i++)
     {
         fprintf(fp, "%6.0f   %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g  %.8g   %.8g    %8.3lf   %12.10lf  %.5f\n", 10.0*i, denstot[i], densN2[i], densO2[i], densAr[i], densH2O[i], densCO2[i], densNe[i], densHe[i], densCH4[i], densKr[i], densH2[i], densO3[i], densN[i], densO[i], densH[i],  density[i], temperature[i], pressure[i], RH[i]);
@@ -3632,10 +3635,9 @@ int AtmosphereModel_build_stdAtmModel(char *fname)
 
 
 
-
     //fp = fopen(fname, "w");
     /* evaluate 0 to 1000 */
-    fprintf(fp, "#  1:alt[m]  2:denstot[part/cm3] 3:N2  4:O2  5:Ar  6:H2O  7:CO2  8:Ne  9:He  10:CH4  11:Kr  12:H2  13:N  14:O  15:H    16:density[g/cm3]  17:temperature[K] 18:pressure[stdatm]  19:RH\n");
+  //  fprintf(fp, "#  1:alt[m]  2:denstot[part/cm3] 3:N2  4:O2  5:Ar  6:H2O  7:CO2  8:Ne  9:He  10:CH4  11:Kr  12:H2  13:N  14:O  15:H    16:density[g/cm3]  17:temperature[K] 18:pressure[stdatm]  19:RH\n");
     TotPart = 0.0;
     TotPart1 = 0.0;
     TotPart2 = 0.0;
@@ -3832,7 +3834,6 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 
 
 
-
     strcpy(KEYWORD,"CO2_PPM");
     read_config_parameter(CONFFILE,KEYWORD,CONTENT);
     CO2_ppm = atof(CONTENT);
@@ -3977,7 +3978,7 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
         RIA_O3_abs = (double*) malloc(sizeof(double)*RIA_NBpts);
         ATMOSPHEREMODEL_loadRIA("./RefractiveIndices/RIA_O3.dat", RIA_O3_lambda, RIA_O3_ri, RIA_O3_abs);
         initRIA_O3 = 1;
-}
+    }
 
     printf("Reading Refractive Index and Abs for N\n");
     if(ATMOSPHEREMODEL_loadRIA_readsize("./RefractiveIndices/RIA_N.dat")==1)
@@ -4001,7 +4002,7 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
         initRIA_O = 1;
     }
 
-     printf("Reading Refractive Index and Abs for H\n");
+    printf("Reading Refractive Index and Abs for H\n");
     if(ATMOSPHEREMODEL_loadRIA_readsize("./RefractiveIndices/RIA_H.dat")==1)
     {
         RIA_H_NBpts = RIA_NBpts;
@@ -4015,19 +4016,8 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
 
 
 
-
-
-
-
-
-
     printf("Building reference atmoshpere model ...\n");
     AtmosphereModel_build_stdAtmModel("atm.txt");
-
-
-
-
-
 
 
 
@@ -4038,32 +4028,32 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE)
     {
         n = 1.0 + AtmosphereModel_stdAtmModel_N(SiteAlt, lambda);
         fprintf(fp, "%.8g %.14f %.14f\n", lambda, n, v_ABSCOEFF);
-      //  printf("%g %.10f\n", lambda, n);
+        //  printf("%g %.10f\n", lambda, n);
     }
     fclose(fp);
 
 
     fp = fopen("Refract.txt", "w");
     fclose(fp);
- 
+
 
 
     // *************** LIGHT PATH THROUGH ATMOSPHERE AT TWO SEPARATE WAVELENGTHS ***********************
 
-lliprecompN2 = -1; // if >=0, use this index in array
-lliprecompO2 = -1; // if >=0, use this index in array
-lliprecompAr = -1; // if >=0, use this index in array
-lliprecompH2O = -1; // if >=0, use this index in array
-lliprecompCO2 = -1; // if >=0, use this index in array
-lliprecompNe = -1; // if >=0, use this index in array
-lliprecompHe = -1; // if >=0, use this index in array
-lliprecompCH4 = -1; // if >=0, use this index in array
-lliprecompKr = -1; // if >=0, use this index in array
-lliprecompH2 = -1; // if >=0, use this index in array
-lliprecompO3 = -1; // if >=0, use this index in array
-lliprecompO = -1; // if >=0, use this index in array
-lliprecompN = -1; // if >=0, use this index in array
-lliprecompH = -1; // if >=0, use this index in array
+    lliprecompN2 = -1; // if >=0, use this index in array
+    lliprecompO2 = -1; // if >=0, use this index in array
+    lliprecompAr = -1; // if >=0, use this index in array
+    lliprecompH2O = -1; // if >=0, use this index in array
+    lliprecompCO2 = -1; // if >=0, use this index in array
+    lliprecompNe = -1; // if >=0, use this index in array
+    lliprecompHe = -1; // if >=0, use this index in array
+    lliprecompCH4 = -1; // if >=0, use this index in array
+    lliprecompKr = -1; // if >=0, use this index in array
+    lliprecompH2 = -1; // if >=0, use this index in array
+    lliprecompO3 = -1; // if >=0, use this index in array
+    lliprecompO = -1; // if >=0, use this index in array
+    lliprecompN = -1; // if >=0, use this index in array
+    lliprecompH = -1; // if >=0, use this index in array
 
 
 
@@ -4072,48 +4062,48 @@ lliprecompH = -1; // if >=0, use this index in array
     AtmosphereModel_RefractionPath(1.6e-6, ZenithAngle, 1);
     r = system("cp refractpath.txt refractpath2.txt");
 
-    
 
 
 
     // **************** REFRACTION AND TRANSMISSION AS A FUNCTION OF WAVELENGTH *********************
 
     // precompute wavelength array and indices
-  /*  llistep = 1;
-    llistart = 0;
-    while(RIA_N2_lambda[llistart]<4.1e-6)
-        llistart++;
-    lliend = llistart;
-    while(RIA_N2_lambda[lliend]<4.2e-6)
-        lliend++;
-    NB_comp_array = (lliend-llistart)/llistep;
-    comp_array_lambda = (double*) malloc(sizeof(double)*NB_comp_array);
-    comp_array_lli = (long*) malloc(sizeof(double)*NB_comp_array);
+    /*  llistep = 1;
+      llistart = 0;
+      while(RIA_N2_lambda[llistart]<4.1e-6)
+          llistart++;
+      lliend = llistart;
+      while(RIA_N2_lambda[lliend]<4.2e-6)
+          lliend++;
+      NB_comp_array = (lliend-llistart)/llistep;
+      comp_array_lambda = (double*) malloc(sizeof(double)*NB_comp_array);
+      comp_array_lli = (long*) malloc(sizeof(double)*NB_comp_array);
 
-    for(li=0; li<NB_comp_array; li++)
-    {
-        lli = llistart + li*llistep;
-        comp_array_lambda[li] = RIA_N2_lambda[lli];
-        comp_array_lli[li] = lli;
-    }
+      for(li=0; li<NB_comp_array; li++)
+      {
+          lli = llistart + li*llistep;
+          comp_array_lambda[li] = RIA_N2_lambda[lli];
+          comp_array_lli[li] = lli;
+      }
 
-    for(li=0; li<NB_comp_array; li++)
-    {
-        lambda = comp_array_lambda[li];
-        lliprecomp = comp_array_lli[li];
-        rangle = AtmosphereModel_RefractionPath(lambda, ZenithAngle, 0);
-        fp = fopen("Refract.txt", "a");
-        fprintf(fp, "%g %.12f %.12f\n", lambda, rangle, v_TRANSM);
-        fclose(fp);
-    }
-    lliprecomp = -1;
+      for(li=0; li<NB_comp_array; li++)
+      {
+          lambda = comp_array_lambda[li];
+          lliprecomp = comp_array_lli[li];
+          rangle = AtmosphereModel_RefractionPath(lambda, ZenithAngle, 0);
+          fp = fopen("Refract.txt", "a");
+          fprintf(fp, "%g %.12f %.12f\n", lambda, rangle, v_TRANSM);
+          fclose(fp);
+      }
+      lliprecomp = -1;
 
-    free(comp_array_lambda);
-    free(comp_array_lli);
-*/
+      free(comp_array_lambda);
+      free(comp_array_lli);
+    */
 
     return 0;
 }
+
 
 
 

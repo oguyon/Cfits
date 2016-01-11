@@ -39,7 +39,7 @@ int clock_gettime(int clk_id, struct timespec *t){
 #include "info/info.h"
 #include "image_gen/image_gen.h"
 #include "statistic/statistic.h"
-
+#include "linopt_imtools/linopt_imtools.h"
 #include "AtmosphericTurbulence/AtmosphericTurbulence.h"
 #include "psf/psf.h"
 #include "WFpropagate/WFpropagate.h"
@@ -218,61 +218,102 @@ int AtmosphericTurbulence_makeHV_CN2prof_cli()
 
 
 
+
+
+int AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
+{
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,3)==0)
+    {
+        measure_wavefront_series_expoframes(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.string);
+    }
+    else
+        return(1);
+    
+}
+
+
+
+int AtmosphericTurbulence_Build_LinPredictor_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+        AtmosphericTurbulence_Build_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+    }
+    else
+        return(1);
+    
+}
+
+
+
+
 //int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, char *outfile)
 
 
 int init_AtmosphericTurbulence()
 {
-  strcpy(data.module[data.NBmodule].name, __FILE__);
-  strcpy(data.module[data.NBmodule].info, "Atmospheric Turbulence");
-  data.NBmodule++;
+    strcpy(data.module[data.NBmodule].name, __FILE__);
+    strcpy(data.module[data.NBmodule].info, "Atmospheric Turbulence");
+    data.NBmodule++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"mkwfs");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = make_AtmosphericTurbulence_wavefront_series_cli;
-  strcpy(data.cmd[data.NBcmd].info,"make wavefront series");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arguments");
-  strcpy(data.cmd[data.NBcmd].example,"mkwfs");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int make_AtmosphericTurbulence_wavefront_series()");
-  data.NBcmd++;
-
+    strcpy(data.cmd[data.NBcmd].key,"mkwfs");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = make_AtmosphericTurbulence_wavefront_series_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make wavefront series");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arguments");
+    strcpy(data.cmd[data.NBcmd].example,"mkwfs");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int make_AtmosphericTurbulence_wavefront_series()");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mkvonKarmanWind");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = make_AtmosphericTurbulence_vonKarmanWind_cli;
-  strcpy(data.cmd[data.NBcmd].info,"make vonKarman wind model");
-  strcpy(data.cmd[data.NBcmd].syntax,"<pixsize> <pixscale [m/pix]> <sigma windspeed [m/s]> <scale [m]> <size [long]> <output name>");
-  strcpy(data.cmd[data.NBcmd].example,"mkvonKarmanWind 8192 0.1 20.0 50.0 512 vKmodel");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, char *IDout_name)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = make_AtmosphericTurbulence_vonKarmanWind_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make vonKarman wind model");
+    strcpy(data.cmd[data.NBcmd].syntax,"<pixsize> <pixscale [m/pix]> <sigma windspeed [m/s]> <scale [m]> <size [long]> <output name>");
+    strcpy(data.cmd[data.NBcmd].example,"mkvonKarmanWind 8192 0.1 20.0 50.0 512 vKmodel");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, char *IDout_name)");
+    data.NBcmd++;
 
- 
+    strcpy(data.cmd[data.NBcmd].key,"mkmastert");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_mkmastert_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make 2 master phase screens");
+    strcpy(data.cmd[data.NBcmd].syntax,"<screen0> <screen1> <size> <outerscale> <innerscale>");
+    strcpy(data.cmd[data.NBcmd].example,"mkmastert scr0 scr1 2048 50.0 2.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outercale, float innercale)");
+    data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"mkHVturbprof");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_makeHV_CN2prof_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make Hufnager-Valley turbulence profile");
+    strcpy(data.cmd[data.NBcmd].syntax,"<high wind speed [m/s]> <r0 [m]> <site alt [m]> <NBlayers> <output file>");
+    strcpy(data.cmd[data.NBcmd].example,"mkHVturbprof 21.0 0.15 4200 100 turbHV.prof");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile)");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"mkmastert");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AtmosphericTurbulence_mkmastert_cli;
-  strcpy(data.cmd[data.NBcmd].info,"make 2 master phase screens");
-  strcpy(data.cmd[data.NBcmd].syntax,"<screen0> <screen1> <size> <outerscale> <innerscale>");
-  strcpy(data.cmd[data.NBcmd].example,"mkmastert scr0 scr1 2048 50.0 2.0");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outercale, float innercale)");
-  data.NBcmd++;
+    strcpy(data.cmd[data.NBcmd].key,"atmturbmeasexpo");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_measure_wavefront_series_expoframes_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Measure long exposure time PSF from wavefront series");
+    strcpy(data.cmd[data.NBcmd].syntax,"<etime [s]> <out name>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbmeasexpo 1.0 outpsf");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int measure_wavefront_series_expoframes(float etime, char *outfile)");
+    data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"atmturbwfpredict");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_Build_LinPredictor_cli;
+    strcpy(data.cmd[data.NBcmd].info,"build linear predictor from wavefront series");
+    strcpy(data.cmd[data.NBcmd].syntax,"<number steps input> <noise level [rad]> <predictor z size> <predictor xy radius>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbwfpredict 1000 0.01 5 5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad)");
+    data.NBcmd++;
 
-  strcpy(data.cmd[data.NBcmd].key,"mkHVturbprof");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = AtmosphericTurbulence_makeHV_CN2prof_cli;
-  strcpy(data.cmd[data.NBcmd].info,"make Hufnager-Valley turbulence profile");
-  strcpy(data.cmd[data.NBcmd].syntax,"<high wind speed [m/s]> <r0 [m]> <site alt [m]> <NBlayers> <output file>");
-  strcpy(data.cmd[data.NBcmd].example,"mkHVturbprof 21.0 0.15 4200 100 turbHV.prof");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile)");
-  data.NBcmd++;
-
-
-
-  return 0;
+    return 0;
 }
+
 
 
 
@@ -1443,6 +1484,8 @@ int make_AtmosphericTurbulence_wavefront_series()
     fclose(fp);
 */
 
+
+
     // TESTING VALUES IN CIDDOR 1996
     P = 102993.0;
     Pw = 641.0;
@@ -1546,7 +1589,7 @@ int make_AtmosphericTurbulence_wavefront_series()
 
     printf("CONF_ZANGLE = %f  alt = %f\n", CONF_ZANGLE, SiteAlt);
 
-    
+
 
    // for(Temp=173.0; Temp<373.0; Temp+=5.0)
      //   printf("T= %lf K    Ps(H2O) [Pa] = %g\n", Temp, AtmosphereModel_H2O_Saturation(Temp));
@@ -2237,10 +2280,10 @@ int make_AtmosphericTurbulence_wavefront_series()
                 if(CONF_ATMWF_REALTIME==0)
                 {
                     tnowdouble = (tspan*NBFRAMES+frame)*CONF_WFTIME_STEP;
-                    printf("\rLayer % 2ld/% 2ld, Frame % 4ld/% 4ld, File % 6ld/% 6ld  [TIME = %10.4f s]  ", layer, NBLAYERS, frame, NBFRAMES,tspan, CONF_NB_TSPAN,(tspan*NBFRAMES+frame)*CONF_WFTIME_STEP);
+                    printf("\rLayer %2ld/%2ld, Frame %4ld/%4ld, File %6ld/%6ld  [TIME = %10.4f s]  ", layer, NBLAYERS, frame, NBFRAMES,tspan, CONF_NB_TSPAN,(tspan*NBFRAMES+frame)*CONF_WFTIME_STEP);
                 }
                 else
-                    printf("\rLayer % 2ld/% 2ld, Frame % 4ld/% 4ld, File % 6ld/% 6ld  [PHYSICAL TIME = %.9lf s]  ",layer,NBLAYERS, frame, NBFRAMES, tspan, CONF_NB_TSPAN, tnowdouble);
+                    printf("\rLayer %2ld/%2ld, Frame %4ld/%4ld, File %6ld/%6ld  [PHYSICAL TIME = %.9lf s]  ",layer,NBLAYERS, frame, NBFRAMES, tspan, CONF_NB_TSPAN, tnowdouble);
                 fflush(stdout);
 
                 // recompute Scoeff for this layer
@@ -3203,7 +3246,14 @@ int measure_wavefront_series(float factor)
 
     FOCAL_SCALE = CONF_LAMBDA/CONF_WFsize/CONF_PUPIL_SCALE/PI*180.0*3600.0; /* in arcsecond per pixel */
     printf("Scale is %f arcsecond per pixel (%ld pixels)\n", FOCAL_SCALE, CONF_WFsize);
+    
+    
     IDpupamp = image_ID("ST_pa");
+    if (IDpupamp==-1)
+        {
+            printf("ERROR: pupil amplitude map not loaded");
+            exit(0);
+        }
     naxes[0]=data.image[ID].md[0].size[0];
     naxes[1]=data.image[ID].md[0].size[1];
 
@@ -3303,6 +3353,177 @@ int measure_wavefront_series(float factor)
 
 
 
+// use past and near pixels to predict current pixel value
+
+int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad)
+{
+    long ii0, jj0;
+    long IDpha_measured;
+    long IDpupamp;
+    long frame;
+    long NBFRAMES;
+    long WFPxsize, WFPysize;
+    double pha;
+    long ii1, jj1, ii, jj;
+    long tspan;
+    long IDpha;
+    long k;
+    long naxes[2];
+    char fnameamp[200];
+    char fnamepha[200];
+ 
+    long WFPlag = 1;
+ 
+    long mvecsize; // measurement vector size
+    long *mvecdx;
+    long *mvecdy;
+    long *mvecdz;
+    long NBmvec; // number of measurement vectors
+    
+    long IDmatA;
+    long l, m;
+    long k0;
+    long IDmatC;
+    double val;
+    long ID_WFPfilt;
+    
+    AtmosphericTurbulence_ReadConf();
+
+    // select center pixel
+    ii0 = CONF_WFsize/2;
+    jj0 = CONF_WFsize/2;
+    
+    WFPxsize = 1+2*WFP_xyrad;
+    WFPysize = 1+2*WFP_xyrad;
+    printf("WFP_xyrad = %ld\n", WFP_xyrad);
+    IDpha_measured = create_3Dimage_ID("WFP_pham", WFPxsize, WFPysize, NB_WFstep);
+ 
+    IDpupamp = image_ID("ST_pa");
+    if (IDpupamp==-1)
+        {
+            printf("ERROR: pupil amplitude map not loaded");
+            exit(0);
+        }
+ 
+    naxes[0] = data.image[IDpupamp].md[0].size[0];
+    naxes[1] = data.image[IDpupamp].md[0].size[1];
+    NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
+
+    printf("NBFRAMES = %ld\n", NBFRAMES);
+    
+    tspan = 0;
+    k = 0;
+    printf("\n\n");
+    while(k<NB_WFstep)
+    {
+        printf("\r %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
+        fflush(stdout);
+//        printf("%ld/%ld\n", tspan, CONF_NB_TSPAN);
+        sprintf(fnamepha,"%s%8ld.pha", CONF_SWF_FILE_PREFIX, tspan);
+        replace_char(fnamepha,' ','0');
+        sprintf(fnameamp,"%s%8ld.amp", CONF_SWF_FILE_PREFIX, tspan);
+        replace_char(fnameamp,' ','0');
+        IDpha = load_fits(fnamepha, "wfpha", 1);
+        
+       for(frame=0; frame<NBFRAMES; frame++)
+        {
+            printf("\r      %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
+            fflush(stdout);
+            if(k<NB_WFstep)
+            {
+                for(ii=0; ii<WFPxsize; ii++)
+                    for(jj=0; jj<WFPysize; jj++)
+                    {
+                        ii1 = ii0 + (ii-WFP_xyrad);
+                        jj1 = jj0 + (jj-WFP_xyrad);
+                        if((ii1>0)&&(ii1<CONF_WFsize)&&(jj1>0)&&(jj1<CONF_WFsize))
+                            pha = data.image[IDpha].array.F[frame*naxes[0]*naxes[1]+jj1*naxes[0]+ii1];
+                        else
+                            pha = 0;
+                        data.image[IDpha_measured].array.F[k*WFPxsize*WFPysize+jj*WFPxsize+ii] = pha + gauss()*WFphaNoise;
+                    }
+            }
+            k++;
+        }
+        tspan++;
+    }
+    
+    save_fits("WFP_pham", "!WFP_pham.fits");
+    
+    mvecsize = WFPxsize*WFPysize*(WFP_NBstep-WFPlag);
+    mvecdx = (long*) malloc(sizeof(long)*mvecsize);
+    mvecdy = (long*) malloc(sizeof(long)*mvecsize);
+    mvecdz = (long*) malloc(sizeof(long)*mvecsize);
+    NBmvec = NB_WFstep-WFP_NBstep;
+    
+    // indexes
+    // m = measurement or vector number
+    // l = pixel index
+    
+    l = 0;
+    for(k=WFPlag;k<WFP_NBstep;k++)
+    {
+        for(ii=0; ii<WFPxsize; ii++)
+            for(jj=0; jj<WFPysize; jj++)
+                {
+                    mvecdx[l] = ii-WFP_xyrad;
+                    mvecdy[l] = jj-WFP_xyrad;
+                    mvecdz[l] = k;
+                    l++;
+                }
+    }
+    
+    IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, mvecsize);
+    // each column is a measurement
+    // ii index is measurement
+    // jj index is pixel
+    
+    for(m=0;m<NBmvec;m++)
+    {
+        k0 = m+WFP_NBstep;
+        for(l=0;l<mvecsize;l++)
+        {
+            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDpha_measured].array.F[(k0-mvecdz[l])*WFPxsize*WFPysize+(mvecdy[l]+WFP_xyrad)*WFPxsize+(mvecdx[l]+WFP_xyrad)];
+        }
+    }
+    
+    
+   
+    save_fits("WFPmatA", "!WFPmatA.fits");
+   
+    linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", 1.0e-8, "WFP_VTmat");
+    save_fits("WFPmatC", "!WFPmatC.fits");
+    IDmatC = image_ID("WFPmatC");
+    
+    ID_WFPfilt = create_3Dimage_ID("WFPfilt", WFPxsize, WFPysize, WFP_NBstep);
+
+    for(l=0;l<mvecsize;l++)
+        {
+            val = 0.0;
+            for(m=0;m<NBmvec;m++)
+                val += data.image[IDmatC].array.F[l*NBmvec+m] * data.image[IDpha_measured].array.F[(m+WFP_NBstep)*WFPxsize*WFPysize + WFP_xyrad*WFPxsize + WFP_xyrad];
+           // printf("%5ld  ->  %5ld / %5ld     %5ld / %5ld    %5ld / %5ld\n", l, mvecdz[l], WFP_NBstep, mvecdy[l]+WFP_xyrad, WFPysize, mvecdx[l]+WFP_xyrad, WFPxsize);
+            data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*mvecdz[l]+WFPxsize*(mvecdy[l]+WFP_xyrad)+(mvecdx[l]+WFP_xyrad)] =  val;
+        }
+    save_fits("WFPfilt", "!WFPfilt.fits");
+    
+    
+    for(k=WFPlag;k<WFP_NBstep;k++)
+    {
+        val = 0.0;
+        for(ii=0;ii<WFPxsize*WFPysize; ii++)
+            val += data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*k+ii]*data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*k+ii];
+        printf("%5ld  %.10f\n", k, val);
+    }
+    
+      
+    free(mvecdx);
+    free(mvecdy);
+    free(mvecdz);
+  
+    return 0;
+}
+
 
 
 int measure_wavefront_series_expoframes(float etime, char *outfile)
@@ -3332,30 +3553,47 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
     double *ycenter;
     long amplitude_on;
 
+    long zoomfactor = 2;
+    long naxesout[2];
+    long xoffset, yoffset;
+
+
     xcenter = (double*) malloc(sizeof(double));
     ycenter = (double*) malloc(sizeof(double));
 
     printf("Frame exposure time is %f s\n",etime);
 
- AtmosphericTurbulence_ReadConf();
+    AtmosphericTurbulence_ReadConf();
 
 
 
 
-    FOCAL_SCALE = CONF_LAMBDA/CONF_WFsize/CONF_PUPIL_SCALE/PI*180.0*3600.0; /* in arcsecond per pixel */
+    FOCAL_SCALE = CONF_LAMBDA/CONF_WFsize/CONF_PUPIL_SCALE/PI*180.0*3600.0*zoomfactor; /* in arcsecond per pixel */
     printf("Scale is %f arcsecond per pixel (%ld pixels)\n",FOCAL_SCALE, CONF_WFsize);
 
-    ID=image_ID("ST_pa");
-    naxes[0]=data.image[ID].md[0].size[0];
-    naxes[1]=data.image[ID].md[0].size[1];
+    ID = image_ID("ST_pa");
+    if (ID==-1)
+        {
+            printf("ERROR: pupil amplitude map not loaded");
+            exit(0);
+        }
+ 
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
     IDamp = ID;
 
+    naxesout[0] = naxes[0]*zoomfactor;
+    naxesout[1] = naxes[1]*zoomfactor;
+    xoffset = (naxesout[0]-naxes[0])/2;
+    yoffset = (naxesout[1]-naxes[1])/2;
+
+
     NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
-    naxes[2]=NBFRAMES;
+    naxes[2] = NBFRAMES;
 
-    ID_array1 = create_2DCimage_ID("array1", naxes[0], naxes[1]);
+    ID_array1 = create_2DCimage_ID("array1", naxesout[0], naxesout[1]);
 
-    IDpsf = create_2Dimage_ID("PSF",naxes[0],naxes[1]);
+    IDpsf = create_2Dimage_ID("PSF", naxesout[0], naxesout[1]);
     frame_number = 0;
     etime_left = etime;
 
@@ -3365,6 +3603,8 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
         printf("ERROR: system(\"%s\"), %s line %d\n",command,__FILE__,__LINE__);
         exit(0);
     }
+
+ 
 
     if((fp=fopen(outfile,"w"))==NULL)
     {
@@ -3377,9 +3617,9 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
     for(tspan=0; tspan<CONF_NB_TSPAN; tspan++)
     {
         printf("%ld/%ld\n", tspan, CONF_NB_TSPAN);
-        sprintf(fnamepha,"%s%8ld.pha", CONF_WF_FILE_PREFIX, tspan);
+        sprintf(fnamepha,"%s%8ld.pha", CONF_SWF_FILE_PREFIX, tspan);
         replace_char(fnamepha,' ','0');
-        sprintf(fnameamp,"%s%8ld.amp", CONF_WF_FILE_PREFIX, tspan);
+        sprintf(fnameamp,"%s%8ld.amp", CONF_SWF_FILE_PREFIX, tspan);
         replace_char(fnameamp,' ','0');
         IDpha = load_fits(fnamepha, "wfpha", 1);
         if(amplitude_on==1)
@@ -3397,8 +3637,8 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
                     {
                         amp = data.image[IDamp].array.F[frame*naxes[0]*naxes[1]+jj*naxes[0]+ii];
                         pha = data.image[IDpha].array.F[frame*naxes[0]*naxes[1]+jj*naxes[0]+ii];
-                        data.image[ID_array1].array.CF[jj*naxes[0]+ii].re = amp*cos(pha);
-                        data.image[ID_array1].array.CF[jj*naxes[0]+ii].im = amp*sin(pha);
+                        data.image[ID_array1].array.CF[(jj+yoffset)*naxesout[0]+ii+xoffset].re = amp*cos(pha);
+                        data.image[ID_array1].array.CF[(jj+yoffset)*naxesout[0]+ii+xoffset].im = amp*sin(pha);
                     }
             else
                 for(ii=0; ii<naxes[0]; ii++)
@@ -3406,31 +3646,31 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
                     {
                         amp = data.image[IDamp].array.F[jj*naxes[0]+ii];
                         pha = data.image[IDpha].array.F[frame*naxes[0]*naxes[1]+jj*naxes[0]+ii];
-                        data.image[ID_array1].array.CF[jj*naxes[0]+ii].re = amp*cos(pha);
-                        data.image[ID_array1].array.CF[jj*naxes[0]+ii].im = amp*sin(pha);
+                        data.image[ID_array1].array.CF[(jj+yoffset)*naxesout[0]+ii+xoffset].re = amp*cos(pha);
+                        data.image[ID_array1].array.CF[(jj+yoffset)*naxesout[0]+ii+xoffset].im = amp*sin(pha);
                     }
 
             do2dfft("array1","im_c");
             permut("im_c");
             ID=image_ID("im_c");
-            for(ii=0; ii<naxes[0]; ii++)
-                for(jj=0; jj<naxes[1]; jj++)
+            for(ii=0; ii<naxesout[0]; ii++)
+                for(jj=0; jj<naxesout[1]; jj++)
                 {
-                    data.image[IDpsf].array.F[jj*naxes[0]+ii] += (data.image[ID].array.CF[jj*naxes[0]+ii].re*data.image[ID].array.CF[jj*naxes[0]+ii].re+data.image[ID].array.CF[jj*naxes[0]+ii].im*data.image[ID].array.CF[jj*naxes[0]+ii].im);
+                    data.image[IDpsf].array.F[jj*naxesout[0]+ii] += (data.image[ID].array.CF[jj*naxesout[0]+ii].re*data.image[ID].array.CF[jj*naxesout[0]+ii].re+data.image[ID].array.CF[jj*naxesout[0]+ii].im*data.image[ID].array.CF[jj*naxesout[0]+ii].im);
                 }
             delete_image_ID("im_c");
 
             etime_left -= CONF_WFTIME_STEP;
             if(etime_left<0)
             {
-                sprintf(fname,"!PSF%ld",frame_number);
+                sprintf(fname,"!PSF%04ld.fits",frame_number);
                 save_fl_fits("PSF",fname);
                 gauss_filter("PSF","PSFg",3,10);
-                center_PSF("PSFg", xcenter, ycenter, naxes[0]/2);
-                tmp = measure_FWHM("PSFg",xcenter[0],ycenter[0],1.0,naxes[0]/2);
+                center_PSF("PSFg", xcenter, ycenter, naxesout[0]/2);
+                tmp = measure_FWHM("PSFg",xcenter[0],ycenter[0],1.0,naxesout[0]/2);
                 printf("%ld FWHM %f arcseconds (%f pixels)\n",frame_number,FOCAL_SCALE*tmp,tmp);
-                tmp1 = measure_enc_NRJ("PSF",xcenter[0],ycenter[0],frac);
-                printf("Encircled energy (%f) is %f arcseconds\n",frac,tmp1*FOCAL_SCALE);
+                tmp1 = measure_enc_NRJ("PSF", xcenter[0], ycenter[0], frac);
+                printf("Encircled energy (%f) is %f arcseconds\n", frac, tmp1*FOCAL_SCALE);
                 delete_image_ID("PSFg");
                 if((fp=fopen(outfile,"a"))==NULL)
                 {
@@ -3454,11 +3694,16 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
     free(ycenter);
     delete_image_ID("array1");
     save_fl_fits("PSF","!PSF");
-    tmp = measure_FWHM("PSF",1.0*naxes[0]/2,1.0*naxes[1]/2,1.0,naxes[0]/2);
-    printf("FWHM = %f arcseconds (%f pixels)\n",FOCAL_SCALE*tmp,tmp);
+    tmp = measure_FWHM("PSF", 1.0*naxesout[0]/2, 1.0*naxesout[1]/2,1.0, naxesout[0]/2);
+    printf("FWHM = %f arcseconds (%f pixels)\n", FOCAL_SCALE*tmp, tmp);
 
     return(0);
 }
+
+
+
+
+
 
 
 int frame_select_PSF(char *logfile, long NBfiles, float frac)
