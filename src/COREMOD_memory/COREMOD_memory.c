@@ -4983,8 +4983,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             }
        //     printf("[%ld] ", slice); //TEST
 
-//            if(slice==NBslice-1)
-            if(slice<oldslice)
+           if(slice==NBslice-1)   //if(slice<oldslice)        
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
