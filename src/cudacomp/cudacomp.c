@@ -704,7 +704,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         GPUloadCmat(index);
 
 
-        printf("SETUP %d/%d DONE, READY TO START COMPUTATIONS  ", index, gpumatmultconf[index].NBstreams);
+        printf("SETUP %d DONE, READY TO START COMPUTATIONS  ", index);
         fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
@@ -724,6 +724,9 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
        gpumatmultconf[index].refWFSinit[device] = initWFSref;
+    
+     printf("CONFIGURATION DONE \n");
+    fflush(stdout);
     
     return(0);
 }
