@@ -24,7 +24,8 @@ int make_AtmosphericTurbulence_wavefront_series();
 
 int measure_wavefront_series(float factor);
 
-int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad);
+int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix);
+int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name);
 
 int measure_wavefront_series_expoframes(float etime, char *outfile);
 

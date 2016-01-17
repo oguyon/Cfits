@@ -235,9 +235,20 @@ int AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
 
 int AtmosphericTurbulence_Build_LinPredictor_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)
     {
-        AtmosphericTurbulence_Build_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        AtmosphericTurbulence_Build_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+    }
+    else
+        return(1);
+    
+}
+
+int AtmosphericTurbulence_Test_LinPredictor_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,4)==0)
+    {
+        AtmosphericTurbulence_Test_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
     }
     else
         return(1);
@@ -307,8 +318,17 @@ int init_AtmosphericTurbulence()
     data.cmd[data.NBcmd].fp = AtmosphericTurbulence_Build_LinPredictor_cli;
     strcpy(data.cmd[data.NBcmd].info,"build linear predictor from wavefront series");
     strcpy(data.cmd[data.NBcmd].syntax,"<number steps input> <noise level [rad]> <predictor z size> <predictor xy radius>");
-    strcpy(data.cmd[data.NBcmd].example,"atmturbwfpredict 1000 0.01 5 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad)");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbwfpredict 1000 0.01 5 5 64 64");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"atmturbwfptest");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_Test_LinPredictor_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Test linear predictor on wavefront series");
+    strcpy(data.cmd[data.NBcmd].syntax,"<number steps input> <noise level [rad]> <predictor name>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbwfptest 1000 0.01 wfpfilt");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name)");
     data.NBcmd++;
 
     return 0;
@@ -3355,7 +3375,7 @@ int measure_wavefront_series(float factor)
 
 // use past and near pixels to predict current pixel value
 
-int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad)
+int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix)
 {
     long ii0, jj0;
     long IDpha_measured;
@@ -3369,6 +3389,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     long IDpha;
     long k;
     long naxes[2];
+    char fname[200];
     char fnameamp[200];
     char fnamepha[200];
  
@@ -3390,8 +3411,8 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     AtmosphericTurbulence_ReadConf();
 
     // select center pixel
-    ii0 = CONF_WFsize/2;
-    jj0 = CONF_WFsize/2;
+    ii0 = WFPiipix;
+    jj0 = WFPjjpix;
     
     WFPxsize = 1+2*WFP_xyrad;
     WFPysize = 1+2*WFP_xyrad;
@@ -3445,6 +3466,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
             }
             k++;
         }
+        delete_image_ID("wfpha");
         tspan++;
     }
     
@@ -3505,7 +3527,8 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
            // printf("%5ld  ->  %5ld / %5ld     %5ld / %5ld    %5ld / %5ld\n", l, mvecdz[l], WFP_NBstep, mvecdy[l]+WFP_xyrad, WFPysize, mvecdx[l]+WFP_xyrad, WFPxsize);
             data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*mvecdz[l]+WFPxsize*(mvecdy[l]+WFP_xyrad)+(mvecdx[l]+WFP_xyrad)] =  val;
         }
-    save_fits("WFPfilt", "!WFPfilt.fits");
+    sprintf(fname, "!WFPfilt_%03ld_%03ld.fits", WFPiipix, WFPjjpix);
+    save_fits("WFPfilt", fname);
     
     
     for(k=WFPlag;k<WFP_NBstep;k++)
@@ -3522,6 +3545,118 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     free(mvecdz);
   
     return 0;
+}
+
+
+
+
+int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name)
+{
+    long WFP_xyrad;
+    long WFP_NBstep;
+    long IDWFPfilt;
+    long WFPxsize, WFPysize;
+    long ii0, jj0;
+    char fnamephaout[200];
+    char fnamephaoutres[200];
+    long tspan;
+    long k, k1;
+    char fnamepha[200];
+    long IDpha;
+    long frame;
+    long ii, jj, ii1, jj1, ii2, jj2;
+    double pha;
+    long IDbuff;
+    long IDphaout, IDphaoutres;
+    double val;
+    long NBFRAMES;
+
+
+
+    IDWFPfilt = image_ID(IDWFPfilt_name);
+    if(IDWFPfilt==-1)
+        {
+            printf("ERROR: image \"%s\" does not exist\n", IDWFPfilt_name);
+            exit(0);
+        }
+    
+    WFPxsize = data.image[IDWFPfilt].md[0].size[0];
+    WFPysize = data.image[IDWFPfilt].md[0].size[1];
+    WFP_NBstep = data.image[IDWFPfilt].md[0].size[2];
+    
+    WFP_xyrad = (long) (0.5*WFPxsize);
+    
+    printf("WFP_xyrad = %ld\n", WFP_xyrad);
+
+    AtmosphericTurbulence_ReadConf();
+    NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
+    IDphaout = create_3Dimage_ID("wfphaout", CONF_WFsize, CONF_WFsize, NBFRAMES);
+    IDphaoutres = create_3Dimage_ID("wfphaoutres", CONF_WFsize, CONF_WFsize, NBFRAMES);
+    IDbuff = create_3Dimage_ID("wfpbuffer", CONF_WFsize, CONF_WFsize, WFP_NBstep);
+    
+    tspan = 0;
+    k = 0;
+    printf("\n\n");
+    while(k<NB_WFstep)
+    {
+        printf("\r %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
+        fflush(stdout);
+        sprintf(fnamepha, "%s%08ld.pha", CONF_SWF_FILE_PREFIX, tspan);
+        
+        IDpha = load_fits(fnamepha, "wfpha", 1);
+        
+        
+        sprintf(fnamephaout, "!%s%08ld.out.pha", CONF_SWF_FILE_PREFIX, tspan);
+         sprintf(fnamephaoutres, "!%s%08ld.outres.pha", CONF_SWF_FILE_PREFIX, tspan);
+        
+        
+        for(frame=0; frame<NBFRAMES; frame++)
+        {
+            printf("\r      %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
+            fflush(stdout);
+            if(k<NB_WFstep)
+            {
+                // write buffer slice 0
+                for(ii=0;ii<CONF_WFsize*CONF_WFsize;ii++)
+                        data.image[IDbuff].array.F[ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+ii] + gauss()*WFphaNoise;
+                        
+                        
+                // estimation
+                for(ii=0;ii<CONF_WFsize;ii++)
+                    for(jj=0;jj<CONF_WFsize;jj++)
+                    {
+                        val = 0.0;
+                        for(ii1=0; ii1<WFPxsize; ii1++)
+                            for(jj1=0; jj1<WFPysize; jj1++)
+                                {
+                                    ii2 = ii + ii1 - WFP_xyrad;
+                                    jj2 = jj + jj1 - WFP_xyrad;
+                                    if((ii2>-1)&&(ii2<CONF_WFsize)&&(jj2>-1)&&(jj2<CONF_WFsize))
+                                        for(k1=0;k1<WFP_NBstep;k1++)
+                                            val += data.image[IDbuff].array.F[k1*CONF_WFsize*CONF_WFsize+CONF_WFsize*jj2+ii2] * data.image[IDWFPfilt].array.F[k1*WFPxsize*WFPysize+jj1*WFPxsize+ii1];
+                                }
+                        data.image[IDphaout].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] = val;
+                        data.image[IDphaoutres].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] - val;
+                    }
+              
+                    
+                // move by 1 slice
+                for(k1=WFP_NBstep-1; k1>0; k1--)
+                    for(ii=0;ii<CONF_WFsize*CONF_WFsize;ii++)
+                        data.image[IDbuff].array.F[k1*CONF_WFsize*CONF_WFsize+ii] = data.image[IDbuff].array.F[(k1-1)*CONF_WFsize*CONF_WFsize+ii];
+            }
+            k++;
+        }
+        save_fits("wfphaout", fnamephaout);
+        save_fits("wfphaoutres", fnamephaoutres);
+        tspan++;
+    }
+    
+    
+    
+    
+    
+    return(0);
 }
 
 
