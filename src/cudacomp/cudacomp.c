@@ -680,7 +680,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 }
 
     // copy memory to devices
-        for(device=0; device<gpumatmultconf[index].NBstreams; device++)
+    for(device=0; device<gpumatmultconf[index].NBstreams; device++)
         {
             error = cudaMemcpy(gpumatmultconf[index].d_wfsVec[device], gpumatmultconf[index].wfsVec_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
             if (error != cudaSuccess)
@@ -704,29 +704,15 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         GPUloadCmat(index);
 
 
-        printf("SETUP %d DONE, READY TO START COMPUTATIONS  \n", index);
+        printf("SETUP %d/%d DONE, READY TO START COMPUTATIONS  ", index, gpumatmultconf[index].NBstreams);
         fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
-
-        printf("1  SETUP %d DONE, READY TO START COMPUTATIONS  \n", index);
-        fflush(stdout);
-
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
-
-        printf("2  SETUP %d DONE, READY TO START COMPUTATIONS  \n", index);
-        fflush(stdout);
-
         gpumatmultconf[index].threadarray = (pthread_t*) malloc(sizeof(pthread_t)*gpumatmultconf[index].NBstreams);
-     
-     
-        printf("3  SETUP %d DONE, READY TO START COMPUTATIONS  \n", index);
-        fflush(stdout);
-
-
+    
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] = 0.0;
-
 
         cnt = 0;
         iter = 0;
