@@ -3408,6 +3408,15 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     double val;
     long ID_WFPfilt;
     
+    
+    
+    // General Hessian Algorithm
+    double GHA_eta = 0.01; // learning rate
+    long GHA_NBmodes = 10;
+    long ID_GHA_G; // V
+    long ID_GHA_N; // Rt S-1
+    
+    
     AtmosphericTurbulence_ReadConf();
 
     // select center pixel
@@ -3431,6 +3440,11 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
 
     printf("NBFRAMES = %ld\n", NBFRAMES);
+    
+    // prepare GHA
+    
+    
+    
     
     tspan = 0;
     k = 0;
