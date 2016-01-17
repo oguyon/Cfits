@@ -708,7 +708,15 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
+
+        printf("SETUP %d DONE, READY TO START COMPUTATIONS  ", index);
+        fflush(stdout);
+
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
+
+        printf("SETUP %d DONE, READY TO START COMPUTATIONS  ", index);
+        fflush(stdout);
+
         gpumatmultconf[index].threadarray = (pthread_t*) malloc(sizeof(pthread_t)*gpumatmultconf[index].NBstreams);
      
      
