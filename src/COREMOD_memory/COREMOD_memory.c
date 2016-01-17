@@ -4400,7 +4400,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         break;
     }
 
-    printf("image frame size = %ld\n", framesize);
+    printf("IMAGE FRAME SIZE = %ld\n", framesize);
 
     switch ( data.image[ID].md[0].atype ) {
     case CHAR:
