@@ -12851,7 +12851,7 @@ if test  "$cudaval" = "yes"; then
     NVCCFLAGS="$NVCCFLAGS"
     CUDA_CFLAGS="$CUDA_CFLAGS"
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
-    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include -I/usr/local/cuda-6.5/include/"
+    CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include -I/usr/local/cuda/include/"
     CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
     CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas"
     NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
@@ -12864,9 +12864,9 @@ $as_echo "#define HAVE_CUDA 1" >>confdefs.h
     eval "ARRAY${N}='-D_CUDA'"
     N=`expr $N + 1`
     LIBS="$LIBS $CUDA_LIBS"
-    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS -L/usr/local/cuda-6.5/lib64/"
+    LDFLAGS="$LDFLAGS $CUDA_LDFLAGS -L/usr/local/cuda/lib64/"
     CFLAGS="$CFLAGS $CUDA_CFLAGS"
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/cuda-6.5/lib64/"
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/cuda/lib64/"
 fi
 
 

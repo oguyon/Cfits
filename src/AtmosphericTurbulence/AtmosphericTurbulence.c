@@ -235,9 +235,9 @@ int AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
 
 int AtmosphericTurbulence_Build_LinPredictor_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
     {
-        AtmosphericTurbulence_Build_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+        AtmosphericTurbulence_Build_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
     }
     else
         return(1);
@@ -3375,7 +3375,7 @@ int measure_wavefront_series(float factor)
 
 // use past and near pixels to predict current pixel value
 
-int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix)
+int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFPlag, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix)
 {
     long ii0, jj0;
     long IDpha_measured;
@@ -3392,8 +3392,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     char fname[200];
     char fnameamp[200];
     char fnamepha[200];
- 
-    long WFPlag = 1;
+
  
     long mvecsize; // measurement vector size
     long *mvecdx;
@@ -3408,7 +3407,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     double val;
     long ID_WFPfilt;
     
-    
+    int Save = 0;
     
     // General Hessian Algorithm
     double GHA_eta = 0.01; // learning rate
@@ -3416,6 +3415,14 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     long ID_GHA_G; // V
     long ID_GHA_N; // Rt S-1
     
+    
+    
+    printf("WFP lag    = %ld\n", WFPlag);
+    printf("WFP rad    = %ld\n", WFP_xyrad);
+    printf("WFP NBstep = %ld\n", WFP_NBstep);
+    
+    printf("NOISE      = %f\n", WFphaNoise);
+    fflush(stdout);
     
     AtmosphericTurbulence_ReadConf();
 
@@ -3484,7 +3491,8 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
         tspan++;
     }
     
-    save_fits("WFP_pham", "!WFP_pham.fits");
+    if(Save==1)
+        save_fits("WFP_pham", "!WFP_pham.fits");
     
     mvecsize = WFPxsize*WFPysize*(WFP_NBstep-WFPlag);
     mvecdx = (long*) malloc(sizeof(long)*mvecsize);
@@ -3524,11 +3532,12 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     }
     
     
-   
-    save_fits("WFPmatA", "!WFPmatA.fits");
+    if(Save==1)
+        save_fits("WFPmatA", "!WFPmatA.fits");
    
     linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", 1.0e-8, "WFP_VTmat");
-    save_fits("WFPmatC", "!WFPmatC.fits");
+    if(Save==1)
+        save_fits("WFPmatC", "!WFPmatC.fits");
     IDmatC = image_ID("WFPmatC");
     
     ID_WFPfilt = create_3Dimage_ID("WFPfilt", WFPxsize, WFPysize, WFP_NBstep);
@@ -3541,7 +3550,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
            // printf("%5ld  ->  %5ld / %5ld     %5ld / %5ld    %5ld / %5ld\n", l, mvecdz[l], WFP_NBstep, mvecdy[l]+WFP_xyrad, WFPysize, mvecdx[l]+WFP_xyrad, WFPxsize);
             data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*mvecdz[l]+WFPxsize*(mvecdy[l]+WFP_xyrad)+(mvecdx[l]+WFP_xyrad)] =  val;
         }
-    sprintf(fname, "!WFPfilt_%03ld_%03ld.fits", WFPiipix, WFPjjpix);
+    sprintf(fname, "!WFPfilt_lag%ld_rad%ld_%03ld_%03ld.fits", WFPlag, WFP_xyrad, WFPiipix, WFPjjpix);
     save_fits("WFPfilt", fname);
     
     
@@ -3552,7 +3561,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
             val += data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*k+ii]*data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*k+ii];
         printf("%5ld  %.10f\n", k, val);
     }
-    
+    list_image_ID();
       
     free(mvecdx);
     free(mvecdy);

@@ -4975,7 +4975,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
         //  dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
             data.image[IDout].md[0].write = 1;
 
-            if((slice<NBslice))
+            if(slice<NBslice)
             {
                 sliceii = slice*data.image[IDmap].md[0].size[0]*data.image[IDmap].md[0].size[1];
                 for(ii=0; ii<nbpixslice[slice]; ii++)
@@ -4983,7 +4983,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             }
        //     printf("[%ld] ", slice); //TEST
 
-            if(slice==NBslice-1)
+//            if(slice==NBslice-1)
+            if(slice<oldslice)
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
