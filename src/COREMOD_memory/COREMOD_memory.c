@@ -4788,13 +4788,13 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                 data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
                 
                     
-                printf("[%ld]", data.image[ID].md[0].cnt1); // TEST
+               // printf("[%ld]", data.image[ID].md[0].cnt1); // TEST
 
-                if(data.image[ID].md[0].cnt1==0)
+/*                if(data.image[ID].md[0].cnt1==0)
                     {
                         printf("\n"); // TEST
                         fflush(stdout);
-                    }
+                    }*/
                 if(NBslices>1)
                     memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
                 else
@@ -4855,7 +4855,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     int r;
     long tmpl0, tmpl1;
     int semr;
-    
+
     double *dtarray;
     struct timespec *tarray;
     long slice1;
@@ -4885,11 +4885,11 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     IDout_pixslice = create_image_ID("outpixsl", 2, sizearray, USHORT, 0, 0);
 
     NBslice = data.image[IDin].md[0].size[2];
-    
+
     dtarray = (double*) malloc(sizeof(double)*NBslice);
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*NBslice);
-    
-    
+
+
     nbpixslice = (long*) malloc(sizeof(long)*NBslice);
     if((fp=fopen(NBpix_fname,"r"))==NULL)
     {
@@ -4959,7 +4959,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
         }
         else
         {
-        if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);
             }
@@ -4979,14 +4979,14 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             slice = data.image[IDin].md[0].cnt1;
             if(slice>oldslice+1)
                 slice = oldslice+1;
-          
-          
+
+
             if(oldslice==NBslice-1)
                 slice = 0;
-            
-            
-         //   clock_gettime(CLOCK_REALTIME, &tarray[slice]);
-        //  dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
+
+
+            //   clock_gettime(CLOCK_REALTIME, &tarray[slice]);
+            //  dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
             data.image[IDout].md[0].write = 1;
 
             if(slice<NBslice)
@@ -4995,22 +4995,22 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 for(ii=0; ii<nbpixslice[slice]; ii++)
                     data.image[IDout].array.U[data.image[IDmap].array.U[sliceii + ii] ] = data.image[IDin].array.U[sliceii + ii];
             }
-       //     printf("[%ld] ", slice); //TEST
+            //     printf("[%ld] ", slice); //TEST
 
-           if(slice==NBslice-1)   //if(slice<oldslice)        
+            if(slice==NBslice-1)   //if(slice<oldslice)
             {
                 sem_post(data.image[IDout].semptr[0]);
                 data.image[IDout].md[0].cnt0 ++;
-                
-           //     printf("[[ Timimg [us] :   ");
-              //  for(slice1=1;slice1<NBslice;slice1++)
-              //      {
-          //              dtarray[slice1] -= dtarray[0];
-             //           printf("%6ld ", (long) (1.0e6*dtarray[slice1]));
-              //      }
-               // printf("]]");
-              //  printf("\n");//TEST
-               // fflush(stdout);
+
+                //     printf("[[ Timimg [us] :   ");
+                //  for(slice1=1;slice1<NBslice;slice1++)
+                //      {
+                //              dtarray[slice1] -= dtarray[0];
+                //           printf("%6ld ", (long) (1.0e6*dtarray[slice1]));
+                //      }
+                // printf("]]");
+                //  printf("\n");//TEST
+                // fflush(stdout);
             }
 
             data.image[IDout].md[0].cnt1 = slice;
@@ -5022,7 +5022,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
-            
+
         iter++;
     }
 
@@ -5032,6 +5032,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
     return(IDout);
 }
+
 
 
 
