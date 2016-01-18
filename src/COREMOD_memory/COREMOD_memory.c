@@ -4485,9 +4485,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
             if(iter == 0)
             {
+                printf("driving semaphore to zero ... ");
+                fflush(stdout);
                 sem_getvalue(data.image[ID].semptr[0], &semval);
                 for(scnt=0; scnt<semval; scnt++)
                     sem_trywait(data.image[ID].semptr[0]);
+                printf("done\n");
+                fflush(stdout);
             }
         }
         if(semr==0)
