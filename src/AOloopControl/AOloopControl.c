@@ -6001,11 +6001,11 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
 
 
 /** Measures zonal response matrix
- * -> collapses it to DM response map and WFS response map 
- * (both maps show amplitude of actuator effect on WFS) 
- * 
- * mode : 
- *  0: compute WFSmap and DMmap 
+ * -> collapses it to DM response map and WFS response map
+ * (both maps show amplitude of actuator effect on WFS)
+ *
+ * mode :
+ *  0: compute WFSmap and DMmap
  *  1: compute WFSmap, DMmap, WFSmask and DMmask  -> images wfsmask and dmmask
  * NOTE can take custom poke matrix (loaded in image name RMpokeCube)
  * */
@@ -6043,12 +6043,12 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     int ret;
-    
-    
+
+
 
     schedpar.sched_priority = RT_priority;
-    sched_setscheduler(0, SCHED_FIFO, &schedpar); 
-   
+    sched_setscheduler(0, SCHED_FIFO, &schedpar);
+
 
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
@@ -6091,27 +6091,29 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
 
 
-  IDpokeC = image_ID("RMpokeCube");
+    IDpokeC = image_ID("RMpokeCube");
     if(IDpokeC==-1)
     {
         IDpokeC = create_3Dimage_ID("RMpokeCube", AOconf[loop].sizexDM, AOconf[loop].sizeyDM, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
-        for(act=0;act<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; act++)
-            {
-                for(ii=0;ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
-                    data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+ii] = 0.0;
-                data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+act] = 1.0;
-            }
-            save_fits("RMpokeCube", "!RMpokeCube.fits");
-    
+        for(act=0; act<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; act++)
+        {
+            for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
+                data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+ii] = 0.0;
+            data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+act] = 1.0;
+        }
+        save_fits("RMpokeCube", "!RMpokeCube.fits");
+
         NBpoke = data.image[IDpokeC].md[0].size[2];
     }
     else
-        NBpoke = AOconf[loop].sizeDM;
-
+        {
+            //NBpoke = AOconf[loop].sizeDM;
+            NBpoke = data.image[IDpokeC].md[0].size[2];
+        }
 
     sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke);
     ret = system(command);
-//    sleep(10);
+    //    sleep(10);
 
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
@@ -6131,7 +6133,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
         sizearray[0] = AOconf[loop].sizexWFS;
         sizearray[1] = AOconf[loop].sizeyWFS;
         ID_WFSmask = create_image_ID("wfsmask", 2, sizearray, FLOAT, 1, 5);
-        
+
         sizearray[0] = AOconf[loop].sizexDM;
         sizearray[1] = AOconf[loop].sizeyDM;
         ID_DMmask = create_image_ID("dmmask", 2, sizearray, FLOAT, 1, 5);
@@ -6142,9 +6144,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     iter = 0;
 
 
-    // 
-    
-  
+    //
+
+
 
 
     //    for(iter=0; iter<NBiter; iter++)
@@ -6153,8 +6155,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
     r = system(command);
- 
- 
+
+
     printf("STARTING RM...\n");
     fflush(stdout);
 
@@ -6162,11 +6164,11 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     {
         printf("\r iteration # %8ld     ", iter);
         fflush(stdout);
- 
+
         for(act=0; act<NBpoke; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0; 
-                    
+                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0;
+
 
 
         act = 0;
@@ -6181,7 +6183,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
             // POSITIVE POKE
             for(j=0; j<AOconf[loop].sizeDM; j++)
-                arrayf[j] = ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j]; 
+                arrayf[j] = ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j];
 
             data.image[aoconfID_dmRM].md[0].write = 1;
             memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
@@ -6210,7 +6212,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             // NEGATIVE POKE
             for(j=0; j<AOconf[loop].sizeDM; j++)
                 arrayf[j] = -ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j];
- 
+
             data.image[aoconfID_dmRM].md[0].write = 1;
             memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
             data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -6244,120 +6246,120 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
         cntn = 2*NBave; // Number of images
 
 
-            for(j=0; j<AOconf[loop].sizeDM; j++)
-                arrayf[j] = 0.0;
+        for(j=0; j<AOconf[loop].sizeDM; j++)
+            arrayf[j] = 0.0;
 
-            data.image[aoconfID_dmRM].md[0].write = 1;
-            memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-            data.image[aoconfID_dmRM].md[0].cnt0++;
-            data.image[aoconfID_dmRM].md[0].write = 0;
-            AOconf[loop].DMupdatecnt ++;
+        data.image[aoconfID_dmRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_dmRM].md[0].cnt0++;
+        data.image[aoconfID_dmRM].md[0].write = 0;
+        AOconf[loop].DMupdatecnt ++;
 
 
         if(data.signal_USR1==0)
         {
-            for(act=0; act<NBpoke; act++) 
+            for(act=0; act<NBpoke; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii]/ampl/cntn;
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
             save_fits(zrespm_name, fname);
 
-            for(act=0; act<NBpoke; act++) 
+            for(act=0; act<NBpoke; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                 {
                     data.image[IDzrespfp].array.F[act*AOconf[loop].sizeWFS+ii] /= NBave;
                     data.image[IDzrespfm].array.F[act*AOconf[loop].sizeWFS+ii] /= NBave;
                 }
 
-            
-                r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
-                save_fits("zrespfp", fname);
-                r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter);
-                save_fits("zrespfm", fname);
+
+            r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
+            save_fits("zrespfp", fname);
+            r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter);
+            save_fits("zrespfm", fname);
 
 
             total = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[ID_WFSref0n].array.F[ii] = data.image[ID_WFSref0].array.F[ii]/NBave/cntn;
-                    total += data.image[ID_WFSref0n].array.F[ii];
-                }
+            {
+                data.image[ID_WFSref0n].array.F[ii] = data.image[ID_WFSref0].array.F[ii]/NBave/cntn;
+                total += data.image[ID_WFSref0n].array.F[ii];
+            }
 
             if(normalize==1)
-                {
-                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                        data.image[ID_WFSref0n].array.F[ii] /= total;
-                }
+            {
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    data.image[ID_WFSref0n].array.F[ii] /= total;
+            }
             else
-                {
-                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                        data.image[ID_WFSref0n].array.F[ii] /= NBave;
-                }
-                
+            {
+                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    data.image[ID_WFSref0n].array.F[ii] /= NBave;
+            }
+
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter);
             save_fits(WFSref0_name, fname);
 
 
-        if(mode!=3)
-        {
-            for(act=0; act<AOconf[loop].sizeDM; act++)
+            if(mode!=3)
             {
-                rms = 0.0;
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
-                    rms += tmpv*tmpv;
-                }
-                data.image[ID_DMmap].array.F[act] = rms;
-            }
-            sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
-            save_fits(DMmap_name, fname);
-
- 
-
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            {
-                rms = 0.0;
                 for(act=0; act<AOconf[loop].sizeDM; act++)
                 {
-                    tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
-                    rms += tmpv*tmpv;
+                    rms = 0.0;
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                    {
+                        tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
+                        rms += tmpv*tmpv;
+                    }
+                    data.image[ID_DMmap].array.F[act] = rms;
                 }
-                data.image[ID_WFSmap].array.F[ii] = rms;
-            }
-            sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
-            save_fits(WFSmap_name, fname);
-  
-  
-            
-            if(mode>0) // compute WFSmask and DMmask
-            {
-                // WFSmask : select pixels >40% of 85-percentile
-                lim = 0.4*img_percentile(WFSmap_name, 0.7);
+                sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
+                save_fits(DMmap_name, fname);
+
+
+
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                {
+                    rms = 0.0;
+                    for(act=0; act<AOconf[loop].sizeDM; act++)
+                    {
+                        tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
+                        rms += tmpv*tmpv;
+                    }
+                    data.image[ID_WFSmap].array.F[ii] = rms;
+                }
+                sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
+                save_fits(WFSmap_name, fname);
+
+
+
+                if(mode>0) // compute WFSmask and DMmask
+                {
+                    // WFSmask : select pixels >40% of 85-percentile
+                    lim = 0.4*img_percentile(WFSmap_name, 0.7);
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     {
                         if(data.image[ID_WFSmap].array.F[ii]<lim)
                             data.image[ID_WFSmask].array.F[ii] = 0.0;
                         else
                             data.image[ID_WFSmask].array.F[ii] = 1.0;
                     }
-                
-                // DMmask: select pixels >10% of 50-percentile
-                lim = 0.1*img_percentile(DMmap_name, 0.5);
-                for(act=0; act<AOconf[loop].sizeDM; act++)
+
+                    // DMmask: select pixels >10% of 50-percentile
+                    lim = 0.1*img_percentile(DMmap_name, 0.5);
+                    for(act=0; act<AOconf[loop].sizeDM; act++)
                     {
-                         if(data.image[ID_DMmap].array.F[act]<lim)
+                        if(data.image[ID_DMmap].array.F[act]<lim)
                             data.image[ID_DMmask].array.F[act] = 0.0;
                         else
                             data.image[ID_DMmask].array.F[act] = 1.0;
                     }
+                }
             }
-        }
             iter++;
             r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
-            r = system(command);        
+            r = system(command);
         }
-    }   
+    }
 
     free(arrayf);
     free(sizearray);
@@ -6367,6 +6369,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
 
     return(ID_WFSmap);
 }
+
 
 
 
