@@ -4498,9 +4498,9 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         {
             frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
             frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
-            printf("counters    %8ld  %8ld\n", frame_md[0].cnt0, frame_md[0].cnt1); //TEST
+            /*printf("counters    %8ld  %8ld\n", frame_md[0].cnt0, frame_md[0].cnt1); //TEST
             fflush(stdout);
-            
+           */ 
             slice = data.image[ID].md[0].cnt1;
             if(slice>oldslice+1)
                 slice = oldslice+1;
@@ -4508,13 +4508,13 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                 if(oldslice==NBslices-1)
                     slice = 0;;
 
-            printf("[%ld -> %ld] ", oldslice, slice); // TEST
+       //     printf("[%ld -> %ld] ", oldslice, slice); // TEST
             frame_md[0].cnt1 = slice;
-            if(slice == 0)
+         /*   if(slice == 0)
             {
                 printf("\n");
                 fflush(stdout);
-            }
+            }*/
 
             ptr1 = ptr0 + framesize*slice; //data.image[ID].md[0].cnt1; // frame that was just written
             memcpy(buff, ptr1, framesize);
@@ -4531,11 +4531,11 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             }
             oldslice = slice;
         }
-        else//TEST
+       /* else//TEST
             {
                 printf("semr = %d\n", semr);
                 fflush(stdout);
-            }
+            }*/
         
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             sockOK = 0;
