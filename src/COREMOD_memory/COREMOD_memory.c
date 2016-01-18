@@ -4498,7 +4498,8 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
         {
             frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
             frame_md[0].cnt1 = data.image[ID].md[0].cnt1;
-
+            printf("counters    %8ld  %8ld\n", frame_md[0].cnt0, frame_md[0].cnt1); //TEST
+            fflush(stdout);
             
             slice = data.image[ID].md[0].cnt1;
             if(slice>oldslice+1)
@@ -4530,6 +4531,12 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
             }
             oldslice = slice;
         }
+        else//TEST
+            {
+                printf("semr = %d\n", semr);
+                fflush(stdout);
+            }
+        
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             sockOK = 0;
 
