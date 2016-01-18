@@ -4663,7 +4663,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 
     ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
     COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
-    printf("Created image stream %s\n", imgmd[0].name);
+    printf("Created image stream %s - shared = %d\n", imgmd[0].name, imgmd[0].shared);
     list_image_ID();
     
     
