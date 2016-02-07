@@ -145,6 +145,19 @@ int make_rnd_cli()
 }
 
 
+
+int make_rndgauss_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+    {
+		make_rnd(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, "gauss"); 
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 //long make_rnd(char *ID_name, long l1, long l2, char *options)
 
 
@@ -244,9 +257,19 @@ int init_image_gen()
   data.cmd[data.NBcmd].fp = make_rnd_cli;
   strcpy(data.cmd[data.NBcmd].info,"make random image");
   strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize>");
-  strcpy(data.cmd[data.NBcmd].example,"mkrndim 512 512");
+  strcpy(data.cmd[data.NBcmd].example,"mkrndim im 512 512");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_rnd(char *ID_name, long l1, long l2, char *options)");
   data.NBcmd++;
+
+  strcpy(data.cmd[data.NBcmd].key,"mkrndgim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = make_rndgauss_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make random image, gaussian distrib");
+  strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize>");
+  strcpy(data.cmd[data.NBcmd].example,"mkrndgim im 512 512");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long make_rnd(char *ID_name, long l1, long l2, char *options)");
+  data.NBcmd++;
+
 
 //long make_rnd(char *ID_name, long l1, long l2, char *options)
 

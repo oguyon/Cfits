@@ -246,9 +246,9 @@ int AtmosphericTurbulence_Build_LinPredictor_cli()
 
 int AtmosphericTurbulence_Test_LinPredictor_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,4)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0)
     {
-        AtmosphericTurbulence_Test_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
+        AtmosphericTurbulence_Test_LinPredictor(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
     }
     else
         return(1);
@@ -326,9 +326,9 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AtmosphericTurbulence_Test_LinPredictor_cli;
     strcpy(data.cmd[data.NBcmd].info,"Test linear predictor on wavefront series");
-    strcpy(data.cmd[data.NBcmd].syntax,"<number steps input> <noise level [rad]> <predictor name>");
-    strcpy(data.cmd[data.NBcmd].example,"atmturbwfptest 1000 0.01 wfpfilt");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<number steps input> <noise level [rad]> <predictor name> <lag> <iipix> <jjpix>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbwfptest 1000 0.01 wfpfilt 1 32 54");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix)");
     data.NBcmd++;
 
     return 0;
@@ -3373,10 +3373,14 @@ int measure_wavefront_series(float factor)
 
 
 
-// use past and near pixels to predict current pixel value
+
+
+// use past and near pixels to predict current pixel value ( single pixel )
 
 int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFPlag, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix)
 {
+    int GHA = 0;
+
     long ii0, jj0;
     long IDpha_measured;
     long IDpupamp;
@@ -3393,84 +3397,163 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
     char fnameamp[200];
     char fnamepha[200];
 
- 
+
     long mvecsize; // measurement vector size
     long *mvecdx;
     long *mvecdy;
     long *mvecdz;
     long NBmvec; // number of measurement vectors
-    
+
     long IDmatA;
     long l, m;
     long k0;
     long IDmatC;
     double val;
     long ID_WFPfilt;
-    
-    int Save = 0;
-    
+
+    int Save = 1;
+
     // General Hessian Algorithm
-    double GHA_eta = 0.01; // learning rate
+    double GHA_eta = 1e-7; // learning rate
     long GHA_NBmodes = 10;
-    long ID_GHA_G; // V
-    long ID_GHA_N; // Rt S-1
+    long ID_GHA_x; // input vector [ n ]
+    long ID_GHA_y; // output vector [ m ]
+    long ID_GHA_z;
+    long ID_GHA_UT; // V [n x n]
+    long ID_GHA_NT; // V S+ [m x n]
+    long ID_GHA_zzT; // [m x m]
+    long ID_GHA_V; // [n x n]
+    long ID_GHA_sval; // [m]
+    long ID_GHA_Mest; // [m x n]
+    long ID_GHA_WFPfilt;
+    long GHA_n; // size of input vector = n
+    long GHA_m; // size of output vector = m
+    double dval, dval0;
+    long ll;
+    double sval;
+    long offset;
+    long GHAiter;
+    long GHA_NBiter = 50;
+    long double errval = 0.0;
+    long ID_GHA_matA;
+    long double cntval;
+    long long cnt;
+    long k1;
+
+
+    long IDpupmask;
+    double maxPixSpeed = 2.0; // max wind speed in pix / frame
+
+    double SVDeps = 1e-8;
+    long vID;
     
     
     
+    if((vID=variable_ID("SVDeps"))!=-1)
+    {
+        SVDeps = data.variable[vID].value.f;
+        printf("SVDeps = %f\n", SVDeps);
+    }
+
+
     printf("WFP lag    = %ld\n", WFPlag);
     printf("WFP rad    = %ld\n", WFP_xyrad);
     printf("WFP NBstep = %ld\n", WFP_NBstep);
-    
+
     printf("NOISE      = %f\n", WFphaNoise);
     fflush(stdout);
-    
+
     AtmosphericTurbulence_ReadConf();
 
     // select center pixel
     ii0 = WFPiipix;
     jj0 = WFPjjpix;
-    
+
     WFPxsize = 1+2*WFP_xyrad;
     WFPysize = 1+2*WFP_xyrad;
     printf("WFP_xyrad = %ld\n", WFP_xyrad);
     IDpha_measured = create_3Dimage_ID("WFP_pham", WFPxsize, WFPysize, NB_WFstep);
- 
+
     IDpupamp = image_ID("ST_pa");
     if (IDpupamp==-1)
-        {
-            printf("ERROR: pupil amplitude map not loaded");
-            exit(0);
-        }
- 
+    {
+        printf("ERROR: pupil amplitude map not loaded");
+        exit(0);
+    }
+
     naxes[0] = data.image[IDpupamp].md[0].size[0];
     naxes[1] = data.image[IDpupamp].md[0].size[1];
     NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
 
     printf("NBFRAMES = %ld\n", NBFRAMES);
-    
-    // prepare GHA
-    
-    
-    
-    
+
+
+    IDpupmask = image_ID("pupmask");
+    if (IDpupmask==-1)
+    {
+        printf("ERROR: pupil mask not loaded");
+        exit(0);
+    }
+
+
+
+    if(GHA==1)
+    {
+        // prepare GHA
+        // matrix convention
+        // km x kn matrix
+        // size[0] = km
+        // size[1] = kn
+        // m<n
+        GHA_m = 1;
+        GHA_n = WFPxsize*WFPysize*(WFP_NBstep-WFPlag);
+        ID_GHA_x = create_2Dimage_ID("GHA_x", GHA_n, 1); // input vector
+        ID_GHA_y = create_2Dimage_ID("GHA_y", GHA_m, 1); // output vector
+        ID_GHA_z = create_2Dimage_ID("GHA_z", GHA_m, 1); // z = UT y
+        ID_GHA_UT = create_2Dimage_ID("GHA_UT", GHA_m, GHA_m);
+        ID_GHA_NT = create_2Dimage_ID("GHA_NT", GHA_m, GHA_n);  // m x n matrix
+        ID_GHA_zzT = create_2Dimage_ID("GHA_zzT", GHA_m, GHA_m);  // m x m matrix
+
+
+        // initialization: set GHA_UT to Identity square matrix
+        for(ii=0; ii<GHA_m; ii++)
+            for(jj=0; jj<GHA_m; jj++)
+                data.image[ID_GHA_UT].array.F[jj*GHA_m+ii] = 0.0;
+        for(ii=0; ii<GHA_m; ii++)
+            data.image[ID_GHA_UT].array.F[ii*GHA_m+ii] = 1.0;
+
+        // set NT elements
+        for(ii=0; ii<GHA_m; ii++)
+            for(jj=0; jj<GHA_n; jj++)
+                data.image[ID_GHA_NT].array.F[jj*GHA_m+ii] = 0.0;
+        for(ii=0; ii<GHA_m; ii++)
+            data.image[ID_GHA_NT].array.F[ii*GHA_m+ii] = 1.0;
+        //data.image[ID_GHA_NT].array.F[10] = 1.0;
+    }
+
+
     tspan = 0;
     k = 0;
     printf("\n\n");
+    cnt = 0;
+    cntval = 0.0;
     while(k<NB_WFstep)
     {
         printf("\r %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
         fflush(stdout);
-//        printf("%ld/%ld\n", tspan, CONF_NB_TSPAN);
+        //        printf("%ld/%ld\n", tspan, CONF_NB_TSPAN);
         sprintf(fnamepha,"%s%8ld.pha", CONF_SWF_FILE_PREFIX, tspan);
         replace_char(fnamepha,' ','0');
         sprintf(fnameamp,"%s%8ld.amp", CONF_SWF_FILE_PREFIX, tspan);
         replace_char(fnameamp,' ','0');
         IDpha = load_fits(fnamepha, "wfpha", 1);
-        
-       for(frame=0; frame<NBFRAMES; frame++)
+
+        for(frame=0; frame<NBFRAMES; frame++)
         {
             printf("\r      %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
             fflush(stdout);
+            cnt = 0;
+            cntval = 0.0;
             if(k<NB_WFstep)
             {
                 for(ii=0; ii<WFPxsize; ii++)
@@ -3482,98 +3565,272 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
                             pha = data.image[IDpha].array.F[frame*naxes[0]*naxes[1]+jj1*naxes[0]+ii1];
                         else
                             pha = 0;
-                        data.image[IDpha_measured].array.F[k*WFPxsize*WFPysize+jj*WFPxsize+ii] = pha + gauss()*WFphaNoise;
+                        data.image[IDpha_measured].array.F[k*WFPxsize*WFPysize+jj*WFPxsize+ii] = gauss()*WFphaNoise + pha;
+                        cnt++;
+                        cntval += data.image[IDpha_measured].array.F[k*WFPxsize*WFPysize+jj*WFPxsize+ii];
                     }
+                //            for(ii=0; ii<WFPxsize*WFPysize; ii++)
+                //                  data.image[IDpha_measured].array.F[k*WFPxsize*WFPysize+ii] -= cntval/cnt;
             }
             k++;
         }
         delete_image_ID("wfpha");
         tspan++;
     }
-    
+
+
+
+
+    //    for(ii=0; ii<WFPxsize*WFPysize*NB_WFstep; ii++)
+    //      data.image[IDpha_measured].array.F[ii] -= cntval/cnt;
+
     if(Save==1)
         save_fits("WFP_pham", "!WFP_pham.fits");
-    
+
+
+
+
+
     mvecsize = WFPxsize*WFPysize*(WFP_NBstep-WFPlag);
     mvecdx = (long*) malloc(sizeof(long)*mvecsize);
     mvecdy = (long*) malloc(sizeof(long)*mvecsize);
     mvecdz = (long*) malloc(sizeof(long)*mvecsize);
     NBmvec = NB_WFstep-WFP_NBstep;
-    
+
     // indexes
-    // m = measurement or vector number
+    // m = measurement number
     // l = pixel index
-    
+
     l = 0;
-    for(k=WFPlag;k<WFP_NBstep;k++)
+    for(k=WFPlag; k<WFP_NBstep; k++)
     {
+            
         for(ii=0; ii<WFPxsize; ii++)
             for(jj=0; jj<WFPysize; jj++)
-                {
-                    mvecdx[l] = ii-WFP_xyrad;
-                    mvecdy[l] = jj-WFP_xyrad;
-                    mvecdz[l] = k;
+            {
+                mvecdx[l] = ii-WFP_xyrad;
+                mvecdy[l] = jj-WFP_xyrad;
+                mvecdz[l] = k;
+                
+                if((data.image[IDpupmask].array.F[(jj0+mvecdy[l])*naxes[0] + (ii0+mvecdx[l])]>0.1) && (sqrt(mvecdx[l]*mvecdx[l]+mvecdy[l]*mvecdy[l])<maxPixSpeed*(k+1)) )
                     l++;
-                }
+            }
     }
+
+    printf("lmax = %ld / %ld\n", l, mvecsize);
+    mvecsize = l;
     
+
     IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, mvecsize);
     // each column is a measurement
     // ii index is measurement
     // jj index is pixel
-    
-    for(m=0;m<NBmvec;m++)
+    for(m=0; m<NBmvec; m++)
     {
         k0 = m+WFP_NBstep;
-        for(l=0;l<mvecsize;l++)
+        for(l=0; l<mvecsize; l++)
         {
             data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDpha_measured].array.F[(k0-mvecdz[l])*WFPxsize*WFPysize+(mvecdy[l]+WFP_xyrad)*WFPxsize+(mvecdx[l]+WFP_xyrad)];
         }
     }
-    
-    
+
+
+
+
+    if(GHA==1)
+    {
+        // for GHA: compute differences
+        ID_GHA_matA = create_2Dimage_ID("GHAmatA", NBmvec, mvecsize);
+        for(k=0; k<NB_WFstep; k++)
+        {
+            k1 = k + 50; // 50 frames offset
+            if(k1>NB_WFstep-1)
+                k1 -= NB_WFstep;
+            for(l=0; l<mvecsize; l++)
+                data.image[ID_GHA_matA].array.F[l*NBmvec+k] = data.image[IDmatA].array.F[l*NBmvec+k] - data.image[IDmatA].array.F[l*NBmvec+k1];
+        }
+    }
+
+
     if(Save==1)
+    {
         save_fits("WFPmatA", "!WFPmatA.fits");
-   
-    linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", 1.0e-8, "WFP_VTmat");
+        if(GHA==1)
+            save_fits("GHAmatA", "!GHAmatA.fits");
+    }
+
+    if(GHA==1)
+    {
+        // run GHA
+        printf("\n");
+        printf("RUNNING GHA  %ld x %ld  [%ld]... \n", GHA_m, GHA_n, NBmvec);
+        fflush(stdout);
+        for(GHAiter=0; GHAiter<GHA_NBiter; GHAiter++)
+        {
+            errval = 0.0;
+            for(k=0; k<NBmvec; k++)
+            {
+                //printf("\n %ld\n", k);
+                //fflush(stdout);
+
+                // initialize input vector x
+                for(ii=0; ii<GHA_n; ii++)
+                    data.image[ID_GHA_x].array.F[ii] = data.image[ID_GHA_matA].array.F[ii*NBmvec+k];
+
+                // initialize output vector y
+                for(ii=0; ii<GHA_m; ii++)
+                    data.image[ID_GHA_y].array.F[ii] = data.image[ID_GHA_x].array.F[60];
+                //data.image[IDpha_measured].array.F[(k+WFP_NBstep)*WFPxsize*WFPysize+WFP_xyrad*WFPxsize+WFP_xyrad];
+                //data.image[ID_GHA_x].array.F[24];
+
+                // Compute vector z = UT y
+                for(ii=0; ii<GHA_m; ii++)
+                    data.image[ID_GHA_z].array.F[ii] = 0.0;
+
+                for(ii=0; ii<GHA_m; ii++)
+                    for(jj=0; jj<GHA_m; jj++)
+                        data.image[ID_GHA_z].array.F[ii] += data.image[ID_GHA_UT].array.F[jj*GHA_m+ii] * data.image[ID_GHA_y].array.F[jj];
+
+                // compute LT[zzT]
+                for(ii=0; ii<GHA_m; ii++)
+                    for(jj=0; jj<GHA_m; jj++)
+                        if(jj<=ii)
+                            data.image[ID_GHA_zzT].array.F[jj*GHA_m+ii] = data.image[ID_GHA_z].array.F[ii] * data.image[ID_GHA_z].array.F[jj];
+
+                // update UT
+                for(ii=0; ii<GHA_m; ii++)
+                    for(jj=0; jj<GHA_m; jj++)
+                    {
+                        dval = 0.0;
+                        dval = data.image[ID_GHA_z].array.F[ii]*data.image[ID_GHA_y].array.F[jj];  // z yT
+                        dval0 = 0.0;
+                        for(ll=0; ll<GHA_m; ll++)
+                            dval0 += data.image[ID_GHA_zzT].array.F[ll*GHA_m+ii] * data.image[ID_GHA_UT].array.F[jj*GHA_m+ll];
+                        dval -= dval0;
+
+                        data.image[ID_GHA_UT].array.F[jj*GHA_m+ii] += GHA_eta * dval;
+                    }
+
+                // update NT
+                errval = 0.0;
+                for(ii=0; ii<GHA_m; ii++)
+                    for(jj=0; jj<GHA_n; jj++)
+                    {
+                        dval = 0.0;
+                        dval = data.image[ID_GHA_z].array.F[ii]*data.image[ID_GHA_x].array.F[jj];  // z xT
+                        dval0 = 0.0;
+                        for(ll=0; ll<GHA_m; ll++)
+                            dval0 += data.image[ID_GHA_zzT].array.F[ll*GHA_m+ii] * data.image[ID_GHA_NT].array.F[jj*GHA_m+ll];
+                        dval -= dval0;
+
+                        errval += dval*dval;
+
+                        data.image[ID_GHA_NT].array.F[jj*GHA_m+ii] += GHA_eta*dval;
+                    }
+                //  printf("%05ld   z = %g    U = %g     NT0 = %g\n", k, data.image[ID_GHA_z].array.F[0], data.image[ID_GHA_UT].array.F[0], data.image[ID_GHA_NT].array.F[0]);
+            }
+            printf("%3ld  errval = %.18lf    %.10f\n", GHAiter, (double) errval, data.image[ID_GHA_NT].array.F[0]);
+            fflush(stdout);
+        }
+        printf("done\n");
+        fflush(stdout);
+
+        if(Save==1)
+        {
+            save_fits("GHA_UT", "!GHA_UT.fits");
+            save_fits("GHA_NT", "!GHA_NT.fits");
+        }
+
+        printf("Computing Matrix M\n");
+        fflush(stdout);
+
+        // separate vectors V and singular values
+        ID_GHA_V = create_2Dimage_ID("GHA_V", GHA_n, GHA_m);
+        ID_GHA_sval = create_2Dimage_ID("GHA_sval", GHA_m, 1);
+        for(jj=0; jj<GHA_m; jj++)
+        {
+            val = 0.0;
+            for(ii=0; ii<GHA_n; ii++)
+            {
+                dval = data.image[ID_GHA_NT].array.F[ii*GHA_m+jj];
+                val += dval*dval;
+                data.image[ID_GHA_V].array.F[jj*GHA_n+ii] = dval;
+            }
+            val = sqrt(val);
+            for(ii=0; ii<GHA_n; ii++)
+                data.image[ID_GHA_V].array.F[jj*GHA_n+ii] /= val;
+            printf("Singular value %3ld = %g\n", jj, 1.0/val);
+            data.image[ID_GHA_sval].array.F[jj] = 1.0/val;
+        }
+        save_fits("GHA_V", "!GHA_V.fits");
+
+        // compute Mest
+        ID_GHA_Mest = create_2Dimage_ID("GHA_Mest", GHA_m, GHA_n);
+
+        for(ll=0; ll<GHA_m; ll++) // singular value index
+        {
+            sval = data.image[ID_GHA_sval].array.F[ll];
+            for(jj=0; jj<GHA_n; jj++)
+                for(ii=0; ii<GHA_m; ii++)
+                {
+                    data.image[ID_GHA_Mest].array.F[jj*GHA_m+ii] += data.image[ID_GHA_UT].array.F[ii*GHA_m+ll]*sval*data.image[ID_GHA_V].array.F[ll*GHA_n+jj];
+                }
+        }
+
+
+        ID_GHA_WFPfilt = create_3Dimage_ID("GHA_WFPfilt", WFPxsize, WFPysize, WFP_NBstep);
+        offset = WFPxsize*WFPysize*WFPlag;
+        for(k=0; k<WFPxsize*WFPysize*(WFP_NBstep-WFPlag); k++)
+            data.image[ID_GHA_WFPfilt].array.F[offset+k] =  data.image[ID_GHA_Mest].array.F[k];
+        save_fits("GHA_WFPfilt", "!GHA_WFPfilt.fits");
+
+    }
+    //exit(0);
+
+
+
+    linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
     if(Save==1)
         save_fits("WFPmatC", "!WFPmatC.fits");
     IDmatC = image_ID("WFPmatC");
-    
+
     ID_WFPfilt = create_3Dimage_ID("WFPfilt", WFPxsize, WFPysize, WFP_NBstep);
 
-    for(l=0;l<mvecsize;l++)
-        {
-            val = 0.0;
-            for(m=0;m<NBmvec;m++)
-                val += data.image[IDmatC].array.F[l*NBmvec+m] * data.image[IDpha_measured].array.F[(m+WFP_NBstep)*WFPxsize*WFPysize + WFP_xyrad*WFPxsize + WFP_xyrad];
-           // printf("%5ld  ->  %5ld / %5ld     %5ld / %5ld    %5ld / %5ld\n", l, mvecdz[l], WFP_NBstep, mvecdy[l]+WFP_xyrad, WFPysize, mvecdx[l]+WFP_xyrad, WFPxsize);
-            data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*mvecdz[l]+WFPxsize*(mvecdy[l]+WFP_xyrad)+(mvecdx[l]+WFP_xyrad)] =  val;
-        }
-    sprintf(fname, "!WFPfilt_lag%ld_rad%ld_%03ld_%03ld.fits", WFPlag, WFP_xyrad, WFPiipix, WFPjjpix);
-    save_fits("WFPfilt", fname);
-    
-    
-    for(k=WFPlag;k<WFP_NBstep;k++)
+    for(l=0; l<mvecsize; l++)
     {
         val = 0.0;
-        for(ii=0;ii<WFPxsize*WFPysize; ii++)
+        for(m=0; m<NBmvec; m++)
+            val += data.image[IDmatC].array.F[l*NBmvec+m] * data.image[IDpha_measured].array.F[(m+WFP_NBstep)*WFPxsize*WFPysize + WFP_xyrad*WFPxsize + WFP_xyrad];
+        // printf("%5ld  ->  %5ld / %5ld     %5ld / %5ld    %5ld / %5ld\n", l, mvecdz[l], WFP_NBstep, mvecdy[l]+WFP_xyrad, WFPysize, mvecdx[l]+WFP_xyrad, WFPxsize);
+        data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*mvecdz[l]+WFPxsize*(mvecdy[l]+WFP_xyrad)+(mvecdx[l]+WFP_xyrad)] =  val;
+    }
+    sprintf(fname, "!WFPfilt_lag%ld_rad%ld_%03ld_%03ld.fits", WFPlag, WFP_xyrad, WFPiipix, WFPjjpix);
+    save_fits("WFPfilt", fname);
+    save_fits("WFPfilt", "!WFPfilt.fits");
+
+    for(k=WFPlag; k<WFP_NBstep; k++)
+    {
+        val = 0.0;
+        for(ii=0; ii<WFPxsize*WFPysize; ii++)
             val += data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*k+ii]*data.image[ID_WFPfilt].array.F[WFPxsize*WFPysize*k+ii];
         printf("%5ld  %.10f\n", k, val);
     }
     list_image_ID();
-      
+
     free(mvecdx);
     free(mvecdy);
     free(mvecdz);
-  
+
     return 0;
 }
 
 
 
 
-int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name)
+
+
+
+int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix)
 {
     long WFP_xyrad;
     long WFP_NBstep;
@@ -3589,33 +3846,60 @@ int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, c
     long frame;
     long ii, jj, ii1, jj1, ii2, jj2;
     double pha;
-    long IDbuff;
+    long IDbuff, IDbuff1;
     long IDphaout, IDphaoutres;
     double val;
     long NBFRAMES;
-
+    FILE *fp;
+    double valgain100, valgain050, valgain025, valgain013, valgain006, valgain003, vallag;
+    double rms100, rms050, rms025, rms013, rms006, rms003, rmslag;
+    double err, rms;
+    double rmst; // pure temporal error
+    long rmscnt;
 
 
     IDWFPfilt = image_ID(IDWFPfilt_name);
     if(IDWFPfilt==-1)
-        {
-            printf("ERROR: image \"%s\" does not exist\n", IDWFPfilt_name);
-            exit(0);
-        }
-    
+    {
+        printf("ERROR: image \"%s\" does not exist\n", IDWFPfilt_name);
+        exit(0);
+    }
+
     WFPxsize = data.image[IDWFPfilt].md[0].size[0];
     WFPysize = data.image[IDWFPfilt].md[0].size[1];
     WFP_NBstep = data.image[IDWFPfilt].md[0].size[2];
-    
+
     WFP_xyrad = (long) (0.5*WFPxsize);
-    
+
     printf("WFP_xyrad = %ld\n", WFP_xyrad);
 
     AtmosphericTurbulence_ReadConf();
     NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
-    IDphaout = create_3Dimage_ID("wfphaout", CONF_WFsize, CONF_WFsize, NBFRAMES);
-    IDphaoutres = create_3Dimage_ID("wfphaoutres", CONF_WFsize, CONF_WFsize, NBFRAMES);
+    //    IDphaout = create_3Dimage_ID("wfphaout", CONF_WFsize, CONF_WFsize, NBFRAMES);
+    //    IDphaoutres = create_3Dimage_ID("wfphaoutres", CONF_WFsize, CONF_WFsize, NBFRAMES);
     IDbuff = create_3Dimage_ID("wfpbuffer", CONF_WFsize, CONF_WFsize, WFP_NBstep);
+    IDbuff1 = create_3Dimage_ID("wfpbuffer1", CONF_WFsize, CONF_WFsize, WFP_NBstep); // no noise
+
+    fp = fopen("WFPtest.log", "w");
+
+    valgain100 = 0.0;
+    valgain050 = 0.0;
+    valgain025 = 0.0;
+    valgain013 = 0.0;
+    valgain006 = 0.0;
+    valgain003 = 0.0;
+    vallag = 0.0;
+    
+    rms = 0.0;
+    rms100 = 0.0;
+    rms050 = 0.0;
+    rms025 = 0.0;
+    rms013 = 0.0;
+    rms006 = 0.0;
+    rms003 = 0.0;
+    rmslag = 0.0;
+    
+    rmscnt = 0;
     
     tspan = 0;
     k = 0;
@@ -3625,14 +3909,14 @@ int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, c
         printf("\r %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
         fflush(stdout);
         sprintf(fnamepha, "%s%08ld.pha", CONF_SWF_FILE_PREFIX, tspan);
-        
+
         IDpha = load_fits(fnamepha, "wfpha", 1);
-        
-        
+
+
         sprintf(fnamephaout, "!%s%08ld.out.pha", CONF_SWF_FILE_PREFIX, tspan);
-         sprintf(fnamephaoutres, "!%s%08ld.outres.pha", CONF_SWF_FILE_PREFIX, tspan);
-        
-        
+        sprintf(fnamephaoutres, "!%s%08ld.outres.pha", CONF_SWF_FILE_PREFIX, tspan);
+
+
         for(frame=0; frame<NBFRAMES; frame++)
         {
             printf("\r      %4ld/%4ld   tspan = %4ld   ", k, NB_WFstep, tspan);
@@ -3640,47 +3924,107 @@ int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, c
             if(k<NB_WFstep)
             {
                 // write buffer slice 0
-                for(ii=0;ii<CONF_WFsize*CONF_WFsize;ii++)
-                        data.image[IDbuff].array.F[ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+ii] + gauss()*WFphaNoise;
-                        
-                        
-                // estimation
-                for(ii=0;ii<CONF_WFsize;ii++)
-                    for(jj=0;jj<CONF_WFsize;jj++)
+                for(ii=0; ii<CONF_WFsize*CONF_WFsize; ii++)
                     {
-                        val = 0.0;
-                        for(ii1=0; ii1<WFPxsize; ii1++)
-                            for(jj1=0; jj1<WFPysize; jj1++)
-                                {
-                                    ii2 = ii + ii1 - WFP_xyrad;
-                                    jj2 = jj + jj1 - WFP_xyrad;
-                                    if((ii2>-1)&&(ii2<CONF_WFsize)&&(jj2>-1)&&(jj2<CONF_WFsize))
-                                        for(k1=0;k1<WFP_NBstep;k1++)
-                                            val += data.image[IDbuff].array.F[k1*CONF_WFsize*CONF_WFsize+CONF_WFsize*jj2+ii2] * data.image[IDWFPfilt].array.F[k1*WFPxsize*WFPysize+jj1*WFPxsize+ii1];
-                                }
-                        data.image[IDphaout].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] = val;
-                        data.image[IDphaoutres].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] - val;
+                        data.image[IDbuff].array.F[ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+ii] + gauss()*WFphaNoise;
+                        data.image[IDbuff1].array.F[ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+ii];
                     }
-              
                     
+                // estimation
+                //for(ii=0;ii<CONF_WFsize;ii++)
+                //  for(jj=0;jj<CONF_WFsize;jj++)
+                // {
+                ii = WFPiipix;
+                jj = WFPjjpix;
+                val = 0.0;
+                for(ii1=0; ii1<WFPxsize; ii1++)
+                    for(jj1=0; jj1<WFPysize; jj1++)
+                    {
+                        ii2 = ii + ii1 - WFP_xyrad;
+                        jj2 = jj + jj1 - WFP_xyrad;
+                        if((ii2>-1)&&(ii2<CONF_WFsize)&&(jj2>-1)&&(jj2<CONF_WFsize))
+                            for(k1=0; k1<WFP_NBstep; k1++)
+                                val += data.image[IDbuff].array.F[k1*CONF_WFsize*CONF_WFsize+CONF_WFsize*jj2+ii2] * data.image[IDWFPfilt].array.F[k1*WFPxsize*WFPysize+jj1*WFPxsize+ii1];
+                    }
+
+
+                //data.image[IDphaout].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] = val;
+                //data.image[IDphaoutres].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii] - val;
+
+                valgain100 = data.image[IDbuff].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+                valgain050 = valgain050*(1.00-0.50) + 0.50*data.image[IDbuff].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+                valgain025 = valgain025*(1.00-0.25) + 0.25*data.image[IDbuff].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+                valgain013 = valgain013*(1.00-0.13) + 0.13*data.image[IDbuff].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+                valgain006 = valgain006*(1.00-0.06) + 0.06*data.image[IDbuff].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+                valgain003 = valgain003*(1.00-0.03) + 0.03*data.image[IDbuff].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+                vallag = data.image[IDbuff1].array.F[WFPlag*CONF_WFsize*CONF_WFsize+CONF_WFsize*WFPjjpix+WFPiipix];
+
+                fprintf(fp, "%5ld  %20f  %20f  %20f  %20f  %20f  %20f  %20f  %20f  %20f\n", k, data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii], val, data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-val, valgain100, valgain050, valgain025, valgain013, valgain006, valgain003);
+
+
+
+                if(k>100)
+                {
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-valgain100;
+                    rms100 += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-valgain050;
+                    rms050 += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-valgain025;
+                    rms025 += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-valgain013;
+                    rms013 += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-valgain006;
+                    rms006 += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-valgain003;
+                    rms003 += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-val;
+                    rms += err*err;
+
+                    err = data.image[IDpha].array.F[frame*CONF_WFsize*CONF_WFsize+jj*CONF_WFsize+ii]-vallag;
+                    rmslag += err*err;
+
+                    rmscnt ++;
+                }
+
+
                 // move by 1 slice
                 for(k1=WFP_NBstep-1; k1>0; k1--)
-                    for(ii=0;ii<CONF_WFsize*CONF_WFsize;ii++)
-                        data.image[IDbuff].array.F[k1*CONF_WFsize*CONF_WFsize+ii] = data.image[IDbuff].array.F[(k1-1)*CONF_WFsize*CONF_WFsize+ii];
+                    for(ii=0; ii<CONF_WFsize*CONF_WFsize; ii++)
+                        {
+                            data.image[IDbuff].array.F[k1*CONF_WFsize*CONF_WFsize+ii] = data.image[IDbuff].array.F[(k1-1)*CONF_WFsize*CONF_WFsize+ii];
+                            data.image[IDbuff1].array.F[k1*CONF_WFsize*CONF_WFsize+ii] = data.image[IDbuff1].array.F[(k1-1)*CONF_WFsize*CONF_WFsize+ii];
+                        }
             }
             k++;
         }
-        save_fits("wfphaout", fnamephaout);
-        save_fits("wfphaoutres", fnamephaoutres);
+        //        save_fits("wfphaout", fnamephaout);
+        //       save_fits("wfphaoutres", fnamephaoutres);
         tspan++;
     }
+
+    fclose(fp);
+
+
+    rms = sqrt(rms/rmscnt);
+    rms100 = sqrt(rms100/rmscnt);
+    rms050 = sqrt(rms050/rmscnt);
+    rms025 = sqrt(rms025/rmscnt);
+    rms013 = sqrt(rms013/rmscnt);
+    rms006 = sqrt(rms006/rmscnt);
+    rms003 = sqrt(rms003/rmscnt);
+    rmslag = sqrt(rmslag/rmscnt);
     
-    
-    
-    
-    
+    printf("\nRMS : %10f    [%8f]  %10f %10f %10f %10f %10f %10f\n", rms, rmslag, rms100, rms050, rms025, rms013, rms006, rms003);
+
     return(0);
 }
+
 
 
 

@@ -13,7 +13,7 @@ int init_AOsystSim();
 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
-long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux);
+long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON);
 int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom);
 int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes);
 
