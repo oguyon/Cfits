@@ -3442,7 +3442,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
 
 
     long IDpupmask;
-    double maxPixSpeed = 2.0; // max wind speed in pix / frame
+    double maxPixSpeed = 0.3; // max wind speed in pix / frame
 
     double SVDeps = 1e-8;
     long vID;
@@ -3612,7 +3612,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
                 mvecdy[l] = jj-WFP_xyrad;
                 mvecdz[l] = k;
                 
-                if((data.image[IDpupmask].array.F[(jj0+mvecdy[l])*naxes[0] + (ii0+mvecdx[l])]>0.1) && (sqrt(mvecdx[l]*mvecdx[l]+mvecdy[l]*mvecdy[l])<maxPixSpeed*(k+1)) )
+                if((data.image[IDpupmask].array.F[(jj0+mvecdy[l])*naxes[0] + (ii0+mvecdx[l])]>0.1) && (sqrt(mvecdx[l]*mvecdx[l]+mvecdy[l]*mvecdy[l])<2.0+maxPixSpeed*(k+1)) )
                     l++;
             }
     }

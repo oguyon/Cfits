@@ -36,9 +36,14 @@ long DMifpixarray_NBpix;
 
 
 long NBprobesG = 3;
+int CENTERprobe=1; // 1 if center probe included
 long NBoptVar;
 long double probe_re[100]; // 100 probes maximum
 long double probe_im[100];
+long double nprobe_re[100]; // 100 probes maximum
+long double nprobe_im[100];
+
+
 long double probe_tflux[100]; // test point computed flux
 long double Cflux = 1.0; // coherent flux, ph for CA unity circle
 long double probe_nmflux[100]; // measured flux (noisy)
@@ -107,9 +112,9 @@ int AOsystSim_FPWFS_mkprobes_CLI()
 
 int AOsystSim_FPWFS_sensitivityAnalysis_cli()
 {
-     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
     {   
-        AOSystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+        AOsystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else
@@ -175,9 +180,9 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOsystSim_FPWFS_sensitivityAnalysis_cli;
     strcpy(data.cmd[data.NBcmd].info,"run focal plane WFS sensitivity analysis");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode> <optmode> <NBprobes>");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mapmode> <mode> <optmode> <NBprobes>");
     strcpy(data.cmd[data.NBcmd].example,"AOsystFPWFSan");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOSystSim_FPWFS_sensitivityAnalysis(int mode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int NBprobes)");
     data.NBcmd++;
 
     // add atexit functions here
@@ -1907,7 +1912,7 @@ double f_eval (const gsl_vector *v, void *params)
 
 
 
-long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON)
+long AOsystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON, double CnoiseFloor)
 {
     long size = 256;
     double puprad = 50.0;
@@ -1939,14 +1944,17 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
     char fname[200];
     double probeAmultcoeff = 1.0;
     double probeBmultcoeff = 1.0;
-    double probeBphaseoffset = 0.0;
+    double probeBphaseoffset = 1.0*M_PI/2.0;
 
     double dmactgain;
     long IDnoise;
     double val;
+    
 
-    printf("Creating images .... \n");
+
+    printf("Creating images .... Contrast = %g  \n", contrast);
     fflush(stdout);
+
 
     IDpupa = make_subpixdisk("pupa", size, size, 0.5*size, 0.5*size, puprad);
 
@@ -2025,15 +2033,15 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
     for(pr=0; pr<NBprobesG; pr++)
     {
         if(pr==0)
-        {
-            coeffA = 0.0;
-            coeffB = 0.0;
-        }
+            {
+                coeffA = 0.0;
+                coeffB = 0.0;
+            }
         else
-        {
-            coeffA = cos(2.0*M_PI/(NBprobesG-1)*(pr-1));
-            coeffB = sin(2.0*M_PI/(NBprobesG-1)*(pr-1));
-        }
+            {
+                coeffA = cos(2.0*M_PI/(NBprobesG-1)*(pr-1)); //nprobe_re[pr];
+                coeffB = sin(2.0*M_PI/(NBprobesG-1)*(pr-1)); //nprobe_im[pr];
+            }
 
         for(ii=0; ii<size*size; ii++)
             data.image[IDwf].array.F[ii] = data.image[IDwf0].array.F[ii] + coeffA*data.image[IDwfA].array.F[ii] + coeffB*data.image[IDwfB].array.F[ii];
@@ -2146,13 +2154,14 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
     // CREATE PROBE AMPLITUDE IMAGE IN FOCAL PLANE
     ID1 = create_2Dimage_ID("psfprobeampC", xsize, ysize);
 
+    
     for(ii1=0; ii1<xsize; ii1++)
         for(jj1=0; jj1<ysize; jj1++)
         {
             tot1 = 0.0;
-            for(pr=1; pr<NBprobesG; pr++)
+            for(pr=CENTERprobe; pr<NBprobesG; pr++)
                 tot1 += data.image[ID].array.F[pr*xsize*ysize+jj1*xsize+ii1]/peak;
-            tot1 /= (NBprobesG-1);
+            tot1 /= (NBprobesG-CENTERprobe);
             data.image[ID1].array.F[jj1*xsize+ii1] = tot1 - data.image[ID].array.F[jj1*xsize+ii1]/peak;
         }
     save_fl_fits("psfprobeampC", "!psfprobeampC.fits");
@@ -2165,7 +2174,7 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
     ID = image_ID("psfCcropn");
     for(ii1=0; ii1<xsize; ii1++)
         for(jj1=0; jj1<ysize; jj1++)
-            data.image[ID].array.F[ii] += RON * gauss();
+            data.image[ID].array.F[jj1*xsize+ii1] += RON * gauss();
             
     
     save_fl_fits("psfCcrop", "!psfCcrop.fits");
@@ -2183,7 +2192,9 @@ long AOSystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
                 if(val<1.0)
                     val = 1.0;
                 
-                data.image[IDnoise].array.F[pr*xsize*ysize+jj1*xsize+ii1] = sqrt( val + RON*RON )/peak;  // assuming photon noise + readout noise
+                data.image[IDnoise].array.F[pr*xsize*ysize+jj1*xsize+ii1] = sqrt( val + RON*RON )/peak ;  // assuming photon noise + readout noise
+                if(data.image[IDnoise].array.F[pr*xsize*ysize+jj1*xsize+ii1] < CnoiseFloor)
+                    data.image[IDnoise].array.F[pr*xsize*ysize+jj1*xsize+ii1]  = CnoiseFloor;
             }
     save_fl_fits("psfCcropnC", "!psfCcropnC.fits");
     printf("Saving psfCcropnCn\n");
@@ -2424,7 +2435,7 @@ int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxs
 // 1: 3 free parameters: ptre, ptim, Iflux
 // 2: 6 free parameters: ptre, ptim, Iflux, are, aim, e
 //
-int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
+int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int NBprobes)
 {
     // conventions
     // CA : complex amplitude
@@ -2436,8 +2447,6 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
 
     double probe_noise_prop;
     double ProbeNoise;
-    double nprobe_re[100]; // noisy probe
-    double nprobe_im[100];
 
     double probe_mflux[100]; // measured flux (ideal, no noise)
     double probe_mflux_dre[100]; // derivative against ptre
@@ -2464,7 +2473,6 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     double optampl;
     long ksmax = 100000000;
 
-    int mapmode = 1; // 1 if building error map
     double mapampl = 2.0;
     long mapsize = 41; // map size (linear)
     long mapxsize, mapysize;
@@ -2529,10 +2537,15 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     long IDmap_Iflux_rmsn1;
     long IDmap_CA_rms, IDmap_CA_rmsn;
     double dx, dy, val;
+    double CnoiseFloor;
+    
 
     NBprobesG = NBprobes;
 
 
+
+    if(mapmode==2) // complex amplitude field
+        imSimulMode = 1;
 
     mapzsize = 10;
     if((vID=variable_ID("mapzsize"))!=-1)
@@ -2551,7 +2564,7 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     if((vID=variable_ID("ProbeNoise"))!=-1)
     {
         ProbeNoise = data.variable[vID].value.f;
-        printf("ProbeNoise = %f\n", ProbeNoise);
+        printf("ProbeNoise = %g\n", ProbeNoise);
     }
 
     RON = 1.0;
@@ -2559,6 +2572,20 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     {
         RON = data.variable[vID].value.f;
         printf("RON = %f\n", RON);
+    }
+
+    CnoiseFloor = 1.0e-5;
+    if((vID=variable_ID("CnoiseFloor"))!=-1)
+    {
+        CnoiseFloor = data.variable[vID].value.f;
+        printf("CnoiseFloor = %g\n", CnoiseFloor);
+    }
+
+    CENTERprobe = 1;
+    if((vID=variable_ID("CENTERprobe"))!=-1)
+    {
+        CENTERprobe = (int) (0.1+data.variable[vID].value.f);
+        printf("CENTERprobe = %d\n", CENTERprobe);
     }
 
 
@@ -2587,9 +2614,6 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
             printf("WFerr = %f rad\n", WFerr);
         }
 
-        sleep(1);
-
-
         mapmode = 2; // use existing file
     }
 
@@ -2603,8 +2627,13 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
         }
 
 
+
+    if(mapmode==2)
+        CENTERprobe = 1;
+
+
     probeamp = 1.0;
-    if(0) // include center probe
+    if(CENTERprobe==1) // include center probe
     {
         probe_re[pr] = 0.0;
         probe_im[pr] = 0.0;
@@ -2680,11 +2709,12 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
     }
 
 
-    printf("mode     = %d (%f)\n", mode, probe_noise_prop);
-    printf("mapmode  = %d\n", mapmode);
-    printf("mapsize  = %ld   %ld   %ld\n", mapxsize, mapysize, mapzsize);
-    printf("execmode = %d\n", execmode);
-
+    printf("noise mode  = %d (%f)\n", mode, probe_noise_prop);
+    printf("mapmode     = %d\n", mapmode);
+    printf("mapsize     = %ld   %ld   %ld\n", mapxsize, mapysize, mapzsize);
+    printf("execmode    = %d\n", execmode);
+    printf("mapzsize    = %ld\n", mapzsize);
+    printf("imSimulMode = %d\n", imSimulMode);
 
 
     if(IDprobampC==-1)
@@ -2701,7 +2731,7 @@ int AOSystSim_FPWFS_sensitivityAnalysis(int mode, int optmode, int NBprobes)
 
         if(imSimulMode == 1)
         {
-            IDpsfC = AOSystSim_FPWFS_imsimul(probeampl, 30.0, 30.0, contrast, WFerr, totFlux, probe_noise_prop, RON); // computes data cube
+            IDpsfC = AOsystSim_FPWFS_imsimul(probeampl, 30.0, 30.0, contrast, WFerr, totFlux, probe_noise_prop, RON, CnoiseFloor); // computes data cube
             IDpsfCnoise = image_ID("psfCcropnCn");
             IDprobampC = image_ID("psfprobeampC");
             save_fl_fits("psfC", "!psfC.fits");

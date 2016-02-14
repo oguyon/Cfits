@@ -963,7 +963,10 @@ long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_cent
     double x, y, r;
     double value;
 
-    printf("Making hexagon at %f x %f\n",x_center,y_center);
+   
+    
+    printf("Making hexagon at %f x %f\n", x_center, y_center);
+        
 
     create_2Dimage_ID(IDname,l1,l2);
     ID = image_ID(IDname);
@@ -993,6 +996,7 @@ long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_cent
         }
 
 
+
     return(ID);
 }
 
@@ -1020,6 +1024,94 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
     int seg;
     long kk, jj;
     float xc, yc, tc;
+
+    int WriteCIF = 1;
+    FILE *fpmlevel;
+    FILE *fp;
+    FILE *fp1;
+    double pixscale = 1.0;
+    long vID;
+    double x, y;
+    int pt;
+
+    long IDmap1;
+    long index;
+    double mapscalefactor = 1.037;
+    long size1;
+
+    long *seglevel;
+    long i;
+    long tmpl1, tmpl2;
+    int ret;
+    int segi;
+    float segf;
+    int k;
+
+    int *bitval; // 0 or 1
+    int bitindex = 4; // 0 = MSB
+
+    if(WriteCIF==1)
+    {
+        fp = fopen("hexcoord.txt", "w");
+        fp1 = fopen("hexcoord_pt.txt", "w");
+        
+        fprintf(fp, "DS 1 1 1;\n");
+    }
+
+    if((vID=variable_ID("pixscale"))!=-1)
+    {
+        pixscale = data.variable[vID].value.f;
+        printf("pixscale = %f\n", pixscale);
+    }
+
+    SEGcnt = 100;
+    if((vID=variable_ID("SEGcnt"))!=-1)
+    {
+        SEGcnt = (long) (0.1+data.variable[vID].value.f);
+        printf("SEGcnt = %ld\n", SEGcnt);
+    }
+
+  
+    seglevel = (long*) malloc(sizeof(long)*SEGcnt);
+    bitval = (int*) malloc(sizeof(int)*SEGcnt);
+ 
+    fpmlevel = fopen("fpm_level.txt", "r");
+    if(fp!=NULL)
+        {
+            for(i=0;i<SEGcnt;i++)
+                {
+                   ret = fscanf(fpmlevel, "%ld %ld\n", &tmpl1, &tmpl2);
+                   seglevel[tmpl1-1] = tmpl2+15; 
+                }
+            fclose(fpmlevel);
+        }
+
+
+    // SINGLE BIT
+    for(i=0;i<SEGcnt;i++)
+        {
+            printf("%5ld %5ld   ", i+1, seglevel[i]);
+            segf = 1.0*seglevel[i]/16.0;
+            for(k=0;k<5;k++)
+                {
+                    segi = (int) segf;
+                    printf(" %d", segi);
+                    segf -= segi;
+                    segf *= 2;
+                    
+                    if(k==bitindex)
+                        bitval[i] = segi;
+                }
+            printf("\n");
+        }
+
+
+
+
+
+    IDmap1 = image_ID("indexmap");
+    size1 = data.image[IDmap1].md[0].size[0];
+
 
     size2 = size*size;
 
@@ -1080,13 +1172,42 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
                         piston = 0.0;
                 }
                 printf("Hexagon %ld: ", SEGcnt);
-                ID1 = make_hexagon("_TMPhex",size, size, 0.5*size+x2, 0.5*size+y2, (step-gap)*(sqrt(3.0)/2.0));
+                ID1 = make_hexagon("_TMPhex", size, size, 0.5*size+x2, 0.5*size+y2, (step-gap)*(sqrt(3.0)/2.0));
+
+
+
                 tot = 0.0;
                 for(ii=0; ii<size2; ii++)
                     tot += data.image[ID1].array.F[ii]*data.image[IDdisk].array.F[ii];
                 if(tot<0.1)
                 {
                     SEGcnt++;
+                    if(WriteCIF==1)
+                    {
+                        ii = (long) (0.5*size1 + x2*(0.5*size1/radius)*mapscalefactor);
+                        jj = (long) (0.5*size1 + y2*(0.5*size1/radius)*mapscalefactor);
+                        index = 0;
+                        if(IDmap1 != -1)
+                            index = data.image[IDmap1].array.U[jj*size1+ii];
+
+
+                      //  fprintf(fp, "# hex%03ld     index%03ld   [ %f %f ] -> [ %f %f ]     [%4ld %4ld] %f\n", SEGcnt, index, x2, y2, 0.5*size+x2, 0.5*size+y2, ii, jj, radius);
+                        if(bitval[index-1]==1)
+                        {
+                            fprintf(fp, "L %ld;\n", seglevel[index-1]);
+                        fprintf(fp, "P");
+                        for(pt=0; pt<6; pt++)
+                        {
+                            x = pixscale*(x2 + 1.0*cos(2.0*M_PI*pt/6)*(step-gap));
+                            y = pixscale*(y2 + 1.0*sin(2.0*M_PI*pt/6)*(step-gap));
+                            fprintf(fp, " %ld,%ld", (long) (100.0*x), (long) (100.0*y));
+                            fprintf(fp1, "%ld %ld\n", (long) (100.0*x), (long) (100.0*y));
+
+                        }
+                        fprintf(fp, ";\n");
+                    }
+                    }
+
                     if(PISTONerr==1)
                     {
                         for(ii=0; ii<size2; ii++)
@@ -1135,6 +1256,33 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
                 if(tot<0.1)
                 {
                     SEGcnt++;
+
+                    if(WriteCIF==1)
+                    {
+                        ii = (long) (0.5*size1 + x2*(0.5*size1/radius)*mapscalefactor);
+                        jj = (long) (0.5*size1 + y2*(0.5*size1/radius)*mapscalefactor);
+                        index = 0;
+                        if(IDmap1 != -1)
+                            index = data.image[IDmap1].array.U[jj*size1+ii];
+
+
+                       // fprintf(fp, "# hex%03ld     index%03ld   [ %f %f ] -> [ %f %f ]   [%4ld %4ld] %f\n", SEGcnt, index, x2, y2, 0.5*size+x2, 0.5*size+y2, ii, jj, radius);
+
+                        if(bitval[index-1]==1)
+                        {
+                        fprintf(fp, "L %ld;\n", seglevel[index-1]);
+                        fprintf(fp, "P");
+                        for(pt=0; pt<6; pt++)
+                        {
+                            x = pixscale*(x2 + 1.0*cos(2.0*M_PI*pt/6)*(step-gap));
+                            y = pixscale*(y2 + 1.0*sin(2.0*M_PI*pt/6)*(step-gap));
+                            fprintf(fp, " %ld,%ld", (long) (100.0*x), (long) (100.0*y));
+                            fprintf(fp1, "%ld %ld\n", (long) (100.0*x), (long) (100.0*y));
+                        }
+                        fprintf(fp, ";\n");
+                        }
+                    }
+
                     if(PISTONerr==1)
                     {
                         for(ii=0; ii<size2; ii++)
@@ -1156,9 +1304,23 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
 
         }
     delete_image_ID("_TMPdisk");
-
+    
     printf("%ld segments\n",SEGcnt);
+  
 
+    if(WriteCIF==1)
+    {
+        fprintf(fp, "DF;\n");
+        fprintf(fp, "E\n");
+        
+        fclose(fp);
+        fclose(fp1);
+    }
+    free(seglevel);
+    free(bitval);
+
+
+exit(0);
 
     if(mkInfluenceFunctions==1) // TT and focus for each segment
     {
@@ -1200,6 +1362,7 @@ long make_hexsegpupil(char *IDname, long size, double radius, double gap, double
 
     return(ID);
 }
+
 
 
 
