@@ -196,7 +196,9 @@ long Average_cam_frames_IDdark = -1;
 long Average_cam_frames_nelem = 1;
 
 
-
+int GPUcntMax = 100;
+int *GPUset0;
+int *GPUset1;
 
 
 
@@ -3114,7 +3116,6 @@ int AOloopControl_InitializeMemory(int mode)
     long *sizearray;
     char cntname[200];
     int k;
-    int GPUcntMax = 100;
 
     SM_fd = open(AOconfname, O_RDWR);
     if(SM_fd==-1)
@@ -3215,18 +3216,14 @@ int AOloopControl_InitializeMemory(int mode)
 
     if(AOloopcontrol_meminit==0)
         {
-            printf("INITIALIZING GPUset ARRAYS\n");
-            fflush(stdout);
-        for(loop=0; loop<NB_AOloopcontrol; loop++)
-            {
-                AOconf[loop].GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
-            for(k=0;k<GPUcntMax;k++)
-                AOconf[loop].GPUset0[k] = k;
-            AOconf[loop].GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
-            for(k=0;k<GPUcntMax;k++)
-                AOconf[loop].GPUset1[k] = k;
-            }
-            exit(0);
+                printf("INITIALIZING GPUset ARRAYS\n");
+                fflush(stdout);      
+            GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+            GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
+                for(k=0;k<GPUcntMax;k++)
+                    GPUset0[k] = k;
+                for(k=0;k<GPUcntMax;k++)
+                    GPUset1[k] = k;
         }
 
 
@@ -5009,7 +5006,7 @@ int set_DM_modes(long loop)
     float *arrayf;
     double a;
     long cnttest;
-
+    
     if(AOconf[loop].GPU == 0)
     {
         arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
@@ -5034,7 +5031,8 @@ int set_DM_modes(long loop)
 #ifdef HAVE_CUDA
         printf("GPU setup\n");
         fflush(stdout);
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, AOconf[loop].GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);        
+
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);        
         AOconf[loop].status = 12; 
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
@@ -7939,7 +7937,7 @@ int AOcompute(long loop, int normalize)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
-            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, AOconf[loop].GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
 
             AOconf[loop].status = 6; // 6 execute
 
@@ -7954,7 +7952,7 @@ int AOcompute(long loop, int normalize)
         {
             if(1==0)
             {
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, AOconf[loop].GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
@@ -8021,7 +8019,7 @@ int AOcompute(long loop, int normalize)
                 
                 //printf("PIXSTREAM_SLICE = %d\n", PIXSTREAM_SLICE);
               //  printf("GPU_loop_MultMat_setup   %s %s %s\n", data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name);
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, AOconf[loop].GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
 
 
                 initWFSref_GPU[PIXSTREAM_SLICE] = 1;
@@ -8207,7 +8205,7 @@ int AOloopControl_run()
    if(AOconf[loop].GPU>1)
     {
         for(k=0;k<AOconf[loop].GPU;k++)
-            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", k, AOconf[loop].GPUset0[k], AOconf[loop].GPUset1[k]);
+            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", k, GPUset0[k], GPUset1[k]);
     }
    
    
