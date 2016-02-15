@@ -769,6 +769,10 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             }
     }
     
+    
+    printf("STEP 001\n");
+    fflush(stdout);
+    
  
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
