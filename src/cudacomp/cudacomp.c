@@ -1265,6 +1265,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
    for(iter=0; iter<NBiter; iter++)
         {
+            status = 0;
            // printf("iter %ld/%ld  \n", iter, NBiter);
            // fflush(stdout);
             GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
