@@ -1523,13 +1523,13 @@ rmdelayfr=2
 if [ -f "./conf/conf_RMdelayfr.txt" ]; then
 rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
 fi
-menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame" )
+menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame(s)" )
 
 rmfrave=5
 if [ -f "./conf/conf_RMfrave.txt" ]; then
 rmfrave=$( cat ./conf/conf_RMfrave.txt )
 fi
-menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frames" )
+menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frames(s)" )
 
 
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
