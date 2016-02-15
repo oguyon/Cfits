@@ -7,7 +7,7 @@ then
   echo
   echo "------ Measure zonal resp matrix ------"
   echo
-  echo "  $0 <ampl[um]> <tdelay[sec]> <nb frames ave> <normalize>"
+  echo "  $0 <ampl[um]> <tdelay[frame]> <nb frames ave> <normalize>"
   echo
   echo "Default output: "
   echo "  zrespmat.fits : zonal response matrix"

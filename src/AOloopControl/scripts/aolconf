@@ -1519,11 +1519,11 @@ rmamplum=$( cat ./conf/conf_RMamplum.txt )
 fi
 menuitems+=( "rmamp" "            RM amplitude                    ${rmamplum} um" )
 
-rmdelays=0.05
-if [ -f "./conf/conf_RMdelays.txt" ]; then
-rmdelays=$( cat ./conf/conf_RMdelays.txt )
+rmdelayfr=2
+if [ -f "./conf/conf_RMdelayfr.txt" ]; then
+rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
 fi
-menuitems+=( "rmdelay" "            RM time delay                   ${rmdelays} sec" )
+menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame" )
 
 rmfrave=5
 if [ -f "./conf/conf_RMfrave.txt" ]; then
@@ -2014,10 +2014,10 @@ AOlog "RM amplitude $rmamplum um"
 ;;
 	rmdelay)
 exec 3>&1;
-rmdelays=$(dialog --inputbox "RM time delay [s]" 0 0 "$rmdelays" 2>&1 1>&3);
+rmdelayfr=$(dialog --inputbox "RM time delay [frame]" 0 0 "$rmdelayfr" 2>&1 1>&3);
 exec 3>&-;
-echo "$rmdelays" > ./conf/conf_RMdelays.txt
-AOlog "RM time delay $rmdelays sec"
+echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
+AOlog "RM time delay $rmdelayfr frame"
 ;;
 	rmnbfr)
 exec 3>&1;
@@ -2080,9 +2080,9 @@ menucontrolloop_default="WFSNon"
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave} ${WFSnorm}" C-m
-echo "./aolMeasureZrespmat ${rmamplum} ${rmdelays} ${rmfrave} ${WFSnorm}" > aolcmd.txt
-AOlog "Start RM amplitude $rmamplum um, time delay $rmdelays sec, NB frame average $rmfrave frames"
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${WFSnorm}" C-m
+echo "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${WFSnorm}" > aolcmd.txt
+AOlog "Start RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames"
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm

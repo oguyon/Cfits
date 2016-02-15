@@ -6008,9 +6008,12 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
  *  0: compute WFSmap and DMmap
  *  1: compute WFSmap, DMmap, WFSmask and DMmask  -> images wfsmask and dmmask
  * NOTE can take custom poke matrix (loaded in image name RMpokeCube)
- * */
+ *
+ * ASYNC = 1  -> record ALL frames and assemble the RM off-line
+ * 
+ *  */
 
-long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize)
+long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int ASYNC)
 {
     long ID_WFSmap, ID_WFSref0, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n;
     long act, j, ii, kk;
@@ -6044,7 +6047,7 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
     struct sched_param schedpar;
     int ret;
 
-
+    
 
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
@@ -6192,8 +6195,9 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             AOconf[loop].DMupdatecnt ++;
 
 
-            usleep(delayus);
-
+            for(kk=0; kk<delayfr; kk++)
+                Average_cam_frames(loop, 1, 0, normalize, 0);
+            
 
             for(kk=0; kk<NBave; kk++)
             {
@@ -6220,8 +6224,8 @@ long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zr
             AOconf[loop].DMupdatecnt ++;
 
 
-            usleep(delayus);
-
+            for(kk=0; kk<delayfr; kk++)
+                Average_cam_frames(loop, 1, 0, normalize, 0);
 
             for(kk=0; kk<NBave; kk++)
             {
