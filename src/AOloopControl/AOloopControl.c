@@ -928,9 +928,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = Measure_zonalRM_cli;
     strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay second [float]> <nb frames per position [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 0.02 20 zrm wfsref wfsmap dmmap 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, double delays, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <nb frames per position [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 20 zrm wfsref wfsmap dmmap 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)");
     data.NBcmd++;
 
 
@@ -6018,7 +6018,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
     long ID_WFSmap, ID_WFSref0, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n;
     long act, j, ii, kk;
     double value;
-    long delayus;
     float *arrayf;
     char fname[200];
     char name[200];
@@ -6057,7 +6056,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
 
-    delayus = (long) (1000000.0*delays);
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
