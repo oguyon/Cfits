@@ -533,7 +533,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         printf("-----------------------------------------------------\n");
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
-            printf("DEVICE %d  :  %5d -> %5d  (%d)\n", device, gpumatmultconf[index].Noffset[device], gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device], gpumatmultconf[index].Nsize[device]);
+            printf("DEVICE %2d  [%2d]:  %5d -> %5d  (%d)\n", device, gpumatmultconf[index].GPUdevice[device], gpumatmultconf[index].Noffset[device], gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device], gpumatmultconf[index].Nsize[device]);
         printf("-----------------------------------------------------\n");
 
 
