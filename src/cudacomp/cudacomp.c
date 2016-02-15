@@ -731,8 +731,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
        gpumatmultconf[index].refWFSinit[device] = initWFSref;
     
-    printf("CONFIGURATION DONE \n");
-    fflush(stdout);
+   // printf("CONFIGURATION DONE \n");
+   // fflush(stdout);
     
     return(0);
 }
