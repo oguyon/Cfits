@@ -1,13 +1,13 @@
 #! /bin/bash
 
-EXPECTED_ARGS=4
+EXPECTED_ARGS=5
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo
   echo "------ Measure zonal resp matrix ------"
   echo
-  echo "  $0 <ampl[um]> <tdelay[frame]> <nb frames ave> <normalize>"
+  echo "  $0 <ampl[um]> <tdelay[frame]> <nb frames ave> <nb frames excl> <normalize>"
   echo
   echo "Default output: "
   echo "  zrespmat.fits : zonal response matrix"
@@ -29,7 +29,7 @@ pname="aol${loopnb}zrespM"
 Cfits -n $pname << EOF
 aolnb $loopnb
 loadfits RMpokeCube.fits RMpokeCube
-aolmeaszrm $1 $2 $3 zrespmat wfsref0 wfsmap dmmap 1 $4 1
+aolmeaszrm $1 $2 $3 $4 zrespmat wfsref0 wfsmap dmmap 1 $5 
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmask.fits"
 listim

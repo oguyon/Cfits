@@ -419,9 +419,9 @@ int AOloopControl_TestDMmodes_Recovery_cli()
 
 int Measure_zonalRM_cli()
 {
-    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)==0)
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,3)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,2)+CLI_checkarg(10,2)==0)
     {
-        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl);
+        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl);
         return 0;
     }
     else
@@ -928,9 +928,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = Measure_zonalRM_cli;
     strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <nb frames per position [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <ASYNC mode>");
+    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode>");
     strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 20 zrm wfsref wfsmap dmmap 1 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, long ASYNC)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode)");
     data.NBcmd++;
 
 
@@ -6013,7 +6013,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
  * 
  *  */
 
-long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int ASYNC)
+long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize)
 {
     long ID_WFSmap, ID_WFSref0, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n;
     long act, j, ii, kk;
@@ -6045,7 +6045,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     int ret;
-
+    int PokeSign;
+    long act1, kk1;
     
 
     schedpar.sched_priority = RT_priority;
@@ -6173,6 +6174,28 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
 
 
         act = 0;
+        
+        kk1 = 0;
+        PokeSign = 1;
+        act1 = 0;
+        
+        // initialize with first positive poke
+         for(j=0; j<AOconf[loop].sizeDM; j++)
+            arrayf[j] = ampl*data.image[IDpokeC].array.F[act1*AOconf[loop].sizeDM+j];
+            
+        data.image[aoconfID_dmRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_dmRM].md[0].cnt0++;
+        data.image[aoconfID_dmRM].md[0].write = 0;
+        AOconf[loop].DMupdatecnt ++;
+        
+        // WAIT FOR LOOP DELAY
+        for(kk=0; kk<delayfr; kk++)               
+            Average_cam_frames(loop, 1, 0, normalize, 0);
+        
+        kk1 = delayfr;
+        
+                
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
 
@@ -6180,29 +6203,40 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
             {
                 data.image[IDpos].array.F[ii] = 0.0;
                 data.image[IDneg].array.F[ii] = 0.0;
-            }
+            }            
 
-            // POSITIVE POKE
-            for(j=0; j<AOconf[loop].sizeDM; j++)
-                arrayf[j] = ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j];
-
-            data.image[aoconfID_dmRM].md[0].write = 1;
-            memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-            data.image[aoconfID_dmRM].md[0].cnt0++;
-            data.image[aoconfID_dmRM].md[0].write = 0;
-            AOconf[loop].DMupdatecnt ++;
-
-
-            for(kk=0; kk<delayfr; kk++)
-                Average_cam_frames(loop, 1, 0, normalize, 0);
-            
-
-            for(kk=0; kk<NBave; kk++)
+            // POSITIVE INTEGRATION
+            for(kk=0; kk<NBave+NBexcl; kk++)
             {
                 Average_cam_frames(loop, 1, 0, normalize, 0);
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    data.image[IDpos].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
+                if(kk<NBave)
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                        data.image[IDpos].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
+                kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        if(PokeSign==1)
+                            PokeSign = -1;
+                        else
+                            {
+                                act1++;
+                                PokeSign = 1;
+                            }
+                        if(act1>NBpoke-1)
+                            act1 = NBpoke-1;
+                        // POKE
+                         for(j=0; j<AOconf[loop].sizeDM; j++)
+                            arrayf[j] = ampl*PokeSign*data.image[IDpokeC].array.F[act1*AOconf[loop].sizeDM+j];
+            
+                        data.image[aoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+                        data.image[aoconfID_dmRM].md[0].cnt0++;
+                        data.image[aoconfID_dmRM].md[0].write = 0;
+                        AOconf[loop].DMupdatecnt ++;
+                    }
             }
+                        
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
@@ -6211,26 +6245,38 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
             }
 
 
-            // NEGATIVE POKE
-            for(j=0; j<AOconf[loop].sizeDM; j++)
-                arrayf[j] = -ampl*data.image[IDpokeC].array.F[act*AOconf[loop].sizeDM+j];
-
-            data.image[aoconfID_dmRM].md[0].write = 1;
-            memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-            data.image[aoconfID_dmRM].md[0].cnt0++;
-            data.image[aoconfID_dmRM].md[0].write = 0;
-            AOconf[loop].DMupdatecnt ++;
-
-
-            for(kk=0; kk<delayfr; kk++)
-                Average_cam_frames(loop, 1, 0, normalize, 0);
-
-            for(kk=0; kk<NBave; kk++)
+            // NEGATIVE INTEGRATION
+            for(kk=0; kk<NBave+NBexcl; kk++)
             {
                 Average_cam_frames(loop, 1, 0, normalize, 0);
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    data.image[IDneg].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
+                if(kk<NBave)
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                        data.image[IDneg].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
+                kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        if(PokeSign==1)
+                            PokeSign = -1;
+                        else
+                            {
+                                act1++;
+                                PokeSign = 1;
+                            }
+                        if(act1>NBpoke-1)
+                            act1 = NBpoke-1;
+                        // POKE
+                         for(j=0; j<AOconf[loop].sizeDM; j++)
+                            arrayf[j] = ampl*PokeSign*data.image[IDpokeC].array.F[act1*AOconf[loop].sizeDM+j];
+            
+                        data.image[aoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+                        data.image[aoconfID_dmRM].md[0].cnt0++;
+                        data.image[aoconfID_dmRM].md[0].write = 0;
+                        AOconf[loop].DMupdatecnt ++;
+                    }
             }
+                        
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
@@ -6238,11 +6284,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, char *zre
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDneg].array.F[ii];
             }
 
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            {
-                data.image[IDpos].array.F[ii] = 0.0;
-                data.image[IDneg].array.F[ii] = 0.0;
-            }
             act++;
         }
         cntn = 2*NBave; // Number of images

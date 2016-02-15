@@ -1532,6 +1532,13 @@ fi
 menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frames(s)" )
 
 
+rmexfr=5
+if [ -f "./conf/conf_RMexfr.txt" ]; then
+rmexfr=$( cat ./conf/conf_RMexfr.txt )
+fi
+menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frames(s)" )
+
+
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
 menuitems+=( "zrespM" "$menustring" )
 
@@ -2026,6 +2033,13 @@ exec 3>&-;
 echo "$rmfrave" > ./conf/conf_RMfrave.txt
 AOlog "RM NB frame average $rmfrave frames"
 ;;
+	rmexfr)
+exec 3>&1;
+rmexfr=$(dialog --inputbox "RM excluded frames" 0 0 "$rmexfr" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmexfr" > ./conf/conf_RMexfr.txt
+AOlog "RM NB frame excluded $rmexfr frames"
+;;
 
 
 	zmatn)
@@ -2080,9 +2094,9 @@ menucontrolloop_default="WFSNon"
 zrespMstat=" ON"
 echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
-tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${WFSnorm}" C-m
-echo "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${WFSnorm}" > aolcmd.txt
-AOlog "Start RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames"
+tmux send-keys -t aol${LOOPNUMBER}zrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+echo "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+AOlog "Start RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm
