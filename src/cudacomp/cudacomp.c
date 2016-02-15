@@ -538,7 +538,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].GPUdevice = (int*) malloc(sizeof(int)*NBGPUs);
         for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
-            printf("stream %2d  ->  GPU devide %2d\n", device, GPUdevice[device]);
+            printf("stream %2d  ->  GPU device %2d\n", device, GPUdevice[device]);
             fflush(stdout);
             gpumatmultconf[index].GPUdevice[device] = GPUdevice[device];
         }

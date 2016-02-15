@@ -8192,6 +8192,15 @@ int AOloopControl_run()
     COMPUTE_PIXELSTREAMING = 0; // TEST
     
    
+   printf("GPU = %ld\n", AOconf[loop].GPU);
+   if(AOconf[loop].GPU>1)
+    {
+        for(k=0;k<AOconf[loop].GPU;k++)
+            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", k, AOconf[loop].GPUset0[k], AOconf[loop].GPUset1[k]);
+    }
+   
+   
+   
     
 
     vOK = 1;
