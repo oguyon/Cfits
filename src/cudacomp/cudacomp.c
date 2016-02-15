@@ -845,7 +845,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] = 0.0; //gpumatmultconf[index].NBstreams+0.35;
+        gpumatmultconf[index].dmVecTMP[m] = 0.0; 
 
     
 
@@ -854,12 +854,13 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
-    if(data.image[gpumatmultconf[index].IDout].sem > 0)
+  
+/*    if(data.image[gpumatmultconf[index].IDout].sem > 0)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
         
     if(data.image[gpumatmultconf[index].IDout].sem > 1)
         sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
-
+*/
 
 //    sem_post(data.image[gpumatmultconf[index].IDout].semlog);
 
