@@ -360,8 +360,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             {
                 sprintf(name, "aol%ld_looptiming", loopnb);
                 IDtiming = image_ID(name);
+            
+            if(IDtiming==-1)
+                IDtiming = create_2Dimage_ID(name, 50, 1);
             }
-    
  
  
         
