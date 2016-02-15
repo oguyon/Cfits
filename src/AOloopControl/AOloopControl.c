@@ -8113,7 +8113,7 @@ int AOloopControl_run()
     double a;
     long cnttest;
     float tmpf1;
-
+    int k;
     long xsize, ysize;
 
     struct timespec t1;
