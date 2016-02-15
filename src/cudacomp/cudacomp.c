@@ -779,6 +779,9 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
 
 //    if((gpumatmultconf[index].sem==0)||
+
+
+/*
     if(gpumatmultconf[index].gpuinit==0)
     {
         printf("GPU pthread create, index = %d    %d %d\n", index, gpumatmultconf[index].sem, gpumatmultconf[index].gpuinit);//TEST
@@ -798,7 +801,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             }
         }
         gpumatmultconf[index].gpuinit = 1;
-    }
+    }*/
     *status = *status + 1;  // -> 8
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
@@ -806,7 +809,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[IDtiming].array.F[*status] = tdiffv;
  
 
-
+/*
     if(gpumatmultconf[index].sem==0)
     {
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
@@ -833,7 +836,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             }
 
     }
-
+*/
 
     // SUM RESULTS FROM SEPARATE GPUs
     *status = *status + 1;  // -> 9
