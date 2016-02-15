@@ -1222,7 +1222,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     long *wfssize;
     long *cmdmodessize;
     int status;
-    int *GPUstatus;
+    int GPUstatus[100];
     long iter;
     long NBiter = 10000;
     double time1sec, time2sec;
@@ -1231,7 +1231,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
     printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
 
-    GPUstatus = (int*) malloc(sizeof(int)*100);
+//    GPUstatus = (int*) malloc(sizeof(int)*100);
 
     cmsize = (long*) malloc(sizeof(long)*3);
     cmsize[0] = WFSsize;
@@ -1255,7 +1255,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
 //    for(iter=0; iter<NBiter; iter++)
-        GPU_loop_MultMat_execute(0, &status, GPUstatus, 1.0, 0.0);
+    GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
 
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
@@ -1273,7 +1273,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     free(wfssize);
     free(cmdmodessize);
 
-    free(GPUstatus);
+  //  free(GPUstatus);
 
     return(0);
 }
