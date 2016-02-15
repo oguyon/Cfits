@@ -8192,7 +8192,7 @@ int AOloopControl_run()
     COMPUTE_PIXELSTREAMING = 0; // TEST
     
    
-   printf("GPU = %ld\n", AOconf[loop].GPU);
+   printf("GPU = %d\n", AOconf[loop].GPU);
    if(AOconf[loop].GPU>1)
     {
         for(k=0;k<AOconf[loop].GPU;k++)
