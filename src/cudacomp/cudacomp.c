@@ -1263,14 +1263,14 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     clock_gettime(CLOCK_REALTIME, &tnow);
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-/*   for(iter=0; iter<NBiter; iter++)
+   for(iter=0; iter<NBiter; iter++)
         {
             printf("iter %ld/%ld  \n", iter, NBiter);
             fflush(stdout);
             GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
             printf("done\n");
             fflush(stdout);
-        }*/
+        }
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
@@ -1288,8 +1288,6 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     free(cmsize);
     free(wfssize);
     free(cmdmodessize);
-
-  //  free(GPUstatus);
 
     return(0);
 }
