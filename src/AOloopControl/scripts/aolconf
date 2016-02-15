@@ -1529,14 +1529,14 @@ rmfrave=5
 if [ -f "./conf/conf_RMfrave.txt" ]; then
 rmfrave=$( cat ./conf/conf_RMfrave.txt )
 fi
-menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frames(s)" )
+menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frame(s)" )
 
 
 rmexfr=5
 if [ -f "./conf/conf_RMexfr.txt" ]; then
 rmexfr=$( cat ./conf/conf_RMexfr.txt )
 fi
-menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frames(s)" )
+menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frame(s)" )
 
 
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"

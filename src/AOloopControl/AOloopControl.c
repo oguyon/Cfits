@@ -6191,10 +6191,33 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         
         // WAIT FOR LOOP DELAY
         for(kk=0; kk<delayfr; kk++)               
-            Average_cam_frames(loop, 1, 0, normalize, 0);
-        
-        kk1 = delayfr;
-        
+            {
+                Average_cam_frames(loop, 1, 0, normalize, 0);
+                kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        if(PokeSign==1)
+                            PokeSign = -1;
+                        else
+                            {
+                                act1++;
+                                PokeSign = 1;
+                            }
+                        if(act1>NBpoke-1)
+                            act1 = NBpoke-1;
+                        // POKE
+                         for(j=0; j<AOconf[loop].sizeDM; j++)
+                            arrayf[j] = ampl*PokeSign*data.image[IDpokeC].array.F[act1*AOconf[loop].sizeDM+j];
+            
+                        data.image[aoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+                        data.image[aoconfID_dmRM].md[0].cnt0++;
+                        data.image[aoconfID_dmRM].md[0].write = 0;
+                        AOconf[loop].DMupdatecnt ++;
+                    }
+            }
+            
                 
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
