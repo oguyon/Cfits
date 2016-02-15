@@ -752,18 +752,12 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
-    printf("STEP 000\n");
-    fflush(stdout);
-
 
     *status = *status + 1;  // ->7
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
-    
-     printf("STEP 001\n");
-    fflush(stdout);
     
 
     if(index==0) /// main CM multiplication loop
@@ -778,9 +772,6 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             }
     }
     
-    
-    printf("STEP 002\n");
-    fflush(stdout);
     
  
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
@@ -1267,8 +1258,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     clock_gettime(CLOCK_REALTIME, &tnow);
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-//    for(iter=0; iter<NBiter; iter++)
-    GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
+    for(iter=0; iter<NBiter; iter++)
+        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
 
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
