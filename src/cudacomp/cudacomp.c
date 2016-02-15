@@ -1279,6 +1279,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     printf("done\n");
     fflush(stdout);
 
+    list_image_ID();
+
     delete_image_ID("cudatestcm");
     delete_image_ID("cudatestwfs");
     delete_image_ID("cudatestcmd");
