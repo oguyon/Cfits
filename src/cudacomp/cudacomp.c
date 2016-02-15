@@ -1243,7 +1243,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
     GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
     for(k=0;k<GPUcnt;k++)
-        GPUdevices[k] = k+6;
+        GPUdevices[k] = k+7;
 
 //    GPUstatus = (int*) malloc(sizeof(int)*100);
 
