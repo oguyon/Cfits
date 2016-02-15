@@ -776,7 +776,10 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
  
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
-    if((gpumatmultconf[index].sem==0)||(gpumatmultconf[index].gpuinit==0))
+
+
+//    if((gpumatmultconf[index].sem==0)||
+    if(gpumatmultconf[index].gpuinit==0)
     {
         printf("GPU pthread create, index = %d    %d %d\n", index, gpumatmultconf[index].sem, gpumatmultconf[index].gpuinit);//TEST
         fflush(stdout);
