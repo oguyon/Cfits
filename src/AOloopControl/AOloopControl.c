@@ -3215,7 +3215,9 @@ int AOloopControl_InitializeMemory(int mode)
 
     if(AOloopcontrol_meminit==0)
         {
-            for(loop=0; loop<NB_AOloopcontrol; loop++)
+            printf("INITIALIZING GPUset ARRAYS\n");
+            fflush(stdout);
+        for(loop=0; loop<NB_AOloopcontrol; loop++)
             {
                 AOconf[loop].GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
             for(k=0;k<GPUcntMax;k++)
@@ -3224,6 +3226,7 @@ int AOloopControl_InitializeMemory(int mode)
             for(k=0;k<GPUcntMax;k++)
                 AOconf[loop].GPUset1[k] = k;
             }
+            exit(0);
         }
 
 
