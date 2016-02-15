@@ -1255,7 +1255,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
 //    for(iter=0; iter<NBiter; iter++)
-  //      GPU_loop_MultMat_execute(0, &status, GPUstatus, 1.0, 0.0);
+        GPU_loop_MultMat_execute(0, &status, GPUstatus, 1.0, 0.0);
 
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
