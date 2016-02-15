@@ -3197,13 +3197,6 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].framesAve = 1;
             AOconf[loop].NBMblocks = 3;
             AOconf[loop].GPUusesem = 1;
-        
-            AOconf[loop].GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
-            for(k=0;k<GPUcntMax;k++)
-                AOconf[loop].GPUset0[k] = k;
-            AOconf[loop].GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
-            for(k=0;k<GPUcntMax;k++)
-                AOconf[loop].GPUset1[k] = k;
         }
     }
     else
@@ -3218,6 +3211,21 @@ int AOloopControl_InitializeMemory(int mode)
                 printf("DM RM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].dmRMname, aoconfID_dmC, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
             }
     }
+
+
+    if(AOloopcontrol_meminit==0)
+        {
+            for(loop=0; loop<NB_AOloopcontrol; loop++)
+            {
+                AOconf[loop].GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+            for(k=0;k<GPUcntMax;k++)
+                AOconf[loop].GPUset0[k] = k;
+            AOconf[loop].GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
+            for(k=0;k<GPUcntMax;k++)
+                AOconf[loop].GPUset1[k] = k;
+            }
+        }
+
 
     AOloopcontrol_meminit = 1;
 
