@@ -93,6 +93,8 @@ typedef struct
     int GPUall; // 1 if scaling computations done by GPU
     int GPUusesem; // 1 if using semaphores to control GPU
 
+    int *GPUset0;
+    int *GPUset1;
     
     int AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
     
