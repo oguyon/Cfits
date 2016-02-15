@@ -6189,7 +6189,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         data.image[aoconfID_dmRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
         
-        // WAIT FOR LOOP DELAY
+        // WAIT FOR LOOP DELAY, PRIMING
         for(kk=0; kk<delayfr; kk++)               
             {
                 Average_cam_frames(loop, 1, 0, normalize, 0);
