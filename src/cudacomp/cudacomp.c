@@ -530,6 +530,14 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             gpumatmultconf[index].Nsize[device-1] = gpumatmultconf[index].Noffset[device] - gpumatmultconf[index].Noffset[device-1];
         }
         gpumatmultconf[index].Nsize[gpumatmultconf[index].NBstreams-1] = gpumatmultconf[index].N-gpumatmultconf[index].Noffset[gpumatmultconf[index].NBstreams-1];
+     
+     
+     
+     
+        gpumatmultconf[index].GPUdevice = (int*) malloc(sizeof(int)*NBGPUs);
+        for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
+            gpumatmultconf[index].GPUdevice[device] = GPUdevice[device];
+
 
         printf("-----------------------------------------------------\n");
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
@@ -611,13 +619,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             sem_init(gpumatmultconf[index].semptr5[device], 1, 0);
 
         }
-
-        gpumatmultconf[index].GPUdevice = (int*) malloc(sizeof(int)*NBGPUs);
         
 
         for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
-            gpumatmultconf[index].GPUdevice[device] = GPUdevice[device];
             cudaSetDevice(GPUdevice[device]);
             cudaStreamCreate( &gpumatmultconf[index].stream[device]);
         }
