@@ -778,7 +778,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     // ptn is the thread number = GPU device number
     if((gpumatmultconf[index].sem==0)||(gpumatmultconf[index].gpuinit==0))
     {
-        printf("GPU pthread create\n");//TEST
+        printf("GPU pthread create, index = %d    %d %d\n", index, gpumatmultconf[index].sem, gpumatmultconf[index].gpuinit);//TEST
         fflush(stdout);
                 
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
