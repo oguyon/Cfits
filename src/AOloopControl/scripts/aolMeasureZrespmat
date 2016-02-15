@@ -29,7 +29,7 @@ pname="aol${loopnb}zrespM"
 Cfits -n $pname << EOF
 aolnb $loopnb
 loadfits RMpokeCube.fits RMpokeCube
-aolmeaszrm $1 $2 $3 zrespmat wfsref0 wfsmap dmmap 1 $4
+aolmeaszrm $1 $2 $3 zrespmat wfsref0 wfsmap dmmap 1 $4 1
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmask.fits"
 listim
