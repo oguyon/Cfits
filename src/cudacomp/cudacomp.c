@@ -750,13 +750,17 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
+    printf("STEP 000\n");
+    fflush(stdout);
+
+
     *status = *status + 1;  // ->7
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
     
-     printf("STEP 000\n");
+     printf("STEP 001\n");
     fflush(stdout);
     
 
@@ -773,7 +777,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     }
     
     
-    printf("STEP 001\n");
+    printf("STEP 002\n");
     fflush(stdout);
     
  
