@@ -296,7 +296,7 @@ int GPUloadCmat(int index)
 
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
     {
-        cudaSetDevice(device);
+        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
         error = cublasSetMatrix (gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], sizeof(float), gpumatmultconf[index].cMat_part[device], gpumatmultconf[index].M, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M);
         if (error != cudaSuccess)
         {
@@ -324,7 +324,7 @@ int GPUloadCmat(int index)
  * 
 */
 
-int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int *GPUdevices, int orientation, int USEsem, int initWFSref, long loopnb)
+int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb)
 {
     long IDcontrM, IDwfsim, IDwfsref;
     long *sizearraytmp;
@@ -612,18 +612,19 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
         }
 
-
-
+        gpumatmultconf[index].GPUdevice = (int*) malloc(sizeof(int)*NBGPUs);
+        
 
         for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
-            cudaSetDevice(device);
+            gpumatmultconf[index].GPUdevice[device] = GPUdevice[device];
+            cudaSetDevice(GPUdevice[device]);
             cudaStreamCreate( &gpumatmultconf[index].stream[device]);
         }
 
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
         {
-            cudaSetDevice(device);
+            cudaSetDevice(GPUdevice[device]);
 
             // ALLOCATE MEMORY ON DEVICE
 
@@ -918,6 +919,8 @@ int GPU_loop_MultMat_free(int index)
 
     free(gpumatmultconf[index].refWFSinit);
 
+    free(gpumatmultconf[index].GPUdevice);
+
     return(0);
 }
 
@@ -975,10 +978,7 @@ void *compute_function( void *ptr )
 
     ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device + sizeof(int)*10*index);
 
-
-
     *ptrstat = 1;
-
 
 
 
@@ -986,7 +986,8 @@ void *compute_function( void *ptr )
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
     ptr0f = (float*) ptr0;
 
-    cudaSetDevice(device);
+    if(index==0)
+        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
