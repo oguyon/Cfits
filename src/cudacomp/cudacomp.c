@@ -759,7 +759,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
     
-
+/*
     if(index==0) /// main CM multiplication loop
     {
         //	gpumatmultconf[index].NBstreams = 6;
@@ -771,7 +771,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
                 gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
             }
     }
-    
+  */  
     
  
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
