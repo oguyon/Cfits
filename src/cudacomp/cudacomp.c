@@ -1233,7 +1233,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     int status;
     int GPUstatus[100];
     long iter;
-    long NBiter = 10;
+    long NBiter = 5000;
     double time1sec, time2sec;
     struct timespec tnow;
 
