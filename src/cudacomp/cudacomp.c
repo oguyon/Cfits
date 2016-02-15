@@ -1242,7 +1242,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
     GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
     for(k=0;k<GPUcnt;k++)
-        GPUdevices[k] = k;
+        GPUdevices[k] = k+1;
 
 //    GPUstatus = (int*) malloc(sizeof(int)*100);
 
@@ -1270,11 +1270,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
    for(iter=0; iter<NBiter; iter++)
         {
             status = 0;
-           // printf("iter %ld/%ld  \n", iter, NBiter);
-           // fflush(stdout);
             GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
-           // printf("done\n");
-           // fflush(stdout);
         }
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
