@@ -2256,13 +2256,13 @@ long read_sharedmem_image(char *name)
         data.image[ID].semptr = (sem_t**) malloc(sizeof(sem_t*)*data.image[ID].sem);
         for(s=0; s<snb; s++)
         {
-            sprintf(sname, "%s_sem%02ld", name, s);
+            sprintf(sname, "%s_sem%02ld", data.image[ID].md[0].name, s);
             if ((data.image[ID].semptr[s] = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
                 printf("ERROR: could not open semaphore %s\n", sname);
             }
         }
         
-        sprintf(sname, "%s_semlog", name);
+        sprintf(sname, "%s_semlog", data.image[ID].md[0].name);
         if ((data.image[ID].semlog = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
                 printf("ERROR: could not open semaphore %s\n", sname);
             }
