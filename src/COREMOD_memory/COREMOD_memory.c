@@ -2240,10 +2240,7 @@ long read_sharedmem_image(char *name)
             //printf("name = %s\n", data.image[ID].md[0].name);
             sprintf(sname, "%s_sem%02ld", data.image[ID].md[0].name, snb);
             if((stest = sem_open(sname, 0, 0644, 0))== SEM_FAILED)
-                {
-                    printf("Cannot open \"%s\"\n", sname);
-                    sOK = 0;
-                }
+                sOK = 0;
             else
                 {
                     sem_close(stest);
