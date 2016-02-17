@@ -1758,19 +1758,22 @@ case $retval in
 dialog --title "Help" --msgbox '
 Loop configuration is stored in ./conf/ directory\n
 Files specified in this configuration menu get linked/loaded to shared memory:\n
-
+\n
 
 
 HARDWARE I/O:\n
      /tmp/aol${LOOPNUMBER}_dmC.im.shm           DM correction channel\n
      /tmp/aol${LOOPNUMBER}_dmRM.im.shm          DM resp matrix channel\n
      /tmp/aol${LOOPNUMBER}_wfsim.im.shm         WFS camera image\n
+\n
 I/O PRE-PROCESSING:\n
      /tmp/aol${LOOPNUMBER}_wfsdark.im.shm       WFS dark\n
+\n
 SYSTEM ZONAL RESPONSE AND CONTROL:\n
      /tmp/aol${LOOPNUMBER}_wfsmask.im.shm       WFS mask\n
      /tmp/aol${LOOPNUMBER}_dmmask.im.shm        DM mask\n
      /tmp/aol${LOOPNUMBER}_wfsref0.im.shm        WFS ref\n
+\n
 SYSTEM MODAL RESPONSE AND CONTROL:\n
      /tmp/aol${LOOPNUMBER}_DMmodes.im.shm       DM modes\n
      /tmp/aol${LOOPNUMBER}_RM.im.shm            Response Matrix\n
