@@ -3309,7 +3309,7 @@ void *compute_function_dark_subtract( void *ptr )
  *
  */
 
-int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode)
+int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem)
 {
     long imcnt;
     long ii;
@@ -3363,6 +3363,15 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode)
         avcamarraysInit = 1;
     }
 
+
+
+    if(InitSem==1)
+        {
+            sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
+            printf("INITIALIZING SEMAPHORE %d   %s   (%d)\n", semindex, data.image[aoconfID_wfsim].md[0].name, semval);
+            for(i=0; i<semval; i++)
+                sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
+        }
 
 
     if(RM==0)
@@ -6131,9 +6140,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         AOconf[loop].DMupdatecnt ++;
         
         // WAIT FOR LOOP DELAY, PRIMING
+        Read_cam_frame(loop, 1, normalize, 0, 1);
         for(kk=0; kk<delayfr; kk++)               
             {
-                Read_cam_frame(loop, 1, normalize, 0);
+                Read_cam_frame(loop, 1, normalize, 0, 0);
                 kk1++;
                 if(kk1==NBave)
                     {
@@ -6171,7 +6181,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             // POSITIVE INTEGRATION
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
-                Read_cam_frame(loop, 1, normalize, 0);
+                Read_cam_frame(loop, 1, normalize, 0, 0);
                 if(kk<NBave)
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDpos].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
@@ -6211,7 +6221,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             // NEGATIVE INTEGRATION
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
-                Read_cam_frame(loop, 1, normalize, 0);
+                Read_cam_frame(loop, 1, normalize, 0, 0);
                 if(kk<NBave)
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDneg].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
@@ -7216,7 +7226,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     for(kk=0; kk<NbAve; kk++)
                     {
-                        Read_cam_frame(loop, 1, 1, 0);
+                        Read_cam_frame(loop, 1, 1, 0, 0);
 
 
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -7236,7 +7246,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     for(kk=0; kk<NbAve; kk++)
                     {
-                        Read_cam_frame(loop, 1, 1, 0);
+                        Read_cam_frame(loop, 1, 1, 0, 0);
 
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
@@ -7714,7 +7724,7 @@ int AOcompute(long loop, int normalize)
     // pixel 2 is time from beginning of loop to status 02
 
 
-    Read_cam_frame(loop, 0, normalize, 0);
+    Read_cam_frame(loop, 0, normalize, 0, 0);
     
     slice = PIXSTREAM_SLICE;
     if(COMPUTE_PIXELSTREAMING==0) // no pixel streaming
@@ -9401,7 +9411,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     for(kk=0; kk<NBframes; kk++)
     {
-        Read_cam_frame(loop, 0, 1, 0);
+        Read_cam_frame(loop, 0, 1, 0, 0);
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_imWFS1].array.F[ii];
     }
