@@ -8189,6 +8189,7 @@ int AOloopControl_run()
             {
                 if(timerinit==0)
                     {
+                        Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
                         clock_gettime(CLOCK_REALTIME, &t1);
                         timerinit = 1;
                         printf("\n");
