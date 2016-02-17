@@ -2239,7 +2239,10 @@ long read_sharedmem_image(char *name)
         {
             sprintf(sname, "%s_sem%02ld", name, snb);
             if((stest = sem_open(sname, 0, 0644, 0))== SEM_FAILED)
-                sOK = 0;
+                {
+                    printf("Cannot open \"%s\"\n", sname);
+                    sOK = 0;
+                }
             else
                 {
                     sem_close(stest);
