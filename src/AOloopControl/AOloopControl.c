@@ -8227,13 +8227,18 @@ int AOloopControl_run()
                     {
                          if(isnan(data.image[aoconfID_meas_act].array.F[ii])!=0)
                             {
-                            printf("image aol2_meas_act  element %ld is NAN -> replacing by 0\n", ii);
-                            data.image[aoconfID_meas_act].array.F[ii] = 0.0;
+                                printf("image aol2_meas_act  element %ld is NAN -> replacing by 0\n", ii);
+                                data.image[aoconfID_meas_act].array.F[ii] = 0.0;
                             }
                     }
 
+                AOconf[loop].status = 13; // enforce limits
+                clock_gettime(CLOCK_REALTIME, &tnow);
+                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+                data.image[aoconfID_looptiming].array.F[13] = tdiffv;
 
-
+                
                     for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                     {
                         data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
@@ -8245,6 +8250,16 @@ int AOloopControl_run()
                         if(data.image[aoconfID_dmC].array.F[ii] < -AOconf[loop].maxlimit)
                             data.image[aoconfID_dmC].array.F[ii] = -AOconf[loop].maxlimit;
                     }
+                        
+
+                AOconf[loop].status = 14; // write to DM
+                clock_gettime(CLOCK_REALTIME, &tnow);
+                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+                data.image[aoconfID_looptiming].array.F[14] = tdiffv;
+
+
+
                         
                    if(data.image[aoconfID_dmC].sem > 0)
                         sem_post(data.image[aoconfID_dmC].semptr[0]);
@@ -8628,12 +8643,26 @@ int AOloopControl_statusStats()
     statusdef[9] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
     statusdef[10] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
     statusdef[11] = "MULTIPLYING BY GAINS";
-    statusdef[12] = "ENTER SET DM MODES";
+
+    if(MATRIX_COMPUTATION_MODE==0)
+    {
+        statusdef[12] = "ENTER SET DM MODES";
     statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
     statusdef[14] = "MATRIX MULT: CREATE COMPUTING THREADS";
     statusdef[15] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
     statusdef[16] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
     statusdef[17] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+    }
+    else
+    {
+        statusdef[12] = "REMOVE NAN VALUES";
+    statusdef[13] = "ENFORCE STROKE LIMITS";
+    statusdef[14] = "-";
+    statusdef[15] = "-";
+    statusdef[16] = "-";
+    statusdef[17] = "-";
+    }
+
     statusdef[18] = "LOG DATA";
     statusdef[19] = "READING IMAGE";
     statusdef[20] = "WAIT FOR IMAGE";
