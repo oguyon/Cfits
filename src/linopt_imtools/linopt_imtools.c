@@ -665,6 +665,10 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     long ID_VTmatrix;
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
+  
+  
+    printf("[SVD start]");
+    fflush(stdout);
 
 
     IDin = image_ID(IDin_name);
@@ -679,9 +683,6 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     matrix_DtraD = gsl_matrix_alloc (m,m);
     matrix_DtraD_evec = gsl_matrix_alloc (m,m);
 
-    printf(" 01 ");
-    fflush(stdout);
-
    
     /* write matrix_D */
     for(k=0; k<m; k++)
@@ -692,9 +693,6 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     /* compute DtraD */
     gsl_blas_dgemm (CblasTrans, CblasNoTrans, 1.0, matrix_D, matrix_D, 0.0, matrix_DtraD);
 
-    printf(" 02 ");
-    fflush(stdout);
-
     /* compute the inverse of DtraD */
 
     /* first, compute the eigenvalues and eigenvectors */
@@ -703,15 +701,9 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     gsl_matrix_memcpy(matrix_save, matrix_DtraD);
     gsl_eigen_symmv (matrix_save, matrix_DtraD_eval, matrix_DtraD_evec, w);
 
-    printf(" 03 ");
-    fflush(stdout);
-
     gsl_matrix_free(matrix_save);
     gsl_eigen_symmv_free(w);
     gsl_eigen_symmv_sort (matrix_DtraD_eval, matrix_DtraD_evec, GSL_EIGEN_SORT_ABS_DESC);
-
-    printf(" 04 ");
-    fflush(stdout);
 
     IDcoeff = create_2Dimage_ID(IDcoeff_name, m, 1);
     
@@ -732,9 +724,6 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
         for(k=0; k<m; k++) // modes
             data.image[ID_VTmatrix].array.F[k*m+ii] = (float) gsl_matrix_get( matrix_DtraD_evec, k, ii);
 
-    printf(" 05 ");
-    fflush(stdout);
-
     /// Compute SVD decomp
     
     IDout = create_3Dimage_ID(IDout_name, data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
@@ -749,9 +738,6 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
         }
     }
     
-    printf(" 06 ");
-    fflush(stdout);
-    
  //   delete_image_ID("SVD_VTm");
 
  
@@ -763,6 +749,8 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
     gsl_matrix_free(matrix_DtraD_evec);
     gsl_vector_free(matrix_DtraD_eval);
 
+    printf("[SVD done]\n");
+    fflush(stdout);
 
     return(IDout);
 }
@@ -802,6 +790,9 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
 
     int atype;
 
+
+    printf("[CM SVD start]");
+    fflush(stdout);
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
 
@@ -990,6 +981,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
 
     free(arraysizetmp);
 
+    printf("[CM SVD done]\n");
+    fflush(stdout);
 
     return(ID_Cmatrix);
 }
