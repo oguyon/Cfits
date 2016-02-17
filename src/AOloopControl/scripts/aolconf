@@ -1759,12 +1759,14 @@ dialog --title "Help" --msgbox '
 Loop configuration is stored in ./conf/ directory\n
 Files specified in this configuration menu get linked/loaded to shared memory:\n
 \n
-
-
 HARDWARE I/O:\n
      /tmp/aol${LOOPNUMBER}_dmC.im.shm           DM correction channel\n
      /tmp/aol${LOOPNUMBER}_dmRM.im.shm          DM resp matrix channel\n
      /tmp/aol${LOOPNUMBER}_wfsim.im.shm         WFS camera image\n
+            sem0    post: full frame ready      wait: main WFC loop\n
+            sem1    post: full frame ready      wait: RM acquisition\n
+            sem2    post: subframe ready        wait: main WFC loop, pixel stream mode\n
+            sem3    post: subframe ready\n
 \n
 I/O PRE-PROCESSING:\n
      /tmp/aol${LOOPNUMBER}_wfsdark.im.shm       WFS dark\n

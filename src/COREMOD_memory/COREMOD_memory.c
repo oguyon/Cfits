@@ -4881,7 +4881,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     sizearray[0] = xsizeim;
     sizearray[1] = ysizeim;
     IDout = create_image_ID(IDout_name, 2, sizearray, data.image[IDin].md[0].atype, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(IDout_name, 4);
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 4); // create 4 semaphores
     IDout_pixslice = create_image_ID("outpixsl", 2, sizearray, USHORT, 0, 0);
 
     NBslice = data.image[IDin].md[0].size[2];
@@ -5000,6 +5000,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             if(slice==NBslice-1)   //if(slice<oldslice)
             {
                 sem_post(data.image[IDout].semptr[0]);
+                sem_post(data.image[IDout].semptr[1]);
                 data.image[IDout].md[0].cnt0 ++;
 
                 //     printf("[[ Timimg [us] :   ");
@@ -5014,7 +5015,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             }
 
             data.image[IDout].md[0].cnt1 = slice;
-            sem_post(data.image[IDout].semptr[1]);
+            sem_post(data.image[IDout].semptr[2]);
+            sem_post(data.image[IDout].semptr[3]);
             data.image[IDout].md[0].write = 0;
 
             oldslice = slice;
