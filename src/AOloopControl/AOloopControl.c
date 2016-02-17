@@ -3306,10 +3306,10 @@ void *compute_function_dark_subtract( void *ptr )
  *
  * if normalize == 1, image is normalized by dividing by (total + AOconf[loop].WFSnormfloor)
  * if PixelStreamMode = 1, read on semaphore 1, return slice index
- * 
+ *
  */
 
-int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelStreamMode)
+int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode)
 {
     long imcnt;
     long ii;
@@ -3329,13 +3329,22 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
     void *status = 0;
     long i;
     int semval;
- 
- 
- 
+
+    int semindex = 0;
+    
+    
+    
+
+
     WFSatype = data.image[aoconfID_wfsim].md[0].atype;
 
     if(avcamarraysInit==0)
     {
+        if(RM==0)
+            semindex = 0;
+        else
+            semindex = 1;
+        
         arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
         arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
 
@@ -3343,190 +3352,106 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
         Average_cam_frames_IDdark = image_ID(Average_cam_frames_dname);
         Average_cam_frames_nelem = AOconf[loop].sizeWFS;
 
-        if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups  
-            {
-                // set semaphore 1 to 0
-                sem_getvalue(data.image[aoconfID_wfsim].semptr[1], &semval);
-                for(i=0; i<semval; i++)
-                    sem_trywait(data.image[aoconfID_wfsim].semptr[1]);
+        // set semaphore to 0
+        sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
+        for(i=0; i<semval; i++)
+            sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
 
-                PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;    // set semaphore 1 to 0
-            }
+            //PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;    // set semaphore 1 to 0
+        
         avcamarraysInit = 1;
     }
 
-    if(NbAve>1)
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[aoconfID_imWFS0].array.F[ii] = 0.0;
+
 
     if(RM==0)
-        {
-            AOconf[loop].status = 020;  // 2->020: WAIT FOR IMAGE
-            clock_gettime(CLOCK_REALTIME, &tnow);
-            tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
-            tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-            data.image[aoconfID_looptiming].array.F[20] = tdiffv;
-        }
+    {
+        AOconf[loop].status = 020;  // 2->020: WAIT FOR IMAGE
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[20] = tdiffv;
+    }
     else
         data.status1 = 2;
 
 
-    if(data.image[aoconfID_wfsim].md[0].naxis==2) // single buffer
-    {
-        switch (WFSatype) {
-        case FLOAT :
-            imcnt = 0;
-            while(imcnt<NbAve)
-            {
-                usleep(50); // OK FOR NOW (not using single buffer in fast WFS)
-                if(data.image[aoconfID_wfsim].md[0].write == 0)
-                {
-                    if(AOconf[loop].WFScnt!=data.image[aoconfID_wfsim].md[0].cnt0)
-                    {
-                        AOconf[loop].WFScnt = data.image[aoconfID_wfsim].md[0].cnt0;
-                        memcpy (arrayftmp, data.image[aoconfID_wfsim].array.F, sizeof(float)*AOconf[loop].sizeWFS);
-                        if(NbAve>1)
-                        {
 
-                            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                                data.image[aoconfID_imWFS0].array.F[ii] += arrayftmp[ii];
-                        }
-                        else
-                            memcpy(data.image[aoconfID_imWFS0].array.F, arrayftmp,  sizeof(float)*AOconf[loop].sizeWFS);
-                        imcnt++;
-                    }
-                }
-            }
-            break;
-        case USHORT :
-            imcnt = 0;
-            while(imcnt<NbAve)
-            {
-                
-                /*printf("HERE\n");
-                fflush(stdout);*/
-                usleep(50); // OK FOR NOW (not using single buffer in fast WFS)
-                
-                
-                if(data.image[aoconfID_wfsim].md[0].write == 0)
-                {
-                    if(AOconf[loop].WFScnt!=data.image[aoconfID_wfsim].md[0].cnt0)
-                    {
-                        AOconf[loop].WFScnt = data.image[aoconfID_wfsim].md[0].cnt0;
-                        memcpy (arrayutmp, data.image[aoconfID_wfsim].array.U, sizeof(unsigned short)*AOconf[loop].sizeWFS);
-                        if(NbAve>1)
-                        {
-                            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                                data.image[aoconfID_imWFS0].array.F[ii] += arrayutmp[ii];
-                        }
-                        else
-                        {
-                            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                                data.image[aoconfID_imWFS0].array.F[ii] = arrayutmp[ii];
-                        }
-                        imcnt++;
-                    }
-                }
-            }
-            break;
-        default :
-            printf("ERROR: DATA TYPE NOT SUPPORTED\n");
-            exit(0);
-            break;
-        }
-    }
-    else // ring buffer mode, only works with NbAve = 1
+
+
+    if(data.image[aoconfID_wfsim].sem==0)
     {
-   //    printf("RING BUFFER\n");
-   //     fflush(stdout);
-        if(data.image[aoconfID_wfsim].sem==0) // (*)
-        {
-            if(RM==0)
-            {
-                while(AOconf[loop].WFScnt==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
-                {
-                    usleep(5);
-                    // do nothing, wait
-                }
-            }
-            else
-            {
-                while(AOconf[loop].WFScntRM==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
-                {
-                    usleep(5);
-                    // do nothing, wait
-                }
-            }
-        }
+        if(RM==0)
+            while(AOconf[loop].WFScnt==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
+                usleep(5);
         else
-        {
-            //printf("Waiting for semaphore to post .... ");
-            //fflush(stdout);
-            sem_wait(data.image[aoconfID_wfsim].semptr[0]);
-            //printf(" done\n");
-            //fflush(stdout);
-        }
+            while(AOconf[loop].WFScntRM==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
+                usleep(5);
+    }
+    else
+        sem_wait(data.image[aoconfID_wfsim].semptr[semindex]);
 
+
+    slice = 0;
+    if(data.image[aoconfID_wfsim].md[0].naxis==3) // ring buffer
+    {
         slice = data.image[aoconfID_wfsim].md[0].cnt1;
         if(slice==-1)
             slice = data.image[aoconfID_wfsim].md[0].size[2];
-
-        switch (WFSatype) {
-        case FLOAT :
-            ptrv = (char*) data.image[aoconfID_wfsim].array.F;
-            ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
-            memcpy(arrayftmp, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
-            break;
-        case USHORT :
-            ptrv = (char*) data.image[aoconfID_wfsim].array.U;
-            ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
-            memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
-            break;
-        default :
-            printf("ERROR: DATA TYPE NOT SUPPORTED\n");
-            exit(0);
-            break;
-        }
-        if(RM==0)
-            AOconf[loop].WFScnt = data.image[aoconfID_wfsim].md[0].cnt0;
-        else
-            AOconf[loop].WFScntRM = data.image[aoconfID_wfsim].md[0].cnt0;
     }
-    
-    
-    
- 
- //   if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
-    PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
-    
 
-    
-    
-    
-//    data.image[aoconfID_looptiming].md[0].wtime = tnow; 
-  
+    switch (WFSatype) {
+    case FLOAT :
+        ptrv = (char*) data.image[aoconfID_wfsim].array.F;
+        ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
+        memcpy(arrayftmp, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
+        break;
+    case USHORT :
+        ptrv = (char*) data.image[aoconfID_wfsim].array.U;
+        ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
+        memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
+        break;
+    default :
+        printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+        exit(0);
+        break;
+    }
+    if(RM==0)
+        AOconf[loop].WFScnt = data.image[aoconfID_wfsim].md[0].cnt0;
+    else
+        AOconf[loop].WFScntRM = data.image[aoconfID_wfsim].md[0].cnt0;
+
+
+
+
+
+    //   if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
+    PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
+
+
     // THIS IS THE STARTING POINT FOR THE LOOP
-    
-    AOconf[loop].status = 001;  // 3->001: DARK SUBTRACT
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[aoconfID_looptiming].array.F[0] = tdiffv;
-    
-    data.image[aoconfID_looptiming].md[0].wtime = tnow; 
-    
-    
+    if(RM==0)
+    {
+        AOconf[loop].status = 001;  // 3->001: DARK SUBTRACT
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[0] = tdiffv;
+
+        data.image[aoconfID_looptiming].md[0].wtime = tnow;
+    }
+
     // Dark subtract and compute total
     //sprintf(dname, "aol%ld_wfsdark", loop);
     //IDdark = image_ID(dname);
     //nelem = AOconf[loop].sizeWFS;
 
-    if((loop==0)||(RMACQUISITION == 1)) // single thread, in CPU
+    if((loop==0)||(RM == 1)) // single thread, in CPU
     {
         switch ( WFSatype ) {
-            case USHORT :
+        case USHORT :
 # ifdef _OPENMP
-        #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
+            #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
         {
 # endif
 
@@ -3538,10 +3463,10 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
 # ifdef _OPENMP
         }
 # endif
-            break;
-            case FLOAT :
+        break;
+        case FLOAT :
 # ifdef _OPENMP
-        #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
+            #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
         {
 # endif
 
@@ -3553,13 +3478,13 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
 # ifdef _OPENMP
         }
 # endif
+        break;
+        default :
+            printf("ERROR: WFS data type not recognized\n");
+            exit(0);
             break;
-            default :
-                printf("ERROR: WFS data type not recognized\n");
-                exit(0);
-                break;
         }
-            
+
     }
     else
     {
@@ -3571,25 +3496,21 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
             {
                 pthread_create( &thread_dark_subtract[ti], NULL, compute_function_dark_subtract, (void*) &ti);
                 sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], 0, 0);
-                sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti], 0, 0); 
+                sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti], 0, 0);
                 usleep(100);
-                ti++;   
-           }
-//            sem_init(&AOLCOMPUTE_DARK_SUBTRACT_sem_name, 0, 0);
-  //          sem_init(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name, 0, 0);             
+                ti++;
+            }
             AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 1;
         }
 
 
         for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
-            {
-                sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval0);
-                sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti]);
-                sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval);
-//                printf("[%ld] 00 posting thread    %d -> %d\n", ti, sval0, sval);
-//              printf("[%ld] waiting on result thread\n", ti);
-                sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
-            }
+        {
+            sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval0);
+            sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti]);
+            sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval);
+            sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
+        }
     }
 
 
@@ -3599,74 +3520,74 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
     //       data.image[aoconfID_imWFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     //}
 
-    AOconf[loop].status = 002; // 4 -> 002 : COMPUTE TOTAL OF IMAGE
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[aoconfID_looptiming].array.F[2] = tdiffv;
-
+    if(RM==0)
+    {
+        AOconf[loop].status = 002; // 4 -> 002 : COMPUTE TOTAL OF IMAGE
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[2] = tdiffv;
+    }
 
     // Normalize
     if(normalize==1)
     {
-    if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RMACQUISITION == 1)) // do it in main thread
-    {
-        AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_imWFS0].name);
-        AOLCOMPUTE_TOTAL_INIT = 1;
-        IMTOTAL = AOconf[loop].WFStotalflux;
-    }
-    else  // do it in other threads
-    {
-        AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
-        if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
+        if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RM == 1)) // do it in main thread
         {
-            pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
-            AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
-            sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
+            AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_imWFS0].name);
+            AOLCOMPUTE_TOTAL_INIT = 1;
+            IMTOTAL = AOconf[loop].WFStotalflux;
         }
-        sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
-    }
+        else  // do it in other threads
+        {
+            AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
+            if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
+            {
+                pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
+                AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
+                sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
+            }
+            sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+        }
     }
 
-    AOconf[loop].status = 003;  // 5 -> 003: NORMALIZE WFS IMAGE
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[aoconfID_looptiming].array.F[3] = tdiffv;
-
+    if(RM==0)
+    {
+        AOconf[loop].status = 003;  // 5 -> 003: NORMALIZE WFS IMAGE
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[3] = tdiffv;
+    }
 
     data.image[aoconfID_imWFS0].md[0].cnt0 ++;
 
     nelem = AOconf[loop].sizeWFS;
 
     if(normalize==1)
-        {
+    {
         totalinv=1.0/(AOconf[loop].WFStotalflux + AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-           normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
-        }
+        normfloorcoeff = AOconf[loop].WFStotalflux/(AOconf[loop].WFStotalflux+AOconf[loop].WFSnormfloor*AOconf[loop].sizeWFS);
+    }
     else
-        {
+    {
         totalinv = 1.0;
         normfloorcoeff = 1.0;
     }
-    
+
     GPU_alpha = totalinv;
-    
+
     GPU_beta = -normfloorcoeff;
 
-    
-    //GPU_beta = -1.0; // test
 
- //   printf("----------- alpha = %g     beta = %g\n", GPU_alpha, GPU_beta);
-  //  fflush(stdout);
 
- 
- 
- 
- 
+
+
+
+
     if(COMPUTE_GPU_SCALING==0)  // normalize WFS image by totalinv
     {
-    data.image[aoconfID_imWFS1].md[0].write = 1;
+        data.image[aoconfID_imWFS1].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
         {
@@ -3687,6 +3608,8 @@ int Average_cam_frames(long loop, long NbAve, int RM, int normalize, int PixelSt
 
     return(0);
 }
+
+
 
 
 
@@ -6209,7 +6132,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         // WAIT FOR LOOP DELAY, PRIMING
         for(kk=0; kk<delayfr; kk++)               
             {
-                Average_cam_frames(loop, 1, 0, normalize, 0);
+                Read_cam_frame(loop, 1, normalize, 0);
                 kk1++;
                 if(kk1==NBave)
                     {
@@ -6238,7 +6161,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
-
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDpos].array.F[ii] = 0.0;
@@ -6248,7 +6170,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             // POSITIVE INTEGRATION
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
-                Average_cam_frames(loop, 1, 0, normalize, 0);
+                Read_cam_frame(loop, 1, normalize, 0);
                 if(kk<NBave)
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDpos].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
@@ -6288,7 +6210,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             // NEGATIVE INTEGRATION
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
-                Average_cam_frames(loop, 1, 0, normalize, 0);
+                Read_cam_frame(loop, 1, normalize, 0);
                 if(kk<NBave)
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDneg].array.F[ii] += data.image[aoconfID_imWFS1].array.F[ii];
@@ -7293,7 +7215,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     for(kk=0; kk<NbAve; kk++)
                     {
-                        Average_cam_frames(loop, 1, 1, 1, 0);
+                        Read_cam_frame(loop, 1, 1, 0);
 
 
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -7313,7 +7235,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
                     for(kk=0; kk<NbAve; kk++)
                     {
-                        Average_cam_frames(loop, 1, 1, 1, 0);
+                        Read_cam_frame(loop, 1, 1, 0);
 
                         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         {
@@ -7791,7 +7713,7 @@ int AOcompute(long loop, int normalize)
     // pixel 2 is time from beginning of loop to status 02
 
 
-    Average_cam_frames(loop, AOconf[loop].framesAve, 0, normalize, 0);
+    Read_cam_frame(loop, 0, normalize, 0);
     
     slice = PIXSTREAM_SLICE;
     if(COMPUTE_PIXELSTREAMING==0) // no pixel streaming
@@ -9478,7 +9400,7 @@ int AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NB
 
     for(kk=0; kk<NBframes; kk++)
     {
-        Average_cam_frames(loop, 1, 0, 1, 0);
+        Read_cam_frame(loop, 0, 1, 0);
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_imWFS1].array.F[ii];
     }
