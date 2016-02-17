@@ -1763,6 +1763,8 @@ HARDWARE I/O:\n
      /tmp/aol${LOOPNUMBER}_dmC.im.shm           DM correction channel\n
      /tmp/aol${LOOPNUMBER}_dmRM.im.shm          DM resp matrix channel\n
      /tmp/aol${LOOPNUMBER}_wfsim.im.shm         WFS camera image\n
+            cnt0    full frame counter\n
+            cnt1    last slice written (pixel stream mode)\n
             sem0    post: full frame ready      wait: main WFC loop\n
             sem1    post: full frame ready      wait: RM acquisition\n
             sem2    post: subframe ready        wait: main WFC loop, pixel stream mode\n

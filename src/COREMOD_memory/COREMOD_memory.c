@@ -4893,7 +4893,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     nbpixslice = (long*) malloc(sizeof(long)*NBslice);
     if((fp=fopen(NBpix_fname,"r"))==NULL)
     {
-        printf("ERROR : cannor open file \"%s\"\n", NBpix_fname);
+        printf("ERROR : cannot open file \"%s\"\n", NBpix_fname);
         exit(0);
     }
 
@@ -5001,6 +5001,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             {
                 sem_post(data.image[IDout].semptr[0]);
                 sem_post(data.image[IDout].semptr[1]);
+                sem_post(data.image[IDout].semlog);
                 data.image[IDout].md[0].cnt0 ++;
 
                 //     printf("[[ Timimg [us] :   ");
