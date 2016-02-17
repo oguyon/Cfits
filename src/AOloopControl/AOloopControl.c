@@ -3353,6 +3353,7 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode)
         Average_cam_frames_nelem = AOconf[loop].sizeWFS;
 
         // set semaphore to 0
+        printf("INITIALIZING SEMAPHORE %d   %s\n", semindex, data.image[aoconfID_wfsim].md[0].name);
         sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
         for(i=0; i<semval; i++)
             sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
