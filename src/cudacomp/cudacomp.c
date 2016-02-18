@@ -1511,13 +1511,13 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
  
  
  
- /*   cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_M, n);
+    cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_M, n);
      if (cudaStat != cudaSuccess)
     {
         printf("cublasSgemm returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
-*/
+
     
 
 
@@ -1538,8 +1538,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
     
     
-    //cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
-    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
+    cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    //cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
