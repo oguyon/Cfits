@@ -1282,7 +1282,7 @@ int GPU_SVD(int device)
 
 
     if (cublasH ) cublasDestroy(cublasH);
-    //    if (cudenseH) cusolverDnDestroy(cudenseH);
+    if (cudenseH) cusolverDnDestroy(cudenseH);
 
     cudaDeviceReset();
 
