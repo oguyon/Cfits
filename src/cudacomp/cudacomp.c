@@ -1535,7 +1535,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
     
     
-    cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    //cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1556,6 +1557,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaFree(d_VT);
     cudaFree(d_Work);
     cudaFree(devInfo);
+    cudaFree(d_M);
 
     if (cublasH ) cublasDestroy(cublasH);
     if (cudenseH) cusolverDnDestroy(cudenseH);
