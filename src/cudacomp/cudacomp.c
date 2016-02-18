@@ -1228,7 +1228,24 @@ void *compute_function( void *ptr )
 
 int GPU_SVD(int device)
 {
+    cudsHandle_t cudenseH = NULL;
+    cublasHandle_t cublasH = NULL;
+    cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
+    cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
     
+    // step 1: create cudense/cublas handle
+    cusolver_status = cudsCreate(&cudenseH);
+    assert(CUSOLVER_STATUS_SUCCESS == cusolver_status);
+
+    cublas_status = cublasCreate(&cublasH);
+    assert(CUBLAS_STATUS_SUCCESS == cublas_status);
+    
+    
+    
+    if (cublasH ) cublasDestroy(cublasH);   
+    if (cudenseH) cudsDestroy(cudenseH);   
+
+    cudaDeviceReset();
     
     return(0);
 }
