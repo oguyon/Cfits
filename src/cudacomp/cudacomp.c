@@ -1233,6 +1233,21 @@ int GPU_SVD(int device)
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
     cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
     
+    
+    
+       cudaGetDeviceCount(&deviceCount);
+        printf("%d devices found\n", deviceCount);
+        printf("\n");
+        for (device = 0; device < deviceCount; ++device) {
+            cudaGetDeviceProperties(&deviceProp, device);
+            printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
+                   device, deviceProp.name, deviceProp.major, deviceProp.minor);
+            printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
+            printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
+            printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
+            printf("\n");
+        }
+        
 /*    printf("step 1a: create cudense handle ...");
     fflush(stdout);
     cusolver_status = cusolverDnCreate(&cudenseH);
