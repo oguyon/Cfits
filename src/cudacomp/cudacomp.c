@@ -1243,7 +1243,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     struct cudaDeviceProp deviceProp;
     int k;
 
-    long ID_Rmatrix;
+    long ID_Rmatrix, ID_Cmatrix;
     int atype;
     long m;
     long n;
@@ -1381,7 +1381,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     double SVDeps = 1e-6;
     
     printf("Testing SVD on GPU\n");
-    linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat") 
+    linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
    // GPU_SVD_computeControlMatrix(0, "Rmat", "CMmat", SVDeps, "VTmat");
     exit(0);
 
