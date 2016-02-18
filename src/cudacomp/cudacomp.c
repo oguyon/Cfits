@@ -1250,7 +1250,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     int n;
     long *arraysizetmp;
     int lda, ldu, ldvt;
-
+    
 
     float *d_A = NULL; // linear memory of GPU
     float *d_S = NULL; // linear memory of GPU
@@ -1272,6 +1272,10 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     double time1sec, time2sec;
     struct timespec tnow;
+
+
+    long ID_leftSV; // left singular vectors
+
 
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
@@ -1436,7 +1440,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     
-    //  cudaStat = cudaDeviceSynchronize();
+    cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
 
