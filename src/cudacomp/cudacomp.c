@@ -1326,7 +1326,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaStat = cudaMalloc ((void**)&d_A  , sizeof(double) * n * m);
     if (cudaStat != cudaSuccess)
             {
-                printf("cudaMalloc d_A returned error code %d, line(%d)\n", cudastat, __LINE__);
+                printf("cudaMalloc d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
                 exit(EXIT_FAILURE);
             }
             
@@ -1334,7 +1334,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaStat = cudaMemcpy(d_A, data.image[ID_Rmatrix].array.F, sizeof(float)*m*n, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
         {
-            printf("cudaMemcpy d_wfsRef wfsRef returned error code %d, line(%d)\n", error, __LINE__);
+            printf("cudaMemcpy d_wfsRef wfsRef returned error code %d, line(%d)\n", cudaStat, __LINE__);
             exit(EXIT_FAILURE);
         }
 
