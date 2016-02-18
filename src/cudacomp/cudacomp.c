@@ -1419,7 +1419,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
 
-    printf("START GPU COMPUTATION ...");
+    printf("START GPU COMPUTATION (%d x %d)...", m, n);
     fflush(stdout);
     cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
     //  cudaStat = cudaDeviceSynchronize();
