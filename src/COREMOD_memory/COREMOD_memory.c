@@ -2562,14 +2562,14 @@ long copy_image_ID(char *name, char *newname, int shared)
     for(s=0;s<data.image[IDout].sem; s++)
     {
         sem_getvalue(data.image[IDout].semptr[s], &semval);
-        if(semval<SEMAPHORE_MAX)
+        if(semval<SEMAPHORE_MAXVAL)
             sem_post(data.image[IDout].semptr[s]);
     }
     
     if(data.image[IDout].semlog!=NULL)
     {
         sem_getvalue(data.image[IDout].semlog, &semval);
-        if(semval<SEMAPHORE_MAX)
+        if(semval<SEMAPHORE_MAXVAL)
             sem_post(data.image[IDout].semlog);
     }
     
@@ -4040,7 +4040,7 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
         for(s=0; s<data.image[ID].sem; s++)
         {
             sem_getvalue(data.image[ID].semptr[s], &semval);
-            if(semval<SEMAPHORE_MAX)
+            if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[ID].semptr[s]);
         }
     }
@@ -4051,7 +4051,7 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
         else
         {
             sem_getvalue(data.image[ID].semptr[index], &semval);
-            if(semval<SEMAPHORE_MAX)
+            if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[ID].semptr[index]);
         }
     }
@@ -4825,7 +4825,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                 if(data.image[ID].sem > 0)
                 {
                     sem_getvalue(data.image[ID].semptr[0], &semval);
-                    if(semval<SEMAPHORE_MAX)
+                    if(semval<SEMAPHORE_MAXVAL)
                         sem_post(data.image[ID].semptr[0]);
                 }
             }
@@ -5026,15 +5026,15 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             if(slice==NBslice-1)   //if(slice<oldslice)
             {
                 sem_getvalue(data.image[IDout].semptr[0], &semval);
-                if(semval<SEMAPHORE_MAX)
+                if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDout].semptr[0]);
 
                 sem_getvalue(data.image[IDout].semptr[1], &semval);
-                if(semval<SEMAPHORE_MAX)
+                if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDout].semptr[1]);
 
                 sem_getvalue(data.image[IDout].semlog, &semval);
-                if(semval<SEMAPHORE_MAX)
+                if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDout].semlog);
              
                 data.image[IDout].md[0].cnt0 ++;
@@ -5053,11 +5053,11 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             data.image[IDout].md[0].cnt1 = slice;
             
             sem_getvalue(data.image[IDout].semptr[2], &semval);
-            if(semval<SEMAPHORE_MAX)
+            if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[IDout].semptr[2]);
             
             sem_getvalue(data.image[IDout].semptr[3], &semval);
-            if(semval<SEMAPHORE_MAX)
+            if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[IDout].semptr[3]);
             
             data.image[IDout].md[0].write = 0;
