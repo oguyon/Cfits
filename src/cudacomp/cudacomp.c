@@ -1270,7 +1270,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     int info_gpu;
 
-
+    double time1sec, time2sec;
+    struct timespec tnow;
 
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
@@ -1359,6 +1360,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
 
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
 
 
@@ -1473,6 +1476,11 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+
+  clock_gettime(CLOCK_REALTIME, &tnow);
+        time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+        printf("time = %8.3f s\n", 1.0*(time2sec-time1sec));
 
 
     cudaFree(d_A);
