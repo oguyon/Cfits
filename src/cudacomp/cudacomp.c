@@ -1306,10 +1306,10 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     int *GPUdevices;
     int k;
 
-    /*printf("Testing SVD on GPU\n");
+    printf("Testing SVD on GPU\n");
     GPU_SVD(0);
     exit(0);
-*/
+
     printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
 
 
