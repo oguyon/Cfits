@@ -1234,16 +1234,15 @@ int GPU_SVD(int device)
     cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
     
     // step 1: create cudense/cublas handle
-    cusolver_status = cudsCreate(&cudenseH);
+    cusolver_status = cusolverDnCreate(&cudenseH);
     assert(CUSOLVER_STATUS_SUCCESS == cusolver_status);
 
     cublas_status = cublasCreate(&cublasH);
     assert(CUBLAS_STATUS_SUCCESS == cublas_status);
     
     
-    
     if (cublasH ) cublasDestroy(cublasH);   
-    if (cudenseH) cudsDestroy(cudenseH);   
+    if (cudenseH) cusolverDnDestroy(cudenseH);   
 
     cudaDeviceReset();
     
