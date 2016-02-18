@@ -1287,14 +1287,14 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     {
         m = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
         n = data.image[ID_Rmatrix].md[0].size[2];
-        printf("3D image -> %ld %ld\n", m, n);
+        printf("3D image -> %d %d\n", m, n);
         fflush(stdout);
     }
     else
     {
         m = data.image[ID_Rmatrix].md[0].size[0];
         n = data.image[ID_Rmatrix].md[0].size[1];
-        printf("2D image -> %ld %ld\n", m, n);
+        printf("2D image -> %d %d\n", m, n);
         fflush(stdout);
     }
 
