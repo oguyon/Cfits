@@ -58,6 +58,10 @@ int clock_gettime(int clk_id, struct timespec *t){
 #include "info/info.h"
 #include "cudacomp/cudacomp.h"
 
+#include "linopt_imtools/linopt_imtools.h" // for testing
+
+
+
 # ifdef _OPENMP
 # include <omp.h>
 #define OMP_NELEMENT_LIMIT 1000000
@@ -1224,9 +1228,13 @@ void *compute_function( void *ptr )
 
 
 
+//
+// Computes control matrix
+// Conventions:
+//   m: number of actuators (= NB_MODES)
+//   n: number of sensors  (= # of pixels)
 
-
-int GPU_SVD(int device)
+int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name)
 {
     cusolverDnHandle_t  cudenseH = NULL;
     cublasHandle_t cublasH = NULL;
@@ -1234,6 +1242,39 @@ int GPU_SVD(int device)
     cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
     struct cudaDeviceProp deviceProp;
     int k;
+
+    long ID_Rmatrix;
+    int atype;
+    long m;
+    long n;
+    long *arraysizetmp;
+    
+    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    ID_Rmatrix = image_ID(ID_Rmatrix_name);
+    
+    atype = data.image[ID_Rmatrix].md[0].atype;
+    if(atype!=FLOAT)
+        {
+            printf("wrong type\n");
+            exit(0);
+        }
+        
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
+        m = data.image[ID_Rmatrix].md[0].size[2];
+        printf("3D image -> %ld %ld\n", n, m);
+        fflush(stdout);
+    }
+    else
+    {
+        n = data.image[ID_Rmatrix].md[0].size[0];
+        m = data.image[ID_Rmatrix].md[0].size[1];
+         printf("2D image -> %ld %ld\n", n, m);
+        fflush(stdout);
+   }
+
+
 
 
     cudaGetDeviceCount(&deviceCount);
@@ -1275,16 +1316,37 @@ int GPU_SVD(int device)
         printf ("CUBLAS initialization failed\n");
         return EXIT_FAILURE;
     }
-
-    // assert(CUBLAS_STATUS_SUCCESS == cublas_status);
     printf(" done\n");
     fflush(stdout);
+
+
+
+
+  //  cusolverDnSgesvd (cudenseH, char jobu, char jobvt, int m, int n, float *A, int lda, float *S, float *U, int ldu, float *VT, int ldvt, float *Work, int Lwork, float *rwork, int  *devInfo);
+
+
+
+
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
+        arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
+        arraysizetmp[2] = m;
+    }
+    else
+    {
+        arraysizetmp[0] = n;
+        arraysizetmp[1] = m;
+    }
+
+    ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
 
 
     if (cublasH ) cublasDestroy(cublasH);
     if (cudenseH) cusolverDnDestroy(cudenseH);
 
     cudaDeviceReset();
+    free(arraysizetmp);
 
     return(0);
 }
@@ -1316,9 +1378,11 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     struct timespec tnow;
     int *GPUdevices;
     int k;
-
+    double SVDeps = 1e-6;
+    
     printf("Testing SVD on GPU\n");
-    GPU_SVD(0);
+    linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat") 
+   // GPU_SVD_computeControlMatrix(0, "Rmat", "CMmat", SVDeps, "VTmat");
     exit(0);
 
     printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
