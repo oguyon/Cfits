@@ -1235,48 +1235,49 @@ int GPU_SVD(int device)
     struct cudaDeviceProp deviceProp;
     int k;
 
-    
-       cudaGetDeviceCount(&deviceCount);
-        printf("%d devices found\n", deviceCount);
+
+    cudaGetDeviceCount(&deviceCount);
+    printf("%d devices found\n", deviceCount);
+    printf("\n");
+    for (k = 0; k < deviceCount; ++k) {
+        cudaGetDeviceProperties(&deviceProp, k);
+        printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
+               k, deviceProp.name, deviceProp.major, deviceProp.minor);
+        printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
+        printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
+        printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
         printf("\n");
-        for (k = 0; k < deviceCount; ++k) {
-            cudaGetDeviceProperties(&deviceProp, k);
-            printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
-                   k, deviceProp.name, deviceProp.major, deviceProp.minor);
-            printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
-            printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
-            printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
-            printf("\n");
-        }
-        
-/*    printf("step 1a: create cudense handle ...");
-    fflush(stdout);
-    cusolver_status = cusolverDnCreate(&cudenseH);
-    assert(CUSOLVER_STATUS_SUCCESS == cusolver_status);
-    printf(" done\n");
-    fflush(stdout);
-*/
+    }
+
+    /*    printf("step 1a: create cudense handle ...");
+        fflush(stdout);
+        cusolver_status = cusolverDnCreate(&cudenseH);
+        assert(CUSOLVER_STATUS_SUCCESS == cusolver_status);
+        printf(" done\n");
+        fflush(stdout);
+    */
 
     printf("step 1b: create cublas handle ...");
     fflush(stdout);
     cublas_status = cublasCreate(&cublasH);
-     if (cublas_status != CUBLAS_STATUS_SUCCESS) {
-                printf ("CUBLAS initialization failed\n");
-                return EXIT_FAILURE;
-            }
-    
-   // assert(CUBLAS_STATUS_SUCCESS == cublas_status);
+    if (cublas_status != CUBLAS_STATUS_SUCCESS) {
+        printf ("CUBLAS initialization failed\n");
+        return EXIT_FAILURE;
+    }
+
+    // assert(CUBLAS_STATUS_SUCCESS == cublas_status);
     printf(" done\n");
     fflush(stdout);
-    
-    
-    if (cublasH ) cublasDestroy(cublasH);   
-//    if (cudenseH) cusolverDnDestroy(cudenseH);   
+
+
+    if (cublasH ) cublasDestroy(cublasH);
+    //    if (cudenseH) cusolverDnDestroy(cudenseH);
 
     cudaDeviceReset();
-    
+
     return(0);
 }
+
 
 
 
@@ -1305,11 +1306,10 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     int *GPUdevices;
     int k;
 
-    printf("Testing SVD on GPU\n");
+    /*printf("Testing SVD on GPU\n");
     GPU_SVD(0);
-    
     exit(0);
-
+*/
     printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
 
 
