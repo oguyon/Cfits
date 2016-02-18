@@ -1305,7 +1305,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     printf("%d devices found\n", deviceCount);
     fflush(stdout);
     printf("\n");
-/*    for (k = 0; k < deviceCount; ++k) {
+   for (k = 0; k < deviceCount; ++k) {
         cudaGetDeviceProperties(&deviceProp, k);
         printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
                k, deviceProp.name, deviceProp.major, deviceProp.minor);
@@ -1314,7 +1314,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
         printf("\n");
     }
-  */
+  
     
     if(device<deviceCount)
         cudaSetDevice(device);
