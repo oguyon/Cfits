@@ -1261,6 +1261,11 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     int *devInfo = NULL; // info in gpu (device copy)
     int Lwork;
     
+    float *Sarray;
+    long i;
+    FILE *fp;
+    char fname[200];
+    
     
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
@@ -1405,7 +1410,23 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     cudaStat = cudaDeviceSynchronize();
 
-
+    Sarray = (float*) malloc(sizeof(float)*m);
+    cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*m, cudaMemcpyDeviceToHost);
+    if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+    
+    sprintf(fname, "eigenv.dat");
+    if((fp=fopen(fname, "w"))==NULL)
+      {
+        printf("ERROR: cannot create file \"%s\"\n", fname);
+        exit(0);
+      }
+    for(i=0;i<m;i++)
+        fprintf(fp,"%ld %f\n", i, Sarray[i]);
+    fclose(fp);
 
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
@@ -1434,8 +1455,10 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     if (cudenseH) cusolverDnDestroy(cudenseH);
 
     cudaDeviceReset();
+    
     free(arraysizetmp);
-
+    free(Sarray);
+    
     return(0);
 }
 
