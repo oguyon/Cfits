@@ -1256,7 +1256,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     float *h_A = NULL;
     float *d_S = NULL; // linear memory of GPU
     float *d_U = NULL; // linear memory of GPU
-    float *h_U = NULL;
+    float *h_U = NULL;    
     float *d_VT = NULL; // linear memory of GPU
     float *d_M = NULL; // linear memory of GPU
     
@@ -1283,7 +1283,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     long ii, jj;
     float alpha = 1.0;
     float beta = 0.0;
-    
+    long ID;
     
  
 
@@ -1479,6 +1479,13 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     for(i=0; i<n; i++)
         fprintf(fp,"%ld %g\n", i, Sarray[i]);
     fclose(fp);
+
+
+
+    ID = create_2Dimage_ID("matU", m, m);
+    cudaMemcpy(data.image[ID].array.F, d_U, sizeof(float)*m*m, cudaMemcpyDeviceToHost);
+    save_fits("matU", "!matU.fits");
+
 
 
     ID_VTmatrix = create_2Dimage_ID(ID_VTmatrix_name, n,n);
