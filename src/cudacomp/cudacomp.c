@@ -1383,9 +1383,9 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     
     if(1==1)
     {
-    printf("Testing SVD on GPU\n");
-    linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
-   // GPU_SVD_computeControlMatrix(0, "Rmat", "CMmat", SVDeps, "VTmat");
+        printf("Testing SVD on GPU\n");
+        //linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
+        GPU_SVD_computeControlMatrix(0, "Rmat", "CMmat", SVDeps, "VTmat");
     }
     else
     {
