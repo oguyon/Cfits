@@ -1248,14 +1248,25 @@ int GPU_SVD(int device)
         printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
         printf("\n");
     }
-
-    /*    printf("step 1a: create cudense handle ...");
+    
+    if(device<deviceCount)
+        cudaSetDevice(device);
+    else
+        {
+            printf("Invalid Device : %d / %d\n", device, deviceCount);
+            exit(0);
+        }
+    
+    printf("step 1a: create cudense handle ...");
         fflush(stdout);
         cusolver_status = cusolverDnCreate(&cudenseH);
-        assert(CUSOLVER_STATUS_SUCCESS == cusolver_status);
+        if (cusolver_status != CUSOLVER_STATUS_SUCCESS) {
+        printf ("CUSOLVER initialization failed\n");
+        return EXIT_FAILURE;
+    }
         printf(" done\n");
         fflush(stdout);
-    */
+    
 
     printf("step 1b: create cublas handle ...");
     fflush(stdout);
