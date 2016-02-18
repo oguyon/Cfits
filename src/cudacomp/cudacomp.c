@@ -1494,6 +1494,9 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     {
         if(Sarray[ii]>Sarray[0]*sqrt(SVDeps))
             val = 1.0/Sarray[ii];
+        else
+            val = 0.0;
+        
         for(jj=0;jj<n;jj++)
              data.image[ID_VTmatrix].array.F[jj*n+ii] *= val;
     }
