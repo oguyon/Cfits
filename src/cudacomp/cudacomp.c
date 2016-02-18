@@ -1259,7 +1259,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     float *h_U1 = NULL;    
     float *d_VT = NULL; // linear memory of GPU
     float *d_M = NULL; // linear memory of GPU
-    
+    float *d_U1 = NULL; // linear memory of GPU
     float *d_Work = NULL; // linear memory of GPU
     cudaError_t cudaStat = cudaSuccess;
     int *devInfo = NULL; // info in gpu (device copy)
