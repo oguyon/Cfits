@@ -1267,6 +1267,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     FILE *fp;
     char fname[200];
     
+    int info_gpu;
     
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
@@ -1409,6 +1410,9 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
     cudaStat = cudaDeviceSynchronize();
+    
+    cudaStat = cudaMemcpy(&info_gpu, devInfo, sizeof(int), cudaMemcpyDeviceToHost);
+    printf("after gesvd: info_gpu = %d\n", info_gpu);
 
     Sarray = (float*) malloc(sizeof(float)*m);
 //    Aarray = (float*) malloc(sizeof(float)*m*n);
