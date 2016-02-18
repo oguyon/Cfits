@@ -1233,14 +1233,15 @@ int GPU_SVD(int device)
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
     cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
     
-    printf("step 1: create cudense handle ...");
+/*    printf("step 1a: create cudense handle ...");
     fflush(stdout);
     cusolver_status = cusolverDnCreate(&cudenseH);
     assert(CUSOLVER_STATUS_SUCCESS == cusolver_status);
     printf(" done\n");
     fflush(stdout);
+*/
 
-    printf("step 1: create cublas handle ...");
+    printf("step 1b: create cublas handle ...");
     fflush(stdout);
     cublas_status = cublasCreate(&cublasH);
     assert(CUBLAS_STATUS_SUCCESS == cublas_status);
@@ -1249,7 +1250,7 @@ int GPU_SVD(int device)
     
     
     if (cublasH ) cublasDestroy(cublasH);   
-    if (cudenseH) cusolverDnDestroy(cudenseH);   
+//    if (cudenseH) cusolverDnDestroy(cudenseH);   
 
     cudaDeviceReset();
     
