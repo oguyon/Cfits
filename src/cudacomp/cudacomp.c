@@ -1539,7 +1539,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     
     
     //cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
-    cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
+    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
