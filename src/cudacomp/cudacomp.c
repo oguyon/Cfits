@@ -1228,7 +1228,7 @@ void *compute_function( void *ptr )
 
 int GPU_SVD(int device)
 {
-    cudsHandle_t cudenseH = NULL;
+    cusolverDnHandle_t  cudenseH = NULL;
     cublasHandle_t cublasH = NULL;
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
     cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
