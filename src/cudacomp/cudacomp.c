@@ -1423,7 +1423,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
     
-    rwork = (float*) malloc(sizeof(float)*n);
+    rwork = (float*) malloc(5*sizeof(float)*n);
     
 
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
