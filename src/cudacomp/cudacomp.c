@@ -1502,71 +1502,72 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     int *GPUdevices;
     int k;
     double SVDeps = 0.9;
-    
-    
+
+
     if(1==1)
     {
         printf("Testing SVD on GPU\n");
-        //linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
-        GPU_SVD_computeControlMatrix(0, "Rmat", "CMmat", SVDeps, "VTmat");
+        linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
+        //GPU_SVD_computeControlMatrix(0, "Rmat", "Cmat", SVDeps, "VTmat");
     }
     else
     {
-    printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
+        printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
 
 
-    GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
-    for(k=0;k<GPUcnt;k++)
-        GPUdevices[k] = k+8;
+        GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
+        for(k=0; k<GPUcnt; k++)
+            GPUdevices[k] = k+8;
 
-//    GPUstatus = (int*) malloc(sizeof(int)*100);
+        //    GPUstatus = (int*) malloc(sizeof(int)*100);
 
-    cmsize = (long*) malloc(sizeof(long)*3);
-    cmsize[0] = WFSsize;
-    cmsize[1] = WFSsize;
-    cmsize[2] = NBmodes;
-    ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
+        cmsize = (long*) malloc(sizeof(long)*3);
+        cmsize[0] = WFSsize;
+        cmsize[1] = WFSsize;
+        cmsize[2] = NBmodes;
+        ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
 
-    wfssize = (long*) malloc(sizeof(long)*2);
-    wfssize[0] = WFSsize;
-    wfssize[1] = WFSsize;
-    ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
+        wfssize = (long*) malloc(sizeof(long)*2);
+        wfssize[0] = WFSsize;
+        wfssize[1] = WFSsize;
+        ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
 
-    cmdmodessize = (long*) malloc(sizeof(long)*2);
-    cmdmodessize[0] = NBmodes;
-    cmdmodessize[1] = 1;
-    ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
+        cmdmodessize = (long*) malloc(sizeof(long)*2);
+        cmdmodessize[0] = NBmodes;
+        cmdmodessize[1] = 1;
+        ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
 
-    GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
+        GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
 
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-   for(iter=0; iter<NBiter; iter++)
+        for(iter=0; iter<NBiter; iter++)
         {
             status = 0;
             GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
         }
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
-    printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
+        printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
 
-    printf("done\n");
-    fflush(stdout);
+        printf("done\n");
+        fflush(stdout);
 
-    delete_image_ID("cudatestcm");
-    delete_image_ID("cudatestwfs");
-    delete_image_ID("cudatestcmd");
+        delete_image_ID("cudatestcm");
+        delete_image_ID("cudatestwfs");
+        delete_image_ID("cudatestcmd");
 
-    free(cmsize);
-    free(wfssize);
-    free(cmdmodessize);
-    free(GPUdevices);
+        free(cmsize);
+        free(wfssize);
+        free(cmdmodessize);
+        free(GPUdevices);
     }
-    
+
     return(0);
 }
+
 
 
 #endif
