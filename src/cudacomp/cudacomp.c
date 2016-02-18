@@ -1496,7 +1496,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     }
     for(ii=0;ii<m;ii++)
         for(jj=0;jj<n;jj++)
-            h_U1[jj*m+n] = data.image[ID].array.F[jj*m+n];
+            h_U1[jj*m+ii] = data.image[ID].array.F[jj*m+ii];
     cudaMemcpy(d_U1, h_U1, sizeof(float)*m*m, cudaMemcpyHostToDevice);
     free(h_U1);
     
