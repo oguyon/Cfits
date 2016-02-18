@@ -1300,7 +1300,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
             exit(0);
         }
 
-
+/*
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
     fflush(stdout);
@@ -1322,6 +1322,9 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
             printf("Invalid Device : %d / %d\n", device, deviceCount);
             exit(0);
         }
+  */
+  
+    cudaSetDevice(device);
     
     printf("step 1a: create cudense handle ...");
         fflush(stdout);
