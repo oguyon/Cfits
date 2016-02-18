@@ -1303,6 +1303,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
+    fflush(stdout);
     printf("\n");
     for (k = 0; k < deviceCount; ++k) {
         cudaGetDeviceProperties(&deviceProp, k);
