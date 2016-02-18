@@ -1428,7 +1428,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
-    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, rwork, devInfo);
+    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, rwork, Lwork, devInfo);
     //  cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
