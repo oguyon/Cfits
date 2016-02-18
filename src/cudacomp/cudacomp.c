@@ -45,6 +45,7 @@ int clock_gettime(int clk_id, struct timespec *t){
 #include <cublas_v2.h>
 #include <device_types.h>
 #include <pthread.h>
+#include <cusolverDn.h>
 
  #endif
 
