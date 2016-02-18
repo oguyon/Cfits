@@ -1285,37 +1285,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     float beta = 0.0;
     
     
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
-    ID_Rmatrix = image_ID(ID_Rmatrix_name);
-
-    atype = data.image[ID_Rmatrix].md[0].atype;
-    if(atype!=FLOAT)
-    {
-        printf("wrong type\n");
-        exit(0);
-    }
-
-    if(data.image[ID_Rmatrix].md[0].naxis==3)
-    {
-        m = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
-        n = data.image[ID_Rmatrix].md[0].size[2];
-        printf("3D image -> %d %d\n", m, n);
-        fflush(stdout);
-    }
-    else
-    {
-        m = data.image[ID_Rmatrix].md[0].size[0];
-        n = data.image[ID_Rmatrix].md[0].size[1];
-        printf("2D image -> %d %d\n", m, n);
-        fflush(stdout);
-    }
-
-    if(m<=n)
-    {
-        printf("ERROR: m must be larger than n\n");
-        exit(0);
-    }
-
+ 
 
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
@@ -1369,10 +1339,47 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
 
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
 
 
-        clock_gettime(CLOCK_REALTIME, &tnow);
-        time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+
+    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    ID_Rmatrix = image_ID(ID_Rmatrix_name);
+
+    atype = data.image[ID_Rmatrix].md[0].atype;
+    if(atype!=FLOAT)
+    {
+        printf("wrong type\n");
+        exit(0);
+    }
+
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        m = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
+        n = data.image[ID_Rmatrix].md[0].size[2];
+        printf("3D image -> %d %d\n", m, n);
+        fflush(stdout);
+    }
+    else
+    {
+        m = data.image[ID_Rmatrix].md[0].size[0];
+        n = data.image[ID_Rmatrix].md[0].size[1];
+        printf("2D image -> %d %d\n", m, n);
+        fflush(stdout);
+    }
+
+    if(m<=n)
+    {
+        printf("ERROR: m must be larger than n\n");
+        exit(0);
+    }
+
+
+
+
+
 
 
 
@@ -1546,12 +1553,6 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
     
-    
-
-  clock_gettime(CLOCK_REALTIME, &tnow);
-        time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
-
-        printf("time = %8.3f s\n", 1.0*(time2sec-time1sec));
 
 
     cudaFree(d_A);
@@ -1561,6 +1562,14 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaFree(d_Work);
     cudaFree(devInfo);
     cudaFree(d_M);
+
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+    printf("time = %8.3f s\n", 1.0*(time2sec-time1sec));
+
+
+
 
     if (cublasH ) cublasDestroy(cublasH);
     if (cudenseH) cusolverDnDestroy(cudenseH);
