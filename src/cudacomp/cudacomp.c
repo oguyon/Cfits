@@ -1233,6 +1233,7 @@ void *compute_function( void *ptr )
 // Conventions:
 //   m: number of actuators (= NB_MODES)
 //   n: number of sensors  (= # of pixels)
+// assumes m < n
 
 int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name)
 {
@@ -1248,9 +1249,18 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     long m;
     long n;
     long *arraysizetmp;
+    int lda, ldu, ldvt;
     
-    double *d_A = NULL; // linear memory of GPU 
+    
+    float *d_A = NULL; // linear memory of GPU 
+    float *d_S = NULL; // linear memory of GPU 
+    float *d_U = NULL; // linear memory of GPU 
+    float *d_VT = NULL; // linear memory of GPU 
+    float *d_Work = NULL; // linear memory of GPU 
     cudaError_t cudaStat = cudaSuccess;
+    int *devInfo = NULL; // info in gpu (device copy)
+    int Lwork;
+    
     
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
@@ -1277,7 +1287,11 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         fflush(stdout);
    }
 
-
+    if(m>=n)
+        {
+            printf("ERROR: m must be smaller than n\n");
+            exit(0);
+        }
 
 
     cudaGetDeviceCount(&deviceCount);
@@ -1323,7 +1337,16 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     fflush(stdout);
 
 
-    cudaStat = cudaMalloc ((void**)&d_A  , sizeof(double) * n * m);
+
+
+
+
+
+
+
+
+
+    cudaStat = cudaMalloc ((void**)&d_A  , sizeof(float) * n * m);
     if (cudaStat != cudaSuccess)
             {
                 printf("cudaMalloc d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1338,8 +1361,49 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
             exit(EXIT_FAILURE);
         }
 
-  //  cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, data.image[ID_Rmatrix].array.F, int lda, float *S, float *U, int ldu, float *VT, int ldvt, float *Work, int Lwork, float *rwork, int  *devInfo);
 
+    cudaStat = cudaMalloc ((void**)&d_S  , sizeof(float) * m);
+    if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMalloc d_S returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+    
+    cudaStat = cudaMalloc ((void**)&d_U  , sizeof(float) * m * m);
+    if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMalloc d_U returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+
+    cudaStat = cudaMalloc ((void**)&d_VT  , sizeof(float) * n * n);
+    if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMalloc d_VT returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+
+
+    
+    lda = m;
+    ldu = m;
+    ldvt = n;
+    cusolver_status = cusolverDnSgesvd_bufferSize(cudenseH, m, n, &Lwork );
+    if (cusolver_status != CUSOLVER_STATUS_SUCCESS) {
+        printf ("CUSOLVER DnSgesvd_bufferSize failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    cudaStat = cudaMalloc((void**)&d_Work, sizeof(float)*Lwork);
+    if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMalloc d_Work returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+
+    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
+
+    cudaStat = cudaDeviceSynchronize();
 
 
 
@@ -1354,11 +1418,17 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         arraysizetmp[0] = n;
         arraysizetmp[1] = m;
     }
-
+    lda = m;
+    ldu = n;
+    
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
 
 
     cudaFree(d_A);
+    cudaFree(d_S);
+    cudaFree(d_U);
+    cudaFree(d_VT);
+    cudaFree(d_Work);
 
     if (cublasH ) cublasDestroy(cublasH);
     if (cudenseH) cusolverDnDestroy(cudenseH);
