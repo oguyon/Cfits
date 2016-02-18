@@ -290,7 +290,7 @@ if test  "$cudaval" = "yes"; then
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
     CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_INSTALL_PATH/include -I/usr/local/cuda/include/"
     CUDA_LDFLAGS="-L$CUDA_INSTALL_PATH/lib64"
-    CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas"
+    CUDA_LIBS="-lcuda -lcudart -lcufft -lcublas -lcusolver"
     NVCCFLAGS="$NVCCFLAGS $CUDA_CFLAGS $CUDA_LDFLAGS $CUDA_LIBS"
     NVCC="nvcc"
     AC_SUBST(NVCC)
