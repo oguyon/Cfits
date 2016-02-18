@@ -1253,6 +1253,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     
 
     float *d_A = NULL; // linear memory of GPU
+    float *h_A = NULL;
     float *d_S = NULL; // linear memory of GPU
     float *d_U = NULL; // linear memory of GPU
     float *d_VT = NULL; // linear memory of GPU
@@ -1377,13 +1378,17 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
 
-
+    h_A = (float*) malloc(sizeof(float)*m*n);
+    
     cudaStat = cudaMemcpy(d_A, data.image[ID_Rmatrix].array.F, sizeof(float)*m*n, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
+
+
+
 
 
     cudaStat = cudaMalloc ((void**)&d_S  , sizeof(float) * n);
@@ -1436,10 +1441,6 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
     cusolverDnSgesvd (cudenseH, 'S', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
-    
-
-
-    
     cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
@@ -1466,6 +1467,9 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         fprintf(fp,"%ld %g\n", i, Sarray[i]);
     fclose(fp);
 
+
+
+
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
         arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
@@ -1480,6 +1484,14 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+
+    cudaStat = cudaMemcpy(data.image[ID_Cmatrix_name].array.F, d_U, sizeof(float)*n*m, cudaMemcpyDeviceToHost);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    
 
   clock_gettime(CLOCK_REALTIME, &tnow);
         time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
@@ -1502,7 +1514,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     free(arraysizetmp);
     free(Sarray);
     free(rwork);
-
+    free(h_A);
+    
     return(0);
 }
 
