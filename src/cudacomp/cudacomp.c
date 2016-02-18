@@ -1258,6 +1258,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     float *d_U = NULL; // linear memory of GPU
     float *h_U = NULL;
     float *d_VT = NULL; // linear memory of GPU
+    float *d_M = NULL; // linear memory of GPU
+    
     float *d_Work = NULL; // linear memory of GPU
     cudaError_t cudaStat = cudaSuccess;
     int *devInfo = NULL; // info in gpu (device copy)
@@ -1498,7 +1500,15 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
     
-    cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_U, m);
+    
+    cudaStat = cudaMalloc((void**)&d_M, sizeof(float)*n*m);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMalloc d_M returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    
+    cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_M, n);
      if (cudaStat != cudaSuccess)
     {
         printf("cublasSgemm returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1506,14 +1516,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     }
 
     
-    
-    h_U = (float*) malloc(sizeof(float)*m*n);
-    cudaStat = cudaMemcpy(h_U, d_U, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
+
 
 
     if(data.image[ID_Rmatrix].md[0].naxis==3)
@@ -1530,6 +1533,14 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+    
+    
+    cudaStat = cudaMemcpy(data.image[ID_Rmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     
     
 
