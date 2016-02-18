@@ -1250,35 +1250,35 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     long n;
     long *arraysizetmp;
     int lda, ldu, ldvt;
-    
-    
-    float *d_A = NULL; // linear memory of GPU 
-    float *d_S = NULL; // linear memory of GPU 
-    float *d_U = NULL; // linear memory of GPU 
-    float *d_VT = NULL; // linear memory of GPU 
-    float *d_Work = NULL; // linear memory of GPU 
+
+
+    float *d_A = NULL; // linear memory of GPU
+    float *d_S = NULL; // linear memory of GPU
+    float *d_U = NULL; // linear memory of GPU
+    float *d_VT = NULL; // linear memory of GPU
+    float *d_Work = NULL; // linear memory of GPU
     cudaError_t cudaStat = cudaSuccess;
     int *devInfo = NULL; // info in gpu (device copy)
     int Lwork;
-    
+
     float *Sarray;
     float *Aarray;
     long i;
     FILE *fp;
     char fname[200];
-    
+
     int info_gpu;
-    
+
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
-    
+
     atype = data.image[ID_Rmatrix].md[0].atype;
     if(atype!=FLOAT)
-        {
-            printf("wrong type\n");
-            exit(0);
-        }
-        
+    {
+        printf("wrong type\n");
+        exit(0);
+    }
+
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
         m = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
@@ -1290,22 +1290,22 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     {
         m = data.image[ID_Rmatrix].md[0].size[0];
         n = data.image[ID_Rmatrix].md[0].size[1];
-         printf("2D image -> %ld %ld\n", m, n);
+        printf("2D image -> %ld %ld\n", m, n);
         fflush(stdout);
-   }
+    }
 
     if(m<=n)
-        {
-            printf("ERROR: m must be larger than n\n");
-            exit(0);
-        }
+    {
+        printf("ERROR: m must be larger than n\n");
+        exit(0);
+    }
 
 
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
     fflush(stdout);
     printf("\n");
-   for (k = 0; k < deviceCount; ++k) {
+    for (k = 0; k < deviceCount; ++k) {
         cudaGetDeviceProperties(&deviceProp, k);
         printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
                k, deviceProp.name, deviceProp.major, deviceProp.minor);
@@ -1314,28 +1314,30 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
         printf("\n");
     }
-  
-    
+
+
     if(device<deviceCount)
+    {
         cudaSetDevice(device);
+    }
     else
-        {
-            printf("Invalid Device : %d / %d\n", device, deviceCount);
-            exit(0);
-        }
-  
-  
-    
+    {
+        printf("Invalid Device : %d / %d\n", device, deviceCount);
+        exit(0);
+    }
+
+
+
     printf("step 1a: create cudense handle ...");
-        fflush(stdout);
-        cusolver_status = cusolverDnCreate(&cudenseH);
-        if (cusolver_status != CUSOLVER_STATUS_SUCCESS) {
+    fflush(stdout);
+    cusolver_status = cusolverDnCreate(&cudenseH);
+    if (cusolver_status != CUSOLVER_STATUS_SUCCESS) {
         printf ("CUSOLVER initialization failed\n");
         return EXIT_FAILURE;
     }
-        printf(" done\n");
-        fflush(stdout);
-    
+    printf(" done\n");
+    fflush(stdout);
+
 
     printf("step 1b: create cublas handle ...");
     fflush(stdout);
@@ -1359,43 +1361,48 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     cudaStat = cudaMalloc ((void**)&d_A  , sizeof(float) * n * m);
     if (cudaStat != cudaSuccess)
-            {
-                printf("cudaMalloc d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-            
-            
+    {
+        printf("cudaMalloc d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+
     cudaStat = cudaMemcpy(d_A, data.image[ID_Rmatrix].array.F, sizeof(float)*m*n, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
-        {
-            printf("cudaMemcpy d_wfsRef wfsRef returned error code %d, line(%d)\n", cudaStat, __LINE__);
-            exit(EXIT_FAILURE);
-        }
+    {
+        printf("cudaMemcpy d_A returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
 
 
     cudaStat = cudaMalloc ((void**)&d_S  , sizeof(float) * n);
     if (cudaStat != cudaSuccess)
-            {
-                printf("cudaMalloc d_S returned error code %d, line(%d)\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-    
+    {
+        printf("cudaMalloc d_S returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
     cudaStat = cudaMalloc ((void**)&d_U  , sizeof(float) * m * m);
     if (cudaStat != cudaSuccess)
-            {
-                printf("cudaMalloc d_U returned error code %d, line(%d)\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
+    {
+        printf("cudaMalloc d_U returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
 
     cudaStat = cudaMalloc ((void**)&d_VT  , sizeof(float) * n * n);
     if (cudaStat != cudaSuccess)
-            {
-                printf("cudaMalloc d_VT returned error code %d, line(%d)\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-
-
+    {
+        printf("cudaMalloc d_VT returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
     
+    cudaStat = cudaMalloc ((void**)&devInfo, sizeof(int));
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMalloc devInfo returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
     lda = m;
     ldu = m;
     ldvt = n;
@@ -1404,40 +1411,40 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         printf ("CUSOLVER DnSgesvd_bufferSize failed\n");
         return EXIT_FAILURE;
     }
-    
+
     cudaStat = cudaMalloc((void**)&d_Work, sizeof(float)*Lwork);
     if (cudaStat != cudaSuccess)
-            {
-                printf("cudaMalloc d_Work returned error code %d, line(%d)\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
+    {
+        printf("cudaMalloc d_Work returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
 
     printf("START GPU COMPUTATION ...");
     fflush(stdout);
     cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
-  //  cudaStat = cudaDeviceSynchronize();
+    //  cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
-        
+
     cudaStat = cudaMemcpy(&info_gpu, devInfo, sizeof(int), cudaMemcpyDeviceToHost);
     printf("after gesvd: info_gpu = %d\n", info_gpu);
 
     Sarray = (float*) malloc(sizeof(float)*m);
-//    Aarray = (float*) malloc(sizeof(float)*m*n);
+    //    Aarray = (float*) malloc(sizeof(float)*m*n);
     cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
-            {
-                printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
-            }
-    
+    {
+        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
     sprintf(fname, "eigenv.dat");
     if((fp=fopen(fname, "w"))==NULL)
-      {
+    {
         printf("ERROR: cannot create file \"%s\"\n", fname);
         exit(0);
-      }
-    for(i=0;i<n;i++)
+    }
+    for(i=0; i<n; i++)
         fprintf(fp,"%ld %g\n", i, Sarray[i]);
     fclose(fp);
 
@@ -1453,7 +1460,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         arraysizetmp[1] = n;
     }
 
-    
+
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
 
 
@@ -1462,17 +1469,19 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaFree(d_U);
     cudaFree(d_VT);
     cudaFree(d_Work);
+    cudaFree(devInfo);
 
     if (cublasH ) cublasDestroy(cublasH);
     if (cudenseH) cusolverDnDestroy(cudenseH);
 
     cudaDeviceReset();
-    
+
     free(arraysizetmp);
     free(Sarray);
-    
+
     return(0);
 }
+
 
 
 
