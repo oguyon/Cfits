@@ -1380,11 +1380,15 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     int k;
     double SVDeps = 1e-6;
     
+    
+    if(1==1)
+    {
     printf("Testing SVD on GPU\n");
     linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
    // GPU_SVD_computeControlMatrix(0, "Rmat", "CMmat", SVDeps, "VTmat");
-    exit(0);
-
+    }
+    else
+    {
     printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
 
 
@@ -1436,7 +1440,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     free(wfssize);
     free(cmdmodessize);
     free(GPUdevices);
-
+    }
+    
     return(0);
 }
 
