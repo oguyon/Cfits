@@ -1424,7 +1424,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     Sarray = (float*) malloc(sizeof(float)*m);
 //    Aarray = (float*) malloc(sizeof(float)*m*n);
-    cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*m, cudaMemcpyDeviceToHost);
+    cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
             {
                 printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
