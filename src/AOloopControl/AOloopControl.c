@@ -3259,6 +3259,7 @@ void *compute_function_dark_subtract( void *ptr )
     long *index;
     int sval;
     long threadindex;
+    int semval;
 
     nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
     index = (long*) ptr;
@@ -3285,8 +3286,10 @@ void *compute_function_dark_subtract( void *ptr )
             exit(0);
             break;
         }
-
-        sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[threadindex]);
+        
+        sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[threadindex], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[threadindex]);
     }
 }
 
@@ -3522,7 +3525,9 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
         for(ti=0; ti<COMPUTE_DARK_SUBTRACT_NBTHREADS; ti++)
         {
             sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval0);
-            sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti]);
+            if(sval0<SEMAPHORE_MAXVAL)
+                sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti]);
+            
             sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval);
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
         }
@@ -3562,7 +3567,9 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
                 AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
                 sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
             }
-            sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+            sem_getvalue(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         }
     }
 
@@ -4944,6 +4951,7 @@ int set_DM_modes(long loop)
     float *arrayf;
     double a;
     long cnttest;
+    int semval;
     
     if(AOconf[loop].GPU == 0)
     {
@@ -4958,7 +4966,11 @@ int set_DM_modes(long loop)
         data.image[aoconfID_dmC].md[0].write = 1;
         memcpy (data.image[aoconfID_dmC].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
         if(data.image[aoconfID_dmC].sem > 0)
-            sem_post(data.image[aoconfID_dmC].semptr[0]);
+        {
+            sem_getvalue(data.image[aoconfID_dmC].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[aoconfID_dmC].semptr[0]);
+        }
         data.image[aoconfID_dmC].md[0].cnt0++;
         data.image[aoconfID_dmC].md[0].write = 0;
 
@@ -4983,8 +4995,12 @@ int set_DM_modes(long loop)
 
     if(aoconfID_dmdisp!=-1)
         if(data.image[aoconfID_dmdisp].sem > 1)
-            sem_post(data.image[aoconfID_dmdisp].semptr[1]);
-
+        {
+            sem_getvalue(data.image[aoconfID_dmdisp].semptr[1], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[aoconfID_dmdisp].semptr[1]);
+        }
+        
     AOconf[loop].DMupdatecnt ++;
 
     return(0);
@@ -8068,6 +8084,9 @@ int AOloopControl_run()
     struct timespec tdiff;
     double tdiffv;
     int timerinit;
+    int semval;
+    
+    
 /*    float tmpv, tmpv1, tmpv2;
     float range1 = 0.1; // limit single iteration motion
     float rangec = 0.3; // limit cumulative motion
@@ -8262,14 +8281,21 @@ int AOloopControl_run()
 
                         
                    if(data.image[aoconfID_dmC].sem > 0)
-                        sem_post(data.image[aoconfID_dmC].semptr[0]);
+                   {
+                       sem_getvalue(data.image[aoconfID_dmC].semptr[0], &semval);
+                        if(semval<SEMAPHORE_MAXVAL)
+                            sem_post(data.image[aoconfID_dmC].semptr[0]);
+                    }
                     data.image[aoconfID_dmC].md[0].cnt0++;
                     data.image[aoconfID_dmC].md[0].write = 0;
                     // inform dmdisp that new command is ready in one of the channels
                     if(aoconfID_dmdisp!=-1)
                         if(data.image[aoconfID_dmdisp].sem > 1)
-                            sem_post(data.image[aoconfID_dmdisp].semptr[1]);
-
+                        {
+                            sem_getvalue(data.image[aoconfID_dmdisp].semptr[0], &semval);
+                            if(semval<SEMAPHORE_MAXVAL)
+                                sem_post(data.image[aoconfID_dmdisp].semptr[1]);
+                        }
                     AOconf[loop].DMupdatecnt ++;
                     AOconf[loop].DMupdatecnt ++;
                 }
@@ -9860,6 +9886,7 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     struct tm *uttime;
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
     long ii;
+    int semval;
     
     
     IDprobeA = image_ID(IDprobeA_name);
@@ -9966,7 +9993,9 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         ptr0 += k*dmframesize;
         data.image[IDdmstream].md[0].write = 1;
         memcpy(data.image[IDdmstream].array.F, (void*) ptr0, dmframesize);
-        sem_post(data.image[IDdmstream].semptr[0]);
+        sem_getvalue(data.image[IDdmstream].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAX)
+            sem_post(data.image[IDdmstream].semptr[0]);
         data.image[IDdmstream].md[0].cnt0++;
         data.image[IDdmstream].md[0].write = 0;
         
@@ -9975,7 +10004,9 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
         ptr0 += k*wfsframesize;
         data.image[IDwfsrefstream].md[0].write = 1;
         memcpy(data.image[IDwfsrefstream].array.F, (void*) ptr0, wfsframesize);
-        sem_post(data.image[IDwfsrefstream].semptr[0]);
+        sem_getvalue(data.image[IDwfsrefstream].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAX)
+            sem_post(data.image[IDwfsrefstream].semptr[0]);
         data.image[IDwfsrefstream].md[0].cnt0++;
         data.image[IDwfsrefstream].md[0].write = 0;
       
@@ -10005,7 +10036,9 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     data.image[IDdmstream].md[0].write = 1;
     for(ii=0;ii<dmsize;ii++)
         data.image[IDdmstream].array.F[ii] = 0.0;
-    sem_post(data.image[IDdmstream].semptr[0]);
+    sem_getvalue(data.image[IDdmstream].semptr[0], &semval);
+    if(semval<SEMAPHORE_MAX)
+        sem_post(data.image[IDdmstream].semptr[0]);
     data.image[IDdmstream].md[0].cnt0++;
     data.image[IDdmstream].md[0].write = 0;
  
@@ -10013,7 +10046,9 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
     data.image[IDwfsrefstream].md[0].write = 1;
     for(ii=0;ii<wfssize;ii++)
         data.image[IDwfsrefstream].array.F[ii] = 0.0;
-    sem_post(data.image[IDwfsrefstream].semptr[0]);
+    sem_getvalue(data.image[IDwfsrefstream].semptr[0], &semval);
+    if(semval<SEMAPHORE_MAX)
+        sem_post(data.image[IDwfsrefstream].semptr[0]);
     data.image[IDwfsrefstream].md[0].cnt0++;
     data.image[IDwfsrefstream].md[0].write = 0;
 

@@ -46,6 +46,7 @@ int C_ERRNO;			// C errno (from errno.h)
 
 
 #define SEMAPHORE_MAX       1000
+#define SEMAPHORE_MAXVAL    10 // maximum value for a semaphore
 #define NB_ARG_MAX                 20
 
 
