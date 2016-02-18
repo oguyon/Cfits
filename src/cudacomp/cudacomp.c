@@ -1246,8 +1246,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     long ID_Rmatrix, ID_Cmatrix;
     int atype;
-    long m;
-    long n;
+    int m;
+    int n;
     long *arraysizetmp;
     int lda, ldu, ldvt;
 
@@ -1260,6 +1260,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaError_t cudaStat = cudaSuccess;
     int *devInfo = NULL; // info in gpu (device copy)
     int Lwork;
+    float *rwork;
 
     float *Sarray;
     float *Aarray;
@@ -1268,6 +1269,9 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     char fname[200];
 
     int info_gpu;
+
+
+
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
@@ -1419,10 +1423,12 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
     
+    rwork = (float*) malloc(sizeof(float)*n);
+    
 
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
-    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
+    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, rwork, devInfo);
     //  cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
@@ -1479,6 +1485,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
     free(arraysizetmp);
     free(Sarray);
+    free(rwork);
 
     return(0);
 }
