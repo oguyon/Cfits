@@ -1256,7 +1256,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     float *h_A = NULL;
     float *d_S = NULL; // linear memory of GPU
     float *d_U = NULL; // linear memory of GPU
-    float *h_U = NULL;    
+    float *h_U1 = NULL;    
     float *d_VT = NULL; // linear memory of GPU
     float *d_M = NULL; // linear memory of GPU
     
@@ -1485,7 +1485,24 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     ID = create_2Dimage_ID("matU", m, m);
     cudaMemcpy(data.image[ID].array.F, d_U, sizeof(float)*m*m, cudaMemcpyDeviceToHost);
     save_fits("matU", "!matU.fits");
-
+  
+  
+    h_U1 = (float*) malloc(sizeof(float)*m*n);
+    cudaStat = cudaMalloc((void**)&d_U1, sizeof(float)*m*n);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMalloc d_U1 returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    for(ii=0;ii<m;ii++)
+        for(jj=0;jj<n;jj++)
+            h_U1[jj*m+n] = data.image[ID].array.F[jj*m+n];
+    cudaMemcpy(d_U1, h_U1, sizeof(float)*m*m, cudaMemcpyHostToDevice);
+    free(h_U1);
+    
+    ID = create_2Dimage_ID("matU1", m, n);
+    cudaMemcpy(data.image[ID].array.F, d_U1, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    save_fits("matU1", "!matU1.fits");
 
 
     ID_VTmatrix = create_2Dimage_ID(ID_VTmatrix_name, n,n);
@@ -1572,6 +1589,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaFree(d_Work);
     cudaFree(devInfo);
     cudaFree(d_M);
+    cudaFree(d_U1);
 
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
