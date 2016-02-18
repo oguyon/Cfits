@@ -1231,8 +1231,8 @@ void *compute_function( void *ptr )
 //
 // Computes control matrix
 // Conventions:
-//   m: number of actuators (= NB_MODES)
-//   n: number of sensors  (= # of pixels)
+//   n: number of actuators (= NB_MODES)
+//   m: number of sensors  (= # of pixels)
 // assumes m < n
 
 int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name)
@@ -1281,22 +1281,22 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
-        n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
-        m = data.image[ID_Rmatrix].md[0].size[2];
-        printf("3D image -> %ld %ld\n", n, m);
+        m = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
+        n = data.image[ID_Rmatrix].md[0].size[2];
+        printf("3D image -> %ld %ld\n", m, n);
         fflush(stdout);
     }
     else
     {
-        n = data.image[ID_Rmatrix].md[0].size[0];
-        m = data.image[ID_Rmatrix].md[0].size[1];
-         printf("2D image -> %ld %ld\n", n, m);
+        m = data.image[ID_Rmatrix].md[0].size[0];
+        n = data.image[ID_Rmatrix].md[0].size[1];
+         printf("2D image -> %ld %ld\n", m, n);
         fflush(stdout);
    }
 
-    if(m>=n)
+    if(m<=n)
         {
-            printf("ERROR: m must be smaller than n\n");
+            printf("ERROR: m must be larger than n\n");
             exit(0);
         }
 
@@ -1373,7 +1373,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         }
 
 
-    cudaStat = cudaMalloc ((void**)&d_S  , sizeof(float) * m);
+    cudaStat = cudaMalloc ((void**)&d_S  , sizeof(float) * n);
     if (cudaStat != cudaSuccess)
             {
                 printf("cudaMalloc d_S returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1433,7 +1433,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         printf("ERROR: cannot create file \"%s\"\n", fname);
         exit(0);
       }
-    for(i=0;i<m;i++)
+    for(i=0;i<n;i++)
         fprintf(fp,"%ld %g\n", i, Sarray[i]);
     fclose(fp);
 
@@ -1441,15 +1441,14 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     {
         arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
         arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
-        arraysizetmp[2] = m;
+        arraysizetmp[2] = n;
     }
     else
     {
-        arraysizetmp[0] = n;
-        arraysizetmp[1] = m;
+        arraysizetmp[0] = m;
+        arraysizetmp[1] = n;
     }
-    lda = m;
-    ldu = n;
+
     
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
 
