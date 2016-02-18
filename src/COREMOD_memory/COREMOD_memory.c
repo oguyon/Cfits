@@ -2466,6 +2466,8 @@ long copy_image_ID(char *name, char *newname, int shared)
     int newim = 0;
     long s;
     char errstr[200];
+    int semval;
+
 
     ID = image_ID(name);
     if(ID==-1)
@@ -2558,11 +2560,19 @@ long copy_image_ID(char *name, char *newname, int shared)
         memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
 
     for(s=0;s<data.image[IDout].sem; s++)
-        sem_post(data.image[IDout].semptr[s]);
-
+    {
+        sem_getvalue(data.image[IDout].semptr[s], &semval);
+        if(semval<SEMAPHORE_MAX)
+            sem_post(data.image[IDout].semptr[s]);
+    }
+    
     if(data.image[IDout].semlog!=NULL)
-        sem_post(data.image[IDout].semlog);
-
+    {
+        sem_getvalue(data.image[IDout].semlog, &semval);
+        if(semval<SEMAPHORE_MAX)
+            sem_post(data.image[IDout].semlog);
+    }
+    
     data.image[IDout].md[0].write = 0;
     data.image[IDout].md[0].cnt0++;
 
@@ -4018,32 +4028,37 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
     long ID;
     long s;
     int semval;
-    
-    
+
+
     ID = image_ID(IDname);
 
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
-        
+
     if(index<0)
+    {
+        for(s=0; s<data.image[ID].sem; s++)
         {
-            for(s=0; s<data.image[ID].sem; s++)
-            {
-                sem_getvalue(data.image[ID].semptr[s], &semval);
-                if(semval<SEMAPHORE_MAX)
-                    sem_post(data.image[ID].semptr[s]);
-            }
+            sem_getvalue(data.image[ID].semptr[s], &semval);
+            if(semval<SEMAPHORE_MAX)
+                sem_post(data.image[ID].semptr[s]);
         }
+    }
     else
+    {
+        if(index>data.image[ID].sem-1)
+            printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
+        else
         {
-            if(index>data.image[ID].sem-1)
-                printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
-    else
-            sem_post(data.image[ID].semptr[index]);
+            sem_getvalue(data.image[ID].semptr[index], &semval);
+            if(semval<SEMAPHORE_MAX)
+                sem_post(data.image[ID].semptr[index]);
         }
+    }
 
     return(ID);
 }
+
 
 long COREMOD_MEMORY_image_set_semwait(char *IDname, long index)
 {
@@ -4216,6 +4231,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     char *ptr0; // source
     char *ptr1; // dest
     long framesize;
+    int semval;
 
     printf("Creating image stream ...\n");
     fflush(stdout);
@@ -4277,7 +4293,11 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
         ptr0 = ptr0s + kk*framesize;
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
-        sem_post(data.image[IDout].semptr[0]);
+        
+        sem_getvalue(data.image[IDout].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(data.image[IDout].semptr[0]);
+
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
 
@@ -4580,6 +4600,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     char fname[200];
     long NBslices;
     int socketOpen = 1; // 0 if socket is closed
+    int semval;
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
@@ -4802,7 +4823,11 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                      memcpy(ptr0, buff, framesize);
                 data.image[ID].md[0].cnt0++;
                 if(data.image[ID].sem > 0)
-                    sem_post(data.image[ID].semptr[0]);
+                {
+                    sem_getvalue(data.image[ID].semptr[0], &semval);
+                    if(semval<SEMAPHORE_MAX)
+                        sem_post(data.image[ID].semptr[0]);
+                }
             }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             socketOpen = 0;
@@ -5000,9 +5025,18 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
             if(slice==NBslice-1)   //if(slice<oldslice)
             {
-                sem_post(data.image[IDout].semptr[0]);
-                sem_post(data.image[IDout].semptr[1]);
-                sem_post(data.image[IDout].semlog);
+                sem_getvalue(data.image[IDout].semptr[0], &semval);
+                if(semval<SEMAPHORE_MAX)
+                    sem_post(data.image[IDout].semptr[0]);
+
+                sem_getvalue(data.image[IDout].semptr[1], &semval);
+                if(semval<SEMAPHORE_MAX)
+                    sem_post(data.image[IDout].semptr[1]);
+
+                sem_getvalue(data.image[IDout].semlog, &semval);
+                if(semval<SEMAPHORE_MAX)
+                    sem_post(data.image[IDout].semlog);
+             
                 data.image[IDout].md[0].cnt0 ++;
 
                 //     printf("[[ Timimg [us] :   ");
@@ -5017,8 +5051,15 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             }
 
             data.image[IDout].md[0].cnt1 = slice;
-            sem_post(data.image[IDout].semptr[2]);
-            sem_post(data.image[IDout].semptr[3]);
+            
+            sem_getvalue(data.image[IDout].semptr[2], &semval);
+            if(semval<SEMAPHORE_MAX)
+                sem_post(data.image[IDout].semptr[2]);
+            
+            sem_getvalue(data.image[IDout].semptr[3], &semval);
+            if(semval<SEMAPHORE_MAX)
+                sem_post(data.image[IDout].semptr[3]);
+            
             data.image[IDout].md[0].write = 0;
 
             oldslice = slice;
