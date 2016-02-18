@@ -1483,9 +1483,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     ID = create_2Dimage_ID("matU", m, m);
-    cudaMemcpy(data.image[ID].array.F, d_U, sizeof(float)*m*10, cudaMemcpyDeviceToHost);
+    cudaMemcpy(data.image[ID].array.F, d_U, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
     save_fits("matU", "!matU.fits");
-  
   
     h_U1 = (float*) malloc(sizeof(float)*m*n);
     cudaStat = cudaMalloc((void**)&d_U1, sizeof(float)*m*n);
