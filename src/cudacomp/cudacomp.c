@@ -1244,7 +1244,7 @@ int GPU_SVD(int device)
     printf("step 1b: create cublas handle ...");
     fflush(stdout);
     cublas_status = cublasCreate(&cublasH);
-     if (cublas_stat != CUBLAS_STATUS_SUCCESS) {
+     if (cublas_status != CUBLAS_STATUS_SUCCESS) {
                 printf ("CUBLAS initialization failed\n");
                 return EXIT_FAILURE;
             }
