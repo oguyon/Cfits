@@ -1407,12 +1407,12 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
                 exit(EXIT_FAILURE);
             }
 
-//    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
-  //  cudaStat = cudaDeviceSynchronize();
+    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, d_Work, devInfo);
+    cudaStat = cudaDeviceSynchronize();
 
     Sarray = (float*) malloc(sizeof(float)*m);
-    Aarray = (float*) malloc(sizeof(float)*m*n);
-    cudaStat = cudaMemcpy(Aarray, d_A, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+//    Aarray = (float*) malloc(sizeof(float)*m*n);
+    cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*m, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
             {
                 printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1426,7 +1426,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(0);
       }
     for(i=0;i<m;i++)
-        fprintf(fp,"%ld %f\n", i, Aarray[i]);
+        fprintf(fp,"%ld %g\n", i, Sarray[i]);
     fclose(fp);
 
     if(data.image[ID_Rmatrix].md[0].naxis==3)
