@@ -1277,9 +1277,12 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     long ID_leftSV; // left singular vectors
-
-
-
+    float val;
+    long ii, jj;
+    float alpha = 1.0;
+    float beta = 0.0;
+    
+    
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
 
@@ -1494,7 +1497,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
     
-    cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, 1.0, d_VT, n, d_U, m, 0.0, d_U, m);
+    cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_U, m);
      if (cudaStat != cudaSuccess)
     {
         printf("cublasSgemm returned error code %d, line(%d)\n", cudaStat, __LINE__);
