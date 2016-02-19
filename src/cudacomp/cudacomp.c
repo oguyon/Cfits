@@ -1514,7 +1514,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
 
-
+    printf("SVDeps = %f\n", SVDeps);
 
     // multiply lines of VT by 1/eigenval
     for(ii=0;ii<n;ii++)
