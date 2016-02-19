@@ -1684,19 +1684,20 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     int semr;
     long ii, kk;
 
+    long NBmodes;
+
 
     ID_DMact = image_ID(DMact_stream);
     m = data.image[ID_DMact].md[0].size[0]*data.image[ID_DMact].md[0].size[1];
 
     ID_DMmodes = image_ID(DMmodes);
     n = data.image[ID_DMmodes].md[0].size[2];
-    for(kk=1;kk<n;kk++)
-        for(ii=0;ii<m;ii++)
-            data.image[ID_DMmodes].array.F[kk*m+ii] = 0.0;
-    save_fits(DMmodes, "!DMmodes_test.fits");
+    NBmodes = n;
 
-    arraytmp = (long*) malloc(sizeof(long)*1);
-    arraytmp[0] = n;
+    NBmodes = 3;
+
+    arraytmp = (long*) malloc(sizeof(long)*2);
+    arraytmp[0] = NBmodes;
     arraytmp[1] = 1;
     ID_modeval = create_image_ID(DMmodes_val, 2, arraytmp, FLOAT, 1, 0);
     free(arraytmp);
@@ -1739,13 +1740,13 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
 
     // load DMmodes to GPU
-    cudaStat = cudaMalloc((void**)&d_DMmodes, sizeof(float)*m*n);
+    cudaStat = cudaMalloc((void**)&d_DMmodes, sizeof(float)*m*NBmodes);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_DMmodes returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
-    cudaStat = cudaMemcpy(d_DMmodes, data.image[ID_DMmodes].array.F, sizeof(float)*m*n, cudaMemcpyHostToDevice);
+    cudaStat = cudaMemcpy(d_DMmodes, data.image[ID_DMmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1762,7 +1763,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     }
 
     // create d_modeval
-    cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*n);
+    cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*NBmodes);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_modeval returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1845,7 +1846,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             }
 
             // compute
-            cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
+            cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
             if (cudaStat != CUBLAS_STATUS_SUCCESS)
             {
                 printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
@@ -1862,7 +1863,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
             // copy result
             data.image[ID_modeval].md[0].write = 1;
-            cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*n, cudaMemcpyDeviceToHost);
+            cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
             sem_getvalue(data.image[ID_modeval].semptr[0], &semval);
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[ID_modeval].semptr[0]);
