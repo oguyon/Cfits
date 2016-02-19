@@ -1693,7 +1693,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     arraytmp = (long*) malloc(sizeof(long)*1);
     arraytmp[0] = n;
-    ID_modeval = create_image_ID(DMmodes_val, 1, arraytmp, FLOAT, 1, 0);
+    arraytmp[1] = 1;
+    ID_modeval = create_image_ID(DMmodes_val, 2, arraytmp, FLOAT, 1, 0);
     free(arraytmp);
     COREMOD_MEMORY_image_set_createsem(DMmodes_val, 2);
 
