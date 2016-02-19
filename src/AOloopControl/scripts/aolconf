@@ -2054,13 +2054,9 @@ AOlog "RM NB frame excluded $rmexfr frames"
 	zrespM)
 case $amode in
 	0)
-echo "zrespMfname = ${zrespMfname}"
-echo "${wfsmaskfname}"
-sleep 2
 cd zrespM
 exec 3>&1;
 zrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM" --fselect "${zrespMfname}" $nbwlines $nbwcols)
-sleep 2
 cd ..
 echo "./zrespM/$zrespMfname" > ./conf/conf_zrespM_fname.txt
 ReadConfFile "zrespM"
@@ -2204,9 +2200,11 @@ state="menuconfigureloop"
 	wfsM)
 case $amode in
 	0)
+cd wfsmask
 exec 3>&1;
 wfsmaskfname=$(dialog --title "Select WFS pixel mask file name" --stdout  --fselect "${wfsmaskfname}" $nbwlines $nbwcols)
-echo "$wfsmaskfname" > ./conf/conf_wfsmask_fname.txt
+cd ..
+echo "./wfsmask/$wfsmaskfname" > ./conf/conf_wfsmask_fname.txt
 ReadConfFile "wfsmask"
 ;;
 	1)
