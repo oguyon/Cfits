@@ -120,6 +120,14 @@ int CUDACOMP_test_cli()
     else
         return 1;
 }
+
+int CUDACOMP_extractModesLoop_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
+        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
+    else
+        return 1;
+}
 #endif
 
 
@@ -158,7 +166,16 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].example,"cudacomptest");
     strcpy(data.cmd[data.NBcmd].Ccall,"GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
     data.NBcmd++;
-
+    
+    strcpy(data.cmd[data.NBcmd].key,"cudaextrmodes");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = CUDACOMP_extractModesLoop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]>");
+    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6");
+    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex)");
+    data.NBcmd++;
+    
 
 #endif
     // add atexit functions here
@@ -1637,7 +1654,7 @@ cudaDeviceReset();
 
 
 // extract mode coefficients
-int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex)
+int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex)
 {
     long ID_DMact;
     long ID_DMmodes;
