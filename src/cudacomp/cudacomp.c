@@ -1504,7 +1504,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     save_fits("matU1", "!matU1.fits");
 
 
-    ID_VTmatrix = create_2Dimage_ID(ID_VTmatrix_name, n,n);
+    ID_VTmatrix = create_2Dimage_ID(ID_VTmatrix_name, n, n);
     cudaStat = cudaMemcpy(data.image[ID_VTmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
@@ -1515,7 +1515,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     // multiply lines of VT by 1/eigenval
-    /*for(ii=0;ii<n;ii++)
+    for(ii=0;ii<n;ii++)
     {
         if(Sarray[ii]>Sarray[0]*sqrt(SVDeps))
             val = 1.0/Sarray[ii];
@@ -1524,11 +1524,11 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         
         for(jj=0;jj<n;jj++)
              data.image[ID_VTmatrix].array.F[jj*n+ii] *= val;
-    }*/
+    }
     
     
     // copy VT back to GPU
-  /*  cudaStat = cudaMemcpy(d_VT, data.image[ID_VTmatrix].array.F, sizeof(float)*n*n, cudaMemcpyHostToDevice);
+   cudaStat = cudaMemcpy(d_VT, data.image[ID_VTmatrix].array.F, sizeof(float)*n*n, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1542,17 +1542,17 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         printf("cudaMalloc d_M returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
-    */
+    
  
  
  
-   /* cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_M, n);
+    cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_M, n);
      if (cudaStat != cudaSuccess)
     {
         printf("cublasSgemm returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
-*/
+
     
 
 
@@ -1573,7 +1573,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
     
     
-    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_U, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
     //cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
