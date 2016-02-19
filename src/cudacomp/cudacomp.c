@@ -1515,19 +1515,22 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     }
 
     printf("SVDeps = %f\n", SVDeps);
-
+    cnt0 = 0;
     // multiply lines of VT by 1/eigenval
     for(ii=0;ii<n;ii++)
     {
         if( Sarray[ii] > Sarray[0]*SVDeps )
-            val = 1.0/(Sarray[ii]);
+            {
+                val = 1.0/(Sarray[ii]);
+                cnt0++;
+            }
         else
             val = 0.0;
         
         for(jj=0;jj<n;jj++)
              data.image[ID_VTmatrix].array.F[jj*n+ii] *= val;
     }
-    
+    printf("%ld eigenvalues kept\n", cnt0);
     
     // copy VT back to GPU
    cudaStat = cudaMemcpy(d_VT, data.image[ID_VTmatrix].array.F, sizeof(float)*n*n, cudaMemcpyHostToDevice);
