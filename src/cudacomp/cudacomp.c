@@ -1285,6 +1285,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     float beta = 0.0;
     long ID;
     
+    float *h_M;
+    
  
 
     cudaGetDeviceCount(&deviceCount);
@@ -1573,7 +1575,14 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
     
     
-    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+ //   cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    
+    h_M = (float*) malloc(sizeof(float)*m*n);
+    cudaStat = cudaMemcpy(h_M, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    for(ii=0;ii<m;ii++)
+        for(jj=0;jj<n;jj++)
+            data.image[ID_Cmatrix].array.F[jj*m+ii] = h_M[ii*n+jj];
+    
     //cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
@@ -1609,6 +1618,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     free(Sarray);
     free(rwork);
     free(h_A);
+    free(h_M);
     
     return(0);
 }
