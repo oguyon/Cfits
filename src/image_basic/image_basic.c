@@ -3770,7 +3770,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     int semval;
     char *ptr0;  
     char *ptr1;
-    
+    int loopOK;
    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
@@ -3799,8 +3799,41 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
 
     ptr1 = (char*) data.image[IDs].array.F; // destination 
 
+
+
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+
     k = 0;
-    while(1)
+    loopOK = 1;
+    while(loopOK == 1)
     {
         ptr0 = (char*) data.image[ID].array.F;
         ptr0 += sizeof(float)*xysize*k;
@@ -3819,7 +3852,13 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
         k++;
         if(k==zsize)
             k = 0;
+    
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            loopOK = 0;
     }
+
+    for(ii=0;ii<xysize;ii++)
+        data.image[IDs].array.F[ii] = 0.0;
 
     return(0);
 }
