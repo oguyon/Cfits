@@ -306,15 +306,15 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         //printf("k = %ld\n", k);
         //fflush(stdout);
         
-        if(data.image[IDcam].sem==0)
+        if(data.image[IDcam].sem<5)
         {
             while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
                 usleep(10);
         }
         else
         {
-            sem_getvalue(data.image[IDcam].semptr[0], &semval);
-            sem_wait(data.image[IDcam].semptr[0]);
+//            sem_getvalue(data.image[IDcam].semptr[4], &semval);
+            sem_wait(data.image[IDcam].semptr[4]);
         }
 
         //slice = data.image[IDcam].md[0].cnt1;
