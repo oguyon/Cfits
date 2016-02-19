@@ -3794,16 +3794,11 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     }
     zsize = data.image[ID].md[0].size[2];
 
-    list_image_ID();
-
-printf(" %ld %ld\n", ID, IDs);
-fflush(stdout);
-    
     k = 0;
     while(1)
     {
         data.image[IDs].md[0].write = 1;
-        memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(float)*xysize);
+        memcpy (data.image[IDs].array.F, (void*) (data.image[ID].array.F + sizeof(float)*xysize*k), sizeof(float)*xysize);
         if(data.image[IDs].sem > 0)
         {
             sem_getvalue(data.image[IDs].semptr[0], &semval);
