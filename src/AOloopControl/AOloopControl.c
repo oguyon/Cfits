@@ -7859,6 +7859,7 @@ int AOcompute(long loop, int normalize)
             sizearray[1] = AOconf[loop].sizeyDM;
             sprintf(imname, "aol%ld_meas_act", LOOPNUMBER);
             aoconfID_meas_act = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+            COREMOD_MEMORY_image_set_createsem(imname, 2);
             free(sizearray);
         }
 
@@ -8250,6 +8251,15 @@ int AOloopControl_run()
                                 data.image[aoconfID_meas_act].array.F[ii] = 0.0;
                             }
                     }
+                    
+                sem_getvalue(data.image[aoconfID_meas_act].semptr[0], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[aoconfID_meas_act].semptr[0]);
+                sem_getvalue(data.image[aoconfID_meas_act].semptr[1], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[aoconfID_meas_act].semptr[1]);
+
+
 
                 AOconf[loop].status = 13; // enforce limits
                 clock_gettime(CLOCK_REALTIME, &tnow);
@@ -8297,7 +8307,7 @@ int AOloopControl_run()
                                 sem_post(data.image[aoconfID_dmdisp].semptr[1]);
                         }
                     AOconf[loop].DMupdatecnt ++;
-                    AOconf[loop].DMupdatecnt ++;
+//                    AOconf[loop].DMupdatecnt ++;
                 }
 
                 AOconf[loop].status = 18; // 18
@@ -8307,6 +8317,12 @@ int AOloopControl_run()
                 data.image[aoconfID_looptiming].array.F[18] = tdiffv;
 
                 AOconf[loop].cnt++;
+
+                
+                
+
+
+
 
                 data.image[AOconf[loop].logdataID].md[0].cnt0 = AOconf[loop].cnt;
                 data.image[AOconf[loop].logdataID].array.F[0] = AOconf[loop].gain;
