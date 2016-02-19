@@ -1769,8 +1769,8 @@ HARDWARE I/O:\n
             sem1    post: full frame ready      wait: RM acquisition\n
             sem2    post: subframe ready        wait: main WFC loop, pixel stream mode\n
             sem3    post: subframe ready\n
-            sem4    post: full frame ready      wait: alignment loop\n
-            sem5    post: full frame ready      unused\n
+            sem4    post: full frame ready      wait: alignment loop #1 (focus)\n
+            sem5    post: full frame ready      wait: alignment loop #2 (pupil)\n
 \n
 I/O PRE-PROCESSING:\n
      /tmp/aol${LOOPNUMBER}_wfsdark.im.shm       WFS dark\n
