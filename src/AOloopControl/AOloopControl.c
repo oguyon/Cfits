@@ -3336,18 +3336,17 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
     int semindex = 0;
     
     
-    
+    if(RM==0)
+        semindex = 0;
+    else
+        semindex = 1;
+ 
 
 
     WFSatype = data.image[aoconfID_wfsim].md[0].atype;
 
     if(avcamarraysInit==0)
     {
-        if(RM==0)
-            semindex = 0;
-        else
-            semindex = 1;
-        
         arrayftmp = (float*) malloc(sizeof(float)*AOconf[loop].sizeWFS);
         arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*AOconf[loop].sizeWFS);
 
