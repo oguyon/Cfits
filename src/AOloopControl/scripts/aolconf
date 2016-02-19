@@ -2073,7 +2073,6 @@ esac
 
 
 
-
 	Hon)
 echo "1" > ./conf/conf_RMpokeMode.txt
 if [ -f "RMpokeCube.fits" ]; then
