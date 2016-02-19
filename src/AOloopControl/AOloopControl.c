@@ -6295,8 +6295,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                         
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
-                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
-                data.image[IDzrespfm].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDneg].array.F[ii];
+                data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
+                data.image[IDzrespfm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] = data.image[IDneg].array.F[ii];
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDneg].array.F[ii];
             }
 
