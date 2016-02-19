@@ -3766,12 +3766,14 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     long tdelay;
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
-   
+    int r;
    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges
+
+
 
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
