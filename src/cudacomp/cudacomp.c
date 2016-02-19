@@ -1463,7 +1463,19 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaStat = cudaMemcpy(&info_gpu, devInfo, sizeof(int), cudaMemcpyDeviceToHost);
     printf("after gesvd: info_gpu = %d\n", info_gpu);
 
-    Sarray = (float*) malloc(sizeof(float)*n);
+ 
+    ID_VTmatrix = create_2Dimage_ID(ID_VTmatrix_name, n, n);
+    cudaStat = cudaMemcpy(data.image[ID_VTmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+   
+   save_fits(ID_VTmatrix_name, "!matVT0.fits");
+  
+  
+     Sarray = (float*) malloc(sizeof(float)*n);
     //    Aarray = (float*) malloc(sizeof(float)*m*n);
     cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
@@ -1506,15 +1518,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     save_fits("matU1", "!matU1.fits");
 
 
-    ID_VTmatrix = create_2Dimage_ID(ID_VTmatrix_name, n, n);
-    cudaStat = cudaMemcpy(data.image[ID_VTmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
    
-   save_fits(ID_VTmatrix_name, "!matVT0.fits");
    
     printf("SVDeps = %f\n", SVDeps);
     cnt0 = 0;
