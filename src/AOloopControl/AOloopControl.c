@@ -6440,6 +6440,108 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
 
 
+int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name)
+{
+    long IDWFSmap, IDDMmap;
+    long IDWFSmask, IDDMmask;
+    long IDzrm;
+    long act, ii;
+    float lim, rms;
+    double tmpv;
+    long sizexWFS, sizeyWFS, sizeWFS;
+    long sizexDM, sizeyDM, sizeDM;
+    long IDdm;
+    char name[200];
+    
+    IDzrm = image_ID(zrespm_name);
+    sizexWFS = data.image[IDzrm].md[0].size[1];
+    sizeyWFS = data.image[IDzrm].md[0].size[2];
+    
+    sprintf(name, "aol%ld_dmC", loop);
+    IDdm = read_sharedmem_image(name);
+    sizexDM = data.image[IDdm].md[0].size[0];
+    sizeyDM = data.image[IDdm].md[0].size[1];
+    
+    sizeDM = sizexDM*sizeyDM;
+    sizeWFS = sizexWFS*sizeyWFS;
+    
+    IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
+    IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
+    IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
+    IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
+
+
+    printf("Preparing DM map ... ");
+    fflush(stdout);    
+    for(act=0; act<sizeDM; act++)
+    {
+        rms = 0.0;
+        for(ii=0; ii<sizeWFS; ii++)
+        {
+            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
+            rms += tmpv*tmpv;
+        }
+        data.image[IDDMmap].array.F[act] = rms;
+    }
+    printf("done\n");
+    fflush(stdout);
+
+
+
+    printf("Preparing WFS map ... ");
+    fflush(stdout);    
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        rms = 0.0;
+        for(act=0; act<sizeDM; act++)
+        {
+            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
+            rms += tmpv*tmpv;
+        }
+        data.image[IDWFSmap].array.F[ii] = rms;
+    }
+    printf("done\n");
+    fflush(stdout);
+
+
+
+
+   printf("Preparing DM mask ... ");
+    fflush(stdout);    
+     // DMmask: select pixels >10% of 50-percentile
+    lim = 0.2*img_percentile(DMmap_name, 0.5);
+    for(act=0; act<sizeDM; act++)
+    {
+        if(data.image[IDDMmap].array.F[act]<lim)
+            data.image[IDDMmask].array.F[act] = 0.0;
+        else
+            data.image[IDDMmask].array.F[act] = 1.0;
+    }
+   printf("done\n");
+    fflush(stdout);
+
+
+
+    // WFSmask : select pixels >40% of 85-percentile
+    printf("Preparing WFS mask ... ");
+    fflush(stdout);    
+    lim = 0.4*img_percentile(WFSmap_name, 0.85);
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        if(data.image[IDWFSmap].array.F[ii]<lim)
+            data.image[IDWFSmask].array.F[ii] = 0.0;
+        else
+            data.image[IDWFSmask].array.F[ii] = 1.0;
+    }
+   printf("done\n");
+    fflush(stdout);
+
+
+    return(0);
+}
+
+
+
 //
 // median-averages multiple response matrices to create a better one
 //
@@ -6697,87 +6799,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
-
-
-
-
-
-
-    IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
-    IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
-    IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
-    IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
-
-
-    printf("Preparing DM map ... ");
-    fflush(stdout);    
-    for(act=0; act<sizeDM; act++)
-    {
-        rms = 0.0;
-        for(ii=0; ii<sizeWFS; ii++)
-        {
-            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
-            rms += tmpv*tmpv;
-        }
-        data.image[IDDMmap].array.F[act] = rms;
-    }
-    printf("done\n");
-    fflush(stdout);
-
-
-
-    printf("Preparing WFS map ... ");
-    fflush(stdout);    
-    for(ii=0; ii<sizeWFS; ii++)
-    {
-        rms = 0.0;
-        for(act=0; act<sizeDM; act++)
-        {
-            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
-            rms += tmpv*tmpv;
-        }
-        data.image[IDWFSmap].array.F[ii] = rms;
-    }
-    printf("done\n");
-    fflush(stdout);
-
-
-
-
-   printf("Preparing DM mask ... ");
-    fflush(stdout);    
-     // DMmask: select pixels >10% of 50-percentile
-    lim = 0.2*img_percentile(DMmap_name, 0.5);
-    for(act=0; act<sizeDM; act++)
-    {
-        if(data.image[IDDMmap].array.F[act]<lim)
-            data.image[IDDMmask].array.F[act] = 0.0;
-        else
-            data.image[IDDMmask].array.F[act] = 1.0;
-    }
-   printf("done\n");
-    fflush(stdout);
-
-
-
-    // WFSmask : select pixels >40% of 85-percentile
-    printf("Preparing WFS mask ... ");
-    fflush(stdout);    
-    lim = 0.4*img_percentile(WFSmap_name, 0.85);
-    for(ii=0; ii<sizeWFS; ii++)
-    {
-        if(data.image[IDWFSmap].array.F[ii]<lim)
-            data.image[IDWFSmask].array.F[ii] = 0.0;
-        else
-            data.image[IDWFSmask].array.F[ii] = 1.0;
-    }
-   printf("done\n");
-    fflush(stdout);
-
-
-
-
-    list_image_ID();
+    AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name);
 
     return(0);
 }
