@@ -1286,7 +1286,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     long ID;
     
     float *h_M;
-    
+    long cnt0;
  
 
     cudaGetDeviceCount(&deviceCount);
