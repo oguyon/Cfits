@@ -2059,7 +2059,8 @@ cd ..
 echo "./zrespM/$zrespMfname" > ./conf/conf_zrespM_fname.txt
 ReadConfFile "zrespM"
 
-sed -e 's/zrespM/wfsmask/g' ./conf/conf_zrespM_fname.txt > test.txt
+sed -e 's/zrespM/wfsmask/g' ./conf/conf_zrespM_fname.txt > ./conf/conf_wfsmask_fname.txt
+ReadConfFile "wfsmask"
 
 ;;
 	1)
