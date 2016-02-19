@@ -3764,8 +3764,15 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     long xsize, ysize, xysize, zsize;
     long k;
     long tdelay;
-    
-    
+    int RT_priority = 95; //any number from 0-99
+    struct sched_param schedpar;
+   
+   
+    schedpar.sched_priority = RT_priority;
+    r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    r = seteuid(euid_real);//Go back to normal privileges
+
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
@@ -3775,13 +3782,13 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
 
     printf("frequ = %f Hz\n", frequ);
     printf("tdelay = %ld us\n", tdelay);
-    
+
     IDs = image_ID(streamname);
     if((xsize != data.image[IDs].md[0].size[0])||(ysize != data.image[IDs].md[0].size[1]))
-        {
-            printf("ERROR: images have different x and y sizes");
-            exit(0);
-        }
+    {
+        printf("ERROR: images have different x and y sizes");
+        exit(0);
+    }
     zsize = data.image[ID].md[0].size[2];
 
     k = 0;
@@ -3790,12 +3797,14 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
         data.image[IDs].md[0].write = 1;
         memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(double)*xysize);
         if(data.image[IDs].sem > 0)
-            sem_post(data.image[IDs].semptr[0]);
+        {
+            sem_getvalue(data.image[IDs].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[IDs].semptr[0]);
+        }
         data.image[IDs].md[0].write = 0;
         data.image[IDs].md[0].cnt0++;
 
-    //    usleep((long) (10000000.0/frequ));
-        
         usleep ( tdelay );
         k++;
         if(k>zsize-1)
@@ -3804,6 +3813,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
 
     return(0);
 }
+
 
 
 // works only for floats
