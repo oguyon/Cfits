@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
-
+#include <sched.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
