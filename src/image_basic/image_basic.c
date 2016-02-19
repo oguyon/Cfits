@@ -3802,8 +3802,6 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     k = 0;
     while(1)
     {
-        printf("k = %ld\n", k);
-        fflush(stdout);
         ptr0 = (char*) data.image[ID].array.F;
         ptr0 += sizeof(float)*xysize*k;
         data.image[IDs].md[0].write = 1;
