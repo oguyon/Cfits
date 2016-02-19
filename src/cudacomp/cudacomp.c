@@ -1685,7 +1685,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     long ii, kk;
 
     long NBmodes;
-
+    
+    float *normcoeff;
+    
+    
 
     ID_DMact = image_ID(DMact_stream);
     m = data.image[ID_DMact].md[0].size[0]*data.image[ID_DMact].md[0].size[1];
@@ -1693,6 +1696,16 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     ID_DMmodes = image_ID(DMmodes);
     n = data.image[ID_DMmodes].md[0].size[2];
     NBmodes = n;
+    normcoeff = (float*) malloc(sizeof(float)*NBmodes);
+
+    for(kk=0;kk<NBmodes;kk++)
+        {
+            normcoeff[kk] = 0.0;
+            for(ii=0;ii<m;ii++)
+                normcoeff[kk] += data.image[ID_DMmodes].array.F[kk*m+ii]*data.image[ID_DMmodes].array.F[kk*m+ii];            
+            for(ii=0;ii<m;ii++)
+                data.image[ID_DMmodes].array.F[kk*m+ii] /= normcoeff[kk];
+        }
 
     //NBmodes = 3;
 
@@ -1887,7 +1900,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     if (cublasH ) cublasDestroy(cublasH);
 
-
+    free(normcoeff);
 
     return(0);
 }
