@@ -1656,6 +1656,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     long n, m;
     long *arraysizetmp;
     long ID, ID_R, ID_C;
+    long ii, jj, k;
+    float val;
 
     if(1==1)
     {
