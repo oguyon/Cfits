@@ -6477,6 +6477,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     long ID1;
     long IDrmpokec;
 
+
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
     {
@@ -6583,10 +6584,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     // STEP 2: average / median each pixel
     IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, sizeDM);
     IDWFSref = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
-    IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
-    IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
-    IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
-    IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
+    
+    
 
 
     kband = 0;
@@ -6697,6 +6696,19 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     sizeDM = data.image[IDzrm].md[0].size[2];
 
 
+
+
+
+
+
+
+
+    IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
+    IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
+    IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
+    IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
+
+
     printf("Preparing DM map ... ");
     fflush(stdout);    
     for(act=0; act<sizeDM; act++)
@@ -6732,7 +6744,6 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
 
-    list_image_ID();
    printf("Preparing DM mask ... ");
     fflush(stdout);    
      // DMmask: select pixels >10% of 50-percentile
