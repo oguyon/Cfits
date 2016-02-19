@@ -1641,12 +1641,14 @@ int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, c
 {
     long ID_DMact;
     long ID_DMmodes;
+    long ID_modeval;
     cublasHandle_t cublasH = NULL;
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
     cudaError_t cudaStat = cudaSuccess;
     struct cudaDeviceProp deviceProp;
     int m, n;
     int k;
+    long *arraytmp;
 
     float *d_DMmodes = NULL; // linear memory of GPU
     float *d_DMact = NULL;
@@ -1662,8 +1664,11 @@ int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, c
     ID_DMmodes = image_ID(DMmodes);
     n = data.image[ID_DMmodes].md[0].size[2];
 
-
-
+    arraytmp = (long*) malloc(sizeof(long)*1);
+    arraytmp[0] = n;
+    ID_modeval = create_image_ID(DMmodes_val, 1, arraytmp, FLOAT, 1, 0);
+    free(arraytmp);
+    
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
     fflush(stdout);
@@ -1758,6 +1763,9 @@ int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, c
                 printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
             exit(EXIT_FAILURE);
         }
+        
+        // copy result
+        cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*n, cudaMemcpyDeviceToHost);
     }
 
  
