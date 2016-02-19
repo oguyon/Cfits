@@ -2062,6 +2062,11 @@ ReadConfFile "zrespM"
 sed -e 's/zrespM/wfsmask/g' ./conf/conf_zrespM_fname.txt > ./conf/conf_wfsmask_fname.txt
 ReadConfFile "wfsmask"
 
+sed -e 's/zrespM/dmmask/g' ./conf/conf_zrespM_fname.txt > ./conf/conf_dmmask_fname.txt
+ReadConfFile "dmmask"
+
+sed -e 's/zrespM/wfsref0/g' ./conf/conf_zrespM_fname.txt > ./conf/conf_wfsref0_fname.txt
+ReadConfFile "wfsref0"
 ;;
 	1)
 ds9 $imname &
