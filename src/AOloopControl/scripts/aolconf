@@ -1545,8 +1545,6 @@ menuitems+=( "zrespM" "$menustring" )
 
 
 
-
-
 if [ -f "./conf/conf_RMpokeMode.txt" ]; then
 RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
 else
@@ -2060,6 +2058,9 @@ zrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM
 cd ..
 echo "./zrespM/$zrespMfname" > ./conf/conf_zrespM_fname.txt
 ReadConfFile "zrespM"
+
+sed -e 's/zrespM/wfsmask/g' ./conf/conf_zrespM_fname.txt > test.txt
+
 ;;
 	1)
 ds9 $imname &
