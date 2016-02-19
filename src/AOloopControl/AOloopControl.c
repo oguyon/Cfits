@@ -6159,7 +6159,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                     }
             }
         
-        
+        printf("\n");
+        for(act=0;act<100;act++)
+            printf("[ %4ld %4ld ]", act, actarray[act]);
+        printf("\n");
 
         for(act=0; act<NBpoke; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
