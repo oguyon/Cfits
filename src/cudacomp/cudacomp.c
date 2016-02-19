@@ -1453,7 +1453,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
  
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
-    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
+    cusolverDnSgesvd (cudenseH, 'O', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
     cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
@@ -1573,7 +1573,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
     
     
-    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_U, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_A, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
     //cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_VT, sizeof(float)*n*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
     {
