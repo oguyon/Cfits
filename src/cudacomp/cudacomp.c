@@ -1691,8 +1691,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
         fflush(stdout);
         
         ID = create_2Dimage_ID("SVDcheck", n, n);
-        for(ii=0;ii<m;ii++)
-            for(jj=0;jj<m;jj++)
+        for(ii=0;ii<n;ii++)
+            for(jj=0;jj<n;jj++)
                 {
                     val = 0.0;
                     for(k=0;k<m;k++)
