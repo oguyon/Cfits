@@ -1618,6 +1618,9 @@ fi
 makemenuitemstringaolshm "wfsmask" "WFS pixel mask"
 menuitems+=( "wfsM" "$menustring" )
 
+makemenuitemstringaolshm "dmmap" "DM actuator influence map"
+menuitems+=( "dmmap" "$menustring" )
+
 makemenuitemstringaolshm "dmmask" "DM actuator mask"
 menuitems+=( "dmM" "$menustring" )
 
@@ -2229,6 +2232,27 @@ esac
 menucontrolloop_default="wfsM"
 state="menuconfigureloop"
 ;;
+
+
+	dmmap)
+case $amode in
+	0)
+cd dmmap
+exec 3>&1;
+dmmaskfname=$(dialog --title "Select DM map file name" --stdout --fselect "${dmmapfname}" $nbwlines $nbwcols)
+cd ..
+echo "./dmmask/$dmmapfname" > ./conf/conf_dmmap_fname.txt
+ReadConfFile "dmmap"
+;;
+	1)
+imname=$( cat ./conf/conf_dmmap_fname.txt )
+ds9 $imname &
+;;
+esac
+menucontrolloop_default="dmmap"
+state="menuconfigureloop"
+;;
+
 	dmM)
 case $amode in
 	0)
