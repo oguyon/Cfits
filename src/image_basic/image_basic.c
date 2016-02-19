@@ -3810,7 +3810,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
 
         usleep ( tdelay );
         k++;
-        if(k>zsize-1)
+        if(k==zsize)
             k = 0;
     }
 
