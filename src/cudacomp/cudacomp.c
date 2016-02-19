@@ -1461,7 +1461,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     cudaStat = cudaMemcpy(&info_gpu, devInfo, sizeof(int), cudaMemcpyDeviceToHost);
     printf("after gesvd: info_gpu = %d\n", info_gpu);
 
-  /*  Sarray = (float*) malloc(sizeof(float)*n);
+    Sarray = (float*) malloc(sizeof(float)*n);
     //    Aarray = (float*) malloc(sizeof(float)*m*n);
     cudaStat = cudaMemcpy(Sarray, d_S, sizeof(float)*n, cudaMemcpyDeviceToHost);
     if (cudaStat != cudaSuccess)
@@ -1512,7 +1512,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(EXIT_FAILURE);
     }
 
-*/
+
 
     // multiply lines of VT by 1/eigenval
     /*for(ii=0;ii<n;ii++)
