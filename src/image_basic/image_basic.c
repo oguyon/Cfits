@@ -3767,6 +3767,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
     int r;
+    int semval;
    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
