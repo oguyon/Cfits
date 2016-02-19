@@ -6146,7 +6146,20 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         for(act=0;act<NBpoke;act++)
             actarray[act] = act;
             
-
+        for(act=0;act<NBpoke;act++)
+            {
+                act1 = (long) (ran1()*NBpoke);
+                if(act1>=NBpoke)
+                    act1 = NBpoke-1;
+                if(act!=act1)
+                    {
+                        act2 = actarray[act1];
+                        actarray[act1] = actarray[act];
+                        actarray[act] = act2;
+                    }
+            }
+        
+        
 
         for(act=0; act<NBpoke; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
