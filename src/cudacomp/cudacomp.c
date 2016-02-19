@@ -1760,7 +1760,7 @@ int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, c
         }
     }
 
-
+ 
     cudaFree(d_DMmodes);
     cudaFree(d_DMact);
     cudaFree(d_modeval);
