@@ -85,10 +85,10 @@ float SCExAO_PZT_STAGE_Ypos_max = -1.0;
 
 int SCExAOcontrol_Average_image_cli()
 {
-    if(CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
+    if(CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
     {
 
-        SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+        SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else
@@ -188,9 +188,9 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
     strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
-    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd>");
-    strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd> <semaphore index>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve, long semindex)");
     data.NBcmd++;
 
 
@@ -263,7 +263,7 @@ int init_SCExAO_control()
 
 
 
-long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
+long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)
 {
     long ID;
     long IDdark;
@@ -306,7 +306,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         //printf("k = %ld\n", k);
         //fflush(stdout);
         
-        if(data.image[IDcam].sem<5)
+        if(data.image[IDcam].sem<semindex)
         {
             while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
                 usleep(10);
@@ -314,7 +314,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout)
         else
         {
 //            sem_getvalue(data.image[IDcam].semptr[4], &semval);
-            sem_wait(data.image[IDcam].semptr[4]);
+            sem_wait(data.image[IDcam].semptr[(int) semindex]);
         }
 
         //slice = data.image[IDcam].md[0].cnt1;
@@ -458,7 +458,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
     double gain = 1.0;
 
 
-    ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs");
+    ID = SCExAOcontrol_Average_image(WFScam_name, 5000, "imwfs", 7);
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
 
@@ -566,7 +566,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         }
 
 
-        ID = SCExAOcontrol_Average_image(WFScam_name, 20000, "imwfs");
+        ID = SCExAOcontrol_Average_image(WFScam_name, 20000, "imwfs", 4);
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
@@ -778,7 +778,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         }
 
 
-        ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
+        ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 5);
         save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
 
 
@@ -936,7 +936,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
     printf("%s", command);
     r = system(command);
-    IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp");
+    IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp", 4);
     save_fits("imwfspp", "!imwfspp.fits");
 
 
@@ -949,7 +949,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
     printf("%s", command);
     r = system(command);
-    IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm");
+    IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm", 4);
     save_fits("imwfspm", "!imwfspm.fits");
 
     // - +
@@ -961,7 +961,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
     printf("%s", command);
     r = system(command);
-    IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp");
+    IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp", 4);
     save_fits("imwfsmp", "!imwfsmp.fits");
 
 
@@ -974,7 +974,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
     sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
     printf("%s", command);
     r = system(command);
-    IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm");
+    IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm", 4);
     save_fits("imwfsmm", "!imwfsmm.fits");
 
 
@@ -1251,7 +1251,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 
 
     
-            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 6);
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
             p0 = img_percentile("imwfs", level0);
             p1 = img_percentile("imwfs", level1);
@@ -1285,7 +1285,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
             usleep(sleeptimeus);
 
 
-            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 6);
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
             p0 = img_percentile("imwfs", level0);
             p1 = img_percentile("imwfs", level1);
@@ -1306,7 +1306,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
             usleep(sleeptimeus);
 
 
-            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs");
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 6);
             save_fits("imwfs", "!./tmp/imwfs_pyrflat.fits");
             p0 = img_percentile("imwfs", level0);
             p1 = img_percentile("imwfs", level1);

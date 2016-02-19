@@ -6,7 +6,7 @@ int init_SCExAO_control();
 
 int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos);
 
-long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout);
+long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex);
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name);
 
