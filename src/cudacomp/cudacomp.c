@@ -1640,9 +1640,13 @@ cudaDeviceReset();
 int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex)
 {
     long ID_DMact;
+    long ID_DMmodes;
     cublasHandle_t cublasH = NULL;
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
+    cudaError_t cudaStat = cudaSuccess;
+    struct cudaDeviceProp deviceProp;
     int m, n;
+    int k;
 
     float *d_DMmodes = NULL; // linear memory of GPU
     float *d_DMact = NULL;
@@ -1740,7 +1744,7 @@ int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, c
         }
 
         // compute
-        cudaStat = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
+        cublas_status =  = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
         if (cudaStat != CUBLAS_STATUS_SUCCESS)
         {
             printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
