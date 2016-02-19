@@ -3797,6 +3797,8 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     k = 0;
     while(1)
     {
+        printf("k = %ld\n", k);
+        fflush(stdout);
         data.image[IDs].md[0].write = 1;
         memcpy (data.image[IDs].array.F, (void*) (data.image[ID].array.F + sizeof(float)*xysize*k), sizeof(float)*xysize);
         if(data.image[IDs].sem > 0)
