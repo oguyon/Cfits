@@ -1524,9 +1524,6 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         else
             val = 0.0;
         
-        if(ii!=0)
-            val = 0.0;
-        
         for(jj=0;jj<n;jj++)
              data.image[ID_VTmatrix].array.F[jj*n+ii] *= val;
     }
@@ -1656,12 +1653,45 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     int k;
     double SVDeps = 0.9;
 
+    long n, m;
+    long *arraysizetmp;
+    long ID, ID_R, ID_C;
 
     if(1==1)
     {
         printf("Testing SVD on GPU\n");
        //linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
        GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
+       
+       // CHECK RESULT
+        arraysizetmp = (long*) malloc(sizeof(long)*3);
+        ID_R = image_ID("Rmat");
+        ID_C = image_ID("Cmat");
+
+        if(data.image[ID_R].md[0].naxis==3)
+        {
+            m = data.image[ID_R].md[0].size[0]*data.image[ID_R].md[0].size[1];
+            n = data.image[ID_R].md[0].size[2];
+            printf("3D image -> %d %d\n", m, n);
+            fflush(stdout);
+        }
+        else
+        {
+            m = data.image[ID_R].md[0].size[0];
+            n = data.image[ID_R].md[0].size[1];
+            printf("2D image -> %d %d\n", m, n);
+            fflush(stdout);
+        }
+        
+        ID = create_2Dimage_ID("SVDcheck", m, m);
+        for(ii=0;ii<m;ii++)
+            for(jj=0;jj<m;jj++)
+                {
+                    val = 0.0;
+                    for(k=0;k<n;k++)
+                        val += data.image[ID_R].array.F[k*m+ii] * data.image[ID_C].array.F[jj*n+k] ;
+                }
+        save_fits("SVDcheck", "!SVDcheck.fits");
     }
     else
     {
