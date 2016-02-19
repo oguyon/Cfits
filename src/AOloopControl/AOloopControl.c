@@ -57,6 +57,7 @@ int clock_gettime(int clk_id, struct timespec *t){
 #include "ZernikePolyn/ZernikePolyn.h"
 #include "linopt_imtools/linopt_imtools.h"
 #include "image_gen/image_gen.h"
+#include "statistic/statistic.h"
 
 
 
