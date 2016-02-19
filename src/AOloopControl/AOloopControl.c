@@ -6182,10 +6182,11 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                     }
             }
         
-        printf("\n");
+      /*  printf("\n");
         for(act=0;act<100;act++)
             printf("[ %4ld %4ld ]", act, actarray[act]);
         printf("\n");
+*/
 
         for(act=0; act<NBpoke; act++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -6818,8 +6819,6 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
     // update sizeDM
     sizeDM = data.image[IDzrm].md[0].size[2];
-
-
 
     AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name);
 
