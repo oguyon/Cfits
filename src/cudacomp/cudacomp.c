@@ -1660,8 +1660,8 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     if(1==1)
     {
         printf("Testing SVD on GPU\n");
-       //linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
-       GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
+       linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
+      // GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
        
        // CHECK RESULT
         arraysizetmp = (long*) malloc(sizeof(long)*3);
