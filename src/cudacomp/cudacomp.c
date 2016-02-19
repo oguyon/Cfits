@@ -1513,7 +1513,9 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
-
+   
+   save_fits(ID_VTmatrix_name, "!matVT0.fits");
+   
     printf("SVDeps = %f\n", SVDeps);
     cnt0 = 0;
     // multiply lines of VT by 1/eigenval
