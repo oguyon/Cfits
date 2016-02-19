@@ -1744,7 +1744,7 @@ int GPUextractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, c
         }
 
         // compute
-        cublas_status =  = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
+        cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
         if (cudaStat != CUBLAS_STATUS_SUCCESS)
         {
             printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
