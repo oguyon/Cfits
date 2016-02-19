@@ -6,8 +6,10 @@
 #include <string.h>
 #include <math.h>
 #include <sched.h>
+#include <signal.h> 
 
 
+#include <semaphore.h>
 
 #ifdef __MACH__
 #include <mach/mach_time.h>
@@ -1673,6 +1675,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     float alpha = 1.0;
     float beta = 0.0;
+    int loopOK;
+    struct timespec ts;
+
+
 
 
     ID_DMact = image_ID(DMact_stream);
@@ -1685,7 +1691,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     arraytmp[0] = n;
     ID_modeval = create_image_ID(DMmodes_val, 1, arraytmp, FLOAT, 1, 0);
     free(arraytmp);
-    
+
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
     fflush(stdout);
@@ -1753,39 +1759,105 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     }
 
 
-
-
-    if(1==1)
-    {
-        // load DMact to GPU
-        cudaStat = cudaMemcpy(d_DMact, data.image[ID_DMact].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
-        if (cudaStat != cudaSuccess)
-        {
-            printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
-            exit(EXIT_FAILURE);
-        }
-
-        // compute
-        cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
-        if (cudaStat != CUBLAS_STATUS_SUCCESS)
-        {
-            printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-            if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-            if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-            if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-            if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-            exit(EXIT_FAILURE);
-        }
-        
-        // copy result
-        cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*n, cudaMemcpyDeviceToHost);
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
     }
 
- 
+
+    loopOK = 1;
+    iter = 0;
+
+    while(loopOK == 1)
+    {
+        if(data.image[ID_DMact].sem==0)
+        {
+            while(data.image[ID_DMact].md[0].cnt0==cnt) // test if new frame exists
+                usleep(5);
+            cnt = data.image[ID_DMact].md[0].cnt0;
+            semr = 0;
+        }
+        else
+        {
+            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+                perror("clock_gettime");
+                exit(EXIT_FAILURE);
+            }
+            ts.tv_sec += 1;
+            semr = sem_timedwait(data.image[ID_DMact].semptr[0], &ts);
+
+            if(iter == 0)
+            {
+                printf("driving semaphore to zero ... ");
+                fflush(stdout);
+                sem_getvalue(data.image[ID_DMact].semptr[0], &semval);
+                for(scnt=0; scnt<semval; scnt++)
+                    sem_trywait(data.image[ID_DMact].semptr[0]);
+                printf("done\n");
+                fflush(stdout);
+            }
+        }
+
+        if(semr==0)
+        {
+
+            // load DMact to GPU
+            cudaStat = cudaMemcpy(d_DMact, data.image[ID_DMact].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
+            if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+
+            // compute
+            cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, n, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
+            if (cudaStat != CUBLAS_STATUS_SUCCESS)
+            {
+                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                exit(EXIT_FAILURE);
+            }
+
+            // copy result
+            cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*n, cudaMemcpyDeviceToHost);
+        }
+
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            loopOK = 0;
+    }
+
+
     cudaFree(d_DMmodes);
     cudaFree(d_DMact);
     cudaFree(d_modeval);
@@ -1796,6 +1868,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     return(0);
 }
+
 
 
 
