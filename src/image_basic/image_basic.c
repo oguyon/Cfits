@@ -3858,9 +3858,20 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
             loopOK = 0;
     }
 
+
+    data.image[IDs].md[0].write = 1;
     for(ii=0;ii<xysize;ii++)
         data.image[IDs].array.F[ii] = 0.0;
-
+    if(data.image[IDs].sem > 0)
+        {
+            sem_getvalue(data.image[IDs].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[IDs].semptr[0]);
+        }
+        data.image[IDs].md[0].write = 0;
+        data.image[IDs].md[0].cnt0++;
+        
+        
     return(0);
 }
 
