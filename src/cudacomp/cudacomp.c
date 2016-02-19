@@ -1696,7 +1696,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
                 {
                     val = 0.0;
                     for(k=0;k<m;k++)
-                        val += data.image[ID_C].array.F[k*n+ii] * data.image[ID_R].array.F[jj*m+k];
+                        val += data.image[ID_C].array.F[ii*m+k] * data.image[ID_R].array.F[jj*m+k];
                     data.image[ID].array.F[jj*n+ii] = val;
                 }
         save_fits("SVDcheck", "!SVDcheck.fits");
