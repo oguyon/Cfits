@@ -1520,7 +1520,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     for(ii=0;ii<n;ii++)
     {
         if(Sarray[ii]>Sarray[0]*sqrt(SVDeps))
-            val = 1.0/Sarray[ii];
+            val = 1.0/(Sarray[ii]*Sarray[ii]);
         else
             val = 0.0;
         
