@@ -431,6 +431,18 @@ int Measure_zonalRM_cli()
         return 1;
 }
 
+
+int AOloopControl_mkCalib_map_mask_cli()
+{
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)==0)
+        {
+            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+            return 0;
+        }
+    else
+        return 1;
+}
+
 int AOloopControl_ProcessZrespM_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0)
@@ -855,6 +867,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <gain> <compute sum flag>");
     strcpy(data.cmd[data.NBcmd].example,"aolsetmbgain 2 0.2 1");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolRMmkmasks");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkCalib_map_mask_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make sensitivity maps and masks from response matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS response map fname [string]>  <output DM response map fname [string]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolRMmkmasks");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name)");
     data.NBcmd++;
 
 
