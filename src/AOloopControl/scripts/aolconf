@@ -2218,9 +2218,11 @@ state="menuconfigureloop"
 	dmM)
 case $amode in
 	0)
+cd dmmask
 exec 3>&1;
 dmmaskfname=$(dialog --title "Select DM act mask file name" --stdout --fselect "${dmmaskfname}" $nbwlines $nbwcols)
-echo "$dmmaskfname" > ./conf/conf_dmmask_fname.txt
+cd ..
+echo "./dmmask/$dmmaskfname" > ./conf/conf_dmmask_fname.txt
 ReadConfFile "dmmask"
 ;;
 	1)
@@ -2244,12 +2246,15 @@ ds9 conf/dmmask_slaved.fits &
 ;;
 esac
 ;;
+
 	wfsref0)
 case $amode in
 	0)
+cd wfsref0
 exec 3>&1;
 wfsref0fname=$(dialog --title "Select WFS reference file name" --stdout --fselect "${wfsref0fname}" $nbwlines $nbwcols)
-echo "$wfsref0fname" > ./conf/conf_wfsref0_fname.txt
+cd ..
+echo "./wfsref0/$wfsref0fname" > ./conf/conf_wfsref0_fname.txt
 ReadConfFile "wfsref0"
 ;;
 	1)
