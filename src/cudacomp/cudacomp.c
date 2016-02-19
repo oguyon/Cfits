@@ -1695,6 +1695,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     arraytmp[0] = n;
     ID_modeval = create_image_ID(DMmodes_val, 1, arraytmp, FLOAT, 1, 0);
     free(arraytmp);
+    COREMOD_MEMORY_image_set_createsem(DMmodes_val, 2);
+
 
     cudaGetDeviceCount(&deviceCount);
     printf("%d devices found\n", deviceCount);
@@ -1854,7 +1856,16 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             }
 
             // copy result
+            data.image[ID_modeval].md[0].write = 1;
             cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*n, cudaMemcpyDeviceToHost);
+            sem_getvalue(data.image[ID_modeval].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[ID_modeval].semptr[0]);
+            sem_getvalue(data.image[ID_modeval].semptr[1], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[ID_modeval].semptr[1]);
+            data.image[ID_modeval].md[0].cnt0++;
+            data.image[ID_modeval].md[0].write = 0;
         }
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
