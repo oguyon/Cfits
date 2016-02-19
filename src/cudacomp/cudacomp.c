@@ -1641,7 +1641,7 @@ cudaDeviceReset();
 
 
 
-
+ 
 
 
 int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
