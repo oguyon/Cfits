@@ -2054,9 +2054,13 @@ AOlog "RM NB frame excluded $rmexfr frames"
 	zmatn)
 case $amode in
 	0)
+echo "${zrespMfname}"
+echo "${wfsmaskfname}"
+sleep 2
+exec 3>&1;
 zrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM" --fselect "${zrespMfname}" $nbwlines $nbwcols)
+sleep 2
 echo "$zrespMfname" > ./conf/conf_zrespM_fname.txt
-#ReadzrespMfname
 ReadConfFile "zrespM"
 ;;
 	1)
@@ -2065,6 +2069,8 @@ imname=$( cat ./conf/conf_zrespM_fname.txt )
 ;;
 esac
 ;;
+
+
 
 
 
