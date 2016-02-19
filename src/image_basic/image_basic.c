@@ -3794,6 +3794,11 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     }
     zsize = data.image[ID].md[0].size[2];
 
+    list_image_ID();
+
+printf(" %ld %ld\n", ID, IDs);
+fflush(stdout);
+    
     k = 0;
     while(1)
     {
