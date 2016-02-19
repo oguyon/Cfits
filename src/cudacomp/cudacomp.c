@@ -1678,7 +1678,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     int loopOK;
     struct timespec ts;
     long iter;
-
+    long long cnt = -1;
     long scnt;
     int semval;
     int semr;
