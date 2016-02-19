@@ -3768,6 +3768,9 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     struct sched_param schedpar;
     int r;
     int semval;
+    char *ptr0;  
+    char *ptr1;
+    
    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
@@ -3794,13 +3797,17 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     }
     zsize = data.image[ID].md[0].size[2];
 
+    ptr1 = (char*) data.image[IDs].array.F; // destination 
+
     k = 0;
     while(1)
     {
         printf("k = %ld\n", k);
         fflush(stdout);
+        ptr0 = (char*) data.image[ID].array.F;
+        ptr0 += sizeof(float)*xysize*k;
         data.image[IDs].md[0].write = 1;
-        memcpy (data.image[IDs].array.F, (void*) (data.image[ID].array.F + sizeof(float)*xysize*k), sizeof(float)*xysize);
+        memcpy ((void*) ptr1, (void*) ptr0, sizeof(float)*xysize);
         if(data.image[IDs].sem > 0)
         {
             sem_getvalue(data.image[IDs].semptr[0], &semval);
