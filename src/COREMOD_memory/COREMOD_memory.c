@@ -4907,7 +4907,7 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
     sizearray[0] = xsizeim;
     sizearray[1] = ysizeim;
     IDout = create_image_ID(IDout_name, 2, sizearray, data.image[IDin].md[0].atype, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(IDout_name, 4); // create 4 semaphores
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 6); // create 6 semaphores
     IDout_pixslice = create_image_ID("outpixsl", 2, sizearray, USHORT, 0, 0);
 
     NBslice = data.image[IDin].md[0].size[2];
@@ -5006,10 +5006,8 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
             if(slice>oldslice+1)
                 slice = oldslice+1;
 
-
             if(oldslice==NBslice-1)
                 slice = 0;
-
 
             //   clock_gettime(CLOCK_REALTIME, &tarray[slice]);
             //  dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
@@ -5032,6 +5030,14 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
                 sem_getvalue(data.image[IDout].semptr[1], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDout].semptr[1]);
+
+                sem_getvalue(data.image[IDout].semptr[4], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[IDout].semptr[4]);
+
+                sem_getvalue(data.image[IDout].semptr[5], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[IDout].semptr[5]);
 
                 sem_getvalue(data.image[IDout].semlog, &semval);
                 if(semval<SEMAPHORE_MAXVAL)
