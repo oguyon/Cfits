@@ -1677,7 +1677,11 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     float beta = 0.0;
     int loopOK;
     struct timespec ts;
+    long iter;
 
+    long scnt;
+    int semval;
+    int semr;
 
 
 
@@ -1855,6 +1859,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             loopOK = 0;
+        
+        iter++;
     }
 
 
