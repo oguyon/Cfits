@@ -3771,6 +3771,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     char *ptr0;  
     char *ptr1;
     int loopOK;
+    long ii;
    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
