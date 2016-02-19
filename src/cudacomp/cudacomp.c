@@ -1690,14 +1690,14 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
         printf("CHECKING RESULT ... ");
         fflush(stdout);
         
-        ID = create_2Dimage_ID("SVDcheck", m, m);
+        ID = create_2Dimage_ID("SVDcheck", n, n);
         for(ii=0;ii<m;ii++)
             for(jj=0;jj<m;jj++)
                 {
                     val = 0.0;
-                    for(k=0;k<n;k++)
-                        val += data.image[ID_R].array.F[k*m+ii] * data.image[ID_C].array.F[jj*n+k];
-                    data.image[ID].array.F[jj*m+ii] = val;
+                    for(k=0;k<m;k++)
+                        val += data.image[ID_C].array.F[k*n+ii] * data.image[ID_R].array.F[jj*m+k];
+                    data.image[ID].array.F[jj*n+ii] = val;
                 }
         save_fits("SVDcheck", "!SVDcheck.fits");
         printf("DONE\n");
