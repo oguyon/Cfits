@@ -694,12 +694,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
                 SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
 
             // sig X
-            sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
+            sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
             printf("%s", command);
             r = system(command);
 
             // sig Y
-            sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
+            sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
             printf("%s", command);
             r = system(command);
 
