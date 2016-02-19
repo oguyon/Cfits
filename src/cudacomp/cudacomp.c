@@ -1455,7 +1455,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
  
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
-    cusolverDnSgesvd (cudenseH, 'S', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
+    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
     cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
@@ -1497,7 +1497,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
     ID = create_2Dimage_ID("matU", m, m);
-    cudaMemcpy(data.image[ID].array.F, d_U, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
+    cudaMemcpy(data.image[ID].array.F, d_U, sizeof(float)*m*m, cudaMemcpyDeviceToHost);
     save_fits("matU", "!matU.fits");
   
     h_U1 = (float*) malloc(sizeof(float)*m*n);
