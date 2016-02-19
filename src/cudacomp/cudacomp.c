@@ -1682,7 +1682,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     long scnt;
     int semval;
     int semr;
-    long kk;
+    long ii, kk;
 
 
     ID_DMact = image_ID(DMact_stream);
