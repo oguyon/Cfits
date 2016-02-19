@@ -1721,7 +1721,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         printf("Invalid Device : %d / %d\n", GPUindex, deviceCount);
         exit(0);
     }
-
+ 
 
     printf("Create cublas handle ...");
     fflush(stdout);
