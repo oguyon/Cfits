@@ -1549,7 +1549,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     }
     
  
- 
+    save_fits(ID_VTmatrix_name, "!matVT.fits");
  
     cudaStat = cublasSgemm(cublasH, CUBLAS_OP_T, CUBLAS_OP_T, n, m, n, &alpha, d_VT, n, d_U, m, &beta, d_M, n);
      if (cudaStat != cudaSuccess)
