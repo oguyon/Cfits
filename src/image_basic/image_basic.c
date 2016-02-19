@@ -3802,8 +3802,6 @@ fflush(stdout);
     k = 0;
     while(1)
     {
-        printf("%ld\n", k);
-        fflush(stdout);
         data.image[IDs].md[0].write = 1;
         memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(float)*xysize);
         if(data.image[IDs].sem > 0)
