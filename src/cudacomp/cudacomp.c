@@ -1694,7 +1694,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     n = data.image[ID_DMmodes].md[0].size[2];
     NBmodes = n;
 
-    NBmodes = 3;
+    //NBmodes = 3;
 
     arraytmp = (long*) malloc(sizeof(long)*2);
     arraytmp[0] = NBmodes;
