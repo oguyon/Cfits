@@ -3805,7 +3805,7 @@ fflush(stdout);
         printf("%ld\n", k);
         fflush(stdout);
         data.image[IDs].md[0].write = 1;
-        memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(double)*xysize);
+        memcpy (data.image[IDs].array.F, data.image[ID].array.F, sizeof(float)*xysize);
         if(data.image[IDs].sem > 0)
         {
             sem_getvalue(data.image[IDs].semptr[0], &semval);
