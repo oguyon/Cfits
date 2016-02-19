@@ -6017,7 +6017,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     struct sched_param schedpar;
     int ret;
     int PokeSign;
-    long act1, kk1;
+    long act1, act2, kk1;
     
     long *actarray;
 
