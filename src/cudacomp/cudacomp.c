@@ -1651,7 +1651,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     struct timespec tnow;
     int *GPUdevices;
     int k;
-    double SVDeps = 0.9;
+    double SVDeps = 0.01;
 
     long n, m;
     long *arraysizetmp;
