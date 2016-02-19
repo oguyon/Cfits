@@ -1455,7 +1455,7 @@ cudaDeviceReset();
  
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
-    cusolverDnSgesvd (cudenseH, 'S', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
+    cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
     cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
@@ -1660,7 +1660,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     struct timespec tnow;
     int *GPUdevices;
     int k;
-    double SVDeps = 0.01;
+    double SVDeps = 0.1;
 
     long n, m;
     long *arraysizetmp;
@@ -1670,11 +1670,11 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
     if(1==1)
     {
-        //printf("Testing SVD on CPU\n");
-       //linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
+        printf("Testing SVD on CPU\n");
+       linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
     
-        printf("Testing SVD on GPU\n");
-        GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
+       // printf("Testing SVD on GPU\n");
+       // GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
        
        // CHECK RESULT
         arraysizetmp = (long*) malloc(sizeof(long)*3);
