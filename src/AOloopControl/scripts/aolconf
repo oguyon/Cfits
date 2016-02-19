@@ -2070,11 +2070,11 @@ ReadConfFile "dmmap"
 
 sed -e 's/zrespM/wfsref0/g' ./conf/conf_zrespM_fname.txt > ./conf/conf_wfsref0_fname.txt
 ReadConfFile "wfsref0"
-;;
 
 ./mkDMslaveAct ./conf/aol${LOOPNUMBER}_dmmap.fits 0.7
 echo "conf/dmslaved.fits" > ./conf/conf_dmslaved_fname.txt
 ReadConfFile "dmslaved"
+;;
 	1)
 ds9 $imname &
 imname=$( cat ./conf/conf_zrespM_fname.txt )
