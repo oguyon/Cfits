@@ -2051,7 +2051,7 @@ AOlog "RM NB frame excluded $rmexfr frames"
 ;;
 
 
-	zmatn)
+	zrespM)
 case $amode in
 	0)
 echo "${zrespMfname}"
