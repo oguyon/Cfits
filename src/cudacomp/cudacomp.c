@@ -1690,6 +1690,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     ID_DMmodes = image_ID(DMmodes);
     n = data.image[ID_DMmodes].md[0].size[2];
+    for(kk=1;kk<n;kk++)
+        for(ii=0;ii<m;ii++)
+            data.image[ID_DMmodes].array.F[kk*m+ii] = 0.0;
+    save_fits(DMmodes, "!DMmodes_test.fits");
 
     arraytmp = (long*) malloc(sizeof(long)*1);
     arraytmp[0] = n;
@@ -1741,7 +1745,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         printf("cudaMalloc d_DMmodes returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
-    cudaStat = cudaMemcpy(d_DMmodes, data.image[ID_DMmodes].array.F, sizeof(float)*m*1, cudaMemcpyHostToDevice);
+    cudaStat = cudaMemcpy(d_DMmodes, data.image[ID_DMmodes].array.F, sizeof(float)*m*n, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
