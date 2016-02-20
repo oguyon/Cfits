@@ -6493,6 +6493,8 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     IDWFSmask = create_2Dimage_ID("wfsmask", sizexWFS, sizeyWFS);
     IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
 
+    list_image_ID();
+    sleep(10);
 
     printf("Preparing DM map ... ");
     fflush(stdout);    
@@ -6509,7 +6511,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     printf("done\n");
     fflush(stdout);
 
-
+    sleep(10);
 
     printf("Preparing WFS map ... ");
     fflush(stdout);    
@@ -6526,7 +6528,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     printf("done\n");
     fflush(stdout);
 
-
+    sleep(10);
 
 
    printf("Preparing DM mask ... ");
@@ -6543,7 +6545,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
    printf("done\n");
     fflush(stdout);
 
-
+    sleep(10);
 
     // WFSmask : select pixels >40% of 85-percentile
     printf("Preparing WFS mask ... ");
@@ -6556,7 +6558,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
         else
             data.image[IDWFSmask].array.F[ii] = 1.0;
     }
-   printf("done\n");
+    printf("done\n");
     fflush(stdout);
 
 
@@ -6817,8 +6819,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                     save_fits("RMpokeC1", "!test_RMpokeC1.fits");
                 }            
         }
-    list_image_ID();
-    sleep(100);
+
     // update sizeDM
     sizeDM = data.image[IDzrm].md[0].size[2];
 
