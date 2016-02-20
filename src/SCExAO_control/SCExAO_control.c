@@ -65,13 +65,13 @@ long SCExAO_Pcam_Range = 50000;
 
 float SCExAO_PZT_STAGE_Xpos = -5.0;
 float SCExAO_PZT_STAGE_Xpos_ref = -5.0;
-float SCExAO_PZT_STAGE_Xpos_min = -9.0;
-float SCExAO_PZT_STAGE_Xpos_max = -1.0;
+float SCExAO_PZT_STAGE_Xpos_min = -7.0;
+float SCExAO_PZT_STAGE_Xpos_max = -3.0;
 
 float SCExAO_PZT_STAGE_Ypos = -5.0;
 float SCExAO_PZT_STAGE_Ypos_ref = -5.0;
-float SCExAO_PZT_STAGE_Ypos_min = -9.0;
-float SCExAO_PZT_STAGE_Ypos_max = -1.0;
+float SCExAO_PZT_STAGE_Ypos_min = -7.0;
+float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 
 // CLI commands
 //
