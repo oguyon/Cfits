@@ -2202,7 +2202,6 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "cp zrespmat.fits zrespM/zrespM_${dates
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
-
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_fname.txt
@@ -2226,6 +2225,50 @@ AOlog "Stop RM"
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
+
+	zrmcust)
+tmux new-session -d -s aol${LOOPNUMBER}zrmcust
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "${execprefix} ./aolRMmkMasks zrespmat.fits" C-m
+echo "./aolRMmkMasks zrespmat.fits" >> aolcmd.txt
+mkdir -p zrespM
+mkdir -p wfsref
+mkdir -p wfsref0
+mkdir -p wfsmap
+mkdir -p dmmap
+mkdir -p wfsmask
+mkdir -p dmmask
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_fname.txt
+echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_fname.txt
+echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
+echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
+echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
+echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
+rm zrmcust.run
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "touch zrmcust.run" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrmcust "exit" C-m
+waitforfile zrmcust.run
+rm zrmcust.run
+ReadConfFile "zrespM"
+ReadConfFile "wfsref0"
+ReadConfFile "wfsmap"
+ReadConfFile "dmmap"
+ReadConfFile "wfsmask"
+ReadConfFile "dmmask"
+menucontrolloop_default="zrmcust"
+state="menuconfigureloop"
+;;
+
+
+
+
+
 	zrespmon)
 tmux a -t aol${LOOPNUMBER}zrespM
 menucontrolloop_default="zrespmon"

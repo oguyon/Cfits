@@ -3627,9 +3627,7 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
 
 
 
-
-
-    if(COMPUTE_GPU_SCALING==0)  // normalize WFS image by totalinv
+    if((COMPUTE_GPU_SCALING==0)&&(RM==0))  // normalize WFS image by totalinv
     {
         data.image[aoconfID_imWFS1].md[0].write = 1;
 # ifdef _OPENMP
