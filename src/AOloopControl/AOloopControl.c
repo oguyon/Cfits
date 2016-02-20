@@ -6477,8 +6477,8 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     char name[200];
     
     IDzrm = image_ID(zrespm_name);
-    sizexWFS = data.image[IDzrm].md[0].size[1];
-    sizeyWFS = data.image[IDzrm].md[0].size[2];
+    sizexWFS = data.image[IDzrm].md[0].size[0];
+    sizeyWFS = data.image[IDzrm].md[0].size[1];
     
     sprintf(name, "aol%ld_dmC", loop);
     IDdm = read_sharedmem_image(name);
@@ -6497,6 +6497,8 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     printf("sizeWFS = %ld\n", sizeWFS);
     printf("sizeDM  = %ld\n", sizeDM);
     sleep(20);
+
+
 
     printf("Preparing DM map ... ");
     fflush(stdout);    
