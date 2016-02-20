@@ -6805,8 +6805,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         {
             chname_image_ID(zrespm_name, "tmprm");
             save_fits("tmprm", "!zrespm_Hadamard.fits");
+            
             AOloopControl_Hadamard_decodeRM("tmprm", "Hmat", "pixindexim", zrespm_name);
             delete_image_ID("tmprm");
+            
             IDzrm = image_ID(zrespm_name);
 
             if((IDrmpokec = image_ID("RMpokeC"))!=-1)   
@@ -6815,8 +6817,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                     save_fits("RMpokeC1", "!test_RMpokeC1.fits");
                 }            
         }
-
-
+    list_image_ID();
+    sleep(100);
     // update sizeDM
     sizeDM = data.image[IDzrm].md[0].size[2];
 
