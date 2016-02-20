@@ -3627,7 +3627,7 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
 
 
 
-    if((COMPUTE_GPU_SCALING==0)&&(RM==0))  // normalize WFS image by totalinv
+    if( ((COMPUTE_GPU_SCALING==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
     {
         data.image[aoconfID_imWFS1].md[0].write = 1;
 # ifdef _OPENMP
@@ -3646,7 +3646,8 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
         data.image[aoconfID_imWFS1].md[0].cnt0 ++;
         data.image[aoconfID_imWFS1].md[0].write = 0;
     }
-
+    
+  
 
     return(0);
 }
@@ -6042,6 +6043,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     
     long *actarray;
 
+
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
 
@@ -6139,10 +6141,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
     cntn = 0;
     iter = 0;
-
-
-    //
-
 
 
 
@@ -6340,6 +6338,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         AOconf[loop].DMupdatecnt ++;
 
 
+
+
         if(data.signal_USR1==0)
         {
             for(act=0; act<NBpoke; act++)
@@ -6354,6 +6354,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                     data.image[IDzrespfp].array.F[act*AOconf[loop].sizeWFS+ii] /= NBave;
                     data.image[IDzrespfm].array.F[act*AOconf[loop].sizeWFS+ii] /= NBave;
                 }
+
+            
 
 
             r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
