@@ -230,7 +230,7 @@ int init_linopt_imtools()
 
     strcpy(data.cmd[data.NBcmd].key,"imlinconstructs");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = linopt_imtools_image_construct_cli;
+    data.cmd[data.NBcmd].fp = linopt_imtools_image_construct_stream_cli;
     strcpy(data.cmd[data.NBcmd].info,"construct image as linear sum of modes (stream mode)");
     strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs> <outim>");
     strcpy(data.cmd[data.NBcmd].example,"imlinconstructs modes coeffs outim");
