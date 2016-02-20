@@ -3129,7 +3129,7 @@ menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient"
 
 if [ "${zploopONstat}" = "OFF" ];
 then
-menuitems+=( "zplon" "   START zero point offset loop" )
+menuitems+=( "zplon" "   START zero point offset loop #3 (wfszpo3)" )
 else
 menuitems+=( "zploff" "\Z1\ZrSTOP zero point offset loop\Zn" )
 fi
