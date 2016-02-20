@@ -1100,7 +1100,9 @@ long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_nam
         else
             sem_wait(data.image[IDcoeff].semptr[0]);
 
-        
+         for(ii=0; ii<sizexy; ii++)
+            data.image[IDout].array.F[ii] = 0.0;
+                
         data.image[IDout].md[0].write = 1;
         for(kk=0; kk<zsize; kk++)
             for(ii=0; ii<sizexy; ii++)
