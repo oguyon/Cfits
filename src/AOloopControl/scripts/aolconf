@@ -3297,7 +3297,7 @@ AOlog "zeroing loop"
          echo "gi = $gi   $i  $NBblocks   $gtmp"
 	     echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
-        sleep 10
+        sleep 1
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
