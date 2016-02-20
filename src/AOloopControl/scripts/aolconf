@@ -38,7 +38,7 @@ shmimmonexec="shmimmon"
 
 
 # CUSTOM USER-PROVIDED SCRIPTS:
-. AOloopsetup.bash # executed here
+./AOloopsetup.bash # executed here
 # script AOloopAlign.bash : to be executed when menu entry sected
 
 
