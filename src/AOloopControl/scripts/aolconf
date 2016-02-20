@@ -1558,7 +1558,7 @@ menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} fra
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
 menuitems+=( "zrespM" "$menustring" )
 
-
+menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
 if [ -f "./conf/conf_RMpokeMode.txt" ]; then
