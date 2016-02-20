@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <semaphore.h>
-
+#include <sched.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multifit.h>
 
@@ -1078,7 +1078,7 @@ long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_nam
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     
-     schedpar.sched_priority = RT_priority;
+    schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
   
   
