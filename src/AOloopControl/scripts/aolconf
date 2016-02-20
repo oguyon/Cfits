@@ -2866,6 +2866,8 @@ tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run" C-m
 waitforfile mkmodes.run
 
 
+dialog --title "OKbox" --msgbox 'Type key to load new CM' 6 20
+
 ReadConfFile "DMmodes"
 ReadConfFile "respM"
 ReadConfFile "contrM"
