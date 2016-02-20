@@ -126,6 +126,20 @@ int linopt_imtools_image_construct_cli()
 
 
 
+int linopt_imtools_image_construct_stream_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)==0)
+    {
+      linopt_imtools_image_construct_stream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+//long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_name, char *IDout_name)
+
+
 int linopt_compute_SVDdecomp_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)==0)
@@ -212,6 +226,15 @@ int init_linopt_imtools()
     strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs> <outim>");
     strcpy(data.cmd[data.NBcmd].example,"imlinconstruct modes coeffs outim");
     strcpy(data.cmd[data.NBcmd].Ccall,"long linopt_imtools_image_construct(char *IDmodes_name, char *IDcoeff_name, char *ID_name)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imlinconstructs");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = linopt_imtools_image_construct_cli;
+    strcpy(data.cmd[data.NBcmd].info,"construct image as linear sum of modes (stream mode)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs> <outim>");
+    strcpy(data.cmd[data.NBcmd].example,"imlinconstructs modes coeffs outim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_name, char *IDout_name)");
     data.NBcmd++;
 
 
@@ -1005,13 +1028,14 @@ long linopt_imtools_image_construct(char *IDmodes_name, char *IDcoeff_name, char
 
     IDmodes = image_ID(IDmodes_name);
     atype = data.image[IDmodes].md[0].atype;
+
     xsize = data.image[IDmodes].md[0].size[0];
     ysize = data.image[IDmodes].md[0].size[1];
     zsize = data.image[IDmodes].md[0].size[2];
+
     sizexy = xsize*ysize;
 
-   // printf("%ld %ld %ld\n", xsize, ysize, zsize);
-    //fflush(stdout);
+
 
     if(atype==FLOAT)
         ID = create_2Dimage_ID(ID_name, xsize, ysize);
@@ -1020,7 +1044,6 @@ long linopt_imtools_image_construct(char *IDmodes_name, char *IDcoeff_name, char
 
     IDcoeff = image_ID(IDcoeff_name);
 
-    //  list_image_ID();
 
     if(atype==FLOAT)
     {
@@ -1035,9 +1058,63 @@ long linopt_imtools_image_construct(char *IDmodes_name, char *IDcoeff_name, char
                 data.image[ID].array.D[ii] += data.image[IDcoeff].array.D[kk] * data.image[IDmodes].array.D[kk*sizexy+ii];
     }
 
+
     return(ID);
 }
 
+
+// FLOAT only
+long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_name, char *IDout_name)
+{
+    long IDout;
+    long IDmodes;
+    long IDcoeff;
+    long ii, jj, kk;
+    long xsize, ysize, zsize;
+    long sizexy;
+    int semval;
+    int atype;
+    long long cnt = 0;
+
+    IDmodes = image_ID(IDmodes_name);
+    atype = data.image[IDmodes].md[0].atype;
+
+    xsize = data.image[IDmodes].md[0].size[0];
+    ysize = data.image[IDmodes].md[0].size[1];
+    zsize = data.image[IDmodes].md[0].size[2];
+
+    sizexy = xsize*ysize;
+
+
+    IDout = image_ID(IDout_name);
+    IDcoeff = image_ID(IDcoeff_name);
+
+    while(1==1)
+    {
+        if(data.image[IDcoeff].sem==0)
+        {
+            while(cnt==data.image[IDcoeff].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[IDcoeff].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[IDcoeff].semptr[0]);
+
+        
+        data.image[IDout].md[0].write = 1;
+        for(kk=0; kk<zsize; kk++)
+            for(ii=0; ii<sizexy; ii++)
+                data.image[IDout].array.F[ii] += data.image[IDcoeff].array.F[kk] * data.image[IDmodes].array.F[kk*sizexy+ii];
+        sem_getvalue(data.image[IDout].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(data.image[IDout].semptr[0]);
+
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+    }
+
+    return(IDout);
+}
 
 
 
