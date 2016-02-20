@@ -6494,7 +6494,9 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     IDDMmask = create_2Dimage_ID("dmmask", sizexDM, sizeyDM);
 
     list_image_ID();
-    sleep(10);
+    printf("sizeWFS = %ld\n", sizeWFS);
+    printf("sizeDM  = %ld\n", sizeDM);
+    sleep(20);
 
     printf("Preparing DM map ... ");
     fflush(stdout);    
