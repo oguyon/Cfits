@@ -6743,6 +6743,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
                 save_fits(DMmap_name, fname);
 
+        printf("----- TEST STEP 005 --------\n");
+        fflush(stdout);                
 
 
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -6758,7 +6760,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
                 save_fits(WFSmap_name, fname);
 
-        printf("----- TEST STEP 005 --------\n");
+        printf("----- TEST STEP 006 --------\n");
         fflush(stdout);                
 
 
@@ -6788,7 +6790,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             iter++;
             r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
             r = system(command);
-                    printf("----- TEST STEP 006 --------\n");
+                    printf("----- TEST STEP 007 --------\n");
         fflush(stdout);                
 
         }
