@@ -6462,10 +6462,12 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     iter = 0;
 
 
-
+    printf("Clearing directory files\n");
+    fflush(stdout);
+    
     //    for(iter=0; iter<NBiter; iter++)
     r = system("mkdir -p zresptmp");
-    r = system("rm ./zresptmp/*.fits");
+    r = system("rm ./zresptmp/LO*.fits");
 
     r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
     r = system(command);
