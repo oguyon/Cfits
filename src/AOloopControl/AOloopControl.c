@@ -6556,7 +6556,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                     }
             }
             
-                
+            
+        printf("----- TEST STEP 00 --------\n");
+        fflush(stdout);    
+        
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
