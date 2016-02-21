@@ -2487,6 +2487,7 @@ LOrespMstat=" ON"
 echo " ON" > ./status/stat_LOrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}LOrespM
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "{execprefix} ./aolmkLO_DMmodes ${rmMcpa}" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "sleep 100" C-m
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 echo "./aolMeasureLOrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 AOlog "Start modal RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
