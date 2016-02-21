@@ -6728,7 +6728,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             if(mode!=3)
             {
                 list_image_ID();
-                        printf("----- TEST STEP 004  [%ld  %ld] --------\n", IDzrespmn, ID_DMmap);
+                        printf("----- TEST STEP 004  [%ld  %ld] sizeDM = %ld --------\n", IDzrespmn, ID_DMmap, AOconf[loop].sizeDM);
         fflush(stdout);                
 
                 for(act=0; act<AOconf[loop].sizeDM; act++)
