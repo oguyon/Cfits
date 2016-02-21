@@ -6818,7 +6818,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
             tmpv = data.image[IDzrm].array.F[poke*sizeWFS+ii];
             rms += tmpv*tmpv;
         }
-        data.image[IDDMmap].array.F[act] = rms;
+        data.image[IDDMmap].array.F[poke] = rms;
     }
     printf("done\n");
     fflush(stdout);
