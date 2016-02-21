@@ -2201,7 +2201,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         delete_image_ID("linfitcoeff");
         delete_image_ID("imfitim");
 
-        
+        save_fits("imfitmat", "!imfitmat.fits");
+        delete_image_ID("imfitmat");
 
 
         printf("\n");
