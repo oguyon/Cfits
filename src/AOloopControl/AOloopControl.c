@@ -6648,16 +6648,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         }
         cntn = 2*NBave; // Number of images
             
-        printf("----- TEST STEP 00 --------\n");
-        fflush(stdout);                
-
 
         for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = 0.0;
             
-        printf("----- TEST STEP 01 --------\n");
-        fflush(stdout);                
-
         data.image[aoconfID_dmRM].md[0].write = 1;
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
         data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -6665,16 +6659,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         AOconf[loop].DMupdatecnt ++;
 
             
-        printf("----- TEST STEP 02 --------\n");
-        fflush(stdout);                
-
-
- 
         if(data.signal_USR1==0)
         {
-        printf("----- TEST STEP 000 --------\n");
-        fflush(stdout);                
-
             for(act=0; act<NBpoke; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii]/ampl/cntn;
@@ -6688,18 +6674,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                     data.image[IDzrespfm].array.F[act*AOconf[loop].sizeWFS+ii] /= NBave;
                 }
 
-            
-        printf("----- TEST STEP 001 --------\n");
-        fflush(stdout);                
-
-
             r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
             save_fits("zrespfp", fname);
             r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter);
             save_fits("zrespfm", fname);
-
-        printf("----- TEST STEP 002 --------\n");
-        fflush(stdout);                
 
             total = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -6718,9 +6696,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[ID_WFSref0n].array.F[ii] /= NBave;
             }
-        printf("----- TEST STEP 003 --------\n");
-        fflush(stdout);                
-
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter);
             save_fits(WFSref0_name, fname);
 
@@ -6728,9 +6703,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             if(mode!=3)
             {
                 list_image_ID();
-                        printf("----- TEST STEP 004  [%ld  %ld] --------\n", IDzrespmn, ID_DMmap);
-        fflush(stdout);                
-
                 for(poke=0; poke<NBpoke; poke++)
                 {
                     rms = 0.0;
@@ -6743,9 +6715,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 }
                 sprintf(fname, "!./zresptmp/%s_%03ld.fits", DMmap_name, iter);
                 save_fits(DMmap_name, fname);
-
-        printf("----- TEST STEP 005 --------\n");
-        fflush(stdout);                
 
 
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -6760,10 +6729,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 }
                 sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
                 save_fits(WFSmap_name, fname);
-
-        printf("----- TEST STEP 006 --------\n");
-        fflush(stdout);                
-
 
                 if(mode>0) // compute WFSmask and DMmask
                 {
@@ -6791,9 +6756,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             iter++;
             r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
             r = system(command);
-                    printf("----- TEST STEP 007 --------\n");
-        fflush(stdout);                
-
         }
     }
 
