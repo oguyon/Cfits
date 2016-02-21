@@ -265,6 +265,18 @@ int AOloopControl_CrossProduct_cli()
 }
 
 
+
+
+int AOloopControl_mkloDMmodes_cli()
+{
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)==0)
+        AOloopControl_mkloDMmodes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl);
+    else
+        return 1;
+}
+
+
+
 int AOloopControl_mkModes_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,1)==0)
@@ -814,6 +826,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].syntax,"<cube1> <cube2> <output image>");
     strcpy(data.cmd[data.NBcmd].example,"aolcrossp imc0 imc1 crosspout");
     strcpy(data.cmd[data.NBcmd].Ccall,"AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolmklodmmodes");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkloDMmodes_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make low order DM modes");
+    strcpy(data.cmd[data.NBcmd].syntax,"<output modes> <sizex> <sizey> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmklodmmodes modes 50 50 5.0 0.8 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode)");
     data.NBcmd++;
 
 
