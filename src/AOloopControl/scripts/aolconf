@@ -2480,7 +2480,7 @@ echo "./aolMeasureLOrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSn
 AOlog "Start modal RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
-	zrespc) # clean zrespm
+	LOrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}LOrepMc"
 tmux new-session -d -s ${tmuxname}
 #tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
@@ -2524,7 +2524,7 @@ echo "OFF" > ./status/stat_LOrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}LOrespM
 #tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
 #echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
-##pkill -USR1 aol${LOOPNUMBER}LOrespM
+pkill -USR1 aol${LOOPNUMBER}LOrespM
 #mkdir -p zrespM
 #mkdir -p wfsref
 #mkdir -p wfsref0
