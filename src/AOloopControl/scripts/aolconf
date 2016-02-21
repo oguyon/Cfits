@@ -2595,8 +2595,6 @@ echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_fname.txt
 echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_fname.txt
 echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_fname.txt
 echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_fname.txt
-sleep 100
-
 rm cleanLOresp.run
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "touch cleanLOresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "exit" C-m
