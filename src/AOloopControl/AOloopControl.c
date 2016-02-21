@@ -6359,7 +6359,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     long act1, act2, kk1;
     
     long *actarray;
-
+    long poke, poke1, poke2;
 
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
@@ -6483,19 +6483,19 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
 
         // permut actarray
-        for(act=0;act<NBpoke;act++)
-            actarray[act] = act;
+        for(poke=0;poke<NBpoke;poke++)
+            actarray[poke] = poke;
              
-       for(act=0;act<NBpoke;act++)
+       for(poke=0;poke<NBpoke;poke++)
             {
-                act1 = (long) (ran1()*NBpoke);
-                if(act1>=NBpoke)
-                    act1 = NBpoke-1;
-                if(act!=act1)
+                poke1 = (long) (ran1()*NBpoke);
+                if(poke1>=NBpoke)
+                    poke1 = NBpoke-1;
+                if(poke!=poke1)
                     {
-                        act2 = actarray[act1];
-                        actarray[act1] = actarray[act];
-                        actarray[act] = act2;
+                        poke2 = actarray[poke1];
+                        actarray[poke1] = actarray[poke];
+                        actarray[poke] = poke2;
                     }
             }
         
@@ -6505,9 +6505,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         printf("\n");
 */
 
-        for(act=0; act<NBpoke; act++)
+        for(poke=0; poke<NBpoke; poke++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDzrespm].array.F[act*AOconf[loop].sizeWFS+ii] = 0.0;
+                data.image[IDzrespm].array.F[poke*AOconf[loop].sizeWFS+ii] = 0.0;
 
 
         act = 0;
@@ -6669,7 +6669,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         fflush(stdout);                
 
 
-
+ 
         if(data.signal_USR1==0)
         {
         printf("----- TEST STEP 000 --------\n");
@@ -6728,15 +6728,15 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             if(mode!=3)
             {
                 list_image_ID();
-                        printf("----- TEST STEP 004  [%ld  %ld] sizeDM = %ld --------\n", IDzrespmn, ID_DMmap, AOconf[loop].sizeDM);
+                        printf("----- TEST STEP 004  [%ld  %ld] --------\n", IDzrespmn, ID_DMmap);
         fflush(stdout);                
 
-                for(act=0; act<AOconf[loop].sizeDM; act++)
+                for(poke=0; poke<NBpoke; poke++)
                 {
                     rms = 0.0;
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     {
-                        tmpv = data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii];
+                        tmpv = data.image[IDzrespmn].array.F[poke*AOconf[loop].sizeWFS+ii];
                         rms += tmpv*tmpv;
                     }
                     data.image[ID_DMmap].array.F[act] = rms;
