@@ -2506,7 +2506,7 @@ cd LOrespM
 exec 3>&1;
 LOrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM" --fselect "${LOrespMfname}" $nbwlines $nbwcols)
 cd ..
-echo "./zrespM/$LOrespMfname" > ./conf/conf_LOrespM_fname.txt
+echo "./LOrespM/$LOrespMfname" > ./conf/conf_LOrespM_fname.txt
 ReadConfFile "LOrespM"
 ;;
 	1)
