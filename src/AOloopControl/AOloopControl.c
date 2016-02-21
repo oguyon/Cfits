@@ -6390,6 +6390,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     sprintf(name, "aol%ld_imWFS1RM", loop);
     sizearray[0] = AOconf[loop].sizexWFS;
     sizearray[1] = AOconf[loop].sizeyWFS;
+    printf("WFS size = %ld %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    fflush(stdout);
     aoconfID_imWFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
 
 
