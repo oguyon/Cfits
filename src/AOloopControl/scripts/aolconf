@@ -2524,6 +2524,7 @@ echo "OFF" > ./status/stat_LOrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}LOrespM
 #tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
 #echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
+echo "pkill -USR1 aol${LOOPNUMBER}LOrespM"
 pkill -USR1 aol${LOOPNUMBER}LOrespM
 #mkdir -p zrespM
 #mkdir -p wfsref
