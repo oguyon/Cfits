@@ -2450,6 +2450,9 @@ state="menuconfigureloop"
 
 
 
+
+
+
 	rmMamp)
 exec 3>&1;
 rmMamplum=$(dialog --inputbox "modal RM amp [um]" 0 0 "$rmMamplum" 2>&1 1>&3);
@@ -2458,13 +2461,104 @@ echo "$rmMamplum" > ./conf/conf_RMMamplum.txt
 AOlog "modal RM amplitude $rmMamplum um"
 ;;
 
-
 	rmMcpa)
 exec 3>&1;
 rmMcpa=$(dialog --inputbox "modal RM CPA max" 0 0 "$rmMcpa" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmMcpa" > ./conf/conf_RMMcpa.txt
 AOlog "modal RM CPA max $rmMcpa"
+;;
+
+
+
+	LOresp_on)
+LOrespMstat=" ON"
+echo " ON" > ./status/stat_LOrespM.txt
+tmux new-session -d -s aol${LOOPNUMBER}LOrespM
+#tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+#echo "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+#AOlog "Start RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
+menucontrolloop_default="LOrespoff"
+;;
+	zrespc) # clean zrespm
+tmuxname="aol${LOOPNUMBER}LOrepMc"
+tmux new-session -d -s ${tmuxname}
+#tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
+#echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
+#mkdir -p zrespM
+#mkdir -p wfsref
+#mkdir -p wfsref0
+#mkdir -p wfsmap
+#mkdir -p dmmap
+#mkdir -p wfsmask
+#mkdir -p dmmask
+#datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+#tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+#tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+#echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_fname.txt
+#echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_fname.txt
+#echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
+#echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
+#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
+#echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
+rm cleanLOresp.run
+tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
+tmux send-keys -t ${tmuxname} "exit" C-m
+waitforfile cleanLOresp.run
+rm cleanLOresp.run
+#ReadConfFile "zrespM"
+#ReadConfFile "wfsref0"
+#ReadConfFile "wfsmap"
+#ReadConfFile "dmmap"
+#ReadConfFile "wfsmask"
+#ReadConfFile "dmmask"
+sleep 0.5
+;;
+	LOrespoff)
+LOrespMstat="OFF"
+echo "OFF" > ./status/stat_LOrespM.txt
+tmux new-session -d -s aol${LOOPNUMBER}LOrespM
+#tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
+#echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
+##pkill -USR1 aol${LOOPNUMBER}LOrespM
+#mkdir -p zrespM
+#mkdir -p wfsref
+#mkdir -p wfsref0
+#mkdir -p wfsmap
+#mkdir -p dmmap
+#mkdir -p wfsmask
+#mkdir -p dmmask
+#datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+#tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+#echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_fname.txt
+#echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_fname.txt
+#echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_fname.txt
+#echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_fname.txt
+#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_fname.txt
+#echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_fname.txt
+rm cleanLOresp.run
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "touch cleanLOresp.run" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "exit" C-m
+waitforfile cleanLOresp.run
+rm cleanLOresp.run
+#ReadConfFile "zrespM"
+#ReadConfFile "wfsref0"
+#ReadConfFile "wfsmap"
+#ReadConfFile "dmmap"
+#ReadConfFile "wfsmask"
+#ReadConfFile "dmmask"
+AOlog "Stop modal RM"
+menucontrolloop_default="LOresp_on"
+state="menuconfigureloop"
 ;;
 
 
