@@ -1666,14 +1666,8 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
         delete_image_ID("_tmpinterpol");
     }
 
-    list_image_ID();
 
-
-
-
-
-
-return(ID);
+    return(ID);
 }
 
 
@@ -1924,10 +1918,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         if(MODAL==0)
         {
             AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
-            printf("SAVING MODES : %s...\n", ID_name);
-            save_fits(ID_name, "!./mkmodestmp/test_fmodes0all.fits");
-            printf("DONE SAVING\n");
-            exit(0);
+                    
+           
+           /* 
             
             
             NBZ = 5; /// 3: tip, tilt, focus
@@ -1954,7 +1947,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
             IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ, 1);
 
-            /*** Create TTF first */
+           
             zernike_init();
             for(k=0; k<NBZ; k++)
             {
@@ -2106,7 +2099,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 }
                 delete_image_ID("_tmpinterpol");
             }
-
+*/
 
         }
         else
@@ -2128,7 +2121,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
 
         printf("SAVING MODES : %s...\n", ID_name);
-        save_fits(ID_name, "!./mkmodestmp/test_fmodes0all.fits");
+        save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
         printf("DONE SAVING\n");
     
 // time : 0:04
