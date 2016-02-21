@@ -2502,13 +2502,12 @@ AOlog "modal RM CPA max $rmMcpa"
 	LOrespM)
 case $amode in
 	0)
-cd zrespM
+cd LOrespM
 exec 3>&1;
 LOrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM" --fselect "${LOrespMfname}" $nbwlines $nbwcols)
 cd ..
 echo "./zrespM/$LOrespMfname" > ./conf/conf_LOrespM_fname.txt
 ReadConfFile "LOrespM"
-
 ;;
 	1)
 ds9 $imname &
@@ -2567,6 +2566,7 @@ ReadConfFile "LOrespM"
 #ReadConfFile "dmmask"
 sleep 0.5
 ;;
+
 	LOrespoff)
 LOrespMstat="OFF"
 echo "OFF" > ./status/stat_LOrespM.txt
