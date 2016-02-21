@@ -6600,12 +6600,17 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                     }
             }
                         
+            printf("----- TEST STEP 01 --------\n");
+            fflush(stdout);                
+            
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
                 data.image[IDzrespfp].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] = data.image[IDpos].array.F[ii];
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDpos].array.F[ii];
             }
+            printf("----- TEST STEP 02 --------\n");
+            fflush(stdout);                
 
 
             // NEGATIVE INTEGRATION
@@ -6639,7 +6644,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                         AOconf[loop].DMupdatecnt ++;
                     }
             }
-                        
+            
+            printf("----- TEST STEP 03 --------\n");
+            fflush(stdout);                
+     
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
@@ -6650,6 +6658,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             act++;
         }
         cntn = 2*NBave; // Number of images
+            
+            printf("----- TEST STEP 04 --------\n");
+            fflush(stdout);                
 
 
         for(j=0; j<AOconf[loop].sizeDM; j++)
