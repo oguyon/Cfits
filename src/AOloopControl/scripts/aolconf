@@ -2583,12 +2583,12 @@ mkdir -p LOdmmap
 mkdir -p LOwfsmask
 mkdir -p LOdmmask
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_fname.txt
 echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_fname.txt
 echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_fname.txt
