@@ -1678,7 +1678,7 @@ menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 rmMamplum=0.1
 if [ -f "./conf/conf_RMMamplum.txt" ]; then
-rmamplum=$( cat ./conf/conf_RMMamplum.txt )
+rmMamplum=$( cat ./conf/conf_RMMamplum.txt )
 fi
 menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
 
