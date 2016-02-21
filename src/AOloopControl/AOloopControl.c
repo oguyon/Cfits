@@ -6702,7 +6702,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
             if(mode!=3)
             {
-                list_image_ID();
                 for(poke=0; poke<NBpoke; poke++)
                 {
                     rms = 0.0;
