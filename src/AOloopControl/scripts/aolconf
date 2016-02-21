@@ -2475,9 +2475,10 @@ AOlog "modal RM CPA max $rmMcpa"
 LOrespMstat=" ON"
 echo " ON" > ./status/stat_LOrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}LOrespM
-#tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-#echo "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-#AOlog "Start RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ${execprefix} ${rmMcpa}"
+tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolMeasureLOrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+echo "./aolMeasureLOrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+AOlog "Start modal RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
 	zrespc) # clean zrespm
