@@ -1815,8 +1815,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     long act1, act2;
 
-
     int MODAL; // 1 if "pixels" of DM are already modes
+
+    long IDRMMmodes, IDRMMresp, ID_imfit, IDRMM_coeff, IDcoeffmat;
+    long IDmodes0all;
+    long linfitsize;
+    int linfitreuse;
+
 
 
     MODAL = 0;
@@ -2119,6 +2124,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+        IDmodes0all = image_ID(ID_name);
         printf("DONE SAVING\n");
     
 // time : 0:04
@@ -2145,8 +2151,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("\n");
         
         # ifdef _OPENMP
-                #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
-                # endif
+        #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
+        # endif
+                
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
             m1 = m*wfssize;
@@ -2164,8 +2171,44 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
 
+        
+        // if modal response matrix exists, use it
+        IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
+        IDRMMresp = image_ID("RMMresp"); // modal resp matrix
+
+        linfitsize = data.image[IDRMMmodes].md[0].size[2];
+        IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
+        
+        ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
+        
+        IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
+        
+        linfitreuse = 0;
+        if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
+            {
+                for(m=0;m<data.image[ID].md[0].size[2]; m++)
+                {
+                    for(ii=0;ii<msizexy;ii++)
+                        data.image[ID_imfit].array.F[ii] = data.image[IDmodes0all].array.F[m*msizexy+ii];
+                            
+                    linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 0.0001, "linfitcoeff", linfitreuse);
+                    linfitreuse = 1;
+                    
+                    for(jj=0;jj<linfitsize;jj++)
+                        data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
+                }
+            }
+        delete_image_ID("linfitcoeff");
+        delete_image_ID("imfitim");
+
+        
+
+
         printf("\n");
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
+
+exit(0);
+
 
 
 
