@@ -1671,13 +1671,25 @@ fi
 
 
 
+menuitems+=( " " " " )
+stringcenter "SYSTEM CALIBRATION (MODAL)"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
+
+rmMamplum=0.1
+if [ -f "./conf/conf_RMMamplum.txt" ]; then
+rmamplum=$( cat ./conf/conf_RMMamplum.txt )
+fi
+menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
+
+
 
 
 
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM MODAL RESPONSE AND CONTROL"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 
 SVDlimall=0.01
@@ -2400,6 +2412,22 @@ tmux a -t $tmuxsname
 menucontrolloop_default="awfsref0mon"
 state="menuconfigureloop"
 ;;
+
+
+
+
+	rmMamp)
+exec 3>&1;
+rmMamplum=$(dialog --inputbox "modal RM amp [um]" 0 0 "$rmMamplum" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmMamplum" > ./conf/conf_RMMamplum.txt
+AOlog "modal RM amplitude $rmMamplum um"
+;;
+
+
+
+
+
 
 
 	SVDla)
