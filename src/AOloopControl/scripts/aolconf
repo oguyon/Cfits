@@ -1692,6 +1692,33 @@ menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" 
 
 
 
+LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
+if [ "${LOrespMstat}" = "OFF" ];
+then
+menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] START modal RMs acquisition" )
+if [ "${LOrespmatnbiter}" -lt 4 ]; then
+menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+else
+menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
+fi
+
+#menuitems+=( "zrespoff" "            PROCESS zrespM" )
+menuitems+=( " " " ")
+else
+menuitems+=( "LOrespoff" "\Z1\ZrSTOP modal RM acquisition\Zn" )
+if [ "${LOrespmatnbiter}" -lt 4 ]; then
+menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+else
+menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
+fi
+
+menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
+fi
+
+
+
+
+
 
 
 menuitems+=( " " " " )
