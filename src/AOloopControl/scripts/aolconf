@@ -1683,6 +1683,13 @@ fi
 menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
 
 
+rmMcpa=1.0
+if [ -f "./conf/conf_RMMcpa.txt" ]; then
+rmMamplum=$( cat ./conf/conf_RMMcpa.txt )
+fi
+menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" )
+
+
 
 
 
@@ -2424,6 +2431,14 @@ echo "$rmMamplum" > ./conf/conf_RMMamplum.txt
 AOlog "modal RM amplitude $rmMamplum um"
 ;;
 
+
+	rmMcpa)
+exec 3>&1;
+rmMcpa=$(dialog --inputbox "modal RM CPA max" 0 0 "$rmMcpa" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmMcpa" > ./conf/conf_RMMcpa.txt
+AOlog "modal RM CPA max $rmMcpa"
+;;
 
 
 
