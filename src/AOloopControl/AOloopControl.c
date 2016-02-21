@@ -6478,7 +6478,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
-        printf("\r iteration # %8ld     ", iter);
+        printf("iteration # %8ld    \n", iter);
         fflush(stdout);
 
 
@@ -6672,6 +6672,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
         if(data.signal_USR1==0)
         {
+        printf("----- TEST STEP 000 --------\n");
+        fflush(stdout);                
+
             for(act=0; act<NBpoke; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[IDzrespmn].array.F[act*AOconf[loop].sizeWFS+ii] = data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii]/ampl/cntn;
