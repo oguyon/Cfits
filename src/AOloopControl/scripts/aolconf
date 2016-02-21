@@ -394,6 +394,21 @@ Fits2shm ${zrespMfname} aol${LOOPNUMBER}_zrespM
 ln -s $PWD/${zrespMfname} conf/aol${LOOPNUMBER}_zrespM.fits
 }
 
+
+function ReadLOrespMfname {
+file="./conf/conf_LOrespM_fname.txt"
+if [ -a $file ]
+	then
+	LOrespMfname=$(echo "$(cat $file)")
+	else
+	LOrespMfname="LOrespM.fits" #default
+fi
+rm /tmp/aol${LOOPNUMBER}_LOrespM.im.shm
+Fits2shm ${LOrespMfname} aol${LOOPNUMBER}_LOrespM
+ln -s $PWD/${LOrespMfname} conf/aol${LOOPNUMBER}_LOrespM.fits
+}
+
+
 function ReadWFSmaskfname {
 file="./conf/conf_wfsmask_fname.txt"
 if [ -a $file ]
@@ -829,6 +844,7 @@ ReadWFSdarkfname
 
 # SYSTEM CALIBRATION
 ReadConfFile "zrespM"
+ReadConfFile "LOrespM"
 ReadConfFile "wfsmask"
 ReadConfFile "dmmap"
 ReadConfFile "dmmask"
@@ -1692,6 +1708,9 @@ menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" 
 
 
 
+makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
+menuitems+=( "LOrespM" "$menustring" )
+
 
 
 LOrespMstat=$( cat ./status/stat_LOrespM.txt )
@@ -1700,8 +1719,6 @@ echo "OK"
 else
 echo "OFF" > ./status/stat_LOrespM.txt
 fi
-
-
 
 LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
 if [ "${LOrespMstat}" = "OFF" ];
@@ -2478,6 +2495,25 @@ rmMcpa=$(dialog --inputbox "modal RM CPA max" 0 0 "$rmMcpa" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmMcpa" > ./conf/conf_RMMcpa.txt
 AOlog "modal RM CPA max $rmMcpa"
+;;
+
+
+	LOrespM)
+case $amode in
+	0)
+cd zrespM
+exec 3>&1;
+LOrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM" --fselect "${LOrespMfname}" $nbwlines $nbwcols)
+cd ..
+echo "./zrespM/$LOrespMfname" > ./conf/conf_LOrespM_fname.txt
+ReadConfFile "LOrespM"
+
+;;
+	1)
+ds9 $imname &
+imname=$( cat ./conf/conf_LOrespM_fname.txt )
+;;
+esac
 ;;
 
 
