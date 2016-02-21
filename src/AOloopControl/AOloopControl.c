@@ -1801,9 +1801,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
 
         printf("SAVING MODES : %s...\n", ID_name);
-        save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+        save_fits(ID_name, "!./mkmodestmp/test_fmodes0all.fits");
         printf("DONE SAVING\n");
-
+    
+    exit(0);
 // time : 0:04
 
 
