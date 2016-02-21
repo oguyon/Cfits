@@ -6779,24 +6779,25 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     long IDWFSmap, IDDMmap;
     long IDWFSmask, IDDMmask;
     long IDzrm;
-    long act, ii;
+    long ii;
     float lim, rms;
     double tmpv;
     long sizexWFS, sizeyWFS, sizeWFS;
-    long sizexDM, sizeyDM, sizeDM;
+    long sizexDM, sizeyDM;
     long IDdm;
     char name[200];
+    long NBpoke, poke;
     
     IDzrm = image_ID(zrespm_name);
     sizexWFS = data.image[IDzrm].md[0].size[0];
     sizeyWFS = data.image[IDzrm].md[0].size[1];
+    NBpoke = data.image[IDzrm].md[0].size[2];
     
     sprintf(name, "aol%ld_dmC", loop);
     IDdm = read_sharedmem_image(name);
     sizexDM = data.image[IDdm].md[0].size[0];
     sizeyDM = data.image[IDdm].md[0].size[1];
     
-    sizeDM = sizexDM*sizeyDM;
     sizeWFS = sizexWFS*sizeyWFS;
     
     IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
@@ -6809,12 +6810,12 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
 
     printf("Preparing DM map ... ");
     fflush(stdout);    
-    for(act=0; act<sizeDM; act++)
+    for(poke=0; poke<NBpoke; poke++)
     {
         rms = 0.0;
         for(ii=0; ii<sizeWFS; ii++)
         {
-            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
+            tmpv = data.image[IDzrm].array.F[poke*sizeWFS+ii];
             rms += tmpv*tmpv;
         }
         data.image[IDDMmap].array.F[act] = rms;
@@ -6829,9 +6830,9 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     for(ii=0; ii<sizeWFS; ii++)
     {
         rms = 0.0;
-        for(act=0; act<sizeDM; act++)
+        for(poke=0; poke<NBpoke; poke++)
         {
-            tmpv = data.image[IDzrm].array.F[act*sizeWFS+ii];
+            tmpv = data.image[IDzrm].array.F[poke*sizeWFS+ii];
             rms += tmpv*tmpv;
         }
         data.image[IDWFSmap].array.F[ii] = rms;
@@ -6845,12 +6846,12 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     fflush(stdout);    
      // DMmask: select pixels >10% of 50-percentile
     lim = 0.2*img_percentile(DMmap_name, 0.5);
-    for(act=0; act<sizeDM; act++)
+    for(poke=0; poke<NBpoke; poke++)
     {
-        if(data.image[IDDMmap].array.F[act]<lim)
-            data.image[IDDMmask].array.F[act] = 0.0;
+        if(data.image[IDDMmap].array.F[poke]<lim)
+            data.image[IDDMmask].array.F[poke] = 0.0;
         else
-            data.image[IDDMmask].array.F[act] = 1.0;
+            data.image[IDDMmask].array.F[poke] = 1.0;
     }
    printf("done\n");
     fflush(stdout);
