@@ -6893,10 +6893,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     char zrname[200];
     long kmat;
     long IDzrespfp, IDzrespfm;
-    long sizexWFS, sizeyWFS, sizeDM, sizeWFS;
+    long sizexWFS, sizeyWFS, sizeWFS;
     long sizexDM, sizeyDM;
     long *IDzresp_array;
-    long act, ii;
+    long ii;
     double fluxpos, fluxneg;
     float *pixvalarray;
     long k, kmin, kmax, kband;
@@ -6913,7 +6913,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     long NBmatlim = 3;
     long ID1;
     long IDrmpokec;
-
+    long NBpoke, poke;
+    
 
     sprintf(fname, "./zresptmp/%s_nbiter.txt", zrespm_name);
     if((fp = fopen(fname, "r"))==NULL)
@@ -6955,39 +6956,39 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
         sizexWFS = data.image[IDzrespfp].md[0].size[0];
         sizeyWFS = data.image[IDzrespfp].md[0].size[1];
-        sizeDM = data.image[IDzrespfp].md[0].size[2];
+        NBpoke = data.image[IDzrespfp].md[0].size[2];
         sizeWFS = sizexWFS*sizeyWFS;
 
         r = sprintf(name, "wfsrefc%03ld", kmat);
-        IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, sizeDM);
+        IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
 
         r = sprintf(zrname, "zrespm%03ld", kmat);
-        IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, sizeDM);
+        IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
 
         # ifdef _OPENMP
         #pragma omp parallel for private(fluxpos,fluxneg,ii)
         # endif 
-        for(act=0; act<sizeDM; act++)
+        for(poke=0; poke<NBpoke; poke++)
         {
             fluxpos = 0.0;
             fluxneg = 0.0;
             for(ii=0; ii<sizeWFS; ii++)
             {
-                if(isnan(data.image[IDzrespfp].array.F[act*sizeWFS+ii])!=0)
+                if(isnan(data.image[IDzrespfp].array.F[poke*sizeWFS+ii])!=0)
                     {
-                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfp, act*sizeWFS+ii);
-                        data.image[IDzrespfp].array.F[act*sizeWFS+ii] = 0.0;
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfp, poke*sizeWFS+ii);
+                        data.image[IDzrespfp].array.F[poke*sizeWFS+ii] = 0.0;
                     }
-                fluxpos += data.image[IDzrespfp].array.F[act*sizeWFS+ii];
+                fluxpos += data.image[IDzrespfp].array.F[poke*sizeWFS+ii];
             }
             for(ii=0; ii<sizeWFS; ii++)
              {
-                 if(isnan(data.image[IDzrespfm].array.F[act*sizeWFS+ii])!=0)
+                 if(isnan(data.image[IDzrespfm].array.F[poke*sizeWFS+ii])!=0)
                     {
-                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfm, act*sizeWFS+ii);
-                        data.image[IDzrespfm].array.F[act*sizeWFS+ii] = 0.0;
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfm, poke*sizeWFS+ii);
+                        data.image[IDzrespfm].array.F[poke*sizeWFS+ii] = 0.0;
                     }
-                    fluxneg += data.image[IDzrespfm].array.F[act*sizeWFS+ii];                    
+                    fluxneg += data.image[IDzrespfm].array.F[poke*sizeWFS+ii];                    
                 }
             //     printf("   %12g   %12g\n", fluxpos, fluxneg);
 
@@ -6995,21 +6996,21 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             {
                 if(normalize==1)
                     {
-                        data.image[IDzrespfp].array.F[act*sizeWFS+ii] /= fluxpos;
-                        data.image[IDzrespfm].array.F[act*sizeWFS+ii] /= fluxneg;
+                        data.image[IDzrespfp].array.F[poke*sizeWFS+ii] /= fluxpos;
+                        data.image[IDzrespfm].array.F[poke*sizeWFS+ii] /= fluxneg;
                     }
-                data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]-data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
-                data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[act*sizeWFS+ii]+data.image[IDzrespfm].array.F[act*sizeWFS+ii]);
+                data.image[IDzresp_array[kmat]].array.F[poke*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[poke*sizeWFS+ii]-data.image[IDzrespfm].array.F[poke*sizeWFS+ii]);
+                data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] = 0.5*(data.image[IDzrespfp].array.F[poke*sizeWFS+ii]+data.image[IDzrespfm].array.F[poke*sizeWFS+ii]);
 
-                if(isnan(data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii])!=0)
+                if(isnan(data.image[IDzresp_array[kmat]].array.F[poke*sizeWFS+ii])!=0)
                     {
-                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzresp_array[kmat], act*sizeWFS+ii);
-                        data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] = 0.0;
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDzresp_array[kmat], poke*sizeWFS+ii);
+                        data.image[IDzresp_array[kmat]].array.F[poke*sizeWFS+ii] = 0.0;
                     }
-                if(isnan(data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii])!=0)
+                if(isnan(data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii])!=0)
                     {
-                        printf("%ld element %ld is NAN -> replacing by 0\n", IDWFSrefc_array[kmat], act*sizeWFS+ii);
-                        data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] = 0.0;
+                        printf("%ld element %ld is NAN -> replacing by 0\n", IDWFSrefc_array[kmat], poke*sizeWFS+ii);
+                        data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] = 0.0;
                     }
             }
         }
@@ -7019,7 +7020,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
     // STEP 2: average / median each pixel
-    IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, sizeDM);
+    IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, NBpoke);
     IDWFSref = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
     
     
@@ -7034,9 +7035,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     # ifdef _OPENMP
     #pragma omp parallel for private(ii,kmat,ave,k,pixvalarray)
     # endif 
-    for(act=0; act<sizeDM; act++)
+    for(poke=0; poke<NBpoke; poke++)
     {
-        printf("\r act %ld / %ld        ", act, sizeDM);
+        printf("\r act %ld / %ld        ", poke, NBpoke);
         fflush(stdout);
     
         if((pixvalarray = (float*) malloc(sizeof(float)*NBmat))==NULL)
@@ -7048,13 +7049,13 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         for(ii=0; ii<sizeWFS; ii++)
         {
             for(kmat=0; kmat<NBmat; kmat++)
-                pixvalarray[kmat] = data.image[IDzresp_array[kmat]].array.F[act*sizeWFS+ii] ;
+                pixvalarray[kmat] = data.image[IDzresp_array[kmat]].array.F[poke*sizeWFS+ii] ;
             quick_sort_float(pixvalarray, kmat);
             ave = 0.0;
             for(k=kmin; k<kmax; k++)
                 ave += pixvalarray[k];
             ave /= (kmax-kmin);
-            data.image[IDzrm].array.F[act*sizeWFS+ii] = ave/rmampl;
+            data.image[IDzrm].array.F[poke*sizeWFS+ii] = ave/rmampl;
         }
         free(pixvalarray);
     }
@@ -7063,30 +7064,30 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
   //  pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
     kband = 0;
-    kband = (long) (0.2*NBmat*sizeDM);
+    kband = (long) (0.2*NBmat*NBpoke);
     kmin = kband;
-    kmax = NBmat*sizeDM-kband;
+    kmax = NBmat*NBpoke-kband;
 
 
     # ifdef _OPENMP
-    #pragma omp parallel for private(act,kmat,pixvalarray)
+    #pragma omp parallel for private(poke,kmat,pixvalarray)
     # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
         fflush(stdout);
         
-        if((pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM))==NULL)
+        if((pixvalarray = (float*) malloc(sizeof(float)*NBmat*NBpoke))==NULL)
             {
-                printf("ERROR: cannot allocate pixvalarray, size = %ld x %ld\n", NBmat, sizeDM);
+                printf("ERROR: cannot allocate pixvalarray, size = %ld x %ld\n", NBmat, NBpoke);
                 exit(0);
             }
         
-        for(act=0; act<sizeDM; act++)
+        for(poke=0; poke<NBpoke; poke++)
             for(kmat=0; kmat<NBmat; kmat++)
-                pixvalarray[kmat*sizeDM+act] = data.image[IDWFSrefc_array[kmat]].array.F[act*sizeWFS+ii] ;
+                pixvalarray[kmat*NBpoke+poke] = data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] ;
 
-        quick_sort_float(pixvalarray, sizeDM*NBmat);
+        quick_sort_float(pixvalarray, NBpoke*NBmat);
 
         ave = 0.0;
         for(k=kmin; k<kmax; k++)
@@ -7094,7 +7095,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         ave /= (kmax-kmin);
         data.image[IDWFSref].array.F[ii] = ave;
         
-        printf("free pixvalarray : %ld x %ld\n", NBmat, sizeDM);
+        printf("free pixvalarray : %ld x %ld\n", NBmat, NBpoke);
         fflush(stdout);
         free(pixvalarray);
         printf("done\n");
@@ -7130,8 +7131,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                 }            
         }
 
-    // update sizeDM
-    sizeDM = data.image[IDzrm].md[0].size[2];
+    NBpoke = data.image[IDzrm].md[0].size[2];
 
     AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name);
 
