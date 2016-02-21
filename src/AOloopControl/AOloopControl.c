@@ -1492,7 +1492,7 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     }
 
 
-    NBZ = 5; /// 3: tip, tilt, focus
+    NBZ = 0; 
 
     for(m=0; m<10; m++)
     {
@@ -1666,6 +1666,7 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
         delete_image_ID("_tmpinterpol");
     }
 
+    list_image_ID();
 
 
 
