@@ -6689,6 +6689,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 }
 
             
+        printf("----- TEST STEP 001 --------\n");
+        fflush(stdout);                
 
 
             r = sprintf(fname, "!./zresptmp/%s_pos_%03ld.fits", zrespm_name, iter);
@@ -6696,6 +6698,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             r = sprintf(fname, "!./zresptmp/%s_neg_%03ld.fits", zrespm_name, iter);
             save_fits("zrespfm", fname);
 
+        printf("----- TEST STEP 002 --------\n");
+        fflush(stdout);                
 
             total = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -6714,6 +6718,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     data.image[ID_WFSref0n].array.F[ii] /= NBave;
             }
+        printf("----- TEST STEP 003 --------\n");
+        fflush(stdout);                
 
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter);
             save_fits(WFSref0_name, fname);
@@ -6721,6 +6727,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
             if(mode!=3)
             {
+                        printf("----- TEST STEP 004 --------\n");
+        fflush(stdout);                
+
                 for(act=0; act<AOconf[loop].sizeDM; act++)
                 {
                     rms = 0.0;
@@ -6749,6 +6758,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 sprintf(fname, "!./zresptmp/%s_%03ld.fits", zrespm_name, iter);
                 save_fits(WFSmap_name, fname);
 
+        printf("----- TEST STEP 005 --------\n");
+        fflush(stdout);                
 
 
                 if(mode>0) // compute WFSmask and DMmask
@@ -6777,6 +6788,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             iter++;
             r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
             r = system(command);
+                    printf("----- TEST STEP 006 --------\n");
+        fflush(stdout);                
+
         }
     }
 
