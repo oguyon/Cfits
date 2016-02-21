@@ -2001,6 +2001,7 @@ exec 3>&-;
 echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
 cp conf/aol${LOOPNUMBER}_zrespM.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_LOrespM.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_dmmap.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_wfsmap.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_dmmask.fits "${confname}"
@@ -2057,7 +2058,7 @@ done
 
 
 
-for name in zrespM dmmap dmmask wfsmap wfsmask wfsref0
+for name in zrespM LOrespM dmmap dmmask wfsmap wfsmask wfsref0
 do
 	cp "${confname}"/aol${LOOPNUMBER}_${name}.fits ./conf/conf_${name}.txt
 	echo "${confname}/aol${LOOPNUMBER}_${name}.fits" > ./conf/conf_${name}_fname.txt
@@ -2558,7 +2559,7 @@ tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanLOresp.run
 rm cleanLOresp.run
-#ReadConfFile "zrespM"
+ReadConfFile "LOrespM"
 #ReadConfFile "wfsref0"
 #ReadConfFile "wfsmap"
 #ReadConfFile "dmmap"
@@ -2599,7 +2600,7 @@ tmux send-keys -t aol${LOOPNUMBER}LOrespM "touch cleanLOresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "exit" C-m
 waitforfile cleanLOresp.run
 rm cleanLOresp.run
-#ReadConfFile "zrespM"
+ReadConfFile "LOrespM"
 #ReadConfFile "wfsref0"
 #ReadConfFile "wfsmap"
 #ReadConfFile "dmmap"
