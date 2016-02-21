@@ -1414,7 +1414,7 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     long kelim = 20;
     long kernsize, citer, conviter;
    long NBciter = 200;
-long NBconviter = 10;
+    long NBconviter = 10;
 
     zindex[0] = 1; // tip
     zcpa[0] = 0.0;
@@ -1493,7 +1493,7 @@ long NBconviter = 10;
 
 
     NBZ = 5; /// 3: tip, tilt, focus
-    NBZ = 0;
+
     for(m=0; m<10; m++)
     {
         if(zcpa[m]<CPAmax)
