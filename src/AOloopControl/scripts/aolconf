@@ -2534,26 +2534,26 @@ tmuxname="aol${LOOPNUMBER}LOrepMc"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "${execprefix} ./aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
 echo "./aolCleanLOrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
-mkdir -p zrespM
-mkdir -p wfsref
-mkdir -p wfsref0
-mkdir -p wfsmap
-mkdir -p dmmap
-mkdir -p wfsmask
-mkdir -p dmmask
+mkdir -p LOzrespM
+mkdir -p LOwfsref
+mkdir -p LOwfsref0
+mkdir -p LOwfsmap
+mkdir -p LOdmmap
+mkdir -p LOwfsmask
+mkdir -p LOdmmask
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t ${tmuxname} "cp LOrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp LOwfsref0.fits wfsref0/LOwfsref0_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp LOwfsmap.fits wfsmap/LOwfsmap_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp LOdmmap.fits dmmap/LOdmmap_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits wfsmask/LOwfsmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp LOdmmask.fits dmmask/LOdmmask_${datestr}.fits" C-m
-echo "zrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_fname.txt
-echo "wfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_fname.txt
-echo "wfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_fname.txt
-echo "dmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_fname.txt
-echo "wfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_fname.txt
-echo "dmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_fname.txt
+tmux send-keys -t ${tmuxname} "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
+echo "LOzrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_fname.txt
+echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_fname.txt
+echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_fname.txt
+echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_fname.txt
+echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_fname.txt
+echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_fname.txt
 rm cleanLOresp.run
 tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
@@ -2575,26 +2575,26 @@ tmux send-keys -t aol${LOOPNUMBER}LOrespM "${execprefix} ./aolCleanLOrespmat ${r
 echo "./aolCleanLOrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
 echo "pkill -USR1 aol${LOOPNUMBER}LOrespM"
 pkill -USR1 aol${LOOPNUMBER}LOrespM
-mkdir -p zrespM
-mkdir -p wfsref
-mkdir -p wfsref0
-mkdir -p wfsmap
-mkdir -p dmmap
-mkdir -p wfsmask
-mkdir -p dmmask
+mkdir -p LOrespM
+mkdir -p LOwfsref
+mkdir -p LOwfsref0
+mkdir -p LOwfsmap
+mkdir -p LOdmmap
+mkdir -p LOwfsmask
+mkdir -p LOdmmask
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOrespmat.fits zrespM/LOrespM_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsref0.fits wfsref0/LOwfsref0_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsmap.fits wfsmap/LOwfsmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOdmmap.fits dmmap/LOdmmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsmask.fits wfsmask/LOwfsmask_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOdmmask.fits dmmask/LOdmmask_${datestr}.fits" C-m
-echo "zrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_fname.txt
-echo "wfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_fname.txt
-echo "wfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_fname.txt
-echo "dmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_fname.txt
-echo "wfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_fname.txt
-echo "dmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_fname.txt
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
+echo "LOzrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_fname.txt
+echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_fname.txt
+echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_fname.txt
+echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_fname.txt
+echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_fname.txt
+echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_fname.txt
 rm cleanLOresp.run
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "touch cleanLOresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}LOrespM "exit" C-m
