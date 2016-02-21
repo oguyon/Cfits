@@ -1917,10 +1917,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         if(MODAL==0)
         {
-            AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
+           // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
                     
            
-           /* 
+           
             
             
             NBZ = 5; /// 3: tip, tilt, focus
@@ -2099,7 +2099,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 }
                 delete_image_ID("_tmpinterpol");
             }
-*/
+
 
         }
         else
