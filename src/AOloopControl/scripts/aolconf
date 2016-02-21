@@ -1692,6 +1692,17 @@ menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" 
 
 
 
+
+
+LOrespMstat=$( cat ./status/stat_LOrespM.txt )
+if [[ -f "./status/stat_LOrespM.txt" && ( "$LOrespMstat" = " ON" || "$LOrespMstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_LOrespM.txt
+fi
+
+
+
 LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
 if [ "${LOrespMstat}" = "OFF" ];
 then
