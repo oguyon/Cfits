@@ -2271,16 +2271,17 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         LOcoeff = 0.0;
                         
                     if(res>1e-6)
-                        LOcoeff *= 0.0;
+                        LOcoeff = 0.0;
                         
-                    fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
-                
-                    if((res<0.1)&&(res1<10.0)) // replace HO with LO
+                   fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+                   // printf("%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+                    
+                /*    if((res<0.1)&&(res1<10.0)) // replace HO with LO
                         {
                             for(wfselem=0; wfselem<wfssize; wfselem++)
-                                data.image[IDm].array.F[m+wfselem] = LOcoeff*data.image[IDtmp].array.F[ii] + (1.0-LOcoeff)*data.image[IDm].array.F[m+wfselem];
+                                data.image[IDm].array.F[m+wfselem] = LOcoeff*data.image[IDtmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m+wfselem];
                         }
-                
+                */
                 }
             
                 delete_image_ID("linfitcoeff");
