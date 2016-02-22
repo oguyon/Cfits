@@ -6529,7 +6529,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         // permut actarray
         for(poke=0;poke<NBpoke;poke++)
             actarray[poke] = poke;
-   /*          
+             
        for(poke=0;poke<NBpoke;poke++)
             {
                 poke1 = (long) (ran1()*NBpoke);
@@ -6542,7 +6542,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                         actarray[poke] = poke2;
                     }
             }
-     */
+     
         
   
 
