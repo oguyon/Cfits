@@ -2224,6 +2224,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         
                 linfitreuse = 0;
    
+                IDwfstmp = create_2Dimage_ID("wfsimtmp", wfsxsize, wfsysize);
+   
                 for(m=0;m<data.image[IDmodes0all].md[0].size[2]; m++)
                 {
                     for(ii=0;ii<msizexy;ii++)
@@ -2279,6 +2281,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     if(LOcoeff>0.01)
                     {
                         // construct linear fit (WFS space)
+                        
                         
                     }
                     
