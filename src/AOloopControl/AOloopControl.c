@@ -2170,22 +2170,22 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 } 
             }
         }
-
         
         // if modal response matrix exists, use it
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
         IDRMMresp = image_ID("RMMresp"); // modal resp matrix
 
-        linfitsize = data.image[IDRMMmodes].md[0].size[2];
-        IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
-        
-        ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
-        
-        IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
-        
-        linfitreuse = 0;
         if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
             {
+                linfitsize = data.image[IDRMMmodes].md[0].size[2];
+                IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
+        
+                ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
+        
+                IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
+        
+                linfitreuse = 0;
+   
                 for(m=0;m<data.image[ID].md[0].size[2]; m++)
                 {
                     for(ii=0;ii<msizexy;ii++)
@@ -2197,18 +2197,19 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(jj=0;jj<linfitsize;jj++)
                         data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
                 }
+            
+                delete_image_ID("linfitcoeff");
+                delete_image_ID("imfitim");
+
+                save_fits("imfitmat", "!imfitmat.fits");
+                delete_image_ID("imfitmat");
             }
-        delete_image_ID("linfitcoeff");
-        delete_image_ID("imfitim");
-
-        save_fits("imfitmat", "!imfitmat.fits");
-        delete_image_ID("imfitmat");
-
 
         printf("\n");
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
-exit(0);
+    
+    exit(0);
 
 
 
@@ -6544,7 +6545,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             }
      
         
-  
 
         for(poke=0; poke<NBpoke; poke++)
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)

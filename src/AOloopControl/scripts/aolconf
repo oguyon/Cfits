@@ -2566,6 +2566,7 @@ tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanLOresp.run
 rm cleanLOresp.run
 ReadConfFile "LOrespM"
+ReadConfFile "LODMmodes"
 #ReadConfFile "wfsref0"
 #ReadConfFile "wfsmap"
 #ReadConfFile "dmmap"
@@ -2612,6 +2613,7 @@ tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanLOresp.run
 rm cleanLOresp.run
 ReadConfFile "LOrespM"
+ReadConfFile "LODMmodes"
 #ReadConfFile "wfsref0"
 #ReadConfFile "wfsmap"
 #ReadConfFile "dmmap"
