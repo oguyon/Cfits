@@ -2191,7 +2191,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(ii=0;ii<msizexy;ii++)
                         data.image[ID_imfit].array.F[ii] = data.image[IDmodes0all].array.F[m*msizexy+ii];
                             
-                    linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 0.0001, "linfitcoeff", linfitreuse);
+                    linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 0.01, "linfitcoeff", linfitreuse);
                     linfitreuse = 1;
                     
                     for(jj=0;jj<linfitsize;jj++)
