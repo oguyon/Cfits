@@ -1850,7 +1850,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     double resn, vn;
     double LOcoeff;
     FILE *fpLOcoeff;
-
+    long IDwfstmp;
+    
+    
 
     MODAL = 0;
     if(msizey==1)
@@ -2281,8 +2283,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     if(LOcoeff>0.01)
                     {
                         // construct linear fit (WFS space)
-                        
-                        
+                        for(wfselem=0;wfselem<wfssize;wfselem++)
+                            data.image[IDwfstmp].array.F[wfselem] = 0.0;
+                        for(jj=0;jj<linfitsize;jj++)
+                            for(wfselem=0;wfselem<wfssize;wfselem++)
+                                data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];                        
                     }
                     
                 /*    if((res<0.1)&&(res1<10.0)) // replace HO with LO
