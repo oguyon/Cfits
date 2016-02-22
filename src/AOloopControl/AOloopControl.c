@@ -2290,7 +2290,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                                 data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];                        
                     
                         for(wfselem=0; wfselem<wfssize; wfselem++)
-                            data.image[IDm].array.F[m+wfselem] = LOcoeff*data.image[IDtmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m+wfselem];
+                            data.image[IDm].array.F[m*wfssize+wfselem] = LOcoeff*data.image[IDwfstmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m*wfssize+wfselem];
                     }
                 }
             
