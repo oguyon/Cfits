@@ -2258,7 +2258,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     delete_image_ID("testrc");
                    
                    
-                    if(m<20)
+                    if(m<100)
                         {
                             printf("%5ld   %20g  %20g\n", m, res, res1);
                         }
