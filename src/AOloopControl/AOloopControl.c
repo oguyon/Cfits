@@ -1849,6 +1849,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     double resn, vn;
     double LOcoeff;
+    FILE *fpLOcoeff;
 
 
     MODAL = 0;
