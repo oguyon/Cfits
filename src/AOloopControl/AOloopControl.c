@@ -2186,7 +2186,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         
                 linfitreuse = 0;
    
-                for(m=0;m<data.image[ID].md[0].size[2]; m++)
+                for(m=0;m<data.image[IDmodes0all].md[0].size[2]; m++)
                 {
                     for(ii=0;ii<msizexy;ii++)
                         data.image[ID_imfit].array.F[ii] = data.image[IDmodes0all].array.F[m*msizexy+ii];
@@ -2197,7 +2197,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(jj=0;jj<linfitsize;jj++)
                         data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
                         
-                    if(m==0)
+                    if(m==14)
                         {
                             save_fits("imfitim","!test_imfitim.fits");
                             save_fits("RMMmodes", "!test_RMMmodes.fits");
