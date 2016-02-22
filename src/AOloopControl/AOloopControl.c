@@ -2288,14 +2288,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         for(jj=0;jj<linfitsize;jj++)
                             for(wfselem=0;wfselem<wfssize;wfselem++)
                                 data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];                        
-                    }
                     
-                /*    if((res<0.1)&&(res1<10.0)) // replace HO with LO
-                        {
-                            for(wfselem=0; wfselem<wfssize; wfselem++)
-                                data.image[IDm].array.F[m+wfselem] = LOcoeff*data.image[IDtmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m+wfselem];
-                        }
-                */
+                        for(wfselem=0; wfselem<wfssize; wfselem++)
+                            data.image[IDm].array.F[m+wfselem] = LOcoeff*data.image[IDtmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m+wfselem];
+                    }
                 }
             
                 delete_image_ID("linfitcoeff");
