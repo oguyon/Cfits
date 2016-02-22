@@ -2209,7 +2209,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             for(jj=0;jj<linfitsize;jj++)
                                 for(ii=0;ii<msizex*msizey;ii++)
                                     data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
-                            save_fits("testrc", "!testrc.fits");
+                            save_fits("testrc", "!test_testrc.fits");
                         }
                         
                 }
