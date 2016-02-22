@@ -2306,7 +2306,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
     
-    exit(0);
+//    exit(0);
 
 
 
