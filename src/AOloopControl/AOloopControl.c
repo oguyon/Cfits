@@ -520,6 +520,21 @@ int AOloopControl_compute_CombinedControlMatrix_cli()
 }
 
 
+
+
+int AOloopControl_CompModes_loop_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
+    {
+      AOloopControl_CompModes_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 int AOloopControl_sig2Modecoeff_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
@@ -1019,13 +1034,21 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"aocmlrun");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_CompModes_loop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"run AO compute modes loop");
+    strcpy(data.cmd[data.NBcmd].syntax,"<CM> <wfsref> <WFS image stream> <output stream>");
+    strcpy(data.cmd[data.NBcmd].example,"aocmlrun CM wfsref wfsim aomodeval");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_coeff_name)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolrun");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_run;
     strcpy(data.cmd[data.NBcmd].info,"run AO loop");
     strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-    strcpy(data.cmd[data.NBcmd].example,"AOlooprun");
+    strcpy(data.cmd[data.NBcmd].example,"aolrun");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_run()");
     data.NBcmd++;
 
@@ -1821,6 +1844,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long IDmodes0all;
     long linfitsize;
     int linfitreuse;
+    double res, res1, v0;
+
+
+    double resn, vn;
 
 
 
@@ -2150,6 +2177,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("size: %ld %ld %ld\n", data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
         
+        
         # ifdef _OPENMP
         #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
         # endif
@@ -2170,6 +2198,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 } 
             }
         }
+        
+        
         
         // if modal response matrix exists, use it
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
@@ -2197,21 +2227,48 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(jj=0;jj<linfitsize;jj++)
                         data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
                         
-                    if(m==14)
+          
+                         //   save_fits("imfitim","!test_imfitim.fits");
+                         //   save_fits("RMMmodes", "!test_RMMmodes.fits");
+                        //    save_fits("dmmask", "!test_dmmask.fits");
+                    //for(jj=0;jj<linfitsize;jj++)
+                     //   printf("coeff %ld = %f\n", jj, data.image[IDRMM_coeff].array.F[jj]);
+                        
+                    // construct linear fit result
+                    IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
+                    for(jj=0;jj<linfitsize;jj++)
+                        for(ii=0;ii<msizex*msizey;ii++)
+                            data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
+
+                    res = 0.0;
+                    resn = 0.0;
+                    for(ii=0;ii<msizex*msizey;ii++)
                         {
-                            save_fits("imfitim","!test_imfitim.fits");
-                            save_fits("RMMmodes", "!test_RMMmodes.fits");
-                            save_fits("dmmask", "!test_dmmask.fits");
-                            for(jj=0;jj<linfitsize;jj++)
-                                printf("coeff %ld = %f\n", jj, data.image[IDRMM_coeff].array.F[jj]);
-                        
-                            IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
-                            for(jj=0;jj<linfitsize;jj++)
-                                for(ii=0;ii<msizex*msizey;ii++)
-                                    data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
-                            save_fits("testrc", "!test_testrc.fits");
+                            v0 = data.image[IDtmp].array.F[ii]-data.image[ID_imfit].array.F[ii];
+                            vn = data.image[ID_imfit].array.F[ii];
+                            res += v0*v0;
+                            resn += vn*vn;
                         }
-                        
+                    res /= resn;
+                    
+                    res1 = 0.0;
+                    for(jj=0;jj<linfitsize;jj++)
+                        res1 += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMM_coeff].array.F[jj];
+                    
+                    delete_image_ID("testrc");
+                   
+                   
+                    if(m<20)
+                        {
+                            printf("%5ld   %20g  %20g\n", m, res, res1);
+                        }
+                
+                    if((res<0.1)&&(res1<10.0)) // replace HO with LO
+                        {
+                            for(wfselem=0; wfselem<wfssize; wfselem++)
+                                data.image[IDm].array.F[m+wfselem] = 0.0;
+                        }
+                
                 }
             
                 delete_image_ID("linfitcoeff");
@@ -8500,7 +8557,84 @@ int AOcompute(long loop, int normalize)
 
 
 
+int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_coeff_name)
+{
+    int *GPUsetM;
+    int GPUcntMax = 1;
+    long ID_CM;
+    long ID_WFSref;
+    long ID_WFSim;
+    long ID_coeff;
+    long GPUcnt;
+    int k;
+    int GPUstatus[100];
+    int status;
+    long iter;
+    long NBiter=100;
+    long NBmodes;
+    long *sizearray;
+    long initWFSref = 0;
+    
+    long ID_WFSim_n;
+    long wfsxsize, wfsysize;
+    
+    long IDcoeff0;
+    
+    
+    
+    GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
+    for(k=0;k<GPUcnt;k++)
+        GPUsetM[k] = k+6;
 
+
+    ID_CM = image_ID(ID_CM_name);
+    wfsxsize = data.image[ID_CM].md[0].size[0];
+    wfsysize = data.image[ID_CM].md[0].size[1];
+    NBmodes = data.image[ID_CM].md[0].size[2];
+
+    ID_WFSref = image_ID(ID_WFSref_name);
+
+    ID_coeff = create_2Dimage_ID(ID_coeff_name, NBmodes, 1);
+    
+    sizearray = (long*) malloc(sizeof(long)*2);    
+    ID_coeff = create_image_ID(ID_coeff_name, 2, sizearray, FLOAT, 1, 0);
+    free(sizearray);
+    COREMOD_MEMORY_image_set_createsem(ID_coeff_name, 4);
+
+    IDcoeff0 = create_image_ID("coeff0", 2, sizearray, FLOAT, 1, 0);
+
+    ID_WFSim_n = create_2Dimage_ID("wfsim_n", wfsxsize, wfsysize);
+    COREMOD_MEMORY_image_set_createsem("wfsim_n", 4);
+
+
+    for(iter=0; iter<NBiter; iter++)
+        {
+
+            #ifdef HAVE_CUDA
+            
+            GPU_loop_MultMat_setup(0, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
+            
+            if(initWFSref==0)
+                {
+                    memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSref].array.F, sizeof(float)*wfsxsize*wfsysize);
+                    GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
+                    for(m=0;m<NBmodes;m++)
+                        data.image[IDcoeff0].array.F[m] = data.image[ID_coeff].array.F[m];
+                }
+                        
+            COREMOD_MEMORY_image_set_semwait(ID_WFSim_name, 6);
+            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
+            
+            for(m=0;m<NBmodes;m++)
+                data.image[ID_coeff].array.F[m] -= data.image[IDcoeff0].array.F[m];
+            
+            #endif
+        }
+    
+    delete_image_ID("coeff0");
+    
+    free(GPUsetM);
+}
 
 
 
