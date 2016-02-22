@@ -1848,7 +1848,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
     double resn, vn;
-
+    double LOcoeff;
 
 
     MODAL = 0;
@@ -2205,6 +2205,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
         IDRMMresp = image_ID("RMMresp"); // modal resp matrix
 
+        fpLOcoeff = fopen("LOcoeff.txt", "w");
+        if(fpLOcoeff == NULL)
+            {
+                printf("ERROR: cannot create file \"LOcoeff.txt\"\n");
+                exit(0);
+            }
+        
         if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
             {
                 linfitsize = data.image[IDRMMmodes].md[0].size[2];
@@ -2257,16 +2264,20 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     
                     delete_image_ID("testrc");
                    
-                   
-                    if(m<100)
-                        {
-                            printf("%5ld   %20g  %20g\n", m, res, res1);
-                        }
+                    if(res1<0.1)
+                        LOcoeff = 1.0;
+                    else
+                        LOcoeff = 0.0;
+                        
+                    if(res>1e-6)
+                        LOcoeff *= 0.0;
+                        
+                    fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
                 
                     if((res<0.1)&&(res1<10.0)) // replace HO with LO
                         {
                             for(wfselem=0; wfselem<wfssize; wfselem++)
-                                data.image[IDm].array.F[m+wfselem] = 0.0;
+                                data.image[IDm].array.F[m+wfselem] = LOcoeff*data.image[IDtmp].array.F[ii] + (1.0-LOcoeff)*data.image[IDm].array.F[m+wfselem];
                         }
                 
                 }
@@ -2277,7 +2288,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 save_fits("imfitmat", "!imfitmat.fits");
                 delete_image_ID("imfitmat");
             }
-
+        fclose(fpLOcoeff);
+        
         printf("\n");
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
