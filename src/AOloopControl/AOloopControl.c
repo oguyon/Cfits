@@ -8577,7 +8577,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     
     long ID_WFSim_n;
     long wfsxsize, wfsysize;
-    
+    int m;
     long IDcoeff0;
     
     
