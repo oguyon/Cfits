@@ -845,6 +845,7 @@ ReadWFSdarkfname
 # SYSTEM CALIBRATION
 ReadConfFile "zrespM"
 ReadConfFile "LOrespM"
+ReadConfFile "LODMmodes"
 ReadConfFile "wfsmask"
 ReadConfFile "dmmap"
 ReadConfFile "dmmask"
@@ -2002,6 +2003,7 @@ echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
 cp conf/aol${LOOPNUMBER}_zrespM.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_LOrespM.fits "${confname}"
+cp conf/aol${LOOPNUMBER}_LODMmodes.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_dmmap.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_wfsmap.fits "${confname}"
 cp conf/aol${LOOPNUMBER}_dmmask.fits "${confname}"
@@ -2058,7 +2060,7 @@ done
 
 
 
-for name in zrespM LOrespM dmmap dmmask wfsmap wfsmask wfsref0
+for name in zrespM LOrespM LODMmodes dmmap dmmask wfsmap wfsmask wfsref0
 do
 	cp "${confname}"/aol${LOOPNUMBER}_${name}.fits ./conf/conf_${name}.txt
 	echo "${confname}/aol${LOOPNUMBER}_${name}.fits" > ./conf/conf_${name}_fname.txt
