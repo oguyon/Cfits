@@ -1851,8 +1851,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     double LOcoeff;
     FILE *fpLOcoeff;
     long IDwfstmp;
-    
-    
+    char fnameLOcoeff[200];
 
     MODAL = 0;
     if(msizey==1)
@@ -1952,9 +1951,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         if(MODAL==0)
         {
-           // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
-                    
-            
+            // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
+
+
             NBZ = 5; /// 3: tip, tilt, focus
 
 
@@ -1979,7 +1978,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
             IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ, 1);
 
-           
+
             zernike_init();
             for(k=0; k<NBZ; k++)
             {
@@ -2156,8 +2155,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
         IDmodes0all = image_ID(ID_name);
         printf("DONE SAVING\n");
-    
-// time : 0:04
+
+        // time : 0:04
 
 
         /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
@@ -2179,16 +2178,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         printf("size: %ld %ld %ld\n", data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
-        
-        
-        # ifdef _OPENMP
+
+
+# ifdef _OPENMP
         #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
-        # endif
-                
+# endif
+
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
             m1 = m*wfssize;
-            
+
             printf("\r %5ld / %5ld   ", m, data.image[ID].md[0].size[2]);
             fflush(stdout);
             for(act=0; act<msizexy; act++)
@@ -2198,127 +2197,120 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 for(wfselem=0; wfselem<wfssize; wfselem++)
                 {
                     data.image[IDm].array.F[m1+wfselem] += data.image[ID].array.F[act1] * data.image[IDzrespM].array.F[act2+wfselem];
-                } 
+                }
             }
         }
-        
-        
-        
+
+
+
         // if modal response matrix exists, use it
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
         IDRMMresp = image_ID("RMMresp"); // modal resp matrix
 
         fpLOcoeff = fopen("LOcoeff.txt", "w");
         if(fpLOcoeff == NULL)
-            {
-                printf("ERROR: cannot create file \"LOcoeff.txt\"\n");
-                exit(0);
-            }
+        {
+            printf("ERROR: cannot create file \"LOcoeff.txt\"\n");
+            exit(0);
+        }
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.HO.fits");
-        
+
         if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
+        {
+            linfitsize = data.image[IDRMMmodes].md[0].size[2];
+            IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
+
+            ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
+
+            IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
+
+            linfitreuse = 0;
+
+            IDwfstmp = create_2Dimage_ID("wfsimtmp", wfsxsize, wfsysize);
+
+            for(m=0; m<data.image[IDmodes0all].md[0].size[2]; m++)
             {
-                linfitsize = data.image[IDRMMmodes].md[0].size[2];
-                IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
-        
-                ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
-        
-                IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
-        
-                linfitreuse = 0;
-   
-                IDwfstmp = create_2Dimage_ID("wfsimtmp", wfsxsize, wfsysize);
-   
-                for(m=0;m<data.image[IDmodes0all].md[0].size[2]; m++)
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[ID_imfit].array.F[ii] = data.image[IDmodes0all].array.F[m*msizexy+ii];
+
+                linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-8, "linfitcoeff", linfitreuse);
+                linfitreuse = 1;
+
+                for(jj=0; jj<linfitsize; jj++)
+                    data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
+
+                // construct linear fit result (DM)
+                IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
+                for(jj=0; jj<linfitsize; jj++)
+                    for(ii=0; ii<msizex*msizey; ii++)
+                        data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
+
+                res = 0.0;
+                resn = 0.0;
+                for(ii=0; ii<msizex*msizey; ii++)
                 {
-                    for(ii=0;ii<msizexy;ii++)
-                        data.image[ID_imfit].array.F[ii] = data.image[IDmodes0all].array.F[m*msizexy+ii];
-                            
-                    linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-8, "linfitcoeff", linfitreuse);
-                    linfitreuse = 1;
-                    
-                    for(jj=0;jj<linfitsize;jj++)
-                        data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
-                        
-          
-                         //   save_fits("imfitim","!test_imfitim.fits");
-                         //   save_fits("RMMmodes", "!test_RMMmodes.fits");
-                        //    save_fits("dmmask", "!test_dmmask.fits");
-                    //for(jj=0;jj<linfitsize;jj++)
-                     //   printf("coeff %ld = %f\n", jj, data.image[IDRMM_coeff].array.F[jj]);
-                        
-                    // construct linear fit result (DM)
-                    IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
-                    for(jj=0;jj<linfitsize;jj++)
-                        for(ii=0;ii<msizex*msizey;ii++)
-                            data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
-
-                    res = 0.0;
-                    resn = 0.0;
-                    for(ii=0;ii<msizex*msizey;ii++)
-                        {
-                            v0 = data.image[IDtmp].array.F[ii]-data.image[ID_imfit].array.F[ii];
-                            vn = data.image[ID_imfit].array.F[ii];
-                            res += v0*v0;
-                            resn += vn*vn;
-                        }
-                    res /= resn;
-                    
-                    res1 = 0.0;
-                    for(jj=0;jj<linfitsize;jj++)
-                        res1 += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMM_coeff].array.F[jj];
-                    
-                    delete_image_ID("testrc");
-                   
-                    LOcoeff = 1.0;
-                    
-                    LOcoeff = 1.0/(1.0+pow(res/1.0e-6,2.0));
-                
-                    if(res1>1.0)
-                        LOcoeff *= 1.0/pow(res1, 2.0);
-                    
-                        
-                   fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
-                   // printf("%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
-                    
-                    if(LOcoeff>0.01)
-                    {
-                        // construct linear fit (WFS space)
-                        for(wfselem=0;wfselem<wfssize;wfselem++)
-                            data.image[IDwfstmp].array.F[wfselem] = 0.0;
-                        for(jj=0;jj<linfitsize;jj++)
-                            for(wfselem=0;wfselem<wfssize;wfselem++)
-                                data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];                        
-                    
-                        for(wfselem=0; wfselem<wfssize; wfselem++)
-                            data.image[IDm].array.F[m*wfssize+wfselem] = LOcoeff*data.image[IDwfstmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m*wfssize+wfselem];
-                    }
+                    v0 = data.image[IDtmp].array.F[ii]-data.image[ID_imfit].array.F[ii];
+                    vn = data.image[ID_imfit].array.F[ii];
+                    res += v0*v0;
+                    resn += vn*vn;
                 }
-            
-                delete_image_ID("linfitcoeff");
-                delete_image_ID("imfitim");
+                res /= resn;
 
-                save_fits("imfitmat", "!imfitmat.fits");
-                delete_image_ID("imfitmat");
+                res1 = 0.0;
+                for(jj=0; jj<linfitsize; jj++)
+                    res1 += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMM_coeff].array.F[jj];
+
+                delete_image_ID("testrc");
+
+                LOcoeff = 1.0;
+
+                LOcoeff = 1.0/(1.0+pow(res/1.0e-6,2.0));
+
+                if(res1>1.0)
+                    LOcoeff *= 1.0/pow(res1, 2.0);
+
+
+                fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+                // printf("%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+
+                if(LOcoeff>0.01)
+                {
+                    // construct linear fit (WFS space)
+                    for(wfselem=0; wfselem<wfssize; wfselem++)
+                        data.image[IDwfstmp].array.F[wfselem] = 0.0;
+                    for(jj=0; jj<linfitsize; jj++)
+                        for(wfselem=0; wfselem<wfssize; wfselem++)
+                            data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];
+
+                    for(wfselem=0; wfselem<wfssize; wfselem++)
+                        data.image[IDm].array.F[m*wfssize+wfselem] = LOcoeff*data.image[IDwfstmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDm].array.F[m*wfssize+wfselem];
+                }
             }
+
+            delete_image_ID("linfitcoeff");
+            delete_image_ID("imfitim");
+            delete_image_ID("wfsimtmp");
+            save_fits("imfitmat", "!imfitmat.fits");
+            delete_image_ID("imfitmat");
+        }
         fclose(fpLOcoeff);
-        
+
         printf("\n");
         save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.fits");
 
-    
-//    exit(0);
+
+        //    exit(0);
 
 
 
 
-// time : 0:42
+        // time : 0:42
 
 
 
 
 
-        /// STEP 2: SEPARATE MODES INTO BLOCKS
+        /// STEP 2: SEPARATE DM MODES INTO BLOCKS
         msizexy = msizex*msizey;
 
         CPAblocklim[0] = 0.1; // tip and tilt
@@ -2386,14 +2378,14 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
 
 
-// time : 00:42
+        // time : 00:42
 
-        /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -> fmodes1all.fits
+        /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -> fmodes1all.fits  (DM space)
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             printf("MODE BLOCK %ld\n", mblock);
             fflush(stdout);
-            
+
             sprintf(imname, "fmodes0_%02ld", mblock);
             printf("SVD decomp ...");
             fflush(stdout);
@@ -2443,11 +2435,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-// time: 00:58
+        // time: 00:58
 
 
 
-        /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits
+        /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
             data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -2466,8 +2458,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
-                   // printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-                   // fflush(stdout);
+                    // printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
+                    // fflush(stdout);
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     sprintf(imname, "fmodes1_%02ld", mblock0);
@@ -2556,7 +2548,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-// 1:25
+    // 1:25
 
     // WFS modes
     IDzrespM = image_ID("zrespM");
@@ -2591,6 +2583,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
 
 
+
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 printf("BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
@@ -2599,10 +2592,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 if(MBLOCK_NBmode[mblock]>0)
                 {
                     IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
-                    
-                # ifdef _OPENMP
-                #pragma omp parallel for private(m,act,wfselem)
-                # endif                    
+
+# ifdef _OPENMP
+                    #pragma omp parallel for private(m,act,wfselem)
+# endif
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
                         for(act=0; act<msizexy; act++)
@@ -2613,6 +2606,107 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             }
                         }
                     }
+
+                    if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
+                    {
+                        sprintf(fnameLOcoeff, "LOcoeff_%02d.txt", mblock);
+
+                        fpLOcoeff = fopen(fnameLOcoeff, "w");
+                        if(fpLOcoeff == NULL)
+                        {
+                            printf("ERROR: cannot create file \"LOcoeff1.txt\"\n");
+                            exit(0);
+                        }
+
+
+
+                        linfitsize = data.image[IDRMMmodes].md[0].size[2];
+                        IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
+
+                        ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
+
+                        IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
+
+                        linfitreuse = 0;
+
+                        IDwfstmp = create_2Dimage_ID("wfsimtmp", wfsxsize, wfsysize);
+
+                        for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+                        {
+                            for(ii=0; ii<msizexy; ii++)
+                                data.image[ID_imfit].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
+
+                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-8, "linfitcoeff", linfitreuse);
+                            linfitreuse = 1;
+
+                            for(jj=0; jj<linfitsize; jj++)
+                                data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
+
+                            // construct linear fit result (DM)
+                            IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
+                            for(jj=0; jj<linfitsize; jj++)
+                                for(ii=0; ii<msizex*msizey; ii++)
+                                    data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
+
+                            res = 0.0;
+                            resn = 0.0;
+                            for(ii=0; ii<msizex*msizey; ii++)
+                            {
+                                v0 = data.image[IDtmp].array.F[ii]-data.image[ID_imfit].array.F[ii];
+                                vn = data.image[ID_imfit].array.F[ii];
+                                res += v0*v0;
+                                resn += vn*vn;
+                            }
+                            res /= resn;
+
+                            res1 = 0.0;
+                            for(jj=0; jj<linfitsize; jj++)
+                                res1 += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMM_coeff].array.F[jj];
+
+                            delete_image_ID("testrc");
+
+                            LOcoeff = 1.0;
+
+                            LOcoeff = 1.0/(1.0+pow(res/1.0e-6,2.0));
+
+                            if(res1>1.0)
+                                LOcoeff *= 1.0/pow(res1, 2.0);
+
+
+                            fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+                            // printf("%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+
+                            if(LOcoeff>0.01)
+                            {
+                                // construct linear fit (WFS space)
+                                for(wfselem=0; wfselem<wfssize; wfselem++)
+                                    data.image[IDwfstmp].array.F[wfselem] = 0.0;
+                                for(jj=0; jj<linfitsize; jj++)
+                                    for(wfselem=0; wfselem<wfssize; wfselem++)
+                                        data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];
+
+                                for(wfselem=0; wfselem<wfssize; wfselem++)
+                                    data.image[IDwfsMresp].array.F[m*wfssize+wfselem] = LOcoeff*data.image[IDwfstmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDwfsMresp].array.F[m*wfssize+wfselem];
+                            }
+                        }
+
+                        delete_image_ID("linfitcoeff");
+                        delete_image_ID("imfitim");
+
+                        save_fits("imfitmat", "!imfitmat.fits");
+                        delete_image_ID("imfitmat");
+                    }
+                    fclose(fpLOcoeff);
+
+
+
+
+
+
+
+
+
+
                     sprintf(fname, "!./mkmodestmp/fmodesWFS0_%02ld.fits", mblock);
                     save_fits(imname, fname);
                 }
@@ -2623,8 +2717,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 cnt += MBLOCK_NBmode[mblock];
             IDm = create_3Dimage_ID("fmodesWFS0all", wfsxsize, wfsysize, cnt);
             cnt = 0;
-            
-            
+
+
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 sprintf(imname, "fmodesWFS0_%02ld", mblock);
@@ -2638,7 +2732,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
             save_fits("fmodesWFS0all", "!./mkmodestmp/fmodesWFS0all.fits");
 
-// time : 02:00
+
+
+
+
+            // time : 02:00
 
 
             /// STEP 6: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
@@ -2652,7 +2750,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 mok[m] = 1;
 
 
-            
+
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 rmsarray = (float*) malloc(sizeof(float)*MBLOCK_NBmode[mblock]);
@@ -2668,8 +2766,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     mok[m] = 1;
-                    
-                    
+
+
                 for(mblock0=0; mblock0<mblock; mblock0++)
                 {
                     reuse = 0;
@@ -2693,7 +2791,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         linopt_imtools_image_construct(imnameDM, "modecoeff", "SVDmode1DM");
                         IDSVDmode1 = image_ID("SVDmode1");
                         IDSVDmode1DM = image_ID("SVDmode1DM");
-                   
+
                         delete_image_ID("modecoeff");
 
                         value1 = 0.0;
@@ -2713,11 +2811,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         {
                             mok[m] = 0;
                         }
-//                        printf("  %12g\n", rms/rmsarray[m]);
+                        //                        printf("  %12g\n", rms/rmsarray[m]);
                     }
                 }
-                
-                
+
+
                 cnt = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     cnt += mok[m];
@@ -2802,8 +2900,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             free(mok);
 
 
-// time : 04:34
-     
+            // time : 04:34
+
 
 
             cnt = 0;
@@ -2845,8 +2943,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         }
 
-    
- // time : 04:36
+
+        // time : 04:36
 
         if(BlockNB<0)
         {
@@ -3049,7 +3147,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     // COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX
                     sprintf(imname, "fmodes_%02ld", mblock);
                     compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
-                
+
 
                     sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
                     save_fits(imnameCMc, fname);
@@ -3113,6 +3211,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     return(ID);
 }
+
 
 
 
