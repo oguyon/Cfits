@@ -4251,10 +4251,13 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
             AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_imWFS0].name);
             AOLCOMPUTE_TOTAL_INIT = 1;
             IMTOTAL = AOconf[loop].WFStotalflux;
-            data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
-            sem_getvalue(data.image[aoconfID_imWFS0tot].semptr[0], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
+            if(aoconfID_imWFS0tot!=-1)
+            {
+                data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
+                sem_getvalue(data.image[aoconfID_imWFS0tot].semptr[0], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
+            }
         }
         else  // do it in other threads
         {
@@ -5010,7 +5013,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     COREMOD_MEMORY_image_set_createsem(name, 2);
   
     sprintf(name, "aol%ld_imWFS0tot", loop);
-    aoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", 1, 1);
+    aoconfID_imWFS0tot = AOloopControl_2Dloadcreate_shmim(name, " ", 1, 1);
     COREMOD_MEMORY_image_set_createsem(name, 2);
 
     sprintf(name, "aol%ld_imWFS1", loop);
