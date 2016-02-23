@@ -1878,6 +1878,12 @@ SYSTEM MODAL RESPONSE AND CONTROL:\n
      /tmp/aol${LOOPNUMBER}_DMmodes.im.shm       DM modes\n
      /tmp/aol${LOOPNUMBER}_RM.im.shm            Response Matrix\n
      /tmp/aol${LOOPNUMBER}_CM.im.shm            Control Matrix\n
+\n
+\n
+    /tmp/aol${LOOPNUMBER}_imWFS0.im.shm         Dark-subtracted WFS frame\n
+            sem0    post: full frame ready      wait: modal reconstruction\n
+            sem1    post: full frame ready      wait: \n
+\n
 ' $nbwlines $nbwcols
 ;;
 

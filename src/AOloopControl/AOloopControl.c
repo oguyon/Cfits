@@ -4982,6 +4982,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
     sprintf(name, "aol%ld_imWFS0", loop);
     aoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    COREMOD_MEMORY_image_set_createsem(name, 2);
 
     sprintf(name, "aol%ld_imWFS1", loop);
     aoconfID_imWFS1 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
