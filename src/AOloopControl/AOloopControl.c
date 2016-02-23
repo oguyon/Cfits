@@ -8794,7 +8794,6 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     int GPUcntMax = 1;
     long ID_CM;
     long ID_WFSref;
-    long ID_WFSim;
     long ID_coeff;
     long GPUcnt=1;
     int k;
