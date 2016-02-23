@@ -8806,6 +8806,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     long *sizearray;
     long initWFSref = 0;
     
+    long ID_WFSim;
     long ID_WFSim_n;
     long wfsxsize, wfsysize;
     int m;
@@ -8837,6 +8838,8 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 4);
     
     
+    ID_WFSim = image_ID(ID_WFSim_name);
+    
 //    for(iter=0; iter<NBiter; iter++)
     GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
    
@@ -8866,15 +8869,16 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
                 }
             
          //   printf("seaphore wait ...");
-          //  fflush(stdout);
+          //  fflush(stdout); 
+            memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSim].array.F, sizeof(float)*wfsxsize*wfsysize);
             COREMOD_MEMORY_image_set_semwait(ID_WFSim_name, 0);
           //  printf(" done\n");
           //  fflush(stdout);
     
             GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
             
-//            for(m=0;m<NBmodes;m++)
-//              data.image[ID_coeff].array.F[m] = data.image[ID_coeff].array.F[m];
+           for(m=0;m<NBmodes;m++)
+              data.image[ID_coeff].array.F[m] -= data.image[IDcoeff0].array.F[m];
             
             
             iter++;
