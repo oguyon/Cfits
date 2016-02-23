@@ -2609,7 +2609,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                     if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
                     {
-                        sprintf(fnameLOcoeff, "LOcoeff_%02d.txt", mblock);
+                        sprintf(fnameLOcoeff, "LOcoeff_%02ld.txt", mblock);
 
                         fpLOcoeff = fopen(fnameLOcoeff, "w");
                         if(fpLOcoeff == NULL)
