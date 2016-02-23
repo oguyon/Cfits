@@ -8836,7 +8836,8 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     
     long ID_WFSimtot;
     double totfluxave;
-    double alpha = 0.005;
+    double alpha = 0.1;
+    long ID_coefft;
     
     GPUcnt = 2;
     
@@ -8856,9 +8857,15 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     sizearray = (long*) malloc(sizeof(long)*2);    
     sizearray[0] = NBmodes;
     sizearray[1] = 1;
+
     ID_coeff = create_image_ID(ID_coeff_name, 2, sizearray, FLOAT, 1, 0);
-    
     COREMOD_MEMORY_image_set_createsem(ID_coeff_name, 4);
+    data.image[ID_coeff].md[0].cnt0 = 0;
+   
+    ID_coefft = create_image_ID("coefftmp", 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem("coefftmp", 4);
+    
+  
     IDcoeff0 = create_image_ID("coeff0", 2, sizearray, FLOAT, 1, 0);
     ID_WFSim_n = create_2Dimage_ID("wfsim_n", wfsxsize, wfsysize);
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 4);
@@ -8869,15 +8876,12 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     
 //    for(iter=0; iter<NBiter; iter++)
     #ifdef HAVE_CUDA
-    GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
+    GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", "coefftmp", GPUcnt, GPUsetM, 0, 1, 1, 0);
 
     totfluxave = 1.0;
     
     while(1==1)
         {
-           // GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
-         //   printf("iteration %ld\n", iter);
-         //   fflush(stdout);
             if(initWFSref==0)
                 {
                     printf("Computing reference\n");
@@ -8886,8 +8890,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
                     GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
                     for(m=0;m<NBmodes;m++)
                     {
-                      //  printf("%10f ", data.image[ID_coeff].array.F[m]);
-                        data.image[IDcoeff0].array.F[m] = data.image[ID_coeff].array.F[m];
+                        data.image[IDcoeff0].array.F[m] = data.image[ID_coefft].array.F[m];
                     }
                     printf("\n");
                     initWFSref = 1;
@@ -8895,19 +8898,17 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
                     fflush(stdout);
                 }
             
-         //   printf("seaphore wait ...");
-          //  fflush(stdout); 
             memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSim].array.F, sizeof(float)*wfsxsize*wfsysize);
             COREMOD_MEMORY_image_set_semwait(ID_WFSim_name, 0);
-          //  printf(" done\n");
-          //  fflush(stdout);
     
             GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
             totfluxave = (1.0-alpha)*totfluxave + alpha*data.image[ID_WFSimtot].array.F[0];
             
+             data.image[ID_coeff].md[0].write = 1;
            for(m=0;m<NBmodes;m++)
-              data.image[ID_coeff].array.F[m] = data.image[ID_coeff].array.F[m]/totfluxave - data.image[IDcoeff0].array.F[m];
-            
+              data.image[ID_coeff].array.F[m] = data.image[ID_coefft].array.F[m]/totfluxave - data.image[IDcoeff0].array.F[m];
+            data.image[ID_coeff].md[0].cnt0 ++;
+            data.image[ID_coeff].md[0].write = 0;
             
             iter++;
         }
