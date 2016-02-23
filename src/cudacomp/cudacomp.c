@@ -894,11 +894,19 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     }
   
     if(data.image[gpumatmultconf[index].IDout].sem > 0)
-        sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
+    {
+        sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
+    }
+     
         
     if(data.image[gpumatmultconf[index].IDout].sem > 1)
-        sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
-
+        {
+            sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[1], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
+        }
 
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
