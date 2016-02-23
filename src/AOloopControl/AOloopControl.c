@@ -120,6 +120,7 @@ long aoconfID_wfsim = -1;
 int WFSatype;
 long aoconfID_wfsdark = -1;
 long aoconfID_imWFS0 = -1;
+long aoconfID_imWFS0tot = -1;
 long aoconfID_imWFS1 = -1;
 long aoconfID_imWFS2 = -1;
 long aoconfID_wfsref0 = -1;
@@ -3916,7 +3917,8 @@ void *compute_function_imtotal( void *ptr )
 {
     long ii;
     long nelem;
-
+    int semval;
+    
     nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
 
     while(1)
@@ -3926,6 +3928,11 @@ void *compute_function_imtotal( void *ptr )
         for(ii=0; ii<nelem; ii++)
             IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii];
     }
+    
+    data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
+    sem_getvalue(data.image[aoconfID_imWFS0tot].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
 }
 
 
@@ -4244,6 +4251,10 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
             AOconf[loop].WFStotalflux = arith_image_total(data.image[aoconfID_imWFS0].name);
             AOLCOMPUTE_TOTAL_INIT = 1;
             IMTOTAL = AOconf[loop].WFStotalflux;
+            data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
+            sem_getvalue(data.image[aoconfID_imWFS0tot].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
         }
         else  // do it in other threads
         {
@@ -4259,6 +4270,9 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
                 sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         }
     }
+    
+    
+    
 
     if(RM==0)
     {
@@ -4993,6 +5007,10 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
     sprintf(name, "aol%ld_imWFS0", loop);
     aoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    COREMOD_MEMORY_image_set_createsem(name, 2);
+  
+    sprintf(name, "aol%ld_imWFS0tot", loop);
+    aoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", 1, 1);
     COREMOD_MEMORY_image_set_createsem(name, 2);
 
     sprintf(name, "aol%ld_imWFS1", loop);
@@ -8842,13 +8860,12 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     ID_WFSim = image_ID(ID_WFSim_name);
     
 //    for(iter=0; iter<NBiter; iter++)
+    #ifdef HAVE_CUDA
     GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
    
     
     while(1==1)
         {
-            #ifdef HAVE_CUDA
-            
            // GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
          //   printf("iteration %ld\n", iter);
          //   fflush(stdout);
@@ -8883,9 +8900,9 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
             
             
             iter++;
-            
-            #endif
         }
+    #endif
+        
     
     delete_image_ID("coeff0");
     free(sizearray);
