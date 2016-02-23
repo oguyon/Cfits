@@ -8824,7 +8824,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     NBmodes = data.image[ID_CM].md[0].size[2];
 
     ID_WFSref = image_ID(ID_WFSref_name);
-    
+     
     
     sizearray = (long*) malloc(sizeof(long)*2);    
     sizearray[0] = NBmodes;
