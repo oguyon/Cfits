@@ -2695,14 +2695,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                         save_fits("imfitmat", "!imfitmat.fits");
                         delete_image_ID("imfitmat");
+                    
+                        fclose(fpLOcoeff);
                     }
-                    fclose(fpLOcoeff);
-
-
-
-
-
-
 
 
 
@@ -3129,6 +3124,106 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             }
                         }
                     }
+                    
+                    if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
+                    {
+                        sprintf(fnameLOcoeff, "LOcoeff1_%02ld.txt", mblock);
+
+                        fpLOcoeff = fopen(fnameLOcoeff, "w");
+                        if(fpLOcoeff == NULL)
+                        {
+                            printf("ERROR: cannot create file \"LOcoeff1.txt\"\n");
+                            exit(0);
+                        }
+
+
+
+                        linfitsize = data.image[IDRMMmodes].md[0].size[2];
+                        IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
+
+                        ID_imfit = create_2Dimage_ID("imfitim", msizex, msizey);
+
+                        IDcoeffmat = create_2Dimage_ID("imfitmat", linfitsize, data.image[ID].md[0].size[2]);
+
+                        linfitreuse = 0;
+
+                        IDwfstmp = create_2Dimage_ID("wfsimtmp", wfsxsize, wfsysize);
+
+                        for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+                        {
+                            for(ii=0; ii<msizexy; ii++)
+                                data.image[ID_imfit].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
+
+                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-8, "linfitcoeff", linfitreuse);
+                            linfitreuse = 1;
+
+                            for(jj=0; jj<linfitsize; jj++)
+                                data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
+
+                            // construct linear fit result (DM)
+                            IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
+                            for(jj=0; jj<linfitsize; jj++)
+                                for(ii=0; ii<msizex*msizey; ii++)
+                                    data.image[IDtmp].array.F[ii] += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMMmodes].array.F[jj*msizex*msizey+ii];
+
+                            res = 0.0;
+                            resn = 0.0;
+                            for(ii=0; ii<msizex*msizey; ii++)
+                            {
+                                v0 = data.image[IDtmp].array.F[ii]-data.image[ID_imfit].array.F[ii];
+                                vn = data.image[ID_imfit].array.F[ii];
+                                res += v0*v0;
+                                resn += vn*vn;
+                            }
+                            res /= resn;
+
+                            res1 = 0.0;
+                            for(jj=0; jj<linfitsize; jj++)
+                                res1 += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMM_coeff].array.F[jj];
+
+                            delete_image_ID("testrc");
+
+                            LOcoeff = 1.0;
+
+                            LOcoeff = 1.0/(1.0+pow(res/1.0e-6,2.0));
+
+                            if(res1>1.0)
+                                LOcoeff *= 1.0/pow(res1, 2.0);
+
+
+                            fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+                            // printf("%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
+
+                            if(LOcoeff>0.01)
+                            {
+                                // construct linear fit (WFS space)
+                                for(wfselem=0; wfselem<wfssize; wfselem++)
+                                    data.image[IDwfstmp].array.F[wfselem] = 0.0;
+                                for(jj=0; jj<linfitsize; jj++)
+                                    for(wfselem=0; wfselem<wfssize; wfselem++)
+                                        data.image[IDwfstmp].array.F[wfselem] += data.image[IDRMM_coeff].array.F[jj] * data.image[IDRMMresp].array.F[jj*wfssize+wfselem];
+
+                                for(wfselem=0; wfselem<wfssize; wfselem++)
+                                    data.image[IDwfsMresp].array.F[m*wfssize+wfselem] = LOcoeff*data.image[IDwfstmp].array.F[wfselem] + (1.0-LOcoeff)*data.image[IDwfsMresp].array.F[m*wfssize+wfselem];
+                            }
+                        }
+
+                        delete_image_ID("linfitcoeff");
+                        delete_image_ID("imfitim");
+
+                        save_fits("imfitmat", "!imfitmat.fits");
+                        delete_image_ID("imfitmat");
+                    
+                        fclose(fpLOcoeff);
+                    }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
                     save_fits(imname, fname);
 
