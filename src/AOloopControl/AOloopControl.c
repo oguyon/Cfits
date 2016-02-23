@@ -8835,8 +8835,10 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     IDcoeff0 = create_image_ID("coeff0", 2, sizearray, FLOAT, 1, 0);
     ID_WFSim_n = create_2Dimage_ID("wfsim_n", wfsxsize, wfsysize);
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 4);
-
-    for(iter=0; iter<NBiter; iter++)
+    
+    
+//    for(iter=0; iter<NBiter; iter++)
+    while(1==1)
         {
             #ifdef HAVE_CUDA
             
