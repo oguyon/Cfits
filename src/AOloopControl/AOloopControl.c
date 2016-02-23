@@ -8814,25 +8814,13 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     ID_WFSref = image_ID(ID_WFSref_name);
     
     
-    printf("STEP 000\n");
-    fflush(stdout);
-    
     sizearray = (long*) malloc(sizeof(long)*2);    
     sizearray[0] = NBmodes;
     sizearray[1] = 1;
     ID_coeff = create_image_ID(ID_coeff_name, 2, sizearray, FLOAT, 1, 0);
     
-    printf("STEP 001\n");
-    fflush(stdout);
-    
     COREMOD_MEMORY_image_set_createsem(ID_coeff_name, 4);
-
-    printf("STEP 002\n");
-    fflush(stdout);
-
-
     IDcoeff0 = create_image_ID("coeff0", 2, sizearray, FLOAT, 1, 0);
-
     ID_WFSim_n = create_2Dimage_ID("wfsim_n", wfsxsize, wfsysize);
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 4);
 
