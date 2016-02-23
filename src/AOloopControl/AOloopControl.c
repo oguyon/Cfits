@@ -8812,10 +8812,12 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     long IDcoeff0;
     
     
+    GPUcnt = 4;
+    
     
     GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
     for(k=0;k<GPUcnt;k++)
-        GPUsetM[k] = k+6;
+        GPUsetM[k] = k+5;
 
 
     ID_CM = image_ID(ID_CM_name);
