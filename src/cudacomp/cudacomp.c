@@ -1030,8 +1030,8 @@ void *compute_function( void *ptr )
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
     ptr0f = (float*) ptr0;
 
-    if(index==0)
-        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
+    if((index==0)||(index==2))
+        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);    
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
