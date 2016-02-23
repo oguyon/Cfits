@@ -8843,7 +8843,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
         {
             #ifdef HAVE_CUDA
             
-            GPU_loop_MultMat_setup(3, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
+            GPU_loop_MultMat_setup(0, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
             printf("iteration %ld\n", iter);
             fflush(stdout);
             if(initWFSref==0)
@@ -8851,7 +8851,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
                     printf("Computing reference\n");
                     fflush(stdout);
                     memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSref].array.F, sizeof(float)*wfsxsize*wfsysize);
-                    GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], 1.0, 0.0);
+                    GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
                     for(m=0;m<NBmodes;m++)
                     {
                         printf("%10f ", data.image[ID_coeff].array.F[m]);
@@ -8869,7 +8869,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
             printf(" done\n");
             fflush(stdout);
     
-            GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], 1.0, 0.0);
+            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
             
             for(m=0;m<NBmodes;m++)
                 data.image[ID_coeff].array.F[m]-= data.image[IDcoeff0].array.F[m];

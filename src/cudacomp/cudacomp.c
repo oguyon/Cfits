@@ -795,7 +795,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[IDtiming].array.F[*status] = tdiffv;
     
 
-    if(index==0) /// main CM multiplication loop
+    if((index==0)||(index==2)) /// main CM multiplication loop
     {
         //	gpumatmultconf[index].NBstreams = 6;
         if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
