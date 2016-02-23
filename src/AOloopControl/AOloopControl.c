@@ -8838,12 +8838,12 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     
     
 //    for(iter=0; iter<NBiter; iter++)
- 
+ GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
     while(1==1)
         {
             #ifdef HAVE_CUDA
             
-            GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
+           // GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", ID_coeff_name, GPUcnt, GPUsetM, 0, 1, 1, 0);
             printf("iteration %ld\n", iter);
             fflush(stdout);
             if(initWFSref==0)
