@@ -525,9 +525,9 @@ int AOloopControl_compute_CombinedControlMatrix_cli()
 
 int AOloopControl_CompModes_loop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)==0)
     {
-      AOloopControl_CompModes_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      AOloopControl_CompModes_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
       return 0;
     }
   else
@@ -1039,9 +1039,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_CompModes_loop_cli;
     strcpy(data.cmd[data.NBcmd].info,"run AO compute modes loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<CM> <wfsref> <WFS image stream> <output stream>");
-    strcpy(data.cmd[data.NBcmd].example,"aocmlrun CM wfsref wfsim aomodeval");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_coeff_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<CM> <wfsref> <WFS image stream> <WFS image total stream> <output stream>");
+    strcpy(data.cmd[data.NBcmd].example,"aocmlrun CM wfsref wfsim wfsimtot aomodeval");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolrun");
@@ -8811,7 +8811,7 @@ int AOcompute(long loop, int normalize)
 
 
 
-int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_coeff_name)
+int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)
 {
     int *GPUsetM;
     int GPUcntMax = 1;
@@ -8835,8 +8835,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     long IDcoeff0;
     
     
-    GPUcnt = 4;
-    
+    GPUcnt = 2;
     
     GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
     for(k=0;k<GPUcnt;k++)
