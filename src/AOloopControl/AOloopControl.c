@@ -8850,7 +8850,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
                         data.image[IDcoeff0].array.F[m] = data.image[ID_coeff].array.F[m];
                 }
                         
-            COREMOD_MEMORY_image_set_semwait(ID_WFSim_name, 6);
+            COREMOD_MEMORY_image_set_semwait(ID_WFSim_name, 0);
             GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
             
             for(m=0;m<NBmodes;m++)
