@@ -1576,8 +1576,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             result = lseek(SM_fd, sharedsize-1, SEEK_SET);
             if (result == -1) {
                 close(SM_fd);
-                perror("Error calling lseek() to 'stretch' the file");
-                printf("Line %d\n", __LINE__);
+                printERROR(__FILE__,__func__,__LINE__,"Error calling lseek() to 'stretch' the file");
                 exit(0);
             }
 
