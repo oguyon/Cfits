@@ -3927,12 +3927,14 @@ void *compute_function_imtotal( void *ptr )
         IMTOTAL = 0.0;
         for(ii=0; ii<nelem; ii++)
             IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii];
-    }
+    
     
     data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
     sem_getvalue(data.image[aoconfID_imWFS0tot].semptr[0], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
+    if(semval<SEMAPHORE_MAXVAL)
+        sem_post(data.image[aoconfID_imWFS0tot].semptr[0]);
+
+    }
 }
 
 
