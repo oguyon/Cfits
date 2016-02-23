@@ -4009,7 +4009,8 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
     void *status = 0;
     long i;
     int semval;
-
+    int s;
+    
     int semindex = 0;
     
     
@@ -4136,9 +4137,6 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
     }
 
     // Dark subtract and compute total
-    //sprintf(dname, "aol%ld_wfsdark", loop);
-    //IDdark = image_ID(dname);
-    //nelem = AOconf[loop].sizeWFS;
 
     if((loop==0)||(RM == 1)) // single thread, in CPU
     {
@@ -4179,6 +4177,12 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
             break;
         }
 
+         for(s=0;s<data.image[aoconfID_imWFS0].sem; s++)
+            {
+                sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[aoconfID_imWFS0].semptr[s]);
+            }
     }
     else
     {
@@ -4207,6 +4211,13 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
             sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval);
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
         }
+    
+        for(s=0;s<data.image[aoconfID_imWFS0].sem; s++)
+            {
+                sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[aoconfID_imWFS0].semptr[s]);
+            }
     }
 
 
