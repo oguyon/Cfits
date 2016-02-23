@@ -8811,7 +8811,7 @@ int AOcompute(long loop, int normalize)
 
 
 
-int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)
+int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name)
 {
     int *GPUsetM;
     int GPUcntMax = 1;
@@ -8834,6 +8834,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     int m;
     long IDcoeff0;
     
+    long ID_WFSimtot;
     
     GPUcnt = 2;
     
@@ -8862,6 +8863,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     
     
     ID_WFSim = image_ID(ID_WFSim_name);
+    ID_WFSimtot = image_ID(ID_WFSimtot_name);
     
 //    for(iter=0; iter<NBiter; iter++)
     #ifdef HAVE_CUDA
@@ -8900,7 +8902,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
             GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
             
            for(m=0;m<NBmodes;m++)
-              data.image[ID_coeff].array.F[m] -= data.image[IDcoeff0].array.F[m];
+              data.image[ID_coeff].array.F[m] = data.image[ID_coeff].array.F[m]/data.image[ID_WFSimtot].array.F[0] - data.image[IDcoeff0].array.F[m];
             
             
             iter++;
