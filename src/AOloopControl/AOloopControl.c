@@ -5676,7 +5676,7 @@ int set_DM_modes(long loop)
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
-        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
 #endif
     }
 
@@ -8642,7 +8642,7 @@ int AOcompute(long loop, int normalize)
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
             data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
-            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
         }
         else // direct pixel -> actuators linear transformation
         {
@@ -8655,7 +8655,7 @@ int AOcompute(long loop, int normalize)
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
-                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
             }
             else // only use active pixels and actuators (**)
             {
@@ -8728,9 +8728,9 @@ int AOcompute(long loop, int normalize)
 
 
                 if(COMPUTE_GPU_SCALING==1)
-                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta);
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
                 else
-                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0);
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
 
                 // re-map output vector
                 data.image[aoconfID_meas_act].md[0].write = 1;
@@ -8853,7 +8853,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
                     printf("Computing reference\n");
                     fflush(stdout);
                     memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSref].array.F, sizeof(float)*wfsxsize*wfsysize);
-                    GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0);
+                    GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
                     for(m=0;m<NBmodes;m++)
                     {
                         printf("%10f ", data.image[ID_coeff].array.F[m]);
@@ -8871,7 +8871,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
             printf(" done\n");
             fflush(stdout);
     
-//            GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0);
+            GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
             
 //            for(m=0;m<NBmodes;m++)
 //              data.image[ID_coeff].array.F[m] = data.image[ID_coeff].array.F[m];

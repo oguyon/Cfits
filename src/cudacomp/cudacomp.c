@@ -775,7 +775,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
 // increments status by 4
-int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta)
+int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta, int timing)
 {
     int m;
     int ptn;
@@ -787,13 +787,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
-
+    if(timing==1)
+    {
     *status = *status + 1;  // ->7
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
-    
+    }
 
     if((index==0)||(index==2)) /// main CM multiplication loop
     {
@@ -837,12 +838,15 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         }
         gpumatmultconf[index].gpuinit = 1;
     }
+    
+    if(timing == 1)
+    {
     *status = *status + 1;  // -> 8
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
- 
+    }
 
 
     if(gpumatmultconf[index].sem==0)
@@ -874,12 +878,15 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 
 
     // SUM RESULTS FROM SEPARATE GPUs
+    if(timing == 1)
+    {
     *status = *status + 1;  // -> 9
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
- 
+    }
+    
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
@@ -912,12 +919,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
+    if(timing == 1)
+    {
     *status = *status + 1; // -> 10
     clock_gettime(CLOCK_REALTIME, &tnow);
     tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[IDtiming].array.F[*status] = tdiffv;
- 
+    }
  
     return(0);
 }
@@ -2303,7 +2312,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
         for(iter=0; iter<NBiter; iter++)
         {
             status = 0;
-            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0);
+            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
         }
         clock_gettime(CLOCK_REALTIME, &tnow);
         time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
