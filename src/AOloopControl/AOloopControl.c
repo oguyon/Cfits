@@ -2214,6 +2214,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 printf("ERROR: cannot create file \"LOcoeff.txt\"\n");
                 exit(0);
             }
+        save_fits("fmodesWFS00all", "!./mkmodestmp/fmodesWFS00all.HO.fits");
         
         if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
             {
