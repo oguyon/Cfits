@@ -8818,6 +8818,8 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     fflush(stdout);
     
     sizearray = (long*) malloc(sizeof(long)*2);    
+    sizearray[0] = NBmodes;
+    sizearray[1] = 1;
     ID_coeff = create_image_ID(ID_coeff_name, 2, sizearray, FLOAT, 1, 0);
     free(sizearray);
     
