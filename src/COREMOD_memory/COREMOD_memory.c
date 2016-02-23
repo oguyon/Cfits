@@ -1850,6 +1850,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             {
                 fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
                 fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong size %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+                fprintf(stderr,"Axis %ld :  %ld  %ld\n", i, data.image[ID].md[0].size[i], size[i]);
                 exit(0);
             }
     }
