@@ -3058,7 +3058,6 @@ tmux send-keys -t $tmuxname "${execprefix} ./aolmkmodes ${cpamax} -1 ${SVDlimall
 tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
-exit
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
