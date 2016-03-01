@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # copy PIAACMC design scripts to local directory
-execname=PIAACMCdesign
+execname=Cfits
 
 srcdir=$( $execname -i| grep SOURCEDIR| awk '{ print $NF }')
 
@@ -22,6 +22,7 @@ fi
 
 for sname in run runclean runopt runPIAACMC sim1024
 do
+rm $sname
 ln -s $srcdir/PIAACMCsimul/scripts/$sname $currdir/$sname
 done
 
