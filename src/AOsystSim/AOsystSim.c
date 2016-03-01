@@ -3145,7 +3145,7 @@ int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int 
                     rms /= mapz;
                     rms -= ave*ave;
                     rms = sqrt(rms);
-                    data.image[IDmap_CA_rms].array.F[ky*mapxsize+kx] = rms;
+                    data.image[IDmap_CA_rms].array.F[ky*mapxsize+kx] = sqrt(ave);
                 }
                 save_fits("WFSsol_CA_rms", "!WFSsol_CA_rms.fits");
         
@@ -3155,9 +3155,8 @@ int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int 
                 
                 for(kx=0; kx<mapxsize; kx++)
                     for(ky=0; ky<mapysize; ky++)
-                    {
-                        data.image[IDmap_CA_rmsn].array.F[ky*mapxsize+kx] = data.image[IDmap_CA_rms].array.F[ky*mapxsize+kx] * FLUXph;
-                    }
+                        data.image[IDmap_CA_rmsn].array.F[ky*mapxsize+kx] = data.image[IDmap_CA_rms].array.F[ky*mapxsize+kx] * sqrt(FLUXph);
+                
                 save_fits("WFSsol_CA_rmsn", "!WFSsol_CA_rmsn.fits");                
             }
         }
