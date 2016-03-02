@@ -42,6 +42,7 @@ loadparam NBls 4
 loadparam lambda 600
 loadparam mlambda 600
 loadparam mlambdaB 10
+loadparam FPMsectors 1
 loadparam NBrings 22
 loadparam maskradld 1.60
 loadparam ssize 20
@@ -96,6 +97,7 @@ printvar "lambda" "Wavelength for monochromatic design [nm]"
 
 echo "FOCAL PLANE MASK DESIGN:"
 printvar "fpmmaterial" "focal plane mask material"
+printvar "FPMsectors" "mask geometry: 0=disk, 1=sectors, 2=hexagonal tiling"
 printvar "NBrings" "number of rings in focal plane mask"
 printvar "maskradld" "mask outer radius at central wavelength [l/D]"
 printvar "fpmminsag" "min focal plane mask sag"
