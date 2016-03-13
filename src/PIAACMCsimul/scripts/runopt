@@ -558,6 +558,8 @@ fi
 
 # eval single
 if [ $inputmode -eq 3 ]; then
+echo "inputmode = $inputmode"
+exit
 	reoptimize=1		
 	funcprocess							
 	checkerrorstatus
