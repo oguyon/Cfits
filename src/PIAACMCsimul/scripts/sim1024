@@ -237,8 +237,8 @@ echo "====== EXECUTING: ./runPIAACMC $dirname $size $pscale $pupfile $coin $coou
 
 
 # $fpmrad $coin $coout $rmode $emode $sprange $lambda $PIAAmaterial $designstep"
-echo "----------------$designstep ->  ssize = $ssize"
-sleep 10
+#echo "----------------$designstep ->  ssize = $ssize"
+
 ./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep
 #$fpmrad $coin $coout ${rmode} ${emode} ${sprange} $lambda $PIAAmaterial $designstep
 
