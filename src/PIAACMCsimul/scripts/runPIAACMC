@@ -936,7 +936,7 @@ $execnamestring -n step721 << EOF
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
-PIAACMC_ldoffset=0.01
+PIAACMC_ldoffset=0.00001
 piaacmcsimrun $1 100
 exit
 EOF
