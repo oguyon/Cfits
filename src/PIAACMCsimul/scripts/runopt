@@ -17,7 +17,7 @@ file="conf_MdesignStepMax.txt"
 if [ -f $file ]
 	then
 	MdesignStepMax=$(echo "$(cat $file)")
-	echo "Monochromatic Max design Step  = $MdesignStepMax %"
+	echo "Monochromatic Max design Step  = $MdesignStepMax"
 	ok=0
 fi
 
@@ -558,8 +558,6 @@ fi
 
 # eval single
 if [ $inputmode -eq 3 ]; then
-echo "inputmode = $inputmode"
-exit
 	reoptimize=1		
 	funcprocess							
 	checkerrorstatus
