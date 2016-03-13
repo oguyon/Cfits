@@ -48,7 +48,7 @@ int WRITE_OK = 1;
 extern DATA data;
 
 #define SBUFFERSIZE 2000
-
+ 
 ///  Current configuration directory
 char piaacmcconfdir[300];
 
