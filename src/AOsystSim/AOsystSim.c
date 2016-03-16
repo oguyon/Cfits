@@ -1448,7 +1448,7 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
     {
 //        printf("ITERATION %6ld   \n", iter);
   //      fflush(stdout);
-          sprintf(name, "dm%lddisp", DMindex);
+        sprintf(name, "dm%lddisp", DMindex);
         AOsystSim_DMshape(name, "dmifc", "dm2Ddisp");
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
     
@@ -1498,6 +1498,7 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
             COREMOD_MEMORY_image_set_semwait_OR_IDarray(IDarray, 2);
             break;
             default :
+            printf("WAITING %ld us\n", delayus);
             usleep(delayus);
             break;
         }
