@@ -952,7 +952,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
     char pfnamea[200];
     char pfnamep[200];
 
-    long PYRMOD_nbpts = 8;
+    long PYRMOD_nbpts = 16;
     long pmodpt;
     double PYRMOD_rad = 5.0;
     double xc, yc, PA;
