@@ -4208,13 +4208,19 @@ case $retval in
    	 H)
 dialog --title "Help" --msgbox 'Simulation mode\n
 \n
-Creates shared memory arrays: \n
-   dm10disp      : DM control map\n
-   WFturb        : Wavefront phase turbulence (512x512)\n
-   aosimpsfout   : output PSF (intensity)\n
-   aosimwfsim    : output WFS image (intensity)\n
+Creates/links shared memory arrays: \n
+   dm${DMindex}disp    : DM control map\n
+   WFturb              : (created) Wavefront phase turbulence (512x512)\n
+   aosimpsfout         : output PSF (intensity)\n
+   aosimwfsim          : output WFS image (intensity)\n
 \n
-Recomputes aosimpsfout when either dm${DMindex}disp01 or WFturb changes' 40 80
+Recomputes aosimpsfout when either dm${DMindex}disp01 or WFturb changes\n
+\n
+syncmode:\n
+  0: sync to turbulence\n
+  1: sync to DM\n
+  2: sync to both\n
+\n' 40 80
 ;;
 	tv)
 tmux a -t aol${LOOPNUMBER}test
