@@ -854,7 +854,7 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
                     DMifpixarray_NBpix++;
         
         dmifpixactarray = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
-        dmifpixactarray_act = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
+        dmifpixactarray_dmact = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
         dmifpixactarray_ii = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
         
         
