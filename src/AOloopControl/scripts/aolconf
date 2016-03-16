@@ -4274,6 +4274,19 @@ menutestmode_default="dm1v"
 $shmimmonexec dm${DMindex}disp1
 menutestmode_default="dm1m"
 ;;   
+
+    DMsim)
+vali=$( echo $DMindexsim )
+menuitems1=( "0" "Simulation DM index = 0" )
+for i in 1 2 3 4 5 6 7 8 9;
+        do
+menuitems1+=( "$i" "Simulation DM index = $i" )
+done 
+
+cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
+DMindexsim=$("${cmd[@]}" 2>&1 >/dev/tty)
+echo "$DMindexsim" > ./conf/conf_DMindexsim.txt
+;;
    	 Start)
 #if [ $testloopstatus = "OFF" ]; then
 TestModeStart
