@@ -989,6 +989,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
         imsize[0] = arraysize;
         imsize[1] = arraysize;
         ID_outWFSim = create_image_ID(outWFSim_name, 2, imsize, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(outWFSim_name, 5);
         free(imsize);
     }
 
@@ -1458,6 +1459,7 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
         mk_complex_from_amph(imnameamp, imnamepha, "_tmpwfc", 0);
         AOsystSim_WFSsim_Pyramid("_tmpwfc", "aosimwfsim", 0.0, 1);
         delete_image_ID("_tmpwfc");
+        
         COREMOD_MEMORY_image_set_sempost("aosimwfsim", 0);
 
      
