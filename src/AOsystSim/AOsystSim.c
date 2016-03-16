@@ -921,7 +921,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
     char pfnamea[200];
     char pfnamep[200];
 
-    long PYRMOD_nbpts = 4;
+    long PYRMOD_nbpts = 8;
     long pmodpt;
     double PYRMOD_rad = 5.0;
     double xc, yc, PA;
@@ -1449,9 +1449,18 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 //        printf("ITERATION %6ld   \n", iter);
   //      fflush(stdout);
         sprintf(name, "dm%lddisp", DMindex);
+        print("Compute DM shape ...\n");
+        fflush(stdout);
         AOsystSim_DMshape(name, "dmifc", "dm2Ddisp");
+        printf("done\n");
+        fflush(stdout);
+        
+        print("Computing propagation ...\n");
+        fflush(stdout);
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
-    
+        printf("done\n");
+        fflush(stdout);
+        
         // PYWFS code
         index = 2;
         ret = sprintf(imnameamp, "WFamp0_%03ld", index);
