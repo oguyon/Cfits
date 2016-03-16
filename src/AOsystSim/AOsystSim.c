@@ -32,8 +32,11 @@ float *DMifpixarray_val;
 long *DMifpixarray_index; // which actuator
 long *DMifpixarray_pixindex; // which pixel
 long DMifpixarray_NBpix;
-
-
+long DMifpixarray_NBpix0;
+long *dmifpixactarray;
+long *dmifpixactarray_act;
+long *dmifpixactarray_ii;
+        
 
 long NBprobesG = 3;
 int CENTERprobe=1; // 1 if center probe included
@@ -832,7 +835,6 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     long dmact;
     double eps=1.0e-12;
     long k;
-    long DMifpixarray_NBpix0;
     
 
     IDdmctrl = image_ID(IDdmctrl_name);
@@ -850,6 +852,23 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
             for(ii=0; ii<dmsizex*dmsizey; ii++)
                 if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
                     DMifpixarray_NBpix++;
+        
+        dmifpixactarray = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
+        dmifpixactarray_act = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
+        dmifpixactarray_ii = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
+        
+        
+        
+        DMifpixarray_NBpix = 0.0;
+        for(dmact=0; dmact<DMnbact; dmact++)
+            for(ii=0; ii<dmsizex*dmsizey; ii++)
+                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
+                    {
+                        dmifpixactarray[DMifpixarray_NBpix] = dmact*dmsizex*dmsizey+ii;
+                        dmifpixactarray_dmact[DMifpixarray_NBpix] = dmact;
+                        dmifpixactarray_ii[DMifpixarray_NBpix] = ii;
+                        DMifpixarray_NBpix++;
+                    }
         
         if(DMifpixarray_val!=NULL)
             {
@@ -869,19 +888,27 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     }
        
        
-    DMifpixarray_NBpix = 0;
+/*    DMifpixarray_NBpix = 0;
     for(dmact=0; dmact<DMnbact; dmact++)
         for(ii=0; ii<dmsizex*dmsizey; ii++)
             if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
                 {
-            //          printf("%ld / %ld \n", DMifpixarray_NBpix, DMifpixarray_NBpix0);
                     DMifpixarray_val[DMifpixarray_NBpix] = data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii];
                     DMifpixarray_index[DMifpixarray_NBpix] = dmact;
                     DMifpixarray_pixindex[DMifpixarray_NBpix] = ii;
                     DMifpixarray_NBpix++;
                 }
-    printf("Used pix = %ld / %ld\n", DMifpixarray_NBpix, DMnbact*dmsizex*dmsizey);
-    usleep(1000000);
+*/                
+                
+    for(kk=0;kk<DMifpixarray_NBpix0;kk++)
+    {
+        DMifpixarray_val[kk] = data.image[IDdmifc].array.F[dmifpixactarray[kk]];
+        DMifpixarray_index[kk] = dmifpixactarray_dmact[kk];
+        DMifpixarray_pixindex[kk] = dmifpixactarray_ii[kk];
+    }
+    
+  //  printf("Used pix = %ld / %ld\n", DMifpixarray_NBpix, DMnbact*dmsizex*dmsizey);
+  
    
     IDdm = image_ID(IDdm_name);
     if(IDdm==-1)
