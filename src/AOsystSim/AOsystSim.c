@@ -34,7 +34,7 @@ long *DMifpixarray_pixindex; // which pixel
 long DMifpixarray_NBpix;
 long DMifpixarray_NBpix0;
 long *dmifpixactarray;
-long *dmifpixactarray_act;
+long *dmifpixactarray_dmact;
 long *dmifpixactarray_ii;
         
 
@@ -835,7 +835,7 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     long dmact;
     double eps=1.0e-12;
     long k;
-    
+    long kk;
 
     IDdmctrl = image_ID(IDdmctrl_name);
 
