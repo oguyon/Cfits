@@ -865,6 +865,10 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
         DMifpixarray_index = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
         DMifpixarray_pixindex = (long*) malloc(sizeof(long)*DMifpixarray_NBpix);
         DMifpixarray_NBpix0 = DMifpixarray_NBpix;
+        DMifpixarray_init = 1;
+    }
+       
+       
         DMifpixarray_NBpix = 0;
         for(dmact=0; dmact<DMnbact; dmact++)
             for(ii=0; ii<dmsizex*dmsizey; ii++)
@@ -876,7 +880,7 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
                         DMifpixarray_pixindex[DMifpixarray_NBpix] = ii;
                         DMifpixarray_NBpix++;
                     }
-    }
+    
 
    
     IDdm = image_ID(IDdm_name);
