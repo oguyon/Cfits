@@ -1449,13 +1449,13 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 //        printf("ITERATION %6ld   \n", iter);
   //      fflush(stdout);
         sprintf(name, "dm%lddisp", DMindex);
-        print("Compute DM shape ...\n");
+        printf("Compute DM shape ...\n");
         fflush(stdout);
         AOsystSim_DMshape(name, "dmifc", "dm2Ddisp");
         printf("done\n");
         fflush(stdout);
         
-        print("Computing propagation ...\n");
+        printf("Computing propagation ...\n");
         fflush(stdout);
         OptSystProp_run(optsystsim, 0, 0, optsystsim[0].NBelem, "./testconf/", 1);
         printf("done\n");
