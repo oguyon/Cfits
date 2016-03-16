@@ -869,19 +869,19 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
     }
        
        
-        DMifpixarray_NBpix = 0;
-        for(dmact=0; dmact<DMnbact; dmact++)
-            for(ii=0; ii<dmsizex*dmsizey; ii++)
-                if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
-                    {
-              //          printf("%ld / %ld \n", DMifpixarray_NBpix, DMifpixarray_NBpix0);
-                        DMifpixarray_val[DMifpixarray_NBpix] = data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii];
-                        DMifpixarray_index[DMifpixarray_NBpix] = dmact;
-                        DMifpixarray_pixindex[DMifpixarray_NBpix] = ii;
-                        DMifpixarray_NBpix++;
-                    }
-    
-
+    DMifpixarray_NBpix = 0;
+    for(dmact=0; dmact<DMnbact; dmact++)
+        for(ii=0; ii<dmsizex*dmsizey; ii++)
+            if(fabs(data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii])>eps)
+                {
+            //          printf("%ld / %ld \n", DMifpixarray_NBpix, DMifpixarray_NBpix0);
+                    DMifpixarray_val[DMifpixarray_NBpix] = data.image[IDdmifc].array.F[dmact*dmsizex*dmsizey+ii];
+                    DMifpixarray_index[DMifpixarray_NBpix] = dmact;
+                    DMifpixarray_pixindex[DMifpixarray_NBpix] = ii;
+                    DMifpixarray_NBpix++;
+                }
+    printf("Used pix = %ld / %ld\n", DMifpixarray_NBpix, DMnbact*dmsizex*dmsizey);
+    usleep(1000000);
    
     IDdm = image_ID(IDdm_name);
     if(IDdm==-1)
