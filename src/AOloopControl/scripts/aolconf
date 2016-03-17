@@ -11,12 +11,17 @@ NUMAnodeRT=1 # for numactl
 
 execprefix=""
 # the aollog and aolrun cpusets are on the same node
-execprefixRT="" #cset proc -s aolRT -e "
-execprefixLOG="" #cset proc -s aollog -e "
+execprefixRT="sudo cset proc -s aolRT -e "  # main RT script
+execprefixRT1="sudo cset proc -s aolRT1 -e " # simulator
+execprefixSYS="sudo cset proc -s system -e " # everything else
 
 execname="$execprefix Cfits"  
 execnameRT="$execprefixRT Cfits" # real time control process
-execnameLOG="$execprefixLOG Cfits" # 
+execnameRT1="$execprefixRT1 Cfits" 
+execnameLOG="$execprefixSYS Cfits" 
+
+
+
 
 # default parameters
 
@@ -3466,7 +3471,7 @@ echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
 
 tmux new-session -d -s aol${LOOPNUMBER}-ctr
-tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefix ./aolctr" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefixSYS ./aolctr" C-m
 
 #$xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolctr &
 sleep 1

@@ -1020,7 +1020,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
         imsize[0] = arraysize;
         imsize[1] = arraysize;
         ID_outWFSim = create_image_ID(outWFSim_name, 2, imsize, FLOAT, 1, 0);
-        COREMOD_MEMORY_image_set_createsem(outWFSim_name, 5);
+        COREMOD_MEMORY_image_set_createsem(outWFSim_name, 7);
         free(imsize);
     }
 
