@@ -65,18 +65,6 @@ dmysize=32
 
 # =================== some initial setup =======================
 
-# write waitforfile script
-
-
-sudo echo "while [ ! -f \"\$1\" ]" > /usr/local/bin/waitforfile
-sudo echo "do" >> /usr/local/bin/waitforfile
-sudo echo "        echo \"WAITING for file \$1\"" >> /usr/local/bin/waitforfile
-sudo echo "       inotifywait -qqt 2 -e create -e moved_to \"\$(dirname \$1)\"" >> /usr/local/bin/waitforfile
-sudo echo "done" >> /usr/local/bin/waitforfile
-
-
-
-
 
 LINES=$( tput lines )
 COLUMNS=$( tput cols )
@@ -3489,6 +3477,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefixSYS ./aolctr" C-m
 sleep 1
 tmux new-session -d -s aol${LOOPNUMBER}-run
 tmux send-keys -t aol${LOOPNUMBER}-run "$execprefixRT ./aolrun" C-m
+echo "$execprefixRT ./aolrun" > cmd00.txt
 #xterm $xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolrun &
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
