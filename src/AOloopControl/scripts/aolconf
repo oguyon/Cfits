@@ -378,7 +378,7 @@ if [ -a $file ]
 	else
 	wfsdarkfname="wfsdark.fits" #default
 fi
-rm /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
+rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
 Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
 ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
 }
@@ -852,8 +852,6 @@ ReaddmZPname
 Readdmdispname
 ReaddmRMname
 Readwfsimcamname
-ReadLoopDelay
-
 
 # I/O pre-processing [FITS files]
 ReadWFSdarkfname
