@@ -1704,7 +1704,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     long NBmodes;
     
     float *normcoeff;
-    
+    double SVDeps = 1e-4;
     
 
     ID_DMact = image_ID(DMact_stream);
@@ -1724,6 +1724,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 data.image[ID_DMmodes].array.F[kk*m+ii] /= normcoeff[kk];
         }
 
+
+    linopt_compute_reconstructionMatrix(DMmodes, "_fm_recm", SVDeps, "_fm_vtmat");
+    save_fits("_fm_recm", "!test_fm_recm.fits");
+    
     //NBmodes = 3;
 
     arraytmp = (long*) malloc(sizeof(long)*2);
@@ -1866,7 +1870,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
         if(semr==0)
         {
-
             // load DMact to GPU
             cudaStat = cudaMemcpy(d_DMact, data.image[ID_DMact].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
             if (cudaStat != cudaSuccess)
