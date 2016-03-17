@@ -708,6 +708,7 @@ function initDM {
     then
     dmmodes="empty"
     dm2dmO="empty"
+    dm2dmM="empty"
     fi
     echo "dmwfsrefmode = $dmwfsrefmode"
     if [ ! "$dmwfsrefmode" = "1" ];
