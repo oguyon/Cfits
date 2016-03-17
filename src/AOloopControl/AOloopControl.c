@@ -1832,7 +1832,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-    float SVDlim0 = 1.0e-4; // DM filtering
+    float SVDlim0 = 1.0e-2; // DM filtering
     float SVDlim1 = 3.0e-2; // WFS filtering
     float rmslim = 0.03;
     float *rmsarray;
@@ -2985,13 +2985,15 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         printf("%ld blocks\n", NBmblock);
 
+
+
         /// STEP 7: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
 
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            if(BlockNB>-1)
+            if(BlockNB>-1) // LOAD & VERIFY SIZE
             {
                 sprintf(imname1, "fmodesWFS1_%02ld", mblock);
                 sprintf(fname1, "./mkmodestmp/fmodesWFS1_%02ld.fits", mblock);
@@ -3042,7 +3044,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 sprintf(imnameDM1, "fmodes_%02ld", mblock);
 
 
-                linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff");
+                linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff"); // SVD, WFS space
                 IDSVDcoeff = image_ID("modecoeff");
 
                 cnt = 0;
@@ -3114,6 +3116,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
         
+
+
 
 
 
