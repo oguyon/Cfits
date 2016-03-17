@@ -5,9 +5,16 @@
 # ====================== USER EDITS THIS SECTION =======================
 
 
-NUMAnode=0 # for numactl
-NUMAnodeRT=1 # for numactl
 
+
+# CPU SETS
+#
+# The code expects the following CPU SETs to be defined:
+#
+# aol${loopnb}_RT     real-time loop computation    (multiple cores)
+# aol${loopnb}_RT1    simulator                     (single core)
+# aol${loopnb}_RT2    extract mode values from WFS  (single core, controls GPU(s))
+# aol${loopnb}_nRT    non real-time space           (multiple cores, control matric comp, etc...)
 
 execprefix=""
 # the aollog and aolrun cpusets are on the same node
@@ -3428,6 +3435,18 @@ exec 3>&1;
 nbGPU=$(dialog --inputbox "Number of GPU(s) (0 = CPU mode)" 0 0 "$nbGPU" 2>&1 1>&3);
 exec 3>&-;
 echo "$nbGPU" > ./conf/conf_GPU.txt
+
+#n=1
+#for pkg in $(cat file.txt)
+#    do
+#        echo "$pkg $n off" >> /tmp/output.txt
+#        n=$[n+1]
+#done
+
+#dialog --checklist "Choose item:" 80 40 20 $(cat /tmp/output.txt) 2>/tmp/output2.txt
+
+#echo you chose $(cat /tmp/output2.txt)
+#rm /tmp/output*
 ;;
 
 
@@ -3473,12 +3492,12 @@ echo " ON" > ./status/stat_procON.txt
 tmux new-session -d -s aol${LOOPNUMBER}-ctr
 tmux send-keys -t aol${LOOPNUMBER}-ctr "$execprefixSYS ./aolctr" C-m
 
-#$xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolctr &
+
 sleep 1
 tmux new-session -d -s aol${LOOPNUMBER}-run
 tmux send-keys -t aol${LOOPNUMBER}-run "$execprefixRT ./aolrun" C-m
 echo "$execprefixRT ./aolrun" > cmd00.txt
-#xterm $xtermopt -e numactl --cpunodebind=$NUMAnode --membind=$NUMAnode ./aolrun &
+
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m

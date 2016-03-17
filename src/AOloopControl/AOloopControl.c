@@ -838,7 +838,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].key,"aolcrossp");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_CrossProduct_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute cross product between two cubes");
+    strcpy(data.cmd[data.NBcmd].info,"compute cross product between two cubes. Apply mask if image xpmask exists");
     strcpy(data.cmd[data.NBcmd].syntax,"<cube1> <cube2> <output image>");
     strcpy(data.cmd[data.NBcmd].example,"aolcrossp imc0 imc1 crosspout");
     strcpy(data.cmd[data.NBcmd].Ccall,"AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
@@ -1377,6 +1377,7 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
     long zsize1, zsize2;
     long z1, z2;
     long ii;
+    long IDmask;
 
     ID1 = image_ID(ID1_name);
     ID2 = image_ID(ID2_name);
@@ -1392,11 +1393,16 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
         exit(0);
     }
 
+    IDmask = image_ID("xpmask");
+    
+
     IDout = create_2Dimage_ID(IDout_name, zsize1, zsize2);
     for(ii=0;ii<zsize1*zsize2;ii++)
         data.image[IDout].array.F[z2*zsize1+z1] = 0.0;
-        
-    for(z1=0; z1<zsize1; z1++)
+  
+    if(IDmask==-1)    
+    {
+        for(z1=0; z1<zsize1; z1++)
         for(z2=0; z2<zsize2; z2++)
         {
             for(ii=0;ii<xysize1;ii++)
@@ -1404,6 +1410,18 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
                     data.image[IDout].array.F[z2*zsize1+z1] += data.image[ID1].array.F[z1*xysize1+ii] * data.image[ID2].array.F[z2*xysize2+ii];
                 }
         }
+    }
+    else
+    {
+        for(z1=0; z1<zsize1; z1++)
+        for(z2=0; z2<zsize2; z2++)
+        {
+            for(ii=0;ii<xysize1;ii++)
+                {
+                    data.image[IDout].array.F[z2*zsize1+z1] += data.image[IDmask].array.F[ii]*data.image[IDmask].array.F[ii]*data.image[ID1].array.F[z1*xysize1+ii] * data.image[ID2].array.F[z2*xysize2+ii];
+                }
+        }
+    }
 
     return(IDout);
 }
