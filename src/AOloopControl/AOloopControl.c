@@ -1402,6 +1402,10 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
   
     if(IDmask==-1)    
     {
+         printf("No mask\n");
+        fflush(stdout);
+        
+        
         for(z1=0; z1<zsize1; z1++)
         for(z2=0; z2<zsize2; z2++)
         {
