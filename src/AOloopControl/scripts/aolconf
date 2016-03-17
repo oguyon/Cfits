@@ -65,6 +65,19 @@ dmysize=32
 
 # =================== some initial setup =======================
 
+# write waitforfile script
+
+
+sudo echo "while [ ! -f \"\$1\" ]" > /usr/local/bin/waitforfile
+sudo echo "do" >> /usr/local/bin/waitforfile
+sudo echo "        echo \"WAITING for file \$1\"" >> /usr/local/bin/waitforfile
+sudo echo "       inotifywait -qqt 2 -e create -e moved_to \"\$(dirname \$1)\"" >> /usr/local/bin/waitforfile
+sudo echo "done" >> /usr/local/bin/waitforfile
+
+
+
+
+
 LINES=$( tput lines )
 COLUMNS=$( tput cols )
 let " nbwlines = $LINES - 10 "
