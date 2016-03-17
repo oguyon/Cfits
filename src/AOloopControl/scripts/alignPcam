@@ -21,11 +21,11 @@ pname=${pname0#"./"}-$loopnb
 
 
 Cfits -n pname << EOF
-readshmim aol${loopnb}_wfs
+readshmim aol${loopnb}_wfsim
 readshmim aol${loopnb}_wfsdark
 cp aol${loopnb}_wfsdark wfsdark
 loadfits "./conf/refwfs0.fits" imref
-scexaopywfscamalign aol${loopnb}_wfs
+scexaopywfscamalign aol${loopnb}_wfsim
 imdiff=imwfs-imref
 savefits imdiff "!./tmp/imdiff.fits"
 exit
