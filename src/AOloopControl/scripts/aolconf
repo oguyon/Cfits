@@ -11,9 +11,9 @@ NUMAnodeRT=1 # for numactl
 
 execprefix=""
 # the aollog and aolrun cpusets are on the same node
-execprefixRT="sudo cset proc -s aolRT -e "  # main RT script
-execprefixRT1="sudo cset proc -s aolRT1 -e " # simulator
-execprefixSYS="sudo cset proc -s system -e " # everything else
+execprefixRT="cset proc -s aolRT -e "  # main RT script
+execprefixRT1="cset proc -s aolRT1 -e " # simulator
+execprefixSYS="cset proc -s system -e " # everything else
 
 execname="$execprefix Cfits"  
 execnameRT="$execprefixRT Cfits" # real time control process
