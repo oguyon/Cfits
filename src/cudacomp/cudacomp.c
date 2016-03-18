@@ -1890,7 +1890,9 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     iter = 0;
 
     list_image_ID();
-
+    sleep(100);
+       
+       
     if(TRACEMODE==1)
         {
             sizearraytmp = (long*) malloc(sizeof(long)*2);
