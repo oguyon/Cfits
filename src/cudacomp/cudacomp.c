@@ -1993,7 +1993,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                     data.image[ID_modeval].md[0].write = 1;
                     
                     for(k=0;k<NBmodes;k++)
-                        data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k] 
+                        data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k]; 
                     
                     sem_getvalue(data.image[IDtrace].semptr[0], &semval);
                     if(semval<SEMAPHORE_MAXVAL)
