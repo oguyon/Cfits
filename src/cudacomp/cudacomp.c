@@ -1899,15 +1899,15 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 exit(EXIT_FAILURE);
             }
             ts.tv_sec += 1;
-            semr = sem_timedwait(data.image[ID_DMact].semptr[0], &ts);
+            semr = sem_timedwait(data.image[ID_DMact].semptr[2], &ts);
 
             if(iter == 0)
             {
                 printf("driving semaphore to zero ... ");
                 fflush(stdout);
-                sem_getvalue(data.image[ID_DMact].semptr[0], &semval);
+                sem_getvalue(data.image[ID_DMact].semptr[2], &semval);
                 for(scnt=0; scnt<semval; scnt++)
-                    sem_trywait(data.image[ID_DMact].semptr[0]);
+                    sem_trywait(data.image[ID_DMact].semptr[2]);
                 printf("done\n");
                 fflush(stdout);
             }
