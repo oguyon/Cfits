@@ -2030,7 +2030,11 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             if(FILTERMODES==1)
             {
                 for(k=0;k<NBmodes;k++)
+                {
+                    if(k<10)
+                        printf("Multiplying coeff %4ld by  %f\n", k, data.image[ID_modeval_mult].array.F[k]);
                     data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
+                }
                 
                 // send vector back to GPU
                 cudaStat = cudaMemcpy(d_modeval, data.image[ID_modeval].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
