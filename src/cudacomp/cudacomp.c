@@ -1722,7 +1722,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     NBmodes = n;
     normcoeff = (float*) malloc(sizeof(float)*NBmodes);
 
-    list_image_ID();
 
     if(FILTERMODES==1)
         {
@@ -1759,7 +1758,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             free(sizearraytmp);
        }
 
-    list_image_ID();
+
 
     for(kk=0; kk<NBmodes; kk++)
     {
