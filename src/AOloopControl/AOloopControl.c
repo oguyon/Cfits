@@ -2597,24 +2597,15 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
-            /*value1 = 0.0;
-            for(ii=0; ii<msizexy; ii++)
-                {
-                        data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] -= data.image[IDSVDmode1].array.F[ii];;
-                        value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
-                    }
-                    delete_image_ID("SVDmode1");
-                 
-                    rms = sqrt(value1/totm);
-                    if(rms>rmslim)
-                    {
-                 //       for(ii=0; ii<msizexy; ii++)
-                   //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
-                    }
-                    else
-                        mok[m] = 0;
-            */
-
+            for(m=0;m<cnt;m++)
+            {
+                value1 = 0.0;
+                for(ii=0; ii<msizexy; ii++)
+                    value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDm].array.F[m*msizexy+ii];
+                rms = sqrt(value1/msizexy);
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[IDm].array.F[m*msizexy+ii] /= rms;
+            }
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
