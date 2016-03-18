@@ -2338,9 +2338,15 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     //printf("Testing SVD on CPU\n");
       // linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
     
+        create_2Dimage_ID("Rmat", WFSsize, WFSsize);
+    
        printf("Testing SVD on GPU\n");
        GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
-       
+        list_image_ID();
+        printf("DONE ... ");
+        fflush(stdout);
+        
+        
        // CHECK RESULT
         arraysizetmp = (long*) malloc(sizeof(long)*3);
         ID_R = image_ID("Rmat");
