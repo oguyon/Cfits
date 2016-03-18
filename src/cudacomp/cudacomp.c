@@ -1932,7 +1932,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 }
 
                 // compute
-/*
+
                  cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_DMmodes, n, d_modeval, 1, &beta, d_DMact, 1);
                 if (cudaStat != CUBLAS_STATUS_SUCCESS)
                 {
@@ -1947,7 +1947,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                         printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
                     exit(EXIT_FAILURE);
                 }
-*/
+
                 // copy result
 /*                data.image[IDoutact].md[0].write = 1;
                 cudaStat = cudaMemcpy(data.image[IDoutact].array.F, d_DMact, sizeof(float)*m, cudaMemcpyDeviceToHost);
