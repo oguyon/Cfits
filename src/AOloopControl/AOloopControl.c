@@ -9431,13 +9431,13 @@ int AOloopControl_run()
                                 data.image[aoconfID_meas_act].array.F[ii] = 0.0;
                             }
                     }
-                    
-                sem_getvalue(data.image[aoconfID_meas_act].semptr[0], &semval);
-                if(semval<SEMAPHORE_MAXVAL)
-                    sem_post(data.image[aoconfID_meas_act].semptr[0]);
-                sem_getvalue(data.image[aoconfID_meas_act].semptr[1], &semval);
-                if(semval<SEMAPHORE_MAXVAL)
-                    sem_post(data.image[aoconfID_meas_act].semptr[1]);
+                
+                for(semnb=0;semnb<data.image[aoconfID_meas_act].sem;semnb++)
+                {
+                    sem_getvalue(data.image[aoconfID_meas_act].semptr[semnb], &semval);
+                    if(semval<SEMAPHORE_MAXVAL)
+                        sem_post(data.image[aoconfID_meas_act].semptr[semnb]);
+                }
 
 
 
