@@ -2621,9 +2621,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         save_fits("fmodes2ball", "!./mkmodestmp/fmodes2ball.fits");
-
-
-
     }
 
 
@@ -2854,7 +2851,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     {
                         sprintf(imname, "fmodesWFS0_%02ld", mblock);
                         IDmwfs = image_ID(imname);
-                        sprintf(imnameDM, "fmodes2_%02ld", mblock);
+                        sprintf(imnameDM, "fmodes2b_%02ld", mblock);
                         IDm = image_ID(imnameDM);
 
 
@@ -2862,7 +2859,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             data.image[IDSVDmodein].array.F[ii] = data.image[IDmwfs].array.F[m*wfssize+ii];
 
                         sprintf(imname, "fmodesWFS0_%02ld", mblock0);
-                        sprintf(imnameDM, "fmodes2_%02ld", mblock0);
+                        sprintf(imnameDM, "fmodes2b_%02ld", mblock0);
                         linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-4, "modecoeff", reuse);
                         IDSVDcoeff = image_ID("modecoeff");
                         reuse = 1;
@@ -2909,7 +2906,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     m1 = 0;
                     sprintf(imname, "fmodesWFS0_%02ld", mblock);
                     IDmwfs = image_ID(imname);
-                    sprintf(imnameDM, "fmodes2_%02ld", mblock);
+                    sprintf(imnameDM, "fmodes2b_%02ld", mblock);
                     IDmdm = image_ID(imnameDM);
                     if(IDmdm==-1)
                     {
