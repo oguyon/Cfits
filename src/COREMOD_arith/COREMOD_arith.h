@@ -2,6 +2,7 @@
 #define _ARITH_H
 
 long arith_set_pixel(char *ID_name, double value, long x, long y);
+long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y);
 
 long arith_set_row(char *ID_name, double value, long y);
 
