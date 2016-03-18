@@ -2461,6 +2461,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
+        /// fmodes1all -> fmodes2all
+        
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
             data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -2594,6 +2596,25 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
+
+            /*value1 = 0.0;
+            for(ii=0; ii<msizexy; ii++)
+                {
+                        data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] -= data.image[IDSVDmode1].array.F[ii];;
+                        value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
+                    }
+                    delete_image_ID("SVDmode1");
+                 
+                    rms = sqrt(value1/totm);
+                    if(rms>rmslim)
+                    {
+                 //       for(ii=0; ii<msizexy; ii++)
+                   //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
+                    }
+                    else
+                        mok[m] = 0;
+            */
+
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
