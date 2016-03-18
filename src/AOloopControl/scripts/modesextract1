@@ -11,6 +11,8 @@ loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_meas_act
 readshmim aol${loopnb}_dmC
 creaim aol${loopnb}_gainarray 50 1
-cudaextrmodes aol${loopnb}_meas_act DMmodes aol${loopnb}_gainarray aol${loopnb}_modevalc 6 1 aol${loopnb}_dmC
+readshmim dmfiltact
+cudaextrmodes aol${loopnb}_meas_act DMmodes aol${loopnb}_gainarray aol${loopnb}_modevalc 6 1 dmfiltact 
+aol${loopnb}_dmC
 exit
 EOF
