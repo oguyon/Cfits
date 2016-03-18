@@ -2031,8 +2031,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             {
                 for(k=0;k<NBmodes;k++)
                 {
-                    if(k<10)
-                        printf("Multiplying coeff %4ld by  %f\n", k, data.image[ID_modeval_mult].array.F[k]);
+                    //if(k<10)
+                      //  printf("Multiplying coeff %4ld by  %f\n", k, data.image[ID_modeval_mult].array.F[k]);
                     data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
                 }
                 
