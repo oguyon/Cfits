@@ -180,7 +180,7 @@ int init_COREMOD_arith()
   
   strcpy(data.cmd[data.NBcmd].key,"setpix1Drange");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = arith_set_pixel_cli;
+  data.cmd[data.NBcmd].fp = arith_set_pixel_1Drange_cli;
   strcpy(data.cmd[data.NBcmd].info,"set pixel value for 1D area");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <first pix> <last pix>");
   strcpy(data.cmd[data.NBcmd].example,"setpix im 1.24 10 200");
