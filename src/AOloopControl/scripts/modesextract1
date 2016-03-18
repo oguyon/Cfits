@@ -13,7 +13,8 @@ readshmim dm0disp3
 readshmim aol${loopnb}_mfiltmult
 creaim aol${loopnb}_gainarray 50 1
 readshmim dmfiltact
-cudaextrmodes aol${loopnb}_dmC DMmodes aol${loopnb}_gainarray aol${loopnb}_modevalc 6 1 aol${loopnb}_mfiltmult dm0disp3
+listim
+cudaextrmodes dm0disp3 DMmodes aol${loopnb}_gainarray aol${loopnb}_modevalc 6 1 aol${loopnb}_mfiltmult dm0disp3
 #aol${loopnb}_dmC
 exit
 EOF
