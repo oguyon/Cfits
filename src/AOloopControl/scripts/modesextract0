@@ -3,13 +3,13 @@
 
 loopnb=$(cat LOOPNUMBER)
 
-pname="aol${loopnb}modeval"
+pname="aol${loopnb}modeval0"
 
 
 Cfits -n $pname << EOF
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_meas_act
 creaim aol${loopnb}_gainarray 50 1
-cudaextrmodes aol${loopnb}_meas_act DMmodes aol${loopnb}_gainarray aol${loopnb}_modeval 6 0 empty
+cudaextrmodes aol${loopnb}_meas_act DMmodes aol${loopnb}_gainarray aol${loopnb}_modeval 5 0 empty empty
 exit
 EOF
