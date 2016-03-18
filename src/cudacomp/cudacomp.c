@@ -1989,7 +1989,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
                 // copy result
                 data.image[IDoutact].md[0].write = 1;
-             //   cudaStat = cudaMemcpy(data.image[IDoutact].array.F, d_DMact, sizeof(float)*m, cudaMemcpyDeviceToHost);
+                cudaStat = cudaMemcpy(data.image[IDoutact].array.F, d_DMact, sizeof(float)*m, cudaMemcpyDeviceToHost);
                 sem_getvalue(data.image[IDoutact].semptr[0], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDoutact].semptr[0]);
