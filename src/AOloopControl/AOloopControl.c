@@ -3268,7 +3268,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 MBLOCK_ID[mblock] = IDm;
                 sprintf(fname2, "!./mkmodestmp/fmodes5_%02ld.fits", mblock);
                 list_image_ID();
+                printf("SAVING %s -> %s\n", imname, fname2);
+                fflush(stdout);
                 save_fits(imname, fname2);
+                printf("SAVED\n");
+                fflush(stdout);
             }
             MBLOCK_NBmode[mblock] = cnt;
         }
