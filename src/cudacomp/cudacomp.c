@@ -1957,6 +1957,9 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 exit(EXIT_FAILURE);
             }
 
+            list_image_ID();
+            sleep(100);
+
             // compute
             cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
             if (cudaStat != CUBLAS_STATUS_SUCCESS)
