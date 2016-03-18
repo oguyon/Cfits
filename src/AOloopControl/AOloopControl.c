@@ -3225,19 +3225,19 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     value1 = 0.0;
                     for(ii=0; ii<msizexy; ii++)
                     {
-                        data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] -= data.image[IDSVDmode1].array.F[ii];;
+               //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] -= data.image[IDSVDmode1].array.F[ii];;
                         value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     }
                     delete_image_ID("SVDmode1");
                  
-                    rms = sqrt(value1/totm);
-                    if(rms>rmslim)
-                    {
+          //          rms = sqrt(value1/totm);
+      //              if(rms>rmslim)
+        //            {
                  //       for(ii=0; ii<msizexy; ii++)
                    //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
-                    }
-                    else
-                        mok[m] = 0;
+//                    }
+  //                  else
+    //                    mok[m] = 0;
             
                     //printf("  %12g (%g %g)\n", rms, value1, totm);
                 }
