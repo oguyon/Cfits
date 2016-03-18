@@ -1884,6 +1884,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
+   if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
 
 
     loopOK = 1;
