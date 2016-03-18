@@ -1704,7 +1704,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     long ii, kk;
 
     long NBmodes;
-    int FILTERMODES = 0;
+    int FILTERMODES = 1;
     float *normcoeff;
 
     long IDoutact;
