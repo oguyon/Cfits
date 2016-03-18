@@ -2562,7 +2562,72 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         save_fits("fmodes2all", "!./mkmodestmp/fmodes2all.fits");
+    
+
+
+
+
+
+
+        /// STEP 5: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim0 FOR CUTOFF -> fmodes2ball.fits  (DM space)
+        for(mblock=0; mblock<NBmblock; mblock++)
+        {
+            printf("MODE BLOCK %ld\n", mblock);
+            fflush(stdout);
+
+            sprintf(imname, "fmodes2_%02ld", mblock);
+            printf("SVD decomp ...");
+            fflush(stdout);
+            linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
+            printf("DONE\n");
+            fflush(stdout);
+            cnt = 0;
+            IDSVDcoeff = image_ID("svdcoeff");
+            svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
+            for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
+                if(data.image[IDSVDcoeff].array.F[m]>SVDlim0*svdcoeff0)
+                    cnt++;
+            printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
+            fflush(stdout);
+            sprintf(imname1, "fmodes2b_%02ld", mblock);
+            IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
+            IDSVDmodes = image_ID("svdmodes");
+            for(ii=0; ii<cnt*msizex*msizey; ii++)
+                data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
+
+            MBLOCK_NBmode[mblock] = cnt;
+            MBLOCK_ID[mblock] = IDm;
+            sprintf(fname1, "!./mkmodestmp/fmodes2b_%02ld.fits", mblock);
+            save_fits(imname1, fname1);
+
+            delete_image_ID("svdmodes");
+            delete_image_ID("svdcoeff");
+        }
+
+
+        cnt = 0;
+        for(mblock=0; mblock<NBmblock; mblock++)
+            cnt += MBLOCK_NBmode[mblock];
+        IDm = create_3Dimage_ID("fmodes2ball", msizex, msizey, cnt);
+        cnt = 0;
+        for(mblock=0; mblock<NBmblock; mblock++)
+        {
+            for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+            {
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[IDm].array.F[cnt*msizexy+ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
+                // printf("Writing cnt %ld    %ld of %ld  [%ld -> %ld]\n", cnt, m, mblock, MBLOCK_ID[mblock], IDm);
+                cnt++;
+            }
+        }
+        save_fits("fmodes2ball", "!./mkmodestmp/fmodes2ball.fits");
+
+
+
     }
+
+
+
 
 
 
@@ -2573,7 +2638,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     IDzrespM = image_ID("zrespM");
     if(IDzrespM!=-1) // compute WFS response to DM modes
     {
-        /// STEP 5: COMPUTE WFS RESPONSE TO MODES -> fmodesWFS0all.fits
+        /// STEP 6: COMPUTE WFS RESPONSE TO MODES -> fmodesWFS0all.fits
         if(BlockNB<0)
         {   // check size
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
@@ -2753,7 +2818,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             // time : 02:00
 
 
-            /// STEP 6: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
+            /// STEP 7: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
             IDSVDmask = create_2Dimage_ID("SVDmask", wfsxsize, wfsysize);
             for(ii=0; ii<wfssize; ii++)
                 data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -2980,7 +3045,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-        /// STEP 7: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
+        /// STEP 8: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
 
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
 
