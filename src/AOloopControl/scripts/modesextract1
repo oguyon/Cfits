@@ -9,12 +9,12 @@ pname="aol${loopnb}modeval1"
 Cfits -n $pname << EOF
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_meas_act
-readshmim dm0disp3
+readshmim aol${loopnb}_dmC
 readshmim aol${loopnb}_mfiltmult
 creaim aol${loopnb}_gainarray 50 1
 readshmim dmfiltact
 listim
-cudaextrmodes dm0disp3 DMmodes aol${loopnb}_gainarray aol${loopnb}_modevalc 6 1 aol${loopnb}_mfiltmult dmfiltact
+cudaextrmodes aol${loopnb}_dmC DMmodes aol${loopnb}_gainarray aol${loopnb}_modevalc 6 1 aol${loopnb}_mfiltmult aol${loopnb}_dmC
 #aol${loopnb}_dmC
 exit
 EOF
