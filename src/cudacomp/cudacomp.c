@@ -1889,8 +1889,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     loopOK = 1;
     iter = 0;
 
-    list_image_ID();
-    sleep(100);
+    
        
        
     if(TRACEMODE==1)
@@ -1917,7 +1916,9 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             free(sizearraytmp);
         }
 
-
+  list_image_ID();
+    sleep(100);
+  
 
     while(loopOK == 1)
     {
