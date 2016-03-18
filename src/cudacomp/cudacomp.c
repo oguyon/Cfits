@@ -1920,8 +1920,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             free(sizearraytmp);
         }
 
-  list_image_ID();
-    sleep(100);
   
 
     while(loopOK == 1)
@@ -1953,6 +1951,12 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 fflush(stdout);
             }
         }
+
+
+ list_image_ID();
+    sleep(100);
+  
+
 
         if(semr==0)
         {
