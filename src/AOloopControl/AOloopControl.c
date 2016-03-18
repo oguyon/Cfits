@@ -9469,11 +9469,11 @@ int AOloopControl_run()
 
 
                         
-                   if(data.image[aoconfID_dmC].sem > 0)
+                   for(semnb=0;semnb<data.image[aoconfID_dmC].sem;semnb++)
                    {
-                       sem_getvalue(data.image[aoconfID_dmC].semptr[0], &semval);
+                       sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
                         if(semval<SEMAPHORE_MAXVAL)
-                            sem_post(data.image[aoconfID_dmC].semptr[0]);
+                            sem_post(data.image[aoconfID_dmC].semptr[semnb]);
                     }
                     data.image[aoconfID_dmC].md[0].cnt0++;
                     data.image[aoconfID_dmC].md[0].write = 0;
