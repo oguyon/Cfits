@@ -125,8 +125,8 @@ int CUDACOMP_test_cli()
 
 int CUDACOMP_extractModesLoop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,4)==0)
-        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string);
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,4)+CLI_checkarg(8,4)==0)
+        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string);
     else
         return 1;
 }
@@ -174,7 +174,7 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]> <FILTER mode> <out filter stream>");
     strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6 1 dm0disp3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDoutfilt_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name)");
     data.NBcmd++;
     
 
@@ -1675,7 +1675,7 @@ cudaDeviceReset();
 // DMmodes needs to be orthogonal
 // single GPU computation
 //
-int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDoutfilt_name)
+int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name)
 {
     long ID_DMact;
     long ID_DMmodes;
@@ -1726,17 +1726,14 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     if(FILTERMODES==1)
         {
             sizearraytmp = (long*) malloc(sizeof(long)*2);
-
-//            sizearraytmp[0] = data.image[ID_DMact].md[0].size[0];
- //           sizearraytmp[1] = data.image[ID_DMact].md[0].size[1];
             IDoutact = image_ID(IDoutfilt_name);
             list_image_ID();
-            //create_image_ID("dmfiltact", 2, sizearraytmp, FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem(IDoutfilt_name, 5);
             
             sizearraytmp[0] = NBmodes;
             sizearraytmp[1] = 1;
-            ID_modeval_mult = create_image_ID("dmfilt_mult", 2, sizearraytmp, FLOAT, 1, 0);
+            ID_modeval_mult = image_ID(IDfiltmult_name);
+            //create_image_ID("dmfilt_mult", 2, sizearraytmp, FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem("dmfilt_mult", 5);
             for(k=0;k<NBmodes;k++)
                 {

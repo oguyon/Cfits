@@ -108,7 +108,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta, int timing);
 int GPU_loop_MultMat_free(int index);
 void *compute_function( void *ptr );
-int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDoutfilt_name);
+int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name);
 #endif
 
 
