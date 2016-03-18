@@ -316,12 +316,12 @@ long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)
     if(atype == FLOAT)
     {
         for(ii=iistart;ii<iiend;ii++)
-            data.image[ID].array.F[y*naxes[0]+ii] = (float) value;
+            data.image[ID].array.F[ii] = (float) value;
     }
     else if(atype == DOUBLE)
     {
         for(ii=iistart;ii<iiend;ii++)
-            data.image[ID].array.D[y*naxes[0]+ii] = value;
+            data.image[ID].array.D[ii] = value;
     }
     else
     {
