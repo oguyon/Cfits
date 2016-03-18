@@ -3060,7 +3060,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
         /// STEP 8: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
-        /// fmodesWFS1all, fmodes3 -> fmodesWFSall, fmodesall
+        /// fmodesWFS1all, fmodes3 -> fmodes4all
         
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
 
@@ -3148,7 +3148,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 }
                 delete_image_ID("SVDout");
                 delete_image_ID("modecoeff");
-                sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock);
+                sprintf(fname, "!./mkmodestmp/fmodes4_%02ld.fits", mblock);
                 save_fits(imnameDM1, fname);
                 MBLOCK_ID[mblock] = IDmdm1;
                 MBLOCK_NBmode[mblock] = cnt;
@@ -3156,8 +3156,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
             else
             {
-                sprintf(fname, "./mkmodestmp/fmodes_%02ld.fits", mblock);
-                sprintf(imnameDM1, "fmodes_%02ld", mblock);
+                sprintf(fname, "./mkmodestmp/fmodes4_%02ld.fits", mblock);
+                sprintf(imnameDM1, "fmodes4_%02ld", mblock);
                 IDmdm1 = load_fits(fname, imnameDM1, 1);
                 MBLOCK_ID[mblock] = IDmdm1;
                 MBLOCK_NBmode[mblock] = data.image[IDmdm1].md[0].size[2];
@@ -3167,7 +3167,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
-        IDm = create_3Dimage_ID("fmodesall", msizex, msizey, cnt);
+        IDm = create_3Dimage_ID("fmodes4all", msizex, msizey, cnt);
         cnt = 0;
         cnt1 = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
@@ -3182,7 +3182,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 cnt++;
             }
         }
-        save_fits("fmodesall", "!./mkmodestmp/fmodesall.fits");
+        save_fits("fmodes4all", "!./mkmodestmp/fmodes4all.fits");
 
         NBmblock = cnt1;
 
@@ -3193,7 +3193,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
        /// STEP 9: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes5all.fits  (DM space)
-        /// fmodes[4]all -> fmodes5all
+        /// fmodes4all -> fmodes5all
         
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
@@ -3216,7 +3216,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
-                    sprintf(imname, "fmodes_%02ld", mblock0); /// [4]
+                    sprintf(imname, "fmodes4_%02ld", mblock0); /// [4]
                     linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-4, "modecoeff", reuse);
                     reuse = 1;
                     linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
@@ -3322,7 +3322,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     cnt++;
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             fflush(stdout);
-            sprintf(imname1, "fmodes5b_%02ld", mblock);
+            sprintf(imname1, "fmodes_%02ld", mblock);
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
             IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
@@ -3340,7 +3340,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
-            sprintf(fname1, "!./mkmodestmp/fmodes5b_%02ld.fits", mblock);
+            sprintf(fname1, "!./mkmodestmp/fmodes_%02ld.fits", mblock);
             save_fits(imname1, fname1);
 
             delete_image_ID("svdmodes");
@@ -3351,7 +3351,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
-        IDm = create_3Dimage_ID("fmodes5ball", msizex, msizey, cnt);
+        IDm = create_3Dimage_ID("fmodesball", msizex, msizey, cnt);
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
@@ -3363,7 +3363,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 cnt++;
             }
         }
-        save_fits("fmodes5ball", "!./mkmodestmp/fmodes5ball.fits");
+        save_fits("fmodesball", "!./mkmodestmp/fmodesall.fits");
     
 
 
