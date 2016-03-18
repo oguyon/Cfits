@@ -1349,7 +1349,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
         exit(0);
     }
 
-cudaDeviceReset();
+    cudaDeviceReset();
 
     printf("step 1a: create cudense handle ...");
     fflush(stdout);
@@ -1714,6 +1714,12 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     int imOK;
 
 
+    int TRACEMODE = 1;
+    char traceim_name[200];
+    long TRACEsize = 3000;
+    long TRACEindex = 0;
+
+
 
     ID_DMact = image_ID(DMact_stream);
     m = data.image[ID_DMact].md[0].size[0]*data.image[ID_DMact].md[0].size[1];
@@ -1884,6 +1890,32 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     list_image_ID();
 
+    if(TRACEMODE==1)
+        {
+            sizearray = (long*) malloc(sizeof(long)*2);
+            sprintf(traceim_name, "%s-trace", DMmodes_val);
+            sizearraytmp[0] = TRACEsize;
+            sizearraytmp[1] = NBmodes;
+            IDtrace = image_ID(traceim_name);
+            imOK = 1;
+            if(IDtrace == -1)
+                imOK = 0;
+            else
+                {
+                    if((data.image[IDtrace].md[0].size[0]!=TRACEsize)||(data.image[IDtrace].md[0].size[1]!=NBmodes))
+                        {
+                            imOK = 0;
+                            delete_image_ID(traceim_name);
+                        }
+                }
+            if(imOK==0)
+                IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, FLOAT, 1, 0);
+            COREMOD_MEMORY_image_set_createsem(traceim_name, 5);
+            free(sizearraytmp);
+        }
+
+
+
     while(loopOK == 1)
     {
         if(data.image[ID_DMact].sem==0)
@@ -1951,6 +1983,31 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 sem_post(data.image[ID_modeval].semptr[1]);
             data.image[ID_modeval].md[0].cnt0++;
             data.image[ID_modeval].md[0].write = 0;
+
+
+
+
+            if(TRACEMODE == 1)
+                {
+                    data.image[ID_modeval].md[0].write = 1;
+                    
+                    for(k=0;k<NBmodes;k++)
+                        data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k] 
+                    
+                    sem_getvalue(data.image[IDtrace].semptr[0], &semval);
+                    if(semval<SEMAPHORE_MAXVAL)
+                        sem_post(data.image[IDtrace].semptr[0]);
+                    sem_getvalue(data.image[IDtrace].semptr[1], &semval);
+                    if(semval<SEMAPHORE_MAXVAL)
+                        sem_post(data.image[IDtrace].semptr[1]);
+                    data.image[IDtrace].md[0].cnt0++;
+                    data.image[IDtrace].md[0].write = 0;
+                    
+                    TRACEindex++;
+                    if(TRACEindex>=TRACEsize)
+                        TRACEindex = 0;
+                }
+
 
 
             if(FILTERMODES==1)
