@@ -1746,6 +1746,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             free(sizearraytmp);
        }
 
+    list_image_ID();
 
     for(kk=0; kk<NBmodes; kk++)
     {
