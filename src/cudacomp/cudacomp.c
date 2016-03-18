@@ -1943,9 +1943,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             ts.tv_sec += 1;
             semr = sem_timedwait(data.image[ID_DMact].semptr[2], &ts);
 
- list_image_ID();
-    sleep(100);
- 
 
             if(iter == 0)
             {
@@ -1972,8 +1969,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 exit(EXIT_FAILURE);
             }
 
-            list_image_ID();
-            sleep(100);
 
             // compute
             cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_DMmodes, m, d_DMact, 1, &beta, d_modeval, 1);
