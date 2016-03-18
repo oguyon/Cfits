@@ -1736,7 +1736,12 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             ID_modeval_mult = create_image_ID("dmfilt_mult", 2, sizearraytmp, FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem("dmfilt_mult", 5);
             for(k=0;k<NBmodes;k++)
-                data.image[ID_modeval_mult].array.F[k] = 1.0/(1.0+k);
+                {
+                    if(k<2)
+                        data.image[ID_modeval_mult].array.F[k] = 0.0;
+                    else
+                        data.image[ID_modeval_mult].array.F[k] = 1.0;
+                }
 
             free(sizearraytmp);
        }
