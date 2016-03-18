@@ -1736,7 +1736,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         for(ii=0; ii<m; ii++)
             normcoeff[kk] += data.image[ID_DMmodes].array.F[kk*m+ii]*data.image[ID_DMmodes].array.F[kk*m+ii];
         for(ii=0; ii<m; ii++)
-            data.image[ID_DMmodes].array.F[kk*m+ii] /= normcoeff[kk];
+            data.image[ID_DMmodes].array.F[kk*m+ii] /= normcoeff[kk]*sqrt(m);
     }
 
 
