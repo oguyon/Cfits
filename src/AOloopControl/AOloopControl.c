@@ -1832,7 +1832,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-    float SVDlim0 = 1.0e-2; // DM filtering
+    float SVDlim0 = 0.05; // DM filtering
     float SVDlim1 = 3.0e-2; // WFS filtering
     float rmslim = 0.03;
     float *rmsarray;
@@ -3046,7 +3046,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
         /// STEP 8: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
-        /// fmodesWFS1all, fmodes3 -> 
+        /// fmodesWFS1all, fmodes3 -> fmodesWFSall, fmodesall
         
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
 
