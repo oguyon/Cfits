@@ -1727,7 +1727,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         {
             sizearraytmp = (long*) malloc(sizeof(long)*2);
             IDoutact = image_ID(IDoutfilt_name);
-            list_image_ID();
             COREMOD_MEMORY_image_set_createsem(IDoutfilt_name, 5);
             
             sizearraytmp[0] = NBmodes;
@@ -1881,6 +1880,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     loopOK = 1;
     iter = 0;
+
+    list_image_ID();
 
     while(loopOK == 1)
     {
