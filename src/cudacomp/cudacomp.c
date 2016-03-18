@@ -1894,7 +1894,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     if(TRACEMODE==1)
         {
             sizearraytmp = (long*) malloc(sizeof(long)*2);
-            sprintf(traceim_name, "%s-trace", DMmodes_val);
+            sprintf(traceim_name, "%s_trace", DMmodes_val);
             sizearraytmp[0] = TRACEsize;
             sizearraytmp[1] = NBmodes;
             IDtrace = image_ID(traceim_name);
