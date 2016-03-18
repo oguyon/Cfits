@@ -3332,7 +3332,7 @@ menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
 
 
 menuitems+=( " " " " )
-stringcenter "MODAL BLOCK GAINS"
+stringcenter "CONTROL MATRIX MODAL BLOCK GAINS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 
