@@ -1381,6 +1381,7 @@ cudaDeviceReset();
 
 
 
+    list_image_ID();
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
