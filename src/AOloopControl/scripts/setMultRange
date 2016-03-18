@@ -27,14 +27,11 @@ loopnb=$(cat LOOPNUMBER)
 pname="aol${loopnb}_Mmult"
 
 
-for i in `seq $1 $2`;
-        do
 
 Cfits -n $pname << EOF
 csetpmove system
 readshmim aol${loopnb}_mfiltmult
-setpix aol${loopnb}_mfiltmult $3 $i 0
+setpix1Drange aol${loopnb}_mfiltmult $3 $1 $2
 exit
 EOF
-done
 
