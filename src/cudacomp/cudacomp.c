@@ -1957,8 +1957,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 for(k=0;k<NBmodes;k++)
                    {
                         data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
-                        if(k<2)
-                            data.image[ID_modeval].array.F[k] = 0;
+                        
+                        data.image[ID_modeval].array.F[k] = 0;
                     }
                 
                 // send vector back to GPU
