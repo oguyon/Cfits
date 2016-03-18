@@ -3206,10 +3206,17 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
+            printf("================  mblock = %ld  ==================\n", mblock);
+            fflush(stdout);
+            
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 mok[m] = 1;
             for(mblock0=0; mblock0<mblock; mblock0++)
             {
+                
+                printf("         mblock0 = %ld  ==================\n", mblock0);
+                fflush(stdout);
+               
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
