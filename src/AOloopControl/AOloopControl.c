@@ -3334,8 +3334,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 for(ii=0; ii<msizexy; ii++)
                     value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDm].array.F[m*msizexy+ii];
                 rms = sqrt(value1/msizexy);
-                for(ii=0; ii<msizexy; ii++)
-                    data.image[IDm].array.F[m*msizexy+ii] /= rms;
+               // for(ii=0; ii<msizexy; ii++)
+                 //   data.image[IDm].array.F[m*msizexy+ii] /= rms;
             }
 
             MBLOCK_NBmode[mblock] = cnt;
