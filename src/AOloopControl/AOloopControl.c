@@ -9265,6 +9265,7 @@ int AOloopControl_run()
     double tdiffv;
     int timerinit;
     int semval;
+    int semnb;
     
     
 /*    float tmpv, tmpv1, tmpv2;
