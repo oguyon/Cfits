@@ -1933,7 +1933,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
                 // compute
 
-                 cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_DMmodes, n, d_modeval, 1, &beta, d_DMact, 1);
+                 cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_DMmodes, m, d_modeval, 1, &beta, d_DMact, 1);
                 if (cudaStat != CUBLAS_STATUS_SUCCESS)
                 {
                     printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
