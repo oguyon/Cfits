@@ -1945,6 +1945,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                     if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                         printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
                     exit(EXIT_FAILURE);
+                    sleep(10000);
                 }
 
                 // copy result
