@@ -3114,7 +3114,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     exit(0);
                 }
 
-                sprintf(imnameDM1, "fmodes_%02ld", mblock);
+                sprintf(imnameDM1, "fmodes4_%02ld", mblock);
 
 
                 linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff"); // SVD
