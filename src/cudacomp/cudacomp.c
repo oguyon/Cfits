@@ -125,13 +125,12 @@ int CUDACOMP_test_cli()
 
 int CUDACOMP_extractModesLoop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
-        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,3)==0)
+        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string);
     else
         return 1;
 }
 #endif
-
 
 
 
@@ -173,9 +172,9 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = CUDACOMP_extractModesLoop_cli;
     strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6");
-    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]> <FILTER mode> <out filter stream>");
+    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6 1 dm0disp3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDoutfilt)");
     data.NBcmd++;
     
 
@@ -1674,8 +1673,9 @@ cudaDeviceReset();
 //
 // extract mode coefficients from data stream
 // DMmodes needs to be orthogonal
+// single GPU computation
 //
-int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex)
+int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDoutfilt)
 {
     long ID_DMact;
     long ID_DMmodes;
@@ -1947,8 +1947,9 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                     exit(EXIT_FAILURE);
                 }
 
-                // compute
 
+
+                // compute
                  cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_DMmodes, m, d_modeval, 1, &beta, d_DMact, 1);
                 if (cudaStat != CUBLAS_STATUS_SUCCESS)
                 {
