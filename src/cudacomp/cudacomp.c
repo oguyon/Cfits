@@ -1933,6 +1933,11 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         }
         else
         {
+            
+ list_image_ID();
+    sleep(100);
+  
+            
             if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);
@@ -1953,9 +1958,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         }
 
 
- list_image_ID();
-    sleep(100);
-  
 
 
         if(semr==0)
