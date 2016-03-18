@@ -1753,8 +1753,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                         }
                 }
             if(imOK==0)
-                ID_modeval_mult = create_image_ID("dmfilt_mult", 2, sizearraytmp, FLOAT, 1, 0);
-            COREMOD_MEMORY_image_set_createsem("dmfilt_mult", 5);
+            {
+                ID_modeval_mult = create_image_ID(IDfiltmult_name, 2, sizearraytmp, FLOAT, 1, 0);
+                COREMOD_MEMORY_image_set_createsem(IDfiltmult_name, 5);                
+            }
             for(k=0;k<NBmodes;k++)
                 {
                     if(k<2)
