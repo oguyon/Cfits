@@ -68,6 +68,19 @@ int arith_set_pixel_cli()
     return 1;
 }
 
+
+int arith_set_pixel_1Drange_cli()
+{
+
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+      arith_set_pixel_1Drange(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 int arith_set_row_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0)
@@ -165,6 +178,15 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_pixel(char *ID_name, double value, long x, long y)");
   data.NBcmd++;
   
+  strcpy(data.cmd[data.NBcmd].key,"setpix1Drange");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_set_pixel_cli;
+  strcpy(data.cmd[data.NBcmd].info,"set pixel value for 1D area");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <value> <first pix> <last pix>");
+  strcpy(data.cmd[data.NBcmd].example,"setpix im 1.24 10 200");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)");
+  data.NBcmd++;
+  
   strcpy(data.cmd[data.NBcmd].key,"setrow");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = arith_set_row_cli;
@@ -246,6 +268,60 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
     else if(atype == DOUBLE)
     {
         data.image[ID].array.D[y*naxes[0]+x] = value;
+    }
+    else
+    {
+        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        if(n >= SBUFFERSIZE)
+            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        exit(0);
+    }
+    data.image[ID].md[0].write = 0;
+    data.image[ID].md[0].cnt0++;
+    COREMOD_MEMORY_image_set_sempost(ID_name, -1);
+
+    return(ID);
+}
+
+
+
+long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)
+{
+    long ID;
+    long naxes[2];
+    int atype;
+    int n;
+    long ii, iistart, iiend;
+    
+    ID = image_ID(ID_name);
+    atype = data.image[ID].md[0].atype;
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+    iistart = x;
+    iiend = y+1;
+    
+    if(iistart<0)
+        iistart = 0;
+    if(iistart<naxes[0]*naxes[1])
+        iistart = naxes[0]*naxes[1];
+        
+    if(iiend<0)
+        iiend = 0;
+    if(iiend<naxes[0]*naxes[1])
+        iiend = naxes[0]*naxes[1];
+         
+        
+    data.image[ID].md[0].write = 1;
+    if(atype == FLOAT)
+    {
+        for(ii=iistart;ii<iiend;ii++)
+            data.image[ID].array.F[y*naxes[0]+ii] = (float) value;
+    }
+    else if(atype == DOUBLE)
+    {
+        for(ii=iistart;ii<iiend;ii++)
+            data.image[ID].array.D[y*naxes[0]+ii] = value;
     }
     else
     {
