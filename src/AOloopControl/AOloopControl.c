@@ -8798,6 +8798,7 @@ int AOcompute(long loop, int normalize)
 
     int slice;
     int semnb;
+    int semval;
 
     // waiting for dark-subtracted image
     AOconf[loop].status = 19;  //  19: WAITING FOR IMAGE
