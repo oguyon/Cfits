@@ -1757,7 +1757,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             for(k=0;k<NBmodes;k++)
                 {
                     if(k<2)
-                        data.image[ID_modeval_mult].array.F[k] = 0.0;
+                        data.image[ID_modeval_mult].array.F[k] = 1.0;
                     else
                         data.image[ID_modeval_mult].array.F[k] = 1.0;
                 }
