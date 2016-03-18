@@ -27,6 +27,18 @@ int write_float_file(char *fname, float value);
 // 4: existing image
 //
 
+int COREMOD_TOOLS_mvProcCPUset_cli()
+{
+    if(CLI_checkarg(1,3)==0)
+    {
+      COREMOD_TOOLS_mvProcCPUset(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 int write_flot_file_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
@@ -60,6 +72,15 @@ int init_COREMOD_tools()
   strcpy(data.module[data.NBmodule].info, "image information and statistics");
   data.NBmodule++;
 
+
+  strcpy(data.cmd[data.NBcmd].key,"csetpmove");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = COREMOD_TOOLS_mvProcCPUset_cli;
+  strcpy(data.cmd[data.NBcmd].info,"move current process to CPU set");
+  strcpy(data.cmd[data.NBcmd].syntax,"<CPU set name>");
+  strcpy(data.cmd[data.NBcmd].example,"csetpmove realtime");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_TOOLS_mvProcCPUset(char *csetname)");
+  data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"writef2file");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -85,6 +106,19 @@ int init_COREMOD_tools()
 
 
 
+
+int COREMOD_TOOLS_mvProcCPUset(char *csetname)
+{
+    int pid;
+    char command[200];
+    int ret;
+    
+    pid = getpid();
+    sprintf(command, "sudo cset proc -m -p %d -t %s\n", pid, csetname);
+    ret = system(command);
+      
+    return(0);
+}
 
 
 

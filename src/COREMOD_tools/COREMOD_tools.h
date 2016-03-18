@@ -1,6 +1,10 @@
 #ifndef _TOOLS_H
 #define _TOOLS_H
 
+
+
+int COREMOD_TOOLS_mvProcCPUset(char *csetname);
+
 int create_counter_file(char *fname, long NBpts);
 
 int bubble_sort(double *array, long count);

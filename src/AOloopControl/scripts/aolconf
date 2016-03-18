@@ -3083,8 +3083,7 @@ rm mkmodes.run
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "${execprefix} ./aolmkmodes ${cpamax} -1 ${SVDlimall}" C-m
-
-tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run0" C-m
+tmux send-keys -t $tmuxname "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
 rm mkmodes.run0
 
