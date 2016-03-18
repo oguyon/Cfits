@@ -1714,21 +1714,31 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     ID_DMact = image_ID(DMact_stream);
     m = data.image[ID_DMact].md[0].size[0]*data.image[ID_DMact].md[0].size[1];
-
-    if(FILTERMODES==1)
-        {
-            sizearraytmp = (long*) malloc(sizeof(long)*2);
-            sizearraytmp[0] = data.image[ID_DMact].md[0].size[0];
-            sizearraytmp[1] = data.image[ID_DMact].md[0].size[1];
-            create_image_ID("dmfiltact", 2, sizearraytmp, FLOAT, 1, 0);
-            IDoutact = COREMOD_MEMORY_image_set_createsem("dmfiltact", 5);
-            free(sizearraytmp);
-        }
-
+   
     ID_DMmodes = image_ID(DMmodes);
     n = data.image[ID_DMmodes].md[0].size[2];
     NBmodes = n;
     normcoeff = (float*) malloc(sizeof(float)*NBmodes);
+
+    if(FILTERMODES==1)
+        {
+            sizearraytmp = (long*) malloc(sizeof(long)*2);
+
+            sizearraytmp[0] = data.image[ID_DMact].md[0].size[0];
+            sizearraytmp[1] = data.image[ID_DMact].md[0].size[1];
+            IDoutact = create_image_ID("dmfiltact", 2, sizearraytmp, FLOAT, 1, 0);
+            COREMOD_MEMORY_image_set_createsem("dmfiltact", 5);
+            
+            sizearraytmp[0] = NBmodes;
+            sizearraytmp[1] = 1;
+            ID_modeval_mult = create_image_ID("dmfilt_mult", 2, sizearraytmp, FLOAT, 1, 0);
+            COREMOD_MEMORY_image_set_createsem("dmfilt_mult", 5);
+            for(k=0;k<NBmodes;k++)
+                data.image[ID_modeval_mult].array.F[k] = 1.0/(1.0+k);
+
+            free(sizearraytmp);
+       }
+
 
     for(kk=0; kk<NBmodes; kk++)
     {
@@ -1923,6 +1933,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
             if(FILTERMODES==1)
             {
+                for(k=0;k<NBmodes;k++)
+                    data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
+                
+                
                 // send vector back to GPU
                 cudaStat = cudaMemcpy(d_modeval, data.image[ID_modeval].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
                 if (cudaStat != cudaSuccess)
