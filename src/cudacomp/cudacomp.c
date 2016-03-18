@@ -173,7 +173,7 @@ int init_cudacomp()
     data.cmd[data.NBcmd].fp = CUDACOMP_extractModesLoop_cli;
     strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]> <FILTER mode> <out filter stream>");
-    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6 1 dm0disp3");
+    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6 1 filtmult dm0disp3");
     strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name)");
     data.NBcmd++;
     
