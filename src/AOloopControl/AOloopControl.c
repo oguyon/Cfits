@@ -9067,6 +9067,7 @@ int AOcompute(long loop, int normalize)
                 data.image[aoconfID_meas_act].md[0].write = 1;
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
+            
                 for(semnb=0;semnb<data.image[aoconfID_meas_act].sem;semnb++)
                 {
                     sem_getvalue(data.image[aoconfID_meas_act].semptr[semnb], &semval);
@@ -9439,13 +9440,13 @@ int AOloopControl_run()
                             }
                     }
                 
-                for(semnb=0;semnb<data.image[aoconfID_meas_act].sem;semnb++)
+             /*   for(semnb=0;semnb<data.image[aoconfID_meas_act].sem;semnb++)
                 {
                     sem_getvalue(data.image[aoconfID_meas_act].semptr[semnb], &semval);
                     if(semval<SEMAPHORE_MAXVAL)
                         sem_post(data.image[aoconfID_meas_act].semptr[semnb]);
                 }
-
+*/
 
 
                 AOconf[loop].status = 13; // enforce limits
