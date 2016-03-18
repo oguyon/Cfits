@@ -1924,7 +1924,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             if(FILTERMODES==1)
             {
                 // send vector back to GPU
-                cudaStat = cudaMemcpy(d_modeval, data.image[ID_modeval].array.F, sizeof(float)*n, cudaMemcpyHostToDevice);
+                cudaStat = cudaMemcpy(d_modeval, data.image[ID_modeval].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
                 if (cudaStat != cudaSuccess)
                 {
                     printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -1932,7 +1932,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 }
 
                 // compute
-                cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_DMmodes, n, d_modeval, 1, &beta, d_DMact, 1);
+/*
+                 cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_DMmodes, n, d_modeval, 1, &beta, d_DMact, 1);
                 if (cudaStat != CUBLAS_STATUS_SUCCESS)
                 {
                     printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
@@ -1945,11 +1946,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                     if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                         printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
                     exit(EXIT_FAILURE);
-                    sleep(10000);
                 }
-
+*/
                 // copy result
-                data.image[IDoutact].md[0].write = 1;
+/*                data.image[IDoutact].md[0].write = 1;
                 cudaStat = cudaMemcpy(data.image[IDoutact].array.F, d_DMact, sizeof(float)*m, cudaMemcpyDeviceToHost);
                 sem_getvalue(data.image[IDoutact].semptr[0], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
@@ -1958,7 +1958,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDoutact].semptr[1]);
                 data.image[IDoutact].md[0].cnt0++;
-                data.image[IDoutact].md[0].write = 0;
+                data.image[IDoutact].md[0].write = 0;*/
 
             }
 
