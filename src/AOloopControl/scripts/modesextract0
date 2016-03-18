@@ -7,6 +7,7 @@ pname="aol${loopnb}modeval0"
 
 
 Cfits -n $pname << EOF
+csetpmove aolRT1
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_meas_act
 creaim aol${loopnb}_gainarray 50 1
