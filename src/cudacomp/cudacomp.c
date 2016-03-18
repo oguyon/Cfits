@@ -1933,10 +1933,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         }
         else
         {
-            
- list_image_ID();
-    sleep(100);
-  
+   
             
             if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
                 perror("clock_gettime");
@@ -1944,6 +1941,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             }
             ts.tv_sec += 1;
             semr = sem_timedwait(data.image[ID_DMact].semptr[2], &ts);
+
+ list_image_ID();
+    sleep(100);
+ 
 
             if(iter == 0)
             {
