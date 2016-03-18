@@ -1974,15 +1974,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     if(BlockNB<0)
     {
-
         if(MODAL==0)
         {
             // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
-
-
             NBZ = 5; /// 3: tip, tilt, focus
-
-
             NBZ = 0;
             for(m=0; m<10; m++)
             {
@@ -2501,16 +2496,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     }
                     delete_image_ID("SVDmode1");
+                 
                     rms = sqrt(value1/totm);
                     if(rms>rmslim)
                     {
-                        for(ii=0; ii<msizexy; ii++)
-                            data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
+                 //       for(ii=0; ii<msizexy; ii++)
+                   //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
                     }
                     else
-                    {
                         mok[m] = 0;
-                    }
+            
                     //printf("  %12g (%g %g)\n", rms, value1, totm);
                 }
             }
@@ -2567,8 +2562,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         save_fits("fmodes2all", "!./mkmodestmp/fmodes2all.fits");
-
-
     }
 
 
@@ -3044,7 +3037,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 sprintf(imnameDM1, "fmodes_%02ld", mblock);
 
 
-                linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff"); // SVD, WFS space
+                linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff"); // SVD
                 IDSVDcoeff = image_ID("modecoeff");
 
                 cnt = 0;
