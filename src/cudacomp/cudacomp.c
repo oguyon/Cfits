@@ -1716,7 +1716,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
     int TRACEMODE = 1;
     char traceim_name[200];
-    long TRACEsize = 1000;
+    long TRACEsize = 2000;
     long TRACEindex = 0;
     long IDtrace;
 
