@@ -303,12 +303,12 @@ long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)
     
     if(iistart<0)
         iistart = 0;
-    if(iistart<naxes[0]*naxes[1])
+    if(iistart>=naxes[0]*naxes[1])
         iistart = naxes[0]*naxes[1];
         
     if(iiend<0)
         iiend = 0;
-    if(iiend<naxes[0]*naxes[1])
+    if(iiend>=naxes[0]*naxes[1])
         iiend = naxes[0]*naxes[1];
          
         
