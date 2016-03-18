@@ -164,7 +164,7 @@ int init_cudacomp()
     data.cmd[data.NBcmd].fp = CUDACOMP_test_cli;
     strcpy(data.cmd[data.NBcmd].info,"test CUDA comp");
     strcpy(data.cmd[data.NBcmd].syntax,"<NB actuators [long]> <NB modes [long]> <NB pixels [long]> <NB GPU [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"cudacomptest");
+    strcpy(data.cmd[data.NBcmd].example,"cudacomptest 1000 20 1000 1");
     strcpy(data.cmd[data.NBcmd].Ccall,"GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
     data.NBcmd++;
     
@@ -1268,7 +1268,7 @@ void *compute_function( void *ptr )
 // Conventions:
 //   n: number of actuators (= NB_MODES)
 //   m: number of sensors  (= # of pixels)
-// assumes m < n
+// assumes m = n
 
 int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name)
 {
@@ -1407,9 +1407,9 @@ cudaDeviceReset();
         fflush(stdout);
     }
 
-    if(m<=n)
+    if(m!=n)
     {
-        printf("ERROR: m must be larger than n\n");
+        printf("ERROR: m must be equal to n\n");
         exit(0);
     }
 
