@@ -2816,6 +2816,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
             /// STEP 7: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
+            /// Input: fmodesWFS0all (corresponding to fmodes2ball)
+            /// Output -> fmodesWFS1all / fmodes3all
+            
             IDSVDmask = create_2Dimage_ID("SVDmask", wfsxsize, wfsysize);
             for(ii=0; ii<wfssize; ii++)
                 data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -3043,7 +3046,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
         /// STEP 8: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
-
+        /// fmodesWFS1all, fmodes3 -> 
+        
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
 
         for(mblock=0; mblock<NBmblock; mblock++)
@@ -3125,8 +3129,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(ii=0; ii<msizexy; ii++)
                         value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
                     rms = sqrt(value1/totm);
-                    for(ii=0; ii<msizexy; ii++)
-                        data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
+                   // for(ii=0; ii<msizexy; ii++)
+                   //     data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
                 }
                 delete_image_ID("SVDout");
                 delete_image_ID("modecoeff");
