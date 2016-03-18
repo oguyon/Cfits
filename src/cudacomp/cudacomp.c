@@ -1728,6 +1728,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 //            sizearraytmp[0] = data.image[ID_DMact].md[0].size[0];
  //           sizearraytmp[1] = data.image[ID_DMact].md[0].size[1];
             IDoutact = image_ID(IDoutfilt_name);
+            list_image_ID();
             //create_image_ID("dmfiltact", 2, sizearraytmp, FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem(IDoutfilt_name, 5);
             
