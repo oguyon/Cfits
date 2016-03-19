@@ -7644,7 +7644,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
     fflush(stdout);
-exit(0);
+
 
         # ifdef _OPENMP
         #pragma omp parallel for private(fluxpos,fluxneg,ii)
@@ -7694,6 +7694,9 @@ exit(0);
                     }
             }
         }
+        printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
+    fflush(stdout);
+exit(0);
         delete_image_ID("zrespfp");
         delete_image_ID("zrespfm");
     }
