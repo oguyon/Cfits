@@ -2126,9 +2126,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                         }
                     data.image[IDprocrms].md[0].cnt0++;
                     data.image[IDprocrms].md[0].write = 0;   
-   
-                
-                
                 }
 
 
