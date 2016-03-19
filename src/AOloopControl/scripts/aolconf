@@ -1936,11 +1936,11 @@ esac
 ;;
 
 	
-	dmZP)
+	dmZP3)
 case $amode in
 	0)
 exec 3>&1;
-dmZP=$(dialog --inputbox "dmZP" 0 0 "$dmZP" 2>&1 1>&3);
+dmZP3=$(dialog --inputbox "dmZP3" 0 0 "$dmZP3" 2>&1 1>&3);
 #exitcode=$?;
 exec 3>&-;
 #echo $result $exitcode;
