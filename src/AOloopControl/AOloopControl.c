@@ -2227,7 +2227,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         // if modal response matrix exists, use it
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
         IDRMMresp = image_ID("RMMresp"); // modal resp matrix
-
+        
         list_image_ID();
         exit(0);
         
