@@ -7625,7 +7625,12 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     // STEP 1: build individually cleaned RM
     for(kmat=0; kmat<NBmat; kmat++)
     {
-        r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
+        
+        
+        printf("\n= %ld ======00========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        fflush(stdout);
+    
+       r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
         IDzrespfp = load_fits(fname, "zrespfp", 2);
         r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
         IDzrespfm = load_fits(fname, "zrespfm", 2);
@@ -7642,7 +7647,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
 
 
-printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
+    printf("\n=======09========= %ld ===========\n", IDWFSrefc_array[0]);
     fflush(stdout);
 
 
@@ -7658,7 +7663,6 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                 if(isnan(data.image[IDzrespfp].array.F[poke*sizeWFS+ii])!=0)
                     {
                         printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfp, poke*sizeWFS+ii);
-                        fflush(stdout);
                       data.image[IDzrespfp].array.F[poke*sizeWFS+ii] = 0.0;
                     }
                 fluxpos += data.image[IDzrespfp].array.F[poke*sizeWFS+ii];
@@ -7696,10 +7700,10 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                     }
             }*/
         }
-        printf("\n= %ld ======00========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
-    fflush(stdout);
-    if( IDWFSrefc_array[0] > 10)
-        exit(0);
+        printf("\n= %ld ======10========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        fflush(stdout);
+        if( IDWFSrefc_array[0] > 10)
+            exit(0);
 
         delete_image_ID("zrespfp");
         delete_image_ID("zrespfm");
