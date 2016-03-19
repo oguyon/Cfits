@@ -2089,13 +2089,12 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             
             if(PROCESS==1)
                 {
-                    stepcoeff = 0.5;
-                    
+                    stepcoeff = 0.5;                    
                     data.image[IDprocave].md[0].write = 1;
                     for(step=0;step<NBaveSTEP;step++)
                         {
                             for(k=0;k<NBmodes;k++)
-                                data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-coeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
+                                data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
                             stepcoeff *= 0.5;
                         }
                     for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
@@ -2107,7 +2106,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                     data.image[IDprocave].md[0].cnt0++;
                     data.image[IDprocave].md[0].write = 0;   
                 
-                
+                    stepcoeff = 0.5;                
                     data.image[IDprocrms].md[0].write = 1;
                     for(step=0;step<NBaveSTEP;step++)
                         {
@@ -2115,7 +2114,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                             {
                                 tmpv = data.image[ID_modeval].array.F[k] - data.image[IDprocave].array.F[NBmodes*step+k];
                                 tmpv = tmpv*tmpv;
-                                data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-coeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
+                                data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
                             }
                             stepcoeff *= 0.5;
                         }
