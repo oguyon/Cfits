@@ -7737,7 +7737,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     
     printf("\n");
 
-  //  pixvalarray = (float*) malloc(sizeof(float)*NBmat*sizeDM);
+  
     kband = 0;
     kband = (long) (0.2*NBmat*NBpoke);
     kmin = kband;
@@ -7747,9 +7747,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     fflush(stdout);
 
 
-    # ifdef _OPENMP
-    #pragma omp parallel for private(poke,kmat,pixvalarray,ave,k)
-    # endif 
+  //  # ifdef _OPENMP
+  //  #pragma omp parallel for private(poke,kmat,pixvalarray,ave,k)
+  //  # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
@@ -7785,7 +7785,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     free(IDzresp_array);
     free(IDWFSrefc_array);
 
-//    free(pixvalarray);
+/
 
 
 
