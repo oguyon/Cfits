@@ -7624,20 +7624,11 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
     // STEP 1: build individually cleaned RM
     for(kmat=0; kmat<NBmat; kmat++)
-    {
-        
-        
-        printf("\n= %ld ======00========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
-        fflush(stdout);
-    
+    {                    
         r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
         IDzrespfp = load_fits(fname, "zrespfp", 2);
         r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
         IDzrespfm = load_fits(fname, "zrespfm", 2);
-
-        printf("\n= %ld ======01========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
-        fflush(stdout);
-
 
         sizexWFS = data.image[IDzrespfp].md[0].size[0];
         sizeyWFS = data.image[IDzrespfp].md[0].size[1];
@@ -7645,30 +7636,22 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         sizeWFS = sizexWFS*sizeyWFS;
         
         r = sprintf(name, "wfsrefc%03ld", kmat);
-        printf("\n= %ld ======02========= %ld ===== [%s %ld %ld %ld] ======\n", kmat, IDWFSrefc_array[0], name, sizexWFS, sizeyWFS, NBpoke);
-        fflush(stdout);
 
         IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
-
-        printf("\n= %ld ======03========= %ld ========= [%ld] ==\n", kmat, IDWFSrefc_array[0], IDWFSrefc_array[kmat] );
-        fflush(stdout);
 
         r = sprintf(zrname, "zrespm%03ld", kmat);
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
 
 
-    printf("\n=======09========= %ld ===========\n", IDWFSrefc_array[0]);
-    fflush(stdout);
 
-
-       // # ifdef _OPENMP
-       // #pragma omp parallel for private(fluxpos,fluxneg,ii)
-      //  # endif 
+        # ifdef _OPENMP
+        #pragma omp parallel for private(fluxpos,fluxneg,ii)
+        # endif 
         for(poke=0; poke<NBpoke; poke++)
         {
             fluxpos = 0.0;
             fluxneg = 0.0;
-            /*for(ii=0; ii<sizeWFS; ii++)
+            for(ii=0; ii<sizeWFS; ii++)
             {
                 if(isnan(data.image[IDzrespfp].array.F[poke*sizeWFS+ii])!=0)
                     {
@@ -7676,9 +7659,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                       data.image[IDzrespfp].array.F[poke*sizeWFS+ii] = 0.0;
                     }
                 fluxpos += data.image[IDzrespfp].array.F[poke*sizeWFS+ii];
-            }*/
+            }
           
-          /*  for(ii=0; ii<sizeWFS; ii++)
+            for(ii=0; ii<sizeWFS; ii++)
              {
                  if(isnan(data.image[IDzrespfm].array.F[poke*sizeWFS+ii])!=0)
                     {
@@ -7687,8 +7670,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                     }
                     fluxneg += data.image[IDzrespfm].array.F[poke*sizeWFS+ii];                    
                 }
-          */
-        /*    for(ii=0; ii<sizeWFS; ii++)
+          
+            for(ii=0; ii<sizeWFS; ii++)
             {
                 if(normalize==1)
                     {
@@ -7708,22 +7691,13 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
                         printf("%ld element %ld is NAN -> replacing by 0\n", IDWFSrefc_array[kmat], poke*sizeWFS+ii);
                         data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] = 0.0;
                     }
-            }*/
+            }
         }
-        printf("\n= %ld ======10========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
-        fflush(stdout);
-        if( IDWFSrefc_array[0] > 10)
-            exit(0);
 
         delete_image_ID("zrespfp");
         delete_image_ID("zrespfm");
     }
     
-    printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
-    fflush(stdout);
-    list_image_ID();
-exit(0);
-
     // STEP 2: average / median each pixel
     IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, NBpoke);
     IDWFSref = create_2Dimage_ID(WFSref0_name, sizexWFS, sizeyWFS);
@@ -7773,13 +7747,10 @@ exit(0);
     kmin = kband;
     kmax = NBmat*NBpoke-kband;
 
-    printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
-    fflush(stdout);
 
-
-  //  # ifdef _OPENMP
-  //  #pragma omp parallel for private(poke,kmat,pixvalarray,ave,k)
-  //  # endif 
+    # ifdef _OPENMP
+    #pragma omp parallel for private(poke,kmat,pixvalarray,ave,k)
+    # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
@@ -7804,13 +7775,13 @@ exit(0);
         printf(" DONE 2\n");
         fflush(stdout);
         
-        //quick_sort_float(pixvalarray, NBpoke*NBmat);
+        quick_sort_float(pixvalarray, NBpoke*NBmat);
 
-   /*     ave = 0.0;
+        ave = 0.0;
         for(k=kmin; k<kmax; k++)
             ave += pixvalarray[k];
         ave /= (kmax-kmin);*/
-        //data.image[IDWFSref].array.F[ii] = ave;
+        data.image[IDWFSref].array.F[ii] = ave;
         
         printf("free pixvalarray : %ld x %ld\n", NBmat, NBpoke);
         fflush(stdout);
@@ -7818,13 +7789,9 @@ exit(0);
         printf("done\n");
         fflush(stdout);
     }
-    printf("\n===========================\n");
-    fflush(stdout);
-
     free(IDzresp_array);
     free(IDWFSrefc_array);
 
-exit(0);
 
 
 
