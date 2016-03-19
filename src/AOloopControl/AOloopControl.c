@@ -7643,12 +7643,11 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         sizeyWFS = data.image[IDzrespfp].md[0].size[1];
         NBpoke = data.image[IDzrespfp].md[0].size[2];
         sizeWFS = sizexWFS*sizeyWFS;
-
-        printf("\n= %ld ======02========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        
+        r = sprintf(name, "wfsrefc%03ld", kmat);
+        printf("\n= %ld ======02========= %ld ===== [%s %ld %ld %ld] ======\n", kmat, IDWFSrefc_array[0], name, sizexWFS, sizeyWFS, NBpoke);
         fflush(stdout);
 
-
-        r = sprintf(name, "wfsrefc%03ld", kmat);
         IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
 
         printf("\n= %ld ======03========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
