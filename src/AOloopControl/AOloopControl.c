@@ -7646,9 +7646,9 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
     fflush(stdout);
 
 
-        # ifdef _OPENMP
-        #pragma omp parallel for private(fluxpos,fluxneg,ii)
-        # endif 
+       // # ifdef _OPENMP
+       // #pragma omp parallel for private(fluxpos,fluxneg,ii)
+      //  # endif 
         for(poke=0; poke<NBpoke; poke++)
         {
             fluxpos = 0.0;
