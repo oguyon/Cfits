@@ -7844,7 +7844,7 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
     long elem, act;
     long zpcnt = 0;
     long zpcnt0;
-    
+    int semval;
     struct timespec t1;
     struct timespec t2;
     
@@ -7943,7 +7943,10 @@ int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char 
         memcpy(data.image[IDwfszp].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
         data.image[IDwfszp].md[0].cnt0 ++;
         data.image[IDwfszp].md[0].write = 0;
-        COREMOD_MEMORY_image_set_sempost(IDwfszp_name, 0);    
+
+        sem_getvalue(data.image[IDwfszp].semptr[0], &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            COREMOD_MEMORY_image_set_sempost(IDwfszp_name, 0);    
         zpcnt++;
     }
     
@@ -7973,7 +7976,8 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
     long IDtmp;
     long ii;
     char name[200];
-
+    int semval;
+    
     schedpar.sched_priority = RT_priority;
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
@@ -8036,7 +8040,10 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
             memcpy(data.image[IDwfsref].array.F, data.image[IDtmp].array.F, sizeof(float)*wfsxysize);
             data.image[IDwfsref].md[0].cnt0 ++;
             data.image[IDwfsref].md[0].write = 0;
-            COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
+            
+            sem_getvalue(data.image[IDwfsref].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
 
             cntsumold = cntsum;
         }
