@@ -1722,7 +1722,8 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
 
     int PROCESS = 1;
-    double process_gain = 0.01;
+    int NBaveSTEP = 10; // each step is 2x longer average than previous step
+    double stepcoeff;
     char process_ave_name[200];
     char process_rms_name[200];
     long IDprocave;
@@ -1931,6 +1932,54 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
         }
 
   
+          if(PROCESS==1)
+            {
+                sizearraytmp = (long*) malloc(sizeof(long)*2);
+                sprintf(process_ave_name, "%s_ave", DMmodes_val);
+                sizearraytmp[0] = NBmodes;
+                sizearraytmp[1] = NBaveSTEP;
+                IDprocave = image_ID(process_ave_name);
+                imOK = 1;
+                if(IDprocave == -1)
+                    imOK = 0;
+                else
+                    {
+                        if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=NBaveSTEP))
+                            {
+                                imOK = 0;
+                                delete_image_ID(process_ave_name);
+                            }
+                    }
+                if(imOK==0)
+                    IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
+                COREMOD_MEMORY_image_set_createsem(process_ave_name, 5);
+                free(sizearraytmp);
+            
+                sizearraytmp = (long*) malloc(sizeof(long)*2);
+                sprintf(process_rms_name, "%s_rms", DMmodes_val);
+                sizearraytmp[0] = NBmodes;
+                sizearraytmp[1] = NBaveSTEP;
+                IDprocrms = image_ID(process_rms_name);
+                imOK = 1;
+                if(IDprocrms == -1)
+                    imOK = 0;
+                else
+                    {
+                        if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=NBaveSTEP))
+                            {
+                                imOK = 0;
+                                delete_image_ID(process_rms_name);
+                            }
+                    }
+                if(imOK==0)
+                    IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
+                COREMOD_MEMORY_image_set_createsem(process_rms_name, 5);
+                free(sizearraytmp);            
+            }
+            
+  
+  
+  
 
     while(loopOK == 1)
     {
@@ -2033,54 +2082,51 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 }
 
 
+            
             if(PROCESS==1)
-            {
-                sizearraytmp = (long*) malloc(sizeof(long)*2);
-                sprintf(process_ave_name, "%s_ave", DMmodes_val);
-                sizearraytmp[0] = NBmodes;
-                sizearraytmp[1] = 1;
-                IDprocave = image_ID(process_ave_name);
-                imOK = 1;
-                if(IDprocave == -1)
-                    imOK = 0;
-                else
-                    {
-                        if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=1))
+                {
+                    stepcoeff = 0.5;
+                    
+                    data.image[IDprocave].md[0].write = 1;
+                    for(step=0;step<NBaveSTEP;step++)
+                        {
+                            for(k=0;k<NBmodes;k++)
+                                data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-coeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
+                            stepcoeff *= 0.5;
+                        }
+                    for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
+                        {
+                            sem_getvalue(data.image[IDprocave].semptr[semnb], &semval);
+                            if(semval<SEMAPHORE_MAXVAL)
+                                sem_post(data.image[IDprocave].semptr[semnb]);
+                        }
+                    data.image[IDprocave].md[0].cnt0++;
+                    data.image[IDprocave].md[0].write = 0;   
+                
+                
+                    data.image[IDprocrms].md[0].write = 1;
+                    for(step=0;step<NBaveSTEP;step++)
+                        {
+                            for(k=0;k<NBmodes;k++)
                             {
-                                imOK = 0;
-                                delete_image_ID(process_ave_name);
+                                tmpv = data.image[ID_modeval].array.F[k] - data.image[IDprocave].array.F[NBmodes*step+k];
+                                tmpv = tmpv*tmpv;
+                                data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-coeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
                             }
-                    }
-                if(imOK==0)
-                    IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(process_ave_name, 5);
-                free(sizearraytmp);
-            
-                sizearraytmp = (long*) malloc(sizeof(long)*2);
-                sprintf(process_rms_name, "%s_rms", DMmodes_val);
-                sizearraytmp[0] = NBmodes;
-                sizearraytmp[1] = 1;
-                IDprocrms = image_ID(process_rms_name);
-                imOK = 1;
-                if(IDprocrms == -1)
-                    imOK = 0;
-                else
-                    {
-                        if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=1))
-                            {
-                                imOK = 0;
-                                delete_image_ID(process_rms_name);
-                            }
-                    }
-                if(imOK==0)
-                    IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(process_rms_name, 5);
-                free(sizearraytmp);            
-            }
-            
-            
-            
-            
+                            stepcoeff *= 0.5;
+                        }
+                    for(semnb=0; semnb<data.image[IDprocrms].sem; semnb++)
+                        {
+                            sem_getvalue(data.image[IDprocrms].semptr[semnb], &semval);
+                            if(semval<SEMAPHORE_MAXVAL)
+                                sem_post(data.image[IDprocrms].semptr[semnb]);
+                        }
+                    data.image[IDprocrms].md[0].cnt0++;
+                    data.image[IDprocrms].md[0].write = 0;   
+   
+                
+                
+                }
 
 
             if(FILTERMODES==1)
