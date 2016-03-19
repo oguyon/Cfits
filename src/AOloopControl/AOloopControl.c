@@ -7692,8 +7692,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         delete_image_ID("zrespfp");
         delete_image_ID("zrespfm");
     }
-    list_image_ID();
-    sleep(10);
+ 
 
     // STEP 2: average / median each pixel
     IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, NBpoke);
@@ -7772,7 +7771,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         for(k=kmin; k<kmax; k++)
             ave += pixvalarray[k];
         ave /= (kmax-kmin);
-        data.image[IDWFSref].array.F[ii] = ave;
+        //data.image[IDWFSref].array.F[ii] = ave;
         
         printf("free pixvalarray : %ld x %ld\n", NBmat, NBpoke);
         fflush(stdout);
