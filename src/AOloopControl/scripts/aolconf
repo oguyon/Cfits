@@ -303,18 +303,18 @@ ln -s /tmp/${dmO}.im.shm /tmp/aol${LOOPNUMBER}_dmO.im.shm
 }
 
 
-function ReaddmZPname {
-file="./conf/conf_dmZP_name.txt"
+function ReaddmZP3name {
+file="./conf/conf_dmZP3_name.txt"
 if [ -a $file ]
 	then
 	dmZP=$(echo "$(cat $file)")
 	else
-	dmZP="dmZP" #default
+	dmZP="dmZP3" #default
 fi
 # DM correction channel
 echo "linking to dm offset channel"
-rm /tmp/aol${LOOPNUMBER}_dmZP.im.shm 
-ln -s /tmp/${dmZP}.im.shm /tmp/aol${LOOPNUMBER}_dmZP.im.shm
+rm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm 
+ln -s /tmp/${dmZP3}.im.shm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm
 }
 
 
@@ -1165,7 +1165,7 @@ echo "dm${DMindex}disp3" > ./conf/conf_dmC_name.txt # DM control channel
 ReaddmCname
 echo "dm${DMindex}disp0" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
 ReaddmOname
-echo "dm${DMindex}disp7" > ./conf/conf_dmZP_name.txt
+echo "dm${DMindex}disp7" > ./conf/conf_dmZP3_name.txt
 ReaddmZPname
 echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
 Readdmdispname
@@ -1480,10 +1480,10 @@ dmZPfile="/tmp/${dmZP}.im.shm"
 if [ -f $dmZPfile ]; then
 getshmimsize ${dmZP}
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP\Zn -> \Z4${dmZP}\Zn" )
+menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z4${dmZP3}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP\Zn -> \Z1${dmZP}\Zn" )
+menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z1${dmZP3}\Zn" )
 confOK=0
 fi
 
@@ -1944,10 +1944,10 @@ dmZP=$(dialog --inputbox "dmZP" 0 0 "$dmZP" 2>&1 1>&3);
 #exitcode=$?;
 exec 3>&-;
 #echo $result $exitcode;
-echo "$dmZP" > ./conf/conf_dmZP_name.txt
+echo "$dmZP3" > ./conf/conf_dmZP3_name.txt
 ReaddmZPname
 ;;
-	1)shmimmon aol${LOOPNUMBER}_dmZP;;
+	1)shmimmon aol${LOOPNUMBER}_dmZP3;;
 esac
 ;;
 
@@ -2066,7 +2066,7 @@ cp conf/conf_dmC_name.txt "${confname}"
 cp conf/conf_dmO_name.txt "${confname}"
 cp conf/conf_dmdisp_name.txt "${confname}"
 cp conf/conf_dmRM_name.txt "${confname}"
-cp conf/conf_dmZP_name.txt "${confname}"
+cp conf/conf_dmZP3_name.txt "${confname}"
 cp conf/conf_wfsim_name.txt "${confname}"
 ;;
 
@@ -3910,26 +3910,26 @@ tmux send-keys -t $tmuxname "exit" C-m
 AOlog "multiply ref by ${value}"
 ;;
 
-	zplon)
-echo " ON" > ./status/stat_zploopON.txt
-tmuxname="aol${LOOPNUMBER}zploop"
+	zplon3)
+echo " ON" > ./status/stat_zploopON3.txt
+tmuxname="aol${LOOPNUMBER}zploop3"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop" C-m
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop3" C-m
 tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
-menucontrolloop_default="zploff"
-AOlog "start zero-point offset loop"
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP3 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
+menucontrolloop_default="zploff3"
+AOlog "start zero-point offset loop 3"
 ;; 
-	zploff)
-echo "OFF" > ./status/stat_zploopON.txt
-tmuxname="aol${LOOPNUMBER}zploop"
+	zploff3)
+echo "OFF" > ./status/stat_zploopON3.txt
+tmuxname="aol${LOOPNUMBER}zploop3"
 tmux kill-session -t $tmuxname 
-menucontrolloop_default="zplon"
-AOlog "stop zero-point offset loop"
+menucontrolloop_default="zplon3"
+AOlog "stop zero-point offset loop 3"
 	;;
 	zpinj)
 ampl="0.03"
@@ -3940,9 +3940,9 @@ tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zpin" C-m
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
 tmux send-keys -t $tmuxname "breakcube modec" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
-tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP" C-m
+tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 AOlog "inject fourier mode to zero-point"
 	;;
@@ -3953,8 +3953,8 @@ tmuxname="aol${LOOPNUMBER}zpzero"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
 tmux send-keys -t $tmuxname "csetpmove system" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP" C-m
-tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 AOlog "zero the zero-point offset"
 	;;
