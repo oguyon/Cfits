@@ -7650,7 +7650,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
         IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
 
-        printf("\n= %ld ======03========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        printf("\n= %ld ======03========= %ld ========= [%ld] ==\n", kmat, IDWFSrefc_array[0], IDWFSrefc_array[kmat] );
         fflush(stdout);
 
         r = sprintf(zrname, "zrespm%03ld", kmat);
