@@ -47,6 +47,8 @@ loadfits "./conf/aol${loopnb}_dmslaved.fits" dmslaved
 loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
 loadfits "./conf/aol${loopnb}_dmmask.fits" dmmask
 loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
+loadfits "./conf/aol${LOOPNUMBER}_LOrespM.fits" RMMresp
+loadfits "./conf/aol${LOOPNUMBER}_LODMmodes.fits" RMMmodes
 loadfits "./conf/TPind.fits" emodes
 readshmim aol${loopnb}_dmC
 imstats aol${loopnb}_dmC
