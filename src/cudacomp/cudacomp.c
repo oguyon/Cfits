@@ -1789,6 +1789,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             normcoeff[kk] += data.image[ID_DMmodes].array.F[kk*m+ii]*data.image[ID_DMmodes].array.F[kk*m+ii];
         for(ii=0; ii<m; ii++)
             data.image[ID_DMmodes].array.F[kk*m+ii] *= sqrt(m)/normcoeff[kk];
+        printf("NORM COEFF %5ld = %f\n", kk, sqrt(m)/normcoeff[kk]);
     }
 
 
