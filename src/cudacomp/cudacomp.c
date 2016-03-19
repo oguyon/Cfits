@@ -2072,7 +2072,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
             //cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
             for(k=0;k<NBmodes;k++)
-                data.image[ID_modeval].array.F[k] = modevalarray[k]*normcoeff[kk];
+                data.image[ID_modeval].array.F[k] = modevalarray[k]*normcoeff[k];
                 
             sem_getvalue(data.image[ID_modeval].semptr[0], &semval);
             if(semval<SEMAPHORE_MAXVAL)
