@@ -7743,7 +7743,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     kmin = kband;
     kmax = NBmat*NBpoke-kband;
 
-    printf("\n=======00====================\n");
+    printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
     fflush(stdout);
 
 
