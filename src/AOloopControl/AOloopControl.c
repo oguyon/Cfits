@@ -7662,7 +7662,8 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                     }
                 fluxpos += data.image[IDzrespfp].array.F[poke*sizeWFS+ii];
             }
-            for(ii=0; ii<sizeWFS; ii++)
+          
+          /*  for(ii=0; ii<sizeWFS; ii++)
              {
                  if(isnan(data.image[IDzrespfm].array.F[poke*sizeWFS+ii])!=0)
                     {
@@ -7671,7 +7672,7 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                     }
                     fluxneg += data.image[IDzrespfm].array.F[poke*sizeWFS+ii];                    
                 }
-          
+          */
         /*    for(ii=0; ii<sizeWFS; ii++)
             {
                 if(normalize==1)
