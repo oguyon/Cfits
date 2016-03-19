@@ -536,6 +536,19 @@ int AOloopControl_CompModes_loop_cli()
 
 
 
+int AOloopControl_mkPredictiveFilter_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
+    {
+        AOloopControl_mkPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 int AOloopControl_sig2Modecoeff_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
@@ -545,7 +558,6 @@ int AOloopControl_sig2Modecoeff_cli()
     }
   else
     return 1;
-
 }
 
 
@@ -1044,6 +1056,17 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)");
     data.NBcmd++;
 
+
+    strcpy(data.cmd[data.NBcmd].key,"aolmkpfilt");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkPredictiveFilter_cli;
+    strcpy(data.cmd[data.NBcmd].info, "make predictive filter");
+    strcpy(data.cmd[data.NBcmd].syntax, "<trace im> <mode number> <delay [frames]> <filter size> <out filter name>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmkpfilt traceim 23 2.4 20 filt23");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name)");
+    data.NBcmd++;
+    
+    
     strcpy(data.cmd[data.NBcmd].key,"aolrun");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_run;
@@ -9245,6 +9268,57 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 }
 
 
+
+
+/// 
+/// predictive control based on SVD
+///
+/// input: 
+///     mode values trace  [ii: time, jj: mode number]
+///     mode index
+///     delayfr [delay in frame unit]  
+///     filtsize [number of samples in filter]
+///
+long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name)
+{
+    long IDtrace;
+    long IDmatA;
+    double SVDeps = 1.0e-6;
+    long NBtraceVec; // number of measurement vectors in trace 
+    long NBmvec; // number of measurements in measurement matrix
+    long IDmatC;
+    long IDfilt;
+    long l,m;
+    
+    
+    IDtrace = image_ID(IDtrace_name);
+    NBtraceVec = data.image[IDtrace].md[0].size[0];
+
+    NBmvec = NBtraceVec - filtsize - (long) (delayfr+1.0);
+    
+    // build measurement matrix
+    
+    
+    IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize);
+    // each column is a measurement
+    for(m=0; m<NBmvec; m++) // column index
+    {
+        for(l=0; l<filtsize; l++)
+            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+l)];
+    }
+    
+    
+    linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
+    
+    save_fits("WFPmatC", "!WFPmatC.fits");
+    IDmatC = image_ID("WFPmatC");
+
+    IDfilt = create_2Dimage_ID(IDfilt_name, filtsize, 1);
+    
+    
+    
+    return(IDfilt);
+}
 
 
 
