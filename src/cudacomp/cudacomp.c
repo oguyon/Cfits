@@ -1728,6 +1728,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     char process_rms_name[200];
     long IDprocave;
     long IDprocrms;
+    long step;
     
 
     ID_DMact = image_ID(DMact_stream);
