@@ -7692,7 +7692,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         delete_image_ID("zrespfp");
         delete_image_ID("zrespfm");
     }
- 
+    
+    printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
+    fflush(stdout);
+exit(0);
 
     // STEP 2: average / median each pixel
     IDzrm = create_3Dimage_ID(zrespm_name, sizexWFS, sizeyWFS, NBpoke);
