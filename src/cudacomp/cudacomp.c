@@ -1676,11 +1676,12 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 // DMmodes needs to be orthogonal
 // single GPU computation
 //
-int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name)
+int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name, char *IDmask_name)
 {
     long ID_DMact;
     long ID_DMmodes;
     long ID_modeval;
+    long IDmask;
     cublasHandle_t cublasH = NULL;
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
     cudaError_t cudaStat = cudaSuccess;
@@ -1733,6 +1734,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     long semnb;
     double tmpv;
     
+    double normcoeff0 = 0.0;
+    
+    float *modevalarray;
+
 
     ID_DMact = image_ID(DMact_stream);
     m = data.image[ID_DMact].md[0].size[0]*data.image[ID_DMact].md[0].size[1];
@@ -1742,6 +1747,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     n = data.image[ID_DMmodes].md[0].size[2];
     NBmodes = n;
     normcoeff = (float*) malloc(sizeof(float)*NBmodes);
+
+    IDmask = image_ID(IDmask_name);
+
+    modevalarray = (float*) malloc(sizeof(float)*n);
 
 
     if(FILTERMODES==1)
@@ -1782,14 +1791,21 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
 
 
+    normcoeff0 = 0.0;
+    for(ii=0;ii<m;ii++)
+        normcoeff0 += data.image[IDmask].array.F[ii];
+    
     for(kk=0; kk<NBmodes; kk++)
-    {
+    {        
         normcoeff[kk] = 0.0;
         for(ii=0; ii<m; ii++)
             normcoeff[kk] += data.image[ID_DMmodes].array.F[kk*m+ii]*data.image[ID_DMmodes].array.F[kk*m+ii];
         for(ii=0; ii<m; ii++)
             data.image[ID_DMmodes].array.F[kk*m+ii] *= sqrt(m)/normcoeff[kk];
-        printf("NORM COEFF %5ld = %f\n", kk, sqrt(m)/normcoeff[kk]);
+        
+        printf("TOTAL NORM COEFF %5ld = %f\n", kk, sqrt(m)/normcoeff[kk]*(1.0*m/normcoeff0));
+        
+        normcoeff[kk] = sqrt(m)/normcoeff[kk]*(1.0*m/normcoeff0);
     }
 
 
@@ -2051,7 +2067,12 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
             // copy result
             data.image[ID_modeval].md[0].write = 1;
-            cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+
+            cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+            //cudaStat = cudaMemcpy(data.image[ID_modeval].array.F, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+            for(k=0;k<NBmodes;k++)
+                data.image[ID_modeval].array.F[k] = modevalarray[k]*normcoeff[kk];
+                
             sem_getvalue(data.image[ID_modeval].semptr[0], &semval);
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[ID_modeval].semptr[0]);
@@ -2060,8 +2081,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 sem_post(data.image[ID_modeval].semptr[1]);
             data.image[ID_modeval].md[0].cnt0++;
             data.image[ID_modeval].md[0].write = 0;
-
-
 
 
             if(TRACEMODE == 1)
@@ -2133,11 +2152,13 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             if(FILTERMODES==1)
             {
                 for(k=0;k<NBmodes;k++)
-                    data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
+                    modevalarray[k] *= data.image[ID_modeval_mult].array.F[k];
+                
+ //                   data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
             
                 
                 // send vector back to GPU
-                cudaStat = cudaMemcpy(d_modeval, data.image[ID_modeval].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
+                cudaStat = cudaMemcpy(d_modeval, modevalarray, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
                 if (cudaStat != cudaSuccess)
                 {
                     printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
@@ -2194,6 +2215,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     if (cublasH ) cublasDestroy(cublasH);
 
     free(normcoeff);
+    free(modevalarray);
 
     return(0);
 }
