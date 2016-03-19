@@ -7767,7 +7767,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         for(poke=0; poke<NBpoke; poke++)
             for(kmat=0; kmat<NBmat; kmat++)
             {
-                printf("%ld    %ld x %ld + %ld -> %ld \n", IDWFSrefc_array[kmat], poke, ii, sizeWFS, poke*sizeWFS+ii);
+                printf("kmat = %ld   ID = %ld    %ld x %ld + %ld -> %ld \n", kmat, IDWFSrefc_array[kmat], poke, ii, sizeWFS, poke*sizeWFS+ii);
                 fflush(stdout);
                 pixvalarray[kmat*NBpoke+poke] = data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] ;
             }
