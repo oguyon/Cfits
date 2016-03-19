@@ -307,9 +307,9 @@ function ReaddmZP3name {
 file="./conf/conf_dmZP3_name.txt"
 if [ -a $file ]
 	then
-	dmZP=$(echo "$(cat $file)")
+	dmZP3=$(echo "$(cat $file)")
 	else
-	dmZP="dmZP3" #default
+	dmZP3="dmZP3" #default
 fi
 # DM correction channel
 echo "linking to dm offset channel"
@@ -854,7 +854,7 @@ EOF
 # hardware I/O [shared memory]
 ReaddmCname
 ReaddmOname
-ReaddmZPname
+ReaddmZP3name
 Readdmdispname
 ReaddmRMname
 Readwfsimcamname
@@ -1166,7 +1166,7 @@ ReaddmCname
 echo "dm${DMindex}disp0" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
 ReaddmOname
 echo "dm${DMindex}disp7" > ./conf/conf_dmZP3_name.txt
-ReaddmZPname
+ReaddmZP3name
 echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
 Readdmdispname
 echo "dm${DMindex}disp2" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
@@ -1476,9 +1476,9 @@ confOK=0
 fi
 
 
-dmZPfile="/tmp/${dmZP}.im.shm"
-if [ -f $dmZPfile ]; then
-getshmimsize ${dmZP}
+dmZP3file="/tmp/${dmZP3}.im.shm"
+if [ -f $dmZP3file ]; then
+getshmimsize ${dmZP3}
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z4${dmZP3}\Zn" )
 else
@@ -1945,7 +1945,7 @@ dmZP3=$(dialog --inputbox "dmZP3" 0 0 "$dmZP3" 2>&1 1>&3);
 exec 3>&-;
 #echo $result $exitcode;
 echo "$dmZP3" > ./conf/conf_dmZP3_name.txt
-ReaddmZPname
+ReaddmZP3name
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmZP3;;
 esac
@@ -2077,7 +2077,7 @@ confname=$(dialog --title "Select Configuration" --stdout --title "Select Config
 exec 3>&-;
 echo "${confname}" > confname.txt
 
-for name in dmC dmO dmdisp dmRM dmZP wfsim
+for name in dmC dmO dmdisp dmRM dmZP3 wfsim
 do
 	cp "${confname}"/conf_${name}_name.txt ./conf/conf_${name}_name.txt
 	lname=$( echo "./conf/conf_${name}_name.txt" )
@@ -2134,7 +2134,7 @@ cp "${confname}"/conf_loopmultcoeff.txt ./conf/
 
 exit
 
-#for name in "dmC" "dmdisp" "dmRM" "dmZP" "wfsim" 
+#for name in "dmC" "dmdisp" "dmRM" "dmZP3" "wfsim" 
 #do
 #	cp "${confname}"/conf_${name}_fname.txt ./conf/
 #done
@@ -5101,7 +5101,7 @@ mkdir -p recinst
 tmuxname="aol${LOOPNUMBER}-ctr"
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act_active" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act" C-m
-for name in contrM contrMc contrMcact dmC dmO dmdisp dmmap dmmask DMmodes dmRM dmZP gainb imWFS0 imWFS1 imWFS1RM imWFS2 meas_act_active meas_act respM wfsdark wfsim wfsmap wfsmask wfsref0 wfsref zrespM
+for name in contrM contrMc contrMcact dmC dmO dmdisp dmmap dmmask DMmodes dmRM dmZP3 gainb imWFS0 imWFS1 imWFS1RM imWFS2 meas_act_active meas_act respM wfsdark wfsim wfsmap wfsmask wfsref0 wfsref zrespM
 do
 tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_${name} \"!./recinst/aol${LOOPNUMBER}_${name}.fits\"" C-m
 done
