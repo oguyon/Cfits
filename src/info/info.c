@@ -568,6 +568,12 @@ int info_image_monitor(char *ID_name, double frequ)
     long npix;
 
     ID = image_ID(ID_name);
+    if(ID==-1)
+        {
+            printf("Image %s not found in memory\n", ID_name);
+        }
+    else
+    {
     npix = data.image[ID].md[0].nelement;
 
 
@@ -603,7 +609,7 @@ int info_image_monitor(char *ID_name, double frequ)
         refresh();
     }
     endwin();
-
+    }
     return 0;
 }
 

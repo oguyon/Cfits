@@ -1721,6 +1721,13 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
     long IDtrace;
 
 
+    int PROCESS = 1;
+    double process_gain = 0.01;
+    char process_ave_name[200];
+    char process_rms_name[200];
+    long IDprocave;
+    long IDprocrms;
+    
 
     ID_DMact = image_ID(DMact_stream);
     m = data.image[ID_DMact].md[0].size[0]*data.image[ID_DMact].md[0].size[1];
@@ -2026,15 +2033,61 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 }
 
 
+            if(PROCESS==1)
+            {
+                sizearraytmp = (long*) malloc(sizeof(long)*2);
+                sprintf(process_ave_name, "%s_ave", DMmodes_val);
+                sizearraytmp[0] = NBmodes;
+                sizearraytmp[1] = 1;
+                IDprocave = image_ID(process_ave_name);
+                imOK = 1;
+                if(IDprocave == -1)
+                    imOK = 0;
+                else
+                    {
+                        if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=1))
+                            {
+                                imOK = 0;
+                                delete_image_ID(process_ave_name);
+                            }
+                    }
+                if(imOK==0)
+                    IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
+                COREMOD_MEMORY_image_set_createsem(process_ave_name, 5);
+                free(sizearraytmp);
+            
+                sizearraytmp = (long*) malloc(sizeof(long)*2);
+                sprintf(process_rms_name, "%s_rms", DMmodes_val);
+                sizearraytmp[0] = NBmodes;
+                sizearraytmp[1] = 1;
+                IDprocrms = image_ID(process_rms_name);
+                imOK = 1;
+                if(IDprocrms == -1)
+                    imOK = 0;
+                else
+                    {
+                        if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=1))
+                            {
+                                imOK = 0;
+                                delete_image_ID(process_rms_name);
+                            }
+                    }
+                if(imOK==0)
+                    IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
+                COREMOD_MEMORY_image_set_createsem(process_rms_name, 5);
+                free(sizearraytmp);            
+            }
+            
+            
+            
+            
+
 
             if(FILTERMODES==1)
             {
                 for(k=0;k<NBmodes;k++)
-                {
-                    //if(k<10)
-                      //  printf("Multiplying coeff %4ld by  %f\n", k, data.image[ID_modeval_mult].array.F[k]);
                     data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
-                }
+            
                 
                 // send vector back to GPU
                 cudaStat = cudaMemcpy(d_modeval, data.image[ID_modeval].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
