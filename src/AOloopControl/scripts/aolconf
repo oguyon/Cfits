@@ -3454,7 +3454,7 @@ if [ "${zploopONstat3}" = "OFF" ];
 then
 menuitems+=( "zplon3" "   START zero point offset loop #3 (wfszpo3)" )
 else
-menuitems+=( "zploff3" "\Z1\ZrSTOP zero point offset loop #2\Zn" )
+menuitems+=( "zploff3" "\Z1\ZrSTOP zero point offset loop #3\Zn" )
 fi
 
 
