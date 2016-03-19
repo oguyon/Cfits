@@ -3414,11 +3414,20 @@ done
 menuitems+=( " " " " )
 stringcenter "ZERO POINT"
 menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
-zploopONstat=$( cat ./status/stat_zploopON.txt )
-if [[ -f "./status/stat_zploopON.txt" && ( "$zploopONstat" = " ON" || "$zploopONstat" = "OFF" ) ]]; then
+
+zploopONstat2=$( cat ./status/stat_zploopON2.txt )
+if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploopONstat2" = "OFF" ) ]]; then
 echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON.txt
+echo "OFF" > ./status/stat_zploopON2.txt
+fi
+
+
+zploopONstat3=$( cat ./status/stat_zploopON3.txt )
+if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploopONstat3" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON3.txt
 fi
 
 
@@ -3433,11 +3442,19 @@ menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient"
 
 
 
-if [ "${zploopONstat}" = "OFF" ];
+if [ "${zploopONstat2}" = "OFF" ];
 then
-menuitems+=( "zplon" "   START zero point offset loop #3 (wfszpo3)" )
+menuitems+=( "zplon2" "   START zero point offset loop #2 (wfszpo3)" )
 else
-menuitems+=( "zploff" "\Z1\ZrSTOP zero point offset loop\Zn" )
+menuitems+=( "zploff2" "\Z1\ZrSTOP zero point offset loop #2\Zn" )
+fi
+
+
+if [ "${zploopONstat3}" = "OFF" ];
+then
+menuitems+=( "zplon3" "   START zero point offset loop #3 (wfszpo3)" )
+else
+menuitems+=( "zploff3" "\Z1\ZrSTOP zero point offset loop #2\Zn" )
 fi
 
 
@@ -5172,7 +5189,7 @@ mkdir -p recinst
 tmuxname="aol${LOOPNUMBER}-ctr"
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act_active" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act" C-m
-for name in contrM contrMc contrMcact dmC dmO dmdisp dmmap dmmask DMmodes dmRM dmZP3 gainb imWFS0 imWFS1 imWFS1RM imWFS2 meas_act_active meas_act respM wfsdark wfsim wfsmap wfsmask wfsref0 wfsref zrespM
+for name in contrM contrMc contrMcact dmC dmO dmdisp dmmap dmmask DMmodes dmRM dmZP2 dmZP3 gainb imWFS0 imWFS1 imWFS1RM imWFS2 meas_act_active meas_act respM wfsdark wfsim wfsmap wfsmask wfsref0 wfsref zrespM
 do
 tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_${name} \"!./recinst/aol${LOOPNUMBER}_${name}.fits\"" C-m
 done
