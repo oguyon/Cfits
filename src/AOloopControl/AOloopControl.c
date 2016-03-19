@@ -7767,10 +7767,10 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
         //quick_sort_float(pixvalarray, NBpoke*NBmat);
 
-        ave = 0.0;
+   /*     ave = 0.0;
         for(k=kmin; k<kmax; k++)
             ave += pixvalarray[k];
-        ave /= (kmax-kmin);
+        ave /= (kmax-kmin);*/
         //data.image[IDWFSref].array.F[ii] = ave;
         
         printf("free pixvalarray : %ld x %ld\n", NBmat, NBpoke);
@@ -7785,7 +7785,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     free(IDzresp_array);
     free(IDWFSrefc_array);
 
-
+exit(0);
 
 
 
