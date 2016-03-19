@@ -7744,6 +7744,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     kmin = kband;
     kmax = NBmat*NBpoke-kband;
 
+    printf("\n===========================\n");
+    fflush(stdout);
 
 
     # ifdef _OPENMP
@@ -7778,8 +7780,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         printf("done\n");
         fflush(stdout);
     }
-    printf("\n\n");
-
+    printf("\n===========================\n");
+    fflush(stdout);
 
     free(IDzresp_array);
     free(IDWFSrefc_array);
