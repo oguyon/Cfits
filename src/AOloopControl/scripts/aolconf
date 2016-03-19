@@ -2702,8 +2702,8 @@ state="menuconfigureloop"
 
 
 LOrespmon)
-echo "test"
-sleep 2
+tmuxname="aol${LOOPNUMBER}LOrespM"
+tmux a -t ${tmuxname}
 menucontrolloop_default="LOrespmon"
 state="menuconfigureloop"
 ;;
