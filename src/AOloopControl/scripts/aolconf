@@ -3127,11 +3127,12 @@ echo "$cpamax" > ./conf/conf_cpamax.txt
 rm mkmodes.run
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "loadfits \"./conf/aol${LOOPNUMBER}_LOrespM.fits\" RMMresp"
-tmux send-keys -t $tmuxname "loadfits \"./conf/aol${LOOPNUMBER}_LODMmodes.fits\" RMMmodes"
+tmux send-keys -t $tmuxname "loadfits \"./conf/aol${LOOPNUMBER}_LOrespM.fits\" RMMresp" C-m
+tmux send-keys -t $tmuxname "loadfits \"./conf/aol${LOOPNUMBER}_LODMmodes.fits\" RMMmodes" C-m
 echo "./aolmkmodes ${cpamax} -1 ${SVDlimall}" >> aolcmd.txt
 tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} -1 ${SVDlimall}" C-m
 tmux send-keys -t $tmuxname "touch mkmodes.run0" C-m
+sleep 1000
 waitforfile mkmodes.run0
 rm mkmodes.run0
 
