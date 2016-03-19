@@ -1177,17 +1177,10 @@ void *compute_function( void *ptr )
                 fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
             fclose(fptest);
             
-            
-            
- 
- 
-         if(gpumatmultconf[index].sem==1)
-            sem_post(gpumatmultconf[index].semptr5[device]);
+            if(gpumatmultconf[index].sem==1)
+                sem_post(gpumatmultconf[index].semptr5[device]);
 
-        *ptrstat = 6;
-
-
- 
+            *ptrstat = 6;
         }
         else
         {
@@ -1229,9 +1222,7 @@ void *compute_function( void *ptr )
                     }
             }
 
-
             // result is on gpumatmultconf[index].d_dmVec[device]
-
             stat = cublasGetVector(gpumatmultconf[index].M, sizeof(float), gpumatmultconf[index].d_dmVec[device], 1, gpumatmultconf[index].dmVec_part[device], 1);
             if (stat != CUBLAS_STATUS_SUCCESS)
             {

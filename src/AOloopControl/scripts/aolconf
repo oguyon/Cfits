@@ -2604,7 +2604,7 @@ tmuxname="aol${LOOPNUMBER}LOrespM"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./aolmkLO_DMmodes ${rmMcpa}" C-m
 tmux send-keys -t ${tmuxname} "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-echo "./aolMeasureLOrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+echo "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 AOlog "Start modal RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
@@ -2612,7 +2612,7 @@ menucontrolloop_default="LOrespoff"
 tmuxname="aol${LOOPNUMBER}LOrepMc"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
-echo "./aolCleanLOrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
+echo "./aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" >> aolcmd.txt
 mkdir -p LOrespM
 mkdir -p LODMmodes
 mkdir -p LOwfsref

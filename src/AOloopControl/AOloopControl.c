@@ -7745,8 +7745,9 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     kmax = NBmat*NBpoke-kband;
 
 
+
     # ifdef _OPENMP
-    #pragma omp parallel for private(poke,kmat,pixvalarray)
+    #pragma omp parallel for private(poke,kmat,pixvalarray,ave)
     # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
