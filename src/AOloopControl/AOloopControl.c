@@ -7519,8 +7519,8 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
 
    printf("Preparing DM mask ... ");
     fflush(stdout);    
-     // DMmask: select pixels >30% of 50-percentile
-    lim = 0.3*img_percentile(DMmap_name, 0.5);
+     // DMmask: select pixels >30% of 65-percentile
+    lim = 0.3*img_percentile(DMmap_name, 0.65);
     for(poke=0; poke<NBpoke; poke++)
     {
         if(data.image[IDDMmap].array.F[poke]<lim)
