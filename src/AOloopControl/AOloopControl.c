@@ -7641,6 +7641,11 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         r = sprintf(zrname, "zrespm%03ld", kmat);
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
 
+
+printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
+    fflush(stdout);
+exit(0);
+
         # ifdef _OPENMP
         #pragma omp parallel for private(fluxpos,fluxneg,ii)
         # endif 
@@ -7695,6 +7700,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     
     printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
     fflush(stdout);
+    list_image_ID();
 exit(0);
 
     // STEP 2: average / median each pixel
