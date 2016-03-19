@@ -1722,7 +1722,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
 
     int PROCESS = 1;
-    int NBaveSTEP = 10; // each step is 2x longer average than previous step
+    int NBaveSTEP = 16; // each step is 2x longer average than previous step
     double stepcoeff;
     char process_ave_name[200];
     char process_rms_name[200];
