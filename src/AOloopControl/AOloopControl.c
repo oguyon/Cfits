@@ -7630,18 +7630,29 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         printf("\n= %ld ======00========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
         fflush(stdout);
     
-       r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
+        r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
         IDzrespfp = load_fits(fname, "zrespfp", 2);
         r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
         IDzrespfm = load_fits(fname, "zrespfm", 2);
+
+        printf("\n= %ld ======01========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        fflush(stdout);
+
 
         sizexWFS = data.image[IDzrespfp].md[0].size[0];
         sizeyWFS = data.image[IDzrespfp].md[0].size[1];
         NBpoke = data.image[IDzrespfp].md[0].size[2];
         sizeWFS = sizexWFS*sizeyWFS;
 
+        printf("\n= %ld ======02========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        fflush(stdout);
+
+
         r = sprintf(name, "wfsrefc%03ld", kmat);
         IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
+
+        printf("\n= %ld ======03========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
+        fflush(stdout);
 
         r = sprintf(zrname, "zrespm%03ld", kmat);
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
