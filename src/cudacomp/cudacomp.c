@@ -125,8 +125,8 @@ int CUDACOMP_test_cli()
 
 int CUDACOMP_extractModesLoop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,4)+CLI_checkarg(8,4)==0)
-        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string);
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,4)+CLI_checkarg(8,4)+CLI_checkarg(9,4)==0)
+        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string);
     else
         return 1;
 }
@@ -172,9 +172,9 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = CUDACOMP_extractModesLoop_cli;
     strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]> <FILTER mode> <out filter stream>");
-    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6 1 filtmult dm0disp3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMact stream> <DM modes> <mode gains> <DMmode vals> <GPU index [long]> <FILTER mode> <out filter stream> <dmmask>");
+    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes dmmap DMmodes DMmodesgain DMmodeval 6 1 filtmult dm0disp3 dmmask");
+    strcpy(data.cmd[data.NBcmd].Ccall,"CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_gain, char *DMmodes_val, int GPUindex, int FILTERMODES, char *IDfiltmult_name, char *IDoutfilt_name, char *IDmask_name)");
     data.NBcmd++;
     
 
