@@ -7694,9 +7694,9 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                     }
             }
         }
-        printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
+        printf("\n= %ld ======00========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
     fflush(stdout);
-exit(0);
+
         delete_image_ID("zrespfp");
         delete_image_ID("zrespfm");
     }
