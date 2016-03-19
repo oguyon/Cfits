@@ -7747,7 +7747,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 
     # ifdef _OPENMP
-    #pragma omp parallel for private(poke,kmat,pixvalarray,ave)
+    #pragma omp parallel for private(poke,kmat,pixvalarray,ave,k)
     # endif 
     for(ii=0; ii<sizeWFS; ii++)
     {
