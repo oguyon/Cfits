@@ -7672,7 +7672,7 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                     fluxneg += data.image[IDzrespfm].array.F[poke*sizeWFS+ii];                    
                 }
           
-            for(ii=0; ii<sizeWFS; ii++)
+        /*    for(ii=0; ii<sizeWFS; ii++)
             {
                 if(normalize==1)
                     {
@@ -7692,7 +7692,7 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                         printf("%ld element %ld is NAN -> replacing by 0\n", IDWFSrefc_array[kmat], poke*sizeWFS+ii);
                         data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] = 0.0;
                     }
-            }
+            }*/
         }
         printf("\n= %ld ======00========= %ld ===========\n", kmat, IDWFSrefc_array[0]);
     fflush(stdout);
