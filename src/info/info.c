@@ -569,49 +569,51 @@ int info_image_monitor(char *ID_name, double frequ)
 
     ID = image_ID(ID_name);
     if(ID==-1)
-        {
-            printf("Image %s not found in memory\n", ID_name);
-        }
+    {
+        printf("Image %s not found in memory\n\n", ID_name);
+        fflush(stdout);
+    }
     else
     {
-    npix = data.image[ID].md[0].nelement;
+        npix = data.image[ID].md[0].nelement;
 
 
-    initscr();
-    getmaxyx(stdscr, wrow, wcol);
+        initscr();
+        getmaxyx(stdscr, wrow, wcol);
 
-    if(npix<100)
-        mode = 1;
+        if(npix<100)
+            mode = 1;
 
-    NBpix = npix;
-    if(NBpix > wrow)
-        NBpix = wrow-2;
+        NBpix = npix;
+        if(NBpix > wrow)
+            NBpix = wrow-2;
 
-    start_color();
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    init_pair(2, COLOR_BLACK, COLOR_RED);
-    init_pair(3, COLOR_GREEN, COLOR_BLACK);
-    init_pair(4, COLOR_RED, COLOR_BLACK);
+        start_color();
+        init_pair(1, COLOR_BLACK, COLOR_WHITE);
+        init_pair(2, COLOR_BLACK, COLOR_RED);
+        init_pair(3, COLOR_GREEN, COLOR_BLACK);
+        init_pair(4, COLOR_RED, COLOR_BLACK);
 
-    while( !kbdhit() )
-    {
-        usleep((long) (1000000.0/frequ));
-        clear();
-        attron(A_BOLD);
-        print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-        attroff(A_BOLD);
+        while( !kbdhit() )
+        {
+            usleep((long) (1000000.0/frequ));
+            clear();
+            attron(A_BOLD);
+            print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
+            attroff(A_BOLD);
 
-        //if(mode==0)
-        printstatus(ID);
-        //else
-        //  info_pixelstats_smallImage(ID, NBpix);
+            //if(mode==0)
+            printstatus(ID);
+            //else
+            //  info_pixelstats_smallImage(ID, NBpix);
 
-        refresh();
-    }
-    endwin();
+            refresh();
+        }
+        endwin();
     }
     return 0;
 }
+
 
 
 
