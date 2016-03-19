@@ -3127,6 +3127,7 @@ echo "$cpamax" > ./conf/conf_cpamax.txt
 rm mkmodes.run
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
+echo "./aolmkmodes ${cpamax} -1 ${SVDlimall}" >> aolcmd.txt
 tmux send-keys -t $tmuxname "./aolmkmodes ${cpamax} -1 ${SVDlimall}" C-m
 tmux send-keys -t $tmuxname "touch mkmodes.run0" C-m
 waitforfile mkmodes.run0
