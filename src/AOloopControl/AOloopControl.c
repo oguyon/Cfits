@@ -7726,7 +7726,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
         {
             for(kmat=0; kmat<NBmat; kmat++)
                 pixvalarray[kmat] = data.image[IDzresp_array[kmat]].array.F[poke*sizeWFS+ii] ;
-            quick_sort_float(pixvalarray, kmat);
+        //    quick_sort_float(pixvalarray, kmat);
             ave = 0.0;
             for(k=kmin; k<kmax; k++)
                 ave += pixvalarray[k];
