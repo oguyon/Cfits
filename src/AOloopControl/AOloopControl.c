@@ -7658,7 +7658,7 @@ printf("\n=======00========= %ld ===========\n", IDWFSrefc_array[0]);
                 if(isnan(data.image[IDzrespfp].array.F[poke*sizeWFS+ii])!=0)
                     {
                         printf("%ld element %ld is NAN -> replacing by 0\n", IDzrespfp, poke*sizeWFS+ii);
-                        data.image[IDzrespfp].array.F[poke*sizeWFS+ii] = 0.0;
+               //         data.image[IDzrespfp].array.F[poke*sizeWFS+ii] = 0.0;
                     }
                 fluxpos += data.image[IDzrespfp].array.F[poke*sizeWFS+ii];
             }
