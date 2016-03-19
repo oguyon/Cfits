@@ -7763,10 +7763,14 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
             }
         printf(" DONE\n");
         fflush(stdout);
+        
         for(poke=0; poke<NBpoke; poke++)
             for(kmat=0; kmat<NBmat; kmat++)
                 pixvalarray[kmat*NBpoke+poke] = data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] ;
-
+        
+        printf(" DONE 2\n");
+        fflush(stdout);
+        
         //quick_sort_float(pixvalarray, NBpoke*NBmat);
 
    /*     ave = 0.0;
