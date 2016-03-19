@@ -7754,13 +7754,15 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     {
         printf("\r wfs pix %ld / %ld        ", ii, sizeWFS);
         fflush(stdout);
-        
+        printf("ATTEMPTING TO ALLOCATE %ld ELEMENTS\n", NBmat*NBpoke);
+        fflush(stdout);
         if((pixvalarray = (float*) malloc(sizeof(float)*NBmat*NBpoke))==NULL)
             {
                 printf("ERROR: cannot allocate pixvalarray, size = %ld x %ld\n", NBmat, NBpoke);
                 exit(0);
             }
-        
+        printf(" DONE\n");
+        fflush(stdout);
         for(poke=0; poke<NBpoke; poke++)
             for(kmat=0; kmat<NBmat; kmat++)
                 pixvalarray[kmat*NBpoke+poke] = data.image[IDWFSrefc_array[kmat]].array.F[poke*sizeWFS+ii] ;
