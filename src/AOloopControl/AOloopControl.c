@@ -9283,7 +9283,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
 {
     long IDtrace;
     long IDmatA;
-    double SVDeps = 1.0e-4;
+    double SVDeps = 1.0e-8;
     long NBtraceVec; // number of measurement vectors in trace 
     long NBmvec; // number of measurements in measurement matrix
     long IDmatC;
