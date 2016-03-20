@@ -9359,7 +9359,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
             tmpv = 0.0;
             for(l=0;l<filtsize;l++)
                 tmpv += data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + (m-filtsize+l)];
-            fprintf(fp, "%5ld %20f %20f %20f\n", l, data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + m], tmpv, marray[m]);
+            fprintf(fp, "%5ld %20f %20f %20f\n", l, data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + m], tmpv, marray[m-filtsize]);
         }
     fclose(fp);
     
