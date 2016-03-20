@@ -5371,7 +5371,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 tmux send-keys -t $tmuxnameC "mkdir -p $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
-tmux send-keys -t $tmuxnameC "logshim aol${LOOPNUMBER}_modeval 1000 $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
+tmux send-keys -t $tmuxnameC "logshim aol${LOOPNUMBER}_modeval 10000 $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
 tmuxname="modeval${LOOPNUMBER}log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modeval" C-m
@@ -5389,6 +5389,36 @@ menurecord_default="lmodeval1"
 ;;
 
 
+
+
+
+
+   lmodevalc1)
+log "log aol${LOOPNUMBER}_modevalc ON"
+logmodevalcstat=1
+echo "1" > ./status/stat_logmodevalc.txt
+tmuxnameC="modevalc${LOOPNUMBER}logC"
+echo "1" > ./status/stat_logmodevalc.txt
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+tmux send-keys -t $tmuxnameC "mkdir -p $savedir/$datestr/aol${LOOPNUMBER}_modevalc/" C-m
+tmux send-keys -t $tmuxnameC "logshim aol${LOOPNUMBER}_modevalc 10000 $savedir/$datestr/aol${LOOPNUMBER}_modevalc/" C-m
+tmuxname="modevalc${LOOPNUMBER}log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modevalc" C-m
+menurecord_default="lmodevalc0"
+;;
+    lmodevalc0)
+log "log aol${LOOPNUMBER}_modevalc OFF"
+logmodevalstat=0
+echo "0" > ./status/stat_lmodevalc.txt
+tmuxname="modevalc${LOOPNUMBER}log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff aol${LOOPNUMBER}_modevalc" C-m
+echo "0" > ./status/stat_logmodevalc.txt
+menurecord_default="lmodevalc1"
+;;
 
 
 
