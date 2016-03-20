@@ -28,7 +28,7 @@ function log {
 dolog PYRAMID "\"$@\"" 
 }
 
-log "starting instance"
+log "starting $0 instance"
 
 
 dmC="dm0disp3" # DM control channel
