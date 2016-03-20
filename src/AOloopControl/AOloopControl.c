@@ -9295,6 +9295,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     float tmpv;
     long delayfr_int;
     float delayfr_x;
+    long ch, l1;
     
     double err0, err1;
     float v0;
