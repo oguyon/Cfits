@@ -9344,8 +9344,12 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     free(marray);
     
     fp = fopen("filt.txt", "w");
+    tmpv = 0.0;
     for(l=0;l<filtsize;l++)
-        fprintf(fp, "%3ld %f\n", l, data.image[IDfilt].array.F[l]);
+        {
+            tmpv += data.image[IDfilt].array.F[l];
+            fprintf(fp, "%3ld %f %f\n", l, data.image[IDfilt].array.F[l], tmpv);
+        }
     fclose(fp);
     
     return(IDfilt);
