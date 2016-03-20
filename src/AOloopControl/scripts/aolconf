@@ -873,14 +873,14 @@ mkdir -p ./conf/turb
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname 
-tmux send-keys -t $tmuxname "$execname" C-m
+tmux send-keys -t $tmuxname "$execname -n dmturbrun" C-m
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturb ${DMindex}" C-m
 
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turbctrl"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname" C-m
+tmux send-keys -t $tmuxname "$execname -n dmturbctr" C-m
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} 0.1" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturtint ${DMindex} 10000" C-m
