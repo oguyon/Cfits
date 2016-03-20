@@ -5019,6 +5019,18 @@ fi
 
 
 
+file="./status/stat_logmodeval.txt"
+logmodevalstat=$( cat $file )
+if [ "${logmodevalstat}" = "0" ];
+then
+menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval" )
+else
+menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn" )
+fi
+
+
+
+
 
 
 menuitems+=( " " " " )
@@ -5334,6 +5346,44 @@ tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp7" C-m
 echo "0" > ./status/stat_logdmdisp7.txt
 menurecord_default="ldmdisp71"
 ;;
+
+
+
+
+
+   lmodeval1)
+log "log aol${LOOPNUMBER}_modeval ON"
+logdmdisp7stat=1
+echo "1" > ./status/stat_logmodeval.txt
+tmuxnameC="modeval${LOOPNUMBER}logC"
+echo "1" > ./status/stat_logmodeval.txt
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+tmux send-keys -t $tmuxnameC "mkdir -p $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
+tmux send-keys -t $tmuxnameC "logshim aol${LOOPNUMBER}_modeval 1000 $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
+tmuxname="modeval${LOOPNUMBER}log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modeval" C-m
+menurecord_default="lmodeval0"
+;;
+    lmodeval0)
+log "log aol${LOOPNUMBER}_modeval OFF"
+lmodevalstat=0
+echo "0" > ./status/stat_lmodeval.txt
+tmuxname="modeval${LOOPNUMBER}log"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff aol${LOOPNUMBER}_modeval" C-m
+echo "0" > ./status/stat_logmodeval.txt
+menurecord_default="lmodeval1"
+;;
+
+
+
+
+
+
+
 
 
     rins) 
