@@ -9289,8 +9289,11 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     long IDmatC;
     long IDfilt;
     long l,m;
-    
+    float *marray; // measurement array
     FILE *fp;
+    
+    long delayfr_int;
+    float delayfr_x;
     
     IDtrace = image_ID(IDtrace_name);
     NBtraceVec = data.image[IDtrace].md[0].size[0];
@@ -9299,22 +9302,30 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     // build measurement matrix
     
-    fp = fopen("tracepts,txt","w");
+    fp = fopen("tracepts.txt","w");
     IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize);
-    // each column is a measurement
-    
-    list_image_ID();
-    printf("IDmatA = %ld\n", IDmatA);
-    printf("IDtrace = %ld\n", IDtrace);
-    printf("NBmvec = %ld\n", NBmvec);
-    printf("NBtraceVec = %ld\n", NBtraceVec);
-    
+    // each column is a measurement    
     for(m=0; m<NBmvec; m++) // column index
     {
-        fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m]);
+        fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m+filtsize]);
         for(l=0; l<filtsize; l++)
             data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
     }
+    fclose(fp);
+    
+    
+    // build measurement vector
+    delayfr_int = (int) delayfr_int;
+    delayfr_x = delayfr - delayfr_int;
+    printf("%f  = %lf + %f\n", delayfr, delayfr_int, delayfr_x);
+    marray = (float*) malloc(sizeof(float)*NBmvec);
+    fp = fopen("tracepts1.txt","w");
+    for(m=0; m<NBmvec; m++)
+        {
+            marray[m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int)])*(1.0-delayfr_x) + data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int+1)])*delayfr_x;
+            fprintf(fp, "%5ld %f %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m+filtsize], marray[m]);
+        }
+    free(marray);
     fclose(fp);
     
     linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");

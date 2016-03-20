@@ -3623,15 +3623,13 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
 
     IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, mvecsize);
     // each column is a measurement
-    // ii index is measurement
-    // jj index is pixel
+    // m index is measurement
+    // l index is pixel
     for(m=0; m<NBmvec; m++)
     {
         k0 = m+WFP_NBstep;
         for(l=0; l<mvecsize; l++)
-        {
             data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDpha_measured].array.F[(k0-mvecdz[l])*WFPxsize*WFPysize+(mvecdy[l]+WFP_xyrad)*WFPxsize+(mvecdx[l]+WFP_xyrad)];
-        }
     }
 
 
