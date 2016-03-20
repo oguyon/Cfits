@@ -9286,6 +9286,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     double SVDeps = 1.0e-8;
     long NBtraceVec; // number of measurement vectors in trace 
     long NBmvec; // number of measurements in measurement matrix
+    long NBchan; // number of channels in measurement
     long IDmatC;
     long IDfilt;
     long l,m;
@@ -9301,14 +9302,17 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     
     
     IDtrace = image_ID(IDtrace_name);
+    
     NBtraceVec = data.image[IDtrace].md[0].size[0];
-
+    NBchan = data.image[IDtrace].md[0].size[1];
+    
+    
     NBmvec = NBtraceVec - filtsize - (long) (delayfr+1.0);
     
     
     
     // add noise
-   // for(m=0; m<NBtraceVec; m++) 
+    // for(m=0; m<NBtraceVec; m++) 
     //    data.image[IDtrace].array.F[NBtraceVec*modeout + m] += NoiseAmpl*gauss() + 0.2*sin(2.0*M_PI*m/10.0) + 0.2*sin(2.0*M_PI*m/17.0)  + 0.2*sin(2.0*M_PI*m/27.0);
     
     
@@ -9317,15 +9321,22 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     // build measurement matrix
     
     fp = fopen("tracepts.txt","w");
-    IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize);
+    IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize*NBchan);
     // each column is a measurement    
     for(m=0; m<NBmvec; m++) // column index
     {
         fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*modeout+m+filtsize]);
         for(l=0; l<filtsize; l++)
-            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*modeout + (m+l)];
+            for(ch=0;ch<NBch;ch++)
+                {
+                    l1 = ch*filtsize + l;
+                    data.image[IDmatA].array.F[l1*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*ch + (m+l)];
+                }
     }
     fclose(fp);
+    
+    
+    
     
     
     
@@ -9342,27 +9353,30 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
         }
     fclose(fp);
     
+    
     linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
     
     save_fits("WFPmatA", "!WFPmatA.fits");
     save_fits("WFPmatC", "!WFPmatC.fits");
     IDmatC = image_ID("WFPmatC");
 
-    IDfilt = create_2Dimage_ID(IDfilt_name, filtsize, 1);
+    IDfilt = create_2Dimage_ID(IDfilt_name, filtsize, NBch);
     for(l=0;l<filtsize;l++)
+    for(ch=0;ch<NBch;ch++)
         {
             tmpv = 0.0;
             for(m=0; m<NBmvec; m++)
-                tmpv += data.image[IDmatC].array.F[l*NBmvec+m] * marray[m];
-            data.image[IDfilt].array.F[l] = tmpv;
+                tmpv += data.image[IDmatC].array.F[(ch*filtsize+l)*NBmvec+m] * marray[m];
+            data.image[IDfilt].array.F[ch*filtsize+l] = tmpv;
         }
     
     fp = fopen("filt.txt", "w");
     tmpv = 0.0;
     for(l=0;l<filtsize;l++)
+    for(ch=0;ch<NBch;ch++)
         {
-            tmpv += data.image[IDfilt].array.F[l];
-            fprintf(fp, "%3ld %f %f\n", l, data.image[IDfilt].array.F[l], tmpv);
+            tmpv += data.image[IDfilt].array.F[ch*filtsize+l];
+            fprintf(fp, "%3ld %3ld %f %f\n", ch, l, data.image[IDfilt].array.F[l], tmpv);
         }
     fclose(fp);
     printf("filter TOTAL = %f\n", tmpv);
@@ -9380,7 +9394,9 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
         {
             tmpv = 0.0;
             for(l=0;l<filtsize;l++)
-                tmpv += data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*modeout + (m-filtsize+l)];
+            for(ch=0;ch<NBch;ch++)
+                tmpv += data.image[IDfilt].array.F[ch*filtsize+l]*data.image[IDtrace].array.F[NBtraceVec*ch + (m-filtsize+l)];
+
             fprintf(fp, "%5ld %20f %20f %20f\n", m, data.image[IDtrace].array.F[NBtraceVec*modeout + m], tmpv, marray[m-filtsize]);
             
             v0 = tmpv - marray[m-filtsize];
