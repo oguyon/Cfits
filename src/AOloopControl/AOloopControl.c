@@ -9290,6 +9290,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     long IDfilt;
     long l,m;
     
+    FILE *fp;
     
     IDtrace = image_ID(IDtrace_name);
     NBtraceVec = data.image[IDtrace].md[0].size[0];
@@ -9298,15 +9299,16 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     // build measurement matrix
     
-    
+    fp = fopen("tracepts,txt","w");
     IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize);
     // each column is a measurement
     for(m=0; m<NBmvec; m++) // column index
     {
+        fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m]);
         for(l=0; l<filtsize; l++)
             data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+l)];
     }
-    
+    fclose(fp);
     
     linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
     
