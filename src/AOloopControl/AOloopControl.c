@@ -9286,7 +9286,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     double SVDeps = 1.0e-8;
     long NBtraceVec; // number of measurement vectors in trace 
     long NBmvec; // number of measurements in measurement matrix
-    long NBchan; // number of channels in measurement
+    long NBch; // number of channels in measurement
     long IDmatC;
     long IDfilt;
     long l,m;
@@ -9296,7 +9296,6 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     long delayfr_int;
     float delayfr_x;
     long ch, l1;
-    long NBch;
     double err0, err1;
     float v0;
     float NoiseAmpl = 0.02;
@@ -9305,7 +9304,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     IDtrace = image_ID(IDtrace_name);
     
     NBtraceVec = data.image[IDtrace].md[0].size[0];
-    NBchan = data.image[IDtrace].md[0].size[1];
+    NBch = data.image[IDtrace].md[0].size[1];
     
     
     NBmvec = NBtraceVec - filtsize - (long) (delayfr+1.0);
@@ -9322,7 +9321,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     // build measurement matrix
     
     fp = fopen("tracepts.txt","w");
-    IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize*NBchan);
+    IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize*NBch);
     // each column is a measurement    
     for(m=0; m<NBmvec; m++) // column index
     {
@@ -9413,6 +9412,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     err1 = sqrt(err1/(NBtraceVec-filtsize-(delayfr_int+1)));
     printf("Prediction error (using optimal filter)   :   %f\n", err0);
     printf("Prediction error (using last measurement) :   %f\n", err1);
+ 
     return(IDfilt);
 }
 
