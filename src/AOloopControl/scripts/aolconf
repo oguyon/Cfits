@@ -502,6 +502,7 @@ if [ -a $file ]
 	else
 	wfsreffname="wfsref0.fits" #default
 fi
+log "linking wfsref0 to file ${wfsreffname}"
 rm /tmp/aol${LOOPNUMBER}_wfsref0.im.shm
 Fits2shm ${wfsreffname} aol${LOOPNUMBER}_wfsref0
 ln -s $PWD/${wfsreffname} conf/aol${LOOPNUMBER}_wfsref0.fits
@@ -524,6 +525,7 @@ if [ -a $file ]
 	cpamax=$(echo "$(cat $file)")
 	else
 	cpamax="10.0" #default
+    log "cpamax = ${cpamax}"
 fi
 }
 
@@ -535,6 +537,7 @@ if [ -a $file ]
 	else
 	DMmodesfname="DMmodes.fits" #default
 fi
+log "linking DMmodes to file ${DMmodesfname}"
 rm /tmp/aol${LOOPNUMBER}_DMmodes.im.shm
 Fits2shm ${DMmodesfname} aol${LOOPNUMBER}_DMmodes
 rm conf/aol${LOOPNUMBER}_DMmodes.fits
@@ -550,6 +553,7 @@ if [ -a $file ]
 	else
 	respMfname="respM.fits" #default
 fi
+log "linking respM to file ${respMfname}"
 rm /tmp/aol${LOOPNUMBER}_respM.im.shm
 Fits2shm ${respMfname} aol${LOOPNUMBER}_respM
 rm conf/aol${LOOPNUMBER}_respM.fits
@@ -574,7 +578,8 @@ if [ -a $file ]
 	else
 	fname="$1.fits" #default
 fi
-# rm /tmp/aol${LOOPNUMBER}_$1.im.shm  
+# rm /tmp/aol${LOOPNUMBER}_$1.im.shm 
+log "linking $1 to ${fname}" 
 Fits2shm ${fname} aol${LOOPNUMBER}_$1
 rm conf/aol${LOOPNUMBER}_$1.fits
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
@@ -589,6 +594,7 @@ fname=$( cat $ffname )
 echo "fname = $fname"
 fname=$(dialog --title "Select  Matrix" --stdout --title "Select ${name}" --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > $ffname
+log "select configuration file ${name} : ${fname}"
 ReadConfFile "$name"
 }
 
@@ -611,6 +617,7 @@ if [ -a $file ]
 	loopgain=$(echo "$(cat $file)")
 	else
 	loopgain="0.000" #default
+    log "loopgain = ${loopgain}"
 fi
 }
 
@@ -622,6 +629,7 @@ if [ -a $file ]
 	loopmaxlim=$(echo "$(cat $file)")
 	else
 	loopmaxlim="0.100"
+    log "loopmaxlim = ${loopmaxlim}"
 fi
 }
 
@@ -633,6 +641,7 @@ if [ -a $file ]
 	loopmultcoeff=$(echo "$(cat $file)")
 	else
 	loopmultcoeff="0.999"
+    log "loopmultcoeff = ${loopmultcoeff}"
 fi
 }
 
@@ -646,6 +655,7 @@ if [ -a $file ]
 	else
 	dmturbampl=0.1 #default
 fi
+log "dmturbampl = $dmturbampl"
 tmux new-session -d -s DMturbamp
 tmux send-keys -t DMturbamp "$execname " C-m
 tmux send-keys -t DMturbamp "csetpmove system" C-m
@@ -663,6 +673,7 @@ if [ -a $file ]
 	else
 	dmturbws=1.0 #default
 fi
+log "dmturbws = $dmturbws"
 tmux new-session -d -s DMturbws
 tmux send-keys -t DMturbws "$execname " C-m
 tmux send-keys -t DMturbws "csetpmove system" C-m
@@ -696,7 +707,8 @@ function ReadDMturbtint {
         dmturbtint=$(echo "$(cat $file)")
         else
         dmturbtint=0.1 #default
-                fi
+    fi
+    log "dmturbtint = ${dmturbtint}"
                 tmux new-session -d -s DMturbtint
                 tmux send-keys -t DMturbtint "$execname " C-m
                 tmux send-keys -t DMturbtint "csetpmove system" C-m
@@ -714,7 +726,8 @@ function ReadTMsync {
         AOsystsimsync=$(echo "$(cat $file)")
         else
         AOsystsimsync=2 #default
-                fi
+    fi
+    log "AOsystsimsync = ${AOsystsimsync}"
 }
 
 
@@ -725,7 +738,8 @@ function ReadTMdelayus {
         AOsystsimWFSdelayus=$(echo "$(cat $file)")
         else
         AOsystsimWFSdelayus=100000 #default
-                fi
+    fi
+    log "AOsystsimWFSdelayus = ${AOsystsimWFSdelayus}"
 }
 
 
@@ -734,6 +748,7 @@ function ReadTMdelayus {
 
 
 function initDM {
+    log "start initDM ${DMindex}"
     file="./conf/conf_dm${DMindex}xsize.txt"
     if [ -a $file ]
         then
@@ -811,7 +826,7 @@ fi
 
 function TestModeStart {
 
-echo "TEST MODE START"
+log "TEST MODE START"
 
 
 mkdir -p testconf
@@ -841,6 +856,7 @@ ReadLoopMultCoeff
 
 
 function TestModeStop {
+log "TEST MODE STOP"
 pkill aol${LOOPNUMBER}test
 echo "OFF" > ./status/testloopstatus.txt
 }
@@ -851,6 +867,7 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 function TestStartTurb {
+log "TEST START TURB"
 echo " ON" > ./status/testdm${DMindex}turbstatus.txt
 mkdir -p ./conf/turb
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
@@ -873,6 +890,7 @@ tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} 0.0" C-m
 }
 
 function TestStopTurb {
+log "TEST STOP TURB"
 tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}turbctrl "exit" C-m
 tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
 
@@ -885,6 +903,9 @@ imzero dm${DMindex}disp1
 quit
 EOF
 }
+
+
+
 
 
 
@@ -957,7 +978,7 @@ echo "START STATE MACHINE"
 while true; do
 
 stateok=0
-
+log "$0 state = ${state}"
 
 
 # =====================================================
