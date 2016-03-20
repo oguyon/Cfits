@@ -9319,6 +9319,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
     
+    save_fits("WFPmatA", "!WFPmatA.fits");
     save_fits("WFPmatC", "!WFPmatC.fits");
     IDmatC = image_ID("WFPmatC");
 
