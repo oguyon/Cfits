@@ -9365,7 +9365,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
             fprintf(fp, "%3ld %f %f\n", l, data.image[IDfilt].array.F[l], tmpv);
         }
     fclose(fp);
-    
+    printf("filter TOTAL = %f\n", tmpv);
     
     // TEST FILTER
     
