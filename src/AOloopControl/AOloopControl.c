@@ -9295,6 +9295,9 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     long delayfr_int;
     float delayfr_x;
     
+    double err0, err1;
+    float v0;
+    
     IDtrace = image_ID(IDtrace_name);
     NBtraceVec = data.image[IDtrace].md[0].size[0];
 
@@ -9353,19 +9356,34 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     
     // TEST FILTER
+    
+    // col #1 : time index m
+    // col #2 : value at index m
+    // col #3 : predicted value at m+delay
+    // col #4 : actual value at m+delay
     fp = fopen("testfilt.txt", "w");
+    err0 = 0.0;
+    err1 = 0.0;
     for(m=filtsize;m<NBtraceVec;m++)
         {
             tmpv = 0.0;
             for(l=0;l<filtsize;l++)
                 tmpv += data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + (m-filtsize+l)];
             fprintf(fp, "%5ld %20f %20f %20f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode + m], tmpv, marray[m-filtsize]);
+            
+            v0 = tmpv - marray[m-filtsize];
+            err0 += v0*v0;
+            
+            v0 = data.image[IDtrace].array.F[NBtraceVec*mode + m] - marray[m-filtsize];
+            err1 += v1*v1;            
         }
     fclose(fp);
-    
-    
     free(marray);
     
+    err0 = sqrt(err0/(NBtraceVec-filtsize));
+    err1 = sqrt(err1/(NBtraceVec-filtsize));
+    printf("Prediction error (using optimal filter)   :   %f\n", err0);
+    printf("Prediction error (using last measurement) :   %f\n", err1);
     return(IDfilt);
 }
 
