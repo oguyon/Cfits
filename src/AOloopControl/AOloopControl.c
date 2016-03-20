@@ -9341,7 +9341,6 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
                 tmpv += data.image[IDmatC].array.F[l*NBmvec+m] * marray[m];
             data.image[IDfilt].array.F[l] = tmpv;
         }
-    free(marray);
     
     fp = fopen("filt.txt", "w");
     tmpv = 0.0;
@@ -9351,6 +9350,21 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
             fprintf(fp, "%3ld %f %f\n", l, data.image[IDfilt].array.F[l], tmpv);
         }
     fclose(fp);
+    
+    
+    // TEST FILTER
+    fp = fopen("testfilt.txt", "w");
+    for(m=filtsize;m<NBtraceVec;m++)
+        {
+            tmpv = 0.0;
+            for(l=0;l<filtsize;l++)
+                tmpv += data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + (m-filtsize+l)];
+            fprintf(fp, "%5ld %20f %20f %20f\n", l, data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + m], tmpv, marray[m]);
+        }
+    fclose(fp);
+    
+    
+    free(marray);
     
     return(IDfilt);
 }
