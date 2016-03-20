@@ -9376,7 +9376,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     fp = fopen("testfilt.txt", "w");
     err0 = 0.0;
     err1 = 0.0;
-    for(m=filtsize;m<NBtraceVec;m++)
+    for(m=filtsize;m<NBtraceVec-(delayfr_int+1);m++)
         {
             tmpv = 0.0;
             for(l=0;l<filtsize;l++)
@@ -9392,8 +9392,8 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     fclose(fp);
     free(marray);
     
-    err0 = sqrt(err0/(NBtraceVec-filtsize));
-    err1 = sqrt(err1/(NBtraceVec-filtsize));
+    err0 = sqrt(err0/(NBtraceVec-filtsize-(delayfr_int+1)));
+    err1 = sqrt(err1/(NBtraceVec-filtsize-(delayfr_int+1)));
     printf("Prediction error (using optimal filter)   :   %f\n", err0);
     printf("Prediction error (using last measurement) :   %f\n", err1);
     return(IDfilt);
