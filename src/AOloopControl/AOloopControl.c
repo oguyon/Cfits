@@ -9375,7 +9375,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
             err0 += v0*v0;
             
             v0 = data.image[IDtrace].array.F[NBtraceVec*mode + m] - marray[m-filtsize];
-            err1 += v1*v1;            
+            err1 += v0*v0;            
         }
     fclose(fp);
     free(marray);
