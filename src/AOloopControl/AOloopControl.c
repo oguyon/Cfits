@@ -9297,11 +9297,22 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     double err0, err1;
     float v0;
+    float NoiseAmpl = 0.1;
+    
     
     IDtrace = image_ID(IDtrace_name);
     NBtraceVec = data.image[IDtrace].md[0].size[0];
 
     NBmvec = NBtraceVec - filtsize - (long) (delayfr+1.0);
+    
+    
+    
+    // add noise
+    for(m=0; m<NBtraceVec; m++) 
+        data.image[IDtrace].array.F[NBtraceVec*mode + m] += NoiseAmpl*gauss();
+    
+    
+    
     
     // build measurement matrix
     
@@ -9315,6 +9326,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
             data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
     }
     fclose(fp);
+    
     
     
     // build measurement vector
