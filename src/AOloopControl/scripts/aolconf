@@ -978,8 +978,6 @@ echo "START STATE MACHINE"
 while true; do
 
 stateok=0
-log "$0 state = ${state}"
-
 
 # =====================================================
 # ===================== TOP MENU ======================
@@ -987,6 +985,7 @@ log "$0 state = ${state}"
 
 if [ $state = "menutop" ]; then
 stateok=1
+log "$0 state = ${state}"
 confselected=$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]"
 
@@ -1375,6 +1374,7 @@ fi
 
 if [ $state = "menualign" ]; then
 stateok=1
+log "$0 state = ${state}"
 ./AOloopAlign.bash
 state="menutop"
 fi
@@ -1496,6 +1496,7 @@ ReadConfFile "contrMcact${i2}_00"
 
 if [ $state = "menuconfigureloop" ]; then
 stateok=1
+log "$0 state = ${state}"
 menuname="\Zb\Zu LOOP CONFIGURATION\Zn\n 
 Notations: \n      
   \Z4shared memory stream\Zn\n
@@ -3140,6 +3141,7 @@ fi
 
 if [ $state = "menu_mkFModes" ]; then
 stateok=1
+log "$0 state = ${state}"
 menuname=" CONFIGURATION - Make Fourier based Modes"
 rm tmp/*.fits
 menuitems=()
@@ -3264,6 +3266,7 @@ fi
 # =====================================================
 if [ $state = "menucontrolloop" ]; then
 stateok=1
+log "$0 state = ${state}"
 menuname="CONTROL LOOP"
 
 
@@ -4142,7 +4145,7 @@ fi
 # =====================================================
 if [ $state = "menutestmode" ]; then
 stateok=1
-
+log "$0 state = ${state}"
 testloopstatus="OFF"
 testdmturbstatus="OFF"
 
@@ -4651,7 +4654,7 @@ fi
 
 if [ $state = "menuview" ]; then
 stateok=1
-
+log "$0 state = ${state}"
 
 
 menuname="VIEW MODE"
@@ -4797,13 +4800,14 @@ NBframes="$1"
 
 
 
+
 # =====================================================
 # ======== RECORD/ANALYZE  ============================
 # =====================================================
 
 if [ $state = "menurecord" ]; then
 stateok=1
-
+log "$0 state = ${state}"
 
 
 menuname="RECORD / ANALYZE"
@@ -5301,6 +5305,7 @@ fi
 
 if [ $state = "menuexit" ]; then
 stateok=1
+log "$0 state = ${state}"
 echo "exit"
 exit
 fi
@@ -5309,6 +5314,7 @@ fi
 
 if [ $stateok = 0 ]; then
 echo "state \"$state\" not recognized ... exit"
+log "state \"$state\" not recognized ... exit"
 exit
 fi
 
