@@ -9309,7 +9309,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     // add noise
     for(m=0; m<NBtraceVec; m++) 
-        data.image[IDtrace].array.F[NBtraceVec*mode + m] += NoiseAmpl*gauss();
+        data.image[IDtrace].array.F[NBtraceVec*mode + m] += NoiseAmpl*gauss() + 0.01*sin(0.1*m);
     
     
     
