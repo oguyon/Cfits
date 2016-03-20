@@ -9297,7 +9297,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     double err0, err1;
     float v0;
-    float NoiseAmpl = 0.0;
+    float NoiseAmpl = 0.02;
     
     
     IDtrace = image_ID(IDtrace_name);
