@@ -79,6 +79,7 @@ actionmode="Select"
 LOOPNUMBER_file="LOOPNUMBER"
 confnbfile="./conf/conf_CONFNUMBER.txt"
 
+
 mkdir -p conf
 mkdir -p status
 mkdir -p tmp
@@ -87,11 +88,11 @@ mkdir -p tmp
 # LOOPNUMBER (loop number)
 if [ ! -f $LOOPNUMBER_file ]
 then
-	echo "creating loop number"
+	log "creating loop number $LOOPNUMBER_default"
 	echo "$LOOPNUMBER_default" > $LOOPNUMBER_file
 else
 	LOOPNUMBER=$(cat $LOOPNUMBER_file)
-	echo "LOOPNUMBER = $LOOPNUMBER"
+	log "LOOPNUMBER = $LOOPNUMBER"
 fi
 
 
@@ -113,7 +114,7 @@ fi
 
 
 # connect to WFS camera
-echo "connecting to camera"
+# log "connecting to camera"
 ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 
 
@@ -121,7 +122,7 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 
 # loop name
 echo "$LOOPNAME" > ./conf/conf_LOOPNAME.txt
-echo "loop name : $LOOPNAME"
+log "loop name  $LOOPNAME"
 
 
 
@@ -183,6 +184,7 @@ fi
 
 
 function Fits2shm {
+log "Move FITS to shared memory : $1 -> $2"
 $execname << EOF # move file to shared memory
 csetpmove system
 loadfits "$1" im
