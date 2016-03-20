@@ -238,7 +238,7 @@ if [ -a $file ]
 	dmC="dmC" #default
 fi
 # DM correction channel
-echo "linking to dm correction channel"
+log "linking dmC to ${dmC}"
 rm /tmp/aol${LOOPNUMBER}_dmC.im.shm 
 ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
 }
@@ -253,7 +253,7 @@ if [ -a $file ]
 	dm2dmO="empty" #default
 fi
 # DM ouput to other loop
-echo "linking DM output to loop / channel"
+log "linking dm2dmO to ${dm2dmO}"
 rm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm 
 ln -s /tmp/${dm2dmO}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm
 }
@@ -266,6 +266,7 @@ if [ -a $file ]
 	else
 	dm2dmM="empty" #default
 fi
+log "linking dm2dmM to ${dm2dmM}"
 rm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm 
 ln -s /tmp/${dm2dmM}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm
 }
@@ -279,6 +280,7 @@ if [ -a $file ]
 	else
 	dmwrefRM="empty" #default
 fi
+log "linking dmwfrefRM to ${dmwrefRM}"
 rm /tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm 
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
 }
@@ -291,6 +293,7 @@ if [ -a $file ]
 	else
 	dmwrefO="empty" #default
 fi
+log "linking dmwfref0 to ${dmwrefO}"
 rm /tmp/aol${LOOPNUMBER}_dmwrefO.im.shm 
 ln -s /tmp/${dmwrefO}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefO.im.shm
 }
@@ -308,6 +311,7 @@ if [ -a $file ]
 fi
 # DM offset channel
 echo "linking to dm offset channel"
+log "linking dmO to ${dmO}"
 rm /tmp/aol${LOOPNUMBER}_dmO.im.shm 
 ln -s /tmp/${dmO}.im.shm /tmp/aol${LOOPNUMBER}_dmO.im.shm
 }
@@ -323,9 +327,11 @@ if [ -a $file ]
 fi
 # DM correction channel
 echo "linking to dm offset channel"
+log "linking dmZP2 to ${dmZP2}"
 rm /tmp/aol${LOOPNUMBER}_dmZP2.im.shm 
 ln -s /tmp/${dmZP2}.im.shm /tmp/aol${LOOPNUMBER}_dmZP2.im.shm
 }
+
 
 function ReaddmZP3name {
 file="./conf/conf_dmZP3_name.txt"
@@ -337,6 +343,7 @@ if [ -a $file ]
 fi
 # DM correction channel
 echo "linking to dm offset channel"
+log "linking dmZP3 to ${dmZP3}"
 rm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm 
 ln -s /tmp/${dmZP3}.im.shm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm
 }
@@ -354,9 +361,11 @@ if [ -a $file ]
 fi
 # DM correction channel
 echo "linking to dm correction channel"
+log "linking dmdisp to ${dmdisp}"
 rm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm 
 ln -s /tmp/${dmdisp}.im.shm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm
 }
+
 
 function ReaddmRMname {
 file="./conf/conf_dmRM_name.txt"
@@ -367,7 +376,7 @@ if [ -a $file ]
 	dmRM="dmRM" #default
 fi
 # DM response matrix channel
-echo "linking to dm resp mat channel"
+log "linking dmRM to ${dmRM}"
 rm /tmp/aol${LOOPNUMBER}_dmRM.im.shm 
 ln -s /tmp/${dmRM}.im.shm /tmp/aol${LOOPNUMBER}_dmRM.im.shm
 }
@@ -382,7 +391,7 @@ if [ -a $file ]
 	wfsimcam="wfsimcam" #default
 fi
 # WFS raw image
-echo "linking to WFS camera"
+log "linking wfsim to ${wfsimcam}"
 ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 }
 
@@ -400,6 +409,7 @@ if [ -a $file ]
 	else
 	wfsdarkfname="wfsdark.fits" #default
 fi
+log "linking wfsdark to file ${wfsdarkfname}"
 rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
 Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
 ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
@@ -415,6 +425,7 @@ if [ -a $file ]
 	else
 	zrespMfname="zrespM.fits" #default
 fi
+log "linking zrespM to file ${zrespMfname}"
 rm /tmp/aol${LOOPNUMBER}_zrespM.im.shm
 Fits2shm ${zrespMfname} aol${LOOPNUMBER}_zrespM
 ln -s $PWD/${zrespMfname} conf/aol${LOOPNUMBER}_zrespM.fits
@@ -429,6 +440,7 @@ if [ -a $file ]
 	else
 	LOrespMfname="LOrespM.fits" #default
 fi
+log "linking LOrespM to file ${LOrespMfname}"
 rm /tmp/aol${LOOPNUMBER}_LOrespM.im.shm
 Fits2shm ${LOrespMfname} aol${LOOPNUMBER}_LOrespM
 ln -s $PWD/${LOrespMfname} conf/aol${LOOPNUMBER}_LOrespM.fits
@@ -443,6 +455,7 @@ if [ -a $file ]
 	else
 	wfsmaskfname="wfsmask.fits" #default
 fi
+log "linking wfsmask to file ${wfsmaskfname}"
 rm /tmp/aol${LOOPNUMBER}_wfsmask.im.shm
 Fits2shm ${wfsmaskfname} aol${LOOPNUMBER}_wfsmask
 ln -s $PWD/${wfsmaskfname} conf/aol${LOOPNUMBER}_wfsmask.fits
@@ -458,6 +471,7 @@ if [ -a $file ]
 	else
 	dmmaskfname="dmmask.fits" #default
 fi
+log "linking dmmask to file ${dmmaskfname}"
 rm /tmp/aol${LOOPNUMBER}_dmmask.im.shm
 Fits2shm ${dmmaskfname} aol${LOOPNUMBER}_dmmask
 ln -s $PWD/${dmmaskfname} conf/aol${LOOPNUMBER}_dmmask.fits
@@ -473,6 +487,7 @@ if [ -a $file ]
 	else
 	dmmapfname="dmmap.fits" #default
 fi
+log "linking dmmap to file ${dmmapfname}"
 rm /tmp/aol${LOOPNUMBER}_dmmap.im.shm
 Fits2shm ${dmmapfname} aol${LOOPNUMBER}_dmmap
 ln -s $PWD/${dmmapfname} conf/aol${LOOPNUMBER}_dmmap.fits
