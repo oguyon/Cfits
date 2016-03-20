@@ -9317,12 +9317,12 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     // build measurement vector
     delayfr_int = (int) delayfr_int;
     delayfr_x = delayfr - delayfr_int;
-    printf("%f  = %lf + %f\n", delayfr, delayfr_int, delayfr_x);
+    printf("%f  = %ld + %f\n", delayfr, delayfr_int, delayfr_x);
     marray = (float*) malloc(sizeof(float)*NBmvec);
     fp = fopen("tracepts1.txt","w");
     for(m=0; m<NBmvec; m++)
         {
-            marray[m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int)])*(1.0-delayfr_x) + data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int+1)])*delayfr_x;
+            marray[m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int)]*(1.0-delayfr_x) + data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int+1)]*delayfr_x;
             fprintf(fp, "%5ld %f %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m+filtsize], marray[m]);
         }
     free(marray);
