@@ -9296,7 +9296,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     long delayfr_int;
     float delayfr_x;
     long ch, l1;
-    
+    long NBch;
     double err0, err1;
     float v0;
     float NoiseAmpl = 0.02;
