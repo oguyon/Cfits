@@ -9279,7 +9279,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 ///     delayfr [delay in frame unit]  
 ///     filtsize [number of samples in filter]
 ///
-long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name)
+long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double delayfr, long filtsize, char *IDfilt_name)
 {
     long IDtrace;
     long IDmatA;
@@ -9309,7 +9309,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     // add noise
    // for(m=0; m<NBtraceVec; m++) 
-    //    data.image[IDtrace].array.F[NBtraceVec*mode + m] += NoiseAmpl*gauss() + 0.2*sin(2.0*M_PI*m/10.0) + 0.2*sin(2.0*M_PI*m/17.0)  + 0.2*sin(2.0*M_PI*m/27.0);
+    //    data.image[IDtrace].array.F[NBtraceVec*modeout + m] += NoiseAmpl*gauss() + 0.2*sin(2.0*M_PI*m/10.0) + 0.2*sin(2.0*M_PI*m/17.0)  + 0.2*sin(2.0*M_PI*m/27.0);
     
     
     
@@ -9321,9 +9321,9 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     // each column is a measurement    
     for(m=0; m<NBmvec; m++) // column index
     {
-        fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m+filtsize]);
+        fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*modeout+m+filtsize]);
         for(l=0; l<filtsize; l++)
-            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
+            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*modeout + (m+l)];
     }
     fclose(fp);
     
@@ -9337,8 +9337,8 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     fp = fopen("tracepts1.txt","w");
     for(m=0; m<NBmvec; m++)
         {
-            marray[m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int)]*(1.0-delayfr_x) + data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int+1)]*delayfr_x;
-            fprintf(fp, "%5ld %f %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m+filtsize], marray[m]);
+            marray[m] = data.image[IDtrace].array.F[NBtraceVec*modeout+(m+filtsize+delayfr_int)]*(1.0-delayfr_x) + data.image[IDtrace].array.F[NBtraceVec*modeout+(m+filtsize+delayfr_int+1)]*delayfr_x;
+            fprintf(fp, "%5ld %f %f\n", m, data.image[IDtrace].array.F[NBtraceVec*modeout+m+filtsize], marray[m]);
         }
     fclose(fp);
     
@@ -9380,13 +9380,13 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
         {
             tmpv = 0.0;
             for(l=0;l<filtsize;l++)
-                tmpv += data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*mode + (m-filtsize+l)];
-            fprintf(fp, "%5ld %20f %20f %20f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode + m], tmpv, marray[m-filtsize]);
+                tmpv += data.image[IDfilt].array.F[l]*data.image[IDtrace].array.F[NBtraceVec*modeout + (m-filtsize+l)];
+            fprintf(fp, "%5ld %20f %20f %20f\n", m, data.image[IDtrace].array.F[NBtraceVec*modeout + m], tmpv, marray[m-filtsize]);
             
             v0 = tmpv - marray[m-filtsize];
             err0 += v0*v0;
             
-            v0 = data.image[IDtrace].array.F[NBtraceVec*mode + m] - marray[m-filtsize];
+            v0 = data.image[IDtrace].array.F[NBtraceVec*modeout + m] - marray[m-filtsize];
             err1 += v0*v0;            
         }
     fclose(fp);
@@ -9398,6 +9398,9 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     printf("Prediction error (using last measurement) :   %f\n", err1);
     return(IDfilt);
 }
+
+
+
 
 
 
