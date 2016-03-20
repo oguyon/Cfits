@@ -9302,11 +9302,12 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     fp = fopen("tracepts,txt","w");
     IDmatA = create_2Dimage_ID("WFPmatA", NBmvec, filtsize);
     // each column is a measurement
+    
     for(m=0; m<NBmvec; m++) // column index
     {
         fprintf(fp, "%5ld %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m]);
-        for(l=0; l<filtsize; l++)
-            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+l)];
+        for(l=0; l<filtsize-1; l++)
+            data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
     }
     fclose(fp);
     
