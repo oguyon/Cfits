@@ -985,7 +985,7 @@ stateok=0
 
 if [ $state = "menutop" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 confselected=$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]"
 
@@ -1388,7 +1388,7 @@ fi
 
 if [ $state = "menualign" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 ./AOloopAlign.bash
 state="menutop"
 fi
@@ -1510,7 +1510,7 @@ ReadConfFile "contrMcact${i2}_00"
 
 if [ $state = "menuconfigureloop" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 menuname="\Zb\Zu LOOP CONFIGURATION\Zn\n 
 Notations: \n      
   \Z4shared memory stream\Zn\n
@@ -3162,7 +3162,7 @@ fi
 
 if [ $state = "menu_mkFModes" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 menuname=" CONFIGURATION - Make Fourier based Modes"
 rm tmp/*.fits
 menuitems=()
@@ -3287,7 +3287,7 @@ fi
 # =====================================================
 if [ $state = "menucontrolloop" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 menuname="CONTROL LOOP"
 
 
@@ -4194,7 +4194,7 @@ fi
 # =====================================================
 if [ $state = "menutestmode" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 testloopstatus="OFF"
 testdmturbstatus="OFF"
 
@@ -4726,7 +4726,7 @@ fi
 
 if [ $state = "menuview" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 
 
 menuname="VIEW MODE"
@@ -4883,7 +4883,7 @@ NBframes="$1"
 
 if [ $state = "menurecord" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 
 
 menuname="RECORD / ANALYZE"
@@ -5026,6 +5026,16 @@ then
 menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval" )
 else
 menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn" )
+fi
+
+
+file="./status/stat_logmodevalc.txt"
+logmodevalcstat=$( cat $file )
+if [ "${logmodevalcstat}" = "0" ];
+then
+menuitems+=( "lmodevalc1" "START logging aol${LOOPNUMBER}_modevalc" )
+else
+menuitems+=( "lmodevalc0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalc\Zn" )
 fi
 
 
@@ -5353,7 +5363,7 @@ menurecord_default="ldmdisp71"
 
    lmodeval1)
 log "log aol${LOOPNUMBER}_modeval ON"
-logdmdisp7stat=1
+logmodevalstat=1
 echo "1" > ./status/stat_logmodeval.txt
 tmuxnameC="modeval${LOOPNUMBER}logC"
 echo "1" > ./status/stat_logmodeval.txt
@@ -5369,7 +5379,7 @@ menurecord_default="lmodeval0"
 ;;
     lmodeval0)
 log "log aol${LOOPNUMBER}_modeval OFF"
-lmodevalstat=0
+logmodevalstat=0
 echo "0" > ./status/stat_lmodeval.txt
 tmuxname="modeval${LOOPNUMBER}log"
 tmux new-session -d -s $tmuxname
@@ -5377,6 +5387,8 @@ tmux send-keys -t $tmuxname "logshimoff aol${LOOPNUMBER}_modeval" C-m
 echo "0" > ./status/stat_logmodeval.txt
 menurecord_default="lmodeval1"
 ;;
+
+
 
 
 
@@ -5451,7 +5463,7 @@ fi
 
 if [ $state = "menuexit" ]; then
 stateok=1
-log "$0 state = ${state}"
+#log "$0 state = ${state}"
 echo "exit"
 exit
 fi
