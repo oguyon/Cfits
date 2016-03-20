@@ -23,6 +23,14 @@ execname="Cfits"
 LOOPNAME="PyWFS" # name of the control loop
 LOOPNUMBER_default=2  # loop number
 
+
+function log {
+dolog PYRAMID "$@" 
+}
+
+log starting $ instance 
+
+
 dmC="dm0disp3" # DM control channel
 dmO="dm0disp0" # DM offset channel
 dmdisp="dm0disp" # total DM displacement channel
