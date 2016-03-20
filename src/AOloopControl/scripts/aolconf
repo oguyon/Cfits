@@ -2672,7 +2672,7 @@ tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./aolmkLO_DMmodes ${rmMcpa}" C-m
 tmux send-keys -t ${tmuxname} "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 echo "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-log "Start modal RM amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
+log "Start modal RM    $rmMcpa CPA   amplitude $rmMamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
 	LOrespc) # clean zrespm
