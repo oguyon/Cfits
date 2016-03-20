@@ -9309,8 +9309,8 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
         //for(l=0; l<filtsize-4; l++)
         l = 5;
         data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
-         l = 6;
-        data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
+  //       l = 6;
+   //     data.image[IDmatA].array.F[l*NBmvec+m] = data.image[IDtrace].array.F[NBtraceVec*mode + (m+l)];
     }
     fclose(fp);
     
