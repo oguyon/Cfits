@@ -9315,7 +9315,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     
     
     // build measurement vector
-    delayfr_int = (int) delayfr_int;
+    delayfr_int = (int) delayfr;
     delayfr_x = delayfr - delayfr_int;
     printf("%f  = %ld + %f\n", delayfr, delayfr_int, delayfr_x);
     marray = (float*) malloc(sizeof(float)*NBmvec);
