@@ -9325,7 +9325,6 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
             marray[m] = data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int)]*(1.0-delayfr_x) + data.image[IDtrace].array.F[NBtraceVec*mode+(m+filtsize+delayfr_int+1)]*delayfr_x;
             fprintf(fp, "%5ld %f %f\n", m, data.image[IDtrace].array.F[NBtraceVec*mode+m+filtsize], marray[m]);
         }
-    free(marray);
     fclose(fp);
     
     linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
@@ -9335,8 +9334,19 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double dela
     IDmatC = image_ID("WFPmatC");
 
     IDfilt = create_2Dimage_ID(IDfilt_name, filtsize, 1);
+    for(l=0;l<filtsize;l++)
+        {
+            tmpv = 0.0;
+            for(m=0; m<NBmvec; m++)
+                tmpv += data.image[IDmatC].array.F[l*NBmvec+m] * marray[m];
+            data.image[IDfilt].array.F[l] = tmpv;
+        }
+    free(marray);
     
-    
+    fp = fopen("filt.txt", "w");
+    for(l=0;l<filtsize;l++)
+        fprintf(fp, "%3ld %f\n", l, data.image[IDfilt].array.F[l]);
+    fclose(fp);
     
     return(IDfilt);
 }
