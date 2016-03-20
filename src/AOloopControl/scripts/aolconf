@@ -25,7 +25,7 @@ LOOPNUMBER_default=2  # loop number
 
 
 function log {
-dolog PYRAMID "$@" 
+dolog PYRAMID "\"$@\"" 
 }
 
 log starting $ instance 
