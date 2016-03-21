@@ -1559,15 +1559,29 @@ stopDMfunc
 
 
     GPUd2w1)
-    aolog "STARTING GPU-based DM -> WFSref loop"
-    file="./conf/conf_GPUdm2wfsref.txt"
-    echo "1" > $file
+aolog "(re) STARTING GPU-based DM -> WFSref loop"
+file="./conf/conf_GPUdm2wfsref.txt"
+echo "1" > $file
+tmuxname="GPUdm2wfsref${DMindex}"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
+tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwrefRM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwref0" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "" C-m
+menutop_default="GPUd2w0"
 ;;
 
     GPUd2w0)
-        aolog "STOPPING GPU-based DM -> WFSref loop"
-    file="./conf/conf_GPUdm2wfsref.txt"
-    echo "0" > $file
+aolog "STOPPING GPU-based DM -> WFSref loop"
+file="./conf/conf_GPUdm2wfsref.txt"
+echo "0" > $file
+tmuxname="GPUdm2wfsref${DMindex}"
+tmux send-keys -t $tmuxname "" C-c
+tmux kill-session -t $tmuxname
+menutop_default="GPUd2w1"
 ;;
 
 
