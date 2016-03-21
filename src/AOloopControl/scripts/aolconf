@@ -1813,7 +1813,8 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL)"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-
+cat ./conf/conf_RMmodal.txt 
+sleep 5
 
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
 if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
@@ -1885,8 +1886,6 @@ then
 fi
 
 
-cat ./conf/conf_RMmodal.txt 
-sleep 2
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM MODAL RESPONSE AND CONTROL"
