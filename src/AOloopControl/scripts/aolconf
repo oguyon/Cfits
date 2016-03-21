@@ -1499,6 +1499,7 @@ initDM
     stopDM)
 file="~/status/stat_initdm${DMindex}.txt"
 echo "0" > $file
+stopDM
 ;;
 
    	 C) state="menuconfigureloop";;   
