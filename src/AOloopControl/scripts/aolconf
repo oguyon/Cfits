@@ -156,7 +156,7 @@ trap "rm -f $tempfile" 0 1 2 5 15
 echo "FUNCTIONS..."
 
 function aolog {
-dolog $LOOPNAME "$@"
+dolog "$LOOPNAME" "$@"
 }
 
 
