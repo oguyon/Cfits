@@ -1809,6 +1809,11 @@ fi
 
 
 
+menuitems+=( " " " " )
+stringcenter "SYSTEM CALIBRATION (MODAL)"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
+
 
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
 if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
@@ -1821,27 +1826,16 @@ RMmodal=$( cat ./conf/conf_RMmodal.txt )
 if [ "${RMmodal}" = "OFF" ];
 then
 menuitems+=( "RMMon" "           RM modal is currently OFF. Select to toggle to ON" )
-menuitems+=( " " " " )
 fi
 if [ "${RMmodal}" = " ON" ];
 then
 menuitems+=( "RMMoff" "           RM modal is currently ON. Select to toggle to OFF" )
-menuitems+=( " " " " )
-fi
-
-
-menuitems+=( " " " " )
-stringcenter "SYSTEM CALIBRATION (MODAL)"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
-
-
 
 rmMamplum=0.1
 if [ -f "./conf/conf_RMMamplum.txt" ]; then
 rmMamplum=$( cat ./conf/conf_RMMamplum.txt )
 fi
 menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
-
 
 rmMcpa=1.0
 if [ -f "./conf/conf_RMMcpa.txt" ]; then
@@ -1850,11 +1844,8 @@ fi
 menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" )
 
 
-
-
 makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
 menuitems+=( "LOrespM" "$menustring" )
-
 
 
 LOrespMstat=$( cat ./status/stat_LOrespM.txt )
@@ -1888,7 +1879,7 @@ menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}
 fi
 
 
-
+fi
 
 
 
