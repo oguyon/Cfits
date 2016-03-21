@@ -392,7 +392,7 @@ if [ -a $file ]
 	dmwrefRM="empty" #default
 fi
 aolog "linking dmwfrefRM to ${dmwrefRM}"
-rm /tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm 
+rm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm 
 aolog "ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm"
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
 }
