@@ -3965,8 +3965,11 @@ menucontrolloop_default="S"
 echo " ON" > ./status/stat_loopON.txt
 aolog "LOOP ON"
 customfunction_startloop
+if [ "$logMode" = "1" ] || [ "$logmode" =  "2" ] ;
+then
+start_Telemetrylog_all
+fi
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
-#echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
 menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
@@ -3974,7 +3977,10 @@ echo "OFF" > ./status/stat_loopON.txt
 aolog "LOOP OFF"
 customfunction_stoploop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
-#echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
+if [ "$logMode" = "0" ] || [ "$logmode" =  "1" ] ;
+then
+stop_Telemetrylog_all
+fi
 menucontrolloop_default="Nloopon"
 ;; 
   	 Z)
@@ -5172,22 +5178,21 @@ echo "0" > $file
 fi
 
 
-#file="./conf/conf_dmcombavemode.txt"
-#dmcombavemode=$( cat $file )
-#if [[ -f "$file" && ( "$dmcombavemode" = "0" || "$dmcombavemode" = "1" || "$dmcombavemode" = "2" ) ]]; then
-#echo "OK"
-#else
-#echo "0" > $file
-#dmcombavemode=0
-#fi
+file="./conf/conf_logmode.txt"
+logMode=$( cat $file )
+if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logMode=0
+fi
 
-
-stringcenter "DATA LOGGING MODE"
+stringcenter "DATA LOGGING MODE: $logMode$"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
 menuitems+=( "slogM0" "Set Log mode 0 : NEVER LOG" )
-menuitems+=( "slogM1" "Set Log mode 0 : LOG WHEN LOOP CLOSED" )
-menuitems+=( "slogM2" "Set Log mode 0 : ALWAYS LOG" )
+menuitems+=( "slogM1" "Set Log mode 1 : LOG WHEN LOOP CLOSED" )
+menuitems+=( "slogM2" "Set Log mode 2 : ALWAYS LOG" )
 
 menuitems+=( " " " " )
 
@@ -5367,16 +5372,27 @@ echo "$savedir" > ./conf/conf_savedir_name.txt
     slogM0)
 logMode="0"
 echo "0" > "./conf/conf_logmode.txt"
+stop_Telemetrylog_all
 menurecord_default="slogM0"
 ;;
     slogM1)
 logMode="1"
 echo "1" > "./conf/conf_logmode.txt"
+loopON=$( cat ./status/stat_loopON.txt )
+if [ "$loopON" = "ON" ];
+then
+start_Telemetrylog_all
+fi
+if [ "$loopON" = "OFF" ];
+then
+stop_Telemetrylog_all
+fi
 menurecord_default="slogM1"
 ;;
     slogM2)
 logMode="2"
 echo "2" > "./conf/conf_logmode.txt"
+start_Telemetrylog_all
 menurecord_default="slogM2"
 ;;
 
