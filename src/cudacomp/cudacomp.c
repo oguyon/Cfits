@@ -1673,7 +1673,8 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
     long NBmodes;
     long IDmodes;
     long IDcoeff;
-    long k, m;
+    long m;
+    int k;
     cublasHandle_t cublasH = NULL;
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
     cudaError_t cudaStat = cudaSuccess;
@@ -1708,6 +1709,13 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
 
 
 
+    IDoutmap = image_ID(IDoutmap_name);
+    if(IDoutmap==-1)
+        {
+            printf("ERROR: missing output stream\n");
+            exit(0);
+        }
+    COREMOD_MEMORY_image_set_createsem(IDoutmap_name, 5);
 
 
     cudaGetDeviceCount(&deviceCount);
