@@ -1822,67 +1822,71 @@ else
 echo "OFF" > ./conf/conf_RMmodal.txt
 fi
 
+
+
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
 if [ "${RMmodal}" = "OFF" ];
 then
-menuitems+=( "RMMon" "           RM modal is currently OFF. Select to toggle to ON" )
+    menuitems+=( "RMMon" "           RM modal is currently OFF. Select to toggle to ON" )
 fi
 if [ "${RMmodal}" = " ON" ];
 then
-menuitems+=( "RMMoff" "           RM modal is currently ON. Select to toggle to OFF" )
+    menuitems+=( "RMMoff" "           RM modal is currently ON. Select to toggle to OFF" )
 
-rmMamplum=0.1
-if [ -f "./conf/conf_RMMamplum.txt" ]; then
-rmMamplum=$( cat ./conf/conf_RMMamplum.txt )
+    rmMamplum=0.1
+   
+    if [ -f "./conf/conf_RMMamplum.txt" ]; then
+        rmMamplum=$( cat ./conf/conf_RMMamplum.txt )
+    fi
+   
+    menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
+
+    rmMcpa=1.0
+   
+    if [ -f "./conf/conf_RMMcpa.txt" ]; then
+        rmMcpa=$( cat ./conf/conf_RMMcpa.txt )
+    fi
+   
+    menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" )
+
+
+    makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
+    menuitems+=( "LOrespM" "$menustring" )
+
+
+    LOrespMstat=$( cat ./status/stat_LOrespM.txt )
+   
+    if [[ -f "./status/stat_LOrespM.txt" && ( "$LOrespMstat" = " ON" || "$LOrespMstat" = "OFF" ) ]]; then
+        echo "OK"
+    else
+        echo "OFF" > ./status/stat_LOrespM.txt
+    fi
+
+    LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
+   
+    if [ "${LOrespMstat}" = "OFF" ];
+    then
+        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] START modal RMs acquisition" )
+        if [ "${LOrespmatnbiter}" -lt 4 ]; then
+            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+        else
+            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
+        fi
+        menuitems+=( " " " ")
+    else
+        menuitems+=( "LOrespoff" "\Z1\ZrSTOP modal RM acquisition\Zn" )
+        if [ "${LOrespmatnbiter}" -lt 4 ]; then
+            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+        else
+            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
+        fi
+        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
+    fi
 fi
-menuitems+=( "rmMamp" "            Modal RM amplitude                ${rmMamplum} um" )
-
-rmMcpa=1.0
-if [ -f "./conf/conf_RMMcpa.txt" ]; then
-rmMcpa=$( cat ./conf/conf_RMMcpa.txt )
-fi
-menuitems+=( "rmMcpa" "            Modal RM CPA max                  ${rmMcpa}" )
 
 
-makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
-menuitems+=( "LOrespM" "$menustring" )
-
-
-LOrespMstat=$( cat ./status/stat_LOrespM.txt )
-if [[ -f "./status/stat_LOrespM.txt" && ( "$LOrespMstat" = " ON" || "$LOrespMstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_LOrespM.txt
-fi
-
-LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
-if [ "${LOrespMstat}" = "OFF" ];
-then
-menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] START modal RMs acquisition" )
-if [ "${LOrespmatnbiter}" -lt 4 ]; then
-menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-else
-menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
-fi
-
-#menuitems+=( "zrespoff" "            PROCESS zrespM" )
-menuitems+=( " " " ")
-else
-menuitems+=( "LOrespoff" "\Z1\ZrSTOP modal RM acquisition\Zn" )
-if [ "${LOrespmatnbiter}" -lt 4 ]; then
-menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-else
-menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
-fi
-
-menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
-fi
-
-
-fi
-
-
-
+cat ./conf/conf_RMmodal.txt 
+sleep 2
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM MODAL RESPONSE AND CONTROL"
