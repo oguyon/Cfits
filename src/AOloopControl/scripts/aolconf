@@ -1149,13 +1149,13 @@ dm2dmModesMast=$( cat $file )
 menuitems+=( " " " ")
 if [ "${dm2dm_mode}" = "0" ];
 then
-menuitems+=( "dm2dm1" " [  OFF  ] Activate virtual (modal) DM to physical DM mode" )
+menuitems+=( "dm2dm1" " [  OFF  ] DM-to-DM is OFF (select to activate virtual (modal) DM to physical DM mode)" )
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 fi
 if [ "${dm2dm_mode}" = "1" ];
 then
-menuitems+=( "dm2dm0" " [   ON  ] De-activate DM to DM mode" )
+menuitems+=( "dm2dm0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
 
 
 Readdm2dmMname
@@ -1163,10 +1163,10 @@ dm2dmMfile="/tmp/${dm2dmM}.im.shm"
 if [ -f $dm2dmMfile ]; then
 getshmimsize ${dm2dmM}
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn]  DM to DM modes                 \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${dm2dmM}\Zn" )
+menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${dm2dmM}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM modes                 \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${dm2dmM}\Zn" )
+menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${dm2dmM}\Zn" )
 fi
 
 
@@ -1198,13 +1198,13 @@ fi
 menuitems+=( " " " ")
 if [ "${dmwfsrefmode}" = "0" ];
 then
-menuitems+=( "dmwref1" " [  OFF  ] Activate WFS ref DM mode (DM ouput applied as WFS offset)" )
+menuitems+=( "dmwref1" " [  OFF  ] CPU-based dmcomb output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 fi
 if [ "${dmwfsrefmode}" = "1" ];
 then
-menuitems+=( "dmwref0" " [   ON  ] De-activate WFS ref DM mode" )
+menuitems+=( "dmwref0" " [   ON  ] CPU-based dmcomb output WFS ref is ON (select to de-activate)" )
 
 
 ReaddmwrefRMname
