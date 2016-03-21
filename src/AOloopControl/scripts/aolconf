@@ -5290,12 +5290,12 @@ menurecord_default="ldmdisp21"
 
     ldmdisp31)
 startstreamlog dm${DMindex}disp3
-logdmdisp3stat=1
+echo "1" > "./status/stat_log_dm${DMindex}disp3.txt"
 menurecord_default="ldmdisp30"
 ;;
     ldmdisp30)
 stopstreamlog dm${DMindex}disp3
-logdmdisp3stat=0
+echo "0" > "./status/stat_log_dm${DMindex}disp3.txt"
 menurecord_default="ldmdisp31"
 ;;
 
