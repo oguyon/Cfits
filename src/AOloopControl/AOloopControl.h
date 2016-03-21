@@ -166,7 +166,7 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
 int AOcompute(long loop, int normalize);
 int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name);
-long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name);
+double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name);
 int AOloopControl_run();
 
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);

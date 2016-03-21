@@ -536,11 +536,11 @@ int AOloopControl_CompModes_loop_cli()
 
 
 
-int AOloopControl_mkPredictiveFilter_cli()
+int AOloopControl_testPredictiveFilter_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
     {
-        AOloopControl_mkPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string);
+        AOloopControl_testPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, 1e-10);
       return 0;
     }
   else
@@ -1059,11 +1059,11 @@ int init_AOloopControl()
 
     strcpy(data.cmd[data.NBcmd].key,"aolmkpfilt");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkPredictiveFilter_cli;
-    strcpy(data.cmd[data.NBcmd].info, "make predictive filter");
+    data.cmd[data.NBcmd].fp = AOloopControl_testPredictiveFilter_cli;
+    strcpy(data.cmd[data.NBcmd].info, "test predictive filter");
     strcpy(data.cmd[data.NBcmd].syntax, "<trace im> <mode number> <delay [frames]> <filter size> <out filter name>");
     strcpy(data.cmd[data.NBcmd].example,"aolmkpfilt traceim 23 2.4 20 filt23");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps)");
     data.NBcmd++;
     
     
@@ -9270,6 +9270,32 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 
 
 
+
+
+
+//
+// IDcoeff_name is AO telemetry file
+// size:   #modes, 1, #samples
+//
+long AOloopControl_tunePredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr)
+{
+    long IDmodecoeff;
+    long NBsamples;
+    long NBmodes;
+    double SVDeps;
+    
+    IDmodecoeff = image_ID(IDmodecoeff_name);
+    NBmodes = data.image[IDmodecoeff].md[0].size[0];
+    NBsamples = data.image[IDmodecoeff].md[0].size[2];
+    
+    
+//    AOloopControl_testPredictiveFilter(char *IDtrace_name, long modeout, double delayfr, long filtsize, char *IDfilt_name, SVDeps);
+    
+    
+    return(0);
+}
+
+
 /// 
 /// predictive control based on SVD
 ///
@@ -9279,11 +9305,10 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 ///     delayfr [delay in frame unit]  
 ///     filtsize [number of samples in filter]
 ///
-long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double delayfr, long filtsize, char *IDfilt_name)
+double AOloopControl_testPredictiveFilter(char *IDtrace_name, long modeout, double delayfr, long filtsize, char *IDfilt_name, double SVDeps)
 {
     long IDtrace;
     long IDmatA;
-    double SVDeps = 1.0e-10;
     long NBtraceVec; // number of measurement vectors in trace 
     long NBmvec; // number of measurements in measurement matrix
     long NBch; // number of channels in measurement
@@ -9308,12 +9333,6 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     
     
     NBmvec = NBtraceVec - filtsize - (long) (delayfr+1.0);
-    
-    
-    
-    // add noise
-    // for(m=0; m<NBtraceVec; m++) 
-    //    data.image[IDtrace].array.F[NBtraceVec*modeout + m] += NoiseAmpl*gauss() + 0.2*sin(2.0*M_PI*m/10.0) + 0.2*sin(2.0*M_PI*m/17.0)  + 0.2*sin(2.0*M_PI*m/27.0);
     
     
     
@@ -9413,7 +9432,7 @@ long AOloopControl_mkPredictiveFilter(char *IDtrace_name, long modeout, double d
     printf("Prediction error (using optimal filter)   :   %f\n", err0);
     printf("Prediction error (using last measurement) :   %f\n", err1);
  
-    return(IDfilt);
+    return(err1);
 }
 
 
