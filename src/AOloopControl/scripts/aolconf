@@ -1295,19 +1295,40 @@ menuitems+=( "initDM" "START  DM comb process (-> dm${DMindex}disp0..7  dm${DMin
 else
 menuitems+=( "stopDM" "STOP  DM comb process" )
 fi
-menuitems+=( "-" " " )
+menuitems+=( " " " " )
+
+
+
+
+file="./conf/conf_GPUdm2wfsref.txt"
+GPUdm2wfsref=$( cat $file )
+if [[ -f "$file" && ( "$GPUdm2wfsref" = "1" || "$GPUdm2wfsref" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+dmwfsrefmode=0
+fi
+
+menuitems+=( " " " ")
+if [ "${GPUdm2wfsref}" = "0" ];
+then
+menuitems+=( "GPUd2w1" " [  OFF  ] GPU-based output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
+fi
+if [ "${GPUdm2wfsref}" = "1" ];
+then
+menuitems+=( "GPUd2w0" " [   ON  ] GPU-based output WFS ref is ON (select to de-activate)" )
+fi
 
 
 
 
 
 
-
-menuitems+=( "-" " " )
-menuitems+=( "-" " " )
-menuitems+=( "-" " " )
-menuitems+=( "-" " " )
-menuitems+=( "-" " " )
+menuitems+=( " " " " )
+menuitems+=( " " " " )
+menuitems+=( " " " " )
+menuitems+=( " " " " )
+menuitems+=( " " " " )
 
 
 
