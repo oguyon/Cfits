@@ -1216,8 +1216,6 @@ menuitems+=( " " " ")
 if [ "${dmwfsrefmode}" = "0" ];
 then
 menuitems+=( "dmwref1" " [  OFF  ] CPU-based dmcomb output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
-menuitems+=( " " " ")
-menuitems+=( " " " ")
 fi
 if [ "${dmwfsrefmode}" = "1" ];
 then
@@ -1299,6 +1297,17 @@ menuitems+=( "stopDM" "STOP  DM comb process" )
 fi
 menuitems+=( "-" " " )
 
+
+
+
+
+
+
+menuitems+=( "-" " " )
+menuitems+=( "-" " " )
+menuitems+=( "-" " " )
+menuitems+=( "-" " " )
+menuitems+=( "-" " " )
 
 
 
