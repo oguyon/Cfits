@@ -1261,7 +1261,7 @@ menuitems+=( " " " ")
 menuitems+=( "dmcombam" "[${dmcombavemode}] DM combination averaging mode" )
 
 menuitems+=( " " " ")
-file="~/status/stat_initdm${DMindex}.txt"
+file="$HOME/status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
 if [[ -f "$file" && ( "$initDMstat" = "0" || "$initDMstat" = "1" ) ]]; then
 echo "OK"
@@ -1270,7 +1270,7 @@ mkdir -p ./status
 echo "0" > $file
 fi
 
-file="~/status/stat_initdm${DMindex}.txt"
+file="$HOME/status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
 if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
 echo "OK"
@@ -1498,7 +1498,7 @@ log "set dmcombavemode = ${dmcombavemode}"
 ;;
 
 	initDM)
-mkdir -p ~/status
+mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "writing to file $file"
 echo "1" > $file
@@ -1507,7 +1507,7 @@ initDM
 ;;
 
     stopDM)
-mkdir -p ~/status
+mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "writing to file $file"
 sleep 10
