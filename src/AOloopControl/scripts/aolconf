@@ -4989,7 +4989,8 @@ menuitems+=( "logON" "start logging ALL telemetry")
 menuitems+=( "logOFF" "stop logging ALL telemetry")
 
 
-
+file="./status/stat_log_wfsim.txt"
+logwfsimstat=$( cat $file )
 if [ "${logwfsimstat}" = "0" ];
 then
 menuitems+=( "lwfsim1" "START logging $wfsimcam" )
