@@ -2652,11 +2652,15 @@ state="menuconfigureloop"
     RMMon)
 echo "ON" > ./conf/conf_RMmodal.txt
 log "set modal RM mode ON"
+echo "set modal RM mode ON"
+sleep 5
 menucontrolloop_default="RMMoff"
 ;;
     RMMoff)
 echo "OFF" > ./conf/conf_RMmodal.txt
 log "set modal RM mode OFF"
+echo "set modal RM mode OFF"
+sleep 5
 menucontrolloop_default="RMMon"
 ;;
 
