@@ -214,10 +214,14 @@ startstreamlog dm${DMindex}disp6
 echo "1" > "./status/stat_log_dm${DMindex}disp6.txt"
 startstreamlog dm${DMindex}disp7
 echo "1" > "./status/stat_log_dm${DMindex}disp7.txt"
+
+if [ "${dm2dm_mode}" = "0" ];
+then
 startstreamlog aol${LOOPNUMBER}_modeval
 echo "1" > "./status/stat_log_modeval.txt"
 startstreamlog aol${LOOPNUMBER}_modevalc
 echo "1" > "./status/stat_log_modevalc.txt"
+fi
 }
 
 
@@ -244,10 +248,15 @@ echo "0" > "./status/stat_log_dm${DMindex}disp6.txt"
 stopstreamlog dm${DMindex}disp7
 echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
 log "stop ALL telemetry logging"
+
+
+if [ "${dm2dm_mode}" = "0" ];
+then
 stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
 stopstreamlog aol${LOOPNUMBER}_modevalc
 echo "0" > "./status/stat_log_modevalc.txt"
+fi
 }
 
 
@@ -1555,7 +1564,6 @@ file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "0" > $file
 stopDMfunc
 ;;
-
 
 
 
@@ -5257,6 +5265,7 @@ menuitems+=( "ldmdisp50" "\Z1\ZrSTOP logging dm${DMindex}disp5\Zn" )
 fi
 
 
+
 file="./status/stat_log_dm${DMindex}disp6.txt"
 logdmdisp6stat=$( cat $file )
 if [ "${logdmdisp6stat}" = "0" ];
@@ -5277,6 +5286,10 @@ menuitems+=( "ldmdisp70" "\Z1\ZrSTOP logging dm${DMindex}disp7\Zn" )
 fi
 
 
+
+if [ "${dm2dm_mode}" = "0" ];
+then
+
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
 if [ "${logmodevalstat}" = "0" ];
@@ -5296,7 +5309,7 @@ else
 menuitems+=( "lmodevalc0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalc\Zn" )
 fi
 
-
+fi
 
 
 
