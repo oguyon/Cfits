@@ -125,7 +125,7 @@ int CUDACOMP_test_cli()
 
 int CUDACOMP_Coeff2Map_Loop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4))
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)==0)
         CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
     else
         return 1;
@@ -1714,7 +1714,8 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
     long ii, kk;
 
 
-
+    printf("entering CUDACOMP_Coeff2Map_Loop\n");
+    fflush(stdout);
 
     IDcoeff = image_ID(IDcoeff_name);
     NBmodes = data.image[IDcoeff].md[0].size[0];
