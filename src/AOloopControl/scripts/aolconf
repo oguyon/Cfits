@@ -170,7 +170,7 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon $1" C-m
 }
 
-function stropstreamlog {
+function stopstreamlog {
 log "log $1 OFF"
 echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
