@@ -1817,10 +1817,15 @@ cat ./conf/conf_RMmodal.txt
 sleep 5
 
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
+echo "=============== RMmodal = $RMmodal"
+sleep 5
 if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
 echo "OK"
+sleep 5
 else
 echo "OFF" > ./conf/conf_RMmodal.txt
+echo "SETTING TO OFF"
+sleep 5
 fi
 
 
@@ -2652,15 +2657,11 @@ state="menuconfigureloop"
     RMMon)
 echo "ON" > ./conf/conf_RMmodal.txt
 log "set modal RM mode ON"
-echo "set modal RM mode ON"
-sleep 5
 menucontrolloop_default="RMMoff"
 ;;
     RMMoff)
 echo "OFF" > ./conf/conf_RMmodal.txt
 log "set modal RM mode OFF"
-echo "set modal RM mode OFF"
-sleep 5
 menucontrolloop_default="RMMon"
 ;;
 
