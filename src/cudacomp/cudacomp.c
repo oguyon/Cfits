@@ -1884,6 +1884,8 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
         if(semr==0)
         {
+            printf("Compute\n");
+            fflush(stdout);
 
             // send vector back to GPU
             cudaStat = cudaMemcpy(d_coeff, data.image[IDcoeff].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
