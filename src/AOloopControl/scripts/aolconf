@@ -1500,17 +1500,13 @@ log "set dmcombavemode = ${dmcombavemode}"
 	initDM)
 mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
-echo "writing to file $file"
 echo "1" > $file
-sleep 10
 initDM
 ;;
 
     stopDM)
 mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
-echo "writing to file $file"
-sleep 10
 echo "0" > $file
 stopDM
 ;;
