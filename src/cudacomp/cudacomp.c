@@ -2094,7 +2094,10 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                     
                     TRACEindex++;
                     if(TRACEindex>=TRACEsize)
-                        TRACEindex = 0;
+                        {
+                            TRACEindex = 0;
+                            // copy to tracef shared memory (frozen trace)
+                        }   
                 }
 
 
@@ -2146,8 +2149,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
                 for(k=0;k<NBmodes;k++)
                     modevalarray[k] *= data.image[ID_modeval_mult].array.F[k];
                 
- //                   data.image[ID_modeval].array.F[k] *= data.image[ID_modeval_mult].array.F[k];
-            
                 
                 // send vector back to GPU
                 cudaStat = cudaMemcpy(d_modeval, modevalarray, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);

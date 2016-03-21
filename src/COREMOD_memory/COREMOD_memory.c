@@ -4602,6 +4602,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     long NBslices;
     int socketOpen = 1; // 0 if socket is closed
     int semval;
+    int semnb;
 
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
@@ -4823,11 +4824,11 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                 else
                      memcpy(ptr0, buff, framesize);
                 data.image[ID].md[0].cnt0++;
-                if(data.image[ID].sem > 0)
+                for(semnb=0;semnb<data.image[ID].sem ; semnb++)
                 {
-                    sem_getvalue(data.image[ID].semptr[0], &semval);
+                    sem_getvalue(data.image[ID].semptr[semnb], &semval);
                     if(semval<SEMAPHORE_MAXVAL)
-                        sem_post(data.image[ID].semptr[0]);
+                        sem_post(data.image[ID].semptr[semnb]);
                 }
             }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
