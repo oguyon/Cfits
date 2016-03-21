@@ -896,7 +896,7 @@ function initDM {
     sleep 1
     tmux kill-session -t $tmuxname
     tmux new-session -d -s $tmuxname
-    tmux send-keys -t $tmuxname "$execname" C-m
+    tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comb" C-m
     tmux send-keys -t $tmuxname "csetpmove system" C-m
 if [ "$dmvoltmode" = "1" ]; then 
     tmux send-keys -t $tmuxname "readshmim dmvolt" C-m
