@@ -1298,7 +1298,8 @@ fi
 menuitems+=( " " " " )
 
 
-
+stringcenter " "
+menuitems+=( " " "\Zb\Zr$string\Zn" )
 
 file="./conf/conf_GPUdm2wfsref.txt"
 GPUdm2wfsref=$( cat $file )
@@ -1306,7 +1307,7 @@ if [[ -f "$file" && ( "$GPUdm2wfsref" = "1" || "$GPUdm2wfsref" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmwfsrefmode=0
+GPUdm2wfsref=0
 fi
 
 menuitems+=( " " " ")
