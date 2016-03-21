@@ -1555,6 +1555,22 @@ echo "0" > $file
 stopDMfunc
 ;;
 
+
+
+
+    GPUd2w1)
+    aolog "STARTING GPU-based DM -> WFSref loop"
+    file="./conf/conf_GPUdm2wfsref.txt"
+    echo "1" > $file
+;;
+
+    GPUd2w0)
+        aolog "STOPPING GPU-based DM -> WFSref loop"
+    file="./conf/conf_GPUdm2wfsref.txt"
+    echo "0" > $file
+;;
+
+
    	 C) state="menuconfigureloop";;   
    	 L) state="menucontrolloop";;
    	 T) state="menutestmode"   ;;
