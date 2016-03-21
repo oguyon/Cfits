@@ -173,7 +173,7 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].info,"test CUDA comp");
     strcpy(data.cmd[data.NBcmd].syntax,"<NB actuators [long]> <NB modes [long]> <NB pixels [long]> <NB GPU [long]>");
     strcpy(data.cmd[data.NBcmd].example,"cudacomptest 1000 20 1000 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
     data.NBcmd++;
         
     strcpy(data.cmd[data.NBcmd].key,"cudacoeff2map");
@@ -1841,8 +1841,12 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
     loopOK = 1;
     iter = 0;
 
+    printf("ENTERING LOOP\n");
+    fflush(stdout);
+
     while(loopOK == 1)
     {
+        
         if(data.image[IDcoeff].sem==0)
         {
             while(data.image[IDcoeff].md[0].cnt0==cnt) // test if new frame exists
