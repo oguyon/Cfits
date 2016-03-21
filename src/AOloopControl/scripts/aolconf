@@ -156,6 +156,44 @@ trap "rm -f $tempfile" 0 1 2 5 15
 echo "FUNCTIONS..."
 
 
+function startstreamlog {
+log "log $1 ON"
+echo "1" > ./status/stat_log$1.txt
+tmuxnameC="logC_$1"
+tmux new-session -d -s $tmuxnameC
+savedir=$(cat ./conf/conf_savedir_name.txt)
+datestr=`date -u +%Y%m%d`
+mkdir -p $savedir/$datestr/$1/
+tmux send-keys -t $tmuxnameC "logshim $1 30000 $savedir/$datestr/$1/" C-m
+tmuxname="log_$1"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimon $1" C-m
+}
+
+function stropstreamlog {
+log "log $1 OFF"
+echo "0" > ./status/stat_log$1.txt
+tmuxname="log_$1"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimoff $1" C-m
+echo "0" > ./status/stat_log$1.txt
+}
+
+
+function killstreamlog {
+log "log $1 OFF"
+echo "0" > ./status/stat_log$1.txt
+tmuxname="log_$1"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "logshimkill $1" C-m
+echo "0" > ./status/stat_log$1.txt
+}
+
+
+
+
+
+
 
 function stringcenter {
 line=$1
@@ -5145,7 +5183,7 @@ savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp/
 tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp 30000 $savedir/$datestr/dm${DMindex}disp/" C-m
-tmuxname="dm${DMindex}log"
+tmuxname="dm${DMindex}displog"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp" C-m
 menurecord_default="ldmdisp0"
@@ -5154,7 +5192,7 @@ menurecord_default="ldmdisp0"
 log "log dm${DMindex}disp OFF"
 logdmdispstat=0
 echo "0" > ./status/stat_logdmdisp.txt
-tmuxname="dm${DMindex}log"
+tmuxname="dm${DMindex}displog"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp" C-m
 echo "0" > ./status/stat_logdmdisp.txt
