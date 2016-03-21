@@ -61,9 +61,6 @@ shmimmonexec="shmimmon"
 # script AOloopAlign.bash : to be executed when menu entry sected
 
 
-echo "loop name = $LOOPNAME"
-exit
-
 # ======================== END OF USER EDIT SECTION =====================
 
 
