@@ -1270,7 +1270,14 @@ mkdir -p ./status
 echo "0" > $file
 fi
 
-
+file="~/status/stat_initdm${DMindex}.txt"
+initDMstat=$( cat $file )
+if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+initDMstat=0
+fi
 
 if [ "${initDMstat}" = "0" ]; then
 menuitems+=( "initDM" "START  DM comb process (-> dm${DMindex}disp0..7  dm${DMindex}disp)" )
@@ -1491,12 +1498,14 @@ log "set dmcombavemode = ${dmcombavemode}"
 ;;
 
 	initDM)
+mkdir -p ~/status
 file="~/status/stat_initdm${DMindex}.txt"
 echo "1" > $file
 initDM
 ;;
 
     stopDM)
+mkdir -p ~/status
 file="~/status/stat_initdm${DMindex}.txt"
 echo "0" > $file
 stopDM
