@@ -5097,9 +5097,6 @@ menuitems+=( "ldmdisp70" "\Z1\ZrSTOP logging dm${DMindex}disp7\Zn" )
 fi
 
 
-
-
-
 file="./status/stat_logmodeval.txt"
 logmodevalstat=$( cat $file )
 if [ "${logmodevalstat}" = "0" ];
@@ -5177,6 +5174,10 @@ startstreamlog dm${DMindex}disp6
 echo "1" > "./status/stat_log_dm${DMindex}disp6.txt"
 startstreamlog dm${DMindex}disp7
 echo "1" > "./status/stat_log_dm${DMindex}disp7.txt"
+startstreamlog aol${LOOPNUMBER}_modeval
+echo "1" > "./status/stat_log_modeval.txt"
+startstreamlog aol${LOOPNUMBER}_modevalc
+echo "1" > "./status/stat_log_modevalc.txt"
 ;;
 
 
@@ -5203,33 +5204,12 @@ echo "0" > "./status/stat_log_dm${DMindex}disp6.txt"
 stopstreamlog dm${DMindex}disp7
 echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
 log "stop ALL telemetry logging"
+stopstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+stopstreamlog aol${LOOPNUMBER}_modevalc
+echo "0" > "./status/stat_log_modevalc.txt"
 ;;
 
-
-    tlwfsim1)
-log "log $wfsimcam ON"
-logwfsimstat=1
-tmuxnameC="wfsimlogC"
-echo "1" > ./status/stat_logwfsim.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/ocam2d/
-tmux send-keys -t $tmuxnameC "logshim $wfsimcam 30000 $savedir/$datestr/ocam2d/" C-m
-tmuxname="wfsimlog"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon $wfsimcam" C-m
-menurecord_default="lwfsim0"
-;;
-    tlwfsim0)
-log "log $wfsimcam OFF"
-logwfsimstat=0
-tmuxname="wfsimlog"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff $wfsimcam" C-m
-echo "0" > ./status/stat_logwfsim.txt
-menurecord_default="lwfsim1"
-;;
 
 
 
@@ -5356,10 +5336,35 @@ menurecord_default="ldmdisp71"
 
 
 
+    lmodeval1)
+startstreamlog aol${LOOPNUMBER}_modeval
+echo "1" > "./status/stat_log_modeval.txt"
+menurecord_default="lmodeval0"
+;;
+    lmodeval0)
+stopstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+menurecord_default="lmodeval1"
+;;
+
+
+    lmodevalc1)
+startstreamlog aol${LOOPNUMBER}_modevalc
+echo "1" > "./status/stat_log_modevalc.txt"
+menurecord_default="lmodevalc0"
+;;
+    lmodevalc0)
+stopstreamlog aol${LOOPNUMBER}_modevalc
+echo "0" > "./status/stat_log_modevalc.txt"
+menurecord_default="lmodevalc1"
+;;
 
 
 
-   lmodeval1)
+
+
+
+   tlmodeval1)
 log "log aol${LOOPNUMBER}_modeval ON"
 logmodevalstat=1
 echo "1" > ./status/stat_logmodeval.txt
@@ -5375,7 +5380,7 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modeval" C-m
 menurecord_default="lmodeval0"
 ;;
-    lmodeval0)
+    tlmodeval0)
 log "log aol${LOOPNUMBER}_modeval OFF"
 logmodevalstat=0
 echo "0" > ./status/stat_lmodeval.txt
@@ -5391,7 +5396,7 @@ menurecord_default="lmodeval1"
 
 
 
-   lmodevalc1)
+   tlmodevalc1)
 log "log aol${LOOPNUMBER}_modevalc ON"
 logmodevalcstat=1
 echo "1" > ./status/stat_logmodevalc.txt
@@ -5407,7 +5412,7 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modevalc" C-m
 menurecord_default="lmodevalc0"
 ;;
-    lmodevalc0)
+    tlmodevalc0)
 log "log aol${LOOPNUMBER}_modevalc OFF"
 logmodevalstat=0
 echo "0" > ./status/stat_lmodevalc.txt
