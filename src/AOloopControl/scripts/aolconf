@@ -393,6 +393,7 @@ if [ -a $file ]
 fi
 aolog "linking dmwfrefRM to ${dmwrefRM}"
 rm /tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm 
+aolog "ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm"
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
 }
 
@@ -404,7 +405,7 @@ if [ -a $file ]
 	else
 	dmwrefO="empty" #default
 fi
-aolog "linking dmwfref0 to ${dmwrefO}"
+aolog "linking dmwfrefO to ${dmwrefO}"
 rm /tmp/aol${LOOPNUMBER}_dmwrefO.im.shm 
 ln -s /tmp/${dmwrefO}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefO.im.shm
 }
