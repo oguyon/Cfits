@@ -1810,10 +1810,30 @@ fi
 
 
 
+RMmodal=$( cat ./conf/conf_RMmodal.txt )
+if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./conf/conf_RMmodal.txt
+fi
+
+RMmodal=$( cat ./conf/conf_RMmodal.txt )
+if [ "${RMmodal}" = "OFF" ];
+then
+menuitems+=( "RMMon" "           RM modal is currently OFF. Select to toggle to ON" )
+menuitems+=( " " " " )
+fi
+if [ "${RMmodal}" = " ON" ];
+then
+menuitems+=( "RMMoff" "           RM modal is currently ON. Select to toggle to OFF" )
+menuitems+=( " " " " )
+fi
+
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL)"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
 
 
 rmMamplum=0.1
@@ -2634,6 +2654,17 @@ state="menuconfigureloop"
 
 
 
+
+    RMMon)
+echo "ON" > ./conf/conf_RMmodal.txt
+log "set modal RM mode ON"
+menucontrolloop_default="RMMoff"
+;;
+    RMMoff)
+echo "OFF" > ./conf/conf_RMmodal.txt
+log "set modal RM mode OFF"
+menucontrolloop_default="RMMon"
+;;
 
 
 
