@@ -1842,7 +1842,7 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
                 exit(EXIT_FAILURE);
             }
             ts.tv_sec += 1;
-            semr = sem_timedwait(data.image[IDcoef].semptr[2], &ts);
+            semr = sem_timedwait(data.image[IDcoeff].semptr[2], &ts);
 
 
             if(iter == 0)
