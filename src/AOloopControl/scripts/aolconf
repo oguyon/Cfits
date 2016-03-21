@@ -5172,120 +5172,55 @@ menurecord_default="lwfsim1"
 ;;
 
 
+
+
+
     ldmdisp1)
-log "log dm${DMindex}disp ON"
-logdmdispstat=1
-echo "1" > ./status/stat_logdmdisp.txt
-tmuxnameC="dm${DMindex}logC"
-echo "1" > ./status/stat_logdm.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp 30000 $savedir/$datestr/dm${DMindex}disp/" C-m
-tmuxname="dm${DMindex}displog"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp" C-m
+startstreamlog dm${DMindex}disp
+echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
 menurecord_default="ldmdisp0"
 ;;
     ldmdisp0)
-log "log dm${DMindex}disp OFF"
-logdmdispstat=0
-echo "0" > ./status/stat_logdmdisp.txt
-tmuxname="dm${DMindex}displog"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp" C-m
-echo "0" > ./status/stat_logdmdisp.txt
+stopstreamlog dm${DMindex}disp
+echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
 menurecord_default="ldmdisp1"
 ;;
 
 
-
     ldmdisp01)
-log "log dm${DMindex}disp0 ON"
-logdmdisp0stat=1
-echo "1" > ./status/stat_logdmdisp0.txt
-tmuxnameC="dm${DMindex}disp0logC"
-echo "1" > ./status/stat_logdmdisp0.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp0/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp0 100 $savedir/$datestr/dm${DMindex}disp0/" C-m
-tmuxname="dm${DMindex}disp0log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp0" C-m
+startstreamlog dm${DMindex}disp0
+echo "1" > "./status/stat_log_dm${DMindex}disp0.txt"
 menurecord_default="ldmdisp00"
 ;;
     ldmdisp00)
-log "log dm${DMindex}disp0 OFF"
-logdmdisp0stat=0
-echo "0" > ./status/stat_logdmdisp0.txt
-tmuxname="dm${DMindex}disp0log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp0" C-m
-echo "0" > ./status/stat_logdmdisp0.txt
+stopstreamlog dm${DMindex}disp0
+echo "0" > "./status/stat_log_dm${DMindex}disp0.txt"
 menurecord_default="ldmdisp01"
 ;;
 
 
     ldmdisp11)
-log "log dm${DMindex}disp1 ON"
-logdmdisp1stat=1
-echo "1" > ./status/stat_logdmdisp1.txt
-tmuxnameC="dm${DMindex}disp1logC"
-echo "1" > ./status/stat_logdmdisp1.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp1/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp1 100 $savedir/$datestr/dm${DMindex}disp1/" C-m
-tmuxname="dmd${DMindex}isp1log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp1" C-m
+startstreamlog dm${DMindex}disp1
+echo "1" > "./status/stat_log_dm${DMindex}disp1.txt"
 menurecord_default="ldmdisp10"
 ;;
     ldmdisp10)
-log "log dm${DMindex}disp1 OFF"
-logdmdisp1stat=0
-echo "0" > ./status/stat_logdmdisp1.txt
-tmuxname="dm${DMindex}disp1log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp1" C-m
-echo "0" > ./status/stat_logdmdisp1.txt
+stopstreamlog dm${DMindex}disp1
+echo "0" > "./status/stat_log_dm${DMindex}disp1.txt"
 menurecord_default="ldmdisp11"
 ;;
 
 
-
-
     ldmdisp21)
-log "log dm${DMindex}disp2 ON"
-logdmdisp2stat=1
-echo "1" > ./status/stat_logdmdisp2.txt
-tmuxnameC="dm${DMindex}disp2logC"
-echo "1" > ./status/stat_logdmdisp2.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp2/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp2 100 $savedir/$datestr/dm${DMindex}disp2/" C-m
-tmuxname="dm${DMindex}disp2log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp2" C-m
+startstreamlog dm${DMindex}disp2
+echo "1" > "./status/stat_log_dm${DMindex}disp2.txt"
 menurecord_default="ldmdisp20"
 ;;
     ldmdisp20)
-log "log dm${DMindex}disp2 OFF"
-logdmdisp2stat=0
-echo "0" > ./status/stat_logdmdisp2.txt
-tmuxname="dm${DMindex}disp2log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp2" C-m
-echo "0" > ./status/stat_logdmdisp2.txt
+stopstreamlog dm${DMindex}disp2
+echo "0" > "./status/stat_log_dm${DMindex}disp2.txt"
 menurecord_default="ldmdisp21"
 ;;
-
 
 
     ldmdisp31)
@@ -5300,119 +5235,54 @@ menurecord_default="ldmdisp31"
 ;;
 
 
-
     ldmdisp41)
-log "log dm${DMindex}disp4 ON"
-logdmdisp4stat=1
-echo "1" > ./status/stat_logdmdisp4.txt
-tmuxnameC="dm${DMindex}disp4logC"
-echo "1" > ./status/stat_logdmdisp4.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp4/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp4 100 $savedir/$datestr/dm${DMindex}disp4/" C-m
-tmuxname="dm${DMindex}disp4log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp4" C-m
+startstreamlog dm${DMindex}disp4
+echo "1" > "./status/stat_log_dm${DMindex}disp4.txt"
 menurecord_default="ldmdisp40"
 ;;
     ldmdisp40)
-log "log dm${DMindex}disp4 OFF"
-logdmdisp4stat=0
-echo "0" > ./status/stat_logdmdisp4.txt
-tmuxname="dm${DMindex}disp4log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp4" C-m
-echo "0" > ./status/stat_logdmdisp4.txt
+stopstreamlog dm${DMindex}disp4
+echo "0" > "./status/stat_log_dm${DMindex}disp4.txt"
 menurecord_default="ldmdisp41"
 ;;
 
 
-
     ldmdisp51)
-log "log dm${DMindex}disp5 ON"
-logdmdisp5stat=1
-echo "1" > ./status/stat_logdmdisp5.txt
-tmuxnameC="dm${DMindex}disp5logC"
-echo "1" > ./status/stat_logdmdisp5.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp5/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp5 100 $savedir/$datestr/dm${DMindex}disp5/" C-m
-tmuxname="dm${DMindex}disp5log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp5" C-m
+startstreamlog dm${DMindex}disp5
+echo "1" > "./status/stat_log_dm${DMindex}disp5.txt"
 menurecord_default="ldmdisp50"
 ;;
     ldmdisp50)
-log "log dm${DMindex}disp6 OFF"
-logdmdisp5stat=0
-echo "0" > ./status/stat_logdmdisp5.txt
-tmuxname="dm${DMindex}disp5log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp5" C-m
-echo "0" > ./status/stat_logdmdisp5.txt
+stopstreamlog dm${DMindex}disp5
+echo "0" > "./status/stat_log_dm${DMindex}disp5.txt"
 menurecord_default="ldmdisp51"
 ;;
 
 
-
     ldmdisp61)
-log "log dm${DMindex}disp6 ON"
-logdmdisp6stat=1
-echo "1" > ./status/stat_logdmdisp6.txt
-tmuxnameC="dm${DMindex}disp6logC"
-echo "1" > ./status/stat_logdmdisp6.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp6/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp6 100 $savedir/$datestr/dm${DMindex}disp6/" C-m
-tmuxname="dm${DMindex}disp6log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp6" C-m
+startstreamlog dm${DMindex}disp6
+echo "1" > "./status/stat_log_dm${DMindex}disp6.txt"
 menurecord_default="ldmdisp60"
 ;;
     ldmdisp60)
-log "log dm${DMindex}disp6 OFF"
-logdmdisp6stat=0
-echo "0" > ./status/stat_logdmdisp6.txt
-tmuxname="dm${DMindex}disp6log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp6" C-m
-echo "0" > ./status/stat_logdmdisp6.txt
+stopstreamlog dm${DMindex}disp6
+echo "0" > "./status/stat_log_dm${DMindex}disp6.txt"
 menurecord_default="ldmdisp61"
 ;;
 
 
     ldmdisp71)
-log "log dm${DMindex}disp7 ON"
-logdmdisp7stat=1
-echo "1" > ./status/stat_logdmdisp7.txt
-tmuxnameC="dm${DMindex}disp7logC"
-echo "1" > ./status/stat_logdmdisp7.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-mkdir -p $savedir/$datestr/dmdisp7/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp7 100 $savedir/$datestr/dm${DMindex}disp7/" C-m
-tmuxname="dm${DMindex}disp7log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp7" C-m
+startstreamlog dm${DMindex}disp7
+echo "1" > "./status/stat_log_dm${DMindex}disp7.txt"
 menurecord_default="ldmdisp70"
 ;;
     ldmdisp70)
-log "log dm${DMindex}disp7 OFF"
-logdmdisp7stat=0
-echo "0" > ./status/stat_logdmdisp7.txt
-tmuxname="dm${DMindex}disp6log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff dm${DMindex}disp7" C-m
-echo "0" > ./status/stat_logdmdisp7.txt
+stopstreamlog dm${DMindex}disp7
+echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
 menurecord_default="ldmdisp71"
 ;;
+
+
 
 
 
