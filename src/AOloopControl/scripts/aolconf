@@ -1571,7 +1571,7 @@ tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
 tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefRM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefO" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp 4 aol${DMindex}_dmwfrefO" C-m
 menutop_default="GPUd2w0"
 ;;
 
