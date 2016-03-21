@@ -100,11 +100,11 @@ mkdir -p tmp
 # LOOPNUMBER (loop number)
 if [ ! -f $LOOPNUMBER_file ]
 then
-	log "creating loop number $LOOPNUMBER_default"
+	aolog "creating loop number $LOOPNUMBER_default"
 	echo "$LOOPNUMBER_default" > $LOOPNUMBER_file
 else
 	LOOPNUMBER=$(cat $LOOPNUMBER_file)
-	log "LOOPNUMBER = $LOOPNUMBER"
+	aolog "LOOPNUMBER = $LOOPNUMBER"
 fi
 
 
@@ -126,7 +126,7 @@ fi
 
 
 # connect to WFS camera
-# log "connecting to camera"
+# aolog "connecting to camera"
 ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 
 
@@ -134,7 +134,7 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 
 # loop name
 echo "$LOOPNAME" > ./conf/conf_LOOPNAME.txt
-log "loop name  $LOOPNAME"
+aolog "loop name  $LOOPNAME"
 
 
 
@@ -157,7 +157,7 @@ echo "FUNCTIONS..."
 
 
 function startstreamlog {
-log "log $1 ON"
+aolog "log $1 ON"
 echo "1" > ./status/stat_log$1.txt
 tmuxnameC="logC_$1"
 tmux new-session -d -s $tmuxnameC
@@ -171,7 +171,7 @@ tmux send-keys -t $tmuxname "logshimon $1" C-m
 }
 
 function stopstreamlog {
-log "log $1 OFF"
+aolog "log $1 OFF"
 echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
 tmux new-session -d -s $tmuxname
@@ -181,7 +181,7 @@ echo "0" > ./status/stat_log$1.txt
 
 
 function killstreamlog {
-log "log $1 OFF"
+aolog "log $1 OFF"
 echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
 tmux new-session -d -s $tmuxname
@@ -191,7 +191,7 @@ echo "0" > ./status/stat_log$1.txt
 
 
 function start_Telemetrylog_all {
-log "start ALL telemetry logging"
+aolog "start ALL telemetry logging"
 startstreamlog ${wfsimcam}
 echo "1" > "./status/stat_log_wfsim.txt"
 startstreamlog dm${DMindex}disp
@@ -220,7 +220,7 @@ echo "1" > "./status/stat_log_modevalc.txt"
 
 
 function stop_Telemetrylog_all {
-log "start ALL telemetry logging"
+aolog "start ALL telemetry logging"
 stopstreamlog ${wfsimcam}
 echo "0" > "./status/stat_log_wfsim.txt"
 stopstreamlog dm${DMindex}disp
@@ -293,7 +293,7 @@ fi
 
 
 function Fits2shm {
-log "Move FITS to shared memory : $1 -> $2"
+aolog "Move FITS to shared memory : $1 -> $2"
 $execname << EOF # move file to shared memory
 csetpmove system
 loadfits "$1" im
@@ -347,7 +347,7 @@ if [ -a $file ]
 	dmC="dmC" #default
 fi
 # DM correction channel
-log "linking dmC to ${dmC}"
+aolog "linking dmC to ${dmC}"
 rm /tmp/aol${LOOPNUMBER}_dmC.im.shm 
 ln -s /tmp/${dmC}.im.shm /tmp/aol${LOOPNUMBER}_dmC.im.shm
 }
@@ -362,7 +362,7 @@ if [ -a $file ]
 	dm2dmO="empty" #default
 fi
 # DM ouput to other loop
-log "linking dm2dmO to ${dm2dmO}"
+aolog "linking dm2dmO to ${dm2dmO}"
 rm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm 
 ln -s /tmp/${dm2dmO}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmO.im.shm
 }
@@ -375,7 +375,7 @@ if [ -a $file ]
 	else
 	dm2dmM="empty" #default
 fi
-log "linking dm2dmM to ${dm2dmM}"
+aolog "linking dm2dmM to ${dm2dmM}"
 rm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm 
 ln -s /tmp/${dm2dmM}.im.shm /tmp/aol${LOOPNUMBER}_dm2dmM.im.shm
 }
@@ -389,7 +389,7 @@ if [ -a $file ]
 	else
 	dmwrefRM="empty" #default
 fi
-log "linking dmwfrefRM to ${dmwrefRM}"
+aolog "linking dmwfrefRM to ${dmwrefRM}"
 rm /tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm 
 ln -s /tmp/${dmwrefRM}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefRM.im.shm
 }
@@ -402,7 +402,7 @@ if [ -a $file ]
 	else
 	dmwrefO="empty" #default
 fi
-log "linking dmwfref0 to ${dmwrefO}"
+aolog "linking dmwfref0 to ${dmwrefO}"
 rm /tmp/aol${LOOPNUMBER}_dmwrefO.im.shm 
 ln -s /tmp/${dmwrefO}.im.shm /tmp/aol${LOOPNUMBER}_dmwfrefO.im.shm
 }
@@ -420,7 +420,7 @@ if [ -a $file ]
 fi
 # DM offset channel
 echo "linking to dm offset channel"
-log "linking dmO to ${dmO}"
+aolog "linking dmO to ${dmO}"
 rm /tmp/aol${LOOPNUMBER}_dmO.im.shm 
 ln -s /tmp/${dmO}.im.shm /tmp/aol${LOOPNUMBER}_dmO.im.shm
 }
@@ -436,7 +436,7 @@ if [ -a $file ]
 fi
 # DM correction channel
 echo "linking to dm offset channel"
-log "linking dmZP2 to ${dmZP2}"
+aolog "linking dmZP2 to ${dmZP2}"
 rm /tmp/aol${LOOPNUMBER}_dmZP2.im.shm 
 ln -s /tmp/${dmZP2}.im.shm /tmp/aol${LOOPNUMBER}_dmZP2.im.shm
 }
@@ -452,7 +452,7 @@ if [ -a $file ]
 fi
 # DM correction channel
 echo "linking to dm offset channel"
-log "linking dmZP3 to ${dmZP3}"
+aolog "linking dmZP3 to ${dmZP3}"
 rm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm 
 ln -s /tmp/${dmZP3}.im.shm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm
 }
@@ -470,7 +470,7 @@ if [ -a $file ]
 fi
 # DM correction channel
 echo "linking to dm correction channel"
-log "linking dmdisp to ${dmdisp}"
+aolog "linking dmdisp to ${dmdisp}"
 rm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm 
 ln -s /tmp/${dmdisp}.im.shm /tmp/aol${LOOPNUMBER}_dmdisp.im.shm
 }
@@ -485,7 +485,7 @@ if [ -a $file ]
 	dmRM="dmRM" #default
 fi
 # DM response matrix channel
-log "linking dmRM to ${dmRM}"
+aolog "linking dmRM to ${dmRM}"
 rm /tmp/aol${LOOPNUMBER}_dmRM.im.shm 
 ln -s /tmp/${dmRM}.im.shm /tmp/aol${LOOPNUMBER}_dmRM.im.shm
 }
@@ -500,7 +500,7 @@ if [ -a $file ]
 	wfsimcam="wfsimcam" #default
 fi
 # WFS raw image
-log "linking wfsim to ${wfsimcam}"
+aolog "linking wfsim to ${wfsimcam}"
 ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 }
 
@@ -518,7 +518,7 @@ if [ -a $file ]
 	else
 	wfsdarkfname="wfsdark.fits" #default
 fi
-log "linking wfsdark to file ${wfsdarkfname}"
+aolog "linking wfsdark to file ${wfsdarkfname}"
 rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
 Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
 ln -s $PWD/${wfsdarkfname} conf/aol${LOOPNUMBER}_wfsdark.fits
@@ -534,7 +534,7 @@ if [ -a $file ]
 	else
 	zrespMfname="zrespM.fits" #default
 fi
-log "linking zrespM to file ${zrespMfname}"
+aolog "linking zrespM to file ${zrespMfname}"
 rm /tmp/aol${LOOPNUMBER}_zrespM.im.shm
 Fits2shm ${zrespMfname} aol${LOOPNUMBER}_zrespM
 ln -s $PWD/${zrespMfname} conf/aol${LOOPNUMBER}_zrespM.fits
@@ -549,7 +549,7 @@ if [ -a $file ]
 	else
 	LOrespMfname="LOrespM.fits" #default
 fi
-log "linking LOrespM to file ${LOrespMfname}"
+aolog "linking LOrespM to file ${LOrespMfname}"
 rm /tmp/aol${LOOPNUMBER}_LOrespM.im.shm
 Fits2shm ${LOrespMfname} aol${LOOPNUMBER}_LOrespM
 ln -s $PWD/${LOrespMfname} conf/aol${LOOPNUMBER}_LOrespM.fits
@@ -564,7 +564,7 @@ if [ -a $file ]
 	else
 	wfsmaskfname="wfsmask.fits" #default
 fi
-log "linking wfsmask to file ${wfsmaskfname}"
+aolog "linking wfsmask to file ${wfsmaskfname}"
 rm /tmp/aol${LOOPNUMBER}_wfsmask.im.shm
 Fits2shm ${wfsmaskfname} aol${LOOPNUMBER}_wfsmask
 ln -s $PWD/${wfsmaskfname} conf/aol${LOOPNUMBER}_wfsmask.fits
@@ -580,7 +580,7 @@ if [ -a $file ]
 	else
 	dmmaskfname="dmmask.fits" #default
 fi
-log "linking dmmask to file ${dmmaskfname}"
+aolog "linking dmmask to file ${dmmaskfname}"
 rm /tmp/aol${LOOPNUMBER}_dmmask.im.shm
 Fits2shm ${dmmaskfname} aol${LOOPNUMBER}_dmmask
 ln -s $PWD/${dmmaskfname} conf/aol${LOOPNUMBER}_dmmask.fits
@@ -596,7 +596,7 @@ if [ -a $file ]
 	else
 	dmmapfname="dmmap.fits" #default
 fi
-log "linking dmmap to file ${dmmapfname}"
+aolog "linking dmmap to file ${dmmapfname}"
 rm /tmp/aol${LOOPNUMBER}_dmmap.im.shm
 Fits2shm ${dmmapfname} aol${LOOPNUMBER}_dmmap
 ln -s $PWD/${dmmapfname} conf/aol${LOOPNUMBER}_dmmap.fits
@@ -611,7 +611,7 @@ if [ -a $file ]
 	else
 	wfsreffname="wfsref0.fits" #default
 fi
-log "linking wfsref0 to file ${wfsreffname}"
+aolog "linking wfsref0 to file ${wfsreffname}"
 rm /tmp/aol${LOOPNUMBER}_wfsref0.im.shm
 Fits2shm ${wfsreffname} aol${LOOPNUMBER}_wfsref0
 ln -s $PWD/${wfsreffname} conf/aol${LOOPNUMBER}_wfsref0.fits
@@ -646,7 +646,7 @@ if [ -a $file ]
 	else
 	DMmodesfname="DMmodes.fits" #default
 fi
-log "linking DMmodes to file ${DMmodesfname}"
+aolog "linking DMmodes to file ${DMmodesfname}"
 rm /tmp/aol${LOOPNUMBER}_DMmodes.im.shm
 Fits2shm ${DMmodesfname} aol${LOOPNUMBER}_DMmodes
 rm conf/aol${LOOPNUMBER}_DMmodes.fits
@@ -662,7 +662,7 @@ if [ -a $file ]
 	else
 	respMfname="respM.fits" #default
 fi
-log "linking respM to file ${respMfname}"
+aolog "linking respM to file ${respMfname}"
 rm /tmp/aol${LOOPNUMBER}_respM.im.shm
 Fits2shm ${respMfname} aol${LOOPNUMBER}_respM
 rm conf/aol${LOOPNUMBER}_respM.fits
@@ -688,7 +688,7 @@ if [ -a $file ]
 	fname="$1.fits" #default
 fi
 # rm /tmp/aol${LOOPNUMBER}_$1.im.shm 
-log "linking $1 to ${fname}" 
+aolog "linking $1 to ${fname}" 
 Fits2shm ${fname} aol${LOOPNUMBER}_$1
 rm conf/aol${LOOPNUMBER}_$1.fits
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
@@ -703,7 +703,7 @@ fname=$( cat $ffname )
 echo "fname = $fname"
 fname=$(dialog --title "Select  Matrix" --stdout --title "Select ${name}" --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > $ffname
-log "select configuration file ${name} : ${fname}"
+aolog "select configuration file ${name} : ${fname}"
 ReadConfFile "$name"
 }
 
@@ -726,7 +726,7 @@ if [ -a $file ]
 	loopgain=$(echo "$(cat $file)")
 	else
 	loopgain="0.000" #default
-    log "loopgain = ${loopgain}"
+    aolog "loopgain = ${loopgain}"
 fi
 }
 
@@ -738,7 +738,7 @@ if [ -a $file ]
 	loopmaxlim=$(echo "$(cat $file)")
 	else
 	loopmaxlim="0.100"
-    log "loopmaxlim = ${loopmaxlim}"
+    aolog "loopmaxlim = ${loopmaxlim}"
 fi
 }
 
@@ -750,7 +750,7 @@ if [ -a $file ]
 	loopmultcoeff=$(echo "$(cat $file)")
 	else
 	loopmultcoeff="0.999"
-    log "loopmultcoeff = ${loopmultcoeff}"
+    aolog "loopmultcoeff = ${loopmultcoeff}"
 fi
 }
 
@@ -764,7 +764,7 @@ if [ -a $file ]
 	else
 	dmturbampl=0.1 #default
 fi
-log "dmturbampl = $dmturbampl"
+aolog "dmturbampl = $dmturbampl"
 tmux new-session -d -s DMturbamp
 tmux send-keys -t DMturbamp "$execname " C-m
 tmux send-keys -t DMturbamp "csetpmove system" C-m
@@ -782,7 +782,7 @@ if [ -a $file ]
 	else
 	dmturbws=1.0 #default
 fi
-log "dmturbws = $dmturbws"
+aolog "dmturbws = $dmturbws"
 tmux new-session -d -s DMturbws
 tmux send-keys -t DMturbws "$execname " C-m
 tmux send-keys -t DMturbws "csetpmove system" C-m
@@ -817,7 +817,7 @@ function ReadDMturbtint {
         else
         dmturbtint=0.1 #default
     fi
-    log "dmturbtint = ${dmturbtint}"
+    aolog "dmturbtint = ${dmturbtint}"
                 tmux new-session -d -s DMturbtint
                 tmux send-keys -t DMturbtint "$execname " C-m
                 tmux send-keys -t DMturbtint "csetpmove system" C-m
@@ -836,7 +836,7 @@ function ReadTMsync {
         else
         AOsystsimsync=2 #default
     fi
-    log "AOsystsimsync = ${AOsystsimsync}"
+    aolog "AOsystsimsync = ${AOsystsimsync}"
 }
 
 
@@ -848,7 +848,7 @@ function ReadTMdelayus {
         else
         AOsystsimWFSdelayus=100000 #default
     fi
-    log "AOsystsimWFSdelayus = ${AOsystsimWFSdelayus}"
+    aolog "AOsystsimWFSdelayus = ${AOsystsimWFSdelayus}"
 }
 
 
@@ -857,7 +857,7 @@ function ReadTMdelayus {
 
 
 function initDM {
-    log "start initDM ${DMindex}"
+    aolog "start initDM ${DMindex}"
     file="./conf/conf_dm${DMindex}xsize.txt"
     if [ -a $file ]
         then
@@ -921,7 +921,7 @@ fi
 }
 
 function stopDM {
-    log "stop initDM ${DMindex}"
+    aolog "stop initDM ${DMindex}"
     tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
     tmux kill-session -t $tmuxname
 }
@@ -939,7 +939,7 @@ function stopDM {
 
 function TestModeStart {
 
-log "TEST MODE START"
+aolog "TEST MODE START"
 
 
 mkdir -p testconf
@@ -969,7 +969,7 @@ ReadLoopMultCoeff
 
 
 function TestModeStop {
-log "TEST MODE STOP"
+aolog "TEST MODE STOP"
 pkill aol${LOOPNUMBER}test
 echo "OFF" > ./status/testloopstatus.txt
 }
@@ -980,7 +980,7 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 function TestStartTurb {
-log "TEST START TURB"
+aolog "TEST START TURB"
 echo " ON" > ./status/testdm${DMindex}turbstatus.txt
 mkdir -p ./conf/turb
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
@@ -1003,7 +1003,7 @@ tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} 0.0" C-m
 }
 
 function TestStopTurb {
-log "TEST STOP TURB"
+aolog "TEST STOP TURB"
 tmux send-keys -t aosim${LOOPNUMBER}dm${DMindex}turbctrl "exit" C-m
 tmux kill-session -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
 
@@ -1098,7 +1098,7 @@ stateok=0
 
 if [ $state = "menutop" ]; then
 stateok=1
-#log "$0 state = ${state}"
+#aolog "$0 state = ${state}"
 confselected=$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]"
 
@@ -1344,23 +1344,23 @@ done
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 DMindex=$("${cmd[@]}" 2>&1 >/dev/tty)
 echo "$DMindex" > ./conf/conf_DMindex.txt
-log "set DMindex = $DMindex"
+aolog "set DMindex = $DMindex"
 ;;
 	dmxs)
 exec 3>&1;dmxsize=$(dialog --inputbox "DM xsize" 0 0 "$dmxsize" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmxsize" > ./conf/conf_dm${DMindex}xsize.txt
-log "set dm${DMindex}xsize = $dmxsize"
+aolog "set dm${DMindex}xsize = $dmxsize"
 ;;
 	dmys)
 exec 3>&1;dmysize=$(dialog --inputbox "DM ysize" 0 0 "$dmysize" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmysize" > ./conf/conf_dm${DMindex}ysize.txt
-log "set dm${DMindex}ysize = $dmysize"
+aolog "set dm${DMindex}ysize = $dmysize"
 ;;
 
     nolink)
-log "set DM nolink"
+aolog "set DM nolink"
 echo "0" > "./conf/conf_dm2dm_mode.txt"
 echo "0" > "./conf/conf_dmwfsref_mode.txt"
 echo "1" > "./conf/conf_dmvolt_mode.txt"
@@ -1380,7 +1380,7 @@ ReaddmRMname
 ;;
 
     dmolink)
-log "set DM link"
+aolog "set DM link"
 echo "1" > "./conf/conf_dm2dm_mode.txt"
 echo "1" > "./conf/conf_dmwfsref_mode.txt"
 echo "0" > "./conf/conf_dmvolt_mode.txt"
@@ -1437,12 +1437,12 @@ ReaddmwrefOname
 
 
    dm2dm0)
-log "set dm2dm_mode = 0"
+aolog "set dm2dm_mode = 0"
 echo "0" > "./conf/conf_dm2dm_mode.txt"
 menutop_default="dm2dm1"
 ;;
     dm2dm1)
-log "set dm2dm_mode = 1"
+aolog "set dm2dm_mode = 1"
 echo "1" > "./conf/conf_dm2dm_mode.txt"
 menutop_default="dm2dm0"
 ;;
@@ -1451,7 +1451,7 @@ exec 3>&1;
 dm2dmM=$(dialog --inputbox "dm2dmM" 0 0 "$dm2dmM" 2>&1 1>&3);
 echo "$dm2dmM" > ./conf/conf_dm2dmM_name.txt
 Readdm2dmMname
-log "set dm2dm_name = $dm2dmM"
+aolog "set dm2dm_name = $dm2dmM"
 ;;
 
     dm2dmO)
@@ -1460,27 +1460,27 @@ dm2dmO=$(dialog --inputbox "dm2dmO" 0 0 "$dm2dmO" 2>&1 1>&3);
 exec 3>&-;
 echo "$dm2dmO" > ./conf/conf_dm2dmO_name.txt
 Readdm2dmOname
-log "set dm2dmO_name = $dm2dmO"
+aolog "set dm2dmO_name = $dm2dmO"
 ;;
 
     dmwref0)
-log "set dmwfsref = 0"
+aolog "set dmwfsref = 0"
 echo "0" > "./conf/conf_dmwfsref_mode.txt"
 menutop_default="dmwref1"
 ;;
     dmwref1)
-log "set dmwfsref = 1"
+aolog "set dmwfsref = 1"
 echo "1" > "./conf/conf_dmwfsref_mode.txt"
 menutop_default="dmwref0"
 ;;
 
     dmvolt0)
-log "set dmvolt_mode = 0"
+aolog "set dmvolt_mode = 0"
 echo "0" > "./conf/conf_dmvolt_mode.txt"
 menutop_default="dmvolt1"
 ;;
     dmvolt1)
-log "set dmvolt_mode = 1"
+aolog "set dmvolt_mode = 1"
 echo "1" > "./conf/conf_dmvolt_mode.txt"
 menutop_default="dmvolt0"
 ;;
@@ -1494,7 +1494,7 @@ menuitems1+=( "2" "do not apply DC offset, do not offset sum, do not clip" )
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmcombavemode=$("${cmd[@]}" 2>&1 >/dev/tty)
 echo "$dmcombavemode" > ./conf/conf_dmcombavemode.txt
-log "set dmcombavemode = ${dmcombavemode}"
+aolog "set dmcombavemode = ${dmcombavemode}"
 ;;
 
 	initDM)
@@ -1535,7 +1535,7 @@ fi
 
 if [ $state = "menualign" ]; then
 stateok=1
-#log "$0 state = ${state}"
+#aolog "$0 state = ${state}"
 ./AOloopAlign.bash
 state="menutop"
 fi
@@ -1559,7 +1559,7 @@ fi
 
 
 function UpdateModes {
-log "UpdateModes"
+aolog "UpdateModes"
 value=${SVDlim[10#${mb}]}
 SelectValue01 100 1001 50
 SVDlim[10#${mb}]=${value}
@@ -1657,7 +1657,7 @@ ReadConfFile "contrMcact${i2}_00"
 
 if [ $state = "menuconfigureloop" ]; then
 stateok=1
-#log "$0 state = ${state}"
+#aolog "$0 state = ${state}"
 menuname="\Zb\Zu LOOP CONFIGURATION\Zn\n 
 Notations: \n      
   \Z4shared memory stream\Zn\n
@@ -1953,7 +1953,7 @@ if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF"
 echo "OK"
 else
 echo "OFF" > ./conf/conf_RMmodal.txt
-log "RMmodal not (properly) set -> SETTING TO OFF"
+aolog "RMmodal not (properly) set -> SETTING TO OFF"
 fi
 
 
@@ -2269,19 +2269,19 @@ echo "$wfsdarkfname" > ./conf/conf_wfsdark_fname.txt
 ReadWFSdarkfname
 ;;
 	adark_on)
-log "start dark acquisiton"
+aolog "start dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
 tmux send-keys -t adark "./takedark 10000" C-m
-AOlog "taking dark"
+aolog "taking dark"
 menucontrolloop_default="adark_on"
 ;;
 #	adarkoff)
 #acqdarkstat="OFF"
 #echo "OFF" > ./status/stat_acqudark.txt
 #tmux kill-session -t adark
-#AOlog "stopping dark"
+#aolog "stopping dark"
 #menucontrolloop_default="adark_on"
 #;;
 
@@ -2292,7 +2292,7 @@ mkdir -p ./CONF
 exec 3>&1;
 confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
 exec 3>&-;
-log "save configuration to ${confname}"
+aolog "save configuration to ${confname}"
 echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
 cp conf/aol${LOOPNUMBER}_zrespM.fits "${confname}"
@@ -2344,7 +2344,7 @@ exec 3>&1;
 confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
 exec 3>&-;
 echo "${confname}" > confname.txt
-log "load configuration from ${confname}"
+aolog "load configuration from ${confname}"
 for name in dmC dmO dmdisp dmRM dmZP2 dmZP3 wfsim
 do
 	cp "${confname}"/conf_${name}_name.txt ./conf/conf_${name}_name.txt
@@ -2416,28 +2416,28 @@ exec 3>&1;
 rmamplum=$(dialog --inputbox "RM amplitude [um]" 0 0 "$rmamplum" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmamplum" > ./conf/conf_RMamplum.txt
-log "RM amplitude $rmamplum um"
+aolog "RM amplitude $rmamplum um"
 ;;
 	rmdelay)
 exec 3>&1;
 rmdelayfr=$(dialog --inputbox "RM time delay [frame]" 0 0 "$rmdelayfr" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
-log "RM time delay $rmdelayfr frame"
+aolog "RM time delay $rmdelayfr frame"
 ;;
 	rmnbfr)
 exec 3>&1;
 rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmfrave" > ./conf/conf_RMfrave.txt
-log "RM NB frame average $rmfrave frames"
+aolog "RM NB frame average $rmfrave frames"
 ;;
 	rmexfr)
 exec 3>&1;
 rmexfr=$(dialog --inputbox "RM excluded frames" 0 0 "$rmexfr" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmexfr" > ./conf/conf_RMexfr.txt
-log "RM NB frame excluded $rmexfr frames"
+aolog "RM NB frame excluded $rmexfr frames"
 ;;
 
 
@@ -2487,7 +2487,7 @@ fi
 cp H50poke.fits RMpokeCube.fits
 cp H50pixindex.fits RMpixindex.fits
 cp H50mat.fits RMHmat.fits 
-log "set Hadamard ON"
+aolog "set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
 	Hoff)
@@ -2495,19 +2495,19 @@ echo "0" > ./conf/conf_RMpokeMode.txt
 rm RMpokeCube.fits
 rm RMpixindex.fits
 rm RMHmat.fits
-log "set Hadamard OFF"
+aolog "set Hadamard OFF"
 menucontrolloop_default="Hon"
 ;;
 
 
     WFSNon)
 echo "1" > ./conf/conf_WFSnormalize.txt
-log "set WFS normalize ON"
+aolog "set WFS normalize ON"
 menucontrolloop_default="WFSNoff"
 ;;
     WFSNoff)
 echo "0" > ./conf/conf_WFSnormalize.txt
-log "set WFS normalize OFF"
+aolog "set WFS normalize OFF"
 menucontrolloop_default="WFSNon"
 ;;
 
@@ -2517,7 +2517,7 @@ echo " ON" > ./status/stat_zrespM.txt
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 echo "./aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-log "SART HO RM,  amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
+aolog "SART HO RM,  amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="zrespoff"
 ;;
 	zrespc) # clean zrespm
@@ -2561,7 +2561,7 @@ sleep 0.5
 	zrespoff)
 zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
-log "Stop HO RM"
+aolog "Stop HO RM"
 tmux new-session -d -s aol${LOOPNUMBER}zrespM
 tmux send-keys -t aol${LOOPNUMBER}zrespM "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" C-m
 echo "./aolCleanZrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
@@ -2603,7 +2603,7 @@ state="menuconfigureloop"
 
 	zrmcust)
 tmux new-session -d -s aol${LOOPNUMBER}zrmcust
-log "make custom RM"
+aolog "make custom RM"
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "./aolRMmkMasks zrespmat.fits" C-m
 echo "./aolRMmkMasks zrespmat.fits" >> aolcmd.txt
 mkdir -p zrespM
@@ -2749,7 +2749,7 @@ tmux send-keys -t $tmuxsname "csetpmove aolRT" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 0" C-m
-log "start taking WFS reference"
+aolog "start taking WFS reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
 ;;
@@ -2767,7 +2767,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t $tmuxsname "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_fname.txt
-log "stop taking WFS reference"
+aolog "stop taking WFS reference"
 menucontrolloop_default="awfsref0_on"
 state="menuconfigureloop"
 ;;
@@ -2784,12 +2784,12 @@ state="menuconfigureloop"
 
     RMMon)
 echo " ON" > ./conf/conf_RMmodal.txt
-log "set modal RM mode ON"
+aolog "set modal RM mode ON"
 menucontrolloop_default="RMMoff"
 ;;
     RMMoff)
 echo "OFF" > ./conf/conf_RMmodal.txt
-log "set modal RM mode OFF"
+aolog "set modal RM mode OFF"
 menucontrolloop_default="RMMon"
 ;;
 
@@ -2800,7 +2800,7 @@ exec 3>&1;
 rmMamplum=$(dialog --inputbox "modal RM amp [um]" 0 0 "$rmMamplum" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmMamplum" > ./conf/conf_RMMamplum.txt
-log "modal RM amplitude $rmMamplum um"
+aolog "modal RM amplitude $rmMamplum um"
 ;;
 
 	rmMcpa)
@@ -2808,7 +2808,7 @@ exec 3>&1;
 rmMcpa=$(dialog --inputbox "modal RM CPA max" 0 0 "$rmMcpa" 2>&1 1>&3);
 exec 3>&-;
 echo "$rmMcpa" > ./conf/conf_RMMcpa.txt
-log "modal RM CPA max $rmMcpa"
+aolog "modal RM CPA max $rmMcpa"
 ;;
 
 
@@ -2842,7 +2842,7 @@ tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./aolmkLO_DMmodes ${rmMcpa}" C-m
 tmux send-keys -t ${tmuxname} "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 echo "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-log "Start modal RM    $rmMcpa CPA   amplitude $rmMamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
+aolog "Start modal RM    $rmMcpa CPA   amplitude $rmMamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
 	LOrespc) # clean zrespm
@@ -2890,7 +2890,7 @@ sleep 0.5
 
 	LOrespoff)
 LOrespMstat="OFF"
-log "Stop modal RM"
+aolog "Stop modal RM"
 echo "OFF" > ./status/stat_LOrespM.txt
 tmuxname="aol${LOOPNUMBER}LOrespM"
 tmux new-session -d -s ${tmuxname}
@@ -2954,7 +2954,7 @@ exec 3>&1;
 SVDlimall=$(dialog --inputbox "SVD limit for full built" 0 0 "$SVDlimall" 2>&1 1>&3);
 exec 3>&-;
 echo "$SVDlimall" > ./conf/conf_SVDlimall.txt
-log "set SDVlimall ${SVDlimall}"
+aolog "set SDVlimall ${SVDlimall}"
 ;;
 	mkModes)
 menucontrolloop_default="mkModes"
@@ -3332,7 +3332,6 @@ fi
 
 if [ $state = "menu_mkFModes" ]; then
 stateok=1
-#log "$0 state = ${state}"
 menuname=" CONFIGURATION - Make Fourier based Modes"
 rm tmp/*.fits
 menuitems=()
@@ -3457,7 +3456,6 @@ fi
 # =====================================================
 if [ $state = "menucontrolloop" ]; then
 stateok=1
-#log "$0 state = ${state}"
 menuname="CONTROL LOOP"
 
 
@@ -3742,7 +3740,7 @@ exec 3>&1;
 nbGPU=$(dialog --inputbox "Number of GPU(s) (0 = CPU mode)" 0 0 "$nbGPU" 2>&1 1>&3);
 exec 3>&-;
 echo "$nbGPU" > ./conf/conf_GPU.txt
-log "set nbGPU = ${nbGPU}"
+aolog "set nbGPU = ${nbGPU}"
 #n=1
 #for pkg in $(cat file.txt)
 #    do
@@ -3759,36 +3757,36 @@ log "set nbGPU = ${nbGPU}"
 
 	GPUon)
 echo "1" > ./conf/conf_GPU.txt
-log "set GPU ON"
+aolog "set GPU ON"
 menucontrolloop_default="GPUoff"
 ;;
 	GPUoff)
 echo "0" > ./conf/conf_GPU.txt
-log "set GPU OFF"
+aolog "set GPU OFF"
 menucontrolloop_default="GPUon"
 ;;
 
  
 	GPUaon)
 echo "1" > ./conf/conf_GPUall.txt
-log "set GPUall ON"
+aolog "set GPUall ON"
 menucontrolloop_default="GPUaoff"
 ;;
 	GPUaoff)
 echo "0" > ./conf/conf_GPUall.txt
-log "set GPUall OFF"
+aolog "set GPUall OFF"
 menucontrolloop_default="GPUaon"
 ;;
 
 
 	CMm1)
 echo "1" > ./conf/conf_CMmode.txt
-log "set CMmode 1"
+aolog "set CMmode 1"
 menucontrolloop_default="CMm0"
 ;;
 	CMm0)
 echo "0" > ./conf/conf_CMmode.txt
-log "set CMmode 0"
+aolog "set CMmode 0"
 menucontrolloop_default="CMm1"
 ;;
 
@@ -3801,7 +3799,7 @@ menucontrolloop_default="CMm1"
    	 S)
 echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
-log "START LOOP PROCESSES"
+aolog "START LOOP PROCESSES"
 tmux new-session -d -s aol${LOOPNUMBER}-ctr
 tmux send-keys -t aol${LOOPNUMBER}-ctr "./aolctr" C-m
 
@@ -3845,7 +3843,7 @@ menucontrolloop_default="K"
 ;; 
    	 K)
 echo "OFF" > ./status/stat_procON.txt
-log "STOP LOOP PROCESSES"
+aolog "STOP LOOP PROCESSES"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
@@ -3872,7 +3870,7 @@ menucontrolloop_default="S"
 ;;
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
-log "LOOP ON"
+aolog "LOOP ON"
 customfunction_startloop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 #echo "aolon" >> aolctr-${LOOPNUMBER}-fifo
@@ -3880,7 +3878,7 @@ menucontrolloop_default="Floopoff"
 ;; 
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
-log "LOOP OFF"
+aolog "LOOP OFF"
 customfunction_stoploop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 #echo "aoloff" >> aolctr-${LOOPNUMBER}-fifo
@@ -3890,7 +3888,7 @@ menucontrolloop_default="Nloopon"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
-log "zeroing loop"
+aolog "zeroing loop"
 #echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
 #echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
 #echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
@@ -3898,31 +3896,31 @@ log "zeroing loop"
 ;;
    	 t1) 
 echo "aolstep 1" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 1"
+aolog "aolstep 1"
 ;;   
    	 t3) 
 echo "aolstep 3" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 3"
+aolog "aolstep 3"
 ;;   
    	 t10) 
 echo "aolstep 10" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 10"
+aolog "aolstep 10"
 ;;   
    	 t30) 
 echo "aolstep 30" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 30"
+aolog "aolstep 30"
 ;;   
    	 t100) 
 echo "aolstep 100" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 100"
+aolog "aolstep 100"
 ;;   
    	 t300) 
 echo "aolstep 300" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 300"
+aolog "aolstep 300"
 ;;   
    	 t1000) 
 echo "aolstep 1000" >> aolctr-${LOOPNUMBER}-fifo 
-log "aolstep 1000"
+aolog "aolstep 1000"
 ;;   
 
 	ctrmon) tmux a -t aol${LOOPNUMBER}-ctr ;;
@@ -3934,7 +3932,7 @@ log "aolstep 1000"
   	 loopgain=${value}
   	 echo "$loopgain" > ./conf/conf_loopgain.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
-	 log "set gain ${loopgain}"
+	 aolog "set gain ${loopgain}"
   	 ;; 
    	 m)
    	 value=${loopmaxlim}
@@ -3942,7 +3940,7 @@ log "aolstep 1000"
  	 loopmaxlim=${value}
  	 echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
-	 log "set max limit ${loopmaxlim}"
+	 aolog "set max limit ${loopmaxlim}"
    	 ;;  
    	 e) 
    	 value=${loopmultcoeff}
@@ -3950,7 +3948,7 @@ log "aolstep 1000"
  	 loopmultcoeff=${value}
  	 echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
 	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
-	 log "set mult coeff ${loopmultcoeff}"
+	 aolog "set mult coeff ${loopmultcoeff}"
      	 ;;  
 
 	 gball) 
@@ -3965,7 +3963,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to ${value}"
+	 aolog "set all gains to ${value}"
 	 ;;
 	 
     gball01)
@@ -3978,7 +3976,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 01 (alpha = 0.1)"
+	 aolog "set all gains to custom set 01 (alpha = 0.1)"
 	 ;;
    gball02)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -3990,7 +3988,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 02 (alpha = 0.2)"
+	 aolog "set all gains to custom set 02 (alpha = 0.2)"
 	 ;;
    gball04)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -4002,7 +4000,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 04 (alpha = 0.4)"
+	 aolog "set all gains to custom set 04 (alpha = 0.4)"
 	 ;;
    gball08)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -4014,7 +4012,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 08 (alpha = 0.8)"
+	 aolog "set all gains to custom set 08 (alpha = 0.8)"
 	 ;;
    gball12)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -4026,7 +4024,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 12 (alpha = 1.2)"
+	 aolog "set all gains to custom set 12 (alpha = 1.2)"
 	 ;;
    gball16)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -4038,7 +4036,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 16 (alpha = 1.6)"
+	 aolog "set all gains to custom set 16 (alpha = 1.6)"
 	 ;;
    gball20)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -4050,7 +4048,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 20 (alpha = 2.0)"
+	 aolog "set all gains to custom set 20 (alpha = 2.0)"
 	 ;;
 
 
@@ -4068,7 +4066,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 2 (alpha = 2)"
+	 aolog "set all gains to custom set 2 (alpha = 2)"
 	 ;;
 
     gball3)
@@ -4081,7 +4079,7 @@ log "aolstep 1000"
 	 done
      gi="00"
      tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "set all gains to custom set 3 (alpha = 0.5)"
+	 aolog "set all gains to custom set 3 (alpha = 0.5)"
 	 ;;
      
   	 gb00)
@@ -4091,7 +4089,7 @@ log "aolstep 1000"
   	 gainb[${10#gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb01)
@@ -4101,7 +4099,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb02)
@@ -4111,7 +4109,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb03)
@@ -4121,7 +4119,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb04)
@@ -4131,7 +4129,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb05)
@@ -4141,7 +4139,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb06)
@@ -4151,7 +4149,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb07)
@@ -4161,7 +4159,7 @@ log "aolstep 1000"
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb08)
@@ -4171,7 +4169,7 @@ log "aolstep 1000"
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb09)
@@ -4181,7 +4179,7 @@ log "aolstep 1000"
   	 gainb[10#${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb10)
@@ -4191,7 +4189,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb11)
@@ -4201,7 +4199,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb12)
@@ -4211,7 +4209,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb13)
@@ -4221,7 +4219,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
   	 gb14)
@@ -4231,7 +4229,7 @@ log "aolstep 1000"
   	 gainb[${gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
-	 log "block ${gi} set gain to ${value}"
+	 aolog "block ${gi} set gain to ${value}"
   	 ;; 
 
 
@@ -4249,7 +4247,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "wfsref=${zpmult}*wfsref0"
 tmux send-keys -t $tmuxname "exit" C-m
-log "multiply ref by ${value}"
+aolog "multiply ref by ${value}"
 ;;
 
 
@@ -4265,14 +4263,14 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
 tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP2 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo2" C-m
 menucontrolloop_default="zploff2"
-log "start zero-point offset loop 2"
+aolog "start zero-point offset loop 2"
 ;; 
 	zploff2)
 echo "OFF" > ./status/stat_zploopON2.txt
 tmuxname="aol${LOOPNUMBER}zploop2"
 tmux kill-session -t $tmuxname 
 menucontrolloop_default="zplon2"
-log "stop zero-point offset loop 2"
+aolog "stop zero-point offset loop 2"
 	;;
 
 
@@ -4288,14 +4286,14 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "listim" C-m
 tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP3 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
 menucontrolloop_default="zploff3"
-log "start zero-point offset loop 3"
+aolog "start zero-point offset loop 3"
 ;; 
 	zploff3)
 echo "OFF" > ./status/stat_zploopON3.txt
 tmuxname="aol${LOOPNUMBER}zploop3"
 tmux kill-session -t $tmuxname 
 menucontrolloop_default="zplon3"
-log "stop zero-point offset loop 3"
+aolog "stop zero-point offset loop 3"
 	;;
     
 	zpinj)
@@ -4311,7 +4309,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "dmo=$ampl*modec_$modenb" C-m
 tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "exit" C-m
-log "inject fourier mode to zero-point"
+aolog "inject fourier mode to zero-point"
 	;;
 
 
@@ -4323,7 +4321,7 @@ tmux send-keys -t $tmuxname "csetpmove system" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmZP3" C-m
 tmux send-keys -t $tmuxname "exit" C-m
-log "zero the zero-point offset"
+aolog "zero the zero-point offset"
 	;;
 esac
 ;;
@@ -4369,7 +4367,6 @@ fi
 # =====================================================
 if [ $state = "menutestmode" ]; then
 stateok=1
-#log "$0 state = ${state}"
 testloopstatus="OFF"
 testdmturbstatus="OFF"
 
@@ -4669,25 +4666,25 @@ tmux a -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
 exec 3>&1;dmturbampl=$(dialog --inputbox "DM turbulence amplitude [um]" 0 0 "$dmturbampl" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmturbampl" > ./conf/conf_dmturbampl.txt
-log "dmturbampl = ${dmturbampl}"
+aolog "dmturbampl = ${dmturbampl}"
 ;;
 	DMtws)
 exec 3>&1;dmturbws=$(dialog --inputbox "DM turbulence wind speed [m/s]" 0 0 "$dmturbws" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmturbws" > ./conf/conf_dmturbws.txt
-log "dmturbws = $dmturbws"
+aolog "dmturbws = $dmturbws"
 ;;
     DMtlo)
 exec 3>&1;dmturblo=$(dialog --inputbox "DM turbulence low order coeff" 0 0 "$dmturblo" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmturblo" > ./conf/conf_dmturblo.txt
-log "dmturblo = $dmturblo"
+aolog "dmturblo = $dmturblo"
 ;;
 	DMttint)
 exec 3>&1;dmturbtint=$(dialog --inputbox "DM turbulence interval [us]" 0 0 "$dmturbtint" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmturbtint" > ./conf/conf_dmturbtint.txt
-log "dmturbtint = $dmturbtint"
+aolog "dmturbtint = $dmturbtint"
 ;;
 
 
@@ -4716,14 +4713,14 @@ menutestmode_default="Start"
 exec 3>&1;AOsystsimsync=$(dialog --inputbox "Sync mode" 0 0 "$AOsystsimsync" 2>&1 1>&3);
 exec 3>&-;
 echo "$AOsystsimsync" > ./conf/conf_AOsystsimsync.txt
-log "AOsystsimsync = $AOsystsimsync"
+aolog "AOsystsimsync = $AOsystsimsync"
 menutestmode_default="TMsync"
 ;;
 	TMdelay)
 exec 3>&1;AOsystsimWFSdelayus=$(dialog --inputbox "WFS cam delay [us]" 0 0 "$AOsystsimWFSdelayus" 2>&1 1>&3);
 exec 3>&-;
 echo "$AOsystsimWFSdelayus" > ./conf/conf_AOsystsimWFSdelayus.txt
-log "AOsystsimWFSdelayus = $AOsystsimWFSdelayus"
+aolog "AOsystsimWFSdelayus = $AOsystsimWFSdelayus"
 menutestmode_default="TMdelay"
 ;;
 
@@ -4735,21 +4732,21 @@ menutestmode_default="TMdelay"
 exec 3>&1; testActx=$(dialog --inputbox "Set test actuator x" 0 0 "$testActx" 2>&1 1>&3);
 exec 3>&-;
 echo "$testActx" > ./conf/conf_testActx.txt
-log "testActx = $testActx"
+aolog "testActx = $testActx"
 ;;
 
     settay)
 exec 3>&1; testActy=$(dialog --inputbox "Set test actuator y" 0 0 "$testActx" 2>&1 1>&3);
 exec 3>&-;
 echo "$testActy" > ./conf/conf_testActy.txt
-log "testActy = $testActy"
+aolog "testActy = $testActy"
 ;;
 
     settaa)
 exec 3>&1; testActa=$(dialog --inputbox "Set test actuator a" 0 0 "$testActa" 2>&1 1>&3);
 exec 3>&-;
 echo "$testActa" > ./conf/conf_testActa.txt
-log "testActa = $testActa"
+aolog "testActa = $testActa"
 ;;
 
 
@@ -4761,7 +4758,7 @@ setpix ${dmRM} $testActa $testActx $testActy
 exit
 EOF
 echo "1" > ./status/stat_testact.txt
-log "testact = 1"
+aolog "testact = 1"
 menutestmode_default="testact0"
 ;;
 
@@ -4773,7 +4770,7 @@ setpix ${dmRM} 0.0 $testActx $testActy
 exit
 EOF
 echo "0" > ./status/stat_testact.txt
-log "testact = 0"
+aolog "testact = 0"
 menutestmode_default="testact1"
 ;;
 
@@ -4784,32 +4781,32 @@ menutestmode_default="testact1"
 exec 3>&1;testModeNb=$(dialog --inputbox "Set test DM mode number" 0 0 "$testModeNb" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModeNb" > ./conf/conf_testModeNb.txt
-log "testModeNb = $testModeNb"
+aolog "testModeNb = $testModeNb"
 ;;
 	settma)
 exec 3>&1;testModeAmp=$(dialog --inputbox "Set test DM mode amplitude" 0 0 "$testModeAmp" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModeAmp" > ./conf/conf_testModeAmp.txt
-log "testModeAmp = $testModeAmp"
+aolog "testModeAmp = $testModeAmp"
 ;;
 
 	settmd)
 exec 3>&1;testModeDelay=$(dialog --inputbox "Set test DM mode delay [us]" 0 0 "$testModeDelay" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModeDelay" > ./conf/conf_testModeDelay.txt
-log "testModeDelay = $testModeDelay"
+aolog "testModeDelay = $testModeDelay"
 ;;
 	setave)
 exec 3>&1;testModeAve=$(dialog --inputbox "Set number of frames averaged" 0 0 "$testModeAve" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModeAve" > ./conf/conf_testModeAve.txt
-log "testModeAve = $testModeAve"
+aolog "testModeAve = $testModeAve"
 ;;
 
 
     inj)
 tmuxname="aol${LOOPNUMBER}modeinj"
-log "inject mode"
+aolog "inject mode"
 tmux new-session -d -s ${tmuxname}
 modenb=$( printf "%05ld" ${testModeNb} )
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj" C-m
@@ -4824,14 +4821,14 @@ tmux send-keys -t $tmuxname "exit" C-m
 
     mrec)
 tmuxname="aol${LOOPNUMBER}mrec"
-log "Test Mode Recovery"
+aolog "Test Mode Recovery"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t $tmuxname "./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}" C-m
 ;;
     
     clr)
 tmuxname="aol${LOOPNUMBER}modeclr"
-log "clear DM channel"
+aolog "clear DM channel"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeclr" C-m
 tmux send-keys -t $tmuxname "csetpmove system" C-m
@@ -4845,32 +4842,32 @@ tmux send-keys -t $tmuxname "exit" C-m
 exec 3>&1;testModefmin=$(dialog --inputbox "Set test DM mode freq min" 0 0 "$testModefmin" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModefmin" > ./conf/conf_testModefmin.txt
-log "testModefmin = $testModefmin"
+aolog "testModefmin = $testModefmin"
 ;;
 	settmf1)
 exec 3>&1;testModefmax=$(dialog --inputbox "Set test DM mode freq max" 0 0 "$testModefmax" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModefmax" > ./conf/conf_testModefmax.txt
-log "testModefmax = $testModefmax"
+aolog "testModefmax = $testModefmax"
 ;;
 	settmfs)
 exec 3>&1;testModefmstep=$(dialog --inputbox "Set test DM mode freq mult step" 0 0 "$testModefmstep" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModefmstep" > ./conf/conf_testModefmstep.txt
-log "testModefmstep = $testModefmstep"
+aolog "testModefmstep = $testModefmstep"
 ;;
 	settmet)
 exec 3>&1;testModeetime=$(dialog --inputbox "Set test DM mode measurement time" 0 0 "$testModeetime" 2>&1 1>&3);
 exec 3>&-;
 echo "$testModeetime" > ./conf/conf_testModeetime.txt
-log "testModeetime = $testModeetime"
+aolog "testModeetime = $testModeetime"
 ;;
 
     dmmtr)
 tmuxname="aol${LOOPNUMBER}testmresp"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
-log "MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}"
+aolog "MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}"
 ;;
 
 
@@ -4901,8 +4898,6 @@ fi
 
 if [ $state = "menuview" ]; then
 stateok=1
-#log "$0 state = ${state}"
-
 
 menuname="VIEW MODE"
 
@@ -5058,8 +5053,6 @@ NBframes="$1"
 
 if [ $state = "menurecord" ]; then
 stateok=1
-#log "$0 state = ${state}"
-
 
 menuname="RECORD / ANALYZE"
 
@@ -5413,68 +5406,6 @@ menurecord_default="lmodevalc1"
 
 
 
-   tlmodeval1)
-log "log aol${LOOPNUMBER}_modeval ON"
-logmodevalstat=1
-echo "1" > ./status/stat_logmodeval.txt
-tmuxnameC="modeval${LOOPNUMBER}logC"
-echo "1" > ./status/stat_logmodeval.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-tmux send-keys -t $tmuxnameC "mkdir -p $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
-tmux send-keys -t $tmuxnameC "logshim aol${LOOPNUMBER}_modeval 10000 $savedir/$datestr/aol${LOOPNUMBER}_modeval/" C-m
-tmuxname="modeval${LOOPNUMBER}log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modeval" C-m
-menurecord_default="lmodeval0"
-;;
-    tlmodeval0)
-log "log aol${LOOPNUMBER}_modeval OFF"
-logmodevalstat=0
-echo "0" > ./status/stat_lmodeval.txt
-tmuxname="modeval${LOOPNUMBER}log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff aol${LOOPNUMBER}_modeval" C-m
-echo "0" > ./status/stat_logmodeval.txt
-menurecord_default="lmodeval1"
-;;
-
-
-
-
-
-
-   tlmodevalc1)
-log "log aol${LOOPNUMBER}_modevalc ON"
-logmodevalcstat=1
-echo "1" > ./status/stat_logmodevalc.txt
-tmuxnameC="modevalc${LOOPNUMBER}logC"
-echo "1" > ./status/stat_logmodevalc.txt
-tmux new-session -d -s $tmuxnameC
-savedir=$(cat ./conf/conf_savedir_name.txt)
-datestr=`date -u +%Y%m%d`
-tmux send-keys -t $tmuxnameC "mkdir -p $savedir/$datestr/aol${LOOPNUMBER}_modevalc/" C-m
-tmux send-keys -t $tmuxnameC "logshim aol${LOOPNUMBER}_modevalc 10000 $savedir/$datestr/aol${LOOPNUMBER}_modevalc/" C-m
-tmuxname="modevalc${LOOPNUMBER}log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimon aol${LOOPNUMBER}_modevalc" C-m
-menurecord_default="lmodevalc0"
-;;
-    tlmodevalc0)
-log "log aol${LOOPNUMBER}_modevalc OFF"
-logmodevalstat=0
-echo "0" > ./status/stat_lmodevalc.txt
-tmuxname="modevalc${LOOPNUMBER}log"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "logshimoff aol${LOOPNUMBER}_modevalc" C-m
-echo "0" > ./status/stat_logmodevalc.txt
-menurecord_default="lmodevalc1"
-;;
-
-
-
-
 
 
 
@@ -5545,7 +5476,6 @@ fi
 
 if [ $state = "menuexit" ]; then
 stateok=1
-#log "$0 state = ${state}"
 echo "exit"
 exit
 fi
@@ -5554,7 +5484,7 @@ fi
 
 if [ $stateok = 0 ]; then
 echo "state \"$state\" not recognized ... exit"
-log "state \"$state\" not recognized ... exit"
+aolog "state \"$state\" not recognized ... exit"
 exit
 fi
 
