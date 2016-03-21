@@ -1582,6 +1582,16 @@ echo "0" > $file
 tmuxname="GPUdm2wfsref${DMindex}"
 tmux send-keys -t $tmuxname "" C-c
 tmux kill-session -t $tmuxname
+
+tmuxname="GPUdm2wfsref${DMindex}z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefO" C-m
+tmux send-keys -t $tmuxname "imzero aol${DMindex}_dmwfrefO" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
 menutop_default="GPUd2w1"
 ;;
 
