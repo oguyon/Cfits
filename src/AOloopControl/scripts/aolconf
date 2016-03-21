@@ -858,7 +858,7 @@ function ReadTMdelayus {
 
 
 
-function initDM {
+function initDMfunc {
     aolog "start initDM ${DMindex}"
     file="./conf/conf_dm${DMindex}xsize.txt"
     if [ -a $file ]
@@ -919,10 +919,11 @@ fi
     echo "dm2dmO : $dm2dmO" >> cmd00.txt
     echo "dmvoltmode : $dmvoltmode" >> cmd00.txt
     
+    aolog "STARTING DM COM"
     tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
 }
 
-function stopDM {
+function stopDMfunc {
     aolog "stop initDM ${DMindex}"
     tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
     tmux kill-session -t $tmuxname
@@ -1503,14 +1504,14 @@ aolog "set dmcombavemode = ${dmcombavemode}"
 mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "1" > $file
-initDM
+initDMfunc
 ;;
 
     stopDM)
 mkdir -p $HOME/status
 file="$HOME/status/stat_initdm${DMindex}.txt"
 echo "0" > $file
-stopDM
+stopDMfunc
 ;;
 
    	 C) state="menuconfigureloop";;   
