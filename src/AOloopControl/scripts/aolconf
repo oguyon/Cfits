@@ -190,6 +190,65 @@ echo "0" > ./status/stat_log$1.txt
 }
 
 
+function start_Telemetrylog_all {
+log "start ALL telemetry logging"
+startstreamlog ${wfsimcam}
+echo "1" > "./status/stat_log_wfsim.txt"
+startstreamlog dm${DMindex}disp
+echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
+startstreamlog dm${DMindex}disp0
+echo "1" > "./status/stat_log_dm${DMindex}disp0.txt"
+startstreamlog dm${DMindex}disp1
+echo "1" > "./status/stat_log_dm${DMindex}disp1.txt"
+startstreamlog dm${DMindex}disp2
+echo "1" > "./status/stat_log_dm${DMindex}disp2.txt"
+startstreamlog dm${DMindex}disp3
+echo "1" > "./status/stat_log_dm${DMindex}disp3.txt"
+startstreamlog dm${DMindex}disp4
+echo "1" > "./status/stat_log_dm${DMindex}disp4.txt"
+startstreamlog dm${DMindex}disp5
+echo "1" > "./status/stat_log_dm${DMindex}disp5.txt"
+startstreamlog dm${DMindex}disp6
+echo "1" > "./status/stat_log_dm${DMindex}disp6.txt"
+startstreamlog dm${DMindex}disp7
+echo "1" > "./status/stat_log_dm${DMindex}disp7.txt"
+startstreamlog aol${LOOPNUMBER}_modeval
+echo "1" > "./status/stat_log_modeval.txt"
+startstreamlog aol${LOOPNUMBER}_modevalc
+echo "1" > "./status/stat_log_modevalc.txt"
+}
+
+
+function stop_Telemetrylog_all {
+log "start ALL telemetry logging"
+stopstreamlog ${wfsimcam}
+echo "0" > "./status/stat_log_wfsim.txt"
+stopstreamlog dm${DMindex}disp
+echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
+stopstreamlog dm${DMindex}disp0
+echo "0" > "./status/stat_log_dm${DMindex}disp0.txt"
+stopstreamlog dm${DMindex}disp1
+echo "0" > "./status/stat_log_dm${DMindex}disp1.txt"
+stopstreamlog dm${DMindex}disp2
+echo "0" > "./status/stat_log_dm${DMindex}disp2.txt"
+stopstreamlog dm${DMindex}disp3
+echo "0" > "./status/stat_log_dm${DMindex}disp3.txt"
+stopstreamlog dm${DMindex}disp4
+echo "0" > "./status/stat_log_dm${DMindex}disp4.txt"
+stopstreamlog dm${DMindex}disp5
+echo "0" > "./status/stat_log_dm${DMindex}disp5.txt"
+stopstreamlog dm${DMindex}disp6
+echo "0" > "./status/stat_log_dm${DMindex}disp6.txt"
+stopstreamlog dm${DMindex}disp7
+echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
+log "stop ALL telemetry logging"
+stopstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+stopstreamlog aol${LOOPNUMBER}_modevalc
+echo "0" > "./status/stat_log_modevalc.txt"
+}
+
+
 
 
 
@@ -3766,6 +3825,11 @@ tmuxname="aol${LOOPNUMBER}mex1"
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
 
+stopstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+stopstreamlog aol${LOOPNUMBER}_modevalc
+echo "0" > "./status/stat_log_modevalc.txt"
+
 menucontrolloop_default="S"
 ;;
    	 Nloopon)
@@ -5153,65 +5217,12 @@ echo "$savedir" > ./conf/conf_savedir_name.txt
 
 
     logON)
-log "start ALL telemetry logging"
-startstreamlog ${wfsimcam}
-echo "1" > "./status/stat_log_wfsim.txt"
-startstreamlog dm${DMindex}disp
-echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
-startstreamlog dm${DMindex}disp0
-echo "1" > "./status/stat_log_dm${DMindex}disp0.txt"
-startstreamlog dm${DMindex}disp1
-echo "1" > "./status/stat_log_dm${DMindex}disp1.txt"
-startstreamlog dm${DMindex}disp2
-echo "1" > "./status/stat_log_dm${DMindex}disp2.txt"
-startstreamlog dm${DMindex}disp3
-echo "1" > "./status/stat_log_dm${DMindex}disp3.txt"
-startstreamlog dm${DMindex}disp4
-echo "1" > "./status/stat_log_dm${DMindex}disp4.txt"
-startstreamlog dm${DMindex}disp5
-echo "1" > "./status/stat_log_dm${DMindex}disp5.txt"
-startstreamlog dm${DMindex}disp6
-echo "1" > "./status/stat_log_dm${DMindex}disp6.txt"
-startstreamlog dm${DMindex}disp7
-echo "1" > "./status/stat_log_dm${DMindex}disp7.txt"
-startstreamlog aol${LOOPNUMBER}_modeval
-echo "1" > "./status/stat_log_modeval.txt"
-startstreamlog aol${LOOPNUMBER}_modevalc
-echo "1" > "./status/stat_log_modevalc.txt"
+start_Telemetrylog_all
 ;;
-
 
     logOFF)
-log "start ALL telemetry logging"
-stopstreamlog ${wfsimcam}
-echo "0" > "./status/stat_log_wfsim.txt"
-stopstreamlog dm${DMindex}disp
-echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
-stopstreamlog dm${DMindex}disp0
-echo "0" > "./status/stat_log_dm${DMindex}disp0.txt"
-stopstreamlog dm${DMindex}disp1
-echo "0" > "./status/stat_log_dm${DMindex}disp1.txt"
-stopstreamlog dm${DMindex}disp2
-echo "0" > "./status/stat_log_dm${DMindex}disp2.txt"
-stopstreamlog dm${DMindex}disp3
-echo "0" > "./status/stat_log_dm${DMindex}disp3.txt"
-stopstreamlog dm${DMindex}disp4
-echo "0" > "./status/stat_log_dm${DMindex}disp4.txt"
-stopstreamlog dm${DMindex}disp5
-echo "0" > "./status/stat_log_dm${DMindex}disp5.txt"
-stopstreamlog dm${DMindex}disp6
-echo "0" > "./status/stat_log_dm${DMindex}disp6.txt"
-stopstreamlog dm${DMindex}disp7
-echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
-log "stop ALL telemetry logging"
-stopstreamlog aol${LOOPNUMBER}_modeval
-echo "0" > "./status/stat_log_modeval.txt"
-stopstreamlog aol${LOOPNUMBER}_modevalc
-echo "0" > "./status/stat_log_modevalc.txt"
+stop_Telemetrylog_all
 ;;
-
-
-
 
     lwfsim1)
 startstreamlog ${wfsimcam}
