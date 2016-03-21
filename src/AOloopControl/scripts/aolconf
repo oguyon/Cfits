@@ -925,7 +925,12 @@ fi
 
 function stopDMfunc {
     aolog "stop initDM ${DMindex}"
-    tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
+    tmuxname="aol${LOOPNUMBER}dm${DMindex}comboff"
+    tmux kill-session -t $tmuxname
+    tmux new-session -d -s $tmuxname
+    tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comboff" C-m
+    tmux send-keys -t $tmuxname "aoloopcontroldmcomboff ${DMindex}" C-m
+    tmux send-keys -t $tmuxname "exit"
     tmux kill-session -t $tmuxname
 }
 
