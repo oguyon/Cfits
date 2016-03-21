@@ -1813,19 +1813,12 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL)"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-cat ./conf/conf_RMmodal.txt 
-sleep 5
-
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
-echo "=============== RMmodal = $RMmodal"
-sleep 5
 if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
 echo "OK"
-sleep 5
 else
 echo "OFF" > ./conf/conf_RMmodal.txt
-echo "SETTING TO OFF"
-sleep 5
+log "RMmodal not (properly) set -> SETTING TO OFF"
 fi
 
 
