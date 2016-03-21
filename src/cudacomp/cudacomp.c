@@ -1683,7 +1683,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 //
 // single GPU
-//
+// semaphore input = 3
 //
 int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name)
 {
@@ -1864,7 +1864,7 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
                 exit(EXIT_FAILURE);
             }
             ts.tv_sec += 1;
-            semr = sem_timedwait(data.image[IDcoeff].semptr[2], &ts);
+            semr = sem_timedwait(data.image[IDcoeff].semptr[3], &ts);
 
 
             if(iter == 0)
