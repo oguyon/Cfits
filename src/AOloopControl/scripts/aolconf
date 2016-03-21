@@ -5172,10 +5172,19 @@ echo "0" > $file
 fi
 
 
+stringcenter "DATA LOGGING MODE"
+menuitems+=( " " "\Zb\Zr$string\Zn" )
+
+menuitems+=( "slogM0" "Set Log mode 0 : NEVER LOG" )
+menuitems+=( "slogM1" "Set Log mode 0 : LOG WHEN LOOP CLOSED" )
+menuitems+=( "slogM2" "Set Log mode 0 : ALWAYS LOG" )
+
+menuitems+=( " " " " )
 
 menuitems+=( "logON" "start logging ALL telemetry")
 menuitems+=( "logOFF" "stop logging ALL telemetry")
 
+menuitems+=( " " " " )
 
 file="./status/stat_log_wfsim.txt"
 logwfsimstat=$( cat $file )
