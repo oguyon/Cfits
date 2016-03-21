@@ -1697,14 +1697,14 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
 
 
 
-    IDcoeff = image_ID(DMcoeff_name);
+    IDcoeff = image_ID(IDcoeff_name);
     NBmodes = data.image[IDcoeff].md[0].size[0];
 
     IDmodes = image_ID(IDmodes_name);
     if(data.image[IDmodes].md[0].naxis==3)
-        m = data.image[ID_modes].md[0].size[0]*data.image[IDmodes].md[0].size[1];
+        m = data.image[IDmodes].md[0].size[0]*data.image[IDmodes].md[0].size[1];
     else
-        m = data.image[ID_modes].md[0].size[0];
+        m = data.image[IDmodes].md[0].size[0];
 
 
 
