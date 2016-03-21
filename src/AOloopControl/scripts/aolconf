@@ -931,7 +931,7 @@ function stopDMfunc {
     tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comboff" C-m
     tmux send-keys -t $tmuxname "aoloopcontroldmcomboff ${DMindex}" C-m
     tmux send-keys -t $tmuxname "exit"
-    tmux kill-session -t $tmuxname
+  #  tmux kill-session -t $tmuxname
 }
 
 
