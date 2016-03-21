@@ -1819,7 +1819,8 @@ sleep 5
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
 echo "=============== RMmodal = $RMmodal"
 sleep 5
-if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
+#if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
+if [[ -f "./conf/conf_RMmodal.txt" ]]; then
 echo "OK"
 sleep 5
 else
