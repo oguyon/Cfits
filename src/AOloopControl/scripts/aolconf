@@ -20,22 +20,34 @@ execname="Cfits"
 
 # default parameters
 
-LOOPNAME="PyWFS" # name of the control loop
-LOOPNUMBER_default=2  # loop number
+#LOOPNAME="PyWFS" # name of the control loop
+#LOOPNUMBER_default=2  # loop number
+
+LOOPNAME="loopname" # name of the control loop
+LOOPNUMBER_default=7  # loop number
+
+#function log {
+#dolog PYRAMID "$@"
+#}
+
+#log "starting $0 instance"
 
 
-function log {
-dolog PYRAMID "$@"
-}
+#dmC="dm0disp3" # DM control channel
+#dmO="dm0disp0" # DM offset channel
+#dmdisp="dm0disp" # total DM displacement channel
+#dmoffset="dmoffset" # DM offset                                                      
+#dmRM="dm0disp7" # DM actuation channel for RM matrix
+#wfsimcam="imcam" # WFS camera image
 
-log "starting $0 instance"
 
 
-dmC="dm0disp3" # DM control channel
-dmO="dm0disp0" # DM offset channel
+dmC="dmdisp3" # DM control channel
+dmO="dmdisp0" # DM offset channel
 dmdisp="dm0disp" # total DM displacement channel
-dmoffset="dmoffset" # DM offset                                                      
-dmRM="dm0disp7" # DM actuation channel for RM matrix
+dmZP2="dmZP2"    
+dmZP2="dmZP3"                                                   
+dmRM="dmRM" # DM actuation channel for RM matrix
 wfsimcam="imcam" # WFS camera image
 
 DMindex=0 
