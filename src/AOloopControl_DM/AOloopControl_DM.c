@@ -566,7 +566,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     int vOK;
     float maxmaxvolt = 150.0;
     char errstr[200];
-    
+    int semnb;
     long sizexyDMout;
     long IDtmpoutdm;
     long kk;
@@ -850,7 +850,16 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             memcpy (data.image[dmdispcombconf[DMindex].IDdisp].array.F,data.image[IDdispt].array.F, sizeof(float)*data.image[dmdispcombconf[DMindex].IDdisp].md[0].nelement);
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].cnt0++;
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].write = 0;            
-            sem_post(data.image[dmdispcombconf[DMindex].IDdisp].semptr[0]);
+ 
+            for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].sem;semnb++)
+                   {
+                       sem_getvalue(data.image[dmdispcombconf[DMindex].IDdisp].semptr[semnb], &semval);
+                        if(semval<SEMAPHORE_MAXVAL)
+                            sem_post(data.image[dmdispcombconf[DMindex].IDdisp].semptr[semnb]);
+                    }      
+                   //      sem_post(data.image[dmdispcombconf[DMindex].IDdisp].semptr[0]);
+ 
+ 
  
             if(dm2dm_mode==1)
             {

@@ -1869,13 +1869,13 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
             if(iter == 0)
             {
-                printf("driving semaphore to zero ... ");
-                fflush(stdout);
+              //  printf("driving semaphore to zero ... ");
+               // fflush(stdout);
                 sem_getvalue(data.image[IDcoeff].semptr[2], &semval);
                 for(scnt=0; scnt<semval; scnt++)
                     sem_trywait(data.image[IDcoeff].semptr[2]);
-                printf("done\n");
-                fflush(stdout);
+               // printf("done\n");
+               // fflush(stdout);
             }
         }
 
