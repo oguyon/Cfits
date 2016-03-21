@@ -566,7 +566,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     int vOK;
     float maxmaxvolt = 150.0;
     char errstr[200];
-    int semnb;
+    int semnb, semval;
     long sizexyDMout;
     long IDtmpoutdm;
     long kk;
