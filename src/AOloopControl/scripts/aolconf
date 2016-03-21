@@ -5097,7 +5097,7 @@ menuitems+=( "ldmdisp70" "\Z1\ZrSTOP logging dm${DMindex}disp7\Zn" )
 fi
 
 
-file="./status/stat_logmodeval.txt"
+file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
 if [ "${logmodevalstat}" = "0" ];
 then
@@ -5107,7 +5107,7 @@ menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn" )
 fi
 
 
-file="./status/stat_logmodevalc.txt"
+file="./status/stat_log_modevalc.txt"
 logmodevalcstat=$( cat $file )
 if [ "${logmodevalcstat}" = "0" ];
 then
