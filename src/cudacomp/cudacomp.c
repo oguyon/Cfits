@@ -1662,6 +1662,252 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 
 
 
+
+
+//
+// single GPU
+//
+//
+int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex, char *IDoutmap_name)
+{
+    long NBmodes;
+    long IDmodes;
+    long IDcoeff;
+    long k, m;
+
+    float *d_modes = NULL; // linear memory of GPU
+    float *d_coeff = NULL;
+    float *d_outmap = NULL;
+
+
+    IDcoeff = image_ID(DMcoeff_name);
+    NBmodes = data.image[IDcoeff].md[0].size[0];
+
+    IDmodes = image_ID(IDmodes_name);
+    if(data.image[IDmodes].md[0].naxis==3)
+        m = data.image[ID_modes].md[0].size[0]*data.image[IDmodes].md[0].size[1];
+    else
+        m = data.image[ID_modes].md[0].size[0];
+
+
+
+
+
+    cudaGetDeviceCount(&deviceCount);
+    printf("%d devices found\n", deviceCount);
+    fflush(stdout);
+    printf("\n");
+    for (k = 0; k < deviceCount; ++k) {
+        cudaGetDeviceProperties(&deviceProp, k);
+        printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
+               k, deviceProp.name, deviceProp.major, deviceProp.minor);
+        printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
+        printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
+        printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
+        printf("\n");
+    }
+
+
+    if(GPUindex<deviceCount)
+        cudaSetDevice(GPUindex);
+    else
+    {
+        printf("Invalid Device : %d / %d\n", GPUindex, deviceCount);
+        exit(0);
+    }
+
+
+    printf("Create cublas handle ...");
+    fflush(stdout);
+    cublas_status = cublasCreate(&cublasH);
+    if (cublas_status != CUBLAS_STATUS_SUCCESS) {
+        printf ("CUBLAS initialization failed\n");
+        return EXIT_FAILURE;
+    }
+    printf(" done\n");
+    fflush(stdout);
+
+
+    // load modes to GPU
+    cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMalloc d_DMmodes returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+    cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+
+    // create d_outmap
+    cudaStat = cudaMalloc((void**)&d_outmap, sizeof(float)*m);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMalloc d_outmap returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+
+    // create d_coeff
+    cudaStat = cudaMalloc((void**)&d_coeff, sizeof(float)*NBmodes);
+    if (cudaStat != cudaSuccess)
+    {
+        printf("cudaMalloc d_coeff returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        exit(EXIT_FAILURE);
+    }
+
+
+    if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGTERM, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGBUS, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGABRT, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGHUP, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGPIPE, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
+
+
+    loopOK = 1;
+    iter = 0;
+
+    while(loopOK == 1)
+    {
+        if(data.image[ID_DMact].sem==0)
+        {
+            while(data.image[ID_DMact].md[0].cnt0==cnt) // test if new frame exists
+                usleep(5);
+            cnt = data.image[ID_DMact].md[0].cnt0;
+            semr = 0;
+        }
+        else
+        {
+
+
+            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+                perror("clock_gettime");
+                exit(EXIT_FAILURE);
+            }
+            ts.tv_sec += 1;
+            semr = sem_timedwait(data.image[ID_DMact].semptr[2], &ts);
+
+
+            if(iter == 0)
+            {
+                printf("driving semaphore to zero ... ");
+                fflush(stdout);
+                sem_getvalue(data.image[ID_DMact].semptr[2], &semval);
+                for(scnt=0; scnt<semval; scnt++)
+                    sem_trywait(data.image[ID_DMact].semptr[2]);
+                printf("done\n");
+                fflush(stdout);
+            }
+        }
+
+
+
+
+        if(semr==0)
+        {
+
+            // send vector back to GPU
+            cudaStat = cudaMemcpy(d_coeff, data.image[IDcoeff].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
+            if (cudaStat != cudaSuccess)
+            {
+                printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                exit(EXIT_FAILURE);
+            }
+
+
+
+            // compute
+            cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_modes, m, d_coeff, 1, &beta, d_outmap, 1);
+            if (cudaStat != CUBLAS_STATUS_SUCCESS)
+            {
+                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                exit(EXIT_FAILURE);
+            }
+
+            // copy result
+            data.image[IDoutmap].md[0].write = 1;
+            cudaStat = cudaMemcpy(data.image[IDoutmap].array.F, d_outmap, sizeof(float)*m, cudaMemcpyDeviceToHost);
+            sem_getvalue(data.image[IDoutmap].semptr[0], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[IDoutmap].semptr[0]);
+            sem_getvalue(data.image[IDoutmap].semptr[1], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[IDoutmap].semptr[1]);
+            data.image[IDoutmap].md[0].cnt0++;
+            data.image[IDoutmap].md[0].write = 0;
+
+
+
+
+
+            if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+                loopOK = 0;
+
+            iter++;
+
+
+
+
+
+
+        }
+    }
+
+
+    cudaFree(d_modes);
+    cudaFree(d_outmap);
+    cudaFree(d_coeff);
+
+
+    if (cublasH ) cublasDestroy(cublasH);
+
+
+
+    return(0);
+}
+
+
+
+
 //
 // extract mode coefficients from data stream
 // DMmodes needs to be orthogonal
@@ -1802,7 +2048,6 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
 
 
 
-    //NBmodes = 3;
 
     arraytmp = (long*) malloc(sizeof(long)*2);
     arraytmp[0] = NBmodes;
