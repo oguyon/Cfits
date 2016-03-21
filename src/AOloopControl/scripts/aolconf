@@ -1222,7 +1222,7 @@ fi
 if [ "${dmwfsrefmode}" = "1" ];
 then
 menuitems+=( "dmwref0" " [   ON  ] CPU-based dmcomb output WFS ref is ON (select to de-activate)" )
-
+fi
 
 ReaddmwrefRMname
 dmwrefRMfile="/tmp/${dmwrefRM}.im.shm"
@@ -1248,7 +1248,7 @@ menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream             \Z4\Zbaol${L
 fi
 
 
-fi
+
 
 
 file="./conf/conf_dmvolt_mode.txt"
