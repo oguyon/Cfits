@@ -123,6 +123,14 @@ int CUDACOMP_test_cli()
         return 1;
 }
 
+int CUDACOMP_Coeff2Map_Loop_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4))
+        CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+    else
+        return 1;
+}
+
 int CUDACOMP_extractModesLoop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,4)+CLI_checkarg(8,4)+CLI_checkarg(9,4)==0)
@@ -166,6 +174,15 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].syntax,"<NB actuators [long]> <NB modes [long]> <NB pixels [long]> <NB GPU [long]>");
     strcpy(data.cmd[data.NBcmd].example,"cudacomptest 1000 20 1000 1");
     strcpy(data.cmd[data.NBcmd].Ccall,"GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)");
+    data.NBcmd++;
+        
+    strcpy(data.cmd[data.NBcmd].key,"cudacoeff2map");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = CUDACOMP_Coeff2Map_Loop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"CUDA multiply vector by modes");
+    strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs vector> <GPU index [long]> <output map>");
+    strcpy(data.cmd[data.NBcmd].example,"cudacoeff2map modes coeff 4 outmap");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"cudaextrmodes");
