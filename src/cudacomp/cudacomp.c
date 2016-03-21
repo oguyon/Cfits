@@ -1674,10 +1674,27 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
     long IDmodes;
     long IDcoeff;
     long k, m;
+    cublasHandle_t cublasH = NULL;
+    cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
+    cudaError_t cudaStat = cudaSuccess;
+    struct cudaDeviceProp deviceProp;
 
     float *d_modes = NULL; // linear memory of GPU
     float *d_coeff = NULL;
     float *d_outmap = NULL;
+
+    float alpha = 1.0;
+    float beta = 0.0;
+    int loopOK;
+    struct timespec ts;
+    long iter;
+    long long cnt = -1;
+    long scnt;
+    int semval;
+    int semr;
+    long ii, kk;
+
+
 
 
     IDcoeff = image_ID(DMcoeff_name);
@@ -1883,12 +1900,6 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
                 loopOK = 0;
 
             iter++;
-
-
-
-
-
-
         }
     }
 
