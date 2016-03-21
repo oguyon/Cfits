@@ -1668,11 +1668,12 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 // single GPU
 //
 //
-int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex, char *IDoutmap_name)
+int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name)
 {
     long NBmodes;
     long IDmodes;
     long IDcoeff;
+    long IDoutmap;
     long m;
     int k;
     cublasHandle_t cublasH = NULL;
@@ -1825,11 +1826,11 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
 
     while(loopOK == 1)
     {
-        if(data.image[ID_DMact].sem==0)
+        if(data.image[IDcoeff].sem==0)
         {
-            while(data.image[ID_DMact].md[0].cnt0==cnt) // test if new frame exists
+            while(data.image[IDcoeff].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);
-            cnt = data.image[ID_DMact].md[0].cnt0;
+            cnt = data.image[IDcoeff].md[0].cnt0;
             semr = 0;
         }
         else
@@ -1841,16 +1842,16 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDoeff_name, int GPUindex,
                 exit(EXIT_FAILURE);
             }
             ts.tv_sec += 1;
-            semr = sem_timedwait(data.image[ID_DMact].semptr[2], &ts);
+            semr = sem_timedwait(data.image[IDcoef].semptr[2], &ts);
 
 
             if(iter == 0)
             {
                 printf("driving semaphore to zero ... ");
                 fflush(stdout);
-                sem_getvalue(data.image[ID_DMact].semptr[2], &semval);
+                sem_getvalue(data.image[IDcoeff].semptr[2], &semval);
                 for(scnt=0; scnt<semval; scnt++)
-                    sem_trywait(data.image[ID_DMact].semptr[2]);
+                    sem_trywait(data.image[IDcoeff].semptr[2]);
                 printf("done\n");
                 fflush(stdout);
             }
