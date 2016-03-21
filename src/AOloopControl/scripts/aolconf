@@ -5144,7 +5144,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp 30000 $savedir/$datestr/dmdisp/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp 30000 $savedir/$datestr/dm${DMindex}disp/" C-m
 tmuxname="dm${DMindex}log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp" C-m
@@ -5173,7 +5173,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp0/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp0 100 $savedir/$datestr/dmdisp0/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp0 100 $savedir/$datestr/dm${DMindex}disp0/" C-m
 tmuxname="dm${DMindex}disp0log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp0" C-m
@@ -5201,7 +5201,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp1/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp1 100 $savedir/$datestr/dmdisp1/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp1 100 $savedir/$datestr/dm${DMindex}disp1/" C-m
 tmuxname="dmd${DMindex}isp1log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp1" C-m
@@ -5231,7 +5231,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp2/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp2 100 $savedir/$datestr/dmdisp2/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp2 100 $savedir/$datestr/dm${DMindex}disp2/" C-m
 tmuxname="dm${DMindex}disp2log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp2" C-m
@@ -5260,8 +5260,8 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp3/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp3 30000 $savedir/$datestr/dmdisp3/" C-m
-tmuxname="dmd${DMindex}isp3log"
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp3 30000 $savedir/$datestr/dm${DMindex}disp3/" C-m
+tmuxname="dm${DMindex}disp3log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp3" C-m
 menurecord_default="ldmdisp30"
@@ -5289,7 +5289,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp4/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp4 100 $savedir/$datestr/dmdisp4/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp4 100 $savedir/$datestr/dm${DMindex}disp4/" C-m
 tmuxname="dm${DMindex}disp4log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp4" C-m
@@ -5318,7 +5318,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp5/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp5 100 $savedir/$datestr/dmdisp5/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp5 100 $savedir/$datestr/dm${DMindex}disp5/" C-m
 tmuxname="dm${DMindex}disp5log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp5" C-m
@@ -5347,7 +5347,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp6/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp6 100 $savedir/$datestr/dmdisp6/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp6 100 $savedir/$datestr/dm${DMindex}disp6/" C-m
 tmuxname="dm${DMindex}disp6log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp6" C-m
@@ -5375,7 +5375,7 @@ tmux new-session -d -s $tmuxnameC
 savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/dmdisp7/
-tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp7 100 $savedir/$datestr/dmdisp7/" C-m
+tmux send-keys -t $tmuxnameC "logshim dm${DMindex}disp7 100 $savedir/$datestr/dm${DMindex}disp7/" C-m
 tmuxname="dm${DMindex}disp7log"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimon dm${DMindex}disp7" C-m
