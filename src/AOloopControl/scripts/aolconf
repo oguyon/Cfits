@@ -4992,7 +4992,7 @@ fi
 
 
 
-file="./status/stat_logdmdisp.txt"
+file="./status/stat_log_dm${DMindex}disp.txt"
 logdmdispstat=$( cat $file )
 if [[ -f "$file" && ( "$logdmdispstat" = "0" || "$logdmdispstat" = "1" ) ]]; then
 echo "OK"
@@ -5008,7 +5008,7 @@ menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn" )
 fi
 
 
-file="./status/stat_logdmdisp0.txt"
+file="./status/stat_log_dm${DMindex}disp0.txt"
 logdmdisp0stat=$( cat $file )
 if [ "${logdmdisp0stat}" = "0" ];
 then
@@ -5019,7 +5019,7 @@ fi
 
 
 
-file="./status/stat_logdmdisp1.txt"
+file="./status/stat_log_dm${DMindex}disp1.txt"
 logdmdisp1stat=$( cat $file )
 if [ "${logdmdisp1stat}" = "0" ];
 then
@@ -5029,7 +5029,7 @@ menuitems+=( "ldmdisp10" "\Z1\ZrSTOP logging dm${DMindex}disp1\Zn" )
 fi
 
 
-file="./status/stat_logdmdisp2.txt"
+file="./status/stat_log_dm${DMindex}disp2.txt"
 logdmdisp2stat=$( cat $file )
 if [ "${logdmdisp2stat}" = "0" ];
 then
@@ -5049,7 +5049,7 @@ menuitems+=( "ldmdisp30" "\Z1\ZrSTOP logging dm${DMindex}disp3\Zn" )
 fi
 
 
-file="./status/stat_logdmdisp4.txt"
+file="./status/stat_log_dm${DMindex}disp4.txt"
 logdmdisp4stat=$( cat $file )
 if [ "${logdmdisp4stat}" = "0" ];
 then
@@ -5059,7 +5059,7 @@ menuitems+=( "ldmdisp40" "\Z1\ZrSTOP logging dm${DMindex}disp4\Zn" )
 fi
 
 
-file="./status/stat_logdmdisp5.txt"
+file="./status/stat_log_dm${DMindex}disp5.txt"
 logdmdisp5stat=$( cat $file )
 if [ "${logdmdisp5stat}" = "0" ];
 then
@@ -5069,7 +5069,7 @@ menuitems+=( "ldmdisp50" "\Z1\ZrSTOP logging dm${DMindex}disp5\Zn" )
 fi
 
 
-file="./status/stat_logdmdisp6.txt"
+file="./status/stat_log_dm${DMindex}disp6.txt"
 logdmdisp6stat=$( cat $file )
 if [ "${logdmdisp6stat}" = "0" ];
 then
@@ -5079,7 +5079,7 @@ menuitems+=( "ldmdisp60" "\Z1\ZrSTOP logging dm${DMindex}disp6\Zn" )
 fi
 
 
-file="./status/stat_logdmdisp7.txt"
+file="./status/stat_log_dm${DMindex}disp7.txt"
 logdmdisp7stat=$( cat $file )
 if [ "${logdmdisp7stat}" = "0" ];
 then
