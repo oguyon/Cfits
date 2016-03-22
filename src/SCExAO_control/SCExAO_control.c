@@ -535,7 +535,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     long NBframesAve;
     long NBframesAveMin = 100;
     long NBframesAveMax = 20000;
-
+    long twaitus = 1000000;
 
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
@@ -718,7 +718,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         }
 
         save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
-
+        usleep(twaitus);
     }
 
     r = system("rm stop_PyAlignTT.txt");
