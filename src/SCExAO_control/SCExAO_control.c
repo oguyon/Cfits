@@ -532,6 +532,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     long IDshm;
     long *sizearray;
 
+    long NBframesAve;
+    long NBframesAveMin = 100;
+    long NBframesAveMax = 20000;
+
 
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
@@ -564,9 +568,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
             if((v0>0.0)&&(v0<1.0))
                 gain = v0;
         }
+        
+        NBframesAve = (long) (1.1*NBframesAve);
+        if (NBframesAve<NBframesAveMax)
+            NBframesAve = NBframesAveMax;
 
-
-        ID = SCExAOcontrol_Average_image(WFScam_name, 20000, "imwfs", 4);
+        ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 4);
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
 
