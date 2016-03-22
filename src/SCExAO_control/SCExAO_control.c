@@ -763,11 +763,20 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     int r;
     char command[200];
     long delayus = 1000000;
+    
     long NBframes = 20000;
+    
     float v0;
-    long maxstep = 500;
+    long maxstep = 1000;
     float ave;
     char pausefilename[200];
+
+
+    long NBframesAve;
+    long NBframesAveMin = 100;
+    long NBframesAveMax = 10000;
+    float gainfactor;
+
 
 
     /// read position of stages
@@ -779,7 +788,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
     SCExAO_Pcam_Xpos0 = SCExAO_Pcam_Xpos;
     SCExAO_Pcam_Ypos0 = SCExAO_Pcam_Ypos;
-    
+
+    NBframesAve = NBframesAveMin;
+    gainfactor = 1.0;
     while(file_exist ("stop_PyAlignCam.txt")==0)
     {
         while (file_exist ("pause_PyAlignCam.txt"))
@@ -793,13 +804,19 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             r = fscanf(fp, "%f", &v0);
             fclose(fp);
             if((v0>0.0)&&(v0<1.0))
-                gain = v0;
+                gain = gainfactor*v0;
         }
+        gainfactor = 0.9*gainfactor;
+        if(gainfactor < 0.1)
+            gainfactor = 0.1;
 
-
-        ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 5);
+        ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 5);
         save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
-
+  
+        NBframesAve = (long) (1.1*NBframesAve);
+        if (NBframesAve>NBframesAveMax)
+            NBframesAve = NBframesAveMax;
+        
 
         tot = 0.0;
         for(ii=0; ii<pXsize*pYsize; ii++)
@@ -809,7 +826,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         ave =  tot/pXsize/pYsize;
         printf("tot = %f   ave = %f \n", tot, ave);
 
-        list_image_ID();
+      
 
         if(ave > 10.0)
         {
