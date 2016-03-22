@@ -5268,9 +5268,9 @@ fi
 
 menuitems+=( " " " " )
 
-menuitems+=( "logON" "start logging ALL telemetry")
-menuitems+=( "logOFF" "stop logging ALL telemetry")
-menuitems+=( "logKILL" "kill all telemetry logging processes")
+menuitems+=( "logON"        " START logging ALL telemetry")
+menuitems+=( "logOFF"       " STOP  logging ALL telemetry")
+menuitems+=( "logKILL"      " KILL  all telemetry logging processes")
 menuitems+=( " " " " )
 
 file="./status/stat_log_wfsim.txt"
