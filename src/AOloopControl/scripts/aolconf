@@ -188,6 +188,9 @@ echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "logshimkill $1" C-m
+tmux kill-session -t $tmuxname
+tmuxnameC="logC_$1"
+tmux kill-session -t $tmuxnameC
 echo "0" > ./status/stat_log$1.txt
 }
 
