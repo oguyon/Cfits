@@ -302,9 +302,9 @@ int AOloopControl_camimage_extract2D_sharedmem_loop_cli()
 
 int AOloopControl_AveStream_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
     {
-      AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
     }
   else
     return 1;
@@ -902,9 +902,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_AveStream_cli;
     strcpy(data.cmd[data.NBcmd].info,"average and AC shared mem image");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <coeff> <output image ave> <output AC>");
-    strcpy(data.cmd[data.NBcmd].example,"aveACshmim imin 0.01 outave outAC");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <coeff> <output image ave> <output AC> <output RMS>");
+    strcpy(data.cmd[data.NBcmd].example,"aveACshmim imin 0.01 outave outAC outRMS");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
     data.NBcmd++;
 
 
@@ -4710,11 +4710,11 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
 // alpha is averaging coefficient
 // uses cnt0
 
-int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC)
+int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)
 {
     long IDin;
     long IDout_ave;
-    long IDout_AC;
+    long IDout_AC, IDout_RMS;
     long xsize, ysize;
     long *sizearray;
     long cnt0old;
@@ -4736,6 +4736,10 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
 
     IDout_AC = create_image_ID(IDname_out_AC, 2, sizearray, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 2);
+   
+    IDout_RMS = create_image_ID(IDname_out_RMS, 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDname_out_RMS, 2);
+ 
      
     free(sizearray);
    
@@ -4746,15 +4750,19 @@ int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, ch
             {
                 data.image[IDout_ave].md[0].write = 1;
                 data.image[IDout_AC].md[0].write = 1;
+                data.image[IDout_RMS].md[0].write = 1;
                 for(ii=0;ii<xsize*ysize;ii++)
                     {
                         data.image[IDout_ave].array.F[ii] = (1.0-alpha)*data.image[IDout_ave].array.F[ii] + alpha * data.image[IDin].array.F[ii];
-                        data.image[IDout_AC].array.F[ii] += alpha * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]) * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]);
+                        data.image[IDout_RMS].array.F[ii] += alpha * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]) * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]);
+                        data.image[IDout_AC].array.F[ii] = data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii];
                     }
                 data.image[IDout_ave].md[0].cnt0++;
                 data.image[IDout_AC].md[0].cnt0++;
+                data.image[IDout_RMS].md[0].cnt0++;
                 data.image[IDout_ave].md[0].write = 0;
                 data.image[IDout_AC].md[0].write = 0;
+                data.image[IDout_RMS].md[0].write = 0;
                 cnt0old = data.image[IDin].md[0].cnt0;
             }
         usleep(delayus);
