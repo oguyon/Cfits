@@ -183,7 +183,7 @@ echo "0" > ./status/stat_log$1.txt
 
 
 function killstreamlog {
-aolog "log $1 OFF"
+aolog "log $1 KILL"
 echo "0" > ./status/stat_log$1.txt
 tmuxname="log_$1"
 tmux new-session -d -s $tmuxname
