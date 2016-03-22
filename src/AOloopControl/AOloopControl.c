@@ -545,6 +545,7 @@ int AOloopControl_mapPredictiveFilter_cli()
 }
 
 
+
 int AOloopControl_testPredictiveFilter_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
@@ -570,6 +571,7 @@ int AOloopControl_sig2Modecoeff_cli()
 }
 
 
+
 int AOloopControl_loopMonitor_cli()
 {
  if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0)
@@ -583,7 +585,6 @@ int AOloopControl_loopMonitor_cli()
      return 0;
    }
 }
-
 
 
 
@@ -1884,7 +1885,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-    float SVDlim0 = 0.05; // DM filtering
+    float SVDlim0 = 0.01; // DM filtering
     float SVDlim1 = 3.0e-2; // WFS filtering
     float rmslim = 0.03;
     float *rmsarray;
