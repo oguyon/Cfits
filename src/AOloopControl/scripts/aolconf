@@ -226,7 +226,7 @@ fi
 
 
 function stop_Telemetrylog_all {
-aolog "start ALL telemetry logging"
+aolog "stop ALL telemetry logging"
 stopstreamlog ${wfsimcam}
 echo "0" > "./status/stat_log_wfsim.txt"
 stopstreamlog dm${DMindex}disp
@@ -5187,7 +5187,7 @@ echo "0" > $file
 logMode=0
 fi
 
-stringcenter "DATA LOGGING MODE: $logMode$"
+stringcenter "DATA LOGGING MODE: $logMode"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
 menuitems+=( "slogM0" "Set Log mode 0 : NEVER LOG" )
