@@ -1885,8 +1885,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-    float SVDlim0 = 0.01; // DM filtering
-    float SVDlim1 = 0.01 // WFS filtering
+    float SVDlim0 = 0.001; // DM filtering
+    float SVDlim1 = 0.001; // WFS filtering
     float rmslim = 0.03;
     float *rmsarray;
     long IDm, IDSVDmodes;
