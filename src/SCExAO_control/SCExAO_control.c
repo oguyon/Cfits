@@ -767,7 +767,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     long NBframes = 20000;
     
     float v0;
-    long maxstep = 1000;
+    long maxstep = 3000;
     float ave;
     char pausefilename[200];
 
@@ -806,7 +806,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             if((v0>0.0)&&(v0<1.0))
                 gain = gainfactor*v0;
         }
-        gainfactor = 0.9*gainfactor;
+        gainfactor = 0.95*gainfactor;
         if(gainfactor < 0.1)
             gainfactor = 0.1;
 
