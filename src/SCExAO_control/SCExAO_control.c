@@ -578,7 +578,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
         
-        NBframesAve += 100; //(long) (1.1*NBframesAve);
+        NBframesAve = (long) (1.1*NBframesAve);
         if (NBframesAve>NBframesAveMax)
             NBframesAve = NBframesAveMax;
         
