@@ -553,6 +553,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     }
 
 
+    NBframesAve = NBframesAveMin;
     
     while(file_exist("stop_PyAlignTT.txt")==0)
     {
@@ -569,14 +570,16 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
                 gain = v0;
         }
         
-        NBframesAve = (long) (1.1*NBframesAve);
-        if (NBframesAve<NBframesAveMax)
-            NBframesAve = NBframesAveMax;
 
         ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 4);
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
-
+        
+        NBframesAve = (long) (1.1*NBframesAve);
+        if (NBframesAve<NBframesAveMax)
+            NBframesAve = NBframesAveMax;
+        
+        
         // save_fits("imwfs", "!imwfs.fits"); // TEST
 
         printf("%ld x %ld image\n", xsize, ysize);
