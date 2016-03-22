@@ -5248,9 +5248,23 @@ fi
 stringcenter "DATA LOGGING MODE: $logMode"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
+if [ "$logMode" = "0" ]; then
+menuitems+=("slogM0" "\Z1\Zr Log mode = 0  - NEVER LOG \Zn" )
+else
 menuitems+=( "slogM0" "Set Log mode 0 : NEVER LOG" )
+fi
+
+if [ "$logMode" = "1" ]; then
+menuitems+=( "slogM1" "\Z1\Zr Log mode = 1  - LOG WHEN LOOP CLOSED\Zn" )
+else
 menuitems+=( "slogM1" "Set Log mode 1 : LOG WHEN LOOP CLOSED" )
+fi
+
+if [ "$logMode" = "2" ]; then
+menuitems+=( "slogM2" "\Z1\Zr Log mode = 2 -  ALWAYS LOG\Zn" )
+else
 menuitems+=( "slogM2" "Set Log mode 2 : ALWAYS LOG" )
+fi
 
 menuitems+=( " " " " )
 
