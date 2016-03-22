@@ -810,6 +810,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
         if(gainfactor < 0.1)
             gainfactor = 0.1;
 
+
+        printf("================== AVERAGING %6ld FRAMES    gain = %f ================ \n", NBframesAve, gain);
         ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 5);
         save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
   
