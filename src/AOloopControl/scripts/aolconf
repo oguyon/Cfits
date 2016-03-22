@@ -3961,28 +3961,50 @@ echo "0" > "./status/stat_log_modevalc.txt"
 
 menucontrolloop_default="S"
 ;;
+
    	 Nloopon)
 echo " ON" > ./status/stat_loopON.txt
 aolog "LOOP ON"
 customfunction_startloop
-if [ "$logMode" = "1" ] || [ "$logmode" =  "2" ] ;
+
+file="./conf/conf_logmode.txt"
+logMode=$( cat $file )
+if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logMode=0
+fi
+if [ "$logMode" = "1" ] || [ "$logMode" =  "2" ] ;
 then
 start_Telemetrylog_all
 fi
+
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 menucontrolloop_default="Floopoff"
 ;; 
+
    	 Floopoff)
 echo "OFF" > ./status/stat_loopON.txt
 aolog "LOOP OFF"
 customfunction_stoploop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
-if [ "$logMode" = "0" ] || [ "$logmode" =  "1" ] ;
+file="./conf/conf_logmode.txt"
+logMode=$( cat $file )
+if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logMode=0
+fi
+if [ "$logMode" = "0" ] || [ "$logMode" =  "1" ] ;
 then
 stop_Telemetrylog_all
 fi
 menucontrolloop_default="Nloopon"
-;; 
+;;
+
+ 
   	 Z)
 tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
