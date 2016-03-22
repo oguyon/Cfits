@@ -249,12 +249,45 @@ stopstreamlog dm${DMindex}disp7
 echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
 log "stop ALL telemetry logging"
 
-
 if [ "${dm2dm_mode}" = "0" ];
 then
 stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
 stopstreamlog aol${LOOPNUMBER}_modevalc
+echo "0" > "./status/stat_log_modevalc.txt"
+fi
+}
+
+
+function kill_Telemetrylog_all {
+aolog "kill ALL telemetry logging"
+killstreamlog ${wfsimcam}
+echo "0" > "./status/stat_log_wfsim.txt"
+killstreamlog dm${DMindex}disp
+echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
+killstreamlog dm${DMindex}disp0
+echo "0" > "./status/stat_log_dm${DMindex}disp0.txt"
+killstreamlog dm${DMindex}disp1
+echo "0" > "./status/stat_log_dm${DMindex}disp1.txt"
+killstreamlog dm${DMindex}disp2
+echo "0" > "./status/stat_log_dm${DMindex}disp2.txt"
+killstreamlog dm${DMindex}disp3
+echo "0" > "./status/stat_log_dm${DMindex}disp3.txt"
+killstreamlog dm${DMindex}disp4
+echo "0" > "./status/stat_log_dm${DMindex}disp4.txt"
+killstreamlog dm${DMindex}disp5
+echo "0" > "./status/stat_log_dm${DMindex}disp5.txt"
+killstreamlog dm${DMindex}disp6
+echo "0" > "./status/stat_log_dm${DMindex}disp6.txt"
+killstreamlog dm${DMindex}disp7
+echo "0" > "./status/stat_log_dm${DMindex}disp7.txt"
+log "kill ALL telemetry logging"
+
+if [ "${dm2dm_mode}" = "0" ];
+then
+killstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+killstreamlog aol${LOOPNUMBER}_modevalc
 echo "0" > "./status/stat_log_modevalc.txt"
 fi
 }
@@ -5220,7 +5253,7 @@ menuitems+=( " " " " )
 
 menuitems+=( "logON" "start logging ALL telemetry")
 menuitems+=( "logOFF" "stop logging ALL telemetry")
-
+menuitems+=( "logKILL" "kill all telemetry logging processes")
 menuitems+=( " " " " )
 
 file="./status/stat_log_wfsim.txt"
@@ -5428,6 +5461,11 @@ start_Telemetrylog_all
     logOFF)
 stop_Telemetrylog_all
 ;;
+
+    logKILL)
+kill_Telemetrylog_all
+;;
+
 
     lwfsim1)
 startstreamlog ${wfsimcam}
