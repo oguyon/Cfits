@@ -534,8 +534,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
     long NBframesAve;
     long NBframesAveMin = 100;
-    long NBframesAveMax = 20000;
-    long twaitus = 1000000;
+    long NBframesAveMax = 2000;
+    long twaitus = 500000; // 0.5 sec
+
+    float gainfactor;
 
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
@@ -554,7 +556,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
 
     NBframesAve = NBframesAveMin;
-    
+    gainfactor = 1.0;
     
     
     
@@ -572,6 +574,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
             if((v0>0.0)&&(v0<1.0))
                 gain = v0;
         }
+        
+        gainfactor = 0.9*gainfactor;
+        if(gainfactor < 0.1)
+            gainfactor = 0.1;
         
         printf("================== AVERAGING %6ld FRAMES ================ \n", NBframesAve);
         ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 4);
