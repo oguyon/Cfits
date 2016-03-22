@@ -534,7 +534,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
     long NBframesAve;
     long NBframesAveMin = 100;
-    long NBframesAveMax = 2000;
+    long NBframesAveMax = 10000;
     long twaitus = 500000; // 0.5 sec
 
     float gainfactor;
@@ -774,7 +774,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
     long NBframesAve;
     long NBframesAveMin = 100;
-    long NBframesAveMax = 10000;
+    long NBframesAveMax = 30000;
     float gainfactor;
 
 
