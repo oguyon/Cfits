@@ -762,7 +762,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     long stepx, stepy;
     int r;
     char command[200];
-    long delayus = 1000000;
+    long delayus = 500000;
     
     long NBframes = 20000;
     
