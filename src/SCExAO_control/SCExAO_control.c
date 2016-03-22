@@ -570,7 +570,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
                 gain = v0;
         }
         
-
+        printf("================== AVERAGING %6ld FRAMES ================ \n", NBframesAve);
         ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 4);
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
