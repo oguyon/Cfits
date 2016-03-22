@@ -5401,7 +5401,8 @@ menurecord_default="slogM0"
 logMode="1"
 echo "1" > "./conf/conf_logmode.txt"
 loopON=$( cat ./status/stat_loopON.txt )
-if [ "$loopON" = "ON" ];
+aolog "TEST: loopON=$loopON"
+if [ "$loopON" = " ON" ];
 then
 start_Telemetrylog_all
 fi
