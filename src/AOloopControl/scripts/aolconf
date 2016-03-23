@@ -3766,6 +3766,7 @@ else
 echo "5" > $file
 GPUmodesextr0="5"
 fi
+menuitems+=( "GPUme0" "[ $GPUmodesextr0 ]    Mode coefficient CM extraction  : GPU device" )
 
 
 file="./conf/conf_GPUmodesextr1.txt"
@@ -3776,6 +3777,7 @@ else
 echo "6" > $file
 GPUmodesextr1="6"
 fi
+menuitems+=( "GPUme1" "[ $GPUmodesextr1 ]    Mode coefficient dmC extraction : GPU device" )
 
 fi
 
@@ -4133,6 +4135,33 @@ aolog "set GPU OFF"
 menucontrolloop_default="GPUon"
 ;;
 
+ 
+ 
+ GPUme0)
+file="./conf/conf_GPUmodesextr0.txt"
+exec 3>&1;
+GPUmodesextr0=$(dialog --inputbox "GPU modes extract 0 device" 0 0 "$GPUmodesextr0" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUmodesextr0" > $file
+aolog "set GPUmodesextr0 = ${GPUmodesextr0}"
+menucontrolloop_default="GPUme0"
+;;
+ 
+ GPUme1)
+file="./conf/conf_GPUmodesextr1.txt"
+exec 3>&1;
+GPUmodesextr1=$(dialog --inputbox "GPU modes extract 1 device" 0 0 "$GPUmodesextr1" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUmodesextr1" > $file
+aolog "set GPUmodesextr1 = ${GPUmodesextr1}"
+menucontrolloop_default="GPUme1"
+;;
+ 
+ 
+ 
+ 
+ 
+ 
  
 	GPUaon)
 echo "1" > ./conf/conf_GPUall.txt
