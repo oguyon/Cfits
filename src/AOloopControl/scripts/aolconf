@@ -1211,13 +1211,13 @@ dm2dmModesMast=$( cat $file )
 menuitems+=( " " " ")
 if [ "${dm2dm_mode}" = "0" ];
 then
-menuitems+=( "dm2dm1" " [  OFF  ] DM-to-DM is OFF (select to activate virtual (modal) DM to physical DM mode)" )
+menuitems+=( "dm2dmMode1" " [  OFF  ] DM-to-DM is OFF (select to activate virtual (modal) DM to physical DM mode)" )
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 fi
 if [ "${dm2dm_mode}" = "1" ];
 then
-menuitems+=( "dm2dm0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
+menuitems+=( "dm2dmMode0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
 
 
 Readdm2dmMname
@@ -1525,15 +1525,15 @@ ReaddmwrefOname
 ;;
 
 
-   dm2dm0)
+   dm2dmMode0)
 aolog "set dm2dm_mode = 0"
 echo "0" > "./conf/conf_dm2dm_mode.txt"
-menutop_default="dm2dm1"
+menutop_default="dm2dmMode1"
 ;;
-    dm2dm1)
+    dm2dmMode1)
 aolog "set dm2dm_mode = 1"
 echo "1" > "./conf/conf_dm2dm_mode.txt"
-menutop_default="dm2dm0"
+menutop_default="dm2dmMode0"
 ;;
     dm2dmM)
 exec 3>&1;
@@ -4171,6 +4171,8 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
 
+
+if [ "${dm2dm_mode}" = "0" ]; then
 # start analysis processes
 tmuxname="aol${LOOPNUMBER}mex0"
 tmux kill-session -t $tmuxname
@@ -4181,6 +4183,8 @@ tmuxname="aol${LOOPNUMBER}mex1"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "./modesextract1" C-m
+fi
+
 menucontrolloop_default="K"
 ;; 
    	 K)
@@ -4195,6 +4199,7 @@ pkill -9 aol${LOOPNUMBER}wfszpo
 tmuxname="aol${LOOPNUMBER}wfszpo"
 tmux kill-session -t $tmuxname
 
+if [ "${dm2dm_mode}" = "0" ]; then
 tmuxname="aol${LOOPNUMBER}mex0"
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
@@ -4207,6 +4212,7 @@ stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
 stopstreamlog aol${LOOPNUMBER}_modevalc
 echo "0" > "./status/stat_log_modevalc.txt"
+fi
 
 menucontrolloop_default="S"
 ;;
