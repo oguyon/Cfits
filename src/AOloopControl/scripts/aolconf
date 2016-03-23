@@ -4010,7 +4010,7 @@ aolog "set nbGPU = ${nbGPU}"
 exec 3>&1;
 GPU0device=$(dialog --inputbox "GPU0 device" 0 0 "$GPU0device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU0device" > ./conf/conf_GPU0.txt
+echo "$GPU0device" > ./conf/conf_GPUset0_dev0.txt
 aolog "set GPU0device = ${GPU0device}"
 menucontrolloop_default="GPU0"
 ;;
@@ -4019,7 +4019,7 @@ menucontrolloop_default="GPU0"
 exec 3>&1;
 GPU1device=$(dialog --inputbox "GPU1 device" 0 0 "$GPU1device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU1device" > ./conf/conf_GPU1.txt
+echo "$GPU1device" > ./conf/conf_GPUset0_dev1.txt
 aolog "set GPU1device = ${GPU1device}"
 menucontrolloop_default="GPU1"
 ;;
@@ -4028,7 +4028,7 @@ menucontrolloop_default="GPU1"
 exec 3>&1;
 GPU2device=$(dialog --inputbox "GPU2 device" 0 0 "$GPU2device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU2device" > ./conf/conf_GPU2.txt
+echo "$GPU2device" > ./conf/conf_GPUset0_dev2.txt
 aolog "set GPU2device = ${GPU2device}"
 menucontrolloop_default="GPU2"
 ;;
@@ -4037,7 +4037,7 @@ menucontrolloop_default="GPU2"
 exec 3>&1;
 GPU3device=$(dialog --inputbox "GPU3 device" 0 0 "$GPU3device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU3device" > ./conf/conf_GPU3.txt
+echo "$GPU3device" > ./conf/conf_GPUset0_dev3.txt
 aolog "set GPU3device = ${GPU3device}"
 menucontrolloop_default="GPU3"
 ;;
@@ -4046,7 +4046,7 @@ menucontrolloop_default="GPU3"
 exec 3>&1;
 GPU4device=$(dialog --inputbox "GPU4 device" 0 0 "$GPU4device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU4device" > ./conf/conf_GPU4.txt
+echo "$GPU4device" > ./conf/conf_GPUset0_dev4.txt
 aolog "set GPU4device = ${GPU4device}"
 menucontrolloop_default="GPU4"
 ;;
@@ -4055,7 +4055,7 @@ menucontrolloop_default="GPU4"
 exec 3>&1;
 GPU5device=$(dialog --inputbox "GPU5 device" 0 0 "$GPU5device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU5device" > ./conf/conf_GPU5.txt
+echo "$GPU5device" > ./conf/conf_GPUset0_dev5.txt
 aolog "set GPU5device = ${GPU5device}"
 menucontrolloop_default="GPU5"
 ;;
@@ -4064,7 +4064,7 @@ menucontrolloop_default="GPU5"
 exec 3>&1;
 GPU6device=$(dialog --inputbox "GPU6 device" 0 0 "$GPU6device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU6device" > ./conf/conf_GPU6.txt
+echo "$GPU6device" > ./conf/conf_GPUset0_dev6.txt
 aolog "set GPU6device = ${GPU6device}"
 menucontrolloop_default="GPU6"
 ;;
@@ -4073,7 +4073,7 @@ menucontrolloop_default="GPU6"
 exec 3>&1;
 GPU7device=$(dialog --inputbox "GPU7 device" 0 0 "$GPU7device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU7device" > ./conf/conf_GPU7.txt
+echo "$GPU7device" > ./conf/conf_GPUset0_dev7.txt
 aolog "set GPU7device = ${GPU7device}"
 menucontrolloop_default="GPU7"
 ;;
@@ -4082,7 +4082,7 @@ menucontrolloop_default="GPU7"
 exec 3>&1;
 GPU8device=$(dialog --inputbox "GPU8 device" 0 0 "$GPU8device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU8device" > ./conf/conf_GPU8.txt
+echo "$GPU8device" > ./conf/conf_GPUset0_dev8.txt
 aolog "set GPU8device = ${GPU8device}"
 menucontrolloop_default="GPU8"
 ;;
@@ -4091,7 +4091,7 @@ menucontrolloop_default="GPU8"
 exec 3>&1;
 GPU9device=$(dialog --inputbox "GPU9 device" 0 0 "$GPU9device" 2>&1 1>&3);
 exec 3>&-;
-echo "$GPU9device" > ./conf/conf_GPU9.txt
+echo "$GPU9device" > ./conf/conf_GPUset0_dev9.txt
 aolog "set GPU9device = ${GPU9device}"
 menucontrolloop_default="GPU9"
 ;;
