@@ -3899,6 +3899,16 @@ aolog "set nbGPU = ${nbGPU}"
 ;;
 
 
+    GPU0)
+exec 3>&1;
+nbGPU=$(dialog --inputbox "GPU0 device" 0 0 "$GPU0device" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU0device" > ./conf/conf_GPU0.txt
+aolog "set GPU0device = ${GPU0device}"
+menucontrolloop_default="GPU0"
+;;
+
+
 	GPUon)
 echo "1" > ./conf/conf_GPU.txt
 aolog "set GPU ON"
