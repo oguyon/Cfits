@@ -1624,6 +1624,7 @@ file="./conf/conf_GPUdm2wfsref.txt"
 echo "0" > $file
 tmuxname="GPUdm2wfsref${DMindex}"
 tmux send-keys -t $tmuxname "" C-c
+sleep 0.2
 tmux kill-session -t $tmuxname
 
 tmuxname="GPUdm2wfsref${DMindex}z"
@@ -4156,19 +4157,19 @@ echo "$GPUmodesextr1" > $file
 aolog "set GPUmodesextr1 = ${GPUmodesextr1}"
 menucontrolloop_default="GPUme1"
 ;;
+
  
  
  
  
  
  
- 
-	GPUaon)
+    GPUaon)
 echo "1" > ./conf/conf_GPUall.txt
 aolog "set GPUall ON"
 menucontrolloop_default="GPUaoff"
 ;;
-	GPUaoff)
+    GPUaoff)
 echo "0" > ./conf/conf_GPUall.txt
 aolog "set GPUall OFF"
 menucontrolloop_default="GPUaon"
