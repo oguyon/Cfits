@@ -4157,7 +4157,7 @@ int AOloopControl_InitializeMemory(int mode)
     char cntname[200];
     int k;
     FILE *fp;
-   // FILE *fp1; // testing
+    // FILE *fp1; // testing
     int tmpi;
     int ret;
     char fname[200];
@@ -4261,42 +4261,42 @@ int AOloopControl_InitializeMemory(int mode)
 
     if(AOloopcontrol_meminit==0)
     {
-        
+
         printf("INITIALIZING GPUset ARRAYS\n");
         fflush(stdout);
-        
+
         GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
         for(k=0; k<GPUcntMax; k++)
+        {
+            sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", k);
+            fp = fopen(fname, "r");
+            if(fp!=NULL)
             {
-                sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", k);
-                fp = fopen(fname, "r");
-                if(fp!=NULL)
-                    {
-                        ret = fscanf(fp, "%d" , &tmpi);
-                        fclose(fp);
-                        GPUset0[k] = tmpi;
-                    }
-                else
-                    GPUset0[k] = k;
+                ret = fscanf(fp, "%d" , &tmpi);
+                fclose(fp);
+                GPUset0[k] = tmpi;
             }
-     
-        
-        
-            
+            else
+                GPUset0[k] = k;
+        }
+
+
+
+
         GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
         for(k=0; k<GPUcntMax; k++)
+        {
+            sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", k);
+            fp = fopen(fname, "r");
+            if(fp!=NULL)
             {
-                sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", k);
-                fp = fopen(fname, "r");
-                if(fp!=NULL)
-                    {
-                        ret = fscanf(fp, "%d" , &tmpi);
-                        fclose(fp);
-                        GPUset1[k] = tmpi;
-                    }
-                else            
-            GPUset1[k] = k;
+                ret = fscanf(fp, "%d" , &tmpi);
+                fclose(fp);
+                GPUset1[k] = tmpi;
             }
+            else
+                GPUset1[k] = k;
+        }
     }
 
 
@@ -4305,6 +4305,7 @@ int AOloopControl_InitializeMemory(int mode)
 
     return 0;
 }
+
 
 
 

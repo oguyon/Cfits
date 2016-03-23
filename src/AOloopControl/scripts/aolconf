@@ -1786,7 +1786,7 @@ ReadConfFile "contrMcact${i2}_00"
 if [ $state = "menuconfigureloop" ]; then
 stateok=1
 #aolog "$0 state = ${state}"
-menuname="\Zb\Zu LOOP CONFIGURATION\Zn\n 
+menuname="\Zb\Zu LOOP CONFIGURATION, GPU ALLOCATION\Zn\n 
 Notations: \n      
   \Z4shared memory stream\Zn\n
   \Zufile system FITS file\Zn\n   
