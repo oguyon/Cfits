@@ -4137,7 +4137,7 @@ menucontrolloop_default="GPUon"
 
  
  
- GPUme0)
+    GPUme0)
 file="./conf/conf_GPUmodesextr0.txt"
 exec 3>&1;
 GPUmodesextr0=$(dialog --inputbox "GPU modes extract 0 device" 0 0 "$GPUmodesextr0" 2>&1 1>&3);
@@ -4146,8 +4146,8 @@ echo "$GPUmodesextr0" > $file
 aolog "set GPUmodesextr0 = ${GPUmodesextr0}"
 menucontrolloop_default="GPUme0"
 ;;
- 
- GPUme1)
+
+    GPUme1)
 file="./conf/conf_GPUmodesextr1.txt"
 exec 3>&1;
 GPUmodesextr1=$(dialog --inputbox "GPU modes extract 1 device" 0 0 "$GPUmodesextr1" 2>&1 1>&3);

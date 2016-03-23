@@ -1927,13 +1927,13 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
 
 
-
-
-            if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
-                loopOK = 0;
-
-            iter++;
         }
+
+        if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
+            loopOK = 0;
+
+        iter++;
+        
     }
 
 
