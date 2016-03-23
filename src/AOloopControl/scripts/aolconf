@@ -1624,8 +1624,10 @@ file="./conf/conf_GPUdm2wfsref.txt"
 echo "0" > $file
 tmuxname="GPUdm2wfsref${DMindex}"
 tmux send-keys -t $tmuxname "" C-c
-sleep 0.2
-#tmux kill-session -t $tmuxname
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
 
 tmuxname="GPUdm2wfsref${DMindex}z"
 tmux kill-session -t $tmuxname
