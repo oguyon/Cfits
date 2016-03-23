@@ -2786,11 +2786,14 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             for(ii=0; ii<msizexy; ii++)
                                 data.image[ID_imfit].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
 
-                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-8, "linfitcoeff", linfitreuse);
+                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-6, "linfitcoeff", linfitreuse);
                             linfitreuse = 1;
 
                             for(jj=0; jj<linfitsize; jj++)
                                 data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
+
+                            // prevent large coefficients (noise propagation)
+                            
 
                             // construct linear fit result (DM)
                             IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
@@ -2809,7 +2812,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             }
                             res /= resn;
 
-                            res1 = 0.0;
+                            res1 = 0.0;  // norm squared of linear vector
                             for(jj=0; jj<linfitsize; jj++)
                                 res1 += data.image[IDRMM_coeff].array.F[jj]*data.image[IDRMM_coeff].array.F[jj];
 
