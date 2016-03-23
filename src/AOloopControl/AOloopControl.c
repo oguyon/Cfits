@@ -4158,7 +4158,7 @@ int AOloopControl_InitializeMemory(int mode)
     int k;
     FILE *fp;
     FILE *fp1; // testing
-    long tmpl;
+    int tmpi;
     int ret;
     char fname[200];
 
@@ -4273,13 +4273,13 @@ int AOloopControl_InitializeMemory(int mode)
                 fp = fopen(fname, "r");
                 if(fp!=NULL)
                     {
-                        ret = fscanf(fp, "%ld" , &tmpl);
+                        ret = fscanf(fp, "%d" , &tmpi);
                         fclose(fp);
-                        GPUset0[k] = tmpl;
+                        GPUset0[k] = tmpi;
                     }
                 else
                     GPUset0[k] = k;
-                fprintf(fp1, "%4d %4ld\n", k, GPUset0[k]);
+                fprintf(fp1, "%4d %4d\n", k, GPUset0[k]);
             }
         fclose(fp1);
         
