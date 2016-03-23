@@ -4159,6 +4159,7 @@ int AOloopControl_InitializeMemory(int mode)
     FILE *fp;
     FILE *fp1; // testing
     long tmpl;
+    int ret;
     char fname[200];
 
     SM_fd = open(AOconfname, O_RDWR);
@@ -4268,17 +4269,17 @@ int AOloopControl_InitializeMemory(int mode)
         GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
         for(k=0; k<GPUcntMax; k++)
             {
-                sprintf(fname, "./conf/conf_GPUset0_dev%ld.txt", k);
+                sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", k);
                 fp = fopen(fname, "r");
                 if(fp!=NULL)
                     {
-                        fscanf(fp, "%ld" , &tmpl);
+                        ret = fscanf(fp, "%ld" , &tmpl);
                         fclose(fp);
                         GPUset0[k] = tmpl;
                     }
                 else
                     GPUset0[k] = k;
-                fprintf(fp1, "%4ld %4ld\n", k, GPUset0[k]);
+                fprintf(fp1, "%4d %4ld\n", k, GPUset0[k]);
             }
         fclose(fp1);
         
