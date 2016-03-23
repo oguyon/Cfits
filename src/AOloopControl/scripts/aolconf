@@ -3756,6 +3756,31 @@ fi
 
 
 
+if [ "${dm2dm_mdoe}" = "0" ]; then
+
+file="./conf/conf_GPUmodesextr0.txt"
+GPUmodesextr0=$( cat $file )
+if [[ -f "$file" && ${GPUmodesextr0} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "5" > $file
+GPUmodesextr0="5"
+fi
+
+
+file="./conf/conf_GPUmodesextr1.txt"
+GPUmodesextr1=$( cat $file )
+if [[ -f "$file" && ${GPUmodesextr1} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "6" > $file
+GPUmodesextr1="6"
+fi
+
+fi
+
+
+
 
 
 CMmode=$( cat ./conf/conf_CMmode.txt )
@@ -4177,12 +4202,12 @@ if [ "${dm2dm_mode}" = "0" ]; then
 tmuxname="aol${LOOPNUMBER}mex0"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./modesextract0" C-m
+tmux send-keys -t $tmuxname "./modesextract0 ${GPUmodesextr0}" C-m
 
 tmuxname="aol${LOOPNUMBER}mex1"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./modesextract1" C-m
+tmux send-keys -t $tmuxname "./modesextract1 ${GPUmodesextr1}" C-m
 fi
 
 menucontrolloop_default="K"
