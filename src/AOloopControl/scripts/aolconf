@@ -3756,7 +3756,7 @@ fi
 
 
 
-if [ "${dm2dm_mdoe}" = "0" ]; then
+if [ "${dm2dm_mode}" = "0" ]; then
 
 file="./conf/conf_GPUmodesextr0.txt"
 GPUmodesextr0=$( cat $file )
