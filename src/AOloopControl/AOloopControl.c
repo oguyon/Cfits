@@ -4159,7 +4159,7 @@ int AOloopControl_InitializeMemory(int mode)
     FILE *fp;
     FILE *fp1; // testing
     long tmpl;
-    
+    char fname[200];
 
     SM_fd = open(AOconfname, O_RDWR);
     if(SM_fd==-1)
