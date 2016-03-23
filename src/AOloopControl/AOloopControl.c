@@ -2823,7 +2823,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             LOcoeff = 1.0/(1.0+pow(10.0*res, 4.0));
 
                             if(res1>1.0)
-                                LOcoeff *= 1.0/(1.0+pow((res1-1.0)*0.3, 2.0));
+                                LOcoeff *= 1.0/(1.0+pow((res1-1.0)*0.1, 2.0));
 
 
                             fprintf(fpLOcoeff, "%5ld   %20g  %20g   ->  %f\n", m, res, res1, LOcoeff);
