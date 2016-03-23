@@ -4156,6 +4156,10 @@ int AOloopControl_InitializeMemory(int mode)
     long *sizearray;
     char cntname[200];
     int k;
+    FILE *fp;
+    FILE *fp1; // testing
+    long tmpl;
+    
 
     SM_fd = open(AOconfname, O_RDWR);
     if(SM_fd==-1)
@@ -4255,16 +4259,35 @@ int AOloopControl_InitializeMemory(int mode)
 
 
     if(AOloopcontrol_meminit==0)
-        {
-                printf("INITIALIZING GPUset ARRAYS\n");
-                fflush(stdout);      
-            GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
-            GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
-                for(k=0;k<GPUcntMax;k++)
+    {
+        
+        printf("INITIALIZING GPUset ARRAYS\n");
+        fflush(stdout);
+        
+        fp1 = fopen("GPUset0.txt", "w");
+        GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+        for(k=0; k<GPUcntMax; k++)
+            {
+                sprintf(fname, "./conf/conf_GPUset0_dev%ld.txt", k);
+                fp = fopen(fname, "r");
+                if(fp!=NULL)
+                    {
+                        fscanf(fp, "%ld" , &tmpl);
+                        fclose(fp);
+                        GPUset0[k] = tmpl;
+                    }
+                else
                     GPUset0[k] = k;
-                for(k=0;k<GPUcntMax;k++)
-                    GPUset1[k] = k;
-        }
+                fprintf(fp1, "%4ld %4ld\n", k, GPUset0[k]);
+            }
+        fclose(fp1);
+        
+        
+            
+        GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
+        for(k=0; k<GPUcntMax; k++)
+            GPUset1[k] = k;
+    }
 
 
     AOloopcontrol_meminit = 1;
@@ -4272,6 +4295,7 @@ int AOloopControl_InitializeMemory(int mode)
 
     return 0;
 }
+
 
 
 
