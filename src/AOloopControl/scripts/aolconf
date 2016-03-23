@@ -3626,7 +3626,7 @@ fi
 
 if [ "0" -lt "$GPUmode" ]; then
 GPU0device=$( cat ./conf/conf_GPU0.txt )
-if [[ -f "./conf/conf_GPU0.txt" && ${GPU0device} =~ [0-9] ]]; then
+if [[ -f "./conf/conf_GPU0.txt" && ${GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
 echo "0" > ./conf/conf_GPU0.txt
