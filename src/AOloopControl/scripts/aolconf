@@ -3624,6 +3624,29 @@ fi
 
 
 
+if [ "0" -lt "$GPUmode" ]; then
+menuitems+=( "GPU0" "[ GPU0 ]    GPU #0" )
+fi
+
+if [ "1" -lt "$GPUmode" ]; then
+menuitems+=( "GPU1" "[ GPU1 ]    GPU #1" )
+fi
+
+if [ "2" -lt "$GPUmode" ]; then
+menuitems+=( "GPU2" "[ GPU2 ]    GPU #2" )
+fi
+
+if [ "3" -lt "$GPUmode" ]; then
+menuitems+=( "GPU3" "[ GPU3 ]    GPU #3" )
+fi
+
+if [ "4" -lt "$GPUmode" ]; then
+menuitems+=( "GPU4" "[ GPU4 ]    GPU #4" )
+fi
+
+
+
+
 CMmode=$( cat ./conf/conf_CMmode.txt )
 
 
