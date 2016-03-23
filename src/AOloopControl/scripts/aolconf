@@ -3625,11 +3625,12 @@ fi
 
 
 if [ "0" -lt "$GPUmode" ]; then
-GPU0device=$( cat ./conf/conf_GPU0.txt )
-if [[ -f "./conf/conf_GPU0.txt" && ${GPU0device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev0.txt"
+GPU0device=$( cat $file )
+if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "0" > ./conf/conf_GPU0.txt
+echo "0" > $file
 GPU0device="0"
 fi
 menuitems+=( "GPU0" "[ $GPU0device ]    GPU #0 device" )
@@ -3637,11 +3638,12 @@ fi
 
 
 if [ "1" -lt "$GPUmode" ]; then
-GPU1device=$( cat ./conf/conf_GPU1.txt )
-if [[ -f "./conf/conf_GPU1.txt" && ${GPU1device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev1.txt"
+GPU1device=$( cat $file )
+if [[ -f "$file" && ${GPU1device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "1" > ./conf/conf_GPU1.txt
+echo "1" > $file
 GPU1device="1"
 fi
 menuitems+=( "GPU1" "[ $GPU1device ]    GPU #1 device" )
@@ -3649,11 +3651,12 @@ fi
 
 
 if [ "2" -lt "$GPUmode" ]; then
-GPU2device=$( cat ./conf/conf_GPU2.txt )
-if [[ -f "./conf/conf_GPU2.txt" && ${GPU2device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev2.txt"
+GPU2device=$( cat $file )
+if [[ -f "$file" && ${GPU2device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "2" > ./conf/conf_GPU2.txt
+echo "2" > $file
 GPU2device="2"
 fi
 menuitems+=( "GPU2" "[ $GPU2device ]    GPU #2 device" )
@@ -3661,11 +3664,12 @@ fi
 
 
 if [ "3" -lt "$GPUmode" ]; then
-GPU3device=$( cat ./conf/conf_GPU3.txt )
-if [[ -f "./conf/conf_GPU3.txt" && ${GPU3device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev3.txt"
+GPU3device=$( cat $file )
+if [[ -f "$file" && ${GPU3device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "3" > ./conf/conf_GPU3.txt
+echo "3" > $file
 GPU3device="3"
 fi
 menuitems+=( "GPU3" "[ $GPU3device ]    GPU #3 device" )
@@ -3673,11 +3677,12 @@ fi
 
 
 if [ "4" -lt "$GPUmode" ]; then
-GPU4device=$( cat ./conf/conf_GPU4.txt )
-if [[ -f "./conf/conf_GPU4.txt" && ${GPU4device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev4.txt"
+GPU4device=$( cat $file )
+if [[ -f "$file" && ${GPU4device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "4" > ./conf/conf_GPU4.txt
+echo "4" >  $file
 GPU4device="4"
 fi
 menuitems+=( "GPU4" "[ $GPU4device ]    GPU #4 device" )
@@ -3685,11 +3690,12 @@ fi
 
 
 if [ "5" -lt "$GPUmode" ]; then
-GPU5device=$( cat ./conf/conf_GPU5.txt )
-if [[ -f "./conf/conf_GPU5.txt" && ${GPU5device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev5.txt"
+GPU5device=$( cat $file )
+if [[ -f "$file" && ${GPU5device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "5" > ./conf/conf_GPU5.txt
+echo "5" > $file
 GPU5device="5"
 fi
 menuitems+=( "GPU5" "[ $GPU5device ]    GPU #5 device" )
@@ -3697,11 +3703,12 @@ fi
 
 
 if [ "6" -lt "$GPUmode" ]; then
-GPU6device=$( cat ./conf/conf_GPU6.txt )
-if [[ -f "./conf/conf_GPU6.txt" && ${GPU6device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev6.txt"
+GPU6device=$( cat $file )
+if [[ -f "$file" && ${GPU6device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "6" > ./conf/conf_GPU6.txt
+echo "6" > $file
 GPU6device="6"
 fi
 menuitems+=( "GPU6" "[ $GPU6device ]    GPU #6 device" )
@@ -3709,11 +3716,12 @@ fi
 
 
 if [ "7" -lt "$GPUmode" ]; then
-GPU7device=$( cat ./conf/conf_GPU7.txt )
-if [[ -f "./conf/conf_GPU7.txt" && ${GPU0device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev7.txt"
+GPU7device=$( cat $file )
+if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "7" > ./conf/conf_GPU7.txt
+echo "7" > $file
 GPU7device="7"
 fi
 menuitems+=( "GPU7" "[ $GPU7device ]    GPU #7 device" )
@@ -3721,11 +3729,12 @@ fi
 
 
 if [ "8" -lt "$GPUmode" ]; then
-GPU8device=$( cat ./conf/conf_GPU8.txt )
-if [[ -f "./conf/conf_GPU8.txt" && ${GPU8device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev8.txt"
+GPU8device=$( cat $file )
+if [[ -f "$file" && ${GPU8device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "8" > ./conf/conf_GPU8.txt
+echo "8" > $file
 GPU8device="8"
 fi
 menuitems+=( "GPU8" "[ $GPU8device ]    GPU #8 device" )
@@ -3733,11 +3742,12 @@ fi
 
 
 if [ "9" -lt "$GPUmode" ]; then
-GPU9device=$( cat ./conf/conf_GPU9.txt )
-if [[ -f "./conf/conf_GPU9.txt" && ${GPU0device} =~ [0-9]$ ]]; then
+file="./conf/conf_GPUset0_dev9.txt"
+GPU9device=$( cat $file )
+if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
-echo "9" > ./conf/conf_GPU9.txt
+echo "9" > $file
 GPU9device="9"
 fi
 menuitems+=( "GPU9" "[ $GPU9device ]    GPU #9 device" )
