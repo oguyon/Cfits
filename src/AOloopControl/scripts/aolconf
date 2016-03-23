@@ -1625,7 +1625,7 @@ echo "0" > $file
 tmuxname="GPUdm2wfsref${DMindex}"
 tmux send-keys -t $tmuxname "" C-c
 sleep 0.2
-tmux kill-session -t $tmuxname
+#tmux kill-session -t $tmuxname
 
 tmuxname="GPUdm2wfsref${DMindex}z"
 tmux kill-session -t $tmuxname
