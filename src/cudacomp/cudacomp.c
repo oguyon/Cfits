@@ -2831,7 +2831,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
         
         
        // CHECK RESULT
-        arraysizetmp = (long*) malloc(sizeof(long)*3);
+     /*   arraysizetmp = (long*) malloc(sizeof(long)*3);
         ID_R = image_ID("Rmat");
         ID_C = image_ID("Cmat");
 
@@ -2850,6 +2850,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
             fflush(stdout);
         }
         
+     
         printf("CHECKING RESULT ... ");
         fflush(stdout);
         
@@ -2864,7 +2865,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
                 }
         save_fits("SVDcheck", "!SVDcheck.fits");
         printf("DONE\n");
-        fflush(stdout);
+        fflush(stdout);*/
     }
     else
     {
