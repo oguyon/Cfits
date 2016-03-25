@@ -3118,7 +3118,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-        /// STEP 8: SVD WFS SPACE IN EACH BLOCK -> final modes and control Matrices
+        /// STEP 8: SVD WFS SPACE IN EACH BLOCK 
         /// fmodesWFS1all, fmodes3 -> fmodes4all
         
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
