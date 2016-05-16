@@ -1,3 +1,7 @@
+rm runPIAACMCfifo*
+rm clistartup*.txt
+rm -rf piaacmcconf_*
+rm test*
 rm piaacmc*/*thread0*.fits
 rm piaacmc*/*thread0*.fits.tmp
 rm piaacmc*/WFamp0*.fits

@@ -59,6 +59,7 @@ int save_fl_fits_cli()
   return 0;
 }
 
+
 int save_db_fits_cli()
 {
   char fname[200];

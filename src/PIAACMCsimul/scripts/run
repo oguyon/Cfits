@@ -6,7 +6,7 @@
 
 
 mkdir -p conf
-
+mkdir -p log
 
 
 function loadparam() {
@@ -57,6 +57,7 @@ loadparam fpmccz $fpmmaxsag
 loadparam fpmocradld 8.0
 loadparam fpmocz 0.0
 
+loadparam size 1024
 loadparam PIAAbeamrad 0.022
 loadparam pscale 0.00011
 loadparam Fratio 80.0
@@ -81,21 +82,21 @@ loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fouri
 
 function printvarall() {
 
-echo "          CURRENT PARAMETERS VALUES"
+echo -e "\033[1m          CURRENT PARAMETERS VALUES :\033[0m"
 echo " "
-echo "PIAA OPTICS DESIGN"
+echo -e "\033[1m PIAA OPTICS DESIGN: \033[0m"
 printvar "coin" "central obstruction at input beam [beam radius]"
 printvar "coout" "central obstruction at output beam [beam radius]"
 printvar "fpmradld" "focal plane mask radius [l/D]"
 printvar "PIAAmaterial" "PIAA optics material"
 printvar "PIAAcirc" "FLAG: 1 if PIAA shapes are circular (no Fourier modes)"
 
-echo "LYOT STOP(S) DESIGN"
+echo -e "\033[1m LYOT STOP(S) DESIGN: \033[0m"
 printvar "LStransm" "Lyot stop transmission"
 printvar "NBls" "Number of Lyot stops"
 printvar "lambda" "Wavelength for monochromatic design [nm]"
 
-echo "FOCAL PLANE MASK DESIGN:"
+echo -e "\033[1m FOCAL PLANE MASK DESIGN: \033[0m"
 printvar "fpmmaterial" "focal plane mask material"
 printvar "FPMsectors" "mask geometry: 0=disk, 1=sectors, 2=hexagonal tiling"
 printvar "NBrings" "number of rings in focal plane mask"
@@ -107,13 +108,14 @@ printvar "fpmccz" "sag at cone center (sag at cone edge will be midpoint between
 printvar "fpmocradld" "outer cone outer radius [l/D]"
 printvar "fpmocz" "sag at inner edge of outer cone (sag = 0 at outer edge), set to 0 if no outer cone"
 
-echo "OPTIMIZATION PARAMETERS"
+echo -e "\033[1m OPTIMIZATION PARAMETERS: \033[0m"
 printvar "mlambda" "central wavelength for polychromatic design [nm]"
 printvar "mlambdaB" "spectral bandwidth [%]"
 printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
 printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
 
-echo "OPTICAL DESIGN:"
+echo -e "\033[1m OPTICAL DESIGN: \033[0m"
+printvar "size" "array size"
 printvar "PIAAbeamrad" "beam radius [mm]"
 printvar "pscale" "pixel scale in pupil [m/pix]"
 printvar "Fratio" "F ratio at focal plane mask"
@@ -139,7 +141,7 @@ printhelp ()
 {
 echo
 echo "------------------------------------------------------------------------"
-echo "                 PIAACMC DESIGN: TOP LEVEL SCRIPT"
+echo -e "\033[1m                 PIAACMC DESIGN: TOP LEVEL SCRIPT \033[0m"
 echo " "
 echo " Edit script to set PIAACMC design parameters"
 echo " Design parameters stored in conf/conf_<param>.txt"
@@ -157,7 +159,7 @@ echo ""
 echo "------------------------------------------------------------------------"
 printvarall
 echo "------------------------------------------------------------------------"
-echo "                      USAGE"
+echo -e "\033[1m                       USAGE \033[0m"
 echo " $0 <command>"
 echo "  command : "
 echo "     optsingle <stepstop>  : optimize up to, but not including, step <stepstop>. mstep>18 for full optimization"
@@ -200,13 +202,13 @@ runoptcmd=$1
 
 
 
-echo "18" > conf_MdesignStepMax.txt
+echo "18" > ./log/conf_MdesignStepMax.txt
 
 if [ "$runoptcmd" = "designmono" ]; then
-echo "$2" > conf_MdesignStepMax.txt
+echo "$2" > ./log/conf_MdesignStepMax.txt
 fi
 
-echo "$2" > conf_exitpt.txt
+echo "$2" > ./log/conf_exitpt.txt
 
 
 

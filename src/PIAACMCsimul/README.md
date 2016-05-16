@@ -38,7 +38,12 @@ Code is composed of a several layers (from high to low) :
 
 Scripts are located in src/PIAACMCsimul/scripts
 
+
+
 TOP LEVEL SCRIPT: \n
+./run\n
+Script calls ./runopt
+
 ./runopt\n
 This script can optimize a PIAACMC design or run an existing design\n
 Type command with no argument to get help

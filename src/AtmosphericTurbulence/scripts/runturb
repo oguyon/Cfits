@@ -1,6 +1,65 @@
 #!/bin/bash
 
 execname="AtmosphericTurbulenceSimul"
+mkdir -p RefractiveIndices
+
+
+printhelp ()
+{
+echo
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m                 ATMOSPHERIC TURBULENCE SCRIPT \033[0m"
+echo " "
+echo " Edit script to set atmosphere and turbulence parameters"
+echo " Execute script without argument to compute atmospheric wavefronts"
+echo ""
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m                       OVERVIEW \033[0m"
+echo ""
+echo "Main steps are: "
+echo "   Build atmospheric composition/density model"
+echo "      function call: AtmosphereModel_Create_from_CONF(CONFFILE)"
+echo "      INPUT: "
+echo "           ./RefractiveIndices/RIA_xx.dat, where xx = N2, O2, Ar, H2O, CO2, Ne, He, CH4, Kr, H2, O3, N, O, H"
+echo "           (if RIA file does not exist, uses Sellmeier equations in module OpticsMaterials)"
+echo "      OUTPUT:"
+echo "          atm.txt           atmospheric vertical composition/density profile"
+echo "          RindexSite.txt   : refractive index at site, as a function of wavelength"
+echo "          refractpath.txt   "
+echo "                       Files :"
+echo "                          <workdir>/linoptval.txt          : log for each optimization scan"
+echo "                          <workdir>/mode13_....bestval.txt : overall best solution"
+echo "                          <workdir>/fpm_zonez_...best.fits : best zone sags solution"
+echo "                             Stops immediately, no performance measurement (this mode is for debugging)"
+echo "     propmono   <bogusarg> : propagate existing solution (monochromatic)"
+echo "     designmono <MaxStep>  : design monochromatic PIAACMC up to, but not including, step <MaxStep>, and measure its contrast"
+echo "                             This mode is useful to track design performance during design process"
+echo "                             Contrast is normalized by computing PSF without focal plane mask"
+echo "                             Common usage is :"
+echo "                                  designmono 1"
+echo "                                  # inspect results"
+echo "                                  designmono 2"
+echo "                                  # inspect results"
+echo "                                  ..."
+echo "                       NOTE: type \"./runPIAACMC helpsteps\" to list design steps description"
+echo "     proppoly <bogusarg>   : polychromatic propagation point source"
+echo "     eval0 <stepstop>      : level 0 evaluation (compute on-axis PSF and contrast), <stepstop> should be set to 18"
+echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
+echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + transmission curve), <stepstop> should be set to 18"
+echo "------------------------------------------------------------------------"
+}
+
+NBARGS=0
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+        printhelp
+if [ "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+fi
+        exit
+fi
+
+
 
 
 #turbprofcase="HVmed"
@@ -131,7 +190,7 @@ SHM_SOUTPUTM=2                      # output shared memory phase unit. 0:rad, 1:
 
 # pixel size, scale -----------------------------------------------
 WFsize=512                          # pixel size of output images
-PUPIL_SCALE=0.01                    # pupil scale - m per pixel 
+PUPIL_SCALE=0.02                    # pupil scale - m per pixel 
 
 
 
@@ -155,7 +214,7 @@ REALTIMEFACTOR=1.0                  # time dilatation factor for realtime mode (
 # The realtime mode is typically used when output is shared memory for another real-time program
 
 WFTIME_STEP=0.001                   # time step in seconds between wavefront frames
-TIME_SPAN=0.1                       # time span for one continuous WF cube file 
+TIME_SPAN=1.0                       # time span for one continuous WF cube file 
 NB_TSPAN=100000000                  # total number of consecutive wavefront cubes to compute
 SIMTDELAY=0                         # additional time delay [us] between frames (used to limit CPU load)
 # NOTE:
@@ -181,8 +240,8 @@ MASTER_SIZE=4096                    # size in pixel of master turbulence screens
 
 # ------------ WAVEFRONT AMPLITUDE -------------------------------------------
 
-WAVEFRONT_AMPLITUDE=1               # 1 if Wavefront amplitude is computed in addition to phase
-FRESNEL_PROPAGATION=1               # 1 if diffraction propagation between layers (ignored if WAVEFRONT_AMPLITUDE = 0)
+WAVEFRONT_AMPLITUDE=0               # 1 if Wavefront amplitude is computed in addition to phase
+FRESNEL_PROPAGATION=0               # 1 if diffraction propagation between layers (ignored if WAVEFRONT_AMPLITUDE = 0)
 FRESNEL_PROPAGATION_BIN=1000.0      # vertical distance within which layers will be binned together prior to diffraction propagation [m]
 
 

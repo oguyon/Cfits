@@ -2608,6 +2608,7 @@ double AirMixture_N(double lambda, double dens_N2, double dens_O2, double dens_A
     double n;
     long llistep;
     int llidir, lliOK;
+	float alpha;
 
         // N2
     if(initRIA_N2==1)
@@ -2628,9 +2629,10 @@ double AirMixture_N(double lambda, double dens_N2, double dens_O2, double dens_A
                     lli += llidir*llistep;
                 llidir = -llidir;
             }
-        
+        alpha = (lambda-RIA_N2_lambda[lli])/(RIA_N2_lambda[lli+1]-RIA_N2_lambda[lli]);
+    //    printf("%d   alpha = %f \n", llidir, alpha);
         lliprecompN2 = lli;
-        n = RIA_N2_ri[lli];
+        n = (1.0-alpha)*RIA_N2_ri[lli] + alpha*RIA_N2_ri[lli+1];
         abscoeff = RIA_N2_abs[lli];
     }
     else
@@ -2665,10 +2667,10 @@ double AirMixture_N(double lambda, double dens_N2, double dens_O2, double dens_A
                     lli += llidir*llistep;
                 llidir = -llidir;
             }
-        
+        alpha = (lambda-RIA_O2_lambda[lli])/(RIA_O2_lambda[lli+1]-RIA_O2_lambda[lli]);
         lliprecompO2 = lli;
-        n = RIA_O2_ri[lli];
-        abscoeff = RIA_O2_abs[lli];
+        n = (1.0-alpha)*RIA_O2_ri[lli] + alpha*RIA_O2_ri[lli+1];
+        abscoeff = (1.0-alpha)*RIA_O2_abs[lli] + alpha*RIA_O2_abs[lli+1];
     }
     else
     {

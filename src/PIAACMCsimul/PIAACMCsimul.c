@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <gsl/gsl_math.h>
@@ -13,6 +14,7 @@
 
 
 #include "CLIcore.h"
+#include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
@@ -37,10 +39,12 @@
 #endif
 
 
+
 /**
  * @file PIAACMCsimul.c
  * @author Olivier Guyon
  */
+
 
 
 int WRITE_OK = 1;
@@ -151,7 +155,6 @@ int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
 // 3: string
 // 4: existing image
 //
-
 
 
 
@@ -724,7 +727,7 @@ long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name, int mode
             printf("Zone 0 thickness: %g\n", data.image[piaacmc[0].zonezID].array.D[0]);
             printf("piaacmc[0].fpmRad = %g m\n", piaacmc[0].fpmRad);
             printf("piaacmc[0].fpmCentConeRad = %g m\n", piaacmc[0].fpmCentConeRad);
-            printf("piaacmc[0].fpmOuterConeRad [%d] = %g m\n", piaacmc[0].fpmOuterConeRad, OuterCone);
+            printf("piaacmc[0].fpmOuterConeRad [%d] = %g m\n",  OuterCone, piaacmc[0].fpmOuterConeRad);
 
             for(ii=0; ii<size; ii++)
                 for(jj=0; jj<size; jj++)
@@ -4571,6 +4574,8 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
     save_fits("LMintC", fname);
 
 
+
+
     for(l=0; l<NBz; l++)
         for(m=0;m<NBmasks;m++)
             {
@@ -5024,6 +5029,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     long NBparam;
     FILE *fp;
     FILE *fpt;
+    FILE *fptest;
+    char fptestname[1000];
     char command[1000];
     char dirname[500];
     int paramtype[10000]; // FLOAT or DOUBLE
@@ -5231,7 +5238,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         printf("MASK RADIUS = %lf lambda/D\n", fpmradld);
     }
 
-    sprintf(command, "echo \"%03ld     $(date)\" >> PIAACMC_mode_log.txt", mode);
+    sprintf(command, "echo \"%03ld     $(date)\" >> ./log/PIAACMC_mode_log.txt", mode);
     ret = system(command);
     printf("command = %s\n", command);
 
@@ -5630,6 +5637,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         PIAACMCsimul_optimizeLyotStop_OAmin(fnamea, fnamep, "OAincohc", zmin, zmax, lstransm, NBpropstep, piaacmc[0].NBLyotStop);
         PIAACMCsimul_optimizeLyotStop(fnamea, fnamep, "OAincohc", zmin, zmax, lstransm, NBpropstep, piaacmc[0].NBLyotStop);
+
+		sprintf(fptestname, "conj_test.txt");
+		fptest = fopen(fptestname, "w");
+		for(ls=0; ls<piaacmc[0].NBLyotStop; ls++)
+            fprintf("%ld  %f  %f     %f  %f\n", ls, zmin, zmax, piaacmc[0].LyotStop_zpos[ls], optsyst[0].elemZpos[5]);
+		fclose(fptest);
 
 
         for(ls=0; ls<piaacmc[0].NBLyotStop; ls++)
@@ -7791,7 +7804,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
             i++;
 
-            if(file_exist(stopfile)==1)
+            if(file_exists(stopfile)==1)
             {
                 printf("FILE \"%s\" found\n", stopfile);
                 loopOK = 0;

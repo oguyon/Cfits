@@ -86,6 +86,20 @@ int image_basic_contract_cli()
         return 1;
 }
 
+
+int image_basic_contract3D_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
+    {
+        basic_contract3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 int IMAGE_BASIC_get_assym_component_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1) == 0)
@@ -202,6 +216,15 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<im1> <im2> <outim> <offsetx> <offsety>");
     strcpy(data.cmd[data.NBcmd].example,"addim im1 im2 outim 23 201");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, long off2)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imcontract3D");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_contract3D_cli;
+    strcpy(data.cmd[data.NBcmd].info,"image binning (3D)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inim> <outim> <binx> <biny> <binz>");
+    strcpy(data.cmd[data.NBcmd].example,"imcontracteD im1 outim 4 4 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long basic_contract3D(char *ID_name, char *ID_name_out, int n1, int n2, int n3)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imcontract");

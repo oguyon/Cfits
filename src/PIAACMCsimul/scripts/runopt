@@ -2,8 +2,8 @@
 
 execname="PIAACMCdesign"
 
-size=1024 # central lambda [nm]
-file="conf_size.txt"
+size=1024 # default
+file="./conf/conf_size.txt"
 if [ -f $file ]
 	then
 	size=$(echo "$(cat $file)")
@@ -13,7 +13,7 @@ fi
 
 
 MdesignStepMax=13 #default
-file="conf_MdesignStepMax.txt"
+file="./log/conf_MdesignStepMax.txt"
 if [ -f $file ]
 	then
 	MdesignStepMax=$(echo "$(cat $file)")
@@ -23,7 +23,8 @@ fi
 
 
 # save command string to filesystem (useful for debugging)
-echo "$0 $@" > $0_cmdstring.txt
+mkdir -p log
+echo "$0 $@" > ./log/$0_cmdstring.txt
 echo "$0 $@"
 
 
@@ -48,8 +49,8 @@ printhelp ()
 	echo "------------------------------------------------------------------------------"
 	echo ""
 	echo "               SCRIPT FOR PIAACMC DESIGN AND EVALUATION"
-	echo "               SEQUENCES OPERATIONS TO SCRIPT sim1024"
-	echo "                MOST PARAMETERS ARE PASSED TO sim1024"
+	echo "               SEQUENCES OPERATIONS TO SCRIPT sim"
+	echo "                MOST PARAMETERS ARE PASSED TO sim"
 	echo ""
 	echo ""
 	echo ""
@@ -85,7 +86,7 @@ printhelp ()
 	echo " 9    NBlyotstop   : Number of Lyot stops"
 	echo "Note: other settings are specified as conf_.txt files:"
 	echo "            conf_size.txt            [default = 1024]  : array size                                $size pix"
-	echo "            conf_MdesignStepMax.txt  [default = 13]    : max design step for monochromatic design  $MdesignStepMax" 
+	echo "            ./log/conf_MdesignStepMax.txt  [default = 13]    : max design step for monochromatic design  $MdesignStepMax" 
 	echo ""
 	echo ""
 	echo "Arguments specific to PIAACMC focal plane mask :" 
@@ -156,7 +157,7 @@ fpmocz=${22}
 # configuration index
 index=${23}
 
-# list of arguments passed to sim1024 :
+# list of arguments passed to sim :
 # $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $index
 
 
@@ -312,26 +313,26 @@ if [ ! -f ${stepfiletest} ]
 then
 
 # Turn focal plane mask into zones, Compute polychromatic response to zones, store result in FPMresp
-echo "1" > conf_FPMsectors.txt
-echo "$NBlambda" > conf_nblambda.txt
+echo "1" > ./log/conf_FPMsectors.txt
+echo "$NBlambda" > ./log/conf_nblambda.txt
 
 #NOTE: this does nothing... can be removed ?
-./sim$size 800 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index # set configuration settings
+./sim 800 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index # set configuration settings
 checkerrorstatus
 
 
 
-./sim$size 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index # compute FPMresp if not present
+./sim 101 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index # compute FPMresp if not present
 checkerrorstatus
 
 
 # Search for optimal solution
 echo "$searchtime" > searchtime.txt
-./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+./sim 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 
 
-echo "./sim$size 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index"
+echo "./sim 102 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index"
 
 
 # LOOP STUFF
@@ -364,7 +365,7 @@ if [ $computecontrast -eq 1 ]
 then
 execcode=$(( 720 + 10*$nbDM ))
 echo "execcode = $execcode"
-./sim$size $execcode $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+./sim $execcode $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 fi
 
@@ -372,7 +373,7 @@ fi
 # compute polychromatic PSF for extended source
 if [ $computecontrast -gt 1 ]
 then
-./sim$size 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+./sim 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 fi
 
@@ -380,7 +381,7 @@ fi
 
 if [ $computecontrast -eq 3 ]
 then
-./sim$size 722 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index
+./sim 722 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index
 checkerrorstatus
 fi
 
@@ -388,7 +389,7 @@ fi
 if [ $computetransmcurve -eq 1 ]
 then
 echo "computing transmission curve"
-./sim$size 750 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index
+./sim 750 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial  $index
 checkerrorstatus
 fi
 
@@ -447,7 +448,7 @@ done
 
 
 # make focal plane mask OPD
-#./sim$size $fpmrad 0.30 $2 00 0 $lambdaB $lambda 800 000
+#./sim $fpmrad 0.30 $2 00 0 $lambdaB $lambda 800 000
 
 touch $stepfile
 
@@ -470,24 +471,24 @@ else
 	
 	
 	# if directory does not exist but monochromatic design reference exists, adopt it, otherwise, do nothing	
-	./sim$size 501 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim 501 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 	
 	# PHASE 1: COMPUTE MONOCHROMATIC IDEAL PIAACMC
 echo "$MdesignStepMax"
-	./sim$size $MdesignStepMax $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim $MdesignStepMax $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 
 	# copy solution as master reference (if it does not exist) for other lambda / lambdaB
-	./sim$size 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus	
 	
 	# COMPUTE MONOCHROMATIC ON-AXIS PSF with NO focal plane mask -> CONTRAST CALIBRATION
-	./sim$size 699 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim 699 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 
 	# COMPUTE MONOCHROMATIC ON-AXIS PSF with idealized focal plane mask	
-	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 
 	#touch $file1
@@ -534,7 +535,7 @@ fi
 # propmono
 if [ $inputmode -eq 10 ]; then
 	# COMPUTE ON-AXIS PSF with idealized focal plane mask, monochromatic	
-	./sim$size 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim 700 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 fi
 
@@ -542,7 +543,7 @@ fi
 # proppoly
 if [ $inputmode -eq 11 ]; then
 	# COMPUTE ON-AXIS PSF polychromatic	
-	./sim$size 720 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	./sim 720 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 	checkerrorstatus
 fi
 

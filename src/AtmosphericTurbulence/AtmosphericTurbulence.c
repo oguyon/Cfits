@@ -232,6 +232,40 @@ int AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
 }
 
 
+int AtmosphericTurbulence_mkTestTTseq_cli()
+{
+   if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,1)==0)
+    {
+		AtmosphericTurbulence_mkTestTTseq(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numf, 0);
+    }
+    else
+        return(1);
+}
+
+
+
+
+int AtmosphericTurbulence_Build_LinPredictor_Full_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
+    {
+        AtmosphericTurbulence_Build_LinPredictor_Full(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf);
+    }
+    else
+        return(1);
+}
+
+
+int AtmosphericTurbulence_Apply_LinPredictor_Full_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,3)+CLI_checkarg(6,3)==0)
+    {
+        AtmosphericTurbulence_Apply_LinPredictor_Full(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
+    }
+    else
+        return(1);
+}
+
 
 int AtmosphericTurbulence_Build_LinPredictor_cli()
 {
@@ -255,10 +289,6 @@ int AtmosphericTurbulence_Test_LinPredictor_cli()
     
 }
 
-
-
-
-//int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, char *outfile)
 
 
 int init_AtmosphericTurbulence()
@@ -311,6 +341,34 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].syntax,"<etime [s]> <out name>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbmeasexpo 1.0 outpsf");
     strcpy(data.cmd[data.NBcmd].Ccall,"int measure_wavefront_series_expoframes(float etime, char *outfile)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"atmturbmktestTTs");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_mkTestTTseq_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make test TT sequence");
+    strcpy(data.cmd[data.NBcmd].syntax,"<dt [s]> <number of pts per block> <number of blocks> <measurement noise> <accelerometer mode> <accelerometer noise>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbmktestTTs 0.001 1000 10 0.1 0 0.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_mkTestTTseq(double dt, long NBpts, long NBblocks, double measnoise, int ACCnmode, double ACCnoise, int MODE)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"atmturbwfpredictf");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_Build_LinPredictor_Full_cli;
+    strcpy(data.cmd[data.NBcmd].info,"build full linear predictor from wavefront series");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input WF series (cube)> <mask image> <predictor order> <predictor time lag> <SVD eps>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbwfpredictf wfin wfmask 20 3.5 0.001");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, double SVDeps)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"atmturbwfpapply");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AtmosphericTurbulence_Apply_LinPredictor_Full_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Apply full linear predictor from wavefront series");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input WF series (cube)> <mask image> <predictor order> <predictor time lag> <predicted future values> <measured future values>");
+    strcpy(data.cmd[data.NBcmd].example,"atmturbwfpapply wfin wfmask 20 3.5 outp outf");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Apply_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, char *WFoutp_name, char *WFoutf_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"atmturbwfpredict");
@@ -1178,10 +1236,15 @@ int AtmosphericTurbulence_ReadConf()
     read_config_parameter(CONFFILE, KEYWORD, CONTENT);
     CONF_WAVEFRONT_AMPLITUDE = atoi(CONTENT);
 
-    strcpy(KEYWORD,"FRESNEL_PROPAGATION");
-    read_config_parameter(CONFFILE, KEYWORD, CONTENT);
-    CONF_FRESNEL_PROPAGATION = atoi(CONTENT);
-
+	if(CONF_WAVEFRONT_AMPLITUDE == 1)
+	{
+		strcpy(KEYWORD,"FRESNEL_PROPAGATION");
+		read_config_parameter(CONFFILE, KEYWORD, CONTENT);
+		CONF_FRESNEL_PROPAGATION = atoi(CONTENT);
+	}
+	else
+		CONF_FRESNEL_PROPAGATION = 0;
+		
     strcpy(KEYWORD,"FRESNEL_PROPAGATION_BIN");
     read_config_parameter(CONFFILE, KEYWORD, CONTENT);
     CONF_FRESNEL_PROPAGATION_BIN = atof(CONTENT);
@@ -1488,12 +1551,15 @@ int make_AtmosphericTurbulence_wavefront_series()
 
 
 
+
     printf("Building reference atmosphere model ...\n");
     // create atm.txt file with concentrations as function of altitude
     // load RIA (Refractive index and Absorption) files if available 
     AtmosphereModel_Create_from_CONF(CONFFILE);
 
 
+
+	
     // SOME TESTING
   //  AtmosphereModel_RefractionPath(1.5, CONF_ZANGLE, 0); //79.999/180.0*M_PI);//CONF_ZANGLE);
  
@@ -1658,7 +1724,11 @@ int make_AtmosphericTurbulence_wavefront_series()
 
 
 
-    NBFRAMES = (long) (CONF_TIME_SPAN/CONF_WFTIME_STEP);
+    NBFRAMES = (long) (1.0*CONF_TIME_SPAN/CONF_WFTIME_STEP+0.5);
+    printf("%.16f  %.16f  ->  %ld\n", CONF_TIME_SPAN, CONF_WFTIME_STEP, NBFRAMES);
+    
+	
+    
     naxes[2] = NBFRAMES;
     naxesout[2] = NBFRAMES;
 
@@ -2312,13 +2382,18 @@ int make_AtmosphericTurbulence_wavefront_series()
                 Scoeff =  CONF_LAMBDA/CONF_SLAMBDA * Nslambda/Nlambda; // multiplicative coefficient to go from reference lambda phase to science lambda phase
 
 
+			//	printf("STEP 000\n");
+		//		fflush(stdout);
+
                 if(layer!=NBLAYERS-1)
                 {
                     if(super_layer_index[layer+1]!=super_layer_index[layer])
                     {
                         if(CONF_FRESNEL_PROPAGATION==1)
                         {
-                            // printf("[%g %g %g]",CONF_PUPIL_SCALE/pfactor,SLAYER_ALT[super_layer_index[layer+1]]-SLAYER_ALT[super_layer_index[layer]], CONF_LAMBDA);
+          //                  printf("[%g %g %g]\n",CONF_PUPIL_SCALE/pfactor,SLAYER_ALT[super_layer_index[layer+1]]-SLAYER_ALT[super_layer_index[layer]], CONF_LAMBDA);
+			//				fflush(stdout);//TEST
+                      
                             Fresnel_propagate_wavefront("array2","array2p", CONF_PUPIL_SCALE/pfactor,(SLAYER_ALT[super_layer_index[layer+1]]-SLAYER_ALT[super_layer_index[layer]])/cos(CONF_ZANGLE), CONF_LAMBDA);
                             delete_image_ID("array2");
                             chname_image_ID("array2p","array2");
@@ -2328,6 +2403,9 @@ int make_AtmosphericTurbulence_wavefront_series()
                         {
                             if(CONF_FRESNEL_PROPAGATION==1)
                             {
+				//				printf("FRESNEL PROPAGATION\n");  //TEST
+					//			fflush(stdout);
+								
                                 Fresnel_propagate_wavefront("sarray2","sarray2p", CONF_PUPIL_SCALE/pfactor, (SLAYER_ALT[super_layer_index[layer+1]]-SLAYER_ALT[super_layer_index[layer]])/cos(CONF_ZANGLE), CONF_SLAMBDA);
                                 delete_image_ID("sarray2");
                                 chname_image_ID("sarray2p","sarray2");
@@ -2336,6 +2414,11 @@ int make_AtmosphericTurbulence_wavefront_series()
                         }
                     }
                 }
+
+
+			//	printf("STEP 001\n");
+			//	fflush(stdout);
+
 
                 // layer_scale = (SODIUM_ALT-LAYER_ALT[layer])/SODIUM_ALT;
 
@@ -2401,6 +2484,10 @@ int make_AtmosphericTurbulence_wavefront_series()
 
                 /* make wavefront */
 
+//				printf("STEP 002\n");
+//				fflush(stdout);
+
+
                 for(ii=0; ii<naxes[0]; ii++)
                     for(jj=0; jj<naxes[1]; jj++)
                     {
@@ -2438,6 +2525,8 @@ int make_AtmosphericTurbulence_wavefront_series()
                         }
                     }
 
+//				printf("STEP 003\n");
+//				fflush(stdout);
 
 
                 /* make swavefront */
@@ -2481,6 +2570,10 @@ int make_AtmosphericTurbulence_wavefront_series()
                             }
                         }
                 }
+
+
+//				printf("STEP 004\n");
+//				fflush(stdout);
 
 
                 /* cwavefront */
@@ -3369,6 +3462,682 @@ int measure_wavefront_series(float factor)
 
     return(0);
 }
+
+
+
+
+//
+// make TT test sequence
+// if ACCmode == 1, include accelerometer
+//
+// MODE = 0 : 30 sine waves
+// MODE = 1 : repeating waveform (non-periodic) 
+//
+int AtmosphericTurbulence_mkTestTTseq(double dt, long NBpts, long NBblocks, double measnoise, int ACCmode, double ACCnoise, int MODE)
+{ 
+	long IDout, IDoutn;
+	long block;
+	
+	double tsim = 0.0; // running time	
+	double fv1;
+	double fv2 = 0.0;
+	char imname[200];
+	char fname[200];
+
+	char imnamen[200];
+	char fnamen[200];
+
+	double x, y;
+	double vx, vy; // speed
+	double xold, yold, vxold, vyold;
+	double ax, ay; // acceleration
+	double xn, yn;
+	double axn, ayn; // acceleration
+	
+	double ameasnoise;
+	
+	long NBfrequ;
+	double *farray_frequ;
+	double *farray_amp;
+	double *farray_PA;
+	double *farray_pha;
+	long frequ;
+	
+	long ii;
+	
+	FILE *fp;
+	
+	
+	
+	long NBpt_wf0 = 40;
+	long i;
+	long wfi0;
+	long WFon0;
+	double *xwaveform0;
+	double *ywaveform0;
+
+	long NBpt_wf1 = 100;
+	long wfi1;
+	long WFon1;
+	double *xwaveform1;
+	double *ywaveform1;
+
+	double amp;
+	
+	
+	
+	
+	// create waveform
+	xwaveform0 = (double*) malloc(sizeof(double)*NBpt_wf0);
+	ywaveform0 = (double*) malloc(sizeof(double)*NBpt_wf0);
+	for(i=0;i<NBpt_wf0;i++)
+	{
+		x = 1.0*i/NBpt_wf0;
+		xwaveform0[i] = 5.0*(1.0-x)*pow(sin(2.0*M_PI*x*2.0), 5.0);
+		ywaveform0[i] = -5.0*4.0*exp(pow((-2.0*x),3.0)) * exp(-pow(2.0*(1.0-x), 20.0));
+	}
+	
+	xwaveform1 = (double*) malloc(sizeof(double)*NBpt_wf1);
+	ywaveform1 = (double*) malloc(sizeof(double)*NBpt_wf1);
+	for(i=0;i<NBpt_wf1;i++)
+	{
+		x = 1.0*i/NBpt_wf1;
+		amp = 10*sqrt(x)*exp(-x*x*8);
+		xwaveform1[i] = amp*sin(2.0*M_PI*x*4.0);
+		ywaveform1[i] = amp*cos(2.0*M_PI*x*4.0);
+	}
+	
+	
+
+	
+	
+	
+	NBfrequ = 20;
+	farray_frequ = (double*) malloc(sizeof(double)*NBfrequ);
+	farray_amp = (double*) malloc(sizeof(double)*NBfrequ);
+	farray_PA = (double*) malloc(sizeof(double)*NBfrequ);
+	farray_pha = (double*) malloc(sizeof(double)*NBfrequ);
+	
+	farray_frequ[0] = 15.0;
+	farray_amp[0] = 1.0;
+	farray_PA[0] = 0.0;
+	farray_pha[0] = 0.0;
+	
+	for(frequ=1; frequ<NBfrequ; frequ++)
+		{
+			farray_frequ[frequ] = 1.1*farray_frequ[frequ-1];
+			farray_amp[frequ] = farray_amp[frequ-1];
+			farray_PA[frequ] = 1.0*frequ;
+			farray_pha[frequ] = farray_pha[frequ-1];
+		}
+	
+	fp = fopen("testTTseq.txt", "w");
+
+	WFon0 = 0;
+	wfi0 = 0;
+	fv1 = 0.0;
+	WFon1 = 0;
+	wfi1 = 0;
+	
+	
+	
+	for(block=0; block < NBblocks; block++)
+		{
+			sprintf(imname, "testTT%05ld", block);
+			sprintf(fname, "!%s.fits", imname);
+	
+			sprintf(imnamen, "testTTn%05ld", block);
+			sprintf(fnamen, "!%s.fits", imnamen);
+			
+			if(ACCmode==0)
+				{
+					IDout = create_3Dimage_ID(imname, 2, 2, NBpts);
+					IDoutn = create_3Dimage_ID(imnamen, 2, 2, NBpts);
+				}
+			else
+				{
+					IDout = create_3Dimage_ID(imname, 4, 2, NBpts);
+					IDoutn = create_3Dimage_ID(imnamen, 4, 2, NBpts);
+				}
+			
+				
+			xold = 0.0;
+			yold = 0.0;
+			vxold = 0.0;
+			vyold = 0.0;
+			
+		//	printf("---------------------------fv1 = %f\n", fv1);
+		//	printf(" LOOP START2   fv1 = %f\n", fv1);
+
+
+
+			for(ii=0;ii<NBpts;ii++)
+			{
+			//	printf(" LOOP START %ld/%ld  fv1 = %f\n", ii, NBpts, fv1);
+						
+				x = 0.0;
+				y = 0.0;
+				ax = 0.0;
+				ay = 0.0;
+				
+				if(MODE==0)
+					for(frequ=0; frequ<NBfrequ; frequ++)
+					{
+						x += farray_amp[frequ] * sin(2.0*M_PI*(tsim*farray_frequ[frequ])+farray_pha[frequ]) * cos(farray_PA[frequ]);
+						y += farray_amp[frequ] * sin(2.0*M_PI*(tsim*farray_frequ[frequ])+farray_pha[frequ]) * sin(farray_PA[frequ]);
+						ax -= 0.0002*farray_amp[frequ] * cos(farray_PA[frequ]) * sin(2.0*M_PI*(tsim*farray_frequ[frequ])+farray_pha[frequ]) * farray_frequ[frequ] * farray_frequ[frequ];
+						ay -= 0.0002*farray_amp[frequ] * sin(farray_PA[frequ]) * sin(2.0*M_PI*(tsim*farray_frequ[frequ])+farray_pha[frequ]) * farray_frequ[frequ] * farray_frequ[frequ];
+					}
+				
+				if(MODE==1)
+					{
+						if(ii==1060)
+							WFon0 = 1;
+						
+						if( (WFon0==0)&&((ii>1200)||(ii<900)) )
+							{
+								if(  fabs(sin(cos(1800.123456*fv1))) < 0.05  )
+									WFon0 = 1;
+								wfi0 = 0;
+							}
+						if(WFon0==1)
+							{
+								x += xwaveform0[wfi0];
+								y += ywaveform0[wfi0];
+								wfi0++;
+							}
+						if(wfi0==NBpt_wf0-1)
+							{
+								wfi0 = 0;
+								WFon0 = 0;
+							}
+						
+						
+						
+						if(ii==1110)
+							WFon1 = 1;
+						if( (WFon1==0) &&((ii>1200)||(ii<900)) )
+							{
+								if(  fabs(sin(cos(1700.123456*fv1))) < 0.05  )
+									WFon1 = 1;
+								wfi1 = 0;
+							}
+						if(WFon1==1)
+							{
+								x += xwaveform1[wfi1];
+								y += ywaveform1[wfi1];
+								wfi1++;
+							}
+						if(wfi1==NBpt_wf1-1)
+							{
+								wfi1 = 0;
+								WFon1 = 0;
+							}
+																			
+					}
+				
+				vx = x-xold;
+				vy = y-yold;
+				xold = x;
+				yold = y;
+				
+				ax = -5.5*(vxold-vx);
+				ay = -5.5*(vyold-vy);
+					
+
+				xn = x + measnoise*gauss();
+				yn = y + measnoise*gauss();
+				axn = ax + ACCnoise*gauss();
+				ayn = ay + ACCnoise*gauss();
+				fprintf(fp, "%lf %f %f %f %f   %f %f %f %f\n", tsim, x, y, xn, yn, ax, ay, axn, ayn);
+
+				vxold = vx;
+				vyold = vy;
+
+
+				if(ACCmode==0)
+				{
+				data.image[IDout].array.F[4*ii] = x;
+				data.image[IDout].array.F[4*ii+1] = y;
+
+				data.image[IDout].array.F[4*ii+2] = -x;
+				data.image[IDout].array.F[4*ii+3] = -y;
+
+
+
+				data.image[IDoutn].array.F[4*ii] = xn;
+				data.image[IDoutn].array.F[4*ii+1] = yn;
+
+				data.image[IDoutn].array.F[4*ii+2] = -xn;
+				data.image[IDoutn].array.F[4*ii+3] = -yn;
+				}
+				else
+				{
+				data.image[IDout].array.F[8*ii] = x;
+				data.image[IDout].array.F[8*ii+1] = y;
+				data.image[IDout].array.F[8*ii+2] = ax;
+				data.image[IDout].array.F[8*ii+3] = ay;
+
+				data.image[IDout].array.F[8*ii+4] = -x;
+				data.image[IDout].array.F[8*ii+5] = -y;
+				data.image[IDout].array.F[8*ii+6] = -ax;
+				data.image[IDout].array.F[8*ii+7] = -ay;
+
+
+
+				data.image[IDoutn].array.F[8*ii] = xn;
+				data.image[IDoutn].array.F[8*ii+1] = yn;
+				data.image[IDoutn].array.F[8*ii+2] = axn;
+				data.image[IDoutn].array.F[8*ii+3] = ayn;
+
+				data.image[IDoutn].array.F[8*ii+4] = -xn;
+				data.image[IDoutn].array.F[8*ii+5] = -yn;
+				data.image[IDoutn].array.F[8*ii+6] = -axn;
+				data.image[IDoutn].array.F[8*ii+7] = -ayn;
+				}
+			
+				tsim += dt;
+	//			printf("=== %f + %f -> ", fval1, t);
+
+			//	printf("   %f ===\n", fval1);
+				fv1 = fv1 + tsim;
+				//printf(" LOOP END   %f  fv1 = %f\n", tsim, fv1);
+			}
+			
+			
+			save_fits(imname, fname);
+			printf("%s -> %s\n", imnamen, fnamen);
+			save_fits(imnamen, fnamen);
+		}
+	fclose(fp);
+	
+	free(farray_frequ);
+	free(farray_amp);
+	free(farray_pha);
+	
+	free(xwaveform0);
+	free(ywaveform0);
+	free(xwaveform1);
+	free(ywaveform1);
+	
+	return(0);
+}
+
+
+
+
+
+//
+// build full predictor (all pixels of WF)
+//
+int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, double SVDeps, double lambda)
+{
+	long ID_WFin;
+	long NBmvec; // number of entries in data matrix
+	long ID_WFmask;
+	long xsize, ysize, zsize;
+	long xysize;
+	
+	long IDmatA; // data matrix
+	long NBpix;
+	long pix;
+	long PFpix;
+	
+	long mvecsize;
+	long *pixarray_x;
+	long *pixarray_y;
+	long *pixarray_xy;
+	
+	long IDmatC;
+	
+	int Save = 1;
+	char filtname[200];
+	char filtfname[200];
+	double val, valf;
+	long k0;
+	long ID_Pfilt;
+	float alpha;
+	long ii, jj, kk, dt, m;
+	int ret;
+	
+	double tot, totm;
+	
+	int REG = 0;  // 1 if regularization
+	long m1, NBmvec1;
+	
+	
+	if(lambda>1e-20)
+		REG = 1;
+	
+	ID_WFin = image_ID(WFin_name);
+	xsize = data.image[ID_WFin].md[0].size[0];
+	ysize = data.image[ID_WFin].md[0].size[1];
+	zsize = data.image[ID_WFin].md[0].size[2];
+	xysize = xsize*ysize;
+	
+	ID_WFmask = image_ID(WFmask_name);
+	NBpix = 0;
+	for(ii=0;ii<xsize*ysize;ii++)
+		if(data.image[ID_WFmask].array.F[ii] > 0.5)
+			NBpix++;
+	pixarray_x = (long*) malloc(sizeof(long)*NBpix);
+	pixarray_y = (long*) malloc(sizeof(long)*NBpix);
+	pixarray_xy = (long*) malloc(sizeof(long)*NBpix);
+	
+
+
+
+	// PRE_PROCESS WAVEFRONTS : REMOVE PISTON TERM
+
+	totm = 0.0;
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			if(data.image[ID_WFmask].array.F[jj*xsize+ii] > 0.5)
+				totm += 1.0;
+
+	for(kk=0;kk<zsize;kk++)
+	{
+		tot = 0.0;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+			{
+				data.image[ID_WFin].array.F[kk*xysize+jj*xsize+ii] *= data.image[ID_WFmask].array.F[jj*xsize+ii];
+				tot += data.image[ID_WFin].array.F[kk*xysize+jj*xsize+ii];
+			}
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<ysize;jj++)
+					if(data.image[ID_WFmask].array.F[jj*xsize+ii] > 0.5)
+						data.image[ID_WFin].array.F[kk*xysize+jj*xsize+ii] -= tot/totm;
+		}
+	if(Save==1)
+		save_fits(WFin_name, "!wfinm.fits");
+	
+	
+	
+	// LOAD PIXELS COORDINATES INTO ARRAYS
+	
+	NBpix = 0;
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			if(data.image[ID_WFmask].array.F[jj*xsize+ii] > 0.5)
+				{
+					pixarray_x[NBpix] = ii;
+					pixarray_y[NBpix] = jj;
+					pixarray_xy[NBpix] = jj*xsize+ii;
+					NBpix++;
+				}
+	printf("NBpix = %ld\n", NBpix);
+	
+	
+	
+	
+	ret = system("mkdir -p pixfilters");
+	
+	// build data matrix
+	NBmvec = zsize - PForder - (int) (PFlag) - 1;
+	mvecsize = NBpix * PForder;
+	
+	if(REG==0)
+		IDmatA = create_2Dimage_ID("PFmatD", NBmvec, mvecsize);
+    else
+		IDmatA = create_2Dimage_ID("PFmatD", NBmvec + mvecsize, mvecsize);
+		
+    
+    
+    // each column is a measurement
+    // m index is measurement
+    // dt*NBpix+pix index is pixel
+    
+    
+    // CREATE DATA MATRIX
+    
+	if(REG==0)
+		{
+			printf("NBmvec   = %ld  -> %ld \n", NBmvec, NBmvec);
+			NBmvec1 = NBmvec;
+		}
+	else
+		{
+			printf("NBmvec   = %ld  -> %ld \n", NBmvec, NBmvec + mvecsize);
+			NBmvec1 = NBmvec + mvecsize;
+		}
+    
+    printf("mvecsize = %ld  (%d x %ld)\n", mvecsize, PForder, NBpix);
+
+
+	for(m=0; m<NBmvec; m++)
+	{
+		k0 = m + PForder-1; // dt=0 index
+		for(pix=0; pix<NBpix; pix++)
+			for(dt=0; dt<PForder; dt++)		
+				data.image[IDmatA].array.F[(NBpix*dt+pix)*NBmvec1+m] = data.image[ID_WFin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
+	}
+	if(REG==1)
+		{
+			for(m=0; m<mvecsize; m++)
+				{
+					m1 = NBmvec + m;
+					data.image[IDmatA].array.F[(m)*NBmvec1+(NBmvec+m)] = lambda;
+				}
+		}
+
+	
+	if(Save == 1)
+		save_fits("PFmatD", "!PFmatD.fits");
+	list_image_ID();
+
+	
+
+
+	printf("Compute reconstruction matrix\n");
+	fflush(stdout);
+	linopt_compute_reconstructionMatrix("PFmatD", "PFmatC", SVDeps, "PF_VTmat");
+    if(Save==1)
+        save_fits("PFmatC", "!PFmatC.fits");
+    IDmatC = image_ID("PFmatC");
+
+	printf("Compute filters\n");
+	fflush(stdout);
+	for(PFpix=0; PFpix<NBpix; PFpix++) // PFpix is the pixel for which the filter is created
+	{
+		sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", pixarray_xy[PFpix], pixarray_x[PFpix], pixarray_y[PFpix]);			
+		sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", pixarray_xy[PFpix], pixarray_x[PFpix], pixarray_y[PFpix]);
+		ID_Pfilt = create_3Dimage_ID(filtname, xsize, ysize, PForder);
+	
+	//	for(l=0; l<mvecsize; l++)
+		for(pix=0; pix<NBpix; pix++)
+			{
+				for(dt=0; dt<PForder; dt++)		
+					{
+						val = 0.0;
+						for(m=0; m<NBmvec; m++)
+							{
+								k0 =  m + PForder - 1; // dt=0 index
+								k0 += (long) PFlag;
+								alpha = PFlag - ((long) PFlag);
+
+								valf = (1.0-alpha)*data.image[ID_WFin].array.F[(k0)*xysize + pixarray_xy[PFpix]] + alpha*data.image[ID_WFin].array.F[(k0+1)*xysize + pixarray_xy[PFpix]];
+
+								val += data.image[IDmatC].array.F[(NBpix*dt+pix)*NBmvec1+m] * valf;
+							}
+						data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
+					}
+			
+			save_fits(filtname, filtfname);
+			}
+	}
+	
+	
+
+
+	free(pixarray_x);
+	free(pixarray_y);
+	
+	return(0);
+}
+
+
+
+
+//
+// Apply full predictor (all pixels of WF)
+//
+// outp : prediction
+// outf : time-shifted measurement
+// outft : actual future value
+// reft : true wavefront (no WFS noise)
+//
+// -> outp_res  (prediction residual)
+// -> outf_res  (future measurement residual)
+// -> outl_res  (last measurement residual)
+//
+int AtmosphericTurbulence_Apply_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, char *WFoutp_name, char *WFoutf_name)
+{
+	long ID_WFin;
+	long NBmvec; // number of entries in data matrix
+	long ID_WFmask;
+	long xsize, ysize, zsize;
+	long xysize;
+	
+	long NBpix;
+	long pix;
+	long PFpix;
+
+	long *pixarray_x;
+	long *pixarray_y;
+	long *pixarray_xy;
+	
+	
+	char filtname[200];
+	char filtfname[200];
+	double val, valf, valp;
+	long ID_Pfilt;
+	float alpha;
+	long ii, jj, kk, dt, m;
+	int ret;
+	
+	double tot, totm;
+	long IDoutp, IDoutf;
+	long step;
+	long PFlagl;
+	
+	long IDreft; 
+	long IDoutft; // truth (if exists)
+	double valft;
+	
+	long IDoutp_res;
+	long IDoutf_res;
+	long IDoutl_res;
+	
+	
+	
+	
+	ID_WFin = image_ID(WFin_name);
+	xsize = data.image[ID_WFin].md[0].size[0];
+	ysize = data.image[ID_WFin].md[0].size[1];
+	zsize = data.image[ID_WFin].md[0].size[2];
+	xysize = xsize*ysize;
+	
+	IDoutp = create_3Dimage_ID(WFoutp_name, xsize, ysize, zsize);
+	IDoutf = create_3Dimage_ID(WFoutf_name, xsize, ysize, zsize);
+	IDreft = image_ID("reft");
+	if(IDreft!=-1)
+		{
+			IDoutft = create_3Dimage_ID("outft", xsize, ysize, zsize);
+			IDoutp_res = create_3Dimage_ID("outp_res", xsize, ysize, zsize);
+			IDoutf_res = create_3Dimage_ID("outf_res", xsize, ysize, zsize);
+			IDoutl_res = create_3Dimage_ID("outl_res", xsize, ysize, zsize);
+		}
+	
+	ID_WFmask = image_ID(WFmask_name);
+	NBpix = 0;
+	for(ii=0;ii<xsize*ysize;ii++)
+		if(data.image[ID_WFmask].array.F[ii] > 0.5)
+			NBpix++;
+	pixarray_x = (long*) malloc(sizeof(long)*NBpix);
+	pixarray_y = (long*) malloc(sizeof(long)*NBpix);
+	pixarray_xy = (long*) malloc(sizeof(long)*NBpix);
+	
+	
+	totm = 0.0;
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			if(data.image[ID_WFmask].array.F[jj*xsize+ii] > 0.5)
+				totm += 1.0;
+
+	NBpix = 0;
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			if(data.image[ID_WFmask].array.F[jj*xsize+ii] > 0.5)
+				{
+					pixarray_x[NBpix] = ii;
+					pixarray_y[NBpix] = jj;
+					pixarray_xy[NBpix] = jj*xsize+ii;
+					NBpix++;
+				}
+	printf("NBpix = %ld\n", NBpix);
+	
+	
+	
+	alpha = PFlag - ((long) PFlag);
+	PFlagl = (long) PFlag;
+	
+	printf("Read and Apply filters\n");
+	fflush(stdout);
+	for(PFpix=0; PFpix<NBpix; PFpix++) 
+	{
+		sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", pixarray_xy[PFpix], pixarray_x[PFpix], pixarray_y[PFpix]);			
+		sprintf(filtfname, "./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", pixarray_xy[PFpix], pixarray_x[PFpix], pixarray_y[PFpix]);
+		ID_Pfilt = load_fits(filtfname, filtname, 1);
+	
+		for(kk=PForder;kk<zsize;kk++)
+			{
+				valp = 0.0;
+				for(step=0;step<PForder;step++)
+					{
+						for(ii=0;ii<xsize*ysize;ii++)
+							valp += data.image[ID_Pfilt].array.F[xysize*step+ii]*data.image[ID_WFin].array.F[(kk-step)*xysize + ii];
+					}
+					
+				valf = 0.0;
+				if(kk+PFlag+1<zsize)
+					valf = (1.0-alpha) * data.image[ID_WFin].array.F[(kk+PFlagl)*xysize+pixarray_xy[PFpix]] + alpha * data.image[ID_WFin].array.F[(kk+PFlagl+1)*xysize+pixarray_xy[PFpix]];
+			
+				valft = 0.0;
+				if(kk+PFlag+1<zsize)
+					valft = (1.0-alpha) * data.image[IDreft].array.F[(kk+PFlagl)*xysize+pixarray_xy[PFpix]] + alpha * data.image[IDreft].array.F[(kk+PFlagl+1)*xysize+pixarray_xy[PFpix]];
+		
+		
+				data.image[IDoutp].array.F[kk*xysize+pixarray_xy[PFpix]] = valp;
+				data.image[IDoutf].array.F[kk*xysize+pixarray_xy[PFpix]] = valf;
+				
+				if(IDreft!=-1)
+				{					
+					valft = 0.0;
+					if(kk+PFlag+1<zsize)
+						valft = (1.0-alpha) * data.image[IDreft].array.F[(kk+PFlagl)*xysize+pixarray_xy[PFpix]] + alpha * data.image[IDreft].array.F[(kk+PFlagl+1)*xysize+pixarray_xy[PFpix]];
+					data.image[IDoutft].array.F[kk*xysize+pixarray_xy[PFpix]] = valft;
+
+					data.image[IDoutp_res].array.F[kk*xysize+pixarray_xy[PFpix]] = valp-valft;					
+					data.image[IDoutf_res].array.F[kk*xysize+pixarray_xy[PFpix]] = valf-valft;		
+					data.image[IDoutl_res].array.F[kk*xysize+pixarray_xy[PFpix]] = data.image[ID_WFin].array.F[kk*xysize + pixarray_xy[PFpix]]-valft;					
+				}
+			}
+	}	
+	
+	
+
+
+	free(pixarray_x);
+	free(pixarray_y);
+	free(pixarray_xy);
+
+	return(0);
+}
+
+
+
+
 
 
 

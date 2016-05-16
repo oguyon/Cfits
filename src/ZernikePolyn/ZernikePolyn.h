@@ -42,6 +42,8 @@ int get_zern_array(char *ID_name, long max_zer, double radius, double *array);
 
 int remove_zerns(char *ID_name, char *ID_name_out, int max_zer, double radius);
 
+long ZERNIKEPOLYN_rmPiston(char *ID_name, char *IDmask_name);
+
 int remove_TTF(char *ID_name, char *ID_name_out, double radius);
 
 double fit_zer(char *ID_name, long maxzer_nb, double radius, double *zvalue, double *residual);

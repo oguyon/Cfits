@@ -23,6 +23,11 @@ int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int facto
 int make_AtmosphericTurbulence_wavefront_series();
 
 int measure_wavefront_series(float factor);
+ 
+int AtmosphericTurbulence_mkTestTTseq(double dt, long NBpts, long NBblocks, double measnoise, int ACCnmode, double ACCnoise, int MODE);
+
+int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, double SVDeps, double lambda);
+int AtmosphericTurbulence_Apply_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, char *WFoutp_name, char *WFoutf_name);
 
 int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, long WFPlag, long WFP_NBstep, long WFP_xyrad, long WFPiipix, long WFPjjpix);
 int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix);
