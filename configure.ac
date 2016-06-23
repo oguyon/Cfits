@@ -307,6 +307,38 @@ fi
 
 
 
+#=================================================
+# Setup MAGMA
+
+
+# Check: enable MAGMA?
+AC_MSG_CHECKING([whether to use MAGMA library])
+AC_ARG_ENABLE(magma,
+    [AS_HELP_STRING(--enable-magma,enable MAGMA support)],
+    magmaval="yes",
+    magmaval="no")
+AC_MSG_RESULT([$magmaval])
+
+# check to see if CUDA been selected
+if test "$magmaval" == "no"; then
+    AC_MSG_WARN([Not using MAGMA!])
+fi
+
+if test  "$magmaval" = "yes"; then
+	MAGMA_LIBS="-lmagma "
+	MAGMA_CFLAGS="-DADD_ -I/usr/local/magma/include/"
+	MAGMA_LDFLAGS="-L/usr/local/magma/lib/"
+	AC_DEFINE([HAVE_MAGMA],[1],[Defined if MAGMA should be used])
+	eval "ARRAY${N}='-D_MAGMA'"
+    N=`expr $N + 1`
+    LIBS="$LIBS $MAGMA_LIBS"
+    LDFLAGS="$LDFLAGS $MAGMA_LDFLAGS"
+    CFLAGS="$CFLAGS $MAGMA_CFLAGS"
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH -L/usr/local/magma/lib/"
+fi
+
+
+
 
 # Create our own a symbol for execname until we can find the right one
 EXECNAME=Cfits
@@ -318,7 +350,7 @@ LIBS="$LIBS -lpthread"
 #	LIBS="$LIBS -lcuda -lcudart -lcufft"
 #fi
 
-AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/img_reduce/Makefile src/AOloopControl_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphereModel/Makefile src/AtmosphericTurbulence/Makefile src/cudacomp/Makefile src/SCExAO_control/Makefile)
+AC_CONFIG_FILES(Makefile src/Makefile src/00CORE/Makefile src/COREMOD_arith/Makefile src/COREMOD_iofits/Makefile src/COREMOD_memory/Makefile src/COREMOD_tools/Makefile src/info/Makefile src/fft/Makefile src/statistic/Makefile src/linopt_imtools/Makefile src/image_gen/Makefile src/kdtree/Makefile src/image_filter/Makefile src/image_basic/Makefile src/WFpropagate/Makefile src/ZernikePolyn/Makefile src/coronagraphs/Makefile src/OpticsMaterials/Makefile src/OptSystProp/Makefile src/PIAACMCsimul/Makefile src/image_format/Makefile src/img_reduce/Makefile src/AOloopControl_DM/Makefile src/AOsystSim/Makefile src/AOloopControl/Makefile src/psf/Makefile src/AtmosphereModel/Makefile src/AtmosphericTurbulence/Makefile src/cudacomp/Makefile src/SCExAO_control/Makefile src/TransitLC/Makefile)
 
 AC_OUTPUT
 

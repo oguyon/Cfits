@@ -7,8 +7,8 @@ pid=$$
 
 NBthreadsFPMresp=4 
 
-execname="PIAACMCdesign -e"  # only run program if X is inactive (prevents slowing down user)
-#execname="PIAACMCdesign"
+#execname="PIAACMCdesign -e"  # only run program if X is inactive (prevents slowing down user)
+execname="PIAACMCdesign"
 
 errorfile="errorstatus.txt"
 checkerrorstatus ()
@@ -102,6 +102,7 @@ printhelp_designsteps()
 	cecho "STEP 000 ----------------------------------------" $bwhite
 	echo ""
 	echo "    Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration"
+	echo "  PIAACMCsimul_exec mode(s): 000"
 	echo ""
 	echo "  OUTPUT:"
 	echo -e "     \033[1m Cmodes_$size.fits \033[0m       : Circular radial cosine modes"
@@ -156,13 +157,20 @@ printhelp_designsteps()
 	echo "     Compute on-axis PSF"
 	echo ""
 	cecho "STEP 004 ----------------------------------------" $bwhite
+	echo "  PIAACMCsimul_exec mode(s): 005"
 	echo ""
 	echo "     Optimize Lyot stop(s) shapes and locations (monochromatic light)"
 	echo ""
+	echo "  INPUT:"
+	echo -e "     \033[1m PIAACMC_lstransm           \033[0m : Lyot stops geometric transmission (default=0.85)"
+	echo ""
 	echo "  OUTPUT:"
-	echo -e "     \033[1m OAincohc.fits            \033[0m : Incoherent flux distribution in Lyot conjugation search space (3D cube), no focal plane mask (TBC)"
-	echo -e "     \033[1m LyotStop<###>.fits       \033[0m : Lyot Stop(s)"
-	echo -e "     \033[1m conjugations.txt         \033[0m : updated conjugation file"
+	echo -e "     \033[1m OAincohc.fits              \033[0m : Incoherent flux distribution in Lyot conjugation search space (3D cube), off-axis source"
+	echo -e "     \033[1m test_oals_index.fits       \033[0m : darkest pixel index of OAincohc.fits (NOTE: not used directly towards Lyot stop computation)"
+	echo -e "     \033[1m test_val_index.fits        \033[0m : darkest pixel value of OAincohc.fits (NOTE: not used directly towards Lyot stop computation)"
+	echo -e "     \033[1m LyotStop<###>.fits         \033[0m : Lyot Stop(s)"
+	echo -e "     \033[1m piaacmcparams.conf         \033[0m : contains updated conjugations (absolute)"
+	echo -e "     \033[1m piaacmcparams_step004.conf \033[0m : contains updated conjugations (absolute)"
 	echo ""
 	echo -e "\E[1;32m  DESCRIPTION:\E[0m" 
 	echo "    Compute incoherent flux in search space -> OAincohc.fits"

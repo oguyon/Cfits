@@ -49,7 +49,17 @@ int clock_gettime(int clk_id, struct timespec *t){
 #include <pthread.h>
 #include <cusolverDn.h>
 
- #endif
+#endif
+
+
+#ifdef HAVE_MAGMA
+
+#include "magma.h"
+#include "magma_v2.h"
+#include "magma_lapack.h"
+
+#endif
+
 
 
 #include "CLIcore.h"
@@ -62,6 +72,8 @@ int clock_gettime(int clk_id, struct timespec *t){
 
 #include "linopt_imtools/linopt_imtools.h" // for testing
 
+
+#define min(a,b) (((a)<(b))?(a):(b))
 
 
 # ifdef _OPENMP
@@ -226,6 +238,12 @@ int CUDACOMP_init()
         printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
         printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
         printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
+        printf("\n");
+        #ifdef HAVE_MAGMA
+		printf("Using MAGMA library\n");
+		magma_print_environment();
+		#endif
+
         printf("\n");
     }
 
@@ -1271,6 +1289,717 @@ void *compute_function( void *ptr )
 
 
 
+
+
+#ifdef HAVE_MAGMA
+
+
+
+
+
+
+/******************* CPU memory */
+#define TESTING_MALLOC_CPU( ptr, type, size )                              \
+    if ( MAGMA_SUCCESS !=                                                  \
+            magma_malloc_cpu( (void**) &ptr, (size)*sizeof(type) )) {      \
+        fprintf( stderr, "!!!! magma_malloc_cpu failed for: %s\n", #ptr ); \
+        magma_finalize();                                                  \
+        exit(-1);                                                          \
+    }
+
+#define TESTING_FREE_CPU( ptr ) magma_free_cpu( ptr )
+
+
+/******************* Pinned CPU memory */
+#ifdef HAVE_CUBLAS
+    // In CUDA, this allocates pinned memory.
+    #define TESTING_MALLOC_PIN( ptr, type, size )                                 \
+        if ( MAGMA_SUCCESS !=                                                     \
+                magma_malloc_pinned( (void**) &ptr, (size)*sizeof(type) )) {      \
+            fprintf( stderr, "!!!! magma_malloc_pinned failed for: %s\n", #ptr ); \
+            magma_finalize();                                                     \
+            exit(-1);                                                             \
+        }
+    
+    #define TESTING_FREE_PIN( ptr ) magma_free_pinned( ptr )
+#else
+    // For OpenCL, we don't support pinned memory yet.
+    #define TESTING_MALLOC_PIN( ptr, type, size )                              \
+        if ( MAGMA_SUCCESS !=                                                  \
+                magma_malloc_cpu( (void**) &ptr, (size)*sizeof(type) )) {      \
+            fprintf( stderr, "!!!! magma_malloc_cpu failed for: %s\n", #ptr ); \
+            magma_finalize();                                                  \
+            exit(-1);                                                          \
+        }
+    
+    #define TESTING_FREE_PIN( ptr ) magma_free_cpu( ptr )
+#endif
+
+
+/******************* GPU memory */
+#ifdef HAVE_CUBLAS
+    // In CUDA, this has (void**) cast.
+    #define TESTING_MALLOC_DEV( ptr, type, size )                              \
+        if ( MAGMA_SUCCESS !=                                                  \
+                magma_malloc( (void**) &ptr, (size)*sizeof(type) )) {          \
+            fprintf( stderr, "!!!! magma_malloc failed for: %s\n", #ptr );     \
+            magma_finalize();                                                  \
+            exit(-1);                                                          \
+        }
+#else
+    // For OpenCL, ptr is cl_mem* and there is no cast.
+    #define TESTING_MALLOC_DEV( ptr, type, size )                              \
+        if ( MAGMA_SUCCESS !=                                                  \
+                magma_malloc( &ptr, (size)*sizeof(type) )) {                   \
+            fprintf( stderr, "!!!! magma_malloc failed for: %s\n", #ptr );     \
+            magma_finalize();                                                  \
+            exit(-1);                                                          \
+        }
+#endif
+
+#define TESTING_FREE_DEV( ptr ) magma_free( ptr )
+
+
+
+
+
+
+
+
+
+
+//
+// Computes control matrix
+// Conventions:
+//   m: number of actuators 
+//   n: number of sensors  
+int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name) /* works for m != n */
+{
+	long *arraysizetmp;
+	magma_int_t M, N, min_mn;
+	long m, n, ii, jj, k;
+	long ID_Rmatrix;
+	long ID_Cmatrix;
+	int atype;
+	
+	magma_int_t lda, ldu, ldv;
+	float dummy[1];
+	float *a, *h_R;         // a, h_R - mxn  matrices
+	float *U, *VT;			// u - mxm matrix , vt - nxn  matrix  on the  host
+	float *S1;              //  vectors  of  singular  values
+	magma_int_t  info;
+	magma_int_t  ione   = 1;
+	float  work[1], error = 1.;				// used in  difference  computations
+	float  mone =  -1.0, *h_work;           //  h_work  - workspace
+	magma_int_t  lwork;                     //  workspace  size
+	real_Double_t gpu_time , cpu_time;
+	
+	FILE *fp;
+	char fname[200];
+	long ID_VTmatrix;
+	float egvlim;
+	long maxMode, MaxNBmodes1, mode;
+
+	
+    arraysizetmp = (long*) malloc(sizeof(long)*3);
+
+    ID_Rmatrix = image_ID(ID_Rmatrix_name);
+    atype = data.image[ID_Rmatrix].md[0].atype;
+    
+    
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
+        m = data.image[ID_Rmatrix].md[0].size[2];
+        printf("3D image -> %ld %ld\n", n, m);
+        fflush(stdout);
+    }
+    else
+    {
+        n = data.image[ID_Rmatrix].md[0].size[0];
+        m = data.image[ID_Rmatrix].md[0].size[1];
+         printf("2D image -> %ld %ld\n", n, m);
+        fflush(stdout);
+   }
+
+	M = n;
+	N = m;
+
+	lda = M;
+	ldu = M;
+	ldv = N;
+	
+	min_mn=min(M,N);
+	
+    /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
+
+    printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+    fflush(stdout);
+
+
+	magma_init (); // initialize Magma
+	//  Allocate  host  memory
+	magma_smalloc_cpu (&a, lda*N);                  // host  memory  for a
+	magma_smalloc_cpu (&VT, ldv*N);                 // host  memory  for vt
+	magma_smalloc_cpu (&U, M*M);                    // host  memory  for u
+	magma_smalloc_cpu (&S1, min_mn );               // host  memory  for s1
+	magma_smalloc_pinned (&h_R, lda*N);             // host  memory  for r
+	magma_int_t  nb = magma_get_sgesvd_nb(M,N);     // opt. block  size
+	lwork = (M+N)*nb + 3* min_mn;
+	magma_smalloc_pinned (&h_work, lwork);          // host  mem. for  h_work
+
+
+	// write input h_R matrix
+	 if(atype==FLOAT)
+    {
+        for(k=0; k<m; k++)
+            for(ii=0; ii<n; ii++)
+                h_R[k*n+ii] =  data.image[ID_Rmatrix].array.F[k*n+ii];
+    }
+    else
+    {
+        for(k=0; k<m; k++)
+            for(ii=0; ii<n; ii++)
+                h_R[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
+    }
+
+	printf("M = %ld   N = %ld\n", (long) M, (long) N);
+	printf("=============== lwork = %ld\n", (long) lwork);
+	gpu_time = magma_wtime ();
+	magma_sgesvd( MagmaSomeVec, MagmaAllVec, M, N, h_R, lda, S1, U, ldu, VT, ldv, h_work, lwork, &info );
+	gpu_time = magma_wtime() - gpu_time;
+	if (info != 0) {
+                printf("magma_sgesvd returned error %d: %s.\n",
+                       (int) info, magma_strerror( info ));
+            }
+            
+	printf("sgesvd gpu time: %7.5f\n", gpu_time );   
+     
+     
+     // Write eigenvalues
+    sprintf(fname, "eigenv_magma.dat");
+    if((fp=fopen(fname, "w"))==NULL)
+      {
+        printf("ERROR: cannot create file \"%s\"\n", fname);
+        exit(0);
+      }
+    for(k=0; k<min_mn; k++)
+      fprintf(fp,"%ld %g\n", k, S1[k]);
+    fclose(fp);
+ 
+    egvlim = SVDeps * S1[0];
+       
+	MaxNBmodes1 = MaxNBmodes;
+	if(MaxNBmodes1>M)
+		MaxNBmodes1 = M;
+	if(MaxNBmodes1>N)
+		MaxNBmodes1 = N;
+	mode = 0;
+	while( (mode<MaxNBmodes1) && (S1[mode]>egvlim) )
+		mode++;
+	MaxNBmodes1 = mode;
+	
+	printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
+    // Write rotation matrix 
+    arraysizetmp[0] = m;
+    arraysizetmp[1] = m;
+    if(atype==FLOAT)
+    {
+        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, FLOAT, 0, 0);
+        for(ii=0; ii<m; ii++) // modes
+            for(k=0; k<m; k++) // modes
+                data.image[ID_VTmatrix].array.F[k*m+ii] = (float) VT[k*m+ii];
+    }
+    else
+    {
+        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, DOUBLE, 0, 0);
+        for(ii=0; ii<m; ii++) // modes
+            for(k=0; k<m; k++) // modes
+                data.image[ID_VTmatrix].array.D[k*m+ii] = (double) VT[k*m+ii];
+    }
+
+     
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
+        arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
+        arraysizetmp[2] = m;
+    }
+    else
+    {
+        arraysizetmp[0] = n;
+        arraysizetmp[1] = m;
+    }
+    
+    if(atype==FLOAT)
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+    else
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
+
+   // compute pseudo-inverse
+   // M+ = V Sig^-1 UT
+  /* for(ii=0;ii<M;ii++)
+		for(jj=0;jj<N;jj++)
+			for(mode=0;mode<MaxNBmodes1-1;mode++)
+				{
+					data.image[ID_Cmatrix].array.F[jj*M+ii] += VT[jj*N+mode]*U[mode*M+ii]/S1[mode];
+				}
+   */
+     
+            
+    free(a);                                        // free  host  memory
+	free(VT);                                       // free  host  memory
+	free(S1);                                       // free  host  memory
+	free(U);                                        // free  host  memory
+	magma_free_pinned(h_work );                  // free  host  memory
+	magma_free_pinned(h_R);                        // free  host  memory       
+            
+	magma_finalize ();                               //  finalize  Magma
+
+	free(arraysizetmp);
+
+    printf("[CM magma SVD done]\n");
+    fflush(stdout);
+
+    return(ID_Cmatrix);
+}
+
+
+//
+// Computes control matrix
+// Conventions:
+//   m: number of actuators 
+//   n: number of sensors  
+//	assumes n>m
+//
+// NOTE: NUMERICALLY STABLE FOR SVDeps >1e-3
+//
+int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name) /* works for m != n */
+{
+	long ID_Rmatrix;
+	int atype;
+	long *arraysizetmp;
+	int size; // variable for memory allocations
+    long n, m, N, M;
+    long ii, jj, k;
+    magma_int_t info;
+ 
+	
+	double *h_A, *d_A, *d_AtA, *h_AtA;
+	double *w1; // eigenvalues
+    double *h_R;
+	double aux_work[1];
+	double *h_work;
+	double *d_VT1;
+	double *h_VT1;
+	double *d_M2;
+	double *d_Ainv;
+	double *h_Ainv;
+	double *h_M2;
+ 
+	long ID_A, ID_AtA, ID_VT, ID_Ainv;
+ 
+	// Timing
+	int testmode = 0;
+	int timing = 0; 
+	struct timespec t0, t1, t2, t3, t4, t5, t6, t7;
+    double t01d, t12d, t23d, t34d, t45d, t56d, t67d;
+	struct timespec tdiff;
+ 
+ 
+    // queue for default device
+    magma_queue_t   queue;
+    
+   
+    magma_int_t aux_iwork[1];
+    magma_int_t lwork, liwork;
+	magma_int_t *iwork;
+	FILE *fp;
+	char fname[200];
+     
+    long maxMode, MaxNBmodes1, mode;
+    double egvlim;
+    long nbmodesremoved;
+    long ID_M2;
+    
+    long ID_Cmatrix;
+	
+     
+     
+       
+    if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t0);
+		
+    
+    
+    arraysizetmp = (long*) malloc(sizeof(long)*3);
+	
+
+
+    ID_Rmatrix = image_ID(ID_Rmatrix_name);
+    atype = data.image[ID_Rmatrix].md[0].atype;
+    
+    
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
+        m = data.image[ID_Rmatrix].md[0].size[2];
+        printf("3D image -> %ld %ld\n", n, m);
+        fflush(stdout);
+    }
+    else
+    {
+        n = data.image[ID_Rmatrix].md[0].size[0];
+        m = data.image[ID_Rmatrix].md[0].size[1];
+         printf("2D image -> %ld %ld\n", n, m);
+        fflush(stdout);
+   }
+
+	M = n;
+	N = m;
+	if(M<N)
+		{
+			printf("ERROR: this routine needs M > N\n");
+			exit(0);
+		}
+	
+	
+    /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
+
+    printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+    fflush(stdout);
+
+
+	magma_init(); // initialize Magma
+	//flops_init(); 
+    
+    magma_print_environment();
+    
+    
+
+	
+    
+	TESTING_MALLOC_CPU( h_A, double, M*N);
+    TESTING_MALLOC_DEV( d_A, double, M*N);
+    
+	TESTING_MALLOC_CPU( h_AtA, double, N*N);
+	TESTING_MALLOC_DEV( d_AtA, double, N*N);
+	
+	TESTING_MALLOC_CPU( h_VT1, double, N*N);
+	TESTING_MALLOC_DEV( d_VT1, double, N*N);
+	TESTING_MALLOC_DEV( d_M2, double, N*N);
+  
+  
+  // h_A d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
+	
+	// write input h_A matrix
+	 if(atype==FLOAT)
+    {
+        for(k=0; k<m; k++)
+            for(ii=0; ii<n; ii++)
+                h_A[k*n+ii] =  data.image[ID_Rmatrix].array.F[k*n+ii];
+    }
+    else
+    {
+        for(k=0; k<m; k++)
+            for(ii=0; ii<n; ii++)
+                h_A[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
+    }
+    
+    if(testmode==1)
+    {
+		ID_A = create_2Dimage_ID("mA", M, N);
+		for(ii=0;ii<M*N;ii++)
+			data.image[ID_A].array.F[ii] = h_A[ii];
+		save_fits("mA", "!test_mA.fits");
+	}
+	
+    magma_queue_create(0, &queue);
+	magma_dsetmatrix( M, N, h_A, M, d_A, M, queue);
+	TESTING_FREE_CPU( h_A );
+	
+	
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t1);
+
+	// COMPUTE trans(A) x A
+	magma_dgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, d_A, M, d_A, M, 0.0,  d_AtA, N, queue);
+	
+	if(testmode == 1)
+	{
+		magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, queue);
+		ID_AtA = create_2Dimage_ID("mAtA", N, N);
+		for(ii=0;ii<N*N;ii++)
+			data.image[ID_AtA].array.F[ii] = h_AtA[ii];
+		save_fits("mAtA", "!test_mAtA.fits");
+	}
+	
+	if(timing==1)		
+		clock_gettime(CLOCK_REALTIME, &t2);
+	
+	// COMPUTE eigenvalues and eigenvectors of trans(A) x A
+	
+	// get workspace size
+	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, aux_work,  -1, aux_iwork, -1, &info );
+	lwork  = (magma_int_t) MAGMA_S_REAL( aux_work[0] );
+	liwork = aux_iwork[0];
+	printf("workspace size : %ld  %ld\n", (long) lwork, (long) liwork);
+	
+	// allocate & compute
+	TESTING_MALLOC_CPU( iwork,  magma_int_t,        liwork );
+	TESTING_MALLOC_PIN( h_work, double, lwork  );
+	TESTING_MALLOC_CPU( w1,     double,             N      );
+	TESTING_MALLOC_PIN( h_R,    double, N*N  );
+	
+	
+  // d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
+	// iwork h_work w1 h_R
+	
+	
+	// THIS ROUTINE IS GOOD TO EIGENVALUES ABOUT 1e-6 OF PEAK EIGENVALUE IF USING FLOAT, MUCH BETTER WITH DOUBLE
+	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, d_AtA, N, w1, h_R, N, h_work, lwork, iwork, liwork, &info );
+	
+	TESTING_FREE_CPU( iwork  );
+	TESTING_FREE_PIN( h_R    );
+	TESTING_FREE_PIN( h_work );
+	
+	 // d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
+	//  w1
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t3);
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t4);
+
+	
+	
+	// Write eigenvalues
+    sprintf(fname, "eigenv_magma.dat");
+    if((fp=fopen(fname, "w"))==NULL)
+      {
+        printf("ERROR: cannot create file \"%s\"\n", fname);
+        exit(0);
+      }
+    for(k=0; k<m; k++)
+      fprintf(fp,"%ld %g\n", k, w1[m-k-1]);
+    fclose(fp);
+
+	
+	
+	egvlim = SVDeps*SVDeps* w1[m-1];
+	MaxNBmodes1 = MaxNBmodes;
+	if(MaxNBmodes1>m)
+		MaxNBmodes1 = m;
+	if(MaxNBmodes1>n)
+		MaxNBmodes1 = n;
+	mode = 0;
+	while( (mode<MaxNBmodes1) && (w1[m-mode-1]>egvlim) )
+		mode++;
+	printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
+	
+	fp = fopen("SVDmodes.log", "w");
+	fprintf(fp, "%6ld %6ld\n", mode, MaxNBmodes1);
+	fclose(fp);
+	MaxNBmodes1 = mode;
+	//printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
+
+
+	magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, queue);
+	
+
+	if(testmode == 1)
+	{
+		ID_VT = create_2Dimage_ID("mVT", N, N);
+		for(ii=0;ii<N;ii++)
+			for(jj=0;jj<N;jj++)
+				data.image[ID_VT].array.F[jj*N+ii] = h_AtA[jj*N+ii];
+		save_fits("mVT", "!test_mVT.fits");
+	}
+
+	for(ii=0;ii<N;ii++)
+		for(jj=0;jj<N;jj++)
+			{
+				if(N-jj-1<MaxNBmodes1)
+					h_VT1[ii*N+jj] = h_AtA[jj*N+ii]/w1[jj];
+				else
+					h_VT1[ii*N+jj] = 0.0;
+			}
+	magma_dsetmatrix( N, N, h_VT1, N, d_VT1, N, queue);
+	
+	TESTING_FREE_CPU( h_VT1 );
+	TESTING_FREE_CPU( w1 );
+	TESTING_FREE_CPU( h_AtA );
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t5);
+
+	// compute M2 = VT1 VT
+	magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, d_VT1, N, d_AtA, N, 0.0,  d_M2, N, queue);
+	
+	
+	if(testmode == 1)
+	{
+		TESTING_MALLOC_CPU( h_M2, double, N*N);
+		magma_dgetmatrix( N, N, d_M2, N, h_M2, N, queue);
+		ID_M2 = create_2Dimage_ID("mM2", N, N);
+
+		/*for(ii=0;ii<N;ii++)
+			for(jj=0;jj<N;jj++)
+				if(ii==jj)
+					h_M2[jj*N+ii] = 1.0;
+				else
+					h_M2[jj*N+ii] = 0.0;
+		*/
+		for(ii=0;ii<N;ii++)
+			for(jj=0;jj<N;jj++)
+				data.image[ID_M2].array.F[jj*N+ii] = h_M2[jj*N+ii];
+		save_fits("mM2", "!test_mM2.fits");
+		
+	
+	//	magma_dsetmatrix( N, N, h_M2, N, d_M2, N, queue);
+		TESTING_FREE_CPU( h_M2 );
+	}
+	TESTING_FREE_DEV( d_VT1 );
+	TESTING_FREE_DEV( d_AtA );
+
+	
+	 // d_A d_M2
+	//  w1
+	
+	// compute M3 = M2 A
+	TESTING_MALLOC_DEV( d_Ainv, double, N*M);
+	magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, d_A, M, d_M2, N, 0.0, d_Ainv, M, queue);
+	TESTING_FREE_DEV( d_A);
+	TESTING_MALLOC_CPU( h_Ainv, double, N*M);
+	TESTING_FREE_DEV( d_M2 );
+
+	 // d_Ainv h_Ainv
+	//  w1
+
+
+
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t6);
+
+	magma_dgetmatrix( M, N, d_Ainv, M, h_Ainv, M, queue);
+	if(testmode == 1)
+	{
+		ID_Ainv = create_2Dimage_ID("mAinv", M, N);
+		for(ii=0;ii<M;ii++)
+			for(jj=0;jj<N;jj++)
+				data.image[ID_Ainv].array.F[jj*M+ii] = h_Ainv[jj*M+ii];
+		save_fits("mAinv", "!test_mAinv.fits");
+	}
+
+
+
+    if(data.image[ID_Rmatrix].md[0].naxis==3)
+    {
+        arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
+        arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
+        arraysizetmp[2] = m;
+    }
+    else
+    {
+        arraysizetmp[0] = n;
+        arraysizetmp[1] = m;
+    }
+
+    if(atype==FLOAT)
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+    else
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
+
+
+	 /* write result */
+	// 	M = n;
+	//	N = m;
+    if(atype==FLOAT)
+    {
+        for(ii=0; ii<M; ii++) // sensors
+            for(k=0; k<N; k++) // actuator modes
+                data.image[ID_Cmatrix].array.F[k*M+ii] = (float) h_Ainv[k*M+ii];
+    }
+    else
+    {
+        for(ii=0; ii<M; ii++) // sensors
+            for(k=0; k<N; k++) // actuator modes
+                data.image[ID_Cmatrix].array.D[k*M+ii] = h_Ainv[k*M+ii];
+    }
+	
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t7);
+
+
+
+	TESTING_FREE_DEV( d_Ainv );
+	TESTING_FREE_CPU( h_Ainv );
+	
+	
+	 
+	
+
+
+	
+	magma_queue_destroy( queue );
+	magma_finalize ();                               //  finalize  Magma
+
+	free(arraysizetmp);
+	
+	
+		if(timing==1)
+	{
+		tdiff = info_time_diff(t0, t1);
+        t01d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t1, t2);
+        t12d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t2, t3);
+        t23d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t3, t4);
+        t34d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t4, t5);
+        t45d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t5, t6);
+        t56d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t6, t7);
+        t67d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		printf("Timing info: \n");
+		printf("  0-1	%12.3f ms\n", t01d*1000.0);
+		printf("  1-2	%12.3f ms\n", t12d*1000.0);
+		printf("  2-3	%12.3f ms\n", t23d*1000.0);
+		printf("  3-4	%12.3f ms\n", t34d*1000.0);
+		printf("  4-5	%12.3f ms\n", t45d*1000.0);
+		printf("  5-6	%12.3f ms\n", t56d*1000.0);
+		printf("  6-7	%12.3f ms\n", t67d*1000.0);
+	}
+
+
+    return(ID_Cmatrix);
+}
+
+
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
 //
 // Computes control matrix
 // Conventions:
@@ -1500,6 +2229,8 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
     printf("START GPU COMPUTATION (%d x %d)  buffer size = %d ...", m, n, Lwork);
     fflush(stdout);
     cusolverDnSgesvd (cudenseH, 'A', 'A', m, n, d_A, lda, d_S, d_U, ldu, d_VT, ldvt, d_Work, Lwork, NULL, devInfo);
+    printf(" SYNC ");
+    fflush(stdout);
     cudaStat = cudaDeviceSynchronize();
     printf(" DONE\n");
     fflush(stdout);
@@ -2824,7 +3555,7 @@ int GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
         create_2Dimage_ID("Rmat", WFSsize, WFSsize);
     
        printf("Testing SVD on GPU\n");
-       GPU_SVD_computeControlMatrix(1, "Rmat", "Cmat", SVDeps, "VTmat");
+       GPU_SVD_computeControlMatrix(0, "Rmat", "Cmat", SVDeps, "VTmat");
         list_image_ID();
         printf("DONE ... ");
         fflush(stdout);

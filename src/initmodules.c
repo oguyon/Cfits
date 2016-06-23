@@ -31,6 +31,7 @@ int init_modules()
   init_AtmosphericTurbulence();
   init_cudacomp();
   init_SCExAO_control();
+  init_TransitLC();
  
   return 0;
 }

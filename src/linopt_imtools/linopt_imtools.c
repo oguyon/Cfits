@@ -16,12 +16,33 @@
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_cblas.h>
 
+#ifdef __MACH__
+#include <mach/mach_time.h>
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+int clock_gettime(int clk_id, struct timespec *t){
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    uint64_t time;
+    time = mach_absolute_time();
+    double nseconds = ((double)time * (double)timebase.numer)/((double)timebase.denom);
+    double seconds = ((double)time * (double)timebase.numer)/((double)timebase.denom * 1e9);
+    t->tv_sec = seconds;
+    t->tv_nsec = nseconds;
+    return 0;
+}
+#else
+#include <time.h>
+#endif
+
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
+#include "COREMOD_arith/COREMOD_arith.h"
+#include "COREMOD_iofits/COREMOD_iofits.h"
 #include "statistic/statistic.h"
-
+#include "info/info.h"
 #include "linopt_imtools/linopt_imtools.h"
 
 
@@ -786,11 +807,14 @@ long linopt_compute_SVDdecomp(char *IDin_name, char *IDout_name, char *IDcoeff_n
 // Conventions:
 //   m: number of actuators (= NB_MODES)
 //   n: number of sensors  (= # of pixels)
-int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, char *ID_VTmatrix_name) /* works even for m != n */
+//
+// This implementation computes the eigenvalue decomposition of transpose(M) x M, so it is efficient if n>>m, as transpose(M) x M is size m x m
+//
+int linopt_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name) /* works even for m != n */
 {
     FILE *fp;
     char fname[200];
-    long ii1, jj1, k, ii;
+    long ii1, jj1, k, ii, jj;
     gsl_matrix *matrix_D; /* this is the response matrix */
     gsl_matrix *matrix_Ds; /* this is the pseudo inverse of D */
     gsl_matrix *matrix_Dtra;
@@ -813,9 +837,27 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
 
     int atype;
 
+	long maxMode, MaxNBmodes1, mode;
+	
+	// Timing
+	int timing = 1; 
+	struct timespec t0, t1, t2, t3, t4, t5, t6, t7;
+    double t01d, t12d, t23d, t34d, t45d, t56d, t67d;
+	struct timespec tdiff;
 
-    printf("[CM SVD start]");
+	int testmode = 0;
+	long ID_AtA;
+	long ID;
+
+
+
+
+    printf("[CPU (gsl) SVD start]");
     fflush(stdout);
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t0);
+		
 
     arraysizetmp = (long*) malloc(sizeof(long)*3);
 
@@ -841,8 +883,8 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     //  long m = smao[0].NBmode;
     // long n = smao[0].NBwfselem;
 
-    //  printf("m = %ld actuators (modes), n = %ld sensors\n", m, n);
-    //  fflush(stdout);
+     printf("m = %ld , n = %ld \n", m, n);
+      fflush(stdout);
 
     matrix_DtraD_eval = gsl_vector_alloc (m);
     matrix_D = gsl_matrix_alloc (n,m);
@@ -868,8 +910,27 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
                 gsl_matrix_set (matrix_D, ii, k, data.image[ID_Rmatrix].array.D[k*n+ii]);
     }
 
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t1);
+
+
     /* compute DtraD */
     gsl_blas_dgemm (CblasTrans, CblasNoTrans, 1.0, matrix_D, matrix_D, 0.0, matrix_DtraD);
+
+
+	if(testmode==1)
+	{
+	// TEST
+	ID_AtA = create_2Dimage_ID("AtA", m, m);
+    for(ii=0; ii<m; ii++) 
+    for(jj=0; jj<m; jj++) 
+		data.image[ID_AtA].array.F[jj*m+ii] = (float) gsl_matrix_get( matrix_DtraD, ii, jj);
+	save_fits("AtA", "!test_AtA.fits");
+	}
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t2);
+
 
 
     /* compute the inverse of DtraD */
@@ -881,14 +942,20 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     gsl_eigen_symmv (matrix_save, matrix_DtraD_eval, matrix_DtraD_evec, w);
     gsl_matrix_free(matrix_save);
     gsl_eigen_symmv_free(w);
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t3);
+
     gsl_eigen_symmv_sort (matrix_DtraD_eval, matrix_DtraD_evec, GSL_EIGEN_SORT_ABS_DESC);
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t4);
+
 
     //  printf("Eigenvalues\n");
     //  fflush(stdout);
 
     // Write eigenvalues
-
-
     sprintf(fname, "eigenv.dat");
     if((fp=fopen(fname, "w"))==NULL)
       {
@@ -896,16 +963,26 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
         exit(0);
       }
     for(k=0; k<m; k++)
-      fprintf(fp,"%ld %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
+      fprintf(fp,"%ld %g\n", k, sqrt(gsl_vector_get(matrix_DtraD_eval,k)));
     fclose(fp);
     
 
 
     //  for(k=0; k<m; k++)
     //    printf("Mode %ld eigenvalue = %g\n", k, gsl_vector_get(matrix_DtraD_eval,k));
-    egvlim = SVDeps * gsl_vector_get(matrix_DtraD_eval,0);
-
-    // Write rotation matrix to go from DM modes to eigenmodes
+    egvlim = SVDeps*SVDeps * gsl_vector_get(matrix_DtraD_eval, 0);
+	MaxNBmodes1 = MaxNBmodes;
+	if(MaxNBmodes1>m)
+		MaxNBmodes1 = m;
+	if(MaxNBmodes1>n)
+		MaxNBmodes1 = n;
+	mode = 0;
+	while( (mode<MaxNBmodes1) && (gsl_vector_get(matrix_DtraD_eval, mode)>egvlim) )
+		mode++;
+	printf("Keeping %ld modes  (SVDeps = %g-> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
+	MaxNBmodes1 = mode;
+		
+    // Write rotation matrix 
     arraysizetmp[0] = m;
     arraysizetmp[1] = m;
     if(atype==FLOAT)
@@ -923,15 +1000,18 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
                 data.image[ID_VTmatrix].array.D[k*m+ii] = gsl_matrix_get( matrix_DtraD_evec, k, ii);
     }
 
+	if(testmode==1)
+		save_fits(ID_VTmatrix_name, "!test_VT.fits");
+
     /* second, build the "inverse" of the diagonal matrix of eigenvalues (matrix1) */
     nbmodesremoved = 0;
     matrix1 = gsl_matrix_alloc (m, m);
-    for(ii1=0; ii1<m; ii1++)
+    for(ii1=0; ii1<m; ii1++) // mode
         for(jj1=0; jj1<m; jj1++)
         {
             if(ii1==jj1)
             {
-                if(gsl_vector_get(matrix_DtraD_eval,ii1)<egvlim)
+                if(ii1>MaxNBmodes1-1)
                 {
                     gsl_matrix_set(matrix1, ii1, jj1, 0.0);
                     nbmodesremoved ++;
@@ -945,23 +1025,30 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     // printf("%ld modes removed\n", nbmodesremoved);
     // printf("Compute inverse\n");
     // fflush(stdout);
-
+	
+	
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t5);
+		
+		
     /* third, compute the "inverse" of DtraD */
     matrix2 = gsl_matrix_alloc (m, m);
-    //  printf("step 0\n");
-    // fflush(stdout);
     gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, matrix_DtraD_evec, matrix1, 0.0, matrix2);
-    // printf("step 1\n");
-    //fflush(stdout);
     gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix2, matrix_DtraD_evec, 0.0, matrix_DtraDinv);
-    //printf("step 2\n");
-    //fflush(stdout);
     gsl_matrix_free(matrix1);
     gsl_matrix_free(matrix2);
+    
+    if(testmode==1)
+    {
+		ID = create_2Dimage_ID("M2", m, m);
+		for(ii=0;ii<m;ii++)
+			for(jj=0;jj<m;jj++)
+				data.image[ID].array.F[jj*m+ii] = gsl_matrix_get(matrix_DtraDinv, ii, jj);
+		save_fits("M2", "!test_M2.fits");
+	}
+    
+    
     gsl_blas_dgemm (CblasNoTrans, CblasTrans, 1.0, matrix_DtraDinv, matrix_D, 0.0, matrix_Ds);
-
-    //  printf("Write result\n");
-    //  fflush(stdout);
 
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
@@ -980,6 +1067,10 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
     else
         ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
 
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t6);
+
     /* write result */
     if(atype==FLOAT)
     {
@@ -994,6 +1085,14 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
                 data.image[ID_Cmatrix].array.D[k*n+ii] = gsl_matrix_get(matrix_Ds, k, ii);
     }
 
+
+	if(testmode==1)
+		save_fits(ID_Cmatrix_name, "!test_Ainv.fits");
+
+	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t7);
+
+
     gsl_vector_free(matrix_DtraD_eval);
     gsl_matrix_free(matrix_D);
     gsl_matrix_free(matrix_Ds);
@@ -1004,11 +1103,52 @@ int linopt_compute_reconstructionMatrix(char *ID_Rmatrix_name, char *ID_Cmatrix_
 
     free(arraysizetmp);
 
-    printf("[CM SVD done]\n");
+    printf("[CPU pseudo-inverse done]\n");
     fflush(stdout);
+
+	if(timing==1)
+	{
+		tdiff = info_time_diff(t0, t1);
+        t01d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t1, t2);
+        t12d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t2, t3);
+        t23d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t3, t4);
+        t34d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t4, t5);
+        t45d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t5, t6);
+        t56d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		tdiff = info_time_diff(t6, t7);
+        t67d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+		printf("Timing info: \n");
+		printf("  0-1	%12.3f ms\n", t01d*1000.0);
+		printf("  1-2	%12.3f ms\n", t12d*1000.0);
+		printf("  2-3	%12.3f ms\n", t23d*1000.0);
+		printf("  3-4	%12.3f ms\n", t34d*1000.0);
+		printf("  4-5	%12.3f ms\n", t45d*1000.0);
+		printf("  5-6	%12.3f ms\n", t56d*1000.0);
+		printf("  6-7	%12.3f ms\n", t67d*1000.0);
+	}
+
 
     return(ID_Cmatrix);
 }
+
+
+
+
+
+
+
 
 
 
@@ -1159,7 +1299,7 @@ long linopt_imtools_image_fitModes(char *ID_name, char *IDmodes_name, char *IDma
     {
         linopt_imtools_mask_to_pixtable(IDmask_name, "_fm_pixind", "_fm_pixmul");
         linopt_imtools_Image_to_vec(IDmodes_name, "_fm_pixind", "_fm_pixmul", "_fm_respm");
-        linopt_compute_reconstructionMatrix("_fm_respm", "_fm_recm", SVDeps, "_fm_vtmat");
+        linopt_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
     }
 
     

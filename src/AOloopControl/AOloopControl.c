@@ -3598,7 +3598,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     fflush(stdout);
 
                     // COMPUTE MODAL CONTROL MATRICES
-                    linopt_compute_reconstructionMatrix(imname, imnameCM, SVDlim1*0.01, "VTmat");
+                    linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1*0.01, 10000, "VTmat");
                     delete_image_ID("VTmat");
                     sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
                     save_fits(imnameCM, fname);
@@ -3660,7 +3660,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         // COMPUTE OVERALL CONTROL MATRIX
 
-        linopt_compute_reconstructionMatrix("fmodesWFSall", "cmat", SVDlim1*0.01, "VTmat");
+        linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1*0.01, 10000, "VTmat");
         delete_image_ID("VTmat");
         save_fits("cmat", "!./mkmodestmp/cmat.fits");
 
@@ -9474,7 +9474,7 @@ double AOloopControl_testPredictiveFilter(char *IDtrace_name, long modeout, doub
     fclose(fp);
     
     
-    linopt_compute_reconstructionMatrix("WFPmatA", "WFPmatC", SVDeps, "WFP_VTmat");
+    linopt_compute_SVDpseudoInverse("WFPmatA", "WFPmatC", SVDeps, 10000, "WFP_VTmat");
     
     save_fits("WFPmatA", "!WFPmatA.fits");
     save_fits("WFPmatC", "!WFPmatC.fits");

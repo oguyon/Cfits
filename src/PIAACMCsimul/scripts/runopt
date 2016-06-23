@@ -354,7 +354,7 @@ loopcnt=$(( $loopcnt + 1 ))
 
 
 
-dirname=$( cat dirname.txt )
+dirname=$( cat log/dirname.txt )
 echo "dirname = $dirname"
 
 

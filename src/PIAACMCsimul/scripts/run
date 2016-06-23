@@ -84,6 +84,9 @@ function printvarall() {
 
 echo -e "\033[1m          CURRENT PARAMETERS VALUES :\033[0m"
 echo " "
+echo -e "\033[1m OPTICAL DESIGN: \033[0m"
+echo " File conjugations.txt in piaacmcconf directory lists optical design elements and location"
+echo ""
 echo -e "\033[1m PIAA OPTICS DESIGN: \033[0m"
 printvar "coin" "central obstruction at input beam [beam radius]"
 printvar "coout" "central obstruction at output beam [beam radius]"
@@ -129,8 +132,8 @@ printvar "prePIAA0maskpos" "pre-PIAA optic 0 mask distance from pupil plane [m] 
 printvar "postPIAA0maskpos" "post-PIAA optic 0 mask distance from pupil plane [m] (if postPIAA0mask.fits exits)"
 printvar "piaaNBCmodesmax" "maximum number of radial cosine modes for PIAA optics"
 printvar "piaaCPAmax" "maximum spatial frequency (CPA) for PIAA optics"
-printvar "LyotZmin" "minimum value for Lyot stop(s) conjugation range [m]"
-printvar "LyotZmax" "maximum value for Lyot stop(s) conjugation range [m]"
+printvar "LyotZmin" "minimum value for Lyot stop(s) conjugation range [m] - relative to element named \"post focal plane mask pupil\""
+printvar "LyotZmax" "maximum value for Lyot stop(s) conjugation range [m] - relative to element named \"post focal plane mask pupil\""
 printvar "pupoutmaskrad" "output pupil mask radius (scaled to pupil radius)"
 echo " "
 }
@@ -182,7 +185,13 @@ echo "                                  ..."
 echo "                       NOTE: type \"./runPIAACMC helpsteps\" to list design steps description"
 echo "     proppoly <bogusarg>   : polychromatic propagation point source"
 echo "     eval0 <stepstop>      : level 0 evaluation (compute on-axis PSF and contrast), <stepstop> should be set to 18"
+echo "                    output files:  flux_ptsrc_...          "
+echo "                                   contrast_ptsrc_...."
+echo "                                   psfi0_ptsrc_..."
 echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
+echo "                    output files:  ContrastCurve_extsrc15_..."
+echo "                                   ContrastVal_extsrc15_..."
+echo "                                   psfi0_extsrc15_..."
 echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + transmission curve), <stepstop> should be set to 18"
 echo "------------------------------------------------------------------------"
 }
@@ -230,7 +239,8 @@ echo "$2" > ./log/conf_exitpt.txt
 #18  
 
 
-# echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
+echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
+
 
 ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
 

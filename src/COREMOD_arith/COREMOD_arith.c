@@ -53,8 +53,23 @@ int arith_image_extract2D_cli()
     }
   else
     return 1;
-
 }
+
+
+int arith_image_extract3D_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
+    {
+      arith_image_extract3D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 
 int arith_set_pixel_cli()
 {
@@ -166,6 +181,16 @@ int init_COREMOD_arith()
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sizex> <sizey> <xstart> <ystart>");
   strcpy(data.cmd[data.NBcmd].example,"extractim im ime 256 256 100 100");
   strcpy(data.cmd[data.NBcmd].Ccall,"int arith_image_extract2D(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)"); 
+  data.NBcmd++;
+  
+
+  strcpy(data.cmd[data.NBcmd].key,"extract3Dim");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = arith_image_extract3D_cli;
+  strcpy(data.cmd[data.NBcmd].info,"crop 3D image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sizex> <sizey> <sizez> <xstart> <ystart> <zstart>");
+  strcpy(data.cmd[data.NBcmd].example,"extractim im ime 256 256 5 100 100 0");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int arith_image_extract3D(char *in_name, char *out_name, long size_x, long size_y, long size_z, long xstart, long ystart, long zstart)"); 
   data.NBcmd++;
   
 

@@ -27,6 +27,10 @@ cfits_LDADD =
 ## Core modules last, higher level modules at the top
 
 
+SUBDIRS += TransitLC 
+cfits_LDADD += TransitLC/libtransitlc.la
+cfits_CPPFLAGS += -I@abs_top_srcdir@/src/TransitLC
+
 SUBDIRS += SCExAO_control
 cfits_LDADD += SCExAO_control/libscexaocontrol.la
 cfits_CPPFLAGS += -I@abs_top_srcdir@/src/SCExAO_control

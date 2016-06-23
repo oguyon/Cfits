@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+
+#define _GNU_SOURCE
+#include <unistd.h>
+
 //#include <pthread_np.h>
 
 #ifdef __MACH__
@@ -22,7 +26,7 @@ int clock_gettime(int clk_id, struct timespec *t){
     return 0;
 }
 #else
-#include <time.h>
+#include <sys/time.h>
 #endif
 
 
