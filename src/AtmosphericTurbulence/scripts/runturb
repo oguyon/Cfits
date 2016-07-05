@@ -11,7 +11,12 @@ echo "------------------------------------------------------------------------"
 echo -e "\033[1m                 ATMOSPHERIC TURBULENCE SCRIPT \033[0m"
 echo " "
 echo " Edit script to set atmosphere and turbulence parameters"
-echo " Execute script without argument to compute atmospheric wavefronts"
+echo " Execute script without to compute atmospheric wavefronts"
+echo ""
+echo " usage:    $0 <slambdaum>"
+echo ""
+echo "      INPUT:"
+echo "          slambdaum       Wavelength [um]"
 echo ""
 echo "------------------------------------------------------------------------"
 echo -e "\033[1m                       OVERVIEW \033[0m"
@@ -49,7 +54,7 @@ echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + t
 echo "------------------------------------------------------------------------"
 }
 
-NBARGS=0
+NBARGS=1
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
         printhelp
@@ -60,7 +65,7 @@ fi
 fi
 
 
-
+slambdaum="$1"
 
 #turbprofcase="HVmed"
 # choose a pre-defined turbulence profile model
@@ -172,7 +177,7 @@ SHM_OUTPUT=0                              # shared memory output (phase only)
 # 
 
 MAKE_SWAVEFRONT=1                   # 1 if the high fidelity wavefront series needs to be made
-SLAMBDA=1.600                       # wavelength for high fidelity simulation [micron]
+SLAMBDA=1.600                       # wavelength for high fidelity simulation [micron] - DEFAULT VALUE
 SWF_WRITE2DISK=1                    # if writing to disk
 WFoutdir="WFout"
 mkdir -p $WFoutdir
@@ -259,15 +264,15 @@ FRESNEL_PROPAGATION_BIN=1000.0      # vertical distance within which layers will
 
 
 TURBULENCE_SEEING=0.6 
-echo "# altitude(m)   relativeCN2     speed(m/s)      direction(rad)   outerscale[m]	innerscale[m]" > turbul.prof
+echo "# altitude(m)   relativeCN2     speed(m/s)      direction(rad)   outerscale[m]	innerscale[m]	sigmawsp[m/s]	windOuterScale[m]" > turbul.prof
 echo "" >> turbul.prof
-echo "4215		5.32		6.5		1.47	2.0		0.01" >> turbul.prof
-echo "4230		1.47		6.55		1.57	20.0		0.01" >> turbul.prof
-echo "4349		1.08		6.6		1.67	20.0		0.01" >> turbul.prof
-echo "5007		2.11		6.7		1.77	20.0		0.01" >> turbul.prof
-echo "12000		1.83		22.0		3.1	30.0		0.02" >> turbul.prof
-echo "16200		1.48		9.5		3.2	40.0		0.03" >> turbul.prof
-echo "23701		0.697		5.6		3.3	40.0		1.0" >> turbul.prof
+echo " 4215     5.32        6.5     1.47     2.0        0.01    1.0     10.0" >> turbul.prof
+echo " 4230     1.47        6.55    1.57    20.0        0.01    4.0     20.0" >> turbul.prof
+echo " 4349     1.08        6.6     1.67    20.0        0.01    4.0     50.0" >> turbul.prof
+echo " 5007     2.11        6.7     1.77    20.0        0.01    3.0     80.0" >> turbul.prof
+echo "12000     1.83       22.0     3.1     30.0        0.02    3.0     80.0" >> turbul.prof
+echo "16200     1.48        9.5     3.2     40.0        0.03    3.0     80.0" >> turbul.prof
+echo "23701     0.697       5.6     3.3     40.0        1.0     2.0     80.0" >> turbul.prof
 
 
 
@@ -367,7 +372,7 @@ printf "\n\n" >> $conffilename
 
 $execname << EOF
 #mkatmospheremodel $conffilename
-mkwfs
+mkwfs ${slambdaum}
 exit
 EOF
 

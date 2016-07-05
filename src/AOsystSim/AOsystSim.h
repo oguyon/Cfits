@@ -11,6 +11,12 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name);
 
 int init_AOsystSim();
 
+
+int AOsystSim_mkWF(char *CONF_FNAME);
+int AOsystSim_PyrWFS(char *CONF_FNAME);
+int AOsystSim_DM(char *CONF_FNAME);
+
+
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
 long AOsystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON, double CnoiseFloor);

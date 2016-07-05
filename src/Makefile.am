@@ -1,8 +1,8 @@
 #SUFFIXES = .c .h .y .l
 
-bin_PROGRAMS = cfits
-cfits_SOURCES = CLIcore.c CLIcore.h initmodules.c initmodules.h calc_bison.y calc_flex.l calc.h
-cfits_CPPFLAGS = -I@abs_top_srcdir@/src -DCONFIGDIR=\"@abs_top_srcdir@/config\" -DSOURCEDIR=\"@abs_top_srcdir@/src\" -DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp
+bin_PROGRAMS = cfitsTK
+cfitsTK_SOURCES = CLIcore.c CLIcore.h initmodules.c initmodules.h calc_bison.y calc_flex.l calc.h
+cfitsTK_CPPFLAGS = -I@abs_top_srcdir@/src -DCONFIGDIR=\"@abs_top_srcdir@/config\" -DSOURCEDIR=\"@abs_top_srcdir@/src\" -DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -19,7 +19,7 @@ BUILT_SOURCES = calc_bison.h
 
 
 SUBDIRS = 
-cfits_LDADD = 
+cfitsTK_LDADD = 
 
 
 ## Modules are built as libraries of convenience
@@ -28,105 +28,105 @@ cfits_LDADD =
 
 
 SUBDIRS += TransitLC 
-cfits_LDADD += TransitLC/libtransitlc.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/TransitLC
+cfitsTK_LDADD += TransitLC/libtransitlc.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/TransitLC
 
 SUBDIRS += SCExAO_control
-cfits_LDADD += SCExAO_control/libscexaocontrol.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/SCExAO_control
+cfitsTK_LDADD += SCExAO_control/libscexaocontrol.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/SCExAO_control
 
 SUBDIRS += cudacomp
-cfits_LDADD += cudacomp/libcudacomp.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/cudacomp
+cfitsTK_LDADD += cudacomp/libcudacomp.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/cudacomp
 
 SUBDIRS += AtmosphericTurbulence
-cfits_LDADD += AtmosphericTurbulence/libatmosphericturbulence.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
+cfitsTK_LDADD += AtmosphericTurbulence/libatmosphericturbulence.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphericTurbulence
 
 SUBDIRS += AtmosphereModel
-cfits_LDADD += AtmosphereModel/libatmospheremodel.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
+cfitsTK_LDADD += AtmosphereModel/libatmospheremodel.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
 
 
 SUBDIRS += psf
-cfits_LDADD += psf/libpsf.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/psf
+cfitsTK_LDADD += psf/libpsf.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/psf
 
 SUBDIRS += AOloopControl
-cfits_LDADD += AOloopControl/libaoloopcontrol.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl
+cfitsTK_LDADD += AOloopControl/libaoloopcontrol.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl
 
 SUBDIRS += AOsystSim
-cfits_LDADD += AOsystSim/libaosystsim.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim
+cfitsTK_LDADD += AOsystSim/libaosystsim.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOsystSim
 
 SUBDIRS += AOloopControl_DM
-cfits_LDADD += AOloopControl_DM/libaoloopcontroldm.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
+cfitsTK_LDADD += AOloopControl_DM/libaoloopcontroldm.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_DM
 
 SUBDIRS += img_reduce
-cfits_LDADD += img_reduce/libimgreduce.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/img_reduce
+cfitsTK_LDADD += img_reduce/libimgreduce.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/img_reduce
 
 SUBDIRS += image_format
-cfits_LDADD += image_format/libimageformat.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_format
+cfitsTK_LDADD += image_format/libimageformat.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/image_format
 
 SUBDIRS += PIAACMCsimul
-cfits_LDADD += PIAACMCsimul/libpiaacmcsimul.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/PIAACMCsimul
+cfitsTK_LDADD += PIAACMCsimul/libpiaacmcsimul.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/PIAACMCsimul
 
 SUBDIRS += OptSystProp
-cfits_LDADD += OptSystProp/liboptsystprop.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
+cfitsTK_LDADD += OptSystProp/liboptsystprop.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/OptSystProp
 
 SUBDIRS += OpticsMaterials
-cfits_LDADD += OpticsMaterials/libopticsmaterials.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/OpticsMaterials
+cfitsTK_LDADD += OpticsMaterials/libopticsmaterials.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/OpticsMaterials
 
 SUBDIRS += coronagraphs
-cfits_LDADD += coronagraphs/libcoronagraphs.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/coronagraphs
+cfitsTK_LDADD += coronagraphs/libcoronagraphs.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/coronagraphs
 
 SUBDIRS += ZernikePolyn
-cfits_LDADD += ZernikePolyn/libzernikepolyn.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/ZernikePolyn
+cfitsTK_LDADD += ZernikePolyn/libzernikepolyn.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/ZernikePolyn
 
 SUBDIRS += WFpropagate
-cfits_LDADD += WFpropagate/libwfpropagate.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/WFpropagate
+cfitsTK_LDADD += WFpropagate/libwfpropagate.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/WFpropagate
 
 SUBDIRS += image_basic
-cfits_LDADD += image_basic/libimagebasic.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_basic
+cfitsTK_LDADD += image_basic/libimagebasic.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/image_basic
 
 SUBDIRS += image_filter
-cfits_LDADD += image_filter/libimagefilter.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_filter
+cfitsTK_LDADD += image_filter/libimagefilter.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/image_filter
 
 SUBDIRS += kdtree
-cfits_LDADD += kdtree/libkdtree.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/kdtree
+cfitsTK_LDADD += kdtree/libkdtree.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/kdtree
 
 SUBDIRS += image_gen
-cfits_LDADD += image_gen/libimagegen.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/image_gen
+cfitsTK_LDADD += image_gen/libimagegen.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/image_gen
 
 SUBDIRS += linopt_imtools
-cfits_LDADD += linopt_imtools/liblinoptimtools.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/linopt_imtools
+cfitsTK_LDADD += linopt_imtools/liblinoptimtools.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/linopt_imtools
 
 SUBDIRS += statistic
-cfits_LDADD += statistic/libstatistic.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/statistic
+cfitsTK_LDADD += statistic/libstatistic.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/statistic
 
 SUBDIRS += fft
-cfits_LDADD += fft/libfft.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/fft
+cfitsTK_LDADD += fft/libfft.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/fft
 
 SUBDIRS += info
-cfits_LDADD += info/libinfo.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/info
+cfitsTK_LDADD += info/libinfo.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/info
 
 
 
@@ -142,22 +142,22 @@ cfits_CPPFLAGS += -I@abs_top_srcdir@/src/info
 
 
 SUBDIRS += COREMOD_arith
-cfits_LDADD += COREMOD_arith/libcoremodarith.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_arith
+cfitsTK_LDADD += COREMOD_arith/libcoremodarith.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_arith
 
 SUBDIRS += COREMOD_iofits
-cfits_LDADD += COREMOD_iofits/libcoremodiofits.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_iofits
+cfitsTK_LDADD += COREMOD_iofits/libcoremodiofits.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_iofits
 
 SUBDIRS += COREMOD_memory
-cfits_LDADD += COREMOD_memory/libcoremodmemory.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_memory
+cfitsTK_LDADD += COREMOD_memory/libcoremodmemory.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_memory
 
 SUBDIRS += COREMOD_tools
-cfits_LDADD += COREMOD_tools/libcoremodtools.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_tools
+cfitsTK_LDADD += COREMOD_tools/libcoremodtools.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/COREMOD_tools
 
 SUBDIRS += 00CORE
-cfits_LDADD += 00CORE/lib00core.la
-cfits_CPPFLAGS += -I@abs_top_srcdir@/src/00CORE
+cfitsTK_LDADD += 00CORE/lib00core.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/00CORE
 

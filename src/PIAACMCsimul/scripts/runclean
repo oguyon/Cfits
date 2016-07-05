@@ -8,3 +8,13 @@ rm piaacmc*/WFamp0*.fits
 rm piaacmc*/WFpha0*.fits
 rm piaacmc*/psfi*.fits
 rm piaacmc*/LMintC.fits
+rm tmp_*
+rm PSFcontrastval.txt
+rm eigenv.dat
+rm __test*
+rm stepfile*
+rm searchtime.txt
+rm looppsfcomp_done
+rm conj_test.txt
+rm piaacmcscriptsinit.txt
+

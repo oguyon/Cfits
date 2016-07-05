@@ -2552,26 +2552,34 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     beamradpix = piaacmc[0].beamrad/piaacmc[0].pixscale;
     size = piaacmc[0].size;
 
-    printf("BEAM RADIUS:  %f / %f =  %f pix\n", piaacmc[0].beamrad, piaacmc[0].pixscale, beamradpix);
+    printf("BEAM RADIUS :  %f / %f =  %f pix, size = %ld\n", piaacmc[0].beamrad, piaacmc[0].pixscale, beamradpix, size);
+    fflush(stdout);
 
     // x, y, r and PA coordinates in beam (for convenience & speed)
     IDx = create_2Dimage_ID("xcoord", size, size);
     IDy = create_2Dimage_ID("ycoord", size, size);
     IDr = create_2Dimage_ID("rcoord", size, size);
     IDPA = create_2Dimage_ID("PAcoord", size, size);
+    printf("pre-computing x, y, r, and PA\n");
+    fflush(stdout);
+    list_image_ID();
+    
     for(ii=0; ii<size; ii++)
-        for(jj=0; jj<size; jj++)
-        {
+       {
+		    for(jj=0; jj<size; jj++)
+			{
             x = (1.0*ii-0.5*size)/beamradpix;
             y = (1.0*jj-0.5*size)/beamradpix;
             data.image[IDx].array.F[jj*size+ii] = x;
             data.image[IDy].array.F[jj*size+ii] = y;
             data.image[IDr].array.F[jj*size+ii] = sqrt(x*x+y*y);
             data.image[IDPA].array.F[jj*size+ii] = atan2(y,x);
-        }
-
+			}
+		}
 
     // ==================== CREATE DMs ===============
+    printf("%d DM(s)\n", piaacmc[0].nbDM);
+    fflush(stdout);
     for(iDM=0; iDM<piaacmc[0].nbDM; iDM++)
     {
         printf("DM # %ld\n",iDM);
@@ -2596,6 +2604,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     }
 
     // ==================== CREATE MODES USED TO FIT AND DESCRIBE PIAA SHAPES ===============
+	printf("Creating / loading Cmodes and Fmodes ...\n");
+	fflush(stdout);
     CREATE_Cmodes = 0;
     //   sprintf(fname, "%s/Cmodes.fits", piaacmcconfdir);
     sprintf(fname, "Cmodes_%ld.fits", piaacmc[0].size);
@@ -2651,7 +2661,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     piaacmc[0].NBFmodes = data.image[piaacmc[0].FmodesID].md[0].size[2];
     piaacmc[0].Fmsize = data.image[piaacmc[0].FmodesID].md[0].size[0];
 
-
+	printf("DONE Creating / loading Cmodes and Fmodes\n");
+	fflush(stdout);
      
 
     // =================== IMPORT / CREATE PIAA SHAPES =====================

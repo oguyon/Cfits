@@ -7,6 +7,7 @@
 #include <math.h>
 #include <pthread.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/mman.h>
 #include <signal.h> 
@@ -18,6 +19,9 @@
 #include <netinet/tcp.h>
 #include <fcntl.h> // for open
 #include <unistd.h> // for close
+
+
+
 
 
 #ifdef __MACH__
@@ -296,6 +300,7 @@ int create_image_shared_cli() // default precision
             break;
         }
         free(imsize);
+        COREMOD_MEMORY_image_set_createsem(data.cmdargtoken[1].val.string, 10);
     }
     else
         return 1;
@@ -2110,7 +2115,7 @@ long read_sharedmem_image(char *name)
 
 
     sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
-    printf("Importing mmap file \"%s\"\n",SM_fname);
+   // printf("Importing mmap file \"%s\"\n",SM_fname);
 
 
     SM_fd = open(SM_fname, O_RDWR);
@@ -2118,7 +2123,7 @@ long read_sharedmem_image(char *name)
     {
         data.image[ID].used = 0;
         ID = -1;
-        printf("Cannot import file - continuing\n");
+        printf("Cannot import shared memory file %s \n", name);
     }
     else
     {
@@ -2540,22 +2545,22 @@ long copy_image_ID(char *name, char *newname, int shared)
     data.image[IDout].md[0].write = 1;
 
     if(atype==CHAR)
-        memcpy (data.image[IDout].array.C,data.image[ID].array.C, sizeof(char)*nelement);
+        memcpy (data.image[IDout].array.C, data.image[ID].array.C, sizeof(char)*nelement);
 
     if(atype==INT)
-        memcpy (data.image[IDout].array.I,data.image[ID].array.I, sizeof(int)*nelement);
+        memcpy (data.image[IDout].array.I, data.image[ID].array.I, sizeof(int)*nelement);
 
     if(atype==FLOAT)
-        memcpy (data.image[IDout].array.F,data.image[ID].array.F, sizeof(float)*nelement);
+        memcpy (data.image[IDout].array.F, data.image[ID].array.F, sizeof(float)*nelement);
 
     if(atype==DOUBLE)
-        memcpy (data.image[IDout].array.D,data.image[ID].array.D, sizeof(double)*nelement);
+        memcpy (data.image[IDout].array.D, data.image[ID].array.D, sizeof(double)*nelement);
 
     if(atype==COMPLEX_FLOAT)
-        memcpy (data.image[IDout].array.CF,data.image[ID].array.CF, sizeof(float)*2*nelement);
+        memcpy (data.image[IDout].array.CF, data.image[ID].array.CF, sizeof(float)*2*nelement);
 
     if(atype==COMPLEX_DOUBLE)
-        memcpy (data.image[IDout].array.CD,data.image[ID].array.CD, sizeof(double)*2*nelement);
+        memcpy (data.image[IDout].array.CD, data.image[ID].array.CD, sizeof(double)*2*nelement);
 
     if(atype==USHORT)
         memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);

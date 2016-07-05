@@ -628,7 +628,7 @@ echo "invPIAAmode = $invPIAAmode"
 SCORINGMASKTYPE=1
 
 
-NBpropStep=100
+NBpropStep=200
 
 # PARAMETER LOAD SCRIPT TO BE EXECUTED - DEFAULT VALUES
 startupfile="clistartup$pid.txt"
