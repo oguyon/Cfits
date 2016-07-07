@@ -182,11 +182,12 @@ printhelp_designsteps()
 	cecho "STEP 006 ----------------------------------------" $bwhite
 	echo ""
 	echo "    Compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)"
-	echo "     \033[1m LMintC_step006.fits        \033[0m : 3D incoherent illumination"
+	echo -e "     \033[1m LMintC_step006.fits        \033[0m : 3D incoherent illumination"
 	echo ""
 	cecho "STEP 007 ----------------------------------------" $bwhite
 	echo ""
 	echo "    Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes"
+	echo ""
 	echo ""
 	cecho "STEP 008 ----------------------------------------" $bwhite
 	echo ""

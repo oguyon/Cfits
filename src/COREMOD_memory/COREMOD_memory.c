@@ -4212,15 +4212,16 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
         else
         {
             s = index;
-                sem_getvalue(data.image[ID].semptr[s], &semval);
-                for(i=0; i<semval; i++)
-                    sem_trywait(data.image[ID].semptr[s]);
+            sem_getvalue(data.image[ID].semptr[s], &semval);
+            for(i=0; i<semval; i++)
+                sem_trywait(data.image[ID].semptr[s]);
 
         }
     }
 
     return(ID);
 }
+
 
 
 

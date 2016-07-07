@@ -1237,14 +1237,15 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "# ======== AO simulation : creating atmospheric wavefronts stream =================\n");
 	fprintf(fp, "# script relies on pre-computed physical atmospheric wavefronts\n");
 	fprintf(fp, "\n\n");
+	fprintf(fp, "MODE             0                # 0: read pre-computed WFs, 1: empty WFs, 2: AR filter + random walk\n");
     fprintf(fp, "WFDIR            ./atmwf          # atmospheric wavefronts directory\n");
     fprintf(fp, "\n");
     fprintf(fp, "LAMBDANM         1600             # wavelength [nm]\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== OUTPUT TYPE (OPD unit = um) ====================\n");
     fprintf(fp, "OUT0FITSFILE         0                # 0: none, 1 if FITS file output OPD only, 2 if OPD+AMP\n");
-    fprintf(fp, "OUT0FITSFILENAMEOPD  wfopd.fits       # FITS file name output (OPD)\n");
-    fprintf(fp, "OUT0FITSFILENAMEAMP  wfamp.fits       # FITS file name output (AMP)\n");
+    fprintf(fp, "OUT0FITSFILENAMEOPD  wf0opd.fits       # FITS file name output (OPD)\n");
+    fprintf(fp, "OUT0FITSFILENAMEAMP  wf0amp.fits       # FITS file name output (AMP)\n");
     fprintf(fp, "OUT0STREAM           1                # 1 if shared memory stream OPD only, 2 if OPD+AMP \n");
     fprintf(fp, "OUT0STREAMNAMEOPD    wf0opd           # output WF stream name (OPD)\n");
     fprintf(fp, "OUT0STREAMNAMEAMP    wf0amp           # output WF stream name (AMP)\n");
@@ -1253,8 +1254,10 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "TRIGGERMODE           1                # 0: file, 1: semaphore from stream, 2: time interval\n");
     fprintf(fp, "TRIGGERFILE           wfup.txt         # update file name (TRIGGERMODE=0,1\n");
     fprintf(fp, "TRIGGERDT             0.1              # update interval (TRIGGERMODE=0,2)\n");
-    fprintf(fp, "TRIGGERSTREAM         WFSinst          # trigger stream\n");
-    fprintf(fp, "TRIGGERSEM            5                # trigger semaphore in TRIGGERSTREAM\n");
+    fprintf(fp, "TRIGGER0STREAM        WFSinst          # trigger stream\n");
+    fprintf(fp, "TRIGGER0SEM           5                # trigger semaphore in TRIGGERSTREAM\n");
+    fprintf(fp, "TRIGGER1STREAM        dm05dispmap      # trigger stream\n");
+    fprintf(fp, "TRIGGER1SEM           5                # trigger semaphore in TRIGGERSTREAM\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== PARAMETERS ======================================\n");
     fprintf(fp, "DT                    0.0003           # time interval between computed wavefronts\n");
@@ -1269,11 +1272,11 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "# ============== POST-PROCESSING =============================\n");
 	fprintf(fp, "DM0MODE               1               # 0 if no DM0, 1 if OPD DMn\n");
 	fprintf(fp, "DM0NAME               dm05dispmap     # DM displacement map stream\n");
+	fprintf(fp, "OUT1FITSFILENAMEOPD  wf1opd.fits       # FITS file name output (OPD)\n");
+    fprintf(fp, "OUT1FITSFILENAMEAMP  wf1amp.fits       # FITS file name output (AMP)\n");
+    fprintf(fp, "OUT1STREAM           1                # 1 if shared memory stream OPD only, 2 if OPD+AMP \n");
     fprintf(fp, "OUT1STREAMNAMEOPD     wf1opd          # output WF stream name (OPD)\n");
     fprintf(fp, "OUT1STREAMNAMEAMP     wf1amp          # output WF stream name (AMP)\n");
-    fprintf(fp, "OUT1STREAM           1                # 1 if shared memory stream OPD only, 2 if OPD+AMP \n");
-    fprintf(fp, "OUT1STREAMNAMEOPD    wf1opd           # output WF stream name (OPD)\n");
-    fprintf(fp, "OUT1STREAMNAMEAMP    wf1amp           # output WF stream name (AMP)\n");
     fprintf(fp, "\n");       
     fprintf(fp, "\n");
     fclose(fp);
@@ -1290,6 +1293,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     char fname[200];
     char wf_fname[500];
 
+	int MODE;
     char WFDIR[500];
     float LAMBDA;
     char conf_atmWFconf_fname[500];
@@ -1304,8 +1308,10 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     int TRIGGERMODE;
     char TRIGGERFILE[200];
     float TRIGGERDT;
-    char TRIGGERSTREAM[200];
-    int TRIGGERSEM;
+    char TRIGGER0STREAM[200];
+    int TRIGGER0SEM;
+    char TRIGGER1STREAM[200];
+    int TRIGGER1SEM;
 
     float DT;
     float OPDMFACT;
@@ -1327,7 +1333,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     char OUT1STREAMNAMEAMP[200];
 
 
-
+	struct timespec ts;
 
     // read from atm turbb config file
     float wfin_TIME_STEP;
@@ -1379,7 +1385,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 
 
     // INPUT WF
-    if((fp=fopen(CONF_FNAME,"r"))==NULL)
+			if((fp=fopen(CONF_FNAME,"r"))==NULL)
     {
         sprintf(fname, "%s.default", CONF_FNAME);
         printf("configuration file %s not found. Creating default template as %s\n", CONF_FNAME, fname);
@@ -1388,6 +1394,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     }
     else
         fclose(fp);
+		
 
     read_config_parameter(CONF_FNAME, "WFDIR", WFDIR);
     printf("WFDIR = %s\n", WFDIR);
@@ -1411,8 +1418,10 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     TRIGGERMODE = read_config_parameter_long(CONF_FNAME, "TRIGGERMODE");
     TRIGGERDT =  read_config_parameter_float(CONF_FNAME, "TRIGGERDT");
     read_config_parameter(CONF_FNAME, "TRIGGERFILE", TRIGGERFILE);
-    read_config_parameter(CONF_FNAME, "TRIGGERSTREAM", TRIGGERSTREAM);
-    TRIGGERSEM = read_config_parameter_long(CONF_FNAME, "TRIGGERSEM");
+    read_config_parameter(CONF_FNAME, "TRIGGER0STREAM", TRIGGER0STREAM);
+    TRIGGER0SEM = read_config_parameter_long(CONF_FNAME, "TRIGGER0SEM");
+    read_config_parameter(CONF_FNAME, "TRIGGER1STREAM", TRIGGER1STREAM);
+    TRIGGER1SEM = read_config_parameter_long(CONF_FNAME, "TRIGGER1SEM");
 
     // TIMING OUTPUT
     DT = read_config_parameter_float(CONF_FNAME, "DT");
@@ -1439,7 +1448,6 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     read_config_parameter(CONF_FNAME, "OUT1STREAMNAMEAMP", OUT1STREAMNAMEAMP);
 
 
-
     // TIMING INPUT
     wfin_TIME_STEP = read_config_parameter_float(conf_atmWFconf_fname, "WFTIME_STEP");
     printf("Input WF time step = %f\n", wfin_TIME_STEP);
@@ -1453,20 +1461,15 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     NBframes = (long) ((wfin_TIME_SPAN+0.1*wfin_TIME_STEP)/wfin_TIME_STEP);
     printf("NBframes = %ld\n", NBframes);
 
-
-
-
-
-
     wfin_PUPIL_SCALE = read_config_parameter_float(conf_atmWFconf_fname, "PUPIL_SCALE");
     printf("Input WF PUPIL_SCALE = %f\n", wfin_PUPIL_SCALE);
     fp1 = fopen("pupscale.txt", "w");
     fprintf(fp1, "%f", wfin_PUPIL_SCALE);
     fclose(fp1);
 
-
     wfin_WFsize = read_config_parameter_long(conf_atmWFconf_fname, "WFsize");
     printf("Input WF WFsize = %ld\n", wfin_WFsize);
+
 
     if(PIXSCALEMODE!=2)
         PIXBINFACTOR =1;
@@ -1490,7 +1493,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     else
         IDopd0 = create_image_ID(OUT0STREAMNAMEOPD, 2, sizearray, FLOAT, 0, 0);
 
-    if(OUT0STREAM>1)
+    if(OUT0STREAM>0) // create amp stream if OUT0STREAM=1 or 2, but will only update it if OUT0STREAM=2
     {
         IDamp0 = create_image_ID(OUT0STREAMNAMEAMP, 2, sizearray, FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(OUT0STREAMNAMEAMP, 10);
@@ -1509,7 +1512,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
         else
             IDopd1 = create_image_ID(OUT1STREAMNAMEOPD, 2, sizearray, FLOAT, 0, 0);
 
-        if(OUT1STREAM>1)
+        if(OUT1STREAM>0) // create amp stream if OUT0STREAM=1 or 2, but will only update it if OUT0STREAM=2
         {
             IDamp1 = create_image_ID(OUT1STREAMNAMEAMP, 2, sizearray, FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem(OUT1STREAMNAMEAMP, 10);
@@ -1746,10 +1749,6 @@ int AOsystSim_mkWF(char *CONF_FNAME)
                         }
                     }
             }
-            //    save_fits("tmpre", "!tmpre.fits");
-            //    save_fits("tmpim", "!tmpim.fits");
-            //    save_fits("tmpamp", "!tmpamp.fits");
-            //    save_fits("tmpopd", "!tmpopd.fits");
         }
 
 
@@ -1922,13 +1921,21 @@ int AOsystSim_mkWF(char *CONF_FNAME)
             }
             break;
         case 1:
-            ID = image_ID(TRIGGERSTREAM);
+            ID = image_ID(TRIGGER0STREAM);
             while(ID==-1)
             {
                 usleep(1000000);
-                ID = read_sharedmem_image(TRIGGERSTREAM);
+                ID = read_sharedmem_image(TRIGGER0STREAM);
             }
-            COREMOD_MEMORY_image_set_semwait(TRIGGERSTREAM, TRIGGERSEM);
+            COREMOD_MEMORY_image_set_semwait(TRIGGER0STREAM, TRIGGER0SEM);
+            
+            ID = image_ID(TRIGGER1STREAM);
+            while(ID==-1)
+            {
+                usleep(1000000);
+                ID = read_sharedmem_image(TRIGGER1STREAM);
+            }
+            COREMOD_MEMORY_image_set_semwait(TRIGGER1STREAM, TRIGGER1SEM);            
             break;
         case 2:
             usleep((long) (1.0e6*TRIGGERDT));
@@ -2435,7 +2442,7 @@ int AOsystSim_DM(char *CONF_FNAME)
 	long rxi, ryi;
 	long IDif, IDifc;
 	float ii0f,jj0f;
-	double dmifscale = 2.0; // scale magnification between full DM map and DM influence function
+	double dmifscale = 4.0; // scale magnification between full DM map and DM influence function
 
 	long IDdmdispC, IDdmdispC1;
 	long act;

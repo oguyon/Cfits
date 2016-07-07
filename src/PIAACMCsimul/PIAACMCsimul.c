@@ -3762,7 +3762,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
             printf("COMPUTING RESOLVED SOURCE PSF\n");
             printf("Peak constrast (rough estimate)= %g\n", peakcontrast/size/size/optsyst[0].flux[0]/focscale/focscale/normcoeff/normcoeff);
-            printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(arith_image_total("scoringmask")*focscale*focscale));
+            printf("Total light in scoring field = %g, peak PSF = %g    -> Average contrast = %g\n", value, piaacmc[0].peakPSF, value/(arith_image_total("scoringmask")*focscale*focscale));
 
             if(outsave==1)
             {
@@ -3870,12 +3870,15 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             if(piaacmc[0].peakPSF<1.0)
                 {
                     printf("Peak constrast (rough estimate)= %g -> %g\n", peakcontrast, peakcontrast/(optsyst[0].flux[0]*optsyst[0].flux[0]));
-                    printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL); 
+                    printf("optsyst[0].flux[0]  = %g\n", optsyst[0].flux[0]);
+                    printf("SCORINGMASKTYPE = %d\n", SCORINGMASKTYPE);
+                    printf("[0] Total light in scoring field = %g, peak PSF = %g, SCOTINGTOTAL = %g   -> Average contrast = %g\n", value, piaacmc[0].peakPSF,  SCORINGTOTAL, value/(optsyst[0].flux[0]*optsyst[0].flux[0])/SCORINGTOTAL); 
                 }
             else
                 {
                     printf("Peak constrast = %g -> %g\n", peakcontrast, peakcontrast/piaacmc[0].peakPSF);
-                    printf("Total light in scoring field = %g  -> Average contrast = %g\n", value, value/piaacmc[0].peakPSF/SCORINGTOTAL);
+                    printf("SCORINGMASKTYPE = %d\n", SCORINGMASKTYPE);
+                    printf("[1] Total light in scoring field = %g, peak PSF = %g, SCOTINGTOTAL = %g  -> Average contrast = %g\n", value, piaacmc[0].peakPSF, SCORINGTOTAL, value/piaacmc[0].peakPSF/SCORINGTOTAL);
                     
                     if((fp=fopen("PSFcontrastval.txt","w"))!=NULL)
                     {
@@ -5223,6 +5226,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     int initscene;
     long IDscene;
 
+	double acoeff0, acoeff1, acoeff2;
+	float scangainfact;
+	int alphascaninit = 0;
+
+
+
 
     piaacmc = NULL;
 
@@ -5316,6 +5325,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
                 printf("valref = %g\n", valref);
             }
+ 
+		printf("EXEC CASE 0 COMPLETED\n");
  
         break;
 
@@ -6473,12 +6484,28 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         PIAACMC_fpmtype = 0; // idealized (default)
         if((IDv=variable_ID("PIAACMC_fpmtype"))!=-1)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
-
         printf("PIAACMC_fpmtype = %d\n", PIAACMC_fpmtype);
-
+ 
+ 
+		FORCE_CREATE_fpmza = 1;
         PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
  //       printf("data.image[piaacmc[0].zoneaID].array.D[0] = %lf\n", data.image[piaacmc[0].zoneaID].array.D[0]);
 //        sleep(10);
+        
+        
+      
+        PIAACMCsimul_makePIAAshapes(piaacmc, 0);
+        optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
+        
+        
+       if(0) // TEST
+        {
+			valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
+			printf("valref = %g\n", valref);
+			printf("EXEC CASE 40 COMPLETED\n");
+		}
+        else
+		{
         
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
@@ -6582,7 +6609,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         FORCE_MAKE_PIAA0shape = 1;
         FORCE_MAKE_PIAA1shape = 1;
-
+}
         break;
 
 
@@ -7215,9 +7242,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             fclose(fp);
 
 
-            //    linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-4, "optcoeff4", 0);
-            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-5, "optcoeff0", 0);
-            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 1.0e-7, "optcoeff1", 0);
+            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", sqrt(1.0e-4), "optcoeff0", 0);
+            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", sqrt(1.0e-5), "optcoeff1", 0);
+            linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", sqrt(1.0e-7), "optcoeff2", 0);
 
             IDoptvec = arith_image_cstmult("optcoeff0", 0.0, "optvec"); // create optimal vector
 
@@ -7227,15 +7254,34 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
             NBlinoptgain = 0;
-            for(alphareg=0.0; alphareg<1.01; alphareg += 0.01)
+            
+ 
+            scangainfact = 1.2;
+			alphascaninit = 0;
+            
+            for(alphareg=0.0; alphareg<1.01; alphareg += 0.25)
             {
-                alphareg *= 1.5;
-                arith_image_cstmult("optcoeff0", alphareg, "optcoeff0m");
-                arith_image_cstmult("optcoeff1", 1.0-alphareg, "optcoeff1m");
-                arith_image_add("optcoeff0m", "optcoeff1m", "optcoeff");
+                acoeff0 = 1.0 - 2.0*alphareg;
+                if(acoeff0<0.0)
+					acoeff0 = 0.0;
+
+				acoeff1 = 1.0 - fabs(2.0*(alphareg-0.5));
+
+				acoeff2 = 2.0*alphareg - 1.0;
+				if(acoeff2<0.0)
+					acoeff2 = 0.0;
+				
+                
+                arith_image_cstmult("optcoeff0", acoeff0, "optcoeff0m");
+                arith_image_cstmult("optcoeff1", acoeff1, "optcoeff1m");
+                arith_image_cstmult("optcoeff2", acoeff2, "optcoeff2m");
+                
+                arith_image_add("optcoeff0m", "optcoeff1m", "optcoeff01m");
+                arith_image_add("optcoeff01m", "optcoeff2m", "optcoeff");
                 delete_image_ID("optcoeff0m");
                 delete_image_ID("optcoeff1m");
-
+                delete_image_ID("optcoeff2m");
+				delete_image_ID("optcoeff01m");
 
                 ID = image_ID("optcoeff");
 
@@ -7245,6 +7291,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 val = 100000000000.0; // big number
                 bestgain = 0.0;
                 k = 0;
+                
+                if(alphascaninit==1)
+						scangain = bestgain/scangainfact/scangainfact/scangainfact;
+				alphascaninit = 1;
                 while(linscanOK==1)
                 {
                     // compute offsets
@@ -7308,6 +7358,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                             data.image[IDoptvec].array.F[i] = (float) *(paramval[i]); //paramdeltaval[i];
                         bestval = val;
                         fprintf(fp, " BEST VECTOR\n");
+                        bestgain = scangain;
                     }
                     else
                     {
@@ -7341,10 +7392,13 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     else
                         linscanOK = 0;
 
+						
+
                     if(k>90)
                         linscanOK = 0;
+
                     scangain += scanstepgain;
-                    scangain *= 1.2;
+                    scangain *= scangainfact;
                 }
                 if(k>NBlinoptgain)
                     NBlinoptgain = k;
@@ -7505,7 +7559,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             // if optimization ends, then iterOK set to 0
             if(iter==NBiter)
                 iterOK = 0;
-            if(iter>3)
+            if(iter>2)
             {
                 if(val>0.95*oldval)
                     iterOK = 0;
