@@ -1237,7 +1237,7 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "# ======== AO simulation : creating atmospheric wavefronts stream =================\n");
 	fprintf(fp, "# script relies on pre-computed physical atmospheric wavefronts\n");
 	fprintf(fp, "\n\n");
-	fprintf(fp, "MODE             0                # 0: read pre-computed WFs, 1: empty WFs, 2: AR filter + random walk\n");
+	fprintf(fp, "MODE             0                # 0: read pre-computed WFs, 1: empty WFs\n");
     fprintf(fp, "WFDIR            ./atmwf          # atmospheric wavefronts directory\n");
     fprintf(fp, "\n");
     fprintf(fp, "LAMBDANM         1600             # wavelength [nm]\n");
@@ -1540,7 +1540,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 
     OK = 1;
     k = 0;
-    kmax = 10;
+    kmax = 3;
     AMPfile = 1;
 
     IDampmask = make_disk("pupmask", ARRAYSIZE, ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*PUPDIAM/pupscale);
@@ -1569,8 +1569,8 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     jj1end ++;
 
 
-
-    while(k<kmax)
+	
+    while(1)
     {
         frame_f = (t - wfin_TIME_SPAN*k)/wfin_TIME_STEP;
         frame_n = (long) frame_f;
@@ -1945,6 +1945,9 @@ int AOsystSim_mkWF(char *CONF_FNAME)
             exit(0);
             break;
         }
+
+		if(k>kmax)
+			k = 0;
 
     }
 
