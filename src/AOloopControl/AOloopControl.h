@@ -149,7 +149,8 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
 
 int set_DM_modes(long loop);
 int set_DM_modesRM(long loop);
-long AOloopControl_mkHadamardModes50(char *outname);
+//long AOloopControl_mkHadamardModes50(char *outname);
+long AOloopControl_mkHadamardModes(char *DMmask_name, char *outname);
 long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname);
 long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl);
 long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter);

@@ -24,7 +24,7 @@ void qs3(double *array, double *array1, double *array2, long left, long right);
 void qs3_double(double *array, double *array1, double *array2, long left, long right);
 
 void quick_sort3(double *array, double *array1, double *array2, long count);
-
+void quick_sort3_float(float *array, float *array1, float *array2, long count);
 void quick_sort3_double(double *array, double *array1, double *array2, long count);
 
 void qs2l(double *array, long *array1, long left, long right);

@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #ifdef __MACH__
 #include <mach/mach_time.h>
@@ -359,11 +361,11 @@ int AOloopControl_set_modeblock_gain_cli()
         return 1;
 }
 
-int AOloopControl_mkHadamardModes50_cli()
+int AOloopControl_mkHadamardModes_cli()
 {
-    if(CLI_checkarg(1,3)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
-      AOloopControl_mkHadamardModes50(data.cmdargtoken[1].val.string);
+      AOloopControl_mkHadamardModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
       return 0;
     }
   else
@@ -949,13 +951,13 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double ampl)");
     data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"aolmkH50");
+    strcpy(data.cmd[data.NBcmd].key,"aolmkH");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_mkHadamardModes50_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make 50x50 Hadamard poke sequence");
-    strcpy(data.cmd[data.NBcmd].syntax,"<output fname [string]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmkH50 h50pokec");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkHadamardModes50(char outname)");
+    data.cmd[data.NBcmd].fp = AOloopControl_mkHadamardModes_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make Hadamard poke sequence");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DM pixel mask> <output fname [string]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmkH dm50mask h50pokec");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkHadamardModes50(char *DMmask_name, char outname)");
     data.NBcmd++;
 
 
@@ -1786,15 +1788,15 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
  *
  * if Mmask exists, measure xc, yc from it, otherwise use values given to function
  * if "dmslaved" image exists, force these actuators to be slaved to neighbors
- * 
+ *
  * MaskMode = 0  : tapered masking
  * MaskMode = 1  : STRICT masking
  *
  * if BlockNB < 0 : do all blocks
- * if BlockNB >= 0 : only update single block 
- * 
+ * if BlockNB >= 0 : only update single block
+ *
  * SVDlim = 0.001 works well
- * 
+ *
  * OPTIONAL : if file zrespM exists, WFS modes will be computed
  *
  */
@@ -1805,7 +1807,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long ID0;
     long ID=-1;
     long k, ii, jj;
-
+	int use_magma = 0;
+	
     long IDmask; // DM mask
     long IDwfsmask; // WFS mask
 
@@ -1886,7 +1889,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
     float SVDlim0 = 0.0005; // DM filtering
-    float SVDlim1 = 0.0005; // WFS filtering
+    float SVDlim1 = 0.0001; // WFS filtering
     float rmslim = 0.03;
     float *rmsarray;
     long IDm, IDSVDmodes;
@@ -1919,8 +1922,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     int MODAL; // 1 if "pixels" of DM are already modes
 
-    long IDRMMmodes, IDRMMresp, ID_imfit, IDRMM_coeff, IDcoeffmat;
-    long IDmodes0all;
+    long IDRMMmodes = -1;
+    long IDRMMresp  = -1;
+    long ID_imfit = -1;
+    long IDRMM_coeff = -1;
+    long IDcoeffmat = -1;
+    long IDmodes0all = -1;
     long linfitsize;
     int linfitreuse;
     double res, res1, v0;
@@ -2025,7 +2032,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-    if(BlockNB<0)
+    if(BlockNB<0) // COMPUTE ALL BLOCKS
     {
         if(MODAL==0)
         {
@@ -2280,10 +2287,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         // if modal response matrix exists, use it
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
         IDRMMresp = image_ID("RMMresp"); // modal resp matrix
-        
-    
-        
-        fpLOcoeff = fopen("LOcoeff.txt", "w");
+
+
+
+        fpLOcoeff = fopen("./mkmodestmp/LOcoeff.txt", "w");
         if(fpLOcoeff == NULL)
         {
             printf("ERROR: cannot create file \"LOcoeff.txt\"\n");
@@ -2518,7 +2525,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
         /// fmodes1all -> fmodes2all
-        
+
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
             data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -2554,16 +2561,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     }
                     delete_image_ID("SVDmode1");
-                 
+
                     rms = sqrt(value1/totm);
                     if(rms>rmslim)
                     {
-                 //       for(ii=0; ii<msizexy; ii++)
-                   //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
+                        //       for(ii=0; ii<msizexy; ii++)
+                        //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
                     }
                     else
                         mok[m] = 0;
-            
+
                     //printf("  %12g (%g %g)\n", rms, value1, totm);
                 }
             }
@@ -2620,7 +2627,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         save_fits("fmodes2all", "!./mkmodestmp/fmodes2all.fits");
-    
+
 
 
 
@@ -2653,7 +2660,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
-            for(m=0;m<cnt;m++)
+            for(m=0; m<cnt; m++)
             {
                 value1 = 0.0;
                 for(ii=0; ii<msizexy; ii++)
@@ -2703,7 +2710,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     IDzrespM = image_ID("zrespM");
     if(IDzrespM!=-1) // compute WFS response to DM modes
     {
-        /// STEP 6: COMPUTE WFS RESPONSE TO MODES 
+        /// STEP 6: COMPUTE WFS RESPONSE TO MODES
         /// fmodes2ball -> fmodesWFS0all.fits
 
         if(BlockNB<0)
@@ -2760,7 +2767,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                     if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
                     {
-                        sprintf(fnameLOcoeff, "LOcoeff_%02ld.txt", mblock);
+                        sprintf(fnameLOcoeff, "./mkmodestmp/LOcoeff_%02ld.txt", mblock);
 
                         fpLOcoeff = fopen(fnameLOcoeff, "w");
                         if(fpLOcoeff == NULL)
@@ -2794,7 +2801,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                                 data.image[IDcoeffmat].array.F[m*linfitsize+jj] = data.image[IDRMM_coeff].array.F[jj];
 
                             // prevent large coefficients (noise propagation)
-                            
+
 
                             // construct linear fit result (DM)
                             IDtmp = create_2Dimage_ID("testrc", msizex, msizey);
@@ -2849,7 +2856,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                         save_fits("imfitmat", "!imfitmat.fits");
                         delete_image_ID("imfitmat");
-                    
+
                         fclose(fpLOcoeff);
                     }
 
@@ -2891,7 +2898,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             /// STEP 7: REMOVE WFS MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE WFS-SPACE ORTHOGONALITY BETWEEN BLOCKS
             /// Input: fmodesWFS0all (corresponding to fmodes2ball)
             /// Output -> fmodesWFS1all / fmodes3all
-            
+
             IDSVDmask = create_2Dimage_ID("SVDmask", wfsxsize, wfsysize);
             for(ii=0; ii<wfssize; ii++)
                 data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -3118,9 +3125,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-        /// STEP 8: SVD WFS SPACE IN EACH BLOCK 
+        /// STEP 8: SVD WFS SPACE IN EACH BLOCK
         /// fmodesWFS1all, fmodes3 -> fmodes4all
-        
+
         // fmodesWFS1_##, fmodes3_## -> fmodes_##
 
         for(mblock=0; mblock<NBmblock; mblock++)
@@ -3202,8 +3209,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(ii=0; ii<msizexy; ii++)
                         value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
                     rms = sqrt(value1/totm);
-                   // for(ii=0; ii<msizexy; ii++)
-                   //     data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
+                    // for(ii=0; ii<msizexy; ii++)
+                    //     data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
                 }
                 delete_image_ID("SVDout");
                 delete_image_ID("modecoeff");
@@ -3251,9 +3258,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-       /// STEP 9: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes5all.fits  (DM space)
+        /// STEP 9: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes5all.fits  (DM space)
         /// fmodes4all -> fmodes5all
-        
+
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
             data.image[IDSVDmask].array.F[ii] = 1.0;
@@ -3267,15 +3274,15 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         {
             printf("================  mblock = %ld  ==================\n", mblock);
             fflush(stdout);
-            
+
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 mok[m] = 1;
             for(mblock0=0; mblock0<mblock; mblock0++)
             {
-                
+
                 printf("         mblock0 = %ld  ==================\n", mblock0);
                 fflush(stdout);
-               
+
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
@@ -3295,16 +3302,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         value1 += data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii]*data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     }
                     delete_image_ID("SVDmode1");
-                 
-          //          rms = sqrt(value1/totm);
-      //              if(rms>rmslim)
-        //            {
-                 //       for(ii=0; ii<msizexy; ii++)
-                   //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
-//                    }
-  //                  else
-    //                    mok[m] = 0;
-            
+
+                    //          rms = sqrt(value1/totm);
+                    //              if(rms>rmslim)
+                    //            {
+                    //       for(ii=0; ii<msizexy; ii++)
+                    //         data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii] /= rms;
+                    //                    }
+                    //                  else
+                    //                    mok[m] = 0;
+
                     //printf("  %12g (%g %g)\n", rms, value1, totm);
                 }
             }
@@ -3366,7 +3373,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         save_fits("fmodes5all", "!./mkmodestmp/fmodes5all.fits");
-    
+
 
 
 
@@ -3399,7 +3406,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
-            for(m=0;m<cnt;m++)
+            for(m=0; m<cnt; m++)
             {
                 value1 = 0.0;
                 for(ii=0; ii<msizexy; ii++)
@@ -3435,7 +3442,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         save_fits("fmodesball", "!./mkmodestmp/fmodesall.fits");
-    
 
 
 
@@ -3452,7 +3458,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-        
+
+
 
 
 
@@ -3481,6 +3488,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     printf("COMPUTING WFS MODES, MODAL CONTROL MATRICES: block %ld  ( %ld x %ld = %ld - %ld )   %ld modes [ %ld <- %ld %ld ]\n", mblock, wfsxsize, wfsysize, wfssize, msizexy, MBLOCK_NBmode[mblock], IDwfsMresp, MBLOCK_ID[mblock], IDzrespM);
                     fflush(stdout);
 
+
+
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
                         for(act=0; act<msizexy; act++)
@@ -3491,19 +3500,20 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             }
                         }
                     }
-                    
+
+
+
+
                     if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
                     {
-                        sprintf(fnameLOcoeff, "LOcoeff1_%02ld.txt", mblock);
+                        sprintf(fnameLOcoeff, "./mkmodestmp/LOcoeff1_%02ld.txt", mblock);
 
                         fpLOcoeff = fopen(fnameLOcoeff, "w");
                         if(fpLOcoeff == NULL)
                         {
-                            printf("ERROR: cannot create file \"LOcoeff1.txt\"\n");
+                            printf("ERROR: cannot create file \"./mkmodestmp/LOcoeff1.txt\"\n");
                             exit(0);
                         }
-
-
 
                         linfitsize = data.image[IDRMMmodes].md[0].size[2];
                         IDRMM_coeff = create_2Dimage_ID("linfitcoeff", linfitsize, 1);
@@ -3515,6 +3525,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         linfitreuse = 0;
 
                         IDwfstmp = create_2Dimage_ID("wfsimtmp", wfsxsize, wfsysize);
+
+
 
                         for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                         {
@@ -3578,19 +3590,19 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         delete_image_ID("linfitcoeff");
                         delete_image_ID("imfitim");
 
-                        save_fits("imfitmat", "!imfitmat.fits");
+                        save_fits("imfitmat", "!./mkmodestmp/imfitmat.fits");
                         delete_image_ID("imfitmat");
-                    
+
                         fclose(fpLOcoeff);
                     }
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+
+
+
+
+
+
+
+
                     sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
                     save_fits(imname, fname);
 
@@ -3598,7 +3610,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     fflush(stdout);
 
                     // COMPUTE MODAL CONTROL MATRICES
-                    linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1*0.01, 10000, "VTmat");
+		#ifdef HAVE_MAGMA
+	use_magma = 1;
+	#endif
+	printf("COMPUTE OVERALL CONTROL MATRIX\n");
+	if(use_magma==1)
+		CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
+	else
+		linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
+                    
+                    
                     delete_image_ID("VTmat");
                     sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
                     save_fits(imnameCM, fname);
@@ -3659,10 +3680,21 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
         // COMPUTE OVERALL CONTROL MATRIX
+	use_magma = 0;
+	#ifdef HAVE_MAGMA
+	use_magma = 1;
+	#endif
+	//use_magma = 0;
+	printf("COMPUTE OVERALL CONTROL MATRIX\n");
+	if(use_magma==1)
+		CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat");
+	else
+		linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
 
-        linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1*0.01, 10000, "VTmat");
-        delete_image_ID("VTmat");
-        save_fits("cmat", "!./mkmodestmp/cmat.fits");
+	//save_fits("VTmat", "!./mkmodestmp/VTmat.fits");
+    delete_image_ID("VTmat");
+	save_fits("cmat", "!./mkmodestmp/cmat.fits");
+
 
 
         sprintf(command, "echo \"%ld\" > ./conf/conf_NBmodes.txt", cnt);
@@ -3673,6 +3705,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     return(ID);
 }
+
+
 
 
 
@@ -6170,12 +6204,13 @@ int set_DM_modesRM(long loop)
 // Hadamard modes (outname)
 // Hadamard matrix ("H50mat.fits")
 // pixel indexes ("H50pixindex.fits", float, to be converted to long)
-long AOloopControl_mkHadamardModes50(char *outname)
+long AOloopControl_mkHadamardModes(char *DMmask_name, char *outname)
 {
     long IDout;
     long xsize, ysize, xysize;
-    long IDdisk;
-    long Hsize = 2048;
+//    long IDdisk;
+    long cnt;
+    long Hsize;
     long Hnmax = 11;
     long *indexarray;
     long index;
@@ -6185,29 +6220,40 @@ long AOloopControl_mkHadamardModes50(char *outname)
     long IDindex;
     long *sizearray;
     
+    long IDmask;
     
-    indexarray = (long*) malloc(sizeof(long)*Hsize);
- 
-    xsize = 50;
-    ysize = 50;
+    
+    IDmask = image_ID(DMmask_name);
+    xsize = data.image[IDmask].md[0].size[0];
+    ysize = data.image[IDmask].md[0].size[1];
     xysize = xsize*ysize;
-    IDdisk = make_disk("tmpdisk", xsize, ysize, 24.5, 24.5, 25.6);
-
+    // IDdisk = make_disk("tmpdisk", xsize, ysize, 24.5, 24.5, 25.6);
 
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = xsize;
     sizearray[1] = ysize;
-    IDindex = create_image_ID("H50pixindex", 2, sizearray, FLOAT, 0, 0);
+    IDindex = create_image_ID("Hpixindex", 2, sizearray, FLOAT, 0, 0);
     free(sizearray);
+
+	cnt = 0;
+	for(ii=0;ii<xysize;ii++)
+		if(data.image[IDmask].array.F[ii]>0.5)
+			cnt++;
+	
+	Hsize = 1;
+	while(Hsize<cnt)
+		Hsize *= 2;
 
     for(ii=0;ii<xysize;ii++)
         data.image[IDindex].array.F[ii] = -10.0;
     
     index = 0;
+    
+    indexarray = (long*) malloc(sizeof(long)*Hsize);
     for(k=0;k<Hsize;k++)
         indexarray[k] = -1;
     for(ii=0;ii<xysize;ii++)
-        if((data.image[IDdisk].array.F[ii]>0.5)&&(index<Hsize))
+        if((data.image[IDmask].array.F[ii]>0.5)&&(index<Hsize))
             {
                 
                 indexarray[index] = ii;
@@ -6217,7 +6263,7 @@ long AOloopControl_mkHadamardModes50(char *outname)
                 
                 index++;
             }
-    save_fits("H50pixindex", "!H50pixindex.fits");
+    save_fits("Hpixindex", "!Hpixindex.fits");
     
     Hmat = (int*) malloc(sizeof(int)*Hsize*Hsize);
     
@@ -6248,7 +6294,7 @@ long AOloopControl_mkHadamardModes50(char *outname)
         for(jj=0; jj<Hsize; jj++)    
             data.image[IDtest].array.F[jj*Hsize+ii] = Hmat[jj*Hsize+ii];
     
-    save_fits("Htest", "!H50mat.fits");
+    save_fits("Htest", "!Hmat.fits");
     
     
     IDout = create_3Dimage_ID(outname, xsize, ysize, Hsize);
@@ -6267,6 +6313,9 @@ long AOloopControl_mkHadamardModes50(char *outname)
     
     return(IDout);
 }
+
+
+
 
 
 long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)
@@ -6410,29 +6459,34 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     long NBwfsframe;
     long twaitus = 30000; // 30 ms
     double dtoffset0 = 0.002; // 2 ms
+	long wfsframeoffset = 10;
 
     long IDwfsref;
     unsigned int dmstate;
     unsigned long wfscnt0;
     char *ptr;
-    long kk;
+    long kk, kkmax;
     double *valarray;
     double valmax, valmaxdt;
     double tmp;
     double dtoffset;
-
+	long kkoffset;
+	
     long iter;
-    
+
     double latencymax = 0.0;
     float *latencyarray;
-    float latencyave;
-    
+    float *latencysteparray;
+    float latencyave, latencystepave;
+
     FILE *fp;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     double latency;
+    float latencystep;
     int ret;
     float minlatency, maxlatency;
+    
 
     schedpar.sched_priority = RT_priority;
     // r = seteuid(euid_called); //This goes up to maximum privileges
@@ -6441,7 +6495,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
 
     latencyarray = (float*) malloc(sizeof(float)*NBiter);
-    
+	latencysteparray = (float*) malloc(sizeof(float)*NBiter);
 
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
@@ -6472,18 +6526,19 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
     dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
 
-
-    if ((fp=fopen("latency.txt", "w"))==NULL)
-        {
-            printf("ERROR: cannot open file \"latency.txt\"\\n");
-            exit(0);
-        }
+	ret = system("mkdir -p timingstats");
+	
+    if ((fp=fopen("timingstats/latency.txt", "w"))==NULL)
+    {
+        printf("ERROR: cannot open file \"timingstats/latency.txt\"\\n");
+        exit(0);
+    }
 
     for(iter=0; iter<NBiter; iter++)
     {
-    printf("ITERATION %5ld / %5ld\n", iter, NBiter);
-    fflush(stdout);
-    
+        printf("ITERATION %5ld / %5ld\n", iter, NBiter);
+        fflush(stdout);
+
         clock_gettime(CLOCK_REALTIME, &tstart);
         tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
         tlastdouble = tstartdouble;
@@ -6492,7 +6547,20 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
         copy_image_ID("_testdm0", dmname, 1);
         dmstate = 0;
+        
+        // waiting time
         usleep(twaitus);
+        // and waiting frames
+         wfscnt0 = data.image[IDwfs].md[0].cnt0;
+         for(wfsframe=0; wfsframe<wfs_NBframesmax;wfsframe++)
+		{ 
+	        while(wfscnt0==data.image[IDwfs].md[0].cnt0)
+            {
+                usleep(50);
+            }
+         wfscnt0 = data.image[IDwfs].md[0].cnt0;
+		}       
+        
         dt = 0.0;
 
         wfsframe = 0;
@@ -6503,8 +6571,6 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             // WAITING for image
             while(wfscnt0==data.image[IDwfs].md[0].cnt0)
             {
-                //  printf("\r [%8ld] Waiting for image cnt0 = %8ld      ", wfsframe, wfscnt0);
-                //  fflush(stdout);
                 usleep(50);
             }
             wfscnt0 = data.image[IDwfs].md[0].cnt0;
@@ -6524,14 +6590,15 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             tlastdouble = tdouble;
 
             // apply DM pattern #1
-            if((dmstate==0)&&(dt>dtoffset0))
+            if((dmstate==0)&&(dt>dtoffset0)&&(wfsframe>wfsframeoffset))
             {
                 printf("\nDM STATE CHANGED ON ITERATION %ld\n\n", wfsframe);
                 dtoffset = dt;
+                kkoffset = wfsframe;
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
             }
-           wfsframe++;
+            wfsframe++;
         }
         printf("\n\n %ld frames recorded\n", wfsframe);
         fflush(stdout);
@@ -6556,27 +6623,30 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             {
                 valmax = valarray[kk];
                 valmaxdt = dtarray[kk];
+                kkmax = kk-kkoffset;
             }
         }
 
 
 
         for(wfsframe=0; wfsframe<NBwfsframe; wfsframe++)
-            printf("%ld   %10.2f us       %g\n", wfsframe, 1.0e6*(dtarray[wfsframe]-dtoffset), valarray[wfsframe]);
+            fprintf(fp, "%ld   %10.2f     %g\n", wfsframe-kkoffset, 1.0e6*(dtarray[wfsframe]-dtoffset), valarray[wfsframe]);
 
         printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
         fflush(stdout);
-        
+
         free(valarray);
-        
+
         latency = valmaxdt-dtoffset;
-        printf("Latency = %f ms\n", 1000.0*latency);
+        latencystep = kkmax;
+        printf("Latency = %f ms  = %ld frames\n", 1000.0*latency, kkmax);
         if(latency > latencymax)
         {
             latencymax = latency;
-            save_fits("_testwfsc", "!maxlatencyseq.fits");
-        }        
-        fprintf(fp, "%5ld  %8.6f\n", iter, (valmaxdt-dtoffset));
+            save_fits("_testwfsc", "!./timingstats/maxlatencyseq.fits");
+        }
+        fprintf(fp, "# %5ld  %8.6f\n", iter, (valmaxdt-dtoffset));
+		latencysteparray[iter] = 1.0*kkmax;
         latencyarray[iter] = (valmaxdt-dtoffset);
     }
     fclose(fp);
@@ -6585,30 +6655,35 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     free(tarray);
 
     latencyave = 0.0;
+    latencystepave = 0.0;
     minlatency = latencyarray[0];
     maxlatency = latencyarray[0];
-    for(iter=0;iter<NBiter;iter++)
-        {
-            if(latencyarray[iter]>maxlatency)
-                maxlatency = latencyarray[iter];
-                                
-            if(latencyarray[iter]<minlatency)
-                minlatency = latencyarray[iter];
-                        
-            latencyave += latencyarray[iter];
-        }
+    for(iter=0; iter<NBiter; iter++)
+    {
+        if(latencyarray[iter]>maxlatency)
+            maxlatency = latencyarray[iter];
+
+        if(latencyarray[iter]<minlatency)
+            minlatency = latencyarray[iter];
+
+        latencyave += latencyarray[iter];
+        latencystepave += latencysteparray[iter];
+    }
     latencyave /= NBiter;
-    
-    printf("AVERAGE LATENCY = %8.3f ms\n", latencyave*1000.0);
+    latencystepave /= NBiter;
+
+    printf("AVERAGE LATENCY = %8.3f ms   %f frames\n", latencyave*1000.0, latencystepave);
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
-    
-    ret = sprintf(command, "echo %f %f %f > conf/conf_hardwlatency.txt", latencyave, minlatency, maxlatency);
+
+    ret = sprintf(command, "echo %f %f %f %f > conf/conf_hardwlatency.txt", latencyave, minlatency, maxlatency, latencystepave);
     ret = system(command);
-    
+
     free(latencyarray);
-    
+	free(latencysteparray);
+ 
     return 0;
 }
+
 
 
 
@@ -8317,7 +8392,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     // create output
     IDwfsref0 = create_2Dimage_ID("refwfsacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-    IDrespM = create_3Dimage_ID_float("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
+    IDrespM = create_3Dimage_ID("respmacq", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
 
 
 

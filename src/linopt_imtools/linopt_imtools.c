@@ -15,6 +15,7 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_cblas.h>
+#include <gsl/gsl_blas.h>
 
 #ifdef __MACH__
 #include <mach/mach_time.h>
@@ -38,6 +39,7 @@ int clock_gettime(int clk_id, struct timespec *t){
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
+#include "COREMOD_tools/COREMOD_tools.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"

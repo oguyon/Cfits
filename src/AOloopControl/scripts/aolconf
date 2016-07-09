@@ -103,6 +103,7 @@ echo "------------------------------------------------------------------------"
 NBARGS=0
 
 
+
 . ./aolconfscripts/aolconf_readconf
 
 
@@ -232,6 +233,7 @@ mkdir -p conf
 mkdir -p status
 mkdir -p tmp
 
+cp LOOPNAME ./conf/conf_LOOPNAME.txt
 
 
 

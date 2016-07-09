@@ -1808,14 +1808,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, queue);
 	
 
-	if(testmode == 1)
-	{
-		ID_VT = create_2Dimage_ID("mVT", N, N);
+	//if(testmode == 1)
+	//{
+		ID_VT = create_2Dimage_ID(ID_VTmatrix_name, N, N);
 		for(ii=0;ii<N;ii++)
 			for(jj=0;jj<N;jj++)
-				data.image[ID_VT].array.F[jj*N+ii] = h_AtA[jj*N+ii];
-		save_fits("mVT", "!test_mVT.fits");
-	}
+				data.image[ID_VT].array.F[jj*N+ii] = h_AtA[(N-ii-1)*N+jj];
+//		save_fits("mVT", "!test_mVT.fits");
+//	}
 
 	for(ii=0;ii<N;ii++)
 		for(jj=0;jj<N;jj++)

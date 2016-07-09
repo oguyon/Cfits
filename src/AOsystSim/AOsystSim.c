@@ -1261,7 +1261,7 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "\n");
     fprintf(fp, "# ============== PARAMETERS ======================================\n");
     fprintf(fp, "DT                    0.0003           # time interval between computed wavefronts\n");
-    fprintf(fp, "OPDMFACT              1.0              # OPD multiplicative factor\n");
+    fprintf(fp, "OPDMFACT              0.01             # OPD multiplicative factor\n");
     fprintf(fp, "AMPMFACT              1.0              # AMP multiplicative factor\n");
     fprintf(fp, "ARRAYSIZE             128              # output size [pix]\n");
     fprintf(fp, "PIXSCALEMODE          2                # 0: adopt input WF pixel scale, 1: custom pixel scale, 2: bin\n");
@@ -1346,7 +1346,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     long ii, jj, ii1, jj1;
     int OKf;
     int OK;
-    long k;
+    long k, k1;
     long kmax = 3;
     char wfimname_pha[200];
     char wfimname_amp[200];
@@ -1539,7 +1539,10 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 	}
 
     OK = 1;
+    
     k = 0;
+    k1 = 0;
+    
     kmax = 3;
     AMPfile = 1;
 
@@ -1572,13 +1575,14 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 	
     while(1)
     {
-        frame_f = (t - wfin_TIME_SPAN*k)/wfin_TIME_STEP;
+        frame_f = (t - wfin_TIME_SPAN*k1)/wfin_TIME_STEP;
         frame_n = (long) frame_f;
         alpha = frame_f-frame_n;
 
         if(frame_n > (NBframes-1))
         {
             k++;
+            k1++;
             frame_n -= NBframes;
             frame_f -= wfin_TIME_SPAN;
         }
@@ -1923,6 +1927,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
         case 1:
             ID = image_ID(TRIGGER0STREAM);
             while(ID==-1)
+
             {
                 usleep(1000000);
                 ID = read_sharedmem_image(TRIGGER0STREAM);
@@ -1979,8 +1984,8 @@ int AOsystSim_PyrWFS_mkCONF(char *fname)
     fprintf(fp, "\n");
     fprintf(fp, "# ============== INPUT TYPE (OPD unit = um) ====================\n");
     fprintf(fp, "INMODE                   0                 # 0:stream, 1:file system (FITS)\n");
-    fprintf(fp, "INSTREAMNAMEOPD          wfopd             # input OPD stream\n");
-    fprintf(fp, "INSTREAMNAMEAMP          wfamp             # input AMP stream\n");
+    fprintf(fp, "INSTREAMNAMEOPD          wf1opd            # input OPD stream\n");
+    fprintf(fp, "INSTREAMNAMEAMP          wf1amp            # input AMP stream\n");
     fprintf(fp, "INSEMCHAN                5                 # input semaphore channel (using OPD input)\n");
     fprintf(fp, "INFITSFILENAMEOPD        inwfopd.fits      # input FITS file name (OPD)\n");
     fprintf(fp, "INFITSFILENAMEAMP        inwfamp.fits      # input FITS file name (AMP)\n");
@@ -1996,8 +2001,8 @@ int AOsystSim_PyrWFS_mkCONF(char *fname)
     fprintf(fp, "# ============== FREQUENCY, GEOMETRY =============================\n");
 	fprintf(fp, "ARRAYSIZE                256               # array size for computations\n");
 	fprintf(fp, "PYRMODMODE               1                 # 0: no modulation, 1: modulation\n");
-	fprintf(fp, "PYRMODAMP                3.0               # Modulation radius [l/D]\n");
-	fprintf(fp, "PYRMODNBPT               20                # number of pyramid modulation points\n");
+	fprintf(fp, "PYRMODAMP                0.0               # Modulation radius [l/D]\n");
+	fprintf(fp, "PYRMODNBPT               1                 # number of pyramid modulation points\n");
 	fprintf(fp, "PYRAPERTURE              50.0              # spatial filter aperture [l/D]\n");
 	fprintf(fp, "PUPPIXDIAM               100.0             # pupil diameter [pix] - used to compute l/D scale\n");
 	fprintf(fp, "PYRPUPSEP                1.2               # separation between pupil imagees (relative to pup diam)\n");
@@ -2383,10 +2388,10 @@ int AOsystSim_DM_mkCONF(char *fname)
     fprintf(fp, "# ============== GEOMETRY, TIME =============================\n");
 	fprintf(fp, "ARRAYSIZE                128               # array size, pix\n");
 	fprintf(fp, "DMRAD                    52                # DM radius on array\n");
-	fprintf(fp, "DMDT                     0.0001            # DM time sampling\n");
+	fprintf(fp, "DMDT                     0.0003            # DM time sampling\n");
 	fprintf(fp, "NBTSAMPLES               100               # number of time samples\n");
 	fprintf(fp, "DMLAGSTART               0.0003            # time lag start\n");
-	fprintf(fp, "DMTIMECST                0.001             # DM time constant\n");
+	fprintf(fp, "DMTIMECST                0.0001            # DM time constant\n");
 	fprintf(fp, "\n");
 
     fclose(fp);

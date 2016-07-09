@@ -96,11 +96,11 @@ int AOloopControl_DM_CombineChannels_cli()
     // 12 int voltmode
     // 13 char *IDvolt_name       
     // 14 float maxvolt
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,5)+CLI_checkarg(8,5)+CLI_checkarg(9,2)+CLI_checkarg(10,5)+CLI_checkarg(11,5)+CLI_checkarg(12,2)+CLI_checkarg(13,5)+CLI_checkarg(14,1)==0)
-        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.string, data.cmdargtoken[14].val.numf);
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,5)+CLI_checkarg(8,5)+CLI_checkarg(9,2)+CLI_checkarg(10,5)+CLI_checkarg(11,5)+CLI_checkarg(12,2)+CLI_checkarg(13,5)+CLI_checkarg(14,1)+CLI_checkarg(15,1)==0)
+        AOloopControl_DM_CombineChannels(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.string, data.cmdargtoken[14].val.numf, data.cmdargtoken[15].val.numf);
     else
         {// DEFAULT: no dm2dm, no wfsref, dmvolt output
-            AOloopControl_DM_CombineChannels(0, 50, 50, 8, 1, 0, "dmmodes", "outdisp", 0, "wfsrm", "refout", 1, "dmvolt", 150.0);
+            AOloopControl_DM_CombineChannels(0, 50, 50, 8, 1, 0, "dmmodes", "outdisp", 0, "wfsrm", "refout", 1, "dmvolt", 0.0, 150.0);
         }
         
     return 1;
@@ -207,9 +207,9 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_CombineChannels_cli;
     strcpy(data.cmd[data.NBcmd].info,"create and combine DM channels");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <xsize> <ysize> <NBchannel> <AveMode (1=if average level removed)> <dm2dm mode> <DMmodes> <outdm stream> <wfsref mode> <WFS resp mat> <wfsref stream> <voltmode (1=dmvolt computed)> <dmvoltname> <maxvolt [V]>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 120.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float maxvolt)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <xsize> <ysize> <NBchannel> <AveMode (1=if average level removed)> <dm2dm mode> <DMmodes> <outdm stream> <wfsref mode> <WFS resp mat> <wfsref stream> <voltmode (1=dmvolt computed)> <dmvoltname> <DClevel> <maxvolt [V]>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMcomb 0 50 50 8 0 1 dmmodes outdm 1 wfsrm wfsrefout 1 dmvolt 0.78 120.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float DClevel, float maxvolt)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolcontroldmchgain");
@@ -364,15 +364,32 @@ int AOloopControl_DM_disp2V(long DMindex)
 int AOloopControl_printDMconf()
 {
     long DMindex;
+    char IDvolt_str[4];
+    char maxvolt_str[7];
+    char voltname_str[12];
     
-    printf("DM on   x   y Nbch busy maxvolt  monint stat IDdisp IDvolt voltname\n");
+    printf("DM | on |  x |  y | Nbch | busy | ave | DClevel | monint  | stat | IDdisp | voltmode | IDvolt | maxvolt |   voltname  |\n");
     for(DMindex=0; DMindex<NB_DMindex; DMindex++)
         {
-            printf("%ld  %d  %3ld %3ld  %02ld %d     %6.2f  %8ld  %02d  %3ld %3ld  %s\n", DMindex, dmdispcombconf[DMindex].ON, dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].NBchannel, dmdispcombconf[DMindex].busy, dmdispcombconf[DMindex].MAXVOLT, dmdispcombconf[DMindex].moninterval, dmdispcombconf[DMindex].status, dmdispcombconf[DMindex].IDdisp, dmdispcombconf[DMindex].IDvolt, dmdispcombconf[DMindex].voltname);
+			if(dmdispcombconf[DMindex].voltmode==1)
+				{
+					sprintf(IDvolt_str, "%3ld", dmdispcombconf[DMindex].IDvolt);
+					sprintf(maxvolt_str, "%6.2f", dmdispcombconf[DMindex].MAXVOLT);
+					sprintf(voltname_str, "%11s", dmdispcombconf[DMindex].voltname);
+				}
+				else
+				{
+					sprintf(IDvolt_str, "---");
+					sprintf(maxvolt_str, "------");
+					sprintf(voltname_str, "-----------");
+				}
+				
+			printf("%02ld |  %1d |%3ld |%3ld |  %02ld  |   %1d  |  %1d  | %6.2f  |%8ld |   %02d |   %3ld  |    %4d  |   %3s  |  %6s | %11s |\n", DMindex, dmdispcombconf[DMindex].ON, dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].NBchannel, dmdispcombconf[DMindex].busy, dmdispcombconf[DMindex].AveMode, dmdispcombconf[DMindex].DClevel, dmdispcombconf[DMindex].moninterval, dmdispcombconf[DMindex].status, dmdispcombconf[DMindex].IDdisp, dmdispcombconf[DMindex].voltmode, IDvolt_str, maxvolt_str, voltname_str);
         }
     
     return(0);
 }
+
 
 
 int AOloopControl_DM_createconf()
@@ -540,7 +557,7 @@ int AOloopControl_DM_unloadconf()
 //
 // maxvolt: maximum volt for DM volt
 // 
-int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float maxvolt)
+int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float DClevel, float maxvolt)
 {
     long naxis = 2;
     long *size;
@@ -597,11 +614,13 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[DMindex].ysize = ysize;
     dmdispcombconf[DMindex].xysize = xsize*ysize;
     dmdispcombconf[DMindex].NBchannel = NBchannel;
+    dmdispcombconf[DMindex].voltmode = voltmode;
     dmdispcombconf[DMindex].MAXVOLT = maxvolt;
+    dmdispcombconf[DMindex].AveMode = AveMode;
     sprintf(dmdispcombconf[DMindex].voltname, "%s", IDvolt_name);
     dmdispcombconf[DMindex].status = 0;
     
-    dmdispcombconf[DMindex].DClevel = 0.5*(DMSTROKE100*dmdispcombconf[DMindex].MAXVOLT/100.0*dmdispcombconf[DMindex].MAXVOLT/100.0);
+    dmdispcombconf[DMindex].DClevel = DClevel; //0.5*(DMSTROKE100*dmdispcombconf[DMindex].MAXVOLT/100.0*dmdispcombconf[DMindex].MAXVOLT/100.0);
 
     printf("maxvolt = %f\n", maxvolt);
 
@@ -715,7 +734,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     IDdispt = create_image_ID(name, naxis, size, FLOAT, 0, 0);
     dmdispptr = data.image[IDdispt].array.F;
 
-    if(voltmode==1)
+    if(dmdispcombconf[DMindex].voltmode==1)
     {
         IDvolt = image_ID(dmdispcombconf[DMindex].voltname);
         
@@ -827,7 +846,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             dmdispcombconf[DMindex].status = 4;
 
             ave = 0.0;
-            if(AveMode == 1) // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
+            if(dmdispcombconf[DMindex].AveMode == 1) // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
                 {
                     for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
                         ave += data.image[IDdispt].array.F[ii];
@@ -835,7 +854,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                 }
             dmdispcombconf[DMindex].status = 5;
 
-            if(AveMode < 2)
+            if(dmdispcombconf[DMindex].AveMode < 2)
             {
                     for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
                 {
@@ -907,7 +926,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             
             dmdispcombconf[DMindex].status = 7;
 
-            if(voltmode==1)
+            if(dmdispcombconf[DMindex].voltmode==1)
                 AOloopControl_DM_disp2V(DMindex);
 
             dmdispcombconf[DMindex].status = 8;
@@ -981,6 +1000,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("cnt       %ld\n", dmdispcombconf[DMindex].loopcnt);
         printw("updatecnt %ld\n", dmdispcombconf[DMindex].updatecnt);
         printw("busy      %d\n", dmdispcombconf[DMindex].busy);
+        printw("DClevel   %f\n", dmdispcombconf[DMindex].DClevel);
         printw("MAXVOLT   %f\n", dmdispcombconf[DMindex].MAXVOLT);
         printw("status    %d\n",  dmdispcombconf[DMindex].status);
         printw("moninterval %d\n", dmdispcombconf[DMindex].moninterval);
