@@ -18,6 +18,14 @@
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
+#include "COREMOD_arith/COREMOD_arith.h"
+#include "COREMOD_tools/COREMOD_tools.h"
+#include "fft/fft.h"
+#include "info/info.h"
+#include "statistic/statistic.h"
+#include "image_filter/image_filter.h"
+#include "image_gen/image_gen.h"
+
 
 #include "AOloopControl_DM/AOloopControl_DM.h"
 //#include "AtmosphericTurbulence/AtmosphericTurbulence.h"
@@ -1464,7 +1472,7 @@ int AOloopControl_DM_dmturb(long DMindex)
     DM_Ysize = dmdispcombconf[DMindex].ysize;
     printf("DM %ld array size : %ld %ld\n", DMindex, DM_Xsize, DM_Ysize);
     list_image_ID();
-    sprintf(name, "dm%02lddisp1", DMindex);
+    sprintf(name, "dm%02lddisp01", DMindex);
     read_sharedmem_image(name);
     list_image_ID();
     dmturbconf[DMindex].on = 1;
@@ -1566,7 +1574,7 @@ int AOloopControl_DM_dmturb(long DMindex)
         fflush(stdout);
         list_image_ID();
         
-        sprintf(name, "dm%02lddisp1", DMindex);
+        sprintf(name, "dm%02lddisp01", DMindex);
         copy_image_ID("turbs", name, 0);
         save_fits("turbs", "!turbs.fits");
         save_fits("turbs1", "!turbs1.fits");

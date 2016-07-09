@@ -329,7 +329,7 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 
-. ./aolconf_DMturb
+. ./aolconfscripts/aolconf_DMturb
 
 
 

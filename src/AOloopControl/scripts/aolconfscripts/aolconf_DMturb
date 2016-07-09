@@ -10,10 +10,13 @@ fi
 
 
 function TestStartTurb {
-aoconflog "TEST START TURB"
+aoconflog "TEST START TURB, DMindex = ${DMindex}"
+sleep 1
 echo " ON" > ./status/testdm${DMindex}turbstatus.txt
 mkdir -p ./conf/turb
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}turb"
+echo "tmuxname = $tmuxname"
+sleep 5
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname 
 tmux send-keys -t $tmuxname "$execname -n dmturbrun" C-m
