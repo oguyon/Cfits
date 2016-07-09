@@ -709,7 +709,7 @@ aoconflog "start dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
-tmux send-keys -t adark "./takedark 10000" C-m
+tmux send-keys -t adark "./customscripts/takedark 10000" C-m
 aoconflog "taking dark"
 menucontrolloop_default="adark_on"
 ;;
@@ -1283,9 +1283,9 @@ LOrespMstat=" ON"
 echo " ON" > ./status/stat_LOrespM.txt
 tmuxname="aol${LOOPNUMBER}LOrespM"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "./aolmkLO_DMmodes ${rmMcpa}" C-m
-tmux send-keys -t ${tmuxname} "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-echo "./aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+echo "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflog "Start modal RM    $rmMcpa CPA   amplitude $rmMamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
