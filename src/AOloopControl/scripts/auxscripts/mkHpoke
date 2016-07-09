@@ -1,0 +1,34 @@
+#!/bin/bash
+
+printhelp ()
+{
+echo
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m                MAKE Hadamard POKE MATRIX \033[0m"
+echo " "
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m                       USAGE \033[0m"
+echo " $0 <DMmask>"
+echo "  INPUT : "
+echo "     DMmask    : DM pixel mask (FITS file)"
+echo "------------------------------------------------------------------------"
+}
+
+NBARGS=1
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+        printhelp
+if [ "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+fi
+        exit
+fi
+
+
+
+Cfits << EOF
+loadfits "$1" DMmask
+aolmkH DMmask outim
+savefits outim "!Hpoke.fits"
+exit
+EOF

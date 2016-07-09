@@ -1,0 +1,521 @@
+#!/bin/bash
+
+
+if [ ! -v aolconfFLAG ]; then
+echo "ERROR: This script should be called from aolconf main script"
+exit
+fi
+
+
+
+
+
+
+
+
+
+
+
+function recordanalizeWFS {
+NBframes="$1"
+   	mkdir -p ./rec
+  	tmuxname="aol${LOOPNUMBER}-ctr"
+	rm ./rec/imWFS0rec.fits
+	tmux new-session -d -s $tmuxname
+  	tmux send-keys -t $tmuxname "rm imWFS0rec" C-m
+	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+	tmux send-keys -t $tmuxname "$execname -n aolrec" C-m
+	if [ "$CPUconfRT" -eq "1" ];then
+    tmux send-keys -t $tmuxname "csetpmove system" C-m
+	fi
+	tmux send-keys -t $tmuxname "imgstreamrec aol${LOOPNUMBER}_imWFS0 $1 imWFS0rec " C-m	
+	tmux send-keys -t $tmuxname "savefits imWFS0rec \"rec/rec_${datestr}_imWFS0rec.fits\"" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+	tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_DMmodes" C-m
+	tmux send-keys -t $tmuxname "rm outcoeff" C-m
+	tmux send-keys -t $tmuxname "aolsig2mcoeff imWFS0rec aol${LOOPNUMBER}_wfsref aol${LOOPNUMBER}_respM outcoeff" C-m
+	tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_wfsref0 \"./rec/rec_${datestr}_aol${LOOPNUMBER}_wfsref0.fits\"" C-m
+	tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_wfsref \"./rec/rec_${datestr}_aol${LOOPNUMBER}_wfsref.fits\"" C-m
+    tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_respM \"./rec/rec_${datestr}_aol${LOOPNUMBER}_respM.fits\"" C-m
+    tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_DMmodes \"./rec/rec_${datestr}_aol${LOOPNUMBER}_DMmodes.fits\"" C-m
+    tmux send-keys -t $tmuxname "savefits outcoeff \"./rec/rec_${datestr}_mcoeffs.fits\"" C-m
+	tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_imWFS0rec \"./rec/rec_${datestr}_imWFS0.fits\"" C-m
+	tmux send-keys -t $tmuxname "!mv mode_stats.txt ./rec/rec_${datestr}_modestats.txt" C-m
+}
+
+
+
+
+
+
+
+
+
+# =====================================================
+# ======== RECORD/ANALYZE  ============================
+# =====================================================
+
+if [ $state = "menurecord" ]; then
+stateok=1
+
+menuname="RECORD / ANALYZE"
+
+
+stringcenter "HELP"
+menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
+menuitems+=( " " " " )
+
+
+stringcenter "DATA LOGGING"
+menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+
+
+savedir=$( cat ./conf/conf_savedir_name.txt )
+datestr=`date -u +%Y%m%d`
+menuitems+=( "sdir" "[${savedir}] Save directory prefix -> $savedir/$datestr")
+
+file="./status/stat_logwfsim.txt"
+logwfsimstat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsimstat" = "0" || "$logwfsimstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+fi
+
+
+file="./conf/conf_logmode.txt"
+logMode=$( cat $file )
+if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logMode=0
+fi
+
+stringcenter "DATA LOGGING MODE: $logMode"
+menuitems+=( " " "\Zb\Zr$string\Zn" )
+
+if [ "$logMode" = "0" ]; then
+menuitems+=("slogM0" "\Z1\Zr Log mode = 0  - NEVER LOG \Zn" )
+else
+menuitems+=( "slogM0" "Set Log mode 0 : NEVER LOG" )
+fi
+
+if [ "$logMode" = "1" ]; then
+menuitems+=( "slogM1" "\Z1\Zr Log mode = 1  - LOG WHEN LOOP CLOSED\Zn" )
+else
+menuitems+=( "slogM1" "Set Log mode 1 : LOG WHEN LOOP CLOSED" )
+fi
+
+if [ "$logMode" = "2" ]; then
+menuitems+=( "slogM2" "\Z1\Zr Log mode = 2 -  ALWAYS LOG\Zn" )
+else
+menuitems+=( "slogM2" "Set Log mode 2 : ALWAYS LOG" )
+fi
+
+menuitems+=( " " " " )
+
+menuitems+=( "logON"        " START logging ALL telemetry")
+menuitems+=( "logOFF"       " STOP  logging ALL telemetry")
+menuitems+=( "logKILL"      " KILL  all telemetry logging processes")
+menuitems+=( " " " " )
+
+file="./status/stat_log_wfsim.txt"
+logwfsimstat=$( cat $file )
+if [ "${logwfsimstat}" = "0" ];
+then
+menuitems+=( "lwfsim1" "START logging $wfsimcam" )
+else
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging $wfsimcam\Zn" )
+fi
+
+
+
+file="./status/stat_log_dm${DMindex}disp.txt"
+logdmdispstat=$( cat $file )
+if [[ -f "$file" && ( "$logdmdispstat" = "0" || "$logdmdispstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+fi
+
+if [ "${logdmdispstat}" = "0" ];
+then
+menuitems+=( "ldmdisp1" "START logging dm${DMindex}disp" )
+else
+menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp00.txt"
+logdmdisp00stat=$( cat $file )
+if [ "${logdmdisp0stat}" = "0" ];
+then
+menuitems+=( "ldmdisp001" "START logging dm${DMindex}disp0" )
+else
+menuitems+=( "ldmdisp000" "\Z1\ZrSTOP logging dm${DMindex}disp0\Zn" )
+fi
+
+
+
+file="./status/stat_log_dm${DMindex}disp1.txt"
+logdmdisp01stat=$( cat $file )
+if [ "${logdmdisp01stat}" = "0" ];
+then
+menuitems+=( "ldmdisp011" "START logging dm${DMindex}disp1" )
+else
+menuitems+=( "ldmdisp010" "\Z1\ZrSTOP logging dm${DMindex}disp1\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp2.txt"
+logdmdisp02stat=$( cat $file )
+if [ "${logdmdisp02stat}" = "0" ];
+then
+menuitems+=( "ldmdisp021" "START logging dm${DMindex}disp2" )
+else
+menuitems+=( "ldmdisp020" "\Z1\ZrSTOP logging dm${DMindex}disp2\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp3.txt"
+logdmdisp03stat=$( cat $file )
+if [ "${logdmdisp03stat}" = "0" ];
+then
+menuitems+=( "ldmdisp031" "START logging dm${DMindex}disp3" )
+else
+menuitems+=( "ldmdisp030" "\Z1\ZrSTOP logging dm${DMindex}disp3\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp4.txt"
+logdmdisp04stat=$( cat $file )
+if [ "${logdmdisp04stat}" = "0" ];
+then
+menuitems+=( "ldmdisp041" "START logging dm${DMindex}disp4" )
+else
+menuitems+=( "ldmdisp040" "\Z1\ZrSTOP logging dm${DMindex}disp4\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp5.txt"
+logdmdisp05stat=$( cat $file )
+if [ "${logdmdisp05stat}" = "0" ];
+then
+menuitems+=( "ldmdisp051" "START logging dm${DMindex}disp5" )
+else
+menuitems+=( "ldmdisp050" "\Z1\ZrSTOP logging dm${DMindex}disp5\Zn" )
+fi
+
+
+
+file="./status/stat_log_dm${DMindex}disp6.txt"
+logdmdisp06stat=$( cat $file )
+if [ "${logdmdisp06stat}" = "0" ];
+then
+menuitems+=( "ldmdisp061" "START logging dm${DMindex}disp6" )
+else
+menuitems+=( "ldmdisp060" "\Z1\ZrSTOP logging dm${DMindex}disp6\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp7.txt"
+logdmdisp07stat=$( cat $file )
+if [ "${logdmdisp07stat}" = "0" ];
+then
+menuitems+=( "ldmdisp071" "START logging dm${DMindex}disp7" )
+else
+menuitems+=( "ldmdisp070" "\Z1\ZrSTOP logging dm${DMindex}disp7\Zn" )
+fi
+
+
+
+if [ "${dm2dm_mode}" = "0" ];
+then
+
+file="./status/stat_log_modeval.txt"
+logmodevalstat=$( cat $file )
+if [ "${logmodevalstat}" = "0" ];
+then
+menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval" )
+else
+menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn" )
+fi
+
+
+file="./status/stat_log_modevalc.txt"
+logmodevalcstat=$( cat $file )
+if [ "${logmodevalcstat}" = "0" ];
+then
+menuitems+=( "lmodevalc1" "START logging aol${LOOPNUMBER}_modevalc" )
+else
+menuitems+=( "lmodevalc0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalc\Zn" )
+fi
+
+fi
+
+
+
+
+menuitems+=( " " " " )
+
+stringcenter "RECORD TIME SEQUENCES"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "rins" "Record / analyze single instantaneous loop state to ./recinst/ directory" )
+menuitems+=( "rec1" "Record / analyze     10 WFS frames" )
+menuitems+=( "rec2" "Record / analyze    100 WFS frames" )
+menuitems+=( "rec3" "Record / analyze   1000 WFS frames" )
+menuitems+=( "rec4" "Record / analyze  10000 WFS frames" )
+
+
+dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols 100 "${menuitems[@]}"  2> $tempfile
+
+
+
+retval=$?
+choiceval=$(cat $tempfile)
+menurecord_default="$choiceval"
+state="menurecord"
+case $retval in
+   0) # Monitor
+	case $choiceval in
+
+    sdir)
+exec 3>&1;
+savedir=$(dialog --inputbox "savedir" 0 0 "$savedir" 2>&1 1>&3);
+exec 3>&-;
+echo "$savedir" > ./conf/conf_savedir_name.txt
+;;
+
+
+    slogM0)
+logMode="0"
+echo "0" > "./conf/conf_logmode.txt"
+stop_Telemetrylog_all
+menurecord_default="slogM0"
+;;
+    slogM1)
+logMode="1"
+echo "1" > "./conf/conf_logmode.txt"
+loopON=$( cat ./status/stat_loopON.txt )
+aoconflog "TEST: loopON=$loopON"
+if [ "$loopON" = " ON" ];
+then
+start_Telemetrylog_all
+fi
+if [ "$loopON" = "OFF" ];
+then
+stop_Telemetrylog_all
+fi
+menurecord_default="slogM1"
+;;
+    slogM2)
+logMode="2"
+echo "2" > "./conf/conf_logmode.txt"
+start_Telemetrylog_all
+menurecord_default="slogM2"
+;;
+
+
+
+    logON)
+start_Telemetrylog_all
+;;
+
+    logOFF)
+stop_Telemetrylog_all
+;;
+
+    logKILL)
+kill_Telemetrylog_all
+;;
+
+
+    lwfsim1)
+startstreamlog ${wfsimcam}
+echo "1" > "./status/stat_log_wfsim.txt"
+menurecord_default="lwfsim0"
+;;
+    lwfsim0)
+stopstreamlog ${wfsimcam}
+echo "0" > "./status/stat_log_wfsim.txt"
+menurecord_default="lwfsim1"
+;;
+
+
+
+    ldmdisp1)
+startstreamlog dm${DMindex}disp
+echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
+menurecord_default="ldmdisp0"
+;;
+    ldmdisp0)
+stopstreamlog dm${DMindex}disp
+echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
+menurecord_default="ldmdisp1"
+;;
+
+
+    ldmdisp001)
+startstreamlog dm${DMindex}disp00
+echo "1" > "./status/stat_log_dm${DMindex}disp00.txt"
+menurecord_default="ldmdisp000"
+;;
+    ldmdisp000)
+stopstreamlog dm${DMindex}disp00
+echo "0" > "./status/stat_log_dm${DMindex}disp00.txt"
+menurecord_default="ldmdisp001"
+;;
+
+
+    ldmdisp11)
+startstreamlog dm${DMindex}disp01
+echo "1" > "./status/stat_log_dm${DMindex}disp01.txt"
+menurecord_default="ldmdisp010"
+;;
+    ldmdisp10)
+stopstreamlog dm${DMindex}disp01
+echo "0" > "./status/stat_log_dm${DMindex}disp01.txt"
+menurecord_default="ldmdisp011"
+;;
+
+
+    ldmdisp21)
+startstreamlog dm${DMindex}disp02
+echo "1" > "./status/stat_log_dm${DMindex}disp02.txt"
+menurecord_default="ldmdisp020"
+;;
+    ldmdisp20)
+stopstreamlog dm${DMindex}disp02
+echo "0" > "./status/stat_log_dm${DMindex}disp02.txt"
+menurecord_default="ldmdisp021"
+;;
+
+
+    ldmdisp31)
+startstreamlog dm${DMindex}disp03
+echo "1" > "./status/stat_log_dm${DMindex}disp03.txt"
+menurecord_default="ldmdisp030"
+;;
+    ldmdisp30)
+stopstreamlog dm${DMindex}disp03
+echo "0" > "./status/stat_log_dm${DMindex}disp03.txt"
+menurecord_default="ldmdisp031"
+;;
+
+
+    ldmdisp41)
+startstreamlog dm${DMindex}disp04
+echo "1" > "./status/stat_log_dm${DMindex}disp04.txt"
+menurecord_default="ldmdisp040"
+;;
+    ldmdisp40)
+stopstreamlog dm${DMindex}disp04
+echo "0" > "./status/stat_log_dm${DMindex}disp04.txt"
+menurecord_default="ldmdisp041"
+;;
+
+
+    ldmdisp51)
+startstreamlog dm${DMindex}disp05
+echo "1" > "./status/stat_log_dm${DMindex}disp05.txt"
+menurecord_default="ldmdisp050"
+;;
+    ldmdisp50)
+stopstreamlog dm${DMindex}disp05
+echo "0" > "./status/stat_log_dm${DMindex}disp05.txt"
+menurecord_default="ldmdisp051"
+;;
+
+
+    ldmdisp61)
+startstreamlog dm${DMindex}disp06
+echo "1" > "./status/stat_log_dm${DMindex}disp06.txt"
+menurecord_default="ldmdisp060"
+;;
+    ldmdisp60)
+stopstreamlog dm${DMindex}disp06
+echo "0" > "./status/stat_log_dm${DMindex}disp06.txt"
+menurecord_default="ldmdisp061"
+;;
+
+
+    ldmdisp71)
+startstreamlog dm${DMindex}disp07
+echo "1" > "./status/stat_log_dm${DMindex}disp07.txt"
+menurecord_default="ldmdisp070"
+;;
+    ldmdisp70)
+stopstreamlog dm${DMindex}disp07
+echo "0" > "./status/stat_log_dm${DMindex}disp07.txt"
+menurecord_default="ldmdisp071"
+;;
+
+
+
+
+    lmodeval1)
+startstreamlog aol${LOOPNUMBER}_modeval
+echo "1" > "./status/stat_log_modeval.txt"
+menurecord_default="lmodeval0"
+;;
+    lmodeval0)
+stopstreamlog aol${LOOPNUMBER}_modeval
+echo "0" > "./status/stat_log_modeval.txt"
+menurecord_default="lmodeval1"
+;;
+
+
+    lmodevalc1)
+startstreamlog aol${LOOPNUMBER}_modevalc
+echo "1" > "./status/stat_log_modevalc.txt"
+menurecord_default="lmodevalc0"
+;;
+    lmodevalc0)
+stopstreamlog aol${LOOPNUMBER}_modevalc
+echo "0" > "./status/stat_log_modevalc.txt"
+menurecord_default="lmodevalc1"
+;;
+
+
+
+
+
+
+
+
+
+
+
+    rins) 
+mkdir -p recinst
+tmuxname="aol${LOOPNUMBER}-ctr"
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act_active" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_meas_act" C-m
+for name in contrM contrMc contrMcact dmC dmO dmdisp dmmap dmmask DMmodes dmRM dmZP2 dmZP3 gainb imWFS0 imWFS1 imWFS1RM imWFS2 meas_act_active meas_act respM wfsdark wfsim wfsmap wfsmask wfsref0 wfsref zrespM
+do
+tmux send-keys -t $tmuxname "savefits aol${LOOPNUMBER}_${name} \"!./recinst/aol${LOOPNUMBER}_${name}.fits\"" C-m
+done
+;;
+    rec1) recordanalizeWFS 10;;
+   	rec2) recordanalizeWFS 100;;
+   	rec3) recordanalizeWFS 1000;;
+   	rec4) recordanalizeWFS 10000;;
+    rec5) recordanalizeWFS 100000;;
+	an) processWFSrec;;
+esac
+;; 
+   1) state="menutop";;   
+  2) state="menuexit";;
+   255) state="menuexit";;
+esac
+
+fi
+
+
+
+
+
+
