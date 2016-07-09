@@ -1,0 +1,42 @@
+#! /bin/bash
+
+EXPECTED_ARGS=5
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo
+  echo "------ Measure low order modes resp matrix ------"
+  echo
+  echo "  $0 <ampl[um]> <tdelay[frame]> <nb frames ave> <nb frames excl> <normalize>"
+  echo
+  echo "loads respM_LOmodes.fits" 
+  echo
+  echo "Default output: "
+  echo "  ./zresptmp/LOrespmat_pos_<nnn>.fits : low order modes response matrix, positive component"
+  echo "  ./zresptmp/LOrespmat_neg_<nnn>.fits : low order modes response matrix, negative component"
+  echo "  ./zresptmp/LOwfsref0_<nnn>.fits     : wfs reference"
+  echo "  wfsmap_LO.fits    : WFS response map"
+  echo "  dmmap_LO.fits     : DM response map"
+  echo
+  echo "runs forever until killed"
+  echo "Default output files updated at each cycle" 
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname0=$0
+pname="aol${loopnb}LOrespM"
+
+Cfits -n $pname << EOF
+aolnb $loopnb
+loadfits respM_LOmodes.fits RMpokeCube
+listim
+aolmeaszrm $1 $2 $3 $4 LOrespmat LOwfsref0 wfsmap dmmap 1 $5 
+savefits wfsmask "!wfsmask_LO.fits"
+savefits dmmask "!dmmask_LO.fits"
+listim
+exit
+EOF
+
+
