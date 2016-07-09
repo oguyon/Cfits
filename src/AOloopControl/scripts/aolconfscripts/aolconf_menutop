@@ -528,8 +528,7 @@ fi
 
 if [ $state = "menualign" ]; then
 stateok=1
-#aoconflog "$0 state = ${state}"
-./AOloopAlign.bash
+. ./customscripts/AOloopAlign.bash
 state="menutop"
 fi
 
