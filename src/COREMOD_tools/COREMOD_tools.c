@@ -5,6 +5,9 @@
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
+#include "COREMOD_memory/COREMOD_memory.h"
+#include "COREMOD_tools/COREMOD_tools.h"
+
 
 #define SBUFFERSIZE 1000
 
@@ -114,7 +117,7 @@ int COREMOD_TOOLS_mvProcCPUset(char *csetname)
     int ret;
     
     pid = getpid();
-    sprintf(command, "sudo cset proc -m -p %d -t %s\n", pid, csetname);
+    sprintf(command, "sudo -n cset proc -m -p %d -t %s\n", pid, csetname);
     ret = system(command);
       
     return(0);
@@ -645,7 +648,7 @@ long read_config_parameter_long(char *config_file, char *keyword)
   return(value);
 }
 
-long read_config_parameter_int(char *config_file, char *keyword)
+int read_config_parameter_int(char *config_file, char *keyword)
 {
   int value;
   char content[SBUFFERSIZE];

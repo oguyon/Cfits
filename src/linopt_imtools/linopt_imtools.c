@@ -1285,6 +1285,7 @@ long linopt_imtools_image_fitModes(char *ID_name, char *IDmodes_name, char *IDma
     long IDcoeff;
     long ii, jj;
 
+	int use_magma = 0;
 
 
     if((reuse==0)&&(fmInit==1))
@@ -1301,7 +1302,16 @@ long linopt_imtools_image_fitModes(char *ID_name, char *IDmodes_name, char *IDma
     {
         linopt_imtools_mask_to_pixtable(IDmask_name, "_fm_pixind", "_fm_pixmul");
         linopt_imtools_Image_to_vec(IDmodes_name, "_fm_pixind", "_fm_pixmul", "_fm_respm");
+   
+        	#ifdef HAVE_MAGMA
+	use_magma = 1;
+	#endif
+
+	if(use_magma==1)
+		CUDACOMP_magma_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
+	else
         linopt_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
+   
     }
 
     

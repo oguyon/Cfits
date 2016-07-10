@@ -1650,7 +1650,7 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
 
             for(ii=0; ii<msizex*msizey; ii++)
                 data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-            linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-5, "lcoeff", 0);
+            linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-2, "lcoeff", 0);
             linopt_imtools_image_construct("emodes", "lcoeff", "em00");
             delete_image_ID("lcoeff");
             IDem = image_ID("em00");
@@ -1888,9 +1888,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-    float SVDlim0 = 0.0005; // DM filtering
-    float SVDlim1 = 0.0001; // WFS filtering
-    float rmslim = 0.03;
+    float SVDlim0 = 0.01; // DM filtering
+    float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
+    float rmslim = 0.2;
     float *rmsarray;
     long IDm, IDSVDmodes;
     float svdcoeff0;
@@ -2092,7 +2092,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                     for(ii=0; ii<msizex*msizey; ii++)
                         data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-5, "lcoeff", 0);
+                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-2, "lcoeff", 0);
                     linopt_imtools_image_construct("emodes", "lcoeff", "em00");
                     delete_image_ID("lcoeff");
                     IDem = image_ID("em00");
@@ -2316,7 +2316,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 for(ii=0; ii<msizexy; ii++)
                     data.image[ID_imfit].array.F[ii] = data.image[IDmodes0all].array.F[m*msizexy+ii];
 
-                linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-4, "linfitcoeff", linfitreuse);
+                linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-2, "linfitcoeff", linfitreuse);
                 linfitreuse = 1;
 
                 for(jj=0; jj<linfitsize; jj++)
@@ -2549,7 +2549,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     sprintf(imname, "fmodes1_%02ld", mblock0);
-                    linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-4, "modecoeff", reuse);
+                    linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
                     reuse = 1;
                     linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                     IDSVDmode1 = image_ID("SVDmode1");
@@ -2794,7 +2794,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             for(ii=0; ii<msizexy; ii++)
                                 data.image[ID_imfit].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
 
-                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-3, "linfitcoeff", linfitreuse);
+                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-2, "linfitcoeff", linfitreuse);
                             linfitreuse = 1;
 
                             for(jj=0; jj<linfitsize; jj++)
@@ -2943,7 +2943,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                         sprintf(imname, "fmodesWFS0_%02ld", mblock0);
                         sprintf(imnameDM, "fmodes2b_%02ld", mblock0);
-                        linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-4, "modecoeff", reuse);
+                        linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
                         IDSVDcoeff = image_ID("modecoeff");
                         reuse = 1;
                         linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
@@ -3290,7 +3290,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     sprintf(imname, "fmodes4_%02ld", mblock0); /// [4]
-                    linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-4, "modecoeff", reuse);
+                    linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
                     reuse = 1;
                     linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                     IDSVDmode1 = image_ID("SVDmode1");
@@ -3533,7 +3533,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             for(ii=0; ii<msizexy; ii++)
                                 data.image[ID_imfit].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
 
-                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-8, "linfitcoeff", linfitreuse);
+                            linopt_imtools_image_fitModes("imfitim", "RMMmodes", "dmmask", 1.0e-4, "linfitcoeff", linfitreuse);
                             linfitreuse = 1;
 
                             for(jj=0; jj<linfitsize; jj++)
@@ -6712,7 +6712,7 @@ long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, fl
     char *ptr;
     long k1;
     long IDcoeff;
-    float SVDeps = 1.0e-6;
+    float SVDeps = 1.0e-3;
     int SVDreuse = 0;
     long IDcoeffarray;
     long IDcoeffarraym;
@@ -6951,7 +6951,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
     long kk;
     long IDdmtmp, IDmeastmp;
     int SVDreuse = 0;
-    float SVDeps = 1.0e-6;
+    float SVDeps = 1.0e-3;
     long IDcoeffarray;
     long IDcoeffarraymeas;
     long cntdmout;
