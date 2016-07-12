@@ -1566,10 +1566,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
    */
      
             
-    free(a);                                        // free  host  memory
-	free(VT);                                       // free  host  memory
-	free(S1);                                       // free  host  memory
-	free(U);                                        // free  host  memory
+    magma_free_cpu(a);                                        // free  host  memory
+	magma_free_cpu(VT);                                       // free  host  memory
+	magma_free_cpu(S1);                                       // free  host  memory
+	magma_free_cpu(U);                                        // free  host  memory
 	magma_free_pinned(h_work );                  // free  host  memory
 	magma_free_pinned(h_R);                        // free  host  memory       
             
