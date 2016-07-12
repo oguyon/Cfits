@@ -1883,7 +1883,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long wfsxsize, wfsysize, wfssize;
     long wfselem, act;
 
-    long IDout, ID1, ID2;
+    long IDout, ID1, ID2, ID2b;
     long zsize1, zsize2;
     long z1, z2;
     long xysize1, xysize2;
@@ -1943,6 +1943,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long IDwfstmp;
     char fnameLOcoeff[200];
 
+
+	int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
+	int COMPUTE_FULL_CMAT = 0;
+
+
     MODAL = 0;
     if(msizey==1)
         MODAL = 1;
@@ -1982,6 +1987,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     ret = system("mkdir -p mkmodestmp");
 
+    msizexy = msizex*msizey;
 
     /// STEP 1: CREATE STARTING POINT : ZERNIKES + FOURIER MODES
 
@@ -2035,8 +2041,15 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
+	
+	COMPUTE_DM_MODES = 0;
+	ID2b = image_ID("fmodes2ball");
+	if(ID2b == -1)
+		COMPUTE_DM_MODES = 1;
 
-    if(BlockNB<0) // COMPUTE ALL BLOCKS
+
+
+    if(COMPUTE_DM_MODES==1) // DM modes fmodes2b
     {
         if(MODAL==0)
         {
@@ -2684,6 +2697,10 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
 
 
+		fp = fopen("./mkmodestmp/NBblocks.txt", "w");
+		fprintf(fp, "%ld\n", NBmblock);
+		fclose(fp);
+
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
@@ -2701,6 +2718,20 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
         save_fits("fmodes2ball", "!./mkmodestmp/fmodes2ball.fits");
     }
+    else
+    {
+		fp = fopen("./mkmodestmp/NBblocks.txt", "r");
+		ret = fscanf(fp, "%ld", &NBmblock);
+		fclose(fp);
+		for(mblock=0; mblock<NBmblock; mblock++)
+			{
+				sprintf(fname, "./mkmodestmp/fmodes2b_%02ld.fits", mblock);
+				sprintf(imname, "fmodes2b_%02ld", mblock);
+				ID = load_fits(fname, imname, 1);
+				MBLOCK_NBmode[mblock] = data.image[ID].md[0].size[2];
+				MBLOCK_ID[mblock] = ID;
+			}
+	}
 
 
 
@@ -2711,7 +2742,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     // 1:25
 
 
-
+	// ==================================================
 
 
 
@@ -3323,7 +3354,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 #ifdef HAVE_MAGMA
                     use_magma = 1;
 #endif
-                    printf("COMPUTE OVERALL CONTROL MATRIX\n");
+                    printf("COMPUTE CONTROL MATRIX\n");
                     if(use_magma==1)
                         CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
                     else
@@ -3389,6 +3420,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
+    
+    if(COMPUTE_FULL_CMAT == 1)
+    {
         // COMPUTE OVERALL CONTROL MATRIX
         use_magma = 0;
 #ifdef HAVE_MAGMA
@@ -3405,11 +3439,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         delete_image_ID("VTmat");
         save_fits("cmat", "!./mkmodestmp/cmat.fits");
 
-
+		}
 
         sprintf(command, "echo \"%ld\" > ./conf/conf_NBmodes.txt", cnt);
         ret = system(command);
 
+    
     }
     // time : 07:43
 
