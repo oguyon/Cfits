@@ -658,18 +658,18 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 4 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
 
 
-if [ "${dm2dm_mode}" = "0" ]; then
+#if [ "${dm2dm_mode}" = "0" ]; then
 # start analysis processes
-tmuxname="aol${LOOPNUMBER}mex0"
-tmux kill-session -t $tmuxname
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./auxscripts/modesextract0 ${GPUmodesextr0}" C-m
+#tmuxname="aol${LOOPNUMBER}mex0"
+#tmux kill-session -t $tmuxname
+#tmux new-session -d -s $tmuxname
+#tmux send-keys -t $tmuxname "./auxscripts/modesextract0 ${GPUmodesextr0}" C-m
 
-tmuxname="aol${LOOPNUMBER}mex1"
-tmux kill-session -t $tmuxname
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./auxscripts/modesextract1 ${GPUmodesextr1}" C-m
-fi
+#tmuxname="aol${LOOPNUMBER}mex1"
+#tmux kill-session -t $tmuxname
+#tmux new-session -d -s $tmuxname
+#tmux send-keys -t $tmuxname "./auxscripts/modesextract1 ${GPUmodesextr1}" C-m
+#fi
 
 menucontrolloop_default="K"
 ;; 

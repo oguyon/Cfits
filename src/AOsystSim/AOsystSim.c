@@ -1641,7 +1641,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
             kk1 = kk0+1;
         }
 
-        if(k>0)
+/*        if(k>0) // delete (only for long sequence)
         {
             sprintf(wfimname_pha, "wf%08ld_pha", k-1);
             if(image_ID(wfimname_pha)!=-1)
@@ -1653,7 +1653,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
                     delete_image_ID(wfimname_amp);
             }
         }
-
+*/
 
 
         printf("%.9f  %8ld  %12.6f  %6ld      %5ld %5ld  %.5f\n", t, k, frame_f, frame_n, kk0, kk1, alpha);

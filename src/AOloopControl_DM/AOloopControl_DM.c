@@ -1472,7 +1472,7 @@ int AOloopControl_DM_dmturb(long DMindex)
     DM_Ysize = dmdispcombconf[DMindex].ysize;
     printf("DM %ld array size : %ld %ld\n", DMindex, DM_Xsize, DM_Ysize);
     list_image_ID();
-    sprintf(name, "dm%02lddisp01", DMindex);
+    sprintf(name, "dm%02lddisp10", DMindex);
     read_sharedmem_image(name);
     list_image_ID();
     dmturbconf[DMindex].on = 1;
@@ -1574,7 +1574,7 @@ int AOloopControl_DM_dmturb(long DMindex)
         fflush(stdout);
         list_image_ID();
         
-        sprintf(name, "dm%02lddisp01", DMindex);
+        sprintf(name, "dm%02lddisp10", DMindex);
         copy_image_ID("turbs", name, 0);
         save_fits("turbs", "!turbs.fits");
         save_fits("turbs1", "!turbs1.fits");

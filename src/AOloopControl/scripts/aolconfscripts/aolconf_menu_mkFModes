@@ -17,7 +17,7 @@ fi
 
 if [ $state = "menu_mkFModes" ]; then
 stateok=1
-menuname=" CONFIGURATION - Make Fourier based Modes"
+menuname=" CONFIGURATION - Make Fourier based Modes (mode = $mkModesMODE)"
 rm tmp/*.fits
 menuitems=()
 menuitems+=( "00.2" "0.2 CPA (Tip/Tilt only)" )

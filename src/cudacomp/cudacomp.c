@@ -138,10 +138,20 @@ int CUDACOMP_test_cli()
 int CUDACOMP_Coeff2Map_Loop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)==0)
-        CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+        CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, 0, " ");
     else
         return 1;
 }
+
+
+int CUDACOMP_Coeff2Map_offset_Loop_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,4)==0)
+        CUDACOMP_Coeff2Map_Loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, 1, data.cmdargtoken[5].val.string);
+    else
+        return 1;
+}
+
 
 int CUDACOMP_extractModesLoop_cli()
 {
@@ -194,7 +204,16 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].info,"CUDA multiply vector by modes");
     strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs vector> <GPU index [long]> <output map>");
     strcpy(data.cmd[data.NBcmd].example,"cudacoeff2map modes coeff 4 outmap");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name)");
+    data.NBcmd++;
+    
+    strcpy(data.cmd[data.NBcmd].key,"cudacoeffo2map");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = CUDACOMP_Coeff2Map_offset_Loop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"CUDA multiply vector by modes and add offset");
+    strcpy(data.cmd[data.NBcmd].syntax,"<modes> <coeffs vector> <GPU index [long]> <output map> <offset image>");
+    strcpy(data.cmd[data.NBcmd].example,"cudacoeffo2map modes coeff 4 outmap offsetim");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name)");
     data.NBcmd++;
     
     strcpy(data.cmd[data.NBcmd].key,"cudaextrmodes");
@@ -2416,7 +2435,7 @@ int GPU_SVD_computeControlMatrix(int device, char *ID_Rmatrix_name, char *ID_Cma
 // single GPU
 // semaphore input = 3
 //
-int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name)
+int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex, char *IDoutmap_name, int offsetmode, char *IDoffset_name)
 {
     long NBmodes;
     long IDmodes;
@@ -2444,12 +2463,30 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
     int semr;
     long ii, kk;
 
+    long IDoffset;
+
 
     printf("entering CUDACOMP_Coeff2Map_Loop\n");
+    printf("offsetmode = %d\n", offsetmode);
     fflush(stdout);
 
+    if(offsetmode==1)
+    {
+        beta = 1.0;
+        IDoffset = image_ID(IDoffset_name);
+        
+        if(IDoffset == -1)
+        {
+            printf("ERROR: image \"%s\" does not exist\n", IDoffset_name);
+            exit(0);
+        }
+    }
+
+
     IDcoeff = image_ID(IDcoeff_name);
-    NBmodes = data.image[IDcoeff].md[0].size[0];
+    NBmodes = 1;
+    for(k=0; k<data.image[IDcoeff].md[0].naxis; k++)
+        NBmodes *= data.image[IDcoeff].md[0].size[k];
 
     IDmodes = image_ID(IDmodes_name);
     if(data.image[IDmodes].md[0].naxis==3)
@@ -2461,10 +2498,10 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
     IDoutmap = image_ID(IDoutmap_name);
     if(IDoutmap==-1)
-        {
-            printf("ERROR: missing output stream\n");
-            exit(0);
-        }
+    {
+        printf("ERROR: missing output stream\n");
+        exit(0);
+    }
     COREMOD_MEMORY_image_set_createsem(IDoutmap_name, 5);
 
 
@@ -2573,12 +2610,12 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
     loopOK = 1;
     iter = 0;
 
-    printf("ENTERING LOOP\n");
+    printf("ENTERING LOOP, %ld modes (offsetmode = %d)\n", NBmodes, offsetmode);
     fflush(stdout);
 
     while(loopOK == 1)
     {
-        
+
         if(data.image[IDcoeff].sem==0)
         {
             while(data.image[IDcoeff].md[0].cnt0==cnt) // test if new frame exists
@@ -2600,13 +2637,13 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
             if(iter == 0)
             {
-              //  printf("driving semaphore to zero ... ");
-               // fflush(stdout);
+                //  printf("driving semaphore to zero ... ");
+                // fflush(stdout);
                 sem_getvalue(data.image[IDcoeff].semptr[2], &semval);
                 for(scnt=0; scnt<semval; scnt++)
                     sem_trywait(data.image[IDcoeff].semptr[2]);
-               // printf("done\n");
-               // fflush(stdout);
+                // printf("done\n");
+                // fflush(stdout);
             }
         }
 
@@ -2615,8 +2652,8 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
         if(semr==0)
         {
-          //  printf("Compute\n");
-          //  fflush(stdout);
+            //  printf("Compute\n");
+            //  fflush(stdout);
 
             // send vector back to GPU
             cudaStat = cudaMemcpy(d_coeff, data.image[IDcoeff].array.F, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
@@ -2626,7 +2663,15 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
                 exit(EXIT_FAILURE);
             }
 
-
+            if(offsetmode==1)
+            {
+                cudaStat = cudaMemcpy(d_outmap, data.image[IDoffset].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
+                if (cudaStat != cudaSuccess)
+                {
+                    printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+                    exit(EXIT_FAILURE);
+                }
+            }
 
             // compute
             cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_modes, m, d_coeff, 1, &beta, d_outmap, 1);
@@ -2664,7 +2709,7 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
             loopOK = 0;
 
         iter++;
-        
+
     }
 
 
@@ -2679,6 +2724,7 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 
     return(0);
 }
+
 
 
 
@@ -2789,7 +2835,7 @@ int CUDACOMP_extractModesLoop(char *DMact_stream, char *DMmodes, char *DMmodes_g
             if(imOK==0)
             {
                 ID_modeval_mult = create_image_ID(IDfiltmult_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(IDfiltmult_name, 5);                
+                COREMOD_MEMORY_image_set_createsem(IDfiltmult_name, 10);                
             }
             for(k=0;k<NBmodes;k++)
                 {

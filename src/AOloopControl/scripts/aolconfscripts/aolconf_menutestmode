@@ -229,7 +229,8 @@ menuitems+=( "setave" "[${testModeAve}] Number of WFS frames averaged" )
 
 menuitems+=( "-" " " )
 menuitems+=( "-" " STATIC TEST " )
-menuitems+=( "inj" "Inject single mode ${testModeNb}, amplitude ${testModeAmp} to RM channel" )
+menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
+menuitems+=( "inj" "Inject single mode ${testModeNb} (fmodesall basis), amplitude ${testModeAmp} to RM channel" )
 menuitems+=( "mrec" "Test mode recovery (all modes)  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 menuitems+=( "clr" "Clear RM channel" )
 
@@ -315,6 +316,22 @@ syncmode:\n
   1: sync to DM\n
   2: sync to both\n
 \n' 40 80
+;;
+
+	lsimon)
+tmuxname="aol${LOOPNUMBER}-linsim"
+file="./status/lsimstatus.txt"
+echo "ON" > $file
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "./auxscripts/aolLinSim 0" C-m
+menutestmode_default="lsimoff"
+;;
+	lsimoff)
+tmuxname="aol${LOOPNUMBER}-linsim"
+file="./status/lsimstatus.txt"
+echo "OFF" > $file
+tmux kill-session -t $tmuxname
+menutestmode_default="lsimon"
 ;;
 	tv)
 tmux a -t aol${LOOPNUMBER}test
@@ -492,6 +509,24 @@ aoconflog "testModeAve = $testModeAve"
 ;;
 
 
+    inj0)
+tmuxname="aol${LOOPNUMBER}modeinj0"
+aoconflog "inject mode from fmodes0all basis"
+tmux new-session -d -s ${tmuxname}
+modenb=$( printf "%05ld" ${testModeNb} )
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj0" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove system" C-m
+fi
+tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
+tmux send-keys -t $tmuxname "breakcube modec" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
+tmux send-keys -t $tmuxname "dmo=${testModeAmp}*modec_$modenb" C-m
+tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmRM" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+	;;
+	
+	
     inj)
 tmuxname="aol${LOOPNUMBER}modeinj"
 aoconflog "inject mode"
@@ -501,7 +536,7 @@ tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj" C-m
 if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 fi
-tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
+tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodesall.fits\" modec" C-m
 tmux send-keys -t $tmuxname "breakcube modec" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "dmo=${testModeAmp}*modec_$modenb" C-m

@@ -1400,7 +1400,13 @@ exec 3>&-;
 echo "$SVDlimall" > ./conf/conf_SVDlimall.txt
 aoconflog "set SDVlimall ${SVDlimall}"
 ;;
-	mkModes)
+	mkModes0)
+mkModesMODE=0; # full computation
+menucontrolloop_default="mkModes"
+state="menu_mkFModes"
+;;
+	mkModes1)
+mkModesMODE=1; # re-use previous DM modes
 menucontrolloop_default="mkModes"
 state="menu_mkFModes"
 ;;

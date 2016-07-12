@@ -558,6 +558,16 @@ int COREMOD_MEMORY_image_set_sempost_cli()
         return 1;
 }
 
+int COREMOD_MEMORY_image_set_sempost_loop_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+        COREMOD_MEMORY_image_set_sempost_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+    else
+        return 1;
+}
+
+
+
 int COREMOD_MEMORY_image_set_semwait_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)==0)
@@ -944,10 +954,19 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].key,"imsetsempost");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_cli;
-    strcpy(data.cmd[data.NBcmd].info,"post image semaphore");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname)");
+    strcpy(data.cmd[data.NBcmd].info,"post image semaphore. If sem index = -1, post all semaphores");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"imsetsempostl");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_loop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"post image semaphore loop. If sem index = -1, post all semaphores");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index> <time interval [us]>");
+    strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(char *IDname, long index, long dtus)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imsetsemwait");
@@ -4065,6 +4084,52 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
 
     return(ID);
 }
+
+
+
+
+// if index < 0, post all semaphores
+
+long COREMOD_MEMORY_image_set_sempost_loop(char *IDname, long index, long dtus)
+{
+    long ID;
+    long s;
+    int semval;
+
+
+    ID = image_ID(IDname);
+
+    if(ID==-1)
+        ID = read_sharedmem_image(IDname);
+
+
+	while(1)
+	{
+    if(index<0)
+    {
+        for(s=0; s<data.image[ID].sem; s++)
+        {
+            sem_getvalue(data.image[ID].semptr[s], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[ID].semptr[s]);
+        }
+    }
+    else
+    {
+        if(index>data.image[ID].sem-1)
+            printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
+        else
+        {
+            sem_getvalue(data.image[ID].semptr[index], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[ID].semptr[index]);
+        }
+    }
+    sleep(dtus);
+	}
+    return(ID);
+}
+
 
 
 long COREMOD_MEMORY_image_set_semwait(char *IDname, long index)
