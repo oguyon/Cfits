@@ -472,7 +472,8 @@ mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 NBmodes=$( cat ./conf/conf_NBmodes.txt )
-menuitems+=( "mkModes" "<$mkmodesdatestr>  [$NBblocks blocks, $NBmodes modes] Create DM control modes file, control matrices" )
+menuitems+=( "mkModes0" "<$mkmodesdatestr>  [$NBblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (full computation)" )
+menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
 
 
