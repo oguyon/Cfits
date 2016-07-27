@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "accessing aolconf_readconf"
+
 
 if [ ! -v aolconfFLAG ]; then
 echo "ERROR: This script should be called from aolconf main script"
@@ -127,6 +129,36 @@ ln -s /tmp/${dmO}.im.shm /tmp/aol${LOOPNUMBER}_dmO.im.shm
 }
 
 
+function ReaddmZP0name {
+file="./conf/conf_dmZP0_name.txt"
+if [ -a $file ]
+	then
+	dmZP0=$(echo "$(cat $file)")
+	else
+	dmZP0="dmZP0" #default
+fi
+# DM correction channel
+echo "linking to dm offset channel ZP0"
+aoconflog "linking dmZP0 to ${dmZP0}"
+rm /tmp/aol${LOOPNUMBER}_dmZP0.im.shm 
+ln -s /tmp/${dmZP0}.im.shm /tmp/aol${LOOPNUMBER}_dmZP0.im.shm
+}
+
+function ReaddmZP1name {
+file="./conf/conf_dmZP1_name.txt"
+if [ -a $file ]
+	then
+	dmZP1=$(echo "$(cat $file)")
+	else
+	dmZP1="dmZP1" #default
+fi
+# DM correction channel
+echo "linking to dm offset channel ZP1"
+aoconflog "linking dmZP1 to ${dmZP1}"
+rm /tmp/aol${LOOPNUMBER}_dmZP1.im.shm 
+ln -s /tmp/${dmZP1}.im.shm /tmp/aol${LOOPNUMBER}_dmZP1.im.shm
+}
+
 function ReaddmZP2name {
 file="./conf/conf_dmZP2_name.txt"
 if [ -a $file ]
@@ -156,6 +188,21 @@ echo "linking to dm offset channel ZP3"
 aoconflog "linking dmZP3 to ${dmZP3}"
 rm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm 
 ln -s /tmp/${dmZP3}.im.shm /tmp/aol${LOOPNUMBER}_dmZP3.im.shm
+}
+
+function ReaddmZP4name {
+file="./conf/conf_dmZP4_name.txt"
+if [ -a $file ]
+	then
+	dmZP4=$(echo "$(cat $file)")
+	else
+	dmZP4="dmZP4" #default
+fi
+# DM correction channel
+echo "linking to dm offset channel ZP4"
+aoconflog "linking dmZP4 to ${dmZP4}"
+rm /tmp/aol${LOOPNUMBER}_dmZP4.im.shm 
+ln -s /tmp/${dmZP4}.im.shm /tmp/aol${LOOPNUMBER}_dmZP4.im.shm
 }
 
 
@@ -212,7 +259,7 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 
 
 function ReadWFSdarkfname {
-file="./conf/conf_wfsdark_fname.txt"
+file="./conf/conf_wfsdark_name.txt"
 if [ -a $file ]
 	then
 	wfsdarkfname=$(echo "$(cat $file)")
@@ -232,7 +279,7 @@ fi
 
 
 function ReadzrespMfname {
-file="./conf/conf_zrespM_fname.txt"
+file="./conf/conf_zrespM_name.txt"
 if [ -a $file ]
 	then
 	zrespMfname=$(echo "$(cat $file)")
@@ -247,7 +294,7 @@ ln -s $PWD/${zrespMfname} conf/aol${LOOPNUMBER}_zrespM.fits
 
 
 function ReadLOrespMfname {
-file="./conf/conf_LOrespM_fname.txt"
+file="./conf/conf_LOrespM_name.txt"
 if [ -a $file ]
 	then
 	LOrespMfname=$(echo "$(cat $file)")
@@ -262,7 +309,7 @@ ln -s $PWD/${LOrespMfname} conf/aol${LOOPNUMBER}_LOrespM.fits
 
 
 function ReadWFSmaskfname {
-file="./conf/conf_wfsmask_fname.txt"
+file="./conf/conf_wfsmask_name.txt"
 if [ -a $file ]
 	then
 	wfsmaskfname=$(echo "$(cat $file)")
@@ -278,7 +325,7 @@ ln -s $PWD/${wfsmaskfname} conf/aol${LOOPNUMBER}_wfsmask.fits
 
 
 function ReadDMmaskfname {
-file="./conf/conf_dmmask_fname.txt"
+file="./conf/conf_dmmask_name.txt"
 if [ -a $file ]
 	then
 	dmmaskfname=$(echo "$(cat $file)")
@@ -292,9 +339,24 @@ ln -s $PWD/${dmmaskfname} conf/aol${LOOPNUMBER}_dmmask.fits
 }
 
 
+function ReadDMmaskRMfname {
+file="./conf/conf_dmmaskRM_name.txt"
+if [ -a $file ]
+	then
+	dmmaskRMfname=$(echo "$(cat $file)")
+	else
+	dmmaskRMfname="dmmaskRM.fits" #default
+fi
+aoconflog "linking dmmaskRM to file ${dmmaskRMfname}"
+rm /tmp/aol${LOOPNUMBER}_dmmaskRM.im.shm
+Fits2shm ${dmmaskRMfname} aol${LOOPNUMBER}_dmmaskRM
+ln -s $PWD/${dmmaskRMfname} conf/aol${LOOPNUMBER}_dmmaskRM.fits
+}
+
+
 
 function ReadDMmapfname {
-file="./conf/conf_dmmap_fname.txt"
+file="./conf/conf_dmmap_name.txt"
 if [ -a $file ]
 	then
 	dmmapfname=$(echo "$(cat $file)")
@@ -309,7 +371,7 @@ ln -s $PWD/${dmmapfname} conf/aol${LOOPNUMBER}_dmmap.fits
 
 
 function ReadWFSref0fname {
-file="./conf/conf_wfsref0_fname.txt"
+file="./conf/conf_wfsref0_name.txt"
 if [ -a $file ]
 	then
 	wfsreffname=$(echo "$(cat $file)")
@@ -330,7 +392,7 @@ ln -s $PWD/${wfsreffname} conf/aol${LOOPNUMBER}_wfsref0.fits
 
 
 
-#  System response and control
+#  System response and controlReadCon
 
 function ReadCPAmax {
 file="./conf/conf_cpamax.txt"
@@ -344,7 +406,7 @@ fi
 }
 
 function ReadDMmodesfname {
-file="./conf/conf_DMmodes_fname.txt"
+file="./conf/conf_DMmodes_name.txt"
 if [ -a $file ]
 	then
 	DMmodesfname=$(echo "$(cat $file)")
@@ -360,7 +422,7 @@ ln -s $PWD/${DMmodesfname} conf/aol${LOOPNUMBER}_DMmodes.fits
 
 
 function ReadrespMfname {
-file="./conf/conf_respM_fname.txt"
+file="./conf/conf_respM_name.txt"
 if [ -a $file ]
 	then
 	respMfname=$(echo "$(cat $file)")
@@ -380,12 +442,12 @@ ln -s $PWD/${respMfname} conf/aol${LOOPNUMBER}_respM.fits
 
 # arg1 : image/stream name
 #
-# Reads conf/conf_XXX_fname.txt
+# Reads conf/conf_XXX_name.txt
 # -> moves file to shared mem under aol#_XXX stream
 # -> makes sym link to conf/aol#_XXX.fits
 #
 function ReadConfFile {
-file="./conf/conf_$1_fname.txt"
+file="./conf/conf_$1_name.txt"
 if [ -a $file ]
 	then
 	fname=$(echo "$(cat $file)")
@@ -402,7 +464,7 @@ ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
 
 function SelectConfFile {
 name="$1"
-ffname="./conf/conf_${name}_fname.txt"
+ffname="./conf/conf_${name}_name.txt"
 fname=$( cat $ffname )
 echo "fname = $fname"
 fname=$(dialog --title "Select  Matrix" --stdout --title "Select ${name}" --fselect ${fname} $nbwlines $nbwcols)

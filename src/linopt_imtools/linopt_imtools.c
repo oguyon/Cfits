@@ -76,6 +76,20 @@ int fmInit = 0;
 // 4: existing image
 //
 
+
+int linopt_compute_linRM_from_inout_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0)
+    {
+      linopt_compute_linRM_from_inout(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
 int linopt_imtools_makeCosRadModes_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
@@ -194,6 +208,15 @@ int init_linopt_imtools()
     data.NBmodule++;
 
 
+    strcpy(data.cmd[data.NBcmd].key,"lincRMiter");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = linopt_compute_linRM_from_inout_cli;
+    strcpy(data.cmd[data.NBcmd].info,"estimate response matrix from input and output");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input cube> <inmask> <output cube> <RM>");
+    strcpy(data.cmd[data.NBcmd].example,"lincRMiter inC inmask outC imRM");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long linopt_compute_linRM_iter(char *IDinput_name, char *IDinmask_name, char *IDoutput_name, char *IDRM_name)");
+    data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"mkcosrmodes");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -290,6 +313,190 @@ int init_linopt_imtools()
 
 }
 
+
+//
+// solve for response matrix given a series of input and output
+// initial value of RM should be best guess
+// inmask = 0 over input that are known to produce no response
+//
+long linopt_compute_linRM_from_inout(char *IDinput_name, char *IDinmask_name, char *IDoutput_name, char *IDRM_name)
+{
+	long IDRM;
+	long IDin;
+	long IDinmask;
+	long IDout;
+	long insize; // number of input
+	long xsizein, ysizein, xsizeout, ysizeout;
+	double fitval;
+	long kk, ii_in, jj_in, ii_out, jj_out;
+	double tot;
+	long IDtmp;
+	double tmpv1;
+	long iter;
+	long IDout1;
+	double alpha = 0.001;
+	
+	long *sizearray;
+	long IDpokeM; // poke matrix (input)
+	long IDoutM; // outputX
+	double SVDeps = 1.0e-4;
+	
+	long NBact, act;
+	long *inpixarray;
+	long spl; // sample measurement
+	long ii;
+	long ID_rm;
+	int autoMask_MODE = 0; // if 1, automatically measure input mask based on IDinput_name image
+	long IDpinv;
+	int use_magma = 0;
+	
+	int ngpu;
+	
+	ngpu = 0;
+	setenv("CUDA_VISIBLE_DEVICES", "3,4", 1 );
+	
+	
+	IDin = image_ID(IDinput_name);
+	IDout = image_ID(IDoutput_name);
+	IDRM = image_ID(IDRM_name);
+	
+		
+	insize = data.image[IDin].md[0].size[2];
+	xsizeout = data.image[IDRM].md[0].size[0];
+	ysizeout = data.image[IDRM].md[0].size[1];
+	xsizein = data.image[IDin].md[0].size[0];
+	ysizein = data.image[IDin].md[0].size[1];
+	
+	if(autoMask_MODE==0)
+		IDinmask = image_ID(IDinmask_name);
+	else
+		{
+			IDinmask = create_2Dimage_ID("_RMmask", xsizein, ysizein);
+			for(spl=0;spl<insize;spl++)
+				for(ii=0;ii<xsizein*ysizein;ii++)
+					if(data.image[IDin].array.F[spl*xsizein*ysizein + ii]>0.5)
+						data.image[IDinmask].array.F[ii] = 1.0;
+		}
+		
+	// create pokeM
+	NBact = 0;
+	for(ii=0;ii<xsizein*ysizein;ii++)
+		if(data.image[IDinmask].array.F[ii]>0.5)
+			NBact++;
+			
+	printf("NBact = %ld\n", NBact);
+	
+	inpixarray = (long*) malloc(sizeof(long)*NBact);
+	act = 0;
+	for(ii=0;ii<xsizein*ysizein;ii++)
+		if(data.image[IDinmask].array.F[ii]>0.5)
+			{
+				inpixarray[act] = ii;
+				act++;
+			}
+	
+	
+	
+	sizearray = (long*) malloc(sizeof(long)*2);
+	
+	sizearray[0] = NBact;
+	sizearray[1] = insize; // number of measurements
+
+	printf("NBact = %ld\n", NBact);
+	for(act=0;act<10;act++)
+		printf("act %5ld -> pix %5ld\n", act, inpixarray[act]);
+	
+	 
+	IDpokeM = create_2Dimage_ID("pokeM", NBact, insize);
+
+	for(spl=0;spl<insize;spl++)
+		for(act=0;act<NBact;act++)
+			data.image[IDpokeM].array.F[NBact*spl+act] = data.image[IDin].array.F[spl*xsizein*ysizein + inpixarray[act]];
+	save_fits("pokeM", "!_test_pokeM.fits");
+
+	// compute pokeM pseudo-inverse
+   	#ifdef HAVE_MAGMA
+	use_magma = 1;
+	#endif
+	
+	if(use_magma==1)
+		CUDACOMP_magma_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat");
+	else
+        linopt_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat");
+        
+        
+	list_image_ID();
+	save_fits("pokeMinv", "!pokeMinv.fits");
+	IDpinv = image_ID("pokeMinv");
+	
+	// multiply measurements by pokeMinv
+	ID_rm = create_3Dimage_ID("_respmat", xsizeout, ysizeout, xsizein*ysizein);
+
+	for(act=0;act<NBact;act++)
+		{
+			for(kk=0;kk<insize;kk++)
+				for(ii=0;ii<xsizeout*ysizeout;ii++)
+					data.image[ID_rm].array.F[inpixarray[act]*xsizeout*ysizeout + ii] += data.image[IDout].array.F[kk*xsizeout*ysizeout + ii] * data.image[IDpinv].array.F[kk*NBact+act];
+		}
+	save_fits("_respmat", "!_test_RM.fits");
+//exit(0);
+	
+	
+	// COMPUTE SOLUTION QUALITY
+	
+	IDRM = image_ID("_respmat");
+	
+	
+	IDtmp = create_2Dimage_ID("_tmplicli", xsizeout, ysizeout);
+	IDout1 = create_3Dimage_ID("testout", xsizeout, ysizeout, insize);
+	
+	printf("IDin  = %ld\n", IDin);
+	printf("IDout = %ld\n", IDout);
+	printf("IDinmask = %ld\n", IDinmask);
+	
+	// on iteration 0, compute initial fit value
+	fitval = 0.0;
+
+	
+
+		for(kk=0;kk<insize;kk++)
+		{
+			printf("\r kk = %5ld / %5ld    ", kk, insize);
+			fflush(stdout);
+			
+			for(ii_out=0;ii_out<xsizeout; ii_out++)
+				for(jj_out=0;jj_out<ysizeout; jj_out++)
+					data.image[IDtmp].array.F[jj_out*xsizeout+ii_out] = 0.0;
+					
+					
+			for(ii_in=0;ii_in<xsizein;ii_in++)
+				for(jj_in=0;jj_in<ysizein;jj_in++)
+					{
+						
+								//printf("%ld  pix %ld %ld active\n", kk, ii_in, jj_in);
+								for(ii_out=0;ii_out<xsizeout; ii_out++)
+									for(jj_out=0;jj_out<ysizeout; jj_out++)
+										data.image[IDtmp].array.F[jj_out*xsizeout+ii_out] += data.image[IDin].array.F[kk*xsizein*ysizein + jj_in*xsizein + ii_in]*data.image[IDRM].array.F[(jj_in*xsizein + ii_in)*xsizeout*ysizeout+jj_out*xsizeout+ii_out];							
+							
+					}
+			for(ii_out=0;ii_out<xsizeout; ii_out++)
+				for(jj_out=0;jj_out<ysizeout; jj_out++)
+					{
+						tmpv1 = data.image[IDtmp].array.F[jj_out*xsizeout+ii_out] - data.image[IDout].array.F[kk*xsizeout*ysizeout + jj_out*xsizeout+ii_out];
+						fitval += tmpv1*tmpv1;
+						data.image[IDout1].array.F[kk*xsizeout*ysizeout + jj_out*xsizeout+ii_out] = tmpv1; //data.image[IDtmp].array.F[jj_out*xsizeout+ii_out];
+					}
+		}
+	printf("\n");
+	printf("  %5ld    fitval = %.20f\n", kk, sqrt(fitval/xsizeout/ysizeout));
+	
+	delete_image_ID("_tmplicli");
+		
+	free(sizearray);
+	free(inpixarray);
+	
+	return(IDout);
+}
 
 
 //
@@ -865,6 +1072,11 @@ int linopt_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name
 
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
+    if(ID_Rmatrix==-1)
+		{
+			printf("ERROR: matrix %s not found in memory\n", ID_Rmatrix_name);
+			exit(0);
+		}
     atype = data.image[ID_Rmatrix].md[0].atype;
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
@@ -1219,9 +1431,12 @@ long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_nam
     long long cnt = 0;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
+	int NOSEM = 1; // ignore input semaphore, use counter
+   
     
     schedpar.sched_priority = RT_priority;
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+ 
   
   
     IDmodes = image_ID(IDmodes_name);
@@ -1233,13 +1448,17 @@ long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_nam
 
     sizexy = xsize*ysize;
 
+	if(variable_ID("NOSEM")!=-1)
+		NOSEM = 1;
+	else
+		NOSEM = 0;
 
     IDout = image_ID(IDout_name);
     IDcoeff = image_ID(IDcoeff_name);
 
     while(1==1)
     {
-        if(data.image[IDcoeff].sem==0)
+        if((data.image[IDcoeff].sem==0)||(NOSEM==1))
         {
             while(cnt==data.image[IDcoeff].md[0].cnt0) // test if new frame exists
                 usleep(5);

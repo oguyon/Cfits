@@ -32,6 +32,7 @@ int init_modules()
   init_cudacomp();
   init_SCExAO_control();
   init_TransitLC();
+  init_linARfilterPred();
  
   return 0;
 }

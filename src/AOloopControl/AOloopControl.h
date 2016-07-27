@@ -65,6 +65,11 @@ typedef struct
     float maxlimit; // maximum absolute value for mode values
     float mult; // multiplication coefficient to be applied at each loop iteration
 
+	// Timing info
+	float loopfrequ; // Hz
+	float hardlatency_frame; // hardware latency between DM command and WFS response 
+	float complatency_frame; // computation latency (main loop)
+	float wfsmextrlatency_frame; // WFS mode extraction latency
 
     // LOOP CONTROL
     int on;  // goes to 1 when loop starts, put to 0 to turn loop off
@@ -167,7 +172,7 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
 int AOcompute(long loop, int normalize);
 int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name);
-
+ 
 long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr);
 double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps);
 
@@ -178,6 +183,10 @@ int AOloopControl_printloopstatus(long loop, long nbcol);
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
 int AOloopControl_statusStats();
 int AOloopControl_showparams(long loop);
+long AOloopControl_blockstats(long loop, char *IDout_name);
+long AOloopControl_computeWFSresidualimage(long loop, float alpha);
+long AOloopControl_ComputeOpenLoopModes(long loop);
+long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff);
 
 int AOloopControl_setLoopNumber(long loop);
 int AOloopControl_loopkill();
@@ -187,6 +196,11 @@ int AOloopControl_logon();
 int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
 int AOloopControl_loopreset();
+
+int AOloopControl_set_loopfrequ(float loopfrequ);
+int AOloopControl_set_hardlatency_frame(float hardlatency_frame);
+int AOloopControl_set_complatency_frame(float complatency_frame);
+int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame);
 int AOloopControl_setgain(float gain);
 int AOloopControl_setWFSnormfloor(float WFSnormfloor);
 int AOloopControl_setmaxlimit(float maxlimit);

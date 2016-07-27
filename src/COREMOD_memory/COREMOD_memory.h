@@ -157,6 +157,8 @@ long COREMOD_MEMORY_image_set_cnt1(char *IDname, int cnt1);
 
 long COREMOD_MEMORY_image_set_createsem(char *IDname, long NBsem);
 long COREMOD_MEMORY_image_set_sempost(char *IDname, long index);
+long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index);
+
 long COREMOD_MEMORY_image_set_sempost_loop(char *IDname, long index, long dtus);
 long COREMOD_MEMORY_image_set_semwait(char *IDname, long index);
 void *waitforsemID(void *ID);

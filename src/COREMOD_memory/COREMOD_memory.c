@@ -2599,6 +2599,7 @@ long copy_image_ID(char *name, char *newname, int shared)
             sem_post(data.image[IDout].semlog);
     }
     
+    COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
     data.image[IDout].md[0].write = 0;
     data.image[IDout].md[0].cnt0++;
 
@@ -2939,6 +2940,9 @@ int list_image_ID_ofp(FILE *fo)
 
 
     clock_gettime(CLOCK_REALTIME, &timenow);
+	fprintf(fo, "time:  %ld.%09ld\n", timenow.tv_sec % 60, timenow.tv_nsec);
+ 
+    
 
     fprintf(fo, "\n");
     fprintf(fo, "INDEX    NAME         SIZE                    TYPE        SIZE  [percent]    LAST ACCESS\n");
@@ -4074,6 +4078,37 @@ long COREMOD_MEMORY_image_set_sempost(char *IDname, long index)
     {
         if(index>data.image[ID].sem-1)
             printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
+        else
+        {
+            sem_getvalue(data.image[ID].semptr[index], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[ID].semptr[index]);
+        }
+    }
+
+    return(ID);
+}
+
+
+// if index < 0, post all semaphores
+long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
+{
+    long s;
+    int semval;
+
+    if(index<0)
+    {
+        for(s=0; s<data.image[ID].sem; s++)
+        {
+            sem_getvalue(data.image[ID].semptr[s], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(data.image[ID].semptr[s]);
+        }
+    }
+    else
+    {
+        if(index>data.image[ID].sem-1)
+            printf("ERROR: image ID %ld semaphore # %ld does no exist\n", ID, index);
         else
         {
             sem_getvalue(data.image[ID].semptr[index], &semval);
@@ -5386,7 +5421,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     char iname[200];
     time_t t;
     struct tm *uttime;
-    struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    //struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    struct timespec timenow;
     long kw;
 
     long IDlogdata;
@@ -5530,9 +5566,18 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
             /// measure time
             t = time(NULL);
             uttime = gmtime(&t);
-            clock_gettime(CLOCK_REALTIME, thetime);
-            sprintf(fname,"!%s/%s_%02d:%02d:%02d.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
-            sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02d.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+            //clock_gettime(CLOCK_REALTIME, thetime);
+            
+			clock_gettime(CLOCK_REALTIME, &timenow);
+/*
+   struct timespec timenow;
+   clock_gettime(CLOCK_REALTIME, &timenow);
+	fprintf(fo, "time:  %ld.%09ld\n", timenow.tv_sec % 60, timenow.tv_nsec);
+  */          
+            sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+   //        sprintf(fname, "!%s/%s_%02d:%02d:%02d.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, (long)thetime->tv_sec, (long) (thetime->tv_nsec));
+
+            sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
         }
 
         if(logshimconf[0].on == 1)
@@ -5542,7 +5587,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
                 /// measure time
                 t = time(NULL);
                 uttime = gmtime(&t);
-                clock_gettime(CLOCK_REALTIME, thetime);
+                //clock_gettime(CLOCK_REALTIME, thetime);
+				clock_gettime(CLOCK_REALTIME, &timenow);
 
                 if(index==0)
                     fp = fopen(fname_asciilog, "w");
@@ -5587,7 +5633,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
 
                 memcpy((void *) ptr1, (void *) ptr0, framesize);
 
-                fprintf(fp, "%02d:%02d:%02d.%09ld ", uttime->tm_hour, uttime->tm_min, uttime->tm_sec, thetime->tv_nsec);
+                fprintf(fp, "%02d:%02d:%02ld.%09ld ", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
 
                 if(IDlogdata!=-1)
                 {

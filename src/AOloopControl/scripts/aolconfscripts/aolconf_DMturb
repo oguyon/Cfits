@@ -49,14 +49,14 @@ echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
 if [ "$CPUconfRT" -eq "1" ]; then
 $execname << EOF
 csetpmove system
-readshmim dm${DMindex}disp01
-imzero dm${DMindex}disp01
+readshmim dm${DMindex}disp10
+imzero dm${DMindex}disp10
 quit
 EOF
 else
 $execname << EOF
-readshmim dm${DMindex}disp01
-imzero dm${DMindex}disp01
+readshmim dm${DMindex}disp10
+imzero dm${DMindex}disp10
 quit
 EOF
 fi

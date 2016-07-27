@@ -151,83 +151,123 @@ fi
 
 file="./status/stat_log_dm${DMindex}disp00.txt"
 logdmdisp00stat=$( cat $file )
-if [ "${logdmdisp0stat}" = "0" ];
+if [ "${logdmdisp00stat}" = "0" ];
 then
-menuitems+=( "ldmdisp001" "START logging dm${DMindex}disp0" )
+menuitems+=( "ldmdisp001" "START logging dm${DMindex}disp00" )
 else
-menuitems+=( "ldmdisp000" "\Z1\ZrSTOP logging dm${DMindex}disp0\Zn" )
+menuitems+=( "ldmdisp000" "\Z1\ZrSTOP logging dm${DMindex}disp00\Zn" )
 fi
 
 
 
-file="./status/stat_log_dm${DMindex}disp1.txt"
+file="./status/stat_log_dm${DMindex}disp01.txt"
 logdmdisp01stat=$( cat $file )
 if [ "${logdmdisp01stat}" = "0" ];
 then
-menuitems+=( "ldmdisp011" "START logging dm${DMindex}disp1" )
+menuitems+=( "ldmdisp011" "START logging dm${DMindex}disp01" )
 else
-menuitems+=( "ldmdisp010" "\Z1\ZrSTOP logging dm${DMindex}disp1\Zn" )
+menuitems+=( "ldmdisp010" "\Z1\ZrSTOP logging dm${DMindex}disp01\Zn" )
 fi
 
 
-file="./status/stat_log_dm${DMindex}disp2.txt"
+file="./status/stat_log_dm${DMindex}disp02.txt"
 logdmdisp02stat=$( cat $file )
 if [ "${logdmdisp02stat}" = "0" ];
 then
-menuitems+=( "ldmdisp021" "START logging dm${DMindex}disp2" )
+menuitems+=( "ldmdisp021" "START logging dm${DMindex}disp02" )
 else
-menuitems+=( "ldmdisp020" "\Z1\ZrSTOP logging dm${DMindex}disp2\Zn" )
+menuitems+=( "ldmdisp020" "\Z1\ZrSTOP logging dm${DMindex}disp02\Zn" )
 fi
 
 
-file="./status/stat_log_dm${DMindex}disp3.txt"
+file="./status/stat_log_dm${DMindex}disp03.txt"
 logdmdisp03stat=$( cat $file )
 if [ "${logdmdisp03stat}" = "0" ];
 then
-menuitems+=( "ldmdisp031" "START logging dm${DMindex}disp3" )
+menuitems+=( "ldmdisp031" "START logging dm${DMindex}disp03" )
 else
-menuitems+=( "ldmdisp030" "\Z1\ZrSTOP logging dm${DMindex}disp3\Zn" )
+menuitems+=( "ldmdisp030" "\Z1\ZrSTOP logging dm${DMindex}disp03\Zn" )
 fi
 
 
-file="./status/stat_log_dm${DMindex}disp4.txt"
+file="./status/stat_log_dm${DMindex}disp04.txt"
 logdmdisp04stat=$( cat $file )
 if [ "${logdmdisp04stat}" = "0" ];
 then
-menuitems+=( "ldmdisp041" "START logging dm${DMindex}disp4" )
+menuitems+=( "ldmdisp041" "START logging dm${DMindex}disp04" )
 else
-menuitems+=( "ldmdisp040" "\Z1\ZrSTOP logging dm${DMindex}disp4\Zn" )
+menuitems+=( "ldmdisp040" "\Z1\ZrSTOP logging dm${DMindex}disp04\Zn" )
 fi
 
 
-file="./status/stat_log_dm${DMindex}disp5.txt"
+file="./status/stat_log_dm${DMindex}disp05.txt"
 logdmdisp05stat=$( cat $file )
 if [ "${logdmdisp05stat}" = "0" ];
 then
-menuitems+=( "ldmdisp051" "START logging dm${DMindex}disp5" )
+menuitems+=( "ldmdisp051" "START logging dm${DMindex}disp05" )
 else
-menuitems+=( "ldmdisp050" "\Z1\ZrSTOP logging dm${DMindex}disp5\Zn" )
+menuitems+=( "ldmdisp050" "\Z1\ZrSTOP logging dm${DMindex}disp05\Zn" )
 fi
 
 
 
-file="./status/stat_log_dm${DMindex}disp6.txt"
+file="./status/stat_log_dm${DMindex}disp06.txt"
 logdmdisp06stat=$( cat $file )
 if [ "${logdmdisp06stat}" = "0" ];
 then
-menuitems+=( "ldmdisp061" "START logging dm${DMindex}disp6" )
+menuitems+=( "ldmdisp061" "START logging dm${DMindex}disp06" )
 else
-menuitems+=( "ldmdisp060" "\Z1\ZrSTOP logging dm${DMindex}disp6\Zn" )
+menuitems+=( "ldmdisp060" "\Z1\ZrSTOP logging dm${DMindex}disp06\Zn" )
 fi
 
 
-file="./status/stat_log_dm${DMindex}disp7.txt"
+file="./status/stat_log_dm${DMindex}disp07.txt"
 logdmdisp07stat=$( cat $file )
 if [ "${logdmdisp07stat}" = "0" ];
 then
-menuitems+=( "ldmdisp071" "START logging dm${DMindex}disp7" )
+menuitems+=( "ldmdisp071" "START logging dm${DMindex}disp07" )
 else
-menuitems+=( "ldmdisp070" "\Z1\ZrSTOP logging dm${DMindex}disp7\Zn" )
+menuitems+=( "ldmdisp070" "\Z1\ZrSTOP logging dm${DMindex}disp07\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp08.txt"
+logdmdisp08stat=$( cat $file )
+if [ "${logdmdisp08stat}" = "0" ];
+then
+menuitems+=( "ldmdisp081" "START logging dm${DMindex}disp08" )
+else
+menuitems+=( "ldmdisp080" "\Z1\ZrSTOP logging dm${DMindex}disp08\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp09.txt"
+logdmdisp09stat=$( cat $file )
+if [ "${logdmdisp09stat}" = "0" ];
+then
+menuitems+=( "ldmdisp091" "START logging dm${DMindex}disp09" )
+else
+menuitems+=( "ldmdisp090" "\Z1\ZrSTOP logging dm${DMindex}disp09\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp10.txt"
+logdmdisp10stat=$( cat $file )
+if [ "${logdmdisp10stat}" = "0" ];
+then
+menuitems+=( "ldmdisp101" "START logging dm${DMindex}disp10" )
+else
+menuitems+=( "ldmdisp100" "\Z1\ZrSTOP logging dm${DMindex}disp10\Zn" )
+fi
+
+
+file="./status/stat_log_dm${DMindex}disp11.txt"
+logdmdisp11stat=$( cat $file )
+if [ "${logdmdisp11stat}" = "0" ];
+then
+menuitems+=( "ldmdisp111" "START logging dm${DMindex}disp11" )
+else
+menuitems+=( "ldmdisp110" "\Z1\ZrSTOP logging dm${DMindex}disp11\Zn" )
 fi
 
 
@@ -245,24 +285,41 @@ menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn" )
 fi
 
 
-file="./status/stat_log_modevalc.txt"
-logmodevalcstat=$( cat $file )
-if [ "${logmodevalcstat}" = "0" ];
+file="./status/stat_log_modeval_ol.txt"
+logmodevalolstat=$( cat $file )
+if [ "${logmodevalolstat}" = "0" ];
 then
-menuitems+=( "lmodevalc1" "START logging aol${LOOPNUMBER}_modevalc" )
+menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol" )
 else
-menuitems+=( "lmodevalc0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalc\Zn" )
+menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn" )
 fi
 
 fi
 
+menuitems+=( " " " " )
 
+stringcenter "TEMPORAL STATISTICS"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+
+file="./conf/conf_dmCavecoeff.txt"
+dmCavecoeff=$( cat $file )
+menuitems+=( "setdmCaveC" "[${dmCavecoeff}] Set dmC averaging coefficient value" )
+
+
+file="./status/stat_taveC_ON.txt"
+taveC_ON=$( cat $file )
+if [ "${taveC_ON}" = "0" ];
+then
+menuitems+=( "taveC1" "START temporal average of DM correction -> aol2_dmCave" )
+else
+menuitems+=( "taveC0" "STOP temporal average of DM correction  -> aol2_cmCave" )
+fi
 
 
 menuitems+=( " " " " )
 
 stringcenter "RECORD TIME SEQUENCES"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "rins" "Record / analyze single instantaneous loop state to ./recinst/ directory" )
 menuitems+=( "rec1" "Record / analyze     10 WFS frames" )
 menuitems+=( "rec2" "Record / analyze    100 WFS frames" )
@@ -370,87 +427,135 @@ menurecord_default="ldmdisp001"
 ;;
 
 
-    ldmdisp11)
+    ldmdisp011)
 startstreamlog dm${DMindex}disp01
 echo "1" > "./status/stat_log_dm${DMindex}disp01.txt"
 menurecord_default="ldmdisp010"
 ;;
-    ldmdisp10)
+    ldmdisp010)
 stopstreamlog dm${DMindex}disp01
 echo "0" > "./status/stat_log_dm${DMindex}disp01.txt"
 menurecord_default="ldmdisp011"
 ;;
 
 
-    ldmdisp21)
+    ldmdisp021)
 startstreamlog dm${DMindex}disp02
 echo "1" > "./status/stat_log_dm${DMindex}disp02.txt"
 menurecord_default="ldmdisp020"
 ;;
-    ldmdisp20)
+    ldmdisp020)
 stopstreamlog dm${DMindex}disp02
 echo "0" > "./status/stat_log_dm${DMindex}disp02.txt"
-menurecord_default="ldmdisp021"
+menurecord_default="ldmdisp021"send-keys -t ${tmuxname}
 ;;
 
 
-    ldmdisp31)
+    ldmdisp031)
 startstreamlog dm${DMindex}disp03
 echo "1" > "./status/stat_log_dm${DMindex}disp03.txt"
 menurecord_default="ldmdisp030"
 ;;
-    ldmdisp30)
+    ldmdisp030)
 stopstreamlog dm${DMindex}disp03
 echo "0" > "./status/stat_log_dm${DMindex}disp03.txt"
 menurecord_default="ldmdisp031"
 ;;
 
 
-    ldmdisp41)
+    ldmdisp041)
 startstreamlog dm${DMindex}disp04
 echo "1" > "./status/stat_log_dm${DMindex}disp04.txt"
 menurecord_default="ldmdisp040"
 ;;
-    ldmdisp40)
+    ldmdisp040)
 stopstreamlog dm${DMindex}disp04
 echo "0" > "./status/stat_log_dm${DMindex}disp04.txt"
 menurecord_default="ldmdisp041"
 ;;
 
 
-    ldmdisp51)
+    ldmdisp051)
 startstreamlog dm${DMindex}disp05
 echo "1" > "./status/stat_log_dm${DMindex}disp05.txt"
 menurecord_default="ldmdisp050"
 ;;
-    ldmdisp50)
+    ldmdisp050)
 stopstreamlog dm${DMindex}disp05
 echo "0" > "./status/stat_log_dm${DMindex}disp05.txt"
 menurecord_default="ldmdisp051"
 ;;
 
 
-    ldmdisp61)
+    ldmdisp061)
 startstreamlog dm${DMindex}disp06
 echo "1" > "./status/stat_log_dm${DMindex}disp06.txt"
 menurecord_default="ldmdisp060"
 ;;
-    ldmdisp60)
+    ldmdisp060)
 stopstreamlog dm${DMindex}disp06
 echo "0" > "./status/stat_log_dm${DMindex}disp06.txt"
 menurecord_default="ldmdisp061"
 ;;
 
 
-    ldmdisp71)
+    ldmdisp071)
 startstreamlog dm${DMindex}disp07
 echo "1" > "./status/stat_log_dm${DMindex}disp07.txt"
 menurecord_default="ldmdisp070"
 ;;
-    ldmdisp70)
+    ldmdisp070)
 stopstreamlog dm${DMindex}disp07
 echo "0" > "./status/stat_log_dm${DMindex}disp07.txt"
 menurecord_default="ldmdisp071"
+;;
+
+
+    ldmdisp081)
+startstreamlog dm${DMindex}disp08
+echo "1" > "./status/stat_log_dm${DMindex}disp08.txt"
+menurecord_default="ldmdisp080"
+;;
+    ldmdisp080)
+stopstreamlog dm${DMindex}disp08
+echo "0" > "./status/stat_log_dm${DMindex}disp08.txt"
+menurecord_default="ldmdisp081"
+;;
+
+
+    ldmdisp091)
+startstreamlog dm${DMindex}disp09
+echo "1" > "./status/stat_log_dm${DMindex}disp09.txt"
+menurecord_default="ldmdisp090"
+;;
+    ldmdisp090)
+stopstreamlog dm${DMindex}disp09
+echo "0" > "./status/stat_log_dm${DMindex}disp09.txt"
+menurecord_default="ldmdisp091"
+;;
+
+
+    ldmdisp101)
+startstreamlog dm${DMindex}disp10
+echo "1" > "./status/stat_log_dm${DMindex}disp10.txt"
+menurecord_default="ldmdisp100"
+;;
+    ldmdisp100)
+stopstreamlog dm${DMindex}disp10
+echo "0" > "./status/stat_log_dm${DMindex}disp10.txt"
+menurecord_default="ldmdisp101"
+;;
+
+
+    ldmdisp111)
+startstreamlog dm${DMindex}disp10
+echo "1" > "./status/stat_log_dm${DMindex}disp11.txt"
+menurecord_default="ldmdisp110"
+;;
+    ldmdisp110)
+stopstreamlog dm${DMindex}disp11
+echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
+menurecord_default="ldmdisp111"
 ;;
 
 
@@ -468,19 +573,41 @@ menurecord_default="lmodeval1"
 ;;
 
 
-    lmodevalc1)
-startstreamlog aol${LOOPNUMBER}_modevalc
-echo "1" > "./status/stat_log_modevalc.txt"
-menurecord_default="lmodevalc0"
+    lmodevalol1)
+startstreamlog aol${LOOPNUMBER}_modeval_ol
+echo "1" > "./status/stat_log_modeval_ol.txt"
+menurecord_default="lmodevalol0"
 ;;
-    lmodevalc0)
-stopstreamlog aol${LOOPNUMBER}_modevalc
-echo "0" > "./status/stat_log_modevalc.txt"
-menurecord_default="lmodevalc1"
+    lmodevalol0)
+stopstreamlog aol${LOOPNUMBER}_modeval_ol
+echo "0" > "./status/stat_log_modeval_ol.txt"
+menurecord_default="lmodevalol1"
 ;;
 
+	setdmCaveC)
+exec 3>&1;
+dmCavecoeff=$(dialog --inputbox "dmC averaging coeff" 0 0 "$dmCavecoeff" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmCavecoeff" > ./conf/conf_dmCavecoeff.txt
+aoconflog "setting dmC averaging coeff to $dmCavecoeff"
+;;
 
+taveC1)
+file="./status/stat_taveC_ON.txt"
+echo "1" > $file
+tmuxname="aol${LOOPNUMBER}dmCave"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t ${tmuxname} "./auxscripts/aol_dmCave ${dmCavecoeff}" C-m
+menurecord_default="taveC0"
+;;
 
+taveC0)
+file="./status/stat_taveC_ON.txt"
+echo "0" > $file
+tmuxname="aol${LOOPNUMBER}dmCave"
+tmux kill-session -t $tmuxname
+menurecord_default="taveC1"
+;;
 
 
 

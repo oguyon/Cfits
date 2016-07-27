@@ -18,11 +18,11 @@ long make_square(char *ID_name, long l1, long l2, double x_center, double y_cent
 long make_rectangle(char *ID_name, long l1, long l2, double x_center, double y_center, double radius1, double radius2);
 
 long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, double y2, double t);
-
+long make_lincoordinate(char *IDname, long l1, long l2, double x_center, double y_center, double angle);
 long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_center, double radius);
 
 long make_hexsegpupil(char *IDname, long size, double radius, double gap, double step);
-
+long IMAGE_gen_segments2WFmodes(char *prefix, long ndigit, char *IDout);
 long make_jacquinot_pupil(char *ID_name, long l1, long l2, double x_center, double y_center, double width, double height);
 
 long make_sectors(char *ID_name, long l1, long l2, double x_center, double y_center, double step, long NB_sectors);

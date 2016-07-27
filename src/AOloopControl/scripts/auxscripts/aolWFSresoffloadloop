@@ -1,0 +1,39 @@
+#!/bin/bash
+
+EXPECTED_ARGS=2
+
+
+if [ $# -ne $EXPECTED_ARGS ] || [ "$1" == "help" ]
+then
+  echo
+  echo " command : $0 $@"  
+  echo
+  echo "------ Slow offload of WFS residuals to WFS reference ------"
+  echo 
+  echo "Usage: $0 <time interval> <averaging coeff>"
+  echo
+  echo "offloads aol#_wfsres_ave to aol#_wfsref"
+  echo 
+  exit
+fi
+
+loopnb=$(cat LOOPNUMBER)
+cnt=0
+
+while true
+do
+
+echo "$cnt   WFS residual offset to WFS ref"
+Cfits -n aol${loopnb}$0 << EOF > /dev/null
+readshmim aol${loopnb}_wfsres_ave
+readshmim aol${loopnb}_wfsref
+im=aol${loopnb}_wfsref+$2*aol${loopnb}_wfsres_ave
+listim
+cpsh im aol${loopnb}_wfsref	
+exit
+EOF
+let cnt=cnt+1
+sleep $1
+
+done
+

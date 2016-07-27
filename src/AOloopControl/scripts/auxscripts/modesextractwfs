@@ -1,0 +1,33 @@
+#! /bin/bash
+
+
+EXPECTED_ARGS=1
+
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo "------- EXTRACT MODE VALUES FROM WFS IMAGES ---------"
+  echo 
+  echo "Usage:  $0 <GPUdevice>"
+  echo
+fi
+
+loopnb=$(cat LOOPNUMBER)
+
+pname="aol${loopnb}modeval0"
+
+# this version does not use masking (yet)
+
+Cfits -n $pname << EOF
+csetpmove aolRT1
+readshmim aol${loopnb}_respM
+readshmim aol${loopnb}_imWFS0
+readshmim aol${loopnb}_imWFS0tot
+readshmim aol${loopnb}_wfsref0
+
+readshmim aol${loopnb}_wfsmask
+cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref0 aol${loopnb}_modeval $1
+
+
+exit
+EOF
+

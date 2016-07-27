@@ -67,13 +67,21 @@ startstreamlog dm${DMindex}disp06
 echo "1" > "./status/stat_log_dm${DMindex}disp06.txt"
 startstreamlog dm${DMindex}disp07
 echo "1" > "./status/stat_log_dm${DMindex}disp07.txt"
+startstreamlog dm${DMindex}disp08
+echo "1" > "./status/stat_log_dm${DMindex}disp08.txt"
+startstreamlog dm${DMindex}disp09
+echo "1" > "./status/stat_log_dm${DMindex}disp09.txt"
+startstreamlog dm${DMindex}disp10
+echo "1" > "./status/stat_log_dm${DMindex}disp10.txt"
+startstreamlog dm${DMindex}disp11
+echo "1" > "./status/stat_log_dm${DMindex}disp11.txt"
 
 if [ "${dm2dm_mode}" = "0" ];
 then
 startstreamlog aol${LOOPNUMBER}_modeval
 echo "1" > "./status/stat_log_modeval.txt"
-startstreamlog aol${LOOPNUMBER}_modevalc
-echo "1" > "./status/stat_log_modevalc.txt"
+startstreamlog aol${LOOPNUMBER}_modeval_ol
+echo "1" > "./status/stat_log_modeval_ol.txt"
 fi
 }
 
@@ -100,14 +108,22 @@ stopstreamlog dm${DMindex}disp06
 echo "0" > "./status/stat_log_dm${DMindex}disp06.txt"
 stopstreamlog dm${DMindex}disp07
 echo "0" > "./status/stat_log_dm${DMindex}disp07.txt"
+stopstreamlog dm${DMindex}disp08
+echo "0" > "./status/stat_log_dm${DMindex}disp08.txt"
+stopstreamlog dm${DMindex}disp09
+echo "0" > "./status/stat_log_dm${DMindex}disp09.txt"
+stopstreamlog dm${DMindex}disp10
+echo "0" > "./status/stat_log_dm${DMindex}disp10.txt"
+stopstreamlog dm${DMindex}disp11
+echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
 log "stop ALL telemetry logging"
 
 if [ "${dm2dm_mode}" = "0" ];
 then
 stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
-stopstreamlog aol${LOOPNUMBER}_modevalc
-echo "0" > "./status/stat_log_modevalc.txt"
+stopstreamlog aol${LOOPNUMBER}_modeval_ol
+echo "0" > "./status/stat_log_modeval_ol.txt"
 fi
 }
 
@@ -134,14 +150,22 @@ killstreamlog dm${DMindex}disp06
 echo "0" > "./status/stat_log_dm${DMindex}disp06.txt"
 killstreamlog dm${DMindex}disp07
 echo "0" > "./status/stat_log_dm${DMindex}disp07.txt"
+killstreamlog dm${DMindex}disp08
+echo "0" > "./status/stat_log_dm${DMindex}disp08.txt"
+killstreamlog dm${DMindex}disp09
+echo "0" > "./status/stat_log_dm${DMindex}disp09.txt"
+killstreamlog dm${DMindex}disp10
+echo "0" > "./status/stat_log_dm${DMindex}disp10.txt"
+killstreamlog dm${DMindex}disp11
+echo "0" > "./status/stat_log_dm${DMindex}disp11.txt"
 log "kill ALL telemetry logging"
 
 if [ "${dm2dm_mode}" = "0" ];
 then
 killstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
-killstreamlog aol${LOOPNUMBER}_modevalc
-echo "0" > "./status/stat_log_modevalc.txt"
+killstreamlog aol${LOOPNUMBER}_modeval_ol
+echo "0" > "./status/stat_log_modeval_ol.txt"
 fi
 }
 

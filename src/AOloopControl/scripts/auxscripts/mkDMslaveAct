@@ -14,20 +14,19 @@ then
   echo
   echo "EXAMPLE: $0 dmmap 0.7"
   echo
-  echo "  OUTPUT: ./conf/dmslaved.fits"
+  echo "  OUTPUT: dmslaved.fits"
   echo
   exit
 fi
 
 
-
-
 Cfits << EOF
 loadfits "$1" dmmap
-gaussfilt dmmap dmmapg 5.0 24
-savefits dmmapg "!test_dmmapg.fits"
+dmmapc=dmmap-perc(dmmap,0.2)
+gaussfilt dmmapc dmmapg 5.0 24
+#savefits dmmapg "!test_dmmapg.fits"
 dmmap1=dmmap/dmmapg
-savefits dmmap1 "!_test_dmmap1.fits"
+#savefits dmmap1 "!_test_dmmap1.fits"
 a=$2
 b=$2*0.99
 imtrunc dmmap1 0.0 a dmmap2
@@ -40,7 +39,28 @@ dmmap6=dmmap5/0.2
 imtrunc dmmap6 0.0 1.01 dmmap6t
 dmmap7=floor(dmmap6t)
 dmmapsl=dmmap7*(1.0-dmmask)
-savefits dmmapsl "!./conf/dmslaved.fits"
+#savefits dmmapsl "!dmslaved.fits"
+gaussfilt dmmapsl dmmapslg 3.5 4
+mm1=dmmapslg*6.0
+imtrunc mm1 0.0 1.01 mm2
+mm3=floor(mm2)
+#savefits mm3 "!_test_mm3.fits"
+dmmap1s=sqrt(dmmap1)
+mm4=(dmmap1s-0.8)*100.0
+imtrunc mm4 0.0 1.01 mm5
+mm6=floor(mm5)
+#savefits mm6 "!_test_mm6.fits"
+mm7=mm3*(1.0-mm6)
+#savefits mm7 "!_test_mm7.fits"
+
+loadfits dmmaskRM.fits dmmRM
+gaussfilt dmmRM dmmRMg 5.5 8
+dmmRMg1=dmmRMg*9
+imtrunc dmmRMg1 0.0 1.01 ma0
+ma1=floor(ma0)
+#savefits ma1 "!_test_ma1.fits"
+mm8=(mm7+(mm7-1.0)*(dmmRM-1.0))*ma1
+savefits mm8 "!dmslaved.fits"
 exit
 EOF
 

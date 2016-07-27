@@ -3391,6 +3391,8 @@ int execute_arith( char *cmd1 )
   int OKea = 1;
   int n;
 
+	int Debug = 0;
+
   //  if( Debug > 0 )   fprintf(stdout, "[execute_arith]\n");
   //  if( Debug > 0 )   fprintf(stdout, "[execute_arith] str: [%s]\n", cmd1);
 
@@ -3401,7 +3403,9 @@ int execute_arith( char *cmd1 )
       intr_priority[i] = 0;
     }
   
-
+	
+	
+	
   /* 
      Pre-process string: 
      - remove any spaces in cmd1
@@ -3510,8 +3514,8 @@ int execute_arith( char *cmd1 )
 
   for (i=0;i<nbword;i++)
     {
-      //      if( Debug > 0 )
-      //	printf("TESTING WORD %d = %s\n",i,word[i]);
+           if( Debug > 0 )
+      	printf("TESTING WORD %d = %s\n",i,word[i]);
       word_type[i] = 0;
       found_word_type = 0;
       if((isanumber(word[i])==1)&&(found_word_type==0))
@@ -3574,7 +3578,7 @@ int execute_arith( char *cmd1 )
 	}
       if(found_word_type==0)
 	word_type[i] = 1;
-      //        if( Debug > 0 ) printf("word %d is  \"%s\" word typ is %d\n",i,word[i],word_type[i]);
+	if( Debug > 0 ) printf("word %d is  \"%s\" word typ is %d\n",i,word[i],word_type[i]);
     }
   
 
@@ -4437,6 +4441,7 @@ int execute_arith( char *cmd1 )
 	      
 	      if(strcmp(word[i],"tan")==0)
 		{
+			printf("LINE 4440\n");//TBE
 		  if(word_type[i+1]==2)
 		    {
 		      tmp_prec = tan(data.variable[variable_ID(word[i+1])].value.f);

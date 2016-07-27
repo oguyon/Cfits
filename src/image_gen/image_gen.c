@@ -83,7 +83,6 @@ int make_dist_cli()
   return 0;
 }
 
-
 int make_hexsegpupil_cli()
 {
 
@@ -95,6 +94,19 @@ int make_hexsegpupil_cli()
   else
     return 1;
 }
+
+
+int IMAGE_gen_segments2WFmodes_cli()
+{
+	 if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,4)==0)
+    {
+      IMAGE_gen_segments2WFmodes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 
 int make_rectangle_cli()
 {
@@ -119,6 +131,19 @@ int make_line_cli()
   else
     return 1;
 }
+
+int make_lincoordinate_cli()
+{
+  
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
+    {
+		make_lincoordinate(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf);
+       return 0;
+    }
+  else
+    return 1;
+}
+
 
 int make_2Dgridpix_cli()
 {
@@ -224,7 +249,16 @@ int init_image_gen()
   strcpy(data.cmd[data.NBcmd].example,"mkhexsegpup imhex 4096 200 2.0 46.3");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_hexsegpupil(char *IDname, long size, double radius, double gap, double step)");
   data.NBcmd++;
- 
+  
+  strcpy(data.cmd[data.NBcmd].key,"segs2wfmodes");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = IMAGE_gen_segments2WFmodes_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make WF modes from TT&piston of segments. Segment names: <prefix>xxx");
+  strcpy(data.cmd[data.NBcmd].syntax,"<seg image prefix> <number of digits> <output image name>");
+  strcpy(data.cmd[data.NBcmd].example,"seg2wfmodes segim 2 WFmodes");
+  strcpy(data.cmd[data.NBcmd].Ccall,"ong IMAGE_gen_segments2WFmodes(char *prefix, long ndigit, char *IDout)");
+  data.NBcmd++;
+  
   strcpy(data.cmd[data.NBcmd].key,"mkrect");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = make_rectangle_cli;
@@ -239,16 +273,25 @@ int init_image_gen()
   data.cmd[data.NBcmd].fp = make_line_cli;
   strcpy(data.cmd[data.NBcmd].info,"make line");
   strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <x1> <y1> <x2> <y2> <thickness>");
-  strcpy(data.cmd[data.NBcmd].example,"mkline 512 512 256.0 256.0 100.0 200.0 3.0");
+  strcpy(data.cmd[data.NBcmd].example,"mkline lim 512 512 256.0 256.0 100.0 200.0 3.0");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, double y2, double t)");
   data.NBcmd++;
 
+  strcpy(data.cmd[data.NBcmd].key,"mklincoord");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = make_lincoordinate_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make linear coordinate");
+  strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <xc> <yc> <angle>");
+  strcpy(data.cmd[data.NBcmd].example,"mklincoord lim 512 512 256.0 256.0 1.42");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long make_lincoordinate(char *IDname, long l1, long l2, double x_center, double y_center, double angle)");
+  data.NBcmd++;
+  
   strcpy(data.cmd[data.NBcmd].key,"mkgridpix");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = make_2Dgridpix_cli;
   strcpy(data.cmd[data.NBcmd].info,"make regular grid");
   strcpy(data.cmd[data.NBcmd].syntax,"<output image name> <xsize> <ysize> <xpitch> <ypitch> <xoffset> <yoffset>");
-  strcpy(data.cmd[data.NBcmd].example,"mkgridpix 512 512 10.0 10.0 4.5 2.8");
+  strcpy(data.cmd[data.NBcmd].example,"mkgridpix impgrid 512 512 10.0 10.0 4.5 2.8");
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double pitchy, double offsetx, double offsety)");
   data.NBcmd++;
 
@@ -955,6 +998,34 @@ long make_line(char *IDname, long l1, long l2, double x1, double y1, double x2, 
     return(ID);
 }
 
+
+// draw line crossing point xc, yc with angle, pixel value is coordinate axis perp to line
+long make_lincoordinate(char *IDname, long l1, long l2, double x_center, double y_center, double angle)
+{
+	long ID;
+    long ii,jj;
+	long naxes[2];
+	double x, y, x1, y1;
+ 
+	create_2Dimage_ID(IDname, l1, l2);
+    ID = image_ID(IDname);
+    naxes[0] = data.image[ID].md[0].size[0];
+    naxes[1] = data.image[ID].md[0].size[1];
+ 
+	for (jj = 0; jj < naxes[1]; jj++)
+        for (ii = 0; ii < naxes[0]; ii++)
+			{
+				x = 1.0*ii - x_center;
+				y = 1.0*jj - y_center;
+				x1 = x*cos(angle) + y*sin(angle);
+				y1 = -x*sin(angle) + y*cos(angle);
+				data.image[ID].array.F[jj*naxes[0]+ii] = x1;
+			}
+ 
+	return(ID);
+}
+
+
 long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_center, double radius)
 {
     long ID;
@@ -1000,7 +1071,128 @@ long make_hexagon(char *IDname, long l1, long l2, double x_center, double y_cent
     return(ID);
 }
 
+long IMAGE_gen_segments2WFmodes(char *prefix, long ndigit, char *IDout_name)
+{
+	long IDout;
+	long NBseg;
+	long seg;
+	int OK;
+	char imname[200];
+	long IDarray[10000];
+	long ii, jj, kk, xsize, ysize, xysize;
+	double x, y;
+	long IDtmp, IDmask;
+	double *segxc;
+	double *segyc;
+	double *segsum;
+	
+	seg = 0;
+	OK = 1;
+	while(OK==1)
+	{
+		switch (ndigit) {
+			
+			case 1 :
+			sprintf(imname, "%s%01ld", prefix, seg);
+			break;
+			case 2 :
+			sprintf(imname, "%s%02ld", prefix, seg);
+			break;
+			case 3 :
+			sprintf(imname, "%s%03ld", prefix, seg);
+			break;
+			case 4 :
+			sprintf(imname, "%s%04ld", prefix, seg);
+			break;
+			case 5 :
+			sprintf(imname, "%s%05ld", prefix, seg);
+			break;
+			case 6 :
+			sprintf(imname, "%s%06ld", prefix, seg);
+			break;
+			
+			
+			default:
+			printf("ERROR: Invalid number of didits\n");
+			exit(0);
+		}
+		IDarray[seg] = image_ID(imname);
+		if(IDarray[seg]!=-1)
+			seg++;
+		else
+			OK = 0;
+	}
+	NBseg = seg;
+	printf("Processing %ld segments\n", NBseg);
+	if(NBseg>0)
+	{
+		xsize = data.image[IDarray[0]].md[0].size[0];
+		ysize = data.image[IDarray[0]].md[0].size[1];
+		xysize = xsize*ysize;
+	
+		segxc = (double*) malloc(sizeof(double)*NBseg);
+		segyc = (double*) malloc(sizeof(double)*NBseg);
+		segsum = (double*) malloc(sizeof(double)*NBseg);
+	
+		IDmask = create_2Dimage_ID("_pupmask", xsize, ysize);
+		
+		for(seg=0;seg<NBseg;seg++)
+			{
+				segxc[seg] = 0.0;
+				segyc[seg] = 0.0;
+				segsum[seg] = 0.0;
 
+				for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<ysize;jj++)
+				{
+					x = 1.0*ii;
+					y = 1.0*jj;
+					segxc[seg] += x*data.image[IDarray[seg]].array.F[jj*xsize+ii];
+					segyc[seg] += y*data.image[IDarray[seg]].array.F[jj*xsize+ii];
+					segsum[seg] += data.image[IDarray[seg]].array.F[jj*xsize+ii];
+
+					data.image[IDmask].array.F[jj*xsize+ii] += (1.0+seg)*data.image[IDarray[seg]].array.F[jj*xsize+ii];										
+				}
+				segxc[seg] /= segsum[seg];
+				segyc[seg] /= segsum[seg];
+			}
+	
+		save_fits("_pupmask", "!_pupmask.fits");
+	
+		IDtmp = create_2Dimage_ID("_seg2wfm_tmp", xsize, ysize);
+		IDout = create_3Dimage_ID(IDout_name, xsize, ysize, 3*NBseg);
+		kk = 0;
+		for(seg=0;seg<NBseg;seg++) // create modes one at a time 
+		{
+			// piston seg 
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<xsize;jj++)
+					data.image[IDout].array.F[kk*xysize+jj*xsize+ii] = data.image[IDarray[seg]].array.F[jj*xsize+ii];
+			kk++;
+	
+			// Tip
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<xsize;jj++)
+					data.image[IDout].array.F[kk*xysize+jj*xsize+ii] = data.image[IDarray[seg]].array.F[jj*xsize+ii]*(1.0*ii-segxc[seg]);
+			kk++;
+			
+			// Tilt
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<xsize;jj++)
+					data.image[IDout].array.F[kk*xysize+jj*xsize+ii] = data.image[IDarray[seg]].array.F[jj*xsize+ii]*(1.0*jj-segyc[seg]);
+			kk++;
+		}
+		
+		
+		delete_image_ID("_seg2wfm_tmp");
+	
+		free(segxc);
+		free(segyc);
+		free(segsum);
+	}
+	
+	return(IDout);
+}
 
 
 long make_hexsegpupil(char *IDname, long size, double radius, double gap, double step)

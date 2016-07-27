@@ -10,10 +10,11 @@ then
   echo "  $0 <rm ampl[um]> <normalize>"
   echo
   echo "Default output: "
-  echo "  zrespmat.fits : zonal response matrix"
-  echo "  wfsref0.fits   : wfs reference"
-  echo "  wfsmap.fits   : WFS response map"
-  echo "  dmmap.fits    : DM response map"
+  echo "  zrespmat.fits    : zonal response matrix"
+  echo "  wfsref0.fits     : wfs reference"
+  echo "  wfsmap.fits      : WFS response map"
+  echo "  dmmap.fits       : DM response map"
+  echo "  dmmaskRM.fits    : DM response mask"
   echo
   echo "Cleans zonal response matrices in ./zresptmp/ directory"
   echo "if images conf/RMpixindex.fits conf/RMHmat.fits exist, use Hadamard coding/decoding"
@@ -34,14 +35,24 @@ loadfits "./conf/RMpokeCube.fits" RMpokeC
 loadfits "./conf/RMHmat.fits" Hmat
 loadfits "./conf/RMpixindex.fits" pixindexim
 aolcleanzrm zrespmat wfsref0 wfsmap dmmap $1 $2
+
 savefits zrespmat "!zrespmat.fits"
 savefits wfsref0 "!wfsref0.fits"
 savefits wfsmap "!wfsmap.fits"
 savefits dmmap "!dmmap.fits"
 savefits wfsmask "!wfsmask.fits"
-savefits dmmask "!dmmask.fits"
+savefits dmmask "!dmmaskRM.fits"
 listim
 exit
 EOF
 
+./auxscripts/mkDMslaveAct dmmap.fits 0.7
+
+Cfits << EOF
+loadfits dmmaskRM.fits dmmRM
+loadfits dmslaved.fits dmsl
+dmm=1.0-(1.0-dmmRM)*(1.0-dmsl)
+savefits dmm "!dmmask.fits"
+exit
+EOF
 

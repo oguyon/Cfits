@@ -18,9 +18,10 @@ fi
 
 if [ $state = "menutop" ]; then
 stateok=1
+dateUTC=$( date -u )
 #aoconflog "$0 state = ${state}"
 confselected=$(cat "./conf/conf_CONFNUMBER.txt")
-menuname="TOP MENU\n [Active conf = ${confselected}]"
+menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
 
 
 file="./conf/conf_dmcombavemode.txt"
@@ -94,7 +95,7 @@ menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM output modes          \Z4\Zbaol${LOO
 fi
 
 
-Readdm2dmOname
+Readdm2dmOnamedmTCPrcv-0
 dm2dmOfile="/tmp/${dm2dmO}.im.shm"
 if [ -f $dm2dmOfile ]; then
 getshmimsize ${dm2dmO}
@@ -202,41 +203,10 @@ menuitems+=( "initDM" "START  DM comb process (-> dm${DMindex}disp00..07  dm${DM
 else
 menuitems+=( "stopDM" "STOP  DM comb process" )
 fi
-menuitems+=( " " " " )
 
-
-stringcenter " "
-menuitems+=( " " "\Zb\Zr$string\Zn" )
-
-file="./conf/conf_GPUdm2wfsref.txt"
-GPUdm2wfsref=$( cat $file )
-if [[ -f "$file" && ( "$GPUdm2wfsref" = "1" || "$GPUdm2wfsref" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-GPUdm2wfsref=0
-fi
 
 menuitems+=( " " " ")
-if [ "${GPUdm2wfsref}" = "0" ];
-then
-menuitems+=( "GPUd2w1" " [  OFF  ] GPU-based output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
-fi
-if [ "${GPUdm2wfsref}" = "1" ];
-then
-menuitems+=( "GPUd2w0" " [   ON  ] GPU-based output WFS ref is ON (select to de-activate)" )
-fi
-
-
-
-
-
-
-menuitems+=( " " " " )
-menuitems+=( " " " " )
-menuitems+=( " " " " )
-menuitems+=( " " " " )
-menuitems+=( " " " " )
+menuitems+=( " " " ")
 
 
 
@@ -245,8 +215,10 @@ menuitems+=( " " " " )
 stringcenter "AO CONFIGURE AND CONTROL"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( "C" "Configure/link AO loop" )
-menuitems+=( "L" "Control AO loop" )
+menuitems+=( "M" "load all (M)emory" )
+menuitems+=( "C" "(C)onfigure/link AO loop" )
+menuitems+=( "CM" "Control Matrix" )
+menuitems+=( "L" "Control AO (L)oop" )
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 
@@ -463,49 +435,14 @@ stopDMfunc
 ;;
 
 
-
-    GPUd2w1)
-aoconflog "(re) STARTING GPU-based DM -> WFSref loop"
-file="./conf/conf_GPUdm2wfsref.txt"
-echo "1" > $file
-tmuxname="GPUdm2wfsref${DMindex}"
-tmux kill-session -t $tmuxname
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
-tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefRM" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefO" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp 4 aol${DMindex}_dmwfrefO" C-m
-menutop_default="GPUd2w0"
-;;
-
-    GPUd2w0)
-aoconflog "STOPPING GPU-based DM -> WFSref loop"
-file="./conf/conf_GPUdm2wfsref.txt"
-echo "0" > $file
-tmuxname="GPUdm2wfsref${DMindex}"
-tmux send-keys -t $tmuxname "" C-c
-sleep 0.1
-tmux send-keys -t $tmuxname "exit" C-m
-sleep 0.1
-tmux kill-session -t $tmuxname
-
-tmuxname="GPUdm2wfsref${DMindex}z"
-tmux kill-session -t $tmuxname
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefO" C-m
-tmux send-keys -t $tmuxname "imzero aol${DMindex}_dmwfrefO" C-m
-tmux send-keys -t $tmuxname "exit" C-m
-tmux kill-session -t $tmuxname
-
-menutop_default="GPUd2w1"
+	M)
+AOloadMem 1
 ;;
 
 
    	 C) state="menuconfigureloop";;   
    	 L) state="menucontrolloop";;
+   	 CM) state="menucontrolmatrix";;
    	 T) state="menutestmode"   ;;
    	 V) state="menuview" ;;
 

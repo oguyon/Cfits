@@ -63,6 +63,28 @@ int image_basic_resize_cli()
     return 1;
 }
 
+int image_basic_3Dto2D_cli() // collapse first 2 axis into one
+{
+	if(CLI_checkarg(1,4) == 0)
+    {
+		image_basic_3Dto2D(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+int image_basic_SwapAxis2D_cli() // swap axis of a 2D image
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3) == 0)
+    {
+		image_basic_SwapAxis2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
 int image_basic_add_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
@@ -207,6 +229,24 @@ int init_image_basic()
     strcpy(data.cmd[data.NBcmd].syntax,"<image in> <output image> <new x size> <new y size>");
     strcpy(data.cmd[data.NBcmd].example,"resizeim im1 im2 230 200");
     strcpy(data.cmd[data.NBcmd].Ccall,"long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysizeout)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"im3Dto2D");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_3Dto2D_cli;
+    strcpy(data.cmd[data.NBcmd].info,"collapse first 2 axis of 3D image (in place)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image name>");
+    strcpy(data.cmd[data.NBcmd].example,"im3Dto2D im1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_basic_3Dto2D(char *IDname)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"imswapaxis2D");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = image_basic_SwapAxis2D_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Swap axis of a 2D image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image>");
+    strcpy(data.cmd[data.NBcmd].example,"imswapaxis2D im1 im2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long image_basic_SwapAxis2D(char *IDin_name, char *IDout_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"addim");
@@ -2729,6 +2769,74 @@ long basic_resizeim(char *imname_in, char *imname_out, long xsizeout, long ysize
 
     return(0);
 }
+
+
+
+
+
+
+
+
+/* ---------------------------------------------------------------------- 
+ * 
+ * turns a 3D image into a 2D image by collapsing first 2 axis
+ * 
+ * 
+ * ---------------------------------------------------------------------- */
+
+
+long image_basic_3Dto2D(char *IDname)
+{
+	long ID;
+	
+	ID = image_ID(IDname);
+	if(data.image[ID].md[0].naxis != 3)
+	{
+		printf("ERROR: image needs to have 3 axis\n");
+	}
+	else
+	{
+		data.image[ID].md[0].size[0] *= data.image[ID].md[0].size[1];
+		data.image[ID].md[0].size[1] =  data.image[ID].md[0].size[2];
+		data.image[ID].md[0].naxis = 2;
+	}
+
+	return(ID);
+}
+
+
+
+
+
+long image_basic_SwapAxis2D(char *IDin_name, char *IDout_name)
+{
+	long IDin;
+	long IDout = -1;
+	long ii, jj;
+	
+	IDin = image_ID(IDin_name);
+	if(data.image[IDin].md[0].naxis != 2)
+	{
+		printf("ERROR: image needs to have 2 axis\n");
+	}
+	else
+	{
+		IDout = create_2Dimage_ID(IDout_name, data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[0]);
+		for(ii=0;ii<data.image[IDin].md[0].size[0];ii++)
+			for(jj=0;jj<data.image[IDin].md[0].size[1];jj++)
+				data.image[IDout].array.F[ii*data.image[IDin].md[0].size[1]+jj] = data.image[IDin].array.F[jj*data.image[IDin].md[0].size[0]+ii];
+	}
+
+	return(IDout);
+}
+
+
+
+
+
+
+
+
 
 
 

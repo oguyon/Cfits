@@ -41,8 +41,9 @@ echo "          -H  <string>   (H)elp category"
 echo "                    cf     configuration files"     
 echo "          -L <long>      (L)oop number"
 echo "          -N <string>    loop (N)ame"
-echo "          -C             (C)PU config"
+echo "          -C             run (C)PU config"
 echo "          -c             (c)lear all settings"
+echo "          -n             do (n)ot load configuration on startup"
 echo "------------------------------------------------------------------------"
 }
 
@@ -67,6 +68,7 @@ quit
 EOF
 sizestring=$( cat _size.txt )
 sizestring=$(printf "%+12s\n" "$sizestring" )
+echo "$sizestring" > conf/conf_imsize_$1.txt
 rm -f _size.txt
 }
 
@@ -76,9 +78,10 @@ function makemenuitemstringaolshm {
 name="$1"
 textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
-fname=$( cat ./conf/conf_${name}_fname.txt )
-if [ -f "$fname" ] && [ -f "./conf/conf_${name}_fname.txt" ]; then
-getshmimsize "aol${LOOPNUMBER}_${name}"
+fname=$( cat ./conf/conf_${name}_name.txt )
+if [ -f "$fname" ] && [ -f "./conf/conf_${name}_name.txt" ]; then
+#getshmimsize "aol${LOOPNUMBER}_${name}"
+sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_${name}.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
 else

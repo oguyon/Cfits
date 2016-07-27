@@ -27,6 +27,10 @@ cfitsTK_LDADD =
 ## Core modules last, higher level modules at the top
 
 
+SUBDIRS += linARfilterPred 
+cfitsTK_LDADD += linARfilterPred/liblinarfilterpred.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/linARfilterPred
+
 SUBDIRS += TransitLC 
 cfitsTK_LDADD += TransitLC/libtransitlc.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/TransitLC
