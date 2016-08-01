@@ -1435,7 +1435,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
     long mode;
     long modestart = 1;
     long ID;
-    long NBframes = 100;
+    long NBframes = 20;
     double val, valp, valm, val0;
     double ampl;
     double a;
@@ -1472,7 +1472,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
     IDdm5 = read_sharedmem_image("dm00disp05");
     IDdm6 = read_sharedmem_image("dm00disp06");
-    IDdisp = read_sharedmem_image("dmdisp");
+    IDdisp = read_sharedmem_image("dm00disp");
     dmsize = data.image[IDdm5].md[0].size[0];
     dmsize2 = dmsize*dmsize;
 
@@ -1493,8 +1493,12 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
 
 
-    
+	printf("Averaging %ld frames ,,,", NBframes);
+	fflush(stdout);
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "impsf", 6);
+    printf(" done\n");
+    fflush(stdout);
+    
             save_fits("impsf", "!./tmp/impsf.fits");
             p0 = img_percentile("impsf", level0);
             p1 = img_percentile("impsf", level1);
