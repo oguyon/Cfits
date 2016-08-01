@@ -1449,7 +1449,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
     long IDdisp;
     long sleeptimeus = 1000; // 1ms
 
-
+	long iter = 0;
     double p0, p1, p2;
     float level0, level1, level2;
 	double v0;
@@ -1524,6 +1524,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 					}
 			}
     val = tot1/pow(tot, alpha);
+    val0 = val;
     
     
     
@@ -1620,7 +1621,10 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             
             printf("== MODE %ld / %ld ========== %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", mode, NBmodes, valp, valm, a, ampl, 0.5*(valp+valm), val0);
 
-
+			fp = fopen("log.txt", "a");
+			fprintf(fp, "%8ld %4ld %20f %20f\n", iter, mode, 0.5*(valp+valm), val0);
+			fclose(fp);
+			
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDm].array.F[mode*dmsize2+ii];
@@ -1660,6 +1664,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             NBmodes = NBmodesmax;
         if(NBmodes>data.image[IDm].md[0].size[2])
 			NBmodes = data.image[IDm].md[0].size[2];
+    
+		iter++;
     }
 
     return(0);
