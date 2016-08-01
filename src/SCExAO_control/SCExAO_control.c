@@ -1459,7 +1459,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 	long cnt;
 	
 	
-	double ampl0 = 0.1;
+	double ampl0 = 0.01;
 
 
 	double beta = 0.999; // regularization
