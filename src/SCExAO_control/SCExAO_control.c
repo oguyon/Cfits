@@ -1429,10 +1429,11 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 
 
 
-int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
+int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 {
-    long zimax;
-    long zi;
+    long NBmodes;
+    long mode;
+    long modestart = 1;
     long ID;
     long NBframes = 100;
     double val, valp, valm, val0;
@@ -1444,7 +1445,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
     long ii, jj;
     long dmsize;
     long dmsize2;
-    long IDz;
+    long IDm;
     long IDdisp;
     long sleeptimeus = 1000; // 1ms
 
@@ -1461,6 +1462,9 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
 	double ampl0 = 0.1;
 
 
+	double beta = 0.999; // regularization
+
+
     level0 = 0.1;
     level1 = 0.2;
     level2 = 0.4;
@@ -1473,10 +1477,11 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
     dmsize2 = dmsize*dmsize;
 
     // prepare modes
-    IDz = mk_zer_seriescube("zcube", dmsize, zimaxmax, 0.5*dmsize);
+    
+    IDm = mk_zer_seriescube("modes", dmsize, NBmodesmax, 0.5*dmsize);
     list_image_ID();
-    printf("IDz = %ld\n", IDz);
-    zimax = zimaxmax;
+    printf("IDm = %ld\n", IDm);
+    NBmodes = NBmodesmax;
 
 
 
@@ -1523,11 +1528,11 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
                 ampl = 0.1*ampl0;
 
         
-        for(zi=4; zi<zimax; zi++)
+        for(mode=modestart; mode<NBmodes; mode++)
         {
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
-                data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+                data.image[IDdm5].array.F[ii] += ampl*data.image[IDm].array.F[mode*dmsize2+ii];
             sem_post(data.image[IDdm5].semptr[0]);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
@@ -1565,7 +1570,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
 
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
-                data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+                data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDm].array.F[mode*dmsize2+ii];
             sem_post(data.image[IDdm5].semptr[0]);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
@@ -1604,16 +1609,26 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
            
              a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
             
-            printf("== MODE %ld / %ld ========== %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", zi, zimax, valp, valm, a, ampl, 0.5*(valp+valm), val0);
+            printf("== MODE %ld / %ld ========== %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", mode, NBmodes, valp, valm, a, ampl, 0.5*(valp+valm), val0);
 
 
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
-                data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDz].array.F[zi*dmsize2+ii];
+                data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDm].array.F[mode*dmsize2+ii];
             sem_post(data.image[IDdm5].semptr[0]);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
+
+
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] *= beta;
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+
 
             usleep(sleeptimeus);
         }
@@ -1621,7 +1636,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
         printf("%ld -> %ld\n", IDdm5, IDdm6);
         data.image[IDdm5].md[0].write = 1;
         data.image[IDdm6].md[0].write = 1;
-        for(ii=0; ii<2500; ii++)
+        for(ii=0; ii<xsize*ysize; ii++)
         {
             data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
             data.image[IDdm5].array.F[ii] = 0.0;
@@ -1631,9 +1646,9 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
         data.image[IDdm5].md[0].write = 0;
         data.image[IDdm6].md[0].write = 0;
 
-        zimax ++;
-        if(zimax>zimaxmax)
-            zimax = zimaxmax;
+        NBmodes ++;
+        if(NBmodes>NBmodesmax)
+            NBmodes = NBmodesmax;
     }
 
     return(0);

@@ -174,7 +174,6 @@ int linopt_imtools_image_construct_stream_cli()
     return 1;
 }
 
-//long linopt_imtools_image_construct_stream(char *IDmodes_name, char *IDcoeff_name, char *IDout_name)
 
 
 int linopt_compute_SVDdecomp_cli()
@@ -187,6 +186,7 @@ int linopt_compute_SVDdecomp_cli()
   else
     return 1;
 }
+
 
 int linopt_imtools_image_fitModes_cli()
 {
