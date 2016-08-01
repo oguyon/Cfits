@@ -296,6 +296,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
     long xsize, ysize, xysize;
     char *ptrv;
     unsigned short *arrayutmp;
+    float *arraytmp;
     long ii;
     long kw;
     double darkv;
@@ -303,6 +304,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
     char imnameave[200];
     long long cntref;
     int semval;
+    
 
     cntref = -1;
 
@@ -311,7 +313,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
         IDcam = read_sharedmem_image(imname);
 
 
-
+	
 
     xsize = data.image[IDcam].md[0].size[0];
     ysize = data.image[IDcam].md[0].size[1];
@@ -321,7 +323,10 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
 
 //    list_image_ID();
 
-    arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
+	if(data.image[IDcam].md[0].atype == FLOAT)
+		arraytmp = (float*) malloc(sizeof(float)*xysize);
+	else
+		arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
 
 
     for(k=0; k<NbAve; k++)
@@ -345,12 +350,24 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
          //   slice = data.image[IDcam].md[0].size[2]-1;
 
         
-
-        ptrv = (char*) data.image[IDcam].array.U;
+		if(data.image[IDcam].md[0].atype == FLOAT)
+			{
+				ptrv = (char*) data.image[IDcam].array.F;
+				memcpy (arraytmp, ptrv, sizeof(float)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[ID].array.F[ii] += arraytmp[ii];
+			}
+        else
+			{
+				ptrv = (char*) data.image[IDcam].array.U;
+				memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
+				for(ii=0; ii<xysize; ii++)
+					data.image[ID].array.F[ii] += (float) arraytmp[ii];
+			}
+        
+        
         //ptrv += sizeof(unsigned short)*slice*xysize;
-        memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
-        for(ii=0; ii<xysize; ii++)
-            data.image[ID].array.F[ii] += (float) arrayutmp[ii];
+    
 
         cntref = data.image[IDcam].md[0].cnt0;
     }
@@ -366,8 +383,10 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
             data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
 
-
-    free(arrayutmp);
+	if(data.image[IDcam].md[0].atype == FLOAT)
+		free(arraytmp);
+    else
+		free(arrayutmp);
 
     return(ID);
 }
