@@ -1615,7 +1615,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 					}
 				}
 			val = tot1/pow(tot, alpha);
-			
+			if(cnt<1)
+				val = 0.0;
 			printf("=========== %f  %f  %ld  %f\n", tot, tot1, cnt, val);
 			
             valm = val;
