@@ -1491,6 +1491,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 	else
 		NBmodes = data.image[IDm].md[0].size[2];
 
+	if(NBmodes>NBmodesmax)
+		NBmodes = NBmodesmax;
 
 
 
