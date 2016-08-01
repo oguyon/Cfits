@@ -1431,6 +1431,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 
 int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 {
+	FILE *fp;
     long NBmodes;
     long mode;
     long modestart = 1;
