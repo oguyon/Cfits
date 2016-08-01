@@ -1458,7 +1458,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 	double pv;
 	long xsize, ysize;
 	long cnt;
-	
+	long iter1 = 0;
 	
 	double ampl0 = 0.01;
 
