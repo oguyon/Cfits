@@ -1546,7 +1546,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] += ampl*data.image[IDm].array.F[mode*dmsize2+ii];
-            sem_post(data.image[IDdm5].semptr[0]);
+            COREMOD_MEMORY_image_set_sempost_byID(IDdm5, -1);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
@@ -1583,8 +1583,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
-                data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDm].array.F[mode*dmsize2+ii];
-            sem_post(data.image[IDdm5].semptr[0]);
+                data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDm].array.F[mode*dmsize2+ii];            
+            COREMOD_MEMORY_image_set_sempost_byID(IDdm5, -1);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
@@ -1631,7 +1631,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDm].array.F[mode*dmsize2+ii];
-            sem_post(data.image[IDdm5].semptr[0]);
+            COREMOD_MEMORY_image_set_sempost_byID(IDdm5, -1);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
@@ -1640,7 +1640,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             data.image[IDdm5].md[0].write = 1;
             for(ii=0; ii<dmsize2; ii++)
                 data.image[IDdm5].array.F[ii] *= beta;
-            sem_post(data.image[IDdm5].semptr[0]);
+            COREMOD_MEMORY_image_set_sempost_byID(IDdm5, -1);
             sem_post(data.image[IDdisp].semptr[1]);
             data.image[IDdm5].md[0].cnt0++;
             data.image[IDdm5].md[0].write = 0;
@@ -1659,6 +1659,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
             data.image[IDdm5].array.F[ii] = 0.0;
         }
+        COREMOD_MEMORY_image_set_sempost_byID(IDdm5, -1);
+        COREMOD_MEMORY_image_set_sempost_byID(IDdm6, -1);
         data.image[IDdm5].md[0].cnt0++;
         data.image[IDdm6].md[0].cnt0++;
         data.image[IDdm5].md[0].write = 0;
