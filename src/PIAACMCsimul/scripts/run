@@ -223,21 +223,6 @@ echo "$2" > ./log/conf_exitpt.txt
 
 
 
-# 5  4.62845e-06
-# 6  2.73012e-07
-# 7  1.2657e-07
-# 8  5.73497e-08    #2.89903e-06
-# 9  4.82752e-08    #5.04682e-07
-#10  5.74245e-08    #5.15738e-07
-#11  5.76306e-08    #5.19874e-07
-#12  5.47897e-08    #6.15752e-05
-#13  7.87868e-09    #6.57179e-05
-#14  1.08568e-07    #6.88505e-05
-#15  8.74249e-08
-#16  4.1511e-08 
-#17  1.56353e-08
-#18  
-
 
 echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
 

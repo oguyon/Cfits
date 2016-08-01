@@ -158,6 +158,19 @@ int SCExAOcontrol_Pyramid_flattenRefWF_cli()
 }
 
 
+int SCExAOcontrol_optPSF_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
+    {
+        SCExAOcontrol_optPSF(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 
 
 int SCExAOcontrol_SAPHIRA_cam_process_cli()
@@ -240,6 +253,16 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float ampl0);");
     data.NBcmd++;
 
+
+	strcpy(data.cmd[data.NBcmd].key,"scexaoPSFopt");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_optPSF_cli;
+    strcpy(data.cmd[data.NBcmd].info,"optimize PSF shape");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname> <NB modes> <ampl>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaoPSFopt wfsim 20 0.05");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)");
+    data.NBcmd++;
+     
 
     strcpy(data.cmd[data.NBcmd].key,"scexaosaphiraproc");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1245,6 +1268,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 
 
 
+
 int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float ampl0)
 {
     long zimax;
@@ -1399,6 +1423,221 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
     return(0);
 }
 
+
+
+
+
+
+
+int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)
+{
+    long zimax;
+    long zi;
+    long ID;
+    long NBframes = 100;
+    double val, valp, valm, val0;
+    double ampl;
+    double a;
+    char command[200];
+    int r;
+    long IDdm5, IDdm6;
+    long ii, jj;
+    long dmsize;
+    long dmsize2;
+    long IDz;
+    long IDdisp;
+    long sleeptimeus = 1000; // 1ms
+
+
+    double p0, p1, p2;
+    float level0, level1, level2;
+	double v0;
+	double tot, tot1;
+	double pv;
+	long xsize, ysize;
+	long cnt;
+	
+	
+	double ampl0 = 0.1;
+
+
+    level0 = 0.1;
+    level1 = 0.2;
+    level2 = 0.4;
+    
+
+    IDdm5 = read_sharedmem_image("dmdisp5");
+    IDdm6 = read_sharedmem_image("dmdisp6");
+    IDdisp = read_sharedmem_image("dmdisp");
+    dmsize = data.image[IDdm5].md[0].size[0];
+    dmsize2 = dmsize*dmsize;
+
+    // prepare modes
+    IDz = mk_zer_seriescube("zcube", dmsize, zimaxmax, 0.5*dmsize);
+    list_image_ID();
+    printf("IDz = %ld\n", IDz);
+    zimax = zimaxmax;
+
+
+
+
+
+
+    
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "impsf", 6);
+            save_fits("impsf", "!./tmp/impsf.fits");
+            p0 = img_percentile("impsf", level0);
+            p1 = img_percentile("impsf", level1);
+            p2 = img_percentile("impsf", level2);
+ 
+	xsize = data.image[ID].md[0].size[0];
+	ysize = data.image[ID].md[0].size[1];
+
+    tot1 = 0.0;
+    tot = 0.0;
+    cnt = 0;
+	v0 = 1.0*p2;
+    for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				pv = data.image[ID].array.F[jj*xsize+ii];
+				pv -= v0;
+				if(pv>0.0)
+					{
+						tot1 += pow(pv, alpha);
+						tot += pv;
+						cnt++;
+					}
+			}
+    val = tot1/pow(tot, alpha);
+    
+    
+    
+    
+    ampl = ampl0;
+
+    while(1)
+    {
+        ampl *= 0.95;
+            if(ampl<0.1*ampl0)
+                ampl = 0.1*ampl0;
+
+        
+        for(zi=4; zi<zimax; zi++)
+        {
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] += ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+           
+            usleep(sleeptimeus);
+
+
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 6);
+            
+            save_fits("impsf", "!./tmp/impsf.fits");
+            p0 = img_percentile("impsf", level0);
+            p1 = img_percentile("impsf", level1);
+            p2 = img_percentile("impsf", level2);
+            tot1 = 0.0;
+			tot = 0.0;
+			cnt = 0;
+			v0 = 1.0*p2;
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<ysize;jj++)
+				{
+				pv = data.image[ID].array.F[jj*xsize+ii];
+				pv -= v0;
+				if(pv>0.0)
+					{
+						tot1 += pow(pv, alpha);
+						tot += pv;
+						cnt++;
+					}
+				}
+			val = tot1/pow(tot, alpha);
+               
+            valp = val;
+
+
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] -= 2.0*ampl*data.image[IDz].array.F[zi*dmsize2+ii];
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+           
+            usleep(sleeptimeus);
+
+
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "impsf", 6);
+            
+            save_fits("imwfs", "!./tmp/impsf.fits");
+            p0 = img_percentile("impsf", level0);
+            p1 = img_percentile("impsf", level1);
+            p2 = img_percentile("impsf", level2);
+            tot1 = 0.0;
+			tot = 0.0;
+			cnt = 0;
+			v0 = 1.0*p2;
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<ysize;jj++)
+				{
+				pv = data.image[ID].array.F[jj*xsize+ii];
+				pv -= v0;
+				if(pv>0.0)
+					{
+						tot1 += pow(pv, alpha);
+						tot += pv;
+						cnt++;
+					}
+				}
+			val = tot1/pow(tot, alpha);
+                       
+            valm = val;
+
+
+           
+             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
+            
+            printf("== MODE %ld / %ld ========== %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", zi, zimax, valp, valm, a, ampl, 0.5*(valp+valm), val0);
+
+
+            data.image[IDdm5].md[0].write = 1;
+            for(ii=0; ii<dmsize2; ii++)
+                data.image[IDdm5].array.F[ii] += (ampl+a)*data.image[IDz].array.F[zi*dmsize2+ii];
+            sem_post(data.image[IDdm5].semptr[0]);
+            sem_post(data.image[IDdisp].semptr[1]);
+            data.image[IDdm5].md[0].cnt0++;
+            data.image[IDdm5].md[0].write = 0;
+
+            usleep(sleeptimeus);
+        }
+
+        printf("%ld -> %ld\n", IDdm5, IDdm6);
+        data.image[IDdm5].md[0].write = 1;
+        data.image[IDdm6].md[0].write = 1;
+        for(ii=0; ii<2500; ii++)
+        {
+            data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
+            data.image[IDdm5].array.F[ii] = 0.0;
+        }
+        data.image[IDdm5].md[0].cnt0++;
+        data.image[IDdm6].md[0].cnt0++;
+        data.image[IDdm5].md[0].write = 0;
+        data.image[IDdm6].md[0].write = 0;
+
+        zimax ++;
+        if(zimax>zimaxmax)
+            zimax = zimaxmax;
+    }
+
+    return(0);
+}
 
 
 
