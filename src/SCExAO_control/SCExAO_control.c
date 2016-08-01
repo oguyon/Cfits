@@ -1618,12 +1618,12 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
 
            
-             a = (1.0/valp-1.0/valm)/(1.0/valp+1.0/valm)*ampl;
+             a = (valp- valm) / (valp + valm)*ampl;
             
             printf("== MODE %ld / %ld ========== %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", mode, NBmodes, valp, valm, a, ampl, 0.5*(valp+valm), val0);
 
 			fp = fopen("log.txt", "a");
-			fprintf(fp, "%8ld %4ld %20f %20f\n", iter, mode, 0.5*(valp+valm), val0);
+			fprintf(fp, "%8ld  %8ld  %4ld  %20f  %20f\n", iter1, iter, mode, 0.5*(valp+valm), val0);
 			fclose(fp);
 			
             data.image[IDdm5].md[0].write = 1;
@@ -1645,6 +1645,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
 
             usleep(sleeptimeus);
+
+            iter1++;
         }
 
         printf("%ld -> %ld\n", IDdm5, IDdm6);
