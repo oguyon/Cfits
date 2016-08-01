@@ -1470,20 +1470,25 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
     level2 = 0.4;
     
 
-    IDdm5 = read_sharedmem_image("dmdisp5");
-    IDdm6 = read_sharedmem_image("dmdisp6");
+    IDdm5 = read_sharedmem_image("dmdisp05");
+    IDdm6 = read_sharedmem_image("dmdisp06");
     IDdisp = read_sharedmem_image("dmdisp");
     dmsize = data.image[IDdm5].md[0].size[0];
     dmsize2 = dmsize*dmsize;
 
     // prepare modes
     
-    IDm = mk_zer_seriescube("modes", dmsize, NBmodesmax, 0.5*dmsize);
-    list_image_ID();
-    printf("IDm = %ld\n", IDm);
-    NBmodes = NBmodesmax;
-
-
+    IDm = image_ID("modes");
+    
+    if(IDm==-1)
+	{    
+		IDm = mk_zer_seriescube("modes", dmsize, NBmodesmax, 0.5*dmsize);
+		list_image_ID();
+		printf("IDm = %ld\n", IDm);
+		NBmodes = NBmodesmax;
+	}
+	else
+		NBmodes = data.image[IDm].md[0].size[2];
 
 
 
@@ -1649,6 +1654,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
         NBmodes ++;
         if(NBmodes>NBmodesmax)
             NBmodes = NBmodesmax;
+        if(NBmodes>data.image[IDm].md[0].size[2])
+			NBmodes = data.image[IDm].md[0].size[2];
     }
 
     return(0);
