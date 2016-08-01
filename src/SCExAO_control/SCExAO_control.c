@@ -1448,7 +1448,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
     long dmsize2;
     long IDm;
     long IDdisp;
-    long sleeptimeus = 1000; // 1ms
+    long sleeptimeus = 100000; // 100ms
 
 	long iter = 0;
     double p0, p1, p2;
