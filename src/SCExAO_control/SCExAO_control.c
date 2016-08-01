@@ -1622,7 +1622,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
            
              a = (valp- valm) / (valp + valm)*ampl;
             
-            printf("== MODE %ld / %ld ========== %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", mode, NBmodes, valp, valm, a, ampl, 0.5*(valp+valm), val0);
+            printf("== MODE %ld / %ld ========== (%ld) %f %f -> a = %f  [ampl = %f] ( %f <- %f)\n", cnt, mode, NBmodes, valp, valm, a, ampl, 0.5*(valp+valm), val0);
 
 			fp = fopen("log.txt", "a");
 			fprintf(fp, "%8ld  %8ld  %4ld  %20f  %20f\n", iter1, iter, mode, 0.5*(valp+valm), val0);
