@@ -1678,17 +1678,15 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
         }
 
 
-		printf("STEP 001\n");
-		fflush(stdout);
+
         printf("%ld -> %ld\n", IDdm5, IDdm6);
 		fflush(stdout);
-		list_image_ID();
-		sleep(1);
+
 		
 		
         data.image[IDdm5].md[0].write = 1;
         data.image[IDdm6].md[0].write = 1;
-        for(ii=0; ii<xsize*ysize; ii++)
+        for(ii=0; ii<dmsize2; ii++)
         {
             data.image[IDdm6].array.F[ii] += data.image[IDdm5].array.F[ii];
             data.image[IDdm5].array.F[ii] = 0.0;
@@ -1700,9 +1698,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
         data.image[IDdm5].md[0].write = 0;
         data.image[IDdm6].md[0].write = 0;
 
-		printf("STEP 002\n");
-		fflush(stdout);
-		sleep(1);
+		
 
         NBmodes ++;
         if(NBmodes>NBmodesmax)
@@ -1710,7 +1706,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
         if(NBmodes>data.image[IDm].md[0].size[2])
 			NBmodes = data.image[IDm].md[0].size[2];
     
-    
+		
     
     
 		iter++;
