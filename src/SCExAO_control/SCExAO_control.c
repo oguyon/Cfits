@@ -1573,7 +1573,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
             usleep(sleeptimeus);
 
 
-            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "imwfs", 6);
+            ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "impsf", 6);
             
             save_fits("impsf", "!./tmp/impsf.fits");
             p0 = img_percentile("impsf", level0);
@@ -1613,7 +1613,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
             ID = SCExAOcontrol_Average_image(WFScam_name, NBframes, "impsf", 6);
             
-            save_fits("imwfs", "!./tmp/impsf.fits");
+            save_fits("impsf", "!./tmp/impsf.fits");
             p0 = img_percentile("impsf", level0);
             p1 = img_percentile("impsf", level1);
             p2 = img_percentile("impsf", level2);
