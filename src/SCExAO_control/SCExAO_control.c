@@ -1484,6 +1484,8 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
 	double beta = 0.99999; // regularization
 
+	double ampcoeff = 10.0;
+
 
     level0 = 0.1;
     level1 = 0.2;
@@ -1646,7 +1648,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
 
            
-             a = (valp - valm) / (valp + valm)*ampl;
+             a = ampcoeff * (valp - valm) / (valp + valm)*ampl;
             if(a<-ampl)
 				a = -ampl;
 			if(a>ampl)
@@ -1680,6 +1682,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
             iter1++;
         }
+        ampcoeff *= 0.5;
 
 
 
