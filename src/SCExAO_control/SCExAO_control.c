@@ -1682,7 +1682,9 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
 
             iter1++;
         }
-        ampcoeff *= 0.5;
+        ampcoeff *= 0.9;
+        if(ampcoeff<1.0)
+			ampcoeff = 1.0;
 
 
 
