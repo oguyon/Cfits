@@ -1,6 +1,6 @@
 #!/bin/bash
 
-execname="AtmosphericTurbulenceSimul"
+execname="Cfits"
 mkdir -p RefractiveIndices
 
 
@@ -28,29 +28,19 @@ echo "      INPUT: "
 echo "           ./RefractiveIndices/RIA_xx.dat, where xx = N2, O2, Ar, H2O, CO2, Ne, He, CH4, Kr, H2, O3, N, O, H"
 echo "           (if RIA file does not exist, uses Sellmeier equations in module OpticsMaterials)"
 echo "      OUTPUT:"
-echo "          atm.txt           atmospheric vertical composition/density profile"
-echo "          RindexSite.txt   : refractive index at site, as a function of wavelength"
-echo "          refractpath.txt   "
-echo "                       Files :"
-echo "                          <workdir>/linoptval.txt          : log for each optimization scan"
-echo "                          <workdir>/mode13_....bestval.txt : overall best solution"
-echo "                          <workdir>/fpm_zonez_...best.fits : best zone sags solution"
-echo "                             Stops immediately, no performance measurement (this mode is for debugging)"
-echo "     propmono   <bogusarg> : propagate existing solution (monochromatic)"
-echo "     designmono <MaxStep>  : design monochromatic PIAACMC up to, but not including, step <MaxStep>, and measure its contrast"
-echo "                             This mode is useful to track design performance during design process"
-echo "                             Contrast is normalized by computing PSF without focal plane mask"
-echo "                             Common usage is :"
-echo "                                  designmono 1"
-echo "                                  # inspect results"
-echo "                                  designmono 2"
-echo "                                  # inspect results"
-echo "                                  ..."
-echo "                       NOTE: type \"./runPIAACMC helpsteps\" to list design steps description"
-echo "     proppoly <bogusarg>   : polychromatic propagation point source"
-echo "     eval0 <stepstop>      : level 0 evaluation (compute on-axis PSF and contrast), <stepstop> should be set to 18"
-echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
-echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + transmission curve), <stepstop> should be set to 18"
+echo "          atm.txt               :  atmospheric vertical composition/density profile"
+echo "          RindexSite.txt        : refractive index at site, as a function of wavelength (lambda[um] rindex abs)"
+echo ""
+echo "          refractpath_0550.txt  : geometric light ray path at  550 nm "
+echo "          refractpath_0550.txt  : geometric light ray path at 1650 nm "
+echo "              columns: "
+echo "                1:h0              altitude above sea level"
+echo "                2:x0              x coordinate"
+echo "                3:y0              y coordinate (aligned with altitude vector at sea level"
+echo "                4:alpha           ray angle [rad]"
+echo "                5:alpha-Zangle    atm refraction: ray angle - Zenith angle [rad]"
+echo "                6:alpha-Zangle    atm refraction: ray angle - Zenith angle [arcsec]"
+echo "                7:offset          atm refraction geometric shear [m]"
 echo "------------------------------------------------------------------------"
 }
 
@@ -150,11 +140,11 @@ SITE_PRESS=0.6                           # [atm] = [101325 Pa]
 # the total precipitable water will be computed 
 
 # Method 3: specify relatice humidity and total precipitable water
-# the precipitable water scale height will be adjusted automatically
+# the precipitable water scale height will be adjusted automaticallyq
 
 SITE_H2O_METHOD=1                       # Method chosen to input water vapor content
 SITE_RH=30.0                            # site relative humidity [%]
-SITE_TPW=1.0                            # Site total precitipable water [mm] (only takes into account PW above SITE_ALT)
+SITE_TPW=0.01                            # Site total precitipable water [mm] (only takes into account PW above SITE_ALT)
 SITE_PW_SCALEH=2000.0                   # water vapor relative concentration scale height [m]
 
 # IMPORTANT NOTE: 

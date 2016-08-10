@@ -189,10 +189,11 @@ echo "                    output files:  flux_ptsrc_...          "
 echo "                                   contrast_ptsrc_...."
 echo "                                   psfi0_ptsrc_..."
 echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
-echo "                    output files:  ContrastCurve_extsrc15_..."
+echo "                    OUTPUT FILES:  ContrastCurve_extsrc15_..."
 echo "                                   ContrastVal_extsrc15_..."
 echo "                                   psfi0_extsrc15_..."
 echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + transmission curve), <stepstop> should be set to 18"
+echo "                    OUTPUT FILES:  transmCurve_<parameters>.txt"
 echo "------------------------------------------------------------------------"
 }
 

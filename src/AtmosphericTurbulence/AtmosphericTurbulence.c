@@ -1030,6 +1030,9 @@ int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int facto
 // Compressibility factors:
 // Davies 1991
 //
+// returns compressibility
+// rhocoeff is the (proportional) increase of particle density vs. STP 
+//
 double Z_Air(double P, double T, double RH)
 {
     double Z, Z0, rho, rho0;
@@ -1480,7 +1483,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
 
     int r;
     double Temp;
-
+	double RH;
+	double Z, Z0;
 
 
     // timing
@@ -1534,6 +1538,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
 
     printf("Making the wavefront series...\n");
     fflush(stdout);
+
+	
 
     AtmosphericTurbulence_ReadConf();
     naxesout[0] = CONF_WFsize;
@@ -1624,10 +1630,10 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     printf("Building reference atmosphere model ...\n");
     // create atm.txt file with concentrations as function of altitude
     // load RIA (Refractive index and Absorption) files if available 
-    AtmosphereModel_Create_from_CONF(CONFFILE);
+    AtmosphereModel_Create_from_CONF(CONFFILE, slambdaum*1e-6);
 
 
-
+	
 	
     // SOME TESTING
   //  AtmosphereModel_RefractionPath(1.5, CONF_ZANGLE, 0); //79.999/180.0*M_PI);//CONF_ZANGLE);
@@ -1635,21 +1641,34 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
 
  /*   fp = fopen("Rprof.txt", "w");
     for(h=0; h<100000.0; h+=10.0)
-        fprintf(fp, "%8g %.16f %.16f\n", h, AtmosphereModel_stdAtmModel_N(h, 0.6e-6), AtmosphereModel_stdAtmModel_N(h, 1.6e-6));
+        fprintf(fp, "%8g %.16f %.16f\n", h, AtmosphereModel_stdAtmModel_N(h, 0.6e-6, 0), AtmosphereModel_stdAtmModel_N(h, 1.6e-6, 0));
     fclose(fp);
 */
 
 
 
     // TESTING VALUES IN CIDDOR 1996
-    P = 102993.0;
-    Pw = 641.0;
-    CO2ppm = 450.0;
-    TC = 19.173; 
+    
+    
+    if(0) // dry, table 1, 10 C, 100kPa -> Ciddor value = 1.000277747
+    {
+		P = 100000.0;
+		Pw = 0.0;
+		CO2ppm = 450.0;
+		TC = 10.0; 
+    }
+    else // wet
+    {
+		P = 102993.0;
+		Pw = 641.0;
+		CO2ppm = 450.0;
+		TC = 19.173; 
+    }
+    
     
     T = TC + 273.15;
     
-    // dry air (Harisson 1965)
+    // dry air composition (Harisson 1965)
     dens_N2 = 780840e-6 * LoschmidtConstant*1e-6;
     dens_O2 = 209844e-6 * LoschmidtConstant*1e-6; // assuming CO2 -> O2
     dens_Ar = 9340e-6 * LoschmidtConstant*1e-6;
@@ -1662,10 +1681,14 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     dens_N = 0.0;
     dens_O = 0.0;
     dens_H = 0.0;
-    dens_O2 -= CO2ppm*1e-6;
-    denstot = dens_N2 + dens_O2 + dens_Ar + dens_Ne + dens_He + dens_CH4 + dens_Kr + dens_H2 + dens_O3 + dens_N + dens_O + dens_H;
-    dens_H2O = denstot * (Pw/P) / (1.0 - (Pw/P) - 1e-6*CO2ppm);
-    dens_CO2 = denstot * CO2ppm*1e-6 / (1.0 - (Pw/P) - 1e-6*CO2ppm);
+    dens_O2 -= CO2ppm*1e-6 * LoschmidtConstant*1e-6;
+    dens_CO2 = CO2ppm*1e-6 * LoschmidtConstant*1e-6;
+    denstot = dens_N2 + dens_O2 + dens_Ar + dens_Ne + dens_He + dens_CH4 + dens_Kr + dens_H2 + dens_O3 + dens_N + dens_O + dens_H + dens_CO2;
+    dens_H2O = denstot * (Pw/P) / (1.0 - (Pw/P)); // - 1e-6*CO2ppm);
+    //dens_CO2 = CO2ppm*1e-6 * LoschmidtConstant*1e-6;
+    
+    
+    //dens_CO2 = denstot * CO2ppm*1e-6 / (1.0 - (Pw/P) - 1e-6*CO2ppm);
     
     denstot = dens_N2 + dens_O2 + dens_Ar + dens_Ne + dens_He + dens_CH4 + dens_Kr + dens_H2 + dens_O3 + dens_N + dens_O + dens_H + dens_H2O + dens_CO2;
     xN2 = dens_N2/denstot;
@@ -1700,14 +1723,20 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     xCO2 /= xtot;
     xH2O /= xtot;
  
-    printf("CO2 ppm = %.3f\n", xCO2*1e6);
-    printf("H2O ppm = %.3f\n", xH2O*1e6);
-    Z_Air(P, TC, 27.0); // /Z_N2(101325.0, 273.15);
+    printf("CO2 ppm = %.6f\n", xCO2*1e6);
+    printf("H2O ppm = %.6f (goal: %.6f)\n", xH2O*1e6, Pw/P);
+    
+    RH = 0.0;
+    Z0 = Z_Air(101325.0, 0.0, 0.0);
+    Z = Z_Air(P, TC, RH); // 
     //LL *= rhocoeff;
     printf("rhocoeff = %f %f\n", 1.0/rhocoeff, P/101325.0 * (273.15/T));
-    
-    denstot = P/101325.0 * (273.15/T) * LoschmidtConstant*1e-6;
-    denstot = 1.0/rhocoeff * LoschmidtConstant*1e-6;
+    printf("Z = %f\n", Z);
+    printf("Z0 = %f\n", Z0);
+   
+
+	//denstot = 1.0/rhocoeff * LoschmidtConstant*1e-6;
+    denstot =  (1.0/Z) * P/101325.0 * (273.15/T) * LoschmidtConstant*1e-6; // approximation - does not take into account CHANGE of Z with pressure, temperature
     
     dens_N2 = xN2 * denstot;
     dens_O2 = xO2 * denstot;
@@ -1724,27 +1753,35 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     dens_CO2 = xCO2 * denstot;
     dens_H2O = xH2O * denstot;
   
-    lambda = 0.633e-6;
-    printf("n = %.10g\n", 1.0+AirMixture_N(lambda, dens_N2, dens_O2, dens_Ar, dens_H2O, dens_CO2, dens_Ne, dens_He, dens_CH4, dens_Kr, dens_H2, dens_O3, dens_N, dens_O, dens_H));
-
   
+  
+	printf("denstot = %g part/cm3      %f x LScst\n", denstot, denstot*1.0e6/LoschmidtConstant);
+    lambda = 0.633e-6;
+    printf("633nm test values\n");
+    printf("HARISSON MODEL:    n = %.12g\n", 1.0 + AirMixture_N(lambda, dens_N2, dens_O2, dens_Ar, dens_H2O, dens_CO2, dens_Ne, dens_He, dens_CH4, dens_Kr, dens_H2, dens_O3, dens_N, dens_O, dens_H));
+
+	printf("STD MODEL, 1 atm : n = %.12g\n", AtmosphereModel_stdAtmModel_N(0.0, lambda, 1));
+	exit(0); //TEST
+
 
 
     fp = fopen("Rlambda.txt", "w");
     for(l=1e-6; l<5e-6; l*=1.0+1e-5)
-        fprintf(fp, "%.16f %.16f %.16f %.16f\n", l, AtmosphereModel_stdAtmModel_N(10, l), AtmosphereModel_stdAtmModel_N(1000, l), AtmosphereModel_stdAtmModel_N(4200, l));
+        fprintf(fp, "%.16f %.16f %.16f %.16f\n", l, AtmosphereModel_stdAtmModel_N(10, l, 0), AtmosphereModel_stdAtmModel_N(1000, l, 0), AtmosphereModel_stdAtmModel_N(4200, l, 0));
     fclose(fp);
 
     
 
    fp = fopen("AtmRefrac.txt", "w");
     for(l=0.4e-6; l<2.0e-6; l+=0.01e-6)
-        fprintf(fp, "%.16f %.16f\n", l, asin(sin(CONF_ZANGLE)/(1.0+AtmosphereModel_stdAtmModel_N(SiteAlt, l))));
+        fprintf(fp, "%.16f %.16f\n", l, asin(sin(CONF_ZANGLE)/(1.0+AtmosphereModel_stdAtmModel_N(SiteAlt, l, 0))));
     fclose(fp);
+	
+	exit(0); //TEST
 
     printf("CONF_ZANGLE = %f  alt = %f\n", CONF_ZANGLE, SiteAlt);
 
-
+	
 
    // for(Temp=173.0; Temp<373.0; Temp+=5.0)
      //   printf("T= %lf K    Ps(H2O) [Pa] = %g\n", Temp, AtmosphereModel_H2O_Saturation(Temp));
@@ -1757,8 +1794,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
 
     //printf("method 1 : %f %f\n", Nlambda, Nslambda);
 
-    Nlambda = AtmosphereModel_stdAtmModel_N(0.0, CONF_LAMBDA);
-    Nslambda = AtmosphereModel_stdAtmModel_N(0.0, SLAMBDA);
+    Nlambda = AtmosphereModel_stdAtmModel_N(0.0, CONF_LAMBDA, 0);
+    Nslambda = AtmosphereModel_stdAtmModel_N(0.0, SLAMBDA, 0);
     Scoeff =  CONF_LAMBDA/SLAMBDA * Nslambda/Nlambda; // multiplicative coefficient to go from reference lambda phase to science lambda phase
 
 
@@ -2034,7 +2071,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
 
     h = 0.0;
     printf("\n\n");
-    printf("Refractivity = %g -> %g     %g -> %g\n", CONF_LAMBDA, AtmosphereModel_stdAtmModel_N(h, CONF_LAMBDA), SLAMBDA, AtmosphereModel_stdAtmModel_N(h, SLAMBDA));
+    printf("Refractivity = %g -> %g     %g -> %g\n", CONF_LAMBDA, AtmosphereModel_stdAtmModel_N(h, CONF_LAMBDA, 0), SLAMBDA, AtmosphereModel_stdAtmModel_N(h, SLAMBDA, 0));
     
 
     printf("Computing refraction and position offset for CONF_ZANGLE = %f\n", CONF_ZANGLE);
@@ -2051,7 +2088,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
         Roffset = 0.0;
         for(h=SiteAlt; h<LAYER_ALT[layer]; h += 1.0)
         {
-            Rindex = 1.0 + AtmosphereModel_stdAtmModel_N(h, CONF_LAMBDA);
+            Rindex = 1.0 + AtmosphereModel_stdAtmModel_N(h, CONF_LAMBDA, 0);
             tmpf = sin(CONF_ZANGLE)/sqrt(Rindex*Rindex-sin(CONF_ZANGLE)*sin(CONF_ZANGLE));
             tmpf -= sin(CONF_ZANGLE)/sqrt(1.0-sin(CONF_ZANGLE)*sin(CONF_ZANGLE));
             Roffset += tmpf;
@@ -2062,7 +2099,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
         RoffsetS = 0.0;
         for(h=SiteAlt; h<LAYER_ALT[layer]; h += 1.0)
         {
-            Rindex = 1.0 + AtmosphereModel_stdAtmModel_N(h, SLAMBDA);
+            Rindex = 1.0 + AtmosphereModel_stdAtmModel_N(h, SLAMBDA, 0);
             tmpf = sin(CONF_ZANGLE)/sqrt(Rindex*Rindex-sin(CONF_ZANGLE)*sin(CONF_ZANGLE));
             tmpf -= sin(CONF_ZANGLE)/sqrt(1.0-sin(CONF_ZANGLE)*sin(CONF_ZANGLE));
             RoffsetS += tmpf;
@@ -2447,8 +2484,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
                 fflush(stdout);
 
                 // recompute Scoeff for this layer
-                Nlambda = AtmosphereModel_stdAtmModel_N(LAYER_ALT[layer], CONF_LAMBDA);
-                Nslambda = AtmosphereModel_stdAtmModel_N(LAYER_ALT[layer], SLAMBDA);
+                Nlambda = AtmosphereModel_stdAtmModel_N(LAYER_ALT[layer], CONF_LAMBDA, 0);
+                Nslambda = AtmosphereModel_stdAtmModel_N(LAYER_ALT[layer], SLAMBDA, 0);
                 Scoeff =  CONF_LAMBDA/SLAMBDA * Nslambda/Nlambda; // multiplicative coefficient to go from reference lambda phase to science lambda phase
 
 
