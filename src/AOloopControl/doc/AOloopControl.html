@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Olivier Guyon" />
+  <title>AOloopControl</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="/home/olivier/.css/pandoc.css" type="text/css" />
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">AOloopControl</h1>
+<h2 class="author">Olivier Guyon</h2>
+<h3 class="date">Aug 9, 2016</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#overview"><span class="toc-section-number">1</span> Overview</a><ul>
+<li><a href="#scope"><span class="toc-section-number">1.1</span> Scope</a></li>
+<li><a href="#usage"><span class="toc-section-number">1.2</span> Usage</a></li>
+<li><a href="#supporting-scripts-aolconfscripts-directory"><span class="toc-section-number">1.3</span> Supporting scripts, aolconfscripts directory</a></li>
+<li><a href="#supporting-scripts-auxscripts-directory"><span class="toc-section-number">1.4</span> Supporting scripts, auxscripts directory</a></li>
+<li><a href="#hardware-simulation-scripts"><span class="toc-section-number">1.5</span> Hardware simulation scripts</a></li>
+</ul></li>
+<li><a href="#simulation-environment---pywfs-based-example"><span class="toc-section-number">2</span> Simulation environment - PyWFS-based example</a><ul>
+<li><a href="#overview-1"><span class="toc-section-number">2.1</span> Overview</a></li>
+<li><a href="#processes-and-scripts"><span class="toc-section-number">2.2</span> Processes and scripts</a><ul>
+<li><a href="#ao-loop-control"><span class="toc-section-number">2.2.1</span> AO loop control</a></li>
+<li><a href="#hardware-simulation-architecture"><span class="toc-section-number">2.2.2</span> Hardware simulation architecture</a></li>
+<li><a href="#dm-temporal-response"><span class="toc-section-number">2.2.3</span> DM temporal response</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="overview" class="section level1">
+<h1><span class="header-section-number">1</span> Overview</h1>
+<div id="scope" class="section level2">
+<h2><span class="header-section-number">1.1</span> Scope</h2>
+<p>AO loop control package</p>
+</div>
+<div id="usage" class="section level2">
+<h2><span class="header-section-number">1.2</span> Usage</h2>
+<p>Scripts to run the software are located within the source code directory:</p>
+<pre><code>./src/AOloopControl/scripts/</code></pre>
+<p>The scripts can be linked to your working directory by executing the following command:</p>
+<pre><code>ln -s $PWD/syncscripts /myworkdirectory/syncscripts</code></pre>
+<p>Then, execute in your work directory:</p>
+<pre><code>./syncscripts</code></pre>
+<p>This will install all required scripts in workdirectory and install any packages required.</p>
+<p>The main script is</p>
+<pre><code>./aolconf</code></pre>
+</div>
+<div id="supporting-scripts-aolconfscripts-directory" class="section level2">
+<h2><span class="header-section-number">1.3</span> Supporting scripts, aolconfscripts directory</h2>
+<p>Scripts in the <code>aolconfscripts</code> directory are part of the high-level ASCII control GUI</p>
+<table>
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Script</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>aolconf_DMfuncs</strong></td>
+<td align="left">DM functions</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_DMturb</strong></td>
+<td align="left">DM turbulence functions</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolconf_funcs</strong></td>
+<td align="left">Misc functions</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_logfuncs</strong></td>
+<td align="left">data and command logging</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolconf_menuconfigureloop</strong></td>
+<td align="left">configure loop menu</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_menucontrolloop</strong></td>
+<td align="left">control loop menu</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolconf_menucontrolmatrix</strong></td>
+<td align="left">control matrix menu</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_menu_mkFModes</strong></td>
+<td align="left">Make modes</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolconf_menurecord</strong></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_menutestmode</strong></td>
+<td align="left">Test mode menu</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolconf_menutop</strong></td>
+<td align="left">Top level menu</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_menuview</strong></td>
+<td align="left">Data view menu</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolconf_readconf</strong></td>
+<td align="left">Configuration read functions</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolconf_template</strong></td>
+<td align="left">Template (not used)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="supporting-scripts-auxscripts-directory" class="section level2">
+<h2><span class="header-section-number">1.4</span> Supporting scripts, auxscripts directory</h2>
+<p>Scripts in the <code>auxscripts</code> directory are called by aolconf to perform various tasks.</p>
+<table>
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Script</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>acquRespM</strong></td>
+<td align="left">Acquire response matrix</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="hardware-simulation-scripts" class="section level2">
+<h2><span class="header-section-number">1.5</span> Hardware simulation scripts</h2>
+<p>SCripts in the <code>aohardsim</code> directory are called to simulate hardware for testing / simulations</p>
+<table>
+<colgroup>
+<col width="34%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Script</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>simDMstart</strong></td>
+<td align="left">Start simulation DM shared mem</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="simulation-environment---pywfs-based-example" class="section level1">
+<h1><span class="header-section-number">2</span> Simulation environment - PyWFS-based example</h1>
+<div id="overview-1" class="section level2">
+<h2><span class="header-section-number">2.1</span> Overview</h2>
+<p>The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.</p>
+</div>
+<div id="processes-and-scripts" class="section level2">
+<h2><span class="header-section-number">2.2</span> Processes and scripts</h2>
+<div id="ao-loop-control" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> AO loop control</h3>
+<p>The <code>aolconf</code> script is used to configure and launch the AO control loop. It can be configured with input/output from real hardware or a simulation of real hardware.</p>
+</div>
+<div id="hardware-simulation-architecture" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Hardware simulation architecture</h3>
+<p>Close-loop simulation of a pyramid-based WFS requires the following scripts to be launched to simulate the hardware, in the following order :</p>
+<ul>
+<li><code>simDMstart</code>: This script creates DM channels (uses dm index 5 for simulation). Shared memory arrays <code>dm05disp00</code> to <code>dm05disp07</code> are created, along with the total displacement <code>dm05disp</code>. Also creates the <code>wf1opd</code> shared memory stream which is needed by runDM and will be updated by runWF. <code>wf1opd</code> is the master clock for the whole simulation, as it triggers DM shape computation and WFS image computation.</li>
+<li><code>AOsim_runDM</code>: Simulates physical deformable mirror (DM)</li>
+<li><code>AOsim_runWF</code>: Creates atmospheric wavefronts</li>
+<li><code>AOsim_runPyrWFS</code>: Simulates pyramid WFS</li>
+</ul>
+<p>Some key script variables need to coordinated between scripts. The following WF array size should match :</p>
+<ul>
+<li><code>WFsize</code> in script <code>simDMstart</code></li>
+<li><code>ARRAYSIZE</code> in <code>AOsim_runWF</code></li>
+<li><code>ARRAYSIZE</code> in <code>AOsim_runDM</code></li>
+</ul>
+<p>The main hardware loop is between <code>AOsim_runWF</code> and <code>AOsim_runPyWFS</code>: computation of a wavefront by <code>AOsim_runWF</code> is <em>triggered</em> by completion of a WFS instantaneous image computation by <code>AOsim_runPyrWFS</code>. The configuration files are configured for this link.</p>
+<p>The interdependencies between processes in the low-latency shared memory mode are :</p>
+<pre><code>    WFSinst [5] -----(AOsim_runWF)------&gt; wfopd0---&gt;wfopd1=wfopd0-2*dm05dispmap
+    dm05dispmap [5]-/
+
+    wfopd1   [5] ----(AOsim_runPyWFS)----&gt; WFinst
+    wfopd1   [6] ----(AOsim_runDM)-------&gt; dm05dispmap</code></pre>
+</div>
+<div id="dm-temporal-response" class="section level3">
+<h3><span class="header-section-number">2.2.3</span> DM temporal response</h3>
+<p>The DM temporal response is assumed to be such that the distance between the current position <span class="math inline">\(p\)</span> and desired displacement <span class="math inline">\(c\)</span> values is multiplided by coefficient <span class="math inline">\(a&lt;1\)</span> at each time step <span class="math inline">\(dt\)</span>. The corresponding step response is :</p>
+<p><span class="math inline">\(c - p((k+1) dt) = (c - p(k dt)) a\)</span></p>
+<p><span class="math inline">\(c - p(k dt) = (c-p0) a^k\)</span></p>
+<p><span class="math inline">\(p(k dt) = 1-a^k\)</span></p>
+<p>The corresponding time constant is</p>
+<p><span class="math inline">\(a^{\frac{t0}{dt}} = 0.5\)</span></p>
+<p><span class="math inline">\(\frac{t0}{dt} ln(a) = ln(0.5)\)</span></p>
+<p><span class="math inline">\(ln(a) = ln(0.5) dt/t0\)</span></p>
+<p><span class="math inline">\(a = 0.5^{\frac{dt}{t0}}\)</span></p>
+</div>
+</div>
+</div>
+</body>
+</html>

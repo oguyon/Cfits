@@ -1,0 +1,9 @@
+#!/bin/bash
+
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+Cfits -n $pname << EOF
+AOsimDM $pname.conf
+exit
+EOF
