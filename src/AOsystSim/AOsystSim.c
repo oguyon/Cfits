@@ -2847,6 +2847,7 @@ int AOsystSim_coroLOWFS_mkCONF(char *fname)
     fprintf(fp, "\n");
     fprintf(fp, "# ============== OUTPUT TYPE ===================================\n");
     fprintf(fp, "OUTMODE                  0                       # 0: stream, 1: file system\n");
+    fprintf(fp, "OUTLOWFSARRAYSIZE        16                      # output LOWFS array size, pix\n");
     fprintf(fp, "OUTLOWFSSTREAMNAME       aosim_imcamLOWFS        # output WF stream name \n");
     fprintf(fp, "OUTLOWFSFITSFILENAME     aosim_imcamLOWFS.fits   # FITS file name output [um]\n");
     fprintf(fp, "OUTTRIGGERFILE           outLOWFS.txt            # output trigger file\n");
@@ -2864,10 +2865,8 @@ int AOsystSim_coroLOWFS_mkCONF(char *fname)
 	fprintf(fp, "# ============== LOWFS =============================\n");
 	fprintf(fp, "LOWFSOPDMAP              lowfsopdmap       # LOWFS defocus map [um]\n");
 	fprintf(fp, "LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]\n");
+	
 
-//	fprintf(fp, "NBTSAMPLES               100               # number of time samples\n");
-//	fprintf(fp, "DMLAGSTART               0.0003            # time lag start\n");
-//	fprintf(fp, "DMTIMECST                0.0001            # DM time constant\n");
 	fprintf(fp, "\n");
 
     fclose(fp);
@@ -2897,6 +2896,7 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
     char INPHYSTIME[200];
 
     int OUTMODE;
+    long OUTLOWFSARRAYSIZE;
     char OUTLOWFSSTREAMNAME[200];
     char OUTLOWFSFITSFILENAME[200];
     char OUTTRIGGERFILE[200];
@@ -2973,6 +2973,7 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
   
     // OUTPUT STREAM
     OUTMODE = read_config_parameter_long(CONF_FNAME, "OUTMODE");
+    OUTLOWFSARRAYSIZE = read_config_parameter_long(CONF_FNAME, "OUTLOWFSARRAYSIZE");
 	read_config_parameter(CONF_FNAME, "OUTLOWFSSTREAMNAME", OUTLOWFSSTREAMNAME);
 	read_config_parameter(CONF_FNAME, "OUTLOWFSFITSFILENAME", OUTLOWFSFITSFILENAME);
 	read_config_parameter(CONF_FNAME, "OUTTRIGGERFILE", OUTTRIGGERFILE);
@@ -3071,8 +3072,8 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
 	
 
     sizearray = (long*) malloc(sizeof(long)*2);
-    sizearray[0] = ARRAYSIZE; 
-    sizearray[1] = ARRAYSIZE; 
+    sizearray[0] = OUTLOWFSARRAYSIZE; 
+    sizearray[1] = OUTLOWFSARRAYSIZE; 
     DMsize = data.image[IDinOPD].md[0].size[0];
     if(OUTMODE==0)
     {
@@ -3081,8 +3082,11 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
     }
     else
         IDoutLOWFS = create_image_ID(OUTLOWFSSTREAMNAME, 2, sizearray, FLOAT, 0, 0);
+	
+	IDimlowfs = create_image_ID("aosim_imlowfs", 2, sizearray, FLOAT, 1, 0);
 
-
+    sizearray[0] = ARRAYSIZE; 
+    sizearray[1] = ARRAYSIZE; 
 
 	IDfoc1a = create_image_ID("aosim_foc1_amp", 2, sizearray, FLOAT, 1, 0);
 	IDfoc1p = create_image_ID("aosim_foc1_pha", 2, sizearray, FLOAT, 1, 0);
@@ -3092,10 +3096,6 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
     
 	IDpup1ra = create_image_ID("aosim_pup1r_amp", 2, sizearray, FLOAT, 1, 0);
 	IDpup1rp = create_image_ID("aosim_pup1r_pha", 2, sizearray, FLOAT, 1, 0);
-    
-    IDimlowfs = create_image_ID("aosim_imlowfs", 2, sizearray, FLOAT, 1, 0);
-    
-   // IDimcamlowfs = create_image_ID("aosim_imcamlowfs", 2, sizearray, FLOAT, 1, 0);
     
     free(sizearray);
 
@@ -3220,11 +3220,14 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
 		// COMPUTE imlowfs
 		IDfoclowfsa = image_ID("aosim_foclowfs_amp");
 		data.image[IDimlowfs].md[0].write = 1;
-		for(ii=0;ii<ARRAYSIZE2;ii++)
-			{
-				data.image[IDimlowfs].array.F[ii] = data.image[IDfoclowfsa].array.F[ii]*data.image[IDfoclowfsa].array.F[ii];
-				data.image[IDimcamlowfstmp].array.F[ii] += data.image[IDimlowfs].array.F[ii];
-			}
+		for(ii=0;ii<OUTLOWFSARRAYSIZE;ii++)
+			for(jj=0;jj<OUTLOWFSARRAYSIZE;jj++)
+				{
+					ii1 = ii+(ARRAYSIZE-OUTLOWFSARRAYSIZE)/2;
+					jj1 = jj+(ARRAYSIZE-OUTLOWFSARRAYSIZE)/2;
+					data.image[IDimlowfs].array.F[OUTLOWFSARRAYSIZE*jj+ii] = data.image[IDfoclowfsa].array.F[jj1*ARRAYSIZE+ii1]*data.image[IDfoclowfsa].array.F[jj1*ARRAYSIZE+ii1];
+					data.image[IDimcamlowfstmp].array.F[OUTLOWFSARRAYSIZE*jj+ii] += data.image[IDimlowfs].array.F[OUTLOWFSARRAYSIZE*jj+ii];
+				}
 		COREMOD_MEMORY_image_set_sempost_byID(IDimlowfs, -1);
 		data.image[IDimlowfs].md[0].cnt0++;
 		data.image[IDimlowfs].md[0].write = 0;

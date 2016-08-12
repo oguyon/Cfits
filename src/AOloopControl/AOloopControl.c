@@ -534,6 +534,17 @@ int AOloopControl_CompModes_loop_cli()
     return 1;
 }
 
+int AOloopControl_GPUmodecoeffs2dm_filt_loop_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)==0)
+		{
+			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
+		return 0;
+		}
+	else
+		return 1;
+}
+
 
 
 int AOloopControl_blockstats_cli()
@@ -1161,6 +1172,15 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)");
     data.NBcmd++;
     
+    
+    strcpy(data.cmd[data.NBcmd].key,"aolmc2dmfilt");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_GPUmodecoeffs2dm_filt_loop_cli;
+    strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map, includes filtering");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex)");
+    data.NBcmd++;
 
 
     strcpy(data.cmd[data.NBcmd].key,"aolmappfilt");
@@ -6386,9 +6406,6 @@ int set_DM_modes(long loop)
 
 
 
-
-
-
 int set_DM_modesRM(long loop)
 {
     long k;
@@ -9715,7 +9732,66 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
     free(sizearray);
         
     free(GPUsetM);
+    return(0);
 }
+
+
+
+
+
+
+
+
+
+//
+// compute DM map from mode values
+//
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex)
+{
+	long IDmodecoeffs;
+	int GPUcnt, k;
+	int *GPUsetM;
+    int GPUstatus[100];
+    int status;
+    float alpha, beta;
+	int initWFSref;
+	int orientation = 1;
+	int use_sem = 1;
+
+	int write_timing = 0;
+
+	GPUcnt = 1;
+	for(k=0;k<GPUcnt;k++)
+        GPUsetM[k] = k+GPUindex;
+	
+	
+
+	IDmodecoeffs = image_ID(modecoeffs_name);
+
+
+		#ifdef HAVE_CUDA
+        GPU_loop_MultMat_setup(3, DMmodes_name, modecoeffs_name, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
+
+	while(1==1)
+        {
+			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);
+			GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], alpha, beta, write_timing);
+		}
+
+#endif
+
+ 
+	free(GPUsetM);
+
+	return(0);
+}
+
+
+
+
+
+
+
 
 
 
@@ -10152,7 +10228,7 @@ int AOloopControl_run()
 
 
                         
-                   for(semnb=0;semnb<data.image[aoconfID_dmC].sem;semnb++)
+                  for(semnb=0;semnb<data.image[aoconfID_dmC].sem;semnb++)
                    {
                        sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
                         if(semval<SEMAPHORE_MAXVAL)
@@ -10910,6 +10986,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 }
 
 
+
+
 long AOloopControl_ComputeOpenLoopModes(long loop)
 {
 	long IDout;
@@ -10921,6 +10999,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long modevalDMindexl = 0;
 
 	long IDmodevalDM; // DM correction at WFS measurement time
+	long IDmodevalDMnow; // current DM correction
 	long modevalDMindex0, modevalDMindex1;
 	float alpha;
 	
@@ -10942,7 +11021,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	if(AOloopcontrol_meminit==0)
 		AOloopControl_InitializeMemory(1);
 		
-	sprintf(imname, "aol%ld_modeval", loop);
+	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
 	IDmodeval = read_sharedmem_image(imname);
 	NBmodes = data.image[IDmodeval].md[0].size[0];
 
@@ -10961,12 +11040,16 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
    	IDblknb = create_image_ID(imname, 2, sizeout, USHORT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
-	sprintf(imname, "aol%ld_modeval_dm", loop); // DM correction
+ 	sprintf(imname, "aol%ld_modeval_dm_now", loop); // current modal DM correction 
+   	IDmodevalDMnow = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+ 
+	sprintf(imname, "aol%ld_modeval_dm", loop); // modal DM correction at time of currently available WFS measurement
    	IDmodevalDM = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
   	sizeout[1] = modevalDM_bsize;
- 	sprintf(imname, "aol%ld_modeval_dm_C", loop); // DM correction, circular buffer
+ 	sprintf(imname, "aol%ld_modeval_dm_C", loop); // modal DM correction, circular buffer
    	IDmodevalDM_C = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
     
@@ -11012,19 +11095,24 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	// initialize arrays
 	data.image[IDmodevalDM].md[0].write = 1;
+	data.image[IDmodevalDMnow].md[0].write = 1;
 	data.image[IDmodevalDM_C].md[0].write = 1;
 	for(m=0;m<NBmodes;m++)
 		{
 			data.image[IDmodevalDM].array.F[m] = 0.0;
+			data.image[IDmodevalDMnow].array.F[m] = 0.0;
 			for(modevalDMindex=0;modevalDMindex<modevalDM_bsize;modevalDMindex++)
 				data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = 0;
 			data.image[IDout].array.F[m] = 0.0;
 		}	
 	COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM, -1);
+	COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
 	COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
 	data.image[IDmodevalDM].md[0].cnt0++;
+	data.image[IDmodevalDMnow].md[0].cnt0++;
 	data.image[IDmodevalDM_C].md[0].cnt0++;
 	data.image[IDmodevalDM].md[0].write = 0;
+	data.image[IDmodevalDMnow].md[0].write = 0;
 	data.image[IDmodevalDM_C].md[0].write = 0;
 	
 	
@@ -11056,11 +11144,14 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDM_C].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
 			{
-				data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] + modegain[m]*data.image[IDmodeval].array.F[m]);
+				data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] + modegain[m]*data.image[IDmodeval].array.F[m]);			
+				data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = data.image[IDmodevalDMnow].array.F[m];
 			}
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
+		data.image[IDmodevalDM_C].md[0].cnt1 = modevalDMindex;
 		data.image[IDmodevalDM_C].md[0].cnt0++;
 		data.image[IDmodevalDM_C].md[0].write = 0;
+		
 		
 		// COMPUTE DM STATE AT TIME OF WFS MEASUREMENT
 		modevalDMindex0 = modevalDMindex - framelatency0;
@@ -11072,9 +11163,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		data.image[IDmodevalDM].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
-			{
-				data.image[IDmodevalDM].array.F[m] = (1.0-alpha)*data.image[IDmodevalDM_C].array.F[modevalDMindex0*NBmodes+m] + alpha*data.image[IDmodevalDM_C].array.F[modevalDMindex1*NBmodes+m];
-			}
+			data.image[IDmodevalDM].array.F[m] = (1.0-alpha)*data.image[IDmodevalDM_C].array.F[modevalDMindex0*NBmodes+m] + alpha*data.image[IDmodevalDM_C].array.F[modevalDMindex1*NBmodes+m];
+			
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM, -1);
 		data.image[IDmodevalDM].md[0].cnt0++;
 		data.image[IDmodevalDM].md[0].write = 0;
@@ -11102,6 +11192,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	return(IDout);
 }
+
+
 
 
 
