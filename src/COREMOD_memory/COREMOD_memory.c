@@ -1535,7 +1535,7 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
     //	printf("NBkw = %ld\n", NBkw);
 
     ID = -1;
-    if(image_ID(name)==-1)
+    if(image_ID(name) == -1)
     {
         # ifdef _OPENMP
         #pragma omp atomic
@@ -1851,6 +1851,9 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
         data.image[ID].md[0].cnt0 = 0;
         data.image[ID].md[0].cnt1 = 0;
         data.image[ID].md[0].nelement = nelement;
+    
+		if(shared==1)
+			COREMOD_MEMORY_image_set_createsem(name, 10);
     }
     else
     {
@@ -1893,6 +1896,8 @@ long create_image_ID(char *name, long naxis, long *size, int atype, int shared, 
             strcpy(data.image[ID].kw[kw].comment, comment);
           }
         */
+
+	
 
 
     if(MEM_MONITOR == 1)
@@ -3436,6 +3441,11 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int shared
 # ifdef _OPENMP
         }
 # endif
+		if(sharedmem==1)
+		{
+			COREMOD_MEMORY_image_set_sempost_byID(IDre, -1);
+			COREMOD_MEMORY_image_set_sempost_byID(IDim, -1);
+        }
         data.image[IDre].md[0].cnt0++;
         data.image[IDim].md[0].cnt0++;
         data.image[IDre].md[0].write = 0;
@@ -3460,6 +3470,11 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int shared
 # ifdef _OPENMP
         }
 # endif
+		if(sharedmem==1)
+		{
+			COREMOD_MEMORY_image_set_sempost_byID(IDre, -1);
+			COREMOD_MEMORY_image_set_sempost_byID(IDim, -1);
+        }
         data.image[IDre].md[0].cnt0++;
         data.image[IDim].md[0].cnt0++;
         data.image[IDre].md[0].write = 0;
@@ -3479,6 +3494,9 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int shared
 
     return(0);
 }
+
+
+
 
 int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int sharedmem)
 {
@@ -3503,8 +3521,8 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int shared
 
     if(atype==COMPLEX_FLOAT) // single precision
     {
-        IDam = create_image_ID(am_name,naxis,naxes,FLOAT, sharedmem, data.NBKEWORD_DFT);
-        IDph = create_image_ID(ph_name,naxis,naxes,FLOAT, sharedmem, data.NBKEWORD_DFT);
+        IDam = create_image_ID(am_name, naxis, naxes, FLOAT, sharedmem, data.NBKEWORD_DFT);
+        IDph = create_image_ID(ph_name, naxis, naxes, FLOAT, sharedmem, data.NBKEWORD_DFT);
         data.image[IDam].md[0].write = 1;
         data.image[IDph].md[0].write = 1;
 # ifdef _OPENMP
@@ -3522,6 +3540,11 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int shared
 # ifdef _OPENMP
         }
 # endif
+		if(sharedmem==1)
+		{
+			COREMOD_MEMORY_image_set_sempost_byID(IDam, -1);
+			COREMOD_MEMORY_image_set_sempost_byID(IDph, -1);
+        }
         data.image[IDam].md[0].cnt0++;
         data.image[IDph].md[0].cnt0++;
         data.image[IDam].md[0].write = 0;
@@ -3548,6 +3571,11 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int shared
 # ifdef _OPENMP
         }
 # endif
+		if(sharedmem==1)
+		{
+			COREMOD_MEMORY_image_set_sempost_byID(IDam, -1);
+			COREMOD_MEMORY_image_set_sempost_byID(IDph, -1);
+        }
         data.image[IDam].md[0].cnt0++;
         data.image[IDph].md[0].cnt0++;
         data.image[IDam].md[0].write = 0;
@@ -3564,6 +3592,9 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int shared
 
     return(0);
 }
+
+
+
 
 int mk_reim_from_amph(char *am_name, char *ph_name, char *re_out_name, char *im_out_name, int sharedmem)
 {

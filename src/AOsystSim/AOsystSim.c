@@ -130,6 +130,17 @@ int AOsystSim_DM_cli()
         return 1;
 }
 
+int AOsystSim_coroLOWFS_cli()
+{
+  if(CLI_checkarg(1,5)==0)
+    {
+        AOsystSim_coroLOWFS(data.cmdargtoken[1].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 
 
@@ -224,6 +235,15 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].syntax,"<configuration file name>");
     strcpy(data.cmd[data.NBcmd].example,"AOsimDM PyrWFS.conf");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_DM(char *CONF_FNAME)");
+    data.NBcmd++;
+	
+    strcpy(data.cmd[data.NBcmd].key,"AOsimcoroLOWFS");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOsystSim_coroLOWFS_cli;
+    strcpy(data.cmd[data.NBcmd].info,"run coro and LOWFS for AO simulation");
+    strcpy(data.cmd[data.NBcmd].syntax,"<configuration file name>");
+    strcpy(data.cmd[data.NBcmd].example,"AOsimcoroLOWFS LOWFS.conf");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_coroLOWFS(char *CONF_FNAME)");
     data.NBcmd++;
 	
 	
@@ -1240,27 +1260,28 @@ int AOsystSim_mkWF_mkCONF(char *fname)
 	fprintf(fp, "MODE             0                # 0: read pre-computed WFs, 1: empty WFs\n");
     fprintf(fp, "WFDIR            ./atmwf          # atmospheric wavefronts directory\n");
     fprintf(fp, "\n");
-    fprintf(fp, "LAMBDANM         1600             # wavelength [nm]\n");
+    fprintf(fp, "LAMBDANM         1650             # wavelength [nm]\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== OUTPUT TYPE (OPD unit = um) ====================\n");
     fprintf(fp, "OUT0FITSFILE         0                # 0: none, 1 if FITS file output OPD only, 2 if OPD+AMP\n");
-    fprintf(fp, "OUT0FITSFILENAMEOPD  wf0opd.fits       # FITS file name output (OPD)\n");
-    fprintf(fp, "OUT0FITSFILENAMEAMP  wf0amp.fits       # FITS file name output (AMP)\n");
-    fprintf(fp, "OUT0STREAM           1                # 1 if shared memory stream OPD only, 2 if OPD+AMP \n");
+    fprintf(fp, "OUT0FITSFILENAMEOPD  wf0opd.fits      # FITS file name output (OPD)\n");
+    fprintf(fp, "OUT0FITSFILENAMEAMP  wf0amp.fits      # FITS file name output (AMP)\n");
+    fprintf(fp, "OUTPHYSTIME          aosim_phystime   # physical time [s]\n");
+    fprintf(fp, "OUT0STREAM           2                # 1 if shared memory stream OPD only, 2 if OPD+AMP \n");
     fprintf(fp, "OUT0STREAMNAMEOPD    wf0opd           # output WF stream name (OPD)\n");
     fprintf(fp, "OUT0STREAMNAMEAMP    wf0amp           # output WF stream name (AMP)\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== PROCESS TRIGGER ==================================\n");
-    fprintf(fp, "TRIGGERMODE           1                # 0: file, 1: semaphore from stream, 2: time interval\n");
+    fprintf(fp, "TRIGGERMODE           2                # 0: file, 1: semaphore from stream, 2: time interval\n");
     fprintf(fp, "TRIGGERFILE           wfup.txt         # update file name (TRIGGERMODE=0,1\n");
-    fprintf(fp, "TRIGGERDT             0.1              # update interval (TRIGGERMODE=0,2)\n");
+    fprintf(fp, "TRIGGERDT             0.05             # update interval (TRIGGERMODE=0,2)\n");
     fprintf(fp, "TRIGGER0STREAM        WFSinst          # trigger stream\n");
     fprintf(fp, "TRIGGER0SEM           5                # trigger semaphore in TRIGGERSTREAM\n");
     fprintf(fp, "TRIGGER1STREAM        dm05dispmap      # trigger stream\n");
     fprintf(fp, "TRIGGER1SEM           5                # trigger semaphore in TRIGGERSTREAM\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== PARAMETERS ======================================\n");
-    fprintf(fp, "DT                    0.0003           # time interval between computed wavefronts\n");
+    fprintf(fp, "DT                    0.001            # time interval between computed wavefronts\n");
     fprintf(fp, "OPDMFACT              0.01             # OPD multiplicative factor\n");
     fprintf(fp, "AMPMFACT              1.0              # AMP multiplicative factor\n");
     fprintf(fp, "ARRAYSIZE             128              # output size [pix]\n");
@@ -1301,6 +1322,8 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     int OUT0FITSFILE;
     char OUT0FITSFILENAMEOPD[200];
     char OUT0FITSFILENAMEAMP[200];
+   
+	char OUTPHYSTIME[200];
     int OUT0STREAM;
     char OUT0STREAMNAMEOPD[200];
     char OUT0STREAMNAMEAMP[200];
@@ -1357,7 +1380,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     long ID0, ID1, ID0amp, ID1amp, kk0, kk1;
     float alpha;
 
-    double t;
+    double phystime;
     float frame_f;
     long frame_n;
     long NBframes;
@@ -1379,13 +1402,16 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     long ID;
 
 	long IDdm0opd;
+	long IDphystime;
+
 
 
     printf("AOsystSim mkWFS...\n");
 
-
+	
+	
     // INPUT WF
-			if((fp=fopen(CONF_FNAME,"r"))==NULL)
+	if((fp=fopen(CONF_FNAME,"r"))==NULL)
     {
         sprintf(fname, "%s.default", CONF_FNAME);
         printf("configuration file %s not found. Creating default template as %s\n", CONF_FNAME, fname);
@@ -1410,6 +1436,8 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     OUT0FITSFILE = read_config_parameter_long(CONF_FNAME, "OUT0FITSFILE");
     read_config_parameter(CONF_FNAME, "OUT0FITSFILENAMEOPD", OUT0FITSFILENAMEOPD);
     read_config_parameter(CONF_FNAME, "OUT0FITSFILENAMEAMP", OUT0FITSFILENAMEAMP);
+	
+	read_config_parameter(CONF_FNAME, "OUTPHYSTIME", OUTPHYSTIME);
     OUT0STREAM = read_config_parameter_long(CONF_FNAME, "OUT0STREAM");
     read_config_parameter(CONF_FNAME, "OUT0STREAMNAMEOPD", OUT0STREAMNAMEOPD);
     read_config_parameter(CONF_FNAME, "OUT0STREAMNAMEAMP", OUT0STREAMNAMEAMP);
@@ -1469,6 +1497,16 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 
     wfin_WFsize = read_config_parameter_long(conf_atmWFconf_fname, "WFsize");
     printf("Input WF WFsize = %ld\n", wfin_WFsize);
+	
+	
+	
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = 1;
+	sizearray[1] = 1;
+	IDphystime = create_image_ID(OUTPHYSTIME, 2, sizearray, FLOAT, 1, 0);
+	phystime = 0;
+	data.image[IDphystime].array.F[0] = phystime;
+	free(sizearray);
 
 
     if(PIXSCALEMODE!=2)
@@ -1485,6 +1523,8 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     sizearray[0] = ARRAYSIZE;
     sizearray[1] = ARRAYSIZE;
 
+
+
     if(OUT0STREAM>0)
     {
         IDopd0 = create_image_ID(OUT0STREAMNAMEOPD, 2, sizearray, FLOAT, 1, 0);
@@ -1492,6 +1532,8 @@ int AOsystSim_mkWF(char *CONF_FNAME)
     }
     else
         IDopd0 = create_image_ID(OUT0STREAMNAMEOPD, 2, sizearray, FLOAT, 0, 0);
+
+
 
     if(OUT0STREAM>0) // create amp stream if OUT0STREAM=1 or 2, but will only update it if OUT0STREAM=2
     {
@@ -1575,7 +1617,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 	
     while(1)
     {
-        frame_f = (t - wfin_TIME_SPAN*k1)/wfin_TIME_STEP;
+        frame_f = (phystime - wfin_TIME_SPAN*k1)/wfin_TIME_STEP;
         frame_n = (long) frame_f;
         alpha = frame_f-frame_n;
 
@@ -1606,6 +1648,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
         IDwf0 = image_ID(wfimname_pha);
         if(AMPfile==1)
             IDwf0amp = image_ID(wfimname_amp);
+            
 
         sprintf(wfimname_pha, "wf%08ld_pha", k+1);
         sprintf(wfimname_amp, "wf%08ld_amp", k+1);
@@ -1628,18 +1671,28 @@ int AOsystSim_mkWF(char *CONF_FNAME)
             IDwf1amp = image_ID(wfimname_amp);
 
         ID0 = IDwf0;
+		if(AMPfile==1)
+			ID0amp = IDwf0amp;
+			
+			
         if(frame_n+1 == NBframes)
         {
             kk0 = frame_n;
             kk1 = 0;
             ID1 = IDwf1;
+            ID1amp = IDwf1amp;
         }
         else
         {
             ID1 = IDwf0;
+            ID1amp = IDwf0amp;
             kk0 = frame_n;
             kk1 = kk0+1;
         }
+        
+        
+        
+        
 
 /*        if(k>0) // delete (only for long sequence)
         {
@@ -1656,7 +1709,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 */
 
 
-        printf("%.9f  %8ld  %12.6f  %6ld      %5ld %5ld  %.5f\n", t, k, frame_f, frame_n, kk0, kk1, alpha);
+        printf("%.9f  %8ld  %12.6f  %6ld      %5ld %5ld  %.5f\n", phystime, k, frame_f, frame_n, kk0, kk1, alpha);
 
 
         // BIN
@@ -1906,9 +1959,12 @@ int AOsystSim_mkWF(char *CONF_FNAME)
         }
 
 
-
-
-        t += DT;
+        phystime += DT;
+        data.image[IDphystime].md[0].write = 0;
+        data.image[IDphystime].array.F[0] = phystime;
+		COREMOD_MEMORY_image_set_sempost_byID(IDphystime, -1);
+        data.image[IDphystime].md[0].cnt0 ++;
+        data.image[IDphystime].md[0].write = 0;
 
         switch(TRIGGERMODE) {
         case 0:
@@ -2751,6 +2807,489 @@ int AOsystSim_DM(char *CONF_FNAME)
     free(dmifcarray_value);
     free(dmifcarray_act);
     free(dmifcarray_iijj);
+
+    return(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//
+// from DM dispacements to 2D DM map
+// 
+int AOsystSim_coroLOWFS_mkCONF(char *fname)
+{
+    FILE *fp;
+
+    fp = fopen(fname, "w");
+    fprintf(fp, "\n");       
+    fprintf(fp, "# ============== AOsim: coro LOWFS process =============================\n");
+    fprintf(fp, "# LOWFS process is triggered by WF OPD\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "# ============== INPUT & TRIGGER (OPD unit = um) ===============\n");
+    fprintf(fp, "INMODE                   0                 # 0:stream, 1:file system (FITS)\n");
+    fprintf(fp, "INAMPSTREAMNAME          wf1amp            # input AMP stream\n");
+    fprintf(fp, "INOPDSTREAMNAME          wf1opd            # input OPD stream\n");
+    fprintf(fp, "INAMPFITSFILENAME        wf1amp.fits       # input FITS file name\n");
+    fprintf(fp, "INOPDFITSFILENAME        wf1opd.fits       # input FITS file name\n");
+    fprintf(fp, "INTRIGSTREAMNAME         wf1opd            # input trigger stream\n");
+    fprintf(fp, "INTRIGSEMCHAN            4                 # input semaphore channel (using OPD input)\n");
+    fprintf(fp, "INTRIGGERFILE            inwf.txt          # input trigger file\n");
+    fprintf(fp, "INPHYSTIME               aosim_phystime    # physical time\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "# ============== OUTPUT TYPE ===================================\n");
+    fprintf(fp, "OUTMODE                  0                       # 0: stream, 1: file system\n");
+    fprintf(fp, "OUTLOWFSSTREAMNAME       aosim_imcamLOWFS        # output WF stream name \n");
+    fprintf(fp, "OUTLOWFSFITSFILENAME     aosim_imcamLOWFS.fits   # FITS file name output [um]\n");
+    fprintf(fp, "OUTTRIGGERFILE           outLOWFS.txt            # output trigger file\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "# ============== GEOMETRY, OPTICAL DESIGN =============================\n");
+    fprintf(fp, "LAMBDAum                 1.65              # wavelength [um]\n");
+	fprintf(fp, "ARRAYSIZE                256               # array size, pix, used for internal computations\n");
+	fprintf(fp, "COROFPMAMP               corofpmamp        # coronagraph focal plane mask amplitude\n");
+	fprintf(fp, "COROFPMPHA               corofpmpha        # coronagraph focal plane mask amplitude\n");
+	fprintf(fp, "LYOTSTOPREFLAMP          lyotstopreflamp   # LYOT stop reflectivity map (amp)\n");
+	fprintf(fp, "LYOTSTOPREFLPHA          lyotstopreflpha   # LYOT stop reflectivity map (pha)\n");
+	fprintf(fp, "LYOTSTOPTRANSMAMP        lyotstoptransmamp # LYOT stop transmission map (amp)\n");
+	fprintf(fp, "LYOTSTOPTRANSMPHA        lyotstoptransmpha # LYOT stop transmission map (pha)\n");
+	fprintf(fp, "\n");
+	fprintf(fp, "# ============== LOWFS =============================\n");
+	fprintf(fp, "LOWFSOPDMAP              lowfsopdmap       # LOWFS defocus map [um]\n");
+	fprintf(fp, "LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]\n");
+
+//	fprintf(fp, "NBTSAMPLES               100               # number of time samples\n");
+//	fprintf(fp, "DMLAGSTART               0.0003            # time lag start\n");
+//	fprintf(fp, "DMTIMECST                0.0001            # DM time constant\n");
+	fprintf(fp, "\n");
+
+    fclose(fp);
+
+    return(0);
+}
+
+
+
+
+int AOsystSim_coroLOWFS(char *CONF_FNAME)
+{
+    FILE *fp;
+    char fname[200];
+    long *sizearray;
+    long k;
+    long kmax = 100000000;
+
+    int INMODE;
+    char INAMPSTREAMNAME[200];
+    char INOPDSTREAMNAME[200];
+    char INAMPFITSFILENAME[200];  
+    char INOPDFITSFILENAME[200];  
+    char INTRIGSTREAMNAME[200];
+    int INTRIGSEMCHAN;
+    char INTRIGGERFILE[200];
+    char INPHYSTIME[200];
+
+    int OUTMODE;
+    char OUTLOWFSSTREAMNAME[200];
+    char OUTLOWFSFITSFILENAME[200];
+    char OUTTRIGGERFILE[200];
+	char COROFPMAMP[200];
+	char COROFPMPHA[200];
+	char LYOTSTOPREFLAMP[200];
+	char LYOTSTOPREFLPHA[200];
+	char LYOTSTOPTRANSMAMP[200];
+	char LYOTSTOPTRANSMPHA[200];
+
+	char LOWFSOPDMAP[200];
+	float LOWFSCAMETIME;
+	float LOWFScamstarttime = 0.0;
+	long LOWFScamcnt = 0;
+	
+    long ARRAYSIZE;
+    long ARRAYSIZE2;
+    double LAMBDA;
+  	   
+	long DMsize;
+	long IDoutLOWFS, IDout_tmp;
+	int ret;
+	char command[200];
+	int OKf;
+	long IDinTRIG, IDinOPD, IDinAMP;
+
+	long *imsize;
+	long xsizein, ysizein;
+	long ii, jj;
+	long ii1, jj1;
+	long iioffset, jjoffset;
+
+	long IDfpmamp, IDfpmpha;
+	long ID_LS_ramp, ID_LS_rpha; // Lyot stop reflected amplitude and phase
+	long ID_LS_tamp, ID_LS_tpha; // Lyot stop transmitted amplitude and phase
+	long ID_lowfsopd;
+
+	long IDwfa, IDwfp;
+	long IDfoc0a, IDfoc0p;
+	long IDfoc1a, IDfoc1p;
+	long IDpup1a, IDpup1p;
+	long IDpup1ta, IDpup1tp;
+	long IDpup1ra, IDpup1rp;
+	long IDfoclowfsa;
+	long IDimlowfs;
+
+	long IDphystime;
+	long IDimcamlowfstmp;
+
+
+    printf("AOsystSim coro LOWFS...\n");
+
+
+    if((fp=fopen(CONF_FNAME,"r"))==NULL)
+    {
+        sprintf(fname, "%s.default", CONF_FNAME);
+        printf("configuration file %s not found. Creating default template as %s\n", CONF_FNAME, fname);
+        AOsystSim_coroLOWFS_mkCONF(fname);
+        exit(0);
+    }
+    else
+        fclose(fp);
+
+
+    INMODE = read_config_parameter_long(CONF_FNAME, "INMODE");
+    read_config_parameter(CONF_FNAME, "INAMPSTREAMNAME", INAMPSTREAMNAME);            // IDinAMP
+    read_config_parameter(CONF_FNAME, "INOPDSTREAMNAME", INOPDSTREAMNAME);            // IDinOPD
+	read_config_parameter(CONF_FNAME, "INAMPFITSFILENAME", INAMPFITSFILENAME);        
+	read_config_parameter(CONF_FNAME, "INOPDFITSFILENAME", INOPDFITSFILENAME);        
+	read_config_parameter(CONF_FNAME, "INTRIGSTREAMNAME", INTRIGSTREAMNAME);          // IDinTRIG
+    INTRIGSEMCHAN = read_config_parameter_long(CONF_FNAME, "INTRIGSEMCHAN");
+	read_config_parameter(CONF_FNAME, "INTRIGGERFILE", INTRIGGERFILE);    
+	read_config_parameter(CONF_FNAME, "INPHYSTIME", INPHYSTIME); 
+  
+    // OUTPUT STREAM
+    OUTMODE = read_config_parameter_long(CONF_FNAME, "OUTMODE");
+	read_config_parameter(CONF_FNAME, "OUTLOWFSSTREAMNAME", OUTLOWFSSTREAMNAME);
+	read_config_parameter(CONF_FNAME, "OUTLOWFSFITSFILENAME", OUTLOWFSFITSFILENAME);
+	read_config_parameter(CONF_FNAME, "OUTTRIGGERFILE", OUTTRIGGERFILE);
+
+	LAMBDA = 1.0e-6 * read_config_parameter_float(CONF_FNAME, "LAMBDAum");
+ 	ARRAYSIZE = read_config_parameter_long(CONF_FNAME, "ARRAYSIZE");
+ 	ARRAYSIZE2 = ARRAYSIZE*ARRAYSIZE;
+ 	read_config_parameter(CONF_FNAME, "COROFPMAMP", COROFPMAMP);
+ 	read_config_parameter(CONF_FNAME, "COROFPMPHA", COROFPMPHA);
+ 	read_config_parameter(CONF_FNAME, "LYOTSTOPREFLAMP", LYOTSTOPREFLAMP);
+ 	read_config_parameter(CONF_FNAME, "LYOTSTOPREFLPHA", LYOTSTOPREFLPHA);
+ 	read_config_parameter(CONF_FNAME, "LYOTSTOPTRANSMAMP", LYOTSTOPTRANSMAMP);
+ 	read_config_parameter(CONF_FNAME, "LYOTSTOPTRANSMPHA", LYOTSTOPTRANSMPHA);
+
+	read_config_parameter(CONF_FNAME, "LOWFSOPDMAP", LOWFSOPDMAP);
+	LOWFSCAMETIME = read_config_parameter_float(CONF_FNAME, "LOWFSCAMETIME");
+	
+	
+	IDphystime = read_sharedmem_image(INPHYSTIME);
+	
+
+    switch( INMODE ) {
+    case 0:
+		IDinOPD = read_sharedmem_image(INOPDSTREAMNAME);
+		while(IDinOPD==-1)
+			{
+				usleep(100000);
+				IDinOPD = read_sharedmem_image(INOPDSTREAMNAME);
+			}
+    
+		IDinAMP = read_sharedmem_image(INAMPSTREAMNAME);
+		while(IDinOPD==-1)
+			{
+				usleep(100000);
+				IDinOPD = read_sharedmem_image(INAMPSTREAMNAME);
+			}
+    
+        IDinTRIG = read_sharedmem_image(INTRIGSTREAMNAME);
+        while(IDinTRIG==-1)
+			{
+				usleep(100000);
+				IDinTRIG = read_sharedmem_image(INTRIGSTREAMNAME);
+			}
+        break;
+    case 1:
+        break;
+    default:
+        printf("INMODE value %d not valid\n", INMODE);
+        exit(0);
+        break;
+    }
+
+	if((IDfpmamp = image_ID(COROFPMAMP))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", COROFPMAMP);
+			exit(0);
+		}
+	
+	if((IDfpmpha = image_ID(COROFPMPHA))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", COROFPMPHA);
+			exit(0);
+		}
+	
+	if((ID_LS_ramp = image_ID(LYOTSTOPREFLAMP))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", LYOTSTOPREFLAMP);
+			exit(0);
+		}
+
+	if((ID_LS_rpha = image_ID(LYOTSTOPREFLPHA))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", LYOTSTOPREFLPHA);
+			exit(0);
+		}
+
+	if((ID_LS_tamp = image_ID(LYOTSTOPTRANSMAMP))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", LYOTSTOPTRANSMAMP);
+			exit(0);
+		}
+
+	if((ID_LS_tpha = image_ID(LYOTSTOPTRANSMPHA))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", LYOTSTOPTRANSMPHA);
+			exit(0);
+		}
+
+	if((ID_lowfsopd = image_ID(LOWFSOPDMAP))==-1)
+		{
+			printf("ERROR: image %s not loaded\n", LOWFSOPDMAP);
+			exit(0);
+		}
+
+	
+	
+
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = ARRAYSIZE; 
+    sizearray[1] = ARRAYSIZE; 
+    DMsize = data.image[IDinOPD].md[0].size[0];
+    if(OUTMODE==0)
+    {
+        IDoutLOWFS = create_image_ID(OUTLOWFSSTREAMNAME, 2, sizearray, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(OUTLOWFSSTREAMNAME, 10);
+    }
+    else
+        IDoutLOWFS = create_image_ID(OUTLOWFSSTREAMNAME, 2, sizearray, FLOAT, 0, 0);
+
+
+
+	IDfoc1a = create_image_ID("aosim_foc1_amp", 2, sizearray, FLOAT, 1, 0);
+	IDfoc1p = create_image_ID("aosim_foc1_pha", 2, sizearray, FLOAT, 1, 0);
+    
+	IDpup1ta = create_image_ID("aosim_pup1t_amp", 2, sizearray, FLOAT, 1, 0);
+	IDpup1tp = create_image_ID("aosim_pup1t_pha", 2, sizearray, FLOAT, 1, 0);
+    
+	IDpup1ra = create_image_ID("aosim_pup1r_amp", 2, sizearray, FLOAT, 1, 0);
+	IDpup1rp = create_image_ID("aosim_pup1r_pha", 2, sizearray, FLOAT, 1, 0);
+    
+    IDimlowfs = create_image_ID("aosim_imlowfs", 2, sizearray, FLOAT, 1, 0);
+    
+   // IDimcamlowfs = create_image_ID("aosim_imcamlowfs", 2, sizearray, FLOAT, 1, 0);
+    
+    free(sizearray);
+
+
+	xsizein = data.image[IDinOPD].md[0].size[0];
+	ysizein = data.image[IDinOPD].md[0].size[1];
+	IDwfa = create_2Dimage_ID("aosim_wfa", ARRAYSIZE, ARRAYSIZE);
+	IDwfp = create_2Dimage_ID("aosim_wfp", ARRAYSIZE, ARRAYSIZE);	
+	iioffset = (ARRAYSIZE - xsizein)/2;
+	jjoffset = (ARRAYSIZE - ysizein)/2;
+
+	IDimcamlowfstmp = create_2Dimage_ID("aosim_imcamlowfstmp", ARRAYSIZE, ARRAYSIZE);	
+	LOWFScamstarttime = data.image[IDphystime].array.F[0];
+
+    k = 0;
+    while(k<kmax)
+    {		
+        printf("k = %8ld\n", k);
+        
+        // COMPUTE FOCAL PLANE COMPLEX AMPLITUDE INCIDENT ON FOCAL PLANE MASK
+		for(ii=0;ii<xsizein;ii++)
+			for(jj=0;jj<ysizein;jj++)
+				{
+					ii1 = ii + iioffset;
+					jj1 = jj + jjoffset;
+					data.image[IDwfa].array.F[jj1*ARRAYSIZE+ii1] = data.image[IDinAMP].array.F[jj*xsizein+ii];
+					data.image[IDwfp].array.F[jj1*ARRAYSIZE+ii1] = 1.0*M_PI*data.image[IDinOPD].array.F[jj*xsizein+ii]*1e-6/LAMBDA;
+				}
+
+		// loc_  for local files (not shared)
+        mk_complex_from_amph("aosim_wfa", "aosim_wfp", "loc_aosim_wfc", 0);
+        permut("loc_aosim_wfc");
+        do2dfft("loc_aosim_wfc", "loc_aosim_fc0");
+        permut("loc_aosim_fc0");
+        mk_amph_from_complex("loc_aosim_fc0", "aosim_foc0_amp", "aosim_foc0_pha", 1);
+        delete_image_ID("loc_aosim_wfc");
+        delete_image_ID("loc_aosim_fc0");
+		
+
+        // APPLY FOCAL PLANE MASK
+        IDfoc0a = image_ID("aosim_foc0_amp");
+        IDfoc0p = image_ID("aosim_foc0_pha");
+        data.image[IDfoc1a].md[0].write = 1;
+        data.image[IDfoc1p].md[0].write = 1;
+        for(ii=0;ii<ARRAYSIZE2;ii++)
+			{
+				data.image[IDfoc1a].array.F[ii] = data.image[IDfoc0a].array.F[ii] * data.image[IDfpmamp].array.F[ii];
+				data.image[IDfoc1p].array.F[ii] = data.image[IDfoc0p].array.F[ii] + data.image[IDfpmpha].array.F[ii];
+			}
+		COREMOD_MEMORY_image_set_sempost_byID(IDfoc1a, -1);
+		COREMOD_MEMORY_image_set_sempost_byID(IDfoc1p, -1);
+		data.image[IDfoc1a].md[0].cnt0++;
+		data.image[IDfoc1p].md[0].cnt0++;
+		data.image[IDfoc1a].md[0].write = 0;
+        data.image[IDfoc1p].md[0].write = 0;
+        
+        // COMPUTE pre-LYOT CA  
+		mk_complex_from_amph("aosim_foc1_amp", "aosim_foc1_pha", "loc_aosim_foc1_c", 0);
+		permut("loc_aosim_foc1_c");
+		do2dfft("loc_aosim_foc1_c", "loc_aosim_pup1_c");
+		delete_image_ID("loc_aosim_foc1_c");
+		permut("loc_aosim_pup1_c");
+		mk_amph_from_complex("loc_aosim_pup1_c", "aosim_pup1_amp", "aosim_pup1_pha", 1);
+		delete_image_ID("loc_aosim_pup1_c");
+	
+		IDpup1a = image_ID("aosim_pup1_amp");
+		IDpup1p = image_ID("aosim_pup1_pha");
+		
+		
+		// COMPUTE pup1t
+        data.image[IDpup1ta].md[0].write = 1;
+        data.image[IDpup1tp].md[0].write = 1;
+        for(ii=0;ii<ARRAYSIZE2;ii++)
+			{
+				data.image[IDpup1ta].array.F[ii] = data.image[IDpup1a].array.F[ii] * data.image[ID_LS_tamp].array.F[ii];
+				data.image[IDpup1tp].array.F[ii] = data.image[IDpup1p].array.F[ii] + data.image[ID_LS_tpha].array.F[ii];
+			}
+		COREMOD_MEMORY_image_set_sempost_byID(IDpup1ta, -1);
+		COREMOD_MEMORY_image_set_sempost_byID(IDpup1tp, -1);
+		data.image[IDpup1ta].md[0].cnt0++;
+		data.image[IDpup1tp].md[0].cnt0++;
+		data.image[IDpup1ta].md[0].write = 0;
+        data.image[IDpup1tp].md[0].write = 0;
+ 
+ 
+		// COMPUTE foc2
+		mk_complex_from_amph("aosim_pup1t_amp", "aosim_pup1t_pha", "loc_aosim_pup1t_c", 0);
+        permut("loc_aosim_pup1t_c");
+        do2dfft("loc_aosim_pup1t_c", "loc_aosim_foc2_c");
+        permut("loc_aosim_foc2_c");
+        mk_amph_from_complex("loc_aosim_foc2_c", "aosim_foc2_amp", "aosim_foc2_pha", 1);
+        delete_image_ID("loc_aosim_pup1t_c");
+        delete_image_ID("loc_aosim_foc2_c");
+ 
+ 
+ 
+		// COMPUTE pup1r
+        data.image[IDpup1ra].md[0].write = 1;
+        data.image[IDpup1rp].md[0].write = 1;
+        for(ii=0;ii<ARRAYSIZE2;ii++)
+			{
+				data.image[IDpup1ra].array.F[ii] = data.image[IDpup1a].array.F[ii] * data.image[ID_LS_ramp].array.F[ii];
+				data.image[IDpup1rp].array.F[ii] = data.image[IDpup1p].array.F[ii] + data.image[ID_LS_rpha].array.F[ii] + 2.0*M_PI*data.image[ID_lowfsopd].array.F[ii]*1.0e-6/LAMBDA;
+			}
+		COREMOD_MEMORY_image_set_sempost_byID(IDpup1ra, -1);
+		COREMOD_MEMORY_image_set_sempost_byID(IDpup1rp, -1);
+		data.image[IDpup1ra].md[0].cnt0++;
+		data.image[IDpup1rp].md[0].cnt0++;
+		data.image[IDpup1ra].md[0].write = 0;
+        data.image[IDpup1rp].md[0].write = 0;
+ 
+		
+		// COMPUTE foclowfs
+		mk_complex_from_amph("aosim_pup1r_amp", "aosim_pup1r_pha", "loc_aosim_pup1r_c", 0);
+        permut("loc_aosim_pup1r_c");
+        do2dfft("loc_aosim_pup1r_c", "loc_aosim_foc1r_c");
+        permut("loc_aosim_foc1r_c");
+        mk_amph_from_complex("loc_aosim_foc1r_c", "aosim_foclowfs_amp", "aosim_foclowfs_pha", 1);
+        delete_image_ID("loc_aosim_pup1r_c");
+        delete_image_ID("loc_aosim_foc1r_c");
+	
+		// COMPUTE imlowfs
+		IDfoclowfsa = image_ID("aosim_foclowfs_amp");
+		data.image[IDimlowfs].md[0].write = 1;
+		for(ii=0;ii<ARRAYSIZE2;ii++)
+			{
+				data.image[IDimlowfs].array.F[ii] = data.image[IDfoclowfsa].array.F[ii]*data.image[IDfoclowfsa].array.F[ii];
+				data.image[IDimcamlowfstmp].array.F[ii] += data.image[IDimlowfs].array.F[ii];
+			}
+		COREMOD_MEMORY_image_set_sempost_byID(IDimlowfs, -1);
+		data.image[IDimlowfs].md[0].cnt0++;
+		data.image[IDimlowfs].md[0].write = 0;
+		LOWFScamcnt++;
+		
+		if(data.image[IDphystime].array.F[0]-LOWFScamstarttime > LOWFSCAMETIME)
+			{
+				data.image[IDoutLOWFS].md[0].write = 1;
+				data.image[IDimcamlowfstmp].md[0].write = 1;
+				for(ii=0;ii<ARRAYSIZE2;ii++)
+					data.image[IDoutLOWFS].array.F[ii] = data.image[IDimcamlowfstmp].array.F[ii]/LOWFScamcnt;
+				for(ii=0;ii<ARRAYSIZE2;ii++)
+					data.image[IDimcamlowfstmp].array.F[ii] = 0.0;
+				COREMOD_MEMORY_image_set_sempost_byID(IDoutLOWFS, -1);
+				COREMOD_MEMORY_image_set_sempost_byID(IDimcamlowfstmp, -1);
+				data.image[IDoutLOWFS].md[0].cnt0++;
+				data.image[IDimcamlowfstmp].md[0].cnt0++;;
+				data.image[IDoutLOWFS].md[0].write = 0;
+				data.image[IDimcamlowfstmp].md[0].write = 0;			
+				LOWFScamcnt = 0;
+				LOWFScamstarttime = data.image[IDphystime].array.F[0];
+			}
+		
+		
+		
+
+        if(OUTMODE==1)
+        {
+            sprintf(command, "rm %s", OUTLOWFSFITSFILENAME);
+            ret = system(command);
+            sprintf(fname, "!%s", OUTLOWFSFITSFILENAME);
+            save_fits(OUTLOWFSSTREAMNAME, fname);
+            sprintf(command, "touch %s", OUTTRIGGERFILE);
+            ret = system(command);
+        }
+
+        switch( INMODE ) {
+        case 0:
+            COREMOD_MEMORY_image_set_semwait(INTRIGSTREAMNAME, INTRIGSEMCHAN);
+            break;
+        case 1:
+            OKf = 0;
+            while(OKf==0)
+            {
+                usleep(10000);
+                if(file_exists(INTRIGGERFILE)==1)
+                {
+                    sprintf(command, "rm %s", INTRIGGERFILE);
+                    ret = system(command);
+                    OKf = 1;
+                }
+            }
+            break;
+        default:
+            printf("INMODE value %d not valid\n", INMODE);
+            exit(0);
+            break;
+        }
+
+
+		k++;
+    }
+
+
+   
 
     return(0);
 }

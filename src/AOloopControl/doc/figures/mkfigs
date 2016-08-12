@@ -1,0 +1,4 @@
+dot -Tjpeg aosimlink.dot -o aosimlink.jpg
+dot -Tjpeg aosimlink_coroLOWFS.dot -o aosimlink_coroLOWFS.jpg
+dot -Tjpeg aolconfGUIscreens.dot -o aolconfGUIscreens.jpg
+

@@ -15,7 +15,7 @@ int init_AOsystSim();
 int AOsystSim_mkWF(char *CONF_FNAME);
 int AOsystSim_PyrWFS(char *CONF_FNAME);
 int AOsystSim_DM(char *CONF_FNAME);
-
+int AOsystSim_coroLOWFS(char *CONF_FNAME);
 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 

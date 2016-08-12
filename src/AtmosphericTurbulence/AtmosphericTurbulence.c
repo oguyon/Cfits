@@ -1659,9 +1659,9 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     }
     else // wet
     {
-		P = 102993.0;
-		Pw = 641.0;
-		CO2ppm = 450.0;
+		P = 103006.0;
+		Pw = 642.0;
+		CO2ppm = 440.0;
 		TC = 19.173; 
     }
     
@@ -1761,7 +1761,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     printf("HARISSON MODEL:    n = %.12g\n", 1.0 + AirMixture_N(lambda, dens_N2, dens_O2, dens_Ar, dens_H2O, dens_CO2, dens_Ne, dens_He, dens_CH4, dens_Kr, dens_H2, dens_O3, dens_N, dens_O, dens_H));
 
 	printf("STD MODEL, 1 atm : n = %.12g\n", AtmosphereModel_stdAtmModel_N(0.0, lambda, 1));
-	exit(0); //TEST
+
 
 
 
@@ -1777,7 +1777,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
         fprintf(fp, "%.16f %.16f\n", l, asin(sin(CONF_ZANGLE)/(1.0+AtmosphereModel_stdAtmModel_N(SiteAlt, l, 0))));
     fclose(fp);
 	
-	exit(0); //TEST
+
 
     printf("CONF_ZANGLE = %f  alt = %f\n", CONF_ZANGLE, SiteAlt);
 

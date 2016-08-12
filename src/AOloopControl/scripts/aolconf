@@ -8,11 +8,28 @@ aolconfFLAG="1"
 
 
 
+LOOPNAME=$( cat LOOPNAME )
+echo "LOOPNAME = $LOOPNAME"
+
+
+
 # ======================= LOGGING =================================
+# NOTE: copy logging functions to external scripts
+# NOTE: dolog and dologext should be provided by user
+
+# internal log - logs EVERYTHING
 function aoconflog {
 echo "$@" >> aolconf.log
-#dolog "$LOOPNAME" "$@"
+dolog "$LOOPNAME" "$@"
 }
+
+# external log, less verbose
+function aoconflogext {
+echo "$@" >> aolconf.log
+dolog "$LOOPNAME" "$@"
+dologext "$LOOPNAME $@"
+}
+
 
 
 # ================= screen printing =============================
@@ -31,7 +48,9 @@ echo "$@" >> aolconf.log
 
 
 
-aoconflog "======== NEW SESSION ==========="
+
+
+aoconflog " STARTING NEW aolconf SESSION"
 
 
 
@@ -43,26 +62,7 @@ execname="Cfits"
 LOOPNUMBER_default=7  # default loop number
 CPUconfRT=0 # no CPU real-time configuration
 
-
-
-#dmC="dm00disp03" # DM control channel
-#dmO="dm00disp00" # DM offset channel
-#dmdisp="dm00disp" # total DM displacement channel
-#dmoffset="dmoffset" # DM offset                                                      
-#dmRM="dm00disp07" # DM actuation channel for RM matrix
-#wfsimcam="imcam" # WFS camera image
-
-
-
-dmC="dmdisp03" # DM control channel
-dmO="dmdisp00" # DM offset channel
-dmdisp="dm00disp" # total DM displacement channel
-dmZP2="dmZP2"    
-dmZP2="dmZP3"                                                   
-dmRM="dmRM" # DM actuation channel for RM matrix
-wfsimcam="imcam" # WFS camera image
-
-DMindex=0 
+DMindex=0
 
 
 
@@ -109,6 +109,8 @@ NBARGS=0
 
 
 
+LOADMEM=1
+
 
 ### Start getopts code ###
 
@@ -117,7 +119,7 @@ NBARGS=0
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get unrecognized option code to work.
 
-while getopts :hH:L:N:Cc FLAG; do
+while getopts :hH:L:N:Ccn FLAG; do
   case $FLAG in
     H) # detailed help
     if [ "$OPTARG" == "cf" ]; then
@@ -158,6 +160,9 @@ while getopts :hH:L:N:Cc FLAG; do
     rm tmp/*
     rmdir tmp
     exit
+    ;;
+    n) # do not load configuration upon startup
+    LOADMEM=0
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -249,12 +254,6 @@ cp LOOPNAME ./conf/conf_LOOPNAME.txt
 
 
 
-# connect to WFS camera
-# aoconflog "connecting to camera"
-ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
-
-
-
 
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
 trap "rm -f $tempfile" 0 1 2 5 15
@@ -273,11 +272,6 @@ trap "rm -f $tempfile" 0 1 2 5 15
 echo "FUNCTIONS..."
 
 . ./aolconf_logfuncs
-
-
-
-
-
 . ./aolconf_DMfuncs
 
 
@@ -338,39 +332,142 @@ echo "OFF" > ./status/testloopstatus.txt
 
 # =================== READ CONFIGURATION====================================
 
+# =================== READ CONFIGURATION====================================
+
+
+function AOloadMem {
 # hardware I/O [shared memory]
 ReaddmCname
+getshmimsize aol${LOOPNUMBER}_dmC
+
 ReaddmOname
+getshmimsize aol${LOOPNUMBER}_dmO
+
+ReaddmZP0name
+getshmimsize aol${LOOPNUMBER}_dmZP0
+
+ReaddmZP1name
+getshmimsize aol${LOOPNUMBER}_dmZP1
+
 ReaddmZP2name
+getshmimsize aol${LOOPNUMBER}_dmZP2
+
 ReaddmZP3name
+getshmimsize aol${LOOPNUMBER}_dmZP3
+
+ReaddmZP4name
+getshmimsize aol${LOOPNUMBER}_dmZP4
+
 Readdmdispname
+getshmimsize aol${LOOPNUMBER}_dmdisp
+
 ReaddmRMname
+getshmimsize aol${LOOPNUMBER}_dmRM
+
 Readwfsimcamname
+getshmimsize aol${LOOPNUMBER}_wfsim
 
-
-# I/O pre-processing [FITS files]
 ReadWFSdarkfname
+getshmimsize aol${LOOPNUMBER}_wfsdark
+
+
+
 
 # SYSTEM CALIBRATION
-ReadConfFile "zrespM"
-ReadConfFile "LOrespM"
-ReadConfFile "LODMmodes"
+
+
+
+ReadConfFile "wfsmap"
+getshmimsize aol${LOOPNUMBER}_wfsmask
+
+
 ReadConfFile "wfsmask"
+getshmimsize aol${LOOPNUMBER}_wfsmask
+
 ReadConfFile "dmmap"
+getshmimsize aol${LOOPNUMBER}_dmmap
+
+ReadConfFile "dmmaskRM"
+getshmimsize aol${LOOPNUMBER}_dmmaskRM
+
+ReadConfFile "dmslaved"
+getshmimsize aol${LOOPNUMBER}_dmslaved
+
 ReadConfFile "dmmask"
+getshmimsize aol${LOOPNUMBER}_dmmask
+
 ReadConfFile "wfsref0"
+getshmimsize aol${LOOPNUMBER}_wfsref0
+
+
+
+ReadConfFile "zrespM"
+getshmimsize aol${LOOPNUMBER}_zrespM
+
+
+ReadConfFile "LODMmodes"
+getshmimsize aol${LOOPNUMBER}_LODMmodes
+
+ReadConfFile "LOrespM"
+getshmimsize aol${LOOPNUMBER}_LOrespM
+
+
+
 
 # System response and control
 ReadCPAmax
-#ReadDMmodesfname
-#ReadrespMfname
+
 ReadConfFile "DMmodes"
+getshmimsize aol${LOOPNUMBER}_DMmodes
+
 ReadConfFile "respM"
+getshmimsize aol${LOOPNUMBER}_respM
+
 ReadConfFile "contrM"
+getshmimsize aol${LOOPNUMBER}_contrM
+
+
+if [ "$1" -eq 1 ];then
+NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+NBmodes=$( cat ./conf/conf_NBmodes.txt )
+for i in `seq 0 $(( $NBblocks - 1 ))`;
+do
+i2=$(printf "%02d" "$i")
+
+ReadConfFile "DMmodes${i2}"
+getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
+
+ReadConfFile "respM${i2}"
+getshmimsize aol${LOOPNUMBER}_respM${i2}
+
+ReadConfFile "contrM${i2}"
+getshmimsize aol${LOOPNUMBER}_contrM${i2}
+
+ReadConfFile "contrMc${i2}"
+getshmimsize aol${LOOPNUMBER}_contrMc${i2}
+
+ReadConfFile "contrMcact${i2}_00"
+getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
+
+done
+fi
 
 ReadLoopGain
 ReadLoopMaxLim
 ReadLoopMultCoeff
+
+echo "memory loaded"
+}
+
+
+
+if [ "$LOADMEM" -eq "1" ]
+then
+AOloadMem 1
+fi
+
+
+
 
 
 # =================== STATE MACHINE ====================================
@@ -386,10 +483,12 @@ stateok=0
 . ./aolconfscripts/aolconf_menutop
 . ./aolconfscripts/aolconf_menuconfigureloop
 . ./aolconfscripts/aolconf_menu_mkFModes
+. ./aolconfscripts/aolconf_menucontrolmatrix
 . ./aolconfscripts/aolconf_menucontrolloop
 . ./aolconfscripts/aolconf_menutestmode
 . ./aolconfscripts/aolconf_menuview
 . ./aolconfscripts/aolconf_menurecord
+
 if [ $state = "menuexit" ]; then
 stateok=1
 echo "exit"

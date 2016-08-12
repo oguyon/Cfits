@@ -1,33 +1,64 @@
 #!/bin/bash
 
-printhelp ()
-{
-echo
+
+# number of arguments to script
+NBARGS=0
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+function printHELP {
 echo "------------------------------------------------------------------------"
-echo -e "\033[1m                MAKE Hadamard POKE MATRIX \033[0m"
-echo " "
+echo "$(tput bold) $pname : MAKE HADAMARD POKE MATRIX $(tput sgr 0)"
 echo "------------------------------------------------------------------------"
-echo -e "\033[1m                       USAGE \033[0m"
-echo " $0 <DMmask>"
-echo "  INPUT : "
-echo "     DMmask    : DM pixel mask (FITS file)"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr 0)"
+echo "     $0"
+echo ""
+echo " $(tput bold)OPTIONAL INPUT:$(tput sgr 0)"
+echo "     HRM_DMmask.fits    DM active mask file - will be created if doesn't exist"
+echo ""
+echo " $(tput bold)REQUIRED:$(tput sgr 0)"
+echo "     dm     output file"
+echo ""
 echo "------------------------------------------------------------------------"
 }
 
-NBARGS=1
+
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
-        printhelp
 if [ "$#" -ne $NBARGS ]; then
-    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr 0)"
 fi
+printHELP
         exit
 fi
 
 
+loopnb=$(cat LOOPNUMBER)
+
+if [ ! -f "./conf/HRM_DMmask.fits" ]; then
+Cfits << EOF
+readshmim aol${loopnb}_dmC
+imstats aol${loopnb}_dmC
+cx=0.5*imsize0-0.5
+cy=0.5*imsize1-0.5
+rad=0.5*imsize0+0.6
+mkdisk dmmask imsize0 imsize1 cx cy rad
+savefits dmmask "!./conf/HRM_DMmask.fits"
+itot(dmmask)
+exit
+EOF
+fi
+
 
 Cfits << EOF
-loadfits "$1" DMmask
+loadfits "./conf/HRM_DMmask.fits" DMmask
 aolmkH DMmask outim
 savefits outim "!Hpoke.fits"
 exit

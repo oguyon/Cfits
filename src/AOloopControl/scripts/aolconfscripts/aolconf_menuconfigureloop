@@ -678,6 +678,7 @@ dmC=$(dialog --inputbox "dmC" 0 0 "$dmC" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmC" > ./conf/conf_dmC_name.txt
 ReaddmCname
+getshmimsize aol${LOOPNUMBER}_dmC
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmC;;
 esac
@@ -692,6 +693,7 @@ dmO=$(dialog --inputbox "dmO" 0 0 "$dmO" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmO" > ./conf/conf_dmO_name.txt
 ReaddmOname
+getshmimsize aol${LOOPNUMBER}_dmO
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmO;;
 esac
@@ -708,6 +710,7 @@ exec 3>&-;
 #echo $result $exitcode;
 echo "$dmZP0" > ./conf/conf_dmZP0_name.txt
 ReaddmZP0name
+getshmimsize aol${LOOPNUMBER}_dmZP0
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmZP0;;
 esac
@@ -724,6 +727,7 @@ exec 3>&-;
 #echo $result $exitcode;
 echo "$dmZP1" > ./conf/conf_dmZP1_name.txt
 ReaddmZP1name
+getshmimsize aol${LOOPNUMBER}_dmZP1
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmZP1;;
 esac
@@ -739,6 +743,7 @@ exec 3>&-;
 #echo $result $exitcode;
 echo "$dmZP2" > ./conf/conf_dmZP2_name.txt
 ReaddmZP2name
+getshmimsize aol${LOOPNUMBER}_dmZP2
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmZP2;;
 esac
@@ -754,6 +759,7 @@ exec 3>&-;
 #echo $result $exitcode;
 echo "$dmZP3" > ./conf/conf_dmZP3_name.txt
 ReaddmZP3name
+getshmimsize aol${LOOPNUMBER}_dmZP3
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmZP3;;
 esac
@@ -769,6 +775,7 @@ exec 3>&-;
 #echo $result $exitcode;
 echo "$dmZP4" > ./conf/conf_dmZP4_name.txt
 ReaddmZP4name
+getshmimsize aol${LOOPNUMBER}_dmZP4
 ;;
 	1)shmimmon aol${LOOPNUMBER}_dmZP4;;
 esac
@@ -785,6 +792,7 @@ exec 3>&-;
 #echo $result $exitcode;
 echo "$dmdisp" > ./conf/conf_dmdisp_name.txt
 Readdmdispname
+getshmimsize aol${LOOPNUMBER}_dmdisp
 ;;
 	1)
 shmimmon aol${LOOPNUMBER}_dmdisp
@@ -799,6 +807,7 @@ dmRM=$(dialog --inputbox "dmRM" 0 0 "$dmRM" 2>&1 1>&3);
 exec 3>&-;
 echo "$dmRM" > ./conf/conf_dmRM_name.txt
 ReaddmRMname
+getshmimsize aol${LOOPNUMBER}_dmRM
 ;;
 	1)
 shmimmon aol${LOOPNUMBER}_dmRM
@@ -813,6 +822,7 @@ wfsimcam=$(dialog --inputbox "WFS image" 0 0 "$wfsimcam" 2>&1 1>&3);
 exec 3>&-;
 echo "$wfsimcam" > ./conf/conf_wfsim_name.txt
 Readwfsimcamname
+getshmimsize aol${LOOPNUMBER}_wfsim
 ;;
 	1)
 shmimmon aol${LOOPNUMBER}_wfsim
@@ -1029,10 +1039,11 @@ esac
 
 	Hon)
 echo "1" > ./conf/conf_RMpokeMode.txt
+
 if [ -f "./conf/RMpokeCube.fits" ]; then
 echo "OK"
 else
-./auxscripts/mkHpoke ./conf/DMmask.fits
+./auxscripts/mkHpoke 
 fi
 mv Hpoke.fits ./conf/Hpoke.fits
 cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
