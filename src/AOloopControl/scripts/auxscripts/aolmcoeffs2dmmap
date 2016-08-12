@@ -1,0 +1,60 @@
+#! /bin/bash
+
+
+
+
+# number of arguments to script
+NBARGS=1
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP (included filtering) $(tput sgr 0)"
+echo "------------------------------------------------------------------------"
+echo "  Computes DM map from modal loop coefficients"
+echo "  Requires Open Loop modes extraction process to be running"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr 0)"
+echo "     $0 <GPU index>"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr 0)"
+echo "     <GPUindex>     GPU index"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr 0)"
+fi
+printHELP
+        exit
+fi
+
+
+
+
+
+loopnb=$(cat LOOPNUMBER)
+
+
+
+# this version does not use masking (yet)
+
+Cfits -n $pname << EOF
+readshmim aol${loopnb}_modeval_dm_now
+loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
+aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 outDM_map $1
+exit
+EOF
+
