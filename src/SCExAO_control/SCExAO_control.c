@@ -201,9 +201,9 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
     strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
-    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd> <semaphore index>");
-    strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve, long semindex)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd> <output image> <semaphore index>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100 outave 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)");
     data.NBcmd++;
 
 
@@ -362,7 +362,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
 				ptrv = (char*) data.image[IDcam].array.U;
 				memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
 				for(ii=0; ii<xysize; ii++)
-					data.image[ID].array.F[ii] += (float) arraytmp[ii];
+					data.image[ID].array.F[ii] += (float) arrayutmp[ii];
 			}
         
         

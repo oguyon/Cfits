@@ -476,6 +476,12 @@ fi
 
 
 
+menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
+
+
+
+
+
 menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL)"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
@@ -526,6 +532,7 @@ then
         echo "OK"
     else
         echo "OFF" > ./status/stat_LOrespM.txt
+        LOrespMstat="OFF"
     fi
 
     LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
@@ -548,6 +555,11 @@ then
         fi
         menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
     fi
+
+
+	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
+
+
 fi
 
 
@@ -1140,6 +1152,8 @@ rm cleanZresp.run
 #ReadConfFile "dmmask"
 sleep 0.5
 ;;
+
+
 	zrespoff)
 zrespMstat="OFF"
 echo "OFF" > ./status/stat_zrespM.txt
@@ -1202,6 +1216,30 @@ rm cleanZresp.run
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
+
+
+
+SMloadzrm) # load files into shared memory
+ReadConfFile "zrespM"
+getshmimsize aol${LOOPNUMBER}_zrespM
+ReadConfFile "wfsref0"
+getshmimsize aol${LOOPNUMBER}_wfsref0
+ReadConfFile "wfsmap"
+getshmimsize aol${LOOPNUMBER}_wfsmap
+ReadConfFile "dmmap"
+getshmimsize aol${LOOPNUMBER}_dmmap
+ReadConfFile "wfsmask"
+getshmimsize aol${LOOPNUMBER}_wfsmask
+ReadConfFile "dmmaskRM"
+getshmimsize aol${LOOPNUMBER}_dmmaskRM
+ReadConfFile "dmslaved"
+getshmimsize aol${LOOPNUMBER}_dmslaved
+ReadConfFile "dmmask"
+getshmimsize aol${LOOPNUMBER}_dmmask
+;;
+
+
+
 
 	zrmcust)
 tmux new-session -d -s aol${LOOPNUMBER}zrmcust
@@ -1480,6 +1518,7 @@ echo "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rm
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
 menucontrolloop_default="LOrespoff"
 ;;
+
 	LOrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}LOrepMc"
 tmux new-session -d -s ${tmuxname}
@@ -1570,6 +1609,14 @@ menucontrolloop_default="LOrespmon"
 state="menuconfigureloop"
 ;;
 
+
+
+SMloadmrm) # load files into shared memory
+ReadConfFile "LOrespM"
+getshmimsize aol${LOOPNUMBER}_LOrespM
+ReadConfFile "LODMmodes"
+getshmimsize aol${LOOPNUMBER}_LODMmodes
+;;
 
 
 

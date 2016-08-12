@@ -290,7 +290,7 @@ aolconf -L 3 -N testsim
 - **link to WFS camera** (`wfs` to `Loop Configuration` screen). Select the WFS shared memory stream. 
 
 
-## Acquiring a response matrix 
+## Acquiring a zonal response matrix 
 
 - **set response matrix parameters** in `Loop Configure` screen: amplitude, time delay, frame averaging, excluded frames
 
@@ -298,4 +298,174 @@ aolconf -L 3 -N testsim
 
 - **start zonal response matrix acquisition** (`zrespon` in `Loop Configure` screen). The process runs in tmux session aol#zrepM.
 
+- **stop zonal response matrix acquistion** (`zrespoff` in `Loop Configure` screen). 
+
+
+The following files are then created:
+
+----------------------------- ------------------------------------ -----------------------------------------------------------
+File                          Archived location                    Description
+----------------------------- ------------------------------------ -----------------------------------------------------------
+**zrespmat.fits**             zrespM/zrespM_${datestr}.fits        zonal response matrix
+
+**wfsref0.fits**              wfsref0/wfsref0_${datestr}.fits      WFS reference (time-averaged image)
+
+**wfsmap.fits**               wfsmap/wfsmap_${datestr}.fits        Map of WFS elements sensitivity
+
+**dmmap.fits**                dmmap/dmmap_${datestr}.fits          Map of DM elements sensitivity
+
+**wfsmask.fits**              wfsmask/wfsmask_${datestr}.fits      WFS pixel mask, derived from wfsmap
+
+**dmmaskRM.fits**             dmmaskRM/dmmaskRM_${datestr}.fits    DM actuator mask, derived from dmmap by selecting actuators with strong response
+
+**dmslaved.fits**             dmslaved/dmslaved_${datestr}.fits    slaved DM actuators: actuators near active actuators in dmmaskRM
+
+**dmmask.fits**               dmmask/dmmask_${datestr}.fits        DM mask: all actuators controlled (union of dmmaskRM and dmslaved)
+----------------------------- ------------------------------------ -----------------------------------------------------------
+
+
+Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in "conf/conf_<streamname>.txt" for future loading.
+
+- **Load zrespm files into shared memory** (`SMloadzrm` in `Loop Configure` screen)
+
+
+	
+## Acquiring a modal response matrix (optional)
+
+In addition to the zonal response matrix, a modal response matrix can be acquired to improve sensitivity to low-oder modes.
+
+To do so: 
+
+- activate `RMMon` to **toggle the modal RM on**.
+
+- **select RM amplitude and maximum cycles per aperture (CPA)**
+
+- **start the acquisiton** (`LOresp_on`)
+
+- **stop the acquisiton** (`LOresp_off`)
+
+The following files are then created:
+
+----------------------------- ------------------------------------ -----------------------------------------------------------
+File                          Archived location                    Description
+----------------------------- ------------------------------------ -----------------------------------------------------------
+**LOrespmat.fits**            LOrespM/LOrespM_${datestr}.fits      Modal response matrix
+
+**respM_LOmodes.fits**        LODMmodes/LODMmodes_${datestr}.fits  Low-order modes
+
+**LOwfsref0.fits**            LOwfsref0/LOwfsref0_${datestr}.fits  WFS reference measured during LO RM acquisition
+
+**LOwfsmap.fits**             LOwfsmap/LOwfsmap_${datestr}.fits    Map of WFS elements sensitivity
+
+**LOdmmap.fits**              LOdmmap/LOdmmap_${datestr}.fits      Map of DM elements sensitivity
+
+**LOwfsmask.fits**            LOwfsmask/LOwfsmask_${datestr}.fits  WFS pixel mask, derived from wfsmap
+
+**LOdmmask.fits**             LOdmmask/LOdmmask_${datestr}.fits    DM actuator mask, derived from dmmap by selecting actuators with strong response
+----------------------------- ------------------------------------ -----------------------------------------------------------
+
+
+Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in "conf/conf_<streamname>.txt" for future loading.
+
+- **Load LOrespm files into shared memory** (`SMloadmrm` in `Loop Configure` screen)
+
+
+## Building control matrix
+
+- **set SVDlimit** (`SVDla` in `Control Matrix` screen). Set value is 0.1 as a starting point for a stable loop.
+
+- **perform full CM computation** (`mkModes0` in `Control Matrix` screen). Enter first the number of CPA blocks you wish to use. Computation takes a few minutes, and takes place in tmux session `aol#mkmodes`.
+
+The following files are created:
+
+----------------------------- ----------------------------------------- -----------------------------------------------------------
+File                          Archived location                         Description
+----------------------------- ----------------------------------------- -----------------------------------------------------------
+**aolN_DMmodes**              Mmodes/DMmodes_${datestr}.fits            DM modes
+
+**aolN_respM**                respM/respM_${datestr}.fits               WFS response to DM modes
+----------------------------- ----------------------------------------- -----------------------------------------------------------
+
+
+Block-specific files:
+
+----------------------------- ----------------------------------------- -----------------------------------------------------------
+File                          Archived location                         Description
+----------------------------- ----------------------------------------- -----------------------------------------------------------
+**aolN_DMmodesbb**            DMmodes/DMmodesbb_${datestr}.fits         DM modes for block bb
+
+**aolN_respMbb**              respM/respMbb_${datestr}.fits             WFS response to DM modes for block bb
+
+**aolN_contrMbb.fits**        contrM/contrMbb_${datestr}.fits           Control matrix for block bb
+
+**aolN_contrMcbb.fits**       contrMc/contrMcbb_${datestr}.fits         Collapsed control matrix for block bb
+
+**aolN_contrMcactbb.fits**    contrMcact/contrMcactbb_${datestr}.fits   Collabsed control matrix for block bb, only active actuators
+----------------------------- ----------------------------------------- -----------------------------------------------------------
+
+
+Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in "conf/conf_<streamname>.txt" for future loading.
+
+- **Load CM files into shared memory** (`SMloadCM` in `Control Matrix` screen)
+
+
+
+
+## Running the loop: Choosing hardware mode (CPU/GPU)
+
+There are multiple ways to perform the computations on CPU and/or GPUs. The main 3 parameters are:
+
+- **GPU**     : 0 if matrix multiplication(s) done on CPU, >0 for GPU use
+
+- **CMmode**  : 1 if using a combined matrix between WFS pixels and DM actuators, skipping intermediate computation of modes
+
+- **GPUall**  : if using GPUall, then the WFS reference subtraction is wrapped inside the GPU matrix multiplication
+
+
+------- --------- --------- ------------ --------------------------------------------------------------------------------
+GPU     CMmode    GPUall    Matrix       Description
+------- --------- --------- ------------ --------------------------------------------------------------------------------
+>0      ON         ON       contrMcact   dark-subtracted WFS frame imWFS0 is multiplited by collapsed control matrix (only active pixels).
+                                         normalization and WFS reference subtraction are wrapped in this GPU operation as subtraction of pre-computed vector output.
+                                         This is the fastest mode.
+                            
+>0      ON         OFF      contrMcact   WFS reference is subtracted from imWFS0 in CPU, yielding imWFS2.                         
+                                         imWFS2 is multiplied by control matrix (only active pixels) in GPU.
+                            
+>0      OFF        OFF      contrM       MWFS reference is subtracted from imWFS0 in CPU, yiedling imWFS2.
+                                         imWFS2 is multiplied (GPU) by control matrix to yield mode values.
+                                         Mode coefficients then multiplied (GPU) by modes.
+
+0       ON         -        contrMcact   imWFS2 is multiplied by control matrix (only active pixels) in CPU
+
+0       OFF        -        contrM       imWFS2 multiplied by modal control matrix
+------- --------- --------- ------------ --------------------------------------------------------------------------------
+
+
+
  
+# Virtual DM (dm-to-dm link)
+
+In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop.
+
+
+
+
+
+# Predictive control (experimental)
+
+## Scripts
+
+
+----------------------------- -----------------------------------------------------------
+File                          Description
+----------------------------- -----------------------------------------------------------
+**aolARPF**                   find auto-regressive predictive filter
+
+**aolARPFblock**              AO find optimal AR linear predictive filter 
+----------------------------- -----------------------------------------------------------
+
+
+
+
+

@@ -85,7 +85,7 @@ echo "DMmodes/DMmodes_${datestr}.fits" > ./conf/conf_DMmodes_name.txt
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
 echo "respM/respM_${datestr}.fits" > ./conf/conf_respM_name.txt
 
-tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmat.fits contrM/contrM_${datestr}.fits" C-m
+tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits" C-m
 echo "contrM/contrM_${datestr}.fits" > ./conf/conf_contrM_name.txt
 
 

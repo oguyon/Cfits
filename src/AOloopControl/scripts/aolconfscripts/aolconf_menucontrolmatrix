@@ -63,9 +63,13 @@ menuitems+=( "RM" "$menustring" )
 makemenuitemstringaolshm "contrM" "Modal Control Matrix"
 menuitems+=( "CM" "$menustring" )
 
+menuitems+=( " " " " )
+menuitems+=( "SMloadCM" "Load current Files" )
 
-
-
+menuitems+=( " " " " )
+stringcenter "BLOCK DECOMPOSITION"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " " )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
 do
@@ -189,6 +193,7 @@ menucontrolloop_default="mkModes"
 aoconflogext "START control matrix computation mkModesMODE 0"
 state="menu_mkFModes"
 ;;
+
 	mkModes1)
 mkModesMODE=1; # re-use previous DM modes
 menucontrolloop_default="mkModes"
@@ -201,7 +206,6 @@ fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nb
 echo "$fname" > ./conf/conf_DMmodes_name.txt
 ReadConfFile "DMmodes"
 menucontrolloop_default="DMmodes"
-state="menuconfigureloop"
 ;;
 	RM)
 fname=$( cat ./conf/conf_respM_name.txt )
@@ -209,7 +213,6 @@ fname=$(dialog --title "Select Resp Matrix" --stdout --fselect ${fname} $nbwline
 echo "$fname" > ./conf/conf_respM_name.txt
 ReadConfFile "respM"
 menucontrolloop_default="RM"
-state="menuconfigureloop"
 ;;
 	CM)
 fname=$( cat ./conf/conf_contrM_name.txt )
@@ -217,9 +220,44 @@ fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlin
 echo "$fname" > ./conf/conf_contrM_name.txt
 ReadConfFile "contrM"
 menucontrolloop_default="CM"
-state="menuconfigureloop"
 ;;
 
+
+SMloadCM)
+
+ReadConfFile "DMmodes"
+getshmimsize aol${LOOPNUMBER}_DMmodes
+
+ReadConfFile "respM"
+getshmimsize aol${LOOPNUMBER}_respM
+
+ReadConfFile "contrM"
+getshmimsize aol${LOOPNUMBER}_contrM
+
+NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+NBmodes=$( cat ./conf/conf_NBmodes.txt )
+for i in `seq 0 $(( $NBblocks - 1 ))`;
+do
+i2=$(printf "%02d" "$i")
+
+ReadConfFile "DMmodes${i2}"
+getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
+
+ReadConfFile "respM${i2}"
+getshmimsize aol${LOOPNUMBER}_respM${i2}
+
+ReadConfFile "contrM${i2}"
+getshmimsize aol${LOOPNUMBER}_contrM${i2}
+
+ReadConfFile "contrMc${i2}"
+getshmimsize aol${LOOPNUMBER}_contrMc${i2}
+
+ReadConfFile "contrMcact${i2}_00"
+getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
+
+done
+menucontrolloop_default="SMloadCM"
+;;
 
 
 

@@ -82,7 +82,14 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#files"><span class="toc-section-number">3.1</span> Files</a></li>
 <li><a href="#gui-description"><span class="toc-section-number">3.2</span> GUI description</a></li>
 <li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">3.3</span> Setting up the hardware interfaces</a></li>
-<li><a href="#acquiring-a-response-matrix"><span class="toc-section-number">3.4</span> Acquiring a response matrix</a></li>
+<li><a href="#acquiring-a-zonal-response-matrix"><span class="toc-section-number">3.4</span> Acquiring a zonal response matrix</a></li>
+<li><a href="#acquiring-a-modal-response-matrix-optional"><span class="toc-section-number">3.5</span> Acquiring a modal response matrix (optional)</a></li>
+<li><a href="#building-control-matrix"><span class="toc-section-number">3.6</span> Building control matrix</a></li>
+<li><a href="#running-the-loop-choosing-hardware-mode-cpugpu"><span class="toc-section-number">3.7</span> Running the loop: Choosing hardware mode (CPU/GPU)</a></li>
+</ul></li>
+<li><a href="#virtual-dm-dm-to-dm-link"><span class="toc-section-number">4</span> Virtual DM (dm-to-dm link)</a></li>
+<li><a href="#predictive-control-experimental"><span class="toc-section-number">5</span> Predictive control (experimental)</a><ul>
+<li><a href="#scripts"><span class="toc-section-number">5.1</span> Scripts</a></li>
 </ul></li>
 </ul>
 </div>
@@ -666,13 +673,318 @@ LOWFSOPDMAP              lowfsopdmap       # LOWFS defocus map (um)</code></pre>
 <li><p><strong>link to WFS camera</strong> (<code>wfs</code> to <code>Loop Configuration</code> screen). Select the WFS shared memory stream.</p></li>
 </ul>
 </div>
-<div id="acquiring-a-response-matrix" class="section level2">
-<h2><span class="header-section-number">3.4</span> Acquiring a response matrix</h2>
+<div id="acquiring-a-zonal-response-matrix" class="section level2">
+<h2><span class="header-section-number">3.4</span> Acquiring a zonal response matrix</h2>
 <ul>
 <li><p><strong>set response matrix parameters</strong> in <code>Loop Configure</code> screen: amplitude, time delay, frame averaging, excluded frames</p></li>
 <li><p><strong>set normalization and Hadmard modes</strong> in <code>Loop Configure</code> screen. Normalization should probably be set to 1.</p></li>
 <li><p><strong>start zonal response matrix acquisition</strong> (<code>zrespon</code> in <code>Loop Configure</code> screen). The process runs in tmux session aol#zrepM.</p></li>
+<li><p><strong>stop zonal response matrix acquistion</strong> (<code>zrespoff</code> in <code>Loop Configure</code> screen).</p></li>
 </ul>
+<p>The following files are then created:</p>
+<table>
+<colgroup>
+<col width="23%" />
+<col width="29%" />
+<col width="46%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Archived location</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>zrespmat.fits</strong></td>
+<td align="left">zrespM/zrespM_${datestr}.fits</td>
+<td align="left">zonal response matrix</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>wfsref0.fits</strong></td>
+<td align="left">wfsref0/wfsref0_${datestr}.fits</td>
+<td align="left">WFS reference (time-averaged image)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>wfsmap.fits</strong></td>
+<td align="left">wfsmap/wfsmap_${datestr}.fits</td>
+<td align="left">Map of WFS elements sensitivity</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>dmmap.fits</strong></td>
+<td align="left">dmmap/dmmap_${datestr}.fits</td>
+<td align="left">Map of DM elements sensitivity</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>wfsmask.fits</strong></td>
+<td align="left">wfsmask/wfsmask_${datestr}.fits</td>
+<td align="left">WFS pixel mask, derived from wfsmap</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>dmmaskRM.fits</strong></td>
+<td align="left">dmmaskRM/dmmaskRM_${datestr}.fits</td>
+<td align="left">DM actuator mask, derived from dmmap by selecting actuators with strong response</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>dmslaved.fits</strong></td>
+<td align="left">dmslaved/dmslaved_${datestr}.fits</td>
+<td align="left">slaved DM actuators: actuators near active actuators in dmmaskRM</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>dmmask.fits</strong></td>
+<td align="left">dmmask/dmmask_${datestr}.fits</td>
+<td align="left">DM mask: all actuators controlled (union of dmmaskRM and dmslaved)</td>
+</tr>
+</tbody>
+</table>
+<p>Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in &quot;conf/conf_<streamname>.txt&quot; for future loading.</p>
+<ul>
+<li><strong>Load zrespm files into shared memory</strong> (<code>SMloadzrm</code> in <code>Loop Configure</code> screen)</li>
+</ul>
+</div>
+<div id="acquiring-a-modal-response-matrix-optional" class="section level2">
+<h2><span class="header-section-number">3.5</span> Acquiring a modal response matrix (optional)</h2>
+<p>In addition to the zonal response matrix, a modal response matrix can be acquired to improve sensitivity to low-oder modes.</p>
+<p>To do so:</p>
+<ul>
+<li><p>activate <code>RMMon</code> to <strong>toggle the modal RM on</strong>.</p></li>
+<li><p><strong>select RM amplitude and maximum cycles per aperture (CPA)</strong></p></li>
+<li><p><strong>start the acquisiton</strong> (<code>LOresp_on</code>)</p></li>
+<li><p><strong>stop the acquisiton</strong> (<code>LOresp_off</code>)</p></li>
+</ul>
+<p>The following files are then created:</p>
+<table>
+<colgroup>
+<col width="23%" />
+<col width="29%" />
+<col width="46%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Archived location</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>LOrespmat.fits</strong></td>
+<td align="left">LOrespM/LOrespM_${datestr}.fits</td>
+<td align="left">Modal response matrix</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>respM_LOmodes.fits</strong></td>
+<td align="left">LODMmodes/LODMmodes_${datestr}.fits</td>
+<td align="left">Low-order modes</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>LOwfsref0.fits</strong></td>
+<td align="left">LOwfsref0/LOwfsref0_${datestr}.fits</td>
+<td align="left">WFS reference measured during LO RM acquisition</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>LOwfsmap.fits</strong></td>
+<td align="left">LOwfsmap/LOwfsmap_${datestr}.fits</td>
+<td align="left">Map of WFS elements sensitivity</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>LOdmmap.fits</strong></td>
+<td align="left">LOdmmap/LOdmmap_${datestr}.fits</td>
+<td align="left">Map of DM elements sensitivity</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>LOwfsmask.fits</strong></td>
+<td align="left">LOwfsmask/LOwfsmask_${datestr}.fits</td>
+<td align="left">WFS pixel mask, derived from wfsmap</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>LOdmmask.fits</strong></td>
+<td align="left">LOdmmask/LOdmmask_${datestr}.fits</td>
+<td align="left">DM actuator mask, derived from dmmap by selecting actuators with strong response</td>
+</tr>
+</tbody>
+</table>
+<p>Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in &quot;conf/conf_<streamname>.txt&quot; for future loading.</p>
+<ul>
+<li><strong>Load LOrespm files into shared memory</strong> (<code>SMloadmrm</code> in <code>Loop Configure</code> screen)</li>
+</ul>
+</div>
+<div id="building-control-matrix" class="section level2">
+<h2><span class="header-section-number">3.6</span> Building control matrix</h2>
+<ul>
+<li><p><strong>set SVDlimit</strong> (<code>SVDla</code> in <code>Control Matrix</code> screen). Set value is 0.1 as a starting point for a stable loop.</p></li>
+<li><p><strong>perform full CM computation</strong> (<code>mkModes0</code> in <code>Control Matrix</code> screen). Enter first the number of CPA blocks you wish to use. Computation takes a few minutes, and takes place in tmux session <code>aol#mkmodes</code>.</p></li>
+</ul>
+<p>The following files are created:</p>
+<table>
+<colgroup>
+<col width="22%" />
+<col width="32%" />
+<col width="45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Archived location</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>aolN_DMmodes</strong></td>
+<td align="left">Mmodes/DMmodes_${datestr}.fits</td>
+<td align="left">DM modes</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolN_respM</strong></td>
+<td align="left">respM/respM_${datestr}.fits</td>
+<td align="left">WFS response to DM modes</td>
+</tr>
+</tbody>
+</table>
+<p>Block-specific files:</p>
+<table>
+<colgroup>
+<col width="22%" />
+<col width="32%" />
+<col width="45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Archived location</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>aolN_DMmodesbb</strong></td>
+<td align="left">DMmodes/DMmodesbb_${datestr}.fits</td>
+<td align="left">DM modes for block bb</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolN_respMbb</strong></td>
+<td align="left">respM/respMbb_${datestr}.fits</td>
+<td align="left">WFS response to DM modes for block bb</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolN_contrMbb.fits</strong></td>
+<td align="left">contrM/contrMbb_${datestr}.fits</td>
+<td align="left">Control matrix for block bb</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolN_contrMcbb.fits</strong></td>
+<td align="left">contrMc/contrMcbb_${datestr}.fits</td>
+<td align="left">Collapsed control matrix for block bb</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>aolN_contrMcactbb.fits</strong></td>
+<td align="left">contrMcact/contrMcactbb_${datestr}.fits</td>
+<td align="left">Collabsed control matrix for block bb, only active actuators</td>
+</tr>
+</tbody>
+</table>
+<p>Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in &quot;conf/conf_<streamname>.txt&quot; for future loading.</p>
+<ul>
+<li><strong>Load CM files into shared memory</strong> (<code>SMloadCM</code> in <code>Control Matrix</code> screen)</li>
+</ul>
+</div>
+<div id="running-the-loop-choosing-hardware-mode-cpugpu" class="section level2">
+<h2><span class="header-section-number">3.7</span> Running the loop: Choosing hardware mode (CPU/GPU)</h2>
+<p>There are multiple ways to perform the computations on CPU and/or GPUs. The main 3 parameters are:</p>
+<ul>
+<li><p><strong>GPU</strong> : 0 if matrix multiplication(s) done on CPU, &gt;0 for GPU use</p></li>
+<li><p><strong>CMmode</strong> : 1 if using a combined matrix between WFS pixels and DM actuators, skipping intermediate computation of modes</p></li>
+<li><p><strong>GPUall</strong> : if using GPUall, then the WFS reference subtraction is wrapped inside the GPU matrix multiplication</p></li>
+</ul>
+<table>
+<colgroup>
+<col width="6%" />
+<col width="8%" />
+<col width="8%" />
+<col width="10%" />
+<col width="66%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">GPU</th>
+<th align="left">CMmode</th>
+<th align="left">GPUall</th>
+<th align="left">Matrix</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">&gt;0</td>
+<td align="left">ON</td>
+<td align="left">ON</td>
+<td align="left">contrMcact</td>
+<td align="left">dark-subtracted WFS frame imWFS0 is multiplited by collapsed control matrix (only active pixels). normalization and WFS reference subtraction are wrapped in this GPU operation as subtraction of pre-computed vector output. This is the fastest mode.</td>
+</tr>
+<tr class="even">
+<td align="left">&gt;0</td>
+<td align="left">ON</td>
+<td align="left">OFF</td>
+<td align="left">contrMcact</td>
+<td align="left">WFS reference is subtracted from imWFS0 in CPU, yielding imWFS2. imWFS2 is multiplied by control matrix (only active pixels) in GPU.</td>
+</tr>
+<tr class="odd">
+<td align="left">&gt;0</td>
+<td align="left">OFF</td>
+<td align="left">OFF</td>
+<td align="left">contrM</td>
+<td align="left">MWFS reference is subtracted from imWFS0 in CPU, yiedling imWFS2. imWFS2 is multiplied (GPU) by control matrix to yield mode values. Mode coefficients then multiplied (GPU) by modes.</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="left">ON</td>
+<td align="left">-</td>
+<td align="left">contrMcact</td>
+<td align="left">imWFS2 is multiplied by control matrix (only active pixels) in CPU</td>
+</tr>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">OFF</td>
+<td align="left">-</td>
+<td align="left">contrM</td>
+<td align="left">imWFS2 multiplied by modal control matrix</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="virtual-dm-dm-to-dm-link" class="section level1">
+<h1><span class="header-section-number">4</span> Virtual DM (dm-to-dm link)</h1>
+<p>In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual loop.</p>
+</div>
+<div id="predictive-control-experimental" class="section level1">
+<h1><span class="header-section-number">5</span> Predictive control (experimental)</h1>
+<div id="scripts" class="section level2">
+<h2><span class="header-section-number">5.1</span> Scripts</h2>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="66%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">File</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>aolARPF</strong></td>
+<td align="left">find auto-regressive predictive filter</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>aolARPFblock</strong></td>
+<td align="left">AO find optimal AR linear predictive filter</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </body>

@@ -987,8 +987,8 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_camimage_extract2D_sharedmem_loop_cli;
     strcpy(data.cmd[data.NBcmd].info,"crop shared mem image");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image>");
-    strcpy(data.cmd[data.NBcmd].example,"cropshim imin imout");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output image> <sizex> <sizey> <xstart> <ystart>");
+    strcpy(data.cmd[data.NBcmd].example,"cropshim imin imout 32 32 153 201");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
     data.NBcmd++;
 
@@ -1663,6 +1663,7 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
 
 
 
+
 // make low order DM modes
 long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode)
 {
@@ -2188,6 +2189,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 	int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
 	int COMPUTE_FULL_CMAT = 0;
+
+	long IDcmat, IDcmatall;
 
 
     MODAL = 0;
@@ -3733,6 +3736,29 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
+
+        cnt = 0;
+        for(mblock=0; mblock<NBmblock; mblock++)
+            cnt += MBLOCK_NBmode[mblock];
+        IDcmatall = create_3Dimage_ID("cmatall", wfsxsize, wfsysize, cnt);
+        cnt = 0;
+        for(mblock=0; mblock<NBmblock; mblock++)
+        {
+            sprintf(imname, "cmat_%02ld", mblock);
+            IDcmat = image_ID(imname);
+            for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+            {
+                for(ii=0; ii<wfssize; ii++)
+                    data.image[IDcmatall].array.F[cnt*wfssize+ii] = data.image[IDcmat].array.F[m*wfssize+ii];
+                cnt++;
+            }
+        }
+        save_fits("cmatall", "!./mkmodestmp/cmatall.fits");
+
+    
+    
+    
+    
     
     if(COMPUTE_FULL_CMAT == 1)
     {
@@ -6168,53 +6194,84 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)
 {
+	long IDcontrM0; // local storage
     long IDcontrMc0; // local storage
     long IDcontrMcact0; // local storage
     long ii, kk;
     char name[200];
     char name1[200];
+    char name2[200];
+    char name3[200];
     long ID;
     double eps=1e-6;
 
+	long NBmodes;
+	long m, m1;
+	long sizeWFS;
+	
+	
+	NBmodes = 0;
+	for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
+		NBmodes += AOconf[loop].NBmodes_block[kk];
+		
+	
 
     sprintf(name, "aol%ld_gainb", loop);
     aoconfID_gainb = image_ID(name);
     if((blocknb<AOconf[loop].DMmodesNBblock)&&(blocknb>-1))
         data.image[aoconfID_gainb].array.F[blocknb] = gain;
 
-
+	sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
 
     if(add==1)
     {
-        IDcontrMc0 = image_ID("contrMc0");
+		IDcontrM0 = image_ID("contrM0");
+        if(IDcontrM0==-1)
+            IDcontrM0 = create_3Dimage_ID("contrM0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBmodes);
+		
+		IDcontrMc0 = image_ID("contrMc0");
         if(IDcontrMc0==-1)
             IDcontrMc0 = create_3Dimage_ID("contrMc0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
+
 
         IDcontrMcact0 = image_ID("contrMcact0");
         if(IDcontrMcact0==-1)
             IDcontrMcact0 = create_2Dimage_ID("contrMcact0", AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
 
+		arith_image_zero("contrM0");
         arith_image_zero("contrMc0");
         arith_image_zero("contrMcact0");
 
-
+		m = 0;
         for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
         {
-            if(data.image[aoconfID_gainb].array.F[kk]>eps)
-            {
-                sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
-                sprintf(name1, "aol%ld_contrMcact%02ld_00", loop, kk);
+				sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
+                sprintf(name2, "aol%ld_contrMc%02ld", loop, kk);
+                sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk);
 
                 printf("adding %ld / %ld  (%g)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
-
-                ID = image_ID(name);
+				
+				ID = image_ID(name1);
+				printf("updating %ld modes\n", data.image[ID].md[0].size[2]);
+		
+				for(m1=0;m1<data.image[ID].md[0].size[2];m1++)
+					{
+						for(ii=0;ii<sizeWFS;ii++)
+							data.image[IDcontrM0].array.F[m*sizeWFS+ii] = data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[m1*sizeWFS+ii];
+						m++;
+					}
+			
+			if(data.image[aoconfID_gainb].array.F[kk]>eps)
+            {
+				sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
+                ID = image_ID(name2);
                 # ifdef _OPENMP
                 #pragma omp parallel for 
                 # endif
                 for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
                     data.image[IDcontrMc0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
 
-                ID = image_ID(name1);
+                ID = image_ID(name3);
                 # ifdef _OPENMP
                 #pragma omp parallel for 
                 # endif
@@ -6232,11 +6289,23 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
 
 
         // for GPU mode
-        printf("UPDATING Mc matrix (GPU mode)\n");
+        printf("UPDATING Mcact matrix (GPU mode)\n");
         data.image[aoconfID_contrMcact[0]].md[0].write = 1;
         memcpy(data.image[aoconfID_contrMcact[0]].array.F, data.image[IDcontrMcact0].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
         data.image[aoconfID_contrMcact[0]].md[0].cnt0++;
         data.image[aoconfID_contrMcact[0]].md[0].write = 0;
+
+       // 
+        printf("UPDATING M matrix (ID = %ld)  %ld modes %ld pixel   name = %s\n", aoconfID_contrM, NBmodes, sizeWFS, data.image[aoconfID_contrM].md[0].name);
+        data.image[aoconfID_contrM].md[0].write = 1;
+        memcpy(data.image[aoconfID_contrM].array.F, data.image[IDcontrM0].array.F, sizeof(float)*sizeWFS*NBmodes);
+        data.image[aoconfID_contrM].md[0].cnt0++;
+        data.image[aoconfID_contrM].md[0].write = 0;
+
+
+
+
+
 
         initcontrMcact_GPU[0] = 0;
     }
