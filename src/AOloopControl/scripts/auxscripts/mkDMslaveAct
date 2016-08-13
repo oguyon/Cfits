@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_ARGS=2
+EXPECTED_ARGS=3
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
@@ -11,8 +11,9 @@ then
   echo
   echo "  INPUT <dmmap>      : DM response map"
   echo "  INPUT <lim>        : limit value (usually 0.7)"
+  echo "  INPUT <gauss>      : edge blurr (usually 1.0)"
   echo
-  echo "EXAMPLE: $0 dmmap 0.7"
+  echo "EXAMPLE: $0 dmmap 0.7 1.0"
   echo
   echo "  OUTPUT: dmslaved.fits"
   echo
@@ -30,6 +31,7 @@ dmmap1=dmmap/dmmapg
 a=$2
 b=$2*0.99
 imtrunc dmmap1 0.0 a dmmap2
+savefits dmmap2 "!_test_dmmap2.fits"
 dmmap3=dmmap2/b
 dmmap4=floor(dmmap3)
 gaussfilt dmmap4 dmmap4g 1.0 2
@@ -60,7 +62,12 @@ imtrunc dmmRMg1 0.0 1.01 ma0
 ma1=floor(ma0)
 #savefits ma1 "!_test_ma1.fits"
 mm8=(mm7+(mm7-1.0)*(dmmRM-1.0))*ma1
-savefits mm8 "!dmslaved.fits"
+
+gaussfilt mm8 mm8g $3 5
+mm9=5.0*mm8g
+imtrunc mm9 0.0 1.1 mm10
+mm11=floor(mm10)
+savefits mm11 "!dmslaved.fits"
 exit
 EOF
 

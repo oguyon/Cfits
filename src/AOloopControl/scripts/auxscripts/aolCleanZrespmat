@@ -46,7 +46,9 @@ listim
 exit
 EOF
 
-./auxscripts/mkDMslaveAct dmmap.fits 0.7
+
+./auxscripts/mkDMslaveAct dmmap.fits 0.7 1.0
+
 
 Cfits << EOF
 loadfits dmmaskRM.fits dmmRM

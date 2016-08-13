@@ -1359,7 +1359,7 @@ state="menuconfigureloop"
 	dmSlM)
 case $amode in
         0)
-./auxscripts/mkDMslaveAct ./conf/aol${LOOPNUMBER}_dmmap.fits 0.6
+./auxscripts/mkDMslaveAct ./conf/aol${LOOPNUMBER}_dmmap.fits 0.6 1.0
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 fname="dmslaved/dmslaved_${datestr}.fits"
 mkdir -p dmslaved
