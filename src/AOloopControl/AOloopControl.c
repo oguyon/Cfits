@@ -9797,7 +9797,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
     int status;
     float alpha = 1.0;
     float beta = 0.0;
-	int initWFSref;
+	int initWFSref = 1;
 	int orientation = 1;
 	int use_sem = 1;
 	long IDout;
