@@ -126,9 +126,9 @@ file="./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 logwfsimstat=$( cat $file )
 if [ "${logwfsimstat}" = "0" ];
 then
-menuitems+=( "lwfsim1" "START logging $wfsimcam" )
+menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim" )
 else
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging $wfsimcam\Zn" )
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn" )
 fi
 
 
