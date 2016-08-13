@@ -444,11 +444,11 @@ menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
 file="./status/stat_procWFSres2refON.txt"
-procWFSres2refONstat=$( cat ./status/stat_procWFSres2refON.txt )
+procWFSres2refONstat=$( cat $file )
 if [[ -f "$file" && ( "$procWFSres2refONstat" = " ON" || "$procWFSres2refONstat" = "OFF" ) ]]; then
 echo "OK"
 else
-echo "OFF" > ./status/stat_procWFSres2refONstat.txt
+echo "OFF" > $file
 procWFSres2refONstat="OFF"
 fi
 
