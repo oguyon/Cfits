@@ -76,7 +76,7 @@ savedir=$( cat ./conf/conf_savedir_name.txt )
 datestr=`date -u +%Y%m%d`
 menuitems+=( "sdir" "[${savedir}] Save directory prefix -> $savedir/$datestr")
 
-file="./status/stat_logwfsim.txt"
+file="./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 logwfsimstat=$( cat $file )
 if [[ -f "$file" && ( "$logwfsimstat" = "0" || "$logwfsimstat" = "1" ) ]]; then
 echo "OK"
@@ -122,7 +122,7 @@ menuitems+=( "logOFF"       " STOP  logging ALL telemetry")
 menuitems+=( "logKILL"      " KILL  all telemetry logging processes")
 menuitems+=( " " " " )
 
-file="./status/stat_log_wfsim.txt"
+file="./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 logwfsimstat=$( cat $file )
 if [ "${logwfsimstat}" = "0" ];
 then
@@ -391,13 +391,13 @@ kill_Telemetrylog_all
 
 
     lwfsim1)
-startstreamlog ${wfsimcam}
-echo "1" > "./status/stat_log_wfsim.txt"
+startstreamlog aol${LOOPNUMBER}_wfsim
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 menurecord_default="lwfsim0"
 ;;
     lwfsim0)
-stopstreamlog ${wfsimcam}
-echo "0" > "./status/stat_log_wfsim.txt"
+stopstreamlog aol${LOOPNUMBER}_wfsim
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 menurecord_default="lwfsim1"
 ;;
 
