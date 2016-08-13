@@ -49,8 +49,11 @@ function start_Telemetrylog_all {
 
 	
 aoconflog "start ALL telemetry logging"
+
 startstreamlog aol${LOOPNUMBER}_wfsim
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
+startstreamlog aol${LOOPNUMBER}_wfsref
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 startstreamlog dm${DMindex}disp
 echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
 startstreamlog dm${DMindex}disp00
@@ -92,6 +95,8 @@ function stop_Telemetrylog_all {
 aoconflog "stop ALL telemetry logging"
 stopstreamlog aol${LOOPNUMBER}_wfsim
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
+stopstreamlog aol${LOOPNUMBER}_wfsref
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 stopstreamlog dm${DMindex}disp
 echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
 stopstreamlog dm${DMindex}disp00
@@ -134,6 +139,8 @@ function kill_Telemetrylog_all {
 aoconflog "kill ALL telemetry logging"
 killstreamlog aol${LOOPNUMBER}_wfsim
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
+killstreamlog aol${LOOPNUMBER}_wfsref
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 killstreamlog dm${DMindex}disp
 echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
 killstreamlog dm${DMindex}disp00

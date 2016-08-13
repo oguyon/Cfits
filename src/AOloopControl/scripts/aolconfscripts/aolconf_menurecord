@@ -85,6 +85,16 @@ echo "0" > $file
 fi
 
 
+file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+logwfsrefstat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsrefstat" = "0" || "$logwfsrefstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+fi
+
+
+
 file="./conf/conf_logmode.txt"
 logMode=$( cat $file )
 if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
@@ -131,6 +141,17 @@ else
 menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn" )
 fi
 
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+logwfsrefstat=$( cat $file )
+if [ "${logwfsrefstat}" = "0" ];
+then
+menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref" )
+else
+menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn" )
+fi
 
 
 file="./status/stat_log_dm${DMindex}disp.txt"
@@ -399,6 +420,18 @@ menurecord_default="lwfsim0"
 stopstreamlog aol${LOOPNUMBER}_wfsim
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 menurecord_default="lwfsim1"
+;;
+
+
+    lwfsref1)
+startstreamlog aol${LOOPNUMBER}_wfsref
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+menurecord_default="lwfsref0"
+;;
+    lwfsref0)
+stopstreamlog aol${LOOPNUMBER}_wfsref
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+menurecord_default="lwfsref1"
 ;;
 
 
