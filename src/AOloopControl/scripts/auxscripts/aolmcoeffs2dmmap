@@ -51,7 +51,7 @@ OFFLOADMODE=0
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get unrecognized option code to work.
 
-while getopts :ho:g: FLAG; do
+while getopts :ho:g:f FLAG; do
   case $FLAG in
     o) # set output correction channel
     OUTCNAME=$OPTARG
