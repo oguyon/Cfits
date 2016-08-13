@@ -64,7 +64,7 @@ ma1=floor(ma0)
 mm8=(mm7+(mm7-1.0)*(dmmRM-1.0))*ma1
 
 gaussfilt mm8 mm8g $3 5
-mm9=5.0*mm8g
+mm9=3.0*mm8g
 imtrunc mm9 0.0 1.1 mm10
 mm11=floor(mm10)
 savefits mm11 "!dmslaved.fits"
