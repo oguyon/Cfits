@@ -449,7 +449,6 @@ if [[ -f "$file" && ( "$procWFSres2refONstat" = " ON" || "$procWFSres2refONstat"
 echo "OK"
 else
 echo "OFF" > $file 
-echo "$procWFSres2refONstat" > test_l452
 procWFSres2refONstat="OFF"
 fi
 
