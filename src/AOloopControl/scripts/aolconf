@@ -271,8 +271,8 @@ trap "rm -f $tempfile" 0 1 2 5 15
 
 echo "FUNCTIONS..."
 
-. ./aolconf_logfuncs
-. ./aolconf_DMfuncs
+. ./aolconfscripts/aolconf_logfuncs
+. ./aolconfscripts/aolconf_DMfuncs
 
 
 
