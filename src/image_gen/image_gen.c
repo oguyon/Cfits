@@ -183,6 +183,18 @@ int make_rndgauss_cli()
 }
 
 
+int image_gen_im2coord_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
+    {
+		image_gen_im2coord(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string); 
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
 //long make_rnd(char *ID_name, long l1, long l2, char *options)
 
 
@@ -313,7 +325,16 @@ int init_image_gen()
   strcpy(data.cmd[data.NBcmd].Ccall,"long make_rnd(char *ID_name, long l1, long l2, char *options)");
   data.NBcmd++;
 
-
+strcpy(data.cmd[data.NBcmd].key,"im2coord");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = image_gen_im2coord_cli;
+  strcpy(data.cmd[data.NBcmd].info,"make coordinate image");
+  strcpy(data.cmd[data.NBcmd].syntax,"<in> <axis> <out>");
+  strcpy(data.cmd[data.NBcmd].example,"im2coord imin 1 imy");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name)");
+  data.NBcmd++;
+  
+  
 //long make_rnd(char *ID_name, long l1, long l2, char *options)
 
  // add atexit functions here
@@ -2343,6 +2364,105 @@ long make_tile(char *IDin_name, long size, char *IDout_name)
 	jj0 = jj%sizey0;
 	data.image[IDout].array.F[jj*size+ii] = data.image[IDin].array.F[jj0*sizex0+ii0];
       }
+
+  return(IDout);
+}
+
+
+
+// make image that is coordinate of input
+// for example, if axis = 0
+// value = 1.0 x ii 
+long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name)
+{
+	long naxis;
+	int OK = 1;
+	long IDin, IDout;
+	long xsize, ysize, zsize;
+	long ii, jj, kk;
+
+
+	IDin = image_ID(IDin_name);
+	naxis = data.image[IDin].md[0].naxis;
+  
+  if(axis>naxis-1)
+	{
+		printf("Image has only %d axis, cannot access axis %d\n", naxis, axis);
+		OK = 0;
+	}
+	
+	if(naxis>3)
+		{
+			printf("naxis should be 3 or less\n");
+			OK = 0;
+		}
+		
+	if(OK==1)
+	{	
+
+		if(naxis==1)
+		{
+			printf("naxis = 1\n");
+			fflush(stdout);
+			xsize = data.image[IDin].md[0].size[0];
+			IDout = create_1Dimage_ID(IDout_name, xsize);
+			for(ii=0;ii<xsize;ii++)
+				data.image[IDout].array.F[ii] = 1.0*ii;
+		}
+		
+		if(naxis==2)
+			{
+			printf("naxis = 2\n");
+			fflush(stdout);
+				xsize = data.image[IDin].md[0].size[0];
+				ysize = data.image[IDin].md[0].size[1];
+				IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
+				if(axis==0)
+					{
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<ysize;jj++)
+								data.image[IDout].array.F[jj*xsize+ii] = 1.0*ii;
+					}
+				if(axis==1)
+					{
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<ysize;jj++)
+								data.image[IDout].array.F[jj*xsize+ii] = 1.0*jj;
+					}
+			}
+		
+		if(naxis==3)
+			{
+			printf("naxis = 3\n");
+			fflush(stdout);
+				xsize = data.image[IDin].md[0].size[0];
+				ysize = data.image[IDin].md[0].size[1];
+				zsize = data.image[IDin].md[0].size[2];
+				IDout = create_3Dimage_ID(IDout_name, xsize, ysize, zsize);
+				if(axis==0)
+					{
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<ysize;jj++)
+								for(kk=0;kk<zsize;kk++)
+									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*ii;
+					}
+				if(axis==1)
+					{
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<ysize;jj++)
+								for(kk=0;kk<zsize;kk++)
+									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*jj;
+					}
+				if(axis==2)
+					{
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<xsize;jj++)
+								for(kk=0;kk<zsize;kk++)
+									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*kk;
+					}
+			}
+	}	
+	
 
   return(IDout);
 }

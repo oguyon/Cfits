@@ -536,9 +536,9 @@ int AOloopControl_CompModes_loop_cli()
 
 int AOloopControl_GPUmodecoeffs2dm_filt_loop_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)==0)
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
 		{
-			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
+			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
 		return 0;
 		}
 	else
@@ -1177,9 +1177,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_GPUmodecoeffs2dm_filt_loop_cli;
     strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map, includes filtering");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <modes max val> <DMmodes> <sem trigg number> <out> <gain> <GPUindex> <loopnb>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval aolmodevalmax DMmodesC 2 dmmapc 0.2 1 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop)");
     data.NBcmd++;
 
 
@@ -2486,36 +2486,69 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 					while(pixcnt>0)
 					{
 					pixcnt = 0;
-					for(ii=1;ii<msizex-1;ii++)
-						for(jj=1;jj<msizey-1;jj++)
+					for(ii=0;ii<msizex;ii++)
+						for(jj=0;jj<msizey;jj++)
 							{
 								if((data.image[IDtmp1].array.F[jj*msizex+ii]<0.5) && (data.image[IDslaved].array.F[jj*msizex+ii]>0.5))
 								{
-									pixcnt ++; 
-									vxp = data.image[IDtmp].array.F[jj*msizex+(ii+1)];
-									cxp = data.image[IDtmp1].array.F[jj*msizex+(ii+1)];
+									pixcnt ++;
+									if(ii+1<msizex) 
+									{
+										vxp = data.image[IDtmp].array.F[jj*msizex+(ii+1)];
+										cxp = data.image[IDtmp1].array.F[jj*msizex+(ii+1)];
+									}
+									else
+									{
+										vxp = 0.0;
+										cxp = 0.0;
+									}
+								
+									if(ii>0)
+									{
+										vxm = data.image[IDtmp].array.F[jj*msizex+(ii-1)];
+										cxm = data.image[IDtmp1].array.F[jj*msizex+(ii-1)];
+									}
+									else
+									{
+										vxm = 0.0;
+										cxm = 0.0;
+									}
 
-									vxm = data.image[IDtmp].array.F[jj*msizex+(ii-1)];
-									cxm = data.image[IDtmp1].array.F[jj*msizex+(ii-1)];
+									if(jj+1<msizey)
+									{
+										vyp = data.image[IDtmp].array.F[(jj+1)*msizex+ii];
+										cyp = data.image[IDtmp1].array.F[(jj+1)*msizex+ii];
+									}
+									else
+									{
+										vyp = 0.0;
+										cyp = 0.0;
+									}
 
-									vyp = data.image[IDtmp].array.F[(jj+1)*msizex+ii];
-									cyp = data.image[IDtmp1].array.F[(jj+1)*msizex+ii];
-
-									vym = data.image[IDtmp].array.F[(jj-1)*msizex+ii];
-									cym = data.image[IDtmp1].array.F[(jj-1)*msizex+ii];
+									if(jj>0)
+									{
+										vym = data.image[IDtmp].array.F[(jj-1)*msizex+ii];
+										cym = data.image[IDtmp1].array.F[(jj-1)*msizex+ii];
+									}
+									else
+									{
+										vym = 0.0;
+										cym = 0.0;
+									}
 
 									ctot = (cxp+cxm+cyp+cym);
 									
-									if(ctot>0.5)
+									if(ctot>0.1)
 										{
-											data.image[IDtmp].array.F[jj*msizex+ii] = (vxp*cxp+vxm*cxm+vyp*cyp+vym*cym)/ctot;
-											data.image[IDtmp2].array.F[jj*msizex+ii] = 1.0;
+											data.image[IDtmp].array.F[jj*msizex+ii] = 0.8*data.image[IDtmp].array.F[jj*msizex+ii] + 0.2*(vxp*cxp+vxm*cxm+vyp*cyp+vym*cym)/ctot;
+											data.image[IDtmp2].array.F[jj*msizex+ii] = 0.99*data.image[IDtmp2].array.F[jj*msizex+ii]+0.01;
 										}
 								}
 							}
 						for(ii=0; ii<msizex*msizey; ii++)
 							data.image[IDtmp1].array.F[ii] = data.image[IDtmp2].array.F[ii];						
 						}
+						
 					for(ii=0; ii<msizex*msizey; ii++)
 							data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[ii];		
 					
@@ -2543,6 +2576,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 					
                 
                 }
+                save_fits("_tmpcoeff1", "!_tmpcoeff1.fits");
+                save_fits("_tmpcoeff2", "!_tmpcoeff2.fits");
+                save_fits("dmslaved", "!_dmslaved.fits");
                 
                 delete_image_ID("_tmpcoeff1"); 
                 delete_image_ID("_tmpcoeff2");     
@@ -2585,6 +2621,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("DONE SAVING\n");
 
         // time : 0:04
+
+
 
 
         /// COMPUTE WFS RESPONSE TO MODES -> fmodesWFS00all.fits
@@ -9745,42 +9783,78 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 
 //
 // compute DM map from mode values
+// out_name is the correction to be ADDED to the DM
 //
-int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex)
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop)
 {
 	long IDmodecoeffs;
+	long IDmodevalmax;
 	int GPUcnt, k;
 	int *GPUsetM;
     int GPUstatus[100];
     int status;
-    float alpha, beta;
+    float alpha = 1.0;
+    float beta = 0.0;
 	int initWFSref;
 	int orientation = 1;
 	int use_sem = 1;
-
+	long IDout;
 	int write_timing = 0;
+	long NBmodes, m;
+
+	float x, x2, x4, x8;
+	float gamma;
+	
+	long *sizearray;
+	char imnamecorr[200];
+	long IDmodesC;
 
 	GPUcnt = 1;
+    GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
 	for(k=0;k<GPUcnt;k++)
         GPUsetM[k] = k+GPUindex;
 	
-	
-
+	IDout = image_ID(out_name);
 	IDmodecoeffs = image_ID(modecoeffs_name);
+	IDmodevalmax = image_ID(modevalmax_name);
+
+	NBmodes = data.image[IDmodecoeffs].md[0].size[0];
 
 
-		#ifdef HAVE_CUDA
-        GPU_loop_MultMat_setup(3, DMmodes_name, modecoeffs_name, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sprintf(imnamecorr, "aol%ld_mode_limcorr", loop);
+	sizearray[0] = NBmodes;
+	sizearray[1] = 1;
+	IDmodesC = create_image_ID(imnamecorr, 2, sizearray, FLOAT, 1, 0);
+	COREMOD_MEMORY_image_set_createsem(imnamecorr, 10);
+	free(sizearray);
 
+
+
+	#ifdef HAVE_CUDA
+    GPU_loop_MultMat_setup(3, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
+
+	
 	while(1==1)
         {
-			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);
+			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
+
+			// FILTER MODES
+			for(m=0;m<NBmodes;m++)
+				{
+					x = data.image[IDmodecoeffs].array.F[m]/data.image[IDmodevalmax].array.F[m];
+					x2 = x*x;
+					x4 = x2*x2;
+					x8 = x4*x4;
+					data.image[IDmodesC].array.F[m] = gain * (x/pow((x8+1.0), 1.0/8.0) * data.image[IDmodevalmax].array.F[m] - data.image[IDmodecoeffs].array.F[m]);
+				}
+				
 			GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], alpha, beta, write_timing);
 		}
+	#endif
 
-#endif
 
- 
+	
 	free(GPUsetM);
 
 	return(0);
@@ -11144,10 +11218,11 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDM_C].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
 			{
-				data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] + modegain[m]*data.image[IDmodeval].array.F[m]);			
+				data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);			
 				data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = data.image[IDmodevalDMnow].array.F[m];
 			}
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
+		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
 		data.image[IDmodevalDM_C].md[0].cnt1 = modevalDMindex;
 		data.image[IDmodevalDM_C].md[0].cnt0++;
 		data.image[IDmodevalDM_C].md[0].write = 0;

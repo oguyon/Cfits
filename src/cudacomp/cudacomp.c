@@ -616,10 +616,15 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].Nsize[gpumatmultconf[index].NBstreams-1] = gpumatmultconf[index].N-gpumatmultconf[index].Noffset[gpumatmultconf[index].NBstreams-1];
      
      
-        printf("Allocating physical GPUs to streams\n");
+        printf("Allocating physical GPU(s) to stream(s) (index %d, NBGPU(s) = %d)\n", index, NBGPUs);
+        printf("%d stream(s)\n", gpumatmultconf[index].NBstreams);
         fflush(stdout);
      
         gpumatmultconf[index].GPUdevice = (int*) malloc(sizeof(int)*NBGPUs);
+            
+        printf("- - - - - - - - -\n");
+        fflush(stdout);    
+        
         for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
             printf("stream %2d  ->  GPU device %2d\n", device, GPUdevice[device]);
@@ -628,13 +633,14 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         }
 
         printf("-----------------------------------------------------\n");
+        fflush(stdout);
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
         {
             printf("DEVICE %2d  [%2d]:  %5d -> %5d  (%d)\n", device, gpumatmultconf[index].GPUdevice[device], gpumatmultconf[index].Noffset[device], gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device], gpumatmultconf[index].Nsize[device]);
             fflush(stdout);
         }
         printf("-----------------------------------------------------\n");
-
+        fflush(stdout);
 
 
 
@@ -971,7 +977,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     data.image[IDtiming].array.F[*status] = tdiffv;
     }
     
-    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+    data.image[gpumatmultconf[index].IDout].md[0].write = 1;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
         gpumatmultconf[index].dmVecTMP[m] = 0.0; 
@@ -983,8 +989,11 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
-  
-    if(data.image[gpumatmultconf[index].IDout].sem > 0)
+ 
+	COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+    
+    
+ /*  if(data.image[gpumatmultconf[index].IDout].sem > 0)
     {
         sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
         if(semval<SEMAPHORE_MAXVAL)
@@ -998,8 +1007,9 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
         }
+*/
 
-
+	
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 

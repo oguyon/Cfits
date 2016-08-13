@@ -22,13 +22,61 @@ echo "  Computes DM map from modal loop coefficients"
 echo "  Requires Open Loop modes extraction process to be running"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr 0)"
-echo "     $0 <GPU index>"
+echo "     $0 [-h -o <outputstream>] <GPU index>"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr 0)"
 echo "     <GPUindex>     GPU index"
 echo ""
 echo "------------------------------------------------------------------------"
 }
+
+
+OUTMODE=0 # default output : outDM_map
+gain=0.2
+
+
+# ================= OPTIONS =============================
+
+#Parse command line flags
+#If an option should be followed by an argument, it should be followed by a ":".
+#Notice there is no ":" after "h". The leading ":" suppresses error messages from
+#getopts. This is required to get unrecognized option code to work.
+
+while getopts :ho:g: FLAG; do
+  case $FLAG in
+    o) # set output correction channel
+    OUTCNAME=$OPTARG
+    OUTMODE=1
+    ;;
+    h)  #show help
+      printHELP
+      exit
+      ;;
+    g)  #show help
+      gain="$OPTARG"
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      #If you just want to display a simple error message instead of the full
+      #help, remove the 2 lines above and uncomment the 2 lines below.
+      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
+      #exit 2
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
+
+### End getopts code ###
+
+
+
+
+
+
+
+
 
 
 
@@ -49,12 +97,32 @@ loopnb=$(cat LOOPNUMBER)
 
 
 
-# this version does not use masking (yet)
+if [ "$OUTMODE" = "0" ]; then
 
 Cfits -n $pname << EOF
 readshmim aol${loopnb}_modeval_dm_now
+readshmim aol${loopnb}_DMmode_LIMIT
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
-aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 outDM_map $1
+readshmim aol${loopnb}_dmC
+im1=0+aol${loopnb}_dmC
+cpsh im1 outDM_map
+readshmim outDM_map
+listim
+aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 outDM_map $gain $1 ${loopnb}
 exit
 EOF
 
+else
+
+Cfits -n $pname << EOF
+readshmim aol${loopnb}_modeval_dm_now
+readshmim aol${loopnb}_DMmode_LIMIT
+loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
+readshmim aol${loopnb}_dmC
+readshmim ${OUTCNAME}
+aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb}
+exit
+EOF
+
+
+fi

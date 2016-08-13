@@ -59,4 +59,6 @@ long make_2Dgridpix(char *IDname, long xsize, long ysize, double pitchx, double 
 
 long make_tile(char *IDin_name, long size, char *IDout_name);
 
+long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name);
+
 #endif
