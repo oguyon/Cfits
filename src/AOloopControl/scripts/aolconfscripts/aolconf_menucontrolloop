@@ -1180,6 +1180,9 @@ aoconflogext "aolstep $loopNBstep"
 tmuxname="aol${LOOPNUMBER}wfsresoffl"
 file="./status/stat_procWFSres2refON.txt"
 echo "ON" > $file
+echo "----------------"
+cat $file
+sleep 3
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1" C-m
 menucontrolloop_default="wresolOFF"
