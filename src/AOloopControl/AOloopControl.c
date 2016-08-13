@@ -9849,14 +9849,11 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 		IDc = image_ID(imnamedmC);
 		dmxsize = data.image[IDc].md[0].size[0];
 		dmxsize = data.image[IDc].md[0].size[1];
-	}
+	} 
 	
 	
 	while(1==1)
-        {
-			printf("waiting on %s (%d)   - %d\n", modecoeffs_name, semTrigg, offloadMode);
-			fflush(stdout);
-			
+        {	
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
 
 			// FILTER MODES
@@ -9874,9 +9871,6 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 			
 			if(offloadMode==1) // offload to dmC
 				{
-					printf("offloading to dmC\n");
-					fflush(stdout);
-					
 					data.image[IDc].md[0].write = 1;
 					for(ii=0;ii<dmxsize*dmysize;ii++)
 						data.image[IDc].array.F[ii] -= data.image[IDout].array.F[ii];					
