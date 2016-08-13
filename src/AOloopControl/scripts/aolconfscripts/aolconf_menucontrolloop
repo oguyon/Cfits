@@ -1020,7 +1020,7 @@ tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
 fi
 
-if [ "$procWFSres2refONstat" = "ON" ]; then
+if [ "$procWFSres2refONstat" = " ON" ]; then
 tmuxname="aol${LOOPNUMBER}wfsresoffl"
 file="./status/stat_procWFSres2refON.txt"
 echo "OFF" > $file
@@ -1180,7 +1180,7 @@ aoconflogext "aolstep $loopNBstep"
 # WFS residual offload to wfsref
 tmuxname="aol${LOOPNUMBER}wfsresoffl"
 file="./status/stat_procWFSres2refON.txt"
-echo "ON" > $file
+echo " ON" > $file
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1" C-m
 menucontrolloop_default="wresolOFF"
