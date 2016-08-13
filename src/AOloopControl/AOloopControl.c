@@ -9855,7 +9855,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 	while(1==1)
         {
 			printf("waiting on %s (%d)\n", modecoeffs_name, semTrigg);
-			fflush(Stdout);
+			fflush(stdout);
 			
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
 
