@@ -9871,6 +9871,8 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 			
 			if(offloadMode==1) // offload to dmC
 				{
+					printf("offloading to dmC\n");
+					fflush(stdout);
 					
 					data.image[IDc].md[0].write = 1;
 					for(ii=0;ii<dmxsize*dmysize;ii++)
