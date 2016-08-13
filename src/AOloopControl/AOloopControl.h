@@ -172,7 +172,7 @@ int ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, floa
 long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* IDwfsmask_name, char *IDdmmask_name, char *IDcmatc_name, char *IDcmatc_active_name);
 int AOcompute(long loop, int normalize);
 int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name);
-int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop);
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, int offloadMode);
  
 long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr);
 double AOloopControl_testPredictiveFilter(char *IDtrace_name, long mode, double delayfr, long filtsize, char *IDfilt_name, double SVDeps);

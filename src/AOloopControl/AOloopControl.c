@@ -536,9 +536,9 @@ int AOloopControl_CompModes_loop_cli()
 
 int AOloopControl_GPUmodecoeffs2dm_filt_loop_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0)
 		{
-			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
+			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
 		return 0;
 		}
 	else
@@ -1177,9 +1177,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_GPUmodecoeffs2dm_filt_loop_cli;
     strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map, includes filtering");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <modes max val> <DMmodes> <sem trigg number> <out> <gain> <GPUindex> <loopnb>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval aolmodevalmax DMmodesC 2 dmmapc 0.2 1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <modes max val> <DMmodes> <sem trigg number> <out> <gain> <GPUindex> <loopnb> <offloadMode>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval aolmodevalmax DMmodesC 2 dmmapc 0.2 1 2 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, long offloadMode)");
     data.NBcmd++;
 
 
@@ -9785,7 +9785,9 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 // compute DM map from mode values
 // out_name is the correction to be ADDED to the DM
 //
-int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop)
+// if offloadMode = 1, apply correction to aol#_dmC
+//
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, int offloadMode)
 {
 	long IDmodecoeffs;
 	long IDmodevalmax;
@@ -9808,6 +9810,13 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 	long *sizearray;
 	char imnamecorr[200];
 	long IDmodesC;
+
+	char imnamedmC[200];
+	long IDc;
+	long dmxsize, dmysize;
+	long ii;
+
+
 
 	GPUcnt = 1;
     GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
@@ -9834,6 +9843,14 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 	#ifdef HAVE_CUDA
     GPU_loop_MultMat_setup(3, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
 
+	if(offloadMode==1)
+	{
+		sprintf(imnamedmC, "aol%ld_dmC", loop);
+		IDc = image_ID(imnamedmC);
+		dmxsize = data.image[IDc].md[0].size[0];
+		dmxsize = data.image[IDc].md[0].size[1];
+	}
+	
 	
 	while(1==1)
         {
@@ -9850,6 +9867,14 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 				}
 				
 			GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], alpha, beta, write_timing);
+			
+			
+			if(offloadMode==1) // offload to dmC
+				{
+					
+					for(ii=0;ii<dmxsize*dmysize;ii++)
+						data.image[IDc].array.F[ii] -= data.image[IDout].array.F[ii];					
+				}			
 		}
 	#endif
 
