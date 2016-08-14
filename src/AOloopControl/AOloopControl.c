@@ -7510,6 +7510,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     sizearray = (long*) malloc(sizeof(long)*3);
 
 
+	exit(0);
+
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
