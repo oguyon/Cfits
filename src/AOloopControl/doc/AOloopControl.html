@@ -90,8 +90,11 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="#offsetting"><span class="toc-section-number">4</span> Offsetting</a><ul>
 <li><a href="#overview-2"><span class="toc-section-number">4.1</span> Overview</a></li>
-<li><a href="#zonal-cpu-based-zero-point-offset"><span class="toc-section-number">4.2</span> Zonal CPU-based zero point offset</a></li>
-<li><a href="#gpu-based-zero-point-offset"><span class="toc-section-number">4.3</span> GPU-based zero point offset</a></li>
+<li><a href="#dm-offsets"><span class="toc-section-number">4.2</span> DM offsets</a><ul>
+<li><a href="#zonal-cpu-based-zero-point-offset"><span class="toc-section-number">4.2.1</span> Zonal CPU-based zero point offset</a></li>
+<li><a href="#gpu-based-zero-point-offset"><span class="toc-section-number">4.2.2</span> GPU-based zero point offset</a></li>
+</ul></li>
+<li><a href="#wfs-offsets"><span class="toc-section-number">4.3</span> WFS offsets</a></li>
 </ul></li>
 <li><a href="#virtual-dm-dm-to-dm-link"><span class="toc-section-number">5</span> Virtual DM (dm-to-dm link)</a></li>
 <li><a href="#predictive-control-experimental"><span class="toc-section-number">6</span> Predictive control (experimental)</a><ul>
@@ -926,16 +929,18 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </div>
 <div id="offsetting" class="section level1">
 <h1><span class="header-section-number">4</span> Offsetting</h1>
+<div id="overview-2" class="section level2">
+<h2><span class="header-section-number">4.1</span> Overview</h2>
+<p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP4</code>.</p>
 <div class="figure">
 <img src="./figures/aoloopctr_offset.jpg" title="WFS zero point offsetting" alt="WFS zero point offsetting" />
 <p class="caption">WFS zero point offsetting</p>
 </div>
-<div id="overview-2" class="section level2">
-<h2><span class="header-section-number">4.1</span> Overview</h2>
-<p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>.</p>
 </div>
-<div id="zonal-cpu-based-zero-point-offset" class="section level2">
-<h2><span class="header-section-number">4.2</span> Zonal CPU-based zero point offset</h2>
+<div id="dm-offsets" class="section level2">
+<h2><span class="header-section-number">4.2</span> DM offsets</h2>
+<div id="zonal-cpu-based-zero-point-offset" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Zonal CPU-based zero point offset</h3>
 <p>CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-08) and apply them to the <code>aolN_wfsref</code> stream. To activate this features, the user needs to :</p>
 <ul>
 <li><strong>Toggle the zero point offset loop process ON</strong> (<code>LPzpo</code>) prior to starting the loop.</li>
@@ -946,8 +951,12 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 </ul>
 <p>Every time one of the activated DM channel changes, the corresponding wfs <code>aolN_wfszpo#</code> zero point offset is CPU-computed.</p>
 </div>
-<div id="gpu-based-zero-point-offset" class="section level2">
-<h2><span class="header-section-number">4.3</span> GPU-based zero point offset</h2>
+<div id="gpu-based-zero-point-offset" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> GPU-based zero point offset</h3>
+</div>
+</div>
+<div id="wfs-offsets" class="section level2">
+<h2><span class="header-section-number">4.3</span> WFS offsets</h2>
 </div>
 </div>
 <div id="virtual-dm-dm-to-dm-link" class="section level1">

@@ -452,14 +452,23 @@ GPU     CMmode    GPUall    Matrix       Features   Description
 ------- --------- --------- ------------ --------------------------------------------------------------------------------
 
 
-# Offsetting
 
+
+
+
+
+
+
+
+
+
+# Offsetting
 
 
 
 ## Overview
 
-Input channels are provided to offset the AO loop convergence point. By default, **DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting**. The DM channels are sym-linked to `aolN_dmZP0` - `aolN_dmZP4`.
+Input channels are provided to offset the AO loop convergence point. By default, **DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting**. The DM channels are sym-linked to `aolN_dmZP0` - `aolN_dmZP7`.
 
 
 ![WFS zero point offsetting](./figures/aoloopctr_offset.jpg "WFS zero point offsetting")

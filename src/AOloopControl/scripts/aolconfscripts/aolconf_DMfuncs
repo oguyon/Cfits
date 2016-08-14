@@ -66,7 +66,7 @@ function initDMfunc {
 
     
 
-    echo "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" > cmd00.txt
+    echo "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 0.0 120.0" > cmd00.txt
     echo "$tmuxname" >> cmd00.txt
     echo "dm2dm_mode : $dm2dm_mode" >> cmd00.txt
     echo "dm2dmM : $dm2dmM" >> cmd00.txt
@@ -74,7 +74,7 @@ function initDMfunc {
     echo "dmvoltmode : $dmvoltmode" >> cmd00.txt
     
     aoconflog "STARTING DM COM"
-    tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 8 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 120.0" C-m
+    tmux send-keys -t $tmuxname "aolcontrolDMcomb ${DMindex} ${dmxsize} ${dmysize} 12 ${dmcombavemode} $dm2dm_mode ${dm2dmM} ${dm2dmO} ${dmwfsrefmode} ${dmwrefRM} ${dmwrefO} ${dmvoltmode} dmvolt 0.0 120.0" C-m
 }
 
 

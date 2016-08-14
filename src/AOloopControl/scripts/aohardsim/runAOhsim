@@ -142,45 +142,58 @@ fi
 
 echo ""
 
+
+
+
 tmuxname="aosimDMcomb"
-echo "Executing aosimDMstart in tmux session $tmuxname"
 tmux send-keys -t $tmuxname C-c 2> /dev/null
 tmux kill-session -t $tmuxname 2> /dev/null
+
+tmuxname="aosimDMrun"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+
+tmuxname="aosimmkWF"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+
+tmuxname="aosimPyrWFS"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+
+tmuxname="aosimcoroLOWFS"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+
+
+
+
+
+
+tmuxname="aosimDMcomb"
+echo "Executing aosimDMstart in tmux session $tmuxname"
 tmux new -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aosimDMstart" C-M
 
-
 tmuxname="aosimDMrun"
 echo "Executing aosimDMrun in tmux session $tmuxname"
-tmux send-keys -t $tmuxname C-c 2> /dev/null
-tmux kill-session -t $tmuxname 2> /dev/null
 tmux new -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aosimDMrun" C-M
 
-
 tmuxname="aosimmkWF"
 echo "Executing aosimmkWF in tmux session $tmuxname"
-tmux send-keys -t $tmuxname C-c 2> /dev/null
-tmux kill-session -t $tmuxname 2> /dev/null
 tmux new -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aosimmkWF" C-M
 
-
 tmuxname="aosimPyrWFS"
 echo "Executing aosimPyrWFS in tmux session $tmuxname"
-tmux send-keys -t $tmuxname C-c 2> /dev/null
-tmux kill-session -t $tmuxname 2> /dev/null
 tmux new -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aosimPyrWFS" C-M
 
-
 tmuxname="aosimcoroLOWFS"
 echo "Executing aosimcoroLOWFS in tmux session $tmuxname"
-tmux send-keys -t $tmuxname C-c 2> /dev/null
-tmux kill-session -t $tmuxname 2> /dev/null
 tmux new -d -s $tmuxname
 tmux send-keys -t $tmuxname "./aosimcoroLOWFS" C-M
-
 
 
 echo ""

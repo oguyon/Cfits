@@ -1263,7 +1263,7 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "LAMBDANM         1650             # wavelength [nm]\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== OUTPUT TYPE (OPD unit = um) ====================\n");
-    fprintf(fp, "OUT0FITSFILE         0                # 0: none, 1 if FITS file output OPD only, 2 if OPD+AMP\n");
+    fprintf(fp, "OUT0FITSFILE         2                # 0: none, 1 if FITS file output OPD only, 2 if OPD+AMP\n");
     fprintf(fp, "OUT0FITSFILENAMEOPD  wf0opd.fits      # FITS file name output (OPD)\n");
     fprintf(fp, "OUT0FITSFILENAMEAMP  wf0amp.fits      # FITS file name output (AMP)\n");
     fprintf(fp, "OUTPHYSTIME          aosim_phystime   # physical time [s]\n");
