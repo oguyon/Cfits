@@ -1675,13 +1675,13 @@ tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fit
 
 UpdateCalib_staged_mrm
 
-echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
-echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
-echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
-echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
-echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
-echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
-echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
+#echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
+#echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
+#echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
+#echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
+#echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
+#echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
+#echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
 
 rm cleanLOresp.run
 tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
@@ -1722,13 +1722,14 @@ tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fit
 
 UpdateCalib_staged_mrm
 
-echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
-echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
-echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
-echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
-echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
-echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
-echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
+#echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
+#echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
+#echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
+#echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
+#echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
+#echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
+#echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
+
 rm cleanLOresp.run
 tmux send-keys -t ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
