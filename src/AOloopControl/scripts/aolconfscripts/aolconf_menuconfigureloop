@@ -80,6 +80,24 @@ ReadConfFile "contrMcact${i2}_00"
 
 
 
+function UpdateCalib_saged_zrm {
+
+mkdir -p conf_staged
+
+echo "zrespM/zrespM_${datestr}.fits" > ./conf_staged/conf_zrespM_name.txt
+echo "wfsref0/wfsref0_${datestr}.fits" > ./conf_staged/conf_wfsref0_name.txt
+echo "wfsmap/wfsmap_${datestr}.fits" > ./conf_staged/conf_wfsmap_name.txt
+echo "dmmap/dmmap_${datestr}.fits" > ./conf_staged/conf_dmmap_name.txt
+echo "wfsmask/wfsmask_${datestr}.fits" > ./conf_staged/conf_wfsmask_name.txt
+echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf_staged/conf_dmmaskRM_name.txt
+echo "dmslaved/dmslaved_${datestr}.fits" > ./conf_staged/conf_dmslaved_name.txt
+echo "dmmask/dmmask_${datestr}.fits" > ./conf_staged/conf_dmmask_name.txt
+}
+
+
+
+
+
 
 # =====================================================
 # =============== CONFIGURE AO LOOP ===================
@@ -1182,6 +1200,7 @@ echo "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmex
 aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded"
 menucontrolloop_default="zrespoff"
 ;;
+
 	zrespc) # clean zrespm
 tmuxname="aol${LOOPNUMBER}zrepMc"
 tmux new-session -d -s ${tmuxname}
@@ -1205,6 +1224,10 @@ tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" 
 tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+
+
+UpdateCalib_saged_zrm 
+
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
@@ -1230,14 +1253,6 @@ tmux send-keys -t  ${tmuxname} "touch cleanZresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanZresp.run
 rm cleanZresp.run
-#ReadConfFile "zrespM"
-#ReadConfFile "wfsref0"
-#ReadConfFile "wfsmap"
-#ReadConfFile "dmmap"
-#ReadConfFile "wfsmask"
-#ReadConfFile "dmmaskRM"
-#ReadConfFile "dmslaved"
-#ReadConfFile "dmmask"
 sleep 0.5
 ;;
 
@@ -1268,6 +1283,10 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${date
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+
+
+UpdateCalib_saged_zrm 
+
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 
@@ -1293,18 +1312,15 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "touch cleanZresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "exit" C-m
 waitforfile cleanZresp.run
 rm cleanZresp.run
-#ReadConfFile "zrespM"
-#ReadConfFile "wfsref0"
-#ReadConfFile "wfsmap"
-#ReadConfFile "dmmap"
-#ReadConfFile "wfsmask"
-#ReadConfFile "dmmaskRM"
-#ReadConfFile "dmslaved"
-#ReadConfFile "dmmask"
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
 
+
+upzrm) # update zonal response matrix calibration to latest 
+
+
+;;
 
 
 SMloadzrm) # load files into shared memory
