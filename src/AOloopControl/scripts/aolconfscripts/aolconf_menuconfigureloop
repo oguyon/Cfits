@@ -82,31 +82,53 @@ ReadConfFile "contrMcact${i2}_00"
 
 # STAGING DIRECTORIES
 dir_conf_zrm_staged="conf_zrm_staged"
-
+dir_conf_mrm_staged="conf_mrm_staged"
 
 
 
 
 function UpdateCalib_staged_zrm {
-
 dir="$dir_conf_zrm_staged"
 mkdir -p $dir
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
+mv zrespmat.fits ./${dir}/
 echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
-
+mv  wfsref0.fits ./${dir}/
 echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt
+mv wfsmap.fits ./${dir}/
 echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
-
+mv dmmap.fits ./${dir}/
 echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
-
+mv wfsmap.fits ./${dir}/
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
+mv dmmaskRM.fits ./${dir}/
 echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
+mv dmslaved.fits ./${dir}/
 echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
-
+mv dmmask.fits ./${dir}/
 }
 
 
+function UpdateCalib_staged_mrm {
+dir="$dir_conf_mrm_staged"
+mkdir -p $dir
+
+echo "LOrespM/LOrespM_${datestr}.fits" > ./${dir}/conf_LOrespM_name.txt
+mv LOrespmat.fits ./${dir}/
+echo "LODMmodes/LODMmodes_${datestr}.fits" > ./${dir}/conf_LODMmodes_name.txt
+mv respM_LOmodes.fits ./${dir}/
+echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./${dir}/conf_LOwfsref0_name.txt
+mv LOwfsref0.fits ./${dir}/
+echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./${dir}/conf_LOwfsmap_name.txt
+mv LOwfsmap.fits ./${dir}/
+echo "LOdmmap/LOdmmap_${datestr}.fits" > ./${dir}/conf_LOdmmap_name.txt
+mv LOdmmap.fits ./${dir}/
+echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./${dir}/conf_LOwfsmask_name.txt
+mv LOwfsmask.fits ./${dir}/
+echo "LOdmmask/LOdmmask_${datestr}.fits" > ./${dir}/conf_LOdmmask_name.txt
+mv LOdmmask.fits ./${dir}/
+}
 
 
 
@@ -1332,7 +1354,7 @@ state="menuconfigureloop"
 
 
 upzrm) # update zonal response matrix calibration to latest 
-cp ${dir_conf_zrm_staged}/* ./conf/
+cp ${dir_conf_zrm_staged}/conf_*.txt ./conf/
 ;;
 
 
@@ -1394,14 +1416,6 @@ tmux send-keys -t aol${LOOPNUMBER}zrmcust "touch zrmcust.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "exit" C-m
 waitforfile zrmcust.run
 rm zrmcust.run
-#ReadConfFile "zrespM"
-#ReadConfFile "wfsref0"
-#ReadConfFile "wfsmap"
-#ReadConfFile "dmmap"
-#ReadConfFile "wfsmask"
-#ReadConfFile "dmmaskRM"
-#ReadConfFile "dmslaved"
-#ReadConfFile "dmmask"
 menucontrolloop_default="zrmcust"
 state="menuconfigureloop"
 ;;
@@ -1657,6 +1671,10 @@ tmux send-keys -t ${tmuxname} "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fit
 tmux send-keys -t ${tmuxname} "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
+
+
+UpdateCalib_staged_mrm
+
 echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
 echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
 echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
@@ -1664,6 +1682,7 @@ echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
 echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
 echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
 echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
+
 rm cleanLOresp.run
 tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
@@ -1700,6 +1719,9 @@ tmux send-keys -t ${tmuxname} "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fit
 tmux send-keys -t ${tmuxname} "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
+
+UpdateCalib_staged_mrm
+
 echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
 echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
 echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
@@ -1724,6 +1746,12 @@ tmuxname="aol${LOOPNUMBER}LOrespM"
 tmux a -t ${tmuxname}
 menucontrolloop_default="LOrespmon"
 state="menuconfigureloop"
+;;
+
+
+
+upmrm) # update modal  matrix calibration to latest 
+cp ${dir_conf_mrm_staged}/conf_*.txt ./conf/
 ;;
 
 
