@@ -82,16 +82,17 @@ ReadConfFile "contrMcact${i2}_00"
 
 function UpdateCalib_saged_zrm {
 
-mkdir -p conf_staged
+dir="conf_zrm_staged"
+mkdir -p $dir
 
-echo "zrespM/zrespM_${datestr}.fits" > ./conf_staged/conf_zrespM_name.txt
-echo "wfsref0/wfsref0_${datestr}.fits" > ./conf_staged/conf_wfsref0_name.txt
-echo "wfsmap/wfsmap_${datestr}.fits" > ./conf_staged/conf_wfsmap_name.txt
-echo "dmmap/dmmap_${datestr}.fits" > ./conf_staged/conf_dmmap_name.txt
-echo "wfsmask/wfsmask_${datestr}.fits" > ./conf_staged/conf_wfsmask_name.txt
-echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf_staged/conf_dmmaskRM_name.txt
-echo "dmslaved/dmslaved_${datestr}.fits" > ./conf_staged/conf_dmslaved_name.txt
-echo "dmmask/dmmask_${datestr}.fits" > ./conf_staged/conf_dmmask_name.txt
+echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
+echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
+echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt
+echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
+echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
+echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
+echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
+echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
 }
 
 
@@ -1318,8 +1319,7 @@ state="menuconfigureloop"
 
 
 upzrm) # update zonal response matrix calibration to latest 
-
-
+cp conf_zrm_staged/* ./conf/
 ;;
 
 
