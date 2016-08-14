@@ -94,13 +94,18 @@ mkdir -p $dir
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
+
 echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
+
 echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
+
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
 echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
 echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
+
 }
+
 
 
 
@@ -1237,19 +1242,19 @@ tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 
 UpdateCalib_staged_zrm 
 
-echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
-echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
-echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
-echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
+#echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
+#echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
+#echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
+#echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
 
-if [ "$MASKS_LOCK" -eq "1" ]; then
-echo "conf/wfsmask_LOCK.fits" > ./conf/conf_wfsmask_name.txt
-else
-echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
-fi
+#if [ "$MASKS_LOCK" -eq "1" ]; then
+#echo "conf/wfsmask_LOCK.fits" > ./conf/conf_wfsmask_name.txt
+#else
+#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
+#fi
 
-echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
-echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
+#echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
+#echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
 
 if [ "$MASKS_LOCK" -eq "1" ]; then
 echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
@@ -1296,19 +1301,19 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr
 
 UpdateCalib_staged_zrm 
 
-echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
-echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
+#echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
+#echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 
-if [ "$MASKS_LOCK" -eq "1" ]; then
-echo "conf/wfsmask_LOCK.fits" > ./conf/conf_wfsmask_name.txt
-else
-echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
-fi
+#if [ "$MASKS_LOCK" -eq "1" ]; then
+#echo "conf/wfsmask_LOCK.fits" > ./conf/conf_wfsmask_name.txt
+#else
+#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
+#fi
 
-echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
-echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
-echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
-echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
+#echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
+#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
+#echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
+#echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
 
 if [ "$MASKS_LOCK" -eq "1" ]; then
 echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
