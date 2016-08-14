@@ -93,7 +93,6 @@ mkdir -p $dir
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
 mv zrespmat.fits ./${dir}/
-echo "mv zrespmat.fits ./${dir}/" > testcmd.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
 mv  wfsref0.fits ./${dir}/
 echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt

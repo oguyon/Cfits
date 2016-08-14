@@ -455,13 +455,18 @@ GPU     CMmode    GPUall    Matrix       Features   Description
 # Offsetting
 
 
-![WFS zero point offsetting](./figures/aoloopctr_offset.jpg "WFS zero point offsetting")
+
 
 ## Overview
 
 Input channels are provided to offset the AO loop convergence point. By default, **DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting**. The DM channels are sym-linked to `aolN_dmZP0` - `aolN_dmZP4`.
 
-## Zonal CPU-based zero point offset
+
+![WFS zero point offsetting](./figures/aoloopctr_offset.jpg "WFS zero point offsetting")
+
+## DM offsets
+
+### Zonal CPU-based zero point offset
 
 CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-08) and apply them to the `aolN_wfsref` stream. To activate this features, the user needs to :
 
@@ -474,7 +479,10 @@ Cfits command `aolzpwfscloop` (C function `AOloopControl_WFSzeropoint_sum_update
 Every time one of the activated DM channel changes, the corresponding wfs `aolN_wfszpo#` zero point offset is CPU-computed.
 
 
-## GPU-based zero point offset
+### GPU-based zero point offset
+
+
+## WFS offsets
 
 
 
