@@ -1262,9 +1262,6 @@ tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fit
 tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 
-
-UpdateCalib_staged_zrm 
-
 #echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 #echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 #echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
@@ -1291,6 +1288,7 @@ tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanZresp.run
 rm cleanZresp.run
 sleep 0.5
+UpdateCalib_staged_zrm 
 ;;
 
 
@@ -1322,8 +1320,6 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmslaved.fits dmslaved/dmslaved_${d
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 
 
-UpdateCalib_staged_zrm 
-
 #echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 #echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 
@@ -1349,6 +1345,7 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "touch cleanZresp.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "exit" C-m
 waitforfile cleanZresp.run
 rm cleanZresp.run
+UpdateCalib_staged_zrm 
 menucontrolloop_default="zresp_on"
 state="menuconfigureloop"
 ;;
@@ -1674,8 +1671,6 @@ tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.
 tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 
 
-UpdateCalib_staged_mrm
-
 #echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
 #echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
 #echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
@@ -1689,9 +1684,8 @@ tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanLOresp.run
 rm cleanLOresp.run
-#ReadConfFile "LOrespM"
-#ReadConfFile "LODMmodes"
 sleep 0.5
+UpdateCalib_staged_mrm
 ;;
 
 	LOrespoff)
@@ -1721,8 +1715,6 @@ tmux send-keys -t ${tmuxname} "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" 
 tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 
-UpdateCalib_staged_mrm
-
 #echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
 #echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
 #echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
@@ -1736,8 +1728,7 @@ tmux send-keys -t ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
 waitforfile cleanLOresp.run
 rm cleanLOresp.run
-#ReadConfFile "LOrespM"
-#ReadConfFile "LODMmodes"
+UpdateCalib_staged_mrm
 menucontrolloop_default="LOresp_on"
 state="menuconfigureloop"
 ;;
