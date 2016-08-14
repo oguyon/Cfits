@@ -650,7 +650,7 @@ then
         menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
     fi
 
-
+	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
 	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
 
 
