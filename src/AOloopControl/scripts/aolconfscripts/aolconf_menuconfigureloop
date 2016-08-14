@@ -80,9 +80,16 @@ ReadConfFile "contrMcact${i2}_00"
 
 
 
-function UpdateCalib_saged_zrm {
+# STAGING DIRECTORIES
+dir_conf_zrm_staged="conf_zrm_staged"
 
-dir="conf_zrm_staged"
+
+
+
+
+function UpdateCalib_staged_zrm {
+
+dir="$dir_conf_zrm_staged"
 mkdir -p $dir
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
@@ -535,6 +542,7 @@ fi
 
 
 
+menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION")
 menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 
 
@@ -1227,7 +1235,7 @@ tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fit
 tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 
 
-UpdateCalib_saged_zrm 
+UpdateCalib_staged_zrm 
 
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
@@ -1286,7 +1294,7 @@ tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmslaved.fits dmslaved/dmslaved_${d
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 
 
-UpdateCalib_saged_zrm 
+UpdateCalib_staged_zrm 
 
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
@@ -1319,7 +1327,7 @@ state="menuconfigureloop"
 
 
 upzrm) # update zonal response matrix calibration to latest 
-cp conf_zrm_staged/* ./conf/
+cp ${dir_conf_zrm_staged}/* ./conf/
 ;;
 
 
