@@ -95,7 +95,7 @@ menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM output modes          \Z4\Zbaol${LOO
 fi
 
 
-Readdm2dmOnamedmTCPrcv-0
+Readdm2dmOname
 dm2dmOfile="/tmp/${dm2dmO}.im.shm"
 if [ -f $dm2dmOfile ]; then
 getshmimsize ${dm2dmO}
