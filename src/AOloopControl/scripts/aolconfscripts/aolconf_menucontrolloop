@@ -585,6 +585,27 @@ else
 echo "OFF" > ./status/stat_zploopON4.txt
 fi
 
+zploopONstat5=$( cat ./status/stat_zploopON5.txt )
+if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploopONstat5" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON5.txt
+fi
+
+zploopONstat6=$( cat ./status/stat_zploopON6.txt )
+if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploopONstat6" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON6.txt
+fi
+
+zploopONstat7=$( cat ./status/stat_zploopON7.txt )
+if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploopONstat7" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_zploopON7.txt
+fi
+
 
 
 
@@ -644,7 +665,7 @@ menuitems+=( "zploff5" "\Z1\ZrSTOP DM->WFS zero point offset loop #5\Zn (\Z4${dm
 fi
 
 
-if [ "${zploopONstat4}" = "OFF" ];
+if [ "${zploopONstat6}" = "OFF" ];
 then
 menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
 else
