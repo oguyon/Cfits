@@ -31,7 +31,7 @@ dmmap1=dmmap/dmmapg
 a=$2
 b=$2*0.99
 imtrunc dmmap1 0.0 a dmmap2
-savefits dmmap2 "!_test_dmmap2.fits"
+#savefits dmmap2 "!_test_dmmap2.fits"
 dmmap3=dmmap2/b
 dmmap4=floor(dmmap3)
 gaussfilt dmmap4 dmmap4g 1.0 2
