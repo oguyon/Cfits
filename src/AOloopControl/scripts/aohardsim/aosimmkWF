@@ -5,6 +5,7 @@ NBARGS=0
 
 pname=`echo "$0" | sed "s/\.\///g"`
 
+CONFFILE="$pname.conf" #default
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -17,7 +18,8 @@ echo "     $0 [-hc]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr 0)"
 echo "    $(tput bold)-h$(tput sgr 0)               print help"
-echo "    $(tput bold)-c$(tput sgr 0) <conffile>    adopt configuration file <conffile>"
+echo "    $(tput bold)-c$(tput sgr 0) <conffile>    use configuration file <conffile>"
+echo "    $(tput bold)-n$(tput sgr 0)               create new template default configuration ($CONFFILE.default) and exit"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr 0)"
 echo "     aosim.conf     configuration file (default name)"
@@ -28,7 +30,6 @@ echo ""
 echo "------------------------------------------------------------------------"
 }
 
-CONFFILE="aosimmkWF.conf"
 
 
 function CreateDefaultConfiguration {
@@ -93,8 +94,9 @@ if [ ! -f $CONFFILE ]
     if [ -f "$pname.conf.default" ]; then
     cp $pname.conf.default $CONFFILE
     else
-    echo "$(tput setaf 1)$(tput bold) ERROR: File $pname.conf.default not found $(tput sgr 0)"
-    exit
+    echo "$(tput setaf 5)$(tput bold) WARNING: File $pname.conf.default not found $(tput sgr 0) -> creating it"
+    CreateDefaultConfiguration
+    cp $pname.conf.default $CONFFILE
     fi
 fi
 

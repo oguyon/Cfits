@@ -1,0 +1,197 @@
+#!/bin/bash
+
+
+
+# number of arguments to script
+NBARGS=0
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+# ======================= LOGGING =================================
+LOGGING=0 # set to 1 if logging 
+function scriptlog {
+echo "$@" >> $0.log
+}
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : AO HARDWARE SIMULATION $(tput sgr 0)"
+echo "------------------------------------------------------------------------"
+echo "  This script does nothing particularly useful. It is an example"
+echo "  it takes 2 input arguments"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr 0)"
+echo "     $0 [-hHLNCc] <file1> <file2>"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr 0)"
+echo "     $(tput bold)-h$(tput sgr 0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr 0)"
+echo "     <file1>     first file"
+echo "     <file2>     second file"
+echo ""
+echo " $(tput bold)OUTPUT:$(tput sgr 0)"
+echo "     out.txt     output file"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+EXITSTATUS=0
+
+
+function checkFile {
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr 0)] File $1 found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr 0)] File $1 not found"
+    EXITSTATUS=1
+fi
+}
+
+function checkDir {
+if [ -d $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr 0)] Directory $1 found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr 0)] Directory $1 not found"
+    EXITSTATUS=1
+fi
+}
+
+
+
+# ================= OPTIONS =============================
+
+#Parse command line flags
+#If an option should be followed by an argument, it should be followed by a ":".
+#Notice there is no ":" after "h". The leading ":" suppresses error messages from
+#getopts. This is required to get unrecognized option code to work.
+
+while getopts :h FLAG; do
+  case $FLAG in
+    L)  #  set loop number
+      LOOPNUMBER=$OPTARG
+      echo "LOOP NUMBER = $LOOPNUMBER"
+      echo "$LOOPNUMBER" > $LOOPNUMBER_file
+      aoconflog "setting LOOPNUMBER to $LOOPNUMBER"
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      #If you just want to display a simple error message instead of the full
+      #help, remove the 2 lines above and uncomment the 2 lines below.
+      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
+      #exit 2
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
+
+### End getopts code ###
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr 0)"
+fi
+printHELP
+        exit
+fi
+
+
+
+
+
+# ======================= CHECK REQUIRED FILES =================================
+echo ""
+checkFile aosimDMrun
+checkFile aosimDMstart
+checkFile aosimmkWF
+checkFile aosimcoroLOWFS
+checkFile aosimPyrWFS
+
+checkDir atmwf
+checkFile "atmwf/WFsim.conf"
+
+
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES NOT FOUND: EXITING $(tput sgr 0)"
+echo ""
+exit
+else
+echo ""
+fi
+
+
+
+# ======================= CREATE CONFIGURATION FILES =================================
+
+echo ""
+
+tmuxname="aosimDMcomb"
+echo "Executing aosimDMstart in tmux session $tmuxname"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+tmux new -d -s $tmuxname
+tmux send-keys -t $tmuxname "./aosimDMstart" C-M
+
+
+tmuxname="aosimDMrun"
+echo "Executing aosimDMrun in tmux session $tmuxname"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+tmux new -d -s $tmuxname
+tmux send-keys -t $tmuxname "./aosimDMrun" C-M
+
+
+tmuxname="aosimmkWF"
+echo "Executing aosimmkWF in tmux session $tmuxname"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+tmux new -d -s $tmuxname
+tmux send-keys -t $tmuxname "./aosimmkWF" C-M
+
+
+tmuxname="aosimPyrWFS"
+echo "Executing aosimPyrWFS in tmux session $tmuxname"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+tmux new -d -s $tmuxname
+tmux send-keys -t $tmuxname "./aosimPyrWFS" C-M
+
+
+tmuxname="aosimcoroLOWFS"
+echo "Executing aosimcoroLOWFS in tmux session $tmuxname"
+tmux send-keys -t $tmuxname C-c 2> /dev/null
+tmux kill-session -t $tmuxname 2> /dev/null
+tmux new -d -s $tmuxname
+tmux send-keys -t $tmuxname "./aosimcoroLOWFS" C-M
+
+
+
+echo ""
+
+
+
+
+
+
+
+
+
+
+

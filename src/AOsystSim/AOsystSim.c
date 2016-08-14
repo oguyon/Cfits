@@ -1282,7 +1282,7 @@ int AOsystSim_mkWF_mkCONF(char *fname)
     fprintf(fp, "\n");
     fprintf(fp, "# ============== PARAMETERS ======================================\n");
     fprintf(fp, "DT                    0.001            # time interval between computed wavefronts\n");
-    fprintf(fp, "OPDMFACT              0.01             # OPD multiplicative factor\n");
+    fprintf(fp, "OPDMFACT              1.0              # OPD multiplicative factor\n");
     fprintf(fp, "AMPMFACT              1.0              # AMP multiplicative factor\n");
     fprintf(fp, "ARRAYSIZE             128              # output size [pix]\n");
     fprintf(fp, "PIXSCALEMODE          2                # 0: adopt input WF pixel scale, 1: custom pixel scale, 2: bin\n");

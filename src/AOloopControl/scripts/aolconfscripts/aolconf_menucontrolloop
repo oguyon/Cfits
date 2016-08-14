@@ -636,6 +636,30 @@ menuitems+=( "zploff4" "\Z1\ZrSTOP DM->WFS zero point offset loop #4\Zn (\Z4${dm
 fi
 
 
+if [ "${zploopONstat5}" = "OFF" ];
+then
+menuitems+=( "zplon5" "   START DM->WFS zero point offset loop #5 (\Z4${dmZP5}\Zn -> wfszpo5)" )
+else
+menuitems+=( "zploff5" "\Z1\ZrSTOP DM->WFS zero point offset loop #5\Zn (\Z4${dmZP5}\Zn -> wfszpo5)" )
+fi
+
+
+if [ "${zploopONstat4}" = "OFF" ];
+then
+menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
+else
+menuitems+=( "zploff6" "\Z1\ZrSTOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
+fi
+
+
+if [ "${zploopONstat7}" = "OFF" ];
+then
+menuitems+=( "zplon7" "   START DM->WFS zero point offset loop #7 (\Z4${dmZP7}\Zn -> wfszpo7)" )
+else
+menuitems+=( "zploff7" "\Z1\ZrSTOP DM->WFS zero point offset loop #7\4n (\Z4${dmZP7}\Zn -> wfszpo7)" )
+fi
+
+
 
 
 menuitems+=( "zpinj" "Inject Fourier mode to DM zero point" )
@@ -899,7 +923,7 @@ menucontrolloop_default="CMm1"
 
 
 # LOOP PROCESSES
-   	 S)
+   	 S)  	 
 echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
 aoconflogext "START LOOP PROCESSES"
@@ -1669,6 +1693,86 @@ tmux kill-session -t $tmuxname
 menucontrolloop_default="zplon4"
 aoconflogext "stop zero-point offset loop 4"
 	;;
+
+
+	zplon5)
+echo " ON" > ./status/stat_zploopON5.txt
+tmuxname="aol${LOOPNUMBER}zploop5"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop5" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP5 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo5" C-m
+menucontrolloop_default="zploff5"
+aoconflogext "start zero-point offset loop 5"
+;; 
+
+	zploff5)
+echo "OFF" > ./status/stat_zploopON5.txt
+tmuxname="aol${LOOPNUMBER}zploop5"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon5"
+aoconflogext "stop zero-point offset loop 5"
+	;;
+
+
+	zplon6)
+echo " ON" > ./status/stat_zploopON6.txt
+tmuxname="aol${LOOPNUMBER}zploop6"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop6" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP6 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo6" C-m
+menucontrolloop_default="zploff6"
+aoconflogext "start zero-point offset loop 6"
+;; 
+
+	zploff6)
+echo "OFF" > ./status/stat_zploopON6.txt
+tmuxname="aol${LOOPNUMBER}zploop6"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon6"
+aoconflogext "stop zero-point offset loop 6"
+	;;
+
+	zplon7)
+echo " ON" > ./status/stat_zploopON7.txt
+tmuxname="aol${LOOPNUMBER}zploop7"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop7" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+fi
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP7 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo7" C-m
+menucontrolloop_default="zploff7"
+aoconflogext "start zero-point offset loop 7"
+;; 
+
+	zploff7)
+echo "OFF" > ./status/stat_zploopON7.txt
+tmuxname="aol${LOOPNUMBER}zploop7"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon7"
+aoconflogext "stop zero-point offset loop 7"
+	;;
+
+
+
 
     
 	zpinj)

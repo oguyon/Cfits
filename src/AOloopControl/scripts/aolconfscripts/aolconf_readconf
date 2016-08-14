@@ -206,6 +206,54 @@ ln -s /tmp/${dmZP4}.im.shm /tmp/aol${LOOPNUMBER}_dmZP4.im.shm
 }
 
 
+function ReaddmZP5name {
+file="./conf/conf_dmZP5_name.txt"
+if [ -a $file ]
+	then
+	dmZP5=$(echo "$(cat $file)")
+	else
+	dmZP5="dmZP5" #default
+fi
+# DM correction channel
+echo "linking to dm offset channel ZP5"
+aoconflog "linking dmZP5 to ${dmZP5}"
+rm /tmp/aol${LOOPNUMBER}_dmZP5.im.shm 
+ln -s /tmp/${dmZP5}.im.shm /tmp/aol${LOOPNUMBER}_dmZP5.im.shm
+}
+
+
+function ReaddmZP6name {
+file="./conf/conf_dmZP6_name.txt"
+if [ -a $file ]
+	then
+	dmZP6=$(echo "$(cat $file)")
+	else
+	dmZP6="dmZP6" #default
+fi
+# DM correction channel
+echo "linking to dm offset channel ZP6"
+aoconflog "linking dmZP6 to ${dmZP6}"
+rm /tmp/aol${LOOPNUMBER}_dmZP6.im.shm 
+ln -s /tmp/${dmZP6}.im.shm /tmp/aol${LOOPNUMBER}_dmZP6.im.shm
+}
+
+
+function ReaddmZP7name {
+file="./conf/conf_dmZP7_name.txt"
+if [ -a $file ]
+	then
+	dmZP7=$(echo "$(cat $file)")
+	else
+	dmZP7="dmZP7" #default
+fi
+# DM correction channel
+echo "linking to dm offset channel ZP7"
+aoconflog "linking dmZP7 to ${dmZP7}"
+rm /tmp/aol${LOOPNUMBER}_dmZP7.im.shm 
+ln -s /tmp/${dmZP7}.im.shm /tmp/aol${LOOPNUMBER}_dmZP7.im.shm
+}
+
+
 
 
 function Readdmdispname {

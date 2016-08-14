@@ -106,6 +106,16 @@ Script                         Description
 
 The AOsim simulation architecture relies on individual processes that simulate subsystems. Each process is launched by a bash script. ASCII configuration files are read by each process. Data I/O can be done with low latency using shared memory and semaphores: a process operation (for example, the wavefront sensor process computing WFS signals) is typically triggered by a semaphore contained in the shared memory wavefront stream. A low-speed file system based alternative to shared memory and semaphores is also provided.
 
+## Quick start
+
+You can launch the simulator quickly with the following steps:
+
+
+- go into directory `aohardsim`
+- create symbolic link `atmwf` to atmospheric wavefront simulation directory
+- execute master script './runAOhsim'
+
+
 
 ## Processes and scripts: main WF control loop
 
@@ -442,11 +452,51 @@ GPU     CMmode    GPUall    Matrix       Features   Description
 ------- --------- --------- ------------ --------------------------------------------------------------------------------
 
 
+# Offsetting
+
+
+![WFS zero point offsetting](./figures/aoloopctr_offset.jpg "WFS zero point offsetting")
+
+## Overview
+
+Input channels are provided to offset the AO loop convergence point. By default, **DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting**. The DM channels are sym-linked to `aolN_dmZP0` - `aolN_dmZP4`.
+
+## Zonal CPU-based zero point offset
+
+CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-08) and apply them to the `aolN_wfsref` stream. To activate this features, the user needs to :
+
+- **Toggle the zero point offset loop process ON** (`LPzpo`) prior to starting the loop. 
+
+Cfits command `aolzpwfscloop` (C function `AOloopControl_WFSzeropoint_sum_update_loop`) launches a loop that monitors shared memory streams `aolN_wfszpo0` to `aolN_wfszpo3`, and updates the WFS reference when one of these has changed.  The loop is running insite tmux session `aolNwfszpo`, and is launched when the loop is closed (`Floopon`) if the loop zero point offset flag is toggled on (`LPzpo`)
+
+- **Activate individual zero point offset channels** (`zplon0` to `zplon4`).
+
+Every time one of the activated DM channel changes, the corresponding wfs `aolN_wfszpo#` zero point offset is CPU-computed.
+
+
+## GPU-based zero point offset
+
+
+
 
  
 # Virtual DM (dm-to-dm link)
 
 In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop.
+
+- create a separate working directory for **loopB**, allocate a separate loop number and loop name
+
+- select number of **loopA** modes controlled by **loopB**. The number is entered as DM x size (`dmxs` in `Top menu`)
+
+- **Link loop DM to external loop** (`dmolink` in `Top menu`). Select the loop number to link to (**loopA**), and select an offset channel. This will set up several key files:
+	- **dm2dmM**    : **loopA** modes controlled by **loopB**
+	- **dm2dmO**    : symbolic link to **loopA** DM channel controlled by **loopB**
+	- **dmwrefRM**  : **loopA** WFS response to modes controlled by **loopB**
+	- **dmwrefO**   : **loopA** WFS zero point offset
+
+
+
+
 
 
 

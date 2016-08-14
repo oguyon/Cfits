@@ -225,6 +225,46 @@ confOK=0
 fi
 
 
+dmZP5file="/tmp/aol${LOOPNUMBER}_dmZP5.im.shm"
+if [ -f $dmZP5file ]; then
+#getshmimsize aol${LOOPNUMBER}_dmZP5
+sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_dmZP5.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z4${dmZP5}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z1${dmZP5}\Zn" )
+confOK=0
+fi
+
+
+dmZP6file="/tmp/aol${LOOPNUMBER}_dmZP6.im.shm"
+if [ -f $dmZP6file ]; then
+#getshmimsize aol${LOOPNUMBER}_dmZP6
+sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_dmZP6.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z4${dmZP6}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z1${dmZP6}\Zn" )
+confOK=0
+fi
+
+
+dmZP7file="/tmp/aol${LOOPNUMBER}_dmZP7.im.shm"
+if [ -f $dmZP7file ]; then
+#getshmimsize aol${LOOPNUMBER}_dmZP7
+sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_dmZP7.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z4${dmZP7}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z1${dmZP7}\Zn" )
+confOK=0
+fi
+
+
+
 
 dmdispfile="/tmp/aol${LOOPNUMBER}_dmdisp.im.shm"
 if [ -f $dmdispfile ]; then
@@ -793,6 +833,54 @@ getshmimsize aol${LOOPNUMBER}_dmZP4
 esac
 ;;
 
+	dmZP5)
+case $amode in
+	0)
+exec 3>&1;
+dmZP5=$(dialog --inputbox "dmZP5" 0 0 "$dmZP5" 2>&1 1>&3);
+#exitcode=$?;
+exec 3>&-;
+#echo $result $exitcode;
+echo "$dmZP5" > ./conf/conf_dmZP5_name.txt
+ReaddmZP5name
+getshmimsize aol${LOOPNUMBER}_dmZP5
+;;
+	1)shmimmon aol${LOOPNUMBER}_dmZP5;;
+esac
+;;
+
+	dmZP6)
+case $amode in
+	0)
+exec 3>&1;
+dmZP6=$(dialog --inputbox "dmZP6" 0 0 "$dmZP4" 2>&1 1>&3);
+#exitcode=$?;
+exec 3>&-;
+#echo $result $exitcode;
+echo "$dmZP6" > ./conf/conf_dmZP6_name.txt
+ReaddmZP6name
+getshmimsize aol${LOOPNUMBER}_dmZP6
+;;
+	1)shmimmon aol${LOOPNUMBER}_dmZP6;;
+esac
+;;
+
+	dmZP7)
+case $amode in
+	0)
+exec 3>&1;
+dmZP7=$(dialog --inputbox "dmZP7" 0 0 "$dmZP7" 2>&1 1>&3);
+#exitcode=$?;
+exec 3>&-;
+#echo $result $exitcode;
+echo "$dmZP7" > ./conf/conf_dmZP7_name.txt
+ReaddmZP7name
+getshmimsize aol${LOOPNUMBER}_dmZP7
+;;
+	1)shmimmon aol${LOOPNUMBER}_dmZP7;;
+esac
+;;
+
 
 	dmdisp)
 case $amode in
@@ -916,7 +1004,7 @@ confnameloaded=${confname}
 cp "${confname}"/conf_*.txt ./conf/
 
 # set up symbolic links to streams
-for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 wfsim
+for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 dmZP5 dmZP6 dmZP7 wfsim
 do
 	lname=$( cat "./conf/conf_${name}_name.txt" )
 	rm /tmp/aol${LOOPNUMBER}_${name}.im.shm

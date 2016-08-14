@@ -5,8 +5,9 @@ NBARGS=0
 
 
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
+
+CONFFILE="$pname.conf" #default
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -20,6 +21,7 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr 0)"
 echo "    $(tput bold)-h$(tput sgr 0)               print help"
 echo "    $(tput bold)-c$(tput sgr 0) <conffile>    adopt configuration file <conffile>"
+echo "    $(tput bold)-n$(tput sgr 0)               create new template default configuration ($CONFFILE.default) and exit"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr 0)"
 echo "     dm05dispmap    shared memory DM displacement map"
@@ -27,7 +29,15 @@ echo ""
 echo "------------------------------------------------------------------------"
 }
 
-CONFFILE="aosimDMrun.conf"
+
+
+
+function CreateDefaultConfiguration {
+Cfits << EOF
+AOsimDM $CONFFILE
+exit
+EOF
+}
 
 
 # ================= OPTIONS =============================
@@ -37,7 +47,7 @@ CONFFILE="aosimDMrun.conf"
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get unrecognized option code to work.
 
-while getopts :hc: FLAG; do
+while getopts :hc:n FLAG; do
   case $FLAG in
     h)  #show help
       printHELP
@@ -46,7 +56,11 @@ while getopts :hc: FLAG; do
     c) # set configuration file name
     CONFFILE=$OPTARG
     ;;
-    \?) #unrecognized option - show help
+     n) # create default configuration
+    CreateDefaultConfiguration
+    exit
+    ;;
+     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
       #If you just want to display a simple error message instead of the full
@@ -81,8 +95,9 @@ if [ ! -f $CONFFILE ]
     if [ -f "$pname.conf.default" ]; then
     cp $pname.conf.default $CONFFILE
     else
-    echo "$(tput setaf 1)$(tput bold) ERROR: File $pname.conf.default not found $(tput sgr 0)"
-    exit
+    echo "$(tput setaf 5)$(tput bold) WARNING: File $pname.conf.default not found $(tput sgr 0) -> creating it"
+    CreateDefaultConfiguration
+    cp $pname.conf.default $CONFFILE
     fi
 fi
 
