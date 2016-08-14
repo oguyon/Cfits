@@ -358,6 +358,17 @@ getshmimsize aol${LOOPNUMBER}_dmZP3
 ReaddmZP4name
 getshmimsize aol${LOOPNUMBER}_dmZP4
 
+ReaddmZP5name
+getshmimsize aol${LOOPNUMBER}_dmZP5
+
+ReaddmZP6name
+getshmimsize aol${LOOPNUMBER}_dmZP6
+
+ReaddmZP7name
+getshmimsize aol${LOOPNUMBER}_dmZP7
+
+
+
 Readdmdispname
 getshmimsize aol${LOOPNUMBER}_dmdisp
 
