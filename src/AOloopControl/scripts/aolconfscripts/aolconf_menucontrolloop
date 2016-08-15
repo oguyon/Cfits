@@ -571,7 +571,7 @@ menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
 
 
 zploopONstat0=$( cat ./status/stat_zploopON0.txt )
-if [[ -f "./status/stat_zploopON0.txt" && ( "$zploopONstat0" = " ON" || "$zploopONstat0" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON0.txt" && ( "$zploopONstat0" = " ON" || "$zploopONstat0" = "OFF" || "$zploopONstat0" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON0.txt
@@ -579,7 +579,7 @@ fi
 
 
 zploopONstat1=$( cat ./status/stat_zploopON1.txt )
-if [[ -f "./status/stat_zploopON1.txt" && ( "$zploopONstat1" = " ON" || "$zploopONstat1" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON1.txt" && ( "$zploopONstat1" = " ON" || "$zploopONstat1" = "OFF" || "$zploopONstat1" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON1.txt
@@ -588,7 +588,7 @@ fi
 
 
 zploopONstat2=$( cat ./status/stat_zploopON2.txt )
-if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploopONstat2" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploopONstat2" = "OFF" || "$zploopONstat2" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON2.txt
@@ -596,35 +596,35 @@ fi
 
 
 zploopONstat3=$( cat ./status/stat_zploopON3.txt )
-if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploopONstat3" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploopONstat3" = "OFF" || "$zploopONstat3" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON3.txt
 fi
 
 zploopONstat4=$( cat ./status/stat_zploopON4.txt )
-if [[ -f "./status/stat_zploopON4.txt" && ( "$zploopONstat4" = " ON" || "$zploopONstat4" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON4.txt" && ( "$zploopONstat4" = " ON" || "$zploopONstat4" = "OFF" || "$zploopONstat4" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON4.txt
 fi
 
 zploopONstat5=$( cat ./status/stat_zploopON5.txt )
-if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploopONstat5" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploopONstat5" = "OFF" || "$zploopONstat5" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON5.txt
 fi
 
 zploopONstat6=$( cat ./status/stat_zploopON6.txt )
-if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploopONstat6" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploopONstat6" = "OFF" || "$zploopONstat6" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON6.txt
 fi
 
 zploopONstat7=$( cat ./status/stat_zploopON7.txt )
-if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploopONstat7" = "OFF" ) ]]; then
+if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploopONstat7" = "OFF" || "$zploopONstat7" = "WFS" ) ]]; then
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON7.txt
