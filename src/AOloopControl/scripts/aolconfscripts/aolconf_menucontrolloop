@@ -692,6 +692,8 @@ fi
 if [ "${zploopONstat6}" = "OFF" ];
 then
 menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
+elif [ "${zploopONstat6}" = "WFS" ];
+menuitems+=( " " "\Z1\ZrCHANNEL CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff6" "\Z1\Zr    STOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
 fi
@@ -1251,7 +1253,12 @@ file="./status/stat_procWFSres2refON.txt"
 echo " ON" > $file
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1 6" C-m
+
 echo "WFS" > ./status/stat_zploopON6.txt
+tmuxname="aol${LOOPNUMBER}zploop6"
+tmux kill-session -t $tmuxname 
+menucontrolloop_default="zplon6"
+aoconflogext "stop zero-point offset loop 6"
 menucontrolloop_default="wresolOFF"
 ;;
 
