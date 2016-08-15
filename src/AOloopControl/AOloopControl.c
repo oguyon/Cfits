@@ -10314,7 +10314,6 @@ int AOloopControl_run()
 
     if(vOK==1)
     {
-
         AOconf[loop].kill = 0;
         AOconf[loop].on = 0;
         printf("\n");

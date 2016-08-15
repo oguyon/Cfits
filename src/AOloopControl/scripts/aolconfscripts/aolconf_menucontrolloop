@@ -1245,22 +1245,24 @@ aoconflogext "aolstep $loopNBstep"
 
 
 	wresolON)
-# WFS residual offload to wfsref
+# WFS residual offload to aolN_wfszpo6
 tmuxname="aol${LOOPNUMBER}wfsresoffl"
 file="./status/stat_procWFSres2refON.txt"
 echo " ON" > $file
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1 6" C-m
+echo "WFS" > ./status/stat_zploopON6.txt
 menucontrolloop_default="wresolOFF"
 ;;
 
 	wresolOFF)
-# WFS residual offload to wfsref
+# WFS residual offload to aolN_wfszpo6
 tmuxname="aol${LOOPNUMBER}wfsresoffl"
 file="./status/stat_procWFSres2refON.txt"
 echo "OFF" > $file
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
+echo "OFF" > ./status/stat_zploopON6.txt
 menucontrolloop_default="wresolON"
 ;;
 

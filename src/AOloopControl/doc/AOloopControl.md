@@ -525,9 +525,9 @@ Commands to the **loopB** DM should now propagate to modal commands to **loopA**
 
 ## Running the loop
 
-The next steps are similar to the ones previously described:
+The next steps are similar to the ones previously described, with the following important differences:
 
-- specify the WFS image data stream
+- The control matrix should be computed in zonal mode (no modal CPA block decomposition)
 
 
 
