@@ -692,7 +692,7 @@ fi
 if [ "${zploopONstat6}" = "OFF" ];
 then
 menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
-elif [ "${zploopONstat6}" = "WFS" ];
+elif [ "${zploopONstat6}" = "WFS" ]; then
 menuitems+=( " " "\Z1\ZrCHANNEL CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff6" "\Z1\Zr    STOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
