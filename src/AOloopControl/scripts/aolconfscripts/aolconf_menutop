@@ -350,12 +350,15 @@ dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
 
 
 menuitems1=( " " " " )
-for i in 0 1 2 3 4 5;
+for i in 0 1 2 3 4 5 6 7;
         do
 dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
-dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $i+4)}')
+dmolinkchan="$i"
+dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
 menuitems1+=( "$i" "offset channel $i  ( dm${dmnb}disp${dmolinkchan1} )" )
 done 
+
+
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
 
