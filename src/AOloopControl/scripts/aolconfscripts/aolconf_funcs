@@ -12,7 +12,7 @@ function printWARNING ()
 tput bold
 tput setaf 5
 echo "WARNING: $@"
-tput sgr 0
+tput sgr0
 aoconflog "WARNING: $@"
 }
 
@@ -21,7 +21,7 @@ function printERROR ()
 tput bold
 tput setaf 1
 echo "ERROR: $@"
-tput sgr 0
+tput sgr0
 aoconflog "ERROR: $@"
 }
 

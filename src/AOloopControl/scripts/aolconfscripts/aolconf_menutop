@@ -42,13 +42,13 @@ menuitems+=( " " " ")
 
 
 
-
 # =====================================================================================================================
 # =================================== DM CHANNELS AND OUTPUT (dmcomb process) =========================================
 # =====================================================================================================================
 
 stringcenter "DM CHANNELS AND OUTPUT (dmcomb process)"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
 
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
@@ -213,7 +213,7 @@ fi
 
 menuitems+=( " " " ")
 menuitems+=( " " " ")
-
+menuitems+=( " " " ")
 
 
 
@@ -227,7 +227,7 @@ menuitems+=( " " " ")
 
 stringcenter "AO CONFIGURE AND CONTROL"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
-
+menuitems+=( " " " ")
 menuitems+=( "M" "load all (M)emory" )
 menuitems+=( "C" "(C)onfigure/link AO loop" )
 
@@ -239,8 +239,22 @@ menuitems+=( "L" "Control AO (L)oop" )
 
 menuitems+=( " " " ")
 menuitems+=( " " " ")
+menuitems+=( " " " ")
 
 
+
+# =====================================================================================================================
+# ================================  PREDICTIVE CONTROL & POST PROCESSING ==============================================
+# =====================================================================================================================
+
+stringcenter "PREDICTIVE CONTROL"
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "P" "Predictive Control")
+menuitems+=( "Fi" "Filtering")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+menuitems+=( " " " ")
 
 
 
@@ -251,12 +265,13 @@ menuitems+=( " " " ")
 
 
 stringcenter "TEST AND MONITOR"
-menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
 menuitems+=( "T" "Test mode: simulated AO system" )
 menuitems+=( "V" "View / monitor" )
 menuitems+=( " " " ")
 menuitems+=( " " " ")
-
+menuitems+=( " " " ")
 
 
 # =====================================================================================================================
@@ -265,11 +280,12 @@ menuitems+=( " " " ")
 
 
 stringcenter "DATA LOGGING / ANALYSIS"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
 menuitems+=( "R" "Record / analyze")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
-
+menuitems+=( " " " ")
 
 
 # =====================================================================================================================
@@ -278,7 +294,8 @@ menuitems+=( " " " ")
 
 
 stringcenter "CUSTOM EXTERNAL SCRIPTS"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
 menuitems+=( "A" "Align")
 
 
