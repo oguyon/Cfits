@@ -497,7 +497,7 @@ if [ "$procONstat" = " ON" ]; then
  menuitems+=( " " "WFS residual offload to wfsref requires loop ON" )
 fi
 menuitems+=( "wresolinit" "WFS residual offload initialize" )
-
+menuitems+=( "wzpoinit" "Initialize all wfszpo" )
 
 
 
@@ -1284,6 +1284,28 @@ EOF
 menucontrolloop_default="wresolinit"
 ;;
 
+wzpoinit)
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_wfszpo0
+imzero aol${LOOPNUMBER}_wfszpo0
+readshmim aol${LOOPNUMBER}_wfszpo1
+imzero aol${LOOPNUMBER}_wfszpo1
+readshmim aol${LOOPNUMBER}_wfszpo2
+imzero aol${LOOPNUMBER}_wfszpo2
+readshmim aol${LOOPNUMBER}_wfszpo3
+imzero aol${LOOPNUMBER}_wfszpo3
+readshmim aol${LOOPNUMBER}_wfszpo4
+imzero aol${LOOPNUMBER}_wfszpo4
+readshmim aol${LOOPNUMBER}_wfszpo5
+imzero aol${LOOPNUMBER}_wfszpo5
+readshmim aol${LOOPNUMBER}_wfszpo6
+imzero aol${LOOPNUMBER}_wfszpo6
+readshmim aol${LOOPNUMBER}_wfszpo7
+imzero aol${LOOPNUMBER}_wfszpo7
+exit
+EOF
+menucontrolloop_default="wzpoinit"
+;;
 
 
 
