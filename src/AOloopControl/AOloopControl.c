@@ -7637,7 +7637,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+act] = 1.0;
         }
         save_fits("RMpokeCube", "!./conf/RMpokeCube.fits");
-
+		save_fits("RMpokeCube", "!./conf/test_RMpokeCube.fits");
+        
         NBpoke = data.image[IDpokeC].md[0].size[2];
     }
     else
@@ -7645,9 +7646,14 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             //NBpoke = AOconf[loop].sizeDM;
             NBpoke = data.image[IDpokeC].md[0].size[2];
         }
+        
+    save_fits("RMpokeCube", "!./conf/test1_RMpokeCube.fits");
 
     sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke);
     ret = system(command);
+    sprintf(command, "echo \"%ld\" > test_RM_NBpoke.txt\n", NBpoke);
+    ret = system(command);
+
     //    sleep(10);
 
     sizearray[0] = AOconf[loop].sizexWFS;
