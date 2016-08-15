@@ -1,6 +1,8 @@
 #if !defined(GENIMAGE_H)
 #define GENIMAGE_H
 
+
+
 long make_double_star(char *ID_name, long l1, long l2, double intensity_1, double intensity_2, double separation, double position_angle);
 /* creates a double star */
 

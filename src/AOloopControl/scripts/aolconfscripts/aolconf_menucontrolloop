@@ -8,6 +8,15 @@ fi
 
 
 
+# is the loop control in ZONAL CM or MODAL CM mode ?
+CMMODEfile="conf/conf_CMMODE.txt"
+if [ -f $CMMODEfile ]; then
+CMMODE=$( cat ${CMMODEfile} )
+else
+CMMODE="MODAL"
+echo "$CMMODE" > $CMMODEfile
+fi
+
 
 # =====================================================
 # ======== CONTROL AO LOOP ============================
@@ -15,6 +24,10 @@ fi
 if [ $state = "menucontrolloop" ]; then
 stateok=1
 menuname="CONTROL LOOP"
+
+
+
+
 
 
 file="./conf/conf_loopgain.txt"
@@ -273,8 +286,6 @@ fi
 
 
 
-
-
 CMmode=$( cat ./conf/conf_CMmode.txt )
 
 
@@ -507,11 +518,13 @@ menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
 menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
 
 
+
+
 menuitems+=( " " " " )
 stringcenter "CONTROL MATRIX MODAL BLOCK GAINS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
-
+if [ "$CMMODE" = "MODAL" ]; then
 menuitems+=( "gball" "Set all block to same gain")
 menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
 menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
@@ -539,6 +552,17 @@ fi
 string=$( printf "% 3d" "${NBblockmodes}" )
 menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
 done
+else
+menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS" )
+fi
+
+
+
+
+
+
+
+
 
 
 menuitems+=( " " " " )
@@ -622,14 +646,14 @@ if [ "${zploopONstat0}" = "OFF" ];
 then
 menuitems+=( "zplon0" "   START DM->WFS zero point offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
 else
-menuitems+=( "zploff0" "\Z1\ZrSTOP DM->WFS zero point offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
+menuitems+=( "zploff0" "\Z1\Zr    STOP DM->WFS zero point offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
 fi
 
 if [ "${zploopONstat1}" = "OFF" ];
 then
 menuitems+=( "zplon1" "   START DM->WFS zero point offset loop #1 (\Z4${dmZP1}\Zn -> wfszpo1)" )
 else
-menuitems+=( "zploff1" "\Z1\ZrSTOP DM->WFS zero point offset loop #1\Zn (\Z4${dmZP1}\Zn -> wfszpo1)" )
+menuitems+=( "zploff1" "\Z1\Zr    STOP DM->WFS zero point offset loop #1\Zn (\Z4${dmZP1}\Zn -> wfszpo1)" )
 fi
 
 
@@ -637,7 +661,7 @@ if [ "${zploopONstat2}" = "OFF" ];
 then
 menuitems+=( "zplon2" "   START DM->WFS zero point offset loop #2 (\Z4${dmZP2}\Zn -> wfszpo2)" )
 else
-menuitems+=( "zploff2" "\Z1\ZrSTOP DM->WFS zero point offset loop #2\Zn (\Z4${dmZP2}\Zn -> wfszpo2)" )
+menuitems+=( "zploff2" "\Z1\Zr    STOP DM->WFS zero point offset loop #2\Zn (\Z4${dmZP2}\Zn -> wfszpo2)" )
 fi
 
 
@@ -645,7 +669,7 @@ if [ "${zploopONstat3}" = "OFF" ];
 then
 menuitems+=( "zplon3" "   START DM->WFS zero point offset loop #3 (\Z4${dmZP3}\Zn -> wfszpo3)" )
 else
-menuitems+=( "zploff3" "\Z1\ZrSTOP DM->WFS zero point offset loop #3\Zn (\Z4${dmZP3}\Zn -> wfszpo3)" )
+menuitems+=( "zploff3" "\Z1\Zr    STOP DM->WFS zero point offset loop #3\Zn (\Z4${dmZP3}\Zn -> wfszpo3)" )
 fi
 
 
@@ -653,7 +677,7 @@ if [ "${zploopONstat4}" = "OFF" ];
 then
 menuitems+=( "zplon4" "   START DM->WFS zero point offset loop #4 (\Z4${dmZP4}\Zn -> wfszpo4)" )
 else
-menuitems+=( "zploff4" "\Z1\ZrSTOP DM->WFS zero point offset loop #4\Zn (\Z4${dmZP4}\Zn -> wfszpo4)" )
+menuitems+=( "zploff4" "\Z1\Zr    STOP DM->WFS zero point offset loop #4\Zn (\Z4${dmZP4}\Zn -> wfszpo4)" )
 fi
 
 
@@ -661,7 +685,7 @@ if [ "${zploopONstat5}" = "OFF" ];
 then
 menuitems+=( "zplon5" "   START DM->WFS zero point offset loop #5 (\Z4${dmZP5}\Zn -> wfszpo5)" )
 else
-menuitems+=( "zploff5" "\Z1\ZrSTOP DM->WFS zero point offset loop #5\Zn (\Z4${dmZP5}\Zn -> wfszpo5)" )
+menuitems+=( "zploff5" "\Z1\Zr    STOP DM->WFS zero point offset loop #5\Zn (\Z4${dmZP5}\Zn -> wfszpo5)" )
 fi
 
 
@@ -669,7 +693,7 @@ if [ "${zploopONstat6}" = "OFF" ];
 then
 menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
 else
-menuitems+=( "zploff6" "\Z1\ZrSTOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
+menuitems+=( "zploff6" "\Z1\Zr    STOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
 fi
 
 
@@ -677,7 +701,7 @@ if [ "${zploopONstat7}" = "OFF" ];
 then
 menuitems+=( "zplon7" "   START DM->WFS zero point offset loop #7 (\Z4${dmZP7}\Zn -> wfszpo7)" )
 else
-menuitems+=( "zploff7" "\Z1\ZrSTOP DM->WFS zero point offset loop #7\4n (\Z4${dmZP7}\Zn -> wfszpo7)" )
+menuitems+=( "zploff7" "\Z1\Zr    STOP DM->WFS zero point offset loop #7\4n (\Z4${dmZP7}\Zn -> wfszpo7)" )
 fi
 
 
@@ -732,7 +756,7 @@ fi
 state="menutop"
 
 
-dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNUMBER}" \
+dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNUMBER} - ($CMMODE)" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \

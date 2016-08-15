@@ -33,6 +33,24 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " " )
 
 
+
+CMMODEfile="conf/conf_CMMODE.txt"
+if [ -f $CMMODEfile ]; then
+CMMODE=$( cat ${CMMODEfile} )
+else
+CMMODE="MODAL"
+echo "$CMMODE" > $CMMODEfile
+fi
+
+if [ "$CMMODE" = "ZONAL" ]; then
+menuitems+=( "CMmodeM" "\Zb\ZrCM mode is ZONAL\Zn (select to force to MODAL)" )
+else
+menuitems+=( "CMmodeZ" "\Zb\ZrCM mode is MODAL\Zn (select to force to ZONAL)" )
+fi
+
+
+
+
 SVDlimall=0.01
 if [ -f "./conf/conf_SVDlimall.txt" ]; then
 SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
@@ -190,8 +208,19 @@ SYSTEM MODAL RESPONSE AND CONTROL:\n
 
 
 
+CMmodeM)
+CMMODE="MODAL"
+CMMODEfile="conf/conf_CMMODE.txt"
+echo "$CMMODE" > $CMMODEfile
+menucontrolloop_default="CMmodeZ"
+;;
 
-
+CMmodeZ)
+CMMODE="ZONAL"
+CMMODEfile="conf/conf_CMMODE.txt"
+echo "$CMMODE" > $CMMODEfile
+menucontrolloop_default="CMmodeM"
+;;
 
 
 	SVDla)
@@ -214,8 +243,19 @@ menucontrolloop_default="zRM"
 
 
 	RM2CM)
-./auxscripts/aolRM2CM
-menucontrolloop_default="RM2RM"
+mkdir -p zcontrM
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
+mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
+echo "zcontrM/zcontrM_${datestr}.fits" > ./conf/conf_contrM_name.txt
+
+ReadConfFile "contrM"
+getshmimsize aol${LOOPNUMBER}_contrM
+
+CMMODE="ZONAL"
+echo "$CMMODE" > $CMMODEfile
+
+menucontrolloop_default="RM2CM"
 ;;
 
 
@@ -225,6 +265,8 @@ menucontrolloop_default="RM2RM"
 mkModesMODE=0; # full computation
 menucontrolloop_default="mkModes"
 aoconflogext "START control matrix computation mkModesMODE 0"
+CMMODE="MODAL"
+echo "$CMMODE" > $CMMODEfile
 state="menu_mkFModes"
 ;;
 
@@ -232,6 +274,8 @@ state="menu_mkFModes"
 mkModesMODE=1; # re-use previous DM modes
 menucontrolloop_default="mkModes"
 aoconflogext "START control matrix computation mkModesMODE 1"
+CMMODE="MODAL"
+echo "$CMMODE" > $CMMODEfile
 state="menu_mkFModes"
 ;;
 	DMmodes)

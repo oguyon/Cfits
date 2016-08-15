@@ -5840,28 +5840,35 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
             ID1tmp = load_fits(fname, "tmp3Dim", 1);
             if(ID1tmp==-1)
             {
-                printf("ERROR: no file \"%s\"\n", fname);
-                exit(0);
+                printf("WARNING: no file \"%s\" -> loading zonal modes\n", fname);
+                sprintf(fname, "./conf/aol%ld_DMmodes_zonal.fits", loop);
+				ID1tmp = load_fits(fname, "tmp3Dim", 1);
+				if(ID1tmp==-1)
+					{
+						printf("ERROR: cannot read zonal modes \"%s\"\n", fname);
+						exit(0);
+					}
             }
-
-            // check size
-            if(data.image[ID1tmp].md[0].naxis != 3)
-            {
-                printf("ERROR: File \"%s\" is not a 3D image (cube)\n", fname);
-                exit(0);
-            }
-            if(data.image[ID1tmp].md[0].size[0] != AOconf[loop].sizexDM)
-            {
-                printf("ERROR: File \"%s\" has wrong x size: should be %ld, is %ld\n", fname, AOconf[loop].sizexDM, data.image[ID1tmp].md[0].size[0]);
-                exit(0);
-            }
-            if(data.image[ID1tmp].md[0].size[1] != AOconf[loop].sizeyDM)
-            {
-                printf("ERROR: File \"%s\" has wrong y size: should be %ld, is %ld\n", fname, AOconf[loop].sizeyDM, data.image[ID1tmp].md[0].size[1]);
-                exit(0);
-            }
-            AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
-
+			
+			
+				// check size
+				if(data.image[ID1tmp].md[0].naxis != 3)
+				{
+					printf("ERROR: File \"%s\" is not a 3D image (cube)\n", fname);
+					exit(0);
+				}
+				if(data.image[ID1tmp].md[0].size[0] != AOconf[loop].sizexDM)
+				{
+					printf("ERROR: File \"%s\" has wrong x size: should be %ld, is %ld\n", fname, AOconf[loop].sizexDM, data.image[ID1tmp].md[0].size[0]);
+					exit(0);
+				}
+				if(data.image[ID1tmp].md[0].size[1] != AOconf[loop].sizeyDM)
+				{
+					printf("ERROR: File \"%s\" has wrong y size: should be %ld, is %ld\n", fname, AOconf[loop].sizeyDM, data.image[ID1tmp].md[0].size[1]);
+					exit(0);
+				}
+				AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
+			
             printf("NUMBER OF MODES = %ld\n", AOconf[loop].NBDMmodes);
 
             // try to read it from shared memory
@@ -7629,7 +7636,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+ii] = 0.0;
             data.image[IDpokeC].array.F[act*AOconf[loop].sizexDM*AOconf[loop].sizeyDM+act] = 1.0;
         }
-        save_fits("RMpokeCube", "!RMpokeCube.fits");
+        save_fits("RMpokeCube", "!./conf/RMpokeCube.fits");
 
         NBpoke = data.image[IDpokeC].md[0].size[2];
     }

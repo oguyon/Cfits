@@ -33,6 +33,8 @@ extern DATA data;
 // 4: existing image
 //
 
+
+
 int make_disk_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
@@ -2373,6 +2375,8 @@ long make_tile(char *IDin_name, long size, char *IDout_name)
 // make image that is coordinate of input
 // for example, if axis = 0
 // value = 1.0 x ii 
+// if axis value is not one of the coordinates, write pixel index
+//
 long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name)
 {
 	long naxis;
@@ -2387,7 +2391,7 @@ long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name)
   
   if(axis>naxis-1)
 	{
-		printf("Image has only %d axis, cannot access axis %d\n", naxis, axis);
+		printf("Image has only %ld axis, cannot access axis %d\n", naxis, axis);
 		OK = 0;
 	}
 	
@@ -2417,18 +2421,24 @@ long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name)
 				xsize = data.image[IDin].md[0].size[0];
 				ysize = data.image[IDin].md[0].size[1];
 				IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
-				if(axis==0)
-					{
+				
+				switch (axis) {
+					case 0 :
 						for(ii=0;ii<xsize;ii++)
 							for(jj=0;jj<ysize;jj++)
 								data.image[IDout].array.F[jj*xsize+ii] = 1.0*ii;
-					}
-				if(axis==1)
-					{
+					break;
+					case 1 :
 						for(ii=0;ii<xsize;ii++)
 							for(jj=0;jj<ysize;jj++)
 								data.image[IDout].array.F[jj*xsize+ii] = 1.0*jj;
-					}
+					break;
+					default :
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<ysize;jj++)
+								data.image[IDout].array.F[jj*xsize+ii] = 1.0*jj*xsize+ii;
+				}
+				
 			}
 		
 		if(naxis==3)
@@ -2439,27 +2449,33 @@ long image_gen_im2coord(char *IDin_name, int axis, char *IDout_name)
 				ysize = data.image[IDin].md[0].size[1];
 				zsize = data.image[IDin].md[0].size[2];
 				IDout = create_3Dimage_ID(IDout_name, xsize, ysize, zsize);
-				if(axis==0)
-					{
+				
+				
+				switch (axis) {
+					case 0 :
 						for(ii=0;ii<xsize;ii++)
 							for(jj=0;jj<ysize;jj++)
 								for(kk=0;kk<zsize;kk++)
 									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*ii;
-					}
-				if(axis==1)
-					{
+					break;
+					case 1 :
 						for(ii=0;ii<xsize;ii++)
 							for(jj=0;jj<ysize;jj++)
 								for(kk=0;kk<zsize;kk++)
 									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*jj;
-					}
-				if(axis==2)
-					{
+					break;
+					case 2 :
 						for(ii=0;ii<xsize;ii++)
 							for(jj=0;jj<xsize;jj++)
 								for(kk=0;kk<zsize;kk++)
 									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*kk;
-					}
+					break;
+					default :
+						for(ii=0;ii<xsize;ii++)
+							for(jj=0;jj<xsize;jj++)
+								for(kk=0;kk<zsize;kk++)
+									data.image[IDout].array.F[kk*xsize*ysize+jj*xsize+ii] = 1.0*kk*xsize*ysize + jj*xsize + ii;
+							}
 			}
 	}	
 	
