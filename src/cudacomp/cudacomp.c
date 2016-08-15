@@ -1298,8 +1298,8 @@ void *compute_function( void *ptr )
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
              
-				printf("index  = %ld\n", index);
-				printf("device = %ld\n", device);
+				printf("device %ld of index %ld\n", device, index);
+				printf("GPU device : %ld\n", gpumatmultconf[index].GPUdevice[device]);
 				
 				printf("alpha = %f\n", cublasSgemv_alpha);
  				printf("alpha = %f\n", cublasSgemv_beta);
