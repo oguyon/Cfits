@@ -92,4 +92,4 @@ exit
 EOF
 
 
-cp ./conf/RMpokeCube.fits ./conf/aol${loopnb}_DMmodes_zonal.fits
+cp ./conf/zRMpokeCube.fits ./conf/aol${loopnb}_DMmodes_zonal.fits
