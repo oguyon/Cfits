@@ -1008,7 +1008,7 @@ tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
-tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 5 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
+tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
 fi
 
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
