@@ -931,7 +931,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <h1><span class="header-section-number">4</span> Offsetting</h1>
 <div id="overview-2" class="section level2">
 <h2><span class="header-section-number">4.1</span> Overview</h2>
-<p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP4</code>.</p>
+<p>Input channels are provided to offset the AO loop convergence point. By default, <strong>DM channels 04, 05, 06, 07, and 08 are dedicated to zero-point offsetting</strong>. The DM channels are sym-linked to <code>aolN_dmZP0</code> - <code>aolN_dmZP7</code>.</p>
 <div class="figure">
 <img src="./figures/aoloopctr_offset.jpg" title="WFS zero point offsetting" alt="WFS zero point offsetting" />
 <p class="caption">WFS zero point offsetting</p>
@@ -963,8 +963,10 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <h1><span class="header-section-number">5</span> Virtual DM (dm-to-dm link)</h1>
 <p>In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that <strong>loopA</strong> is the main loop (directly controls a physical DM) and that <strong>loopB</strong> is the virtual loop.</p>
 <ul>
-<li><p>create a separate working directory for <strong>loopB</strong>, allocate a separate loop number and loop name</p></li>
-<li><p>select number of <strong>loopA</strong> modes controlled by <strong>loopB</strong>. The number is entered as DM x size (<code>dmxs</code> in <code>Top menu</code>)</p></li>
+<li><p>Create a separate working directory for <strong>loopB</strong>, allocate a separate loop number and loop name</p></li>
+<li><p>Choose DM index number (<code>S</code>)</p></li>
+<li><p>Select number of <strong>loopA</strong> modes controlled by <strong>loopB</strong>. The number is entered as DM x size (<code>dmxs</code> in <code>Top menu</code>)</p></li>
+<li><p>Enter 1 for DM y size (<code>dmys</code> in <code>Top menu</code>)</p></li>
 <li><strong>Link loop DM to external loop</strong> (<code>dmolink</code> in <code>Top menu</code>). Select the loop number to link to (<strong>loopA</strong>), and select an offset channel. This will set up several key files:
 <ul>
 <li><strong>dm2dmM</strong> : <strong>loopA</strong> modes controlled by <strong>loopB</strong></li>
@@ -972,6 +974,8 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <li><strong>dmwrefRM</strong> : <strong>loopA</strong> WFS response to modes controlled by <strong>loopB</strong></li>
 <li><strong>dmwrefO</strong> : <strong>loopA</strong> WFS zero point offset</li>
 </ul></li>
+<li><p><strong>Choose DM or WFS offset mode</strong>. For WFS offset mode (faster), toggle to 1 (<code>dmwref1</code>). Note that the DMcomb process will perform the offsetting</p></li>
+<li><p>(Re)-create DM streams and run DMcomb process (<code>initDM</code>)</p></li>
 </ul>
 </div>
 <div id="predictive-control-experimental" class="section level1">

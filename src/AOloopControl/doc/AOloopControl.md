@@ -495,15 +495,19 @@ Every time one of the activated DM channel changes, the corresponding wfs `aolN_
 
 
 
-
+# Controlling offsets from another loop
  
-# Virtual DM (dm-to-dm link)
+## Virtual DM (dm-to-dm link)
 
 In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop.
 
-- create a separate working directory for **loopB**, allocate a separate loop number and loop name
+- Create a separate working directory for **loopB**, allocate a separate loop number and loop name
 
-- select number of **loopA** modes controlled by **loopB**. The number is entered as DM x size (`dmxs` in `Top menu`)
+- Choose DM index number (`S`)
+
+- Select number of **loopA** modes controlled by **loopB**. The number is entered as DM x size (`dmxs` in `Top menu`)
+
+- Enter 1 for DM y size (`dmys` in `Top menu`)
 
 - **Link loop DM to external loop** (`dmolink` in `Top menu`). Select the loop number to link to (**loopA**), and select an offset channel. This will set up several key files:
 	- **dm2dmM**    : **loopA** modes controlled by **loopB**
@@ -511,8 +515,19 @@ In this mode, the AO loop controls a virtual DM. The virtual actuators are corre
 	- **dmwrefRM**  : **loopA** WFS response to modes controlled by **loopB**
 	- **dmwrefO**   : **loopA** WFS zero point offset
 
+- **Choose DM or WFS offset mode**. For WFS offset mode (faster), toggle to 1 (`dmwref1`).
+Note that the DMcomb process will perform the offsetting
+
+- **(Re)-create DM streams and run DMcomb process** (`initDM`) 
+
+Commands to the **loopB** DM should now propagate to modal commands to **loopA**..
 
 
+## Running the loop
+
+The next steps are similar to the ones previously described:
+
+- specify the WFS image data stream
 
 
 

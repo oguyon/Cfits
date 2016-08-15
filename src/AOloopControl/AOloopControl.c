@@ -279,6 +279,14 @@ int AOloopControl_mkloDMmodes_cli()
 }
 
 
+int AOloopControl_mkCM_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)==0)
+		AOloopControl_mkCM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
+	else
+		return 1;
+}
+
 
 int AOloopControl_mkModes_cli()
 {
@@ -983,6 +991,14 @@ int init_AOloopControl()
     data.NBcmd++;
 
 
+	strcpy(data.cmd[data.NBcmd].key,"aolRM2CM");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkCM_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make control matrix from response matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<RMimage> <CMimage> <SVDlim>");
+    strcpy(data.cmd[data.NBcmd].example,"aolRM2CM respM contrM 0.1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolmkmodes");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1745,8 +1761,8 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     zcpa[9] = 1.5;
 
 
-
-
+	printf("msizexy = %ld %ld\n", msizex, msizey);
+	list_image_ID();
     IDmask = image_ID("dmmask");
     if(IDmask==-1)
     {
@@ -1778,9 +1794,13 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
                 yc1 += 1.0*jj*data.image[IDmask].array.F[jj*msizex+ii];
                 totm += data.image[IDmask].array.F[jj*msizex+ii];
             }
+       // printf("xc1 yc1    %f  %f     %f\n", xc1, yc1, totm);
         xc1 /= totm;
         yc1 /= totm;
     }
+    
+    
+    
 
     totm = arith_image_total("dmmask");
     if((msizex != data.image[IDmask].md[0].size[0])||(msizey != data.image[IDmask].md[0].size[1]))
@@ -1804,15 +1824,20 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     ID0 = image_ID("CPAmodes");
     IDfreq = image_ID("cpamodesfreq");
 
-
+	
 
     printf("  %ld %ld %ld\n", msizex, msizey, data.image[ID0].md[0].size[2]-1 );
     ID = create_3Dimage_ID(ID_name, msizex, msizey, data.image[ID0].md[0].size[2]-1+NBZ);
+
+
+
+	
 
     IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ, 1);
 
     /*** Create TTF first */
     zernike_init();
+    printf("r1 = %f    %f %f\n", r1, xc1, yc1);
     for(k=0; k<NBZ; k++)
     {
         data.image[IDmfcpa].array.F[k] = zcpa[k];
@@ -1826,12 +1851,17 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
                 data.image[ID].array.F[k*msizex*msizey+jj*msizex+ii] = Zernike_value(zindex[k], r, PA);
             }
     }
+    
+    
+
+    
     for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
     {
         data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
         for(ii=0; ii<msizex*msizey; ii++)
             data.image[ID].array.F[(k+NBZ)*msizex*msizey+ii] = data.image[ID0].array.F[(k+1)*msizex*msizey+ii];
     }
+
 
 
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
@@ -1886,10 +1916,12 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
             rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii];
         }
         rms = sqrt(rms/totm);
-        printf("Mode %ld   RMS = %lf\n", k, rms);
+        printf("Mode %ld   RMS = %lf  (%f)\n", k, rms, totm);
         for(ii=0; ii<msizex*msizey; ii++)
             data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
     }
+
+
 
 
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
@@ -2028,6 +2060,45 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
 
     return(ID);
 }
+
+
+
+
+
+
+
+
+//
+// make control matrix
+//
+long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)
+{
+		int use_magma;
+
+
+        // COMPUTE OVERALL CONTROL MATRIX
+        use_magma = 0;
+#ifdef HAVE_MAGMA
+        use_magma = 1;
+#endif
+        //use_magma = 0;
+        printf("COMPUTE OVERALL CONTROL MATRIX\n");
+        if(use_magma==1)
+            CUDACOMP_magma_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 100000, "VTmat");
+        else
+            linopt_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 10000, "VTmat");
+
+        //save_fits("VTmat", "!./mkmodestmp/VTmat.fits");
+        delete_image_ID("VTmat");
+
+    return(image_ID(cm_name));
+}
+
+
+
+
+
+
 
 
 
@@ -3847,7 +3918,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
     return(ID);
 }
-
 
 
 

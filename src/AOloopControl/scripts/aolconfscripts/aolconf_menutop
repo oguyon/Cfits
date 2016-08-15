@@ -217,10 +217,19 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "M" "load all (M)emory" )
 menuitems+=( "C" "(C)onfigure/link AO loop" )
+
 menuitems+=( "CM" "Control Matrix" )
+
+menuitems+=( " " " ")
+
 menuitems+=( "L" "Control AO (L)oop" )
+
 menuitems+=( " " " ")
 menuitems+=( " " " ")
+
+
+
+
 
 
 

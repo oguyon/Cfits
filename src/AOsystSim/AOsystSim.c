@@ -3114,7 +3114,7 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
     k = 0;
     while(k<kmax)
     {		
-        printf("k = %8ld\n", k);
+  
         
         // COMPUTE FOCAL PLANE COMPLEX AMPLITUDE INCIDENT ON FOCAL PLANE MASK
 		for(ii=0;ii<xsizein;ii++)
@@ -3233,6 +3233,9 @@ int AOsystSim_coroLOWFS(char *CONF_FNAME)
 		data.image[IDimlowfs].md[0].cnt0++;
 		data.image[IDimlowfs].md[0].write = 0;
 		LOWFScamcnt++;
+	
+		printf("%8ld  TIME: %16f  %16f   %16f/%16f\n", k, data.image[IDphystime].array.F[0], LOWFScamstarttime, data.image[IDphystime].array.F[0]-LOWFScamstarttime, LOWFSCAMETIME);
+		fflush(stdout);
 		
 		if(data.image[IDphystime].array.F[0]-LOWFScamstarttime > LOWFSCAMETIME)
 			{

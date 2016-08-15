@@ -33,16 +33,30 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " " )
 
 
-menuitems+=( " " " " )
-stringcenter "SYSTEM MODAL RESPONSE AND CONTROL"
-menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
-
-
 SVDlimall=0.01
 if [ -f "./conf/conf_SVDlimall.txt" ]; then
 SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
 fi
 menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "SYSTEM ZONAL RESPONSE -> CONTROL MATRIX"
+menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+
+makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
+menuitems+=( "zRM" "$menustring" )
+
+menuitems+=( "RM2CM" "Compute Control matrix" )
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
 mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
@@ -68,7 +82,7 @@ menuitems+=( "SMloadCM" "Load current Files" )
 
 menuitems+=( " " " " )
 stringcenter "BLOCK DECOMPOSITION"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " " )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -187,6 +201,26 @@ exec 3>&-;
 echo "$SVDlimall" > ./conf/conf_SVDlimall.txt
 aoconflogext "set SDVlimall ${SVDlimall}"
 ;;
+
+
+	zRM)
+fname=$( cat ./conf/conf_zrespM_name.txt )
+fname=$(dialog --title "Select zonal Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
+echo "$fname" > ./conf/conf_zrespM_name.txt
+ReadConfFile "zrespM"
+menucontrolloop_default="zRM"
+;;
+
+
+
+	RM2CM)
+./auxscripts/aolRM2CM
+menucontrolloop_default="RM2RM"
+;;
+
+
+
+
 	mkModes0)
 mkModesMODE=0; # full computation
 menucontrolloop_default="mkModes"

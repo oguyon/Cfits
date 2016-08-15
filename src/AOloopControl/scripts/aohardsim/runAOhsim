@@ -32,6 +32,7 @@ echo "     $0 [-hHLNCc] <file1> <file2>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr 0)"
 echo "     $(tput bold)-h$(tput sgr 0)          help"
+echo "     $(tput bold)-k$(tput sgr 0)          kill processes"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr 0)"
 echo "     <file1>     first file"
@@ -67,7 +68,7 @@ if [ -d $1 ]
 fi
 }
 
-
+KILLPROCESSES=0
 
 # ================= OPTIONS =============================
 
@@ -76,13 +77,14 @@ fi
 #Notice there is no ":" after "h". The leading ":" suppresses error messages from
 #getopts. This is required to get unrecognized option code to work.
 
-while getopts :h FLAG; do
+while getopts :hk FLAG; do
   case $FLAG in
-    L)  #  set loop number
-      LOOPNUMBER=$OPTARG
-      echo "LOOP NUMBER = $LOOPNUMBER"
-      echo "$LOOPNUMBER" > $LOOPNUMBER_file
-      aoconflog "setting LOOPNUMBER to $LOOPNUMBER"
+    h) # help
+    printHELP
+    exit
+    ;;
+    k)  #  kill processes
+      KILLPROCESSES=1
       ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -166,7 +168,9 @@ tmux send-keys -t $tmuxname C-c 2> /dev/null
 tmux kill-session -t $tmuxname 2> /dev/null
 
 
-
+if [ "$KILLPROCESSES" -eq "1" ]; then
+exit
+fi 
 
 
 
