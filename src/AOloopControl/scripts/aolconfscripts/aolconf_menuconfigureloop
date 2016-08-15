@@ -394,7 +394,7 @@ menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LO
 menuitems+=( " " " " )
 
 
-menuitems+=( "smlock" "Set locked masks to current masks")
+menuitems+=( "smlock" "Set locked masks to current masks (dmmaskRM, dmmask, dmslaved, wfsmask)")
 
 file="conf/conf_MASKS_LOCK.txt"
 if [ -a $file ]
@@ -1009,10 +1009,19 @@ menucontrolloop_default="adark_on"
 
 
 	smlock) # set masks lock files
+	
 fname=$( cat ./conf/conf_dmmask_name.txt )
 cp $fname ./conf/dmmask_LOCK.fits
+
+fname=$( cat ./conf/conf_dmmaskRM_name.txt )
+cp $fname ./conf/dmmaskRM_LOCK.fits
+
+fname=$( cat ./conf/conf_dmslaved_name.txt )
+cp $fname ./conf/dmslaved_LOCK.fits
+
 fname=$( cat ./conf/conf_wfsmask_name.txt )
 cp $fname ./conf/wfsmask_LOCK.fits
+
 menucontrolloop_default="smlock"
 ;;
 
@@ -1024,6 +1033,9 @@ menucontrolloop_default="smlock"
 	else
 	MASKS_LOCK="1"
 	echo "1" > ./conf/conf_MASKS_LOCK.txt
+	
+	# TBD
+	
 	fi
 menucontrolloop_default="mlock"
 ;;
@@ -1251,29 +1263,25 @@ mkdir -p dmmask
 mkdir -p wfsmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+
+if [ "$MASKS_LOCK" -eq "1" ]; then
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/dmmask_LOCK.fits dmmask.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/dmmaskRM_LOCK.fits dmmaskRM.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/dmslaved_LOCK.fits dmslaved.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/wfsmask_LOCK.fits wfsmask.fits" C-m
+fi
+
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 
-#echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
-#echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
-#echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
-#echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
-#if [ "$MASKS_LOCK" -eq "1" ]; then
-#echo "conf/wfsmask_LOCK.fits" > ./conf/conf_wfsmask_name.txt
-#else
-#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
-#fi
-
-#echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
-#echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
 
 if [ "$MASKS_LOCK" -eq "1" ]; then
 echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
@@ -1308,30 +1316,25 @@ mkdir -p dmmask
 mkdir -p wfsmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+
+if [ "$MASKS_LOCK" -eq "1" ]; then
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/dmmask_LOCK.fits dmmask.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/dmmaskRM_LOCK.fits dmmaskRM.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/dmslaved_LOCK.fits dmslaved.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp ./conf/wfsmask_LOCK.fits wfsmask.fits" C-m
+fi
+
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+
 tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespM "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
-
-#echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
-#echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
-
-#if [ "$MASKS_LOCK" -eq "1" ]; then
-#echo "conf/wfsmask_LOCK.fits" > ./conf/conf_wfsmask_name.txt
-#else
-#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
-#fi
-
-#echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
-#echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
-#echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
-#echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
 
 if [ "$MASKS_LOCK" -eq "1" ]; then
 echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
@@ -1391,6 +1394,8 @@ mkdir -p dmmask
 mkdir -p wfsmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+
+
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
@@ -1670,14 +1675,6 @@ tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.
 tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 
 
-#echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
-#echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
-#echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
-#echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
-#echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
-#echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
-#echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
-
 rm cleanLOresp.run
 tmux send-keys -t  ${tmuxname} "touch cleanLOresp.run" C-m
 tmux send-keys -t ${tmuxname} "exit" C-m
@@ -1714,13 +1711,6 @@ tmux send-keys -t ${tmuxname} "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" 
 tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 
-#echo "LOrespM/LOrespM_${datestr}.fits" > ./conf/conf_LOrespM_name.txt
-#echo "LODMmodes/LODMmodes_${datestr}.fits" > ./conf/conf_LODMmodes_name.txt
-#echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./conf/conf_LOwfsref0_name.txt
-#echo "LOwfsmap/LOwfsmap_${datestr}.fits" > ./conf/conf_LOwfsmap_name.txt
-#echo "LOdmmap/LOdmmap_${datestr}.fits" > ./conf/conf_LOdmmap_name.txt
-#echo "LOwfsmask/LOwfsmask_${datestr}.fits" > ./conf/conf_LOwfsmask_name.txt
-#echo "LOdmmask/LOdmmask_${datestr}.fits" > ./conf/conf_LOdmmask_name.txt
 
 rm cleanLOresp.run
 tmux send-keys -t ${tmuxname} "touch cleanLOresp.run" C-m
