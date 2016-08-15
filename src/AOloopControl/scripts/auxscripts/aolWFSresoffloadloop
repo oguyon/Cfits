@@ -95,9 +95,8 @@ echo "$cnt   WFS residual offset to WFS ref"
 Cfits -n $pname << EOF > /dev/null
 readshmim aol${loopnb}_wfsres_ave
 readshmim aol${loopnb}_wfsref
-im=aol${loopnb}_wfsref+$2*aol${loopnb}_wfsres_ave
-listim
 readshmim aol${loopnb}_wfszpo$3
+im=aol${loopnb}_wfszpo$3+$2*aol${loopnb}_wfsres_ave
 cpsh im aol${loopnb}_wfszpo$3	
 exit
 EOF
