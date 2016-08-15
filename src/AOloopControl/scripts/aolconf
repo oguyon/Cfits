@@ -496,6 +496,8 @@ stateok=0
 . ./aolconfscripts/aolconf_menu_mkFModes
 . ./aolconfscripts/aolconf_menucontrolmatrix
 . ./aolconfscripts/aolconf_menucontrolloop
+. ./aolconfscripts/aolconf_menupredictivecontrol
+. ./aolconfscripts/aolconf_menudmCfiltering
 . ./aolconfscripts/aolconf_menutestmode
 . ./aolconfscripts/aolconf_menuview
 . ./aolconfscripts/aolconf_menurecord

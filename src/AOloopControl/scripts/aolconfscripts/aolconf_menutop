@@ -579,13 +579,22 @@ AOloadMem 1
 ;;
 
 
-   	 C) state="menuconfigureloop";;   
+   	 C) state="menuconfigureloop";;
+   	 
+  	 CM) state="menucontrolmatrix";;
+   	    
    	 L) state="menucontrolloop";;
    	 CM) state="menucontrolmatrix";;
+   	 
+   	 
+   	 P) state="menupredictivecontrol";;
+   	 Fi) state="menudmCfiltering";;
+   	 
+   	 
    	 T) state="menutestmode"   ;;
    	 V) state="menuview" ;;
 
- 	R) state="menurecord" ;;
+	R) state="menurecord" ;;
 
    	 A) state="menualign";;
 
