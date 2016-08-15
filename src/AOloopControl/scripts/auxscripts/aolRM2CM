@@ -94,3 +94,5 @@ EOF
 
 cp ./conf/RMpokeCube.fits ./conf/aol${loopnb}_DMmodes_zonal.fits
 
+echo "TEST-----------------------"
+sleep 10
