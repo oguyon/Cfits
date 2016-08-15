@@ -25,7 +25,7 @@ echo "  Computes DM map from modal loop coefficients"
 echo "  Requires Open Loop modes extraction process to be running"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr 0)"
-echo "     $0 [-h -o <outputstream> -f] <GPU index>"
+echo "     $0 [-h -o <outputstream> -f -g <gain>] <GPU index>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr 0)"
 echo "     $(tput bold)-h$(tput sgr 0)             help"
@@ -116,10 +116,9 @@ readshmim aol${loopnb}_DMmode_LIMIT
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
-cpsh im1 outDM_map
-readshmim outDM_map
-listim
-aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 outDM_map $gain $1 ${loopnb} $OFFLOADMODE
+readshmim ${OUTCNAME}
+cpsh im1 ${OUTCNAME}
+aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 
@@ -130,7 +129,9 @@ readshmim aol${loopnb}_modeval_dm_now
 readshmim aol${loopnb}_DMmode_LIMIT
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
+im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
+cpsh im1 ${OUTCNAME}
 aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
