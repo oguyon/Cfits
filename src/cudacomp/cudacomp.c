@@ -1297,6 +1297,14 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+             
+				printf("index  = %ld\n", index);
+				printf("device = %ld\n", device);
+				
+				printf("alpha = %f\n", cublasSgemv_alpha);
+ 				printf("alpha = %f\n", cublasSgemv_beta);
+            
+             
                 exit(EXIT_FAILURE);
             }
 
