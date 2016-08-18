@@ -233,7 +233,10 @@ printhelp_designsteps()
 }
 
 
-
+REGPIAACCOEFF="0.0001"
+REGPIAACALPHA="0.2"
+REGPIAAFCOEFF="0.0001"
+REGPIAAFALPHA="0.2"
 
 
 
@@ -275,6 +278,13 @@ printhelp ()
 	echo "  arg24: outer sag offset [m]                     ${24}"
 	echo "  arg25: index                                    ${25}"
 	echo "  arg26: design step                              ${26}"
+	echo ""
+	echo "========= PARAMETERS IN runPIAACMC script ============="
+	echo ""
+	echo "PIAA regularization, C coeff                     ${REGPIAACCOEFF}"
+	echo "PIAA regularization, F coeff                     ${REGPIAAFCOEFF}"
+	echo "PIAA regularization, C alpha                     ${REGPIAACALPHA}"
+	echo "PIAA regularization, F alpha                     ${REGPIAAFALPHA}"
 	echo ""
 }
 
@@ -727,6 +737,11 @@ PIAACMC_nbiter=20
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1617,6 +1632,11 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1676,6 +1696,11 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1709,7 +1734,7 @@ checkexit
 
 
 
-# STEP 009: Compute Lyot stops shapes and locations, 2nd pass, throughput = LStransm1
+# STEP 009: Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 
 if [ 009 -eq ${state} ]
 then
@@ -1743,7 +1768,7 @@ cp ./$1/LyotStop3.fits ./$1/LyotStop3_step009.fits
 
 touch ./$1/step009.txt
  else
- printf "skip step 009 [  5] (Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput)\n"
+ printf "skip step 009 [  5] (Compute Lyot stops shapes and locations, 3nd pass, $LStransm1 throughput)\n"
  fi
 state=010
 fi
@@ -1834,6 +1859,11 @@ PIAACMC_lambda=${lambda}
 #PIAACMC_dftgrid=2
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1899,7 +1929,11 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
-#60 625 
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1936,7 +1970,7 @@ checkexit
 
 
 
-# STEP 013: Compute Lyot stops shapes and locations, 3rd pass, 80% throughput
+# STEP 013: Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
 
 if [ 013 -eq ${state} ]
 then
@@ -1972,7 +2006,7 @@ cp ./$1/LyotStop3.fits ./$1/LyotStop3_step013.fits
 
 touch ./$1/step013.txt
  else
- printf "skip step 013 [  5] (Compute Lyot stops shapes and locations, 3rd pass, 70%% throughput)\n"
+ printf "skip step 013 [  5] (Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput)\n"
  fi
 state=014
 fi
@@ -2064,6 +2098,11 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -2128,6 +2167,11 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF
@@ -2188,6 +2232,11 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+REGPIAASHAPES=1
+REGPIAA_C_COEFF=1.0
+REGPIAA_C_ALPHA=1.0
+REGPIAA_F_COEFF=1.0
+REGPIAA_F_ALPHA=1.0
 piaacmcsimrun $1 40
 exit
 EOF

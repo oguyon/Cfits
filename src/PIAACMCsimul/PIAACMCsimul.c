@@ -5098,11 +5098,17 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
     // OPTIMIZATION PARAMETERS
     int REGPIAASHAPES = 0;
+
     float piaa0C_regcoeff = 0.0e-7; // regularization coeff
     float piaa1C_regcoeff = 0.0e-7; // regularization coeff
-
     float piaa0C_regcoeff_alpha = 1.0; // regularization coeff power
     float piaa1C_regcoeff_alpha = 1.0; // regularization coeff power
+
+    float piaa0F_regcoeff = 0.0e-7; // regularization coeff
+    float piaa1F_regcoeff = 0.0e-7; // regularization coeff
+    float piaa0F_regcoeff_alpha = 1.0; // regularization coeff power
+    float piaa1F_regcoeff_alpha = 1.0; // regularization coeff power
+
     int r;
 
     double val, v1, v2, pha, cosp, sinp, re, im, re1, im1;
@@ -5341,7 +5347,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 1 : // optimize Lyot stop positions
+    case 001 : // optimize Lyot stop positions
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -5423,7 +5429,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 2 : // optimize focal plane mask transmission for monochromatic idealized PIAACMC
+    case 002 : // optimize focal plane mask transmission for monochromatic idealized PIAACMC
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -5496,7 +5502,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 3 : // calibrate, no focal plane mask
+    case 003 : // calibrate, no focal plane mask
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -5520,7 +5526,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 4 : // optimize PIAA optics shapes, cosine modes only
+    case 004 : // optimize PIAA optics shapes, cosine modes only
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         LINOPT = 1; // perform linear optimization
         if((IDv=variable_ID("PIAACMC_nbiter"))!=-1)
@@ -5568,7 +5574,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 5 : // optimize Lyot stops shapes and positions
+    case 005 : // optimize Lyot stops shapes and positions
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -5698,7 +5704,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 10 : // setup multizone physical ring mask
+    case 010 : // setup multizone physical ring mask
         PIAAsimul_initpiaacmcconf(0, fpmradld, centobs0, centobs1, 0, 1);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
         //  piaacmc[0].fpmaskamptransm = 1.0;
@@ -5712,7 +5718,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         break;
 
 
-    case 11 : // setup multizone ring mask and Compute polychromatic response to zones, store result in FPMresp
+    case 011 : // setup multizone ring mask and Compute polychromatic response to zones, store result in FPMresp
         printf("STEP01\n");
 
         if((IDv=variable_ID("PIAACMC_nblambda"))!=-1)
@@ -6040,7 +6046,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         break;
 
 
-    case 12 : // search for best mask solution using FPMresp
+    case 012 : // search for best mask solution using FPMresp
         PIAAsimul_initpiaacmcconf(1, fpmradld, centobs0, centobs1, 0, 1);
         PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0);
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
@@ -6406,7 +6412,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 13 : // optimize focal plane mask zones only
+    case 013 : // optimize focal plane mask zones only
         PIAAsimul_initpiaacmcconf(1, fpmradld, centobs0, centobs1, 0, 1);
 
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
@@ -6479,7 +6485,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
-    case 40 : // optimize PIAA optics shapes (and focal plane mask transmission for idealized PIAACMC)
+    case 040 : // optimize PIAA optics shapes (and focal plane mask transmission for idealized PIAACMC)
         //		FORCE_CREATE_fpmza = 1;
         PIAACMC_fpmtype = 0; // idealized (default)
         if((IDv=variable_ID("PIAACMC_fpmtype"))!=-1)
@@ -6513,25 +6519,65 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         else
             NBiter = 1000;
 
+
         kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
         if((IDv=variable_ID("PIAACMC_maxoptCterm"))!=-1)
             kmaxC = (long) data.variable[IDv].value.f+0.01;
-
         if(kmaxC>data.image[piaacmc[0].piaa0CmodesID].md[0].size[0])
             kmaxC = data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
 
-        list_variable_ID();
      
         kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
-    
         if((IDv=variable_ID("PIAACMC_maxoptFterm"))!=-1)
             kmaxF = (long) data.variable[IDv].value.f+0.01;
-
-
- 
         if(kmaxF>data.image[piaacmc[0].piaa0FmodesID].md[0].size[0])
             kmaxF = data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
         
+
+		// PIAA shapes regularization
+		
+		REGPIAASHAPES = 0; // default
+		if((IDv=variable_ID("REGPIAASHAPES"))!=-1)
+			REGPIAASHAPES = (long) data.variable[IDv].value.f+0.01;
+				
+				
+		
+		piaa0C_regcoeff = 0.0e-7; // regularization coeff
+		piaa1C_regcoeff = 0.0e-7; // regularization coeff
+		if((IDv=variable_ID("REGPIAA_C_COEFF"))!=-1)
+		{
+			piaa0C_regcoeff = data.variable[IDv].value.f;
+			piaa1C_regcoeff = data.variable[IDv].value.f;
+		}
+		
+		piaa0C_regcoeff_alpha = 1.0; // regularization coeff power
+		piaa1C_regcoeff_alpha = 1.0; // regularization coeff power
+		if((IDv=variable_ID("REGPIAA_C_ALPHA"))!=-1)
+		{
+			piaa0C_regcoeff_alpha = data.variable[IDv].value.f;
+			piaa1C_regcoeff_alpha = data.variable[IDv].value.f;
+		}
+		
+	
+				
+		piaa0F_regcoeff = 0.0e-7; // regularization coeff
+		piaa1F_regcoeff = 0.0e-7; // regularization coeff
+		if((IDv=variable_ID("REGPIAA_F_COEFF"))!=-1)
+		{
+			piaa0F_regcoeff = data.variable[IDv].value.f;
+			piaa1F_regcoeff = data.variable[IDv].value.f;
+		}
+
+		piaa0F_regcoeff_alpha = 1.0; // regularization coeff power
+		piaa1F_regcoeff_alpha = 1.0; // regularization coeff power
+		if((IDv=variable_ID("REGPIAA_F_ALPHA"))!=-1)
+		{
+			piaa0F_regcoeff_alpha = data.variable[IDv].value.f;
+			piaa1F_regcoeff_alpha = data.variable[IDv].value.f;
+		}
+			
+
+
 
         NBparam = 0;
 
@@ -6609,7 +6655,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         FORCE_MAKE_PIAA0shape = 1;
         FORCE_MAKE_PIAA1shape = 1;
-}
+		}
         break;
 
 
@@ -7081,7 +7127,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         if(REGPIAASHAPES==1)
         {
             size1Dvec += data.image[piaacmc[0].piaa0CmodesID].md[0].size[0];
-            size1Dvec += data.image[piaacmc[0].piaa1CmodesID].md[0].size[0];
+            size1Dvec += data.image[piaacmc[0].piaa1CmodesID].md[0].size[0];   
+            size1Dvec += data.image[piaacmc[0].piaa0FmodesID].md[0].size[0];
+            size1Dvec += data.image[piaacmc[0].piaa1FmodesID].md[0].size[0];   
         }
 
 
@@ -7096,6 +7144,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             data.image[ID1Dref].array.F[ii] = data.image[ID].array.F[ii];
             data.image[IDm].array.F[ii] = 1.0;
         }
+        
+        
         if(REGPIAASHAPES == 1)
         {
             ID = piaacmc[0].piaa0CmodesID;
@@ -7113,6 +7163,23 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 data.image[IDm].array.F[ii] = 1.0;
                 ii++;
             }
+
+            ID = piaacmc[0].piaa0FmodesID;
+            for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+            {
+                data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa0F_regcoeff_alpha);
+                data.image[IDm].array.F[ii] = 1.0;
+                ii++;
+            }
+
+            ID = piaacmc[0].piaa1FmodesID;
+            for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+            {
+                data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1F_regcoeff_alpha);
+                data.image[IDm].array.F[ii] = 1.0;
+                ii++;
+            }
+
         }
         delete_image_ID("vecDHref");
 
@@ -7206,6 +7273,22 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                             data.image[ID1D].array.F[ii] = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1C_regcoeff_alpha);
                             ii++;
                         }
+                        
+                        ID = piaacmc[0].piaa0FmodesID;
+                        for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+                        {
+                            data.image[ID1D].array.F[ii] = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa0F_regcoeff_alpha);
+                            ii++;
+                        }
+
+                        ID = piaacmc[0].piaa1FmodesID;
+                        for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+                        {
+                            data.image[ID1D].array.F[ii] = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1F_regcoeff_alpha);
+                            ii++;
+                        }
+   
+                        
                     }
                     delete_image_ID("imvect");
 
@@ -7479,6 +7562,23 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1C_regcoeff_alpha);
                     ii++;
                 }
+
+
+                ID = piaacmc[0].piaa0FmodesID;
+                for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+                {
+                    data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa0F_regcoeff_alpha);
+                    ii++;
+                }
+
+                ID = piaacmc[0].piaa1FmodesID;
+                for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+                {
+                    data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1F_regcoeff_alpha);
+                    ii++;
+                }
+
+
             }
             delete_image_ID("imvect");
 
