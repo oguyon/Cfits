@@ -7,9 +7,9 @@
 #define CORONAGRAPHS_ARRAYSIZE 4096
 
 
-double coronagraph_make_2Dprolate(double masksizepix, double beamradpix, double centralObs, char *outname, long size);
+double coronagraph_make_2Dprolate(double masksizepix, double beamradpix, double centralObs, char *outname, long size, char *pupmask_name);
 
-int coronagraph_make_2Dprolateld(double masksizeld, double beamradpix, double centralObs, char *outname, long size);
+int coronagraph_make_2Dprolateld(double masksizeld, double beamradpix, double centralObs, char *outname, long size, char *pupmask_name);
 
 int coronagraph_update_2Dprolate(double masksizeld, double beamradpix, double centralObs, double zfactor);
 

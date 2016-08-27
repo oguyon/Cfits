@@ -39,12 +39,16 @@ typedef struct {
     float beamrad; // [m]
     long size;
     float pixscale; // [m/pix]
-    float piaa0pos; // conjugation (z) of first PIAA surface [m]
-    float piaasep;// separation between PIAA surfaces [m]
-    int prepiaa0mask; // 1 if mask before PIAA surface 0
-    float prepiaa0maskpos; // position of mask before PIAA surface 0 [m]
-    int postpiaa0mask; // 1 if mask after PIAA surface 0
-    float postpiaa0maskpos; // position of mask after PIAA surface 0 [m]
+
+	int PIAAmode; // 0: no PIAA, 1: PIAA
+
+    float PIAA0pos; // conjugation (z) of first PIAA surface [m]
+    float PIAAsep;// separation between PIAA surfaces [m]
+    int prePIAA0mask; // 1 if mask before PIAA surface 0
+    float prePIAA0maskpos; // position of mask before PIAA surface 0 [m]
+    int postPIAA0mask; // 1 if mask after PIAA surface 0
+    float postPIAA0maskpos; // position of mask after PIAA surface 0 [m]
+	float PIAAcoeff; // fraction of apodization done by PIAA
     int invPIAAmode; // 0: no inv PIAA, 1: inv PIAA after Lyot stops, 2: inv PIAA before Lyot stops
     float LyotZmin;
     float LyotZmax;
@@ -83,16 +87,7 @@ typedef struct {
     float peakPSF;
 
 
-    // ========= Focal Plane Mask =============
-
-    // sprintf(fname, "%s/fpm_zonez_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-
-    // sprintf(fname, "!%s/psfi0_exsrc%3d_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, sourcesize, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);    
-
-   // sprintf(fname, "%s/FPMresp%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-
-  //  sprintf(fname, "!%s/ContrastCurve_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%04ld_maxsag%04ld_ccnbr%03ld_ccz%04ld_ocr%04ld_ocz%04ld_ssr%02d_ssm%d_%s_wb%02d_tt000.txt", piaacmcconfdir, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag + 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRad+0.1), (long) (1.0e-9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda); 
-  
+    // ========= Focal Plane Mask ============
 
     double fpmaskradld; // mask radius [l/d] for the idealized PIAACMC starting point
     long focmNBzone; // number of zones

@@ -84,14 +84,40 @@ var=$( cat "$file" )
 eval "$1=$var"
 }
 
+
+
+
+
+
+
+
+
+
 function checkexit() {
+
 if [ $state -eq $exitpt ] 
 then
 echo "$0 REACHED STATE EXIT POINT ($exitpt)" > errorstatus.txt
+echo "$0 REACHED STATE EXIT POINT ($exitpt)"
 cleanup
 exit
+else
+echo "$state neq $exitpt -> CONTINUING"
 fi	
+
+
+if [ $state -eq $statestop ] 
+then
+echo "STATE STOP POINT ($statestop)"
+sleep 1
+cleanup
+exit
+fi
+
 }
+
+
+
 
 
 printhelp_designsteps()
@@ -312,8 +338,33 @@ fi
 
 
 
+
+
+
 # READ CONFIGURATION FILES
+loadparam PIAAmode 0   # if set to 1, use PIAA optics
+loadparam PIAAcoeff 0.9
 loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fourier modes)
+loadparam FPMsectors "1"
+loadparam nblambda "10"
+loadparam beamrad "0.01"
+loadparam Fratio "80"
+loadparam r0lim "1.15"
+loadparam r1lim "1.50"
+loadparam PIAAsep "1.00"
+loadparam PIAA0pos "1.00"
+loadparam prePIAA0maskpos "1.00"
+loadparam postPIAA0maskpos "1.00"
+loadparam piaaNBCmodesmax "40"
+loadparam piaaCPAmax "10.0"
+loadparam LyotZmin "-2.5"
+loadparam LyotZmax "-2.5"
+loadparam pupoutmaskrad "0.99"
+loadparam invPIAAmode "1"
+
+
+
+
 
 
 
@@ -358,7 +409,7 @@ rstep=${26}
 PIAACMC_nbiter=20
 
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0 # full sampling
 kmaxC=10
 
 kmaxF=0
@@ -382,7 +433,9 @@ statestop=$rstep
 
 # if $26 in [0-99]
 # run steps from 0 to $26
-if ((rstep >= 0 && rstep <= 99)); then
+#if ((rstep >= 0 && rstep <= 99)); then
+
+if [ "$rstep" -ge "0" ] && [ "$rstep" -le "200" ]; then 
 echo ""
 state=0
 statestop=${rstep}
@@ -390,11 +443,13 @@ fi
 
 # if $26 in [100-109]
 # run steps from 100 to $26
-if ((rstep >= 100 && rstep <= 109)); then
-echo ""
-state=100
-statestop=${rstep}
-fi
+
+#if ((rstep >= 100 && rstep <= 109)); then
+#if [ "$rstep" -ge "100" ] && ["$rstep" le 109 ]; then 
+#echo ""
+#state=100
+#statestop=${rstep}
+#fi
 
 
 
@@ -433,204 +488,6 @@ LStransm1=$( echo "($LStransm0+$LStransm2)*0.5" | bc -l )
 
 
 
-FPMsectors=1 # default
-file="conf/conf_FPMsectors.txt"
-if [ -f $file ]
-        then
-        FPMsectors=$(echo "$(cat $file)")
-        else
-        #echo "CANNOT READ FILE ${file}"
-        ok=0
-fi
-echo "FPMsectors = $FPMsectors"
-
-
-
-nblambda=10 # default
-file="conf/conf_nblambda.txt"
-if [ -f $file ]
-	then
-	nblambda=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "nblambda = $nblambda"
-
-
-beamrad=0.01 # default
-file="conf/conf_PIAAbeamrad.txt"
-if [ -f $file ]
-	then
-	beamrad=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "beamrad = $beamrad"
-
-
-Fratio=80 # default
-file="conf/conf_Fratio.txt"
-if [ -f $file ]
-	then
-	Fratio=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "Fratio = $Fratio"
-
-
-r0lim=1.15 # default
-file="conf/conf_r0lim.txt"
-if [ -f $file ]
-	then
-	r0lim=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "r0lim = $r0lim"
-
-
-r1lim=1.50 # default
-file="conf/conf_r1lim.txt"
-if [ -f $file ]
-	then
-	r1lim=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "r1lim = ${r1lim}"
-
-
-piaasep=1.00 # default
-file="conf/conf_PIAAsep.txt"
-if [ -f $file ]
-	then
-	piaasep=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "piaasep = $piaasep"
-
-
-piaa0pos=1.00 # default
-file="conf/conf_PIAA0pos.txt"
-if [ -f $file ]
-	then
-	piaa0pos=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "piaa0pos = $piaa0pos"
-
-
-prepiaa0maskpos=1.00 # default
-file="conf/conf_prePIAA0maskpos.txt"
-if [ -f $file ]
-	then
-	prepiaa0maskpos=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "prepiaa0maskpos = $prepiaa0maskpos"
-
-
-postpiaa0maskpos=1.00 # default
-file="conf/conf_postPIAA0maskpos.txt"
-if [ -f $file ]
-	then
-	postpiaa0maskpos=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "postpiaa0maskpos = $postpiaa0maskpos"
-
-
-
-piaaNBCmodesmax=40 # default
-file="conf/conf_piaaNBCmodesmax.txt"
-if [ -f $file ]
-	then
-	piaaNBCmodesmax=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "piaaNBCmodesmax = $piaaNBCmodesmax"
-
-
-
-piaaCPAmax=10.0 # default
-file="conf/conf_piaaCPAmax.txt"
-if [ -f $file ]
-	then
-	piaaCPAmax=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "piaaCPAmax = $piaaCPAmax"
-
-
-LyotZmin=-2.5 # default
-file="conf/conf_LyotZmin.txt"
-if [ -f $file ]
-	then
-	LyotZmin=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "LyotZmin = $LyotZmin"
-
-
-LyotZmax=-2.5 # default
-file="conf/conf_LyotZmax.txt"
-if [ -f $file ]
-	then
-	LyotZmax=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "LyotZmax = $LyotZmax"
-
-
-
-pupoutmaskrad=0.99 # default
-file="conf/conf_pupoutmaskrad.txt"
-if [ -f $file ]
-	then
-	pupoutmaskrad=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "pupoutmaskrad = $pupoutmaskrad"
-
-
-
-
-invPIAAmode=1 # default
-file="conf/conf_invPIAAmode.txt"
-if [ -f $file ]
-	then
-	invPIAAmode=$(echo "$(cat $file)")
-	else
-	#echo "CANNOT READ FILE ${file}"
-	ok=0
-fi
-echo "invPIAAmode = $invPIAAmode"
-
-
 
 
 
@@ -643,7 +500,8 @@ NBpropStep=200
 
 # PARAMETER LOAD SCRIPT TO BE EXECUTED - DEFAULT VALUES
 startupfile="clistartup$pid.txt"
-echo "PIAACMC_size=${size}" > $startupfile  #2
+echo "PIAACMC_PIAAmode=${PIAAmode}" > $startupfile
+echo "PIAACMC_size=${size}" >> $startupfile  #2
 echo "PIAACMC_pixscale=${pscale}" >> $startupfile  #3
 echo "PIAACMC_centobs0=${centobs0}" >> $startupfile #5
 echo "PIAACMC_centobs1=${centobs1}" >> $startupfile #6
@@ -665,17 +523,17 @@ echo "PIAACMC_fpmCentConeZ=${fpmccz}" >> $startupfile #22
 echo "PIAACMC_fpmOuterConeRadld=${fpmocr}" >> $startupfile #23
 echo "PIAACMC_fpmOuterConeZ=${fpmocz}" >> $startupfile #24
 
-echo "PIAACMC_dftgrid=2" >> $startupfile
+echo "PIAACMC_dftgrid=${PIAACMC_dftgrid}" >> $startupfile
 echo "PIAACMC_nblambda=${nblambda}" >> $startupfile
 echo "PIAACMC_beamrad=${beamrad}" >> $startupfile
 echo "PIAACMC_Fratio=${Fratio}" >> $startupfile
 echo "PIAACMC_r0lim=${r0lim}" >> $startupfile
 echo "PIAACMC_r1lim=${r1lim}" >> $startupfile
-echo "PIAACMC_piaasep=${piaasep}" >> $startupfile
-echo "PIAACMC_piaa0pos=${piaa0pos}" >> $startupfile
+echo "PIAACMC_PIAAsep=${PIAAsep}" >> $startupfile
+echo "PIAACMC_PIAA0pos=${PIAA0pos}" >> $startupfile
 echo "PIAACMC_invPIAAmode=${invPIAAmode}" >> $startupfile
-echo "PIAACMC_prepiaa0maskpos=${prepiaa0maskpos}" >> $startupfile
-echo "PIAACMC_postpiaa0maskpos=${postpiaa0maskpos}" >> $startupfile
+echo "PIAACMC_prePIAA0maskpos=${prePIAA0maskpos}" >> $startupfile
+echo "PIAACMC_postPIAA0maskpos=${postPIAA0maskpos}" >> $startupfile
 echo "PIAACMC_piaaNBCmodesmax=${piaaNBCmodesmax}" >> $startupfile
 echo "PIAACMC_piaaCPAmax=${piaaCPAmax}" >> $startupfile
 echo "PIAACMC_LyotZmin=${LyotZmin}" >> $startupfile
@@ -688,7 +546,7 @@ fifoname="runPIAACMCfifo$pid"
 execnamestring="$execname -s $startupfile -f $fifoname -e"
 
 
-
+cp $startupfile test_startupfile.txt
 
 
 
@@ -698,6 +556,7 @@ cleanup ()
 {
 rm $startupfile
 rm $fifoname
+rm runPIAACMCfifo*
 }
 
 
@@ -1256,7 +1115,7 @@ fi
 
 
 # ========================================================= BEGIN MAIN DESIGN SCRIPT ==============================================================================
-
+# if PIAAmode = 0, only step 000 is executed
 
 
 # =========================================================================================================
@@ -1269,15 +1128,14 @@ checkexit
 
 
 
-#kmaxC=20
-
-#kmaxF=0
-#if [ "$PIAAcirc" -eq "0" ]; then
-#kmaxF=20
-#fi
 
 
 echo "kmaxF = $kmaxF"
+
+if [ "$PIAAmode" -eq "0" ]; then
+ cp pup_$size.fits _pupmaskload.fits
+ cp $4 ./$1/pupa0_$2.fits
+fi
 
 
 if [ 0 -eq ${state} ]
@@ -1287,6 +1145,27 @@ then
  echo "step 000"
 echo "000" > ./$1/runstep
 touch ./$1/step000.run.txt
+
+if [ "$PIAAmode" -eq "0" ]; then
+touch ./$1/step001.txt
+touch ./$1/step002.txt
+touch ./$1/step003.txt
+touch ./$1/step004.txt
+touch ./$1/step005.txt
+touch ./$1/step006.txt
+touch ./$1/step007.txt
+touch ./$1/step008.txt
+touch ./$1/step009.txt
+touch ./$1/step010.txt
+touch ./$1/step011.txt
+touch ./$1/step012.txt
+touch ./$1/step013.txt
+touch ./$1/step014.txt
+touch ./$1/step015.txt
+touch ./$1/step016.txt
+touch ./$1/step017.txt
+fi
+
 $execnamestring -n step000 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
@@ -1294,6 +1173,10 @@ PIAACMC_MASKRADLD=0.0
 PIAACMC_resolved=0
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
+
+# load mask if available
+loadfits "_pupmaskload.fits" pupmaskim
+
 piaacmcsimrun $1 0
 exit
 EOF
@@ -1303,6 +1186,11 @@ else
  printf "skip step 000 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration)\n"
   fi
 state=001
+fi
+
+
+if [ "$PIAAmode" -eq "1" ]; then
+rm _pupmaskload.fits
 fi
 
 
@@ -1321,6 +1209,9 @@ checkexit
 
 
 
+
+
+
 # STEP 001: repeat above step to compute on-axis PSF
 #
 # -> piaacmcparams_01.conf
@@ -1331,8 +1222,8 @@ then
  if [ ! -f ./$1/step001.txt ]
  then
  echo "step 001"
-echo "001" > ./$1/runstep
-touch ./$1/step001.run.txt
+ echo "001" > ./$1/runstep
+ touch ./$1/step001.run.txt
 $execnamestring -n step001 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
@@ -1343,36 +1234,33 @@ PIAACMC_lambda=${lambda}
 piaacmcsimrun $1 0
 exit
 EOF
-mv ./$1/psfi0.fits ./$1/psfi0_step001.fits
-cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_step001.conf
-cp ./$1/piaa0Cmodes.fits ./$1/piaa0Cmodes_step001.fits
-cp ./$1/piaa0Fmodes.fits ./$1/piaa0Fmodes_step001.fits
-cp ./$1/piaa1Cmodes.fits ./$1/piaa1Cmodes_step001.fits
-cp ./$1/piaa1Fmodes.fits ./$1/piaa1Fmodes_step001.fits
-touch ./$1/step001.txt
+ mv ./$1/psfi0.fits ./$1/psfi0_step001.fits
+ cp ./$1/piaacmcparams.conf ./$1/piaacmcparams_step001.conf
+ cp ./$1/piaa0Cmodes.fits ./$1/piaa0Cmodes_step001.fits
+ cp ./$1/piaa0Fmodes.fits ./$1/piaa0Fmodes_step001.fits
+ cp ./$1/piaa1Cmodes.fits ./$1/piaa1Cmodes_step001.fits
+ cp ./$1/piaa1Fmodes.fits ./$1/piaa1Fmodes_step001.fits
+ touch ./$1/step001.txt
  else
  printf "skip step 001 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC)\n" 
  fi
-state=002
+state="002"
 fi
 
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (001)"
-sleep 5
-cleanup
-exit
-fi
 
 
 checkexit
 
 
 
+
+
+
+
 # STEP 002: Specify input pupil geometry
 
-if [ 002 -eq ${state} ]
+if [ "002" -eq ${state} ]
 then
  if [ ! -f ./$1/step002.txt ]
  then
@@ -1383,15 +1271,7 @@ then
  else
  printf "skip step 002       (load pupil geometry)\n"
  fi
-state=003
-fi
-
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (002)"
-sleep 5
-cleanup
-exit
+state="003"
 fi
 
 
@@ -1402,11 +1282,10 @@ checkexit
 
 
 
-
 #
 # STEP 003: compute on-axis PSF
 #
-if [ 003 -eq ${state} ]
+if [ "003" -eq ${state} ]
 then
  if [ ! -f ./$1/step003.txt ]
  then
@@ -1428,20 +1307,14 @@ touch ./$1/step003.txt
  else
  printf "skip step 003 [  0] (Compute on-axis PSF)\n"
  fi
-state=004
+state="004"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (003)"
-cleanup
-exit
-fi
+
 
 
 
 checkexit
-
 
 
 
@@ -1455,7 +1328,7 @@ checkexit
 # ...
 # 
 
-if [ 004 -eq ${state} ]
+if [ "004" -eq ${state} ]
 then
  if [ ! -f ./$1/step004.txt ]
  then
@@ -1488,15 +1361,9 @@ touch ./$1/step004.txt
  else
  printf "skip step 004 [  5] (Compute Lyot stops shapes and locations, 1st pass)\n"
  fi
-state=005
+state="005"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (004)"
-cleanup
-exit
-fi
 
 
 checkexit
@@ -1508,7 +1375,7 @@ checkexit
 # STEP 005: optimize focal plane mask transm
 # -> result_fpmt.log 
 #
-if [ 005 -eq ${state} ]
+if [ "005" -eq ${state} ]
 then
  if [ ! -f ./$1/step005.txt ]
  then
@@ -1531,15 +1398,9 @@ touch ./$1/step005.txt
  else
  printf "skip step 005 [  2] (optimize focal plane mask transm, 1st pass - see result_fpmt.log for results)\n"
  fi
-state=006
+state="006"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (005)"
-cleanup
-exit
-fi
 
 
 checkexit
@@ -1589,16 +1450,9 @@ touch ./$1/step006.txt
 state=007
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (006)"
-cleanup
-exit
-fi
 
 
 checkexit
-
 
 
 
@@ -1615,7 +1469,7 @@ echo "kmaxF = $kmaxF"
 
 #sleep 10000000
 
-if [ 007 -eq ${state} ]
+if [ "007" -eq ${state} ]
 then
  if [ ! -f ./$1/step007.txt ]
  then
@@ -1653,15 +1507,9 @@ touch ./$1/step007.txt
  else
  printf "skip step 007 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 10, 5)\n"
  fi
-state=8
+state="008"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (007)"
-cleanup
-exit
-fi
 
 
 checkexit
@@ -1680,7 +1528,7 @@ if [ "$PIAAcirc" -eq "0" ]; then
 kmaxF=20
 fi
 
-if [ 8 -eq ${state} ]
+if [ "008" -eq ${state} ]
 then
  if [ ! -f ./$1/step008.txt ]
  then
@@ -1717,16 +1565,10 @@ touch ./$1/step008.txt
  else
  printf "skip step 008 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 20, 20)\n"
  fi
-state=9
+state="009"
 fi
 
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (008)"
-cleanup
-exit
-fi
 
 checkexit
 
@@ -1736,12 +1578,12 @@ checkexit
 
 # STEP 009: Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 
-if [ 009 -eq ${state} ]
+if [ "009" -eq ${state} ]
 then
  if [ ! -f ./$1/step009.txt ]
  then
  echo "step 009"
-step=009
+step="009"
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execnamestring -n step009 << EOF
@@ -1770,15 +1612,9 @@ touch ./$1/step009.txt
  else
  printf "skip step 009 [  5] (Compute Lyot stops shapes and locations, 3nd pass, $LStransm1 throughput)\n"
  fi
-state=010
+state="010"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (009)"
-cleanup
-exit
-fi
 
 
 
@@ -1789,12 +1625,12 @@ checkexit
 
 # STEP 010: Tune Lyot stops conjugations
 
-if [ 010 -eq ${state} ]
+if [ "010" -eq ${state} ]
 then
  if [ ! -f ./$1/step010.txt ]
  then
  echo "step 010"
-step=010
+step="010"
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execnamestring -n step010 << EOF
@@ -1815,15 +1651,9 @@ touch ./$1/step010.txt
  else
  printf "skip step 010 [  1] (tune Lyot stops conjugations)\n"
  fi
-state=011
+state="011"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (010)"
-cleanup
-exit
-fi
 
 
 
@@ -1840,12 +1670,12 @@ if [ "$PIAAcirc" -eq "0" ]; then
 kmaxF=20
 fi
 
-if [ 011 -eq ${state} ]
+if [ "011" -eq ${state} ]
 then
  if [ ! -f ./$1/step011.txt ]
  then
  echo "step 011"
-step=011
+step="011"
 echo "$step" > ./$1/runstep
 touch ./$1/step$step.run.txt
 $execnamestring -n step011 << EOF
@@ -1856,7 +1686,7 @@ PIAACMC_resolved=0
 PIAACMC_nbiter=20
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
-#PIAACMC_dftgrid=2
+
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
 REGPIAASHAPES=1
@@ -1880,15 +1710,9 @@ touch ./$1/step011.txt
  else
  printf "skip step 011 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 20, 20)\n"
  fi
-state=012
+state="012"
 fi
 
-if [ $state -eq $statestop ]
-then 
-echo "STATE STOP POINT (011)"
-cleanup
-exit
-fi
 
 
 
@@ -1911,9 +1735,9 @@ if [ "$PIAAcirc" -eq "0" ]; then
 kmaxF=150
 fi
 
-if [ 012 -eq ${state} ]
+if [ "012" -eq ${state} ]
 then
-step=012
+step="012"
  if [ ! -f ./$1/step012.txt ]
  then
  echo "step $step"
@@ -1951,14 +1775,7 @@ touch ./$1/step012.txt
  else
  printf "skip step 012 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 150)\n"
  fi
-state=013
-fi
-
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (012)"
-cleanup
-exit
+state="013"
 fi
 
 
@@ -1972,9 +1789,9 @@ checkexit
 
 # STEP 013: Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
 
-if [ 013 -eq ${state} ]
+if [ "013" -eq ${state} ]
 then
-step=013
+step="013"
  if [ ! -f ./$1/step013.txt ]
  then
  echo "step $step"
@@ -2008,15 +1825,9 @@ touch ./$1/step013.txt
  else
  printf "skip step 013 [  5] (Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput)\n"
  fi
-state=014
+state="014"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (013)"
-cleanup
-exit
-fi
 
 
 checkexit
@@ -2026,9 +1837,9 @@ checkexit
 
 # STEP 014
 
-if [ 014 -eq ${state} ]
+if [ "014" -eq ${state} ]
 then
-step=014
+step="014"
  if [ ! -f ./$1/step014.txt ]
  then
  echo "step $step"
@@ -2053,14 +1864,7 @@ touch ./$1/step014.txt
  else
  printf "skip step 014 [  1] (tune Lyot stops conjugations)\n"
  fi
-state=015
-fi
-
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (014)"
-cleanup
-exit
+state="015"
 fi
 
 
@@ -2080,7 +1884,7 @@ if [ "$PIAAcirc" -eq "0" ]; then
 kmaxF=20
 fi
 
-if [ 015 -eq ${state} ]
+if [ "015" -eq ${state} ]
 then
 step=015
  if [ ! -f ./$1/step015.txt ]
@@ -2120,14 +1924,7 @@ touch ./$1/step015.txt
  else
  printf "skip step 015 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 20, 20)\n"
  fi
-state=016
-fi
-
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (015)"
-cleanup
-exit
+state="016"
 fi
 
 
@@ -2149,9 +1946,9 @@ if [ "$PIAAcirc" -eq "0" ]; then
 kmaxF=150
 fi
 
-if [ 016 -eq ${state} ]
+if [ "016" -eq ${state} ]
 then
-step=016
+step="016"
  if [ ! -f ./$1/step016.txt ]
  then
  echo "step $step"
@@ -2189,15 +1986,9 @@ touch ./$1/step016.txt
  else
  printf "skip step 016 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 150)\n"
  fi
-state=017
+state="017"
 fi
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (016)"
-cleanup
-exit
-fi
 
 
 
@@ -2221,7 +2012,7 @@ step=017
  then
  echo "step $step"
 echo "$step" > ./$1/runstep
-touch ./piaacmcconf$1/step$step.run.txt
+touch ./$1/step$step.run.txt
 $execnamestring -n step017 << EOF
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
@@ -2254,30 +2045,26 @@ touch ./$1/step017.txt
  else
  printf "skip step 017 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 625)\n"
  fi
-state=018
-fi
-
-if [ ${state} -eq ${statestop} ] 
-then
-echo "STATE STOP POINT (017)"
-cleanup
-exit
+state="018"
 fi
 
 
 checkexit
 
 
-# STEP 18: exit
 
-if [ 018 -eq ${state} ]
+# STEP 18: go to step 100
+
+if [ "018" -eq ${state} ]
 then
-cleanup
-exit
+step=018
+echo "$step" > ./$1/runstep
+touch ./$1/step$step.run.txt
+state="100"
 fi
 
 
-
+checkexit
 
 
 
@@ -2289,14 +2076,14 @@ fi
 #
 # STEP 100: turn focal plane mask into physical mask with zones, Compute polychromatic response to zones, store result in FPMresp
 #
-if [ 100 -eq ${state} ]
+if [ "100" -eq ${state} ]
 then
-step=100
+step="100"
     if [ ! -f ./$1/step100.txt ]
     then
     echo "step 100"
     echo "$step" > ./$1/runstep
-    touch ./piaacmcconf$1/step$step.run.txt
+    touch ./$1/step$step.run.txt
 
     NBthreadsFPMrespm1=$(( $NBthreadsFPMresp - 1 ))
 
@@ -2394,17 +2181,12 @@ fi
  else
  printf "skip step 100 [ 11] turn focal plane mask into zones, Compute polychromatic response to zones, store result in FPMresp\n"
  fi
-state=101
+state="101"
 fi
 
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (100)"
-cleanup
-exit
-fi
 
+checkexit
 
 
 
@@ -2412,7 +2194,7 @@ fi
 
 # STEP 101: search for optimal solution
 
-if [ 101 -eq ${state} ]
+if [ "101" -eq ${state} ]
 then
 echo "entering step 101"
 if [ ! -f ./$1/step101.txt ]
@@ -2420,7 +2202,7 @@ if [ ! -f ./$1/step101.txt ]
  echo "step 101"
 step="101"
 echo "$step" > ./$1/runstep
-touch ./piaacmcconf$1/step$step.run.txt
+touch ./$1/step$step.run.txt
 $execnamestring -n step101 << EOF
 PIAACMC_fpmtype=1
 PIAACMC_FPMsectors=$FPMsectors
@@ -2428,6 +2210,11 @@ SCORINGMASKTYPE=$SCORINGMASKTYPE
 PIAACMC_save=0
 PIAACMC_nbiterSA=10000
 PIAACMC_nbiterDS=100
+
+#REGFPMSAG=1
+#REGFPMSAG_COEFF=0.1
+#REGFPMSAG_COEFF_ALPHA=1.0
+
 piaacmcsimrun $1 13
 exit
 EOF
@@ -2435,32 +2222,26 @@ EOF
  echo "skip step 101 [ 13] search for optimal solution"
 fi
 #touch ./$1/step101.txt
-state=102
+state="102"
 fi
 
 
 
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (101)"
-cleanup
-exit
-fi
-
-
+checkexit
 
 
 
 
 # STEP 102: exit
 
-if [ 102 -eq ${state} ]
+if [ "102" -eq ${state} ]
 then
 cleanup
 exit
 fi
 
 
+checkexit
 
 
 
@@ -2469,19 +2250,6 @@ fi
 
 
 
-
-
-
-
-
-
-
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT (FINAL)"
-cleanup
-exit
-fi
 
 
 

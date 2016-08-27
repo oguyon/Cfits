@@ -33,6 +33,9 @@ printf "%20s  [%10s]  %s\n" "$1" "$var" "$2"
 
 
 # MAIN FUNCTION ARGUMENTS
+loadparam PIAAmode 1
+
+loadparam PIAAcoeff 1.0
 loadparam coin 0.300
 loadparam coout 0.290
 loadparam fpmradld 1.100
@@ -58,7 +61,7 @@ loadparam fpmocradld 8.0
 loadparam fpmocz 0.0
 
 loadparam size 1024
-loadparam PIAAbeamrad 0.022
+loadparam beamrad 0.022
 loadparam pscale 0.00011
 loadparam Fratio 80.0
 loadparam PIAAr0lim 1.15 
@@ -87,19 +90,29 @@ echo " "
 echo -e "\033[1m OPTICAL DESIGN: \033[0m"
 echo " File conjugations.txt in piaacmcconf directory lists optical design elements and location"
 echo ""
+
 echo -e "\033[1m PIAA OPTICS DESIGN: \033[0m"
+
+printvar "PIAAmode" "PIAA mode (0: classical apodization, 1: PIAA)"
+printvar "fpmradld" "focal plane mask radius [l/D]"
+if [ "$PIAAmode" -eq "1" ]; then
+printvar "PIAAcoeff" "fraction of PIAA apodization"
 printvar "coin" "central obstruction at input beam [beam radius]"
 printvar "coout" "central obstruction at output beam [beam radius]"
-printvar "fpmradld" "focal plane mask radius [l/D]"
 printvar "PIAAmaterial" "PIAA optics material"
 printvar "PIAAcirc" "FLAG: 1 if PIAA shapes are circular (no Fourier modes)"
+fi
 
 echo -e "\033[1m LYOT STOP(S) DESIGN: \033[0m"
+if [ "$PIAAmode" -eq "1" ]; then
 printvar "LStransm" "Lyot stop transmission"
 printvar "NBls" "Number of Lyot stops"
+fi
 printvar "lambda" "Wavelength for monochromatic design [nm]"
 
+
 echo -e "\033[1m FOCAL PLANE MASK DESIGN: \033[0m"
+
 printvar "fpmmaterial" "focal plane mask material"
 printvar "FPMsectors" "mask geometry: 0=disk, 1=sectors, 2=hexagonal tiling"
 printvar "NBrings" "number of rings in focal plane mask"
@@ -111,29 +124,37 @@ printvar "fpmccz" "sag at cone center (sag at cone edge will be midpoint between
 printvar "fpmocradld" "outer cone outer radius [l/D]"
 printvar "fpmocz" "sag at inner edge of outer cone (sag = 0 at outer edge), set to 0 if no outer cone"
 
+
 echo -e "\033[1m OPTIMIZATION PARAMETERS: \033[0m"
+
 printvar "mlambda" "central wavelength for polychromatic design [nm]"
 printvar "mlambdaB" "spectral bandwidth [%]"
 printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
 printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
 
+
 echo -e "\033[1m OPTICAL DESIGN: \033[0m"
+
 printvar "size" "array size"
-printvar "PIAAbeamrad" "beam radius [mm]"
+printvar "beamrad" "beam radius [mm]"
 printvar "pscale" "pixel scale in pupil [m/pix]"
 printvar "Fratio" "F ratio at focal plane mask"
+if [ "$PIAAmode" -eq "1" ]; then
 printvar "PIAAr0lim" "outer edge of PIAA optic 0 [beam radius unit]"
 printvar "PIAAr1lim" "outer edge of PIAA optic 1 [beam radius unit]"
 printvar "PIAAsep" "distance between PIAA optics [m]"
 printvar "PIAA0pos" "PIAA optic 0 distance from pupil plane [m]"
 printvar "invPIAAmode" "0: no inv PIAA, 1: inv PIAA after Lyot stops, 2: inv PIAA before Lyot stops"
+fi
 
 printvar "prePIAA0maskpos" "pre-PIAA optic 0 mask distance from pupil plane [m] (if prePIAA0mask.fits exists)"
+if [ "$PIAAmode" -eq "1" ]; then
 printvar "postPIAA0maskpos" "post-PIAA optic 0 mask distance from pupil plane [m] (if postPIAA0mask.fits exits)"
 printvar "piaaNBCmodesmax" "maximum number of radial cosine modes for PIAA optics"
 printvar "piaaCPAmax" "maximum spatial frequency (CPA) for PIAA optics"
 printvar "LyotZmin" "minimum value for Lyot stop(s) conjugation range [m] - relative to element named \"post focal plane mask pupil\""
 printvar "LyotZmax" "maximum value for Lyot stop(s) conjugation range [m] - relative to element named \"post focal plane mask pupil\""
+fi
 printvar "pupoutmaskrad" "output pupil mask radius (scaled to pupil radius)"
 echo " "
 }
@@ -165,13 +186,14 @@ echo "------------------------------------------------------------------------"
 echo -e "\033[1m                       USAGE \033[0m"
 echo " $0 <command>"
 echo "  command : "
-echo "     optsingle <stepstop>  : optimize up to, but not including, step <stepstop>. mstep>18 for full optimization"
-echo "                             include polychromatic optimization"
-echo "                       Files :"
-echo "                          <workdir>/linoptval.txt          : log for each optimization scan"
-echo "                          <workdir>/mode13_....bestval.txt : overall best solution"
-echo "                          <workdir>/fpm_zonez_...best.fits : best zone sags solution"
-echo "                             Stops immediately, no performance measurement (this mode is for debugging)"
+echo "     optsingle <stepstop>  : optimize up to, but not including, step <stepstop>"
+echo "                                       stepstrop=18 for monochromatic idealized design"
+echo "                                             Stops immediately, no performance measurement (this mode is for debugging)"
+echo "                                       stepstop=200 to include polychromatic optimization"
+echo "                             Files :"
+echo "                                <workdir>/linoptval.txt          : log for each optimization scan"
+echo "                                <workdir>/mode13_....bestval.txt : overall best solution"
+echo "                                <workdir>/fpm_zonez_...best.fits : best zone sags solution"
 echo "     propmono   <bogusarg> : propagate existing solution (monochromatic)"
 echo "     designmono <MaxStep>  : design monochromatic PIAACMC up to, but not including, step <MaxStep>, and measure its contrast"
 echo "                             This mode is useful to track design performance during design process"
@@ -197,6 +219,8 @@ echo "                    OUTPUT FILES:  transmCurve_<parameters>.txt"
 echo "------------------------------------------------------------------------"
 }
 
+
+
 NBARGS=2
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
@@ -212,7 +236,7 @@ runoptcmd=$1
 
 
 
-echo "18" > ./log/conf_MdesignStepMax.txt
+echo "200" > ./log/conf_MdesignStepMax.txt
 
 if [ "$runoptcmd" = "designmono" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
@@ -226,7 +250,6 @@ echo "$2" > ./log/conf_exitpt.txt
 
 
 echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
-
 
 ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
 

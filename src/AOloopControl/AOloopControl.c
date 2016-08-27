@@ -10814,20 +10814,20 @@ int AOloopControl_statusStats()
     if(MATRIX_COMPUTATION_MODE==0)
     {
         statusdef[12] = "ENTER SET DM MODES";
-    statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
-    statusdef[14] = "MATRIX MULT: CREATE COMPUTING THREADS";
-    statusdef[15] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
-    statusdef[16] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
-    statusdef[17] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
+        statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
+        statusdef[14] = "MATRIX MULT: CREATE COMPUTING THREADS";
+        statusdef[15] = "MATRIX MULT: WAIT FOR THREADS TO COMPLETE";
+        statusdef[16] = "MATRIX MULT: COMBINE TRHEADS RESULTS";
+        statusdef[17] = "MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
     }
     else
     {
         statusdef[12] = "REMOVE NAN VALUES";
-    statusdef[13] = "ENFORCE STROKE LIMITS";
-    statusdef[14] = "-";
-    statusdef[15] = "-";
-    statusdef[16] = "-";
-    statusdef[17] = "-";
+        statusdef[13] = "ENFORCE STROKE LIMITS";
+        statusdef[14] = "-";
+        statusdef[15] = "-";
+        statusdef[16] = "-";
+        statusdef[17] = "-";
     }
 
     statusdef[18] = "LOG DATA";
@@ -10947,6 +10947,7 @@ int AOloopControl_statusStats()
 
     return 0;
 }
+
 
 
 

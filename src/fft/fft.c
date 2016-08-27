@@ -2212,6 +2212,7 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
                 data.image[IDpupin_mask].array.F[ii] = 0.0;
         }
 
+//		save_fits("_pupinmask", "!test_pupinmask0.fits");//TEST
 
 
         IDfpmz = image_ID(fpmz_name);
@@ -2336,6 +2337,8 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
          }*/
 
         fft_DFT( "_foc0", "_fpmzmask", "_pupout2D", "_pupinmask", zfactor, 1, 0);
+
+	//	save_fits("_pupinmask", "!test_pupinmask.fits");//TEST
 
         IDout2D = image_ID("_pupout2D");
         for(ii=0; ii<xsize*ysize; ii++)

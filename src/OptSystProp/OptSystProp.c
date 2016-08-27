@@ -316,7 +316,13 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
         printf("Applying element %ld\n", elem);
         fflush(stdout);
 
-        if(optsyst[index].elemtype[elem]==1)   // OPAQUE MASK
+
+
+
+
+
+
+        if(optsyst[index].elemtype[elem]==1)   // AMPLITUDE MASK
         {
             ID = optsyst[index].elemarrayindex[elem];
             printf("============= elem %ld:  Opaque mask (%s) =================\n", elem, data.image[ID].name);
@@ -371,8 +377,17 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
             //	save_fits(data.image[IDa].name, "!opmask2.fits"); //TEST
             //	printf("POINT 1.1\n");
 
-
         }
+
+
+
+
+
+
+
+
+
+
 
         if(optsyst[index].elemtype[elem]==3)  // MIRROR SURFACE - STORED AS OPD MAP AS A SINGLE MAP (ACHROMATIC) OR A CUBE (CHROMATIC)
         {
@@ -410,6 +425,12 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 # endif
             }
         }
+
+
+
+
+
+
 
 
 

@@ -70,6 +70,8 @@ int write_float_file(char *fname, float value);
 
 int COREMOD_TOOLS_imgdisplay3D(char *IDname, long step);
 
+long COREMOD_TOOLS_statusStat(char *IDstat_name, long indexmax);
+
 
 #endif
 
