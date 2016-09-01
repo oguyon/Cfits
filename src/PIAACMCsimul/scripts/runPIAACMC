@@ -95,6 +95,15 @@ eval "$1=$var"
 
 function checkexit() {
 
+
+if [ $state -eq $statestop ] 
+then
+echo "STATE STOP POINT ($statestop)"
+sleep 1
+cleanup
+exit
+fi
+
 if [ $state -eq $exitpt ] 
 then
 echo "$0 REACHED STATE EXIT POINT ($exitpt)" > errorstatus.txt
@@ -104,15 +113,6 @@ exit
 else
 echo "$state neq $exitpt -> CONTINUING"
 fi	
-
-
-if [ $state -eq $statestop ] 
-then
-echo "STATE STOP POINT ($statestop)"
-sleep 1
-cleanup
-exit
-fi
 
 }
 
@@ -268,7 +268,6 @@ REGPIAAFALPHA="0.2"
 
 printhelp ()
 {
-	
 	echo ""
 	echo "main PIAACMC design scrit"
 
@@ -557,6 +556,7 @@ cleanup ()
 rm $startupfile
 rm $fifoname
 rm runPIAACMCfifo*
+rm clistartup*.txt
 }
 
 
@@ -1544,11 +1544,13 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+
 REGPIAASHAPES=1
 REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
 piaacmcsimrun $1 40
 exit
 EOF
@@ -2073,6 +2075,12 @@ checkexit
 
 
 
+
+
+
+
+
+
 #
 # STEP 100: turn focal plane mask into physical mask with zones, Compute polychromatic response to zones, store result in FPMresp
 #
@@ -2084,6 +2092,7 @@ step="100"
     echo "step 100"
     echo "$step" > ./$1/runstep
     touch ./$1/step$step.run.txt
+
 
     NBthreadsFPMrespm1=$(( $NBthreadsFPMresp - 1 ))
 
@@ -2192,7 +2201,8 @@ checkexit
 
 
 
-# STEP 101: search for optimal solution
+# STEP 101: search for optimal FPM solution
+# 
 
 if [ "101" -eq ${state} ]
 then
@@ -2210,6 +2220,8 @@ SCORINGMASKTYPE=$SCORINGMASKTYPE
 PIAACMC_save=0
 PIAACMC_nbiterSA=10000
 PIAACMC_nbiterDS=100
+
+
 
 #REGFPMSAG=1
 #REGFPMSAG_COEFF=0.1

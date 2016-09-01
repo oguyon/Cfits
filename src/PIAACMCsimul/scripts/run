@@ -3,6 +3,8 @@
 # Designing PIAACMC 
 
 
+errorfile="errorstatus.txt"
+rm $errorfile
 
 
 mkdir -p conf
@@ -37,13 +39,13 @@ loadparam PIAAmode 1
 
 loadparam PIAAcoeff 1.0
 loadparam coin 0.300
-loadparam coout 0.290
-loadparam fpmradld 1.100
+loadparam coout 0.250
+loadparam fpmradld 1.000
 loadparam PIAAmaterial "Mirror"
 loadparam LStransm 0.70
 loadparam NBls 4
-loadparam lambda 600
-loadparam mlambda 600
+loadparam lambda 800
+loadparam mlambda 800
 loadparam mlambdaB 10
 loadparam FPMsectors 1
 loadparam NBrings 22
@@ -61,8 +63,8 @@ loadparam fpmocradld 8.0
 loadparam fpmocz 0.0
 
 loadparam size 1024
-loadparam beamrad 0.022
-loadparam pscale 0.00011
+loadparam beamrad 0.02
+loadparam pscale 0.0001
 loadparam Fratio 80.0
 loadparam PIAAr0lim 1.15 
 loadparam PIAAr1lim 1.50
@@ -178,7 +180,7 @@ echo "     rm conf/*"
 echo "     edit default values in current bash script"
 echo "     re-run current script with no argument to check values"
 echo ""
-echo " Once you satisfied with values, launch current script with eval argument (evalsingle, eval0, eval1, or eval2)"
+echo " Once satisfied with values, launch current script with eval argument (evalsingle, eval0, eval1, or eval2)"
 echo ""
 echo "------------------------------------------------------------------------"
 printvarall
@@ -243,6 +245,24 @@ echo "$2" > ./log/conf_MdesignStepMax.txt
 fi
 
 echo "$2" > ./log/conf_exitpt.txt
+
+
+
+
+if [ "$runoptcmd" = "eval0" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+echo "19" > ./log/conf_exitpt.txt
+fi
+
+if [ "$runoptcmd" = "eval1" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+echo "19" > ./log/conf_exitpt.txt
+fi
+
+if [ "$runoptcmd" = "eval2" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+echo "19" > ./log/conf_exitpt.txt
+fi
 
 
 

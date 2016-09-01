@@ -3798,7 +3798,7 @@ int AtmosphericTurbulence_mkTestTTseq(double dt, long NBpts, long NBblocks, doub
 				yn = y + measnoise*gauss();
 				axn = ax + ACCnoise*gauss();
 				ayn = ay + ACCnoise*gauss();
-				fprintf(fp, "%lf %f %f %f %f   %f %f %f %f\n", tsim, x, y, xn, yn, ax, ay, axn, ayn);
+				fprintf(fp, "%16lf %16f %16f %16f %16f   %16f %16f %16f %16f\n", tsim, x, y, xn, yn, ax, ay, axn, ayn);
 
 				vxold = vx;
 				vyold = vy;

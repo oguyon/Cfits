@@ -471,16 +471,17 @@ else
 	
 	# if directory does not exist but monochromatic design reference exists, adopt it, otherwise, do nothing	
 	./sim 501 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	
 	checkerrorstatus
 	
 	
 	
 	# PHASE 1: COMPUTE MONOCHROMATIC IDEAL PIAACMC
 	echo "$MdesignStepMax"
+	
 	./sim $MdesignStepMax $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+	
 	checkerrorstatus
-
-	exit #TEST
 	
 	# copy solution as master reference (if it does not exist) for other lambda / lambdaB
 	./sim 500 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index

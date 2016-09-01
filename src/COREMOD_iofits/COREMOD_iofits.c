@@ -204,9 +204,9 @@ int init_COREMOD_iofits()
   strcpy(data.cmd[data.NBcmd].key,"imgs2cube");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = images_to_cube_cli;
-  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube");
+  strcpy(data.cmd[data.NBcmd].info,"combine individual images into cube, image name is prefix followed by 5 digits");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image format> <max index> <output cube>");
-  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ imc");
+  strcpy(data.cmd[data.NBcmd].example,"imgs2cube im_ 100 imc");
   strcpy(data.cmd[data.NBcmd].Ccall,"int images_to_cube(char *img_name, long nbframes, char *cube_name)");
   data.NBcmd++;
 
