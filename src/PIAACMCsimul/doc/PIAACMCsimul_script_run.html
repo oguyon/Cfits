@@ -1,0 +1,619 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Olivier Guyon" />
+  <meta name="date" content="2016-01-01" />
+  <title>PIAACMC design: script run</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { color: #800000; } /* DataType */
+code > span.dv { color: #0000ff; } /* DecVal */
+code > span.bn { color: #0000ff; } /* BaseN */
+code > span.fl { color: #800080; } /* Float */
+code > span.ch { color: #ff00ff; } /* Char */
+code > span.st { color: #dd0000; } /* String */
+code > span.co { color: #808080; font-style: italic; } /* Comment */
+code > span.al { color: #00ff00; font-weight: bold; } /* Alert */
+code > span.fu { color: #000080; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #ff0000; font-weight: bold; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #ff00ff; } /* SpecialChar */
+code > span.vs { color: #dd0000; } /* VerbatimString */
+code > span.ss { color: #dd0000; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { } /* Variable */
+code > span.cf { } /* ControlFlow */
+code > span.op { } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.at { } /* Attribute */
+code > span.do { color: #808080; font-style: italic; } /* Documentation */
+code > span.an { color: #808080; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #808080; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="/home/olivier/.css/pandoc.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">PIAACMC design: script run</h1>
+<h2 class="author">Olivier Guyon</h2>
+<h3 class="date">2016</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#piaacmcsimul-script-run"><span class="toc-section-number">1</span> PIAACMCsimul script: run</a><ul>
+<li><a href="#source-code"><span class="toc-section-number">1.1</span> Source Code</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="piaacmcsimul-script-run" class="section level1">
+<h1><span class="header-section-number">1</span> PIAACMCsimul script: run</h1>
+<div id="source-code" class="section level2">
+<h2><span class="header-section-number">1.1</span> Source Code</h2>
+<div class="sourceCode"><table class="sourceCode bash numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+</pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="co"># Designing PIAACMC </span>
+
+
+<span class="ot">errorfile=</span><span class="st">&quot;errorstatus.txt&quot;</span>
+<span class="kw">rm</span> <span class="ot">$errorfile</span>
+
+
+<span class="kw">mkdir</span> -p conf
+<span class="kw">mkdir</span> -p log
+
+
+<span class="kw">function</span><span class="fu"> loadparam()</span> <span class="kw">{</span>
+<span class="ot">file=</span><span class="st">&quot;conf/conf_</span><span class="ot">$1</span><span class="st">.txt&quot;</span>
+<span class="kw">if [</span> <span class="ot">!</span> <span class="ot">-f</span> <span class="ot">$file</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span> <span class="kw">&gt;</span> <span class="ot">$file</span>
+<span class="kw">fi</span>
+<span class="ot">var=$(</span> <span class="kw">cat</span> <span class="st">&quot;</span><span class="ot">$file</span><span class="st">&quot;</span> <span class="ot">)</span>
+<span class="kw">eval</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">=</span><span class="ot">$var</span><span class="st">&quot;</span>
+<span class="kw">}</span>
+
+<span class="kw">function</span><span class="fu"> printvar()</span> <span class="kw">{</span>
+<span class="kw">eval</span> <span class="st">&quot;var=${!1}&quot;</span>
+<span class="kw">printf</span> <span class="st">&quot;%20s  [%10s]  %s\n&quot;</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$var</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span>
+<span class="kw">}</span>
+
+
+<span class="co"># loading parameters</span>
+<span class="co"># 2nd arg is default value - will only be adopted if corresponding conf/conf_&lt;parameter&gt;.txt file DOES NOT EXIST</span>
+<span class="co"># To force YOUR parameter values to be used, you can :</span>
+<span class="co">#    (1) rm ./conf/*</span>
+<span class="co">#    (2) edit values in this script</span>
+<span class="co">#    (3) re-execute this script</span>
+
+
+<span class="co"># MAIN FUNCTION ARGUMENTS</span>
+<span class="kw">loadparam</span> PIAAmode 1
+
+<span class="kw">loadparam</span> PIAAcoeff 1.0
+<span class="kw">loadparam</span> coin 0.300
+<span class="kw">loadparam</span> coout 0.250
+<span class="kw">loadparam</span> fpmradld 1.000
+<span class="kw">loadparam</span> PIAAmaterial <span class="st">&quot;Mirror&quot;</span>
+<span class="kw">loadparam</span> LStransm 0.70
+<span class="kw">loadparam</span> NBls 4
+<span class="kw">loadparam</span> lambda 800
+<span class="kw">loadparam</span> mlambda 800
+<span class="kw">loadparam</span> mlambdaB 10
+<span class="kw">loadparam</span> FPMsectors 1
+<span class="kw">loadparam</span> NBrings 22
+<span class="kw">loadparam</span> maskradld 1.60
+<span class="kw">loadparam</span> ssize 20
+<span class="kw">loadparam</span> extmode 0
+
+<span class="kw">loadparam</span> fpmmaterial <span class="st">&quot;Mirror&quot;</span>
+<span class="kw">loadparam</span> fpmminsag <span class="st">&quot;-1e-6&quot;</span>
+<span class="kw">loadparam</span> fpmmaxsag <span class="st">&quot;1e-6&quot;</span>
+
+<span class="kw">loadparam</span> fpmccnbr 0
+<span class="kw">loadparam</span> fpmccz <span class="ot">$fpmmaxsag</span>
+<span class="kw">loadparam</span> fpmocradld 8.0
+<span class="kw">loadparam</span> fpmocz 0.0
+
+<span class="kw">loadparam</span> size 1024
+<span class="kw">loadparam</span> beamrad 0.02
+<span class="kw">loadparam</span> pscale 0.0001
+<span class="kw">loadparam</span> Fratio 80.0
+<span class="kw">loadparam</span> PIAAr0lim 1.15 
+<span class="kw">loadparam</span> PIAAr1lim 1.50
+<span class="kw">loadparam</span> PIAAsep 1.0
+<span class="kw">loadparam</span> PIAA0pos 1.0 
+<span class="kw">loadparam</span> invPIAAmode 1
+
+<span class="kw">loadparam</span> prePIAA0maskpos 1.0 
+<span class="kw">loadparam</span> postPIAA0maskpos 1.5 
+<span class="kw">loadparam</span> piaaNBCmodesmax 40
+<span class="kw">loadparam</span> piaaCPAmax 10.0
+<span class="kw">loadparam</span> LyotZmin -2.5
+<span class="kw">loadparam</span> LyotZmax 0.5
+<span class="kw">loadparam</span> pupoutmaskrad 0.92
+
+<span class="co"># CONFIGURATION FLAGS/PARAMETERS</span>
+<span class="kw">loadparam</span> PIAAcirc 0   <span class="co"># if set to 1, force PIAA shapes to be circular (no Fourier modes)</span>
+
+
+
+<span class="kw">function</span><span class="fu"> printvarall()</span> <span class="kw">{</span>
+
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m          CURRENT PARAMETERS VALUES :\033[0m&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; &quot;</span>
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m OPTICAL DESIGN: \033[0m&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; File conjugations.txt in piaacmcconf directory lists optical design elements and location&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m PIAA OPTICS DESIGN: \033[0m&quot;</span>
+
+<span class="kw">printvar</span> <span class="st">&quot;PIAAmode&quot;</span> <span class="st">&quot;PIAA mode (0: classical apodization, 1: PIAA)&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmradld&quot;</span> <span class="st">&quot;focal plane mask radius [l/D]&quot;</span>
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAAcoeff&quot;</span> <span class="st">&quot;fraction of PIAA apodization&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;coin&quot;</span> <span class="st">&quot;central obstruction at input beam [beam radius]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;coout&quot;</span> <span class="st">&quot;central obstruction at output beam [beam radius]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAAmaterial&quot;</span> <span class="st">&quot;PIAA optics material&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAAcirc&quot;</span> <span class="st">&quot;FLAG: 1 if PIAA shapes are circular (no Fourier modes)&quot;</span>
+<span class="kw">fi</span>
+
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m LYOT STOP(S) DESIGN: \033[0m&quot;</span>
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">printvar</span> <span class="st">&quot;LStransm&quot;</span> <span class="st">&quot;Lyot stop transmission&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;NBls&quot;</span> <span class="st">&quot;Number of Lyot stops&quot;</span>
+<span class="kw">fi</span>
+<span class="kw">printvar</span> <span class="st">&quot;lambda&quot;</span> <span class="st">&quot;Wavelength for monochromatic design [nm]&quot;</span>
+
+
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m FOCAL PLANE MASK DESIGN: \033[0m&quot;</span>
+
+<span class="kw">printvar</span> <span class="st">&quot;fpmmaterial&quot;</span> <span class="st">&quot;focal plane mask material&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;FPMsectors&quot;</span> <span class="st">&quot;mask geometry: 0=disk, 1=sectors, 2=hexagonal tiling&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;NBrings&quot;</span> <span class="st">&quot;number of rings in focal plane mask&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;maskradld&quot;</span> <span class="st">&quot;mask outer radius at central wavelength [l/D]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmminsag&quot;</span> <span class="st">&quot;min focal plane mask sag&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmmaxsag&quot;</span> <span class="st">&quot;max focal plane mask sag&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmccnbr&quot;</span> <span class="st">&quot;how many central rings replaced by cone (set to 0 if no central cone)&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmccz&quot;</span> <span class="st">&quot;sag at cone center (sag at cone edge will be midpoint between minsag and maxsag)&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmocradld&quot;</span> <span class="st">&quot;outer cone outer radius [l/D]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;fpmocz&quot;</span> <span class="st">&quot;sag at inner edge of outer cone (sag = 0 at outer edge), set to 0 if no outer cone&quot;</span>
+
+
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m OPTIMIZATION PARAMETERS: \033[0m&quot;</span>
+
+<span class="kw">printvar</span> <span class="st">&quot;mlambda&quot;</span> <span class="st">&quot;central wavelength for polychromatic design [nm]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;mlambdaB&quot;</span> <span class="st">&quot;spectral bandwidth [%]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;ssize&quot;</span> <span class="st">&quot;source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;extmode&quot;</span> <span class="st">&quot;source extent mode (0: 3 points; 1: 6 points)&quot;</span>
+
+
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m OPTICAL DESIGN: \033[0m&quot;</span>
+
+<span class="kw">printvar</span> <span class="st">&quot;size&quot;</span> <span class="st">&quot;array size&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;beamrad&quot;</span> <span class="st">&quot;beam radius [mm]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;pscale&quot;</span> <span class="st">&quot;pixel scale in pupil [m/pix]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;Fratio&quot;</span> <span class="st">&quot;F ratio at focal plane mask&quot;</span>
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAAr0lim&quot;</span> <span class="st">&quot;outer edge of PIAA optic 0 [beam radius unit]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAAr1lim&quot;</span> <span class="st">&quot;outer edge of PIAA optic 1 [beam radius unit]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAAsep&quot;</span> <span class="st">&quot;distance between PIAA optics [m]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;PIAA0pos&quot;</span> <span class="st">&quot;PIAA optic 0 distance from pupil plane [m]&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;invPIAAmode&quot;</span> <span class="st">&quot;0: no inv PIAA, 1: inv PIAA after Lyot stops, 2: inv PIAA before Lyot stops&quot;</span>
+<span class="kw">fi</span>
+
+<span class="kw">printvar</span> <span class="st">&quot;prePIAA0maskpos&quot;</span> <span class="st">&quot;pre-PIAA optic 0 mask distance from pupil plane [m] (if prePIAA0mask.fits exists)&quot;</span>
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot;</span> <span class="ot">-eq</span> <span class="st">&quot;1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">printvar</span> <span class="st">&quot;postPIAA0maskpos&quot;</span> <span class="st">&quot;post-PIAA optic 0 mask distance from pupil plane [m] (if postPIAA0mask.fits exits)&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;piaaNBCmodesmax&quot;</span> <span class="st">&quot;maximum number of radial cosine modes for PIAA optics&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;piaaCPAmax&quot;</span> <span class="st">&quot;maximum spatial frequency (CPA) for PIAA optics&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;LyotZmin&quot;</span> <span class="st">&quot;minimum value for Lyot stop(s) conjugation range [m] - relative to element named </span><span class="dt">\&quot;</span><span class="st">post focal plane mask pupil</span><span class="dt">\&quot;</span><span class="st">&quot;</span>
+<span class="kw">printvar</span> <span class="st">&quot;LyotZmax&quot;</span> <span class="st">&quot;maximum value for Lyot stop(s) conjugation range [m] - relative to element named </span><span class="dt">\&quot;</span><span class="st">post focal plane mask pupil</span><span class="dt">\&quot;</span><span class="st">&quot;</span>
+<span class="kw">fi</span>
+<span class="kw">printvar</span> <span class="st">&quot;pupoutmaskrad&quot;</span> <span class="st">&quot;output pupil mask radius (scaled to pupil radius)&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; &quot;</span>
+<span class="kw">}</span>
+
+
+
+<span class="fu">printhelp ()</span>
+<span class="kw">{</span>
+<span class="kw">echo</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m                 PIAACMC DESIGN: TOP LEVEL SCRIPT \033[0m&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; &quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; Edit script to set PIAACMC design parameters&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; Design parameters stored in conf/conf_&lt;param&gt;.txt&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; Design parameters list [current value]:&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; To change design parameter values, you may:&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     edit conf/conf_&lt;parameter&gt;.txt  file&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; OR&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     rm conf/*&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     edit default values in current bash script&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     re-run current script with no argument to check values&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; Once satisfied with values, launch current script with eval argument (evalsingle, eval0, eval1, or eval2)&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">printvarall</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">echo</span> -e <span class="st">&quot;\033[1m                       USAGE \033[0m&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot; </span><span class="ot">$0</span><span class="st"> &lt;command&gt;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;  command : &quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     optsingle &lt;stepstop&gt;  : optimize up to, but not including, step &lt;stepstop&gt;&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                       stepstrop=18 for monochromatic idealized design&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                             Stops immediately, no performance measurement (this mode is for debugging)&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                       stepstop=200 to include polychromatic optimization&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                             Files :&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                &lt;workdir&gt;/linoptval.txt          : log for each optimization scan&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                &lt;workdir&gt;/mode13_....bestval.txt : overall best solution&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                &lt;workdir&gt;/fpm_zonez_...best.fits : best zone sags solution&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     propmono   &lt;bogusarg&gt; : propagate existing solution (monochromatic)&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     designmono &lt;MaxStep&gt;  : design monochromatic PIAACMC up to, but not including, step &lt;MaxStep&gt;, and measure its contrast&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                             This mode is useful to track design performance during design process&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                             Contrast is normalized by computing PSF without focal plane mask&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                             Common usage is :&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                  designmono 1&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                  # inspect results&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                  designmono 2&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                  # inspect results&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                  ...&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                       NOTE: type </span><span class="dt">\&quot;</span><span class="st">./runPIAACMC helpsteps</span><span class="dt">\&quot;</span><span class="st"> to list design steps description&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     proppoly &lt;bogusarg&gt;   : polychromatic propagation point source&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     eval0 &lt;stepstop&gt;      : level 0 evaluation (compute on-axis PSF and contrast), &lt;stepstop&gt; should be set to 18&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                    output files:  flux_ptsrc_...          &quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                   contrast_ptsrc_....&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                   psfi0_ptsrc_...&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     eval1 &lt;stepstop&gt;      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), &lt;stepstop&gt; should be set to 18&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                    OUTPUT FILES:  ContrastCurve_extsrc15_...&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                   ContrastVal_extsrc15_...&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                                   psfi0_extsrc15_...&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;     eval2 &lt;stepstop&gt;      : level 2 evaluation (compute all contrasts + transmission curve), &lt;stepstop&gt; should be set to 18&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;                    OUTPUT FILES:  transmCurve_&lt;parameters&gt;.txt&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------&quot;</span>
+<span class="kw">}</span>
+
+
+
+<span class="ot">NBARGS=</span>2
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;help&quot;</span><span class="kw"> ]</span> <span class="kw">|| [</span> <span class="st">&quot;</span><span class="ot">$#</span><span class="st">&quot;</span> <span class="ot">-ne</span> <span class="ot">$NBARGS</span><span class="kw"> ]</span>; <span class="kw">then</span>
+        <span class="kw">printhelp</span>
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$#</span><span class="st">&quot;</span> <span class="ot">-ne</span> <span class="ot">$NBARGS</span><span class="kw"> ]</span>; <span class="kw">then</span>
+    <span class="kw">echo</span> <span class="st">&quot;Illegal number of parameters (</span><span class="ot">$NBARGS</span><span class="st"> params required, </span><span class="ot">$#</span><span class="st"> entered)&quot;</span>
+<span class="kw">fi</span>
+        <span class="kw">exit</span>
+<span class="kw">fi</span>
+
+
+<span class="ot">runoptcmd=$1</span>
+
+
+
+<span class="kw">echo</span> <span class="st">&quot;200&quot;</span> <span class="kw">&gt;</span> ./log/conf_MdesignStepMax.txt
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$runoptcmd</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;designmono&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span> <span class="kw">&gt;</span> ./log/conf_MdesignStepMax.txt
+<span class="kw">fi</span>
+
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span> <span class="kw">&gt;</span> ./log/conf_exitpt.txt
+
+
+
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$runoptcmd</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;eval0&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span> <span class="kw">&gt;</span> ./log/conf_MdesignStepMax.txt
+<span class="kw">echo</span> <span class="st">&quot;19&quot;</span> <span class="kw">&gt;</span> ./log/conf_exitpt.txt
+<span class="kw">fi</span>
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$runoptcmd</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;eval1&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span> <span class="kw">&gt;</span> ./log/conf_MdesignStepMax.txt
+<span class="kw">echo</span> <span class="st">&quot;19&quot;</span> <span class="kw">&gt;</span> ./log/conf_exitpt.txt
+<span class="kw">fi</span>
+
+<span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$runoptcmd</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;eval2&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$2</span><span class="st">&quot;</span> <span class="kw">&gt;</span> ./log/conf_MdesignStepMax.txt
+<span class="kw">echo</span> <span class="st">&quot;19&quot;</span> <span class="kw">&gt;</span> ./log/conf_exitpt.txt
+<span class="kw">fi</span>
+
+
+
+
+
+
+<span class="kw">echo</span> <span class="st">&quot;./runopt </span><span class="ot">$runoptcmd</span><span class="st"> </span><span class="ot">$pscale</span><span class="st"> </span><span class="ot">$coin</span><span class="st"> </span><span class="ot">$coout</span><span class="st"> </span><span class="ot">$fpmradld</span><span class="st"> </span><span class="ot">$lambda</span><span class="st"> </span><span class="ot">$PIAAmaterial</span><span class="st"> </span><span class="ot">$LStransm</span><span class="st"> </span><span class="ot">$NBls</span><span class="st"> </span><span class="ot">$mlambda</span><span class="st"> </span><span class="ot">$mlambdaB</span><span class="st"> </span><span class="ot">$NBrings</span><span class="st"> </span><span class="ot">$maskradld</span><span class="st"> </span><span class="ot">$ssize</span><span class="st"> </span><span class="ot">$extmode</span><span class="st"> </span><span class="ot">$fpmmaterial</span><span class="st"> </span><span class="ot">$fpmminsag</span><span class="st"> </span><span class="ot">$fpmmaxsag</span><span class="st"> </span><span class="ot">$fpmccnbr</span><span class="st"> </span><span class="ot">$fpmccz</span><span class="st"> </span><span class="ot">$fpmocradld</span><span class="st"> </span><span class="ot">$fpmocz</span><span class="st"> 000&quot;</span>
+
+<span class="kw">./runopt</span> <span class="ot">$runoptcmd</span> <span class="ot">$pscale</span> <span class="ot">$coin</span> <span class="ot">$coout</span> <span class="ot">$fpmradld</span> <span class="ot">$lambda</span> <span class="ot">$PIAAmaterial</span> <span class="ot">$LStransm</span> <span class="ot">$NBls</span> <span class="ot">$mlambda</span> <span class="ot">$mlambdaB</span> <span class="ot">$NBrings</span> <span class="ot">$maskradld</span> <span class="ot">$ssize</span> <span class="ot">$extmode</span> <span class="ot">$fpmmaterial</span> <span class="ot">$fpmminsag</span> <span class="ot">$fpmmaxsag</span> <span class="ot">$fpmccnbr</span> <span class="ot">$fpmccz</span> <span class="ot">$fpmocradld</span> <span class="ot">$fpmocz</span> 000
+</code></pre></td></tr></table></div>
+</div>
+</div>
+</body>
+</html>

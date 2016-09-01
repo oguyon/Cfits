@@ -1,0 +1,146 @@
+
+digraph runPIAACMCsteps {
+  graph [fontsize=30 labelloc="t" label="" splines=true overlap=false];
+  ratio = auto;
+  
+  "step000" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 000 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 000</td></tr>
+  <tr><td align="left"> make monochromatic PIAACMC idealized design</td></tr>
+  </table>> ];
+ 
+  "step001" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 001 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 000</td></tr>
+  <tr><td align="left"> repeat above step to compute on-axis PSF</td></tr>
+  </table>> ];
+
+  "step002" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 002 </font></td></tr>
+  <tr><td align="left"> - </td></tr>
+  <tr><td align="left"> Specify input pupil geometry </td></tr>
+  </table>> ];
+
+  "step003" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 003 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 000</td></tr>
+  <tr><td align="left"> compute on-axis PSF </td></tr>
+  </table>> ];
+
+  "step004" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 004 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 005</td></tr>
+  <tr><td align="left"> compute Lyot stops shapes and locations</td></tr>
+  <tr><td align="left"> 2nd pass, LStransm2 throughput</td></tr>
+  </table>> ];
+
+  "step005" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 005 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 002</td></tr>
+  <tr><td align="left"> optimize focal plane mask transm</td></tr>
+  </table>> ];
+
+  "step006" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 006 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 005</td></tr>
+  <tr><td align="left"> compute Lyot stops shapes and locations</td></tr>
+  <tr><td align="left"> 2nd pass, LStransm0 throughput</td></tr>
+  </table>> ];
+
+  "step007" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 007 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>
+  <tr><td align="left"> 10 cosine modes, 5 Fourier modes</td></tr>
+  </table>> ];
+
+  "step008" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 008 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>
+  <tr><td align="left"> 20 cosine modes, 10 Fourier modes</td></tr>
+  </table>> ];
+
+  "step009" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 009 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 005 </td></tr>
+  <tr><td align="left"> compute Lyot stops shapes and locations</td></tr>
+  <tr><td align="left"> 3nd pass, LStransm1 throughput</td></tr>
+  </table>> ];
+
+  "step010" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 010 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 001 </td></tr>
+  <tr><td align="left"> Tune Lyot stops conjugations</td></tr>
+  </table>> ];
+
+  "step011" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 011 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>
+    <tr><td align="left"> 20 cosine modes, 20 Fourier modes</td></tr>
+  </table>> ];
+
+  "step012" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 012 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>   
+  <tr><td align="left"> 40 cosine modes, 150 Fourier modes</td></tr>
+  </table>> ];
+
+  "step013" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 013 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 005 </td></tr>
+  <tr><td align="left"> compute Lyot stops shapes and locations</td></tr>
+  <tr><td align="left"> 4rth pass, LStransm2 throughput</td></tr>
+  </table>> ];
+
+  "step014" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 014 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 001 </td></tr>
+  <tr><td align="left"> Tune Lyot stops conjugations</td></tr>
+  </table>> ];
+
+  "step015" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 015 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>
+  <tr><td align="left"> 20 cosine modes, 20 Fourier modes</td></tr>
+  </table>> ];
+
+  "step016" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 016 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>
+  <tr><td align="left"> 40 cosine modes, 150 Fourier modes</td></tr>
+  </table>> ];
+
+  "step017" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white"> STEP 017 </font></td></tr>
+  <tr><td align="left"> piaacmcsimrun code 040</td></tr>
+  <tr><td align="left"> tune PIAA shapes and focal plane mask transm</td></tr>
+  <tr><td align="left"> 40 cosine modes, 625 Fourier modes</td></tr>
+  </table>> ];
+
+
+  
+  step000 -> step001 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step001 -> step002 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step002 -> step003 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step003 -> step004 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step004 -> step005 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step005 -> step006 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step006 -> step007 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step007 -> step008 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step008 -> step009 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step009 -> step010 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step010 -> step011 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step011 -> step012 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step012 -> step013 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step013 -> step014 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step014 -> step015 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step015 -> step016 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+  step016 -> step017 [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
+
+  {rank=same step000 step006 step012}
+}

@@ -1,0 +1,294 @@
+% PIAACMC design: script run
+% Olivier Guyon
+% 2016
+
+
+
+
+
+
+
+# PIAACMCsimul script: run
+
+
+## Source Code
+
+~~~~~~~~~~~ {.bash .numberLines}
+#!/bin/bash
+
+# Designing PIAACMC 
+
+
+errorfile="errorstatus.txt"
+rm $errorfile
+
+
+mkdir -p conf
+mkdir -p log
+
+
+function loadparam() {
+file="conf/conf_$1.txt"
+if [ ! -f $file ]; then
+echo "$2" > $file
+fi
+var=$( cat "$file" )
+eval "$1=$var"
+}
+
+function printvar() {
+eval "var=${!1}"
+printf "%20s  [%10s]  %s\n" "$1" "$var" "$2"
+}
+
+
+# loading parameters
+# 2nd arg is default value - will only be adopted if corresponding conf/conf_<parameter>.txt file DOES NOT EXIST
+# To force YOUR parameter values to be used, you can :
+#    (1) rm ./conf/*
+#    (2) edit values in this script
+#    (3) re-execute this script
+
+
+# MAIN FUNCTION ARGUMENTS
+loadparam PIAAmode 1
+
+loadparam PIAAcoeff 1.0
+loadparam coin 0.300
+loadparam coout 0.250
+loadparam fpmradld 1.000
+loadparam PIAAmaterial "Mirror"
+loadparam LStransm 0.70
+loadparam NBls 4
+loadparam lambda 800
+loadparam mlambda 800
+loadparam mlambdaB 10
+loadparam FPMsectors 1
+loadparam NBrings 22
+loadparam maskradld 1.60
+loadparam ssize 20
+loadparam extmode 0
+
+loadparam fpmmaterial "Mirror"
+loadparam fpmminsag "-1e-6"
+loadparam fpmmaxsag "1e-6"
+
+loadparam fpmccnbr 0
+loadparam fpmccz $fpmmaxsag
+loadparam fpmocradld 8.0
+loadparam fpmocz 0.0
+
+loadparam size 1024
+loadparam beamrad 0.02
+loadparam pscale 0.0001
+loadparam Fratio 80.0
+loadparam PIAAr0lim 1.15 
+loadparam PIAAr1lim 1.50
+loadparam PIAAsep 1.0
+loadparam PIAA0pos 1.0 
+loadparam invPIAAmode 1
+
+loadparam prePIAA0maskpos 1.0 
+loadparam postPIAA0maskpos 1.5 
+loadparam piaaNBCmodesmax 40
+loadparam piaaCPAmax 10.0
+loadparam LyotZmin -2.5
+loadparam LyotZmax 0.5
+loadparam pupoutmaskrad 0.92
+
+# CONFIGURATION FLAGS/PARAMETERS
+loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fourier modes)
+
+
+
+function printvarall() {
+
+echo -e "\033[1m          CURRENT PARAMETERS VALUES :\033[0m"
+echo " "
+echo -e "\033[1m OPTICAL DESIGN: \033[0m"
+echo " File conjugations.txt in piaacmcconf directory lists optical design elements and location"
+echo ""
+
+echo -e "\033[1m PIAA OPTICS DESIGN: \033[0m"
+
+printvar "PIAAmode" "PIAA mode (0: classical apodization, 1: PIAA)"
+printvar "fpmradld" "focal plane mask radius [l/D]"
+if [ "$PIAAmode" -eq "1" ]; then
+printvar "PIAAcoeff" "fraction of PIAA apodization"
+printvar "coin" "central obstruction at input beam [beam radius]"
+printvar "coout" "central obstruction at output beam [beam radius]"
+printvar "PIAAmaterial" "PIAA optics material"
+printvar "PIAAcirc" "FLAG: 1 if PIAA shapes are circular (no Fourier modes)"
+fi
+
+echo -e "\033[1m LYOT STOP(S) DESIGN: \033[0m"
+if [ "$PIAAmode" -eq "1" ]; then
+printvar "LStransm" "Lyot stop transmission"
+printvar "NBls" "Number of Lyot stops"
+fi
+printvar "lambda" "Wavelength for monochromatic design [nm]"
+
+
+echo -e "\033[1m FOCAL PLANE MASK DESIGN: \033[0m"
+
+printvar "fpmmaterial" "focal plane mask material"
+printvar "FPMsectors" "mask geometry: 0=disk, 1=sectors, 2=hexagonal tiling"
+printvar "NBrings" "number of rings in focal plane mask"
+printvar "maskradld" "mask outer radius at central wavelength [l/D]"
+printvar "fpmminsag" "min focal plane mask sag"
+printvar "fpmmaxsag" "max focal plane mask sag"
+printvar "fpmccnbr" "how many central rings replaced by cone (set to 0 if no central cone)"
+printvar "fpmccz" "sag at cone center (sag at cone edge will be midpoint between minsag and maxsag)"
+printvar "fpmocradld" "outer cone outer radius [l/D]"
+printvar "fpmocz" "sag at inner edge of outer cone (sag = 0 at outer edge), set to 0 if no outer cone"
+
+
+echo -e "\033[1m OPTIMIZATION PARAMETERS: \033[0m"
+
+printvar "mlambda" "central wavelength for polychromatic design [nm]"
+printvar "mlambdaB" "spectral bandwidth [%]"
+printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
+printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
+
+
+echo -e "\033[1m OPTICAL DESIGN: \033[0m"
+
+printvar "size" "array size"
+printvar "beamrad" "beam radius [mm]"
+printvar "pscale" "pixel scale in pupil [m/pix]"
+printvar "Fratio" "F ratio at focal plane mask"
+if [ "$PIAAmode" -eq "1" ]; then
+printvar "PIAAr0lim" "outer edge of PIAA optic 0 [beam radius unit]"
+printvar "PIAAr1lim" "outer edge of PIAA optic 1 [beam radius unit]"
+printvar "PIAAsep" "distance between PIAA optics [m]"
+printvar "PIAA0pos" "PIAA optic 0 distance from pupil plane [m]"
+printvar "invPIAAmode" "0: no inv PIAA, 1: inv PIAA after Lyot stops, 2: inv PIAA before Lyot stops"
+fi
+
+printvar "prePIAA0maskpos" "pre-PIAA optic 0 mask distance from pupil plane [m] (if prePIAA0mask.fits exists)"
+if [ "$PIAAmode" -eq "1" ]; then
+printvar "postPIAA0maskpos" "post-PIAA optic 0 mask distance from pupil plane [m] (if postPIAA0mask.fits exits)"
+printvar "piaaNBCmodesmax" "maximum number of radial cosine modes for PIAA optics"
+printvar "piaaCPAmax" "maximum spatial frequency (CPA) for PIAA optics"
+printvar "LyotZmin" "minimum value for Lyot stop(s) conjugation range [m] - relative to element named \"post focal plane mask pupil\""
+printvar "LyotZmax" "maximum value for Lyot stop(s) conjugation range [m] - relative to element named \"post focal plane mask pupil\""
+fi
+printvar "pupoutmaskrad" "output pupil mask radius (scaled to pupil radius)"
+echo " "
+}
+
+
+
+printhelp ()
+{
+echo
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m                 PIAACMC DESIGN: TOP LEVEL SCRIPT \033[0m"
+echo " "
+echo " Edit script to set PIAACMC design parameters"
+echo " Design parameters stored in conf/conf_<param>.txt"
+echo " Design parameters list [current value]:"
+echo ""
+echo " To change design parameter values, you may:"
+echo "     edit conf/conf_<parameter>.txt  file"
+echo " OR"
+echo "     rm conf/*"
+echo "     edit default values in current bash script"
+echo "     re-run current script with no argument to check values"
+echo ""
+echo " Once satisfied with values, launch current script with eval argument (evalsingle, eval0, eval1, or eval2)"
+echo ""
+echo "------------------------------------------------------------------------"
+printvarall
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m                       USAGE \033[0m"
+echo " $0 <command>"
+echo "  command : "
+echo "     optsingle <stepstop>  : optimize up to, but not including, step <stepstop>"
+echo "                                       stepstrop=18 for monochromatic idealized design"
+echo "                                             Stops immediately, no performance measurement (this mode is for debugging)"
+echo "                                       stepstop=200 to include polychromatic optimization"
+echo "                             Files :"
+echo "                                <workdir>/linoptval.txt          : log for each optimization scan"
+echo "                                <workdir>/mode13_....bestval.txt : overall best solution"
+echo "                                <workdir>/fpm_zonez_...best.fits : best zone sags solution"
+echo "     propmono   <bogusarg> : propagate existing solution (monochromatic)"
+echo "     designmono <MaxStep>  : design monochromatic PIAACMC up to, but not including, step <MaxStep>, and measure its contrast"
+echo "                             This mode is useful to track design performance during design process"
+echo "                             Contrast is normalized by computing PSF without focal plane mask"
+echo "                             Common usage is :"
+echo "                                  designmono 1"
+echo "                                  # inspect results"
+echo "                                  designmono 2"
+echo "                                  # inspect results"
+echo "                                  ..."
+echo "                       NOTE: type \"./runPIAACMC helpsteps\" to list design steps description"
+echo "     proppoly <bogusarg>   : polychromatic propagation point source"
+echo "     eval0 <stepstop>      : level 0 evaluation (compute on-axis PSF and contrast), <stepstop> should be set to 18"
+echo "                    output files:  flux_ptsrc_...          "
+echo "                                   contrast_ptsrc_...."
+echo "                                   psfi0_ptsrc_..."
+echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
+echo "                    OUTPUT FILES:  ContrastCurve_extsrc15_..."
+echo "                                   ContrastVal_extsrc15_..."
+echo "                                   psfi0_extsrc15_..."
+echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + transmission curve), <stepstop> should be set to 18"
+echo "                    OUTPUT FILES:  transmCurve_<parameters>.txt"
+echo "------------------------------------------------------------------------"
+}
+
+
+
+NBARGS=2
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+        printhelp
+if [ "$#" -ne $NBARGS ]; then
+    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+fi
+        exit
+fi
+
+
+runoptcmd=$1
+
+
+
+echo "200" > ./log/conf_MdesignStepMax.txt
+
+if [ "$runoptcmd" = "designmono" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+fi
+
+echo "$2" > ./log/conf_exitpt.txt
+
+
+
+
+if [ "$runoptcmd" = "eval0" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+echo "19" > ./log/conf_exitpt.txt
+fi
+
+if [ "$runoptcmd" = "eval1" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+echo "19" > ./log/conf_exitpt.txt
+fi
+
+if [ "$runoptcmd" = "eval2" ]; then
+echo "$2" > ./log/conf_MdesignStepMax.txt
+echo "19" > ./log/conf_exitpt.txt
+fi
+
+
+
+
+
+
+echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
+
+./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
+
+
+~~~~~~~~~~~
+

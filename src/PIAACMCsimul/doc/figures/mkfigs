@@ -1,0 +1,3 @@
+dot -Tjpeg scripts_flow.dot -o scripts_flow.jpg
+dot -Tjpeg runPIAACMCsteps.dot -o runPIAACMCsteps.jpg
+
