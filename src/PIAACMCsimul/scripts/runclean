@@ -17,4 +17,7 @@ rm searchtime.txt
 rm looppsfcomp_done
 rm conj_test.txt
 rm piaacmcscriptsinit.txt
+rm _pupmaskload.fits
+rm SVDmodes.log
+rm eigenv_*
 

@@ -3572,18 +3572,23 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 	char imname[200];
 	
 
+
     size = piaacmc[0].size;
     size2 = size*size;
 
-
+	printf("Loading (optional) OPDerr file\n");
+	fflush(stdout);
 	IDopderrC = image_ID("OPDerrC");
 	if(IDopderrC==-1)
 		IDopderrC = load_fits("OPDerrC.fits", "OPDerrC", 0);
-
-	nbOPDerr = data.image[IDopderrC].md[0].size[2];
-	printf("INCLUDING %ld OPD MODES\n", nbOPDerr);
-
-
+	if(IDopderrC != -1)
+	{
+		nbOPDerr = data.image[IDopderrC].md[0].size[2];
+		printf("INCLUDING %ld OPD MODES\n", nbOPDerr);
+		fflush(stdout);
+	}
+	else
+		nbOPDerr = 0;
     focscale = (2.0*piaacmc[0].beamrad/piaacmc[0].pixscale)/piaacmc[0].size;
 
 
@@ -3637,6 +3642,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
         //exit(0);
 
     }
+
 
 
 
@@ -5465,8 +5471,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
 
 
-
-
       // if file "scene.txt" extists, compute series of PSFs and sum 
         fp = fopen("SCENE.txt", "r");
         if(fp!=NULL)
@@ -5502,6 +5506,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             }
  
 		printf("EXEC CASE 0 COMPLETED\n");
+		fflush(stdout);
  
         break;
 
@@ -8528,6 +8533,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
     }
     else
         PIAACMCsimul_exec(confindex, mode);
+
 
     free(piaacmc);
 

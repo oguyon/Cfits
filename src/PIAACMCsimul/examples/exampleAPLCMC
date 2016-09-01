@@ -1,0 +1,133 @@
+#!/bin/bash
+
+
+# APLCMC design example script / step by step operations
+# run the commands in this script in the local working directory
+# This script is meant to be run/read line by line to guide the user
+
+
+
+
+# ===========================================
+#    MAKE LOCAL COPY (SYM LINK) OF SCRIPTS
+# ===========================================
+
+
+# source code directory (change as needed)
+srcdir="/home/olivier/src/Cfits/src/PIAACMCsimul/scripts"
+
+ln -s $srcdir/syncscripts syncscripts
+./syncscripts
+
+# you should see the following scripts in the work directory:
+# ./run
+# ./runclean
+# ./runopt
+# ./runPIAACMC
+# ./sim
+
+# type "./run" (no arguments) to see current configuration parameters and write the parameters in ./conf directory
+./run
+
+# configuration parameters are listed as files: ./conf/conf_<PARAMETERNAME>.txt
+
+
+
+# ===========================================
+#    CREATE / IMPORT PUPIL
+# ===========================================
+
+# you may create / import your own pupil
+# in this example, the pupil must be a 1024 x 1024 pixel FITS file, single precision floating point
+# the pupil array size (1024 pix) must match the "size" parameter
+# the pupil radius in this example is 200 pix, and must match beamrad/pscale
+# the pupil central obstruction should match the coin parameter (0.3 in this example)
+# if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
+
+# the name of the pupil file is "pup_1024.fits"
+
+
+# examples directory (change as needed)
+exampledir="/home/olivier/src/Cfits/src/PIAACMCsimul/examples"
+
+cp $exampledir/pup_seg00_1024.fits pup_1024.fits
+
+
+
+
+# ===========================================
+#    SET PARAMETER VALUES FOR APLCMC
+# ===========================================
+
+# no PIAA optics (APLCMC)
+echo "0" > ./conf/conf_PIAAmode.txt
+
+# set pre-apodizer to pupil plane conjugation
+echo "0.0" > ./conf/conf_prePIAA0maskpos.txt
+
+# set output pupil mask radius to 1.0 
+echo "1.0" > ./conf/conf_pupoutmaskrad.txt
+
+
+# ===========================================
+#    CREATE APLCMC MONOCHROMATIC DESIGN
+# ===========================================
+
+# create apodization profile (prolate spheroidal) for the pupil
+./run optsingle 1
+
+# this operation should take approximately 2 minutes
+
+# The following files will be created:
+
+# Cmodes_1024.fits : Cosine modes
+# Fmodes_1024.fits : Fourier modes
+
+# in ./piaacmcconf_i000 directory :
+# WFamp0_xxx.fits and WFpha0_xxx.fits: amplitude and phase in specific planes
+# conjugations.txt : list of planes and conjugation distance to reference
+# apo2Drad.fits  : amplitude apodization (entirely allocated to pre-apodizer)
+
+# Note: for the APLCMC, the monochromatic design is completed in step 1, and further steps are de-activated
+
+
+# ===========================================
+#    FOCAL PLANE MASK DESIGN
+# ===========================================
+
+# select focal plane mask type: SiO2, transmission mask
+echo "SiO2" > conf/conf_fpmmaterial.txt
+
+# hexagonal tiling
+echo "2" > conf/conf_FPMsectors.txt
+
+# outer radius = 2.5 l/D
+echo "2.5" > conf/conf_maskradld.txt
+
+# 24 rings
+echo "24" > conf/conf_NBrings.txt
+
+
+
+# START FOCAL PLANE MASK DESIGN
+./run optsingle 200
+
+# this command will run for a few hrs, possibly day(s) if the number of focal plane mask zones is large
+# the complex amplitude response of each mask zone is computed 
+# Several sub-processes are launched, each computing a subset of the total number of zones
+# you can follow the progress of each subprocess in the corresponding tmux sessions
+# the tmux session names are PID followed by FPMt<index>n<NBindex>
+#
+# as each subprocess computes zone responses, they are stored in FITS files FPMresp..._thread<index>.fits.tmp
+# you can open/view these files to follow progress - each zone appears as a line, and files should fill from the bottom to the top
+#
+# when all threads complete, the files are merged into a single FPMresp file
+#
+
+
+
+
+
+
+
+

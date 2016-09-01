@@ -22,7 +22,7 @@ digraph scripts_flow {
 
   "runPIAACMC" [ style = "filled" penwidth = 1 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
   label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white">runPIAACMC</font></td></tr>
-  <tr><td align="left">lower-level scropt calling C-written executable</td></tr>
+  <tr><td align="left">lower-level script calling C-written executable</td></tr>
   </table>> ];
 
 

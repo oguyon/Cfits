@@ -21,36 +21,40 @@
 <li><a href="#scope"><span class="toc-section-number">1.1</span> Scope</a></li>
 <li><a href="#usage"><span class="toc-section-number">1.2</span> Usage</a></li>
 </ul></li>
-<li><a href="#c-code-description"><span class="toc-section-number">2</span> C code description</a><ul>
-<li><a href="#piaacmc_designcodes"><span class="toc-section-number">2.1</span> PIAACMC_designcodes</a></li>
+<li><a href="#quick-start"><span class="toc-section-number">2</span> Quick start</a><ul>
+<li><a href="#aplcmc-example-script"><span class="toc-section-number">2.1</span> APLCMC example script</a></li>
+<li><a href="#piaacmc-example-script"><span class="toc-section-number">2.2</span> PIAACMC example script</a></li>
 </ul></li>
-<li><a href="#design-steps-for-piaacmc"><span class="toc-section-number">3</span> Design Steps for PIAACMC</a></li>
-<li><a href="#initialization-rules-function-piaasimul_initpiaacmc"><span class="toc-section-number">4</span> Initialization rules (function PIAAsimul_initpiaacmc() )</a><ul>
-<li><a href="#mode-000-create-an-idealized-centrally-obscured-apodized-piaacmc-monochromatic-design"><span class="toc-section-number">4.1</span> MODE 000: Create an idealized centrally obscured apodized PIAACMC monochromatic design</a><ul>
-<li><a href="#code-breakdown"><span class="toc-section-number">4.1.1</span> Code breakdown</a></li>
-<li><a href="#output-files"><span class="toc-section-number">4.1.2</span> Output Files</a></li>
+<li><a href="#c-code-description"><span class="toc-section-number">3</span> C code description</a><ul>
+<li><a href="#piaacmc_designcodes"><span class="toc-section-number">3.1</span> PIAACMC_designcodes</a></li>
 </ul></li>
-<li><a href="#step-002-specify-input-pupil-geometry"><span class="toc-section-number">4.2</span> STEP 002: Specify input pupil geometry</a></li>
-<li><a href="#step-003-mode-0-compute-on-axis-psf-for-new-pupil-geometry"><span class="toc-section-number">4.3</span> STEP 003 (mode = 0): compute on-axis PSF for new pupil geometry</a></li>
-<li><a href="#step-004-mode-5-compute-lyot-stops-shapes-and-locations-1st-pass"><span class="toc-section-number">4.4</span> STEP 004 (mode = 5): Compute Lyot stops shapes and locations, 1st pass</a></li>
-<li><a href="#step-005-mode-2-optimize-focal-plane-mask-transmission-1st-pass"><span class="toc-section-number">4.5</span> STEP 005 (mode = 2): Optimize focal plane mask transmission, 1st pass</a></li>
-<li><a href="#step-006-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput"><span class="toc-section-number">4.6</span> STEP 006 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</a></li>
-<li><a href="#step-007-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-10-cosine-modes-5-fourier-modes"><span class="toc-section-number">4.7</span> STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes</a></li>
-<li><a href="#step-008-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes"><span class="toc-section-number">4.8</span> STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</a></li>
-<li><a href="#step-009-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput"><span class="toc-section-number">4.9</span> STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</a></li>
-<li><a href="#step-010-mode-1-tune-lyot-stops-conjugations"><span class="toc-section-number">4.10</span> STEP 010 (mode = 1): Tune Lyot stops conjugations</a></li>
-<li><a href="#step-011-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes"><span class="toc-section-number">4.11</span> STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</a></li>
-<li><a href="#step-012-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-40-cosine-modes-150-fourier-modes"><span class="toc-section-number">4.12</span> STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm, 40 cosine modes, 150 Fourier modes</a></li>
-<li><a href="#step-013-mode-5-compute-lyot-stops-shapes-and-locations-3nd-pass-70-throughput"><span class="toc-section-number">4.13</span> STEP 013 (mode = 5): Compute Lyot stops shapes and locations, 3nd pass, 70% throughput</a></li>
+<li><a href="#design-steps-for-piaacmc"><span class="toc-section-number">4</span> Design Steps for PIAACMC</a></li>
+<li><a href="#initialization-rules-function-piaasimul_initpiaacmc"><span class="toc-section-number">5</span> Initialization rules (function PIAAsimul_initpiaacmc() )</a><ul>
+<li><a href="#mode-000-create-an-idealized-centrally-obscured-apodized-piaacmc-monochromatic-design"><span class="toc-section-number">5.1</span> MODE 000: Create an idealized centrally obscured apodized PIAACMC monochromatic design</a><ul>
+<li><a href="#code-breakdown"><span class="toc-section-number">5.1.1</span> Code breakdown</a></li>
+<li><a href="#output-files"><span class="toc-section-number">5.1.2</span> Output Files</a></li>
 </ul></li>
-<li><a href="#low-level-c-code"><span class="toc-section-number">5</span> Low-level C code</a><ul>
-<li><a href="#key-functions"><span class="toc-section-number">5.1</span> Key functions</a></li>
-<li><a href="#full-piaacmc-design-in-monochromatic-light"><span class="toc-section-number">5.2</span> Full PIAACMC design in monochromatic light</a></li>
-<li><a href="#aplc-design"><span class="toc-section-number">5.3</span> APLC design</a></li>
-<li><a href="#focal-plane-mask-optimization"><span class="toc-section-number">5.4</span> Focal plane mask optimization</a><ul>
-<li><a href="#overall-flow"><span class="toc-section-number">5.4.1</span> Overall flow</a></li>
-<li><a href="#regularization"><span class="toc-section-number">5.4.2</span> Regularization</a></li>
-<li><a href="#key-files"><span class="toc-section-number">5.4.3</span> Key files</a></li>
+<li><a href="#step-002-specify-input-pupil-geometry"><span class="toc-section-number">5.2</span> STEP 002: Specify input pupil geometry</a></li>
+<li><a href="#step-003-mode-0-compute-on-axis-psf-for-new-pupil-geometry"><span class="toc-section-number">5.3</span> STEP 003 (mode = 0): compute on-axis PSF for new pupil geometry</a></li>
+<li><a href="#step-004-mode-5-compute-lyot-stops-shapes-and-locations-1st-pass"><span class="toc-section-number">5.4</span> STEP 004 (mode = 5): Compute Lyot stops shapes and locations, 1st pass</a></li>
+<li><a href="#step-005-mode-2-optimize-focal-plane-mask-transmission-1st-pass"><span class="toc-section-number">5.5</span> STEP 005 (mode = 2): Optimize focal plane mask transmission, 1st pass</a></li>
+<li><a href="#step-006-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput"><span class="toc-section-number">5.6</span> STEP 006 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</a></li>
+<li><a href="#step-007-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-10-cosine-modes-5-fourier-modes"><span class="toc-section-number">5.7</span> STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes</a></li>
+<li><a href="#step-008-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes"><span class="toc-section-number">5.8</span> STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</a></li>
+<li><a href="#step-009-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput"><span class="toc-section-number">5.9</span> STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</a></li>
+<li><a href="#step-010-mode-1-tune-lyot-stops-conjugations"><span class="toc-section-number">5.10</span> STEP 010 (mode = 1): Tune Lyot stops conjugations</a></li>
+<li><a href="#step-011-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes"><span class="toc-section-number">5.11</span> STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</a></li>
+<li><a href="#step-012-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-40-cosine-modes-150-fourier-modes"><span class="toc-section-number">5.12</span> STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm, 40 cosine modes, 150 Fourier modes</a></li>
+<li><a href="#step-013-mode-5-compute-lyot-stops-shapes-and-locations-3nd-pass-70-throughput"><span class="toc-section-number">5.13</span> STEP 013 (mode = 5): Compute Lyot stops shapes and locations, 3nd pass, 70% throughput</a></li>
+</ul></li>
+<li><a href="#low-level-c-code"><span class="toc-section-number">6</span> Low-level C code</a><ul>
+<li><a href="#key-functions"><span class="toc-section-number">6.1</span> Key functions</a></li>
+<li><a href="#full-piaacmc-design-in-monochromatic-light"><span class="toc-section-number">6.2</span> Full PIAACMC design in monochromatic light</a></li>
+<li><a href="#aplc-design"><span class="toc-section-number">6.3</span> APLC design</a></li>
+<li><a href="#focal-plane-mask-optimization"><span class="toc-section-number">6.4</span> Focal plane mask optimization</a><ul>
+<li><a href="#overall-flow"><span class="toc-section-number">6.4.1</span> Overall flow</a></li>
+<li><a href="#regularization"><span class="toc-section-number">6.4.2</span> Regularization</a></li>
+<li><a href="#key-files"><span class="toc-section-number">6.4.3</span> Key files</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -104,7 +108,7 @@
 </tr>
 <tr class="even">
 <td align="left"><strong>runPIAACMC</strong></td>
-<td align="center">lower-level scropt calling C-written executable</td>
+<td align="center">lower-level script calling C-written executable</td>
 </tr>
 </tbody>
 </table>
@@ -118,10 +122,20 @@
 <a href="PIAACMCsimul_script_runPIAACMC.html">Detailed description of script runPIAACMC</a></p>
 </div>
 </div>
+<div id="quick-start" class="section level1">
+<h1><span class="header-section-number">2</span> Quick start</h1>
+<p>The quickest way to get started is to run and modify one of the example design scripts provided in the <code>./examples/</code> directory</p>
+<div id="aplcmc-example-script" class="section level2">
+<h2><span class="header-section-number">2.1</span> APLCMC example script</h2>
+</div>
+<div id="piaacmc-example-script" class="section level2">
+<h2><span class="header-section-number">2.2</span> PIAACMC example script</h2>
+</div>
+</div>
 <div id="c-code-description" class="section level1">
-<h1><span class="header-section-number">2</span> C code description</h1>
+<h1><span class="header-section-number">3</span> C code description</h1>
 <div id="piaacmc_designcodes" class="section level2">
-<h2><span class="header-section-number">2.1</span> PIAACMC_designcodes</h2>
+<h2><span class="header-section-number">3.1</span> PIAACMC_designcodes</h2>
 <p>The main function in the source code is PIAACMCsimul_exec(), which takes two arguments: the configuration index (usually a 3 digit integer) and the mode (integer) which describes the operation to be performed to the PIAACMC design.</p>
 <table style="width:76%;">
 <colgroup>
@@ -259,7 +273,7 @@
 </div>
 </div>
 <div id="design-steps-for-piaacmc" class="section level1">
-<h1><span class="header-section-number">3</span> Design Steps for PIAACMC</h1>
+<h1><span class="header-section-number">4</span> Design Steps for PIAACMC</h1>
 <p>Directories &quot;./piaacmcconf<nnn>/&quot; hold the default/current configuration settings and files for the PIAACMC. The directory will be automatically created if it does not exist. By copying from/to this directory, you can save/load PIAACMC designs.</p>
 <p>By default, if no configuration file exists, a monochromatic PIAACMC for a centrally obscured pupil will be created. This is meant as a starting point for the PIAACMC, which will then be optimized further</p>
 <p>The main command to run the PIAACMC simulation is <executable> piaacmcsimrun <nnn> <mode> exit </p>
@@ -267,10 +281,10 @@
 <p>The PIAACMC design process is as follows: -# design an idealized monochromatic PIAACMC for a centrally obscured aperture (steps 1-4) -# modify the design for the pupil aperture (steps 5-)</p>
 </div>
 <div id="initialization-rules-function-piaasimul_initpiaacmc" class="section level1">
-<h1><span class="header-section-number">4</span> Initialization rules (function PIAAsimul_initpiaacmc() )</h1>
+<h1><span class="header-section-number">5</span> Initialization rules (function PIAAsimul_initpiaacmc() )</h1>
 <p>-# if configuration directory exists, use it and load configuration file ( function PIAAsimul_loadpiaacmcconf ), otherwise, create it -# load/create Cmodes -# load/create Fmodes -# load mode coefficients for piaa shapes if they exist. If not: -# create radial apodization for centrally obscured idealized monochromatic PIAACMC -# fit / extrapolate radial apodization profile with cosines -# using above fit, create 2D radial sag for both PIAA optics ( -&gt; PIAA_Mshapes.txt) -# make 2D sag maps for both optics ( -&gt; piaa0z.fits, piaa1z.fits) -# fit 2D sag maps with Cmodes and Fmodes coefficients ( -&gt; piaa0Cmodes, piaa0Fmodes, piaa1Cmodes, piaa1Fmodes ) -# load/create focal plane mask zone map. This is the map that defines the geometry (which ring is where) -# load/create focal plane mask thickness array -# load/create focal plane mask transmission array -# load/create Lyot stops</p>
 <div id="mode-000-create-an-idealized-centrally-obscured-apodized-piaacmc-monochromatic-design" class="section level2">
-<h2><span class="header-section-number">4.1</span> MODE 000: Create an idealized centrally obscured apodized PIAACMC monochromatic design</h2>
+<h2><span class="header-section-number">5.1</span> MODE 000: Create an idealized centrally obscured apodized PIAACMC monochromatic design</h2>
 <p>This is meant as a starting point for the PIAACMC, which will then be optimized furtherOptional parameters are: - PIAACMC_size : array size (default = 1024) - PIAACMC_pixscale : pixel scale (m/pix) - PIAACMC_nblambda : number of wavelengths (1 for monochromatic) - PIAACMC_dftgrid : DFT grid sampling gap [pix] in pupil plane - PIAACMC_centobs0 : central obstruction in input pupil (default = 0.3) - PIAACMC_centobs1 : central obstruction after remapping (default = 0.2) - PIAACMC_fpmradld : focal plane mask radius for monochromatic idealized design, in l/D system unit (default = 0.9)</p>
 <p><executable> PIAACMC_size=1024 PIAACMC_pixscale=0.00011 PIAACMC_nblambda=1 PIAACMC_dftgrid=2 PIAACMC_centobs0=0.3 PIAACMC_centobs1=0.15 PIAACMC_fpmradld=1.0 PIAACMC_dftgrid=2 piaacmcsimrun 0 0 exit </p>
 <p>This will create the prolate function for a centrally obscured pupil, the idealized focal plane mask, and run the diffraction propagation.This step takes a few minutes - most of the time is spent on iterations to compute the 2D apodization prolate function.</p>
@@ -278,7 +292,7 @@
 <p>After this step, the contrast will likely be around 1e-7. The next step to improve this nominal design is to find the optimal locations for the Lyot stops.</p>
 <p>Example result (for 1 l/D mask, 2048 array size): Peak constrast (rough estimate)= 2.02762e-06 Total light in scoring field = 9.49968e-06 -&gt; Average contrast = 6.88685e-08 </p>
 <div id="code-breakdown" class="section level3">
-<h3><span class="header-section-number">4.1.1</span> Code breakdown</h3>
+<h3><span class="header-section-number">5.1.1</span> Code breakdown</h3>
 <ul>
 <li>PIAACMCsimul_exec() :
 <ul>
@@ -307,10 +321,10 @@
 </ul>
 </div>
 <div id="output-files" class="section level3">
-<h3><span class="header-section-number">4.1.2</span> Output Files</h3>
+<h3><span class="header-section-number">5.1.2</span> Output Files</h3>
 <p>APLCmaskCtransm.txt ?? fpm_ampl.fits fpm_pha.fits FPmask.tmp.fits</p>
 <div id="configuration" class="section level4">
-<h4><span class="header-section-number">4.1.2.1</span> Configuration :</h4>
+<h4><span class="header-section-number">5.1.2.1</span> Configuration :</h4>
 <table style="width:76%;">
 <colgroup>
 <col width="23%" />
@@ -343,7 +357,7 @@
 </table>
 </div>
 <div id="wavefront-modes" class="section level4">
-<h4><span class="header-section-number">4.1.2.2</span> Wavefront Modes :</h4>
+<h4><span class="header-section-number">5.1.2.2</span> Wavefront Modes :</h4>
 <table style="width:76%;">
 <colgroup>
 <col width="23%" />
@@ -376,7 +390,7 @@
 </table>
 </div>
 <div id="piaa-mirrors-apodization-fits" class="section level4">
-<h4><span class="header-section-number">4.1.2.3</span> PIAA mirrors, apodization, fits:</h4>
+<h4><span class="header-section-number">5.1.2.3</span> PIAA mirrors, apodization, fits:</h4>
 <table style="width:76%;">
 <colgroup>
 <col width="23%" />
@@ -461,7 +475,7 @@
 </table>
 </div>
 <div id="idealized-piaacmc-reference-point" class="section level4">
-<h4><span class="header-section-number">4.1.2.4</span> Idealized PIAACMC reference point:</h4>
+<h4><span class="header-section-number">5.1.2.4</span> Idealized PIAACMC reference point:</h4>
 <table style="width:76%;">
 <colgroup>
 <col width="23%" />
@@ -502,7 +516,7 @@
 </table>
 </div>
 <div id="focal-plane-mask" class="section level4">
-<h4><span class="header-section-number">4.1.2.5</span> Focal plane mask:</h4>
+<h4><span class="header-section-number">5.1.2.5</span> Focal plane mask:</h4>
 <p>Focal plane mask design defined by : - [s] Sectors flag (0: no sectors, 1: sectors), variable PIAACMC_FPMsectors - [r] Resolved target flag (0: point source, 1: resolved source) - [mr] Mask radius in units of 0.1 l/D - [rrr] number of rings, variable piaacmc[0].NBrings - [zzz] number of zones</p>
 <table>
 <thead>
@@ -531,7 +545,7 @@
 <p>By default, a non-physical mask is first created with transmission piaacmc[0].fpmaskamptransm read from piaacmcparams.conf. Computations indices using a physical mask: - set transmission to 1.0: piaacmc[0].fpmaskamptransm = 1.0. - set focal plane mask radius to larger value: piaacmc[0].fpmRad = 0.5<em>(LAMBDASTART+LAMBDAEND)</em>piaacmc[0].Fratio * PIAACMC_MASKRADLD</p>
 </div>
 <div id="lyot-stops" class="section level4">
-<h4><span class="header-section-number">4.1.2.6</span> Lyot stops:</h4>
+<h4><span class="header-section-number">5.1.2.6</span> Lyot stops:</h4>
 <table>
 <thead>
 <tr class="header">
@@ -552,7 +566,7 @@
 </table>
 </div>
 <div id="amplitude-phase-at-planes" class="section level4">
-<h4><span class="header-section-number">4.1.2.7</span> Amplitude &amp; Phase at planes:</h4>
+<h4><span class="header-section-number">5.1.2.7</span> Amplitude &amp; Phase at planes:</h4>
 <p>Files are /piaaconfxxx/WFamp_nnn.fits and WFpha_nnn.fits, where nnn is the plane index.Complex amplitude is shown AFTER the element has been applied, in the plane of the element.</p>
 <table>
 <thead>
@@ -610,7 +624,7 @@
 </table>
 </div>
 <div id="performance-evaluation" class="section level4">
-<h4><span class="header-section-number">4.1.2.8</span> Performance Evaluation:</h4>
+<h4><span class="header-section-number">5.1.2.8</span> Performance Evaluation:</h4>
 <table style="width:76%;">
 <colgroup>
 <col width="23%" />
@@ -641,52 +655,52 @@
 </div>
 </div>
 <div id="step-002-specify-input-pupil-geometry" class="section level2">
-<h2><span class="header-section-number">4.2</span> STEP 002: Specify input pupil geometry</h2>
+<h2><span class="header-section-number">5.2</span> STEP 002: Specify input pupil geometry</h2>
 <p>The pupil geometry is copied to file ./piaacmcconf[nnn]/pupa0_[size].fits</p>
 </div>
 <div id="step-003-mode-0-compute-on-axis-psf-for-new-pupil-geometry" class="section level2">
-<h2><span class="header-section-number">4.3</span> STEP 003 (mode = 0): compute on-axis PSF for new pupil geometry</h2>
+<h2><span class="header-section-number">5.3</span> STEP 003 (mode = 0): compute on-axis PSF for new pupil geometry</h2>
 </div>
 <div id="step-004-mode-5-compute-lyot-stops-shapes-and-locations-1st-pass" class="section level2">
-<h2><span class="header-section-number">4.4</span> STEP 004 (mode = 5): Compute Lyot stops shapes and locations, 1st pass</h2>
+<h2><span class="header-section-number">5.4</span> STEP 004 (mode = 5): Compute Lyot stops shapes and locations, 1st pass</h2>
 <p>For circular centrally obscured pupils, the default Lyot stops configuration consists of two stops: one that masks the outer part of the beam, and one that masks the central obstruction.</p>
 <p>Fine optimization of the stops locations is done with a separate command. The optional lsoptrange value is the range (unit: m) for the mask position search (default = 2 m).</p>
 <p>Example result (for 1 l/D mask, 2048 array size): Peak constrast (rough estimate)= 1.78874e-06 Total light in scoring field = 7.75534e-06 -&gt; Average contrast = 5.62228e-08 </p>
 </div>
 <div id="step-005-mode-2-optimize-focal-plane-mask-transmission-1st-pass" class="section level2">
-<h2><span class="header-section-number">4.5</span> STEP 005 (mode = 2): Optimize focal plane mask transmission, 1st pass</h2>
+<h2><span class="header-section-number">5.5</span> STEP 005 (mode = 2): Optimize focal plane mask transmission, 1st pass</h2>
 </div>
 <div id="step-006-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput" class="section level2">
-<h2><span class="header-section-number">4.6</span> STEP 006 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</h2>
+<h2><span class="header-section-number">5.6</span> STEP 006 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</h2>
 </div>
 <div id="step-007-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-10-cosine-modes-5-fourier-modes" class="section level2">
-<h2><span class="header-section-number">4.7</span> STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes</h2>
+<h2><span class="header-section-number">5.7</span> STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes</h2>
 <p>This takes approximately 20mn for size = 1024.Progress can be tracked by watching file : tail -f linoptval.txt </p>
 </div>
 <div id="step-008-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes" class="section level2">
-<h2><span class="header-section-number">4.8</span> STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</h2>
+<h2><span class="header-section-number">5.8</span> STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</h2>
 </div>
 <div id="step-009-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput" class="section level2">
-<h2><span class="header-section-number">4.9</span> STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</h2>
+<h2><span class="header-section-number">5.9</span> STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</h2>
 </div>
 <div id="step-010-mode-1-tune-lyot-stops-conjugations" class="section level2">
-<h2><span class="header-section-number">4.10</span> STEP 010 (mode = 1): Tune Lyot stops conjugations</h2>
+<h2><span class="header-section-number">5.10</span> STEP 010 (mode = 1): Tune Lyot stops conjugations</h2>
 </div>
 <div id="step-011-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes" class="section level2">
-<h2><span class="header-section-number">4.11</span> STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</h2>
+<h2><span class="header-section-number">5.11</span> STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</h2>
 </div>
 <div id="step-012-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-40-cosine-modes-150-fourier-modes" class="section level2">
-<h2><span class="header-section-number">4.12</span> STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm, 40 cosine modes, 150 Fourier modes</h2>
+<h2><span class="header-section-number">5.12</span> STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm, 40 cosine modes, 150 Fourier modes</h2>
 <p>The total number of free parameters is 380 = (40+150)*2, so this routine takes a long time to complete (hours).</p>
 </div>
 <div id="step-013-mode-5-compute-lyot-stops-shapes-and-locations-3nd-pass-70-throughput" class="section level2">
-<h2><span class="header-section-number">4.13</span> STEP 013 (mode = 5): Compute Lyot stops shapes and locations, 3nd pass, 70% throughput</h2>
+<h2><span class="header-section-number">5.13</span> STEP 013 (mode = 5): Compute Lyot stops shapes and locations, 3nd pass, 70% throughput</h2>
 </div>
 </div>
 <div id="low-level-c-code" class="section level1">
-<h1><span class="header-section-number">5</span> Low-level C code</h1>
+<h1><span class="header-section-number">6</span> Low-level C code</h1>
 <div id="key-functions" class="section level2">
-<h2><span class="header-section-number">5.1</span> Key functions</h2>
+<h2><span class="header-section-number">6.1</span> Key functions</h2>
 <p>Every time a PSF is computed, the following 3 functions are created in that order:</p>
 <ul>
 <li><code>PIAAsimul_initpiaacmcconf</code>
@@ -715,7 +729,7 @@
 </ul>
 </div>
 <div id="full-piaacmc-design-in-monochromatic-light" class="section level2">
-<h2><span class="header-section-number">5.2</span> Full PIAACMC design in monochromatic light</h2>
+<h2><span class="header-section-number">6.2</span> Full PIAACMC design in monochromatic light</h2>
 <p>The first step of the optimization process is to compute the PIAACMC optics and focal plane mask in the idealized case: monochromatic light, point source, and ideal focal plane mask (circular, phase-shifting and partially transmissive). Steps are shown in the figure below and correspond to steps in the <code>runPIAACMC</code> state machine.</p>
 <div class="figure">
 <img src="figures/runPIAACMCsteps.jpg" alt="PIAACMC design steps" />
@@ -723,13 +737,13 @@
 </div>
 </div>
 <div id="aplc-design" class="section level2">
-<h2><span class="header-section-number">5.3</span> APLC design</h2>
+<h2><span class="header-section-number">6.3</span> APLC design</h2>
 <p>The scripts produce an APLC design by setting <code>PIAAmode = 0</code>. In that case, only <code>step000</code> in the figure above is executed.</p>
 </div>
 <div id="focal-plane-mask-optimization" class="section level2">
-<h2><span class="header-section-number">5.4</span> Focal plane mask optimization</h2>
+<h2><span class="header-section-number">6.4</span> Focal plane mask optimization</h2>
 <div id="overall-flow" class="section level3">
-<h3><span class="header-section-number">5.4.1</span> Overall flow</h3>
+<h3><span class="header-section-number">6.4.1</span> Overall flow</h3>
 <p>FPM optimization is done as <code>mode = 13</code> in the main routine. It is called from the <code>runPIAACMC</code> script.<br />
 The <code>PIAACMCsimul_run(char *confindex, long mode)</code> function loop-calls the <code>PIAACMCsimul_exec(char *confindex, long mode)</code> function with mode 13 until search time is reached.</p>
 <p>Each search proceeds as follows :</p>
@@ -762,7 +776,7 @@ The <code>PIAACMCsimul_run(char *confindex, long mode)</code> function loop-call
 <p>To stop the optimization and have the current best solution adopted, enter a small value in the <code>searchtime.txt</code> file, so that the optimization process completes.</p>
 </div>
 <div id="regularization" class="section level3">
-<h3><span class="header-section-number">5.4.2</span> Regularization</h3>
+<h3><span class="header-section-number">6.4.2</span> Regularization</h3>
 <p>There are two regularization:</p>
 <ul>
 <li>Focal plane mask zone sags can be included in the linear optimization as extra components to the optimization vector</li>
@@ -770,7 +784,7 @@ The <code>PIAACMCsimul_run(char *confindex, long mode)</code> function loop-call
 </ul>
 </div>
 <div id="key-files" class="section level3">
-<h3><span class="header-section-number">5.4.3</span> Key files</h3>
+<h3><span class="header-section-number">6.4.3</span> Key files</h3>
 <ul>
 <li><code>fpm_zonez_.....best.fits</code> is the optimal solution</li>
 <li><code>mode13_....bestval.txt</code> is the corresponding value</li>

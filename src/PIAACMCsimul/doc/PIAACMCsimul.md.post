@@ -48,7 +48,7 @@ Script                   Description
 
 **sim**                   calls **runPIAACMC** script
 
-**runPIAACMC**            lower-level scropt calling C-written executable
+**runPIAACMC**            lower-level script calling C-written executable
 -------------------- -----------------------------------------------------------
 
 ![scripts](figures/scripts_flow.jpg)
@@ -59,6 +59,17 @@ Script                   Description
 [Detailed description of script runopt](PIAACMCsimul_script_runopt.html)  
 [Detailed description of script sim](PIAACMCsimul_script_sim.html)  
 [Detailed description of script runPIAACMC](PIAACMCsimul_script_runPIAACMC.html)  
+
+
+
+# Quick start
+
+The quickest way to get started is to run and modify one of the example design scripts provided in the `./examples/` directory
+
+## APLCMC example script
+
+## PIAACMC example script
+
 
 
 # C code description
