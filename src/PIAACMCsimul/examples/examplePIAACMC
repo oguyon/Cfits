@@ -1,0 +1,241 @@
+#!/bin/bash
+
+
+# PIAACMC design example script / step by step operations
+# run the commands in this script in the local working directory
+# This script is meant to be run/read line by line to guide the user
+
+
+
+
+# ===========================================
+#    MAKE LOCAL COPY (SYM LINK) OF SCRIPTS
+# ===========================================
+
+
+# source code directory (change as needed)
+srcdir="/home/olivier/src/Cfits/src/PIAACMCsimul/scripts"
+
+ln -s $srcdir/syncscripts syncscripts
+./syncscripts
+
+# you should see the following scripts in the work directory:
+# ./run
+# ./runclean
+# ./runopt
+# ./runPIAACMC
+# ./sim
+
+# type "./run" (no arguments) to see current configuration parameters and write the parameters in ./conf directory
+./run
+
+# configuration parameters are listed as files: ./conf/conf_<PARAMETERNAME>.txt
+
+
+
+# ===========================================
+#    CREATE / IMPORT PUPIL
+# ===========================================
+
+# you may create / import your own pupil
+# in this example, the pupil must be a 2048 x 2048 pixel FITS file, single precision floating point
+# the pupil array size (2048 pix) must match the "size" parameter
+# the pupil radius in this example is 400 pix, and must match beamrad/pscale
+# the pupil central obstruction should match the coin parameter (0.3 in this example)
+# if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
+
+# the name of the pupil file is "pup_2048.fits"
+
+
+# examples directory (change as needed)
+exampledir="/home/olivier/src/Cfits/src/PIAACMCsimul/examples"
+
+cp $exampledir/pup_seg00_2048.fits pup_2048.fits
+
+
+
+
+# ===========================================
+#    SET PARAMETER VALUES FOR PIAACMC
+# ===========================================
+
+# PIAA optics (PIAACMC)
+echo "1" > ./conf/conf_PIAAmode.txt
+
+# set pre-apodizer to pupil plane conjugation
+echo "0.0" > ./conf/conf_prePIAA0maskpos.txt
+
+
+# PIAA OPTICS DESIGN
+echo "0.3" > conf/conf_coin.txt
+echo "0.2" > conf/conf_coout.txt
+echo "1.0" > conf/conf_fpmradld.txt
+
+# LYOT STOP(S) DESIGN
+echo "1650" > conf/conf_lambda.txt
+
+# FOCAL PLANE MASK DESIGN
+echo "SiO2" > conf/conf_fpmmaterial.txt
+echo "2" > conf/conf_FPMsectors.txt
+echo "22" > conf/conf_NBrings.txt
+echo "1.60" > conf/conf_maskradld.txt
+echo "-3.0e-6" > conf/conf_fpmminsag.txt
+echo "3.0e-6" > conf/conf_fpmmaxsag.txt
+
+# OPTIMIZATION PARAMETERS
+echo "1650" > conf/conf_mlambda.txt
+echo "10" > conf/conf_mlambdaB.txt
+echo "50" > conf/conf_ssize.txt
+
+# OPTICAL DESIGN
+echo "2048" > conf/conf_size.txt
+echo "0.00385" > conf/conf_beamrad.txt
+echo "0.000009625" > conf/conf_pscale.txt
+echo "78" > conf/conf_Fratio.txt
+echo "0.1" > conf/conf_PIAAsep.txt
+echo "0.0" > conf/conf_PIAA0pos.txt
+echo "-0.2" > conf/conf_LyotZmin.txt
+echo "0.2" > conf/conf_LyotZmax.txt
+
+
+# ===========================================
+#    CREATE PIAACMC MONOCHROMATIC DESIGN
+# ===========================================
+
+# CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
+./run optsingle 1
+
+# this operation should take approximately 10 minutes
+
+# The following files will be created:
+
+# Cmodes_2048.fits : Cosine modes
+# Fmodes_2048.fits : Fourier modes
+
+# in ./piaacmcconf_i000 directory :
+# WFamp0_xxx.fits and WFpha0_xxx.fits: amplitude and phase in specific planes
+# conjugations.txt : list of planes and conjugation distance to reference
+# apo2Drad.fits  : amplitude apodization (entirely allocated to PIAA optics)
+
+# PIAA_Mshapes.txt : aspheric optics shapes (r0 z0 r1 z1), unit [m]
+
+
+# repeat above step to compute on-axis PSF
+./run optsingle 2
+# this operation should take approximately 3mn
+
+
+
+# Specify input pupil geometry
+./run optsingle 3
+# this operation is almost instantaneous
+
+
+# complete step 003 : Compute on-axis PSF
+./run optsingle 4
+# this operation should take approximately 3mn
+
+
+# complete step 004 : compute Lyot stops shapes and locations
+./run optsingle 5
+# this step takes approximately 8hr
+# the Lyot stops are named "LyotStop0.fits, LyotStop1.fits ...
+
+
+# complete step 005 : optimize focal plane mask transm
+./run optsingle 6
+# this step takes approximately 2hr
+# -> piaacmcconf_i000/result_fpmt.log
+
+
+# complete step 006 : compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
+./run optsingle 7
+# this step takes approximately 20mn
+
+
+# complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
+./run optsingle 8
+# this step takes approximately 4hr (PIAACMC_dftgrid=2)
+# this step takes approximately 24hr at full resolution (PIAACMC_dftgrid=0)
+# to monitor optimization, view linoptval.txt with tail -f command
+
+
+# complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+./run optsingle 9
+# this step takes approximately 6hr (PIAACMC_dftgrid=2)
+# to monitor optimization, view linoptval.txt with tail -f command
+
+
+# complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
+./run optsingle 10
+# this step takes approximately 20mn
+
+
+# complete step 010: Tune Lyot stops conjugations
+./run optsingle 11
+# start 21:00
+# this step takes approximately 50mn
+# to monitor progress: tail -f result_LMpos.log 
+
+
+# complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+./run optsingle 12
+# this step takes approximately 6h (PIAACMC_dftgrid=2)
+
+# complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
+./run optsingle 13
+# this step takes approximately 18h
+
+# complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
+./run optsingle 14
+# this step takes approximately 20mn
+
+
+
+
+
+
+# ===========================================
+#    FOCAL PLANE MASK DESIGN
+# ===========================================
+
+# select focal plane mask type: SiO2, transmission mask
+echo "SiO2" > conf/conf_fpmmaterial.txt
+
+# hexagonal tiling
+echo "2" > conf/conf_FPMsectors.txt
+
+# outer radius = 2.5 l/D
+echo "3.0" > conf/conf_maskradld.txt
+
+# 24 rings
+echo "32" > conf/conf_NBrings.txt
+
+echo "-2.0e-6" > conf/conf_fpmminsag.txt
+echo "2.0e-6" > conf/conf_fpmmaxsag.txt
+
+# note:
+# 32 rings, 3.0 l/D -> Average contrast = 8.31811e-05
+
+# START FOCAL PLANE MASK DESIGN
+./run optsingle 200
+
+# this command will run for a few hrs if the number of focal plane mask zones is large
+# the complex amplitude response of each mask zone is computed 
+# Several sub-processes are launched, each computing a subset of the total number of zones
+# you can follow the progress of each subprocess in the corresponding tmux sessions
+# the tmux session names are PID followed by FPMt<index>n<NBindex>
+#
+# as each subprocess computes zone responses, they are stored in FITS files FPMresp..._thread<index>.fits.tmp
+# you can open/view these files to follow progress - each zone appears as a line, and files should fill from the bottom to the top
+#
+# when all threads complete, the files are merged into a single FPMresp file
+#
+
+
+
+
+
+
+
+
