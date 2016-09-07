@@ -190,8 +190,9 @@ echo "0.2" > conf/conf_LyotZmax.txt
 ./run optsingle 14
 # this step takes approximately 20mn
 
-
-
+# complete step 014 : Tune Lyot stops conjugations
+./run optsingle 15
+# this step takes approximately 4h
 
 
 

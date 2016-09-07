@@ -1766,6 +1766,7 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_maxoptCterm=${kmaxC}
 PIAACMC_maxoptFterm=${kmaxF}
+
 REGPIAASHAPES=1
 REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
@@ -1851,7 +1852,7 @@ checkexit
 
 
 
-# STEP 014
+# STEP 014: Tune Lyot stops conjugations
 
 if [ "014" -eq ${state} ]
 then
@@ -1923,6 +1924,9 @@ REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1985,6 +1989,10 @@ REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun $1 40
 exit
 EOF
@@ -2044,6 +2052,9 @@ REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun $1 40
 exit
 EOF
