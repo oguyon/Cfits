@@ -69,6 +69,8 @@ echo "0.0" > ./conf/conf_prePIAA0maskpos.txt
 echo "1.0" > ./conf/conf_pupoutmaskrad.txt
 
 
+
+
 # ===========================================
 #    CREATE APLCMC MONOCHROMATIC DESIGN
 # ===========================================
@@ -91,6 +93,9 @@ echo "1.0" > ./conf/conf_pupoutmaskrad.txt
 # Note: for the APLCMC, the monochromatic design is completed in step 1, and further steps are de-activated
 
 
+
+
+
 # ===========================================
 #    FOCAL PLANE MASK DESIGN
 # ===========================================
@@ -102,17 +107,22 @@ echo "SiO2" > conf/conf_fpmmaterial.txt
 echo "2" > conf/conf_FPMsectors.txt
 
 # outer radius = 2.5 l/D
-echo "2.5" > conf/conf_maskradld.txt
+echo "3.0" > conf/conf_maskradld.txt
 
 # 24 rings
-echo "24" > conf/conf_NBrings.txt
+echo "32" > conf/conf_NBrings.txt
 
+echo "-2.0e-6" > conf/conf_fpmminsag.txt
+echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 
+# note:
+# 32 rings, 3.0 l/D -> Average contrast = 8.31811e-05
+# Average contrast = 6.3575e-05
 
 # START FOCAL PLANE MASK DESIGN
 ./run optsingle 200
 
-# this command will run for a few hrs, possibly day(s) if the number of focal plane mask zones is large
+# this command will run for a few hrs if the number of focal plane mask zones is large
 # the complex amplitude response of each mask zone is computed 
 # Several sub-processes are launched, each computing a subset of the total number of zones
 # you can follow the progress of each subprocess in the corresponding tmux sessions
@@ -121,10 +131,27 @@ echo "24" > conf/conf_NBrings.txt
 # as each subprocess computes zone responses, they are stored in FITS files FPMresp..._thread<index>.fits.tmp
 # you can open/view these files to follow progress - each zone appears as a line, and files should fill from the bottom to the top
 #
-# when all threads complete, the files are merged into a single FPMresp file
+# when all threads complete, the files are merged into a single FPMresp file: FPMresp....fits
+# The optimizer then searches for the optimal solution for 7200 sec
+# progress can be tracked by monitoring the file named "mode13_.....opt.txt" (use tail -f command)
+# the 5th number, which is in "( .. )" shows the current best value for contrast
+# 
+# To stop the optimizer, create/edit a file named "searchtime.txt" and enter a small value (for example 100.0) which defines the maximum search time, and wait for the process to end
+#
+# you can track progress against the search time by displaying file timeused.txt
+#
+#
+# the optimizer can be launched again, and will reset the search time to 7200 sec
 #
 
+# ===========================================
+#    ANALYZING RESULTS
+# ===========================================
 
+
+# run polychromatic propagation
+./run proppoly 1
+# computes polychromatic PSF - takes approximately 20mn
 
 
 

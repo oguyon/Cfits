@@ -1657,12 +1657,22 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
 		CO2ppm = 450.0;
 		TC = 10.0; 
     }
-    else // wet
+    else
     {
+		// wet case #1
+		P = 102993.0;
+		Pw = 641.0;
+		CO2ppm = 450.0;
+		TC = 19.173; 
+		
+		if(1)
+		{	
+				// wet case #2
 		P = 103006.0;
 		Pw = 642.0;
 		CO2ppm = 440.0;
 		TC = 19.173; 
+		}
     }
     
     
@@ -1761,7 +1771,6 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum)
     printf("HARISSON MODEL:    n = %.12g\n", 1.0 + AirMixture_N(lambda, dens_N2, dens_O2, dens_Ar, dens_H2O, dens_CO2, dens_Ne, dens_He, dens_CH4, dens_Kr, dens_H2, dens_O3, dens_N, dens_O, dens_H));
 
 	printf("STD MODEL, 1 atm : n = %.12g\n", AtmosphereModel_stdAtmModel_N(0.0, lambda, 1));
-
 
 
 

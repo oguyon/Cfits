@@ -1,25 +1,58 @@
 #!/bin/bash
 
+
+# number of arguments to script
+NBARGS=1
+
+
 execname="Cfits"
-mkdir -p RefractiveIndices
 
 
-printhelp ()
+## OPTIONAL : refractive index / absorption coefficients files (RIA files)
+RIAfile_dir="/data/WORK/2014-AtmTurb/RefractiveIndices"
+RIAfile_N2="${RIAfile_dir}/R300000/RIA_N2.dat"
+RIAfile_O2="${RIAfile_dir}/R300000/RIA_O2.dat"
+RIAfile_Ar="${RIAfile_dir}/R30000/RIA_Ar.dat"
+RIAfile_H2O="${RIAfile_dir}/R300000/RIA_H2O.dat"
+RIAfile_CO2="${RIAfile_dir}/R300000/RIA_CO2.dat"
+RIAfile_Ne="${RIAfile_dir}/R30000/RIA_Ne.dat"
+RIAfile_He="${RIAfile_dir}/R30000/RIA_He.dat"
+RIAfile_CH4="${RIAfile_dir}/R300000/RIA_CH4.dat"
+RIAfile_Kr="${RIAfile_dir}/R30000/RIA_Kr.dat"
+RIAfile_H2="${RIAfile_dir}/R30000/RIA_H2.dat"
+RIAfile_O3="${RIAfile_dir}/R300000/RIA_O3.dat"
+
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+
+
+printHELP ()
 {
 echo
 echo "------------------------------------------------------------------------"
-echo -e "\033[1m                 ATMOSPHERIC TURBULENCE SCRIPT \033[0m"
+echo   "$(tput bold) $pname :  ATMOSPHERIC TURBULENCE SCRIPT $(tput sgr0)"
 echo " "
 echo " Edit script to set atmosphere and turbulence parameters"
 echo " Execute script without to compute atmospheric wavefronts"
 echo ""
-echo " usage:    $0 <slambdaum>"
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "      $0 [-h] <slambdaum>"
 echo ""
-echo "      INPUT:"
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo ""
+echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "          slambdaum       Wavelength [um]"
 echo ""
 echo "------------------------------------------------------------------------"
-echo -e "\033[1m                       OVERVIEW \033[0m"
+echo "     $(tput bold)                OVERVIEW $(tput sgr0)"
 echo ""
 echo "Main steps are: "
 echo "   Build atmospheric composition/density model"
@@ -44,15 +77,73 @@ echo "                7:offset          atm refraction geometric shear [m]"
 echo "------------------------------------------------------------------------"
 }
 
-NBARGS=1
+
+
+# ================= OPTIONS =============================
+while getopts :h FLAG; do
+  case $FLAG in
+    h)  #show help
+      printHELP
+      exit
+      ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  
+
+
+
+
+
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
-        printhelp
 if [ "$#" -ne $NBARGS ]; then
-    echo "Illegal number of parameters ($NBARGS params required, $# entered)"
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
+printHELP
         exit
 fi
+
+
+
+
+
+
+function linkRIA {
+if [ -f "RefractiveIndices/RIA_$2.dat" ]
+then
+echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)RefractiveIndices/RIA_$2.dat$(tput sgr0) already present"
+else
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) linked"
+	ln -s $1 $PWD/RefractiveIndices/RIA_$2.dat
+   else
+    echo "[$(tput setaf 5)$(tput bold) FAILED $(tput sgr0)] WARNING: File $(tput bold)$1$(tput sgr0) not found"
+fi
+fi
+}
+
+
+mkdir -p RefractiveIndices
+linkRIA ${RIAfile_N2} N2
+linkRIA ${RIAfile_O2} O2
+linkRIA ${RIAfile_Ar} Ar
+linkRIA ${RIAfile_H2O} H2O
+linkRIA ${RIAfile_CO2} CO2
+linkRIA ${RIAfile_Ne} Ne
+linkRIA ${RIAfile_He} He
+linkRIA ${RIAfile_CH4} CH4
+linkRIA ${RIAfile_Kr} Kr
+linkRIA ${RIAfile_H2} H2
+linkRIA ${RIAfile_O3} O3
+
+
+
 
 
 slambdaum="$1"

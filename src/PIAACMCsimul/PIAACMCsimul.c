@@ -344,8 +344,8 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
     double hx, hy;
     double hex_x[10000];
     double hex_y[10000];
-    long hex_ring[1000];
-    long hex_number[1000];
+    long hex_ring[10000];
+    long hex_number[10000];
     long hcnt;
     long hindex;
     long hindexMax;
@@ -2641,6 +2641,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         if(piaacmc[0].CmodesID!=-1)
             delete_image_ID("Cmodes");
         Cmsize = (long) (beamradpix*4);
+        printf("beamradpix = %f -> Cmsize = %ld\n", beamradpix, Cmsize);
         // make sure Cmsize if even
         if (Cmsize%2 == 1)
             Cmsize++;
@@ -3578,24 +3579,32 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
 	printf("Loading (optional) OPDerr file\n");
 	fflush(stdout);
+	
 	IDopderrC = image_ID("OPDerrC");
-	if(IDopderrC==-1)
+	if(IDopderrC == -1)
 		IDopderrC = load_fits("OPDerrC.fits", "OPDerrC", 0);
+
 	if(IDopderrC != -1)
-	{
-		nbOPDerr = data.image[IDopderrC].md[0].size[2];
-		printf("INCLUDING %ld OPD MODES\n", nbOPDerr);
-		fflush(stdout);
-	}
+		{
+			nbOPDerr = data.image[IDopderrC].md[0].size[2];
+			printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
+			fflush(stdout);
+		}
 	else
-		nbOPDerr = 0;
+		{
+			printf("NO OPD ERROR MODES\n");
+			fflush(stdout);
+			nbOPDerr = 0;
+		}
     focscale = (2.0*piaacmc[0].beamrad/piaacmc[0].pixscale)/piaacmc[0].size;
 
 
     // CREATE SCORING MASK IF IT DOES NOT EXIST
     if((IDsm=image_ID("scoringmask"))==-1)
     {
+		printf("CREATING SCORING MASK\n");
         printf("FOCAL PLANE SCALE = %f l/d per pix\n", focscale);
+		fflush(stdout);
         IDsm = create_2Dimage_ID("scoringmask", size, size);
 
         if(SCORINGMASKTYPE==0) // high density, wide
@@ -3675,7 +3684,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
         // here value is the total light (averaged across spectral channels) in the measurement points, normalized to the input flux
         avContrast = value/(SCORINGTOTAL*focscale*focscale);
 
-        //        printf("*********************************************************************************\n");
+       // printf("*********************************************************************************\n");//TEST
         //        printf("Peak constrast (rough estimate)= %g\n", peakcontrast/size/size/optsyst[0].flux[0]/focscale/focscale*3.0);
         //        printf("value1 = %g\n", value1);
         //		printf("Total light in scoring field = %g  -> Average contrast = %g   (%g)\n", value, value/(arith_image_total("scoringmask")*focscale*focscale), value1/CnormFactor/optsyst[0].nblambda);
@@ -3685,7 +3694,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
     {
         if(sourcesize!=0)
         {
-            printf("COMPUTING RESOLVED SOURCE PSF / ADDING OPD MODES\n");
+            printf("COMPUTING RESOLVED SOURCE PSF / ADDING OPD MODES\n");	
+            fflush(stdout);
 
 
             dld = 1.0/pow(10.0, 0.1*sourcesize); // nominal pointing offset [l/D]
@@ -3762,7 +3772,10 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
                 arith_image_cstmult_inplace("psfi0ext", 0.5);
             }
-
+			
+			printf("Adding optional OPD error modes (%ld modes)\n", nbOPDerr);
+			fflush(stdout);
+			
 			for(OPDmode=0; OPDmode < nbOPDerr; OPDmode++)
 			{
 				imindex++;
@@ -5225,7 +5238,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     double t, a, dpha, amp;
     int zi;
 
-    char fname[500];
+    char fname[800];
     char fnamecomb[500];
     char fname1[500];
     char fname2[500];
@@ -6102,7 +6115,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                         fflush(stdout);
 
                         ID1 = -1;
-                        while(ID1==-1)
+                        while(ID1 == -1)
                         {
                             sprintf(fname, "%s/FPMresp%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_ccnbr%03ld_ccz%06ld_ocr%04ld_ocz%06ld_ssr%02d_ssm%d_%s_wb%02d_mp%02ld_thread%02ld.fits", piaacmcconfdir, SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), piaacmc[0].NBringCentCone, (long) (1.0e9*piaacmc[0].fpmCentConeZ+0.1), (long) (100.0*piaacmc[0].fpmOuterConeRadld+0.1), (long) (1.0e9*piaacmc[0].fpmOuterConeZ+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda, PIAACMC_FPMresp_mp, thr);
                             printf("Waiting for file \"%s\" ...\n", fname);
@@ -6112,7 +6125,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                             fclose(fpt);
                             sleep(1.0);
 
-                            ID1 = load_fits(fname, "tmpFPMresp", 0);
+							delete_image_ID("tmpFPMresp");
+							list_image_ID();
+                            ID1 = load_fits(fname, "tmpFPMresp", 1);
+                            list_image_ID();
                         }
 
                         fpt = fopen(fnamet,"a");
@@ -7321,7 +7337,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         // Compute Reference
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
-        
+           
         valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
 		val0 = 1.0;
@@ -7661,7 +7677,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.001, "optcoeff2", 0);
             data.image[IDstatus].array.U[0] = 18;
 
-            IDoptvec = arith_image_cstmult("optcoeff0", 0.0, "optvec"); // create optimal vector
+        
+            arith_image_cstmult("optcoeff0", 0.0, "optvec"); // create optimal vector
+			IDoptvec = image_ID("optvec");
 
             bestval = valref;
 
@@ -7772,7 +7790,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     valold = val;
                     data.image[IDstatus].array.U[0] = 23;
 
-           
+                  
                     val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 					valContrast = val;
 					val0 = 1.0;
@@ -7824,15 +7842,13 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 						val += val1;
 					}
                     
-                    
+						
                     data.image[IDstatus].array.U[0] = 24;
                     sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
                     fp = fopen(fname, "a");
                     fprintf(fp, "##  %5.3f   %20lf           %20g    (reg = %12g   contrast = %20g)       [%d] [%ld]", alphareg, scangain, val, val1, valContrast, linoptlimflagarray[k], NBparam);
                     fclose(fp);
 					
-
-
                     fp = fopen(fname, "a");
                     if(val<bestval)
                     {
@@ -7864,9 +7880,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     linoptgainarray[k] = scangain;
                     linoptvalarray[k] = val;
                     k++;
-
-
-
 
 
                     if(val<valold)
@@ -7938,7 +7951,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     *(paramval[i]) = (double) data.image[IDoptvec].array.F[i];
             }
             valold = val;
-
 
             val = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
@@ -8489,9 +8501,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
 			fclose(fp);
 			
             if(micros_used > 1000000.0*searchtime)
-                loopOK = 0;
-            
-            
+                loopOK = 0;                        
         }
 
 
