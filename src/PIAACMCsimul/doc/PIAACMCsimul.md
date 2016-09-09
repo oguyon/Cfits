@@ -91,6 +91,12 @@ The design proceeds in discrete steps. The example scripts show the individual s
 
 Steps from 0 to 99 are executed sequentially to design a monochromatic PIAACMC. For these steps, the user may run multiple steps with a single command. For example, running step 18 will execute all steps from 0 to 17 included. If a step has already been completed, it will not be re-run.
 
+
+
+
+
+
+
 The monochromatic PIAACMC design process is as follows:
 
 * design an idealized monochromatic PIAACMC for a centrally obscured aperture (steps 1-4)
@@ -243,6 +249,22 @@ For circular centrally obscured pupils, the default Lyot stops configuration con
 Fine optimization of the stops locations is done with a separate command. The optional lsoptrange value is the range (unit: m) for the mask position search.
 
 
+When the optimization completes, the best solutions are listed:
+
+~~~
+BEST SOLUTION: 0.000000000000 / 33.478288243056    0.000000556868 / 0.000044544711  -> 0.706241153417  0.019795686221
+BEST SOLUTION: 6.695657648611 / 33.478288243056    0.000000556868 / 0.000044544711  -> 0.706237596354  0.019795151562
+BEST SOLUTION: 7.365223413472 / 33.478288243056    0.000000556868 / 0.000044544711  -> 0.706219734865  0.019792653140
+BEST SOLUTION: 8.034789178333 / 33.478288243056    0.000000556868 / 0.000044544711  -> 0.706026161578  0.019768034052
+BEST SOLUTION: 8.704354943194 / 33.478288243056    0.000000556868 / 0.000044544711  -> 0.705220276320  0.019673042636
+BEST SOLUTION: 9.373920708056 / 33.478288243056    0.000000556868 / 0.000044544711  -> 0.702039509211  0.019321456405
+BEST SOLUTION: 32.808722478194 / 33.478288243056    0.000000668241 / 0.000044544711  -> 0.733651721375  0.019318291526
+BEST SOLUTION: 33.478288243056 / 33.478288243056    0.000000668241 / 0.000044544711  -> 0.710514365016  0.018620791690
+~~~
+
+The optimal Lyot stop(s) conjugation(s) is written in file `piaacmcparams_step004.conf`
+
+This step takes about 2hr.
 
 
 
