@@ -2641,6 +2641,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         if(piaacmc[0].CmodesID!=-1)
             delete_image_ID("Cmodes");
         Cmsize = (long) (beamradpix*4);
+        if(Cmsize>size)
+			Cmsize = size;
         printf("beamradpix = %f -> Cmsize = %ld\n", beamradpix, Cmsize);
         // make sure Cmsize if even
         if (Cmsize%2 == 1)
@@ -2671,6 +2673,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     if(CREATE_Fmodes == 1)
     {
         Fmsize = (long) (beamradpix*4);
+         if(Fmsize>size)
+			Fmsize = size;
         piaacmc[0].Fmsize = Fmsize;
         linopt_imtools_makeCPAmodes("Fmodes",  Fmsize, piaacmc[0].piaaCPAmax, 0.8, beamradpix, 2.0, 1);
         piaacmc[0].FmodesID = image_ID("Fmodes");

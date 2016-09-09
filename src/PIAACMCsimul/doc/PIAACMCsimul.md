@@ -270,30 +270,136 @@ This step takes about 2hr.
 
 ## STEP 005 (mode = 2): Optimize focal plane mask transmission, 1st pass
 
+Optimizes the focal plane mask transmission. Results are written in file `result_fpmt.log`
+
+~~~
+ 0.031579 1.35944e-05  0 0.3 0.1
+ 0.131579 7.96891e-06  0 0.3 0.1
+ 0.231579 3.83775e-06  0 0.3 0.1
+ 0.331579 1.20092e-06  0 0.3 0.1
+ 0.431579 5.84203e-08  0 0.3 0.1
+ 0.531579 4.10247e-07  0 0.3 0.1
+ 0.631579 2.2564e-06  0 0.3 0.1
+
+ 0.341579 1.01943e-06  1 0.09 0.03
+ 0.371579 5.64602e-07  1 0.09 0.03
+ 0.401579 2.44266e-07  1 0.09 0.03
+ 0.431579 5.84203e-08  1 0.09 0.03
+ 0.461579 7.06368e-09  1 0.09 0.03
+ 0.491579 9.01969e-08  1 0.09 0.03
+ 0.521579 3.0782e-07  1 0.09 0.03
+
+ 0.434579 4.72326e-08  2 0.027 0.009
+ 0.443579 2.1739e-08  2 0.027 0.009
+ 0.452579 8.34926e-09  2 0.027 0.009
+ 0.461579 7.06368e-09  2 0.027 0.009
+ 0.470579 1.78822e-08  2 0.027 0.009
+ 0.479579 4.08046e-08  2 0.027 0.009
+ 0.488579 7.58315e-08  2 0.027 0.009
+
+ 0.453479 7.676e-09  3 0.0081 0.0027
+ 0.456179 6.38254e-09  3 0.0081 0.0027
+ 0.458879 6.17844e-09  3 0.0081 0.0027
+ 0.461579 7.06368e-09  3 0.0081 0.0027
+ 0.464279 9.03836e-09  3 0.0081 0.0027
+ 0.466979 1.21023e-08  3 0.0081 0.0027
+ 0.469679 1.62556e-08  3 0.0081 0.0027
+
+ 0.456449 6.31312e-09  4 0.00243 0.00081
+ 0.457259 6.17018e-09  4 0.00243 0.00081
+ 0.458069 6.12529e-09  4 0.00243 0.00081
+ 0.458879 6.17844e-09  4 0.00243 0.00081
+ 0.459689 6.32964e-09  4 0.00243 0.00081
+ 0.460499 6.57888e-09  4 0.00243 0.00081
+ 0.461309 6.92612e-09  4 0.00243 0.00081
+
+ 0.457340 6.16129e-09  5 0.000729 0.000243
+ 0.457583 6.14047e-09  5 0.000729 0.000243
+ 0.457826 6.12846e-09  5 0.000729 0.000243
+ 0.458069 6.12529e-09  5 0.000729 0.000243
+ 0.458312 6.13094e-09  5 0.000729 0.000243
+ 0.458555 6.14542e-09  5 0.000729 0.000243
+ 0.458798 6.16872e-09  5 0.000729 0.000243
+~~~
+
+This takes about 30mn
 
 
 ## STEP 006 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput
 
+Takes about 10mn
 
 
 ## STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 
 This takes approximately 20mn for size = 1024.\n
 Progress can be tracked by watching file :
-\verbatim
+~~~
 tail -f linoptval.txt
-\endverbatim
+~~~
 
+~~~
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7610 1.000000
+    FLUX   4    416183.7006 0.999999
+    FLUX   5    183388.6503 0.440643
+    FLUX   6       216.8273 0.000521
+    FLUX   7       216.8273 0.000521
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 8569.34 -> 4.9474e-08
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 603344, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.42994e-09
+~~~
 
 ## STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm,  20 cosine modes, 20 Fourier modes
+
+
+~~~
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7609 1.000000
+    FLUX   4    416183.7003 0.999999
+    FLUX   5    183471.9114 0.440843
+    FLUX   6       217.2896 0.000522
+    FLUX   7       217.2896 0.000522
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 23929.5 -> 1.38154e-07
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 646809, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.53295e-09
+~~~
 
 
 ## STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput
 
 
+This step takes approximately 4mn.
+
+
 
 ## STEP 010 (mode = 1): Tune Lyot stops conjugations
 
+~~~
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7612 1.000000
+    FLUX   4    416183.7005 0.999999
+    FLUX   5    183521.7743 0.440963
+    FLUX   6       155.7757 0.000374
+    FLUX   7       155.7757 0.000374
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 10394.5 -> 6.00115e-08
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 453057, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.07375e-09
+~~~
+
+This step takes approximately 5mn.
 
 
 ## STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm,  20 cosine modes, 20 Fourier modes
