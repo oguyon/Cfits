@@ -38,15 +38,15 @@ ln -s $srcdir/syncscripts syncscripts
 # ===========================================
 
 # you may create / import your own pupil
-# in this example, the pupil must be a 2048 x 2048 pixel FITS file, single precision floating point
-# the pupil array size (2048 pix) must match the "size" parameter
-# the pupil radius in this example is 400 pix, and must match beamrad/pscale
+# in this example, the pupil must be a 1024 x 1024 pixel FITS file, single precision floating point
+# the pupil array size (1024 pix) must match the "size" parameter
+# the pupil radius in this example is 200 pix, and must match beamrad/pscale
 # the pupil central obstruction should match the coin parameter (0.3 in this example)
 # if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
 
 
 
-# the name of the pupil file is "pup_2048.fits"
+# the name of the pupil file is "pup_1024.fits"
 
 
 
@@ -59,7 +59,7 @@ exampledir="/home/olivier/src/Cfits/src/PIAACMCsimul/examples"
 
 
 
-cp $exampledir/pup_seg00_2048.fits pup_2048.fits
+gunzip $exampledir/pup_WFIRST1024.fits.gz pup_1024.fits
 
 
 
@@ -77,34 +77,38 @@ echo "0.0" > ./conf/conf_prePIAA0maskpos.txt
 
 # PIAA OPTICS DESIGN
 echo "0.3" > conf/conf_coin.txt
-echo "0.2" > conf/conf_coout.txt
-echo "1.0" > conf/conf_fpmradld.txt
+echo "0.29" > conf/conf_coout.txt
+echo "1.1" > conf/conf_fpmradld.txt
 
 # LYOT STOP(S) DESIGN
-echo "1650" > conf/conf_lambda.txt
+echo "565" > conf/conf_lambda.txt
+echo "1" > conf/conf_NBls.txt
 
 # FOCAL PLANE MASK DESIGN
-echo "SiO2" > conf/conf_fpmmaterial.txt
+echo "Mirror" > conf/conf_fpmmaterial.txt
 echo "2" > conf/conf_FPMsectors.txt
 echo "22" > conf/conf_NBrings.txt
 echo "1.60" > conf/conf_maskradld.txt
-echo "-3.0e-6" > conf/conf_fpmminsag.txt
-echo "3.0e-6" > conf/conf_fpmmaxsag.txt
+echo "-2.0e-6" > conf/conf_fpmminsag.txt
+echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 
 # OPTIMIZATION PARAMETERS
-echo "1650" > conf/conf_mlambda.txt
+echo "565" > conf/conf_mlambda.txt
 echo "10" > conf/conf_mlambdaB.txt
 echo "50" > conf/conf_ssize.txt
 
 # OPTICAL DESIGN
-echo "2048" > conf/conf_size.txt
-echo "0.00385" > conf/conf_beamrad.txt
-echo "0.000009625" > conf/conf_pscale.txt
-echo "78" > conf/conf_Fratio.txt
-echo "0.1" > conf/conf_PIAAsep.txt
-echo "0.0" > conf/conf_PIAA0pos.txt
-echo "-0.2" > conf/conf_LyotZmin.txt
-echo "0.2" > conf/conf_LyotZmax.txt
+echo "1024" > conf/conf_size.txt
+echo "0.0022" > conf/conf_beamrad.txt
+echo "0.00011" > conf/conf_pscale.txt
+echo "80" > conf/conf_Fratio.txt
+echo "-2.302606" > conf/conf_PIAAsep.txt
+echo "1.199997" > conf/conf_PIAA0pos.txt
+echo "0" > conf/conf_invPIAAmode.txt
+echo "-1.102609" >  conf/conf_prePIAA0maskpos.txt
+echo "1.199997" >  conf/conf_postPIAA0maskpos.txt
+echo "-4.5" > conf/conf_LyotZmin.txt
+echo "0.5" > conf/conf_LyotZmax.txt
 
 
 # ===========================================
@@ -118,8 +122,8 @@ echo "0.2" > conf/conf_LyotZmax.txt
 
 # The following files will be created:
 
-# Cmodes_2048.fits : Cosine modes
-# Fmodes_2048.fits : Fourier modes
+# Cmodes_1024.fits : Cosine modes
+# Fmodes_1024.fits : Fourier modes
 
 # in ./piaacmcconf_i000 directory :
 # WFamp0_xxx.fits and WFpha0_xxx.fits: amplitude and phase in specific planes
@@ -131,7 +135,7 @@ echo "0.2" > conf/conf_LyotZmax.txt
 
 # repeat above step to compute on-axis PSF
 ./run optsingle 2
-# this operation should take approximately 3mn
+# this operation should take approximately 
 
 
 
@@ -142,66 +146,66 @@ echo "0.2" > conf/conf_LyotZmax.txt
 
 # complete step 003 : Compute on-axis PSF
 ./run optsingle 4
-# this operation should take approximately 3mn
+# this operation should take approximately 
 
 
 # complete step 004 : compute Lyot stops shapes and locations
 ./run optsingle 5
-# this step takes approximately 8hr
+# this step takes approximately 
 # the Lyot stops are named "LyotStop0.fits, LyotStop1.fits ...
 
 
 # complete step 005 : optimize focal plane mask transm
 ./run optsingle 6
-# this step takes approximately 2hr
+# this step takes approximately
 # -> piaacmcconf_i000/result_fpmt.log
 
 
 # complete step 006 : compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
 ./run optsingle 7
-# this step takes approximately 20mn
+# this step takes approximately 
 
 
 # complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 ./run optsingle 8
-# this step takes approximately 4hr (PIAACMC_dftgrid=2)
-# this step takes approximately 24hr at full resolution (PIAACMC_dftgrid=0)
+# this step takes approximately 
 # to monitor optimization, view linoptval.txt with tail -f command
 
 
 # complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 ./run optsingle 9
-# this step takes approximately 6hr (PIAACMC_dftgrid=2)
+# this step takes approximately 
 # to monitor optimization, view linoptval.txt with tail -f command
 
 
 # complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 ./run optsingle 10
-# this step takes approximately 20mn
+# this step takes approximately 
 
 
 # complete step 010: Tune Lyot stops conjugations
 ./run optsingle 11
 # start 21:00
-# this step takes approximately 50mn
+# this step takes approximately 
 # to monitor progress: tail -f result_LMpos.log 
 
 
 # complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 ./run optsingle 12
-# this step takes approximately 6h (PIAACMC_dftgrid=2)
+# this step takes approximately
 
 # complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
 ./run optsingle 13
-# this step takes approximately 18h
+# this step takes approximately 
 
 # complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
 ./run optsingle 14
-# this step takes approximately 20mn
+# this step takes approximately 
 
 # complete step 014 : Tune Lyot stops conjugations
 ./run optsingle 15
-# this step takes approximately 4h
+# this step takes approximately 
+
 
 
 
@@ -210,22 +214,20 @@ echo "0.2" > conf/conf_LyotZmax.txt
 # ===========================================
 
 # select focal plane mask type: SiO2, transmission mask
-echo "SiO2" > conf/conf_fpmmaterial.txt
+echo "Mirror" > conf/conf_fpmmaterial.txt
 
 # hexagonal tiling
 echo "2" > conf/conf_FPMsectors.txt
 
-# outer radius = 2.5 l/D
-echo "3.0" > conf/conf_maskradld.txt
+# outer radius = 2.0 l/D
+echo "2.0" > conf/conf_maskradld.txt
 
-# 24 rings
+# Number of rings
 echo "32" > conf/conf_NBrings.txt
 
 echo "-2.0e-6" > conf/conf_fpmminsag.txt
 echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 
-# note:
-# 32 rings, 3.0 l/D -> Average contrast = 8.31811e-05
 
 # START FOCAL PLANE MASK DESIGN
 ./run optsingle 200
