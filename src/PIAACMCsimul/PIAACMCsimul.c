@@ -7373,8 +7373,10 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                 val0 += tmp*tmp;
                 ii++;
             }
+			
 			valref += val0;
         }
+
 
         val1 = 1.0;
         if(REGFPMSAG == 1)
@@ -7600,7 +7602,11 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                         data.image[ID1D].array.F[ii] = data.image[ID].array.F[ii];
 
                     if(REGPIAASHAPES==1)
-                    {												
+                    {			
+						fp = fopen(fname, "a");
+						fprintf(fp, "# %ld  ADDING PIAA SHAPES REGULARIZATION\n", iter);
+						fclose(fp);
+															
                         ID = piaacmc[0].piaa0CmodesID;
                         for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
                         {
@@ -7842,6 +7848,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 						val += val1;
 					}
                     
+                    
 						
                     data.image[IDstatus].array.U[0] = 24;
                     sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
@@ -7858,7 +7865,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                         else
                             data.image[IDoptvec].array.F[i] = (float) *(paramval[i]); //paramdeltaval[i];
                         bestval = val;
-                        fprintf(fp, " BEST VECTOR\n");
+                        fprintf(fp, " -> BEST VECTOR\n");
                         bestgain = scangain;
                     }
                     else
