@@ -55,12 +55,8 @@ ln -s $srcdir/syncscripts syncscripts
 
 
 exampledir="/home/olivier/src/Cfits/src/PIAACMCsimul/examples"
-
-
-
-
-gunzip $exampledir/pup_WFIRST1024.fits.gz pup_1024.fits
-
+cp $exampledir/pup_WFIRST1024.fits.gz pup_1024.fits.gz
+gunzip pup_1024.fits.gz
 
 
 
@@ -99,7 +95,7 @@ echo "50" > conf/conf_ssize.txt
 
 # OPTICAL DESIGN
 echo "1024" > conf/conf_size.txt
-echo "0.0022" > conf/conf_beamrad.txt
+echo "0.022" > conf/conf_beamrad.txt
 echo "0.00011" > conf/conf_pscale.txt
 echo "80" > conf/conf_Fratio.txt
 echo "-2.302606" > conf/conf_PIAAsep.txt
@@ -115,7 +111,7 @@ echo "0.5" > conf/conf_LyotZmax.txt
 #    CREATE PIAACMC MONOCHROMATIC DESIGN
 # ===========================================
 
-# CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
+# run step 0: CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
 ./run optsingle 1
 
 # this operation should take approximately 10 minutes
@@ -131,6 +127,7 @@ echo "0.5" > conf/conf_LyotZmax.txt
 # apo2Drad.fits  : amplitude apodization (entirely allocated to PIAA optics)
 
 # PIAA_Mshapes.txt : aspheric optics shapes (r0 z0 r1 z1), unit [m]
+
 
 
 # repeat above step to compute on-axis PSF

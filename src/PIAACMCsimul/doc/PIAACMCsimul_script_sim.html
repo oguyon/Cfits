@@ -325,6 +325,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 260
 261
 262
+263
 </pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
 
 
@@ -490,7 +491,8 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<span class="ot">dircode=$(</span><span class="kw">printf</span> <span class="st">&quot;1_coin%5.3f_coout%5.3f_fpmr%5.3f_l%04d_%s_lt%4.2f_ls%d_i%03d&quot;</span> <span class="st">&quot;</span><span class="ot">$coin</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$coout</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$fpmrad</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$lambda</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$PIAAmaterial</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$LStransm</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$NBlyotstop</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="ot">$index</span><span class="st">&quot;</span><span class="ot">)</span>
+<span class="co">#dircode=$(printf &quot;1_coin%5.3f_coout%5.3f_fpmr%5.3f_l%04d_%s_lt%4.2f_ls%d_i%03d&quot; &quot;$coin&quot; &quot;$coout&quot; &quot;$fpmrad&quot; &quot;$lambda&quot; &quot;$PIAAmaterial&quot; &quot;$LStransm&quot; &quot;$NBlyotstop&quot; &quot;$index&quot;)</span>
+<span class="ot">dircode=$(</span><span class="kw">printf</span> <span class="st">&quot;i%03d&quot;</span> <span class="st">&quot;</span><span class="ot">$index</span><span class="st">&quot;</span><span class="ot">)</span>
 <span class="ot">dirname=</span><span class="st">&quot;piaacmcconf_</span><span class="ot">$dircode</span><span class="st">&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$dirname</span><span class="st">&quot;</span> <span class="kw">&gt;</span> ./log/dirname.txt
 

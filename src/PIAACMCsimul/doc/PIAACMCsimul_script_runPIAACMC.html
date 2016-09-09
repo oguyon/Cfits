@@ -2339,6 +2339,30 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 2274
 2275
 2276
+2277
+2278
+2279
+2280
+2281
+2282
+2283
+2284
+2285
+2286
+2287
+2288
+2289
+2290
+2291
+2292
+2293
+2294
+2295
+2296
+2297
+2298
+2299
+2300
 </pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
 <span class="kw">unset</span> <span class="ot">TMUX</span>
 
@@ -3455,7 +3479,7 @@ echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20
 
 
 
-<span class="st"># ========================================================= BEGIN MAIN DESIGN SCRIPT ==============================================================================</span>
+<span class="st"># ====================================== BEGIN MAIN DESIGN SCRIPT =========================================</span>
 <span class="st"># if PIAAmode = 0, only step 000 is executed</span>
 
 
@@ -3832,6 +3856,9 @@ echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20
 <span class="st">REGPIAA_C_ALPHA=1.0</span>
 <span class="st">REGPIAA_F_COEFF=1.0</span>
 <span class="st">REGPIAA_F_ALPHA=1.0</span>
+
+<span class="st">PIAACMC_dftgrid=2</span>
+
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 40</span>
 <span class="st">exit</span>
 <span class="st">EOF</span>
@@ -3860,7 +3887,7 @@ checkexit
 
 
 
-# STEP 008: tu<span class="kw">ne</span> PIAA shapes and focal plane mask transm, 20 cosine modes, 10 Fourier modes
+# STEP 008: tu<span class="kw">ne</span> PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 # -&gt; linoptval.txt
 kmaxC=20
 
@@ -3892,6 +3919,8 @@ REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
 
+PIAACMC_dftgrid=2
+
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
 EOF
@@ -3906,7 +3935,7 @@ cp ./<span class="ot">$1</span>/fpm_zonea.fits ./<span class="ot">$1</span>/fpm_
 cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linoptval_step008.txt
 touch ./<span class="ot">$1</span>/step008.txt
  else
- printf &quot;skip step 008 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 20, 20)\n&quot;
+ printf &quot;skip step 008 [ 40] (tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)\n&quot;
  fi
 state=&quot;009&quot;
 fi
@@ -3985,6 +4014,9 @@ PIAACMC_lstransm=<span class="ot">$LStransm1</span>
 PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_nbpropstep=<span class="ot">$NBpropStep</span>
+
+PIAACMC_dftgrid=1
+
 piaacmcsimrun <span class="ot">$1</span> 1
 exit
 EOF
@@ -4037,6 +4069,9 @@ REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
 EOF
@@ -4069,13 +4104,13 @@ checkexit
 
 
 
-# STEP 012: tune PIAA shapes and focal plane mask transm
+# STEP 012: tune PIAA shapes and focal plane mask transm, 40, 100
 # -&gt; linoptval.txt
 kmaxC=40
 
 kmaxF=0
 if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]<span class="kw">;</span> <span class="kw">then</span>
-kmaxF=150
+kmaxF=100
 fi
 
 if [ &quot;012&quot; -eq <span class="ot">${state}</span> ]
@@ -4096,11 +4131,15 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
+
 REGPIAASHAPES=1
 REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
 EOF
@@ -4116,7 +4155,7 @@ cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linop
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_idealmonomask.conf
 touch ./<span class="ot">$1</span>/step012.txt
  else
- printf &quot;skip step 012 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 150)\n&quot;
+ printf &quot;skip step 012 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 100)\n&quot;
  fi
 state=&quot;013&quot;
 fi
@@ -4178,7 +4217,7 @@ checkexit
 
 
 
-# STEP 014
+# STEP 014: Tune Lyot stops conjugations
 
 if [ &quot;014&quot; -eq <span class="ot">${state}</span> ]
 then
@@ -4245,11 +4284,15 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
+
 REGPIAASHAPES=1
 REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
 EOF
@@ -4312,6 +4355,10 @@ REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
 EOF
@@ -4371,6 +4418,9 @@ REGPIAA_C_COEFF=1.0
 REGPIAA_C_ALPHA=1.0
 REGPIAA_F_COEFF=1.0
 REGPIAA_F_ALPHA=1.0
+
+PIAACMC_dftgrid=2
+
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
 EOF
@@ -4561,8 +4611,6 @@ SCORINGMASKTYPE=<span class="ot">$SCORINGMASKTYPE</span>
 PIAACMC_save=0
 PIAACMC_nbiterSA=10000
 PIAACMC_nbiterDS=100
-
-
 
 #REGFPMSAG=1
 #REGFPMSAG_COEFF=0.1

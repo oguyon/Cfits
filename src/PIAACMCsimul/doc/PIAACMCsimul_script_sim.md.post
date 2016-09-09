@@ -179,7 +179,8 @@ index=${23}
 
 
 
-dircode=$(printf "1_coin%5.3f_coout%5.3f_fpmr%5.3f_l%04d_%s_lt%4.2f_ls%d_i%03d" "$coin" "$coout" "$fpmrad" "$lambda" "$PIAAmaterial" "$LStransm" "$NBlyotstop" "$index")
+#dircode=$(printf "1_coin%5.3f_coout%5.3f_fpmr%5.3f_l%04d_%s_lt%4.2f_ls%d_i%03d" "$coin" "$coout" "$fpmrad" "$lambda" "$PIAAmaterial" "$LStransm" "$NBlyotstop" "$index")
+dircode=$(printf "i%03d" "$index")
 dirname="piaacmcconf_$dircode"
 echo "$dirname" > ./log/dirname.txt
 

@@ -20,7 +20,7 @@ sudo cp $srcdir/PIAACMCsimul/scripts/waitforfile /usr/local/bin/
 touch piaacmcscriptsinit.txt
 fi
 
-for sname in run runclean runopt runPIAACMC sim sim1024 sim2048
+for sname in run runclean runopt runPIAACMC sim waitforfile1
 do
 rm $sname
 ln -s $srcdir/PIAACMCsimul/scripts/$sname $currdir/$sname
