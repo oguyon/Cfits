@@ -398,37 +398,70 @@ This step takes approximately 5mn.
 
 ## STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm,  20 cosine modes, 20 Fourier modes
 
-Encountered magma allocation error -> need to move this to more powerful computer (not my laptop).
-
 ~~~
     FLUX   0    416183.9306 1.000000
     FLUX   1    416183.9306 1.000000
     FLUX   2    416183.8669 1.000000
-    FLUX   3    416183.7613 1.000000
-    FLUX   4    416183.7004 0.999999
-    FLUX   5    186855.3846 0.448973
-    FLUX   6       155.6886 0.000374
-    FLUX   7       155.6886 0.000374
+    FLUX   3    416183.7605 1.000000
+    FLUX   4    416183.6985 0.999999
+    FLUX   5    192668.7345 0.462941
+    FLUX   6       159.3355 0.000383
+    FLUX   7       159.3355 0.000383
 COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
-Peak constrast (rough estimate)= 25459.1 -> 1.46985e-07
+Peak constrast (rough estimate)= 8636.87 -> 4.98638e-08
 optsyst[0].flux[0]  = 416184
 SCORINGMASKTYPE = 0
-[0] Total light in scoring field = 477753, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.13228e-09
+[0] Total light in scoring field = 209897, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.97461e-10
 ~~~
 
 
 ## STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm,  40 cosine modes, 150 Fourier modes
 
+~~~
 The total number of free parameters is 380 = (40+150)*2, so this routine takes a long time to complete (hours).
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7615 1.000000
+    FLUX   4    416183.6991 0.999999
+    FLUX   5    193239.3033 0.464312
+    FLUX   6       159.4789 0.000383
+    FLUX   7       159.4789 0.000383
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 306.006 -> 1.76669e-09
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 29496.3, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 6.99069e-11
+~~~
 
+takes 4hr
 
 ## STEP 013 (mode = 5): Compute Lyot stops shapes and locations, 3nd pass, 70% throughput
 
+takes 4mn
 
 
+## STEP 014 (mode = 1): Tune Lyot stops conjugations
 
+~~~
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7615 1.000000
+    FLUX   4    416183.6991 0.999999
+    FLUX   5    193287.4013 0.464428
+    FLUX   6       176.5218 0.000424
+    FLUX   7       176.5218 0.000424
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 2220.58 -> 1.28202e-08
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 147416, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 3.49379e-10
+~~~
 
+Takes 12mn
 
+## STEP 015
 
 
 

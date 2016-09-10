@@ -5412,6 +5412,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 	
 	double valContrast;
 	double tmp;
+	int initbestval = 0;
 	
 	
 	
@@ -7594,7 +7595,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         delete_image_ID("vecDHref");
 
 
-
+		initbestval = 0;
         sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
         fp = fopen(fname, "w");
         fclose(fp);
@@ -7801,6 +7802,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
             bestval = valref;
 
+			
             alphareg = 1.0;
 
 
@@ -7998,20 +8000,21 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     fclose(fp);
 					
                     fp = fopen(fname, "a");
-                    if(val<bestval)
+                    if((val<bestval)||(initbestval==0))
                     {
+						initbestval = 1;
                         for(i=0; i<NBparam; i++)
                         if(paramtype[i]==FLOAT)
                             data.image[IDoptvec].array.F[i] = *(paramvalf[i]);
                         else
-                            data.image[IDoptvec].array.F[i] = (float) *(paramval[i]); //paramdeltaval[i];
+                            data.image[IDoptvec].array.F[i] = (float) *(paramval[i]); 
                         bestval = val;
-                        fprintf(fp, " -> BEST VECTOR\n");
+                        fprintf(fp, " -> BEST VECTOR =======\n");
                         bestgain = scangain;
                     }
                     else
                     {
-                        fprintf(fp, "\n");
+                        fprintf(fp, "bestval = %12g\n", bestval);
                     }
                     fclose(fp);
 

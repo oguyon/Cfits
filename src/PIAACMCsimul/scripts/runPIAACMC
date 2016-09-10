@@ -1899,7 +1899,11 @@ PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=$NBpropStep
+
+PIAACMC_dftgrid=1
+
 piaacmcsimrun $1 1
+
 exit
 EOF
 mv ./$1/psfi0.fits ./$1/psfi0_step$step.fits
