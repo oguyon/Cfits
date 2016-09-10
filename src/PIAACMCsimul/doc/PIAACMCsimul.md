@@ -383,6 +383,12 @@ This step takes approximately 4mn.
 
 ## STEP 010 (mode = 1): Tune Lyot stops conjugations
 
+To view result:
+
+~~~
+tail -f result_LMpos.log
+~~~
+
 ~~~
     FLUX   0    416183.9306 1.000000
     FLUX   1    416183.9306 1.000000
@@ -404,6 +410,23 @@ This step takes approximately 5mn.
 
 ## STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm,  20 cosine modes, 20 Fourier modes
 
+Encountered magma allocation error -> need to move this to more powerful computer (not my laptop).
+
+~~~
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7613 1.000000
+    FLUX   4    416183.7004 0.999999
+    FLUX   5    186855.3846 0.448973
+    FLUX   6       155.6886 0.000374
+    FLUX   7       155.6886 0.000374
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 25459.1 -> 1.46985e-07
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 477753, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.13228e-09
+~~~
 
 
 ## STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm,  40 cosine modes, 150 Fourier modes

@@ -7345,41 +7345,83 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, 0);
 
 		val0 = 1.0;
-        if(REGPIAASHAPES == 1)
-        {
-			val0 = 0.0;
-            ID = piaacmc[0].piaa0CmodesID;
-            for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
-            {
-                tmp = piaa0C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa0C_regcoeff_alpha);
-				val0 += tmp*tmp;
-			}
+   
+         if(REGPIAASHAPES==1)
+            { 
+				val0 = 0.0;
+				
+				ID = piaacmc[0].piaa0CmodesID;
+				IDref = image_ID("piaa0Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
+				
+                for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+                {
+                    data.image[ID1Dref].array.F[ii] = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa0C_regcoeff_alpha);
+                    val0 += tmp*tmp;
+                }
 
-            ID = piaacmc[0].piaa1CmodesID;
-            for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
-            {
-                tmp = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa1C_regcoeff_alpha);
-                val0 += tmp*tmp;
+
+
+                ID = piaacmc[0].piaa1CmodesID;
+                IDref = image_ID("piaa1Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
+                for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
+                {
+                    data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa1C_regcoeff_alpha);
+                    val0 += tmp*tmp;
+                }
+
+
+				ID_CPAfreq = image_ID("cpamodesfreq");
+
+                ID = piaacmc[0].piaa0FmodesID;
+				IDref = image_ID("piaa0Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Fmref", data.image[piaacmc[0].piaa0FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
+                for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+                {
+                    data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) *pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                    val0 += tmp*tmp;
+                }
+
+                ID = piaacmc[0].piaa1FmodesID;
+                IDref = image_ID("piaa1Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Fmref", data.image[piaacmc[0].piaa1FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
+                for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+                {
+                    data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) *pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                    val0 += tmp*tmp;
+                }
+            valref += val0;
             }
 
-			ID_CPAfreq = image_ID("cpamodesfreq");
-            ID = piaacmc[0].piaa0FmodesID;
-            for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
-            {
-                tmp = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
-                val0 += tmp*tmp;
-            }
 
-            ID = piaacmc[0].piaa1FmodesID;
-            for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
-            {
-                tmp = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
-                val0 += tmp*tmp;
-                ii++;
-            }
-			
-			valref += val0;
-        }
+
+
+
+
+
+
+
 
 
         val1 = 1.0;
@@ -7468,38 +7510,76 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         if(REGPIAASHAPES == 1)
         {
             ID = piaacmc[0].piaa0CmodesID;
-            for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+     		IDref = image_ID("piaa0Cmref");
+			if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
+			for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
             {
-                data.image[ID1Dref].array.F[ii] = piaa0C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa0C_regcoeff_alpha);
+                data.image[ID1Dref].array.F[ii] = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj, piaa0C_regcoeff_alpha);
                 data.image[IDm].array.F[ii] = 1.0;
                 ii++;
             }
 
             ID = piaacmc[0].piaa1CmodesID;
+            IDref = image_ID("piaa1Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
             for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
             {
-                data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa1C_regcoeff_alpha);
+                data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj, piaa1C_regcoeff_alpha);
                 data.image[IDm].array.F[ii] = 1.0;
                 ii++;
             }
 
 			ID_CPAfreq = image_ID("cpamodesfreq");
             ID = piaacmc[0].piaa0FmodesID;
+            IDref = image_ID("piaa0Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Fmref", data.image[piaacmc[0].piaa0FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
             for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
             {
-                data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
                 data.image[IDm].array.F[ii] = 1.0;
                 ii++;
             }
 
             ID = piaacmc[0].piaa1FmodesID;
+            IDref = image_ID("piaa1Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Fmref", data.image[piaacmc[0].piaa1FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
             for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
             {
-                data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
                 data.image[IDm].array.F[ii] = 1.0;
                 ii++;
             }
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         if(REGFPMSAG == 1)
         {
 			ID = piaacmc[0].zonezID;
@@ -7612,32 +7692,60 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 						fclose(fp);
 															
                         ID = piaacmc[0].piaa0CmodesID;
+                        IDref = image_ID("piaa0Cmref");
+						if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
                         {
-                            data.image[ID1D].array.F[ii] = piaa0C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa0C_regcoeff_alpha);
+                            data.image[ID1D].array.F[ii] = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa0C_regcoeff_alpha);
                             ii++;
                         }
 
                         ID = piaacmc[0].piaa1CmodesID;
+                        IDref = image_ID("piaa1Cmref");
+						if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
                         {
-                            data.image[ID1D].array.F[ii] = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1C_regcoeff_alpha);
+                            data.image[ID1D].array.F[ii] = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa1C_regcoeff_alpha);
                             ii++;
                         }
                         
                         ID_CPAfreq = image_ID("cpamodesfreq");
                         
                         ID = piaacmc[0].piaa0FmodesID;
+                        IDref = image_ID("piaa0Fmref");
+						if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Fmref", data.image[piaacmc[0].piaa0FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
                         {
-                            data.image[ID1D].array.F[ii] = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                            data.image[ID1D].array.F[ii] = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
                             ii++;
                         }
 
                         ID = piaacmc[0].piaa1FmodesID;
+                        IDref = image_ID("piaa1Fmref");
+						if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Fmref", data.image[piaacmc[0].piaa1FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
                         {
-                            data.image[ID1D].array.F[ii] = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                            data.image[ID1D].array.F[ii] = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
                             ii++;
                         }                        
                     }
@@ -7808,16 +7916,30 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     {
 						val0 = 0.0;
                         ID = piaacmc[0].piaa0CmodesID;
+                        IDref = image_ID("piaa0Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa0C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa0C_regcoeff_alpha);
+                            tmp = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj, piaa0C_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }
 
                         ID = piaacmc[0].piaa1CmodesID;
+                        IDref = image_ID("piaa1Cmref");
+						if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa1C_regcoeff_alpha);
+                            tmp = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj, piaa1C_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }
                         
@@ -7825,20 +7947,35 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                         ID_CPAfreq = image_ID("cpamodesfreq");
                         
                         ID = piaacmc[0].piaa0FmodesID;
+                        IDref = image_ID("piaa0Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Fmref", data.image[piaacmc[0].piaa0FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                            tmp = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }
 
                         ID = piaacmc[0].piaa1FmodesID;
+                        IDref = image_ID("piaa1Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Fmref", data.image[piaacmc[0].piaa1FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                            tmp = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }       
                         val += val0;                 
-                    }       
+                    }  
+                         
                     val1 = 1.0;
                     if(REGFPMSAG == 1)
                     {
@@ -7857,7 +7994,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     data.image[IDstatus].array.U[0] = 24;
                     sprintf(fname, "%s/linoptval.txt", piaacmcconfdir);
                     fp = fopen(fname, "a");
-                    fprintf(fp, "##  %5.3f   %20lf           %20g    (reg = %12g   contrast = %20g)       [%d] [%ld]", alphareg, scangain, val, val1, valContrast, linoptlimflagarray[k], NBparam);
+                    fprintf(fp, "##  %5.3f   %20lf           %20g    (reg = %12g %12g   contrast = %20g)       [%d] [%ld]", alphareg, scangain, val, val0, val1, valContrast, linoptlimflagarray[k], NBparam);
                     fclose(fp);
 					
                     fp = fopen(fname, "a");
@@ -7970,16 +8107,30 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     {
 						val0 = 0.0;
                         ID = piaacmc[0].piaa0CmodesID;
+                        IDref = image_ID("piaa0Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa0C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa0C_regcoeff_alpha);
+                            tmp = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj, piaa0C_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }
 
                         ID = piaacmc[0].piaa1CmodesID;
+                         IDref = image_ID("piaa1Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj, piaa1C_regcoeff_alpha);
+                            tmp = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj, piaa1C_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }
                         
@@ -7987,16 +8138,30 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                         ID_CPAfreq = image_ID("cpamodesfreq");
                         
                         ID = piaacmc[0].piaa0FmodesID;
+                        IDref = image_ID("piaa0Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Fmref", data.image[piaacmc[0].piaa0FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                            tmp = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }
 
                         ID = piaacmc[0].piaa1FmodesID;
+                        IDref = image_ID("piaa1Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Fmref", data.image[piaacmc[0].piaa1FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                         for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
                         {
-                            tmp = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                            tmp = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
                             val0 += tmp*tmp;
                         }       
                         val += val0;                 
@@ -8029,37 +8194,71 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
             if(REGPIAASHAPES==1)
-            {
-                ID = piaacmc[0].piaa0CmodesID;
+            { 
+				ID = piaacmc[0].piaa0CmodesID;
+				IDref = image_ID("piaa0Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
+				
                 for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa0C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa0C_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa0C_regcoeff_alpha);
                     ii++;
                 }
 
+
+
                 ID = piaacmc[0].piaa1CmodesID;
+                IDref = image_ID("piaa1Cmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Cmref", data.image[piaacmc[0].piaa0CmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                 for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff*data.image[ID].array.F[jj]*pow(1.0*jj,piaa1C_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa1C_regcoeff_alpha);
                     ii++;
                 }
+
 
 				ID_CPAfreq = image_ID("cpamodesfreq");
 
                 ID = piaacmc[0].piaa0FmodesID;
+				IDref = image_ID("piaa0Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa0Fmref", data.image[piaacmc[0].piaa0FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                 for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) *pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
                     ii++;
                 }
 
                 ID = piaacmc[0].piaa1FmodesID;
+                IDref = image_ID("piaa1Fmref");
+				if(IDref==-1)
+					{
+						IDref = create_2Dimage_ID("piaa1Fmref", data.image[piaacmc[0].piaa1FmodesID].md[0].size[0], 1);
+						for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
+							data.image[IDref].array.F[jj] = 0.0;
+					}
                 for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff*data.image[ID].array.F[jj]*pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) *pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
                     ii++;
                 }
             }
+            
+            
             if(REGFPMSAG == 1)
                     {
 						ID = piaacmc[0].zonezID;

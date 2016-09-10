@@ -101,7 +101,7 @@ echo "2048" > conf/conf_size.txt
 echo "0.00385" > conf/conf_beamrad.txt
 echo "0.000009625" > conf/conf_pscale.txt
 echo "78" > conf/conf_Fratio.txt
-echo "0.1" > conf/conf_PIAAsep.txt
+echo "0.15" > conf/conf_PIAAsep.txt
 echo "0.0" > conf/conf_PIAA0pos.txt
 echo "-0.2" > conf/conf_LyotZmin.txt
 echo "0.2" > conf/conf_LyotZmax.txt

@@ -114,7 +114,7 @@ echo "0.5" > conf/conf_LyotZmax.txt
 # run step 0: CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
 ./run optsingle 1
 
-# this operation should take approximately 10 minutes
+# this operation should take approximately 3 minutes
 
 # The following files will be created:
 
@@ -132,7 +132,7 @@ echo "0.5" > conf/conf_LyotZmax.txt
 
 # repeat above step to compute on-axis PSF
 ./run optsingle 2
-# this operation should take approximately 
+# this operation should take approximately 1mn
 
 
 
@@ -143,12 +143,12 @@ echo "0.5" > conf/conf_LyotZmax.txt
 
 # complete step 003 : Compute on-axis PSF
 ./run optsingle 4
-# this operation should take approximately 
+# this operation should take approximately 1mn
 
 
 # complete step 004 : compute Lyot stops shapes and locations
 ./run optsingle 5
-# this step takes approximately 
+# this step takes approximately 2hr
 # the Lyot stops are named "LyotStop0.fits, LyotStop1.fits ...
 
 
