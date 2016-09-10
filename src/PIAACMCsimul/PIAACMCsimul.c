@@ -7799,7 +7799,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         
             arith_image_cstmult("optcoeff0", 0.0, "optvec"); // create optimal vector
 			IDoptvec = image_ID("optvec");
-
+			initbestval = 0;
             bestval = valref;
 
 			
