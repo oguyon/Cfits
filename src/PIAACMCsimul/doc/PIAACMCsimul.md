@@ -338,21 +338,6 @@ Progress can be tracked by watching file :
 tail -f linoptval.txt
 ~~~
 
-~~~
-    FLUX   0    416183.9306 1.000000
-    FLUX   1    416183.9306 1.000000
-    FLUX   2    416183.8669 1.000000
-    FLUX   3    416183.7610 1.000000
-    FLUX   4    416183.7006 0.999999
-    FLUX   5    183388.6503 0.440643
-    FLUX   6       216.8273 0.000521
-    FLUX   7       216.8273 0.000521
-COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
-Peak constrast (rough estimate)= 8569.34 -> 4.9474e-08
-optsyst[0].flux[0]  = 416184
-SCORINGMASKTYPE = 0
-[0] Total light in scoring field = 603344, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.42994e-09
-~~~
 
 ## STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm,  20 cosine modes, 20 Fourier modes
 
@@ -361,17 +346,20 @@ SCORINGMASKTYPE = 0
     FLUX   0    416183.9306 1.000000
     FLUX   1    416183.9306 1.000000
     FLUX   2    416183.8669 1.000000
-    FLUX   3    416183.7609 1.000000
-    FLUX   4    416183.7003 0.999999
-    FLUX   5    183471.9114 0.440843
-    FLUX   6       217.2896 0.000522
-    FLUX   7       217.2896 0.000522
+    FLUX   3    416183.7608 1.000000
+    FLUX   4    416183.6991 0.999999
+    FLUX   5    189642.2892 0.455669
+    FLUX   6       216.7150 0.000521
+    FLUX   7       216.7150 0.000521
 COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
-Peak constrast (rough estimate)= 23929.5 -> 1.38154e-07
+Peak constrast (rough estimate)= 6272.06 -> 3.62109e-08
 optsyst[0].flux[0]  = 416184
 SCORINGMASKTYPE = 0
-[0] Total light in scoring field = 646809, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.53295e-09
+[0] Total light in scoring field = 291196, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 6.90139e-10
 ~~~
+
+This step takes 3 hr
+
 
 
 ## STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput
@@ -393,16 +381,16 @@ tail -f result_LMpos.log
     FLUX   0    416183.9306 1.000000
     FLUX   1    416183.9306 1.000000
     FLUX   2    416183.8669 1.000000
-    FLUX   3    416183.7612 1.000000
-    FLUX   4    416183.7005 0.999999
-    FLUX   5    183521.7743 0.440963
-    FLUX   6       155.7757 0.000374
-    FLUX   7       155.7757 0.000374
+    FLUX   3    416183.7608 1.000000
+    FLUX   4    416183.6991 0.999999
+    FLUX   5    189690.4898 0.455785
+    FLUX   6       159.9713 0.000384
+    FLUX   7       159.9713 0.000384
 COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
-Peak constrast (rough estimate)= 10394.5 -> 6.00115e-08
+Peak constrast (rough estimate)= 7922.02 -> 4.57368e-08
 optsyst[0].flux[0]  = 416184
 SCORINGMASKTYPE = 0
-[0] Total light in scoring field = 453057, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.07375e-09
+[0] Total light in scoring field = 298404, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 7.07224e-10
 ~~~
 
 This step takes approximately 5mn.

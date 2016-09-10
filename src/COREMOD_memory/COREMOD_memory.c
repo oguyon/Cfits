@@ -28,7 +28,7 @@
 #include <mach/mach_time.h>
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 0
-int clock_gettime(int clk_id, struct timespec *t){
+static int clock_gettime(int clk_id, struct timespec *t){
     mach_timebase_info_data_t timebase;
     mach_timebase_info(&timebase);
     uint64_t time;
@@ -82,7 +82,7 @@ int listim_scr_wcol;
 extern DATA data;
 
 
-char errmsg[SBUFFERSIZE];
+char errmsg_memory[SBUFFERSIZE];
 
 
 
@@ -3098,10 +3098,10 @@ int list_image_ID_file(char *fname)
     fp = fopen(fname,"w");
     if(fp == NULL)
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Cannot create file %s",fname);
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Cannot create file %s",fname);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
 
@@ -3264,11 +3264,11 @@ int mk_complex_from_reim(char *re_name, char *im_name, char *out_name, int share
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
     // Note: openMP doesn't help here
@@ -3392,11 +3392,11 @@ int mk_complex_from_amph(char *am_name, char *ph_name, char *out_name, int share
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
 
@@ -3483,11 +3483,11 @@ int mk_reim_from_complex(char *in_name, char *re_name, char *im_name, int shared
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
 
@@ -3583,10 +3583,10 @@ int mk_amph_from_complex(char *in_name, char *am_name, char *ph_name, int shared
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
 
@@ -3705,11 +3705,11 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
 
     if(data.image[ID].md[0].naxis!=3)
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong naxis : %ld - should be 3\n",data.image[ID].md[0].naxis);
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Wrong naxis : %ld - should be 3\n",data.image[ID].md[0].naxis);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
     xsize = data.image[ID].md[0].size[0];
@@ -3768,11 +3768,11 @@ int rotate_cube(char *ID_name, char *ID_out_name, int orientation)
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_memory,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_memory);
         exit(0);
     }
 

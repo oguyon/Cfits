@@ -365,22 +365,68 @@ BEST SOLUTION: 33.478288243056 / 33.478288243056    0.000000668241 / 0.000044544
 </div>
 <div id="step-006-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput" class="section level2">
 <h2><span class="header-section-number">3.8</span> STEP 006 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</h2>
+<p>Takes about 10mn</p>
 </div>
 <div id="step-007-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-10-cosine-modes-5-fourier-modes" class="section level2">
 <h2><span class="header-section-number">3.9</span> STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes</h2>
-<p>This takes approximately 20mn for size = 1024.Progress can be tracked by watching file : tail -f linoptval.txt </p>
+<p>This takes approximately 20mn for size = 1024.Progress can be tracked by watching file : <sub>~</sub> tail -f linoptval.txt <sub>~</sub></p>
 </div>
 <div id="step-008-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes" class="section level2">
 <h2><span class="header-section-number">3.10</span> STEP 008 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</h2>
+<pre><code>    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7608 1.000000
+    FLUX   4    416183.6991 0.999999
+    FLUX   5    189642.2892 0.455669
+    FLUX   6       216.7150 0.000521
+    FLUX   7       216.7150 0.000521
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 6272.06 -&gt; 3.62109e-08
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 291196, peak PSF = -1, SCOTINGTOTAL = 2436   -&gt; Average contrast = 6.90139e-10</code></pre>
+<p>This step takes 3 hr</p>
 </div>
 <div id="step-009-mode-5-compute-lyot-stops-shapes-and-locations-2nd-pass-70-throughput" class="section level2">
 <h2><span class="header-section-number">3.11</span> STEP 009 (mode = 5): Compute Lyot stops shapes and locations, 2nd pass, 70% throughput</h2>
+<p>This step takes approximately 4mn.</p>
 </div>
 <div id="step-010-mode-1-tune-lyot-stops-conjugations" class="section level2">
 <h2><span class="header-section-number">3.12</span> STEP 010 (mode = 1): Tune Lyot stops conjugations</h2>
+<p>To view result:</p>
+<pre><code>tail -f result_LMpos.log</code></pre>
+<pre><code>    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7608 1.000000
+    FLUX   4    416183.6991 0.999999
+    FLUX   5    189690.4898 0.455785
+    FLUX   6       159.9713 0.000384
+    FLUX   7       159.9713 0.000384
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 7922.02 -&gt; 4.57368e-08
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 298404, peak PSF = -1, SCOTINGTOTAL = 2436   -&gt; Average contrast = 7.07224e-10</code></pre>
+<p>This step takes approximately 5mn.</p>
 </div>
 <div id="step-011-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-20-cosine-modes-20-fourier-modes" class="section level2">
 <h2><span class="header-section-number">3.13</span> STEP 011 (mode = 40): Tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes</h2>
+<p>Encountered magma allocation error -&gt; need to move this to more powerful computer (not my laptop).</p>
+<pre><code>    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7613 1.000000
+    FLUX   4    416183.7004 0.999999
+    FLUX   5    186855.3846 0.448973
+    FLUX   6       155.6886 0.000374
+    FLUX   7       155.6886 0.000374
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 25459.1 -&gt; 1.46985e-07
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 477753, peak PSF = -1, SCOTINGTOTAL = 2436   -&gt; Average contrast = 1.13228e-09</code></pre>
 </div>
 <div id="step-012-mode-40-tune-piaa-shapes-and-focal-plane-mask-transm-40-cosine-modes-150-fourier-modes" class="section level2">
 <h2><span class="header-section-number">3.14</span> STEP 012 (mode = 40): Tune PIAA shapes and focal plane mask transm, 40 cosine modes, 150 Fourier modes</h2>

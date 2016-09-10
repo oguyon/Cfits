@@ -26,7 +26,7 @@
 
 extern DATA data;
 
-char errmsg[SBUFFERSIZE];
+char errmsg_arith[SBUFFERSIZE];
 
 
 
@@ -296,10 +296,10 @@ long arith_set_pixel(char *ID_name, double value, long x, long y)
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_arith, SBUFFERSIZE, "Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         exit(0);
     }
     data.image[ID].md[0].write = 0;
@@ -357,10 +357,10 @@ long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_arith,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         exit(0);
     }
     data.image[ID].md[0].write = 0;
@@ -399,10 +399,10 @@ long arith_set_row(char *ID_name, double value, long y)
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_arith,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         exit(0);
     }
 
@@ -443,10 +443,10 @@ long arith_set_col(char *ID_name, double value, long x)
     }
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Wrong image type(s)\n");
+        n = snprintf(errmsg_arith,SBUFFERSIZE,"Wrong image type(s)\n");
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         exit(0);
     }
 
@@ -487,10 +487,10 @@ long arith_image_zero(char *ID_name)
         memset(data.image[ID].array.U,0,sizeof(unsigned short)*nelem);
     else
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"cannot detect image type for image %s",ID_name);
+        n = snprintf(errmsg_arith,SBUFFERSIZE,"cannot detect image type for image %s",ID_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         exit(0);
     }
     data.image[ID].md[0].write = 0;
@@ -527,10 +527,10 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
     IDin = image_ID(ID_name);
     if(IDin==-1)
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"Missing input image = %s",ID_name);
+        n = snprintf(errmsg_arith,SBUFFERSIZE,"Missing input image = %s",ID_name);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         list_image_ID();
         exit(0);
     }
@@ -544,10 +544,10 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
     naxes = (long*) malloc(sizeof(long)*naxis);
     if(naxes==NULL)
     {
-        n = snprintf(errmsg,SBUFFERSIZE,"malloc() error, naxis = %ld",naxis);
+        n = snprintf(errmsg_arith,SBUFFERSIZE,"malloc() error, naxis = %ld",naxis);
         if(n >= SBUFFERSIZE)
             printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-        printERROR(__FILE__,__func__,__LINE__,errmsg);
+        printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
         exit(0);
     }
 
@@ -643,10 +643,10 @@ int arith_image_crop(char *ID_name, char *ID_out, long *start, long *end, long c
         }
         else
         {
-            n = snprintf(errmsg,SBUFFERSIZE,"invalid data type");
+            n = snprintf(errmsg_arith,SBUFFERSIZE,"invalid data type");
             if(n >= SBUFFERSIZE)
                 printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-            printERROR(__FILE__,__func__,__LINE__,errmsg);
+            printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
             exit(0);
         }
     }
@@ -2204,10 +2204,10 @@ int arith_image_function_2_1_inplace(char *ID_name1, char *ID_name2, double (*pt
   nelement = nelement1;
   if(nelement1!=nelement2)
     {
-      n = snprintf(errmsg,SBUFFERSIZE,"images %s and %s have different number of elements\n",ID_name1,ID_name2);
+      n = snprintf(errmsg_arith,SBUFFERSIZE,"images %s and %s have different number of elements\n",ID_name1,ID_name2);
       if(n >= SBUFFERSIZE) 
 	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      printERROR(__FILE__,__func__,__LINE__,errmsg);
+      printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
       exit(0);
     }
   
@@ -2306,10 +2306,10 @@ int arith_image_function_2_1_inplace_byID(long ID1, long ID2, double (*pt2functi
   nelement = nelement1;
   if(nelement1!=nelement2)
     {
-      n = snprintf(errmsg,SBUFFERSIZE,"images ID %ld and %ld have different number of elements\n",ID1,ID2);
+      n = snprintf(errmsg_arith,SBUFFERSIZE,"images ID %ld and %ld have different number of elements\n",ID1,ID2);
       if(n >= SBUFFERSIZE) 
 	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-      printERROR(__FILE__,__func__,__LINE__,errmsg);
+      printERROR(__FILE__,__func__,__LINE__,errmsg_arith);
       exit(0);
     }
   
@@ -3598,33 +3598,33 @@ int execute_arith( char *cmd1 )
 	{
 	  if(word_type[i]==9)
 	    {
-	      n = snprintf(errmsg,SBUFFERSIZE,"line has multiple \"=\"");
+	      n = snprintf(errmsg_arith,SBUFFERSIZE,"line has multiple \"=\"");
 	      if(n >= SBUFFERSIZE) 
-		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");	      printWARNING(__FILE__,__func__,__LINE__,errmsg);
+		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");	      printWARNING(__FILE__,__func__,__LINE__,errmsg_arith);
 	      OKea = 0;
 	    }
 	  if(word_type[i]==4)
 	    {
-	      n = snprintf(errmsg,SBUFFERSIZE,"operand on left side of \"=\"");
+	      n = snprintf(errmsg_arith,SBUFFERSIZE,"operand on left side of \"=\"");
 	      if(n >= SBUFFERSIZE) 
 		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters"); 
-	      printWARNING(__FILE__,__func__,__LINE__,errmsg);
+	      printWARNING(__FILE__,__func__,__LINE__,errmsg_arith);
 	      OKea = 0;
 	    }
 	  if(word_type[i]==5)
 	    {
-	      n = snprintf(errmsg,SBUFFERSIZE,"\"(\" on left side of \"=\"");
+	      n = snprintf(errmsg_arith,SBUFFERSIZE,"\"(\" on left side of \"=\"");
 	      if(n >= SBUFFERSIZE) 
 		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-	      printWARNING(__FILE__,__func__,__LINE__,errmsg);
+	      printWARNING(__FILE__,__func__,__LINE__,errmsg_arith);
 	      OKea = 0;
 	    }
 	  if(word_type[i]==6)
 	    {
-	      n = snprintf(errmsg,SBUFFERSIZE,"\")\" on left side of \"=\"");
+	      n = snprintf(errmsg_arith,SBUFFERSIZE,"\")\" on left side of \"=\"");
 	      if(n >= SBUFFERSIZE) 
 		printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-	      printWARNING(__FILE__,__func__,__LINE__,errmsg);
+	      printWARNING(__FILE__,__func__,__LINE__,errmsg_arith);
 	      OKea = 0;
 	    }
 	}
@@ -3632,10 +3632,10 @@ int execute_arith( char *cmd1 )
 	passedequ = 1;
       if ((passedequ==0)&&(word_type[i]==1)) /* non-existing variable or image as input */
 	{
-	  n  = snprintf(errmsg,SBUFFERSIZE,"%s is a non-existing variable or image",word[i]);
+	  n  = snprintf(errmsg_arith,SBUFFERSIZE,"%s is a non-existing variable or image",word[i]);
 	  if(n >= SBUFFERSIZE) 
 	    printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-	  printWARNING(__FILE__,__func__,__LINE__,errmsg);
+	  printWARNING(__FILE__,__func__,__LINE__,errmsg_arith);
 	  OKea = 0;
 	}      
     }

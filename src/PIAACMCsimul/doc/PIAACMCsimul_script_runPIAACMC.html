@@ -2363,6 +2363,48 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 2298
 2299
 2300
+2301
+2302
+2303
+2304
+2305
+2306
+2307
+2308
+2309
+2310
+2311
+2312
+2313
+2314
+2315
+2316
+2317
+2318
+2319
+2320
+2321
+2322
+2323
+2324
+2325
+2326
+2327
+2328
+2329
+2330
+2331
+2332
+2333
+2334
+2335
+2336
+2337
+2338
+2339
+2340
+2341
+2342
 </pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
 <span class="kw">unset</span> <span class="ot">TMUX</span>
 
@@ -2448,7 +2490,6 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="ot">var=$(</span> <span class="kw">cat</span> <span class="st">&quot;</span><span class="ot">$file</span><span class="st">&quot;</span> <span class="ot">)</span>
 <span class="kw">eval</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">=</span><span class="ot">$var</span><span class="st">&quot;</span>
 <span class="kw">}</span>
-
 
 
 
@@ -2961,26 +3002,31 @@ PIAACMC_<span class="kw">nbiter</span>=20
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_maxoptCte<span class="kw">rm</span>=<span class="ot">${kmaxC}</span>
 PIAACMC_<span class="kw">maxoptFterm</span>=<span class="ot">${kmaxF}</span>
+
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=1.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=1.0
-piaac<span class="kw">mcsimrun</span> <span class="ot">$1</span> 40
-exit
-EOF
-mv ./<span class="ot">$1</span>/psfi0.fits ./<span class="ot">$1</span>/psfi0_step<span class="ot">$step</span>.fits
-cp ./<span class="ot">$1</span>/piaacmcparams.co<span class="kw">nf</span> ./<span class="ot">$1</span>/piaacmcparams_step<span class="ot">$step</span>.conf
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/piaa0Cmodes.fits</span> ./<span class="ot">$1</span>/piaa0Cmodes_step<span class="ot">$step</span>.fits
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/piaa0Fmodes.fits</span> ./<span class="ot">$1</span>/piaa0Fmodes_step<span class="ot">$step</span>.fits
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/piaa1Cmodes.fits</span> ./<span class="ot">$1</span>/piaa1Cmodes_step<span class="ot">$step</span>.fits
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/piaa1Fmodes.fits</span> ./<span class="ot">$1</span>/piaa1Fmodes_step<span class="ot">$step</span>.fits
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/fpm_zonez.fits</span> ./<span class="ot">$1</span>/fpm_zonez_step<span class="ot">$step</span>.fits
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/fpm_zonea.fits</span> ./<span class="ot">$1</span>/fpm_zonea_step<span class="ot">$step</span>.fits
-c<span class="kw">p</span> <span class="kw">./</span><span class="ot">$1</span><span class="kw">/linoptval.txt</span> ./<span class="ot">$1</span>/linoptval_step007.txt
-cleanup
-exi<span class="kw">t</span>
-fi
+loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.fits</span><span class="st">&quot; piaa0Cmref</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Cmodes_step001.fits<span class="st">&quot; piaa1Cmref</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa0Fmodes_step001.fits<span class="st">&quot; piaa0Fmref</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Fmodes_step001.fits<span class="st">&quot; piaa1Fmref</span>
+<span class="st">REGPIAA_C_COEFF=300.0</span>
+<span class="st">REGPIAA_C_ALPHA=0.2</span>
+<span class="st">REGPIAA_F_COEFF=300.0</span>
+<span class="st">REGPIAA_F_ALPHA=0.2</span>
+<span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 40</span>
+<span class="st">exit</span>
+<span class="st">EOF</span>
+<span class="st">mv ./</span><span class="ot">$1</span><span class="st">/psfi0.fits ./</span><span class="ot">$1</span><span class="st">/psfi0_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaacmcparams.conf ./</span><span class="ot">$1</span><span class="st">/piaacmcparams_step</span><span class="ot">$step</span><span class="st">.conf</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaa0Cmodes.fits ./</span><span class="ot">$1</span><span class="st">/piaa0Cmodes_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaa0Fmodes.fits ./</span><span class="ot">$1</span><span class="st">/piaa0Fmodes_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaa1Cmodes.fits ./</span><span class="ot">$1</span><span class="st">/piaa1Cmodes_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaa1Fmodes.fits ./</span><span class="ot">$1</span><span class="st">/piaa1Fmodes_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/fpm_zonez.fits ./</span><span class="ot">$1</span><span class="st">/fpm_zonez_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/fpm_zonea.fits ./</span><span class="ot">$1</span><span class="st">/fpm_zonea_step</span><span class="ot">$step</span><span class="st">.fits</span>
+<span class="st">cp ./</span><span class="ot">$1</span><span class="st">/linoptval.txt ./</span><span class="ot">$1</span><span class="st">/linoptval_step007.txt</span>
+<span class="st">cleanup</span>
+<span class="st">exit</span>
+<span class="st">fi</span>
 
 
 
@@ -3004,11 +3050,11 @@ fi
 
 
 
-# STEP 500: copy poin<span class="kw">t</span> <span class="kw">source</span> mask to extended mask
-## TBM
-if [ 500 -eq <span class="ot">${state}</span> ]
-<span class="kw">then</span>
-echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20_001_001.fits<span class="st">&quot;</span>
+<span class="st"># STEP 500: copy point source mask to extended mask</span>
+<span class="st">## TBM</span>
+<span class="st">if [ 500 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
+<span class="st">then</span>
+<span class="st">echo &quot;</span>cp fpm_zonea00_20_001_001.fits fpm_zonea10_20_001_001.fits<span class="st">&quot;</span>
 <span class="st">echo &quot;</span>cp fpm_zonez00_20_001_001.fits fpm_zonez10_20_001_001.fits<span class="st">&quot;</span>
 <span class="st">printf &quot;</span>Copy monochromatic mask to polychromatic extended mask\n<span class="st">&quot; </span>
 <span class="st">cleanup</span>
@@ -3531,6 +3577,7 @@ echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step017.txt</span>
 <span class="st">fi</span>
 
+
 <span class="ot">$execnamestring</span><span class="st"> -n step000 &lt;&lt; EOF</span>
 <span class="st"># idealized mask</span>
 <span class="st">PIAACMC_MASKRADLD=0.0 </span>
@@ -3551,7 +3598,12 @@ echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20
 <span class="st"> printf &quot;</span>skip step 000 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration)\<span class="kw">n</span><span class="st">&quot;</span>
 <span class="st">  fi</span>
 <span class="st">state=001</span>
+
+
 <span class="st">fi</span>
+
+
+
 
 
 <span class="st">if [ &quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot; -eq &quot;</span>1<span class="st">&quot; ]; then</span>
@@ -3851,11 +3903,16 @@ echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20
 <span class="st">PIAACMC_lambda=</span><span class="ot">${lambda}</span>
 <span class="st">PIAACMC_maxoptCterm=</span><span class="ot">${kmaxC}</span>
 <span class="st">PIAACMC_maxoptFterm=</span><span class="ot">${kmaxF}</span>
+
 <span class="st">REGPIAASHAPES=1</span>
-<span class="st">REGPIAA_C_COEFF=1.0</span>
-<span class="st">REGPIAA_C_ALPHA=1.0</span>
-<span class="st">REGPIAA_F_COEFF=1.0</span>
-<span class="st">REGPIAA_F_ALPHA=1.0</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa0Cmodes_step001.fits<span class="st">&quot; piaa0Cmref</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Cmodes_step001.fits<span class="st">&quot; piaa1Cmref</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa0Fmodes_step001.fits<span class="st">&quot; piaa0Fmref</span>
+<span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Fmodes_step001.fits<span class="st">&quot; piaa1Fmref</span>
+<span class="st">REGPIAA_C_COEFF=300.0</span>
+<span class="st">REGPIAA_C_ALPHA=0.2</span>
+<span class="st">REGPIAA_F_COEFF=300.0</span>
+<span class="st">REGPIAA_F_ALPHA=0.2</span>
 
 <span class="st">PIAACMC_dftgrid=2</span>
 
@@ -3875,19 +3932,19 @@ echo &quot;cp fpm_zo<span class="kw">nea00_20_001_001.fits</span> fpm_zonea10_20
 <span class="st"> else</span>
 <span class="st"> printf &quot;</span>skip step 007 [ 40] (tune PIAA shapes and focal plane mask transm <span class="co"># modes: 10, 5)\n&quot;</span>
  fi
-state=&quot;008&quot;
+<span class="kw">state</span>=<span class="st">&quot;008&quot;</span>
 fi
 
 
 
-checkexit
+ch<span class="kw">eckexit</span>
 
 
 
 
 
 
-# STEP 008: tu<span class="kw">ne</span> PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+# STEP 008: <span class="kw">tune</span> PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 # -&gt; linoptval.txt
 kmaxC=20
 
@@ -3914,10 +3971,14 @@ PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
 
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=1.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=1.0
+loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -4064,11 +4125,16 @@ PIAACMC_lambda=<span class="ot">${lambda}</span>
 
 PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
+
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=1.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=1.0
+loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -4133,10 +4199,14 @@ PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
 
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=1.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=1.0
+loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -4286,10 +4356,14 @@ PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
 
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=2.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=2.0
+loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -4350,11 +4424,16 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
+
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=1.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=1.0
+loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 
 PIAACMC_dftgrid=2
@@ -4413,11 +4492,16 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_maxoptCterm=<span class="ot">${kmaxC}</span>
 PIAACMC_maxoptFterm=<span class="ot">${kmaxF}</span>
+
 REGPIAASHAPES=1
-REGPIAA_C_COEFF=1.0
-REGPIAA_C_ALPHA=1.0
-REGPIAA_F_COEFF=1.0
-REGPIAA_F_ALPHA=1.0
+loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
+loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
+loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 

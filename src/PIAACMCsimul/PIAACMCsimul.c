@@ -3914,7 +3914,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             //           CnormFactor = size*size*optsyst[0].flux[0]*arith_image_total("scoringmask")*focscale*focscale; // /optsyst[0].nblambda;
             CnormFactor = focscale*focscale*size*size*optsyst[0].flux[0]/optsyst[0].nblambda;
 
-            if(WRITE_OK=1)
+            if(WRITE_OK==1)
             {
                 sprintf(fname, "%s/CnormFactor.txt", piaacmcconfdir);
                 fp = fopen(fname, "w");
@@ -5470,7 +5470,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     case 0 :  // Run existing config for on-axis point source. If new, create centrally obscured idealized PIAACMC
         // compatible with wavefront control
         printf("=================================== mode 000 ===================================\n");
-        
+
         PIAACMC_fpmtype = 0; // idealized (default)
         if((IDv=variable_ID("PIAACMC_fpmtype"))!=-1)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
@@ -5480,7 +5480,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         if((IDv=variable_ID("PIAACMC_WFCmode"))!=-1)
             PIAACMC_WFCmode = (int) (data.variable[IDv].value.f + 0.1);
         printf("PIAACMC_WFCmode = %d\n", PIAACMC_WFCmode);
-
+		
         FORCE_CREATE_fpmza = 1;
         
         PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, PIAACMC_WFCmode, 1);

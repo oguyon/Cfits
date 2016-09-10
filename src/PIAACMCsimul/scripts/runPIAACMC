@@ -92,7 +92,6 @@ eval "$1=$var"
 
 
 
-
 function checkexit() {
 
 
@@ -1170,6 +1169,7 @@ touch ./$1/step015.txt
 touch ./$1/step016.txt
 touch ./$1/step017.txt
 fi
+
 
 $execnamestring -n step000 << EOF
 # idealized mask
