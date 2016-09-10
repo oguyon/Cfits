@@ -602,10 +602,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 piaacmcsimrun $1 40
 exit
 EOF
@@ -1502,10 +1502,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -1568,10 +1568,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -1724,10 +1724,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -1796,10 +1796,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -1953,10 +1953,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
@@ -2023,10 +2023,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 
 PIAACMC_dftgrid=2
@@ -2091,10 +2091,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=1000.0
-REGPIAA_C_ALPHA=0.5
-REGPIAA_F_COEFF=1000.0
-REGPIAA_F_ALPHA=0.5
+REGPIAA_C_COEFF=300.0
+REGPIAA_C_ALPHA=0.2
+REGPIAA_F_COEFF=300.0
+REGPIAA_F_ALPHA=0.2
 
 PIAACMC_dftgrid=2
 
