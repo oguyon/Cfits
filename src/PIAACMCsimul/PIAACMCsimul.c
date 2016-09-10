@@ -8002,19 +8002,22 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     fp = fopen(fname, "a");
                     if((val<bestval)||(initbestval==0))
                     {
-						initbestval = 1;
                         for(i=0; i<NBparam; i++)
                         if(paramtype[i]==FLOAT)
                             data.image[IDoptvec].array.F[i] = *(paramvalf[i]);
                         else
                             data.image[IDoptvec].array.F[i] = (float) *(paramval[i]); 
                         bestval = val;
-                        fprintf(fp, " -> BEST VECTOR =======\n");
+						if(initbestval == 0)
+							fprintf(fp, " ===== START POINT =====\n");
+						else
+							fprintf(fp, "  -> BEST VECTOR =======\n");
                         bestgain = scangain;
-                    }
+ 						initbestval = 1;
+ 	                   }
                     else
                     {
-                        fprintf(fp, "bestval = %12g\n", bestval);
+                        fprintf(fp, " bestval = %12g\n", bestval);
                     }
                     fclose(fp);
 
