@@ -24,22 +24,21 @@ function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : AO HARDWARE SIMULATION $(tput sgr 0)"
 echo "------------------------------------------------------------------------"
-echo "  This script does nothing particularly useful. It is an example"
-echo "  it takes 2 input arguments"
+echo "  Launches AO hardware simulation processes"
+echo "  Processes are launched inside tmux sessions:"
+echo "   aosimDMcomb     DM comb process"
+echo "   aosimDMrun      DM hardware simulation"
+echo "   aosimmkWF       create WF"
+echo "   aosimPyrWFS     pyramid WFS simulation"
+echo "   aosimcoroLOWFS  coronagraph + LOWFS"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr 0)"
-echo "     $0 [-hHLNCc] <file1> <file2>"
+echo "     $0 [-hk]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr 0)"
 echo "     $(tput bold)-h$(tput sgr 0)          help"
 echo "     $(tput bold)-k$(tput sgr 0)          kill processes"
 echo ""
-echo " $(tput bold)INPUT:$(tput sgr 0)"
-echo "     <file1>     first file"
-echo "     <file2>     second file"
-echo ""
-echo " $(tput bold)OUTPUT:$(tput sgr 0)"
-echo "     out.txt     output file"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -72,11 +71,6 @@ KILLPROCESSES=0
 
 # ================= OPTIONS =============================
 
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
-
 while getopts :hk FLAG; do
   case $FLAG in
     h) # help
@@ -89,17 +83,13 @@ while getopts :hk FLAG; do
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
-      #If you just want to display a simple error message instead of the full
-      #help, remove the 2 lines above and uncomment the 2 lines below.
-      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
-      #exit 2
       ;;
   esac
 done
 
-shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
+shift $((OPTIND-1))
 
-### End getopts code ###
+
 
 
 

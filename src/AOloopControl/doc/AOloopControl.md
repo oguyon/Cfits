@@ -16,7 +16,7 @@ Scripts to run the software are located within the source code directory:
 
 	./src/AOloopControl/scripts/
 
-The scripts can be linked to your working directory by executing the following command:
+The scripts can be linked to your working directory by executing the following command from `src/AOloopControl/scripts/`:
 
 	ln -s $PWD/syncscripts /myworkdirectory/syncscripts
 
@@ -112,7 +112,11 @@ You can launch the simulator quickly with the following steps:
 
 
 - go into directory `aohardsim`
-- create symbolic link `atmwf` to atmospheric wavefront simulation directory
+
+- create symbolic link `atmwf` to atmospheric wavefront simulation directory. For example:
+
+	`ln -s /data/AtmWF/wdir00/ atmwf`
+
 - execute master script './runAOhsim'
 
 

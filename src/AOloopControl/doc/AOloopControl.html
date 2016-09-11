@@ -115,7 +115,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">1.2</span> Usage</h2>
 <p>Scripts to run the software are located within the source code directory:</p>
 <pre><code>./src/AOloopControl/scripts/</code></pre>
-<p>The scripts can be linked to your working directory by executing the following command:</p>
+<p>The scripts can be linked to your working directory by executing the following command from <code>src/AOloopControl/scripts/</code>:</p>
 <pre><code>ln -s $PWD/syncscripts /myworkdirectory/syncscripts</code></pre>
 <p>Then, execute in your work directory:</p>
 <pre><code>./syncscripts</code></pre>
@@ -264,9 +264,10 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">2.2</span> Quick start</h2>
 <p>You can launch the simulator quickly with the following steps:</p>
 <ul>
-<li>go into directory <code>aohardsim</code></li>
-<li>create symbolic link <code>atmwf</code> to atmospheric wavefront simulation directory</li>
-<li>execute master script './runAOhsim'</li>
+<li><p>go into directory <code>aohardsim</code></p></li>
+<li><p>create symbolic link <code>atmwf</code> to atmospheric wavefront simulation directory. For example:</p>
+<p><code>ln -s $PWD/atmwf /data/AtmWF/wdir00/</code></p></li>
+<li><p>execute master script './runAOhsim'</p></li>
 </ul>
 </div>
 <div id="processes-and-scripts-main-wf-control-loop" class="section level2">

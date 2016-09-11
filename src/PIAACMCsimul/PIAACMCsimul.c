@@ -7362,7 +7362,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 				
                 for(jj=0; jj<data.image[piaacmc[0].piaa0CmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa0C_regcoeff_alpha);
+					tmp = piaa0C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa0C_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = tmp;
                     val0 += tmp*tmp;
                 }
 
@@ -7378,7 +7379,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 					}
                 for(jj=0; jj<data.image[piaacmc[0].piaa1CmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa1C_regcoeff_alpha);
+					tmp = piaa1C_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*jj,piaa1C_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = tmp;
                     val0 += tmp*tmp;
                 }
 
@@ -7395,7 +7397,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 					}
                 for(jj=0; jj<data.image[piaacmc[0].piaa0FmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) *pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+					tmp = piaa0F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa0F_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = tmp;
                     val0 += tmp*tmp;
                 }
 
@@ -7409,15 +7412,18 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 					}
                 for(jj=0; jj<data.image[piaacmc[0].piaa1FmodesID].md[0].size[0]; jj++)
                 {
-                    data.image[ID1Dref].array.F[ii] = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) *pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+					tmp = piaa1F_regcoeff * (data.image[ID].array.F[jj]-data.image[IDref].array.F[jj]) * pow(1.0*data.image[ID_CPAfreq].array.F[jj], piaa1F_regcoeff_alpha);
+                    data.image[ID1Dref].array.F[ii] = tmp;
                     val0 += tmp*tmp;
                 }
+
+			printf("VALREF = %g + %g -> %g\n", valref, val0, valref+val0);
             valref += val0;
             }
 
 
 
-
+		
 
 
 
@@ -7689,8 +7695,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
                     if(REGPIAASHAPES==1)
                     {			
 						fp = fopen(fname, "a");
-						fprintf(fp, "# %ld  ADDING PIAA SHAPES REGULARIZATION\n", iter);
-						fclose(fp);
+				//		fprintf(fp, "# %ld  ADDING PIAA SHAPES REGULARIZATION\n", iter);
+				//		fclose(fp);
 															
                         ID = piaacmc[0].piaa0CmodesID;
                         IDref = image_ID("piaa0Cmref");

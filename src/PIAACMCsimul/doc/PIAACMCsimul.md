@@ -332,8 +332,10 @@ Takes about 10mn
 
 ## STEP 007 (mode = 40): Tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 
-This takes approximately 20mn for size = 1024.\n
+This takes approximately 20mn for size = 1024.
+
 Progress can be tracked by watching file :
+
 ~~~
 tail -f linoptval.txt
 ~~~
@@ -461,9 +463,25 @@ SCORINGMASKTYPE = 0
 
 Takes 12mn
 
-## STEP 015
+## STEP 015 (mode = 40): tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 
+~~~
+    FLUX   0    416183.9306 1.000000
+    FLUX   1    416183.9306 1.000000
+    FLUX   2    416183.8669 1.000000
+    FLUX   3    416183.7606 1.000000
+    FLUX   4    416183.6984 0.999999
+    FLUX   5    194898.6729 0.468299
+    FLUX   6       176.7694 0.000425
+    FLUX   7       176.7694 0.000425
+COMPUTING UNRESOLVED SOURCE PSF -*- [0.000000 x 0.000000]
+Peak constrast (rough estimate)= 1145.55 -> 6.6137e-09
+optsyst[0].flux[0]  = 416184
+SCORINGMASKTYPE = 0
+[0] Total light in scoring field = 86266.2, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 2.04453e-10
+~~~
 
+Takes 1.5hr
 
 
 
