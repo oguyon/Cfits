@@ -613,7 +613,7 @@ fi
 
 if [ $state = "menualign" ]; then
 stateok=1
-. ./customscripts/AOloopAlign.bash
+. ./customscripts/AOloopAlign_${LOOPNAME}.bash
 state="menutop"
 fi
 

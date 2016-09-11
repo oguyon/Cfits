@@ -254,6 +254,17 @@ File `aosimcoroLOWFS.conf.default`:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 # AOloopControl setup
 
 
@@ -285,6 +296,11 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 ~~~~~
 aolconf -L 3 -N testsim
 ~~~~~
+
+The loop name (`testsim` in the above example) will allow the correct custom setup script to be used. The software package comes with a few pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran.
+
+
+
 
 - **Set DM number** (`S` command in `Top Menu` screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will need to enter the desired DM size and create the DM stream with the `initDM` command in the `Top Menu`.
 
