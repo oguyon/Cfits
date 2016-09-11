@@ -1915,7 +1915,11 @@ PIAACMC_lstransm=$LStransm2
 PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=$NBpropStep
+
+PIAACMC_dftgrid=1
+
 piaacmcsimrun $1 1
+
 exit
 EOF
 mv ./$1/psfi0.fits ./$1/psfi0_step$step.fits
@@ -1936,7 +1940,7 @@ checkexit
 
 
 
-# STEP 015 : tune PIAA shapes and focal plane mask transm
+# STEP 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
 # -> linoptval.txt
 kmaxC=20
 
@@ -2006,7 +2010,7 @@ checkexit
 
 
 
-# STEP 016: tune PIAA shapes and focal plane mask transm
+# STEP 016: tune PIAA shapes and focal plane mask transm, # modes: 40, 150
 # -> linoptval.txt
 kmaxC=40
 
@@ -2074,7 +2078,7 @@ checkexit
 
 
 
-# STEP 017: tune PIAA shapes and focal plane mask transm
+# STEP 017: tune PIAA shapes and focal plane mask transm, # modes: 40, 625
 # -> linoptval.txt
 kmaxC=40
 

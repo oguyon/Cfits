@@ -1924,7 +1924,7 @@ checkexit
 
 
 
-# STEP 015 : tune PIAA shapes and focal plane mask transm
+# STEP 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
 # -> linoptval.txt
 kmaxC=20
 
@@ -1994,7 +1994,7 @@ checkexit
 
 
 
-# STEP 016: tune PIAA shapes and focal plane mask transm
+# STEP 016: tune PIAA shapes and focal plane mask transm, # modes: 40, 150
 # -> linoptval.txt
 kmaxC=40
 
@@ -2062,7 +2062,7 @@ checkexit
 
 
 
-# STEP 017: tune PIAA shapes and focal plane mask transm
+# STEP 017: tune PIAA shapes and focal plane mask transm, # modes: 40, 625
 # -> linoptval.txt
 kmaxC=40
 

@@ -15,16 +15,13 @@ latex/
 *.m4
 missing
 *.tex
-*.in
 *.Plo
 ar-lib
 bin/*
 autom4te.cache/*
 compile
-config.guess
 config.log
 config.status
-config.sub
 install-sh
 notes/
 src/cfits

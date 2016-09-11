@@ -2405,6 +2405,10 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 2340
 2341
 2342
+2343
+2344
+2345
+2346
 </pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
 <span class="kw">unset</span> <span class="ot">TMUX</span>
 
@@ -4306,7 +4310,11 @@ PIAACMC_lstransm=<span class="ot">$LStransm2</span>
 PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_nbpropstep=<span class="ot">$NBpropStep</span>
+
+PIAACMC_dftgrid=1
+
 piaacmcsimrun <span class="ot">$1</span> 1
+
 exit
 EOF
 mv ./<span class="ot">$1</span>/psfi0.fits ./<span class="ot">$1</span>/psfi0_step<span class="ot">$step</span>.fits
@@ -4327,7 +4335,7 @@ checkexit
 
 
 
-# STEP 015 : tune PIAA shapes and focal plane mask transm
+# STEP 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
 # -&gt; linoptval.txt
 kmaxC=20
 
@@ -4397,7 +4405,7 @@ checkexit
 
 
 
-# STEP 016: tune PIAA shapes and focal plane mask transm
+# STEP 016: tune PIAA shapes and focal plane mask transm, # modes: 40, 150
 # -&gt; linoptval.txt
 kmaxC=40
 
@@ -4465,7 +4473,7 @@ checkexit
 
 
 
-# STEP 017: tune PIAA shapes and focal plane mask transm
+# STEP 017: tune PIAA shapes and focal plane mask transm, # modes: 40, 625
 # -&gt; linoptval.txt
 kmaxC=40
 

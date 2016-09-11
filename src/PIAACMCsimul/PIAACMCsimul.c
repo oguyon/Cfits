@@ -8687,7 +8687,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
 
             fp = fopen(fname, "a");
-            fprintf(fp,"%10ld %20.5g   %16.5g -> %16.5g   (%16.5g) %d  [%g %d %g %g  %g]", i, MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval, zeroST, CnormFactor, piaacmc[0].nblambda, optsyst[0].flux[0], SCORINGTOTAL, PIAACMCSIMUL_VAL0);
+            fprintf(fp,"%10ld %20.5g   %16.5g -> %16.5g   (%16.5g) %d  [%12g %2d %12g %12g  %12g]", i, MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval, zeroST, CnormFactor, piaacmc[0].nblambda, optsyst[0].flux[0], SCORINGTOTAL, PIAACMCSIMUL_VAL0);
             if(bOK==1)
                 fprintf(fp, " BEST\n");
             else

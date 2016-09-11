@@ -165,26 +165,29 @@ echo "0.2" > conf/conf_LyotZmax.txt
 # complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 ./run optsingle 8
 # this step takes approximately 4hr (PIAACMC_dftgrid=2)
-# this step takes approximately 24hr at full resolution (PIAACMC_dftgrid=0)
-# to monitor optimization, view linoptval.txt with tail -f command
-
+# to monitor optimization, view linoptval.txt with tail -f 
 
 # complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 ./run optsingle 9
 # this step takes approximately 6hr (PIAACMC_dftgrid=2)
-# to monitor optimization, view linoptval.txt with tail -f command
-
+# to monitor optimization, view linoptval.txt with tail -f 
+# contrast =          1.22808e-06
 
 # complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 ./run optsingle 10
 # this step takes approximately 20mn
+# BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001336506 / 0.000004015620  -> 0.651398409628  0.071384621752
 
 
 # complete step 010: Tune Lyot stops conjugations
 ./run optsingle 11
-# start 21:00
-# this step takes approximately 50mn
+# start 09:25
+# this step takes approximately 1hr
 # to monitor progress: tail -f result_LMpos.log 
+
+# [0] Total light in scoring field = 1.67163e+09, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.98592e-06
+
+
 
 
 # complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes

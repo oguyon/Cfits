@@ -81,7 +81,7 @@ Script                             Description
 
 
 
-# Design steps
+# Design steps: Monochromatic design
 
 
 ## Overview
@@ -482,6 +482,41 @@ SCORINGMASKTYPE = 0
 ~~~
 
 Takes 1.5hr
+
+## STEP 016 (mode = 40): tune PIAA shapes and focal plane mask transm, 40 cosine modes, 150 Fourier modes
+In this example step 17 is skipped by typing:
+
+~~~
+touch piaacmcconf_i000/step016.txt
+~~~
+
+
+
+## STEP 017 (mode = 40): tune PIAA shapes and focal plane mask transm, 40 cosine modes, 625 Fourier modes
+In this example step 17 is skipped by typing:
+
+~~~
+touch piaacmcconf_i000/step017.txt
+~~~
+
+
+
+# Design steps: Polychromatic design
+
+## Compute complex amplitude response of each focal plane mask zone
+
+~~~
+./run optsingle 200
+~~~
+
+This command will run for a few hrs if the number of focal plane mask zones is large.
+
+The complex amplitude response of each mask zone is computed. Several sub-processes are launched, each computing a subset of the total number of zones.
+
+You can follow the progress of each subprocess in the corresponding tmux sessions: the tmux session names are PID followed by FPMt<index>n<NBindex>
+
+As each subprocess computes zone responses, they are stored in FITS files FPMresp..._thread<index>.fits.tmp you can open/view these files to follow progress - each zone appears as a line, and files should fill from the bottom to the top when all threads complete, the files are merged into a single FPMresp file.
+
 
 
 

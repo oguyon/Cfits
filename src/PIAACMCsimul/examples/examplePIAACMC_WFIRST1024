@@ -154,56 +154,48 @@ echo "0.5" > conf/conf_LyotZmax.txt
 
 # complete step 005 : optimize focal plane mask transm
 ./run optsingle 6
-# this step takes approximately
 # -> piaacmcconf_i000/result_fpmt.log
-
 
 # complete step 006 : compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
 ./run optsingle 7
-# this step takes approximately 
-
 
 # complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 ./run optsingle 8
-# this step takes approximately 
 # to monitor optimization, view linoptval.txt with tail -f command
-
 
 # complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 ./run optsingle 9
-# this step takes approximately 
 # to monitor optimization, view linoptval.txt with tail -f command
-
 
 # complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 ./run optsingle 10
-# this step takes approximately 
-
 
 # complete step 010: Tune Lyot stops conjugations
-./run optsingle 11
-# start 21:00
-# this step takes approximately 
+./run optsingle 11 
 # to monitor progress: tail -f result_LMpos.log 
-
 
 # complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 ./run optsingle 12
-# this step takes approximately
 
 # complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
 ./run optsingle 13
-# this step takes approximately 
 
 # complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
 ./run optsingle 14
-# this step takes approximately 
 
 # complete step 014 : Tune Lyot stops conjugations
 ./run optsingle 15
-# this step takes approximately 
+
+# complete step 015 
+./run optsingle 16
+
+# skip steps 16 and 17
+touch ./piaacmcconf_i000/step016.txt
+touch ./piaacmcconf_i000/step017.txt
 
 
+# propagate monochromatic solution (optional)
+./run propmono 0
 
 
 # ===========================================
