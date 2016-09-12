@@ -180,7 +180,7 @@ menuitems+=( "" "" )
 menuitems+=( "" "" )
 fi
 
-if [ "$TTloopstat" = "ON" ]; then
+if [ "$TTloopstat" = " ON" ]; then
 menuitems+=( "tp" "PAUSE TT align" )
 menuitems+=( "tk" "STOP TT align (note: need to resume first if paused)" )
 else
@@ -277,7 +277,7 @@ tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t alignPyrTT "cp aol${LOOPNUMBER}_wfsdark wfsdark" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim" C-m
-echo "on" > ./status/status_alignTT.txt
+echo " ON" > ./status/status_alignTT.txt
 menualign_default="ts"
 state="menualign"
 ;; 
@@ -288,7 +288,7 @@ if [ "$(cat ./status/status_alignTT.txt)" == "off" ]
 then
 dialog --title "Message" --msgbox "Starting TT align\n (CTRL-C now to abort)\n" 8 30
 fi
-echo "on" > ./status/status_alignTT.txt
+echo " ON" > ./status/status_alignTT.txt
 menualign_default="tr"
 state="menualign"
 ;; 
@@ -303,14 +303,14 @@ state="menualign"
    	 tp)
 touch pause_PyAlignTT.txt
 aoconflogext "TT align loop pause"
-echo "paused" > ./status/status_alignTT.txt
+echo "PAU" > ./status/status_alignTT.txt
 menualign_default="tp"
 state="menualign"
 ;;  
    	 tk) 
 touch stop_PyAlignTT.txt
 tmux kill-session -t alignPyrTT
-echo "off" > ./status/status_alignTT.txt
+echo "OFF" > ./status/status_alignTT.txt
 aoconflogext "TT align loop off"
 menualign_default="tk"
 state="menualign"
@@ -385,7 +385,7 @@ rm pause_PyAlignCam.txt
 tmux kill-session -t alignPcam
 tmux new-session -d -s alignPcam
 tmux send-keys -t alignPcam "./customscripts/alignPcam" C-m
-echo "on" > ./status/status_alignPcam.txt
+echo " ON" > ./status/status_alignPcam.txt
 menualign_default="ps"
 state="menualign"
 ;; 
@@ -396,7 +396,7 @@ if [ "$(cat ./status/status_alignPcam.txt)" == "off" ]
 then
 dialog --title "Message" --msgbox "Starting Pcam align\n (CTRL-C now to abort)\n" 8 30
 fi
-echo "on" > ./status/status_alignPcam.txt
+echo " ON" > ./status/status_alignPcam.txt
 menualign_default="pr"
 state="menualign"
 ;;  
@@ -410,14 +410,14 @@ state="menualign"
 ;;  	 
 	pp) 
 touch pause_PyAlignCam.txt
-echo "paused" > ./status/status_alignPcam.txt
+echo "PAU" > ./status/status_alignPcam.txt
 aoconflogext "Pupil align loop pause"
 menualign_default="pp"
 state="menualign"
 ;;   
    	 pk) 
 touch stop_PyAlignCam.txt
-echo "off" > ./status/status_alignPcam.txt
+echo "OFF" > ./status/status_alignPcam.txt
 tmux kill-session -t alignPcam
 aoconflogext "Pupil align loop kill"
 menualign_default="pk"

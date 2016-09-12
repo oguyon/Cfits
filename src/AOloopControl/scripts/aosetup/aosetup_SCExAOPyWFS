@@ -160,3 +160,6 @@ echo "dm${DMindex}disp10" > ./conf/conf_dmZP6_name.txt
 echo "dm${DMindex}disp11" > ./conf/conf_dmZP7_name.txt
 echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
 echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
+
+echo "ocam2d" > ./conf/conf_wfsim_name.txt
+
