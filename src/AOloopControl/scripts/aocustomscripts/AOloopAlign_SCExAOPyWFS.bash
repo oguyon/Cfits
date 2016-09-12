@@ -387,7 +387,7 @@ rm stop_PyAlignCam.txt
 rm pause_PyAlignCam.txt
 tmux kill-session -t alignPcam
 tmux new-session -d -s alignPcam
-tmux send-keys -t alignPcam "./aocustomscripts/alignPcam" C-m
+tmux send-keys -t alignPcam "./aocustomscripts/alignPcam_${LOOPNAME}" C-m
 echo " ON" > ./status/status_alignPcam.txt
 menualign_default="pk"
 state="menualign"
