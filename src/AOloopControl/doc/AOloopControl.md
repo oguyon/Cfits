@@ -363,7 +363,9 @@ File                          Archived location                    Description
 ----------------------------- ------------------------------------ -----------------------------------------------------------
 
 
-Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in "conf/conf_<streamname>.txt" for future loading.
+Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in the staging area "conf_zrm_staged/conf_streamname.txt" for future loading.
+
+- **Adopt staged configuration** (`upzrm` in `Loop Configure` screen)
 
 - **Load zrespm files into shared memory** (`SMloadzrm` in `Loop Configure` screen)
 
@@ -404,7 +406,9 @@ File                          Archived location                    Description
 ----------------------------- ------------------------------------ -----------------------------------------------------------
 
 
-Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in "conf/conf_<streamname>.txt" for future loading.
+Note that at this point, the files are NOT loaded in shared memory, but the archieved file names are stored in the staging area "conf_mrm_staged//conf_streamname.txt" for future loading.
+
+- **Adopt staged configuration** (`upmrm` in `Loop Configure` screen)
 
 - **Load LOrespm files into shared memory** (`SMloadmrm` in `Loop Configure` screen)
 
