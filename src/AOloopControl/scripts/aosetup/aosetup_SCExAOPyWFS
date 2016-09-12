@@ -124,6 +124,6 @@ checkFile $takedark_file
 
 echo $LOOPNAME > LOOPNAME
 rm aocustomscripts/AOloopAlign.bash &> /dev/null
-ln -s $PWD/$AOloopAlign_file /aocustomscripts/AOloopAlign.bash 
+ln -s $PWD/$AOloopAlign_file aocustomscripts/AOloopAlign.bash 
 
 
