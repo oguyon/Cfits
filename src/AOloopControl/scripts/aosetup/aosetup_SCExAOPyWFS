@@ -139,4 +139,7 @@ echo $LOOPNUMBER > LOOPNUMBER
 rm aocustomscripts/AOloopAlign.bash &> /dev/null
 ln -s $PWD/$AOloopAlign_file aocustomscripts/AOloopAlign.bash 
 
+mkdir -p conf
+echo "00" > ./conf/conf_DMindex.txt
+
 
