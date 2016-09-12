@@ -175,24 +175,15 @@ menuitems+=( "tz" "Zero TT align" )
 if [ "$TTloopstat" = "OFF" ]; then
 menuitems+=( "ts" "Start TT align" )
 menuitems+=( "" "" )
-else
-menuitems+=( "" "" )
-menuitems+=( "" "" )
 fi
 
 if [ "$TTloopstat" = " ON" ]; then
 menuitems+=( "tp" "PAUSE TT align" )
 menuitems+=( "tk" "STOP TT align (note: need to resume first if paused)" )
-else
-menuitems+=( "" "" )
-menuitems+=( "" "" )
 fi
 
 if [ "$TTloopstat" = "PAU" ]; then
 menuitems+=( "tr" "Resume TT align (after pause)" )
-menuitems+=( "" "" )
-else
-menuitems+=( "" "" )
 menuitems+=( "" "" )
 fi
 
@@ -212,11 +203,23 @@ menuitems+=( "pxm" "Pcam x -$pcamstep (right)" )
 menuitems+=( "pxp" "Pcam x +$pcamstep (left)" )
 menuitems+=( "pym" "Pcam y -$pcamstep (top)" )
 menuitems+=( "pyp" "Pcam y +$pcamstep (bottom)" )
+
+if [ "$Pcamloopstat" = "OFF" ]; then
 menuitems+=( "ps" "Start Pcam align" )
-menuitems+=( "pr" "RESUME Pcam align (after pause)" )
-menuitems+=( "pg" "Pcam loop gain = ${Pcamloopgain}" )
+menuitems+=( "" "" )
+fi
+
+if [ "$Pcamloopstat" = " ON" ]; then
 menuitems+=( "pp" "PAUSE Pcam align" )
 menuitems+=( "pk" "STOP Pcam align (note: need to resume first if paused)" )
+fi
+
+if [ "$Pcamloopstat" = "PAU" ]; then
+menuitems+=( "pr" "RESUME Pcam align (after pause)" )
+menuitems+=( "" "" )
+fi
+
+menuitems+=( "pg" "Pcam loop gain = ${Pcamloopgain}" )
 menuitems+=( "pm" "Monitor Pcam align tmux session")
 menuitems+=( "" "" )
 
