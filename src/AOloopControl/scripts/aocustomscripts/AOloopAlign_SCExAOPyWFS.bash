@@ -124,15 +124,37 @@ while true; do
 
 stateok=0
 
+mkdir -p status
+
+statfile="./status/status_alignTT.txt"
+TTloopstat=$(cat $statfile)
+if [[ -f "$statfile" && ( "$TTloopstat" = " ON" || "$TTloopstat" = "OFF" || "$TTloopstat" = "PAU" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $statfile
+TTloopstat="OFF"
+fi
+
+statfile="./status/status_alignPcam.txt"
+Pcamloopstat=$(cat $statfile)
+if [[ -f "$statfile" && ( "$Pcamloopstat" = " ON" || "$Pcamloopstat" = "OFF" || "$Pcamloopstat" = "PAU" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $statfile
+Pcamloopstat="OFF"
+fi
+
+
+PyrFilter=$(cat ./status/status_fw.txt)
 
 
 if [ $state = "menualign" ]; then
 stateok=1
-menuname="ALIGNMENT\n
+menuname="ALIGNMENT - LOOP ${LOOPNAME} ($LOOPNUMBER})\n
 \n
-   TT   loop is : $(cat ./status/status_alignTT.txt)\n
-   Pcam loop is : $(cat ./status/status_alignPcam.txt)\n
-   Pyr Filter  : $(cat ./status/status_fw.txt)\n"
+   TT   loop is : $TTloopstat\n
+   Pcam loop is : $Pcamloopstat\n
+   Pyr Filter   : $PyrFilter\n"
 
 
 pyTTloopgain=$(cat ./status/gain_PyAlignTT.txt)
@@ -149,11 +171,32 @@ stringcenter "Pyramid TT align"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "tz" "Zero TT align" )
+
+if [ "$TTloopstat" = "OFF" ]; then
 menuitems+=( "ts" "Start TT align" )
-menuitems+=( "tr" "Resume TT align (after pause)" )
-menuitems+=( "tg" "py TT loop gain = ${pyTTloopgain}")
+menuitems+=( "" "" )
+else
+menuitems+=( "" "" )
+menuitems+=( "" "" )
+fi
+
+if [ "$TTloopstat" = "ON" ]; then
 menuitems+=( "tp" "PAUSE TT align" )
 menuitems+=( "tk" "STOP TT align (note: need to resume first if paused)" )
+else
+menuitems+=( "" "" )
+menuitems+=( "" "" )
+fi
+
+if [ "$TTloopstat" = "PAU" ]; then
+menuitems+=( "tr" "Resume TT align (after pause)" )
+menuitems+=( "" "" )
+else
+menuitems+=( "" "" )
+menuitems+=( "" "" )
+fi
+
+menuitems+=( "tg" "py TT loop gain = ${pyTTloopgain}")
 menuitems+=( "tm" "Monitor TT align tmux session")
 menuitems+=( "" "" )
 
