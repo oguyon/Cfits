@@ -91,6 +91,7 @@ if [[ -f "./conf/conf_GPU.txt" && ( "$GPUmode" = "0" || "$GPUmode" = "1" || "$GP
 echo "OK"
 else
 echo "0" > ./conf/conf_GPU.txt
+GPUmode=0
 fi
 
 echo "GPU mode = $GPUmode"
@@ -772,7 +773,7 @@ fi
 state="menutop"
 
 
-dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNUMBER} - ($CMMODE)" \
+dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - (CMMODE = $CMMODE)" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \

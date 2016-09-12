@@ -320,7 +320,7 @@ The loop name (`testsim` in the above example) will allow the correct custom set
 - **link to WFS camera** (`wfs` to `Loop Configuration` screen). Select the WFS shared memory stream. 
 
 
-Note: A `aosetup` script may be used to perform all these operations. Inspect the content of directory `aosetup` to see such scripts. You may use or modify as needed. If you use a `aosetup` script, execute it from the working directory, and then start aolconf:
+Note: An `aosetup` script may be used to perform all these operations. Inspect the content of directory `aosetup` to see such scripts. You may use or modify as needed. If you use a `aosetup` script, execute it from the working directory, and then start aolconf:
 
 ~~~
 ./aosetup/aosetup_<myLoop>

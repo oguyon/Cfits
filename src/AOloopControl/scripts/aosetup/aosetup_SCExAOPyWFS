@@ -190,4 +190,5 @@ echo "3" >./conf/conf_RMMcpa.txt
 echo "0.1" > ./conf/conf_SVDlimall.txt
 
 
+echo "1" > ./conf/conf_GPU.txt
 

@@ -233,10 +233,25 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 # when all threads complete, the files are merged into a single FPMresp file
 #
 
+# the optsingle 200 command includes both the creation of the FPMresp file (which is skipped if the file already exists) and a search for the optimal solution
+# Finding the optimal solution requires multiple searches, so you can re-launch the optsingle 200 command multiple time
+# Results are written in a file names piaacmcconf_i000/mode13_....opt.txt
+# the 5th number (in parentheses) shows the best solution 
 
 
+# to compute the PSF and complex amplitudes for the best solution, execute:
+./run proppoly 0
+# this will take about 20mn
+# [1] Total light in scoring field = 791208, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.76162e-08
+# [1] Total light in scoring field = 789920, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.75875e-08
 
 
+# focal plane mask solution can view:
+#
+# tmp_fpmsag.fits
+# tmp_fpmCA_pha.fits
+# tmp_fpmCA_ampl.fits
+#
 
 
 
