@@ -14,7 +14,7 @@ echo "pname = $pname"
 
 
 
-LOOPNAME="PyWFS"
+LOOPNAME="SCExAOPyWFS"
 
 
 function printHELP {
@@ -109,8 +109,8 @@ fi
 
 
 # ======================= FILE NAMES ===========================================
-AOloopAlign_file="customscripts/AOloopAlign_SCExAOPyWFS.bash" 
-takedark_file="customsctipts/takedark_SCExAOPyWFS"
+AOloopAlign_file="customscripts/AOloopAlign_${LOOPNAME}.bash" 
+takedark_file="customsctipts/takedark_${LOOPNAME}"
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
