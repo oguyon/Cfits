@@ -12,13 +12,9 @@ echo "pname = $pname"
 
 
 
-# ======================= LOGGING =================================
-LOGGING=0 # set to 1 if logging 
-function scriptlog {
-echo "$@" >> $0.log
-}
 
 
+LOOPNAME="PyWFS"
 
 
 function printHELP {
@@ -127,5 +123,7 @@ checkFile $takedark_file
 #checkCommand command1
 
 
+
+echo $LOOPNAME > LOOPNAME
 rm customscripts/AOloopAlign.bash 
 ln -s customscripts/AOloopAlign.bash
