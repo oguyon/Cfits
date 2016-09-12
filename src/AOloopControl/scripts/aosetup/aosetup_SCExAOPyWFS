@@ -118,12 +118,12 @@ checkFile $AOloopAlign_file
 checkFile $takedark_file
 
 
-# ============================= CHECK IF COMMAND EXISTS ==========================
 
-#checkCommand command1
 
 
 
 echo $LOOPNAME > LOOPNAME
-rm customscripts/AOloopAlign.bash 
-ln -s customscripts/AOloopAlign.bash
+rm aocustomscripts/AOloopAlign.bash &> /dev/null
+ln -s $PWD/$AOloopAlign_file /aocustomscripts/AOloopAlign.bash 
+
+
