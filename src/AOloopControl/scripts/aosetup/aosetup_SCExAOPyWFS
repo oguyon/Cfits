@@ -15,7 +15,7 @@ echo "pname = $pname"
 
 
 LOOPNAME="SCExAOPyWFS"
-
+LOOPNUMBER="2"
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -121,8 +121,21 @@ checkFile $takedark_file
 
 
 
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
+echo ""
+exit
+else
+echo ""
+fi
+
+
+
+
 
 echo $LOOPNAME > LOOPNAME
+echo $LOOPNUMBER > LOOPNUMBER
 rm aocustomscripts/AOloopAlign.bash &> /dev/null
 ln -s $PWD/$AOloopAlign_file aocustomscripts/AOloopAlign.bash 
 
