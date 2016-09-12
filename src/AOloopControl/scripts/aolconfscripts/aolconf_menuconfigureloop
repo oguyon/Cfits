@@ -995,7 +995,7 @@ aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
-tmux send-keys -t adark "./customscripts/takedark 10000" C-m
+tmux send-keys -t adark "./aocustomscripts/takedark 10000" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;

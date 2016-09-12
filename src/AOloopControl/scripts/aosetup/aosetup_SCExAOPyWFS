@@ -136,8 +136,15 @@ fi
 
 echo $LOOPNAME > LOOPNAME
 echo $LOOPNUMBER > LOOPNUMBER
+
+
 rm aocustomscripts/AOloopAlign.bash &> /dev/null
 ln -s $PWD/$AOloopAlign_file aocustomscripts/AOloopAlign.bash 
+
+rm aocustomscripts/takedark &> /dev/null
+ln -s $PWD/$takedark_file aocustomscripts/takedark 
+
+
 
 mkdir -p conf
 DMindex="00"
