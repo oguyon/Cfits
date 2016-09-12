@@ -109,8 +109,8 @@ fi
 
 
 # ======================= FILE NAMES ===========================================
-AOloopAlign_file="customscripts/AOloopAlign_${LOOPNAME}.bash" 
-takedark_file="customsctipts/takedark_${LOOPNAME}"
+AOloopAlign_file="aocustomscripts/AOloopAlign_${LOOPNAME}.bash" 
+takedark_file="aocustomsctipts/takedark_${LOOPNAME}"
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
