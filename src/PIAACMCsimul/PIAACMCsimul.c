@@ -7694,7 +7694,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
                     if(REGPIAASHAPES==1)
                     {			
-						fp = fopen(fname, "a");
+						//fp = fopen(fname, "a");
 				//		fprintf(fp, "# %ld  ADDING PIAA SHAPES REGULARIZATION\n", iter);
 				//		fclose(fp);
 															
