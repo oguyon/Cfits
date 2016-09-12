@@ -281,7 +281,7 @@ tmux send-keys -t alignPyrTT "cp aol${LOOPNUMBER}_wfsdark wfsdark" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim" C-m
 echo " ON" > ./status/status_alignTT.txt
-menualign_default="ts"
+menualign_default="tk"
 state="menualign"
 ;; 
   	 tr)
@@ -292,7 +292,7 @@ then
 dialog --title "Message" --msgbox "Starting TT align\n (CTRL-C now to abort)\n" 8 30
 fi
 echo " ON" > ./status/status_alignTT.txt
-menualign_default="tr"
+menualign_default="tp"
 state="menualign"
 ;; 
 	tg)
@@ -307,7 +307,7 @@ state="menualign"
 touch pause_PyAlignTT.txt
 aoconflogext "TT align loop pause"
 echo "PAU" > ./status/status_alignTT.txt
-menualign_default="tp"
+menualign_default="tr"
 state="menualign"
 ;;  
    	 tk) 
@@ -315,7 +315,7 @@ touch stop_PyAlignTT.txt
 tmux kill-session -t alignPyrTT
 echo "OFF" > ./status/status_alignTT.txt
 aoconflogext "TT align loop off"
-menualign_default="tk"
+menualign_default="ts"
 state="menualign"
 ;;
 	tm) tmux a -t alignPyrTT ;; 
@@ -387,9 +387,9 @@ rm stop_PyAlignCam.txt
 rm pause_PyAlignCam.txt
 tmux kill-session -t alignPcam
 tmux new-session -d -s alignPcam
-tmux send-keys -t alignPcam "./customscripts/alignPcam" C-m
+tmux send-keys -t alignPcam "./aocustomscripts/alignPcam" C-m
 echo " ON" > ./status/status_alignPcam.txt
-menualign_default="ps"
+menualign_default="pk"
 state="menualign"
 ;; 
    	 pr)
@@ -400,7 +400,7 @@ then
 dialog --title "Message" --msgbox "Starting Pcam align\n (CTRL-C now to abort)\n" 8 30
 fi
 echo " ON" > ./status/status_alignPcam.txt
-menualign_default="pr"
+menualign_default="pp"
 state="menualign"
 ;;  
  	pg)
@@ -415,7 +415,7 @@ state="menualign"
 touch pause_PyAlignCam.txt
 echo "PAU" > ./status/status_alignPcam.txt
 aoconflogext "Pupil align loop pause"
-menualign_default="pp"
+menualign_default="pr"
 state="menualign"
 ;;   
    	 pk) 
@@ -423,7 +423,7 @@ touch stop_PyAlignCam.txt
 echo "OFF" > ./status/status_alignPcam.txt
 tmux kill-session -t alignPcam
 aoconflogext "Pupil align loop kill"
-menualign_default="pk"
+menualign_default="ps"
 state="menualign"
 ;;   
 	pm) tmux a -t alignPcam ;;

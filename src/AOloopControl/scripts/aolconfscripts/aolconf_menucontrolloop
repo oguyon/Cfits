@@ -247,7 +247,7 @@ else
 echo "5" > $file
 GPUmodesextrwfs="5"
 fi
-menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction  : GPU device" )
+menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
 
 
 #file="./conf/conf_GPUmodesextr1.txt"
