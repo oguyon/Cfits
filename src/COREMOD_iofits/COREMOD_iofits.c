@@ -32,8 +32,9 @@ int images_to_cube(char *img_name, long nbframes, char *cube_name);
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
+// 5: string 
 //
 
 int load_fits_cli()

@@ -258,10 +258,9 @@ printhelp_designsteps()
 }
 
 
-REGPIAACCOEFF="0.0001"
-REGPIAACALPHA="0.2"
-REGPIAAFCOEFF="0.0001"
-REGPIAAFALPHA="0.2"
+
+
+
 
 
 
@@ -361,6 +360,10 @@ loadparam pupoutmaskrad "0.99"
 loadparam invPIAAmode "1"
 
 
+loadparam REGPIAACCOEFF "300.0"
+loadparam REGPIAACALPHA "0.2"
+loadparam REGPIAAFCOEFF "300.0"
+loadparam REGPIAAFALPHA "0.2"
 
 
 
@@ -601,10 +604,13 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
+
 piaacmcsimrun $1 40
 exit
 EOF
@@ -730,6 +736,8 @@ mv ./$1/psfi0.fits ./$1/psfi0_step700.fits
 cleanup
 exit
 fi
+
+
 
 
 
@@ -1502,10 +1510,11 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 
@@ -1568,10 +1577,10 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 
@@ -1724,10 +1733,11 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 
@@ -1796,10 +1806,11 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 
@@ -1957,10 +1968,11 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 
@@ -2027,11 +2039,11 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
 
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 
@@ -2095,10 +2107,11 @@ loadfits "$1/piaa0Cmodes_step001.fits" piaa0Cmref
 loadfits "$1/piaa1Cmodes_step001.fits" piaa1Cmref
 loadfits "$1/piaa0Fmodes_step001.fits" piaa0Fmref
 loadfits "$1/piaa1Fmodes_step001.fits" piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=${REGPIAACCOEFF}
+REGPIAA_C_ALPHA=${REGPIAACALPHA}
+REGPIAA_F_COEFF=${REGPIAAFCOEFF}
+REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
 PIAACMC_dftgrid=2
 

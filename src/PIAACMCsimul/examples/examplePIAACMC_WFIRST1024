@@ -196,6 +196,7 @@ touch ./piaacmcconf_i000/step017.txt
 
 # propagate monochromatic solution (optional)
 ./run propmono 0
+# [1] Total light in scoring field = 28915, peak PSF = 1.84375e+10, SCOTINGTOTAL = 324  -> Average contrast = 4.84035e-09
 
 
 # ===========================================
@@ -244,14 +245,17 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 # this will take about 20mn
 # [1] Total light in scoring field = 791208, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.76162e-08
 # [1] Total light in scoring field = 789920, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.75875e-08
+# [1] Total light in scoring field = 724691, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.61352e-08
 
 
-# focal plane mask solution can view:
+# focal plane mask solution :
 #
 # tmp_fpmsag.fits
 # tmp_fpmCA_pha.fits
 # tmp_fpmCA_ampl.fits
 #
-
+# PSF:
+# psfi0.fits
+#
 
 

@@ -714,7 +714,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         IDtmpoutref = create_2Dimage_ID("_tmpoutref", dmdispcombconf[DMindex].xsizewfsref, dmdispcombconf[DMindex].ysizewfsref);
         sizexywfsref = dmdispcombconf[DMindex].xsizewfsref*dmdispcombconf[DMindex].ysizewfsref;
 
-       COREMOD_MEMORY_image_set_createsem(wfsref_out, 5);
+       COREMOD_MEMORY_image_set_createsem(wfsref_out, 10);
 
         printf("done\n\n");
         fflush(stdout);
@@ -729,14 +729,14 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         sprintf(name, "dm%02lddisp%02ld", DMindex, ch);
         printf("Channel %ld \n", ch);
         dmdispcombconf[DMindex].dmdispID[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
-        COREMOD_MEMORY_image_set_createsem(name, 5);
+        COREMOD_MEMORY_image_set_createsem(name, 10);
         dmdispptr_array[ch] = data.image[dmdispcombconf[DMindex].dmdispID[ch]].array.F;
     }
 
 
     sprintf(name, "dm%02lddisp", DMindex);
     dmdispcombconf[DMindex].IDdisp = create_image_ID(name, naxis, size, FLOAT, 1, 10);
-    COREMOD_MEMORY_image_set_createsem(name, 5);
+    COREMOD_MEMORY_image_set_createsem(name, 10);
     
     sprintf(name, "dm%02lddispt", DMindex);
     IDdispt = create_image_ID(name, naxis, size, FLOAT, 0, 0);
@@ -759,7 +759,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         if(vOK==0)
         {
             dmdispcombconf[DMindex].IDvolt = create_image_ID(dmdispcombconf[DMindex].voltname, naxis, size, USHORT, 1, 10);
-            COREMOD_MEMORY_image_set_createsem(dmdispcombconf[DMindex].voltname, 5);
+            COREMOD_MEMORY_image_set_createsem(dmdispcombconf[DMindex].voltname, 10);
          }
          else
             dmdispcombconf[DMindex].IDvolt = image_ID(dmdispcombconf[DMindex].voltname);
@@ -771,7 +771,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[0].status = 1;
 
     sprintf(name, "dm%02lddisp", DMindex);
-    COREMOD_MEMORY_image_set_createsem(name, 5);
+    COREMOD_MEMORY_image_set_createsem(name, 10);
 
     if(data.image[dmdispcombconf[DMindex].IDdisp].sem<2)
     {
@@ -867,8 +867,10 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
                     for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
                 {
                     data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel-ave;
-                    if(data.image[IDdispt].array.F[ii]<0.0)
-                        data.image[IDdispt].array.F[ii] = 0.0;
+                
+					if(dmdispcombconf[DMindex].voltmode==1)
+						if(data.image[IDdispt].array.F[ii]<0.0)
+							data.image[IDdispt].array.F[ii] = 0.0;
                 }
             }
             dmdispcombconf[DMindex].status = 6;

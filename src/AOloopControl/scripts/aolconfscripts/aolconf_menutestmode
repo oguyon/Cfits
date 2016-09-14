@@ -97,8 +97,8 @@ menuitems+=( "DMtws" "DM turbulence wind speed      = ${dmturbws} m/s" )
 menuitems+=( "DMtlo" "DM turbulence low order coeff = ${dmturblo}" )
 menuitems+=( "DMttint" "DM turbulence interval  = ${dmturbtint} us" )
 
-menuitems+=( "dm1v" "View DM chan 1 (turbulence) stream" )
-menuitems+=( "dm1m" "Monitor DM chan 1 (turbulence) stream" )
+menuitems+=( "dm1v" "View DM chan 10 (turbulence) stream" )
+menuitems+=( "dm1m" "Monitor DM chan 10 (turbulence) stream" )
 
 menuitems+=( "-" " " )
 stringcenter "START/STOP SIMULATOR   (tmux ao${LOOPNUMBER}test)"
@@ -285,7 +285,7 @@ menuitems+=( "psfv" "PSF view")
 
 
 
-dialog --colors --title "TEST MODE  - LOOP ${LOOPNUMBER}" \
+dialog --colors --title "TEST MODE  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \

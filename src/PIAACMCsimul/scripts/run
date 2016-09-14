@@ -85,6 +85,15 @@ loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fouri
 
 
 
+loadparam REGPIAACCOEFF 300.0
+loadparam REGPIAACALPHA 0.2
+loadparam REGPIAAFCOEFF 300.0
+loadparam REGPIAAFALPHA 0.2
+
+
+
+
+
 function printvarall() {
 
 echo -e "\033[1m          CURRENT PARAMETERS VALUES :\033[0m"
@@ -103,6 +112,10 @@ printvar "coin" "central obstruction at input beam [beam radius]"
 printvar "coout" "central obstruction at output beam [beam radius]"
 printvar "PIAAmaterial" "PIAA optics material"
 printvar "PIAAcirc" "FLAG: 1 if PIAA shapes are circular (no Fourier modes)"
+printvar "REGPIAACCOEFF" "PIAA regularization amplitude, cosine modes"
+printvar "REGPIAACALPHA" "PIAA regularization power law, cosine modes"
+printvar "REGPIAAFCOEFF" "PIAA regularization amplitude, Fourier modes"
+printvar "REGPIAAFALPHA" "PIAA regularization power law, Fourier modes"
 fi
 
 echo -e "\033[1m LYOT STOP(S) DESIGN: \033[0m"

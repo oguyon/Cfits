@@ -122,8 +122,9 @@ float cublasSgemv_beta  = 0.0;
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
+// 5: string 
 //
 
 #ifdef HAVE_CUDA
@@ -155,8 +156,8 @@ int CUDACOMP_Coeff2Map_offset_Loop_cli()
 
 int CUDACOMP_extractModesLoop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)+CLI_checkarg(6,2)==0)
-        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numl);
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,5)+CLI_checkarg(6,3)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)==0)
+        CUDACOMP_extractModesLoop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl);
     else
         return 1;
 }
@@ -219,10 +220,10 @@ int init_cudacomp()
     strcpy(data.cmd[data.NBcmd].key,"cudaextrmodes");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = CUDACOMP_extractModesLoop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop");
-    strcpy(data.cmd[data.NBcmd].syntax,"<inval stream> <intot stream> <modes> <ref val> <outmode vals> <GPU index [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes inmap inmaptot modes imref modeval 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDref_name, char *IDmodes_val_name, int GPUindex)");
+    strcpy(data.cmd[data.NBcmd].info,"CUDA extract mode values loop. Note that intot and refout parameters can be NULL");
+    strcpy(data.cmd[data.NBcmd].syntax,"<inval stream> <intot stream> <modes> <refin val> <refout_val> <outmode vals> <GPU index [long]> <PROCESS flag> <TRACEMODE flag> <MODE norm flag> <input semaphore> <axis orientation>");
+    strcpy(data.cmd[data.NBcmd].example,"cudaextrmodes inmap inmaptot modes imref imoutref modeval 3 1 1 1 3 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode)");
     data.NBcmd++;
     
 
@@ -2783,13 +2784,29 @@ int CUDACOMP_Coeff2Map_Loop(char *IDmodes_name, char *IDcoeff_name, int GPUindex
 // modes need to be orthogonal
 // single GPU computation
 // 
+// in_stream                  input stream
+// intot_strem   [optional]   input normalization stream 
+// IDmodes_name               Modes
+// IDrefin_name               input reference  - to be subtracted
+// IDrefout_name [optional]   output reference - to be added
+// IDmodes_val_name           ouput 
+// GPUindex                   GPU index
+// PROCESS                    1 if postprocessing
+// TRACEMODE                  1 if writing trace
+// MODENORM                   1 if input modes should be normalized
+// insem                      input semaphore index
+// axmode                     0 for normal mode extraction, 1 for expansion
 //
-int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDref_name, char *IDmodes_val_name, int GPUindex)
+// if IDrefout_name exists, match output image size to IDrefout_name
+//
+
+int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes_name, char *IDrefin_name, char *IDrefout_name, char *IDmodes_val_name, int GPUindex, int PROCESS, int TRACEMODE, int MODENORM, int insem, int axmode)
 {
     long IDin;
     long IDintot;
     long IDmodes;
     long IDref;
+    long ID;
     long ID_modeval;
     cublasHandle_t cublasH = NULL;
     cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
@@ -2812,7 +2829,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     long scnt;
     int semval;
     int semr;
-    long ii, kk;
+    long ii, jj, kk;
 
     long NBmodes;
     float *normcoeff;
@@ -2824,14 +2841,12 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     int imOK;
 
 
-    int TRACEMODE = 1;
     char traceim_name[200];
     long TRACEsize = 2000;
     long TRACEindex = 0;
     long IDtrace;
 
 
-    int PROCESS = 1;
     int NBaveSTEP = 10; // each step is 2x longer average than previous step
     double stepcoeff;
     double stepcoeff0 = 0.3;
@@ -2844,13 +2859,15 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     long semnb;
     double tmpv;
     
-  
+	int INNORMMODE = 0; // 1 if input normalized
     
     float *modevalarray;
 	float *modevalarrayref;
 
 	int initref = 0; // 1 when reference has been processed
-
+	int BETAMODE = 0;
+	long IDrefout;
+	
 
     IDin = image_ID(in_stream);
     m = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];
@@ -2859,23 +2876,63 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
    // total flux
    IDintot = image_ID(intot_stream);
    
+   if(IDintot==-1)
+	{
+		INNORMMODE = 0;
+		IDintot = create_2Dimage_ID("intot_tmp", 1, 1);
+		data.image[IDintot].array.F[0] = 1.0;
+	}
+	else
+		INNORMMODE = 1;
+	
+   
    // reference
-   IDref = image_ID(IDref_name);
+   IDref = image_ID(IDrefin_name);
+   if(IDref==-1)
+		{
+		IDref = create_2Dimage_ID("_tmprefin", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
+		for(ii=0;ii<data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];ii++)
+			data.image[IDref].array.F[ii] = 0.0;
+	}
    
-   
-    IDmodes = image_ID(IDmodes_name);
-    n = data.image[IDmodes].md[0].size[2];
-    NBmodes = n;
-   
+
+   if(axmode==0)
+		{
+			IDmodes = image_ID(IDmodes_name);
+			n = data.image[IDmodes].md[0].size[2];
+			NBmodes = n;
+		}
+	else
+	{
+		ID = image_ID(IDmodes_name);
+		NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
+		IDmodes = create_3Dimage_ID("_tmpmodes", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
+		for(ii=0;ii<data.image[IDin].md[0].size[0]; ii++)
+			for(jj=0;jj<data.image[IDin].md[0].size[1]; jj++)
+				{
+					for(kk=0;kk<NBmodes;kk++)
+						data.image[IDmodes].array.F[kk*data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]+jj*data.image[IDin].md[0].size[0]+ii] = data.image[ID].array.F[NBmodes*(data.image[IDin].md[0].size[1]+jj*data.image[IDin].md[0].size[0]+ii)+kk];
+				}
+		save_fits("_tmpmodes", "!_test_tmpmodes.fits");
+	}
+		
+		
 	normcoeff = (float*) malloc(sizeof(float)*NBmodes);
 	
+	if(MODENORM==1)
+	{
 	for(k=0;k<NBmodes;k++)
 		{
 			normcoeff[k] = 0.0;
 			for(ii=0;ii<m;ii++)
 				normcoeff[k] += data.image[IDmodes].array.F[k*m+ii] * data.image[IDmodes].array.F[k*m+ii];
 		}
-
+	}
+	else
+		for(k=0;k<NBmodes;k++)
+			normcoeff[k] = 1.0;
+			
+			
 
     modevalarray = (float*) malloc(sizeof(float)*n);
 	modevalarrayref = (float*) malloc(sizeof(float)*n);
@@ -2884,8 +2941,13 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 
 
     arraytmp = (long*) malloc(sizeof(long)*2);
-    arraytmp[0] = NBmodes;
-    arraytmp[1] = 1;
+
+	//IDrefout = image_ID(IDrefout_name);
+	//if(IDrefout==-1)
+	
+		arraytmp[0] = NBmodes;
+		arraytmp[1] = 1;
+	
     ID_modeval = create_image_ID(IDmodes_val_name, 2, arraytmp, FLOAT, 1, 0);
     free(arraytmp);
     COREMOD_MEMORY_image_set_createsem(IDmodes_val_name, 10);
@@ -2930,13 +2992,13 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
     if (cudaStat != cudaSuccess)
     {
-        printf("cudaMalloc d_modes returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        printf("cudaMalloc d_modes returned error code %d, line %d\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
     cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
-        printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
 
@@ -2945,7 +3007,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     cudaStat = cudaMalloc((void**)&d_in, sizeof(float)*m);
     if (cudaStat != cudaSuccess)
     {
-        printf("cudaMalloc d_in returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        printf("cudaMalloc d_in returned error code %d, line %d\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
 
@@ -2954,7 +3016,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*NBmodes);
     if (cudaStat != cudaSuccess)
     {
-        printf("cudaMalloc d_modeval returned error code %d, line(%d)\n", cudaStat, __LINE__);
+        printf("cudaMalloc d_modeval returned error code %d, line %d\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
 
@@ -3123,12 +3185,20 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 			else
 				cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
 				
+				
             if (cudaStat != cudaSuccess)
             {
-                printf("cudaMemcpy returned error code %d, line(%d)\n", cudaStat, __LINE__);
+				printf("initref = %d    %ld  %ld\n", initref, IDref, IDin);
+                printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
                 exit(EXIT_FAILURE);
             }
 
+
+			if(BETAMODE == 1)
+				{
+					beta = -1.0;
+					cudaStat = cudaMemcpy(d_modeval, modevalarrayref, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);					
+				}
 
             // compute
             cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
@@ -3149,20 +3219,39 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
             // copy result
             data.image[ID_modeval].md[0].write = 1;
 
-			if(initref==0)
-				cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+			if(initref==0) // construct reference to be subtracted 
+				{
+					cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);						
+
+					IDrefout = image_ID(IDrefout_name);
+					if(IDrefout != -1)
+						for(k=0;k<NBmodes;k++)
+							modevalarrayref[k] -= data.image[IDrefout].array.F[k];  
+					
+					if((INNORMMODE==0)&&(MODENORM==0))
+						BETAMODE = 1; // include ref subtraction in GPU operation
+					else
+						BETAMODE = 0;
+				}
             else
 				{
 					cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
-            
-					for(k=0;k<NBmodes;k++)
-						data.image[ID_modeval].array.F[k] = (modevalarray[k]/data.image[IDintot].array.F[0]-modevalarrayref[k])/normcoeff[k];
+					
+					if(BETAMODE==0)
+					{
+							for(k=0;k<NBmodes;k++)
+								data.image[ID_modeval].array.F[k] = (modevalarray[k]/data.image[IDintot].array.F[0]-modevalarrayref[k])/normcoeff[k];
+					}
+					else
+						for(k=0;k<NBmodes;k++)
+								data.image[ID_modeval].array.F[k] = modevalarray[k];
+								
                 
-			COREMOD_MEMORY_image_set_sempost_byID(ID_modeval, -1);
+					COREMOD_MEMORY_image_set_sempost_byID(ID_modeval, -1);
 			
-            data.image[ID_modeval].md[0].cnt0++;
-            data.image[ID_modeval].md[0].write = 0;
-			}
+					data.image[ID_modeval].md[0].cnt0++;
+					data.image[ID_modeval].md[0].write = 0;
+				}
 
             if(TRACEMODE == 1)
                 {

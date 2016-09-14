@@ -100,7 +100,16 @@ Script                         Description
 
 
 
-# Hardware Simulation 
+
+
+
+
+
+
+
+
+
+# Physical Hardware Simulation 
 
 ## Overview
 
@@ -265,6 +274,28 @@ File `aosimcoroLOWFS.conf.default`:
 
 
 
+
+# Linear Hardware Simulation
+
+## Overview
+
+The Linear Hardware Simulation (LHS) uses a linear response matrix to compute the WFS image from the DM state. It is significantly faster than the Physical Hardware Simulation (PHS).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # AOloopControl setup
 
 
@@ -290,6 +321,9 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 
 
 ## Setting up the hardware interfaces
+
+
+### Manual setup
 
 - start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):
 
@@ -320,7 +354,9 @@ The loop name (`testsim` in the above example) will allow the correct custom set
 - **link to WFS camera** (`wfs` to `Loop Configuration` screen). Select the WFS shared memory stream. 
 
 
-Note: An `aosetup` script may be used to perform all these operations. Inspect the content of directory `aosetup` to see such scripts. You may use or modify as needed. If you use a `aosetup` script, execute it from the working directory, and then start aolconf:
+### Setup script
+
+An `aosetup` script may be used to perform all these operations. Inspect the content of directory `aosetup` to see such scripts. You may use or modify as needed. If you use a `aosetup` script, execute it from the working directory, and then start aolconf:
 
 ~~~
 ./aosetup/aosetup_<myLoop>
@@ -458,7 +494,7 @@ Note that at this point, the files are NOT loaded in shared memory, but the arch
 
 There are multiple ways to perform the computations on CPU and/or GPUs. The main 3 parameters are:
 
-- **GPU**     : 0 if matrix multiplication(s) done on CPU, >0 for GPU use
+- **GPU**     : 0 if matrix multiplication(s) done on CPU, >0 for GPU use. This is the number GPUs to use for matrix mult.
 
 - **CMmode**  : 1 if using a combined matrix between WFS pixels and DM actuators, skipping intermediate computation of modes
 
@@ -483,6 +519,59 @@ GPU     CMmode    GPUall    Matrix       Features   Description
 
 0       OFF        -        contrM                  imWFS2 multiplied by modal control matrix
 ------- --------- --------- ------------ ----------- ---------------------------------------------------------------------
+
+
+
+## Auxilliary processes
+
+A number of auxilliary processes can be running in addition to the main loop operation.
+
+
+### Extract WFS modes
+
+Launches script `./auxscripts/modesextractwfs` :
+
+~~~ {.numberLines}
+!INCLUDE "../scripts/auxscripts/modesextractwfs"
+~~~
+
+
+### Extract open loop modes
+
+Launches script C function (CPU-based):
+
+~~~
+key       :    aolcompolm
+module    :    AOloopControl.c
+info      :    compute open loop mode values
+syntax    :    <loop #>
+example   :    aolcompolm 2
+C call    :    long AOloopControl_ComputeOpenLoopModes(long loop)
+~~~
+
+
+### Running average of dmC
+
+
+Launches script `./auxscripts/aol_dmCave 0.0005` :
+
+~~~ {.numberLines}
+!INCLUDE "../scripts/auxscripts/aol_dmCave"
+~~~
+
+
+### Compute and average wfsres
+
+
+Launches script `./auxscripts/aolmkWFSres 0.0005` :
+
+~~~ {.numberLines}
+!INCLUDE "../scripts/auxscripts/aolmkWFSres"
+~~~
+
+
+
+
 
 
 
@@ -567,6 +656,12 @@ The next steps are similar to the ones previously described, with the following 
 
 
 
+
+
+
+
+
+
 # Predictive control (experimental)
 
 ## Scripts
@@ -579,6 +674,52 @@ File                          Description
 
 **aolARPFblock**              AO find optimal AR linear predictive filter 
 ----------------------------- -----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# REFERENCE
+
+## Semaphores
+
+
+-------------- -----------------------------------------------------------
+dm00disp       
+-------------- -----------------------------------------------------------
+0              ?
+
+6              -> compute simulated linear WFS image 
+               
+-------------- -----------------------------------------------------------
+
+
+
+-------------- -----------------------------------------------------------
+aol0_imWFS0    
+-------------- -----------------------------------------------------------
+0              ?
+
+2              -> extract modes from WFS image
+               script `./auxscripts/modesextractwfs`
+               
+-------------- -----------------------------------------------------------
 
 
 

@@ -80,6 +80,12 @@ echo "0.3" > conf/conf_coin.txt
 echo "0.2" > conf/conf_coout.txt
 echo "1.0" > conf/conf_fpmradld.txt
 
+echo "0.5" > conf/conf_REGPIAACALPHA.txt
+echo "1000.0" > conf/conf_REGPIAACCOEFF.txt  
+echo "0.5" > conf/conf_REGPIAAFALPHA.txt  
+echo "1000.0" > conf/conf_REGPIAAFCOEFF.txt
+
+
 # LYOT STOP(S) DESIGN
 echo "1650" > conf/conf_lambda.txt
 
@@ -177,15 +183,16 @@ echo "0.2" > conf/conf_LyotZmax.txt
 ./run optsingle 10
 # this step takes approximately 20mn
 # BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001336506 / 0.000004015620  -> 0.651398409628  0.071384621752
+# BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001712712 / 0.000004288296  -> 0.652970578150  0.075272989285
 
 
 # complete step 010: Tune Lyot stops conjugations
 ./run optsingle 11
-# start 09:25
 # this step takes approximately 1hr
 # to monitor progress: tail -f result_LMpos.log 
 
 # [0] Total light in scoring field = 1.67163e+09, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.98592e-06
+# [0] Total light in scoring field = 1.62817e+09, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.8563e-06
 
 
 
@@ -193,18 +200,34 @@ echo "0.2" > conf/conf_LyotZmax.txt
 # complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 ./run optsingle 12
 # this step takes approximately 6h (PIAACMC_dftgrid=2)
+# contrast =  1.46909e-06
 
+# skip step 12
+touch ./piaacmcconf_i000/step012.txt
 # complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
 ./run optsingle 13
 # this step takes approximately 18h
 
+
+
 # complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
 ./run optsingle 14
 # this step takes approximately 20mn
+# BEST SOLUTION: 3.133245863066 / 3.012736406794    0.000002213436 / 0.000003848618  -> 0.703131215257  0.086711655779
+
 
 # complete step 014 : Tune Lyot stops conjugations
 ./run optsingle 15
-# this step takes approximately 4h
+# this step takes approximately 1h
+
+# complete step 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
+./run optsingle 16
+# [0] Total light in scoring field = 6.07659e+08, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.81245e-06
+
+# skip steps 16 and 17
+touch ./piaacmcconf_i000/step016.txt
+touch ./piaacmcconf_i000/step017.txt
+
 
 
 
