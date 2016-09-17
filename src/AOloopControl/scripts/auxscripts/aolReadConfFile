@@ -1,0 +1,18 @@
+#!/bin/bash
+
+EXPECTED_ARGS=1
+
+
+loopnb=$(cat LOOPNUMBER)
+
+file="./conf/conf_$1_name.txt"
+if [ -a $file ]
+	then
+	fname=$(echo "$(cat $file)")
+	else
+	fname="$1.fits" #default
+fi
+aoconflog "linking $1 to ${fname}" 
+./auxscripts/Fits2shm ${fname} aol${loopnb}_$1
+rm conf/aol${loopnb}_$1.fits
+ln -s $PWD/${fname} conf/aol${loopnb}_$1.fits

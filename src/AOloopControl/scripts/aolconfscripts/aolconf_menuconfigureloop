@@ -1386,11 +1386,11 @@ aoconflogext "set auto calib mrm time to $ACmrmtime sec"
 
 
 ACstopZ)
-touch function_LOresp_off.wait
+touch function_zresp_off.wait
 ;;
 
 ACstopM)
-touch function_zresp_off.wait
+touch function_LOresp_off.wait
 ;;
 
 
