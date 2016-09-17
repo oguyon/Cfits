@@ -617,7 +617,7 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
         gpumatmultconf[index].Nsize[gpumatmultconf[index].NBstreams-1] = gpumatmultconf[index].N-gpumatmultconf[index].Noffset[gpumatmultconf[index].NBstreams-1];
      
      
-        printf("Allocating physical GPU(s) to stream(s) (index %d, NBGPU(s) = %d)\n", index, NBGPUs);
+        printf("Allocating physical GPU(s) to stream(s) (index %d, NBGPU(s) = %ld)\n", index, NBGPUs);
         printf("%d stream(s)\n", gpumatmultconf[index].NBstreams);
         fflush(stdout);
      
@@ -1299,8 +1299,8 @@ void *compute_function( void *ptr )
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
              
-				printf("device %ld of index %ld\n", device, index);
-				printf("GPU device : %ld\n", gpumatmultconf[index].GPUdevice[device]);
+				printf("device %d of index %d\n", device, index);
+				printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
 				
 				printf("alpha = %f\n", cublasSgemv_alpha);
  				printf("alpha = %f\n", cublasSgemv_beta);
@@ -3099,6 +3099,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
             COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
             free(sizearraytmp);
         }
+
 
   
        if(PROCESS==1)
