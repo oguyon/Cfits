@@ -3887,7 +3887,9 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
     char *ptr1;
     char *ptr2;
     long k;
-
+	int axis;
+	int shmOK;
+	
 
     ID = image_ID(IDname);
     naxis = data.image[ID].md[0].naxis;
@@ -3898,12 +3900,37 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
     for(k=0; k<naxis; k++)
         sizearray[k] = data.image[ID].md[0].size[k];
 
-
-    IDshm = create_image_ID(IDshmname, naxis, sizearray, atype, 1, 0);
+	shmOK = 1;
+	IDshm = read_sharedmem_image(IDshmname);
+	if(IDshm!=-1)
+	{
+		// verify type and size
+		if(data.image[ID].md[0].naxis!=data.image[IDshm].md[0].naxis)
+			shmOK = 0;
+		if(shmOK==1)
+			{
+				for(axis=0;axis<data.image[IDshm].md[0].naxis;axis++)
+					if(data.image[ID].md[0].size[axis]!=data.image[IDshm].md[0].size[axis])
+						shmOK = 0;
+			}
+		if(data.image[ID].md[0].atype!=data.image[IDshm].md[0].atype)
+			shmOK = 0;
+	
+		if(shmOK==0)
+			{
+				delete_image_ID(IDshmname);
+				IDshm = -1;
+			}
+	}
+	
+	if(IDshm==-1)
+		IDshm = create_image_ID(IDshmname, naxis, sizearray, atype, 1, 0);
     free(sizearray);
 
     //data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
     //printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
+
+	data.image[IDshm].md[0].write = 1;
 
     switch (atype) {
     case FLOAT :
@@ -3925,6 +3952,9 @@ long COREMOD_MEMORY_cp2shm(char *IDname, char *IDshmname)
         printf("data type not supported\n");
         break;
     }
+    COREMOD_MEMORY_image_set_sempost_byID(IDshm, -1);
+	data.image[IDshm].md[0].cnt0++;
+	data.image[IDshm].md[0].write = 0;
 
     return(0);
 }

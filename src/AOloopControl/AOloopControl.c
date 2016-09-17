@@ -9716,7 +9716,7 @@ int AOcompute(long loop, int normalize)
                 {
                     if(data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0 != contrMcactcnt0[PIXSTREAM_SLICE])
                     {
-                        printf("NEW CONTROL MATRIX DETECTED -> RECOMPUTE REFERENCE x MATRIX\n");
+                        printf("NEW CONTROL MATRIX DETECTED (%s) -> RECOMPUTE REFERENCE x MATRIX\n", data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].name);
                         fflush(stdout);
                         initWFSref_GPU[PIXSTREAM_SLICE] = 0;
                         contrMcactcnt0[PIXSTREAM_SLICE] = data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0;
@@ -9724,7 +9724,7 @@ int AOcompute(long loop, int normalize)
 
                     if(data.image[aoconfID_wfsref].md[0].cnt0 != wfsrefcnt0)  // (*)
                     {
-                        printf("NEW REFERENCE WFS DETECTED  [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
+                        printf("NEW REFERENCE WFS DETECTED (%s) [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].name, data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
                         fflush(stdout);
                         initWFSref_GPU[PIXSTREAM_SLICE] = 0;
                         wfsrefcnt0 = data.image[aoconfID_wfsref].md[0].cnt0;

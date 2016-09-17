@@ -97,7 +97,7 @@ menuitems+=( "CM" "$menustring" )
 
 menuitems+=( " " " " )
 if [ -f "aolmkmodes.runproc" ]; then
-menuitems+=( " chk " "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
+menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
 else
 menuitems+=( "SMloadCM" "Load current Files" )
 fi
@@ -302,6 +302,15 @@ fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlin
 echo "$fname" > ./conf/conf_contrM_name.txt
 ReadConfFile "contrM"
 menucontrolloop_default="CM"
+;;
+
+
+chkSMloadCM)
+if [ -f "aolmkmodes.runproc" ]; then
+menucontrolloop_default="chkSMloadCM"
+else
+menucontrolloop_default="SMloadCM"
+fi
 ;;
 
 
