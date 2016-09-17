@@ -67,16 +67,48 @@ menuitems+=( "-" " " )
 stringcenter "LINEAR SIMULATOR"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
+
+makemenuitemstringaolshm "zrespMlinsim" "linear simulation Zonal Resp Mat"
+menuitems+=( "zrespMlinsim" "$menustring" )
+
+makemenuitemstringaolshm "wfsref0linsim" "linear simulation WFS reference"
+menuitems+=( "wfsref0linsim" "$menustring" )
+
+file="./conf/conf_GPUlinsim.txt"
+GPUlinsim=$( cat $file )
+if [[ -f "$file" && ${GPUlinsim} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPUlinsim="0"
+fi
+menuitems+=( "GPUlinsim" "[ $GPUlinsim ]    Linear WFS simulation: GPU device" )
+
+
+file="./conf/conf_linsimDelay.txt"
+linsimDelay=$( cat $file )
+if [[ -f "$file" && ${linsimDelay} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+linsimDelay="0"
+fi
+menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop delay" )
+
+
+
 if [ "${lsimstatus}" = "OFF" ];
 then
-menuitems+=( "lsimon" "             START linear simulator" )
+menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    press to START linear simulator" )
 else
-menuitems+=( "lsimoff" "             STOP  linear simulator" )
+menuitems+=( "lsimoff" "\Zr\Z2[runnning]\Zn    \Zr\Z1press to STOP  linear simulator\Zn" )
 fi
 
 
+
+
 menuitems+=( "-" " " )
-stringcenter "TURBULENCE  -> dm${DMindex}disp01  (tmux aosim${LOOPNUMBER}dm${DMindex}turb)"
+stringcenter "TURBULENCE  -> dm${DMindex}disp10  (tmux aosim${LOOPNUMBER}dm${DMindex}turb)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
@@ -309,7 +341,7 @@ Creates/links shared memory arrays: \n
    aosimpsfout         : output PSF (intensity)\n
    aosimwfsim          : output WFS image (intensity)\n
 \n
-Recomputes aosimpsfout when either dm${DMindex}disp01 or WFturb changes\n
+Recomputes aosimpsfout when either dm${DMindex}disp10 or WFturb changes\n
 \n
 syncmode:\n
   0: sync to turbulence\n
@@ -318,19 +350,65 @@ syncmode:\n
 \n' 40 80
 ;;
 
+zrespMlinsim)
+	exec 3>&1;
+	zrespMlinsimfname=$(dialog --title "linear simulation: Select Zonal RM" --stdout --title "linear simulation: select zonal RM" --fselect "${zrespMlinsimfname}" $nbwlines $nbwcols)
+	echo "$zrespMlinsimfname" > ./conf/conf_zrespMlinsim_name.txt
+	ReadConfFile "zrespMlinsim"
+	getshmimsize "aol${LOOPNUMBER}_zrespMlinsim"
+;;
+
+wfsref0linsim)
+	exec 3>&1;
+	wfsref0linsimfname=$(dialog --title "linear simulation: Select WFS ref" --stdout --title "linear simulation: select WFS ref" --fselect "${wfsref0linsimfname}" $nbwlines $nbwcols)
+	echo "$wfsref0linsimfname" > ./conf/conf_wfsref0linsim_name.txt
+	ReadConfFile "wfsref0linsim"
+	getshmimsize "aol${LOOPNUMBER}_wfsref0linsim"
+;;
+
+
+    GPUlinsim)
+file="./conf/conf_GPUlinsim.txt"
+exec 3>&1;
+GPUlinsim=$(dialog --inputbox "linear WFS simulation GPU device" 0 0 "$GPUlinsim" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUlinsim" > $file
+aoconflog "set GPUlinsim = ${GPUlinsim}"
+menucontrolloop_default="GPUlinsim"
+;;
+
+linsimDelay)
+file="./conf/conf_linsimDelay.txt"
+exec 3>&1;
+linsimDelay=$(dialog --inputbox "linear WFS simulation frame(s) delay" 0 0 "$linsimDelay" 2>&1 1>&3);
+exec 3>&-;
+echo "$linsimDelay" > $file
+aoconflog "set linsimDelay = ${linsimDelay}"
+menucontrolloop_default="linsimDelay"
+;;
+
 	lsimon)
-tmuxname="aol${LOOPNUMBER}-linsim"
 file="./status/lsimstatus.txt"
 echo "ON" > $file
+
+tmuxname="aol${LOOPNUMBER}linsimD"
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./auxscripts/aolLinSim 0" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
+
+tmuxname="aol${LOOPNUMBER}linsim"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim ${GPUlinsim}" C-m
 menutestmode_default="lsimoff"
 ;;
 	lsimoff)
-tmuxname="aol${LOOPNUMBER}-linsim"
 file="./status/lsimstatus.txt"
 echo "OFF" > $file
+
+tmuxname="aol${LOOPNUMBER}linsimD"
 tmux kill-session -t $tmuxname
+tmuxname="aol${LOOPNUMBER}linsim"
+tmux kill-session -t $tmuxname
+
 menutestmode_default="lsimon"
 ;;
 	tv)
@@ -377,11 +455,11 @@ aoconflog "dmturbtint = $dmturbtint"
 
 
 	dm1v)
-$shmimviewexec /tmp/dm${DMindex}disp01.im.shm 4 &> /dev/null &
+$shmimviewexec /tmp/dm${DMindex}disp10.im.shm 4 &> /dev/null &
 menutestmode_default="dm1v"
 ;;   
 	dm1m)
-$shmimmonexec dm${DMindex}disp01
+$shmimmonexec dm${DMindex}disp10
 menutestmode_default="dm1m"
 ;;   
 

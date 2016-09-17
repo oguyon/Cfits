@@ -2,15 +2,176 @@
 
 
 aolconfFLAG="1"
+NBARGS=0
+
+if [ -f LOOPNAME ]; then
+LOOPNAME=$( cat LOOPNAME )
+else
+LOOPNAME="null"
+fi
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+echo "pname = $pname"
+
+
+
+
+printHELP_confFILES ()
+{
+echo "------------------------------------------------------------------------"
+echo -e "\033[1m               CONFIGURATION FILES \033[0m"
+echo "------------------------------------------------------------------------"
+echo "	CONFNUMBER                    loop number (long)"
+echo "	CONFNAME                      loop name"
+echo "  conf/conf_dmC_name.txt        DM control"
+echo "------------------------------------------------------------------------"
+}
+
+
+
+
+
+printHELP ()
+{
+	
+echo
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname :  AO loop CONTROL - main script $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo " "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [options]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "   --help -h             print (h)elp and exit"
+echo "   --help1               print 1 line summary"
+echo "          -H  <string>   (H)elp category"
+echo "                    cf     configuration files"     
+echo "          -L <long>      (L)oop number"
+echo "          -N <string>    loop (N)ame"
+echo "          -C             run (C)PU config"
+echo "          -c             (c)lear all settings"
+echo "          -n             do (n)ot load configuration on startup"
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+	printf "%20s       AO loop CONTROL - main script\n" "$0" 
+}
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+LOADMEM=1
+
+
+### Start getopts code ###
+while getopts :hH:L:N:Ccn FLAG; do
+  case $FLAG in
+    H) # detailed help
+    if [ "$OPTARG" == "cf" ]; then
+    printHELP_confFILES
+    exit
+    fi
+    echo "ERROR: choice $OPTARG not recognized"
+    exit
+    ;;
+    L)  #  set loop number
+      LOOPNUMBER=$OPTARG
+      echo "LOOP NUMBER = $LOOPNUMBER"
+      echo "$LOOPNUMBER" > $LOOPNUMBER_file
+      aoconflog "setting LOOPNUMBER to $LOOPNUMBER"
+      ;;
+    N) # set loop name
+    LOOPNAME=$OPTARG
+    echo "LOOP NAME = $LOOPNAME"
+    echo "$LOOPNAME" > $LOOPNAME_file
+    aoconflog "setting LOOPNAME to $LOOPNAME"
+    ;;
+    C) # configure CPU
+    echo "Configure CPU"
+    CPUconfRT=1
+    ;;
+    h)  #show help
+	if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    c) # clear
+    echo "Clearing all settings"
+    rm $LOOPNUMBER_file
+    rm $LOOPNAME_file
+    rm conf/*
+    rmdir conf
+    rm status/*
+    rmdir status
+    rm tmp/*
+    rmdir tmp
+    exit
+    ;;
+    n) # do not load configuration upon startup
+    LOADMEM=0
+    ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1)) 
+
+### End getopts code ###
+
+
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo -e \\n"Illegal number of parameters ($NBARGS params required, $# entered)"\\n
+fi
+printHELP
+        exit
+fi
+
+
+
+
+
+
+
+
+
+
+
 
 # help, warning, error
 . ./aolconfscripts/aolconf_funcs
-
-
-
-LOOPNAME=$( cat LOOPNAME )
-echo "LOOPNAME = $LOOPNAME"
-
 
 
 # ======================= LOGGING =================================
@@ -29,22 +190,6 @@ echo "$@" >> aolconf.log
 dolog "$LOOPNAME" "$@"
 dologext "$LOOPNAME $@"
 }
-
-
-
-# ================= screen printing =============================
-
-# Num  Colour    #define         R G B
-
-# 0    black     COLOR_BLACK     0,0,0
-# 1    red       COLOR_RED       1,0,0
-# 2    green     COLOR_GREEN     0,1,0
-# 3    yellow    COLOR_YELLOW    1,1,0
-# 4    blue      COLOR_BLUE      0,0,1
-# 5    magenta   COLOR_MAGENTA   1,0,1
-# 6    cyan      COLOR_CYAN      0,1,1
-# 7    white     COLOR_WHITE     1,1,1
-
 
 
 
@@ -83,117 +228,8 @@ shmimmonexec="shmimmon"
 
 
 
-printHELP_confFILES ()
-{
-echo "------------------------------------------------------------------------"
-echo -e "\033[1m               CONFIGURATION FILES \033[0m"
-echo "------------------------------------------------------------------------"
-echo "	CONFNUMBER                    loop number (long)"
-echo "	CONFNAME                      loop name"
-echo "  conf/conf_dmC_name.txt        DM control"
-echo "------------------------------------------------------------------------"
-}
-
-
-
-
-
-
-
-NBARGS=0
-
-
-
 . ./aolconfscripts/aolconf_readconf
 
-
-
-
-LOADMEM=1
-
-
-### Start getopts code ###
-
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
-
-while getopts :hH:L:N:Ccn FLAG; do
-  case $FLAG in
-    H) # detailed help
-    if [ "$OPTARG" == "cf" ]; then
-    printHELP_confFILES
-    exit
-    fi
-    echo "ERROR: choice $OPTARG not recognized"
-    exit
-    ;;
-    L)  #  set loop number
-      LOOPNUMBER=$OPTARG
-      echo "LOOP NUMBER = $LOOPNUMBER"
-      echo "$LOOPNUMBER" > $LOOPNUMBER_file
-      aoconflog "setting LOOPNUMBER to $LOOPNUMBER"
-      ;;
-    N) # set loop name
-    LOOPNAME=$OPTARG
-    echo "LOOP NAME = $LOOPNAME"
-    echo "$LOOPNAME" > $LOOPNAME_file
-    aoconflog "setting LOOPNAME to $LOOPNAME"
-    ;;
-    C) # configure CPU
-    echo "Configure CPU"
-    CPUconfRT=1
-    ;;
-    h)  #show help
-      printHELP
-      exit
-      ;;
-    c) # clear
-    echo "Clearing all settings"
-    rm $LOOPNUMBER_file
-    rm $LOOPNAME_file
-    rm conf/*
-    rmdir conf
-    rm status/*
-    rmdir status
-    rm tmp/*
-    rmdir tmp
-    exit
-    ;;
-    n) # do not load configuration upon startup
-    LOADMEM=0
-    ;;
-    \?) #unrecognized option - show help
-      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
-      printHELP
-      #If you just want to display a simple error message instead of the full
-      #help, remove the 2 lines above and uncomment the 2 lines below.
-      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
-      #exit 2
-      ;;
-  esac
-done
-
-shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
-
-### End getopts code ###
-
-
-
-
-
-
-
-
-
-if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
-if [ "$#" -ne $NBARGS ]; then
-    echo -e \\n"Illegal number of parameters ($NBARGS params required, $# entered)"\\n
-fi
-printHELP
-        exit
-fi
 
 
 

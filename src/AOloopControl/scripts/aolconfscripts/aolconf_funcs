@@ -26,27 +26,12 @@ aoconflog "ERROR: $@"
 }
 
 
-printHELP ()
+function logRunningProcess 
 {
-echo
-echo "------------------------------------------------------------------------"
-echo -e "\033[1m               AO loop CONTROL - main script \033[0m"
-echo " "
-echo "------------------------------------------------------------------------"
-echo -e "\033[1m                       USAGE \033[0m"
-echo " $0 [options]"
-echo "  OPTIONS : "
-echo "          -h             print (h)elp and exit"
-echo "          -H  <string>   (H)elp category"
-echo "                    cf     configuration files"     
-echo "          -L <long>      (L)oop number"
-echo "          -N <string>    loop (N)ame"
-echo "          -C             run (C)PU config"
-echo "          -c             (c)lear all settings"
-echo "          -n             do (n)ot load configuration on startup"
-echo "------------------------------------------------------------------------"
+	datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+	string=$( printf "%s   %20s   %s" "${datestr}" "$1" "$2" )
+	echo "$string" > $1.runproc 
 }
-
 
 
 

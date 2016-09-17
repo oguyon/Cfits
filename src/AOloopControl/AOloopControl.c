@@ -457,9 +457,9 @@ int Measure_zonalRM_cli()
 
 int AOloopControl_mkCalib_map_mask_cli()
 {
-     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)==0)
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)
         {
-            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf);
             return 0;
         }
     else
@@ -937,6 +937,29 @@ int AOloopControl_DMmodulateAB_cli()
 
 
 
+int AOloopControl_frameDelay_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,2)==0)
+    {
+        AOloopControl_frameDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+int AOloopControl_AnalyzeRM_sensitivity_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,3)==0)
+    {
+        AOloopControl_AnalyzeRM_sensitivity(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
 
 
 
@@ -1056,9 +1079,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_mkCalib_map_mask_cli;
     strcpy(data.cmd[data.NBcmd].info,"make sensitivity maps and masks from response matrix");
-    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS response map fname [string]>  <output DM response map fname [string]>");
-    strcpy(data.cmd[data.NBcmd].example,"aolRMmkmasks");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS response map fname [string]>  <output DM response map fname [string]> <percentile low> <coefficient low> <percentile high> <coefficient high>");
+    strcpy(data.cmd[data.NBcmd].example,"aolRMmkmasks .. 0.2 1.0 0.5 0.3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh)");
     data.NBcmd++;
 
 
@@ -1571,7 +1594,24 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aoldmmodAB probeA probeB wfsrespmat wfsref 0.1 6");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *IDdmstream_name, char *IDrespmat_name, char *IDwfsrefstream_name, double delay, long NBprobes)");
     data.NBcmd++;
+     
+    strcpy(data.cmd[data.NBcmd].key,"aolframedelay");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_frameDelay_cli;
+    strcpy(data.cmd[data.NBcmd].info,"introduce temporal delay");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in> <temporal kernel> <out> <sem index>");
+    strcpy(data.cmd[data.NBcmd].example,"aolframedelay in kern out 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_frameDelay(char *IDin_name, char *IDkern_name, char *IDout_name, int insem)");
+    data.NBcmd++;
     
+	strcpy(data.cmd[data.NBcmd].key,"aolzrmsens");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_AnalyzeRM_sensitivity_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Measure zonal RM sensitivity");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMmodes> <DMmask> <WFSref> <WFSresp> <WFSmask> <outname>");
+    strcpy(data.cmd[data.NBcmd].example,"aolzrmsens DMmodes dmmask wfsref0 zrespmat wfsmask outfile.txt");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_name, char *IDwfsref_name, char *IDwfsresp_name, char *IDwfsmask_name, char *foutname)");
+    data.NBcmd++;
 
 
     // add atexit functions here
@@ -2201,7 +2241,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     char fname2[200];
     char command[1000];
 
-    float value, value0, value1, valuen;
+    float value, value0, value1, value1cnt, valuen;
     long msizexy;
     long m0, mblock0;
 
@@ -2984,7 +3024,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
-            data.image[IDSVDmask].array.F[ii] = 1.0;
+            data.image[IDSVDmask].array.F[ii] = data.image[IDmaskRM].array.F[ii];
         IDSVDmodein = create_2Dimage_ID("SVDmodein", msizex, msizey);
 
         mok = (int*) malloc(sizeof(int)*NBmm);
@@ -3075,6 +3115,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
+			
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<msizexy; ii++)
@@ -3118,10 +3159,20 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
             for(m=0; m<cnt; m++)
             {
+				value1 = 0.0;
+				value1cnt = 0.0;
+				for(ii=0; ii<msizexy; ii++)
+					{
+						value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+						value1cnt += data.image[IDmaskRM].array.F[ii];
+					}
+				for(ii=0; ii<msizexy; ii++)
+					data.image[IDm].array.F[m*msizexy+ii] -= value1/value1cnt;
+				
                 value1 = 0.0;
                 for(ii=0; ii<msizexy; ii++)
-                    value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDm].array.F[m*msizexy+ii];
-                rms = sqrt(value1/msizexy);
+                    value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                rms = sqrt(value1/value1cnt);
                 for(ii=0; ii<msizexy; ii++)
                     data.image[IDm].array.F[m*msizexy+ii] /= rms;
             }
@@ -3699,10 +3750,35 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                             data.image[IDmwfs1].array.F[kk*wfssize + ii] += data.image[ID_VTmatrix].array.F[kk1*data.image[IDSVDcoeff].md[0].size[0]+kk]*data.image[IDmwfs].array.F[kk1*wfssize + ii];
                     }
 
-                    value1 = 0.0;
+					value1 = 0.0;
+					value1cnt = 0.0;
+					for(ii=0; ii<msizexy; ii++)
+						{
+						value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+						value1cnt += data.image[IDmaskRM].array.F[ii];
+						}
+					for(ii=0; ii<msizexy; ii++)
+						data.image[IDmdm1].array.F[kk*msizexy+ii] -= value1/value1cnt;
+				
+					value1 = 0.0;
+					for(ii=0; ii<msizexy; ii++)
+						value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+					rms = sqrt(value1/value1cnt);
+					
+					for(ii=0; ii<msizexy; ii++)
+						data.image[IDmdm1].array.F[kk*msizexy+ii] /= rms;
+
+					for(ii=0; ii<wfssize; ii++)
+						data.image[IDmwfs1].array.F[kk*wfssize+ii] /= rms;
+
+
+               /*     value1 = 0.0;
                     for(ii=0; ii<msizexy; ii++)
                         value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
                     rms = sqrt(value1/totm);
+                    */
+                    
+                    
                     // for(ii=0; ii<msizexy; ii++)
                     //     data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
                 }
@@ -7998,10 +8074,12 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
 
 
+// dmmask_perclow = 0.2
+// dmmask_coefflow = 1.0
+// dmmask_perchigh = 0.7
+// dmmask_coeffhigh = 0.3
 
-
-
-int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name)
+int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh)
 {
     long IDWFSmap, IDDMmap;
     long IDWFSmask, IDDMmask;
@@ -8015,6 +8093,8 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     char name[200];
     long NBpoke, poke;
     long IDDMmap1;
+    float lim0;
+    long IDtmp;
     
     IDzrm = image_ID(zrespm_name);
     sizexWFS = data.image[IDzrm].md[0].size[0];
@@ -8080,15 +8160,22 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     
     // (map/map1)*pow(map,0.25)
     
-     // DMmask: select pixels >30% of 65-percentile
-    lim = 0.6*img_percentile(DMmap_name, 0.70) - 0.4*img_percentile(DMmap_name, 0.2); 
+    // DMmask: select pixels >30% of 70-percentile
+    lim0 = dmmask_coefflow*img_percentile(DMmap_name, dmmask_perclow);
+     
+    IDtmp = create_2Dimage_ID("_tmpdmmap", sizexDM, sizeyDM);
+    for(ii=0;ii<sizexDM*sizeyDM;ii++)
+		data.image[IDtmp].array.F[ii] = data.image[IDDMmap].array.F[ii] - lim0;
+	lim = dmmask_coeffhigh*img_percentile("_tmpdmmap", dmmask_perchigh); 
+
     for(poke=0; poke<NBpoke; poke++)
     {
-        if(data.image[IDDMmap].array.F[poke]<lim)
+        if(data.image[IDtmp].array.F[poke]<lim)
             data.image[IDDMmask].array.F[poke] = 0.0;
         else
             data.image[IDDMmask].array.F[poke] = 1.0;
     }
+    delete_image_ID("_tmpdmmap");
    printf("done\n");
     fflush(stdout);
 
@@ -8097,7 +8184,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     // WFSmask : select pixels >30% of 65-percentile
     printf("Preparing WFS mask ... ");
     fflush(stdout);    
-    lim = 0.4*img_percentile(WFSmap_name, 0.65);
+    lim = 0.3*img_percentile(WFSmap_name, 0.65);
     for(ii=0; ii<sizeWFS; ii++)
     {
         if(data.image[IDWFSmap].array.F[ii]<lim)
@@ -8371,7 +8458,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     NBpoke = data.image[IDzrm].md[0].size[2];
 
     
-    AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name);
+    AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name, 0.2, 1.0, 0.7, 0.3);
 
 //	list_image_ID();
 	//printf("========== STEP 000 ============\n");
@@ -12722,6 +12809,246 @@ int AOloopControl_DMmodulateAB(char *IDprobeA_name, char *IDprobeB_name, char *I
 }
 
 
+long AOloopControl_frameDelay(char *IDin_name, char *IDkern_name, char *IDout_name, int insem)
+{
+	long IDout;
+	long IDin;
+	long IDkern;
+	long ksize;
+	long IDbuff;
+	long xsize, ysize;
+	long kindex;
+	long cnt;
+	long framesize;
+	char *ptr0;
+	long IDtmp;
+	long xysize;
+	float eps=1.0e-8;
+	long ii, jj, kk, k1;
+	long *sizearray;
+	
+	IDin = image_ID(IDin_name);
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	IDtmp = create_2Dimage_ID("_tmpfr", xsize, ysize);
+	xysize = xsize*ysize;
 
+	printf("xsize = %ld\n", xsize);
+	printf("ysize = %ld\n", ysize);
+	fflush(stdout);
+	
+	
+	
+	
+		
+	IDkern = image_ID(IDkern_name);	
+	ksize = data.image[IDkern].md[0].size[0];
+	printf("ksize = %ld\n", ksize);
+	fflush(stdout);
+	
+	
+	IDbuff = create_3Dimage_ID("_tmpbuff", xsize, ysize, ksize);
+	kindex = 0;
+	
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = xsize;
+	sizearray[1] = ysize;
+	IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
+    free(sizearray);
+
+
+	framesize = sizeof(float)*xsize*ysize;
+
+
+    kindex = 0;
+    cnt = 0;
+
+    while(1 == 1)
+    {
+	 if(data.image[IDin].sem==0)
+        {
+            while(cnt==data.image[IDin].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[IDin].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[IDin].semptr[insem]);
+		
+	
+
+        ptr0 = (char*) data.image[IDbuff].array.F;
+        ptr0 += kindex*framesize;
+    
+        data.image[IDbuff].md[0].write = 1;
+		memcpy((void*) ptr0, data.image[IDin].array.F, framesize);
+        data.image[IDbuff].md[0].cnt0++;
+        data.image[IDbuff].md[0].write = 0;
+ 
+ 
+        data.image[IDout].md[0].write = 1;
+        
+        for(ii=0;ii<xysize;ii++)
+			data.image[IDtmp].array.F[ii] = 0.0;
+        for(kk=0;kk<ksize;kk++)
+			{
+				if(fabs(data.image[IDkern].array.F[kk])>eps)
+					{
+						k1 = kindex-kk;
+						if(k1<0)
+							k1 += ksize;
+						
+						for(ii=0;ii<xysize;ii++)
+							data.image[IDtmp].array.F[ii] += data.image[IDkern].array.F[kk] * data.image[IDbuff].array.F[k1*xysize + ii];
+					}
+			}
+		memcpy(data.image[IDout].array.F, data.image[IDtmp].array.F, framesize);
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);		
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+ 
+ 
+        kindex++;
+        if(kindex == ksize)
+			kindex = 0;
+    }
+	
+	
+	
+	return IDout;
+}
+
+
+//
+// measure response matrix sensitivity
+// 
+long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_name, char *IDwfsref_name, char *IDwfsresp_name, char *IDwfsmask_name, char *foutname)
+{
+	FILE *fp;
+	long IDdmmodes;
+	long IDdmmask;
+	long IDwfsref;
+	long IDwfsresp;
+	long IDwfsmask;
+	
+	long dmxsize, dmysize, dmxysize;
+	long NBmodes;
+	long wfsxsize, wfsysize, wfsxysize;
+	long mode, mode1;
+	
+	long ii;
+	
+	double dmmoderms, dmmodermscnt;
+	double wfsmoderms, wfsmodermscnt;
+	double tmp1;
+	
+	double wfsreftot, wfsmasktot, aveval;
+	double SNR, SNR1; // single pixel SNR 
+	
+	double amplimit = 0.01;
+	float frac = 0.0;
+	float pcnt;
+	long IDoutXP;
+	double XPval;
+	
+	
+	IDdmmodes = image_ID(IDdmmodes_name);
+	dmxsize = data.image[IDdmmodes].md[0].size[0];
+	dmysize = data.image[IDdmmodes].md[0].size[1];
+	NBmodes = data.image[IDdmmodes].md[0].size[2];
+	dmxysize = dmxsize * dmysize;
+	
+	IDdmmask = image_ID(IDdmmask_name);
+	
+	IDwfsref = image_ID(IDwfsref_name);
+	wfsxsize = data.image[IDwfsref].md[0].size[0];
+	wfsysize = data.image[IDwfsref].md[0].size[1];
+	wfsxysize = wfsxsize * wfsysize;
+	
+	IDwfsresp = image_ID(IDwfsresp_name);
+	IDwfsmask = image_ID(IDwfsmask_name);
+	
+	wfsreftot = 0.0;
+	for(ii=0; ii<wfsxysize; ii++)
+		wfsreftot += data.image[IDwfsref].array.F[ii];
+	
+	wfsmasktot = 0.0;
+	for(ii=0; ii<wfsxysize; ii++)
+		wfsmasktot += data.image[IDwfsmask].array.F[ii];
+	
+	
+	list_image_ID();
+	printf("NBmodes = %ld\n", NBmodes);
+	printf("wfs size = %ld %ld\n", wfsxsize, wfsysize);
+	printf("wfs resp ID : %ld\n", IDwfsresp);
+	printf("wfs mask ID : %ld\n", IDwfsmask);
+	
+	printf("wfsmasktot = %f\n", wfsmasktot);
+	
+	fp = fopen(foutname, "w");
+	
+	for(mode=0; mode<NBmodes; mode++)
+	{
+		dmmoderms = 0.0;
+		dmmodermscnt = 0.0;
+		aveval = 0.0;
+		for(ii=0;ii<dmxysize;ii++)
+			{
+				tmp1 = data.image[IDdmmodes].array.F[mode*dmxysize+ii]*data.image[IDdmmask].array.F[ii];
+				aveval += tmp1;
+				dmmoderms += tmp1*tmp1;
+				dmmodermscnt += data.image[IDdmmask].array.F[ii];												
+			}
+		dmmoderms = sqrt(dmmoderms/dmmodermscnt);
+		aveval /= dmmodermscnt;
+		
+		SNR = 0.0;
+		wfsmoderms = 0.0;
+		wfsmodermscnt = 0.0;
+		pcnt = 0.0;
+		for(ii=0;ii<wfsxysize;ii++)
+			{
+				tmp1 = data.image[IDwfsresp].array.F[mode*wfsxysize+ii]*data.image[IDwfsmask].array.F[ii];
+				wfsmoderms += tmp1*tmp1;
+				wfsmodermscnt = 1.0;
+				wfsmodermscnt += data.image[IDwfsmask].array.F[ii];												
+			
+				if(data.image[IDwfsmask].array.F[ii]>0.1)
+					if(data.image[IDwfsref].array.F[ii]>fabs(data.image[IDwfsresp].array.F[mode*wfsxysize+ii]*amplimit))
+						{
+							SNR1 = data.image[IDwfsresp].array.F[mode*wfsxysize+ii]/sqrt(data.image[IDwfsref].array.F[ii]);
+							SNR1 /= wfsreftot;
+							SNR += SNR1*SNR1; 
+							pcnt += data.image[IDwfsref].array.F[ii];
+						}
+			}
+		frac = pcnt/wfsreftot;
+		
+		wfsmoderms = sqrt(wfsmoderms/wfsmodermscnt);
+		SNR = sqrt(SNR);
+		
+		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %g\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac);
+	}
+	
+	fclose(fp);
+	
+	
+	// computing DM space cross-product
+	IDoutXP = create_2Dimage_ID("DMmodesXP", NBmodes, NBmodes);
+
+	for(mode=0; mode<NBmodes; mode++)
+		for(mode1=0; mode1<mode+1; mode1++)
+			{
+				XPval = 0.0;
+				for(ii=0;ii<dmxysize;ii++)
+					XPval += data.image[IDdmmask].array.F[ii]*data.image[IDdmmodes].array.F[mode*dmxysize+ii]*data.image[IDdmmodes].array.F[mode1*dmxysize+ii];
+			
+				data.image[IDoutXP].array.F[mode*NBmodes+mode1] = XPval/dmmodermscnt;
+			}
+	save_fits("DMmodesXP", "!DMmodesXP.fits");
+	
+	
+	return(0);
+}
 
 

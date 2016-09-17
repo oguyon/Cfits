@@ -96,7 +96,11 @@ makemenuitemstringaolshm "contrM" "Modal Control Matrix"
 menuitems+=( "CM" "$menustring" )
 
 menuitems+=( " " " " )
+if [ -f "aolmkmodes.runproc" ]; then
+menuitems+=( " chk " "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
+else
 menuitems+=( "SMloadCM" "Load current Files" )
+fi
 
 menuitems+=( " " " " )
 stringcenter "BLOCK DECOMPOSITION"

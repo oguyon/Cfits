@@ -503,10 +503,12 @@ if [ -a $file ]
 	fname="$1.fits" #default
 fi
 aoconflog "linking $1 to ${fname}" 
-Fits2shm ${fname} aol${LOOPNUMBER}_$1
+./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 rm conf/aol${LOOPNUMBER}_$1.fits
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
 }
+
+
 
 
 

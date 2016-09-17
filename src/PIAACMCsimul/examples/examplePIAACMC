@@ -244,7 +244,7 @@ echo "2" > conf/conf_FPMsectors.txt
 # outer radius = 2.5 l/D
 echo "3.0" > conf/conf_maskradld.txt
 
-# 24 rings
+# 32 rings
 echo "32" > conf/conf_NBrings.txt
 
 echo "-2.0e-6" > conf/conf_fpmminsag.txt
