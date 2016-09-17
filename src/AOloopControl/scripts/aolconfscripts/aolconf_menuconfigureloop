@@ -1395,6 +1395,26 @@ touch function_LOresp_off.wait
 
 
 AUTOC)
+# archive
+dirnb=20
+i0=`( printf "%03d" "$dirnb" )`
+rm -rf conf_zrm_staged.$i0
+rm -rf conf_mrm_staged.$i0
+
+while [ $dirnb -gt 0 ]; do
+i=$(($dirnb))
+i1=$(($dirnb-1))
+is=`( printf "%03d" "$i" )`
+i1s=`( printf "%03d" "$i1" )`
+mv conf_zrm_staged.$i1s conf_zrm_staged.$is
+mv conf_mrm_staged.$i1s conf_mrm_staged.$is
+let dirnb-=1
+done    
+ 
+cp -rf conf_zrm_staged conf_zrm_staged.000
+cp -rf conf_mrm_staged conf_mrm_staged.000
+
+
 logRunningProcess "autocalibration" "Automatic system calibration (zonal + modal RMs)"
 touch function_LOresp_on_tmux.lock
 touch function_LOresp_off_tmux.lock
