@@ -111,12 +111,13 @@ fi
 # ======================= FILE NAMES ===========================================
 AOloopAlign_file="aocustomscripts/AOloopAlign_${LOOPNAME}.bash" 
 takedark_file="aocustomscripts/takedark_${LOOPNAME}"
+cpuconfig_file="aocustomscripts/cpuconfig_${LOOPNAME}"
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
 checkFile $AOloopAlign_file
 checkFile $takedark_file
-
+checkFile $cpuconfig_file
 
 
 
@@ -143,6 +144,10 @@ ln -s $PWD/$AOloopAlign_file aocustomscripts/AOloopAlign.bash
 
 rm aocustomscripts/takedark &> /dev/null
 ln -s $PWD/$takedark_file aocustomscripts/takedark 
+
+rm aocustomscripts/cpuconfig &> /dev/null
+ln -s $PWD/$cpuconfig_file aocustomscripts/cpuconfig 
+
 
 
 

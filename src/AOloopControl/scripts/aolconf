@@ -220,6 +220,18 @@ printWARNING "File AOloopsetup.bash does not exist"
 fi
 
 
+
+# execute CPU configuration script if it exists
+if [ -f "./aocustomscripts/cpuconfig" ]; then
+if [ ! -f "cpuconfigOK" ]; then
+. ./aocustomscripts/cpuconfig
+touch cpuconfigOK
+fi
+fi
+
+
+
+
 shmimviewexec="shmimview"
 shmimmonexec="shmimmon"
 
