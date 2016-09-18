@@ -130,14 +130,15 @@ EOF
 cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits
 cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits
 
-./auxscripts/mkDMslaveAct ./${stageddir}/dmmap.fits 0.7 1.0
+./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
 
 cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits
 
 Cfits << EOF
 loadfits dmmaskRM.fits dmmRM
 loadfits dmslaved.fits dmsl
-dmm=1.0-(1.0-dmmRM)*(1.0-dmsl)
+imtrunc dmsl 0.0 1.0 dmsl1
+dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
 savefits dmm "!dmmask.fits"
 exit
 EOF

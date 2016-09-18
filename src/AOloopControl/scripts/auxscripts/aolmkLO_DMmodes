@@ -39,10 +39,14 @@ pname=${pname0#"./"}-$loopnb
 mkdir -p Cmodes
 mkdir -p tmp
 
+
+zrmstageddir="./conf_zrm_staged"
+
 Cfits -n $pname << EOF
 aolnb $loopnb
-loadfits "./conf/aol${loopnb}_dmslaved.fits" dmslaved
-loadfits "./conf/aol${loopnb}_dmmask.fits" dmmask
+loadfits "${zrmstageddir}/dmslaved.fits" dmslaved0
+imtrunc dmslaved0 0.0 1.0 dmslaved
+loadfits "${zrmstageddir}/dmmask.fits" dmmask
 loadfits "./conf/TPind.fits" emodes
 readshmim aol${loopnb}_dmC
 imstats aol${loopnb}_dmC
@@ -52,7 +56,6 @@ od=0.42*imsize0
 id=0.13*imsize0
 if=0
 aolmklodmmodes fmodes imsize0 imsize1 $1 0.8 cx cy od id 0 
-listim
 savefits fmodes "!respM_LOmodes.fits"
 exit
 EOF

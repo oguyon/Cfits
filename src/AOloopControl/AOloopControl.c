@@ -268,7 +268,13 @@ int AOloopControl_CrossProduct_cli()
 }
 
 
-
+int AOloopControl_mkSlavedAct_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0)
+		AOloopControl_mkSlavedAct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
+	else
+		return 1;
+}
 
 int AOloopControl_mkloDMmodes_cli()
 {
@@ -1003,6 +1009,14 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"aolmkslact");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkSlavedAct_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create slaved actuators map based on proximity");
+    strcpy(data.cmd[data.NBcmd].syntax,"<maskRM> <distance> <outslact>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmkslact DMmaskRM 2.5 DMslavedact");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolmklodmmodes");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1903,7 +1917,6 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     }
 
 
-
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
     {
         /// Remove excluded modes
@@ -1962,8 +1975,6 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     }
 
 
-
-
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
     {
         rms = 0.0;
@@ -1977,7 +1988,7 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
     }
 
 
-
+	
     if(MaskMode==1)
     {
         kernsize = 5;
@@ -1997,9 +2008,6 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
             delete_image_ID("modeg");
         }
     }
-
-
-
 
 
 
@@ -2138,11 +2146,254 @@ long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)
 
 
 
+//
+// make slave actuators from maskRM
+//
+long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name)
+{
+	long IDout;
+	long IDmaskRM;
+	long ii, jj;
+	long ii1, jj1;
+	long xsize, ysize;
+	long pixradl;
+	long ii1min, ii1max, jj1min, jj1max;
+	float dx, dy, r;
+	
+	
+	
+	IDmaskRM = image_ID(IDmaskRM_name);
+	xsize = data.image[IDmaskRM].md[0].size[0];
+	ysize = data.image[IDmaskRM].md[0].size[1];
+	
+	pixradl = (long) pixrad + 1;
+	
+	IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
+	for(ii=0;ii<xsize*ysize;ii++)
+		data.image[IDout].array.F[jj*xsize+ii] = xsize+ysize;
+	
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				if(data.image[IDmaskRM].array.F[jj*xsize+ii] < 0.5)
+				{
+				ii1min = ii-pixradl;
+				if(ii1min<0)
+					ii1min=0;
+				ii1max = ii+pixradl;
+				if(ii1max>(xsize-1))
+					ii1max = xsize-1;
+				
+				jj1min = jj-pixradl;
+				if(jj1min<0)
+					jj1min=0;
+				jj1max = jj+pixradl;
+				if(jj1max>(ysize-1))
+					jj1max = ysize-1;
+
+				for(ii1=ii1min;ii1<ii1max+1;ii1++)
+					for(jj1=jj1min;jj1<jj1max+1;jj1++)
+						if(data.image[IDmaskRM].array.F[jj1*xsize+ii1]>0.5)
+						{
+							dx = 1.0*(ii-ii1);
+							dy = 1.0*(jj-jj1);
+							r = sqrt(dx*dx+dy*dy);
+							if(r<pixrad)
+								if(r < data.image[IDout].array.F[jj*xsize+ii])
+									data.image[IDout].array.F[jj*xsize+ii] = r;								
+						}
+				}		
+			}
+	
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			if(data.image[IDout].array.F[jj*xsize+ii] > (xsize+ysize)/2 )
+				data.image[IDout].array.F[jj*xsize+ii] = 0.0;
+				
+	
+	return(IDout);
+}
+
+
+
+long AOloopControl_DMedgeDetect(char *IDmaskRM_name, char *IDout_name)
+{
+	long IDout;
+	long IDmaskRM;
+	long ii, jj;
+	float val1;
+	long xsize, ysize;
+		
+	
+	IDmaskRM = image_ID(IDmaskRM_name);
+	xsize = data.image[IDmaskRM].md[0].size[0];
+	ysize = data.image[IDmaskRM].md[0].size[1];
+	
+	IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
+	
+	for(ii=1;ii<xsize-1;ii++)
+		for(jj=1;jj<ysize-1;jj++)
+			{
+				val1 = 0.0;
+				if(data.image[IDmaskRM].array.F[jj*xsize+ii] > 0.5)
+					{
+						if(data.image[IDmaskRM].array.F[jj*xsize+ii+1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[jj*xsize+ii-1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj+1)*xsize+ii]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-1)*xsize+ii]<0.5)
+							val1 += 1.0;						
+
+						if(data.image[IDmaskRM].array.F[(jj+1)*xsize+ii+1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj+1)*xsize+ii-1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-1)*xsize+ii+1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-1)*xsize+ii-1]<0.5)
+							val1 += 1.0;	
+							
+						if(data.image[IDmaskRM].array.F[jj*xsize+ii+2]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[jj*xsize+ii-2]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj+2)*xsize+ii]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-2)*xsize+ii]<0.5)
+							val1 += 1.0;						
+						
+						
+						
+						if(data.image[IDmaskRM].array.F[(jj+1)*xsize+ii+2]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj+1)*xsize+ii-2]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-1)*xsize+ii+2]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-1)*xsize+ii-2]<0.5)
+							val1 += 1.0;
+							
+						if(data.image[IDmaskRM].array.F[(jj+2)*xsize+ii-1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-2)*xsize+ii-1]<0.5)
+							val1 += 1.0;						
+						if(data.image[IDmaskRM].array.F[(jj+2)*xsize+ii+1]<0.5)
+							val1 += 1.0;
+						if(data.image[IDmaskRM].array.F[(jj-2)*xsize+ii+1]<0.5)
+							val1 += 1.0;						
+												
+					}
+				if(val1>4.9)
+					val1 = 1.0;
+				else
+					val1 = 0.0;
+				data.image[IDout].array.F[jj*xsize+ii] = val1;
+			}
+	
+	return(IDout);
+}
 
 
 
 
 
+
+long AOloopControl_DMslaveExt(char *IDin_name, char *IDmask_name, char *IDsl_name, char *IDout_name)
+{
+	long IDin, IDmask, IDsl, IDout;
+	long ii, jj, kk, ii1, jj1;
+	long xsize, ysize, zsize, xysize;
+	long index;
+	float rfactor = 2.0;
+	float val1, val1cnt;
+	float pixrad;
+	long pixradl;
+	long ii1min, ii1max, jj1min, jj1max;
+	float dx, dy, r, r1;
+	float coeff;
+	
+	
+	IDin = image_ID(IDin_name);
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	if(data.image[IDin].md[0].naxis == 3)
+		{
+			zsize = data.image[IDin].md[0].size[2];
+			IDout = create_3Dimage_ID(IDout_name, xsize, ysize, zsize);
+		}
+	else
+		{
+			zsize = 1;
+			IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
+		}
+	xysize = xsize*ysize;
+		
+	IDmask = image_ID(IDmask_name);
+	IDsl = image_ID(IDsl_name);
+	
+	
+
+	
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				index = jj*xsize+ii;
+				if(data.image[IDmask].array.F[index]>0.5)
+					{
+						for(kk=0;kk<zsize;kk++)
+							data.image[IDout].array.F[kk*xysize+index] = data.image[IDin].array.F[kk*xysize+index];
+					}
+				else if (data.image[IDsl].array.F[index]>0.5)
+					{
+						for(kk=0;kk<zsize;kk++)
+						{
+							val1 = 0.0;
+							val1cnt = 0.0;
+							pixrad = (rfactor*data.image[IDsl].array.F[index]+1.0);
+							pixradl = (long) pixrad + 1;
+							
+							ii1min = ii-pixradl;
+							if(ii1min<0)
+								ii1min=0;
+							ii1max = ii+pixradl;
+							if(ii1max>(xsize-1))
+							ii1max = xsize-1;
+				
+							jj1min = jj-pixradl;
+							if(jj1min<0)
+								jj1min=0;
+							jj1max = jj+pixradl;
+							if(jj1max>(ysize-1))
+								jj1max = ysize-1;
+						
+							for(ii1=ii1min;ii1<ii1max+1;ii1++)
+								for(jj1=jj1min;jj1<jj1max+1;jj1++)
+									{
+										dx = 1.0*(ii-ii1);
+										dy = 1.0*(jj-jj1);
+										r = sqrt(dx*dx+dy*dy);
+										if((r<pixrad)&&(data.image[IDmask].array.F[jj1*xsize+ii1]>0.5))
+											{
+												r1 = r/pixrad;
+												coeff = exp(-4.0*r1*r1);
+												val1 += data.image[IDin].array.F[kk*xysize+jj1*xsize+ii1]*coeff;
+												val1cnt += coeff;
+											}
+									}
+							if(val1cnt>0.0001)
+								data.image[IDout].array.F[kk*xysize+index] = val1/val1cnt;
+						}
+					}
+				else
+					for(kk=0;kk<zsize;kk++)
+						data.image[IDout].array.F[kk*xysize+index] = 0.0;
+			}
+
+	
+	return(IDout);
+}
 
 
 
@@ -2323,6 +2574,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 	long IDcmat, IDcmatall;
 
+	long ii1, jj1;
+	float dx, dy, dist, dist0, val1cnt;
+	long IDprox, IDprox1;
+
+
+	long IDmaskRMedge, IDmaskRMin;
+	float gain;
+	
+	
+	
 
     MODAL = 0;
     if(msizey==1)
@@ -2513,18 +2774,18 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
                     data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
-                    data.image[ID].array.F[k*msizex*msizey+ii] *= data.image[IDmaskRM].array.F[ii];
+                   // data.image[ID].array.F[k*msizex*msizey+ii] *= data.image[IDmaskRM].array.F[ii];
                 }
 
                 offset = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
-                    offset += data.image[ID].array.F[k*msizex*msizey+ii];
+                    offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/msizex/msizey;
-                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii];
+                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
+                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
@@ -2533,7 +2794,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
 
 
-            for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
+           /* for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
@@ -2544,7 +2805,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
             }
-
+*/
 
 
             if(MaskMode==1)
@@ -2569,10 +2830,123 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
+		/*	save_fits(ID_name, "!./mkmodestmp/fmodesIall.fits");
+
+		IDprox = create_2Dimage_ID("proxim", msizex, msizey);
+		for(ii=0;ii<msizex;ii++)
+			for(jj=0;jj<msizey;jj++)
+			{
+				data.image[IDprox].array.F[jj*msizex+ii] = 1.0*(msizex+msizey);
+				
+				for(ii1=0;ii1<msizex;ii1++)
+					for(jj1=0;jj1<msizey;jj1++)
+						{
+							if(data.image[IDmaskRM].array.F[jj1*msizex+ii1]>0.5)
+								{
+									dx = 1.0*ii1-1.0*ii;
+									dy = 1.0*jj1-1.0*jj;
+									dist = sqrt(dx*dx+dy*dy);
+									if(dist<data.image[IDprox].array.F[jj*msizex+ii])
+										data.image[IDprox].array.F[jj*msizex+ii] = dist;
+								}
+						}
+			}
+		save_fits("proxim", "!./mkmodestmp/proxRMim.fits");
+		
+		IDprox1 = create_2Dimage_ID("proxim1", msizex, msizey);
+		for(ii=0;ii<msizex;ii++)
+			for(jj=0;jj<msizey;jj++)
+				{
+					data.image[IDprox1].array.F[jj*msizex+ii] = 0.0;
+					
+					for(ii1=0;ii1<msizex;ii1++)
+						for(jj1=0;jj1<msizey;jj1++)
+							{
+								dx = 1.0*ii1-1.0*ii;
+								dy = 1.0*jj1-1.0*jj;
+								dist = sqrt(dx*dx+dy*dy);
+								
+								if(dist<1.5)
+									if(data.image[IDprox].array.F[jj1*msizex+ii1]>data.image[IDprox1].array.F[jj*msizex+ii])
+										data.image[IDprox1].array.F[jj*msizex+ii] = data.image[IDprox].array.F[jj1*msizex+ii1];
+							}
+		
+				}
+		save_fits("proxim1", "!./mkmodestmp/proxRMim1.fits");
+		
+		
+		
+		IDtmp1 = create_3Dimage_ID("proxC", msizex, msizey, data.image[ID].md[0].size[2]);
+		for(m=0; m<data.image[ID].md[0].size[2]; m++)
+		{
+			for(ii=0;ii<msizex;ii++)
+			for(jj=0;jj<msizey;jj++)
+				{
+					dist0 = data.image[IDprox1].array.F[jj*msizex+ii];
+					
+					val1 = 0.0;
+					val1cnt = 0.0;
+					for(ii1=0;ii1<msizex;ii1++)
+						for(jj1=0;jj1<msizey;jj1++)
+						{
+							dx = 1.0*ii1-1.0*ii;
+							dy = 1.0*jj1-1.0*jj;
+							dist = sqrt(dx*dx+dy*dy);
+							
+							if(dist<4.0*(dist0+0.1))
+								{
+									coeff = exp(-0.6*pow((dist)/(dist0+0.5),3.0));
+									val1 += data.image[ID].array.F[m*msizex*msizey+jj1*msizex+ii1]*coeff;
+									val1cnt += coeff;
+								}
+							data.image[IDtmp1].array.F[m*msizex*msizey+jj*msizex+ii] = val1/val1cnt;
+		
+						}
+				}
+		}
+		save_fits("proxC", "!./mkmodestmp/proxC.fits");
+		*/
+		
+		
+		
+		
+		// MAKE MASKS FOR EDGE EXTRAPOLATION
+		
+		          
+		IDslaved = image_ID("dmslaved");
+		// load or create DM mask : union of dmslaved and dmmaskRM
+		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
+		printf("Create DM mask\n");
+		fflush(stdout);
+		IDmask = -1;
+		if(IDmask == -1)
+		{
+			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
+			for(ii=0; ii<msizex*msizey; ii++)
+				data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+			save_fits("dmmask", "!dmmask.fits");
+		}
+
+		// EDGE PIXELS IN IDmaskRM
+		IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
+		save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
+		
+		// IDmaskRM pixels excluding edge
+		IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
+		for(ii=0; ii<msizex*msizey; ii++)
+			data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
+		save_fits("dmmaskRMin", "!dmmaskRMin.fits");
+		
+
+		for(m=0; m<data.image[ID].md[0].size[2]; m++)
+		{
+			for(ii=0; ii<msizex*msizey; ii++)
+				data.image[ID].array.F[m*msizex*msizey+ii] *= data.image[IDmaskRM].array.F[ii];		
+		}
 
 
 
-
+/*
             /// SLAVED ACTUATORS
             IDslaved = image_ID("dmslaved");
             ID = image_ID(ID_name);
@@ -2588,19 +2962,21 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 					// write input DM mode
                     for(ii=0; ii<msizex*msizey; ii++)
                         {
-							data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msizex*msizey+ii];
-							data.image[IDtmp1].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0-data.image[IDslaved].array.F[ii]);													
-							data.image[IDtmp2].array.F[ii] = data.image[IDtmp1].array.F[ii];
+							data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msizex*msizey+ii];  // modes
+					
+							data.image[IDtmp1].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0-data.image[IDslaved].array.F[ii]);		// non-slaved actuators inside pupil							
+					
+							data.image[IDtmp2].array.F[ii] = data.image[IDtmp1].array.F[ii];   // copy of non-slaved actuators inside pupil
 						}
 				
 					pixcnt = 1;
 					while(pixcnt>0)
 					{
-					pixcnt = 0;
-					for(ii=0;ii<msizex;ii++)
+						pixcnt = 0;
+						for(ii=0;ii<msizex;ii++)
 						for(jj=0;jj<msizey;jj++)
 							{
-								if((data.image[IDtmp1].array.F[jj*msizex+ii]<0.5) && (data.image[IDslaved].array.F[jj*msizex+ii]>0.5))
+								if((data.image[IDtmp1].array.F[jj*msizex+ii]<0.5) && (data.image[IDslaved].array.F[jj*msizex+ii]>0.5))   // slaved actuator, not controlled
 								{
 									pixcnt ++;
 									if(ii+1<msizex) 
@@ -2658,32 +3034,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 							}
 						for(ii=0; ii<msizex*msizey; ii++)
 							data.image[IDtmp1].array.F[ii] = data.image[IDtmp2].array.F[ii];						
-						}
+					}
 						
 					for(ii=0; ii<msizex*msizey; ii++)
 							data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[ii];		
 					
-	/*				
-                    for(conviter=0; conviter<NBconviter; conviter++)
-                    {
-						// convolve                    
-                        sigma = 0.5*NBconviter/(1.0+conviter);
-                        gauss_filter("_tmpinterpol", "_tmpinterpolg", 1.0, 2);
-                        IDtmpg = image_ID("_tmpinterpolg");
-                        for(ii=0; ii<msizex*msizey; ii++)
-                        {
-                            if((data.image[IDmaskRM].array.F[ii]>0.5)&&(data.image[IDslaved].array.F[ii]<0.5)) 
-                                data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msizex*msizey+ii];
-                            else
-                                data.image[IDtmp].array.F[ii] = data.image[IDtmpg].array.F[ii];
-                        }
-                        delete_image_ID("_tmpinterpolg");
-                    }
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        if((data.image[IDmaskRM].array.F[ii]>0.5)||(data.image[IDslaved].array.F[ii]>0.5))
-                            data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[ii];
-                */
-                
 					
                 
                 }
@@ -2695,6 +3050,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 delete_image_ID("_tmpcoeff2");     
                 delete_image_ID("_tmpinterpol");
             }
+            */
         }
         else
         {
@@ -2713,21 +3069,29 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 data.image[ID].array.F[m*msizex*msizey+m] = 1.0;
             }
         }
-	
-		// load or create DM mask : union of dmslaved and dmmaskRM
-		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
-		IDmask = -1;
-		if(IDmask == -1)
-		{
-			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
+        
+        // forcing edge pixels to be average of nearby inner pixels
+		IDtmp = AOloopControl_DMslaveExt(ID_name, "dmmaskRMin", "dmmaskRMedge", "fmodes0alle");
+//		save_fits("fmodes0alle", "!./mkmodestmp/fmodes0alle.fits");
+
+		gain = 0.8;
+		for(m=0; m<data.image[ID].md[0].size[2]; m++)
 			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
-			save_fits("dmmask", "!dmmask.fits");
-		}
-
-
+				data.image[ID].array.F[m*msizex*msizey+ii] = (1.0-gain)*data.image[ID].array.F[m*msizex*msizey+ii] + gain*data.image[IDtmp].array.F[m*msizex*msizey+ii];
+	
+       
+       IDtmp = AOloopControl_DMslaveExt(ID_name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodes0allext");
+       for(m=0; m<data.image[ID].md[0].size[2]; m++)
+			for(ii=0; ii<msizex*msizey; ii++)
+				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii];
+       
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+
+	//	AOloopControl_DMslaveExt(ID_name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodes0allext");
+	//	save_fits("fmodes0allext", "!./mkmodestmp/fmodes0allext.fits");
+
+
         IDmodes0all = image_ID(ID_name);
         printf("DONE SAVING\n");
 
@@ -2890,7 +3254,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-        /// STEP 2: SEPARATE DM MODES INTO BLOCKS
+        /// STEP 2: SEPARATE DM MODES INTO BLOCKS AND MASK
         msizexy = msizex*msizey;
 
         CPAblocklim[0] = 0.1; // tip and tilt
@@ -2905,7 +3269,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         CPAblocklim[9] = 15.0;
         CPAblocklim[10] = 17.0;
         CPAblocklim[11] = 19.0;
-        CPAblocklim[12] = 22.0;
+        CPAblocklim[12] = 21.0;
         CPAblocklim[13] = 100.0;
 
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
@@ -2952,7 +3316,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 mblock++;
 
             for(ii=0; ii<msizex*msizey; ii++)
-                data.image[MBLOCK_ID[mblock]].array.F[MBLOCK_NBmode[mblock]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii];
+                data.image[MBLOCK_ID[mblock]].array.F[MBLOCK_NBmode[mblock]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
             MBLOCK_NBmode[mblock]++;
         }
@@ -2963,11 +3327,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            printf("MODE BLOCK %ld\n", mblock);
+            printf("\nMODE BLOCK %ld\n", mblock);
             fflush(stdout);
 
             sprintf(imname, "fmodes0_%02ld", mblock);
-            printf("SVD decomp ...");
+            
+            printf("SVD decomp ... (%ld) .... ", data.image[image_ID(imname)].md[0].size[2]);
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
             printf("DONE\n");
@@ -3176,6 +3541,14 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 for(ii=0; ii<msizexy; ii++)
                     data.image[IDm].array.F[m*msizexy+ii] /= rms;
             }
+
+			// Extrapolate outside maskRM
+			IDtmp = AOloopControl_DMslaveExt(data.image[IDm].md[0].name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodesext");
+			for(m=0; m<cnt; m++)
+				for(ii=0; ii<msizexy; ii++)
+					data.image[IDm].array.F[m*msizexy+ii] = data.image[IDtmp].array.F[m*msizexy+ii];
+			delete_image_ID("fmodesext");
+
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
@@ -3500,11 +3873,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         delete_image_ID("SVDmode1DM");
 
                         rms = sqrt(value1/wfssize);
+                        
                         if(rms<rmsarray[m]*rmslim1)
                         {
                             mok[m] = 0;
                         }
-                        //                        printf("  %12g\n", rms/rmsarray[m]);
+                        printf("RMS RATIO  %3ld :   %12g\n", m, rms/rmsarray[m]);
                     }
                 }
 

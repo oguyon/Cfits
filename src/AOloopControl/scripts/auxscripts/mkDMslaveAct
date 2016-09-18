@@ -21,6 +21,8 @@ then
 fi
 
 
+
+
 Cfits << EOF
 
 loadfits "$1" dmmap

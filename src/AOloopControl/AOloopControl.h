@@ -137,6 +137,7 @@ long AOloopControl_CrossProduct(char *ID1_name, char *ID2_name, char *IDout_name
 long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode);
 
 long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim);
+long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name);
 long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim);
 
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);

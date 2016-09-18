@@ -158,13 +158,15 @@ exit
 EOF
 
 
-./auxscripts/mkDMslaveAct dmmap.fits 0.7 1.0
+#./auxscripts/mkDMslaveAct dmmap.fits 0.7 1.0
+./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
 
 
 Cfits << EOF
 loadfits dmmaskRM.fits dmmRM
 loadfits dmslaved.fits dmsl
-dmm=1.0-(1.0-dmmRM)*(1.0-dmsl)
+imtrunc dmsl 0.0 1.0 dmsl1
+dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
 savefits dmm "!dmmask.fits"
 exit
 EOF

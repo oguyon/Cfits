@@ -623,7 +623,7 @@ menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LO
 menuitems+=( " " " " )
 
 
-menuitems+=( "smlock" "Set locked masks to current masks (dmmaskRM, dmmask, dmslaved, wfsmask)")
+menuitems+=( "smlock" "Set locked masks to current ./conf/conf_<mask>_name.txt masks (dmmaskRM, dmmask, dmslaved, wfsmask)")
 
 file="conf/conf_MASKS_LOCK.txt"
 if [ -a $file ]
@@ -867,7 +867,7 @@ fi
 
 
 menuitems+=(" " " ")
-menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION")
+menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
 menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 
 
@@ -931,7 +931,7 @@ then
    
     if [ "${LOrespMstat}" = "OFF" ];
     then
-        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU" )
+        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in zrm staged dir)" )
         if [ "${LOrespmatnbiter}" -lt 4 ]; then
             menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
         else
@@ -1878,7 +1878,7 @@ state="menuconfigureloop"
 	dmSlM)
 case $amode in
         0)
-./auxscripts/mkDMslaveAct ./conf/aol${LOOPNUMBER}_dmmap.fits 0.6 1.0
+./auxscripts/mkDMslaveActprox ./conf/aol${LOOPNUMBER}_dmmaskRM.fits 2.5
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 fname="dmslaved/dmslaved_${datestr}.fits"
 mkdir -p dmslaved
