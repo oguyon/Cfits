@@ -3074,7 +3074,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 		IDtmp = AOloopControl_DMslaveExt(ID_name, "dmmaskRMin", "dmmaskRMedge", "fmodes0alle");
 //		save_fits("fmodes0alle", "!./mkmodestmp/fmodes0alle.fits");
 
-		gain = 1.0;
+		gain = 0.7;
 		for(m=0; m<data.image[ID].md[0].size[2]; m++)
 			for(ii=0; ii<msizex*msizey; ii++)
 				data.image[ID].array.F[m*msizex*msizey+ii] = (1.0-gain)*data.image[ID].array.F[m*msizex*msizey+ii] + gain*data.image[IDtmp].array.F[m*msizex*msizey+ii];
