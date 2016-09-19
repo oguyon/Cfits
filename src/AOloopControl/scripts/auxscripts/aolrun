@@ -1,6 +1,13 @@
 #! /bin/bash
 
 
+
+# number of arguments to script
+NBARGS=0
+
+
+
+
 printhelp ()
 {
 	echo "--------------------------------------------------"
@@ -36,8 +43,8 @@ fi
 loopnb=$(cat LOOPNUMBER)
 confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 
-pname0=$0
-pname=${pname0#"./"}-$loopnb
+
+pname=aol${loopnb}run
 
 rm /tmp/aol${loopnb}_respM.im.shm
 $execname -n $pname << EOF
