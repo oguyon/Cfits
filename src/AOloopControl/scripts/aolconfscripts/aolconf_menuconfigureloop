@@ -684,8 +684,8 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (ZONAL)"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION\Zn" )
-menuitems+=( "Lconf" "        \Zb\ZuLOAD SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
+menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
 menuitems+=( " " " " )
 
 rmamplum=0.05
