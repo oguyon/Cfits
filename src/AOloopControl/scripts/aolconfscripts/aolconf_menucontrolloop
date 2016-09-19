@@ -989,15 +989,18 @@ menucontrolloop_default="CMm1"
 echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
 aoconflogext "START LOOP PROCESSES"
-tmux new-session -d -s aol${LOOPNUMBER}-ctr
-tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m
-tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m
-tmux send-keys -t aol${LOOPNUMBER}-ctr "./auxscripts/aolctr" C-m
+tmuxname="aol${LOOPNUMBER}-ctr"
+tmux new-session -d -s ${tmuxname}
+logRunningProcess "aolctr" "$tmuxname" "AO loop control prompt"
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolctr" C-m
 
 
 sleep 1
 tmux new-session -d -s aol${LOOPNUMBER}-run
 tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m
+logRunningProcess "aolrun" "aol${LOOPNUMBER}-run" "AO loop real-time loop"
 tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
 echo "./aolrun" > cmd00.txt
 
@@ -1019,6 +1022,7 @@ if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}wfszpo"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
+logRunningProcess "aolzpwfscloop" "$tmuxname" "AO loop zero point offset (zonal, CPU-based)"
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}wfszpo" C-m
 if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
@@ -1032,6 +1036,7 @@ if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
+logRunningProcess "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
 tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs ${GPUmodesextrwfs}" C-m
 fi
 
@@ -1039,6 +1044,7 @@ if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
+logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
 tmux send-keys -t $tmuxname "Cfits" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
@@ -1048,6 +1054,7 @@ if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}dmCave"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
+logRunningProcess "aol_dmCave" "$tmuxname" "AO loop compute time-averaged DM correction"
 tmux send-keys -t $tmuxname "./auxscripts/aol_dmCave 0.0005" C-m
 fi
 
@@ -1056,6 +1063,7 @@ if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}wfsresave"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
+logRunningProcess "aolmkWFSres" "$tmuxname" "compute and average WFS residual"
 tmux send-keys -t $tmuxname "./auxscripts/aolmkWFSres 0.0005" C-m
 fi
 
@@ -1068,18 +1076,22 @@ aoconflogext "STOP LOOP PROCESSES"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "rm aolctr.runproc" C-m
 pkill -9 aolrun-${LOOPNUMBER}
+rm aolrun.runproc
 
 if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
 pkill -9 aol${LOOPNUMBER}wfszpo
 tmuxname="aol${LOOPNUMBER}wfszpo"
 tmux kill-session -t $tmuxname
+rm aolzpwfscloop.runproc
 fi
 
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
+rm modesextractwfs.runproc
 #stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
 fi
@@ -1088,6 +1100,7 @@ if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
+rm aolcompolm.runproc
 #stopstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "0" > "./status/stat_log_modeval_ol.txt"
 fi
@@ -1097,12 +1110,14 @@ if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}dmCave"
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
+rm aol_dmCave.runproc
 fi
 
 if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}wfsresave"
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
+rm aolmkWFSres.runproc
 fi
 
 if [ "$procWFSres2refONstat" = " ON" ]; then

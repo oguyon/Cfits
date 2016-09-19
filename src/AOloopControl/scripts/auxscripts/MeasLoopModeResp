@@ -127,9 +127,7 @@ readshmim aol${loopnb}_dmRM
 readshmim aol${loopnb}_dmC
 readshmim aol${loopnb}_meas_act
 
-
 aoltestmresp aol${loopnb}_DMmodes $1 $2 $fmin $fmax $fmultstep $avetime $tstepus aol${looopnb}_dmmask aol${loop}_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act out
-
 
 savefits outave "!test_DMmodesRec.fits"
 savefits outrms "!test_DMmodesRec_RMS.fits"

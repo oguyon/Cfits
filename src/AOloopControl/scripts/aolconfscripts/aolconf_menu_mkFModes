@@ -53,7 +53,7 @@ case $retval in
 
 tmuxname="aol${LOOPNUMBER}mkmodes"
 tmux new-session -d -s $tmuxname
-logRunningProcess "aolmkmodes" "Compute control modes and control matrix (tmux session $tmuxname)"
+logRunningProcess "aolmkmodes" "$tmuxname" "Compute control modes and control matrix (tmux session $tmuxname)"
 mkdir -p DMmodes
 mkdir -p respM
 mkdir -p contrM
