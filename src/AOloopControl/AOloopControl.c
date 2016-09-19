@@ -4914,11 +4914,6 @@ int AOloopControl_InitializeMemory(int mode)
     }
 	
 	
-	printf("STEP 000\n");
-	fflush(stdout);
-	sleep(10.0);//TEST
-	
-	
     AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
     if (AOconf == MAP_FAILED) {
         close(SM_fd);
@@ -4927,9 +4922,6 @@ int AOloopControl_InitializeMemory(int mode)
     }
     
     
-	printf("STEP 000a\n");
-	fflush(stdout);
-	sleep(10.0);//TEST
 	
     if((mode==0)||(create==1))
     {
@@ -4948,9 +4940,7 @@ int AOloopControl_InitializeMemory(int mode)
         }
     }
 
-	printf("STEP 001\n");
-	fflush(stdout);
-	sleep(10.0);//TEST
+
 
 
     if(create==1)
@@ -4989,7 +4979,6 @@ int AOloopControl_InitializeMemory(int mode)
     }
 
 
-	sleep(10.0);//TEST
 
     if(AOloopcontrol_meminit==0)
     {
@@ -8036,12 +8025,10 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     sizearray = (long*) malloc(sizeof(long)*3);
 
 
-//	exit(0);
-
 	printf("INITIALIZE MEMORY....\n");
     fflush(stdout);
     if(AOloopcontrol_meminit==0)
-        AOloopControl_InitializeMemory(0);
+        AOloopControl_InitializeMemory(1);
 	fflush(stdout);
 	sleep(10); //TEST
 	exit(0); //TEST
