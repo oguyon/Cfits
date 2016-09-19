@@ -8025,26 +8025,27 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 	fflush(stdout);
-	sleep(10.0); //TEST
+	sleep(10); //TEST
+	exit(0); //TEST
 
     //  sprintf(fname, "./conf/AOloop.conf");
 
 	printf("LOAD/CONFIGURE loop ...\n");
     fflush(stdout);
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
-	sleep(10.0); //TEST
+	
 
 
     printf("Importing DM response matrix channel shared memory ...\n");
     fflush(stdout);
     aoconfID_dmRM = read_sharedmem_image(AOconf[loop].dmRMname);
-	sleep(10.0); //TEST
+
 
 
     printf("Importing WFS camera image shared memory ... \n");
 	fflush(stdout);
     aoconfID_wfsim = read_sharedmem_image(AOconf[loop].WFSname);
-	sleep(10.0); //TEST
+
 
 
     sprintf(name, "aol%ld_imWFS1RM", loop);
