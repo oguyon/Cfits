@@ -4912,7 +4912,13 @@ int AOloopControl_InitializeMemory(int mode)
             exit(0);
         }
     }
-
+	
+	
+	printf("STEP 000\n");
+	fflush(stdout);
+	sleep(10.0);//TEST
+	
+	
     AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
     if (AOconf == MAP_FAILED) {
         close(SM_fd);
@@ -4936,6 +4942,11 @@ int AOloopControl_InitializeMemory(int mode)
             free(sizearray);
         }
     }
+
+	printf("STEP 001\n");
+	fflush(stdout);
+	sleep(10.0);//TEST
+
 
     if(create==1)
     {
@@ -4972,6 +4983,8 @@ int AOloopControl_InitializeMemory(int mode)
             }
     }
 
+
+	sleep(10.0);//TEST
 
     if(AOloopcontrol_meminit==0)
     {
