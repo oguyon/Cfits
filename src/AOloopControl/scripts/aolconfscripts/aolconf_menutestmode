@@ -222,6 +222,23 @@ stringcenter "SYSTEM RESPONSE TEST / CALIBRATION"
 menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 
+menuitems+=( " "  " " ) 
+
+file="./conf/conf_mzRMsensAmpnm.txt"
+if [ -a $file ]
+	then
+	mzRMsensAmpnm=$(echo "$(cat $file)")
+	else
+	mzRMsensAmpnm="100"
+fi
+menuitems+=( "mzRMsA" "[${mzRMsensAmpnm} nm] zonal RM sensitivity measurement amplitude [nm]" )
+
+menuitems+=( "mzRMs"  "Measure zonal response matrix sensitivity (ampl = ${mzRMsensAmpnm} nm)" ) 
+
+
+menuitems+=( " "  " " ) 
+
+
 file="./conf/conf_testModeNb.txt"
 if [ -a $file ]
 	then
@@ -558,6 +575,37 @@ menutestmode_default="testact1"
 ;;
 
 
+	mzRMsA)
+exec 3>&1;mzRMsensAmpnm=$(dialog --inputbox "Set zRM sensitivity measurement amplitude" 0 0 "$mzRMsensAmpnm" 2>&1 1>&3);
+exec 3>&-;
+echo "$mzRMsensAmpnm" > ./conf/conf_mzRMsensAmpnm.txt
+aoconflog "mzRMsensAmpnm = $mzRMsensAmpnm"
+;;
+
+
+mzRMs)
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+wfslambdanm="800"
+if [ -f "./conf/conf_wfslambdanm.txt" ]; then
+wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
+fi
+
+./auxscripts/aolRMmeas_sensitivity ${mzRMsensAmpnm} ${wfslambdanm}
+
+
+mkdir -p perfMeas
+str=`( printf "%04ld" "$mzRMsensAmpnm")`
+fname="./perfMeas/wfs_sensitivity_$str.${datestr}.txt"
+echo "# amplitude = $mzRMsensAmpnm nm" > $fname
+echo "# WFS lambda = $wfslambda um" >> $fname
+echo " " >> $fname
+cat wfs_sensitivity.txt >> $fname
+rm wfs_sensitivity.txt
+
+mv DMmodesXP.fits DMmodesXP.${datestr}.fits
+;;
+
 
 
 	settmn)
@@ -671,7 +719,7 @@ aoconflog "testModeetime = $testModeetime"
     dmmtr)
 tmuxname="aol${LOOPNUMBER}testmresp"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "./MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
 aoconflog "MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}"
 ;;
 

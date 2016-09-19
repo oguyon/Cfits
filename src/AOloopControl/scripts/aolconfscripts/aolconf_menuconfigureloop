@@ -588,6 +588,11 @@ confOK=0
 fi
 
 
+wfslambdanm="800"
+if [ -f "./conf/conf_wfslambdanm.txt" ]; then
+wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
+fi
+menuitems+=( "swfsl" "[${wfslambdanm} nm] WFS lambda" )
 
 
 menuitems+=( " " " " )
@@ -1300,6 +1305,18 @@ shmimmon aol${LOOPNUMBER}_wfsim
 esac
 ;;
 
+	swfsl)
+exec 3>&1;
+wfslambdanm=$(dialog --inputbox "WFS lambda [nm]" 0 0 "$wfslambdanm" 2>&1 1>&3);
+exec 3>&-;
+echo "$wfslambdanm" > ./conf/conf_wfslambdanm.txt
+aoconflogext "set WFS lambda [nm] to ${wfslambdanm}"
+;;
+
+
+
+
+
 	dark)
 exec 3>&1;
 wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
@@ -1315,6 +1332,7 @@ tmux send-keys -t adark "./aocustomscripts/takedark 10000" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
+
 
 
 
