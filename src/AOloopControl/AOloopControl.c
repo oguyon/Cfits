@@ -4925,7 +4925,12 @@ int AOloopControl_InitializeMemory(int mode)
         perror("Error mmapping the file");
         exit(0);
     }
-
+    
+    
+	printf("STEP 000a\n");
+	fflush(stdout);
+	sleep(10.0);//TEST
+	
     if((mode==0)||(create==1))
     {
         AOconf[loop].on = 0;
