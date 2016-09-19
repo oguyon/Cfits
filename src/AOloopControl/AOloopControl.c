@@ -8032,8 +8032,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
 	fflush(stdout);
-	sleep(10); //TEST
-	exit(0); //TEST
+
 
     //  sprintf(fname, "./conf/AOloop.conf");
 
