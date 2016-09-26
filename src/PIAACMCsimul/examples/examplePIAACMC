@@ -202,8 +202,7 @@ echo "0.2" > conf/conf_LyotZmax.txt
 # this step takes approximately 6h (PIAACMC_dftgrid=2)
 # contrast =  1.46909e-06
 
-# skip step 12
-touch ./piaacmcconf_i000/step012.txt
+
 # complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
 ./run optsingle 13
 # this step takes approximately 18h
@@ -224,8 +223,12 @@ touch ./piaacmcconf_i000/step012.txt
 ./run optsingle 16
 # [0] Total light in scoring field = 6.07659e+08, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.81245e-06
 
-# skip steps 16 and 17
+# skip steps 16 
 touch ./piaacmcconf_i000/step016.txt
+# [0] Total light in scoring field = 857055, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 3.31607e-08
+# 
+
+# skip steps 17
 touch ./piaacmcconf_i000/step017.txt
 
 

@@ -3,7 +3,7 @@
 
 
 # number of arguments to script
-NBARGS=3
+NBARGS=6
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
@@ -117,7 +117,7 @@ ampl=$2
 fmin=$3
 fmax=$4
 fmultstep="1.1"
-avetime="1.0" 
+avetime="1.5" 
 tstepus="1000"
 
 Cfits << EOF
@@ -127,11 +127,8 @@ readshmim aol${loopnb}_dmRM
 readshmim aol${loopnb}_dmC
 readshmim aol${loopnb}_meas_act
 
-aoltestmresp aol${loopnb}_DMmodes $1 $2 $fmin $fmax $fmultstep $avetime $tstepus aol${looopnb}_dmmask aol${loop}_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act out
+aoltestmresp aol${loopnb}_DMmodes $1 $2 $fmin $fmax $fmultstep $avetime $tstepus aol${loopnb}_dmmask aol${loopnb}_dmRM aol${loopnb}_dmC out
+listim
 
-savefits outave "!test_DMmodesRec.fits"
-savefits outrms "!test_DMmodesRec_RMS.fits"
-savefits outmave "!test_DMmodesRec_m.fits"
-savefits outmrms "!test_DMmodesRec_m_RMS.fits"
 exit
 EOF

@@ -10,6 +10,84 @@ fi
 
 
 
+function function_mrec_on {
+mrecONstat=" ON"
+tmuxname="aol${LOOPNUMBER}mrec"
+echo " ON" > ./status/stat_mrecON.txt
+logRunningProcess "MeasDMmodesRec" "$tmuxname" "Measure DM modes AO loop recovery"
+tmux new-session -d -s ${tmuxname}
+aoconflog "Test Mode Recovery"
+tmux send-keys -t $tmuxname "./auxscripts/MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}" C-m
+tmux send-keys -t $tmuxname "rm MeasDMmodesRec.runproc" C-m
+tmux send-keys -t $tmuxname "echo \"OFF\" > ./status/stat_mrecON.txt" C-m
+}
+
+
+function function_mrec_off {
+mrecONstat="OFF"
+tmuxname="aol${LOOPNUMBER}mrec"
+echo "OFF" > ./status/stat_mrecON.txt
+tmux kill-session -t ${tmuxname}
+rm MeasDMmodesRec.runproc
+}
+
+
+
+
+
+function function_dmmtr_on {
+dmmtrONstat=" ON"
+tmuxname="aol${LOOPNUMBER}dmmtr"
+echo " ON" > ./status/stat_dmmtrON.txt
+logRunningProcess "MeasLoopModeResp" "$tmuxname" "Measure AO loop temporal response"
+tmux new-session -d -s ${tmuxname}
+aoconflog "Measure AO loop temporal response"
+tmux send-keys -t $tmuxname "./auxscripts/MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
+tmux send-keys -t $tmuxname "rm MeasLoopModeResp.runproc" C-m
+tmux send-keys -t $tmuxname "echo \"OFF\" > ./status/stat_dmmtrON.txt" C-m
+}
+	
+function function_dmmtr_off {
+dmmtrONstat="OFF"
+tmuxname="aol${LOOPNUMBER}dmmtr"
+echo "OFF" > ./status/stat_dmmtrON.txt
+tmux kill-session -t ${tmuxname}
+rm MeasLoopModeResp.runproc
+}
+
+
+
+
+
+function function_lsim_on {
+lsimONstat=" ON"
+tmuxname="aol${LOOPNUMBER}linsim"
+tmuxnameD="aol${LOOPNUMBER}linsimD"
+echo " ON" > ./status/stat_lsimON.txt
+logRunningProcess "aollinsimDelay" "$tmuxnameD" "Add delay to simulation"
+logRunningProcess "aollindm2wfsim" "$tmuxname" "linear computation of simulated WFS from DM"
+tmux new-session -d -s ${tmuxnameD}
+tmux new-session -d -s ${tmuxname}
+aoconflog "Start linear WFS simulator"
+tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim ${GPUlinsim}" C-m
+}
+
+
+function function_lsim_off {
+lsimONstat="OFF"
+tmuxname="aol${LOOPNUMBER}linsim"
+tmuxnameD="aol${LOOPNUMBER}linsimD"
+echo "OFF" > ./status/stat_lsimON.txt
+tmux kill-session -t ${tmuxnameD}
+tmux kill-session -t ${tmuxname}
+rm aollinsimDelay.runproc
+rm aollindm2wfsim.runproc
+}
+
+
+
+
 
 
 # =====================================================
@@ -21,8 +99,7 @@ lsimstatus="OFF"
 testloopstatus="OFF"
 testdmturbstatus="OFF"
 
-
-file="./status/lsimstatus.txt"
+file="./status/stat_lsimON.txt"
 if [ -a $file ]
 	then
 	lsimstatus=$(echo "$(cat $file)")
@@ -97,9 +174,11 @@ menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop dela
 
 
 
+
+
 if [ "${lsimstatus}" = "OFF" ];
 then
-menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    press to START linear simulator" )
+menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    \Zb\Zu ===== START linear simulator =====\ZB\ZU" )
 else
 menuitems+=( "lsimoff" "\Zr\Z2[runnning]\Zn    \Zr\Z1press to STOP  linear simulator\Zn" )
 fi
@@ -114,7 +193,7 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 if [ "${testdmturbstatus}" = "OFF" ];
 then
-menuitems+=( "DMton" "             START simulated turbulence" )
+menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ==== \ZB\ZU" )
 menuitems+=( "-" " ")
 menuitems+=( "-" " ")
 else
@@ -279,8 +358,25 @@ menuitems+=( "setave" "[${testModeAve}] Number of WFS frames averaged" )
 menuitems+=( "-" " " )
 menuitems+=( "-" " STATIC TEST " )
 menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
+
 menuitems+=( "inj" "Inject single mode ${testModeNb} (fmodesall basis), amplitude ${testModeAmp} to RM channel" )
-menuitems+=( "mrec" "Test mode recovery (all modes)  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+
+
+
+mrecONstat=$( cat ./status/stat_mrecON.txt )
+if [[ -f "./status/stat_mrecON.txt" && ( "$mrecONstat" = " ON" || "$mrecONstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_mrecON.txt
+fi
+if [ "$mrecONstat" = "OFF" ]; then
+menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+else
+menuitems+=( "mrec_off" "\Z1\Zr    STOP Test mode recovery (all modes) \Zn  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+fi
+
+
+
 menuitems+=( "clr" "Clear RM channel" )
 
 
@@ -323,7 +419,21 @@ if [ -a $file ]
 fi
 menuitems+=( "settmet" "[${testModeetime}] Set test mode measurement time per frequ" )
 
-menuitems+=( "dmmtr" "DM mode temporal response test")
+
+
+
+dmmtrONstat=$( cat ./status/stat_dmmtrON.txt )
+if [[ -f "./status/stat_dmmtrON.txt" && ( "$dmmtrONstat" = " ON" || "$dmmtrONstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_dmmtrON.txt
+fi
+if [ "$dmmtrONstat" = "OFF" ]; then
+menuitems+=( "dmmtr_on" "\Zb\Zu ==== START DM mode temporal response test ====\ZB\ZU" )
+else
+menuitems+=( "dmmtr_off" "\Z1\Zr    STOP DM mode temporal response test \Zn" )
+fi
+
 
 
 menuitems+=( "-" " " )
@@ -404,30 +514,17 @@ aoconflog "set linsimDelay = ${linsimDelay}"
 menucontrolloop_default="linsimDelay"
 ;;
 
+
 	lsimon)
-file="./status/lsimstatus.txt"
-echo "ON" > $file
-
-tmuxname="aol${LOOPNUMBER}linsimD"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
-
-tmuxname="aol${LOOPNUMBER}linsim"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim ${GPUlinsim}" C-m
+function_lsim_on
 menutestmode_default="lsimoff"
 ;;
+
 	lsimoff)
-file="./status/lsimstatus.txt"
-echo "OFF" > $file
-
-tmuxname="aol${LOOPNUMBER}linsimD"
-tmux kill-session -t $tmuxname
-tmuxname="aol${LOOPNUMBER}linsim"
-tmux kill-session -t $tmuxname
-
+function_lsim_off
 menutestmode_default="lsimon"
 ;;
+
 	tv)
 tmux a -t aol${LOOPNUMBER}test
 ;;
@@ -603,7 +700,7 @@ echo " " >> $fname
 cat wfs_sensitivity.txt >> $fname
 rm wfs_sensitivity.txt
 
-mv DMmodesXP.fits DMmodesXP.${datestr}.fits
+mv DMmodesXP.fits ./perfMeas/DMmodesXP.${datestr}.fits
 ;;
 
 
@@ -670,12 +767,20 @@ tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 	;;
 
-    mrec)
-tmuxname="aol${LOOPNUMBER}mrec"
-aoconflog "Test Mode Recovery"
-tmux new-session -d -s ${tmuxname}
-tmux send-keys -t $tmuxname "./auxscripts/MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}" C-m
+
+	mrec_on)
+function_mrec_on
+menutestmode_default="mrec_off"
 ;;
+
+
+	mrec_off)
+function_mrec_off
+menutestmode_default="mrec_on"
+;;
+
+
+
     
     clr)
 tmuxname="aol${LOOPNUMBER}modeclr"
@@ -716,12 +821,17 @@ echo "$testModeetime" > ./conf/conf_testModeetime.txt
 aoconflog "testModeetime = $testModeetime"
 ;;
 
-    dmmtr)
-tmuxname="aol${LOOPNUMBER}testmresp"
-tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "./auxscripts/MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}" C-m
-aoconflog "MeasLoopModeResp ${testModeNb} ${testModeAmp} ${testModefmin} ${testModefmax} ${testModefmstep} ${testModeetime}"
+
+	dmmtr_on)
+function_dmmtr_on
+menutestmode_default="dmmtr_off"
 ;;
+
+	dmmtr_off)
+function_dmmtr_off
+menutestmode_default="dmmtr_on"
+;;
+
 
 
    	 psfv)

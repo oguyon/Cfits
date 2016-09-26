@@ -176,6 +176,66 @@ echo " "
 
 
 
+
+printhelpeval0 ()
+{
+	echo ""
+	echo "---------------------------------------------------------------------"
+	echo "               PIAACMC DESIGN evaluation level 0 (eval0)"
+	echo "                         list of files"
+	echo ""
+	echo "vallog.txt                               List of design variables"
+	echo "lambdalist.txt                           List of discrete wavelength values"
+	echo ""
+	echo "psfi0_step699.fits                       Monochromatic on-axis reference PSF, no focal plane mask"
+	echo "psfi0_step700.fits                       Monochromatic on-axis PSF, idealized focal plane mask"
+	echo "psfi0_ptsrc_sm0_s2_l...fits              Polychromatic on-axis PSF, physical focal plane mask"
+	echo "contrast_ptsrc_sm0_s2_l....txt           Contrast value"
+	echo ""
+	echo "piaam0z.fits                             PIAA mirror 0 sag [m]"
+	echo "piaam1z.fits                             PIAA mirror 1 sag [m]"
+	echo "conjugations.txt                         location of planes (unfolded collimated space)"
+	echo "WFamp0_xxx.fits, WFpha0_xxx.fits         complex amplitude in planes"
+	echo "LyotStop#.fits                           Lyot stops"
+	echo ""
+	echo "tmp_fpmsag.fits                          Focal plane mask sag [m]"
+	echo "tmp_fpmCA_pha.fits                       Focal plane mask phase [rad]"
+	echo "tmp_fpmCA_ampl.fits                      Focal plane mask amplitude"
+	echo "tmp_fpmzone.fits                         Focal plane mask zones"
+	echo "---------------------------------------------------------------------"
+	}
+
+
+printhelpeval1 ()
+{
+	echo ""
+	echo "---------------------------------------------------------------------"
+	echo "               PIAACMC DESIGN evaluation level 1 (eval1)"
+	echo "                         list of files"
+	echo ""
+	echo "psfi0_x50_y00.fits                        Polychromatic off-axis point source PSF, x=5l/D at central lambda, y=0"
+	echo "psfi0_ptsrc_sm0_s2_....fits               Polychromatic on-axis point source PSF"
+	echo "psfi0_extsrc15_sm0_s2_l....fits           Polychromatic on-axis resolved source (0.03 l/D radius)"
+	echo "ContrastCurve_extsrc15_sm0_s2_l....fits   contrast curve for 0.03 l/D radius source"
+	echo "psfi0_extsrc20_sm0_s2_l....fits           Polychromatic on-axis resolved source (0.01 l/D radius)"
+	echo "ContrastCurve_extsrc20_sm0_s2_l....fits   contrast curve for 0.01 l/D radius source"
+	echo ""
+	echo ""
+	echo "---------------------------------------------------------------------"
+}
+
+printhelpeval2 ()
+{
+	echo ""
+	echo "---------------------------------------------------------------------"
+	echo "               PIAACMC DESIGN evaluation level 2 (eval2)"
+	echo "                         list of files"
+	echo ""
+	echo ""
+	echo "---------------------------------------------------------------------"
+}
+
+
 printhelp ()
 {
 echo
@@ -222,9 +282,11 @@ echo "                                  ..."
 echo "                       NOTE: type \"./runPIAACMC helpsteps\" to list design steps description"
 echo "     proppoly <bogusarg>   : polychromatic propagation point source"
 echo "     eval0 <stepstop>      : level 0 evaluation (compute on-axis PSF and contrast), <stepstop> should be set to 18"
-echo "                    output files:  flux_ptsrc_...          "
-echo "                                   contrast_ptsrc_...."
-echo "                                   psfi0_ptsrc_..."
+echo "                    output files:  flux_ptsrc_sm0_s2_l_...          "
+echo "                                   contrast_ptsrc_sm0_s2_l....txt"
+echo "                                   psfi0_ptsrc_sm0_s2_l...fits"
+echo "                                Notes: sm = scoring mask"
+echo "                                       s = segments (2=hex)"
 echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
 echo "                    OUTPUT FILES:  ContrastCurve_extsrc15_..."
 echo "                                   ContrastVal_extsrc15_..."
@@ -241,12 +303,13 @@ NBARGS=2
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
         printhelp
 if [ "$#" -ne $NBARGS ]; then
+    printvarall > "varlog.txt"
     echo "Illegal number of parameters ($NBARGS params required, $# entered)"
 fi
         exit
 fi
 
-
+printvarall > "varlog.txt"
 runoptcmd=$1
 
 
@@ -260,17 +323,19 @@ fi
 echo "$2" > ./log/conf_exitpt.txt
 
 
-
+3333
 
 if [ "$runoptcmd" = "eval0" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
 echo "19" > ./log/conf_exitpt.txt
 fi
 
+
 if [ "$runoptcmd" = "eval1" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
 echo "19" > ./log/conf_exitpt.txt
 fi
+
 
 if [ "$runoptcmd" = "eval2" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
@@ -278,12 +343,55 @@ echo "19" > ./log/conf_exitpt.txt
 fi
 
 
+rm cmdlog.txt
 
 
-
-
-echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000" > cmdlog.txt
 
 ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
+
+
+if [ "$runoptcmd" = "eval0" ]; then
+mkdir -p eval0
+printhelpeval0 > ./eval0/readme_eval0.txt
+cp varlog.txt ./eval0/varlog.txt
+cp piaacmcconf_i000/lambdalist.txt ./eval0/
+cp piaacmcconf_i000/psfi0_step699.fits ./eval0/
+cp piaacmcconf_i000/psfi0_step700.fits ./eval0/
+cp piaacmcconf_i000/psfi0_step720.fits ./eval0/
+cp piaacmcconf_i000/piaam0z.fits ./eval0/
+cp piaacmcconf_i000/piaam1z.fits ./eval0/
+cp piaacmcconf_i000/conjugations.txt ./eval0/
+cp piaacmcconf_i000/WFamp0_*.fits ./eval0/
+cp piaacmcconf_i000/WFpha0_*.fits ./eval0/
+cp piaacmcconf_i000/LyotStop[0-5].fits ./eval0/
+cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2_l*.fits ./eval0/
+cp piaacmcconf_i000/contrast_ptsrc_sm0_s2_l*.txt ./eval0/
+cp tmp_fpmCA_ampl.fits ./eval0/
+cp tmp_fpmCA_pha.fits ./eval0/
+cp tmp_fpmsag.fits ./eval0/
+cp tmp_fpmzone.fits ./eval0/
+cd eval0
+gzip *.fits
+cd ..
+fi
+
+if [ "$runoptcmd" = "eval1" ]; then
+mkdir -p eval1
+printhelpeval1 > ./eval1/readme_eval1.txt
+cp varlog.txt ./eval1/varlog.txt
+cp piaacmcconf_i000/psfi0_x50_y00.fits ./eval1/
+cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2*.fits ./eval1/
+cp piaacmcconf_i000/psfi0_extsrc15_sm0_s2_l*.fits ./eval1/
+cp piaacmcconf_i000/ContrastCurve_extsrc15_sm0_s2_l*.txt ./eval1/
+cp piaacmcconf_i000/psfi0_extsrc20_sm0_s2_l*.fits ./eval1/
+cp piaacmcconf_i000/ContrastCurve_extsrc20_sm0_s2_l*.txt ./eval1/
+fi
+
+if [ "$runoptcmd" = "eval2" ]; then
+mkdir -p eval2
+printhelpeval2 > ./eval2/readme_eval2.txt
+fi
 
 

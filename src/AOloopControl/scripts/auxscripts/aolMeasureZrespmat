@@ -116,12 +116,6 @@ fi
 
 
 
-
-
-
-
-
-
 loopnb=$(cat LOOPNUMBER)
 
 pname0=$0

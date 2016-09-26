@@ -1152,9 +1152,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_TestDMmodeResp_cli;
     strcpy(data.cmd[data.NBcmd].info,"Measure system response for a single mode");
-    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <meas. time [sec]> <time step [us]> <DM mask> <DM in [2D stream]> <DM out [2D stream]>  <output [2D im]>"); 
-    strcpy(data.cmd[data.NBcmd].example,"aoltestmresp DMmodesC 5 0.05 10.0 100.0 1.0 1000 dmmask dmdisp3 dmC out");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DM modes [3D im]> <mode #> <ampl [um]> <fmin [Hz]> <fmax [Hz]> <fstep> <meas. time [sec]> <time step [us]> <DM mask> <DM in [2D stream]> <DM out [2D stream]>  <output [2D im]>"); 
+    strcpy(data.cmd[data.NBcmd].example,"aoltestmresp DMmodesC 5 0.05 10.0 100.0 1.2 1.0 1000 dmmask dmdisp3 dmC out");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *IDout_name)");
     data.NBcmd++;
 
 
@@ -7665,6 +7665,8 @@ long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, fl
             ptr += sizeof(float)*k*dmsize;
             memcpy(ptr, data.image[IDdmout].array.F, sizeof(float)*dmsize); //out->in
                         
+            timearray[k] = runtime;           
+             
             usleep(dtus);
             k++;
         }
@@ -7761,6 +7763,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
     dmysize = data.image[IDmodes].md[0].size[1];
     dmsize = dmxsize*dmysize;
     NBmodes = data.image[IDmodes].md[0].size[2];
+    
     
 	//
 	// CHECK IMAGE SIZES

@@ -671,10 +671,12 @@ menuitems+=( "sACmrmt" "            modal RM running time                 ${ACmr
 
 
 if [ -f "autocalibration.runproc" ]; then
-menuitems+=( "ACstopZ" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to STOP zonal acquisition\Zn" )
-menuitems+=( "ACstopM" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to STOP modal acquisition\Zn" )
+menuitems+=( "ACstopK" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
+menuitems+=( "ACstopZ" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
+menuitems+=( "ACstopM" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
 else
 menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn" )
+menuitems+=( " " " " )
 menuitems+=( " " " " )
 fi
 
@@ -1408,6 +1410,28 @@ echo "$ACmrmtime" > ./conf/conf_ACmrmtime.txt
 aoconflogext "set auto calib mrm time to $ACmrmtime sec"
 ;;
 
+ACstopK)
+tmux kill-session -t aol2LOrespM
+tmux kill-session -t aol2LOrespMc
+tmux kill-session -t aol2zrespM
+tmux kill-session -t aol2zrespMc
+rm function_LOresp_on_tmux.lock
+rm function_LOresp_off_tmux.lock
+rm aolCleanLOrespmat.runproc  
+rm aolMeasureLOrespmat.runproc  
+rm aolupmrm.runproc  
+rm autocalibration.runproc  
+rm SMloadmrm.runproc
+rm aolCleanZrespmat.runproc   
+rm aolMeasureZrespmat.runproc   
+rm aolupzrm.runproc
+rm SMloadzrm.runproc
+./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
+echo "OFF" > ./status/stat_zrespM.txt 
+echo "OFF" > ./status/stat_LOrespM.txt
+menucontrolloop_default="AUTOC"
+;;
+
 
 ACstopZ)
 touch function_zresp_off.wait
@@ -1509,6 +1533,7 @@ do
 	ln -s "$fname" "./conf/aol${LOOPNUMBER}_${name}.fits"
 done
 
+
 # blocks: set up symbolic links to FITS files in conf directory
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 for namet in contrM contrMc contrMcact DMmodes respM
@@ -1517,14 +1542,18 @@ do
 for i in `seq 0 $(( $NBblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
+	if [ "$namet" = "contrMcact" ]; then
+	name="${namet}${i2}_00"
+	else
 	name="${namet}${i2}"
+	fi
 	fname1="${confname}/conf_${name}_name.txt"
 	if [ -f "$fname1" ]; then
 	cp ${confname}/conf_${name}_name.txt ./conf/conf_${name}_name.txt
 	fname=$( cat "./conf/conf_${name}_name.txt" )
 	ln -s "$fname" "./conf/aol${LOOPNUMBER}_${name}.fits"
-	#else
-	#rm "./conf/aol${LOOPNUMBER}_${name}.fits"
+	else
+	echo "MISSING FILE: $fname1" 
 	#rm "./conf/conf_${name}_name.txt"
 	fi
 done
@@ -1532,6 +1561,11 @@ done
 for i in `seq $NBblocks 20`;
 do
 i2=$(printf "%02d" "$i")
+if [ "$namet" = "contrMcact" ]; then
+	name="${namet}${i2}_00"
+	else
+	name="${namet}${i2}"
+	fi
 rm "./conf/aol${LOOPNUMBER}_${name}.fits"
 rm "./conf/conf_${name}_name.txt"
 done

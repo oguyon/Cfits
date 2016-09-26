@@ -5440,7 +5440,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     }
 
     for(elem=0; elem<100; elem++)
-        optsyst[0].keepMem[i] = 0;
+        optsyst[0].keepMem[elem] = 0;
 
 
 
