@@ -1,10 +1,13 @@
-
 #if !defined(CORONAGRAPHS_H)
 #define CORONAGRAPHS_H
 
 
 
 #define CORONAGRAPHS_ARRAYSIZE 4096
+
+
+int init_coronagraphs();
+
 
 
 double coronagraph_make_2Dprolate(double masksizepix, double beamradpix, double centralObs, char *outname, long size, char *pupmask_name);
@@ -51,6 +54,6 @@ int coronagraph_userfunc();
 
 int coronagraph_compute_limitcoeff();
 
-int coronagraph_scanPIAACMC_centObs_perf( double obs0input );
+int CORONAGRAPHS_scanPIAACMC_centObs_perf( double obs0input );
 
 #endif

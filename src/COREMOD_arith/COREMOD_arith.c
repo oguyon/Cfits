@@ -320,11 +320,6 @@ long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)
     long ii, iistart, iiend;
     
     
-     list_image_ID();
-    printf("%ld -> %ld\n", iistart, iiend);
-    fflush(stdout);
-    
-    
     ID = image_ID(ID_name);
     atype = data.image[ID].md[0].atype;
     naxes[0] = data.image[ID].md[0].size[0];
@@ -342,7 +337,9 @@ long arith_set_pixel_1Drange(char *ID_name, double value, long x, long y)
     if(iiend>=naxes[0]*naxes[1])
         iiend = naxes[0]*naxes[1];
          
-        
+          list_image_ID();
+    printf("%ld -> %ld\n", iistart, iiend);
+    fflush(stdout);   
   
     data.image[ID].md[0].write = 1;
     if(atype == FLOAT)
@@ -2062,7 +2059,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
   int atype1,atype2;
   long i;
   int n;
-  char errmsg[200];
+  char errmsg[SBUFFERSIZE];
 
   ID1 = image_ID(ID_name1);
   ID2 = image_ID(ID_name2);
@@ -2111,7 +2108,7 @@ int arith_image_function_2_1(char *ID_name1, char *ID_name2, char *ID_out, doubl
   nelement = nelement1;
   if(nelement1!=nelement2)
     {
-      n = snprintf(errmsg,SBUFFERSIZE,"images %s and %s have different number of elements ( %ld %ld )\n",ID_name1,ID_name2,nelement1,nelement2);
+      n = snprintf(errmsg, SBUFFERSIZE, "images %s and %s have different number of elements ( %ld %ld )\n", ID_name1, ID_name2, nelement1, nelement2);
       if(n >= SBUFFERSIZE) 
 	printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
       printERROR(__FILE__,__func__,__LINE__,errmsg);

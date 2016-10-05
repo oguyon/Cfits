@@ -14,6 +14,11 @@ typedef struct /* structure to store Zernike coefficients */
 
 
 
+
+int init_ZernikePolyn();
+
+
+
 double fact(int n);
 
 int zernike_init();

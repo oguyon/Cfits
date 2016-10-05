@@ -453,17 +453,13 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	printf("Compute reconstruction matrix\n");
 	fflush(stdout);
 
-	magmacomp = 0;
-	#ifdef HAVE_MAGMA
-	if(use_magma == 1)
-		magmacomp = 1;
-	#endif
+
 	
-	if(magmacomp==1)
+#ifdef HAVE_MAGMA
 		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat");
-	else
+	#else
 		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat");
-	 
+	#endif 
 	 
 	if(Save==1)
         save_fits("PFmatC", "!PFmatC.fits");

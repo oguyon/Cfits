@@ -25,6 +25,7 @@
 
 #include "coronagraphs/coronagraphs.h"
 
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
 
@@ -2511,7 +2512,7 @@ int coronagraph_init_PIAA()
     verr = 1.0;
     NBistep = 1000000;
     innerprof_cumul = (double*) malloc(sizeof(double)*NBistep);
-
+	dir = 1.0; // initial direction
     while(fabs(verr)>1.0e-9)
     {
         t0 = 0.0;
@@ -6661,7 +6662,7 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
     char fname1[200];
     double trad_pix;
     long IDa1,IDp1,ID1;
-    long IDapo;
+    long IDapo = -1;
     long ii,jj;
     long ID;
     long IDfpm;
@@ -6846,8 +6847,8 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
 
 
 
-
-    /*
+/*
+    
     if(APLC_CentOBS1>0.0001)
       sprintf(fname,"%s/APLCapo/raw/APLCapo_%.3f.%.3f.%ld.ref.gz", CORONAGRAPHSDATALOCAL, APLC_FPMASKsize, APLC_CentOBS1, size);
     else
@@ -7054,8 +7055,9 @@ int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
         }
         else // default apodization
         {
-            for(ii=0; ii<size2; ii++)
-                data.image[IDa1].array.F[ii] *= data.image[IDapo].array.F[ii];
+			if(IDapo!=-1)
+				for(ii=0; ii<size2; ii++)
+					data.image[IDa1].array.F[ii] *= data.image[IDapo].array.F[ii];
         }
 
         mk_complex_from_amph("pa1","pp1","pc1", 0);

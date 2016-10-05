@@ -42,8 +42,7 @@ int clock_gettime(int clk_id, struct timespec *t){
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_blas.h>
-
-
+#include <pthread.h>
 
 
 #include "CLIcore.h"
@@ -2121,20 +2120,16 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
 //
 long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)
 {
-		int use_magma;
 
 
         // COMPUTE OVERALL CONTROL MATRIX
-        use_magma = 0;
-#ifdef HAVE_MAGMA
-        use_magma = 1;
-#endif
-        //use_magma = 0;
+        
         printf("COMPUTE OVERALL CONTROL MATRIX\n");
-        if(use_magma==1)
-            CUDACOMP_magma_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 100000, "VTmat");
-        else
-            linopt_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 10000, "VTmat");
+        #ifdef HAVE_MAGMA
+      CUDACOMP_magma_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 100000, "VTmat");
+#else
+linopt_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 10000, "VTmat");
+#endif
 
         //save_fits("VTmat", "!./mkmodestmp/VTmat.fits");
         delete_image_ID("VTmat");
@@ -4254,15 +4249,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     fflush(stdout);
 
                     // COMPUTE MODAL CONTROL MATRICES
-#ifdef HAVE_MAGMA
-                    use_magma = 1;
-#endif
                     printf("COMPUTE CONTROL MATRIX\n");
-                    if(use_magma==1)
+                    #ifdef HAVE_MAGMA
                         CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
-                    else
+                    #else
                         linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
-
+					#endif
 
                     delete_image_ID("VTmat");
                     sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
@@ -4350,17 +4342,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     if(COMPUTE_FULL_CMAT == 1)
     {
         // COMPUTE OVERALL CONTROL MATRIX
-        use_magma = 0;
-#ifdef HAVE_MAGMA
-        use_magma = 1;
-#endif
-        //use_magma = 0;
         printf("COMPUTE OVERALL CONTROL MATRIX\n");
-        if(use_magma==1)
+        #ifdef HAVE_MAGMA
             CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat");
-        else
+        #else
             linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
-
+		#endif
+		
         //save_fits("VTmat", "!./mkmodestmp/VTmat.fits");
         delete_image_ID("VTmat");
         save_fits("cmat", "!./mkmodestmp/cmat.fits");
@@ -9330,7 +9318,7 @@ int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDel
 
     for(iter=0; iter<NBiter; iter++)
     {
-        if (file_exist ("stopRM.txt"))
+        if (file_exists("stopRM.txt"))
         {
             r = system("rm stopRM.txt");
             iter = NBiter;

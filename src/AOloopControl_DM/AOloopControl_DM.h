@@ -80,6 +80,10 @@ typedef struct
 
 
 
+int init_AOloopControl_DM();
+
+
+
 int init_AOsystSim();
 
 int AOloopControl_DM_disp2V(long DMindex);

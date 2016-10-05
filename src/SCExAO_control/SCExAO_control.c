@@ -24,6 +24,7 @@
 #include "linopt_imtools/linopt_imtools.h"
 #include "image_filter/image_filter.h"
 #include "info/info.h"
+#include "fft/fft.h"
 #include "ZernikePolyn/ZernikePolyn.h"
 
 #include "SCExAO_control/SCExAO_control.h"
@@ -602,13 +603,13 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     
     
     
-    while(file_exist("stop_PyAlignTT.txt")==0)
+    while(file_exists("stop_PyAlignTT.txt")==0)
     {
 
-        while (file_exist("pause_PyAlignTT.txt"))
+        while (file_exists("pause_PyAlignTT.txt"))
             usleep(100000);
 
-        if(file_exist("./status/gain_PyAlignTT.txt"))
+        if(file_exists("./status/gain_PyAlignTT.txt"))
         {
             fp = fopen("./status/gain_PyAlignTT.txt", "r");
             r = fscanf(fp, "%f", &v0);
@@ -835,14 +836,14 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
     NBframesAve = NBframesAveMin;
     gainfactor = 1.0;
-    while(file_exist ("stop_PyAlignCam.txt")==0)
+    while(file_exists ("stop_PyAlignCam.txt")==0)
     {
-        while (file_exist ("pause_PyAlignCam.txt"))
+        while (file_exists ("pause_PyAlignCam.txt"))
             usleep(100000);
 
 
 
-        if(file_exist("./status/gain_PyAlignCam.txt"))
+        if(file_exists("./status/gain_PyAlignCam.txt"))
         {
             fp = fopen("./status/gain_PyAlignCam.txt", "r");
             r = fscanf(fp, "%f", &v0);

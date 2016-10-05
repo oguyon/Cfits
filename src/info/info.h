@@ -2,6 +2,10 @@
 #define INFO_H
 
 
+int init_info();
+
+
+
 int kbdhit(void);
 
 int print_header(char *str, char c);
@@ -28,6 +32,8 @@ double ssquare(char *ID_name);
 double rms_dev(char *ID_name);
 
 int info_image_stats(char *ID_name, char *options);
+
+long info_cubestats(char *ID_name, char *IDmask_name, char *outfname);
 
 double img_min(char *ID_name);
 

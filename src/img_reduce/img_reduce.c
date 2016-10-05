@@ -20,6 +20,7 @@
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "image_filter/image_filter.h"
+#include "fft/fft.h"
 
 
 #include "img_reduce/img_reduce.h"
