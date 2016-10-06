@@ -12,7 +12,7 @@
 #include <mach/mach_time.h>long AOloopControl_ComputeOpenLoopModes(long loop)
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 0
-int clock_gettime(int clk_id, struct timespec *t){
+int clock_gettime(int clk_id, struct mach_timespec *t){
     mach_timebase_info_data_t timebase;
     mach_timebase_info(&timebase);
     uint64_t time;
@@ -7298,10 +7298,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     
 
     schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     // r = seteuid(euid_real);//Go back to normal privileges
-
+	#endif
 
     latencyarray = (float*) malloc(sizeof(float)*NBiter);
 	latencysteparray = (float*) malloc(sizeof(float)*NBiter);
@@ -8010,8 +8011,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     long poke, poke1, poke2;
 
     schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
-
+	#endif
 
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
@@ -9032,9 +9034,11 @@ int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name,
     int semval;
     
     schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges
+	#endif
 
     IDwfsref = image_ID(IDwfsref_name);
     wfsxsize = data.image[IDwfsref].md[0].size[0];
@@ -10670,10 +10674,11 @@ int AOloopControl_run()
   */  
     
     schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     // r = seteuid(euid_real);//Go back to normal privileges
-
+	#endif
 
 
 
@@ -11291,7 +11296,9 @@ int AOloopControl_statusStats()
         AOloopControl_InitializeMemory(1);
 
     schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
+	#endif
 
     nbgpu = AOconf[LOOPNUMBER].GPU;
 

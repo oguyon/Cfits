@@ -1442,6 +1442,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         fclose(fp);
 
     optsyst[0].NBelem = elem;
+    optsyst[0].endmode = 0;
 
     optsystinit = 1;
 }
@@ -2194,7 +2195,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
 
     long IDapo;
-    long xsize, ysize;
+    long xsize = 0;
+    long ysize = 0;
     long IDapo_PIAA, IDapo_CPA;
     double coeff;
 
@@ -4309,7 +4311,8 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
     double rsl, rsl0;
     long iter, NBiter;
     long ii;
-    long xsize, ysize;
+    long xsize = 0;
+    long ysize = 0;
     long IDout;
     float sigma = 4.0;
     int filter_size = 10;
@@ -4446,7 +4449,9 @@ long PIAACMCsimul_CA2propCubeInt(char *IDamp_name, char *IDpha_name, float zmin,
     long IDout;
     long l;
     long IDa, IDp;
-    long xsize, ysize, ii;
+    long xsize = 0;
+    long ysize = 0;
+    long ii;
     long nblambda, k;
     float *zarray;
     float zprop;
@@ -4559,7 +4564,9 @@ long PIAACMCsimul_optimizeLyotStop_OAmin(char *IDincohc_name)
     long IDindex;
     long IDminflux;
     long ii, jj, kk;
-    long xsize, ysize, xysize;
+    long xsize = 0;
+    long ysize = 0;
+    long xysize = 0;
     double minv;
     long minindex;
     double tmpv;
@@ -4627,7 +4634,8 @@ double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *I
     char nameint[500];
     char fname[500];
     char fname1[500];
-    long xsize, ysize;
+    long xsize = 0;
+    long ysize = 0;
     long ii, jj, k, m;
 
     float *rinarray;
@@ -5138,7 +5146,10 @@ long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long
 {
     long ID, IDout;
     long ii, jj, kk;
-    long xsize, ysize, zsize, ysize1;
+    long xsize = 0;
+    long ysize = 0;
+    long zsize = 0;
+    long ysize1 = 0;
 
     ID = image_ID(FPMresp_in_name);
     xsize = data.image[ID].md[0].size[0];
@@ -5167,9 +5178,14 @@ long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long
 // compress FPMresp to smaller number of lambda and points
 long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)
 {
-    long ID, IDout;
+    long ID = -1;
+    long IDout = -1;
     long ii, jj, kk, ii1, kk1;
-    long xsize, ysize, zsize, xsize1, zsize1;
+    long xsize = 0;
+    long ysize = 0;
+    long zsize = 0;
+    long xsize1 = 0;
+    long zsize1 = 0;
     double alpha;
     long kk1xi;
     double kk1x;
@@ -5289,7 +5305,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     long i, ii, jj, kk;
     long IDv, ID, ID1, IDref, IDa, IDcomb;
     long IDmodes, IDmodes2D;
-    long xsize, ysize, zsize;
+    long xsize = 0;
+    long ysize = 0;
+    long zsize = 0;
     long k;
 
     long iter;
@@ -5437,7 +5455,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     long aveCcnt;
 
     double alphareg;
-    double bestval;
+    double bestval = 0.0;
     long IDoptvec = -1;
 
     long index;

@@ -34,7 +34,7 @@
 #include <mach/mach_time.h>
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 0
-int clock_gettime(int clk_id, struct timespec *t){
+int clock_gettime(int clk_id, struct mach_timespec *t){
     mach_timebase_info_data_t timebase;
     mach_timebase_info(&timebase);
     uint64_t time;
@@ -609,9 +609,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     
     schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges
+	#endif
 
    // AOloopControl_DM_createconf();
     
