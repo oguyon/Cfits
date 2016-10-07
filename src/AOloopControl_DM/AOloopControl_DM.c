@@ -28,7 +28,6 @@
 
 
 #include "AOloopControl_DM/AOloopControl_DM.h"
-//#include "AtmosphericTurbulence/AtmosphericTurbulence.h"
 
 #ifdef __MACH__
 #include <mach/mach_time.h>

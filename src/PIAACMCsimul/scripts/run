@@ -323,8 +323,6 @@ fi
 echo "$2" > ./log/conf_exitpt.txt
 
 
-3333
-
 if [ "$runoptcmd" = "eval0" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
 echo "19" > ./log/conf_exitpt.txt
