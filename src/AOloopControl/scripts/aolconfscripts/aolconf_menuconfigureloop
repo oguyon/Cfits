@@ -644,9 +644,9 @@ if [ -a $file ]
 	MASKS_LOCK="0"
 fi
 if [ "$MASKS_LOCK" -eq "1" ]; then
-menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] Toggle Lock WFS and DM masks\Zn" )
+menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to toggle Lock OFF" )
 else
-menuitems+=( "mlock" "[$MASKS_LOCK] Toggle Lock WFS and DM masks" )
+menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock OFF" )
 fi
 
 
