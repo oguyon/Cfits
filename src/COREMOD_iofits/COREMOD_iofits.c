@@ -1417,6 +1417,7 @@ int save_fits_atomic(char *ID_name, char *file_name)
     long ID;
     int atype;
     char fnametmp[1000];
+    char savename[1000];
 	char command[2000];
 	int ret;
 	pthread_t self_id;
@@ -1424,24 +1425,24 @@ int save_fits_atomic(char *ID_name, char *file_name)
     ID = image_ID(ID_name);
 
 	self_id=pthread_self();
-	sprintf(fnametmp, "!_savefits_atomic_%s_%d_%ld.tmp.fits", ID_name, (int) getpid(), (unsigned long) self_id);
-
+	sprintf(fnametmp, "_savefits_atomic_%s_%d_%ld.tmp.fits", ID_name, (int) getpid(), (unsigned long) self_id);
+	sprintf(savename, "!%s", fnametmp);
     if (ID!=-1)
     {
         atype = data.image[ID].md[0].atype;
         switch(atype) {
         case FLOAT:
-            save_fl_fits(ID_name, fnametmp);
+            save_fl_fits(ID_name, savename);
             break;
         case DOUBLE:
-            save_db_fits(ID_name, fnametmp);
+            save_db_fits(ID_name, savename);
             break;
         case USHORT:
-            save_sh_fits(ID_name, fnametmp);
+            save_sh_fits(ID_name, savename);
             break;
         }
 		
-		sprintf("mv %s %s", fnametmp, file_name);
+		sprintf(command, "mv %s %s", fnametmp, file_name);
 		ret = system(command);
     }
 
