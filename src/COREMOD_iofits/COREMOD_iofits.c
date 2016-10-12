@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <pthread.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -1417,10 +1419,12 @@ int save_fits_atomic(char *ID_name, char *file_name)
     char fnametmp[1000];
 	char command[2000];
 	int ret;
+	pthread_t self_id;
 	
     ID = image_ID(ID_name);
 
-	sprintf(fnametmp, "!_savefits_atomic_%s.tmp.fits", ID_name);
+	self_id=pthread_self();
+	sprintf(fnametmp, "!_savefits_atomic_%s_%d_%ld.tmp.fits", ID_name, (int) getpid(), (unsigned long) self_id);
 
     if (ID!=-1)
     {

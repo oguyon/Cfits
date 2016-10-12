@@ -828,6 +828,9 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         if(semwaitts.tv_nsec >= 1000000000)
             semwaitts.tv_sec = semwaitts.tv_sec + 1;
 
+		//
+		// this is semaphore that triggers the write to the DM
+		// 
         sem_timedwait(data.image[dmdispcombconf[DMindex].IDdisp].semptr[1], &semwaitts);
 
         cntsum = 0;
