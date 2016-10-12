@@ -607,7 +607,7 @@ AOloadMem 1
 # ===========================================  TEST AND MONITOR =======================================================
 # =====================================================================================================================   	 
 	l)
-	xterm  -e ./auxscripts/listrunproc
+	xterm  -geometry 200x40 -e ./auxscripts/listrunproc
 	;;
    	 T) state="menutestmode"   ;;
    	 V) state="menuview" ;;
