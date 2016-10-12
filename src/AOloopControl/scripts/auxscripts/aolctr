@@ -3,8 +3,10 @@
 loopnb=$(cat LOOPNUMBER)
 confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 
-pname0=$0
-pname="${pname0#"./"}-$loopnb"
+#pname0=$0
+#pname="${pname0#"./"}-$loopnb"
+
+pname="aolctr-$loopnb"
 
 echo "pname = $pname"
 
