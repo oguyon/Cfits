@@ -17,7 +17,6 @@ echo " "
 echo "PROCESSES RUNNING"
 echo "Start Time                          Process Name                      Tmux session    Description"
 echo "-------------------------------------------------------------------------------------------------------------------------------"
-echo "2016-10-12_20:49:53                 autocalibration                              -    Automatic system calibration (zonal + modal RMs)"
 for file in *.runproc
 do
 line=$( cat $file )
