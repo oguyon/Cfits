@@ -321,10 +321,10 @@ state="menualign"
 	tm) tmux a -t alignPyrTT ;; 
 	pz)
 aoconflogext "Pupil align zero"
-pywfs reimage x home
-pywfs reimage x goto $pywfsreimagexposref #150000
-pywfs reimage y home
-pywfs reimage y goto $pywfsreimageyposref #67000
+pywfs_pup x home
+pywfs_pup x goto $pywfsreimagexposref #150000
+pywfs_pup y home
+pywfs_pup y goto $pywfsreimageyposref #67000
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pz"
 state="menualign"
@@ -351,7 +351,7 @@ state="menualign"
 ;;
         pxm)
 pywfsreimagexposref=$(($pywfsreimagexposref-$pcamstep))
-pywfs reimage x goto $pywfsreimagexposref #150000
+pywfs_pup x goto $pywfsreimagexposref #150000
 aoconflog "Pupil move x ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pxm"
@@ -359,7 +359,7 @@ state="menualign"
 ;;
         pxp)
 pywfsreimagexposref=$(($pywfsreimagexposref+$pcamstep))
-pywfs reimage x goto $pywfsreimagexposref #150000
+pywfs_pup x goto $pywfsreimagexposref #150000
 aoconflog "Pupil move x ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pxp"
@@ -367,7 +367,7 @@ state="menualign"
 ;;
         pym)
 pywfsreimageyposref=$(($pywfsreimageyposref-$pcamstep))
-pywfs reimage y goto $pywfsreimageyposref #150000
+pywfs_pup y goto $pywfsreimageyposref #150000
 aoconflog "Pupil move y ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pym"
@@ -375,7 +375,7 @@ state="menualign"
 ;;
         pyp)
 pywfsreimageyposref=$(($pywfsreimageyposref+$pcamstep))
-pywfs reimage y goto $pywfsreimageyposref #150000
+pywfs_pup y goto $pywfsreimageyposref #150000
 aoconflog "Pupil move y ${pywfsreimagexposref}"
 echo "$pywfsreimagexposref $pywfsreimageyposref" > ./status/pcampos.txt
 menualign_default="pyp"
