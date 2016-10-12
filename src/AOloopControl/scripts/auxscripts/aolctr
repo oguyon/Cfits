@@ -39,7 +39,9 @@ echo "readshmim aol${loopnb}_DMmode_MULTF" >> aol${loopnb}startup.txt
 #echo "cp cmat aol${loopnb}_ContrM" >> aol${loopnb}startup.txt
 
 rm ${pname}-fifo
+echo "fifo file: ${pname}-fifo"
 sleep 1
+
 Cfits -n $pname --startup="aol${loopnb}startup.txt" -f ${pname}-fifo
  
 
