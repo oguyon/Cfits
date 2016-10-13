@@ -370,9 +370,9 @@ else
 echo "OFF" > ./status/stat_mrecON.txt
 fi
 if [ "$mrecONstat" = "OFF" ]; then
-menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 else
-menuitems+=( "mrec_off" "\Z1\Zr    STOP Test mode recovery (all modes) \Zn  <./MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
+menuitems+=( "mrec_off" "\Z1\Zr    STOP Test mode recovery (all modes) \Zn  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 fi
 
 
@@ -770,6 +770,7 @@ tmux send-keys -t $tmuxname "exit" C-m
 
 	mrec_on)
 function_mrec_on
+sleep 10
 menutestmode_default="mrec_off"
 ;;
 
