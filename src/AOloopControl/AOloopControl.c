@@ -2344,7 +2344,7 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 										dist = r;
 								}
 						}
-				data.image[IDpixdist].array.F[jj1*xsize+ii1] = dist;
+				data.image[IDpixdist].array.F[jj*xsize+ii] = dist;
 			}
 	save_fits("pixmaskdist", "!_tmp_pixmaskdist.fits");
 	save_fits(IDcpa_name, "!_tmp_cpa.fits");
