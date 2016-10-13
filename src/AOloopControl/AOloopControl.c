@@ -2359,7 +2359,7 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 					coeff = (exp(-coeff*coeff)-exp(-1.0))  / (1.0 - exp(-1.0));
 					if(coeff<0.0)
 						coeff = 0.0;
-					data.image[IDout].array.F[kk*xysize+index] = coeff; //data.image[IDin].array.F[kk*xysize+index]*coeff;
+					data.image[IDout].array.F[kk*xysize+index] = coeff*data.image[IDin].array.F[kk*xysize+index]*coeff;
 				}
 	}
 
