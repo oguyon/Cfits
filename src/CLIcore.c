@@ -792,18 +792,7 @@ int main(int argc, char *argv[])
 			
         while(CLIexecuteCMDready == 0)
         {
-			//printf("blockCLIinput = %d\n", blockCLIinput);
-		//	fflush(stdout);
-           
-      //     printf("here0\n");
-      //     fflush(stdout);
-           
-       
-
             n = select(fdmax+1, &cli_fdin_set, NULL, NULL, &tv);
-
-		//	printf("[n=%d]\n", n);
-		//	fflush(stdout);
             
             if (n==0) // nothing received, need to re-init and go back to select call
 				{
@@ -830,8 +819,6 @@ int main(int argc, char *argv[])
             }
 
 			blockCLIinput = 0;
-          // printf("here1\n");
-          // fflush(stdout);
            
             if(data.fifoON==1)
             {
@@ -859,23 +846,15 @@ int main(int argc, char *argv[])
                             fflush(stdout);
                             break;
                         }
-		//				printf("bytes = %d [%s]\n", (int) bytes, line);
-		//				fflush(stdout);
                     }
 					blockCLIinput = 1; // keep blocking input while fifo is not empty
                 }
             }
 			
-	//	stat(data.fifoname, &st);
-      //     printf("here2  [%s -> %ju]\n", data.fifoname, (intmax_t) st.st_size);
-      //     fflush(stdout);
-           
             if(blockCLIinput == 0)
 				if (FD_ISSET(fileno(stdin), &cli_fdin_set)) {
 					rl_callback_read_char();
 				}
-	//		printf("here3\n");
-        //   fflush(stdout);
         }
         CLIexecuteCMDready = 0;
 
