@@ -2301,6 +2301,9 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 	long IDpixdist;
 	long ii, jj, ii1, jj1, dii, djj, dii2, djj2;
 	float r, dist;
+	float coeff;
+	long index;
+	long kk;
 	
 	IDin = image_ID(IDin_name);
 	xsize = data.image[IDin].md[0].size[0];
@@ -2343,7 +2346,20 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 						}
 				data.image[IDpixdist].array.F[jj1*xsize+ii1] = dist;
 			}
-		save_fits("pixmaskdist", "~_tmp_pixmaskdist.fits");
+	save_fits("pixmaskdist", "!_tmp_pixmaskdist.fits");
+	save_fits(IDcpa_name, "!_tmp_cpa.fits");
+	for(kk=0; kk<zsize; kk++)
+	{
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				{
+					index = jj*xsize+ii;
+					coeff =  data.image[IDpixdist].array.F[index] / ((1.0*xsize/(data.image[IDcpa].array.F[kk]+0.1))*0.5);
+					
+					coeff = (exp(-coeff*coeff)-exp(-1.0))  / (1.0 - exp(-1.0));
+					data.image[IDout].array.F[kk*xysize+index] = coeff; //data.image[IDin].array.F[kk*xysize+index]*coeff;
+				}
+	}
 
 	return(IDout);
 }
