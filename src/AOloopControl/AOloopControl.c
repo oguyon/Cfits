@@ -2293,7 +2293,7 @@ long AOloopControl_DMedgeDetect(char *IDmaskRM_name, char *IDout_name)
 
 
 
-//AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
+
 long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *IDcpa_name, char *IDout_name)
 {
 	long IDin, IDmask, IDcpa, IDout;
@@ -2354,9 +2354,11 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 			for(jj=0;jj<ysize;jj++)
 				{
 					index = jj*xsize+ii;
-					coeff =  data.image[IDpixdist].array.F[index] / ((1.0*xsize/(data.image[IDcpa].array.F[kk]+0.1))*0.5);
+					coeff =  data.image[IDpixdist].array.F[index] / ((1.0*xsize/(data.image[IDcpa].array.F[kk]+0.1))*0.8);
 					
 					coeff = (exp(-coeff*coeff)-exp(-1.0))  / (1.0 - exp(-1.0));
+					if(coeff<0.0)
+						coeff = 0.0;
 					data.image[IDout].array.F[kk*xysize+index] = coeff; //data.image[IDin].array.F[kk*xysize+index]*coeff;
 				}
 	}
