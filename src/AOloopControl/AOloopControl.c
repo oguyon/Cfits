@@ -2346,8 +2346,8 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 						}
 				data.image[IDpixdist].array.F[jj*xsize+ii] = dist;
 			}
-	save_fits("pixmaskdist", "!_tmp_pixmaskdist.fits");
-	save_fits(IDcpa_name, "!_tmp_cpa.fits");
+	//save_fits("pixmaskdist", "!_tmp_pixmaskdist.fits");
+	//save_fits(IDcpa_name, "!_tmp_cpa.fits");
 	for(kk=0; kk<zsize; kk++)
 	{
 		for(ii=0;ii<xsize;ii++)
@@ -2362,6 +2362,7 @@ long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *
 					data.image[IDout].array.F[kk*xysize+index] = coeff*data.image[IDin].array.F[kk*xysize+index]*coeff;
 				}
 	}
+	delete_image_ID("pixmaskdist");
 
 	return(IDout);
 }
@@ -2894,83 +2895,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-		/*	save_fits(ID_name, "!./mkmodestmp/fmodesIall.fits");
-
-		IDprox = create_2Dimage_ID("proxim", msizex, msizey);
-		for(ii=0;ii<msizex;ii++)
-			for(jj=0;jj<msizey;jj++)
-			{
-				data.image[IDprox].array.F[jj*msizex+ii] = 1.0*(msizex+msizey);
-				
-				for(ii1=0;ii1<msizex;ii1++)
-					for(jj1=0;jj1<msizey;jj1++)
-						{
-							if(data.image[IDmaskRM].array.F[jj1*msizex+ii1]>0.5)
-								{
-									dx = 1.0*ii1-1.0*ii;
-									dy = 1.0*jj1-1.0*jj;
-									dist = sqrt(dx*dx+dy*dy);
-									if(dist<data.image[IDprox].array.F[jj*msizex+ii])
-										data.image[IDprox].array.F[jj*msizex+ii] = dist;
-								}
-						}
-			}
-		save_fits("proxim", "!./mkmodestmp/proxRMim.fits");
-		
-		IDprox1 = create_2Dimage_ID("proxim1", msizex, msizey);
-		for(ii=0;ii<msizex;ii++)
-			for(jj=0;jj<msizey;jj++)
-				{
-					data.image[IDprox1].array.F[jj*msizex+ii] = 0.0;
-					
-					for(ii1=0;ii1<msizex;ii1++)
-						for(jj1=0;jj1<msizey;jj1++)
-							{
-								dx = 1.0*ii1-1.0*ii;
-								dy = 1.0*jj1-1.0*jj;
-								dist = sqrt(dx*dx+dy*dy);
-								
-								if(dist<1.5)
-									if(data.image[IDprox].array.F[jj1*msizex+ii1]>data.image[IDprox1].array.F[jj*msizex+ii])
-										data.image[IDprox1].array.F[jj*msizex+ii] = data.image[IDprox].array.F[jj1*msizex+ii1];
-							}
-		
-				}
-		save_fits("proxim1", "!./mkmodestmp/proxRMim1.fits");
-		
-		
-		
-		IDtmp1 = create_3Dimage_ID("proxC", msizex, msizey, data.image[ID].md[0].size[2]);
-		for(m=0; m<data.image[ID].md[0].size[2]; m++)
-		{
-			for(ii=0;ii<msizex;ii++)
-			for(jj=0;jj<msizey;jj++)
-				{
-					dist0 = data.image[IDprox1].array.F[jj*msizex+ii];
-					
-					val1 = 0.0;
-					val1cnt = 0.0;
-					for(ii1=0;ii1<msizex;ii1++)
-						for(jj1=0;jj1<msizey;jj1++)
-						{
-							dx = 1.0*ii1-1.0*ii;
-							dy = 1.0*jj1-1.0*jj;
-							dist = sqrt(dx*dx+dy*dy);
-							
-							if(dist<4.0*(dist0+0.1))
-								{
-									coeff = exp(-0.6*pow((dist)/(dist0+0.5),3.0));
-									val1 += data.image[ID].array.F[m*msizex*msizey+jj1*msizex+ii1]*coeff;
-									val1cnt += coeff;
-								}
-							data.image[IDtmp1].array.F[m*msizex*msizey+jj*msizex+ii] = val1/val1cnt;
-		
-						}
-				}
-		}
-		save_fits("proxC", "!./mkmodestmp/proxC.fits");
-		*/
-		
+	
 		
 		
 		
@@ -2987,7 +2912,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 		{
 			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
 			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+				{
+					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+					if(data.image[IDmask].array.F[ii]>1.0)
+						data.image[IDmask].array.F[ii] = 1.0;
+				}
 			save_fits("dmmask", "!dmmask.fits");
 		}
 
@@ -3012,116 +2941,11 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 		for(m=0; m<data.image[ID].md[0].size[2]; m++)
 		{
 			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[ID].array.F[m*msizex*msizey+ii] *= data.image[IDmaskRM].array.F[ii];		
+				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii] * data.image[IDmask].array.F[ii];		
 		}
 
 
 
-/*
-            /// SLAVED ACTUATORS
-            IDslaved = image_ID("dmslaved");
-            ID = image_ID(ID_name);
-			
-            if((IDslaved != -1)&&(IDmaskRM!=-1))
-            {
-                IDtmp = create_2Dimage_ID("_tmpinterpol", msizex, msizey);
-                IDtmp1 = create_2Dimage_ID("_tmpcoeff1", msizex, msizey);
-                
-                IDtmp2 = create_2Dimage_ID("_tmpcoeff2", msizex, msizey);
-                for(m=0; m<data.image[ID].md[0].size[2]; m++)
-                {
-					// write input DM mode
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        {
-							data.image[IDtmp].array.F[ii] = data.image[ID].array.F[m*msizex*msizey+ii];  // modes
-					
-							data.image[IDtmp1].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0-data.image[IDslaved].array.F[ii]);		// non-slaved actuators inside pupil							
-					
-							data.image[IDtmp2].array.F[ii] = data.image[IDtmp1].array.F[ii];   // copy of non-slaved actuators inside pupil
-						}
-				
-					pixcnt = 1;
-					while(pixcnt>0)
-					{
-						pixcnt = 0;
-						for(ii=0;ii<msizex;ii++)
-						for(jj=0;jj<msizey;jj++)
-							{
-								if((data.image[IDtmp1].array.F[jj*msizex+ii]<0.5) && (data.image[IDslaved].array.F[jj*msizex+ii]>0.5))   // slaved actuator, not controlled
-								{
-									pixcnt ++;
-									if(ii+1<msizex) 
-									{
-										vxp = data.image[IDtmp].array.F[jj*msizex+(ii+1)];
-										cxp = data.image[IDtmp1].array.F[jj*msizex+(ii+1)];
-									}
-									else
-									{
-										vxp = 0.0;
-										cxp = 0.0;
-									}
-								
-									if(ii>0)
-									{
-										vxm = data.image[IDtmp].array.F[jj*msizex+(ii-1)];
-										cxm = data.image[IDtmp1].array.F[jj*msizex+(ii-1)];
-									}
-									else
-									{
-										vxm = 0.0;
-										cxm = 0.0;
-									}
-
-									if(jj+1<msizey)
-									{
-										vyp = data.image[IDtmp].array.F[(jj+1)*msizex+ii];
-										cyp = data.image[IDtmp1].array.F[(jj+1)*msizex+ii];
-									}
-									else
-									{
-										vyp = 0.0;
-										cyp = 0.0;
-									}
-
-									if(jj>0)
-									{
-										vym = data.image[IDtmp].array.F[(jj-1)*msizex+ii];
-										cym = data.image[IDtmp1].array.F[(jj-1)*msizex+ii];
-									}
-									else
-									{
-										vym = 0.0;
-										cym = 0.0;
-									}
-
-									ctot = (cxp+cxm+cyp+cym);
-									
-									if(ctot>0.1)
-										{
-											data.image[IDtmp].array.F[jj*msizex+ii] = 0.8*data.image[IDtmp].array.F[jj*msizex+ii] + 0.2*(vxp*cxp+vxm*cxm+vyp*cyp+vym*cym)/ctot;
-											data.image[IDtmp2].array.F[jj*msizex+ii] = 0.99*data.image[IDtmp2].array.F[jj*msizex+ii]+0.01;
-										}
-								}
-							}
-						for(ii=0; ii<msizex*msizey; ii++)
-							data.image[IDtmp1].array.F[ii] = data.image[IDtmp2].array.F[ii];						
-					}
-						
-					for(ii=0; ii<msizex*msizey; ii++)
-							data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[ii];		
-					
-					
-                
-                }
-                save_fits("_tmpcoeff1", "!_tmpcoeff1.fits");
-                save_fits("_tmpcoeff2", "!_tmpcoeff2.fits");
-                save_fits("dmslaved", "!_dmslaved.fits");
-                
-                delete_image_ID("_tmpcoeff1"); 
-                delete_image_ID("_tmpcoeff2");     
-                delete_image_ID("_tmpinterpol");
-            }
-            */
         }
         else
         {
@@ -3142,7 +2966,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
         
         // forcing edge pixels to be average of nearby inner pixels
-	
+	/*
 		IDtmp = AOloopControl_DMslaveExt(ID_name, "dmmaskRMin", "dmmaskRMedge", "fmodes0alle", 100.0);
 		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all0.fits");
 		save_fits("fmodes0alle", "!./mkmodestmp/_test_fmodes0alle.fits");
@@ -3158,7 +2982,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 			for(ii=0; ii<msizex*msizey; ii++)
 				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii];
     
-    
+    */
        
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
