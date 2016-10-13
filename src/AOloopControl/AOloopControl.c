@@ -2702,7 +2702,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
 
 
-
+			// here we create simple Fourier modes
             linopt_imtools_makeCPAmodes("CPAmodes", msizex, CPAmax, deltaCPA, 0.5*msizex, 1.2, 0);
             ID0 = image_ID("CPAmodes");
 
@@ -2740,7 +2740,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
-                /// Remove excluded modes
+                /// Remove excluded modes if they exist
                 IDeModes = image_ID("emodes");
                 if(IDeModes!=-1)
                 {
@@ -2764,25 +2764,24 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 }
 
 
+				// Compute total of image over mask -> totvm
                 ave = 0.0;
                 totvm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
-                {
-                    //	  data.image[ID].array.F[k*msize*msize+ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
                     totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
-                }
+
+                // compute DC offset in mode
                 offset = totvm/totm;
 
+				// remove DM offset
                 for(ii=0; ii<msizex*msizey; ii++)
-                {
                     data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
-                   // data.image[ID].array.F[k*msizex*msizey+ii] *= data.image[IDmaskRM].array.F[ii];
-                }
 
                 offset = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                     offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
+				// set RMS = 1 over mask
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
@@ -2796,19 +2795,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
 
 
-           /* for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
-            {
-                rms = 0.0;
-                for(ii=0; ii<msizex*msizey; ii++)
-                {
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/msizex/msizey;
-                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii];
-                }
-                rms = sqrt(rms/totm);
-                printf("Mode %ld   RMS = %lf\n", k, rms);
-            }
-*/
-
+       
 
             if(MaskMode==1)
             {
@@ -2939,7 +2926,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 			data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
 		save_fits("dmmaskRMin", "!dmmaskRMin.fits");
 		
-
+		
+		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all00.fits");
 		for(m=0; m<data.image[ID].md[0].size[2]; m++)
 		{
 			for(ii=0; ii<msizex*msizey; ii++)
@@ -3090,9 +3078,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
        
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
-
-	//	AOloopControl_DMslaveExt(ID_name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodes0allext", 100.0);
-	//	save_fits("fmodes0allext", "!./mkmodestmp/fmodes0allext.fits");
 
 
         IDmodes0all = image_ID(ID_name);
