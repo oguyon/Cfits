@@ -2293,6 +2293,63 @@ long AOloopControl_DMedgeDetect(char *IDmaskRM_name, char *IDout_name)
 
 
 
+//AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
+long AOloopControl_DMextrapolateModes(char *IDin_name, char *IDmask_name, char *IDcpa_name, char *IDout_name)
+{
+	long IDin, IDmask, IDcpa, IDout;
+	long xsize, ysize, zsize, xysize;
+	long IDpixdist;
+	long ii, jj, ii1, jj1, dii, djj, dii2, djj2;
+	float r, dist;
+	
+	IDin = image_ID(IDin_name);
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	if(data.image[IDin].md[0].naxis == 3)
+		{
+			zsize = data.image[IDin].md[0].size[2];
+			IDout = create_3Dimage_ID(IDout_name, xsize, ysize, zsize);
+		}
+	else
+		{
+			zsize = 1;
+			IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
+		}
+	xysize = xsize*ysize;
+		
+	IDmask = image_ID(IDmask_name);
+	IDcpa = image_ID(IDcpa_name);
+
+
+	// measure pixel distance to mask
+	IDpixdist = create_2Dimage_ID("pixmaskdist", xsize, ysize);
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				dist = 1.0*xsize+1.0*ysize;
+				for(ii1=0;ii1<xsize;ii1++)
+					for(jj1=0;jj1<ysize;jj1++)
+						{
+							if(data.image[IDmask].array.F[jj1*xsize+ii1] > 0.5)
+								{
+									dii = ii1-ii;
+									djj = jj1-jj;
+									dii2 = dii*dii;
+									djj2 = djj*djj;
+									r = sqrt(dii2+djj2);
+									if(r<dist)
+										dist = r;
+								}
+						}
+				data.image[IDpixdist].array.F[jj1*xsize+ii1] = dist;
+			}
+		save_fits("pixmaskdist", "~_tmp_pixmaskdist.fits");
+
+	return(IDout);
+}
+
+
+
 
 
 long AOloopControl_DMslaveExt(char *IDin_name, char *IDmask_name, char *IDsl_name, char *IDout_name, float r0)
@@ -2928,6 +2985,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 		
 		
 		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all00.fits");
+		
+		
+		IDtmp = AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
+		save_fits("fmodes0test", "!fmodes0test.fits");
+		
+		
 		for(m=0; m<data.image[ID].md[0].size[2]; m++)
 		{
 			for(ii=0; ii<msizex*msizey; ii++)
@@ -3061,6 +3124,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         }
         
         // forcing edge pixels to be average of nearby inner pixels
+	
 		IDtmp = AOloopControl_DMslaveExt(ID_name, "dmmaskRMin", "dmmaskRMedge", "fmodes0alle", 100.0);
 		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all0.fits");
 		save_fits("fmodes0alle", "!./mkmodestmp/_test_fmodes0alle.fits");
@@ -3075,6 +3139,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
        for(m=0; m<data.image[ID].md[0].size[2]; m++)
 			for(ii=0; ii<msizex*msizey; ii++)
 				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii];
+    
+    
        
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
