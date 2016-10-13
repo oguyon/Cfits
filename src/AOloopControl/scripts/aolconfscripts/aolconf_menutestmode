@@ -769,9 +769,7 @@ tmux send-keys -t $tmuxname "exit" C-m
 
 
 	mrec_on)
-echo "calling : function_mrec_on"
 function_mrec_on
-sleep 10
 menutestmode_default="mrec_off"
 ;;
 
