@@ -122,7 +122,7 @@ readshmim aol${loopnb}_dmRM
 readshmim aol${loopnb}_dmC
 readshmim aol${loopnb}_meas_act
 listim
-aoltestdmrec aol${loopnb}_DMmodes ${ampl} aol${loopnb}_dmmaskRM aol2_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act ${tlagus} ${nbave} outave outrms outmave outmrms
+aoltestdmrec aol${loopnb}_DMmodes ${ampl} aol${loopnb}_dmmaskRM aol${loopnb}_dmRM aol${loopnb}_dmC aol${loopnb}_meas_act ${tlagus} ${nbave} outave outrms outmave outmrms
 savefits outave "!test_DMmodesRec.fits"
 savefits outrms "!test_DMmodesRec_RMS.fits"
 savefits outmave "!test_DMmodesRec_m.fits"
