@@ -178,7 +178,7 @@ if [ -f $file ]; then
 pyfreq=$(cat $file)
 else
 pyfreq="2000"
-echo "$pyfrequ" > $file
+echo "$pyfreq" > $file
 fi
 
 if [ "$pyfreq" = "500" ]; then
@@ -428,43 +428,43 @@ menualign_default="$choiceval"
 
 	pyfr05)
 pyfreq="500"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr10)
 pyfreq="1000"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr15)
 pyfreq="1500"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr20)
 pyfreq="2000"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr25)
 pyfreq="2500"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 	
 	pyfr30)
 pyfreq="3000"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr35)
 pyfreq="3500"
-echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
