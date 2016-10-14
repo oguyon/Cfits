@@ -6732,7 +6732,7 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
                 sprintf(name2, "aol%ld_contrMc%02ld", loop, kk);
                 sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk);
 
-                printf("adding %ld / %ld  (%g)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
+                printf("adding %ld / %ld  (%5.3f)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
 				
 				ID = image_ID(name1);
 				printf("updating %ld modes\n", data.image[ID].md[0].size[2]);
@@ -12180,11 +12180,21 @@ int AOloopControl_setlimitblock(long mb, float limitval)
     long k;
     char name[200];
     long kmin, kmax;
+	long NBmodes;
+	long kk;
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
-	printf("mode block %ld / %ld\n", mb, AOconf[LOOPNUMBER].NBMblocks);
+	kmin = 0;
+	for(kk=0; kk<mb; kk++)
+	{
+		printf("%ld -> %f   [%ld]\n", kk, AOconf[LOOPNUMBER].NBmodes_block[kk], kmin);
+		kmin += AOconf[LOOPNUMBER].NBmodes_block[kk];
+	}
+	kmax = kmin + AOconf[LOOPNUMBER].NBmodes_block[mb];
+	printf("setting %ld - %ld to %f\n", kmin, kmax, limitval);
+	printf("loop %ld   mode block %ld / %ld\n", LOOPNUMBER, mb, AOconf[LOOPNUMBER].DMmodesNBblock);
 
     if(aoconfID_LIMIT_modes==-1)
     {
@@ -12192,20 +12202,10 @@ int AOloopControl_setlimitblock(long mb, float limitval)
         aoconfID_LIMIT_modes = read_sharedmem_image(name);
     }
 
-    if(mb<AOconf[LOOPNUMBER].NBMblocks)
-    {
-        if(mb==0)
-            kmin = 0;
-        else
-            kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
-        kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
 
-        AOconf[LOOPNUMBER].limitMB[mb] = limitval;
-		
-		printf("setting %ld - %ld to %f\n", kmin, kmax, limitval);
-        for(k=kmin; k<kmax; k++)
-            data.image[aoconfID_LIMIT_modes].array.F[k] = limitval;
-    }
+     for(k=kmin; k<kmax; k++)
+        data.image[aoconfID_LIMIT_modes].array.F[k] = limitval;
+   
 
     return 0;
 }

@@ -397,6 +397,7 @@ then
 menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
 menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval" )
 menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
 menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
 menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
 menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
@@ -413,6 +414,12 @@ if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol\Zn" )
 else
 menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+fi
+
+if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMFILTWB] ---  RUNNING    ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC\Zn" )
+else
+menuitems+=( " " "     [$LOOPPROCESS_DMFILTWB] --- not running ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
 fi
 
 
@@ -1019,7 +1026,8 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_respM" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
-tmux send-keys -t aol${LOOPNUMBER}-ctr "aolset" C-m
+sleep 1
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[${gi}]} 1" C-m
 sleep 2
 
 if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
@@ -1163,6 +1171,20 @@ menucontrolloop_default="LPmeol"
 ;;
 
 
+DMfWB)
+	if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+	LOOPPROCESS_DMFILTWB="0"
+	echo "0" > ./conf/conf_LOOPPROCESS_DMFILTWB.txt
+	else
+	LOOPPROCESS_DMFILTWB="1"
+	echo "1" > ./conf/conf_LOOPPROCESS_DMFILTWB.txt
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTRWFSMODES.txt
+	echo "1" > ./conf/conf_LOOPPROCESS_EXTROLMODES.txt
+	fi
+menucontrolloop_default="DMfWB"
+;;
+
+
 LPzpo)
 	if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
 	LOOPPROCESS_ZPO="0"
@@ -1239,6 +1261,9 @@ fi
 menucontrolloop_default="Nloopon"
 ;;
 
+
+
+
  
   	 Z)
 Cfits <<EOF
@@ -1250,16 +1275,7 @@ readshmim aol${LOOPNUMBER}_dmC
 imzero aol${LOOPNUMBER}_dmC
 exit
 EOF
-
-
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_DMmode_cmd" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_dmC" C-m
-#tmux send-keys -t aol${LOOPNUMBER}-ctr "imzero aol${LOOPNUMBER}_dmC" C-m
 aoconflogext "zeroing DM correction"
-#echo "imzero aol${LOOPNUMBER}_DMmode_cmd" >> aolctr-${LOOPNUMBER}-fifo
-#echo "readshmim aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
-#echo "imzero aol${LOOPNUMBER}_dmC" >> aolctr-${LOOPNUMBER}-fifo
-
 ;;
 
 
@@ -1523,6 +1539,9 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "set all gains to custom set 3 (alpha = 0.5)"
 	 ;;
      
+
+
+
   	 gb00)
   	 gi="00"
   	 value=${gainb[${gi}]}
@@ -1535,10 +1554,10 @@ menucontrolloop_default="wzpoinit"
 
   	 lb00)
   	 gi="00"
-  	 value=${gainb[${gi}]}
+  	 value=${limitb[${gi}]}
 	 SelectValue01 100 1200 50
   	 limitb[${10#gi}]=${value}
-  	 echo "${limitb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
@@ -1557,6 +1576,18 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb01)
+  	 gi="01"
+  	 value=${limitb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+
+
   	 gb02)
   	 gi="02"
   	 value=${gainb[${gi}]}
@@ -1567,6 +1598,19 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb02)
+  	 gi="02"
+  	 value=${limitb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+
+
+
   	 gb03)
   	 gi="03"
   	 value=${gainb[${gi}]}
@@ -1576,6 +1620,18 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb03)
+  	 gi="03"
+  	 value=${limitb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+  	 
 
   	 gb04)
   	 gi="04"
@@ -1585,7 +1641,19 @@ menucontrolloop_default="wzpoinit"
   	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
+  	 ;;
+  	 
+ 	 lb04)
+  	 gi="04"
+  	 value=${limitb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+  	 
+  	  
 
   	 gb05)
   	 gi="05"
@@ -1596,6 +1664,20 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb05)
+  	 gi="05"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+  	 
+  	 
+  	 
 
   	 gb06)
   	 gi="06"
@@ -1606,6 +1688,20 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb06)
+  	 gi="06"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+
+
+
 
   	 gb07)
   	 gi="07"
@@ -1617,6 +1713,21 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb07)
+  	 gi="07"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[10#${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+
+
+
+
+
   	 gb08)
   	 gi="08"
   	 value=${gainb[10#${gi}]}
@@ -1627,6 +1738,20 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+ 	 lb08)
+  	 gi="08"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[10#${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+
+
+
+
   	 gb09)
   	 gi="09"
   	 value=${gainb[10#${gi}]}
@@ -1636,6 +1761,19 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+  	 
+ 	 lb09)
+  	 gi="09"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[10#${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+  	 
+  	 
+  	 
 
   	 gb10)
   	 gi="10"
@@ -1647,6 +1785,20 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+	 lb10)
+  	 gi="10"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+  
+
+
+
   	 gb11)
   	 gi="11"
   	 value=${gainb[10#${gi}]}
@@ -1656,6 +1808,19 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+
+	 lb11)
+  	 gi="11"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+
+
 
   	 gb12)
   	 gi="12"
@@ -1667,6 +1832,19 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+	 lb12)
+  	 gi="12"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+
+
+
   	 gb13)
   	 gi="13"
   	 value=${gainb[10#${gi}]}
@@ -1677,6 +1855,19 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
 
+	 lb13)
+  	 gi="13"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+
+
+
   	 gb14)
   	 gi="14"
   	 value=${gainb[10#${gi}]}
@@ -1686,6 +1877,17 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+
+	 lb14)
+  	 gi="14"
+  	 value=${limitb[10#${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
 
 
 

@@ -27,7 +27,6 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)             help"
 echo "     $(tput bold)-o$(tput sgr0) <file>      set output correction map"
-echo "     $(tput bold)-g$(tput sgr0) <gain>      set gain (default = $gain)"
 echo "     $(tput bold)-f$(tput sgr0)             offload correction to aol${looop}_dmC"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
@@ -57,9 +56,6 @@ while getopts :ho:g:f FLAG; do
     h)  #show help
       printHELP
       exit
-      ;;
-    g)  #show help
-      gain="$OPTARG"
       ;;
     f) # offload correction to dmC
     OFFLOADMODE=1
