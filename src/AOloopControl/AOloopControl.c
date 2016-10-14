@@ -2493,7 +2493,7 @@ long AOloopControl_DMslaveExt(char *IDin_name, char *IDmask_name, char *IDsl_nam
  * if BlockNB < 0 : do all blocks
  * if BlockNB >= 0 : only update single block (untested)
  *
- * SVDlim = 0.001 works well
+ * SVDlim = 0.05 works well
  *
  * OPTIONAL : if file zrespM exists, WFS modes will be computed
  *
@@ -2660,8 +2660,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 	long IDmaskRMedge, IDmaskRMin;
 	float gain;
 	
-	
-	
+	FILE *fpcoeff;
+	char fnameSVDcoeff[400];
 
     MODAL = 0;
     if(msizey==1)
@@ -3995,12 +3995,16 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 IDSVDcoeff = image_ID("modecoeff");
 
                 cnt = 0;
+                sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock);
+                fpcoeff = fopen(fnameSVDcoeff, "w");
                 for(kk=0; kk<data.image[IDSVDcoeff].md[0].size[0]; kk++)
                 {
+					fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt);
                     printf("==== %ld %12g %12g  %3ld\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt);
                     if(data.image[IDSVDcoeff].array.F[kk]>SVDlim*data.image[IDSVDcoeff].array.F[0])
                         cnt++;
                 }
+                fclose(fpcoeff);
 
 
                 IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
@@ -4755,7 +4759,7 @@ int AOloopControl_InitializeMemory(int mode)
     SM_fd = open(AOconfname, O_RDWR);
     if(SM_fd==-1)
     {
-        printf("Cannot import file -> creating file\n");
+        printf("Cannot import file \"%s\" -> creating file\n", AOconfname);
         create = 1;
     }
     else
@@ -4764,7 +4768,7 @@ int AOloopControl_InitializeMemory(int mode)
         printf("File %s size: %zd\n", AOconfname, file_stat.st_size);
         if(file_stat.st_size!=sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol)
         {
-            printf("File size wrong -> recreating file\n");
+            printf("File \"%s\" size is wrong -> recreating file\n", AOconfname);
             create = 1;
             close(SM_fd);
         }
@@ -4793,7 +4797,7 @@ int AOloopControl_InitializeMemory(int mode)
             exit(0);
         }
     }
-	
+
 	
     AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
     if (AOconf == MAP_FAILED) {
@@ -4820,8 +4824,6 @@ int AOloopControl_InitializeMemory(int mode)
             free(sizearray);
         }
     }
-
-
 
 
     if(create==1)
@@ -4859,7 +4861,7 @@ int AOloopControl_InitializeMemory(int mode)
             }
     }
 
-
+	
 
     if(AOloopcontrol_meminit==0)
     {
@@ -7789,8 +7791,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
                         usleep(20);
                     
                     cntdmout =  data.image[IDdmout].md[0].cnt0;
-                    
-                    
+                                  
                     memcpy(data.image[IDdmtmp].array.F, data.image[IDdmout].array.F, sizeof(float)*dmsize);
                     memcpy(data.image[IDmeastmp].array.F, data.image[IDmeasout].array.F, sizeof(float)*dmsize);
 
@@ -7807,7 +7808,6 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
                     for(kk1=0;kk1<NBmodes;kk1++)
                         data.image[IDcoeffarraymeas].array.F[kk1*NBave+i] = 0.5*data.image[IDcoeff].array.F[kk1];
                     delete_image_ID("dmcoeffs");                    
-
                 }
             
             
@@ -7834,7 +7834,6 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
                     data.image[IDoutmeas].array.F[kk1*NBmodes+kk] /= NBave*ampl;
                     data.image[IDoutmeasrms].array.F[kk1*NBmodes+kk] = sqrt(data.image[IDoutmeasrms].array.F[kk1*NBmodes+kk]/NBave);
                 }
-            
         }
     printf("\n\n");
     fflush(stdout);
@@ -7911,15 +7910,16 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
-
-
-	printf("INITIALIZE MEMORY....\n");
+	
+	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
     fflush(stdout);
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
 	fflush(stdout);
 
 
+
+	
     //  sprintf(fname, "./conf/AOloop.conf");
 
 	printf("LOAD/CONFIGURE loop ...\n");
@@ -11558,7 +11558,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	// read AO loop gain, mult
 	if(AOloopcontrol_meminit==0)
 		AOloopControl_InitializeMemory(1);
-		
+	
+	
+	// INPUT
 	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
 	IDmodeval = read_sharedmem_image(imname);
 	NBmodes = data.image[IDmodeval].md[0].size[0];
@@ -11567,6 +11569,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	modemult = (float*) malloc(sizeof(float)*NBmodes);
 	modeblock = (long*) malloc(sizeof(long)*NBmodes);
 
+
+	// OUPUT
 	sizeout = (long*) malloc(sizeof(long)*2);
     sizeout[0] = NBmodes;
     sizeout[1] = 1;

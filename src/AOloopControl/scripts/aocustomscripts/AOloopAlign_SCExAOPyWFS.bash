@@ -167,8 +167,113 @@ pywfsreimagexposref=$(cat ./status/pcampos.txt | awk '{print $1}')
 pywfsreimageyposref=$(cat ./status/pcampos.txt | awk '{print $2}')
 fi
 
-stringcenter "Pyramid TT align"
+
+stringcenter "Pyramid modulation"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
+
+# format: f<frequ>m<modampl>pf<pywfs filter>pp<pywfs pickoff>
+
+file="./conf/conf_pywfs_frequ.txt"
+if [ -f $file ]; then
+pyfrequ=$(cat $file)
+else
+pyfrequ="2000"
+echo "$pyfrequ" > $file
+fi
+
+if [ "$pyfreq" = "500" ]; then
+menuitems+=( "pyfr05" "\Zr\Z2frequ = 0.5 kHz\Zn" )
+else
+menuitems+=( "pyfr05" "frequ = 0.5 kHz" )
+fi
+
+if [ "$pyfreq" = "1000" ]; then
+menuitems+=( "pyfr10" "\Zr\Z2frequ = 1.0 kHz\Zn" )
+else
+menuitems+=( "pyfr10" "frequ = 1.0 kHz" )
+fi
+
+if [ "$pyfreq" = "1500" ]; then
+menuitems+=( "pyfr15" "\Zr\Z2frequ = 1.5 kHz\Zn" )
+else
+menuitems+=( "pyfr15" "frequ = 1.5 kHz" )
+fi
+
+if [ "$pyfreq" = "2000" ]; then
+menuitems+=( "pyfr20" "\Zr\Z2frequ = 2.0 kHz\Zn" )
+else
+menuitems+=( "pyfr20" "frequ = 2.0 kHz" )
+fi
+
+if [ "$pyfreq" = "2500" ]; then
+menuitems+=( "pyfr25" "\Zr\Z2frequ = 2.5 kHz\Zn" )
+else
+menuitems+=( "pyfr25" "frequ = 2.5 kHz" )
+fi
+
+if [ "$pyfreq" = "3000" ]; then
+menuitems+=( "pyfr30" "\Zr\Z2frequ = 3.0 kHz\Zn" )
+else
+menuitems+=( "pyfr30" "frequ = 3.0 kHz" )
+fi
+
+if [ "$pyfreq" = "3500" ]; then
+menuitems+=( "pyfr35" "\Zr\Z2frequ = 3.5 kHz\Zn" )
+else
+menuitems+=( "pyfr35" "frequ = 3.5 kHz" )
+fi
+
+
+file="./conf/conf_pywfs_modampl.txt"
+if [ -f $file ]; then
+pymodampl=$(cat $file)
+else
+pymodampl="0.5"
+echo "$pymodampl" > $file
+fi
+
+if [ "$pymodampl" = "0.1" ]; then
+menuitems+=( "pymoda01" "\Zr\Z2modulation amplitude = 0.1\Zn" )
+else
+menuitems+=( "pymoda01" "modulation amplitude = 0.1" )
+fi
+
+if [ "$pymodampl" = "0.2" ]; then
+menuitems+=( "pymoda02" "\Zr\Z2modulation amplitude = 0.2\Zn" )
+else
+menuitems+=( "pymoda02" "modulation amplitude = 0.2" )
+fi
+
+if [ "$pymodampl" = "0.3" ]; then
+menuitems+=( "pymoda03" "\Zr\Z2modulation amplitude = 0.3\Zn" )
+else
+menuitems+=( "pymoda03" "modulation amplitude = 0.3" )
+fi
+
+if [ "$pymodampl" = "0.5" ]; then
+menuitems+=( "pymoda05" "\Zr\Z2modulation amplitude = 0.5\Zn" )
+else
+menuitems+=( "pymoda05" "modulation amplitude = 0.5" )
+fi
+
+if [ "$pymodampl" = "0.7" ]; then
+menuitems+=( "pymoda07" "\Zr\Z2modulation amplitude = 0.7\Zn" )
+else
+menuitems+=( "pymoda07" "modulation amplitude = 0.7" )
+fi
+
+if [ "$pymodampl" = "1.0" ]; then
+menuitems+=( "pymoda10" "\Zr\Z2modulation amplitude = 1.0\Zn" )
+else
+menuitems+=( "pymoda10" "modulation amplitude = 1.0" )
+fi
+
+
+
+
+
+stringcenter "Pyramid TT align"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "tz" "Zero TT align" )
 
@@ -192,7 +297,7 @@ menuitems+=( "tm" "Monitor TT align tmux session")
 menuitems+=( "" "" )
 
 stringcenter "Pyramid Camera Align"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "pz" "Zero Pcam align  ( $pywfsreimagexposref $pywfsreimageyposref )" )
 menuitems+=( "pst0" "alignment step = 50000" )
@@ -224,7 +329,7 @@ menuitems+=( "pm" "Monitor Pcam align tmux session")
 menuitems+=( "" "" )
 
 stringcenter "DM flatten"
-menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "fl" "Flatten DM for pyWFS" )
 menuitems+=( "flk" "End flatten DM process" )
@@ -234,7 +339,7 @@ menuitems+=( "flm" "Monitor DM flatten tmux session" )
 menuitems+=( "" "" )
 
 stringcenter "FILTERS"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "fw" "Set PY Filter Wheel" )
 menuitems+=( "" "" )
@@ -262,6 +367,94 @@ case $retval in
    0) # button
 menualign_default="$choiceval"
 	case $choiceval in
+
+
+	pyfr05)
+pyfreq="500"
+echo "1000" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr10)
+pyfreq="1000"
+echo "1000" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr15)
+pyfreq="1500"
+echo "1500" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr20)
+pyfreq="2000"
+echo "${pyfrequ}" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr25)
+pyfreq="2500"
+echo "2500" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+	
+	pyfr30)
+pyfreq="3000"
+echo "3000" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pyfr35)
+pyfreq="3500"
+echo "3500" > ./conf/conf_pywfs_frequ.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+
+
+	pymoda01)
+pymodampl="0.1"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda02)
+pymodampl="0.2"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda03)
+pymodampl="0.3"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda05)
+pymodampl="0.5"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda07)
+pymodampl="0.7"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda10)
+pymodampl="1.0"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+
+
+
+
+
+
 	tz)
 aoconflogext "TT align zero"
 analog_output.py voltage C -5.0
