@@ -326,6 +326,94 @@ fi
 
 
 
+menuitems+=( "" "" )
+
+file="./conf/conf_pywfs_pickoff.txt"
+if [ -f $file ]; then
+pypickoff=$(cat $file)
+else
+pypickoff="1"
+echo "$pypickoff" > $file
+fi
+
+
+if [ "$pypickoff" = "01" ]; then
+menuitems+=( "pypick01" "\Zr\Z2 PyWFS pickoff 01  (Open)\Zn" )
+else
+menuitems+=( "pypick01" " PyWFS pickoff 01  (Open)" )
+fi
+
+if [ "$pypickoff" = "02" ]; then
+menuitems+=( "pypick02" "\Zr\Z2 PyWFS pickoff 02  (Silver mirror)\Zn" )
+else
+menuitems+=( "pypick02" " PyWFS pickoff 02  (Silver mirror)" )
+fi
+
+if [ "$pypickoff" = "03" ]; then
+menuitems+=( "pypick03" "\Zr\Z2 PyWFS pickoff 03  (50/50 splitter)\Zn" )
+else
+menuitems+=( "pypick03" " PyWFS pickoff 03  (50/50 splitter)" )
+fi
+
+if [ "$pypickoff" = "04" ]; then
+menuitems+=( "pypick04" "\Zr\Z2 PyWFS pickoff 04  (650 nm SP)\Zn" )
+else
+menuitems+=( "pypick04" " PyWFS pickoff 04  (650 nm SP)" )
+fi
+
+if [ "$pypickoff" = "05" ]; then
+menuitems+=( "pypick05" "\Zr\Z2 PyWFS pickoff 05  (700 nm SP)\Zn" )
+else
+menuitems+=( "pypick05" " PyWFS pickoff 05  (700 nm SP)" )
+fi
+
+if [ "$pypickoff" = "06" ]; then
+menuitems+=( "pypick06" "\Zr\Z2 PyWFS pickoff 06  (750 nm SP)\Zn" )
+else
+menuitems+=( "pypick06" " PyWFS pickoff 06  (750 nm SP)" )
+fi
+
+if [ "$pypickoff" = "07" ]; then
+menuitems+=( "pypick07" "\Zr\Z2 PyWFS pickoff 07  (800 nm SP)\Zn" )
+else
+menuitems+=( "pypick07" " PyWFS pickoff 07  (800 nm SP)" )
+fi
+
+if [ "$pypickoff" = "08" ]; then
+menuitems+=( "pypick08" "\Zr\Z2 PyWFS pickoff 08  (850 nm SP)\Zn" )
+else
+menuitems+=( "pypick08" " PyWFS pickoff 08  (850 nm SP)" )
+fi
+
+if [ "$pypickoff" = "09" ]; then
+menuitems+=( "pypick09" "\Zr\Z2 PyWFS pickoff 09  (750 nm LP)\Zn" )
+else
+menuitems+=( "pypick09" " PyWFS pickoff 09  (750 nm LP)" )
+fi
+
+if [ "$pypickoff" = "10" ]; then
+menuitems+=( "pypick10" "\Zr\Z2 PyWFS pickoff 10  (800 nm LP)\Zn" )
+else
+menuitems+=( "pypick10" " PyWFS pickoff 10  (800 nm LP)" )
+fi
+
+if [ "$pypickoff" = "11" ]; then
+menuitems+=( "pypick11" "\Zr\Z2 PyWFS pickoff 11  (850 nm LP)\Zn" )
+else
+menuitems+=( "pypick11" " PyWFS pickoff 11  (850 nm LP)" )
+fi
+
+if [ "$pypickoff" = "12" ]; then
+menuitems+=( "pypick12" "\Zr\Z2 PyWFS pickoff 12  (Open)\Zn" )
+else
+menuitems+=( "pypick12" " PyWFS pickoff 12  (Open)" )
+fi
+
+
+
+menuitems+=( "" "" )
+
+
 
 
 
@@ -546,6 +634,79 @@ pywfs_filter ${pyfilter}
 ;;
 
 
+
+
+	pypick01)
+pypickoff="01"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick02)
+pypickoff="02"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick03)
+pypickoff="03"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick04)
+pypickoff="04"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick05)
+pypickoff="05"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick06)
+pypickoff="06"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick07)
+pypickoff="07"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick08)
+pypickoff="08"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick09)
+pypickoff="09"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick10)
+pypickoff="10"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick11)
+pypickoff="11"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
+
+	pypick12)
+pypickoff="12"
+echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
+pywfs_pickoff ${pypickoff}
+;;
 
 
 
