@@ -1504,7 +1504,13 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 #confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_" $nbwlines $nbwcols)
 #exec 3>&-;
 
-dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_" $nbwlines $nbwcols 2> $tempfile
+if [ -f "./conf/conf_loopconfname.txt" ]; then
+loopconfname=$(cat ./conf/conf_loopconfname.txt)
+else
+loopconfname=""
+fi
+
+dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
 

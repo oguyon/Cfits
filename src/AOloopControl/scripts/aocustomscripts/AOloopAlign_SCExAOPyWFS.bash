@@ -332,7 +332,7 @@ file="./conf/conf_pywfs_pickoff.txt"
 if [ -f $file ]; then
 pypickoff=$(cat $file)
 else
-pypickoff="1"
+pypickoff="01"
 echo "$pypickoff" > $file
 fi
 
@@ -409,6 +409,9 @@ else
 menuitems+=( "pypick12" " PyWFS pickoff 12  (Open)" )
 fi
 
+
+loopconfname="fr${pyfreq}mof${pymodampl}pf${pyfilter}pp{pypickoff}"
+echo "${loopconfname}" > ./conf/conf_loopconfname.txt
 
 
 menuitems+=( "" "" )
