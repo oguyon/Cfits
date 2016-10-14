@@ -14,9 +14,6 @@ echo "pname = $pname"
 
 loopnb=$(cat LOOPNUMBER)
 
-gain=0.2
-
-
 function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP (included filtering) $(tput sgr0)"
@@ -42,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 OUTMODE=0 # default output : outDM_map
 OFFLOADMODE=0
-
+OUTCNAME="aol${loopnb}_dmCoutfilt"
 
 # ================= OPTIONS =============================
 
@@ -118,7 +115,7 @@ readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 
@@ -132,7 +129,7 @@ readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now aol${loopnb}_DMmode_LIMIT DMmodes 2 ${OUTCNAME} $gain $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 

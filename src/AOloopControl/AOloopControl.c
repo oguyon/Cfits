@@ -549,9 +549,9 @@ int AOloopControl_CompModes_loop_cli()
 
 int AOloopControl_GPUmodecoeffs2dm_filt_loop_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0)
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
 		{
-			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
+			AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
 		return 0;
 		}
 	else
@@ -1228,10 +1228,10 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].key,"aolmc2dmfilt");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_GPUmodecoeffs2dm_filt_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map, includes filtering");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <modes max val> <DMmodes> <sem trigg number> <out> <gain> <GPUindex> <loopnb> <offloadMode>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval aolmodevalmax DMmodesC 2 dmmapc 0.2 1 2 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, long offloadMode)");
+    strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <DMmodes> <sem trigg number> <out> <gain> <GPUindex> <loopnb> <offloadMode>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 0.2 1 2 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, long offloadMode)");
     data.NBcmd++;
 
 
@@ -1494,7 +1494,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].info,"set modal limits by block");
     strcpy(data.cmd[data.NBcmd].syntax,"<block [long]> <limval>");
     strcpy(data.cmd[data.NBcmd].example,"aolsetlimitb 2 0.02");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitblock(long m0, long m1, float gainval)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setlimitblock(long mb, float limitval)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolsetmultfb");
@@ -10219,10 +10219,9 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 //
 // if offloadMode = 1, apply correction to aol#_dmC
 //
-int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modevalmax_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, int offloadMode)
+int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode)
 {
 	long IDmodecoeffs;
-	long IDmodevalmax;
 	int GPUcnt, k;
 	int *GPUsetM;
     int GPUstatus[100];
@@ -10257,7 +10256,6 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 	
 	IDout = image_ID(out_name);
 	IDmodecoeffs = image_ID(modecoeffs_name);
-	IDmodevalmax = image_ID(modevalmax_name);
 
 	NBmodes = data.image[IDmodecoeffs].md[0].size[0];
 
@@ -10280,32 +10278,27 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *modeva
 		sprintf(imnamedmC, "aol%ld_dmC", loop);
 		IDc = image_ID(imnamedmC);
 		dmxsize = data.image[IDc].md[0].size[0];
-		dmxsize = data.image[IDc].md[0].size[1];
+		dmysize = data.image[IDc].md[0].size[1];
 	} 
 	
-	
+	printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
 	while(1==1)
         {	
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
 
 			// FILTER MODES
-			for(m=0;m<NBmodes;m++)
-				{
-					x = data.image[IDmodecoeffs].array.F[m]/data.image[IDmodevalmax].array.F[m];
-					x2 = x*x;
-					x4 = x2*x2;
-					x8 = x4*x4;
-					data.image[IDmodesC].array.F[m] = gain * (x/pow((x8+1.0), 1.0/8.0) * data.image[IDmodevalmax].array.F[m] - data.image[IDmodecoeffs].array.F[m]);
-				}
+			for(m=0;m<NBmodes;m++)				
+				data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];					
+				
 				
 			GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], alpha, beta, write_timing);
 			
 			
-			if(offloadMode==1) // offload to dmC
+			if(offloadMode==1) // offload back to dmC
 				{
 					data.image[IDc].md[0].write = 1;
 					for(ii=0;ii<dmxsize*dmysize;ii++)
-						data.image[IDc].array.F[ii] -= data.image[IDout].array.F[ii];					
+						data.image[IDc].array.F[ii] = data.image[IDout].array.F[ii];					
 
 					COREMOD_MEMORY_image_set_sempost_byID(IDc, -1);
 					data.image[IDc].md[0].write = 0;
@@ -11525,7 +11518,7 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 
 
 
-
+// includes mode filtering (limits, multf)
 long AOloopControl_ComputeOpenLoopModes(long loop)
 {
 	long IDout;
@@ -11538,6 +11531,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 	long IDmodevalDM; // DM correction at WFS measurement time
 	long IDmodevalDMnow; // current DM correction
+	long IDmodevalDMnowfilt; // current DM correction filtered
 	long modevalDMindex0, modevalDMindex1;
 	float alpha;
 	
@@ -11554,6 +11548,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long cnt;
 	
 	
+	// FILTERING
+	int FILTERMODE = 1;
+	long IDmodeLIMIT;
+	long IDmodeMULT;
+	
+	
 	
 	// read AO loop gain, mult
 	if(AOloopcontrol_meminit==0)
@@ -11568,6 +11568,17 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	modegain = (float*) malloc(sizeof(float)*NBmodes);
 	modemult = (float*) malloc(sizeof(float)*NBmodes);
 	modeblock = (long*) malloc(sizeof(long)*NBmodes);
+
+	sprintf(imname, "aol%ld_DMmode_LIMIT", loop);
+	IDmodeLIMIT = read_sharedmem_image(imname);
+	if(IDmodeLIMIT == -1)
+		FILTERMODE = 0;
+
+	sprintf(imname, "aol%ld_DMmode_MULTF", loop);
+	IDmodeMULT = read_sharedmem_image(imname);
+	if(IDmodeMULT == -1)
+		FILTERMODE = 0;
+
 
 
 	// OUPUT
@@ -11586,6 +11597,11 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
    	IDmodevalDMnow = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
+	sprintf(imname, "aol%ld_modeval_dm_now_filt", loop); // current modal DM correction, filtered 
+   	IDmodevalDMnowfilt = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+ 
+ 
 	sprintf(imname, "aol%ld_modeval_dm", loop); // modal DM correction at time of currently available WFS measurement
    	IDmodevalDM = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
@@ -11603,7 +11619,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	printf("%ld modes\n", NBmodes);
 	
 	
-	
+	// Read from shared mem the DM mode files to indentify blocks
 	data.image[IDblknb].md[0].write = 1;
 	m = 0;
 	blk = 0;
@@ -11626,6 +11642,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	NBblock = blk;
 
 
+	// Read gain values for each block
 	sprintf(imname, "aol%ld_gainb", loop);
 	IDgainb = read_sharedmem_image(imname);
 	
@@ -11657,6 +11674,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	data.image[IDmodevalDMnow].md[0].write = 0;
 	data.image[IDmodevalDM_C].md[0].write = 0;
 	
+	printf("FILTERMODE = %d\n", FILTERMODE);
 	
 	
 	modevalDMindex = 0;
@@ -11673,6 +11691,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         else
             sem_wait(data.image[IDmodeval].semptr[4]);
 
+	// write gain and mult into arrays
 	for(m=0;m<NBmodes;m++)
 		{
 			modegain[m] = AOconf[loop].gain * data.image[IDgainb].array.F[modeblock[m]];
@@ -11684,11 +11703,30 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		// UPDATE CURRENT DM STATE
 		data.image[IDmodevalDM_C].md[0].write = 1;
+		// mode values = mult x (lastvalue - gain x WFSresidual) 
 		for(m=0;m<NBmodes;m++)
+			data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
+			
+			
+		// FILTERING MODE VALUES
+		// THIS FILTERING GOES TOGETHER WITH THE WRITEBACK ON DM
+		if(FILTERMODE == 1)
+		{
+			for(m=0;m<NBmodes;m++)
 			{
-				data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);			
-				data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = data.image[IDmodevalDMnow].array.F[m];
+				data.image[IDmodevalDMnow].array.F[m] *= data.image[IDmodeMULT].array.F[m];
+				
+				if(data.image[IDmodevalDMnow].array.F[m] > data.image[IDmodeLIMIT].array.F[m])
+					data.image[IDmodevalDMnow].array.F[m] = data.image[IDmodeLIMIT].array.F[m];
+				if(data.image[IDmodevalDMnow].array.F[m] < -data.image[IDmodeLIMIT].array.F[m])
+					data.image[IDmodevalDMnow].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
 			}
+		}
+		
+		// update current location of circular buffer
+		for(m=0;m<NBmodes;m++)
+			data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = data.image[IDmodevalDMnow].array.F[m];					
+			
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
 		data.image[IDmodevalDM_C].md[0].cnt1 = modevalDMindex;
@@ -12146,6 +12184,8 @@ int AOloopControl_setlimitblock(long mb, float limitval)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
+	printf("mode block %ld / %ld\n", mb, AOconf[LOOPNUMBER].NBMblocks);
+
     if(aoconfID_LIMIT_modes==-1)
     {
         sprintf(name, "aol%ld_DMmode_LIMIT", LOOPNUMBER);
@@ -12161,7 +12201,8 @@ int AOloopControl_setlimitblock(long mb, float limitval)
         kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
 
         AOconf[LOOPNUMBER].limitMB[mb] = limitval;
-
+		
+		printf("setting %ld - %ld to %f\n", kmin, kmax, limitval);
         for(k=kmin; k<kmax; k++)
             data.image[aoconfID_LIMIT_modes].array.F[k] = limitval;
     }

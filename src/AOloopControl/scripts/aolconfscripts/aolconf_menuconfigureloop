@@ -1510,11 +1510,13 @@ else
 loopconfname=""
 fi
 
-dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
+--cancel-label "Exit" --fselect "./CONF/${datestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
 
 aoconflogext "save configuration to ${confname}"
+echo "saving to ${confname}   tempfile = $tempfile"
 
 case $retval in
    0) # button
@@ -1543,6 +1545,9 @@ confname=$(cat $tempfile)
 
 echo "${confname}" > confname.txt
 aoconflogext "load configuration from ${confname}"
+echo "confname = $confname"
+
+
 confnameloaded=${confname}
 
 case $retval in

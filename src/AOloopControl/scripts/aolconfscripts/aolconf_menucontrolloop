@@ -522,7 +522,7 @@ menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
 
 
 menuitems+=( " " " " )
-stringcenter "CONTROL MATRIX MODAL BLOCK GAINS"
+stringcenter "CONTROL MATRIX MODAL BLOCK GAINS AND LIMITS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 if [ "$CMMODE" = "MODAL" ]; then
@@ -534,7 +534,9 @@ menuitems+=( "gball08" "Custom gain set 08 (alpha = 0.8)")
 menuitems+=( "gball12" "Custom gain set 12 (alpha = 1.2)")
 menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
 menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
-
+menuitems+=( " " " " )
+menuitems+=( "lball" "Set all block to same limit")
+menuitems+=( " " " " )
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -550,19 +552,22 @@ gainb[10#${i2}]=$( cat ${fname} )
 else
 gainb[10#${i2}]="1.000"
 fi
-string=$( printf "% 3d" "${NBblockmodes}" )
-menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain  ($string modes)" )
-done
+
+fname="conf/conf_limitb${i2}.txt"
+if [ -f "$fname" ]; then
+limitb[10#${i2}]=$( cat ${fname} )
 else
-menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS" )
+limitb[10#${i2}]="1.000"
 fi
 
-
-
-
-
-
-
+string=$( printf "% 3d" "${NBblockmodes}" )
+menuitems+=( "" "" )
+menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain   ($string modes)" )
+menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit  ($string modes)" )
+done
+else
+menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
+fi
 
 
 
@@ -1386,6 +1391,22 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "set all gains to ${value}"
 	 ;;
 	 
+	 lball) 
+	 value=${limitallb}
+	 SelectValue01 100 1200 50 
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     limitb[10#${gi}]=${value}
+	     echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]} 0" C-m
+	 done
+     gi="00"
+     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${gainb[10#${gi}]} 1" C-m
+	 aoconflogext "set all gains to ${value}"
+	 ;;
+	 
+	 
     gball01)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
       	 do
@@ -1511,6 +1532,20 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
 	 aoconflogext "block ${gi} set gain to ${value}"
   	 ;; 
+
+  	 lb00)
+  	 gi="00"
+  	 value=${gainb[${gi}]}
+	 SelectValue01 100 1200 50
+  	 limitb[${10#gi}]=${value}
+  	 echo "${limitb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+
+
+
+
 
   	 gb01)
   	 gi="01"
