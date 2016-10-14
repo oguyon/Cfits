@@ -428,43 +428,43 @@ menualign_default="$choiceval"
 
 	pyfr05)
 pyfreq="500"
-echo "1000" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr10)
 pyfreq="1000"
-echo "1000" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr15)
 pyfreq="1500"
-echo "1500" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr20)
 pyfreq="2000"
-echo "${pyfrequ}" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr25)
 pyfreq="2500"
-echo "2500" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 	
 	pyfr30)
 pyfreq="3000"
-echo "3000" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pyfr35)
 pyfreq="3500"
-echo "3500" > ./conf/conf_pywfs_frequ.txt
+echo "${pyfreq}" > ./conf/conf_pywfs_frequ.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
