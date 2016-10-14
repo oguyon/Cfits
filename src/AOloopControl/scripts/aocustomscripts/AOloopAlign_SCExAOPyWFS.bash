@@ -230,41 +230,41 @@ file="./conf/conf_pywfs_modampl.txt"
 if [ -f $file ]; then
 pymodampl=$(cat $file)
 else
-pymodampl="0.5"
+pymodampl="05"
 echo "$pymodampl" > $file
 fi
 
-if [ "$pymodampl" = "0.1" ]; then
+if [ "$pymodampl" = "01" ]; then
 menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn" )
 else
 menuitems+=( "pymoda01" " modulation amplitude = 0.1" )
 fi
 
-if [ "$pymodampl" = "0.2" ]; then
+if [ "$pymodampl" = "02" ]; then
 menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn" )
 else
 menuitems+=( "pymoda02" " modulation amplitude = 0.2" )
 fi
 
-if [ "$pymodampl" = "0.3" ]; then
+if [ "$pymodampl" = "03" ]; then
 menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn" )
 else
 menuitems+=( "pymoda03" " modulation amplitude = 0.3" )
 fi
 
-if [ "$pymodampl" = "0.5" ]; then
+if [ "$pymodampl" = "05" ]; then
 menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn" )
 else
 menuitems+=( "pymoda05" " modulation amplitude = 0.5" )
 fi
 
-if [ "$pymodampl" = "0.7" ]; then
+if [ "$pymodampl" = "07" ]; then
 menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn" )
 else
 menuitems+=( "pymoda07" " modulation amplitude = 0.7" )
 fi
 
-if [ "$pymodampl" = "1.0" ]; then
+if [ "$pymodampl" = "10" ]; then
 menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn" )
 else
 menuitems+=( "pymoda10" " modulation amplitude = 1.0" )
@@ -410,7 +410,8 @@ menuitems+=( "pypick12" " PyWFS pickoff 12  (Open)" )
 fi
 
 
-loopconfname="fr${pyfreq}mof${pymodampl}pf${pyfilter}pp{pypickoff}"
+pymodampl10=$(sed 's/\.//' ./conf/conf_pywfs_modampl.txt)
+loopconfname="fr${pyfreq}_mod${pymodampl10}_pf${pyfilter}_pp${pypickoff}_"
 echo "${loopconfname}" > ./conf/conf_loopconfname.txt
 
 
@@ -569,31 +570,31 @@ pywfs_mod_setup ${pyfreq} ${pymodampl}
 
 	pymoda02)
 pymodampl="0.2"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "0.2" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pymoda03)
 pymodampl="0.3"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "0.3" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pymoda05)
 pymodampl="0.5"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "0.5" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pymoda07)
 pymodampl="0.7"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "0.7" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 	pymoda10)
 pymodampl="1.0"
-echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+echo "1.0" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
