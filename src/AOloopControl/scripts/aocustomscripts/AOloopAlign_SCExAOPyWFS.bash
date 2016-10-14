@@ -234,37 +234,37 @@ pymodampl="05"
 echo "$pymodampl" > $file
 fi
 
-if [ "$pymodampl" = "01" ]; then
+if [ "$pymodampl" = "0.1" ]; then
 menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn" )
 else
 menuitems+=( "pymoda01" " modulation amplitude = 0.1" )
 fi
 
-if [ "$pymodampl" = "02" ]; then
+if [ "$pymodampl" = "0.2" ]; then
 menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn" )
 else
 menuitems+=( "pymoda02" " modulation amplitude = 0.2" )
 fi
 
-if [ "$pymodampl" = "03" ]; then
+if [ "$pymodampl" = "0.3" ]; then
 menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn" )
 else
 menuitems+=( "pymoda03" " modulation amplitude = 0.3" )
 fi
 
-if [ "$pymodampl" = "05" ]; then
+if [ "$pymodampl" = "0.5" ]; then
 menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn" )
 else
 menuitems+=( "pymoda05" " modulation amplitude = 0.5" )
 fi
 
-if [ "$pymodampl" = "07" ]; then
+if [ "$pymodampl" = "0.7" ]; then
 menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn" )
 else
 menuitems+=( "pymoda07" " modulation amplitude = 0.7" )
 fi
 
-if [ "$pymodampl" = "10" ]; then
+if [ "$pymodampl" = "1.0" ]; then
 menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn" )
 else
 menuitems+=( "pymoda10" " modulation amplitude = 1.0" )
