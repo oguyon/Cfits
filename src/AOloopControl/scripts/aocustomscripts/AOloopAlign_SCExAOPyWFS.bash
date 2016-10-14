@@ -173,54 +173,54 @@ menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
 menuitems+=( "" "" )
-file="./conf/conf_pywfs_frequ.txt"
+file="./conf/conf_pywfs_freq.txt"
 if [ -f $file ]; then
-pyfrequ=$(cat $file)
+pyfreq=$(cat $file)
 else
-pyfrequ="2000"
+pyfreq="2000"
 echo "$pyfrequ" > $file
 fi
 
 if [ "$pyfreq" = "500" ]; then
-menuitems+=( "pyfr05" "\Zr\Z2frequ = 0.5 kHz\Zn" )
+menuitems+=( "pyfr05" "\Zr\Z2 freq = 0.5 kHz\Zn" )
 else
-menuitems+=( "pyfr05" "frequ = 0.5 kHz" )
+menuitems+=( "pyfr05" " freq = 0.5 kHz" )
 fi
 
 if [ "$pyfreq" = "1000" ]; then
-menuitems+=( "pyfr10" "\Zr\Z2frequ = 1.0 kHz\Zn" )
+menuitems+=( "pyfr10" "\Zr\Z2 freq = 1.0 kHz\Zn" )
 else
-menuitems+=( "pyfr10" "frequ = 1.0 kHz" )
+menuitems+=( "pyfr10" " freq = 1.0 kHz" )
 fi
 
 if [ "$pyfreq" = "1500" ]; then
-menuitems+=( "pyfr15" "\Zr\Z2frequ = 1.5 kHz\Zn" )
+menuitems+=( "pyfr15" "\Zr\Z2 freq = 1.5 kHz\Zn" )
 else
-menuitems+=( "pyfr15" "frequ = 1.5 kHz" )
+menuitems+=( "pyfr15" " freq = 1.5 kHz" )
 fi
 
 if [ "$pyfreq" = "2000" ]; then
-menuitems+=( "pyfr20" "\Zr\Z2frequ = 2.0 kHz\Zn" )
+menuitems+=( "pyfr20" "\Zr\Z2 freq = 2.0 kHz\Zn" )
 else
-menuitems+=( "pyfr20" "frequ = 2.0 kHz" )
+menuitems+=( "pyfr20" " freq = 2.0 kHz" )
 fi
 
 if [ "$pyfreq" = "2500" ]; then
-menuitems+=( "pyfr25" "\Zr\Z2frequ = 2.5 kHz\Zn" )
+menuitems+=( "pyfr25" "\Zr\Z2 freq = 2.5 kHz\Zn" )
 else
-menuitems+=( "pyfr25" "frequ = 2.5 kHz" )
+menuitems+=( "pyfr25" " freq = 2.5 kHz" )
 fi
 
 if [ "$pyfreq" = "3000" ]; then
-menuitems+=( "pyfr30" "\Zr\Z2frequ = 3.0 kHz\Zn" )
+menuitems+=( "pyfr30" "\Zr\Z2 freq = 3.0 kHz\Zn" )
 else
-menuitems+=( "pyfr30" "frequ = 3.0 kHz" )
+menuitems+=( "pyfr30" " freq = 3.0 kHz" )
 fi
 
 if [ "$pyfreq" = "3500" ]; then
-menuitems+=( "pyfr35" "\Zr\Z2frequ = 3.5 kHz\Zn" )
+menuitems+=( "pyfr35" "\Zr\Z2 freq = 3.5 kHz\Zn" )
 else
-menuitems+=( "pyfr35" "frequ = 3.5 kHz" )
+menuitems+=( "pyfr35" " freq = 3.5 kHz" )
 fi
 
 
