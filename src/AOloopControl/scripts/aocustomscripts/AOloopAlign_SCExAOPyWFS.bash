@@ -171,8 +171,8 @@ fi
 stringcenter "Pyramid modulation"
 menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
-# format: f<frequ>m<modampl>pf<pywfs filter>pp<pywfs pickoff>
 
+menuitems+=( "" "" )
 file="./conf/conf_pywfs_frequ.txt"
 if [ -f $file ]; then
 pyfrequ=$(cat $file)
@@ -224,6 +224,8 @@ menuitems+=( "pyfr35" "frequ = 3.5 kHz" )
 fi
 
 
+menuitems+=( "" "" )
+
 file="./conf/conf_pywfs_modampl.txt"
 if [ -f $file ]; then
 pymodampl=$(cat $file)
@@ -233,40 +235,95 @@ echo "$pymodampl" > $file
 fi
 
 if [ "$pymodampl" = "0.1" ]; then
-menuitems+=( "pymoda01" "\Zr\Z2modulation amplitude = 0.1\Zn" )
+menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn" )
 else
-menuitems+=( "pymoda01" "modulation amplitude = 0.1" )
+menuitems+=( "pymoda01" " modulation amplitude = 0.1" )
 fi
 
 if [ "$pymodampl" = "0.2" ]; then
-menuitems+=( "pymoda02" "\Zr\Z2modulation amplitude = 0.2\Zn" )
+menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn" )
 else
-menuitems+=( "pymoda02" "modulation amplitude = 0.2" )
+menuitems+=( "pymoda02" " modulation amplitude = 0.2" )
 fi
 
 if [ "$pymodampl" = "0.3" ]; then
-menuitems+=( "pymoda03" "\Zr\Z2modulation amplitude = 0.3\Zn" )
+menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn" )
 else
-menuitems+=( "pymoda03" "modulation amplitude = 0.3" )
+menuitems+=( "pymoda03" " modulation amplitude = 0.3" )
 fi
 
 if [ "$pymodampl" = "0.5" ]; then
-menuitems+=( "pymoda05" "\Zr\Z2modulation amplitude = 0.5\Zn" )
+menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn" )
 else
-menuitems+=( "pymoda05" "modulation amplitude = 0.5" )
+menuitems+=( "pymoda05" " modulation amplitude = 0.5" )
 fi
 
 if [ "$pymodampl" = "0.7" ]; then
-menuitems+=( "pymoda07" "\Zr\Z2modulation amplitude = 0.7\Zn" )
+menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn" )
 else
-menuitems+=( "pymoda07" "modulation amplitude = 0.7" )
+menuitems+=( "pymoda07" " modulation amplitude = 0.7" )
 fi
 
 if [ "$pymodampl" = "1.0" ]; then
-menuitems+=( "pymoda10" "\Zr\Z2modulation amplitude = 1.0\Zn" )
+menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn" )
 else
-menuitems+=( "pymoda10" "modulation amplitude = 1.0" )
+menuitems+=( "pymoda10" " modulation amplitude = 1.0" )
 fi
+
+
+menuitems+=( "" "" )
+
+file="./conf/conf_pywfs_filter.txt"
+if [ -f $file ]; then
+pyfilter=$(cat $file)
+else
+pyfilter="1"
+echo "$pyfilter" > $file
+fi
+
+
+if [ "$pyfilter" = "1" ]; then
+menuitems+=( "pyfilt1" "\Zr\Z2 PyWFS filter 1  (Open)\Zn" )
+else
+menuitems+=( "pyfilt1" " PyWFS filter 1  (Open)" )
+fi
+
+
+if [ "$pyfilter" = "2" ]; then
+menuitems+=( "pyfilt2" "\Zr\Z2 PyWFS filter 2  (700 nm, 50 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt2" " PyWFS filter 2  (700 nm, 50 nm BW)" )
+fi
+
+
+if [ "$pyfilter" = "3" ]; then
+menuitems+=( "pyfilt3" "\Zr\Z2 PyWFS filter 3  (BLOCK)\Zn" )
+else
+menuitems+=( "pyfilt3" " PyWFS filter 3  (BLOCK)" )
+fi
+
+
+if [ "$pyfilter" = "4" ]; then
+menuitems+=( "pyfilt4" "\Zr\Z2 PyWFS filter 4  (750 nm, 50 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt4" " PyWFS filter 4  (750 nm, 50 nm BW)" )
+fi
+
+
+if [ "$pyfilter" = "5" ]; then
+menuitems+=( "pyfilt5" "\Zr\Z2 PyWFS filter 5  (850 nm, 25 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt5" " PyWFS filter 5  (850 nm, 25 nm BW)" )
+fi
+
+
+if [ "$pyfilter" = "6" ]; then
+menuitems+=( "pyfilt6" "\Zr\Z2 PyWFS filter 6  (850 nm, 40 nm BW)\Zn" )
+else
+menuitems+=( "pyfilt6" " PyWFS filter 6  (850 nm, 40 nm BW)" )
+fi
+
+
 
 
 
@@ -449,6 +506,44 @@ echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
+
+
+
+	pyfilt1)
+pyfilter="1"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt2)
+pyfilter="2"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt3)
+pyfilter="3"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt4)
+pyfilter="4"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt5)
+pyfilter="5"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
+
+	pyfilt6)
+pyfilter="6"
+echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
+pywfs_filter ${pyfilter}
+;;
 
 
 
