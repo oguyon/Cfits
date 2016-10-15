@@ -10908,8 +10908,39 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     long col;
     float val;
     long nbl = 1;
-    float AVElim = 0.01;
-    float RMSlim = 0.01;
+    float AVElim = 0.01; // [um]
+    float RMSlim = 0.01; // [um]
+
+
+	// DM mode values
+	long IDmodeval_dm;
+	
+	// WFS modes values
+	long IDmodeval;
+	long ksize;
+	long IDmodevalave;
+	long IDmodevalrms;
+	char fname[200];
+
+	// real-time DM mode value
+	sprintf(fname, "aol%ld_modeval_dm_now", loop);
+	IDmodeval_dm = read_sharedmem_image(fname);
+
+	// real-time WFS mode value
+	sprintf(fname, "aol%ld_modeval", loop);
+	IDmodeval = read_sharedmem_image(fname);
+
+	// averaged WFS residual modes, computed by CUDACOMP_extractModesLoop
+	sprintf(fname, "aol%ld_modeval_ave", loop);
+	IDmodevalave = read_sharedmem_image(fname);
+	ksize = data.image[IDmodevalave].md[0].size[1]; // number of averaging line, each line is 2x averaged of previous line
+	
+	// averaged WFS residual modes RMS, computed by CUDACOMP_extractModesLoop
+	sprintf(fname, "aol%ld_modeval_rms", loop);
+	IDmodevalrms = read_sharedmem_image(fname);
+	
+
+
 
     printw("    loop number %ld    ", loop);
 
@@ -10993,7 +11024,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     //printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
 
 
-    print_header(" MODES ", '-');
+    print_header(" MODES [nm]    DM correction -- WFS value -- WFS average -- WFS RMS     ", '-');
     nbl++;
 
 
@@ -11012,11 +11043,11 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
         printw("[%4.2f %4.2f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
 
         // print current value on DM
-        val = data.image[aoconfID_cmd_modes].array.F[k];
+        val = data.image[IDmodeval_dm].array.F[k];
         if(fabs(val)>0.99*AOconf[loop].maxlimit)
         {
             attron(A_BOLD | COLOR_PAIR(2));
-            printw("%7.4f ", val);
+            printw("%+8.3f ", 1000.0*val);
             attroff(A_BOLD | COLOR_PAIR(2));
         }
         else
@@ -11024,39 +11055,39 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
             if(fabs(val)>0.99*AOconf[loop].maxlimit*data.image[aoconfID_LIMIT_modes].array.F[k])
             {
                 attron(COLOR_PAIR(1));
-                printw("%7.4f ", val);
+                printw("%+8.3f ", 1000.0*val);
                 attroff(COLOR_PAIR(1));
             }
             else
-                printw("%7.4f ", val);
+                printw("%+8.3f ", 1000.0*val);
         }
 
         // last reading from WFS
-        printw("%7.4f ", data.image[aoconfID_meas_modes].array.F[k]);
+        printw("%+8.3f ", 1000.0*data.image[IDmodeval].array.F[k]);
 
 
         // Time average
-        val = data.image[aoconfID_AVE_modes].array.F[k];
+        val = data.image[IDmodevalave].array.F[(ksize-1)*AOconf[loop].NBDMmodes+k];
         if(fabs(val)>AVElim)
         {
             attron(A_BOLD | COLOR_PAIR(2));
-            printw("%7.4f ", val);
+            printw("%+8.3f ", 1000.0*val);
             attroff(A_BOLD | COLOR_PAIR(2));
         }
         else
-            printw("%7.4f ", val);
+            printw("%+8.3f ", 1000.0*val);
 
 
         // RMS variation
-        val = data.image[aoconfID_RMS_modes].array.F[k];
+        val = sqrt(data.image[IDmodevalrms].array.F[(ksize-1)*AOconf[loop].NBDMmodes+k]);
         if(fabs(val)>RMSlim)
         {
             attron(A_BOLD | COLOR_PAIR(2));
-            printw("%7.4f ", val);
+            printw("%8.3f ", 1000.0*val);
             attroff(A_BOLD | COLOR_PAIR(2));
         }
         else
-            printw("%7.4f ", val);
+            printw("%8.3f ", 1000.0*val);
 
         col++;
         if(col==nbcol)

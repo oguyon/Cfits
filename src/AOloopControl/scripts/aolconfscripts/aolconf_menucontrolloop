@@ -404,8 +404,8 @@ fi
 if [ "${procONstat}" = "OFF" ];
 then
 menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
-menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval" )
-menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
 menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
 menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
 menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
@@ -414,15 +414,15 @@ else
 menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
 
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval\Zn" )
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace\Zn" )
 else
-menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval" )
+menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
 fi
 
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol\Zn" )
+menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now\Zn" )
 else
-menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol" )
+menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
 fi
 
 if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
