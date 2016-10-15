@@ -104,10 +104,37 @@ typedef struct
 
     
 
-    // LOOP TELEMETRY
+    // LOOP TELEMETRY AND PERFORMANCE 
+    // COMPUTED BY OPEN LOOP RETRIEVAL PROCESS
+    
     double RMSmodes;
     double RMSmodesCumul;
     long long RMSmodesCumulcnt;
+
+	// block statistics (instantaneous)
+	double block_OLrms[100]; // open loop RMS
+	double block_Crms[100]; // correction RMS
+	double block_WFSrms[100]; // WFS residual RMS
+	double block_limFrac[100]; // fraction of mode coefficients exceeding limit
+	
+	double ALL_OLrms; // open loop RMS
+	double ALL_Crms; // correction RMS
+	double ALL_WFSrms; // WFS residual RMS
+	double ALL_limFrac; // fraction of mode coefficients exceeding limit
+	
+	// averaged
+	long AveStats_NBpt; // averaging interval
+	double blockave_OLrms[100]; // open loop RMS
+	double blockave_Crms[100]; // correction RMS
+	double blockave_WFSrms[100]; // WFS residual RMS
+	double blockave_limFrac[100]; // fraction of mode coefficients exceeding limit
+
+	double ALLave_OLrms; // open loop RMS
+	double ALLave_Crms; // correction RMS
+	double ALLave_WFSrms; // WFS residual RMS
+	double ALLave_limFrac; // fraction of mode coefficients exceeding limit
+
+
 
     long logdataID; // image ID containing additional info that can be attached to a image stream log
 

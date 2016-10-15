@@ -249,16 +249,16 @@ GPUmodesextrwfs="5"
 fi
 menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
 
+file="./conf/conf_GPUdmfwb.txt"
+GPUdmfwb=$( cat $file )
+if [[ -f "$file" && ${GPUdmfwb} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPUdmfwb="0"
+fi
+menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU device" )
 
-#file="./conf/conf_GPUmodesextr1.txt"
-#GPUmodesextr1=$( cat $file )
-#if [[ -f "$file" && ${GPUmodesextr1} =~ [0-9]$ ]]; then
-#echo "OK"
-#else
-#echo "6" > $file
-#GPUmodesextr1="6"
-#fi
-#menuitems+=( "GPUme1" "[ $GPUmodesextr1 ]    Mode coefficient dmC extraction : GPU device" )
 
 
 file="./conf/conf_GPUzpoffsetM.txt"
@@ -361,6 +361,15 @@ if [ -a $file ]
 	LOOPPROCESS_EXTROLMODES=$(cat $file)
 	else
 	LOOPPROCESS_EXTROLMODES="0"
+	echo "0" > $file
+fi
+
+file="conf/conf_LOOPPROCESS_DMFILTWB.txt"
+if [ -a $file ]
+	then
+	LOOPPROCESS_DMFILTWB=$(cat $file)
+	else
+	LOOPPROCESS_DMFILTWB="0"
 	echo "0" > $file
 fi
 
@@ -543,6 +552,7 @@ menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
 menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
 menuitems+=( " " " " )
 menuitems+=( "lball" "Set all block to same limit")
+menuitems+=( "mball" "Set all block to same multf")
 menuitems+=( " " " " )
 NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
@@ -564,13 +574,21 @@ fname="conf/conf_limitb${i2}.txt"
 if [ -f "$fname" ]; then
 limitb[10#${i2}]=$( cat ${fname} )
 else
-limitb[10#${i2}]="1.000"
+limitb[10#${i2}]="1.00000"
+fi
+
+fname="conf/conf_multfb${i2}.txt"
+if [ -f "$fname" ]; then
+multfb[10#${i2}]=$( cat ${fname} )
+else
+multfb[10#${i2}]="1.000"
 fi
 
 string=$( printf "% 3d" "${NBblockmodes}" )
-menuitems+=( "" "" )
-menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ] Modal block ${i2} gain   ($string modes)" )
-menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit  ($string modes)" )
+menuitems+=( " "       "         \Zb\Zr======= BLOCK #${i2}  - ($string modes) ============\Zn" )
+menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ]   Modal block ${i2} gain" )
+menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit" )
+menuitems+=( "mb${i2}" "[ ${multfb[10#${i2}]} ]   Modal block ${i2} multf" )
 done
 else
 menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
@@ -930,15 +948,17 @@ aoconflog "set GPUmodesextrwfs = ${GPUmodesextrwfs}"
 menucontrolloop_default="GPUmewfs"
 ;;
 
-#    GPUme1)
-#file="./conf/conf_GPUmodesextr1.txt"
-#exec 3>&1;
-#GPUmodesextr1=$(dialog --inputbox "GPU modes extract 1 device" 0 0 "$GPUmodesextr1" 2>&1 1>&3);
-#exec 3>&-;
-#echo "$GPUmodesextr1" > $file
-#aoconflog "set GPUmodesextr1 = ${GPUmodesextr1}"
-#menucontrolloop_default="GPUme1"
-#;;
+
+
+    GPUdmfwb)
+file="./conf/conf_GPUdmfwb.txt"
+exec 3>&1;
+GPUdmfwb=$(dialog --inputbox "GPU DM modal write device" 0 0 "$GPUdmfwb" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPUdmfwb" > $file
+aoconflog "set GPUdmfwb = ${GPUdmfwb}"
+menucontrolloop_default="GPUdmfwb"
+;;
 
 
 
@@ -1027,7 +1047,24 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_respM" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
 sleep 1
-tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[${gi}]} 1" C-m
+
+
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+
+	     limitb[10#${gi}]=$(cat ./conf/conf_limitb${gi}.txt )
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
+
+	     multfb[10#${gi}]=$(cat ./conf/conf_multfb${gi}.txt )
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+
+	     gainb[10#${gi}]=$(cat ./conf/conf_gainb${gi}.txt )
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[10#${gi}]} 0" C-m
+	 done
+gi="00"
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[10#${gi}]} 1" C-m
+
 sleep 2
 
 if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
@@ -1053,6 +1090,7 @@ logRunningProcess "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
 tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs ${GPUmodesextrwfs}" C-m
 fi
 
+
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
@@ -1061,6 +1099,18 @@ logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
 tmux send-keys -t $tmuxname "Cfits" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
+
+
+if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmfwb"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+logRunningProcess "aolmcoeffs2dmmap" "$tmuxname" "DM modal (post-filtering) write back"
+tmux send-keys -t $tmuxname "./auxscripts/aolmcoeffs2dmmap -f ${GPUdmfwb}" C-m
+fi
+
+
+
 
 
 if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
@@ -1409,19 +1459,30 @@ menucontrolloop_default="wzpoinit"
 	 
 	 lball) 
 	 value=${limitallb}
-	 SelectValue01 100 1200 50 
+	 SelectValue02 10000 120000 5000 
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
 	     limitb[10#${gi}]=${value}
 	     echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
-	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]} 0" C-m
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 done
-     gi="00"
-     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${gainb[10#${gi}]} 1" C-m
-	 aoconflogext "set all gains to ${value}"
+	 aoconflogext "set all limits to ${value}"
 	 ;;
 	 
+	 mball) 
+	 value=${multfallb}
+	 SelectValue03 100 1001 50 
+	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+      	 do
+	     gi=$(printf "%02d" "$i")
+	     multfb[10#${gi}]=${value}
+	     echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 done
+	 aoconflogext "set all limits to ${value}"
+	 ;;
+	
 	 
     gball01)
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -1555,11 +1616,21 @@ menucontrolloop_default="wzpoinit"
   	 lb00)
   	 gi="00"
   	 value=${limitb[${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${10#gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+  	 mb00)
+  	 gi="00"
+  	 value=${multfb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${10#gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
   	 ;; 
 
 
@@ -1579,12 +1650,23 @@ menucontrolloop_default="wzpoinit"
  	 lb01)
   	 gi="01"
   	 value=${limitb[${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+
+ 	 mb01)
+  	 gi="01"
+  	 value=${multfb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
 
 
 
@@ -1601,13 +1683,22 @@ menucontrolloop_default="wzpoinit"
  	 lb02)
   	 gi="02"
   	 value=${limitb[${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
 
+ 	 mb02)
+  	 gi="02"
+  	 value=${limitb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
 
 
 
@@ -1624,12 +1715,24 @@ menucontrolloop_default="wzpoinit"
  	 lb03)
   	 gi="03"
   	 value=${limitb[${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+  	 
+ 	 mb03)
+  	 gi="03"
+  	 value=${multfb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+  	 
   	 
   	 
 
@@ -1646,14 +1749,24 @@ menucontrolloop_default="wzpoinit"
  	 lb04)
   	 gi="04"
   	 value=${limitb[${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
   	 
-  	  
+  	 mb04)
+  	 gi="04"
+  	 value=${limitb[${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+ 	  
 
   	 gb05)
   	 gi="05"
@@ -1668,14 +1781,24 @@ menucontrolloop_default="wzpoinit"
  	 lb05)
   	 gi="05"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
   	 
+   	 mb05)
+  	 gi="05"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
   	 
+	 
   	 
   	 
 
@@ -1692,13 +1815,22 @@ menucontrolloop_default="wzpoinit"
  	 lb06)
   	 gi="06"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
  
+ 	 mb06)
+  	 gi="06"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
 
 
 
@@ -1716,13 +1848,22 @@ menucontrolloop_default="wzpoinit"
  	 lb07)
   	 gi="07"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[10#${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
  
+ 	 mb07)
+  	 gi="07"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[10#${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
 
 
 
@@ -1741,11 +1882,21 @@ menucontrolloop_default="wzpoinit"
  	 lb08)
   	 gi="08"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[10#${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
+  	 ;; 
+ 
+ 	 mb08)
+  	 gi="08"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[10#${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
   	 ;; 
  
 
@@ -1765,13 +1916,24 @@ menucontrolloop_default="wzpoinit"
  	 lb09)
   	 gi="09"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[10#${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
   	 
+ 	 mb09)
+  	 gi="09"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[10#${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+  	 
+    	 
   	 
   	 
 
@@ -1788,12 +1950,23 @@ menucontrolloop_default="wzpoinit"
 	 lb10)
   	 gi="10"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+
+	 mb10)
+  	 gi="10"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
 
   
 
@@ -1812,12 +1985,24 @@ menucontrolloop_default="wzpoinit"
 	 lb11)
   	 gi="11"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+
+	 lb11)
+  	 gi="11"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
 
 
 
@@ -1835,12 +2020,23 @@ menucontrolloop_default="wzpoinit"
 	 lb12)
   	 gi="12"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+
+	 mb12)
+  	 gi="12"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
 
 
 
@@ -1858,12 +2054,23 @@ menucontrolloop_default="wzpoinit"
 	 lb13)
   	 gi="13"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+
+	 mb13)
+  	 gi="13"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
 
 
 
@@ -1881,12 +2088,24 @@ menucontrolloop_default="wzpoinit"
 	 lb14)
   	 gi="14"
   	 value=${limitb[10#${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue02 10000 120000 5000
   	 limitb[${gi}]=${value}
   	 echo "${limitb[10#${gi}]}" > ./conf/conf_limitb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
+  	 
+	 mb14)
+  	 gi="14"
+  	 value=${multfb[10#${gi}]}
+	 SelectValue03 100 1001 50
+  	 multfb[${gi}]=${value}
+  	 echo "${multfb[10#${gi}]}" > ./conf/conf_multfb${gi}.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
+	 aoconflogext "block ${gi} set multf to ${value}"
+  	 ;; 
+
+
 
 
 

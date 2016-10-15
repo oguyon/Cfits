@@ -6378,33 +6378,37 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    // modes blocks
-
-    //    if(read_config_parameter(config_fname, "NBMblocks", content)==0)
-    //        AOconf[loop].NBMblocks = 1;
-    //    else
-    //        AOconf[loop].NBMblocks = atoi(content);
-    AOconf[loop].NBMblocks = 5;
+    AOconf[loop].NBMblocks = AOconf[loop].DMmodesNBblock;
     printf("NBMblocks : %ld\n", AOconf[loop].NBMblocks);
     fflush(stdout);
 
     
 
-    if(AOconf[loop].NBMblocks==1)
+    if(AOconf[loop].DMmodesNBblock==1)
         AOconf[loop].indexmaxMB[0] = AOconf[loop].NBDMmodes;
     else
     {
-        for(k=0; k<AOconf[loop].NBMblocks; k++)
-            AOconf[loop].indexmaxMB[k] = (long) (pow(1.0*(k+1.0)/AOconf[loop].NBMblocks,2.0)*AOconf[loop].NBDMmodes);
-        AOconf[loop].indexmaxMB[AOconf[loop].NBMblocks-1] = AOconf[loop].NBDMmodes;
+		AOconf[loop].indexmaxMB[k] = AOconf[loop].NBmodes_block[0];
+		for(k=1; k<AOconf[loop].DMmodesNBblock; k++)
+			AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
-
-
-    for(k=0; k<AOconf[loop].NBMblocks; k++)
+    
+    AOconf[loop].AveStats_NBpt = 100;
+    for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
     {
         AOconf[loop].gainMB[k] = 1.0;
         AOconf[loop].limitMB[k] = 1.0;
         AOconf[loop].multfMB[k] = 1.0;
+        
+        AOconf[loop].block_OLrms[k] = 0.0;
+        AOconf[loop].block_Crms[k] = 0.0;
+        AOconf[loop].block_WFSrms[k] = 0.0;
+        AOconf[loop].block_limFrac[k] = 0.0;
+        
+        AOconf[loop].blockave_OLrms[k] = 0.0;
+        AOconf[loop].blockave_Crms[k] = 0.0;
+        AOconf[loop].blockave_WFSrms[k] = 0.0;
+        AOconf[loop].blockave_limFrac[k] = 0.0;
     }
 
 
@@ -10900,10 +10904,10 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WF
 
 int AOloopControl_printloopstatus(long loop, long nbcol)
 {
-    long k, kmax;
+    long k, kmin, kmax;
     long col;
     float val;
-    long nbl = 0;
+    long nbl = 1;
     float AVElim = 0.01;
     float RMSlim = 0.01;
 
@@ -10923,30 +10927,68 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     */
 
 
-    printw("STATUS = %d  ", AOconf[loop].status);
+    printw("STATUS = %3d  ", AOconf[loop].status);
 
-    kmax = (wrow-3)*(nbcol);
-    printw("Gain = %f   maxlim = %f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
-    printw("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
+    kmax = (wrow-3)*(nbcol) - 1;
+    printw("Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
+    nbl++;
+    printw("loop iteration CNT : %lld\n", AOconf[loop].cnt);
     nbl++;
 
-    printw("CNT : %lld  / %lld\n", AOconf[loop].cnt, AOconf[loop].cntmax);
+	printw("\n");
+	nbl++;
+
+	printw("=========== %6ld modes, %3ld blocks ================|------------ Telemetry [nm] ----------------|    |     LIMITS         |\n", AOconf[loop].NBDMmodes, AOconf[loop].DMmodesNBblock);
     nbl++;
+    printw("BLOCK  #modes [ min - max ]    gain   limit   multf  |       dmC     Input  ->       WFS   Ratio  |    | hits/step    perc  |\n");
+    nbl++;
+   	printw("\n");
+	nbl++;
 
-
-
-
-    for(k=0; k<AOconf[loop].NBMblocks; k++)
+    for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
     {
         if(k==0)
-            printw("MODE BLOCK %ld   [ %4ld - %4ld ]  %4.2f  %4.2f  %4.2f\n", k, (long) 0, AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
-        else
-            printw("MODE BLOCK %ld   [ %4ld - %4ld ]  %4.2f  %4.2f  %4.2f\n", k, AOconf[loop].indexmaxMB[k-1], AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+			kmin = 0;
+		else
+			kmin = AOconf[loop].indexmaxMB[k-1];
+		
+		attron(A_BOLD);
+        printw("%3ld", k);
+        attroff(A_BOLD);
+		
+		printw("    %4ld [ %4ld - %4ld ]   %5.3f  %7.5f  %5.3f", AOconf[loop].NBmodes_block[k], kmin, AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+		printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
+
+		attron(A_BOLD);
+		printw("   %5.3f  ", AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k]);
+		attroff(A_BOLD);
+
+		if( AOconf[loop].blockave_limFrac[k] > 0.01 )
+			attron(A_BOLD | COLOR_PAIR(2));
+		
+		printw("| %2ld | %9.3f  %6.2f\% |\n", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);			
+        attroff(A_BOLD | COLOR_PAIR(2));
+        
         nbl++;
     }
+    
 
+	printw("\n");
+	nbl++;
 
-    printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
+	printw(" ALL   %4ld                                        ", AOconf[loop].NBDMmodes); 
+	printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].ALLave_Crms, 1000.0*AOconf[loop].ALLave_OLrms, 1000.0*AOconf[loop].ALLave_WFSrms);
+	
+	attron(A_BOLD);
+	printw("   %5.3f  ", AOconf[loop].ALLave_WFSrms/AOconf[loop].ALLave_OLrms);
+	attroff(A_BOLD);
+		
+	printw("| %2ld | %9.3f  %6.2f\% |\n", k, AOconf[loop].ALLave_limFrac,  100.0*AOconf[loop].ALLave_limFrac/AOconf[loop].NBDMmodes);			
+
+	printw("\n");
+	nbl++;
+	
+    //printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
 
 
     print_header(" MODES ", '-');
@@ -11553,6 +11595,19 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long IDmodeLIMIT;
 	long IDmodeMULT;
 	
+	// TELEMETRY
+	long block;
+	long blockstatcnt = 0;
+	
+	double blockaveOLrms[100];
+	double blockaveCrms[100]; // correction RMS
+	double blockaveWFSrms[100]; // WFS residual RMS
+	double blockavelimFrac[100];
+	
+	double allaveOLrms;
+	double allaveCrms;
+	double allaveWFSrms;
+	double allavelimFrac;
 	
 	
 	// read AO loop gain, mult
@@ -11680,6 +11735,21 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	modevalDMindex = 0;
 	modevalDMindexl = 0;
 	cnt = 0;
+	
+	blockstatcnt = 0;
+	for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
+	{
+		blockaveOLrms[block] = 0.0;
+		blockaveCrms[block] = 0.0; 
+		blockaveWFSrms[block] = 0.0;
+		blockavelimFrac[block] = 0.0;
+	}
+	allaveOLrms = 0.0;
+	allaveCrms = 0.0;
+	allaveWFSrms = 0.0;
+	allavelimFrac = 0.0;
+
+	
 	while (1)
 	{
 	  if(data.image[IDmodeval].sem==0)
@@ -11691,8 +11761,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         else
             sem_wait(data.image[IDmodeval].semptr[4]);
 
-	// write gain and mult into arrays
-	for(m=0;m<NBmodes;m++)
+		// write gain and mult into arrays
+		for(m=0;m<NBmodes;m++)
 		{
 			modegain[m] = AOconf[loop].gain * data.image[IDgainb].array.F[modeblock[m]];
 			modemult[m] = AOconf[loop].mult;
@@ -11712,16 +11782,26 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		// THIS FILTERING GOES TOGETHER WITH THE WRITEBACK ON DM
 		if(FILTERMODE == 1)
 		{
+			
 			for(m=0;m<NBmodes;m++)
 			{
 				data.image[IDmodevalDMnow].array.F[m] *= data.image[IDmodeMULT].array.F[m];
 				
+				block = data.image[IDblknb].array.U[m];	
+				
 				if(data.image[IDmodevalDMnow].array.F[m] > data.image[IDmodeLIMIT].array.F[m])
-					data.image[IDmodevalDMnow].array.F[m] = data.image[IDmodeLIMIT].array.F[m];
+					{
+						blockavelimFrac[block] += 1.0;
+						data.image[IDmodevalDMnow].array.F[m] = data.image[IDmodeLIMIT].array.F[m];
+					}
 				if(data.image[IDmodevalDMnow].array.F[m] < -data.image[IDmodeLIMIT].array.F[m])
-					data.image[IDmodevalDMnow].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
+					{
+						blockavelimFrac[block] += 1.0;
+						data.image[IDmodevalDMnow].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
+					}
 			}
 		}
+		
 		
 		// update current location of circular buffer
 		for(m=0;m<NBmodes;m++)
@@ -11732,6 +11812,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDM_C].md[0].cnt1 = modevalDMindex;
 		data.image[IDmodevalDM_C].md[0].cnt0++;
 		data.image[IDmodevalDM_C].md[0].write = 0;
+		
+		
+		
 		
 		
 		// COMPUTE DM STATE AT TIME OF WFS MEASUREMENT
@@ -11765,6 +11848,49 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		modevalDMindex++;
 		if(modevalDMindex==modevalDM_bsize)
 			modevalDMindex = 0;
+	
+		for(m=0;m<NBmodes;m++)
+		{
+			block = data.image[IDblknb].array.U[m];
+			
+			blockaveOLrms[block] += data.image[IDout].array.F[m]*data.image[IDout].array.F[m];
+			blockaveCrms[block] += data.image[IDmodevalDMnow].array.F[m]*data.image[IDmodevalDMnow].array.F[m];
+			blockaveWFSrms[block] += data.image[IDmodeval].array.F[m]*data.image[IDmodeval].array.F[m];
+		}
+	
+		blockstatcnt ++;
+		if(blockstatcnt==AOconf[loop].AveStats_NBpt)
+			{
+				for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
+				{
+					AOconf[loop].blockave_OLrms[block] = sqrt(blockaveOLrms[block]/blockstatcnt);
+					AOconf[loop].blockave_Crms[block] = sqrt(blockaveCrms[block]/blockstatcnt); 
+					AOconf[loop].blockave_WFSrms[block] = sqrt(blockaveWFSrms[block]/blockstatcnt);
+					AOconf[loop].blockave_limFrac[block] = blockavelimFrac[block]/blockstatcnt;
+					
+					allaveOLrms += blockaveOLrms[block];
+					allaveCrms += blockaveCrms[block];
+					allaveWFSrms += blockaveWFSrms[block];
+					allavelimFrac += blockavelimFrac[block];
+					
+					blockaveOLrms[block] = 0.0;
+					blockaveCrms[block] = 0.0; 
+					blockaveWFSrms[block] = 0.0;
+					blockavelimFrac[block] = 0.0;
+				}
+				
+				AOconf[loop].ALLave_OLrms = sqrt(allaveOLrms/blockstatcnt);
+				AOconf[loop].ALLave_Crms = sqrt(allaveCrms/blockstatcnt);
+				AOconf[loop].ALLave_WFSrms = sqrt(allaveWFSrms/blockstatcnt);
+				AOconf[loop].ALLave_limFrac = allavelimFrac/blockstatcnt;
+				
+				allaveOLrms = 0.0;
+				allaveCrms = 0.0;
+				allaveWFSrms = 0.0;
+				allavelimFrac = 0.0;
+
+				blockstatcnt = 0;
+			}
 	}
 		
 	free(modegain);
@@ -12189,7 +12315,7 @@ int AOloopControl_setlimitblock(long mb, float limitval)
 	kmin = 0;
 	for(kk=0; kk<mb; kk++)
 	{
-		printf("%ld -> %f   [%ld]\n", kk, AOconf[LOOPNUMBER].NBmodes_block[kk], kmin);
+//		printf("%ld -> %ld   [%ld]\n", kk, AOconf[LOOPNUMBER].NBmodes_block[kk], kmin);
 		kmin += AOconf[LOOPNUMBER].NBmodes_block[kk];
 	}
 	kmax = kmin + AOconf[LOOPNUMBER].NBmodes_block[mb];
@@ -12207,6 +12333,8 @@ int AOloopControl_setlimitblock(long mb, float limitval)
         data.image[aoconfID_LIMIT_modes].array.F[k] = limitval;
    
 
+	AOconf[LOOPNUMBER].limitMB[mb] = limitval;
+
     return 0;
 }
 
@@ -12217,29 +12345,35 @@ int AOloopControl_setmultfblock(long mb, float multfval)
     long k;
     char name[200];
     long kmin, kmax;
+	long NBmodes;
+	long kk;
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
-    if(aoconfID_MULTF_modes==-1)
+	kmin = 0;
+	for(kk=0; kk<mb; kk++)
+	{
+//		printf("%ld -> %ld   [%ld]\n", kk, AOconf[LOOPNUMBER].NBmodes_block[kk], kmin);
+		kmin += AOconf[LOOPNUMBER].NBmodes_block[kk];
+	}
+	kmax = kmin + AOconf[LOOPNUMBER].NBmodes_block[mb];
+	printf("setting %ld - %ld to %f\n", kmin, kmax, multfval);
+	printf("loop %ld   mode block %ld / %ld\n", LOOPNUMBER, mb, AOconf[LOOPNUMBER].DMmodesNBblock);
+
+    if(aoconfID_LIMIT_modes==-1)
     {
         sprintf(name, "aol%ld_DMmode_MULTF", LOOPNUMBER);
         aoconfID_MULTF_modes = read_sharedmem_image(name);
     }
 
-    if(mb<AOconf[LOOPNUMBER].NBMblocks)
-    {
-        if(mb==0)
-            kmin = 0;
-        else
-            kmin = AOconf[LOOPNUMBER].indexmaxMB[mb-1];
-        kmax = AOconf[LOOPNUMBER].indexmaxMB[mb];
 
-        AOconf[LOOPNUMBER].multfMB[mb] = multfval;
+     for(k=kmin; k<kmax; k++)
+        data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
 
-        for(k=kmin; k<kmax; k++)
-            data.image[aoconfID_MULTF_modes].array.F[k] = multfval;
-    }
+
+     AOconf[LOOPNUMBER].multfMB[mb] = multfval;
+
 
     return 0;
 }

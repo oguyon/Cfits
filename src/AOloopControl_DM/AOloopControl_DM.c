@@ -597,6 +597,12 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     long sizexywfsref;
     long IDtmpoutref;
     
+	long IDvar;
+    long DMtwaitus = 0; // optional time interval between successive commands [us]
+    // if 0, do not wait
+    // read from variable name DMTWAIT
+    
+    
     if(DMindex>NB_DMindex-1)
     {
         printf("ERROR: requested DMindex (%02ld) exceeds maximum number of DMs (%02ld)\n", DMindex, NB_DMindex);
@@ -605,6 +611,12 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     
     printf("Setting up DM #%ld\n", DMindex); 
+    
+    list_variable_ID();
+    IDvar = variable_ID("DMTWAIT");
+    if(IDvar!=-1)
+		DMtwaitus = (long) (data.variable[IDvar].value.f);
+    
     
     
     schedpar.sched_priority = RT_priority;
@@ -819,6 +831,9 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     while(dmdispcombconf[DMindex].ON == 1)
     {
         dmdispcombconf[DMindex].status = 2;
+
+		if(DMtwaitus>0)
+			usleep(DMtwaitus);
 
         if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
             perror("clock_gettime");

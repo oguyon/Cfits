@@ -521,6 +521,8 @@ menucontrolloop_default="linsimDelay"
 
 
 	lsimon)
+ReadConfFile "zrespMlinsim"
+ReadConfFile "wfsref0linsim"
 function_lsim_on
 menutestmode_default="lsimoff"
 ;;
