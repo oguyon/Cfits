@@ -9,7 +9,7 @@ NBARGS=0
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
-
+loopnb=$(cat LOOPNUMBER)
 
 
 
@@ -73,13 +73,13 @@ fi
 
 
 
-# select most recent files
+# select most recent files -> cp to 
 
 datestr=`date -u +%Y%m%d`
 logdir="/media/data"
 
-OLdir="$logdir/$datestr/aol2_modeval_ol"
-CLdir="$logdir/$datestr/aol2_modeval"
+OLdir="$logdir/$datestr/aol${loopnb}_modeval_ol"
+CLdir="$logdir/$datestr/aol${loopnb}_modeval"
 
 OLfn=$( ls -t $OLdir/*.fits | head -n1 )
 CLfn=$( ls -t $CLdir/*.fits | head -n1 )
