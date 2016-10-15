@@ -10927,7 +10927,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     */
 
 
-    printw("STATUS = %3d  ", AOconf[loop].status);
+    printw("   STATUS = %3d  ", AOconf[loop].status);
 
     kmax = (wrow-22)*(nbcol);
     
