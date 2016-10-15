@@ -10902,7 +10902,7 @@ long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WF
 
 
 
-int AOloopControl_printloopstatus(long loop, long nbcol)
+int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize)
 {
     long k, kmin, kmax;
     long col;
@@ -10912,32 +10912,6 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     float RMSlim = 0.01; // [um]
 
 
-	// DM mode values
-	long IDmodeval_dm;
-	
-	// WFS modes values
-	long IDmodeval;
-	long ksize;
-	long IDmodevalave;
-	long IDmodevalrms;
-	char fname[200];
-
-	// real-time DM mode value
-	sprintf(fname, "aol%ld_modeval_dm_now", loop);
-	IDmodeval_dm = read_sharedmem_image(fname);
-
-	// real-time WFS mode value
-	sprintf(fname, "aol%ld_modeval", loop);
-	IDmodeval = read_sharedmem_image(fname);
-
-	// averaged WFS residual modes, computed by CUDACOMP_extractModesLoop
-	sprintf(fname, "aol%ld_modeval_ave", loop);
-	IDmodevalave = read_sharedmem_image(fname);
-	ksize = data.image[IDmodevalave].md[0].size[1]; // number of averaging line, each line is 2x averaged of previous line
-	
-	// averaged WFS residual modes RMS, computed by CUDACOMP_extractModesLoop
-	sprintf(fname, "aol%ld_modeval_rms", loop);
-	IDmodevalrms = read_sharedmem_image(fname);
 	
 
 
@@ -11110,6 +11084,19 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 {
     char name[200];
+	// DM mode values
+	long IDmodeval_dm;
+	
+	// WFS modes values
+	long IDmodeval;
+	long ksize;
+	long IDmodevalave;
+	long IDmodevalrms;
+	char fname[200];
+
+
+
+
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
@@ -11162,6 +11149,26 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
     }
 
 
+	// real-time DM mode value
+	sprintf(fname, "aol%ld_modeval_dm_now", loop);
+	IDmodeval_dm = read_sharedmem_image(fname);
+
+	// real-time WFS mode value
+	sprintf(fname, "aol%ld_modeval", loop);
+	IDmodeval = read_sharedmem_image(fname);
+
+	// averaged WFS residual modes, computed by CUDACOMP_extractModesLoop
+	sprintf(fname, "aol%ld_modeval_ave", loop);
+	IDmodevalave = read_sharedmem_image(fname);
+	ksize = data.image[IDmodevalave].md[0].size[1]; // number of averaging line, each line is 2x averaged of previous line
+	
+	// averaged WFS residual modes RMS, computed by CUDACOMP_extractModesLoop
+	sprintf(fname, "aol%ld_modeval_rms", loop);
+	IDmodevalrms = read_sharedmem_image(fname);
+
+
+
+
     initscr();
     getmaxyx(stdscr, wrow, wcol);
 
@@ -11180,7 +11187,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
         print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
         attroff(A_BOLD);
 
-        AOloopControl_printloopstatus(loop, nbcol);
+        AOloopControl_printloopstatus(loop, nbcol, IDmodeval_dm, IDmodeval, IDmodevalave, IDmodevalrms, ksize);
 
         refresh();
     }
