@@ -349,12 +349,12 @@ menuitems+=( "A" "Align")
 
 
 
-dialog --colors --title "AO loop top menu  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
+dialog --colors --title "AO loop top menu  - LOOP ${LOOPNAME} (${LOOPNUMBER})  [$nbwlines x $nbwcols]" \
 --ok-label "Select" \
 --cancel-label "Exit" \
 --default-item "${menutop_default}" \
  --menu "$menuname" \
- $nbwlines $nbwcols  100 "${menuitems[@]}"  2> $tempfile
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 retval=$?
