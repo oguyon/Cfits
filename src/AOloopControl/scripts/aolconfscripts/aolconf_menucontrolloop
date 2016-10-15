@@ -1992,7 +1992,7 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "block ${gi} set limit to ${value}"
   	 ;; 
 
-	 lb11)
+	 mb11)
   	 gi="11"
   	 value=${multfb[10#${gi}]}
 	 SelectValue03 100 1001 50
