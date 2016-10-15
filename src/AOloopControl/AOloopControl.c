@@ -10911,7 +10911,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol)
     float AVElim = 0.01;
     float RMSlim = 0.01;
 
-    printw("loop number %ld    ", loop);
+    printw("    loop number %ld    ", loop);
 
 
     if(AOconf[loop].on == 1)
