@@ -6393,6 +6393,19 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 			AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
     
+    fprintf(fname, "./conf/conf_blockoffset_%ld.txt", 0); 
+    fp = fopen( fname, "w");
+	fprintf(fp, "0");
+    fclose(fp);
+    for(k=1;k<AOconf[loop].DMmodesNBblock; k++)
+    {
+		fprintf(fname, "./conf/conf_blockoffset_%ld.txt", k); 
+		fp = fopen( fname, "w");
+		fprintf(fp, "%ld", AOconf[loop].indexmaxMB[k-1]);
+		fclose(fp);
+	}
+    
+    
     AOconf[loop].AveStats_NBpt = 100;
     for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
     {

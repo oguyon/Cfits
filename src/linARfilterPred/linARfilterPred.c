@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <sched.h>
+#include <assert.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multifit.h>
 
@@ -107,6 +108,29 @@ int LINARFILTERPRED_ScanGain_cli()
 }
 
 
+//long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha);
+int LINARFILTERPRED_PF_updatePFmatrix_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,1)==0)
+		LINARFILTERPRED_PF_updatePFmatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
+	else
+       return 1;
+
+  return(0);
+}
+
+
+//long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name);
+int LINARFILTERPRED_PF_RealTimeApply_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)==0)
+		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string);
+	else
+       return 1;
+
+  return(0);
+}
+
 
 
 
@@ -158,6 +182,23 @@ int init_linARfilterPred()
     data.NBcmd++;
 
 
+	strcpy(data.cmd[data.NBcmd].key,"linARPFMupdate");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_updatePFmatrix_cli;
+    strcpy(data.cmd[data.NBcmd].info,"update predictive filter matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input 3D predictor> <output 2D matrix> <update coeff>");
+    strcpy(data.cmd[data.NBcmd].example,"linARPFMupdate outPF PFMat 0.1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"linARApplyRT");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Real-time apply predictive filter");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream>");
+    strcpy(data.cmd[data.NBcmd].example,"linARApplyRT modevalOL 0 2 PFmat 5 outPFmodeval");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name)");
+    data.NBcmd++;
 
     // add atexit functions here
 
@@ -197,6 +238,7 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 	IDin = image_ID(IDin_name);
 	IDblknb = image_ID(IDblknb_name);
 	naxis = data.image[IDin].md[0].naxis;
+	mmax = data.image[IDblknb].md[0].size[0];
 	
 	if(data.image[IDin].md[0].size[0] != data.image[IDblknb].md[0].size[0])
 		{			
@@ -207,21 +249,26 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 				mmax = data.image[IDblknb].md[0].size[0];
 		}
 	
-	
+
+
+
 	NBmodes1 = 0;
 	for(m=0;m<mmax;m++)
 		{
 			if(data.image[IDblknb].array.U[m] == blkNB)
 				NBmodes1++;
 		}
+
 	
 	sizearray = (long*) malloc(sizeof(long)*naxis);
 	
 	for(axis=0;axis<naxis;axis++)
 		sizearray[axis] = data.image[IDin].md[0].size[axis];
 	sizearray[0] = NBmodes1;
-	
+
+
 	IDout = create_image_ID(IDout_name, naxis, sizearray, FLOAT, 0, 0);
+	
 	
 	xsize = data.image[IDin].md[0].size[0];
 	if(naxis>1)
@@ -596,15 +643,15 @@ long LINARFILTERPRED_Apply_LinPredictor(char *IDfilt_name, char *IDin_name, floa
 	alpha = PFlag - ((long) PFlag);
 	PFlagl = (long) PFlag;
 	
-	for(kk=PForder;kk<nbspl;kk++)
+	for(kk=PForder;kk<nbspl;kk++) // time step
 	{
 		for(iip=0;iip<xysize;iip++) // predicted variable
 			{
 				valp = 0.0; // prediction 
 				for(step=0;step<PForder;step++)
 					{
-						for(ii=0;ii<xsize*ysize;ii++)
-							valp += data.image[IDfilt].array.F[xysize*xysize*step+iip*xysize+ii]*data.image[IDin].array.F[(kk-step)*xysize + ii];
+						for(ii=0;ii<xsize*ysize;ii++) // input variable
+							valp += data.image[IDfilt].array.F[xysize*xysize*step + iip*xysize + ii] * data.image[IDin].array.F[(kk-step)*xysize + ii];
 					}
 				data.image[IDout].array.F[kk*xysize+iip] = valp;
 			
@@ -791,10 +838,131 @@ float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag)
 }
 
 
+//
+// IDPF_name and IDPFM_name should be pre-loaded
+//
+long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha)
+{
+	long IDPF, IDPFM;
+	long inmode, NBmode, outmode, NBmode2;
+	long tstep, NBtstep;
+
+	long *sizearray;
+	long naxis;
+	
+	
+	
+	// IDPF should be square
+	IDPF = image_ID(IDPF_name);
+	NBmode = data.image[IDPF].md[0].size[0];
+	NBmode2 = NBmode*NBmode;
+	assert( data.image[IDPF].md[0].size[0] == data.image[IDPF].md[0].size[1]);
+	NBtstep = data.image[IDPF].md[0].size[2];
+	
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = NBmode*NBtstep;
+	sizearray[1] = NBmode;
+	naxis = 2;
+	
+	IDPFM = image_ID(IDPFM_name);
+	
+	if(IDPFM==-1)
+		{
+			printf("Creating shared mem image %s  [ %ld  x  %ld ]\n", IDPFM_name, sizearray[0], sizearray[1]);
+			fflush(stdout);
+			IDPFM = create_image_ID(IDPFM_name, naxis, sizearray, FLOAT, 1, 0);
+		}
+	free(sizearray);
+	
+	
+	data.image[IDPFM].md[0].write = 1;
+	for(outmode=0; outmode<NBmode; outmode++)
+		{
+			for(tstep=0;tstep<NBtstep;tstep++)
+				for(inmode=0; inmode<NBmode; inmode++)
+					data.image[IDPFM].array.F[outmode*(NBmode*NBtstep) + tstep*NBmode+inmode] = (1.0-alpha)*data.image[IDPFM].array.F[outmode*(NBmode*NBtstep) + tstep*NBmode+inmode] + alpha * data.image[IDPF].array.F[tstep*NBmode2 + outmode*NBmode + inmode];
+		}	
+	COREMOD_MEMORY_image_set_sempost_byID(IDPFM, -1);
+	data.image[IDPFM].md[0].write = 0;
+	data.image[IDPFM].md[0].cnt0++;
 
 
+	return(IDPFM);
+}
 
 
+//
+// IDmodevalOL_name : open loop modal coefficients
+// IndexOffset      : predicted mode start at this OL index 
+// semtrig          : semaphore trigger index in OL input
+// IDPFM_name       : predictive filter matrix
+// IDPFout_name     : prediction
+// 
+long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name)
+{
+	long IDmodevalOL;
+	long NBmodeOL, NBmodeOUT, modeOUT;
+	long IDPFM;
+	
+	long IDOLbuff;
+	long tstep;
+	long *sizearray;
+	long naxis;
+
+	long IDPFout;
+	long ii;
+	
+	
+	IDmodevalOL = image_ID(IDmodevalOL_name);
+	NBmodeOL = data.image[IDmodevalOL].md[0].size[0];
+	
+	IDPFM = image_ID(IDPFM_name);
+	NBmodeOUT = data.image[IDPFM].md[0].size[1]; 
+	
+	IDOLbuff = create_2Dimage_ID("OLbuffer", NBmodeOUT, NBPFstep);
+	
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = NBmodeOUT;
+	sizearray[1] = 1;
+	naxis = 2;
+	IDPFout = image_ID(IDPFout_name);
+	if(IDPFout==-1)
+		IDPFout = create_image_ID(IDPFout_name, naxis, sizearray, FLOAT, 1, 0);
+	free(sizearray);
+	
+	while(1==1)
+	{
+		sem_wait(data.image[IDmodevalOL].semptr[semtrig]);
+		
+		
+		// fill in buffer
+		for(tstep=NBPFstep-1; tstep>0; tstep--)
+			{
+				// tstep-1 -> tstep
+				for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
+					data.image[IDOLbuff].array.F[NBmodeOUT*tstep + modeOUT] = data.image[IDOLbuff].array.F[NBmodeOUT*(tstep-1) + modeOUT];
+			}
+		for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
+			data.image[IDOLbuff].array.F[modeOUT] = data.image[IDmodevalOL].array.F[IndexOffset + modeOUT];
+
+
+		
+		// compute output : matrix vector mult
+		data.image[IDPFout].md[0].write = 1;
+		for(modeOUT=0;modeOUT<NBmodeOUT;modeOUT)
+			{
+				data.image[IDPFout].array.F[modeOUT] = 0.0;
+				for(ii=0;ii<NBmodeOUT*NBPFstep;ii++)
+					data.image[IDPFout].array.F[modeOUT] += data.image[IDOLbuff].array.F[ii] * data.image[IDPFM].array.F[modeOUT*data.image[IDPFM].md[0].size[0]+ii];
+			}
+		COREMOD_MEMORY_image_set_sempost_byID(IDPFout, -1);
+		data.image[IDPFout].md[0].write = 0;
+		data.image[IDPFout].md[0].cnt0++;
+	}
+	
+	
+	return(IDPFout);
+}
 
 
 

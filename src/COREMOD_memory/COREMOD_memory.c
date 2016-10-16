@@ -5651,6 +5651,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
    //        sprintf(fname, "!%s/%s_%02d:%02d:%02d.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, (long)thetime->tv_sec, (long) (thetime->tv_nsec));
 
             sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+            
+         //   printf("fname           = %s\n", fname);
+          //  printf("fname_asciilog  = %s\n", fname_asciilog);
+         //   fflush(stdout);
         }
 
         if(logshimconf[0].on == 1)

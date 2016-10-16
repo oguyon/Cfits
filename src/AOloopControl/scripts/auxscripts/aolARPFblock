@@ -14,7 +14,7 @@ pname="aolARPFblock"
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname :  AO find optimal AR linear predictive filter $(tput sgr0)"
+echo "$(tput bold) $pname :  AO find optimal AR linear predictive filter (single block) $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  Uses pseudo-open loop telemetry"
 echo "   "
@@ -34,6 +34,16 @@ echo " $(tput bold)EXAMPLE:$(tput sgr0)"
 echo "    $0 wfsmodes_ol.fits 3 2.36 6"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
+echo "       ./PredictiveControl/olwfsmeasblk.<block>.fits        input block telemetry"
+echo "       ./PredictiveControl/outPF.<block>.fits               output AR filter"
+echo "       ./PredictiveControl/outPFrec.<block>.fits            reconstructed (prediction)"
+echo "       ./PredictiveControl/outPFf.<block>.fits              time-shifted measurement"
+echo ""
+echo " $(tput bold)NOTES:$(tput sgr0)"
+echo "   outPF is a 3D image"
+echo "      ii axis (x, horizontal): input telemetry index"
+echo "      jj axis (y, vertical)  : output telemetry index (predicted variable)"
+echo "      kk axis (z, depth)     : time step (into the past)"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -143,24 +153,23 @@ fi
 
 
 loopnb=$(cat LOOPNUMBER)
-GPUindex=1
+
 
 Cfits -n aol${loopnb}scangain << EOF
 readshmim aol${loopnb}_mode_blknb
 loadfits "$1" olwfsmeas
 mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
-savefits olwfsmeasblk "!olwfsmeasblk.fits"
+savefits olwfsmeasblk "!./PredictiveControl/olwfsmeasblk.$2..fits"
 mkARpfilt olwfsmeasblk $4 $3 0.001 0.0 outPF 
-savefits outPF "!outPF.fits"
+savefits outPF "!./PredictiveControl/outPF.$2.fits"
 
 applyARpfilt outPF olwfsmeasblk $3 outrec
-savefits outrec "!outPFrec.fits"
-savefits outf "!outPFf.fits"
+savefits outrec "!./PredictiveControl/outPFrec.$2.fits"
+savefits outf "!./PredictiveControl/outPFf.$2.fits"
 res=outrec-outf
 imstats res
 imstats olwfsmeasblk
 exit
 EOF
 
-cp gainscan.txt gainscan.$2.txt
 
