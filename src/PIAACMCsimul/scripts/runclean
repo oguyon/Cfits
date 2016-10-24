@@ -1,3 +1,5 @@
+rm Cmodes_*
+rm Fmodes_*
 rm runPIAACMCfifo*
 rm clistartup*.txt
 rm -rf piaacmcconf_*

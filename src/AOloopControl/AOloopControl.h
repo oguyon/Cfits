@@ -75,6 +75,11 @@ typedef struct
     int on;  // goes to 1 when loop starts, put to 0 to turn loop off
     float gain; // overall loop gain
     long framesAve; // number of frames to average
+ 
+	// PREDICTICE CONTROL
+    int ARPFon; // 1 if auto-regressive predictive filter is ON
+	float ARPFgain; 
+ 
 
     int status;
     int GPUstatus[50];
@@ -231,12 +236,15 @@ int AOloopControl_logon();
 int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
 int AOloopControl_loopreset();
+int AOloopControl_ARPFon();
+int AOloopControl_ARPFoff();
 
 int AOloopControl_set_loopfrequ(float loopfrequ);
 int AOloopControl_set_hardlatency_frame(float hardlatency_frame);
 int AOloopControl_set_complatency_frame(float complatency_frame);
 int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame);
 int AOloopControl_setgain(float gain);
+int AOloopControl_setARPFgain(float gain);
 int AOloopControl_setWFSnormfloor(float WFSnormfloor);
 int AOloopControl_setmaxlimit(float maxlimit);
 int AOloopControl_setmult(float multcoeff);

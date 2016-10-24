@@ -6,6 +6,8 @@
 # This script is meant to be run/read line by line to guide the user
 
 
+# set this to 1 if each step should be saved
+SAVESTEP=1
 
 
 # ===========================================
@@ -38,15 +40,15 @@ ln -s $srcdir/syncscripts syncscripts
 # ===========================================
 
 # you may create / import your own pupil
-# in this example, the pupil must be a 2048 x 2048 pixel FITS file, single precision floating point
-# the pupil array size (2048 pix) must match the "size" parameter
-# the pupil radius in this example is 400 pix, and must match beamrad/pscale
+# in this example, the pupil must be a 1024 x 1024 pixel FITS file, single precision floating point
+# the pupil array size (1024 pix) must match the "size" parameter
+# the pupil radius in this example is 200 pix, and must match beamrad/pscale
 # the pupil central obstruction should match the coin parameter (0.3 in this example)
 # if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
 
 
 
-# the name of the pupil file is "pup_2048.fits"
+# the name of the pupil file is "pup_1024.fits"
 
 
 
@@ -55,10 +57,6 @@ ln -s $srcdir/syncscripts syncscripts
 
 
 exampledir="/home/olivier/src/Cfits/src/PIAACMCsimul/examples"
-
-
-
-
 cp $exampledir/pup_seg00_2048.fits pup_2048.fits
 
 
@@ -109,6 +107,7 @@ echo "0.000009625" > conf/conf_pscale.txt
 echo "78" > conf/conf_Fratio.txt
 echo "0.15" > conf/conf_PIAAsep.txt
 echo "0.0" > conf/conf_PIAA0pos.txt
+echo "0" > conf/conf_invPIAAmode.txt
 echo "-0.2" > conf/conf_LyotZmin.txt
 echo "0.2" > conf/conf_LyotZmax.txt
 
@@ -118,7 +117,11 @@ echo "0.2" > conf/conf_LyotZmax.txt
 # ===========================================
 
 # CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
-./run optsingle 1
+step="001"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 
 # this operation should take approximately 10 minutes
 
@@ -136,58 +139,99 @@ echo "0.2" > conf/conf_LyotZmax.txt
 
 
 # repeat above step to compute on-axis PSF
-./run optsingle 2
+step="002"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this operation should take approximately 3mn
 
 
 
 # Specify input pupil geometry
-./run optsingle 3
+step="003"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
+
 # this operation is almost instantaneous
 
 
 # complete step 003 : Compute on-axis PSF
-./run optsingle 4
+step="004"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this operation should take approximately 3mn
 
 
 # complete step 004 : compute Lyot stops shapes and locations
-./run optsingle 5
+step="005"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 8hr
 # the Lyot stops are named "LyotStop0.fits, LyotStop1.fits ...
 
 
 # complete step 005 : optimize focal plane mask transm
-./run optsingle 6
+step="006"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 2hr
 # -> piaacmcconf_i000/result_fpmt.log
 
 
 # complete step 006 : compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
-./run optsingle 7
+step="007"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 20mn
 
 
 # complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
-./run optsingle 8
+step="008"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 4hr (PIAACMC_dftgrid=2)
 # to monitor optimization, view linoptval.txt with tail -f 
 
 # complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
-./run optsingle 9
+step="009"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 6hr (PIAACMC_dftgrid=2)
 # to monitor optimization, view linoptval.txt with tail -f 
 # contrast =          1.22808e-06
 
 # complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
-./run optsingle 10
+step="010"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 20mn
 # BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001336506 / 0.000004015620  -> 0.651398409628  0.071384621752
 # BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001712712 / 0.000004288296  -> 0.652970578150  0.075272989285
 
 
 # complete step 010: Tune Lyot stops conjugations
-./run optsingle 11
+step="011"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 1hr
 # to monitor progress: tail -f result_LMpos.log 
 
@@ -198,29 +242,49 @@ echo "0.2" > conf/conf_LyotZmax.txt
 
 
 # complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
-./run optsingle 12
+step="012"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 6h (PIAACMC_dftgrid=2)
 # contrast =  1.46909e-06
 
 
 # complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
-./run optsingle 13
+step="013"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 18h
 
 
 
 # complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
-./run optsingle 14
+step="014"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 20mn
 # BEST SOLUTION: 3.133245863066 / 3.012736406794    0.000002213436 / 0.000003848618  -> 0.703131215257  0.086711655779
 
 
 # complete step 014 : Tune Lyot stops conjugations
-./run optsingle 15
+step="015"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # this step takes approximately 1h
 
 # complete step 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
-./run optsingle 16
+step="016"
+./run optsingle $step
+if [ "$SAVESTEP" = "1" ]; then
+cp -rf $PWD $PWD.step${step}
+fi
 # [0] Total light in scoring field = 6.07659e+08, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 1.81245e-06
 
 # skip steps 16 
@@ -259,6 +323,9 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 # START FOCAL PLANE MASK DESIGN
 ./run optsingle 200
 
+
+
+
 # this command will run for a few hrs if the number of focal plane mask zones is large
 # the complex amplitude response of each mask zone is computed 
 # Several sub-processes are launched, each computing a subset of the total number of zones
@@ -271,10 +338,47 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 # when all threads complete, the files are merged into a single FPMresp file
 #
 
+# the optsingle 200 command includes both the creation of the FPMresp file (which is skipped if the file already exists) and a search for the optimal solution
+# Finding the optimal solution requires multiple searches, so you can re-launch the optsingle 200 command multiple time
+# Results are written in a file names piaacmcconf_i000/mode13_....opt.txt
+# the 5th number (in parentheses) shows the best solution 
+
+#
+# OPTIMIZATION PHASE
+# to view the status: tail -f ./piaacmcconf_i000/mode13....opt.txt
+# To stop the optimization loop, create a file named "./piaacmcconf_i000/stoploop13.txt" (twice)
+#
+
+# to compute the PSF and complex amplitudes for the best solution, execute:
+./run proppoly 0
+# this will take about 20mn
+# [1] Total light in scoring field = 791208, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.76162e-08
+# [1] Total light in scoring field = 789920, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.75875e-08
+# [1] Total light in scoring field = 724691, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.61352e-08
 
 
+# focal plane mask solution :
+#
+# tmp_fpmsag.fits
+# tmp_fpmCA_pha.fits
+# tmp_fpmCA_ampl.fits
+#
+# PSF:
+# psfi0.fits
+#
 
 
+#
+# time ./run eval0 18
+# running time : 3mn
+#
+# results :
+# piaacmcconf_i000/contrast_ptsrc_sm0_s2_...
+# 1.21731e-11
+#
+#
 
+
+#
 
 

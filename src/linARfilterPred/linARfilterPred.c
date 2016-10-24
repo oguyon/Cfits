@@ -50,6 +50,10 @@ int clock_gettime(int clk_id, struct timespec *t){
 
 #include "linARfilterPred/linARfilterPred.h"
 
+#ifdef HAVE_CUDA
+#include "cudacomp/cudacomp.h"
+#endif
+
 extern DATA data;
 
 
@@ -123,8 +127,8 @@ int LINARFILTERPRED_PF_updatePFmatrix_cli()
 //long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name);
 int LINARFILTERPRED_PF_RealTimeApply_cli()
 {
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)==0)
-		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string);
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
+		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
 	else
        return 1;
 
@@ -195,9 +199,9 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_cli;
     strcpy(data.cmd[data.NBcmd].info,"Real-time apply predictive filter");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream>");
-    strcpy(data.cmd[data.NBcmd].example,"linARApplyRT modevalOL 0 2 PFmat 5 outPFmodeval");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream> <nbGPU> <loop>");
+    strcpy(data.cmd[data.NBcmd].example,"linARApplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)");
     data.NBcmd++;
 
     // add atexit functions here
@@ -898,7 +902,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 // IDPFM_name       : predictive filter matrix
 // IDPFout_name     : prediction
 // 
-long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name)
+long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
 {
 	long IDmodevalOL;
 	long NBmodeOL, NBmodeOUT, modeOUT;
@@ -912,6 +916,15 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 	long IDPFout;
 	long ii;
 	
+	int *GPUsetPF;
+	char GPUsetfname[200];
+	int gpuindex;
+    int status;
+    int GPUstatus[100];
+    FILE *fp;
+	int ret;
+
+
 	
 	IDmodevalOL = image_ID(IDmodevalOL_name);
 	NBmodeOL = data.image[IDmodevalOL].md[0].size[0];
@@ -926,38 +939,75 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 	sizearray[1] = 1;
 	naxis = 2;
 	IDPFout = image_ID(IDPFout_name);
+
 	if(IDPFout==-1)
 		IDPFout = create_image_ID(IDPFout_name, naxis, sizearray, FLOAT, 1, 0);
 	free(sizearray);
+	
+	
+	if(nbGPU>0)
+		{
+			GPUsetPF = (int*) malloc(sizeof(int)*nbGPU);
+			
+			for(gpuindex=0;gpuindex<nbGPU;gpuindex++)
+			{
+				sprintf(GPUsetfname, "./conf/conf_GPUsetARPF_dev%d.txt", gpuindex);
+				fp = fopen(GPUsetfname, "r");
+				if(fp==NULL)
+					{
+						printf("ERROR: file %s not found\n", GPUsetfname);
+						exit(0);
+					}
+				ret = fscanf(fp, "%d", &GPUsetPF[gpuindex]);
+				fclose(fp);
+			}
+			printf("USING %d GPUs: ", nbGPU);
+			for(gpuindex=0;gpuindex<nbGPU;gpuindex++)
+				printf(" %d", GPUsetPF[gpuindex]);
+			printf("\n\n"); 
+		}
+	
 	
 	while(1==1)
 	{
 		sem_wait(data.image[IDmodevalOL].semptr[semtrig]);
 		
-		
 		// fill in buffer
+		for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
+			data.image[IDOLbuff].array.F[modeOUT] = data.image[IDmodevalOL].array.F[IndexOffset + modeOUT];
+
+
+		if(nbGPU>0)
+		{
+	
+			#ifdef HAVE_CUDA
+			GPU_loop_MultMat_setup(4, IDPFM_name, "OLbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
+			GPU_loop_MultMat_execute(4, &status, &GPUstatus[0], 1.0, 0.0, 1);
+			#endif
+		}
+		else
+		{
+			// compute output : matrix vector mult
+			data.image[IDPFout].md[0].write = 1;
+			for(modeOUT=0;modeOUT<NBmodeOUT;modeOUT++)
+			{
+				data.image[IDPFout].array.F[modeOUT] = 0.0;
+				for(ii=0;ii<NBmodeOUT*NBPFstep;ii++)
+					data.image[IDPFout].array.F[modeOUT] += data.image[IDOLbuff].array.F[ii] * data.image[IDPFM].array.F[modeOUT*data.image[IDPFM].md[0].size[0]+ii];
+			}
+			COREMOD_MEMORY_image_set_sempost_byID(IDPFout, -1);
+			data.image[IDPFout].md[0].write = 0;
+			data.image[IDPFout].md[0].cnt0++;
+		}
+	
+		// do this now to save time when semaphore is posted
 		for(tstep=NBPFstep-1; tstep>0; tstep--)
 			{
 				// tstep-1 -> tstep
 				for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
 					data.image[IDOLbuff].array.F[NBmodeOUT*tstep + modeOUT] = data.image[IDOLbuff].array.F[NBmodeOUT*(tstep-1) + modeOUT];
 			}
-		for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
-			data.image[IDOLbuff].array.F[modeOUT] = data.image[IDmodevalOL].array.F[IndexOffset + modeOUT];
-
-
 		
-		// compute output : matrix vector mult
-		data.image[IDPFout].md[0].write = 1;
-		for(modeOUT=0;modeOUT<NBmodeOUT;modeOUT)
-			{
-				data.image[IDPFout].array.F[modeOUT] = 0.0;
-				for(ii=0;ii<NBmodeOUT*NBPFstep;ii++)
-					data.image[IDPFout].array.F[modeOUT] += data.image[IDOLbuff].array.F[ii] * data.image[IDPFM].array.F[modeOUT*data.image[IDPFM].md[0].size[0]+ii];
-			}
-		COREMOD_MEMORY_image_set_sempost_byID(IDPFout, -1);
-		data.image[IDPFout].md[0].write = 0;
-		data.image[IDPFout].md[0].cnt0++;
 	}
 	
 	

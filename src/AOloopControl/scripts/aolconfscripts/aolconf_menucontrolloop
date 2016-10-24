@@ -58,6 +58,15 @@ fi
 
 
 
+file="./conf/conf_ARPFgain.txt"
+if [ -f $file ]; then
+ARPFgain=$(echo "$(cat $file)")
+else
+echo "0.0" > $file
+ARPFgain="0.0"
+fi
+
+
 if [ -f "./conf/conf_WFSnormalize.txt" ]; then
 WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
 else
@@ -199,7 +208,7 @@ fi
 if [ "7" -lt "$GPUmode" ]; then
 file="./conf/conf_GPUset0_dev7.txt"
 GPU7device=$( cat $file )
-if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+if [[ -f "$file" && ${GPU7device} =~ [0-9]$ ]]; then
 echo "OK"
 else
 echo "7" > $file
@@ -225,7 +234,7 @@ fi
 if [ "9" -lt "$GPUmode" ]; then
 file="./conf/conf_GPUset0_dev9.txt"
 GPU9device=$( cat $file )
-if [[ -f "$file" && ${GPU0device} =~ [0-9]$ ]]; then
+if [[ -f "$file" && ${GPU9device} =~ [0-9]$ ]]; then
 echo "OK"
 else
 echo "9" > $file
@@ -233,6 +242,180 @@ GPU9device="9"
 fi
 menuitems+=( "GPU9" "            [ $GPU9device ]    GPU #9 device" )
 fi
+
+
+
+
+
+
+GPUmodeARPF=$( cat ./conf/conf_GPU_ARPF.txt )
+if [[ -f "./conf/conf_GPU_ARPF.txt" && ( "$GPUmodeARPF" = "0" || "$GPUmodeARPF" = "1" || "$GPUmodeARPF" = "2" || "$GPUmodeARPF" = "3" || "$GPUmodeARPF" = "4" || "$GPUmodeARPF" = "5" ) ]]; then
+echo "OK"
+else
+echo "0" > ./conf/conf_GPU_ARPF.txt
+GPUmodeARPF=0
+fi
+
+echo "GPU ARPF mode = $GPUmodeARPF"
+
+if [ "${GPUmodeARPF}" = "0" ];
+then
+menuitems+=( "GPUselARPF" "[ GPU_ARPF is OFF  ]    AR PREDICTION MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU_ARPF mode" )
+else
+menuitems+=( "GPUselARPF" " AR PREDICTION MATRIX MULT CURRENTLY USING \Z5\Zr $GPUmodeARPF \Zn GPU(S)" )
+fi
+
+
+
+if [ "0" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev0.txt"
+GPU0ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU0ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+GPU0ARPFdevice="0"
+fi
+menuitems+=( "GPU0ARPF" "            [ $GPU0ARPFdevice ]    GPU ARPF #0 device" )
+fi
+
+
+if [ "1" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev1.txt"
+GPU1ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU1ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "1" > $file
+GPU1ARPFdevice="1"
+fi
+menuitems+=( "GPU1ARPF" "            [ $GPU1ARPFdevice ]    GPU ARPF #1 device" )
+fi
+
+
+if [ "2" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev2.txt"
+GPU2ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU2ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "2" > $file
+GPU2ARPFdevice="2"
+fi
+menuitems+=( "GPU2ARPF" "            [ $GPU2ARPFdevice ]    GPU ARPF #2 device" )
+fi
+
+
+if [ "3" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev3.txt"
+GPU3ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU3ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "3" > $file
+GPU3ARPFdevice="3"
+fi
+menuitems+=( "GPU3ARPF" "            [ $GPU3ARPFdevice ]    GPU ARPF #3 device" )
+fi
+
+
+if [ "4" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev4.txt"
+GPU4ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU4ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "4" >  $file
+GPU4ARPFdevice="4"
+fi
+menuitems+=( "GPU4ARPF" "            [ $GPU4ARPFdevice ]    GPU ARPF #4 device" )
+fi
+
+
+if [ "5" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev5.txt"
+GPU5ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU5ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "5" > $file
+GPU5ARPFdevice="5"
+fi
+menuitems+=( "GPU5ARPF" "            [ $GPU5ARPFdevice ]    GPU ARPF #5 device" )
+fi
+
+
+if [ "6" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev6.txt"
+GPU6ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU6ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "6" > $file
+GPU6ARPFdevice="6"
+fi
+menuitems+=( "GPU6ARPF" "            [ $GPU6ARPFdevice ]    GPU ARPF #6 device" )
+fi
+
+
+if [ "7" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev7.txt"
+GPU7ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU7ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "7" > $file
+GPU7ARPFdevice="7"
+fi
+menuitems+=( "GPU7ARPF" "            [ $GPU7ARPFdevice ]    GPU ARPF #7 device" )
+fi
+
+
+if [ "8" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev8.txt"
+GPU8ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU8ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "8" > $file
+GPU8ARPFdevice="8"
+fi
+menuitems+=( "GPU8ARPF" "            [ $GPU8ARPFdevice ]    GPU ARPF #8 device" )
+fi
+
+
+if [ "9" -lt "$GPUmodeARPF" ]; then
+file="./conf/conf_GPUsetARPF_dev9.txt"
+GPU9ARPFdevice=$( cat $file )
+if [[ -f "$file" && ${GPU9ARPFdevice} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "9" > $file
+GPU9ARPFdevice="9"
+fi
+menuitems+=( "GPU9ARPF" "            [ $GPU9ARPFdevice ]    GPU ARPF #9 device" )
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -535,6 +718,23 @@ menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
 menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
 
 
+file="./conf/conf_ARPFon.txt"
+if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
+echo "ARPFon OK"
+ARPFon=$( cat $file )
+else
+echo "OFF" > "$file"
+ARPFon=$( cat $file )
+fi
+
+
+if [ "$ARPFon" = "OFF" ]; then
+menuitems+=( "ARPFon" " Predictive control (ARPF) is OFF - press to START" )
+else
+menuitems+=( "ARPFoff" "\Z1\Zr Predictive control (ARPF) is  ON - press to STOP\Zn  " )
+fi
+
+menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
 
 
 menuitems+=( " " " " )
@@ -923,6 +1123,115 @@ echo "$GPU9device" > ./conf/conf_GPUset0_dev9.txt
 aoconflog "set GPU9device = ${GPU9device}"
 menucontrolloop_default="GPU9"
 ;;
+
+
+
+
+
+	GPUselARPF)
+exec 3>&1;
+nbGPUARPF=$(dialog --inputbox "Number of ARPF GPU(s) (0 = CPU mode)" 0 0 "$nbGPUARPF" 2>&1 1>&3);
+exec 3>&-;
+echo "$nbGPUARPF" > ./conf/conf_GPU_ARPF.txt
+aoconflog "set nbGPUARPF = ${nbGPUARPF}"
+;;
+
+
+    GPU0ARPF)
+exec 3>&1;
+GPU0ARPFdevice=$(dialog --inputbox "GPU0ARPF device" 0 0 "$GPU0ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU0ARPFdevice" > ./conf/conf_GPUsetARPF_dev0.txt
+aoconflog "set GPU0ARPFdevice = ${GPU0ARPFdevice}"
+menucontrolloop_default="GPU0ARPF"
+;;
+
+    GPU1ARPF)
+exec 3>&1;
+GPU1ARPFdevice=$(dialog --inputbox "GPU1ARPF device" 0 0 "$GPU1ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU1ARPFdevice" > ./conf/conf_GPUsetARPF_dev1.txt
+aoconflog "set GPU1device = ${GPU1ARPFdevice}"
+menucontrolloop_default="GPU1ARPF"
+;;
+
+    GPU2ARPF)
+exec 3>&1;
+GPU2ARPFdevice=$(dialog --inputbox "GPU2ARPF device" 0 0 "$GPU2ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU2ARPFdevice" > ./conf/conf_GPUsetARPF_dev2.txt
+aoconflog "set GPU2device = ${GPU2ARPFdevice}"
+menucontrolloop_default="GPU2ARPF"
+;;
+
+    GPU3ARPF)
+exec 3>&1;
+GPU3ARPFdevice=$(dialog --inputbox "GPU3ARPF device" 0 0 "$GPU3ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU3ARPFdevice" > ./conf/conf_GPUsetARPF_dev3.txt
+aoconflog "set GPU3device = ${GPU3ARPFdevice}"
+menucontrolloop_default="GPU3ARPF"
+;;
+
+    GPU4ARPF)
+exec 3>&1;
+GPU4ARPFdevice=$(dialog --inputbox "GPU4ARPF device" 0 0 "$GPU4ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU4ARPFdevice" > ./conf/conf_GPUsetARPF_dev4.txt
+aoconflog "set GPU4device = ${GPU4ARPFdevice}"
+menucontrolloop_default="GPU4ARPF"
+;;
+
+    GPU5ARPF)
+exec 3>&1;
+GPU5ARPFdevice=$(dialog --inputbox "GPU5ARPF device" 0 0 "$GPU5ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU5ARPFdevice" > ./conf/conf_GPUsetARPF_dev5.txt
+aoconflog "set GPU5device = ${GPU5ARPFdevice}"
+menucontrolloop_default="GPU5ARPF"
+;;
+
+    GPU6ARPF)
+exec 3>&1;
+GPU6ARPFdevice=$(dialog --inputbox "GPU6ARPF device" 0 0 "$GPU6ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU6ARPFdevice" > ./conf/conf_GPUsetARPF_dev6.txt
+aoconflog "set GPU6device = ${GPU6ARPFdevice}"
+menucontrolloop_default="GPU6ARPF"
+;;
+
+    GPU7ARPF)
+exec 3>&1;
+GPU7ARPFdevice=$(dialog --inputbox "GPU7ARPF device" 0 0 "$GPU7ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU7ARPFdevice" > ./conf/conf_GPUsetARPF_dev7.txt
+aoconflog "set GPU7device = ${GPU7ARPFdevice}"
+menucontrolloop_default="GPU7ARPF"
+;;
+
+    GPU8ARPF)
+exec 3>&1;
+GPU8ARPFdevice=$(dialog --inputbox "GPU8ARPF device" 0 0 "$GPU8ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU8ARPFdevice" > ./conf/conf_GPUsetARPF_dev8.txt
+aoconflog "set GPU8device = ${GPU8ARPFdevice}"
+menucontrolloop_default="GPU8ARPF"
+;;
+
+    GPU9ARPF)
+exec 3>&1;
+GPU9ARPFdevice=$(dialog --inputbox "GPU9ARPF device" 0 0 "$GPU9ARPFdevice" 2>&1 1>&3);
+exec 3>&-;
+echo "$GPU9ARPFdevice" > ./conf/conf_GPUsetARPF_dev9.txt
+aoconflog "set GPU9device = ${GPU9ARPFdevice}"
+menucontrolloop_default="GPU9ARPF"
+;;
+
+
+
+
+
+
 
 
 	GPUon)
@@ -1425,6 +1734,7 @@ menucontrolloop_default="wzpoinit"
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
 	 aoconflogext "set gain ${loopgain}"
   	 ;; 
+   	 
    	 m)
    	 value=${loopmaxlim}
    	 SelectValue01 100 1200 50
@@ -1432,7 +1742,8 @@ menucontrolloop_default="wzpoinit"
  	 echo "$loopmaxlim" > ./conf/conf_loopmaxlim.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmaxlim ${loopmaxlim}" C-m
 	 aoconflogext "set max limit ${loopmaxlim}"
-   	 ;;  
+   	 ;; 
+   	  
    	 e) 
    	 value=${loopmultcoeff}
    	 SelectValue01 900 1001 2
@@ -1442,6 +1753,29 @@ menucontrolloop_default="wzpoinit"
 	 aoconflogext "set mult coeff ${loopmultcoeff}"
      	 ;;  
 
+	ARPFon)
+	ARPFon=" ON"
+	echo "$ARPFon" > ./conf/conf_ARPFon.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolARPFon" C-m
+	menucontrolloop_default="ARPFoff"
+	;;
+	 
+	ARPFoff)
+	ARPFon="OFF"
+	echo "$ARPFon" > ./conf/conf_ARPFon.txt
+	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolARPFoff" C-m
+	menucontrolloop_default="ARPFon"
+	;;
+	 
+	 ARPFg)
+  	 value=${loopgain}
+	 SelectValue01 100 1200 50
+  	 ARPFgain=${value}
+  	 echo "$ARPFgain" > ./conf/conf_ARPFgain.txt
+  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetARPFgain ${ARPFgain}" C-m
+	 aoconflogext "set ARPF gain ${ARPFgain}"
+  	 ;; 
+	 
 	 gball) 
 	 value=${gainallb}
 	 SelectValue01 100 1200 50 
