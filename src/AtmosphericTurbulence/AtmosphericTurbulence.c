@@ -1448,7 +1448,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     char tmppfname[200];
 
     // float SODIUM_ALT;
-    float layer_scale = 1.0;
+    double layer_scale = 1.0;
 
     long master;
     long NBMASTERS;
@@ -1469,7 +1469,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     long ID_sarray2;
     long ID_carray2;
 
-    float re,im;
+    double re,im;
 
     double SLAMBDA; // wagvelength [um]
 
@@ -1477,8 +1477,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     long IDout_sarray_amp;
     complex_float *sarray;
     complex_double *sarray_double;
-    float Scoeff;
-    float Nlambda,Nslambda, l;
+    double Scoeff;
+    double Nlambda, Nslambda, l;
 
 
     // cone effect wavefront
@@ -1496,14 +1496,14 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     char word[200];
     char fname[200];
     char name[200];
-    float *LAYER_ALT;
-    float *LAYER_CN2;
-    float *LAYER_SPD;
-    float *LAYER_DIR;
-    float *LAYER_OUTERSCALE;
-    float *LAYER_INNERSCALE;
-    float *LAYER_SIGMAWSPEED;
-    float *LAYER_LWIND;
+    double *LAYER_ALT;
+    double *LAYER_CN2;
+    double *LAYER_SPD;
+    double *LAYER_DIR;
+    double *LAYER_OUTERSCALE;
+    double *LAYER_INNERSCALE;
+    double *LAYER_SIGMAWSPEED;
+    double *LAYER_LWIND;
     int stop;
 
     long *naxes;
@@ -1514,22 +1514,22 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     double *ypos0;
     long *xposfcnt; // counter to keep trak of modulo
     long *yposfcnt;
-    float *vxpix;
-    float *vypix;
+    double *vxpix;
+    double *vypix;
     double vpix,PA;
     long vindex;
     long frame;
     long NBFRAMES;
-    float fl1, fl2, fl3, fl4, fl5, fl6, fl7, fl8;
+    double fl1, fl2, fl3, fl4, fl5, fl6, fl7, fl8;
     long ii, jj, iim, jjm, ii1, jj1;
-    float value;
-    float coeff=0.0;
+    double value;
+    double coeff = 0.0;
 
-    float *alt_bin_sep;
+    double *alt_bin_sep;
     long NB_alt_bin_sep;
-    float minaltd;
-    float *SLAYER_ALT;
-    float *SLAYER_CN2;
+    double minaltd;
+    double *SLAYER_ALT;
+    double *SLAYER_CN2;
     long NBSLAYERS;
     int OK;
     long i,j,index;
@@ -1538,8 +1538,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     int contraction_factor;
     int pfactor;
     //   float OuterScale;
-    float CN2total;
-    float tmp,tmpf,h,Rindex,Roffset,RoffsetS;
+    double CN2total;
+    double tmp, tmpf, h, Rindex, Roffset, RoffsetS;
 
     long xref,yref,xrefm,yrefm,iimax,jjmax,y1;
     long ID;
@@ -1939,14 +1939,14 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     }
     fclose(fp);
 
-    LAYER_ALT = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_CN2 = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_SPD = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_DIR = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_OUTERSCALE = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_INNERSCALE = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_SIGMAWSPEED = (float*) malloc(NBLAYERS*sizeof(float));
-    LAYER_LWIND = (float*) malloc(NBLAYERS*sizeof(float));
+    LAYER_ALT = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_CN2 = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_SPD = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_DIR = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_OUTERSCALE = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_INNERSCALE = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_SIGMAWSPEED = (double*) malloc(NBLAYERS*sizeof(double));
+    LAYER_LWIND = (double*) malloc(NBLAYERS*sizeof(double));
 
     if((fp=fopen(CONF_TURBULENCE_PROF_FILE, "r"))==NULL)
     {
@@ -1959,7 +1959,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
         sscanf(line,"%s",word);
         if(isdigit(word[0]))
         {
-            sscanf(line,"%f %f %f %f %f %f %f %f", &fl1, &fl2, &fl3, &fl4, &fl5, &fl6, &fl7, &fl8);
+            sscanf(line,"%lf %lf %lf %lf %lf %lf %lf %lf", &fl1, &fl2, &fl3, &fl4, &fl5, &fl6, &fl7, &fl8);
             if(fl1>SiteAlt-0.1)
             {
                 LAYER_ALT[layer] = fl1;
@@ -2004,8 +2004,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
 
 
 
-    SLAYER_ALT = (float*) malloc(NBLAYERS*sizeof(float));
-    SLAYER_CN2 = (float*) malloc(NBLAYERS*sizeof(float));
+    SLAYER_ALT = (double*) malloc(NBLAYERS*sizeof(double));
+    SLAYER_CN2 = (double*) malloc(NBLAYERS*sizeof(double));
     NBSLAYERS = NBLAYERS;
     for(layer=0; layer<NBSLAYERS; layer++)
     {
@@ -2087,7 +2087,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     }
 
     NB_alt_bin_sep = NBSLAYERS-1;
-    alt_bin_sep = (float*) malloc(NB_alt_bin_sep*sizeof(float));
+    alt_bin_sep = (double*) malloc(NB_alt_bin_sep*sizeof(double));
     for(i=0; i<NB_alt_bin_sep; i++)
     {
         alt_bin_sep[i] = 0.5*(SLAYER_ALT[i]+SLAYER_ALT[i+1]);
@@ -2119,8 +2119,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     xposfcnt = (long*) malloc(sizeof(long)*NBLAYERS);
     yposfcnt = (long*) malloc(sizeof(long)*NBLAYERS);
 
-    vxpix = (float*) malloc(sizeof(float)*NBLAYERS);
-    vypix = (float*) malloc(sizeof(float)*NBLAYERS);
+    vxpix = (double*) malloc(sizeof(double)*NBLAYERS);
+    vypix = (double*) malloc(sizeof(double)*NBLAYERS);
 
     h = 0.0;
     printf("\n\n");
