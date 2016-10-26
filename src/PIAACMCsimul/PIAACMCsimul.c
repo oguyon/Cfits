@@ -629,7 +629,7 @@ long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_na
     nbring++;
     nbzone++;
 
-    IDout = create_2Dimagedouble_ID(IDout_name, nbzone, 1);
+    IDout = create_2Dimage_ID_double(IDout_name, nbzone, 1);
     for(zone=0; zone<nbzone; zone++)
         data.image[IDout].array.D[zone] = data.image[IDin].array.D[arrayring[zone]];
 
@@ -3125,7 +3125,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         if(piaacmc[0].zonezID!=-1)
             delete_image_ID("fpmzt");
 
-        piaacmc[0].zonezID = create_2Dimagedouble_ID("fpmzt", piaacmc[0].focmNBzone, 1);
+        piaacmc[0].zonezID = create_2Dimage_ID_double("fpmzt", piaacmc[0].focmNBzone, 1);
         t = 1.0e-9;
 
         if(piaacmctype==0) // idealized focal plane mask
@@ -3194,7 +3194,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     {
         if(piaacmc[0].zoneaID != -1)
             delete_image_ID("fpmza");
-        piaacmc[0].zoneaID = create_2Dimagedouble_ID("fpmza", piaacmc[0].focmNBzone, 1);
+        piaacmc[0].zoneaID = create_2Dimage_ID_double("fpmza", piaacmc[0].focmNBzone, 1);
 
         if(PIAACMC_MASKRADLD>0.2) // physical mask
         {

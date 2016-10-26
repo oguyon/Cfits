@@ -597,7 +597,7 @@ long basic_add(char *ID_name1, char *ID_name2, char *ID_name_out, long off1, lon
 
     if(atype==DOUBLE)
     {
-        create_2Dimagedouble_ID(ID_name_out,(xmax-xmin),(ymax-ymin));
+        create_2Dimage_ID_double(ID_name_out,(xmax-xmin),(ymax-ymin));
         ID_out = image_ID(ID_name_out);
         naxes[0] = data.image[ID_out].md[0].size[0];
         naxes[1] = data.image[ID_out].md[0].size[1];
@@ -4011,7 +4011,7 @@ long IMAGE_BASIC_streamfeed(char *IDname, char *streamname, float frequ)
     long ii;
    
     schedpar.sched_priority = RT_priority;
-    #ifndef __MACH_
+    #ifndef __MACH__
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges

@@ -370,11 +370,10 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 
 #
 # time ./run eval0 18
-# running time : 3mn
+# running time : 3mn (1024 pix)
 #
 # results :
 # piaacmcconf_i000/contrast_ptsrc_sm0_s2_...
-# 1.21731e-11
 #
 #
 

@@ -341,18 +341,13 @@ fi
 #    FOCAL PLANE MASK DESIGN
 # ===========================================
 
-# select focal plane mask type: SiO2, transmission mask
-echo "SiO2" > conf/conf_fpmmaterial.txt
 
-# hexagonal tiling
-echo "2" > conf/conf_FPMsectors.txt
+echo "SiO2" > conf/conf_fpmmaterial.txt     # select focal plane mask type: SiO2, transmission mask
+echo "2" > conf/conf_FPMsectors.txt         # hexagonal tiling
 
-# outer radius = 3.0 l/D
-echo "3.0" > conf/conf_maskradld.txt
-
-# 32 rings
+# Search parameters
+echo "3.0" > conf/conf_maskradld.txt        
 echo "24" > conf/conf_NBrings.txt
-
 echo "-3.0e-6" > conf/conf_fpmminsag.txt
 echo "3.0e-6" > conf/conf_fpmmaxsag.txt
 

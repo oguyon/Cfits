@@ -845,9 +845,7 @@ int save_db_fits(char *ID_name, char *file_name)
         }
 
 
-        
-    printf("creating file \"%s\"\n", file_name1);
-    fflush(stdout);
+       
 
         fits_create_file(&fptr, file_name1, &FITSIO_status);
         if(check_FITSIO_status(__FILE__,__func__,__LINE__,1) != 0)
