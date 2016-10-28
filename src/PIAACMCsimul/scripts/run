@@ -56,6 +56,8 @@ loadparam extmode 0
 loadparam fpmmaterial "Mirror"
 loadparam fpmminsag "-1e-6"
 loadparam fpmmaxsag "1e-6"
+loadparam fpmregsag_coeff "1.0"
+loadparam fpmregsag_alpha "1.0"
 
 loadparam fpmccnbr 0
 loadparam fpmccz $fpmmaxsag
@@ -134,6 +136,8 @@ printvar "NBrings" "number of rings in focal plane mask"
 printvar "maskradld" "mask outer radius at central wavelength [l/D]"
 printvar "fpmminsag" "min focal plane mask sag"
 printvar "fpmmaxsag" "max focal plane mask sag"
+printvar "fpmregsag_coeff" "sag regularization coefficient"
+printvar "fpmregsag_alpha" "sag regularization coefficient exponent"
 printvar "fpmccnbr" "how many central rings replaced by cone (set to 0 if no central cone)"
 printvar "fpmccz" "sag at cone center (sag at cone edge will be midpoint between minsag and maxsag)"
 printvar "fpmocradld" "outer cone outer radius [l/D]"
@@ -359,46 +363,53 @@ rm cmdlog.txt
 
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-echo "$datestr  ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000" > cmdlog.txt
+echo "$datestr  ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz 000" > cmdlog.txt
 
-./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
+touch run.cmd.tsart
+
+./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
 
 
 if [ "$runoptcmd" = "eval0" ]; then
 mkdir -p eval0
 printhelpeval0 > ./eval0/readme_eval0.txt
-cp varlog.txt ./eval0/varlog.txt
-cp piaacmcconf_i000/lambdalist.txt ./eval0/
-cp piaacmcconf_i000/psfi0_step699.fits ./eval0/
-cp piaacmcconf_i000/psfi0_step700.fits ./eval0/
-cp piaacmcconf_i000/psfi0_step720.fits ./eval0/
-cp piaacmcconf_i000/piaam0z.fits ./eval0/
-cp piaacmcconf_i000/piaam1z.fits ./eval0/
-cp piaacmcconf_i000/conjugations.txt ./eval0/
-cp piaacmcconf_i000/WFamp0_*.fits ./eval0/
-cp piaacmcconf_i000/WFpha0_*.fits ./eval0/
-cp piaacmcconf_i000/LyotStop[0-5].fits ./eval0/
-cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2_l*.fits ./eval0/
-cp piaacmcconf_i000/contrast_ptsrc_sm0_s2_l*.txt ./eval0/
-cp tmp_fpmCA_ampl.fits ./eval0/
-cp tmp_fpmCA_pha.fits ./eval0/
-cp tmp_fpmsag.fits ./eval0/
-cp tmp_fpmzone.fits ./eval0/
+#cp varlog.txt ./eval0/varlog.txt
+#cp piaacmcconf_i000/lambdalist.txt ./eval0/
+#cp piaacmcconf_i000/psfi0_step699.fits ./eval0/
+#cp piaacmcconf_i000/psfi0_step700.fits ./eval0/
+#cp piaacmcconf_i000/psfi0_step720.fits ./eval0/
+#cp piaacmcconf_i000/piaam0z.fits ./eval0/
+#cp piaacmcconf_i000/piaam1z.fits ./eval0/
+#cp piaacmcconf_i000/conjugations.txt ./eval0/
+#cp piaacmcconf_i000/WFamp0_*.fits ./eval0/
+#cp piaacmcconf_i000/WFpha0_*.fits ./eval0/
+#cp piaacmcconf_i000/LyotStop[0-5].fits ./eval0/
+#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2_l*.fits ./eval0/
+#cp piaacmcconf_i000/contrast_ptsrc_sm0_s2_l*.txt ./eval0/
+#cp tmp_fpmCA_ampl.fits ./eval0/
+#cp tmp_fpmCA_pha.fits ./eval0/
+#cp tmp_fpmsag.fits ./eval0/
+#cp tmp_fpmzone.fits ./eval0/
+find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval0/
 cd eval0
-gzip *.fits
+gzip -f *.fits
 cd ..
 fi
 
 if [ "$runoptcmd" = "eval1" ]; then
 mkdir -p eval1
 printhelpeval1 > ./eval1/readme_eval1.txt
-cp varlog.txt ./eval1/varlog.txt
-cp piaacmcconf_i000/psfi0_x50_y00.fits ./eval1/
-cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2*.fits ./eval1/
-cp piaacmcconf_i000/psfi0_extsrc15_sm0_s2_l*.fits ./eval1/
-cp piaacmcconf_i000/ContrastCurve_extsrc15_sm0_s2_l*.txt ./eval1/
-cp piaacmcconf_i000/psfi0_extsrc20_sm0_s2_l*.fits ./eval1/
-cp piaacmcconf_i000/ContrastCurve_extsrc20_sm0_s2_l*.txt ./eval1/
+#cp varlog.txt ./eval1/varlog.txt
+#cp piaacmcconf_i000/psfi0_x50_y00.fits ./eval1/
+#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2*.fits ./eval1/
+#cp piaacmcconf_i000/psfi0_extsrc15_sm0_s2_l*.fits ./eval1/
+#cp piaacmcconf_i000/ContrastCurve_extsrc15_sm0_s2_l*.txt ./eval1/
+#cp piaacmcconf_i000/psfi0_extsrc20_sm0_s2_l*.fits ./eval1/
+#cp piaacmcconf_i000/ContrastCurve_extsrc20_sm0_s2_l*.txt ./eval1/
+find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval1/
+cd eval1
+gzip -f *.fits
+cd ..
 fi
 
 if [ "$runoptcmd" = "eval2" ]; then
@@ -407,3 +418,4 @@ printhelpeval2 > ./eval2/readme_eval2.txt
 fi
 
 
+rm run.cmd.tsart

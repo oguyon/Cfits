@@ -102,6 +102,8 @@ typedef struct {
     long NBrings; // number of rings
     double fpmminsag; // [m]
     double fpmmaxsag; // [m]
+    double fpmsagreg_coeff;
+    double fpmsagreg_alpha;
     long NBringCentCone; // number of rings that the central cone occupies
     double fpmCentConeRad; // [m]
     double fpmCentConeZ; // peak sag of central cone [m]

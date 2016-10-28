@@ -79,22 +79,24 @@ printhelp ()
 
 	echo " 14   fpmminsag    : Focal plane mask min sag [m]"
 	echo " 15   fpmmaxsag    : Focal plane mask max sag [m]"
-	echo " 16   fpmccnbr     : Center cone number of rings"
-	echo " 17   fpmccz       : center cone sag"
-	echo " 18   fpmocradld   : outer cone radius [l/D]"
-	echo " 19   fpmocz       : outer cone sag [m]"
+	echo " 16   fpmregsag_coeff  : regularization coefficient"   
+	echo " 17   fpmregsag_alpha  : regularization exponent" 
+	echo " 18   fpmccnbr     : Center cone number of rings"
+	echo " 19   fpmccz       : center cone sag"
+	echo " 20   fpmocradld   : outer cone radius [l/D]"
+	echo " 21   fpmocz       : outer cone sag [m]"
 
-	echo " 20   ssize        : extended source radius [-10 log(rad)]. 00 if point source"
-	echo " 21   extmode      : extended source mode (0: 3pts, 1: 6pts)"
-	echo " 22   fpmmaterial  : material used for the focal plane mask"
+	echo " 22   ssize        : extended source radius [-10 log(rad)]. 00 if point source"
+	echo " 23   extmode      : extended source mode (0: 3pts, 1: 6pts)"
+	echo " 24   fpmmaterial  : material used for the focal plane mask"
 	echo ""
-	echo " 23   index"
+	echo " 25   index"
 	echo ""
 	echo "------------------------------------------------------------------------------"
 	echo ""
 }
 
-NBARGS=23
+NBARGS=25
 
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 	printhelp
@@ -143,13 +145,15 @@ NBrings=${12}
 maskradld=${13}
 fpmminsag=${14}
 fpmmaxsag=${15}
-fpmccnbr=${16}
-fpmccz=${17}
-fpmocradld=${18}
-fpmocz=${19}
-ssize=${20}
-extmode=${21}
-fpmmaterial="${22}"
+fpmregsag_coeff=${16}
+fpmregsag_alpha=${17}
+fpmccnbr=${18}
+fpmccz=${19}
+fpmocradld=${20}
+fpmocz=${21}
+ssize=${22}
+extmode=${23}
+fpmmaterial="${24}"
 
 
 	
@@ -157,7 +161,7 @@ fpmmaterial="${22}"
 
 
 # configuration index
-index=${23}
+index=${25}
 
 
 
@@ -238,14 +242,8 @@ fi
 exit
 fi
 
-fpmminsag=${14}
-fpmmaxsag=${15}
-fpmccnbr=${16}
-fpmccz=${17}
-fpmocradld=${18}
-fpmocz=${19}
 
-echo "====== EXECUTING: ./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep"
+echo "====== EXECUTING: ./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep"
 
 
 
@@ -256,9 +254,9 @@ echo "====== EXECUTING: ./runPIAACMC $dirname $size $pscale $pupfile $coin $coou
 
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-echo "$datestr  ./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep" >> cmdlog.txt
+echo "$datestr  ./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep" >> cmdlog.txt
 
-./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep
+./runPIAACMC $dirname $size $pscale $pupfile $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $index $designstep
 #$fpmrad $coin $coout ${rmode} ${emode} ${sprange} $lambda $PIAAmaterial $designstep
 
 #cp -rf $dirname ${dirname}_step$designstep

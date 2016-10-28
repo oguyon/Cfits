@@ -295,12 +295,14 @@ printhelp ()
 	echo "  arg18: focal plane material                     ${18}"
 	echo "  arg19: min sag [m]                              ${19}"
 	echo "  arg20: max sag [m]                              ${20}"
-	echo "  arg21: center cone nb rings                     ${21}"
-	echo "  arg22: center cone sag                          ${22}"
-	echo "  arg23: outer cone rad [l/D]                     ${23}"
-	echo "  arg24: outer sag offset [m]                     ${24}"
-	echo "  arg25: index                                    ${25}"
-	echo "  arg26: design step                              ${26}"
+	echo "  arg21  fpmregsag_coeff                          ${21}"   
+	echo "  arg22: fpmregsag_alpha                          ${22}" 
+	echo "  arg23: center cone nb rings                     ${23}"
+	echo "  arg24: center cone sag                          ${24}"
+	echo "  arg25: outer cone rad [l/D]                     ${25}"
+	echo "  arg26: outer sag offset [m]                     ${26}"
+	echo "  arg27: index                                    ${27}"
+	echo "  arg28: design step                              ${28}"
 	echo ""
 	echo "========= PARAMETERS IN runPIAACMC script ============="
 	echo ""
@@ -314,7 +316,7 @@ printhelp ()
 
 
 
-NBARGS=26
+NBARGS=28
 
 
 if [ "$1" = "helpsteps" ]; then
@@ -392,17 +394,17 @@ echo "${18}" > $1/conf_fpmmaterial_name.txt
 
 fpmminsag=${19}
 fpmmaxsag=${20}
-fpmccnbr=${21}
-fpmccz=${22}
-fpmocr=${23}
-fpmocz=${24}
+fpmsagreg_coeff=${21}
+fpmsagreg_alpha=${22}
+fpmccnbr=${23}
+fpmccz=${24}
+fpmocr=${25}
+fpmocz=${26}
 
-
-
-index=${25}
+index=${27}
 
 # STEP PRE-PROCESSING
-rstep=${26}
+rstep=${28}
 
 
 
@@ -519,10 +521,12 @@ echo "PIAACMC_resolved=$PIAACMC_resolved" >> $startupfile #16
 echo "PIAACMC_extmode=$PIAACMC_extmode" >> $startupfile #17
 echo "PIAACMC_fpmminsag=${fpmminsag}" >> $startupfile #19
 echo "PIAACMC_fpmmaxsag=${fpmmaxsag}" >> $startupfile #20
-echo "PIAACMC_NBringCentCone=${fpmccnbr}" >> $startupfile #21
-echo "PIAACMC_fpmCentConeZ=${fpmccz}" >> $startupfile #22
-echo "PIAACMC_fpmOuterConeRadld=${fpmocr}" >> $startupfile #23
-echo "PIAACMC_fpmOuterConeZ=${fpmocz}" >> $startupfile #24
+echo "PIAACMC_fpmsagreg_coeff=${fpmsagreg_coeff}" >> $startupfile #21
+echo "PIAACMC_fpmsagreg_alpha=${fpmsagreg_alpha}" >> $startupfile #22
+echo "PIAACMC_NBringCentCone=${fpmccnbr}" >> $startupfile #23
+echo "PIAACMC_fpmCentConeZ=${fpmccz}" >> $startupfile #24
+echo "PIAACMC_fpmOuterConeRadld=${fpmocr}" >> $startupfile #25
+echo "PIAACMC_fpmOuterConeZ=${fpmocz}" >> $startupfile #26
 
 echo "PIAACMC_dftgrid=${PIAACMC_dftgrid}" >> $startupfile
 echo "PIAACMC_nblambda=${nblambda}" >> $startupfile
@@ -2404,8 +2408,6 @@ checkexit
 
 
 
-
-
 # STEP 101: search for optimal FPM solution
 # 
 
@@ -2427,10 +2429,6 @@ SCORINGMASKTYPE=$SCORINGMASKTYPE
 PIAACMC_save=0
 PIAACMC_nbiterSA=10000
 PIAACMC_nbiterDS=100
-
-REGFPMSAG=1
-REGFPMSAG_COEFF=0.5
-REGFPMSAG_COEFF_ALPHA=1.0
 
 piaacmcsimrun $1 13
 exit
