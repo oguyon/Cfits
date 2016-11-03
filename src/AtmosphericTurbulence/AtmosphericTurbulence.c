@@ -1603,6 +1603,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     long vKwindsize;
 
 
+	FILE *fpxypos;
+
 
     SLAMBDA = 1.0e-6*slambdaum;
 
@@ -2531,7 +2533,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
 
     printf("WAVEFRONT_AMPLITUDE = %d\n", CONF_WAVEFRONT_AMPLITUDE);
 
-
+	fpxypos = fopen("xypos.log", "w");
+    fclose(fpxypos);
 
 
     for(tspan=start_tspan; tspan<CONF_NB_TSPAN; tspan++)
@@ -2745,8 +2748,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
                     for(ii=0; ii<naxes[0]; ii++)
                         for(jj=0; jj<naxes[1]; jj++)
                         {
-                            iimf = fmod((xpos[layer]+ii),1.0*naxes_MASTER[0]);
-                            jjmf = fmod((ypos[layer]+jj),1.0*naxes_MASTER[1]);
+                            iimf = fmod((xpos[layer]+ii), 1.0*naxes_MASTER[0]);
+                            jjmf = fmod((ypos[layer]+jj), 1.0*naxes_MASTER[1]);
                             iim = (long) (iimf);
                             jjm = (long) (jjmf);
                             iifrac = iimf-iim;
@@ -2776,14 +2779,17 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
                                 data.image[ID_array2].array.CF[jj*naxes[0]+ii].im = re*sin(value)+im*cos(value);
                             }
                         }
+                    fpxypos = fopen("xypos.log", "a");
+                    fprintf(fpxypos, "%5ld %4ld    %10.8f %10.8f      %5ld %10.8f %5ld %10.8f    %10.8f %10.8f  %.18g        %.18g   %.18g   %.18g   %.18g\n", vindex, layer, xpos[layer], ypos[layer], iim, iifrac, jjm, jjfrac, 1.0*iim+iifrac, 1.0*jjm+jjfrac, value, data.image[ID_TML[layer]].array.F[jjm*naxes_MASTER[0]+iim], data.image[ID_TML[layer]].array.F[jjm1*naxes_MASTER[0]+iim], data.image[ID_TML[layer]].array.F[jjm1*naxes_MASTER[0]+iim1], data.image[ID_TML[layer]].array.F[jjm*naxes_MASTER[0]+iim1]);
+                    fclose(fpxypos);
                 }
                 else
                 {
                     for(ii=0; ii<naxes[0]; ii++)
                         for(jj=0; jj<naxes[1]; jj++)
                         {
-                            iimf = fmod((xpos[layer]+ii),1.0*naxes_MASTER[0]);
-                            jjmf = fmod((ypos[layer]+jj),1.0*naxes_MASTER[1]);
+                            iimf = fmod((xpos[layer]+ii), 1.0*naxes_MASTER[0]);
+                            jjmf = fmod((ypos[layer]+jj), 1.0*naxes_MASTER[1]);
                             iim = (long) (iimf);
                             jjm = (long) (jjmf);
                             iifrac = iimf-iim;
@@ -2827,8 +2833,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
                         for(ii=0; ii<naxes[0]; ii++)
                             for(jj=0; jj<naxes[1]; jj++)
                             {
-                                iimf = fmod((xpos[layer]+ii),1.0*naxes_MASTER[0]);
-                                jjmf = fmod((ypos[layer]+jj),1.0*naxes_MASTER[1]);
+                                iimf = fmod((xpos[layer]+ii), 1.0*naxes_MASTER[0]);
+                                jjmf = fmod((ypos[layer]+jj), 1.0*naxes_MASTER[1]);
                                 iim = (long) (iimf);
                                 jjm = (long) (jjmf);
                                 iifrac = iimf-iim;
@@ -2867,8 +2873,8 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
                         for(ii=0; ii<naxes[0]; ii++)
                             for(jj=0; jj<naxes[1]; jj++)
                             {
-                                iimf = fmod((xpos[layer]+ii),1.0*naxes_MASTER[0]);
-                                jjmf = fmod((ypos[layer]+jj),1.0*naxes_MASTER[1]);
+                                iimf = fmod((xpos[layer]+ii), 1.0*naxes_MASTER[0]);
+                                jjmf = fmod((ypos[layer]+jj), 1.0*naxes_MASTER[1]);
                                 iim = (long) (iimf);
                                 jjm = (long) (jjmf);
                                 iifrac = iimf-iim;

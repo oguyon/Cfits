@@ -1133,7 +1133,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
             x = (1.0*ii-0.5*size)/beamradpix; // position of pixel (ii,jj) in pupil radius units
             y = (1.0*jj-0.5*size)/beamradpix;
             // set the mirror shape as a linear tilt of pixel position reflecting the tilt
-            data.image[ID].array.F[jj*size+ii] = 0.25*(TTxld*x+TTyld*y)*(LAMBDAEND+LAMBDASTART)*0.5;
+            data.image[ID].array.F[jj*size+ii] = 0.25*(TTxld*x+TTyld*y)*(LAMBDAEND+LAMBDASTART)*0.5; // xld -> half-OPD
         }
 
 
@@ -1147,7 +1147,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
                 x = (1.0*ii-0.5*size)/beamradpix;
                 y = (1.0*jj-0.5*size)/beamradpix;
                 // add the error shape to the mirror shape
-                data.image[ID].array.F[jj*size+ii] += data.image[IDopderr].array.F[jj*size+ii];
+                data.image[ID].array.F[jj*size+ii] += data.image[IDopderr].array.F[jj*size+ii]*0.5;
             }
     }
 
@@ -3818,7 +3818,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
             // save the intensity of the first point
             copy_image_ID("psfi0", "psfi0ext", 0);
-
+			sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			save_fits("psfi0", fname);
+            
             // do the same for the second point
 			imindex++;
 			sprintf(imname, "imvectp%02ld", imindex);
@@ -3828,8 +3830,10 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
             // add the intensity to build up PSF for extended source
-            arith_image_add_inplace("psfi0ext","psfi0");
-
+            arith_image_add_inplace("psfi0ext", "psfi0");
+			sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			save_fits("psfi0", fname);
+			
             // do the same for the third point
 			imindex++;
 			sprintf(imname, "imvectp%02ld", imindex);
@@ -3839,8 +3843,10 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
             // add the intensity to build up PSF for extended source
-            arith_image_add_inplace("psfi0ext","psfi0");
-            
+            arith_image_add_inplace("psfi0ext", "psfi0");
+       		sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			save_fits("psfi0", fname);
+			
             if (extmode==1)
             { // keep going for the other three points if desired, on the outer radius
 				imindex++;
@@ -3851,6 +3857,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext","psfi0");
+				sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				save_fits("psfi0", fname);
+			
 
 				imindex++;
 				sprintf(imname, "imvectp%02ld", imindex);
@@ -3859,7 +3868,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 PIAACMCsimul_makePIAAshapes(piaacmc, 0);
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
-                arith_image_add_inplace("psfi0ext","psfi0");
+                arith_image_add_inplace("psfi0ext", "psfi0");
+				sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				save_fits("psfi0", fname);
 
 				imindex++;
 				sprintf(imname, "imvectp%02ld", imindex);
@@ -3868,9 +3879,12 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 PIAACMCsimul_makePIAAshapes(piaacmc, 0);
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
-                arith_image_add_inplace("psfi0ext","psfi0");
+                arith_image_add_inplace("psfi0ext", "psfi0");
+				sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				save_fits("psfi0", fname);
+			
                 // but multiply by 0.5 'cause we have twice as many points
-                arith_image_cstmult_inplace("psfi0ext", 0.5);
+				//    arith_image_cstmult_inplace("psfi0ext", 0.5);
             }
 			
 			printf("Adding optional OPD error modes (%ld modes)\n", nbOPDerr);
@@ -3892,6 +3906,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext","psfi0");
+	       		sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				save_fits("psfi0", fname);
+				delete_image_ID("opderr");
 			}
 			
             // now average over all the PSFs we've created to simulate this extended source
@@ -5529,6 +5546,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     int initbestval = 0;
 
 
+	long size;
+	long IDopderrC, nbOPDerr, OPDmode, IDopderr;
+
 
     // Create status shared variable
     // this allows realtime monitoring of the code by other processes
@@ -6865,6 +6885,34 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
         printf("=================================== mode 100 ===================================\n");
 
+		// measure sensitivity to errors
+		printf("Loading (optional) OPDerr file\n");
+		fflush(stdout);
+		// load an error if it exists
+		IDopderrC = image_ID("OPDerrC");
+		if(IDopderrC == -1)
+			IDopderrC = load_fits("OPDerrC.fits", "OPDerrC", 0);
+	
+
+		if(IDopderrC != -1)
+		{
+			nbOPDerr = data.image[IDopderrC].md[0].size[2];  // number of error arrays
+			printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
+			fflush(stdout);
+		}
+		else
+		{
+			printf("NO OPD ERROR MODES\n");
+			fflush(stdout);
+			nbOPDerr = 0;
+		}
+
+
+		printf("Will add optional OPD error modes (%ld modes)\n", nbOPDerr);
+		fflush(stdout);
+		
+
+
         PIAACMC_fpmtype = 0; // idealized (default)
         if((IDv=variable_ID("PIAACMC_fpmtype"))!=-1)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
@@ -6994,6 +7042,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
 
+
         // measure pointing sensitivity
         IDps = create_3Dimage_ID("starim", piaacmc[0].size, piaacmc[0].size, zsize);
 
@@ -7028,9 +7077,29 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] /= 4.0;
 
-        sprintf(fname,"!%s/psfi0_starim.fits", piaacmcconfdir);
+        sprintf(fname, "!%s/psfi0_starim.fits", piaacmcconfdir);
         save_fits("starim", fname);
 
+	
+	
+	 // measure sensitivity to errors
+
+	printf("Adding optional OPD error modes (%ld modes)\n", nbOPDerr);
+	fflush(stdout);
+	// add error modes if any
+	for(OPDmode=0; OPDmode < nbOPDerr; OPDmode++)
+		{
+			size = data.image[IDopderrC].md[0].size[0];
+			IDopderr = create_2Dimage_ID("opderr", size, size);
+            // "opderr" is a standard name read by PIAACMCsimul_init
+			for(ii=0;ii<size*size;ii++)
+				data.image[IDopderr].array.F[ii] = data.image[IDopderrC].array.F[size*size*OPDmode + ii];			
+			PIAACMCsimul_init(piaacmc, 0, 0.0, 0.0); // add error to the data
+			PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
+			sprintf(fname, "!%s/psfi0_opderr%02ld.fits", piaacmcconfdir, OPDmode);
+			save_fits("psfi0", fname);
+			delete_image_ID("opderr");
+		}
 
         sprintf(fname, "!%s/psfi0_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
 
