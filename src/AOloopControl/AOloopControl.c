@@ -7223,6 +7223,12 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     long IDwfs;
     long wfsxsize, wfsysize, wfssize;
     long twait0us = 100000;
+    
+    double tdouble_start;
+    double tdouble_end;
+    long wfscntstart;
+    long wfscntend;
+    
     struct timespec tstart;
     struct timespec tnow;
     struct timespec *tarray;
@@ -7243,7 +7249,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     long NBwfsframe;
     long twaitus = 30000; // 30 ms
     double dtoffset0 = 0.002; // 2 ms
-	long wfsframeoffset = 10;
+    long wfsframeoffset = 10;
 
     long IDwfsref;
     unsigned int dmstate;
@@ -7254,8 +7260,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     double valmax, valmaxdt;
     double tmp;
     double dtoffset;
-	long kkoffset;
-	
+    long kkoffset;
+
     long iter;
 
     double latencymax = 0.0;
@@ -7270,17 +7276,17 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     float latencystep;
     int ret;
     float minlatency, maxlatency;
-    
+
 
     schedpar.sched_priority = RT_priority;
-    #ifndef __MACH__
+#ifndef __MACH__
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     // r = seteuid(euid_real);//Go back to normal privileges
-	#endif
+#endif
 
     latencyarray = (float*) malloc(sizeof(float)*NBiter);
-	latencysteparray = (float*) malloc(sizeof(float)*NBiter);
+    latencysteparray = (float*) malloc(sizeof(float)*NBiter);
 
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
@@ -7311,14 +7317,18 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
     dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
 
-	ret = system("mkdir -p timingstats");
-	
+    ret = system("mkdir -p timingstats");
+
     if ((fp=fopen("timingstats/latency.txt", "w"))==NULL)
     {
         printf("ERROR: cannot open file \"timingstats/latency.txt\"\\n");
         exit(0);
     }
-
+    
+	clock_gettime(CLOCK_REALTIME, &tnow);
+	tdouble_start = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+	wfscntstart = data.image[IDwfs].md[0].cnt0;
+    
     for(iter=0; iter<NBiter; iter++)
     {
         printf("ITERATION %5ld / %5ld\n", iter, NBiter);
@@ -7332,20 +7342,20 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
         copy_image_ID("_testdm0", dmname, 1);
         dmstate = 0;
-        
+
         // waiting time
         usleep(twaitus);
         // and waiting frames
-         wfscnt0 = data.image[IDwfs].md[0].cnt0;
-         for(wfsframe=0; wfsframe<wfs_NBframesmax;wfsframe++)
-		{ 
-	        while(wfscnt0==data.image[IDwfs].md[0].cnt0)
+        wfscnt0 = data.image[IDwfs].md[0].cnt0;
+        for(wfsframe=0; wfsframe<wfs_NBframesmax; wfsframe++)
+        {
+            while(wfscnt0==data.image[IDwfs].md[0].cnt0)
             {
                 usleep(50);
             }
-         wfscnt0 = data.image[IDwfs].md[0].cnt0;
-		}       
-        
+            wfscnt0 = data.image[IDwfs].md[0].cnt0;
+        }
+
         dt = 0.0;
 
         wfsframe = 0;
@@ -7377,16 +7387,16 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             // apply DM pattern #1
             if((dmstate==0)&&(dt>dtoffset0)&&(wfsframe>wfsframeoffset))
             {
-				usleep((long) (ran1()*2000));
+                usleep((long) (ran1()*2000));
                 printf("\nDM STATE CHANGED ON ITERATION %ld\n\n", wfsframe);
                 kkoffset = wfsframe;
                 dmstate = 1;
                 copy_image_ID("_testdm1", dmname, 1);
-				
-				clock_gettime(CLOCK_REALTIME, &tnow);
-				tdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
-				dt = tdouble - tstartdouble;
-				dtoffset = dt; // time at which DM command is sent
+
+                clock_gettime(CLOCK_REALTIME, &tnow);
+                tdouble = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+                dt = tdouble - tstartdouble;
+                dtoffset = dt; // time at which DM command is sent
             }
             wfsframe++;
         }
@@ -7436,10 +7446,16 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             save_fits("_testwfsc", "!./timingstats/maxlatencyseq.fits");
         }
         fprintf(fp, "# %5ld  %8.6f\n", iter, (valmaxdt-dtoffset));
-		latencysteparray[iter] = 1.0*kkmax;
+        latencysteparray[iter] = 1.0*kkmax;
         latencyarray[iter] = (valmaxdt-dtoffset);
     }
     fclose(fp);
+    
+   	clock_gettime(CLOCK_REALTIME, &tnow);
+   	tdouble_end = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+    wfscntend = data.image[IDwfs].md[0].cnt0;
+
+	
 
     free(dtarray);
     free(tarray);
@@ -7468,11 +7484,17 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     ret = sprintf(command, "echo %f %f %f %f > conf/conf_hardwlatency.txt", latencyave, minlatency, maxlatency, latencystepave);
     ret = system(command);
 
+	dt = tdouble_end - tdouble_start;
+	printf("FRAME RATE = %.3f Hz\n", 1.0*(wfscntend-wfscntstart)/dt);
+	ret = sprintf(command, "echo %.3f > conf/conf_loopfrequ.txt", 1.0*(wfscntend-wfscntstart)/dt );
+    ret = system(command);
+    
     free(latencyarray);
-	free(latencysteparray);
- 
+    free(latencysteparray);
+
     return 0;
 }
+
 
 
 

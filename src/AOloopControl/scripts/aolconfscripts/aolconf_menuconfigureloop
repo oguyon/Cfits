@@ -423,7 +423,7 @@ loophlat="2.1"
 if [ -f "./conf/conf_loophlat.txt" ]; then
 loophlat=$( cat ./conf/conf_loophlat.txt )
 fi
-menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} frame" )
+menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} sec" )
 
 loopclat="0.6"
 if [ -f "./conf/conf_loopclat.txt" ]; then

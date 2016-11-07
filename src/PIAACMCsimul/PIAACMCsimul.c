@@ -2555,6 +2555,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     printf("fpmCentConeRad =  %g\n", (0.5*(LAMBDASTART+LAMBDAEND)*piaacmc[0].Fratio*fpmradld)*piaacmc[0].NBringCentCone/piaacmc[0].NBrings);
 
 
+
+
     if(load==1)
     {
         printf("Loading PIAACMC configuration\n");
@@ -2569,6 +2571,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
             saveconf = 1;
         }
     }
+
+
 
 
 
@@ -3237,7 +3241,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     list_image_ID();
     size2 = size*size;
 
-
+	
     if(piaacmc[0].PIAAmode == 1)
     {
         for(i=0; i<piaacmc[0].NBLyotStop; i++)
@@ -4320,6 +4324,7 @@ int PIAAsimul_loadpiaacmcconf(char *dname)
             {
                 sprintf(fname, "%s/LyotStop%ld.fits", dname, i);
                 sprintf(imname, "lyotstop%ld", i);
+                printf("Loading \"%s\" as \"%s\"\n", fname, imname);
                 piaacmc[0].IDLyotStop[i] = load_fits(fname, imname, 1);
                 r = fscanf(fp, "%lf   LyotStop_zpos %ld\n", &tmplf, &tmpl);
                 piaacmc[0].LyotStop_zpos[i] = tmplf;
@@ -6888,11 +6893,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
         printf("=================================== mode 100 ===================================\n");
 		
-		system("touch STOP.txt");//TEST
-		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
-		while( access( "STOP.txt", F_OK ) != -1 ) 
-			sleep(1);
-			
 		
 
 		// measure sensitivity to errors
@@ -6917,12 +6917,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 			nbOPDerr = 0;
 		}
 
-
-
-		system("touch STOP.txt");//TEST
-		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
-		while( access( "STOP.txt", F_OK ) != -1 ) 
-			sleep(1);
 	
   
 		printf("Will add optional OPD error modes (%ld modes)\n", nbOPDerr);
@@ -6934,8 +6928,15 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         if((IDv=variable_ID("PIAACMC_fpmtype"))!=-1)
             PIAACMC_fpmtype = (int) (data.variable[IDv].value.f + 0.1);
 
+
+	
+
         FORCE_CREATE_fpmza = 1;
         PIAAsimul_initpiaacmcconf(PIAACMC_fpmtype, fpmradld, centobs0, centobs1, 0, 1);
+
+
+
+
 
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
@@ -6955,23 +6956,11 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         printf("ldoffset = %f\n", ldoffset);
 
 
-		system("touch STOP.txt");//TEST
-		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
-		while( access( "STOP.txt", F_OK ) != -1 ) 
-			sleep(1);
-
-
-
         valref = PIAACMCsimul_computePSF(5.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_x50_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         //load_fits(fname, "psfi");
 
-
-		system("touch STOP.txt");//TEST
-		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
-		while( access( "STOP.txt", F_OK ) != -1 ) 
-			sleep(1);
 
 
 
@@ -7008,10 +6997,6 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         ID = image_ID("psfi0");
 
-		system("touch STOP.txt");//TEST
-		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
-		while( access( "STOP.txt", F_OK ) != -1 ) 
-			sleep(1);
 
 
 
