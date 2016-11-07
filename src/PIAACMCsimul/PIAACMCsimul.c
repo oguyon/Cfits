@@ -3643,8 +3643,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
     // number of pixels in each image
     size2 = size*size;
 
-	printf("Loading (optional) OPDerr file\n");
-	fflush(stdout);
+	//printf("Loading (optional) OPDerr file\n");
+	//fflush(stdout);
 	// load an error if it exists
 	IDopderrC = image_ID("OPDerrC");
 	if(IDopderrC == -1)
@@ -3653,13 +3653,13 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 	if(IDopderrC != -1)
 		{
 			nbOPDerr = data.image[IDopderrC].md[0].size[2];  // number of error arrays
-			printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
-			fflush(stdout);
+			//printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
+			//fflush(stdout);
 		}
 	else
 		{
-			printf("NO OPD ERROR MODES\n");
-			fflush(stdout);
+			//printf("NO OPD ERROR MODES\n");
+			//fflush(stdout);
 			nbOPDerr = 0;
 		}
     // focal plane plate scale in lambda/D per pixel
@@ -3906,8 +3906,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext","psfi0");
-	       		sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-				save_fits("psfi0", fname);
+	       	//	sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			//	save_fits("psfi0", fname);
 				delete_image_ID("opderr");
 			}
 			
@@ -6886,8 +6886,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         printf("=================================== mode 100 ===================================\n");
 
 		// measure sensitivity to errors
-		printf("Loading (optional) OPDerr file\n");
-		fflush(stdout);
+	//	printf("Loading (optional) OPDerr file\n");
+	//	fflush(stdout);
 		// load an error if it exists
 		IDopderrC = image_ID("OPDerrC");
 		if(IDopderrC == -1)
@@ -6897,13 +6897,13 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 		if(IDopderrC != -1)
 		{
 			nbOPDerr = data.image[IDopderrC].md[0].size[2];  // number of error arrays
-			printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
-			fflush(stdout);
+			//printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
+			//fflush(stdout);
 		}
 		else
 		{
-			printf("NO OPD ERROR MODES\n");
-			fflush(stdout);
+			//printf("NO OPD ERROR MODES\n");
+			//fflush(stdout);
 			nbOPDerr = 0;
 		}
 
@@ -7084,8 +7084,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 	
 	 // measure sensitivity to errors
 
-	printf("Adding optional OPD error modes (%ld modes)\n", nbOPDerr);
-	fflush(stdout);
+//	printf("Adding optional OPD error modes (%ld modes)\n", nbOPDerr);
+//	fflush(stdout);
 	// add error modes if any
 	for(OPDmode=0; OPDmode < nbOPDerr; OPDmode++)
 		{

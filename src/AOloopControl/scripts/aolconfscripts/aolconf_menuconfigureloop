@@ -986,7 +986,7 @@ fi
 state="menutop"
 
 
-dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
+dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - script `basename "$0"`" \
 --ok-label "Action: ${actionmode}" \
 --cancel-label "Top" \
 --extra-button --extra-label "Action toggle" \

@@ -891,7 +891,7 @@ echo "$datestr  step722  Eval polychromatic contrast for on-axis PSF, and pointi
  echo "722: eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.03 l/D"
 echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 $5 $6 $7" 
 echo "722" > ./$1/runstep
-touch ./$1/step721.run.txt
+touch ./$1/step722.run.txt
 $execnamestring -n step722 << EOF
 PIAACMC_dftgrid=2
 PIAACMC_fpmtype=1 
@@ -906,6 +906,38 @@ cleanup
 exit
 fi
 fi
+
+
+
+if [ 723 -eq ${state} ]
+then
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  step723  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.001 l/D"
+echo "$datestr  step723  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.001 l/D" >> cmdlog.txt
+ if [ ! -f ./$1/step007.txt ]
+ then
+ echo "====================== step 723 requires step 007 ======================================="
+ exit
+ else
+ echo "723: eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.001 l/D"
+echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 $5 $6 $7" 
+echo "722" > ./$1/runstep
+touch ./$1/step723.run.txt
+$execnamestring -n step723 << EOF
+PIAACMC_dftgrid=2
+PIAACMC_fpmtype=1 
+PIAACMC_FPMsectors=$FPMsectors
+PIAACMC_nblambda=$nblambda
+PIAACMC_ldoffset=0.001
+piaacmcsimrun $1 100
+exit
+EOF
+mv ./$1/psfi0_starim.fits ./$1/psfi0_step723.fits
+cleanup
+exit
+fi
+fi
+
 
 
 
