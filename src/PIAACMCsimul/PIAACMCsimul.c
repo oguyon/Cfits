@@ -6888,22 +6888,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
         printf("=================================== mode 100 ===================================\n");
 		
-		system("touch STOP.txt");
+		system("touch STOP.txt");//TEST
 		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
-		while( access( fname, F_OK ) != -1 ) 
+		while( access( "STOP.txt", F_OK ) != -1 ) 
 			sleep(1);
 			
 		
-		printf("- [line %5d] Press ENTER key to Continue\n", __LINE__);  
-		kbdhit();
-		
-		printf("- [line %5d] Press ENTER key to Continue\n", __LINE__);  
-		kbdhit();
-		
-		printf("- [line %5d] Press ENTER key to Continue\n", __LINE__);  
-		kbdhit();
-		
-sleep(10000);
 
 		// measure sensitivity to errors
 	//	printf("Loading (optional) OPDerr file\n");
@@ -6928,10 +6918,12 @@ sleep(10000);
 		}
 
 
-  		printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
-		fgets(userinputstr, 100, stdin);
-		printf("Continuing....\n");
 
+		system("touch STOP.txt");//TEST
+		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
+		while( access( "STOP.txt", F_OK ) != -1 ) 
+			sleep(1);
+	
   
 		printf("Will add optional OPD error modes (%ld modes)\n", nbOPDerr);
 		fflush(stdout);
@@ -6963,10 +6955,10 @@ sleep(10000);
         printf("ldoffset = %f\n", ldoffset);
 
 
-	
-   		printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
-		fgets(userinputstr, 100, stdin);
-		printf("Continuing....\n");
+		system("touch STOP.txt");//TEST
+		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
+		while( access( "STOP.txt", F_OK ) != -1 ) 
+			sleep(1);
 
 
 
@@ -6976,9 +6968,11 @@ sleep(10000);
         //load_fits(fname, "psfi");
 
 
-	   	printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
-		fgets(userinputstr, 100, stdin);
-		printf("Continuing....\n");
+		system("touch STOP.txt");//TEST
+		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
+		while( access( "STOP.txt", F_OK ) != -1 ) 
+			sleep(1);
+
 
 
         ID = image_ID("psfi0");
@@ -7014,10 +7008,10 @@ sleep(10000);
 
         ID = image_ID("psfi0");
 
-   		printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
-		fgets(userinputstr, 100, stdin);
-		printf("Continuing....\n");
-
+		system("touch STOP.txt");//TEST
+		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
+		while( access( "STOP.txt", F_OK ) != -1 ) 
+			sleep(1);
 
 
 
