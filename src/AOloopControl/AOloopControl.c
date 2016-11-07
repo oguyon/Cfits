@@ -7356,7 +7356,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             // WAITING for image
             while(wfscnt0==data.image[IDwfs].md[0].cnt0)
             {
-                usleep(50);
+                usleep(10);
             }
             wfscnt0 = data.image[IDwfs].md[0].cnt0;
             printf("\r[%8ld]    ", wfsframe);

@@ -5549,6 +5549,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 	long size;
 	long IDopderrC, nbOPDerr, OPDmode, IDopderr;
 
+	int tmpn1;
+	char userinputstr[100];
+	
 
     // Create status shared variable
     // this allows realtime monitoring of the code by other processes
@@ -6884,6 +6887,24 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
         printf("=================================== mode 100 ===================================\n");
+		
+		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
+		fflush(stdin);
+		getchar();    
+		
+		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
+		fflush(stdin);
+		getchar();    
+
+		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
+		fflush(stdin);
+		getchar();    
+
+		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
+		fflush(stdin);
+		getchar();    
+
+sleep(10000);
 
 		// measure sensitivity to errors
 	//	printf("Loading (optional) OPDerr file\n");
@@ -6908,6 +6929,11 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 		}
 
 
+  		printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
+		fgets(userinputstr, 100, stdin);
+		printf("Continuing....\n");
+
+  
 		printf("Will add optional OPD error modes (%ld modes)\n", nbOPDerr);
 		fflush(stdout);
 		
@@ -6938,12 +6964,22 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         printf("ldoffset = %f\n", ldoffset);
 
 
+	
+   		printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
+		fgets(userinputstr, 100, stdin);
+		printf("Continuing....\n");
+
 
 
         valref = PIAACMCsimul_computePSF(5.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_x50_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         //load_fits(fname, "psfi");
+
+
+	   	printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
+		fgets(userinputstr, 100, stdin);
+		printf("Continuing....\n");
 
 
         ID = image_ID("psfi0");
@@ -6978,6 +7014,12 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
 
         ID = image_ID("psfi0");
+
+   		printf ("STOP point [line %5d] - type enter to continue ", __LINE__); //TEST    
+		fgets(userinputstr, 100, stdin);
+		printf("Continuing....\n");
+
+
 
 
         /// compute contrast curve

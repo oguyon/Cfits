@@ -389,7 +389,6 @@ checkerrorstatus
 fi
 
 
-
 if [ $computecontrast -eq 3 ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`

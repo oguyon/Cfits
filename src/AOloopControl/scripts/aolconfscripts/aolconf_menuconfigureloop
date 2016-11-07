@@ -986,7 +986,7 @@ fi
 state="menutop"
 
 
-dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - script `basename "$0"`" \
+dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - script aolconf_menuconfigureloop" \
 --ok-label "Action: ${actionmode}" \
 --cancel-label "Top" \
 --extra-button --extra-label "Action toggle" \
@@ -1668,6 +1668,7 @@ exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system latency"
 ./auxscripts/MeasureLatency "$nblatm"
+awk '{print $1}' conf/conf_hardwlatency.txt > conf/conf_loophlat.txt
 ;;
 
 	zrespM)
