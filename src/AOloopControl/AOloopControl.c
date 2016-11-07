@@ -7387,7 +7387,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             // apply DM pattern #1
             if((dmstate==0)&&(dt>dtoffset0)&&(wfsframe>wfsframeoffset))
             {
-//                usleep((long) (ran1()*2000));
+                usleep((long) (ran1()*500));
                 printf("\nDM STATE CHANGED ON ITERATION %ld\n\n", wfsframe);
                 kkoffset = wfsframe;
                 dmstate = 1;
