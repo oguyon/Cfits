@@ -6893,7 +6893,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 		getchar();    
 		
 		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
-		fflush(stdin);
+		while(getchar()!='\n');
 		getchar();    
 
 		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
