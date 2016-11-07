@@ -6888,22 +6888,21 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
         printf("=================================== mode 100 ===================================\n");
 		
-		printf(" - [line %5d] Press ENTER key to Continue\n", __LINE__);  
-		while(getchar()!='\n'); // option TWO to clean stdin
-		getchar();    
+		system("touch STOP.txt");
+		printf(" - [line %5d] remove file STOP.txt to Continue\n", __LINE__);  
+		while( access( fname, F_OK ) != -1 ) 
+			sleep(1);
+			
 		
-		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
-		while(getchar()!='\n');
-		getchar();    
-
-		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
-		fflush(stdin);
-		getchar();    
-
-		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
-		fflush(stdin);
-		getchar();    
-
+		printf("- [line %5d] Press ENTER key to Continue\n", __LINE__);  
+		kbdhit();
+		
+		printf("- [line %5d] Press ENTER key to Continue\n", __LINE__);  
+		kbdhit();
+		
+		printf("- [line %5d] Press ENTER key to Continue\n", __LINE__);  
+		kbdhit();
+		
 sleep(10000);
 
 		// measure sensitivity to errors
