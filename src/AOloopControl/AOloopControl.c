@@ -7318,7 +7318,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 	naxes[0] = wfsxsize;
 	naxes[1] = wfsysize;
 	naxes[2] = wfs_NBframesmax;
-	IDwfsc = create_image_ID("testwfsc", 3, naxes, atype, 0, 0);
+	IDwfsc = create_image_ID("_testwfsc", 3, naxes, atype, 0, 0);
 //    IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
 
 
