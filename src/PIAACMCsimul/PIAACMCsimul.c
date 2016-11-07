@@ -6888,8 +6888,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
     case 100 : // evaluate current design: polychromatic contrast, pointing sensitivity
         printf("=================================== mode 100 ===================================\n");
 		
-		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  
-		fflush(stdin);
+		printf(" - [line %5d] Press ENTER key to Continue\n", __LINE__);  
+		while(getchar()!='\n'); // option TWO to clean stdin
 		getchar();    
 		
 		printf("[line %5d] Press ENTER key to Continue\n", __LINE__);  

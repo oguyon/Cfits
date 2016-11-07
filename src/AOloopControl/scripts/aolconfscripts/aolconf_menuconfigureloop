@@ -1668,7 +1668,8 @@ exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system latency"
 ./auxscripts/MeasureLatency "$nblatm"
-awk '{print $1}' conf/conf_hardwlatency.txt > conf/conf_loophlat.txt
+hlat=$(awk '{print $1}' conf/conf_hardwlatency.txt ) 
+echo "$hlat" > conf/conf_loophlat.txt
 ;;
 
 	zrespM)
