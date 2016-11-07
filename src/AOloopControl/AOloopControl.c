@@ -7278,7 +7278,10 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     float minlatency, maxlatency;
 	double wfsdt;
 	
-
+	int atype;
+    long naxes[3];
+    
+    
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
     // r = seteuid(euid_called); //This goes up to maximum privileges
@@ -7310,9 +7313,13 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     wfsxsize = data.image[IDwfs].md[0].size[0];
     wfsysize = data.image[IDwfs].md[0].size[1];
     wfssize = wfsxsize*wfsysize;
+	atype = data.image[IDwfs].md[0].atype;
 
-
-    IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
+	naxes[0] = wfsxsize;
+	naxes[1] = wfsysize;
+	naxes[2] = wfs_NBframesmax;
+	IDwfsc = create_image_ID("testwfsc", 3, naxes, atype, 0, 0);
+//    IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
 
 
 // coarse estimage of frame rate
@@ -7385,11 +7392,23 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             wfscnt0 = data.image[IDwfs].md[0].cnt0;
             printf("\r[%8ld]    ", wfsframe);
             fflush(stdout);
-            // copy image to cube slice
-            ptr = (char*) data.image[IDwfsc].array.F;
-            ptr += sizeof(float)*wfsframe*wfssize;
-            memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
-
+            
+            if(atype == FLOAT)
+            {
+				// copy image to cube slice
+				ptr = (char*) data.image[IDwfsc].array.F;
+				ptr += sizeof(float)*wfsframe*wfssize;
+				memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
+			}
+			
+			if(atype == USHORT)
+			{
+				// copy image to cube slice
+				ptr = (char*) data.image[IDwfsc].array.U;
+				ptr += sizeof(short)*wfsframe*wfssize;
+				memcpy(ptr, data.image[IDwfs].array.U, sizeof(short)*wfssize);
+			}
+			
             clock_gettime(CLOCK_REALTIME, &tarray[wfsframe]);
 
             tdouble = 1.0*tarray[wfsframe].tv_sec + 1.0e-9*tarray[wfsframe].tv_nsec;
@@ -7428,11 +7447,18 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
         for(kk=1; kk<NBwfsframe; kk++)
         {
             valarray[kk] = 0.0;
-            for(ii=0; ii<wfssize; ii++)
-            {
+            if(atype == FLOAT)
+				for(ii=0; ii<wfssize; ii++)
+				{
                 tmp = data.image[IDwfsc].array.F[kk*wfssize+ii] - data.image[IDwfsc].array.F[(kk-1)*wfssize+ii];
                 valarray[kk] += tmp*tmp;
-            }
+				}
+			if(atype == USHORT)
+				for(ii=0; ii<wfssize; ii++)
+				{
+                tmp = data.image[IDwfsc].array.U[kk*wfssize+ii] - data.image[IDwfsc].array.U[(kk-1)*wfssize+ii];
+                valarray[kk] += 1.0*tmp*tmp;
+				}
             if(valarray[kk]>valmax)
             {
                 valmax = valarray[kk];
