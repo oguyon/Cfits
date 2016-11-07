@@ -7276,7 +7276,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     float latencystep;
     int ret;
     float minlatency, maxlatency;
-
+	double wfsdt;
+	
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -7312,6 +7313,19 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
 
     IDwfsc = create_3Dimage_ID("_testwfsc", wfsxsize, wfsysize, wfs_NBframesmax);
+
+
+// coarse estimage of frame rate
+	clock_gettime(CLOCK_REALTIME, &tnow);
+	tdouble_start = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+	wfscntstart = data.image[IDwfs].md[0].cnt0;
+	sleep(5.0);
+   	clock_gettime(CLOCK_REALTIME, &tnow);
+   	tdouble_end = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
+    wfscntend = data.image[IDwfs].md[0].cnt0;
+	wfsdt = (tdouble_end - tdouble_start)/(wfscntend-wfscntstart);
+
+
 
 
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
@@ -7387,7 +7401,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             // apply DM pattern #1
             if((dmstate==0)&&(dt>dtoffset0)&&(wfsframe>wfsframeoffset))
             {
-                usleep((long) (ran1()*500));
+                usleep((long) (ran1()*1000000.0*wfsdt));
                 printf("\nDM STATE CHANGED ON ITERATION %ld\n\n", wfsframe);
                 kkoffset = wfsframe;
                 dmstate = 1;
