@@ -718,8 +718,8 @@ pywfs_pickoff ${pypickoff}
 	tz)
 aoconflogext "TT align zero"
 
-./scripts/aocustomscripts/SCExAO_analogoutput C -5.0
-./scripts/aocustomscripts/SCExAO_analogoutput D -5.0
+./aocustomscripts/SCExAO_analogoutput C -5.0
+./aocustomscripts/SCExAO_analogoutput D -5.0
 #analog_output.py voltage C -5.0
 #analog_output.py voltage D -5.0
 menualign_default="tz"
