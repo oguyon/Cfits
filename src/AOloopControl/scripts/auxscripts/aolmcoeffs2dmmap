@@ -9,10 +9,9 @@ NBARGS=1
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -36,16 +35,34 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%20s       GPU-based  MODE COEFFS -> DM MAP (included filtering)\n" "$0" 
+}
+
+
+
+
 OUTMODE=0 # default output : outDM_map
 OFFLOADMODE=0
 OUTCNAME="aol${loopnb}_dmCoutfilt"
 
 # ================= OPTIONS =============================
 
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
 
 while getopts :ho:g:f FLAG; do
   case $FLAG in
@@ -54,7 +71,11 @@ while getopts :ho:g:f FLAG; do
     OUTMODE=1
     ;;
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     f) # offload correction to dmC
@@ -63,10 +84,6 @@ while getopts :ho:g:f FLAG; do
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
-      #If you just want to display a simple error message instead of the full
-      #help, remove the 2 lines above and uncomment the 2 lines below.
-      #echo -e "Use ${BOLD}$SCRIPT -h${NORM} to see the help documentation."\\n
-      #exit 2
       ;;
   esac
 done

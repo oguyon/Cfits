@@ -7,7 +7,7 @@ NBARGS=2
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
+#echo "pname = $pname"
 
 
 

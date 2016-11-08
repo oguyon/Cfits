@@ -42,14 +42,20 @@ fi
 
 loopnb=$(cat LOOPNUMBER)
 
+DMindex=$(cat ./conf/conf_DMindex.txt)
+dmxsize=$(cat conf/conf_dm${DMindex}xsize.txt)
+dmysize=$(cat conf/conf_dm${DMindex}ysize.txt)
+echo "DM size = $dmxsize $dmysize"
+
+
 if [ ! -f "./conf/HRM_DMmask.fits" ]; then
 Cfits << EOF
-readshmim aol${loopnb}_dmC
-imstats aol${loopnb}_dmC
-cx=0.5*imsize0-0.5
-cy=0.5*imsize1-0.5
-rad=0.5*imsize0+0.6
-mkdisk dmmask imsize0 imsize1 cx cy rad
+#readshmim aol${loopnb}_dmC
+#imstats aol${loopnb}_dmC
+cx=0.5*${dmxsize}-0.5
+cy=0.5*${dmysize}-0.5
+rad=0.5*${dmxsize}+0.6
+mkdisk dmmask ${dmxsize} ${dmysize} cx cy rad
 savefits dmmask "!./conf/HRM_DMmask.fits"
 itot(dmmask)
 exit

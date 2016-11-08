@@ -53,7 +53,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Example script\n" "$0" 
+    printf "%20s       AO find optimal AR linear predictive filter (single block)\n" "$0" 
 }
 
 

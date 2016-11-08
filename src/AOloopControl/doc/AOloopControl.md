@@ -77,6 +77,129 @@ Scripts in the `auxscripts` directory are called by aolconf to perform various t
 Script                         Description
 ------------------------------ -----------------------------------------------------------
 **acquRespM**                  Acquire response matrix
+
+**aolARPFautoApply**   
+
+**aolctr**
+
+**aolmcoeffs2dmmap**
+
+**aolmkmodes**
+
+**aolRMmeas_sensitivity**
+
+**cmmake**
+
+**MeasDMmodesRec**
+
+**modesextract0**         
+
+**selectLatestTelemetry**
+
+**xp2test**
+
+**alignPcam**
+
+**aolARPFautoUpdate**  
+
+**aol_dmCave**
+
+**aolMeasureLOrespmat**  
+
+**aolmkWFSres**      
+
+**aolrun**                 
+
+**cmmake1**
+
+**MeasLoopModeResp**
+
+**modesextract1**
+
+**setMultRange**
+
+**xptest**
+
+**alignPyrTT**
+
+**aolARPFblock**
+
+**aolgetshmimsize**
+
+**aolMeasureZrespmat**
+
+**aolmon**
+
+**aolscangain**
+
+**fitactmappup**
+
+**MeasureLatency**
+
+**modesextractwfs**
+
+**setTTmult**
+
+**aolApplyARPF**
+
+**aolblockstats**
+
+**aollindm2wfsim**
+
+**aolMergeRMmat**
+
+**aoloffloadloop**
+
+**aolSetmcLimit**
+
+**Fits2shm**
+
+**mkDMslaveAct**
+
+**modesTTextact**
+
+**shmimzero**
+
+**aolApplyARPFblock**
+
+**aolCleanLOrespmat**
+
+**aolLinSim**
+
+**aolmkLO_DMmodes**
+
+**aolReadConfFile**
+
+**aolWFSresoffloadloop**
+
+**fits2shmim**
+
+**mkDMslaveActprox**
+
+**processTelemetryPSDs**
+
+**waitforfilek**
+
+**aolARPF**
+
+**aolCleanZrespmat**
+
+**aollinsimDelay**
+
+**aolmkMasks**
+
+**aolRM2CM**
+
+**aolzploopon**
+
+**listrunproc**
+
+**mkHpoke**
+
+**script_aol2test**
+
+**waitonfile**
+
 ------------------------------ -----------------------------------------------------------
 
 
@@ -299,16 +422,6 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 # AOloopControl setup
 
 
-## Files 
-
-SM = shared memory
-
-
----------------------------------- -------------- -----------------------------------------------------------
-File                               stream         Description
----------------------------------- -------------- -----------------------------------------------------------
-**./conf/HRM_DMmask.fits**                        DM mask to construct Hadamard RM pokes, created by **auxscripts/mkHpoke** if not present
----------------------------------- -------------- -----------------------------------------------------------
 
 
 

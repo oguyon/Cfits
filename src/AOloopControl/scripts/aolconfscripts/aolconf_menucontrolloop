@@ -1343,7 +1343,6 @@ tmux new-session -d -s aol${LOOPNUMBER}-run
 tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m
 logRunningProcess "aolrun" "aol${LOOPNUMBER}-run" "AO loop real-time loop"
 tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
-echo "./aolrun" > cmd00.txt
 
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m

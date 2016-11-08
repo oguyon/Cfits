@@ -5,7 +5,7 @@
 NBARGS=1
 
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
+#echo "pname = $pname"
 
 
 

@@ -209,18 +209,57 @@ echo "Mirror" > conf/conf_fpmmaterial.txt
 # hexagonal tiling
 echo "2" > conf/conf_FPMsectors.txt
 
-# outer radius = 2.0 l/D
-echo "2.0" > conf/conf_maskradld.txt
 
-# Number of rings
-echo "32" > conf/conf_NBrings.txt
 
+
+echo "3.0" > conf/conf_maskradld.txt    # outer radius = 3.0 l/D
+echo "32" > conf/conf_NBrings.txt		# Number of rings
 echo "-2.0e-6" > conf/conf_fpmminsag.txt
 echo "2.0e-6" > conf/conf_fpmmaxsag.txt
+echo "50" > conf/conf_ssize.txt
+echo "1.0" > conf/conf_fpmregsag_coeff.txt
 
 
 # START FOCAL PLANE MASK DESIGN
-./run optsingle 200
+time ./run optsingle 200
+
+# measured contrast performance is 2nd number in ContrastVal_....
+
+#  rings    mask rad    source     regularization    value                         unresolved         0.001 l/D       0.01 l/D       0.03 l/D
+
+# 32 rings  3.0 l/D   ssize=50      reg=0.01  ->    3.8724e-08, Average contrast = 5.61627e-08		3.66916e-08		9.15693e-08		5.39727e-07
+# 32 rings  3.0 l/D   ssize=50      reg=0.1   ->    1.0065e-09, Average contrast = 6.29330e-09		3.55166e-09		6.80190e-08		5.93530e-07
+# 32 rings  3.0 l/D   ssize=50      reg=1.0   ->    2.8193e-10, Average contrast = 4.94036e-09		2.67363e-09		6.00026e-08		5.27830e-07
+# 32 rings  3.0 l/D   ssize=50      reg=10.0  ->    2.4695e-10, Average contrast = 4.65744e-09 					
+# 32 rings  3.0 l/D   ssize=50      reg=100.0 ->    2.1154e-10, Average contrast = 4.35287e-09
+
+# 32 rings  3.0 l/D   ssize=20      reg=0.01  ->	4.1832e-08, Average contrast = 7.04972e-08		4.40613e-08		7.05408e-08		2.88584e-07
+# 32 rings  3.0 l/D   ssize=20      reg=0.1   ->	3.1043e-09, Average contrast = 2.32142e-08		1.26858e-08		2.77492e-08		1.53159e-07
+# 32 rings  3.0 l/D   ssize=20      reg=1.0   ->	1.9625e-09, Average contrast = 2.65421e-08		1.42888e-08		3.27611e-08		1.85560e-07
+# 32 rings  3.0 l/D   ssize=20      reg=10.0  ->	1.8084e-09, Average contrast = 2.72116e-08	
+# 32 rings  3.0 l/D   ssize=20      reg=100.0 ->	1.6206e-09, Average contrast = 1.92244e-08
+
+# adding 4nm RMS of astig (0.01 l/D at 400nm)
+# 32 rings  3.0 l/D   ssize=50      reg=0.01  ->	1.6562e-07, Average contrast = 6.95957e-07 
+# 32 rings  3.0 l/D   ssize=50      reg=0.1   ->    6.9933e-08, Average contrast = 3.97405e-07 
+# 32 rings  3.0 l/D   ssize=50      reg=1.0   ->    6.3399e-08, Average contrast = 3.98679e-07		4.35282e-07		4.99133e-07		1.01478e-06
+
+# Testing astig solution on astig-free configuration
+# cp ../../PIAACMC1024_WFIRSTast/piaacmcconf_i000/fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits .
+# cp ../../PIAACMC1024_WFIRSTast/piaacmcconf_i000/fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits .
+# 32 rings  3.0 l/D   ssize=50      reg=1.0   ->                Average contrast = 3.98679e-07		2.20694e-07		3.16471e-07		1.08995e-06
+
+# Testing astig-free solution on astig configuration
+# 32 rings  3.0 l/D   ssize=50      reg=1.0   ->                                                  	2.18580e-06		2.22402e-06		2.53591e-06
+
+
+# 64 rings  4.0 l/D   ssize=50      reg=10.0  ->    3.5759e-08, Average contrast = 5.48219e-07
+# 64 rings  4.0 l/D   ssize=50      reg=100.0 ->    2.8548e-08
+
+# 64 rings  4.0 l/D   ssize=20 
+# 64 rings  4.0 l/D   ssize=20      reg=100.0 ->   
+
+
 
 # this command will run for a few hrs if the number of focal plane mask zones is large
 # the complex amplitude response of each mask zone is computed 
@@ -235,17 +274,61 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 #
 
 # the optsingle 200 command includes both the creation of the FPMresp file (which is skipped if the file already exists) and a search for the optimal solution
+#
 # Finding the optimal solution requires multiple searches, so you can re-launch the optsingle 200 command multiple time
 # Results are written in a file names piaacmcconf_i000/mode13_....opt.txt
 # the 5th number (in parentheses) shows the best solution 
+#
+# The focal plane mask solution is stored as:
+# fpm_zonez_s2_l0565_sr10_nbr032_mr200_minsag-01999_maxsag002000_ssr50_ssm0_Mirror_wb10.best.fits
+#
+#
+# to stop optimization loop:
+# touch piaacmcconf_i000/stoploop13.txt
+#
 
 
-# to compute the PSF and complex amplitudes for the best solution, execute:
+
+
+# to compute the on-axis PSF and complex amplitudes for the best solution, execute:
 ./run proppoly 0
-# this will take about 20mn
-# [1] Total light in scoring field = 791208, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.76162e-08
-# [1] Total light in scoring field = 789920, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.75875e-08
-# [1] Total light in scoring field = 724691, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.61352e-08
+# this will take about 3mn
+# OUTPUT :
+# [1] Total light in scoring field = 145297, peak PSF = 1.7878e+10, SCOTINGTOTAL = 2436  -> Average contrast = 3.33627e-09
+# FILES IN ./piaacmcconf_i000/
+# fpm_sagmap_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# psfi0_ptsrc_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+
+# to compute the on-axis PSF and complex amplitudes for the best solution, execute:
+./run eval0 18
+# result files written in ./eval0/
+
+
+# to compute PSF, point source and extended source
+./run eval1 18
+# takes 59mn
+# more accurate pt source measurement of contrast in ContrastVal_s2 ... , 2nd number
+# extended source (+ OPD err)
+# ContrastVal_extsrc20_.. and ContrastVal_extsrc15_
+# OUTPUT FILES:
+# psfi0_extsrc15_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# ContrastVal_extsrc15_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.txt
+# ContrastCurve_extsrc15_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.txt
+# 
+#
+
+
+# to test a different focal plane solution
+# save previous solution
+# cp fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save
+# cp fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save
+# replace solution
+# cp fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr20_ssm0_Mirror_wb10.fits fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# cp fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr20_ssm0_Mirror_wb10.fits fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# restore previous configuration
+# cp fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# cp fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+
 
 
 # focal plane mask solution :
@@ -257,5 +340,6 @@ echo "2.0e-6" > conf/conf_fpmmaxsag.txt
 # PSF:
 # psfi0.fits
 #
+
 
 

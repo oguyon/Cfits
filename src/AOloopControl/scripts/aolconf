@@ -12,7 +12,7 @@ fi
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
+#echo "pname = $pname"
 
 
 
@@ -34,7 +34,6 @@ echo "------------------------------------------------------------------------"
 
 printHELP ()
 {
-	
 echo
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname :  AO loop CONTROL - main script $(tput sgr0)"
@@ -46,13 +45,13 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary"
-echo "          -H  <string>   (H)elp category"
-echo "                    cf     configuration files"     
-echo "          -L <long>      (L)oop number"
-echo "          -N <string>    loop (N)ame"
-echo "          -C             run (C)PU config"
-echo "          -c             (c)lear all settings"
-echo "          -n             do (n)ot load configuration on startup"
+echo "   -H  <string>         (H)elp category"
+echo "                 cf     configuration files"     
+echo "   -L <long>            (L)oop number"
+echo "   -N <string>          loop (N)ame. Run ./aosetup/aosetup_<string> if available"
+echo "   -C                   run (C)PU config"
+echo "   -c                   (c)lear all settings"
+echo "   -n                   do (n)ot load configuration on startup"
 echo "------------------------------------------------------------------------"
 }
 
@@ -80,7 +79,8 @@ done
 
 
 LOADMEM=1
-
+LOOPNAME_file="LOOPNAME"
+LOOPNUMBER_file="LOOPNUMBER"
 
 ### Start getopts code ###
 while getopts :hH:L:N:Ccn FLAG; do
@@ -104,6 +104,7 @@ while getopts :hH:L:N:Ccn FLAG; do
     echo "LOOP NAME = $LOOPNAME"
     echo "$LOOPNAME" > $LOOPNAME_file
     aoconflog "setting LOOPNAME to $LOOPNAME"
+	./aosetup/aosetup_${LOOPNAME}
     ;;
     C) # configure CPU
     echo "Configure CPU"
@@ -119,14 +120,15 @@ while getopts :hH:L:N:Ccn FLAG; do
       ;;
     c) # clear
     echo "Clearing all settings"
-    rm $LOOPNUMBER_file
-    rm $LOOPNAME_file
-    rm conf/*
-    rmdir conf
-    rm status/*
-    rmdir status
-    rm tmp/*
-    rmdir tmp
+    rm LOOPNUMBER 2> /dev/null
+    rm LOOPNAME 2> /dev/null
+    rm conf/* 2> /dev/null
+    rmdir conf 2> /dev/null
+    rm status/* 2> /dev/null
+    rmdir status 2> /dev/null
+    rm tmp/* 2> /dev/null
+    rmdir tmp 2> /dev/null
+    rm aolconf.log 2> /dev/null
     exit
     ;;
     n) # do not load configuration upon startup

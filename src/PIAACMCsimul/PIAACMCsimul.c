@@ -3909,9 +3909,9 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 				PIAACMCsimul_makePIAAshapes(piaacmc, 0);
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
-                arith_image_add_inplace("psfi0ext","psfi0");
-	       	//	sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-			//	save_fits("psfi0", fname);
+                arith_image_add_inplace("psfi0ext", "psfi0");
+	       		sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex); //TEST
+				save_fits("psfi0", fname); //TEST
 				delete_image_ID("opderr");
 			}
 			
@@ -5557,6 +5557,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 	int tmpn1;
 	char userinputstr[100];
 	
+	long NBpt;
 
     // Create status shared variable
     // this allows realtime monitoring of the code by other processes
@@ -6955,7 +6956,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         printf("ldoffset = %f\n", ldoffset);
 
-
+		// compute off-axis POINT source
         valref = PIAACMCsimul_computePSF(5.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_x50_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
@@ -6989,6 +6990,8 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         free(peakarray);
         delete_image_ID("psfi0");
 
+
+		// compute on-axis POINT source
         valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
         sprintf(fname,"!%s/psfi0_x00_y00.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
@@ -7065,13 +7068,15 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 
         // measure pointing sensitivity
         IDps = create_3Dimage_ID("starim", piaacmc[0].size, piaacmc[0].size, zsize);
-
+		NBpt = 0;
+		
         valref = 0.25*PIAACMCsimul_computePSF(ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_p0.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+		NBpt++;
 
         valref += 0.25*PIAACMCsimul_computePSF(-ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_m0.fits", piaacmcconfdir);
@@ -7079,6 +7084,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+		NBpt++;
 
         valref += 0.25*PIAACMCsimul_computePSF(0.0, ldoffset, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_0p.fits", piaacmcconfdir);
@@ -7086,6 +7092,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+		NBpt++;
 
         valref += 0.25*PIAACMCsimul_computePSF(0.0, -ldoffset, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_0m.fits", piaacmcconfdir);
@@ -7093,13 +7100,9 @@ int PIAACMCsimul_exec(char *confindex, long mode)
         ID = image_ID("psfi0");
         for(ii=0; ii<xsize*ysize*zsize; ii++)
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+		NBpt++;
 
-        for(ii=0; ii<xsize*ysize*zsize; ii++)
-            data.image[IDps].array.F[ii] /= 4.0;
-
-        sprintf(fname, "!%s/psfi0_starim.fits", piaacmcconfdir);
-        save_fits("starim", fname);
-
+      
 	
 	
 	 // measure sensitivity to errors
@@ -7107,7 +7110,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 //	printf("Adding optional OPD error modes (%ld modes)\n", nbOPDerr);
 //	fflush(stdout);
 	// add error modes if any
-	for(OPDmode=0; OPDmode < nbOPDerr; OPDmode++)
+		for(OPDmode=0; OPDmode < nbOPDerr; OPDmode++)
 		{
 			size = data.image[IDopderrC].md[0].size[0];
 			IDopderr = create_2Dimage_ID("opderr", size, size);
@@ -7119,7 +7122,21 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 			sprintf(fname, "!%s/psfi0_opderr%02ld.fits", piaacmcconfdir, OPDmode);
 			save_fits("psfi0", fname);
 			delete_image_ID("opderr");
+			ID = image_ID("psfi0");
+			for(ii=0; ii<xsize*ysize*zsize; ii++)
+				data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+			NBpt++;
 		}
+		
+		
+		for(ii=0; ii<xsize*ysize*zsize; ii++)
+            data.image[IDps].array.F[ii] /= NBpt;
+
+        sprintf(fname, "!%s/psfi0_starim.fits", piaacmcconfdir);
+        save_fits("starim", fname);
+
+
+
 
         sprintf(fname, "!%s/psfi0_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
 

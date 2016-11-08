@@ -1,7 +1,7 @@
 #! /bin/bash
 
-EXPECTED_ARGS=6
-
+NBARGS=6
+pname=`echo "$0" | sed "s/\.\///g"`
 
 
 

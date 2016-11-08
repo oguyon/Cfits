@@ -1721,8 +1721,10 @@ else
 fi
 mv Hpoke.fits ./conf/Hpoke.fits
 cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
-cp Hpixindex.fits ./conf/RMpixindex.fits
-cp Hmat.fits ./conf/RMHmat.fits 
+mv Hpixindex.fits ./conf/
+cp ./conf/Hpixindex.fits ./conf/RMpixindex.fits
+mv Hmat.fits ./conf/
+cp ./conf/Hmat.fits ./conf/RMHmat.fits 
 aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;

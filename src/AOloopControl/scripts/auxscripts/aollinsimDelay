@@ -7,7 +7,7 @@ NBARGS=1
 # ======================= PROCESS NAME =================================
 pname="aol${loopnb}linsimD"
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 function printHELP {
@@ -32,6 +32,11 @@ echo "------------------------------------------------------------------------"
 }
 
 
+printHELP1 ()
+{
+    printf "%20s       INTRODUCE DM DELAY\n" "$0" 
+}
+
 
 
 
@@ -40,10 +45,30 @@ echo "------------------------------------------------------------------------"
 
 # ================= OPTIONS =============================
 
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
 while getopts :h FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     \?) #unrecognized option - show help

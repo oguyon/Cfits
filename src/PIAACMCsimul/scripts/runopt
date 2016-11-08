@@ -380,6 +380,7 @@ fi
 
 
 # compute polychromatic PSF for extended source
+
 if [ $computecontrast -gt 1 ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
