@@ -426,6 +426,17 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "tz" "Zero TT align" )
 
+menuitems+=( "tst0" "alignment step = 0.05" )
+menuitems+=( "tst1" "alignment step = 0.1" )
+menuitems+=( "tst2" "alignment step = 0.2" )
+menuitems+=( "tst3" "alignment step = 0.5" )
+menuitems+=( "txm" "TT x -$TTstep (right)" )
+menuitems+=( "txp" "TT x +$TTstep (left)" )
+menuitems+=( "tym" "TT y -$TTstep (top)" )
+menuitems+=( "typ" "TT y +$TTstep (bottom)" )
+
+
+
 if [ "$TTloopstat" = "OFF" ]; then
 menuitems+=( "ts" "Start TT align" )
 menuitems+=( "" "" )
@@ -444,6 +455,12 @@ fi
 menuitems+=( "tg" "py TT loop gain = ${pyTTloopgain}")
 menuitems+=( "tm" "Monitor TT align tmux session")
 menuitems+=( "" "" )
+
+
+
+
+
+
 
 stringcenter "Pyramid Camera Align"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
@@ -726,6 +743,60 @@ menualign_default="tz"
 state="menualign"
 ;;
 
+        tst0)
+TTstep="0.05"
+menualign_default="tst0"
+state="menualign"
+;;
+        tst1)
+TTstep="0.1"
+menualign_default="tst1"
+state="menualign"
+;;
+        tst2)
+TTstep="0.2"
+menualign_default="tst2"
+state="menualign"
+;;
+        tst3)
+TTstep="0.5"
+menualign_default="tst3"
+state="menualign"
+;;
+        txm)
+TTposX=$( cat status/stat_AnalogVoltage_C.txt )
+TTposXn=$( echo "$TTposX-$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput C $TTposXn
+aoconflog "TT move x ${TTposXn}"
+menualign_default="txm"
+state="menualign"
+;;
+        txp)
+TTposX=$( cat status/stat_AnalogVoltage_C.txt )
+TTposXn=$( echo "$TTposX+$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput C $TTposXn
+aoconflog "TT move x ${TTposXn}"
+menualign_default="txp"
+state="menualign"
+;;
+        tym)
+TTposY=$( cat status/stat_AnalogVoltage_D.txt )
+TTposYn=$( echo "$TTposY-$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput D $TTposYn
+aoconflog "TT move y ${TTposYn}"
+menualign_default="tym"
+state="menualign"
+;;
+        typ)
+TTposY=$( cat status/stat_AnalogVoltage_D.txt )
+TTposYn=$( echo "$TTposY+$TTstep" | bc )
+./aocustomscripts/SCExAO_analogoutput D $TTposYn
+aoconflog "TT move y ${TTposYn}"
+menualign_default="typ"
+state="menualign"
+;;
+
+
 	ts)
 aoconflogext "TT align loop start"
 rm stop_PyAlignTT.txt
@@ -777,6 +848,7 @@ menualign_default="ts"
 state="menualign"
 ;;
 	tm) tmux a -t alignPyrTT ;; 
+
 	pz)
 aoconflogext "Pupil align zero"
 pywfs_pup x home
