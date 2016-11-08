@@ -717,11 +717,15 @@ pywfs_pickoff ${pypickoff}
 
 	tz)
 aoconflogext "TT align zero"
-analog_output.py voltage C -5.0
-analog_output.py voltage D -5.0
+
+./scripts/aocustomscripts/SCExAO_analogoutput C -5.0
+./scripts/aocustomscripts/SCExAO_analogoutput D -5.0
+#analog_output.py voltage C -5.0
+#analog_output.py voltage D -5.0
 menualign_default="tz"
 state="menualign"
 ;;
+
 	ts)
 aoconflogext "TT align loop start"
 rm stop_PyAlignTT.txt
@@ -737,6 +741,7 @@ echo " ON" > ./status/status_alignTT.txt
 menualign_default="tk"
 state="menualign"
 ;; 
+
   	 tr)
 aoconflogext "TT align loop resume" 
 rm pause_PyAlignTT.txt stop_PyAlignTT.txt

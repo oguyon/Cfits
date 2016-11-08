@@ -444,23 +444,26 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 aolconf -L 3 -N testsim
 ~~~~~
 
-The loop name (`testsim` in the above example) will allow the correct custom setup script to be used. The software package comes with a few pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran.
+The loop name (`testsim` in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran. The script may make some of the steps described below optional.
 
 
 
 
-- **Set DM number** (`S` command in `Top Menu` screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will need to enter the desired DM size and create the DM stream with the `initDM` command in the `Top Menu`.
+- **Set DM number** (`S` command in `Top Menu` screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the `initDM` command in the `Top Menu`.
 
-- **autoconfigure streams** (`nolink` in `Top Menu` screen). This command automactically sets up the following symbolic links:
-	- dm##disp03 is linked to aol#_dmC      (loop dm control channel)
-	- dm##disp00 is linked to aol#_dmO      (flat offset channel)
-	- dm##disp04 is linked to aol#_dmZP0    (zero point offset 0 actuation channel)
-	- dm##disp05 is linked to aol#_dmZP1    (zero point offset 1 actuation channel)
-	- dm##disp06 is linked to aol#_dmZP2    (zero point offset 2 actuation channel)
-	- dm##disp07 is linked to aol#_dmZP3    (zero point offset 3 actuation channel)
-	- dm##disp08 is linked to aol#_dmZP4    (zero point offset 4 actuation channel)
-	- dm##disp   is linked to aol#_dmdisp   (total dm displacement channel)
-	- dm##disp02 is linked to aol#_dmRM     (response matrix actuation channel)
+- **autoconfigure DM streams** 
+There are two possible setup configurations:
+	- **set physical DM** (`nolink` in `Top Menu` screen). This command automactically sets up the following symbolic links:
+		- dm##disp03 is linked to aol#_dmC      (loop dm control channel)
+		- dm##disp00 is linked to aol#_dmO      (flat offset channel)
+		- dm##disp04 is linked to aol#_dmZP0    (zero point offset 0 actuation channel)
+		- dm##disp05 is linked to aol#_dmZP1    (zero point offset 1 actuation channel)
+		- dm##disp06 is linked to aol#_dmZP2    (zero point offset 2 actuation channel)
+		- dm##disp07 is linked to aol#_dmZP3    (zero point offset 3 actuation channel)
+		- dm##disp08 is linked to aol#_dmZP4    (zero point offset 4 actuation channel)
+		- dm##disp   is linked to aol#_dmdisp   (total dm displacement channel)
+		- dm##disp02 is linked to aol#_dmRM     (response matrix actuation channel)
+	
 	
 - **load Memory** (`M` in `Top Menu` screen). The dm performs the symbolic links to the DM channels.
 

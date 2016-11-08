@@ -869,10 +869,12 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <li>start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</li>
 </ul>
 <pre><code>aolconf -L 3 -N testsim</code></pre>
-<p>The loop name (<code>testsim</code> in the above example) will allow the correct custom setup script to be used. The software package comes with a few pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran.</p>
+<p>The loop name (<code>testsim</code> in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran. The script may make some of the steps described below optional.</p>
 <ul>
-<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will need to enter the desired DM size and create the DM stream with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
-<li><strong>autoconfigure streams</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
+<li><p><strong>Set DM number</strong> (<code>S</code> command in <code>Top Menu</code> screen). If the DM stream exists, you should see its x and y size in the two lines below. If not, you will to enter the desired DM size and create the DM stream with the <code>initDM</code> command in the <code>Top Menu</code>.</p></li>
+<li><strong>autoconfigure DM streams</strong> There are two possible setup configurations:
+<ul>
+<li><strong>set physical DM</strong> (<code>nolink</code> in <code>Top Menu</code> screen). This command automactically sets up the following symbolic links:
 <ul>
 <li>dm##disp03 is linked to aol#_dmC (loop dm control channel)</li>
 <li>dm##disp00 is linked to aol#_dmO (flat offset channel)</li>
@@ -883,6 +885,7 @@ OUTARRAYSIZE             120               # output array size</code></pre></td>
 <li>dm##disp08 is linked to aol#_dmZP4 (zero point offset 4 actuation channel)</li>
 <li>dm##disp is linked to aol#_dmdisp (total dm displacement channel)</li>
 <li>dm##disp02 is linked to aol#_dmRM (response matrix actuation channel)</li>
+</ul></li>
 </ul></li>
 <li><p><strong>load Memory</strong> (<code>M</code> in <code>Top Menu</code> screen). The dm performs the symbolic links to the DM channels.</p></li>
 <li><p><strong>link to WFS camera</strong> (<code>wfs</code> to <code>Loop Configuration</code> screen). Select the WFS shared memory stream.</p></li>
