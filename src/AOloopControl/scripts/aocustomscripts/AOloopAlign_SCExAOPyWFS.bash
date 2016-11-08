@@ -430,10 +430,10 @@ menuitems+=( "tst0" "alignment step = 0.05" )
 menuitems+=( "tst1" "alignment step = 0.1" )
 menuitems+=( "tst2" "alignment step = 0.2" )
 menuitems+=( "tst3" "alignment step = 0.5" )
-menuitems+=( "txm" "TT x -$TTstep (right)" )
-menuitems+=( "txp" "TT x +$TTstep (left)" )
-menuitems+=( "tym" "TT y -$TTstep (top)" )
-menuitems+=( "typ" "TT y +$TTstep (bottom)" )
+menuitems+=( "txm" "TT x -$TTstep (PyWFS bottom left )" )
+menuitems+=( "txp" "TT x +$TTstep (PyWFS top    right)" )
+menuitems+=( "tym" "TT y -$TTstep (PyWFS top    left )" )
+menuitems+=( "typ" "TT y +$TTstep (PyWFS bottom right)" )
 
 
 
