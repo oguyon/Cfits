@@ -14,6 +14,9 @@ zrespMstat=" ON"
 tmuxname="aol${LOOPNUMBER}zrespM"
 echo " ON" > ./status/stat_zrespM.txt
 logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response matrix"
+
+echo "TESTSTEP 18"; read -n 1 #TEST
+
 tmux new-session -d -s $tmuxname
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
@@ -21,6 +24,8 @@ then # use option -r to re-use AO shared memory configuration
 else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
+
+echo "TESTSTEP 28"; read -n 1 #TEST
 
 echo "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded"

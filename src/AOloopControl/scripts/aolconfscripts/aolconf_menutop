@@ -441,7 +441,7 @@ echo "1" > "./conf/conf_dm2dm_mode.txt"
 echo "1" > "./conf/conf_dmwfsref_mode.txt"
 echo "0" > "./conf/conf_dmvolt_mode.txt"
 echo "2" > "./conf/conf_dmcombavemode.txt"
-menuitems1=( "0" "loop 0 (directory ../AOloop$i/)" )
+menuitems1=( "0" "loop 0 (directory ../AOloop0/)" )
 for i in 1 2 3 4 5 6 7 8 9;
         do
 menuitems1+=( "$i" "loop $i (directory ../AOloop$i/)" )
