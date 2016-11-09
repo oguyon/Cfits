@@ -752,7 +752,7 @@ Input channels are provided to offset the AO loop convergence point. By default,
 
 ### Zonal CPU-based zero point offset
 
-CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-08) and apply them to the `aolN_wfsref` stream. To activate this features, the user needs to :
+CPU-based zero point offsets will compute WFS offsets from the zero point offset DM channels (04-11) and apply them to the `aolN_wfsref` stream. To activate this features, the user needs to :
 
 - **Toggle the zero point offset loop process ON** (`LPzpo`) prior to starting the loop. 
 
@@ -764,6 +764,8 @@ Every time one of the activated DM channel changes, the corresponding wfs `aolN_
 
 
 ### GPU-based zero point offset
+
+A faster GPU-based zero point offset from DM to WFS is provided for each of the 8 offset channels. GPU-based and CPU-based offsetting for a single channel are mutually exclusive.
 
 
 ## WFS offsets

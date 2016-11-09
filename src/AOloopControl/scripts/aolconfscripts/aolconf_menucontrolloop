@@ -874,6 +874,89 @@ fi
 
 
 
+
+
+GPUzploopONstat0=$( cat ./status/stat_GPUzploopON0.txt )
+if [[ -f "./status/stat_GPUzploopON0.txt" && ( "GPU$zploopONstat0" = " ON" || "$GPUzploopONstat0" = "OFF" || "$GPUzploopONstat0" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON0.txt
+GPUzploopONstat0="OFF"
+fi
+
+
+GPUzploopONstat1=$( cat ./status/stat_GPUzploopON1.txt )
+if [[ -f "./status/stat_GPUzploopON1.txt" && ( "$GPUzploopONstat1" = " ON" || "$GPUzploopONstat1" = "OFF" || "$GPUzploopONstat1" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON1.txt
+GPUzploopONstat1="OFF"
+fi
+
+
+
+GPUzploopONstat2=$( cat ./status/stat_GPUzploopON2.txt )
+if [[ -f "./status/stat_GPUzploopON2.txt" && ( "$GPUzploopONstat2" = " ON" || "$GPUzploopONstat2" = "OFF" || "$GPUzploopONstat2" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON2.txt
+GPUzploopONstat2="OFF"
+fi
+
+
+GPUzploopONstat3=$( cat ./status/stat_GPUzploopON3.txt )
+if [[ -f "./status/stat_GPUzploopON3.txt" && ( "$GPUzploopONstat3" = " ON" || "$GPUzploopONstat3" = "OFF" || "$GPUzploopONstat3" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON3.txt
+GPUzploopONstat3="OFF"
+fi
+
+GPUzploopONstat4=$( cat ./status/stat_GPUzploopON4.txt )
+if [[ -f "./status/stat_GPUzploopON4.txt" && ( "$GPUzploopONstat4" = " ON" || "$GPUzploopONstat4" = "OFF" || "$GPUzploopONstat4" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON4.txt
+GPUzploopONstat4="OFF"
+fi
+
+GPUzploopONstat5=$( cat ./status/stat_GPUzploopON5.txt )
+if [[ -f "./status/stat_GPUzploopON5.txt" && ( "$GPUzploopONstat5" = " ON" || "$GPUzploopONstat5" = "OFF" || "$GPUzploopONstat5" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON5.txt
+GPUzploopONstat5="OFF"
+fi
+
+GPUzploopONstat6=$( cat ./status/stat_GPUzploopON6.txt )
+if [[ -f "./status/stat_GPUzploopON6.txt" && ( "$GPUzploopONstat6" = " ON" || "$GPUzploopONstat6" = "OFF" || "$GPUzploopONstat6" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON6.txt
+GPUzploopONstat6="OFF"
+fi
+
+GPUzploopONstat7=$( cat ./status/stat_GPUzploopON7.txt )
+if [[ -f "./status/stat_GPUzploopON7.txt" && ( "$GPUzploopONstat7" = " ON" || "$GPUzploopONstat7" = "OFF" || "$GPUzploopONstat7" = "WFS" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_GPUzploopON7.txt
+GPUzploopONstat7="OFF"
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 fname="./conf/conf_zpmultcoeff.txt"
 if [ -f "$fname" ]; then
 zpmultcoeff=$( cat ${fname} )
@@ -883,6 +966,7 @@ fi
 menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient" )
 
 
+if [ "${GPUzploopONstat0}" = "OFF" ]; then
 if [ "${zploopONstat0}" = "OFF" ];
 then
 menuitems+=( "zplon0" "   START DM->WFS zero point offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
@@ -891,7 +975,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff0" "\Z1\Zr    STOP DM->WFS zero point offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
+
+if [ "${GPUzploopONstat1}" = "OFF" ]; then
 if [ "${zploopONstat1}" = "OFF" ];
 then
 menuitems+=( "zplon1" "   START DM->WFS zero point offset loop #1 (\Z4${dmZP1}\Zn -> wfszpo1)" )
@@ -900,8 +989,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 1 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff1" "\Z1\Zr    STOP DM->WFS zero point offset loop #1\Zn (\Z4${dmZP1}\Zn -> wfszpo1)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 1 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
 
+if [ "${GPUzploopONstat2}" = "OFF" ]; then
 if [ "${zploopONstat2}" = "OFF" ];
 then
 menuitems+=( "zplon2" "   START DM->WFS zero point offset loop #2 (\Z4${dmZP2}\Zn -> wfszpo2)" )
@@ -910,8 +1003,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 2 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff2" "\Z1\Zr    STOP DM->WFS zero point offset loop #2\Zn (\Z4${dmZP2}\Zn -> wfszpo2)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 2 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
 
+if [ "${GPUzploopONstat3}" = "OFF" ]; then
 if [ "${zploopONstat3}" = "OFF" ];
 then
 menuitems+=( "zplon3" "   START DM->WFS zero point offset loop #3 (\Z4${dmZP3}\Zn -> wfszpo3)" )
@@ -920,8 +1017,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 3 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff3" "\Z1\Zr    STOP DM->WFS zero point offset loop #3\Zn (\Z4${dmZP3}\Zn -> wfszpo3)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 3 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
 
+if [ "${GPUzploopONstat4}" = "OFF" ]; then
 if [ "${zploopONstat4}" = "OFF" ];
 then
 menuitems+=( "zplon4" "   START DM->WFS zero point offset loop #4 (\Z4${dmZP4}\Zn -> wfszpo4)" )
@@ -930,8 +1031,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 4 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff4" "\Z1\Zr    STOP DM->WFS zero point offset loop #4\Zn (\Z4${dmZP4}\Zn -> wfszpo4)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 4 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
 
+if [ "${GPUzploopONstat5}" = "OFF" ]; then
 if [ "${zploopONstat5}" = "OFF" ];
 then
 menuitems+=( "zplon5" "   START DM->WFS zero point offset loop #5 (\Z4${dmZP5}\Zn -> wfszpo5)" )
@@ -940,8 +1045,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 5 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff5" "\Z1\Zr    STOP DM->WFS zero point offset loop #5\Zn (\Z4${dmZP5}\Zn -> wfszpo5)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 5 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
 
+if [ "${GPUzploopONstat6}" = "OFF" ]; then
 if [ "${zploopONstat6}" = "OFF" ];
 then
 menuitems+=( "zplon6" "   START DM->WFS zero point offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
@@ -950,8 +1059,12 @@ menuitems+=( " " "\Z1\ZrCHANNEL 6 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff6" "\Z1\Zr    STOP DM->WFS zero point offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
 fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 6 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
+fi
 
 
+if [ "${GPUzploopONstat7}" = "OFF" ]; then
 if [ "${zploopONstat7}" = "OFF" ];
 then
 menuitems+=( "zplon7" "   START DM->WFS zero point offset loop #7 (\Z4${dmZP7}\Zn -> wfszpo7)" )
@@ -959,6 +1072,9 @@ elif [ "${zploopONstat7}" = "WFS" ]; then
 menuitems+=( " " "\Z1\ZrCHANNEL 7 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff7" "\Z1\Zr    STOP DM->WFS zero point offset loop #7\4n (\Z4${dmZP7}\Zn -> wfszpo7)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 7 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\Zn" )
 fi
 
 
@@ -971,8 +1087,130 @@ menuitems+=( "zpz" "Zero DM zero point" )
 
 
 menuitems+=( " " " " )
-stringcenter "ZERO POINT (fast GPU-BASED)"
+stringcenter "ZONAL ZERO POINT (fast GPU-BASED)"
 menuitems+=( "8 ->" "\Zb\Zr$string\Zn" )
+
+
+
+if [ "${zploopONstat0}" = "OFF" ]; then
+if [ "${GPUzploopONstat0}" = "OFF" ];
+then
+menuitems+=( "GPUzplon0" "   START DM->WFS zero point GPU offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
+elif [ "${GPUzploopONstat0}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff0" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat1}" = "OFF" ]; then
+if [ "${GPUzploopONstat1}" = "OFF" ];
+then
+menuitems+=( "GPUzplon1" "   START DM->WFS zero point GPU offset loop #1 (\Z4${dmZP1}\Zn -> wfszpo1)" )
+elif [ "${GPUzploopONstat1}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 1 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff1" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #1\Zn (\Z4${dmZP1}\Zn -> wfszpo1)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 1 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat2}" = "OFF" ]; then
+if [ "${GPUzploopONstat2}" = "OFF" ];
+then
+menuitems+=( "GPUzplon2" "   START DM->WFS zero point GPU offset loop #2 (\Z4${dmZP2}\Zn -> wfszpo2)" )
+elif [ "${GPUzploopONstat2}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 2 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff2" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #2\Zn (\Z4${dmZP2}\Zn -> wfszpo2)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 2 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat3}" = "OFF" ]; then
+if [ "${GPUzploopONstat3}" = "OFF" ];
+then
+menuitems+=( "GPUzplon3" "   START DM->WFS zero point GPU offset loop #3 (\Z4${dmZP3}\Zn -> wfszpo3)" )
+elif [ "${GPUzploopONstat3}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 3 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff3" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #3\Zn (\Z4${dmZP3}\Zn -> wfszpo3)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 3 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat4}" = "OFF" ]; then
+if [ "${GPUzploopONstat4}" = "OFF" ];
+then
+menuitems+=( "GPUzplon4" "   START DM->WFS zero point GPU offset loop #4 (\Z4${dmZP4}\Zn -> wfszpo4)" )
+elif [ "${GPUzploopONstat4}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 4 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff4" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #4\Zn (\Z4${dmZP4}\Zn -> wfszpo4)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 4 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat5}" = "OFF" ]; then
+if [ "${GPUzploopONstat5}" = "OFF" ];
+then
+menuitems+=( "GPUzplon5" "   START DM->WFS zero point GPU offset loop #5 (\Z4${dmZP5}\Zn -> wfszpo5)" )
+elif [ "${GPUzploopONstat5}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 5 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff5" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #5\Zn (\Z4${dmZP5}\Zn -> wfszpo5)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 5 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat6}" = "OFF" ]; then
+if [ "${GPUzploopONstat6}" = "OFF" ];
+then
+menuitems+=( "GPUzplon6" "   START DM->WFS zero point GPU offset loop #6 (\Z4${dmZP6}\Zn -> wfszpo6)" )
+elif [ "${GPUzploopONstat6}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 6 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff6" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #6\Zn (\Z4${dmZP6}\Zn -> wfszpo6)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 6 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+if [ "${zploopONstat7}" = "OFF" ]; then
+if [ "${GPUzploopONstat7}" = "OFF" ];
+then
+menuitems+=( "GPUzplon7" "   START DM->WFS zero point GPU offset loop #7 (\Z4${dmZP7}\Zn -> wfszpo7)" )
+elif [ "${GPUzploopONstat7}" = "WFS" ]; then
+menuitems+=( " " "\Z1\ZrCHANNEL 7 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
+else
+menuitems+=( "GPUzploff7" "\Z1\Zr    STOP DM->WFS zero point offset GPU loop #7\4n (\Z4${dmZP7}\Zn -> wfszpo7)" )
+fi
+else
+menuitems+=( " " "\Z1\ZrCHANNEL 7 CURRENTLY USED FOR CPU-BASED ZONAL ZERO POINT\Zn" )
+fi
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "MODAL ZERO POINT (fast GPU-BASED)"
+menuitems+=( "9 ->" "\Zb\Zr$string\Zn" )
+
+
 
 
 file="./conf/conf_GPUdm2wfsref.txt"
@@ -995,15 +1233,15 @@ menuitems+=( "GPUd2wMoff" " [   ON  ] Modal WFS offset [->dm05] is ON (select to
 fi
 
 
-menuitems+=( " " " ")
-if [ "${GPUdm2wfsrefZ}" = "0" ];
-then
-menuitems+=( "GPUd2wZon" " [  OFF  ] Zonal WFS offset [dm07->] is OFF (select for DM ouput applied as WFS offset)" )
-fi
-if [ "${GPUdm2wfsrefZ}" = "1" ];
-then
-menuitems+=( "GPUd2wZoff" " [   ON  ] Zonal WFS offset [dm07->] is ON (select to de-activate)" )
-fi
+#menuitems+=( " " " ")
+#if [ "${GPUdm2wfsrefZ}" = "0" ];
+#then
+#menuitems+=( "GPUd2wZon" " [  OFF  ] Zonal WFS offset [dm07->] is OFF (select for DM ouput applied as WFS offset)" )
+#fi
+#if [ "${GPUdm2wfsrefZ}" = "1" ];
+#then
+#menuitems+=( "GPUd2wZoff" " [   ON  ] Zonal WFS offset [dm07->] is ON (select to de-activate)" )
+#fi
 
 
 
@@ -2712,6 +2950,346 @@ tmux send-keys -t $tmuxname "exit" C-m
 aoconflogext "zero the zero-point offset"
 	;;
 	
+
+
+
+
+
+
+
+
+
+
+
+    GPUzplon0)
+echo " ON" > ./status/stat_GPUzploopON0.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 0"
+tmuxname="aol${LOOPNUMBER}GPUzploop0"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop0" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP0" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
+menucontrolloop_default="GPUzploff0"
+;;
+
+    GPUzploff0)
+echo "OFF" > ./status/stat_GPUzploopON0.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 0"
+tmuxname="aol${LOOPNUMBER}GPUzploop0"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop0z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo0" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon0"
+;;
+
+
+
+
+    GPUzplon1)
+echo " ON" > ./status/stat_GPUzploopON1.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 1"
+tmuxname="aol${LOOPNUMBER}GPUzploop1"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP1 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
+menucontrolloop_default="GPUzploff0"
+;;
+
+    GPUzploff1)
+echo "OFF" > ./status/stat_GPUzploopON1.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 1"
+tmuxname="aol${LOOPNUMBER}GPUzploop1"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop1z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon1"
+;;
+
+
+
+    GPUzplon2)
+echo " ON" > ./status/stat_GPUzploopON2.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 2"
+tmuxname="aol${LOOPNUMBER}GPUzploop2"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop2" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP2" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP2 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo2 0 bogusname" C-m
+menucontrolloop_default="GPUzploff2"
+;;
+
+    GPUzploff2)
+echo "OFF" > ./status/stat_GPUzploopON2.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 2"
+tmuxname="aol${LOOPNUMBER}GPUzploop2"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop2z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo2" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon2"
+;;
+
+
+
+    GPUzplon3)
+echo " ON" > ./status/stat_GPUzploopON3.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 3"
+tmuxname="aol${LOOPNUMBER}GPUzploop3"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop3" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP3 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
+menucontrolloop_default="GPUzploff3"
+;;
+
+    GPUzploff3)
+echo "OFF" > ./status/stat_GPUzploopON3.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 3"
+tmuxname="aol${LOOPNUMBER}GPUzploop3"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop3z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon3"
+;;
+
+
+
+    GPUzplon4)
+echo " ON" > ./status/stat_GPUzploopON4.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 4"
+tmuxname="aol${LOOPNUMBER}GPUzploop4"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop4" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP4" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
+menucontrolloop_default="GPUzploff0"
+;;
+
+    GPUzploff4)
+echo "OFF" > ./status/stat_GPUzploopON4.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 4"
+tmuxname="aol${LOOPNUMBER}GPUzploop4"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop4z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo4" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon4"
+;;
+
+
+
+    GPUzplon5)
+echo " ON" > ./status/stat_GPUzploopON5.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 5"
+tmuxname="aol${LOOPNUMBER}GPUzploop0"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop5" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP5 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo5 0 bogusname" C-m
+menucontrolloop_default="GPUzploff5"
+;;
+
+    GPUzploff5)
+echo "OFF" > ./status/stat_GPUzploopON5.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 5"
+tmuxname="aol${LOOPNUMBER}GPUzploop5"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop5z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo5" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon5"
+;;
+
+
+
+    GPUzplon6)
+echo " ON" > ./status/stat_GPUzploopON6.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 6"
+tmuxname="aol${LOOPNUMBER}GPUzploop6"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop6" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP6 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo6 0 bogusname" C-m
+menucontrolloop_default="GPUzploff6"
+;;
+
+    GPUzploff6)
+echo "OFF" > ./status/stat_GPUzploopON6.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 6"
+tmuxname="aol${LOOPNUMBER}GPUzploop6"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop6z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo6" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon6"
+;;
+
+
+
+    GPUzplon7)
+echo " ON" > ./status/stat_GPUzploopON7.txt
+aoconflogext "STARTING GPU-based DM -> WFSref loop 7"
+tmuxname="aol${LOOPNUMBER}GPUzploop7"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop7" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
+tmux send-keys -t $tmuxname "listim" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP7 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo7 0 bogusname" C-m
+menucontrolloop_default="GPUzploff7"
+;;
+
+    GPUzploff7)
+echo "OFF" > ./status/stat_GPUzploopON7.txt
+aoconflogext "STOPPING GPU-based DM -> WFSref loop 7"
+tmuxname="aol${LOOPNUMBER}GPUzploop7"
+tmux send-keys -t $tmuxname "" C-c
+sleep 0.1
+tmux send-keys -t $tmuxname "exit" C-m
+sleep 0.1
+tmux kill-session -t $tmuxname
+
+tmuxname="aol${LOOPNUMBER}GPUzploop7z"
+tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo7" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+
+menucontrolloop_default="GPUzplon7"
+;;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	
     GPUd2wMon)
@@ -2724,9 +3302,9 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
 tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefRM" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp05 ${GPUzpoffsetM} aol${DMindex}_wfszpo3 0 bogus" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp05 ${GPUzpoffsetM} aol${DMindex}_wfszpo1 0 bogus" C-m
 menutop_default="GPUd2wMoff"
 ;;
 
@@ -2745,8 +3323,8 @@ tmuxname="GPUdm2wfsrefM_dm${DMindex}z"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo3" C-m
-tmux send-keys -t $tmuxname "imzero aol${DMindex}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "imzero aol${DMindex}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 
@@ -2754,9 +3332,13 @@ menutop_default="GPUd2wMon"
 ;;
 
 
+
+
+
+
 	
     GPUd2wZon)
-aoconflogext "(re) STARTING GPU-based DM -> WFSref loop 1"
+aoconflogext "(re) STARTING GPU-based DM -> WFSref loop"
 file="./conf/conf_GPUdm2wfsrefZ.txt"
 echo "1" > $file
 tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}"
@@ -2765,14 +3347,14 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${LOOPNUMBER}disp07" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM dm${LOOPNUMBER}disp07 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM dm${LOOPNUMBER}disp07 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
 menutop_default="GPUd2wZoff"
 ;;
 
     GPUd2wZoff)
-aoconflogext "STOPPING GPU-based DM -> WFSref loop 1"
+aoconflogext "STOPPING GPU-based DM -> WFSref loop"
 file="./conf/conf_GPUdm2wfsrefZ.txt"
 echo "0" > $file
 tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}"
@@ -2786,8 +3368,8 @@ tmuxname="GPUdm2wfsrefZ_dm${LOOPNUMBER}z"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
-tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 

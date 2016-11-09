@@ -3822,8 +3822,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
             // save the intensity of the first point
             copy_image_ID("psfi0", "psfi0ext", 0);
-			sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-			save_fits("psfi0", fname);
+			//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			//save_fits("psfi0", fname);
             
             // do the same for the second point
 			imindex++;
@@ -3835,8 +3835,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
             // add the intensity to build up PSF for extended source
             arith_image_add_inplace("psfi0ext", "psfi0");
-			sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-			save_fits("psfi0", fname);
+			//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			//save_fits("psfi0", fname);
 			
             // do the same for the third point
 			imindex++;
@@ -3848,8 +3848,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
             linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
             // add the intensity to build up PSF for extended source
             arith_image_add_inplace("psfi0ext", "psfi0");
-       		sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-			save_fits("psfi0", fname);
+       		//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+			//save_fits("psfi0", fname);
 			
             if (extmode==1)
             { // keep going for the other three points if desired, on the outer radius
@@ -3861,8 +3861,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext","psfi0");
-				sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-				save_fits("psfi0", fname);
+				//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				//save_fits("psfi0", fname);
 			
 
 				imindex++;
@@ -3873,8 +3873,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext", "psfi0");
-				sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-				save_fits("psfi0", fname);
+				//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				//save_fits("psfi0", fname);
 
 				imindex++;
 				sprintf(imname, "imvectp%02ld", imindex);
@@ -3884,8 +3884,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext", "psfi0");
-				sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
-				save_fits("psfi0", fname);
+				//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex);
+				//save_fits("psfi0", fname);
 			
                 // but multiply by 0.5 'cause we have twice as many points
 				//    arith_image_cstmult_inplace("psfi0ext", 0.5);
@@ -3910,8 +3910,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
                 OptSystProp_run(optsyst, 0, startelem, optsyst[0].NBelem, piaacmcconfdir, 0);
                 linopt_imtools_Image_to_vec("psfc0", "pixindex", "pixmult", imname);
                 arith_image_add_inplace("psfi0ext", "psfi0");
-	       		sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex); //TEST
-				save_fits("psfi0", fname); //TEST
+	       		//sprintf(fname, "!%s/psfi0_pt%03ld.fits", piaacmcconfdir, imindex); //TEST
+				//save_fits("psfi0", fname); //TEST
 				delete_image_ID("opderr");
 			}
 			
