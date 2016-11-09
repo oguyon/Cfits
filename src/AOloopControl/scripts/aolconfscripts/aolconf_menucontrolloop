@@ -1949,7 +1949,7 @@ menucontrolloop_default="wzpoinit"
   	 gb00)
   	 gi="00"
   	 value=${gainb[${gi}]}
-	 SelectValue01 100 1200 50
+	 SelectValue01 100 1800 50
   	 gainb[${10#gi}]=${value}
   	 echo "${gainb[10#${gi}]}" > ./conf/conf_gainb${gi}.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
