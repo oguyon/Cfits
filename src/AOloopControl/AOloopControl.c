@@ -8057,7 +8057,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 	
 	
 	
-	sleep(20);//TEST
+
 	
 	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
     fflush(stdout);
@@ -8065,7 +8065,6 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         AOloopControl_InitializeMemory(AOinitMode);
 	fflush(stdout);
 
-sleep(20);//TEST
 
 	
     //  sprintf(fname, "./conf/AOloop.conf");
