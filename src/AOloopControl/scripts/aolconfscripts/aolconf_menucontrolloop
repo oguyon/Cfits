@@ -524,6 +524,7 @@ if [[ -f "./status/stat_procON.txt" && ( "$procONstat" = " ON" || "$procONstat" 
 echo "OK"
 else
 echo "OFF" > ./status/stat_procON.txt
+procONstat="OFF"
 fi
 
 
@@ -670,6 +671,7 @@ if [ "$procONstat" = " ON" ]; then
    echo "OK"
    else
    echo "OFF" > ./status/stat_loopON.txt
+   loopONstat="OFF"
   fi
 
  if [ "${loopONstat}" = "OFF" ];
@@ -806,6 +808,7 @@ if [[ -f "./status/stat_zploopON0.txt" && ( "$zploopONstat0" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON0.txt
+zploopONstat0="OFF"
 fi
 
 
@@ -814,6 +817,7 @@ if [[ -f "./status/stat_zploopON1.txt" && ( "$zploopONstat1" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON1.txt
+zploopONstat1="OFF"
 fi
 
 
@@ -823,6 +827,7 @@ if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON2.txt
+zploopONstat2="OFF"
 fi
 
 
@@ -831,6 +836,7 @@ if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON3.txt
+zploopONstat3="OFF"
 fi
 
 zploopONstat4=$( cat ./status/stat_zploopON4.txt )
@@ -838,6 +844,7 @@ if [[ -f "./status/stat_zploopON4.txt" && ( "$zploopONstat4" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON4.txt
+zploopONstat4="OFF"
 fi
 
 zploopONstat5=$( cat ./status/stat_zploopON5.txt )
@@ -845,6 +852,7 @@ if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON5.txt
+zploopONstat5="OFF"
 fi
 
 zploopONstat6=$( cat ./status/stat_zploopON6.txt )
@@ -852,6 +860,7 @@ if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON6.txt
+zploopONstat6="OFF"
 fi
 
 zploopONstat7=$( cat ./status/stat_zploopON7.txt )
@@ -859,6 +868,7 @@ if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploop
 echo "OK"
 else
 echo "OFF" > ./status/stat_zploopON7.txt
+zploopONstat7="OFF"
 fi
 
 

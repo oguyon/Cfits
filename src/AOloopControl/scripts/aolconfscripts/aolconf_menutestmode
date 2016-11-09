@@ -183,9 +183,9 @@ menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop dela
 
 if [ "${lsimstatus}" = "OFF" ];
 then
-menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    \Zb\Zu ===== START linear simulator =====\ZB\ZU" )
+menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    \Zb\Zu ===== START linear simulator =====\ZB\ZU -> aol#_linsimWFS" )
 else
-menuitems+=( "lsimoff" "\Zr\Z2[runnning]\Zn    \Zr\Z1press to STOP  linear simulator\Zn" )
+menuitems+=( "lsimoff" "\Zr\Z2[runnning]\Zn    \Zr\Z1press to STOP  linear simulator\Zn -> aol#_linsimWFS" )
 fi
 
 
@@ -373,6 +373,7 @@ if [[ -f "./status/stat_mrecON.txt" && ( "$mrecONstat" = " ON" || "$mrecONstat" 
 echo "OK"
 else
 echo "OFF" > ./status/stat_mrecON.txt
+mrecONstat="OFF"
 fi
 if [ "$mrecONstat" = "OFF" ]; then
 menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
@@ -432,6 +433,7 @@ if [[ -f "./status/stat_dmmtrON.txt" && ( "$dmmtrONstat" = " ON" || "$dmmtrONsta
 echo "OK"
 else
 echo "OFF" > ./status/stat_dmmtrON.txt
+dmmtrONstat="OFF"
 fi
 if [ "$dmmtrONstat" = "OFF" ]; then
 menuitems+=( "dmmtr_on" "\Zb\Zu ==== START DM mode temporal response test ====\ZB\ZU" )

@@ -65,12 +65,12 @@ tmux send-keys -t ${tmuxname} "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
 fi
 
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
@@ -772,6 +772,7 @@ if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" 
 echo "OK"
 else
 echo "OFF" > ./status/stat_zrespM.txt
+zrespMstat="OFF"
 fi
 
 
@@ -834,6 +835,7 @@ if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$ac
 echo "OK"
 else
 echo "OFF" > ./status/stat_acquwfsref0.txt
+acquwfsref0stat="OFF"
 fi
 
 acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
@@ -902,6 +904,7 @@ if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF"
 echo "OK"
 else
 echo "OFF" > ./conf/conf_RMmodal.txt
+RMmodal="OFF"
 aoconflog "RMmodal not (properly) set -> SETTING TO OFF"
 fi
 

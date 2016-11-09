@@ -463,8 +463,12 @@ There are two possible setup configurations:
 		- dm##disp08 is linked to aol#_dmZP4    (zero point offset 4 actuation channel)
 		- dm##disp   is linked to aol#_dmdisp   (total dm displacement channel)
 		- dm##disp02 is linked to aol#_dmRM     (response matrix actuation channel)
+	- **set virtual DM**, which is a link to another DM (`dmolink` in `Top Menu` screen)
 	
+- **OPTIONAL: set DM delay** ('setDMdelayON' and 'setDMdelayval' in `Top Menu` screen)
 	
+- **(Re-)Start DM comb if needed** ('stopDM' and 'initDM' commands in `Top Menu` screen)
+
 - **load Memory** (`M` in `Top Menu` screen). The dm performs the symbolic links to the DM channels.
 
 - **link to WFS camera** (`wfs` to `Loop Configuration` screen). Select the WFS shared memory stream. 
