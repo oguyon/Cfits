@@ -8055,13 +8055,17 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
 	
+	
+	
+	sleep(20);//TEST
+	
 	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
     fflush(stdout);
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
 	fflush(stdout);
 
-
+sleep(20);//TEST
 
 	
     //  sprintf(fname, "./conf/AOloop.conf");
