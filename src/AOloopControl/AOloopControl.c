@@ -4865,7 +4865,7 @@ int AOloopControl_InitializeMemory(int mode)
     }
 
 
-	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
+	
 	
     AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
     if (AOconf == MAP_FAILED) {
@@ -4875,7 +4875,7 @@ int AOloopControl_InitializeMemory(int mode)
     }
     
    
-	printf("LINE TEST : %d    loop = %ld\n", __LINE__, loop); sleep(5);//TEST
+	
 	
     if((mode==0)||(create==1))
     {
@@ -4884,7 +4884,7 @@ int AOloopControl_InitializeMemory(int mode)
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
         AOconf[loop].init_CMc = 0;
-        printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
+        
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
         if((AOconf[loop].logdataID = image_ID(cntname))==-1)
         {
@@ -4896,7 +4896,7 @@ int AOloopControl_InitializeMemory(int mode)
         }
     }
 
-	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
+    
     if(create==1)
     {
         for(loop=0; loop<NB_AOloopcontrol; loop++)
@@ -4933,8 +4933,6 @@ int AOloopControl_InitializeMemory(int mode)
                 printf("DM RM:  %s  [%ld]  %ld x %ld\n", AOconf[loop].dmRMname, aoconfID_dmC, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
             }
     }
-
-		printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
 
     if(AOloopcontrol_meminit==0)
     {
@@ -4976,7 +4974,6 @@ int AOloopControl_InitializeMemory(int mode)
         }
     }
 
-	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
     AOloopcontrol_meminit = 1;
 
 
