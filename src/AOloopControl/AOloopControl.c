@@ -4862,6 +4862,8 @@ int AOloopControl_InitializeMemory(int mode)
         }
     }
 
+
+	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
 	
     AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
     if (AOconf == MAP_FAILED) {
@@ -4870,7 +4872,7 @@ int AOloopControl_InitializeMemory(int mode)
         exit(0);
     }
     
-    
+    	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
 	
     if((mode==0)||(create==1))
     {
@@ -4890,7 +4892,7 @@ int AOloopControl_InitializeMemory(int mode)
         }
     }
 
-
+	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
     if(create==1)
     {
         for(loop=0; loop<NB_AOloopcontrol; loop++)
@@ -4928,7 +4930,7 @@ int AOloopControl_InitializeMemory(int mode)
             }
     }
 
-	
+		printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
 
     if(AOloopcontrol_meminit==0)
     {
@@ -4970,7 +4972,7 @@ int AOloopControl_InitializeMemory(int mode)
         }
     }
 
-
+	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
     AOloopcontrol_meminit = 1;
 
 
@@ -8062,7 +8064,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
     fflush(stdout);
     
-    sleep(10);//TEST
+   
     
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
@@ -8075,8 +8077,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 	printf("LOAD/CONFIGURE loop ...\n");
     fflush(stdout);
     
-    sleep(10); //TEST
-    
+
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
 	
 
