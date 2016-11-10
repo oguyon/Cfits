@@ -4872,7 +4872,8 @@ int AOloopControl_InitializeMemory(int mode)
         exit(0);
     }
     
-    	printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
+   
+	printf("LINE TEST : %d    loop = %ld\n", __LINE__, loop); sleep(5);//TEST
 	
     if((mode==0)||(create==1))
     {
@@ -4881,6 +4882,7 @@ int AOloopControl_InitializeMemory(int mode)
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
         AOconf[loop].init_CMc = 0;
+        printf("LINE TEST : %d\n", __LINE__); sleep(5);//TEST
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
         if((AOconf[loop].logdataID = image_ID(cntname))==-1)
         {
