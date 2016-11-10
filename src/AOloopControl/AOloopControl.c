@@ -4820,6 +4820,8 @@ int AOloopControl_InitializeMemory(int mode)
     int ret;
     char fname[200];
 
+	loop = LOOPNUMBER;
+
     SM_fd = open(AOconfname, O_RDWR);
     if(SM_fd==-1)
     {
@@ -8061,7 +8063,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 	
 	
 	
-
+	
 	
 	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
     fflush(stdout);
