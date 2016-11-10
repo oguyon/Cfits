@@ -8,6 +8,20 @@ fi
 
 
 
+# DM mode
+# ZONAL : physical actuators on spatial coordinates
+# MODAL : each DM actuiator represents a single WF mode
+DMMODEfile="conf/conf_DMMODE.txt"
+if [ -f $DMMODEfile ]; then
+DMMODE=$( cat ${DMMODEfile} )
+else
+DMMODE="ZONAL"
+echo "$DMMODE" > $DMMODEfile
+fi
+
+
+
+
 
 function function_zresp_on {
 zrespMstat=" ON"
@@ -54,28 +68,36 @@ mkdir -p wfsref
 mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
-mkdir -p dmmask
 mkdir -p wfsmask
+
+if [ "$DMMODE" = "ZONAL" ]; then
+mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+fi
 
+if [ "$DMMODE" = "ZONAL" ]; then
 if [ "$MASKS_LOCK" -eq "1" ]; then
 tmux send-keys -t ${tmuxname} "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
 tmux send-keys -t ${tmuxname} "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
 fi
+fi
+
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
-
 tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
+tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
+fi
 
 
 #if [ "$MASKS_LOCK" -eq "1" ]; then
@@ -116,11 +138,15 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmap" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmask" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmaskRM" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmslaved\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
+fi
+
 tmux send-keys -t $1 "rm SMloadzrm.runproc" C-m
 }
 
@@ -214,12 +240,16 @@ echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
 mv dmmap.fits ./${dir}/
 echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
 mv wfsmap.fits ./${dir}/
+
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
 mv dmmaskRM.fits ./${dir}/
 echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
 mv dmslaved.fits ./${dir}/
 echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
 mv dmmask.fits ./${dir}/
+fi
+
 }
 
 
@@ -236,12 +266,15 @@ tmux send-keys -t $1 "echo \"dmmap/dmmap_${datestr}.fits\" > ./${dir}/conf_dmmap
 tmux send-keys -t $1 "mv dmmap.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"wfsmask/wfsmask_${datestr}.fits\" > ./${dir}/conf_wfsmask_name.txt" C-m
 tmux send-keys -t $1 "mv wfsmap.fits ./${dir}/" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t $1 "echo \"dmmaskRM/dmmaskRM_${datestr}.fits\" > ./${dir}/conf_dmmaskRM_name.txt" C-m
 tmux send-keys -t $1 "mv dmmaskRM.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"dmslaved/dmslaved_${datestr}.fits\" > ./${dir}/conf_dmslaved_name.txt" C-m
 tmux send-keys -t $1 "mv dmslaved.fits ./${dir}/" C-m
 tmux send-keys -t $1 "echo \"dmmask/dmmask_${datestr}.fits\" > ./${dir}/conf_dmmask_name.txt" C-m
 tmux send-keys -t $1 "mv dmmask.fits ./${dir}/" C-m
+fi
 }
 
 
@@ -637,7 +670,7 @@ menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LO
 
 
 
-
+if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( " " " " )
 
 
@@ -655,7 +688,9 @@ menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to 
 else
 menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock OFF" )
 fi
-
+else
+MASKS_LOCK="0"
+fi
 
 
 
@@ -670,17 +705,21 @@ ACzrmtime=$( cat ./conf/conf_ACzrmtime.txt )
 fi
 menuitems+=( "sACzrmt" "            zonal RM running time                 ${ACzrmtime} sec" )
 
+if [ "$DMMODE" = "ZONAL" ]; then
 ACmrmtime="60.0"
 if [ -f "./conf/conf_ACmrmtime.txt" ]; then
 ACmrmtime=$( cat ./conf/conf_ACmrmtime.txt )
 fi
 menuitems+=( "sACmrmt" "            modal RM running time                 ${ACmrmtime} sec" )
+fi
 
 
 if [ -f "autocalibration.runproc" ]; then
 menuitems+=( "ACstopK" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
 menuitems+=( "ACstopZ" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
+if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( "ACstopM" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
+fi
 else
 menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn" )
 menuitems+=( " " " " )
@@ -735,6 +774,7 @@ menuitems+=( "zrespM" "$menustring" )
 menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
+if [ "$DMMODE" = "ZONAL" ]; then
 if [ -f "./conf/conf_RMpokeMode.txt" ]; then
 RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
 else
@@ -751,7 +791,10 @@ menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
 else
 menuitems+=( "Hoff" "\Zr\Z2Hadamard mode is ON\Zn    press to turn off")
 fi
-
+else
+RMpokeMode=0
+menuitems+=( " " " " )
+fi
 
 
 if [ -f "./conf/conf_WFSnormalize.txt" ]; then
@@ -817,6 +860,7 @@ menuitems+=( "wfsM" "$menustring" )
 makemenuitemstringaolshm "dmmap" "DM influence map"
 menuitems+=( "dmmap" "$menustring" )
 
+if [ "$DMMODE" = "ZONAL" ]; then
 makemenuitemstringaolshm "dmmaskRM" "DM actuator mask"
 menuitems+=( "dmMrm" "$menustring" )
 
@@ -825,6 +869,7 @@ menuitems+=( "dmSlM" "$menustring" )
 
 makemenuitemstringaolshm "dmmask" "extended DM act mask"
 menuitems+=( "dmM" "$menustring" )
+fi
 
 makemenuitemstringaolshm "wfsref0" "WFS reference"
 menuitems+=( "wfsref0" "$menustring" )
@@ -855,6 +900,7 @@ fi
 
 menuitems+=(" " " ")
 
+if [ "$DMMODE" = "ZONAL" ]; then
 DMmaskRMp0=0.2
 if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
 DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
@@ -885,7 +931,12 @@ menuitems+=("mkAOmasks" "(re-)create AO masks")
 else
 menuitems+=(" " "CANNOT (re-)create AO masks in AO mask LOCK mode")
 fi
-
+else
+DMmaskRMp0=0
+DMmaskRMc0=0
+DMmaskRMp1=0
+DMmaskRMc1=0
+fi
 
 
 menuitems+=(" " " ")
@@ -894,7 +945,7 @@ menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 
-
+if [ "$DMMODE" = "ZONAL" ]; then
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL)"
@@ -977,7 +1028,7 @@ then
 
 fi
 
-
+fi
 
 
 
@@ -1421,24 +1472,32 @@ aoconflogext "set auto calib mrm time to $ACmrmtime sec"
 ;;
 
 ACstopK)
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux kill-session -t aol2LOrespM
 tmux kill-session -t aol2LOrespMc
+fi
 tmux kill-session -t aol2zrespM
 tmux kill-session -t aol2zrespMc
+if [ "$DMMODE" = "ZONAL" ]; then
 rm function_LOresp_on_tmux.lock
 rm function_LOresp_off_tmux.lock
 rm aolCleanLOrespmat.runproc  
 rm aolMeasureLOrespmat.runproc  
 rm aolupmrm.runproc  
+fi
 rm autocalibration.runproc  
+if [ "$DMMODE" = "ZONAL" ]; then
 rm SMloadmrm.runproc
+fi
 rm aolCleanZrespmat.runproc   
 rm aolMeasureZrespmat.runproc   
 rm aolupzrm.runproc
 rm SMloadzrm.runproc
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 echo "OFF" > ./status/stat_zrespM.txt 
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "OFF" > ./status/stat_LOrespM.txt
+fi
 menucontrolloop_default="AUTOC"
 ;;
 
@@ -1457,7 +1516,9 @@ AUTOC)
 dirnb=20
 i0=`( printf "%03d" "$dirnb" )`
 rm -rf conf_zrm_staged.$i0
+if [ "$DMMODE" = "ZONAL" ]; then
 rm -rf conf_mrm_staged.$i0
+fi
 
 while [ $dirnb -gt 0 ]; do
 i=$(($dirnb))
@@ -1465,22 +1526,29 @@ i1=$(($dirnb-1))
 is=`( printf "%03d" "$i" )`
 i1s=`( printf "%03d" "$i1" )`
 mv conf_zrm_staged.$i1s conf_zrm_staged.$is
+if [ "$DMMODE" = "ZONAL" ]; then
 mv conf_mrm_staged.$i1s conf_mrm_staged.$is
+fi
 let dirnb-=1
 done    
  
 cp -rf conf_zrm_staged conf_zrm_staged.000
+if [ "$DMMODE" = "ZONAL" ]; then
 cp -rf conf_mrm_staged conf_mrm_staged.000
-
+fi
 
 logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
 touch function_LOresp_on_tmux.lock
+if [ "$DMMODE" = "ZONAL" ]; then
 touch function_LOresp_off_tmux.lock
+fi
 function_zresp_on
 function_zresp_off $ACzrmtime
 tmuxname="aol${LOOPNUMBER}zrespMc"
 function_upzrm_tmux ${tmuxname}
 function_SMloadzrm_tmux ${tmuxname}
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t ${tmuxname} "rm function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off_tmux.lock" C-m
 
@@ -1496,6 +1564,7 @@ function_SMloadmrm_tmux ${tmuxname}
 tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 else
 tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
+fi
 fi
 ;;
 
@@ -1615,12 +1684,13 @@ done
 
 done
 
+if [ "$DMMODE" = "ZONAL" ]; then
 cp "${confname}/RMpoke.fits" ./conf/
 cp "${confname}/Hpoke.fits" ./conf/
 cp "${confname}/RMHmat.fits" ./conf/
 cp "${confname}/RMpixindex.fits" ./conf/
 cp "${confname}/RMpokeCube.fits" ./conf/
-
+fi
 
 AOloadMem 1
 else
@@ -1768,28 +1838,36 @@ mkdir -p wfsref
 mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
-mkdir -p dmmask
 mkdir -p wfsmask
+
+if [ "$DMMODE" = "ZONAL" ]; then
+mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+fi
 
+if [ "$DMMODE" = "ZONAL" ]; then
 if [ "$MASKS_LOCK" -eq "1" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmmask.LOCK.fits dmmask.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmmaskRM.LOCK.fits dmmaskRM.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/dmslaved.LOCK.fits dmslaved.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp ./conf/wfsmask.LOCK.fits wfsmask.fits" C-m
 fi
+fi
+
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
+tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+fi
 
 
 #if [ "$MASKS_LOCK" -eq "1" ]; then
@@ -1889,10 +1967,13 @@ mkdir -p wfsref
 mkdir -p wfsref0
 mkdir -p wfsmap
 mkdir -p dmmap
-mkdir -p dmmask
 mkdir -p wfsmask
+
+if [ "$DMMODE" = "ZONAL" ]; then
+mkdir -p dmmask
 mkdir -p dmmaskRM
 mkdir -p dmslaved
+fi
 
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -1901,17 +1982,26 @@ tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsref0.fits wfsref0/wfsref0_${dat
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
+
+if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
+fi
+
+
 echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
 echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
 echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
 echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
 echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
+
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
 echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
 echo "dmmaskRM/dmmask_${datestr}.fits" > ./conf/conf_dmmask_name.txt
+fi
+
 rm zrmcust.run
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "touch zrmcust.run" C-m
 tmux send-keys -t aol${LOOPNUMBER}zrmcust "exit" C-m

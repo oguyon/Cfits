@@ -59,14 +59,14 @@ echo "0" > $file
 PForder=$(cat $file)
 fi
 
-menuitems+=( "PFord" "[$PForder] Select Predictive Filter order (latency = $lat)" )
-menuitems+=( " " " ")
+menuitems+=( "PFord" "[$PForder] Select Predictive Filter order" )
+menuitems+=( " " " latency = $lat frames")
 
 
 menuitems+=( "sellat" "Select Latest telemetry files for filter computation" )
 fname=$(ls -lh ./PredictiveControl/modeval_ol.fits )
 fnamel=$( echo $fname |  awk '{print $NF}' )
-menuitems+=( "" "$fnamel" )
+menuitems+=( "" "FILE : $fnamel" )
 menuitems+=( "mkPSDs" "Create open and closed loop PSDs of selected OL / CL telemetry" )
 menuitems+=( "" "" )
 

@@ -171,6 +171,7 @@ long AOloopControl_mkloDMmodes(char *ID_name, long msizex, long msizey, float CP
 long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim);
 long AOloopControl_mkSlavedAct(char *IDmaskRM_name, float pixrad, char *IDout_name);
 long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim);
+long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim);
 
 int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart);
 int compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim);

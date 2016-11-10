@@ -320,6 +320,16 @@ int AOloopControl_mkModes_cli()
 }
 
 
+int AOloopControl_mkModes_Simple_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0)
+        AOloopControl_mkModes_Simple(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
+    else
+        return 1;
+}
+
+
+
 
 int AOloopControl_camimage_extract2D_sharedmem_loop_cli()
 {
@@ -1075,6 +1085,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].syntax,"<output modes> <sizex> <sizey> <max CPA> <delta CPA> <cx> <cy> <r0> <r1> <masking mode> <block> <SVDlim>");
     strcpy(data.cmd[data.NBcmd].example,"aolmkmodes modes 50 50 5.0 0.8 1 2 0.01");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolmkmodesM");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkModes_Simple_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make control modes in modal DM mode");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input WFS modes> <NBmblock> <block> <SVDlim>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmkmodesM wfsallmodes 5 2 0.01");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim)");
     data.NBcmd++;
 
 
@@ -4324,6 +4344,217 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     // time : 07:43
 
     return(ID);
+}
+
+
+
+
+
+
+
+
+
+
+
+long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, float SVDlim)
+{
+	long IDin; // input WFS responses
+	FILE *fp;
+	long mblock;
+	long *MBLOCK_NBmode;
+	long *MBLOCK_blockstart;
+	long *MBLOCK_blockend;
+	char fname[500];
+	int ret;
+	char imname[500];
+	char imname1[500];
+	long ID;
+	long wfsxsize, wfsysize;
+	long wfssize;
+	long ii, kk;
+	char imnameCM[500];
+	char imnameCMc[500];
+	char imnameCMcact[500];
+	long IDwfsmask;
+	long IDdmmask;
+	long IDmodes;
+	long NBmodes;
+	long cnt;
+	long IDm;
+	long IDmwfs;
+	long m;
+	long IDcmat;
+	long IDcmatall;
+	char command[500];
+	
+	
+	printf("Function AOloopControl_mkModes_Simple - Cmblock = %ld / %ld\n", Cmblock, NBmblock);
+	fflush(stdout);
+	ret = system("mkdir -p mkmodestmp");
+	
+	MBLOCK_NBmode = (long*) malloc(sizeof(long)*NBmblock);
+	MBLOCK_blockstart = (long*) malloc(sizeof(long)*NBmblock);
+	MBLOCK_blockend = (long*) malloc(sizeof(long)*NBmblock);
+	// read block ends
+	for(mblock=0; mblock<NBmblock; mblock++)
+		{
+			sprintf(fname, "./conf/conf_block%02ldend.txt", mblock);
+			fp = fopen(fname, "r");
+			ret = fscanf(fp, "%ld", &MBLOCK_blockend[mblock]);
+			fclose(fp);
+		}
+	MBLOCK_NBmode[0] = MBLOCK_blockend[0];
+	MBLOCK_blockstart[0] = 0;
+	for(mblock=1; mblock<NBmblock; mblock++)
+		{
+			MBLOCK_NBmode[mblock] = MBLOCK_blockend[mblock] - MBLOCK_blockend[mblock-1];
+			MBLOCK_blockstart[mblock] =  MBLOCK_blockstart[mblock-1] + MBLOCK_NBmode[mblock-1];
+		}
+		
+	IDin = image_ID(IDin_name);
+	wfsxsize = data.image[IDin].md[0].size[0];
+	wfsysize = data.image[IDin].md[0].size[1];
+	wfssize = wfsxsize*wfsysize;
+	NBmodes = data.image[IDin].md[0].size[2];
+
+	for(mblock=0; mblock<NBmblock; mblock++)
+		{
+			printf("mblock %02ld  : %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
+		
+		
+			if( (Cmblock == mblock) || (Cmblock == -1) )
+			{
+				printf("Reconstructing block %ld\n", mblock);
+			
+				 sprintf(command, "echo \"%f\" > ./conf/block%02ld_SVDlim.txt", SVDlim, mblock);
+                ret = system(command);
+
+				
+				IDdmmask = create_2Dimage_ID("dmmask", NBmodes, 1);
+				for(kk=0;kk<NBmodes;kk++)
+					data.image[IDdmmask].array.F[kk] = 1.0;
+		
+				sprintf(imname, "fmodesWFS_%02ld", mblock);
+				ID = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
+				for(kk=0;kk<MBLOCK_NBmode[mblock];kk++)
+					{
+						for(ii=0;ii<wfssize;ii++)
+							data.image[ID].array.F[kk*wfssize+ii] = data.image[IDin].array.F[(kk+MBLOCK_blockstart[mblock])*wfssize+ii];
+					}
+				
+				sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
+				save_fits(imname, fname);
+				
+				
+				sprintf(imnameCM, "cmat_%02ld", mblock);
+				sprintf(imnameCMc, "cmatc_%02ld", mblock);
+				sprintf(imnameCMcact, "cmatcact_%02ld", mblock);
+				
+				// COMPUTE MODAL CONTROL MATRICES
+                printf("COMPUTE CONTROL MATRIX\n");
+                #ifdef HAVE_MAGMA
+                    CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim, 10000, "VTmat");
+                #else
+                   linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim, 10000, "VTmat");
+				#endif
+	             
+	            delete_image_ID("VTmat");
+                sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock);
+                save_fits(imnameCM, fname);
+			
+				printf("-- COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX\n");
+                fflush(stdout);
+
+				// COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX
+                sprintf(imname, "fmodes_%02ld", mblock);
+                IDmodes = create_3Dimage_ID(imname, NBmodes, 1, MBLOCK_NBmode[mblock]);
+                list_image_ID();
+                for(kk=0;kk<MBLOCK_NBmode[mblock];kk++)
+					{
+						for(ii=0;ii<NBmodes;ii++)
+							data.image[IDmodes].array.F[kk*MBLOCK_NBmode[mblock]+ii] = 0.0;
+						data.image[IDmodes].array.F[kk*MBLOCK_NBmode[mblock]+(kk+MBLOCK_blockstart[mblock])] = 1.0;
+					}
+				sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock);
+				save_fits(imname, fname);
+				
+				
+                compute_CombinedControlMatrix(imnameCM, imname, "wfsmask", "dmmask", imnameCMc, imnameCMcact);
+				delete_image_ID("dmmask");
+
+				sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock);
+				save_fits(imnameCMc, fname);
+                sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock);
+                sprintf(imname1, "%s_00", imnameCMcact);
+                save_fits(imname1, fname);
+			}
+		
+			else
+            {
+                printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
+                fflush(stdout);
+
+                sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
+                load_fits(fname, imname, 1);
+                sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock);
+                load_fits(fname, imnameCM, 1);
+                sprintf(fname, "./mkmodestmp/cmatc_%02ld.fits", mblock);
+                load_fits(fname, imnameCMc, 1);
+                sprintf(fname, "./mkmodestmp/cmatcact_%02ld.fits", mblock);
+                load_fits(fname, imnameCMcact, 1);
+            }
+		}
+	
+		 
+     cnt = 0;
+     for(mblock=0; mblock<NBmblock; mblock++)
+         cnt += MBLOCK_NBmode[mblock];
+     IDm = create_3Dimage_ID("fmodesWFSall", wfsxsize, wfsysize, cnt);
+     cnt = 0;
+     for(mblock=0; mblock<NBmblock; mblock++)
+        {
+			sprintf(command, "echo \"%ld\" > ./conf/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
+            ret = system(command);
+			
+            sprintf(imname, "fmodesWFS_%02ld", mblock);
+            IDmwfs = image_ID(imname);
+            for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+            {
+                for(ii=0; ii<wfssize; ii++)
+                    data.image[IDm].array.F[cnt*wfssize+ii] = data.image[IDmwfs].array.F[m*wfssize+ii];
+                cnt++;
+            }
+        }
+     save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
+
+
+        cnt = 0;
+        for(mblock=0; mblock<NBmblock; mblock++)
+            cnt += MBLOCK_NBmode[mblock];
+        IDcmatall = create_3Dimage_ID("cmatall", wfsxsize, wfsysize, cnt);
+        cnt = 0;
+        for(mblock=0; mblock<NBmblock; mblock++)
+        {
+            sprintf(imname, "cmat_%02ld", mblock);
+            IDcmat = image_ID(imname);
+            for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+            {
+                for(ii=0; ii<wfssize; ii++)
+                    data.image[IDcmatall].array.F[cnt*wfssize+ii] = data.image[IDcmat].array.F[m*wfssize+ii];
+                cnt++;
+            }
+        }
+        save_fits("cmatall", "!./mkmodestmp/cmatall.fits");
+
+    
+   
+
+
+	free(MBLOCK_NBmode);
+	free(MBLOCK_blockstart);
+	free(MBLOCK_blockend);
+
+    return(IDin);
 }
 
 
@@ -9719,19 +9950,34 @@ long compute_CombinedControlMatrix(char *IDcmat_name, char *IDmodes_name, char* 
     sizeyWFS = data.image[IDwfsmask].md[0].size[1];
     sizeWFS = sizexWFS*sizeyWFS;
 
+	printf("IDwfsmask = %ld\n", IDwfsmask);
+	fflush(stdout);
+
     IDdmmask = image_ID(IDdmmask_name);
     sizexDM = data.image[IDdmmask].md[0].size[0];
     sizeyDM = data.image[IDdmmask].md[0].size[1];
     sizeDM = sizexDM*sizeyDM;
 
+	printf("IDdmmask = %ld\n", IDdmmask);
+	fflush(stdout);
+
     IDmodes = image_ID(IDmodes_name);
+    
+   	printf("IDmodes = %ld\n", IDmodes);
+	fflush(stdout);
+    
     NBDMmodes = data.image[IDmodes].md[0].size[2];
+
+
 
     // allocate array for combined matrix
     sizearray = (long*) malloc(sizeof(long)*3);
     sizearray[0] = sizexWFS;
     sizearray[1] = sizeyWFS;
     sizearray[2] = sizeDM;
+    
+    printf("Creating 3D image : %ld %ld %ld\n", sizexWFS, sizeyWFS, sizeDM);
+    fflush(stdout);
     IDcmatc = create_image_ID(IDcmatc_name, 3, sizearray, FLOAT, 0, 0);
     free(sizearray);
 
