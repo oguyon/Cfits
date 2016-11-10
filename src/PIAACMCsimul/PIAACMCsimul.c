@@ -8585,7 +8585,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
     char fnamebestval[500];
     double bestval = 1.0;
     int ret;
-    char command[1000];
+    char command[1000]; 
     long k;
     int fOK = 0;
     int bOK = 0;
@@ -8599,7 +8599,11 @@ int PIAACMCsimul_run(char *confindex, long mode)
     int loopin = 0;
     struct timeval start, end;
     long secs_used,micros_used;
-
+	
+	double prob1;
+	double sag0; // sag to change OPD by 1 wave at central wavelength
+    long cnt00, cnt0;
+    
     double searchtime = 3600.0*10.0; // [second] default 10 hours
 
 
@@ -8632,6 +8636,11 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
 
     printf("mode = %ld\n", mode);
+    
+    
+    
+	// compute the material thickness producing a lambda phase shift at the center of the spectral band
+	sag0 = 1.0;
 
 
     // mode 13: optimize focal plane mask zones only, setting the sag values for each mask zone
@@ -8673,21 +8682,27 @@ int PIAACMCsimul_run(char *confindex, long mode)
             if((i<1))
                 MODampl = 0.0; // MODampl is a global
             else
-                MODampl = 1.0e-6*pow(ran1(),4.0); // pick amplitude for random optimization starting point
+                MODampl = 1.0e-6*pow(ran1(), 8.0); // pick amplitude for random optimization starting point
 
 
+			// compute the material thickness producing a lambda phase shift at the center of the spectral band
+			sag0 = 1.0e-6;
+			
+		
 
-
-            // after the first iteration, half the time set zeroST=0
+            // after the first iteration, half the time set zeroST = 0
             // 1/4th the time when a best solution exists set zeroST = 1
             // 1/4th the time set zeroST = 2
             // zeroST is an information-only flag that does not control activity: it reflects
             //  the settings in each conditional
-            // zeroST = 0 => starting point uses random distribution of FP mask zone sags
+            // zeroST = 0 => starting point uses previous solution
             // zeroST = 1 => starting point is a mask that has no sag: blank focal plane mask
             // zeroST = 2 => starting point is best solution found so far
             //
             // data.image[piaacmc[0].zonezID].array is ???? *******************************
+            
+            cnt00 = 0;
+            cnt0 = 0;
             if((i>1)&&(ran1()>0.5))
             {
                 if((ran1()>0.5)&&(IDbestsol!=-1))
@@ -8695,7 +8710,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
                     zeroST = 2; // starting point = optimal solution
                     // copy the best solution to the current zoneID of array of sags
                     for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
-                        data.image[piaacmc[0].zonezID].array.D[k] = data.image[IDbestsol].array.D[k];
+                        data.image[piaacmc[0].zonezID].array.D[k] = data.image[IDbestsol].array.D[k];                             
                 }
                 else
                 {
@@ -8718,10 +8733,51 @@ int PIAACMCsimul_run(char *confindex, long mode)
                     data.image[piaacmc[0].zonezID].array.D[k] = data.image[IDbestsol].array.D[k];
                 MODampl = 0.0;
             }
+            
+            
+            if(i>0)
+            {
+				sprintf(command, "echo \"%g  %ld\" > sag0.txt", sag0, data.image[piaacmc[0].zonezID].md[0].size[0]);
+				ret = system(command);
+				
+				  // randomly select regions that are abs()>sag0/2 and push them back toward zero
+              prob1 = pow(ran1(),8.0); // probability that each zone is pushed back toward zero
+                    
+                    for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
+						{
+							if(data.image[piaacmc[0].zonezID].array.D[k] > sag0/2.0)
+								{
+									cnt00++;									
+									if(ran1()<prob1)
+										{
+											data.image[piaacmc[0].zonezID].array.D[k] -= sag0;
+											cnt0++;
+										}
+								}
+							if(data.image[piaacmc[0].zonezID].array.D[k] < -sag0/2.0)
+								{
+									cnt00++;
+									if(ran1()<prob1)
+										{
+											data.image[piaacmc[0].zonezID].array.D[k] += sag0;
+											cnt0++;
+										}
+								}
+						}
+            }
+            
+            
+            
 
             // actually do the optmization
             PIAACMCsimul_exec(confindex, mode);
             bOK = 0; // initialize have better value flag for printing "best" in a nice place
+			
+			printf("%g m  -> %g rad\n", sag0, (double) OPTICSMATERIALS_pha_lambda(piaacmc[0].fpmmaterial_code, sag0, piaacmc[0].lambda));
+			sag0 = sag0 / (OPTICSMATERIALS_pha_lambda(piaacmc[0].fpmmaterial_code, sag0, piaacmc[0].lambda) / 2.0 / M_PI);
+			printf("======================= sag0 = %g m  -> %g rad\n", sag0, (double) OPTICSMATERIALS_pha_lambda(piaacmc[0].fpmmaterial_code, sag0, (double) piaacmc[0].lambda));
+			
+			
 
             // if there is no best _solution_, load the current solution
             if(IDbestsol==-1)
@@ -8815,7 +8871,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
             // open mode13...opt.txt for adding and write current value
             fp = fopen(fname, "a");
-            fprintf(fp,"%10ld %20.5g   %16.5g -> %16.5g   (%16.5g) %d  [%12g %2d %12g %12g  %12g]", i, MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval, zeroST, CnormFactor, piaacmc[0].nblambda, optsyst[0].flux[0], SCORINGTOTAL, PIAACMCSIMUL_VAL0);
+            fprintf(fp,"%10ld %20.5g   %16.5g -> %16.5g   (%16.5g) %d %5ld/%5ld [%12g %2d %12g %12g  %12g]", i, MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval, zeroST, cnt0, cnt00, CnormFactor, piaacmc[0].nblambda, optsyst[0].flux[0], SCORINGTOTAL, PIAACMCSIMUL_VAL0);
             if(bOK==1) // mark it as best if it is
                 fprintf(fp, " BEST\n");
             else
