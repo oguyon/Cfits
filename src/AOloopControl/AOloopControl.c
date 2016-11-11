@@ -6212,6 +6212,82 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+	// Timing info
+	if((fp=fopen("./conf/conf_loopfrequ.txt", "r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_loopfrequ.txt missing\n");
+    }
+    else
+    {
+        r = fscanf(fp, "%f", &AOconf[loop].loopfrequ);
+        printf("loopfrequ : %f\n", AOconf[loop].loopfrequ);
+        fclose(fp);
+        fflush(stdout);
+        fprintf(fplog, "AOconf[%ld].loopfrequ = %f\n", loop, AOconf[loop].loopfrequ);
+   }
+   
+   
+	
+	if((fp=fopen("./conf/conf_hardlatency.txt", "r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_hardlatency.txt missing\n");
+    }
+    else
+    {
+        r = fscanf(fp, "%f", &AOconf[loop].hardlatency);
+        printf("hardlatency : %f\n", AOconf[loop].hardlatency);
+        fclose(fp);
+        fflush(stdout);
+        fprintf(fplog, "AOconf[%ld].hardlatency = %f\n", loop, AOconf[loop].hardlatency);
+   }
+	
+	
+/*	if((fp=fopen("./conf/conf_hardlatency_frame.txt", "r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_hardlatency_frame.txt missing\n");
+    }
+    else
+    {
+        r = fscanf(fp, "%f", &AOconf[loop].hardlatency_frame);
+        printf("hardlatency_frame : %f\n", AOconf[loop].hardlatency_frame);
+        fclose(fp);
+        fflush(stdout);
+        fprintf(fplog, "AOconf[%ld].hardlatency_frame = %f\n", loop, AOconf[loop].hardlatency_frame);
+   }
+*/
+	
+	AOconf[loop].hardlatency_frame = AOconf[loop].hardlatency * AOconf[loop].loopfrequ;
+	
+
+	if((fp=fopen("./conf/conf_complatency_frame.txt", "r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_complatency_frame.txt missing\n");
+    }
+    else
+    {
+        r = fscanf(fp, "%f", &AOconf[loop].complatency_frame);
+        printf("complatency_frame : %f\n", AOconf[loop].complatency_frame);
+        fclose(fp);
+        fflush(stdout);
+        fprintf(fplog, "AOconf[%ld].complatency_frame = %f\n", loop, AOconf[loop].complatency_frame);
+   }
+
+	if((fp=fopen("./conf/conf_wfsmextrlatency_frame.txt", "r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_wfsmextrlatency_frame.txt missing\n");
+    }
+    else
+    {
+        r = fscanf(fp, "%f", &AOconf[loop].wfsmextrlatency_frame);
+        printf(" : %f\n", AOconf[loop].wfsmextrlatency_frame);
+        fclose(fp);
+        fflush(stdout);
+        fprintf(fplog, "AOconf[%ld].wfsmextrlatency_frame = %f\n", loop, AOconf[loop].wfsmextrlatency_frame);
+   }
+
+
+
+
     // USE GPUs ?
 
     if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
