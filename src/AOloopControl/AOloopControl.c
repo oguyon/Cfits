@@ -11694,7 +11694,8 @@ int AOloopControl_statusStats()
 	statusMdef[16] = "";
 	statusMdef[17] = "";
 	statusMdef[18] = "";
-	statusMdef[19] = "WAIT FOR IMAGE";
+	statusMdef[19] = "";
+	statusMdef[20] = "WAIT FOR IMAGE";
 
 
 
@@ -11750,6 +11751,8 @@ int AOloopControl_statusStats()
         stM = AOconf[LOOPNUMBER].statusM;
         if(st<statusmax)
             statuscnt[st]++;
+        if(st<statusmax)
+            statusMcnt[st]++;
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
         {
             // 1st matrix mult
