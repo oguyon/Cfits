@@ -52,7 +52,16 @@ lat=$(awk "BEGIN {printf \"%.3f\",${loophlat}+${loopslat}}")
 stringcenter "TIMING PARAMETERS"
 menuitems+=( "0 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
+
 menuitems+=( "mt" "Measure Timing (-> timingstats/timingReport.txt)    $loophlat + $loopslat = $lat")
+
+file="./conf/conf_PForder.txt"
+if [ -f $file ]; then
+PForder=$(cat $file)
+else
+echo "0" > $file
+PForder=$(cat $file)
+fi
 menuitems+=( "PFord" "[$PForder] Select Predictive Filter order" )
 
 file="./conf/conf_predcontr_blockSel.txt"
@@ -63,6 +72,7 @@ echo "0" > $file
 blockSel=$(cat $file)
 fi
 menuitems+=( "selB" "[$blockSel] Select block" )
+
 menuitems+=( " " " ")
 
 
@@ -72,13 +82,7 @@ stringcenter "SINGLE FILE: COMPUTE FILTER(S)"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " " " ")
-file="./conf/conf_PForder.txt"
-if [ -f $file ]; then
-PForder=$(cat $file)
-else
-echo "0" > $file
-PForder=$(cat $file)
-fi
+
 
 menuitems+=( "sellat" "Select Latest telemetry files for filter computation" )
 fname=$(ls -lh ./PredictiveControl/modeval_ol.fits )
