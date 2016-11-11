@@ -11776,6 +11776,9 @@ int AOloopControl_statusStats()
 
 	AOconf[LOOPNUMBER].loopfrequ = 1.0*loopcnt/tdiffv;
 	AOconf[LOOPNUMBER].complatency_frame = 1.0-1.0*statuscnt[20]/NBkiter;
+    AOconf[LOOPNUMBER].wfsmextrlatency_frame = 1.0-1.0*statusMcnt[20]/NBkiter;
+    
+    
     
     for(st=0; st<statusmax; st++)
         printf("STATUS %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
