@@ -10673,6 +10673,11 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	#ifdef HAVE_CUDA
     GPU_loop_MultMat_setup(3, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
 
+
+	for(k=0;k<GPUcnt;k++)
+		printf(" ====================     USING GPU %d\n", GPUsetM[k]);
+
+
 	if(offloadMode==1)
 	{
 		sprintf(imnamedmC, "aol%ld_dmC", loop);
