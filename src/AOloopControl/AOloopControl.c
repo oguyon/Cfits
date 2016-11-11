@@ -11857,11 +11857,11 @@ int AOloopControl_statusStats()
     fprintf(fp, "%8.2f", AOconf[LOOPNUMBER].loopfrequ);
     fclose(fp);
     
-    fp = fopen("conf/conf_complatency_frame", "w");
+    fp = fopen("conf/conf_complatency_frame.txt", "w");
     fprintf(fp, "%8.2f", AOconf[LOOPNUMBER].complatency_frame);
     fclose(fp);
     
-    fp = fopen("conf/conf_wfsmextrlatency_frame", "w");
+    fp = fopen("conf/conf_wfsmextrlatency_frame.txt", "w");
     fprintf(fp, "%8.2f", AOconf[LOOPNUMBER].wfsmextrlatency_frame);
     fclose(fp);
     
