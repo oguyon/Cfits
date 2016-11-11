@@ -1724,6 +1724,12 @@ rm aolcompolm.runproc
 echo "0" > "./status/stat_log_modeval_ol.txt"
 fi
 
+if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmfwb"
+tmux send-keys -t $tmuxname C-c
+tmux kill-session -t $tmuxname
+rm aolmcoeffs2dmmap.runproc
+fi
 
 if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}dmCave"
