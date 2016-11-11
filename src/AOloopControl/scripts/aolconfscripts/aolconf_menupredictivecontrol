@@ -49,19 +49,26 @@ lat=$(awk "BEGIN {printf \"%.3f\",${loophlat}+${loopslat}}")
 
 
 
-stringcenter "MEASURE TIMING"
+stringcenter "TIMING PARAMETERS"
 menuitems+=( "0 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 menuitems+=( "mt" "Measure Timing (-> timingstats/timingReport.txt)    $loophlat + $loopslat = $lat")
+menuitems+=( "PFord" "[$PForder] Select Predictive Filter order" )
+
+file="./conf/conf_predcontr_blockSel.txt"
+if [ -f $file ]; then
+blockSel=$(cat $file)
+else
+echo "0" > $file
+blockSel=$(cat $file)
+fi
+menuitems+=( "selB" "[$blockSel] Select block" )
 menuitems+=( " " " ")
 
 
 
 
-
-
-
-stringcenter "PREDICTIVE CONTROL: COMPUTE FILTER(S)"
+stringcenter "SINGLE FILE: COMPUTE FILTER(S)"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " " " ")
@@ -73,42 +80,19 @@ echo "0" > $file
 PForder=$(cat $file)
 fi
 
-menuitems+=( "PFord" "[$PForder] Select Predictive Filter order" )
-menuitems+=( " " " latency = $lat frames")
-
-
 menuitems+=( "sellat" "Select Latest telemetry files for filter computation" )
 fname=$(ls -lh ./PredictiveControl/modeval_ol.fits )
 fnamel=$( echo $fname |  awk '{print $NF}' )
-menuitems+=( "" "FILE : $fnamel" )
+menuitems+=( "" "      FILE : $fnamel" )
 menuitems+=( "mkPSDs" "Create open and closed loop PSDs of selected OL / CL telemetry" )
-menuitems+=( "" "" )
-
-file="./conf/conf_predcontr_blockSel.txt"
-if [ -f $file ]; then
-blockSel=$(cat $file)
-else
-echo "0" > $file
-blockSel=$(cat $file)
-fi
-menuitems+=( "selB" "[$blockSel] Select block" )
-
 menuitems+=( "ARPFb" "AO find optimal AR linear predictive filter - single block" )
-menuitems+=( " " " ")
-
-
-
-
-
-
-
 menuitems+=( "ARPF" "AO find optimal AR linear predictive filter" )
 
 
 
 menuitems+=( " " " ")
 menuitems+=( " " " ")
-stringcenter "PREDICTIVE CONTROL: APPLY FILTER(S)"
+stringcenter "SINGLE FILE: APPLY FILTER(S)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
@@ -116,13 +100,10 @@ menuitems+=( " " " ")
 menuitems+=( "sellatC" "Select Latest telemetry files for filter correction" )
 fname=$(ls -lh ./PredictiveControl/modeval_ol_C.fits )
 fnamel=$( echo $fname |  awk '{print $NF}' )
-menuitems+=( "" "$fnamel" )
-menuitems+=( "" "" )
-
-
-menuitems+=( " " " ")
-menuitems+=( "PFapply" "Apply Predictive Filter" )
+menuitems+=( "" "      FILE : $fnamel" )
 menuitems+=( "PFapplyb" "Apply Predictive Filter - single block" )
+menuitems+=( "PFapply" "Apply Predictive Filter" )
+
 
 
 
