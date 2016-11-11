@@ -81,7 +81,8 @@ typedef struct
 	float ARPFgain; 
  
 
-    int status;
+    int status; // loop status for main loop
+    
     int GPUstatus[50];
     unsigned int NBtimer; // number of active timers - 1 timer per status value
     struct timespec timer[MAX_NUMBER_TIMER];
