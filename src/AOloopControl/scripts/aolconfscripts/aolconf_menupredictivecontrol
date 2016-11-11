@@ -32,25 +32,29 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " ")
 
 
+# hardware latency (frames)
+loophlat="2.1"
+file="./conf/conf_hardlatency_frame.txt"
+if [ -f "$file" ]; then
+loophlat=$( cat $file )
+fi
+
+# software latency (frame)
+loopslat="0.6"
+file="./conf/conf_wfsmextrlatency_frame.txt"
+if [ -f "$file" ]; then
+loopclat=$( cat $file )
+fi
+lat=$(awk "BEGIN {printf \"%.3f\",${loophlat}+${loopclat}}")
+
 
 
 stringcenter "MEASURE TIMING"
 menuitems+=( "0 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
-menuitems+=( "mt" "Measure Timing (see -> timingstats/timingReport.txt)")
+menuitems+=( "mt" "Measure Timing (-> timingstats/timingReport.txt)    $loophlat + $loopslat = $lat")
 menuitems+=( " " " ")
 
-
-
-loophlat="2.1"
-if [ -f "./conf/conf_loophlat.txt" ]; then
-loophlat=$( cat ./conf/conf_loophlat.txt )
-fi
-loopclat="0.6"
-if [ -f "./conf/conf_loopclat.txt" ]; then
-loopclat=$( cat ./conf/conf_loopclat.txt )
-fi
-lat=$(awk "BEGIN {printf \"%.2f\",${loophlat}+${loopclat}}")
 
 
 
