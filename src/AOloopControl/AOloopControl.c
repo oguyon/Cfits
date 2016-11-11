@@ -11751,8 +11751,8 @@ int AOloopControl_statusStats()
         stM = AOconf[LOOPNUMBER].statusM;
         if(st<statusmax)
             statuscnt[st]++;
-        if(st<statusmax)
-            statusMcnt[st]++;
+        if(stM<statusmax)
+            statusMcnt[stM]++;
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
         {
             // 1st matrix mult
