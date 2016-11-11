@@ -154,12 +154,12 @@ echo "$PForder" > ./conf/conf_PForder.txt
 
     ARPFb)
 echo "./auxscripts/aolARPFblock \"./PredictiveControl/modeval_ol.fits\"  $blockSel $lat $PForder" > cmd.txt
-./auxscripts/aolARPFblock "./PredictiveControl/modeval_ol.fits"  $blockSel $lat $PForder
+#./auxscripts/aolARPFblock "./PredictiveControl/modeval_ol.fits"  $blockSel $lat $PForder
 ;;
 
     ARPF)
 echo "./auxscripts/aolARPF \"./PredictiveControl/modeval_ol.fits\" $lat $PForder" > cmd.txt
-./auxscripts/aolARPF "./PredictiveControl/modeval_ol.fits" $lat $PForder
+#./auxscripts/aolARPF "./PredictiveControl/modeval_ol.fits" $lat $PForder
 ;;
 
 
@@ -174,7 +174,8 @@ echo "./auxscripts/aolARPF \"./PredictiveControl/modeval_ol.fits\" $lat $PForder
   
   
 	PFapply)
-./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.fits" $lat
+echo "./auxscripts/aolApplyARPF \"./PredictiveControl/modeval_ol_C.fits\" \"./PredictiveControl/outPF.fits\" $lat" > cmd
+#./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.fits" $lat
 ;;
 
 esac
