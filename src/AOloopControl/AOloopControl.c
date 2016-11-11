@@ -11711,6 +11711,7 @@ int AOloopControl_statusStats()
     long *statusgpucnt2;
     double loopiterus;
     long long loopcnt;
+    int ret;
     
     FILE *fp;
     
@@ -11858,6 +11859,18 @@ int AOloopControl_statusStats()
     fclose(fp);
     
     
+	if((fp=fopen("./conf/conf_hardlatency.txt", "r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_hardlatency.txt missing\n");
+    }
+    else
+    {
+        ret = fscanf(fp, "%f", &AOconf[LOOPNUMBER].hardlatency);
+        printf("hardlatency : %f\n", AOconf[LOOPNUMBER].hardlatency);
+        fclose(fp);
+        fflush(stdout);
+   }
+	
     printf("hardlatency = %f\n", AOconf[LOOPNUMBER].hardlatency);
     AOconf[LOOPNUMBER].hardlatency_frame = AOconf[LOOPNUMBER].hardlatency * AOconf[LOOPNUMBER].loopfrequ;
     
