@@ -148,7 +148,7 @@ fi
 
 
 
-
+mkdir -p PredictiveControl
 
 
 
@@ -159,7 +159,7 @@ Cfits -n aol${loopnb}scangain << EOF
 readshmim aol${loopnb}_mode_blknb
 loadfits "$1" olwfsmeas
 mselblock olwfsmeas aol${loopnb}_mode_blknb $2 olwfsmeasblk
-savefits olwfsmeasblk "!./PredictiveControl/olwfsmeasblk.$2..fits"
+savefits olwfsmeasblk "!./PredictiveControl/olwfsmeasblk.$2.fits"
 mkARpfilt olwfsmeasblk $4 $3 0.001 0.0 outPF 
 savefits outPF "!./PredictiveControl/outPF.$2.fits"
 
