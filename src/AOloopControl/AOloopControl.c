@@ -12091,7 +12091,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
    	IDout = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
-	sprintf(imname, "aol%ld_mode_blknb", loop);
+	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
    	IDblknb = create_image_ID(imname, 2, sizeout, USHORT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
@@ -12162,7 +12162,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		{
 			data.image[IDmodevalDM].array.F[m] = 0.0;
 			data.image[IDmodevalDMnow].array.F[m] = 0.0;
-			for(modevalDMindex=0;modevalDMindex<modevalDM_bsize;modevalDMindex++)
+			for(modevalDMindex=0; modevalDMindex<modevalDM_bsize; modevalDMindex++)
 				data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = 0;
 			data.image[IDout].array.F[m] = 0.0;
 		}	
@@ -12221,10 +12221,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		// UPDATE CURRENT DM STATE
 		//  current state =   modemult   x   ( last state   - modegain * WFSmodeval  )
 		//
-		data.image[IDmodevalDM_C].md[0].write = 1;
+		data.image[IDmodevalDMnow].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
 			data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
-
 
 		// 
 		//  MIX PREDICTION WITH CURRENT DM STATE 
@@ -12246,42 +12245,56 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				}
 			}
 			
-			
+		data.image[IDmodevalDMnowfilt].md[0].write = 1;
 		// FILTERING MODE VALUES
 		// THIS FILTERING GOES TOGETHER WITH THE WRITEBACK ON DM TO KEEP FILTERED AND ACTUAL VALUES IDENTICAL
+		for(m=0;m<NBmodes;m++)
+			data.image[IDmodevalDMnowfilt].array.F[m] = data.image[IDmodevalDMnow].array.F[m];
+		
 		if(FILTERMODE == 1)
 		{
 			for(m=0;m<NBmodes;m++)
 			{
-				data.image[IDmodevalDMnow].array.F[m] *= data.image[IDmodeMULT].array.F[m];
-				
+				data.image[IDmodevalDMnowfilt].array.F[m] *= data.image[IDmodeMULT].array.F[m];				
+
 				block = data.image[IDblknb].array.U[m];	
 				
-				if(data.image[IDmodevalDMnow].array.F[m] > data.image[IDmodeLIMIT].array.F[m])
+				if(data.image[IDmodevalDMnowfilt].array.F[m] > data.image[IDmodeLIMIT].array.F[m])
 					{
 						blockavelimFrac[block] += 1.0;
-						data.image[IDmodevalDMnow].array.F[m] = data.image[IDmodeLIMIT].array.F[m];
+						data.image[IDmodevalDMnowfilt].array.F[m] = data.image[IDmodeLIMIT].array.F[m];
 					}
-				if(data.image[IDmodevalDMnow].array.F[m] < -data.image[IDmodeLIMIT].array.F[m])
+				if(data.image[IDmodevalDMnowfilt].array.F[m] < -data.image[IDmodeLIMIT].array.F[m])
 					{
 						blockavelimFrac[block] += 1.0;
-						data.image[IDmodevalDMnow].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
+						data.image[IDmodevalDMnowfilt].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
 					}
 			}
 		}
 		
+		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
+		data.image[IDmodevalDMnow].md[0].cnt1 = modevalDMindex;
+		data.image[IDmodevalDMnow].md[0].cnt0++;
+		data.image[IDmodevalDMnow].md[0].write = 0;
+		
+		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnowfilt, -1);
+		data.image[IDmodevalDMnowfilt].md[0].cnt1 = modevalDMindex;
+		data.image[IDmodevalDMnowfilt].md[0].cnt0++;
+		data.image[IDmodevalDMnowfilt].md[0].write = 0;
 		
 		//
 		// update current location of dm correction circular buffer
 		// 
+		data.image[IDmodevalDM_C].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
-			data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = data.image[IDmodevalDMnow].array.F[m];					
-			
+			data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = data.image[IDmodevalDMnowfilt].array.F[m];					
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
-		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
 		data.image[IDmodevalDM_C].md[0].cnt1 = modevalDMindex;
 		data.image[IDmodevalDM_C].md[0].cnt0++;
 		data.image[IDmodevalDM_C].md[0].write = 0;
+		
+	
+		
 		
 		
 		
@@ -12299,8 +12312,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		data.image[IDmodevalDM].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
-			data.image[IDmodevalDM].array.F[m] = (1.0-alpha)*data.image[IDmodevalDM_C].array.F[modevalDMindex0*NBmodes+m] + alpha*data.image[IDmodevalDM_C].array.F[modevalDMindex1*NBmodes+m];
-			
+			data.image[IDmodevalDM].array.F[m] = (1.0-alpha)*data.image[IDmodevalDM_C].array.F[modevalDMindex0*NBmodes+m] + alpha*data.image[IDmodevalDM_C].array.F[modevalDMindex1*NBmodes+m];			
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM, -1);
 		data.image[IDmodevalDM].md[0].cnt0++;
 		data.image[IDmodevalDM].md[0].write = 0;

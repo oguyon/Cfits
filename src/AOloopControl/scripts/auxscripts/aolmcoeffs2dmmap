@@ -15,7 +15,7 @@ loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP (included filtering) $(tput sgr0)"
+echo "$(tput bold) $pname : GPU-based  MODE COEFFS -> DM MAP $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  Computes DM map from modal loop coefficients"
 echo "  Requires Open Loop modes extraction process to be running"
@@ -37,7 +37,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       GPU-based  MODE COEFFS -> DM MAP (included filtering)\n" "$0" 
+    printf "%20s       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
 }
 
 
@@ -121,28 +121,26 @@ fi
 if [ "$OUTMODE" = "0" ]; then
 
 Cfits -n $pname << EOF
-readshmim aol${loopnb}_modeval_dm_now
-readshmim aol${loopnb}_DMmode_LIMIT
+readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 
 else
 
 Cfits -n $pname << EOF
-readshmim aol${loopnb}_modeval_dm_now
-readshmim aol${loopnb}_DMmode_LIMIT
+readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
-aolmc2dmfilt aol${loopnb}_modeval_dm_now DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
+aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
 
