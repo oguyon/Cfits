@@ -5375,7 +5375,8 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
     }
     else
         data.status1 = 2;
-
+	
+	AOconf[loop].statusM = 20; // wait for image
  //   usleep(20);
 
 
@@ -10772,7 +10773,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	while(1==1)
         {	
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
-
+			AOconf[loop].statusM = 18;	
 			
 			for(m=0;m<NBmodes;m++)				
 				data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];					
@@ -10791,7 +10792,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 					data.image[IDc].md[0].write = 0;
 					data.image[IDc].md[0].cnt0++;
 				}
-			AOconf[loop].statusM = 20;			
+			AOconf[loop].statusM = 19;			
 		}
 	#endif
 
@@ -12382,7 +12383,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	while (1)
 	{
-	  if(data.image[IDmodeval].sem==0)
+		AOconf[loop].statusM = 1;
+		if(data.image[IDmodeval].sem==0)
         {
             while(cnt==data.image[IDmodeval].md[0].cnt0) // test if new frame exists
                 usleep(5);
