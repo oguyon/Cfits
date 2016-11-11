@@ -177,10 +177,20 @@ echo "./auxscripts/aolARPF \"./PredictiveControl/modeval_ol.fits\" $lat $PForder
 ;;
   
   
+  
+  	PFapplyb)
+echo "./auxscripts/aolApplyARPFblock \"./PredictiveControl/modeval_ol_C.fits\" \"./PredictiveControl/outPF.$blockSel.fits\" $blockSel $lat" > cmd.txt
+#./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.$blockSel.fits" $blockSel $lat
+;;
+
+  
 	PFapply)
-echo "./auxscripts/aolApplyARPF \"./PredictiveControl/modeval_ol_C.fits\" \"./PredictiveControl/outPF.fits\" $lat" > cmd
+echo "./auxscripts/aolApplyARPF \"./PredictiveControl/modeval_ol_C.fits\" \"./PredictiveControl/outPF.fits\" $lat" > cmd.txt
 #./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.fits" $lat
 ;;
+
+
+
 
 esac
 ;; 
