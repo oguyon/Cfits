@@ -11874,6 +11874,10 @@ int AOloopControl_statusStats()
     printf("hardlatency = %f\n", AOconf[LOOPNUMBER].hardlatency);
     AOconf[LOOPNUMBER].hardlatency_frame = AOconf[LOOPNUMBER].hardlatency * AOconf[LOOPNUMBER].loopfrequ;
     
+    fp = fopen("conf/conf_hardlatency_frame.txt", "w");
+    fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].hardlatency_frame);
+    fclose(fp);
+    
     fp = fopen("conf/conf_complatency_frame.txt", "w");
     fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].complatency_frame);
     fclose(fp);
