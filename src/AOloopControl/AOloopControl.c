@@ -11336,7 +11336,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
     
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
 	printw("    Predictive control state: $d        ARPF gain = %5.3f\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain);
-	printfw(" TIMIMNG :  lfr = %8.2f Hz    hw lat = fr   comp lat =  %8.2f fr  wfs extr lat =  %8.2f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
+	printf(" TIMIMNG :  lfr = %8.2f Hz    hw lat = fr   comp lat =  %8.2f fr  wfs extr lat =  %8.2f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
 	nbl++;
     nbl++;
     nbl++;
