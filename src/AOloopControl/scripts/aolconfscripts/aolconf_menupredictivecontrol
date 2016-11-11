@@ -43,9 +43,9 @@ fi
 loopslat="0.6"
 file="./conf/conf_wfsmextrlatency_frame.txt"
 if [ -f "$file" ]; then
-loopclat=$( cat $file )
+loopslat=$( cat $file )
 fi
-lat=$(awk "BEGIN {printf \"%.3f\",${loophlat}+${loopclat}}")
+lat=$(awk "BEGIN {printf \"%.3f\",${loophlat}+${loopslat}}")
 
 
 
