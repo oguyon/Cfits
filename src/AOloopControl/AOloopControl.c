@@ -11635,6 +11635,9 @@ int AOloopControl_statusStats()
     long *statusgpucnt2;
     double loopiterus;
     long long loopcnt;
+    
+    FILE *fp;
+    
 
     statusdef[0] = "LOAD IMAGE";
     statusdef[1] = "DARK SUBTRACT";
@@ -11696,10 +11699,6 @@ int AOloopControl_statusStats()
 	statusMdef[18] = "";
 	statusMdef[19] = "";
 	statusMdef[20] = "WAIT FOR IMAGE";
-
-
-
-
 
 
 
@@ -11778,6 +11777,17 @@ int AOloopControl_statusStats()
 	AOconf[LOOPNUMBER].complatency_frame = 1.0-1.0*statuscnt[20]/NBkiter;
     AOconf[LOOPNUMBER].wfsmextrlatency_frame = 1.0-1.0*statusMcnt[20]/NBkiter;
     
+    fp = fopen("conf/conf_loopfrequ.txt", "w");
+    fprintf(fp, "%8.2f", AOconf[LOOPNUMBER].loopfrequ);
+    fclose(fp);
+    
+    fp = fopen("conf/conf_complatency_frame", "w");
+    fprintf(fp, "%8.2f", AOconf[LOOPNUMBER].complatency_frame);
+    fclose(fp);
+    
+    fp = fopen("conf/conf_wfsmextrlatency_frame", "w");
+    fprintf(fp, "%8.2f", AOconf[LOOPNUMBER].wfsmextrlatency_frame);
+    fclose(fp);
     
     
     for(st=0; st<statusmax; st++)
