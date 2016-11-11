@@ -5394,6 +5394,8 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
    if(RM==0)
     AOconf[loop].status = 0;  // LOAD IMAGE        
     
+    AOconf[loop].statusM = 0;
+    
 
     slice = 0;
     if(data.image[aoconfID_wfsim].md[0].naxis==3) // ring buffer
@@ -11698,7 +11700,7 @@ int AOloopControl_statusStats()
     clock_gettime(CLOCK_REALTIME, &t1);
     for(k=0; k<NBkiter; k++)
     {
-        usleep((long) (usec0+usec1*(1.0*k/NBkiter)));
+        usleep((long) (usec0 + usec1*(1.0*k/NBkiter)));
         st = AOconf[LOOPNUMBER].status;
         if(st<statusmax)
             statuscnt[st]++;

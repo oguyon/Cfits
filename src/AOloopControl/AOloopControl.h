@@ -70,6 +70,8 @@ typedef struct
 	float hardlatency_frame; // hardware latency between DM command and WFS response 
 	float complatency_frame; // computation latency (main loop) from WFS image reception to DM command output
 	float wfsmextrlatency_frame; // WFS mode extraction latency
+	
+
 
     // LOOP CONTROL
     int on;  // goes to 1 when loop starts, put to 0 to turn loop off
@@ -82,6 +84,7 @@ typedef struct
  
 
     int status; // loop status for main loop
+    int statusM; // loop status for modal loop
     
     int GPUstatus[50];
     unsigned int NBtimer; // number of active timers - 1 timer per status value
