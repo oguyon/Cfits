@@ -78,7 +78,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 // 2: compute modes loop
 //         int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name)
 //
-// 3: coefficients to DM shape
+// 3: coefficients to DM shape [ NOTE: CRASHES IF NOT USING GPU 0 ]
 //         int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode)
 //
 // 4: Predictive control (in modules linARfilterPred)
@@ -11723,8 +11723,13 @@ int AOloopControl_statusStats()
     printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);
     printf("\n");
 
+	AOconf[LOOPNUMBER].loopfrequ = 1.0*loopcnt/tdiffv;
+	AOconf[LOOPNUMBER].complatency_frame = 1.0-1.0*statuscnt[20]/NBkiter;
+    
     for(st=0; st<statusmax; st++)
         printf("STATUS %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
+
+
 
 
     if(AOconf[LOOPNUMBER].GPU!=0)

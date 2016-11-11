@@ -68,7 +68,7 @@ typedef struct
 	// Timing info
 	float loopfrequ; // Hz
 	float hardlatency_frame; // hardware latency between DM command and WFS response 
-	float complatency_frame; // computation latency (main loop)
+	float complatency_frame; // computation latency (main loop) from WFS image reception to DM command output
 	float wfsmextrlatency_frame; // WFS mode extraction latency
 
     // LOOP CONTROL
