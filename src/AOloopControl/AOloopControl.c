@@ -10650,6 +10650,10 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	long ii;
 
 
+	// read AO loop gain, mult
+	if(AOloopcontrol_meminit==0)
+		AOloopControl_InitializeMemory(1);
+
 
 	GPUcnt = 1;
     GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
@@ -10710,7 +10714,8 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 					COREMOD_MEMORY_image_set_sempost_byID(IDc, -1);
 					data.image[IDc].md[0].write = 0;
 					data.image[IDc].md[0].cnt0++;
-				}			
+				}
+			AOconf[loop].statusM = 20;			
 		}
 	#endif
 
@@ -12013,6 +12018,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 
 
 
+
+
 // includes mode filtering (limits, multf)
 long AOloopControl_ComputeOpenLoopModes(long loop)
 {
@@ -12222,6 +12229,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         else
             sem_wait(data.image[IDmodeval].semptr[4]);
 
+
+		AOconf[loop].statusM = 2;
+
 		// write gain and mult into arrays
 		for(m=0;m<NBmodes;m++)
 		{
@@ -12238,6 +12248,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDMnow].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
 			data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
+
+		AOconf[loop].statusM = 3;
 
 		// 
 		//  MIX PREDICTION WITH CURRENT DM STATE 
@@ -12258,7 +12270,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
 				}
 			}
-			
+	
+		AOconf[loop].statusM = 4;
+	
 		data.image[IDmodevalDMnowfilt].md[0].write = 1;
 		// FILTERING MODE VALUES
 		// THIS FILTERING GOES TOGETHER WITH THE WRITEBACK ON DM TO KEEP FILTERED AND ACTUAL VALUES IDENTICAL
@@ -12296,6 +12310,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDMnowfilt].md[0].cnt0++;
 		data.image[IDmodevalDMnowfilt].md[0].write = 0;
 		
+		AOconf[loop].statusM = 5;
+		
 		//
 		// update current location of dm correction circular buffer
 		// 
@@ -12309,7 +12325,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 	
 		
-		
+		AOconf[loop].statusM1 = 6;
 		
 		
 		
@@ -12331,6 +12347,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDM].md[0].cnt0++;
 		data.image[IDmodevalDM].md[0].write = 0;
 		
+		
+		AOconf[loop].statusM1 = 7;
+		
 		//
 		// OPEN LOOP STATE = most recent WFS reading + time-lagged DM
 		//
@@ -12340,6 +12359,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 		data.image[IDout].md[0].cnt0++;
 		data.image[IDout].md[0].write = 0;
+		
+		
+		AOconf[loop].statusM1 = 8;
 		
 		
 		modevalDMindexl = modevalDMindex;
@@ -12391,6 +12413,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 				blockstatcnt = 0;
 			}
+			
+		AOconf[loop].statusM = 9;
 	}
 		
 	free(modegain);

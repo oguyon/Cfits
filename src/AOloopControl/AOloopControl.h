@@ -85,7 +85,8 @@ typedef struct
 
     int status; // loop status for main loop
     int statusM; // loop status for modal loop
-    
+    int statusM1; // loop status for modal loop
+  
     int GPUstatus[50];
     unsigned int NBtimer; // number of active timers - 1 timer per status value
     struct timespec timer[MAX_NUMBER_TIMER];
