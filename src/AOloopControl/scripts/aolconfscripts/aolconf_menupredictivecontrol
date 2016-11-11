@@ -47,7 +47,7 @@ lat=$(awk "BEGIN {printf \"%.2f\",${loophlat}+${loopclat}}")
 
 
 
-stringcenter "PREDICTIVE CONTROL: COMPUTE FILTER(S), SINGLE FILE"
+stringcenter "PREDICTIVE CONTROL: COMPUTE FILTER(S)"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " " " ")
@@ -94,7 +94,7 @@ menuitems+=( "ARPF" "AO find optimal AR linear predictive filter" )
 
 menuitems+=( " " " ")
 menuitems+=( " " " ")
-stringcenter "PREDICTIVE CONTROL: APPLY FILTER(S), SINGLE FILE"
+stringcenter "PREDICTIVE CONTROL: APPLY FILTER(S)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
