@@ -11618,11 +11618,13 @@ int AOloopControl_statusStats()
     long NBkiter = 10000;
     long statusmax = 21;
     long *statuscnt;
+    long *statusMcnt;
     float usec0, usec1;
-    int st;
+    int st, stM;
     int RT_priority = 91; //any number from 0-99
     struct sched_param schedpar;
     const char *statusdef[21];
+    const char *statusMdef[21];
     int gpu;
     int nbgpu;
     struct timespec t1;
@@ -11646,7 +11648,7 @@ int AOloopControl_statusStats()
     statusdef[9] = "CONTROL MATRIX MULT: COMBINE TRHEADS RESULTS";
     statusdef[10] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
     statusdef[11] = "MULTIPLYING BY GAINS";
-
+    
     if(MATRIX_COMPUTATION_MODE==0)
     {
         statusdef[12] = "ENTER SET DM MODES";
@@ -11670,6 +11672,40 @@ int AOloopControl_statusStats()
     statusdef[19] = "READING IMAGE";
     statusdef[20] = "WAIT FOR IMAGE";
 
+
+
+
+	statusMdef[0] = "EXTRACTING WFS MODES";
+	statusMdef[1] = "EXTRACTING WFS MODES";
+	statusMdef[2] = " - ";
+	statusMdef[3] = " - ";
+	statusMdef[4] = "MODAL FILTERING / CLIPPING";
+	statusMdef[5] = "MODAL -> ZONAL DM";
+	statusMdef[6] = "";
+	statusMdef[7] = "";
+	statusMdef[8] = "";
+	statusMdef[9] = "";
+	statusMdef[10] = "";
+	statusMdef[11] = "";
+	statusMdef[12] = "";
+	statusMdef[13] = "";
+	statusMdef[14] = "";
+	statusMdef[15] = "";
+	statusMdef[16] = "";
+	statusMdef[17] = "";
+	statusMdef[18] = "";
+	statusMdef[19] = "WAIT FOR IMAGE";
+
+
+
+
+
+
+
+
+
+
+
     usec0 = 50.0;
     usec1 = 150.0;
 
@@ -11688,13 +11724,17 @@ int AOloopControl_statusStats()
     fflush(stdout);
 
     statuscnt = (long*) malloc(sizeof(long)*statusmax);
+    statusMcnt = (long*) malloc(sizeof(long)*statusmax);
     statusgpucnt = (long*) malloc(sizeof(long)*nbgpu*10);
     statusgpucnt2 = (long*) malloc(sizeof(long)*nbgpu*10);
 
 
     for(st=0; st<statusmax; st++)
-        statuscnt[st] = 0;
-
+        {
+			statuscnt[st] = 0;
+			statusMcnt[st] = 0;
+		}
+		
     for(st=0; st<nbgpu*10; st++)
     {
         statusgpucnt[st] = 0;
@@ -11707,6 +11747,7 @@ int AOloopControl_statusStats()
     {
         usleep((long) (usec0 + usec1*(1.0*k/NBkiter)));
         st = AOconf[LOOPNUMBER].status;
+        stM = AOconf[LOOPNUMBER].statusM;
         if(st<statusmax)
             statuscnt[st]++;
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
@@ -11783,7 +11824,15 @@ int AOloopControl_statusStats()
             }
         }
     }
-    free(statuscnt);
+    
+    
+    
+     for(st=0; st<statusmax; st++)
+        printf("STATUSM %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
+
+    
+    free(statuscnt);    
+    free(statusMcnt);
     free(statusgpucnt);
     free(statusgpucnt2);
 
