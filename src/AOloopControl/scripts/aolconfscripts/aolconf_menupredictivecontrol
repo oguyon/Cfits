@@ -34,6 +34,13 @@ menuitems+=( " " " ")
 
 
 
+stringcenter "MEASURE TIMING"
+menuitems+=( "0 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
+menuitems+=( "mt" "Measure Timing (see -> timingstats/timingReport.txt)")
+menuitems+=( " " " ")
+
+
 
 loophlat="2.1"
 if [ -f "./conf/conf_loophlat.txt" ]; then
@@ -44,6 +51,9 @@ if [ -f "./conf/conf_loopclat.txt" ]; then
 loopclat=$( cat ./conf/conf_loopclat.txt )
 fi
 lat=$(awk "BEGIN {printf \"%.2f\",${loophlat}+${loopclat}}")
+
+
+
 
 
 
@@ -125,6 +135,12 @@ case $retval in
    0) # Monitor
 	case $choiceval in
 
+  
+  mt)
+mkdir -p timingstats
+./auxscripts/aolMeasureTiming > timingstats/timingReport.txt
+;;
+  
   
 	sellat)
 ./auxscripts/selectLatestTelemetry
