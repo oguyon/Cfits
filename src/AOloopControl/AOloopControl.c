@@ -6387,7 +6387,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-	if((fp=fopen("./conf/conf_loophlat.txt","r"))==NULL)
+/*	if((fp=fopen("./conf/conf_loophlat.txt","r"))==NULL)
     {
         printf("WARNING: file ./conf/conf_loophlat.txt missing\n");
         printf("Using default hardware latency\n");
@@ -6440,7 +6440,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].wfsmextrlatency_frame = atof(content);
         fprintf(fplog, "AOconf[%ld].wfsmextrlatency_frame = %f\n", loop, AOconf[loop].wfsmextrlatency_frame);
     }
-
+*/
 
 
 
@@ -7835,7 +7835,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     printf("AVERAGE LATENCY = %8.3f ms   %f frames\n", latencyave*1000.0, latencystepave);
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
 
-    ret = sprintf(command, "echo %f %f %f %f %f > conf/conf_hardwlatency.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
+    ret = sprintf(command, "echo %f %f %f %f %f > conf/conf_hardlatency.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
     ret = system(command);
 
 	dt = tdouble_end - tdouble_start;

@@ -1742,7 +1742,7 @@ exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system latency"
 ./auxscripts/MeasureLatency "$nblatm"
-hlat=$( awk '{print $1}' conf/conf_hardwlatency.txt ) 
+hlat=$( awk '{print $1}' conf/conf_hardlatency.txt ) 
 echo "$hlat" > conf/conf_loophlat.txt
 touch gothere.txt
 ;;
