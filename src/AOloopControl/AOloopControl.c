@@ -12466,7 +12466,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				blockstatcnt = 0;
 			}
 			
-		AOconf[loop].statusM = 9;
+		AOconf[loop].statusM1 = 9;
 	}
 		
 	free(modegain);
