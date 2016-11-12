@@ -5534,7 +5534,7 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
     //    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     //       data.image[aoconfID_imWFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     //}
-
+	AOconf[loop].statusM = 2;
     if(RM==0)
     {
         AOconf[loop].status = 2; // 4 -> 002 : COMPUTE TOTAL OF IMAGE
@@ -11757,9 +11757,9 @@ int AOloopControl_statusStats()
 
 
 
-	statusMdef[0] = "EXTRACTING WFS MODES";
-	statusMdef[1] = "EXTRACTING WFS MODES";
-	statusMdef[2] = " - ";
+	statusMdef[0] = "LOAD IMAGE";
+	statusMdef[1] = "DARK SUBTRACT";
+	statusMdef[2] = "EXTRACT WFS MODES";
 	statusMdef[3] = " - ";
 	statusMdef[4] = "MODAL FILTERING / CLIPPING";
 	statusMdef[5] = "-";
@@ -12384,7 +12384,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	while (1)
 	{
-		AOconf[loop].statusM = 2;
 		if(data.image[IDmodeval].sem==0)
         {
             while(cnt==data.image[IDmodeval].md[0].cnt0) // test if new frame exists
