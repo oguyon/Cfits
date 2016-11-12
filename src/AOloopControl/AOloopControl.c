@@ -11761,7 +11761,7 @@ int AOloopControl_statusStats()
 	statusMdef[2] = " - ";
 	statusMdef[3] = " - ";
 	statusMdef[4] = "MODAL FILTERING / CLIPPING";
-	statusMdef[5] = "MODAL -> ZONAL DM";
+	statusMdef[5] = "-";
 	statusMdef[6] = "";
 	statusMdef[7] = "";
 	statusMdef[8] = "";
@@ -11774,7 +11774,7 @@ int AOloopControl_statusStats()
 	statusMdef[15] = "";
 	statusMdef[16] = "";
 	statusMdef[17] = "";
-	statusMdef[18] = "";
+	statusMdef[18] = "MODES TO DM ACTUATORS (GPU)";
 	statusMdef[19] = "";
 	statusMdef[20] = "WAIT FOR IMAGE";
 
