@@ -11760,9 +11760,9 @@ int AOloopControl_statusStats()
 	statusMdef[0] = "LOAD IMAGE";
 	statusMdef[1] = "DARK SUBTRACT";
 	statusMdef[2] = "EXTRACT WFS MODES";
-	statusMdef[3] = " - ";
-	statusMdef[4] = "MODAL FILTERING / CLIPPING";
-	statusMdef[5] = "-";
+	statusMdef[3] = "UPDATE CURRENT DM STATE";
+	statusMdef[4] = "MIX PREDICTION WITH CURRENT DM STATE";
+	statusMdef[5] = "MODAL FILTERING / CLIPPING";
 	statusMdef[6] = "";
 	statusMdef[7] = "";
 	statusMdef[8] = "";
