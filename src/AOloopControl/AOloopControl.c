@@ -11754,8 +11754,8 @@ int AOloopControl_statusStats()
 
 
 
-	statusMdef[0] = "LOAD IMAGE";
-	statusMdef[1] = "DARK SUBTRACT";
+	statusMdef[0] = "";
+	statusMdef[1] = "";
 	statusMdef[2] = "EXTRACT WFS MODES";
 	statusMdef[3] = "UPDATE CURRENT DM STATE";
 	statusMdef[4] = "MIX PREDICTION WITH CURRENT DM STATE";
