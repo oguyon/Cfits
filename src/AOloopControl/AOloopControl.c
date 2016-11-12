@@ -12392,8 +12392,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         }
         else
             sem_wait(data.image[IDmodeval].semptr[4]);
-
-
+		
+		// drive sem4 to zero
+		while(sem_trywait(data.image[IDmodeval].semptr[4])==0) {}
 		AOconf[loop].statusM = 2;
 
 		// write gain and mult into arrays
