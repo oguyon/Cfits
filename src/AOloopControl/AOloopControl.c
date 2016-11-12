@@ -11940,7 +11940,8 @@ int AOloopControl_statusStats()
     
     
      for(st=0; st<statusmax; st++)
-        printf("STATUSM %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
+		if(strlen(statusMdef[st])>0)
+			printf("STATUSM %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
 
     
     free(statuscnt);    
