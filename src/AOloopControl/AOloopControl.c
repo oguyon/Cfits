@@ -11763,7 +11763,7 @@ int AOloopControl_statusStats()
 	statusMdef[3] = "UPDATE CURRENT DM STATE";
 	statusMdef[4] = "MIX PREDICTION WITH CURRENT DM STATE";
 	statusMdef[5] = "MODAL FILTERING / CLIPPING";
-	statusMdef[6] = "";
+	statusMdef[6] = "INTER-PROCESS LATENCY";
 	statusMdef[7] = "";
 	statusMdef[8] = "";
 	statusMdef[9] = "";
@@ -11776,7 +11776,7 @@ int AOloopControl_statusStats()
 	statusMdef[16] = "";
 	statusMdef[17] = "";
 	statusMdef[18] = "MODES TO DM ACTUATORS (GPU)";
-	statusMdef[19] = "";
+	statusMdef[19] = "WAIT TO ENTER WAITIMAGE MAIN LOOP STEP";
 	statusMdef[20] = "WAIT FOR IMAGE";
 
 
