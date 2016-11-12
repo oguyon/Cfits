@@ -3183,7 +3183,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
                  //   sem_trywait(data.image[IDin].semptr[insem]);
                // printf("done\n");
                // fflush(stdout);
-            }
+            //}
             
         }
 		}
