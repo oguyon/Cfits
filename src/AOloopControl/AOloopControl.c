@@ -5436,6 +5436,7 @@ int Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int In
     if(RM==0)
     {
         AOconf[loop].status = 1;  // 3->001: DARK SUBTRACT
+        AOconf[loop].statusM = 1;
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -12383,7 +12384,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	while (1)
 	{
-		AOconf[loop].statusM = 1;
+		AOconf[loop].statusM = 2;
 		if(data.image[IDmodeval].sem==0)
         {
             while(cnt==data.image[IDmodeval].md[0].cnt0) // test if new frame exists
@@ -12395,7 +12396,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		// drive sem4 to zero
 		while(sem_trywait(data.image[IDmodeval].semptr[4])==0) {}
-		AOconf[loop].statusM = 2;
+		AOconf[loop].statusM = 3;
 
 		// write gain and mult into arrays
 		for(m=0;m<NBmodes;m++)
@@ -12414,7 +12415,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		for(m=0;m<NBmodes;m++)
 			data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
 
-		AOconf[loop].statusM = 3;
+		AOconf[loop].statusM = 4;
 
 		// 
 		//  MIX PREDICTION WITH CURRENT DM STATE 
@@ -12436,7 +12437,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				}
 			}
 	
-		AOconf[loop].statusM = 4;
+		AOconf[loop].statusM = 5;
 	
 		data.image[IDmodevalDMnowfilt].md[0].write = 1;
 		// FILTERING MODE VALUES
@@ -12475,7 +12476,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDMnowfilt].md[0].cnt0++;
 		data.image[IDmodevalDMnowfilt].md[0].write = 0;
 		
-		AOconf[loop].statusM = 5;
+		AOconf[loop].statusM = 6;
 		
 		//
 		// update current location of dm correction circular buffer
