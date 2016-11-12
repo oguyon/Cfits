@@ -235,9 +235,9 @@ echo "$pymodampl" > $file
 fi
 
 if [ "$pymodampl" = "0.05" ]; then
-menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.05\Zn" )
+menuitems+=( "pymoda005" "\Zr\Z2 modulation amplitude = 0.05\Zn" )
 else
-menuitems+=( "pymoda01" " modulation amplitude = 0.05" )
+menuitems+=( "pymoda005" " modulation amplitude = 0.05" )
 fi
 
 if [ "$pymodampl" = "0.1" ]; then
@@ -584,6 +584,13 @@ pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
 
+
+
+	pymoda005)
+pymodampl="0.05"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
 
 	pymoda01)
 pymodampl="0.1"
