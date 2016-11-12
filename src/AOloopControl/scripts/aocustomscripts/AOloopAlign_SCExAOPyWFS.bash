@@ -234,6 +234,12 @@ pymodampl="05"
 echo "$pymodampl" > $file
 fi
 
+if [ "$pymodampl" = "0.05" ]; then
+menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.05\Zn" )
+else
+menuitems+=( "pymoda01" " modulation amplitude = 0.05" )
+fi
+
 if [ "$pymodampl" = "0.1" ]; then
 menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn" )
 else
