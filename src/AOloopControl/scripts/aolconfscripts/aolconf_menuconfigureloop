@@ -2181,6 +2181,7 @@ tmux send-keys -t $tmuxsname "savefits imgstreamrms test_wfsimrms.fits"C-m
 tmux send-keys -t $tmuxsname "savefits imave1 test_wfsref0.fits" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+sleep 10
 tmux send-keys -t $tmuxsname "exit" C-m
 aoconflogext "STOP taking WFS reference"
 menucontrolloop_default="awfsref0_on"
