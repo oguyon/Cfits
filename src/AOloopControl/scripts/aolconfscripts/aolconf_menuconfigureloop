@@ -2154,10 +2154,11 @@ acquwfsref0stat="OFF"
 echo "OFF" > ./status/stat_acquwfsref0.txt
 pkill -USR1 awfsref0${LOOPNUMBER}
 rm wfsref0.fits
+rm wfsimrms.fits
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
-tmux send-keys -t $tmuxsname "savefits imgstreamrms \"!wfsimrms.fits\""C-m
-tmux send-keys -t $tmuxsname "savefits imave1 \"!wfsref0.fits\"" C-m
+tmux send-keys -t $tmuxsname "savefits imgstreamrms wfsimrms.fits"C-m
+tmux send-keys -t $tmuxsname "savefits imave1 wfsref0.fits" C-m
 tmux send-keys -t $tmuxsname "imcp2shm imave1 aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -2172,11 +2173,12 @@ state="menuconfigureloop"
 acquwfsref0stat="OFF"
 echo "OFF" > ./status/stat_acquwfsref0.txt
 pkill -USR1 awfsref0${LOOPNUMBER}
-rm wfsref0.fits
+rm test_wfsimrms.fits
+rm test_wfsref0.fits
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
-tmux send-keys -t $tmuxsname "savefits imgstreamrms \"!test_wfsimrms.fits\""C-m
-tmux send-keys -t $tmuxsname "savefits imave1 \"!test_wfsref0.fits\"" C-m
+tmux send-keys -t $tmuxsname "savefits imgstreamrms test_wfsimrms.fits"C-m
+tmux send-keys -t $tmuxsname "savefits imave1 test_wfsref0.fits" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux send-keys -t $tmuxsname "exit" C-m
