@@ -887,12 +887,13 @@ fi
 acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
 if [ "${acquwfsref0stat}" = "OFF" ];
 then
-menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0" )
+menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0  [waits on sem4 of aol${LOOPNUMBER}_wfsim]" )
 menuitems+=( " " " " )
 fi
 if [ "${acquwfsref0stat}" = " ON" ];
 then
-menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition                  \Zn" )
+menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition and update conf                \Zn" )
+menuitems+=( "awfsref0offtest" "\Z1\Zr             STOP WFS ref acquisition, copy outuput to test_<>.fits  \Zn" )
 menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
 fi
 
@@ -2143,7 +2144,7 @@ tmux send-keys -t $tmuxsname "$execname -n awfsref0${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "csetpmove aolRT" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
-tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 0" C-m
+tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 1" C-m
 aoconflogext "START taking WFS reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
@@ -2155,7 +2156,8 @@ pkill -USR1 awfsref0${LOOPNUMBER}
 rm wfsref0.fits
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
-tmux send-keys -t $tmuxsname "savefits imave1 wfsref0.fits" C-m
+tmux send-keys -t $tmuxsname "savefits imgstreamrms \"!wfsimrms.fits\""C-m
+tmux send-keys -t $tmuxsname "savefits imave1 \"!wfsref0.fits\"" C-m
 tmux send-keys -t $tmuxsname "imcp2shm imave1 aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxsname "exit" C-m
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -2166,12 +2168,34 @@ aoconflogext "STOP taking WFS reference"
 menucontrolloop_default="awfsref0_on"
 state="menuconfigureloop"
 ;;
+	awfsref0offtest)
+acquwfsref0stat="OFF"
+echo "OFF" > ./status/stat_acquwfsref0.txt
+pkill -USR1 awfsref0${LOOPNUMBER}
+rm wfsref0.fits
+tmuxsname="aol${LOOPNUMBER}awfsref0"
+tmux send-keys -t $tmuxsname "imave1=imave-aol${LOOPNUMBER}_wfsdark" C-m
+tmux send-keys -t $tmuxsname "savefits imgstreamrms \"!test_wfsimrms.fits\""C-m
+tmux send-keys -t $tmuxsname "savefits imave1 \"!test_wfsref0.fits\"" C-m
+tmux send-keys -t $tmuxsname "exit" C-m
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+tmux send-keys -t $tmuxsname "exit" C-m
+aoconflogext "STOP taking WFS reference"
+menucontrolloop_default="awfsref0_on"
+state="menuconfigureloop"
+;;
 	awfsref0mon)
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux a -t $tmuxsname
 menucontrolloop_default="awfsref0mon"
 state="menuconfigureloop"
 ;;
+
+
+
+
+
+
 
 
 
