@@ -10774,14 +10774,14 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	while(1==1)
         {	
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
-			AOconf[loop].statusM = 18;	
+			AOconf[loop].statusM = 10;	
 			
 			for(m=0;m<NBmodes;m++)				
 				data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];					
 				
 				
 			GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], alpha, beta, write_timing);
-			
+			AOconf[loop].statusM = 11;	
 			
 			if(offloadMode==1) // offload back to dmC
 				{
@@ -10792,8 +10792,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 					COREMOD_MEMORY_image_set_sempost_byID(IDc, -1);
 					data.image[IDc].md[0].write = 0;
 					data.image[IDc].md[0].cnt0++;
-				}
-			AOconf[loop].statusM = 19;			
+				}			
 		}
 	#endif
 
@@ -11767,16 +11766,16 @@ int AOloopControl_statusStats()
 	statusMdef[7] = "";
 	statusMdef[8] = "";
 	statusMdef[9] = "";
-	statusMdef[10] = "";
-	statusMdef[11] = "";
+	statusMdef[10] = "MODES TO DM ACTUATORS (GPU)";
+	statusMdef[11] = "WAIT TO ENTER WAITIMAGE MAIN LOOP STEP";
 	statusMdef[12] = "";
 	statusMdef[13] = "";
 	statusMdef[14] = "";
 	statusMdef[15] = "";
 	statusMdef[16] = "";
 	statusMdef[17] = "";
-	statusMdef[18] = "MODES TO DM ACTUATORS (GPU)";
-	statusMdef[19] = "WAIT TO ENTER WAITIMAGE MAIN LOOP STEP";
+	statusMdef[18] = "";
+	statusMdef[19] = "";
 	statusMdef[20] = "WAIT FOR IMAGE";
 
 
