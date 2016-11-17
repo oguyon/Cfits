@@ -30,13 +30,15 @@ echo "     <nb frames excl>     Number of WFS frames to be excluded upon DM stat
 echo "     <normalize flag>     1 if WFS frames to be normalized"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
-  echo "  zrespmat.fits  : zonal response matrix"
-  echo "  wfsref0.fits   : wfs reference"
-  echo "  wfsmap.fits    : WFS response map"
-  echo "  dmmap.fits     : DM response map"
-  echo
-  echo "runs forever until killed with USR1 signal"
-  echo "Default output files updated at each cycle" 
+echo "    ./zresptmp/zrespmat_pos_NNN.fits    : zonal response, positive pokes"
+echo "    ./zresptmp/zrespmat_pos_NNN.fits    : zonal response, negative pokes"
+echo "    ./zresptmp/wfsref0_NNN.fits         : wfs reference"
+echo "    ./zresptmp/wfsimRMS_NNN.fits         : wfs reference"
+#echo "    ./zresptmp/wfsmap.fits    : WFS response map"
+#echo "    ./zresptmp/dmmap.fits     : DM response map"
+echo
+echo "runs forever until killed with USR1 signal"
+#echo "Default output files updated at each cycle" 
 echo ""
 echo "------------------------------------------------------------------------"
 }

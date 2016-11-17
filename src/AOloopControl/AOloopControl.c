@@ -490,9 +490,9 @@ int Measure_zonalRM_cli()
 
 int AOloopControl_mkCalib_map_mask_cli()
 {
-     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)
+     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,1)+CLI_checkarg(11,1)==0)
         {
-            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf);
+            AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numf, data.cmdargtoken[11].val.numf);
             return 0;
         }
     else
@@ -1145,8 +1145,8 @@ int init_AOloopControl()
     data.cmd[data.NBcmd].fp = AOloopControl_mkCalib_map_mask_cli;
     strcpy(data.cmd[data.NBcmd].info,"make sensitivity maps and masks from response matrix");
     strcpy(data.cmd[data.NBcmd].syntax,"<zrespm fname [string]> <output WFS response map fname [string]>  <output DM response map fname [string]> <percentile low> <coefficient low> <percentile high> <coefficient high>");
-    strcpy(data.cmd[data.NBcmd].example,"aolRMmkmasks .. 0.2 1.0 0.5 0.3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh)");
+    strcpy(data.cmd[data.NBcmd].example,"aolRMmkmasks .. 0.2 1.0 0.5 0.3 0.05 1.0 0.65 0.3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh)");
     data.NBcmd++;
 
 
@@ -8322,7 +8322,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
 
 long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)
 {
-    long ID_WFSmap, ID_WFSref0, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n;
+    long ID_WFSmap, ID_WFSref0, ID_WFSref2, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n,  ID_WFSref2n;
     long act, j, ii, kk;
     double value;
     float *arrayf;
@@ -8462,7 +8462,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 
     ID_WFSmap = create_image_ID(WFSmap_name, 2, sizearray, FLOAT, 1, 5);
     ID_WFSref0 = create_image_ID("tmpwfsref0", 2, sizearray, FLOAT, 1, 5);
+    ID_WFSref2 = create_image_ID("tmpwfsref2", 2, sizearray, FLOAT, 1, 5);
     ID_WFSref0n = create_image_ID(WFSref0_name, 2, sizearray, FLOAT, 1, 5);
+    ID_WFSref2n = create_image_ID("tmpwfsimrms", 2, sizearray, FLOAT, 1, 5);
     IDzrespm = create_image_ID("zrespm", 3, sizearray, FLOAT, 0, 5); // Zonal response matrix
     IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, FLOAT, 0, 5); // Zonal response matrix normalized
 
@@ -8582,6 +8584,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             }
                 
         
+        
+        
+        
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -8628,6 +8633,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] += data.image[IDpos].array.F[ii];
                 data.image[IDzrespfp].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] = data.image[IDpos].array.F[ii];
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDpos].array.F[ii];
+                data.image[ID_WFSref2].array.F[ii] += data.image[IDpos].array.F[ii]*data.image[IDpos].array.F[ii];
             }
 
             // NEGATIVE INTEGRATION
@@ -8667,6 +8673,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                 data.image[IDzrespm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] -= data.image[IDneg].array.F[ii];
                 data.image[IDzrespfm].array.F[actarray[act]*AOconf[loop].sizeWFS+ii] = data.image[IDneg].array.F[ii];
                 data.image[ID_WFSref0].array.F[ii] += data.image[IDneg].array.F[ii];
+                data.image[ID_WFSref2].array.F[ii] += data.image[IDneg].array.F[ii] * data.image[IDneg].array.F[ii];
             }
 
             act++;
@@ -8684,7 +8691,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         AOconf[loop].DMupdatecnt ++;
 
             
-        if(data.signal_USR1==0)
+        if(data.signal_USR1==0) // keep looping 
         {
             for(act=0; act<NBpoke; act++)
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -8707,22 +8714,33 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             total = 0.0;
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
+				data.image[ID_WFSref2n].array.F[ii] = sqrt((data.image[ID_WFSref2].array.F[ii] - data.image[ID_WFSref0].array.F[ii]*data.image[ID_WFSref0].array.F[ii])/NBave/cntn);
                 data.image[ID_WFSref0n].array.F[ii] = data.image[ID_WFSref0].array.F[ii]/NBave/cntn;
                 total += data.image[ID_WFSref0n].array.F[ii];
             }
 
+			
+
             if(normalize==1)
             {
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    data.image[ID_WFSref0n].array.F[ii] /= total;
+                    {
+						data.image[ID_WFSref0n].array.F[ii] /= total;
+						data.image[ID_WFSref2n].array.F[ii] /= total;
+                    }
             }
             else
             {
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                    data.image[ID_WFSref0n].array.F[ii] /= NBave;
+                    {
+						data.image[ID_WFSref0n].array.F[ii] /= NBave;
+						data.image[ID_WFSref2n].array.F[ii] /= NBave;
+					}
             }
             sprintf(fname, "!./zresptmp/%s_%03ld.fits", WFSref0_name, iter);
             save_fits(WFSref0_name, fname);
+            sprintf(fname, "!./zresptmp/wfsimRMS.fits");
+            save_fits("wfsimrms", fname);
 
 
             if(mode!=3)
@@ -8781,7 +8799,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
             r = system(command);
         }
-    }
+    } // end of iteration loop 
 
     free(arrayf);
     free(sizearray);
@@ -8801,7 +8819,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
 // dmmask_perchigh = 0.7
 // dmmask_coeffhigh = 0.3
 
-int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh)
+int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh)
 {
     long IDWFSmap, IDDMmap;
     long IDWFSmask, IDDMmask;
@@ -8882,9 +8900,8 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
     
     // (map/map1)*pow(map,0.25)
     
-    // DMmask: select pixels >30% of 70-percentile
+    // DMmask: select pixels 
     lim0 = dmmask_coefflow*img_percentile(DMmap_name, dmmask_perclow);
-     
     IDtmp = create_2Dimage_ID("_tmpdmmap", sizexDM, sizeyDM);
     for(ii=0;ii<sizexDM*sizeyDM;ii++)
 		data.image[IDtmp].array.F[ii] = data.image[IDDMmap].array.F[ii] - lim0;
@@ -8903,10 +8920,16 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
 
    
 
-    // WFSmask : select pixels >30% of 65-percentile
+    // WFSmask : select pixels 
     printf("Preparing WFS mask ... ");
     fflush(stdout);    
-    lim = 0.3*img_percentile(WFSmap_name, 0.65);
+    
+    lim0 = wfsmask_coefflow*img_percentile(WFSmap_name, wfsmask_perclow);
+    IDtmp = create_2Dimage_ID("_tmpwfsmap", sizexWFS, sizeyWFS);
+    for(ii=0;ii<sizexWFS*sizeyWFS;ii++)
+		data.image[IDtmp].array.F[ii] = data.image[IDWFSmap].array.F[ii] - lim0;
+    lim = wfsmask_coeffhigh*img_percentile("_tmpwfsmap", wfsmask_perchigh);
+    
     for(ii=0; ii<sizeWFS; ii++)
     {
         if(data.image[IDWFSmap].array.F[ii]<lim)
@@ -8914,6 +8937,7 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
         else
             data.image[IDWFSmask].array.F[ii] = 1.0;
     }
+    delete_image_ID("_tmpwfsmap");
     printf("done\n");
     fflush(stdout);
 
@@ -9180,7 +9204,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
     NBpoke = data.image[IDzrm].md[0].size[2];
 
     
-    AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name, 0.2, 1.0, 0.7, 0.3);
+    AOloopControl_mkCalib_map_mask(loop, zrespm_name, WFSmap_name, DMmap_name, 0.2, 1.0, 0.7, 0.3, 0.05, 1.0, 0.65, 0.3);
 
 //	list_image_ID();
 	//printf("========== STEP 000 ============\n");
@@ -9219,6 +9243,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 		fprintf(fp, "%6ld %06ld %20f %20f\n", poke, NBpoke, tot, tot1);
 	}
 	fclose(fp);
+
 
     return(0);
 }

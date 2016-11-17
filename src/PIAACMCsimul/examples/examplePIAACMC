@@ -1,63 +1,273 @@
 #!/bin/bash
 
 
-# PIAACMC design example script / step by step operations
-# run the commands in this script in the local working directory
-# This script is meant to be run/read line by line to guide the user
+
+# number of arguments to script
+NBARGS=0
 
 
-# set this to 1 if each step should be saved
-SAVESTEP=1
 
 
-# ===========================================
-#    MAKE LOCAL COPY (SYM LINK) OF SCRIPTS
-# ===========================================
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+
+
 
 
 # source code directory (change as needed)
 srcdir="/home/olivier/src/Cfits/src/PIAACMCsimul/scripts"
 
-ln -s $srcdir/syncscripts syncscripts
-./syncscripts
-
-# you should see the following scripts in the work directory:
-# ./run
-# ./runclean
-# ./runopt
-# ./runPIAACMC
-# ./sim
-
-# type "./run" (no arguments) to see current configuration parameters and write the parameters in ./conf directory
-./run
-
-# configuration parameters are listed as files: ./conf/conf_<PARAMETERNAME>.txt
-
+size="1024"
 
 
 # ===========================================
 #    CREATE / IMPORT PUPIL
 # ===========================================
-
 # you may create / import your own pupil
 # in this example, the pupil must be a 1024 x 1024 pixel FITS file, single precision floating point
 # the pupil array size (1024 pix) must match the "size" parameter
 # the pupil radius in this example is 200 pix, and must match beamrad/pscale
 # the pupil central obstruction should match the coin parameter (0.3 in this example)
 # if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
+# the name of the pupil file is "pup_1024.fits" or "pup_2048.fits"
+
+
+# example (change as needed)
+# cp $exampledir/pup_seg00_2048.fits pup_2048.fits
 
 
 
-# the name of the pupil file is "pup_1024.fits"
 
 
 
 
-# examples directory (change as needed)
 
 
-exampledir="/home/olivier/src/Cfits/src/PIAACMCsimul/examples"
-cp $exampledir/pup_seg00_2048.fits pup_2048.fits
+
+
+
+
+
+
+
+
+
+# ===================================================================================
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : PIAACMC DESIGN SCRIPT $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "PIAACMC design example script / step by step operations"
+echo "run the script in this script in the local working directory"
+echo "This script is meant to be run/read line by line to guide the user"
+echo "Command-line interface has limited features"
+echo "   "
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-hS]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     ${tput bold)-S$(tput sgr0)          (S)ave intermediate results during monochromatic design"
+echo ""
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%20s       PIAACMC design script\n" "$0" 
+}
+
+
+
+
+
+EXITSTATUS=0
+
+function checkFile {
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] File $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function checkDir {
+if [ -d $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
+else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+
+}
+
+
+
+# ================= OPTIONS =============================
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+# Save intermediate steps
+SAVESTEP=0 
+
+# by default, skip setup
+MKSETUP=0
+
+
+
+
+# Parse command line flags
+while getopts :hH:L:N:Cc FLAG; do
+  case $FLAG in
+    S)
+    SAVESTEP=1
+    ;;
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    \?) 
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHEL
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  
+
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+
+
+# ======================= CHECK REQUIRED FILES =================================
+echo ""
+
+
+
+
+checkFile "pup_$size.fits"
+
+
+# ============================= CHECK IF COMMANDS EXISTS ==========================
+
+if [ ! -f "step_setup.txt" ]; then
+MKSETUP=1
+fi
+
+if [ "$MKSETUP" = "1" ]; then
+# ===========================================
+#    MAKE LOCAL COPY (SYM LINK) OF SCRIPTS
+# ===========================================
+ln -s $srcdir/syncscripts syncscripts
+./syncscripts
+# you should see the following scripts in the work directory:
+# ./run
+# ./runclean
+# ./runopt
+# ./runPIAACMC
+# ./sim
+touch step_setup.txt
+fi
+
+
+checkCommand "./run"
+checkCommand "./runclean"
+checkCommand "./runopt"
+checkCommand "./runPIAACMC"
+checkCommand "./sim"
+
+
+
+
+
+
+
+
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
+echo ""
+exit
+else
+echo ""
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# type "./run" (no arguments) to see current configuration parameters and write the parameters in ./conf directory
+./run
+# configuration parameters are listed as files: ./conf/conf_<PARAMETERNAME>.txt
+
+
 
 
 
@@ -101,7 +311,7 @@ echo "10" > conf/conf_mlambdaB.txt
 echo "50" > conf/conf_ssize.txt
 
 # OPTICAL DESIGN
-echo "2048" > conf/conf_size.txt
+echo "$size" > conf/conf_size.txt
 echo "0.00385" > conf/conf_beamrad.txt
 echo "0.000009625" > conf/conf_pscale.txt
 echo "78" > conf/conf_Fratio.txt
@@ -118,10 +328,14 @@ echo "0.2" > conf/conf_LyotZmax.txt
 
 # CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
 step="001"
+if [ ! -f "step000.txt" ]; then
 ./run optsingle $step
 if [ "$SAVESTEP" = "1" ]; then
 cp -rf $PWD $PWD.step${step}
 fi
+touch step000.txt
+fi
+
 
 # this operation should take approximately 10 minutes
 

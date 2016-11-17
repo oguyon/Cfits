@@ -8686,7 +8686,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
 
 			// compute the material thickness producing a lambda phase shift at the center of the spectral band
-			sag0 = 1.0e-6;
+			//sag0 = 1.0e-6;
 			
 		
 
@@ -8739,9 +8739,9 @@ int PIAACMCsimul_run(char *confindex, long mode)
             {
 				sprintf(command, "echo \"%g  %ld\" > sag0.txt", sag0, data.image[piaacmc[0].zonezID].md[0].size[0]);
 				ret = system(command);
-				
+								
 				  // randomly select regions that are abs()>sag0/2 and push them back toward zero
-              prob1 = pow(ran1(),8.0); // probability that each zone is pushed back toward zero
+				prob1 = pow(ran1(),8.0); // probability that each zone is pushed back toward zero
                     
                     for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
 						{
@@ -8764,6 +8764,16 @@ int PIAACMCsimul_run(char *confindex, long mode)
 										}
 								}
 						}
+
+				fp = fopen("fpsagtest.txt", "w");
+				fprintf(fp, "# %9.6f\n", sag0*1.0e6);
+				fprintf(fp, "#    %5ld    %5ld    %5ld\n", cnt0, cnt00, data.image[piaacmc[0].zonezID].md[0].size[0]);
+				for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
+					{
+						fprintf(fp, "%5ld %9.6f\n", k, data.image[piaacmc[0].zonezID].array.D[k]*1.0e6);
+					}
+				fclose(fp);
+
             }
             
             

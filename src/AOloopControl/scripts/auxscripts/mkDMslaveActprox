@@ -106,9 +106,6 @@ fi
 
 
 
-
-
-
 Cfits << EOF
 loadfits "$1" DMmaskRM
 aolmkslact DMmaskRM $2 DMslavedact
@@ -116,3 +113,18 @@ savefits DMslavedact "!dmslaved.fits"
 exit
 EOF
 
+
+Cfits << EOF
+loadfits dmmaskRM.fits dmmRM
+loadfits dmslaved.fits dmsl
+imtrunc dmsl 0.0 1.0 dmsl1
+dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
+savefits dmm "!dmmask.fits"
+exit
+EOF
+
+
+
+#stageddir="conf_zrm_staged"
+#cp dmslavedact.fits ./${stageddir}/
+#cp dmmask.fits ./${stageddir}/

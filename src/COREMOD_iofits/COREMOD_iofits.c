@@ -1401,7 +1401,7 @@ int save_ush_fits(char *ID_name, char *file_name)
 
 
 
-int save_fits(char *ID_name, char *file_name)
+/*int save_fits(char *ID_name, char *file_name)
 {
     long ID;
     int atype;
@@ -1425,9 +1425,19 @@ int save_fits(char *ID_name, char *file_name)
     }
 
     return 0;
+}*/
+
+
+int save_fits(char *ID_name, char *file_name)
+{
+    char savename[1000];
+    if (file_name[0] == '!')
+        strcpy(savename, file_name+1); // avoid the leading '!'
+    else
+        strcpy(savename, file_name);
+    
+    return save_fits_atomic(ID_name, savename);
 }
-
-
 
 
 int save_fits_atomic(char *ID_name, char *file_name)

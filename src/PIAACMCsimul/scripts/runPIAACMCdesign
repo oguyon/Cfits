@@ -1,0 +1,1101 @@
+#!/bin/bash
+
+
+
+# number of arguments to script
+NBARGS=0
+
+
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+
+
+
+
+# source code directory (change as needed)
+srcdir="/home/olivier/src/Cfits"
+
+size="1024"
+
+
+# ===========================================
+#    CREATE / IMPORT PUPIL
+# ===========================================
+# you may create / import your own pupil
+# in this example, the pupil must be a 1024 x 1024 pixel FITS file, single precision floating point
+# the pupil array size (1024 pix) must match the "size" parameter
+# the pupil radius in this example is 200 pix, and must match beamrad/pscale
+# the pupil central obstruction should match the coin parameter (0.3 in this example)
+# if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
+# the name of the pupil file is "pup_1024.fits" or "pup_2048.fits"
+
+
+# example (change as needed)
+# cp $exampledir/pup_seg00_2048.fits pup_2048.fits
+
+
+
+
+
+
+
+# default configurations
+
+# PIAA optics mode
+# 0: no PIAA optics (APLCMC)
+# 1: PIAA optics (PIAACMC)
+PIAAmode="1"
+PIAAcoeff="1.0" 	# fraction of apodization to be done by PIAA optics
+PIAAr0lim="1.15"
+PIAAr1lim="1.5"
+PIAAcirc="0"
+
+# PIAA shapes regularization
+REGPIAACALPHA="0.2"
+REGPIAACCOEFF="300.0"
+REGPIAAFALPHA="0.2"
+REGPIAAFCOEFF="300.0"
+
+
+# include inverse PIAA ?
+invPIAAmode=1
+
+# set pre-apodizer to pupil plane conjugation
+prePIAA0maskpos="0.0"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+set_optconfig=0
+
+
+
+# refractive PIAA lenses in collimated beam, SiO2 focal plane mask
+function SetConfig_PIAACMCnearIRlenses1024 {
+size="1024"
+invPIAAmode=1
+lambda="1650"
+PIAAmaterial="CaF2"
+beamrad="0.00882"
+pscale="0.0000441"
+Fratio="29.422"
+PIAAsep="0.10"
+PIAA0pos="0.0"
+LyotZmin-"-0.1"
+LyotZmax="0.1"
+pupoutmaskrad="0.98"
+
+fpmmaterial="SiO2"
+FPMsectors="2"
+
+# LYOT STOP(S) DESIGN
+LStransm="0.90"
+NBls="1"
+
+set_optconfig=1
+}
+
+
+
+# afocal gregorian telescope, reflective focal plane mask
+function SetConfig_PIAACMCvisMirrorGregorian1024 {
+size="1024"
+invPIAAmode=0
+lambda="565"
+PIAAmaterial="Mirror"
+beamrad="0.022"
+pscale="0.00011"
+Fratio="80.0"
+PIAAsep="-2.302606"
+PIAA0pos="1.199997"
+prePIAA0maskpos="-1.102609" # optional
+postPIAA0maskpos="1.199997" # optional
+LyotZmin="-4.5"
+LyotZmax="0.5"
+pupoutmaskrad="0.95"
+
+fpmmaterial="Mirror"
+FPMsectors="2"
+
+# LYOT STOP(S) DESIGN
+LStransm="0.80"
+NBls="1"
+
+set_optconfig=1
+}
+
+
+
+
+
+
+
+
+
+
+
+# ===========================================
+#    CREATE / IMPORT PUPIL
+# ===========================================
+
+# you may create / import your own pupil
+# in this example, the pupil must be size x size FITS file, single precision floating point
+# the pupil array size must match the "size" parameter
+# the pupil radius should be equal to beamrad/pscale
+# the linear pupil central obstruction should match the coin parameter
+# if you wish to use your own pupil file, make sure you either match the array size and beam size (pix) of this example, or modify the size, beamrad, pscale and coin parameters according to your pupil file
+
+set_pupil=0
+
+function loadPup_WFIRST1024 {
+exampledir="$srcdir/src/PIAACMCsimul/examples"
+cp $exampledir/pup_WFIRST1024.fits.gz pup_1024.fits.gz
+rm pup_1024.fits 2> /dev/null
+gunzip pup_1024.fits.gz
+coin="0.3"
+coout="0.29"
+pupoutmaskrad="0.92"
+set_pupil=1
+}
+
+
+
+function loadPup_Subaru1024 {
+exampledir="$srcdir/src/PIAACMCsimul/examples"
+cp $exampledir/pupSubaruM_1024.fits.gz pup_1024.fits.gz
+rm pup_1024.fits 2> /dev/null
+gunzip pup_1024.fits.gz
+coin="0.3175"
+coout="0.2"
+pupoutmaskrad="0.95"
+set_pupil=1
+}
+
+
+
+function loadPup_seg3rings1024 {
+exampledir="$srcdir/src/PIAACMCsimul/examples"
+cp $exampledir/pup_seg3rings_1024.fits.gz pup_1024.fits.gz
+rm pup_1024.fits 2> /dev/null
+gunzip pup_1024.fits.gz
+coin="0.3"
+coout="0.22"
+pupoutmaskrad="0.95"
+set_pupil=1
+}
+
+
+
+
+
+
+
+
+
+
+
+set_optparam="0"
+
+function SetOptParam {
+	
+lambdaB="10"    # spectral band (%)
+mlambdaB="$lambdaB"
+fpmradld="1.0"
+
+# FOCAL PLANE MASK
+ssize="50"
+NBrings="32"
+maskradld="3.00"
+fpmminsag="-2.0e-6"
+fpmmaxsag="2.0e-6"
+fpmregsag_coeff="1.0"
+fpmregsag_alpha="1.0"
+set_optparam="1"
+}
+
+
+
+
+
+# ===================================================================================
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : PIAACMC DESIGN SCRIPT $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "PIAACMC design example script / step by step operations"
+echo "run the script in this script in the local working directory"
+echo ""
+echo "Parameters different from the default values in this script are loaded by user-provided script \"setparam.bash\""
+echo "Example syntax for setparam.bash script:"
+echo "NBrings=\"32\""
+echo ""
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-hcSmel]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-c$(tput sgr0)              Clear directory of all results (use with care)"
+echo "     $(tput bold)-S$(tput sgr0)              save intermediate results during monochromatic design"
+echo "     $(tput bold)-r$(tput sgr0) <step>       Revert to step <step>, if it has been saved"              
+echo "     $(tput bold)-e$(tput sgr0) <index>      Use example #<index>"
+echo "                           0 : Subaru PIAACMC, H band"
+echo "                           1 : WFIST PIAACMC, visible (default)"
+echo "                           2 : 3-rings PSF, visible"
+echo "     $(tput bold)-l$(tput sgr0)              List design parameters"
+echo "     $(tput bold)-m$(tput sgr0) <step>       Design PIAACMC step <step>"
+echo "                      1-18 : design monochromatic PIAACMC up to this step"
+echo "                      200  : polychromatic focal plane mask design"
+echo "                      300  : compute polychromatic on-axis PSF -> psfi0.fits"
+echo "                      400  : evaluation, level 0 (on-axis PSF)"
+echo "                      401  : evaluation, level 1 (level0 + extended source with OPD errors)"
+echo "                      402  : evaluation, level 2 (level 1 + transmission curve)"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%20s       PIAACMC design script\n" "$0" 
+}
+
+
+
+
+
+EXITSTATUS=0
+
+function checkis1 {
+if [ "$2" = "1" ]
+	then
+	echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Variable $(tput bold)$1$(tput sgr0) set to 1"
+	else
+	echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Variable $(tput bold)$1$(tput sgr0) not set to 1"
+    EXITSTATUS=1
+fi
+}
+
+function checkFile {
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] File $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function checkDir {
+if [ -d $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
+else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+
+}
+
+
+
+
+
+
+
+# ================= OPTIONS =============================
+
+DesignExampleIndex=1 # default
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+
+# Save intermediate steps
+SAVESTEP=0 
+
+# by default, skip setup
+MKSETUP=0
+
+# by default, max step for monochromatic design = 18
+mSTEP=18
+
+# by default, do not list parameters, but execute code
+ListParam=0
+
+
+step="000"
+
+# Parse command line flags
+while getopts :hSm:e:lcr: FLAG; do
+  case $FLAG in
+    S)
+    SAVESTEP=1
+    ;;
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    m)
+    mSTEP=$OPTARG
+    ;;
+    l)
+    ListParam=1
+    ;;
+    e)
+    DesignExampleIndex=$OPTARG    
+    ;;
+    c)
+    ./runclean 2> /dev/null
+    exit
+    ;;
+    r)
+    step=$OPTARG
+    dir="$PWD.step${step}"
+    if [ -d $dir ]; then
+    echo "Directory $dir found"
+    ./runclean 2> /dev/null
+    rsync -au --progress $dir/* .
+    else
+    echo "Directory $dir does not exist: cannot revert to step $step"
+    fi
+    exit
+    ;;
+    \?) 
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHEL
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  
+
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+
+
+
+
+# ================== DESIGN =============================
+
+# Subaru PIAACMC
+if [ "$DesignExampleIndex" -eq 0 ]; then
+loadPup_Subaru1024
+SetConfig_PIAACMCnearIRlenses1024
+SetOptParam
+fi
+
+# WFIRST optical
+if [ "$DesignExampleIndex" -eq 1 ]; then
+loadPup_WFIRST1024
+SetConfig_PIAACMCvisMirrorGregorian1024
+SetOptParam
+fi
+
+# Segmented aperture, 3 rings
+if [ "$DesignExampleIndex" -eq 2 ]; then
+loadPup_seg3rings1024
+SetConfig_PIAACMCvisMirrorGregorian1024
+SetOptParam
+fi
+
+. ./setparam.bash 2> /dev/null
+
+
+
+# ======================= CHECK REQUIRED FILES =================================
+echo ""
+checkFile "pup_$size.fits"
+
+
+
+# ============================= CHECK IF COMMANDS EXISTS ==========================
+
+if [ ! -f "step_setup.txt" ]; then
+MKSETUP=1
+fi
+
+if [ "$MKSETUP" = "1" ]; then
+# ===========================================
+#    MAKE LOCAL COPY (SYM LINK) OF SCRIPTS
+# ===========================================
+rm syncscripts 2> /dev/null
+ln -s $srcdir/src/PIAACMCsimul/scripts/syncscripts syncscripts
+./syncscripts
+# you should see the following scripts in the work directory:
+# ./run
+# ./runclean
+# ./runopt
+# ./runPIAACMC
+# ./sim
+touch step_setup.txt
+fi
+
+
+checkCommand "./run"
+checkCommand "./runclean"
+checkCommand "./runopt"
+checkCommand "./runPIAACMC"
+checkCommand "./sim"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+checkis1 set_pupil $set_pupil
+checkis1 set_optconfig $set_optconfig
+checkis1 set_optparam $set_optparam
+
+
+
+
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
+rm step_setup.txt
+echo ""
+exit
+else
+echo ""
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# type "./run" (no arguments) to see current configuration parameters and write the parameters in ./conf directory
+# ./run
+# configuration parameters are listed as files: ./conf/conf_<PARAMETERNAME>.txt
+
+
+
+
+
+# ===========================================
+#    SET PARAMETER VALUES FOR PIAACMC
+# ===========================================
+
+# PIAA optics (PIAACMC)
+echo "$PIAAmode" > ./conf/conf_PIAAmode.txt
+
+# set pre-apodizer to pupil plane conjugation
+echo "$prePIAA0maskpos" > ./conf/conf_prePIAA0maskpos.txt
+# set location of post PIAA mask
+echo "$postPIAA0maskpos" > ./conf/conf_postPIAA0maskpos.txt
+
+# PIAA OPTICS DESIGN
+echo "$coin" > conf/conf_coin.txt
+echo "$coout" > conf/conf_coout.txt
+echo "$fpmradld" > conf/conf_fpmradld.txt
+echo "$PIAAmaterial" > conf/conf_PIAAmaterial.txt
+echo "$REGPIAACALPHA" > conf/conf_REGPIAACALPHA.txt
+echo "$REGPIAACCOEFF" > conf/conf_REGPIAACCOEFF.txt  
+echo "$REGPIAAFALPHA" > conf/conf_REGPIAAFALPHA.txt  
+echo "$REGPIAAFCOEFF" > conf/conf_REGPIAAFCOEFF.txt
+
+
+# LYOT STOP(S) DESIGN
+echo "$lambda" > conf/conf_lambda.txt
+echo "$NBls" > conf/conf_NBls.txt
+
+# FOCAL PLANE MASK DESIGN
+echo "$fpmmaterial" > conf/conf_fpmmaterial.txt
+echo "$FPMsectors" > conf/conf_FPMsectors.txt
+echo "$NBrings" > conf/conf_NBrings.txt
+echo "$maskradld" > conf/conf_maskradld.txt
+echo "$fpmminsag" > conf/conf_fpmminsag.txt
+echo "$fpmmaxsag" > conf/conf_fpmmaxsag.txt
+echo "$fpmregsag_coeff" > conf/conf_fpmregsag_coeff.txt
+echo "$fpmregsag_alpha" > conf/conf_fpmregsag_alpha.txt
+
+#echo "$fpmregsag_alpha" > conf/conf_fpmregsag_alpha.txt
+
+# OPTIMIZATION PARAMETERS
+echo "$lambda" > conf/conf_mlambda.txt
+echo "$lambdaB" > conf/conf_mlambdaB.txt
+echo "$ssize" > conf/conf_ssize.txt
+
+# OPTICAL DESIGN
+echo "$size" > conf/conf_size.txt
+echo "$beamrad" > conf/conf_beamrad.txt
+echo "$pscale" > conf/conf_pscale.txt
+echo "$Fratio" > conf/conf_Fratio.txt
+echo "$PIAAr0lim" > conf/conf_PIAAr0lim.txt
+echo "$PIAAr1lim" > conf/conf_PIAAr1lim.txt
+echo "$PIAAsep" > conf/conf_PIAAsep.txt
+echo "$PIAA0pos" > conf/conf_PIAA0pos.txt
+echo "$invPIAAmode" > conf/conf_invPIAAmode.txt
+echo "$LyotZmin" > conf/conf_LyotZmin.txt
+echo "$LyotZmax" > conf/conf_LyotZmax.txt
+echo "$pupoutmaskrad" > conf/conf_pupoutmaskrad.txt
+
+
+
+
+
+if [ "$ListParam" -eq 1 ]; then
+./run
+exit
+fi
+
+
+
+# ===========================================
+#    CREATE PIAACMC MONOCHROMATIC DESIGN
+# ===========================================
+
+# CREATE APODIZATION PROFILE AND PIAA OPTICS SHAPES FOR CENTRALLY OBSCURED CIRCULAR PUPIL APPROXIMATION
+step="001"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+
+# this operation should take approximately 3:15 (size = 1024)
+
+# The following files will be created:
+# Cmodes_<size>.fits : Cosine modes
+# Fmodes_<size>.fits : Fourier modes
+
+# in ./piaacmcconf_i000 directory :
+# WFamp0_xxx.fits and WFpha0_xxx.fits: amplitude and phase in specific planes
+# conjugations.txt : list of planes and conjugation distance to reference
+# apo2Drad.fits  : amplitude apodization (entirely allocated to PIAA optics)
+
+# PIAA_Mshapes.txt : aspheric optics shapes (r0 z0 r1 z1), unit [m]
+
+
+
+
+# repeat above step to compute on-axis PSF
+step="002"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this operation should take approximately 30s (1024 pix)
+
+# WFIRST example:
+# Average contrast = 9.20659e-08
+
+
+
+
+# Specify input pupil geometry
+step="003"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this operation is almost instantaneous
+
+
+
+
+# complete step 003 : Compute on-axis PSF
+step="004"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this operation should take approximately 30s (1024 pix)
+
+# WFIRST example:
+# Average contrast = 1.81985e-05
+
+
+
+
+# complete step 004 : compute Lyot stops shapes and locations
+step="005"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 8hr (1024 pix, 1 mask)
+# the Lyot stops are named "LyotStop0.fits, LyotStop1.fits ...
+
+
+
+# complete step 005 : optimize focal plane mask transm
+step="006"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 2hr
+# -> piaacmcconf_i000/result_fpmt.log
+
+
+
+
+
+# complete step 006 : compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
+step="007"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 22mn (size=1024)
+
+
+
+
+# complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
+step="008"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 40mn (size = 1024) 
+# to monitor optimization, view linoptval.txt with tail -f 
+
+# WFIRST example:
+# Average contrast = 1.02029e-09
+
+
+
+# complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+step="009"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 52mnhr (size = 1024)
+# to monitor optimization, view linoptval.txt with tail -f 
+
+# WFIRST example
+# contrast =          7.9458e-10
+
+
+
+
+# complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
+step="010"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 5mn
+# BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001336506 / 0.000004015620  -> 0.651398409628  0.071384621752
+# BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001712712 / 0.000004288296  -> 0.652970578150  0.075272989285
+
+
+
+
+# complete step 010: Tune Lyot stops conjugations
+step="011"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 4mn
+# to monitor progress: tail -f result_LMpos.log 
+
+# [0] Total light in scoring field = 1.67163e+09, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.98592e-06
+# [0] Total light in scoring field = 1.62817e+09, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.8563e-06
+
+# WFIRST example :
+# Average contrast = 8.02037e-1
+
+
+
+
+# complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+step="012"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 2h (size=1024)
+
+# WFIRST example :
+# Average contrast = 2.69584e-10
+
+
+
+
+# complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
+step="013"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 1h45mn (size=1024)
+
+# WFIRST example :
+# Average contrast = 4.18878e-11
+
+
+# complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
+step="014"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 4mn
+
+
+
+
+# complete step 014 : Tune Lyot stops conjugations
+step="015"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 3mn
+
+# WFIRST example :
+# Average contrast = 1.33201e-10
+
+
+
+# complete step 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
+step="016"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+# this step takes approximately 37mn
+
+# WFIRST example :
+# Average contrast = 1.01677e-10
+
+
+
+# complete step 016
+#touch ./piaacmcconf_i000/step017.txt
+step="017"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+
+
+# this step takes approximately  140mn
+
+# WFIRST example :
+# Average contrast = 2.06308e-11
+
+
+
+# complete step 017
+#touch ./piaacmcconf_i000/step017.txt
+step="018"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+
+
+# this step takes approximately 10h 
+
+# WFIRST example :
+# Average contrast = 5.17511e-12
+
+
+
+
+
+# ===========================================
+#    FOCAL PLANE MASK DESIGN
+# ===========================================
+
+step="200"
+if [ "$step" -le "$mSTEP" ]; then
+	if [ ! -f "step$step.txt" ]; then		
+		./run optsingle $step
+		if [ "$SAVESTEP" = "1" ]; then
+			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+		fi
+	touch step$step.txt
+	fi
+fi
+
+
+# this command will run for a few hrs if the number of focal plane mask zones is large
+# the complex amplitude response of each mask zone is computed 
+# Several sub-processes are launched, each computing a subset of the total number of zones
+# you can follow the progress of each subprocess in the corresponding tmux sessions
+# the tmux session names are PID followed by FPMt<index>n<NBindex>
+#
+# as each subprocess computes zone responses, they are stored in FITS files FPMresp..._thread<index>.fits.tmp
+# you can open/view these files to follow progress - each zone appears as a line, and files should fill from the bottom to the top
+#
+# when all threads complete, the files are merged into a single FPMresp file
+#
+
+# the optsingle 200 command includes both the creation of the FPMresp file (which is skipped if the file already exists) and a search for the optimal solution
+# Finding the optimal solution requires multiple searches, so you can re-launch the optsingle 200 command multiple time
+# Results are written in a file names piaacmcconf_i000/mode13_....opt.txt
+# the 5th number (in parentheses) shows the best solution 
+
+#
+# OPTIMIZATION PHASE
+# to view the status: tail -f ./piaacmcconf_i000/mode13....opt.txt
+# To stop the optimization loop, create a file named "./piaacmcconf_i000/stoploop13.txt" (twice)
+#
+
+
+
+
+# ===========================================
+#    EVALUATION
+# ===========================================
+
+
+# compute the PSF and complex amplitudes for the best solution
+step="300"
+if [ "$step" = "300" ]; then
+	./run proppoly 0
+	if [ "$SAVESTEP" = "1" ]; then
+		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+	fi
+fi
+# this will take about 20mn
+# [1] Total light in scoring field = 791208, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.76162e-08
+# [1] Total light in scoring field = 789920, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.75875e-08
+# [1] Total light in scoring field = 724691, peak PSF = 1.84375e+10, SCOTINGTOTAL = 2436  -> Average contrast = 1.61352e-08
+
+
+# focal plane mask solution :
+#
+# tmp_fpmsag.fits
+# tmp_fpmCA_pha.fits
+# tmp_fpmCA_ampl.fits
+#
+# PSF:
+# psfi0.fits
+#
+
+
+
+# compute the PSF and complex amplitudes for the best solution
+step="400"
+if [ "$step" = "400" ]; then
+	./run eval0 18
+	if [ "$SAVESTEP" = "1" ]; then
+		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+	fi
+fi
+
+
+
+
+# compute PSF, point source and extended source
+step="401"
+if [ "$step" = "401" ]; then
+	./run eval1 18
+	if [ "$SAVESTEP" = "1" ]; then
+		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+	fi
+fi
+# takes 59mn
+# more accurate pt source measurement of contrast in ContrastVal_s2 ... , 2nd number
+# extended source (+ OPD err)
+# ContrastVal_extsrc20_.. and ContrastVal_extsrc15_
+# OUTPUT FILES:
+# psfi0_extsrc15_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# ContrastVal_extsrc15_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.txt
+# ContrastCurve_extsrc15_sm0_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.txt
+# 
+#
+
+# to test a different focal plane solution
+# save previous solution
+# cp fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save
+# cp fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save
+# replace solution
+# cp fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr20_ssm0_Mirror_wb10.fits fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# cp fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr20_ssm0_Mirror_wb10.fits fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# restore previous configuration
+# cp fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save fpm_zonez_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+# cp fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits.save fpm_zonea_s2_l0565_sr10_nbr032_mr300_minsag-02000_maxsag002000_fpmreg001000_ssr50_ssm0_Mirror_wb10.fits
+
+
+
+
+# compute PSF, point source and extended source, transmission curve
+step="402"
+if [ "$step" = "402" ]; then
+	./run eval2 18
+	if [ "$SAVESTEP" = "1" ]; then
+		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
+	fi
+fi
+
+
+
+
+
+

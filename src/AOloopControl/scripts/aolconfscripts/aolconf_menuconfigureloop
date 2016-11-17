@@ -57,9 +57,12 @@ tmux send-keys -t ${tmuxname} "rm aolMeasureZrespmat.runproc" C-m
 tmux send-keys -t ${tmuxname} "sleep 0.5" C-m
 aoconflogext "STOP HO RM acquision in $1 sec"
 
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
 logRunningProcess "aolCleanZrespmat" "$tmuxname" "Process zonal response matrix"
-tmux send-keys -t aol${LOOPNUMBER}zrespMc "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
+tmux send-keys -t  ${tmuxname} "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
+
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
 
@@ -902,29 +905,70 @@ fi
 menuitems+=(" " " ")
 
 if [ "$DMMODE" = "ZONAL" ]; then
+
+
 DMmaskRMp0=0.2
 if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
 DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
 fi
-menuitems+=( "DMmaskRMp0" "            DM mask RM: background percentile               ${DMmaskRMp0}" )
+menuitems+=( "DMmaskRMp0"  "            DM mask RM: low level percentile                                ${DMmaskRMp0}" )
 
 DMmaskRMc0=1.0
 if [ -f "./conf/conf_DMmaskRMc0.txt" ]; then
 DMmaskRMc0=$( cat ./conf/conf_DMmaskRMc0.txt )
 fi
-menuitems+=( "DMmaskRMc0" "            DM mask RM: background coefficient              ${DMmaskRMc0}" )
+menuitems+=( "DMmaskRMc0"  "            DM mask RM: low level coefficient                               ${DMmaskRMc0}" )
 
 DMmaskRMp1=0.5
 if [ -f "./conf/conf_DMmaskRMp1.txt" ]; then
 DMmaskRMp1=$( cat ./conf/conf_DMmaskRMp1.txt )
 fi
-menuitems+=( "DMmaskRMp1" "            DM mask RM: threshold percentile                ${DMmaskRMp1}" )
+menuitems+=( "DMmaskRMp1"  "            DM mask RM: high level percentile                               ${DMmaskRMp1}" )
 
 DMmaskRMc1=0.4
 if [ -f "./conf/conf_DMmaskRMc1.txt" ]; then
 DMmaskRMc1=$( cat ./conf/conf_DMmaskRMc1.txt )
 fi
-menuitems+=( "DMmaskRMc1" "            DM mask RM: threshold coefficient               ${DMmaskRMc1}" )
+menuitems+=( "DMmaskRMc1"  "            DM mask RM: high level coefficient                              ${DMmaskRMc1}" )
+
+
+
+WFSmaskRMp0=0.2
+if [ -f "./conf/conf_WFSmaskRMp0.txt" ]; then
+WFSmaskRMp0=$( cat ./conf/conf_WFSmaskRMp0.txt )
+fi
+menuitems+=( "WFSmaskRMp0" "            WFS mask RM: low level percentile                               ${WFSmaskRMp0}" )
+
+WFSmaskRMc0=1.0
+if [ -f "./conf/conf_WFSmaskRMc0.txt" ]; then
+WFSmaskRMc0=$( cat ./conf/conf_WFSmaskRMc0.txt )
+fi
+menuitems+=( "WFSmaskRMc0" "            WFS mask RM: low level coefficient                              ${WFSmaskRMc0}" )
+
+WFSmaskRMp1=0.5
+if [ -f "./conf/conf_WFSmaskRMp1.txt" ]; then
+WFSmaskRMp1=$( cat ./conf/conf_WFSmaskRMp1.txt )
+fi
+menuitems+=( "WFSmaskRMp1" "            WFS mask RM: high level percentile                              ${WFSmaskRMp1}" )
+
+WFSmaskRMc1=0.4
+if [ -f "./conf/conf_WFSmaskRMc1.txt" ]; then
+WFSmaskRMc1=$( cat ./conf/conf_WFSmaskRMc1.txt )
+fi
+menuitems+=( "WFSmaskRMc1" "            WFS mask RM: high level coefficient                             ${WFSmaskRMc1}" )
+
+
+
+WFSmaskSNRr=0.05
+if [ -f "./conf/conf_WFSmaskSNRr.txt" ]; then
+WFSmaskSNRr=$( cat ./conf/conf_WFSmaskSNRr.txt )
+fi
+menuitems+=( "WFSmaskSNRr" "            WFS mask RN: fraction of pixels rejected for poor SNR           ${WFSmaskSNRr}" )
+
+
+
+
+
 
 
 if [ "$MASKS_LOCK" -eq "0" ]; then
@@ -1930,11 +1974,58 @@ aoconflogext "set DMmaskRM coeff 1 $DMmaskRMc1"
 ;;
 
 
+	WFSmaskRMp0)
+exec 3>&1;
+WFSmaskRMp0=$(dialog --inputbox "WFSmaskRM perc 0" 0 0 "$WFSmaskRMp0" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMp0" > ./conf/conf_WFSmaskRMp0.txt
+aoconflogext "set WFSmaskRM perc 0 $WFSmaskRMp0"
+;;
+
+	WFSmaskRMc0)
+exec 3>&1;
+WFSmaskRMc0=$(dialog --inputbox "WFSmaskRM coeff 0" 0 0 "$WFSmaskRMc0" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMc0" > ./conf/conf_WFSmaskRMc0.txt
+aoconflogext "set WFSmaskRM coeff 0 $WFSmaskRMc0"
+;;
+
+	WFSmaskRMp1)
+exec 3>&1;
+WFSmaskRMp1=$(dialog --inputbox "WFSmaskRM perc 1" 0 0 "$WFSmaskRMp1" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMp1" > ./conf/conf_WFSmaskRMp1.txt
+aoconflogext "set WFSmaskRM perc 1 $WFSmaskRMp1"
+;;
+
+	WFSmaskRMc1)
+exec 3>&1;
+WFSmaskRMc1=$(dialog --inputbox "WFSmaskRM coeff 1" 0 0 "$WFSmaskRMc1" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskRMc1" > ./conf/conf_WFSmaskRMc1.txt
+aoconflogext "set WFSmaskRM coeff 1 $WFSmaskRMc1"
+;;
+
+
+	WFSmaskSNRr)
+exec 3>&1;
+WFSmaskSNRr=$(dialog --inputbox "Fraction of WFS elements rejected due to poor SNR" 0 0 "$WFSmaskSNRr" 2>&1 1>&3);
+exec 3>&-;
+echo "$WFSmaskSNRr" > ./conf/conf_WFSmaskSNRr.txt
+aoconflogext "set WFSmakSNRr $WFSmaskSNRr"
+;;
+
+
 
 
 
 mkAOmasks)
-./auxscripts/aolmkMasks ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}
+./auxscripts/aolmkMasks 
+
+stageddir="conf_zrm_staged"
+cp wfsmask.fits ./${stageddir}/
+cp dmmaskRM.fits ./${stageddir}/
+
 menucontrolloop_default="mkAOmasks"
 state="menuconfigureloop"
 ;;
