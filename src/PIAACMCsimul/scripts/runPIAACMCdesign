@@ -253,6 +253,7 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)              help"
 echo "     $(tput bold)-c$(tput sgr0)              Clear directory of all results (use with care)"
+echo "     $(tput bold)-a$(tput sgr0)              APLCMC design (no PIAA optics)"
 echo "     $(tput bold)-S$(tput sgr0)              save intermediate results during monochromatic design"
 echo "     $(tput bold)-r$(tput sgr0) <step>       Revert to step <step>, if it has been saved"              
 echo "     $(tput bold)-e$(tput sgr0) <index>      Use example #<index>"
@@ -368,9 +369,10 @@ ListParam=0
 
 
 step="000"
+APLCMC="0"
 
 # Parse command line flags
-while getopts :hSm:e:lcr: FLAG; do
+while getopts :haSm:e:lcr: FLAG; do
   case $FLAG in
     S)
     SAVESTEP=1
@@ -383,6 +385,9 @@ while getopts :hSm:e:lcr: FLAG; do
       fi
       exit
       ;;
+    a) # APLCMC design
+    APLCMC="1"
+    ;;
     m)
     mSTEP=$OPTARG
     ;;
@@ -460,6 +465,13 @@ SetOptParam
 fi
 
 . ./setparam.bash 2> /dev/null
+
+
+if [ "$APLCMC" = "1" ]; then
+PIAAmode="0"
+prePIAA0maskpos="0"
+pupoutmaskrad="1.0"
+fi
 
 
 
@@ -563,14 +575,17 @@ echo "$prePIAA0maskpos" > ./conf/conf_prePIAA0maskpos.txt
 echo "$postPIAA0maskpos" > ./conf/conf_postPIAA0maskpos.txt
 
 # PIAA OPTICS DESIGN
+#if [ "$APLCMC" = "0" ]; then
 echo "$coin" > conf/conf_coin.txt
 echo "$coout" > conf/conf_coout.txt
-echo "$fpmradld" > conf/conf_fpmradld.txt
 echo "$PIAAmaterial" > conf/conf_PIAAmaterial.txt
 echo "$REGPIAACALPHA" > conf/conf_REGPIAACALPHA.txt
 echo "$REGPIAACCOEFF" > conf/conf_REGPIAACCOEFF.txt  
 echo "$REGPIAAFALPHA" > conf/conf_REGPIAAFALPHA.txt  
 echo "$REGPIAAFCOEFF" > conf/conf_REGPIAAFCOEFF.txt
+#fi
+
+echo "$fpmradld" > conf/conf_fpmradld.txt
 
 
 # LYOT STOP(S) DESIGN
@@ -599,6 +614,8 @@ echo "$size" > conf/conf_size.txt
 echo "$beamrad" > conf/conf_beamrad.txt
 echo "$pscale" > conf/conf_pscale.txt
 echo "$Fratio" > conf/conf_Fratio.txt
+
+if [ "$APLCMC" = "0" ]; then
 echo "$PIAAr0lim" > conf/conf_PIAAr0lim.txt
 echo "$PIAAr1lim" > conf/conf_PIAAr1lim.txt
 echo "$PIAAsep" > conf/conf_PIAAsep.txt
@@ -607,6 +624,7 @@ echo "$invPIAAmode" > conf/conf_invPIAAmode.txt
 echo "$LyotZmin" > conf/conf_LyotZmin.txt
 echo "$LyotZmax" > conf/conf_LyotZmax.txt
 echo "$pupoutmaskrad" > conf/conf_pupoutmaskrad.txt
+fi
 
 
 
@@ -635,7 +653,7 @@ if [ "$step" -le "$mSTEP" ]; then
 	fi
 fi
 
-# this operation should take approximately 3:15 (size = 1024)
+# this operation should take approximately 3mn15 (size = 1024)
 
 # The following files will be created:
 # Cmodes_<size>.fits : Cosine modes
@@ -650,7 +668,7 @@ fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # repeat above step to compute on-axis PSF
 step="002"
 if [ "$step" -le "$mSTEP" ]; then
@@ -666,10 +684,11 @@ fi
 
 # WFIRST example:
 # Average contrast = 9.20659e-08
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # Specify input pupil geometry
 step="003"
 if [ "$step" -le "$mSTEP" ]; then
@@ -682,10 +701,11 @@ if [ "$step" -le "$mSTEP" ]; then
 	fi
 fi
 # this operation is almost instantaneous
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 003 : Compute on-axis PSF
 step="004"
 if [ "$step" -le "$mSTEP" ]; then
@@ -701,10 +721,10 @@ fi
 
 # WFIRST example:
 # Average contrast = 1.81985e-05
+fi
 
 
-
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 004 : compute Lyot stops shapes and locations
 step="005"
 if [ "$step" -le "$mSTEP" ]; then
@@ -718,9 +738,10 @@ if [ "$step" -le "$mSTEP" ]; then
 fi
 # this step takes approximately 8hr (1024 pix, 1 mask)
 # the Lyot stops are named "LyotStop0.fits, LyotStop1.fits ...
+fi
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 005 : optimize focal plane mask transm
 step="006"
 if [ "$step" -le "$mSTEP" ]; then
@@ -734,11 +755,11 @@ if [ "$step" -le "$mSTEP" ]; then
 fi
 # this step takes approximately 2hr
 # -> piaacmcconf_i000/result_fpmt.log
+fi
 
 
 
-
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 006 : compute Lyot stops shapes and locations, 2nd pass, LStransm0 throughput)
 step="007"
 if [ "$step" -le "$mSTEP" ]; then
@@ -751,10 +772,11 @@ if [ "$step" -le "$mSTEP" ]; then
 	fi
 fi
 # this step takes approximately 22mn (size=1024)
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 007 : tune PIAA shapes and focal plane mask transm, 10 cosine modes, 5 Fourier modes
 step="008"
 if [ "$step" -le "$mSTEP" ]; then
@@ -771,9 +793,11 @@ fi
 
 # WFIRST example:
 # Average contrast = 1.02029e-09
+fi
 
 
 
+if [ "$APLCMC" = "0" ]; then
 # complete step 008 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 step="009"
 if [ "$step" -le "$mSTEP" ]; then
@@ -790,10 +814,11 @@ fi
 
 # WFIRST example
 # contrast =          7.9458e-10
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 009 : Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 step="010"
 if [ "$step" -le "$mSTEP" ]; then
@@ -808,10 +833,11 @@ fi
 # this step takes approximately 5mn
 # BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001336506 / 0.000004015620  -> 0.651398409628  0.071384621752
 # BEST SOLUTION: 3.755878053803 / 3.682233386082    0.000001712712 / 0.000004288296  -> 0.652970578150  0.075272989285
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 010: Tune Lyot stops conjugations
 step="011"
 if [ "$step" -le "$mSTEP" ]; then
@@ -831,10 +857,11 @@ fi
 
 # WFIRST example :
 # Average contrast = 8.02037e-1
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 011 :  tune PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 step="012"
 if [ "$step" -le "$mSTEP" ]; then
@@ -850,10 +877,11 @@ fi
 
 # WFIRST example :
 # Average contrast = 2.69584e-10
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 012 : tune PIAA shapes and focal plane mask transm, 40, 100
 step="013"
 if [ "$step" -le "$mSTEP" ]; then
@@ -869,8 +897,10 @@ fi
 
 # WFIRST example :
 # Average contrast = 4.18878e-11
+fi
 
 
+if [ "$APLCMC" = "0" ]; then
 # complete step 013 : Compute Lyot stops shapes and locations, 4rth pass, $LStransm2 throughput
 step="014"
 if [ "$step" -le "$mSTEP" ]; then
@@ -883,10 +913,11 @@ if [ "$step" -le "$mSTEP" ]; then
 	fi
 fi
 # this step takes approximately 4mn
+fi
 
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 014 : Tune Lyot stops conjugations
 step="015"
 if [ "$step" -le "$mSTEP" ]; then
@@ -902,9 +933,10 @@ fi
 
 # WFIRST example :
 # Average contrast = 1.33201e-10
+fi
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 015 : tune PIAA shapes and focal plane mask transm, # modes: 20, 20
 step="016"
 if [ "$step" -le "$mSTEP" ]; then
@@ -920,9 +952,10 @@ fi
 
 # WFIRST example :
 # Average contrast = 1.01677e-10
+fi
 
 
-
+if [ "$APLCMC" = "0" ]; then
 # complete step 016
 #touch ./piaacmcconf_i000/step017.txt
 step="017"
@@ -941,9 +974,11 @@ fi
 
 # WFIRST example :
 # Average contrast = 2.06308e-11
+fi
 
 
 
+if [ "$APLCMC" = "0" ]; then
 # complete step 017
 #touch ./piaacmcconf_i000/step017.txt
 step="018"
@@ -962,7 +997,7 @@ fi
 
 # WFIRST example :
 # Average contrast = 5.17511e-12
-
+fi
 
 
 
@@ -972,15 +1007,14 @@ fi
 # ===========================================
 
 step="200"
-if [ "$step" -le "$mSTEP" ]; then
-	if [ ! -f "step$step.txt" ]; then		
+if [ "$step" -eq "$mSTEP" ]; then		
 		./run optsingle $step
 		if [ "$SAVESTEP" = "1" ]; then
 			rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
 		fi
 	touch step$step.txt
-	fi
 fi
+
 
 
 # this command will run for a few hrs if the number of focal plane mask zones is large
@@ -1016,7 +1050,7 @@ fi
 
 # compute the PSF and complex amplitudes for the best solution
 step="300"
-if [ "$step" = "300" ]; then
+if [ "$step" = "$mSTEP" ]; then
 	./run proppoly 0
 	if [ "$SAVESTEP" = "1" ]; then
 		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
@@ -1042,7 +1076,7 @@ fi
 
 # compute the PSF and complex amplitudes for the best solution
 step="400"
-if [ "$step" = "400" ]; then
+if [ "$step" = "$mSTEP" ]; then
 	./run eval0 18
 	if [ "$SAVESTEP" = "1" ]; then
 		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
@@ -1054,7 +1088,7 @@ fi
 
 # compute PSF, point source and extended source
 step="401"
-if [ "$step" = "401" ]; then
+if [ "$step" = "$mSTEP" ]; then
 	./run eval1 18
 	if [ "$SAVESTEP" = "1" ]; then
 		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null
@@ -1087,7 +1121,7 @@ fi
 
 # compute PSF, point source and extended source, transmission curve
 step="402"
-if [ "$step" = "402" ]; then
+if [ "$step" = "$mSTEP" ]; then
 	./run eval2 18
 	if [ "$SAVESTEP" = "1" ]; then
 		rsync -au --progress $PWD/ $PWD.step${step} &> /dev/null

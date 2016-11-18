@@ -1,3 +1,9 @@
+rm prePIAA0mask.fits
+rm prePIAA1mask.fits
+rm postPIAA0mask.fits
+rm postPIAA1mask.fits
+rm initOK*
+rm run.cmd.tsart
 rm optcoeff*.fits
 rm step0*.txt
 rm -rf ./status/

@@ -981,6 +981,9 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     int savefpm;
 
+	long ID_DFTmask00;
+	double r;
+
     //    double ri, ri0, sag2opd_coeff;
     //    long IDpiaar0zsag, IDpiaar1zsag;
     //    int mkpiaar0zsag, mkpiaar1zsag;
@@ -1027,7 +1030,19 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
     // beam radius in pixels
     beamradpix = optsyst[0].beamrad/optsyst[0].pixscale;
 
-
+	// Create "_DFTmask00" : force pixels within 10% of nominal pupil radius to be part of the DFT
+	ID_DFTmask00 = create_2Dimage_ID("_DFTmask00", size, size);
+	for(ii=0;ii<size;ii++)
+		for(jj=0;jj<size;jj++)
+			{
+				x = (1.0*ii-0.5*size)/beamradpix;
+				y = (1.0*jj-0.5*size)/beamradpix;
+				r = sqrt(x*x+y*y);
+				if(r<1.1)
+					data.image[ID_DFTmask00].array.F[jj*size+ii] = 1.0;
+				else
+					data.image[ID_DFTmask00].array.F[jj*size+ii] = 0.0;					
+			}
 
 
     // printf("BEAM RADIUS = %f / %f  = %f pix,   piaacmc[0].beamrad = %f\n", optsyst[0].beamrad, optsyst[0].pixscale, beamradpix, piaacmc[0].beamrad );
@@ -1201,7 +1216,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
 
     // ------------------- [OPTIONAL] pre-apodizer  -----------------------
-    // typically not present, skipping
+    // typically not present for PIAACMC
     ID = image_ID("prePIAA0mask");
     if(ID==-1)
         ID = load_fits("prePIAA0mask.fits", "prePIAA0mask", 1);
@@ -2903,7 +2918,10 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         }
 
         copy_image_ID("apo2Drad_CPA", "prePIAA0mask", 0);
-        save_fits("prePIAA0mask", "!test_prePIAA0mask.fits");
+        save_fits("prePIAA0mask", "!prePIAA0mask.fits");
+        
+        
+        
 
 
         // load PIAA apodization profile and fit it a series of cosines
