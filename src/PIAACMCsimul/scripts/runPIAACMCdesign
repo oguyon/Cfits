@@ -39,6 +39,15 @@ size="1024"
 
 
 
+function loadparam() {
+file="conf/conf_$1.txt"
+if [ ! -f $file ]; then
+echo "$2" > $file
+fi
+var=$( cat "$file" )
+eval "$1=$var"
+}
+
 
 
 # default configurations
@@ -254,12 +263,13 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)              help"
 echo "     $(tput bold)-c$(tput sgr0)              Clear directory of all results (use with care)"
 echo "     $(tput bold)-a$(tput sgr0)              APLCMC design (no PIAA optics)"
+echo "     $(tput bold)-p$(tput sgr0)              PIAACMC design (PIAA optics)"
 echo "     $(tput bold)-S$(tput sgr0)              save intermediate results during monochromatic design"
 echo "     $(tput bold)-r$(tput sgr0) <step>       Revert to step <step>, if it has been saved"              
-echo "     $(tput bold)-e$(tput sgr0) <index>      Use example #<index>"
+echo "     $(tput bold)-e$(tput sgr0) <index>      Use example #<index> (WILL SET ALL PARAMETERS)"
 echo "                           0 : Subaru PIAACMC, H band"
 echo "                           1 : WFIST PIAACMC, visible (default)"
-echo "                           2 : 3-rings PSF, visible"
+echo "                           2 : 3-rings segmented aperture, visible"
 echo "     $(tput bold)-l$(tput sgr0)              List design parameters"
 echo "     $(tput bold)-m$(tput sgr0) <step>       Design PIAACMC step <step>"
 echo "                      1-18 : design monochromatic PIAACMC up to this step"
@@ -369,10 +379,19 @@ ListParam=0
 
 
 step="000"
+
+
 APLCMC="0"
+# READ APLCMC
+loadparam PIAAmode 1
+if [ "$PIAAmode" = "0" ]; then
+APLCMC="1"
+fi
+
+
 
 # Parse command line flags
-while getopts :haSm:e:lcr: FLAG; do
+while getopts :hapSm:e:lcr: FLAG; do
   case $FLAG in
     S)
     SAVESTEP=1
@@ -387,6 +406,13 @@ while getopts :haSm:e:lcr: FLAG; do
       ;;
     a) # APLCMC design
     APLCMC="1"
+    PIAAmode="0"
+    echo "$PIAAmode" > ./conf/conf_PIAAmode.txt
+    ;;
+    p) # PIAACMC design
+    APLCMC="0"
+    PIAAmode="1"
+    echo "$PIAAmode" > ./conf/conf_PIAAmode.txt
     ;;
     m)
     mSTEP=$OPTARG
@@ -395,7 +421,8 @@ while getopts :haSm:e:lcr: FLAG; do
     ListParam=1
     ;;
     e)
-    DesignExampleIndex=$OPTARG    
+    DesignExampleIndex=$OPTARG
+    SETparams=1    
     ;;
     c)
     ./runclean 2> /dev/null
@@ -464,13 +491,17 @@ SetConfig_PIAACMCvisMirrorGregorian1024
 SetOptParam
 fi
 
+
+# LOAD CUSTOM PARAMETERS IF AVAILABLE
 . ./setparam.bash 2> /dev/null
 
 
 if [ "$APLCMC" = "1" ]; then
 PIAAmode="0"
 prePIAA0maskpos="0"
+echo "$prePIAA0maskpos" > ./conf/conf_prePIAA0maskpos.txt
 pupoutmaskrad="1.0"
+echo "$pupoutmaskrad" > ./conf/conf_pupoutmaskrad.txt
 fi
 
 
@@ -561,7 +592,7 @@ fi
 
 
 
-
+if [ "$SETparams" = "1" ]; then
 # ===========================================
 #    SET PARAMETER VALUES FOR PIAACMC
 # ===========================================
@@ -625,6 +656,9 @@ echo "$LyotZmin" > conf/conf_LyotZmin.txt
 echo "$LyotZmax" > conf/conf_LyotZmax.txt
 echo "$pupoutmaskrad" > conf/conf_pupoutmaskrad.txt
 fi
+
+fi
+
 
 
 
