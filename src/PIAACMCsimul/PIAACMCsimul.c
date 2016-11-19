@@ -2239,7 +2239,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     long Fmsize;
     long ID, ID0, ID1;
     long size2;
-    int r;
+    double rad;
     char command[1000];
     long IDv1, IDv2;
     char fname[500];
@@ -2577,7 +2577,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         printf("Loading PIAACMC configuration\n");
         fflush(stdout);
         sprintf(command, "mkdir -p %s", piaacmcconfdir);
-        r = system(command);
+        ret = system(command);
         loaded = PIAAsimul_loadpiaacmcconf(piaacmcconfdir);
         if(loaded==0)
         {
@@ -2762,7 +2762,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 		save_fits("cpamodesfreq", "!cpamodesfreq.fits");
         sprintf(command, "mv ModesExpr_CPA.txt %s/", piaacmcconfdir);
         
-        r = system(command);
+        ret = system(command);
     }
     piaacmc[0].NBFmodes = data.image[piaacmc[0].FmodesID].md[0].size[2];
     piaacmc[0].Fmsize = data.image[piaacmc[0].FmodesID].md[0].size[0];
@@ -3296,7 +3296,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         sprintf(fname, "!%s/LyotStop%ld.fits", piaacmcconfdir, i);
         sprintf(name, "lyotstop%ld", i);
 
-     
+
         
         piaacmc[0].IDLyotStop[i] = image_ID(name);
         if(piaacmc[0].IDLyotStop[i]==-1)
@@ -3308,13 +3308,25 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 						data.image[piaacmc[0].IDLyotStop[i]].array.F[ii] = 0.0;
 					else
 						data.image[piaacmc[0].IDLyotStop[i]].array.F[ii] = 1.0;
+						
+				for(ii=0;ii<xsize;ii++)
+					for(jj=0;jj<ysize;jj++)
+						{
+							x = 1.0*ii-0.5*xsize;
+							y = 1.0*jj-0.5*ysize;
+							rad = sqrt(x*x+y*y);
+							rad /= beamradpix;
+							if(rad<(piaacmc[0].centObs1+0.5/beamradpix))
+								data.image[piaacmc[0].IDLyotStop[i]].array.F[jj*xsize+ii] = 0.0;
+							if(rad>(1.0-0.5/beamradpix))
+								data.image[piaacmc[0].IDLyotStop[i]].array.F[jj*xsize+ii] = 0.0;
+						}
 				save_fl_fits(name, fname);
 			}
     }
 
     if(saveconf==1)
         PIAAsimul_savepiaacmcconf(piaacmcconfdir);
-
 
 
     return(0);
