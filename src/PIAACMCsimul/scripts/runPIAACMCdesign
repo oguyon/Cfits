@@ -413,6 +413,7 @@ while getopts :hs:apSm:e:lcr: FLAG; do
       exit
       ;;
     s)
+    echo "CHANGING SOURCE DIRECTORY to $OPTARG"
     echo "$OPTARG" > ./conf/conf_srcdir.txt
     exit
     ;;
