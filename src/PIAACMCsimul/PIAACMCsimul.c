@@ -2901,7 +2901,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
         if(piaacmc[0].PIAAmode==0)
         {
-            for(ii=0; ii<xsize*ysize; ii++)
+            for(ii=0; ii<xsize*ysize; ii++) // everything goes to the conventional apodizer
             {
                 data.image[IDapo_PIAA].array.F[ii] = 1.0;
                 data.image[IDapo_CPA].array.F[ii] = data.image[IDapo].array.F[ii];
@@ -3290,6 +3290,8 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         i = 0;
         sprintf(fname, "!%s/LyotStop%ld.fits", piaacmcconfdir, i);
         sprintf(name, "lyotstop%ld", i);
+
+     
         
         piaacmc[0].IDLyotStop[i] = image_ID(name);
         if(piaacmc[0].IDLyotStop[i]==-1)

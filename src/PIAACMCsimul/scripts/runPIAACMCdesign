@@ -421,11 +421,13 @@ while getopts :hs:apSm:e:lcr: FLAG; do
     APLCMC="1"
     PIAAmode="0"
     echo "$PIAAmode" > ./conf/conf_PIAAmode.txt
+    exit
     ;;
     p) # PIAACMC design
     APLCMC="0"
     PIAAmode="1"
     echo "$PIAAmode" > ./conf/conf_PIAAmode.txt
+    exit
     ;;
     m)
     mSTEP=$OPTARG
@@ -905,7 +907,7 @@ fi
 # [0] Total light in scoring field = 1.62817e+09, peak PSF = -1, SCOTINGTOTAL = 2436   -> Average contrast = 4.8563e-06
 
 # WFIRST example :
-# Average contrast = 8.02037e-1
+# Average contrast = 8.02037e-10
 fi
 
 
