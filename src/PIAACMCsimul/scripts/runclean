@@ -1,3 +1,4 @@
+rm ModesExpr_CPA.txt
 rm prePIAA0mask.fits
 rm prePIAA1mask.fits
 rm postPIAA0mask.fits

@@ -546,7 +546,6 @@ ln -s $srcdir/src/PIAACMCsimul/scripts/syncscripts syncscripts
 # ./sim
 touch step_setup.txt
 echo "$srcdir/src/PIAACMCsimul/scripts/syncscripts"
-exit
 fi
 
 
