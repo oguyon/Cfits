@@ -413,7 +413,7 @@ while getopts :hs:apSm:e:lcr: FLAG; do
       exit
       ;;
     s)
-    echo "$OPTARG" > ./conf/conf_SRCdir.txt
+    echo "$OPTARG" > ./conf/conf_srcdir.txt
     exit
     ;;
     a) # APLCMC design
