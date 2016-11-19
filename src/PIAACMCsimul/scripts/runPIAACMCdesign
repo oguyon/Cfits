@@ -24,7 +24,7 @@ echo "$2" > $file
 fi
 var=$( cat "$file" )
 eval "$1=$var"
-}
+} 
 
 
 
