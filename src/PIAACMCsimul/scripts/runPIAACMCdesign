@@ -33,7 +33,7 @@ eval "$1=$var"
 loadparam srcdir "/home/olivier/src/Cfits"
 
 echo "srcdir = $srcdir"
-exit
+
 size="1024"
 
 
