@@ -14,6 +14,21 @@ pname=`echo "$0" | sed "s/\.\///g"`
 
 
 
+
+
+function loadparam() {
+mkdir -p conf
+file="conf/conf_$1.txt"
+if [ ! -f $file ]; then
+echo "$2" > $file
+fi
+var=$( cat "$file" )
+eval "$1=$var"
+}
+
+
+
+
 # source code directory (change as needed)
 loadparam SRCdir "/home/olivier/src/Cfits"
 
@@ -37,17 +52,6 @@ size="1024"
 
 
 
-
-
-function loadparam() {
-mkdir -p conf
-file="conf/conf_$1.txt"
-if [ ! -f $file ]; then
-echo "$2" > $file
-fi
-var=$( cat "$file" )
-eval "$1=$var"
-}
 
 
 
