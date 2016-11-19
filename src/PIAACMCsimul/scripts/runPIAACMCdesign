@@ -32,6 +32,8 @@ eval "$1=$var"
 # source code directory (change as needed)
 loadparam srcdir "/home/olivier/src/Cfits"
 
+echo "srcdir = $srcdir"
+exit
 size="1024"
 
 
