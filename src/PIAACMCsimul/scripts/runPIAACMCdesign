@@ -15,7 +15,7 @@ pname=`echo "$0" | sed "s/\.\///g"`
 
 
 # source code directory (change as needed)
-srcdir="/home/olivier/src/Cfits"
+loadparam SRCdir "/home/olivier/src/Cfits"
 
 size="1024"
 
@@ -40,6 +40,7 @@ size="1024"
 
 
 function loadparam() {
+mkdir -p conf
 file="conf/conf_$1.txt"
 if [ ! -f $file ]; then
 echo "$2" > $file
@@ -261,6 +262,7 @@ echo "     $0 [-hcSmel]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-s$(tput sgr0) <src dir>    set source directory"
 echo "     $(tput bold)-c$(tput sgr0)              Clear directory of all results (use with care)"
 echo "     $(tput bold)-a$(tput sgr0)              APLCMC design (no PIAA optics)"
 echo "     $(tput bold)-p$(tput sgr0)              PIAACMC design (PIAA optics)"
@@ -391,7 +393,7 @@ fi
 
 
 # Parse command line flags
-while getopts :hapSm:e:lcr: FLAG; do
+while getopts :hs:apSm:e:lcr: FLAG; do
   case $FLAG in
     S)
     SAVESTEP=1
@@ -404,6 +406,10 @@ while getopts :hapSm:e:lcr: FLAG; do
       fi
       exit
       ;;
+    s)
+    echo "$OPTARG" > ./conf/conf_SRCdir.txt
+    exit
+    ;;
     a) # APLCMC design
     APLCMC="1"
     PIAAmode="0"
