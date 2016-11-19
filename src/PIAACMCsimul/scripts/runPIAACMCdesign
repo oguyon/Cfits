@@ -421,6 +421,11 @@ while getopts :hs:apSm:e:lcr: FLAG; do
     APLCMC="1"
     PIAAmode="0"
     echo "$PIAAmode" > ./conf/conf_PIAAmode.txt
+    PIAAmode="0"
+	prePIAA0maskpos="0"
+	echo "$prePIAA0maskpos" > ./conf/conf_prePIAA0maskpos.txt
+	pupoutmaskrad="1.0"
+	echo "$pupoutmaskrad" > ./conf/conf_pupoutmaskrad.txt
     exit
     ;;
     p) # PIAACMC design
@@ -485,6 +490,8 @@ fi
 
 # ================== DESIGN =============================
 
+
+if [ "$SETparams" = "1" ]; then
 # Subaru PIAACMC
 if [ "$DesignExampleIndex" -eq 0 ]; then
 loadPup_Subaru1024
@@ -506,18 +513,12 @@ SetConfig_PIAACMCvisMirrorGregorian1024
 SetOptParam
 fi
 
+fi
+
+
 
 # LOAD CUSTOM PARAMETERS IF AVAILABLE
 . ./setparam.bash 2> /dev/null
-
-
-if [ "$APLCMC" = "1" ]; then
-PIAAmode="0"
-prePIAA0maskpos="0"
-echo "$prePIAA0maskpos" > ./conf/conf_prePIAA0maskpos.txt
-pupoutmaskrad="1.0"
-echo "$pupoutmaskrad" > ./conf/conf_pupoutmaskrad.txt
-fi
 
 
 
@@ -571,9 +572,9 @@ checkCommand "./sim"
 
 
 
-checkis1 set_pupil $set_pupil
-checkis1 set_optconfig $set_optconfig
-checkis1 set_optparam $set_optparam
+#checkis1 set_pupil $set_pupil
+#checkis1 set_optconfig $set_optconfig
+#checkis1 set_optparam $set_optparam
 
 
 

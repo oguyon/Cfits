@@ -2817,6 +2817,10 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
         }
     }
 
+
+
+
+
     if((piaacmc[0].piaa0CmodesID==-1)||( piaacmc[0].piaa0FmodesID==-1)||(piaacmc[0].piaa1CmodesID==-1)||( piaacmc[0].piaa1FmodesID==-1))
     {
         sprintf(fname, "%s/apo2Drad.fits", piaacmcconfdir);
@@ -2887,9 +2891,10 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
                 }
 
             }
-
-
         }
+        
+        
+        
 
 
         // split apodization in conventional pupil apodizer (apoCPA) and PIAA apodization (apo2Drad_PIAA)
@@ -3299,7 +3304,7 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 				piaacmc[0].IDLyotStop[i] = create_2Dimage_ID(name, xsize, ysize);
 				ID = image_ID("pupmaskim");
 				for(ii=0; ii<xsize*ysize; ii++)
-					if(data.image[ID].array.F[ii] < 0.999)
+					if(data.image[ID].array.F[ii] < 0.99999999)
 						data.image[piaacmc[0].IDLyotStop[i]].array.F[ii] = 0.0;
 					else
 						data.image[piaacmc[0].IDLyotStop[i]].array.F[ii] = 1.0;
