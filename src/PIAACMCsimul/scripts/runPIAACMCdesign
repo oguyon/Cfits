@@ -30,7 +30,7 @@ eval "$1=$var"
 
 
 # source code directory (change as needed)
-loadparam SRCdir "/home/olivier/src/Cfits"
+loadparam srcdir "/home/olivier/src/Cfits"
 
 size="1024"
 
@@ -272,7 +272,7 @@ echo "     $(tput bold)-a$(tput sgr0)              APLCMC design (no PIAA optics
 echo "     $(tput bold)-p$(tput sgr0)              PIAACMC design (PIAA optics)"
 echo "     $(tput bold)-S$(tput sgr0)              save intermediate results during monochromatic design"
 echo "     $(tput bold)-r$(tput sgr0) <step>       Revert to step <step>, if it has been saved"              
-echo "     $(tput bold)-e$(tput sgr0) <index>      Use example #<index> (WILL SET ALL PARAMETERS)"
+echo "     $(tput bold)-e$(tput sgr0) <index>      setup example #<index> (WILL SET ALL PARAMETERS)"
 echo "                           0 : Subaru PIAACMC, H band"
 echo "                           1 : WFIST PIAACMC, visible (default)"
 echo "                           2 : 3-rings segmented aperture, visible"
@@ -432,7 +432,7 @@ while getopts :hs:apSm:e:lcr: FLAG; do
     ;;
     e)
     DesignExampleIndex=$OPTARG
-    SETparams=1    
+    SETparams=1
     ;;
     c)
     ./runclean 2> /dev/null
@@ -542,7 +542,10 @@ ln -s $srcdir/src/PIAACMCsimul/scripts/syncscripts syncscripts
 # ./runPIAACMC
 # ./sim
 touch step_setup.txt
+echo "$srcdir/src/PIAACMCsimul/scripts/syncscripts"
+exit
 fi
+
 
 
 checkCommand "./run"
@@ -666,7 +669,7 @@ echo "$LyotZmin" > conf/conf_LyotZmin.txt
 echo "$LyotZmax" > conf/conf_LyotZmax.txt
 echo "$pupoutmaskrad" > conf/conf_pupoutmaskrad.txt
 fi
-
+exit
 fi
 
 
