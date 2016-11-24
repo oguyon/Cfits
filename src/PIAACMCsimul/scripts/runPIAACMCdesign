@@ -140,8 +140,8 @@ PIAAsep="-2.302606"
 PIAA0pos="1.199997"
 prePIAA0maskpos="-1.102609" # optional
 postPIAA0maskpos="1.199997" # optional
-LyotZmin="-4.5"
-LyotZmax="0.5"
+LyotZmin="-2.5"
+LyotZmax="2.5"
 pupoutmaskrad="0.95"
 
 fpmmaterial="Mirror"
