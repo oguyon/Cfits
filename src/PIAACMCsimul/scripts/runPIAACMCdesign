@@ -861,7 +861,7 @@ if [ "$step" -le "$mSTEP" ]; then
 	touch step$step.txt
 	fi
 fi
-# this step takes approximately 52mnhr (size = 1024)
+# this step takes approximately 52mn (size = 1024)
 # to monitor optimization, view linoptval.txt with tail -f 
 
 # WFIRST example
