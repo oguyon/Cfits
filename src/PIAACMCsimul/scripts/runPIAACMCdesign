@@ -34,7 +34,8 @@ loadparam srcdir "/home/olivier/src/Cfits"
 
 echo "srcdir = $srcdir"
 
-size="1024"
+
+loadparam size "1024"
 
 
 # ===========================================
