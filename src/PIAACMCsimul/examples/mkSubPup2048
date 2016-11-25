@@ -1,0 +1,90 @@
+#!/bin/bash
+
+size=2048
+cx=1024
+cy=1024
+pupradpix=400
+
+puprad=8.82
+#co=2.7765
+co=2.8
+#spthick=0.869
+# measured from image
+spthick=0.57
+#spoff=1.45225
+spoff=1.5
+PA=0.775
+
+
+Cfits << EOF
+# scale in pix per mm
+scale=$pupradpix/$puprad
+copix=$co*scale
+mkdisk d0 $size $size $cx $cy $pupradpix
+mkdisk d1 $size $size $cx $cy copix
+
+# spiders
+spthickpix=$spthick*scale
+
+x10=$cx+$spoff*scale
+y10=$cy
+x20=$cx+$pupradpix*cos($PA)
+y20=$cy+$pupradpix*cos($PA)
+
+x11=$cx-$spoff*scale
+y11=$cy
+x21=$cx-$pupradpix*cos($PA)
+y21=$cy+$pupradpix*cos($PA)
+
+x12=$cx+$spoff*scale
+y12=$cy
+x22=$cx+$pupradpix*cos($PA)
+y22=$cy-$pupradpix*cos($PA)
+
+x13=$cx-$spoff*scale
+y13=$cy
+x23=$cx-$pupradpix*cos($PA)
+y23=$cy-$pupradpix*cos($PA)
+
+
+mkline spider0 $size $size x10 y10 x20 y20 spthickpix
+mkline spider1 $size $size x11 y11 x21 y21 spthickpix
+mkline spider2 $size $size x12 y12 x22 y22 spthickpix
+mkline spider3 $size $size x13 y13 x23 y23 spthickpix
+
+xl1=x13+2.9*scale
+yl1=y13-2.0*scale
+xl2=x23+2.9*scale
+yl2=y23-2.0*scale
+spthickpix1=0.5*spthickpix
+mkline l1 $size $size xl1 yl1 xl2 yl2 spthickpix1
+
+cx1=$cx-1.00*scale
+cy1=$cy-5.15*scale
+r1=scale*0.7
+mkdisk d2 $size $size cx1 cy1 r1
+
+
+cx1=$cx+3.95*scale
+cy1=$cy+3.15*scale
+r1=scale*0.7
+mkdisk d3 $size $size cx1 cy1 r1
+
+
+
+pup=d0-d1-spider0-spider1-spider2-spider3-l1-d2-d3
+
+imtrunc pup 0 1 pup1
+savefits pup1 "!pupSubaruM_${size}.fits"
+
+#rotateim pup1 pup1r 0.105
+
+#loadfits "pup_measured_internal.fits" mpup
+#mpup1=0.0-mpup/700000
+#resizeim pup1r pup1rr 451 451
+#addim pup1rr mpup1 pupadd 73 100 
+#savefits pup1r "!pup1r.fits"
+#savefits pupadd "!pupadd.fits"
+exit
+EOF
+
