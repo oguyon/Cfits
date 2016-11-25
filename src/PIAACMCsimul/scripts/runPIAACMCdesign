@@ -101,13 +101,13 @@ set_optconfig=0
 
 
 # refractive PIAA lenses in collimated beam, SiO2 focal plane mask
-function SetConfig_PIAACMCnearIRlenses1024 {
-size="1024"
+function SetConfig_PIAACMCnearIRlenses2048 {
+size="2048"
 invPIAAmode=1
 lambda="1650"
 PIAAmaterial="CaF2"
 beamrad="0.00882"
-pscale="0.0000441"
+pscale="0.00002205"
 Fratio="29.422"
 PIAAsep="0.10"
 PIAA0pos="0.0"
@@ -190,11 +190,11 @@ set_pupil=1
 
 
 
-function loadPup_Subaru1024 {
+function loadPup_Subaru2048 {
 exampledir="$srcdir/src/PIAACMCsimul/examples"
-cp $exampledir/pupSubaruM_1024.fits.gz pup_1024.fits.gz
-rm pup_1024.fits 2> /dev/null
-gunzip pup_1024.fits.gz
+cp $exampledir/pupSubaruM_2048.fits.gz pup_2048.fits.gz
+rm pup_2048.fits 2> /dev/null
+gunzip pup_2048.fits.gz
 coin="0.3175"
 coout="0.2"
 pupoutmaskrad="0.95"
@@ -275,9 +275,9 @@ echo "     $(tput bold)-p$(tput sgr0)              PIAACMC design (PIAA optics)"
 echo "     $(tput bold)-S$(tput sgr0)              save intermediate results during monochromatic design"
 echo "     $(tput bold)-r$(tput sgr0) <step>       Revert to step <step>, if it has been saved"              
 echo "     $(tput bold)-e$(tput sgr0) <index>      setup example #<index> (WILL SET ALL PARAMETERS)"
-echo "                           0 : Subaru PIAACMC, H band"
-echo "                           1 : WFIST PIAACMC, visible (default)"
-echo "                           2 : 3-rings segmented aperture, visible"
+echo "                           0 : Subaru PIAACMC, H band, 2048 pix array"
+echo "                           1 : WFIST PIAACMC, visible (default), 1024 pix array"
+echo "                           2 : 3-rings segmented aperture, visible, 1024 pix array"
 echo "     $(tput bold)-l$(tput sgr0)              List design parameters"
 echo "     $(tput bold)-m$(tput sgr0) <step>       Design PIAACMC step <step>"
 echo "                      1-18 : design monochromatic PIAACMC up to this step"
