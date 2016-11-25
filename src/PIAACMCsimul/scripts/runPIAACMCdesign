@@ -494,8 +494,8 @@ fi
 if [ "$SETparams" = "1" ]; then
 # Subaru PIAACMC
 if [ "$DesignExampleIndex" -eq 0 ]; then
-loadPup_Subaru1024
-SetConfig_PIAACMCnearIRlenses1024
+loadPup_Subaru2048
+SetConfig_PIAACMCnearIRlenses2048
 SetOptParam
 fi
 
