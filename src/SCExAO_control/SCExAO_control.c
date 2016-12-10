@@ -743,15 +743,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
         //       SCExAO_PZT_STAGE_Xpos += gain*(xsig/0.2);
         //     SCExAO_PZT_STAGE_Ypos -= gain*(ysig/0.2);
 
-		sprintf(command, "dolog %s \"auto pyTT pupf   %6.4f   %6.4f   %6.4f   %6.4f\"", LoopName, tot01, tot11, tot00, tot10);
-        printf("COMMAND: \"%s\"\n", command);
-        r = system(command);
-
-
-
-		sprintf(command, "dolog %s \"auto pyTT sig %6.4f  %6.4f\"", LoopName, xsig, ysig);
-        printf("COMMAND: \"%s\"\n", command);
-        r = system(command);
+	
 
 
         if(tot > 10.0*xsize*ysize)
@@ -780,17 +772,13 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
-			sprintf(command, "dolog %s \"auto pyTT X %5.3f\"", LoopName, SCExAO_PZT_STAGE_Xpos);
-            printf("COMMAND: \"%s\"\n", command);
-            r = system(command);
-
             // sig Y
             //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
             sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
-			sprintf(command, "dolog %s \"auto pyTT Y %5.3f\"", LoopName, SCExAO_PZT_STAGE_Ypos);
+			sprintf(command, "dolog %s \"auto pyTT pupf %6.4f %6.4f %6.4f %6.4f  sig %6.4f  %6.4f  XY %5.3f %5.3f \"", LoopName, tot01, tot11, tot00, tot10, xsig, ysig, SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
