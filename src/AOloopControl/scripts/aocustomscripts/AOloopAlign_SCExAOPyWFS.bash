@@ -777,33 +777,33 @@ menualign_default="tst3"
 state="menualign"
 ;;
         txm)
-TTposX=$( cat status/stat_AnalogVoltage_C.txt )
+TTposX=$( cat status/stat_AnalogVoltage_D.txt )
 TTposXn=$( echo "$TTposX-$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput C $TTposXn
+./aocustomscripts/SCExAO_analogoutput D $TTposXn
 aoconflog "TT move x ${TTposXn}"
 menualign_default="txm"
 state="menualign"
 ;;
         txp)
-TTposX=$( cat status/stat_AnalogVoltage_C.txt )
+TTposX=$( cat status/stat_AnalogVoltage_D.txt )
 TTposXn=$( echo "$TTposX+$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput C $TTposXn
+./aocustomscripts/SCExAO_analogoutput D $TTposXn
 aoconflog "TT move x ${TTposXn}"
 menualign_default="txp"
 state="menualign"
 ;;
         tym)
-TTposY=$( cat status/stat_AnalogVoltage_D.txt )
+TTposY=$( cat status/stat_AnalogVoltage_C.txt )
 TTposYn=$( echo "$TTposY-$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput D $TTposYn
+./aocustomscripts/SCExAO_analogoutput C $TTposYn
 aoconflog "TT move y ${TTposYn}"
 menualign_default="tym"
 state="menualign"
 ;;
         typ)
-TTposY=$( cat status/stat_AnalogVoltage_D.txt )
+TTposY=$( cat status/stat_AnalogVoltage_C.txt )
 TTposYn=$( echo "$TTposY+$TTstep" | bc )
-./aocustomscripts/SCExAO_analogoutput D $TTposYn
+./aocustomscripts/SCExAO_analogoutput C $TTposYn
 aoconflog "TT move y ${TTposYn}"
 menualign_default="typ"
 state="menualign"
