@@ -876,7 +876,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             if((v0>0.0)&&(v0<1.0))
                 gain = gainfactor*v0;
         }
-        gainfactor = 0.95*gainfactor;
+        gainfactor = 0.98*gainfactor;
         if(gainfactor < 0.1)
             gainfactor = 0.1;
 
@@ -969,18 +969,18 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             fprintf(fp, "%ld %ld\n", SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
             fclose(fp);
 
-            sprintf(command, "pywfs reimage x goto %ld\n", SCExAO_Pcam_Xpos);
+            sprintf(command, "pywfs_pup x goto %ld\n", SCExAO_Pcam_Xpos);
             printf("%s", command);
             r = system(command);
             usleep(delayus);
 
-            sprintf(command, "pywfs reimage y goto %ld\n", SCExAO_Pcam_Ypos);
+            sprintf(command, "pywfs_pup y goto %ld\n", SCExAO_Pcam_Ypos);
             printf("%s", command);
             r = system(command);
             usleep(delayus);
 
 
-			sprintf(command, "dolog %s \"auto pcam ave %6ld g %6.4f totxy %6.4f %6.4f step %6ld %6ld  XY %7ld %7ld \"", LoopName, NBframesAve, gain, totx, toty, stepx, stepy, SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+			sprintf(command, "dolog %s \"auto pcam ave %6ld g %6.4f totxy %+6.4f %+6.4f step %6ld %6ld  XY %7ld %7ld \"", LoopName, NBframesAve, gain, totx, toty, stepx, stepy, SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
