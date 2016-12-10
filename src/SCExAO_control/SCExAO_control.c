@@ -581,6 +581,14 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     long twaitus = 500000; // 0.5 sec
 
     float gainfactor;
+	
+	char LoopName[200];
+	int ret;
+
+
+	fp = fopen("LOOPNAME", "r");
+	ret = fscanf(fp, "%s", LoopName);
+	fclose(fp);
 
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
@@ -739,8 +747,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
 
         if(tot > 10.0*xsize*ysize)
         {
-            SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/1.0);  // C actuator
-            SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/1.0);  // D actuator
+            SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/1.0);  // D actuator
+            SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/1.0);  // C actuator
 
 
 
@@ -763,11 +771,20 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
+			sprintf(command, "dolog %s \"auto pyTT X %5.3f\"", LoopName, SCExAO_PZT_STAGE_Xpos);
+            printf("COMMAND: \"%s\"\n", command);
+            r = system(command);
+
             // sig Y
             //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
             sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
+
+			sprintf(command, "dolog %s \"auto pyTT Y %5.3f\"", LoopName, SCExAO_PZT_STAGE_Ypos);
+            printf("COMMAND: \"%s\"\n", command);
+            r = system(command);
+
 
             data.image[IDshm].md[0].write = 1;
             data.image[IDshm].array.F[0] = SCExAO_PZT_STAGE_Xpos;
