@@ -913,7 +913,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
             for(ii=0; ii<pXsize*pYsize; ii++)
                 if(data.image[IDc].array.F[ii]>0.0)
-                    data.image[IDc].array.F[ii] = pow(data.image[IDc].array.F[ii]/peak,alpha);
+                    data.image[IDc].array.F[ii] = pow(data.image[IDc].array.F[ii]/peak, alpha);
                 else
                     data.image[IDc].array.F[ii] = 0.0;
 
@@ -932,6 +932,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             toty /= tot;
 
             save_fits("outcorr", "!./tmp/outcorr.fits");
+            save_fits("imwfs", "!./tmp/imwfs.fits");
+            save_fits("imref", "!./tmp/imref.fits");
             delete_image_ID("outcorr");
 
             printf("  %6.4f  x  %6.4f\n", totx, toty);
