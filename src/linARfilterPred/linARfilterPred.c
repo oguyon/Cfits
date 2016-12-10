@@ -8,6 +8,7 @@
 #include <semaphore.h>
 #include <sched.h>
 #include <assert.h>
+#include <sys/stat.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multifit.h>
 
@@ -67,6 +68,19 @@ extern DATA data;
 // 3: string (not image)
 // 4: existing image
 // 5: string
+
+
+
+
+int LINARFILTERPRED_LoadASCIIfiles_cli()
+{
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)==0)
+		{
+			LINARFILTERPRED_LoadASCIIfiles(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string);
+		}
+	else
+		return(1);
+}
 
 
 int LINARFILTERPRED_SelectBlock_cli()
@@ -147,6 +161,19 @@ int init_linARfilterPred()
     data.NBmodule++;
 
 
+	
+	
+
+    strcpy(data.cmd[data.NBcmd].key,"pfloadascii");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = LINARFILTERPRED_LoadASCIIfiles_cli;
+    strcpy(data.cmd[data.NBcmd].info,"load ascii files to PF input");
+    strcpy(data.cmd[data.NBcmd].syntax,"<tstart> <dt> <NBpt> <NBfr> <output>");
+    strcpy(data.cmd[data.NBcmd].example,"pfloadascii 200.0 0.001 10000 4 pfin");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, char *IDoutname)");
+    data.NBcmd++;
+
+
     strcpy(data.cmd[data.NBcmd].key,"mselblock");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = LINARFILTERPRED_SelectBlock_cli;
@@ -155,6 +182,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].example,"mselblock modevals blockmap 23 blk23modevals");
     strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB, char *IDout_name)");
     data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"mkARpfilt");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -211,6 +239,211 @@ int init_linARfilterPred()
 
 
 
+
+int NBwords(const char sentence[ ])
+{
+    int counted = 0; // result
+
+    // state:
+    const char* it = sentence;
+    int inword = 0;
+
+    do switch(*it) {
+        case '\0': 
+        case ' ': case '\t': case '\n': case '\r': 
+            if (inword) { inword = 0; counted++; }
+            break;
+        default: inword = 1;
+    } while(*it++);
+
+    return counted;
+}
+
+
+
+
+//
+// load ascii file(s) into image cube
+// resamples sequence(s) of data points
+//
+// INPUT FILES HAVE TO BE NAMED seq000.dat, seq001.dat etc...
+//
+// file starts at tstart, sampling = dt 
+// NBpt per file
+// NBfr files
+//
+long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, char *IDoutname)
+{
+	FILE *fp;
+	long NBfiles;
+	double runtime;
+	char fname[200];
+	struct stat fstat;
+	int fOK;
+	long NBvarin[200];
+	long fcnt;
+	FILE* fparray[200];
+	long kk;
+	size_t linesiz=0;
+	char *linebuf=0;
+	ssize_t linelen=0;
+	int ret;
+	long vcnt;
+	double ftime0[200];
+	double var0[200][200];
+	double ftime1[200];
+	double var1[200][200];
+	double varC[200][200];
+	float alpha;
+	long nbvar;
+	long fr;
+	char imoutname[200];
+	FILE *fpout;
+	long IDout[200];
+	int HPfilt = 1; // high pass filter
+	float HPgain = 0.005;
+	
+	long ii;
+	long kkpt, kkfr;
+	
+
+	runtime = tstart;
+	
+	fOK = 1;
+	NBfiles = 0;
+	nbvar = 0;
+	while (fOK == 1)
+	{
+		sprintf(fname, "seq%03ld.dat", NBfiles);
+		if( stat (fname, &fstat) == 0 )
+		{
+			printf("Found file %s\n", fname);
+			fflush(stdout);
+			fp = fopen(fname, "r");
+			linelen = getline(&linebuf, &linesiz, fp);
+			fclose(fp);  
+			NBvarin[NBfiles] = NBwords(linebuf)-1;
+			free(linebuf);
+			linebuf = NULL;
+			printf("   NB variables = %ld\n", NBvarin[NBfiles]);
+			nbvar += NBvarin[NBfiles];
+			NBfiles++;
+		}
+		else
+		{
+			printf("No more files\n");
+			fflush(stdout);
+			fOK = 0;
+		}
+	}
+	printf("NBfiles = %ld\n", NBfiles);
+	
+	
+	
+	for(fcnt=0;fcnt<NBfiles;fcnt++)
+		{
+			sprintf(fname, "seq%03ld.dat", fcnt);
+			printf("   %03ld  OPENING FILE %s\n", fcnt, fname);
+			fflush(stdout);
+			fparray[fcnt] = fopen(fname, "r");
+		}
+	
+	
+	
+	kk = 0; // time
+	runtime = tstart;
+	
+
+	for(fcnt=0;fcnt<NBfiles;fcnt++)
+		{
+			ret = fscanf(fparray[fcnt], "%lf", &ftime0[fcnt]);
+			for(vcnt=0; vcnt<NBvarin[fcnt]; vcnt++)
+				ret = fscanf(fparray[fcnt], "%lf", &var0[fcnt][vcnt]);
+			ret = fscanf(fparray[fcnt], "\n");
+
+			ret = fscanf(fparray[fcnt], "%lf", &ftime1[fcnt]);
+			for(vcnt=0; vcnt<NBvarin[fcnt]; vcnt++)
+				ret = fscanf(fparray[fcnt], "%lf", &var1[fcnt][vcnt]);
+			ret = fscanf(fparray[fcnt], "\n");
+		
+	
+	
+		printf("FILE %ld :  \n", fcnt);
+		printf(" time :    %20f  %20f\n", ftime0[fcnt], ftime1[fcnt]);
+		fflush(stdout);
+		
+		for(vcnt=0; vcnt < NBvarin[fcnt]; vcnt++)
+			{
+				printf("    variable %3ld   :   %20f  %20f\n", vcnt, var0[fcnt][vcnt], var1[fcnt][vcnt]);
+				varC[fcnt][vcnt] = var0[fcnt][vcnt];
+			}
+		printf("\n");
+	}
+	
+	
+	for(fr=0; fr<NBfr; fr++)
+	{
+		sprintf(imoutname, "%s_%03ld", IDoutname, fr);
+		IDout[fr] = create_3Dimage_ID(imoutname, nbvar, 1, NBpt);
+	}
+	
+	fpout = fopen("out.txt", "w");
+
+	kk = 0;
+	kkpt = 0;
+	kkfr = 0;
+	while(kkfr<NBfr)
+		{
+			fprintf(fpout, "%20f", runtime);
+			
+			ii = 0;
+			for(fcnt=0;fcnt<NBfiles;fcnt++)
+				{
+					while(ftime1[fcnt]<runtime)
+					{
+						ftime0[fcnt] = ftime1[fcnt];
+						for(vcnt=0; vcnt<NBvarin[fcnt]; vcnt++)
+							var0[fcnt][vcnt] = var1[fcnt][vcnt];
+
+						ret = fscanf(fparray[fcnt], "%lf", &ftime1[fcnt]);
+						for(vcnt=0; vcnt<NBvarin[fcnt]; vcnt++)
+							ret = fscanf(fparray[fcnt], "%lf", &var1[fcnt][vcnt]);
+						ret = fscanf(fparray[fcnt], "\n");
+					}
+					if(kk==0)
+						for(vcnt=0; vcnt < NBvarin[fcnt]; vcnt++)
+							varC[fcnt][vcnt] = var0[fcnt][vcnt];
+							
+					alpha = (runtime - ftime0[fcnt]) / (ftime1[fcnt] - ftime0[fcnt]);
+					for(vcnt=0; vcnt<NBvarin[fcnt]; vcnt++)
+						{
+							fprintf(fpout, " %20f", (1.0-alpha)*var0[fcnt][vcnt] + alpha*var1[fcnt][vcnt] - varC[fcnt][vcnt]);					
+							varC[fcnt][vcnt] = (1.0-HPgain)*varC[fcnt][vcnt] + HPgain * ((1.0-alpha)*var0[fcnt][vcnt] + alpha*var1[fcnt][vcnt]);
+
+							data.image[IDout[kkfr]].array.F[kkpt*nbvar + ii] = (1.0-alpha)*var0[fcnt][vcnt] + alpha*var1[fcnt][vcnt] - varC[fcnt][vcnt];
+							ii++;
+						}
+				}
+			
+			fprintf(fpout, "\n");
+			
+			kk++;
+			kkpt++;
+			runtime += dt;
+			if(kkpt == NBpt)
+				{
+					kkpt = 0;
+					kkfr++;
+				}
+		}
+	
+	fclose(fpout);
+	
+	for(fcnt=0;fcnt<NBfiles;fcnt++)
+		fclose(fparray[fcnt]);
+	
+	return(NBfiles);
+}
 
 
 
@@ -315,6 +548,7 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 //
 // optional: inmask selects input pixels to be used
 //           outmask selects output pixel(s) to be used
+// default: use all channels as both input and output
 //
 // Note: if atmospheric wavefronts, data should be piston-free 
 //
@@ -323,11 +557,12 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 //	1: write individual filters
 // (note: output filter cube always written)
 //
+//
 long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF_name, int outMode)
 {
-    long IDin, IDmatA, IDout, IDinmask;
+    long IDin, IDmatA, IDout, IDinmask, IDoutmask;
 	long nbspl; // number of samples
-	long NBpix;
+	long NBpixin, NBpixout;
 	long NBmvec, NBmvec1;
 	long mvecsize;
 	long xsize, ysize;
@@ -335,6 +570,12 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	long *pixarray_x;
 	long *pixarray_y;
 	long *pixarray_xy;
+	
+	long *outpixarray_x;
+	long *outpixarray_y;
+	long *outpixarray_xy;
+
+	
 	double *ave_inarray;
 	int REG = 0;  // 1 if regularization
 	long m, m1, pix, k0, dt;
@@ -353,10 +594,10 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	long ID_Pfilt;
 	float val;
 	long ind1;
-	long IDoutmask;
 	int ret;
 	long IDoutPF;
 	
+	long NB_SVD_Modes;
 	
 	int DC_MODE = 0; // 1 if average value of each mode is removed
 	
@@ -384,6 +625,9 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 		break;
 	}
 	xysize = xsize*ysize;
+	printf("xysize = %ld\n", xysize);
+
+	
 	
 	pixarray_x = (long*) malloc(sizeof(long)*xsize*ysize);
 	pixarray_y = (long*) malloc(sizeof(long)*xsize*ysize);
@@ -393,37 +637,75 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	IDinmask = image_ID("inmask");
 	if(IDinmask==-1)
 		{
-			NBpix = 0; //xsize*ysize;
+			NBpixin = 0; //xsize*ysize;
 			
 			for(ii=0;ii<xsize;ii++)
 				for(jj=0;jj<ysize;jj++)
 					{
-					pixarray_x[NBpix] = ii;
-					pixarray_y[NBpix] = jj;
-					pixarray_xy[NBpix] = jj*xsize+ii;
-					NBpix++;
+					pixarray_x[NBpixin] = ii;
+					pixarray_y[NBpixin] = jj;
+					pixarray_xy[NBpixin] = jj*xsize+ii;
+					NBpixin ++;
 				}
 		}
 	else
 	{
-	NBpix = 0;
+	NBpixin = 0;
 	for(ii=0;ii<xsize;ii++)
 		for(jj=0;jj<ysize;jj++)
 			if(data.image[IDinmask].array.F[jj*xsize+ii] > 0.5)
 				{
-					pixarray_x[NBpix] = ii;
-					pixarray_y[NBpix] = jj;
-					pixarray_xy[NBpix] = jj*xsize+ii;
-					NBpix++;
+					pixarray_x[NBpixin] = ii;
+					pixarray_y[NBpixin] = jj;
+					pixarray_xy[NBpixin] = jj*xsize+ii;
+					NBpixin ++;
 				}
 	}	
-	printf("NBpix = %ld\n", NBpix);
+	printf("NBpixin = %ld\n", NBpixin);
+
+
+
+
+	// =========== SELECT OUTPUT VALUES =======================
+
+	outpixarray_x = (long*) malloc(sizeof(long)*xsize*ysize);
+	outpixarray_y = (long*) malloc(sizeof(long)*xsize*ysize);
+	outpixarray_xy = (long*) malloc(sizeof(long)*xsize*ysize);
+
+	IDoutmask = image_ID("outmask");
+	if(IDoutmask==-1)
+		{
+			NBpixout = 0; //xsize*ysize;
+			
+			for(ii=0;ii<xsize;ii++)
+				for(jj=0;jj<ysize;jj++)
+					{
+					outpixarray_x[NBpixout] = ii;
+					outpixarray_y[NBpixout] = jj;
+					outpixarray_xy[NBpixout] = jj*xsize+ii;
+					NBpixout ++;
+				}
+		}
+	else
+	{
+	NBpixout = 0;
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			if(data.image[IDoutmask].array.F[jj*xsize+ii] > 0.5)
+				{
+					outpixarray_x[NBpixout] = ii;
+					outpixarray_y[NBpixout] = jj;
+					outpixarray_xy[NBpixout] = jj*xsize+ii;
+					NBpixout ++;
+				}
+	}	
+	
 	
 	
 	// ===================== BUILD DATA MATRIX ============================
 	// build data matrix
 	NBmvec = nbspl - PForder - (int) (PFlag) - 1;
-	mvecsize = NBpix * PForder; // size of each sample vector for AR filter, excluding regularization
+	mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
 	
 	if(REG==0) // no regularization
 		{
@@ -443,10 +725,10 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
  	
  	// each column (ii = cst) is a measurement
     // m index is measurement
-    // dt*NBpix+pix index is pixel
+    // dt*NBpixin+pix index is pixel
    
-    printf("mvecsize = %ld  (%ld x %ld)\n", mvecsize, PForder, NBpix);
-	printf("NBpix = %ld\n", NBpix);
+    printf("mvecsize = %ld  (%ld x %ld)\n", mvecsize, PForder, NBpixin);
+	printf("NBpixin = %ld\n", NBpixin);
 	printf("NBmvec1 = %ld\n", NBmvec1);
 	printf("PForder = %ld\n", PForder);
 
@@ -457,7 +739,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	if(DC_MODE == 1) // remove average
 	{
-		for(pix=0; pix<NBpix; pix++)
+		for(pix=0; pix<NBpixin; pix++)
 			{
 				ave_inarray[pix] = 0.0;
 				for(m=0; m<nbspl; m++)
@@ -467,7 +749,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	}
 	else
 	{
-		for(pix=0; pix<NBpix; pix++)
+		for(pix=0; pix<NBpixin; pix++)
 			ave_inarray[pix] = 0.0;
 	}
 
@@ -476,9 +758,9 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	for(m=0; m<NBmvec1; m++)
 	{
 		k0 = m + PForder-1; // dt=0 index
-		for(pix=0; pix<NBpix; pix++)
+		for(pix=0; pix<NBpixin; pix++)
 			for(dt=0; dt<PForder; dt++)		
-				data.image[IDmatA].array.F[(NBpix*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
+				data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
 	}
 	free(ave_inarray);
 	
@@ -505,15 +787,28 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	fflush(stdout);
 
 
-	
+	NB_SVD_Modes = 10000;
 #ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
 	#else
-		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat");
+		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
 	#endif 
 	 
 	if(Save==1)
-        save_fits("PFmatC", "!PFmatC.fits");
+		{
+			save_fits("PF_VTmat", "!PF_VTmat.fits");
+			save_fits("PFmatC", "!PFmatC.fits");
+			
+			
+			
+		/*	for(Pmode=0; Pmode<NB_SVD_Modes; Pmode++)
+				{
+					sprintf(imname, "PFmodeC_%04ld", Pmode);
+					sprintf(fname, "!PFmodeC_%04ld.fits", Pmode);
+					IDoutPF = create_3Dimage_ID(imname, NBpixin, NBpixout, PForder);
+					
+				}*/
+		}
     IDmatC = image_ID("PFmatC");
 
 	
@@ -531,17 +826,17 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	// axis 0 [ii] : input mode
 	// axis 1 [jj] : reconstructed mode
 	// axis 2 [kk] : time step
-	IDoutPF = create_3Dimage_ID(IDoutPF_name, NBpix, NBpix, PForder);	
+	IDoutPF = create_3Dimage_ID(IDoutPF_name, xysize, xysize, PForder);	
 	
 	IDoutmask = image_ID("outmask");
 	
 	valfarray = (float*) malloc(sizeof(float)*NBmvec);
 	alpha = PFlag - ((long) PFlag);
-	for(PFpix=0; PFpix<NBpix; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
+	for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
 	{
 		// INDIVIDUAL FILTERS
-		sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", pixarray_xy[PFpix], pixarray_x[PFpix], pixarray_y[PFpix]);			
-		sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", pixarray_xy[PFpix], pixarray_x[PFpix], pixarray_y[PFpix]);	
+		sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);			
+		sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);	
 		ID_Pfilt = create_3Dimage_ID(filtname, xsize, ysize, PForder);
 		
 		
@@ -552,33 +847,65 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 				k0 = m + PForder -1;
 				k0 += (long) PFlag;
 				
-				valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + pixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + pixarray_xy[PFpix]];
+				valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
 			}
 		
 		
-		for(pix=0; pix<NBpix; pix++)
+		for(pix=0; pix<NBpixin; pix++)
 			{
 				for(dt=0; dt<PForder; dt++)		
 					{
 						val = 0.0;
-						ind1 = (NBpix*dt+pix)*NBmvec1;
+						ind1 = (NBpixin*dt+pix)*NBmvec1;
 						for(m=0; m<NBmvec; m++)
 							val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
 
 						data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
-						data.image[IDoutPF].array.F[dt*NBpix*NBpix  + PFpix*NBpix + pix] = val;
+						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val;
 					}
 			}
 		save_fits(filtname, filtfname);	
 	}
 	
 	free(valfarray);
+
  	free(pixarray_x);
  	free(pixarray_y);
  	free(pixarray_xy);
+
+ 	free(outpixarray_x);
+ 	free(outpixarray_y);
+ 	free(outpixarray_xy);
 	
     return(IDoutPF);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //

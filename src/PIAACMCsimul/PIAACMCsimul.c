@@ -220,6 +220,19 @@ int PIAACMC_FPMresp_resample_cli()
 
 
 
+int PIAACMC_FPM_process_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
+    {
+        PIAACMC_FPM_process(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 
 
 /**
@@ -267,6 +280,15 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].syntax,"<input FPMresp> <output FPMresp> <NBlambda> <EvalPts step>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmsimfpmresprs FPMresp FPMrespout 10 2");
     strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"piaacmcfpmprocess");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = PIAACMC_FPM_process_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Quantize FPM");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input FPM sags> <sectors ASCII file> <number of exposures> <output FPM sags>");
+    strcpy(data.cmd[data.NBcmd].example,"piaacmcfpmprocess");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPM_process(char *FPMsag_name, char *zonescoord_name, long NBexp, char *outname)");
     data.NBcmd++;
 
 
@@ -441,7 +463,7 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
                 }
             }
         hindexMax = hindex;
-        fprintf(fp, "0 0\n");
+        fprintf(fp, "%5ld %5ld  %11.6f %11.6f\n", (long) 0, (long) 0, 0.0, 0.0);
         hcnt = 1;
         for(ring=1; ring<piaacmc[0].NBrings; ring++)
         {
@@ -449,7 +471,7 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
                 if(hex_ring[hindex]==ring)
                 {
                     hex_number[hindex] = hcnt;
-                    fprintf(fp, "%ld %ld\n", hcnt, ring);
+                    fprintf(fp, "%5ld %5ld  %11.6f %11.6f\n", hcnt, ring, hex_x[hindex], hex_y[hindex]);
                     hcnt++;
                 }
             if(ring>0)
@@ -584,8 +606,8 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 
    if(PIAACMC_FPMsectors!=0)
     {
-      //  printf("Saving %s ....\n", IDname);
-      //  save_fits(IDname, "!__test_zonemap_00.fits"); //TEST
+      printf("Saving %s ....\n", IDname);
+      save_fits(IDname, "!__test_zonemap_00.fits"); //TEST
        // sleep(100000);
     }
 
@@ -8993,7 +9015,104 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
 
 
+long PIAACMC_FPM_process(char *FPMsag_name, char *zonescoord_name, long NBexp, char *outname)
+{
+	long IDin;
+	long NBzones;
+	int atype;
+	
+	double *sagarray_in;
+	double *sagarray_out;
+	long zone;
+	double sagmax, sagmin;
+	long k;
+	long NBsagsteps;
+	
+	double *sagstepval;
+	FILE *fp;
+	FILE *fpout;
+	
+	
+	
+	IDin = image_ID(FPMsag_name);
+	NBzones = data.image[IDin].md[0].size[0];
+	atype = data.image[IDin].md[0].atype;
+	
+	switch (atype) {
+		case DOUBLE:
+		printf("atype = DOUBLE\n");
+		break;
+		case FLOAT:
+		printf("atype = DOUBLE\n");
+		break;
+		default :
+		printf("ERROR: atype not supported\n");
+		exit(0);
+		break;
+	}
+	
+	printf("%ld zones\n", NBzones);
+	sagarray_in = (double*) malloc(sizeof(double)*NBzones);
+	sagarray_out = (double*) malloc(sizeof(double)*NBzones);
+	
+	
+	for(zone=0; zone<NBzones; zone++)
+		{
+			if(atype==FLOAT)
+				sagarray_in[zone] = (double) data.image[IDin].array.F[zone];
+			else
+				sagarray_in[zone] = data.image[IDin].array.D[zone];
+		}
+	
+	sagmin = sagarray_in[0];
+	sagmax = sagarray_in[0];
+	for(zone=1; zone<NBzones; zone++)
+	{
+		if(sagarray_in[zone]<sagmin)
+			sagmin = sagarray_in[zone];
+		if(sagarray_in[zone]>sagmax)
+			sagmax = sagarray_in[zone];
+	}
+	
+	printf("Sag range [um]  :   %10.8f  ->  %10.8f\n", sagmin*1.0e6, sagmax*1.0e6);
+	NBsagsteps = 2;
+	for(k=1; k<NBexp; k++)
+		NBsagsteps *= 2;
+	printf("NBsagsteps = %ld\n", NBsagsteps);
+	
+	
+	fp = fopen("saglevels.dat", "w");
+	
+	sagstepval = (double*) malloc(sizeof(double)*NBsagsteps);
+	for(k=0;k<NBsagsteps;k++)
+		{
+			sagstepval[k] = sagmin + (sagmax-sagmin)*k/NBsagsteps + 0.5*(sagmax-sagmin)/NBsagsteps;
+			fprintf(fp, "%4ld     %10.8f\n", k, sagstepval[k]*1.0e6);
+		}
+	fclose(fp);
+	printf("\n");
+	
+	
+	fpout = fopen(outname, "w");
+	
+	
+	//for(zone=0; zone<NBzones; zone++)
+	for(zone=0; zone<NBzones; zone++)
+	{
+		k = (long) ((sagarray_in[zone]-sagmin)/((sagmax-sagmin)/NBsagsteps));
+		if(sagarray_in[zone] > sagstepval[NBsagsteps-1])
+			k = NBsagsteps-1;
+//		printf("zone %4ld   %10.8f   %10.8f  %4ld\n", zone, sagarray_in[zone]*1e6, (sagarray_in[zone]-sagmin)*1e6, k);
+		fprintf(fpout, "%4ld  %+10.8f  %4ld  %+10.8f\n", zone, sagarray_in[zone]*1e6, k, sagstepval[k]*1e6);
+	}
+	fclose(fpout);
+	
+	free(sagstepval);
+	free(sagarray_in);
+	free(sagarray_out);
 
+	return 0;
+}
 
 
 

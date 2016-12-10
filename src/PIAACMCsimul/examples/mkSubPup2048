@@ -72,10 +72,15 @@ mkdisk d3 $size $size cx1 cy1 r1
 
 
 
-pup=d0-d1-spider0-spider1-spider2-spider3-l1-d2-d3
-
+pupM=d0-d1-spider0-spider1-spider2-spider3-l1-d2-d3
+pup=d0-d1-spider0-spider1-spider2-spider3
+pupm=d0-d1-spider0-spider1-spider2-spider3-d2-d3
+imtrunc pupM 0 1 pupM1
+savefits pupM1 "!pupSubaruM_${size}.fits"
 imtrunc pup 0 1 pup1
-savefits pup1 "!pupSubaruM_${size}.fits"
+savefits pup1 "!pupSubaru_${size}.fits"
+imtrunc pupm 0 1 pupm1
+savefits pupm1 "!pupSubarum_${size}.fits"
 
 #rotateim pup1 pup1r 0.105
 

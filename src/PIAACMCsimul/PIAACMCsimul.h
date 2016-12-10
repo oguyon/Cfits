@@ -171,5 +171,6 @@ long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, lon
 
 int PIAACMCsimul_run(char *confindex, long mode);
 
+long PIAACMC_FPM_process(char *FPMsag_name, char *zonescoord_name, long NBexp, char *outname);
 
 #endif

@@ -37,12 +37,37 @@ double FWHM_MEASURED;
 
 
 
+int PSF_sequence_measure_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0)
+    {
+      PSF_sequence_measure(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 
 int init_psf()
 {
+		
   strcpy(data.module[data.NBmodule].name,__FILE__);
   strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
   data.NBmodule++;
+
+	
+  strcpy(data.cmd[data.NBcmd].key,"psfseqmeas");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = PSF_sequence_measure_cli;
+  strcpy(data.cmd[data.NBcmd].info,"measure PSF sequence");
+  strcpy(data.cmd[data.NBcmd].syntax,"<input image cube> <estimated PSF size> <output file>");
+  strcpy(data.cmd[data.NBcmd].example,"psfseqmeas imc 20.0 outimc.txt");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int PSF_sequence_measure(char *IDin_name, float PSFsizeEst, char *outfname)"); 
+  data.NBcmd++;
 
 }
 
@@ -210,6 +235,9 @@ int PSF_finddiskcent(char *ID_name, float rad, float *result)
   return(0);
 }
 
+
+
+
 int PSF_finddiskcent_alone(char *ID_name, float rad)
 {
   float *result;
@@ -220,6 +248,7 @@ int PSF_finddiskcent_alone(char *ID_name, float rad)
 
   return(0);
 }
+
 
 int PSF_measurePhotocenter(char *ID_name)
 {
@@ -251,6 +280,8 @@ int PSF_measurePhotocenter(char *ID_name)
 
   return(0);
 }
+
+
 
 
 float measure_enc_NRJ(char *ID_name, float xcenter, float ycenter, float fraction)
@@ -308,6 +339,9 @@ float measure_enc_NRJ(char *ID_name, float xcenter, float ycenter, float fractio
 
   return(value);
 }
+
+
+
 
 int measure_enc_NRJ1(char *ID_name, float xcenter, float ycenter, char *filename)
 {
@@ -368,6 +402,9 @@ int measure_enc_NRJ1(char *ID_name, float xcenter, float ycenter, char *filename
 
   return(0);
 }
+
+
+
 
 /* measures the FWHM of a "perfect" PSF */
 float measure_FWHM(char *ID_name, float xcenter, float ycenter, float step, long nb_step)
@@ -437,6 +474,8 @@ float measure_FWHM(char *ID_name, float xcenter, float ycenter, float step, long
 
   return(FWHM);
 }
+
+
 
 /* finds a PSF center with no a priori position information */
 int center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_size)
@@ -524,6 +563,8 @@ int center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_size)
 }
 
 
+
+
 /* finds a PSF center with no a priori position information */
 int fast_center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_size)
 {
@@ -535,9 +576,10 @@ int fast_center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_si
   long ii,jj;
   long naxes[2];
   int k;
-  int nbiter = 3;
+  int nbiter = 6;
 
-  box_size = 0; /* unused */
+	long iimin, iimax, jjmin, jjmax;
+
 
   ID = image_ID(ID_name);
   naxes[0] = data.image[ID].md[0].size[0];
@@ -550,29 +592,53 @@ int fast_center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_si
 
   for (k=0;k<nbiter;k++)
     {
-      n3 = (int) (1.0*naxes[0]/2/(1.0+(0.1*naxes[0]/2*k/(4*nbiter))));
+      n3 = (long) (1.0*naxes[0]/2/(1.0+(0.1*naxes[0]/2*k/(4*nbiter))));
       if (((long) (0.5+ocenterx) - n3) < 0)
-	n3 = (long) (0.5+ocenterx);
+		n3 = (long) (0.5+ocenterx);
       if (((long) (0.5+ocenterx) + n3+1) > naxes[0])
-	n3 = naxes[0]-((long) (0.5+ocenterx) +1);
+		n3 = naxes[0]-((long) (0.5+ocenterx) +1);
       if (((long) (0.5+ocentery) - n3) < 0)
-	n3 = (long) (0.5+ocentery);
+		n3 = (long) (0.5+ocentery);
       if (((long) (0.5+ocentery) + n3+1) > naxes[1])
-	n3 = naxes[1]-((long) (0.5+ocentery) +1);
+		n3 = naxes[1]-((long) (0.5+ocentery) +1);
       n3 -= 1;
-      //   printf("effective box size is %ld - center is %f %f\n",n3,ocenterx,ocentery);
-      // fflush(stdout);
+      
+      if(n3<box_size)
+		n3 = box_size;
+      
+
+      
       centerx = 0.0;
       centery = 0.0;
       total_fl = 0.0;
-      for (jj = ((long) (0.5+ocentery) - n3); jj < ((long) (0.5+ocentery) + n3+1); jj++) 
-	for (ii = ((long) (0.5+ocenterx) - n3); ii < ((long) (0.5+ocenterx) + n3+1); ii++) 
-	  {
-	    centerx += 1.0*ii*(data.image[ID].array.F[jj*naxes[0]+ii]);
-	    centery += 1.0*jj*(data.image[ID].array.F[jj*naxes[0]+ii]);
-	    total_fl += data.image[ID].array.F[jj*naxes[0]+ii];
-	  }
-      //      printf("total_fl is %f\n",total_fl);
+      
+		iimin = ((long) (0.5+ocenterx) - n3);
+		if(iimin < 0)
+			iimin = 0.0;
+		iimax = ((long) (0.5+ocenterx) + n3+1);
+		if( iimax > naxes[0]-1 )
+			iimax = naxes[0]-1;
+	
+		jjmin = ((long) (0.5+ocentery) - n3);
+		if(jjmin < 0)
+			jjmin = 0.0;
+		jjmax = ((long) (0.5+ocentery) + n3+1);
+		if(jjmax > naxes[1]-1 )
+			jjmax = naxes[1]-1;
+		
+      for (jj = jjmin; jj < jjmax; jj++) 
+		for (ii = iimin; ii < iimax; ii++) 
+		{
+			centerx += 1.0*ii*(data.image[ID].array.F[jj*naxes[0]+ii]);
+			centery += 1.0*jj*(data.image[ID].array.F[jj*naxes[0]+ii]);
+			total_fl += data.image[ID].array.F[jj*naxes[0]+ii];
+		}
+
+//        printf("effective box size is %ld (%ld) - center is %f %f   [ %3ld %3ld   %3ld %3ld]   ", n3, box_size, ocenterx, ocentery, iimin, iimax, jjmin, jjmax);
+//       fflush(stdout);
+
+
+  //    printf("total_fl is %f\n",total_fl);
       centerx /= total_fl;
       centery /= total_fl;
       
@@ -588,6 +654,10 @@ int fast_center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_si
 
   return(0);
 }
+
+
+
+
 
 int center_PSF_alone(char *ID_name)
 {
@@ -610,16 +680,16 @@ int center_PSF_alone(char *ID_name)
   /*remove_cosmics(ID_name,"tmpcen");*/
   copy_image_ID(ID_name, "tmpcen", 0);
 
-  arith_image_trunc("tmpcen",img_percentile("tmpcen",0.99),img_percentile("tmpcen",1.0),"tmpcen1");
+  arith_image_trunc("tmpcen", img_percentile("tmpcen",0.99), img_percentile("tmpcen",1.0), "tmpcen1");
   delete_image_ID("tmpcen");
 
-  center_PSF("tmpcen1",xcenter,ycenter,box_size);  
+  center_PSF("tmpcen1", xcenter, ycenter, box_size);  
   delete_image_ID("tmpcen1");
 
-  printf("center : %f %f\n",xcenter[0],ycenter[0]);
+  printf("center : %f %f\n", xcenter[0], ycenter[0]);
 
-  create_variable_ID("xc",xcenter[0]);
-  create_variable_ID("yc",ycenter[0]);
+  create_variable_ID("xc", xcenter[0]);
+  create_variable_ID("yc", ycenter[0]);
 
   free(xcenter);
   free(ycenter);
@@ -627,13 +697,16 @@ int center_PSF_alone(char *ID_name)
   return(0);
 }
 
+
+
+
 /* this simple routine finds the center of a PSF by barycenter technique */
 int center_star(char *ID_in_name, double *x_star, double *y_star)
 {
   int ID_in;
   long ii,jj;
   long naxes[2];
-  long n1,n2,n3;
+  long n1, n2, n3;
   /* n2,n3 are the pixel coordinate, n3 is the pixel radius of the sampling box used.*/
   double sum,coeff;
   double xsum, ysum;
@@ -681,10 +754,14 @@ int center_star(char *ID_in_name, double *x_star, double *y_star)
   
   x_star[0] = xsum;
   y_star[0] = ysum;
-  printf("%f %f\n",xsum,ysum);
+  printf("%f %f\n", xsum, ysum);
  
   return(0);
 }
+
+
+
+
 
 float get_sigma(char *ID_name, float x, float y, char *options)
 {
@@ -876,6 +953,8 @@ float get_sigma(char *ID_name, float x, float y, char *options)
   return(sigma);
 }
 
+
+
 float get_sigma_alone(char *ID_name)
 {
   double *xcenter;
@@ -928,6 +1007,9 @@ float get_sigma_alone(char *ID_name)
   return(sigma);
 }
 
+
+
+
 int extract_psf(char *ID_name, char *out_name, long size)
 {
   long ID;
@@ -949,7 +1031,7 @@ int extract_psf(char *ID_name, char *out_name, long size)
   copy_image_ID(ID_name, "tmpcen", 0);
   arith_image_trunc("tmpcen",img_percentile("tmpcen",0.99),img_percentile("tmpcen",1.0),"tmpcen1");
   delete_image_ID("tmpcen");
-  center_PSF("tmpcen1",xcenter,ycenter,box_size);  
+  center_PSF("tmpcen1", xcenter, ycenter, box_size);  
 
   printf("PSF center = %f %f   extracting window size %ld\n",xcenter[0],ycenter[0],size);
   delete_image_ID("tmpcen1");
@@ -967,6 +1049,8 @@ int extract_psf(char *ID_name, char *out_name, long size)
 
   return(0);
 }
+
+
 
 long extract_psf_photcent(char *ID_name, char *out_name, long size)
 {
@@ -994,7 +1078,7 @@ long extract_psf_photcent(char *ID_name, char *out_name, long size)
   totx /= tot;
   toty /= tot;
  
-  printf("Photocenter = %lf %lf\n",totx,toty);
+  printf("Photocenter = %lf %lf\n", totx, toty);
 
   IDout = create_2Dimage_ID(out_name,size,size);
   ii0 = (long) totx;
@@ -1003,16 +1087,18 @@ long extract_psf_photcent(char *ID_name, char *out_name, long size)
   for(ii1=0;ii1<size;ii1++)
     for(jj1=0;jj1<size;jj1++)
       {
-	ii = ii0-size/2 + ii1;
-	jj = jj0-size/2 + jj1;
-	if((ii>-1)&&(jj>-1)&&(ii<naxes[0])&&(jj<naxes[1]))
-	  data.image[IDout].array.F[jj1*size+ii1] = data.image[IDin].array.F[jj*naxes[0]+ii];
-	else
-	  data.image[IDout].array.F[jj1*size+ii1] = 0.0;
+		ii = ii0-size/2 + ii1;
+		jj = jj0-size/2 + jj1;
+		if((ii>-1)&&(jj>-1)&&(ii<naxes[0])&&(jj<naxes[1]))
+			data.image[IDout].array.F[jj1*size+ii1] = data.image[IDin].array.F[jj*naxes[0]+ii];
+		else
+			data.image[IDout].array.F[jj1*size+ii1] = 0.0;
       }
 
   return(IDout);
 }
+
+
 
 int psf_variance(char *ID_out_m, char *ID_out_v, char *options)
 {
@@ -1094,6 +1180,9 @@ int psf_variance(char *ID_out_m, char *ID_out_v, char *options)
   return(0);
 }
 
+
+
+
 int combine_2psf(char *ID_name, char *ID_name1, char *ID_name2, float radius, float index)
 {
   long ID1,ID2,ID;
@@ -1117,6 +1206,9 @@ int combine_2psf(char *ID_name, char *ID_name1, char *ID_name2, float radius, fl
   
   return(0);
 }
+
+
+
 
 float psf_measure_SR(char *ID_name, float factor, float r1, float r2)
 {
@@ -1243,6 +1335,7 @@ float psf_measure_SR(char *ID_name, float factor, float r1, float r2)
 }
 
 
+
 // simple lucky imaging
 // input must be co-centered flux normalized cube 
 // algorithm will rank frames according to the total flux inside a radius r_pix
@@ -1295,6 +1388,63 @@ long PSF_coaddbest(char *IDcin_name, char *IDout_name, float r_pix)
   free(flux_array);
 
   
-
   return(IDout);
+}
+
+
+//
+// if timing file exists, use it for output
+// PSFsizeEst: estimated size of PSF (sigma)
+//
+int PSF_sequence_measure(char *IDin_name, float PSFsizeEst, char *outfname)
+{
+	long IDin;
+	long xsize, ysize, xysize, zsize;
+	FILE *fpout;
+	long IDtmp;
+	double *xcenter;
+	double *ycenter;
+	long boxsize;
+	char *ptr;
+	long kk;
+	char fname[200];
+	
+	
+	boxsize = (long) (2.0*PSFsizeEst);
+	printf("box size : %f -> %ld\n", PSFsizeEst, boxsize);
+
+	xcenter = (double*) malloc(sizeof(double));
+	ycenter = (double*) malloc(sizeof(double));
+	
+	IDin = image_ID(IDin_name);
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	xysize = xsize*ysize;
+	if(data.image[IDin].md[0].naxis == 3)
+		zsize = data.image[IDin].md[0].size[2];
+	else
+		zsize = 1;
+	
+	IDtmp = create_2Dimage_ID("_tmppsfim", xsize, ysize);
+	
+	fpout = fopen(outfname, "w");
+	for(kk=0;kk<zsize;kk++)
+	{
+		ptr = (char*) data.image[IDin].array.F;
+		ptr += sizeof(float)*xysize*kk;
+		memcpy((void*) data.image[IDtmp].array.F, (void*) ptr, sizeof(float)*xysize);
+		fast_center_PSF("_tmppsfim", xcenter, ycenter, boxsize);
+		printf("%5ld   CENTER = %f %f\n", kk, xcenter[0], ycenter[0]);
+		fprintf(fpout, "%ld %20f %20f\n", kk, xcenter[0], ycenter[0]);
+	
+	//	sprintf(fname, "!_tmppsfim_%04ld.fits", kk);
+	//	save_fits("_tmppsfim", fname);
+	}
+	fclose(fpout);
+	
+	
+	free(xcenter);
+	free(ycenter);
+	
+	return(0);
 }

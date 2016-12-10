@@ -6,6 +6,11 @@
 int init_psf();
 
 
+int PSF_sequence_measure_cli();
+
+
+
+
 long PSF_makeChromatPSF(char *amp_name, char *pha_name, float coeff1, float coeff2, long NBstep, float ApoCoeff, char *out_name);
 
 int PSF_finddiskcent(char *ID_name, float rad, float *result);
@@ -43,5 +48,7 @@ int combine_2psf(char *ID_name, char *ID_name1, char *ID_name2, float radius, fl
 float psf_measure_SR(char *ID_name, float factor, float r1, float r2);
 
 long PSF_coaddbest(char *IDcin_name, char *IDout_name, float r_pix);
+
+int PSF_sequence_measure(char *IDin_name, float PSFsizeEst, char *outfname);
 
 #endif

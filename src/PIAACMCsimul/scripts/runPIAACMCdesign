@@ -287,6 +287,7 @@ echo "                      300  : compute polychromatic on-axis PSF -> psfi0.fi
 echo "                      400  : evaluation, level 0 (on-axis PSF)"
 echo "                      401  : evaluation, level 1 (level0 + extended source with OPD errors)"
 echo "                      402  : evaluation, level 2 (level 1 + transmission curve)"
+echo "     $(tput bold)-q$(tput sgr0) <NBexp>      Quantize and process focal plane mask, <NBexp> exposures"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -397,10 +398,11 @@ if [ "$PIAAmode" = "0" ]; then
 APLCMC="1"
 fi
 
+FPMprocess="0"
 
 
 # Parse command line flags
-while getopts :hs:apSm:e:lcr: FLAG; do
+while getopts :hs:apSm:e:lcr:q: FLAG; do
   case $FLAG in
     S)
     SAVESTEP=1
@@ -460,6 +462,11 @@ while getopts :hs:apSm:e:lcr: FLAG; do
     echo "Directory $dir does not exist: cannot revert to step $step"
     fi
     exit
+    ;;
+    q)
+    NBexp=$OPTARG
+    echo "Process focal plane mask - $NBexp exposures"
+    FPMprocess="1"
     ;;
     \?) 
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -687,6 +694,44 @@ if [ "$ListParam" -eq 1 ]; then
 ./run
 exit
 fi
+
+
+
+
+
+if [ "$FPMprocess" -eq 1 ]; then
+echo "PROCESSING Focal Plane Mask"
+loadparam NBrings "12"
+loadparam FPMsectors "0"
+FPMcoordFile=$( printf "fpmsectors%d_%03d.txt" $FPMsectors $NBrings )
+echo "Coordinates file    :  $FPMcoordFile"
+
+loadparam mlambda "1000"
+loadparam mlambdaB "20"
+loadparam maskradld "2.00"
+maskradld3=$( echo "$maskradld" | sed 's/\.//g')
+loadparam fpmregsag_coeff "1.0"
+fpmregsag_coeff3=$( printf "%07.3f" $fpmregsag_coeff | sed 's/\.//g' )
+loadparam ssize 20
+loadparam fpmmaterial "SiO2"
+loadparam nblambda "20"
+FPMsagfile=$( printf "fpm_zonez_s%d_l%04ld_sr%02d_nbr%03d_mr%03d_minsag-02000_maxsag002000_fpmreg%s_ssr%02d_ssm0_%s_wb%02d.best.fits" $FPMsectors $mlambda $mlambdaB $NBrings $maskradld3 "$fpmregsag_coeff3" $ssize $fpmmaterial $nblambda )
+echo "FPM sag file        :  $FPMsagfile"
+
+execname="PIAACMCdesign"
+$execname << EOF
+loadfits "piaacmcconf_i000/$FPMsagfile" fpmin
+piaacmcfpmprocess fpmin $FPMcoordFile $NBexp fpmout.txt
+exit
+EOF
+
+exit
+fi
+
+
+
+
+
 
 
 
