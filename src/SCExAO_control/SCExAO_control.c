@@ -778,7 +778,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
-			sprintf(command, "dolog %s \"auto pyTT g %6.4f pupf %6.4f %6.4f %6.4f %6.4f  sig %+6.4f %+6.4f  XY %+5.3f %+5.3f \"", LoopName, gain, tot01, tot11, tot00, tot10, xsig, ysig, SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
+			sprintf(command, "dolog %s \"auto pyTT ave %6ld g %6.4f pupf %6.4f %6.4f %6.4f %6.4f  sig %+6.4f %+6.4f  XY %+5.3f %+5.3f \"", LoopName, NBframesAve, gain, tot01, tot11, tot00, tot10, xsig, ysig, SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
