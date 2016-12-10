@@ -839,6 +839,15 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
     float gainfactor;
 
 
+	char LoopName[200];
+	int ret;
+
+
+	fp = fopen("LOOPNAME", "r");
+	ret = fscanf(fp, "%s", LoopName);
+	fclose(fp);
+
+
 
     /// read position of stages
     if((fp = fopen("./status/pcampos.txt", "r"))!=NULL)
@@ -969,6 +978,13 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
             printf("%s", command);
             r = system(command);
             usleep(delayus);
+
+
+			sprintf(command, "dolog %s \"auto pcam ave %6ld g %6.4f totxy %6.4f %6.4f step %6ld %6ld  XY %7ld %7ld \"", LoopName, NBframesAve, gain, totx, toty, stepx, stepy, SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+            printf("COMMAND: \"%s\"\n", command);
+            r = system(command);
+
+
         }
         else
         {
