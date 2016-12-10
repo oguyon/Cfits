@@ -1543,6 +1543,7 @@ echo "OFF" > ./status/stat_zrespM.txt
 if [ "$DMMODE" = "ZONAL" ]; then
 echo "OFF" > ./status/stat_LOrespM.txt
 fi
+aoconflogext "STOP AUTO CALIBRATION"
 menucontrolloop_default="AUTOC"
 ;;
 
@@ -1557,6 +1558,7 @@ touch function_LOresp_off.wait
 
 
 AUTOC)
+aoconflogext "START AUTO CALIBRATION"
 # archive
 dirnb=20
 i0=`( printf "%03d" "$dirnb" )`

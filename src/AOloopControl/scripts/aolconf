@@ -186,7 +186,7 @@ echo "$@" >> aolconf.log
 dolog "$LOOPNAME" "$@"
 }
 
-# external log, less verbose
+# external log, use for less verbose log
 function aoconflogext {
 echo "$@" >> aolconf.log
 dolog "$LOOPNAME" "$@"
