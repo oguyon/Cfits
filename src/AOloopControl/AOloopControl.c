@@ -10802,7 +10802,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 
 
 	#ifdef HAVE_CUDA
-    GPU_loop_MultMat_setup(3, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
+    GPU_loop_MultMat_setup(0, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
 
 
 	for(k=0;k<GPUcnt;k++)
@@ -10820,7 +10820,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
 	fflush(stdout);
 
-	sleep(100);
+
 	while(1==1)
         {	
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	
@@ -10830,7 +10830,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 				data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];					
 				
 				
-			GPU_loop_MultMat_execute(3, &status, &GPUstatus[0], alpha, beta, write_timing);
+			GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], alpha, beta, write_timing);
 			
 			if(offloadMode==1) // offload back to dmC
 				{
