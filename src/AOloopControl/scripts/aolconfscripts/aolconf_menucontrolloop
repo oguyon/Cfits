@@ -3314,15 +3314,16 @@ menucontrolloop_default="GPUzplon7"
 aoconflogext "(re) STARTING GPU-based Modal WFSref offset loop"
 file="./conf/conf_GPUdm2wfsrefM.txt"
 echo "1" > $file
+wfrefO=$( cat conf/conf_dmwrefO_name.txt )
 tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwfrefRM" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwfref0" C-m
+tmux send-keys -t $tmuxname "readshmim $wfrefO" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} aol${LOOPNUMBER}_dmwfref0 0 bogus" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} $wfrefO 0 bogus" C-m
 menucontrolloop_default="GPUd2wMoff"
 ;;
 
@@ -3330,6 +3331,7 @@ menucontrolloop_default="GPUd2wMoff"
 aoconflogext "STOPPING GPU-based Modal WFSref offset loop"
 file="./conf/conf_GPUdm2wfsrefM.txt"
 echo "0" > $file
+wfrefO=$( cat conf/conf_dmwrefO_name.txt )
 tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux send-keys -t $tmuxname "" C-c
 sleep 0.1
@@ -3341,8 +3343,8 @@ tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}z"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwref0" C-m
-tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_dmwref0" C-m
+tmux send-keys -t $tmuxname "readshmim $wfrefO" C-m
+tmux send-keys -t $tmuxname "imzero $wfrefO" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 
