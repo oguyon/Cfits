@@ -10742,6 +10742,7 @@ int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *I
 
 //
 // compute DM map from mode values
+// this is a separate process
 //
 // if offloadMode = 1, apply correction to aol#_dmC
 //
@@ -10754,7 +10755,7 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
     int status;
     float alpha = 1.0;
     float beta = 0.0;
-	int initWFSref = 1;
+	int initWFSref = 0;
 	int orientation = 1;
 	int use_sem = 1;
 	long IDout;

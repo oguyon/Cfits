@@ -101,7 +101,7 @@ long IDtiming = -1; // index to image where timing should be written
 #ifdef HAVE_CUDA
 int deviceCount;
 
-GPUMATMULTCONF gpumatmultconf[20]; // supports up to 20 configurations
+GPUMATMULTCONF gpumatmultconf[20]; // supports up to 20 configurations per process
 
 
 cudaError_t error;
