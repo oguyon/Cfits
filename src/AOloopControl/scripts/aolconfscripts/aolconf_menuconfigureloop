@@ -2234,7 +2234,7 @@ echo " ON" > ./status/stat_acquwfsref0.txt
 tmuxsname="aol${LOOPNUMBER}awfsref0"
 tmux new-session -d -s $tmuxsname
 tmux send-keys -t $tmuxsname "$execname -n awfsref0${LOOPNUMBER}" C-m
-tmux send-keys -t $tmuxsname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxsname "csetpmove aolRT${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 1" C-m

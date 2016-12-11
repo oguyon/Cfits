@@ -1631,7 +1631,7 @@ tmux new-session -d -s $tmuxname
 logRunningProcess "aolzpwfscloop" "$tmuxname" "AO loop zero point offset (zonal, CPU-based)"
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}wfszpo" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
@@ -2722,7 +2722,7 @@ tmuxname="aol${LOOPNUMBER}zploop0"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop0" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP0" C-m
@@ -2748,7 +2748,7 @@ tmuxname="aol${LOOPNUMBER}zploop1"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop1" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP1" C-m
@@ -2774,7 +2774,7 @@ tmuxname="aol${LOOPNUMBER}zploop2"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop2" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP2" C-m
@@ -2799,7 +2799,7 @@ tmuxname="aol${LOOPNUMBER}zploop3"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop3" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
@@ -2824,7 +2824,7 @@ tmuxname="aol${LOOPNUMBER}zploop4"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop4" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP4" C-m
@@ -2850,7 +2850,7 @@ tmuxname="aol${LOOPNUMBER}zploop5"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop5" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
@@ -2876,7 +2876,7 @@ tmuxname="aol${LOOPNUMBER}zploop6"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop6" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
@@ -2901,7 +2901,7 @@ tmuxname="aol${LOOPNUMBER}zploop7"
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop7" C-m
 if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aolRT" C-m
+tmux send-keys -t $tmuxname "csetpmove aolRT${LOOPNUMBER}" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m

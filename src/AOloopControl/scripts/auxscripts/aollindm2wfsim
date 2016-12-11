@@ -102,7 +102,7 @@ fi
 
 
 Cfits -n $pname << EOF
-csetpmove aolRT1
+csetpmove aol${loopnb}RT1
 readshmim aol${loopnb}_dmdisp
 readshmim aol${loopnb}_zrespMlinsim
 readshmim aol${loopnb}_wfsref0linsim
