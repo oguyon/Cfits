@@ -4417,8 +4417,8 @@ long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, 
 	wfssize = wfsxsize*wfsysize;
 	NBmodes = data.image[IDin].md[0].size[2];
 
-	sprintf(imname, "fmodesall", mblock);
-	IDmodes = create_3Dimage_ID(imname, NBmodes, 1, NBmodes);
+	
+	IDmodes = create_3Dimage_ID("fmodesall", NBmodes, 1, NBmodes);
 	for(kk=0;kk<NBmodes*NBmodes;kk++)
 		data.image[IDmodes].array.F[kk] = 0.0;
 	for(kk=0;kk<NBmodes;kk++)
