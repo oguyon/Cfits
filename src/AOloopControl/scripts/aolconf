@@ -224,9 +224,9 @@ fi
 
 
 # execute CPU configuration script if it exists
-if [ -f "./aocustomscripts/cpuconfig" ]; then
+if [ -f "./aocustomscripts/cpuconfig_${LOOPNAME}" ]; then
 if [ ! -f "cpuconfigOK" ]; then
-. ./aocustomscripts/cpuconfig
+. ./aocustomscripts/cpuconfig_${LOOPNAME}
 fi
 fi
 
