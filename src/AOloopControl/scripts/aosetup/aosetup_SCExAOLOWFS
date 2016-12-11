@@ -14,14 +14,14 @@ echo "pname = $pname"
 
 
 
-LOOPNAME="SCExAO_LOWFS"
+LOOPNAME="SCExAOLOWFS"
 LOOPNUMBER="1"
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : CONFIGURE AO LOOP FOR SCExAO PyWFS $(tput sgr0)"
+echo "$(tput bold) $pname : CONFIGURE AO LOOP FOR SCExAO loop $LOOPNAME $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "  Configures AO loop custom scripts and variables for SCExAO PyWFS"
+echo "  Configures AO loop custom scripts and variables for SCExAO loop $LOOPNAME"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h]"
