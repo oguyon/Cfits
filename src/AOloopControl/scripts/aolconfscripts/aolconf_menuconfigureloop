@@ -1612,7 +1612,10 @@ tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 else
 tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 fi
+else
+tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 fi
+
 ;;
 
 
