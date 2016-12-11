@@ -10819,6 +10819,8 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	
 	printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
 	fflush(stdout);
+
+	sleep(100);
 	while(1==1)
         {	
 			COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);	

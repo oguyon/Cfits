@@ -681,35 +681,35 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
             gpumatmultconf[index].dmVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
             gpumatmultconf[index].dmRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
 
-            sprintf(sname, "i%d_gpu%d_sem1", index, device);
+            sprintf(sname, "i%02d_gpu%02d_sem1", index, device);
             if ((gpumatmultconf[index].semptr1[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr1[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem2", index, device);
+            sprintf(sname, "i%02d_gpu%02d_sem2", index, device);
             if ((gpumatmultconf[index].semptr2[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr2[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem3", index, device);
+            sprintf(sname, "i%02d_gpu%02d_sem3", index, device);
             if ((gpumatmultconf[index].semptr3[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr3[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem4", index, device);
+            sprintf(sname, "i%02d_gpu%02d_sem4", index, device);
             if ((gpumatmultconf[index].semptr4[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr4[device], 1, 0);
 
-            sprintf(sname, "i%d_gpu%d_sem5", index, device);
+            sprintf(sname, "i%02d_gpu%02d_sem5", index, device);
             if ((gpumatmultconf[index].semptr5[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
