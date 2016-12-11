@@ -4473,7 +4473,7 @@ long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, 
 					{
 						for(ii=0;ii<NBmodes;ii++)
 							data.image[IDmodes].array.F[kk*MBLOCK_NBmode[mblock]+ii] = 0.0;
-						data.image[IDmodes].array.F[kk*MBLOCK_NBmode[mblock]+(kk+MBLOCK_blockstart[mblock])] = 1.0;
+						data.image[IDmodes].array.F[kk*NBmodes+(kk+MBLOCK_blockstart[mblock])] = 1.0;
 					}
 				sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock);
 				save_fits(imname, fname);
