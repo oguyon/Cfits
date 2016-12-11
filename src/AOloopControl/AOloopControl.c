@@ -7617,7 +7617,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             x = (2.0*ii-1.0*dmxsize)/dmxsize;
             y = (2.0*jj-1.0*dmxsize)/dmysize;
             data.image[IDdm0].array.F[jj*dmxsize+ii] = 0.0;
-            data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.05*(sin(8.0*x)+sin(8.0*y));
+            data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.02*(sin(8.0*x)+sin(8.0*y));
         }
 
 	//save_fits("_testdm0", "!tmp/_testdm0.fits");
