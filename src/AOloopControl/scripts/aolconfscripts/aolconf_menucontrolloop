@@ -444,16 +444,6 @@ menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU d
 
 
 
-file="./conf/conf_GPUzpoffsetM.txt"
-GPUzpoffsetM=$( cat $file )
-if [[ -f "$file" && ${GPUzpoffsetM} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "7" > $file
-GPUzpoffsetM="7"
-fi
-menuitems+=( "GPUzpM" "[ $GPUzpoffsetM ]    Modal WFS zero point offset loop: GPU device" )
-
 
 file="./conf/conf_GPUzpoffsetZ.txt"
 GPUzpoffsetZ=$( cat $file )
@@ -467,6 +457,29 @@ menuitems+=( "GPUzpZ" "[ $GPUzpoffsetZ ]    Zonal WFS zero point offset loop: GP
 
 
 fi
+
+
+
+if [ "${dm2dm_mode}" = "1" ]; then
+
+file="./conf/conf_GPUzpoffsetM.txt"
+GPUzpoffsetM=$( cat $file )
+if [[ -f "$file" && ${GPUzpoffsetM} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "7" > $file
+GPUzpoffsetM="7"
+fi
+menuitems+=( "GPUzpM" "[ $GPUzpoffsetM ]    Modal WFS zero point offset loop: GPU device" )
+
+fi
+
+
+
+
+
+
+
 
 
 
