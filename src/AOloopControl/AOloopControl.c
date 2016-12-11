@@ -11287,7 +11287,7 @@ int AOloopControl_run()
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[14] = tdiffv;
 
-
+ 
 				
                        /* 
                   for(semnb=0;semnb<data.image[aoconfID_dmC].sem;semnb++)
