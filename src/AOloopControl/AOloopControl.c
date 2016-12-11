@@ -7620,8 +7620,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.05*(sin(8.0*x)+sin(8.0*y));
         }
 
-	save_fits("_testdm0", "!tmp/_testdm0.fits");
-	save_fits("_testdm1", "!tmp/_testdm1.fits");
+	//save_fits("_testdm0", "!tmp/_testdm0.fits");
+	//save_fits("_testdm1", "!tmp/_testdm1.fits");
 
     IDwfs = image_ID(wfsname);
     wfsxsize = data.image[IDwfs].md[0].size[0];
@@ -7663,6 +7663,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 	clock_gettime(CLOCK_REALTIME, &tnow);
 	tdouble_start = 1.0*tnow.tv_sec + 1.0e-9*tnow.tv_nsec;
 	wfscntstart = data.image[IDwfs].md[0].cnt0;
+    
+    
+    list_image_ID();
     
     for(iter=0; iter<NBiter; iter++)
     {
