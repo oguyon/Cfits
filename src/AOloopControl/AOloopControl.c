@@ -8598,8 +8598,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
-			printf("act = %6ld   NBpoke = %6ld\n", act, NBpoke);
-			fflush(stdout);
+		//	printf("act = %6ld   NBpoke = %6ld\n", act, NBpoke);
+		//	fflush(stdout);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
                 data.image[IDpos].array.F[ii] = 0.0;
@@ -8607,8 +8607,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             }            
 
             // POSITIVE INTEGRATION
-            printf("POSITIVE INTEGRATION\n");
-            fflush(stdout);
+          //  printf("POSITIVE INTEGRATION\n");
+          //  fflush(stdout);
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
                 Read_cam_frame(loop, 1, normalize, 0, 0);
@@ -8650,8 +8650,8 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
             }
 
             // NEGATIVE INTEGRATION
-            printf("NEGATIVE INTEGRATION\n");
-            fflush(stdout);
+         //   printf("NEGATIVE INTEGRATION\n");
+         //   fflush(stdout);
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
                 Read_cam_frame(loop, 1, normalize, 0, 0);
