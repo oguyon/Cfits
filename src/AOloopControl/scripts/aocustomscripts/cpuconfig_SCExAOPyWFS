@@ -3,6 +3,7 @@
 # number of arguments to script
 NBARGS=0
 
+LOOPNUMBER=$( cat LOOPNUMBER )
 
 
 # ======================= PROCESS NAME =================================
