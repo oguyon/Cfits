@@ -3302,15 +3302,15 @@ menucontrolloop_default="GPUzplon7"
 aoconflogext "(re) STARTING GPU-based Modal WFSref offset loop"
 file="./conf/conf_GPUdm2wfsrefM.txt"
 echo "1" > $file
-tmuxname="GPUdm2wfsrefM_dm${DMindex}"
+tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${DMindex}" C-m
+tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefRM" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwfrefRM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} aol${DMindex}_wfszpo1 0 bogus" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} aol${LOOPNUMBER}_wfszpo1 0 bogus" C-m
 menucontrolloop_default="GPUd2wMoff"
 ;;
 
@@ -3318,19 +3318,19 @@ menucontrolloop_default="GPUd2wMoff"
 aoconflogext "STOPPING GPU-based Modal WFSref offset loop"
 file="./conf/conf_GPUdm2wfsrefM.txt"
 echo "0" > $file
-tmuxname="GPUdm2wfsrefM_dm${DMindex}"
+tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux send-keys -t $tmuxname "" C-c
 sleep 0.1
 tmux send-keys -t $tmuxname "exit" C-m
 sleep 0.1
 tmux kill-session -t $tmuxname
 
-tmuxname="GPUdm2wfsrefM_dm${DMindex}z"
+tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}z"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m
-tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo1" C-m
-tmux send-keys -t $tmuxname "imzero aol${DMindex}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
+tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 
