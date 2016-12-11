@@ -138,6 +138,9 @@ aolmkmodesM zrespM ${NBmblock} ${Cmblock} $2
 exit
 EOF
 
+cp ./mkmodestmp/fmodesall.fits ./conf/aol${loopnb}_DMmodes_zonal.fits
+
+
 #rm $startupfile
 #rm $fifoname
 
