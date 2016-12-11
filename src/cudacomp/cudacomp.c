@@ -1226,6 +1226,7 @@ void *compute_function( void *ptr )
 				
 				printf("alpha = %f\n", alpharef);
  				printf("alpha = %f\n", betaref);
+ 				printf("gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
  				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
                 
                 exit(EXIT_FAILURE);
