@@ -1530,8 +1530,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 	
 	min_mn=min(M,N);
 	
+	printf("INITIALIZE MAGMA\n");
+	fflush(stdout);
+	
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
-
     printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
     fflush(stdout);
 
@@ -1548,6 +1550,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 	magma_smalloc_pinned (&h_work, lwork);          // host  mem. for  h_work
 
 
+
+	printf("MAGMA READY\n");
+	fflush(stdout);
+	
 	// write input h_R matrix
 	 if(atype==FLOAT)
     {
