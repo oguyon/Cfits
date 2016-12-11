@@ -737,6 +737,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_cMat returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_cMat[%d] size %d x %d\n", index, device, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device]);
+			}
 
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsVec[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
@@ -745,6 +749,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_wfsVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_wfsVec[%d] size %d\n", index, device, gpumatmultconf[index].Nsize[device]);
+			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsRef[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
             if (error != cudaSuccess)
@@ -752,6 +760,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_wfsRef returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_wfsRef[%d] size %d\n", index, device, gpumatmultconf[index].Nsize[device]);
+			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmVec[device], sizeof(float)*gpumatmultconf[index].M);
             if (error != cudaSuccess)
@@ -759,6 +771,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_dmVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
+            else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_dmVec[%d] size %d\n", index, device, gpumatmultconf[index].M);
+			}
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M);
             if (error != cudaSuccess)
@@ -766,7 +782,10 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
                 printf("cudaMalloc d_dmVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
-
+			else
+            {
+				printf("ALLOCATED gpumatmultconf[%d].d_dmRef[%d] size %d\n", index, device, gpumatmultconf[index].M);
+			}
 
             stat = cublasCreate(&gpumatmultconf[index].handle[device]);
             printf("INITIALIZED CUBLAS handle index=%d device=%d\n", index, device);
@@ -1220,9 +1239,9 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");			
                     
                 printf("device %d of index %d\n", device, index);
-				printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
+				printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
 				
-				printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N)
+				printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
 				printf("alpha                               = %f\n", alpharef);
  				printf("alpha                               = %f\n", betaref);
  				printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
