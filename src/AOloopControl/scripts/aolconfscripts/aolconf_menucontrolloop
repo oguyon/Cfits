@@ -444,7 +444,6 @@ menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU d
 
 
 
-
 file="./conf/conf_GPUzpoffsetZ.txt"
 GPUzpoffsetZ=$( cat $file )
 if [[ -f "$file" && ${GPUzpoffsetZ} =~ [0-9]$ ]]; then
@@ -3321,9 +3320,9 @@ tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n GPUdm2wfsref${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwfrefRM" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwref0" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmwfref0" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} aol${LOOPNUMBER}_dmwref0 0 bogus" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} aol${LOOPNUMBER}_dmwfref0 0 bogus" C-m
 menucontrolloop_default="GPUd2wMoff"
 ;;
 
