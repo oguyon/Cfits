@@ -3155,7 +3155,10 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     {
 		
 		if(refindex != data.image[IDref].md[0].cnt0)
-			initref = 0;
+			{
+				initref = 0;
+				refindex = data.image[IDref].md[0].cnt0;
+			}
 			
 		if(initref==1)
 		{
@@ -3194,7 +3197,6 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 			
 			if(initref==0)
 			{
-				refindex = data.image[IDref].md[0].cnt0;
 				cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
 			}
 			else
