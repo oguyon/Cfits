@@ -1187,10 +1187,6 @@ void *compute_function( void *ptr )
         }
 
 
-
-
-
-
         if(gpumatmultconf[index].refWFSinit[device] == 0) // compute DM reference (used when reference changes)
         {
             *ptrstat = 4; // compute
@@ -1226,9 +1222,10 @@ void *compute_function( void *ptr )
                 printf("device %d of index %d\n", device, index);
 				printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
 				
-				printf("alpha = %f\n", alpharef);
- 				printf("alpha = %f\n", betaref);
- 				printf("gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+				printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N)
+				printf("alpha                               = %f\n", alpharef);
+ 				printf("alpha                               = %f\n", betaref);
+ 				printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
  				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
                 
                 exit(EXIT_FAILURE);
