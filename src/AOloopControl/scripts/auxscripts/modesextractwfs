@@ -85,7 +85,6 @@ readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_wfsmask
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0
 
-
 exit
 EOF
 

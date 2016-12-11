@@ -11258,13 +11258,7 @@ int AOloopControl_run()
                             }
                     }
                 
-             /*   for(semnb=0;semnb<data.image[aoconfID_meas_act].sem;semnb++)
-                {
-                    sem_getvalue(data.image[aoconfID_meas_act].semptr[semnb], &semval);
-                    if(semval<SEMAPHORE_MAXVAL)
-                        sem_post(data.image[aoconfID_meas_act].semptr[semnb]);
-                }
-*/
+
 
 
                 AOconf[loop].status = 13; // enforce limits
@@ -11294,8 +11288,8 @@ int AOloopControl_run()
                 data.image[aoconfID_looptiming].array.F[14] = tdiffv;
 
 
-
-                        
+				
+                       /* 
                   for(semnb=0;semnb<data.image[aoconfID_dmC].sem;semnb++)
                    {
                        sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
@@ -11313,9 +11307,8 @@ int AOloopControl_run()
                                 sem_post(data.image[aoconfID_dmdisp].semptr[1]);
                         }
                     AOconf[loop].DMupdatecnt ++;
-//                    AOconf[loop].DMupdatecnt ++;
                 }
-
+*/
                 AOconf[loop].status = 18; // 18
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
