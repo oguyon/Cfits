@@ -78,7 +78,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 // 2: compute modes loop
 //         int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name)
 //
-// 3: coefficients to DM shape [ NOTE: CRASHES IF NOT USING GPU 0 ]
+// 3: coefficients to DM shape [ NOTE: CRASHES IF NOT USING index 0 ]
 //         int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode)
 //
 // 4: Predictive control (in modules linARfilterPred)
