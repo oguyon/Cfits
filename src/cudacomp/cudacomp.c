@@ -1219,7 +1219,15 @@ void *compute_function( void *ptr )
                 if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");			
+                    
+                printf("device %d of index %d\n", device, index);
+				printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
+				
+				printf("alpha = %f\n", alpharef);
+ 				printf("alpha = %f\n", betaref);
+ 				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                
                 exit(EXIT_FAILURE);
             }
   //          cublasSgemv_alpha = alphatmp;
