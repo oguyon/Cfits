@@ -3310,8 +3310,8 @@ tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp" C-m
 tmux send-keys -t $tmuxname "readshmim aol${DMindex}_dmwfrefRM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${DMindex}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp05 ${GPUzpoffsetM} aol${DMindex}_wfszpo1 0 bogus" C-m
-menutop_default="GPUd2wMoff"
+tmux send-keys -t $tmuxname "cudacoeff2map aol${DMindex}_dmwfrefRM dm${DMindex}disp ${GPUzpoffsetM} aol${DMindex}_wfszpo1 0 bogus" C-m
+menucontrolloop_default="GPUd2wMoff"
 ;;
 
     GPUd2wMoff)
@@ -3334,7 +3334,7 @@ tmux send-keys -t $tmuxname "imzero aol${DMindex}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 
-menutop_default="GPUd2wMon"
+menucontrolloop_default="GPUd2wMon"
 ;;
 
 
