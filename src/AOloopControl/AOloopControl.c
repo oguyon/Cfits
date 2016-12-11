@@ -7707,7 +7707,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
                 usleep(10);
             }
             wfscnt0 = data.image[IDwfs].md[0].cnt0;
-            printf("\r[%8ld]  %f  %f  ", wfsframe, dt, dtmax);
+            printf("[%8ld]  %f  %f\n", wfsframe, dt, dtmax);
             fflush(stdout);
             
             if(atype == FLOAT)
