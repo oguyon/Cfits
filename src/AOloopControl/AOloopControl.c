@@ -7620,6 +7620,8 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.05*(sin(8.0*x)+sin(8.0*y));
         }
 
+	save_fits("_testdm0", "!tmp/_testdm0.fits");
+	save_fits("_testdm1", "!tmp/_testdm1.fits");
 
     IDwfs = image_ID(wfsname);
     wfsxsize = data.image[IDwfs].md[0].size[0];
@@ -11424,7 +11426,6 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
 	
 
 
-
     printw("    loop number %ld    ", loop);
 
 
@@ -11589,6 +11590,13 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
 
     return(0);
 }
+
+
+
+
+
+
+
 
 
 
