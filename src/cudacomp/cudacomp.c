@@ -1304,6 +1304,7 @@ void *compute_function( void *ptr )
 				
 				printf("alpha = %f\n", cublasSgemv_alpha);
  				printf("alpha = %f\n", cublasSgemv_beta);
+ 				printf("gpumatmultconf[index].Nsize[device] = %ld\n", gpumatmultconf[index].Nsize[device]);
             
              
                 exit(EXIT_FAILURE);
