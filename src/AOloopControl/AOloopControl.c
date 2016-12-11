@@ -7672,10 +7672,6 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
         printf("ITERATION %5ld / %5ld\n", iter, NBiter);
         fflush(stdout);
 
-        clock_gettime(CLOCK_REALTIME, &tstart);
-        tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
-        tlastdouble = tstartdouble;
-
 
 
         copy_image_ID("_testdm0", dmname, 1);
@@ -7683,6 +7679,13 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
         // waiting time
         usleep(twaitus);
+        
+        
+         clock_gettime(CLOCK_REALTIME, &tstart);
+        tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
+        tlastdouble = tstartdouble;
+        
+        
         // and waiting frames
         wfscnt0 = data.image[IDwfs].md[0].cnt0;
         for(wfsframe=0; wfsframe<wfs_NBframesmax; wfsframe++)
