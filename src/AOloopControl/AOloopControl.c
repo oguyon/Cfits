@@ -8598,7 +8598,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         
         while ((act < NBpoke)&&(data.signal_USR1==0))
         {
-			printf("act = %6ld   NBpoke = %6ld\n");
+			printf("act = %6ld   NBpoke = %6ld\n", act, NBpoke);
 			fflush(stdout);
             for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             {
