@@ -87,6 +87,8 @@ int FORCESEMINIT = 1;
 
 
 extern DATA data;
+extern pid_t CLIPID;
+
 
     struct timespec tnow;
     struct timespec tdiff;
