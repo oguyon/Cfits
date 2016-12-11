@@ -2867,7 +2867,8 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 	int initref = 0; // 1 when reference has been processed
 	int BETAMODE = 0;
 	long IDrefout;
-				
+			
+	long refindex;
 				
 	
 
@@ -3152,34 +3153,36 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 
     while(loopOK == 1)
     {
+		
+		if(refindex != data.image[IDref].md[0].cnt0)
+			initref = 0;
+			
 		if(initref==1)
 		{
-        if(data.image[IDin].sem==0)
-        {
-            while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
-                usleep(5);
-            cnt = data.image[IDin].md[0].cnt0;
-            semr = 0;
-        }
-        else
-        {
-   
-            
-            if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
-                perror("clock_gettime");
-                exit(EXIT_FAILURE);
-            }
-            ts.tv_sec += 1;
-            semr = sem_timedwait(data.image[IDin].semptr[insem], &ts);
+			if(data.image[IDin].sem==0)
+			{
+				while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
+					usleep(5);
+				cnt = data.image[IDin].md[0].cnt0;
+				semr = 0;
+			}
+			else
+			{
+				if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+					perror("clock_gettime");
+					exit(EXIT_FAILURE);
+				}
+				ts.tv_sec += 1;
+				semr = sem_timedwait(data.image[IDin].semptr[insem], &ts);
 
-
-			// drive semaphore to zero
-             while(sem_trywait(data.image[IDin].semptr[insem])==0) {}
+				// drive semaphore to zero
+				while(sem_trywait(data.image[IDin].semptr[insem])==0) {}
                      
-        }
+			}
 		}
 		else // compute response of reference immediately
 			{
+				printf("COMPUTE NEW REFERENCE RESPONSE\n");
 				semr = 0;
 			}
 
@@ -3190,7 +3193,10 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
             // load in_stream to GPU
 			
 			if(initref==0)
+			{
+				refindex = data.image[IDref].md[0].cnt0;
 				cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
+			}
 			else
 				cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
 				
