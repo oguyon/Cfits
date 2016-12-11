@@ -1771,6 +1771,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
 
+
+	printf("INITIALIZE MAGMA\n");
+	fflush(stdout);
+	
     printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
     fflush(stdout);
 
@@ -1779,7 +1783,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	//flops_init(); 
     
     magma_print_environment();
-    
     
 
 	
@@ -1793,7 +1796,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	TESTING_MALLOC_CPU( h_VT1, double, N*N);
 	TESTING_MALLOC_DEV( d_VT1, double, N*N);
 	TESTING_MALLOC_DEV( d_M2, double, N*N);
-  
+    	
+    	
+    printf("MAGMA READY\n");
+	fflush(stdout);
+
   
   // h_A d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
 	
