@@ -1585,8 +1585,8 @@ cp -rf conf_mrm_staged conf_mrm_staged.000
 fi
 
 logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
-touch function_LOresp_on_tmux.lock
 if [ "$DMMODE" = "ZONAL" ]; then
+touch function_LOresp_on_tmux.lock
 touch function_LOresp_off_tmux.lock
 fi
 function_zresp_on
