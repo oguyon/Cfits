@@ -7680,11 +7680,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
         // waiting time
         usleep(twaitus);
         
-        
-         clock_gettime(CLOCK_REALTIME, &tstart);
-        tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
-        tlastdouble = tstartdouble;
-        
+      
         
         // and waiting frames
         wfscnt0 = data.image[IDwfs].md[0].cnt0;
@@ -7698,6 +7694,11 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
         }
 
         dt = 0.0;
+          clock_gettime(CLOCK_REALTIME, &tstart);
+        tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
+        tlastdouble = tstartdouble;
+        
+        
 
         wfsframe = 0;
         wfscnt0 = data.image[IDwfs].md[0].cnt0;
