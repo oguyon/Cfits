@@ -769,6 +769,8 @@ int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, c
 
 
             stat = cublasCreate(&gpumatmultconf[index].handle[device]);
+            printf("INITIALIZED CUBLAS handle index=%d device=%d\n", index, device);
+			fflush(stdout);
             if (stat != CUBLAS_STATUS_SUCCESS) {
                 printf ("CUBLAS initialization failed\n");
                 return EXIT_FAILURE;
