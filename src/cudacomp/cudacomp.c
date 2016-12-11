@@ -1197,7 +1197,7 @@ void *compute_function( void *ptr )
                 sem_post(gpumatmultconf[index].semptr2[device]);
 
 
-            printf("%d  GPU %d: compute reference product\n", index, device);
+            printf("%d  device %d (GPU %d): compute reference product\n", index, device, gpumatmultconf[index].GPUdevice[device]);
             fflush(stdout);
  
 //            alphatmp = cublasSgemv_alpha;
