@@ -1229,7 +1229,7 @@ menuitems+=( "GPUd2wMon" " [  OFF  ] Modal WFS offset [->dm05] is OFF (select fo
 fi
 if [ "${GPUdm2wfsrefM}" = "1" ];
 then
-menuitems+=( "GPUd2wMoff" " [   ON  ] Modal WFS offset [->dm05] is ON (select to de-activate)" )
+menuitems+=( "GPUd2wMoff" " [\Z1\Zr   ON  \Zn] Modal WFS offset [->dm05] is ON (select to de-activate)" )
 fi
 
 
@@ -3356,7 +3356,7 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "listim" C-m
 tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM dm${LOOPNUMBER}disp07 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
-menutop_default="GPUd2wZoff"
+menucontrolloop_default="GPUd2wZoff"
 ;;
 
     GPUd2wZoff)
@@ -3379,7 +3379,7 @@ tmux send-keys -t $tmuxname "imzero aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 
-menutop_default="GPUd2wZon"
+menucontrolloop_default="GPUd2wZon"
 ;;
 
 
