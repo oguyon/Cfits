@@ -12230,6 +12230,22 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 }
 
 
+/*
+long AOloopControl_builPFloop(long loop, long mstart, long msize, long PForder, float PFlag, double SVDeps)
+{
+	long IDin;
+	
+	// read AO loop gain, mult
+	if(AOloopcontrol_meminit==0)
+		AOloopControl_InitializeMemory(1);
+		
+		
+	
+	LINARFILTERPRED_Build_LinPredictor(char *IDin_name, PForder, PFlag, SVDeps, double RegLambda, char *IDoutPF_name, int outMode, 1);
+	
+	
+}
+*/
 
 
 

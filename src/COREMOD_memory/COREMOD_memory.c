@@ -5537,6 +5537,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     int wOK;
     int noframe;
 
+
+	char logb0name[500];
+	char logb1name[500];
+
     int is3Dcube = 0; // this is a rolling buffer
     int exitflag = 0; // toggles to 1 when loop must exit
 
@@ -5581,9 +5585,12 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     imsizearray[0] = xsize;
     imsizearray[1] = ysize;
     imsizearray[2] = zsize;
-
-    IDb0 = create_image_ID("logbuff0", 3, imsizearray, atype, 0, 1);
-    IDb1 = create_image_ID("logbuff1", 3, imsizearray, atype, 0, 1);
+    
+    sprintf(logb0name, "%s_logbuff0", IDname);
+    sprintf(logb1name, "%s_logbuff1", IDname);
+    
+    IDb0 = create_image_ID(logb0name, 3, imsizearray, atype, 1, 1);
+    IDb1 = create_image_ID(logb1name, 3, imsizearray, atype, 1, 1);
 
     IDb = IDb0;
 
@@ -5760,7 +5767,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
         if(  (index>zsize-1)  ||  ((wOK==0)&&(index>0)) )
         {
             /// save image
-            sprintf(iname, "logbuff%d", buffer);
+           // sprintf(iname, "logbuff%d", buffer);
+            sprintf(iname, "%s_logbuff%d", IDname, buffer);
+            
             //          printf("Saving %s -> %s\n", iname, fname);
             //         fflush(stdout);
             if(wOK==1) // image has arrived

@@ -1857,6 +1857,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	liwork = aux_iwork[0];
 	printf("workspace size : %ld  %ld\n", (long) lwork, (long) liwork);
 	
+	
+	
 	// allocate & compute
 	TESTING_MALLOC_CPU( iwork,  magma_int_t,        liwork );
 	TESTING_MALLOC_PIN( h_work, double, lwork  );
