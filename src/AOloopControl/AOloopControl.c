@@ -12328,7 +12328,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 
 
 
-	printf("Create aol%ld_modevalol_PFb%ld", loop, PFblock");
+	printf("Create aol%ld_modevalol_PFb%ld", loop, PFblock);
 	fflush(stdout);
 	imsizearray = (long*) malloc(sizeof(long)*3);
 	imsizearray[0] = PFblockSize;
