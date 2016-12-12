@@ -12326,7 +12326,10 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	zsize = data.image[IDinb0].md[0].size[2];
 	atype = data.image[IDinb0].md[0].atype;
 
-	
+
+
+	printf("Create aol%ld_modevalol_PFb%ld", loop, PFblock");
+	fflush(stdout);
 	imsizearray = (long*) malloc(sizeof(long)*3);
 	imsizearray[0] = PFblockSize;
 	imsizearray[1] = 1;
@@ -12335,7 +12338,8 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	IDout = create_image_ID(imnameout, 3, imsizearray, atype, 1, 1);
 	free(imsizearray);
 	COREMOD_MEMORY_image_set_semflush(imnameout, -1);
-	
+	printf("Done\n");
+	fflush(stdout);
 	
 	
 	while(1)
