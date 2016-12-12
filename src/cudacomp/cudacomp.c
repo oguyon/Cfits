@@ -2085,16 +2085,32 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     fclose(fp);
 
 
-
-    egvlim = SVDeps*SVDeps* magma_w1[m-1];
+    printf("step 5.1\n");
+    fflush(stdout);
+	
+	if(MAGMAfloat==1)
+		egvlim = SVDeps*SVDeps* magmaf_w1[m-1];
+    else
+    	egvlim = SVDeps*SVDeps* magma_w1[m-1];
+    
     MaxNBmodes1 = MaxNBmodes;
     if(MaxNBmodes1>m)
         MaxNBmodes1 = m;
     if(MaxNBmodes1>n)
         MaxNBmodes1 = n;
     mode = 0;
-    while( (mode<MaxNBmodes1) && (magma_w1[m-mode-1]>egvlim) )
-        mode++;
+    
+    if(MAGMAfloat==1)
+    {
+		while( (mode<MaxNBmodes1) && (magmaf_w1[m-mode-1]>egvlim) )
+			mode++;
+    }
+    else
+    {
+		while( (mode<MaxNBmodes1) && (magma_w1[m-mode-1]>egvlim) )
+			mode++;
+	}
+	
     printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
 
     fp = fopen("SVDmodes.log", "w");
