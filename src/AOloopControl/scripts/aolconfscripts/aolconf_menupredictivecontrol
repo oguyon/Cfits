@@ -166,8 +166,12 @@ else
 echo "OFF" > $file
 PFb0wON="OFF"
 fi
-menuitems+=( "PFb0wON" "[$PFb0wON] Watch input for PF block 0" )
 
+if [ "$PFbwON" = "OFF" ]; then
+menuitems+=( "PFb0wON" "[$PFb0wON] switch on Watch input for PF block 0" )
+else
+menuitems+=( "PFb0wOFF" "[$PFb0wON] switch off Watch input for PF block 0" )
+fi
 
 
 
