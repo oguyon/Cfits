@@ -611,6 +611,9 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	long *imsizearray;
 	
 	
+	char fname[200];
+	
+	
 	if(LOOPmode==0)
 		NBiter = 1;
 	else
