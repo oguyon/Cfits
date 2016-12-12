@@ -608,7 +608,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	long NBiter, iter;
 	long semtrig = 2;
-	
+	long *imsizearray;
 	
 	
 	if(LOOPmode==0)
@@ -876,22 +876,41 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	// axis 0 [ii] : input mode
 	// axis 1 [jj] : reconstructed mode
 	// axis 2 [kk] : time step
-	IDoutPF = create_3Dimage_ID(IDoutPF_name, xysize, xysize, PForder);	
-	
+
+	if( LOOPmode == 0 )
+		IDoutPF = create_3Dimage_ID(IDoutPF_name, xysize, xysize, PForder);	
+	else
+		{
+			if(iter==0)
+			{
+				imsizearray = (long*) malloc(sizeof(long)*2);
+				imsizearray[0] = xysize;
+				imsizearray[1] = xysize;
+				IDout = create_image_ID(IDoutPF_name, 2, imsizearray, FLOAT, 1, 1);
+				free(imsizearray);
+				COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
+			}
+		}
+		
+		
 	IDoutmask = image_ID("outmask");
 	
 	if(iter==0)
 		valfarray = (float*) malloc(sizeof(float)*NBmvec);
 	
 	
+	
+	data.image[IDoutPF].md[0].write = 1;
+	
 	alpha = PFlag - ((long) PFlag);
 	for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
 	{
-		// INDIVIDUAL FILTERS
-		sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);			
-		sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);	
-		ID_Pfilt = create_3Dimage_ID(filtname, xsize, ysize, PForder);
-		
+		if(LOOPmode==0)
+		{		// INDIVIDUAL FILTERS
+			sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);			
+			sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);	
+			ID_Pfilt = create_3Dimage_ID(filtname, xsize, ysize, PForder);
+		}
 		
 		// fill in valfarray
 		
@@ -913,12 +932,37 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 						for(m=0; m<NBmvec; m++)
 							val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
 
-						data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
+						//data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
 						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val;
 					}
 			}
-		save_fits(filtname, filtfname);	
+			
+		
+			
+			
+		if(LOOPmode==0)
+			{
+				for(pix=0; pix<NBpixin; pix++)
+					for(dt=0; dt<PForder; dt++)	
+						{
+							val = 0.0;
+							ind1 = (NBpixin*dt+pix)*NBmvec1;
+							for(m=0; m<NBmvec; m++)
+								val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
+
+							data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
+						}
+
+				save_fits(filtname, filtfname);	
+			}
+
 	}
+	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF, -1);
+	data.image[IDoutPF].md[0].cnt0++;
+	data.image[IDoutPF].md[0].write = 0;
+
+	
+	
 	printf("DONE\n");
 	fflush(stdout);
 	
