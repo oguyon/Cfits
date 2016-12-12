@@ -12276,6 +12276,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	long PFblockSize;
 	long PFblockOrder;
 	float PFblockLag;
+	float PFblockdgain;
 	FILE *fp;
 	char fname[500];
 	int ret;
@@ -12304,7 +12305,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 		}
 	else
 	{
-		ret = fscanf(fp, "%ld %ld %ld %f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag);
+		ret = fscanf(fp, "%ld %ld %ld %f %f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag, &PFblockdgain);
 		fclose(fp);
 	}
 	PFblockSize = PFblockEnd - PFblockStart;

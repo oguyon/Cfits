@@ -123,18 +123,22 @@ PFb0start=$( cat $file | awk '{ print $1}' )
 PFb0end=$( cat $file | awk '{ print $2}' )
 PFb0order=$( cat $file | awk '{ print $3}' )
 PFb0lag=$( cat $file | awk '{ print $4}' )
+PFb0dgain=$( cat $file | awk '{ print $5}' )
 else
 PFb0start="0"
 PFb0end="2"
 PFb0order="10"
 PFb0lag="2.5"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+PFb0dgain="0.1"
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 fi
 
 menuitems+=( "PFb0start" "[$PFb0start] set Predictive filter block 0 start" )
 menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
+menuitems+=( "PFb1dgain" "[$PFb0lag] set Predictive filter block 0 derivationgain" )
+
 
 
 menuitems+=( " " " ")
@@ -144,19 +148,21 @@ PFb1start=$( cat $file | awk '{ print $1}' )
 PFb1end=$( cat $file | awk '{ print $2}' )
 PFb1order=$( cat $file | awk '{ print $3}' )
 PFb1lag=$( cat $file | awk '{ print $4}' )
+PFb1dgain=$( cat $file | awk '{ print $5}' )
 else
 PFb1start="2"
 PFb1end="12"
 PFb1order="10"
 PFb1lag="2.5"
-echo "$PFb1start $PFb1end $PFb1order $PFb1lag" > $file
+PFb1dgain="0.1"
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 fi
 
 menuitems+=( "PFb1start" "[$PFb1start] set Predictive filter block 1 start" )
 menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
 menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
 menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
-
+menuitems+=( "PFb1dgain" "[$PFb1lag] set Predictive filter block 1 derivationgain" )
 
 
 
@@ -212,6 +218,23 @@ else
 menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] switch off Watch input for PF block 0" )
 fi
 
+
+
+menuitems+=( " " " ")
+file="./status/stat_PFb1cON.txt"
+PFb1cON=$( cat $file )
+if [[ -f "$file" && ( "$PFb1cON" = " ON" || "$PFb1cON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb1cON="OFF"
+fi
+
+if [ "$PFb1cON" = "OFF" ]; then
+menuitems+=( "PFb1cON" "[$PFb1cON] switch on Watch input for PF block 1" )
+else
+menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] switch off Watch input for PF block 1" )
+fi
 
 
 
@@ -316,7 +339,7 @@ exec 3>&1;
 PFb0start=$(dialog --inputbox "Select Predictive filter block 0 start" 0 0 "$PFb0start" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
 
 PFb0end)
@@ -324,7 +347,7 @@ exec 3>&1;
 PFb0end=$(dialog --inputbox "Select Predictive filter block 0 end" 0 0 "$PFb0end" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
 
 PFb0order)
@@ -332,7 +355,7 @@ exec 3>&1;
 PFb0order=$(dialog --inputbox "Select Predictive filter block 0 order" 0 0 "$PFb0order" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
 
 PFb0lag)
@@ -340,9 +363,16 @@ exec 3>&1;
 PFb0lag=$(dialog --inputbox "Select Predictive filter block 0 lag" 0 0 "$PFb0lag" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0lag $PFb0end $PFb0order $PFb0lag" > $file
+echo "$PFb0lag $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
 
+PFb0dgain)
+exec 3>&1;
+PFb0dgain=$(dialog --inputbox "Select Predictive filter block 0 derivation gain" 0 0 "$PFb0dgain" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/conf_PFblock_0.txt"
+echo "$PFb0lag $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
+;;
 
 
 
@@ -356,7 +386,7 @@ exec 3>&1;
 PFb1start=$(dialog --inputbox "Select Predictive filter block 1 start" 0 0 "$PFb1start" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1start $PFb1end $PFb1order $PFb1lag" > $file
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
 
 PFb1end)
@@ -364,7 +394,7 @@ exec 3>&1;
 PFb1end=$(dialog --inputbox "Select Predictive filter block 1 end" 0 0 "$PFb1end" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1start $PFb1end $PFb1order $PFb1lag" > $file
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
 
 PFb1order)
@@ -372,7 +402,7 @@ exec 3>&1;
 PFb1order=$(dialog --inputbox "Select Predictive filter block 1 order" 0 0 "$PFb1order" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1start $PFb1end $PFb1order $PFb1lag" > $file
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
 
 PFb1lag)
@@ -380,7 +410,15 @@ exec 3>&1;
 PFb1lag=$(dialog --inputbox "Select Predictive filter block 1 lag" 0 0 "$PFb1lag" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1lag $PFb1end $PFb1order $PFb1lag" > $file
+echo "$PFb1lag $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
+;;
+
+PFb1dgain)
+exec 3>&1;
+PFb1dgain=$(dialog --inputbox "Select Predictive filter block 1 derivation gain" 0 0 "$PFb1dgain" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/conf_PFblock_1.txt"
+echo "$PFb1lag $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
 
 
