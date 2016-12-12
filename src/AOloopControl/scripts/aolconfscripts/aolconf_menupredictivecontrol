@@ -149,7 +149,7 @@ PFb1start="2"
 PFb1end="12"
 PFb1order="10"
 PFb1lag="2.5"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag" > $file
 fi
 
 menuitems+=( "PFb1start" "[$PFb1start] set Predictive filter block 1 start" )
