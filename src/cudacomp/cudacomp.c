@@ -112,10 +112,19 @@ float cublasSgemv_alpha = 1.0;
 float cublasSgemv_beta  = 0.0;
 
 
-
-
-
 #endif
+
+
+
+
+
+int INIT_MAGMA = 0;
+
+
+
+
+
+
 
 
 
@@ -1796,11 +1805,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     fflush(stdout);
 
 
-	magma_init(); // initialize Magma
-	//flops_init(); 
-    
-    magma_print_environment();
-    
+	if(INIT_MAGMA==0)
+	{
+		magma_init(); // initialize Magma
+		//flops_init(); 
+		magma_print_environment();
+		
+		INIT_MAGMA = 1;
+	}
 
 	
     
@@ -1819,7 +1831,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	fflush(stdout);
 
   
-  // h_A d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
+ 
 	
 	
 	
