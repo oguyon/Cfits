@@ -970,7 +970,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
 //	sprintf(fname, "!_outPF_iter%05ld.fits", iter);
 //	save_fits(IDoutPF_name, fname);
-	
+	save_fits(IDoutPF_name, "!_outPF.fits");
 	printf("DONE\n");
 	fflush(stdout);
 	
