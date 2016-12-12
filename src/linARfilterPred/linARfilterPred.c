@@ -965,7 +965,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	data.image[IDoutPF].md[0].cnt0++;
 	data.image[IDoutPF].md[0].write = 0;
 
-	sprintf(fname, "!_outPF_iter%05ld.fits");
+	sprintf(fname, "!_outPF_iter%05ld.fits", iter);
 	save_fits(IDoutPF_name, fname);
 	
 	printf("DONE\n");
