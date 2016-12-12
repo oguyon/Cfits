@@ -122,12 +122,13 @@ if [ -f $file ]; then
 PFb0start=$( cat $file | awk '{ print $1}' )
 PFb0end=$( cat $file | awk '{ print $2}' )
 PFb0order=$( cat $file | awk '{ print $3}' )
+PFb0lag=$( cat $file | awk '{ print $4}' )
 else
 PFb0start="0"
-PFb0send="2"
+PFb0end="2"
 PFb0order="10"
 PFb0lag="2.5"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lat" > $file
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
 fi
 
 menuitems+=( "PFb0sart" "[$PFb0start] set Predictive filter block 0 start" )
