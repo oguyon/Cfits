@@ -2056,6 +2056,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 
 
+    printf("step 5\n");
+    fflush(stdout);
+
+
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t5);
 
@@ -2163,6 +2167,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
             TESTING_FREE_CPU( magma_h_AtA );
         }
     }
+
+
+    printf("step 6\n");
+    fflush(stdout);
 
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t6);
