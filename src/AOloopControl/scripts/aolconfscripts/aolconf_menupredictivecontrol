@@ -270,6 +270,8 @@ aolPFwatchin ${LOOPNUMBER} 0
 exit
 EOF
 PFb0wON=" ON"
+file="./status/stat_PFb0wON.txt"
+echo "$PFb0wON" > $file
 menupred_default="PFb0wOFF"
 ;;
 
@@ -277,6 +279,9 @@ menupred_default="PFb0wOFF"
 	PFb0wOFF)
 tmuxname="aol${LOOPNUMBER}PFb0watchin"
 tmux send-keys -t ${tmuxname} C-c
+PFb0wON="OFF"
+file="./status/stat_PFb0wON.txt"
+echo "$PFb0wON" > $file
 menupred_default="PFb0wON"
 ;;
 
