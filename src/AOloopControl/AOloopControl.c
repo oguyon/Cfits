@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 
 #ifdef __MACH__
-#include <mach/mach_time.h>long AOloopControl_ComputeOpenLoopModes(long loop)
+#include <mach/mach_time.h>
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 0
 int clock_gettime(int clk_id, struct mach_timespec *t){
@@ -607,6 +607,18 @@ int AOloopControl_computeWFSresidualimage_cli()
 		AOloopControl_computeWFSresidualimage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
 		return 0;
 	}
+	else
+		return 1;
+}
+
+
+int AOloopControl_builPFloop_WatchInput_cli()
+{
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
+		{
+			AOloopControl_builPFloop_WatchInput(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+			return 0;
+		}
 	else
 		return 1;
 }
@@ -1636,6 +1648,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aolmkwfsres 2 0.001");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_computeWFSresidualimage(long loop, float alpha)");
     data.NBcmd++;
+    
+     
+   	strcpy(data.cmd[data.NBcmd].key,"aolPFwatchin");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_builPFloop_WatchInput_cli;
+    strcpy(data.cmd[data.NBcmd].info,"watch telemetry for predictive filter input");
+    strcpy(data.cmd[data.NBcmd].syntax,"<loop #> <PFblock #>");
+    strcpy(data.cmd[data.NBcmd].example,"aolPFwatchin 0 2");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)");
+    data.NBcmd++;   
     
    	strcpy(data.cmd[data.NBcmd].key,"aolcompolm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -12230,22 +12252,86 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 }
 
 
-/*
-long AOloopControl_builPFloop(long loop, long mstart, long msize, long PForder, float PFlag, double SVDeps)
+
+
+
+
+
+
+
+long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 {
-	long IDin;
+	long IDinb0;
+	long IDinb1;
+	char imnameb0[500];
+	char imnameb1[500];
+	long cnt0, cnt1;	
+	long cnt0_old, cnt1_old;
+	long IDinb;
 	
-	// read AO loop gain, mult
-	if(AOloopcontrol_meminit==0)
-		AOloopControl_InitializeMemory(1);
+	long twaitus = 100000; // 0.1 sec
+	
+	long PFblockStart;
+	long PFblockEnd;
+	long PFblockSize;
+	long PFblockOrder;
+	float PFblockLag;
+	FILE *fp;
+	char fname[500];
+	int ret;
+	
+	// read PF block parameters
+	sprintf(fname, "conf/conf_PFblock_%ld.txt", PFblock);
+	if((fp = fopen(fname, "r"))==NULL)
+		{
+			printf("ERROR: File \"%s\" NOT FOUND\n", fname);
+			exit(0);
+		}
+	else
+	{
+		ret = fscanf(fp, "%ld %ld %ld %f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag);
+		fclose(fp);
+	}
+	
+	
+	
+	sprintf(imnameb0, "aol%ld_modeval_ol_logbuff0", loop);
+	sprintf(imnameb1, "aol%ld_modeval_ol_logbuff1", loop);
+	
+	IDinb0 = read_sharedmem_image(imnameb0);
+	IDinb1 = read_sharedmem_image(imnameb1);
+	
+	cnt0_old = data.image[IDinb0].md[0].cnt0;
+	cnt1_old = data.image[IDinb1].md[0].cnt0;
+	
+	while(1)
+	{
+		cnt0 = data.image[IDinb0].md[0].cnt0;
+		cnt1 = data.image[IDinb1].md[0].cnt0;
+		
+		if(cnt0!=cnt0_old)
+		{
+			printf("NEW TELEMETRY BUFFER AVAILABLE [0]\n");
+			cnt0_old = cnt0;
+			IDinb = IDinb0;
+		}
+		
+		if(cnt1!=cnt1_old)
+		{
+			printf("NEW TELEMETRY BUFFER AVAILABLE [1]\n");
+			cnt1_old = cnt1;
+			IDinb = IDinb1;
+		}
+	
 		
 		
+		usleep(twaitus);
+	}
 	
-	LINARFILTERPRED_Build_LinPredictor(char *IDin_name, PForder, PFlag, SVDeps, double RegLambda, char *IDoutPF_name, int outMode, 1);
 	
-	
+	return 0;
 }
-*/
+
 
 
 

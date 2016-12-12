@@ -232,6 +232,7 @@ int AOloopControl_statusStats();
 int AOloopControl_showparams(long loop);
 long AOloopControl_blockstats(long loop, char *IDout_name);
 long AOloopControl_computeWFSresidualimage(long loop, float alpha);
+long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
 long AOloopControl_ComputeOpenLoopModes(long loop);
 long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff);
 
