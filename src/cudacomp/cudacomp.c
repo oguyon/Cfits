@@ -128,16 +128,20 @@ magma_queue_t   magmaqueue;
 
 long MAGMAloop_iter = 0;
 
-	double *h_A, *d_A, *d_AtA, *h_AtA;
-	double *w1; // eigenvalues
-    double *h_R;
-	double *h_work;
-	double *d_VT1;
-	double *h_VT1;
-	double *d_M2;
-	double *d_Ainv;
-	double *h_Ainv;
-	double *h_M2;
+double *magma_h_A, *magma_d_A, *magma_d_AtA, *magma_h_AtA;
+double *magma_w1; // eigenvalues
+double *magma_h_R;
+double *magma_h_work;
+double *magma_d_VT1;
+double *magma_h_VT1;
+double *magma_d_M2;
+double *magma_d_Ainv;
+double *magma_h_Ainv;
+double *magma_h_M2;
+
+magma_int_t magma_aux_iwork[1];
+magma_int_t magma_lwork, magma_liwork;
+magma_int_t *magma_iwork;
 
 
 #endif
@@ -1747,9 +1751,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
  
     
    
-    magma_int_t aux_iwork[1];
-    magma_int_t lwork, liwork;
-	magma_int_t *iwork;
 	FILE *fp;
 	char fname[200];
      
@@ -1822,15 +1823,15 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     
     if(MAGMAloop_iter == 0)
     {
-		TESTING_MALLOC_CPU( h_A, double, M*N);
-		TESTING_MALLOC_DEV( d_A, double, M*N);
+		TESTING_MALLOC_CPU( magma_h_A, double, M*N);
+		TESTING_MALLOC_DEV( magma_d_A, double, M*N);
     
-		TESTING_MALLOC_CPU( h_AtA, double, N*N);
-		TESTING_MALLOC_DEV( d_AtA, double, N*N);
+		TESTING_MALLOC_CPU( magma_h_AtA, double, N*N);
+		TESTING_MALLOC_DEV( magma_d_AtA, double, N*N);
 	
-		TESTING_MALLOC_CPU( h_VT1, double, N*N);
-		TESTING_MALLOC_DEV( d_VT1, double, N*N);
-		TESTING_MALLOC_DEV( d_M2, double, N*N);
+		TESTING_MALLOC_CPU( magma_h_VT1, double, N*N);
+		TESTING_MALLOC_DEV( magma_d_VT1, double, N*N);
+		TESTING_MALLOC_DEV( magma_d_M2, double, N*N);
 	}
     	
     	
@@ -1851,42 +1852,45 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     {
         for(k=0; k<m; k++)
             for(ii=0; ii<n; ii++)
-                h_A[k*n+ii] =  data.image[ID_Rmatrix].array.F[k*n+ii];
+                magma_h_A[k*n+ii] =  data.image[ID_Rmatrix].array.F[k*n+ii];
     }
     else
     {
         for(k=0; k<m; k++)
             for(ii=0; ii<n; ii++)
-                h_A[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
+                magma_h_A[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
     }
     
     if(testmode==1)
     {
 		ID_A = create_2Dimage_ID("mA", M, N);
 		for(ii=0;ii<M*N;ii++)
-			data.image[ID_A].array.F[ii] = h_A[ii];
+			data.image[ID_A].array.F[ii] = magma_h_A[ii];
 		save_fits("mA", "!test_mA.fits");
 	}
 	
-    magma_queue_create(0, &magmaqueue);
-	magma_dsetmatrix( M, N, h_A, M, d_A, M, magmaqueue);
+	if(MAGMAloop_iter == 0)
+		magma_queue_create(0, &magmaqueue);
+	
+	
+	magma_dsetmatrix( M, N, magma_h_A, M, magma_d_A, M, magmaqueue);
 	
 	if(LOOPmode==0)
-		TESTING_FREE_CPU( h_A );
+		TESTING_FREE_CPU( magma_h_A );
 	
 	
 	if(timing==1)
 		clock_gettime(CLOCK_REALTIME, &t2);
 
 	// COMPUTE trans(A) x A
-	magma_dgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, d_A, M, d_A, M, 0.0,  d_AtA, N, magmaqueue);
+	magma_dgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magma_d_A, M, magma_d_A, M, 0.0,  magma_d_AtA, N, magmaqueue);
 	
 	if(testmode == 1)
 	{
-		magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, magmaqueue);
+		magma_dgetmatrix( N, N, magma_d_AtA, N, magma_h_AtA, N, magmaqueue);
 		ID_AtA = create_2Dimage_ID("mAtA", N, N);
 		for(ii=0;ii<N*N;ii++)
-			data.image[ID_AtA].array.F[ii] = h_AtA[ii];
+			data.image[ID_AtA].array.F[ii] = magma_h_AtA[ii];
 		save_fits("mAtA", "!test_mAtA.fits");
 	}
 	
@@ -1895,11 +1899,16 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	
 	// COMPUTE eigenvalues and eigenvectors of trans(A) x A
 	
+	if(MAGMAloop_iter == 0)
+	{
 	// get workspace size
-	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, aux_work,  -1, aux_iwork, -1, &info );
-	lwork  = (magma_int_t) MAGMA_S_REAL( aux_work[0] );
-	liwork = aux_iwork[0];
-	printf("workspace size : %ld  %ld\n", (long) lwork, (long) liwork);
+	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, aux_work,  -1, magma_aux_iwork, -1, &info );
+	magma_lwork  = (magma_int_t) MAGMA_S_REAL( aux_work[0] );
+	magma_liwork = magma_aux_iwork[0];
+	printf("workspace size : %ld  %ld\n", (long) magma_lwork, (long) magma_liwork);
+	}
+	
+	
 	
 	if(timing==1)
 		clock_gettime(CLOCK_REALTIME, &t4);
@@ -1908,22 +1917,22 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	// allocate & compute
 	if(MAGMAloop_iter == 0)
 	{
-		TESTING_MALLOC_CPU( iwork,  magma_int_t,        liwork );
-		TESTING_MALLOC_PIN( h_work, double, lwork  );
-		TESTING_MALLOC_CPU( w1,     double,             N      );
-		TESTING_MALLOC_PIN( h_R,    double, N*N  );
+		TESTING_MALLOC_CPU( magma_iwork,  magma_int_t, magma_liwork );
+		TESTING_MALLOC_PIN( magma_h_work, double, magma_lwork  );
+		TESTING_MALLOC_CPU( magma_w1,     double,             N      );
+		TESTING_MALLOC_PIN( magma_h_R,    double, N*N  );
 	}
 	
 	
 	
 	// THIS ROUTINE IS GOOD TO EIGENVALUES ABOUT 1e-6 OF PEAK EIGENVALUE IF USING FLOAT, MUCH BETTER WITH DOUBLE
-	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, d_AtA, N, w1, h_R, N, h_work, lwork, iwork, liwork, &info );
+	magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
 	
 	if(LOOPmode == 0)
 		{
-			TESTING_FREE_CPU( iwork  );
-			TESTING_FREE_PIN( h_R    );
-			TESTING_FREE_PIN( h_work );
+			TESTING_FREE_CPU( magma_iwork  );
+			TESTING_FREE_PIN( magma_h_R    );
+			TESTING_FREE_PIN( magma_h_work );
 		}
 
 
@@ -1941,19 +1950,19 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
         exit(0);
       }
     for(k=0; k<m; k++)
-      fprintf(fp,"%ld %g\n", k, w1[m-k-1]);
+      fprintf(fp,"%ld %g\n", k, magma_w1[m-k-1]);
     fclose(fp);
 
 	
 	
-	egvlim = SVDeps*SVDeps* w1[m-1];
+	egvlim = SVDeps*SVDeps* magma_w1[m-1];
 	MaxNBmodes1 = MaxNBmodes;
 	if(MaxNBmodes1>m)
 		MaxNBmodes1 = m;
 	if(MaxNBmodes1>n)
 		MaxNBmodes1 = n;
 	mode = 0;
-	while( (mode<MaxNBmodes1) && (w1[m-mode-1]>egvlim) )
+	while( (mode<MaxNBmodes1) && (magma_w1[m-mode-1]>egvlim) )
 		mode++;
 	printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
 	
@@ -1964,7 +1973,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	//printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
 
 
-	magma_dgetmatrix( N, N, d_AtA, N, h_AtA, N, magmaqueue);
+	magma_dgetmatrix( N, N, magma_d_AtA, N, magma_h_AtA, N, magmaqueue);
 	
 
 	//if(testmode == 1)
@@ -1972,7 +1981,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		ID_VT = create_2Dimage_ID(ID_VTmatrix_name, N, N);
 		for(ii=0;ii<N;ii++)
 			for(jj=0;jj<N;jj++)
-				data.image[ID_VT].array.F[jj*N+ii] = h_AtA[(N-ii-1)*N+jj];
+				data.image[ID_VT].array.F[jj*N+ii] = magma_h_AtA[(N-ii-1)*N+jj];
 //		save_fits("mVT", "!test_mVT.fits");
 //	}
 
@@ -1980,30 +1989,30 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		for(jj=0;jj<N;jj++)
 			{
 				if(N-jj-1<MaxNBmodes1)
-					h_VT1[ii*N+jj] = h_AtA[jj*N+ii]/w1[jj];
+					magma_h_VT1[ii*N+jj] = magma_h_AtA[jj*N+ii]/magma_w1[jj];
 				else
-					h_VT1[ii*N+jj] = 0.0;
+					magma_h_VT1[ii*N+jj] = 0.0;
 			}
-	magma_dsetmatrix( N, N, h_VT1, N, d_VT1, N, magmaqueue);
+	magma_dsetmatrix( N, N, magma_h_VT1, N, magma_d_VT1, N, magmaqueue);
 	
 	if(LOOPmode == 0)
 	{
-		TESTING_FREE_CPU( h_VT1 );
-		TESTING_FREE_CPU( w1 );
-		TESTING_FREE_CPU( h_AtA );
+		TESTING_FREE_CPU( magma_h_VT1 );
+		TESTING_FREE_CPU( magma_w1 );
+		TESTING_FREE_CPU( magma_h_AtA );
 	}
 	
 	if(timing==1)
 		clock_gettime(CLOCK_REALTIME, &t6);
 
 	// compute M2 = VT1 VT
-	magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, d_VT1, N, d_AtA, N, 0.0,  d_M2, N, magmaqueue);
+	magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magma_d_VT1, N, magma_d_AtA, N, 0.0,  magma_d_M2, N, magmaqueue);
 	
 	
 	if(testmode == 1)
 	{
-		TESTING_MALLOC_CPU( h_M2, double, N*N);
-		magma_dgetmatrix( N, N, d_M2, N, h_M2, N, magmaqueue);
+		TESTING_MALLOC_CPU( magma_h_M2, double, N*N);
+		magma_dgetmatrix( N, N, magma_d_M2, N, magma_h_M2, N, magmaqueue);
 		ID_M2 = create_2Dimage_ID("mM2", N, N);
 
 		/*for(ii=0;ii<N;ii++)
@@ -2015,18 +2024,18 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		*/
 		for(ii=0;ii<N;ii++)
 			for(jj=0;jj<N;jj++)
-				data.image[ID_M2].array.F[jj*N+ii] = h_M2[jj*N+ii];
+				data.image[ID_M2].array.F[jj*N+ii] = magma_h_M2[jj*N+ii];
 		save_fits("mM2", "!test_mM2.fits");
 		
 	
 	//	magma_dsetmatrix( N, N, h_M2, N, d_M2, N, magmaqueue);
-		TESTING_FREE_CPU( h_M2 );
+		TESTING_FREE_CPU( magma_h_M2 );
 	}
 	
 	if(LOOPmode == 0)
 	{
-		TESTING_FREE_DEV( d_VT1 );
-		TESTING_FREE_DEV( d_AtA );
+		TESTING_FREE_DEV( magma_d_VT1 );
+		TESTING_FREE_DEV( magma_d_AtA );
 	}
 	
 	 // d_A d_M2
@@ -2035,19 +2044,19 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	// compute M3 = M2 A
 	if(MAGMAloop_iter==0)
 	{
-		TESTING_MALLOC_DEV( d_Ainv, double, N*M);
+		TESTING_MALLOC_DEV( magma_d_Ainv, double, N*M);
 	}
 	
-	magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, d_A, M, d_M2, N, 0.0, d_Ainv, M, magmaqueue);
+	magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magma_d_A, M, magma_d_M2, N, 0.0, magma_d_Ainv, M, magmaqueue);
 	
 	if(LOOPmode==0)
-		TESTING_FREE_DEV( d_A);
+		TESTING_FREE_DEV( magma_d_A);
 	
 	if(MAGMAloop_iter==0)
-		TESTING_MALLOC_CPU( h_Ainv, double, N*M);
+		TESTING_MALLOC_CPU( magma_h_Ainv, double, N*M);
 	
 	if(LOOPmode==0)
-		TESTING_FREE_DEV( d_M2 );
+		TESTING_FREE_DEV( magma_d_M2 );
 
 	 // d_Ainv h_Ainv
 	//  w1
@@ -2058,13 +2067,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	if(timing==1)
 		clock_gettime(CLOCK_REALTIME, &t7);
 
-	magma_dgetmatrix( M, N, d_Ainv, M, h_Ainv, M, magmaqueue);
+	magma_dgetmatrix( M, N, magma_d_Ainv, M, magma_h_Ainv, M, magmaqueue);
 	if(testmode == 1)
 	{
 		ID_Ainv = create_2Dimage_ID("mAinv", M, N);
 		for(ii=0;ii<M;ii++)
 			for(jj=0;jj<N;jj++)
-				data.image[ID_Ainv].array.F[jj*M+ii] = h_Ainv[jj*M+ii];
+				data.image[ID_Ainv].array.F[jj*M+ii] = magma_h_Ainv[jj*M+ii];
 		save_fits("mAinv", "!test_mAinv.fits");
 	}
 
@@ -2096,13 +2105,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     {
         for(ii=0; ii<M; ii++) // sensors
             for(k=0; k<N; k++) // actuator modes
-                data.image[ID_Cmatrix].array.F[k*M+ii] = (float) h_Ainv[k*M+ii];
+                data.image[ID_Cmatrix].array.F[k*M+ii] = (float) magma_h_Ainv[k*M+ii];
     }
     else
     {
         for(ii=0; ii<M; ii++) // sensors
             for(k=0; k<N; k++) // actuator modes
-                data.image[ID_Cmatrix].array.D[k*M+ii] = h_Ainv[k*M+ii];
+                data.image[ID_Cmatrix].array.D[k*M+ii] = magma_h_Ainv[k*M+ii];
     }
 	
 
@@ -2112,8 +2121,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 	if(LOOPmode==0)
 	{
-		TESTING_FREE_DEV( d_Ainv );
-		TESTING_FREE_CPU( h_Ainv );
+		TESTING_FREE_DEV( magma_d_Ainv );
+		TESTING_FREE_CPU( magma_h_Ainv );
 	}
 	
 	 
