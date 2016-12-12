@@ -115,7 +115,6 @@ stringcenter "CONTINUOUS PREDICTIVE FILTER LOOP"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
-menuitems+=( " " " ")
 
 file="./conf/conf_PFblock_0.txt"
 if [ -f $file ]; then
@@ -135,6 +134,42 @@ menuitems+=( "PFb0sart" "[$PFb0start] set Predictive filter block 0 start" )
 menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
+
+menuitems+=( " " " ")
+
+file="./conf/conf_PFblock_1.txt"
+if [ -f $file ]; then
+PFb1start=$( cat $file | awk '{ print $1}' )
+PFb1end=$( cat $file | awk '{ print $2}' )
+PFb1order=$( cat $file | awk '{ print $3}' )
+PFb1lag=$( cat $file | awk '{ print $4}' )
+else
+PFb1start="2"
+PFb1end="12"
+PFb1order="10"
+PFb1lag="2.5"
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+fi
+
+menuitems+=( "PFb1sart" "[$PFb1start] set Predictive filter block 1 start" )
+menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
+menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
+menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
+
+menuitems+=( " " " ")
+
+file="./status/stat_PFb0wON.txt"
+PFb0wON=$( cat $file )
+if [[ -f "$file" && ( "PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb0wON="OFF"
+fi
+menuitems+=( "PFb0wi" "[$PFb0wON] Watch input for PF block 0" )
+
+
+
 
 
 
