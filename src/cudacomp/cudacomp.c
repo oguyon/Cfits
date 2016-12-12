@@ -1551,8 +1551,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 
 
 
+
 	printf("MAGMA READY\n");
 	fflush(stdout);
+	
+	
+	
+	
 	
 	// write input h_R matrix
 	 if(atype==FLOAT)
@@ -1670,6 +1675,16 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 }
 
 
+
+
+
+
+
+
+
+
+
+
 //
 // Computes control matrix
 // Conventions:
@@ -1679,7 +1694,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 //
 // NOTE: NUMERICALLY STABLE FOR SVDeps >1e-3
 //
-int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name) /* works for m != n */
+// use LOOPmode = 1 for computing the same size SVD, same input and output location
+//
+int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name, int LOOPmode) /* works for m != n */
 {
 	long ID_Rmatrix;
 	int atype;
@@ -1803,6 +1820,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
   
   // h_A d_A h_AtA d_AtA h_VT1 d_VT1 d_M2
+	
+	
+	
 	
 	// write input h_A matrix
 	 if(atype==FLOAT)

@@ -2232,7 +2232,7 @@ long AOloopControl_mkCM(char *respm_name, char *cm_name, float SVDlim)
         
         printf("COMPUTE OVERALL CONTROL MATRIX\n");
         #ifdef HAVE_MAGMA
-      CUDACOMP_magma_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 100000, "VTmat");
+      CUDACOMP_magma_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 100000, "VTmat", 0);
 #else
 linopt_compute_SVDpseudoInverse(respm_name, cm_name, SVDlim, 10000, "VTmat");
 #endif
@@ -4254,7 +4254,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     // COMPUTE MODAL CONTROL MATRICES
                     printf("COMPUTE CONTROL MATRIX\n");
                     #ifdef HAVE_MAGMA
-                        CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
+                        CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat", 0);
                     #else
                         linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
 					#endif
@@ -4347,7 +4347,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         // COMPUTE OVERALL CONTROL MATRIX
         printf("COMPUTE OVERALL CONTROL MATRIX\n");
         #ifdef HAVE_MAGMA
-            CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat");
+            CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat", 0);
         #else
             linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
 		#endif
@@ -4483,7 +4483,7 @@ long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, 
 				// COMPUTE MODAL CONTROL MATRICES
                 printf("COMPUTE CONTROL MATRIX\n");
                 #ifdef HAVE_MAGMA
-                    CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim, 10000, "VTmat");
+                    CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim, 10000, "VTmat", 0);
                 #else
                    linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim, 10000, "VTmat");
 				#endif
@@ -12292,6 +12292,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	int atype;
 	char imnameout[500];
 	long ii, kk;
+	long ave;
 	
 	
 	// read PF block parameters
@@ -12370,6 +12371,18 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 			for(kk=0;kk<zsize;kk++)
 				for(ii=0; ii<PFblockSize; ii++)
 					data.image[IDout].array.F[kk*PFblockSize + ii] = data.image[IDinb].array.F[kk*xysize + (ii+PFblockStart)];
+
+			for(ii=0;ii<PFblockSize; ii++)
+				{
+					ave = 0.0;
+					for(kk=0;kk<zsize;kk++)
+						ave += data.image[IDout].array.F[kk*PFblockSize + ii];
+				
+					ave /= zsize;
+					for(kk=0;kk<zsize;kk++)
+						data.image[IDout].array.F[kk*PFblockSize + ii] -= ave;
+				}
+			
 			
 			COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 			data.image[IDout].md[0].cnt0++;

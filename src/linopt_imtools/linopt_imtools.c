@@ -416,7 +416,7 @@ long linopt_compute_linRM_from_inout(char *IDinput_name, char *IDinmask_name, ch
 
 	// compute pokeM pseudo-inverse
    	#ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat", 0);
 	#else
         linopt_compute_SVDpseudoInverse("pokeM", "pokeMinv", SVDeps, insize, "VTmat");
      #endif   
@@ -1522,7 +1522,7 @@ long linopt_imtools_image_fitModes(char *ID_name, char *IDmodes_name, char *IDma
    
 
 	#ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat", 0);
 	#else
         linopt_compute_SVDpseudoInverse("_fm_respm", "_fm_recm", SVDeps, 10000, "_fm_vtmat");
    #endif

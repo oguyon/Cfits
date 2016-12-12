@@ -5185,7 +5185,7 @@ int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_
 
 	
 	#ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat", 0);
 	#else
 		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, 100000, "PF_VTmat");
 	#endif
@@ -5195,7 +5195,7 @@ int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_
 		save_fits("PFmatC", "!test_PFmatC.fits");
 		save_fits("PF_VTmat", "!test_PF_VTmat.fits");
 			#ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC_magma", SVDeps, 100000, "PF_VTmat_magma");
+		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC_magma", SVDeps, 100000, "PF_VTmat_magma", 0);
 		#else
 		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC_magma", SVDeps, 100000, "PF_VTmat_magma");
 		#endif

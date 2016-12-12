@@ -839,7 +839,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
 	NB_SVD_Modes = 10000;
 #ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
+		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat", LOOPmode);
 	#else
 		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
 	#endif 

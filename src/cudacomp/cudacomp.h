@@ -109,7 +109,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
 int GPU_loop_MultMat_free(int index);
 
 #ifdef HAVE_MAGMA
-int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name);
+int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, char *ID_VTmatrix_name, int LOOPmode);
 #endif
 
 void *compute_function( void *ptr );
