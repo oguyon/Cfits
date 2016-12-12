@@ -529,7 +529,7 @@ echo "$PFb1cON" > $file
 menupred_default="PFb1cOFF"
 ;;
 
-	PFb0cOFF)
+	PFb1cOFF)
 tmuxname="aol${LOOPNUMBER}PFb1comp"
 tmux send-keys -t ${tmuxname} C-c
 PFb1cON="OFF"
