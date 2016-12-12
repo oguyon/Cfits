@@ -1781,7 +1781,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 
 
-    int MAGMAfloat = 0; // 1 if single precision
+    int MAGMAfloat = 1; // 1 if single precision
 
 
 
