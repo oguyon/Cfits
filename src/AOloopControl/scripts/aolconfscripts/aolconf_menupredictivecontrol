@@ -265,10 +265,9 @@ tmuxname="aol${LOOPNUMBER}PFb0watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-Cfits <<EOF
-aolPFwatchin ${LOOPNUMBER} 0
-exit
-EOF
+tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 0" C-m
+tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0wON=" ON"
 file="./status/stat_PFb0wON.txt"
 echo "$PFb0wON" > $file
