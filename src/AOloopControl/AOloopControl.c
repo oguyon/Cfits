@@ -12327,8 +12327,9 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	atype = data.image[IDinb0].md[0].atype;
 
 
-
-	printf("Create aol%ld_modevalol_PFb%ld", loop, PFblock);
+	list_image_ID();
+	
+	printf("Create aol%ld_modevalol_PFb%ld\n", loop, PFblock);
 	fflush(stdout);
 	imsizearray = (long*) malloc(sizeof(long)*3);
 	imsizearray[0] = PFblockSize;
