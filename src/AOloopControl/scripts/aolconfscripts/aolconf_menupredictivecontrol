@@ -137,7 +137,7 @@ menuitems+=( "PFb0start" "[$PFb0start] set Predictive filter block 0 start" )
 menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
-menuitems+=( "PFb1dgain" "[$PFb0lag] set Predictive filter block 0 derivationgain" )
+menuitems+=( "PFb1dgain" "[$PFb0dgain] set Predictive filter block 0 derivationgain" )
 
 
 
@@ -162,7 +162,7 @@ menuitems+=( "PFb1start" "[$PFb1start] set Predictive filter block 1 start" )
 menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
 menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
 menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
-menuitems+=( "PFb1dgain" "[$PFb1lag] set Predictive filter block 1 derivationgain" )
+menuitems+=( "PFb1dgain" "[$PFb1dgain] set Predictive filter block 1 derivationgain" )
 
 
 
@@ -203,6 +203,8 @@ fi
 
 
 menuitems+=( " " " ")
+
+
 file="./status/stat_PFb0cON.txt"
 PFb0cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb0cON" = " ON" || "$PFb0cON" = "OFF" ) ]]; then
@@ -218,9 +220,6 @@ else
 menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] switch off Watch input for PF block 0" )
 fi
 
-
-
-menuitems+=( " " " ")
 file="./status/stat_PFb1cON.txt"
 PFb1cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb1cON" = " ON" || "$PFb1cON" = "OFF" ) ]]; then
