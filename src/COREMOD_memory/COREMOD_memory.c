@@ -5769,6 +5769,10 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
             /// save image
            // sprintf(iname, "logbuff%d", buffer);
             sprintf(iname, "%s_logbuff%d", IDname, buffer);
+            if(buffer==0)
+				IDb = IDb0;
+			else
+				IDb = IDb1;
             
             
             //          printf("Saving %s -> %s\n", iname, fname);
