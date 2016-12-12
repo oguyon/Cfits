@@ -1850,15 +1850,15 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	// write input h_A matrix
 	 if(atype==FLOAT)
     {
-        for(k=0; k<m; k++)
-            for(ii=0; ii<n; ii++)
-                magma_h_A[k*n+ii] =  data.image[ID_Rmatrix].array.F[k*n+ii];
+//        for(k=0; k<m; k++)
+            for(ii=0; ii<n*k; ii++)
+                magma_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
     }
     else
     {
-        for(k=0; k<m; k++)
-            for(ii=0; ii<n; ii++)
-                magma_h_A[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
+//        for(k=0; k<m; k++)
+            for(ii=0; ii<n*k; ii++)
+                magma_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
     }
     
     if(testmode==1)

@@ -595,7 +595,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	char filtname[200];
 	char filtfname[200];
 	long ID_Pfilt;
-	float val;
+	float val, val0;
 	long ind1;
 	int ret;
 	long IDoutPF;
@@ -609,15 +609,23 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	long NBiter, iter;
 	long semtrig = 2;
 	long *imsizearray;
-	
+	float gain;
 	
 	char fname[200];
 	
 	
 	if(LOOPmode==0)
-		NBiter = 1;
+		{
+			gain = 1.0;
+			NBiter = 1;
+		}
+
 	else
-		NBiter = 100000000;
+		{
+			NBiter = 100000000;
+			gain = 0.01;
+		}
+	
 	
 	
 	
@@ -939,8 +947,8 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 						for(m=0; m<NBmvec; m++)
 							val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
 
-						//data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
-						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val;
+						val0 = data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]];
+						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = (1.0-gain)*val0 + gain*val;
 					}
 			}
 			
