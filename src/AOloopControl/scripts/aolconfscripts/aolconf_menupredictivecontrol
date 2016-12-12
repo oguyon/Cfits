@@ -137,7 +137,7 @@ menuitems+=( "PFb0start" "[$PFb0start] set Predictive filter block 0 start" )
 menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
-menuitems+=( "PFb1dgain" "[$PFb0dgain] set Predictive filter block 0 derivationgain" )
+menuitems+=( "PFb0dgain" "[$PFb0dgain] set Predictive filter block 0 derivationgain" )
 
 
 
