@@ -907,6 +907,8 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 				free(imsizearray);
 				COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
 			}
+			else
+				IDoutPF = image_ID(IDoutPF_name);
 		}
 		
 		
