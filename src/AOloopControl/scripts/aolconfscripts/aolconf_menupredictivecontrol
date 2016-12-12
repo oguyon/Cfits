@@ -131,7 +131,7 @@ PFb0lag="2.5"
 echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
 fi
 
-menuitems+=( "PFb0sart" "[$PFb0start] set Predictive filter block 0 start" )
+menuitems+=( "PFb0start" "[$PFb0start] set Predictive filter block 0 start" )
 menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
@@ -152,7 +152,7 @@ PFb1lag="2.5"
 echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
 fi
 
-menuitems+=( "PFb1sart" "[$PFb1start] set Predictive filter block 1 start" )
+menuitems+=( "PFb1start" "[$PFb1start] set Predictive filter block 1 start" )
 menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
 menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
 menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
@@ -295,6 +295,55 @@ echo "./auxscripts/aolApplyARPFblock \"./PredictiveControl/modeval_ol_C.fits\" \
 echo "./auxscripts/aolApplyARPF \"./PredictiveControl/modeval_ol_C.fits\" \"./PredictiveControl/outPF.fits\" $lat" > cmd.txt
 ./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.fits" $lat
 ;;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PFb0start)
+exec 3>&1;
+PFb0start=$(dialog --inputbox "Select Predictive filter block 0 start" 0 0 "$PFb0start" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/conf_PFblock_0.txt"
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+;;
+
+PFb0end)
+exec 3>&1;
+PFb0end=$(dialog --inputbox "Select Predictive filter block 0 end" 0 0 "$PFb0end" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/conf_PFblock_0.txt"
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+;;
+
+PFb0order)
+exec 3>&1;
+PFb0order=$(dialog --inputbox "Select Predictive filter block 0 order" 0 0 "$PFb0order" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/conf_PFblock_0.txt"
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag" > $file
+;;
+
+PFb0lag)
+exec 3>&1;
+PFb0lag=$(dialog --inputbox "Select Predictive filter block 0 lag" 0 0 "$PFb0lag" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/conf_PFblock_0.txt"
+echo "$PFb0lag $PFb0end $PFb0order $PFb0lag" > $file
+;;
+
+
 
 
 
