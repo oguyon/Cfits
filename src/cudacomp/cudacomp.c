@@ -1732,7 +1732,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
  
 	// Timing
 	int testmode = 0;
-	int timing = 0; 
+	int timing = 1; 
 	struct timespec t0, t1, t2, t3, t4, t5, t6, t7;
     double t01d, t12d, t23d, t34d, t45d, t56d, t67d;
 	struct timespec tdiff;
@@ -1798,15 +1798,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
 
 
-	printf("INITIALIZE MAGMA\n");
-	fflush(stdout);
-	
     printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
     fflush(stdout);
 
 
 	if(INIT_MAGMA==0)
 	{
+		printf("INITIALIZE MAGMA\n");
+		fflush(stdout);
 		magma_init(); // initialize Magma
 		//flops_init(); 
 		magma_print_environment();
@@ -1825,6 +1824,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	TESTING_MALLOC_CPU( h_VT1, double, N*N);
 	TESTING_MALLOC_DEV( d_VT1, double, N*N);
 	TESTING_MALLOC_DEV( d_M2, double, N*N);
+    	
+    	
+    	
     	
     	
     printf("MAGMA READY\n");
@@ -2128,6 +2130,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		printf("  6-7	%12.3f ms\n", t67d*1000.0);
 	}
 
+
+
+	printf("\n\n");
 
     return(ID_Cmatrix);
 }
