@@ -919,7 +919,8 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 			}
 		save_fits(filtname, filtfname);	
 	}
-	
+	printf("DONE\n");
+	fflush(stdout);
 	
 	}
 	
