@@ -97,8 +97,8 @@ int LINARFILTERPRED_SelectBlock_cli()
 
 int LINARFILTERPRED_Build_LinPredictor_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,3)==0)
-		LINARFILTERPRED_Build_LinPredictor(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.string, 1, 0);
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,3)+CLI_checkarg(7,2)==0)
+		LINARFILTERPRED_Build_LinPredictor(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.string, 1, data.cmdargtoken[7].val.numl);
 	else
        return 1;
 
@@ -188,8 +188,8 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = LINARFILTERPRED_Build_LinPredictor_cli;
     strcpy(data.cmd[data.NBcmd].info,"Make linear auto-regressive filter");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input data> <PForder> <PFlag> <SVDeps> <regularization param> <output filters>");
-    strcpy(data.cmd[data.NBcmd].example,"mkARpfilt indata 5 2.4 0.0001 0.0 outPF");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input data> <PForder> <PFlag> <SVDeps> <regularization param> <output filters> <LOOPmode>");
+    strcpy(data.cmd[data.NBcmd].example,"mkARpfilt indata 5 2.4 0.0001 0.0 outPF 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF, int outMode, int LOOPmode)");
     data.NBcmd++;
 
@@ -605,6 +605,19 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	int DC_MODE = 0; // 1 if average value of each mode is removed
 	
 	
+	
+	long NBiter, iter;
+	long semtrig = 2;
+	
+	
+	
+	if(LOOPmode==0)
+		NBiter = 1;
+	else
+		NBiter = 100000000;
+	
+	
+	
 	// =========== SELECT INPUT VALUES =======================
 	
 	IDin = image_ID(IDin_name);
@@ -758,6 +771,31 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	if(LOOPmode == 1)
+		COREMOD_MEMORY_image_set_semflush(IDin_name, semtrig);
+	
+	
+	for(iter=0; iter<NBiter; iter++)
+	{
+	
+		if(LOOPmode == 1)
+		{
+			sem_wait(data.image[IDin].semptr[semtrig]);
+		}
+	
+	
+	
+	
 	for(m=0; m<NBmvec1; m++)
 	{
 		k0 = m + PForder-1; // dt=0 index
@@ -869,6 +907,17 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 			}
 		save_fits(filtname, filtfname);	
 	}
+	
+	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	free(valfarray);
 

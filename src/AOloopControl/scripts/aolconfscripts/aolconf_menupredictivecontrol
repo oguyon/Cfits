@@ -116,6 +116,7 @@ menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
 
+
 file="./conf/conf_PFblock_0.txt"
 if [ -f $file ]; then
 PFb0start=$( cat $file | awk '{ print $1}' )
@@ -135,8 +136,8 @@ menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
 
-menuitems+=( " " " ")
 
+menuitems+=( " " " ")
 file="./conf/conf_PFblock_1.txt"
 if [ -f $file ]; then
 PFb1start=$( cat $file | awk '{ print $1}' )
@@ -156,8 +157,11 @@ menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
 menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
 menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
 
-menuitems+=( " " " ")
 
+
+
+
+menuitems+=( " " " ")
 file="./status/stat_PFb0wON.txt"
 PFb0wON=$( cat $file )
 if [[ -f "$file" && ( "$PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
@@ -172,6 +176,45 @@ menuitems+=( "PFb0wON" "[$PFb0wON] switch on Watch input for PF block 0" )
 else
 menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] switch off Watch input for PF block 0" )
 fi
+
+
+menuitems+=( " " " ")
+file="./status/stat_PFb1wON.txt"
+PFb1wON=$( cat $file )
+if [[ -f "$file" && ( "$PFb1wON" = " ON" || "$PFb1wON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb1wON="OFF"
+fi
+
+if [ "$PFb1wON" = "OFF" ]; then
+menuitems+=( "PFb1wON" "[$PFb1wON] switch on Watch input for PF block 1" )
+else
+menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] switch off Watch input for PF block 1" )
+fi
+
+
+
+
+menuitems+=( " " " ")
+file="./status/stat_PFb0cON.txt"
+PFb0cON=$( cat $file )
+if [[ -f "$file" && ( "$PFb0cON" = " ON" || "$PFb0cON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb0cON="OFF"
+fi
+
+if [ "$PFb0cON" = "OFF" ]; then
+menuitems+=( "PFb0cON" "[$PFb0cON] switch on Watch input for PF block 0" )
+else
+menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] switch off Watch input for PF block 0" )
+fi
+
+
+
 
 
 
@@ -275,7 +318,6 @@ echo "$PFb0wON" > $file
 menupred_default="PFb0wOFF"
 ;;
 
-
 	PFb0wOFF)
 tmuxname="aol${LOOPNUMBER}PFb0watchin"
 tmux send-keys -t ${tmuxname} C-c
@@ -284,6 +326,73 @@ file="./status/stat_PFb0wON.txt"
 echo "$PFb0wON" > $file
 menupred_default="PFb0wON"
 ;;
+
+
+
+
+
+	PFb1wON)
+tmuxname="aol${LOOPNUMBER}PFb1watchin"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
+tmux send-keys -t ${tmuxname} "exit" C-m
+PFb0wON=" ON"
+file="./status/stat_PFb1wON.txt"
+echo "writing $PFb1wON to file $file"
+echo "$PFb1wON" > $file
+menupred_default="PFb1wOFF"
+;;
+
+	PFb1wOFF)
+tmuxname="aol${LOOPNUMBER}PFb1watchin"
+tmux send-keys -t ${tmuxname} C-c
+PFb1wON="OFF"
+file="./status/stat_PFb1wON.txt"
+echo "$PFb1wON" > $file
+menupred_default="PFb1wON"
+;;
+
+
+
+
+
+
+	PFb0cON)
+tmuxname="aol${LOOPNUMBER}PFb0comp"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} "Cfits" C-m
+tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_modevalol_PFb0" C-m
+tmux send-keys -t ${tmuxname} "mkARpfilt aol${LOOPNUMBER}_modevalol_PFb0 ${PFb0order} ${PFb0lag} 0.0001 0.0 outPF 1" C-m
+tmux send-keys -t ${tmuxname} "exit" C-m
+PFb0cON=" ON"
+file="./status/stat_PFb0cON.txt"
+echo "writing $PFb0cON to file $file"
+echo "$PFb0cON" > $file
+menupred_default="PFb0cOFF"
+;;
+
+	PFb0cOFF)
+tmuxname="aol${LOOPNUMBER}PFb0comp"
+tmux send-keys -t ${tmuxname} C-c
+PFb0cON="OFF"
+file="./status/stat_PFb0cON.txt"
+echo "$PFb0cON" > $file
+menupred_default="PFb0cON"
+;;
+
+
+
+
+
+
+
+
+
 
 
 
