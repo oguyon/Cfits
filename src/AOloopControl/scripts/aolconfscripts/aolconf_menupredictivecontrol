@@ -124,7 +124,7 @@ PFb0end=$( cat $file | awk '{ print $2}' )
 PFb0order=$( cat $file | awk '{ print $3}' )
 else
 PFb0start="0"
-PFb0sned="2"
+PFb0send="2"
 PFb0order="10"
 PFb0lag="2.5"
 echo "$PFb0start $PFb0end $PFb0order $PFb0lat" > $file
