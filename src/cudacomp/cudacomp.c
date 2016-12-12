@@ -1759,7 +1759,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     double aux_work[1];
     float auxf_work[1];
 
-
     long ID_A, ID_AtA, ID_VT, ID_Ainv;
 
     // Timing
@@ -1768,7 +1767,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
     double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;
     struct timespec tdiff;
-
 
 
     FILE *fp;
@@ -1888,28 +1886,28 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     // write input h_A matrix
     if(atype==FLOAT)
     {
-        if(MAGMAfloat==0)
-        {
-            for(ii=0; ii<n*m; ii++)
-                magma_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
-        }
-        else
+        if(MAGMAfloat==1)
         {
             for(ii=0; ii<n*m; ii++)
                 magmaf_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
         }
+        else
+        {
+            for(ii=0; ii<n*m; ii++)
+                magma_h_A[ii] =  data.image[ID_Rmatrix].array.F[ii];
+        }
     }
     else
     {
-        if(MAGMAfloat==0)
+        if(MAGMAfloat==1)
         {
             for(ii=0; ii<n*m; ii++)
-                magma_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
+                magmaf_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
         }
         else
         {
             for(ii=0; ii<n*m; ii++)
-                magmaf_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
+                magma_h_A[ii] = data.image[ID_Rmatrix].array.D[ii];
         }
     }
 
@@ -2050,7 +2048,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
         else
             TESTING_FREE_PIN( magma_h_R    );
 
-        TESTING_FREE_PIN( magma_h_work );
+		if(MAGMAfloat==1)
+			TESTING_FREE_PIN( magma_h_work );
+		else
+			TESTING_FREE_PIN( magmaf_h_work );
+    
     }
 
 
