@@ -952,7 +952,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 							val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
 
 						val0 = data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]];
-						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val; //(1.0-gain)*val0 + gain*val;
+						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = (1.0-gain)*val0 + gain*val;
 					}
 			}
 			
