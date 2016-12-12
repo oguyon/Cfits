@@ -178,7 +178,6 @@ menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] switch off Watch input for PF blo
 fi
 
 
-menuitems+=( " " " ")
 file="./status/stat_PFb1wON.txt"
 PFb1wON=$( cat $file )
 if [[ -f "$file" && ( "$PFb1wON" = " ON" || "$PFb1wON" = "OFF" ) ]]; then
@@ -368,7 +367,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_modevalol_PFb0" C-m
 tmux send-keys -t ${tmuxname} "mkARpfilt aol${LOOPNUMBER}_modevalol_PFb0 ${PFb0order} ${PFb0lag} 0.0001 0.0 outPF 1" C-m
-tmux send-keys -t ${tmuxname} "exit" C-m
+#tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0cON=" ON"
 file="./status/stat_PFb0cON.txt"
 echo "writing $PFb0cON to file $file"
