@@ -779,7 +779,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	
 	
-	
+	// ================= LOOP STARTS HERE ===============
 	
 	if(LOOPmode == 1)
 		COREMOD_MEMORY_image_set_semflush(IDin_name, semtrig);
@@ -795,7 +795,8 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	
 	
-	
+	if(LOOPmode == 0)
+	{
 	for(m=0; m<NBmvec1; m++)
 	{
 		k0 = m + PForder-1; // dt=0 index
@@ -804,7 +805,15 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 				data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
 	}
 	free(ave_inarray);
-	
+	}
+	else
+		{
+			k0 = m + PForder-1; // dt=0 index
+			for(pix=0; pix<NBpixin; pix++)
+				for(dt=0; dt<PForder; dt++)		
+					data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
+		}
+
 
 
 	if(REG==1)
@@ -819,7 +828,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	if(Save == 1)
 		save_fits("PFmatD", "!PFmatD.fits");
-	list_image_ID();
+	//list_image_ID();
 
 	
 	
@@ -871,7 +880,10 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	IDoutmask = image_ID("outmask");
 	
-	valfarray = (float*) malloc(sizeof(float)*NBmvec);
+	if(iter==0)
+		valfarray = (float*) malloc(sizeof(float)*NBmvec);
+	
+	
 	alpha = PFlag - ((long) PFlag);
 	for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
 	{
