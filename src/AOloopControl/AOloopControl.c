@@ -12280,6 +12280,20 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	char fname[500];
 	int ret;
 	
+	int Tupdate = 0;    
+	time_t t;
+	struct tm *uttime;
+	struct timespec timenow;
+	long xsize, ysize, zsize, xysize;
+	int cube;
+	
+	long IDout;
+	long *imsizearray;
+	int atype;
+	char imnameout[500];
+	long ii, kk;
+	
+	
 	// read PF block parameters
 	sprintf(fname, "conf/conf_PFblock_%ld.txt", PFblock);
 	if((fp = fopen(fname, "r"))==NULL)
@@ -12292,7 +12306,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 		ret = fscanf(fp, "%ld %ld %ld %f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag);
 		fclose(fp);
 	}
-	
+	PFblockSize = PFblockEnd - PFblockStart;
 	
 	
 	sprintf(imnameb0, "aol%ld_modeval_ol_logbuff0", loop);
@@ -12304,6 +12318,24 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	cnt0_old = data.image[IDinb0].md[0].cnt0;
 	cnt1_old = data.image[IDinb1].md[0].cnt0;
 	
+	xsize = data.image[IDinb0].md[0].size[0];
+	ysize = data.image[IDinb0].md[0].size[1];
+	xysize = xsize*ysize;
+	zsize = data.image[IDinb0].md[0].size[2];
+	atype = data.image[IDinb0].md[0].atype;
+
+	
+	imsizearray = (long*) malloc(sizeof(long)*3);
+	imsizearray[0] = PFblockSize;
+	imsizearray[1] = 1;
+	imsizearray[2] = zsize;
+	sprintf(imnameout, "aol%ld_modevalol_PFb%ld", loop, PFblock);
+	IDout = create_image_ID(imnameout, 3, imsizearray, atype, 1, 1);
+	free(imsizearray);
+	COREMOD_MEMORY_image_set_semflush(imnameout, -1);
+	
+	
+	
 	while(1)
 	{
 		cnt0 = data.image[IDinb0].md[0].cnt0;
@@ -12311,25 +12343,47 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 		
 		if(cnt0!=cnt0_old)
 		{
-			printf("NEW TELEMETRY BUFFER AVAILABLE [0]\n");
+			cube = 0;
 			cnt0_old = cnt0;
 			IDinb = IDinb0;
+			Tupdate = 1;
 		}
 		
 		if(cnt1!=cnt1_old)
 		{
-			printf("NEW TELEMETRY BUFFER AVAILABLE [1]\n");
+			cube = 1;
 			cnt1_old = cnt1;
 			IDinb = IDinb1;
+			Tupdate = 1;
 		}
 	
+		if(Tupdate == 1)
+		{
+			t = time(NULL);
+            uttime = gmtime(&t);
+			clock_gettime(CLOCK_REALTIME, &timenow);
+			printf("%02d:%02d:%02ld.%09ld  NEW TELEMETRY BUFFER AVAILABLE [%d]\n", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec, cube);
+
+
+			data.image[IDout].md[0].write = 1;
+			
+			for(kk=0;kk<zsize;kk++)
+				for(ii=0; ii<PFblockSize; ii++)
+					data.image[IDout].array.F[kk*PFblockSize + ii] = data.image[IDinb].array.F[kk*xysize + (ii+PFblockStart)];
+			
+			COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+			data.image[IDout].md[0].cnt0++;
+			data.image[IDout].md[0].write = 0;
+
+			Tupdate = 0;			
+		}
 		
 		
 		usleep(twaitus);
 	}
 	
 	
-	return 0;
+	return (IDout);
 }
 
 

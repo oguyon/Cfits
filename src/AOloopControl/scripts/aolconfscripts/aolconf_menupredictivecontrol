@@ -170,7 +170,7 @@ fi
 if [ "$PFb0wON" = "OFF" ]; then
 menuitems+=( "PFb0wON" "[$PFb0wON] switch on Watch input for PF block 0" )
 else
-menuitems+=( "PFb0wOFF" "[$PFb0wON] switch off Watch input for PF block 0" )
+menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] switch off Watch input for PF block 0" )
 fi
 
 
