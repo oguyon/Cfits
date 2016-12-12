@@ -2109,7 +2109,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	//	N = m;
     if(atype==FLOAT)
     {
-        for(ii=0; ii<M*M; ii++)
+        for(ii=0; ii<M*N; ii++)
                 data.image[ID_Cmatrix].array.F[ii] = (float) magma_h_Ainv[ii];
     }
     else
