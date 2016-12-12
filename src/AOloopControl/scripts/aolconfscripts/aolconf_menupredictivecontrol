@@ -160,7 +160,7 @@ menuitems+=( " " " ")
 
 file="./status/stat_PFb0wON.txt"
 PFb0wON=$( cat $file )
-if [[ -f "$file" && ( "PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
+if [[ -f "$file" && ( "@PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
 echo "OK"
 else
 echo "OFF" > $file
