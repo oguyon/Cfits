@@ -166,20 +166,20 @@ else
 echo "OFF" > $file
 PFb0wON="OFF"
 fi
-menuitems+=( "PFb0wi" "[$PFb0wON] Watch input for PF block 0" )
+menuitems+=( "PFb0wON" "[$PFb0wON] Watch input for PF block 0" )
 
 
 
 
 
 
-dialog --colors --title "PREDICTIVE CONTROL - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menurecord_default}" --menu "$menuname"  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
+dialog --colors --title "PREDICTIVE CONTROL - LOOP ${LOOPNUMBER}" --ok-label " Select " --cancel-label "Top" --help-button --help-label "Exit" --default-item "${menupred_default}" --menu "$menuname"  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 
 
 retval=$?
 choiceval=$(cat $tempfile)
-menurecord_default="$choiceval"
+menupred_default="$choiceval"
 state="menupredictivecontrol"
 case $retval in
    0) # Monitor
@@ -248,6 +248,32 @@ echo "./auxscripts/aolApplyARPFblock \"./PredictiveControl/modeval_ol_C.fits\" \
 	PFapply)
 echo "./auxscripts/aolApplyARPF \"./PredictiveControl/modeval_ol_C.fits\" \"./PredictiveControl/outPF.fits\" $lat" > cmd.txt
 ./auxscripts/aolApplyARPF "./PredictiveControl/modeval_ol_C.fits" "./PredictiveControl/outPF.fits" $lat
+;;
+
+
+
+
+
+
+
+	PFb0wON)
+tmuxname="aol${LOOPNUMBER}PFb0watchin"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+Cfits <<EOF
+aolPFwatchin ${LOOPNUMBER} 0
+exit
+EOF
+PFb0wON=" ON"
+menupred_default="PFb0wOFF"
+;;
+
+
+	PFb0wOFF)
+tmuxname="aol${LOOPNUMBER}PFb0watchin"
+tmux send-keys -t ${tmuxname} C-c
+menupred_default="PFb0wON"
 ;;
 
 
