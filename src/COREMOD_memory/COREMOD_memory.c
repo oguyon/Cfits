@@ -5770,6 +5770,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
            // sprintf(iname, "logbuff%d", buffer);
             sprintf(iname, "%s_logbuff%d", IDname, buffer);
             
+            
             //          printf("Saving %s -> %s\n", iname, fname);
             //         fflush(stdout);
             if(wOK==1) // image has arrived
@@ -5789,6 +5790,11 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
                 //          printf("OK\n");
                 //          fflush(stdout);
             }
+
+			COREMOD_MEMORY_image_set_sempost_byID(IDb, -1);
+			data.image[IDb].md[0].cnt0++;
+			data.image[IDb].md[0].write = 0;
+			
 
             strcpy(tmsg->iname, iname);
             iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
@@ -5812,7 +5818,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
                 IDb = IDb0;
             else
                 IDb = IDb1;
-
+			data.image[IDb].md[0].write = 1;
             logshimconf[0].filecnt ++;
         }
 
