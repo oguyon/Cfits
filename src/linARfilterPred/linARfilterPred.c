@@ -974,7 +974,6 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
 				save_fits(filtname, filtfname);	
 			}
-
 	}
 	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF, -1);
 	data.image[IDoutPF].md[0].cnt0++;
