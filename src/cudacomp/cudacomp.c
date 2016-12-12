@@ -1733,8 +1733,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	// Timing
 	int testmode = 0;
 	int timing = 1; 
-	struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8;
-    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d;
+	struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
+    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d;
 	struct timespec tdiff;
  
  
@@ -1833,7 +1833,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	fflush(stdout);
 
   
- 
+ 	if(timing==1)
+		clock_gettime(CLOCK_REALTIME, &t1);
 	
 	
 	
@@ -1866,7 +1867,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	
 	
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t1);
+		clock_gettime(CLOCK_REALTIME, &t2);
 
 	// COMPUTE trans(A) x A
 	magma_dgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, d_A, M, d_A, M, 0.0,  d_AtA, N, queue);
@@ -1881,7 +1882,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	}
 	
 	if(timing==1)		
-		clock_gettime(CLOCK_REALTIME, &t2);
+		clock_gettime(CLOCK_REALTIME, &t3);
 	
 	// COMPUTE eigenvalues and eigenvectors of trans(A) x A
 	
@@ -1915,10 +1916,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	//  w1
 
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t3);
+		clock_gettime(CLOCK_REALTIME, &t4);
 
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t4);
+		clock_gettime(CLOCK_REALTIME, &t5);
 
 	
 	
@@ -1979,7 +1980,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	TESTING_FREE_CPU( w1 );
 	TESTING_FREE_CPU( h_AtA );
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t5);
+		clock_gettime(CLOCK_REALTIME, &t6);
 
 	// compute M2 = VT1 VT
 	magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, d_VT1, N, d_AtA, N, 0.0,  d_M2, N, queue);
@@ -2028,7 +2029,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t6);
+		clock_gettime(CLOCK_REALTIME, &t7);
 
 	magma_dgetmatrix( M, N, d_Ainv, M, h_Ainv, M, queue);
 	if(testmode == 1)
@@ -2041,7 +2042,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	}
 
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t7);
+		clock_gettime(CLOCK_REALTIME, &t8);
 
     if(data.image[ID_Rmatrix].md[0].naxis==3)
     {
@@ -2079,7 +2080,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	
 
 	if(timing==1)
-		clock_gettime(CLOCK_REALTIME, &t8);
+		clock_gettime(CLOCK_REALTIME, &t9);
 
 
 
@@ -2124,6 +2125,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		tdiff = info_time_diff(t7, t8);
         t78d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
+		tdiff = info_time_diff(t8, t9);
+        t89d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
 		printf("Timing info: \n");
 		printf("  0-1	%12.3f ms\n", t01d*1000.0);
 		printf("  1-2	%12.3f ms\n", t12d*1000.0);
@@ -2133,6 +2137,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		printf("  5-6	%12.3f ms\n", t56d*1000.0);
 		printf("  6-7	%12.3f ms\n", t67d*1000.0);
 		printf("  7-8	%12.3f ms\n", t78d*1000.0);
+		printf("  8-9	%12.3f ms\n", t89d*1000.0);
 	}
 
 
