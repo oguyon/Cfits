@@ -2068,6 +2068,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		clock_gettime(CLOCK_REALTIME, &t7);
 
 	magma_dgetmatrix( M, N, magma_d_Ainv, M, magma_h_Ainv, M, magmaqueue);
+	
 	if(testmode == 1)
 	{
 		ID_Ainv = create_2Dimage_ID("mAinv", M, N);
@@ -2108,15 +2109,15 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	//	N = m;
     if(atype==FLOAT)
     {
-        for(ii=0; ii<M; ii++) // sensors
-            for(k=0; k<N; k++) // actuator modes
-                data.image[ID_Cmatrix].array.F[k*M+ii] = (float) magma_h_Ainv[k*M+ii];
+        for(ii=0; ii<M*M; ii++)
+                data.image[ID_Cmatrix].array.F[ii] = (float) magma_h_Ainv[ii];
     }
     else
     {
-        for(ii=0; ii<M; ii++) // sensors
-            for(k=0; k<N; k++) // actuator modes
-                data.image[ID_Cmatrix].array.D[k*M+ii] = magma_h_Ainv[k*M+ii];
+		// sensors : M
+		// actuator modes: N
+        for(ii=0; ii<M*N; ii++) // sensors
+            data.image[ID_Cmatrix].array.D[ii] = magma_h_Ainv[ii];
     }
 	
 
