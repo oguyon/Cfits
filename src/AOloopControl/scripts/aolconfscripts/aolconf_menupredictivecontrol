@@ -435,7 +435,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 0" C-m
-tmux send-keys -t ${tmuxname} "exit" C-m
+#tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0wON=" ON"
 file="./status/stat_PFb0wON.txt"
 echo "writing $PFb0wON to file $file"
@@ -463,7 +463,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
-tmux send-keys -t ${tmuxname} "exit" C-m
+#tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0wON=" ON"
 file="./status/stat_PFb1wON.txt"
 echo "writing $PFb1wON to file $file"
