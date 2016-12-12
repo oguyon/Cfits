@@ -2080,23 +2080,28 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	if(timing==1)
 		clock_gettime(CLOCK_REALTIME, &t8);
 
-    if(data.image[ID_Rmatrix].md[0].naxis==3)
-    {
+
+	if(MAGMAloop_iter==0)
+	{
+		if(data.image[ID_Rmatrix].md[0].naxis==3)
+		{
         arraysizetmp[0] = data.image[ID_Rmatrix].md[0].size[0];
         arraysizetmp[1] = data.image[ID_Rmatrix].md[0].size[1];
         arraysizetmp[2] = m;
-    }
-    else
-    {
+		}
+		else
+		{
         arraysizetmp[0] = n;
         arraysizetmp[1] = m;
-    }
+		}
 
-    if(atype==FLOAT)
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
-    else
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
-
+		if(atype==FLOAT)
+			ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+		else
+			ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
+	}
+	else
+		ID_Cmatrix = image_ID(ID_Cmatrix_name);
 
 	 /* write result */
 	// 	M = n;
