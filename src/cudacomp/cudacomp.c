@@ -2052,7 +2052,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 			TESTING_FREE_PIN( magma_h_work );
 		else
 			TESTING_FREE_PIN( magmaf_h_work );
-    
     }
 
 
@@ -2129,9 +2128,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
             for(jj=0; jj<N; jj++)
             {
                 if(N-jj-1<MaxNBmodes1)
-                    magma_h_VT1[ii*N+jj] = magmaf_h_AtA[jj*N+ii]/magma_w1[jj];
+                    magmaf_h_VT1[ii*N+jj] = magmaf_h_AtA[jj*N+ii]/magmaf_w1[jj];
                 else
-                    magma_h_VT1[ii*N+jj] = 0.0;
+                    magmaf_h_VT1[ii*N+jj] = 0.0;
             }
         magma_ssetmatrix( N, N, magmaf_h_VT1, N, magmaf_d_VT1, N, magmaqueue);
     }
