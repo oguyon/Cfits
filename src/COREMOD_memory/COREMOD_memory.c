@@ -5591,6 +5591,8 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     
     IDb0 = create_image_ID(logb0name, 3, imsizearray, atype, 1, 1);
     IDb1 = create_image_ID(logb1name, 3, imsizearray, atype, 1, 1);
+	COREMOD_MEMORY_image_set_semflush(logb0name, -1);
+	COREMOD_MEMORY_image_set_semflush(logb1name, -1);
 
     IDb = IDb0;
 
