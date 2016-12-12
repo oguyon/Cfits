@@ -1734,7 +1734,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 	int testmode = 0;
 	int timing = 1; 
 	struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
-    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d;
+    double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;
 	struct timespec tdiff;
  
  
@@ -2128,6 +2128,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		tdiff = info_time_diff(t8, t9);
         t89d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
+		tdiff = info_time_diff(t0, t9);
+        t09d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+
 		printf("Timing info: \n");
 		printf("  0-1	%12.3f ms\n", t01d*1000.0);
 		printf("  1-2	%12.3f ms\n", t12d*1000.0);
@@ -2138,6 +2142,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 		printf("  6-7	%12.3f ms\n", t67d*1000.0);
 		printf("  7-8	%12.3f ms\n", t78d*1000.0);
 		printf("  8-9	%12.3f ms\n", t89d*1000.0);
+		printf("\n");
+		printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
 	}
 
 
