@@ -1781,7 +1781,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 
 
-    int MAGMAfloat = 1; // 1 if single precision
+    int MAGMAfloat = 0; // 1 if single precision
 
 
 
@@ -2056,9 +2056,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 
 
-    printf("step 5\n");
-    fflush(stdout);
-
 
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t5);
@@ -2085,8 +2082,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     fclose(fp);
 
 
-    printf("step 5.1\n");
-    fflush(stdout);
 	
 	if(MAGMAfloat==1)
 		egvlim = SVDeps*SVDeps* magmaf_w1[m-1];
@@ -2185,8 +2180,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     }
 
 
-    printf("step 6\n");
-    fflush(stdout);
 
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t6);
