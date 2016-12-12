@@ -800,22 +800,25 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	if(LOOPmode == 0)
 	{
-	for(m=0; m<NBmvec1; m++)
-	{
-		k0 = m + PForder-1; // dt=0 index
-		for(pix=0; pix<NBpixin; pix++)
-			for(dt=0; dt<PForder; dt++)		
-				data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
-	}
-	free(ave_inarray);
+		for(m=0; m<NBmvec1; m++)
+		{
+			k0 = m + PForder-1; // dt=0 index
+			for(pix=0; pix<NBpixin; pix++)
+				for(dt=0; dt<PForder; dt++)		
+					data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
+		}
+		free(ave_inarray);
 	}
 	else
+	{
+		for(m=0; m<NBmvec1; m++)
 		{
 			k0 = m + PForder-1; // dt=0 index
 			for(pix=0; pix<NBpixin; pix++)
 				for(dt=0; dt<PForder; dt++)		
 					data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
 		}
+	}
 
 
 
