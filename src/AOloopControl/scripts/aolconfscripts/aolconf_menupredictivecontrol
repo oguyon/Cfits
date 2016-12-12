@@ -160,7 +160,7 @@ menuitems+=( " " " ")
 
 file="./status/stat_PFb0wON.txt"
 PFb0wON=$( cat $file )
-if [[ -f "$file" && ( "@PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
+if [[ -f "$file" && ( "$PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
 echo "OK"
 else
 echo "OFF" > $file
@@ -272,7 +272,6 @@ PFb0wON=" ON"
 file="./status/stat_PFb0wON.txt"
 echo "writing $PFb0wON to file $file"
 echo "$PFb0wON" > $file
-sleep 100
 menupred_default="PFb0wOFF"
 ;;
 
