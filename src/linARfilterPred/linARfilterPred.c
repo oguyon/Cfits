@@ -883,10 +883,11 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 		{
 			if(iter==0)
 			{
-				imsizearray = (long*) malloc(sizeof(long)*2);
+				imsizearray = (long*) malloc(sizeof(long)*3);
 				imsizearray[0] = xysize;
 				imsizearray[1] = xysize;
-				IDoutPF = create_image_ID(IDoutPF_name, 2, imsizearray, FLOAT, 1, 1);
+				imsizearray[2] = PForder;
+				IDoutPF = create_image_ID(IDoutPF_name, 3, imsizearray, FLOAT, 1, 1);
 				free(imsizearray);
 				COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
 			}
