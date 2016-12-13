@@ -11287,8 +11287,9 @@ int AOloopControl_run()
 
                 if(MATRIX_COMPUTATION_MODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
-                    if(fabs(AOconf[loop].gain)>1.0e-6)
-                        set_DM_modes(loop);
+					if(AOconf[loop].DMprimaryWrite_ON==1) // if Writing to DM
+						if(fabs(AOconf[loop].gain)>1.0e-6)
+							set_DM_modes(loop);
                 }
                 else // 1 step: WFS -> DM act
                 {
