@@ -987,7 +987,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 						val = (1.0-gain)*val0 + gain*val;
 						
 						if(dt==2)
-							data.image[IDoutPF2D].array.F[PFpix*(PForder*NBpixin) + dt*pix] = val;
+							data.image[IDoutPF2D].array.F[PFpix*(PForder*NBpixin) + dt*pixarray_xy[pix]] = val;
 						else
 							data.image[IDoutPF2D].array.F[PFpix*(PForder*NBpixin) + dt*pix] = 0.0;
 							
