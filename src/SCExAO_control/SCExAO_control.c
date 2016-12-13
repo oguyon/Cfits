@@ -1951,6 +1951,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
     int atype;
 //    double valxdark, valydark, totdark;
 	long iistart, iiend, jjstart, jjend;
+	long boxrad = 50;
 
 
     IDin = image_ID(IDin_name);
