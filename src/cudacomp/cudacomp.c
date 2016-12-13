@@ -3286,6 +3286,26 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 			
 	long refindex;
 				
+				
+				
+				
+				
+				
+				
+				
+	// TESTING MULTIPLE GPU
+	int initGPUcomp = 0;
+	int *GPUset0;
+	int GPUcntMax = 1;
+	int status;
+	int GPUstatus;
+	
+	
+	GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+	GPUset0 = GPUindex;
+	
+	
+	
 	
 
 
@@ -3609,12 +3629,9 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 
         if(semr==0)
         {
-            // load in_stream to GPU
-			
+            // load in_stream to GPU			
 			if(initref==0)
-			{
 				cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
-			}
 			else
 				cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
 				
@@ -3626,12 +3643,20 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
                 exit(EXIT_FAILURE);
             }
 		
-
 			if(BETAMODE == 1)
 				{
 					beta = -1.0;
 					cudaStat = cudaMemcpy(d_modeval, modevalarrayref, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);					
 				}
+
+
+		if(0)
+		{
+			GPU_loop_MultMat_setup(0, IDmodes_name, in_stream, IDouttest_name, 1, GPUset0, 0, 1, initGPUcomp, 0);
+			initGPUcomp = 1;
+			GPU_loop_MultMat_execute(0, &status, &GPUstatus, alpha, beta, 0);
+		}
+
 
             // compute
             cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
@@ -3649,15 +3674,12 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
                 exit(EXIT_FAILURE);
             }
             
-
             // copy result
             data.image[ID_modeval].md[0].write = 1;
 
 			if(initref==0) // construct reference to be subtracted 
 				{
 					cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);						
-
-
 
 					IDrefout = image_ID(IDrefout_name);
 					if(IDrefout != -1)
@@ -3787,6 +3809,10 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 	free(normcoeff);
     free(modevalarray);
     free(modevalarrayref);
+
+
+	free(GPUset0);
+
 
     return(0);
 }
