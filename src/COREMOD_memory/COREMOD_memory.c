@@ -1014,7 +1014,7 @@ int init_COREMOD_memory()
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
     strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
     strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <mode [int]>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
     data.NBcmd++;
 
@@ -4498,11 +4498,10 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 
 /** continuously transmits 2D image through TCP link
- * mode is not currently used
+ * mode = 1 -> force counter to be used for synchronization, ignore semaphores if they exist
  */
  
 
- 
 
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
 {
@@ -4674,7 +4673,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     
     while(sockOK==1)
     {
-        if(data.image[ID].sem==0)
+        if((data.image[ID].sem==0)||(mode==1))
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);
@@ -4707,6 +4706,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
                 fflush(stdout);
             }
         }
+        
         if(semr==0)
         {
             frame_md[0].cnt0 = data.image[ID].md[0].cnt0;
