@@ -15,4 +15,6 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha);
 int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname);
 
+long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char *IDout_name);
+
 #endif

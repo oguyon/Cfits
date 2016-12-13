@@ -79,9 +79,9 @@ float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 // function CLI_checkarg used to check arguments
 // 1: float
 // 2: long
-// 3: string
+// 3: string, not existing image
 // 4: existing image
-//
+// 5: string
 
 
 int SCExAOcontrol_Average_image_cli()
@@ -186,6 +186,22 @@ int SCExAOcontrol_SAPHIRA_cam_process_cli()
 }
 
 
+int SCExAOcontrol_vib_ComputeCentroid_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    {
+        SCExAOcontrol_vib_ComputeCentroid(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
+
+
 
 
 
@@ -272,6 +288,16 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
     strcpy(data.cmd[data.NBcmd].example,"scexaosaphiraproc");
     strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key, "scexaostreamcentr");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_vib_ComputeCentroid_cli;
+    strcpy(data.cmd[data.NBcmd].info, "compute centroid of image stream");
+    strcpy(data.cmd[data.NBcmd].syntax, "<input stream> <dark image> <output stream>");
+    strcpy(data.cmd[data.NBcmd].example, "measure centroid of stream");
+    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char *IDout_name)");
     data.NBcmd++;
 
 
@@ -1914,5 +1940,111 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
 
+
+long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char *IDout_name)
+{
+    long IDout;
+    long IDin, IDdark;
+    long semtrig = 4;
+    long *sizearray;
+    long ii, jj, xsize, ysize, xysize;
+    double val, valx, valy, tot;
+    int atype;
+    double valxdark, valydark, totdark;
+
+
+
+    IDin = image_ID(IDin_name);
+    IDdark = image_ID(IDdark_name);
+
+    atype = data.image[IDin].md[0].atype;
+    xsize = data.image[IDin].md[0].size[0];
+    ysize = data.image[IDin].md[0].size[1];
+    xysize = xsize*ysize;
+
+    // create output
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = 2;
+    sizearray[1] = 1;
+    IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
+    free(sizearray);
+
+    // compute dark centroid
+    tot = 0.0;
+    valx = 0.0;
+    valy = 0.0;
+    for(ii=0; ii<xsize; ii++)
+        for(jj=0; jj<ysize; jj++)
+        {
+            val = data.image[IDdark].array.F[jj*xsize+ii];
+            valx += 1.0*ii*val;
+            valy += 1.0*jj*val;
+            tot += 1.0*val;
+        }
+    valxdark = valx/tot;
+    valydark = valy/tot;
+    totdark = tot;
+
+
+    // drive semaphore to zero
+    while(sem_trywait(data.image[IDin].semptr[semtrig])==0) {}
+
+    while(1)
+    {
+        sem_wait(data.image[IDin].semptr[semtrig]);
+
+        tot = 0.0;
+        valx = 0.0;
+        valy = 0.0;
+
+        switch (atype) {
+        case USHORT :
+            for(ii=0; ii<xsize; ii++)
+                for(jj=0; jj<ysize; jj++)
+                {
+                    val = data.image[IDin].array.U[jj*xsize+ii];
+                    valx += 1.0*ii*val;
+                    valy += 1.0*jj*val;
+                    tot += 1.0*val;
+                }
+            break;
+        case FLOAT :
+            for(ii=0; ii<xsize; ii++)
+                for(jj=0; jj<ysize; jj++)
+                {
+                    val = data.image[IDin].array.F[jj*xsize+ii];
+                    valx += 1.0*ii*val;
+                    valy += 1.0*jj*val;
+                    tot += 1.0*val;
+                }
+            break;
+        }
+		valx = valx/tot;
+		valy = valy/tot;
+
+        data.image[IDout].md[0].write = 1;
+		data.image[IDout].array.F[0] = ( valx*tot - valxdark*totdark ) / ( tot - totdark );
+		data.image[IDout].array.F[1] = ( valy*tot - valydark*totdark ) / ( tot - totdark );
+        COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+        data.image[IDout].md[0].cnt0 ++;
+        data.image[IDout].md[0].write = 0;
+    }
+
+    return IDout;
+}
+
+
+
+
+
+long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name)
+{
+	long IDout;
+	
+	
+	
+	return IDout;
+}
 
 

@@ -1013,7 +1013,7 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
     strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <mode [int]>");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <sync mode [int]>");
     strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)");
     data.NBcmd++;
@@ -4498,9 +4498,8 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 
 /** continuously transmits 2D image through TCP link
- * mode = 1 -> force counter to be used for synchronization, ignore semaphores if they exist
+ * mode = 1, force counter to be used for synchronization, ignore semaphores if they exist
  */
- 
 
 
 long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
