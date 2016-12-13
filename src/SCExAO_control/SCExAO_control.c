@@ -1944,7 +1944,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 {
     long IDout;
     long IDin, IDdark;
-    long semtrig = 4;
+    long semtrig = 3;
     long *sizearray;
     long ii, jj, xsize, ysize, xysize;
     double val, valx, valy, tot;
