@@ -1947,9 +1947,9 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
     long semtrig = 3;
     long *sizearray;
     long ii, jj, xsize, ysize, xysize;
-    double val, valx, valy, tot;
+    double val, vald, valx, valy, tot;
     int atype;
-    double valxdark, valydark, totdark;
+//    double valxdark, valydark, totdark;
 
 
 
