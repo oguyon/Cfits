@@ -1404,6 +1404,26 @@ int init_AOloopControl()
 
 
 
+
+    strcpy(data.cmd[data.NBcmd].key,"aolDMprimWon");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DMprimaryWrite_on;
+    strcpy(data.cmd[data.NBcmd].info,"turn DM primary write on");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aolDMprimWon");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMprimaryWrite_on()");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolDMprimWoff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DMprimaryWrite_off;
+    strcpy(data.cmd[data.NBcmd].info,"turn DM primary write off");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aolDMprimWoff");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMprimaryWrite_off()");
+    data.NBcmd++;
+
     strcpy(data.cmd[data.NBcmd].key,"aolARPFon");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_ARPFon;
@@ -5141,6 +5161,7 @@ int AOloopControl_InitializeMemory(int mode)
     if((mode==0)||(create==1))
     {
         AOconf[loop].on = 0;
+        AOconf[loop].DMprimaryWrite_ON = 1;
         AOconf[loop].ARPFon = 0;
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
@@ -5164,6 +5185,7 @@ int AOloopControl_InitializeMemory(int mode)
         {
             AOconf[loop].init = 0;
             AOconf[loop].on = 0;
+            AOconf[loop].DMprimaryWrite_ON = 1;
             AOconf[loop].ARPFon = 0;
             AOconf[loop].cnt = 0;
             AOconf[loop].cntmax = 0;
@@ -11218,6 +11240,7 @@ int AOloopControl_run()
     {
         AOconf[loop].kill = 0;
         AOconf[loop].on = 0;
+        AOconf[loop].DMprimaryWrite_ON = 1;
         AOconf[loop].ARPFon = 0;
         printf("\n");
         while( AOconf[loop].kill == 0)
@@ -11269,7 +11292,7 @@ int AOloopControl_run()
                 }
                 else // 1 step: WFS -> DM act
                 {
-					if(0) // if Writing to DM
+					if(AOconf[loop].DMprimaryWrite_ON==1) // if Writing to DM
 					{
                         data.image[aoconfID_dmC].md[0].write = 1;
 
@@ -11492,7 +11515,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
     
     
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
-	printw("    Predictive control state: $d        ARPF gain = %5.3f\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain);
+	printw("    DMprimWrite = %d   Predictive control state: $d        ARPF gain = %5.3f\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain);
 	printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
 	nbl++;
     nbl++;
@@ -12955,6 +12978,35 @@ int AOloopControl_loopoff()
 
     return 0;
 }
+
+
+
+
+int AOloopControl_DMprimaryWrite_on()
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].DMprimaryWrite_ON = 1;
+    AOloopControl_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+
+
+int AOloopControl_DMprimaryWrite_off()
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].DMprimaryWrite_ON = 0;
+    AOloopControl_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+
 
 
 

@@ -79,6 +79,7 @@ typedef struct
     float gain; // overall loop gain
     long framesAve; // number of frames to average
 	
+	int DMprimaryWrite_ON; // primary DM write
 	
  
  
@@ -247,6 +248,8 @@ int AOloopControl_logon();
 int AOloopControl_loopstep(long loop, long NBstep);
 int AOloopControl_logoff();
 int AOloopControl_loopreset();
+int AOloopControl_DMprimaryWrite_on();
+int AOloopControl_DMprimaryWrite_off();
 int AOloopControl_ARPFon();
 int AOloopControl_ARPFoff();
 

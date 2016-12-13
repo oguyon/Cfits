@@ -727,9 +727,30 @@ menuitems+=( "runmon" "  Monitor tmux session aol${LOOPNUMBER}-run" )
 menuitems+=( " " " " )
 stringcenter "LOOP SETTING "
 menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
-menuitems+=( "g" "loop gain    =   ${loopgain}" )
-menuitems+=( "m" "loop max lim =   ${loopmaxlim}" )
-menuitems+=( "e" "mult coeff   =   ${loopmultcoeff}" )
+menuitems+=( "g" "loop gain         =   ${loopgain}" )
+menuitems+=( "e" "mult coeff        =   ${loopmultcoeff}" )
+
+menuitems+=( "m" "actuator max lim  =   ${loopmaxlim}" )
+
+
+
+
+
+file="./conf/conf_DMprimWriteON.txt"
+if [[ -f "$file" && ( "$DMprimWriteON" = " ON" || "$DMprimWriteON" = "OFF" ) ]]; then
+echo "DMprimWriteON OK"
+DMprimWriteON=$( cat $file )
+else
+echo "OFF" > "$file"
+DMprimWriteON=$( cat $file )
+fi
+
+if [ "$DMprimWriteON" = "OFF" ]; then
+menuitems+=( "DMpWon" " DM Primary Write is OFF - press to START" )
+else
+menuitems+=( "DMpWoff" "\Z1\Zr DM Primary Write is  ON - press to STOP\Zn  " )
+fi
+
 
 
 file="./conf/conf_ARPFon.txt"
@@ -741,7 +762,6 @@ echo "OFF" > "$file"
 ARPFon=$( cat $file )
 fi
 
-
 if [ "$ARPFon" = "OFF" ]; then
 menuitems+=( "ARPFon" " Predictive control (ARPF) is OFF - press to START" )
 else
@@ -749,6 +769,9 @@ menuitems+=( "ARPFoff" "\Z1\Zr Predictive control (ARPF) is  ON - press to STOP\
 fi
 
 menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
+
+
+
 
 
 menuitems+=( " " " " )
@@ -2017,6 +2040,23 @@ menucontrolloop_default="wzpoinit"
 	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
 	 aoconflogext "set mult coeff ${loopmultcoeff}"
      	 ;;  
+
+
+
+	DMpWon)
+	DMprimWriteON=" ON"
+	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWon" C-m
+	menucontrolloop_default="DMpWoff"
+	;;
+
+	DMpWoff)
+	DMprimWriteON="OFF"
+	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
+	menucontrolloop_default="DMpWon"
+	;;
+
 
 	ARPFon)
 	ARPFon=" ON"
