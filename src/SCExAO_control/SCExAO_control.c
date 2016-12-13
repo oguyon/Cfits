@@ -1970,7 +1970,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
     free(sizearray);
 
     // compute dark centroid
-    tot = 0.0;
+/*    tot = 0.0;
     valx = 0.0;
     valy = 0.0;
     for(ii=0; ii<xsize; ii++)
@@ -1987,6 +1987,8 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 		valydark = valy/tot;
 		totdark = tot;
 	}
+*/
+
 
     // drive semaphore to zero
     while(sem_trywait(data.image[IDin].semptr[semtrig])==0) {}
@@ -2007,7 +2009,9 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
             for(ii=0; ii<xsize; ii++)
                 for(jj=0; jj<ysize; jj++)
                 {
-                    val = data.image[IDin].array.U[jj*xsize+ii];
+                    val = 1.0*data.image[IDin].array.U[jj*xsize+ii];
+					vald = data.image[IDdark].array.F[jj*xsize+ii];
+                    val -= vald;
                     valx += 1.0*ii*val;
                     valy += 1.0*jj*val;
                     tot += 1.0*val;
@@ -2018,6 +2022,8 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
                 for(jj=0; jj<ysize; jj++)
                 {
                     val = data.image[IDin].array.F[jj*xsize+ii];
+                    vald = data.image[IDdark].array.F[jj*xsize+ii];
+					val -= valdark;
                     valx += 1.0*ii*val;
                     valy += 1.0*jj*val;
                     tot += 1.0*val;
@@ -2030,8 +2036,8 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 		valy = valy/tot;
 
         data.image[IDout].md[0].write = 1;
-		data.image[IDout].array.F[0] = ( valx*tot - valxdark*totdark ) / ( tot - totdark );
-		data.image[IDout].array.F[1] = ( valy*tot - valydark*totdark ) / ( tot - totdark );
+		data.image[IDout].array.F[0] = valx;
+		data.image[IDout].array.F[1] = valy;
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
         data.image[IDout].md[0].cnt0 ++;
         data.image[IDout].md[0].write = 0;
