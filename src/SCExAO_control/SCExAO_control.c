@@ -2055,12 +2055,12 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
         
         if(iistart<0)
 			iistart = 0;
-		if(iisend>xsize-1)
+		if(iiend>xsize-1)
 			iiend = xsize-1;
 
 		if(jjstart<0)
 			jjstart = 0;
-		if(jjsend>ysize-1)
+		if(jjend>ysize-1)
 			jjend = ysize-1;
         
 
