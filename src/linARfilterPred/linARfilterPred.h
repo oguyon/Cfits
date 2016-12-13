@@ -11,6 +11,8 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 
 long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain);
 
+long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name);
+
 long LINARFILTERPRED_Apply_LinPredictor(char *IDfilt_name, char *IDin_name, float PFlag, char *IDout_name);
 
 float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag);

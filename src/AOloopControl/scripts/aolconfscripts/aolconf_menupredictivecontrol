@@ -250,6 +250,38 @@ menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
 
+file="./status/stat_PFb0aON.txt"
+PFb0aON=$( cat $file )
+if [[ -f "$file" && ( "$PFb0aON" = " ON" || "$PFb0aON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb0aON="OFF"
+fi
+
+if [ "$PFb0aON" = "OFF" ]; then
+menuitems+=( "PFb0aON" "[$PFb0aON] switch on prediction engine block 0" )
+else
+menuitems+=( "PFb0aOFF" "[\Z1\Zr${PFb0aON}\Zn] switch on prediction engine for block 0" )
+fi
+
+
+file="./status/stat_PFb1aON.txt"
+PFb1aON=$( cat $file )
+if [[ -f "$file" && ( "$PFb1aON" = " ON" || "$PFb1aON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb1aON="OFF"
+fi
+
+if [ "$PFb1aON" = "OFF" ]; then
+menuitems+=( "PFb1aON" "[$PFb1aON] switch on prediction engine block 1" )
+else
+menuitems+=( "PFb1aOFF" "[\Z1\Zr${PFb1aON}\Zn] switch on prediction engine for block 1" )
+fi
+
+
 
 
 

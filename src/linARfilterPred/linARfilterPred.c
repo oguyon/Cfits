@@ -105,6 +105,16 @@ int LINARFILTERPRED_Build_LinPredictor_cli()
   return(0);
 }
 
+int LINARFILTERPRED_Apply_LinPredictor_RT_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+		LINARFILTERPRED_Apply_LinPredictor_RT(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+	else
+		return 1;
+		
+	return(0);
+}
+
 int LINARFILTERPRED_Apply_LinPredictor_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,3)==0)
@@ -193,6 +203,14 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].Ccall,"int LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF, int outMode, int LOOPmode, float LOOPgain)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"applyPfiltRT");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = LINARFILTERPRED_Apply_LinPredictor_RT_cli;
+    strcpy(data.cmd[data.NBcmd].info,"Apply real-time linear predictive filter");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input data> <predictor filter> <output>");
+    strcpy(data.cmd[data.NBcmd].example,"applyPfiltRT indata Pfilt outPF");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"applyARpfilt");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -1020,6 +1038,8 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
 //
 // real-time apply predictive filter
+// 
+// filter can be smaller than input telemetry but needs to include contiguous pixels at the beginning of the input telemetry
 //
 long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name)
 {
@@ -1030,6 +1050,15 @@ long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, c
 	long NBpix_in;
 	long NBpix_out;
 	long *imsizearray;
+	int semtrig = 7;
+	
+	float *inarray;
+	float *outarray;
+	
+	long ii; // input index
+	long jj; // output index6
+	long kk; // time step index
+	
 	
 	
 	IDfilt = image_ID(IDfilt_name);
@@ -1039,7 +1068,7 @@ long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, c
 	NBpix_in = data.image[IDfilt].md[0].size[0];
 	NBpix_out = data.image[IDfilt].md[0].size[1];
 	
-	if(data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1] != NBpix_out)
+	if(data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1] != NBpix_in)
 		{
 			printf("ERROR: lin predictor engine: filter input size does not match input telemetry\n");
 			exit(0);
@@ -1050,18 +1079,58 @@ long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, c
 	printf("Create prediction output %s\n", IDout_name);
 	fflush(stdout);
 	imsizearray = (long*) malloc(sizeof(long)*2);
-	imsizearray[0] = PFblockSize;
+	imsizearray[0] = NBpix_out;
 	imsizearray[1] = 1;
 	IDout = create_image_ID(IDout_name, 2, imsizearray, FLOAT, 1, 1);
 	free(imsizearray);
-	COREMOD_MEMORY_image_set_semflush(imnameout, -1);
+	COREMOD_MEMORY_image_set_semflush(IDout_name, -1);
 	printf("Done\n");
 	fflush(stdout);
 	
+	inarray = (float*) malloc(sizeof(float)*NBpix_in*PForder);
+	outarray = (float*) malloc(sizeof(float)*NBpix_out);
+	
+	
+	while(sem_trywait(data.image[IDin].semptr[semtrig])==0) {}
+	while(1)
+	{
+		// initialize output array to zero
+		for(jj=0;jj<NBpix_out;jj++)
+			outarray[jj] = 0.0;
+		
+		// shift input buffer entries back one time step
+		for(kk=PForder-1;kk>0;kk--)
+			for(ii=0;ii<NBpix_in;ii++)
+				inarray[kk*NBpix_in+ii] = inarray[(kk-1)*NBpix_in+ii];
+		
+		// multiply input by prediction matrix .. except for measurement yet to come
+		for(jj=0;jj<NBpix_out;jj++)
+			for(ii=0;ii<NBpix_in;ii++)
+				for(kk=1;kk<PForder;kk++)
+					outarray[jj] += data.image[IDfilt].array.F[kk*NBpix_in*NBpix_out + jj*NBpix_in + ii] * inarray[kk*NBpix_in+ii];	
+		
+		sem_wait(data.image[IDin].semptr[semtrig]);
+		
+		// write new input in inarray vector
+		for(ii=0;ii<NBpix_in;ii++)
+			inarray[ii] = data.image[IDin].array.F[ii];
+		
+		
+		// multiply input by prediction matrix
+		for(jj=0;jj<NBpix_out;jj++)
+			for(ii=0;ii<NBpix_in;ii++)
+				outarray[jj] += data.image[IDfilt].array.F[jj*NBpix_in + ii] * inarray[ii];	
 
+		data.image[IDout].md[0].write = 1;
+		for(jj=0;jj<NBpix_out;jj++)
+			data.image[IDout].array.F[jj] = outarray[jj];
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+		data.image[IDout].md[0].cnt0 ++;
+        data.image[IDout].md[0].write = 0;
+	}
 
-
-
+	free(inarray);
+	free(outarray);
 	
 	return(IDout);
 }
