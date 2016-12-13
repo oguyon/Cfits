@@ -1369,6 +1369,7 @@ void *compute_function( void *ptr )
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
                 printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                fflush(stdout);
                 if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
                 if(stat == CUBLAS_STATUS_INVALID_VALUE)
@@ -1384,7 +1385,7 @@ void *compute_function( void *ptr )
 				printf("alpha = %f\n", cublasSgemv_alpha);
  				printf("alpha = %f\n", cublasSgemv_beta);
  				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
-            
+				fflush(stdout);
              
                 exit(EXIT_FAILURE);
             }
@@ -3271,207 +3272,211 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     long IDprocave;
     long IDprocrms;
     long step;
-    
+
     long semnb;
     double tmpv;
-    
-	int INNORMMODE = 0; // 1 if input normalized
-    
-    float *modevalarray;
-	float *modevalarrayref;
 
-	int initref = 0; // 1 when reference has been processed
-	int BETAMODE = 0;
-	long IDrefout;
-			
-	long refindex;
-				
-				
-				
-				
-				
-				
-				
-				
-	// TESTING MULTIPLE GPU
-	int initGPUcomp = 0;
-	int *GPUset0;
-	int GPUcntMax = 1;
-	int status;
-	int GPUstatus;
-	
-	
-	GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
-	GPUset0 = GPUindex;
-	
-	
-	
-	
+    int INNORMMODE = 0; // 1 if input normalized
+
+    float *modevalarray;
+    float *modevalarrayref;
+
+    int initref = 0; // 1 when reference has been processed
+    int BETAMODE = 0;
+    long IDrefout;
+
+    long refindex;
+
+
+
+
+
+
+
+
+    // TESTING MULTIPLE GPU
+    int TESTMGPU = 0;
+    int initGPUcomp = 0;
+    int *GPUset0;
+    int GPUcntMax = 1;
+    int status;
+    int GPUstatus;
+
+
+    GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+    GPUset0[0] = GPUindex+1;
+
+
+
+
 
 
     IDin = image_ID(in_stream);
     m = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];
     COREMOD_MEMORY_image_set_createsem(in_stream, 10);
-   
-   // total flux
-   IDintot = image_ID(intot_stream);
-   
-   if(IDintot==-1)
-	{
-		INNORMMODE = 0;
-		IDintot = create_2Dimage_ID("intot_tmp", 1, 1);
-		data.image[IDintot].array.F[0] = 1.0;
-	}
-	else
-		INNORMMODE = 1;
 
-   // reference
-   IDref = image_ID(IDrefin_name);
-   if(IDref==-1)
-		{
-		IDref = create_2Dimage_ID("_tmprefin", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
-		for(ii=0;ii<data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];ii++)
-			data.image[IDref].array.F[ii] = 0.0;
-	}
+    // total flux
+    IDintot = image_ID(intot_stream);
+
+    if(IDintot==-1)
+    {
+        INNORMMODE = 0;
+        IDintot = create_2Dimage_ID("intot_tmp", 1, 1);
+        data.image[IDintot].array.F[0] = 1.0;
+    }
+    else
+        INNORMMODE = 1;
+
+    // reference
+    IDref = image_ID(IDrefin_name);
+    if(IDref==-1)
+    {
+        IDref = create_2Dimage_ID("_tmprefin", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
+        for(ii=0; ii<data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]; ii++)
+            data.image[IDref].array.F[ii] = 0.0;
+    }
 
 
 
-   if(axmode==0)
-		{
-			IDmodes = image_ID(IDmodes_name);
-			n = data.image[IDmodes].md[0].size[2];
-			NBmodes = n;
-		}
-	else
-	{
-		ID = image_ID(IDmodes_name);
-		printf("ID = %ld\n", ID);
-		fflush(stdout);
-		
-		NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
-		n = NBmodes;
-		printf("NBmodes = %ld\n", NBmodes);
-		fflush(stdout);
-		
-		IDmodes = create_3Dimage_ID("_tmpmodes", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
-		
-		for(ii=0;ii<data.image[IDin].md[0].size[0]; ii++)
-			for(jj=0;jj<data.image[IDin].md[0].size[1]; jj++)
-				{
-					for(kk=0;kk<NBmodes;kk++)
-						data.image[IDmodes].array.F[kk*data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]+jj*data.image[IDin].md[0].size[0]+ii] = data.image[ID].array.F[NBmodes*(jj*data.image[IDin].md[0].size[0]+ii)+kk];
-				}
-		save_fits("_tmpmodes", "!_test_tmpmodes.fits");
-	}
-	
+    if(axmode==0)
+    {
+        IDmodes = image_ID(IDmodes_name);
+        n = data.image[IDmodes].md[0].size[2];
+        NBmodes = n;
+    }
+    else
+    {
+        ID = image_ID(IDmodes_name);
+        printf("ID = %ld\n", ID);
+        fflush(stdout);
 
-		
-	normcoeff = (float*) malloc(sizeof(float)*NBmodes);
-	
-	if(MODENORM==1)
-	{
-	for(k=0;k<NBmodes;k++)
-		{
-			normcoeff[k] = 0.0;
-			for(ii=0;ii<m;ii++)
-				normcoeff[k] += data.image[IDmodes].array.F[k*m+ii] * data.image[IDmodes].array.F[k*m+ii];
-		}
-	}
-	else
-		for(k=0;k<NBmodes;k++)
-			normcoeff[k] = 1.0;
-			
-			
+        NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
+        n = NBmodes;
+        printf("NBmodes = %ld\n", NBmodes);
+        fflush(stdout);
+
+        IDmodes = create_3Dimage_ID("_tmpmodes", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
+
+        for(ii=0; ii<data.image[IDin].md[0].size[0]; ii++)
+            for(jj=0; jj<data.image[IDin].md[0].size[1]; jj++)
+            {
+                for(kk=0; kk<NBmodes; kk++)
+                    data.image[IDmodes].array.F[kk*data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]+jj*data.image[IDin].md[0].size[0]+ii] = data.image[ID].array.F[NBmodes*(jj*data.image[IDin].md[0].size[0]+ii)+kk];
+            }
+        save_fits("_tmpmodes", "!_test_tmpmodes.fits");
+    }
+
+
+
+    normcoeff = (float*) malloc(sizeof(float)*NBmodes);
+
+    if(MODENORM==1)
+    {
+        for(k=0; k<NBmodes; k++)
+        {
+            normcoeff[k] = 0.0;
+            for(ii=0; ii<m; ii++)
+                normcoeff[k] += data.image[IDmodes].array.F[k*m+ii] * data.image[IDmodes].array.F[k*m+ii];
+        }
+    }
+    else
+        for(k=0; k<NBmodes; k++)
+            normcoeff[k] = 1.0;
+
+
 
     modevalarray = (float*) malloc(sizeof(float)*n);
-	modevalarrayref = (float*) malloc(sizeof(float)*n);
+    modevalarrayref = (float*) malloc(sizeof(float)*n);
 
 
     arraytmp = (long*) malloc(sizeof(long)*2);
 
-	IDrefout = image_ID(IDrefout_name);
-	if(IDrefout==-1)
-	{
-		arraytmp[0] = NBmodes;
-		arraytmp[1] = 1;
-	}
-	else
-	{
-		arraytmp[0] = data.image[IDrefout].md[0].size[0];
-		arraytmp[1] = data.image[IDrefout].md[0].size[1];
-	}
-	
+    IDrefout = image_ID(IDrefout_name);
+    if(IDrefout==-1)
+    {
+        arraytmp[0] = NBmodes;
+        arraytmp[1] = 1;
+    }
+    else
+    {
+        arraytmp[0] = data.image[IDrefout].md[0].size[0];
+        arraytmp[1] = data.image[IDrefout].md[0].size[1];
+    }
+
     ID_modeval = create_image_ID(IDmodes_val_name, 2, arraytmp, FLOAT, 1, 0);
     free(arraytmp);
     COREMOD_MEMORY_image_set_createsem(IDmodes_val_name, 10);
 
-
-    cudaGetDeviceCount(&deviceCount);
-    printf("%d devices found\n", deviceCount);
-    fflush(stdout);
-    printf("\n");
-    for (k = 0; k < deviceCount; ++k) {
-        cudaGetDeviceProperties(&deviceProp, k);
-        printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
-               k, deviceProp.name, deviceProp.major, deviceProp.minor);
-        printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
-        printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
-        printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
+    if(TESTMGPU==0)
+    {
+        cudaGetDeviceCount(&deviceCount);
+        printf("%d devices found\n", deviceCount);
+        fflush(stdout);
         printf("\n");
+        for (k = 0; k < deviceCount; ++k) {
+            cudaGetDeviceProperties(&deviceProp, k);
+            printf("Device %d [ %20s ]  has compute capability %d.%d.\n",
+                   k, deviceProp.name, deviceProp.major, deviceProp.minor);
+            printf("  Total amount of global memory:                 %.0f MBytes (%llu bytes)\n", (float)deviceProp.totalGlobalMem/1048576.0f, (unsigned long long) deviceProp.totalGlobalMem);
+            printf("  (%2d) Multiprocessors\n", deviceProp.multiProcessorCount);
+            printf("  GPU Clock rate:                                %.0f MHz (%0.2f GHz)\n", deviceProp.clockRate * 1e-3f, deviceProp.clockRate * 1e-6f);
+            printf("\n");
+        }
+
+
+        if(GPUindex<deviceCount)
+            cudaSetDevice(GPUindex);
+        else
+        {
+            printf("Invalid Device : %d / %d\n", GPUindex, deviceCount);
+            exit(0);
+        }
+
+
+        printf("Create cublas handle ...");
+        fflush(stdout);
+        cublas_status = cublasCreate(&cublasH);
+        if (cublas_status != CUBLAS_STATUS_SUCCESS) {
+            printf ("CUBLAS initialization failed\n");
+            return EXIT_FAILURE;
+        }
+        printf(" done\n");
+        fflush(stdout);
+
+
+        // load modes to GPU
+        cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMalloc d_modes returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+        cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+
+
+        // create d_in
+        cudaStat = cudaMalloc((void**)&d_in, sizeof(float)*m);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMalloc d_in returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
+
+
+        // create d_modeval
+        cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*NBmodes);
+        if (cudaStat != cudaSuccess)
+        {
+            printf("cudaMalloc d_modeval returned error code %d, line %d\n", cudaStat, __LINE__);
+            exit(EXIT_FAILURE);
+        }
     }
 
-
-    if(GPUindex<deviceCount)
-        cudaSetDevice(GPUindex);
-    else
-    {
-        printf("Invalid Device : %d / %d\n", GPUindex, deviceCount);
-        exit(0);
-    }
-
-
-    printf("Create cublas handle ...");
-    fflush(stdout);
-    cublas_status = cublasCreate(&cublasH);
-    if (cublas_status != CUBLAS_STATUS_SUCCESS) {
-        printf ("CUBLAS initialization failed\n");
-        return EXIT_FAILURE;
-    }
-    printf(" done\n");
-    fflush(stdout);
-
-
-    // load modes to GPU
-    cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMalloc d_modes returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-    cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-
-
-    // create d_in
-    cudaStat = cudaMalloc((void**)&d_in, sizeof(float)*m);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMalloc d_in returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
-
-
-    // create d_modeval
-    cudaStat = cudaMalloc((void**)&d_modeval, sizeof(float)*NBmodes);
-    if (cudaStat != cudaSuccess)
-    {
-        printf("cudaMalloc d_modeval returned error code %d, line %d\n", cudaStat, __LINE__);
-        exit(EXIT_FAILURE);
-    }
 
 
     if (sigaction(SIGINT, &data.sigact, NULL) == -1) {
@@ -3502,7 +3507,7 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
-   if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
+    if (sigaction(SIGSEGV, &data.sigact, NULL) == -1) {
         perror("sigaction");
         exit(EXIT_FAILURE);
     }
@@ -3512,310 +3517,330 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     iter = 0;
 
 
-       
+
     if(TRACEMODE==1)
+    {
+        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sprintf(traceim_name, "%s_trace", IDmodes_val_name);
+        sizearraytmp[0] = TRACEsize;
+        sizearraytmp[1] = NBmodes;
+        IDtrace = image_ID(traceim_name);
+        imOK = 1;
+        if(IDtrace == -1)
+            imOK = 0;
+        else
         {
-            sizearraytmp = (long*) malloc(sizeof(long)*2);
-            sprintf(traceim_name, "%s_trace", IDmodes_val_name);
-            sizearraytmp[0] = TRACEsize;
-            sizearraytmp[1] = NBmodes;
-            IDtrace = image_ID(traceim_name);
-            imOK = 1;
-            if(IDtrace == -1)
-                imOK = 0;
-            else
-                {
-                    if((data.image[IDtrace].md[0].size[0]!=TRACEsize)||(data.image[IDtrace].md[0].size[1]!=NBmodes))
-                        {
-                            imOK = 0;
-                            delete_image_ID(traceim_name);
-                        }
-                }
-            if(imOK==0)
-                IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, FLOAT, 1, 0);
-            COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
-            free(sizearraytmp);
-        }
-
-
-  
-       if(PROCESS==1)
+            if((data.image[IDtrace].md[0].size[0]!=TRACEsize)||(data.image[IDtrace].md[0].size[1]!=NBmodes))
             {
-                sizearraytmp = (long*) malloc(sizeof(long)*2);
-                sprintf(process_ave_name, "%s_ave", IDmodes_val_name);
-                sizearraytmp[0] = NBmodes;
-                sizearraytmp[1] = NBaveSTEP;
-                IDprocave = image_ID(process_ave_name);
-                imOK = 1;
-                if(IDprocave == -1)
-                    imOK = 0;
-                else
-                    {
-                        if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=NBaveSTEP))
-                            {
-                                imOK = 0;
-                                delete_image_ID(process_ave_name);
-                            }
-                    }
-                if(imOK==0)
-                    IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(process_ave_name, 10);
-                free(sizearraytmp);
-            
-                sizearraytmp = (long*) malloc(sizeof(long)*2);
-                sprintf(process_rms_name, "%s_rms", IDmodes_val_name);
-                sizearraytmp[0] = NBmodes;
-                sizearraytmp[1] = NBaveSTEP;
-                IDprocrms = image_ID(process_rms_name);
-                imOK = 1;
-                if(IDprocrms == -1)
-                    imOK = 0;
-                else
-                    {
-                        if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=NBaveSTEP))
-                            {
-                                imOK = 0;
-                                delete_image_ID(process_rms_name);
-                            }
-                    }
-                if(imOK==0)
-                    IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
-                COREMOD_MEMORY_image_set_createsem(process_rms_name, 10);
-                free(sizearraytmp);            
+                imOK = 0;
+                delete_image_ID(traceim_name);
             }
-            
+        }
+        if(imOK==0)
+            IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
+        free(sizearraytmp);
+    }
 
-	initref = 0;
+
+
+    if(PROCESS==1)
+    {
+        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sprintf(process_ave_name, "%s_ave", IDmodes_val_name);
+        sizearraytmp[0] = NBmodes;
+        sizearraytmp[1] = NBaveSTEP;
+        IDprocave = image_ID(process_ave_name);
+        imOK = 1;
+        if(IDprocave == -1)
+            imOK = 0;
+        else
+        {
+            if((data.image[IDprocave].md[0].size[0]!=NBmodes)||(data.image[IDprocave].md[0].size[1]!=NBaveSTEP))
+            {
+                imOK = 0;
+                delete_image_ID(process_ave_name);
+            }
+        }
+        if(imOK==0)
+            IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(process_ave_name, 10);
+        free(sizearraytmp);
+
+        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sprintf(process_rms_name, "%s_rms", IDmodes_val_name);
+        sizearraytmp[0] = NBmodes;
+        sizearraytmp[1] = NBaveSTEP;
+        IDprocrms = image_ID(process_rms_name);
+        imOK = 1;
+        if(IDprocrms == -1)
+            imOK = 0;
+        else
+        {
+            if((data.image[IDprocrms].md[0].size[0]!=NBmodes)||(data.image[IDprocrms].md[0].size[1]!=NBaveSTEP))
+            {
+                imOK = 0;
+                delete_image_ID(process_rms_name);
+            }
+        }
+        if(imOK==0)
+            IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(process_rms_name, 10);
+        free(sizearraytmp);
+    }
+
+
+    initref = 0;
 
     while(loopOK == 1)
     {
-		
-		if(refindex != data.image[IDref].md[0].cnt0)
-			{
-				initref = 0;
-				refindex = data.image[IDref].md[0].cnt0;
-			}
-			
-		if(initref==1)
-		{
-			if(data.image[IDin].sem==0)
-			{
-				while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
-					usleep(5);
-				cnt = data.image[IDin].md[0].cnt0;
-				semr = 0;
-			}
-			else
-			{
-				if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
-					perror("clock_gettime");
-					exit(EXIT_FAILURE);
-				}
-				ts.tv_sec += 1;
-				semr = sem_timedwait(data.image[IDin].semptr[insem], &ts);
 
-				// drive semaphore to zero
-				while(sem_trywait(data.image[IDin].semptr[insem])==0) {}
-                     
-			}
-		}
-		else // compute response of reference immediately
-			{
-				printf("COMPUTE NEW REFERENCE RESPONSE\n");
-				semr = 0;
-			}
+        if(refindex != data.image[IDref].md[0].cnt0)
+        {
+            initref = 0;
+            refindex = data.image[IDref].md[0].cnt0;
+        }
+
+        if(initref==1)
+        {
+            if(data.image[IDin].sem==0)
+            {
+                while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
+                    usleep(5);
+                cnt = data.image[IDin].md[0].cnt0;
+                semr = 0;
+            }
+            else
+            {
+                if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+                    perror("clock_gettime");
+                    exit(EXIT_FAILURE);
+                }
+                ts.tv_sec += 1;
+                semr = sem_timedwait(data.image[IDin].semptr[insem], &ts);
+
+                // drive semaphore to zero
+                while(sem_trywait(data.image[IDin].semptr[insem])==0) {}
+
+            }
+        }
+        else // compute response of reference immediately
+        {
+            printf("COMPUTE NEW REFERENCE RESPONSE\n");
+            semr = 0;
+        }
 
 
 
         if(semr==0)
         {
-            // load in_stream to GPU			
-			if(initref==0)
-				cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
-			else
-				cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
-				
-				
-            if (cudaStat != cudaSuccess)
+            if(TESTMGPU==0)
             {
-				printf("initref = %d    %ld  %ld\n", initref, IDref, IDin);
-                printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
-                exit(EXIT_FAILURE);
+                // load in_stream to GPU
+                if(initref==0)
+                    cudaStat = cudaMemcpy(d_in, data.image[IDref].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
+                else
+                    cudaStat = cudaMemcpy(d_in, data.image[IDin].array.F, sizeof(float)*m, cudaMemcpyHostToDevice);
+
+
+                if (cudaStat != cudaSuccess)
+                {
+                    printf("initref = %d    %ld  %ld\n", initref, IDref, IDin);
+                    printf("cudaMemcpy returned error code %d, line %d\n", cudaStat, __LINE__);
+                    exit(EXIT_FAILURE);
+                }
+
+                if(BETAMODE == 1)
+                {
+                    beta = -1.0;
+                    cudaStat = cudaMemcpy(d_modeval, modevalarrayref, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);
+                }
+
+                // compute
+                cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
+                if (cudaStat != CUBLAS_STATUS_SUCCESS)
+                {
+                    printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                    if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+                        printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                    if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                        printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                    if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                        printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                    if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                        printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+                    exit(EXIT_FAILURE);
+                }
+
+                // copy result
+                data.image[ID_modeval].md[0].write = 1;
+
+
+                if(initref==0) // construct reference to be subtracted
+                {
+                    cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+
+                    IDrefout = image_ID(IDrefout_name);
+                    if(IDrefout != -1)
+                        for(k=0; k<NBmodes; k++)
+                            modevalarrayref[k] -= data.image[IDrefout].array.F[k];
+
+
+                    if((INNORMMODE==0)&&(MODENORM==0))
+                        BETAMODE = 1; // include ref subtraction in GPU operation
+                    else
+                        BETAMODE = 0;
+                }
+                else
+                {
+                    cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
+
+                    if(BETAMODE==0)
+                    {
+                        for(k=0; k<NBmodes; k++)
+                            data.image[ID_modeval].array.F[k] = (modevalarray[k]/data.image[IDintot].array.F[0]-modevalarrayref[k])/normcoeff[k];
+                    }
+                    else
+                        for(k=0; k<NBmodes; k++)
+                            data.image[ID_modeval].array.F[k] = modevalarray[k];
+
+
+                    COREMOD_MEMORY_image_set_sempost_byID(ID_modeval, -1);
+
+                    data.image[ID_modeval].md[0].cnt0++;
+                    data.image[ID_modeval].md[0].write = 0;
+                }
+
+
+
             }
+            else // TEST MULTIPLE GPUs
+            {
 		
-			if(BETAMODE == 1)
-				{
-					beta = -1.0;
-					cudaStat = cudaMemcpy(d_modeval, modevalarrayref, sizeof(float)*NBmodes, cudaMemcpyHostToDevice);					
-				}
-
-
-		if(0)
-		{
-			GPU_loop_MultMat_setup(0, IDmodes_name, in_stream, IDouttest_name, 1, GPUset0, 0, 1, initGPUcomp, 0);
-			initGPUcomp = 1;
-			GPU_loop_MultMat_execute(0, &status, &GPUstatus, alpha, beta, 0);
-		}
-
-
-            // compute
-            cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
-            if (cudaStat != CUBLAS_STATUS_SUCCESS)
-            {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-                exit(EXIT_FAILURE);
-            }
-            
-            // copy result
-            data.image[ID_modeval].md[0].write = 1;
-
-			if(initref==0) // construct reference to be subtracted 
-				{
-					cudaStat = cudaMemcpy(modevalarrayref, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);						
-
-					IDrefout = image_ID(IDrefout_name);
-					if(IDrefout != -1)
-						for(k=0;k<NBmodes;k++)
-							modevalarrayref[k] -= data.image[IDrefout].array.F[k];  
-					
-
-					if((INNORMMODE==0)&&(MODENORM==0))
-						BETAMODE = 1; // include ref subtraction in GPU operation
-					else
-						BETAMODE = 0;
-				}
-            else
-				{
-					cudaStat = cudaMemcpy(modevalarray, d_modeval, sizeof(float)*NBmodes, cudaMemcpyDeviceToHost);
-					
-					if(BETAMODE==0)
-					{
-							for(k=0;k<NBmodes;k++)
-								data.image[ID_modeval].array.F[k] = (modevalarray[k]/data.image[IDintot].array.F[0]-modevalarrayref[k])/normcoeff[k];
-					}
-					else
-						for(k=0;k<NBmodes;k++)
-								data.image[ID_modeval].array.F[k] = modevalarray[k];
-								
-                
-					COREMOD_MEMORY_image_set_sempost_byID(ID_modeval, -1);
 			
-					data.image[ID_modeval].md[0].cnt0++;
-					data.image[ID_modeval].md[0].write = 0;
-				}
-	
-	
+					
 
-		
-		
+                GPU_loop_MultMat_setup(0, IDmodes_name, in_stream, IDmodes_val_name, 1, GPUset0, 0, 1, initGPUcomp, 0);
+                initGPUcomp = 1;
+                GPU_loop_MultMat_execute(0, &status, &GPUstatus, alpha, beta, 0);
+
+                // int GPU_loop_MultMat_setup(int index, char *IDcontrM_name, char *IDwfsim_name, char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb);
+                // int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha, float beta, int timing);
+
+            }
+
+
+
+
+
+
+
+
+
+
             if(TRACEMODE == 1)
+            {
+                data.image[ID_modeval].md[0].write = 1;
+
+                for(k=0; k<NBmodes; k++)
+                    data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k];
+                data.image[IDtrace].md[0].cnt1 = TRACEindex;
+
+                sem_getvalue(data.image[IDtrace].semptr[0], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[IDtrace].semptr[0]);
+                sem_getvalue(data.image[IDtrace].semptr[1], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(data.image[IDtrace].semptr[1]);
+                data.image[IDtrace].md[0].cnt0++;
+                data.image[IDtrace].md[0].write = 0;
+
+                TRACEindex++;
+                if(TRACEindex>=TRACEsize)
                 {
-                    data.image[ID_modeval].md[0].write = 1;
-                    
-                    for(k=0;k<NBmodes;k++)
-                        data.image[IDtrace].array.F[k*TRACEsize+TRACEindex] = data.image[ID_modeval].array.F[k]; 
-                    data.image[IDtrace].md[0].cnt1 = TRACEindex;
-                    
-                    sem_getvalue(data.image[IDtrace].semptr[0], &semval);
-                    if(semval<SEMAPHORE_MAXVAL)
-                        sem_post(data.image[IDtrace].semptr[0]);
-                    sem_getvalue(data.image[IDtrace].semptr[1], &semval);
-                    if(semval<SEMAPHORE_MAXVAL)
-                        sem_post(data.image[IDtrace].semptr[1]);
-                    data.image[IDtrace].md[0].cnt0++;
-                    data.image[IDtrace].md[0].write = 0;
-                    
-                    TRACEindex++;
-                    if(TRACEindex>=TRACEsize)
-                        {
-                            TRACEindex = 0;
-                            // copy to tracef shared memory (frozen trace)
-                        }   
+                    TRACEindex = 0;
+                    // copy to tracef shared memory (frozen trace)
                 }
+            }
 
 
-            
+
             if(PROCESS==1)
+            {
+                stepcoeff = stepcoeff0;
+                data.image[IDprocave].md[0].write = 1;
+                for(step=0; step<NBaveSTEP; step++)
                 {
-                    stepcoeff = stepcoeff0;                    
-                    data.image[IDprocave].md[0].write = 1;
-                    for(step=0;step<NBaveSTEP;step++)
-                        {
-                            for(k=0;k<NBmodes;k++)
-                                data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
-                            stepcoeff *= stepcoeff0;
-                        }
-                    for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
-                        {
-                            sem_getvalue(data.image[IDprocave].semptr[semnb], &semval);
-                            if(semval<SEMAPHORE_MAXVAL)
-                                sem_post(data.image[IDprocave].semptr[semnb]);
-                        }
-                    data.image[IDprocave].md[0].cnt0++;
-                    data.image[IDprocave].md[0].write = 0;   
-                
-                    stepcoeff = stepcoeff0;                
-                    data.image[IDprocrms].md[0].write = 1;
-                    for(step=0;step<NBaveSTEP;step++)
-                        {
-                            for(k=0;k<NBmodes;k++)
-                            {
-                                tmpv = data.image[ID_modeval].array.F[k] - data.image[IDprocave].array.F[NBmodes*step+k];
-                                tmpv = tmpv*tmpv;
-                                data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
-                            }
-                            stepcoeff *= stepcoeff0;
-                        }
-                    for(semnb=0; semnb<data.image[IDprocrms].sem; semnb++)
-                        {
-                            sem_getvalue(data.image[IDprocrms].semptr[semnb], &semval);
-                            if(semval<SEMAPHORE_MAXVAL)
-                                sem_post(data.image[IDprocrms].semptr[semnb]);
-                        }
-                    data.image[IDprocrms].md[0].cnt0++;
-                    data.image[IDprocrms].md[0].write = 0;   
+                    for(k=0; k<NBmodes; k++)
+                        data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
+                    stepcoeff *= stepcoeff0;
                 }
+                for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
+                {
+                    sem_getvalue(data.image[IDprocave].semptr[semnb], &semval);
+                    if(semval<SEMAPHORE_MAXVAL)
+                        sem_post(data.image[IDprocave].semptr[semnb]);
+                }
+                data.image[IDprocave].md[0].cnt0++;
+                data.image[IDprocave].md[0].write = 0;
+
+                stepcoeff = stepcoeff0;
+                data.image[IDprocrms].md[0].write = 1;
+                for(step=0; step<NBaveSTEP; step++)
+                {
+                    for(k=0; k<NBmodes; k++)
+                    {
+                        tmpv = data.image[ID_modeval].array.F[k] - data.image[IDprocave].array.F[NBmodes*step+k];
+                        tmpv = tmpv*tmpv;
+                        data.image[IDprocrms].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocrms].array.F[NBmodes*step+k] + stepcoeff*tmpv;
+                    }
+                    stepcoeff *= stepcoeff0;
+                }
+                for(semnb=0; semnb<data.image[IDprocrms].sem; semnb++)
+                {
+                    sem_getvalue(data.image[IDprocrms].semptr[semnb], &semval);
+                    if(semval<SEMAPHORE_MAXVAL)
+                        sem_post(data.image[IDprocrms].semptr[semnb]);
+                }
+                data.image[IDprocrms].md[0].cnt0++;
+                data.image[IDprocrms].md[0].write = 0;
+            }
         }
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
-            {
-				loopOK = 0;
-				printf("Exiting loop\n");
-				fflush(stdout);
-				sleep(1.0);
-			}
-			
-		initref = 1;
+        {
+            loopOK = 0;
+            printf("Exiting loop\n");
+            fflush(stdout);
+            sleep(1.0);
+        }
+
+        initref = 1;
         iter++;
     }
 
+    if(TESTMGPU==0)
+    {
+        cudaFree(d_modes);
+        cudaFree(d_in);
+        cudaFree(d_modeval);
 
-    cudaFree(d_modes);
-    cudaFree(d_in);
-    cudaFree(d_modeval);
 
 
+        if (cublasH ) cublasDestroy(cublasH);
+    }
 
-    if (cublasH ) cublasDestroy(cublasH);
-
-	free(normcoeff);
+    free(normcoeff);
     free(modevalarray);
     free(modevalarrayref);
 
 
-	free(GPUset0);
+    free(GPUset0);
 
 
     return(0);
 }
+
 
 
 
