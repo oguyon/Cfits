@@ -302,7 +302,6 @@ int init_SCExAO_control()
 
 
 
-
     // add atexit functions here
 
 
@@ -1982,10 +1981,12 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
             valy += 1.0*jj*val;
             tot += 1.0*val;
         }
+    if(tot>1.0)
+    {
     valxdark = valx/tot;
     valydark = valy/tot;
     totdark = tot;
-
+	}
 
     // drive semaphore to zero
     while(sem_trywait(data.image[IDin].semptr[semtrig])==0) {}
