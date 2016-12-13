@@ -1018,10 +1018,53 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
 
 
+//
+// real-time apply predictive filter
+//
+long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name)
+{
+	long IDout;
+	long IDin;
+	long IDfilt;
+	long PForder;
+	long NBpix_in;
+	long NBpix_out;
+	long *imsizearray;
+	
+	
+	IDfilt = image_ID(IDfilt_name);
+	IDin = image_ID(IDin_name);
+		
+	PForder = data.image[IDfilt].md[0].size[2];
+	NBpix_in = data.image[IDfilt].md[0].size[0];
+	NBpix_out = data.image[IDfilt].md[0].size[1];
+	
+	if(data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1] != NBpix_out)
+		{
+			printf("ERROR: lin predictor engine: filter input size does not match input telemetry\n");
+			exit(0);
+		}
+	
+	
+	
+	printf("Create prediction output %s\n", IDout_name);
+	fflush(stdout);
+	imsizearray = (long*) malloc(sizeof(long)*2);
+	imsizearray[0] = PFblockSize;
+	imsizearray[1] = 1;
+	IDout = create_image_ID(IDout_name, 2, imsizearray, FLOAT, 1, 1);
+	free(imsizearray);
+	COREMOD_MEMORY_image_set_semflush(imnameout, -1);
+	printf("Done\n");
+	fflush(stdout);
+	
 
 
 
 
+	
+	return(IDout);
+}
 
 
 

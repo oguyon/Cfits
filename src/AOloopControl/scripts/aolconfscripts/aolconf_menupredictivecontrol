@@ -111,7 +111,10 @@ menuitems+=( "PFapply" "Apply Predictive Filter" )
 
 menuitems+=( " " " ")
 menuitems+=( " " " ")
-stringcenter "CONTINUOUS PREDICTIVE FILTER LOOP"
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+stringcenter "CONTINUOUS PREDICTIVE FILTER LOOP - COMPUTE FILTER"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 
@@ -235,6 +238,16 @@ else
 menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] switch off Watch input for PF block 1" )
 fi
 
+
+
+
+
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+stringcenter "CONTINUOUS PREDICTIVE FILTER LOOP - APPLY FILTER"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " ")
 
 
 
