@@ -2023,7 +2023,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
                 {
                     val = data.image[IDin].array.F[jj*xsize+ii];
                     vald = data.image[IDdark].array.F[jj*xsize+ii];
-					val -= valdark;
+					val -= vald;
                     valx += 1.0*ii*val;
                     valy += 1.0*jj*val;
                     tot += 1.0*val;
