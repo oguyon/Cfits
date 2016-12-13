@@ -11269,8 +11269,7 @@ int AOloopControl_run()
                 }
                 else // 1 step: WFS -> DM act
                 {
-                    if(0) // if DMwritePrim
-                    {
+     
                         data.image[aoconfID_dmC].md[0].write = 1;
 
                         for(ii=0; ii<AOconf[loop].sizeDM; ii++)//TEST
@@ -11331,7 +11330,7 @@ int AOloopControl_run()
                                     sem_post(data.image[aoconfID_dmdisp].semptr[1]);
                             }
                         AOconf[loop].DMupdatecnt ++;
-                    }
+                    
                 }
 
                 AOconf[loop].status = 18; // 18
