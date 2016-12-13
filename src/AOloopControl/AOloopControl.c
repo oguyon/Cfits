@@ -11113,19 +11113,19 @@ int AOloopControl_run()
     int timerinit;
     int semval;
     int semnb;
-    
-    
-/*    float tmpv, tmpv1, tmpv2;
-    float range1 = 0.1; // limit single iteration motion
-    float rangec = 0.3; // limit cumulative motion
-  */  
-    
+
+
+    /*    float tmpv, tmpv1, tmpv2;
+        float range1 = 0.1; // limit single iteration motion
+        float rangec = 0.3; // limit cumulative motion
+      */
+
     schedpar.sched_priority = RT_priority;
-    #ifndef __MACH__
+#ifndef __MACH__
     // r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     // r = seteuid(euid_real);//Go back to normal privileges
-	#endif
+#endif
 
 
 
@@ -11133,15 +11133,15 @@ int AOloopControl_run()
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
-    
-    
+
+
 
     printf("SETTING UP...\n");
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
-    
 
-    COMPUTE_GPU_SCALING = AOconf[loop].GPUall; 
+
+    COMPUTE_GPU_SCALING = AOconf[loop].GPUall;
 
 
 
@@ -11154,49 +11154,49 @@ int AOloopControl_run()
 
     printf("============ pixel streaming ? =============\n");
     fflush(stdout);
-    
+
     if(COMPUTE_PIXELSTREAMING == 1)
         aoconfID_pixstream_wfspixindex = load_fits("pixstream_wfspixindex.fits", "pixstream", 1);
 
     if(aoconfID_pixstream_wfspixindex == -1)
         COMPUTE_PIXELSTREAMING = 0;
-    else    
+    else
     {
         printf("Testing data type\n");
         fflush(stdout);
         if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != USHORT)
             COMPUTE_PIXELSTREAMING = 0;
     }
-    
+
     if(COMPUTE_PIXELSTREAMING == 1)
     {
         xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
         ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
         PIXSTREAM_NBSLICES = 0;
-        for(ii=0;ii<xsize*ysize;ii++)
+        for(ii=0; ii<xsize*ysize; ii++)
             if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii] > PIXSTREAM_NBSLICES)
                 PIXSTREAM_NBSLICES = data.image[aoconfID_pixstream_wfspixindex].array.U[ii];
         PIXSTREAM_NBSLICES++;
         printf("PIXEL STREAMING:   %d image slices\n", PIXSTREAM_NBSLICES);
     }
-    
-    
-    
+
+
+
     printf("============ FORCE pixel streaming = 0\n");
     fflush(stdout);
     COMPUTE_PIXELSTREAMING = 0; // TEST
-    
-   
-   printf("GPU = %d\n", AOconf[loop].GPU);
-   if(AOconf[loop].GPU>1)
+
+
+    printf("GPU = %d\n", AOconf[loop].GPU);
+    if(AOconf[loop].GPU>1)
     {
-        for(k=0;k<AOconf[loop].GPU;k++)
+        for(k=0; k<AOconf[loop].GPU; k++)
             printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", k, GPUset0[k], GPUset1[k]);
     }
-   
-   
-   
-    
+
+
+
+
 
     vOK = 1;
     if(AOconf[loop].init_wfsref0==0)
@@ -11228,10 +11228,10 @@ int AOloopControl_run()
                 printf(" \n");
             }
             clock_gettime(CLOCK_REALTIME, &t2);
-  
+
             tdiff = info_time_diff(t1, t2);
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-  
+
             printf(" WAITING     %20.3lf sec         \r", tdiffv);
             fflush(stdout);
             usleep(1000);
@@ -11241,19 +11241,19 @@ int AOloopControl_run()
             while(AOconf[loop].on == 1)
             {
                 if(timerinit==0)
-                    {
-                        Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
-                        clock_gettime(CLOCK_REALTIME, &t1);
-                        timerinit = 1;
-                        printf("\n");
-                        printf("LOOP CLOSED  ");
-                        fflush(stdout);
-                     }
-              
-  
+                {
+                    Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
+                    clock_gettime(CLOCK_REALTIME, &t1);
+                    timerinit = 1;
+                    printf("\n");
+                    printf("LOOP CLOSED  ");
+                    fflush(stdout);
+                }
+
+
                 AOcompute(loop, AOconf[loop].WFSnormalize);
-               
- 
+
+
 
                 AOconf[loop].status = 12; // 12
                 clock_gettime(CLOCK_REALTIME, &tnow);
@@ -11269,66 +11269,69 @@ int AOloopControl_run()
                 }
                 else // 1 step: WFS -> DM act
                 {
-                    data.image[aoconfID_dmC].md[0].write = 1;
-
-                    for(ii=0; ii<AOconf[loop].sizeDM; ii++)//TEST
+                    if(0) // if DMwritePrim
                     {
-                         if(isnan(data.image[aoconfID_meas_act].array.F[ii])!=0)
+                        data.image[aoconfID_dmC].md[0].write = 1;
+
+                        for(ii=0; ii<AOconf[loop].sizeDM; ii++)//TEST
+                        {
+                            if(isnan(data.image[aoconfID_meas_act].array.F[ii])!=0)
                             {
                                 printf("image aol2_meas_act  element %ld is NAN -> replacing by 0\n", ii);
                                 data.image[aoconfID_meas_act].array.F[ii] = 0.0;
                             }
-                    }
-                
-
-
-
-                AOconf[loop].status = 13; // enforce limits
-                clock_gettime(CLOCK_REALTIME, &tnow);
-                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
-                tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-                data.image[aoconfID_looptiming].array.F[13] = tdiffv;
-
-                
-                    for(ii=0; ii<AOconf[loop].sizeDM; ii++)
-                    {
-                        data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
-                                             
-                        data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;                         
-
-                        if(data.image[aoconfID_dmC].array.F[ii] > AOconf[loop].maxlimit)
-                            data.image[aoconfID_dmC].array.F[ii] = AOconf[loop].maxlimit;
-                        if(data.image[aoconfID_dmC].array.F[ii] < -AOconf[loop].maxlimit)
-                            data.image[aoconfID_dmC].array.F[ii] = -AOconf[loop].maxlimit;
-                    }
-                        
-
-                AOconf[loop].status = 14; // write to DM
-                clock_gettime(CLOCK_REALTIME, &tnow);
-                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
-                tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-                data.image[aoconfID_looptiming].array.F[14] = tdiffv;
-
- 
-				
-                       
-                  for(semnb=0;semnb<data.image[aoconfID_dmC].sem;semnb++)
-                   {
-                       sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
-                        if(semval<SEMAPHORE_MAXVAL)
-                            sem_post(data.image[aoconfID_dmC].semptr[semnb]);
-                    }
-                    data.image[aoconfID_dmC].md[0].cnt0++;
-                    data.image[aoconfID_dmC].md[0].write = 0;
-                    // inform dmdisp that new command is ready in one of the channels
-                    if(aoconfID_dmdisp!=-1)
-                        if(data.image[aoconfID_dmdisp].sem > 1)
-                        {
-                            sem_getvalue(data.image[aoconfID_dmdisp].semptr[0], &semval);
-                            if(semval<SEMAPHORE_MAXVAL)
-                                sem_post(data.image[aoconfID_dmdisp].semptr[1]);
                         }
-                    AOconf[loop].DMupdatecnt ++;
+
+
+
+
+                        AOconf[loop].status = 13; // enforce limits
+                        clock_gettime(CLOCK_REALTIME, &tnow);
+                        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+                        data.image[aoconfID_looptiming].array.F[13] = tdiffv;
+
+
+                        for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+                        {
+                            data.image[aoconfID_dmC].array.F[ii] -= AOconf[loop].gain * data.image[aoconfID_meas_act].array.F[ii];
+
+                            data.image[aoconfID_dmC].array.F[ii] *= AOconf[loop].mult;
+
+                            if(data.image[aoconfID_dmC].array.F[ii] > AOconf[loop].maxlimit)
+                                data.image[aoconfID_dmC].array.F[ii] = AOconf[loop].maxlimit;
+                            if(data.image[aoconfID_dmC].array.F[ii] < -AOconf[loop].maxlimit)
+                                data.image[aoconfID_dmC].array.F[ii] = -AOconf[loop].maxlimit;
+                        }
+
+
+                        AOconf[loop].status = 14; // write to DM
+                        clock_gettime(CLOCK_REALTIME, &tnow);
+                        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+                        data.image[aoconfID_looptiming].array.F[14] = tdiffv;
+
+
+
+
+                        for(semnb=0; semnb<data.image[aoconfID_dmC].sem; semnb++)
+                        {
+                            sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
+                            if(semval<SEMAPHORE_MAXVAL)
+                                sem_post(data.image[aoconfID_dmC].semptr[semnb]);
+                        }
+                        data.image[aoconfID_dmC].md[0].cnt0++;
+                        data.image[aoconfID_dmC].md[0].write = 0;
+                        // inform dmdisp that new command is ready in one of the channels
+                        if(aoconfID_dmdisp!=-1)
+                            if(data.image[aoconfID_dmdisp].sem > 1)
+                            {
+                                sem_getvalue(data.image[aoconfID_dmdisp].semptr[0], &semval);
+                                if(semval<SEMAPHORE_MAXVAL)
+                                    sem_post(data.image[aoconfID_dmdisp].semptr[1]);
+                            }
+                        AOconf[loop].DMupdatecnt ++;
+                    }
                 }
 
                 AOconf[loop].status = 18; // 18
@@ -11339,8 +11342,8 @@ int AOloopControl_run()
 
                 AOconf[loop].cnt++;
 
-                
-                
+
+
 
 
 
@@ -11361,6 +11364,7 @@ int AOloopControl_run()
 
     return(0);
 }
+
 
 
 

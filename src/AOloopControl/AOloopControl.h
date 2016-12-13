@@ -78,6 +78,9 @@ typedef struct
     int on;  // goes to 1 when loop starts, put to 0 to turn loop off
     float gain; // overall loop gain
     long framesAve; // number of frames to average
+	
+	
+ 
  
 	// PREDICTICE CONTROL
     int ARPFon; // 1 if auto-regressive predictive filter is ON
