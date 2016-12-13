@@ -149,10 +149,10 @@ int LINARFILTERPRED_PF_updatePFmatrix_cli()
 
 
 //long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name);
-int LINARFILTERPRED_PF_RealTimeApply_cli()
+int LINARFILTERPRED_PF_RealTimeApply_GPU_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
-		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
+		LINARFILTERPRED_PF_RealTimeApply_GPU(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
 	else
        return 1;
 
@@ -243,7 +243,7 @@ int init_linARfilterPred()
 
 	strcpy(data.cmd[data.NBcmd].key,"linARApplyRT");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_cli;
+    data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_GPU_cli;
     strcpy(data.cmd[data.NBcmd].info,"Real-time apply predictive filter");
     strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream> <nbGPU> <loop>");
     strcpy(data.cmd[data.NBcmd].example,"linARApplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0");
@@ -616,8 +616,10 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	float val, val0;
 	long ind1;
 	int ret;
-	long IDoutPF;
-	
+	long IDoutPF2D;
+	long IDoutPF3D;
+	char IDoutPF_name3D[500];
+		
 	long NB_SVD_Modes;
 	
 	int DC_MODE = 0; // 1 if average value of each mode is removed
@@ -646,7 +648,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 			gain = LOOPgain;
 		}
 	
-	
+	sprintf(IDoutPF_name3D, "%s_3D", IDoutPF_name);
 	
 	
 	// =========== SELECT INPUT VALUES =======================
@@ -882,16 +884,6 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 		{
 			save_fits("PF_VTmat", "!PF_VTmat.fits");
 			save_fits("PFmatC", "!PFmatC.fits");
-			
-			
-			
-		/*	for(Pmode=0; Pmode<NB_SVD_Modes; Pmode++)
-				{
-					sprintf(imname, "PFmodeC_%04ld", Pmode);
-					sprintf(fname, "!PFmodeC_%04ld.fits", Pmode);
-					IDoutPF = create_3Dimage_ID(imname, NBpixin, NBpixout, PForder);
-					
-				}*/
 		}
     IDmatC = image_ID("PFmatC");
 
@@ -906,27 +898,47 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	ret = system("mkdir -p pixfilters");
 	
-	// FILTER MATRIX
+	// 3D FILTER MATRIX - contains all pixels
 	// axis 0 [ii] : input mode
 	// axis 1 [jj] : reconstructed mode
 	// axis 2 [kk] : time step
 
+
+	// 2D Filter - contains only used input and output 
+	// axis 0 [ii1] : input mode x time step
+	// axis 1 [jj1] : output mode 
+
 	if( LOOPmode == 0 )
-		IDoutPF = create_3Dimage_ID(IDoutPF_name, xysize, xysize, PForder);	
+		{
+			IDoutPF2D = create_2Dimage_ID(IDoutPF_name, NBpixin*PForder, NBpixout);	
+			IDoutPF3D = create_3Dimage_ID(IDoutPF_name3D, xysize, xysize, PForder);	
+		}
+	
 	else
 		{
 			if(iter==0)
 			{
+				imsizearray = (long*) malloc(sizeof(long)*2);
+				imsizearray[0] = NBpixin*PForder;
+				imsizearray[1] = NBpixout;
+				IDoutPF2D = create_image_ID(IDoutPF_name, 2, imsizearray, FLOAT, 1, 1);
+				free(imsizearray);
+				COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
+				
+				
 				imsizearray = (long*) malloc(sizeof(long)*3);
 				imsizearray[0] = xysize;
 				imsizearray[1] = xysize;
 				imsizearray[2] = PForder;
-				IDoutPF = create_image_ID(IDoutPF_name, 3, imsizearray, FLOAT, 1, 1);
+				IDoutPF3D = create_image_ID(IDoutPF_name3D, 3, imsizearray, FLOAT, 1, 1);
 				free(imsizearray);
-				COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
+				COREMOD_MEMORY_image_set_semflush(IDoutPF_name3D, -1);
 			}
 			else
-				IDoutPF = image_ID(IDoutPF_name);
+				{
+					IDoutPF2D = image_ID(IDoutPF_name);
+					IDoutPF3D = image_ID(IDoutPF_name3D);
+				}
 		}
 		
 		
@@ -937,8 +949,9 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 	
 	
 	
-	data.image[IDoutPF].md[0].write = 1;
-	
+	data.image[IDoutPF2D].md[0].write = 1;
+	data.image[IDoutPF3D].md[0].write = 1;
+		
 	alpha = PFlag - ((long) PFlag);
 	for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
 	{
@@ -969,8 +982,11 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 						for(m=0; m<NBmvec; m++)
 							val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
 
-						val0 = data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]];
-						data.image[IDoutPF].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = (1.0-gain)*val0 + gain*val;
+						val0 = data.image[IDoutPF3D].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]];
+						val = (1.0-gain)*val0 + gain*val;
+						data.image[IDoutPF2D].array.F[PFpix*PForder*NBpixin + dt*pix] = val;
+						data.image[IDoutPF3D].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val;												
+						
 					}
 			}
 			
@@ -993,13 +1009,18 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 				save_fits(filtname, filtfname);	
 			}
 	}
-	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF, -1);
-	data.image[IDoutPF].md[0].cnt0++;
-	data.image[IDoutPF].md[0].write = 0;
+	
+	
+	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF2D, -1);
+	data.image[IDoutPF2D].md[0].cnt0++;
+	data.image[IDoutPF2D].md[0].write = 0;
 
-//	sprintf(fname, "!_outPF_iter%05ld.fits", iter);
-//	save_fits(IDoutPF_name, fname);
+	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF3D, -1);
+	data.image[IDoutPF3D].md[0].cnt0++;
+	data.image[IDoutPF3D].md[0].write = 0;
+
 	save_fits(IDoutPF_name, "!_outPF.fits");
+	save_fits(IDoutPF_name3D, "!_outPF3D.fits");
 	printf("DONE\n");
 	fflush(stdout);
 	
@@ -1023,7 +1044,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
  	free(outpixarray_y);
  	free(outpixarray_xy);
 	
-    return(IDoutPF);
+    return(IDoutPF2D);
 }
 
 
@@ -1469,7 +1490,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 // IDPFM_name       : predictive filter matrix
 // IDPFout_name     : prediction
 // 
-long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
+long LINARFILTERPRED_PF_RealTimeApply_GPU(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
 {
 	long IDmodevalOL;
 	long NBmodeOL, NBmodeOUT, modeOUT;

@@ -260,9 +260,9 @@ PFb0aON="OFF"
 fi
 
 if [ "$PFb0aON" = "OFF" ]; then
-menuitems+=( "PFb0aON" "[$PFb0aON] switch on prediction engine block 0" )
+menuitems+=( "PFb0aON" "[$PFb0aON] switch on prediction engine for PF block 0" )
 else
-menuitems+=( "PFb0aOFF" "[\Z1\Zr${PFb0aON}\Zn] switch on prediction engine for block 0" )
+menuitems+=( "PFb0aOFF" "[\Z1\Zr${PFb0aON}\Zn] switch on prediction engine for PF block 0" )
 fi
 
 
@@ -276,9 +276,9 @@ PFb1aON="OFF"
 fi
 
 if [ "$PFb1aON" = "OFF" ]; then
-menuitems+=( "PFb1aON" "[$PFb1aON] switch on prediction engine block 1" )
+menuitems+=( "PFb1aON" "[$PFb1aON] switch on prediction engine for PF block 1" )
 else
-menuitems+=( "PFb1aOFF" "[\Z1\Zr${PFb1aON}\Zn] switch on prediction engine for block 1" )
+menuitems+=( "PFb1aOFF" "[\Z1\Zr${PFb1aON}\Zn] switch on prediction engine for PF block 1" )
 fi
 
 
@@ -585,6 +585,38 @@ menupred_default="PFb1cON"
 
 
 
+
+
+
+
+
+
+
+
+	PFb0aON)
+tmuxname="aol${LOOPNUMBER}PFb0apply"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} "Cfits" C-m
+
+#tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m
+#tmux send-keys -t ${tmuxname} "exit" C-m
+PFb0cON=" ON"
+file="./status/stat_PFb0aON.txt"
+echo "writing $PFb0aON to file $file"
+echo "$PFb0aON" > $file
+menupred_default="PFb0aOFF"
+;;
+
+	PFb0aOFF)
+tmuxname="aol${LOOPNUMBER}PFb0apply"
+tmux send-keys -t ${tmuxname} C-c
+PFb0cON="OFF"
+file="./status/stat_PFb0aON.txt"
+echo "$PFb0aON" > $file
+menupred_default="PFb0aON"
+;;
 
 
 
