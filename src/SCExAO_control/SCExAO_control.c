@@ -1950,7 +1950,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
     double val, vald, valx, valy, tot;
     int atype;
 //    double valxdark, valydark, totdark;
-
+	long iistart, iiend, jjstart, jjend;
 
 
     IDin = image_ID(IDin_name);
@@ -1993,6 +1993,11 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
     // drive semaphore to zero
     while(sem_trywait(data.image[IDin].semptr[semtrig])==0) {}
 
+	iistart = 0;
+	iiend = xsize;
+	jjstart = 0;
+	jjend = ysize;
+
     while(1)
     {
         sem_wait(data.image[IDin].semptr[semtrig]);
@@ -2006,8 +2011,8 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 
         switch (atype) {
         case USHORT :
-            for(ii=0; ii<xsize; ii++)
-                for(jj=0; jj<ysize; jj++)
+            for(ii=iistart; ii<iiend; ii++)
+                for(jj=jjstart; jj<jjend; jj++)
                 {
                     val = 1.0*data.image[IDin].array.U[jj*xsize+ii];
 					vald = data.image[IDdark].array.F[jj*xsize+ii];
@@ -2018,8 +2023,8 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
                 }
             break;
         case FLOAT :
-            for(ii=0; ii<xsize; ii++)
-                for(jj=0; jj<ysize; jj++)
+            for(ii=iistart; ii<iiend; ii++)
+                for(jj=jjstart; jj<jjend; jj++)
                 {
                     val = data.image[IDin].array.F[jj*xsize+ii];
                     vald = data.image[IDdark].array.F[jj*xsize+ii];
@@ -2041,6 +2046,26 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
         data.image[IDout].md[0].cnt0 ++;
         data.image[IDout].md[0].write = 0;
+        
+        
+        iistart = (long) (valx-boxrad);
+        iiend = (long) (valx+boxrad);
+        jjstart = (long) (valy-boxrad);
+        jjend = (long) (valy+boxrad);
+        
+        if(iistart<0)
+			iistart = 0;
+		if(iisend>xsize-1)
+			iiend = xsize-1;
+
+		if(jjstart<0)
+			jjstart = 0;
+		if(jjsend>ysize-1)
+			jjend = ysize-1;
+        
+
+		printf("tot = %f\n", tot);
+
     }
 
     return IDout;
