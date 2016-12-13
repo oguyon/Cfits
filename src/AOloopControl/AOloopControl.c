@@ -12637,9 +12637,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	while (1)
 	{
 		
-		printf("STEP 000\n");
-		fflush(stdout);
-		
 		if(data.image[IDmodeval].sem==0)
         {
             while(cnt==data.image[IDmodeval].md[0].cnt0) // test if new frame exists
@@ -12660,9 +12657,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			modemult[m] = AOconf[loop].mult;
 		}
 
-		printf("STEP 001\n");
-		fflush(stdout);
-
 
 		//
 		// UPDATE CURRENT DM STATE
@@ -12674,9 +12668,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 		AOconf[loop].statusM = 4;
 
-
-		printf("STEP 002\n");
-		fflush(stdout);
 
 
 		// 
@@ -12699,9 +12690,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				}
 			}
 	
-			printf("STEP 003\n");
-		fflush(stdout);
-
 	
 		AOconf[loop].statusM = 5;
 	
@@ -12732,8 +12720,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			}
 		}
 		
-				printf("STEP 004\n");
-		fflush(stdout);
 
 		
 		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
@@ -12763,8 +12749,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		AOconf[loop].statusM1 = 6;
 		
-				printf("STEP 005\n");
-		fflush(stdout);
 
 		
 		//
