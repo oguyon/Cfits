@@ -1995,8 +1995,8 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
     {
         sem_wait(data.image[IDin].semptr[semtrig]);
         
-        printf("New image\n");
-        fflush(stdout);
+       // printf("New image\n");
+       // fflush(stdout);
 
         tot = 0.0;
         valx = 0.0;
@@ -2024,7 +2024,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
                 }
             break;
         }
-        printf("%12f %12f %12f\n", valx, valy, tot);
+      //  printf("%12f %12f %12f\n", valx, valy, tot);
         
 		valx = valx/tot;
 		valy = valy/tot;
