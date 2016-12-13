@@ -778,6 +778,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
    
     printf("mvecsize = %ld  (%ld x %ld)\n", mvecsize, PForder, NBpixin);
 	printf("NBpixin = %ld\n", NBpixin);
+	printf("NBpixout = %ld\n", NBpixout);
 	printf("NBmvec1 = %ld\n", NBmvec1);
 	printf("PForder = %ld\n", PForder);
 
