@@ -1227,6 +1227,7 @@ void *compute_function( void *ptr )
         if (error != cudaSuccess)
         {
             printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
+            fflush(stdout);
             exit(EXIT_FAILURE);
         }
 
@@ -1281,6 +1282,7 @@ void *compute_function( void *ptr )
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
                 printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                fflush(stdout);
                 if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
                 if(stat == CUBLAS_STATUS_INVALID_VALUE)
@@ -1298,7 +1300,7 @@ void *compute_function( void *ptr )
  				printf("alpha                               = %f\n", betaref);
  				printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
  				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
-                
+                fflush(stdout);
                 exit(EXIT_FAILURE);
             }
   //          cublasSgemv_alpha = alphatmp;
