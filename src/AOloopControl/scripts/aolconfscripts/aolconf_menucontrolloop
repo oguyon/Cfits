@@ -741,7 +741,7 @@ if [[ -f "$file" && ( "$DMprimWriteON" = " ON" || "$DMprimWriteON" = "OFF" ) ]];
 echo "DMprimWriteON OK"
 DMprimWriteON=$( cat $file )
 else
-echo "OFF" > "$file"
+echo " ON" > "$file"
 DMprimWriteON=$( cat $file )
 fi
 
