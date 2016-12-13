@@ -2065,8 +2065,11 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 			jjend = ysize-1;
         
 
-		printf("tot = %f\n", tot);
-
+		printf("tot = %20f    boxrad = %4ld\n", tot, boxrad);
+		if(tot<200000)
+			boxrad = 200;
+		else
+			boxrad = 50;
     }
 
     return IDout;
