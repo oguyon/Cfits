@@ -1678,7 +1678,11 @@ tmuxname="aol${LOOPNUMBER}mexwfs"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 logRunningProcess "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
+if [ "$CMmode" -eq "1" ]; then
 tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs ${GPUmodesextrwfs}" C-m
+else
+tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}" C-m
+fi
 fi
 
 
