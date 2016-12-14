@@ -2123,7 +2123,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	int initOK = 0;
 	
-	float TTamp = 0.1;
+	float TTamp = 0.5;
 	long NBpt = 1200;
 	long iter0;
 	long NBpt0 = 1200; // warm up
