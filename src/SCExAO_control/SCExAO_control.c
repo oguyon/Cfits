@@ -2135,6 +2135,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	char fname[200];
 	long IDoutC;
 	
+	float accFactor = 1000.0;
 	
 	long ID_TTact;
 		
@@ -2193,13 +2194,13 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		if(iter==0)
 			{
 				for(kk=0;kk<NBacc;kk++)
-					valarrayave[kk] = data.image[IDacc].array.F[kk];
+					valarrayave[kk] = data.image[IDacc].array.F[kk]*accFactor;
 				valarrayave[NBacc] = data.image[IDttpos].array.F[0];
 				valarrayave[NBacc+1] = data.image[IDttpos].array.F[1];
 			}
 		
 		for(kk=0;kk<NBacc;kk++)
-			valarray[kk] = data.image[IDacc].array.F[kk] - valarrayave[kk]; 
+			valarray[kk] = data.image[IDacc].array.F[kk]*accFactor - valarrayave[kk]; 
 		valarray[NBacc] = data.image[IDttpos].array.F[0] - valarrayave[NBacc];
 		valarray[NBacc+1] = data.image[IDttpos].array.F[1] - valarrayave[NBacc+1];
 		
@@ -2243,7 +2244,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		if(mode==1)
 			{
 				for(kk=0;kk<NBacc;kk++)
-					data.image[IDoutC].array.F[iter*(NBacc+2)+kk] = data.image[IDacc].array.F[kk];
+					data.image[IDoutC].array.F[iter*(NBacc+2)+kk] = data.image[IDacc].array.F[kk]*accFactor;
 				data.image[IDoutC].array.F[iter*(NBacc+2)+NBacc] = data.image[IDttpos].array.F[0];
 				data.image[IDoutC].array.F[iter*(NBacc+2)+NBacc+1] = data.image[IDttpos].array.F[1];
 			}
@@ -2251,7 +2252,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		if(initOK==0)
 			{
 				for(kk=0;kk<NBacc;kk++)
-					valarrayave[kk] = data.image[IDacc].array.F[kk];
+					valarrayave[kk] = data.image[IDacc].array.F[kk]*accFactor;
 				valarrayave[NBacc] = data.image[IDttpos].array.F[0];
 				valarrayave[NBacc+1] = data.image[IDttpos].array.F[1];
 				initOK = 1;
@@ -2259,7 +2260,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		
 		
 		for(kk=0;kk<NBacc;kk++)
-			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*data.image[IDacc].array.F[kk];
+			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*data.image[IDacc].array.F[kk]*accFactor;
 		valarrayave[NBacc] = (1.0-gain)*valarrayave[NBacc] + gain*data.image[IDttpos].array.F[0];
 		valarrayave[NBacc+1] = (1.0-gain)*valarrayave[NBacc+1] + gain*data.image[IDttpos].array.F[1];
 	
