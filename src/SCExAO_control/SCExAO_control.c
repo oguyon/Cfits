@@ -2186,7 +2186,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 				if(iter==NBpt/2)
 					TTx = -TTamp;
 				if(iter==3*NBpt/4)
-					TTx = -TTamp;
+					TTx = 0.0;
 			}
 	
         if(mode==3)
@@ -2196,7 +2196,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 				if(iter==NBpt/2)
 					TTy = -TTamp;
 				if(iter==3*NBpt/4)
-					TTy = -TTamp;
+					TTy = 0.0;
 			}
 	
 	
