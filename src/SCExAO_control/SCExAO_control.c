@@ -2135,7 +2135,18 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	char fname[200];
 	long IDoutC;
 	
+	
+	long ID_TTact;
 		
+	
+	
+	if(mode>1)
+	{
+		// connect to actuators
+		ID_TTact = image_ID("TToffload_modeval");
+	}
+	
+	
 	
 	IDacc = image_ID(IDacc_name);
 	NBacc = data.image[IDacc].md[0].size[0];
