@@ -2118,6 +2118,8 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	long *sizearray;
 	long iter = 0;	
 	
+	int initOK = 0;
+	
 		
 	IDacc = image_ID(IDacc_name);
 	NBacc = data.image[IDacc].md[0].size[0];
@@ -2167,6 +2169,16 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 				fprintf(fpout, "%8ld  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f\n", iter, data.image[IDout].array.F[0], data.image[IDout].array.F[1], data.image[IDout].array.F[2], data.image[IDout].array.F[3], data.image[IDout].array.F[4], data.image[IDout].array.F[5]);
 				fclose(fpout);
 			}
+		
+		if(initOK==0)
+			{
+				for(kk=0;kk<NBacc;kk++)
+					valarrayave[kk] = data.image[IDacc].array.F[kk];
+				valarrayave[NBacc] = data.image[IDttpos].array.F[0];
+				valarrayave[NBacc+1] = data.image[IDttpos].array.F[1];
+				initOK = 1;
+			}
+		
 		
 		for(kk=0;kk<NBacc;kk++)
 			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*data.image[IDacc].array.F[kk];
