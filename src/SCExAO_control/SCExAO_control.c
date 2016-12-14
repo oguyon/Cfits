@@ -199,6 +199,19 @@ int SCExAOcontrol_vib_ComputeCentroid_cli()
 
 
 
+int SCExAOcontrol_vib_mergeData_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+    {
+        SCExAOcontrol_vib_mergeData(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 
 
 
@@ -296,8 +309,17 @@ int init_SCExAO_control()
     data.cmd[data.NBcmd].fp = SCExAOcontrol_vib_ComputeCentroid_cli;
     strcpy(data.cmd[data.NBcmd].info, "compute centroid of image stream");
     strcpy(data.cmd[data.NBcmd].syntax, "<input stream> <dark image> <output stream>");
-    strcpy(data.cmd[data.NBcmd].example, "measure centroid of stream");
+    strcpy(data.cmd[data.NBcmd].example, "scexaostreamcentr");
     strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char *IDout_name)");
+    data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key, "scexaovibmerge");
+    strcpy(data.cmd[data.NBcmd].module, __FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_vib_mergeData_cli;
+    strcpy(data.cmd[data.NBcmd].info, "merge accelerometer and position data");
+    strcpy(data.cmd[data.NBcmd].syntax, "<acc stream> <pos stream> <output stream>");
+    strcpy(data.cmd[data.NBcmd].example, "scexaovibmerge acc pos out");
+    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name)");
     data.NBcmd++;
 
 
@@ -2082,8 +2104,66 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name)
 {
 	long IDout;
+	long IDacc;
+	long IDttpos;
+	long semtrig = 2;
+	long NBacc;
+	float gain = 0.001; // drive measurement back to zero... slow loop	
+	float *valarray;
+	float *valarrayave;
+	long kk;
+		
+	long *sizearray;
+		
+		
+	IDacc = image_ID(IDacc_name);
+	NBacc = data.image[IDacc].md[0].size[0];
+	
+	IDttpos = image_ID(IDttpos_name);
 	
 	
+	valarray = (float*) malloc(sizeof(float)*(NBacc+2));
+	valarrayave = (float*) malloc(sizeof(float)*(NBacc+2));
+
+
+   // create output
+    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray[0] = NBacc+2;
+    sizearray[1] = 1;
+    IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
+    free(sizearray);
+
+	
+	
+	
+	 // drive semaphore to zero
+    while(sem_trywait(data.image[IDacc].semptr[semtrig])==0) {}
+	
+	
+	while(1)
+	{
+		sem_wait(data.image[IDacc].semptr[semtrig]);
+		
+		for(kk=0;kk<NBacc;kk++)
+			valarray[kk] = data.image[IDacc].array.F[kk] - valarrayave[kk]; 
+		valarray[NBacc] = data.image[IDttpos].array.F[0] - valarrayave[NBacc];
+		valarray[NBacc+1] = data.image[IDttpos].array.F[0] - valarrayave[NBacc+1];
+		
+		data.image[IDout].md[0].write = 1;
+		for(kk=0;kk<NBacc+2;kk++)
+			data.image[IDout].array.F[kk] = valarray[kk];
+        COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+        data.image[IDout].md[0].cnt0 ++;
+        data.image[IDout].md[0].write = 0;
+  
+		for(kk=0;kk<NBacc+2;kk++)
+			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*valarray[kk];
+		
+	}
+	
+	free(valarray);
+	free(valarrayave);
 	
 	return IDout;
 }
