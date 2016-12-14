@@ -2289,10 +2289,8 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		
 		if(mode==1)
 			{
-				for(kk=0;kk<NBacc;kk++)
-					data.image[IDoutC].array.F[iter*(NBacc+2)+kk] = data.image[IDacc].array.F[kk]*accFactor;
-				data.image[IDoutC].array.F[iter*(NBacc+2)+NBacc] = data.image[IDttpos].array.F[0];
-				data.image[IDoutC].array.F[iter*(NBacc+2)+NBacc+1] = data.image[IDttpos].array.F[1];
+				for(kk=0;kk<NBacc+2;kk++)
+					data.image[IDoutC].array.F[iter*(NBacc+2)+kk] = data.image[IDout].array.F[kk];
 			}
 		
 		if(initOK==0)
