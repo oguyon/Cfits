@@ -2125,11 +2125,13 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	float TTamp = 0.1;
 	long NBpt = 1200;
+	long iter0;
+	long NBpt0 = 1200; // warm up
 	long ii;
 
 	float TTx, TTy;
 
-
+	
 		
 	
 	IDacc = image_ID(IDacc_name);
@@ -2152,6 +2154,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 
 	if(mode>0)
 		WriteFile = 1;
+		
 	
 	
 	if(WriteFile == 1)
@@ -2161,6 +2164,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
     while(sem_trywait(data.image[IDacc].semptr[semtrig])==0) {}
 	
 	iter = 0;
+	iter0 = 0;
 	TTx = 0.0;
 	TTy = 0.0;
 	while(iter<NBpt)
@@ -2210,7 +2214,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	
 	
-		if(WriteFile == 1)
+		if((WriteFile == 1)&&(iter0>NBpt0))
 			{
 				fpout = fopen("accpos.dat", "a");
 				fprintf(fpout, "%8ld  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f\n", iter, TTx, TTy, data.image[IDout].array.F[0], data.image[IDout].array.F[1], data.image[IDout].array.F[2], data.image[IDout].array.F[3], data.image[IDout].array.F[4], data.image[IDout].array.F[5]);
@@ -2233,8 +2237,15 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		valarrayave[NBacc+1] = (1.0-gain)*valarrayave[NBacc+1] + gain*data.image[IDttpos].array.F[1];
 	
 	
-		if(mode>0)
-			iter ++;
+		iter0++;
+		
+		
+		
+		if((mode>0)&&(iter0>NBpt0))
+			{
+				gain = 0.0;
+				iter ++;
+			}
 	}
 	TTx = 0.0;
 	TTy = 0.0;
