@@ -2238,7 +2238,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	        data.image[IDttpos].md[0].write = 1;
 			data.image[IDttpos].array.F[0] = TTx;
 			data.image[IDttpos].array.F[1] = TTy;
-			COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+			COREMOD_MEMORY_image_set_sempost_byID(IDttpos, -1);
 			data.image[IDttpos].md[0].cnt0 ++;
 			data.image[IDttpos].md[0].write = 0;
 		}
