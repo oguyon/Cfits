@@ -2123,7 +2123,15 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	int initOK = 0;
 	
+	float TTamp = 0.1;
+	long NBpt = 1200;
+	long ii;
+
+	float TTx, TTy;
+
+
 		
+	
 	IDacc = image_ID(IDacc_name);
 	NBacc = data.image[IDacc].md[0].size[0];
 	
@@ -2152,8 +2160,10 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	 // drive semaphore to zero
     while(sem_trywait(data.image[IDacc].semptr[semtrig])==0) {}
 	
-	
-	while(1)
+	iter = 0;
+	TTx = 0.0;
+	TTy = 0.0;
+	while(iter<NBpt)
 	{
 		sem_wait(data.image[IDacc].semptr[semtrig]);
 		
@@ -2168,11 +2178,34 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
         data.image[IDout].md[0].cnt0 ++;
         data.image[IDout].md[0].write = 0;
-
+        
+        if(mode==2)
+			{
+				if(iter==NBpt/4)
+					TTx = TTamp;
+				if(iter==NBpt/2)
+					TTx = -TTamp;
+				if(iter==3*NBpt/4)
+					TTx = -TTamp;
+			}
+	
+        if(mode==3)
+			{
+				if(iter==NBpt/4)
+					TTy = TTamp;
+				if(iter==NBpt/2)
+					TTy = -TTamp;
+				if(iter==3*NBpt/4)
+					TTy = -TTamp;
+			}
+	
+	
+	
+	
 		if(WriteFile == 1)
 			{
 				fpout = fopen("accpos.dat", "a");
-				fprintf(fpout, "%8ld  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f\n", iter, data.image[IDout].array.F[0], data.image[IDout].array.F[1], data.image[IDout].array.F[2], data.image[IDout].array.F[3], data.image[IDout].array.F[4], data.image[IDout].array.F[5]);
+				fprintf(fpout, "%8ld  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f\n", iter, TTx, TTy, data.image[IDout].array.F[0], data.image[IDout].array.F[1], data.image[IDout].array.F[2], data.image[IDout].array.F[3], data.image[IDout].array.F[4], data.image[IDout].array.F[5]);
 				fclose(fpout);
 			}
 		
@@ -2191,9 +2224,12 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		valarrayave[NBacc] = (1.0-gain)*valarrayave[NBacc] + gain*data.image[IDttpos].array.F[0];
 		valarrayave[NBacc+1] = (1.0-gain)*valarrayave[NBacc+1] + gain*data.image[IDttpos].array.F[1];
 	
-		iter ++;
 	
+		if(mode>0)
+			iter ++;
 	}
+	TTx = 0.0;
+	TTy = 0.0;
 	
 	free(valarray);
 	free(valarrayave);
