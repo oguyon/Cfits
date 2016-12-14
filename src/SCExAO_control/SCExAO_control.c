@@ -2141,6 +2141,9 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	int outTT = 0;
 	
 	
+	
+	printf("MODE = %d\n", mode);
+	
 	if(mode>1)
 	{
 		// connect to actuators
@@ -2148,6 +2151,10 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		if(ID_TTact != -1)
 			outTT = 1;
 	}
+	
+	printf("ID_TTact = %ld\n", ID_TTact);
+	fflush(stdout);
+	
 	
 	
 	
@@ -2235,12 +2242,12 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 		if(outTT==1)
 		{
-	        data.image[IDttpos].md[0].write = 1;
-			data.image[IDttpos].array.F[0] = TTx;
-			data.image[IDttpos].array.F[1] = TTy;
-			COREMOD_MEMORY_image_set_sempost_byID(IDttpos, -1);
-			data.image[IDttpos].md[0].cnt0 ++;
-			data.image[IDttpos].md[0].write = 0;
+	        data.image[ID_TTact].md[0].write = 1;
+			data.image[ID_TTact].array.F[0] = TTx;
+			data.image[ID_TTact].array.F[1] = TTy;
+			COREMOD_MEMORY_image_set_sempost_byID(ID_TTact, -1);
+			data.image[ID_TTact].md[0].cnt0 ++;
+			data.image[ID_TTact].md[0].write = 0;
 		}
 		
 	
