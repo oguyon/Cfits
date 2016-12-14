@@ -2148,7 +2148,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 		for(kk=0;kk<NBacc;kk++)
 			valarray[kk] = data.image[IDacc].array.F[kk] - valarrayave[kk]; 
 		valarray[NBacc] = data.image[IDttpos].array.F[0] - valarrayave[NBacc];
-		valarray[NBacc+1] = data.image[IDttpos].array.F[0] - valarrayave[NBacc+1];
+		valarray[NBacc+1] = data.image[IDttpos].array.F[1] - valarrayave[NBacc+1];
 		
 		data.image[IDout].md[0].write = 1;
 		for(kk=0;kk<NBacc+2;kk++)
@@ -2157,9 +2157,10 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
         data.image[IDout].md[0].cnt0 ++;
         data.image[IDout].md[0].write = 0;
   
-		for(kk=0;kk<NBacc+2;kk++)
-			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*valarray[kk];
-		
+		for(kk=0;kk<NBacc;kk++)
+			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*data.image[IDacc].array.F[kk];
+		valarrayave[NBacc] = (1.0-gain)*valarrayave[NBacc] + gain*data.image[IDttpos].array.F[0];
+		valarrayave[NBacc+1] = (1.0-gain)*valarrayave[NBacc+1] + gain*data.image[IDttpos].array.F[1];
 	}
 	
 	free(valarray);
