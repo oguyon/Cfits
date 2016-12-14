@@ -2138,13 +2138,15 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	float accFactor = 1000.0;
 	
 	long ID_TTact;
-		
+	int outTT = 0;
 	
 	
 	if(mode>1)
 	{
 		// connect to actuators
 		ID_TTact = image_ID("TToffload_modeval");
+		if(ID_TTact != -1)
+			outTT = 1;
 	}
 	
 	
@@ -2231,8 +2233,16 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 					TTy = 0.0;
 			}
 	
-	
-	
+		if(outTT==1)
+		{
+	        data.image[IDttpos].md[0].write = 1;
+			data.image[IDttpos].array.F[0] = TTx;
+			data.image[IDttpos].array.F[1] = TTy;
+			COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+			data.image[IDttpos].md[0].cnt0 ++;
+			data.image[IDttpos].md[0].write = 0;
+		}
+		
 	
 		if((WriteFile == 1)&&(iter0>NBpt0))
 			{
