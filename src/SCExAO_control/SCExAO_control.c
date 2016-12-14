@@ -2131,6 +2131,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 
 	float TTx, TTy;
 
+	char imname[200];
 	char fname[200];
 	long IDoutC;
 	
@@ -2160,8 +2161,8 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	if(mode==1)
 		{
 			NBpt = 14400;
-			sprintf(fname, "%sC", IDout_name);
-			IDoutC = create_3Dimage_ID(fname, NBacc+2, 1, NBpt);
+			sprintf(imname, "%sC", IDout_name);
+			IDoutC = create_3Dimage_ID(imname, NBacc+2, 1, NBpt);
 		}
 		
 	if(WriteFile == 1)
@@ -2266,6 +2267,13 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	free(valarray);
 	free(valarrayave);
+	
+	
+	if(mode==1)
+	{
+		sprintf(fname, "!%s.fits", imname);
+		save_fits(imname, fname);
+	}
 	
 	return IDout;
 }
