@@ -201,9 +201,9 @@ int SCExAOcontrol_vib_ComputeCentroid_cli()
 
 int SCExAOcontrol_vib_mergeData_cli()
 {
-	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
     {
-        SCExAOcontrol_vib_mergeData(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+        SCExAOcontrol_vib_mergeData(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else
@@ -317,9 +317,9 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].module, __FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_vib_mergeData_cli;
     strcpy(data.cmd[data.NBcmd].info, "merge accelerometer and position data");
-    strcpy(data.cmd[data.NBcmd].syntax, "<acc stream> <pos stream> <output stream>");
-    strcpy(data.cmd[data.NBcmd].example, "scexaovibmerge acc pos out");
-    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].syntax, "<acc stream> <pos stream> <output stream> <mode>");
+    strcpy(data.cmd[data.NBcmd].example, "scexaovibmerge acc pos out 0");
+    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name, int mode)");
     data.NBcmd++;
 
 
@@ -2101,7 +2101,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 
 
 
-long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name)
+long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name, int mode)
 {
 	long IDout;
 	long IDacc;
