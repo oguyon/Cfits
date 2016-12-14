@@ -2100,7 +2100,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 
 
 // mode = 0: continuous acquisition
-// mode = 1: 1200 points acquisition
+// mode = 1: 14400 points acquisition (120 sec) -> FITS file
 // mode = 2: 1200 points acquisition, TT X calib
 // mode = 3: 1200 points acquisition, TT Y calib
 
@@ -2131,6 +2131,8 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 
 	float TTx, TTy;
 
+	char fname[200];
+	long IDoutC;
 	
 		
 	
@@ -2152,11 +2154,16 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
     free(sizearray);
 
-	if(mode>0)
+	if(mode>1)
 		WriteFile = 1;
 		
-	
-	
+	if(mode==1)
+		{
+			NBpt = 14400;
+			sprintf(fname, "%sC", IDout_name);
+			IDoutC = create_3Dimage_ID(fname, NBacc+2, 1, NBpt);
+		}
+		
 	if(WriteFile == 1)
 		fpout = fopen("accpos.dat", "w");
 	
@@ -2221,6 +2228,14 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 				fclose(fpout);
 			}
 		
+		if(mode==1)
+			{
+				for(kk=0;kk<NBacc;kk++)
+					data.image[IDoutC].array.F[iter*(NBacc+2)+kk] = data.image[IDacc].array.F[kk];
+				data.image[IDoutC].array.F[iter*(NBacc+2)+NBacc] = data.image[IDttpos].array.F[0];
+				data.image[IDoutC].array.F[iter*(NBacc+2)+NBacc+1] = data.image[IDttpos].array.F[1];
+			}
+		
 		if(initOK==0)
 			{
 				for(kk=0;kk<NBacc;kk++)
@@ -2238,7 +2253,6 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	
 		iter0++;
-		
 		
 		
 		if((mode>0)&&(iter0>NBpt0))
