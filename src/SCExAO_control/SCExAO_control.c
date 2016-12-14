@@ -2112,9 +2112,12 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	float *valarray;
 	float *valarrayave;
 	long kk;
-		
+	FILE *fpout;
+	int WriteFile = 1;
+	
 	long *sizearray;
-		
+	long iter = 0;	
+	
 		
 	IDacc = image_ID(IDacc_name);
 	NBacc = data.image[IDacc].md[0].size[0];
@@ -2135,7 +2138,8 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
     free(sizearray);
 
 	
-	
+	if(WriteFile == 1)
+		fpout = fopen("accpos.dat", "w");
 	
 	 // drive semaphore to zero
     while(sem_trywait(data.image[IDacc].semptr[semtrig])==0) {}
@@ -2156,11 +2160,21 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
         data.image[IDout].md[0].cnt0 ++;
         data.image[IDout].md[0].write = 0;
-  
+
+		if(WriteFile == 1)
+			{
+				fpout = fopen("accpos.dat", "a");
+				fprintf(fpout, "%8ld  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f  %+10.8f\n", iter, data.image[IDout].array.F[0], data.image[IDout].array.F[1], data.image[IDout].array.F[2], data.image[IDout].array.F[3], data.image[IDout].array.F[4], data.image[IDout].array.F[5]);
+				fclose(fpout);
+			}
+		
 		for(kk=0;kk<NBacc;kk++)
 			valarrayave[kk] = (1.0-gain)*valarrayave[kk] + gain*data.image[IDacc].array.F[kk];
 		valarrayave[NBacc] = (1.0-gain)*valarrayave[NBacc] + gain*data.image[IDttpos].array.F[0];
 		valarrayave[NBacc+1] = (1.0-gain)*valarrayave[NBacc+1] + gain*data.image[IDttpos].array.F[1];
+	
+		iter ++;
+	
 	}
 	
 	free(valarray);
