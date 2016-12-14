@@ -2099,7 +2099,10 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 
 
 
-
+// mode = 0: continuous acquisition
+// mode = 1: 1200 points acquisition
+// mode = 2: 1200 points acquisition, TT X calib
+// mode = 3: 1200 points acquisition, TT Y calib
 
 long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name, int mode)
 {
