@@ -2139,6 +2139,9 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
     free(sizearray);
 
+	if(mode>0)
+		WriteFile = 1;
+	
 	
 	if(WriteFile == 1)
 		fpout = fopen("accpos.dat", "w");
