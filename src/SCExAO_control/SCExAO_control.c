@@ -2063,6 +2063,17 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 		valx = valx/tot;
 		valy = valy/tot;
 
+		if(valx<0.0)
+			valx = 0.0;
+		if(valx>1.0*(xsize-1))
+			valx = 1.0*(xsize-1);
+			
+		if(valy<0.0)
+			valy = 0.0;
+		if(valy>1.0*(ysize-1))
+			valy = 1.0*(ysize-1);
+			
+
         data.image[IDout].md[0].write = 1;
 		data.image[IDout].array.F[0] = valx;
 		data.image[IDout].array.F[1] = valy;
@@ -2087,7 +2098,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 			jjend = ysize-1;
         
 
-		printf("tot = %20f    boxrad = %4ld\n", tot, boxrad);
+		printf("tot = %20f    boxrad = %4ld  %f %f\n", tot, boxrad, valx, valy);
 		if(tot<20000)
 			boxrad = 200;
 		else
@@ -2139,6 +2150,24 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	
 	long ID_TTact;
 	int outTT = 0;
+	
+	
+	
+	
+	
+	// CALIB NOTES
+	//
+	// imposX [pix]  =  -36.5  * TTx [V] 
+	// imposY [pix]  =   35.0  * TTy [V] 
+	//  
+	// lag X = 1.7 frame 
+	// lag Y = 1.9 frame
+	//
+	//
+	// gain = 35.75 pix / V
+	// delay = 1.8 frame
+	//
+	
 	
 	
 	
