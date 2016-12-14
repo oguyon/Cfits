@@ -2108,7 +2108,7 @@ long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDo
 	long IDttpos;
 	long semtrig = 2;
 	long NBacc;
-	float gain = 0.001; // drive measurement back to zero... slow loop	
+	float gain = 0.005; // drive measurement back to zero... slow loop	
 	float *valarray;
 	float *valarrayave;
 	long kk;
