@@ -4435,7 +4435,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     atype = data.image[IDin].md[0].atype;
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
 
-    COREMOD_MEMORY_image_set_createsem(IDoutname, 4);
+    COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
 
     switch ( atype ) {
     case CHAR:
@@ -4478,9 +4478,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
         
-        sem_getvalue(data.image[IDout].semptr[0], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[IDout].semptr[0]);
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
 
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
