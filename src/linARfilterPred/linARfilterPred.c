@@ -1491,19 +1491,19 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 
 
 //
-// IDmodevalOL_name : open loop modal coefficients
-// IndexOffset      : predicted mode start at this OL index 
-// semtrig          : semaphore trigger index in OL input
+// IDmodevalIN_name : open loop modal coefficients
+// IndexOffset      : predicted mode start at this input index 
+// semtrig          : semaphore trigger index in input input
 // IDPFM_name       : predictive filter matrix
 // IDPFout_name     : prediction
 // 
-long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
+long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
 {
-	long IDmodevalOL;
-	long NBmodeIN, NBmodeOUT, modeOUT;
+	long IDmodevalIN;
+	long NBmodeIN, NBmodeOUT, mode;
 	long IDPFM;
 	
-	long IDOLbuff;
+	long IDINbuff;
 	long tstep;
 	long *sizearray;
 	long naxis;
@@ -1521,8 +1521,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 
 
 	
-	IDmodevalOL = image_ID(IDmodevalOL_name);
-	NBmodeIN = data.image[IDmodevalOL].md[0].size[0]; // NBinput
+	IDmodevalIN = image_ID(IDmodevalIN_name);
+	NBmodeIN = data.image[IDmodevalIN].md[0].size[0]; // NBinput
 	
 	IDPFM = image_ID(IDPFM_name);
 	NBmodeOUT = data.image[IDPFM].md[0].size[1]; 
@@ -1532,9 +1532,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 	printf("Number of output modes = %ld\n", NBmodeOUT);
 	printf("Number of time steps   = %ld\n", NBPFstep);
 	
-	exit(0);
 	
-	IDOLbuff = create_2Dimage_ID("OLbuffer", NBmodeOUT, NBPFstep);
+	
+	IDINbuff = create_2Dimage_ID("INbuffer", NBmodeIN, NBPFstep);
 	
 	sizearray = (long*) malloc(sizeof(long)*2);
 	sizearray[0] = NBmodeOUT;
@@ -1568,15 +1568,17 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 				printf(" %d", GPUsetPF[gpuindex]);
 			printf("\n\n"); 
 		}
+	else
+		printf("Using CPU\n");
 	
 	
 	while(1==1)
 	{
-		sem_wait(data.image[IDmodevalOL].semptr[semtrig]);
+		sem_wait(data.image[IDmodevalIN].semptr[semtrig]);
 		
 		// fill in buffer
-		for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
-			data.image[IDOLbuff].array.F[modeOUT] = data.image[IDmodevalOL].array.F[IndexOffset + modeOUT];
+		for(mode=0; mode<NBmodeIN; mode++)
+			data.image[IDINbuff].array.F[mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 
 
 		if(nbGPU>0)
@@ -1591,11 +1593,11 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 		{
 			// compute output : matrix vector mult
 			data.image[IDPFout].md[0].write = 1;
-			for(modeOUT=0;modeOUT<NBmodeOUT;modeOUT++)
+			for(mode=0;mode<NBmodeOUT;mode++)
 			{
-				data.image[IDPFout].array.F[modeOUT] = 0.0;
-				for(ii=0;ii<NBmodeOUT*NBPFstep;ii++)
-					data.image[IDPFout].array.F[modeOUT] += data.image[IDOLbuff].array.F[ii] * data.image[IDPFM].array.F[modeOUT*data.image[IDPFM].md[0].size[0]+ii];
+				data.image[IDPFout].array.F[mode] = 0.0;
+				for(ii=0;ii<NBmodeIN*NBPFstep;ii++)
+					data.image[IDPFout].array.F[mode] += data.image[IDINbuff].array.F[ii] * data.image[IDPFM].array.F[mode*data.image[IDPFM].md[0].size[0]+ii];
 			}
 			COREMOD_MEMORY_image_set_sempost_byID(IDPFout, -1);
 			data.image[IDPFout].md[0].write = 0;
@@ -1606,8 +1608,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, 
 		for(tstep=NBPFstep-1; tstep>0; tstep--)
 			{
 				// tstep-1 -> tstep
-				for(modeOUT=0; modeOUT<NBmodeOUT; modeOUT++)
-					data.image[IDOLbuff].array.F[NBmodeOUT*tstep + modeOUT] = data.image[IDOLbuff].array.F[NBmodeOUT*(tstep-1) + modeOUT];
+				for(mode=0; mode<NBmodeIN; mode++)
+					data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
 			}
 		
 	}
