@@ -1670,18 +1670,18 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	}
 	
 	// output ASCII file
-	
-	fpout = fopen("testPFsave.dat", "w");
-	for(iter=0;iter<NBiter;iter++)
+	if(SAVEMODE == 1)
 	{
-		fprintf(fpout, "%5ld ", iter);
-		for(kk=0;kk<1+NBmodeIN+NBmodeOUT;kk++)
-			fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] );
-		fprintf(fpout, "\n");
-		
+		fpout = fopen("testPFsave.dat", "w");
+		for(iter=0;iter<NBiter;iter++)
+		{
+			fprintf(fpout, "%5ld ", iter);
+			for(kk=0;kk<(1+NBmodeIN+NBmodeOUT);kk++)
+				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] );
+			fprintf(fpout, "\n");
+		}
+		fclose(fpout);
 	}
-	fclose(fpout);
-	
 	
 	return(IDPFout);
 }
