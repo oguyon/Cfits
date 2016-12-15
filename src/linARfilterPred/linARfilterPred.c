@@ -1551,8 +1551,10 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	NBinmaskpix = 0;
 	for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
 		if(data.image[IDinmask].array.F[ii] > 0.5)
-			inmaskindex[NBinmaskpix] = ii;
- 	
+			{
+				inmaskindex[NBinmaskpix] = ii;
+				NBinmaskpix++;
+			}
 	
 	printf("Number of input modes  = %ld\n", NBmodeIN);
 	printf("Number of output modes = %ld\n", NBmodeOUT);
