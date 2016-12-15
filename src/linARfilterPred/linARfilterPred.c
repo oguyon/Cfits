@@ -1519,7 +1519,17 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
     FILE *fp;
 	int ret;
 
-
+	time_t t;
+    struct tm *uttime;
+    struct timespec timenow;
+	double timesec, timesec0;
+	long IDsave;
+	
+	FILE *fpout;
+	long iter;
+	long kk;
+	
+	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
 	NBmodeIN = data.image[IDmodevalIN].md[0].size[0]; // NBinput
@@ -1572,7 +1582,28 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		printf("Using CPU\n");
 	
 	
-	while(1==1)
+	
+	
+	
+
+
+	iter = 0;
+	if(SAVEMODE==1)
+		if(NBiter>10000)
+			NBiter=10000;
+		
+		
+	if(SAVEMODE == 1)
+		IDsave = create_2Dimage_ID("testPFsave", 1+NBmodeIN+NBmodeOUT, NBiter);
+	
+	t = time(NULL);
+    uttime = gmtime(&t);			
+	clock_gettime(CLOCK_REALTIME, &timenow);
+	timesec0 = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;
+ 
+	
+
+	while(iter!=NBiter)
 	{
 		sem_wait(data.image[IDmodevalIN].semptr[semtrig]);
 		
@@ -1585,7 +1616,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		{
 	
 			#ifdef HAVE_CUDA
-			GPU_loop_MultMat_setup(4, IDPFM_name, "OLbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
+			GPU_loop_MultMat_setup(4, IDPFM_name, "INbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
 			GPU_loop_MultMat_execute(4, &status, &GPUstatus[0], 1.0, 0.0, 1);
 			#endif
 		}
@@ -1603,6 +1634,30 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			data.image[IDPFout].md[0].write = 0;
 			data.image[IDPFout].md[0].cnt0++;
 		}
+		
+		if(SAVEMODE == 1)
+			{
+				t = time(NULL);
+                uttime = gmtime(&t);
+				clock_gettime(CLOCK_REALTIME, &timenow);
+				timesec = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;
+				
+				kk = 0;
+				data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT)] = (float) (timesec - timesec0);
+				kk++;
+				for(mode=0;mode<NBmodeIN;mode++)
+					{
+						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
+						kk++;
+					}
+				for(mode=0;mode<NBmodeOUT;mode++)
+					{
+						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDPFout].array.F[mode];
+						kk++;
+					}
+				
+			}
+		
 	
 		// do this now to save time when semaphore is posted
 		for(tstep=NBPFstep-1; tstep>0; tstep--)
@@ -1611,8 +1666,20 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				for(mode=0; mode<NBmodeIN; mode++)
 					data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
 			}
+		iter++;
+	}
+	
+	// output ASCII file
+	
+	fpout = fopen("testPFsave.dat", "w");
+	for(iter=0;iter<NBiter;iter++)
+	{
+		for(kk=0;kk<1+NBmodeIN+NBmodeOUT;kk++)
+			fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] );
+		fprintf(fpout, "\n");
 		
 	}
+	fclose(fpout);
 	
 	
 	return(IDPFout);
