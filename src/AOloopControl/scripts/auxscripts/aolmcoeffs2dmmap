@@ -127,6 +127,7 @@ readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
+listim
 aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
@@ -140,6 +141,7 @@ readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
+listim
 aolmc2dmfilt aol${loopnb}_modeval_dm_now_filt DMmodes 2 ${OUTCNAME} $1 ${loopnb} $OFFLOADMODE
 exit
 EOF
