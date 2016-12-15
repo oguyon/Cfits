@@ -125,6 +125,7 @@ readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
+listim
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
 listim
@@ -139,6 +140,7 @@ readshmim aol${loopnb}_modeval_dm_now_filt
 loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 readshmim aol${loopnb}_dmC
 im1=0+aol${loopnb}_dmC
+listim
 readshmim ${OUTCNAME}
 cpsh im1 ${OUTCNAME}
 listim
