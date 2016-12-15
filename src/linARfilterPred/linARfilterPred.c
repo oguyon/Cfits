@@ -1542,28 +1542,38 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	NBPFstep = data.image[IDPFM].md[0].size[0]/NBmodeIN; 
 	
 	IDinmask = image_ID("inmask");
-	NBinmaskpix = 0;
-	for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
-		if(data.image[IDinmask].array.F[ii] > 0.5)
-			NBinmaskpix ++;
+	if(IDinmask!=-1)
+	{	
+		NBinmaskpix = 0;
+		for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
+			if(data.image[IDinmask].array.F[ii] > 0.5)
+				NBinmaskpix ++;
 			
-	inmaskindex = (long*) malloc(sizeof(long)*NBinmaskpix);
-	NBinmaskpix = 0;
-	for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
-		if(data.image[IDinmask].array.F[ii] > 0.5)
-			{
-				inmaskindex[NBinmaskpix] = ii;
-				NBinmaskpix++;
-			}
+		inmaskindex = (long*) malloc(sizeof(long)*NBinmaskpix);
+		NBinmaskpix = 0;
+		for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
+			if(data.image[IDinmask].array.F[ii] > 0.5)
+				{
+					inmaskindex[NBinmaskpix] = ii;
+					NBinmaskpix++;
+				}
+		printf("Number of active input modes  = %ld\n", NBinmaskpix);
+	}
+	else
+	{
+		NBinmaskpix = NBmodeIN;
+		inmaskindex = (long*) malloc(sizeof(long)*NBinmaskpix);
+		for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
+			inmaskindex[NBinmaskpix] = ii;
+	}
 	
 	printf("Number of input modes  = %ld\n", NBmodeIN);
 	printf("Number of output modes = %ld\n", NBmodeOUT);
 	printf("Number of time steps   = %ld\n", NBPFstep);
 
-	printf("Number of active input modes  = %ld\n", NBinmaskpix);
 
-	list_image_ID();
-	exit(0);
+	NBmodeIN = NBinmaskpix;
+	
 	
 	IDINbuff = create_2Dimage_ID("INbuffer", NBmodeIN, NBPFstep);
 	
@@ -1630,7 +1640,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		
 		// fill in buffer
 		for(mode=0; mode<NBmodeIN; mode++)
-			data.image[IDINbuff].array.F[mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
+			data.image[IDINbuff].array.F[mode] = data.image[IDmodevalIN].array.F[IndexOffset + inmaskindex[mode]];
 
 
 		if(nbGPU>0)
@@ -1668,7 +1678,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				kk++;
 				for(mode=0;mode<NBmodeIN;mode++)
 					{
-						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
+						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + inmaskindex[mode]];
 						kk++;
 					}
 				for(mode=0;mode<NBmodeOUT;mode++)
