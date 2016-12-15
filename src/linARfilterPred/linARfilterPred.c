@@ -105,7 +105,7 @@ int LINARFILTERPRED_Build_LinPredictor_cli()
   return(0);
 }
 
-int LINARFILTERPRED_Apply_LinPredictor_RT_cli()
+/*int LINARFILTERPRED_Apply_LinPredictor_RT_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
 		LINARFILTERPRED_Apply_LinPredictor_RT(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
@@ -113,7 +113,7 @@ int LINARFILTERPRED_Apply_LinPredictor_RT_cli()
 		return 1;
 		
 	return(0);
-}
+}*/
 
 int LINARFILTERPRED_Apply_LinPredictor_cli()
 {
@@ -149,10 +149,10 @@ int LINARFILTERPRED_PF_updatePFmatrix_cli()
 
 
 //long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name);
-int LINARFILTERPRED_PF_RealTimeApply_GPU_cli()
+int LINARFILTERPRED_PF_RealTimeApply_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0)
-		LINARFILTERPRED_PF_RealTimeApply_GPU(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
+		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
 	else
        return 1;
 
@@ -203,7 +203,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].Ccall,"int LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF, int outMode, int LOOPmode, float LOOPgain)");
     data.NBcmd++;
 
-    strcpy(data.cmd[data.NBcmd].key,"applyPfiltRT");
+  /*  strcpy(data.cmd[data.NBcmd].key,"applyPfiltRT");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = LINARFILTERPRED_Apply_LinPredictor_RT_cli;
     strcpy(data.cmd[data.NBcmd].info,"Apply real-time linear predictive filter");
@@ -211,6 +211,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].example,"applyPfiltRT indata Pfilt outPF");
     strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name)");
     data.NBcmd++;
+*/
 
     strcpy(data.cmd[data.NBcmd].key,"applyARpfilt");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -241,12 +242,12 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha)");
     data.NBcmd++;
 
-	strcpy(data.cmd[data.NBcmd].key,"linARApplyRT");
+	strcpy(data.cmd[data.NBcmd].key,"linARapplyRT");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_GPU_cli;
+    data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_cli;
     strcpy(data.cmd[data.NBcmd].info,"Real-time apply predictive filter");
     strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream> <nbGPU> <loop>");
-    strcpy(data.cmd[data.NBcmd].example,"linARApplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0");
+    strcpy(data.cmd[data.NBcmd].example,"linARapplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)");
     data.NBcmd++;
 
@@ -1434,6 +1435,7 @@ float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag)
 }
 
 
+
 //
 // IDPF_name and IDPFM_name should be pre-loaded
 //
@@ -1487,6 +1489,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 }
 
 
+
 //
 // IDmodevalOL_name : open loop modal coefficients
 // IndexOffset      : predicted mode start at this OL index 
@@ -1494,10 +1497,10 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 // IDPFM_name       : predictive filter matrix
 // IDPFout_name     : prediction
 // 
-long LINARFILTERPRED_PF_RealTimeApply_GPU(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
+long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop)
 {
 	long IDmodevalOL;
-	long NBmodeOL, NBmodeOUT, modeOUT;
+	long NBmodeIN, NBmodeOUT, modeOUT;
 	long IDPFM;
 	
 	long IDOLbuff;
@@ -1519,10 +1522,17 @@ long LINARFILTERPRED_PF_RealTimeApply_GPU(char *IDmodevalOL_name, long IndexOffs
 
 	
 	IDmodevalOL = image_ID(IDmodevalOL_name);
-	NBmodeOL = data.image[IDmodevalOL].md[0].size[0];
+	NBmodeIN = data.image[IDmodevalOL].md[0].size[0]; // NBinput
 	
 	IDPFM = image_ID(IDPFM_name);
 	NBmodeOUT = data.image[IDPFM].md[0].size[1]; 
+	NBPFstep = data.image[IDPFM].md[0].size[0]/NBmodeIN; 
+	
+	printf("Number of input modes  = %ld\n", NBmodeIN);
+	printf("Number of output modes = %ld\n", NBmodeOUT);
+	printf("Number of time steps   = %ld\n", NBPFstep);
+	
+	exit(0);
 	
 	IDOLbuff = create_2Dimage_ID("OLbuffer", NBmodeOUT, NBPFstep);
 	
