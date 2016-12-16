@@ -1819,8 +1819,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			{
 				if(ii1<NBiter)
 				{
-					val0 = data.image[IDsave].array.F[ii0*NBmodeIN0 + outmaskindex[mode]];
-					val1 = data.image[IDsave].array.F[ii1*NBmodeIN0 + outmaskindex[mode]];
+					val0 = data.image[IDmodevalIN].array.F[ii0*NBmodeIN0 + outmaskindex[mode]];
+					val1 = data.image[IDmodevalIN].array.F[ii1*NBmodeIN0 + outmaskindex[mode]];
 				}
 				val = (1.0-tlagalpha)*val0 + tlagalpha*val1;
 				fprintf(fpout, "%10f ", val);
@@ -1852,8 +1852,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 										
 					for(mode=0;mode<NBmodeOUT;mode++)
 						{
-							val0 = data.image[IDsave].array.F[kk0*NBmodeIN0 + outmaskindex[mode]];
-							val1 = data.image[IDsave].array.F[kk1*NBmodeIN0 + outmaskindex[mode]];
+							val0 = data.image[IDmodevalIN].array.F[kk0*NBmodeIN0 + outmaskindex[mode]];
+							val1 = data.image[IDmodevalIN].array.F[kk1*NBmodeIN0 + outmaskindex[mode]];
 							val = tlagalpha*val0 + (1.0-tlagalpha)*val1;
 							
 							data.image[IDsave].array.F[kk*NBmodeIN0 + outmaskindex[mode]] = val;							
