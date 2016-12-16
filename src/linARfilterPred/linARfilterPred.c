@@ -1594,7 +1594,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	printf("Number of output modes        = %ld\n", NBmodeOUT);
 	printf("Number of time steps          = %ld\n", NBPFstep);
 
-	if(SAVEMODE==2)
+	if(SAVEMODE>0)
 	{
 		IDoutmask = image_ID("outmask");
 		if(IDoutmask == -1)
