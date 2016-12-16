@@ -1217,9 +1217,6 @@ void *compute_function( void *ptr )
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
 
-	printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
-	
-
 
     if(gpumatmultconf[index].sem==1)
         itermax = -1;
@@ -1229,6 +1226,10 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
+		printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+
+		
+		
         // copy DM reference to output to prepare computation:   d_dmVec <- d_dmRef
         error = cudaMemcpy(gpumatmultconf[index].d_dmVec[device], gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M, cudaMemcpyDeviceToDevice);
         if (error != cudaSuccess)
