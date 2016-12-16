@@ -1614,7 +1614,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				}
 		if(NBoutmaskpix != NBmodeOUT)
 			{
-				printf("ERROR: NBoutmaskpix != NBmodeOUT\n");
+				printf("ERROR: NBoutmaskpix (%ld)   !=   NBmodeOUT (%ld)\n", NBoutmaskpix, NBmodeOUT);
 				exit(0);
 			}
 	}
