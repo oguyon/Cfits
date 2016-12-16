@@ -1675,7 +1675,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				timesec = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;
 				
 				kk = 0;
-				data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT)] = (float) (timesec - timesec0);
+				data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT)] = (float) (timesec - timesec0);
 				kk++;
 				for(mode=0;mode<NBmodeIN0;mode++)
 					{
