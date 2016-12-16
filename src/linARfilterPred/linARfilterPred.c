@@ -1868,12 +1868,13 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 							data.image[IDsave].array.F[kk*NBmodeIN0 + outmaskindex[mode]] = val;							
 						}
 				}
-		
-			free(outmaskindex);
 
 			save_fits("testPFTout", "!testPFTout.fits");			
 		}
 	
+	
+	if(SAVEMODE>0)
+		free(outmaskindex);
 	
 	
 	return(IDPFout);
