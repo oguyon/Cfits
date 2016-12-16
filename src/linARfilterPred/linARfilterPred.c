@@ -1819,19 +1819,21 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] );
 				
 		
-			ii0 = (long) tlag;
-			tlagalpha = tlag - ii0;
-			ii1 = ii0+1;				
-			ii0 += iter;
-			ii1 += iter;
+		
+			tlag0 = (long) tlag;
+			tlagalpha = tlag-tlag0;
+			
+			ii0 = iter - (tlag0+1);
+			ii1 = iter - (tlag0);				
+			
 			for(mode=0;mode<NBmodeOUT;mode++)
 			{
-				if(ii1<NBiter)
+				if(ii0<-1)
 				{
 					val0 = data.image[IDsave].array.F[ii0*(1+NBmodeIN0+NBmodeOUT) + 1+NBmodeIN0+mode];
 					val1 = data.image[IDsave].array.F[ii1*(1+NBmodeIN0+NBmodeOUT) + 1+NBmodeIN0+mode];
 				}
-				val = (1.0-tlagalpha)*val0 + tlagalpha*val1;
+				val = tlagalpha*val0 + (1.0-tlagalpha)*val1;
 				fprintf(fpout, "%10f ", val);
 			}
 			fprintf(fpout, "\n");
