@@ -1746,7 +1746,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDPFout].array.F[mode];
 						kk++;
 					}
-				printf(" done\n")
+				printf(" done\n");
 				fflush(stdout);
 			}
 		if(SAVEMODE == 2)
@@ -1758,7 +1758,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 					data.image[IDsave].array.F[iter*NBmodeIN0 + mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 				for(mode=0;mode<NBmodeOUT;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + outmaskindex[mode]] = data.image[IDPFout].array.F[mode];
-				printf(" done\n")
+				printf(" done\n");
 				fflush(stdout);
 			}
 	
@@ -1776,7 +1776,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						for(mode=0; mode<NBmodeIN; mode++)
 							data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
 					}
-				printf(" done\n")
+				printf(" done\n");
 				fflush(stdout);
 			}
 	}
