@@ -1550,7 +1550,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	long NBoutmaskpix;
 	long kk0, kk1;
 	float val, val0, val1;
-	
+	long ii0, ii1;
 	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
