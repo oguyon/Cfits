@@ -1500,9 +1500,10 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 //  NBiter: run for fixed number of itearationg
 //  SAVEMODE:   0 no file output
 //  			1	write txt and FITS output
-//				2	write FITS telemetry with prediction
+//				2	write FITS telemetry with prediction: replace output measurements with predictions
 // 
 //	tlag is only used if SAVEMODE = 2	
+//  used outmask to identify outputs 
 //
 long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag)
 {
@@ -1539,6 +1540,17 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	long IDinmask;
 	long *inmaskindex;
 	long NBinmaskpix;
+	
+	
+	long tlag0;
+	float tlagalpha = 0.0;
+
+	long IDoutmask;
+	long *outmaskindex;
+	long NBoutmaskpix;
+	long kk0, kk1;
+	float val, val0, val1;
+	
 	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
@@ -1579,7 +1591,33 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	printf("Number of output modes        = %ld\n", NBmodeOUT);
 	printf("Number of time steps          = %ld\n", NBPFstep);
 
-
+	if(SAVEMODE==2)
+	{
+		IDoutmask = image_ID("outmask");
+		if(IDoutmask == -1)
+			{
+				printf("ERROR: SAVEMODE 2 requires outmask image\n");
+				exit(0);
+			}
+		NBoutmaskpix = 0;
+		for(ii=0;ii<data.image[IDoutmask].md[0].size[0];ii++)
+			if(data.image[IDoutmask].array.F[ii] > 0.5)
+				NBoutmaskpix ++;
+			
+		outmaskindex = (long*) malloc(sizeof(long)*NBoutmaskpix);
+		NBoutmaskpix = 0;
+		for(ii=0;ii<data.image[IDoutmask].md[0].size[0];ii++)
+			if(data.image[IDoutmask].array.F[ii] > 0.5)
+				{
+					outmaskindex[NBoutmaskpix] = ii;
+					NBoutmaskpix++;
+				}
+		if(NBoutmaskpix != NBmodeOUT)
+			{
+				printf("ERROR: NBoutmaskpix != NBmodeOUT\n");
+				exit(0);
+			}
+	}
 
 	
 	
@@ -1694,7 +1732,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 					}
 				for(mode=0;mode<NBmodeOUT;mode++)
 					{
-						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDPFout].array.F[IndexOffset + mode];
+						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDPFout].array.F[mode];
 						kk++;
 					}
 				
@@ -1703,6 +1741,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			{
 				for(mode=0;mode<NBmodeIN0;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
+				for(mode=0;mode<NBmodeOUT;mode++)
+					data.image[IDsave].array.F[iter*NBmodeIN0 + outmaskindex[mode]] = data.image[IDPFout].array.F[mode];
 			}
 	
 		// do this now to save time when semaphore is posted
@@ -1730,6 +1770,32 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	}
 	
 	free(inmaskindex);
+	
+	
+	if(SAVEMODE==2) // time shift predicted output
+		{
+			tlag0 = (long) tlag;
+			tlagalpha = tlag-tlag0;
+			for(kk=NBiter-1; kk>tlag0; kk--)
+				{
+					kk0 = kk-(tlag0+1);
+					kk1 = kk-(tlag0);
+										
+					for(mode=0;mode<NBmodeOUT;mode++)
+						{
+							val0 = data.image[IDsave].array.F[kk0*NBmodeIN0 + outmaskindex[mode]];
+							val1 = data.image[IDsave].array.F[kk1*NBmodeIN0 + outmaskindex[mode]];
+							val = tlagalpha*val0 + (1.0-tlagalpha)*val1;
+							
+							data.image[IDsave].array.F[kk*NBmodeIN0 + outmaskindex[mode]] = val;							
+						}
+				}
+		
+			free(outmaskindex);
+			
+		}
+	
+	
 	
 	return(IDPFout);
 }
