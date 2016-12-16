@@ -1792,6 +1792,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	// output ASCII file
 	if(SAVEMODE == 1)
 	{
+		printf("SAVING DATA [1] ...");
+		fflush(stdout);
+		
 		fpout = fopen("testPFsave.dat", "w");
 		for(iter=0;iter<NBiter;iter++)
 		{
@@ -1801,6 +1804,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			fprintf(fpout, "\n");
 		}
 		fclose(fpout);
+	
+		printf(" done\n");
+		fflush(stdout);
 	}
 	
 	free(inmaskindex);
