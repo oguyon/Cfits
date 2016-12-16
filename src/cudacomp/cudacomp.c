@@ -927,6 +927,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
+	// flush semaphores
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
         sem_getvalue(gpumatmultconf[index].semptr1[ptn], &semval);
@@ -960,9 +961,9 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
 
-    if((index==0)||(index==2)) /// main CM multiplication loop
-    {
-        //	gpumatmultconf[index].NBstreams = 6;
+//    if((index==0)||(index==2)) /// main CM multiplication loop
+//    {
+
         if(gpumatmultconf[index].CM_cnt != data.image[gpumatmultconf[index].CM_ID].md[0].cnt0)
             if(data.image[gpumatmultconf[index].CM_ID].md[0].write == 0)
             {
@@ -970,7 +971,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
                 GPUloadCmat(index);
                 gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
             }
-    }
+ //   }
 
 
 
@@ -1203,16 +1204,21 @@ void *compute_function( void *ptr )
     *ptrstat = 1;
 
 
-
+	
+	
+	
     ptr0 = (char*) gpumatmultconf[index].wfsVec;
     ptr0 += sizeof(float)*gpumatmultconf[index].Noffset[device];
     ptr0f = (float*) ptr0;
 
     if((index==0)||(index==2))
-        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);    
+        cudaSetDevice(gpumatmultconf[index].GPUdevice[device]);
 
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
+
+	printf("gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+	
 
 
     if(gpumatmultconf[index].sem==1)
@@ -1236,7 +1242,7 @@ void *compute_function( void *ptr )
         if(gpumatmultconf[index].sem==1)
         {
             sem_wait(gpumatmultconf[index].semptr1[device]);
-            
+
             if(FORCESEMINIT==1)
             {
                 sem_getvalue(gpumatmultconf[index].semptr1[device], &semval);
@@ -1270,13 +1276,13 @@ void *compute_function( void *ptr )
 
             printf("%d  device %d (GPU %d): compute reference product\n", index, device, gpumatmultconf[index].GPUdevice[device]);
             fflush(stdout);
- 
-//            alphatmp = cublasSgemv_alpha;
-//            betatmp = cublasSgemv_beta;
 
-        // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOID LOOP PAUSE ??
-    //        cublasSgemv_alpha = 1.0;
-    //        cublasSgemv_beta = 0.0;
+            //            alphatmp = cublasSgemv_alpha;
+            //            betatmp = cublasSgemv_beta;
+
+            // MOVE THIS TO CPU AS A SEPARATE THREAD TO AVOID LOOP PAUSE ??
+            //        cublasSgemv_alpha = 1.0;
+            //        cublasSgemv_beta = 0.0;
             alpharef = 1.0;
             betaref = 0.0;
             stat = cublasSgemv(gpumatmultconf[index].handle[device], CUBLAS_OP_N, gpumatmultconf[index].M, gpumatmultconf[index].Nsize[device], &alpharef, gpumatmultconf[index].d_cMat[device], gpumatmultconf[index].M, gpumatmultconf[index].d_wfsVec[device], 1, &betaref, gpumatmultconf[index].d_dmRef[device], 1);
@@ -1291,26 +1297,26 @@ void *compute_function( void *ptr )
                 if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");			
-                    
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+
                 printf("device %d of index %d\n", device, index);
-				printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
-				
-				printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
-				printf("alpha                               = %f\n", alpharef);
- 				printf("alpha                               = %f\n", betaref);
- 				printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
- 				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
+
+                printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
+                printf("alpha                               = %f\n", alpharef);
+                printf("alpha                               = %f\n", betaref);
+                printf("gpumatmultconf[index].M             = %d\n", gpumatmultconf[index].M);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
                 fflush(stdout);
                 exit(EXIT_FAILURE);
             }
-  //          cublasSgemv_alpha = alphatmp;
-  //          cublasSgemv_beta = betatmp;
+            //          cublasSgemv_alpha = alphatmp;
+            //          cublasSgemv_beta = betatmp;
 
             gpumatmultconf[index].refWFSinit[device] = 1;
 
 
-           if(gpumatmultconf[index].sem==1)
+            if(gpumatmultconf[index].sem==1)
                 sem_post(gpumatmultconf[index].semptr3[device]);
 
             *ptrstat = 5; // transfer result
@@ -1319,11 +1325,11 @@ void *compute_function( void *ptr )
             {
                 sem_wait(gpumatmultconf[index].semptr4[device]);
                 if(FORCESEMINIT==1)
-                    {
-                        sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
-                        for(cnt=0; cnt<semval; cnt++)
-                            sem_trywait(gpumatmultconf[index].semptr4[device]);
-                    }
+                {
+                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr4[device]);
+                }
             }
 
 
@@ -1340,9 +1346,9 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_MAPPING_ERROR\n");
                 exit(EXIT_FAILURE);
             }
-            
+
             // TEST
-    
+
             sprintf(fname, "gputest%d.txt", device);
             if((fptest = fopen(fname, "w"))==NULL)
             {
@@ -1351,10 +1357,10 @@ void *compute_function( void *ptr )
             }
             printf("Writing test file \"%s\"\n", fname);
             fflush(stdout);
-            for(ii=0;ii<gpumatmultconf[index].M;ii++)
+            for(ii=0; ii<gpumatmultconf[index].M; ii++)
                 fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
             fclose(fptest);
-            
+
             if(gpumatmultconf[index].sem==1)
                 sem_post(gpumatmultconf[index].semptr5[device]);
 
@@ -1381,15 +1387,15 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
                 if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-             
-				printf("device %d of index %d\n", device, index);
-				printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
-				
-				printf("alpha = %f\n", cublasSgemv_alpha);
- 				printf("alpha = %f\n", cublasSgemv_beta);
- 				printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
-				fflush(stdout);
-             
+
+                printf("device %d of index %d\n", device, index);
+                printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
+
+                printf("alpha = %f\n", cublasSgemv_alpha);
+                printf("alpha = %f\n", cublasSgemv_beta);
+                printf("gpumatmultconf[index].Nsize[device] = %d\n", gpumatmultconf[index].Nsize[device]);
+                fflush(stdout);
+
                 exit(EXIT_FAILURE);
             }
 
@@ -1403,11 +1409,11 @@ void *compute_function( void *ptr )
             {
                 sem_wait(gpumatmultconf[index].semptr4[device]);
                 if(FORCESEMINIT==1)
-                    {
-                        sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
-                        for(cnt=0; cnt<semval; cnt++)
-                            sem_trywait(gpumatmultconf[index].semptr4[device]);
-                    }
+                {
+                    sem_getvalue(gpumatmultconf[index].semptr4[device], &semval);
+                    for(cnt=0; cnt<semval; cnt++)
+                        sem_trywait(gpumatmultconf[index].semptr4[device]);
+                }
             }
 
             // result is on gpumatmultconf[index].d_dmVec[device]
@@ -1430,15 +1436,16 @@ void *compute_function( void *ptr )
         *ptrstat = 6;
 
         // START MODE VALUES COMPUTATION HERE
-        
-        
-        
+
+
+
         iter++;
     }
 
 
     pthread_exit(0);
 }
+
 
 
 
