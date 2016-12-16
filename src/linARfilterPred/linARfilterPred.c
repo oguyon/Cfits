@@ -1828,7 +1828,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			
 			for(mode=0;mode<NBmodeOUT;mode++)
 			{
-				if(ii0<-1)
+				if(ii0>-1)
 				{
 					val0 = data.image[IDsave].array.F[ii0*(1+NBmodeIN0+NBmodeOUT) + 1+NBmodeIN0+mode];
 					val1 = data.image[IDsave].array.F[ii1*(1+NBmodeIN0+NBmodeOUT) + 1+NBmodeIN0+mode];
