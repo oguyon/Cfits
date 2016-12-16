@@ -1689,12 +1689,12 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 
 	while(iter!=NBiter)
 	{
-		printf("iter %5ld / %5ld", iter, NBiter);
-		fflush(stdout);
+	//	printf("iter %5ld / %5ld", iter, NBiter);
+	//	fflush(stdout);
 		
 		sem_wait(data.image[IDmodevalIN].semptr[semtrig]);
-		printf("\n");
-		fflush(stdout);
+	//	printf("\n");
+	//	fflush(stdout);
 			
 		// fill in buffer
 		for(mode=0; mode<NBmodeIN; mode++)
@@ -1736,8 +1736,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		
 		if(SAVEMODE == 1)
 			{
-				printf("	Saving step (mode = 1) ...");
-				fflush(stdout);
+		//		printf("	Saving step (mode = 1) ...");
+		//		fflush(stdout);
 				
 				t = time(NULL);
                 uttime = gmtime(&t);
@@ -1758,28 +1758,28 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDPFout].array.F[mode];
 						kk++;
 					}
-				printf(" done\n");
-				fflush(stdout);
+			//	printf(" done\n");
+			//	fflush(stdout);
 			}
 		if(SAVEMODE == 2)
 			{
-				printf("	Saving step (mode = 2) ...");
-				fflush(stdout);
+			//	printf("	Saving step (mode = 2) ...");
+			//	fflush(stdout);
 
 				for(mode=0;mode<NBmodeIN0;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 				for(mode=0;mode<NBmodeOUT;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + outmaskindex[mode]] = data.image[IDPFout].array.F[mode];
-				printf(" done\n");
-				fflush(stdout);
+			//	printf(" done\n");
+			//	fflush(stdout);
 			}
 	
 		iter++;
 	
 		if(iter<NBiter)
 			{
-				printf("	Shifting previous telemetry ...");
-				fflush(stdout);
+			//	printf("	Shifting previous telemetry ...");
+			//	fflush(stdout);
 				
 				// do this now to save time when semaphore is posted
 				for(tstep=NBPFstep-1; tstep>0; tstep--)
@@ -1788,8 +1788,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						for(mode=0; mode<NBmodeIN; mode++)
 							data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
 					}
-				printf(" done\n");
-				fflush(stdout);
+			//	printf(" done\n");
+			//	fflush(stdout);
 			}
 	}
 	printf("LOOP done\n");
