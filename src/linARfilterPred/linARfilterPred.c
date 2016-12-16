@@ -1690,7 +1690,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	while(iter!=NBiter)
 	{
 		sem_wait(data.image[IDmodevalIN].semptr[semtrig]);
-		
+		printf("iter %5ld / %5ld\n", iter, NBiter);
+		fflush(stdout);
+			
 		// fill in buffer
 		for(mode=0; mode<NBmodeIN; mode++)
 			data.image[IDINbuff].array.F[mode] = data.image[IDmodevalIN].array.F[IndexOffset + inmaskindex[mode]];
@@ -1719,8 +1721,13 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			data.image[IDPFout].md[0].cnt0++;
 		}
 		
+		
+		
 		if(SAVEMODE == 1)
 			{
+				printf("	Saving point\n");
+				fflush(stdout);
+				
 				t = time(NULL);
                 uttime = gmtime(&t);
 				clock_gettime(CLOCK_REALTIME, &timenow);
@@ -1758,6 +1765,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			}
 		iter++;
 	}
+	
 	list_image_ID();
 	
 	// output ASCII file
