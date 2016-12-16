@@ -1500,7 +1500,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE)
 {
 	long IDmodevalIN;
-	long NBmodeIN, NBmodeOUT, mode;
+	long NBmodeIN, NBmodeIN0, NBmodeOUT, mode;
 	long IDPFM;
 	
 	long IDINbuff;
@@ -1535,11 +1535,11 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
-	NBmodeIN = data.image[IDmodevalIN].md[0].size[0]; // NBinput
+	NBmodeIN0 = data.image[IDmodevalIN].md[0].size[0];
 	
 	IDPFM = image_ID(IDPFM_name);
 	NBmodeOUT = data.image[IDPFM].md[0].size[1]; 
-	NBPFstep = data.image[IDPFM].md[0].size[0]/NBmodeIN; 
+	NBPFstep = data.image[IDPFM].md[0].size[0]/NBmodeIN0; 
 	
 	IDinmask = image_ID("inmask");
 	if(IDinmask!=-1)
@@ -1557,22 +1557,23 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 					inmaskindex[NBinmaskpix] = ii;
 					NBinmaskpix++;
 				}
-		printf("Number of active input modes  = %ld\n", NBinmaskpix);
+		//printf("Number of active input modes  = %ld\n", NBinmaskpix);
 	}
 	else
 	{
-		NBinmaskpix = NBmodeIN;
+		NBinmaskpix = NBmodeIN0;
 		inmaskindex = (long*) malloc(sizeof(long)*NBinmaskpix);
 		for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
 			inmaskindex[NBinmaskpix] = ii;
 	}
-	
-	printf("Number of input modes  = %ld\n", NBmodeIN);
-	printf("Number of output modes = %ld\n", NBmodeOUT);
-	printf("Number of time steps   = %ld\n", NBPFstep);
-
-
 	NBmodeIN = NBinmaskpix;
+	printf("Number of input modes         = %ld\n", NBmodeIN0);
+	printf("Number of active input modes  = %ld\n", NBmodeIN);
+	printf("Number of output modes        = %ld\n", NBmodeOUT);
+	printf("Number of time steps          = %ld\n", NBPFstep);
+
+
+
 	
 	
 	IDINbuff = create_2Dimage_ID("INbuffer", NBmodeIN, NBPFstep);
@@ -1625,7 +1626,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		
 		
 	if(SAVEMODE == 1)
-		IDsave = create_2Dimage_ID("testPFsave", 1+NBmodeIN+NBmodeOUT, NBiter);
+		IDsave = create_2Dimage_ID("testPFsave", 1+NBmodeIN0+NBmodeOUT, NBiter);
 	
 	t = time(NULL);
     uttime = gmtime(&t);			
@@ -1676,9 +1677,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				kk = 0;
 				data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT)] = (float) (timesec - timesec0);
 				kk++;
-				for(mode=0;mode<NBmodeIN;mode++)
+				for(mode=0;mode<NBmodeIN0;mode++)
 					{
-						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + inmaskindex[mode]];
+						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 						kk++;
 					}
 				for(mode=0;mode<NBmodeOUT;mode++)
@@ -1707,8 +1708,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		for(iter=0;iter<NBiter;iter++)
 		{
 			fprintf(fpout, "%5ld ", iter);
-			for(kk=0;kk<(1+NBmodeIN+NBmodeOUT);kk++)
-				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] );
+			for(kk=0;kk<(1+NBmodeIN0+NBmodeOUT);kk++)
+				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] );
 			fprintf(fpout, "\n");
 		}
 		fclose(fpout);
