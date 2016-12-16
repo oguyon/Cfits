@@ -1689,8 +1689,11 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 
 	while(iter!=NBiter)
 	{
+		printf("iter %5ld / %5ld", iter, NBiter);
+		fflush(stdout);
+		
 		sem_wait(data.image[IDmodevalIN].semptr[semtrig]);
-		printf("iter %5ld / %5ld\n", iter, NBiter);
+		printf("\n");
 		fflush(stdout);
 			
 		// fill in buffer
@@ -1780,6 +1783,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				fflush(stdout);
 			}
 	}
+	printf("LOOP done\n");
+	fflush(stdout);
+	
 	
 	list_image_ID();
 	
