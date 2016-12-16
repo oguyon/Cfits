@@ -1674,7 +1674,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	if(SAVEMODE == 1)
 		IDsave = create_2Dimage_ID("testPFsave", 1+NBmodeIN0+NBmodeOUT, NBiter);
 	if(SAVEMODE == 2)
-		IDsave = create_2Dimage_ID("testPFTout", NBmodeIN0, NBiter);
+		IDsave = create_3Dimage_ID("testPFTout", NBmodeIN0, 1, NBiter);
 	
 	
 	t = time(NULL);
