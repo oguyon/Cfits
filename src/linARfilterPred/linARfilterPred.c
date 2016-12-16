@@ -1625,7 +1625,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 
 	
 	
-	IDINbuff = create_2Dimage_ID("INbuffer", NBmodeIN, 1, NBPFstep);
+	IDINbuff = create_3Dimage_ID("INbuffer", NBmodeIN, 1, NBPFstep);
 	
 	sizearray = (long*) malloc(sizeof(long)*2);
 	sizearray[0] = NBmodeOUT;
