@@ -1810,6 +1810,18 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			fprintf(fpout, "%5ld ", iter);
 			for(kk=0;kk<(1+NBmodeIN0+NBmodeOUT);kk++)
 				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] );
+				
+		
+			ii0 = (long) tlag;
+			tlagalpha = tlag - ii0;
+			ii1 = ii0+1;				
+			for(mode=0;mode<NBmodeOUT;mode++)
+			{
+				val0 = data.image[IDsave].array.F[ii0*NBmodeIN0 + outmaskindex[mode]];
+				val1 = data.image[IDsave].array.F[ii1*NBmodeIN0 + outmaskindex[mode]];
+				val = (1.0-tlagalpha)*val0 + tlagalpha*val1;
+				fprintf(fpout, "%10f ", val);
+			}
 			fprintf(fpout, "\n");
 		}
 		fclose(fpout);
@@ -1821,7 +1833,12 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	free(inmaskindex);
 	
 	
-	if(SAVEMODE==2) // time shift predicted output
+	
+	
+	
+	
+	
+	if(SAVEMODE==2) // time shift predicted output into FITS output
 		{
 			tlag0 = (long) tlag;
 			tlagalpha = tlag-tlag0;
