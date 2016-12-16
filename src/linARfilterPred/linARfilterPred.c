@@ -1708,6 +1708,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			GPU_loop_MultMat_setup(4, IDPFM_name, "INbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
 			GPU_loop_MultMat_execute(4, &status, &GPUstatus[0], 1.0, 0.0, 1);
 			#endif
+			list_image_ID();
 		}
 		else
 		{
