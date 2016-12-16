@@ -152,7 +152,7 @@ int LINARFILTERPRED_PF_updatePFmatrix_cli()
 int LINARFILTERPRED_PF_RealTimeApply_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)==0)
-		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl);
+		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numf);
 	else
        return 1;
 
@@ -246,9 +246,9 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = LINARFILTERPRED_PF_RealTimeApply_cli;
     strcpy(data.cmd[data.NBcmd].info,"Real-time apply predictive filter");
-    strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream> <nbGPU> <loop> <NBiter> <savemode>");
-    strcpy(data.cmd[data.NBcmd].example,"linARapplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0 0 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream> <nbGPU> <loop> <NBiter> <savemode> <timelag>");
+    strcpy(data.cmd[data.NBcmd].example,"linARapplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0 0 0 1.8");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag)");
     data.NBcmd++;
 
     // add atexit functions here
@@ -1496,8 +1496,15 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 // semtrig          : semaphore trigger index in input input
 // IDPFM_name       : predictive filter matrix
 // IDPFout_name     : prediction
+//
+//  NBiter: run for fixed number of itearationg
+//  SAVEMODE:   0 no file output
+//  			1	write txt and FITS output
+//				2	write FITS telemetry with prediction
 // 
-long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE)
+//	tlag is only used if SAVEMODE = 2	
+//
+long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag)
 {
 	long IDmodevalIN;
 	long NBmodeIN, NBmodeIN0, NBmodeOUT, mode;
@@ -1620,13 +1627,16 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 
 
 	iter = 0;
-	if(SAVEMODE==1)
-		if(NBiter>10000)
-			NBiter=10000;
+	if(SAVEMODE>0)
+		if(NBiter>50000)
+			NBiter=50000;
 		
 		
 	if(SAVEMODE == 1)
 		IDsave = create_2Dimage_ID("testPFsave", 1+NBmodeIN0+NBmodeOUT, NBiter);
+	if(SAVEMODE == 2)
+		IDsave = create_2Dimage_ID("testPFout", NBmodeIN0, NBiter);
+	
 	
 	t = time(NULL);
     uttime = gmtime(&t);			
@@ -1689,7 +1699,11 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 					}
 				
 			}
-		
+		if(SAVEMODE == 2)
+			{
+				for(mode=0;mode<NBmodeIN0;mode++)
+					data.image[IDsave].array.F[iter*NBmodeIN0 + mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
+			}
 	
 		// do this now to save time when semaphore is posted
 		for(tstep=NBPFstep-1; tstep>0; tstep--)
