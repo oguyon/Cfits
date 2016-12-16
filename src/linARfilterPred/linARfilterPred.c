@@ -1709,7 +1709,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				GPU_loop_MultMat_setup(0, IDPFM_name, "INbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
 			GPU_loop_MultMat_execute(0, &status, &GPUstatus[100], 1.0, 0.0, 0);
 			#endif
-			list_image_ID();
+		//	list_image_ID();
 		}
 		else
 		{
@@ -1746,7 +1746,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				
 				kk = 0;
 				data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT)] = (float) (timesec - timesec0);
-				printf(" [%f] ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT)]);
+				//printf(" [%f] ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT)]);
 				kk++;
 				for(mode=0;mode<NBmodeIN0;mode++)
 					{
