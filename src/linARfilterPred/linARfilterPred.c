@@ -1728,10 +1728,15 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		
 		if(iter==0)
 			{
+				 /// measure time
 				t = time(NULL);
 				uttime = gmtime(&t);			
 				clock_gettime(CLOCK_REALTIME, &timenow);
-				timesec0 = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;				
+				timesec0 = 1.0*timenow.tv_sec + 1.0e-9*timenow.tv_nsec;				
+			
+			
+			// fprintf(fp, "%02d:%02d:%02ld.%09ld ", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+			
 			}	
 		
 		if(SAVEMODE == 1)
@@ -1742,7 +1747,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				t = time(NULL);
                 uttime = gmtime(&t);
 				clock_gettime(CLOCK_REALTIME, &timenow);
-				timesec = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;
+				timesec = 1.0*timenow.tv_sec + 1.0e-9*timenow.tv_nsec;
 				
 				kk = 0;
 				data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT)] = (float) (timesec - timesec0);
