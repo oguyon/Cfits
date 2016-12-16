@@ -1763,6 +1763,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	
 		if(iter<NBiter)
 			{
+				printf("	Shifting previous telemetry \n");
+				fflush(stdout);
+				
 				// do this now to save time when semaphore is posted
 				for(tstep=NBPFstep-1; tstep>0; tstep--)
 					{
