@@ -1725,7 +1725,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		
 		if(SAVEMODE == 1)
 			{
-				printf("	Saving step (mode = 1) \n");
+				printf("	Saving step (mode = 1) ...");
 				fflush(stdout);
 				
 				t = time(NULL);
@@ -1746,24 +1746,27 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDPFout].array.F[mode];
 						kk++;
 					}
-				
+				printf(" done\n")
+				fflush(stdout);
 			}
 		if(SAVEMODE == 2)
 			{
-				printf("	Saving step (mode = 2) \n");
+				printf("	Saving step (mode = 2) ...");
 				fflush(stdout);
 
 				for(mode=0;mode<NBmodeIN0;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 				for(mode=0;mode<NBmodeOUT;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + outmaskindex[mode]] = data.image[IDPFout].array.F[mode];
+				printf(" done\n")
+				fflush(stdout);
 			}
 	
 		iter++;
 	
 		if(iter<NBiter)
 			{
-				printf("	Shifting previous telemetry \n");
+				printf("	Shifting previous telemetry ...");
 				fflush(stdout);
 				
 				// do this now to save time when semaphore is posted
@@ -1773,6 +1776,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						for(mode=0; mode<NBmodeIN; mode++)
 							data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
 					}
+				printf(" done\n")
+				fflush(stdout);
 			}
 	}
 	
