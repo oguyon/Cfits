@@ -1804,6 +1804,10 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		printf("SAVING DATA [1] ...");
 		fflush(stdout);
 		
+		for(mode=0;mode<NBmodeOUT;mode++)
+			printf("output %4ld -> %5ld\n", outmaskindex[mode]);
+		
+		
 		fpout = fopen("testPFsave.dat", "w");
 		for(iter=0;iter<NBiter;iter++)
 		{
@@ -1821,8 +1825,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			{
 				if(ii1<NBiter)
 				{
-					val0 = 0.0; //data.image[IDmodevalIN].array.F[ii0*NBmodeIN0 + outmaskindex[mode]];
-					val1 = 0.0; //data.image[IDmodevalIN].array.F[ii1*NBmodeIN0 + outmaskindex[mode]];
+					val0 = data.image[IDsave].array.F[ii0*(1+NBmodeIN0+NBmodeOUT) + 1+NBmodeIN0+mode];
+					val1 = data.image[IDsave].array.F[ii1*(1+NBmodeIN0+NBmodeOUT) + 1+NBmodeIN0+mode];
 				}
 				val = (1.0-tlagalpha)*val0 + tlagalpha*val1;
 				fprintf(fpout, "%10f ", val);
