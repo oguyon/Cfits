@@ -1680,10 +1680,10 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		IDsave = create_3Dimage_ID("testPFTout", NBmodeIN0, 1, NBiter);
 	
 	
-	t = time(NULL);
-    uttime = gmtime(&t);			
-	clock_gettime(CLOCK_REALTIME, &timenow);
-	timesec0 = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;
+//	t = time(NULL);
+//    uttime = gmtime(&t);			
+//	clock_gettime(CLOCK_REALTIME, &timenow);
+//	timesec0 = 3600.0*uttime->tm_hour  + 60.0*uttime->tm_min + 1.0*(timenow.tv_sec % 60) + 1.0e-9*timenow.tv_nsec;
  
 	
 
