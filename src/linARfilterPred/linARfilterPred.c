@@ -1759,14 +1759,18 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 					data.image[IDsave].array.F[iter*NBmodeIN0 + outmaskindex[mode]] = data.image[IDPFout].array.F[mode];
 			}
 	
-		// do this now to save time when semaphore is posted
-		for(tstep=NBPFstep-1; tstep>0; tstep--)
-			{
-				// tstep-1 -> tstep
-				for(mode=0; mode<NBmodeIN; mode++)
-					data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
-			}
 		iter++;
+	
+		if(iter<NBiter)
+			{
+				// do this now to save time when semaphore is posted
+				for(tstep=NBPFstep-1; tstep>0; tstep--)
+					{
+						// tstep-1 -> tstep
+						for(mode=0; mode<NBmodeIN; mode++)
+							data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
+					}
+			}
 	}
 	
 	list_image_ID();
