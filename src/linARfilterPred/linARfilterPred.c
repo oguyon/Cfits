@@ -1787,7 +1787,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	fflush(stdout);
 	
 	
-	list_image_ID();
+
 	
 	// output ASCII file
 	if(SAVEMODE == 1)
