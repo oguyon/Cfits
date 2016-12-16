@@ -1813,8 +1813,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		list_image_ID();
 
 		
-		for(mode=0;mode<NBmodeOUT;mode++)
-			printf("output %4ld -> %5ld\n", outmaskindex[mode]);
+	//	for(mode=0;mode<NBmodeOUT;mode++)
+		//	printf("output %4ld -> %5ld\n", outmaskindex[mode]);
 		
 		fpout = fopen("testPFsave.dat", "w");
 		for(iter=0;iter<NBiter;iter++)
