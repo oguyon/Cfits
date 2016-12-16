@@ -1815,6 +1815,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			ii0 = (long) tlag;
 			tlagalpha = tlag - ii0;
 			ii1 = ii0+1;				
+			ii0 += iter;
+			ii1 += iter;
 			for(mode=0;mode<NBmodeOUT;mode++)
 			{
 				if(ii1<NBiter)
