@@ -1679,12 +1679,12 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 				kk++;
 				for(mode=0;mode<NBmodeIN0;mode++)
 					{
-						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
+						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 						kk++;
 					}
 				for(mode=0;mode<NBmodeOUT;mode++)
 					{
-						data.image[IDsave].array.F[iter*(1+NBmodeIN+NBmodeOUT) + kk] = data.image[IDPFout].array.F[IndexOffset + mode];
+						data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] = data.image[IDPFout].array.F[IndexOffset + mode];
 						kk++;
 					}
 				
