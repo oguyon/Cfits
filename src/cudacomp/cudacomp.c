@@ -927,37 +927,37 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
-   for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
-            {
-                sem_getvalue(gpumatmultconf[index].semptr1[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr1[ptn]);
+    for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
+    {
+        sem_getvalue(gpumatmultconf[index].semptr1[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr1[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr2[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr2[ptn]);
+        sem_getvalue(gpumatmultconf[index].semptr2[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr2[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr3[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr3[ptn]);
+        sem_getvalue(gpumatmultconf[index].semptr3[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr3[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr4[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr4[ptn]);
+        sem_getvalue(gpumatmultconf[index].semptr4[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr4[ptn]);
 
-                sem_getvalue(gpumatmultconf[index].semptr5[ptn], &semval);
-                for(cnt=0; cnt<semval; cnt++)
-                    sem_trywait(gpumatmultconf[index].semptr5[ptn]);
-            }
+        sem_getvalue(gpumatmultconf[index].semptr5[ptn], &semval);
+        for(cnt=0; cnt<semval; cnt++)
+            sem_trywait(gpumatmultconf[index].semptr5[ptn]);
+    }
 
 
     if(timing==1)
     {
-    *status = *status + 1;  // ->7
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1;  // ->7
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
 
     if((index==0)||(index==2)) /// main CM multiplication loop
@@ -971,14 +971,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
                 gpumatmultconf[index].CM_cnt = data.image[gpumatmultconf[index].CM_ID].md[0].cnt0;
             }
     }
-    
-    
- 
+
+
+
     // index is the matrix multiplication index (unique to each matrix multiplication stream operation)
     // ptn is the thread number = GPU device number
 
 
-//    if((gpumatmultconf[index].sem==0)||
+    //    if((gpumatmultconf[index].sem==0)||
 
 
 
@@ -986,7 +986,7 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     {
         printf("GPU pthread create, index = %d    %d %d\n", index, gpumatmultconf[index].sem, gpumatmultconf[index].gpuinit);//TEST
         fflush(stdout);
-                
+
         for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
         {
             gpumatmultconf[index].thdata[ptn].thread_no = ptn;
@@ -1002,14 +1002,14 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
         }
         gpumatmultconf[index].gpuinit = 1;
     }
-    
+
     if(timing == 1)
     {
-    *status = *status + 1;  // -> 8
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1;  // -> 8
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
 
 
@@ -1044,60 +1044,61 @@ int GPU_loop_MultMat_execute(int index, int *status, int *GPUstatus, float alpha
     // SUM RESULTS FROM SEPARATE GPUs
     if(timing == 1)
     {
-    *status = *status + 1;  // -> 9
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1;  // -> 9
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
-    
+
     data.image[gpumatmultconf[index].IDout].md[0].write = 1;
 
     for(m=0; m<gpumatmultconf[index].M; m++)
-        gpumatmultconf[index].dmVecTMP[m] = 0.0; 
+        gpumatmultconf[index].dmVecTMP[m] = 0.0;
 
-    
+
 
     for(ptn=0; ptn<gpumatmultconf[index].NBstreams; ptn++)
     {
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
- 
-	COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
-    
-    
- /*  if(data.image[gpumatmultconf[index].IDout].sem > 0)
-    {
-        sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
-    }
-     
-        
-    if(data.image[gpumatmultconf[index].IDout].sem > 1)
-        {
-            sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[1], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
-        }
-*/
 
-	
+    COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+
+
+    /*  if(data.image[gpumatmultconf[index].IDout].sem > 0)
+       {
+           sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
+           if(semval<SEMAPHORE_MAXVAL)
+               sem_post(data.image[gpumatmultconf[index].IDout].semptr[0]);
+       }
+
+
+       if(data.image[gpumatmultconf[index].IDout].sem > 1)
+           {
+               sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[1], &semval);
+               if(semval<SEMAPHORE_MAXVAL)
+                   sem_post(data.image[gpumatmultconf[index].IDout].semptr[1]);
+           }
+    */
+
+
     data.image[gpumatmultconf[index].IDout].md[0].write = 0;
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     if(timing == 1)
     {
-    *status = *status + 1; // -> 10
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
-    tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-    data.image[IDtiming].array.F[*status] = tdiffv;
+        *status = *status + 1; // -> 10
+        clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[IDtiming].array.F[*status] = tdiffv;
     }
- 
+
     return(0);
 }
+
 
 
 

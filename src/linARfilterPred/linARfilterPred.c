@@ -1523,7 +1523,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	char GPUsetfname[200];
 	int gpuindex;
     int status;
-    int GPUstatus;
+    int GPUstatus[100];
     FILE *fp;
 	int ret;
 
