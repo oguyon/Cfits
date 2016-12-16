@@ -1226,8 +1226,8 @@ void *compute_function( void *ptr )
     iter = 0;
     while(iter != itermax)
     {
-		printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
-
+		//printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+		//fflush(stdout);
 		
 		
         // copy DM reference to output to prepare computation:   d_dmVec <- d_dmRef
