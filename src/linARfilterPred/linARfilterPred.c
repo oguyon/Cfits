@@ -1820,8 +1820,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		for(iter=0;iter<NBiter;iter++)
 		{
 			fprintf(fpout, "%5ld ", iter);
-	//		for(kk=0;kk<(1+NBmodeIN0+NBmodeOUT);kk++)
-//				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] );
+			for(kk=0;kk<(1+NBmodeIN0+NBmodeOUT);kk++)
+				fprintf(fpout, "%10f ", data.image[IDsave].array.F[iter*(1+NBmodeIN0+NBmodeOUT) + kk] );
 				
 		
 		
