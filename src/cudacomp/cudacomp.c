@@ -1217,7 +1217,7 @@ void *compute_function( void *ptr )
     cublasSetStream( gpumatmultconf[index].handle[device], gpumatmultconf[index].stream[device] );
 
 
-	printf("gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
+	printf("====================================== gpumatmultconf[index].M = %d\n", gpumatmultconf[index].M);
 	
 
 
