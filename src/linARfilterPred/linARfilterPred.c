@@ -1725,7 +1725,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 		
 		if(SAVEMODE == 1)
 			{
-				printf("	Saving point\n");
+				printf("	Saving step (mode = 1) \n");
 				fflush(stdout);
 				
 				t = time(NULL);
@@ -1750,6 +1750,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			}
 		if(SAVEMODE == 2)
 			{
+				printf("	Saving step (mode = 2) \n");
+				fflush(stdout);
+
 				for(mode=0;mode<NBmodeIN0;mode++)
 					data.image[IDsave].array.F[iter*NBmodeIN0 + mode] = data.image[IDmodevalIN].array.F[IndexOffset + mode];
 				for(mode=0;mode<NBmodeOUT;mode++)
