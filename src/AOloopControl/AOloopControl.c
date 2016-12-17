@@ -13063,7 +13063,7 @@ int AOloopControl_AUTOTUNE_LIMITS_on()
         AOloopControl_InitializeMemory(1);
 
     AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_ON = 1;
-    AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_delta = 0.001;
+    AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_delta = 0.0001;
     AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_perc = 1.0;
     AOloopControl_showparams(LOOPNUMBER);
 
