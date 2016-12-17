@@ -96,16 +96,12 @@ fi
 
 
 
-
-
-
-
 loopnb=$(cat LOOPNUMBER)
 
 Cfits -n aol${loopnb}latency << EOF
-readshmim aol${loopnb}_imWFS0
-readshmim aol${loopnb}_wfsred
-readshmim aol${loopnb}_imWFS0tot
+#readshmim aol${loopnb}_imWFS0
+#readshmim aol${loopnb}_wfsref
+#readshmim aol${loopnb}_imWFS0tot
 aolmkwfsres ${loopnb} $1
 exit
 EOF

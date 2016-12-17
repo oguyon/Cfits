@@ -35,6 +35,27 @@ echo "------------------------------------------------------------------------"
 
 
 
+printHELP1 ()
+{
+    printf "%20s       Extract mode values from WFS images\n" "$0" 
+}
+
+
+
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
 
 
 
@@ -44,7 +65,11 @@ IMPORTmodeval="0"
 while getopts :hr FLAG; do
   case $FLAG in
     h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
       printHELP
+      else
+      printHELP1
+      fi
       exit
       ;;
     r)

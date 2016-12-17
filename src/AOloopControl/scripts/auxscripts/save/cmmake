@@ -1,8 +1,7 @@
-#! /bin/bash
+#!/bin/bash
 
 
-
-NBARGS=2
+NBARGS=3
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
@@ -10,21 +9,25 @@ pname=`echo "$0" | sed "s/\.\///g"`
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : Compute cross-product of a data cube$(tput sgr0)"
+echo "$(tput bold) $pname : Create Control Matrixes $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "  Compute cross-product of a data cube"
+echo "  Create Control Matrixes"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <FITSfile>"
+echo "     $0 [-h] <beta coeff> <max nb modes removed> <modestep>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
-echo "   <FITSfile1>    FITS data cube file"
+echo "       <beta coeff>           : Beta coefficient (typically 0.5 to 4.0), enhances low order aberrations for SVD"
+echo "       <max number modes removed> : will generate matrixes with 0, 10, 20, .... number of modes removed until max number reached"
+echo "       <modestep>            : incremental step for number of modes removed"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
-echo "        xp.fits"
+echo ""
+echo " $(tput bold)EXAMPLE:$(tput sgr0)"
+echo "   $0 4.0 20 5"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -32,7 +35,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Compute cross-product of a data cube\n" "$0" 
+    printf "%20s       Create Control Matrixes\n" "$0" 
 }
 
 
@@ -91,14 +94,28 @@ fi
 
 
 
+cp ./conf/modesfreqcpa.fits .
+cp ./conf/fmodes.fits .
+cp ./conf/respm.fits .
+
+loopnb=$(cat LOOPNUMBER)
+confnb=$(cat conf/conf_CONFNUMBER.txt)
+
+pname0=$0
+pname=${pname0#"./"}-$loopnb
 
 
-
-
-Cfits << EOF
-loadfits "$1" im1
-loadfits "$1" im2
-aolcrossp im1 im2 xp
-savefits xp "!xp.fits"
+Cfits -n pname << EOF
+aolnb $loopnb
+loadfits "./conf/respm.fits" respm
+loadfits "./conf/fmodes.fits" modesM
+aolcmmake $2 respm cmat $1 $3
+savefits evecM "!evecM.fits"
 exit
 EOF
+mkdir -p ./conf${confnb}/cmat/
+mv cmat_*_*.fits ./conf${confnb}/cmat/
+mv evecM.fits ./conf${confnb}/
+mv eigenv.dat ./conf${confnb}/
+mv eigenmodesM*.fits ./conf${confnb}/
+mv eigenmodesrespM*.fits ./conf${confnb}/
