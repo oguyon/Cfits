@@ -777,14 +777,14 @@ AUTOTUNELIMITperc=1.0
 if [ -f "./conf/conf_AUTOTUNELIMITperc.txt" ]; then
 AUTOTUNELIMITperc=$( cat ./conf/conf_AUTOTUNELIMITperc.txt )
 fi
-menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMperc}" )
+menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMITperc}" )
 
 
 AUTOTUNELIMITdelta=0.001
 if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
 AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
 fi
-menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMdelta}" )
+menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMITdelta}" )
 
 
 
@@ -2125,18 +2125,18 @@ menucontrolloop_default="wzpoinit"
 
 	atlp)
 	exec 3>&1;
-	AUTOTUNELIMperc=$(dialog --inputbox "AUTOTUNELIMperc" 0 0 "$AUTOTUNELIMperc" 2>&1 1>&3);
+	AUTOTUNELIMITperc=$(dialog --inputbox "AUTOTUNELIMITperc" 0 0 "$AUTOTUNELIMITperc" 2>&1 1>&3);
 	exec 3>&-;
-	echo "$AUTOTUNELIMperc" > ./conf/conf_AUTOTUNELIMperc.txt
-	aoconflogext "set AUTOTUNELIMperc ${AUTOTUNELIMperc}"
+	echo "$AUTOTUNELIMITperc" > ./conf/conf_AUTOTUNELIMITperc.txt
+	aoconflogext "set AUTOTUNELIMITperc ${AUTOTUNELIMITperc}"
 	;;
 	
 	atld)
 	exec 3>&1;
-	AUTOTUNELIMdelta=$(dialog --inputbox "AUTOTUNELIMdelta" 0 0 "$AUTOTUNELIMdelta" 2>&1 1>&3);
+	AUTOTUNELIMITdelta=$(dialog --inputbox "AUTOTUNELIMITdelta" 0 0 "$AUTOTUNELIMITdelta" 2>&1 1>&3);
 	exec 3>&-;
-	echo "$AUTOTUNELIMdelta" > ./conf/conf_AUTOTUNELIMdelta.txt
-	aoconflogext "set AUTOTUNELIMdelta ${AUTOTUNELIMdelta}"
+	echo "$AUTOTUNELIMITdelta" > ./conf/conf_AUTOTUNELIMITdelta.txt
+	aoconflogext "set AUTOTUNELIMITdelta ${AUTOTUNELIMITdelta}"
 	;;
 
 
