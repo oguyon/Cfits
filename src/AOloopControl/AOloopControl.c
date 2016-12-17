@@ -12865,13 +12865,20 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
 			{
-				for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
+			/*	for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
 					{
 						if(AOconf[loop].blockave_limFrac[block] > AOconf[loop].AUTOTUNE_LIMITS_perc)
-							data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
+							AOconf[loop].block_limFrac += AOconf[loop].AUTOTUNE_LIMITS_delta;
 						else
-							data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta;
-					}
+							AOconf[loop].block_limFrac -= AOconf[loop].AUTOTUNE_LIMITS_delta;
+					}*/
+				for(m=0;m<NBmodes;m++)
+						{
+							if(fabs(data.image[IDmodeval].array.F[m])>data.image[IDmodeLIMIT].array.F[m])
+								data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
+							else
+								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta*(0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
+						}
 			}
 		
 		

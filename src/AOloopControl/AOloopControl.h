@@ -87,7 +87,7 @@ typedef struct
 	// limits
 	int AUTOTUNE_LIMITS_ON;
 	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
-	float AUTOTUNE_LIMITS_delta; // autotune loop increment
+	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
 	
 	
  
