@@ -754,21 +754,21 @@ fi
 
 
 
-if [ "$AUTOTUNELIMITS_ON" = " ON" ]; then
- loopONstat=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
+
+AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
   if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
    echo "OK"
    else
    echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
-   loopONstat="OFF"
-  fi
+   AUTOTUNELIMITS_ON="OFF"
+fi
 
- if [ "${AUTOTUNELIMITS_ON}" = "OFF" ];
+if [ "${AUTOTUNELIMITS_ON}" = "OFF" ];
   then
   menuitems+=( "ONatlim" "  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
   else
   menuitems+=( "OFFatlim" "\Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
- fi
+fi
 
 
 
