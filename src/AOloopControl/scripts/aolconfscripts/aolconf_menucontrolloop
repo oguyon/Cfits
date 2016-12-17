@@ -753,6 +753,26 @@ fi
 
 
 
+
+if [ "$AUTOTUNELIMITS_ON" = " ON" ]; then
+ loopONstat=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
+  if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
+   echo "OK"
+   else
+   echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
+   loopONstat="OFF"
+  fi
+
+ if [ "${AUTOTUNELIMITS_ON}" = "OFF" ];
+  then
+  menuitems+=( "ONatlim" "  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
+  else
+  menuitems+=( "OFFatlim" "\Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
+ fi
+
+
+
+
 file="./conf/conf_ARPFon.txt"
 if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
 echo "ARPFon OK"
@@ -775,7 +795,7 @@ menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
 
 
 menuitems+=( " " " " )
-stringcenter "CONTROL MATRIX MODAL BLOCK GAINS AND LIMITS"
+stringcenter "MODAL BLOCK GAINS AND LIMITS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 if [ "$CMMODE" = "MODAL" ]; then
@@ -2059,6 +2079,21 @@ menucontrolloop_default="wzpoinit"
 	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
 	menucontrolloop_default="DMpWon"
+	;;
+
+	
+	ONatlim)
+	AUTOTUNELIMITS_ON=" ON"
+	echo "$AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMon" C-m
+	menucontrolloop_default="OFFatlim"
+	;;
+
+	ONatlim)
+	AUTOTUNELIMITS_ON="OFF"
+	echo "$AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
+	menucontrolloop_default="ONatlim"
 	;;
 
 
