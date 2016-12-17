@@ -11620,7 +11620,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
         printw("%4ld ", k);
         attroff(A_BOLD);
 
-        printw("[%5.3f %6.4f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
+        printw("[%5.3f %8.4f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], 1000.0*data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
 
         // print current value on DM
         val = data.image[IDmodeval_dm].array.F[k];
@@ -12872,12 +12872,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 						else
 							AOconf[loop].block_limFrac -= AOconf[loop].AUTOTUNE_LIMITS_delta;
 					}*/
-				for(m=0;m<NBmodes;m++)
+				for(m=0; m<NBmodes; m++)
 						{
 							if(fabs(data.image[IDmodevalDMnowfilt].array.F[m])>data.image[IDmodeLIMIT].array.F[m])
 								data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
 							else
-								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta*(0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
+								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
 						}
 			}
 		
