@@ -5215,7 +5215,7 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].mult = 1.00;
             AOconf[loop].gain = 0.0;
             AOconf[loop].AUTOTUNE_LIMITS_perc = 1.0; // percentile threshold
-			AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-6;
+			AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-2;
             AOconf[loop].ARPFgain = 0.0;
             AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
