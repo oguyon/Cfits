@@ -12720,6 +12720,20 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		for(m=0;m<NBmodes;m++)
 			data.image[IDmodevalDMnowfilt].array.F[m] = data.image[IDmodevalDMnow].array.F[m];
 		
+		
+		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
+			{
+				for(m=0; m<NBmodes; m++)
+						{
+							if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > data.image[IDmodeLIMIT].array.F[m])
+								data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
+							else
+								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
+						}
+			}
+
+		
+		
 		if(FILTERMODE == 1)
 		{
 			
@@ -12861,26 +12875,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				allavelimFrac = 0.0;
 
 				blockstatcnt = 0;
-			}
-		
-		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
-			{
-			/*	for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
-					{
-						if(AOconf[loop].blockave_limFrac[block] > AOconf[loop].AUTOTUNE_LIMITS_perc)
-							AOconf[loop].block_limFrac += AOconf[loop].AUTOTUNE_LIMITS_delta;
-						else
-							AOconf[loop].block_limFrac -= AOconf[loop].AUTOTUNE_LIMITS_delta;
-					}*/
-				for(m=0; m<NBmodes; m++)
-						{
-							if(fabs(data.image[IDmodevalDMnowfilt].array.F[m])>data.image[IDmodeLIMIT].array.F[m])
-								data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
-							else
-								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
-						}
-			}
-		
+			}		
 		
 		AOconf[loop].statusM1 = 9;
 	}
