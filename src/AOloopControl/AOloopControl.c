@@ -1424,6 +1424,8 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMprimaryWrite_off()");
     data.NBcmd++;
 
+
+
     strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNELIMon");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_LIMITS_on;
@@ -1442,6 +1444,29 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNELIMoff");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_LIMITS_off()");
     data.NBcmd++;
+
+	
+	strcpy(data.cmd[data.NBcmd].key,"aolsetATlimd");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_set_AUTOTUNE_LIMITS_delta_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set auto-tuning modal limits delta");
+    strcpy(data.cmd[data.NBcmd].syntax,"<delta value [um]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetATlimd 0.0001");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetATlimp");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_set_AUTOTUNE_LIMITS_perc_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set auto-tuning modal limits percentile");
+    strcpy(data.cmd[data.NBcmd].syntax,"<percentile value [percent]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetATlimp 1.0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)");
+    data.NBcmd++;
+
+
+
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"aolARPFon");
@@ -12724,20 +12749,18 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
 			{
 				for(m=0; m<NBmodes; m++)
-						{
-							if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > data.image[IDmodeLIMIT].array.F[m])
-								data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
-							else
-								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
-						}
+					{
+						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > data.image[IDmodeLIMIT].array.F[m])
+							data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
+						else
+							data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
+					}
 			}
 
 		
 		
 		if(FILTERMODE == 1)
-		{
-			
-			
+		{			
 			for(m=0;m<NBmodes;m++)
 			{
 				data.image[IDmodevalDMnowfilt].array.F[m] *= data.image[IDmodeMULT].array.F[m];				
@@ -12754,11 +12777,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 						blockavelimFrac[block] += 1.0;
 						data.image[IDmodevalDMnowfilt].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
 					}
-			}
-			
-			
-			
-			
+			}				
 		}
 		
 
@@ -13081,6 +13100,30 @@ int AOloopControl_AUTOTUNE_LIMITS_off()
     AOloopControl_showparams(LOOPNUMBER);
 
     return 0;
+}
+
+
+int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta)
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory(1);
+
+  AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_delta = AUTOTUNE_LIMITS_delta;
+  AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
+}
+
+
+int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory(1);
+
+  AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_perc = AUTOTUNE_LIMITS_perc;
+  AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
 }
 
 

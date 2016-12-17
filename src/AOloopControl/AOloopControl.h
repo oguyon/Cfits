@@ -258,8 +258,12 @@ int AOloopControl_logoff();
 int AOloopControl_loopreset();
 int AOloopControl_DMprimaryWrite_on();
 int AOloopControl_DMprimaryWrite_off();
+
 int AOloopControl_AUTOTUNE_LIMITS_on();
 int AOloopControl_AUTOTUNE_LIMITS_off();
+int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta);
+int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc);
+
 int AOloopControl_ARPFon();
 int AOloopControl_ARPFoff();
 

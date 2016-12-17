@@ -755,7 +755,7 @@ fi
 
 
 
-
+menuitems+=( " " " " )
 AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
   if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
    echo "OK"
@@ -773,7 +773,24 @@ fi
 
 
 
+AUTOTUNELIMITperc=1.0
+if [ -f "./conf/conf_AUTOTUNELIMITperc.txt" ]; then
+AUTOTUNELIMITperc=$( cat ./conf/conf_AUTOTUNELIMITperc.txt )
+fi
+menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMperc}" )
 
+
+AUTOTUNELIMITdelta=0.001
+if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
+AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
+fi
+menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMdelts}" )
+
+
+
+
+
+menuitems+=( " " " " )
 file="./conf/conf_ARPFon.txt"
 if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
 echo "ARPFon OK"
@@ -2104,6 +2121,29 @@ menucontrolloop_default="wzpoinit"
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
 	menucontrolloop_default="ONatlim"
 	;;
+
+
+	atlp)
+	exec 3>&1;
+	AUTOTUNELIMperc=$(dialog --inputbox "AUTOTUNELIMperc" 0 0 "$AUTOTUNELIMperc" 2>&1 1>&3);
+	exec 3>&-;
+	echo "$AUTOTUNELIMperc" > ./conf/conf_AUTOTUNELIMperc.txt
+	aoconflogext "set AUTOTUNELIMperc ${AUTOTUNELIMperc}"
+	;;
+	
+	atld)
+	exec 3>&1;
+	AUTOTUNELIMdelta=$(dialog --inputbox "AUTOTUNELIMdelta" 0 0 "$AUTOTUNELIMdelta" 2>&1 1>&3);
+	exec 3>&-;
+	echo "$AUTOTUNELIMdelta" > ./conf/conf_AUTOTUNELIMdelta.txt
+	aoconflogext "set AUTOTUNELIMdelta ${AUTOTUNELIMdelta}"
+	;;
+
+
+
+
+
+
 
 
 	ARPFon)
