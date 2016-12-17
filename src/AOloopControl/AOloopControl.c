@@ -5264,7 +5264,7 @@ int AOloopControl_InitializeMemory(int mode)
         {
             AOconf[loop].init = 0;
             AOconf[loop].on = 0;
-            AOconf[loop].DMprimaryWrite_ON = 1;
+            AOconf[loop].DMprimaryWrite_ON = 0;
             AOconf[loop].ARPFon = 0;
             AOconf[loop].cnt = 0;
             AOconf[loop].cntmax = 0;
@@ -11321,7 +11321,7 @@ int AOloopControl_run()
     {
         AOconf[loop].kill = 0;
         AOconf[loop].on = 0;
-        AOconf[loop].DMprimaryWrite_ON = 1;
+        AOconf[loop].DMprimaryWrite_ON = 0;
         AOconf[loop].ARPFon = 0;
         printf("\n");
         while( AOconf[loop].kill == 0)

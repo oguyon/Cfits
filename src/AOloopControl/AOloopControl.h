@@ -53,9 +53,9 @@ typedef struct
 
     int init_wfsref0;    // WFS reference image loaded
 
-    int init_RM;        // Response Matrix loaded
-    int init_CM;        // Control Matrix loaded
-    int init_CMc;       // combine control matrix computed
+    int init_RM;         // Response Matrix loaded
+    int init_CM;         // Control Matrix loaded
+    int init_CMc;        // combine control matrix computed
     int initmapping;
     char respMname[80];
     char contrMname[80];
