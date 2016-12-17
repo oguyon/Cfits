@@ -11540,7 +11540,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
     
     
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
-	printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain);
+	printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON);
 	printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
 	nbl++;
     nbl++;
