@@ -514,6 +514,7 @@ if [[ -f "./conf/conf_CMmode.txt" && ( "$CMmode" = "1" || "$CMmode" = "0" ) ]]; 
 echo "OK"
 else
 echo "0" > ./conf/conf_CMmode.txt
+CMmode="0"
 fi
 echo "CM mode = $CMmode"
 
@@ -1641,6 +1642,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/aolctr" C-m
 
 
+
 sleep 1
 tmux new-session -d -s aol${LOOPNUMBER}-run
 tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m
@@ -1649,6 +1651,13 @@ tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
 
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
+
+if [ "$CMmode" = "0" ]; then
+	DMprimWriteON="OFF"
+	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
+fi
+
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 sleep 2
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
