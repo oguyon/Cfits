@@ -784,7 +784,7 @@ AUTOTUNELIMITdelta=0.001
 if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
 AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
 fi
-menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMdelts}" )
+menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMdelta}" )
 
 
 
