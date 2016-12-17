@@ -5215,7 +5215,7 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].mult = 1.00;
             AOconf[loop].gain = 0.0;
             AOconf[loop].AUTOTUNE_LIMITS_perc = 1.0; // percentile threshold
-			AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-2;
+			AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-3;
             AOconf[loop].ARPFgain = 0.0;
             AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
@@ -12874,7 +12874,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					}*/
 				for(m=0;m<NBmodes;m++)
 						{
-							if(fabs(data.image[IDmodeval].array.F[m])>data.image[IDmodeLIMIT].array.F[m])
+							if(fabs(data.image[IDmodevalDMnowfilt].array.F[m])>data.image[IDmodeLIMIT].array.F[m])
 								data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
 							else
 								data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta*(0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
