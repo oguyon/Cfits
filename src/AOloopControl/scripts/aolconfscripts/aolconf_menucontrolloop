@@ -2089,7 +2089,7 @@ menucontrolloop_default="wzpoinit"
 	menucontrolloop_default="OFFatlim"
 	;;
 
-	ONatlim)
+	OFFatlim)
 	AUTOTUNELIMITS_ON="OFF"
 	echo "$AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
