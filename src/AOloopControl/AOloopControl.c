@@ -774,6 +774,38 @@ int AOloopControl_set_wfsmextrlatency_frame_cli()
 
 
 
+
+
+
+
+
+
+int AOloopControl_set_AUTOTUNE_LIMITS_delta_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    {
+      AOloopControl_set_AUTOTUNE_LIMITS_delta(data.cmdargtoken[1].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+int AOloopControl_set_AUTOTUNE_LIMITS_perc_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    {
+      AOloopControl_set_AUTOTUNE_LIMITS_perc(data.cmdargtoken[1].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
+
 int AOloopControl_setgain_cli()
 {
   if(CLI_checkarg(1,1)==0)
