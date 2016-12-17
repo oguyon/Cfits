@@ -83,6 +83,14 @@ typedef struct
 	
  
  
+	// MODAL AUTOTUNING 
+	// limits
+	int AUTOTUNE_LIMITS_ON;
+	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
+	float AUTOTUNE_LIMITS_delta; // autotune loop increment
+	
+	
+ 
 	// PREDICTICE CONTROL
     int ARPFon; // 1 if auto-regressive predictive filter is ON
 	float ARPFgain; 
@@ -250,6 +258,8 @@ int AOloopControl_logoff();
 int AOloopControl_loopreset();
 int AOloopControl_DMprimaryWrite_on();
 int AOloopControl_DMprimaryWrite_off();
+int AOloopControl_AUTOTUNE_LIMITS_on();
+int AOloopControl_AUTOTUNE_LIMITS_off();
 int AOloopControl_ARPFon();
 int AOloopControl_ARPFoff();
 

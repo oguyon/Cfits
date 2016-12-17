@@ -1424,6 +1424,26 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DMprimaryWrite_off()");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNELIMon");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_LIMITS_on;
+    strcpy(data.cmd[data.NBcmd].info,"turn auto-tuning modal limits on");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNELIMon");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_LIMITS_on()");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolAUTOTUNELIMoff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_AUTOTUNE_LIMITS_off;
+    strcpy(data.cmd[data.NBcmd].info,"turn auto-tuning modal limits off");
+    strcpy(data.cmd[data.NBcmd].syntax,"no arg");
+    strcpy(data.cmd[data.NBcmd].example,"aolAUTOTUNELIMoff");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_AUTOTUNE_LIMITS_off()");
+    data.NBcmd++;
+
+
     strcpy(data.cmd[data.NBcmd].key,"aolARPFon");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_ARPFon;
@@ -1442,6 +1462,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aolARPFoff");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_ARPFoff()");
     data.NBcmd++;
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"aolsetgain");
@@ -5161,7 +5182,8 @@ int AOloopControl_InitializeMemory(int mode)
     if((mode==0)||(create==1))
     {
         AOconf[loop].on = 0;
-        AOconf[loop].DMprimaryWrite_ON = 1;
+        AOconf[loop].DMprimaryWrite_ON = 0;
+		AOconf[loop].AUTOTUNE_LIMITS_ON = 0;
         AOconf[loop].ARPFon = 0;
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
@@ -5192,6 +5214,8 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].maxlimit = 0.3;
             AOconf[loop].mult = 1.00;
             AOconf[loop].gain = 0.0;
+            AOconf[loop].AUTOTUNE_LIMITS_perc = 1.0; // percentile threshold
+			AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-6;
             AOconf[loop].ARPFgain = 0.0;
             AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
@@ -11596,7 +11620,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
         printw("%4ld ", k);
         attroff(A_BOLD);
 
-        printw("[%4.2f %4.2f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
+        printw("[%5.3f %6.4f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
 
         // print current value on DM
         val = data.image[IDmodeval_dm].array.F[k];
@@ -11658,9 +11682,6 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
 
     return(0);
 }
-
-
-
 
 
 
@@ -12701,6 +12722,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		if(FILTERMODE == 1)
 		{
+			
+			
 			for(m=0;m<NBmodes;m++)
 			{
 				data.image[IDmodevalDMnowfilt].array.F[m] *= data.image[IDmodeMULT].array.F[m];				
@@ -12718,6 +12741,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 						data.image[IDmodevalDMnowfilt].array.F[m] = -data.image[IDmodeLIMIT].array.F[m];
 					}
 			}
+			
+			
+			
+			
 		}
 		
 
@@ -12835,7 +12862,19 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 				blockstatcnt = 0;
 			}
-			
+		
+		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
+			{
+				for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
+					{
+						if(AOconf[loop].blockave_limFrac[block] > AOconf[loop].AUTOTUNE_LIMITS_perc)
+							data.image[IDmodeLIMIT].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
+						else
+							data.image[IDmodeLIMIT].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta;
+					}
+			}
+		
+		
 		AOconf[loop].statusM1 = 9;
 	}
 		
@@ -12896,7 +12935,7 @@ int AOloopControl_showparams(long loop)
     printf("loop is OFF\n");
     
     printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
-	printf("    Predictive control state: %d        ARPF gain = %5.3f\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain);
+	printf("    Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE lim %d\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON);
     printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 
 	printf("loopfrequ               =  %8.2f Hz\n", AOconf[loop].loopfrequ);
@@ -13007,6 +13046,34 @@ int AOloopControl_DMprimaryWrite_off()
         AOloopControl_InitializeMemory(1);
 
     AOconf[LOOPNUMBER].DMprimaryWrite_ON = 0;
+    AOloopControl_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+
+
+
+
+int AOloopControl_AUTOTUNE_LIMITS_on()
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_ON = 1;
+    AOloopControl_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+
+
+int AOloopControl_AUTOTUNE_LIMITS_off()
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_ON = 0;
     AOloopControl_showparams(LOOPNUMBER);
 
     return 0;
