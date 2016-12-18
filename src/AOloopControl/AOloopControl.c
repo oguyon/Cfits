@@ -3494,6 +3494,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 		if(IDextrablock != -1)
 			{				
 				extrablockIndex = 4;
+				
+				fp = fopen("./conf/conf_extrablockIndex.txt", "r");
+				if(fp != NULL)
+				{
+					ret = fscanf(fp, "%d", &extrablockIndex);
+					fclose(fp);
+				}
 			}
 			
 			
