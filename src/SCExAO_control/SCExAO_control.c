@@ -617,10 +617,21 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 		
 		
 	if(IDmask!=-1)
+	{
 		for(kk=0;kk<nbseg*3;kk++)
+		{
+			val = 0.0;
+			val1 = 0.0;
 			for(ii=0; ii<size2; ii++)
+			{
 				data.image[IDout].array.F[kk*size2+ii] *= data.image[IDmask].array.F[ii];
-	
+				val += data.image[IDout].array.F[kk*size2+ii];
+				val1 += data.image[IDmask].array.F[ii];
+			}
+			for(ii=0; ii<size2; ii++)
+				data.image[IDout].array.F[kk*size2+ii] -= data.image[IDmask].array.F[ii] * val/val1;
+		}
+	}		
 	
 	
 	free(segarray);
