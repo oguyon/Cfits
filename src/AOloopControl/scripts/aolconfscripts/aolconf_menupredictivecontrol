@@ -502,6 +502,8 @@ menupred_default="PFb0wON"
 
 
 	PFb1wON)
+echo "entering PFb1wON"
+sleep 2
 tmuxname="aol${LOOPNUMBER}PFb1watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
