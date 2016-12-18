@@ -254,6 +254,17 @@ stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
+if [ -f "./extrablockM.fits" ]; then
+if [ -f "./conf/extrablockM.fits"]; then
+menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
+else
+menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
+fi
+else
+menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
+fi
+
+
 mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
@@ -341,7 +352,7 @@ dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})"
 --cancel-label "Top" \
 --extra-button --extra-label "Action toggle" \
 --help-button --help-label "Exit" \
---default-item "${menucontrolloop_default}" \
+--default-item "${menucontrolmatrix_default}" \
  --menu "$menuname" \
  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
@@ -349,7 +360,7 @@ dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})"
 retval=$?
 choiceval=$(cat $tempfile)
 
-menucontrolloop_default="$choiceval"
+menucontrolmatrix_default="$choiceval"
 state="menucontrolmatrix"
 
 case $actionmode in
@@ -574,14 +585,14 @@ CMmodeM)
 CMMODE="MODAL"
 CMMODEfile="conf/conf_CMMODE.txt"
 echo "$CMMODE" > $CMMODEfile
-menucontrolloop_default="CMmodeZ"
+menucontrolmatrix_default="CMmodeZ"
 ;;
 
 CMmodeZ)
 CMMODE="ZONAL"
 CMMODEfile="conf/conf_CMMODE.txt"
 echo "$CMMODE" > $CMMODEfile
-menucontrolloop_default="CMmodeM"
+menucontrolmatrix_default="CMmodeM"
 ;;
 
 
@@ -647,7 +658,7 @@ done
 
 
 tmux send-keys -t $tmuxname "rm aolmkmodesM.runproc" C-m
-menucontrolloop_default="RM2CMm"
+menucontrolmatrix_default="RM2CMm"
 ;;
 
 
@@ -661,7 +672,7 @@ fname=$( cat ./conf/conf_zrespM_name.txt )
 fname=$(dialog --title "Select zonal Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/conf_zrespM_name.txt
 ReadConfFile "zrespM"
-menucontrolloop_default="zRM"
+menucontrolmatrix_default="zRM"
 ;;
 
 
@@ -679,15 +690,29 @@ getshmimsize aol${LOOPNUMBER}_contrM
 CMMODE="ZONAL"
 echo "$CMMODE" > $CMMODEfile
 
-menucontrolloop_default="RM2CM"
+menucontrolmatrix_default="RM2CM"
 ;;
 
 
 
 
+
+	extBlOFF)
+	rm ./conf/extrablockM.fits
+	menucontrolmatrix_default="extBlON"
+	;;
+	
+	extBlON)
+	cp ./extrablockM.fits ./conf/extrablockM.fits
+	menucontrolmatrix_default="extBlOFF"
+	;;
+	
+
+
+
 	mkModes0)
 mkModesMODE=0; # full computation
-menucontrolloop_default="mkModes"
+menucontrolmatrix_default="mkModes"
 aoconflogext "START control matrix computation mkModesMODE 0"
 CMMODE="MODAL"
 echo "$CMMODE" > $CMMODEfile
@@ -696,7 +721,7 @@ state="menu_mkFModes"
 
 	mkModes1)
 mkModesMODE=1; # re-use previous DM modes
-menucontrolloop_default="mkModes"
+menucontrolmatrix_default="mkModes"
 aoconflogext "START control matrix computation mkModesMODE 1"
 CMMODE="MODAL"
 echo "$CMMODE" > $CMMODEfile
@@ -707,29 +732,29 @@ fname=$( cat ./conf/conf_DMmodes_name.txt )
 fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/conf_DMmodes_name.txt
 ReadConfFile "DMmodes"
-menucontrolloop_default="DMmodes"
+menucontrolmatrix_default="DMmodes"
 ;;
 	RM)
 fname=$( cat ./conf/conf_respM_name.txt )
 fname=$(dialog --title "Select Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/conf_respM_name.txt
 ReadConfFile "respM"
-menucontrolloop_default="RM"
+menucontrolmatrix_default="RM"
 ;;
 	CM)
 fname=$( cat ./conf/conf_contrM_name.txt )
 fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/conf_contrM_name.txt
 ReadConfFile "contrM"
-menucontrolloop_default="CM"
+menucontrolmatrix_default="CM"
 ;;
 
 
 chkSMloadCM)
 if [ -f "aolmkmodes.runproc" ]; then
-menucontrolloop_default="chkSMloadCM"
+menucontrolmatrix_default="chkSMloadCM"
 else
-menucontrolloop_default="SMloadCM"
+menucontrolmatrix_default="SMloadCM"
 fi
 ;;
 
@@ -767,7 +792,7 @@ ReadConfFile "contrMcact${i2}_00"
 getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
 
 done
-menucontrolloop_default="SMloadCM"
+menucontrolmatrix_default="SMloadCM"
 ;;
 
 
@@ -840,102 +865,102 @@ menucontrolloop_default="SMloadCM"
 
 	DMm00)
 SelectConfFile "DMmodes00"
-menucontrolloop_default="DMm00"
+menucontrolmatrix_default="DMm00"
 state="menuconfigureloop"
 ;;
 	DMm01)
 SelectConfFile "DMmodes01"
-menucontrolloop_default="DMm01"
+menucontrolmatrix_default="DMm01"
 state="menuconfigureloop"
 ;;
 	DMm02)
 SelectConfFile "DMmodes02"
-menucontrolloop_default="DMm02"
+menucontrolmatrix_default="DMm02"
 state="menuconfigureloop"
 ;;
 	DMm03)
 SelectConfFile "DMmodes03"
-menucontrolloop_default="DMm03"
+menucontrolmatrix_default="DMm03"
 state="menuconfigureloop"
 ;;
 	DMm04)
 SelectConfFile "DMmodes04"
-menucontrolloop_default="DMm04"
+menucontrolmatrix_default="DMm04"
 state="menuconfigureloop"
 ;;
 	DMm05)
 SelectConfFile "DMmodes05"
-menucontrolloop_default="DMm05"
+menucontrolmatrix_default="DMm05"
 state="menuconfigureloop"
 ;;
 	DMm06)
 SelectConfFile "DMmodes06"
-menucontrolloop_default="DMm06"
+menucontrolmatrix_default="DMm06"
 state="menuconfigureloop"
 ;;
 	DMm07)
 SelectConfFile "DMmodes07"
-menucontrolloop_default="DMm07"
+menucontrolmatrix_default="DMm07"
 state="menuconfigureloop"
 ;;
 	DMm08)
 SelectConfFile "DMmodes08"
-menucontrolloop_default="DMm08"
+menucontrolmatrix_default="DMm08"
 state="menuconfigureloop"
 ;;
 	DMm09)
 SelectConfFile "DMmodes09"
-menucontrolloop_default="DMm09"
+menucontrolmatrix_default="DMm09"
 state="menuconfigureloop"
 ;;
 	DMm10)
 SelectConfFile "DMmodes10"
-menucontrolloop_default="DMm10"
+menucontrolmatrix_default="DMm10"
 state="menuconfigureloop"
 ;;
 	DMm11)
 SelectConfFile "DMmodes11"
-menucontrolloop_default="DMm11"
+menucontrolmatrix_default="DMm11"
 state="menuconfigureloop"
 ;;
 	DMm12)
 SelectConfFile "DMmodes12"
-menucontrolloop_default="DMm12"
+menucontrolmatrix_default="DMm12"
 state="menuconfigureloop"
 ;;
 	DMm13)
 SelectConfFile "DMmodes13"
-menucontrolloop_default="DMm13"
+menucontrolmatrix_default="DMm13"
 state="menuconfigureloop"
 ;;
 	DMm14)
 SelectConfFile "DMmodes14"
-menucontrolloop_default="DMm14"
+menucontrolmatrix_default="DMm14"
 state="menuconfigureloop"
 ;;
 	DMm15)
 SelectConfFile "DMmodes15"
-menucontrolloop_default="DMm15"
+menucontrolmatrix_default="DMm15"
 state="menuconfigureloop"
 ;;
 	DMm16)
 SelectConfFile "DMmodes16"
-menucontrolloop_default="DMm16"
+menucontrolmatrix_default="DMm16"
 state="menuconfigureloop"
 ;;
 	DMm17)
 SelectConfFile "DMmodes17"
-menucontrolloop_default="DMm17"
+menucontrolmatrix_default="DMm17"
 state="menuconfigureloop"
 ;;
 	DMm18)
 SelectConfFile "DMmodes18"
-menucontrolloop_default="DMm18"
+menucontrolmatrix_default="DMm18"
 state="menuconfigureloop"
 ;;
 	DMm19)
 SelectConfFile "DMmodes19"
-menucontrolloop_default="DMm19"
+menucontrolmatrix_default="DMm19"
 state="menuconfigureloop"
 ;;
 
@@ -944,102 +969,102 @@ state="menuconfigureloop"
 
 	RM00)
 SelectConfFile "respM00"
-menucontrolloop_default="RM00"
+menucontrolmatrix_default="RM00"
 state="menuconfigureloop"
 ;;
 	RM01)
 SelectConfFile "respM01"
-menucontrolloop_default="RM01"
+menucontrolmatrix_default="RM01"
 state="menuconfigureloop"
 ;;
 	RM02)
 SelectConfFile "respM02"
-menucontrolloop_default="RM02"
+menucontrolmatrix_default="RM02"
 state="menuconfigureloop"
 ;;
 	RM03)
 SelectConfFile "respM03"
-menucontrolloop_default="RM03"
+menucontrolmatrix_default="RM03"
 state="menuconfigureloop"
 ;;
 	RM04)
 SelectConfFile "respM04"
-menucontrolloop_default="RM04"
+menucontrolmatrix_default="RM04"
 state="menuconfigureloop"
 ;;
 	RM05)
 SelectConfFile "respM05"
-menucontrolloop_default="RM05"
+menucontrolmatrix_default="RM05"
 state="menuconfigureloop"
 ;;
 	RM06)
 SelectConfFile "respM06"
-menucontrolloop_default="RM06"
+menucontrolmatrix_default="RM06"
 state="menuconfigureloop"
 ;;
 	RM07)
 SelectConfFile "respM07"
-menucontrolloop_default="RM07"
+menucontrolmatrix_default="RM07"
 state="menuconfigureloop"
 ;;
 	RM08)
 SelectConfFile "respM08"
-menucontrolloop_default="RM08"
+menucontrolmatrix_default="RM08"
 state="menuconfigureloop"
 ;;
 	RM09)
 SelectConfFile "respM09"
-menucontrolloop_default="RM09"
+menucontrolmatrix_default="RM09"
 state="menuconfigureloop"
 ;;
 	RM10)
 SelectConfFile "respM10"
-menucontrolloop_default="RM10"
+menucontrolmatrix_default="RM10"
 state="menuconfigureloop"
 ;;
 	RM11)
 SelectConfFile "respM11"
-menucontrolloop_default="RM11"
+menucontrolmatrix_default="RM11"
 state="menuconfigureloop"
 ;;
 	RM12)
 SelectConfFile "respM12"
-menucontrolloop_default="RM12"
+menucontrolmatrix_default="RM12"
 state="menuconfigureloop"
 ;;
 	RM13)
 SelectConfFile "respM13"
-menucontrolloop_default="RM13"
+menucontrolmatrix_default="RM13"
 state="menuconfigureloop"
 ;;
 	RM14)
 SelectConfFile "respM14"
-menucontrolloop_default="RM14"
+menucontrolmatrix_default="RM14"
 state="menuconfigureloop"
 ;;
 	RM15)
 SelectConfFile "respM15"
-menucontrolloop_default="RM15"
+menucontrolmatrix_default="RM15"
 state="menuconfigureloop"
 ;;
 	RM16)
 SelectConfFile "respM16"
-menucontrolloop_default="RM16"
+menucontrolmatrix_default="RM16"
 state="menuconfigureloop"
 ;;
 	RM17)
 SelectConfFile "respM17"
-menucontrolloop_default="RM17"
+menucontrolmatrix_default="RM17"
 state="menuconfigureloop"
 ;;
 	RM18)
 SelectConfFile "respM18"
-menucontrolloop_default="RM18"
+menucontrolmatrix_default="RM18"
 state="menuconfigureloop"
 ;;
 	RM19)
 SelectConfFile "respM19"
-menucontrolloop_default="RM19"
+menucontrolmatrix_default="RM19"
 state="menuconfigureloop"
 ;;
 
@@ -1050,102 +1075,102 @@ state="menuconfigureloop"
 
 	CM00)
 SelectConfFile "contrM00"
-menucontrolloop_default="CM00"
+menucontrolmatrix_default="CM00"
 state="menuconfigureloop"
 ;;
 	CM01)
 SelectConfFile "contrM01"
-menucontrolloop_default="CM01"
+menucontrolmatrix_default="CM01"
 state="menuconfigureloop"
 ;;
 	CM02)
 SelectConfFile "contrM02"
-menucontrolloop_default="CM02"
+menucontrolmatrix_default="CM02"
 state="menuconfigureloop"
 ;;
 	CM03)
 SelectConfFile "contrM03"
-menucontrolloop_default="CM03"
+menucontrolmatrix_default="CM03"
 state="menuconfigureloop"
 ;;
 	CM04)
 SelectConfFile "contrM04"
-menucontrolloop_default="CM04"
+menucontrolmatrix_default="CM04"
 state="menuconfigureloop"
 ;;
 	CM05)
 SelectConfFile "contrM05"
-menucontrolloop_default="CM05"
+menucontrolmatrix_default="CM05"
 state="menuconfigureloop"
 ;;
 	CM06)
 SelectConfFile "contrM06"
-menucontrolloop_default="CM06"
+menucontrolmatrix_default="CM06"
 state="menuconfigureloop"
 ;;
 	CM07)
 SelectConfFile "contrM07"
-menucontrolloop_default="CM07"
+menucontrolmatrix_default="CM07"
 state="menuconfigureloop"
 ;;
 	CM08)
 SelectConfFile "contrM08"
-menucontrolloop_default="CM08"
+menucontrolmatrix_default="CM08"
 state="menuconfigureloop"
 ;;
 	CM09)
 SelectConfFile "contrM09"
-menucontrolloop_default="CM09"
+menucontrolmatrix_default="CM09"
 state="menuconfigureloop"
 ;;
 	CM10)
 SelectConfFile "contrM10"
-menucontrolloop_default="CM10"
+menucontrolmatrix_default="CM10"
 state="menuconfigureloop"
 ;;
 	CM11)
 SelectConfFile "contrM11"
-menucontrolloop_default="CM11"
+menucontrolmatrix_default="CM11"
 state="menuconfigureloop"
 ;;
 	CM12)
 SelectConfFile "contrM12"
-menucontrolloop_default="CM12"
+menucontrolmatrix_default="CM12"
 state="menuconfigureloop"
 ;;
 	CM13)
 SelectConfFile "contrM13"
-menucontrolloop_default="CM13"
+menucontrolmatrix_default="CM13"
 state="menuconfigureloop"
 ;;
 	CM14)
 SelectConfFile "contrM14"
-menucontrolloop_default="CM14"
+menucontrolmatrix_default="CM14"
 state="menuconfigureloop"
 ;;
 	CM15)
 SelectConfFile "contrM15"
-menucontrolloop_default="CM15"
+menucontrolmatrix_default="CM15"
 state="menuconfigureloop"
 ;;
 	CM16)
 SelectConfFile "contrM16"
-menucontrolloop_default="CM16"
+menucontrolmatrix_default="CM16"
 state="menuconfigureloop"
 ;;
 	CM17)
 SelectConfFile "contrM17"
-menucontrolloop_default="CM17"
+menucontrolmatrix_default="CM17"
 state="menuconfigureloop"
 ;;
 	CM18)
 SelectConfFile "contrM18"
-menucontrolloop_default="CM18"
+menucontrolmatrix_default="CM18"
 state="menuconfigureloop"
 ;;
 	CM19)
 SelectConfFile "contrM19"
-menucontrolloop_default="CM19"
+menucontrolmatrix_default="CM19"
 state="menuconfigureloop"
 ;;
 
@@ -1154,102 +1179,102 @@ state="menuconfigureloop"
 
 	CMc00)
 SelectConfFile "contrMc00"
-menucontrolloop_default="CMc00"
+menucontrolmatrix_default="CMc00"
 state="menuconfigureloop"
 ;;
 	CMc01)
 SelectConfFile "contrMc01"
-menucontrolloop_default="CMc01"
+menucontrolmatrix_default="CMc01"
 state="menuconfigureloop"
 ;;
 	CMc02)
 SelectConfFile "contrMc02"
-menucontrolloop_default="CMc02"
+menucontrolmatrix_default="CMc02"
 state="menuconfigureloop"
 ;;
 	CMc03)
 SelectConfFile "contrMc03"
-menucontrolloop_default="CMc03"
+menucontrolmatrix_default="CMc03"
 state="menuconfigureloop"
 ;;
 	CMc04)
 SelectConfFile "contrMc04"
-menucontrolloop_default="CMc04"
+menucontrolmatrix_default="CMc04"
 state="menuconfigureloop"
 ;;
 	CMc05)
 SelectConfFile "contrMc05"
-menucontrolloop_default="CMc05"
+menucontrolmatrix_default="CMc05"
 state="menuconfigureloop"
 ;;
 	CMc06)
 SelectConfFile "contrMc06"
-menucontrolloop_default="CMc06"
+menucontrolmatrix_default="CMc06"
 state="menuconfigureloop"
 ;;
 	CMc07)
 SelectConfFile "contrMc07"
-menucontrolloop_default="CMc07"
+menucontrolmatrix_default="CMc07"
 state="menuconfigureloop"
 ;;
 	CMc08)
 SelectConfFile "contrMc08"
-menucontrolloop_default="CMc08"
+menucontrolmatrix_default="CMc08"
 state="menuconfigureloop"
 ;;
 	CMc09)
 SelectConfFile "contrMc09"
-menucontrolloop_default="CMc09"
+menucontrolmatrix_default="CMc09"
 state="menuconfigureloop"
 ;;
 	CMc10)
 SelectConfFile "contrMc10"
-menucontrolloop_default="CMc10"
+menucontrolmatrix_default="CMc10"
 state="menuconfigureloop"
 ;;
 	CMc11)
 SelectConfFile "contrMc11"
-menucontrolloop_default="CMc11"
+menucontrolmatrix_default="CMc11"
 state="menuconfigureloop"
 ;;
 	CMc12)
 SelectConfFile "contrMc12"
-menucontrolloop_default="CMc12"
+menucontrolmatrix_default="CMc12"
 state="menuconfigureloop"
 ;;
 	CMc13)
 SelectConfFile "contrMc13"
-menucontrolloop_default="CMc13"
+menucontrolmatrix_default="CMc13"
 state="menuconfigureloop"
 ;;
 	CMc14)
 SelectConfFile "contrMc14"
-menucontrolloop_default="CMc14"
+menucontrolmatrix_default="CMc14"
 state="menuconfigureloop"
 ;;
 	CMc15)
 SelectConfFile "contrMc15"
-menucontrolloop_default="CMc15"
+menucontrolmatrix_default="CMc15"
 state="menuconfigureloop"
 ;;
 	CMc16)
 SelectConfFile "contrMc16"
-menucontrolloop_default="CMc16"
+menucontrolmatrix_default="CMc16"
 state="menuconfigureloop"
 ;;
 	CMc17)
 SelectConfFile "contrMc17"
-menucontrolloop_default="CMc17"
+menucontrolmatrix_default="CMc17"
 state="menuconfigureloop"
 ;;
 	CMc18)
 SelectConfFile "contrMc18"
-menucontrolloop_default="CMc18"
+menucontrolmatrix_default="CMc18"
 state="menuconfigureloop"
 ;;
 	CMc19)
 SelectConfFile "contrMc19"
-menucontrolloop_default="CMc19"
+menucontrolmatrix_default="CMc19"
 state="menuconfigureloop"
 ;;
 
@@ -1261,102 +1286,102 @@ state="menuconfigureloop"
 
 	CMca00)
 SelectConfFile "contrMcact00_00"
-menucontrolloop_default="CMca00"
+menucontrolmatrix_default="CMca00"
 state="menuconfigureloop"
 ;;
 	CMca01)
 SelectConfFile "contrMcact01_00"
-menucontrolloop_default="CMca01"
+menucontrolmatrix_default="CMca01"
 state="menuconfigureloop"
 ;;
 	CMca02)
 SelectConfFile "contrMcact02_00"
-menucontrolloop_default="CMca02"
+menucontrolmatrix_default="CMca02"
 state="menuconfigureloop"
 ;;
 	CMca03)
 SelectConfFile "contrMcact03_00"
-menucontrolloop_default="CMca03"
+menucontrolmatrix_default="CMca03"
 state="menuconfigureloop"
 ;;
 	CMca04)
 SelectConfFile "contrMcact04_00"
-menucontrolloop_default="CMca04"
+menucontrolmatrix_default="CMca04"
 state="menuconfigureloop"
 ;;
 	CMca05)
 SelectConfFile "contrMcact05_00"
-menucontrolloop_default="CMca05"
+menucontrolmatrix_default="CMca05"
 state="menuconfigureloop"
 ;;
 	CMca06)
 SelectConfFile "contrMcact06_00"
-menucontrolloop_default="CMca06"
+menucontrolmatrix_default="CMca06"
 state="menuconfigureloop"
 ;;
 	CMca07)
 SelectConfFile "contrMcact07_00"
-menucontrolloop_default="CMca07"
+menucontrolmatrix_default="CMca07"
 state="menuconfigureloop"
 ;;
 	CMca08)
 SelectConfFile "contrMcact08_00"
-menucontrolloop_default="CMca08"
+menucontrolmatrix_default="CMca08"
 state="menuconfigureloop"
 ;;
 	CMca09)
 SelectConfFile "contrMcact09_00"
-menucontrolloop_default="CMca09"
+menucontrolmatrix_default="CMca09"
 state="menuconfigureloop"
 ;;
 	CMca10)
 SelectConfFile "contrMcact10_00"
-menucontrolloop_default="CMca10"
+menucontrolmatrix_default="CMca10"
 state="menuconfigureloop"
 ;;
 	CMca11)
 SelectConfFile "contrMcact11_00"
-menucontrolloop_default="CMca11"
+menucontrolmatrix_default="CMca11"
 state="menuconfigureloop"
 ;;
 	CMca12)
 SelectConfFile "contrMcact12_00"
-menucontrolloop_default="CMca12"
+menucontrolmatrix_default="CMca12"
 state="menuconfigureloop"
 ;;
 	CMca13)
 SelectConfFile "contrMcact13_00"
-menucontrolloop_default="CMca13"
+menucontrolmatrix_default="CMca13"
 state="menuconfigureloop"
 ;;
 	CMca14)
 SelectConfFile "contrMcact14_00"
-menucontrolloop_default="CMca14"
+menucontrolmatrix_default="CMca14"
 state="menuconfigureloop"
 ;;
 	CMca15)
 SelectConfFile "contrMcact15_00"
-menucontrolloop_default="CMca15"
+menucontrolmatrix_default="CMca15"
 state="menuconfigureloop"
 ;;
 	CMca16)
 SelectConfFile "contrMcact16_00"
-menucontrolloop_default="CMca16"
+menucontrolmatrix_default="CMca16"
 state="menuconfigureloop"
 ;;
 	CMca17)
 SelectConfFile "contrMcact17_00"
-menucontrolloop_default="CMca17"
+menucontrolmatrix_default="CMca17"
 state="menuconfigureloop"
 ;;
 	CMca18)
 SelectConfFile "contrMcact18_00"
-menucontrolloop_default="CMca18"
+menucontrolmatrix_default="CMca18"
 state="menuconfigureloop"
 ;;
 	CMca19)
 SelectConfFile "contrMcact19_00"
-menucontrolloop_default="CMca19"
+menucontrolmatrix_default="CMca19"
 state="menuconfigureloop"
 ;;
 
