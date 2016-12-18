@@ -2732,7 +2732,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long IDtm, IDem;
     long IDeModes;
 
-    long kelim = 10;
+    long kelim = 100;
     double coeff;
     long citer;
     long NBciter = 200;
@@ -3214,12 +3214,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     delete_image_ID("lcoeff");
                     IDem = image_ID("em00");
 
-//					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
 
-					if(k>kelim)
-						coeff = 1.0;
-					else
-						coeff = 0.0;
+//					if(k>kelim)
+	//					coeff = 1.0;
+		//			else
+			//			coeff = 0.0;
 
 
                     for(ii=0; ii<msizex*msizey; ii++)
@@ -3276,7 +3276,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("DONE SAVING\n");
 
         // time : 0:04
-		exit(0);
 
 
 
