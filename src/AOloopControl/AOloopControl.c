@@ -3193,7 +3193,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     
        
         printf("SAVING MODES : %s...\n", ID_name);
-        save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+        save_fits(ID_name, "!./mkmodestmp/fmodes0all_00.fits");
 
 
 
@@ -3228,12 +3228,43 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     delete_image_ID("em00");
                     delete_image_ID("tmpmode");
                 }
+			
+			// Compute total of image over mask -> totvm
+                ave = 0.0;
+                totvm = 0.0;
+                totm = 0.0;
+                for(ii=0; ii<msizex*msizey; ii++)
+                    {
+						totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+						totm += data.image[IDmask].array.F[ii];
+					}
+					
+                // compute DC offset in mode
+                offset = totvm/totm;
 
-		
-		
+				// remove DM offset
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
+
+                offset = 0.0;
+                for(ii=0; ii<msizex*msizey; ii++)
+                    offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+
+				// set RMS = 1 over mask
+                rms = 0.0;
+                for(ii=0; ii<msizex*msizey; ii++)
+                {
+                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
+                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+                }
+                rms = sqrt(rms/totm);
+                printf("Mode %ld   RMS = %lf\n", k, rms);
+                
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[ID].array.F[k*msizex*msizey+ii] /= rms;		
 		}
 
-       save_fits(ID_name, "!./mkmodestmp/fmodes0all_rm.fits");
+       save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
 
 
 
