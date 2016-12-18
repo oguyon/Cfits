@@ -377,6 +377,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	float *segarrayv;
 	long ii1, jj1;
 	long NBpixelAdded = 0;
+	long NBoffpix = 0;
 	
 	
 	
@@ -469,11 +470,13 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 				}
 				
 		NBpixelAdded = 0;
+		NBoffpix = 0;
 		for(ii=1;ii<size-1;ii++)
 			for(jj=1; jj<size-1; jj++)
 			{
 				if(segarray[jj*size+ii] == 0) // pixel not yet allocated
 				{
+					NBoffpix ++;
 					// testing pixel on left
 					ii1 = ii-1;
 					jj1 = jj;
@@ -537,11 +540,10 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 						NBpixelAdded++;
 					} 
 	
-		printf("limit = %20g    %ld pixels added\n", lim, NBpixelAdded);
+		printf("limit = %20g      %ld pix off   %ld pixels added\n", lim, NBoffpix, NBpixelAdded);
 				
 		lim *= limstep;
 	}
-	
 	
 	
 	
