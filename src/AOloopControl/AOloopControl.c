@@ -3510,7 +3510,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 				mblock1 = mblock;
 				
             sprintf(imname, "fmodes0_%02ld", mblock1);
-            MBLOCK_ID[mblock1] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock1]);
+            MBLOCK_ID[mblock1] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
             MBLOCK_ID[mblock1] = image_ID(imname);
         }
 
