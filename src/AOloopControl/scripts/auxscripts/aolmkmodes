@@ -36,8 +36,9 @@ echo "   ./mkmodestmp/contrMcact_xx.fits.fits"
 echo "   dmmask.fits"
 echo ""
 echo " $(tput bold)NOTES:$(tput sgr0)"
-echo "  USES (OPTIONAL) : ./conf/TPind.fits"
-echo "                  Modes to be excluded"
+echo "  USES (OPTIONAL) : ./conf/ExcludedModes.fits  Modes to be excluded"
+echo "       (OPTIONAL) : ./conf/extrablockM.fits    extra block of modes"
+echo ""
 echo "  READS: "
 echo "  INPUT: ./conf/aol#_dmslaved.fits"
 echo "  INPUT: ./conf/aol#_zrepM.fits"
@@ -141,7 +142,7 @@ mkdir -p tmp
 
 $execnamestring -n $pname << EOF
 aolnb $loopnb
-
+loadfits "./conf/extrablockM.fits" extrablockM
 loadfits "./conf/aol${loopnb}_dmslaved.fits" dmslaved
 loadfits "./conf/aol${loopnb}_zrespM.fits" zrespM
 loadfits "./conf/aol${loopnb}_dmmaskRM.fits" dmmaskRM

@@ -2867,6 +2867,20 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 	FILE *fpcoeff;
 	char fnameSVDcoeff[400];
 
+
+	// extra block
+	long IDextrablock;
+	long extrablockIndex;
+	long mblock1;
+
+
+
+
+
+
+
+
+
     MODAL = 0;
     if(msizey==1)
         MODAL = 1;
@@ -3327,8 +3341,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         IDRMMmodes = image_ID("RMMmodes"); // modal resp matrix modes
         IDRMMresp = image_ID("RMMresp"); // modal resp matrix
 
-
-
         fpLOcoeff = fopen("./mkmodestmp/LOcoeff.txt", "w");
         if(fpLOcoeff == NULL)
         {
@@ -3477,12 +3489,32 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         NBmblock++;
 
+		
+		IDextrablock = image_ID("extrablockM");
+		if(IDextrablock != -1)
+			{				
+				extrablockIndex = 4;
+			}
+			
+			
+
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            sprintf(imname, "fmodes0_%02ld", mblock);
-            MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
-            MBLOCK_ID[mblock] = image_ID(imname);
+			if(IDextrablock!= -1)
+			{
+				mblock1 = mblock;
+				if(mblock>extrablockIndex-1)
+					mblock1 = mblock+1;
+			}
+			else
+				mblock1 = mblock;
+				
+            sprintf(imname, "fmodes0_%02ld", mblock1);
+            MBLOCK_ID[mblock1] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock1]);
+            MBLOCK_ID[mblock1] = image_ID(imname);
         }
+
+			
 
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
             MBLOCK_NBmode[mblock] = 0;
@@ -3494,11 +3526,42 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             while (cpa > CPAblocklim[mblock])
                 mblock++;
 
-            for(ii=0; ii<msizex*msizey; ii++)
-                data.image[MBLOCK_ID[mblock]].array.F[MBLOCK_NBmode[mblock]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+			if(IDextrablock!= -1)
+			{
+				mblock1 = mblock;
+				if(mblock>extrablockIndex-1)
+					mblock1 = mblock+1;
+			}
+			else
+				mblock1 = mblock;
 
-            MBLOCK_NBmode[mblock]++;
+
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[MBLOCK_ID[mblock1]].array.F[MBLOCK_NBmode[mblock1]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+
+            MBLOCK_NBmode[mblock1]++;
         }
+
+
+		if(IDextrablock != -1)
+			{
+				mblock = extrablockIndex;
+				sprintf(imname, "fmodes0_%02ld", mblock);
+				MBLOCK_NBmode[mblock] = data.image[IDextrablock].md[0].size[2];
+				MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
+
+				for(m=0;m<MBLOCK_NBmode[mblock];m++)
+					for(ii=0; ii<msizex*msizey; ii++)
+						data.image[MBLOCK_ID[mblock]].array.F[m*msizex*msizey+ii] = data.image[IDextrablock].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+				
+				NBmblock++;
+			}
+
+
+
+
+
+
 
 
         // time : 00:42
@@ -3558,7 +3621,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-
+		exit(0);
         // time: 00:58
 
 
