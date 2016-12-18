@@ -26,6 +26,8 @@ fi
 
 function WFSresidualOffsetLoop_init
 {
+	echo "WFSresidualOffsetLoop_init  loop ${LOOPNUMBER}"
+	sleep 2
 Cfits << EOF
 readshmim aol${LOOPNUMBER}_wfszpo6
 imzero aol${LOOPNUMBER}_wfszpo6
