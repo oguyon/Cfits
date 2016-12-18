@@ -2732,7 +2732,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long IDtm, IDem;
     long IDeModes;
 
-    long kelim = 60;
+    long kelim = 10;
     double coeff;
     long citer;
     long NBciter = 200;
@@ -3048,7 +3048,13 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     IDem = image_ID("em00");
 
 //					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
-					coeff = 1.0;
+
+					if(k>kelim)
+						coeff = 1.0;
+					else
+						coeff = 0.0;
+
+
                     for(ii=0; ii<msizex*msizey; ii++)
                         data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
 
