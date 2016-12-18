@@ -356,8 +356,9 @@ int init_SCExAO_control()
 
 
 
-
-// 
+//
+// optional : use dmmask
+//
 long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 {
 	long IDdmmap, IDout;
@@ -383,13 +384,22 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	long cnt;
 	
 	
+	long IDdmmask;
+	
 	
 	IDdmmap = image_ID(IDdmmap_name);
 	size = data.image[IDdmmap].md[0].size[0];
 	size2 = size*size;
 	
+
 	lim0 = img_percentile(IDdmmap_name, 0.90);
-	limstop = lim0*0.01;
+	limstop = lim0*0.001;
+	
+	IDdmmask = image_ID("dmmask");
+	if(IDdmmask!=-1)
+		for(ii=0;ii<size2;ii++)
+			data.image[IDdmmap].array.F[ii] += (2.0*limstop)*data.image[IDdmmask].array.F[ii];
+	
 	
 	segarray = (int*) malloc(sizeof(int)*size*size);
 	segarrayn = (int*) malloc(sizeof(int)*size*size); // proposed new allocation
@@ -603,10 +613,6 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 		
 		
 		
-//	for(ii=0; ii<size; ii++)
-	//	for(jj=0; jj<size; jj++)
-		//		data.image[IDout].array.F[jj*size+ii] = 1.0*segarray[jj*size+ii];
-	
 	
 	
 	
@@ -618,6 +624,9 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	
 	return(IDout);
 }
+
+
+
 
 
 long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)
