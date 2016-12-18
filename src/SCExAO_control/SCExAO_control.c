@@ -74,6 +74,9 @@ float SCExAO_PZT_STAGE_Ypos_ref = -5.0;
 float SCExAO_PZT_STAGE_Ypos_min = -7.0;
 float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 
+
+
+
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -82,6 +85,7 @@ float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 // 3: string, not existing image
 // 4: existing image
 // 5: string
+
 
 int SCExAOcontrol_mkSegmentModes_cli()
 {
@@ -361,16 +365,31 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	long size;
 	double xc, yc, r0, r1;
 	double x, y, r;
+	double lim0, lim;
+	double limstep = 0.9999;
+	double limstop;
+	double val;
 	
 	int *segarray;
 	int nbseg = 4;
+	
+	int *segarrayn;
+	float *segarrayv;
+	long ii1, jj1;
+	long NBpixelAdded = 0;
+	
 	
 	
 	
 	IDdmmap = image_ID(IDdmmap_name);
 	size = data.image[IDdmmap].md[0].size[0];
 	
+	lim0 = img_percentile(IDdmmap_name, 0.90);
+	limstop = lim0*0.2;
+	
 	segarray = (int*) malloc(sizeof(int)*size*size);
+	segarrayn = (int*) malloc(sizeof(int)*size*size); // proposed new allocation
+	segarrayv = (float*) malloc(sizeof(float)*size*size); // proposed new allocation pixel strength
 	
 	
 	IDout = create_2Dimage_ID(IDout_name, size, size);
@@ -439,12 +458,104 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	
 	
 	
+	lim = lim0;
+	while (lim > limstop)
+	{
+		for(ii=0;ii<size;ii++)
+			for(jj=0; jj<size; jj++)
+				{
+					segarrayn[jj*size+ii] = 0;
+					segarrayv[jj*size+ii] = 0.0;				
+				}
+				
+		NBpixelAdded = 0;
+		for(ii=1;ii<size-1;ii++)
+			for(jj=1; jj<size-1; jj++)
+			{
+				if(segarray[jj*size+ii] == 0) // pixel not yet allocated
+				{
+					// testing pixel on left
+					ii1 = ii-1;
+					jj1 = jj;
+					if(segarray[jj1*size+ii1] != 0)
+						{
+							val = data.image[IDdmmap].array.F[jj1*size+ii1];
+							if((val > segarrayv[jj*size+ii])&&(val>lim))
+								{
+									segarrayv[jj*size+ii] = val;
+									segarrayn[jj*size+ii] = segarray[jj1*size+ii1];
+								}								
+						}
+
+					// testing pixel on top
+					ii1 = ii;
+					jj1 = jj+1;
+					if(segarray[jj1*size+ii1] != 0)
+						{
+							val = data.image[IDdmmap].array.F[jj1*size+ii1];
+							if((val > segarrayv[jj*size+ii])&&(val>lim))
+								{
+									segarrayv[jj*size+ii] = val;
+									segarrayn[jj*size+ii] = segarray[jj1*size+ii1];
+								}								
+						}
+
+					// testing pixel on right
+					ii1 = ii+1;
+					jj1 = jj;
+					if(segarray[jj1*size+ii1] != 0)
+						{
+							val = data.image[IDdmmap].array.F[jj1*size+ii1];
+							if((val > segarrayv[jj*size+ii])&&(val>lim))
+								{
+									segarrayv[jj*size+ii] = val;
+									segarrayn[jj*size+ii] = segarray[jj1*size+ii1];
+								}								
+						}
+
+					// testing pixel on bottom
+					ii1 = ii;
+					jj1 = jj-1;
+					if(segarray[jj1*size+ii1] != 0)
+						{
+							val = data.image[IDdmmap].array.F[jj1*size+ii1];
+							if((val > segarrayv[jj*size+ii])&&(val>lim))
+								{
+									segarrayv[jj*size+ii] = val;
+									segarrayn[jj*size+ii] = segarray[jj1*size+ii1];
+								}								
+						}		
+				}
+			}
+		
+		for(ii=1;ii<size-1;ii++)
+			for(jj=1; jj<size-1; jj++)
+				if(segarray[jj*size+ii] == 0) // pixel not yet allocated
+					if(segarray[jj*size+ii] != 0)
+					{
+						segarray[jj*size+ii] = segarrayn[jj*size+ii];
+						NBpixelAdded++;
+					} 
+	
+		printf("limit = %20f    %ld pixels added\n", lim, NBpixelAdded);
+				
+		lim *= limstep;
+	}
+	
+	
+	
+	
+	
 	for(ii=0; ii<size; ii++)
 		for(jj=0; jj<size; jj++)
 				data.image[IDout].array.F[jj*size+ii] = 1.0*segarray[jj*size+ii];
 	
 	
+	
+	
 	free(segarray);
+	free(segarrayn);
+	free(segarrayv);
 	
 	return(IDout);
 }
