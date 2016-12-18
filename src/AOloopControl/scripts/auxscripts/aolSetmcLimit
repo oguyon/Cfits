@@ -6,8 +6,6 @@ NBARGS=4
 
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
-
 
 
 
@@ -34,7 +32,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Compute real-time WFS residual image\n" "$0" 
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
 }
 
 

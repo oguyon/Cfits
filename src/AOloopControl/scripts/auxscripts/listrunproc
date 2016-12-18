@@ -24,7 +24,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s        List running AOloop processes\n" "$0" 
+    printf "%25s       List running AOloop processes\n" "$0" 
 }
 
 

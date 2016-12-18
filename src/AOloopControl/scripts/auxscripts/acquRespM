@@ -31,7 +31,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Acquire response matrix\n" "$0" 
+    printf "%25s       Acquire response matrix\n" "$0" 
 }
 
 

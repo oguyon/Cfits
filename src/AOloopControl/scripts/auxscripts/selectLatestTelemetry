@@ -9,7 +9,6 @@ NBARGS=0
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
-loopnb=$(cat LOOPNUMBER)
 
 
 
@@ -39,7 +38,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Compute real-time WFS residual image\n" "$0" 
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
 }
 
 
@@ -104,6 +103,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 

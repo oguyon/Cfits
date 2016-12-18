@@ -6,7 +6,6 @@
 NBARGS=3
 
 
-loopnb=$(cat LOOPNUMBER)
 # ======================= PROCESS NAME =================================
 pname=`echo "$0${loopnb}" | sed "s/\.\///g"`
 
@@ -37,7 +36,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Compute real-time WFS residual image\n" "$0" 
+    printf "%25s       Compute real-time WFS residual image\n" "$0" 
 }
 
 
@@ -95,6 +94,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 

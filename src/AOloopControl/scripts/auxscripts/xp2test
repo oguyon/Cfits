@@ -31,7 +31,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Compute cross-product of two data cubes\n" "$0" 
+    printf "%25s       Compute cross-product of two data cubes\n" "$0" 
 }
 
 

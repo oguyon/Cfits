@@ -37,7 +37,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
+    printf "%25s       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
 }
 
 

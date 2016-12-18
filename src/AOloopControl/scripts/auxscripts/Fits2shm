@@ -29,7 +29,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Copy FITS files to shared memor\n" "$0" 
+    printf "%25s       Copy FITS files to shared memor\n" "$0" 
 }
 
 

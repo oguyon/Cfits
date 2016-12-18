@@ -25,7 +25,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       EXTRACT MODE VALUES FROM WFS IMAGES, SORT PER BLOCK\n" "$0" 
+    printf "%25s       Extract mode values from WFS images, sort per block\n" "$0" 
 }
 
 

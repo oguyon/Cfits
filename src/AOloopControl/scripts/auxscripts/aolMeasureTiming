@@ -22,7 +22,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Measure loop timing\n" "$0" 
+    printf "%25s       Measure loop timing\n" "$0" 
 }
 
 

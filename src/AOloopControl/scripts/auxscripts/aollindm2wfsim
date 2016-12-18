@@ -7,7 +7,6 @@ NBARGS=1
 # ======================= PROCESS NAME =================================
 pname="aol${loopnb}lindm2wfsim"
 
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 function printHELP {
@@ -39,7 +38,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       CONVERT DM STREAM TO WFS IMAGE\n" "$0" 
+    printf "%25s       CONVERT DM STREAM TO WFS IMAGE\n" "$0" 
 }
 
 
@@ -99,6 +98,8 @@ printHELP
         exit
 fi
 
+
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 Cfits -n $pname << EOF

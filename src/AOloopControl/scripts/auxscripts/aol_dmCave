@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       dmC temporal averaging\n" "$0" 
+    printf "%25s       dmC temporal averaging\n" "$0" 
 }
 
 

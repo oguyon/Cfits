@@ -34,7 +34,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       INTRODUCE DM DELAY\n" "$0" 
+    printf "%25s       Introduce DM delay\n" "$0" 
 }
 
 

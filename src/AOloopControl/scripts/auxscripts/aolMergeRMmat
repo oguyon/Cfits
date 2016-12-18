@@ -34,7 +34,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Merge HO and LO resp matrices\n" "$0" 
+    printf "%25s       Merge HO and LO resp matrices\n" "$0" 
 }
 
 

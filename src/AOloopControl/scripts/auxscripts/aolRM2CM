@@ -1,6 +1,5 @@
 #!/bin/bash
 
-loopnb=$(cat LOOPNUMBER)
 
 
 # number of arguments to script
@@ -40,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Align Pyramid camera\n" "$0" 
+    printf "%25s       Align Pyramid camera\n" "$0" 
 }
 
 
@@ -97,6 +96,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 Cfits -n $pname << EOF

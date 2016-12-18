@@ -53,7 +53,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       CREATE MODES FOR AO LOOP\n" "$0" 
+    printf "%25s       Create modes for AO loop\n" "$0" 
 }
 
 

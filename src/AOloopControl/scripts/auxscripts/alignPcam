@@ -21,7 +21,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Align Pyramid camera\n" "$0" 
+    printf "%25s       Align Pyramid camera\n" "$0" 
 }
 
 

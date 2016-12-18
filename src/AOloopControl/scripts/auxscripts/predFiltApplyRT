@@ -39,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Apply predictive filter to stream\n" "$0" 
+    printf "%25s       Apply predictive filter to stream\n" "$0" 
 }
 
 

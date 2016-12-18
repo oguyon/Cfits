@@ -5,7 +5,6 @@ NBARGS=5
 
 
 pname=`echo "$0" | sed "s/\.\///g"`
-echo "pname = $pname"
 
 
 
@@ -46,7 +45,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Acquire zonal response matrix\n" "$0" 
+    printf "%25s       Acquire zonal response matrix\n" "$0" 
 }
 
 

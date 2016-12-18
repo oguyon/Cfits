@@ -7,7 +7,6 @@ NBARGS=1
 # ======================= PROCESS NAME =================================
 pname="aol${loopnb}modeval0"
 
-loopnb=$(cat LOOPNUMBER)
 
 
 function printHELP {
@@ -37,7 +36,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Extract mode values from WFS images\n" "$0" 
+    printf "%25s       Extract mode values from WFS images\n" "$0" 
 }
 
 
@@ -101,6 +100,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 # this version does not use masking (yet)
 

@@ -622,6 +622,37 @@ menupred_default="PFb0aON"
 
 
 
+	PFb1aON)
+tmuxname="aol${LOOPNUMBER}PFb1apply"
+tmux new-session -d -s ${tmuxname}
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} " " C-m
+tmux send-keys -t ${tmuxname} "Cfits" C-m
+
+#tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m
+#tmux send-keys -t ${tmuxname} "exit" C-m
+PFb1aON=" ON"
+file="./status/stat_PFb1aON.txt"
+echo "writing $PFb1aON to file $file"
+sleep 2
+echo "$PFb1aON" > $file
+menupred_default="PFb1aOFF"
+;;
+
+	PFb1aOFF)
+tmuxname="aol${LOOPNUMBER}PFb1apply"
+tmux send-keys -t ${tmuxname} C-c
+PFb1aON="OFF"
+file="./status/stat_PFb1aON.txt"
+echo "$PFb1aON" > $file
+menupred_default="PFb1aON"
+;;
+
+
+
+
+
+
 
 
 

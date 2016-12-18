@@ -28,7 +28,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Wait for file to appear\n" "$0" 
+    printf "%25s       Wait for file to appear\n" "$0" 
 }
 
 

@@ -9,7 +9,6 @@ NBARGS=0
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
-loopnb=$(cat LOOPNUMBER)
 
 
 
@@ -42,7 +41,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Process telemetry: create open and closed loop PSDs\n" "$0" 
+    printf "%25s       Process telemetry: create open and closed loop PSDs\n" "$0" 
 }
 
 
@@ -102,6 +101,7 @@ fi
 
 
 
+loopnb=$(cat LOOPNUMBER)
 
 
 

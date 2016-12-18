@@ -47,7 +47,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%20s       Cleans zonal resp matrix\n" "$0" 
+    printf "%25s       Cleans zonal resp matrix\n" "$0" 
 }
 
 
