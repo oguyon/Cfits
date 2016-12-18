@@ -587,7 +587,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 						data.image[IDout].array.F[kk*size2+jj*size+ii] = 1.0*ii-xc;
 					}
 			}
-		
+		kk++;
 		
 		// tilt
 		for(ii=0; ii<size; ii++)
@@ -598,6 +598,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 						data.image[IDout].array.F[kk*size2+jj*size+ii] = 1.0*jj-yc;
 					}
 			}
+		kk++;
 	}
 		
 		
