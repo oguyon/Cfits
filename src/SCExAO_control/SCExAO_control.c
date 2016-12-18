@@ -378,7 +378,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	long ii1, jj1;
 	long NBpixelAdded = 0;
 	long NBoffpix = 0;
-	
+	long cnt1 = 0;
 	
 	
 	
@@ -482,6 +482,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					jj1 = jj;
 					if(segarray[jj1*size+ii1] != 0)
 						{
+							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
 							if((val > segarrayv[jj*size+ii])&&(val>lim))
 								{
@@ -495,6 +496,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					jj1 = jj+1;
 					if(segarray[jj1*size+ii1] != 0)
 						{
+							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
 							if((val > segarrayv[jj*size+ii])&&(val>lim))
 								{
@@ -508,6 +510,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					jj1 = jj;
 					if(segarray[jj1*size+ii1] != 0)
 						{
+							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
 							if((val > segarrayv[jj*size+ii])&&(val>lim))
 								{
@@ -521,6 +524,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					jj1 = jj-1;
 					if(segarray[jj1*size+ii1] != 0)
 						{
+							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
 							if((val > segarrayv[jj*size+ii])&&(val>lim))
 								{
@@ -540,7 +544,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 						NBpixelAdded++;
 					} 
 	
-		printf("limit = %20g      %ld pix off   %ld pixels added\n", lim, NBoffpix, NBpixelAdded);
+		printf("limit = %20g      %6ld pix off   %6ld pix tested     ->  %6ld pixels added\n", lim, NBoffpix, cnt1, NBpixelAdded);
 				
 		lim *= limstep;
 	}
