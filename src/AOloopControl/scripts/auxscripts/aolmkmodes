@@ -148,7 +148,7 @@ loadfits "./conf/aol${loopnb}_dmmaskRM.fits" dmmaskRM
 loadfits "./conf/aol${loopnb}_wfsmask.fits" wfsmask
 loadfits "./conf/aol${loopnb}_LOrespM.fits" RMMresp
 loadfits "./conf/aol${loopnb}_LODMmodes.fits" RMMmodes
-loadfits "./conf/TPind.fits" emodes
+loadfits "./conf/ExcludedModes.fits" emodes
 readshmim aol${loopnb}_dmC
 imstats aol${loopnb}_dmC
 cx=0.5*imsize0-0.5
