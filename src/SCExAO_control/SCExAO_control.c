@@ -366,7 +366,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	double xc, yc, r0, r1;
 	double x, y, r;
 	double lim0, lim;
-	double limstep = 0.9999;
+	double limstep = 0.99;
 	double limstop;
 	double val;
 	
