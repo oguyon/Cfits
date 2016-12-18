@@ -3018,7 +3018,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
 
 
-
+			fp = fopen("rmscomp.dat", "w");
 			
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
@@ -3031,7 +3031,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
-                
+				
+				fprintf(fp, "%5ld  %g ", k, rms);
                 
                  /// Remove excluded modes if they exist
                 IDeModes = image_ID("emodes");
@@ -3082,10 +3083,12 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
+                fprintf(fp, " %g\n", rms);
+                
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
             }
-
+			fclose(fp);
 
        
 
