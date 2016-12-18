@@ -121,9 +121,9 @@ EOF
 
 else
 
-echo "Linking    /tmp/aol${loopnb}_DMmode_meas.im.shm  - /tmp/aol${loopnb}_modeval.im.shm"
-rm /tmp/aol${loopnb}_modeval.im.shm
-ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
+#echo "Linking    /tmp/aol${loopnb}_DMmode_meas.im.shm  - /tmp/aol${loopnb}_modeval.im.shm"
+#rm /tmp/aol${loopnb}_modeval.im.shm
+#ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 
 Cfits -n $pname << EOF
 csetpmove aol${loopnb}RT1

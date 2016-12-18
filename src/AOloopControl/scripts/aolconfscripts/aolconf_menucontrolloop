@@ -1719,6 +1719,15 @@ tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfsref0" C-m
 tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" C-m
 fi
 
+
+if [ "$CMmode" -eq "1" ]; then
+echo "Linking    /tmp/aol${loopnb}_DMmode_meas.im.shm  - /tmp/aol${loopnb}_modeval.im.shm"
+rm /tmp/aol${loopnb}_modeval.im.shm
+ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
+fi
+
+
+
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 tmux kill-session -t $tmuxname
@@ -1726,8 +1735,8 @@ tmux new-session -d -s $tmuxname
 logRunningProcess "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
 if [ "$CMmode" -eq "1" ]; then
 tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs ${GPUmodesextrwfs}" C-m
-#else
-#tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}" C-m
+else
+tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}" C-m
 fi
 fi
 
@@ -1737,10 +1746,6 @@ tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
-if [ "$CMmode" -eq "1" ]; then
-rm /tmp/aol${loopnb}_modeval.im.shm
-ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
-fi
 tmux send-keys -t $tmuxname "Cfits" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
