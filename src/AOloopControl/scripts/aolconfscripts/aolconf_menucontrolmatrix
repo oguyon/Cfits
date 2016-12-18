@@ -255,11 +255,11 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
 if [ -f "./extrablockM.fits" ]; then
-if [ -f "./conf/extrablockM.fits"]; then
-menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
-else
-menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
-fi
+	if [ -f "./conf/extrablockM.fits" ]; then
+	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
+	else
+	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
+	fi
 else
 menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
 fi
