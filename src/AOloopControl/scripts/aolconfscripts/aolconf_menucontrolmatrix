@@ -253,7 +253,7 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
-
+menuitems+=( " " " " )
 if [ -f "./extrablockM.fits" ]; then
 	if [ -f "./conf/extrablockM.fits" ]; then
 	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
@@ -264,6 +264,17 @@ else
 menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
 fi
 
+file="./conf/conf_extrablockMindex.txt"
+if [ -f $file ]; then
+extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
+else
+echo "4" > $file
+extrablockIndex="4"
+fi
+menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
+
+
+menuitems+=( " " " " )
 
 mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
@@ -707,6 +718,14 @@ menucontrolmatrix_default="RM2CM"
 	menucontrolmatrix_default="extBlOFF"
 	;;
 	
+setexbi)
+exec 3>&1;
+extrablockIndex=$(dialog --inputbox "extrablockIndex" 0 0 "$extrablockIndex" 2>&1 1>&3);
+exec 3>&-;
+echo "$extrablockIndex" > ./conf/conf_extrablockIndex.txt
+aoconflog "set extrablockIndex = ${extrablockIndex}"
+menucontrolmatrix_default="setexbi"
+;;
 
 
 
