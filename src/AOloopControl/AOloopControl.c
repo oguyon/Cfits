@@ -3042,7 +3042,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                     for(ii=0; ii<msizex*msizey; ii++)
                         data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmaskRM", 1.0e-2, "lcoeff", 0);
+                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmaskRM", 1.0e-3, "lcoeff", 0);
                     linopt_imtools_image_construct("emodes", "lcoeff", "em00");
                     delete_image_ID("lcoeff");
                     IDem = image_ID("em00");
