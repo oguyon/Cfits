@@ -2010,6 +2010,23 @@ readshmim aol${LOOPNUMBER}_dmC
 imzero aol${LOOPNUMBER}_dmC
 readshmim aol${LOOPNUMBER}_dmC
 imzero aol${LOOPNUMBER}_dmC
+
+readshmim aol${LOOPNUMBER}_modeval
+imzero aol${LOOPNUMBER}_modeval
+
+readshmim aol${LOOPNUMBER}_modeval_dm
+imzero aol${LOOPNUMBER}_modeval_dm
+
+readshmim aol${LOOPNUMBER}_modeval_ol
+imzero aol${LOOPNUMBER}_modeval_ol
+
+readshmim aol${LOOPNUMBER}_modeval_dm_now
+imzero aol${LOOPNUMBER}_modeval_dm_now
+
+readshmim aol${LOOPNUMBER}_modeval_dm_now_filt
+imzero aol${LOOPNUMBER}_modeval_dm_now_filt
+
+
 exit
 EOF
 aoconflogext "zeroing DM correction"

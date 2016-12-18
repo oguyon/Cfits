@@ -465,6 +465,9 @@ long arith_image_zero(char *ID_name)
     int n;
 
     ID = image_ID(ID_name);
+    
+    if(ID!=-1)
+    {
     nelem = data.image[ID].md[0].nelement;
 
     data.image[ID].md[0].write = 0;
@@ -493,7 +496,8 @@ long arith_image_zero(char *ID_name)
     data.image[ID].md[0].write = 0;
     data.image[ID].md[0].cnt0++;
     COREMOD_MEMORY_image_set_sempost(ID_name, -1);
-
+	}
+	
     return(ID);
 }
 
