@@ -1799,6 +1799,7 @@ logRunningProcess "aol_dmCave" "$tmuxname" "AO loop compute time-averaged DM cor
 tmux send-keys -t $tmuxname "./auxscripts/aol_dmCave 0.0005" C-m
 fi
 
+WFSresidualOffsetLoop_init
 
 if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}wfsresave"
