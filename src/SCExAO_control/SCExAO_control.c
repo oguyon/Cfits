@@ -83,6 +83,18 @@ float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 // 4: existing image
 // 5: string
 
+int SCExAOcontrol_mkSegmentModes_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+
+        SCExAOcontrol_mkSegmentModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 int SCExAOcontrol_Average_image_cli()
 {
@@ -227,7 +239,16 @@ int init_SCExAO_control()
     data.NBmodule++;
 
 
-    strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
+    strcpy(data.cmd[data.NBcmd].key,"scexaomksegmodes");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = SCExAOcontrol_mkSegmentModes_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make segments modes from dm map");
+    strcpy(data.cmd[data.NBcmd].syntax,"<dmmap> <segmap>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaomksegmodes dmmap segmodes");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
     strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
@@ -235,7 +256,6 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100 outave 3");
     strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)");
     data.NBcmd++;
-
 
     strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -332,6 +352,102 @@ int init_SCExAO_control()
 
 
 
+
+// 
+long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
+{
+	long IDdmmap, IDout;
+	long ii, jj;
+	long size;
+	double xc, yc, r0, r1;
+	double x, y, r;
+	
+	int *segarray;
+	int nbseg = 4;
+	
+	
+	
+	IDdmmap = image_ID(IDdmmap_name);
+	size = data.image[IDdmmap].md[0].size[0];
+	
+	segarray = (int*) malloc(sizeof(int)*size*size);
+	
+	
+	IDout = create_2Dimage_ID(IDout_name, size, size);
+	
+	for(ii=0; ii<size; ii++)
+		for(jj=0; jj<size; jj++)
+			data.image[IDout].array.F[jj*size+ii] = 0.0;
+				
+	// initial segment allocation
+	r0 = 0.25*size;
+	r1 = 3.0;
+	
+	for(ii=0;ii<size;ii++)
+		for(jj=0; jj<size; jj++)
+			{
+				segarray[jj*size+ii] = 0;				
+			}
+	
+	xc = 0.5*size + r0;
+	yc = 0.5*size;
+	for(ii=0;ii<size;ii++)
+		for(jj=0; jj<size; jj++)
+			{
+				x = 1.0*ii - xc;
+				y = 1.0*jj - yc;
+				r = sqrt(x*x+y*y);
+				if(r<r1)
+					segarray[jj*size+ii] = 1;
+			}
+	
+	xc = 0.5*size;
+	yc = 0.5*size + r0;
+	for(ii=0;ii<size;ii++)
+		for(jj=0; jj<size; jj++)
+			{
+				x = 1.0*ii - xc;
+				y = 1.0*jj - yc;
+				r = sqrt(x*x+y*y);
+				if(r<r1)
+					segarray[jj*size+ii] = 2;
+			}
+	
+	xc = 0.5*size - r0;
+	yc = 0.5*size;
+	for(ii=0;ii<size;ii++)
+		for(jj=0; jj<size; jj++)
+			{
+				x = 1.0*ii - xc;
+				y = 1.0*jj - yc;
+				r = sqrt(x*x+y*y);
+				if(r<r1)
+					segarray[jj*size+ii] = 3;
+			}
+	
+	xc = 0.5*size;
+	yc = 0.5*size - r0;
+	for(ii=0;ii<size;ii++)
+		for(jj=0; jj<size; jj++)
+			{
+				x = 1.0*ii - xc;
+				y = 1.0*jj - yc;
+				r = sqrt(x*x+y*y);
+				if(r<r1)
+					segarray[jj*size+ii] = 4;
+			}
+	
+	
+	
+	for(ii=0; ii<size; ii++)
+		for(jj=0; jj<size; jj++)
+				data.image[IDout].array.F[jj*size+ii] = 1.0*segarray[jj*size+ii];
+	
+	
+	free(segarray);
+	
+	return(IDout);
+}
 
 
 long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)

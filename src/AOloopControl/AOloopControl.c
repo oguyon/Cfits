@@ -12315,6 +12315,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
         else
             sem_wait(data.image[IDimWFS0].semptr[3]);
 		
+		// imWFS0/tot0 - WFSref -> out
+		
 		data.image[IDout].md[0].write = 1;
 		for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDout].array.F[ii] = data.image[IDimWFS0].array.F[ii]/data.image[IDtot].array.F[0] - data.image[IDwfsref].array.F[ii];
@@ -12322,6 +12324,9 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 		data.image[IDout].md[0].write = 0;		
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 
+
+		// apply mask
+		
 		data.image[IDoutm].md[0].write = 1;
 		for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutm].array.F[ii] = data.image[IDout].array.F[ii] * data.image[IDwfsmask].array.F[ii];
@@ -12329,6 +12334,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 		data.image[IDoutm].md[0].write = 0;		
 		COREMOD_MEMORY_image_set_sempost_byID(IDoutm, -1);
 	
+		
+		// apply gain
 
 		data.image[IDoutave].md[0].write = 1;
 		for(ii=0;ii<wfsxysize;ii++)
@@ -12337,6 +12344,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 		data.image[IDoutave].md[0].write = 0;		
 		COREMOD_MEMORY_image_set_sempost_byID(IDoutave, -1);
 
+		// apply mask
+
 		data.image[IDoutmave].md[0].write = 1;
 		for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutmave].array.F[ii] = data.image[IDoutave].array.F[ii] * data.image[IDwfsmask].array.F[ii];
@@ -12344,6 +12353,7 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 		data.image[IDoutmave].md[0].write = 0;		
 		COREMOD_MEMORY_image_set_sempost_byID(IDoutmave, -1);
 
+		// compute RMS
 	
 		data.image[IDoutrms].md[0].write = 1;
 		for(ii=0;ii<wfsxysize;ii++)

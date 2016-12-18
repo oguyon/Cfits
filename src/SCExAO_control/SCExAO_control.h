@@ -3,7 +3,7 @@
 
 int init_SCExAO_control();
 
-
+long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name);
 int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos);
 
 long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex);
