@@ -3035,7 +3035,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 				fprintf(fp, "%5ld  %g ", k, rms);
                 
                  /// Remove excluded modes if they exist
-                IDeModes = image_ID("emodes");
+      /*          IDeModes = image_ID("emodes");
                 if(IDeModes!=-1)
                 {
                     IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
@@ -3060,7 +3060,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
                     delete_image_ID("em00");
                     delete_image_ID("tmpmode");
-                }
+                }*/
 
 
 				// Compute total of image over mask -> totvm
@@ -3190,27 +3190,55 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
         }
         
-        // forcing edge pixels to be average of nearby inner pixels
-	/*
-		IDtmp = AOloopControl_DMslaveExt(ID_name, "dmmaskRMin", "dmmaskRMedge", "fmodes0alle", 100.0);
-		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all0.fits");
-		save_fits("fmodes0alle", "!./mkmodestmp/_test_fmodes0alle.fits");
-
-		gain = 1.0;
-		for(m=0; m<data.image[ID].md[0].size[2]; m++)
-			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[ID].array.F[m*msizex*msizey+ii] = (1.0-gain)*data.image[ID].array.F[m*msizex*msizey+ii] + gain*data.image[IDtmp].array.F[m*msizex*msizey+ii];
-	
-       
-       IDtmp = AOloopControl_DMslaveExt(ID_name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodes0allext", 100.0);
-       for(m=0; m<data.image[ID].md[0].size[2]; m++)
-			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii];
     
-    */
        
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+
+
+
+		// remove modes
+		
+		for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
+		{
+			  /// Remove excluded modes if they exist
+                IDeModes = image_ID("emodes");
+                if(IDeModes!=-1)
+                {
+                    IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
+
+                    for(ii=0; ii<msizex*msizey; ii++)
+                        data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
+                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-3, "lcoeff", 0);
+                    linopt_imtools_image_construct("emodes", "lcoeff", "em00");
+                    delete_image_ID("lcoeff");
+                    IDem = image_ID("em00");
+
+//					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+
+					if(k>kelim)
+						coeff = 1.0;
+					else
+						coeff = 0.0;
+
+
+                    for(ii=0; ii<msizex*msizey; ii++)
+                        data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
+
+                    delete_image_ID("em00");
+                    delete_image_ID("tmpmode");
+                }
+
+		
+		
+		}
+
+       save_fits(ID_name, "!./mkmodestmp/fmodes0all_rm.fits");
+
+
+
+
+
 
 
         IDmodes0all = image_ID(ID_name);
