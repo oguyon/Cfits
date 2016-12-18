@@ -369,7 +369,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	double lim0, lim;
 	double limstep = 0.99;
 	double limstop;
-	double val;
+	double val, val1;
 	
 	int *segarray;
 	int nbseg = 4;
