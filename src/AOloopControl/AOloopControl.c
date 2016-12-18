@@ -3018,9 +3018,22 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             }
 
 
+
+			
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
-                /// Remove excluded modes if they exist
+               // set RMS = 1 over mask
+                rms = 0.0;
+                for(ii=0; ii<msizex*msizey; ii++)
+                {
+                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
+                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+                }
+                rms = sqrt(rms/totm);
+                printf("Mode %ld   RMS = %lf\n", k, rms);
+                
+                
+                 /// Remove excluded modes if they exist
                 IDeModes = image_ID("emodes");
                 if(IDeModes!=-1)
                 {
@@ -3195,7 +3208,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         printf("DONE SAVING\n");
 
         // time : 0:04
-
+		exit(0);
 
 
 
