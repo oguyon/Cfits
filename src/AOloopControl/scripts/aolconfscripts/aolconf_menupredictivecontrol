@@ -183,7 +183,7 @@ fi
 if [ "$PFb0wON" = "OFF" ]; then
 menuitems+=( "PFb0wON" "[$PFb0wON] switch on Watch input for PF block 0  -> aol${LOOPNUMBER}_modevalol_PFb0" )
 else
-menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb0 \Zr Select to switch off Watch input for PF block 0" )
+menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb0 \Zn Select to switch off Watch input for PF block 0" )
 fi
 
 
@@ -199,7 +199,7 @@ fi
 if [ "$PFb1wON" = "OFF" ]; then
 menuitems+=( "PFb1wON" "[$PFb1wON] switch on Watch input for PF block 1  -> aol${LOOPNUMBER}_modevalol_PFb1" )
 else
-menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb1 \Zr Select to  switch off Watch input for PF block 1" )
+menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb1 \Zn Select to  switch off Watch input for PF block 1" )
 fi
 
 
@@ -220,7 +220,7 @@ fi
 if [ "$PFb0cON" = "OFF" ]; then
 menuitems+=( "PFb0cON" "[$PFb0cON] switch on compute filter for PF block 0  -> aol${LOOPNUMBER}_outPFb0" )
 else
-menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb0\Z1 Select to switch off compute filter input for PF block 0" )
+menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb0\Zn Select to switch off compute filter input for PF block 0" )
 fi
 
 file="./status/stat_PFb1cON.txt"
@@ -235,7 +235,7 @@ fi
 if [ "$PFb1cON" = "OFF" ]; then
 menuitems+=( "PFb1cON" "[$PFb1cON] switch on compute filter for PF block 1  -> aol${LOOPNUMBER}_outPFb1" )
 else
-menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb1\Z1 Select to switch off compute filter for PF block 1" )
+menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb1\Zn Select to switch off compute filter for PF block 1" )
 fi
 
 
