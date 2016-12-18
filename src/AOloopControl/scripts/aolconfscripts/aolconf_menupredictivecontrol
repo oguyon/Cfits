@@ -502,8 +502,6 @@ menupred_default="PFb0wON"
 
 
 	PFb1wON)
-echo "entering PFb1wON"
-sleep 2
 tmuxname="aol${LOOPNUMBER}PFb1watchin"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
@@ -511,7 +509,7 @@ tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
-PFb0wON=" ON"
+PFb1wON=" ON"
 file="./status/stat_PFb1wON.txt"
 echo "writing $PFb1wON to file $file"
 echo "$PFb1wON" > $file
