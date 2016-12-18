@@ -3618,9 +3618,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-		exit(0);
-        // time: 00:58
-
+	
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
