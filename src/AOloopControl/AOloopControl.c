@@ -3558,9 +3558,6 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 			}
 
 
-list_image_ID();
-exit(0);
-
 
 
 
