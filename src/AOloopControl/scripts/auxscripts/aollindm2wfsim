@@ -8,6 +8,7 @@ NBARGS=1
 pname="aol${loopnb}lindm2wfsim"
 
 
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -26,6 +27,7 @@ echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <GPUdevice>     GPU device"
 echo ""
 echo " $(tput bold)AUTOMATIC INPUT:$(tput sgr0)"
+echo "     aol${loopnb}_dmdisp             input DM stream"
 echo "     aol${loopnb}_zrespMlinsim       WFS reference"
 echo "     aol${loopnb}_wfsref0linsim      zonal response matrix"
 echo ""
@@ -38,7 +40,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       CONVERT DM STREAM TO WFS IMAGE\n" "$0" 
+    printf "%25s       Convert DM stream to WFS image stream\n" "$0" 
 }
 
 
@@ -99,7 +101,6 @@ printHELP
 fi
 
 
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 Cfits -n $pname << EOF

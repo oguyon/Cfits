@@ -598,10 +598,9 @@ tmuxname="aol${LOOPNUMBER}PFb0apply"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "Cfits" C-m
 
-#tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m
-#tmux send-keys -t ${tmuxname} "exit" C-m
+tmux send-keys -t ${tmuxname} "applyPfiltRT accposPF accposP" C-m
+
 PFb0aON=" ON"
 file="./status/stat_PFb0aON.txt"
 echo "writing $PFb0aON to file $file"
@@ -612,6 +611,7 @@ menupred_default="PFb0aOFF"
 	PFb0aOFF)
 tmuxname="aol${LOOPNUMBER}PFb0apply"
 tmux send-keys -t ${tmuxname} C-c
+tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0aON="OFF"
 file="./status/stat_PFb0aON.txt"
 echo "$PFb0aON" > $file
@@ -627,6 +627,8 @@ tmuxname="aol${LOOPNUMBER}PFb1apply"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
+./predFiltApplyRT -s -n 1000  accposPF accposP
+
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 
 #tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m

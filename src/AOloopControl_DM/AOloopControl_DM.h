@@ -96,7 +96,11 @@ int AOloopControl_DM_unloadconf();
 
 int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, char *dm2dm_DMmodes, char *dm2dm_outdisp, int wfsrefmode, char *wfsref_WFSRespMat, char *wfsref_out, int voltmode, char *IDvolt_name, float DClevel, float maxvolt);
 
+
 int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain);
+int AOloopControl_DM_setvoltmodeON(long DMindex);
+int AOloopControl_DM_setvoltmodeOFF(long DMindex);
+int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt);
 
 int AOloopControl_DM_dmdispcombstatus(long DMindex);
 
