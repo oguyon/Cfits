@@ -366,7 +366,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	double xc, yc, r0, r1;
 	double x, y, r;
 	double lim0, lim;
-	double limstep = 0.9;
+	double limstep = 0.99;
 	double limstop;
 	double val;
 	
@@ -386,7 +386,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	size = data.image[IDdmmap].md[0].size[0];
 	
 	lim0 = img_percentile(IDdmmap_name, 0.90);
-	limstop = lim0*0.2;
+	limstop = lim0*0.01;
 	
 	segarray = (int*) malloc(sizeof(int)*size*size);
 	segarrayn = (int*) malloc(sizeof(int)*size*size); // proposed new allocation
