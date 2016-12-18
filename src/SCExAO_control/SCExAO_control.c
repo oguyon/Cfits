@@ -484,8 +484,8 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 				
 		NBpixelAdded = 0;
 		NBoffpix = 0;
-		for(ii=1;ii<size-1;ii++)
-			for(jj=1; jj<size-1; jj++)
+		for(ii=0;ii<size;ii++)
+			for(jj=0; jj<size; jj++)
 			{
 				if(segarray[jj*size+ii] == 0) // pixel not yet allocated
 				{
@@ -493,7 +493,8 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					// testing pixel on left
 					ii1 = ii-1;
 					jj1 = jj;
-					if(segarray[jj1*size+ii1] != 0)
+					if(ii1>-1)
+						if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
@@ -507,6 +508,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					// testing pixel on top
 					ii1 = ii;
 					jj1 = jj+1;
+					if(jj1<size)
 					if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
@@ -521,6 +523,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					// testing pixel on right
 					ii1 = ii+1;
 					jj1 = jj;
+					if(ii1<size)
 					if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
@@ -535,6 +538,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					// testing pixel on bottom
 					ii1 = ii;
 					jj1 = jj-1;
+					if(jj1>-1)
 					if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
@@ -574,7 +578,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 		// piston
 		for(ii=0; ii<size; ii++)
 			for(jj=0; jj<size; jj++)
-			{
+			{	
 				if(segarray[jj*size+ii] == seg)
 					{
 						xc += 1.0*ii;
@@ -612,7 +616,10 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	}
 		
 		
-		
+	if(IDmask!=-1)
+		for(kk=0;kk<nbseg*3;kk++)
+			for(ii=0; ii<size2; ii++)
+				data.image[IDout].array.F[kk*size2+ii] *= data.image[IDmask].array.F[ii];
 	
 	
 	
