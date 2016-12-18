@@ -384,7 +384,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	long cnt;
 	
 	
-	long IDdmmask;
+	long IDmask;
 	
 	
 	IDdmmap = image_ID(IDdmmap_name);
@@ -395,10 +395,10 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	lim0 = img_percentile(IDdmmap_name, 0.90);
 	limstop = lim0*0.001;
 	
-	IDdmmask = image_ID("dmmask");
-	if(IDdmmask!=-1)
+	IDmask = image_ID("dmmask");
+	if(IDmask!=-1)
 		for(ii=0;ii<size2;ii++)
-			data.image[IDdmmap].array.F[ii] += (2.0*limstop)*data.image[IDdmmask].array.F[ii];
+			data.image[IDdmmap].array.F[ii] += (2.0*limstop)*data.image[IDmask].array.F[ii];
 	
 	
 	segarray = (int*) malloc(sizeof(int)*size*size);
