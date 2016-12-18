@@ -362,7 +362,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 {
 	long IDdmmap, IDout;
 	long ii, jj;
-	long size;
+	long size, size2;
 	double xc, yc, r0, r1;
 	double x, y, r;
 	double lim0, lim;
@@ -379,11 +379,14 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	long NBpixelAdded = 0;
 	long NBoffpix = 0;
 	long cnt1 = 0;
+	long kk, seg;
+	long cnt;
 	
 	
 	
 	IDdmmap = image_ID(IDdmmap_name);
 	size = data.image[IDdmmap].md[0].size[0];
+	size2 = size*size;
 	
 	lim0 = img_percentile(IDdmmap_name, 0.90);
 	limstop = lim0*0.01;
@@ -393,7 +396,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	segarrayv = (float*) malloc(sizeof(float)*size*size); // proposed new allocation pixel strength
 	
 	
-	IDout = create_2Dimage_ID(IDout_name, size, size);
+	IDout = create_3Dimage_ID(IDout_name, size, size, nbseg*3);
 	
 	for(ii=0; ii<size; ii++)
 		for(jj=0; jj<size; jj++)
@@ -551,10 +554,57 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	
 	
 	
-	
-	for(ii=0; ii<size; ii++)
-		for(jj=0; jj<size; jj++)
-				data.image[IDout].array.F[jj*size+ii] = 1.0*segarray[jj*size+ii];
+	kk = 0;
+	for(seg=1;seg<nbseg+1;seg++)
+	{
+		xc = 0.0;
+		yc = 0.0;
+		cnt = 0;
+		
+		// piston
+		for(ii=0; ii<size; ii++)
+			for(jj=0; jj<size; jj++)
+			{
+				if(segarray[jj*size+ii] == seg)
+					{
+						xc += 1.0*ii;
+						yc += 1.0*jj;
+						cnt++;
+						data.image[IDout].array.F[kk*size2+jj*size+ii] = 1.0;
+					}
+			}
+		
+		xc /= cnt;
+		yc /= cnt;
+		kk++;
+		
+		// tip
+		for(ii=0; ii<size; ii++)
+			for(jj=0; jj<size; jj++)
+			{
+				if(segarray[jj*size+ii] == seg)
+					{
+						data.image[IDout].array.F[kk*size2+jj*size+ii] = 1.0*ii-xc;
+					}
+			}
+		
+		
+		// tilt
+		for(ii=0; ii<size; ii++)
+			for(jj=0; jj<size; jj++)
+			{
+				if(segarray[jj*size+ii] == seg)
+					{
+						data.image[IDout].array.F[kk*size2+jj*size+ii] = 1.0*jj-yc;
+					}
+			}
+	}
+		
+		
+		
+//	for(ii=0; ii<size; ii++)
+	//	for(jj=0; jj<size; jj++)
+		//		data.image[IDout].array.F[jj*size+ii] = 1.0*segarray[jj*size+ii];
 	
 	
 	
@@ -562,6 +612,8 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	free(segarray);
 	free(segarrayn);
 	free(segarrayv);
+	
+	list_image_ID();
 	
 	return(IDout);
 }
