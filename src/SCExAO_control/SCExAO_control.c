@@ -369,7 +369,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 	double lim0, lim;
 	double limstep = 0.99;
 	double limstop;
-	double val, val1;
+	double val, val1, rms;
 	
 	int *segarray;
 	int nbseg = 4;
@@ -628,8 +628,18 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 				val += data.image[IDout].array.F[kk*size2+ii];
 				val1 += data.image[IDmask].array.F[ii];
 			}
+			rms = 0.0;
 			for(ii=0; ii<size2; ii++)
-				data.image[IDout].array.F[kk*size2+ii] -= data.image[IDmask].array.F[ii] * val/val1;
+				{
+					data.image[IDout].array.F[kk*size2+ii] -= data.image[IDmask].array.F[ii] * val/val1;
+					rms += data.image[IDout].array.F[kk*size2+ii]*data.image[IDout].array.F[kk*size2+ii];
+				}
+			
+			for(ii=0; ii<size2; ii++)
+			{
+				data.image[IDout].array.F[kk*size2+ii] /= sqrt(rms/val1);
+			}
+
 		}
 	}		
 	
