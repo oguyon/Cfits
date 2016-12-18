@@ -538,7 +538,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 		for(ii=1;ii<size-1;ii++)
 			for(jj=1; jj<size-1; jj++)
 				if(segarray[jj*size+ii] == 0) // pixel not yet allocated
-					if(segarray[jj*size+ii] != 0)
+					if(segarrayn[jj*size+ii] != 0)
 					{
 						segarray[jj*size+ii] = segarrayn[jj*size+ii];
 						NBpixelAdded++;
