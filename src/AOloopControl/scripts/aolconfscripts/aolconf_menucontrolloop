@@ -2033,6 +2033,12 @@ menucontrolloop_default="wresolON"
 	wresolinit)
 # WFS residual offload to wfsref: init
 Cfits << EOF
+readshmim aol${LOOPNUMBER}_wfszpo6
+imzero aol${LOOPNUMBER}_wfszpo6
+readshmim aol${LOOPNUMBER}_wfsres_ave
+imzero aol${LOOPNUMBER}_wfsres_ave
+readshmim aol${LOOPNUMBER}_wfsresm_ave
+imzero aol${LOOPNUMBER}_wfsresm_ave
 readshmim aol${LOOPNUMBER}_wfsref0
 readshmim aol${LOOPNUMBER}_wfsref
 cpsh aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref
