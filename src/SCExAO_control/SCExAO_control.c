@@ -537,7 +537,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 						NBpixelAdded++;
 					} 
 	
-		printf("limit = %20f    %ld pixels added\n", lim, NBpixelAdded);
+		printf("limit = %20g    %ld pixels added\n", lim, NBpixelAdded);
 				
 		lim *= limstep;
 	}
