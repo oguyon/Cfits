@@ -90,7 +90,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 #define OMP_NELEMENT_LIMIT 1000000 
 # endif
 
-#define MAX_MBLOCK 14
+#define MAX_MBLOCK 20
 
 
 
@@ -3500,7 +3500,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-			if(IDextrablock!= -1)
+			if(IDextrablock != -1)
 			{
 				mblock1 = mblock;
 				if(mblock>extrablockIndex-1)
