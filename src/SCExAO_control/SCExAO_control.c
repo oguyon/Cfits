@@ -509,7 +509,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					ii1 = ii;
 					jj1 = jj+1;
 					if(jj1<size)
-					if(segarray[jj1*size+ii1] != 0)
+						if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
@@ -524,7 +524,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					ii1 = ii+1;
 					jj1 = jj;
 					if(ii1<size)
-					if(segarray[jj1*size+ii1] != 0)
+						if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
@@ -539,7 +539,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 					ii1 = ii;
 					jj1 = jj-1;
 					if(jj1>-1)
-					if(segarray[jj1*size+ii1] != 0)
+						if(segarray[jj1*size+ii1] != 0)
 						{
 							cnt1++;
 							val = data.image[IDdmmap].array.F[jj1*size+ii1];
@@ -552,8 +552,8 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 				}
 			}
 		
-		for(ii=1;ii<size-1;ii++)
-			for(jj=1; jj<size-1; jj++)
+		for(ii=0;ii<size;ii++)
+			for(jj=0; jj<size; jj++)
 				if(segarray[jj*size+ii] == 0) // pixel not yet allocated
 					if(segarrayn[jj*size+ii] != 0)
 					{
