@@ -2732,7 +2732,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
     long IDtm, IDem;
     long IDeModes;
 
-    long kelim = 100;
+    long kelim = 50;
     double coeff;
     long citer;
     long NBciter = 200;
