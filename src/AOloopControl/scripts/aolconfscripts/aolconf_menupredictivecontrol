@@ -181,9 +181,9 @@ PFb0wON="OFF"
 fi
 
 if [ "$PFb0wON" = "OFF" ]; then
-menuitems+=( "PFb0wON" "[$PFb0wON] switch on Watch input for PF block 0" )
+menuitems+=( "PFb0wON" "[$PFb0wON] switch on Watch input for PF block 0  -> aol${LOOPNUMBER}_modevalol_PFb0" )
 else
-menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] switch off Watch input for PF block 0" )
+menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb0 \Zr Select to switch off Watch input for PF block 0" )
 fi
 
 
@@ -197,9 +197,9 @@ PFb1wON="OFF"
 fi
 
 if [ "$PFb1wON" = "OFF" ]; then
-menuitems+=( "PFb1wON" "[$PFb1wON] switch on Watch input for PF block 1" )
+menuitems+=( "PFb1wON" "[$PFb1wON] switch on Watch input for PF block 1  -> aol${LOOPNUMBER}_modevalol_PFb1" )
 else
-menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] switch off Watch input for PF block 1" )
+menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb1 \Zr Select to  switch off Watch input for PF block 1" )
 fi
 
 
