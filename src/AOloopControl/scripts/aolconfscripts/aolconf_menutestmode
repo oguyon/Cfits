@@ -504,6 +504,16 @@ fi
 menuitems+=( "spmsdt" "[${testDMperMdt}] Set Periodic DM Modal Sequence update interval [us]" )
 
 
+file="./conf/conf_testDMperMfr.txt"
+if [ -a $file ]
+	then
+	testDMperMfr=$(echo "$(cat $file)")
+	else
+	testDMperMfr="10000"
+fi
+menuitems+=( "spmsfr" "[${testDMperMfr}] Set Periodic DM Modal Sequence frequency [Hz]" )
+
+
 file="./conf/conf_testDMperMamp.txt"
 if [ -a $file ]
 	then
@@ -972,6 +982,15 @@ aoconflog "testDMperMdt = $testDMperMdt"
 menutestmode_default="spmsdt"
 ;;
 
+	spmsfr)
+exec 3>&1;
+testDMperMfr=$(dialog --inputbox "set test DM periodic mode sequence frequency [Hz]" 0 0 "$testDMperMfr" 2>&1 1>&3);
+exec 3>&-;
+echo "$testDMperMfr" > ./conf/conf_testDMperMfr.txt
+aoconflog "testDMperMfr = $testDMperMfr"
+menutestmode_default="spmsfr"
+;;
+
 	spmsamp)
 exec 3>&1;
 testDMperMamp=$(dialog --inputbox "set test DM periodic mode sequence ampl [um]" 0 0 "$testDMperMamp" 2>&1 1>&3);
@@ -987,7 +1006,8 @@ echo " ON" > ./status/stat_testDMperM.txt
 tmuxname="aol${LOOPNUMBER}testpms"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
-tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq 100 ${testDMperMn}" C-m
+tmux send-keys -t $tmuxname "nbfr=1000000/${testDMperMdt}/${testDMperMfr}" C-m
+tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq nbfr ${testDMperMn}" C-m
 tmux send-keys -t $tmuxname "outDMmseqn=outDMmseq*${testDMperMamp}" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "creaimstream outDMmseqn aol${LOOPNUMBER}_dmRM ${testDMperMdt}" C-m
