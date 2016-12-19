@@ -80,6 +80,15 @@ aoldmvoltOFF 0
 exit
 EOF
 
+# set dark to zero
+Cfits << EOF
+readshmim aol${LOOPNUMBER_wfsdark
+imzero aol${LOOPNUMBER_wfsdark
+exit
+EOF
+
+dmdispzero 00 00
+
 Readwfsimcamname
 }
 
@@ -101,6 +110,9 @@ aoldmvoltON 0
 exit
 EOF
 
+ReadWFSdarkfname
+
+dmflat
 
 Readwfsimcamname
 }
