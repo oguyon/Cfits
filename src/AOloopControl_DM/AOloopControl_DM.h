@@ -102,6 +102,7 @@ int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain);
 int AOloopControl_DM_setvoltON(long DMindex);
 int AOloopControl_DM_setvoltOFF(long DMindex);
 int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt);
+int AOloopControl_DM_setDClevel(long DMindex, float DClevel);
 
 int AOloopControl_DM_dmdispcombstatus(long DMindex);
 

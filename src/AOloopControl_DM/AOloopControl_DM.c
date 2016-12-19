@@ -149,6 +149,14 @@ int AOloopControl_DM_setMAXVOLT_cli()
 }
 
 
+int AOloopControl_DM_setDClevel_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)
+        AOloopControl_DM_setDClevel(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+    else
+        return 1;
+}
+
 // int AOloopControl_DM_chan_setMAXVOLT(long DMindex, float maxvolt);
 
 
@@ -273,7 +281,8 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].example,"aoldmvoltOFF 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltOFF(long DMindex)");
     data.NBcmd++;
-
+ 
+ 
     strcpy(data.cmd[data.NBcmd].key,"aolsetdmvoltmax");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_DM_setMAXVOLT_cli;
@@ -281,6 +290,15 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <max voltage [V]>");
     strcpy(data.cmd[data.NBcmd].example,"aolsetdmvoltmax 120.0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetdmDC");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setDClevel_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM DC level [um]");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <DC level [um]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmDC 0.5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setDClevel(long DMindex, float DClevel)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmcomboff");
@@ -1094,6 +1112,17 @@ int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt)
     AOloopControl_DM_loadconf();
  
     dmdispcombconf[DMindex].MAXVOLT = maxvolt;
+
+    return 0;
+}
+
+
+int AOloopControl_DM_setDClevel(long DMindex, float DClevel)
+{
+    
+    AOloopControl_DM_loadconf();
+ 
+    dmdispcombconf[DMindex].DClevel = DClevel;
 
     return 0;
 }
