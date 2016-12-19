@@ -101,7 +101,7 @@ SAVEMODE="0"
 MASKINDEX="0"
 USEMINDEX="0"
 
-while getopts :hn:sr FLAG; do
+while getopts :hn:sri: FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
