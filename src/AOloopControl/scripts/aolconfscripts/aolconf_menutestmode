@@ -471,7 +471,62 @@ fi
 
 
 menuitems+=( " " " " )
-menuitems+=( "spms" "Send Periodic Modal Sequence to DM" )
+
+
+file="./conf/conf_testDMperMn.txt"
+if [ -a $file ]
+	then
+	testDMperMn=$(echo "$(cat $file)")
+	else
+	testDMperMn="100"
+fi
+menuitems+=( "spmsn" "[${testDMperMn}] Set Periodic DM Modal Sequence number of modes" )
+
+file="./conf/conf_testDMperMdt.txt"
+if [ -a $file ]
+	then
+	testDMperMdt=$(echo "$(cat $file)")
+	else
+	testDMperMdt="10000"
+fi
+menuitems+=( "spmsdt" "[${testDMperMdt}] Set Periodic DM Modal Sequence update interval [us]" )
+
+
+file="./conf/conf_testDMperMamp.txt"
+if [ -a $file ]
+	then
+	testDMperMamp=$(echo "$(cat $file)")
+	else
+	testDMperMamp="0.001"
+fi
+menuitems+=( "spmsamp" "[${testDMperMamp}] Set Periodic DM Modal Sequence amplitude per mode [um]" )
+
+
+
+file="./status/stat_testDMperM.txt"
+testDMperMstat=$( cat $file )
+if [[ -f "$file" && ( "$testDMperMstat" = " ON" || "$testDMperMstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > "$file"
+testDMperMstat="OFF"
+fi
+if [ "$testDMperMstat" = "OFF" ]; then
+menuitems+=( "spmsON" "Start Periodic DM Modal Sequence" )
+else
+menuitems+=( "spmsOFF" "\Z1\Zr Periodic Modal DM Sequence running\Zn - press to stop" )
+fi
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -877,16 +932,54 @@ menutestmode_default="dmmtr_on"
 
 
 
-	spms)
-Cfits << EOF
-aolmktestmseq outDMmseq 100 50
-readshmim aol${LOOPNUMBER}_dmRM
-creaimstream outDMmseq aol${LOOPNUMBER}_dmRM 1000
-exit
-EOF
-menutestmode_default="spms"	
+	spmsn)
+exec 3>&1;
+testDMperMn=$(dialog --inputbox "set test DM periodic mode sequence number of modes" 0 0 "$testDMperMn" 2>&1 1>&3);
+exec 3>&-;
+echo "$testDMperMn" > ./conf/conf_testDMperMn.txt
+aoconflog "testDMperMn = $testDMperMn"
+menutestmode_default="spmsn"
 ;;
 
+	spmsdt)
+exec 3>&1;
+testDMperMdt=$(dialog --inputbox "set test DM periodic mode sequence dt [us]" 0 0 "$testDMperMdt" 2>&1 1>&3);
+exec 3>&-;
+echo "$testDMperMdt" > ./conf/conf_testDMperMdt.txt
+aoconflog "testDMperMdt = $testDMperMdt"
+menutestmode_default="spmsdt"
+;;
+
+	spmsamp)
+exec 3>&1;
+testDMperMamp=$(dialog --inputbox "set test DM periodic mode sequence ampl [um]" 0 0 "$testDMperMamp" 2>&1 1>&3);
+exec 3>&-;
+echo "$testDMperMamp" > ./conf/conf_testDMperMamp.txt
+aoconflog "testDMperMamp = $testDMperMamp"
+menutestmode_default="spmsamp"
+;;
+
+
+	spmsON)
+echo " ON" > ./status/stat_testDMperM.txt
+tmuxname="aol${LOOPNUMBER}testpms"
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
+tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq 100 50" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
+tmux send-keys -t $tmuxname "creaimstream outDMmseq aol${LOOPNUMBER}_dmRM 1000" C-m
+menutestmode_default="spmsOFF"	
+;;
+
+
+	spmsOFF)
+echo "OFF" > ./status/stat_testDMperM.txt
+tmuxname="aol${LOOPNUMBER}testpms"
+tmux send-keys -t $tmuxname C-c
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+./auxscripts/shmimzero 
+menutestmode_default="spmsON"	
+;;
 
 
    	 psfv)
