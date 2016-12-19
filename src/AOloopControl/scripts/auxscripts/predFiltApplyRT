@@ -120,7 +120,6 @@ while getopts :hn:sr FLAG; do
 	  USEMINDEX="1"
       MASKINDEX="$OPTARG"
       ;;
-      ;;
       s)
       SAVEMODE="1"
       ;;
