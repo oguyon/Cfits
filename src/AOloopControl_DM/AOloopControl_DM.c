@@ -403,17 +403,19 @@ int AOloopControl_DM_disp2V(long DMindex)
     long ii;
     float volt;
 
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 1;
-    for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
-    {
-        volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
-        if(volt>dmdispcombconf[DMindex].MAXVOLT)
-            volt = dmdispcombconf[DMindex].MAXVOLT;
-        data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
+	if(dmdispcombconf[DMindex].voltON==1)
+	{
+		data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 1;
+		for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+			{
+				volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
+				if(volt>dmdispcombconf[DMindex].MAXVOLT)
+					volt = dmdispcombconf[DMindex].MAXVOLT;
+				data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
+		}
+		data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
+		data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
     }
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
-    
     
     COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
 
@@ -1011,10 +1013,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             
             dmdispcombconf[DMindex].status = 7;
 
-            if(dmdispcombconf[DMindex].voltmode==1)
-                AOloopControl_DM_disp2V(DMindex);
-			else
-				COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
+            AOloopControl_DM_disp2V(DMindex);
+			
 
             dmdispcombconf[DMindex].status = 8;
 
