@@ -602,7 +602,7 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 int COREMOD_MEMORY_image_streamupdateloop_cli()
 {
-    if(CLI_checkarg(1,5)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)==0)
     {
         COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
         return 0;
