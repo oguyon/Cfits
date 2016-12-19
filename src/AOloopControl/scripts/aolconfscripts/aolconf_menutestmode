@@ -415,6 +415,7 @@ menuitems+=( "clr" "Clear RM channel" )
 
 menuitems+=( "-" " " )
 menuitems+=( "-" " DYNAMIC TEST" )
+menuitems+=( "-" " " )
 file="./conf/conf_testModefmin.txt"
 if [ -a $file ]
 	then
@@ -467,6 +468,12 @@ menuitems+=( "dmmtr_on" "\Zb\Zu ==== START DM mode temporal response test ====\Z
 else
 menuitems+=( "dmmtr_off" "\Z1\Zr    STOP DM mode temporal response test \Zn" )
 fi
+
+
+menuitems+=( " " " " )
+menuitems+=( "spms" "Send Periodic Modal Sequence to DM" )
+
+
 
 
 
@@ -866,6 +873,18 @@ menutestmode_default="dmmtr_off"
 	dmmtr_off)
 function_dmmtr_off
 menutestmode_default="dmmtr_on"
+;;
+
+
+
+	spms)
+Cfits << EOF
+aolmktestmseq outDMmseq 100 50
+readshmim aol${LOOPNUMBER}_dmRM
+creaimstream outDMmseq aol${LOOPNUMBER}_dmRM 1000
+exit
+EOF
+menutestmode_default="spms"	
 ;;
 
 

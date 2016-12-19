@@ -1807,7 +1807,6 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes)");
     data.NBcmd++;
 
-
     strcpy(data.cmd[data.NBcmd].key,"aolautotune");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_AutoTune;
