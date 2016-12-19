@@ -964,9 +964,10 @@ menutestmode_default="spmsamp"
 echo " ON" > ./status/stat_testDMperM.txt
 tmuxname="aol${LOOPNUMBER}testpms"
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
-tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq 100 50" C-m
+tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq 100 ${testDMperMn}" C-m
+tmux send-keys -t $tmuxname "outDMmseqn=outDMmseq*${testDMperMamp}"
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
-tmux send-keys -t $tmuxname "creaimstream outDMmseq aol${LOOPNUMBER}_dmRM 1000" C-m
+tmux send-keys -t $tmuxname "creaimstream outDMmseqn aol${LOOPNUMBER}_dmRM ${testDMperMdt}" C-m
 menutestmode_default="spmsOFF"	
 ;;
 
