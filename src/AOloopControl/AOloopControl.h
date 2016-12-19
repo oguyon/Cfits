@@ -281,6 +281,8 @@ int AOloopControl_setframesAve(long nbframes);
 
 
 
+
+
 // "old" blocks (somewhat obsolete)
 int AOloopControl_setgainrange(long m0, long m1, float gainval);
 int AOloopControl_setlimitrange(long m0, long m1, float limval);
@@ -292,6 +294,7 @@ int AOloopControl_resetRMSperf();
 int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain);
 
 int AOloopControl_InjectMode( long index, float ampl );
+long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes);
 int AOloopControl_AutoTune();
 
 

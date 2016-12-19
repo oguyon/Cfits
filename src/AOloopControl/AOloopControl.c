@@ -979,6 +979,19 @@ int AOloopControl_InjectMode_cli()
 
 
 
+int AOloopControl_mkTestDynamicModeSeq_cli()
+{
+	if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+    {
+		AOloopControl_mkTestDynamicModeSeq(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
+      return 0;
+    }
+  else
+    return 1; 
+}
+
+
+
 int AOloopControl_scanGainBlock_cli()
 {
   if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,2)==0)
@@ -1784,6 +1797,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aolinjectmode 20 0.1");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_InjectMode()");
     data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aolmktestmseq");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkTestDynamicModeSeq_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make modal periodic test sequence");
+    strcpy(data.cmd[data.NBcmd].syntax,"<outname> <number of slices> <number of modes>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmktestmseq outmc 100 50");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes)");
+    data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"aolautotune");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -13828,6 +13851,57 @@ int AOloopControl_InjectMode( long index, float ampl )
 
     return(0);
 }
+
+
+
+
+//
+// create dynamic test sequence
+//
+long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmodes)
+{
+	long IDout;
+	long xsize, ysize, xysize;
+	long ii, kk;
+	float ampl0;
+	float ampl;
+	float pha0;
+	char name[200];
+	long m;
+	
+	if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+	if(aoconfID_DMmodes==-1)
+		{
+			sprintf(name, "aol%ld_DMmodes", LOOPNUMBER);
+			aoconfID_DMmodes = read_sharedmem_image(name);
+		}
+	xsize = data.image[aoconfID_DMmodes].md[0].size[0];
+	ysize = data.image[aoconfID_DMmodes].md[0].size[1];
+	xysize = xsize*ysize;
+
+	IDout = create_3Dimage_ID(IDname_out, xsize, ysize, NBpt);
+	
+	for(kk=0; kk<NBpt; kk++)
+	{
+		for(ii=0;ii<xysize;ii++)
+			data.image[IDout].array.F[kk*xysize+ii] = 0.0;
+			
+		for(m=0;m<NBmodes;m++)
+			{
+				ampl0 = 1.0;
+				pha0 = 0.1*m;
+				ampl = ampl0 * sin(2.0*M_PI*(1.0*kk/NBpt)+pha0);
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout].array.F[kk*xysize+ii] += ampl * data.image[aoconfID_DMmodes].array.F[m*xysize+ii];
+			}
+	}
+	
+	return(IDout);
+}
+
+
 
 
 
