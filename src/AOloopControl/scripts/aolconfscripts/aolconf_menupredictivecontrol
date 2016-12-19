@@ -152,6 +152,40 @@ fi
 menuitems+=( "PFb0nbGPU" "[$PFb0nbGPU] set Predictive filter block 0 number of GPUs" )
 
 
+
+if [ "0" -lt "$PFb0nbGPU" ]; then
+file="./conf/conf_PFb0GPU0device.txt"
+PFb0GPU0device=$( cat $file )
+if [[ -f "$file" && ${PFb0GPU0device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+PFb0GPU0device="0"
+fi
+menuitems+=( "PFb0GPU0" "            [ $PFb0GPU0device ]    PF block 0   GPU #0 device" )
+fi
+
+
+if [ "1" -lt "$PFb0nbGPU" ]; then
+file="./conf/conf_PFb0GPU1device.txt"
+PFb0GPU1device=$( cat $file )
+if [[ -f "$file" && ${PFb0GPU1device} =~ [0-9]$ ]]; then
+echo "OK"
+else
+echo "0" > $file
+PFb0GPU1device="0"
+fi
+menuitems+=( "PFb0GPU1" "            [ $PFb0GPU1device ]    PF block 0   GPU #1 device" )
+fi
+
+
+
+
+
+
+
+
+
 menuitems+=( " " " ")
 file="./conf/conf_PFblock_1.txt"
 if [ -f $file ]; then
@@ -445,6 +479,36 @@ exec 3>&-;
 file="./conf/conf_PFblock_0_nbGPU.txt"
 echo "$PFb0nbGPU" > $file
 ;;
+
+
+
+    PFb0GPU0)
+exec 3>&1;
+PFb0GPU0device=$(dialog --inputbox "PFb0 GPU0 device" 0 0 "$PFb0GPU0device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU0device" > ./conf/conf_PFb0GPU0device.txt
+aoconflog "set PFb0GPU0device = ${PFb0GPU0device}"
+menucontrolloop_default="PFb0GPU0"
+;;
+
+
+    PFb0GPU1)
+exec 3>&1;
+PFb0GPU1device=$(dialog --inputbox "PFb0 GPU1 device" 0 0 "$PFb0GPU1device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU1device" > ./conf/conf_PFb0GPU1device.txt
+aoconflog "set PFb0GPU1device = ${PFb0GPU1device}"
+menucontrolloop_default="PFb0GPU1"
+;;
+
+
+
+
+
+
+
+
+
 
 
 
