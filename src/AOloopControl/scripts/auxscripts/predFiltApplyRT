@@ -24,6 +24,7 @@ echo "     $(tput bold)-h$(tput sgr0)            help"
 echo "     $(tput bold)-n$(tput sgr0) <NBiter>   run for NBiter iterations (default = 1000 in savemode)"
 echo "     $(tput bold)-s$(tput sgr0)            save ascii and FITS output"
 echo "     $(tput bold)-r$(tput sgr0)            replace measurements by predictions -> FITS output"
+echo "     $(tput bold)-i$(tput sgr0) <index>    read inmask<index>.fits and outmask<index>.fits"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "      <instream>     input stream"
@@ -97,6 +98,8 @@ done
 NBiter="-1"
 NBiterENTRY="0"
 SAVEMODE="0"
+MASKINDEX="0"
+USEMINDEX="0"
 
 while getopts :hn:sr FLAG; do
   case $FLAG in
@@ -108,11 +111,16 @@ while getopts :hn:sr FLAG; do
       fi
       exit
       ;;
-       n)  #  set stream frequency
+       n)  #  set number of iterations
       NBiter="$OPTARG"
       NBiterENTRY="1"
       echo "Setting number of iterations to $NBiter"
-      ;;   
+      ;;
+      i) # mask index
+	  USEMINDEX="1"
+      MASKINDEX="$OPTARG"
+      ;;
+      ;;
       s)
       SAVEMODE="1"
       ;;
@@ -178,11 +186,19 @@ fi
 
 tlag="1.8"
 
+inmaskname="inmask.fits"
+outmaskname="outmask.fits"
+
+if [ "$USEMINDEX" = "1" ]; then
+inmaskname="inmask${MASKINDEX}.fits"
+outmaskname="outmask${MASKINDEX}.fits"
+fi
+
 
 Cfits << EOF
 readshmim $1
-loadfits inmask.fits inmask
-loadfits outmask.fits outmask
+loadfits "${inmaskname}" inmask
+loadfits "${outmaskname}" outmask
 readshmim $2
 listim
 linARapplyRT $1 0 2 $2 5 outPFmodeval 1 2 ${NBiter} ${SAVEMODE} $tlag
