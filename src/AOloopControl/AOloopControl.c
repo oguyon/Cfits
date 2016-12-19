@@ -12598,7 +12598,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	IDinmask = create_2Dimage_ID(inmaskname, xysize, 1);
 	for(ii=0;ii<xysize;ii++)
 		data.image[IDinmask].array.F[ii] = 0.0;
-	for(ii=PFblockstart;ii<PFblockend;ii++)
+	for(ii=PFblockStart;ii<PFblockEnd;ii++)
 		data.image[IDinmask].array.F[ii] = 1.0;
 	sprintf(inmaskfname, "!./PredictiveControl/inmaskPF%ld.fits", PFblock);
 	save_fits(inmaskname, inmaskfname);
