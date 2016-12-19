@@ -25,6 +25,7 @@ echo "     $(tput bold)-n$(tput sgr0) <NBiter>   run for NBiter iterations (defa
 echo "     $(tput bold)-s$(tput sgr0)            save ascii and FITS output"
 echo "     $(tput bold)-r$(tput sgr0)            replace measurements by predictions -> FITS output"
 echo "     $(tput bold)-i$(tput sgr0) <index>    read inmask<index>.fits and outmask<index>.fits"
+echo "     $(tput bold)-g$(tput sgr0) <nbGPU>    number of GPUs"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "      <instream>     input stream"
@@ -100,8 +101,9 @@ NBiterENTRY="0"
 SAVEMODE="0"
 MASKINDEX="0"
 USEMINDEX="0"
+nbGPU="0"
 
-while getopts :hn:sri: FLAG; do
+while getopts :hn:sri:g: FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -126,6 +128,9 @@ while getopts :hn:sri: FLAG; do
       r)
       SAVEMODE="2"
       ;;
+      g) # number of GPUs
+      nbGPU="$OPTARG"
+      ;;
     \?) 
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -135,7 +140,6 @@ done
 
 shift $((OPTIND-1))  
 ### End getopts code ###
-
 
 
 
@@ -160,8 +164,6 @@ checkFile /tmp/$2.im.shm
 # ============================= CHECK IF COMMAND EXISTS ==========================
 
 checkCommand "Cfits"
-
-
 
 
 
@@ -194,13 +196,19 @@ outmaskname="outmask${MASKINDEX}.fits"
 fi
 
 
+
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
+
+
+
+
 Cfits << EOF
 readshmim $1
 loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
 listim
-linARapplyRT $1 0 2 $2 5 outPFmodeval 1 2 ${NBiter} ${SAVEMODE} $tlag
+linARapplyRT $1 0 2 $2 5 outPFmodeval ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag
 listim
 exit
 EOF
