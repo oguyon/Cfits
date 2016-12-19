@@ -12558,8 +12558,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	char inmaskname[200];
 	char inmaskfname[200];
 	long IDinmask;
-	int ret;
-	
+
 	
 	
 	// read PF block parameters
