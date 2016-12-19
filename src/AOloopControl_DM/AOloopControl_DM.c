@@ -1086,43 +1086,39 @@ int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain)
 
 int AOloopControl_DM_setvoltON(long DMindex)
 {
-    
     AOloopControl_DM_loadconf();
- 
     dmdispcombconf[DMindex].voltON = 1;
-
+	AOloopControl_printDMconf();
+	
     return 0;
 }
 
 
 int AOloopControl_DM_setvoltOFF(long DMindex)
 {
-    
     AOloopControl_DM_loadconf();
- 
     dmdispcombconf[DMindex].voltON = 0;
-
+	AOloopControl_printDMconf();
+	
     return 0;
 }
 
 
 int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt)
 {
-    
     AOloopControl_DM_loadconf();
- 
     dmdispcombconf[DMindex].MAXVOLT = maxvolt;
-
+	AOloopControl_printDMconf();
+	
     return 0;
 }
 
 
 int AOloopControl_DM_setDClevel(long DMindex, float DClevel)
 {
-    
     AOloopControl_DM_loadconf();
- 
     dmdispcombconf[DMindex].DClevel = DClevel;
+	AOloopControl_printDMconf();
 
     return 0;
 }
@@ -1191,9 +1187,9 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
 int AOloopControl_DM_dmdispcomboff(long DMindex)
 {
     AOloopControl_DM_loadconf();
-    
     dmdispcombconf[DMindex].ON = 0;
-
+	AOloopControl_printDMconf();
+	
     return 0;
 }
 
@@ -1201,9 +1197,9 @@ int AOloopControl_DM_dmdispcomboff(long DMindex)
 int AOloopControl_DM_dmtrigoff(long DMindex)
 {
 	AOloopControl_DM_loadconf();
-	
 	data.image[dmdispcombconf[DMindex].IDvolt].md[0].status = 101;
-
+	AOloopControl_printDMconf();
+    
     return 0;
 }
 
