@@ -3300,9 +3300,9 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     long IDrefout;
 
     long refindex;
-
-
-
+	long twait1;
+    struct timespec t0;
+    struct timespec t1;
 
     int MODEVALCOMPUTE = 1; // 1 if compute, 0 if import
 
@@ -3606,10 +3606,12 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     initref = 0;
 
 
-
+	twait1 = twait;
 
     while(loopOK == 1)
     {
+		clock_gettime(CLOCK_REALTIME, &t0);
+				
         if(MODEVALCOMPUTE==1)
         {
             if(refindex != data.image[IDref].md[0].cnt0)
@@ -3810,7 +3812,16 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 
 
 		if(twait>0)
-			usleep(twait);
+			usleep(twait1);
+			
+		clock_gettime(CLOCK_REALTIME, &t1);
+        tdiff = info_time_diff(t0, t1);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+	
+		if(tdiffv<1000000.0*twait)
+			twait1 ++;
+		else
+			twait1 --;
 	
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
