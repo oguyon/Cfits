@@ -19,6 +19,6 @@ float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag);
 
 long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha);
 
-long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag);
+long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag, long PFindex);
 
 #endif

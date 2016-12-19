@@ -99,8 +99,7 @@ done
 NBiter="-1"
 NBiterENTRY="0"
 SAVEMODE="0"
-MASKINDEX="0"
-USEMINDEX="0"
+PFINDEX="0"
 nbGPU="0"
 
 while getopts :hn:sri:g: FLAG; do
@@ -119,8 +118,7 @@ while getopts :hn:sri:g: FLAG; do
       echo "Setting number of iterations to $NBiter"
       ;;
       i) # mask index
-	  USEMINDEX="1"
-      MASKINDEX="$OPTARG"
+      PFINDEX="$OPTARG"
       ;;
       s)
       SAVEMODE="1"
@@ -187,13 +185,8 @@ fi
 
 tlag="1.8"
 
-inmaskname="inmask.fits"
-outmaskname="outmask.fits"
-
-if [ "$USEMINDEX" = "1" ]; then
-inmaskname="inmask${MASKINDEX}.fits"
-outmaskname="outmask${MASKINDEX}.fits"
-fi
+inmaskname="inmask${PFINDEX}.fits"
+outmaskname="outmask${PFINDEX}.fits"
 
 
 
@@ -208,7 +201,7 @@ loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
 listim
-linARapplyRT $1 0 2 $2 5 outPFmodeval ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag
+linARapplyRT $1 0 2 $2 5 outPFmodeval ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
 exit
 EOF
