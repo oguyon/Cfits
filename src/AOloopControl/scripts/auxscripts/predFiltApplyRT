@@ -17,7 +17,7 @@ echo "------------------------------------------------------------------------"
 echo "  Apply linear predictive filter to stream"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-hf] <instrem> <filtstream> <outstream>"
+echo "     $0 [-hnsrigo] <instrem> <filtstream> <outstream>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)            help"
@@ -26,6 +26,7 @@ echo "     $(tput bold)-s$(tput sgr0)            save ascii and FITS output"
 echo "     $(tput bold)-r$(tput sgr0)            replace measurements by predictions -> FITS output"
 echo "     $(tput bold)-i$(tput sgr0) <index>    read inmask<index>.fits and outmask<index>.fits"
 echo "     $(tput bold)-g$(tput sgr0) <nbGPU>    number of GPUs"
+echo "     $(tput bold)-o$(tput sgr0)            Write results in master output stream aol${loopnb}_modevalPF requires outmask"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "      <instream>     input stream"
@@ -101,8 +102,9 @@ NBiterENTRY="0"
 SAVEMODE="0"
 PFINDEX="0"
 nbGPU="0"
+MASTEROUTPUT="0"
 
-while getopts :hn:sri:g: FLAG; do
+while getopts :hn:sri:g:o FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -128,6 +130,9 @@ while getopts :hn:sri:g: FLAG; do
       ;;
       g) # number of GPUs
       nbGPU="$OPTARG"
+      ;;
+      o)
+      MASTEROUTPUT="1"
       ;;
     \?) 
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -194,6 +199,7 @@ loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 
+if [ "$MASTEROUTPUT" = "0" ]; then
 
 Cfits << EOF
 readshmim $1
@@ -206,6 +212,22 @@ listim
 exit
 EOF
 
+else
+
+Cfits << EOF
+readshmim $1
+loadfits "${inmaskname}" inmask
+loadfits "${outmaskname}" outmask
+readshmim $2
+readshmim aol${loopnb}_modevalPF
+listim
+linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
+listim
+exit
+EOF
+
+
+fi
 
 
 

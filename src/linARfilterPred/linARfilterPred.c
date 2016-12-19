@@ -1552,6 +1552,9 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	float val, val0, val1;
 	long ii0, ii1;
 	
+	long IDmasterout;
+	char imname[200];
+	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
 	NBmodeIN0 = data.image[IDmodevalIN].md[0].size[0];
@@ -1559,6 +1562,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	IDPFM = image_ID(IDPFM_name);
 	NBmodeOUT = data.image[IDPFM].md[0].size[1]; 
 
+	sprintf(imname, "aol%ld_modevalPF", loop);
+	IDmasterout = image_ID(imname);
 	
 	IDinmask = image_ID("inmask");
 	if(IDinmask!=-1)
@@ -1597,13 +1602,20 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	printf("Number of active input modes  = %ld\n", NBmodeIN);
 	printf("Number of output modes        = %ld\n", NBmodeOUT);
 	printf("Number of time steps          = %ld\n", NBPFstep);
+	if(IDmasterout!=-1)
+		printf("Writing result in master output stream %s\n", imname);
 
-	if(SAVEMODE>0)
+
+
+
+
+
+	if((SAVEMODE>0)||(IDmasterout!=-1))
 	{
 		IDoutmask = image_ID("outmask");
 		if(IDoutmask == -1)
 			{
-				printf("ERROR: SAVEMODE 2 requires outmask image\n");
+				printf("ERROR: outmask image required\n");
 				exit(0);
 			}
 		NBoutmaskpix = 0;
@@ -1783,13 +1795,25 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 			//	fflush(stdout);
 			}
 	
+	
+	
+		if(IDmasterout!=-1)
+		{
+			data.image[IDmasterout].md[0].write = 1;
+			for(mode=0;mode<NBmodeOUT;mode++)
+				data.image[IDmasterout].array.F[outmaskindex[mode]] = data.image[IDPFout].array.F[mode];
+			COREMOD_MEMORY_image_set_sempost_byID(IDmasterout, -1);
+			data.image[IDmasterout].md[0].write = 0;
+			data.image[IDmasterout].md[0].cnt0++;
+		}
+	
+	
+	
+	
 		iter++;
 	
 		if(iter<NBiter)
-			{
-			//	printf("	Shifting previous telemetry ...");
-			//	fflush(stdout);
-				
+			{				
 				// do this now to save time when semaphore is posted
 				for(tstep=NBPFstep-1; tstep>0; tstep--)
 					{
@@ -1797,8 +1821,6 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 						for(mode=0; mode<NBmodeIN; mode++)
 							data.image[IDINbuff].array.F[NBmodeIN*tstep + mode] = data.image[IDINbuff].array.F[NBmodeIN*(tstep-1) + mode];
 					}
-			//	printf(" done\n");
-			//	fflush(stdout);
 			}
 	}
 	printf("LOOP done\n");

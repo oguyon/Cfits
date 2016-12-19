@@ -1325,9 +1325,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_GPUmodecoeffs2dm_filt_loop_cli;
     strcpy(data.cmd[data.NBcmd].info,"convert mode coefficients to DM map");
-    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <DMmodes> <sem trigg number> <out> <gain> <GPUindex> <loopnb> <offloadMode>");
+    strcpy(data.cmd[data.NBcmd].syntax,"<mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex> <loopnb> <offloadMode>");
     strcpy(data.cmd[data.NBcmd].example,"aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 0.2 1 2 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, float gain, int GPUindex, long loop, long offloadMode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, long offloadMode)");
     data.NBcmd++;
 
 
