@@ -219,6 +219,11 @@ readshmim $1
 loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
+
+readshmim aol${loopnb}_modeval
+im1=aol${loopnb}_modeval+0
+cp im1 aol${loopnb}_modevalPF
+
 readshmim aol${loopnb}_modevalPF
 listim
 linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
