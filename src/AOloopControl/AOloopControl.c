@@ -12557,6 +12557,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	
 	char inmaskname[200];
 	char inmaskfname[200];
+	char outmaskfname[200];
 	long IDinmask;
 
 	
@@ -12604,6 +12605,11 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 		data.image[IDinmask].array.F[ii] = 1.0;
 	ret = sprintf(inmaskfname, "!./PredictiveControl/inmaskPF%ld.fits", PFblock);
 	save_fits(inmaskname, inmaskfname);
+	ret = sprintf(outmaskfname, "!./PredictiveControl/outmaskPF%ld.fits", PFblock);
+	save_fits(inmaskname, outmaskfname);
+	
+	
+	
 	
 	
 	printf("Create aol%ld_modevalol_PFb%ld  : %ld x 1 x %ld\n", loop, PFblock, PFblockSize, zsize);
