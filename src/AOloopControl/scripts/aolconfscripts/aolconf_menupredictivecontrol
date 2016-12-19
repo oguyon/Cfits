@@ -312,7 +312,7 @@ else
 PFb1nbGPU="0"
 echo "$PFb1nbGPU" > $file
 fi
-menuitems+=( "PFb1nbGPU" "[$PFb0nbGPU] set Predictive filter block 1 number of GPUs" )
+menuitems+=( "PFb1nbGPU" "[$PFb1nbGPU] set Predictive filter block 1 number of GPUs" )
 
 
 
@@ -728,7 +728,6 @@ aoconflog "set PFb0GPU0device = ${PFb0GPU0device}"
 menucontrolloop_default="PFb0GPU0"
 ;;
 
-
     PFb0GPU1)
 exec 3>&1;
 PFb0GPU1device=$(dialog --inputbox "PFb0 GPU1 device" 0 0 "$PFb0GPU1device" 2>&1 1>&3);
@@ -736,6 +735,78 @@ exec 3>&-;
 echo "$PFb0GPU1device" > ./conf/conf_PFb0GPU1device.txt
 aoconflog "set PFb0GPU1device = ${PFb0GPU1device}"
 menucontrolloop_default="PFb0GPU1"
+;;
+
+    PFb0GPU2)
+exec 3>&1;
+PFb0GPU2device=$(dialog --inputbox "PFb0 GPU2 device" 0 0 "$PFb0GPU2device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU2device" > ./conf/conf_PFb0GPU2device.txt
+aoconflog "set PFb0GPU2device = ${PFb0GPU2device}"
+menucontrolloop_default="PFb0GPU2"
+;;
+
+    PFb0GPU3)
+exec 3>&1;
+PFb0GPU3device=$(dialog --inputbox "PFb0 GPU3 device" 0 0 "$PFb0GPU3device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU3device" > ./conf/conf_PFb0GPU3device.txt
+aoconflog "set PFb0GPU3device = ${PFb0GPU3device}"
+menucontrolloop_default="PFb0GPU3"
+;;
+
+    PFb0GPU4)
+exec 3>&1;
+PFb0GPU4device=$(dialog --inputbox "PFb0 GPU4 device" 0 0 "$PFb0GPU4device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU4device" > ./conf/conf_PFb0GPU4device.txt
+aoconflog "set PFb0GPU4device = ${PFb0GPU4device}"
+menucontrolloop_default="PFb0GPU4"
+;;
+
+    PFb0GPU5)
+exec 3>&1;
+PFb0GPU5device=$(dialog --inputbox "PFb0 GPU5 device" 0 0 "$PFb0GPU5device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU5device" > ./conf/conf_PFb0GPU5device.txt
+aoconflog "set PFb0GPU5device = ${PFb0GPU5device}"
+menucontrolloop_default="PFb0GPU5"
+;;
+
+    PFb0GPU6)
+exec 3>&1;
+PFb0GPU6device=$(dialog --inputbox "PFb0 GPU6 device" 0 0 "$PFb0GPU6device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU6device" > ./conf/conf_PFb0GPU6device.txt
+aoconflog "set PFb0GPU6device = ${PFb0GPU6device}"
+menucontrolloop_default="PFb0GPU6"
+;;
+
+    PFb0GPU7)
+exec 3>&1;
+PFb0GPU7device=$(dialog --inputbox "PFb0 GPU7 device" 0 0 "$PFb0GPU7device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU7device" > ./conf/conf_PFb0GPU7device.txt
+aoconflog "set PFb0GPU7device = ${PFb0GPU7device}"
+menucontrolloop_default="PFb0GPU7"
+;;
+
+    PFb0GPU8)
+exec 3>&1;
+PFb0GPU8device=$(dialog --inputbox "PFb0 GPU8 device" 0 0 "$PFb0GPU8device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU8device" > ./conf/conf_PFb0GPU8device.txt
+aoconflog "set PFb0GPU8device = ${PFb0GPU8device}"
+menucontrolloop_default="PFb0GPU8"
+;;
+
+    PFb0GPU9)
+exec 3>&1;
+PFb0GPU9device=$(dialog --inputbox "PFb0 GPU9 device" 0 0 "$PFb0GPU9device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb0GPU9device" > ./conf/conf_PFb0GPU9device.txt
+aoconflog "set PFb0GPU9device = ${PFb0GPU9device}"
+menucontrolloop_default="PFb0GPU9"
 ;;
 
 
@@ -798,6 +869,97 @@ PFb1nbGPU=$(dialog --inputbox "Select Predictive filter block 1 number of GPUs" 
 exec 3>&-;
 file="./conf/conf_PFblock_1_nbGPU.txt"
 echo "$PFb1nbGPU" > $file
+;;
+
+
+    PFb1GPU0)
+exec 3>&1;
+PFb1GPU0device=$(dialog --inputbox "PFb1 GPU0 device" 0 0 "$PFb1GPU0device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU0device" > ./conf/conf_PFb1GPU0device.txt
+aoconflog "set PFb1GPU0device = ${PFb1GPU0device}"
+menucontrolloop_default="PFb1GPU0"
+;;
+
+    PFb1GPU1)
+exec 3>&1;
+PFb1GPU1device=$(dialog --inputbox "PFb1 GPU1 device" 0 0 "$PFb1GPU1device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU1device" > ./conf/conf_PFb1GPU1device.txt
+aoconflog "set PFb1GPU1device = ${PFb1GPU1device}"
+menucontrolloop_default="PFb1GPU1"
+;;
+
+    PFb1GPU2)
+exec 3>&1;
+PFb1GPU2device=$(dialog --inputbox "PFb1 GPU2 device" 0 0 "$PFb1GPU2device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU2device" > ./conf/conf_PFb1GPU2device.txt
+aoconflog "set PFb1GPU2device = ${PFb1GPU2device}"
+menucontrolloop_default="PFb1GPU2"
+;;
+
+    PFb1GPU3)
+exec 3>&1;
+PFb1GPU3device=$(dialog --inputbox "PFb1 GPU3 device" 0 0 "$PFb1GPU3device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU3device" > ./conf/conf_PFb1GPU3device.txt
+aoconflog "set PFb1GPU3device = ${PFb1GPU3device}"
+menucontrolloop_default="PFb1GPU3"
+;;
+
+    PFb1GPU4)
+exec 3>&1;
+PFb1GPU4device=$(dialog --inputbox "PFb1 GPU4 device" 0 0 "$PFb1GPU4device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU4device" > ./conf/conf_PFb1GPU4device.txt
+aoconflog "set PFb1GPU4device = ${PFb1GPU4device}"
+menucontrolloop_default="PFb1GPU4"
+;;
+
+    PFb1GPU5)
+exec 3>&1;
+PFb1GPU5device=$(dialog --inputbox "PFb1 GPU5 device" 0 0 "$PFb1GPU5device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU5device" > ./conf/conf_PFb1GPU5device.txt
+aoconflog "set PFb1GPU5device = ${PFb1GPU5device}"
+menucontrolloop_default="PFb1GPU5"
+;;
+
+    PFb1GPU6)
+exec 3>&1;
+PFb1GPU6device=$(dialog --inputbox "PFb1 GPU6 device" 0 0 "$PFb1GPU6device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU6device" > ./conf/conf_PFb1GPU6device.txt
+aoconflog "set PFb1GPU6device = ${PFb1GPU6device}"
+menucontrolloop_default="PFb1GPU6"
+;;
+
+    PFb1GPU7)
+exec 3>&1;
+PFb1GPU7device=$(dialog --inputbox "PFb1 GPU7 device" 0 0 "$PFb1GPU7device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU7device" > ./conf/conf_PFb1GPU7device.txt
+aoconflog "set PFb1GPU7device = ${PFb1GPU7device}"
+menucontrolloop_default="PFb1GPU7"
+;;
+
+    PFb1GPU8)
+exec 3>&1;
+PFb1GPU8device=$(dialog --inputbox "PFb1 GPU8 device" 0 0 "$PFb1GPU8device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU8device" > ./conf/conf_PFb1GPU8device.txt
+aoconflog "set PFb1GPU8device = ${PFb1GPU8device}"
+menucontrolloop_default="PFb1GPU8"
+;;
+
+    PFb1GPU9)
+exec 3>&1;
+PFb1GPU9device=$(dialog --inputbox "PFb1 GPU9 device" 0 0 "$PFb1GPU9device" 2>&1 1>&3);
+exec 3>&-;
+echo "$PFb1GPU9device" > ./conf/conf_PFb1GPU9device.txt
+aoconflog "set PFb1GPU9device = ${PFb1GPU9device}"
+menucontrolloop_default="PFb1GPU9"
 ;;
 
 
