@@ -142,6 +142,14 @@ menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
 menuitems+=( "PFb0dgain" "[$PFb0dgain] set Predictive filter block 0 derivationgain" )
 
+file="./conf/conf_PFblock_0_nbGPU.txt"
+if [ -f $file ]; then
+PFb0nbGPU=$( cat $file )
+else
+PFb0nbGPU="0"
+echo "$PFb0nbGPU" > $file
+fi
+menuitems+=( "PFb0nbGPU" "[$PFb0nbGPU] set Predictive filter block 0 number of GPUs" )
 
 
 menuitems+=( " " " ")
@@ -166,6 +174,17 @@ menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
 menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
 menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
 menuitems+=( "PFb1dgain" "[$PFb1dgain] set Predictive filter block 1 derivationgain" )
+
+
+file="./conf/conf_PFblock_1_nbGPU.txt"
+if [ -f $file ]; then
+PFb1nbGPU=$( cat $file )
+else
+PFb1nbGPU="0"
+echo "$PFb1nbGPU" > $file
+fi
+menuitems+=( "PFb1nbGPU" "[$PFb0nbGPU] set Predictive filter block 1 number of GPUs" )
+
 
 
 
