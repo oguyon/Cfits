@@ -123,18 +123,18 @@ int AOloopControl_DM_chan_setgain_cli()
         return 1;
 }
 
-int AOloopControl_DM_setvoltmodeON_cli()
+int AOloopControl_DM_setvoltON_cli()
 {
 	if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_setvoltmodeON(data.cmdargtoken[1].val.numl);
+        AOloopControl_DM_setvoltON(data.cmdargtoken[1].val.numl);
     else
         return 1;
 }
 
-int AOloopControl_DM_setvoltmodeOFF_cli()
+int AOloopControl_DM_setvoltOFF_cli()
 {
 	if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_setvoltmodeOFF(data.cmdargtoken[1].val.numl);
+        AOloopControl_DM_setvoltOFF(data.cmdargtoken[1].val.numl);
     else
         return 1;
 }
@@ -258,20 +258,20 @@ int init_AOloopControl_DM()
 
     strcpy(data.cmd[data.NBcmd].key,"aoldmvoltON");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_DM_setvoltmodeON_cli;
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setvoltON_cli;
     strcpy(data.cmd[data.NBcmd].info,"turn on DM voltage");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
     strcpy(data.cmd[data.NBcmd].example,"aoldmvoltON 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltmodeON(long DMindex)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltON(long DMindex)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aoldmvoltOFF");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_DM_setvoltmodeOFF_cli;
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setvoltOFF_cli;
     strcpy(data.cmd[data.NBcmd].info,"turn off DM voltage");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
     strcpy(data.cmd[data.NBcmd].example,"aoldmvoltOFF 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltmodeOFF(long DMindex)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setvoltOFF(long DMindex)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolsetdmvoltmax");
@@ -691,6 +691,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[DMindex].xysize = xsize*ysize;
     dmdispcombconf[DMindex].NBchannel = NBchannel;
     dmdispcombconf[DMindex].voltmode = voltmode;
+    dmdispcombconf[DMindex].voltON = 1;
     dmdispcombconf[DMindex].MAXVOLT = maxvolt;
     dmdispcombconf[DMindex].AveMode = AveMode;
     sprintf(dmdispcombconf[DMindex].voltname, "%s", IDvolt_name);
@@ -1057,23 +1058,23 @@ int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain)
 
 
 
-int AOloopControl_DM_setvoltmodeON(long DMindex)
+int AOloopControl_DM_setvoltON(long DMindex)
 {
     
     AOloopControl_DM_loadconf();
  
-    dmdispcombconf[DMindex].voltmode = 1;
+    dmdispcombconf[DMindex].voltON = 1;
 
     return 0;
 }
 
 
-int AOloopControl_DM_setvoltmodeOFF(long DMindex)
+int AOloopControl_DM_setvoltOFF(long DMindex)
 {
     
     AOloopControl_DM_loadconf();
  
-    dmdispcombconf[DMindex].voltmode = 0;
+    dmdispcombconf[DMindex].voltON = 0;
 
     return 0;
 }

@@ -22,6 +22,7 @@ typedef struct
 
     int busy; // if set to 1, hold off and wait
     int voltmode;
+    int voltON; // 1 if applying voltage 
     float MAXVOLT; // maximum voltage on DM
 	int AveMode;
     float DClevel;
@@ -98,8 +99,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
 
 int AOloopControl_DM_chan_setgain(long DMindex, int ch, float gain);
-int AOloopControl_DM_setvoltmodeON(long DMindex);
-int AOloopControl_DM_setvoltmodeOFF(long DMindex);
+int AOloopControl_DM_setvoltON(long DMindex);
+int AOloopControl_DM_setvoltOFF(long DMindex);
 int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt);
 
 int AOloopControl_DM_dmdispcombstatus(long DMindex);
