@@ -966,7 +966,7 @@ tmuxname="aol${LOOPNUMBER}testpms"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
 tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq 100 ${testDMperMn}" C-m
-tmux send-keys -t $tmuxname "outDMmseqn=outDMmseq*${testDMperMamp}"
+tmux send-keys -t $tmuxname "outDMmseqn=outDMmseq*${testDMperMamp}" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "creaimstream outDMmseqn aol${LOOPNUMBER}_dmRM ${testDMperMdt}" C-m
 menutestmode_default="spmsOFF"	
