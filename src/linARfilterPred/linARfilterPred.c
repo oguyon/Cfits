@@ -1581,6 +1581,10 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	else
 	{
 		NBinmaskpix = NBmodeIN0;
+		printf("no input mask -> assuming NBinmaskpix = %ld\n", NBinmaskpix);
+		IDinmask = create_2Dimage_ID("inmask", NBinmaskpix, 1);
+		for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
+			data.image[IDinmask].array.F[ii] = 1.0;
 		inmaskindex = (long*) malloc(sizeof(long)*NBinmaskpix);
 		for(ii=0;ii<data.image[IDinmask].md[0].size[0];ii++)
 			inmaskindex[NBinmaskpix] = ii;
