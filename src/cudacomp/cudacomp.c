@@ -3818,11 +3818,11 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
         tdiff = info_time_diff(t0, t1);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 	
-		if(tdiffv<1000000.0*twait)
+		if(tdiffv<1.0e-6*twait) 
 			twait1 ++;
 		else
 			twait1 --;
-	
+		//printf("timing info : %11.9lf  %ld  %ld\n", tdiffv, );
 
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
         {
