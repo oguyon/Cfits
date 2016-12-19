@@ -13890,7 +13890,7 @@ long AOloopControl_mkTestDynamicModeSeq(char *IDname_out, long NBpt, long NBmode
 		for(m=0;m<NBmodes;m++)
 			{
 				ampl0 = 1.0;
-				pha0 = 0.1*m;
+				pha0 = M_PI*(1.0*m/NBmodes);
 				ampl = ampl0 * sin(2.0*M_PI*(1.0*kk/NBpt)+pha0);
 				for(ii=0;ii<xysize;ii++)
 					data.image[IDout].array.F[kk*xysize+ii] += ampl * data.image[aoconfID_DMmodes].array.F[m*xysize+ii];
