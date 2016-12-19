@@ -594,8 +594,8 @@ menupred_default="PFb1cON"
 
 
 	PFb0aON)
-cp PredictiveControl/inmask0.fits inmask0.fits
-cp PredictiveControl/outmask0.fits outmask0.fits
+cp PredictiveControl/inmaskPF0.fits inmask0.fits
+cp PredictiveControl/outmaskPF0.fits outmask0.fits
 tmuxname="aol${LOOPNUMBER}PFb0apply"
 tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} " " C-m
