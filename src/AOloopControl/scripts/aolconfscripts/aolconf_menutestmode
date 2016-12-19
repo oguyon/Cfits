@@ -70,7 +70,7 @@ tmux new-session -d -s ${tmuxnameD}
 tmux new-session -d -s ${tmuxname}
 aoconflog "Start linear WFS simulator"
 tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim ${GPUlinsim}" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlinsim}" C-m
 cp ./conf/conf_wfsim_name.txt ./conf/conf_wfsimhardware_name.txt
 echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/conf_wfsim_name.txt
 
@@ -194,6 +194,19 @@ fi
 menuitems+=( "GPUlinsim" "[ $GPUlinsim ]    Linear WFS simulation: GPU device" )
 
 
+
+
+file="./conf/conf_linsimdt.txt"
+if [ -a $file ]
+	then
+	linsimdt=$(echo "$(cat $file)")
+	else
+	linsimdt="10000"
+fi
+menuitems+=( "linsimdt" "[${linsimdt}] Set Linear WFS update interval [us]" )
+
+
+
 file="./conf/conf_linsimDelay.txt"
 linsimDelay=$( cat $file )
 if [[ -f "$file" && ${linsimDelay} =~ [0-9]$ ]]; then
@@ -202,8 +215,7 @@ else
 echo "0" > $file
 linsimDelay="0"
 fi
-menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop delay" )
-
+menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop lag [frame]" )
 
 
 
@@ -598,6 +610,16 @@ exec 3>&-;
 echo "$GPUlinsim" > $file
 aoconflog "set GPUlinsim = ${GPUlinsim}"
 menucontrolloop_default="GPUlinsim"
+;;
+
+linsimdt)
+file="./conf/conf_linsimdt.txt"
+exec 3>&1;
+linsimdt=$(dialog --inputbox "linear WFS simulation time interval [us]" 0 0 "$linsimdt" 2>&1 1>&3);
+exec 3>&-;
+echo "$linsimdt" > $file
+aoconflog "set linsimdt = ${linsimdt}"
+menucontrolloop_default="linsimdt"
 ;;
 
 linsimDelay)
