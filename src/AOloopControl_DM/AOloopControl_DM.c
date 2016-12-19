@@ -413,6 +413,8 @@ int AOloopControl_DM_disp2V(long DMindex)
     }
     data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
     data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
+    
+    
     COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
 
 
@@ -938,7 +940,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             {
                     for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
                 {
-                    data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel-ave;
+                    data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel - ave;
                 
 					if(dmdispcombconf[DMindex].voltmode==1)
 						if(data.image[IDdispt].array.F[ii]<0.0)
@@ -1010,6 +1012,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
             if(dmdispcombconf[DMindex].voltmode==1)
                 AOloopControl_DM_disp2V(DMindex);
+			else
+				COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
 
             dmdispcombconf[DMindex].status = 8;
 
