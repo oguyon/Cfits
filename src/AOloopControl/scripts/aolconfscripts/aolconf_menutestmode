@@ -963,6 +963,7 @@ menutestmode_default="spmsamp"
 	spmsON)
 echo " ON" > ./status/stat_testDMperM.txt
 tmuxname="aol${LOOPNUMBER}testpms"
+tmux new-session -d -s ${tmuxname}
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}testpms" C-m
 tmux send-keys -t $tmuxname "aolmktestmseq outDMmseq 100 ${testDMperMn}" C-m
 tmux send-keys -t $tmuxname "outDMmseqn=outDMmseq*${testDMperMamp}"
