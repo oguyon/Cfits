@@ -979,7 +979,7 @@ tmuxname="aol${LOOPNUMBER}testpms"
 tmux send-keys -t $tmuxname C-c
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
-./auxscripts/shmimzero 
+./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 menutestmode_default="spmsON"	
 ;;
 
