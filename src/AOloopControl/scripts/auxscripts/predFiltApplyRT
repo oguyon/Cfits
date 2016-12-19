@@ -201,7 +201,7 @@ loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
 listim
-linARapplyRT $1 0 2 $2 5 outPFmodeval ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
+linARapplyRT $1 0 2 $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
 exit
 EOF
