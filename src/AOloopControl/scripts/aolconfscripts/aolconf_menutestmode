@@ -73,6 +73,13 @@ tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
 tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim ${GPUlinsim}" C-m
 cp ./conf/conf_wfsim_name.txt ./conf/conf_wfsimhardware_name.txt
 echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/conf_wfsim_name.txt
+
+# turn off DM voltage 
+Cfits << EOF
+aoldmvoltOFF 0
+exit
+EOF
+
 Readwfsimcamname
 }
 
@@ -87,6 +94,14 @@ tmux kill-session -t ${tmuxname}
 rm aollinsimDelay.runproc
 rm aollindm2wfsim.runproc
 cp ./conf/conf_wfsimhardware_name.txt ./conf/conf_wfsim_name.txt
+
+# turn on DM voltage
+Cfits << EOF
+aoldmvoltON 0
+exit
+EOF
+
+
 Readwfsimcamname
 }
 
