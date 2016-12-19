@@ -222,7 +222,7 @@ readshmim $2
 
 readshmim aol${loopnb}_modeval
 im1=aol${loopnb}_modeval+0
-cp im1 aol${loopnb}_modevalPF
+cpsh im1 aol${loopnb}_modevalPF
 
 readshmim aol${loopnb}_modevalPF
 listim

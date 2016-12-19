@@ -1603,7 +1603,7 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	printf("Number of output modes        = %ld\n", NBmodeOUT);
 	printf("Number of time steps          = %ld\n", NBPFstep);
 	if(IDmasterout!=-1)
-		printf("Writing result in master output stream %s\n", imname);
+		printf("Writing result in master output stream %s  (%ld)\n", imname, IDmasterout);
 
 
 
