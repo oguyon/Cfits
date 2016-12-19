@@ -403,19 +403,27 @@ int AOloopControl_DM_disp2V(long DMindex)
     long ii;
     float volt;
 
+
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 1;
+		
 	if(dmdispcombconf[DMindex].voltON==1)
-	{
-		data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 1;
-		for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
-			{
-				volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
-				if(volt>dmdispcombconf[DMindex].MAXVOLT)
-					volt = dmdispcombconf[DMindex].MAXVOLT;
-				data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
+		{
+			for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+				{
+					volt = 100.0*sqrt(data.image[dmdispcombconf[DMindex].IDdisp].array.F[ii]/DMSTROKE100);
+					if(volt>dmdispcombconf[DMindex].MAXVOLT)
+						volt = dmdispcombconf[DMindex].MAXVOLT;
+					data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*16384.0); //65536.0);
+				}
 		}
-		data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
-		data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
-    }
+	else
+		for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
+			data.image[dmdispcombconf[DMindex].IDvolt].array.U[ii] = 0;
+			
+
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].write = 0;
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].cnt0++;
+    
     
     COREMOD_MEMORY_image_set_sempost(data.image[dmdispcombconf[DMindex].IDdisp].name, -1);
 
@@ -1154,15 +1162,18 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
 int AOloopControl_DM_dmdispcomboff(long DMindex)
 {
     AOloopControl_DM_loadconf();
+    
     dmdispcombconf[DMindex].ON = 0;
 
     return 0;
 }
 
+
 int AOloopControl_DM_dmtrigoff(long DMindex)
 {
-   AOloopControl_DM_loadconf();
-    data.image[dmdispcombconf[DMindex].IDvolt].md[0].status = 101;
+	AOloopControl_DM_loadconf();
+	
+	data.image[dmdispcombconf[DMindex].IDvolt].md[0].status = 101;
 
     return 0;
 }
