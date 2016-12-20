@@ -4618,7 +4618,7 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 	//	printf("tdiff = %f us   ", tdiffv*1e6);
 	//	fflush(stdout);
-		while(tdiffv>1.0e-6*delayus)
+		while((tdiffv>1.0e-6*delayus)&&(cntskip<zsize))
 			{
 				cntskip++;				
 				kkout++;
