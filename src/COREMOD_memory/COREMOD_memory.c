@@ -46,6 +46,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 #include "CLIcore.h"
+#include "info/info.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
@@ -4416,6 +4417,13 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     char *ptr1; // dest
     long framesize;
     int semval;
+    
+	long twait1;
+    struct timespec t0;
+    struct timespec t1;
+
+
+
 
     printf("Creating image stream ...\n");
     fflush(stdout);
@@ -4474,10 +4482,12 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     }
 
 
-    
+    twait1 = usperiod;
     kk = 0;
     while(1)
     {
+		clock_gettime(CLOCK_REALTIME, &t0);
+		
         ptr0 = ptr0s + kk*framesize;
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
@@ -4491,7 +4501,20 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
         if(kk==data.image[IDin].md[0].size[2])
             kk = 0;
 
-        usleep(usperiod);
+       
+		
+		usleep(twait1);
+			
+		clock_gettime(CLOCK_REALTIME, &t1);
+        tdiff = info_time_diff(t0, t1);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+	
+		if(tdiffv<1.0e-6*twait) 
+			twait1 ++;
+		else
+			twait1 --;
+
+
     }
 
     return(IDout);
