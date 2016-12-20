@@ -4720,8 +4720,8 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 	for(i=0;i<imcnt;i++)
 		{
 			ID = IDarray[i];
-			sprintf(imnamecp, "%s_cp", data.image[ID].md[0].name); 
-			IDarraycp[i] = copy_image_ID(data.image[ID].md[0].name, imnamecp, 0);
+			sprintf(imnamecp, "%s_cp", data.image[ID].name); 
+			IDarraycp[i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
 		}
 	
 	list_image_ID();
