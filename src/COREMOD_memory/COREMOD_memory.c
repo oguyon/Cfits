@@ -625,6 +625,17 @@ int COREMOD_MEMORY_streamDelay_cli()
 }
 
 
+int COREMOD_MEMORY_SaveAll_snapshot_cli()
+{
+	 if(CLI_checkarg(1,5)==0)
+    {
+        COREMOD_MEMORY_SaveAll_snapshot(data.cmdargtoken[1].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 
 
 int COREMOD_MEMORY_image_NETWORKtransmit_cli()
@@ -1028,6 +1039,16 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].syntax,"<image2d in> <image2d out> <delay [us]> <resolution [us]>");
     strcpy(data.cmd[data.NBcmd].example,"streamdelay instream outstream 1000 10");
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"imsaveallsnap");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_SaveAll_snapshot_cli;
+    strcpy(data.cmd[data.NBcmd].info,"save all images in directory");
+    strcpy(data.cmd[data.NBcmd].syntax,"<directory>");
+    strcpy(data.cmd[data.NBcmd].example,"imsaveallsnap dir1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)");
     data.NBcmd++;
 
 
@@ -4655,6 +4676,77 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 	
 	return(0);
 }
+
+
+
+
+
+//
+// save all current images/stream onto file
+//
+long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
+{
+	long *IDarray;
+	long *IDarraycp;
+	long i;
+	long imcnt = 0;
+	char imnamecp[200];
+	char fnamecp[500];
+	long ID;
+	char command[500];
+	int ret;
+	
+	
+	for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		imcnt++;
+    
+    IDarray = (long*) malloc(sizeof(long)*imcnt);
+    IDarraycp = (long*) malloc(sizeof(long)*imcnt);
+    
+    imcnt = 0;
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		{
+			IDarray[imcnt] = i;
+			imcnt++;
+		}
+		
+	
+	sprintf(command, "mkdir -p %s", dirname);
+	ret = system(command);
+	
+	// create array for each image
+	for(i=0;i<imcnt;i++)
+		{
+			ID = IDarray[i];
+			sprintf(imnamecp, "%s_cp", data.image[ID].md[0].name); 
+			IDarraycp[i] = copy_image_ID(data.image[ID].md[0].name, imnamecp, 0);
+		}
+	
+	list_image_ID();
+	
+	for(i=0;i<imcnt;i++)
+		{
+			ID = IDarray[i];
+			sprintf(imnamecp, "%s_cp", data.image[ID].md[0].name);
+			sprintf(fnamecp, "!./%s/%s_cp.fits", dirname, data.image[ID].md[0].name);
+			save_fits(imnamecp, fnamecp);
+		}
+		
+    free(IDarray);
+    free(IDarraycp);
+   
+    
+	return(0);
+}
+
+
+
+
+
+
+
 
 
 

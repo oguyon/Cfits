@@ -13141,6 +13141,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
+
 long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff)
 {
 	long IDin, IDout;
