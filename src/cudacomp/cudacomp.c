@@ -3813,7 +3813,10 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
 
 		if(twait>0)
 			usleep(twait1);
-			
+		
+		if(twait1<0)
+			twait1 = 0;
+		
 		clock_gettime(CLOCK_REALTIME, &t1);
         tdiff = info_time_diff(t0, t1);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;

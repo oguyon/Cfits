@@ -4445,7 +4445,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     struct timespec t1;
 	double tdiffv;
     struct timespec tdiff;
-
+	
 
     printf("Creating image stream ...\n");
     fflush(stdout);
@@ -4535,6 +4535,11 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 			twait1 ++;
 		else
 			twait1 --;
+		
+		if(twait1<0)
+			twait1 = 0;
+		if(twait1>usperiod)
+			twait1 = usperiod;
 
 
     }

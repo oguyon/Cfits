@@ -635,7 +635,7 @@ menucontrolloop_default="linsimdt"
 linsimDelay)
 file="./conf/conf_linsimDelay.txt"
 exec 3>&1;
-linsimDelay=$(dialog --inputbox "linear WFS simulation frame(s) delay" 0 0 "$linsimDelay" 2>&1 1>&3);
+linsimDelay=$(dialog --inputbox "linear WFS simulation DM lag [us]" 0 0 "$linsimDelay" 2>&1 1>&3);
 exec 3>&-;
 echo "$linsimDelay" > $file
 aoconflog "set linsimDelay = ${linsimDelay}"
