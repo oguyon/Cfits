@@ -4557,7 +4557,7 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 	double tdiffv;
 	struct timespec tdiff;
 	long *arraytmp;
-	
+	long cntskip = 0;
 	long kkout;
 	  
 	IDin = image_ID(IDin_name);
@@ -4598,17 +4598,21 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 			kkin++;
 			if(kkin==zsize)
 				kkin = 0;
-			cnt0old = cnt0;
+			cnt0old = cnt0;		
 		}
 		
 		clock_gettime(CLOCK_REALTIME, &tnow);
 		
 		
+		cntskip = 0;
 		tdiff = info_time_diff(t0array[kkout], tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 		while(tdiffv>1.0e-6*delayus)
-			{				
+			{
+				cntskip++;				
 				kkout++;
+				if(kkout==zsize)
+					kkout = 0;
 				tdiff = info_time_diff(t0array[kkout], tnow);
 				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 				
@@ -4616,6 +4620,7 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 					data.image[IDout].array.F[ii] = data.image[IDimc].array.F[kkout*xysize+ii];	
 			}
 		
+	
 		usleep(dtus);
 	}
 	
