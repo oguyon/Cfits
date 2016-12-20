@@ -4586,6 +4586,12 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 	kkin = 0;
 	kkout = 0;
 	cnt0old = data.image[IDin].md[0].cnt0;
+
+	clock_gettime(CLOCK_REALTIME, &tnow);
+	for(kk=0;kk<zsize;kk++)
+		t0array[kk] = tnow;
+		
+	
 	while(1)
 	{
 		// has new frame arrived ?
