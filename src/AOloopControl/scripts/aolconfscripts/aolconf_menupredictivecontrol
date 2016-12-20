@@ -697,7 +697,7 @@ exec 3>&1;
 PFb0lag=$(dialog --inputbox "Select Predictive filter block 0 lag" 0 0 "$PFb0lag" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0lag $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
 
 PFb0dgain)
@@ -705,7 +705,7 @@ exec 3>&1;
 PFb0dgain=$(dialog --inputbox "Select Predictive filter block 0 derivation gain" 0 0 "$PFb0dgain" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0lag $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
 
 
@@ -851,7 +851,7 @@ exec 3>&1;
 PFb1lag=$(dialog --inputbox "Select Predictive filter block 1 lag" 0 0 "$PFb1lag" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1lag $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
 
 PFb1dgain)
@@ -859,7 +859,7 @@ exec 3>&1;
 PFb1dgain=$(dialog --inputbox "Select Predictive filter block 1 derivation gain" 0 0 "$PFb1dgain" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1lag $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
+echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
 
 
