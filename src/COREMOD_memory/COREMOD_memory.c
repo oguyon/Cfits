@@ -4721,7 +4721,7 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 		{
 			ID = IDarray[i];
 			sprintf(imnamecp, "%s_cp", data.image[ID].name); 
-			printf("image %s\n", data.image[ID].name);
+			//printf("image %s\n", data.image[ID].name);
 			IDarraycp[i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
 		}
 	
@@ -4730,8 +4730,8 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 	for(i=0;i<imcnt;i++)
 		{
 			ID = IDarray[i];
-			sprintf(imnamecp, "%s_cp", data.image[ID].md[0].name);
-			sprintf(fnamecp, "!./%s/%s_cp.fits", dirname, data.image[ID].md[0].name);
+			sprintf(imnamecp, "%s_cp", data.image[ID].name);
+			sprintf(fnamecp, "!./%s/%s_cp.fits", dirname, data.image[ID].name);
 			save_fits(imnamecp, fnamecp);
 		}
 		
