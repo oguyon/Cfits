@@ -215,7 +215,7 @@ else
 echo "0" > $file
 linsimDelay="0"
 fi
-menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop lag [frame]" )
+menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop lag [us]" )
 
 
 
