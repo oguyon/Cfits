@@ -4509,7 +4509,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
         tdiff = info_time_diff(t0, t1);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 	
-		if(tdiffv<1.0e-6*twait) 
+		if(tdiffv<1.0e-6*usperiod) 
 			twait1 ++;
 		else
 			twait1 --;
