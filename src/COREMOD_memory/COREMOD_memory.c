@@ -4818,6 +4818,7 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 				//printf("image %s\n", data.image[ID].name);
 				IDarraycp[frame*imcnt+i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
 			}
+		frame++;
 	}
 	
 	list_image_ID();
