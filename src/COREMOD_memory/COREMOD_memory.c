@@ -4615,10 +4615,17 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 					kkout = 0;
 				tdiff = info_time_diff(t0array[kkout], tnow);
 				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-				
-				for(ii=0;ii<xysize;ii++)
-					data.image[IDout].array.F[ii] = data.image[IDimc].array.F[kkout*xysize+ii];	
 			}
+		if(cntskip>0)
+		{
+			data.image[IDout].md[0].write = 1;
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[IDimc].array.F[kkout*xysize+ii];	
+			
+			COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
+			data.image[IDout].md[0].cnt0++;
+			data.image[IDout].md[0].write = 0;
+		}
 		
 	
 		usleep(dtus);
