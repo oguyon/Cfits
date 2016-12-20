@@ -637,6 +637,18 @@ int COREMOD_MEMORY_SaveAll_snapshot_cli()
 }
 
 
+int COREMOD_MEMORY_SaveAll_sequ_cli()
+{
+	 if(CLI_checkarg(1,5)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    {
+        COREMOD_MEMORY_SaveAll_sequ(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
 
 int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 {
@@ -1051,6 +1063,14 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"imsaveallseq");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_SaveAll_sequ_cli;
+    strcpy(data.cmd[data.NBcmd].info,"save all images in directory - sequence");
+    strcpy(data.cmd[data.NBcmd].syntax,"<directory> <trigger image name> <trigger semaphore> <NB frames>");
+    strcpy(data.cmd[data.NBcmd].example,"imsaveallsequ dir1 im1 3 20");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)");
+    data.NBcmd++;
 
 
     strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
@@ -4731,7 +4751,7 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 		{
 			ID = IDarray[i];
 			sprintf(imnamecp, "%s_cp", data.image[ID].name);
-			sprintf(fnamecp, "!./%s/%s_cp.fits", dirname, data.image[ID].name);
+			sprintf(fnamecp, "!./%s/%s.fits", dirname, data.image[ID].name);
 			save_fits(imnamecp, fnamecp);
 		}
 		
@@ -4741,6 +4761,83 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
     
 	return(0);
 }
+
+
+
+//
+// save all current images/stream onto file
+//
+long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)
+{
+	long *IDarray;
+	long *IDarraycp;
+	long i;
+	long imcnt = 0;
+	char imnamecp[200];
+	char fnamecp[500];
+	long ID;
+	char command[500];
+	int ret;
+	long IDtrig;
+	
+	long frame = 0;
+	
+	for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		imcnt++;
+    
+    IDarray = (long*) malloc(sizeof(long)*imcnt);
+    IDarraycp = (long*) malloc(sizeof(long)*imcnt*NBframes);
+    
+    imcnt = 0;
+    for (i=0; i<data.NB_MAX_IMAGE; i++)
+       if(data.image[i].used==1)
+		{
+			IDarray[imcnt] = i;
+			imcnt++;
+		}
+		
+	
+	sprintf(command, "mkdir -p %s", dirname);
+	ret = system(command);
+	
+	IDtrig = image_ID(IDtrig_name);
+	// drive semaphore to zero
+	while(sem_trywait(data.image[IDtrig].semptr[semtrig])==0) {}
+	
+	// create array for each image
+	frame = 0;
+	while ( frame < NBframes )
+	{
+//		COREMOD_MEMORY_image_set_semwait(IDtrig_name, semtrig);
+		sem_wait(data.image[IDtrig].semptr[semtrig]);
+		for(i=0;i<imcnt;i++)
+			{
+				ID = IDarray[i];
+				sprintf(imnamecp, "%s_%03ld", data.image[ID].name, frame); 
+				//printf("image %s\n", data.image[ID].name);
+				IDarraycp[frame*imcnt+i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
+			}
+	}
+	
+	list_image_ID();
+	
+	for(frame=0;frame<NBframes;frame++)
+	for(i=0;i<imcnt;i++)
+		{
+			ID = IDarray[i];
+			sprintf(imnamecp, "%s_%03ld", data.image[ID].name, frame);
+			sprintf(fnamecp, "!./%s/%s_%03ld.fits", dirname, data.image[ID].name, frame);
+			save_fits(imnamecp, fnamecp);
+		}
+		
+    free(IDarray);
+    free(IDarraycp);
+   
+    
+	return(0);
+}
+
 
 
 
