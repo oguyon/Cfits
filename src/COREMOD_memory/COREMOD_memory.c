@@ -613,11 +613,11 @@ int COREMOD_MEMORY_image_streamupdateloop_cli()
 }
 
 
-int COREMOD_MEMORY_image_streamDelay_cli()
+int COREMOD_MEMORY_streamDelay_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
     {
-        COREMOD_MEMORY_image_streamDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        COREMOD_MEMORY_streamDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else
@@ -1023,7 +1023,7 @@ int init_COREMOD_memory()
 
     strcpy(data.cmd[data.NBcmd].key,"streamdelay");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamDelay_cli;
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDelay_cli;
     strcpy(data.cmd[data.NBcmd].info,"delay 2D image stream");
     strcpy(data.cmd[data.NBcmd].syntax,"<image2d in> <image2d out> <delay [us]> <resolution [us]>");
     strcpy(data.cmd[data.NBcmd].example,"streamdelay instream outstream 1000 10");
