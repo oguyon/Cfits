@@ -4606,8 +4606,8 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 			if(kkin==zsize)
 				kkin = 0;
 			cnt0old = cnt0;		
-			printf("New frame detected: %ld  ->  %ld\n", cnt0, kkin);
-			fflush(stdout);
+		//	printf("New frame detected: %ld  ->  %ld\n", cnt0, kkin);
+	//		fflush(stdout);
 		}
 		
 		clock_gettime(CLOCK_REALTIME, &tnow);
@@ -4616,8 +4616,8 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 		cntskip = 0;
 		tdiff = info_time_diff(t0array[kkout], tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-		printf("tdiff = %f us   ", tdiffv*1e6);
-		fflush(stdout);
+	//	printf("tdiff = %f us   ", tdiffv*1e6);
+	//	fflush(stdout);
 		while(tdiffv>1.0e-6*delayus)
 			{
 				cntskip++;				
@@ -4627,8 +4627,8 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 				tdiff = info_time_diff(t0array[kkout], tnow);
 				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 			}
-		printf("cntskip = %ld\n", cntskip);
-		fflush(stdout);
+	//	printf("cntskip = %ld\n", cntskip);
+//		fflush(stdout);
 		if(cntskip>0)
 		{
 			data.image[IDout].md[0].write = 1;
