@@ -90,9 +90,9 @@ extern DATA data;
 extern pid_t CLIPID;
 
 
-    struct timespec tnow;
-    struct timespec tdiff;
-    double tdiffv;
+struct timespec tnow;
+struct timespec tdiff;
+double tdiffv;
 
 int IDtimerinit = 0;
 long IDtiming = -1; // index to image where timing should be written

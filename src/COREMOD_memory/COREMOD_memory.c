@@ -4521,6 +4521,93 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 }
 
 
+long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)
+{
+	long IDimc;
+	long IDin, IDout;
+	long xsize, ysize, xysize;
+	long zsize;
+	long kkin;
+	long cnt0, cnt0old;
+	long ii;
+	struct timespec *t0array;
+	struct timespec tnow;
+	double tdiffv;
+	struct timespec tdiff;
+	long *arraytmp;
+	
+	long kkout;
+	  
+	IDin = image_ID(IDin_name);
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	zsize = (long) (delayus/dtus);
+	xysize = xsize*ysize;
+	
+	t0array = (struct timespec*) malloc(sizeof(struct timespec)*zsize);
+	
+	IDimc = create_3Dimage_ID("_tmpc", xsize, ysize, zsize);
+	
+	
+	IDout = image_ID(IDout_name);
+    if(IDout==-1) // CREATE IT
+    {
+		arraytmp = (long*) malloc(sizeof(long)*2);
+		arraytmp[0] = xsize;
+		arraytmp[1] = ysize;
+        IDout = create_image_ID(IDout_name, 2, arraytmp, FLOAT, 1, 0);
+        COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
+		free(arraytmp);
+    }
+    
+    
+	kkin = 0;
+	kkout = 0;
+	cnt0old = data.image[IDin].md[0].cnt0;
+	while(1)
+	{
+		// has new frame arrived ?
+		cnt0 = data.image[IDin].md[0].cnt0;
+		if(cnt0!=cnt0old)
+		{
+			clock_gettime(CLOCK_REALTIME, &t0array[kkin]);
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDimc].array.F[kkin*xysize+ii] = data.image[IDin].array.F[ii];
+			kkin++;
+			if(kkin==zsize)
+				kkin = 0;
+			cnt0old = cnt0;
+		}
+		
+		clock_gettime(CLOCK_REALTIME, &tnow);
+		
+		
+		tdiff = info_time_diff(t0array[kkout], tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+		while(tdiffv>1.0e-6*delayus)
+			{				
+				kkout++;
+				tdiff = info_time_diff(t0array[kkout], tnow);
+				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+				
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout].array.F[ii] = data.image[IDimc].array.F[kkout*xysize+ii];
+		
+			}
+			
+		
+		
+		usleep(dtus);
+	}
+	
+	delete_image_ID("_tmpc");
+	
+	free(t0array);
+	
+	return(0);
+}
+
+
 
 /** continuously transmits 2D image through TCP link
  * mode = 1, force counter to be used for synchronization, ignore semaphores if they exist
