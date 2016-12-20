@@ -4421,7 +4421,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 	long twait1;
     struct timespec t0;
     struct timespec t1;
-
+	double tdiff;
 
 
 
