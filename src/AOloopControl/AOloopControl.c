@@ -452,6 +452,16 @@ int AOcontrolLoop_TestSystemLatency_cli()
 }
 
 
+int AOloopControl_RespMatrix_Fast_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0)
+    {
+        AOloopControl_RespMatrix_Fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
 
 int AOloopControl_TestDMmodeResp_cli()
 {
@@ -1256,6 +1266,15 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)");
     data.NBcmd++;
 
+    
+    strcpy(data.cmd[data.NBcmd].key,"aolmRMfast");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_RespMatrix_Fast_cli;
+    strcpy(data.cmd[data.NBcmd].info,"acquire fast modal response matrix");
+    strcpy(data.cmd[data.NBcmd].syntax,"<modes> <dm RM stream> <WFS stream> <sem trigger> <hardware latency [s]> <loop frequ [Hz]> <ampl [um]> <outname>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmRMfast DMmodes aol0_dmRM aol0_wfsim 4 0.00112 2000.0 0.03 rm000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, char *outname)");
+    data.NBcmd++;
 
 
     strcpy(data.cmd[data.NBcmd].key,"aoltestmresp");
