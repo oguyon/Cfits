@@ -4,13 +4,12 @@
 
 # number of arguments to script
 NBARGS=0
-loopnb=$(cat LOOPNUMBER)
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
-pname0=`basename $0`
-pname=${pname0#"./"}-$loopnb
+#pname0=`basename $0`
+#pname=$pname0-$loopnb
 
-echo "pname = $pname0"
-exit
+pname=aol${loopnb}run
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -99,14 +98,15 @@ echo ""
 exit
 fi
 
-loopnb=$(cat LOOPNUMBER)
+
 confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 
+csetname="aol${loopnb}RT"
 
-pname=aol${loopnb}run
 
 rm /tmp/aol${loopnb}_respM.im.shm
 $execname -n $pname << EOF
+csetpmove ${csetname}
 aolnb $loopnb
 aolrun
 exit
