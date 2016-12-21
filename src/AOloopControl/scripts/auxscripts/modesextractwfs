@@ -5,7 +5,8 @@
 NBARGS=1
 
 # ======================= PROCESS NAME =================================
-pname="aol${loopnb}modeval0"
+loopnb=$(cat LOOPNUMBER 2> /dev/null)
+pname="aol${loopnb}mexwfs"
 
 
 
