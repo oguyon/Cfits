@@ -13463,7 +13463,7 @@ int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame)
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory(1);
 
-  AOconf[LOOPNUMBER].complatency_frame = wfsmextrlatency_frame;
+  AOconf[LOOPNUMBER].wfsmextrlatency_frame = wfsmextrlatency_frame;
   AOloopControl_showparams(LOOPNUMBER);
 
   return 0;
