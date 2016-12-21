@@ -8090,7 +8090,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
         }
 
 
-
+		// 
+		// 
+		//
         for(wfsframe=1; wfsframe<NBwfsframe; wfsframe++)
             fprintf(fp, "%ld   %10.2f     %g\n", wfsframe-kkoffset, 1.0e6*(0.5*(dtarray[wfsframe]+dtarray[wfsframe-1])-dtoffset), valarray[wfsframe]);
 
@@ -8158,6 +8160,176 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
     return 0;
 }
+
+
+
+
+
+
+//
+// Measure fast Modal response matrix
+//
+// HardwareLag [s]
+//
+// ampl [um]
+//
+
+long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, char *outname)
+{
+	long IDout;
+	long IDmodes;
+	long IDmodes1; // muplitiples by ampl, + and - 
+	long IDdmRM;
+	long IDwfs;
+	long IDbuff;
+	long ii, kk;
+	
+	
+	long HardwareLag_int;
+	float HardwareLag_frac;
+	float WFSperiod;
+
+	long NBmodes;
+	long dmxsize, dmysize, dmxysize, wfsxsize, wfsysize, wfsxysize;
+	long twait = 100;
+
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+	char *ptr0;
+	char *ptr1;
+	long dmframesize;
+	long wfsframesize;
+	char *ptrs0;
+	char *ptrs1;
+	long buffindex;
+	
+	
+	
+	WFSperiod = 1.0/loopfrequ;
+	HardwareLag_int = (long) (HardwareLag/WFSperiod);
+	HardwareLag_frac = HardwareLag - WFSperiod*HardwareLag_int; // [s]
+	
+	twait = (long) (1.0e6 * ( (0.5*WFSperiod) - HardwareLag_frac ) );
+	
+	
+	
+	IDmodes = image_ID(DMmodes_name);
+	dmxsize = data.image[IDmodes].md[0].size[0];
+	dmysize = data.image[IDmodes].md[0].size[1];
+	NBmodes = data.image[IDmodes].md[0].size[2];
+	dmxysize = dmxsize*dmysize;
+	
+	
+	
+	
+	IDmodes1 = image_ID("_tmpmodes");
+	if(IDmodes1 == -1)
+		IDmodes1 = create_3Dimage_ID("_tmpmodes", dmxsize, dmysize, 2*NBmodes);
+	
+	for(kk=0;kk<NBmodes;kk++)
+	{
+		for(ii=0;ii<dmxysize;ii++)
+		{
+			data.image[IDmodes1].array.F[2*kk*dmxysize+ii] =  ampl * data.image[IDmodes].array.F[kk*dmxysize+ii];
+			data.image[IDmodes1].array.F[(2*kk+1)*dmxysize+ii] =  -ampl * data.image[IDmodes].array.F[kk*dmxysize+ii];
+		}
+	}
+	
+	
+	
+	IDdmRM = image_ID(dmRM_name);
+	
+	IDwfs = image_ID(imWFS_name);
+	wfsxsize = data.image[IDwfs].md[0].size[0];
+	wfsysize = data.image[IDwfs].md[0].size[1];	
+	wfsxysize = wfsxsize*wfsysize;
+
+	IDbuff = image_ID("RMbuff");
+	if(IDbuff == -1)
+		IDbuff = create_3Dimage_ID("RMbuff", wfsxsize, wfsysize, 2*NBmodes + HardwareLag_int + 1);
+
+	dmframesize = sizeof(float)*dmxysize;
+	wfsframesize = sizeof(float)*wfsxysize;    
+	    
+    schedpar.sched_priority = RT_priority;
+#ifndef __MACH__
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+#endif
+
+	ptr0 = (char*) data.image[IDmodes1].array.F;
+	ptrs0 = (char*) data.image[IDbuff].array.F;
+	
+// flush semaphore
+	while(sem_trywait(data.image[IDwfs].semptr[semtrig])==0) {}
+	
+	
+	for(kk=0;kk<NBmodes;kk++)
+	{
+		
+		sem_wait(data.image[IDwfs].semptr[semtrig]);
+		ptrs1 = ptrs0 + wfsxysize*(2*kk);
+		memcpy(ptrs1, data.image[IDwfs].array.F, wfsframesize);
+		usleep(twait);
+
+		// apply positive mode poke
+		ptr1 = ptr0 + (2*kk)*dmframesize;		 
+		data.image[IDdmRM].md[0].write = 1;
+        memcpy(data.image[IDdmRM].array.F, ptr1, dmframesize);           
+		COREMOD_MEMORY_image_set_sempost_byID(IDdmRM, -1);
+        data.image[IDdmRM].md[0].cnt0++;
+        data.image[IDdmRM].md[0].write = 0;
+		
+		
+
+		sem_wait(data.image[IDwfs].semptr[semtrig]);
+		ptrs1 = ptrs0 + wfsxysize*(2*kk+1);
+		memcpy(ptrs1, data.image[IDwfs].array.F, wfsframesize);
+		usleep(twait);
+		
+		// apply negative mode poke
+		ptr1 = ptr0 + (2*kk+1)*dmframesize;		 
+		data.image[IDdmRM].md[0].write = 1;
+        memcpy(data.image[IDdmRM].array.F, ptr1, dmframesize);           
+		COREMOD_MEMORY_image_set_sempost_byID(IDdmRM, -1);
+        data.image[IDdmRM].md[0].cnt0++;
+        data.image[IDdmRM].md[0].write = 0;
+	}
+	
+	for(kk=0;kk<HardwareLag_int + 1;kk++)
+	{
+		sem_wait(data.image[IDwfs].semptr[semtrig]);
+		ptrs1 = ptrs0 + wfsxysize*(2*NBmodes+kk);
+		memcpy(ptrs1, data.image[IDwfs].array.F, wfsframesize);
+		usleep(twait);
+		
+		// apply zero poke		 
+		data.image[IDdmRM].md[0].write = 1;
+        memset(data.image[IDdmRM].array.F, 0, dmframesize);
+		COREMOD_MEMORY_image_set_sempost_byID(IDdmRM, -1);
+        data.image[IDdmRM].md[0].cnt0++;
+        data.image[IDdmRM].md[0].write = 0;
+	}
+	
+	
+	IDout = create_3Dimage_ID(outname, wfsxsize, wfsysize, NBmodes);
+	for(kk=0;kk<NBmodes;kk++)
+		{
+			buffindex = 2*kk + HardwareLag_int;
+			for(ii=0;ii<wfsxysize;ii++)
+			{
+				data.image[IDout].array.F[kk*wfsxysize + ii] = ( data.image[IDbuff].array.F[(buffindex)*wfsxysize + ii] - data.image[IDbuff].array.F[(buffindex+1)*wfsxysize + ii] ) / ampl;
+			}
+			
+		}
+	
+	
+	return(IDout);
+}
+
+
 
 
 
@@ -12745,6 +12917,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long framelatency0, framelatency1;
 	long IDgainb;
 	long cnt;
+	long ii;
 	
 	
 	// FILTERING
@@ -12797,6 +12970,11 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	// predictive control output
 	sprintf(imname, "aol%ld_modevalPF", loop);
 	IDmodevalPF = read_sharedmem_image(imname);
+	if(IDmodevalPF != -1)
+		{
+			for(ii=0;ii<data.image[IDmodevalPF].md[0].size[0]*data.image[IDmodevalPF].md[0].size[1];ii++)
+				data.image[IDmodevalPF].array.F[ii] = 0.0;
+		}
 
 
 	// OUPUT
@@ -12915,6 +13093,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	while (1)
 	{
+		// read WFS measured modes (residual)
 		
 		if(data.image[IDmodeval].sem==0)
         {
@@ -12929,6 +13108,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		while(sem_trywait(data.image[IDmodeval].semptr[4])==0) {}
 		AOconf[loop].statusM = 3;
 
+
+
+
+
 		// write gain and mult into arrays
 		for(m=0;m<NBmodes;m++)
 		{
@@ -12938,8 +13121,11 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 		//
-		// UPDATE CURRENT DM STATE
+		// UPDATE CURRENT DM MODES STATE
+		//
 		//  current state =   modemult   x   ( last state   - modegain * WFSmodeval  )
+		//
+		// modevalDMindexl = last index in the IDmodevalDM_C buffer
 		//
 		data.image[IDmodevalDMnow].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
@@ -12963,7 +13149,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				{
 					sem_wait(data.image[IDmodevalPF].semptr[3]);
 					for(m=0;m<NBmodes;m++)
-						data.image[IDmodevalDMnow].array.F[m] = AOconf[loop].ARPFgain*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain)*data.image[IDmodevalDMnow].array.F[m];
+						data.image[IDmodevalDMnow].array.F[m] = -AOconf[loop].ARPFgain*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain)*data.image[IDmodevalDMnow].array.F[m];
 					// drive semaphore to zero
 					while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
 				}
