@@ -5,9 +5,10 @@
 # number of arguments to script
 NBARGS=0
 loopnb=$(cat LOOPNUMBER)
+
 pname0=`echo "$0" | sed "s/\.\///g"`
-#pname0=$0
-echo "pname0 = $pname0"
+pname1=${pname0%.bar}
+echo "pname1 = $pname1"
 pname=${pname0#"./"}-$loopnb
 
 echo "pname = $pname"
