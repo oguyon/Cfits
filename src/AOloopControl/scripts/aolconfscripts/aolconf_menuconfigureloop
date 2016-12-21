@@ -1182,7 +1182,7 @@ cat tmpfile.txt
 sleep 5
 rm tmpfile.txt
 echo "$loophlatfr" > ./conf/conf_loophlatfr.txt
-aoconflogext "set hardware latency $loophlat frame"
+aoconflogext "set hardware latency $loophlatfr frame"
 ;;
 
 	lclat)
