@@ -4,8 +4,13 @@
 
 # number of arguments to script
 NBARGS=0
-pname=`echo "$0" | sed "s/\.\///g"`
+loopnb=$(cat LOOPNUMBER)
+#pname=`echo "$0" | sed "s/\.\///g"`
+pname0=$0
+pname=${pname0#"./"}-$loopnb
 
+echo "pnaem = $pname"
+exit
 
 function printHELP {
 echo "------------------------------------------------------------------------"
