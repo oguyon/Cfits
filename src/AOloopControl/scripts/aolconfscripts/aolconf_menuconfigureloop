@@ -459,8 +459,9 @@ menuitems+=( "lfreq" "            Loop Frequ                        ${loopfrequ}
 loophlat="2.1"
 if [ -f "./conf/conf_loophlat.txt" ]; then
 loophlat=$( cat ./conf/conf_loophlat.txt )
+loophlatfr=$( cat ./conf/conf_loophlatfr.txt )
 fi
-menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} sec" )
+menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} sec -> ${loophlatf} frame" )
 
 loopclat="0.6"
 if [ -f "./conf/conf_loopclat.txt" ]; then
@@ -1171,9 +1172,11 @@ aoconflogext "set loop frequency $loopfrequ Hz"
 
 	lhlat)
 exec 3>&1;
-loophlat=$(dialog --inputbox "Hardware latency" 0 0 "$loophlat" 2>&1 1>&3);
+loophlat=$(dialog --inputbox "Hardware latency [s]" 0 0 "$loophlat" 2>&1 1>&3);
 exec 3>&-;
 echo "$loophlat" > ./conf/conf_loophlat.txt
+loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' | echo $loophlat $loopfrequ )
+echo "$loophlatfr" > ./conf/conf_loophlatfr.txt
 aoconflogext "set hardware latency $loophlat frame"
 ;;
 

@@ -760,6 +760,8 @@ int AOloopControl_set_complatency_frame_cli()
     return 1;
 }
 
+
+
 int AOloopControl_set_wfsmextrlatency_frame_cli()
 {
   if(CLI_checkarg(1,1)==0)
@@ -12863,7 +12865,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	IDgainb = read_sharedmem_image(imname);
 	
 
-	framelatency = AOconf[loop].hardlatency_frame + AOconf[loop].complatency_frame; 
+	framelatency = AOconf[loop].hardlatency_frame + AOconf[loop].wfsmextrlatency_frame; 
 	framelatency0 = (long) framelatency;
 	framelatency1 = framelatency0 + 1;
 	alpha = framelatency - framelatency0;
