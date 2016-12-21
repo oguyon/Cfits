@@ -1175,7 +1175,9 @@ exec 3>&1;
 loophlat=$(dialog --inputbox "Hardware latency [s]" 0 0 "$loophlat" 2>&1 1>&3);
 exec 3>&-;
 echo "$loophlat" > ./conf/conf_loophlat.txt
-loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' | echo $loophlat $loopfrequ )
+echo "$loophlat $loopfrequ" > tmpfile.txt
+loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
 echo "$loophlatfr" > ./conf/conf_loophlatfr.txt
 aoconflogext "set hardware latency $loophlat frame"
 ;;
