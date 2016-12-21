@@ -461,7 +461,7 @@ if [ -f "./conf/conf_loophlat.txt" ]; then
 loophlat=$( cat ./conf/conf_loophlat.txt )
 loophlatfr=$( cat ./conf/conf_loophlatfr.txt )
 fi
-menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} sec -> ${loophlatf} frame" )
+menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} sec -> ${loophlatfr} frame" )
 
 loopclat="0.6"
 if [ -f "./conf/conf_loopclat.txt" ]; then
@@ -1177,7 +1177,7 @@ exec 3>&-;
 echo "$loophlat" > ./conf/conf_loophlat.txt
 echo "$loophlat $loopfrequ" > tmpfile.txt
 loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
-echo "loophlatft = $loophlatfr"
+echo "loophlatftr = $loophlatfr"
 cat tmpfile.txt
 sleep 5
 rm tmpfile.txt
