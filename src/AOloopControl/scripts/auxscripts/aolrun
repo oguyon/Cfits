@@ -7,6 +7,7 @@ NBARGS=0
 loopnb=$(cat LOOPNUMBER)
 pname0=`echo "$0" | sed "s/\.\///g"`
 #pname0=$0
+echo "pname0 = $pname0"
 pname=${pname0#"./"}-$loopnb
 
 echo "pname = $pname"
