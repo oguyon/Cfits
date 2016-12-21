@@ -1167,6 +1167,10 @@ exec 3>&1;
 loopfrequ=$(dialog --inputbox "Loop Frequency [Hz]" 0 0 "$loopfrequ" 2>&1 1>&3);
 exec 3>&-;
 echo "$loopfrequ" > ./conf/conf_loopfrequ.txt
+Cfits << EOF
+aolsetloopfrequ 1000
+exit
+EOF
 aoconflogext "set loop frequency $loopfrequ Hz"
 ;;
 
@@ -1191,6 +1195,10 @@ exec 3>&1;
 loopclat=$(dialog --inputbox "Computing latency" 0 0 "$loopclat" 2>&1 1>&3);
 exec 3>&-;
 echo "$loopclat" > ./conf/conf_loopclat.txt
+Cfits << EOF
+aolsetclat ${loopclat}
+exit
+EOF
 aoconflogext "set computing latency $loopclat frame"
 ;;
 
@@ -1199,6 +1207,10 @@ exec 3>&1;
 loopwlat=$(dialog --inputbox "WFS modes extraction latency" 0 0 "$loopwlat" 2>&1 1>&3);
 exec 3>&-;
 echo "$loopwlat" > ./conf/conf_loopwlat.txt
+Cfits << EOF
+aolsetwlat ${loopwlat}
+exit
+EOF
 aoconflogext "set WFS modes extraction latency $loopwlat frame"
 ;;
 
