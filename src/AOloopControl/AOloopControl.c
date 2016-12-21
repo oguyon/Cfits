@@ -12963,7 +12963,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				{
 					sem_wait(data.image[IDmodevalPF].semptr[3]);
 					for(m=0;m<NBmodes;m++)
-						data.image[IDmodevalDMnow].array.F[m] = -AOconf[loop].ARPFgain*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain)*data.image[IDmodevalDMnow].array.F[m];
+						data.image[IDmodevalDMnow].array.F[m] = AOconf[loop].ARPFgain*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain)*data.image[IDmodevalDMnow].array.F[m];
 					// drive semaphore to zero
 					while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
 				}
