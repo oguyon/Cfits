@@ -1177,11 +1177,12 @@ exec 3>&-;
 echo "$loophlat" > ./conf/conf_loophlat.txt
 echo "$loophlat $loopfrequ" > tmpfile.txt
 loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
-echo "loophlatftr = $loophlatfr"
-cat tmpfile.txt
-sleep 5
 rm tmpfile.txt
 echo "$loophlatfr" > ./conf/conf_loophlatfr.txt
+Cfits << EOF
+aolsethlat ${loophlatfr}
+exit
+EOF
 aoconflogext "set hardware latency $loophlatfr frame"
 ;;
 
