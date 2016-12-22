@@ -12248,8 +12248,13 @@ int AOloopControl_statusStats()
     long *statusgpucnt;
     long *statusgpucnt2;
     double loopiterus;
+    
     long long loopcnt;
+    long long wfsimcnt;
+    
     int ret;
+    
+    
     
     FILE *fp;
     
@@ -12356,6 +12361,8 @@ int AOloopControl_statusStats()
         statusgpucnt2[st] = 0;
     }
 
+	imcnt0 = data.image[aoconfID_wfsim].md[0].cnt0;
+	
     loopcnt = AOconf[LOOPNUMBER].cnt;
     clock_gettime(CLOCK_REALTIME, &t1);
     for(k=0; k<NBkiter; k++)
@@ -12379,6 +12386,7 @@ int AOloopControl_statusStats()
         }
     }
     loopcnt = AOconf[LOOPNUMBER].cnt - loopcnt;
+    wfsimcnt = data.imagedata.image[aoconfID_wfsim].md[0].cnt0 - wfsimcnt;
     clock_gettime(CLOCK_REALTIME, &t2);
     tdiff = info_time_diff(t1, t2);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -12386,7 +12394,12 @@ int AOloopControl_statusStats()
     loopiterus = 1.0e6*tdiffv/loopcnt;
     printf("Time diff = %f sec \n", tdiffv);
     printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);
+	printf("Number of iterations    loop: %10lld   wfs: %lld\n", loopcnt, wfsimcnt);
+	
     printf("\n");
+    
+
+
 
 	AOconf[LOOPNUMBER].loopfrequ = 1.0*loopcnt/tdiffv;
 	AOconf[LOOPNUMBER].complatency_frame = 1.0-1.0*statuscnt[20]/NBkiter;
