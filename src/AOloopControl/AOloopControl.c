@@ -9055,7 +9055,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
         // WAIT FOR LOOP DELAY, PRIMING
         Read_cam_frame(loop, 1, normalize, 0, 1);
         
-      
+		// read delayfr frames
         for(kk=0; kk<delayfr; kk++)               
             {
                 Read_cam_frame(loop, 1, normalize, 0, 0);
@@ -9070,6 +9070,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long NBave, long NBex
                                 act1++;
                                 PokeSign = 1;
                             }
+                            
                         if(act1>NBpoke-1)
                             act1 = NBpoke-1;
                         // POKE
