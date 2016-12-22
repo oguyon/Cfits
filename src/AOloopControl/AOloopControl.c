@@ -12252,6 +12252,7 @@ int AOloopControl_statusStats()
     long long loopcnt;
     char imname[200];
     long long wfsimcnt;
+    long long dmCcnt;
     
     int ret;
     
@@ -12365,8 +12366,13 @@ int AOloopControl_statusStats()
 
 	sprintf(imname, "aol%ld_wfsim", LOOPNUMBER);
 	aoconfID_wfsim = read_sharedmem_image(imname);
+
+	sprintf(imname, "aol%ld_dmC", LOOPNUMBER);
+	aoconfID_dmC = read_sharedmem_image(imname);
+
 	
 	wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0;
+	dmCcnt = data.image[aoconfID_dmC].md[0].cnt0;
 	
     loopcnt = AOconf[LOOPNUMBER].cnt;
     clock_gettime(CLOCK_REALTIME, &t1);
@@ -12392,6 +12398,8 @@ int AOloopControl_statusStats()
     }
     loopcnt = AOconf[LOOPNUMBER].cnt - loopcnt;
     wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0 - wfsimcnt;
+    dmCcnt = data.image[aoconfID_dmC].md[0].cnt0 - dmCcnt;
+    
     clock_gettime(CLOCK_REALTIME, &t2);
     tdiff = info_time_diff(t1, t2);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -12399,7 +12407,7 @@ int AOloopControl_statusStats()
     loopiterus = 1.0e6*tdiffv/loopcnt;
     printf("Time diff = %f sec \n", tdiffv);
     printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);
-	printf("Number of iterations    loop: %10lld   wfs: %lld\n", loopcnt, wfsimcnt);
+	printf("Number of iterations    loop: %10lld   wfs: %lld   dmC : %lld\n", loopcnt, wfsimcnt, dmCcnt);
 	
     printf("\n");
     
