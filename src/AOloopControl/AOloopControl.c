@@ -12250,6 +12250,7 @@ int AOloopControl_statusStats()
     double loopiterus;
     
     long long loopcnt;
+    char imname[200];
     long long wfsimcnt;
     
     int ret;
@@ -12361,6 +12362,10 @@ int AOloopControl_statusStats()
         statusgpucnt2[st] = 0;
     }
 
+
+	sprintf(imname, "aol%ld_wfsim", LOOPNUMBER);
+	aoconfID_wfsim = read_sharedmem_image(imname);
+	
 	wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0;
 	
     loopcnt = AOconf[LOOPNUMBER].cnt;
