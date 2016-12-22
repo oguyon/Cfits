@@ -1757,7 +1757,7 @@ ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 fi
 
 
-
+# process runs in CPU set aol0RT1
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 tmux kill-session -t $tmuxname
@@ -1771,22 +1771,25 @@ fi
 fi
 
 
+# process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
-tmux send-keys -t $tmuxname "Cfits" C-m
+tmux send-keys -t $tmuxname "Cfits -p ${tmuxname}" C-m
+tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
 
 
+# process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}dmfwb"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 logRunningProcess "aolmcoeffs2dmmap" "$tmuxname" "DM modal (post-filtering) write back"
-tmux send-keys -t $tmuxname "./auxscripts/aolmcoeffs2dmmap -f ${GPUdmfwb}" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolmcoeffs2dmmap -p ${tmuxname} -f ${GPUdmfwb}" C-m
 fi
 
 
