@@ -4811,10 +4811,11 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 	ret = system(command);
 	
 	IDtrig = image_ID(IDtrig_name);
-	// drive semaphore to zero
-	while(sem_trywait(data.image[IDtrig].semptr[semtrig])==0) {}
 
 
+	printf("Creating arrays\n");
+	fflush(stdout);
+	
 	// create 3D arrays	
 	for(i=0;i<imcnt;i++)
 	{		
@@ -4822,7 +4823,13 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 		imsizearray[i] = sizeof(float)*data.image[IDarray[i]].md[0].size[0]*data.image[IDarray[i]].md[0].size[1];
 		IDarrayout[i] = create_3Dimage_ID(imnameout, data.image[IDarray[i]].md[0].size[0], data.image[IDarray[i]].md[0].size[1], NBframes);
 	}
-
+	list_image_ID();
+	
+	printf("filling arrays\n");
+	fflush(stdout);
+	
+	// drive semaphore to zero
+	while(sem_trywait(data.image[IDtrig].semptr[semtrig])==0) {}
 	
 	frame = 0;
 	while ( frame < NBframes )
@@ -4837,6 +4844,10 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 			}
 		frame++;
 	}
+	
+	
+	printf("Saving images\n");
+	fflush(stdout);
 	
 	list_image_ID();
 	
