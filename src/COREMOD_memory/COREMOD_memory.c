@@ -4771,18 +4771,23 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)
 {
 	long *IDarray;
-	long *IDarraycp;
+	long *IDarrayout;
 	long i;
 	long imcnt = 0;
-	char imnamecp[200];
-	char fnamecp[500];
+	char imnameout[200];
+	char fnameout[500];
 	long ID;
 	char command[500];
 	int ret;
 	long IDtrig;
 	
 	long frame = 0;
+	char *ptr0;
+	char *ptr1;
 	long *imsizearray;
+	
+	
+	
 	
 	for (i=0; i<data.NB_MAX_IMAGE; i++)
        if(data.image[i].used==1)
@@ -4827,28 +4832,25 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 			{
 				ID = IDarray[i];
 				ptr0 = (char*) data.image[IDarrayout[i]].array.F;
-				ptr1 = ptr0 + sizeof()*frame;
-
-				sprintf(imnamecp, "%s_%03ld", data.image[ID].name, frame); 
-				//printf("image %s\n", data.image[ID].name);
-				IDarraycp[frame*imcnt+i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
+				ptr1 = ptr0 + imsizearray[i]*frame;
+				memcpy(ptr1, data.image[ID].array.F, imsizearray[i]);
 			}
 		frame++;
 	}
 	
 	list_image_ID();
 	
-	for(frame=0;frame<NBframes;frame++)
+
 	for(i=0;i<imcnt;i++)
 		{
 			ID = IDarray[i];
-			sprintf(imnamecp, "%s_%03ld", data.image[ID].name, frame);
-			sprintf(fnamecp, "!./%s/%s_%03ld.fits", dirname, data.image[ID].name, frame);
-			save_fits(imnamecp, fnamecp);
+			sprintf(imnameout, "%s_out", data.image[ID].name);
+			sprintf(fnameout, "!./%s/%s_out.fits", dirname, data.image[ID].name);
+			save_fits(imnameout, fnameout);
 		}
 		
     free(IDarray);
-    free(IDarraycp);
+    free(IDarrayout);
 	free(imsizearray);
     
 	return(0);
