@@ -1432,50 +1432,50 @@ menucontrolloop_default="PFb1GPU9"
 
 PFb2start)
 exec 3>&1;
-PFb2start=$(dialog --inputbox "Select Predictive filter block 1 start" 0 0 "$PFb2start" 2>&1 1>&3);
+PFb2start=$(dialog --inputbox "Select Predictive filter block 2 start" 0 0 "$PFb2start" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_2.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
 
 PFb2end)
 exec 3>&1;
-PFb2end=$(dialog --inputbox "Select Predictive filter block 1 end" 0 0 "$PFb2end" 2>&1 1>&3);
+PFb2end=$(dialog --inputbox "Select Predictive filter block 2 end" 0 0 "$PFb2end" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_2.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
 
 PFb2order)
 exec 3>&1;
-PFb2order=$(dialog --inputbox "Select Predictive filter block 1 order" 0 0 "$PFb2order" 2>&1 1>&3);
+PFb2order=$(dialog --inputbox "Select Predictive filter block 2 order" 0 0 "$PFb2order" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_2.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
 
 PFb2lag)
 exec 3>&1;
-PFb2lag=$(dialog --inputbox "Select Predictive filter block 1 lag" 0 0 "$PFb2lag" 2>&1 1>&3);
+PFb2lag=$(dialog --inputbox "Select Predictive filter block 2 lag" 0 0 "$PFb2lag" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_2.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
 
 PFb2dgain)
 exec 3>&1;
-PFb2dgain=$(dialog --inputbox "Select Predictive filter block 1 derivation gain" 0 0 "$PFb2dgain" 2>&1 1>&3);
+PFb2dgain=$(dialog --inputbox "Select Predictive filter block 2 derivation gain" 0 0 "$PFb2dgain" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_2.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
 
 
 PFb2nbGPU)
 exec 3>&1;
-PFb2nbGPU=$(dialog --inputbox "Select Predictive filter block 1 number of GPUs" 0 0 "$PFb2nbGPU" 2>&1 1>&3);
+PFb2nbGPU=$(dialog --inputbox "Select Predictive filter block 2 number of GPUs" 0 0 "$PFb2nbGPU" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1_nbGPU.txt"
+file="./conf/conf_PFblock_2_nbGPU.txt"
 echo "$PFb2nbGPU" > $file
 ;;
 
@@ -1579,7 +1579,7 @@ menucontrolloop_default="PFb2GPU9"
 
 PFb3start)
 exec 3>&1;
-PFb3start=$(dialog --inputbox "Select Predictive filter block 1 start" 0 0 "$PFb3start" 2>&1 1>&3);
+PFb3start=$(dialog --inputbox "Select Predictive filter block 3 start" 0 0 "$PFb3start" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/conf_PFblock_1.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
@@ -1587,42 +1587,42 @@ echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 
 PFb3end)
 exec 3>&1;
-PFb3end=$(dialog --inputbox "Select Predictive filter block 1 end" 0 0 "$PFb3end" 2>&1 1>&3);
+PFb3end=$(dialog --inputbox "Select Predictive filter block 3 end" 0 0 "$PFb3end" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_3.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 ;;
 
 PFb3order)
 exec 3>&1;
-PFb3order=$(dialog --inputbox "Select Predictive filter block 1 order" 0 0 "$PFb3order" 2>&1 1>&3);
+PFb3order=$(dialog --inputbox "Select Predictive filter block 3 order" 0 0 "$PFb3order" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_3.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 ;;
 
 PFb3lag)
 exec 3>&1;
-PFb3lag=$(dialog --inputbox "Select Predictive filter block 1 lag" 0 0 "$PFb3lag" 2>&1 1>&3);
+PFb3lag=$(dialog --inputbox "Select Predictive filter block 3 lag" 0 0 "$PFb3lag" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_3.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 ;;
 
 PFb3dgain)
 exec 3>&1;
-PFb3dgain=$(dialog --inputbox "Select Predictive filter block 1 derivation gain" 0 0 "$PFb3dgain" 2>&1 1>&3);
+PFb3dgain=$(dialog --inputbox "Select Predictive filter block 3 derivation gain" 0 0 "$PFb3dgain" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_3.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 ;;
 
 
 PFb3nbGPU)
 exec 3>&1;
-PFb3nbGPU=$(dialog --inputbox "Select Predictive filter block 1 number of GPUs" 0 0 "$PFb3nbGPU" 2>&1 1>&3);
+PFb3nbGPU=$(dialog --inputbox "Select Predictive filter block 3 number of GPUs" 0 0 "$PFb3nbGPU" 2>&1 1>&3);
 exec 3>&-;
-file="./conf/conf_PFblock_1_nbGPU.txt"
+file="./conf/conf_PFblock_3_nbGPU.txt"
 echo "$PFb3nbGPU" > $file
 ;;
 
