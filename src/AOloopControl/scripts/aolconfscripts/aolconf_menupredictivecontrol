@@ -592,6 +592,20 @@ case $retval in
   mt)
 mkdir -p timingstats
 ./auxscripts/aolMeasureTiming > timingstats/timingReport.txt
+
+# software latency (frame)
+loopslat="0.6"
+file="./conf/conf_wfsmextrlatency_frame.txt"
+if [ -f "$file" ]; then
+loopslat=$( cat $file )
+fi
+lat=$(awk "BEGIN {printf \"%.3f\",${loophlat}+${loopslat}}")
+
+file="./conf/conf_PFblock_0.txt"
+echo "$PFb0start $PFb0end $PFb0order $lat $PFb0dgain" > $file
+
+file="./conf/conf_PFblock_1.txt"
+echo "$PFb1start $PFb1end $PFb1order $lat $PFb1dgain" > $file
 ;;
   
   
