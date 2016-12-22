@@ -569,7 +569,7 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 //           outmask selects output pixel(s) to be used
 // default: use all channels as both input and output
 //
-// Note: if atmospheric wavefronts, data should be piston-free 
+// Note: if atmospheric wavefronts, data should be piston-free
 //
 // outMode
 //	0: do not write individual filters
@@ -583,474 +583,472 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain)
 {
     long IDin, IDmatA, IDout, IDinmask, IDoutmask;
-	long nbspl; // number of samples
-	long NBpixin, NBpixout;
-	long NBmvec, NBmvec1;
-	long mvecsize;
-	long xsize, ysize;
-	long ii, jj;
-	long *pixarray_x;
-	long *pixarray_y;
-	long *pixarray_xy;
-	
-	long *outpixarray_x;
-	long *outpixarray_y;
-	long *outpixarray_xy;
+    long nbspl; // number of samples
+    long NBpixin, NBpixout;
+    long NBmvec, NBmvec1;
+    long mvecsize;
+    long xsize, ysize;
+    long ii, jj;
+    long *pixarray_x;
+    long *pixarray_y;
+    long *pixarray_xy;
 
-	
-	double *ave_inarray;
-	int REG = 0;  // 1 if regularization
-	long m, m1, pix, k0, dt;
-	int Save = 1;
-	long xysize;
-	long IDmatC;
-	int use_magma = 1; // use MAGMA library if available
-	int magmacomp = 0;
+    long *outpixarray_x;
+    long *outpixarray_y;
+    long *outpixarray_xy;
 
-	long IDfiltC;
-	float *valfarray;
-	float alpha;
-	long PFpix;
-	char filtname[200];
-	char filtfname[200];
-	long ID_Pfilt;
-	float val, val0;
-	long ind1;
-	int ret;
-	long IDoutPF2D;
-	long IDoutPF3D;
-	char IDoutPF_name3D[500];
-		
-	long NB_SVD_Modes;
-	
-	int DC_MODE = 0; // 1 if average value of each mode is removed
-	
-	
-	
-	long NBiter, iter;
-	long semtrig = 2;
-	long *imsizearray;
-	float gain;
-	
-	char fname[200];
-	
-	
-	
-	
-	if(LOOPmode==0)
-		{
-			gain = 1.0;
-			NBiter = 1;
-		}
 
-	else
-		{
-			NBiter = 100000000;
-			gain = LOOPgain;
-		}
-	
-	sprintf(IDoutPF_name3D, "%s_3D", IDoutPF_name);
-	
-	
-	// =========== SELECT INPUT VALUES =======================
-	
-	IDin = image_ID(IDin_name);
+    double *ave_inarray;
+    int REG = 0;  // 1 if regularization
+    long m, m1, pix, k0, dt;
+    int Save = 1;
+    long xysize;
+    long IDmatC;
+    int use_magma = 1; // use MAGMA library if available
+    int magmacomp = 0;
 
-	switch (data.image[IDin].md[0].naxis) {
-		
-		case 2 :
-		nbspl = data.image[IDin].md[0].size[1];
-		xsize = data.image[IDin].md[0].size[0];
-		ysize = 1;
-		break;
-		
-		case 3 :
-		nbspl = data.image[IDin].md[0].size[2];
-		xsize = data.image[IDin].md[0].size[0];
-		ysize = data.image[IDin].md[0].size[1];
-		break;
-		
-		default :
-		printf("Invalid image size\n");
-		break;
-	}
-	xysize = xsize*ysize;
-	printf("xysize = %ld\n", xysize);
+    long IDfiltC;
+    float *valfarray;
+    float alpha;
+    long PFpix;
+    char filtname[200];
+    char filtfname[200];
+    long ID_Pfilt;
+    float val, val0;
+    long ind1;
+    int ret;
+    long IDoutPF2D;
+    long IDoutPF3D;
+    char IDoutPF_name3D[500];
 
-	
-	
-	pixarray_x = (long*) malloc(sizeof(long)*xsize*ysize);
-	pixarray_y = (long*) malloc(sizeof(long)*xsize*ysize);
-	pixarray_xy = (long*) malloc(sizeof(long)*xsize*ysize);
-	ave_inarray = (double*) malloc(sizeof(double)*xsize*ysize);
-	
-	IDinmask = image_ID("inmask");
-	if(IDinmask==-1)
-		{
-			NBpixin = 0; //xsize*ysize;
-			
-			for(ii=0;ii<xsize;ii++)
-				for(jj=0;jj<ysize;jj++)
-					{
-					pixarray_x[NBpixin] = ii;
-					pixarray_y[NBpixin] = jj;
-					pixarray_xy[NBpixin] = jj*xsize+ii;
-					NBpixin ++;
-				}
-		}
-	else
-	{
-	NBpixin = 0;
-	for(ii=0;ii<xsize;ii++)
-		for(jj=0;jj<ysize;jj++)
-			if(data.image[IDinmask].array.F[jj*xsize+ii] > 0.5)
-				{
-					pixarray_x[NBpixin] = ii;
-					pixarray_y[NBpixin] = jj;
-					pixarray_xy[NBpixin] = jj*xsize+ii;
-					NBpixin ++;
-				}
-	}	
-	printf("NBpixin = %ld\n", NBpixin);
+    long NB_SVD_Modes;
+
+    int DC_MODE = 0; // 1 if average value of each mode is removed
+
+
+
+    long NBiter, iter;
+    long semtrig = 2;
+    long *imsizearray;
+    float gain;
+
+    char fname[200];
 
 
 
 
-	// =========== SELECT OUTPUT VALUES =======================
+    if(LOOPmode==0)
+    {
+        gain = 1.0;
+        NBiter = 1;
+    }
 
-	outpixarray_x = (long*) malloc(sizeof(long)*xsize*ysize);
-	outpixarray_y = (long*) malloc(sizeof(long)*xsize*ysize);
-	outpixarray_xy = (long*) malloc(sizeof(long)*xsize*ysize);
+    else
+    {
+        NBiter = 100000000;
+        gain = LOOPgain;
+    }
 
-	IDoutmask = image_ID("outmask");
-	if(IDoutmask==-1)
-		{
-			NBpixout = 0; //xsize*ysize;
-			
-			for(ii=0;ii<xsize;ii++)
-				for(jj=0;jj<ysize;jj++)
-					{
-					outpixarray_x[NBpixout] = ii;
-					outpixarray_y[NBpixout] = jj;
-					outpixarray_xy[NBpixout] = jj*xsize+ii;
-					NBpixout ++;
-				}
-		}
-	else
-	{
-	NBpixout = 0;
-	for(ii=0;ii<xsize;ii++)
-		for(jj=0;jj<ysize;jj++)
-			if(data.image[IDoutmask].array.F[jj*xsize+ii] > 0.5)
-				{
-					outpixarray_x[NBpixout] = ii;
-					outpixarray_y[NBpixout] = jj;
-					outpixarray_xy[NBpixout] = jj*xsize+ii;
-					NBpixout ++;
-				}
-	}	
-	
-	
-	
-	// ===================== BUILD DATA MATRIX ============================
-	// build data matrix
-	NBmvec = nbspl - PForder - (int) (PFlag) - 1;
-	mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
-	
-	if(REG==0) // no regularization
-		{
-			printf("NBmvec   = %ld  -> %ld \n", NBmvec, NBmvec);
-			NBmvec1 = NBmvec;
-			IDmatA = create_2Dimage_ID("PFmatD", NBmvec, mvecsize);
-		}
+    sprintf(IDoutPF_name3D, "%s_3D", IDoutPF_name);
+
+
+    // =========== SELECT INPUT VALUES =======================
+
+    IDin = image_ID(IDin_name);
+
+    switch (data.image[IDin].md[0].naxis) {
+
+    case 2 :
+        nbspl = data.image[IDin].md[0].size[1];
+        xsize = data.image[IDin].md[0].size[0];
+        ysize = 1;
+        break;
+
+    case 3 :
+        nbspl = data.image[IDin].md[0].size[2];
+        xsize = data.image[IDin].md[0].size[0];
+        ysize = data.image[IDin].md[0].size[1];
+        break;
+
+    default :
+        printf("Invalid image size\n");
+        break;
+    }
+    xysize = xsize*ysize;
+    printf("xysize = %ld\n", xysize);
+
+
+
+    pixarray_x = (long*) malloc(sizeof(long)*xsize*ysize);
+    pixarray_y = (long*) malloc(sizeof(long)*xsize*ysize);
+    pixarray_xy = (long*) malloc(sizeof(long)*xsize*ysize);
+    ave_inarray = (double*) malloc(sizeof(double)*xsize*ysize);
+
+    IDinmask = image_ID("inmask");
+    if(IDinmask==-1)
+    {
+        NBpixin = 0; //xsize*ysize;
+
+        for(ii=0; ii<xsize; ii++)
+            for(jj=0; jj<ysize; jj++)
+            {
+                pixarray_x[NBpixin] = ii;
+                pixarray_y[NBpixin] = jj;
+                pixarray_xy[NBpixin] = jj*xsize+ii;
+                NBpixin ++;
+            }
+    }
+    else
+    {
+        NBpixin = 0;
+        for(ii=0; ii<xsize; ii++)
+            for(jj=0; jj<ysize; jj++)
+                if(data.image[IDinmask].array.F[jj*xsize+ii] > 0.5)
+                {
+                    pixarray_x[NBpixin] = ii;
+                    pixarray_y[NBpixin] = jj;
+                    pixarray_xy[NBpixin] = jj*xsize+ii;
+                    NBpixin ++;
+                }
+    }
+    printf("NBpixin = %ld\n", NBpixin);
+
+
+
+
+    // =========== SELECT OUTPUT VALUES =======================
+
+    outpixarray_x = (long*) malloc(sizeof(long)*xsize*ysize);
+    outpixarray_y = (long*) malloc(sizeof(long)*xsize*ysize);
+    outpixarray_xy = (long*) malloc(sizeof(long)*xsize*ysize);
+
+    IDoutmask = image_ID("outmask");
+    if(IDoutmask==-1)
+    {
+        NBpixout = 0; //xsize*ysize;
+
+        for(ii=0; ii<xsize; ii++)
+            for(jj=0; jj<ysize; jj++)
+            {
+                outpixarray_x[NBpixout] = ii;
+                outpixarray_y[NBpixout] = jj;
+                outpixarray_xy[NBpixout] = jj*xsize+ii;
+                NBpixout ++;
+            }
+    }
+    else
+    {
+        NBpixout = 0;
+        for(ii=0; ii<xsize; ii++)
+            for(jj=0; jj<ysize; jj++)
+                if(data.image[IDoutmask].array.F[jj*xsize+ii] > 0.5)
+                {
+                    outpixarray_x[NBpixout] = ii;
+                    outpixarray_y[NBpixout] = jj;
+                    outpixarray_xy[NBpixout] = jj*xsize+ii;
+                    NBpixout ++;
+                }
+    }
+
+
+
+    // ===================== BUILD DATA MATRIX ============================
+    // build data matrix
+    NBmvec = nbspl - PForder - (int) (PFlag) - 1;
+    mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
+
+    if(REG==0) // no regularization
+    {
+        printf("NBmvec   = %ld  -> %ld \n", NBmvec, NBmvec);
+        NBmvec1 = NBmvec;
+        IDmatA = create_2Dimage_ID("PFmatD", NBmvec, mvecsize);
+    }
     else // with regularization
-		{
-			printf("NBmvec   = %ld  -> %ld \n", NBmvec, NBmvec + mvecsize);
-			NBmvec1 = NBmvec + mvecsize;
-			IDmatA = create_2Dimage_ID("PFmatD", NBmvec + mvecsize, mvecsize);
-		}
-		
-	IDmatA = image_ID("PFmatD");
- 	
- 	
- 	// each column (ii = cst) is a measurement
+    {
+        printf("NBmvec   = %ld  -> %ld \n", NBmvec, NBmvec + mvecsize);
+        NBmvec1 = NBmvec + mvecsize;
+        IDmatA = create_2Dimage_ID("PFmatD", NBmvec + mvecsize, mvecsize);
+    }
+
+    IDmatA = image_ID("PFmatD");
+
+
+    // each column (ii = cst) is a measurement
     // m index is measurement
     // dt*NBpixin+pix index is pixel
-   
+
     printf("mvecsize = %ld  (%ld x %ld)\n", mvecsize, PForder, NBpixin);
-	printf("NBpixin = %ld\n", NBpixin);
-	printf("NBpixout = %ld\n", NBpixout);
-	printf("NBmvec1 = %ld\n", NBmvec1);
-	printf("PForder = %ld\n", PForder);
+    printf("NBpixin = %ld\n", NBpixin);
+    printf("NBpixout = %ld\n", NBpixout);
+    printf("NBmvec1 = %ld\n", NBmvec1);
+    printf("PForder = %ld\n", PForder);
 
-	printf("xysize = %ld\n", xysize);
-	printf("IDin = %ld\n\n", IDin);
-	list_image_ID();
-	
-	
-	if(DC_MODE == 1) // remove average
-	{
-		for(pix=0; pix<NBpixin; pix++)
-			{
-				ave_inarray[pix] = 0.0;
-				for(m=0; m<nbspl; m++)
-					ave_inarray[pix] += data.image[IDin].array.F[m*xysize+pixarray_xy[pix]];
-				ave_inarray[pix] /= nbspl;
-			}
-	}
-	else
-	{
-		for(pix=0; pix<NBpixin; pix++)
-			ave_inarray[pix] = 0.0;
-	}
+    printf("xysize = %ld\n", xysize);
+    printf("IDin = %ld\n\n", IDin);
+    list_image_ID();
 
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	// ================= LOOP STARTS HERE ===============
-	
-	if(LOOPmode == 1)
-		COREMOD_MEMORY_image_set_semflush(IDin_name, semtrig);
-	
-	
-	for(iter=0; iter<NBiter; iter++)
-	{
-	
-		if(LOOPmode == 1)
-		{
-			sem_wait(data.image[IDin].semptr[semtrig]);
-		}
-	
-	
-	
-	if(LOOPmode == 0)
-	{
-		for(m=0; m<NBmvec1; m++)
-		{
-			k0 = m + PForder-1; // dt=0 index
-			for(pix=0; pix<NBpixin; pix++)
-				for(dt=0; dt<PForder; dt++)		
-					data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
-		}
-		free(ave_inarray);
-	}
-	else
-	{
-		for(m=0; m<NBmvec1; m++)
-		{
-			k0 = m + PForder-1; // dt=0 index
-			for(pix=0; pix<NBpixin; pix++)
-				for(dt=0; dt<PForder; dt++)		
-					data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
-		}
-	}
+    if(DC_MODE == 1) // remove average
+    {
+        for(pix=0; pix<NBpixin; pix++)
+        {
+            ave_inarray[pix] = 0.0;
+            for(m=0; m<nbspl; m++)
+                ave_inarray[pix] += data.image[IDin].array.F[m*xysize+pixarray_xy[pix]];
+            ave_inarray[pix] /= nbspl;
+        }
+    }
+    else
+    {
+        for(pix=0; pix<NBpixin; pix++)
+            ave_inarray[pix] = 0.0;
+    }
 
 
 
-	if(REG==1)
-		{
-			for(m=0; m<mvecsize; m++)
-				{
-					m1 = NBmvec + m;
-					data.image[IDmatA].array.F[(m)*NBmvec1+(NBmvec+m)] = RegLambda;
-				}
-		}
-
-	
-	if(Save == 1)
-		save_fits("PFmatD", "!PFmatD.fits");
-	//list_image_ID();
-
-	
-	
-	// ===================== COMPUTE RECONSTRUCTION MATRIX ============================
-	printf("Compute reconstruction matrix\n");
-	fflush(stdout);
 
 
-	NB_SVD_Modes = 10000;
+
+
+
+
+
+
+    // ================= LOOP STARTS HERE ===============
+
+    if(LOOPmode == 1)
+        COREMOD_MEMORY_image_set_semflush(IDin_name, semtrig);
+
+
+    for(iter=0; iter<NBiter; iter++)
+    {
+        if(LOOPmode == 1)
+            sem_wait(data.image[IDin].semptr[semtrig]);
+
+
+
+        if(LOOPmode == 0)
+        {
+            for(m=0; m<NBmvec1; m++)
+            {
+                k0 = m + PForder-1; // dt=0 index
+                for(pix=0; pix<NBpixin; pix++)
+                    for(dt=0; dt<PForder; dt++)
+                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
+            }
+            free(ave_inarray);
+        }
+        else
+        {
+            for(m=0; m<NBmvec1; m++)
+            {
+                k0 = m + PForder-1; // dt=0 index
+                for(pix=0; pix<NBpixin; pix++)
+                    for(dt=0; dt<PForder; dt++)
+                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
+            }
+        }
+
+
+
+        if(REG==1)
+        {
+            for(m=0; m<mvecsize; m++)
+            {
+                m1 = NBmvec + m;
+                data.image[IDmatA].array.F[(m)*NBmvec1+(NBmvec+m)] = RegLambda;
+            }
+        }
+
+
+        if(Save == 1)
+            save_fits("PFmatD", "!PFmatD.fits");
+        //list_image_ID();
+
+
+
+        // ===================== COMPUTE RECONSTRUCTION MATRIX ============================
+        printf("Compute reconstruction matrix\n");
+        fflush(stdout);
+
+
+        NB_SVD_Modes = 10000;
 #ifdef HAVE_MAGMA
-		CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat", LOOPmode);
-	#else
-		linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
-	#endif 
-	 
-	if(Save==1)
-		{
-			save_fits("PF_VTmat", "!PF_VTmat.fits");
-			save_fits("PFmatC", "!PFmatC.fits");
-		}
-    IDmatC = image_ID("PFmatC");
+        CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat", LOOPmode);
+#else
+        linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
+#endif
 
-	
-	
-	// ===================== COMPUTE FILTERS ============================
-	printf("Compute filters\n");
-	fflush(stdout);
-	
-	
-	
-	
-	ret = system("mkdir -p pixfilters");
-	
-	// 3D FILTER MATRIX - contains all pixels
-	// axis 0 [ii] : input mode
-	// axis 1 [jj] : reconstructed mode
-	// axis 2 [kk] : time step
+        if(Save==1)
+        {
+            save_fits("PF_VTmat", "!PF_VTmat.fits");
+            save_fits("PFmatC", "!PFmatC.fits");
+        }
+        IDmatC = image_ID("PFmatC");
 
 
-	// 2D Filter - contains only used input and output 
-	// axis 0 [ii1] : input mode x time step
-	// axis 1 [jj1] : output mode 
 
-	if( LOOPmode == 0 )
-		{
-			IDoutPF2D = create_2Dimage_ID(IDoutPF_name, NBpixin*PForder, NBpixout);	
-			IDoutPF3D = create_3Dimage_ID(IDoutPF_name3D, xysize, xysize, PForder);	
-		}
-	
-	else
-		{
-			if(iter==0)
-			{
-				imsizearray = (long*) malloc(sizeof(long)*2);
-				imsizearray[0] = NBpixin*PForder;
-				imsizearray[1] = NBpixout;
-				IDoutPF2D = create_image_ID(IDoutPF_name, 2, imsizearray, FLOAT, 1, 1);
-				free(imsizearray);
-				COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
-				
-				
-				imsizearray = (long*) malloc(sizeof(long)*3);
-				imsizearray[0] = xysize;
-				imsizearray[1] = xysize;
-				imsizearray[2] = PForder;
-				IDoutPF3D = create_image_ID(IDoutPF_name3D, 3, imsizearray, FLOAT, 1, 1);
-				free(imsizearray);
-				COREMOD_MEMORY_image_set_semflush(IDoutPF_name3D, -1);
-			}
-			else
-				{
-					IDoutPF2D = image_ID(IDoutPF_name);
-					IDoutPF3D = image_ID(IDoutPF_name3D);
-				}
-		}
-		
-		
-	IDoutmask = image_ID("outmask");
-	
-	if(iter==0)
-		valfarray = (float*) malloc(sizeof(float)*NBmvec);
-	
-	
-	
-	data.image[IDoutPF2D].md[0].write = 1;
-	data.image[IDoutPF3D].md[0].write = 1;
-		
-	alpha = PFlag - ((long) PFlag);
-	for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
-	{
-		if(LOOPmode==0)
-		{		// INDIVIDUAL FILTERS
-			sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);			
-			sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);	
-			ID_Pfilt = create_3Dimage_ID(filtname, xsize, ysize, PForder);
-		}
-		
-		// fill in valfarray
-		
-		for(m=0; m<NBmvec; m++)
-			{
-				k0 = m + PForder -1;
-				k0 += (long) PFlag;
-				
-				valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
-			}
-		
-		
-		for(pix=0; pix<NBpixin; pix++)
-			{
-				for(dt=0; dt<PForder; dt++)		
-					{
-						val = 0.0;
-						ind1 = (NBpixin*dt+pix)*NBmvec1;
-						for(m=0; m<NBmvec; m++)
-							val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
+        // ===================== COMPUTE FILTERS ============================
+        printf("Compute filters\n");
+        fflush(stdout);
 
-						val0 = data.image[IDoutPF3D].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]];
-						val = (1.0-gain)*val0 + gain*val;
-						
-			
-						data.image[IDoutPF2D].array.F[PFpix*(PForder*NBpixin) + dt*NBpixin + pix] = val;
-						
-						data.image[IDoutPF3D].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val;												
-						
-					}
-			}
-			
-		
-			
-			
-		if(LOOPmode==0)
-			{
-				for(pix=0; pix<NBpixin; pix++)
-					for(dt=0; dt<PForder; dt++)	
-						{
-							val = 0.0;
-							ind1 = (NBpixin*dt+pix)*NBmvec1;
-							for(m=0; m<NBmvec; m++)
-								val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
 
-							data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
-						}
 
-				save_fits(filtname, filtfname);	
-			}
-	}
-	
-	
-	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF2D, -1);
-	data.image[IDoutPF2D].md[0].cnt0++;
-	data.image[IDoutPF2D].md[0].write = 0;
 
-	COREMOD_MEMORY_image_set_sempost_byID(IDoutPF3D, -1);
-	data.image[IDoutPF3D].md[0].cnt0++;
-	data.image[IDoutPF3D].md[0].write = 0;
+        ret = system("mkdir -p pixfilters");
 
-	save_fits(IDoutPF_name, "!_outPF.fits");
-	save_fits(IDoutPF_name3D, "!_outPF3D.fits");
-	printf("DONE\n");
-	fflush(stdout);
-	
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	free(valfarray);
+        // 3D FILTER MATRIX - contains all pixels
+        // axis 0 [ii] : input mode
+        // axis 1 [jj] : reconstructed mode
+        // axis 2 [kk] : time step
 
- 	free(pixarray_x);
- 	free(pixarray_y);
- 	free(pixarray_xy);
 
- 	free(outpixarray_x);
- 	free(outpixarray_y);
- 	free(outpixarray_xy);
-	
+        // 2D Filter - contains only used input and output
+        // axis 0 [ii1] : input mode x time step
+        // axis 1 [jj1] : output mode
+
+        if( LOOPmode == 0 )
+        {
+            IDoutPF2D = create_2Dimage_ID(IDoutPF_name, NBpixin*PForder, NBpixout);
+            IDoutPF3D = create_3Dimage_ID(IDoutPF_name3D, xysize, xysize, PForder);
+        }
+
+        else
+        {
+            if(iter==0) // create 2D and 3D filters as shared memory
+            {
+                imsizearray = (long*) malloc(sizeof(long)*2);
+                imsizearray[0] = NBpixin*PForder;
+                imsizearray[1] = NBpixout;
+                IDoutPF2D = create_image_ID(IDoutPF_name, 2, imsizearray, FLOAT, 1, 1);
+                free(imsizearray);
+                COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
+
+
+                imsizearray = (long*) malloc(sizeof(long)*3);
+                imsizearray[0] = xysize;
+                imsizearray[1] = xysize;
+                imsizearray[2] = PForder;
+                IDoutPF3D = create_image_ID(IDoutPF_name3D, 3, imsizearray, FLOAT, 1, 1);
+                free(imsizearray);
+                COREMOD_MEMORY_image_set_semflush(IDoutPF_name3D, -1);
+            }
+            else
+            {
+                IDoutPF2D = image_ID(IDoutPF_name);
+                IDoutPF3D = image_ID(IDoutPF_name3D);
+            }
+        }
+
+
+        IDoutmask = image_ID("outmask");
+
+        if(iter==0)
+            valfarray = (float*) malloc(sizeof(float)*NBmvec);
+
+
+
+        data.image[IDoutPF2D].md[0].write = 1;
+        data.image[IDoutPF3D].md[0].write = 1;
+
+        alpha = PFlag - ((long) PFlag);
+        for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
+        {
+            if(LOOPmode==0)
+            {   // INDIVIDUAL FILTERS
+                sprintf(filtname, "PFfilt_%06ld_%03ld_%03ld", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);
+                sprintf(filtfname, "!./pixfilters/PFfilt_%06ld_%03ld_%03ld.fits", outpixarray_xy[PFpix], outpixarray_x[PFpix], outpixarray_y[PFpix]);
+                ID_Pfilt = create_3Dimage_ID(filtname, xsize, ysize, PForder);
+            }
+
+            // fill in valfarray
+
+            for(m=0; m<NBmvec; m++)
+            {
+                k0 = m + PForder -1;
+                k0 += (long) PFlag;
+
+                valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
+            }
+
+
+            for(pix=0; pix<NBpixin; pix++)
+            {
+                for(dt=0; dt<PForder; dt++)
+                {
+                    val = 0.0;
+                    ind1 = (NBpixin*dt+pix)*NBmvec1;
+                    for(m=0; m<NBmvec; m++)
+                        val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
+
+                    val0 = data.image[IDoutPF3D].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]];
+                    val = (1.0-gain)*val0 + gain*val;
+
+
+                    data.image[IDoutPF2D].array.F[PFpix*(PForder*NBpixin) + dt*NBpixin + pix] = val;
+
+                    data.image[IDoutPF3D].array.F[dt*xysize*xysize  + outpixarray_xy[PFpix]*xysize + pixarray_xy[pix]] = val;
+
+                }
+            }
+
+
+
+
+            if(LOOPmode==0)
+            {
+                for(pix=0; pix<NBpixin; pix++)
+                    for(dt=0; dt<PForder; dt++)
+                    {
+                        val = 0.0;
+                        ind1 = (NBpixin*dt+pix)*NBmvec1;
+                        for(m=0; m<NBmvec; m++)
+                            val += data.image[IDmatC].array.F[ind1+m] * valfarray[m];
+
+                        data.image[ID_Pfilt].array.F[xysize*dt + pixarray_xy[pix]] =  val;
+                    }
+
+                save_fits(filtname, filtfname);
+            }
+        }
+
+
+        COREMOD_MEMORY_image_set_sempost_byID(IDoutPF2D, -1);
+        data.image[IDoutPF2D].md[0].cnt0++;
+        data.image[IDoutPF2D].md[0].write = 0;
+
+        COREMOD_MEMORY_image_set_sempost_byID(IDoutPF3D, -1);
+        data.image[IDoutPF3D].md[0].cnt0++;
+        data.image[IDoutPF3D].md[0].write = 0;
+
+        save_fits(IDoutPF_name, "!_outPF.fits");
+        save_fits(IDoutPF_name3D, "!_outPF3D.fits");
+        printf("DONE\n");
+        fflush(stdout);
+
+    }
+
+
+
+
+
+
+
+
+
+    free(valfarray);
+
+    free(pixarray_x);
+    free(pixarray_y);
+    free(pixarray_xy);
+
+    free(outpixarray_x);
+    free(outpixarray_y);
+    free(outpixarray_xy);
+
     return(IDoutPF2D);
 }
+
 
 
 
