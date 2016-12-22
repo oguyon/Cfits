@@ -591,6 +591,7 @@ case $retval in
   
   mt)
 mkdir -p timingstats
+echo "Measuring loop timing - please wait a few seconds...."
 ./auxscripts/aolMeasureTiming > timingstats/timingReport.txt
 
 # software latency (frame)
