@@ -12361,7 +12361,7 @@ int AOloopControl_statusStats()
         statusgpucnt2[st] = 0;
     }
 
-	imcnt0 = data.image[aoconfID_wfsim].md[0].cnt0;
+	wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0;
 	
     loopcnt = AOconf[LOOPNUMBER].cnt;
     clock_gettime(CLOCK_REALTIME, &t1);
@@ -12386,7 +12386,7 @@ int AOloopControl_statusStats()
         }
     }
     loopcnt = AOconf[LOOPNUMBER].cnt - loopcnt;
-    wfsimcnt = data.imagedata.image[aoconfID_wfsim].md[0].cnt0 - wfsimcnt;
+    wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0 - wfsimcnt;
     clock_gettime(CLOCK_REALTIME, &t2);
     tdiff = info_time_diff(t1, t2);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
