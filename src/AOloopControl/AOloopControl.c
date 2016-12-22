@@ -12408,6 +12408,7 @@ int AOloopControl_statusStats()
     printf("Time diff = %f sec \n", tdiffv);
     printf("Loop freq = %8.2f Hz   -> single interation = %8.3f us\n", 1.0*loopcnt/tdiffv, loopiterus);
 	printf("Number of iterations    loop: %10lld   wfs: %lld   dmC : %lld\n", loopcnt, wfsimcnt, dmCcnt);
+	printf("MISSED FRAMES = %ld\n", wfsimcnt-loopcnt);
 	
     printf("\n");
     
