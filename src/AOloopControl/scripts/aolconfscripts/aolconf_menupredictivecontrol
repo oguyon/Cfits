@@ -789,7 +789,7 @@ fi
 
 
 
-# FILTER 0
+# WATCH
 
 menuitems+=( " " " ")
 file="./status/stat_PFb0wON.txt"
@@ -824,8 +824,42 @@ menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] \Z1\Zr Currently writing aol${LOO
 fi
 
 
+file="./status/stat_PFb2wON.txt"
+PFb2wON=$( cat $file )
+if [[ -f "$file" && ( "$PFb2wON" = " ON" || "$PFb2wON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb2wON="OFF"
+fi
 
-# FILTER 1
+if [ "$PFb2wON" = "OFF" ]; then
+menuitems+=( "PFb2wON" "[$PFb2wON] switch on Watch input for PF block 2  -> aol${LOOPNUMBER}_modevalol_PFb2" )
+else
+menuitems+=( "PFb2wOFF" "[\Z1\Zr${PFb2wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb2 \Zn Select to switch off Watch input for PF block 2" )
+fi
+
+
+file="./status/stat_PFb3wON.txt"
+PFb3wON=$( cat $file )
+if [[ -f "$file" && ( "$PFb3wON" = " ON" || "$PFb3wON" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > $file
+PFb3wON="OFF"
+fi
+
+if [ "$PFb3wON" = "OFF" ]; then
+menuitems+=( "PFb3wON" "[$PFb3wON] switch on Watch input for PF block 3  -> aol${LOOPNUMBER}_modevalol_PFb3" )
+else
+menuitems+=( "PFb3wOFF" "[\Z1\Zr${PFb3wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb3 \Zn Select to  switch off Watch input for PF block 3" )
+fi
+
+
+
+
+
+# COMPUTE
 
 menuitems+=( " " " ")
 file="./status/stat_PFb0cON.txt"
@@ -859,10 +893,6 @@ menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOO
 fi
 
 
-
-# FILTER 2
-
-menuitems+=( " " " ")
 file="./status/stat_PFb2cON.txt"
 PFb2cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb2cON" = " ON" || "$PFb2cON" = "OFF" ) ]]; then
@@ -878,40 +908,6 @@ else
 menuitems+=( "PFb2cOFF" "[\Z1\Zr${PFb2cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb2\Zn Select to switch off compute filter input for PF block 0" )
 fi
 
-file="./status/stat_PFb1cON.txt"
-PFb1cON=$( cat $file )
-if [[ -f "$file" && ( "$PFb1cON" = " ON" || "$PFb1cON" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > $file
-PFb1cON="OFF"
-fi
-
-if [ "$PFb1cON" = "OFF" ]; then
-menuitems+=( "PFb1cON" "[$PFb1cON] switch on compute filter for PF block 1  -> aol${LOOPNUMBER}_outPFb1" )
-else
-menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb1\Zn Select to switch off compute filter for PF block 1" )
-fi
-
-
-
-# FILTER 3
-
-menuitems+=( " " " ")
-file="./status/stat_PFb0cON.txt"
-PFb0cON=$( cat $file )
-if [[ -f "$file" && ( "$PFb0cON" = " ON" || "$PFb0cON" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > $file
-PFb0cON="OFF"
-fi
-
-if [ "$PFb0cON" = "OFF" ]; then
-menuitems+=( "PFb0cON" "[$PFb0cON] switch on compute filter for PF block 0  -> aol${LOOPNUMBER}_outPFb0" )
-else
-menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb0\Zn Select to switch off compute filter input for PF block 0" )
-fi
 
 file="./status/stat_PFb3cON.txt"
 PFb3cON=$( cat $file )
@@ -927,6 +923,15 @@ menuitems+=( "PFb3cON" "[$PFb3cON] switch on compute filter for PF block 1  -> a
 else
 menuitems+=( "PFb3cOFF" "[\Z1\Zr${PFb3cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb3\Zn Select to switch off compute filter for PF block 1" )
 fi
+
+
+
+
+
+
+
+
+
 
 
 
