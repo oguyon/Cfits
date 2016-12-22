@@ -634,6 +634,9 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 
     char fname[200];
 
+    time_t t;
+    struct tm *uttime;
+    struct timespec timenow;
 
 
 
@@ -1013,6 +1016,8 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
         }
 
 
+
+
         COREMOD_MEMORY_image_set_sempost_byID(IDoutPF2D, -1);
         data.image[IDoutPF2D].md[0].cnt0++;
         data.image[IDoutPF2D].md[0].write = 0;
@@ -1021,8 +1026,23 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
         data.image[IDoutPF3D].md[0].cnt0++;
         data.image[IDoutPF3D].md[0].write = 0;
 
-        save_fits(IDoutPF_name, "!_outPF.fits");
-        save_fits(IDoutPF_name3D, "!_outPF3D.fits");
+		if(LOOPmode==1) // log filter
+		{
+			ret = system("mkdir -p ./PredictiveFilters/");
+			   /// measure time
+            t = time(NULL);
+            uttime = gmtime(&t);
+			clock_gettime(CLOCK_REALTIME, &timenow);
+
+            sprintf(fname,"!./PredictiveFilters/%s_%02d:%02d:%02ld.%09ld.fits", IDoutPF_name, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+			save_fits(IDoutPF_name, fname);
+		}
+		else
+		{
+			save_fits(IDoutPF_name, "!_outPF.fits");
+			save_fits(IDoutPF_name3D, "!_outPF3D.fits");
+        }
+        
         printf("DONE\n");
         fflush(stdout);
 
