@@ -137,6 +137,11 @@ menuitems+=( "NBpfb" "[$NBPFblock] Select number of predictive filter blocks" )
 
 
 
+menuitems+=( " " " ")
+menuitems+=( " " " ")
+
+
+
 
 
 # FILTER 0
@@ -298,7 +303,7 @@ fi
 
 
 
-
+if [ "$NBPFblock" -gt "1" ]; then
 # FILTER 1
 
 
@@ -459,10 +464,14 @@ fi
 menuitems+=( "PFb1GPU9" "            [ $PFb1GPU9device ]    PF block 1   GPU #9 device" )
 fi
 
+fi
 
 
 
 
+
+
+if [ "$NBPFblock" -gt "2" ]; then
 # FILTER 2
 
 
@@ -623,10 +632,11 @@ fi
 menuitems+=( "PFb2GPU9" "            [ $PFb2GPU9device ]    PF block 2   GPU #9 device" )
 fi
 
+fi
 
 
 
-
+if [ "$NBPFblock" -gt "3" ]; then
 # FILTER 3
 
 
@@ -787,7 +797,7 @@ fi
 menuitems+=( "PFb3GPU9" "            [ $PFb3GPU9device ]    PF block 3   GPU #9 device" )
 fi
 
-
+fi
 
 
 
@@ -826,6 +836,7 @@ menuitems+=( "PFb0wOFF" "[\Z1\Zr${PFb0wON}\Zn] \Z1\Zr Currently writing aol${LOO
 fi
 
 
+if [ "$NBPFblock" -gt "1" ]; then
 file="./status/stat_PFb1wON.txt"
 PFb1wON=$( cat $file )
 if [[ -f "$file" && ( "$PFb1wON" = " ON" || "$PFb1wON" = "OFF" ) ]]; then
@@ -840,8 +851,10 @@ menuitems+=( "PFb1wON" "[$PFb1wON] switch on Watch input for PF block 1  -> aol$
 else
 menuitems+=( "PFb1wOFF" "[\Z1\Zr${PFb1wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb1 \Zn Select to  switch off Watch input for PF block 1" )
 fi
+fi
 
 
+if [ "$NBPFblock" -gt "2" ]; then
 file="./status/stat_PFb2wON.txt"
 PFb2wON=$( cat $file )
 if [[ -f "$file" && ( "$PFb2wON" = " ON" || "$PFb2wON" = "OFF" ) ]]; then
@@ -856,8 +869,10 @@ menuitems+=( "PFb2wON" "[$PFb2wON] switch on Watch input for PF block 2  -> aol$
 else
 menuitems+=( "PFb2wOFF" "[\Z1\Zr${PFb2wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb2 \Zn Select to switch off Watch input for PF block 2" )
 fi
+fi
 
 
+if [ "$NBPFblock" -gt "3" ]; then
 file="./status/stat_PFb3wON.txt"
 PFb3wON=$( cat $file )
 if [[ -f "$file" && ( "$PFb3wON" = " ON" || "$PFb3wON" = "OFF" ) ]]; then
@@ -872,7 +887,7 @@ menuitems+=( "PFb3wON" "[$PFb3wON] switch on Watch input for PF block 3  -> aol$
 else
 menuitems+=( "PFb3wOFF" "[\Z1\Zr${PFb3wON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_modevalol_PFb3 \Zn Select to  switch off Watch input for PF block 3" )
 fi
-
+fi
 
 
 
@@ -895,6 +910,7 @@ else
 menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb0\Zn Select to switch off compute filter input for PF block 0" )
 fi
 
+if [ "$NBPFblock" -gt "1" ]; then
 file="./status/stat_PFb1cON.txt"
 PFb1cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb1cON" = " ON" || "$PFb1cON" = "OFF" ) ]]; then
@@ -909,8 +925,9 @@ menuitems+=( "PFb1cON" "[$PFb1cON] switch on compute filter for PF block 1  -> a
 else
 menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb1\Zn Select to switch off compute filter for PF block 1" )
 fi
+fi
 
-
+if [ "$NBPFblock" -gt "2" ]; then
 file="./status/stat_PFb2cON.txt"
 PFb2cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb2cON" = " ON" || "$PFb2cON" = "OFF" ) ]]; then
@@ -925,8 +942,10 @@ menuitems+=( "PFb2cON" "[$PFb2cON] switch on compute filter for PF block 0  -> a
 else
 menuitems+=( "PFb2cOFF" "[\Z1\Zr${PFb2cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb2\Zn Select to switch off compute filter input for PF block 0" )
 fi
+fi
 
 
+if [ "$NBPFblock" -gt "3" ]; then
 file="./status/stat_PFb3cON.txt"
 PFb3cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb3cON" = " ON" || "$PFb3cON" = "OFF" ) ]]; then
@@ -941,7 +960,7 @@ menuitems+=( "PFb3cON" "[$PFb3cON] switch on compute filter for PF block 1  -> a
 else
 menuitems+=( "PFb3cOFF" "[\Z1\Zr${PFb3cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb3\Zn Select to switch off compute filter for PF block 1" )
 fi
-
+fi
 
 
 
@@ -981,6 +1000,7 @@ menuitems+=( "PFb0aOFF" "[\Z1\Zr${PFb0aON}\Zn] switch on prediction engine for P
 fi
 
 
+if [ "$NBPFblock" -gt "1" ]; then
 # FILTER 1
 file="./status/stat_PFb1aON.txt"
 PFb1aON=$( cat $file )
@@ -996,9 +1016,10 @@ menuitems+=( "PFb1aON" "[$PFb1aON] switch on prediction engine for PF block 1" )
 else
 menuitems+=( "PFb1aOFF" "[\Z1\Zr${PFb1aON}\Zn] switch on prediction engine for PF block 1" )
 fi
+fi
 
 
-
+if [ "$NBPFblock" -gt "2" ]; then
 # FILTER 2
 file="./status/stat_PFb2aON.txt"
 PFb2aON=$( cat $file )
@@ -1014,8 +1035,9 @@ menuitems+=( "PFb2aON" "[$PFb2aON] switch on prediction engine for PF block 0" )
 else
 menuitems+=( "PFb2aOFF" "[\Z1\Zr${PFb2aON}\Zn] switch on prediction engine for PF block 0" )
 fi
+fi
 
-
+if [ "$NBPFblock" -gt "3" ]; then
 # FILTER 3
 file="./status/stat_PFb3aON.txt"
 PFb3aON=$( cat $file )
@@ -1031,7 +1053,7 @@ menuitems+=( "PFb3aON" "[$PFb3aON] switch on prediction engine for PF block 1" )
 else
 menuitems+=( "PFb3aOFF" "[\Z1\Zr${PFb3aON}\Zn] switch on prediction engine for PF block 1" )
 fi
-
+fi
 
 
 
