@@ -65,7 +65,7 @@ singlelinehelp=1;
 done
 
 
-while getopts :ho:g:f FLAG; do
+while getopts :ho:g:fp: FLAG; do
   case $FLAG in
     o) # set output correction channel
     OUTCNAME=$OPTARG
