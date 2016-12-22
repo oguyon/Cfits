@@ -463,17 +463,20 @@ loophlatfr=$( cat ./conf/conf_loophlatfr.txt )
 fi
 menuitems+=( "lhlat" "            Hardware Latency                  ${loophlat} sec -> ${loophlatfr} frame" )
 
+
 loopclat="0.6"
-if [ -f "./conf/conf_loopclat.txt" ]; then
-loopclat=$( cat ./conf/conf_loopclat.txt )
+if [ -f "./conf/conf_complatency_frame.txt" ]; then
+loopclat=$( cat ./conf/conf_complatency_frame.txt )
 fi
 menuitems+=( "lclat" "            Computing Latency                 ${loopclat} frame" )
 
-loopwlat="0.6"
-if [ -f "./conf/conf_loopwlat.txt" ]; then
-loopwlat=$( cat ./conf/conf_loopwlat.txt )
+
+loopslat="0.6"
+file="./conf/conf_wfsmextrlatency_frame.txt"
+if [ -f "$file" ]; then
+loopslat=$( cat $file )
 fi
-menuitems+=( "lwlat" "            WFS modes extraction Latency      ${loopwlat} frame" )
+menuitems+=( "lslat" "            WFS modes extraction Latency      ${loopslat} frame" )
 
 
 
@@ -1194,7 +1197,7 @@ aoconflogext "set hardware latency $loophlatfr frame"
 exec 3>&1;
 loopclat=$(dialog --inputbox "Computing latency" 0 0 "$loopclat" 2>&1 1>&3);
 exec 3>&-;
-echo "$loopclat" > ./conf/conf_loopclat.txt
+echo "$loopclat" > ./conf/conf_complatency_frame.txt
 Cfits << EOF
 aolsetclat ${loopclat}
 exit
@@ -1202,16 +1205,16 @@ EOF
 aoconflogext "set computing latency $loopclat frame"
 ;;
 
-	lwlat)
+	lslat)
 exec 3>&1;
-loopwlat=$(dialog --inputbox "WFS modes extraction latency" 0 0 "$loopwlat" 2>&1 1>&3);
+loopslat=$(dialog --inputbox "WFS modes extraction latency" 0 0 "$loopslat" 2>&1 1>&3);
 exec 3>&-;
-echo "$loopwlat" > ./conf/conf_loopwlat.txt
+echo "$loopslat" > ./conf/conf_wfsmextrlatency_frame.txt
 Cfits << EOF
-aolsetwlat ${loopwlat}
+aolsetwlat ${loopslat}
 exit
 EOF
-aoconflogext "set WFS modes extraction latency $loopwlat frame"
+aoconflogext "set WFS modes extraction latency $loopslat frame"
 ;;
 
 	dmC)
