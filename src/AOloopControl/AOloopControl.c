@@ -12229,7 +12229,7 @@ int AOloopControl_loopMonitor(long loop, double frequ, long nbcol)
 int AOloopControl_statusStats()
 {
     long k;
-    long NBkiter = 10000;
+    long NBkiter = 100000;
     long statusmax = 21;
     long *statuscnt;
     long *statusMcnt;
