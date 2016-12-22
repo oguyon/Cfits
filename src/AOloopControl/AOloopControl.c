@@ -13271,7 +13271,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		AOconf[loop].statusM1 = 7;
 		
 		//
-		// OPEN LOOP STATE = most recent WFS reading + time-lagged DM
+		// OPEN LOOP STATE = most recent WFS reading - time-lagged DM
 		//
 		data.image[IDout].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
