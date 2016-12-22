@@ -4766,6 +4766,7 @@ long COREMOD_MEMORY_SaveAll_snapshot(char *dirname)
 
 //
 // save all current images/stream onto file
+// only saves 2D float streams into 3D cubes
 //
 long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes)
 {
@@ -4781,13 +4782,14 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 	long IDtrig;
 	
 	long frame = 0;
+	long *imsizearray;
 	
 	for (i=0; i<data.NB_MAX_IMAGE; i++)
        if(data.image[i].used==1)
 		imcnt++;
     
     IDarray = (long*) malloc(sizeof(long)*imcnt);
-    IDarraycp = (long*) malloc(sizeof(long)*imcnt*NBframes);
+    IDarrayout = (long*) malloc(sizeof(long)*imcnt);
     
     imcnt = 0;
     for (i=0; i<data.NB_MAX_IMAGE; i++)
@@ -4796,7 +4798,9 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 			IDarray[imcnt] = i;
 			imcnt++;
 		}
-		
+	imsizearray = (long*) malloc(sizeof(long)*imcnt);	
+	
+	
 	
 	sprintf(command, "mkdir -p %s", dirname);
 	ret = system(command);
@@ -4804,16 +4808,27 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 	IDtrig = image_ID(IDtrig_name);
 	// drive semaphore to zero
 	while(sem_trywait(data.image[IDtrig].semptr[semtrig])==0) {}
+
+
+	// create 3D arrays	
+	for(i=0;i<imcnt;i++)
+	{		
+		sprintf(imnameout, "%s_out", data.image[ID].name); 
+		imsizearray[i] = sizeof(float)*data.image[IDarray[i]].md[0].size[0]*data.image[IDarray[i]].md[0].size[1];
+		IDarrayout[i] = create_3Dimage_ID(imnameout, data.image[IDarray[i]].md[0].size[0], data.image[IDarray[i]].md[0].size[1], NBframes);
+	}
+
 	
-	// create array for each image
 	frame = 0;
 	while ( frame < NBframes )
 	{
-//		COREMOD_MEMORY_image_set_semwait(IDtrig_name, semtrig);
 		sem_wait(data.image[IDtrig].semptr[semtrig]);
 		for(i=0;i<imcnt;i++)
 			{
 				ID = IDarray[i];
+				ptr0 = (char*) data.image[IDarrayout[i]].array.F;
+				ptr1 = ptr0 + sizeof()*frame;
+
 				sprintf(imnamecp, "%s_%03ld", data.image[ID].name, frame); 
 				//printf("image %s\n", data.image[ID].name);
 				IDarraycp[frame*imcnt+i] = copy_image_ID(data.image[ID].name, imnamecp, 0);
@@ -4834,7 +4849,7 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 		
     free(IDarray);
     free(IDarraycp);
-   
+	free(imsizearray);
     
 	return(0);
 }
