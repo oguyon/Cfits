@@ -449,7 +449,7 @@ fi
 
 
 menuitems+=( " " " ")
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_2.txt"
 if [ -f $file ]; then
 PFb2start=$( cat $file | awk '{ print $1}' )
 PFb2end=$( cat $file | awk '{ print $2}' )
@@ -465,21 +465,21 @@ PFb2dgain="0.1"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 fi
 
-menuitems+=( "PFb2start" "[$PFb2start] set Predictive filter block 1 start" )
-menuitems+=( "PFb2end" "[$PFb2end] set Predictive filter block 1 end" )
-menuitems+=( "PFb2order" "[$PFb2order] set Predictive filter block 1 order" )
-menuitems+=( "PFb2lag" "[$PFb2lag] set Predictive filter block 1 lag" )
-menuitems+=( "PFb2dgain" "[$PFb2dgain] set Predictive filter block 1 derivationgain" )
+menuitems+=( "PFb2start" "[$PFb2start] set Predictive filter block 2 start" )
+menuitems+=( "PFb2end" "[$PFb2end] set Predictive filter block 2 end" )
+menuitems+=( "PFb2order" "[$PFb2order] set Predictive filter block 2 order" )
+menuitems+=( "PFb2lag" "[$PFb2lag] set Predictive filter block 2 lag" )
+menuitems+=( "PFb2dgain" "[$PFb2dgain] set Predictive filter block 2 derivationgain" )
 
 
-file="./conf/conf_PFblock_1_nbGPU.txt"
+file="./conf/conf_PFblock_2_nbGPU.txt"
 if [ -f $file ]; then
 PFb2nbGPU=$( cat $file )
 else
 PFb2nbGPU="0"
 echo "$PFb2nbGPU" > $file
 fi
-menuitems+=( "PFb2nbGPU" "[$PFb2nbGPU] set Predictive filter block 1 number of GPUs" )
+menuitems+=( "PFb2nbGPU" "[$PFb2nbGPU] set Predictive filter block 2 number of GPUs" )
 
 
 
@@ -494,7 +494,7 @@ else
 echo "0" > $file
 PFb2GPU0device="0"
 fi
-menuitems+=( "PFb2GPU0" "            [ $PFb2GPU0device ]    PF block 1   GPU #0 device" )
+menuitems+=( "PFb2GPU0" "            [ $PFb2GPU0device ]    PF block 2   GPU #0 device" )
 fi
 
 if [ "1" -lt "$PFb2nbGPU" ]; then
@@ -506,7 +506,7 @@ else
 echo "0" > $file
 PFb2GPU1device="0"
 fi
-menuitems+=( "PFb2GPU1" "            [ $PFb2GPU1device ]    PF block 1   GPU #1 device" )
+menuitems+=( "PFb2GPU1" "            [ $PFb2GPU1device ]    PF block 2   GPU #1 device" )
 fi
 
 if [ "2" -lt "$PFb2nbGPU" ]; then
@@ -518,7 +518,7 @@ else
 echo "0" > $file
 PFb2GPU2device="0"
 fi
-menuitems+=( "PFb2GPU2" "            [ $PFb2GPU2device ]    PF block 1   GPU #2 device" )
+menuitems+=( "PFb2GPU2" "            [ $PFb2GPU2device ]    PF block 2   GPU #2 device" )
 fi
 
 if [ "3" -lt "$PFb2nbGPU" ]; then
@@ -530,7 +530,7 @@ else
 echo "0" > $file
 PFb2GPU3device="0"
 fi
-menuitems+=( "PFb2GPU3" "            [ $PFb2GPU3device ]    PF block 1   GPU #3 device" )
+menuitems+=( "PFb2GPU3" "            [ $PFb2GPU3device ]    PF block 2   GPU #3 device" )
 fi
 
 if [ "4" -lt "$PFb2nbGPU" ]; then
@@ -542,7 +542,7 @@ else
 echo "0" > $file
 PFb2GPU4device="0"
 fi
-menuitems+=( "PFb2GPU4" "            [ $PFb2GPU4device ]    PF block 1   GPU #4 device" )
+menuitems+=( "PFb2GPU4" "            [ $PFb2GPU4device ]    PF block 2   GPU #4 device" )
 fi
 
 if [ "5" -lt "$PFb2nbGPU" ]; then
@@ -554,7 +554,7 @@ else
 echo "0" > $file
 PFb2GPU5device="0"
 fi
-menuitems+=( "PFb2GPU5" "            [ $PFb2GPU5device ]    PF block 1   GPU #5 device" )
+menuitems+=( "PFb2GPU5" "            [ $PFb2GPU5device ]    PF block 2   GPU #5 device" )
 fi
 
 if [ "6" -lt "$PFb2nbGPU" ]; then
@@ -566,7 +566,7 @@ else
 echo "0" > $file
 PFb2GPU6device="0"
 fi
-menuitems+=( "PFb2GPU6" "            [ $PFb2GPU6device ]    PF block 1   GPU #6 device" )
+menuitems+=( "PFb2GPU6" "            [ $PFb2GPU6device ]    PF block 2   GPU #6 device" )
 fi
 
 if [ "7" -lt "$PFb2nbGPU" ]; then
@@ -578,7 +578,7 @@ else
 echo "0" > $file
 PFb2GPU7device="0"
 fi
-menuitems+=( "PFb2GPU7" "            [ $PFb2GPU7device ]    PF block 1   GPU #7 device" )
+menuitems+=( "PFb2GPU7" "            [ $PFb2GPU7device ]    PF block 2   GPU #7 device" )
 fi
 
 if [ "8" -lt "$PFb2nbGPU" ]; then
@@ -590,7 +590,7 @@ else
 echo "0" > $file
 PFb2GPU8device="0"
 fi
-menuitems+=( "PFb2GPU8" "            [ $PFb2GPU8device ]    PF block 1   GPU #8 device" )
+menuitems+=( "PFb2GPU8" "            [ $PFb2GPU8device ]    PF block 2   GPU #8 device" )
 fi
 
 if [ "9" -lt "$PFb2nbGPU" ]; then
@@ -602,7 +602,7 @@ else
 echo "0" > $file
 PFb2GPU9device="0"
 fi
-menuitems+=( "PFb2GPU9" "            [ $PFb2GPU9device ]    PF block 1   GPU #9 device" )
+menuitems+=( "PFb2GPU9" "            [ $PFb2GPU9device ]    PF block 2   GPU #9 device" )
 fi
 
 
@@ -613,7 +613,7 @@ fi
 
 
 menuitems+=( " " " ")
-file="./conf/conf_PFblock_1.txt"
+file="./conf/conf_PFblock_3.txt"
 if [ -f $file ]; then
 PFb3start=$( cat $file | awk '{ print $1}' )
 PFb3end=$( cat $file | awk '{ print $2}' )
@@ -629,21 +629,21 @@ PFb3dgain="0.1"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 fi
 
-menuitems+=( "PFb3start" "[$PFb3start] set Predictive filter block 1 start" )
-menuitems+=( "PFb3end" "[$PFb3end] set Predictive filter block 1 end" )
-menuitems+=( "PFb3order" "[$PFb3order] set Predictive filter block 1 order" )
-menuitems+=( "PFb3lag" "[$PFb3lag] set Predictive filter block 1 lag" )
-menuitems+=( "PFb3dgain" "[$PFb3dgain] set Predictive filter block 1 derivationgain" )
+menuitems+=( "PFb3start" "[$PFb3start] set Predictive filter block 3 start" )
+menuitems+=( "PFb3end" "[$PFb3end] set Predictive filter block 3 end" )
+menuitems+=( "PFb3order" "[$PFb3order] set Predictive filter block 3 order" )
+menuitems+=( "PFb3lag" "[$PFb3lag] set Predictive filter block 3 lag" )
+menuitems+=( "PFb3dgain" "[$PFb3dgain] set Predictive filter block 3 derivationgain" )
 
 
-file="./conf/conf_PFblock_1_nbGPU.txt"
+file="./conf/conf_PFblock_3_nbGPU.txt"
 if [ -f $file ]; then
 PFb3nbGPU=$( cat $file )
 else
 PFb3nbGPU="0"
 echo "$PFb3nbGPU" > $file
 fi
-menuitems+=( "PFb3nbGPU" "[$PFb3nbGPU] set Predictive filter block 1 number of GPUs" )
+menuitems+=( "PFb3nbGPU" "[$PFb3nbGPU] set Predictive filter block 3 number of GPUs" )
 
 
 
@@ -658,7 +658,7 @@ else
 echo "0" > $file
 PFb3GPU0device="0"
 fi
-menuitems+=( "PFb3GPU0" "            [ $PFb3GPU0device ]    PF block 1   GPU #0 device" )
+menuitems+=( "PFb3GPU0" "            [ $PFb3GPU0device ]    PF block 3   GPU #0 device" )
 fi
 
 if [ "1" -lt "$PFb3nbGPU" ]; then
@@ -670,7 +670,7 @@ else
 echo "0" > $file
 PFb3GPU1device="0"
 fi
-menuitems+=( "PFb3GPU1" "            [ $PFb3GPU1device ]    PF block 1   GPU #1 device" )
+menuitems+=( "PFb3GPU1" "            [ $PFb3GPU1device ]    PF block 3   GPU #1 device" )
 fi
 
 if [ "2" -lt "$PFb3nbGPU" ]; then
@@ -682,7 +682,7 @@ else
 echo "0" > $file
 PFb3GPU2device="0"
 fi
-menuitems+=( "PFb3GPU2" "            [ $PFb3GPU2device ]    PF block 1   GPU #2 device" )
+menuitems+=( "PFb3GPU2" "            [ $PFb3GPU2device ]    PF block 3   GPU #2 device" )
 fi
 
 if [ "3" -lt "$PFb3nbGPU" ]; then
@@ -694,7 +694,7 @@ else
 echo "0" > $file
 PFb3GPU3device="0"
 fi
-menuitems+=( "PFb3GPU3" "            [ $PFb3GPU3device ]    PF block 1   GPU #3 device" )
+menuitems+=( "PFb3GPU3" "            [ $PFb3GPU3device ]    PF block 3   GPU #3 device" )
 fi
 
 if [ "4" -lt "$PFb3nbGPU" ]; then
@@ -706,7 +706,7 @@ else
 echo "0" > $file
 PFb3GPU4device="0"
 fi
-menuitems+=( "PFb3GPU4" "            [ $PFb3GPU4device ]    PF block 1   GPU #4 device" )
+menuitems+=( "PFb3GPU4" "            [ $PFb3GPU4device ]    PF block 3   GPU #4 device" )
 fi
 
 if [ "5" -lt "$PFb3nbGPU" ]; then
@@ -718,7 +718,7 @@ else
 echo "0" > $file
 PFb3GPU5device="0"
 fi
-menuitems+=( "PFb3GPU5" "            [ $PFb3GPU5device ]    PF block 1   GPU #5 device" )
+menuitems+=( "PFb3GPU5" "            [ $PFb3GPU5device ]    PF block 3   GPU #5 device" )
 fi
 
 if [ "6" -lt "$PFb3nbGPU" ]; then
@@ -730,7 +730,7 @@ else
 echo "0" > $file
 PFb3GPU6device="0"
 fi
-menuitems+=( "PFb3GPU6" "            [ $PFb3GPU6device ]    PF block 1   GPU #6 device" )
+menuitems+=( "PFb3GPU6" "            [ $PFb3GPU6device ]    PF block 3   GPU #6 device" )
 fi
 
 if [ "7" -lt "$PFb3nbGPU" ]; then
@@ -742,7 +742,7 @@ else
 echo "0" > $file
 PFb3GPU7device="0"
 fi
-menuitems+=( "PFb3GPU7" "            [ $PFb3GPU7device ]    PF block 1   GPU #7 device" )
+menuitems+=( "PFb3GPU7" "            [ $PFb3GPU7device ]    PF block 3   GPU #7 device" )
 fi
 
 if [ "8" -lt "$PFb3nbGPU" ]; then
@@ -754,7 +754,7 @@ else
 echo "0" > $file
 PFb3GPU8device="0"
 fi
-menuitems+=( "PFb3GPU8" "            [ $PFb3GPU8device ]    PF block 1   GPU #8 device" )
+menuitems+=( "PFb3GPU8" "            [ $PFb3GPU8device ]    PF block 3   GPU #8 device" )
 fi
 
 if [ "9" -lt "$PFb3nbGPU" ]; then
@@ -766,7 +766,7 @@ else
 echo "0" > $file
 PFb3GPU9device="0"
 fi
-menuitems+=( "PFb3GPU9" "            [ $PFb3GPU9device ]    PF block 1   GPU #9 device" )
+menuitems+=( "PFb3GPU9" "            [ $PFb3GPU9device ]    PF block 3   GPU #9 device" )
 fi
 
 
