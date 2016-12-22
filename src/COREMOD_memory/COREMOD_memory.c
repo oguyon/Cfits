@@ -4821,6 +4821,8 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
 	{		
 		sprintf(imnameout, "%s_out", data.image[ID].name); 
 		imsizearray[i] = sizeof(float)*data.image[IDarray[i]].md[0].size[0]*data.image[IDarray[i]].md[0].size[1];
+		printf("Creating image %s  size %ld x %ld x %ld\n", imnameout, data.image[IDarray[i]].md[0].size[0], data.image[IDarray[i]].md[0].size[1], NBframes);
+		fflush(stdout);
 		IDarrayout[i] = create_3Dimage_ID(imnameout, data.image[IDarray[i]].md[0].size[0], data.image[IDarray[i]].md[0].size[1], NBframes);
 	}
 	list_image_ID();
