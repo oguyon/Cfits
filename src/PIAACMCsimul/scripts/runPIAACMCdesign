@@ -79,11 +79,11 @@ REGPIAAFCOEFF="300.0"
 # include inverse PIAA ?
 invPIAAmode=1
 
-# set pre-apodizer to pupil plane conjugation
+# set pre-apodizer and post-apodizer to pupil plane conjugation
 prePIAA0maskpos="0.0"
+postPIAA0maskpos="0.0"
 
-
-
+nblambda="10"
 
 
 
@@ -112,7 +112,7 @@ pscale="0.00002205"
 Fratio="29.422"
 PIAAsep="0.10"
 PIAA0pos="0.0"
-LyotZmin-"-0.1"
+LyotZmin="-0.1"
 LyotZmax="0.1"
 pupoutmaskrad="0.98"
 
@@ -664,6 +664,7 @@ echo "$fpmregsag_alpha" > conf/conf_fpmregsag_alpha.txt
 # OPTIMIZATION PARAMETERS
 echo "$lambda" > conf/conf_mlambda.txt
 echo "$lambdaB" > conf/conf_mlambdaB.txt
+echo "$nblambda" > conf/conf_nblambda.txt
 echo "$ssize" > conf/conf_ssize.txt
 
 # OPTICAL DESIGN

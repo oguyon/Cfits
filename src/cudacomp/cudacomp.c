@@ -1592,12 +1592,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 	
 	min_mn=min(M,N);
 	
-	printf("INITIALIZE MAGMA\n");
-	fflush(stdout);
+	//printf("INITIALIZE MAGMA\n");
+	//fflush(stdout);
 	
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
-    printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
-    fflush(stdout);
+ //   printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+    //fflush(stdout);
 
 
 	magma_init (); // initialize Magma
@@ -1614,8 +1614,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 
 
 
-	printf("MAGMA READY\n");
-	fflush(stdout);
+	//printf("MAGMA READY\n");
+	//fflush(stdout);
 	
 	
 	
@@ -1635,8 +1635,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
                 h_R[k*n+ii] = data.image[ID_Rmatrix].array.D[k*n+ii];
     }
 
-	printf("M = %ld   N = %ld\n", (long) M, (long) N);
-	printf("=============== lwork = %ld\n", (long) lwork);
+	//printf("M = %ld   N = %ld\n", (long) M, (long) N);
+	//printf("=============== lwork = %ld\n", (long) lwork);
 	gpu_time = magma_wtime ();
 	magma_sgesvd( MagmaSomeVec, MagmaAllVec, M, N, h_R, lda, S1, U, ldu, VT, ldv, h_work, lwork, &info );
 	gpu_time = magma_wtime() - gpu_time;
@@ -1645,7 +1645,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
                        (int) info, magma_strerror( info ));
             }
             
-	printf("sgesvd gpu time: %7.5f\n", gpu_time );   
+	//printf("sgesvd gpu time: %7.5f\n", gpu_time );   
      
      
      // Write eigenvalues
@@ -1660,7 +1660,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
     fclose(fp);
  
     egvlim = SVDeps * S1[0];
-       
+        
 	MaxNBmodes1 = MaxNBmodes;
 	if(MaxNBmodes1>M)
 		MaxNBmodes1 = M;
@@ -1671,7 +1671,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 		mode++;
 	MaxNBmodes1 = mode;
 	
-	printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
+	//printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
     // Write rotation matrix 
     arraysizetmp[0] = m;
     arraysizetmp[1] = m;
@@ -1730,8 +1730,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(char *ID_Rmatrix_name, char *ID_
 
 	free(arraysizetmp);
 
-    printf("[CM magma SVD done]\n");
-    fflush(stdout);
+//    printf("[CM magma SVD done]\n");
+ //   fflush(stdout);
 
     return(ID_Cmatrix);
 }
@@ -1814,15 +1814,15 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     {
         n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
         m = data.image[ID_Rmatrix].md[0].size[2];
-        printf("3D image -> %ld %ld\n", n, m);
-        fflush(stdout);
+       // printf("3D image -> %ld %ld\n", n, m);
+       // fflush(stdout);
     }
     else
     {
         n = data.image[ID_Rmatrix].md[0].size[0];
         m = data.image[ID_Rmatrix].md[0].size[1];
-        printf("2D image -> %ld %ld\n", n, m);
-        fflush(stdout);
+      //  printf("2D image -> %ld %ld\n", n, m);
+       // fflush(stdout);
     }
 
     M = n;
@@ -1837,8 +1837,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
 
 
-    printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
-    fflush(stdout);
+   // printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+  //  fflush(stdout);
 
 
     if(INIT_MAGMA==0)
@@ -1885,8 +1885,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
 
 
-    printf("MAGMA READY\n");
-    fflush(stdout);
+    //printf("MAGMA READY\n");
+    //fflush(stdout);
 
 
     if(timing==1)
@@ -2015,7 +2015,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 
         magma_liwork = magma_aux_iwork[0];
 
-        printf("workspace size : %ld  %ld\n", (long) magma_lwork, (long) magma_liwork);
+      //  printf("workspace size : %ld  %ld\n", (long) magma_lwork, (long) magma_liwork);
     }
 
 
@@ -2118,7 +2118,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
 			mode++;
 	}
 	
-    printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
+//    printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
 
     fp = fopen("SVDmodes.log", "w");
     fprintf(fp, "%6ld %6ld\n", mode, MaxNBmodes1);
@@ -2457,23 +2457,23 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(char *ID_Rmatrix_name, char *ID_Cmat
         t09d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
 
-        printf("%6ld  Timing info: \n", MAGMAloop_iter);
-        printf("  0-1	%12.3f ms\n", t01d*1000.0);
-        printf("  1-2	%12.3f ms\n", t12d*1000.0);
-        printf("  2-3	%12.3f ms\n", t23d*1000.0);
-        printf("  3-4	%12.3f ms\n", t34d*1000.0);
-        printf("  4-5	%12.3f ms\n", t45d*1000.0);
-        printf("  5-6	%12.3f ms\n", t56d*1000.0);
-        printf("  6-7	%12.3f ms\n", t67d*1000.0);
-        printf("  7-8	%12.3f ms\n", t78d*1000.0);
-        printf("  8-9	%12.3f ms\n", t89d*1000.0);
-        printf("\n");
-        printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
+      //  printf("%6ld  Timing info: \n", MAGMAloop_iter);
+      //  printf("  0-1	%12.3f ms\n", t01d*1000.0);
+      //  printf("  1-2	%12.3f ms\n", t12d*1000.0);
+      //  printf("  2-3	%12.3f ms\n", t23d*1000.0);
+      //  printf("  3-4	%12.3f ms\n", t34d*1000.0);
+      //  printf("  4-5	%12.3f ms\n", t45d*1000.0);
+      //  printf("  5-6	%12.3f ms\n", t56d*1000.0);
+      //  printf("  6-7	%12.3f ms\n", t67d*1000.0);
+      //  printf("  7-8	%12.3f ms\n", t78d*1000.0);
+      //  printf("  8-9	%12.3f ms\n", t89d*1000.0);
+      //  printf("\n");
+      //  printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
     }
 
 
 
-    printf("\n\n");
+   // printf("\n\n");
 
 
     if(LOOPmode == 1)

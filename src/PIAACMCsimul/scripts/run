@@ -47,6 +47,7 @@ loadparam NBls 4
 loadparam lambda 800
 loadparam mlambda 800
 loadparam mlambdaB 10
+loadparam nblambda 10
 loadparam FPMsectors 1
 loadparam NBrings 22
 loadparam maskradld 1.60
@@ -148,6 +149,7 @@ echo -e "\033[1m OPTIMIZATION PARAMETERS: \033[0m"
 
 printvar "mlambda" "central wavelength for polychromatic design [nm]"
 printvar "mlambdaB" "spectral bandwidth [%]"
+printvar "nblambda" "Number of wavelength values"
 printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
 printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
 

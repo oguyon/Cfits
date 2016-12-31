@@ -1099,6 +1099,12 @@ echo "$PFb0start $PFb0end $PFb0order $lat $PFb0dgain" > $file
 
 file="./conf/conf_PFblock_1.txt"
 echo "$PFb1start $PFb1end $PFb1order $lat $PFb1dgain" > $file
+
+file="./conf/conf_PFblock_2.txt"
+echo "$PFb2start $PFb2end $PFb2order $lat $PFb2dgain" > $file
+
+file="./conf/conf_PFblock_3.txt"
+echo "$PFb3start $PFb3end $PFb3order $lat $PFb3dgain" > $file
 ;;
   
   

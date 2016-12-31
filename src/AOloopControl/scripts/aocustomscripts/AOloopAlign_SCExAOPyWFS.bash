@@ -427,10 +427,22 @@ menuitems+=( "" "" )
 
 
 
+
+
+TTposX=$( cat status/stat_AnalogVoltage_D.txt )
+TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+
+TTposXref=$( cat status/stat_AnalogVoltage_Dref.txt )
+TTposYref=$( cat status/stat_AnalogVoltage_Cref.txt )
+
 stringcenter "Pyramid TT align"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( "tz" "Zero TT align" )
+menuitems+=( " " "Current position = $TTposX  $TTposY" )
+
+menuitems+=( "tz" "Zero TT align (-5.0 -5.0)" )
+menuitems+=( "ttr" "Move to TT reference position [ $TTposXref  $TTposYref ]" )
+menuitems+=( "tts" "Store current position as reference" )
 
 menuitems+=( "tst0" "alignment step = 0.05" )
 menuitems+=( "tst1" "alignment step = 0.1" )
@@ -755,6 +767,21 @@ aoconflogext "TT align zero"
 menualign_default="tz"
 state="menualign"
 ;;
+
+
+	ttr)
+./aocustomscripts/SCExAO_analogoutput C $TTposXref
+./aocustomscripts/SCExAO_analogoutput D $TTposYref
+menualign_default="ttr"
+state="menualign"
+;;
+
+
+	tts)
+TTposXref="$TTposX"
+TTposYref="$TTposY"
+;;
+
 
         tst0)
 TTstep="0.05"

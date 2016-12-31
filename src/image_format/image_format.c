@@ -189,6 +189,10 @@ int IMAGE_FORMAT_loadCR2toFITSRGB_cli()
     return 1;
 }
 
+
+
+
+
 //int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)
 
 
@@ -2682,3 +2686,5 @@ long IMAGE_FORMAT_FITS_to_floatbin_lock(  char *IDname, char *fname )
 
   return(0);
 } 
+
+
