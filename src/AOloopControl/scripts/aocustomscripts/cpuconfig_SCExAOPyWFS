@@ -316,6 +316,12 @@ pidlist=$( pgrep modeval|xargs echo | sed 's/ /,/g' )
 sudo cset proc -m -p $pidlist -t aol${LOOPNUMBER}RT1
 
 
+
+pidlist=$( pgrep logC_aol${LOOPNUMBER}|xargs echo | sed 's/ /,/g' )
+sudo cset proc -m -p $pidlist -t aol${LOOPNUMBER}log
+
+
+
 else
 echo "Destroying CPU sets"
 sudo cset se -d LQG
