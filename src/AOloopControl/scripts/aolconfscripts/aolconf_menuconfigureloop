@@ -1816,7 +1816,8 @@ exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system latency"
 ./auxscripts/MeasureLatency "$nblatm"
-loophlat=$( awk '{print $1}' conf/conf_loophlat.txt ) 
+loophlat=$( awk '{print $1}' conf/conf_loophlat.txt )
+loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
 echo "$loophlat $loopfrequ" > tmpfile.txt
 loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 rm tmpfile.txt
