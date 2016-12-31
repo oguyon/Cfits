@@ -779,7 +779,9 @@ state="menualign"
 
 	tts)
 TTposXref="$TTposX"
+echo "$TTposXref" > status/stat_AnalogVoltage_Dref.txt
 TTposYref="$TTposY"
+echo "$TTposYref" > status/stat_AnalogVoltage_Cref.txt
 ;;
 
 
