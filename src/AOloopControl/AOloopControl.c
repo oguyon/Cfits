@@ -748,11 +748,11 @@ int AOloopControl_set_loopfrequ_cli()
     return 1;
 }
 
-int AOloopControl_set_hardlatency_frame_cli()
+int AOloopControl_set_hardwlatency_frame_cli()
 {
   if(CLI_checkarg(1,1)==0)
     {
-      AOloopControl_set_hardlatency_frame(data.cmdargtoken[1].val.numf);
+      AOloopControl_set_hardwlatency_frame(data.cmdargtoken[1].val.numf);
       return 0;
     }
   else
@@ -1587,11 +1587,11 @@ int init_AOloopControl()
 
     strcpy(data.cmd[data.NBcmd].key,"aolsethlat");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = AOloopControl_set_hardlatency_frame_cli;
+    data.cmd[data.NBcmd].fp = AOloopControl_set_hardwlatency_frame_cli;
     strcpy(data.cmd[data.NBcmd].info,"set hardware latency");
     strcpy(data.cmd[data.NBcmd].syntax,"<hardware latency [frame]>");
     strcpy(data.cmd[data.NBcmd].example,"aolsethlat 2.7");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_hardlatency_frame(float hardlatency_frame)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolsetclat");
@@ -5467,8 +5467,11 @@ int AOloopControl_InitializeMemory(int mode)
             AOconf[loop].GPUusesem = 1;
             
             AOconf[loop].loopfrequ = 2000.0;
-            AOconf[loop].hardlatency_frame = 2.1;
-            AOconf[loop].complatency_frame = 0.4;
+            AOconf[loop].hardwlatency = 0.0011;
+            AOconf[loop].hardwlatency_frame = 2.2;
+            AOconf[loop].complatency = 0.0001;
+            AOconf[loop].complatency_frame = 0.2;
+            AOconf[loop].wfsmextrlatency = 0.0003;
             AOconf[loop].wfsmextrlatency_frame = 0.6;
         }
     }
@@ -6548,62 +6551,50 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
    
    
 	
-	if((fp=fopen("./conf/conf_hardlatency.txt", "r"))==NULL)
+	if((fp=fopen("./conf/conf_hardwlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_hardlatency.txt missing\n");
+        printf("WARNING: file ./conf/conf_hardwlatency.txt missing\n");
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].hardlatency);
-        printf("hardlatency : %f\n", AOconf[loop].hardlatency);
+        r = fscanf(fp, "%f", &AOconf[loop].hardwlatency);
+        printf("hardwlatency : %f\n", AOconf[loop].hardwlatency);
         fclose(fp);
         fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].hardlatency = %f\n", loop, AOconf[loop].hardlatency);
+        fprintf(fplog, "AOconf[%ld].hardwlatency = %f\n", loop, AOconf[loop].hardwlatency);
    }
 	
-	
-/*	if((fp=fopen("./conf/conf_hardlatency_frame.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/conf_hardlatency_frame.txt missing\n");
-    }
-    else
-    {
-        r = fscanf(fp, "%f", &AOconf[loop].hardlatency_frame);
-        printf("hardlatency_frame : %f\n", AOconf[loop].hardlatency_frame);
-        fclose(fp);
-        fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].hardlatency_frame = %f\n", loop, AOconf[loop].hardlatency_frame);
-   }
-*/
-	
-	AOconf[loop].hardlatency_frame = AOconf[loop].hardlatency * AOconf[loop].loopfrequ;
+	AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ;
 	
 
-	if((fp=fopen("./conf/conf_complatency_frame.txt", "r"))==NULL)
+	if((fp=fopen("./conf/conf_complatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_complatency_frame.txt missing\n");
+        printf("WARNING: file ./conf/conf_complatency.txt missing\n");
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].complatency_frame);
-        printf("complatency_frame : %f\n", AOconf[loop].complatency_frame);
+        r = fscanf(fp, "%f", &AOconf[loop].complatency);
+        printf("complatency : %f\n", AOconf[loop].complatency);
         fclose(fp);
         fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].complatency_frame = %f\n", loop, AOconf[loop].complatency_frame);
+        fprintf(fplog, "AOconf[%ld].complatency = %f\n", loop, AOconf[loop].complatency);
    }
+	AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
 
-	if((fp=fopen("./conf/conf_wfsmextrlatency_frame.txt", "r"))==NULL)
+
+	if((fp=fopen("./conf/conf_wfsmextrlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_wfsmextrlatency_frame.txt missing\n");
+        printf("WARNING: file ./conf/conf_wfsmextrlatency.txt missing\n");
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].wfsmextrlatency_frame);
-        printf(" : %f\n", AOconf[loop].wfsmextrlatency_frame);
+        r = fscanf(fp, "%f", &AOconf[loop].wfsmextrlatency);
+        printf(" : %f\n", AOconf[loop].wfsmextrlatency);
         fclose(fp);
         fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].wfsmextrlatency_frame = %f\n", loop, AOconf[loop].wfsmextrlatency_frame);
+        fprintf(fplog, "AOconf[%ld].wfsmextrlatency = %f\n", loop, AOconf[loop].wfsmextrlatency);
    }
+	AOconf[loop].wfsmextrlatency_frame = AOconf[loop].wfsmextrlatency * AOconf[loop].loopfrequ;
 
 
 
@@ -6707,60 +6698,6 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-/*	if((fp=fopen("./conf/conf_loophlat.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/conf_loophlat.txt missing\n");
-        printf("Using default hardware latency\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_loophlat.txt missing. Using default hardware latency\n");
-        AOconf[loop].hardlatency_frame = 2.2;
-    }
-    else
-    {
-        r = fscanf(fp, "%s", content);
-        printf("hardlatency_frame : %f\n", atof(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].hardlatency_frame = atof(content);
-        fprintf(fplog, "AOconf[%ld].hardlatency_frame = %f\n", loop, AOconf[loop].hardlatency_frame);
-    }
-
-
-
-	if((fp=fopen("./conf/conf_loopclat.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/conf_loopclat.txt missing\n");
-        printf("Using default computation latency\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_loopclat.txt missing. Using default computation latency\n");
-        AOconf[loop].complatency_frame = 0.4;
-    }
-    else
-    {
-        r = fscanf(fp, "%s", content);
-        printf("complatency_frame : %f\n", atof(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].complatency_frame = atof(content);
-        fprintf(fplog, "AOconf[%ld].complatency_frame = %f\n", loop, AOconf[loop].complatency_frame);
-    }
-
-
-	if((fp=fopen("./conf/conf_loopwlat.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/conf_loopwlat.txt missing\n");
-        printf("Using default WFS modes extraction latency\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_loopwlat.txt missing. Using default WFS modes extraction latency\n");
-        AOconf[loop].wfsmextrlatency_frame = 0.6;
-    }
-    else
-    {
-        r = fscanf(fp, "%s", content);
-        printf("wfsmextrlatency_frame : %f\n", atof(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].wfsmextrlatency_frame = atof(content);
-        fprintf(fplog, "AOconf[%ld].wfsmextrlatency_frame = %f\n", loop, AOconf[loop].wfsmextrlatency_frame);
-    }
-*/
 
 
 
@@ -7974,9 +7911,9 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
     ret = system("mkdir -p timingstats");
 
-    if ((fp=fopen("timingstats/latency.txt", "w"))==NULL)
+    if ((fp=fopen("timingstats/hardwlatency.txt", "w"))==NULL)
     {
-        printf("ERROR: cannot open file \"timingstats/latency.txt\"\\n");
+        printf("ERROR: cannot create file \"timingstats/hardwlatency.txt\"\\n");
         exit(0);
     }
     
@@ -8122,7 +8059,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
 
         latency = valmaxdt-dtoffset;
         latencystep = kkmax;
-        printf("Latency = %f ms  = %ld frames\n", 1000.0*latency, kkmax);
+        printf("Hardware latency = %f ms  = %ld frames\n", 1000.0*latency, kkmax);
         if(latency > latencymax)
         {
             latencymax = latency;
@@ -8166,10 +8103,10 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     printf("AVERAGE LATENCY = %8.3f ms   %f frames\n", latencyave*1000.0, latencystepave);
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
 
-    ret = sprintf(command, "echo %8.6f > conf/conf_loophlat.txt", latencyarray[NBiter/2]);
+    ret = sprintf(command, "echo %8.6f > conf/conf_hardwlatency.txt", latencyarray[NBiter/2]);
     ret = system(command);
 
-    ret = sprintf(command, "echo %f %f %f %f %f > timinstats/hardlatencyStats.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
+    ret = sprintf(command, "echo %f %f %f %f %f > timinstats/hardwlatencyStats.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
     ret = system(command);
 
 
@@ -11962,7 +11899,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
     
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
 	printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm)\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta);
-	printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
+	printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardwlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
 	nbl++;
     nbl++;
     nbl++;
@@ -12420,37 +12357,55 @@ int AOloopControl_statusStats()
 
 
 	AOconf[LOOPNUMBER].loopfrequ = 1.0*loopcnt/tdiffv;
+	
 	AOconf[LOOPNUMBER].complatency_frame = 1.0-1.0*statuscnt[20]/NBkiter;
+	AOconf[LOOPNUMBER].complatency = AOconf[LOOPNUMBER].complatency_frame/AOconf[LOOPNUMBER].loopfrequ;
+	
     AOconf[LOOPNUMBER].wfsmextrlatency_frame = 1.0-1.0*statusMcnt[20]/NBkiter;
+    AOconf[LOOPNUMBER].wfsmextrlatency = AOconf[LOOPNUMBER].wfsmextrlatency_frame/AOconf[LOOPNUMBER].loopfrequ;
+    
     
     fp = fopen("conf/conf_loopfrequ.txt", "w");
     fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].loopfrequ);
     fclose(fp);
     
     
-	if((fp=fopen("./conf/conf_hardlatency.txt", "r"))==NULL)
+	if((fp=fopen("./conf/conf_hardwlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_hardlatency.txt missing\n");
+        printf("WARNING: file ./conf/conf_hardwlatency.txt missing\n");
     }
     else
     {
-        ret = fscanf(fp, "%f", &AOconf[LOOPNUMBER].hardlatency);
-        printf("hardlatency : %f\n", AOconf[LOOPNUMBER].hardlatency);
+        ret = fscanf(fp, "%f", &AOconf[LOOPNUMBER].hardwlatency);
+        printf("hardware latency = %f\n", AOconf[LOOPNUMBER].hardwlatency);
         fclose(fp);
         fflush(stdout);
    }
 	
-    printf("hardlatency = %f\n", AOconf[LOOPNUMBER].hardlatency);
-    AOconf[LOOPNUMBER].hardlatency_frame = AOconf[LOOPNUMBER].hardlatency * AOconf[LOOPNUMBER].loopfrequ;
+	
+    printf("hardwlatency = %f\n", AOconf[LOOPNUMBER].hardwlatency);
+    AOconf[LOOPNUMBER].hardwlatency_frame = AOconf[LOOPNUMBER].hardwlatency * AOconf[LOOPNUMBER].loopfrequ;
     
-    fp = fopen("conf/conf_hardlatency_frame.txt", "w");
-    fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].hardlatency_frame);
+    
+    fp = fopen("conf/conf_hardwlatency_frame.txt", "w");
+    fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].hardwlatency_frame);
     fclose(fp);
     
+    
+    
+    fp = fopen("conf/conf_complatency.txt", "w");
+    fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].complatency);
+    fclose(fp);
+  
     fp = fopen("conf/conf_complatency_frame.txt", "w");
     fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].complatency_frame);
     fclose(fp);
-    
+
+  
+    fp = fopen("conf/conf_wfsmextrlatency.txt", "w");
+    fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].wfsmextrlatency);
+    fclose(fp);
+   
     fp = fopen("conf/conf_wfsmextrlatency_frame.txt", "w");
     fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].wfsmextrlatency_frame);
     fclose(fp);
@@ -13094,7 +13049,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	IDgainb = read_sharedmem_image(imname);
 	
 
-	framelatency = AOconf[loop].hardlatency_frame + AOconf[loop].wfsmextrlatency_frame; 
+	framelatency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame; 
 	framelatency0 = (long) framelatency;
 	framelatency1 = framelatency0 + 1;
 	alpha = framelatency - framelatency0;
@@ -13431,7 +13386,7 @@ int AOloopControl_showparams(long loop)
     printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 
 	printf("loopfrequ               =  %8.2f Hz\n", AOconf[loop].loopfrequ);
-	printf("hardlatency_frame       =  %8.2f fr\n", AOconf[loop].hardlatency_frame);
+	printf("hardwlatency_frame      =  %8.2f fr\n", AOconf[loop].hardwlatency_frame);
 	printf("complatency_frame       =  %8.2f fr\n", AOconf[loop].complatency_frame);
 	printf("wfsmextrlatency_frame   =  %8.2f fr\n", AOconf[loop].wfsmextrlatency_frame);
 
@@ -13673,12 +13628,12 @@ int AOloopControl_set_loopfrequ(float loopfrequ)
 }
 
 
-int AOloopControl_set_hardlatency_frame(float hardlatency_frame)
+int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame)
 {
   if(AOloopcontrol_meminit==0)
     AOloopControl_InitializeMemory(1);
 
-  AOconf[LOOPNUMBER].hardlatency_frame = hardlatency_frame;
+  AOconf[LOOPNUMBER].hardwlatency_frame = hardwlatency_frame;
   AOloopControl_showparams(LOOPNUMBER);
 
   return 0;

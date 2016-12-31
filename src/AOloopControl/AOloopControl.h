@@ -67,9 +67,11 @@ typedef struct
 
 	// Timing info
 	float loopfrequ; // Hz
-	float hardlatency; // hardware latency between DM command and WFS response [sec] 
-	float hardlatency_frame; // hardware latency between DM command and WFS response 
+	float hardwlatency; // hardware latency between DM command and WFS response [sec] 
+	float hardwlatency_frame; // hardware latency between DM command and WFS response 
+	float complatency;
 	float complatency_frame; // computation latency (main loop) from WFS image reception to DM command output
+	float wfsmextrlatency;
 	float wfsmextrlatency_frame; // WFS mode extraction latency
 	
 
@@ -268,7 +270,7 @@ int AOloopControl_ARPFon();
 int AOloopControl_ARPFoff();
 
 int AOloopControl_set_loopfrequ(float loopfrequ);
-int AOloopControl_set_hardlatency_frame(float hardlatency_frame);
+int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame);
 int AOloopControl_set_complatency_frame(float complatency_frame);
 int AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame);
 int AOloopControl_setgain(float gain);
