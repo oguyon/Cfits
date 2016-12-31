@@ -1750,6 +1750,9 @@ tmux send-keys -t $tmuxname "aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol${LOOPNU
 fi
 
 
+
+echo "CMmode = $CMmode"
+sleep 1
 if [ "$CMmode" -eq "0" ]; then  # if CM multiplication outputs modes
 echo "Linking    /tmp/aol${loopnb}_DMmode_meas.im.shm  - /tmp/aol${loopnb}_modeval.im.shm"
 rm /tmp/aol${loopnb}_modeval.im.shm
