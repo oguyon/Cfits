@@ -1816,8 +1816,16 @@ exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system latency"
 ./auxscripts/MeasureLatency "$nblatm"
-hlat=$( awk '{print $1}' conf/conf_hardlatency.txt ) 
-echo "$hlat" > conf/conf_loophlat.txt
+loophlat=$( awk '{print $1}' conf/conf_loophlat.txt ) 
+echo "$loophlat $loopfrequ" > tmpfile.txt
+loophlatfr=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$loophlatfr" > ./conf/conf_loophlatfr.txt
+Cfits << EOF
+aolsethlat ${loophlatfr}
+exit
+EOF
+aoconflogext "set hardware latency $loophlatfr frame"
 touch gothere.txt
 ;;
 
