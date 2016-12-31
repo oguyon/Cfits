@@ -1757,7 +1757,7 @@ rm /tmp/aol${loopnb}_modeval.im.shm
 sleep 0.1
 ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 fi
-
+ls -l /tmp/aol${loopnb}_modeval.im.shm
 
 # process runs in CPU set aol0RT1
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
@@ -1771,7 +1771,9 @@ else
 tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}" C-m
 fi
 fi
+ls -l /tmp/aol${loopnb}_modeval.im.shm
 
+sleep 4
 
 # process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
