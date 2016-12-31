@@ -12359,10 +12359,10 @@ int AOloopControl_statusStats()
 	AOconf[LOOPNUMBER].loopfrequ = 1.0*loopcnt/tdiffv;
 	
 	AOconf[LOOPNUMBER].complatency_frame = 1.0-1.0*statuscnt[20]/NBkiter;
-	AOconf[LOOPNUMBER].complatency = AOconf[LOOPNUMBER].complatency_frame/AOconf[LOOPNUMBER].loopfrequ;
+	AOconf[LOOPNUMBER].complatency = AOconf[LOOPNUMBER].complatency_frame*AOconf[LOOPNUMBER].loopfrequ;
 	
     AOconf[LOOPNUMBER].wfsmextrlatency_frame = 1.0-1.0*statusMcnt[20]/NBkiter;
-    AOconf[LOOPNUMBER].wfsmextrlatency = AOconf[LOOPNUMBER].wfsmextrlatency_frame/AOconf[LOOPNUMBER].loopfrequ;
+    AOconf[LOOPNUMBER].wfsmextrlatency = AOconf[LOOPNUMBER].wfsmextrlatency_frame*AOconf[LOOPNUMBER].loopfrequ;
     
     
     fp = fopen("conf/conf_loopfrequ.txt", "w");
