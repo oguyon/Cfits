@@ -287,7 +287,7 @@ sudo cset set --cpu 21 --cpu_exclusive --set aol${LOOPNUMBER}RT2
 sudo cset set --cpu 23,25 --cpu_exclusive --set aol${LOOPNUMBER}COM
 sudo cset set --cpu 27 --cpu_exclusive --set ocamdec
 
-sudo cset set --cpu 16,18,20--cpu_exclusive --set aol${LOOPNUMBER}log
+sudo cset set --cpu 16,18,20 --cpu_exclusive --set aol${LOOPNUMBER}log
 
 
 # move as much as possible to system
