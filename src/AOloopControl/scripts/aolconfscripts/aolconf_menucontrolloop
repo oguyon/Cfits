@@ -1773,7 +1773,7 @@ fi
 fi
 ls -l /tmp/aol${loopnb}_modeval.im.shm
 
-sleep 4
+sleep 30
 
 # process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
