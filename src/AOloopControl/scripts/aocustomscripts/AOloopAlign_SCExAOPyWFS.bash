@@ -245,14 +245,14 @@ fi
 
 
 echo "$pmodscale $pymodampl" > tmpfile.txt
-pmodradmas=$( awk '{ printf("%03.1f\n", $1*$2) }' tmpfile.txt )
-pmodradmas05=$( awk '{ printf("%03.1f\n", $1*0.05) }' tmpfile.txt )
-pmodradmas10=$( awk '{ printf("%03.1f\n", $1*0.10) }' tmpfile.txt )
-pmodradmas20=$( awk '{ printf("%03.1f\n", $1*0.20) }' tmpfile.txt )
-pmodradmas30=$( awk '{ printf("%03.1f\n", $1*0.30) }' tmpfile.txt )
-pmodradmas50=$( awk '{ printf("%03.1f\n", $1*0.50) }' tmpfile.txt )
-pmodradmas70=$( awk '{ printf("%03.1f\n", $1*0.70) }' tmpfile.txt )
-pmodradmas00=$( awk '{ printf("%03.1f\n", $1*1.00) }' tmpfile.txt )
+pmodradmas=$( awk '{ printf("%5.1f\n", $1*$2) }' tmpfile.txt )
+pmodradmas05=$( awk '{ printf("%5.1f\n", $1*0.05) }' tmpfile.txt )
+pmodradmas10=$( awk '{ printf("%5.1f\n", $1*0.10) }' tmpfile.txt )
+pmodradmas20=$( awk '{ printf("%5.1f\n", $1*0.20) }' tmpfile.txt )
+pmodradmas30=$( awk '{ printf("%5.1f\n", $1*0.30) }' tmpfile.txt )
+pmodradmas50=$( awk '{ printf("%5.1f\n", $1*0.50) }' tmpfile.txt )
+pmodradmas70=$( awk '{ printf("%5.1f\n", $1*0.70) }' tmpfile.txt )
+pmodradmas00=$( awk '{ printf("%5.1f\n", $1*1.00) }' tmpfile.txt )
 rm tmpfile.txt
 
 
