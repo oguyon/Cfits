@@ -1830,7 +1830,7 @@ loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt )
 echo "$hardwlatency $loopfrequ" > tmpfile.txt
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 rm tmpfile.txt
-echo "$hardwlatency_fr" > ./conf/conf_hardwlatency_frame.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
 Cfits << EOF
 aolsethlat ${hardwlatency_frame}
 exit
