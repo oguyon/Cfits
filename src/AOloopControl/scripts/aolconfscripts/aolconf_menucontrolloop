@@ -1751,11 +1751,10 @@ fi
 
 
 
-echo "CMmode = $CMmode"
-sleep 1
 if [ "$CMmode" -eq "0" ]; then  # if CM multiplication outputs modes
 echo "Linking    /tmp/aol${loopnb}_DMmode_meas.im.shm  - /tmp/aol${loopnb}_modeval.im.shm"
 rm /tmp/aol${loopnb}_modeval.im.shm
+sleep 0.1
 ln -s /tmp/aol${loopnb}_DMmode_meas.im.shm /tmp/aol${loopnb}_modeval.im.shm
 fi
 
