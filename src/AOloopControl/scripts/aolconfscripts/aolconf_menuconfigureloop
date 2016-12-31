@@ -772,7 +772,7 @@ nblatm=100
 if [ -f "./conf/conf_nblatm.txt" ]; then
 nblatm=$( cat ./conf/conf_nblatm.txt )
 fi
-menuitems+=( "mlat" "            Measure Latency                 ${nblatm} frame(s)" )
+menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
 
 
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
