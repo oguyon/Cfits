@@ -276,8 +276,8 @@ fi
 
   
 if [ "$ON" = "1" ]; then
-sudo cset set --cpu 0,1,2,4,6,8,10,12,14,16,18,20 --set system
-sudo cset set --cpu 22 --set LQG
+sudo cset set --cpu 0,1,2,4,6,8,10,12,14 --set system
+#sudo cset set --cpu 22 --set LQG
 sudo cset set --cpu 24 --cpu_exclusive --set dmcomb
 sudo cset set --cpu 26 --cpu_exclusive --set dmdrv
 
@@ -286,6 +286,8 @@ sudo cset set --cpu 19 --cpu_exclusive --set aol${LOOPNUMBER}RT1
 sudo cset set --cpu 21 --cpu_exclusive --set aol${LOOPNUMBER}RT2
 sudo cset set --cpu 23,25 --cpu_exclusive --set aol${LOOPNUMBER}COM
 sudo cset set --cpu 27 --cpu_exclusive --set ocamdec
+
+sudo cset set --cpu 16,18,20--cpu_exclusive --set aol${LOOPNUMBER}log
 
 
 # move as much as possible to system
