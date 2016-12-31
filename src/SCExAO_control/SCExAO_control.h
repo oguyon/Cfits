@@ -7,7 +7,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name);
 int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos);
 
 long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex);
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name, float XposStart, float YposStart);
 int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name);
 
 int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset);

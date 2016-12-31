@@ -129,9 +129,9 @@ int SCExAOcontrol_mv_DMstage_cli()
 
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 {
-    if(CLI_checkarg(1,4)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
     {
-        SCExAOcontrol_PyramidWFS_AutoAlign_TT(data.cmdargtoken[1].val.string);
+        SCExAOcontrol_PyramidWFS_AutoAlign_TT(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf);
         return 0;
     }
     else
@@ -274,9 +274,9 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli;
     strcpy(data.cmd[data.NBcmd].info,"move TT to center pyrWFS");
-    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname>");
-    strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign wfscam");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name);");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname> <XposStart> <YposStart>");
+    strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign wfscam -5.5 -4.5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name, float XposStart, float YposStart);");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
@@ -924,7 +924,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
 
 
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name, float XposStart, float YposStart)
 {
     FILE *fp;
     long ID;
@@ -963,8 +963,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name)
     //        SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM();
     // exit(0);
 
-    SCExAO_PZT_STAGE_Xpos = -5.0;
-    SCExAO_PZT_STAGE_Ypos = -5.0;
+    SCExAO_PZT_STAGE_Xpos = XposStart;
+    SCExAO_PZT_STAGE_Ypos = YposStart;
 
     IDshm = image_ID("pyrTT");
     if(IDshm == -1)
