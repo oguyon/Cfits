@@ -849,7 +849,7 @@ tmux send-keys -t alignPyrTT "$execname -n alignPyrTT" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t alignPyrTT "cp aol${LOOPNUMBER}_wfsdark wfsdark" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsim" C-m
-tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim" C-m
+tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim $TTposX $TTposY" C-m
 echo " ON" > ./status/status_alignTT.txt
 menualign_default="tk"
 state="menualign"
