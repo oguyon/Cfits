@@ -8166,8 +8166,12 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
     printf("AVERAGE LATENCY = %8.3f ms   %f frames\n", latencyave*1000.0, latencystepave);
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
 
-    ret = sprintf(command, "echo %f %f %f %f %f > conf/conf_loophlat.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
+    ret = sprintf(command, "echo %8.6f > conf/conf_loophlat.txt", latencyarray[NBiter/2]);
     ret = system(command);
+
+    ret = sprintf(command, "echo %f %f %f %f %f > timinstats/hardlatencyStats.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
+    ret = system(command);
+
 
 	dt = tdouble_end - tdouble_start;
 	printf("FRAME RATE = %.3f Hz\n", 1.0*(wfscntend-wfscntstart)/dt);
