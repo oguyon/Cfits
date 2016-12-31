@@ -245,21 +245,21 @@ fi
 
 
 echo "$pmodscale $pymodampl" > tmpfile.txt
-pmodradmas=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
-pmodradmas05=$( awk '{ printf("%05.3f\n", $1*0.05) }' tmpfile.txt )
-pmodradmas10=$( awk '{ printf("%05.3f\n", $1*0.10) }' tmpfile.txt )
-pmodradmas20=$( awk '{ printf("%05.3f\n", $1*0.20) }' tmpfile.txt )
-pmodradmas30=$( awk '{ printf("%05.3f\n", $1*0.30) }' tmpfile.txt )
-pmodradmas50=$( awk '{ printf("%05.3f\n", $1*0.50) }' tmpfile.txt )
-pmodradmas70=$( awk '{ printf("%05.3f\n", $1*0.70) }' tmpfile.txt )
-pmodradmas00=$( awk '{ printf("%05.3f\n", $1*1.00) }' tmpfile.txt )
+pmodradmas=$( awk '{ printf("%03.1f\n", $1*$2) }' tmpfile.txt )
+pmodradmas05=$( awk '{ printf("%03.1f\n", $1*0.05) }' tmpfile.txt )
+pmodradmas10=$( awk '{ printf("%03.1f\n", $1*0.10) }' tmpfile.txt )
+pmodradmas20=$( awk '{ printf("%03.1f\n", $1*0.20) }' tmpfile.txt )
+pmodradmas30=$( awk '{ printf("%03.1f\n", $1*0.30) }' tmpfile.txt )
+pmodradmas50=$( awk '{ printf("%03.1f\n", $1*0.50) }' tmpfile.txt )
+pmodradmas70=$( awk '{ printf("%03.1f\n", $1*0.70) }' tmpfile.txt )
+pmodradmas00=$( awk '{ printf("%03.1f\n", $1*1.00) }' tmpfile.txt )
 rm tmpfile.txt
 
 
 if [ "$pymodampl" = "0.05" ]; then
-menuitems+=( "pymoda005" "\Zr\Z2 modulation amplitude = 0.05\Zn  (modulation radius = ${pmodradmas05} mas)" )
+menuitems+=( "pymoda005" "\Zr\Z2 modulation amplitude = 0.05\Zn (modulation radius = ${pmodradmas05} mas)" )
 else
-menuitems+=( "pymoda005" " modulation amplitude = 0.05  (modulation radius = ${pmodradmas05} mas)" )
+menuitems+=( "pymoda005" " modulation amplitude = 0.05 (modulation radius = ${pmodradmas05} mas)" )
 fi
 
 if [ "$pymodampl" = "0.1" ]; then
