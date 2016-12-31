@@ -246,49 +246,56 @@ fi
 
 echo "$pmodscale $pymodampl" > tmpfile.txt
 pmodradmas=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+pmodradmas05=$( awk '{ printf("%05.3f\n", $1*0.05) }' tmpfile.txt )
+pmodradmas10=$( awk '{ printf("%05.3f\n", $1*0.10) }' tmpfile.txt )
+pmodradmas20=$( awk '{ printf("%05.3f\n", $1*0.20) }' tmpfile.txt )
+pmodradmas30=$( awk '{ printf("%05.3f\n", $1*0.30) }' tmpfile.txt )
+pmodradmas50=$( awk '{ printf("%05.3f\n", $1*0.50) }' tmpfile.txt )
+pmodradmas70=$( awk '{ printf("%05.3f\n", $1*0.70) }' tmpfile.txt )
+pmodradmas00=$( awk '{ printf("%05.3f\n", $1*1.00) }' tmpfile.txt )
 rm tmpfile.txt
 
 
 if [ "$pymodampl" = "0.05" ]; then
-menuitems+=( "pymoda005" "\Zr\Z2 modulation amplitude = 0.05\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda005" "\Zr\Z2 modulation amplitude = 0.05\Zn  (modulation radius = ${pmodradmas05} mas)" )
 else
-menuitems+=( "pymoda005" " modulation amplitude = 0.05  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda005" " modulation amplitude = 0.05  (modulation radius = ${pmodradmas05} mas)" )
 fi
 
 if [ "$pymodampl" = "0.1" ]; then
-menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn  (modulation radius = ${pmodradmas10} mas)" )
 else
-menuitems+=( "pymoda01" " modulation amplitude = 0.1  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda01" " modulation amplitude = 0.1  (modulation radius = ${pmodradmas10} mas)" )
 fi
 
 if [ "$pymodampl" = "0.2" ]; then
-menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn  (modulation radius = ${pmodradmas20} mas)" )
 else
-menuitems+=( "pymoda02" " modulation amplitude = 0.2  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda02" " modulation amplitude = 0.2  (modulation radius = ${pmodradmas20} mas)" )
 fi
 
 if [ "$pymodampl" = "0.3" ]; then
-menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn  (modulation radius = ${pmodradmas30} mas)" )
 else
-menuitems+=( "pymoda03" " modulation amplitude = 0.3  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda03" " modulation amplitude = 0.3  (modulation radius = ${pmodradmas30} mas)" )
 fi
 
 if [ "$pymodampl" = "0.5" ]; then
-menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn  (modulation radius = ${pmodradmas50} mas)" )
 else
-menuitems+=( "pymoda05" " modulation amplitude = 0.5  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda05" " modulation amplitude = 0.5  (modulation radius = ${pmodradmas50} mas)" )
 fi
 
 if [ "$pymodampl" = "0.7" ]; then
-menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn  (modulation radius = ${pmodradmas70} mas)" )
 else
-menuitems+=( "pymoda07" " modulation amplitude = 0.7  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda07" " modulation amplitude = 0.7  (modulation radius = ${pmodradmas70} mas)" )
 fi
 
 if [ "$pymodampl" = "1.0" ]; then
-menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn  (modulation radius = ${pmodradmas00} mas)" )
 else
-menuitems+=( "pymoda10" " modulation amplitude = 1.0  (modulation radius = ${pmodradmas} mas)" )
+menuitems+=( "pymoda10" " modulation amplitude = 1.0  (modulation radius = ${pmodradmas00} mas)" )
 fi
 
 
