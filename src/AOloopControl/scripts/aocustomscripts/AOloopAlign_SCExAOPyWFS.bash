@@ -184,21 +184,21 @@ fi
 pmodscale="0"
 
 if [ "$pyfreq" = "500" ]; then
-pmodscale="0"
+pmodscale="250"
 menuitems+=( "pyfr05" "\Zr\Z2 freq = 0.5 kHz\Zn" )
 else
 menuitems+=( "pyfr05" " freq = 0.5 kHz" )
 fi
 
 if [ "$pyfreq" = "1000" ]; then
-pmodscale="0"
+pmodscale="250"
 menuitems+=( "pyfr10" "\Zr\Z2 freq = 1.0 kHz\Zn" )
 else
 menuitems+=( "pyfr10" " freq = 1.0 kHz" )
 fi
 
 if [ "$pyfreq" = "1500" ]; then
-pmodscale="0"
+pmodscale="250"
 menuitems+=( "pyfr15" "\Zr\Z2 freq = 1.5 kHz\Zn" )
 else
 menuitems+=( "pyfr15" " freq = 1.5 kHz" )
@@ -212,21 +212,21 @@ menuitems+=( "pyfr20" " freq = 2.0 kHz" )
 fi
 
 if [ "$pyfreq" = "2500" ]; then
-pmodscale="0"
+pmodscale="215"
 menuitems+=( "pyfr25" "\Zr\Z2 freq = 2.5 kHz\Zn" )
 else
 menuitems+=( "pyfr25" " freq = 2.5 kHz" )
 fi
 
 if [ "$pyfreq" = "3000" ]; then
-pmodscale="0"
+pmodscale="180"
 menuitems+=( "pyfr30" "\Zr\Z2 freq = 3.0 kHz\Zn" )
 else
 menuitems+=( "pyfr30" " freq = 3.0 kHz" )
 fi
 
 if [ "$pyfreq" = "3500" ]; then
-pmodscale="0"
+pmodscale="145"
 menuitems+=( "pyfr35" "\Zr\Z2 freq = 3.5 kHz\Zn" )
 else
 menuitems+=( "pyfr35" " freq = 3.5 kHz" )
