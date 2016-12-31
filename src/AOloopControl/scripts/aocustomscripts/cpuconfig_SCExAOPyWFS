@@ -317,7 +317,7 @@ sudo cset proc -m -p $pidlist -t aol${LOOPNUMBER}RT1
 
 
 
-pidlist=$( pgrep logC_aol${LOOPNUMBER}|xargs echo | sed 's/ /,/g' )
+pidlist=$( pgrep logshim|xargs echo | sed 's/ /,/g' )
 sudo cset proc -m -p $pidlist -t aol${LOOPNUMBER}log
 
 
