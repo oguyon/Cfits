@@ -770,8 +770,8 @@ state="menualign"
 
 
 	ttr)
-./aocustomscripts/SCExAO_analogoutput C $TTposXref
-./aocustomscripts/SCExAO_analogoutput D $TTposYref
+./aocustomscripts/SCExAO_analogoutput D $TTposXref
+./aocustomscripts/SCExAO_analogoutput C $TTposYref
 menualign_default="ttr"
 state="menualign"
 ;;
