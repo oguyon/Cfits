@@ -247,9 +247,9 @@ menuitems+=( "pymoda01" " modulation amplitude = 0.1" )
 fi
 
 if [ "$pymodampl" = "0.2" ]; then
-menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn" )
+menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn  (radius = 0.7 V @ 2 kHz = 63 mas)" )
 else
-menuitems+=( "pymoda02" " modulation amplitude = 0.2" )
+menuitems+=( "pymoda02" " modulation amplitude = 0.2  (radius = 0.7 V @ 2 kHz = 63 mas)" )
 fi
 
 if [ "$pymodampl" = "0.3" ]; then
@@ -259,15 +259,15 @@ menuitems+=( "pymoda03" " modulation amplitude = 0.3" )
 fi
 
 if [ "$pymodampl" = "0.5" ]; then
-menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn" )
+menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn  (radius = 1.41 V @ 2 kHz = 128 mas)" )
 else
-menuitems+=( "pymoda05" " modulation amplitude = 0.5" )
+menuitems+=( "pymoda05" " modulation amplitude = 0.5  (radius = 1.41 V @ 2 kHz = 128 mas)" )
 fi
 
 if [ "$pymodampl" = "0.7" ]; then
-menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn" )
+menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn  (radius = 1.56 V @ 2 kHz = 141 mas)" )
 else
-menuitems+=( "pymoda07" " modulation amplitude = 0.7" )
+menuitems+=( "pymoda07" " modulation amplitude = 0.7  (radius = 1.56 V @ 2 kHz = 141 mas)" )
 fi
 
 if [ "$pymodampl" = "1.0" ]; then
@@ -438,7 +438,7 @@ TTposYref=$( cat status/stat_AnalogVoltage_Cref.txt )
 stringcenter "Pyramid TT align"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( " " "Current position = $TTposX  $TTposY" )
+menuitems+=( " " "Current position ( scale = 90.3 mas/V ) = $TTposX  $TTposY" )
 
 menuitems+=( "tz" "Zero TT align (-5.0 -5.0)" )
 menuitems+=( "ttr" "Move to TT reference position [ $TTposXref  $TTposYref ]" )
