@@ -684,19 +684,19 @@ echo "SON" > ./status/testdm${DMindex}turbstatus.txt
 tmuxname="dm${DMindex}turbstream"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
-tmux send-keys -t "Cfits" C-m
-tmux send-keys -t "csetpmove aol${LOOPNUMBER}RT2" C-m
-tmux send-keys -t "loadfits \"wfturbC.fits\" wfc" C-m
-tmux send-keys -t "readshmim dm${DMindex}disp10" C-m
-tmux send-keys -t "creaimstream wfc dm${DMindex}disp10 ${dmturbtint}" C-m
+tmux send-keys -t $tmuxname "Cfits" C-m
+tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT2" C-m
+tmux send-keys -t $tmuxname "loadfits \"wfturbC.fits\" wfc" C-m
+tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp10" C-m
+tmux send-keys -t $tmuxname "creaimstream wfc dm${DMindex}disp10 ${dmturbtint}" C-m
 menutestmode_default="DMtf2sOFF"
 ;;
 
 	DMtf2sOFF)
 echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
 tmuxname="dm${DMindex}turbstream"
-tmux send-keys -t "" C-c
-tmux send-keys -t "exit" C-m
+tmux send-keys -t $tmuxname "" C-c
+tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
 menutestmode_default="DMtf2sON"
 ;;
