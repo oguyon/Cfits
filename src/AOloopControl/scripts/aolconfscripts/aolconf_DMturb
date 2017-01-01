@@ -68,6 +68,6 @@ tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturb2im ${DMindex} wftout $1" C-m
-tmux send-keys -t $tmuxname "savefits wftout \"!wftout.fits\"" C-m
+tmux send-keys -t $tmuxname "savefits wftout \"!wfturbC.fits\"" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 }
