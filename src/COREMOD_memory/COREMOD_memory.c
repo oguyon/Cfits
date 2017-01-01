@@ -4479,16 +4479,27 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
     char *ptr0; // source
     char *ptr1; // dest
     long framesize;
-    int semval;
+    int semval;      
     
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
 	long twait1;
     struct timespec t0;
     struct timespec t1;
 	double tdiffv;
     struct timespec tdiff;
 	
+	
+	
+	
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    #endif
 
-    printf("Creating image stream ...\n");
+
+    printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
 
     IDin = image_ID(IDinname);
@@ -4507,10 +4518,13 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
     atype = data.image[IDin].md[0].atype;
 
-	
+	IDout = image_ID(IDoutname);
+	if(IDout == -1)
+	{
     IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
-
+	}
+	
     switch ( atype ) {
     case CHAR:
         ptr0s = (char*) data.image[IDin].array.C;
@@ -4587,6 +4601,9 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
     return(IDout);
 }
+
+
+
 
 
 long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus)
