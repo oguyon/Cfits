@@ -239,11 +239,17 @@ if [ "${testdmturbstatus}" = "OFF" ];
 then
 menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
 menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
-menuitems+=( "-" " ")
+menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
 else
+if [ "${testdmturbstatus}" = " ON" ];
 menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
 menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
 menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
+else
+menuitems+=( "DMtf2sOFF" "\Z1\Zr             STOP turbulence streaming                     \Zn" )
+menuitems+=( "-" " " )
+menuitems+=( "-" " " )
+fi
 fi
 
 
@@ -671,6 +677,28 @@ menutestmode_default="DMton"
 DMturb_WriteToFile 200000
 menutestmode_default="DMt2f"
 ;;
+
+	DMtf2sON)
+echo "SON" > ./status/testdm${DMindex}turbstatus.txt
+tmuxname="dm${DMindex}turbstream"
+tmux new-session -d -s $tmuxname
+tmux kill-session -t $tmuxname
+tmux send-keys -t "Cfits" C-m
+tmux send-keys -t "loadfits \"wfturbC.fits\" wfc" C-m
+tmux send-keys -t "readshmim dm${DMindex}disp10" C-m
+tmux send-keys -t "creaimstream wfc dm${DMindex}disp10 ${dmturbtint}" C-m
+menutestmode_default="DMtf2sOFF"
+;;
+
+	DMtf2sOFF)
+echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
+tmuxname="dm${DMindex}turbstream"
+tmux send-keys -t "" C-c
+tmux send-keys -t "exit" C-m
+tmux kill-session -t $tmuxname
+menutestmode_default="DMtf2sON"
+;;
+
 
 	tvdmt)
 tmux a -t aosim${LOOPNUMBER}dm${DMindex}turb
