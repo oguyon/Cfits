@@ -1698,9 +1698,16 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 			dmturbconf[DMindex].simtime = tdiff1v;
 		}
 		
-        screen0_X += dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
-        screen0_Y += dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
-
+		if(mode == 0)
+		{
+			screen0_X += dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
+			screen0_Y += dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
+		}
+		else
+		{
+			screen0_X = dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
+			screen0_Y = dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
+		}
 
         //dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
