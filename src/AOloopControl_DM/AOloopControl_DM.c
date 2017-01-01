@@ -1624,9 +1624,11 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
     size_sx = data.image[IDs1].md[0].size[0];
     size_sy = data.image[IDs1].md[0].size[1];
 
+	if(mode==0)
+	{
     clock_gettime(CLOCK_REALTIME, &dmturbconf[DMindex].tstart);
     dmturbconf[DMindex].tend = dmturbconf[DMindex].tstart;
-
+	}
 
     DM_Xsize = dmdispcombconf[DMindex].xsize;
     DM_Ysize = dmdispcombconf[DMindex].ysize;
@@ -1635,7 +1637,9 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
     sprintf(name, "dm%02lddisp10", DMindex);
     read_sharedmem_image(name);
     list_image_ID();
-    dmturbconf[DMindex].on = 1;
+    
+    if(mode==0)
+		dmturbconf[DMindex].on = 1;
 
     IDturbs1 = create_2Dimage_ID("turbs1", DM_Xsize, DM_Ysize);
     IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
