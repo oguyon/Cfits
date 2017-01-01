@@ -682,8 +682,8 @@ menutestmode_default="DMt2f"
 	DMtf2sON)
 echo "SON" > ./status/testdm${DMindex}turbstatus.txt
 tmuxname="dm${DMindex}turbstream"
-tmux new-session -d -s $tmuxname
 tmux kill-session -t $tmuxname
+tmux new-session -d -s $tmuxname
 tmux send-keys -t "Cfits" C-m
 tmux send-keys -t "csetpmove aol${LOOPNUMBER}RT2" C-m
 tmux send-keys -t "loadfits \"wfturbC.fits\" wfc" C-m
