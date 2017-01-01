@@ -1785,6 +1785,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		{
 			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
 				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
+			sprintf(name, "dm%02lddisp10", DMindex);
+			copy_image_ID("turbs", name, 0);
 		}
    
    //     save_fits("turbs", "!turbs.fits");
