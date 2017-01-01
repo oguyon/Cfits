@@ -1623,7 +1623,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	double dX, dY;
 	double wspeedx, wspeedy;
 	double RMSvaltot;
-	long RMSvalcnt;
+	long RMSvaltotcnt;
 
 
     AOloopControl_DMturb_createconf();
@@ -1713,7 +1713,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	fp = fopen("test.txt", "w");
 	
 	RMSvaltot = 0.0;
-	RMSvalcnt = 0;
+	RMSvaltotcnt = 0;
 	
     while(turbON == 1) // computation loop
     {
@@ -1830,7 +1830,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	{	if(k0init==1)
 		{
 			RMSvaltot += RMSval;
-			RMSvalcnt ++;
+			RMSvaltotcnt ++;
 		}
 	}
         
@@ -1883,7 +1883,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	fclose(fp);
 
 
-	RMSval = RMSvaltot/RMSvalcnt;
+	RMSval = RMSvaltot/RMSvaltotcnt;
 	for(k=0;k<NBsamples;k++)
 		for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
 			data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] *= dmturbconf[DMindex].ampl/RMSval;
