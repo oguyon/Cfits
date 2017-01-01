@@ -1260,7 +1260,7 @@ int AOloopControl_DMturb_createconf()
     long DMindex;
     char errstr[200];
     
-    AOloopControl_DM_loadconf();
+    AOloopControl_DMturb_loadconf();
 
 
     if( dmturb_loaded == 0 )
