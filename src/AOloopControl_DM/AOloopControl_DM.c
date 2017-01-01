@@ -1621,7 +1621,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	long IDout;
 	FILE *fp;
 	double dX, dY;
-
+	double wspeedx, wspeedy;
 
     AOloopControl_DMturb_createconf();
 
@@ -1697,7 +1697,13 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		printf("turb screen size = %f m\n", size_sx*pixscale);
 		printf("->   %10.5f  x  %10.5f screen\n", dX/(size_sx*pixscale), dY/(size_sy*pixscale));
 	
-		
+		dX = (floor( dX/(size_sx*pixscale) + 1000.5 ) - 1000.0) * size_sx*pixscale;
+		dY = (floor( dY/(size_sy*pixscale) + 1000.5 ) - 1000.0) * size_sy*pixscale;
+
+		printf("dX x dY  =    %20f x %20f m\n", dX, dY);
+		wspeedx = dX / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
+		wspeedy = dY / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
+		printf("wspeed = %f x %f m/s\n", wspeedx, wspeedy);
 	}
 	/*
 	
