@@ -1676,6 +1676,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		
 	printf("MODE = %d\n", mode);
 	
+	fp = fopen("test.txt", "w");
+	
     while(turbON == 1) // computation loop
     {
 
@@ -1798,6 +1800,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		{
 			printf("STEP %5ld / %5ld       time = %12.6f    coeff = %18g   RMSval = %18g    %18f x %18f\n", k, NBsamples, tdiff1v, coeff, RMSval, screen0_X, screen0_Y);
 			fflush(stdout);
+			fprintf(fp, "%5k  %12.6f      %18g     %18g    %18f  %18f\n", k, tdiff1v, coeff, RMSval, screen0_X, screen0_Y);
+			
 			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
 				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
 		
@@ -1822,7 +1826,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 			}
 		
     }
-
+	fclose(fp);
 
     return(0);
 }
