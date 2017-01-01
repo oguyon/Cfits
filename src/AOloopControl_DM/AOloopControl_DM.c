@@ -1669,8 +1669,11 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		
 
 	k = 0;
-	turbON = dmturbconf[DMindex].on;
-	
+	if(mode == 0)
+		turbON = dmturbconf[DMindex].on;
+	else
+		turbON = 1;
+		
 	printf("MODE = %d\n", mode);
 	
     while(turbON == 1) // computation loop
