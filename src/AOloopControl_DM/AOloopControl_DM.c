@@ -1592,6 +1592,10 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
     double totim;
     long IDk;
 
+	long k;
+	int turbON;
+	long IDout;
+
 
     AOloopControl_DMturb_createconf();
 
@@ -1636,21 +1640,41 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
     IDturbs1 = create_2Dimage_ID("turbs1", DM_Xsize, DM_Ysize);
     IDturb = create_2Dimage_ID("turbs", DM_Xsize, DM_Ysize);
 
-    while(dmturbconf[DMindex].on == 1) // computation loop
+
+	if(mode==1)
+		IDout = create_3Dimage_ID(IDout_name, DM_Xsize, DM_Ysize, NBsamples);
+		
+
+	k = 0;
+	turbON = dmturbconf[DMindex].on;
+	
+    while(turbON == 1) // computation loop
     {
-        usleep(dmturbconf[DMindex].tint);
 
-        tlast = dmturbconf[DMindex].tend;
-        clock_gettime(CLOCK_REALTIME, &dmturbconf[DMindex].tend);
-        tdiff = time_diff(dmturbconf[DMindex].tstart, dmturbconf[DMindex].tend);
-        tdiff1 =  time_diff(tlast, dmturbconf[DMindex].tend);
-        tdiff1v = 1.0*tdiff1.tv_sec + 1.0e-9*tdiff1.tv_nsec;
+		if(mode==0)
+		{
+			usleep(dmturbconf[DMindex].tint);
 
+			tlast = dmturbconf[DMindex].tend;
+			clock_gettime(CLOCK_REALTIME, &dmturbconf[DMindex].tend);
+			tdiff = time_diff(dmturbconf[DMindex].tstart, dmturbconf[DMindex].tend);
+			tdiff1 =  time_diff(tlast, dmturbconf[DMindex].tend);
+			tdiff1v = 1.0*tdiff1.tv_sec + 1.0e-9*tdiff1.tv_nsec;
+		
+			 dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+		}
+		else
+		{
+			tdiff1v = 1.0e-6*dmturbconf[DMindex].tint*k;
+			
+			dmturbconf[DMindex].simtime = tdiff1v;
+		}
+		
         screen0_X += dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
         screen0_Y += dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
 
 
-        dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        //dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
 
         for(ii=0; ii<DM_Xsize; ii++)
@@ -1726,14 +1750,35 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
         coeff /= pow(10.0,x1/fx1);
 
         
-        printf("STEP 001  %f %f\n", screen0_X, screen0_Y);
-        fflush(stdout);
-        list_image_ID();
+//        printf("STEP 001  %f %f\n", screen0_X, screen0_Y);
+//        fflush(stdout);
         
-        sprintf(name, "dm%02lddisp10", DMindex);
-        copy_image_ID("turbs", name, 0);
-        save_fits("turbs", "!turbs.fits");
-        save_fits("turbs1", "!turbs1.fits");
+		if(mode == 0)
+		{
+			sprintf(name, "dm%02lddisp10", DMindex);
+			copy_image_ID("turbs", name, 0);
+		}
+		else
+		{
+			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
+				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
+		}
+   
+   //     save_fits("turbs", "!turbs.fits");
+   //     save_fits("turbs1", "!turbs1.fits");
+    
+		
+		if(mode==0)
+			turbON = dmturbconf[DMindex].on;
+		else
+			{
+				k ++;
+				if(k<NBsamples)
+					turbON = 1;
+				else
+					turbON = 0;
+			}
+		
     }
 
 
