@@ -1686,11 +1686,15 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	
 	if(mode==1) // force periodic sequence
 	{
+		printf("Wind speed = %f m/s\n", dmturbconf[DMindex].wspeed);
+		printf("angle      = %f rad\n", angle);
 		dX = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*cos(angle);
 		dY = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*sin(angle);
-		printf("dX x dY  =    %20f x %20f m", dX, dY);
+		printf("dX x dY  =    %20f x %20f m\n", dX, dY);
 		printf("turb screen size = %f m\n", size_sx*pixscale);
 		printf("->   %10.5f  x  %10.5f screen\n", dX/(size_sx*pixscale), dX/(size_sx*pixscale));
+	
+		
 	}
 	/*
 	
