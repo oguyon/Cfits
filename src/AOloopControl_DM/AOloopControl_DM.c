@@ -1703,7 +1703,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		printf("dX x dY  =    %20f x %20f m\n", dX, dY);
 		wspeedx = dX / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
 		wspeedy = dY / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
-		printf("wspeed = %f x %f m/s\n", wspeedx, wspeedy);
+		printf("wspeed = %f x %f m/s  -> %f m/s\n", wspeedx, wspeedy, sqrt(wspeedx*wspeedx+wspeedy*wspeedy));
 	}
 	/*
 	
