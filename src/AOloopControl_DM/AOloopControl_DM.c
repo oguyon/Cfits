@@ -1612,6 +1612,9 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
     double totim;
     long IDk;
 
+	long k0 = 100;
+	int k0init = 0;
+	
 	long k;
 	int turbON;
 	long IDout;
@@ -1800,13 +1803,15 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		}
 		else
 		{
+			if(k0init==1)
+			{
 			printf("STEP %5ld / %5ld       time = %12.6f    coeff = %18g   RMSval = %18g    %18f x %18f\n", k, NBsamples, tdiff1v, coeff, RMSval, screen0_X, screen0_Y);
 			fflush(stdout);
 			fprintf(fp, "%5ld  %12.6f      %18g     %18g    %18f  %18f  %18f\n", k, tdiff1v, coeff, RMSval, screen0_X, screen0_Y, dmturbconf[DMindex].wspeed);
 			
 			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
 				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
-		
+			}
 		//	usleep(dmturbconf[DMindex].tint);
 		//	sprintf(name, "dm%02lddisp10", DMindex);
 		//	copy_image_ID("turbs", name, 0);
@@ -1821,6 +1826,12 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		else
 			{
 				k ++;
+				if((k==k0)&&(k0init==0))
+				{
+					k0init = 1;
+					k = 0;
+				}
+				
 				if(k<NBsamples)
 					turbON = 1;
 				else
