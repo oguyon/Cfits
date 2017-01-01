@@ -668,7 +668,7 @@ menutestmode_default="DMton"
 ;;
 
 	DMt2f)
-DMturb_WriteToFile 30
+DMturb_WriteToFile 1000
 menutestmode_default="DMt2f"
 ;;
 
