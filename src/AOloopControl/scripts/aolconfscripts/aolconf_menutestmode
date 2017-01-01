@@ -684,6 +684,7 @@ tmuxname="dm${DMindex}turbstream"
 tmux new-session -d -s $tmuxname
 tmux kill-session -t $tmuxname
 tmux send-keys -t "Cfits" C-m
+tmux send-keys -t "csetpmove aol${LOOPNUMBER}RT2" C-m
 tmux send-keys -t "loadfits \"wfturbC.fits\" wfc" C-m
 tmux send-keys -t "readshmim dm${DMindex}disp10" C-m
 tmux send-keys -t "creaimstream wfc dm${DMindex}disp10 ${dmturbtint}" C-m
