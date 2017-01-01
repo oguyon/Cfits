@@ -237,19 +237,20 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 if [ "${testdmturbstatus}" = "OFF" ];
 then
-menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
-menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
-menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
+	menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
+	menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
+	menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
 else
-if [ "${testdmturbstatus}" = " ON" ];
-menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
-menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
-menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
-else
-menuitems+=( "DMtf2sOFF" "\Z1\Zr             STOP turbulence streaming                     \Zn" )
-menuitems+=( "-" " " )
-menuitems+=( "-" " " )
-fi
+	if [ "${testdmturbstatus}" = " ON" ];
+	then
+		menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
+		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
+		menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
+	else
+		menuitems+=( "DMtf2sOFF" "\Z1\Zr             STOP turbulence streaming                     \Zn" )
+		menuitems+=( "-" " " )
+		menuitems+=( "-" " " )
+	fi
 fi
 
 
