@@ -1622,6 +1622,9 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	FILE *fp;
 	double dX, dY;
 	double wspeedx, wspeedy;
+	double RMSvaltot;
+	long RMSvalcnt;
+
 
     AOloopControl_DMturb_createconf();
 
@@ -1708,6 +1711,9 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	
 	
 	fp = fopen("test.txt", "w");
+	
+	RMSvaltot = 0.0;
+	RMSvalcnt = 0;
 	
     while(turbON == 1) // computation loop
     {
@@ -1814,10 +1820,19 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
             }
         RMSval = sqrt(RMSval/RMSvalcnt);
 
+	if(mode == 0)
+	{
         x1 = log10(RMSval/dmturbconf[DMindex].ampl);
         fx1 = 1.0 + 50.0*exp(-5.0*x1*x1);
         coeff /= pow(10.0,x1/fx1);
-
+	}
+	else
+	{	if(k0init==1)
+		{
+			RMSvaltot += RMSval;
+			RMSvalcnt ++;
+		}
+	}
         
 //        printf("STEP 001  %f %f\n", screen0_X, screen0_Y);
 //        fflush(stdout);
@@ -1866,6 +1881,13 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		
     }
 	fclose(fp);
+
+
+	RMSval = RMSvaltot/RMSvalcnt;
+	for(k=0;k<NBsamples;k++)
+		for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
+			data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] *= dmturbconf[DMindex].ampl/RMSval;
+
 
     return(0);
 }
