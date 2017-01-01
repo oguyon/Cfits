@@ -698,6 +698,11 @@ tmuxname="dm${DMindex}turbstream"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
+$execname << EOF
+readshmim dm${DMindex}disp10
+imzero dm${DMindex}disp10
+quit
+EOF
 menutestmode_default="DMtf2sON"
 ;;
 
