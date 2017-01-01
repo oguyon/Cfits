@@ -1681,6 +1681,17 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		
 	printf("MODE = %d\n", mode);
 	
+	
+	if(mode==1) // force periodic sequence
+	{
+		dX = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*cos(angle);
+		dY = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*sin(angle);
+		printf("dX x dY  =    %20f x %20f m");
+
+		
+	}
+	/*
+	
 	fp = fopen("test.txt", "w");
 	
     while(turbON == 1) // computation loop
@@ -1840,6 +1851,6 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		
     }
 	fclose(fp);
-
+*/
     return(0);
 }
