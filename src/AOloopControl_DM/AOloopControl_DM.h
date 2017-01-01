@@ -130,7 +130,7 @@ int AOloopControl_DM_dmturb_tint(long DMindex, long tint);
 
 int AOloopControl_DM_dmturb_printstatus(long DMindex);
 
-int AOloopControl_DM_dmturb(long DMindex);
+int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples);
 
 
 #endif

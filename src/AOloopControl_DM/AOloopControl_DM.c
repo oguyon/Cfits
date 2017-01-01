@@ -189,7 +189,7 @@ int AOloopControl_DM_dmtrigoff_cli()
 int AOloopControl_DM_dmturb_cli()
 {
     if(CLI_checkarg(1,2)==0)
-        AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl);
+        AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl, 0, "NULL", 0);
     else
         return 1;
 }
@@ -336,7 +336,7 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
     strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturboff");
@@ -1548,11 +1548,11 @@ int make_master_turbulence_screen_local(char *ID_name1, char *ID_name2, long siz
 
 
 
+// mode = 0 : send to DM
+// mode = 1 : write to file, so that it can be later sent to DM
 
 
-
-
-int AOloopControl_DM_dmturb(long DMindex)
+int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)
 {
     long size_sx; // screen size
     long size_sy;
@@ -1739,6 +1739,3 @@ int AOloopControl_DM_dmturb(long DMindex)
 
     return(0);
 }
-
-
-
