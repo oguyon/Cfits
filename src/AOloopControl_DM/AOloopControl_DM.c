@@ -1705,7 +1705,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		wspeedy = dY / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
 		printf("wspeed = %f x %f m/s  -> %f m/s\n", wspeedx, wspeedy, sqrt(wspeedx*wspeedx+wspeedy*wspeedy));
 	}
-	/*
+	
 	
 	fp = fopen("test.txt", "w");
 	
@@ -1738,8 +1738,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		}
 		else
 		{
-			screen0_X = dmturbconf[DMindex].wspeed*tdiff1v*cos(angle); // [m]
-			screen0_Y = dmturbconf[DMindex].wspeed*tdiff1v*sin(angle); // [m]
+			screen0_X = wspeedx*tdiff1v; // [m]
+			screen0_Y = wspeedy*tdiff1v; // [m]
 		}
 
         //dmturbconf[DMindex].simtime = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -1866,6 +1866,6 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		
     }
 	fclose(fp);
-*/
+
     return(0);
 }
