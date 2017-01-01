@@ -1259,7 +1259,8 @@ int AOloopControl_DMturb_createconf()
     char name[200];
     long DMindex;
     char errstr[200];
-    
+
+    AOloopControl_DM_loadconf();    
     AOloopControl_DMturb_loadconf();
 
 
