@@ -1671,6 +1671,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	k = 0;
 	turbON = dmturbconf[DMindex].on;
 	
+	printf("MODE = %d\n", mode);
+	
     while(turbON == 1) // computation loop
     {
 
@@ -1783,6 +1785,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		}
 		else
 		{
+			printf("STEP %ld / %ld\n", k, NBsamples);
+			fflush(stdout);
 			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
 				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
 		
