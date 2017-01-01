@@ -1614,6 +1614,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	long k;
 	int turbON;
 	long IDout;
+	FILE *fp;
 
 
     AOloopControl_DMturb_createconf();
