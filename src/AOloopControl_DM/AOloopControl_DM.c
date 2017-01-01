@@ -1788,7 +1788,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		}
 		else
 		{
-			printf("STEP %ld / %ld\n", k, NBsamples);
+			printf("STEP %ld / %ld       time = %12.6f\n", k, NBsamples, tdiff1v);
 			fflush(stdout);
 			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
 				data.image[IDout].array.F[k*DM_Xsize*DM_Ysize+ii] = data.image[IDturb].array.F[ii];
