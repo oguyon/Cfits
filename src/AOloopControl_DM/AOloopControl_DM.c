@@ -194,6 +194,14 @@ int AOloopControl_DM_dmturb_cli()
         return 1;
 }
 
+int AOloopControl_DM_dmturb2im_cli()
+{
+    if(CLI_checkarg(1,2)+CLI_checkarg(3,2)+CLI_checkarg(3,2)==0)
+        AOloopControl_DM_dmturb(data.cmdargtoken[1].val.numl, 1, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+    else
+        return 1;
+}
+
 int AOloopControl_DM_dmturboff_cli()
 {
     if(CLI_checkarg(1,2)==0)
@@ -335,9 +343,20 @@ int init_AOloopControl_DM()
     data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb_cli;
     strcpy(data.cmd[data.NBcmd].info,"DM turbulence");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)>");
-    strcpy(data.cmd[data.NBcmd].example,"aoloopcontrolDMturb 0");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturb 0");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
     data.NBcmd++;
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturb2im");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_dmturb2im_cli;
+    strcpy(data.cmd[data.NBcmd].info,"DM turbulence to image");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (00-09) <imoutname> <NBsamples>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmturb2im 00 wftout 100000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)");
+    data.NBcmd++;
+
+
 
     strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmturboff");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);

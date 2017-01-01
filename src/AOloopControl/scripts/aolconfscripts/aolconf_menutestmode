@@ -237,8 +237,8 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 if [ "${testdmturbstatus}" = "OFF" ];
 then
-menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ==== \ZB\ZU" )
-menuitems+=( "-" " ")
+menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
+menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
 menuitems+=( "-" " ")
 else
 menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
@@ -666,6 +666,12 @@ menutestmode_default="DMtoff"
 TestStopTurb
 menutestmode_default="DMton"
 ;;
+
+	DMt2f)
+DMturb_WriteToFile 100000
+menutestmode_default="DMt2f"
+;;
+
 	tvdmt)
 tmux a -t aosim${LOOPNUMBER}dm${DMindex}turb
 ;;
