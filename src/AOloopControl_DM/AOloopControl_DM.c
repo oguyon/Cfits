@@ -1574,6 +1574,7 @@ int make_master_turbulence_screen_local(char *ID_name1, char *ID_name2, long siz
 
 int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsamples)
 {
+	float DMsizeM = 10.0; // DM size in meter
     long size_sx; // screen size
     long size_sy;
     long IDs1, IDs2;
@@ -1686,9 +1687,9 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	{
 		dX = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*cos(angle);
 		dY = dmturbconf[DMindex].wspeed*1.0e-6*dmturbconf[DMindex].tint*NBsamples*sin(angle);
-		printf("dX x dY  =    %20f x %20f m");
-
-		
+		printf("dX x dY  =    %20f x %20f m", dX, dY);
+		printf("turb screen size = %f m\n", size_sx*pixscale);
+		printf("->   %10.5f  x  %10.5f screen\n", dX/(size_sx*pixscale), dX/(size_sx*pixscale));
 	}
 	/*
 	
@@ -1735,8 +1736,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
             {
                 ii1 = jj*DM_Xsize+ii;
 
-                x = 10.0*ii/DM_Xsize + screen0_X; // [m]
-                y = 10.0*jj/DM_Ysize + screen0_Y; // [m]
+                x = DMsizeM*ii/DM_Xsize + screen0_X; // [m]
+                y = DMsizeM*jj/DM_Ysize + screen0_Y; // [m]
 
                 xpix = 0.5*size_sx + x/pixscale;
                 ypix = 0.5*size_sy + y/pixscale;
