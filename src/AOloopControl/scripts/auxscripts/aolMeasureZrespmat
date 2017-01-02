@@ -18,8 +18,9 @@ echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-hrc] <ampl[um]> <tdelay[frame]> <nb frames ave> <nb frames excl> <normalize flag>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)            help"
-echo "     $(tput bold)-c$(tput sgr0) <CPUset>   use CPU set"
+echo "     $(tput bold)-h$(tput sgr0)                help"
+echo "     $(tput bold)-c$(tput sgr0) <CPUset>       use CPU set"
+echo "     $(tput bold)-d$(tput sgr0) <delayRM1us>   DM command delay [us]"
 echo "     $(tput bold)-r$(tput sgr0)            (r)e-use AO shared memory structure, do not re-create it"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
@@ -70,8 +71,9 @@ done
 
 AOinitMode="0"      # default
 CPUset="NULL"
+delayRM1us="0"
 
-while getopts :hrc: FLAG; do
+while getopts :hrc:d: FLAG; do
   case $FLAG in
     r) # re-use AO configuration
     AOinitMode="1"
@@ -79,6 +81,9 @@ while getopts :hrc: FLAG; do
     ;;
     c)
     CPUset="$OPTARG"
+    ;;
+    d)
+    delayRM1us="$OPTARG"
     ;;
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -132,7 +137,7 @@ Cfits -n $pname << EOF
 aolnb $loopnb
 csetpmove ${CPUset}
 loadfits "./conf/RMpokeCube.fits" RMpokeCube
-aolmeaszrm $1 $2 $3 $4 zrespmat wfsref0 wfsmap dmmap 1 $5 ${AOinitMode}
+aolmeaszrm $1 $2 ${delayRM1us} $3 $4 zrespmat wfsref0 wfsmap dmmap 1 $5 ${AOinitMode}
 savefits wfsmask "!wfsmask.fits"
 savefits dmmask "!dmmask.fits"
 listim
