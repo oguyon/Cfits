@@ -8984,7 +8984,9 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long
         // initialize with first positive poke
          for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = ampl*data.image[IDpokeC].array.F[actarray[act1]*AOconf[loop].sizeDM+j];
-            
+        
+        
+        usleep(delayRM1us);    
         data.image[aoconfID_dmRM].md[0].write = 1;
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
         data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -9018,7 +9020,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long
                          for(j=0; j<AOconf[loop].sizeDM; j++)
                             arrayf[j] = ampl*PokeSign*data.image[IDpokeC].array.F[actarray[act1]*AOconf[loop].sizeDM+j];
             
-            
+						usleep(delayRM1us);    
                         data.image[aoconfID_dmRM].md[0].write = 1;
                         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
                         data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -9067,6 +9069,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long
                          for(j=0; j<AOconf[loop].sizeDM; j++)
                             arrayf[j] = ampl*PokeSign*data.image[IDpokeC].array.F[actarray[act1]*AOconf[loop].sizeDM+j];
             
+                        usleep(delayRM1us);
                         data.image[aoconfID_dmRM].md[0].write = 1;
                         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
                         data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -9110,6 +9113,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long
                          for(j=0; j<AOconf[loop].sizeDM; j++)
                             arrayf[j] = ampl*PokeSign*data.image[IDpokeC].array.F[actarray[act1]*AOconf[loop].sizeDM+j];
             
+                        usleep(delayRM1us);
                         data.image[aoconfID_dmRM].md[0].write = 1;
                         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
                         data.image[aoconfID_dmRM].md[0].cnt0++;
@@ -9134,6 +9138,7 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long
         for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = 0.0;
             
+        usleep(delayRM1us);
         data.image[aoconfID_dmRM].md[0].write = 1;
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
         data.image[aoconfID_dmRM].md[0].cnt0++;
