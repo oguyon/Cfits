@@ -32,13 +32,13 @@ logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response mat
 tmux new-session -d -s $tmuxname
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -r ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -r -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-echo "./auxscripts/aolMeasureZrespmat ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded"
+echo "./auxscripts/aolMeasureZrespmat -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}"
 }
 
 
@@ -755,6 +755,17 @@ if [ -f "./conf/conf_RMdelayfr.txt" ]; then
 rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
 fi
 menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame(s)" )
+
+
+
+delayRM1us="0"
+if [ -f "./conf/conf_delayRM1us.txt" ]; then
+delayRM1us=$( cat ./conf/conf_delayRM1us.txt )
+fi
+menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
+
+
+
 
 rmfrave=5
 if [ -f "./conf/conf_RMfrave.txt" ]; then
@@ -1796,6 +1807,7 @@ exec 3>&-;
 echo "$rmamplum" > ./conf/conf_RMamplum.txt
 aoconflogext "set RM amplitude $rmamplum um"
 ;;
+
 	rmdelay)
 exec 3>&1;
 rmdelayfr=$(dialog --inputbox "RM time delay [frame]" 0 0 "$rmdelayfr" 2>&1 1>&3);
@@ -1803,6 +1815,16 @@ exec 3>&-;
 echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
 aoconflogext "set RM time delay $rmdelayfr frame"
 ;;
+
+	delayRM1us)
+exec 3>&1;
+delayRM1us=$(dialog --inputbox "RM time delay1 [us]" 0 0 "$delayRM1us" 2>&1 1>&3);
+exec 3>&-;
+echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
+aoconflogext "set RM time delay1 $delayRM1us us"
+;;
+
+
 	rmnbfr)
 exec 3>&1;
 rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
