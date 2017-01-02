@@ -32,12 +32,12 @@ logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response mat
 tmux new-session -d -s $tmuxname
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -r -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-echo "./auxscripts/aolMeasureZrespmat -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}"
 }
 
@@ -1611,6 +1611,7 @@ if [ "$DMMODE" = "ZONAL" ]; then
 rm -rf conf_mrm_staged.$i0
 fi
 
+# save old RMs
 while [ $dirnb -gt 0 ]; do
 i=$(($dirnb))
 i1=$(($dirnb-1))
