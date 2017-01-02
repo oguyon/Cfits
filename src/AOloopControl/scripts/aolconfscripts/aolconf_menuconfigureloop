@@ -1839,9 +1839,9 @@ exec 3>&-;
 echo "$rmexfr" > ./conf/conf_RMexfr.txt
 
 echo "$hardwlatency_frame $rmexfr $loopfrequ" > tmpfile.txt
-rmdelayfr=$( awk '{ printf("%05.3f\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
+rmdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
 echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
-delayRM1us=$( awk '{ printf("%05.3f\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
+delayRM1us=$( awk '{ printf("%d\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
 echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
 aoconflogext "set RM NB frame excluded $rmexfr frames"
 ;;
