@@ -1303,7 +1303,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
     strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode>");
     strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)");
     data.NBcmd++;
 
 
@@ -8762,7 +8762,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
  * AOinitMode = 1:  connect only to AO shared mem struct
  *  */
 
-long Measure_zonalRM(long loop, double ampl, long delayfr, long RMdelay1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)
+long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)
 {
     long ID_WFSmap, ID_WFSref0, ID_WFSref2, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n,  ID_WFSref2n;
     long act, j, ii, kk;
