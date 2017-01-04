@@ -42,7 +42,9 @@ aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdela
 }
 
 
+#
 # arg 1 is time [sec] until zresp process will be stopped
+#
 function function_zresp_off 
 {
 zrespMstat="OFF"
@@ -711,7 +713,14 @@ ACzrmtime="600.0"
 if [ -f "./conf/conf_ACzrmtime.txt" ]; then
 ACzrmtime=$( cat ./conf/conf_ACzrmtime.txt )
 fi
-menuitems+=( "sACzrmt" "            zonal RM running time                 ${ACzrmtime} sec" )
+menuitems+=( "sACzrmt" "            zonal RM maximum running time          ${ACzrmtime} sec" )
+
+ACzrmNBcycle="5"
+if [ -f "./conf/conf_ACzrmNBcycle.txt" ]; then
+ACzrmNBcycle=$( cat ./conf/conf_ACzrmNBcycle.txt )
+fi
+menuitems+=( "sACzrmN" "            zonal RM maximum number of Cycles          ${ACzrmNBcycle} cycle(s)" )
+
 
 if [ "$DMMODE" = "ZONAL" ]; then
 ACmrmtime="60.0"
