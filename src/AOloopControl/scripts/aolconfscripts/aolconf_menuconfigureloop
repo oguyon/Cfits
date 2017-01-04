@@ -1577,6 +1577,17 @@ echo "$ACzrmtime" > ./conf/conf_ACzrmtime.txt
 aoconflogext "set auto calib zrm time to $ACzrmtime sec"
 ;;
 
+sACzrmN) # set ACzrmNBcycle
+exec 3>&1;
+ACzrmNBcycle=$(dialog --inputbox "Auto calib zRM NBcycle" 0 0 "$ACzrmNBcycle" 2>&1 1>&3);
+exec 3>&-;
+echo "$ACzrmNBcycle" > ./conf/conf_ACzrmtime.txt
+aoconflogext "set auto calib zrm NBcycle to $ACzrmNBcycle"
+;;
+
+
+
+
 sACmrmt)
 exec 3>&1;
 ACmrmtime=$(dialog --inputbox "Auto calib mRM time" 0 0 "$ACmrmtime" 2>&1 1>&3);
@@ -1584,6 +1595,16 @@ exec 3>&-;
 echo "$ACmrmtime" > ./conf/conf_ACmrmtime.txt
 aoconflogext "set auto calib mrm time to $ACmrmtime sec"
 ;;
+
+sACmrmN) # set ACmrmNBcycle
+exec 3>&1;
+ACmrmNBcycle=$(dialog --inputbox "Auto calib mRM NBcycle" 0 0 "$ACmrmNBcycle" 2>&1 1>&3);
+exec 3>&-;
+echo "$ACmrmNBcycle" > ./conf/conf_ACmrmtime.txt
+aoconflogext "set auto calib mrm NBcycle to $ACmrmNBcycle"
+;;
+
+
 
 ACstopK)
 if [ "$DMMODE" = "ZONAL" ]; then
