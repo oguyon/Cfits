@@ -51,6 +51,7 @@ aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdela
 function function_zresp_off 
 {
 zrespMstat="OFF"
+echo "OFF" > ./status/stat_zrespM.txt
 tmuxname="aol${LOOPNUMBER}zrespMc"
 tmux new-session -d -s ${tmuxname}
 #tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
@@ -307,6 +308,8 @@ else
 fi
 echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
+
+tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
 tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
 }
 
