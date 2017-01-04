@@ -733,7 +733,7 @@ ACmrmtime="60.0"
 if [ -f "./conf/conf_ACmrmtime.txt" ]; then
 ACmrmtime=$( cat ./conf/conf_ACmrmtime.txt )
 fi
-menuitems+=( "sACmrmt" "            Modal RM running time                 ${ACmrmtime} sec" )
+menuitems+=( "sACmrmt" "            Modal RM maximum running time          ${ACmrmtime} sec" )
 
 ACmrmNBcycle="5"
 if [ -f "./conf/conf_ACmrmNBcycle.txt" ]; then
