@@ -292,6 +292,7 @@ fi
 function function_LOresp_on_tmux ()
 {
 LOrespMstat=" ON"
+rm function_LOresp_off.wait
 tmux new-session -d -s $1
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t $1 "echo \" ON\" > ./status/stat_LOrespM.txt" C-m
@@ -300,11 +301,11 @@ tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-echo "./auxscripts/aolMeasureLOrespmat ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
 tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
 }
@@ -316,15 +317,15 @@ function function_LOresp_off_tmux ()
 tmux new-session -d -s $1
 LOrespMstat="OFF"
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_off_tmux.lock" C-m
-
-tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
-tmux send-keys -t ${tmuxname} "sleep $2 && touch function_LOresp_off.wait &" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek function_LOresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "sleep $2 && touch function_LOresp_off.wait &" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_LOresp_off.wait" C-m
 
 tmux send-keys -t $1 "pkill -USR1 aol${LOOPNUMBER}LOrespM" C-m
 tmux send-keys -t $1 "echo \"OFF\" > ./status/stat_LOrespM.txt" C-m
 tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
-tmux send-keys -t $1 "sleep 0.5" C-m
+tmux send-keys -t $1 "sleep 0.2" C-m
+tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
 tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
 echo "./auxscripts/aolCleanLOrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
@@ -717,13 +718,14 @@ ACzrmtime="600.0"
 if [ -f "./conf/conf_ACzrmtime.txt" ]; then
 ACzrmtime=$( cat ./conf/conf_ACzrmtime.txt )
 fi
-menuitems+=( "sACzrmt" "            zonal RM maximum running time          ${ACzrmtime} sec" )
+menuitems+=( "sACzrmt" "            Zonal RM maximum running time          ${ACzrmtime} sec" )
 
 ACzrmNBcycle="5"
 if [ -f "./conf/conf_ACzrmNBcycle.txt" ]; then
 ACzrmNBcycle=$( cat ./conf/conf_ACzrmNBcycle.txt )
 fi
-menuitems+=( "sACzrmN" "            zonal RM maximum number of Cycles          ${ACzrmNBcycle} cycle(s)" )
+menuitems+=( "sACzrmN" "            Zonal RM maximum number of Cycles      ${ACzrmNBcycle} cycle(s)" )
+
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -731,8 +733,15 @@ ACmrmtime="60.0"
 if [ -f "./conf/conf_ACmrmtime.txt" ]; then
 ACmrmtime=$( cat ./conf/conf_ACmrmtime.txt )
 fi
-menuitems+=( "sACmrmt" "            modal RM running time                 ${ACmrmtime} sec" )
+menuitems+=( "sACmrmt" "            Modal RM running time                 ${ACmrmtime} sec" )
+
+ACmrmNBcycle="5"
+if [ -f "./conf/conf_ACmrmNBcycle.txt" ]; then
+ACmrmNBcycle=$( cat ./conf/conf_ACmrmNBcycle.txt )
 fi
+menuitems+=( "sACmrmN" "            Monal RM maximum number of Cycles      ${ACmrmNBcycle} cycle(s)" )
+fi
+
 
 
 if [ -f "autocalibration.runproc" ]; then
