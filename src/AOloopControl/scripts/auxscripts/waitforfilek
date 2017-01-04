@@ -16,7 +16,8 @@ echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h] <fname>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-t$(tput sgr0) <delaysec>   maximum wait time (default 10hr)"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "   <fname>    file name"
@@ -49,7 +50,9 @@ singlelinehelp=1;
 done
 
 
-while getopts :h FLAG; do
+MaxWait="36000"
+
+while getopts :ht: FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -59,6 +62,9 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+    t)
+    MaxWait="$OPTARG"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -88,16 +94,17 @@ fi
 
 
 
-
+cntlim=$(($MaxWait*10))
 
 
 init="0"
-
-while [ ! -f $1 ]; do 
+cnt=0
+while [[ ! -f $1 ]] && [[ "$cnt" -lt "${cntlim}" ]]; do 
 if [ "$init" -eq "0" ]; then
 init="1"
 echo "waiting for file \"$1\""
 fi
 sleep 0.1; 
+let cnt+=1
 done
 rm $1

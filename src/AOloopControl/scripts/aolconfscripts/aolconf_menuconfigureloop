@@ -26,6 +26,7 @@ fi
 function function_zresp_on {
 zrespMstat=" ON"
 tmuxname="aol${LOOPNUMBER}zrespM"
+rm function_zresp_off.wait
 echo " ON" > ./status/stat_zrespM.txt
 logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response matrix"
 
@@ -36,6 +37,8 @@ then # use option -r to re-use AO shared memory configuration
 else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
+
+tmux send-keys -t ${tmuxname} "touch function_zresp_off.wait" C-m
 
 echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
@@ -50,14 +53,15 @@ function function_zresp_off
 zrespMstat="OFF"
 tmuxname="aol${LOOPNUMBER}zrespMc"
 tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
-tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek function_zresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
+#tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_zresp_off.wait" C-m
 tmux send-keys -t ${tmuxname} "pkill -USR1 aol${LOOPNUMBER}zrespM" C-m
 tmux send-keys -t ${tmuxname} "echo \"OFF\" > ./status/stat_zrespM.txt" C-m
 tmux send-keys -t ${tmuxname} "rm aolMeasureZrespmat.runproc" C-m
-tmux send-keys -t ${tmuxname} "sleep 0.5" C-m
-aoconflogext "STOP HO RM acquision in $1 sec"
+tmux send-keys -t ${tmuxname} "sleep 0.2" C-m
+tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
+aoconflogext "STOP HO RM acquision in $1 sec max"
 
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
 logRunningProcess "aolCleanZrespmat" "$tmuxname" "Process zonal response matrix"
