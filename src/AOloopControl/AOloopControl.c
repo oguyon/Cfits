@@ -488,9 +488,9 @@ int AOloopControl_TestDMmodes_Recovery_cli()
 
 int Measure_zonalRM_cli()
 {
-    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)==0)
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
     {
-        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl);
+        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
         return 0;
     }
     else
@@ -1301,9 +1301,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = Measure_zonalRM_cli;
     strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode> <NBcycle>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)");
     data.NBcmd++;
 
 
@@ -8762,7 +8762,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
  * AOinitMode = 1:  connect only to AO shared mem struct
  *  */
 
-long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode)
+long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)
 {
     long ID_WFSmap, ID_WFSref0, ID_WFSref2, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n,  ID_WFSref2n;
     long act, j, ii, kk;
@@ -8806,6 +8806,13 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long
 	#endif
 
 
+	if(NBcycle < 1)
+		NBiter = LONG_MAX; // runs until USR1 signal received
+	else
+		NBiter = NBcycle;
+		
+		
+	
     arraypix = (float*) malloc(sizeof(float)*NBiter);
     sizearray = (long*) malloc(sizeof(long)*3);
 	
