@@ -1581,8 +1581,9 @@ sACzrmN) # set ACzrmNBcycle
 exec 3>&1;
 ACzrmNBcycle=$(dialog --inputbox "Auto calib zRM NBcycle" 0 0 "$ACzrmNBcycle" 2>&1 1>&3);
 exec 3>&-;
-echo "$ACzrmNBcycle" > ./conf/conf_ACzrmtime.txt
+echo "$ACzrmNBcycle" > ./conf/conf_ACzrmNBcycle.txt
 aoconflogext "set auto calib zrm NBcycle to $ACzrmNBcycle"
+menucontrolloop_default="sACzrmN"
 ;;
 
 
@@ -1600,8 +1601,9 @@ sACmrmN) # set ACmrmNBcycle
 exec 3>&1;
 ACmrmNBcycle=$(dialog --inputbox "Auto calib mRM NBcycle" 0 0 "$ACmrmNBcycle" 2>&1 1>&3);
 exec 3>&-;
-echo "$ACmrmNBcycle" > ./conf/conf_ACmrmtime.txt
+echo "$ACmrmNBcycle" > ./conf/conf_ACmrmNBcycle.txt
 aoconflogext "set auto calib mrm NBcycle to $ACmrmNBcycle"
+menucontrolloop_default="sACmrmN"
 ;;
 
 
