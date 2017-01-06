@@ -20,6 +20,7 @@
 #include "AOloopControl_DM/AOloopControl_DM.h"
 #include "AOsystSim/AOsystSim.h"
 #include "AOloopControl/AOloopControl.h"
+#include "FPAOloopControl/FPAOloopControl.h"
 #include "psf/psf.h"
 #include "AtmosphereModel/AtmosphereModel.h"
 #include "AtmosphericTurbulence/AtmosphericTurbulence.h"
@@ -55,6 +56,7 @@ int init_modules()
   init_AOloopControl_DM();
   init_AOsystSim();
   init_AOloopControl();
+  init_FPAOloopControl();
   init_psf();
   init_AtmosphereModel();
   init_AtmosphericTurbulence();

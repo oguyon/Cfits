@@ -410,6 +410,20 @@ menuitems+=( "-" " " )
 menuitems+=( "-" " STATIC TEST " )
 menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
 
+
+inj0pONstat=$( cat ./status/stat_inj0pON.txt )
+if [[ -f "./status/stat_inj0pON.txt" && ( "$inj0pONstat" = " ON" || "$inj0pONstat" = "OFF" ) ]]; then
+echo "OK"
+else
+echo "OFF" > ./status/stat_inj0pON.txt
+inj0pONstat="OFF"
+fi
+if [ "$inj0pONstat" = "OFF" ]; then
+menuitems+=( "inj0pON" "\Zb\Zu ==== START Test mode periodic inject ====\ZB\ZU" )
+else
+menuitems+=( "inj0pOFF" "\Z1\Zr    STOP Test mode periodic inject \Zn" )
+fi
+
 menuitems+=( "inj" "Inject single mode ${testModeNb} (fmodesall basis), amplitude ${testModeAmp} to RM channel" )
 
 
@@ -919,7 +933,35 @@ tmux send-keys -t $tmuxname "dmo=${testModeAmp}*modec_$modenb" C-m
 tmux send-keys -t $tmuxname "cp dmo aol${LOOPNUMBER}_dmRM" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 	;;
-	
+
+
+    inj0pON)
+tmuxname="aol${LOOPNUMBER}modeinj0p"
+aoconflog "START periodic inject mode from fmodes0all basis"
+tmux new-session -d -s ${tmuxname}
+modenb=$( printf "%05ld" ${testModeNb} )
+tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}modeinj0" C-m
+tmux send-keys -t $tmuxname "loadfits \"mkmodestmp/fmodes0all.fits\" modec" C-m
+tmux send-keys -t $tmuxname "breakcube modec" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
+tmux send-keys -t $tmuxname "imz=0+aol${LOOPNUMBER}_dmRM" C-m
+tmux send-keys -t $tmuxname "dmo=${testModeAmp}*modec_$modenb" C-m
+tmux send-keys -t $tmuxname "merge3d imz dmo dmc" C-m
+tmux send-keys -t $tmuxname "creaimstream dmc aol${LOOPNUMBER}_dmRM ${testModeDelay}" C-m
+tmux send-keys -t $tmuxname "exit" C-m
+menutestmode_default="inj0pOFF"
+	;;
+
+
+    inj0pOFF)
+tmuxname="aol${LOOPNUMBER}modeinj0p"
+aoconflog "STOP periodic inject mode from fmodes0all basis"
+tmux send-keys -t $tmuxname "" C-c
+tmux send-keys -t $tmuxname "exit" C-m
+tmux kill-session -t $tmuxname
+menutestmode_default="inj0pON"
+	;;
+
 	
     inj)
 tmuxname="aol${LOOPNUMBER}modeinj"

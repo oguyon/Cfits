@@ -51,10 +51,13 @@ SUBDIRS += AtmosphereModel
 cfitsTK_LDADD += AtmosphereModel/libatmospheremodel.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AtmosphereModel
 
-
 SUBDIRS += psf
 cfitsTK_LDADD += psf/libpsf.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/psf
+
+SUBDIRS += FPAOloopControl
+cfitsTK_LDADD += FPAOloopControl/libfpaoloopcontrol.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/FPAOloopControl
 
 SUBDIRS += AOloopControl
 cfitsTK_LDADD += AOloopControl/libaoloopcontrol.la
