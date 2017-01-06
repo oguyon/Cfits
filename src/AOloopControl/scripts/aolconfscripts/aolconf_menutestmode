@@ -937,6 +937,7 @@ tmux send-keys -t $tmuxname "exit" C-m
 
     inj0pON)
 tmuxname="aol${LOOPNUMBER}modeinj0p"
+echo " ON" > ./status/stat_inj0pON.txt
 aoconflog "START periodic inject mode from fmodes0all basis"
 tmux new-session -d -s ${tmuxname}
 modenb=$( printf "%05ld" ${testModeNb} )
@@ -955,10 +956,17 @@ menutestmode_default="inj0pOFF"
 
     inj0pOFF)
 tmuxname="aol${LOOPNUMBER}modeinj0p"
+echo "OFF" > ./status/stat_inj0pON.txt
 aoconflog "STOP periodic inject mode from fmodes0all basis"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
 tmux kill-session -t $tmuxname
+sleep 0.5
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_dmRM
+imzero aol${LOOPNUMBER}_dmRM
+exit
+EOF
 menutestmode_default="inj0pON"
 	;;
 
