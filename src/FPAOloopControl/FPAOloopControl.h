@@ -6,27 +6,39 @@
 
 typedef struct
 {
+    char name[80];
+	
 	// DM stream
-	long dmRM_ID;
-	long dmC_ID;
+    char dmCname[80];
+    char dmRMname[80];
 	long dmxsize;
 	long dmysize;
+	long dmsize;
 	
 	// Focal plane image stream
-	long FPim_ID;
-	long FPim_dark_ID;
-	long fpimxsize;
-	long fpimysize;
+	char WFSname[80];
+	long sizexWFS;
+	long sizeyWFS;
+	long sizeWFS;
 	
-	float fpim_frequ;
-	float fpim_hardwlatency;
+	// timing info
+	float loopfrequ; // Hz
+	float hardwlatency; // hardware latency between DM command and WFS response [sec] 
+	float hardwlatency_frame; // hardware latency between DM command and WFS response 
 	
 	
-	// response calibration
-	double fpim_normFlux; // total focal plane flux in the absence of a coronagraph
+	// ============= RESPONSE CALIBRATION ===================
+	float fpim_normFlux; // total focal plane flux in the absence of a coronagraph
+	float fpim_Xcent;
+	float fpim_Ycent;
 	
-	long IDrespMat_act2amp; // response matrix: actuator to complex amplitude
-	long IDrespMat_act2pha;
+
+	// ======= LEVEL 1 CALIBRATION ==============
+	// Each actuator influence function has the same amplitude, phase is ramp set accordingly to actuator position
+	// to be acquired without coronagraph
+
+	
+	
 	
 } FPAOLOOPCONTROL_CONF;
 
@@ -37,13 +49,17 @@ int init_FPAOloopControl();
 
 
 
-
-long FPAOloopControl_initMem(long loop, char *IDdmRM_name, char *IDdmC_name, char *IDfpim_name, char *IDfpim_dark_name, int mode);
+long FPAOloopControl_InitializeMemory(int mode);
+int FPAOloopControl_loadconfigure(long loop, int mode, int level);
 
 
 // RM Calibration
 
-// Each actuator is a 
+// level 1
+// Each actuator influence function has the same amplitude, phase is ramp set accordingly to actuator position
+// to be acquired without coronagraph
+long FPAOloopControl_acquireRM_level1(float ampl);
+
 
 
 #endif

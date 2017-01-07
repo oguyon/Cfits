@@ -236,8 +236,8 @@ int AOlooploadconf_init = 0;
 
 #define AOconfname "/tmp/AOconf.shm"
 AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
-int *AOconf_loaded = 0;
-int *AOconf_fd; 
+
+
 
 float *arrayftmp;
 unsigned short *arrayutmp;
@@ -7057,52 +7057,6 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-    // Allocate / create logging data files/memory
-    /*   if(read_config_parameter(config_fname, "logdir", content)==0)
-       {
-           printf("parameter logdir missing\n");
-           exit(0);
-       }
-       strcpy(AOconf[loop].logdir, content);
-       if(read_config_parameter(config_fname, "logsize", content)==0)
-       {
-           printf("parameter logsize missing\n");
-           exit(0);
-       }
-       AOconf[loop].logsize = atol(content);*/
-    // time [s]       (1)
-    // gains          ( AOconf[loop].NBDMmodes )
-    // ID_cmd_modes   ( AOconf[loop].NBDMmodes )
-    // ID_meas_modes  ( AOconf[loop].NBDMmodes )
-
-    /*    sizearray[0] = 1+3*AOconf[loop].NBDMmodes;
-        sizearray[1] = AOconf[loop].logsize;
-        sprintf(name, "loop%ldlog0", loop);
-        aoconfIDlog0 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
-        ID = aoconfIDlog0;
-        data.image[ID].md[0].NBkw = 1;
-        kw = 0;
-        strcpy(data.image[ID].kw[kw].name, "TIMEORIGIN");
-        data.image[ID].kw[kw].type = 'L';
-        data.image[ID].kw[kw].value.numl = 0;
-        strcpy(data.image[ID].kw[kw].comment, "time offset [sec]");
-
-        sprintf(name, "loop%ldlog1", loop);
-        aoconfIDlog1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 10);
-        ID = aoconfIDlog1;
-        data.image[ID].md[0].NBkw = 1;
-        kw = 0;
-        strcpy(data.image[ID].kw[kw].name, "TIMEORIGIN");
-        data.image[ID].kw[kw].type = 'L';
-        data.image[ID].kw[kw].value.numl = 0;
-        strcpy(data.image[ID].kw[kw].comment, "time offset [sec]");
-    */
-
-
-    /*    AOconf[loop].logcnt = 0;
-        AOconf[loop].logfnb = 0;
-        strcpy(AOconf[loop].userLOGstring, "");
-    */
     
 
     printf("%ld modes\n", AOconf[loop].NBDMmodes);
@@ -13301,7 +13255,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		}
 	
 		blockstatcnt ++;
-		if(blockstatcnt==AOconf[loop].AveStats_NBpt)
+		if(blockstatcnt == AOconf[loop].AveStats_NBpt)
 			{
 				for(block=0;block<AOconf[loop].DMmodesNBblock; block++)
 				{

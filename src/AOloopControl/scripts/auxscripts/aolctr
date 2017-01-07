@@ -98,15 +98,16 @@ echo "readshmim aol${loopnb}_wfsdark" >> aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_imWFS0" >> aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_imWFS1" >> aol${loopnb}startup.txt
 echo "readshmim aol${loopnb}_imWFS2" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_cmd" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_cmd1" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_cmd" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_cmd1" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_AVE" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_RMS" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_GAIN" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_LIMIT" >> aol${loopnb}startup.txt
-echo "readshmim aol${loopnb}_DMmode_MULTF" >> aol${loopnb}startup.txt
+
+#echo "readshmim aol${loopnb}_cmd" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_cmd1" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_cmd" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_cmd1" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_AVE" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_RMS" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_GAIN" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_LIMIT" >> aol${loopnb}startup.txt
+#echo "readshmim aol${loopnb}_DMmode_MULTF" >> aol${loopnb}startup.txt
 
 
 #echo "loadfits \"./conf/respm.fits\" respm" >> aol${loopnb}startup.txt

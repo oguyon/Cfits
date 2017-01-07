@@ -10,13 +10,13 @@ echo "pname = $pname"
 
 
 
-filelist="aolconf"
-dirlist="aolconfscripts auxscripts aohardsim aocustomscripts aosetup"
+filelist="FPaolconf"
+dirlist="FPaolconfscripts FPauxscripts FPaohardsim FPaocustomscripts FPaosetup"
 
 printHELP ()
 {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : SYNC AOloopControl scripts $(tput sgr0)"
+echo "$(tput bold) $pname : SYNC FPAOloopControl scripts $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  "
 echo " $(tput bold)USAGE:$(tput sgr0)"
@@ -78,13 +78,13 @@ fi
 
 
 echo ""
-echo "SYNCING AOloopControl scripts..."
+echo "SYNCING FPAOloopControl scripts..."
 echo ""
 
 
 for file in ${filelist[*]}
 do
-	srcfile="$HOME/src/Cfits/src/AOloopControl/scripts/$file"
+	srcfile="$HOME/src/Cfits/src/FPAOloopControl/scripts/$file"
 	echo "syncing file $srcfile -> $file"
 	ln -fs $srcfile $file	
 done
@@ -92,7 +92,7 @@ done
 for dir in ${dirlist[*]}
 do
 	mkdir -p $dir
-	srcdir="$HOME/src/Cfits/src/AOloopControl/scripts/$dir"
+	srcdir="$HOME/src/Cfits/src/FPAOloopControl/scripts/$dir"
 	for entry in "$srcdir"/*
 	do
 	filename="${entry##*/}"	
