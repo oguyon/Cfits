@@ -232,8 +232,15 @@ long FPAOloopControl_initMem(long loop, char *IDdmRM_name, char *IDdmC_name, cha
 	FPAOconf[loop].fpimxsize = data.image[FPAOconf[loop].FPim_ID].md[0].size[0];
 	FPAOconf[loop].fpimysize = data.image[FPAOconf[loop].FPim_ID].md[0].size[1];
 
-	FPAOconf_init = 1;
+
+
+	// Calibration
 	
+	FPAOconf[loop].IDrespMat_act2amp = -1;
+	FPAOconf[loop].IDrespMat_act2pha = -1;
+
+	FPAOconf_init = 1;
+
 
     return(0);
 }
