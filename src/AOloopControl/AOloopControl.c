@@ -6445,7 +6445,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     
     FILE *fplog; // human-readable log of load sequence
 
-    if((fplog=fopen("loadconf.log","w"))==NULL)
+    if((fplog=fopen("loadconf.log", "w"))==NULL)
     {
         printf("ERROR: file loadconf.log missing\n");
         exit(0);
@@ -7033,7 +7033,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     {
 		sprintf(fname, "./conf/conf_blockoffset_%ld.txt", k); 
 		fp = fopen(fname, "w");
-		fprintf(fp, "%ld", AOconf[loop].indexmaxMB[k-1]);
+		fprintf(fp, "%ld\n", AOconf[loop].indexmaxMB[k-1]);
+		fprintf(fp, "%ld\n", AOconf[loop].NBmodes_block[k]);
 		fclose(fp);
 	}
     
@@ -7248,8 +7249,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
     list_image_ID();
     printf(" AOconf[loop].activeWFScnt = %ld\n", AOconf[loop].activeWFScnt );
-     printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
-   printf("   init_WFSref0    %d\n", AOconf[loop].init_wfsref0);
+    printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
+    printf("   init_WFSref0    %d\n", AOconf[loop].init_wfsref0);
     printf("   init_RM        %d\n", AOconf[loop].init_RM);
     printf("   init_CM        %d\n", AOconf[loop].init_CM);
 
@@ -11894,7 +11895,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
         printw("%3ld", k);
         attroff(A_BOLD);
 		
-		printw("    %4ld [ %4ld - %4ld ]   %5.3f  %7.5f  %5.3f", AOconf[loop].NBmodes_block[k], kmin, AOconf[loop].indexmaxMB[k], AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
+		printw("    %4ld [ %4ld - %4ld ]   %5.3f  %7.5f  %5.3f", AOconf[loop].NBmodes_block[k], kmin, AOconf[loop].indexmaxMB[k]-1, AOconf[loop].gainMB[k], AOconf[loop].limitMB[k], AOconf[loop].multfMB[k]);
 		printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
 
 		attron(A_BOLD);
