@@ -7401,6 +7401,9 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
 
         initcontrMcact_GPU[0] = 0;
     }
+    
+    
+    AOconf[loop].gainMB[blocknb] = gain;
     // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
     // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
 
