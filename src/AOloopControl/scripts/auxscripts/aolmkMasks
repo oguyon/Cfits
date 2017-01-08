@@ -162,7 +162,7 @@ fi
 
 
 
-
+stageddir="conf_zrm_staged"
 
 
 Cfits << EOF
