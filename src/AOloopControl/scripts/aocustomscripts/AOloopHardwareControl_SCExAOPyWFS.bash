@@ -222,7 +222,7 @@ state="menuhardwarecontrol"
 
 case $retval in
    0) # button
-menualign_default="$choiceval"
+menucontrolhardware_default="$choiceval"
 	case $choiceval in
 
 
@@ -231,7 +231,7 @@ dmVmax=" 25"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
-aolsetdmDC 00 ${dmVmax025}
+aolsetdmDC 00 ${dmDCum025}
 exit
 EOF
 ;;
@@ -241,7 +241,7 @@ dmVmax=" 50"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
-aolsetdmDC 00 ${dmVmax050}
+aolsetdmDC 00 ${dmDCum050}
 exit
 EOF
 ;;
@@ -251,7 +251,7 @@ dmVmax=" 75"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
-aolsetdmDC 00 ${dmVmax075}
+aolsetdmDC 00 ${dmDCum075}
 exit
 EOF
 ;;
@@ -261,7 +261,7 @@ dmVmax="100"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
-aolsetdmDC 00 ${dmVmax100}
+aolsetdmDC 00 ${dmDCum100}
 exit
 EOF
 ;;
@@ -271,7 +271,7 @@ dmVmax="125"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
-aolsetdmDC 00 ${dmVmax125}
+aolsetdmDC 00 ${dmDCum125}
 exit
 EOF
 ;;
@@ -281,7 +281,7 @@ dmVmax="150"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
-aolsetdmDC 00 ${dmVmax150}
+aolsetdmDC 00 ${dmDCum150}
 exit
 EOF
 ;;
