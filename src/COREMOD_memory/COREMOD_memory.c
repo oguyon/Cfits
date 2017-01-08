@@ -5193,6 +5193,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     int semval;
     int semnb;
 	int OKim;
+	int axis;
+	
 	
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
