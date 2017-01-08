@@ -2041,6 +2041,7 @@ imzero aol${LOOPNUMBER}_modeval_dm_now_filt
 
 exit
 EOF
+sleep 5
 aoconflogext "zeroing DM correction"
 ;;
 
