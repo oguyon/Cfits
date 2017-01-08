@@ -457,7 +457,7 @@ TTposY=$( cat status/stat_AnalogVoltage_C.txt )
 TTposXref=$( cat status/stat_AnalogVoltage_Dref.txt )
 TTposYref=$( cat status/stat_AnalogVoltage_Cref.txt )
 
-stringcenter "Pyramid TT align"
+stringcenter "Pyramid TT align ( 90.3 mas/V )"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " " "Current position ( scale = 90.3 mas/V ) = $TTposX  $TTposY" )
@@ -502,7 +502,7 @@ menuitems+=( "" "" )
 
 
 
-stringcenter "Pyramid Camera Align"
+stringcenter "Pyramid Camera Align ( 5925 steps / pix )"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( "pz" "Zero Pcam align  ( $pywfsreimagexposref $pywfsreimageyposref )" )
