@@ -196,7 +196,7 @@ fi
 
 stringcenter "Science IRcam"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
-menuitems+=( "" "" )
+menuitems+=( " " " " )
 
 
 
@@ -222,7 +222,7 @@ state="menuhardwarecontrol"
 
 case $retval in
    0) # button
-menucontrolhardware_default="$choiceval"
+menuhardwarecontrol_default="$choiceval"
 	case $choiceval in
 
 
