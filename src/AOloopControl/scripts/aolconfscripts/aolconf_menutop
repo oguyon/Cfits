@@ -345,7 +345,7 @@ stringcenter "CUSTOM EXTERNAL SCRIPTS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 menuitems+=( "A" "Align")
-
+menuitems+=( "HC" "Hardware Control")
 
 
 
@@ -721,6 +721,7 @@ AOloadMem 1
 # ===========================================  CUSTOM EXTERNAL SCRIPTS ================================================
 # =====================================================================================================================
    	 A) state="menualign";;
+   	 HC) state="menuhardwarecontrol";;
 
 	esac;;
    1) state="menuexit";;   
@@ -738,6 +739,15 @@ fi
 if [ $state = "menualign" ]; then
 stateok=1
 . ./aocustomscripts/AOloopAlign_${LOOPNAME}.bash
+state="menutop"
+fi
+
+
+
+
+if [ $state = "menuhardwarecontrol" ]; then
+stateok=1
+. ./aocustomscripts/AOloopHardwareControl_${LOOPNAME}.bash
 state="menutop"
 fi
 
