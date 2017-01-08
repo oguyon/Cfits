@@ -195,7 +195,7 @@ fi
 
 
 stringcenter "Science IRcam"
-menuitems=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "" "" )
 
 
