@@ -112,7 +112,7 @@ EOF
 
 
 Cfits << EOF
-loadfits dmmaskRM.fits dmmRM
+loadfits "$1" dmmRM
 loadfits dmslaved.fits dmsl
 imtrunc dmsl 0.0 1.0 dmsl1
 dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
