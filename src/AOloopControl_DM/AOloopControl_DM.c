@@ -1687,7 +1687,7 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 	printf("MODE = %d\n", mode);
 	
 	
-	if(mode==1) // force periodic sequence
+	if(mode==1) // force periodic sequence if wind speed is sufficiently large
 	{
 		printf("Wind speed = %f m/s\n", dmturbconf[DMindex].wspeed);
 		printf("angle      = %f rad\n", angle);
@@ -1706,6 +1706,13 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		printf("dX x dY  =    %20f x %20f m\n", dX, dY);
 		wspeedx = dX / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
 		wspeedy = dY / (1.0e-6*dmturbconf[DMindex].tint*NBsamples);
+		
+		if(sqrt(wspeedx*wspeedx+wspeedy*wspeedy)<0.0001)
+			{				
+				wspeedx = dmturbconf[DMindex].wspeed*cos(angle);
+				wspeedy = dmturbconf[DMindex].wspeed*sin(angle);
+			}
+		
 		printf("wspeed = %f x %f m/s  -> %f m/s\n", wspeedx, wspeedy, sqrt(wspeedx*wspeedx+wspeedy*wspeedy));
 	}
 	
@@ -1846,8 +1853,8 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, char *IDout_name, long NBsam
 		{
 			if(k0init==1)
 			{
-			printf("STEP %5ld / %5ld       time = %12.6f    coeff = %18g   RMSval = %18g    %18f x %18f\n", k, NBsamples, tdiff1v, coeff, RMSval, screen0_X, screen0_Y);
-			fflush(stdout);
+			//printf("STEP %5ld / %5ld       time = %12.6f    coeff = %18g   RMSval = %18g    %18f x %18f\n", k, NBsamples, tdiff1v, coeff, RMSval, screen0_X, screen0_Y);
+			//fflush(stdout);
 			//fprintf(fp, "%5ld  %12.6f      %18g     %18g    %18f  %18f  %18f\n", k, tdiff1v, coeff, RMSval, screen0_X, screen0_Y, dmturbconf[DMindex].wspeed);
 			
 			for(ii=0;ii<DM_Xsize*DM_Ysize;ii++)
