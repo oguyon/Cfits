@@ -120,7 +120,7 @@ stateok=0
 mkdir -p status
 
 
-if [ $state = "menualign" ]; then
+if [ $state = "menuhardwarecontrol" ]; then
 stateok=1
 menuname="HARDWARE CONTROL - LOOP ${LOOPNAME} ($LOOPNUMBER})\n"
 
