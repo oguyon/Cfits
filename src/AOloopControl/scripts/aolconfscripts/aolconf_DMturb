@@ -64,10 +64,12 @@ fi
 
 function DMturb_WriteToFile {
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}mkturb"
+logRunningProcess "dmmkturb2file" "$tmuxname" "Creating DM turbulence sequence"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturb2im ${DMindex} wftout $1" C-m
 tmux send-keys -t $tmuxname "savefits wftout \"!wfturbC.fits\"" C-m
 tmux send-keys -t $tmuxname "exit" C-m
+tmux send-keys -t $tmuxname "rm dmmkturb2file.runproc" C-m
 }
