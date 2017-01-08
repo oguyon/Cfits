@@ -149,8 +149,10 @@ menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "" "" )
 
 menuitems+=( "" "" )
+menuitems+=( "dmrs" "Re-start all DM processes" )
+menuitems+=( "dmk" "Kill all DM processes" )
 
-
+menuitems+=( "" "" )
 if [ "$dmVmax" = " 25" ]; then
 menuitems+=( "dmVmax025" "\Zr\Z2 dmVmax =  25 V  (DC level = ${dmDCum025} um)\Zn" )
 else
@@ -190,6 +192,7 @@ fi
 
 
 
+menuitems+=( "" "" )
 
 
 
@@ -224,6 +227,14 @@ case $retval in
    0) # button
 menuhardwarecontrol_default="$choiceval"
 	case $choiceval in
+
+
+	dmrs)
+/home/scexao/bin/dmrestart
+;;
+	dmk)
+/home/scexao/bin/dmrestart -k
+;;
 
 
 	dmVmax025)

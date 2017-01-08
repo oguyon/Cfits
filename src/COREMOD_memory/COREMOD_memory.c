@@ -5192,7 +5192,8 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     int socketOpen = 1; // 0 if socket is closed
     int semval;
     int semnb;
-
+	int OKim;
+	
     imgmd = (IMAGE_METADATA*) malloc(sizeof(IMAGE_METADATA));
 
     TCP_BUFFER_METADATA *frame_md;
@@ -5274,11 +5275,48 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     }
 
 
-    ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-    COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 4);
-    printf("Created image stream %s - shared = %d\n", imgmd[0].name, imgmd[0].shared);
-    list_image_ID();
-    
+	// is image already in memory ?
+	OKim = 0;
+	
+	ID = image_ID(imgmd[0].name);
+	if(ID==-1)
+	{
+		// is it in shared memory ?
+		ID = read_sharedmem_image(imgmd[0].name);
+	}	
+	
+	
+	
+	if(ID == -1)
+		OKim = 0;
+	else
+	{
+		OKim = 1;
+		if(imgmd[0].naxis != data.image[ID].md[0].naxis)
+			OKim = 0;
+		if(OKim==1)
+			{
+				for(axis=0;axis<imgmd[0].naxis;axis++)
+					if(imgmd[0].size[axis] != data.image[ID].md[0].size[axis])
+						OKim = 0;
+			}
+		if(imgmd[0].atype != data.image[ID].md[0].atype)
+			OKim = 0;
+			
+		if(OKim==0)
+			{
+				delete_image_ID(imgmd[0].name);
+				ID = -1;
+			}
+	}
+
+	if(OKim==0)
+	{
+		ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
+		COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 10);
+		printf("Created image stream %s - shared = %d\n", imgmd[0].name, imgmd[0].shared);
+		list_image_ID();
+    }
     
     
 
