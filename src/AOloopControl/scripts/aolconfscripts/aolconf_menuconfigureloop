@@ -167,6 +167,7 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmap" C-m
 
 tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.004.fits" C-m 
+tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_wfsmask test_wfsmask.004.fits" C-m 
 tmux send-keys -t $1 "sleep 0.2" C-m
 
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
@@ -174,6 +175,7 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmask" C-m
 
 tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.005.fits" C-m 
+tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_wfsmask test_wfsmask.005.fits" C-m 
 tmux send-keys -t $1 "sleep 0.2" C-m
 
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
