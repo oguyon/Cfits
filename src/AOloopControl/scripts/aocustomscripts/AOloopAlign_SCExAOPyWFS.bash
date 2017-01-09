@@ -174,12 +174,18 @@ fi
 
 PyrFilter=$(cat ./status/status_fw.txt)
 
+if [ "$TTloopstat" = " ON" ]; then
+TTloopstat_C="\Zr\Z2 ON\Zn"
+else
+TTloopstat_C="OFF"
+fi
+
 
 if [ $state = "menualign" ]; then
 stateok=1
 menuname="ALIGNMENT - LOOP ${LOOPNAME} ($LOOPNUMBER})\n
 \n
-   TT   loop is : $TTloopstat\n
+   TT   loop is : $TTloopstat_C\n
    Pcam loop is : $Pcamloopstat\n
    Pyr Filter   : $PyrFilter\n"
 
