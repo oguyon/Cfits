@@ -103,7 +103,7 @@ loopnb=$(cat LOOPNUMBER)
 Cfits -n aol${loopnb}latency << EOF
 readshmim aol${loopnb}_wfsim
 readshmim aol${loopnb}_dmC
-aoltestlat aol${loopnb}_dmC aol${loopnb}_wfsim $1
+aoltestlat aol${loopnb}_dmC aol${loopnb}_wfsim 0.02 $1
 savefits _testwfsc "!./timingstats/test_latencyC.fits"
 exit
 EOF

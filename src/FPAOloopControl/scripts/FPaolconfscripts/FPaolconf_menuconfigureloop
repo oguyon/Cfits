@@ -497,7 +497,7 @@ nblatm=$(dialog --inputbox "Latency measurement # frames :" 0 0 "$nblatm" 2>&1 1
 exec 3>&-;
 echo "$nblatm" > ./conf/conf_nblatm.txt
 aoconflogext "Measuring system hardware latency"
-./auxscripts/MeasureLatency "$nblatm"
+./FPauxscripts/MeasureLatency "$nblatm"
 hardwlatency=$( awk '{print $1}' conf/conf_hardwlatency.txt )
 loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
 echo "$hardwlatency $loopfrequ" > tmpfile.txt

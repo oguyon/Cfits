@@ -442,9 +442,9 @@ int AOcontrolLoop_TestDMSpeed_cli()
 
 int AOcontrolLoop_TestSystemLatency_cli()
 {
-      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
+      if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0)
     {
-        AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else
@@ -1261,9 +1261,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOcontrolLoop_TestSystemLatency_cli;
     strcpy(data.cmd[data.NBcmd].info,"test system latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<dm stream> <wfs stream> <NBiter>");
-    strcpy(data.cmd[data.NBcmd].example,"aoltestlat 5000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<dm stream> <wfs stream> <ampl [um]> <NBiter>");
+    strcpy(data.cmd[data.NBcmd].example,"aoltestlat dmC wfsim 0.1 5000");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, float OPDamp, long NBiter)");
     data.NBcmd++;
 
     
@@ -7748,7 +7748,7 @@ long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float amp
 
 
 
-long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
+long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, float OPDamp, long NBiter)
 {
     long IDdm;
     long dmxsize, dmysize, dmsize;
@@ -7837,7 +7837,7 @@ long AOcontrolLoop_TestSystemLatency(char *dmname, char *wfsname, long NBiter)
             x = (2.0*ii-1.0*dmxsize)/dmxsize;
             y = (2.0*jj-1.0*dmxsize)/dmysize;
             data.image[IDdm0].array.F[jj*dmxsize+ii] = 0.0;
-            data.image[IDdm1].array.F[jj*dmxsize+ii] = 0.02*(sin(8.0*x)+sin(8.0*y));
+            data.image[IDdm1].array.F[jj*dmxsize+ii] = OPDamp*(sin(8.0*x)+sin(8.0*y));
         }
 
 	//save_fits("_testdm0", "!tmp/_testdm0.fits");
