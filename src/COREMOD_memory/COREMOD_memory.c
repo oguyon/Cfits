@@ -5326,11 +5326,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     
 	COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 10);
 
-
-/*        sprintf(fname, "sock%d_stream", port);
-        ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-        COREMOD_MEMORY_image_set_createsem(fname, 4);
-   */
+/*
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
     NBslices = 1;
@@ -5434,7 +5430,6 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         if(recvsize!=0)
         {
             totsize += recvsize;
-            //   printf("Received %ld bytes (expected %ld)\n", recvsize, framesize);
         }
         else
             socketOpen = 0;
@@ -5443,7 +5438,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
             {
                 frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
 
-/*            
+            
                 data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
                                     
 
@@ -5459,12 +5454,12 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                     if(semval<SEMAPHORE_MAXVAL)
                         sem_post(data.image[ID].semptr[semnb]);
                 }
-                */
+                
             }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             socketOpen = 0;
     }
-    
+    */
     
     free(buff);
 
