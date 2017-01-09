@@ -1905,9 +1905,16 @@ aoconflogext "Measuring system hardware latency"
 hardwlatency=$( awk '{print $1}' conf/conf_hardwlatency.txt )
 loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
 echo "$hardwlatency $loopfrequ" > tmpfile.txt
+
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+
+# subtracting 1/2 frame
+hardwlatency1=$( awk '{ printf("%.6f\n", $1-0.5/$2) }' tmpfile.txt )
+
 rm tmpfile.txt
+echo "$hardwlatency1" > ./conf/conf_hardwlatency1.txt
 echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+
 Cfits << EOF
 aolsethlat ${hardwlatency_frame}
 exit

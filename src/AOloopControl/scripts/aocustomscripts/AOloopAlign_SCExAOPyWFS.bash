@@ -183,7 +183,7 @@ fi
 
 pmodscale="0"
 
-if [ "$pyfreq" = "500" ]; then
+if [ "$pyfreq" = "0500" ]; then
 pmodscale="250"
 menuitems+=( "pyfr05" "\Zr\Z2 freq = 0.5 kHz\Zn" )
 else
@@ -338,7 +338,7 @@ fi
 if [ "$pymodampl" = "0.60" ]; then
 menuitems+=( "pymoda060" "\Zr\Z2 modulation amplitude = 0.60\Zn  (modulation radius = ${pmodradmas60} mas)" )
 else
-menuitems+=( "pymoda060" " modulation amplitude = 0.50  (modulation radius = ${pmodradmas60} mas)" )
+menuitems+=( "pymoda060" " modulation amplitude = 0.60  (modulation radius = ${pmodradmas60} mas)" )
 fi
 
 if [ "$pymodampl" = "0.65" ]; then
@@ -667,9 +667,10 @@ menualign_default="$choiceval"
 
 
 	pyfr05)
-pyfreq="500"
+pyfreq="0500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+
 ;;
 
 	pyfr10)
