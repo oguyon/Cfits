@@ -77,7 +77,7 @@ frHz=$1
 hardwlatency1=$( cat conf/conf_hardwlatency1.txt )
 wfsmextrlatency=$( cat conf/conf_wfsmextrlatency.txt )
 complatency=$( cat conf/conf_complatency.txt )
-echo "$hardwlatency1 $wfsmextrlatency $complatency $loopfrequ" > tmpfile.txt
+echo "$hardwlatency1 $wfsmextrlatency $complatency $frHz" > tmpfile.txt
 hardwlatency=$( awk '{ printf("%05.3f\n", ($1*$4+0.5)/$4) }' tmpfile.txt )
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$4+0.5) }' tmpfile.txt )
 wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $2*$4) }' tmpfile.txt )
