@@ -14,7 +14,7 @@ echo "pname = $pname"
 
 
 
-LOOPNAME="SCExAOPyWFS"
+LOOPNAME="SCExAOFPAO"
 LOOPNUMBER="0"
 
 function printHELP {
@@ -115,7 +115,7 @@ cpuconfig_file="FPaocustomscripts/cpuconfig_${LOOPNAME}"
 
 # ======================= CHECK REQUIRED FILES =================================
 echo ""
-checkFile $AOloopAlign_file
+checkFile $FPAOloopAlign_file
 checkFile $takedark_file
 checkFile $cpuconfig_file
 
