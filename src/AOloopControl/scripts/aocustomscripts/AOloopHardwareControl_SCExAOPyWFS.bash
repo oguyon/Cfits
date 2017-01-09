@@ -200,16 +200,29 @@ menuitems+=( "" "" )
 
 
 
-stringcenter "Science IRcam"
+stringcenter "scexao2 streams"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " " )
 
-menuitems+=( "ir1cs" "(re-)start ircam1 scexao2->scexao TCP transfer" )
-menuitems+=( "ir1ck" "kill ircam1 scexao2->scexao TCP transfer" )
+menuitems+=( "ir1cs" "\Zr ircam1 \Zn : (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "ir1ck" "\Zr ircam1 \Zn : kill scexao2->scexao TCP transfer" )
 menuitems+=( " " " " )
-menuitems+=( "ir1dcs" "(re-)start ircam1_dark scexao2->scexao TCP transfer" )
-menuitems+=( "ir1dck" "kill ircam1_dark scexao2->scexao TCP transfer" )
-
+menuitems+=( "ir1dcs" "\Zr ircam1_dark \Zn: (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "ir1dck" "\Zr ircam1_dark \Zn: kill scexao2->scexao TCP transfer" )
+menuitems+=( " " " " )
+menuitems+=( " " " " )
+menuitems+=( "ir2cs" "\Zr ircam2crop \Zn : (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "ir2ck" "\Zr ircam2crop \Zn : kill scexao2->scexao TCP transfer" )
+menuitems+=( " " " " )
+menuitems+=( " " " " )
+menuitems+=( "lj1cs" "\Zr labjack1 \Zn: (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "lj1ck" "\Zr labjack1 \Zn: kill scexao2->scexao TCP transfer" )
+menuitems+=( " " " " )
+menuitems+=( "lj2cs" "\Zr labjack2 \Zn: (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "lj2ck" "\Zr labjack2 \Zn: kill scexao2->scexao TCP transfer" )
+menuitems+=( " " " " )
+menuitems+=( "ljcs" "\Zr labjack \Zn: (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "ljck" "\Zr labjack \Zn: kill scexao2->scexao TCP transfer" )
 
 
 
@@ -328,6 +341,43 @@ EOF
 
 	ir1dck)
 /home/scexao/bin/getTCPscexao2im -k ircam1_dark 30103
+;;
+
+
+	ir2cs)
+/home/scexao/bin/getTCPscexao2im -c ircam2crop 30101
+;;
+
+	ir2ck)
+/home/scexao/bin/getTCPscexao2im -k ircam2crop 30101
+;;
+
+
+
+	lj1cs)
+/home/scexao/bin/getTCPscexao2im -c labjack1 30105
+;;
+
+	lj1ck)
+/home/scexao/bin/getTCPscexao2im -k labjack1 30105
+;;
+
+
+	lj2cs)
+/home/scexao/bin/getTCPscexao2im -c labjack2 30106
+;;
+
+	lj2ck)
+/home/scexao/bin/getTCPscexao2im -k labjack2 30106
+;;
+
+
+	ljcs)
+/home/scexao/bin/getTCPscexao2im -c labjack 30107
+;;
+
+	ljck)
+/home/scexao/bin/getTCPscexao2im -k labjack 30107
 ;;
 
 
