@@ -618,7 +618,7 @@ menuitems+=( "tk" "\Zr\Z2 TT loop running \Zn  \Z1\Zr Press to STOP \Zn" )
 fi
 
 if [ "$TTloopstat" = "PAU" ]; then
-menuitems+=( "tr" "Resume TT align (after pause)" )
+menuitems+=( "tr" "\Zb ====== Resume TT align (after pause) ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
@@ -646,17 +646,17 @@ menuitems+=( "pym" "Pcam y -$pcamstep (top)" )
 menuitems+=( "pyp" "Pcam y +$pcamstep (bottom)" )
 
 if [ "$Pcamloopstat" = "OFF" ]; then
-menuitems+=( "ps" "Start Pcam align" )
+menuitems+=( "ps" "\Zb ====== Start Pcam align ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
 if [ "$Pcamloopstat" = " ON" ]; then
-menuitems+=( "pp" "PAUSE Pcam align" )
-menuitems+=( "pk" "STOP Pcam align (note: need to resume first if paused)" )
+menuitems+=( "pp" "\Zr\Z2 Pcam align running \Zn  \Z1\Zr Press to PAUSE \Zn" )
+menuitems+=( "pk" "\Zr\Z2 Pcam align running \Zn  \Z1\Zr Press to STOP \Zn" )
 fi
 
 if [ "$Pcamloopstat" = "PAU" ]; then
-menuitems+=( "pr" "RESUME Pcam align (after pause)" )
+menuitems+=( "pr" "\Zb ====== RESUME Pcam align (after pause) ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
