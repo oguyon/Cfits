@@ -12194,6 +12194,10 @@ int AOloopControl_statusStats(int updateconf)
     int ret;
     
     
+    float loopfrequ_measured, complatency_measured, wfsmextrlatency_measured;
+    long complatency_frame_measured, wfsmextrlatency_frame_measured;
+    
+    
     
     FILE *fp;
     
