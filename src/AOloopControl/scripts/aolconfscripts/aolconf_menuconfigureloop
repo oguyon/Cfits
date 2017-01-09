@@ -751,6 +751,29 @@ fi
 
 
 
+
+
+rmdelayfr=2
+if [ -f "./conf/conf_RMdelayfr.txt" ]; then
+rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
+fi
+
+rmfrave=5
+if [ -f "./conf/conf_RMfrave.txt" ]; then
+rmfrave=$( cat ./conf/conf_RMfrave.txt )
+fi
+
+rmexfr=5
+if [ -f "./conf/conf_RMexfr.txt" ]; then
+rmexfr=$( cat ./conf/conf_RMexfr.txt )
+fi
+
+# compute acquisition time
+RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
+#RMacqTimeM=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
+
+
+
 if [ -f "autocalibration.runproc" ]; then
 menuitems+=( "ACstopK" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
 menuitems+=( "ACstopZ" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
@@ -758,7 +781,7 @@ if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( "ACstopM" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
 fi
 else
-menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn" )
+menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn - Zonal Acquisition time = ${RMacqTimeZ} s" )
 menuitems+=( " " " " )
 menuitems+=( " " " " )
 fi
@@ -778,11 +801,6 @@ if [ -f "./conf/conf_RMamplum.txt" ]; then
 rmamplum=$( cat ./conf/conf_RMamplum.txt )
 fi
 menuitems+=( "rmamp" "            RM amplitude                    ${rmamplum} um" )
-
-rmdelayfr=2
-if [ -f "./conf/conf_RMdelayfr.txt" ]; then
-rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
-fi
 menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame(s)" )
 
 
@@ -793,20 +811,9 @@ delayRM1us=$( cat ./conf/conf_delayRM1us.txt )
 fi
 menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
 
-
-
-
-rmfrave=5
-if [ -f "./conf/conf_RMfrave.txt" ]; then
-rmfrave=$( cat ./conf/conf_RMfrave.txt )
-fi
 menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frame(s)" )
 
 
-rmexfr=5
-if [ -f "./conf/conf_RMexfr.txt" ]; then
-rmexfr=$( cat ./conf/conf_RMexfr.txt )
-fi
 menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frame(s)" )
 
 nblatm=100
