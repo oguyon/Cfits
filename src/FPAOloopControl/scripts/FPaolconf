@@ -131,6 +131,7 @@ while getopts :hH:L:N:Ccn FLAG; do
       LOOPNUMBER=$OPTARG
       echo "LOOP NUMBER = $LOOPNUMBER"
       echo "$LOOPNUMBER" > $LOOPNUMBER_file
+	exit
       FPaoconflog "setting LOOPNUMBER to $LOOPNUMBER"
       ;;
     N) # set loop name
