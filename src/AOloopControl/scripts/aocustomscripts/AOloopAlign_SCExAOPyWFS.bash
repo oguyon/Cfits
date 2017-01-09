@@ -71,6 +71,32 @@ line=$1
 
 
 
+function recomputeLatency {
+frHz=$1
+# read latencies 
+hardwlatency1=$( cat conf/conf_hardwlatency1.txt )
+wfsmextrlatency=$( cat conf/conf_wfsmextrlatency.txt )
+complatency=$( cat conf/conf_complatency.txt )
+echo "$hardwlatency1 $wfsmextrlatency $complatency $loopfrequ" > tmpfile.txt
+hardwlatency=$( awk '{ printf("%05.3f\n", ($1*$4+0.5)/$4) }' tmpfile.txt )
+hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$4+0.5) }' tmpfile.txt )
+wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $2*$4) }' tmpfile.txt )
+complatency_frame=$( awk '{ printf("%05.3f\n", $3*$4) }' tmpfile.txt )
+
+echo "$hardwlatency" > ./conf/conf_hardwlatency.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
+echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
+
+Cfits << EOF
+aolsethlat $hardwlatency_frame
+aolsetwlat $wfsmextrlatency_frame
+aolsetclat $complatency_frame
+exit
+EOF
+}
+
+
 
 
 
@@ -670,43 +696,49 @@ menualign_default="$choiceval"
 pyfreq="0500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
-
+recomputeLatency ${pyfreq}
 ;;
 
 	pyfr10)
 pyfreq="1000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
 ;;
 
 	pyfr15)
 pyfreq="1500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
 ;;
 
 	pyfr20)
 pyfreq="2000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
 ;;
 
 	pyfr25)
 pyfreq="2500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
 ;;
 	
 	pyfr30)
 pyfreq="3000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
 ;;
 
 	pyfr35)
 pyfreq="3500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+recomputeLatency ${pyfreq}
 ;;
 
 
