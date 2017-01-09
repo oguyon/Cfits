@@ -187,7 +187,6 @@ Pcamloopstat_C="OFF"
 fi
 
 
-
 if [ $state = "menualign" ]; then
 stateok=1
 menuname="ALIGNMENT - LOOP ${LOOPNAME} ($LOOPNUMBER})\n
@@ -609,13 +608,13 @@ menuitems+=( "typ" "TT y +$TTstep (PyWFS bottom right)" )
 
 
 if [ "$TTloopstat" = "OFF" ]; then
-menuitems+=( "ts" "Start TT align" )
+menuitems+=( "ts" "\Zb ====== Start TT align ====== \Zn" )
 menuitems+=( "" "" )
 fi
 
 if [ "$TTloopstat" = " ON" ]; then
-menuitems+=( "tp" "PAUSE TT align" )
-menuitems+=( "tk" "STOP TT align (note: need to resume first if paused)" )
+menuitems+=( "tp" "\Zr\Z2 TT loop running \Zn  \Z1\Zr Press to PAUSE \Zn" )
+menuitems+=( "tk" "\Zr\Z2 TT loop running \Zn  \Z1\Zr Press to STOP \Zn" )
 fi
 
 if [ "$TTloopstat" = "PAU" ]; then
