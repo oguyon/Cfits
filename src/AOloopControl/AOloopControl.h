@@ -244,7 +244,7 @@ int AOloopControl_run();
 long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname);
 int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
 int AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
-int AOloopControl_statusStats();
+int AOloopControl_statusStats(int updateconf);
 int AOloopControl_showparams(long loop);
 long AOloopControl_blockstats(long loop, char *IDout_name);
 long AOloopControl_computeWFSresidualimage(long loop, float alpha);

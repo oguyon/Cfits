@@ -15,6 +15,7 @@ echo "     $0 [-h]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-p$(tput sgr0)          print to screen only - do not update configuration"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -43,7 +44,8 @@ singlelinehelp=1;
 done
 
 
-while getopts :h FLAG; do
+UPDATECONF="1"
+while getopts :hp FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -53,6 +55,9 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+    p)
+    UPDATECONF="0"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -86,6 +91,6 @@ pname=${pname0#"./"}-$loopnb
 
 
 Cfits -n pname << EOF
-aolstatusstats
+aolstatusstats $UPDATECONF
 exit
 EOF
