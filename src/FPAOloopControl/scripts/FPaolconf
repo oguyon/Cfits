@@ -256,7 +256,7 @@ shmimmonexec="shmimmon"
 
 
 
-. ./aolconfscripts/FPaolconf_readconf
+. ./FPaolconfscripts/FPaolconf_readconf
 
 
 
@@ -351,6 +351,8 @@ echo "FUNCTIONS..."
 
 function FPAOloadMem {
 # hardware I/O [shared memory]
+
+# Read functions 
 ReaddmCname
 getshmimsize FPaol${LOOPNUMBER}_dmC
 
