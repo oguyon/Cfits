@@ -93,7 +93,9 @@ int FPAOlooploadconf_init = 0;
 #define FPAOconfname "/tmp/FPAOconf.shm"
 FPAOLOOPCONTROL_CONF *FPAOconf; // configuration - this can be an array
 
-
+float *arrayftmp;
+unsigned short *arrayutmp;
+int FPcamReadInit = 0;
 
 
 
@@ -103,6 +105,8 @@ FPAOLOOPCONTROL_CONF *FPAOconf; // configuration - this can be an array
 
 
 long FPaoconfID_wfsim = -1;
+long FPaoconfID_imWFS0 = -1;
+long FPaoconfID_imWFS1 = -1;
 int FPWFSatype;
 long FPaoconfID_wfsdark = -1;
 
@@ -149,8 +153,59 @@ int FPAOloopControl_loadconfigure_cli()
 
 
 
+
+
+
+int FPAOloopControl_showparams_cli()
+{
+	FPAOloopControl_showparams(FPLOOPNUMBER);
+}
+
+
+
+
+int FPAOloopControl_set_hardwlatency_frame_cli()
+{
+  if(CLI_checkarg(1,1)==0)
+    {
+      FPAOloopControl_set_hardwlatency_frame(data.cmdargtoken[1].val.numf);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+int FPAOloopControl_MeasureResp_level1_cli()
+{
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
+		{
+			FPAOloopControl_MeasureResp_level1(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
+			return 0;
+		}
+	else
+		return 1;
+}
+
+
+
+
+
+
 int init_FPAOloopControl()
 {
+	FILE *fp;
+	int r;
+	
+    if((fp=fopen("LOOPNUMBER","r"))!=NULL)
+    {
+        r = fscanf(fp,"%ld", &FPLOOPNUMBER);
+        printf("LOOP NUMBER = %ld\n", FPLOOPNUMBER);
+        fclose(fp);
+    }
+    else
+        FPLOOPNUMBER = 0;
 
 
     strcpy(data.cmd[data.NBcmd].key,"FPaolloadconf");
@@ -162,6 +217,35 @@ int init_FPAOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int FPAOloopControl_loadconfigure(long loopnb, 1, 10)");
     data.NBcmd++;
 
+
+    strcpy(data.cmd[data.NBcmd].key,"FPaoconfshow");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = FPAOloopControl_showparams_cli;
+    strcpy(data.cmd[data.NBcmd].info,"show FPAOconf parameters");
+    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
+    strcpy(data.cmd[data.NBcmd].example,"FPaoconfshow");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int FPAOloopControl_showparams(long loop)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"FPaolsethlat");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = FPAOloopControl_set_hardwlatency_frame_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set FPAO hardware latency");
+    strcpy(data.cmd[data.NBcmd].syntax,"<hardware latency [frame]>");
+    strcpy(data.cmd[data.NBcmd].example,"FPaolsethlat 0.7");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int FPAOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
+    data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"FPaoMeasRespl1");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = FPAOloopControl_MeasureResp_level1_cli;
+    strcpy(data.cmd[data.NBcmd].info,"measure focal plane response, level 1");
+    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [um]> <delay frame [long]> <delayus [long]> <NBave> <NB frame excl> <initMode> <NBiter>");
+    strcpy(data.cmd[data.NBcmd].example,"FPaoMeasRespl1 0.05 1 231 5 1 0 10");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter)");
+    data.NBcmd++;
 
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "FP AO loop control");
@@ -254,8 +338,8 @@ long FPAOloopControl_InitializeMemory(int mode)
    for(loop=0;loop<NB_FPAOloopcontrol; loop++)
 	{
 	// DM streams
-	FPAOconf[loop].dmxsize = 0;
-	FPAOconf[loop].dmysize = 0;
+	FPAOconf[loop].sizexDM = 0;
+	FPAOconf[loop].sizeyDM = 0;
 	
 	// Focal plane image stream
 	FPAOconf[loop].sizexWFS = 0;
@@ -298,9 +382,9 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
     
     FILE *fplog; // human-readable log of load sequence
 
-    if((fplog=fopen("loadconf.log","w"))==NULL)
+    if((fplog=fopen("FPloadconf.log", "w"))==NULL)
     {
-        printf("ERROR: file loadconf.log missing\n");
+        printf("ERROR: file FPloadconf.log missing\n");
         exit(0);
     }
     FPAO_loadcreateshm_log = 1;
@@ -440,11 +524,11 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
             exit(0);
         }
     }
-    FPAOconf[loop].dmxsize = data.image[FPaoconfID_dmC].md[0].size[0];
-    FPAOconf[loop].dmysize = data.image[FPaoconfID_dmC].md[0].size[1];
-    FPAOconf[loop].dmsize = FPAOconf[loop].dmxsize*FPAOconf[loop].dmysize;
+    FPAOconf[loop].sizexDM = data.image[FPaoconfID_dmC].md[0].size[0];
+    FPAOconf[loop].sizeyDM = data.image[FPaoconfID_dmC].md[0].size[1];
+    FPAOconf[loop].sizeDM = FPAOconf[loop].sizexDM*FPAOconf[loop].sizeyDM;
     
-    fprintf(fplog, "Connected to DM %s, size = %ld x %ld\n", FPAOconf[loop].dmCname, FPAOconf[loop].dmxsize, FPAOconf[loop].dmysize);
+    fprintf(fplog, "Connected to DM %s, size = %ld x %ld\n", FPAOconf[loop].dmCname, FPAOconf[loop].sizexDM, FPAOconf[loop].sizeyDM);
 
 
 
@@ -463,6 +547,19 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+
+
+
+
+    sprintf(name, "FPaol%ld_imWFS0", loop);
+    FPaoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS);
+    COREMOD_MEMORY_image_set_createsem(name, 10);
+
+    sprintf(name, "FPaol%ld_imWFS1", loop);
+    FPaoconfID_imWFS1 = AOloopControl_2Dloadcreate_shmim(name, " ", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS);
+    COREMOD_MEMORY_image_set_createsem(name, 10);
+
+
     list_image_ID();
 
 	FPAOlooploadconf_init = 1;
@@ -473,6 +570,213 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
 
     return(0);
 
+}
+
+
+
+
+
+
+/* ========================================================================= */
+/*                    DISPLAY VALUES OF FPAOconf structure                   */
+/* ========================================================================= */
+
+
+int FPAOloopControl_showparams(long loop)
+{
+	printf("----------------------------------------------------\n");
+	printf("loop number %ld\n", loop);
+	printf("\n");
+	printf("name       :    %s\n", FPAOconf[loop].name);
+	
+	printf("dm size    :  %ld x %ld\n", FPAOconf[loop].sizexDM, FPAOconf[loop].sizeyDM);
+	printf("WFS size   :  %ld x %ld\n", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS);
+	printf("loopfrequ  :  %.3f Hz\n", FPAOconf[loop].loopfrequ);
+	printf("harw lat   :  %.6f sec = %.3f frame\n", FPAOconf[loop].hardwlatency, FPAOconf[loop].hardwlatency_frame);
+	printf("\n");
+	printf("PSF flux   : %g\n", FPAOconf[loop].fpim_normFlux);
+	printf("PSF center : %.3f x %.3f\n", FPAOconf[loop].fpim_Xcent, FPAOconf[loop].fpim_Ycent);
+//	printf("\n", FPAOconf[loop].);
+	printf("----------------------------------------------------\n");
+	
+  return 0;
+}
+
+
+
+
+
+
+/* ========================================================================= */
+/*                    SETTING VALUES OF FPAOconf structure                   */
+/* ========================================================================= */
+
+
+
+int FPAOloopControl_set_hardwlatency_frame(float hardwlatency_frame)
+{
+  if(FPAOloopcontrol_meminit==0)
+    FPAOloopControl_InitializeMemory(1);
+
+  FPAOconf[FPLOOPNUMBER].hardwlatency_frame = hardwlatency_frame;
+  FPAOloopControl_showparams(FPLOOPNUMBER);
+
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** Read image from WFS camera
+ *
+ * supports ring buffer
+ * puts image from camera buffer aoconfID_wfsim into aoconfID_imWFS1 (supplied by user)
+ *
+ *
+ */
+
+int FPAOloopControl_Read_cam_frame(long loop, int semindex)
+{
+    long imcnt;
+    long ii;
+    double totalinv;
+    char name[200];
+    int slice;
+    char *ptrv;
+    long double tmplv1;
+    double tmpf;
+    long IDdark;
+    char fname[200];
+    float resulttotal;
+    int sval0, sval;
+    void *status = 0;
+    long i;
+    int semval;
+    int s;
+    
+    int WFSatype;
+    long nelem;
+ 	
+	
+    WFSatype = data.image[FPaoconfID_wfsim].md[0].atype;
+ 
+ 
+	if(FPcamReadInit==0)
+    {
+        arrayftmp = (float*) malloc(sizeof(float)*FPAOconf[loop].sizeWFS);
+        arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*FPAOconf[loop].sizeWFS);
+
+        sprintf(fname, "FPaol%ld_wfsdark", loop);
+		FPaoconfID_wfsdark = image_ID(fname);
+
+        // set semaphore to 0
+        sem_getvalue(data.image[FPaoconfID_wfsim].semptr[semindex], &semval);
+        printf("INITIALIZING SEMAPHORE %d   %s   (%d)\n", semindex, data.image[FPaoconfID_wfsim].md[0].name, semval);
+        for(i=0; i<semval; i++)
+            sem_trywait(data.image[FPaoconfID_wfsim].semptr[semindex]);
+        
+        FPcamReadInit = 1;
+    }
+
+
+    if(data.image[FPaoconfID_wfsim].sem==0)
+    {
+        while(FPAOconf[loop].WFScnt==data.image[FPaoconfID_wfsim].md[0].cnt0) // test if new frame exists
+                usleep(5);
+    }
+    else
+        sem_wait(data.image[FPaoconfID_wfsim].semptr[semindex]);
+
+  
+    
+
+    slice = 0;
+    if(data.image[FPaoconfID_wfsim].md[0].naxis==3) // ring buffer
+    {
+        slice = data.image[FPaoconfID_wfsim].md[0].cnt1;
+        if(slice==-1)
+            slice = data.image[FPaoconfID_wfsim].md[0].size[2];
+    }
+
+    switch (WFSatype) {
+    case FLOAT :
+        ptrv = (char*) data.image[FPaoconfID_wfsim].array.F;
+        ptrv += sizeof(float)*slice* FPAOconf[loop].sizeWFS;
+        memcpy(arrayftmp, ptrv,  sizeof(float)*FPAOconf[loop].sizeWFS);
+        break;
+    case USHORT :
+        ptrv = (char*) data.image[FPaoconfID_wfsim].array.U;
+        ptrv += sizeof(unsigned short)*slice* FPAOconf[loop].sizeWFS;
+        memcpy (arrayutmp, ptrv, sizeof(unsigned short)*FPAOconf[loop].sizeWFS);
+        break;
+    default :
+        printf("ERROR: DATA TYPE NOT SUPPORTED\n");
+        exit(0);
+        break;
+    }
+   
+
+
+
+
+    // Dark subtract -> FPaoconfID_imWFS0
+
+	nelem = FPAOconf[loop].sizeWFS;
+	
+        switch ( WFSatype ) {
+        case USHORT :
+# ifdef _OPENMP
+            #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+        {
+# endif
+
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for(ii=0; ii<nelem; ii++)
+                data.image[FPaoconfID_imWFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[FPaoconfID_wfsdark].array.F[ii];
+# ifdef _OPENMP
+        }
+# endif
+        break;
+        case FLOAT :
+# ifdef _OPENMP
+            #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
+        {
+# endif
+
+# ifdef _OPENMP
+            #pragma omp for
+# endif
+            for(ii=0; ii<nelem; ii++)
+                data.image[FPaoconfID_imWFS0].array.F[ii] = arrayftmp[ii] - data.image[FPaoconfID_wfsdark].array.F[ii];
+# ifdef _OPENMP
+        }
+# endif
+        break;
+        default :
+            printf("ERROR: WFS data type not recognized\n");
+            exit(0);
+            break;
+        }
+
+        data.image[FPaoconfID_imWFS0].md[0].cnt0 ++;
+        data.image[FPaoconfID_imWFS0].md[0].write = 0;
+   
+    
+	FPaoconfID_imWFS1 = FPaoconfID_imWFS0;
+
+    return(0);
 }
 
 
@@ -493,14 +797,299 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-long FPAOloopControl_acquireRM_level1(float ampl)
+/** Measures image response to a series of DM patterns
+ *
+ * AOinitMode = 0:  create AO shared mem struct
+ * AOinitMode = 1:  connect only to AO shared mem struct
+ *  
+ * 
+ * INPUT : DMpoke_name : set of DM patterns
+ * OUTPUT : WFSmap_name : WFS maps
+ * */
+
+long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int FPAOinitMode, long NBcycle)
+{
+    char fname[200];
+    char name[200];
+    char command[200];
+    long *sizearray;
+	long IDoutC;
+
+    long NBiter = LONG_MAX; // runs until USR1 signal received
+    long iter;
+    int r;
+    long IDpokeC;
+    long NBpoke;
+    long PokeIndex, PokeIndex1;
+	long framesize;
+	char *ptr0; // source
+	float *arrayf;
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+    int ret;
+    long cntn;
+
+	long ii, kk, kk1;
+
+
+
+
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar);
+	#endif
+
+
+	if(NBcycle < 1)
+		NBiter = LONG_MAX; // runs until USR1 signal received
+	else
+		NBiter = NBcycle;
+		
+		
+
+    sizearray = (long*) malloc(sizeof(long)*3);
+	
+	
+	printf("INITIALIZE MEMORY (mode %d)....\n", FPAOinitMode);
+    fflush(stdout);
+    if(FPAOloopcontrol_meminit==0)
+        FPAOloopControl_InitializeMemory(FPAOinitMode);
+    FPAOloopControl_loadconfigure(FPLOOPNUMBER, 1, 2);
+	
+
+
+    printf("Importing DM response matrix channel shared memory ...\n");
+    fflush(stdout);
+    FPaoconfID_dmRM = read_sharedmem_image(FPAOconf[loop].dmRMname);
+
+    printf("Importing WFS camera image shared memory ... \n");
+	fflush(stdout);
+    FPaoconfID_wfsim = read_sharedmem_image(FPAOconf[loop].WFSname);
+
+
+	IDpokeC = image_ID(IDpokeC_name);
+    NBpoke = data.image[IDpokeC].md[0].size[2];
+    sizearray[0] = FPAOconf[loop].sizexWFS;
+    sizearray[1] = FPAOconf[loop].sizeyWFS;
+    sizearray[2] = NBpoke; 
+
+	IDoutC = create_3Dimage_ID(IDoutC_name, sizearray[0], sizearray[1], sizearray[2]);
+
+
+	arrayf = (float*) malloc(sizeof(float)*FPAOconf[loop].sizeDM);
+	for(ii=0;ii<FPAOconf[loop].sizeDM;ii++)
+		arrayf[ii] = 0.0;
+
+
+
+	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
+		for(ii=0; ii<FPAOconf[loop].sizeWFS; ii++)
+			data.image[IDoutC].array.F[PokeIndex*FPAOconf[loop].sizeWFS+ii] = 0.0;
+
+
+    cntn = 0;
+    iter = 0;
+
+
+
+	ptr0 = (char*) data.image[IDpokeC].array.F;
+	framesize = sizeof(float)*FPAOconf[loop].sizexDM*FPAOconf[loop].sizeyDM;
+
+    printf("STARTING response measurement...\n");
+    fflush(stdout);
+
+    while((iter<NBiter)&&(data.signal_USR1==0))
+    {
+        printf("iteration # %8ld    \n", iter);
+        fflush(stdout);
+
+        
+        // initialize with first poke
+        kk1 = 0;
+		PokeIndex = 0;
+		PokeIndex1 = 0;
+        
+        
+        usleep(delayRM1us);    
+        data.image[FPaoconfID_dmRM].md[0].write = 1;
+        memcpy (data.image[FPaoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*FPAOconf[loop].sizeDM);
+        data.image[FPaoconfID_dmRM].md[0].cnt0++;
+        data.image[FPaoconfID_dmRM].md[0].write = 0;
+        FPAOconf[loop].DMupdatecnt ++;
+        
+        
+        
+        // WAIT FOR LOOP DELAY, PRIMING
+		FPAOloopControl_Read_cam_frame(loop, 0);
+        
+		// read delayfr frames
+        for(kk=0; kk<delayfr; kk++)               
+            {
+                FPAOloopControl_Read_cam_frame(loop, 0);
+                kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        PokeIndex1++;
+                            
+                        if(PokeIndex1>NBpoke-1)
+                            PokeIndex1 = NBpoke-1;
+
+                        // POKE            
+						usleep(delayRM1us);    
+                        data.image[FPaoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[FPaoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*FPAOconf[loop].sizeDM);
+                        data.image[FPaoconfID_dmRM].md[0].cnt0++;
+                        data.image[FPaoconfID_dmRM].md[0].write = 0;
+                        FPAOconf[loop].DMupdatecnt ++;
+                    }
+            }
+                
+        
+        
+        
+        
+        while ((PokeIndex < NBpoke)&&(data.signal_USR1==0))
+        {
+            // INTEGRATION
+
+            for(kk=0; kk<NBave+NBexcl; kk++)
+            {
+                FPAOloopControl_Read_cam_frame(loop, 0);
+                if(kk<NBave)
+                    for(ii=0; ii<FPAOconf[loop].sizeWFS; ii++)
+                        data.image[IDoutC].array.F[PokeIndex*FPAOconf[loop].sizeWFS+ii] += data.image[FPaoconfID_imWFS1].array.F[ii];
+                kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        PokeIndex1++;
+
+                        if(PokeIndex1>NBpoke-1)
+                            PokeIndex1 = NBpoke-1;
+                        
+            
+                        usleep(delayRM1us);
+                        data.image[FPaoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[FPaoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*FPAOconf[loop].sizeDM);
+                        data.image[FPaoconfID_dmRM].md[0].cnt0++;
+                        data.image[FPaoconfID_dmRM].md[0].write = 0;
+                        FPAOconf[loop].DMupdatecnt ++;
+                    }
+            }
+
+            PokeIndex++;
+        }
+        cntn = NBave; // Number of images
+            
+
+        for(ii=0; ii<FPAOconf[loop].sizeDM; ii++)
+            arrayf[ii] = 0.0;
+        
+        // zero DM channel
+           
+        usleep(delayRM1us);
+        data.image[FPaoconfID_dmRM].md[0].write = 1;
+        memcpy (data.image[FPaoconfID_dmRM].array.F, arrayf, sizeof(float)*FPAOconf[loop].sizeDM);
+        data.image[FPaoconfID_dmRM].md[0].cnt0++;
+        data.image[FPaoconfID_dmRM].md[0].write = 0;
+        FPAOconf[loop].DMupdatecnt ++;
+		
+ 
+    } // end of iteration loop 
+
+    free(arrayf);
+    free(sizearray);
+
+
+	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
+		for(ii=0; ii<FPAOconf[loop].sizeWFS; ii++)
+			data.image[IDoutC].array.F[PokeIndex*FPAOconf[loop].sizeWFS+ii] /= NBave*NBcycle;
+
+    return(IDoutC);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// LEVEL 1 CALIBRATION
+// no coronagraph
+// poke X and Y patterns
+// extract:
+// - PSF center
+// - geometric transformation
+// - contrast scaling at max spatial frequency
+
+
+
+
+
+long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter)
 {
 	// pokes X and Y patterns
-	// X pattens:
 	// period = 1 act
-	// period = 2 act
+
+	long IDpokeC;
+	long loop = FPLOOPNUMBER;
+	long NBpokes = 5;
+	long poke;
+	
+	long ii, jj, kk;
 	
 	
+	
+	if(FPAOloopcontrol_meminit==0)
+        FPAOloopControl_InitializeMemory(0);
+    FPAOloopControl_loadconfigure(loop, 1, 10);
+	
+	
+	// CREATE POKE CUBE
+	IDpokeC = create_3Dimage_ID("pokeC", FPAOconf[loop].sizexDM, FPAOconf[loop].sizeyDM, NBpokes);
+
+	poke = 0;
+	for(ii=0;ii<FPAOconf[loop].sizexDM; ii++)
+		for(jj=0;jj<FPAOconf[loop].sizexDM; jj++)
+			data.image[IDpokeC].array.F[poke*FPAOconf[loop].sizeDM + jj*FPAOconf[loop].sizexDM + ii] = 0.0;
+
+	poke = 1;
+	for(ii=0;ii<FPAOconf[loop].sizexDM; ii++)
+		for(jj=0;jj<FPAOconf[loop].sizexDM; jj++)
+			data.image[IDpokeC].array.F[poke*FPAOconf[loop].sizeDM + jj*FPAOconf[loop].sizexDM + ii] = ampl*(ii % 2);
+	
+	poke = 2;
+	for(ii=0;ii<FPAOconf[loop].sizexDM; ii++)
+		for(jj=0;jj<FPAOconf[loop].sizexDM; jj++)
+			data.image[IDpokeC].array.F[poke*FPAOconf[loop].sizeDM + jj*FPAOconf[loop].sizexDM + ii] = -ampl*(ii % 2);
+
+	poke = 3;
+	for(ii=0;ii<FPAOconf[loop].sizexDM; ii++)
+		for(jj=0;jj<FPAOconf[loop].sizexDM; jj++)
+			data.image[IDpokeC].array.F[poke*FPAOconf[loop].sizeDM + jj*FPAOconf[loop].sizexDM + ii] = ampl*(jj % 2);
+	
+	poke = 4;
+	for(ii=0;ii<FPAOconf[loop].sizexDM; ii++)
+		for(jj=0;jj<FPAOconf[loop].sizexDM; jj++)
+			data.image[IDpokeC].array.F[poke*FPAOconf[loop].sizeDM + jj*FPAOconf[loop].sizexDM + ii] = -ampl*(jj % 2);
+
+
+	FPAO_Measure_WFSrespC(loop, delayfr, delayRM1us, NBave, NBexcl, "pokeC", "wfsRespC", FPAOinitMode, NBiter);
+
+	save_fits("wfsRespC", "!wfsRespC.fits");
 	
 	
 	return 0;

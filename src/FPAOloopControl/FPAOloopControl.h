@@ -11,15 +11,17 @@ typedef struct
 	// DM stream
     char dmCname[80];
     char dmRMname[80];
-	long dmxsize;
-	long dmysize;
-	long dmsize;
+	long sizexDM;
+	long sizeyDM;
+	long sizeDM;
+	long long DMupdatecnt;
 	
 	// Focal plane image stream
 	char WFSname[80];
 	long sizexWFS;
 	long sizeyWFS;
 	long sizeWFS;
+	long long WFScnt;
 	
 	// timing info
 	float loopfrequ; // Hz
@@ -53,12 +55,24 @@ long FPAOloopControl_InitializeMemory(int mode);
 int FPAOloopControl_loadconfigure(long loop, int mode, int level);
 
 
+
+int FPAOloopControl_showparams(long loop);
+
+int FPAOloopControl_set_hardwlatency_frame(float hardwlatency_frame);
+
+
+
+
+
 // RM Calibration
+
+long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int FPAOinitMode, long NBcycle);
+
 
 // level 1
 // Each actuator influence function has the same amplitude, phase is ramp set accordingly to actuator position
 // to be acquired without coronagraph
-long FPAOloopControl_acquireRM_level1(float ampl);
+long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter);
 
 
 

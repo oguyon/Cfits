@@ -1085,7 +1085,7 @@ int init_AOloopControl()
     FILE *fp;
     int r;
 
-    if((fp=fopen("loopnb.txt","r"))!=NULL)
+    if((fp=fopen("LOOPNUMBER","r"))!=NULL)
     {
         r = fscanf(fp,"%ld", &LOOPNUMBER);
         printf("LOOP NUMBER = %ld\n", LOOPNUMBER);
@@ -9236,6 +9236,15 @@ long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long
 
     return(ID_WFSmap);
 }
+
+
+
+
+
+
+
+
+
 
 
 
