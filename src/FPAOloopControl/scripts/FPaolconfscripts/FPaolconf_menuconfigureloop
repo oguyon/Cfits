@@ -504,10 +504,10 @@ echo "$hardwlatency $loopfrequ" > tmpfile.txt
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 rm tmpfile.txt
 echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
-Cfits << EOF
-aolsethlat ${hardwlatency_frame}
-exit
-EOF
+#Cfits << EOF
+#FPaolsethlat ${hardwlatency_frame}
+#exit
+#EOF
 aoconflogext "set hardware latency $hardwlatency_frame frame"
 ;;
 
