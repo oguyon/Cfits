@@ -248,10 +248,23 @@ echo "$pmodscale $pymodampl" > tmpfile.txt
 pmodradmas=$( awk '{ printf("%5.1f\n", $1*$2) }' tmpfile.txt )
 pmodradmas05=$( awk '{ printf("%5.1f\n", $1*0.05) }' tmpfile.txt )
 pmodradmas10=$( awk '{ printf("%5.1f\n", $1*0.10) }' tmpfile.txt )
+pmodradmas15=$( awk '{ printf("%5.1f\n", $1*0.15) }' tmpfile.txt )
 pmodradmas20=$( awk '{ printf("%5.1f\n", $1*0.20) }' tmpfile.txt )
+pmodradmas25=$( awk '{ printf("%5.1f\n", $1*0.25) }' tmpfile.txt )
 pmodradmas30=$( awk '{ printf("%5.1f\n", $1*0.30) }' tmpfile.txt )
+pmodradmas35=$( awk '{ printf("%5.1f\n", $1*0.35) }' tmpfile.txt )
+pmodradmas40=$( awk '{ printf("%5.1f\n", $1*0.40) }' tmpfile.txt )
+pmodradmas45=$( awk '{ printf("%5.1f\n", $1*0.45) }' tmpfile.txt )
 pmodradmas50=$( awk '{ printf("%5.1f\n", $1*0.50) }' tmpfile.txt )
+pmodradmas55=$( awk '{ printf("%5.1f\n", $1*0.55) }' tmpfile.txt )
+pmodradmas60=$( awk '{ printf("%5.1f\n", $1*0.60) }' tmpfile.txt )
+pmodradmas65=$( awk '{ printf("%5.1f\n", $1*0.65) }' tmpfile.txt )
 pmodradmas70=$( awk '{ printf("%5.1f\n", $1*0.70) }' tmpfile.txt )
+pmodradmas75=$( awk '{ printf("%5.1f\n", $1*0.75) }' tmpfile.txt )
+pmodradmas80=$( awk '{ printf("%5.1f\n", $1*0.80) }' tmpfile.txt )
+pmodradmas85=$( awk '{ printf("%5.1f\n", $1*0.85) }' tmpfile.txt )
+pmodradmas90=$( awk '{ printf("%5.1f\n", $1*0.90) }' tmpfile.txt )
+pmodradmas95=$( awk '{ printf("%5.1f\n", $1*0.95) }' tmpfile.txt )
 pmodradmas00=$( awk '{ printf("%5.1f\n", $1*1.00) }' tmpfile.txt )
 rm tmpfile.txt
 
@@ -262,40 +275,118 @@ else
 menuitems+=( "pymoda005" " modulation amplitude = 0.05 (modulation radius = ${pmodradmas05} mas)" )
 fi
 
-if [ "$pymodampl" = "0.1" ]; then
-menuitems+=( "pymoda01" "\Zr\Z2 modulation amplitude = 0.1\Zn  (modulation radius = ${pmodradmas10} mas)" )
+if [ "$pymodampl" = "0.10" ]; then
+menuitems+=( "pymoda010" "\Zr\Z2 modulation amplitude = 0.10\Zn  (modulation radius = ${pmodradmas10} mas)" )
 else
-menuitems+=( "pymoda01" " modulation amplitude = 0.1  (modulation radius = ${pmodradmas10} mas)" )
+menuitems+=( "pymoda010" " modulation amplitude = 0.10  (modulation radius = ${pmodradmas10} mas)" )
 fi
 
-if [ "$pymodampl" = "0.2" ]; then
-menuitems+=( "pymoda02" "\Zr\Z2 modulation amplitude = 0.2\Zn  (modulation radius = ${pmodradmas20} mas)" )
+if [ "$pymodampl" = "0.15" ]; then
+menuitems+=( "pymoda015" "\Zr\Z2 modulation amplitude = 0.15\Zn  (modulation radius = ${pmodradmas15} mas)" )
 else
-menuitems+=( "pymoda02" " modulation amplitude = 0.2  (modulation radius = ${pmodradmas20} mas)" )
+menuitems+=( "pymoda015" " modulation amplitude = 0.15  (modulation radius = ${pmodradmas15} mas)" )
 fi
 
-if [ "$pymodampl" = "0.3" ]; then
-menuitems+=( "pymoda03" "\Zr\Z2 modulation amplitude = 0.3\Zn  (modulation radius = ${pmodradmas30} mas)" )
+if [ "$pymodampl" = "0.20" ]; then
+menuitems+=( "pymoda020" "\Zr\Z2 modulation amplitude = 0.20\Zn  (modulation radius = ${pmodradmas20} mas)" )
 else
-menuitems+=( "pymoda03" " modulation amplitude = 0.3  (modulation radius = ${pmodradmas30} mas)" )
+menuitems+=( "pymoda020" " modulation amplitude = 0.20  (modulation radius = ${pmodradmas20} mas)" )
 fi
 
-if [ "$pymodampl" = "0.5" ]; then
-menuitems+=( "pymoda05" "\Zr\Z2 modulation amplitude = 0.5\Zn  (modulation radius = ${pmodradmas50} mas)" )
+if [ "$pymodampl" = "0.25" ]; then
+menuitems+=( "pymoda025" "\Zr\Z2 modulation amplitude = 0.25\Zn  (modulation radius = ${pmodradmas25} mas)" )
 else
-menuitems+=( "pymoda05" " modulation amplitude = 0.5  (modulation radius = ${pmodradmas50} mas)" )
+menuitems+=( "pymoda025" " modulation amplitude = 0.25  (modulation radius = ${pmodradmas25} mas)" )
 fi
 
-if [ "$pymodampl" = "0.7" ]; then
-menuitems+=( "pymoda07" "\Zr\Z2 modulation amplitude = 0.7\Zn  (modulation radius = ${pmodradmas70} mas)" )
+if [ "$pymodampl" = "0.30" ]; then
+menuitems+=( "pymoda030" "\Zr\Z2 modulation amplitude = 0.30\Zn  (modulation radius = ${pmodradmas30} mas)" )
 else
-menuitems+=( "pymoda07" " modulation amplitude = 0.7  (modulation radius = ${pmodradmas70} mas)" )
+menuitems+=( "pymoda030" " modulation amplitude = 0.30  (modulation radius = ${pmodradmas30} mas)" )
 fi
 
-if [ "$pymodampl" = "1.0" ]; then
-menuitems+=( "pymoda10" "\Zr\Z2 modulation amplitude = 1.0\Zn  (modulation radius = ${pmodradmas00} mas)" )
+if [ "$pymodampl" = "0.35" ]; then
+menuitems+=( "pymoda035" "\Zr\Z2 modulation amplitude = 0.35\Zn  (modulation radius = ${pmodradmas35} mas)" )
 else
-menuitems+=( "pymoda10" " modulation amplitude = 1.0  (modulation radius = ${pmodradmas00} mas)" )
+menuitems+=( "pymoda035" " modulation amplitude = 0.35  (modulation radius = ${pmodradmas35} mas)" )
+fi
+
+if [ "$pymodampl" = "0.40" ]; then
+menuitems+=( "pymoda040" "\Zr\Z2 modulation amplitude = 0.40\Zn  (modulation radius = ${pmodradmas40} mas)" )
+else
+menuitems+=( "pymoda040" " modulation amplitude = 0.40  (modulation radius = ${pmodradmas40} mas)" )
+fi
+
+if [ "$pymodampl" = "0.45" ]; then
+menuitems+=( "pymoda045" "\Zr\Z2 modulation amplitude = 0.45\Zn  (modulation radius = ${pmodradmas45} mas)" )
+else
+menuitems+=( "pymoda045" " modulation amplitude = 0.45  (modulation radius = ${pmodradmas45} mas)" )
+fi
+
+if [ "$pymodampl" = "0.50" ]; then
+menuitems+=( "pymoda050" "\Zr\Z2 modulation amplitude = 0.50\Zn  (modulation radius = ${pmodradmas50} mas)" )
+else
+menuitems+=( "pymoda050" " modulation amplitude = 0.50  (modulation radius = ${pmodradmas50} mas)" )
+fi
+
+if [ "$pymodampl" = "0.55" ]; then
+menuitems+=( "pymoda055" "\Zr\Z2 modulation amplitude = 0.55\Zn  (modulation radius = ${pmodradmas55} mas)" )
+else
+menuitems+=( "pymoda055" " modulation amplitude = 0.55  (modulation radius = ${pmodradmas55} mas)" )
+fi
+
+if [ "$pymodampl" = "0.60" ]; then
+menuitems+=( "pymoda060" "\Zr\Z2 modulation amplitude = 0.60\Zn  (modulation radius = ${pmodradmas60} mas)" )
+else
+menuitems+=( "pymoda060" " modulation amplitude = 0.50  (modulation radius = ${pmodradmas60} mas)" )
+fi
+
+if [ "$pymodampl" = "0.65" ]; then
+menuitems+=( "pymoda065" "\Zr\Z2 modulation amplitude = 0.65\Zn  (modulation radius = ${pmodradmas65} mas)" )
+else
+menuitems+=( "pymoda065" " modulation amplitude = 0.65  (modulation radius = ${pmodradmas65} mas)" )
+fi
+
+if [ "$pymodampl" = "0.70" ]; then
+menuitems+=( "pymoda070" "\Zr\Z2 modulation amplitude = 0.70\Zn  (modulation radius = ${pmodradmas70} mas)" )
+else
+menuitems+=( "pymoda070" " modulation amplitude = 0.70  (modulation radius = ${pmodradmas70} mas)" )
+fi
+
+if [ "$pymodampl" = "0.75" ]; then
+menuitems+=( "pymoda075" "\Zr\Z2 modulation amplitude = 0.75\Zn  (modulation radius = ${pmodradmas75} mas)" )
+else
+menuitems+=( "pymoda075" " modulation amplitude = 0.75  (modulation radius = ${pmodradmas75} mas)" )
+fi
+
+if [ "$pymodampl" = "0.80" ]; then
+menuitems+=( "pymoda080" "\Zr\Z2 modulation amplitude = 0.80\Zn  (modulation radius = ${pmodradmas80} mas)" )
+else
+menuitems+=( "pymoda080" " modulation amplitude = 0.80  (modulation radius = ${pmodradmas80} mas)" )
+fi
+
+if [ "$pymodampl" = "0.85" ]; then
+menuitems+=( "pymoda085" "\Zr\Z2 modulation amplitude = 0.85\Zn  (modulation radius = ${pmodradmas85} mas)" )
+else
+menuitems+=( "pymoda085" " modulation amplitude = 0.85  (modulation radius = ${pmodradmas85} mas)" )
+fi
+
+if [ "$pymodampl" = "0.90" ]; then
+menuitems+=( "pymoda090" "\Zr\Z2 modulation amplitude = 0.90\Zn  (modulation radius = ${pmodradmas90} mas)" )
+else
+menuitems+=( "pymoda090" " modulation amplitude = 0.90  (modulation radius = ${pmodradmas90} mas)" )
+fi
+
+if [ "$pymodampl" = "0.95" ]; then
+menuitems+=( "pymoda095" "\Zr\Z2 modulation amplitude = 0.95\Zn  (modulation radius = ${pmodradmas95} mas)" )
+else
+menuitems+=( "pymoda095" " modulation amplitude = 0.95  (modulation radius = ${pmodradmas95} mas)" )
+fi
+
+if [ "$pymodampl" = "1.00" ]; then
+menuitems+=( "pymoda100" "\Zr\Z2 modulation amplitude = 1.00\Zn  (modulation radius = ${pmodradmas00} mas)" )
+else
+menuitems+=( "pymoda100" " modulation amplitude = 1.00  (modulation radius = ${pmodradmas00} mas)" )
 fi
 
 
@@ -626,39 +717,117 @@ echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
-	pymoda01)
-pymodampl="0.1"
+	pymoda010)
+pymodampl="0.10"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
-	pymoda02)
-pymodampl="0.2"
-echo "0.2" > ./conf/conf_pywfs_modampl.txt
+	pymoda015)
+pymodampl="0.15"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
-	pymoda03)
-pymodampl="0.3"
-echo "0.3" > ./conf/conf_pywfs_modampl.txt
+	pymoda020)
+pymodampl="0.20"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
-	pymoda05)
-pymodampl="0.5"
-echo "0.5" > ./conf/conf_pywfs_modampl.txt
+	pymoda025)
+pymodampl="0.25"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
-	pymoda07)
-pymodampl="0.7"
-echo "0.7" > ./conf/conf_pywfs_modampl.txt
+	pymoda030)
+pymodampl="0.30"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 
-	pymoda10)
-pymodampl="1.0"
-echo "1.0" > ./conf/conf_pywfs_modampl.txt
+	pymoda035)
+pymodampl="0.35"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda040)
+pymodampl="0.40"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda045)
+pymodampl="0.45"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda050)
+pymodampl="0.50"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda055)
+pymodampl="0.55"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda060)
+pymodampl="0.60"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda065)
+pymodampl="0.65"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda070)
+pymodampl="0.70"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda075)
+pymodampl="0.75"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda080)
+pymodampl="0.80"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda085)
+pymodampl="0.85"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda090)
+pymodampl="0.90"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda095)
+pymodampl="0.95"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
+pywfs_mod_setup ${pyfreq} ${pymodampl}
+;;
+
+	pymoda100)
+pymodampl="1.00"
+echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 ;;
 

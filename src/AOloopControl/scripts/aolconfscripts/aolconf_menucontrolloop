@@ -1763,6 +1763,7 @@ rm /tmp/aol${LOOPNUMBER}_modeval.im.shm
 ln -s /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm /tmp/aol${LOOPNUMBER}_modeval.im.shm
 fi
 
+
 # process runs in CPU set aol0RT1
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
@@ -1776,7 +1777,9 @@ tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}"
 fi
 fi
 
-sleep 1
+
+# wait to ensure that modesextractwfs has created aol${LOOPNUMBER}_modeval
+sleep 0.2
 
 # process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
