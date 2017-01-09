@@ -129,7 +129,7 @@ while getopts :hH:L:N:Ccn FLAG; do
     echo "LOOP NAME = $LOOPNAME"
     echo "$LOOPNAME" > $LOOPNAME_file
     FPaoconflog "setting LOOPNAME to $LOOPNAME"
-	./FPaosetup/aosetup_${LOOPNAME}
+	./FPaosetup/FPaosetup_${LOOPNAME}
     ;;
     C) # configure CPU
     echo "Configure CPU"
