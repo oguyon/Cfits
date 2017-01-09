@@ -180,13 +180,20 @@ else
 TTloopstat_C="OFF"
 fi
 
+if [ "$Pcamloopstat" = " ON" ]; then
+Pcamloopstat_C="\Zr\Z2 ON\Zn"
+else
+Pcamloopstat_C="OFF"
+fi
+
+
 
 if [ $state = "menualign" ]; then
 stateok=1
 menuname="ALIGNMENT - LOOP ${LOOPNAME} ($LOOPNUMBER})\n
 \n
    TT   loop is : $TTloopstat_C\n
-   Pcam loop is : $Pcamloopstat\n
+   Pcam loop is : $Pcamloopstat_C\n
    Pyr Filter   : $PyrFilter\n"
 
 
