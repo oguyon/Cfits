@@ -15,7 +15,7 @@ echo "pname = $pname"
 
 
 LOOPNAME="SCExAOFPAO"
-LOOPNUMBER="0"
+LOOPNUMBER="2"
 
 function printHELP {
 echo "------------------------------------------------------------------------"
