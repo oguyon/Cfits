@@ -513,6 +513,14 @@ aoconflogext "set hardware latency $hardwlatency_frame frame"
 
 
 
+	respMl1)
+tmuxname="FPaol${LOOPNUMBER}respMl1"
+tmux new-session -d -s $tmuxname
+tmux send-keys -t $tmuxname "./FPauxscripts/FPaolMeasurerespl1 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+	;;
+
+
+
 
 	zrespMa)
 case $amode in

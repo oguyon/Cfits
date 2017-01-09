@@ -1776,7 +1776,7 @@ tmux send-keys -t $tmuxname "./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}"
 fi
 fi
 
-
+sleep 1
 
 # process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
