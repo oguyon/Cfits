@@ -87,7 +87,7 @@ echo "$hardwlatency" > ./conf/conf_hardwlatency.txt
 echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
 echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
 echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
-
+echo "$frHz" > ./conf/conf_loopfrequ.txt
 Cfits << EOF
 aolsethlat $hardwlatency_frame
 aolsetwlat $wfsmextrlatency_frame
