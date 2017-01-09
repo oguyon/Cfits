@@ -5318,13 +5318,14 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
 	{
 		printf("IMAGE %s HAS TO BE CREATED\n", imgmd[0].name);
 		ID = create_image_ID(imgmd[0].name, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
-		COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 10);
 		printf("Created image stream %s - shared = %d\n", imgmd[0].name, imgmd[0].shared);
     }
     else
 		printf("REUSING EXISTING IMAGE %s\n", imgmd[0].name);
     
     
+	COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 10);
+
 
 /*        sprintf(fname, "sock%d_stream", port);
         ID = create_image_ID(fname, imgmd[0].naxis, imgmd[0].size, imgmd[0].atype, imgmd[0].shared, 0);
@@ -5441,17 +5442,12 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         if(socketOpen==1)
             {
                 frame_md = (TCP_BUFFER_METADATA*) (buff + framesize);
-            
-                data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
-                
-                    
-               // printf("[%ld]", data.image[ID].md[0].cnt1); // TEST
 
-/*                if(data.image[ID].md[0].cnt1==0)
-                    {
-                        printf("\n"); // TEST
-                        fflush(stdout);
-                    }*/
+/*            
+                data.image[ID].md[0].cnt1 = frame_md[0].cnt1;
+                                    
+
+           
                 if(NBslices>1)
                     memcpy(ptr0+framesize*frame_md[0].cnt1, buff, framesize);
                 else
@@ -5463,6 +5459,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
                     if(semval<SEMAPHORE_MAXVAL)
                         sem_post(data.image[ID].semptr[semnb]);
                 }
+                */
             }
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             socketOpen = 0;
