@@ -10,6 +10,15 @@ else
 LOOPNAME="null"
 fi
 
+
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+fi
+
+
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 #echo "pname = $pname"

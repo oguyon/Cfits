@@ -10,6 +10,14 @@ else
 LOOPNAME="null"
 fi
 
+
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+fi
+
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 #echo "pname = $pname"
@@ -208,7 +216,6 @@ aoconflog " STARTING NEW aolconf SESSION"
 execname="Cfits"  
 
 # default parameters
-LOOPNUMBER_default=7  # default loop number
 CPUconfRT=0 # no CPU real-time configuration
 
 DMindex=0
