@@ -70,7 +70,7 @@ fi
 
 dmRMfile="/tmp/FPaol${LOOPNUMBER}_dmRM.im.shm"
 if [ -f $dmRMfile ]; then
-sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_dmRM.txt )
+sizestring=$( cat conf/conf_imsize_FPaol${LOOPNUMBER}_dmRM.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\ZbFPaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${dmRM}\Zn" )
 else
@@ -86,7 +86,7 @@ menuitems+=( "zerodm" "Zero all DM arrays\Zn" )
 
 wfsimcamfile="/tmp/FPaol${LOOPNUMBER}_wfsim.im.shm"
 if [ -f $wfsimcamfile ]; then
-sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsim.txt )
+sizestring=$( cat conf/conf_imsize_FPaol${LOOPNUMBER}_wfsim.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\ZbFPaol${LOOPNUMBER}_wfsim\Zn -> \Z4${wfsimcam}\Zn" )
 else

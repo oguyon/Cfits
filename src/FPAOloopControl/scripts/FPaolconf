@@ -352,7 +352,7 @@ echo "FUNCTIONS..."
 function FPAOloadMem {
 # hardware I/O [shared memory]
 
-# Read functions 
+# Read functions in FPaolconf_readconf
 ReaddmCname
 getshmimsize FPaol${LOOPNUMBER}_dmC
 
