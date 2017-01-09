@@ -22,7 +22,6 @@ fi
 
 
 
-
 function function_zresp_on {
 zrespMstat=" ON"
 tmuxname="aol${LOOPNUMBER}zrespM"
@@ -137,6 +136,7 @@ function function_SMloadzrm_tmux ()
 {
 tmux new-session -d -s $1
 logRunningProcess "SMloadzrm" "$1" "Load zonal response matrix files to shared memory"
+tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.000.fits" C-m 
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"zrespM\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsref0\"" C-m
@@ -156,7 +156,7 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
 fi
-
+tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.100.fits" C-m
 tmux send-keys -t $1 "rm SMloadzrm.runproc" C-m
 }
 
@@ -704,7 +704,7 @@ fi
 if [ "$MASKS_LOCK" -eq "1" ]; then
 menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to toggle Lock OFF" )
 else
-menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock OFF" )
+menuitems+=( "mlock" "[$MASKS_LOCK] WFS/DMmask LOCK is OFF  - press to toggle Lock ON" )
 fi
 else
 MASKS_LOCK="0"
@@ -1676,6 +1676,7 @@ cp -rf conf_zrm_staged conf_zrm_staged.000
 if [ "$DMMODE" = "ZONAL" ]; then
 cp -rf conf_mrm_staged conf_mrm_staged.000
 fi
+
 
 logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
 if [ "$DMMODE" = "ZONAL" ]; then
