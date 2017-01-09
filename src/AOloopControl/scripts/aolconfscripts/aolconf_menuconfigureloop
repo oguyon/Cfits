@@ -769,7 +769,7 @@ rmexfr=$( cat ./conf/conf_RMexfr.txt )
 fi
 
 # compute acquisition time
-RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
+RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
 #RMacqTimeM=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
 
 
