@@ -1,0 +1,569 @@
+#!/bin/bash
+
+
+if [ ! -v FPaolconfFLAG ]; then
+echo "ERROR: This script should be called from FPaolconf main script"
+exit
+fi
+
+
+
+
+
+# =====================================================
+# =============== CONFIGURE AO LOOP ===================
+# =====================================================
+
+if [ $state = "menuconfigureloop" ]; then
+stateok=1
+dateUTC=$( date -u )
+#aoconflog "$0 state = ${state}"
+menuname="\Zb\Zu FP AO LOOP CONFIGURATION\Zn  [ $dateUTC ]\n 
+Notations: \n      
+  \Z4shared memory stream\Zn\n
+  \Zufile system FITS file\Zn\n   
+  \Z1missing file or stream\Zn\n
+\n
+For all configurations files (not including Hardware I/O links) :\n
+  File \Zbconf/conf_<name>_name.txt\Zn contains the original .fits file path and name\n
+  A symbolic link to the FITS file is written as \Zuconf/aol${LOOPNUMBER}_<name>.fits\Zn\n
+  File is loaded in shared memory as /tmp/\Z4aol${LOOPNUMBER}_<name>\Zn.im.shm\n
+"
+
+confOK=1
+stringcenter "HELP"
+menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
+menuitems+=( " " " " )
+
+stringcenter "HARDWARE INFO AND I/O LINKS [shared memory sim links]"
+menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
+
+# here, loop frequency is the incoming image frame rate
+loopfrequ="2000.0"
+if [ -f "./conf/conf_loopfrequ.txt" ]; then
+loopfrequ=$( cat ./conf/conf_loopfrequ.txt )
+fi
+menuitems+=( "lfreq" "            Loop Frequ                        ${loopfrequ} Hz" )
+
+hardwlatency="0.001"
+if [ -f "./conf/conf_hardwlatency.txt" ]; then
+hardwlatency=$( cat ./conf/conf_hardwlatency.txt )
+hardwlatency_frame=$( cat ./conf/conf_hardwlatency_frame.txt )
+fi
+menuitems+=( "lhlat" "            Hardware Latency                  ${hardwlatency} sec -> ${hardwlatency_frame} frame" )
+
+
+
+
+
+dmCfile="/tmp/FPaol${LOOPNUMBER}_dmC.im.shm"
+if [ -f $dmCfile ]; then
+sizestring=$( cat conf/conf_imsize_FPaol${LOOPNUMBER}_dmC.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\ZbFPaol${LOOPNUMBER}_dmC\Zn -> \Z4${dmC}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmC" "[${OKstr}] DM control channel        \Z4\ZbFPaol${LOOPNUMBER}_dmC\Zn -> \Z1${dmC}\Zn" )
+confOK=0
+fi
+
+
+dmRMfile="/tmp/FPaol${LOOPNUMBER}_dmRM.im.shm"
+if [ -f $dmRMfile ]; then
+sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_dmRM.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\ZbFPaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${dmRM}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\ZbFPaol${LOOPNUMBER}_dmRM\Zn -> \Z1${dmRM}\Z1" )
+confOK=0
+fi
+
+
+menuitems+=( "zerodm" "Zero all DM arrays\Zn" )
+
+
+
+wfsimcamfile="/tmp/FPaol${LOOPNUMBER}_wfsim.im.shm"
+if [ -f $wfsimcamfile ]; then
+sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsim.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\ZbFPaol${LOOPNUMBER}_wfsim\Zn -> \Z4${wfsimcam}\Zn" )
+else
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\ZbFPaol${LOOPNUMBER}_wfsim\Zn -> \Z1${wfsimcam}\Zn" )
+confOK=0
+fi
+
+
+wfslambdanm="1600"
+if [ -f "./conf/conf_wfslambdanm.txt" ]; then
+wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
+fi
+menuitems+=( "swfsl" "[${wfslambdanm} nm] WFS lambda" )
+
+
+menuitems+=( " " " " )
+stringcenter "I/O PRE-PROCESSING [FITS files] "
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+ 
+
+wfsdarkfname="/tmp/FPaol${LOOPNUMBER}_wfsdark.im.shm"
+if [ -f "$wfsdarkfname" ]; then
+sizestring=$( cat conf/conf_imsize_FPaol${LOOPNUMBER}_wfsdark.txt )
+OKstr="\Z2\Zr$sizestring\Zn"
+menuitems+=( "wfsdark" "[${OKstr}] WFS camera dark        \Z4\ZbFPaol${LOOPNUMBER}_wfsdark\Zn" )
+else
+OKstr="\Z5 OPTIONAL \Zn"
+menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
+confOK=0
+fi
+
+
+
+menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LOOPNUMBER}_wfsdark" )
+
+
+
+
+
+
+menuitems+=( " " " " )
+stringcenter "AUTOMATIC SYSTEM CALIBRATION"
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
+
+
+menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn" )
+
+menuitems+=( " " " " )
+
+
+stringcenter "SYSTEM CALIBRATION (ZONAL)"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
+menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
+menuitems+=( " " " " )
+
+rmamplum=0.05
+if [ -f "./conf/conf_RMamplum.txt" ]; then
+rmamplum=$( cat ./conf/conf_RMamplum.txt )
+fi
+menuitems+=( "rmamp" "            RM amplitude                    ${rmamplum} um" )
+
+rmdelayfr=2
+if [ -f "./conf/conf_RMdelayfr.txt" ]; then
+rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
+fi
+menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame(s)" )
+
+
+
+delayRM1us="0"
+if [ -f "./conf/conf_delayRM1us.txt" ]; then
+delayRM1us=$( cat ./conf/conf_delayRM1us.txt )
+fi
+menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
+
+
+
+
+rmfrave=5
+if [ -f "./conf/conf_RMfrave.txt" ]; then
+rmfrave=$( cat ./conf/conf_RMfrave.txt )
+fi
+menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frame(s)" )
+
+
+rmexfr=5
+if [ -f "./conf/conf_RMexfr.txt" ]; then
+rmexfr=$( cat ./conf/conf_RMexfr.txt )
+fi
+menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frame(s)" )
+
+nblatm=100
+if [ -f "./conf/conf_nblatm.txt" ]; then
+nblatm=$( cat ./conf/conf_nblatm.txt )
+fi
+menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
+
+
+makemenuitemstringaolshm "zrespMa" "Zonal Resp Mat amplitude"
+menuitems+=( "zrespMa" "$menustring" )
+
+makemenuitemstringaolshm "zrespMp" "Zonal Resp Mat phase"
+menuitems+=( "zrespMp" "$menustring" )
+
+
+
+
+
+
+
+
+
+
+state="menutop"
+
+
+dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - script aolconf_menuconfigureloop" \
+--ok-label "Action: ${actionmode}" \
+--cancel-label "Top" \
+--extra-button --extra-label "Action toggle" \
+--help-button --help-label "Exit" \
+--default-item "${menucontrolloop_default}" \
+ --menu "$menuname" \
+ $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
+
+
+retval=$?
+choiceval=$(cat $tempfile)
+
+menucontrolloop_default="$choiceval"
+state="menuconfigureloop"
+
+case $actionmode in
+	"Select")
+amode=0
+;;
+	"View")
+amode=1
+;;
+esac
+
+case $retval in
+   0) # button
+	case $choiceval in
+	-);;
+	H)
+dialog --title "Help" --msgbox '
+Loop configuration is stored in ./conf/ directory\n
+Files specified in this configuration menu get linked/loaded to shared memory:\n
+\n
+HARDWARE I/O:\n
+     /tmp/FPaol${LOOPNUMBER}_dmC.im.shm           DM correction channel\n
+     /tmp/FPaol${LOOPNUMBER}_dmRM.im.shm          DM resp matrix channel\n
+     /tmp/FPaol${LOOPNUMBER}_wfsim.im.shm         WFS camera image\n
+            cnt0    full frame counter\n
+            cnt1    last slice written (pixel stream mode)\n
+            sem0    post: full frame ready      wait: main WFC loop\n
+            sem1    post: full frame ready      wait: RM acquisition\n
+            sem2    post: subframe ready        wait: main WFC loop, pixel stream mode\n
+            sem3    post: subframe ready\n
+            sem4    post: full frame ready      wait: alignment loop #1 (focus)\n
+            sem5    post: full frame ready      wait: alignment loop #2 (pupil)\n
+            sem6    post: full frame ready      mode coefficients telemetry\n
+\n
+I/O PRE-PROCESSING:\n
+     /tmp/FPaol${LOOPNUMBER}_wfsdark.im.shm       WFS dark\n
+\n
+' $nbwlines $nbwcols
+;;
+
+
+
+
+
+
+	lfreq)
+exec 3>&1;
+loopfrequ=$(dialog --inputbox "Loop Frequency [Hz]" 0 0 "$loopfrequ" 2>&1 1>&3);
+exec 3>&-;
+echo "$loopfrequ" > ./conf/conf_loopfrequ.txt
+Cfits << EOF
+aolsetloopfrequ 1000
+exit
+EOF
+aoconflogext "set loop frequency $loopfrequ Hz"
+;;
+
+	lhlat)
+exec 3>&1;
+hardwlatency=$(dialog --inputbox "Hardware latency [s]" 0 0 "$hardwlatency" 2>&1 1>&3);
+exec 3>&-;
+echo "$hardwlatency" > ./conf/conf_hardwlatency.txt
+echo "$hardwlatency $loopfrequ" > tmpfile.txt
+hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+Cfits << EOF
+aolsethlat ${hardwlatency_frame}
+exit
+EOF
+aoconflogext "set hardware latency $hardwlatency_frame frame"
+;;
+
+	lclat)
+exec 3>&1;
+complatency=$(dialog --inputbox "Computing latency" 0 0 "$complatency" 2>&1 1>&3);
+exec 3>&-;
+echo "$complatency" > ./conf/conf_complatency.txt
+echo "$complatency $loopfrequ" > tmpfile.txt
+complatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$complatency_frame" > ./conf/conf_complatency_frame.txt
+Cfits << EOF
+aolsetclat ${complatency_frame}
+exit
+EOF
+aoconflogext "set computing latency $complatency_frame frame"
+;;
+
+	lslat)
+exec 3>&1;
+wfsmextrlatency=$(dialog --inputbox "WFS modes extraction latency" 0 0 "$wfsmextrlatency" 2>&1 1>&3);
+exec 3>&-;
+echo "$wfsmextrlatency" > ./conf/conf_wfsmextrlatency.txt
+echo "$wfsmextrlatency $loopfrequ" > tmpfile.txt
+wfsmextrlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$wfsmextrlatency_frame" > ./conf/conf_wfsmextrlatency_frame.txt
+Cfits << EOF
+aolsetwlat ${wfsmextrlatency_frame}
+exit
+EOF
+aoconflogext "set WFS modes extraction latency $wfsmextrlatency_frame frame"
+;;
+
+	dmC)
+case $amode in
+	0)
+exec 3>&1;
+dmC=$(dialog --inputbox "dmC" 0 0 "$dmC" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmC" > ./conf/conf_dmC_name.txt
+ReaddmCname
+./FPauxscripts/FPaolgetshmimsize aol${LOOPNUMBER}_dmC
+;;
+	1)shmimmon FPaol${LOOPNUMBER}_dmC;;
+esac
+;;
+
+
+    dmRM)
+case $amode in
+	0)
+exec 3>&1;
+dmRM=$(dialog --inputbox "dmRM" 0 0 "$dmRM" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmRM" > ./conf/conf_dmRM_name.txt
+ReaddmRMname
+./FPauxscripts/FPaolgetshmimsize aol${LOOPNUMBER}_dmRM
+;;
+	1)
+shmimmon FPaol${LOOPNUMBER}_dmRM
+;;
+esac
+;;
+
+
+	zerodm)
+./FPauxscripts/shmimzero FPaol${LOOPNUMBER}_dmC
+./FPauxscripts/shmimzero FPaol${LOOPNUMBER}_dmRM
+;;
+
+
+	wfs)
+case $amode in
+	0)
+exec 3>&1;
+wfsimcam=$(dialog --inputbox "WFS image" 0 0 "$wfsimcam" 2>&1 1>&3);
+exec 3>&-;
+echo "$wfsimcam" > ./conf/conf_wfsim_name.txt
+Readwfsimcamname
+./FPauxscripts/FPaolgetshmimsize FPaol${LOOPNUMBER}_wfsim
+;;
+	1)
+shmimmon FPaol${LOOPNUMBER}_wfsim
+;;
+esac
+;;
+
+	swfsl)
+exec 3>&1;
+wfslambdanm=$(dialog --inputbox "WFS lambda [nm]" 0 0 "$wfslambdanm" 2>&1 1>&3);
+exec 3>&-;
+echo "$wfslambdanm" > ./conf/conf_wfslambdanm.txt
+FPaoconflogext "set WFS lambda [nm] to ${wfslambdanm}"
+;;
+
+
+
+
+
+	dark)
+exec 3>&1;
+wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
+echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
+ReadWFSdarkfname
+;;
+
+	adark_on)
+aoconflog "START dark acquisiton"
+acqdarkstat=" ON"
+echo " ON" > ./status/stat_acqudark.txt
+tmux new-session -d -s adark
+tmux send-keys -t adark "./FPaocustomscripts/takedark_${LOOPNAME} 10000" C-m
+FPaoconflogext "taking dark"
+menucontrolloop_default="adark_on"
+;;
+
+
+
+
+AUTOC)
+aoconflogext "START AUTO CALIBRATION"
+# archive
+dirnb=20
+i0=`( printf "%03d" "$dirnb" )`
+rm -rf conf_zrm_staged.$i0
+if [ "$DMMODE" = "ZONAL" ]; then
+rm -rf conf_mrm_staged.$i0
+fi
+
+# save old RMs
+while [ $dirnb -gt 0 ]; do
+i=$(($dirnb))
+i1=$(($dirnb-1))
+is=`( printf "%03d" "$i" )`
+i1s=`( printf "%03d" "$i1" )`
+mv conf_zrm_staged.$i1s conf_zrm_staged.$is
+if [ "$DMMODE" = "ZONAL" ]; then
+mv conf_mrm_staged.$i1s conf_mrm_staged.$is
+fi
+let dirnb-=1
+done    
+ 
+cp -rf conf_zrm_staged conf_zrm_staged.000
+if [ "$DMMODE" = "ZONAL" ]; then
+cp -rf conf_mrm_staged conf_mrm_staged.000
+fi
+
+
+;;
+
+
+
+
+	rmamp)
+exec 3>&1;
+rmamplum=$(dialog --inputbox "RM amplitude [um]" 0 0 "$rmamplum" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmamplum" > ./conf/conf_RMamplum.txt
+aoconflogext "set RM amplitude $rmamplum um"
+;;
+
+	rmdelay)
+exec 3>&1;
+rmdelayfr=$(dialog --inputbox "RM time delay [frame]" 0 0 "$rmdelayfr" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
+aoconflogext "set RM time delay $rmdelayfr frame"
+;;
+
+	delayRM1us)
+exec 3>&1;
+delayRM1us=$(dialog --inputbox "RM time delay1 [us]" 0 0 "$delayRM1us" 2>&1 1>&3);
+exec 3>&-;
+echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
+aoconflogext "set RM time delay1 $delayRM1us us"
+;;
+
+
+	rmnbfr)
+exec 3>&1;
+rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmfrave" > ./conf/conf_RMfrave.txt
+aoconflogext "set RM NB frame average $rmfrave frames"
+;;
+	rmexfr)
+exec 3>&1;
+rmexfr=$(dialog --inputbox "RM excluded frames" 0 0 "$rmexfr" 2>&1 1>&3);
+exec 3>&-;
+echo "$rmexfr" > ./conf/conf_RMexfr.txt
+
+echo "$hardwlatency_frame $rmexfr $loopfrequ" > tmpfile.txt
+rmdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
+echo "$rmdelayfr" > ./conf/conf_RMdelayfr.txt
+delayRM1us=$( awk '{ printf("%d\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
+echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
+aoconflogext "set RM NB frame excluded $rmexfr frames"
+;;
+
+	mlat)
+exec 3>&1;
+nblatm=$(dialog --inputbox "Latency measurement # frames :" 0 0 "$nblatm" 2>&1 1>&3);
+exec 3>&-;
+echo "$nblatm" > ./conf/conf_nblatm.txt
+aoconflogext "Measuring system hardware latency"
+./auxscripts/MeasureLatency "$nblatm"
+hardwlatency=$( awk '{print $1}' conf/conf_hardwlatency.txt )
+loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
+echo "$hardwlatency $loopfrequ" > tmpfile.txt
+hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
+rm tmpfile.txt
+echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+Cfits << EOF
+aolsethlat ${hardwlatency_frame}
+exit
+EOF
+aoconflogext "set hardware latency $hardwlatency_frame frame"
+;;
+
+
+
+
+	zrespMa)
+case $amode in
+	0)
+	;;
+	1)
+imname=$( cat ./conf/conf_zrespMa_name.txt )
+ds9 $imname &
+;;
+esac
+;;
+
+
+
+
+	zrespMp)
+case $amode in
+	0)
+	;;
+	1)
+imname=$( cat ./conf/conf_zrespMp_name.txt )
+ds9 $imname &
+;;
+esac
+;;
+
+
+
+
+
+
+
+
+	esac;;
+   1) state="menutop";;   
+   2) state="menuexit";;
+   3)
+case $actionmode in
+	"Select")
+actionmode="View"
+;;
+	"View")
+actionmode="Select"
+;;
+esac
+state="menuconfigureloop"
+   ;;
+   255) state="menuexit";;
+esac
+
+
+fi
+
+

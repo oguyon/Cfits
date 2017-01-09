@@ -1,0 +1,154 @@
+#!/bin/bash
+
+echo "accessing FPaolconf_readconf"
+
+
+if [ ! -v FPaolconfFLAG ]; then
+echo "ERROR: This script should be called from FPaolconf main script"
+exit
+fi
+
+
+
+
+# ============== LOOPNUMBER (loop number)
+LOOPNUMBER_file="LOOPNUMBER"
+if [ ! -f $LOOPNUMBER_file ]
+then
+	aoconflog "creating loop number $LOOPNUMBER_default"
+	echo "$LOOPNUMBER_default" > $LOOPNUMBER_file
+	LOOPNUMBER=$LOOPNUMBER_default
+else
+	LOOPNUMBER=$(cat $LOOPNUMBER_file)
+	aoconflog "LOOPNUMBER = $LOOPNUMBER"
+fi
+
+
+# ============= loop name
+LOOPNAME_file="LOOPNAME"
+if [ ! -f $LOOPNAME_file ]
+then
+	aoconflog "creating loop name loop$LOOPNUMBER"
+	echo "loop$LOOPNUMBER" > $LOOPNAME_file
+else
+	LOOPNAME=$(cat $LOOPNAME_file)
+	aoconflog "LOOPNAME = $LOOPNAME"
+fi
+
+
+
+
+
+function ReaddmCname {
+file="./conf/conf_dmC_name.txt"
+if [ -a $file ]
+	then
+	dmC=$(echo "$(cat $file)")
+	else
+	dmC="dmC" #default
+fi
+# DM correction channel
+FPaoconflog "linking dmC to ${dmC}"
+rm /tmp/FPaol${LOOPNUMBER}_dmC.im.shm 
+ln -s /tmp/${dmC}.im.shm /tmp/FPaol${LOOPNUMBER}_dmC.im.shm
+}
+
+
+
+function ReaddmRMname {
+file="./conf/conf_dmRM_name.txt"
+if [ -a $file ]
+	then
+	dmRM=$(echo "$(cat $file)")
+	else
+	dmRM="dmRM" #default
+fi
+# DM response matrix channel
+FPaoconflog "linking dmRM to ${dmRM}"
+rm /tmp/FPaol${LOOPNUMBER}_dmRM.im.shm 
+ln -s /tmp/${dmRM}.im.shm /tmp/FPaol${LOOPNUMBER}_dmRM.im.shm
+}
+
+
+function Readwfsimcamname {
+file="./conf/conf_wfsim_name.txt"
+if [ -a $file ]
+	then
+	wfsimcam=$(echo "$(cat $file)")
+	else
+	wfsimcam="wfsimcam" #default
+fi
+# WFS raw image
+FPaoconflog "linking wfsim to ${wfsimcam}"
+ln -sf /tmp/${wfsimcam}.im.shm /tmp/FPaol${LOOPNUMBER}_wfsim.im.shm
+}
+
+
+
+function ReadWFSdarkfname {
+file="./conf/conf_wfsdark_name.txt"
+if [ -a $file ]
+	then
+	wfsdarkfname=$(echo "$(cat $file)")
+	else
+	wfsdarkfname="wfsdark.fits" #default
+fi
+FPaoconflog "linking wfsdark to file ${wfsdarkfname}"
+if [ -f $wfsdarkfname ];then
+rm -f /tmp/FPaol${LOOPNUMBER}_wfsdark.im.shm
+Fits2shm ${wfsdarkfname} FPaol${LOOPNUMBER}_wfsdark
+ln -s $PWD/${wfsdarkfname} conf/FPaol${LOOPNUMBER}_wfsdark.fits
+else
+printWARNING "File $wfsdarkfname does not exist: no WFS dark frame"
+fi
+}
+
+
+
+
+
+# arg1 : image/stream name
+#
+# Reads conf/conf_XXX_name.txt
+# -> moves file to shared mem under aol#_XXX stream
+# -> makes sym link to conf/aol#_XXX.fits
+#
+function ReadConfFile {
+file="./conf/conf_$1_name.txt"
+if [ -a $file ]
+	then
+	fname=$(echo "$(cat $file)")
+	else
+	fname="$1.fits" #default
+fi
+FPaoconflog "linking $1 to ${fname}" 
+./FPauxscripts/Fits2shm ${fname} FPaol${LOOPNUMBER}_$1
+rm conf/FPaol${LOOPNUMBER}_$1.fits
+ln -s $PWD/${fname} conf/FPaol${LOOPNUMBER}_$1.fits
+}
+
+
+
+
+
+function SelectConfFile {
+name="$1"
+ffname="./conf/conf_${name}_name.txt"
+fname=$( cat $ffname )
+echo "fname = $fname"
+fname=$(dialog --title "Select  Matrix" --stdout --title "Select ${name}" --fselect ${fname} $nbwlines $nbwcols)
+echo "$fname" > $ffname
+FPaoconflog "select configuration file ${name} : ${fname}"
+ReadConfFile "$name"
+}
+
+
+
+
+
+
+
+
+
+
+
