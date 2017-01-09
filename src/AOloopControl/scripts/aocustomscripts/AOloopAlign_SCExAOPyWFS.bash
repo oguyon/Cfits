@@ -92,6 +92,7 @@ Cfits << EOF
 aolsethlat $hardwlatency_frame
 aolsetwlat $wfsmextrlatency_frame
 aolsetclat $complatency_frame
+aolsetloopfrequ $frHz
 exit
 EOF
 }
