@@ -17,6 +17,29 @@ pname=`echo "$0" | sed "s/\.\///g"`
 
 
 
+
+# ======================= LOGGING =================================
+# NOTE: copy logging functions to external scripts
+# NOTE: dolog and dologext should be provided by user
+
+# internal log - logs EVERYTHING
+function FPaoconflog {
+echo "$@" >> FPaolconf.log
+dolog "$LOOPNAME" "$@"
+}
+
+# external log, use for less verbose log
+function FPaoconflogext {
+echo "$@" >> FPaolconf.log
+dolog "$LOOPNAME" "$@"
+dologext "$LOOPNAME $@"
+}
+
+
+
+
+
+
 printHELP_confFILES ()
 {
 echo "------------------------------------------------------------------------"
@@ -175,26 +198,7 @@ fi
 
 
 # help, warning, error
-. ./FPaolconfscripts/aolconf_funcs
-
-
-# ======================= LOGGING =================================
-# NOTE: copy logging functions to external scripts
-# NOTE: dolog and dologext should be provided by user
-
-# internal log - logs EVERYTHING
-function FPaoconflog {
-echo "$@" >> FPaolconf.log
-dolog "$LOOPNAME" "$@"
-}
-
-# external log, use for less verbose log
-function FPaoconflogext {
-echo "$@" >> FPaolconf.log
-dolog "$LOOPNAME" "$@"
-dologext "$LOOPNAME $@"
-}
-
+. ./FPaolconfscripts/FPaolconf_funcs
 
 
 
