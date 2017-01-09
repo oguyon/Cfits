@@ -150,7 +150,10 @@ menuitems+=( "" "" )
 
 menuitems+=( "" "" )
 menuitems+=( "dmrs" "Re-start all DM processes" )
-menuitems+=( "dmk" "Kill all DM processes" )
+menuitems+=( "dmk" "Kill all DM processes - do not restart" )
+menuitems+=( "dmcommrs" "Re-start scexao2 -> scexao DM communication processes" )
+menuitems+=( "dmcommk" "Kill scexao2 -> scexao DM communication processes" )
+
 
 menuitems+=( "" "" )
 if [ "$dmVmax" = " 25" ]; then
@@ -201,6 +204,9 @@ stringcenter "Science IRcam"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " " )
 
+menuitems+=( "ir1cs" "(re-)start ircam1 scexao2->scexao TCP transfer" )
+menuitems+=( "ir1ck" "kill ircam1 scexao2->scexao TCP transfer" )
+
 
 
 
@@ -234,6 +240,13 @@ menuhardwarecontrol_default="$choiceval"
 ;;
 	dmk)
 /home/scexao/bin/dmrestart -k
+;;
+
+	dmcommrs)
+/home/scexao/bin/dmrestart -C
+;;
+	dmcommk)
+/home/scexao/bin/dmrestart -c
 ;;
 
 
@@ -298,6 +311,13 @@ EOF
 ;;
 
 
+	ir1cs)
+/home/scexao/bin/getTCPscexao2im -c ircam1 30102
+;;
+
+	ir1ck)
+/home/scexao/bin/getTCPscexao2im -k ircam1 30102
+;;
 
 
 	esac;;
