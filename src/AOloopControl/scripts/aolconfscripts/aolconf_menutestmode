@@ -361,9 +361,9 @@ if [ -a $file ]
 	else
 	mzRMsensAmpnm="100"
 fi
-menuitems+=( "mzRMsA" "[${mzRMsensAmpnm} nm] zonal RM sensitivity measurement amplitude [nm]" )
+menuitems+=( "mzRMsA" "[${mzRMsensAmpnm} nm] RM sensitivity measurement amplitude [nm]" )
 
-menuitems+=( "mzRMs"  "Measure zonal response matrix sensitivity (ampl = ${mzRMsensAmpnm} nm)" ) 
+menuitems+=( "mzRMs"  "Measure current response matrix sensitivity (ampl = ${mzRMsensAmpnm} nm) -> perfMeas" ) 
 
 
 menuitems+=( " "  " " ) 
