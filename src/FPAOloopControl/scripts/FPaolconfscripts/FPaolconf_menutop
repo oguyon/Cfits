@@ -25,7 +25,7 @@ menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
 
 
 
-menuitems+=( " " " ")
+menuitems=( " " " ")
 menuitems+=( " " " ")
 
 
