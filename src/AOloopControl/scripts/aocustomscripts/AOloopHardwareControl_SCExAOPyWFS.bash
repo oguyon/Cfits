@@ -206,6 +206,9 @@ menuitems+=( " " " " )
 
 menuitems+=( "ir1cs" "(re-)start ircam1 scexao2->scexao TCP transfer" )
 menuitems+=( "ir1ck" "kill ircam1 scexao2->scexao TCP transfer" )
+menuitems+=( " " " " )
+menuitems+=( "ir1dcs" "(re-)start ircam1_dark scexao2->scexao TCP transfer" )
+menuitems+=( "ir1dck" "kill ircam1_dark scexao2->scexao TCP transfer" )
 
 
 
@@ -318,6 +321,15 @@ EOF
 	ir1ck)
 /home/scexao/bin/getTCPscexao2im -k ircam1 30102
 ;;
+
+	ir1dcs)
+/home/scexao/bin/getTCPscexao2im -c ircam1_dark 30103
+;;
+
+	ir1dck)
+/home/scexao/bin/getTCPscexao2im -k ircam1_dark 30103
+;;
+
 
 
 	esac;;
