@@ -5326,7 +5326,6 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     
 	COREMOD_MEMORY_image_set_createsem(imgmd[0].name, 10);
 
-/*
     xsize = data.image[ID].md[0].size[0];
     ysize = data.image[ID].md[0].size[1];
     NBslices = 1;
@@ -5459,7 +5458,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
         if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
             socketOpen = 0;
     }
-    */
+    
     
     free(buff);
 
