@@ -137,52 +137,22 @@ function function_SMloadzrm_tmux ()
 tmux new-session -d -s $1
 logRunningProcess "SMloadzrm" "$1" "Load zonal response matrix files to shared memory"
 
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.000.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"zrespM\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_zrespM" C-m
-
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.001.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
 
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsref0\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsref0" C-m
 
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.002.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmap\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmap" C-m
-
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.003.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
 
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmap\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmap" C-m
 
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.004.fits" C-m 
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_wfsmask test_wfsmask.004.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsmask" C-m
 
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.005.fits" C-m 
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_wfsmask test_wfsmask.005.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
-
-tmux send-keys -t $1 "sleep 0.2" C-m
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.006.fits" C-m 
-tmux send-keys -t $1 "sleep 0.2" C-m
 
 if [ "$DMMODE" = "ZONAL" ]; then
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmaskRM" C-m
@@ -191,7 +161,6 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
 fi
-tmux send-keys -t $1 "shmim2fits aol${LOOPNUMBER}_dmC test_dmC.100.fits" C-m
 tmux send-keys -t $1 "rm SMloadzrm.runproc" C-m
 }
 
