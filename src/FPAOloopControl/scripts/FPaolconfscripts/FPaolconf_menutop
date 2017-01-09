@@ -4,7 +4,7 @@
 
 
 if [ ! -v FPaolconfFLAG ]; then
-echo "ERROR: This script should be called from aolconf main script"
+echo "ERROR (FPaolconf_menutop): This script should be called from aolconf main script"
 exit
 fi
 
