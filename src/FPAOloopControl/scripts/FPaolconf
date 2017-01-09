@@ -349,7 +349,7 @@ echo "FUNCTIONS..."
 # =================== READ CONFIGURATION====================================
 
 
-function AOloadMem {
+function FPAOloadMem {
 # hardware I/O [shared memory]
 ReaddmCname
 getshmimsize FPaol${LOOPNUMBER}_dmC

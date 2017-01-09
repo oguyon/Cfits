@@ -26,8 +26,8 @@ Notations: \n
 \n
 For all configurations files (not including Hardware I/O links) :\n
   File \Zbconf/conf_<name>_name.txt\Zn contains the original .fits file path and name\n
-  A symbolic link to the FITS file is written as \Zuconf/aol${LOOPNUMBER}_<name>.fits\Zn\n
-  File is loaded in shared memory as /tmp/\Z4aol${LOOPNUMBER}_<name>\Zn.im.shm\n
+  A symbolic link to the FITS file is written as \Zuconf/FPaol${LOOPNUMBER}_<name>.fits\Zn\n
+  File is loaded in shared memory as /tmp/\Z4FPaol${LOOPNUMBER}_<name>\Zn.im.shm\n
 "
 
 confOK=1
