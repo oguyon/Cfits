@@ -11,7 +11,7 @@ function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Copy FITS files to shared memory $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "  Align Pyramid camera"
+echo "  Copy FITS file to shared memory"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h] <FITS file> <shared memory stream name>"
@@ -88,6 +88,7 @@ fi
 
 Cfits -n pname << EOF
 loadfits "$1" im
+readshmim "$2"
 cpsh im "$2"
 exit
 EOF
