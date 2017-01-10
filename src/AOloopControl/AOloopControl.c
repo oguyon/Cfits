@@ -149,7 +149,7 @@ long aoconfID_dmRM = -1;
 long aoconfID_DMmodes = -1;
 long aoconfID_dmdisp = -1;  // to notify DMcomb that DM maps should be summed
 
-// Fourier Modes
+// Control Modes
 long aoconfID_cmd_modes = -1;
 long aoconfID_meas_modes = -1; // measured
 long aoconfID_RMS_modes = -1;
@@ -11873,9 +11873,9 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
     long nbl = 1;
     float AVElim = 0.01; // [um]
     float RMSlim = 0.01; // [um]
+	char imname[200];
 
-
-	
+	long IDblknb;
 
 
     printw("    loop number %ld    ", loop);
@@ -11892,6 +11892,11 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
           printw("log is OFF  ");
 
     */
+
+
+	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
+   	IDblknb = read_sharedmem_image(imname);
+
 
 
     printw("   STATUS = %3d  ", AOconf[loop].status);
@@ -11980,7 +11985,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
         printw("%4ld ", k);
         attroff(A_BOLD);
 
-        printw("[%5.3f %8.4f %5.3f] ", data.image[aoconfID_GAIN_modes].array.F[k], 1000.0*data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
+        printw("[%5.3f %8.4f %5.3f] ", AOconf[loop].gain * AOconf[loop].gainMB[data.image[IDblknb].array.U[k]] * data.image[aoconfID_GAIN_modes].array.F[k], 1000.0*data.image[aoconfID_LIMIT_modes].array.F[k], data.image[aoconfID_MULTF_modes].array.F[k]);
 
         // print current value on DM
         val = data.image[IDmodeval_dm].array.F[k];
@@ -13138,7 +13143,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		// write gain and mult into arrays
 		for(m=0;m<NBmodes;m++)
 		{
-			modegain[m] = AOconf[loop].gain * data.image[IDgainb].array.F[modeblock[m]];
+			modegain[m] = AOconf[loop].gain * data.image[IDgainb].array.F[modeblock[m]] * data.image[aoconfID_GAIN_modes].array.F[m];
 			modemult[m] = AOconf[loop].mult;
 		}
 
@@ -13398,7 +13403,7 @@ int AOloopControl_showparams(long loop)
   else
     printf("loop is OFF\n");
     
-    printf("Gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
+    printf("Global gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
 	printf("    Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE lim %d\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON);
     printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 
