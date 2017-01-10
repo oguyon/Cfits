@@ -896,6 +896,7 @@ cat wfs_sensitivity.txt >> $fname
 rm wfs_sensitivity.txt
 
 mv DMmodesXP.fits ./perfMeas/DMmodesXP.${datestr}.fits
+mv WFSmodesXP.fits ./perfMeas/WFSmodesXP.${datestr}.fits
 ;;
 
 

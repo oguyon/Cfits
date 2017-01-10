@@ -15028,7 +15028,7 @@ long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_na
 	
 	float frac = 0.0;
 	float pcnt;
-	long IDoutXP;
+	long IDoutXP, IDoutXP_WFS;
 	double XPval;
 	
 	double eff; // efficiency
@@ -15135,6 +15135,21 @@ long AOloopControl_AnalyzeRM_sensitivity(char *IDdmmodes_name, char *IDdmmask_na
 				data.image[IDoutXP].array.F[mode*NBmodes+mode1] = XPval/dmmodermscnt;
 			}
 	save_fits("DMmodesXP", "!DMmodesXP.fits");
+	
+	
+	// computing WFS space cross-product
+	IDoutXP_WFS = create_2Dimage_ID("WFSmodesXP", NBmodes, NBmodes);
+	for(mode=0; mode<NBmodes; mode++)
+		for(mode1=0; mode1<mode+1; mode1++)
+			{
+				XPval = 0.0;
+				for(ii=0;ii<wfsxysize;ii++)
+					XPval += data.image[IDwfsresp].array.F[mode*wfsxysize+ii]*data.image[IDwfsresp].array.F[mode1*wfsxysize+ii];
+			
+				data.image[IDoutXP_WFS].array.F[mode*NBmodes+mode1] = XPval/wfsxysize;
+			}
+	save_fits("WFSmodesXP", "!WFSmodesXP.fits");
+
 	
 	
 	return(0);
