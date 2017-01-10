@@ -1621,11 +1621,11 @@ menucontrolloop_default="sACmrmN"
 
 ACstopK)
 if [ "$DMMODE" = "ZONAL" ]; then
-tmux kill-session -t aol2LOrespM
-tmux kill-session -t aol2LOrespMc
+tmux kill-session -t aol${LOOPNUMBER}LOrespM
+tmux kill-session -t aol${LOOPNUMBER}LOrespMc
 fi
-tmux kill-session -t aol2zrespM
-tmux kill-session -t aol2zrespMc
+tmux kill-session -t aol${LOOPNUMBER}zrespM
+tmux kill-session -t aol${LOOPNUMBER}zrespMc
 if [ "$DMMODE" = "ZONAL" ]; then
 rm function_LOresp_on_tmux.lock
 rm function_LOresp_off_tmux.lock
