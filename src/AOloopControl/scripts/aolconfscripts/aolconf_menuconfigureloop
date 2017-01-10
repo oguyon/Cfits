@@ -1646,6 +1646,7 @@ echo "OFF" > ./status/stat_zrespM.txt
 if [ "$DMMODE" = "ZONAL" ]; then
 echo "OFF" > ./status/stat_LOrespM.txt
 fi
+./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 aoconflogext "STOP AUTO CALIBRATION"
 menucontrolloop_default="AUTOC"
 ;;
