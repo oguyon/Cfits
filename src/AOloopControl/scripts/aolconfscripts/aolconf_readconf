@@ -315,7 +315,6 @@ if [ -a $file ]
 	wfsdarkfname="wfsdark.fits" #default
 fi
 aoconflog "linking wfsdark to file ${wfsdarkfname}"
-echo "reading dark file $file $wfsdarkfname" > test_rdark.txt
 if [ -f $wfsdarkfname ];then
 rm -f /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
 Fits2shm ${wfsdarkfname} aol${LOOPNUMBER}_wfsdark
