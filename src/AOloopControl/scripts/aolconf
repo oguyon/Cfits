@@ -1,7 +1,8 @@
 #!/bin/bash
 
-
+# ensures that subscripts are called from the main script
 aolconfFLAG="1"
+
 NBARGS=0
 
 if [ -f LOOPNAME ]; then
@@ -9,7 +10,6 @@ LOOPNAME=$( cat LOOPNAME )
 else
 LOOPNAME="null"
 fi
-
 
 if [ -f LOOPNUMBER ]; then
 LOOPNUMBER=$( cat LOOPNUMBER )
@@ -68,6 +68,8 @@ printHELP1 ()
 {
 	printf "%20s       AO loop CONTROL - main script\n" "$0" 
 }
+
+
 
 
 # Transform long options to short ones

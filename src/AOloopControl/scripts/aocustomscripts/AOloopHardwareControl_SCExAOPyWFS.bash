@@ -226,7 +226,7 @@ menuitems+=( "ljck" "\Zr labjack \Zn: kill scexao2->scexao TCP transfer" )
 
 
 
-dialog --colors --title "Alignment" \
+dialog --colors --title "Hardware Control" \
 --ok-label "Select" \
 --cancel-label "Top" \
 --help-button --help-label "Exit" \
