@@ -1792,6 +1792,8 @@ tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
 
+# wait to ensure that aolcompolm has created aol${LOOPNUMBER}_modeval_dm_now_filt
+sleep 0.2
 
 # process runs in CPU set aol0RT
 if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
