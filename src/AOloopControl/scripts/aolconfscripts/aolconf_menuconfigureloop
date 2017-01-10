@@ -1794,7 +1794,7 @@ do
 done
 
 # set up symbolic links to FITS files in conf directory
-for name in zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
+for name in zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsdark wfsref0 contrM DMmodes respM
 do
 	fname=$( cat "./conf/conf_${name}_name.txt" )
 	ln -s "$fname" "./conf/aol${LOOPNUMBER}_${name}.fits"
