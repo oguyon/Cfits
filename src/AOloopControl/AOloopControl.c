@@ -13119,6 +13119,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	allavelimFrac = 0.0;
 
 	
+	printf("aoconfID_GAIN_modes = %ld\n", aoconfID_GAIN_modes);
+	
 	while (1)
 	{
 		// read WFS measured modes (residual)
