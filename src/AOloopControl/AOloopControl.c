@@ -13119,6 +13119,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	allavelimFrac = 0.0;
 
 	
+	 if(aoconfID_GAIN_modes==-1)
+    {
+        sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER);
+        aoconfID_GAIN_modes = read_sharedmem_image(imname);
+    }
+	
 	printf("aoconfID_GAIN_modes = %ld\n", aoconfID_GAIN_modes);
 	
 	while (1)
