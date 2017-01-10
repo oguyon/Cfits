@@ -4137,6 +4137,9 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     mok[m] = 1;
 
 
+
+				// REMOVE WFS MODES FROM PREVIOUS BLOCKS
+/*
                 for(mblock0=0; mblock0<mblock; mblock0++)
                 {
                     reuse = 0;
@@ -4185,7 +4188,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                         printf("RMS RATIO  %3ld :   %12g\n", m, rms/rmsarray[m]);
                     }
                 }
-
+*/
 
                 cnt = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
