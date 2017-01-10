@@ -157,7 +157,7 @@ else
 PFb0start="0"
 PFb0end="2"
 PFb0order="10"
-PFb0lag="2.5"
+PFb0lag="$latency_frame"
 PFb0dgain="0.1"
 echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 fi
@@ -319,7 +319,7 @@ else
 PFb1start="2"
 PFb1end="12"
 PFb1order="10"
-PFb1lag="2.5"
+PFb1lag="$latency_frame"
 PFb1dgain="0.1"
 echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 fi
@@ -487,7 +487,7 @@ else
 PFb2start="2"
 PFb2end="12"
 PFb2order="10"
-PFb2lag="2.5"
+PFb2lag="$latency_frame"
 PFb2dgain="0.1"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 fi
@@ -652,7 +652,7 @@ else
 PFb3start="2"
 PFb3end="12"
 PFb3order="10"
-PFb3lag="2.5"
+PFb3lag="$latency_frame"
 PFb3dgain="0.1"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 fi
