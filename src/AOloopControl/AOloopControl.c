@@ -1700,7 +1700,7 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].key,"aolsetgainr");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_setgainrange_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set modal gains");
+    strcpy(data.cmd[data.NBcmd].info,"set modal gains from m0 to m1 included");
     strcpy(data.cmd[data.NBcmd].syntax,"<modemin [long]> <modemax [long]> <gainval>");
     strcpy(data.cmd[data.NBcmd].example,"aolsetgainr 20 30 0.2");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setgainrange(long m0, long m1, float gainval)");
