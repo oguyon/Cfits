@@ -3815,9 +3815,18 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
             svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
+            
+            sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock);
+            fpcoeff = fopen(fnameSVDcoeff, "w");            
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
-                if(data.image[IDSVDcoeff].array.F[m]>SVDlim01*svdcoeff0)
-                    cnt++;
+            {
+				fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[m], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[m]/data.image[IDSVDcoeff].array.F[0], SVDlim01);
+
+				if(data.image[IDSVDcoeff].array.F[m]>SVDlim01*svdcoeff0)
+					cnt++;
+			}
+            fclose(fpcoeff);
+            
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             fflush(stdout);
             sprintf(imname1, "fmodes2b_%02ld", mblock);
