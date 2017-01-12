@@ -2854,7 +2854,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
     float SVDlim00 = 0.01; // DM filtering step 0
-    float SVDlim01 = 0.0001; // DM filtering step 1
+    float SVDlim01; // DM filtering step 1
     float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
     float rmslim0 = 0.01;
     float rmslim1 = 0.1;
@@ -2936,7 +2936,8 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 
 
-
+	// SET LIMITS
+	SVDlim01 = SVDlim; // DM filtering step 1
 
 
 
