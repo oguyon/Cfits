@@ -195,11 +195,10 @@ fi
 
 
 
+
+
+
 menuitems+=( "" "" )
-
-
-
-
 stringcenter "scexao2 streams"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " " )
@@ -223,6 +222,15 @@ menuitems+=( "lj2ck" "\Zr labjack2 \Zn: kill scexao2->scexao TCP transfer" )
 menuitems+=( " " " " )
 menuitems+=( "ljcs" "\Zr labjack \Zn: (re-)start scexao2->scexao TCP transfer" )
 menuitems+=( "ljck" "\Zr labjack \Zn: kill scexao2->scexao TCP transfer" )
+
+
+
+
+
+menuitems+=( "" "" )
+stringcenter "scexao2 streams"
+menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( " " " " )
 
 
 
