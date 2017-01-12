@@ -4409,7 +4409,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                 fpcoeff = fopen(fnameSVDcoeff, "w");
                 for(kk=0; kk<data.image[IDSVDcoeff].md[0].size[0]; kk++)
                 {
-					fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0]);
+					fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0], SVDlim);
                     printf("==== %ld %12g %12g  %3ld\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt);
                     if(data.image[IDSVDcoeff].array.F[kk]>SVDlim*data.image[IDSVDcoeff].array.F[0])
                         cnt++;
