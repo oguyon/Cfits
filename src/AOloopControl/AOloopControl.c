@@ -3816,7 +3816,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             IDSVDcoeff = image_ID("svdcoeff");
             svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             
-            sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock);
+            sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff01_%02ld.txt", mblock);
             fpcoeff = fopen(fnameSVDcoeff, "w");            
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
             {
