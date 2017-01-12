@@ -4137,7 +4137,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
                     mok[m] = 1;
 
 
-
+ 
 				// REMOVE WFS MODES FROM PREVIOUS BLOCKS
 
                 for(mblock0=0; mblock0<mblock; mblock0++)
