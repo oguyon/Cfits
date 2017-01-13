@@ -613,6 +613,19 @@ int COREMOD_MEMORY_streamDiff_cli()
 }
 
 
+int COREMOD_MEMORY_stream_halfimDiff_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
+    {
+        COREMOD_MEMORY_stream_halfimDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 
 int COREMOD_MEMORY_image_streamupdateloop_cli()
 {
@@ -1126,6 +1139,18 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 outstream 3");
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)");
 	data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"streamhalfdiff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_stream_halfimDiff_cli;
+    strcpy(data.cmd[data.NBcmd].info,"compute difference between two halves of an image stream");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <out stream> <sem trigger index>");
+    strcpy(data.cmd[data.NBcmd].example,"streamhalfdiff stream outstream 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig)");
+	data.NBcmd++;
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
@@ -4564,6 +4589,86 @@ long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char 
 		for(ii=0;ii<xysize;ii++)
 			data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii];		        
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+	}
+	
+	
+	return(IDout);
+}
+
+
+
+
+
+//
+// compute difference between two halves of an image stream
+// triggers on instream
+//
+long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig)
+{
+	long ID0, IDout;
+	long xsizein, ysizein, xysizein;
+	long xsize, ysize, xysize;
+	long ii;
+	long *arraysize;
+	long long cnt;
+	int atype;
+	
+	
+	ID0 = image_ID(IDstream_name);
+	
+	xsizein = data.image[ID0].md[0].size[0];
+	ysizein = data.image[ID0].md[0].size[1];	
+	xysizein = xsizein*ysizein;
+	
+	xsize = xsizein;
+	ysize = ysizein/2;
+	xysize = xsize*ysize;
+	
+	
+	arraysize = (long*) malloc(sizeof(long)*2);
+	arraysize[0] = xsize;
+	arraysize[1] = ysize;
+	
+	IDout = image_ID(IDstreamout_name);
+	if(IDout == -1)
+	{
+		IDout = create_image_ID(IDstreamout_name, 2, arraysize, FLOAT, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDstreamout_name, 10);
+	}
+
+	free(arraysize);
+	
+	atype = data.image[ID0].md[0].atype;
+	
+	
+	
+	while(1)
+	{
+		// has new frame arrived ?
+		if(data.image[ID0].sem==0)
+        {
+            while(cnt==data.image[ID0].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[ID0].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[ID0].semptr[semtrig]);
+
+        data.image[IDout].md[0].write = 1;
+        switch ( atype ) {
+		case USHORT:
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[ID0].array.U[xysize+ii] - data.image[ID0].array.U[ii];		        
+			break;
+		case FLOAT:
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[ID0].array.F[xysize+ii] - data.image[ID0].array.F[ii];		        
+			break;
+		}
+
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
 	}
