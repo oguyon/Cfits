@@ -4660,11 +4660,11 @@ long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_nam
         switch ( atype ) {
 		case USHORT:
 			for(ii=0;ii<xysize;ii++)
-				data.image[IDout].array.F[ii] = data.image[ID0].array.U[xysize+ii] - data.image[ID0].array.U[ii];		        
+				data.image[IDout].array.F[ii] = data.image[ID0].array.U[ii] - data.image[ID0].array.U[xysize+ii];		        
 			break;
 		case FLOAT:
 			for(ii=0;ii<xysize;ii++)
-				data.image[IDout].array.F[ii] = data.image[ID0].array.F[xysize+ii] - data.image[ID0].array.F[ii];		        
+				data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID0].array.F[xysize+ii];		        
 			break;
 		}
 
