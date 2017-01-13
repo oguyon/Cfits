@@ -151,15 +151,7 @@ savefits outim1 "!./tmp/dmmap_fitModes.fits"
 dmres=dmmap-outim
 dmres1=dmres*aol${loopnb}_dmmaskRM
 savefits dmres1 "!./tmp/dmmap_resModes.fits"
+listim
 exit
 EOF
-
-#applyARpfilt outPF olwfsmeas $2 outrec
-#savefits outrec "!./PredictiveControl/outPFrec.fits"
-#savefits outf "!./PredictiveControl/outPFf.fits"
-#res=outrec-outf
-#imstats res
-#imstats olwfsmeasblk
-#exit
-#EOF
 
