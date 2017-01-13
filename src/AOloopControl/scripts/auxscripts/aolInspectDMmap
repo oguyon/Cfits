@@ -146,7 +146,7 @@ readshmim aol${loopnb}_DMmodes
 readshmim aol${loopnb}_dmmaskRM
 imfitmodes dmmap aol${loopnb}_DMmodes aol${loopnb}_dmmaskRM 0.01 lcoeffs
 imlinconstruct aol${loopnb}_DMmodes lcoeffs outim
-outimm=outim*aol${loopnb}_dmmaskRM
+outim1=outim*aol${loopnb}_dmmaskRM
 savefits outim1 "!./tmp/dmmap_fitModes.fits"
 dmres=dmmap-outim
 dmres1=dmres*aol${loopnb}_dmmaskRM
