@@ -603,9 +603,9 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 int COREMOD_MEMORY_streamDiff_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
     {
-        COREMOD_MEMORY_streamDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        COREMOD_MEMORY_streamDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl);
         return 0;
     }
     else
@@ -1135,8 +1135,8 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDiff_cli;
     strcpy(data.cmd[data.NBcmd].info,"compute difference between two image streams");
-    strcpy(data.cmd[data.NBcmd].syntax,"<in stream 0> <in stream 1> <out stream> <sem trigger index>");
-    strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 outstream 3");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in stream 0> <in stream 1> <out stream> <optional mask> <sem trigger index>");
+    strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 null outstream 3");
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)");
 	data.NBcmd++;
 
@@ -4544,16 +4544,18 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
 // compute difference between two 2D streams
 // triggers on stream0
 //
-long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)
+long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreammask_name, char *IDstreamout_name, long semtrig)
 {
 	long ID0, ID1, IDout;
 	long xsize, ysize, xysize;
 	long ii;
 	long *arraysize;
 	long long cnt;
+	long IDmask; // optional 
 	
 	ID0 = image_ID(IDstream0_name);
 	ID1 = image_ID(IDstream1_name);
+	IDmask = image_ID(IDstreammask_name);
 	
 	xsize = data.image[ID0].md[0].size[0];
 	ysize = data.image[ID0].md[0].size[1];	
@@ -4586,8 +4588,17 @@ long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char 
             sem_wait(data.image[ID0].semptr[semtrig]);
 
         data.image[IDout].md[0].write = 1;
-		for(ii=0;ii<xysize;ii++)
-			data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii];		        
+		
+		if(IDmask==-1)
+		{
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii];		        
+		}
+		else
+		{
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[ii] = (data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii]) * data.image[IDmask].array.F[ii];		  
+		}
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;

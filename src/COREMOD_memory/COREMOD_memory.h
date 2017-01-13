@@ -178,7 +178,7 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index);
 /* ========================================================================================================================================= */
 
 
-long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig);
+long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreammask_name, char *IDstreamout_name, long semtrig);
 long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig);
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
 long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus);
