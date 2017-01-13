@@ -71,6 +71,7 @@ echo "           (if RIA file does not exist, uses Sellmeier equations in module
 echo "      OUTPUT:"
 echo "          atm.txt               :  atmospheric vertical composition/density profile"
 echo "          RindexSite.txt        : refractive index at site, as a function of wavelength (lambda[um] rindex abs)"
+echo "          RefractAngle.dat      : refraction angle as a function of wavelength"
 echo ""
 echo "          refractpath_0550.txt  : geometric light ray path at  550 nm "
 echo "          refractpath_1650.txt  : geometric light ray path at 1650 nm "

@@ -4491,8 +4491,63 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
 
 
 
+//
+// compute difference between two 2D streams
+// triggers on stream0
+//
+long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)
+{
+	long ID0, ID1, IDout;
+	long xsize, ysize, xysize;
+	long ii;
+	long *arraysize;
+	long long cnt;
+	
+	ID0 = image_ID(IDstream0_name);
+	ID1 = image_ID(IDstream1_name);
+	
+	xsize = data.image[ID0].md[0].size[0];
+	ysize = data.image[ID0].md[0].size[1];	
+	xysize = xsize*ysize;
+	
+	arraysize = (long*) malloc(sizeof(long)*2);
+	arraysize[0] = xsize;
+	arraysize[1] = ysize;
+	
+	IDout = image_ID(IDstreamout_name);
+	if(IDout == -1)
+	{
+		IDout = create_image_ID(IDstreamout_name, 2, arraysize, FLOAT, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDstreamout_name, 10);
+	}
 
+	free(arraysize);
+	
+	
+	while(1)
+	{
+		// has new frame arrived ?
+		if(data.image[ID0].sem==0)
+        {
+            while(cnt==data.image[ID0].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[ID0].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[ID0].semptr[semtrig]);
 
+        data.image[IDout].md[0].write = 1;
+		for(ii=0;ii<xysize;ii++)
+			data.image[IDout].array.F[ii] = data.image[ID0].array.F[ii] - data.image[ID1].array.F[ii];		        
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+	}
+	
+
+	
+	return(IDout);
+}
 
 
 
