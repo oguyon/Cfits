@@ -20,7 +20,7 @@ int contract_wavefront_cube(char *ina_file, char *inp_file, char *outa_file, cha
 
 int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int factor);
 
-int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecision);
+int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecision, int compmode);
 
 int measure_wavefront_series(float factor);
  

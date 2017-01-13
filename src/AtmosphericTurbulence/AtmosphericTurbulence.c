@@ -182,8 +182,8 @@ float CONF_FRESNEL_PROPAGATION_BIN;
 
 int make_AtmosphericTurbulence_wavefront_series_cli()
 {
-	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0)
-		make_AtmosphericTurbulence_wavefront_series(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl);
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
+		make_AtmosphericTurbulence_wavefront_series(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
 	else
 		return 1;
 }
@@ -338,9 +338,9 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = make_AtmosphericTurbulence_wavefront_series_cli;
     strcpy(data.cmd[data.NBcmd].info,"make wavefront series");
-    strcpy(data.cmd[data.NBcmd].syntax,"<wavelength [nm]> <precision 0=single, 1=double>");
-    strcpy(data.cmd[data.NBcmd].example,"mkwfs 1650.0 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecision)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<wavelength [nm]> <precision 0=single, 1=double> <computation mode>");
+    strcpy(data.cmd[data.NBcmd].example,"mkwfs 1650.0 1 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecision, int compmode)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mkvonKarmanWind");
@@ -1430,7 +1430,10 @@ int AtmosphericTurbulence_ReadConf()
 
 
 
-int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecision)
+// compmode = 0 : compute atmosphere model only, no turbulence
+// compmode = 1 : full computation
+
+int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecision, int compmode)
 {
     //  fitsfile *fptr;       /* pointer to the FITS file; defined in fitsio.h */
     int status;
@@ -1820,6 +1823,9 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
         fprintf(fp, "%.16f %.16f\n", l, asin(sin(CONF_ZANGLE)/(1.0+AtmosphereModel_stdAtmModel_N(SiteAlt, l, 0))));
     fclose(fp);
 
+
+	if(compmode==0)
+		return 0;
 
 
     printf("CONF_ZANGLE = %f  alt = %f\n", CONF_ZANGLE, SiteAlt);

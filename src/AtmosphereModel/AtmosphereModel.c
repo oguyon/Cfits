@@ -3878,7 +3878,7 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE, float slambda)
     double rangle;
     int r;
     long li, lli, llistart, lliend, llistep;
-
+	double l;
 
 
     strcpy(KEYWORD,"ZENITH_ANGLE");
@@ -4120,7 +4120,7 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE, float slambda)
     // ***************** refractive index as a function of lambda at site ****************************
 
     fp  = fopen("RindexSite.txt", "w");
-    for(lambda=0.2e-6; lambda<2.0e-6; lambda*=1.0+1e-6)
+    for(lambda=0.2e-6; lambda<20.0e-6; lambda*=1.0+1e-6)
     {
         n = 1.0 + AtmosphereModel_stdAtmModel_N(SiteAlt, lambda, 0);
         fprintf(fp, "%.8g %.14f %.14f\n", lambda, n, v_ABSCOEFF);
@@ -4164,8 +4164,16 @@ int AtmosphereModel_Create_from_CONF(char *CONFFILE, float slambda)
 	sprintf(command, "mv refractpath.txt refractpath_%04ld.txt", (long) (1e9*slambda+0.5));
     r = system(command);
 
-
-
+	
+	// refractive angle as a function of wavelength
+	printf("Computing refraction angle ... \n");
+	fflush(stdout);
+	fp = fopen("RefractAngle.dat", "w");
+	for(l=0.5e-6;l<10.0e-6;l*=1.0+1e-3)
+		fprintf(fp, "%20.18f  %.6f\n", l, AtmosphereModel_RefractionPath(l, ZenithAngle, 0));
+	fclose(fp);
+	printf("done\n");
+	fflush(stdout);
 
     // **************** REFRACTION AND TRANSMISSION AS A FUNCTION OF WAVELENGTH *********************
 

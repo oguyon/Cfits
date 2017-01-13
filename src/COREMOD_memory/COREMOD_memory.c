@@ -4466,6 +4466,36 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========================================================================================================================================= */
+
+/*                                                   SIMPLE OPERATIONS ON STREAMS                                                            */
+
+/* ========================================================================================================================================= */
+
+
+
+
+
+
+
+
 /// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)
 {
@@ -4885,6 +4915,12 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
     
 	return(0);
 }
+
+
+
+
+
+
 
 
 
@@ -5726,7 +5762,17 @@ long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ys
 
 
 
-/// ---------------------------------------- LOGGING FUNCTIONS --------------------------------
+
+
+
+
+/* ========================================================================================================================================= */
+
+/*                                                                DATA LOGGING                                                               */
+
+/* ========================================================================================================================================= */
+
+
 
 
 
@@ -5826,6 +5872,19 @@ int COREMOD_MEMORY_logshim_printstatus(char *IDname)
     }
     return(0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
