@@ -151,6 +151,7 @@ savefits outim1 "!./tmp/dmmap_fitModes.fits"
 dmres=dmmap-outim
 dmres1=dmres*aol${loopnb}_dmmaskRM
 savefits dmres1 "!./tmp/dmmap_resModes.fits"
+imstats dmres1
 listim
 exit
 EOF
