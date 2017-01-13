@@ -601,6 +601,19 @@ int COREMOD_MEMORY_cp2shm_cli()
 
 
 
+int COREMOD_MEMORY_streamDiff_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
+    {
+        COREMOD_MEMORY_streamDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 int COREMOD_MEMORY_image_streamupdateloop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)==0)
@@ -1102,6 +1115,17 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].example,"impixdecodeU streamin 120 120 pixsclienb.txt decmap outim outsliceindex.fits");
     strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname)");
     data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"streamdiff");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDiff_cli;
+    strcpy(data.cmd[data.NBcmd].info,"compute difference between two image streams");
+    strcpy(data.cmd[data.NBcmd].syntax,"<in stream 0> <in stream 1> <out stream> <sem trigger index>");
+    strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 outstream 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig)");
+	data.NBcmd++;
 
 
     strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
@@ -4544,10 +4568,12 @@ long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char 
         data.image[IDout].md[0].write = 0;
 	}
 	
-
 	
 	return(IDout);
 }
+
+
+
 
 
 

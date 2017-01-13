@@ -168,6 +168,17 @@ long COREMOD_MEMORY_image_set_semwait_OR_IDarray(long *IDarray, long NB_ID);
 long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID);
 long COREMOD_MEMORY_image_set_semflush(char *IDname, long index);
 
+
+
+
+
+
+/* ========================================================================================================================================= */
+/*                                                   SIMPLE OPERATIONS ON STREAMS                                                            */
+/* ========================================================================================================================================= */
+
+
+long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreamout_name, long semtrig);
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
 long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus);
 
@@ -178,6 +189,12 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
 
 long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname);
+
+
+/* ========================================================================================================================================= */
+/*                                                                DATA LOGGING                                                               */
+/* ========================================================================================================================================= */
+
 
 int COREMOD_MEMORY_logshim_printstatus(char *IDname);
 int COREMOD_MEMORY_logshim_set_on(char *IDname, int setv);
