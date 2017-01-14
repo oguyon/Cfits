@@ -146,9 +146,9 @@ Cfits -n $pname << EOF
 aolnb $loopnb
 csetpmove ${CPUset}
 loadfits "./conf/RMpokeCube.fits" RMpokeCube
-dmPokeC=$1*RMpokeCube
-aolmeasWFSrespC ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} dmPokeC wfsresp ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
-savefits wfsresp "!./tmp/wfsresp.fits"
+aolmeaslWFSrespC ${PokeAmpl} ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} dmPokeC wfsresp ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
+listim
+#savefits wfsresp "!./tmp/wfsresp.fits"
 listim
 exit
 EOF
