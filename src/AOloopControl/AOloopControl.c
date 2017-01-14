@@ -511,9 +511,9 @@ int AOloopControl_Measure_WFSrespC_cli()
 
 int AOloopControl_Measure_WFS_linResponse_cli()
 {
-	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,4)+CLI_checkarg(7,5)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)==0)
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,4)+CLI_checkarg(7,5)+CLI_checkarg(8,5)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)==0)
     {
-        AOloopControl_Measure_WFS_linResponse(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl);
+        AOloopControl_Measure_WFS_linResponse(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl);
         return 0;
     }
     else
@@ -1364,9 +1364,9 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFS_linResponse_cli;
     strcpy(data.cmd[data.NBcmd].info,"measure linear WFS response to DM patterns");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [um]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <normalize flag> <AOinitMode> <NBcycle>");
-    strcpy(data.cmd[data.NBcmd].example,"aolmeasWFSrespC 0.05 2 135 20 0 dmmodes wfsresp 1 0 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, int normalize, int AOinitMode, long NBcycle)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [um]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <output reference [string]> <normalize flag> <AOinitMode> <NBcycle>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmeasWFSrespC 0.05 2 135 20 0 dmmodes wfsresp wfsref 1 0 5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
@@ -9059,15 +9059,17 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 
 
-long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, int normalize, int AOinitMode, long NBcycle)
+long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)
 {
 	long IDrespC;
 	long IDpokeC;
 	long dmxsize, dmysize, dmxysize;
+	long wfsxsize, wfsysize, wfsxysize;
 	long NBpoke, NBpoke2;
 	long IDpokeC2;
-	
-	long poke, act;
+	long IDwfsresp2;
+	long poke, act, pix;
+	long IDwfsref;
 	
 	
 	IDpokeC = image_ID(IDpokeC_name);
@@ -9098,14 +9100,17 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	wfsxsize = data.image[IDwfsresp2].md[0].size[0];
 	wfsysize = data.image[IDwfsresp2].md[0].size[1];
 	wfsxysize = wfsxsize*wfsysize;	
-	IDrespC = create_2Dimage_ID(IDrespC_name, wfsxsize, wfsysize, NBpoke);
+	IDrespC = create_3Dimage_ID(IDrespC_name, wfsxsize, wfsysize, NBpoke);
+	
+	IDwfsref = create_2Dimage_ID(IDwfsref_name, wfsxsize, wfsysize);
 	
 	for(poke=0;poke<NBpoke;poke++)
 		{
 			for(pix=0;pix<wfsxysize;pix++)
 				data.image[IDrespC].array.F[wfsxysize*poke + pix] = (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] - data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/ampl;
+			for(pix=0;pix<wfsxysize;pix++)
+				data.image[IDwfsref].array.F[wfsxysize*poke + pix] += (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] + data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/NBpoke2;				
 		}
-	
 	
 	return(IDrespC);
 }
