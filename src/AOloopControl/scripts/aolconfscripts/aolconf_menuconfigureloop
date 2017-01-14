@@ -64,15 +64,15 @@ tmux send-keys -t ${tmuxname} "cp wfsmask.fits dmmask/dmmask_${datestr}.fits" C-
 
 
 # MAKE LOW ORDER MODES : dmslaved.fits, dmmask.fits -> respM_LOmodes.fits
-tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
 # ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 
