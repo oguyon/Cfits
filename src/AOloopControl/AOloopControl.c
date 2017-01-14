@@ -1360,6 +1360,15 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"aolmeaslWFSrespC");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFS_linResponse_cli;
+    strcpy(data.cmd[data.NBcmd].info,"measure linear WFS response to DM patterns");
+    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [um]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <normalize flag> <AOinitMode> <NBcycle>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmeasWFSrespC 0.05 2 135 20 0 dmmodes wfsresp 1 0 5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, int normalize, int AOinitMode, long NBcycle)");
+    data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
