@@ -1369,7 +1369,6 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, int normalize, int AOinitMode, long NBcycle)");
     data.NBcmd++;
 
-
     strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = AOloopControl_Measure_zonalRM_cli;
