@@ -115,9 +115,9 @@ zrmstageddir="./conf_zrm_staged"
 
 Cfits -n $pname << EOF
 aolnb $loopnb
-loadfits "${zrmstageddir}/dmslaved.fits" dmslaved0
+loadfits "dmslaved.fits" dmslaved0
 imtrunc dmslaved0 0.0 1.0 dmslaved
-loadfits "${zrmstageddir}/dmmask.fits" dmmask
+loadfits "dmmask.fits" dmmask
 loadfits "./conf/TPind.fits" emodes
 readshmim aol${loopnb}_dmC
 imstats aol${loopnb}_dmC
