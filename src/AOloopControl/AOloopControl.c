@@ -9109,7 +9109,7 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 			for(pix=0;pix<wfsxysize;pix++)
 				data.image[IDrespC].array.F[wfsxysize*poke + pix] = (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] - data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/ampl;
 			for(pix=0;pix<wfsxysize;pix++)
-				data.image[IDwfsref].array.F[wfsxysize*poke + pix] += (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] + data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/NBpoke2;				
+				data.image[IDwfsref].array.F[pix] += (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] + data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/NBpoke2;				
 		}
 	
 	return(IDrespC);
