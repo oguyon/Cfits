@@ -9057,8 +9057,9 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 
 
-
-
+//
+// Measure the WFS linear response to a set of DM patterns 
+//
 long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)
 {
 	long IDrespC;
@@ -10029,7 +10030,7 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
     // DECODE MAPS (IF REQUIRED)
     
-    if((image_ID("Hmat")!=-1)&&(image_ID("pixindexim")!=-1))
+    if((image_ID("Hmat")!=-1) && (image_ID("pixindexim")!=-1))
         {
             chname_image_ID(zrespm_name, "tmprm");
             save_fits("tmprm", "!zrespm_Hadamard.fits");

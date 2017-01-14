@@ -21,6 +21,24 @@ fi
 
 
 
+function function_acqWFSresp {
+tmuxname="aol${LOOPNUMBER}arespM"
+
+tmux new-session -d -s $tmuxname
+if pgrep "aol${LOOPNUMBER}run" > /dev/null
+then # use option -r to re-use AO shared memory configuration
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+else
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+fi
+
+
+
+
+}
+
+
+
 
 function function_zresp_on {
 zrespMstat=" ON"
@@ -32,9 +50,9 @@ logRunningProcess "aolMeasureZrespmat" "$tmuxname" "Measuring zonal response mat
 tmux new-session -d -s $tmuxname
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
 tmux send-keys -t ${tmuxname} "touch function_zresp_off.wait" C-m
@@ -785,6 +803,7 @@ menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn - Zonal Acq
 menuitems+=( " " " " )
 menuitems+=( " " " " )
 fi
+menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s" )
 
 menuitems+=( " " " " )
 
@@ -1721,9 +1740,13 @@ fi
 else
 tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
 fi
-
 ;;
 
+
+
+nAUTOC)
+function_acqWFSresp
+;;
 
 
 	Sconf)
