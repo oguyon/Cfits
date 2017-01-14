@@ -545,6 +545,26 @@ int AOloopControl_mkCalib_map_mask_cli()
         return 1;
 }
 
+// 1: float
+// 2: long
+// 3: string, not existing image
+// 4: existing image
+// 5: string 
+
+
+
+int AOloopControl_Process_zrespM_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
+    {
+        AOloopControl_Process_zrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
 int AOloopControl_ProcessZrespM_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0)
@@ -1265,6 +1285,16 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh)");
     data.NBcmd++;
 
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolproczrm");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_Process_zrespM_cli;
+    strcpy(data.cmd[data.NBcmd].info,"process zonal resp mat, WFS ref -> DM and WFS response maps");
+    strcpy(data.cmd[data.NBcmd].syntax,"<input zrespm fname [string]> <input WFS ref fname [string]> <output zrespm [string]> <output WFS response map fname [string]>  <output DM response map fname [string]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolproczrm zrespmat0 wfsref0 zrespm wfsmap dmmap");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_Process_zrespM(long loop, char *IDzrespm0_name, char *IDwfsref_name, char *IDzrespm_name, char *WFSmap_name, char *DMmap_name)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"aolcleanzrm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -9793,6 +9823,146 @@ int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_na
 
 
 
+
+
+//
+// if images "Hmat" AND "pixindexim" are provided, decode the image
+// TEST: if "RMpokeC" exists, decode it as well
+//
+int AOloopControl_Process_zrespM(long loop, char *IDzrespm0_name, char *IDwfsref_name, char *IDzrespm_name, char *WFSmap_name, char *DMmap_name)
+{
+	long NBpoke;
+	long IDzrm;
+
+	long sizexWFS, sizeyWFS, sizexDM, sizeyDM;
+	long sizeWFS, sizeDM;
+	long poke, ii;
+	char name[200];
+
+	double rms, tmpv;
+	long IDDMmap, IDWFSmap, IDdm;
+
+
+
+    // DECODE MAPS (IF REQUIRED)
+    IDzrm = image_ID(IDzrespm0_name);
+    if((image_ID("Hmat")!=-1) && (image_ID("pixindexim")!=-1))
+        {
+            save_fits(IDzrespm0_name, "!zrespm_Hadamard.fits");
+            
+            AOloopControl_Hadamard_decodeRM(IDzrespm0_name, "Hmat", "pixindexim", IDzrespm_name);
+            IDzrm = image_ID(IDzrespm_name);
+
+            if(image_ID("RMpokeC")!=-1)   
+                {
+                    AOloopControl_Hadamard_decodeRM("RMpokeC", "Hmat", "pixindexim", "RMpokeC1");
+                    save_fits("RMpokeC1", "!test_RMpokeC1.fits");
+                }            
+        }
+
+
+
+
+	// create sensitivity maps
+    
+    sizexWFS = data.image[IDzrm].md[0].size[0];
+    sizeyWFS = data.image[IDzrm].md[0].size[1];
+    NBpoke = data.image[IDzrm].md[0].size[2];
+    
+    sprintf(name, "aol%ld_dmC", loop);
+    IDdm = read_sharedmem_image(name);
+    sizexDM = data.image[IDdm].md[0].size[0];
+    sizeyDM = data.image[IDdm].md[0].size[1];
+    
+    sizeWFS = sizexWFS*sizeyWFS;
+    
+    IDWFSmap = create_2Dimage_ID(WFSmap_name, sizexWFS, sizeyWFS);
+    IDDMmap = create_2Dimage_ID(DMmap_name, sizexDM, sizeyDM);
+
+
+    printf("Preparing DM map ... ");
+    fflush(stdout);    
+    for(poke=0; poke<NBpoke; poke++)
+    {
+        rms = 0.0;
+        for(ii=0; ii<sizeWFS; ii++)
+        {
+            tmpv = data.image[IDzrm].array.F[poke*sizeWFS+ii];
+            rms += tmpv*tmpv;
+        }
+        data.image[IDDMmap].array.F[poke] = rms;
+    }
+    printf("done\n");
+    fflush(stdout);
+
+   
+
+    printf("Preparing WFS map ... ");
+    fflush(stdout);    
+    for(ii=0; ii<sizeWFS; ii++)
+    {
+        rms = 0.0;
+        for(poke=0; poke<NBpoke; poke++)
+        {
+            tmpv = data.image[IDzrm].array.F[poke*sizeWFS+ii];
+            rms += tmpv*tmpv;
+        }
+        data.image[IDWFSmap].array.F[ii] = rms;
+    }
+    printf("done\n");
+    fflush(stdout);
+
+    
+
+	/*
+	IDWFSmask = image_ID("wfsmask");
+
+	
+	// normalize wfsref with wfsmask
+	tot = 0.0;
+	for(ii=0; ii<sizeWFS; ii++)
+		tot += data.image[IDWFSref].array.F[ii]*data.image[IDWFSmask].array.F[ii];
+
+	totm = 0.0;
+	for(ii=0; ii<sizeWFS; ii++)
+		totm += data.image[IDWFSmask].array.F[ii];
+
+	for(ii=0; ii<sizeWFS; ii++)
+		data.image[IDWFSref].array.F[ii] /= tot;
+
+	// make zrespm flux-neutral over wfsmask
+	fp = fopen("zrespmat_flux.log", "w");
+	for(poke=0;poke<NBpoke;poke++)
+	{
+		tot = 0.0;
+		for(ii=0; ii<sizeWFS; ii++)
+			tot += data.image[IDzrm].array.F[poke*sizeWFS+ii]*data.image[IDWFSmask].array.F[ii];
+
+		for(ii=0; ii<sizeWFS; ii++)
+			data.image[IDzrm].array.F[poke*sizeWFS+ii] -= tot*data.image[IDWFSmask].array.F[ii]/totm;
+
+		tot1 = 0.0;
+		for(ii=0; ii<sizeWFS; ii++)
+			tot1 += data.image[IDzrm].array.F[poke*sizeWFS+ii]*data.image[IDWFSmask].array.F[ii];
+		fprintf(fp, "%6ld %06ld %20f %20f\n", poke, NBpoke, tot, tot1);
+	}
+	fclose(fp);
+
+*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// CANDIDATE FOR RETIREMENT
 //
 // median-averages multiple response matrices to create a better one
 //

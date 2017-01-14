@@ -25,6 +25,9 @@ function function_acqWFSresp {
 tmuxname="aol${LOOPNUMBER}arespM"
 
 tmux new-session -d -s $tmuxname
+
+
+# ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref0.fits
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
@@ -32,9 +35,14 @@ else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
+# PROCESS HIGH ORDER WFS RESPONSE: zrespmat0.fits, wfsref0.fits -> zrespmat.fits, wfsmap.fits, dmmap.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
 
+# MAKE MASKS : zrespmat.fits, wfsmap.fits, dmmap.fits -> wfsmask.fits, dmmaskRM.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 
-
+# MAKE SLAVED ACTUATOR MAP: dmmaskRM.fits -> dmslaved.fits
+tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 }
 
 

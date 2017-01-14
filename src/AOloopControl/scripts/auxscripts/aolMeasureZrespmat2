@@ -148,8 +148,8 @@ csetpmove ${CPUset}
 loadfits "./conf/RMpokeCube.fits" RMpokeCube
 aolmeaslWFSrespC ${PokeAmpl} ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} RMpokeCube wfsresp wfsref ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
 listim
-savefits wfsresp "!./tmp/wfsresp.fits"
-savefits wfsref "!./tmp/wfsref.fits"
+savefits wfsresp "!zrespmat0.fits"
+savefits wfsref "!wfsref0.fits"
 listim
 exit
 EOF
