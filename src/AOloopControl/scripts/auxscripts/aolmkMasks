@@ -176,6 +176,11 @@ savefits dmmask "!dmmaskRM.fits"
 exit
 EOF
 
+
+
+
+exit
+
 if [ -f "./zrespmtmp/wfsimRMS.fits" ]; then
 Cfits << EOF
 loadfits wfsmask.fits wfsmask0
@@ -197,45 +202,3 @@ EOF
 cp wfsmask_SNRfilt.fits wfsmask.fits
 fi
 
-
-#stageddir="conf_zrm_staged"
-#cp wfsmask.fits ./${stageddir}/
-#cp dmmaskRM.fits ./${stageddir}/
-
-
-
-
-#cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits
-#cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits
-
-
-
-
-
-#./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
-
-#cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits
-
-#Cfits << EOF
-#loadfits dmmaskRM.fits dmmRM
-#loadfits dmslaved.fits dmsl
-#imtrunc dmsl 0.0 1.0 dmsl1
-#dmm=1.0-(1.0-dmmRM)*(1.0-dmsl1)
-#savefits dmm "!dmmask.fits"
-#exit
-#EOF
-
-#cp dmmask.fits dmmask/dmmask_${datestr}.fits
-
-
-# update on staged directory
-
-#cp wfsmask.fits ./${stageddir}/
-#cp dmmaskRM.fits ./${stageddir}/
-#cp dmslaved.fits ./${stageddir}/
-#cp dmmask.fits ./${stageddir}/
-
-#echo "wfsmask/wfsmask_${datestr}.fits" > ./${stageddir}/conf_wfsmask_name.txt
-#echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${stageddir}/conf_dmmaskRM_name.txt
-#echo "dmslaved/dmslaved_${datestr}.fits" > ./${stageddir}/conf_dmslaved_name.txt
-#echo "dmmask/dmmask_${datestr}.fits" > ./${stageddir}/conf_dmmask_name.txt

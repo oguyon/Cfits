@@ -28,9 +28,9 @@ tmuxname="aol${LOOPNUMBER}arespM"
 dir_conf_zrm_staged="conf_zrm_staged"
 dir_conf_mrm_staged="conf_mrm_staged"
 
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux new-session -d -s $tmuxname
-
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref0.fits
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
@@ -51,18 +51,16 @@ tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" 
 
 
 
-datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp zrespmat.fits zrespM/zrespM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 
-if [ "$DMMODE" = "ZONAL" ]; then
-tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-fi
+tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
+
+
 
 
 tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
@@ -86,15 +84,13 @@ mkdir -p LOwfsmap
 mkdir -p LOdmmap
 mkdir -p LOwfsmask
 mkdir -p LOdmmask
-tmux send-keys -t $1 "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp respM_LOmodes.fits LODMmodes/LODMmodes_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
-tmux send-keys -t $1 "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
-
-
+tmux send-keys -t ${tmuxname} "cp LOrespmat.fits LOrespM/LOrespM_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp respM_LOmodes.fits LODMmodes/LODMmodes_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOwfsmap.fits LOwfsmap/LOwfsmap_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOdmmap.fits LOdmmap/LOdmmap_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOwfsmask.fits LOwfsmask/LOwfsmask_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 }
 
 
