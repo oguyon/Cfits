@@ -9093,6 +9093,20 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	save_fits("wfsresp2", "!test_wfsresp2.fits");
 	
 	
+	// process data cube
+	IDwfsresp2 = image_ID("wfsresp2");
+	wfsxsize = data.image[IDwfsresp2].md[0].size[0];
+	wfsysize = data.image[IDwfsresp2].md[0].size[1];
+	wfsxysize = wfsxsize*wfsysize;	
+	IDrespC = create_2Dimage_ID(IDrespC_name, wfsxsize, wfsysize, NBpoke);
+	
+	for(poke=0;poke<NBpoke;poke++)
+		{
+			for(pix=0;pix<wfsxysize;pix++)
+				data.image[IDrespC].array.F[wfsxysize*poke + pix] = (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] - data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/ampl;
+		}
+	
+	
 	return(IDrespC);
 }
 
