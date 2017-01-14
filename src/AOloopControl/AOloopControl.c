@@ -9038,6 +9038,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         AOconf[loop].DMupdatecnt ++;
 		
  
+		iter++;
+ 
     } // end of iteration loop 
 
     free(arrayf);
