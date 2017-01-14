@@ -509,6 +509,17 @@ int AOloopControl_Measure_WFSrespC_cli()
 }
 
 
+int AOloopControl_Measure_WFS_linResponse_cli()
+{
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,4)+CLI_checkarg(7,5)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)==0)
+    {
+        AOloopControl_Measure_WFS_linResponse(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
 int AOloopControl_Measure_zonalRM_cli()
 {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
@@ -8813,6 +8824,8 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
  * 
  * INPUT : DMpoke_name : set of DM patterns
  * OUTPUT : WFSmap_name : WFS response maps
+ * 
+ * 
  * */
 
 long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle)
@@ -9036,7 +9049,42 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 
 
-
+long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDrespC_name, int normalize, int AOinitMode, long NBcycle)
+{
+	long IDrespC;
+	long IDpokeC;
+	long dmxsize, dmysize, dmxysize;
+	long NBpoke, NBpoke2;
+	long IDpokeC2;
+	
+	long poke, act;
+	
+	
+	IDpokeC = image_ID(IDpokeC_name);
+	dmxsize = data.image[IDpokeC].md[0].size[0];
+	dmysize = data.image[IDpokeC].md[0].size[1];
+	dmxysize = dmxsize*dmysize;
+	NBpoke = data.image[IDpokeC].md[0].size[2];
+	
+	NBpoke2 = 2*NBpoke;
+	
+	IDpokeC2 = create_3Dimage_ID("dmpokeC2", dmxsize, dmysize, NBpoke2);
+	for(poke=0;poke<NBpoke;poke++)
+		{
+			for(act=0;act<dmxysize;act++)
+				data.image[IDpokeC2].array.F[2*dmxysize*poke + act] = ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
+			for(act=0;act<dmxysize;act++)
+				data.image[IDpokeC2].array.F[2*dmxysize*poke + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
+		}
+	save_fits("dmpokeC2", "test_dmpokeC2.fits");
+		
+	AOloopControl_Measure_WFSrespC(loop, delayfr, delayRM1us, NBave, NBexcl, "dmpokeC2", "wfsresp2", normalize, AOinitMode, NBcycle);
+	
+	save_fits("wfsresp2", "!test_wfsresp2.fits");
+	
+	
+	return(IDrespC);
+}
 
 
 
