@@ -4587,8 +4587,10 @@ long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char 
         else
             sem_wait(data.image[ID0].semptr[semtrig]);
 
+
+
+
         data.image[IDout].md[0].write = 1;
-		
 		if(IDmask==-1)
 		{
 			for(ii=0;ii<xysize;ii++)

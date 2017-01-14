@@ -223,7 +223,16 @@ long AOloopControl_RespMatrix_Fast(char *DMmodes_name, char *dmRM_name, char *im
 long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *IDout_name);
 
 long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name);
-long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle);
+
+
+/* =============================================================================================== */
+/*                             BUILDING RESPONSE MATRIX / CALIBRATION                              */
+/* =============================================================================================== */
+
+long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);
+long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle);
+
+
 int AOloopControl_mkCalib_map_mask(long loop, char *zrespm_name, char *WFSmap_name, char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh);
 int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, double rmampl, int normalize);
 int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name);
@@ -251,6 +260,12 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha);
 long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
 long AOloopControl_ComputeOpenLoopModes(long loop);
 long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff);
+
+
+
+/* =============================================================================================== */
+/*                                         LOOP CONTROL INTERFACE                                  */
+/* =============================================================================================== */
 
 int AOloopControl_setLoopNumber(long loop);
 int AOloopControl_loopkill();

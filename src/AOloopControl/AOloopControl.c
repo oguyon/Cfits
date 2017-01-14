@@ -492,16 +492,35 @@ int AOloopControl_TestDMmodes_Recovery_cli()
 }
 
 
-int Measure_zonalRM_cli()
+
+/* =============================================================================================== */
+/*                             BUILDING RESPONSE MATRIX / CALIBRATION                              */
+/* =============================================================================================== */
+
+int AOloopControl_Measure_WFSrespC_cli()
 {
-    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
+	if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0)
     {
-        Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
+        AOloopControl_Measure_WFSrespC(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
         return 0;
     }
     else
         return 1;
 }
+
+
+int AOloopControl_Measure_zonalRM_cli()
+{
+    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0)
+    {
+        AOloopControl_Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
 
 
 int AOloopControl_mkCalib_map_mask_cli()
@@ -1314,14 +1333,32 @@ int init_AOloopControl()
     data.NBcmd++;
 
 
+
+
+/* =============================================================================================== */
+/*                             BUILDING RESPONSE MATRIX / CALIBRATION                              */
+/* =============================================================================================== */
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aolmeasWFSrespC");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_Measure_WFSrespC_cli;
+    strcpy(data.cmd[data.NBcmd].info,"measure WFS resp to DM patterns");
+    strcpy(data.cmd[data.NBcmd].syntax,"<delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <input DM patter cube [string]> <output response [string]> <normalize flag> <AOinitMode> <NBcycle>");
+    strcpy(data.cmd[data.NBcmd].example,"aolmeasWFSrespC 2 135 20 0 dmmodes wfsresp 1 0 5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);");
+    data.NBcmd++;
+
+
     strcpy(data.cmd[data.NBcmd].key,"aolmeaszrm");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = Measure_zonalRM_cli;
+    data.cmd[data.NBcmd].fp = AOloopControl_Measure_zonalRM_cli;
     strcpy(data.cmd[data.NBcmd].info,"measure zonal resp mat, WFS ref, DM and WFS response maps");
     strcpy(data.cmd[data.NBcmd].syntax,"<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode> <NBcycle>");
     strcpy(data.cmd[data.NBcmd].example,"aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)");
     data.NBcmd++;
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"aolzpwfsloop");
@@ -8740,6 +8777,273 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** Measures WFS image response to a series of DM patterns
+ *
+ * AOinitMode = 0:  create AO shared mem struct
+ * AOinitMode = 1:  connect only to AO shared mem struct
+ *  
+ * 
+ * INPUT : DMpoke_name : set of DM patterns
+ * OUTPUT : WFSmap_name : WFS response maps
+ * */
+
+long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int normalize, int AOinitMode, long NBcycle)
+{
+    char fname[200];
+    char name[200];
+    char command[200];
+    long *sizearray;
+	long IDoutC;
+
+    long NBiter = LONG_MAX; // runs until USR1 signal received
+    long iter;
+    int r;
+    long IDpokeC;
+    long NBpoke;
+    long PokeIndex, PokeIndex1;
+	long framesize;
+	char *ptr0; // source
+	float *arrayf;
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+    int ret;
+    long cntn;
+
+	long ii, kk, kk1;
+
+
+
+
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar);
+	#endif
+
+
+	if(NBcycle < 1)
+		NBiter = LONG_MAX; // runs until USR1 signal received
+	else
+		NBiter = NBcycle;
+		
+		
+
+    sizearray = (long*) malloc(sizeof(long)*3);
+	
+	
+	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
+    fflush(stdout);
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(AOinitMode);
+    AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
+	
+
+
+    printf("Importing DM response matrix channel shared memory ...\n");
+    fflush(stdout);
+    aoconfID_dmRM = read_sharedmem_image(AOconf[loop].dmRMname);
+
+    printf("Importing WFS camera image shared memory ... \n");
+	fflush(stdout);
+    aoconfID_wfsim = read_sharedmem_image(AOconf[loop].WFSname);
+
+
+	IDpokeC = image_ID(IDpokeC_name);
+    NBpoke = data.image[IDpokeC].md[0].size[2];
+    sizearray[0] = AOconf[loop].sizexWFS;
+    sizearray[1] = AOconf[loop].sizeyWFS;
+    sizearray[2] = NBpoke; 
+
+	IDoutC = create_3Dimage_ID(IDoutC_name, sizearray[0], sizearray[1], sizearray[2]);
+
+
+	arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
+	for(ii=0;ii<AOconf[loop].sizeDM;ii++)
+		arrayf[ii] = 0.0;
+
+
+
+
+
+
+    sprintf(name, "aol%ld_imWFS1RM", loop);
+    sizearray[0] = AOconf[loop].sizexWFS;
+    sizearray[1] = AOconf[loop].sizeyWFS;
+    printf("WFS size = %ld %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
+    fflush(stdout);
+    aoconfID_imWFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+
+
+
+
+	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] = 0.0;
+
+
+    cntn = 0;
+    iter = 0;
+
+
+
+	ptr0 = (char*) data.image[IDpokeC].array.F;
+	framesize = sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
+
+    printf("STARTING response measurement...\n");
+    fflush(stdout);
+
+    while((iter<NBiter)&&(data.signal_USR1==0))
+    {
+        printf("iteration # %8ld    \n", iter);
+        fflush(stdout);
+
+        
+        // initialize with first poke
+        kk1 = 0;
+		PokeIndex = 0;
+		PokeIndex1 = 0;
+        
+        
+        usleep(delayRM1us);    
+        data.image[aoconfID_dmRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_dmRM].md[0].cnt0++;
+        data.image[aoconfID_dmRM].md[0].write = 0;
+        AOconf[loop].DMupdatecnt ++;
+        
+        
+        
+        // WAIT FOR LOOP DELAY, PRIMING
+        Read_cam_frame(loop, 1, normalize, 0, 0);
+        
+		// read delayfr frames
+        for(kk=0; kk<delayfr; kk++)               
+            {
+				Read_cam_frame(loop, 1, normalize, 0, 0);
+				kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        PokeIndex1++;
+                            
+                        if(PokeIndex1>NBpoke-1)
+                            PokeIndex1 = NBpoke-1;
+
+                        // POKE            
+						usleep(delayRM1us);    
+                        data.image[aoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+                        data.image[aoconfID_dmRM].md[0].cnt0++;
+                        data.image[aoconfID_dmRM].md[0].write = 0;
+                        AOconf[loop].DMupdatecnt ++;
+                    }
+            }
+                
+        
+        
+        
+        
+        while ((PokeIndex < NBpoke)&&(data.signal_USR1==0))
+        {
+            // INTEGRATION
+
+            for(kk=0; kk<NBave+NBexcl; kk++)
+            {
+				Read_cam_frame(loop, 1, normalize, 0, 0);
+                if(kk<NBave)
+                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                        data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] += data.image[aoconfID_imWFS1].array.F[ii];
+                kk1++;
+                if(kk1==NBave)
+                    {
+                        kk1 = -NBexcl;
+                        PokeIndex1++;
+
+                        if(PokeIndex1>NBpoke-1)
+                            PokeIndex1 = NBpoke-1;
+                        
+            
+                        usleep(delayRM1us);
+                        data.image[aoconfID_dmRM].md[0].write = 1;
+                        memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+                        data.image[aoconfID_dmRM].md[0].cnt0++;
+                        data.image[aoconfID_dmRM].md[0].write = 0;
+                        AOconf[loop].DMupdatecnt ++;
+                    }
+            }
+
+            PokeIndex++;
+        }
+        cntn = NBave; // Number of images
+            
+
+        for(ii=0; ii<AOconf[loop].sizeDM; ii++)
+            arrayf[ii] = 0.0;
+        
+        // zero DM channel
+           
+        usleep(delayRM1us);
+        data.image[aoconfID_dmRM].md[0].write = 1;
+        memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_dmRM].md[0].cnt0++;
+        data.image[aoconfID_dmRM].md[0].write = 0;
+        AOconf[loop].DMupdatecnt ++;
+		
+ 
+    } // end of iteration loop 
+
+    free(arrayf);
+    free(sizearray);
+
+
+	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
+		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
+
+    return(IDoutC);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /** Measures zonal response matrix
  * -> collapses it to DM response map and WFS response map
  * (both maps show amplitude of actuator effect on WFS)
@@ -8755,7 +9059,7 @@ long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DM
  * AOinitMode = 1:  connect only to AO shared mem struct
  *  */
 
-long Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)
+long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref0_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)
 {
     long ID_WFSmap, ID_WFSref0, ID_WFSref2, ID_DMmap, IDmapcube, IDzrespm, IDzrespmn, ID_WFSref0n,  ID_WFSref2n;
     long act, j, ii, kk;

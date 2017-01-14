@@ -805,7 +805,7 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
  *  
  * 
  * INPUT : DMpoke_name : set of DM patterns
- * OUTPUT : WFSmap_name : WFS maps
+ * OUTPUT : WFSmap_name : WFS response maps
  * */
 
 long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, char *IDpokeC_name, char *IDoutC_name, int FPAOinitMode, long NBcycle)
@@ -1005,7 +1005,7 @@ long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave,
 
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<FPAOconf[loop].sizeWFS; ii++)
-			data.image[IDoutC].array.F[PokeIndex*FPAOconf[loop].sizeWFS+ii] /= NBave*NBcycle;
+			data.image[IDoutC].array.F[PokeIndex*FPAOconf[loop].sizeWFS+ii] /= NBave*iter;
 
     return(IDoutC);
 }
