@@ -9040,8 +9040,16 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
 
+
+	// print poke log
+	fp = fopen("RMpokelog.txt", "w");
+	for(imnct=0;imcnt<imcntmax;imcnt++)
+		fprintf("%6ld  %6ld  %6ld\n", imcnt, array_PokeIndex[imcnt], array_PokeIndex1[imcnt]);
+	fclose(fp);
+
 	free(array_PokeIndex);
 	free(array_PokeIndex1);
+
 
     return(IDoutC);
 }
