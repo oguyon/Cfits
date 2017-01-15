@@ -6898,16 +6898,16 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     sprintf(fname, "./conf/aol%ld_wfsref.fits", loop);
     aoconfID_wfsref = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-    
-   // sprintf(name1, "aol%ld_wfsref", loop);
-   // aoconfID_wfsref = copy_image_ID(name, name1, 1);
-   // COREMOD_MEMORY_image_set_createsem(name1, 10);
+    if(initwfsref==0)
+		{
+			sprintf(name1, "aol%ld_wfsref0", loop);
+			copy_image_ID(name1, name, 1);
+		}
+ 
 
 
 
 
-	printf("-------------- got here -[%d]-----------\n", initwfsref);
-	exit(0);//TEST
 
     // Connect to DM
     // Here the DM size is fixed
@@ -6948,6 +6948,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+	printf("-------------- got here -- [level %ld]----------\n", level);
+	exit(0);//TEST
 
 
     if(level>=10) // Load DM modes (will exit if not successful)
