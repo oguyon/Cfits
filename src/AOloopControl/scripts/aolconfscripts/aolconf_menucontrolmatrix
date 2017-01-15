@@ -293,9 +293,6 @@ stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmode
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update \Zn" )
 
-
-menuitems+=( " " " " )
-
 #if [ "$DMMODE" = "ZONAL" ]; then
 #fname="aolmkmodes.runproc"
 #else
