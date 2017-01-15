@@ -21,12 +21,16 @@ fi
 
 
 
+
+
+
+
+
 function function_acqWFSresp {
 tmuxname="aol${LOOPNUMBER}arespM"
 
 # STAGING DIRECTORIES
-dir_conf_zrm_staged="conf_zrm_staged"
-dir_conf_mrm_staged="conf_mrm_staged"
+dir_conf_staged="conf_staged"
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
@@ -63,6 +67,9 @@ tmux send-keys -t ${tmuxname} "cp wfsmask.fits dmmask/dmmask_${datestr}.fits" C-
 
 
 
+
+
+
 # MAKE LOW ORDER MODES : dmslaved.fits, dmmask.fits -> respM_LOmodes.fits
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
@@ -84,6 +91,46 @@ mkdir -p LOwfsref0
 tmux send-keys -t ${tmuxname} "cp respM_LOmodes.fits LODMmodes/LODMmodes_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOrespmat0.fits LOrespM/LOrespM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
+
+# =============================================================================================================
+#       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
+#             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
+# =============================================================================================================
+
+
+
+# copy file names in conf.txt files in staged directory
+
+dir="$dir_conf_staged"
+mkdir -p $dir
+
+echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
+mv  wfsref0.fits ./${dir}/
+
+echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
+mv zrespmat.fits ./${dir}/
+
+echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt
+mv wfsmap.fits ./${dir}/
+
+echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
+mv dmmap.fits ./${dir}/
+
+echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
+mv wfsmap.fits ./${dir}/
+
+echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
+mv dmmaskRM.fits ./${dir}/
+
+echo "dmslaved/dmslaved_${datestr}.fits" > ./${dir}/conf_dmslaved_name.txt
+mv dmslaved.fits ./${dir}/
+
+echo "dmmask/dmmask_${datestr}.fits" > ./${dir}/conf_dmmask_name.txt
+mv dmmask.fits ./${dir}/
+
+
+
+
 
 }
 
@@ -177,11 +224,6 @@ tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fit
 fi
 
 
-#if [ "$MASKS_LOCK" -eq "1" ]; then
-#echo "conf/dmmask_LOCK.fits" > ./conf/conf_dmmask_name.txt
-#else
-#echo "dmmask/dmmask_${datestr}.fits" > ./conf/conf_dmmask_name.txt
-#fi
 
 # move from staged to ./conf/
 UpdateCalib_staged_zrm_tmux "${tmuxname}"
@@ -195,7 +237,7 @@ function function_upzrm_tmux ()
 {
 tmux new-session -d -s $1
 logRunningProcess "aolupzrm" "$1" "Update zonal response matrix calibration to latest"
-tmux send-keys -t $1 "cp ${dir_conf_zrm_staged}/conf_*.txt ./conf/" C-m
+tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
 tmux send-keys -t $1 "rm aolupzrm.runproc" C-m
 }
 
@@ -302,14 +344,14 @@ ReadConfFile "contrMcact${i2}_00"
 
 
 # STAGING DIRECTORIES
-dir_conf_zrm_staged="conf_zrm_staged"
-dir_conf_mrm_staged="conf_mrm_staged"
+dir_conf_staged="conf_staged"
+
 
 
 
 
 function UpdateCalib_staged_zrm {
-dir="$dir_conf_zrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
@@ -336,7 +378,7 @@ fi
 
 
 function UpdateCalib_staged_zrm_tmux {
-dir="$dir_conf_zrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 tmux send-keys -t $1 "echo \"zrespM/zrespM_${datestr}.fits\" > ./${dir}/conf_zrespM_name.txt" C-m
 tmux send-keys -t $1 "mv zrespmat.fits ./${dir}/" C-m
@@ -439,7 +481,7 @@ function function_upmrm_tmux ()
 {
 tmux new-session -d -s $1
 logRunningProcess "aolupmrm" "$1" "Update LO modal response matrix calibration to latest"
-tmux send-keys -t $1 "cp ${dir_conf_mrm_staged}/conf_*.txt ./conf/" C-m
+tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
 tmux send-keys -t $1 "rm aolupmrm.runproc" C-m
 }
 
@@ -461,7 +503,7 @@ tmux send-keys -t $1 "rm SMloadmrm.runproc" C-m
 
 
 function UpdateCalib_staged_mrm {
-dir="$dir_conf_mrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 
 echo "LOrespM/LOrespM_${datestr}.fits" > ./${dir}/conf_LOrespM_name.txt
@@ -482,7 +524,7 @@ mv LOdmmask.fits ./${dir}/
 
 
 function UpdateCalib_staged_mrm_tmux {
-dir="$dir_conf_mrm_staged"
+dir="$dir_conf_staged"
 mkdir -p $dir
 
 tmux send-keys -t $1 "echo \"LOrespM/LOrespM_${datestr}.fits\" > ./${dir}/conf_LOrespM_name.txt" C-m
@@ -1171,7 +1213,7 @@ then
    
     if [ "${LOrespMstat}" = "OFF" ];
     then
-        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in zrm staged dir)" )
+        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in staged dir)" )
         if [ "${LOrespmatnbiter}" -lt 4 ]; then
             menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
         else
@@ -1735,29 +1777,20 @@ aoconflogext "START AUTO CALIBRATION"
 # archive
 dirnb=20
 i0=`( printf "%03d" "$dirnb" )`
-rm -rf conf_zrm_staged.$i0
-if [ "$DMMODE" = "ZONAL" ]; then
-rm -rf conf_mrm_staged.$i0
-fi
+rm -rf conf_staged.$i0
+
 
 # save old RMs
 while [ $dirnb -gt 0 ]; do
-i=$(($dirnb))
-i1=$(($dirnb-1))
-is=`( printf "%03d" "$i" )`
-i1s=`( printf "%03d" "$i1" )`
-mv conf_zrm_staged.$i1s conf_zrm_staged.$is
-if [ "$DMMODE" = "ZONAL" ]; then
-mv conf_mrm_staged.$i1s conf_mrm_staged.$is
-fi
-let dirnb-=1
+	i=$(($dirnb))
+	i1=$(($dirnb-1))
+	is=`( printf "%03d" "$i" )`
+	i1s=`( printf "%03d" "$i1" )`
+	mv conf_staged.$i1s conf_staged.$is
+	let dirnb-=1
 done    
  
-cp -rf conf_zrm_staged conf_zrm_staged.000
-if [ "$DMMODE" = "ZONAL" ]; then
-cp -rf conf_mrm_staged conf_mrm_staged.000
-fi
-
+cp -rf conf_staged conf_staged.000
 
 logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -1767,7 +1800,11 @@ fi
 function_zresp_on
 function_zresp_off $ACzrmtime
 tmuxname="aol${LOOPNUMBER}zrespMc"
+
+
 function_upzrm_tmux ${tmuxname}
+
+# load to shared memory
 function_SMloadzrm_tmux ${tmuxname}
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -1795,7 +1832,28 @@ fi
 
 
 nAUTOC)
+aoconflogext "START AUTO CALIBRATION"
+# archive
+dirnb=20
+i0=`( printf "%03d" "$dirnb" )`
+rm -rf conf_staged.$i0
+
+
+# save old RMs
+while [ $dirnb -gt 0 ]; do
+	i=$(($dirnb))
+	i1=$(($dirnb-1))
+	is=`( printf "%03d" "$i" )`
+	i1s=`( printf "%03d" "$i1" )`
+	mv conf_staged.$i1s conf_staged.$is
+	let dirnb-=1
+done    
+ 
+cp -rf conf_staged conf_staged.000
+
+# this function populated conf_staged directory
 function_acqWFSresp
+
 ;;
 
 
@@ -2238,7 +2296,7 @@ aoconflogext "set WFSmakSNRr $WFSmaskSNRr"
 mkAOmasks)
 ./auxscripts/aolmkMasks 
 
-stageddir="conf_zrm_staged"
+stageddir="conf_staged"
 cp wfsmask.fits ./${stageddir}/
 cp dmmaskRM.fits ./${stageddir}/
 
@@ -2621,7 +2679,7 @@ state="menuconfigureloop"
 upmrm) # update modal  matrix calibration to latest 
 tmuxname="aol${LOOPNUMBER}LOrespMc"
 function_upmrm_tmux ${tmuxname}
-#cp ${dir_conf_mrm_staged}/conf_*.txt ./conf/
+#cp ${dir_conf_staged}/conf_*.txt ./conf/
 ;;
 
 
