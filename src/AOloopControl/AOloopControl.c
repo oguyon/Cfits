@@ -6612,7 +6612,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
 
-exit(0);//TEST
+
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -7377,12 +7377,6 @@ exit(0);//TEST
 
 
 
-/*    sprintf(testdirname, "testdir_%s", data.processname);
-    sprintf(command, "rm -rf %s", testdirname);
-    r = system(command);
-    printf("SAVING FILES TO %s\n", testdirname);
-    saveall_fits(testdirname);  //TEST
-*/
     
     AOconf[loop].init = 1;
     
@@ -7520,8 +7514,6 @@ int AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int ad
     
     
     AOconf[loop].gainMB[blocknb] = gain;
-    // save_fits("contrMc0", "!test_contrMc0.fits");//TEST
-    // save_fits("contrMcact0", "!test_contrMcact0.fits");//TEST
 
     return(0);
 }
@@ -8541,7 +8533,7 @@ long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, fl
         
         
         k1 = k;
-        save_fits("_tmprecdmout", "!_tmprecdmout.fits"); //TEST
+    //    save_fits("_tmprecdmout", "!_tmprecdmout.fits"); 
 
 
         printf("\n\n");
