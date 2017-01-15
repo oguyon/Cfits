@@ -8941,6 +8941,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
         
         // initialize with first poke
+        kk = 0;
         kk1 = 0;
 		PokeIndex = 0;
 		PokeIndex1 = 0;
