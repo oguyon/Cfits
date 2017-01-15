@@ -8914,9 +8914,12 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
-    exit(0);
+
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
 	
+    exit(0);
+
+
 
 
     printf("Importing DM response matrix channel shared memory ...\n");
