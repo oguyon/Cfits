@@ -295,11 +295,17 @@ menuitems+=( "confUp" "\Z1 Configuration Update \Zn" )
 
 
 menuitems+=( " " " " )
-if [ -f "$fname" ]; then
-menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
-else
+
+#if [ "$DMMODE" = "ZONAL" ]; then
+#fname="aolmkmodes.runproc"
+#else
+#fname="aolmkmodesM.runproc"
+#fi
+#if [ -f "$fname" ]; then
+#menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
+#else
 menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
-fi
+#fi
 
 
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
@@ -317,16 +323,6 @@ makemenuitemstringaolshm "contrM" "Modal Control Matrix"
 menuitems+=( "CM" "$menustring" )
 
 fi
-
-
-
-
-if [ "$DMMODE" = "ZONAL" ]; then
-fname="aolmkmodes.runproc"
-else
-fname="aolmkmodesM.runproc"
-fi
-
 
 
 
