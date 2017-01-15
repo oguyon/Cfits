@@ -55,18 +55,16 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
-# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask
-tmux send-keys -t ${tmuxname} "rm wfsref0.fits" C-m
+# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask -> wfsref0
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
 tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
 tmux send-keys -t ${tmuxname} "im1=im0*a" C-m
-tmux send-keys -t ${tmuxname} "savefits im1 wfsref0.fits" C-m
+tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref0.fits\"" C-m
 tmux send-keys -t ${tmuxname} "listim"
 tmux send-keys -t ${tmuxname} "exit" C-m
 
-#tmux send-keys -t ${tmuxname} "sleep 10" C-m
 
 # COPY TO ARCHIVE
 for imname in $RMZONALCALIBlist
