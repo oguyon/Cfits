@@ -6886,12 +6886,12 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 	
 
     sprintf(name, "aol%ld_wfsref0", loop);
-    sprintf(fname, "./conf/wfsref0.fits");
+    sprintf(fname, "./conf/aol%ld_wfsref0.fits", loop);
     aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     AOconf[loop].init_wfsref0 = 1;
 
     sprintf(name, "aol%ld_wfsref", loop);
-    sprintf(fname, "./conf/wfsref.fits");
+    sprintf(fname, "./conf/aol%ld_wfsref.fits", loop);
     aoconfID_wfsref = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
     
