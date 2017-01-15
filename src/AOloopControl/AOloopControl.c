@@ -8911,10 +8911,10 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	
 	printf("INITIALIZE MEMORY (mode %d, meminit = %d)....\n", AOinitMode, AOloopcontrol_meminit);
     fflush(stdout);
-    exit(0);
+
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
-        
+    exit(0);
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
 	
 
