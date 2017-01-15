@@ -952,7 +952,7 @@ menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} fr
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
 menuitems+=( "zrespM" "$menustring" )
 
-menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
+#menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -1031,7 +1031,7 @@ zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 #			menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
 #		fi
 
-menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
+#menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
 #	fi
 #fi
 
@@ -1227,24 +1227,24 @@ then
 
     LOrespmatnbiter=$( cat zresptmp/LOrespmat_nbiter.txt )
    
-    if [ "${LOrespMstat}" = "OFF" ];
-    then
-        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in staged dir)" )
-        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-        else
-            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
-        fi
-        menuitems+=( " " " ")
-    else
-        menuitems+=( "LOrespoff" "\Z1\Zr Modal RM acquisition running - Press to STOP\Zn" )
-        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-        else
-            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
-        fi
-        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
-    fi
+#    if [ "${LOrespMstat}" = "OFF" ];
+#    then
+#        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in staged dir)" )
+#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
+#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+#        else
+#            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
+#        fi
+#        menuitems+=( " " " ")
+#    else
+#        menuitems+=( "LOrespoff" "\Z1\Zr Modal RM acquisition running - Press to STOP\Zn" )
+#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
+#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
+#        else
+#            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
+#        fi
+#        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
+#    fi
 
 	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
 	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
