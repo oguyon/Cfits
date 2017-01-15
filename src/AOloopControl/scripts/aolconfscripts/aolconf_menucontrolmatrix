@@ -542,8 +542,7 @@ exec 3>&-;
 block04end=$( echo $block04end | awk '{ printf("%03d", $1)}' )
 echo "$block04end" > ./conf/conf_block04end.txt
 ;;
-for each file:
-conf_<name>.txt points to archived file location
+
 	bl05e)
 exec 3>&1;
 block05end=$(dialog --inputbox "end of block 05" 0 0 "$block05end" 2>&1 1>&3);
