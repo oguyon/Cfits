@@ -62,6 +62,7 @@ tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
 tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
 tmux send-keys -t ${tmuxname} "im1=im0*a" C-m
 tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref1.fits\"" C-m
+tmux send-keys -t ${tmuxname} "listim"
 tmux send-keys -t ${tmuxname} "exit" C-m
 
 sleep 10
