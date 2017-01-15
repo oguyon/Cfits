@@ -22,7 +22,8 @@ fi
 
 
 
-
+RMZONALCALIBlist="wfsref0 zrespM wfsmap dmmap wfsmask dmmaskRM dmslaved dmmask"
+RMMONALCALIBlist="LODMmodes LOrespM LOwfsref0"
 
 
 
@@ -63,7 +64,7 @@ tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
 tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-tmux send-keys -t ${tmuxname} "cp wfsmask.fits dmmask/dmmask_${datestr}.fits" C-m
+tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
 
 
 
@@ -99,7 +100,7 @@ tmux send-keys -t ${tmuxname} "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.
 
 
 
-# copy file names in conf.txt files in staged directory
+# copy file names in conf_<name>_name.txt files in staged directory
 
 dir="$dir_conf_staged"
 mkdir -p $dir
@@ -906,8 +907,9 @@ RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.
 #fi
 
 
-menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s" )
-
+menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/" )
+menuitems+=( "confUp" "    CONFIGURATION UPDATE     (./conf_staged/*.txt -> ./conf/*.txt" )
+menuitems+=( "calibL" "    Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( " " " " )
 
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
@@ -1872,6 +1874,25 @@ function_acqWFSresp
 ;;
 
 
+
+	confUp)
+cp ./conf_staged/*.txt ./conf/
+;;
+
+	calibL)
+# zonal calib
+for imname in $RMZONALCALIBlist
+do
+./auxscripts/aolReadConfFile ${imname}	
+./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
+done
+# modal calib
+for imname in $RMMODALCALIBlist
+do
+./auxscripts/aolReadConfFile ${imname}	
+./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
+done
+;;
 
 
 
