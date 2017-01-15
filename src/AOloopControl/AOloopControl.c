@@ -8936,7 +8936,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
-        printf("iteration # %8ld    \n", iter);
+        printf("iteration # %8ld    ( %6ld / %6ld )  \n", iter, imcnt, imcntmax);
         fflush(stdout);
 
         
