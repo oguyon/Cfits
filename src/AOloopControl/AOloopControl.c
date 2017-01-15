@@ -8909,10 +8909,12 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     sizearray = (long*) malloc(sizeof(long)*3);
 	
 	
-	printf("INITIALIZE MEMORY (mode %d)....\n", AOinitMode);
+	printf("INITIALIZE MEMORY (mode %d, meminit = %d)....\n", AOinitMode, AOloopcontrol_meminit);
     fflush(stdout);
+    exit(0);
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(AOinitMode);
+        
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
 	
 
