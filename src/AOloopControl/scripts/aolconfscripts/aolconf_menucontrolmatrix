@@ -280,8 +280,24 @@ mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 NBmodes=$( cat ./conf/conf_NBmodes.txt )
-menuitems+=( "mkModes0" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (full computation)" )
-menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
+
+staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
+staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
+staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
+staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
+
+menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
+#menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
+
+menuitems+=( " " " " )
+
+
+stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
+menuitems+=( " " "\Zb\Zr$string\Zn" )
+
+
+stringcenter " ACTIVE CONFIGURATION : <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
+menuitems+=( " " "\Zb\Zr$string\Zn" )
 
 
 
