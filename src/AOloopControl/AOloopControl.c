@@ -8828,7 +8828,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	long imcntmax;
 	long *array_PokeIndex;
 	long *array_PokeIndex1;
-
+	FILE *fp;
 
     schedpar.sched_priority = RT_priority;
     #ifndef __MACH__
