@@ -8827,8 +8827,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	
 	long imcntmax;
 	long *array_iter;
-	long *array_poke;
-	long *array_accum;
+	int *array_poke;
+	int *array_accum;
 	long *array_kk;
 	long *array_kk1;
 	long *array_PokeIndex;
@@ -8919,8 +8919,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 	imcntmax = (1+delayfr+NBpoke)*NBiter;
 	array_iter = (long*) malloc(sizeof(long)*imcntmax);
-	array_poke = (long*) malloc(sizeof(long)*imcntmax);
-	array_accum = (long*) malloc(sizeof(long)*imcntmax);
+	array_poke = (int*) malloc(sizeof(int)*imcntmax);
+	array_accum = (int*) malloc(sizeof(int)*imcntmax);
 	array_kk = (long*) malloc(sizeof(long)*imcntmax);
 	array_kk1 = (long*) malloc(sizeof(long)*imcntmax);
 	array_PokeIndex = (long*) malloc(sizeof(long)*imcntmax);
@@ -8957,6 +8957,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         
         
         // WAIT FOR LOOP DELAY, PRIMING
+		array_iter[imcnt] = iter;
 		array_kk[imcnt] = kk;
 		array_kk1[imcnt] = kk1;
 		array_PokeIndex[imcnt] = PokeIndex;
@@ -8967,6 +8968,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		// read delayfr frames
         for(kk=0; kk<delayfr; kk++)               
             {
+				array_iter[imcnt] = iter;
 				array_kk[imcnt] = kk;
 				array_kk1[imcnt] = kk1;
 				array_PokeIndex[imcnt] = PokeIndex;
@@ -9004,6 +9006,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
+				array_iter[imcnt] = iter;
 				array_kk[imcnt] = kk;
 				array_kk1[imcnt] = kk1;
 				array_PokeIndex[imcnt] = PokeIndex;
