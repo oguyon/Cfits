@@ -9052,7 +9052,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	// print poke log
 	fp = fopen("RMpokelog.txt", "w");
 	for(imnct=0;imcnt<imcntmax;imcnt++)
-		fprintf("%6ld  %6ld  %6ld  %6ld  %6ld\n", imcnt, array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt]);
+		fprintf(fp, "%6ld  %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
 	fclose(fp);
 
 	free(array_kk);
