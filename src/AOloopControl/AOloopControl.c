@@ -8826,6 +8826,9 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	long ii, kk, kk1;
 	
 	long imcntmax;
+	long *array_iter;
+	long *array_poke;
+	long *array_accum;
 	long *array_kk;
 	long *array_kk1;
 	long *array_PokeIndex;
@@ -8913,12 +8916,23 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     printf("STARTING response measurement...\n");
     fflush(stdout);
 	
-	imcnt = 0;
+
 	imcntmax = (1+delayfr+NBpoke)*NBiter;
+	array_iter = (long*) malloc(sizeof(long)*imcntmax);
+	array_poke = (long*) malloc(sizeof(long)*imcntmax);
+	array_accum = (long*) malloc(sizeof(long)*imcntmax);
 	array_kk = (long*) malloc(sizeof(long)*imcntmax);
 	array_kk1 = (long*) malloc(sizeof(long)*imcntmax);
 	array_PokeIndex = (long*) malloc(sizeof(long)*imcntmax);
 	array_PokeIndex1 = (long*) malloc(sizeof(long)*imcntmax);
+	
+	for(imcnt=0;imcnt<imcntmax;imcnt++)
+		{
+			array_poke[imcnt] = 0;
+			array_accum[imcnt] = 0;
+		}
+	
+	imcnt = 0;
 	
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
@@ -8939,7 +8953,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
-        
+        array_poke[imcnt] = 1;
         
         
         // WAIT FOR LOOP DELAY, PRIMING
@@ -8976,6 +8990,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
                         AOconf[loop].DMupdatecnt ++;
+                        array_poke[imcnt] = 1;
                     }
             }
                 
@@ -8997,8 +9012,11 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 				Read_cam_frame(loop, 1, normalize, 0, 0);
 				
                 if(kk<NBave)
-                    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
+                {
+				   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] += data.image[aoconfID_imWFS1].array.F[ii];
+					array_accum[imcnt] = 1;
+                }
                 kk1++;
                 if(kk1==NBave)
                     {
@@ -9016,6 +9034,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
                         AOconf[loop].DMupdatecnt ++;
+                        array_poke[imcnt] = 1;
                     }
             }
 
@@ -9036,6 +9055,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
+        array_poke[imcnt] = 1;
 		
  
 		iter++;
@@ -9054,9 +9074,13 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	// print poke log
 	fp = fopen("RMpokelog.txt", "w");
 	for(imcnt=0;imcnt<imcntmax;imcnt++)
-		fprintf(fp, "%6ld  %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
+		fprintf(fp, "%6ld %3ld    %1d %1d     %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_iter[imcnt], array_poke[imcnt], array_accum[imcnt], array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
 	fclose(fp);
 
+
+	free(array_iter);
+	free(array_accum);
+	free(array_poke);
 	free(array_kk);
 	free(array_kk1);
 	free(array_PokeIndex);
