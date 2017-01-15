@@ -6948,7 +6948,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-	printf("-------------- got here -- [level %ld]----------\n", level);
+	printf("-------------- got here -- [level %d]----------\n", level);
 	exit(0);//TEST
 
 
