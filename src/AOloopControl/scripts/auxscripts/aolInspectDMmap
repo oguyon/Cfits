@@ -153,7 +153,7 @@ im2ascii lcoeffs "./tmp/lcoeffs.txt"
 imlinconstruct aol${loopnb}_DMmodes lcoeffs outim
 outim1=outim*aol${loopnb}_dmmaskRM
 savefits outim1 "!./tmp/dmmap_fitModes.fits"
-dmres=dmmap-outim
+dmres=dmmap1-outim
 dmres1=dmres*aol${loopnb}_dmmaskRM
 savefits dmres1 "!./tmp/dmmap_resModes.fits"
 imlinconstruct aol${loopnb}_respM lcoeffs outimWFS
