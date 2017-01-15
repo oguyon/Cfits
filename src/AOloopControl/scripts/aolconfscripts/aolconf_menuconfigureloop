@@ -951,7 +951,7 @@ menuitems+=( " " " " )
 
 
 
-stringcenter "SYSTEM CALIBRATION PARAMETERS (ZONAL) : $RMZONALCALIBlist"
+stringcenter "ACQUISITION TIMING"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
@@ -980,6 +980,12 @@ if [ -f "./conf/conf_nblatm.txt" ]; then
 nblatm=$( cat ./conf/conf_nblatm.txt )
 fi
 menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
+
+
+
+
+stringcenter "SYSTEM CALIBRATION PARAMETERS (ZONAL) : $RMZONALCALIBlist"
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 
 makemenuitemstringaolshm "zrespM" "Zonal Resp Mat"
@@ -1206,7 +1212,7 @@ if [ "$DMMODE" = "ZONAL" ]; then
 
 menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL) : $RMMODALCALIBlist"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
 if [[ -f "./conf/conf_RMmodal.txt" && ( "$RMmodal" = " ON" || "$RMmodal" = "OFF" ) ]]; then
