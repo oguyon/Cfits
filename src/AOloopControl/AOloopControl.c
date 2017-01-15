@@ -6559,6 +6559,10 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     long kk, tmpl;
     char testdirname[200];
     
+    int initwfsref;
+    
+    
+    
     FILE *fplog; // human-readable log of load sequence
 
     if((fplog=fopen("loadconf.log", "w"))==NULL)
