@@ -147,7 +147,7 @@ dir="conf_staged"
 
 $execnamestring -n $pname << EOF
 aolnb $loopnb
-loadfits "./${dir}/extrablockM.fits" extrablockM
+loadfits "./conf/extrablockM.fits" extrablockM
 loadfits "./${dir}/dmslaved.fits" dmslaved
 loadfits "./${dir}/zrespM.fits" zrespM
 loadfits "./${dir}/dmmaskRM.fits" dmmaskRM
