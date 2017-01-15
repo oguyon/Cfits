@@ -6825,8 +6825,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     aoconfID_looptiming = AOloopControl_2Dloadcreate_shmim(name, " ", NBtimers, 1);
 
 
-	printf("-------------- got here ------------\n");
-	exit(0);//TEST
+	
 
 
     // this image is read to notify when new dm displacement is ready
@@ -6851,6 +6850,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
     fprintf(fplog, "WFS stream size = %ld x %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
+	printf("-------------- got here ------------\n");
+	exit(0);//TEST
 
     // The AOloopControl_xDloadcreate_shmim functions work as follows:
     // If file already loaded, use it (we assume it's already been properly loaded)
