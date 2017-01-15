@@ -56,12 +56,13 @@ tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" 
 
 
 # UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask
+tmux send-keys -t ${tmuxname} "rm wfsref0.fits" C-m
 tmux send-keys -t ${tmuxname} "Cfits" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
 tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
 tmux send-keys -t ${tmuxname} "im1=im0*a" C-m
-tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref0.fits\"" C-m
+tmux send-keys -t ${tmuxname} "savefits im1 wfsref0.fits" C-m
 tmux send-keys -t ${tmuxname} "listim"
 tmux send-keys -t ${tmuxname} "exit" C-m
 
@@ -73,18 +74,6 @@ do
 	mkdir -p ${imname}
 	tmux send-keys -t ${tmuxname} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
 done
-
-
-#tmux send-keys -t ${tmuxname} "cp wfsref0.fits wfsref0/wfsref0_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp zrespM.fits zrespM/zrespM_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp wfsmap.fits wfsmap/wfsmap_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp dmmap.fits dmmap/dmmap_${datestr}.fits" C-m
-
-#tmux send-keys -t ${tmuxname} "cp wfsmask.fits wfsmask/wfsmask_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp dmmaskRM.fits dmmaskRM/dmmaskRM_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp dmslaved.fits dmslaved/dmslaved_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp dmmask.fits dmmask/dmmask_${datestr}.fits" C-m
-
 
 
 
@@ -112,13 +101,6 @@ do
 done
 
 
-#mkdir -p LOrespM
-#mkdir -p LODMmodes
-#mkdir -p LOwfsref0
-
-#tmux send-keys -t ${tmuxname} "cp respM_LOmodes.fits LODMmodes/LODMmodes_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp LOrespmat0.fits LOrespM/LOrespM_${datestr}.fits" C-m
-#tmux send-keys -t ${tmuxname} "cp LOwfsref0.fits LOwfsref0/LOwfsref0_${datestr}.fits" C-m
 
 # =============================================================================================================
 #       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
@@ -139,46 +121,10 @@ do
 done
 
 
-
-
-#tmux send-keys -t ${tmuxname} "echo \"wfsref0/wfsref0_${datestr}.fits\" > ./${dir}/conf_wfsref0_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv  wfsref0.fits ./${dir}/" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"zrespM/zrespM_${datestr}.fits\" > ./${dir}/conf_zrespM_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv zrespmat.fits ./${dir}/zrespM.fits" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"wfsmap/wfsmap_${datestr}.fits\" > ./${dir}/conf_wfsmap_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv wfsmap.fits ./${dir}/" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"dmmap/dmmap_${datestr}.fits\" > ./${dir}/conf_dmmap_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv dmmap.fits ./${dir}/" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"wfsmask/wfsmask_${datestr}.fits\" > ./${dir}/conf_wfsmask_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv wfsmask.fits ./${dir}/" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"dmmaskRM/dmmaskRM_${datestr}.fits\" > ./${dir}/conf_dmmaskRM_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv dmmaskRM.fits ./${dir}/" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"dmslaved/dmslaved_${datestr}.fits\" > ./${dir}/conf_dmslaved_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv dmslaved.fits ./${dir}/" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"dmmask/dmmask_${datestr}.fits\" > ./${dir}/conf_dmmask_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv dmmask.fits ./${dir}/" C-m
-
-
-
-
-#tmux send-keys -t ${tmuxname} "echo \"LODMmodes/LODMmodes_${datestr}.fits\" > ./${dir}/conf_LODMmodes_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv respM_LODMmodes.fits ./${dir}/LODMmodes.fits" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"LOrespM/LOrespM_${datestr}.fits\" > ./${dir}/conf_LOrespM_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv LOrespmat0.fits ./${dir}/LOrespM.fits" C-m
-
-#tmux send-keys -t ${tmuxname} "echo \"LOwfsref0/LOwfsref0_${datestr}.fits\" > ./${dir}/conf_LOwfsref0_name.txt" C-m
-#tmux send-keys -t ${tmuxname} "mv LOwfsref0.fits ./${dir}/LOwfsref0.fits" C-m
-
-
 }
+
+
+
 
 
 
