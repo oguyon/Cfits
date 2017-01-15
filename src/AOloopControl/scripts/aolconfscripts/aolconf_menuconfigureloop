@@ -808,6 +808,10 @@ fi
 menuitems+=( "swfsl" "[${wfslambdanm} nm] WFS lambda" )
 
 
+
+
+
+
 menuitems+=( " " " " )
 stringcenter "I/O PRE-PROCESSING [FITS files] "
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
@@ -858,6 +862,10 @@ fi
 else
 MASKS_LOCK="0"
 fi
+
+
+
+
 
 
 
@@ -945,7 +953,7 @@ menuitems+=( " " " " )
 
 
 
-stringcenter "SYSTEM CALIBRATION PARAMETERS (ZONAL)"
+stringcenter "SYSTEM CALIBRATION PARAMETERS (ZONAL) : $RMZONALCALIBlist"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
@@ -1199,7 +1207,7 @@ menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 if [ "$DMMODE" = "ZONAL" ]; then
 
 menuitems+=( " " " " )
-stringcenter "SYSTEM CALIBRATION (MODAL)"
+stringcenter "SYSTEM CALIBRATION (MODAL) : $RMMODALCALIBlist"
 menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
 RMmodal=$( cat ./conf/conf_RMmodal.txt )
