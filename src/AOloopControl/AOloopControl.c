@@ -6883,14 +6883,16 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-	printf("-------------- got here ------------\n");
-	exit(0);//TEST
+	
 
     sprintf(name, "aol%ld_wfsref0", loop);
     sprintf(fname, "./conf/wfsref0.fits");
     aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     AOconf[loop].init_wfsref0 = 1;
-    
+    list_image_ID();
+ 	printf("-------------- got here ------------\n");
+	exit(0);//TEST
+   
     sprintf(name1, "aol%ld_wfsref", loop);
     aoconfID_wfsref = copy_image_ID(name, name1, 1);
     COREMOD_MEMORY_image_set_createsem(name1, 10);
