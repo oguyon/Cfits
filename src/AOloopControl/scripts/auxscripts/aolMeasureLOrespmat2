@@ -132,6 +132,8 @@ PokeNBExcl_fr="$4"
 normalize_flag="$5"
 
 
+
+
 loopnb=$(cat LOOPNUMBER)
 
 pname0=$0
@@ -148,4 +150,5 @@ listim
 exit
 EOF
 mv respM_LOmodes.fits LODMmodes.fits
+
 
