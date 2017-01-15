@@ -6884,7 +6884,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 	
-
+	initwfsref = AOconf[loop].init_wfsref0;
     sprintf(name, "aol%ld_wfsref0", loop);
     sprintf(fname, "./conf/aol%ld_wfsref0.fits", loop);
     aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -6902,7 +6902,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-	printf("-------------- got here ------------\n");
+	printf("-------------- got here -[%d]-----------\n", initwfsref);
 	exit(0);//TEST
 
     // Connect to DM
