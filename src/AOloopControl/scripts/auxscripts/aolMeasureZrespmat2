@@ -149,7 +149,7 @@ loadfits "./conf/RMpokeCube.fits" RMpokeCube
 aolmeaslWFSrespC ${PokeAmpl} ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} RMpokeCube wfsresp wfsref ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
 listim
 savefits wfsresp "!zrespmat0.fits"
-savefits wfsref "!wfsref0.fits"
+savefits wfsref "!wfsref00.fits"
 listim
 exit
 EOF
