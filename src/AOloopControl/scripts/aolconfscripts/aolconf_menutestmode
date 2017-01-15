@@ -406,6 +406,12 @@ fi
 menuitems+=( "setave" "[${testModeAve}] Number of WFS frames averaged" )
 
 
+
+menuitems+=( "-" " " )
+menuitems+=( "-" " INSPECT CURRENT LOOP STATE " )
+menuitems+=( "resan" "Analyze current residual" )
+
+
 menuitems+=( "-" " " )
 menuitems+=( "-" " STATIC TEST " )
 menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
@@ -926,6 +932,20 @@ exec 3>&-;
 echo "$testModeAve" > ./conf/conf_testModeAve.txt
 aoconflog "testModeAve = $testModeAve"
 ;;
+
+
+
+
+	resan)
+Cfits << EOF
+readshmim dm00disp00
+readshmim aol${LOOPNUMBER}_dmC
+resmap=aol${LOOPNUMBER}_dmC-dm00disp00
+savefits resmap "!resmap.fits"
+exit
+EOF
+./auxscripts/aolInspectDMmap resmap.fits
+	;;
 
 
     inj0)

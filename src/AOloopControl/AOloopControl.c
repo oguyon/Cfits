@@ -8375,7 +8375,7 @@ long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, fl
 
     if(data.image[IDdmout].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
@@ -8387,7 +8387,7 @@ long AOloopControl_TestDMmodeResp(char *DMmodes_name, long index, float ampl, fl
 
    if(data.image[IDdmmask].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
