@@ -8983,7 +8983,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         PokeIndex1++;
                             
                         if(PokeIndex1>NBpoke-1)
-                            PokeIndex1 = NBpoke-1;
+                            PokeIndex1 -= NBpoke;
 
                         // POKE            
 						usleep(delayRM1us);    
@@ -9028,7 +9028,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         PokeIndex1++;
 
                         if(PokeIndex1>NBpoke-1)
-                            PokeIndex1 = NBpoke-1;
+                            PokeIndex1 -= NBpoke;
                         
             
                         usleep(delayRM1us);
@@ -9059,8 +9059,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
-        array_poke[imcnt] = 1;
-		
+        array_poke[imcnt] = 1;		
  
 		iter++;
  
