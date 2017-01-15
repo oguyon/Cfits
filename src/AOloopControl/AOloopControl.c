@@ -6825,7 +6825,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     aoconfID_looptiming = AOloopControl_2Dloadcreate_shmim(name, " ", NBtimers, 1);
 
 
-
+	printf("-------------- got here ------------\n");
 	exit(0);//TEST
 
 
