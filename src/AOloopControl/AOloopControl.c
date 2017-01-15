@@ -8826,6 +8826,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	long ii, kk, kk1;
 	
 	long imcntmax;
+	long *array_kk;
+	long *array_kk1;
 	long *array_PokeIndex;
 	long *array_PokeIndex1;
 	FILE *fp;
