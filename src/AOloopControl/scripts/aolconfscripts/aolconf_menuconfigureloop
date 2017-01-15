@@ -65,7 +65,7 @@ tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref1.fits\"" C-m
 tmux send-keys -t ${tmuxname} "listim"
 tmux send-keys -t ${tmuxname} "exit" C-m
 
-sleep 10
+tmux send-keys -t ${tmuxname} "sleep 10" C-m
 
 # COPY TO ARCHIVE
 for imname in $RMZONALCALIBlist
