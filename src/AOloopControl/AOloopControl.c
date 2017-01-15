@@ -6850,8 +6850,9 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
     fprintf(fplog, "WFS stream size = %ld x %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
-	printf("-------------- got here ------------\n");
-	exit(0);//TEST
+
+
+
 
     // The AOloopControl_xDloadcreate_shmim functions work as follows:
     // If file already loaded, use it (we assume it's already been properly loaded)
@@ -6888,6 +6889,11 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     aoconfID_wfsref = copy_image_ID(name, name1, 1);
     COREMOD_MEMORY_image_set_createsem(name1, 10);
 
+
+
+
+	printf("-------------- got here ------------\n");
+	exit(0);//TEST
 
     // Connect to DM
     // Here the DM size is fixed
