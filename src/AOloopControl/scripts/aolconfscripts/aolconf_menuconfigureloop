@@ -893,31 +893,34 @@ RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.
 
 
 
-if [ -f "autocalibration.runproc" ]; then
-menuitems+=( "[ACstopK]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
-menuitems+=( "[ACstopZ]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
-if [ "$DMMODE" = "ZONAL" ]; then
-menuitems+=( "[ACstopM]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
-fi
-else
-menuitems+=( "[AUTOC]" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn - Zonal Acquisition time = ${RMacqTimeZ} s" )
-menuitems+=( " " " " )
-menuitems+=( " " " " )
-fi
-
+#if [ -f "autocalibration.runproc" ]; then
+#menuitems+=( "[ACstopK]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
+#menuitems+=( "[ACstopZ]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
+#if [ "$DMMODE" = "ZONAL" ]; then
+#menuitems+=( "[ACstopM]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE modal acquisition\Zn" )
+#fi
+#else
+#menuitems+=( "AUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION\Zn - Zonal Acquisition time = ${RMacqTimeZ} s" )
+#menuitems+=( " " " " )
+#menuitems+=( " " " " )
+#fi
 
 
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s" )
 
 menuitems+=( " " " " )
 
-
-stringcenter "SYSTEM CALIBRATION (ZONAL)"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
-
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
 menuitems+=( " " " " )
+
+
+
+
+
+stringcenter "SYSTEM CALIBRATION PARAMETERS (ZONAL)"
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+
 
 rmamplum=0.05
 if [ -f "./conf/conf_RMamplum.txt" ]; then
@@ -1004,32 +1007,33 @@ fi
 
 zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 
-if [ -f "aolCleanZrespmat.runproc" ]; then
-menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
-menuitems+=( " " " " )
-else
-if [ "${zrespMstat}" = "OFF" ];
-then
-menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] \Zb\Zu ==== START zonal RMs acquisition ====\ZB\ZU" )
-if [ "${zrespmatnbiter}" -lt 4 ]; then
-menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-else
-menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
-fi
+#if [ -f "aolCleanZrespmat.runproc" ]; then
+#	menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
+#	menuitems+=( " " " " )
+#else
+#	if [ "${zrespMstat}" = "OFF" ];
+#	then
+#		menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] \Zb\Zu ==== START zonal RMs acquisition ====\ZB\ZU" )
 
-#menuitems+=( "zrespoff" "            PROCESS zrespM" )
-menuitems+=( " " " ")
-else
-menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
-if [ "${zrespmatnbiter}" -lt 4 ]; then
-menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-else
-menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
-fi
+#		if [ "${zrespmatnbiter}" -lt 4 ]; then
+#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
+#		else
+#			menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
+#		fi
+
+#		menuitems+=( "zrespoff" "            PROCESS zrespM" )
+#		menuitems+=( " " " ")
+#	else
+#		menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
+#		if [ "${zrespmatnbiter}" -lt 4 ]; then
+#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
+#		else
+#			menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
+#		fi
 
 menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
-fi
-fi
+#	fi
+#fi
 
 
 makemenuitemstringaolshm "wfsmask" "WFS pixel mask"
@@ -1054,26 +1058,26 @@ menuitems+=( "wfsref0" "$menustring" )
 
 
 
-acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$acquwfsref0stat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_acquwfsref0.txt
-acquwfsref0stat="OFF"
-fi
+#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
+#if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$acquwfsref0stat" = "OFF" ) ]]; then
+#echo "OK"
+#else
+#echo "OFF" > ./status/stat_acquwfsref0.txt
+#acquwfsref0stat="OFF"
+#fi
 
-acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-if [ "${acquwfsref0stat}" = "OFF" ];
-then
-menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0  [waits on sem4 of aol${LOOPNUMBER}_wfsim]" )
-menuitems+=( " " " " )
-fi
-if [ "${acquwfsref0stat}" = " ON" ];
-then
-menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition and update conf                \Zn" )
-menuitems+=( "awfsref0offtest" "\Z1\Zr             STOP WFS ref acquisition, copy outuput to test_<>.fits  \Zn" )
-menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
-fi
+#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
+#if [ "${acquwfsref0stat}" = "OFF" ];
+#then
+#menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0  [waits on sem4 of aol${LOOPNUMBER}_wfsim]" )
+#menuitems+=( " " " " )
+#fi
+#if [ "${acquwfsref0stat}" = " ON" ];
+#then
+#menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition and update conf                \Zn" )
+#menuitems+=( "awfsref0offtest" "\Z1\Zr             STOP WFS ref acquisition, copy outuput to test_<>.fits  \Zn" )
+#menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
+#fi
 
 
 
