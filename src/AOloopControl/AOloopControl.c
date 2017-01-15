@@ -6612,7 +6612,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
 
-
+exit(0);//TEST
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
