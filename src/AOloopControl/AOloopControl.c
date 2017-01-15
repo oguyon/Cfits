@@ -8913,8 +8913,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	
 	imcnt = 0;
 	imcntmax = (1+delayfr+NBpoke)*NBiter;
-	
-	
+	array_PokeIndex = (long*) malloc(sizeof(long)*imcntmax);
+	array_PokeIndex1 = (long*) malloc(sizeof(long)*imcntmax);
 	
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
@@ -9035,10 +9035,13 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     free(arrayf);
     free(sizearray);
 
-
+	
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
+
+	free(array_PokeIndex);
+	free(array_PokeIndex1);
 
     return(IDoutC);
 }
