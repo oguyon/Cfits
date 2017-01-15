@@ -6948,8 +6948,6 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-	printf("-------------- got here -- [level %d]----------\n", level);
-	exit(0);//TEST
 
 
     if(level>=10) // Load DM modes (will exit if not successful)
@@ -7063,97 +7061,16 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
             delete_image_ID("tmp3Dim");
         }
-    }
-    fprintf(fplog, "stream %s loaded as ID = %ld, size %ld %ld %ld\n", AOconf[loop].DMmodesname, aoconfID_DMmodes, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, AOconf[loop].NBDMmodes);
+    
+		fprintf(fplog, "stream %s loaded as ID = %ld, size %ld %ld %ld\n", AOconf[loop].DMmodesname, aoconfID_DMmodes, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, AOconf[loop].NBDMmodes);
+	}
 
 
 
+  
 
-    /*
-        if(aoconfID_DMmodes!=-1)
-        {
-
-            printf("reading from shared memory %s   [%ld x %ld x %ld]\n", name, data.image[aoconfID_DMmodes].md[0].size[0], data.image[aoconfID_DMmodes].md[0].size[1], data.image[aoconfID_DMmodes].md[0].size[2]);
-            AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
-        }
-
-        aoconfID_DMmodes = load_fits("./conf/fmodes.fits", "tmp3Dim");
-        if(aoconfID_DMmodes!=-1)
-        {
-            if(data.image[aoconfID_DMmodes].md[0].naxis != 3)
-            {
-                printf("ERROR: File \"./conf/fmodes.fits\" is not a 3D image (cube)\n");
-                exit(0);
-            }
-            if(data.image[aoconfID_DMmodes].md[0].size[0] != AOconf[loop].sizexDM)
-            {
-                printf("ERROR: File \"./conf/fmodes.fits\" has wrong x size: should be %ld, is %ld\n", AOconf[loop].sizexDM, data.image[aoconfID_DMmodes].md[0].size[0]);
-                exit(0);
-            }
-            if(data.image[aoconfID_DMmodes].md[0].size[1] != AOconf[loop].sizexDM)
-            {
-                printf("ERROR: File \"./conf/fmodes.fits\" has wrong y size: should be %ld, is %ld\n", AOconf[loop].sizeyDM, data.image[aoconfID_DMmodes].md[0].size[1]);
-                exit(0);
-            }
-        }
-
-
-
-
-        if(aoconfID_DMmodes == -1)
-        {
-            printf("ERROR: NO DMmodes\n");
-            exit(0);
-        }
-
-
-
-        // VERIFY DM MODES SIZE
-        vOK = 0;
-        if(aoconfID_DMmodes != -1)
-        {
-            vOK = 1;
-            if(data.image[aoconfID_DMmodes].md[0].naxis != 3)
-            {
-                printf("DM modes has wrong dimension\n");
-                vOK = 0;
-            }
-            if(data.image[aoconfID_DMmodes].md[0].atype != FLOAT)
-            {
-                printf("DM modes has wrong type\n");
-                vOK = 0;
-            }
-            if(vOK==1)
-            {
-                if(data.image[aoconfID_DMmodes].md[0].size[0]!=AOconf[loop].sizexDM)
-                {
-                    printf("DM modes has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexDM);
-                    vOK = 0;
-                }
-                if(data.image[aoconfID_DMmodes].md[0].size[1]!=AOconf[loop].sizeyDM)
-                {
-                    printf("DM modes has wrong y size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexDM);
-                    vOK = 0;
-                }
-            }
-            if(vOK==1)
-            {
-                AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
-                printf("%ld DM modes\n", AOconf[loop].NBDMmodes);
-            }
-        }
-        if(vOK == 0)
-        {
-            printf("\n");
-            printf("========== ERROR: NEED DM MODES TO START AO LOOP ===========\n");
-            printf("\n");
-            exit(0);
-        }
-    */
-
-
-
-
+	// TO BE CHECKED
+	
     AOconf[loop].NBMblocks = AOconf[loop].DMmodesNBblock;
     printf("NBMblocks : %ld\n", AOconf[loop].NBMblocks);
     fflush(stdout);
