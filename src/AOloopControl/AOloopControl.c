@@ -8963,7 +8963,6 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     iter = 0;
 
 
-
 	ptr0 = (char*) data.image[IDpokeC].array.F;
 	framesize = sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
 
