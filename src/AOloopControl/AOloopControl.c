@@ -8852,7 +8852,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
 	
-    exit(0);//TEST
+    
 
 
 
