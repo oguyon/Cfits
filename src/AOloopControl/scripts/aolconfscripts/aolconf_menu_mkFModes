@@ -72,8 +72,8 @@ cpamax=$(cat $tempfile)
 echo "$cpamax" > ./conf/conf_cpamax.txt
 
 #rm mkmodes.run
-tmux send-keys -t $tmuxname "echo \"./auxscripts/aolmkmodes ${cpamax} -1 ${SVDlimall} ${mkModesMODE}\" >> aolcmd.txt" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolmkmodes ${cpamax} -1 ${SVDlimall} ${mkModesMODE}" C-m
+tmux send-keys -t $tmuxname "echo \"./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}\" >> aolcmd.txt" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}" C-m
 #tmux send-keys -t $tmuxname "touch mkmodes.run0" C-m
 #waitforfile mkmodes.run0
 #rm mkmodes.run0

@@ -1851,10 +1851,9 @@ done
  
 cp -rf conf_staged conf_staged.000
 
-# this function populated conf_staged directory
+# this function populates conf_staged directory
 function_acqWFSresp
 ;;
-
 
 
 
