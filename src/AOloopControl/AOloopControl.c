@@ -6880,6 +6880,12 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     sprintf(name, "aol%ld_imWFS2", loop);
     aoconfID_imWFS2 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
+
+
+
+	printf("-------------- got here ------------\n");
+	exit(0);//TEST
+
     sprintf(name, "aol%ld_wfsref0", loop);
     sprintf(fname, "./conf/wfsref0.fits");
     aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
