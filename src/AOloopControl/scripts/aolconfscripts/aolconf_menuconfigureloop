@@ -941,8 +941,8 @@ RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.
 
 
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/" )
-menuitems+=( "confUp" "    CONFIGURATION UPDATE     (./conf_staged/*.txt -> ./conf/*.txt" )
-menuitems+=( "calibL" "    Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
+menuitems+=( "confUp" "              CONFIGURATION UPDATE     (./conf_staged/*.txt -> ./conf/*.txt)" )
+menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( " " " " )
 
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
