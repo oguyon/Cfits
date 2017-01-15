@@ -8917,7 +8917,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     fflush(stdout);
 	
 
-	imcntmax = (1+delayfr+NBpoke)*NBiter;
+	imcntmax = (1+delayfr+(NBave+NBexcl)*NBpoke)*NBiter;
 	array_iter = (long*) malloc(sizeof(long)*imcntmax);
 	array_poke = (int*) malloc(sizeof(int)*imcntmax);
 	array_accum = (int*) malloc(sizeof(int)*imcntmax);
