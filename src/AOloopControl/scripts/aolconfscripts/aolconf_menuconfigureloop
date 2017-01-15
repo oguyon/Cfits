@@ -78,25 +78,25 @@ done
 
 
 # MAKE LOW ORDER MODES : dmslaved.fits, dmmask.fits -> respM_LOmodes.fits
-#tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
 # ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
-#if pgrep "aol${LOOPNUMBER}run" > /dev/null
-#then # use option -r to re-use AO shared memory configuration
-#    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-#else
-#    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
-#fi
-#echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
+if pgrep "aol${LOOPNUMBER}run" > /dev/null
+then # use option -r to re-use AO shared memory configuration
+    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+else
+    tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+fi
+echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
 
 
 # COPY TO ARCHIVE
-#for imname in $RMMODALCALIBlist
-#do
-#	mkdir -p ${imname}
-#	tmux send-keys -t ${tmuxname} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
-#done
+for imname in $RMMODALCALIBlist
+do
+	mkdir -p ${imname}
+	tmux send-keys -t ${tmuxname} "cp ${imname}.fits ${imname}/${imname}_${datestr}.fits" C-m
+done
 
 
 
@@ -109,14 +109,14 @@ done
 
 # copy file names in conf_<name>_name.txt files in staged directory
 
-#dir="$dir_conf_staged"
-#mkdir -p $dir
+dir="$dir_conf_staged"
+mkdir -p $dir
 
-#for imname in $RMZONALCALIBlist $RMMODALCALIBlist
-#do
-#	tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
-#	tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
-#done
+for imname in $RMZONALCALIBlist $RMMODALCALIBlist
+do
+	tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+	tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
+done
 
 
 }
