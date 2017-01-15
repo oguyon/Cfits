@@ -8985,6 +8985,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         usleep(delayRM1us);    
         data.image[aoconfID_dmRM].md[0].write = 1;
         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+		data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
@@ -9011,6 +9012,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 						usleep(delayRM1us);    
                         data.image[aoconfID_dmRM].md[0].write = 1;
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+                        data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
                         AOconf[loop].DMupdatecnt ++;
@@ -9044,6 +9046,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         usleep(delayRM1us);
                         data.image[aoconfID_dmRM].md[0].write = 1;
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
+						data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
                         AOconf[loop].DMupdatecnt ++;
@@ -9063,6 +9066,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         usleep(delayRM1us);
         data.image[aoconfID_dmRM].md[0].write = 1;
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
+        data.image[aoconfID_dmRM].md[0].cnt1 = 0;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
         AOconf[loop].DMupdatecnt ++;
@@ -10241,6 +10245,8 @@ int AOloopControl_ProcessZrespM(long loop, char *zrespm_name, char *WFSref0_name
 
 	for(ii=0; ii<sizeWFS; ii++)
 		data.image[IDWFSref].array.F[ii] /= tot;
+
+
 
 	// make zrespm flux-neutral over wfsmask
 	fp = fopen("zrespmat_flux.log", "w");
