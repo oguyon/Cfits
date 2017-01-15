@@ -8822,10 +8822,12 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     struct sched_param schedpar;
     int ret;
     long cntn;
-
+	long imcnt;
 	long ii, kk, kk1;
-
-
+	
+	long imcntmax;
+	long *array_PokeIndex;
+	long *array_PokeIndex1;
 
 
     schedpar.sched_priority = RT_priority;
@@ -8908,7 +8910,12 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
     printf("STARTING response measurement...\n");
     fflush(stdout);
-
+	
+	imcnt = 0;
+	imcntmax = (1+delayfr+NBpoke)*NBiter;
+	
+	
+	
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
         printf("iteration # %8ld    \n", iter);
@@ -8932,11 +8939,17 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         
         
         // WAIT FOR LOOP DELAY, PRIMING
+		array_PokeIndex[imcnt] = PokeIndex;
+		array_PokeIndex1[imcnt] = PokeIndex1;
+        imcnt ++;
         Read_cam_frame(loop, 1, normalize, 0, 0);
-        
+                
 		// read delayfr frames
         for(kk=0; kk<delayfr; kk++)               
             {
+				array_PokeIndex[imcnt] = PokeIndex;
+				array_PokeIndex1[imcnt] = PokeIndex1;
+				imcnt ++;
 				Read_cam_frame(loop, 1, normalize, 0, 0);
 				kk1++;
                 if(kk1==NBave)
@@ -8968,7 +8981,11 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
             for(kk=0; kk<NBave+NBexcl; kk++)
             {
+				array_PokeIndex[imcnt] = PokeIndex;
+				array_PokeIndex1[imcnt] = PokeIndex1;
+				imcnt ++;
 				Read_cam_frame(loop, 1, normalize, 0, 0);
+				
                 if(kk<NBave)
                     for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                         data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] += data.image[aoconfID_imWFS1].array.F[ii];
