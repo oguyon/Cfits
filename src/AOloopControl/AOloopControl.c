@@ -6612,7 +6612,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
 
-exit(0);//TEST
+
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -6824,6 +6824,9 @@ exit(0);//TEST
     sprintf(name, "aol%ld_looptiming", loop);
     aoconfID_looptiming = AOloopControl_2Dloadcreate_shmim(name, " ", NBtimers, 1);
 
+
+
+	exit(0);//TEST
 
 
     // this image is read to notify when new dm displacement is ready
