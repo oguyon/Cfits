@@ -131,11 +131,11 @@ loadfits "./conf/RMpokeCube.fits" RMpokeC
 loadfits "./conf/RMHmat.fits" Hmat
 loadfits "./conf/RMpixindex.fits" pixindexim
 loadfits zrespmat0.fits zrespmat0
-loadfits wfsref0.fits wfsref0
-aolproczrm zrespmat0 wfsref0 zrespmat wfsmap dmmap
+loadfits wfsref00.fits wfsref00
+aolproczrm zrespmat0 wfsref00 zrespmat wfsmap dmmap
 
 savefits zrespmat "!zrespM.fits"
-savefits wfsref0 "!wfsref0.fits"
+savefits wfsref00 "!wfsref00.fits"
 savefits wfsmap "!wfsmap.fits"
 savefits dmmap "!dmmap.fits"
 #savefits wfsmask "!wfsmask.fits"

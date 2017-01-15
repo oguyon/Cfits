@@ -37,7 +37,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux new-session -d -s $tmuxname
 
-# ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref0.fits
+# ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref00.fits
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
@@ -45,7 +45,7 @@ else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-# PROCESS HIGH ORDER WFS RESPONSE: zrespmat0.fits, wfsref0.fits -> zrespmat.fits, wfsmap.fits, dmmap.fits
+# PROCESS HIGH ORDER WFS RESPONSE: zrespmat0.fits, wfsref00.fits -> zrespmat.fits, wfsmap.fits, dmmap.fits
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
 
 # MAKE MASKS : zrespmat.fits, wfsmap.fits, dmmap.fits -> wfsmask.fits, dmmaskRM.fits
@@ -55,17 +55,17 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 
 
-# UPDATE wfsref0 TO NORMALIZE FLUX OVER wfsmask
+# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask
 tmux send-keys -t ${tmuxname} "Cfits" C-m
-tmux send-keys -t ${tmuxname} "loadfits wfsref0.fits im0" C-m
+tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
 tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
 tmux send-keys -t ${tmuxname} "im1=im0*a" C-m
-tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref1.fits\"" C-m
+tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref0.fits\"" C-m
 tmux send-keys -t ${tmuxname} "listim"
 tmux send-keys -t ${tmuxname} "exit" C-m
 
-tmux send-keys -t ${tmuxname} "sleep 10" C-m
+#tmux send-keys -t ${tmuxname} "sleep 10" C-m
 
 # COPY TO ARCHIVE
 for imname in $RMZONALCALIBlist
