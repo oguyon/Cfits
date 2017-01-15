@@ -3643,7 +3643,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 			{				
 				extrablockIndex = 4;
 				
-				fp = fopen("./conf/conf_extrablockIndex.txt", "r");
+				fp = fopen("./conf_staged/conf_extrablockIndex.txt", "r");
 				if(fp != NULL)
 				{
 					ret = fscanf(fp, "%ld", &extrablockIndex);
@@ -4423,14 +4423,14 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
         if(BlockNB<0)
         {
-            sprintf(command, "echo \"%ld\" > ./conf/conf_NBmodeblocks.txt", NBmblock);
+            sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock);
             ret = system(command);
         }
         else
         {
             if((fp = fopen("./conf/conf_NBmodeblocks.txt", "r"))==NULL)
             {
-                printf("ERROR: cannot read file ./conf/conf_NBmodeblocks.txt\n");
+                printf("ERROR: cannot read file ./conf_staged/conf_NBmodeblocks.txt\n");
                 exit(0);
             }
             ret = fscanf(fp, "%ld", &NBmblock);
@@ -4472,7 +4472,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
             if((BlockNB<0)||(BlockNB==mblock))
             {
 
-                sprintf(command, "echo \"%f\" > ./conf/block%02ld_SVDlim.txt", SVDlim, mblock);
+                sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock);
                 ret = system(command);
 
 
@@ -4705,7 +4705,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            sprintf(command, "echo \"%ld\" > ./conf/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
+            sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
             ret = system(command);
 
             sprintf(imname, "fmodesWFS_%02ld", mblock);
@@ -4759,7 +4759,7 @@ long AOloopControl_mkModes(char *ID_name, long msizex, long msizey, float CPAmax
 
 		}
 
-        sprintf(command, "echo \"%ld\" > ./conf/conf_NBmodes.txt", cnt);
+        sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt);
         ret = system(command);
 
     
@@ -4821,7 +4821,7 @@ long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, 
 	// read block ends
 	for(mblock=0; mblock<NBmblock; mblock++)
 		{
-			sprintf(fname, "./conf/conf_block%02ldend.txt", mblock);
+			sprintf(fname, "./conf_staged/conf_block%02ldend.txt", mblock);
 			fp = fopen(fname, "r");
 			ret = fscanf(fp, "%ld", &MBLOCK_blockend[mblock]);
 			fclose(fp);
@@ -4857,7 +4857,7 @@ long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, 
 			{
 				printf("Reconstructing block %ld\n", mblock);
 			
-				 sprintf(command, "echo \"%f\" > ./conf/block%02ld_SVDlim.txt", SVDlim, mblock);
+				 sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock);
                 ret = system(command);
 
 				
@@ -4944,7 +4944,7 @@ long AOloopControl_mkModes_Simple(char *IDin_name, long NBmblock, long Cmblock, 
      cnt = 0;
      for(mblock=0; mblock<NBmblock; mblock++)
         {
-			sprintf(command, "echo \"%ld\" > ./conf/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
+			sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
             ret = system(command);
 			
             sprintf(imname, "fmodesWFS_%02ld", mblock);
