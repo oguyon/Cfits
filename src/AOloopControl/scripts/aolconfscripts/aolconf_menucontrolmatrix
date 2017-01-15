@@ -293,6 +293,15 @@ stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmode
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update \Zn" )
 
+
+menuitems+=( " " " " )
+if [ -f "$fname" ]; then
+menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
+else
+menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
+fi
+
+
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
@@ -316,13 +325,6 @@ if [ "$DMMODE" = "ZONAL" ]; then
 fname="aolmkmodes.runproc"
 else
 fname="aolmkmodesM.runproc"
-fi
-
-menuitems+=( " " " " )
-if [ -f "$fname" ]; then
-menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
-else
-menuitems+=( "SMloadCM" "Load current Files" )
 fi
 
 
@@ -767,37 +769,6 @@ cp conf_staged/*.txt ./conf/
 ;;
 
 
-	DMmodes)
-fname=$( cat ./conf/conf_DMmodes_name.txt )
-fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_DMmodes_name.txt
-ReadConfFile "DMmodes"
-menucontrolmatrix_default="DMmodes"
-;;
-	RM)
-fname=$( cat ./conf/conf_respM_name.txt )
-fname=$(dialog --title "Select Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_respM_name.txt
-ReadConfFile "respM"
-menucontrolmatrix_default="RM"
-;;
-	CM)
-fname=$( cat ./conf/conf_contrM_name.txt )
-fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
-echo "$fname" > ./conf/conf_contrM_name.txt
-ReadConfFile "contrM"
-menucontrolmatrix_default="CM"
-;;
-
-
-chkSMloadCM)
-if [ -f "aolmkmodes.runproc" ]; then
-menucontrolmatrix_default="chkSMloadCM"
-else
-menucontrolmatrix_default="SMloadCM"
-fi
-;;
-
 
 SMloadCM)
 
@@ -834,6 +805,40 @@ getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
 done
 menucontrolmatrix_default="SMloadCM"
 ;;
+
+
+
+	DMmodes)
+fname=$( cat ./conf/conf_DMmodes_name.txt )
+fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nbwlines $nbwcols)
+echo "$fname" > ./conf/conf_DMmodes_name.txt
+ReadConfFile "DMmodes"
+menucontrolmatrix_default="DMmodes"
+;;
+	RM)
+fname=$( cat ./conf/conf_respM_name.txt )
+fname=$(dialog --title "Select Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
+echo "$fname" > ./conf/conf_respM_name.txt
+ReadConfFile "respM"
+menucontrolmatrix_default="RM"
+;;
+	CM)
+fname=$( cat ./conf/conf_contrM_name.txt )
+fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
+echo "$fname" > ./conf/conf_contrM_name.txt
+ReadConfFile "contrM"
+menucontrolmatrix_default="CM"
+;;
+
+
+chkSMloadCM)
+if [ -f "aolmkmodes.runproc" ]; then
+menucontrolmatrix_default="chkSMloadCM"
+else
+menucontrolmatrix_default="SMloadCM"
+fi
+;;
+
 
 
 
