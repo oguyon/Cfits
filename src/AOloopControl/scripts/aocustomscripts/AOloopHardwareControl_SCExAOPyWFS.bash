@@ -209,10 +209,11 @@ menuitems+=( " " " " )
 menuitems+=( "ir1dcs" "\Zr ircam1_dark \Zn: (re-)start scexao2->scexao TCP transfer" )
 menuitems+=( "ir1dck" "\Zr ircam1_dark \Zn: kill scexao2->scexao TCP transfer" )
 menuitems+=( " " " " )
-menuitems+=( " " " " )
 menuitems+=( "ir2cs" "\Zr ircam2crop \Zn : (re-)start scexao2->scexao TCP transfer" )
 menuitems+=( "ir2ck" "\Zr ircam2crop \Zn : kill scexao2->scexao TCP transfer" )
 menuitems+=( " " " " )
+menuitems+=( "saphcs" "\Zr pbimagediff \Zn : (re-)start scexao2->scexao TCP transfer" )
+menuitems+=( "saphck" "\Zr pbimagediff \Zn : kill scexao2->scexao TCP transfer" )
 menuitems+=( " " " " )
 menuitems+=( "lj1cs" "\Zr labjack1 \Zn: (re-)start scexao2->scexao TCP transfer" )
 menuitems+=( "lj1ck" "\Zr labjack1 \Zn: kill scexao2->scexao TCP transfer" )
@@ -359,6 +360,17 @@ EOF
 	ir2ck)
 /home/scexao/bin/getTCPscexao2im -k ircam2crop 30101
 ;;
+
+
+
+	saphcs)
+/home/scexao/bin/getTCPscexao2im -c pbimagediff 30108
+;;
+
+	saphck)
+/home/scexao/bin/getTCPscexao2im -k pbimagediff 30108
+;;
+
 
 
 
