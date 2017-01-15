@@ -142,10 +142,10 @@ aolnb $loopnb
 csetpmove ${CPUset}
 loadfits respM_LOmodes.fits RMpokeCube
 aolmeaslWFSrespC ${PokeAmpl} ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} RMpokeCube LOwfsresp LOwfsref ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
-savefits LOwfsresp "!LOrespmat0.fits"
+savefits LOwfsresp "!LOrespM.fits"
 savefits LOwfsref "!LOwfsref0.fits"
 listim
 exit
 EOF
-
+mv respM_LOmodes.fits LODMmodes.fits
 

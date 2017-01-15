@@ -134,7 +134,7 @@ loadfits zrespmat0.fits zrespmat0
 loadfits wfsref0.fits wfsref0
 aolproczrm zrespmat0 wfsref0 zrespmat wfsmap dmmap
 
-savefits zrespmat "!zrespmat.fits"
+savefits zrespmat "!zrespM.fits"
 savefits wfsref0 "!wfsref0.fits"
 savefits wfsmap "!wfsmap.fits"
 savefits dmmap "!dmmap.fits"
