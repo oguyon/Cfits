@@ -291,7 +291,7 @@ menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full co
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
-menuitems+=( " " " " )
+menuitems+=( "confUp" "\Z1 Configuration Update \Zn" )
 
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
@@ -336,7 +336,7 @@ fi
 
 
 menuitems+=( " " " " )
-stringcenter "BLOCK DECOMPOSITION (ACTIVE CONFIGURATION)"
+stringcenter " ACTIVE CONFIGURATION : BLOCK DECOMPOSITION (ACTIVE CONFIGURATION)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " " )
 
@@ -759,6 +759,14 @@ CMMODE="MODAL"
 echo "$CMMODE" > $CMMODEfile
 state="menu_mkFModes"
 ;;
+
+
+
+	confUp)
+cp conf_staged/*.txt ./conf/
+;;
+
+
 	DMmodes)
 fname=$( cat ./conf/conf_DMmodes_name.txt )
 fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nbwlines $nbwcols)
