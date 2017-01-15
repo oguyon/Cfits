@@ -6612,7 +6612,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
 
-
+exit(0);//TEST
 
     sizearray = (long*) malloc(sizeof(long)*3);
 
@@ -8917,7 +8917,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 2);
 	
-    exit(0);
+    exit(0);//TEST
 
 
 
