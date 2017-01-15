@@ -1196,9 +1196,9 @@ DMmaskRMc1=0
 fi
 
 
-menuitems+=(" " " ")
-menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
-menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
+#menuitems+=(" " " ")
+#menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
+#menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 
@@ -1279,8 +1279,8 @@ then
 #        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
 #    fi
 
-	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
-	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
+#	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
+#	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 fi
