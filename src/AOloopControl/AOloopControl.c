@@ -6883,8 +6883,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-	printf("-------------- got here ------------\n");
-	exit(0);//TEST
+	//printf("-------------- got here ------------\n");
+	//exit(0);//TEST
 
     sprintf(name, "aol%ld_wfsref0", loop);
     sprintf(fname, "./conf/wfsref0.fits");
@@ -6898,8 +6898,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-	printf("-------------- got here ------------\n");
-	exit(0);//TEST
+	//printf("-------------- got here ------------\n");
+	//exit(0);//TEST
 
     // Connect to DM
     // Here the DM size is fixed
