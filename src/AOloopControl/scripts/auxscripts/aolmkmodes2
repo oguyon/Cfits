@@ -143,6 +143,8 @@ mkdir -p tmp
 dir="conf_staged"
 
 
+
+
 $execnamestring -n $pname << EOF
 aolnb $loopnb
 loadfits "./${dir}/extrablockM.fits" extrablockM

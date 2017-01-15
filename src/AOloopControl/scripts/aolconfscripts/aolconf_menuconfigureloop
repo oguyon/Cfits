@@ -108,7 +108,7 @@ echo "wfsref0/wfsref0_${datestr}.fits" > ./${dir}/conf_wfsref0_name.txt
 mv  wfsref0.fits ./${dir}/
 
 echo "zrespM/zrespM_${datestr}.fits" > ./${dir}/conf_zrespM_name.txt
-mv zrespmat.fits ./${dir}/
+mv zrespmat.fits ./${dir}/zrespM.fits
 
 echo "wfsmap/wfsmap_${datestr}.fits" > ./${dir}/conf_wfsmap_name.txt
 mv wfsmap.fits ./${dir}/
@@ -117,7 +117,7 @@ echo "dmmap/dmmap_${datestr}.fits" > ./${dir}/conf_dmmap_name.txt
 mv dmmap.fits ./${dir}/
 
 echo "wfsmask/wfsmask_${datestr}.fits" > ./${dir}/conf_wfsmask_name.txt
-mv wfsmap.fits ./${dir}/
+mv wfsmask.fits ./${dir}/
 
 echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./${dir}/conf_dmmaskRM_name.txt
 mv dmmaskRM.fits ./${dir}/
@@ -130,6 +130,15 @@ mv dmmask.fits ./${dir}/
 
 
 
+
+echo "LODMmodes/LODMmodes_${datestr}.fits" > ./${dir}/conf_LODMmodes_name.txt
+mv respM_LODMmodes.fits ./${dir}/LODMmodes.fits
+
+echo "LOrespM/LOrespM_${datestr}.fits" > ./${dir}/conf_LOrespM_name.txt
+mv LOrespmat0.fits ./${dir}/LOrespM.fits
+
+echo "LOwfsref0/LOwfsref0_${datestr}.fits" > ./${dir}/conf_LOwfsref0_name.txt
+mv LOwfsref0.fits ./${dir}/LOwfsref0.fits
 
 
 }
