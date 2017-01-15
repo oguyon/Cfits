@@ -289,14 +289,11 @@ staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
 menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
 #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
-menuitems+=( " " " " )
-
-
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
+menuitems+=( " " " " )
 
-
-stringcenter " ACTIVE CONFIGURATION : <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
+stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
 
@@ -339,7 +336,7 @@ fi
 
 
 menuitems+=( " " " " )
-stringcenter "BLOCK DECOMPOSITION"
+stringcenter "BLOCK DECOMPOSITION (ACTIVE CONFIGURATION)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " " )
 
