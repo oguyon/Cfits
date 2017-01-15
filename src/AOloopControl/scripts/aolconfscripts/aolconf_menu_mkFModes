@@ -60,13 +60,13 @@ mkdir -p contrM
 mkdir -p contrMc
 mkdir -p contrMcact
 
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmslaved\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"zrespM\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmmask\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"LOrespM\"" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"LODMmodes\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmslaved\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"zrespM\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmmaskRM\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"dmmask\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"wfsmask\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"LOrespM\"" C-m
+#tmux send-keys -t $tmuxname "./auxscripts/aolReadConfFile \"LODMmodes\"" C-m
 
 cpamax=$(cat $tempfile)
 echo "$cpamax" > ./conf/conf_cpamax.txt
@@ -81,13 +81,13 @@ tmux send-keys -t $tmuxname "./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesall.fits DMmodes/DMmodes_${datestr}.fits" C-m
-tmux send-keys -t $tmuxname "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf/conf_DMmodes_name.txt" C-m
+tmux send-keys -t $tmuxname "echo \"DMmodes/DMmodes_${datestr}.fits\" > ./conf_staged/conf_DMmodes_name.txt" C-m
 
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/fmodesWFSall.fits respM/respM_${datestr}.fits" C-m
-tmux send-keys -t $tmuxname "echo \"respM/respM_${datestr}.fits\" > ./conf/conf_respM_name.txt" C-m
+tmux send-keys -t $tmuxname "echo \"respM/respM_${datestr}.fits\" > ./conf_staged/conf_respM_name.txt" C-m
 
 tmux send-keys -t $tmuxname "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits" C-m
-tmux send-keys -t $tmuxname "echo \"contrM/contrM_${datestr}.fits\" > ./conf/conf_contrM_name.txt" C-m
+tmux send-keys -t $tmuxname "echo \"contrM/contrM_${datestr}.fits\" > ./conf_staged/conf_contrM_name.txt" C-m
 
 
 for i in `seq 0 20`;
@@ -96,19 +96,19 @@ i2=$(printf "%02d" "$i")
 fname="mkmodestmp/fmodes_${i2}.fits"
 #if [ -e "$fname" ]; then
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodes_${i2}.fits DMmodes/DMmodes${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf/conf_DMmodes${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"DMmodes/DMmodes${i2}_${datestr}.fits\" > ./conf_staged/conf_DMmodes${i2}_name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/fmodesWFS_${i2}.fits respM/respM${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf/conf_respM${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"respM/respM${i2}_${datestr}.fits\" > ./conf_staged/conf_respM${i2}_name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmat_${i2}.fits contrM/contrM${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf/conf_contrM${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrM/contrM${i2}_${datestr}.fits\" > ./conf_staged/conf_contrM${i2}_name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatc_${i2}.fits contrMc/contrMc${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf/conf_contrMc${i2}_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMc/contrMc${i2}_${datestr}.fits\" > ./conf_staged/conf_contrMc${i2}_name.txt; fi" C-m
 
 tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then cp ./mkmodestmp/cmatcact_${i2}.fits contrMcact/contrMcact${i2}_${datestr}.fits; fi" C-m
-tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf/conf_contrMcact${i2}_00_name.txt; fi" C-m
+tmux send-keys -t $tmuxname "if [ -f \"$fname\" ]; then echo \"contrMcact/contrMcact${i2}_${datestr}.fits\" > ./conf_staged/conf_contrMcact${i2}_00_name.txt; fi" C-m
 #fi
 done
 
