@@ -12490,7 +12490,7 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
 
     printw("   STATUS = %3d  ", AOconf[loop].status);
 
-    kmax = (wrow-27)*(nbcol);
+    kmax = (wrow-28)*(nbcol);
     
     
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
