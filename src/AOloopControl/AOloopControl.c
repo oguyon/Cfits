@@ -11789,6 +11789,17 @@ int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmode
 	long ii;
 
 
+	int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+
+
+    schedpar.sched_priority = RT_priority;
+#ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); 
+#endif
+
+
 	// read AO loop gain, mult
 	if(AOloopcontrol_meminit==0)
 		AOloopControl_InitializeMemory(1);
@@ -13560,6 +13571,19 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	double allavelimFrac;
 	
 	
+	
+	
+	
+	int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+
+
+    schedpar.sched_priority = RT_priority;
+#ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); 
+#endif
+
 	
 	
 	// read AO loop gain, mult
