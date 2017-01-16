@@ -710,6 +710,7 @@ pyfreq="0500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr10)
@@ -717,6 +718,7 @@ pyfreq="1000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr15)
@@ -724,6 +726,7 @@ pyfreq="1500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr20)
@@ -731,6 +734,7 @@ pyfreq="2000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr25)
@@ -738,6 +742,7 @@ pyfreq="2500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 	
 	pyfr30)
@@ -745,6 +750,7 @@ pyfreq="3000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 	pyfr35)
@@ -752,6 +758,7 @@ pyfreq="3500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
 recomputeLatency ${pyfreq}
+aoconflogext "Set pyfreq = $pyfreq Hz"
 ;;
 
 
@@ -761,120 +768,140 @@ recomputeLatency ${pyfreq}
 pymodampl="0.05"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda010)
 pymodampl="0.10"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda015)
 pymodampl="0.15"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda020)
 pymodampl="0.20"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda025)
 pymodampl="0.25"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda030)
 pymodampl="0.30"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda035)
 pymodampl="0.35"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda040)
 pymodampl="0.40"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda045)
 pymodampl="0.45"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda050)
 pymodampl="0.50"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda055)
 pymodampl="0.55"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda060)
 pymodampl="0.60"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda065)
 pymodampl="0.65"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda070)
 pymodampl="0.70"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda075)
 pymodampl="0.75"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda080)
 pymodampl="0.80"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda085)
 pymodampl="0.85"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda090)
 pymodampl="0.90"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda095)
 pymodampl="0.95"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 	pymoda100)
 pymodampl="1.00"
 echo "$pymodampl" > ./conf/conf_pywfs_modampl.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl}
+aoconflogext "Set py modulation amplitude = $pymodampl"
 ;;
 
 
@@ -884,36 +911,42 @@ pywfs_mod_setup ${pyfreq} ${pymodampl}
 pyfilter="1"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt2)
 pyfilter="2"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt3)
 pyfilter="3"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt4)
 pyfilter="4"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt5)
 pyfilter="5"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt6)
 pyfilter="6"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
 pywfs_filter ${pyfilter}
+aoconflogext "Set py filter = $pyfilter"
 ;;
 
 
@@ -923,72 +956,84 @@ pywfs_filter ${pyfilter}
 pypickoff="01"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick02)
 pypickoff="02"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick03)
 pypickoff="03"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick04)
 pypickoff="04"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick05)
 pypickoff="05"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick06)
 pypickoff="06"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick07)
 pypickoff="07"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick08)
 pypickoff="08"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick09)
 pypickoff="09"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick10)
 pypickoff="10"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick11)
 pypickoff="11"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 	pypick12)
 pypickoff="12"
 echo "${pypickoff}" > ./conf/conf_pywfs_pickoff.txt
 pywfs_pickoff ${pypickoff}
+aoconflogext "Set py pickoff = $pypickoff"
 ;;
 
 
@@ -996,7 +1041,6 @@ pywfs_pickoff ${pypickoff}
 
 	tz)
 aoconflogext "TT align zero"
-
 ./aocustomscripts/SCExAO_analogoutput C -5.0
 ./aocustomscripts/SCExAO_analogoutput D -5.0
 #analog_output.py voltage C -5.0
@@ -1236,6 +1280,7 @@ menualign_default="ps"
 state="menualign"
 ;;   
 	pm) tmux a -t alignPcam ;;
+	
 	d)
 aoconflogext "Measure DM illumination"
 tmux send-keys -t aolconf$LOOPNUMBER "./MeasureActMap" C-m 
