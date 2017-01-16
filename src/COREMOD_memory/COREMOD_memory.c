@@ -639,6 +639,20 @@ int COREMOD_MEMORY_image_streamupdateloop_cli()
 }
 
 
+
+int COREMOD_MEMORY_image_streamupdateloop_semtrig_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)+CLI_checkarg(6,2)==0)
+    {
+        COREMOD_MEMORY_image_streamupdateloop_semtrig(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 int COREMOD_MEMORY_streamDelay_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
@@ -1069,6 +1083,14 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)");
     data.NBcmd++;
 
+    strcpy(data.cmd[data.NBcmd].key,"creaimstreamstrig");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_semtrig_cli;
+    strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube, use other stream to synchronize");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimstreamstrig imcube outstream 3 152 streamsync 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig)");
+    data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"streamdelay");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -4833,13 +4855,13 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
-long COREMOD_MEMORY_image_streamupdateloop_imsem(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig)
+long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig)
 {
 	long IDin;
     long IDout;
     long IDsync;
     
-    long kk; 
+    long kk, kk1; 
     
     long *arraysize;
     long naxis;
@@ -4933,7 +4955,7 @@ long COREMOD_MEMORY_image_streamupdateloop_imsem(char *IDinname, char *IDoutname
     
     while(1)
     {				
-		
+        sem_wait(data.image[IDsync].semptr[semtrig]);
      
         kk++;
         if(kk==period) // UPDATE
@@ -4949,11 +4971,7 @@ long COREMOD_MEMORY_image_streamupdateloop_imsem(char *IDinname, char *IDoutname
 				COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 				data.image[IDout].md[0].cnt0++;
 				data.image[IDout].md[0].write = 0;
-			}
-        		
-
-
-
+			}        		
     }
 
     return(IDout);
