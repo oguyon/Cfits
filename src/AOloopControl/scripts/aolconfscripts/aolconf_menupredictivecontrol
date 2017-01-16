@@ -1095,16 +1095,16 @@ fi
 latency_frame=$(awk "BEGIN {printf \"%.3f\",${hardwlatency}+${wfsmextrlatency_frame}}")
 
 file="./conf/conf_PFblock_0.txt"
-echo "$PFb0start $PFb0end $PFb0order $lat $PFb0dgain" > $file
+echo "$PFb0start $PFb0end $PFb0order $latency_frame $PFb0dgain" > $file
 
 file="./conf/conf_PFblock_1.txt"
-echo "$PFb1start $PFb1end $PFb1order $lat $PFb1dgain" > $file
+echo "$PFb1start $PFb1end $PFb1order $latency_frame $PFb1dgain" > $file
 
 file="./conf/conf_PFblock_2.txt"
-echo "$PFb2start $PFb2end $PFb2order $lat $PFb2dgain" > $file
+echo "$PFb2start $PFb2end $PFb2order $latency_frame $PFb2dgain" > $file
 
 file="./conf/conf_PFblock_3.txt"
-echo "$PFb3start $PFb3end $PFb3order $lat $PFb3dgain" > $file
+echo "$PFb3start $PFb3end $PFb3order $latency_frame $PFb3dgain" > $file
 ;;
   
   
