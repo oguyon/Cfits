@@ -3307,6 +3307,15 @@ int CUDACOMP_extractModesLoop(char *in_stream, char *intot_stream, char *IDmodes
     int MODEVALCOMPUTE = 1; // 1 if compute, 0 if import
 
 
+	int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+
+
+    schedpar.sched_priority = RT_priority;
+#ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); 
+#endif
 
 
 
