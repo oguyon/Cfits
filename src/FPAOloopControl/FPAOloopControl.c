@@ -282,7 +282,6 @@ int init_FPAOloopControl()
 
 
 
-
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "FP AO loop control");
     data.NBmodule++;
@@ -1203,8 +1202,12 @@ long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, 
 	for(kk = 0; kk<kksize; kk++)
 	{
 		
+		printf("FRAME %5ld / %5ld  :", kk, kksize);
 		
-		
+		for(k=0;k<NBmaster;k++)
+			printf("  %+6.4f");
+		printf("\n");
+			
 		k = 0;
 		narray[k]++;
 		while(narray[k]==N)
