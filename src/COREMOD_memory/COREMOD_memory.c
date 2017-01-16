@@ -4695,7 +4695,7 @@ long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_nam
 
 
 
-/// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod)
 {
     long IDin;
@@ -4830,6 +4830,135 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
     return(IDout);
 }
+
+
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
+long COREMOD_MEMORY_image_streamupdateloop_imsem(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig)
+{
+	long IDin;
+    long IDout;
+    long IDsync;
+    
+    long kk; 
+    
+    long *arraysize;
+    long naxis;
+    int atype;
+    char *ptr0s; // source start 3D array ptr
+    char *ptr0; // source
+    char *ptr1; // dest
+    long framesize;
+    int semval;      
+    
+    int RT_priority = 80; //any number from 0-99
+    struct sched_param schedpar;
+
+	
+	
+	
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    #endif
+
+
+    printf("Creating / connecting to image stream ...\n");
+    fflush(stdout);
+
+    IDin = image_ID(IDinname);
+    naxis = data.image[IDin].md[0].naxis;
+    arraysize = (long*) malloc(sizeof(long)*3);
+    if(naxis != 3)
+    {
+        printf("ERROR: input image %s should be 3D\n", IDinname);
+        exit(0);
+    }
+    arraysize[0] = data.image[IDin].md[0].size[0];
+    arraysize[1] = data.image[IDin].md[0].size[1];
+    arraysize[2] = data.image[IDin].md[0].size[2];
+
+
+
+
+
+    atype = data.image[IDin].md[0].atype;
+
+	IDout = image_ID(IDoutname);
+	if(IDout == -1)
+	{
+		IDout = create_image_ID(IDoutname, 2, arraysize, atype, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(IDoutname, 10);
+	}
+	
+    switch ( atype ) {
+    case CHAR:
+        ptr0s = (char*) data.image[IDin].array.C;
+        ptr1 = (char*) data.image[IDout].array.C;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(char);
+        break;
+    case INT:
+        ptr0s = (char*) data.image[IDin].array.I;
+        ptr1 = (char*) data.image[IDout].array.I;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(int);
+        break;
+    case FLOAT:
+        ptr0s = (char*) data.image[IDin].array.F;
+        ptr1 = (char*) data.image[IDout].array.F;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(float);
+        break;
+    case DOUBLE:
+        ptr0s = (char*) data.image[IDin].array.D;
+        ptr1 = (char*) data.image[IDout].array.D;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(double);
+        break;
+    case USHORT:
+        ptr0s = (char*) data.image[IDin].array.U;
+        ptr1 = (char*) data.image[IDout].array.U;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(unsigned short);
+        break;
+    case LONG:
+        ptr0s = (char*) data.image[IDin].array.L;
+        ptr1 = (char*) data.image[IDout].array.L;
+        framesize = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*sizeof(long);
+        break;
+    }
+
+
+
+
+	IDsync = image_ID(IDsync_name);
+
+    kk = 0;
+    kk1 = 0;
+    
+    while(1)
+    {				
+		
+     
+        kk++;
+        if(kk==period) // UPDATE
+			{
+				kk = 0;
+				kk1++;
+				if(kk1==data.image[IDin].md[0].size[2])
+					kk1 = 0;
+				usleep(offsetus);
+				ptr0 = ptr0s + kk1*framesize;
+				data.image[IDout].md[0].write = 1;
+				memcpy((void *) ptr1, (void *) ptr0, framesize);
+				COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+				data.image[IDout].md[0].cnt0++;
+				data.image[IDout].md[0].write = 0;
+			}
+        		
+
+
+
+    }
+
+    return(IDout);
+}
+
 
 
 

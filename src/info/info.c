@@ -609,7 +609,7 @@ int info_image_monitor(char *ID_name, double frequ)
 
         NBpix = npix;
         if(NBpix > wrow)
-            NBpix = wrow-2;
+            NBpix = wrow-4;
 
         start_color();
         init_pair(1, COLOR_BLACK, COLOR_WHITE);

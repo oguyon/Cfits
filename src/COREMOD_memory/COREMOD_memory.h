@@ -177,10 +177,18 @@ long COREMOD_MEMORY_image_set_semflush(char *IDname, long index);
 /*                                                   SIMPLE OPERATIONS ON STREAMS                                                            */
 /* ========================================================================================================================================= */
 
-
+// difference between two streams
 long COREMOD_MEMORY_streamDiff(char *IDstream0_name, char *IDstream1_name, char *IDstreammask_name, char *IDstreamout_name, long semtrig);
+
+// difference between two halves of stream image
 long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_name, long semtrig);
+
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
+
+// takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
+long COREMOD_MEMORY_image_streamupdateloop_imsem(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig);
+
 long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus);
 
 long COREMOD_MEMORY_SaveAll_snapshot(char *dirname);
