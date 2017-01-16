@@ -190,6 +190,28 @@ int FPAOloopControl_MeasureResp_level1_cli()
 
 
 
+int FPAOloopControl_MakeLinComb_seq_cli()
+{
+	if(CLI_checkarg(1,5)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)==0)
+		{
+			FPAOloopControl_MakeLinComb_seq(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string);
+			return 0;
+		}
+	else
+		return 1;
+}
+
+//long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -246,6 +268,19 @@ int init_FPAOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"FPaoMeasRespl1 0.05 1 231 5 1 0 10");
     strcpy(data.cmd[data.NBcmd].Ccall,"long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter)");
     data.NBcmd++;
+
+
+
+    strcpy(data.cmd[data.NBcmd].key,"FPaomklincombs");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = FPAOloopControl_MakeLinComb_seq_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make linear comb sequence of DM pokes from set of masters");
+    strcpy(data.cmd[data.NBcmd].syntax,"<master cube (optional)> <xsize> <ysize> <NBmaster> <N (1+2N steps)> <outCube>");
+    strcpy(data.cmd[data.NBcmd].example,"FPaomklincombs masterC 50 50 3 2 outC");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name)");
+    data.NBcmd++;
+
+
 
 
     strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -1095,5 +1130,100 @@ long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1u
 	
 	return 0;
 }
+
+
+//
+// create sequence of DM patterns from linear combinations of master patterns
+// 
+// N = 0 : -1.0  +1.0
+// N = 1 : -1.0  0.0  +1.0
+// N = 2 : -1.0  -0.5  0.0  +0.5  +1.0
+//
+long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name)
+{
+	long IDout;
+	
+	long IDpC;
+	long xsize, ysize;
+	long NBmaster;
+	long ii;
+	long N1; // number of sample per dimension
+	long kksize;
+	long k;
+	float *N1array;
+	long *narray;
+	long kk, n;
+
+	// Load or create master patterns
+	IDpC = image_ID(IDpC_name);
+	if(IDpC==-1) // create patterns
+	{
+		xsize = xsize0;
+		ysize = ysize0;
+		NBmaster = NBmaster0;
+		IDpC = create_3Dimage_ID("materPatternC", xsize, ysize, NBmaster);
+		for(ii=0;ii<xsize*ysize*NBmaster;ii++)
+			data.image[IDpC].array.F[ii] = 1.0 - 2.0*ran1();
+	}
+	else
+	{
+		xsize = data.image[IDpC].md[0].size[0];
+		ysize = data.image[IDpC].md[0].size[1];
+		NBmaster = data.image[IDpC].md[0].size[2];
+	}
+	
+	
+	if(N==0)
+		{
+			N1 = 2;
+			N1array = (float*) malloc(sizeof(float)*2);
+			N1array[0] = -1.0;
+			N1array[1] = 1.0;
+		}
+	else
+		{
+			N1 = 1 + 2*N;
+			N1array = (float*) malloc(sizeof(float)*N1);
+			for(n=0;n<N1;n++)
+				{
+					N1array[n] = -1.0 + (2.0*n/(N1-1));
+				}
+		}
+		
+	kksize = 1;
+	for(k=0;k<NBmaster;k++)
+		kksize *= N1;
+	
+	IDout = create_3Dimage_ID(IDout_name, xsize, ysize, kksize);
+	
+	narray = (long*) malloc(sizeof(long)*NBmaster);
+	for(k=0;k<NBmaster;k++)
+		narray[k] = 0;
+	
+	for(kk = 0; kk<kksize; kk++)
+	{
+		
+		
+		
+		k = 0;
+		narray[k]++;
+		while(narray[k]==N)
+			{
+				narray[k] = 0;
+				narray[k+1]++;
+				k++;
+			}
+		
+	}
+	
+	
+	
+	free(narray);
+	free(N1array);
+	
+	
+	return(IDout);
+}
+
 
 

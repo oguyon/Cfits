@@ -74,6 +74,6 @@ long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave,
 // to be acquired without coronagraph
 long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter);
 
-
+long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name);
 
 #endif
