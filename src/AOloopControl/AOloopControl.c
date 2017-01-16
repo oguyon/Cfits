@@ -14460,7 +14460,7 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	double ave, rms, tmpv;
 	
 	long kk, m;
-	
+	long ID1dtmp;
 	FILE *fp;
 	
 	
@@ -14470,6 +14470,9 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	
 	IDout_ave = create_2Dimage_ID("modeval_ol_ave", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
 	IDout_rms = create_2Dimage_ID("modeval_ol_rms", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);	
+	
+	ID1dtmp = create_1Dimage_ID("modeval1d", data.image[ID].md[0].size[2]);
+	
 	
 	fp = fopen("moveval_stats.dat", "w");
 	for(m=0;m<NBmodes;m++)
@@ -14487,6 +14490,14 @@ int AOloopControl_logprocess_modeval(char *IDname)
 				}
 			rms = sqrt(rms/NBframes);
 			data.image[IDout_rms].array.F[m] = rms;
+			
+			
+			for(kk=0;kk<NBframes;kk++)
+				data.image[ID1dtmp].array.F[kk] = data.image[ID].array.F[kk*NBmodes+m];
+			do1drfft("modeval1d", "modeval1d_FT");
+			list_image_ID();
+			exit(0);
+			
 			
 			fprintf(fp, "%4ld  %12.8f  %12.8f\n", m, data.image[IDout_ave].array.F[m], data.image[IDout_rms].array.F[m]);
 		}
