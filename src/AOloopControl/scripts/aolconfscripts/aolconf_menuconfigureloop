@@ -1624,6 +1624,7 @@ esac
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP7
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmdisp
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
+aoconflogext "Zero all DM arrays"
 ;;
 
 
@@ -1675,6 +1676,7 @@ menucontrolloop_default="adark_on"
 
 
 	smlock) # set masks lock files (from conf file)
+aoconflogext "Set masks lock files"
 fname=$( cat ./conf/conf_dmmask_name.txt )
 cp ./conf/conf_dmmask_name.txt ./conf/conf_dmmask_name.LOCK.txt
 cp $fname ./conf/dmmask.LOCK.fits
@@ -1702,7 +1704,9 @@ mlock)
 	else
 	MASKS_LOCK="1"
 	echo "1" > ./conf/conf_MASKS_LOCK.txt
-	
+
+aoconflogext "MASKS_LOCK = $MASKS_LOCK"
+
 cp ./conf/conf_dmmask_name.LOCK.txt ./conf/conf_dmmask_name.txt
 cp ./conf/dmmask.LOCK.fits ./conf/dmmask.fits
 
@@ -1891,10 +1895,12 @@ function_acqWFSresp
 
 
 	confUp)
+aoconflogext "Update all configuration files"
 cp ./conf_staged/*.txt ./conf/
 ;;
 
 	calibL)
+aoconflogext "Update calibration configuration files"
 # zonal calib
 for imname in $RMZONALCALIBlist
 do
@@ -1931,7 +1937,7 @@ dialog --title "Select Configuration" --title "Select Configuration" --ok-label 
 retval="$?"
 confname=$(cat $tempfile)
 
-aoconflogext "save configuration to ${confname}"
+aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
 
 case $retval in
@@ -1960,7 +1966,7 @@ retval="$?"
 confname=$(cat $tempfile)
 
 echo "${confname}" > confname.txt
-aoconflogext "load configuration from ${confname}"
+aoconflogext "LOAD configuration from ${confname}"
 echo "confname = $confname"
 
 
@@ -2350,6 +2356,7 @@ aoconflogext "set WFSmakSNRr $WFSmaskSNRr"
 
 
 mkAOmasks)
+aoconflogext "(re-)create masks"
 ./auxscripts/aolmkMasks 
 
 stageddir="conf_staged"
@@ -2366,12 +2373,14 @@ state="menuconfigureloop"
 
 
 upzrm) # update zonal response matrix calibration to latest
+aoconflogext "update zonal response matrix calibration to latest"
 tmuxname="aol${LOOPNUMBER}zrespMc"
 function_upzrm_tmux ${tmuxname}
 ;;
 
 
 SMloadzrm) # load files into shared memory
+aoconflogext "load files into shared memory"
 tmuxname="aol${LOOPNUMBER}zrespMc"
 function_SMloadzrm_tmux ${tmuxname}
 ;;
