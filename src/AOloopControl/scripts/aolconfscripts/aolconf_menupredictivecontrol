@@ -1092,7 +1092,7 @@ file="./conf/conf_wfsmextrlatency_frame.txt"
 if [ -f "$file" ]; then
 wfsmextrlatency_frame=$( cat $file )
 fi
-latency_frame=$(awk "BEGIN {printf \"%.3f\",${hardwlatency}+${wfsmextrlatency_frame}}")
+latency_frame=$(awk "BEGIN {printf \"%.3f\",${hardwlatency_frame}+${wfsmextrlatency_frame}}")
 
 file="./conf/conf_PFblock_0.txt"
 echo "$PFb0start $PFb0end $PFb0order $latency_frame $PFb0dgain" > $file
