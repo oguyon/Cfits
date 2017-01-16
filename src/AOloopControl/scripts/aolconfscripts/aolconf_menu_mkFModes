@@ -74,9 +74,8 @@ echo "$cpamax" > ./conf/conf_cpamax.txt
 #rm mkmodes.run
 tmux send-keys -t $tmuxname "echo \"./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}\" >> aolcmd.txt" C-m
 tmux send-keys -t $tmuxname "./auxscripts/aolmkmodes2 ${cpamax} -1 ${SVDlimall} ${mkModesMODE}" C-m
-#tmux send-keys -t $tmuxname "touch mkmodes.run0" C-m
-#waitforfile mkmodes.run0
-#rm mkmodes.run0
+
+
 
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
@@ -114,15 +113,12 @@ done
 
 
 tmux send-keys -t $tmuxname "rm aolmkmodes.runproc" C-m
-# tmux send-keys -t aol${LOOPNUMBER}mkmodes "touch mkmodes.run" C-m
 
 
-#waitforfile mkmodes.run
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"CM computation DONE\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME CM computation DONE &" C-m
 
 
-#dialog --title "OKbox" --msgbox 'Type key to load new CM' 6 20
-
-#rm mkmodes.run
 ;; # button 1:
    1) state="menutop";;  
    2) state="menuexit";; 

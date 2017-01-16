@@ -763,13 +763,14 @@ state="menu_mkFModes"
 
 
 	confUp)
+aoconflogext "UPDATE all configuration files"
 cp conf_staged/*.txt ./conf/
 ;;
 
 
 
 SMloadCM)
-
+aoconflogext "LOAD CM to shared memory"
 ReadConfFile "DMmodes"
 getshmimsize aol${LOOPNUMBER}_DMmodes
 
