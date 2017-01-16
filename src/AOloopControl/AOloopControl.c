@@ -12792,7 +12792,7 @@ int AOloopControl_statusStats(int updateconf)
     
     
     float loopfrequ_measured, complatency_measured, wfsmextrlatency_measured;
-    long complatency_frame_measured, wfsmextrlatency_frame_measured;
+    float complatency_frame_measured, wfsmextrlatency_frame_measured;
     
     
     
