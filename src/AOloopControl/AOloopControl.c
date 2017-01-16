@@ -12964,7 +12964,10 @@ int AOloopControl_statusStats(int updateconf)
 	if(updateconf==1)
 		AOconf[LOOPNUMBER].complatency = complatency_measured;
 	
+	
+	
 	wfsmextrlatency_frame_measured = 1.0-1.0*statusMcnt[20]/NBkiter;
+	printf("==========> %ld %ld -> %f\n", statusMcnt[20], NBkiter, wfsmextrlatency_frame_measured);	
 	if(updateconf==1)
 		AOconf[LOOPNUMBER].wfsmextrlatency_frame = wfsmextrlatency_frame_measured;
     
