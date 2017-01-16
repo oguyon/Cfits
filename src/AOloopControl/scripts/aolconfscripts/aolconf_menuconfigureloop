@@ -137,6 +137,10 @@ do
 done
 
 
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
+tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
+
+
 }
 
 
@@ -1882,7 +1886,6 @@ cp -rf conf_staged conf_staged.000
 
 # this function populates conf_staged directory
 function_acqWFSresp
-aoconflogext "STOP AUTO CALIBRATION"
 ;;
 
 
