@@ -304,6 +304,14 @@ int AOloopControl_setframesAve(long nbframes);
 
 
 
+/* =============================================================================================== */
+/*                                         PROCESS LOG FILES                                       */
+/* =============================================================================================== */
+
+int AOloopControl_logprocess_modeval(char *IDname);
+
+
+
 
 // "old" blocks (somewhat obsolete)
 int AOloopControl_setgainrange(long m0, long m1, float gainval);

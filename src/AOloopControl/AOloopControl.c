@@ -955,6 +955,32 @@ int AOloopControl_setframesAve_cli()
 
 
 
+// 1: float
+// 2: long
+// 3: string, not existing image
+// 4: existing image
+// 5: string 
+
+
+/* =============================================================================================== */
+/*                                         PROCESS LOG FILES                                       */
+/* =============================================================================================== */
+
+
+int AOloopControl_logprocess_modeval_cli()
+{
+  if(CLI_checkarg(1,4)==0)
+    {
+      AOloopControl_logprocess_modeval(data.cmdargtoken[1].val.string);
+      return 0;
+    }
+  else
+    return 1;
+}
+
+
+
+
 
 
 
@@ -1752,6 +1778,29 @@ int init_AOloopControl()
     strcpy(data.cmd[data.NBcmd].example,"aolsetnbfr 10");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_setframesAve(long nbframes)");
     data.NBcmd++;
+
+
+
+
+
+/* =============================================================================================== */
+/*                                         PROCESS LOG FILES                                       */
+/* =============================================================================================== */
+    strcpy(data.cmd[data.NBcmd].key,"aollogprocmodeval");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_logprocess_modeval_cli;
+    strcpy(data.cmd[data.NBcmd].info,"process log image modeval");
+    strcpy(data.cmd[data.NBcmd].syntax,"<modeval image>");
+    strcpy(data.cmd[data.NBcmd].example,"aollogprocmodeval imc");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_logprocess_modeval(char *IDname);");
+    data.NBcmd++;
+
+
+
+
+
+
+
 
 
     strcpy(data.cmd[data.NBcmd].key,"aolcmmake");
@@ -14383,6 +14432,99 @@ int AOloopControl_setframesAve(long nbframes)
 
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/*                                         PROCESS LOG FILES                                       */
+/* =============================================================================================== */
+
+int AOloopControl_logprocess_modeval(char *IDname)
+{
+	long ID;
+	long NBmodes;
+	long NBframes;
+	
+	long IDout_ave;
+	long IDout_rms;
+	double ave, rms, tmpv;
+	
+	long kk, m;
+	
+	FILE *fp;
+	
+	
+	ID = image_ID(IDname);
+	NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
+	NBframes = data.image[ID].md[0].size[2];
+	
+	IDout_ave = create_2Dimage_ID("modeval_ol_ave", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);
+	IDout_rms = create_2Dimage_ID("modeval_ol_rms", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);	
+	
+	fp = fopen("moveval_stats.dat", "w");
+	for(m=0;m<NBmodes;m++)
+		{
+			ave = 0.0;
+			for(kk=0;kk<NBframes;kk++)
+				ave += data.image[ID].array.F[kk*NBmodes+m];
+			ave /= NBframes;
+			data.image[IDout_ave].array.F[m] = ave;
+			rms = 0.0;
+			for(kk=0;kk<NBframes;kk++)
+				{
+					tmpv = (data.image[ID].array.F[kk*NBmodes+m]-ave);
+					rms += tmpv*tmpv;
+				}
+			rms = sqrt(rms/NBframes);
+			data.image[IDout_rms].array.F[m] = rms;
+			
+			fprintf(fp, "%4ld  %12.8f  %12.8f\n", m, data.image[IDout_ave].array.F[m], data.image[IDout_rms].array.F[m]);
+		}
+	fclose(fp);
+	
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
