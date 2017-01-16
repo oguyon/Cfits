@@ -38,7 +38,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux new-session -d -s $tmuxname
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref00.fits
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+#tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}" C-m
 
 tmux send-keys -t $tmuxname "date" C-m
@@ -51,7 +51,7 @@ else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+#tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}" C-m
 
 
@@ -93,7 +93,7 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
 # ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\"" C-m
+#tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\"" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded" C-m
 
 
@@ -106,7 +106,7 @@ else
     tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\"" C-m
+#tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\"" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded" C-m
 
 # COPY TO ARCHIVE
