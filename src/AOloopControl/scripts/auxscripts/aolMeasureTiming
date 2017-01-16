@@ -17,6 +17,12 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo "     $(tput bold)-p$(tput sgr0)          print to screen only - do not update configuration"
 echo ""
+echo " $(tput bold)FILES UPDATED:$(tput sgr0)"
+echo "      conf/conf_hardwlatency_frame.txt"
+echo "      conf/conf_complatency.txt"
+echo "      conf/conf_complatency_frame.txt"
+echo "      conf/conf_wfsmextrlatency.txt"
+echo "      conf/conf_wfsmextrlatency_frame.txt"
 echo "------------------------------------------------------------------------"
 }
 
