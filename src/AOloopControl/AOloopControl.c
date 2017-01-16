@@ -12481,7 +12481,10 @@ int AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long
 
 
 	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
-   	IDblknb = read_sharedmem_image(imname);
+   	IDblknb = image_ID(imname);
+
+   	if(IDblknb==-1)
+		IDblknb = read_sharedmem_image(imname);
 
 
 

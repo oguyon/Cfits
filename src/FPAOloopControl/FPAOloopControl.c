@@ -1152,6 +1152,7 @@ long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, 
 	float *N1array;
 	long *narray;
 	long kk, n;
+	long xysize;
 
 	// Load or create master patterns
 	IDpC = image_ID(IDpC_name);
@@ -1170,7 +1171,7 @@ long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, 
 		ysize = data.image[IDpC].md[0].size[1];
 		NBmaster = data.image[IDpC].md[0].size[2];
 	}
-	
+	xysize = xsize*ysize;
 	
 	if(N==0)
 		{
@@ -1199,18 +1200,31 @@ long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, 
 	for(k=0;k<NBmaster;k++)
 		narray[k] = 0;
 	
+	
+	printf("N = %ld   ->   N1 = %ld\n", N, N1);
+	for(n=0;n<N1;n++)
+		printf("     %2ld : %+6.4f", n, N1array[n]);
+	printf("\n");
+	
+	
 	for(kk = 0; kk<kksize; kk++)
 	{
+		for(ii=0;ii<xysize;ii++)
+			data.image[IDout].array.F[xysize*kk+ii] = 0.0;
 		
 		printf("FRAME %5ld / %5ld  :", kk, kksize);
-		
 		for(k=0;k<NBmaster;k++)
-			printf("  %+6.4f");
+		{			
+			printf("     %2ld : %+6.4f", narray[k], N1array[narray[k]]);
+			for(ii=0;ii<xysize;ii++)
+				data.image[IDout].array.F[xysize*kk+ii] += N1array[narray[k]] * data.image[IDpC].array.F[xysize*k+ii];
+		}
 		printf("\n");
+		
 			
 		k = 0;
 		narray[k]++;
-		while(narray[k]==N)
+		while(narray[k]==N1)
 			{
 				narray[k] = 0;
 				narray[k+1]++;
