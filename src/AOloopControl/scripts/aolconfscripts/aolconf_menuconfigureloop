@@ -38,8 +38,8 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 tmux new-session -d -s $tmuxname
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: -> zrespmat0.fits, wfsref00.fits
-
-aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t $tmuxname "dologext \"$LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
@@ -48,7 +48,10 @@ else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-aoconflogext "STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t $tmuxname "dologext \"$LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+
+
 
 # PROCESS HIGH ORDER WFS RESPONSE: zrespmat0.fits, wfsref00.fits -> zrespmat.fits, wfsmap.fits, dmmap.fits
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
@@ -87,8 +90,9 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
 # ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded\"" C-m
+tmux send-keys -t $tmuxname "dologext \"$LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded\"" C-m
 
-aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
@@ -99,7 +103,8 @@ else
     tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-aoconflogext "STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
+tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded\"" C-m
+tmux send-keys -t $tmuxname "dologext \"$LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded\"" C-m
 
 # COPY TO ARCHIVE
 for imname in $RMMODALCALIBlist
@@ -906,7 +911,8 @@ RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.
 
 
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/" )
-menuitems+=( "confUp" "              CONFIGURATION UPDATE     (./conf_staged/*.txt -> ./conf/*.txt)" )
+menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
+#menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
