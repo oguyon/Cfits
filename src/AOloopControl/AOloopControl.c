@@ -14463,6 +14463,10 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	long ID1dtmp;
 	FILE *fp;
 	
+	long ID1dPSD:
+	FILE *fpPSD;
+
+
 	
 	ID = image_ID(IDname);
 	NBmodes = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
@@ -14472,7 +14476,7 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	IDout_rms = create_2Dimage_ID("modeval_ol_rms", data.image[ID].md[0].size[0], data.image[ID].md[0].size[1]);	
 	
 	ID1dtmp = create_1Dimage_ID("modeval1d", data.image[ID].md[0].size[2]);
-	
+	ID1dPSD = create_1Dimage_ID("modevalPSD", data.image[ID].md[0].size[2]/2);
 	
 	fp = fopen("moveval_stats.dat", "w");
 	for(m=0;m<NBmodes;m++)
@@ -14495,8 +14499,17 @@ int AOloopControl_logprocess_modeval(char *IDname)
 			for(kk=0;kk<NBframes;kk++)
 				data.image[ID1dtmp].array.F[kk] = data.image[ID].array.F[kk*NBmodes+m];
 			do1drfft("modeval1d", "modeval1d_FT");
-			list_image_ID();
-			exit(0);
+			IDft = image_ID("modeval1d_FT");
+			
+			sprintf(fname, "modevalPSD_%03ld.dat", m);
+			fpPSD = fopen(fname, "w");
+			for(kk=0;kk<NBframes/2;kk++)
+				{
+					data.image[ID1dPSD].array.F[kk] = data.image[ID1].array.CF[kk].re*data.image[ID1].array.CF[kk].re + data.image[ID1].array.CF[kk].im*data.image[ID1].array.CF[kk].im;
+					fprintf(fpPSD, "%03ld %g\n", kk, data.image[ID1dPSD].array.F[kk]);
+				}
+			delete_image_ID("modeval1d_FT");
+			fclose(fpPSD);
 			
 			
 			fprintf(fp, "%4ld  %12.8f  %12.8f\n", m, data.image[IDout_ave].array.F[m], data.image[IDout_rms].array.F[m]);
