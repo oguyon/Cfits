@@ -9118,15 +9118,25 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	dmxysize = dmxsize*dmysize;
 	NBpoke = data.image[IDpokeC].md[0].size[2];
 	
-	NBpoke2 = 2*NBpoke;
+	NBpoke2 = 2*NBpoke + 4; // add zero frame before and after
 	
 	IDpokeC2 = create_3Dimage_ID("dmpokeC2", dmxsize, dmysize, NBpoke2);
+	
+	for(act=0;act<dmxysize;act++)
+	{
+		data.image[IDpokeC2].array.F[act] = 0.0; 
+		data.image[IDpokeC2].array.F[dmxysize + act] = 0.0; 
+		data.image[IDpokeC2].array.F[dmxysize*(2*NBpoke+2) + act] = 0.0; 
+		data.image[IDpokeC2].array.F[dmxysize*(2*NBpoke+3) + act] = 0.0; 
+
+	}
+	
 	for(poke=0;poke<NBpoke;poke++)
 		{
 			for(act=0;act<dmxysize;act++)
-				data.image[IDpokeC2].array.F[2*dmxysize*poke + act] = ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
+				data.image[IDpokeC2].array.F[dmxysize*(2*poke+2) + act] = ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
 			for(act=0;act<dmxysize;act++)
-				data.image[IDpokeC2].array.F[2*dmxysize*poke + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
+				data.image[IDpokeC2].array.F[dmxysize*(2*poke+2) + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
 		}
 	save_fits("dmpokeC2", "test_dmpokeC2.fits");
 		
@@ -9147,9 +9157,9 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	for(poke=0;poke<NBpoke;poke++)
 		{
 			for(pix=0;pix<wfsxysize;pix++)
-				data.image[IDrespC].array.F[wfsxysize*poke + pix] = (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] - data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/2.0/ampl;
+				data.image[IDrespC].array.F[wfsxysize*poke + pix] = (data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + pix] - data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/2.0/ampl;
 			for(pix=0;pix<wfsxysize;pix++)
-				data.image[IDwfsref].array.F[pix] += (data.image[IDwfsresp2].array.F[2*wfsxysize*poke + pix] + data.image[IDwfsresp2].array.F[2*wfsxysize*poke + wfsxysize + pix])/NBpoke2;				
+				data.image[IDwfsref].array.F[pix] += (data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + pix] + data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/NBpoke2;				
 		}
 	
 	return(IDrespC);
