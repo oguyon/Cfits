@@ -261,22 +261,27 @@ menuhardwarecontrol_default="$choiceval"
 
 
 	dmrs)
+aoconflogext "DM processes restart"
 /home/scexao/bin/dmrestart
 ;;
 	dmk)
+aoconflogext "DM processes kill"
 /home/scexao/bin/dmrestart -k
 ;;
 
 	dmcommrs)
+aoconflogext "DM scexao2 comm restart"
 /home/scexao/bin/dmrestart -C
 ;;
 	dmcommk)
+aoconflogext "DM scexao2 comm kill"
 /home/scexao/bin/dmrestart -c
 ;;
 
 
 	dmVmax025)
 dmVmax=" 25"
+aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
@@ -287,6 +292,7 @@ EOF
 
 	dmVmax050)
 dmVmax=" 50"
+aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
@@ -297,6 +303,7 @@ EOF
 
 	dmVmax075)
 dmVmax=" 75"
+aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
@@ -307,6 +314,7 @@ EOF
 
 	dmVmax100)
 dmVmax="100"
+aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
@@ -317,6 +325,7 @@ EOF
 
 	dmVmax125)
 dmVmax="125"
+aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
@@ -327,6 +336,7 @@ EOF
 
 	dmVmax150)
 dmVmax="150"
+aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/conf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
@@ -337,37 +347,45 @@ EOF
 
 
 	ir1cs)
+aoconflogext "(re-)start ircam1 scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c ircam1 30102
 ;;
 
 	ir1ck)
+aoconflogext "kill ircam1 scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k ircam1 30102
 ;;
 
 	ir1dcs)
+aoconflogext "(re-)start ircam1_dark scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c ircam1_dark 30103
 ;;
 
 	ir1dck)
+aoconflogext "kill ircam1_dark scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k ircam1_dark 30103
 ;;
 
 
 	ir2cs)
+aoconflogext "(re-)start ircam2crop scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c ircam2crop 30101
 ;;
 
 	ir2ck)
+aoconflogext "kill ircam1 scexao2crop -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k ircam2crop 30101
 ;;
 
 
 
 	saphcs)
+aoconflogext "(re-)start pbimagediff scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c pbimagediff 30108
 ;;
 
 	saphck)
+aoconflogext "kill pbimagediff scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k pbimagediff 30108
 ;;
 
@@ -375,28 +393,34 @@ EOF
 
 
 	lj1cs)
+aoconflogext "(re-)start labjack1 scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c labjack1 30105
 ;;
 
 	lj1ck)
+aoconflogext "kill labjack1 scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k labjack1 30105
 ;;
 
 
 	lj2cs)
+aoconflogext "(re-)start labjack2 scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c labjack2 30106
 ;;
 
 	lj2ck)
+aoconflogext "kill labjack2 scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k labjack2 30106
 ;;
 
 
 	ljcs)
+aoconflogext "(re-)start labjack scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -c labjack 30107
 ;;
 
 	ljck)
+aoconflogext "kill labjack scexao2 -> scexao TCP transfer"
 /home/scexao/bin/getTCPscexao2im -k labjack 30107
 ;;
 
