@@ -14467,7 +14467,7 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	FILE *fpPSD;
 	long IDft;
 	char fname[200];
-
+	int ret;
 
 	
 	ID = image_ID(IDname);
@@ -14480,7 +14480,7 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	ID1dtmp = create_2Dimage_ID("modeval1d", data.image[ID].md[0].size[2], 1);
 	ID1dPSD = create_2Dimage_ID("modevalPSD", data.image[ID].md[0].size[2]/2, 1);
 	
-	system("mkdir -p modePSD");
+	ret = system("mkdir -p modePSD");
 	fp = fopen("moveval_stats.dat", "w");
 	for(m=0;m<NBmodes;m++)
 		{
