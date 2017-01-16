@@ -187,7 +187,7 @@ long COREMOD_MEMORY_stream_halfimDiff(char *IDstream_name, char *IDstreamout_nam
 long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long usperiod);
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
-long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig);
+long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode);
 
 long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus, long dtus);
 

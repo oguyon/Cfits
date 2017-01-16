@@ -642,9 +642,9 @@ int COREMOD_MEMORY_image_streamupdateloop_cli()
 
 int COREMOD_MEMORY_image_streamupdateloop_semtrig_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)+CLI_checkarg(6,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
     {
-        COREMOD_MEMORY_image_streamupdateloop_semtrig(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numl);
+        COREMOD_MEMORY_image_streamupdateloop_semtrig(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
         return 0;
     }
     else
@@ -1087,9 +1087,9 @@ int init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_semtrig_cli;
     strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube, use other stream to synchronize");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index>");
-    strcpy(data.cmd[data.NBcmd].example,"creaimstreamstrig imcube outstream 3 152 streamsync 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index> <timing mode>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimstreamstrig imcube outstream 3 152 streamsync 3 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"streamdelay");
@@ -4855,7 +4855,7 @@ long COREMOD_MEMORY_image_streamupdateloop(char *IDinname, char *IDoutname, long
 
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
-long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig)
+long COREMOD_MEMORY_image_streamupdateloop_semtrig(char *IDinname, char *IDoutname, long period, long offsetus, char *IDsync_name, int semtrig, int timingmode)
 {
 	long IDin;
     long IDout;
@@ -6383,6 +6383,19 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(char *IDname, long zsize, char *logdir, c
     int exitflag = 0; // toggles to 1 when loop must exit
 
     LOGSHIM_CONF* logshimconf;
+
+
+    int RT_priority = 60; //any number from 0-99
+    struct sched_param schedpar;
+    
+
+    schedpar.sched_priority = RT_priority;
+    #ifndef __MACH__
+    // r = seteuid(euid_called); //This goes up to maximum privileges
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
+    // r = seteuid(euid_real);//Go back to normal privileges
+    #endif
+
 
 
     IDlogdata = image_ID(IDlogdata_name);
