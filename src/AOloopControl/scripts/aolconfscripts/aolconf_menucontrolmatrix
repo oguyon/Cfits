@@ -296,7 +296,7 @@ menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full co
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
-menuitems+=( "confUp" "\Z1 Configuration Update \Zn" )
+menuitems+=( "confUp" "\Z1 Configuration Update (ALL) \Zn" )
 
 #if [ "$DMMODE" = "ZONAL" ]; then
 #fname="aolmkmodes.runproc"
