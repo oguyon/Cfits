@@ -59,7 +59,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 #include "linopt_imtools/linopt_imtools.h"
 #include "image_gen/image_gen.h"
 #include "statistic/statistic.h"
-
+#include "fft/fft.h"
 
 
 #ifdef HAVE_CUDA
@@ -14463,8 +14463,10 @@ int AOloopControl_logprocess_modeval(char *IDname)
 	long ID1dtmp;
 	FILE *fp;
 	
-	long ID1dPSD:
+	long ID1dPSD;
 	FILE *fpPSD;
+	long IDft;
+	char fname[200];
 
 
 	
@@ -14505,7 +14507,7 @@ int AOloopControl_logprocess_modeval(char *IDname)
 			fpPSD = fopen(fname, "w");
 			for(kk=0;kk<NBframes/2;kk++)
 				{
-					data.image[ID1dPSD].array.F[kk] = data.image[ID1].array.CF[kk].re*data.image[ID1].array.CF[kk].re + data.image[ID1].array.CF[kk].im*data.image[ID1].array.CF[kk].im;
+					data.image[ID1dPSD].array.F[kk] = data.image[IDft].array.CF[kk].re*data.image[IDft].array.CF[kk].re + data.image[IDft].array.CF[kk].im*data.image[IDft].array.CF[kk].im;
 					fprintf(fpPSD, "%03ld %g\n", kk, data.image[ID1dPSD].array.F[kk]);
 				}
 			delete_image_ID("modeval1d_FT");
