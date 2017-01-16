@@ -137,8 +137,8 @@ do
 done
 
 
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
+tmux send-keys -t ${tmuxname} "dolog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
+tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
 
 
 }
