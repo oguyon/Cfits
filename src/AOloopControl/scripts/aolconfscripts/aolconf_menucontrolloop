@@ -786,6 +786,9 @@ fi
 
 
 menuitems+=( " " " " )
+
+menuitems+=( "limreset" "Reset mode limit coefficients to 1.0" )
+
 AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
   if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
    echo "OK"
@@ -2175,6 +2178,16 @@ menucontrolloop_default="wzpoinit"
 	menucontrolloop_default="DMpWon"
 	;;
 
+
+	limreset)
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_DMmode_LIMIT
+im=1.0+0*aol${LOOPNUMBER}_DMmode_LIMIT
+cpsh im aol${LOOPNUMBER}_DMmode_LIMIT
+exit
+EOF
+	
+	;;
 	
 	ONatlim)
 	AUTOTUNELIMITS_ON=" ON"
