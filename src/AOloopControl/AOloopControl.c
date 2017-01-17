@@ -13971,6 +13971,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
 			{
+				data.image[aoconfID_LIMIT_modes].md[0].write = 1;
 				for(m=0; m<NBmodes; m++)
 					{
 						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
@@ -13978,6 +13979,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 						else
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 - AOconf[loop].AUTOTUNE_LIMITS_delta) * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
 					}
+				COREMOD_MEMORY_image_set_sempost_byID(aoconfID_LIMIT_modes, -1);
+				data.image[aoconfID_LIMIT_modes].md[0].cnt0++;
+				data.image[aoconfID_LIMIT_modes].md[0].write = 0;
 			}
 
 		
