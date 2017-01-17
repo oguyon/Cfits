@@ -14344,7 +14344,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 				
 				if(m==0)
 				{
-					printf("%12f %20f          slope = %12g    noise2 = %12g    optimal gain = %5ld / %5ld    %12f\n", array_mvalOL1[m], array_mvalOL2[m], array_asq[m], array_sig[m], kkmin, NBgain, gainval_array[kkmin] );
+					printf("%12f %20f     [%5.3f fr]     slope = %12g    noise2 = %12g    optimal gain = %5ld / %5ld    %12f\n", array_mvalOL1[m], array_mvalOL2[m], latency, array_asq[m], array_sig[m], kkmin, NBgain, gainval_array[kkmin] );
 				}
 								
 			}
