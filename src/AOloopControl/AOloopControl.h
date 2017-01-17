@@ -113,9 +113,9 @@ typedef struct
     // BLOCKS OF MODES
     long NBMblocks; // number of mode blocks
     long indexmaxMB[maxNBMB];
-    float gainMB[maxNBMB];
-    float limitMB[maxNBMB];
-    float multfMB[maxNBMB];
+//    float gainMB[maxNBMB];
+//    float limitMB[maxNBMB];
+//    float multfMB[maxNBMB];
 
 
     // COMPUTATION
