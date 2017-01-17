@@ -13642,6 +13642,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	char imname[200];
 	float *modegain;
 	float *modemult;
+	float *modelimit;
 	long *modeblock;
 	long i, n, ID, m, blk, NBblock, NBmodes;
 	long *sizeout;
@@ -13699,6 +13700,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 	modegain = (float*) malloc(sizeof(float)*NBmodes);
 	modemult = (float*) malloc(sizeof(float)*NBmodes);
+	modelimit = (float*) malloc(sizeof(float)*NBmodes);
+
 	modeblock = (long*) malloc(sizeof(long)*NBmodes);
 
 
@@ -13914,6 +13917,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		{
 			modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[modeblock[m]] * data.image[aoconfID_GAIN_modes].array.F[m];
 			modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[modeblock[m]] * data.image[aoconfID_MULTF_modes].array.F[m];
+			modelimit[m] = data.image[aoconfID_limitb].array.F[modeblock[m]] * data.image[aoconfID_LIMIT_modes].array.F[m];
 		}
 
 
@@ -13983,15 +13987,15 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 				block = data.image[IDblknb].array.U[m];	
 				
-				if(data.image[IDmodevalDMnowfilt].array.F[m] > data.image[aoconfID_LIMIT_modes].array.F[m])
+				if(data.image[IDmodevalDMnowfilt].array.F[m] > modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
 					{
 						blockavelimFrac[block] += 1.0;
-						data.image[IDmodevalDMnowfilt].array.F[m] = data.image[aoconfID_LIMIT_modes].array.F[m];
+						data.image[IDmodevalDMnowfilt].array.F[m] = modelimit[m]; //data.image[aoconfID_LIMIT_modes].array.F[m];
 					}
-				if(data.image[IDmodevalDMnowfilt].array.F[m] < -data.image[aoconfID_LIMIT_modes].array.F[m])
+				if(data.image[IDmodevalDMnowfilt].array.F[m] < -modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
 					{
 						blockavelimFrac[block] += 1.0;
-						data.image[IDmodevalDMnowfilt].array.F[m] = -data.image[aoconfID_LIMIT_modes].array.F[m];
+						data.image[IDmodevalDMnowfilt].array.F[m] = -modelimit[m]; //data.image[aoconfID_LIMIT_modes].array.F[m];
 					}
 			}				
 		}
@@ -14117,6 +14121,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 	free(modegain);
 	free(modemult);
+	free(modelimit);
+	
 	free(modeblock);
 	
 	return(IDout);
