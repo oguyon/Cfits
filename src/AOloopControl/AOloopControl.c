@@ -13991,19 +13991,17 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		{			
 			for(m=0;m<NBmodes;m++)
 			{
-				//data.image[IDmodevalDMnowfilt].array.F[m] *= data.image[IDmodeMULT].array.F[m];				
-
 				block = data.image[IDblknb].array.U[m];	
 				
-				if(data.image[IDmodevalDMnowfilt].array.F[m] > modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
+				if(data.image[IDmodevalDMnowfilt].array.F[m] > modelimit[m])
 					{
 						blockavelimFrac[block] += 1.0;
-						data.image[IDmodevalDMnowfilt].array.F[m] = modelimit[m]; //data.image[aoconfID_LIMIT_modes].array.F[m];
+						data.image[IDmodevalDMnowfilt].array.F[m] = modelimit[m]; 
 					}
-				if(data.image[IDmodevalDMnowfilt].array.F[m] < -modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
+				if(data.image[IDmodevalDMnowfilt].array.F[m] < -modelimit[m]) 
 					{
 						blockavelimFrac[block] += 1.0;
-						data.image[IDmodevalDMnowfilt].array.F[m] = -modelimit[m]; //data.image[aoconfID_LIMIT_modes].array.F[m];
+						data.image[IDmodevalDMnowfilt].array.F[m] = -modelimit[m]; 
 					}
 			}				
 		}
