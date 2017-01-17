@@ -14241,7 +14241,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 		AOloopControl_InitializeMemory(1);
 
 
-	AOconf[loop].AUTOTUNEGAIN_evolTimescale = 0.1;
+	AOconf[loop].AUTOTUNEGAIN_evolTimescale = 0.05;
 
 	gain0 = 1.0/(AOconf[loop].loopfrequ*AOconf[loop].AUTOTUNEGAIN_evolTimescale);
 
