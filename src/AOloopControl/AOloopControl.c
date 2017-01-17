@@ -14207,7 +14207,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	float errmin;
 	float *errarray;
 	float mingain = 0.01;
-	float gainfactstep = 1.01; 
+	float gainfactstep = 1.05; 
 	float *gainval_array;
 	float *gainval1_array;
 	float *gainval2_array;
@@ -14263,6 +14263,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	
 	// prepare gain array
 	latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
+	printf("latency = %f frame\n", latency);
 	NBgain = 0;
 	gain = mingain;
 	while(gain<1.0)
@@ -14281,6 +14282,8 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 		gainval_array[kk] = gain;
 		gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/gain);
 		gainval2_array[kk] = (gain/(1.0-gain))*(gain/(1.0-gain));
+
+		printf("gain   %4ld  %12f   %12f  %12f\n", gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
 		gain *= gainfactstep;
 		kk++;
 	}
@@ -14289,6 +14292,8 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 
 	// drive sem5 to zero
 	while(sem_trywait(data.image[IDmodevalOL].semptr[5])==0) {}
+	
+	exit(0);
 	
 	while(1)
 	{	
@@ -14330,7 +14335,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 				
 				if(m==0)
 				{
-					printf("%12f %20f          slope = %12f  noise2 = %12f    optimal gain = %5ld / %5ld    %12f\n", array_mvalOL1[m], array_mvalOL2[m], array_asq[m], array_sig[m], kkmin, NBgain, gainval_array[kkmin] );
+					printf("%12f %20f          slope = %12f    noise2 = %12f    optimal gain = %5ld / %5ld    %12f\n", array_mvalOL1[m], array_mvalOL2[m], array_asq[m], array_sig[m], kkmin, NBgain, gainval_array[kkmin] );
 				}
 								
 			}
