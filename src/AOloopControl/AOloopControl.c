@@ -14295,6 +14295,15 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	
 	exit(0);
 	
+	for(m=0;m<NBmodes;m++)
+		{
+			array_mvalOL1[m] = 0.0;
+			array_mvalOL2[m] = 0.0;
+			array_sig1[m] = 0.0;
+			array_sig2[m] = 0.0;
+		}
+	
+	
 	while(1)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
