@@ -90,7 +90,8 @@ typedef struct
 	int AUTOTUNE_LIMITS_ON;
 	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
-	
+	int AUTOTUNE_GAINS_ON;
+	float AUTOTUNEGAINcoeff;
 	
  
 	// PREDICTICE CONTROL
@@ -259,6 +260,7 @@ long AOloopControl_blockstats(long loop, char *IDout_name);
 long AOloopControl_computeWFSresidualimage(long loop, float alpha);
 long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
 long AOloopControl_ComputeOpenLoopModes(long loop);
+long AOloopControl_AutoTuneGains(long loop, char *IDout_name);
 long AOloopControl_dm2dm_offload(char *streamin, char *streamout, float twait, float offcoeff, float multcoeff);
 
 
@@ -282,6 +284,9 @@ int AOloopControl_AUTOTUNE_LIMITS_on();
 int AOloopControl_AUTOTUNE_LIMITS_off();
 int AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta);
 int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc);
+int AOloopControl_AUTOTUNE_GAINS_on();
+int AOloopControl_AUTOTUNE_GAINS_off();
+
 
 int AOloopControl_ARPFon();
 int AOloopControl_ARPFoff();
