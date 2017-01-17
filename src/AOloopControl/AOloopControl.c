@@ -14252,7 +14252,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 
 	
 	// prepare autotune gain 
-	AOconf[loop].AUTOTUNEGAINcoeff = 0.01;
+	AOconf[loop].AUTOTUNEGAINcoeff = 0.001;
 	// last open loop move values
 	array_mvalOL1 = (float*) malloc(sizeof(float)*NBmodes);
 	array_mvalOL2 = (float*) malloc(sizeof(float)*NBmodes);
