@@ -7368,16 +7368,16 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
 			AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
      
-    sprintf(fname, "./conf/conf_blockoffset_%ld.txt", (long) 0); 
+    sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", (long) 0); 
     fp = fopen(fname, "w");
 	fprintf(fp, "0");
     fclose(fp);
     for(k=1;k<AOconf[loop].DMmodesNBblock; k++)
     {
-		sprintf(fname, "./conf/conf_blockoffset_%ld.txt", k); 
+		sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", k); 
 		fp = fopen(fname, "w");
-		fprintf(fp, "%ld\n", AOconf[loop].indexmaxMB[k-1]);
-		fprintf(fp, "%ld\n", AOconf[loop].NBmodes_block[k]);
+		fprintf(fp, "%4ld\n", AOconf[loop].indexmaxMB[k-1]);
+		fprintf(fp, "%4ld\n", AOconf[loop].NBmodes_block[k]);
 		fclose(fp);
 	}
   
