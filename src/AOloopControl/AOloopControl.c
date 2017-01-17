@@ -14283,7 +14283,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 		gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/gain);
 		gainval2_array[kk] = (gain/(1.0-gain))*(gain/(1.0-gain));
 
-		printf("gain   %4ld  %12f   %12f  %12f\n", gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
+		printf("gain   %4ld  %12f   %12f  %12f\n", kk, gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
 		gain *= gainfactstep;
 		kk++;
 	}
