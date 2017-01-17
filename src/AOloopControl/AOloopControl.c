@@ -13975,10 +13975,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[aoconfID_LIMIT_modes].md[0].write = 1;
 				for(m=0; m<NBmodes; m++)
 					{
-						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
+						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) 
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 + AOconf[loop].AUTOTUNE_LIMITS_delta);
 						else
-							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 - AOconf[loop].AUTOTUNE_LIMITS_delta) * (1.0 - 0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
+							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 - AOconf[loop].AUTOTUNE_LIMITS_delta*0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
 					}
 				COREMOD_MEMORY_image_set_sempost_byID(aoconfID_LIMIT_modes, -1);
 				data.image[aoconfID_LIMIT_modes].md[0].cnt0++;
