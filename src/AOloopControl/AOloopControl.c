@@ -14096,7 +14096,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					AOconf[loop].blockave_OLrms[block] = sqrt(blockaveOLrms[block]/blockstatcnt);
 					AOconf[loop].blockave_Crms[block] = sqrt(blockaveCrms[block]/blockstatcnt); 
 					AOconf[loop].blockave_WFSrms[block] = sqrt(blockaveWFSrms[block]/blockstatcnt);
-					AOconf[loop].blockave_limFrac[block] = (blockavelimFrac[block]/AOconf[loop].NBmodes_block[block])/blockstatcnt;
+					AOconf[loop].blockave_limFrac[block] = (blockavelimFrac[block])/blockstatcnt;
 					
 					allaveOLrms += blockaveOLrms[block];
 					allaveCrms += blockaveCrms[block];
