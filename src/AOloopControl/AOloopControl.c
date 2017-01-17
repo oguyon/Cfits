@@ -7363,7 +7363,7 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].indexmaxMB[0] = AOconf[loop].NBDMmodes;
     else
     {
-		AOconf[loop].indexmaxMB[k] = AOconf[loop].NBmodes_block[0];
+		AOconf[loop].indexmaxMB[0] = AOconf[loop].NBmodes_block[0];
 		for(k=1; k<AOconf[loop].DMmodesNBblock; k++)
 			AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
