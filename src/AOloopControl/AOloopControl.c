@@ -13893,6 +13893,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	while (1)
 	{
+		
+
+
 		// read WFS measured modes (residual)
 		
 		if(data.image[IDmodeval].sem==0)
@@ -13970,7 +13973,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			{
 				for(m=0; m<NBmodes; m++)
 					{
-						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > data.image[aoconfID_LIMIT_modes].array.F[m])
+						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) //data.image[aoconfID_LIMIT_modes].array.F[m])
 							data.image[aoconfID_LIMIT_modes].array.F[m] += AOconf[loop].AUTOTUNE_LIMITS_delta;
 						else
 							data.image[aoconfID_LIMIT_modes].array.F[m] -= AOconf[loop].AUTOTUNE_LIMITS_delta * (0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
@@ -14090,7 +14093,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					AOconf[loop].blockave_OLrms[block] = sqrt(blockaveOLrms[block]/blockstatcnt);
 					AOconf[loop].blockave_Crms[block] = sqrt(blockaveCrms[block]/blockstatcnt); 
 					AOconf[loop].blockave_WFSrms[block] = sqrt(blockaveWFSrms[block]/blockstatcnt);
-					AOconf[loop].blockave_limFrac[block] = blockavelimFrac[block]/blockstatcnt;
+					AOconf[loop].blockave_limFrac[block] = (blockavelimFrac[block]/AOconf[loop].NBmodes_block[block])/blockstatcnt;
 					
 					allaveOLrms += blockaveOLrms[block];
 					allaveCrms += blockaveCrms[block];

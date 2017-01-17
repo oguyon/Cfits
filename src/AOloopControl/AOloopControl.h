@@ -109,13 +109,10 @@ typedef struct
     int RMstatus;
     // 2: wait for image
 
-    // LOOP TUNING
+
     // BLOCKS OF MODES
     long NBMblocks; // number of mode blocks
-    long indexmaxMB[maxNBMB];
-//    float gainMB[maxNBMB];
-//    float limitMB[maxNBMB];
-//    float multfMB[maxNBMB];
+    long indexmaxMB[maxNBMB]; 
 
 
     // COMPUTATION
