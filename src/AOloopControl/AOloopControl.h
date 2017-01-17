@@ -90,8 +90,10 @@ typedef struct
 	int AUTOTUNE_LIMITS_ON;
 	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
+
 	int AUTOTUNE_GAINS_ON;
-	float AUTOTUNEGAINcoeff;
+	float AUTOTUNEGAINcoeff; // averaging coefficient (usually about 0.001 for second-level time response)
+	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
 	
  
 	// PREDICTICE CONTROL

@@ -14222,6 +14222,10 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	long IDout;
 	long *sizearray;
 
+	float gain0; // corresponds to evolution timescale
+
+
+
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -14235,6 +14239,11 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	// read AO loop gain, mult
 	if(AOloopcontrol_meminit==0)
 		AOloopControl_InitializeMemory(1);
+
+
+	AOconf[loop].AUTOTUNEGAIN_evolTimescale = 0.1;
+
+	gain0 = 1.0/(AOconf[loop].frequ*AOconf[loop].AUTOTUNEGAIN_evolTimescale);
 
 	// INPUT
 	sprintf(imname, "aol%ld_modeval_ol", loop); // measured from WFS
@@ -14280,7 +14289,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	while(kk<NBgain)
 	{
 		gainval_array[kk] = gain;
-		gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/gain);
+		gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/(gain+gain0));
 		gainval2_array[kk] = (gain/(1.0-gain));
 
 		printf("gain   %4ld  %12f   %12f  %12f\n", kk, gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
