@@ -823,6 +823,24 @@ menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMITdelta}" )
 
 
 
+AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNEGAINS_ON.txt )
+  if [[ -f "./status/stat_AUTOTUNEGAINS_ON.txt" && ( "$AUTOTUNEGAINS_ON" = " ON" || "$AUTOTUNEGAINS_ON" = "OFF" ) ]]; then
+   echo "OK"
+   else
+   echo "OFF" > ./status/stat_AUTOTUNEGAINS_ON.txt
+   AUTOTUNEGAINS_ON="OFF"
+fi
+
+if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
+  then
+  menuitems+=( "ONatgain" "  \Zb\Zu ==== START AUTOTUNE GAINS loop ====\ZB\ZU" )
+  else
+  menuitems+=( "OFFatgain" "\Z1\ZrAUTOTUNE GAINS running, press to STOP\Zn" )
+fi
+
+
+
+
 menuitems+=( " " " " )
 file="./conf/conf_ARPFon.txt"
 if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
@@ -2186,7 +2204,6 @@ im=1.0+0*aol${LOOPNUMBER}_DMmode_LIMIT
 cpsh im aol${LOOPNUMBER}_DMmode_LIMIT
 exit
 EOF
-	
 	;;
 	
 	ONatlim)
@@ -2201,6 +2218,20 @@ EOF
 	echo "$AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
 	menucontrolloop_default="ONatlim"
+	;;
+
+	ONatgain)
+	AUTOTUNEGAINS_ON=" ON"
+	echo "$AUTOTUNEGAINS_ON" > ./status/stat_AUTOTUNEGAINS_ON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNEGAINon" C-m
+	menucontrolloop_default="OFFatgain"
+	;;
+
+	OFFatgain)
+	AUTOTUNEGAINS_ON="OFF"
+	echo "$AUTOTUNEGAINS_ON" > ./status/stat_AUTOTUNEGAINS_ON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNEGAINoff" C-m
+	menucontrolloop_default="ONatgain"
 	;;
 
 
