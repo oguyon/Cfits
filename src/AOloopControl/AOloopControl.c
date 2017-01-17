@@ -14243,7 +14243,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 
 	AOconf[loop].AUTOTUNEGAIN_evolTimescale = 0.1;
 
-	gain0 = 1.0/(AOconf[loop].frequ*AOconf[loop].AUTOTUNEGAIN_evolTimescale);
+	gain0 = 1.0/(AOconf[loop].loopfrequ*AOconf[loop].AUTOTUNEGAIN_evolTimescale);
 
 	// INPUT
 	sprintf(imname, "aol%ld_modeval_ol", loop); // measured from WFS
