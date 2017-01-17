@@ -14323,6 +14323,8 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 				array_sig2[m] = (1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
 				
 				array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
+				if(array_asq[m]<0.0)
+					array_asq[m] = 0.0;
 				array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
 				
 				
