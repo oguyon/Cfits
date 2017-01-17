@@ -7370,7 +7370,8 @@ int AOloopControl_loadconfigure(long loop, int mode, int level)
      
     sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", (long) 0); 
     fp = fopen(fname, "w");
-	fprintf(fp, "0");
+	fprintf(fp, "   0\n");
+	fprintf(fp, "%4ld\n", AOconf[loop].NBmodes_block[0]);
     fclose(fp);
     for(k=1;k<AOconf[loop].DMmodesNBblock; k++)
     {
