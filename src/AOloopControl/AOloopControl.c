@@ -14252,7 +14252,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 
 	
 	// prepare autotune gain 
-	AOconf[loop].AUTOTUNEGAINcoeff = 0.001;
+	AOconf[loop].AUTOTUNEGAINcoeff = 0.0001;
 	// last open loop move values
 	array_mvalOL1 = (float*) malloc(sizeof(float)*NBmodes);
 	array_mvalOL2 = (float*) malloc(sizeof(float)*NBmodes);
@@ -14304,7 +14304,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 		}
 	
 	
-	while(cnt<1020)
+	while(cnt<10020)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
 			
@@ -14344,7 +14344,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 				
 				data.image[IDout].array.F[m] = gainval_array[kkmin];
 				
-				if((m==0)&&(cnt>1000))
+				if((m==0)&&(cnt>10000))
 				{
 					printf("%12f %12f -> %12.10f %12.10f  [%5.3f fr]   slope = %12.10f    noise = %12.10f    optimal gain = %5ld / %5ld    %12f\n", array_mvalOL1[m], array_mvalOL2[m], array_sig1[m], array_sig2[m], latency, sqrt(array_asq[m]), sqrt(array_sig[m]), kkmin, NBgain, gainval_array[kkmin] );
 				}
