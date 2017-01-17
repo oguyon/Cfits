@@ -14328,7 +14328,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 				
 				
 				for(kk=0;kk<NBgain;kk++)
-					errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval1_array[kk];
+					errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval2_array[kk];
 
 				errmin = errarray[0];
 				kkmin = 0;
