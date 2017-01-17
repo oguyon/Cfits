@@ -194,8 +194,8 @@ long COREMOD_MEMORY_streamDelay(char *IDin_name, char *IDout_name, long delayus,
 long COREMOD_MEMORY_SaveAll_snapshot(char *dirname);
 long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig, long NBframes);
 
-long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode);
-long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode);
+long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode, int RT_priority);
+long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority);
 
 long COREMOD_MEMORY_PixMapDecode_U(char *inputstream_name, long xsizeim, long ysizeim, char* NBpix_fname, char* IDmap_name, char *IDout_name, char *IDout_pixslice_fname);
 

@@ -692,9 +692,9 @@ int COREMOD_MEMORY_SaveAll_sequ_cli()
 
 int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0)
     {
-        COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        COREMOD_MEMORY_image_NETWORKtransmit(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
         return 0;
     }
     else
@@ -704,9 +704,9 @@ int COREMOD_MEMORY_image_NETWORKtransmit_cli()
 
 int COREMOD_MEMORY_image_NETWORKreceive_cli()
 {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
     {
-        COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        COREMOD_MEMORY_image_NETWORKreceive(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
         return 0;
     }
     else
@@ -5283,7 +5283,7 @@ long COREMOD_MEMORY_SaveAll_sequ(char *dirname, char *IDtrig_name, long semtrig,
  */
 
 
-long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode)
+long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, int mode, int RT_priority)
 {
     long ID;
     struct sockaddr_in sock_server;
@@ -5298,7 +5298,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
     char *ptr1; // source - offset by slice
     int rs;
     int sockOK;
-    int RT_priority = 80; //any number from 0-99
+   
     struct sched_param schedpar;
     struct timespec ts;
     long scnt;
@@ -5553,7 +5553,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(char *IDname, char *IPaddr, int port, 
 
 
 
-long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
+long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
 {
     struct sockaddr_in sock_server, sock_client;
     int fds_server, fds_client;
@@ -5585,7 +5585,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)
     char *buff; // buffer
    
 
-    int RT_priority = 80; //any number from 0-99
+
     struct sched_param schedpar;
     
 
