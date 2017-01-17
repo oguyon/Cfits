@@ -14293,7 +14293,7 @@ long AOloopControl_AutoTuneGains(long loop, char *IDout_name)
 	// drive sem5 to zero
 	while(sem_trywait(data.image[IDmodevalOL].semptr[5])==0) {}
 	
-	exit(0);
+	
 	
 	for(m=0;m<NBmodes;m++)
 		{
