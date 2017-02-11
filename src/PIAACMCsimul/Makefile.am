@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libpiaacmcsimul.la
+lib_LTLIBRARIES = libpiaacmcsimul.la
 libpiaacmcsimul_la_SOURCES = PIAACMCsimul.c PIAACMCsimul.h
 
 EXTRA_DIST = scripts
