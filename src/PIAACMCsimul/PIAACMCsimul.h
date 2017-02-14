@@ -140,37 +140,37 @@ typedef struct {
 
 
 // module initialization
-int init_PIAACMCsimul();
+int_fast8_t init_PIAACMCsimul();
 void  PIAACMCsimul_free( void );
 
 // Focal plane mask
-long PIAACMCsimul_mkFPM_zonemap(char *IDname);
-long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_name);
-long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name,  int mode, int saveMask);
+long PIAACMCsimul_mkFPM_zonemap(const char *IDname);
+long PIAACMCsimul_rings2sectors(const char *IDin_name, const char *sectfname, const char *IDout_name);
+long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_name,  int mode, int saveMask);
 
 // initializes the optsyst structure to simulate reflective PIAACMC system
 void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, double TTyld );
 
 // PIAA optics (geometrical optics) tools
-int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, char *IDapofit_name);
-int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name);
-int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name);
+int PIAACMCsimul_load2DRadialApodization(const char *IDapo_name, float beamradpix, const char *IDapofit_name);
+int PIAACMCsimul_init_geomPIAA_rad(const char *IDapofit_name);
+int PIAACMCsimul_mkPIAAMshapes_from_RadSag(const char *fname, const char *ID_PIAAM0_name, const char *ID_PIAAM1_name);
 
-long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout);
+long PIAAsimul_mkSimpleLyotStop(const char *ID_name, float rin, float rout);
 int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int WFCmode, int load);
 int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index);
 double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode, int outsave);
-int PIAAsimul_savepiaacmcconf(char *dname);
-int PIAAsimul_loadpiaacmcconf(char *dname);
-long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name);
-long PIAACMCsimul_CA2propCubeInt(char *IDamp_name, char *IDpha_name, float zmin, float zmax, long NBz, char *IDout_name);
-double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *IDincoh_name, float zmin, float zmax, double throughput, long NBz, long NBmasks);
+int PIAAsimul_savepiaacmcconf(const char *dname);
+int PIAAsimul_loadpiaacmcconf(const char *dname);
+long PIAACMCsimul_mkLyotMask(const char *IDincoh_name, const char *IDmc_name, const char *IDzone_name, double throughput, const char *IDout_name);
+long PIAACMCsimul_CA2propCubeInt(const char *IDamp_name, const char *IDpha_name, float zmin, float zmax, long NBz, const char *IDout_name);
+double PIAACMCsimul_optimizeLyotStop(const char *IDamp_name, const char *IDpha_name, const char *IDincoh_name, float zmin, float zmax, double throughput, long NBz, long NBmasks);
 double PIAACMCsimul_achromFPMsol_eval(double *fpmresp_array, double *zonez_array, double *dphadz_array, double *outtmp_array, long vsize, long nbz, long nbl);
-long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones);
-long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep);
+long PIAACMC_FPMresp_rmzones(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBzones);
+long PIAACMC_FPMresp_resample(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBlambda, long PTstep);
 
-int PIAACMCsimul_run(char *confindex, long mode);
+int PIAACMCsimul_run(const char *confindex, long mode);
 
-long PIAACMC_FPM_process(char *FPMsag_name, char *zonescoord_name, long NBexp, char *outname);
+long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, long NBexp, const char *outname);
 
 #endif

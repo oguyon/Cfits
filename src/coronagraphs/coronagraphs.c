@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 #include <malloc.h>
 #include <math.h>
@@ -83,137 +84,137 @@ double MASKSIZELD;
 phase / amplitude aberrations, if any, are in "corpha" and "coramp" images
 */
 
-int FPMASKSIZE_ERROR = 0; /* 1 if focal plane mask error is included (for chromaticity for example) */
-double FPMASK_FACTOR = 1.0;  // if focal plane mask error included, multiplicative coefficient to the focal plane mask size - currently only for MULTI APLC
-double FPMASK_FACTOR1 = 1.0;
-double FPMASK_FACTOR2 = 1.1;
-double FPM_TRANSM1 = 0.0;
-double FPM_TRANSM2 = 1.0;
+static int FPMASKSIZE_ERROR = 0; /* 1 if focal plane mask error is included (for chromaticity for example) */
+static double FPMASK_FACTOR = 1.0;  // if focal plane mask error included, multiplicative coefficient to the focal plane mask size - currently only for MULTI APLC
+static double FPMASK_FACTOR1 = 1.0;
+static double FPMASK_FACTOR2 = 1.1;
+static double FPM_TRANSM1 = 0.0;
+static double FPM_TRANSM2 = 1.0;
 
 /* arrays and numbers that need to be in memory to use various coronagraphs */
 /* 8 order BL Lyot */
 #define BL8MASK_NBSTEP 100000 /* number of points over which the BL mask is computed */
 #define BL8MASK_STEP 0.01  /* lambda/d per step */
-double BL8MASK[BL8MASK_NBSTEP];
-double BL8MASK_m = 1.0;
-double BL8MASK_l = 3.0;
-double BL8MASK_eps = 0.6;
-int BL8MODE = 1; /* 0 = circular, 1 = linear */
+static double BL8MASK[BL8MASK_NBSTEP];
+static double BL8MASK_m = 1.0;
+static double BL8MASK_l = 3.0;
+static double BL8MASK_eps = 0.6;
+static int BL8MODE = 1; /* 0 = circular, 1 = linear */
 
 /* 4 order BL Lyot */
-double BL4MASK_eps = 0.21;
+static double BL4MASK_eps = 0.21;
 
 /* Optical Differenciation Coronagraph */
-double ODC_GAUSS = 10.0; /* in lambda/d */
-double ODCMASK_eps = 0.85;
+static double ODC_GAUSS = 10.0; /* in lambda/d */
+static double ODCMASK_eps = 0.85;
 
 /* SHEAR4 */
-double SHEAR4_SHEAR = 0.1;
+static double SHEAR4_SHEAR = 0.1;
 
 /* R&R Phase mask */
-double RRPM_RADIUS = 0.53773; /* phase mask radius in lambda/d */
-double RRPM_P2 = -0.3207; /* term of order 2 in polynomial pupil apodization */
-double RRPM_P3 = 0.00952; /* term of order 3 in polynomial pupil apodization */
-double RRPM_P4 = 0.000658; /* term of order 4 in polynomial pupil apodization */
-double RRPM_P5 = 0.001127; /* term of order 5 in polynomial pupil apodization */
-int RRPM_PIAA = 1;
+static double RRPM_RADIUS = 0.53773; /* phase mask radius in lambda/d */
+static double RRPM_P2 = -0.3207; /* term of order 2 in polynomial pupil apodization */
+static double RRPM_P3 = 0.00952; /* term of order 3 in polynomial pupil apodization */
+static double RRPM_P4 = 0.000658; /* term of order 4 in polynomial pupil apodization */
+static double RRPM_P5 = 0.001127; /* term of order 5 in polynomial pupil apodization */
+static int RRPM_PIAA = 1;
 
 /* CPA */
 #define CPAAPO_NBPOINTS 1930
-double CPAAPO[CPAAPO_NBPOINTS];
+static double CPAAPO[CPAAPO_NBPOINTS];
 #define CPAAPO_FNAME "pup_10.411256_2.0"
 #define CPAFPMASKRAD 0.0 /*4.4*/ /* in l/d */
 #define CPAPPMASKRAD 1.0 /* in pupil unit */
 
 /* PIAA and PIAAC (both hybrids) */
-double PIAACENTOBS = 0.0;
-long PIAAAPO_NBPOINTS = 2042;
-double *PIAAAPO;
-double *PIAA_HYBRID_CPAAPO;
-double PIAAAPO2D[CORONAGRAPHS_ARRAYSIZE*CORONAGRAPHS_ARRAYSIZE];
-char PIAAAPO_FNAME[400]="pup_10.411256_2.0";
-char PIAAAPODIZE_2DAPOFNAME[400]="APLCapo_4.200.1024.ref.gz";
+static double PIAACENTOBS = 0.0;
+static long PIAAAPO_NBPOINTS = 2042;
+static double *PIAAAPO;
+static double *PIAA_HYBRID_CPAAPO;
+static double PIAAAPO2D[CORONAGRAPHS_ARRAYSIZE*CORONAGRAPHS_ARRAYSIZE];
+static char PIAAAPO_FNAME[400]="pup_10.411256_2.0";
+static char PIAAAPODIZE_2DAPOFNAME[400]="APLCapo_4.200.1024.ref.gz";
 
 /*#define PIAAAPO_FNAME "Apod04.dat.2"*/
-int PIAAFPMASK = 0;
-int PIAALOWFS = 1;
-double PIAAFPMASKRAD = 5.5; /* in l/d */ /* 4.25 is the critical size to maintain 1e-10 contrast at all separations  default=4.6*/
+static int PIAAFPMASK = 0;
+static int PIAALOWFS = 1;
+static double PIAAFPMASKRAD = 5.5; /* in l/d */ /* 4.25 is the critical size to maintain 1e-10 contrast at all separations  default=4.6*/
 #define PIAAPPMASKRAD 1.0 /* in pupil unit */
 #define PIAACPPMASKRAD1 1.0 /* in pupil unit */
 #define PIAA_HYBRID_CST 0.00000001 /* relative to peak */
-double *piaaconfpup_amp_profile;
-double *piaaconfr0;
-double *piaaconfr1;
+static double *piaaconfpup_amp_profile;
+static double *piaaconfr0;
+static double *piaaconfr1;
 #define piaaconfNPUPFILESIZE 200000
-long piaaconfNBpoints;
+static long piaaconfNBpoints;
 #define piaaconfNBr1fr0_pts 20000
-double *piaaconfr0fr1;
-double *piaaconfr1fr0;
+static double *piaaconfr0fr1;
+static double *piaaconfr1fr0;
 
 // PIAA optics shapes
-double *piaaconfM0;
-double *piaaconfM1;
+static double *piaaconfM0;
+static double *piaaconfM1;
 
-int piaaconfdirection = 0;
-double PIAAFLUXFACTOR;
-double PIAAOVERSIZE = 1.025;
-int initPIAA=0;
-int AUTOPIAACMASK = 1;
-double APLC_CentOBS0 = 0.0;
-double APLC_CentOBS1 = 0.0;
+static int piaaconfdirection = 0;
+static double PIAAFLUXFACTOR;
+static double PIAAOVERSIZE = 1.025;
+static int initPIAA=0;
+static int AUTOPIAACMASK = 1;
+static double APLC_CentOBS0 = 0.0;
+static double APLC_CentOBS1 = 0.0;
 
-double PIAAextfactor0 = 1.1;
-double PIAAextfactor1 = 1.1;
+static double PIAAextfactor0 = 1.1;
+static double PIAAextfactor1 = 1.1;
 
 /* AIC / PIAA hybrid */
 #define PIAAAIC_FIELDLIMIT 15.0 /* in l/d */
 
 /* APLC */
-int APLC_PIAA = 0; /* 1 if the apodization is performed by PIAA */
-long NB_APLC_STEP = 0; /* number of APLC steps */
-double APLC_FPMASKsize = 4.2; /* APLC focal plane mask radius in l/d */
-int APLC_FLIP = 0; // output AIC in APLC PIAA
-int APLC_PMASK = 0; // 1 if focal plane mask in APLC has phase
-double FPMASK_transm_error = 0.0;
-double FPMASK_size_error = 0.0;
+static int APLC_PIAA = 0; /* 1 if the apodization is performed by PIAA */
+static long NB_APLC_STEP = 0; /* number of APLC steps */
+static double APLC_FPMASKsize = 4.2; /* APLC focal plane mask radius in l/d */
+static int APLC_FLIP = 0; // output AIC in APLC PIAA
+static int APLC_PMASK = 0; // 1 if focal plane mask in APLC has phase
+static double FPMASK_transm_error = 0.0;
+static double FPMASK_size_error = 0.0;
 /* STRIPC */
-double STRIPCOFFSET = 0.4;
+static double STRIPCOFFSET = 0.4;
 
 /* OVC */
-long OVC_CHARGE = 2;
+static long OVC_CHARGE = 2;
 
 
 // RAW apodization
-long aporawN;
-double *aporaw_r; // radius
-double *aporaw_v; // value
-int fitapoINIT = 0;
-long fitapoN = 5; // number of terms of form a exp(b x^c)
-double *fitapo_a;
-double *fitapo_b;
-double *fitapo_c;
-double *fitapo_c1;
+static long aporawN;
+static double *aporaw_r; // radius
+static double *aporaw_v; // value
+static int fitapoINIT = 0;
+static long fitapoN = 5; // number of terms of form a exp(b x^c)
+static double *fitapo_a;
+static double *fitapo_b;
+static double *fitapo_c;
+static double *fitapo_c1;
 
 
 static long LOOPCNT = 0;
-double optval0;
+static double optval0;
 
 
 
-long IDprol_init;
-long IDprol_ffrac;
-long IDprol_transm;
-long IDprol_peak;
-long IDprol_fitapo_a, IDprol_fitapo_b, IDprol_fitapo_c;
-long IDprol_fitfit;
+static long IDprol_init;
+static long IDprol_ffrac;
+static long IDprol_transm;
+static long IDprol_peak;
+static long IDprol_fitapo_a, IDprol_fitapo_b, IDprol_fitapo_c;
+static long IDprol_fitfit;
 
-double fitapo_minc = 0.1;
-double APLCapo_CO_START = 0.0;
-double APLCapo_CO_END = 0.5;
-double APLCapo_CO_STEP = 0.001;
-double APLCapo_FPMRAD_START = 0.8;
-double APLCapo_FPMRAD_END = 5.0;
-double APLCapo_FPMRAD_STEP = 0.001;
+static double fitapo_minc = 0.1;
+static double APLCapo_CO_START = 0.0;
+static double APLCapo_CO_END = 0.5;
+static double APLCapo_CO_STEP = 0.001;
+static double APLCapo_FPMRAD_START = 0.8;
+static double APLCapo_FPMRAD_END = 5.0;
+static double APLCapo_FPMRAD_STEP = 0.001;
 
 
 
@@ -229,7 +230,7 @@ double APLCapo_FPMRAD_STEP = 0.001;
 // 4: existing image
 //
 
-int coronagraph_make_2Dprolate_cli()
+int_fast8_t coronagraph_make_2Dprolate_cli()
 {
   if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
     {
@@ -240,7 +241,7 @@ int coronagraph_make_2Dprolate_cli()
     return 1;
 }
 
-int coronagraph_make_2Dprolateld_cli()
+int_fast8_t coronagraph_make_2Dprolateld_cli()
 {
   if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,3)+CLI_checkarg(5,2)==0)
     {
@@ -251,7 +252,7 @@ int coronagraph_make_2Dprolateld_cli()
     return 1;
 }
 
-int coronagraph_update_2Dprolate_cli()
+int_fast8_t coronagraph_update_2Dprolate_cli()
 {
   if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,1)==0)
     {
@@ -263,7 +264,7 @@ int coronagraph_update_2Dprolate_cli()
 }
 
 
-int  coronagraph_simulPSF_cli()
+int_fast8_t  coronagraph_simulPSF_cli()
 {
   if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
     {
@@ -275,7 +276,7 @@ int  coronagraph_simulPSF_cli()
 }
 
 
-int CORONAGRAPHS_scanPIAACMC_centObs_perf_cli()
+int_fast8_t CORONAGRAPHS_scanPIAACMC_centObs_perf_cli()
 {
   if(CLI_checkarg(1,1)==0)
     {
@@ -289,7 +290,7 @@ int CORONAGRAPHS_scanPIAACMC_centObs_perf_cli()
 
 
 
-int init_coronagraphs()
+int_fast8_t init_coronagraphs()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "coronagraph routines");
@@ -301,7 +302,7 @@ int init_coronagraphs()
   strcpy(data.cmd[data.NBcmd].info,"make 2D prolate");
   strcpy(data.cmd[data.NBcmd].syntax,"<focal plane mask radius> <central obstruction> <image name>");
   strcpy(data.cmd[data.NBcmd].example,"cormk2Dprolate 1.20 0.1 prolim");
-  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_make_2Dprolate(double masksize, double centralObs, char *outname)"); 
+  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_make_2Dprolate(double masksize, double centralObs, const char *outname)"); 
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"cormk2Dprolateld");
@@ -310,7 +311,7 @@ int init_coronagraphs()
   strcpy(data.cmd[data.NBcmd].info,"make 2D prolate, l/D unit mask size");
   strcpy(data.cmd[data.NBcmd].syntax,"<focal plane mask radius [l/D]> <central obstruction> <image name> <array size>");
   strcpy(data.cmd[data.NBcmd].example,"cormk2Dprolateld 1.20 0.1 prolim 2048");
-  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_make_2Dprolateld(double masksizeld, double centralObs, char *outname, long size)"); 
+  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_make_2Dprolateld(double masksizeld, double centralObs, const char *outname, long size)"); 
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"corup2Dprolate");
@@ -337,7 +338,7 @@ int init_coronagraphs()
   strcpy(data.cmd[data.NBcmd].info,"create coronagraph PSF");
   strcpy(data.cmd[data.NBcmd].syntax,"<x [l/D]> <y [l/D]> <output image name> <coronagraph index>");
   strcpy(data.cmd[data.NBcmd].example,"corsimpsf 1.0 0.1 50");
-  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_simulPSF(double xld, double yld, char *psfname, long coronagraph_type, char *options)"); 
+  strcpy(data.cmd[data.NBcmd].Ccall,"coronagraph_simulPSF(double xld, double yld, const char *psfname, long coronagraph_type, const char *options)"); 
   data.NBcmd++;
   
   
@@ -365,7 +366,7 @@ int init_coronagraphs()
 //
 // if pupmask does not exist, do not use it
 //
-double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double centralObs, char *outname, long size, char *pupmask_name)
+double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double centralObs, const char *outname, long size, const char *pupmask_name)
 {
     FILE *fp;
     long size2;
@@ -700,7 +701,7 @@ double coronagraph_make_2Dprolate(double fpmradpix, double beamradpix, double ce
 // High definition prolate computation
 // Uses DFT
 //
-double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, double centralObs, char *outname, long size, char *pupmask_name)
+double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, double centralObs, const char *outname, long size, const char *pupmask_name)
 {
     FILE *fp;
     long size2;
@@ -1105,7 +1106,7 @@ double coronagraph_make_2Dprolate_DFT(double fpmradpix, double beamradpix, doubl
 
 
 
-int coronagraph_make_2Dprolateld(double masksizeld, double beamradpix, double centralObs, char *outname, long size, char *pupmask_name)
+int coronagraph_make_2Dprolateld(double masksizeld, double beamradpix, double centralObs, const char *outname, long size, const char *pupmask_name)
 {
     double fpmradpix;
 
@@ -1128,7 +1129,7 @@ int coronagraph_make_2Dprolateld(double masksizeld, double beamradpix, double ce
 // works for non circular pupil shape
 //
 // input is pupaCS
-int coronagraph_make_2Dprolate_CS(double masksize, double beamradpix, char *outname)
+int coronagraph_make_2Dprolate_CS(double masksize, double beamradpix, const char *outname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDout;
@@ -1527,7 +1528,7 @@ double coronagraph_apofit_f_evalmask (const gsl_vector *v, void *params)
 
 
 
-double coronagraph_apofit(char *fnameout)
+double coronagraph_apofit(const char *fnameout)
 {
     FILE *fp;
     int ret;
@@ -1870,7 +1871,7 @@ double coronagraph_apofit(char *fnameout)
 // each FITS file has 2 dimensions: x = central obstruction, y = focal plane mask radius
 //
 //
-int coronagraph_APLCapo_compile()
+int_fast8_t coronagraph_APLCapo_compile()
 {
     FILE *fp;
     int ret;
@@ -3330,7 +3331,7 @@ int coronagraph_PIAAperturbation(double *zarray, long *zindex, long NBzern, doub
 
 
 
-int coronagraphs_PIAA_apodize_beam(char *ampl1, char *opd1, char *ampl2, char *opd2)
+int coronagraphs_PIAA_apodize_beam(const char *ampl1, const char *opd1, const char *ampl2, const char *opd2)
 {
     /* apodize a beam with PIAA */
     double PA;
@@ -3917,7 +3918,7 @@ int coronagraph_init_OVC(long charge)
 
 
 
-int coronagraph_simul_SHEAR4(double xld, double yld, char *psfname)
+int coronagraph_simul_SHEAR4(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1,IDc;
@@ -4026,7 +4027,7 @@ int coronagraph_simul_SHEAR4(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_DICC(double xld, double yld, char *psfname)
+int coronagraph_simul_DICC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1,IDc;
@@ -4280,7 +4281,7 @@ int coronagraph_simul_DICC(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_AIC(double xld, double yld, char *psfname)
+int coronagraph_simul_AIC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1,IDc;
@@ -4361,7 +4362,7 @@ int coronagraph_simul_AIC(double xld, double yld, char *psfname)
 
 
 
-int coronagraph_simul_4QPM(double xld, double yld, char *psfname)
+int coronagraph_simul_4QPM(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -4498,7 +4499,7 @@ int coronagraph_simul_4QPM(double xld, double yld, char *psfname)
     return(0);
 }
 
-int coronagraph_simul_ODC(double xld, double yld, char *psfname)
+int coronagraph_simul_ODC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -4667,7 +4668,7 @@ int coronagraph_simul_ODC(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_BL8(double xld, double yld, char *psfname)
+int coronagraph_simul_BL8(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -4889,7 +4890,7 @@ int coronagraph_simul_BL8(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_BL4(double xld, double yld, char *psfname)
+int coronagraph_simul_BL4(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -5064,7 +5065,7 @@ int coronagraph_simul_BL4(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_RRPM(double xld, double yld, char *psfname)
+int coronagraph_simul_RRPM(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1,IDa2,IDp2;
@@ -5278,7 +5279,7 @@ int coronagraph_simul_RRPM(double xld, double yld, char *psfname)
 }
 
 /* optical vortex coronagraph */
-int coronagraph_simul_OVC(double xld, double yld, char *psfname)
+int coronagraph_simul_OVC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -5522,7 +5523,7 @@ int coronagraph_simul_OVC(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_CPA(double xld, double yld, char *psfname)
+int coronagraph_simul_CPA(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1,IDa2;
@@ -5633,7 +5634,7 @@ int coronagraph_simul_CPA(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_PPA(double xld, double yld, char *psfname)
+int coronagraph_simul_PPA(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1,IDa2;
@@ -5757,7 +5758,7 @@ int coronagraph_simul_PPA(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_NOCORO(double xld, double yld, char *psfname)
+int coronagraph_simul_NOCORO(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -5805,7 +5806,7 @@ int coronagraph_simul_NOCORO(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
+int coronagraph_simul_PIAA(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -5985,7 +5986,7 @@ int coronagraph_simul_PIAA(double xld, double yld, char *psfname)
 
 
 // This routine works for PSFs within 20 l/D from the center
-int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
+int coronagraph_simul_PIAAC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -6229,7 +6230,7 @@ int coronagraph_simul_PIAAC(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_STRIPC(double xld, double yld, char *psfname)
+int coronagraph_simul_STRIPC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -6345,7 +6346,7 @@ int coronagraph_simul_STRIPC(double xld, double yld, char *psfname)
     return(0);
 }
 
-int coronagraph_simul_SIMXY(double xld, double yld, char *psfname)
+int coronagraph_simul_SIMXY(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -6437,7 +6438,7 @@ int coronagraph_simul_SIMXY(double xld, double yld, char *psfname)
 }
 
 
-int coronagraph_simul_AIC_PIAAC(double xld, double yld, char *psfname)
+int coronagraph_simul_AIC_PIAAC(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long IDa1,IDp1;
@@ -6653,7 +6654,7 @@ int coronagraph_RRPM_optimize()
 }
 
 
-int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, char *psfname)
+int coronagraph_simul_MULTISTEP_APLC(double xld, double yld, const char *psfname)
 {
     FILE *fp;
     int result = 0;
@@ -7598,7 +7599,7 @@ int coronagraph_init_EXTERNAL_OCCULTER(double D, double l, double lambda, long F
     return(ID);
 }
 
-int coronagraph_simul_EXTERNAL_OCCULTER(double xld, double yld, char *psfname)
+int coronagraph_simul_EXTERNAL_OCCULTER(double xld, double yld, const char *psfname)
 {
     long size = CORONAGRAPHS_ARRAYSIZE;
     long size2 = size*size;
@@ -7694,7 +7695,7 @@ int coronagraph_simul_EXTERNAL_OCCULTER(double xld, double yld, char *psfname)
 
 
 
-int coronagraph_simulPSF(double xld, double yld, char *psfname, long coronagraph_type, char *options)
+int coronagraph_simulPSF(double xld, double yld, const char *psfname, long coronagraph_type, const char *options)
 {
     FILE *fp;
     int result = 0;
@@ -8091,7 +8092,7 @@ int coronagraph_simulPSF(double xld, double yld, char *psfname, long coronagraph
 }
 
 
-int coronagraph_transm(char *fname, long coronagraph_type, double logcontrast, char *options)
+int coronagraph_transm(const char *fname, long coronagraph_type, double logcontrast, const char *options)
 {
     FILE *fp;
     double sepstep = 0.05; // 0.05;

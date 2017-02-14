@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
@@ -56,7 +57,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 //#define FFTWMT 1
-int NB_FFTW_THREADS = 2;
+static int NB_FFTW_THREADS = 2;
 
 extern DATA data;
 
@@ -65,14 +66,14 @@ extern DATA data;
 
 // Forward references
 
-
+/*
 int init_fftw_plans0 ( );
 int fft_setNthreads(int nt);
 int import_wisdom();
 int export_wisdom();
 int test_fftspeed(int nmax);
 long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout);
-
+*/
 
 
 // CLI commands
@@ -85,7 +86,7 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout);
 //
 
 
-int fft_permut_cli()
+int_fast8_t fft_permut_cli()
 {
     if(CLI_checkarg(1,4)==0)
         permut(data.cmdargtoken[1].val.string);
@@ -96,7 +97,7 @@ int fft_permut_cli()
 
 //int do2dfft(char *in_name, char *out_name);
 
-int fft_do1dfft_cli()
+int_fast8_t fft_do1dfft_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -107,7 +108,7 @@ int fft_do1dfft_cli()
         return 1;
 }
 
-int fft_do1drfft_cli()
+int_fast8_t fft_do1drfft_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -119,7 +120,7 @@ int fft_do1drfft_cli()
 }
 
 
-int fft_do2dfft_cli()
+int_fast8_t fft_do2dfft_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -133,7 +134,7 @@ int fft_do2dfft_cli()
 
 
 
-int test_fftspeed_cli()
+int_fast8_t test_fftspeed_cli()
 {
     if(CLI_checkarg(1,2)==0)
         test_fftspeed((int) data.cmdargtoken[1].val.numl);
@@ -142,7 +143,7 @@ int test_fftspeed_cli()
 }
 
 
-int fft_image_translate_cli()
+int_fast8_t fft_image_translate_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,1)==0)
         fft_image_translate(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf);
@@ -154,7 +155,7 @@ int fft_image_translate_cli()
 
 
 
-int fft_correlation_cli()
+int_fast8_t fft_correlation_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
         fft_correlation(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
@@ -166,7 +167,10 @@ int fft_correlation_cli()
 
 
 
-int init_fft()
+
+
+
+int_fast8_t init_fft()
 {
 
 # ifdef FFTWMT
@@ -208,7 +212,7 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].info,"perform FFT");
     strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
     strcpy(data.cmd[data.NBcmd].example,"fofft in out");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int do2dfft(char *in_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int do2dfft(const char *in_name, const char *out_name)");
     data.NBcmd++;
 
     
@@ -218,7 +222,7 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].info,"perform 1D complex->complex FFT");
     strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
     strcpy(data.cmd[data.NBcmd].example,"do1dfft in out");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int do1dfft(char *in_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int do1dfft(const char *in_name, const char *out_name)");
     data.NBcmd++;
      
        
@@ -228,7 +232,7 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].info,"perform 1D real->complex FFT");
     strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
     strcpy(data.cmd[data.NBcmd].example,"do1drfft in out");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int do1drfft(char *in_name, char *out_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int do1drfft(const char *in_name, const char *out_name)");
     data.NBcmd++;
      
 
@@ -238,7 +242,7 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].info,"permut image quadrants");
     strcpy(data.cmd[data.NBcmd].syntax,"<image>");
     strcpy(data.cmd[data.NBcmd].example,"permut im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int permut(char *ID_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int permut(const char *ID_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"testfftspeed");
@@ -256,7 +260,7 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].info,"translate image");
     strcpy(data.cmd[data.NBcmd].syntax,"<imagein> <imageout> <xtransl> <ytransl>");
     strcpy(data.cmd[data.NBcmd].example,"transl im1 im2 2.3 -2.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int fft_image_translate(const char *ID_name, const char *ID_out, double xtransl, double ytransl)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"fcorrel");
@@ -265,7 +269,7 @@ int init_fft()
     strcpy(data.cmd[data.NBcmd].info,"correlate two images");
     strcpy(data.cmd[data.NBcmd].syntax,"<imagein1> <imagein2> <correlout>");
     strcpy(data.cmd[data.NBcmd].example,"fcorrel im1 im2 outim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_nameout)");
     data.NBcmd++;
 
     return 0;
@@ -446,7 +450,7 @@ int export_wisdom()
 |
 |
 +-----------------------------------------------------------------------------*/
-int init_fftw_plans(int mode)
+int_fast8_t init_fftw_plans(int mode)
 {
     int n;
     int size;
@@ -557,7 +561,10 @@ int init_fftw_plans(int mode)
     return(0);
 }
 
-int init_fftw_plans0()
+
+
+
+int_fast8_t init_fftw_plans0()
 {
     init_fftw_plans(0);
 
@@ -567,7 +574,7 @@ int init_fftw_plans0()
 
 
 
-int permut(char *ID_name)
+int permut(const char *ID_name)
 {
     double tmp;
     long naxes0, naxes1, naxes2;
@@ -856,7 +863,7 @@ int array_index(long size)
 
 /* 1d complex -> complex fft */
 // supports single and double precisions
-long FFT_do1dfft(char *in_name, char *out_name, int dir)
+long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
 {
     int *naxes;
     long *naxesl;
@@ -993,7 +1000,7 @@ long FFT_do1dfft(char *in_name, char *out_name, int dir)
 
 /* 1d real -> complex fft */
 // supports single and double precision
-long do1drfft(char *in_name, char *out_name)
+long do1drfft(const char *in_name, const char *out_name)
 {
     int *naxes;
     long *naxesl;
@@ -1116,7 +1123,7 @@ long do1drfft(char *in_name, char *out_name)
 
 
 
-long do1dfft(char *in_name, char *out_name)
+long do1dfft(const char *in_name, const char *out_name)
 {
 	long IDout;
 	
@@ -1126,7 +1133,7 @@ long do1dfft(char *in_name, char *out_name)
 }
 
 
-long do1dffti(char *in_name, char *out_name)
+long do1dffti(const char *in_name, const char *out_name)
 {
 	long IDout;
 	
@@ -1142,7 +1149,7 @@ long do1dffti(char *in_name, char *out_name)
 
 /* 2d complex fft */
 // supports single and double precisions
-long FFT_do2dfft(char *in_name, char *out_name, int dir)
+long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
 {
     int *naxes;
     long *naxesl;
@@ -1295,7 +1302,7 @@ long FFT_do2dfft(char *in_name, char *out_name, int dir)
 
 
 
-long do2dfft(char *in_name, char *out_name)
+long do2dfft(const char *in_name, const char *out_name)
 {
 	long IDout;
 	
@@ -1305,7 +1312,7 @@ long do2dfft(char *in_name, char *out_name)
 }
 
 
-long do2dffti(char *in_name, char *out_name)
+long do2dffti(const char *in_name, const char *out_name)
 {
 	long IDout;
 	
@@ -1333,7 +1340,7 @@ long do2dffti(char *in_name, char *out_name)
 /* inverse = pupil plane -> focal plane equ. fft2d(..,..,..,0) */
 /* options :  -reim  takes real/imaginary input and creates real/imaginary output
                -inv  for inverse fft (inv=1) */
-int pupfft(char *ID_name_ampl, char *ID_name_pha, char *ID_name_ampl_out, char *ID_name_pha_out, char *options)
+int pupfft(const char *ID_name_ampl, const char *ID_name_pha, const char *ID_name_ampl_out, const char *ID_name_pha_out, const char *options)
 {
     int reim;
     int inv;
@@ -1407,7 +1414,7 @@ int pupfft(char *ID_name_ampl, char *ID_name_pha, char *ID_name_ampl_out, char *
 
 /* real fft : real to complex */
 // supports single and double precisions
-long FFT_do2drfft(char *in_name, char *out_name, int dir)
+long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
 {
     int *naxes;
     long *naxesl;
@@ -1660,7 +1667,7 @@ long FFT_do2drfft(char *in_name, char *out_name, int dir)
 
 
 
-long do2drfft(char *in_name, char *out_name)
+long do2drfft(const char *in_name, const char *out_name)
 {
 	long IDout;
 	
@@ -1671,7 +1678,7 @@ long do2drfft(char *in_name, char *out_name)
 
 
 
-long do2drffti(char *in_name, char *out_name)
+long do2drffti(const char *in_name, const char *out_name)
 {
 	long IDout;
 	
@@ -1689,7 +1696,7 @@ long do2drffti(char *in_name, char *out_name)
 
 
 
-long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)
+long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_nameout)
 {
     long ID1,ID2,IDout;
     long nelement;
@@ -1790,7 +1797,7 @@ long fft_correlation(char *ID_name1, char *ID_name2, char *ID_nameout)
 }
 
 
-int autocorrelation(char *ID_name, char *ID_out)
+int autocorrelation(const char *ID_name, const char *ID_out)
 {
     long ID;
     long nelement;
@@ -1848,7 +1855,7 @@ int autocorrelation(char *ID_name, char *ID_out)
     return(0);
 }
 
-int fftczoom(char *ID_name, char *ID_out, long factor)
+int fftczoom(const char *ID_name, const char *ID_out, long factor)
 {
     long ID,ID1;
     long naxes[2];
@@ -1902,7 +1909,7 @@ int fftczoom(char *ID_name, char *ID_out, long factor)
 
 
 
-int fftzoom(char *ID_name, char *ID_out, long factor)
+int fftzoom(const char *ID_name, const char *ID_out, long factor)
 {
     long ID,ID1;
     long naxes[2];
@@ -2086,7 +2093,7 @@ int test_fftspeed(int nmax)
 // Zfactor is zoom factor
 // dir = -1 for FT, 1 for inverse FT
 // k in selects slice in IDin_name if this is a cube
-long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDoutmask_name, double Zfactor, int dir, long kin)
+long fft_DFT( const char *IDin_name, const char *IDinmask_name, const char *IDout_name, const char *IDoutmask_name, double Zfactor, int dir, long kin)
 {
     long IDin;
     long IDout;
@@ -2245,7 +2252,7 @@ long fft_DFT( char *IDin_name, char *IDinmask_name, char *IDout_name, char *IDou
 //
 // force computation over pixels >0.5 in _DFTmask00 if it exists
 //
-long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *pupout_name)
+long fft_DFTinsertFPM( const char *pupin_name, const char *fpmz_name, double zfactor, const char *pupout_name)
 {
     double eps = 1.0e-16;
     long ID, ID1;
@@ -2463,7 +2470,7 @@ long fft_DFTinsertFPM( char *pupin_name, char *fpmz_name, double zfactor, char *
 //
 //
 //
-long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, char *pupout_name)
+long fft_DFTinsertFPM_re( const char *pupin_name, const char *fpmz_name, double zfactor, const char *pupout_name)
 {
     double eps = 1.0e-10;
     long ID;
@@ -2595,7 +2602,7 @@ long fft_DFTinsertFPM_re( char *pupin_name, char *fpmz_name, double zfactor, cha
 | COMMENT:  Inclusion of this routine requires inclusion of modules:
 |           fft, gen_image
 +-----------------------------------------------------------------------------*/
-int fft_image_translate(char *ID_name, char *ID_out, double xtransl, double ytransl)
+int fft_image_translate(const char *ID_name, const char *ID_out, double xtransl, double ytransl)
 {
     long ID;
     long naxes[2];

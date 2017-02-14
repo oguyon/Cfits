@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,180 +27,180 @@
 extern DATA data;
 
 
-float ZenithAngle;
-int TimeDayOfYear;
-float TimeLocalSolarTime;
+static float ZenithAngle;
+static int TimeDayOfYear;
+static float TimeLocalSolarTime;
 
 
-float SiteLat;
-float SiteLong;
-float SiteAlt;
-float CO2_ppm;
+static float SiteLat;
+static float SiteLong;
+static float SiteAlt;
+static float CO2_ppm;
 
-int SiteTPauto;
-float SiteTemp;
-float SitePress;
+static int SiteTPauto;
+static float SiteTemp;
+static float SitePress;
 
-float SiteH2OMethod;
-float SiteTPW;
-float SiteRH;
-float SitePWSH;
-float alpha1H2O;
+static float SiteH2OMethod;
+static float SiteTPW;
+static float SiteRH;
+static float SitePWSH;
+static float alpha1H2O;
 
 
 
 // Atmosphere model
 
-int initAtmosphereModel = 0;
+static int initAtmosphereModel = 0;
 // densities are in cm^-3
-float *densN2;
-float *densO2;
-float *densAr;
-float *densH2O;
-float *densCO2;
-float *densNe;
-float *densHe;
-float *densCH4;
-float *densKr;
-float *densH2;
-float *densO3;
-float *densN;
-float *densO;
-float *densH;
+static float *densN2;
+static float *densO2;
+static float *densAr;
+static float *densH2O;
+static float *densCO2;
+static float *densNe;
+static float *densHe;
+static float *densCH4;
+static float *densKr;
+static float *densH2;
+static float *densO3;
+static float *densN;
+static float *densO;
+static float *densH;
 
 
-float *denstot;
+static float *denstot;
 
-float *density;
-float *temperature;
-float *pressure;
-float *RH;
-
-
-float dens0;
+static float *density;
+static float *temperature;
+static float *pressure;
+static float *RH;
 
 
+static float dens0;
 
 
 
-double v_ABSCOEFF = 0.0;  // [m-1]
-double v_TRANSM = 1.0;
+
+
+static double v_ABSCOEFF = 0.0;  // [m-1]
+static double v_TRANSM = 1.0;
 
 
 
 
 
 // Refractive indices and abs coeff of individual species
-long RIA_NBpts; // number of points (will be loaded from file)
-double RIA_lambda_min; // [m]
-double RIA_lambda_max; // [m]
+static long RIA_NBpts; // number of points (will be loaded from file)
+static double RIA_lambda_min; // [m]
+static double RIA_lambda_max; // [m]
 
-int initRIA_N2 = 0;
-long RIA_N2_NBpts; // number of points (will be loaded from file)
-double *RIA_N2_lambda;
-double *RIA_N2_ri;
-double *RIA_N2_abs;
+static int initRIA_N2 = 0;
+static long RIA_N2_NBpts; // number of points (will be loaded from file)
+static double *RIA_N2_lambda;
+static double *RIA_N2_ri;
+static double *RIA_N2_abs;
 
-int initRIA_O2 = 0;
-long RIA_O2_NBpts; // number of points (will be loaded from file)
-double *RIA_O2_lambda;
-double *RIA_O2_ri;
-double *RIA_O2_abs;
+static int initRIA_O2 = 0;
+static long RIA_O2_NBpts; // number of points (will be loaded from file)
+static double *RIA_O2_lambda;
+static double *RIA_O2_ri;
+static double *RIA_O2_abs;
 
-int initRIA_Ar = 0;
-long RIA_Ar_NBpts; // number of points (will be loaded from file)
-double *RIA_Ar_lambda;
-double *RIA_Ar_ri;
-double *RIA_Ar_abs;
+static int initRIA_Ar = 0;
+static long RIA_Ar_NBpts; // number of points (will be loaded from file)
+static double *RIA_Ar_lambda;
+static double *RIA_Ar_ri;
+static double *RIA_Ar_abs;
 
-int initRIA_H2O = 0;
-long RIA_H2O_NBpts; // number of points (will be loaded from file)
-double *RIA_H2O_lambda;
-double *RIA_H2O_ri;
-double *RIA_H2O_abs;
+static int initRIA_H2O = 0;
+static long RIA_H2O_NBpts; // number of points (will be loaded from file)
+static double *RIA_H2O_lambda;
+static double *RIA_H2O_ri;
+static double *RIA_H2O_abs;
 
-int initRIA_CO2 = 0;
-long RIA_CO2_NBpts; // number of points (will be loaded from file)
-double *RIA_CO2_lambda;
-double *RIA_CO2_ri;
-double *RIA_CO2_abs;
+static int initRIA_CO2 = 0;
+static long RIA_CO2_NBpts; // number of points (will be loaded from file)
+static double *RIA_CO2_lambda;
+static double *RIA_CO2_ri;
+static double *RIA_CO2_abs;
 
-int initRIA_Ne = 0;
-long RIA_Ne_NBpts; // number of points (will be loaded from file)
-double *RIA_Ne_lambda;
-double *RIA_Ne_ri;
-double *RIA_Ne_abs;
+static int initRIA_Ne = 0;
+static long RIA_Ne_NBpts; // number of points (will be loaded from file)
+static double *RIA_Ne_lambda;
+static double *RIA_Ne_ri;
+static double *RIA_Ne_abs;
 
-int initRIA_He = 0;
-long RIA_He_NBpts; // number of points (will be loaded from file)
-double *RIA_He_lambda;
-double *RIA_He_ri;
-double *RIA_He_abs;
+static int initRIA_He = 0;
+static long RIA_He_NBpts; // number of points (will be loaded from file)
+static double *RIA_He_lambda;
+static double *RIA_He_ri;
+static double *RIA_He_abs;
 
-int initRIA_CH4 = 0;
-long RIA_CH4_NBpts; // number of points (will be loaded from file)
-double *RIA_CH4_lambda;
-double *RIA_CH4_ri;
-double *RIA_CH4_abs;
+static int initRIA_CH4 = 0;
+static long RIA_CH4_NBpts; // number of points (will be loaded from file)
+static double *RIA_CH4_lambda;
+static double *RIA_CH4_ri;
+static double *RIA_CH4_abs;
 
-int initRIA_Kr = 0;
-long RIA_Kr_NBpts; // number of points (will be loaded from file)
-double *RIA_Kr_lambda;
-double *RIA_Kr_ri;
-double *RIA_Kr_abs;
+static int initRIA_Kr = 0;
+static long RIA_Kr_NBpts; // number of points (will be loaded from file)
+static double *RIA_Kr_lambda;
+static double *RIA_Kr_ri;
+static double *RIA_Kr_abs;
 
-int initRIA_H2 = 0;
-long RIA_H2_NBpts; // number of points (will be loaded from file)
-double *RIA_H2_lambda;
-double *RIA_H2_ri;
-double *RIA_H2_abs;
+static int initRIA_H2 = 0;
+static long RIA_H2_NBpts; // number of points (will be loaded from file)
+static double *RIA_H2_lambda;
+static double *RIA_H2_ri;
+static double *RIA_H2_abs;
 
-int initRIA_O3 = 0;
-long RIA_O3_NBpts; // number of points (will be loaded from file)
-double *RIA_O3_lambda;
-double *RIA_O3_ri;
-double *RIA_O3_abs;
+static int initRIA_O3 = 0;
+static long RIA_O3_NBpts; // number of points (will be loaded from file)
+static double *RIA_O3_lambda;
+static double *RIA_O3_ri;
+static double *RIA_O3_abs;
 
-int initRIA_N = 0;
-long RIA_N_NBpts; // number of points (will be loaded from file)
-double *RIA_N_lambda;
-double *RIA_N_ri;
-double *RIA_N_abs;
+static int initRIA_N = 0;
+static long RIA_N_NBpts; // number of points (will be loaded from file)
+static double *RIA_N_lambda;
+static double *RIA_N_ri;
+static double *RIA_N_abs;
 
-int initRIA_O = 0;
-long RIA_O_NBpts; // number of points (will be loaded from file)
-double *RIA_O_lambda;
-double *RIA_O_ri;
-double *RIA_O_abs;
+static int initRIA_O = 0;
+static long RIA_O_NBpts; // number of points (will be loaded from file)
+static double *RIA_O_lambda;
+static double *RIA_O_ri;
+static double *RIA_O_abs;
 
-int initRIA_H = 0;
-long RIA_H_NBpts; // number of points (will be loaded from file)
-double *RIA_H_lambda;
-double *RIA_H_ri;
-double *RIA_H_abs;
-
-
-
-long NB_comp_array;
-double *comp_array_lambda;
-long *comp_array_lli;
-int lliprecomp = -1; // if >=0, use this index in array
+static int initRIA_H = 0;
+static long RIA_H_NBpts; // number of points (will be loaded from file)
+static double *RIA_H_lambda;
+static double *RIA_H_ri;
+static double *RIA_H_abs;
 
 
-int lliprecompN2 = -1; // if >=0, use this index in array
-int lliprecompO2 = -1; // if >=0, use this index in array
-int lliprecompAr = -1; // if >=0, use this index in array
-int lliprecompH2O = -1; // if >=0, use this index in array
-int lliprecompCO2 = -1; // if >=0, use this index in array
-int lliprecompNe = -1; // if >=0, use this index in array
-int lliprecompHe = -1; // if >=0, use this index in array
-int lliprecompCH4 = -1; // if >=0, use this index in array
-int lliprecompKr = -1; // if >=0, use this index in array
-int lliprecompH2 = -1; // if >=0, use this index in array
-int lliprecompO3 = -1; // if >=0, use this index in array
-int lliprecompO = -1; // if >=0, use this index in array
-int lliprecompN = -1; // if >=0, use this index in array
-int lliprecompH = -1; // if >=0, use this index in array
+
+static long NB_comp_array;
+static double *comp_array_lambda;
+static long *comp_array_lli;
+static int lliprecomp = -1; // if >=0, use this index in array
+
+
+static int lliprecompN2 = -1; // if >=0, use this index in array
+static int lliprecompO2 = -1; // if >=0, use this index in array
+static int lliprecompAr = -1; // if >=0, use this index in array
+static int lliprecompH2O = -1; // if >=0, use this index in array
+static int lliprecompCO2 = -1; // if >=0, use this index in array
+static int lliprecompNe = -1; // if >=0, use this index in array
+static int lliprecompHe = -1; // if >=0, use this index in array
+static int lliprecompCH4 = -1; // if >=0, use this index in array
+static int lliprecompKr = -1; // if >=0, use this index in array
+static int lliprecompH2 = -1; // if >=0, use this index in array
+static int lliprecompO3 = -1; // if >=0, use this index in array
+static int lliprecompO = -1; // if >=0, use this index in array
+static int lliprecompN = -1; // if >=0, use this index in array
+static int lliprecompH = -1; // if >=0, use this index in array
 
 
 
@@ -228,7 +229,7 @@ int lliprecompH = -1; // if >=0, use this index in array
 //
 
 
-int AtmosphereModel_Create_from_CONF_cli()
+int_fast8_t AtmosphereModel_Create_from_CONF_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,1)==0)
         AtmosphereModel_Create_from_CONF(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf);
@@ -239,7 +240,7 @@ int AtmosphereModel_Create_from_CONF_cli()
 }
 
 
-int init_AtmosphereModel()
+int_fast8_t init_AtmosphereModel()
 {
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "Atmosphere Model");
@@ -278,7 +279,7 @@ int init_AtmosphereModel()
     strcpy(data.cmd[data.NBcmd].info,"make Earth atmosphere model");
     strcpy(data.cmd[data.NBcmd].syntax,"<conf file> <wavelength>");
     strcpy(data.cmd[data.NBcmd].example,"mkatmospheremodel conf.txt 0.5e-6");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphereModel_Create_from_CONF(char *CONFFILE, float slambda)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphereModel_Create_from_CONF(const char *CONFFILE, float slambda)");
     data.NBcmd++;
 
 
@@ -300,7 +301,7 @@ int init_AtmosphereModel()
 // load refractive indices and abs coeff
 // fname is the file name (eg. "RIA_O2.dat")
 //
-int ATMOSPHEREMODEL_loadRIA_readsize(char *fname)
+int ATMOSPHEREMODEL_loadRIA_readsize(const char *fname)
 {
     FILE *fp;
     long nbpt;
@@ -342,7 +343,7 @@ int ATMOSPHEREMODEL_loadRIA_readsize(char *fname)
 // RIptr is pointer to refractive index array
 // absptr is pointer to absorption coeff array
 //
-int ATMOSPHEREMODEL_loadRIA(char *fname, double *lptr, double *RIptr, double *absptr)
+int ATMOSPHEREMODEL_loadRIA(const char *fname, double *lptr, double *RIptr, double *absptr)
 {
     FILE *fp;
     long nbpt;
@@ -3376,7 +3377,7 @@ double AtmosphereModel_H2O_Saturation(double T)
 
 
 
-int AtmosphereModel_save_stdAtmModel(char *fname)
+int AtmosphereModel_save_stdAtmModel(const char *fname)
 {
     long i;
     FILE *fp;
@@ -3397,7 +3398,7 @@ int AtmosphereModel_save_stdAtmModel(char *fname)
 
 
 
-int AtmosphereModel_build_stdAtmModel(char *fname)
+int AtmosphereModel_build_stdAtmModel(const char *fname)
 {
     FILE *fp;
     struct nrlmsise_output output[10000]; // 100m steps from h=0 to h=100km, 10m steps
@@ -3812,14 +3813,14 @@ int AtmosphereModel_build_stdAtmModel(char *fname)
 /// model lists concentration of atmosphere components, temperature, pressure
 /// one line every 10m of elevation, 10000 lines (0-100km)
 
-int AtmosphereModel_load_stdAtmModel(char *fname)
+int AtmosphereModel_load_stdAtmModel(const char *fname)
 {
     FILE *fp;
     long i;
     char line[500];
     float v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19;
     int r;
-    char *sptr;
+    const char *sptr;
 
 
     printf("Loading atmosphere model \"%s\"\n", fname);
@@ -3868,7 +3869,7 @@ int AtmosphereModel_load_stdAtmModel(char *fname)
 /// read configuration file and create atmosphere model
 
 
-int AtmosphereModel_Create_from_CONF(char *CONFFILE, float slambda)
+int AtmosphereModel_Create_from_CONF(const char *CONFFILE, float slambda)
 {
 	char command[200];
     char KEYWORD[200];

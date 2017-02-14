@@ -1,4 +1,4 @@
-#include <fitsio.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -13,6 +13,8 @@
 #include <sched.h>
 #include <ncurses.h>
 #include <semaphore.h>
+
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -62,7 +64,7 @@ extern DATA data;
 
 
 
-int IMG_REDUCE_cubesimplestat_cli()
+int_fast8_t IMG_REDUCE_cubesimplestat_cli()
 {
     if(CLI_checkarg(1,4)==0)
         IMG_REDUCE_cubesimplestat(data.cmdargtoken[1].val.string);
@@ -72,7 +74,7 @@ int IMG_REDUCE_cubesimplestat_cli()
     return(0);
 }
 
-int IMG_REDUCE_cubeprocess_cli()
+int_fast8_t IMG_REDUCE_cubeprocess_cli()
 {
     if(CLI_checkarg(1,4)==0)
         IMG_REDUCE_cubeprocess(data.cmdargtoken[1].val.string);
@@ -83,7 +85,7 @@ int IMG_REDUCE_cubeprocess_cli()
 }
 
 
-int IMG_REDUCE_cleanbadpix_fast_cli()
+int_fast8_t IMG_REDUCE_cleanbadpix_fast_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
         IMG_REDUCE_cleanbadpix_fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
@@ -95,7 +97,7 @@ int IMG_REDUCE_cleanbadpix_fast_cli()
 
 
 
-int init_img_reduce()
+int_fast8_t init_img_reduce()
 {
 
   strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -109,7 +111,7 @@ int init_img_reduce()
   strcpy(data.cmd[data.NBcmd].info,"remove bad pixels (fast algo)");
   strcpy(data.cmd[data.NBcmd].syntax,"<image> <badpixmap> <output>");
   strcpy(data.cmd[data.NBcmd].example,"rmbadpixfast im bpmap outim");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, const char *IDoutname)");
   data.NBcmd++;
 
 
@@ -119,7 +121,7 @@ int init_img_reduce()
   strcpy(data.cmd[data.NBcmd].info,"simple data cube stats");
   strcpy(data.cmd[data.NBcmd].syntax,"<image>");
   strcpy(data.cmd[data.NBcmd].example,"cubesimplestat");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long IMG_REDUCUE_cubesimplestat(char *IDin_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMG_REDUCUE_cubesimplestat(const char *IDin_name)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"imgcubeprocess");
@@ -128,7 +130,7 @@ int init_img_reduce()
   strcpy(data.cmd[data.NBcmd].info,"data cube process");
   strcpy(data.cmd[data.NBcmd].syntax,"<image>");
   strcpy(data.cmd[data.NBcmd].example,"imgcubeprocess");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int IMG_REDUCE_cubeprocess(char *IDin_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int IMG_REDUCE_cubeprocess(const char *IDin_name)");
   data.NBcmd++;
 
  // add atexit functions here
@@ -145,7 +147,7 @@ int init_img_reduce()
  */
 
 
-long IMG_REDUCE_cubesimplestat(char *IDin_name)
+long IMG_REDUCE_cubesimplestat(const char *IDin_name)
 {
     long IDin;
     long xsize, ysize, zsize;
@@ -196,7 +198,7 @@ long IMG_REDUCE_cubesimplestat(char *IDin_name)
 
 /// removes bad pixels in cube
 
-int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
+int clean_bad_pix(const char *IDin_name, const char *IDbadpix_name)
 {
     long ii, jj, kk;
     long IDin, IDbadpix, IDbadpix1; //, IDouttmp;
@@ -287,7 +289,7 @@ int clean_bad_pix(char *IDin_name, char *IDbadpix_name)
 
 
 // pre-compute operations to clean bad pixels
-long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
+long IMG_REDUCE_cleanbadpix_fast_precompute(const char *IDmask_name)
 {
     long NBop;
     long IDbadpix;
@@ -441,7 +443,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(char *IDmask_name)
 
 
 
-long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutname)
+long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, const char *IDoutname)
 {
     long ID;
     long *sizearray;
@@ -525,7 +527,7 @@ long IMG_REDUCE_cleanbadpix_fast(char *IDname, char *IDbadpix_name, char *IDoutn
 
 
 
-int IMG_REDUCE_correlMatrix(char *IDin_name,  char *IDmask_name, char *IDout_name)
+int IMG_REDUCE_correlMatrix(const char *IDin_name,  const char *IDmask_name, const char *IDout_name)
 {
 	long IDin, IDout;
 	long IDmask;
@@ -588,7 +590,7 @@ int IMG_REDUCE_correlMatrix(char *IDin_name,  char *IDmask_name, char *IDout_nam
  * 
  */
 
-int IMG_REDUCE_cubeprocess(char *IDin_name)
+int IMG_REDUCE_cubeprocess(const char *IDin_name)
 {
     long IDin;
     long xsize, ysize, zsize;

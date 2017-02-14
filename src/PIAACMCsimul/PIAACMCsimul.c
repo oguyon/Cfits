@@ -1,4 +1,4 @@
-#include <fitsio.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -13,6 +13,7 @@
 #include <gsl/gsl_multimin.h>
 #include <assert.h>
 
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -48,107 +49,108 @@
 
 
 
-int WRITE_OK = 1;
+static int WRITE_OK = 1;
 
 extern DATA data;
 
 #define SBUFFERSIZE 2000
  
 ///  Current configuration directory
-char piaacmcconfdir[300];
+static char piaacmcconfdir[300];
 
 OPTSYST *optsyst;
-int optsystinit = 0;
-long IDx, IDy, IDr, IDPA;
-long ID_CPAfreq;
 
-double FPMSCALEFACTOR = 0.9; // undersize mask in array to avoid edge clipping
+static int optsystinit = 0;
+static long IDx, IDy, IDr, IDPA;
+static long ID_CPAfreq;
+
+static double FPMSCALEFACTOR = 0.9; // undersize mask in array to avoid edge clipping
 
 
 // this makes 20% bandwidth, from 0.55/1.1 to 0.55*1.1
-double LAMBDASTART = 0.5e-6;
-double LAMBDAEND = 0.605e-6;
+static double LAMBDASTART = 0.5e-6;
+static double LAMBDAEND = 0.605e-6;
 #define NBLAMBDA 5
 
 OPTPIAACMCDESIGN *piaacmc;
 
 
-int FORCE_CREATE_Cmodes = 0;
-int CREATE_Cmodes = 0;
-int FORCE_CREATE_Fmodes = 0;
-int CREATE_Fmodes = 0;
+static int FORCE_CREATE_Cmodes = 0;
+static int CREATE_Cmodes = 0;
+static int FORCE_CREATE_Fmodes = 0;
+static int CREATE_Fmodes = 0;
 
-int FORCE_CREATE_fpmzmap = 0;
-int CREATE_fpmzmap = 0;
-int FORCE_CREATE_fpmzt = 0;
-int CREATE_fpmzt = 0;
+static int FORCE_CREATE_fpmzmap = 0;
+static int CREATE_fpmzmap = 0;
+static int FORCE_CREATE_fpmzt = 0;
+static int CREATE_fpmzt = 0;
 
-int FORCE_CREATE_fpmza = 0;
-int CREATE_fpmza;
+static int FORCE_CREATE_fpmza = 0;
+static int CREATE_fpmza;
 
-int FORCE_MAKE_PIAA0shape = 0;
-int MAKE_PIAA0shape = 0;
-int FORCE_MAKE_PIAA1shape = 0;
-int MAKE_PIAA1shape = 0;
+static int FORCE_MAKE_PIAA0shape = 0;
+static int MAKE_PIAA0shape = 0;
+static int FORCE_MAKE_PIAA1shape = 0;
+static int MAKE_PIAA1shape = 0;
 
-int focmMode = -1; // if != -1, compute only impulse response to corresponding zone
-int PIAACMC_FPMsectors = 0; // 1 if focal plane mask should have sectors
+static int focmMode = -1; // if != -1, compute only impulse response to corresponding zone
+static int PIAACMC_FPMsectors = 0; // 1 if focal plane mask should have sectors
 
 
 // declared here for speed
-double evalval;
-long evali;
-long evalk, evalki, evalki1, evalmz, evalii, evalii1, evalii2, evalkv;
-double evalcosp, evalsinp, evalre, evalim, evalre1, evalim1, evalpha;
-double evalv1;
-double PIAACMCSIMUL_VAL;
-double PIAACMCSIMUL_VAL0;
-double PIAACMCSIMUL_VALREF;
+static double evalval;
+static long evali;
+static long evalk, evalki, evalki1, evalmz, evalii, evalii1, evalii2, evalkv;
+static double evalcosp, evalsinp, evalre, evalim, evalre1, evalim1, evalpha;
+static double evalv1;
+static double PIAACMCSIMUL_VAL;
+static double PIAACMCSIMUL_VAL0;
+static double PIAACMCSIMUL_VALREF;
 
 // for minimization
-double *fpmresp_array;
-double *zonez_array;
-double *zonez0_array;
-double *zonez1_array;
-double *zonezbest_array;
-double *dphadz_array;
-double *outtmp_array;
-long NBoptVar;
+static double *fpmresp_array;
+static double *zonez_array;
+static double *zonez0_array;
+static double *zonez1_array;
+static double *zonezbest_array;
+static double *dphadz_array;
+static double *outtmp_array;
+static long NBoptVar;
 static long LOOPCNT = 0;
-long vsize;
-double cval0;
+static long vsize;
+static double cval0;
 
-double CnormFactor = 1.0; // for contrast normalization
-double THICKRANGE = 2.0e-6;
+static double CnormFactor = 1.0; // for contrast normalization
+static double THICKRANGE = 2.0e-6;
 
-int computePSF_FAST_FPMresp = 0;
-int computePSF_ResolvedTarget = 0; // source size = 1e-{0.1*computePSF_ResolvedTarget}
-int computePSF_ResolvedTarget_mode = 0; // 0: source is simulated as 3 points, 1: source is simulated as 6 points
-int PIAACMC_FPM_FASTDERIVATIVES = 0;
+static int computePSF_FAST_FPMresp = 0;
+static int computePSF_ResolvedTarget = 0; // source size = 1e-{0.1*computePSF_ResolvedTarget}
+static int computePSF_ResolvedTarget_mode = 0; // 0: source is simulated as 3 points, 1: source is simulated as 6 points
+static int PIAACMC_FPM_FASTDERIVATIVES = 0;
 
  
-long NBsubPix = 8;
+static long NBsubPix = 8;
 
-double SCORINGTOTAL = 1.0;
-double MODampl = 1.0e-6;
+static double SCORINGTOTAL = 1.0;
+static double MODampl = 1.0e-6;
 
-int SCORINGMASKTYPE = 0;
+static int SCORINGMASKTYPE = 0;
 
-int PIAACMC_save = 1;
-
-
-
-float PIAACMC_MASKRADLD = 0.0; // not initialized yet
-float PIAACMC_MASKregcoeff = 1.0;
-int PIAACMC_fpmtype = 0; // 0 for idealized PIAACMC focal plane mask, 1 for physical focal plane mask
-long PIAACMC_FPMresp_mp;
-long PIAACMC_FPMresp_thread;
+static int PIAACMC_save = 1;
 
 
-long PIAACMC_MAXRINGOPTNB = 100; // maximum number of rings to optimize, from inside out
-long PIAACMC_RINGOPTNB;
 
-int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
+static float PIAACMC_MASKRADLD = 0.0; // not initialized yet
+static float PIAACMC_MASKregcoeff = 1.0;
+static int PIAACMC_fpmtype = 0; // 0 for idealized PIAACMC focal plane mask, 1 for physical focal plane mask
+static long PIAACMC_FPMresp_mp;
+static long PIAACMC_FPMresp_thread;
+
+
+static long PIAACMC_MAXRINGOPTNB = 100; // maximum number of rings to optimize, from inside out
+static long PIAACMC_RINGOPTNB;
+
+static int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
 
 
 
@@ -164,7 +166,7 @@ int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
 
 
 
-int PIAACMCsimul_rings2sectors_cli()
+int_fast8_t PIAACMCsimul_rings2sectors_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)==0)
     {
@@ -178,7 +180,7 @@ int PIAACMCsimul_rings2sectors_cli()
 
 
 
-int PIAACMCsimul_run_cli()
+int_fast8_t PIAACMCsimul_run_cli()
 {
 
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)==0)
@@ -193,7 +195,7 @@ int PIAACMCsimul_run_cli()
 
 
 
-int PIAACMC_FPMresp_rmzones_cli()
+int_fast8_t PIAACMC_FPMresp_rmzones_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)==0)
     {
@@ -207,7 +209,7 @@ int PIAACMC_FPMresp_rmzones_cli()
 
 
 
-int PIAACMC_FPMresp_resample_cli()
+int_fast8_t PIAACMC_FPMresp_resample_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
     {
@@ -220,7 +222,7 @@ int PIAACMC_FPMresp_resample_cli()
 
 
 
-int PIAACMC_FPM_process_cli()
+int_fast8_t PIAACMC_FPM_process_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
     {
@@ -238,7 +240,7 @@ int PIAACMC_FPM_process_cli()
 /**
  * Initializes module
  */
-int init_PIAACMCsimul()
+int_fast8_t init_PIAACMCsimul()
 {
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "PIAACMC system simulation");
@@ -250,7 +252,7 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].info,"turn ring fpm design into sectors");
     strcpy(data.cmd[data.NBcmd].syntax,"<input ring fpm> <zone-ring table> <output sector fpm>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmcsimring2sect");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMCsimul_rings2sectors(const char *IDin_name, const char *sectfname, const char *IDout_name)");
     data.NBcmd++;
 
 
@@ -260,7 +262,7 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].info,"Simulate PIAACMC");
     strcpy(data.cmd[data.NBcmd].syntax,"<configuration index [string]> <mode[int]>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmcsimrun");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int PIAACMCsimul_run(char *confindex, long mode)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int PIAACMCsimul_run(const char *confindex, long mode)");
     data.NBcmd++;
 
 
@@ -270,7 +272,7 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].info,"remove zones in FPM resp matrix");
     strcpy(data.cmd[data.NBcmd].syntax,"<input FPMresp> <output FPMresp> <NBzone removed>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmsimfpmresprm FPMresp FPMrespout 125");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_rmzones(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBzones)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"piaacmsimfpmresprs");
@@ -279,7 +281,7 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].info,"resample FPM resp matrix");
     strcpy(data.cmd[data.NBcmd].syntax,"<input FPMresp> <output FPMresp> <NBlambda> <EvalPts step>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmsimfpmresprs FPMresp FPMrespout 10 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPMresp_resample(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBlambda, long PTstep)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"piaacmcfpmprocess");
@@ -288,7 +290,7 @@ int init_PIAACMCsimul()
     strcpy(data.cmd[data.NBcmd].info,"Quantize FPM");
     strcpy(data.cmd[data.NBcmd].syntax,"<input FPM sags> <sectors ASCII file> <number of exposures> <output FPM sags>");
     strcpy(data.cmd[data.NBcmd].example,"piaacmcfpmprocess");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPM_process(char *FPMsag_name, char *zonescoord_name, long NBexp, char *outname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, long NBexp, const char *outname)");
     data.NBcmd++;
 
 
@@ -340,7 +342,7 @@ void PIAACMCsimul_free( void )
  * @param[out]  IDname  Name of output image
  */
 
-long PIAACMCsimul_mkFPM_zonemap(char *IDname)
+long PIAACMCsimul_mkFPM_zonemap(const char *IDname)
 {
     FILE *fp;
     char fname[500];
@@ -624,7 +626,7 @@ long PIAACMCsimul_mkFPM_zonemap(char *IDname)
 /// @param[in] IDin_name	input image: circular mask design
 /// @param[in] sectfname	text file specifying which zones belong to which rings
 /// @param[out] IDout_name	output sector mask design
-long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_name)
+long PIAACMCsimul_rings2sectors(const char *IDin_name, const char *sectfname, const char *IDout_name)
 {
     long IDin, IDout;
     FILE *fp;
@@ -673,7 +675,7 @@ long PIAACMCsimul_rings2sectors(char *IDin_name, char *sectfname, char *IDout_na
 // makes 1-fpm CA
 // zone numbering starts here from 1 (zone 1 = outermost ring)
 //
-long PIAACMCsimul_mkFocalPlaneMask(char *IDzonemap_name, char *ID_name, int mode, int saveMask)
+long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_name, int mode, int saveMask)
 {
     long ID, IDm;
     long IDz;
@@ -1555,7 +1557,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 // load and fit radial apodization profile
 // modal basis is mk(r) : cos(r*k*M_PI/1.3)
 //
-int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, char *IDapofit_name)
+int PIAACMCsimul_load2DRadialApodization(const char *IDapo_name, float beamradpix, const char *IDapofit_name)
 {
     long NBpts;
     long IDm;
@@ -1654,7 +1656,7 @@ int PIAACMCsimul_load2DRadialApodization(char *IDapo_name, float beamradpix, cha
  * uses radial PIAACMC design to initialize PIAA optics shapes and focal plane mask
  */
 
-int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name)
+int PIAACMCsimul_init_geomPIAA_rad(const char *IDapofit_name)
 {
     long i, ii, k;
     double *pup0;
@@ -2063,7 +2065,7 @@ int PIAACMCsimul_init_geomPIAA_rad(char *IDapofit_name)
 //
 // make PIAA OPD screens from radial sag profile
 //
-int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, char *ID_PIAAM1_name)
+int PIAACMCsimul_mkPIAAMshapes_from_RadSag(const char *fname, const char *ID_PIAAM0_name, const char *ID_PIAAM1_name)
 {
     FILE *fp;
     long size;
@@ -2203,7 +2205,7 @@ int PIAACMCsimul_mkPIAAMshapes_from_RadSag(char *fname, char *ID_PIAAM0_name, ch
 
 
 // transmits between rin and rout
-long PIAAsimul_mkSimpleLyotStop(char *ID_name, float rin, float rout)
+long PIAAsimul_mkSimpleLyotStop(const char *ID_name, float rin, float rout)
 {
     long size;
     long size2;
@@ -4273,7 +4275,7 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
 
 
-int PIAAsimul_savepiaacmcconf(char *dname)
+int PIAAsimul_savepiaacmcconf(const char *dname)
 {
     char command[1000];
     int r;
@@ -4344,7 +4346,7 @@ int PIAAsimul_savepiaacmcconf(char *dname)
 
 
 
-int PIAAsimul_loadpiaacmcconf(char *dname)
+int PIAAsimul_loadpiaacmcconf(const char *dname)
 {
     char command[1000];
     int r;
@@ -4455,7 +4457,7 @@ int PIAAsimul_loadpiaacmcconf(char *dname)
 /// (2) keeps pixels for which onaxisLight < v0
 /// selects the mask that achieves the strongest on-axis rejection while satifying the throughput constraint
 
-long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_name, double throughput, char *IDout_name)
+long PIAACMCsimul_mkLyotMask(const char *IDincoh_name, const char *IDmc_name, const char *IDzone_name, double throughput, const char *IDout_name)
 {
     long ID, ID1;
     long IDmc, IDincoh, IDzone;
@@ -4596,7 +4598,7 @@ long PIAACMCsimul_mkLyotMask(char *IDincoh_name, char *IDmc_name, char *IDzone_n
 ///
 /// propagate complex amplitude image into intensity map cube
 ///
-long PIAACMCsimul_CA2propCubeInt(char *IDamp_name, char *IDpha_name, float zmin, float zmax, long NBz, char *IDout_name)
+long PIAACMCsimul_CA2propCubeInt(const char *IDamp_name, const char *IDpha_name, float zmin, float zmax, long NBz, const char *IDout_name)
 {
     long IDout;
     long l;
@@ -4677,7 +4679,7 @@ long PIAACMCsimul_CA2propCubeInt(char *IDamp_name, char *IDpha_name, float zmin,
 /// make Lyot stops using off-axis light minimums
 /// finds minumum flux level in intensity data cube
 
-long PIAACMCsimul_optimizeLyotStop_OAmin(char *IDincohc_name)
+long PIAACMCsimul_optimizeLyotStop_OAmin(const char *IDincohc_name)
 {
     long IDincohc;
     
@@ -4735,7 +4737,7 @@ long PIAACMCsimul_optimizeLyotStop_OAmin(char *IDincohc_name)
 /// @param[in] FluxTOT  total flux in current plane
 /// @param[in] FluxLim   max flux allowed from star
 ///
-double PIAACMCsimul_optimizeLyotStop(char *IDamp_name, char *IDpha_name, char *IDincohc_name, float zmin, float zmax, double throughput, long NBz, long NBmasks)
+double PIAACMCsimul_optimizeLyotStop(const char *IDamp_name, const char *IDpha_name, const char *IDincohc_name, float zmin, float zmax, double throughput, long NBz, long NBmasks)
 {
     // initial guess places Lyot stops regularly from zmin to zmax
     // light propagates from zmin to zmax
@@ -5262,7 +5264,7 @@ double f_evalmask (const gsl_vector *v, void *params)
 
 
 // remove outer zones to FPMresp
-long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long NBzones)
+long PIAACMC_FPMresp_rmzones(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBzones)
 {
     long ID, IDout;
     long ii, jj, kk;
@@ -5296,7 +5298,7 @@ long PIAACMC_FPMresp_rmzones(char *FPMresp_in_name, char *FPMresp_out_name, long
 
 
 // compress FPMresp to smaller number of lambda and points
-long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, long NBlambda, long PTstep)
+long PIAACMC_FPMresp_resample(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBlambda, long PTstep)
 {
     long ID = -1;
     long IDout = -1;
@@ -5398,7 +5400,7 @@ long PIAACMC_FPMresp_resample(char *FPMresp_in_name, char *FPMresp_out_name, lon
  *
  */
 
-int PIAACMCsimul_exec(char *confindex, long mode)
+int PIAACMCsimul_exec(const char *confindex, long mode)
 {
     long NBparam;
     FILE *fp;
@@ -8619,7 +8621,7 @@ int PIAACMCsimul_exec(char *confindex, long mode)
 /*
     entry point for PIAACMCsimul from the cli
 */
-int PIAACMCsimul_run(char *confindex, long mode)
+int PIAACMCsimul_run(const char *confindex, long mode)
 {
     long i;
     FILE *fp;
@@ -9015,7 +9017,7 @@ int PIAACMCsimul_run(char *confindex, long mode)
 
 
 
-long PIAACMC_FPM_process(char *FPMsag_name, char *zonescoord_name, long NBexp, char *outname)
+long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, long NBexp, const char *outname)
 {
 	long IDin;
 	long NBzones;

@@ -115,13 +115,13 @@ typedef struct {
 
 
 
-int init_OptSystProp();
+int_fast8_t init_OptSystProp();
 
 
 
-int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop, int sharedmem);
+int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp_name, const char *IDin_pha_name, const char *IDout_amp_name, const char *IDout_pha_name, double zprop, int sharedmem);
 
-int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir, int sharedmem);
+int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, const char *savedir, int sharedmem);
 
 
 #endif

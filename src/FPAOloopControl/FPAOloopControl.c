@@ -1,4 +1,6 @@
-#include <fitsio.h>
+#define _GNU_SOURCE
+
+#include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -45,6 +47,8 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 #include <pthread.h>
 
 
+#include <fitsio.h>
+
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -85,17 +89,17 @@ extern DATA data;
 
 
 
-long NB_FPAOloopcontrol = 1;
-long FPLOOPNUMBER = 0; // current loop index
-int FPAOloopcontrol_meminit = 0;
-int FPAOlooploadconf_init = 0;
+static long NB_FPAOloopcontrol = 1;
+static long FPLOOPNUMBER = 0; // current loop index
+static int FPAOloopcontrol_meminit = 0;
+static int FPAOlooploadconf_init = 0;
 
 #define FPAOconfname "/tmp/FPAOconf.shm"
 FPAOLOOPCONTROL_CONF *FPAOconf; // configuration - this can be an array
 
-float *arrayftmp;
-unsigned short *arrayutmp;
-int FPcamReadInit = 0;
+static float *arrayftmp;
+static unsigned short *arrayutmp;
+static int FPcamReadInit = 0;
 
 
 
@@ -104,20 +108,20 @@ int FPcamReadInit = 0;
 
 
 
-long FPaoconfID_wfsim = -1;
-long FPaoconfID_imWFS0 = -1;
-long FPaoconfID_imWFS1 = -1;
-int FPWFSatype;
-long FPaoconfID_wfsdark = -1;
+static long FPaoconfID_wfsim = -1;
+static long FPaoconfID_imWFS0 = -1;
+static long FPaoconfID_imWFS1 = -1;
+static int FPWFSatype;
+static long FPaoconfID_wfsdark = -1;
 
-long FPaoconfID_dmC = -1;
-long FPaoconfID_dmRM = -1;
-
-
+static long FPaoconfID_dmC = -1;
+static long FPaoconfID_dmRM = -1;
 
 
-int FPAO_loadcreateshm_log = 0; // 1 if results should be logged in ASCII file
-FILE *FPAO_loadcreateshm_fplog;
+
+
+static int FPAO_loadcreateshm_log = 0; // 1 if results should be logged in ASCII file
+static FILE *FPAO_loadcreateshm_fplog;
 
 
 
@@ -139,67 +143,29 @@ FILE *FPAO_loadcreateshm_fplog;
 
 
 
-int FPAOloopControl_loadconfigure_cli()
-{
-  if(CLI_checkarg(1,2)==0)
-    {
+int_fast8_t FPAOloopControl_loadconfigure_cli() {
+  if(CLI_checkarg(1,2)==0) {
       FPAOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1, 10);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;   }  else    return 1;}
 
-
-
-
-
-
-
-int FPAOloopControl_showparams_cli()
-{
+int_fast8_t FPAOloopControl_showparams_cli(){
 	FPAOloopControl_showparams(FPLOOPNUMBER);
 }
 
-
-
-
-int FPAOloopControl_set_hardwlatency_frame_cli()
-{
-  if(CLI_checkarg(1,1)==0)
-    {
+int_fast8_t FPAOloopControl_set_hardwlatency_frame_cli() {
+  if(CLI_checkarg(1,1)==0)    {
       FPAOloopControl_set_hardwlatency_frame(data.cmdargtoken[1].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
-
-
-int FPAOloopControl_MeasureResp_level1_cli()
-{
-	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)
-		{
+int_fast8_t FPAOloopControl_MeasureResp_level1_cli(){
+	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0)		{
 			FPAOloopControl_MeasureResp_level1(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
-			return 0;
-		}
-	else
-		return 1;
-}
+			return 0;		}	else		return 1;}
 
-
-
-int FPAOloopControl_MakeLinComb_seq_cli()
-{
-	if(CLI_checkarg(1,5)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)==0)
-		{
+int_fast8_t FPAOloopControl_MakeLinComb_seq_cli(){
+	if(CLI_checkarg(1,5)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)==0)		{
 			FPAOloopControl_MakeLinComb_seq(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string);
-			return 0;
-		}
-	else
-		return 1;
-}
+			return 0;		}	else		return 1;}
 
 //long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name)
 
@@ -230,57 +196,15 @@ int init_FPAOloopControl()
         FPLOOPNUMBER = 0;
 
 
-    strcpy(data.cmd[data.NBcmd].key,"FPaolloadconf");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = FPAOloopControl_loadconfigure_cli;
-    strcpy(data.cmd[data.NBcmd].info,"load FPAO loop configuration");
-    strcpy(data.cmd[data.NBcmd].syntax,"<loop #>");
-    strcpy(data.cmd[data.NBcmd].example,"FPaolloadconf 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int FPAOloopControl_loadconfigure(long loopnb, 1, 10)");
-    data.NBcmd++;
+	RegisterCLIcommand("FPaolloadconf", __FILE__, FPAOloopControl_loadconfigure_cli, "load FPAO loop configuration", "<loop #>", "FPaolloadconf 1", "int FPAOloopControl_loadconfigure(long loopnb, 1, 10)");
 
+	RegisterCLIcommand("FPaoconfshow", __FILE__, FPAOloopControl_showparams_cli, "show FPAOconf parameters", "no argument", "FPaoconfshow", "int FPAOloopControl_showparams(long loop)");
 
-    strcpy(data.cmd[data.NBcmd].key,"FPaoconfshow");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = FPAOloopControl_showparams_cli;
-    strcpy(data.cmd[data.NBcmd].info,"show FPAOconf parameters");
-    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-    strcpy(data.cmd[data.NBcmd].example,"FPaoconfshow");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int FPAOloopControl_showparams(long loop)");
-    data.NBcmd++;
+	RegisterCLIcommand("FPaolsethlat", __FILE__, FPAOloopControl_set_hardwlatency_frame_cli, "set FPAO hardware latency", "<hardware latency [frame]>", "FPaolsethlat 0.7", "int FPAOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
 
+	RegisterCLIcommand("FPaoMeasRespl1", __FILE__, FPAOloopControl_MeasureResp_level1_cli, "measure focal plane response, level 1", "<ampl [um]> <delay frame [long]> <delayus [long]> <NBave> <NB frame excl> <initMode> <NBiter>", "FPaoMeasRespl1 0.05 1 231 5 1 0 10", "long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter)");
 
-    strcpy(data.cmd[data.NBcmd].key,"FPaolsethlat");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = FPAOloopControl_set_hardwlatency_frame_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set FPAO hardware latency");
-    strcpy(data.cmd[data.NBcmd].syntax,"<hardware latency [frame]>");
-    strcpy(data.cmd[data.NBcmd].example,"FPaolsethlat 0.7");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int FPAOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"FPaoMeasRespl1");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = FPAOloopControl_MeasureResp_level1_cli;
-    strcpy(data.cmd[data.NBcmd].info,"measure focal plane response, level 1");
-    strcpy(data.cmd[data.NBcmd].syntax,"<ampl [um]> <delay frame [long]> <delayus [long]> <NBave> <NB frame excl> <initMode> <NBiter>");
-    strcpy(data.cmd[data.NBcmd].example,"FPaoMeasRespl1 0.05 1 231 5 1 0 10");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long FPAOloopControl_MeasureResp_level1(float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, int FPAOinitMode, long NBiter)");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"FPaomklincombs");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = FPAOloopControl_MakeLinComb_seq_cli;
-    strcpy(data.cmd[data.NBcmd].info,"make linear comb sequence of DM pokes from set of masters");
-    strcpy(data.cmd[data.NBcmd].syntax,"<master cube (optional)> <xsize> <ysize> <NBmaster> <N (1+2N steps)> <outCube>");
-    strcpy(data.cmd[data.NBcmd].example,"FPaomklincombs masterC 50 50 3 2 outC");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name)");
-    data.NBcmd++;
-
-
+	RegisterCLIcommand("FPaomklincombs", __FILE__, FPAOloopControl_MakeLinComb_seq_cli, "make linear comb sequence of DM pokes from set of masters", "<master cube (optional)> <xsize> <ysize> <NBmaster> <N (1+2N steps)> <outCube>", "FPaomklincombs masterC 50 50 3 2 outC", "long FPAOloopControl_MakeLinComb_seq(char *IDpC_name, long xsize0, long ysize0, long NBmaster0, long N, char *IDout_name)");
 
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "FP AO loop control");

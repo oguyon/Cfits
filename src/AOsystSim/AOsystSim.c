@@ -1,13 +1,16 @@
-#include <fitsio.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
 
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -76,110 +79,50 @@ OPTSYST *optsystsim;
 // 5: string
 
 
-int AOsystSim_simpleAOfilter_cli()
-{
+int_fast8_t AOsystSim_simpleAOfilter_cli(){
   if(CLI_checkarg(1,3)+CLI_checkarg(1,3)==0)
     AOsystSim_simpleAOfilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+  return(0);}
 
-  return(0);
-}
-
-
-
-int AOsystSim_fitTelPup_cli()
-{
+int_fast8_t AOsystSim_fitTelPup_cli(){
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     AOsystSim_fitTelPup(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+  return(0);}
 
-  return(0);
-}
-
-
-
-
-int AOsystSim_mkWF_cli()
-{
-  if(CLI_checkarg(1,5)==0)
-    {
+int_fast8_t AOsystSim_mkWF_cli(){
+  if(CLI_checkarg(1,5)==0)    {
         AOsystSim_mkWF(data.cmdargtoken[1].val.string);
         return 0;
-    }
-    else
-        return 1;
-}
+    }    else        return 1;}
 
-int AOsystSim_PyrWFS_cli()
-{
-  if(CLI_checkarg(1,5)==0)
-    {
+int_fast8_t AOsystSim_PyrWFS_cli(){
+  if(CLI_checkarg(1,5)==0)    {
         AOsystSim_PyrWFS(data.cmdargtoken[1].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0;    }    else        return 1;}
 
-int AOsystSim_DM_cli()
-{
-  if(CLI_checkarg(1,5)==0)
-    {
+int_fast8_t AOsystSim_DM_cli(){
+  if(CLI_checkarg(1,5)==0)    {
         AOsystSim_DM(data.cmdargtoken[1].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0;    }    else        return 1;}
 
-int AOsystSim_coroLOWFS_cli()
-{
-  if(CLI_checkarg(1,5)==0)
-    {
+int_fast8_t AOsystSim_coroLOWFS_cli(){
+  if(CLI_checkarg(1,5)==0)    {
         AOsystSim_coroLOWFS(data.cmdargtoken[1].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0;    }    else        return 1;}
 
-
-
-
-
-
-int AOsystSim_run_cli()
-{
-  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
-    {
+int_fast8_t AOsystSim_run_cli(){
+  if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)    {
         AOsystSim_run(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
-
-int AOsystSim_FPWFS_mkprobes_CLI()
-{
-    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,2)==0)
-    {
+        return 0;    }    else        return 1;}
+        
+int_fast8_t AOsystSim_FPWFS_mkprobes_CLI(){
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,2)==0)    {
         AOsystSim_FPWFS_mkprobes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}
+        return 0;    }    else        return 1;}
 
-
-int AOsystSim_FPWFS_sensitivityAnalysis_cli()
-{
-     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
-    {   
-        AOsystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
-        return 0;
-    }
-    else
-        return 1;      
-}
-
+int_fast8_t AOsystSim_FPWFS_sensitivityAnalysis_cli(){
+     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)    {   
+        AOsystSim_FPWFS_sensitivityAnalysis(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);        return 0;    }    else        return 1;      }
 
 
 
@@ -195,7 +138,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"AO simple filtering");
     strcpy(data.cmd[data.NBcmd].syntax,"<input WF> <output WF>");
     strcpy(data.cmd[data.NBcmd].example,"AOsimfilt wfin wfout");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"AOsystsfitpup");
@@ -204,7 +147,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"fit telescope pupil");
     strcpy(data.cmd[data.NBcmd].syntax,"tel pupil file");
     strcpy(data.cmd[data.NBcmd].example,"AOsystfitpup");
-    strcpy(data.cmd[data.NBcmd].Ccall,"AOsystSim_fitTelPup(char *ID_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"AOsystSim_fitTelPup(const char *ID_name)");
     data.NBcmd++;
 
 
@@ -216,7 +159,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"make WF series for AO simulation");
     strcpy(data.cmd[data.NBcmd].syntax,"<configuration file name>");
     strcpy(data.cmd[data.NBcmd].example,"AOsystmkWF WF.conf");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_mkWF(char *CONF_FNAME)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_mkWF(const char *CONF_FNAME)");
     data.NBcmd++;
 	
     strcpy(data.cmd[data.NBcmd].key,"AOsimPyrWFS");
@@ -225,7 +168,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"run pyramid WFS for AO simulation");
     strcpy(data.cmd[data.NBcmd].syntax,"<configuration file name>");
     strcpy(data.cmd[data.NBcmd].example,"AOsimPyrWFS PyrWFS.conf");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_PyrWFS(char *CONF_FNAME)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_PyrWFS(const char *CONF_FNAME)");
     data.NBcmd++;
 	
     strcpy(data.cmd[data.NBcmd].key,"AOsimDM");
@@ -234,7 +177,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"run DM for AO simulation");
     strcpy(data.cmd[data.NBcmd].syntax,"<configuration file name>");
     strcpy(data.cmd[data.NBcmd].example,"AOsimDM PyrWFS.conf");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_DM(char *CONF_FNAME)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_DM(const char *CONF_FNAME)");
     data.NBcmd++;
 	
     strcpy(data.cmd[data.NBcmd].key,"AOsimcoroLOWFS");
@@ -243,7 +186,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"run coro and LOWFS for AO simulation");
     strcpy(data.cmd[data.NBcmd].syntax,"<configuration file name>");
     strcpy(data.cmd[data.NBcmd].example,"AOsimcoroLOWFS LOWFS.conf");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_coroLOWFS(char *CONF_FNAME)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_coroLOWFS(const char *CONF_FNAME)");
     data.NBcmd++;
 	
 	
@@ -273,7 +216,7 @@ int init_AOsystSim()
     strcpy(data.cmd[data.NBcmd].info,"make AB probes for focal plane sensing and coherence measurement");
     strcpy(data.cmd[data.NBcmd].syntax, "AOsystmkABprobes prA prB 50 50 0.7 0.1 0.7 0.1 1");
     strcpy(data.cmd[data.NBcmd].example,"AOsystmkABprobes");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOsystSim_FPWFS_mkprobes(const char *IDprobeA_name, const char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom)");
     data.NBcmd++;
  
     strcpy(data.cmd[data.NBcmd].key,"AOsystFPWFSan");
@@ -306,7 +249,7 @@ int init_AOsystSim()
  */
 
 
-int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
+int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name)
 {
     long IDin, IDmask, IDout, IDdm, IDwfe;
     long *sizearray;
@@ -550,7 +493,7 @@ int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name)
 
 // all sizes in actuators on DM
 
-long AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx)
+long AOsystSim_mkTelPupDM(const char *ID_name, long msize, double xc, double yc, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx)
 {
     long ID, IDz;
     long ii,  jj;
@@ -667,7 +610,7 @@ long AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double yc, doubl
 
 /** fits DM illumination to pupil geometry */
 
-long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
+long AOsystSim_fitTelPup(const char *ID_name, const char *IDtelpup_name)
 {
     FILE *fp;
     long ID, ID1, IDt;
@@ -924,7 +867,7 @@ long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name)
  *
  */
 
-int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
+int AOsystSim_DMshape(const char *IDdmctrl_name, const char *IDdmifc_name, const char *IDdm_name)
 {
     long IDdmctrl, IDdmifc, IDdm;
     long dmsizex, dmsizey, DMnbact;
@@ -1031,7 +974,7 @@ int AOsystSim_DMshape(char *IDdmctrl_name, char *IDdmifc_name, char *IDdm_name)
 
 
 
-int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modampl, long modnbpts)
+int AOsystSim_WFSsim_Pyramid(const char *inWFc_name, const char *outWFSim_name, double modampl, long modnbpts)
 {
     long ID_inWFc, ID_outWFSim;
     long arraysize;
@@ -1203,7 +1146,7 @@ int AOsystSim_WFSsim_Pyramid(char *inWFc_name, char *outWFSim_name, double modam
 
 //AOsystSim_runWFS(2, "aosimwfsim");
 
-int AOsystSim_runWFS(long index, char *IDout_name)
+int AOsystSim_runWFS(long index, const char *IDout_name)
 {
     long cnt0;
     long IDinamp;
@@ -1249,7 +1192,7 @@ int AOsystSim_runWFS(long index, char *IDout_name)
 
 
 
-int AOsystSim_mkWF_mkCONF(char *fname)
+int AOsystSim_mkWF_mkCONF(const char *fname)
 {
     FILE *fp;
 
@@ -1308,7 +1251,7 @@ int AOsystSim_mkWF_mkCONF(char *fname)
 
 
 
-int AOsystSim_mkWF(char *CONF_FNAME)
+int AOsystSim_mkWF(const char *CONF_FNAME)
 {
     FILE *fp;
     FILE *fp1;
@@ -2031,7 +1974,7 @@ int AOsystSim_mkWF(char *CONF_FNAME)
 
 
 
-int AOsystSim_PyrWFS_mkCONF(char *fname)
+int AOsystSim_PyrWFS_mkCONF(const char *fname)
 {
     FILE *fp;
 
@@ -2073,7 +2016,7 @@ int AOsystSim_PyrWFS_mkCONF(char *fname)
 
 
 
-int AOsystSim_PyrWFS(char *CONF_FNAME)
+int AOsystSim_PyrWFS(const char *CONF_FNAME)
 {
     FILE *fp;
     char fname[200];
@@ -2419,7 +2362,7 @@ int AOsystSim_PyrWFS(char *CONF_FNAME)
 //
 // from DM dispacements to 2D DM map
 // 
-int AOsystSim_DM_mkCONF(char *fname)
+int AOsystSim_DM_mkCONF(const char *fname)
 {
     FILE *fp;
 
@@ -2458,7 +2401,7 @@ int AOsystSim_DM_mkCONF(char *fname)
 
 
 
-int AOsystSim_DM(char *CONF_FNAME)
+int AOsystSim_DM(const char *CONF_FNAME)
 {
     FILE *fp;
     char fname[200];
@@ -2826,7 +2769,7 @@ int AOsystSim_DM(char *CONF_FNAME)
 //
 // from DM dispacements to 2D DM map
 // 
-int AOsystSim_coroLOWFS_mkCONF(char *fname)
+int AOsystSim_coroLOWFS_mkCONF(const char *fname)
 {
     FILE *fp;
 
@@ -2878,7 +2821,7 @@ int AOsystSim_coroLOWFS_mkCONF(char *fname)
 
 
 
-int AOsystSim_coroLOWFS(char *CONF_FNAME)
+int AOsystSim_coroLOWFS(const char *CONF_FNAME)
 {
     FILE *fp;
     char fname[200];
@@ -3751,7 +3694,7 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus)
 
 
 
-int AOsystSim_extremeAO_contrast_sim()
+int_fast8_t AOsystSim_extremeAO_contrast_sim()
 {
     EXAOSIMCONF *exaosimconf;
     long CN2layer;
@@ -4467,7 +4410,7 @@ long AOsystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double c
 //
 //
 //
-int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom)
+int AOsystSim_FPWFS_mkprobes(const char *IDprobeA_name, const char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom)
 {
     long IDdmA, IDdmB;
     double CPAstep = 0.1;

@@ -1,4 +1,4 @@
-#include <fitsio.h> 
+#include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multifit.h>
+
+#include <fitsio.h> 
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
@@ -72,7 +74,7 @@ extern DATA data;
 
 
 
-int LINARFILTERPRED_LoadASCIIfiles_cli()
+int_fast8_t LINARFILTERPRED_LoadASCIIfiles_cli()
 {
 	if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,5)==0)
 		{
@@ -83,7 +85,7 @@ int LINARFILTERPRED_LoadASCIIfiles_cli()
 }
 
 
-int LINARFILTERPRED_SelectBlock_cli()
+int_fast8_t LINARFILTERPRED_SelectBlock_cli()
 {
 
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
@@ -95,7 +97,7 @@ int LINARFILTERPRED_SelectBlock_cli()
 }
 
 
-int LINARFILTERPRED_Build_LinPredictor_cli()
+int_fast8_t LINARFILTERPRED_Build_LinPredictor_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,3)+CLI_checkarg(7,2)+CLI_checkarg(8,1)==0)
 		LINARFILTERPRED_Build_LinPredictor(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.string, 1, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numf);
@@ -105,17 +107,8 @@ int LINARFILTERPRED_Build_LinPredictor_cli()
   return(0);
 }
 
-/*int LINARFILTERPRED_Apply_LinPredictor_RT_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
-		LINARFILTERPRED_Apply_LinPredictor_RT(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
-	else
-		return 1;
-		
-	return(0);
-}*/
 
-int LINARFILTERPRED_Apply_LinPredictor_cli()
+int_fast8_t LINARFILTERPRED_Apply_LinPredictor_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,3)==0)
 		LINARFILTERPRED_Apply_LinPredictor(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.string);
@@ -125,7 +118,7 @@ int LINARFILTERPRED_Apply_LinPredictor_cli()
   return(0);
 }
 
-int LINARFILTERPRED_ScanGain_cli()
+int_fast8_t LINARFILTERPRED_ScanGain_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
     LINARFILTERPRED_ScanGain(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf);
@@ -136,8 +129,7 @@ int LINARFILTERPRED_ScanGain_cli()
 }
 
 
-//long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha);
-int LINARFILTERPRED_PF_updatePFmatrix_cli()
+int_fast8_t LINARFILTERPRED_PF_updatePFmatrix_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,1)==0)
 		LINARFILTERPRED_PF_updatePFmatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
@@ -148,8 +140,7 @@ int LINARFILTERPRED_PF_updatePFmatrix_cli()
 }
 
 
-//long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name);
-int LINARFILTERPRED_PF_RealTimeApply_cli()
+int_fast8_t LINARFILTERPRED_PF_RealTimeApply_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,1)+CLI_checkarg(12,2)==0)
 		LINARFILTERPRED_PF_RealTimeApply(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numf, data.cmdargtoken[12].val.numl);
@@ -164,7 +155,7 @@ int LINARFILTERPRED_PF_RealTimeApply_cli()
 
 
 
-int init_linARfilterPred()
+int_fast8_t init_linARfilterPred()
 {
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "linear auto-regressive predictive filters");
@@ -180,7 +171,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"load ascii files to PF input");
     strcpy(data.cmd[data.NBcmd].syntax,"<tstart> <dt> <NBpt> <NBfr> <output>");
     strcpy(data.cmd[data.NBcmd].example,"pfloadascii 200.0 0.001 10000 4 pfin");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, char *IDoutname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, const char *IDoutname)");
     data.NBcmd++;
 
 
@@ -190,7 +181,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"select modes belonging to a block");
     strcpy(data.cmd[data.NBcmd].syntax,"<input mode values> <block map> <selected block> <output>");
     strcpy(data.cmd[data.NBcmd].example,"mselblock modevals blockmap 23 blk23modevals");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name, long blkNB, const char *IDout_name)");
     data.NBcmd++;
 
 
@@ -200,7 +191,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"Make linear auto-regressive filter");
     strcpy(data.cmd[data.NBcmd].syntax,"<input data> <PForder> <PFlag> <SVDeps> <regularization param> <output filters> <LOOPmode> <LOOPgain>");
     strcpy(data.cmd[data.NBcmd].example,"mkARpfilt indata 5 2.4 0.0001 0.0 outPF 0 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF, int outMode, int LOOPmode, float LOOPgain)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, const char *IDoutPF, int outMode, int LOOPmode, float LOOPgain)");
     data.NBcmd++;
 
   /*  strcpy(data.cmd[data.NBcmd].key,"applyPfiltRT");
@@ -209,7 +200,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"Apply real-time linear predictive filter");
     strcpy(data.cmd[data.NBcmd].syntax,"<input data> <predictor filter> <output>");
     strcpy(data.cmd[data.NBcmd].example,"applyPfiltRT indata Pfilt outPF");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_Apply_LinPredictor_RT(const char *IDfilt_name, const char *IDin_name, const char *IDout_name)");
     data.NBcmd++;
 */
 
@@ -219,7 +210,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"Apply linear auto-regressive filter");
     strcpy(data.cmd[data.NBcmd].syntax,"<input data> <predictor> <PFlag> <prediction>");
     strcpy(data.cmd[data.NBcmd].example,"applyARpfilt indata Pfilt 2.4 outPF");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_Apply_LinPredictor(char *IDfilt_name, char *IDin_name, float PFlag, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_Apply_LinPredictor(const char *IDfilt_name, const char *IDin_name, float PFlag, const char *IDout_name)");
     data.NBcmd++;
 
 	
@@ -239,7 +230,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"update predictive filter matrix");
     strcpy(data.cmd[data.NBcmd].syntax,"<input 3D predictor> <output 2D matrix> <update coeff>");
     strcpy(data.cmd[data.NBcmd].example,"linARPFMupdate outPF PFMat 0.1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_name, float alpha)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"linARapplyRT");
@@ -248,7 +239,7 @@ int init_linARfilterPred()
     strcpy(data.cmd[data.NBcmd].info,"Real-time apply predictive filter");
     strcpy(data.cmd[data.NBcmd].syntax,"<input open loop coeffs stream> <offset index> <trigger semaphore index> <2D predictive matrix> <filter order> <output stream> <nbGPU> <loop> <NBiter> <savemode> <timelag> <PFindex>");
     strcpy(data.cmd[data.NBcmd].example,"linARapplyRT modevalOL 0 2 PFmat 5 outPFmodeval 0 0 0 0 1.8 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalOL_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag, long PFindex)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalOL_name, long IndexOffset, int semtrig, const char *IDPFM_name, long NBPFstep, const char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag, long PFindex)");
     data.NBcmd++;
 
     // add atexit functions here
@@ -291,7 +282,7 @@ int NBwords(const char sentence[ ])
 // NBpt per file
 // NBfr files
 //
-long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, char *IDoutname)
+long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, const char *IDoutname)
 {
 	FILE *fp;
 	long NBfiles;
@@ -474,7 +465,7 @@ long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NB
 
 
 // select block on first dimension 
-long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB, char *IDout_name)
+long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name, long blkNB, const char *IDout_name)
 {
 	long IDin, IDblknb;
 	long naxis, axis;
@@ -580,7 +571,7 @@ long LINARFILTERPRED_SelectBlock(char *IDin_name, char *IDblknb_name, long blkNB
 // if LOOPmode = 1, operate in a loop, and re-run filter computation everytime IDin_name changes
 //
 
-long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain)
+long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, const char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain)
 {
     long IDin, IDmatA, IDout, IDinmask, IDoutmask;
     long nbspl; // number of samples
@@ -1085,7 +1076,7 @@ long LINARFILTERPRED_Build_LinPredictor(char *IDin_name, long PForder, float PFl
 // 
 // filter can be smaller than input telemetry but needs to include contiguous pixels at the beginning of the input telemetry
 //
-long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, char *IDout_name)
+long LINARFILTERPRED_Apply_LinPredictor_RT(const char *IDfilt_name, const char *IDin_name, const char *IDout_name)
 {
 	long IDout;
 	long IDin;
@@ -1201,7 +1192,7 @@ long LINARFILTERPRED_Apply_LinPredictor_RT(char *IDfilt_name, char *IDin_name, c
 //
 
 
-long LINARFILTERPRED_Apply_LinPredictor(char *IDfilt_name, char *IDin_name, float PFlag, char *IDout_name)
+long LINARFILTERPRED_Apply_LinPredictor(const char *IDfilt_name, const char *IDin_name, float PFlag, const char *IDout_name)
 {
 	long IDout;
 	long IDin;
@@ -1457,7 +1448,7 @@ float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag)
 //
 // IDPF_name and IDPFM_name should be pre-loaded
 //
-long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float alpha)
+long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_name, float alpha)
 {
 	long IDPF, IDPFM;
 	long inmode, NBmode, outmode, NBmode2;
@@ -1523,7 +1514,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(char *IDPF_name, char *IDPFM_name, float 
 //	tlag is only used if SAVEMODE = 2	
 //  used outmask to identify outputs 
 //
-long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, int semtrig, char *IDPFM_name, long NBPFstep, char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag, long PFindex)
+long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOffset, int semtrig, const char *IDPFM_name, long NBPFstep, const char *IDPFout_name, int nbGPU, long loop, long NBiter, int SAVEMODE, float tlag, long PFindex)
 {
 	long IDmodevalIN;
 	long NBmodeIN, NBmodeIN0, NBmodeOUT, mode;
@@ -1540,8 +1531,8 @@ long LINARFILTERPRED_PF_RealTimeApply(char *IDmodevalIN_name, long IndexOffset, 
 	int *GPUsetPF;
 	char GPUsetfname[200];
 	int gpuindex;
-    int status;
-    int GPUstatus[100];
+    int_fast8_t status;
+    int_fast8_t GPUstatus[100];
     FILE *fp;
 	int ret;
 

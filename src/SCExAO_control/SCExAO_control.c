@@ -1,4 +1,4 @@
-#include <fitsio.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -15,6 +15,9 @@
 #include <sched.h>
 #include <ncurses.h>
 #include <semaphore.h>
+
+
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
@@ -45,34 +48,34 @@
 
 extern DATA data;
 
-float PcamPixScaleAct = 0.7*10000.0; // pyramid re-image actuators: step per pixel
+static float PcamPixScaleAct = 0.7*10000.0; // pyramid re-image actuators: step per pixel
 
 /// CONFIGURATION
 /// CONFIGURATION
-char WFScam_name[200];
-long long WFScnt = 0;
+static char WFScam_name[200];
+static long long WFScnt = 0;
 
-long pXsize = 120;
-long pYsize = 120;
+static long pXsize = 120;
+static long pYsize = 120;
 
-long SCExAO_DM_STAGE_Xpos = 0;
-long SCExAO_DM_STAGE_Ypos = 0;
+static long SCExAO_DM_STAGE_Xpos = 0;
+static long SCExAO_DM_STAGE_Ypos = 0;
 
-long SCExAO_Pcam_Xpos0 = 60000;
-long SCExAO_Pcam_Ypos0 = 62000;
-long SCExAO_Pcam_Xpos = 60000;
-long SCExAO_Pcam_Ypos = 62000;
-long SCExAO_Pcam_Range = 50000;
+static long SCExAO_Pcam_Xpos0 = 60000;
+static long SCExAO_Pcam_Ypos0 = 62000;
+static long SCExAO_Pcam_Xpos = 60000;
+static long SCExAO_Pcam_Ypos = 62000;
+static long SCExAO_Pcam_Range = 50000;
 
-float SCExAO_PZT_STAGE_Xpos = -5.0;
-float SCExAO_PZT_STAGE_Xpos_ref = -5.0;
-float SCExAO_PZT_STAGE_Xpos_min = -7.0;
-float SCExAO_PZT_STAGE_Xpos_max = -3.0;
+static float SCExAO_PZT_STAGE_Xpos = -5.0;
+static float SCExAO_PZT_STAGE_Xpos_ref = -5.0;
+static float SCExAO_PZT_STAGE_Xpos_min = -7.0;
+static float SCExAO_PZT_STAGE_Xpos_max = -3.0;
 
-float SCExAO_PZT_STAGE_Ypos = -5.0;
-float SCExAO_PZT_STAGE_Ypos_ref = -5.0;
-float SCExAO_PZT_STAGE_Ypos_min = -7.0;
-float SCExAO_PZT_STAGE_Ypos_max = -3.0;
+static float SCExAO_PZT_STAGE_Ypos = -5.0;
+static float SCExAO_PZT_STAGE_Ypos_ref = -5.0;
+static float SCExAO_PZT_STAGE_Ypos_min = -7.0;
+static float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 
 
 
@@ -87,7 +90,7 @@ float SCExAO_PZT_STAGE_Ypos_max = -3.0;
 // 5: string
 
 
-int SCExAOcontrol_mkSegmentModes_cli()
+int_fast8_t SCExAOcontrol_mkSegmentModes_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -100,7 +103,7 @@ int SCExAOcontrol_mkSegmentModes_cli()
 }
 
 
-int SCExAOcontrol_Average_image_cli()
+int_fast8_t SCExAOcontrol_Average_image_cli()
 {
     if(CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
     {
@@ -114,7 +117,7 @@ int SCExAOcontrol_Average_image_cli()
 
 
 
-int SCExAOcontrol_mv_DMstage_cli()
+int_fast8_t SCExAOcontrol_mv_DMstage_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0)
     {
@@ -127,7 +130,7 @@ int SCExAOcontrol_mv_DMstage_cli()
 
 
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
+int_fast8_t SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
     {
@@ -139,7 +142,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli()
 }
 
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
+int_fast8_t SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 {
     if(CLI_checkarg(1,4)==0)
     {
@@ -151,7 +154,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli()
 }
 
 
-int SCExAOcontrol_PyramidWFS_Pcenter_cli()
+int_fast8_t SCExAOcontrol_PyramidWFS_Pcenter_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,1)==0)
     {
@@ -163,7 +166,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter_cli()
 }
 
 
-int SCExAOcontrol_Pyramid_flattenRefWF_cli()
+int_fast8_t SCExAOcontrol_Pyramid_flattenRefWF_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
     {
@@ -175,7 +178,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF_cli()
 }
 
 
-int SCExAOcontrol_optPSF_cli()
+int_fast8_t SCExAOcontrol_optPSF_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0)
     {
@@ -190,7 +193,7 @@ int SCExAOcontrol_optPSF_cli()
 
 
 
-int SCExAOcontrol_SAPHIRA_cam_process_cli()
+int_fast8_t SCExAOcontrol_SAPHIRA_cam_process_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -202,7 +205,7 @@ int SCExAOcontrol_SAPHIRA_cam_process_cli()
 }
 
 
-int SCExAOcontrol_vib_ComputeCentroid_cli()
+int_fast8_t SCExAOcontrol_vib_ComputeCentroid_cli()
 {
 	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
     {
@@ -215,7 +218,7 @@ int SCExAOcontrol_vib_ComputeCentroid_cli()
 
 
 
-int SCExAOcontrol_vib_mergeData_cli()
+int_fast8_t SCExAOcontrol_vib_mergeData_cli()
 {
 	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
     {
@@ -235,7 +238,7 @@ int SCExAOcontrol_vib_mergeData_cli()
 
 
 
-int init_SCExAO_control()
+int_fast8_t init_SCExAO_control()
 {
 
     strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -249,7 +252,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"make segments modes from dm map");
     strcpy(data.cmd[data.NBcmd].syntax,"<dmmap> <segmap>");
     strcpy(data.cmd[data.NBcmd].example,"scexaomksegmodes dmmap segmodes");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_mkSegmentModes(const char *IDdmmap_name, const char *IDout_name)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
@@ -258,7 +261,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
     strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd> <output image> <semaphore index>");
     strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100 outave 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDnameout, long semindex)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
@@ -276,7 +279,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"move TT to center pyrWFS");
     strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname> <XposStart> <YposStart>");
     strcpy(data.cmd[data.NBcmd].example,"scexaopywfsttalign wfscam -5.5 -4.5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name, float XposStart, float YposStart);");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposStart, float YposStart);");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
@@ -294,7 +297,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"center pyrWFS pupil");
     strcpy(data.cmd[data.NBcmd].syntax,"<wfsimname> <pup radius [float]>");
     strcpy(data.cmd[data.NBcmd].example,"scexaopypcent wfsim 25.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad)");
     data.NBcmd++;
 
 
@@ -304,7 +307,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"flatten  pyrWFS");
     strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname> <NB zern> <ampl>");
     strcpy(data.cmd[data.NBcmd].example,"scexaopyflatten wfsim 20 0.05");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float ampl0);");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_Pyramid_flattenRefWF(const char *WFScam_name, long zimaxmax, float ampl0);");
     data.NBcmd++;
 
 
@@ -314,7 +317,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"optimize PSF shape");
     strcpy(data.cmd[data.NBcmd].syntax,"<wfscamname> <NB modes> <ampl>");
     strcpy(data.cmd[data.NBcmd].example,"scexaoPSFopt wfsim 20 0.05");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_optPSF(char *WFScam_name, long zimaxmax, float alpha)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_optPSF(const char *WFScam_name, long zimaxmax, float alpha)");
     data.NBcmd++;
      
 
@@ -324,7 +327,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info,"process saphira camera images");
     strcpy(data.cmd[data.NBcmd].syntax,"<input> <output>");
     strcpy(data.cmd[data.NBcmd].example,"scexaosaphiraproc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutname)");
     data.NBcmd++;
 
 
@@ -334,7 +337,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info, "compute centroid of image stream");
     strcpy(data.cmd[data.NBcmd].syntax, "<input stream> <dark image> <output stream>");
     strcpy(data.cmd[data.NBcmd].example, "scexaostreamcentr");
-    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark_name, const char *IDout_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key, "scexaovibmerge");
@@ -343,7 +346,7 @@ int init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].info, "merge accelerometer and position data");
     strcpy(data.cmd[data.NBcmd].syntax, "<acc stream> <pos stream> <output stream> <mode>");
     strcpy(data.cmd[data.NBcmd].example, "scexaovibmerge acc pos out 0");
-    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name, int mode)");
+    strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_mergeData(const char *IDacc_name, const char *IDttpos_name, const char *IDout_name, int mode)");
     data.NBcmd++;
 
 
@@ -359,7 +362,7 @@ int init_SCExAO_control()
 //
 // optional : use dmmask
 //
-long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
+long SCExAOcontrol_mkSegmentModes(const char *IDdmmap_name, const char *IDout_name)
 {
 	long IDdmmap, IDout;
 	long ii, jj;
@@ -657,7 +660,7 @@ long SCExAOcontrol_mkSegmentModes(char *IDdmmap_name, char *IDout_name)
 
 
 
-long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long semindex)
+long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDnameout, long semindex)
 {
     long ID;
     long IDdark;
@@ -665,7 +668,7 @@ long SCExAOcontrol_Average_image(char *imname, long NbAve, char *IDnameout, long
     int slice;
     long k;
     long xsize, ysize, xysize;
-    char *ptrv;
+    const char *ptrv;
     unsigned short *arrayutmp;
     float *arraytmp;
     long ii;
@@ -860,7 +863,7 @@ int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)
 
 /** auto aligns tip-tilt by equalizing fluxes between quadrants */
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(const char *WFScam_name)
 {
     long ID;
     long xsize, ysize;
@@ -924,7 +927,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(char *WFScam_name)
 
 
 
-int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name, float XposStart, float YposStart)
+int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposStart, float YposStart)
 {
     FILE *fp;
     long ID;
@@ -1180,7 +1183,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(char *WFScam_name, float XposStart, fl
 
 
 /** assumes imref has been loaded */
-int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
+int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
 {
     FILE *fp;
     long ID, IDc;
@@ -1372,7 +1375,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(char *WFScam_name)
 
 /// pupil centering tool
 /// watch pcenter stream
-int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
+int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float poffset)
 {
     long IDmask;
     long IDwfs;
@@ -1703,7 +1706,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(char *IDwfsname, float prad, float poffset)
 
 
 
-int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float ampl0)
+int SCExAOcontrol_Pyramid_flattenRefWF(const char *WFScam_name, long zimaxmax, float ampl0)
 {
     long zimax;
     long zi;
@@ -1863,7 +1866,7 @@ int SCExAOcontrol_Pyramid_flattenRefWF(char *WFScam_name, long zimaxmax, float a
 
 
 
-int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
+int SCExAOcontrol_optPSF(const char *WFScam_name, long NBmodesmax, float alpha)
 {
 	FILE *fp;
     long NBmodes;
@@ -2148,7 +2151,7 @@ int SCExAOcontrol_optPSF(char *WFScam_name, long NBmodesmax, float alpha)
  * full linear regression, up to saturation level
  *
  * */
-int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
+int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutname)
 {
     long IDout;
     long IDin;
@@ -2285,7 +2288,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(char *IDinname, char *IDoutname)
 
 
 
-long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char *IDout_name)
+long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark_name, const char *IDout_name)
 {
     long IDout;
     long IDin, IDdark;
@@ -2438,7 +2441,7 @@ long SCExAOcontrol_vib_ComputeCentroid(char *IDin_name, char *IDdark_name, char 
 // mode = 2: 1200 points acquisition, TT X calib
 // mode = 3: 1200 points acquisition, TT Y calib
 
-long SCExAOcontrol_vib_mergeData(char *IDacc_name, char *IDttpos_name, char *IDout_name, int mode)
+long SCExAOcontrol_vib_mergeData(const char *IDacc_name, const char *IDttpos_name, const char *IDout_name, int mode)
 {
 	long IDout;
 	long IDacc;

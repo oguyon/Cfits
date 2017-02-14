@@ -3,7 +3,7 @@
 #
 
 m4_define([PROGNAME], cfitsTK)
-m4_define([PVERSION], 3.3.02)
+m4_define([PVERSION], 3.4.00)
 
 AC_INIT([PROGNAME], [PVERSION], [oliv.guyon@gmail.com], [PROGNAME])
 

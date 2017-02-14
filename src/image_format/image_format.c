@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,10 +96,10 @@ typedef struct {
 
 
 
-//int IMAGE_FORMAT_2Dim_to_ASCII(char *IDname, char *fname)
+//int IMAGE_FORMAT_2Dim_to_ASCII(const char *IDname, const char *fname)
 
 
-int image_writeBMP_auto_cli()
+int_fast8_t image_writeBMP_auto_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0)
     {
@@ -112,7 +113,7 @@ int image_writeBMP_auto_cli()
 
 
 
-int IMAGE_FORMAT_im_to_ASCII_cli()
+int_fast8_t IMAGE_FORMAT_im_to_ASCII_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -123,7 +124,8 @@ int IMAGE_FORMAT_im_to_ASCII_cli()
     return 1;
 }
 
-int CR2toFITS_cli()
+
+int_fast8_t CR2toFITS_cli()
 {
   //  if(CLI_checkarg(1, 3)+CLI_checkarg(2, 3))
   CR2toFITS(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
@@ -132,7 +134,7 @@ int CR2toFITS_cli()
 }
 
 
-int IMAGE_FORMAT_FITS_to_ushortintbin_lock_cli()
+int_fast8_t IMAGE_FORMAT_FITS_to_ushortintbin_lock_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -143,7 +145,8 @@ int IMAGE_FORMAT_FITS_to_ushortintbin_lock_cli()
     return 1;
 }
 
-int IMAGE_FORMAT_FITS_to_floatbin_lock_cli()
+
+int_fast8_t IMAGE_FORMAT_FITS_to_floatbin_lock_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
     {
@@ -155,7 +158,7 @@ int IMAGE_FORMAT_FITS_to_floatbin_lock_cli()
 }
 
 
-int IMAGE_FORMAT_read_binary32f_cli()
+int_fast8_t IMAGE_FORMAT_read_binary32f_cli()
 {
   if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
     {
@@ -167,7 +170,7 @@ int IMAGE_FORMAT_read_binary32f_cli()
 }
 
 
-int IMAGE_FORMAT_extract_RGGBchan_cli()
+int_fast8_t IMAGE_FORMAT_extract_RGGBchan_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0)
     {
@@ -178,7 +181,7 @@ int IMAGE_FORMAT_extract_RGGBchan_cli()
     return 1;
 }
 
-int IMAGE_FORMAT_loadCR2toFITSRGB_cli()
+int_fast8_t IMAGE_FORMAT_loadCR2toFITSRGB_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)==0)
     {
@@ -193,10 +196,10 @@ int IMAGE_FORMAT_loadCR2toFITSRGB_cli()
 
 
 
-//int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)
+//int loadCR2toFITSRGB(const char *fnameCR2, const char *fnameFITSr, const char *fnameFITSg, const char *fnameFITSb)
 
 
-int init_image_format()
+int_fast8_t init_image_format()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "conversion between image format, I/O");
@@ -208,7 +211,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"convert image file to ASCII");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <output ASCII file>");
   strcpy(data.cmd[data.NBcmd].example,"im2ascii im im.txt");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int IMAGE_FORMAT_im_to_ASCII(char *IDname, char *fname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int IMAGE_FORMAT_im_to_ASCII(const char *IDname, const char *fname)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"saveBMP");
@@ -217,7 +220,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"write RGB image as BMP - auto scaling");
   strcpy(data.cmd[data.NBcmd].syntax,"<red image> <green image> <blue image> <output BMP file name>");
   strcpy(data.cmd[data.NBcmd].example,"saveBMP imr img imb im.bmp");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int image_writeBMP_auto(char *IDnameR, char *IDnameG, char *IDnameB, char *outname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int image_writeBMP_auto(const char *IDnameR, const char *IDnameG, const char *IDnameB, const char *outname)");
   data.NBcmd++;
   
   strcpy(data.cmd[data.NBcmd].key,"cr2tofits");
@@ -226,7 +229,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"convert cr2 file to fits");
   strcpy(data.cmd[data.NBcmd].syntax,"<input CR2 file> <output FITS file>");
   strcpy(data.cmd[data.NBcmd].example,"cr2tofits im01.CR2 im01.fits");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int CR2toFITS(char *fnameCR2, char *fnameFITS)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int CR2toFITS(const char *fnameCR2, const char *fnameFITS)");
   data.NBcmd++;
  
   strcpy(data.cmd[data.NBcmd].key,"writeushortintlock");
@@ -235,7 +238,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"write unsigned short int with file locking");
   strcpy(data.cmd[data.NBcmd].syntax,"str1 is image, str2 is binary file");
   strcpy(data.cmd[data.NBcmd].example,"writeushortintlock im im.bin");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_ushortintbin_lock( const char *IDname, const char *fname)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"writefloatlock");
@@ -244,7 +247,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"write float with file locking");
   strcpy(data.cmd[data.NBcmd].syntax,"str1 is image, str2 is binary file");
   strcpy(data.cmd[data.NBcmd].example,"writefloatlock im im.bin");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_floatbin_lock( char *IDname, char *fname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_FITS_to_floatbin_lock( const char *IDname, const char *fname)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"readb32fim");
@@ -253,7 +256,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"read 32-bit float RAW image");
   strcpy(data.cmd[data.NBcmd].syntax,"<bin file> <xsize> <ysize> <output image>");
   strcpy(data.cmd[data.NBcmd].example,"readb32fim im.bin xsize ysize im");
-  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_read_binary32f(char *fname, long xsize, long ysize, char *IDname)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_FORMAT_read_binary32f(const char *fname, long xsize, long ysize, const char *IDname)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"extractRGGBchan");
@@ -262,7 +265,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"extract RGGB channels from color image");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <imR> <imG1> <imG2> <imB>");
   strcpy(data.cmd[data.NBcmd].example,"extractRGGBchan im imR imG1 imG2 imB");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG1_name, char *IDoutG2_name, char *IDoutB_name)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int image_format_extract_RGGBchan(const char *ID_name, const char *IDoutR_name, const char *IDoutG1_name, const char *IDoutG2_name, const char *IDoutB_name)");
   data.NBcmd++;
 
   strcpy(data.cmd[data.NBcmd].key,"loadcr2torgb");
@@ -271,7 +274,7 @@ int init_image_format()
   strcpy(data.cmd[data.NBcmd].info,"load CR2 file into R G B images");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image> <imR> <imG> <imB>");
   strcpy(data.cmd[data.NBcmd].example,"loadcr2torgb im imR imG imB");
-  strcpy(data.cmd[data.NBcmd].Ccall,"loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)");
+  strcpy(data.cmd[data.NBcmd].Ccall,"loadCR2toFITSRGB(const char *fnameCR2, const char *fnameFITSr, const char *fnameFITSg, const char *fnameFITSb)");
   data.NBcmd++;
 
 
@@ -284,7 +287,7 @@ int init_image_format()
 
 
 
-int IMAGE_FORMAT_im_to_ASCII(char *IDname, char *foutname)
+int IMAGE_FORMAT_im_to_ASCII(const char *IDname, const char *foutname)
 {
     long ii;
     long k;
@@ -372,14 +375,14 @@ uint32 setUint32(uint32 x)
 	each take on values between 0 and 255, inclusive.
   
    The input to the function is:
-	char *filename:					A string representing the filename that will be written
+	const char *filename:					A string representing the filename that will be written
 	uint32 width:					The width, in pixels, of the bitmap
 	uint32 height:					The height, in pixels, of the bitmap
-	unsigned char *image:				The image data, where each pixel is 3 unsigned chars (r, g, b)
+	unsigned const char *image:				The image data, where each pixel is 3 unsigned chars (r, g, b)
 
    Written by Greg Slabaugh (slabaugh@ece.gatech.edu), 10/19/00
 */
-uint32 write24BitBmpFile(char *filename, uint32 width, uint32 height, unsigned char *image)
+uint32 write24BitBmpFile(const char *filename, uint32 width, uint32 height, unsigned char *image)
 {
 	BITMAPINFOHEADER bmpInfoHeader;
 	BITMAPFILEHEADER bmpFileHeader;
@@ -476,7 +479,7 @@ uint32 write24BitBmpFile(char *filename, uint32 width, uint32 height, unsigned c
 }
 
 
-int image_writeBMP_auto(char *IDnameR, char *IDnameG, char *IDnameB, char *outname)
+int image_writeBMP_auto(const char *IDnameR, const char *IDnameG, const char *IDnameB, const char *outname)
 {
     long IDR,IDG,IDB;
     uint32 width;
@@ -514,7 +517,7 @@ int image_writeBMP_auto(char *IDnameR, char *IDnameG, char *IDnameB, char *outna
     return(0);
 }
 
-int image_writeBMP(char *IDnameR, char *IDnameG, char *IDnameB, char *outname)
+int image_writeBMP(const char *IDnameR, const char *IDnameG, const char *IDnameB, const char *outname)
 {
     long IDR,IDG,IDB;
     uint32 width;
@@ -569,7 +572,7 @@ long getImageInfo(FILE* inputFile, long offset, int numberOfChars)
 // ASCII format:
 // ii jj value
 // one line per pixel
-long read_ASCIIimage(char *filename, char *ID_name, long xsize, long ysize)
+long read_ASCIIimage(const char *filename, const char *ID_name, long xsize, long ysize)
 {
   long ID;
   FILE *fp;
@@ -596,7 +599,7 @@ long read_ASCIIimage(char *filename, char *ID_name, long xsize, long ysize)
 
 // ASCII format:
 // value
-long read_ASCIIimage1(char *filename, char *ID_name, long xsize, long ysize)
+long read_ASCIIimage1(const char *filename, const char *ID_name, long xsize, long ysize)
 {
   long ID;
   FILE *fp;
@@ -632,7 +635,7 @@ long read_ASCIIimage1(char *filename, char *ID_name, long xsize, long ysize)
 
 
 
-int read_BMPimage(char* filename, char *IDname_R, char *IDname_G, char *IDname_B)
+int read_BMPimage(char* filename, const char *IDname_R, const char *IDname_G, const char *IDname_B)
 {
   FILE				*bmpInput, *rasterOutput;
   sImage			originalImage;
@@ -712,7 +715,7 @@ int read_BMPimage(char* filename, char *IDname_R, char *IDname_G, char *IDname_B
 
 // reads PGM images (16 bit only)
 // written to read output of "dcraw -t 0 -D -4 xxx.CR2" into FITS
-int read_PGMimage(char *fname, char *ID_name)
+int read_PGMimage(const char *fname, const char *ID_name)
 {
     FILE *fp;
     char line1[100];
@@ -763,7 +766,7 @@ int read_PGMimage(char *fname, char *ID_name)
 
 
 // assumes dcraw is installed
-int CR2toFITS(char *fnameCR2, char *fnameFITS)
+int CR2toFITS(const char *fnameCR2, const char *fnameFITS)
 {
     char command[200];
     FILE *fp;
@@ -827,7 +830,7 @@ int CR2toFITS(char *fnameCR2, char *fnameFITS)
 
 
 // assumes dcraw is installed
-long loadCR2(char *fnameCR2, char *IDname)
+long loadCR2(const char *fnameCR2, const char *IDname)
 {
   char command[200];
   FILE *fp;
@@ -853,7 +856,7 @@ long loadCR2(char *fnameCR2, char *IDname)
 // load all images matching strfilter + .CR2
 // return number of images converted
 // FITS image name = CR2 image name with .CR2 -> .fits
-long CR2toFITS_strfilter(char *strfilter)
+long CR2toFITS_strfilter(const char *strfilter)
 {
   long i;
   long cnt = 0;
@@ -895,7 +898,7 @@ long CR2toFITS_strfilter(char *strfilter)
 // separates a single RGB image into its 4 channels
 // output written in im_r, im_g1, im_g2 and im_b
 //
-int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG1_name, char *IDoutG2_name, char *IDoutB_name)
+int image_format_extract_RGGBchan(const char *ID_name, const char *IDoutR_name, const char *IDoutG1_name, const char *IDoutG2_name, const char *IDoutB_name)
 {
   long ID;
   long Xsize, Ysize;
@@ -975,7 +978,7 @@ int image_format_extract_RGGBchan(char *ID_name, char *IDoutR_name, char *IDoutG
 //
 // assembles 4 channels into a single image (inverse operation of routine above)
 //
-int image_format_reconstruct_from_RGGBchan(char *IDr_name, char *IDg1_name, char *IDg2_name, char *IDb_name, char *IDout_name)
+int image_format_reconstruct_from_RGGBchan(const char *IDr_name, const char *IDg1_name, const char *IDg2_name, const char *IDb_name, const char *IDout_name)
 {
   long ID;
   long IDr, IDg1, IDg2, IDb;
@@ -1045,7 +1048,7 @@ int image_format_reconstruct_from_RGGBchan(char *IDr_name, char *IDg1_name, char
 // IMPORTANT: input will be modified
 // Sampling factor : 0=full resolution (slow), 1=half resolution (fast), 2=quarter resolution (very fast)
 // Fast mode does not reject bad pixels
-int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *ID_name_g, char *ID_name_b, int SamplFactor)
+int convert_rawbayerFITStorgbFITS_simple(const char *ID_name, const char *ID_name_r, const char *ID_name_g, const char *ID_name_b, int SamplFactor)
 {
   long ID;
   long Xsize,Ysize;
@@ -1599,7 +1602,7 @@ int convert_rawbayerFITStorgbFITS_simple(char *ID_name, char *ID_name_r, char *I
 
 
 // assumes dcraw is installed
-int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *fnameFITSb)
+int loadCR2toFITSRGB(const char *fnameCR2, const char *fnameFITSr, const char *fnameFITSg, const char *fnameFITSb)
 {
   FILE *fp;
   char command[200];
@@ -1679,7 +1682,7 @@ int loadCR2toFITSRGB(char *fnameCR2, char *fnameFITSr, char *fnameFITSg, char *f
 // this is a more fancy algorithm that tries to match the data with an model with min information content
 // works well for fields with lots of stars
 /*
-int convert_rawbayerFITStorgbFITS_mininfocontent(char *ID_name)
+int convert_rawbayerFITStorgbFITS_mininfocontent(const char *ID_name)
 {
   long ID;
   long Xsize,Ysize;
@@ -2430,7 +2433,7 @@ int CR2tomov()
 // gain: in e-/ADU
 // alpha: 0 - 1, sets quantization noise at alpha x overall noise
 // bias: image bias in ADU
-long IMAGE_FORMAT_requantize(char *IDin_name, char *IDout_name, double alpha, double ron, double gain, double bias)
+long IMAGE_FORMAT_requantize(const char *IDin_name, const char *IDout_name, double alpha, double ron, double gain, double bias)
 {
   long IDin, IDout;
   long ii;
@@ -2456,7 +2459,7 @@ long IMAGE_FORMAT_requantize(char *IDin_name, char *IDout_name, double alpha, do
   return(IDout);
 }
 
-long IMAGE_FORMAT_dequantize(char *IDin_name, char *IDout_name, double alpha, double ron, double gain, double bias)
+long IMAGE_FORMAT_dequantize(const char *IDin_name, const char *IDout_name, double alpha, double ron, double gain, double bias)
 {
   long IDin, IDout;
   long ii;
@@ -2485,7 +2488,7 @@ long IMAGE_FORMAT_dequantize(char *IDin_name, char *IDout_name, double alpha, do
   return(IDout);
 }
 
-long IMAGE_FORMAT_read_binary16(char *fname, long xsize, long ysize, char *IDname)
+long IMAGE_FORMAT_read_binary16(const char *fname, long xsize, long ysize, const char *IDname)
 {
   FILE *fp;
   char *buffer;
@@ -2529,7 +2532,7 @@ long IMAGE_FORMAT_read_binary16(char *fname, long xsize, long ysize, char *IDnam
       {
 	
 	if(i<fileLen+1)
-	  v1 = (long) (((unsigned char *)buffer)[i]) +  (long) (256*((unsigned char *)buffer)[i+1]);
+	  v1 = (long) (((unsigned const char *)buffer)[i]) +  (long) (256*((unsigned const char *)buffer)[i+1]);
 	data.image[ID].array.F[jj*xsize+ii] = (float) v1;
 	i += 2;
       }
@@ -2540,7 +2543,7 @@ long IMAGE_FORMAT_read_binary16(char *fname, long xsize, long ysize, char *IDnam
 }
 
 
-long IMAGE_FORMAT_read_binary32f(char *fname, long xsize, long ysize, char *IDname)
+long IMAGE_FORMAT_read_binary32f(const char *fname, long xsize, long ysize, const char *IDname)
 {
   FILE *fp;
   float *buffer;
@@ -2596,7 +2599,7 @@ long IMAGE_FORMAT_read_binary32f(char *fname, long xsize, long ysize, char *IDna
 
 
 
-long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname )
+long IMAGE_FORMAT_FITS_to_ushortintbin_lock( const char *IDname, const char *fname )
 {
   long ID;
   long xsize, ysize;
@@ -2641,7 +2644,7 @@ long IMAGE_FORMAT_FITS_to_ushortintbin_lock( char *IDname, char *fname )
   return(0);
 } 
 
-long IMAGE_FORMAT_FITS_to_floatbin_lock(  char *IDname, char *fname )
+long IMAGE_FORMAT_FITS_to_floatbin_lock(  const char *IDname, const char *fname )
 {
   long ID;
   long xsize, ysize;

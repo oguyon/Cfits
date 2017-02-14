@@ -1,7 +1,9 @@
-#include <string.h>
+#include <stdint.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdlib.h>
+
+#include <string.h>
 
 #include "CLIcore.h"
 
@@ -37,7 +39,7 @@ double FWHM_MEASURED;
 
 
 
-int PSF_sequence_measure_cli()
+int_fast8_t PSF_sequence_measure_cli()
 {
   if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0)
     {
@@ -52,7 +54,7 @@ int PSF_sequence_measure_cli()
 
 
 
-int init_psf()
+int_fast8_t init_psf()
 {
 		
   strcpy(data.module[data.NBmodule].name,__FILE__);
@@ -66,7 +68,7 @@ int init_psf()
   strcpy(data.cmd[data.NBcmd].info,"measure PSF sequence");
   strcpy(data.cmd[data.NBcmd].syntax,"<input image cube> <estimated PSF size> <output file>");
   strcpy(data.cmd[data.NBcmd].example,"psfseqmeas imc 20.0 outimc.txt");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int PSF_sequence_measure(char *IDin_name, float PSFsizeEst, char *outfname)"); 
+  strcpy(data.cmd[data.NBcmd].Ccall,"int PSF_sequence_measure(const char *IDin_name, float PSFsizeEst, const char *outfname)"); 
   data.NBcmd++;
 
 }
@@ -76,7 +78,7 @@ int init_psf()
 // make a chromatic PSF, assuming an achromatic amplitude and OPD in the pupil
 // the phase is secified for the wavelength lambda0
 // lamda goes from lambda0*coeff1 to lambda0*coeff2
-long PSF_makeChromatPSF(char *amp_name, char *pha_name, float coeff1, float coeff2, long NBstep, float ApoCoeff, char *out_name)
+long PSF_makeChromatPSF(const char *amp_name, const char *pha_name, float coeff1, float coeff2, long NBstep, float ApoCoeff, const char *out_name)
 {
     long ID_out;
     long xsize,ysize;
@@ -167,7 +169,7 @@ long PSF_makeChromatPSF(char *amp_name, char *pha_name, float coeff1, float coef
 
 
 
-int PSF_finddiskcent(char *ID_name, float rad, float *result)
+int PSF_finddiskcent(const char *ID_name, float rad, float *result)
 {
   // minimizes flux outside disk
   long ii;
@@ -238,7 +240,7 @@ int PSF_finddiskcent(char *ID_name, float rad, float *result)
 
 
 
-int PSF_finddiskcent_alone(char *ID_name, float rad)
+int PSF_finddiskcent_alone(const char *ID_name, float rad)
 {
   float *result;
 
@@ -250,7 +252,7 @@ int PSF_finddiskcent_alone(char *ID_name, float rad)
 }
 
 
-int PSF_measurePhotocenter(char *ID_name)
+int PSF_measurePhotocenter(const char *ID_name)
 {
   int ID;
   long ii,jj;
@@ -284,7 +286,7 @@ int PSF_measurePhotocenter(char *ID_name)
 
 
 
-float measure_enc_NRJ(char *ID_name, float xcenter, float ycenter, float fraction)
+float measure_enc_NRJ(const char *ID_name, float xcenter, float ycenter, float fraction)
 {
   int ID;
   long ii,jj;
@@ -343,7 +345,7 @@ float measure_enc_NRJ(char *ID_name, float xcenter, float ycenter, float fractio
 
 
 
-int measure_enc_NRJ1(char *ID_name, float xcenter, float ycenter, char *filename)
+int measure_enc_NRJ1(const char *ID_name, float xcenter, float ycenter, const char *filename)
 {
   int ID;
   long ii,jj;
@@ -407,7 +409,7 @@ int measure_enc_NRJ1(char *ID_name, float xcenter, float ycenter, char *filename
 
 
 /* measures the FWHM of a "perfect" PSF */
-float measure_FWHM(char *ID_name, float xcenter, float ycenter, float step, long nb_step)
+float measure_FWHM(const char *ID_name, float xcenter, float ycenter, float step, long nb_step)
 {
   int ID;
   long ii,jj;
@@ -478,7 +480,7 @@ float measure_FWHM(char *ID_name, float xcenter, float ycenter, float step, long
 
 
 /* finds a PSF center with no a priori position information */
-int center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_size)
+int center_PSF(const char *ID_name, double *xcenter, double *ycenter, long box_size)
 {
   long ID;
   long n3; /* effective box size. =box_size if the star is not at the edge of the image field */
@@ -566,7 +568,7 @@ int center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_size)
 
 
 /* finds a PSF center with no a priori position information */
-int fast_center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_size)
+int fast_center_PSF(const char *ID_name, double *xcenter, double *ycenter, long box_size)
 {
   int ID;
   long n3; /* effective box size. =box_size if the star is not at the edge of the image field */
@@ -659,7 +661,7 @@ int fast_center_PSF(char *ID_name, double *xcenter, double *ycenter, long box_si
 
 
 
-int center_PSF_alone(char *ID_name)
+int center_PSF_alone(const char *ID_name)
 {
   int ID;
   double *xcenter;
@@ -701,7 +703,7 @@ int center_PSF_alone(char *ID_name)
 
 
 /* this simple routine finds the center of a PSF by barycenter technique */
-int center_star(char *ID_in_name, double *x_star, double *y_star)
+int center_star(const char *ID_in_name, double *x_star, double *y_star)
 {
   int ID_in;
   long ii,jj;
@@ -763,7 +765,7 @@ int center_star(char *ID_in_name, double *x_star, double *y_star)
 
 
 
-float get_sigma(char *ID_name, float x, float y, char *options)
+float get_sigma(const char *ID_name, float x, float y, const char *options)
 {
   int ID,i;
   long naxes[2],ii,jj;
@@ -955,7 +957,7 @@ float get_sigma(char *ID_name, float x, float y, char *options)
 
 
 
-float get_sigma_alone(char *ID_name)
+float get_sigma_alone(const char *ID_name)
 {
   double *xcenter;
   double *ycenter;
@@ -1010,7 +1012,7 @@ float get_sigma_alone(char *ID_name)
 
 
 
-int extract_psf(char *ID_name, char *out_name, long size)
+int extract_psf(const char *ID_name, const char *out_name, long size)
 {
   long ID;
   double *xcenter;
@@ -1052,7 +1054,7 @@ int extract_psf(char *ID_name, char *out_name, long size)
 
 
 
-long extract_psf_photcent(char *ID_name, char *out_name, long size)
+long extract_psf_photcent(const char *ID_name, const char *out_name, long size)
 {
   long IDin,IDout;
   double totx,toty,tot;
@@ -1100,7 +1102,7 @@ long extract_psf_photcent(char *ID_name, char *out_name, long size)
 
 
 
-int psf_variance(char *ID_out_m, char *ID_out_v, char *options)
+int psf_variance(const char *ID_out_m, const char *ID_out_v, const char *options)
 {
   int Nb_files;
   int file_nb;
@@ -1183,7 +1185,7 @@ int psf_variance(char *ID_out_m, char *ID_out_v, char *options)
 
 
 
-int combine_2psf(char *ID_name, char *ID_name1, char *ID_name2, float radius, float index)
+int combine_2psf(const char *ID_name, const char *ID_name1, const char *ID_name2, float radius, float index)
 {
   long ID1,ID2,ID;
   long naxes[2];
@@ -1210,7 +1212,7 @@ int combine_2psf(char *ID_name, char *ID_name1, char *ID_name2, float radius, fl
 
 
 
-float psf_measure_SR(char *ID_name, float factor, float r1, float r2)
+float psf_measure_SR(const char *ID_name, float factor, float r1, float r2)
 {
   long ID;
   long Csize = 128;
@@ -1339,7 +1341,7 @@ float psf_measure_SR(char *ID_name, float factor, float r1, float r2)
 // simple lucky imaging
 // input must be co-centered flux normalized cube 
 // algorithm will rank frames according to the total flux inside a radius r_pix
-long PSF_coaddbest(char *IDcin_name, char *IDout_name, float r_pix)
+long PSF_coaddbest(const char *IDcin_name, const char *IDout_name, float r_pix)
 {
   long IDcin, IDout;
   long IDmask;
@@ -1396,7 +1398,7 @@ long PSF_coaddbest(char *IDcin_name, char *IDout_name, float r_pix)
 // if timing file exists, use it for output
 // PSFsizeEst: estimated size of PSF (sigma)
 //
-int PSF_sequence_measure(char *IDin_name, float PSFsizeEst, char *outfname)
+int PSF_sequence_measure(const char *IDin_name, float PSFsizeEst, const char *outfname)
 {
 	long IDin;
 	long xsize, ysize, xysize, zsize;
@@ -1405,7 +1407,7 @@ int PSF_sequence_measure(char *IDin_name, float PSFsizeEst, char *outfname)
 	double *xcenter;
 	double *ycenter;
 	long boxsize;
-	char *ptr;
+	const char *ptr;
 	long kk;
 	char fname[200];
 	

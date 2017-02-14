@@ -6,12 +6,12 @@ double AirMixture_N(double lambda, double dens_N2, double dens_O2, double dens_A
 float AtmosphereModel_stdAtmModel_N(float alt, float lambdaum, int mode);
 double AtmosphereModel_H2O_Saturation(double T);
 
-int AtmosphereModel_save_stdAtmModel(char *fname);
-int AtmosphereModel_build_stdAtmModel(char *fname);
-int AtmosphereModel_load_stdAtmModel(char *fname);
+int AtmosphereModel_save_stdAtmModel(const char *fname);
+int AtmosphereModel_build_stdAtmModel(const char *fname);
+int AtmosphereModel_load_stdAtmModel(const char *fname);
 
 
-int AtmosphereModel_Create_from_CONF(char *CONFFILE, float slambda);
+int AtmosphereModel_Create_from_CONF(const char *CONFFILE, float slambda);
 
 
 double AtmosphereModel_RefractionPath(double lambda, double Zangle, int WritePath);
@@ -243,7 +243,7 @@ void ghp7 (struct nrlmsise_input *input, \
 #endif
 
 
-int init_AtmosphereModel();
+int_fast8_t init_AtmosphereModel();
 
 
 

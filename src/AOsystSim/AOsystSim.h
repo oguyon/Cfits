@@ -3,24 +3,24 @@
 
 
 
-int AOsystSim_simpleAOfilter(char *IDin_name, char *IDout_name);
+int AOsystSim_simpleAOfilter(const char *IDin_name, const char *IDout_name);
 
-long AOsystSim_mkTelPupDM(char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx);
+long AOsystSim_mkTelPupDM(const char *ID_name, long msize, double xc, double xy, double rin, double rout, double pupPA, double spiderPA, double spideroffset, double spiderthick, double stretchx);
 
-long AOsystSim_fitTelPup(char *ID_name, char *IDtelpup_name);
+long AOsystSim_fitTelPup(const char *ID_name, const char *IDtelpup_name);
 
 int init_AOsystSim();
 
 
-int AOsystSim_mkWF(char *CONF_FNAME);
-int AOsystSim_PyrWFS(char *CONF_FNAME);
-int AOsystSim_DM(char *CONF_FNAME);
-int AOsystSim_coroLOWFS(char *CONF_FNAME);
+int AOsystSim_mkWF(const char *CONF_FNAME);
+int AOsystSim_PyrWFS(const char *CONF_FNAME);
+int AOsystSim_DM(const char *CONF_FNAME);
+int AOsystSim_coroLOWFS(const char *CONF_FNAME);
 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
 
 long AOsystSim_FPWFS_imsimul(double probeamp, double sepx, double sepy, double contrast, double wferramp, double totFlux, double DMgainErr, double RON, double CnoiseFloor);
-int AOsystSim_FPWFS_mkprobes(char *IDprobeA_name, char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom);
+int AOsystSim_FPWFS_mkprobes(const char *IDprobeA_name, const char *IDprobeB_name, long dmxsize, long dmysize, double CPAmax, double CPArmin, double CPArmax, double RMSampl, long modegeom);
 int AOsystSim_FPWFS_sensitivityAnalysis(int mapmode, int mode, int optmode, int NBprobes);
 
 
@@ -94,6 +94,6 @@ typedef struct {
 } EXAOSIMCONF;
 
 
-int AOsystSim_extremeAO_contrast_sim();
+int_fast8_t AOsystSim_extremeAO_contrast_sim();
 
 #endif

@@ -2,7 +2,7 @@
 #define _TRANSITLC_H
 
 
-int init_TransitLC();
+int_fast8_t init_TransitLC();
 
 
 long TransitLC_run(long index);

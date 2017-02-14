@@ -1,10 +1,12 @@
-#include <fitsio.h> 
+#include <stdint.h> 
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdlib.h>
+
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
@@ -35,7 +37,7 @@ extern DATA data;
 
 
 
-int TransitLC_run_cli()
+int_fast8_t TransitLC_run_cli()
 {
 
   if(CLI_checkarg(1, 2)==0)
@@ -49,7 +51,7 @@ int TransitLC_run_cli()
 
 
 
-int init_TransitLC()
+int_fast8_t init_TransitLC()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
   strcpy(data.module[data.NBmodule].info, "exoplanet transit light curve analysis");
@@ -86,7 +88,7 @@ int init_TransitLC()
 // line 2 : flux
 // line 3 : error
 //
-long TransitLC_mkLC(char *IDpl_name, char *IDout_name)
+long TransitLC_mkLC(const char *IDpl_name, const char *IDout_name)
 {
 	long IDout;
 	long NBpt;
@@ -155,7 +157,7 @@ long TransitLC_mkLC(char *IDpl_name, char *IDout_name)
 // output has regular sampling
 //
 
-long TransitLC_EdgeDetect(char *ID_name, char *IDout_name, double edgedt, double dt)
+long TransitLC_EdgeDetect(const char *ID_name, const char *IDout_name, double edgedt, double dt)
 {
 	long ID, IDout;
 	long NBpt, NBpt1;
@@ -241,7 +243,7 @@ long TransitLC_EdgeDetect(char *ID_name, char *IDout_name, double edgedt, double
 //
 // scan for transit events
 // 
-long TransitLC_scanTE(char *IDin_name, char *IDout_name, double Pmin, double Pmax, double Pstep, double t0step, double wmax, double wstep)
+long TransitLC_scanTE(const char *IDin_name, const char *IDout_name, double Pmin, double Pmax, double Pstep, double t0step, double wmax, double wstep)
 {
 	long IDin, IDout;
 	long t0size, Psize, wsize;

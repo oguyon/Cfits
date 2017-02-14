@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -180,7 +181,7 @@ float CONF_FRESNEL_PROPAGATION_BIN;
 //
 
 
-int make_AtmosphericTurbulence_wavefront_series_cli()
+int_fast8_t make_AtmosphericTurbulence_wavefront_series_cli()
 {
 	if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
 		make_AtmosphericTurbulence_wavefront_series(data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl);
@@ -189,7 +190,7 @@ int make_AtmosphericTurbulence_wavefront_series_cli()
 }
 
 
-int make_AtmosphericTurbulence_vonKarmanWind_cli()
+int_fast8_t make_AtmosphericTurbulence_vonKarmanWind_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,3)==0)
         make_AtmosphericTurbulence_vonKarmanWind(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string);
@@ -198,7 +199,7 @@ int make_AtmosphericTurbulence_vonKarmanWind_cli()
 }   
 
 
-int AtmosphericTurbulence_mkmastert_cli()
+int_fast8_t AtmosphericTurbulence_mkmastert_cli()
 {
   
   if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0)
@@ -209,7 +210,7 @@ int AtmosphericTurbulence_mkmastert_cli()
     return 1;
 }
 
-int AtmosphericTurbulence_makeHV_CN2prof_cli()
+int_fast8_t AtmosphericTurbulence_makeHV_CN2prof_cli()
 {
   if(CLI_checkarg(1,1)+CLI_checkarg(2,1)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0)
     {
@@ -223,7 +224,7 @@ int AtmosphericTurbulence_makeHV_CN2prof_cli()
 
 
 
-int AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
+int_fast8_t AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
 {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,3)==0)
     {
@@ -235,7 +236,7 @@ int AtmosphericTurbulence_measure_wavefront_series_expoframes_cli()
 }
 
 
-int AtmosphericTurbulence_mkTestTTseq_cli()
+int_fast8_t AtmosphericTurbulence_mkTestTTseq_cli()
 {
    if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,1)+CLI_checkarg(7,2)==0)
     {
@@ -248,7 +249,7 @@ int AtmosphericTurbulence_mkTestTTseq_cli()
 
 
 
-int AtmosphericTurbulence_Build_LinPredictor_Full_cli()
+int_fast8_t AtmosphericTurbulence_Build_LinPredictor_Full_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
     {
@@ -259,7 +260,7 @@ int AtmosphericTurbulence_Build_LinPredictor_Full_cli()
 }
 
 
-int AtmosphericTurbulence_Apply_LinPredictor_Full_cli()
+int_fast8_t AtmosphericTurbulence_Apply_LinPredictor_Full_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,3)+CLI_checkarg(7,3)==0)
     {
@@ -269,7 +270,7 @@ int AtmosphericTurbulence_Apply_LinPredictor_Full_cli()
         return(1);
 }
 
-int AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract_cli()
+int_fast8_t AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
     {
@@ -281,7 +282,7 @@ int AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract_cli()
 
 
 
-int AtmosphericTurbulence_LinPredictor_filt_Expand_cli()
+int_fast8_t AtmosphericTurbulence_LinPredictor_filt_Expand_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)==0)
     {
@@ -292,7 +293,7 @@ int AtmosphericTurbulence_LinPredictor_filt_Expand_cli()
 }
 
 
-int AtmosphericTurbulence_Build_LinPredictor_cli()
+int_fast8_t AtmosphericTurbulence_Build_LinPredictor_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)+CLI_checkarg(8,1)==0)
     {
@@ -303,8 +304,7 @@ int AtmosphericTurbulence_Build_LinPredictor_cli()
     
 }
 
-//long AtmosphericTurbulence_psfCubeContrast(char *IDwfc_name, char *IDmask_name, char *IDpsfc_name)
-int AtmosphericTurbulence_psfCubeContrast_cli()
+int_fast8_t AtmosphericTurbulence_psfCubeContrast_cli()
 {
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0)
 	{
@@ -315,7 +315,7 @@ int AtmosphericTurbulence_psfCubeContrast_cli()
     
 }
 
-int AtmosphericTurbulence_Test_LinPredictor_cli()
+int_fast8_t AtmosphericTurbulence_Test_LinPredictor_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,1)==0)
     {
@@ -349,7 +349,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"make vonKarman wind model");
     strcpy(data.cmd[data.NBcmd].syntax,"<pixsize> <pixscale [m/pix]> <sigma windspeed [m/s]> <scale [m]> <size [long]> <output name>");
     strcpy(data.cmd[data.NBcmd].example,"mkvonKarmanWind 8192 0.1 20.0 50.0 512 vKmodel");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, char *IDout_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, const char *IDout_name)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mkmastert");
@@ -358,7 +358,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"make 2 master phase screens");
     strcpy(data.cmd[data.NBcmd].syntax,"<screen0> <screen1> <size> <outerscale> <innerscale>");
     strcpy(data.cmd[data.NBcmd].example,"mkmastert scr0 scr1 2048 50.0 2.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outercale, float innercale, long WFprecision)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int make_master_turbulence_screen(const char *ID_name1, const char *ID_name2, long size, float outercale, float innercale, long WFprecision)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mkHVturbprof");
@@ -367,7 +367,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"make Hufnager-Valley turbulence profile");
     strcpy(data.cmd[data.NBcmd].syntax,"<high wind speed [m/s]> <r0 [m]> <site alt [m]> <NBlayers> <output file>");
     strcpy(data.cmd[data.NBcmd].example,"mkHVturbprof 21.0 0.15 4200 100 turbHV.prof");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, const char *outfile)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"atmturbmeasexpo");
@@ -376,7 +376,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"Measure long exposure time PSF from wavefront series");
     strcpy(data.cmd[data.NBcmd].syntax,"<etime [s]> <out name>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbmeasexpo 1.0 outpsf");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int measure_wavefront_series_expoframes(float etime, char *outfile)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int measure_wavefront_series_expoframes(float etime, const char *outfile)");
     data.NBcmd++;
 
 
@@ -395,7 +395,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"build full linear predictor from wavefront series");
     strcpy(data.cmd[data.NBcmd].syntax,"<input WF series (cube)> <mask image> <predictor order> <predictor time lag> <SVD eps> <RegLambda>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbwfpredictf wfin wfmask 20 3.5 0.001 0.0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, double SVDeps, double Rlambda)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Build_LinPredictor_Full(const char *WFin_name, const char *WFmask_name, int PForder, float PFlag, double SVDeps, double Rlambda)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"atmturbwfpapply");
@@ -404,7 +404,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"Apply full linear predictor from wavefront series");
     strcpy(data.cmd[data.NBcmd].syntax,"<mode> <input WF series (cube)> <mask image> <predictor order> <predictor time lag> <predicted future values> <measured future values>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbwfpapply 0 wfin wfmask 20 3.5 outp outf");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Apply_LinPredictor_Full(int MODE, char *WFin_name, char *WFmask_name, int PForder, float PFlag, char *WFoutp_name, char *WFoutf_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Apply_LinPredictor_Full(int MODE, const char *WFin_name, const char *WFmask_name, int PForder, float PFlag, const char *WFoutp_name, const char *WFoutf_name)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"atmturbwfp2Dkern");
@@ -413,7 +413,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"collapse WF predictor into 2D kernel");
     strcpy(data.cmd[data.NBcmd].syntax,"<input WF filter (cube)> <mask image> <kernel radius> <output kernel name>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbwfp2Dkern wfpfilt wfmask 20 wfpkern");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract(char *IDfilt_name, char *IDmask_name, long krad, char *IDkern_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract(const char *IDfilt_name, const char *IDmask_name, long krad, const char *IDkern_name)");
 	data.NBcmd++;
 	
 	strcpy(data.cmd[data.NBcmd].key,"atmturbwfpexp");
@@ -422,7 +422,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"Expand 3D filter cube into pixel-based 3D cube filters");
     strcpy(data.cmd[data.NBcmd].syntax,"<input WF filter (cube)> <mask image>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbwfpexp wfpfilt wfmask ");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AtmosphericTurbulence_LinPredictor_filt_Expand(char *IDfilt_name, char *IDmask_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AtmosphericTurbulence_LinPredictor_filt_Expand(const char *IDfilt_name, const char *IDmask_name)");
 	data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"atmturbwfpredict");
@@ -440,7 +440,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"measure contrast performance of WF cube");
     strcpy(data.cmd[data.NBcmd].syntax,"<input WF cube> <mask> <output psf cube>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbmkpsfcc wfc mask psfc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long AtmosphericTurbulence_psfCubeContrast(char *IDwfc_name, char *IDmask_name, char *IDpsfc_name)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AtmosphericTurbulence_psfCubeContrast(const char *IDwfc_name, const char *IDmask_name, const char *IDpsfc_name)");
     data.NBcmd++;
 
 
@@ -450,7 +450,7 @@ int init_AtmosphericTurbulence()
     strcpy(data.cmd[data.NBcmd].info,"Test linear predictor on wavefront series");
     strcpy(data.cmd[data.NBcmd].syntax,"<number steps input> <noise level [rad]> <predictor name> <lag> <iipix> <jjpix>");
     strcpy(data.cmd[data.NBcmd].example,"atmturbwfptest 1000 0.01 wfpfilt 1 32 54");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, const char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix)");
     data.NBcmd++;
 
     return 0;
@@ -474,7 +474,7 @@ int init_AtmosphericTurbulence()
 
 
 
-int AtmosphericTurbulence_change_configuration_file(char *fname)
+int AtmosphericTurbulence_change_configuration_file(const char *fname)
 {
   sprintf(CONFFILE, "%s", fname);
   
@@ -491,7 +491,7 @@ int AtmosphericTurbulence_change_configuration_file(char *fname)
 // sigmawind [m/s]
 // Lwind [m]
 //
-long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, char *IDout_name)
+long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float sigmawind, float Lwind, long size, const char *IDout_name)
 {
     long ID, IDc;
     long ii, jj;
@@ -640,7 +640,7 @@ long make_AtmosphericTurbulence_vonKarmanWind(long vKsize, float pixscale, float
 // innerscale and outerscale in pixel
 // von Karman spectrum
 //
-int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, float outerscale, float innerscale, long WFprecision)
+int make_master_turbulence_screen(const char *ID_name1, const char *ID_name2, long size, float outerscale, float innerscale, long WFprecision)
 {
     long ID,ii,jj;
     double value,C1,C2;
@@ -859,7 +859,7 @@ int make_master_turbulence_screen(char *ID_name1, char *ID_name2, long size, flo
 
 
 
-int make_master_turbulence_screen_pow(char *ID_name1, char *ID_name2, long size, float power)
+int make_master_turbulence_screen_pow(const char *ID_name1, const char *ID_name2, long size, float power)
 {
     long ID,ii,jj;
     float value,C1,C2;
@@ -928,7 +928,7 @@ int make_master_turbulence_screen_pow(char *ID_name1, char *ID_name2, long size,
 
 
 
-int contract_wavefront_cube(char *ina_file, char *inp_file, char *outa_file, char *outp_file, int factor)
+int contract_wavefront_cube(const char *ina_file, const char *inp_file, const char *outa_file, const char *outp_file, int factor)
 {
     /* contracts the wavefront series by a factor of 2^factor */
     long IDamp,IDpha,IDoutamp,IDoutpha;
@@ -1021,7 +1021,7 @@ int contract_wavefront_cube(char *ina_file, char *inp_file, char *outa_file, cha
 }
 
 
-int contract_wavefront_cube_phaseonly(char *inp_file, char *outp_file, int factor)
+int contract_wavefront_cube_phaseonly(const char *inp_file, const char *outp_file, int factor)
 {
     /* contracts the wavefront series by a factor of 2^factor */
     long IDpha,IDoutpha;
@@ -4479,7 +4479,7 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
 
 
 
-int contract_wavefront_series(char *in_prefix, char *out_prefix, long NB_files)
+int contract_wavefront_series(const char *in_prefix, const char *out_prefix, long NB_files)
 {
     /* contracts the wavefront series by a factor of 2 */
     char fname[200];
@@ -5023,7 +5023,7 @@ int AtmosphericTurbulence_mkTestTTseq(double dt, long NBpts, long NBblocks, doub
 //
 // build full predictor (all pixels of WF)
 //
-int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_name, int PForder, float PFlag, double SVDeps, double RegLambda)
+int AtmosphericTurbulence_Build_LinPredictor_Full(const char *WFin_name, const char *WFmask_name, int PForder, float PFlag, double SVDeps, double RegLambda)
 {
 	long ID_WFin;
 	long NBmvec; // number of entries in data matrix
@@ -5272,7 +5272,7 @@ int AtmosphericTurbulence_Build_LinPredictor_Full(char *WFin_name, char *WFmask_
 //
 // extract translation-invariant kernel from predictive AR filter and expand into individual filters
 //
-long AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract(char *IDfilt_name, char *IDmask_name, long krad, char *IDkern_name)
+long AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract(const char *IDfilt_name, const char *IDmask_name, long krad, const char *IDkern_name)
 {
 	long IDkern;
 	long IDfilt;
@@ -5500,7 +5500,7 @@ long AtmosphericTurbulence_LinPredictor_filt_2DKernelExtract(char *IDfilt_name, 
 // expand into individual filters
 // also provides some statistical analysis on filter
 //
-long AtmosphericTurbulence_LinPredictor_filt_Expand(char *IDfilt_name, char *IDmask_name)
+long AtmosphericTurbulence_LinPredictor_filt_Expand(const char *IDfilt_name, const char *IDmask_name)
 {
 	long IDfilt;
 	long IDmask;
@@ -5623,7 +5623,7 @@ long AtmosphericTurbulence_LinPredictor_filt_Expand(char *IDfilt_name, char *IDm
 // -> outf_res  (future measurement residual)
 // -> outl_res  (last measurement residual)
 //
-int AtmosphericTurbulence_Apply_LinPredictor_Full(int MODE, char *WFin_name, char *WFmask_name, int PForder, float PFlag, char *WFoutp_name, char *WFoutf_name)
+int AtmosphericTurbulence_Apply_LinPredictor_Full(int MODE, const char *WFin_name, const char *WFmask_name, int PForder, float PFlag, const char *WFoutp_name, const char *WFoutf_name)
 {
 	long ID_WFin;
 	long NBmvec; // number of entries in data matrix
@@ -6242,7 +6242,7 @@ int AtmosphericTurbulence_Build_LinPredictor(long NB_WFstep, double WFphaNoise, 
 
 
 
-long AtmosphericTurbulence_psfCubeContrast(char *IDwfc_name, char *IDmask_name, char *IDpsfc_name)
+long AtmosphericTurbulence_psfCubeContrast(const char *IDwfc_name, const char *IDmask_name, const char *IDpsfc_name)
 {
 	long IDwfc, IDmask, IDpsfc, IDa, IDtmp, IDm, IDpsfCc;
 	long xsize, ysize, zsize, xysize, xsize1, ysize1, zsize1, xysize1;
@@ -6395,7 +6395,7 @@ long AtmosphericTurbulence_psfCubeContrast(char *IDwfc_name, char *IDmask_name, 
 
 
 
-int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix, float slambdaum)
+int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, const char *IDWFPfilt_name, long WFPlag, long WFPiipix, long WFPjjpix, float slambdaum)
 {
     long WFP_xyrad;
     long WFP_NBstep;
@@ -6595,7 +6595,7 @@ int AtmosphericTurbulence_Test_LinPredictor(long NB_WFstep, double WFphaNoise, c
 
 
 
-int measure_wavefront_series_expoframes(float etime, char *outfile)
+int measure_wavefront_series_expoframes(float etime, const char *outfile)
 {
     float FOCAL_SCALE;
     float tmp,tmp1;
@@ -6777,7 +6777,7 @@ int measure_wavefront_series_expoframes(float etime, char *outfile)
 
 
 
-int frame_select_PSF(char *logfile, long NBfiles, float frac)
+int frame_select_PSF(const char *logfile, long NBfiles, float frac)
 {
     /* logfile has the following format:
        <PSF file name> <FWHM> <Enc.ener.0.5> <centerx> <centery>
@@ -7844,7 +7844,7 @@ int AtmosphericTurbulence_WFprocess()
 }
 
 
-int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, char *outfile)
+int AtmosphericTurbulence_makeHV_CN2prof(double wspeed, double r0, double sitealt, long NBlayer, const char *outfile)
 {
     FILE *fp;
     double h;

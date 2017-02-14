@@ -1,10 +1,12 @@
-#include <fitsio.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdlib.h>
+
+#include <fitsio.h>
 
 #include "CLIcore.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -35,7 +37,7 @@ extern DATA data;
 
 
 
-int init_OptSystProp()
+int_fast8_t init_OptSystProp()
 {
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "Optical propagation through system");
@@ -58,7 +60,7 @@ int init_OptSystProp()
 
 
 
-int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name, char *IDin_pha_name, char *IDout_amp_name, char *IDout_pha_name, double zprop, int sharedmem)
+int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp_name, const char *IDin_pha_name, const char *IDout_amp_name, const char *IDout_pha_name, double zprop, int sharedmem)
 {
     int kl;
     long ii;
@@ -149,7 +151,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, char *IDin_amp_name,
 /// *optsyst.elemkeepmem	1 if element complex amplitude should be kept in memory after use
 ///
 
-int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, char *savedir, int sharedmem)
+int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, const char *savedir, int sharedmem)
 {
     char command[500];
     char imname[200];
