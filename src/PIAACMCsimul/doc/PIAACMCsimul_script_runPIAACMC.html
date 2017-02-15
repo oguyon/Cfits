@@ -2409,6 +2409,175 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 2344
 2345
 2346
+2347
+2348
+2349
+2350
+2351
+2352
+2353
+2354
+2355
+2356
+2357
+2358
+2359
+2360
+2361
+2362
+2363
+2364
+2365
+2366
+2367
+2368
+2369
+2370
+2371
+2372
+2373
+2374
+2375
+2376
+2377
+2378
+2379
+2380
+2381
+2382
+2383
+2384
+2385
+2386
+2387
+2388
+2389
+2390
+2391
+2392
+2393
+2394
+2395
+2396
+2397
+2398
+2399
+2400
+2401
+2402
+2403
+2404
+2405
+2406
+2407
+2408
+2409
+2410
+2411
+2412
+2413
+2414
+2415
+2416
+2417
+2418
+2419
+2420
+2421
+2422
+2423
+2424
+2425
+2426
+2427
+2428
+2429
+2430
+2431
+2432
+2433
+2434
+2435
+2436
+2437
+2438
+2439
+2440
+2441
+2442
+2443
+2444
+2445
+2446
+2447
+2448
+2449
+2450
+2451
+2452
+2453
+2454
+2455
+2456
+2457
+2458
+2459
+2460
+2461
+2462
+2463
+2464
+2465
+2466
+2467
+2468
+2469
+2470
+2471
+2472
+2473
+2474
+2475
+2476
+2477
+2478
+2479
+2480
+2481
+2482
+2483
+2484
+2485
+2486
+2487
+2488
+2489
+2490
+2491
+2492
+2493
+2494
+2495
+2496
+2497
+2498
+2499
+2500
+2501
+2502
+2503
+2504
+2505
+2506
+2507
+2508
+2509
+2510
+2511
+2512
+2513
+2514
+2515
 </pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
 <span class="kw">unset</span> <span class="ot">TMUX</span>
 
@@ -2669,10 +2838,9 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">}</span>
 
 
-<span class="ot">REGPIAACCOEFF=</span><span class="st">&quot;0.0001&quot;</span>
-<span class="ot">REGPIAACALPHA=</span><span class="st">&quot;0.2&quot;</span>
-<span class="ot">REGPIAAFCOEFF=</span><span class="st">&quot;0.0001&quot;</span>
-<span class="ot">REGPIAAFALPHA=</span><span class="st">&quot;0.2&quot;</span>
+
+
+
 
 
 
@@ -2707,12 +2875,14 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
     <span class="kw">echo</span> <span class="st">&quot;  arg18: focal plane material                     ${18}&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;  arg19: min sag [m]                              ${19}&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;  arg20: max sag [m]                              ${20}&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot;  arg21: center cone nb rings                     ${21}&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot;  arg22: center cone sag                          ${22}&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot;  arg23: outer cone rad [l/D]                     ${23}&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot;  arg24: outer sag offset [m]                     ${24}&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot;  arg25: index                                    ${25}&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot;  arg26: design step                              ${26}&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;  arg21  fpmregsag_coeff                          ${21}&quot;</span>   
+    <span class="kw">echo</span> <span class="st">&quot;  arg22: fpmregsag_alpha                          ${22}&quot;</span> 
+    <span class="kw">echo</span> <span class="st">&quot;  arg23: center cone nb rings                     ${23}&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;  arg24: center cone sag                          ${24}&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;  arg25: outer cone rad [l/D]                     ${25}&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;  arg26: outer sag offset [m]                     ${26}&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;  arg27: index                                    ${27}&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;  arg28: design step                              ${28}&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;========= PARAMETERS IN runPIAACMC script =============&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
@@ -2726,7 +2896,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<span class="ot">NBARGS=</span>26
+<span class="ot">NBARGS=</span>28
 
 
 <span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;helpsteps&quot;</span><span class="kw"> ]</span>; <span class="kw">then</span>
@@ -2772,6 +2942,10 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">loadparam</span> invPIAAmode <span class="st">&quot;1&quot;</span>
 
 
+<span class="kw">loadparam</span> REGPIAACCOEFF <span class="st">&quot;300.0&quot;</span>
+<span class="kw">loadparam</span> REGPIAACALPHA <span class="st">&quot;0.2&quot;</span>
+<span class="kw">loadparam</span> REGPIAAFCOEFF <span class="st">&quot;300.0&quot;</span>
+<span class="kw">loadparam</span> REGPIAAFALPHA <span class="st">&quot;0.2&quot;</span>
 
 
 
@@ -2800,17 +2974,17 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 <span class="ot">fpmminsag=</span>$<span class="dt">{19}</span>
 <span class="ot">fpmmaxsag=</span>$<span class="dt">{20}</span>
-<span class="ot">fpmccnbr=</span>$<span class="dt">{21}</span>
-<span class="ot">fpmccz=</span>$<span class="dt">{22}</span>
-<span class="ot">fpmocr=</span>$<span class="dt">{23}</span>
-<span class="ot">fpmocz=</span>$<span class="dt">{24}</span>
+<span class="ot">fpmsagreg_coeff=</span>$<span class="dt">{21}</span>
+<span class="ot">fpmsagreg_alpha=</span>$<span class="dt">{22}</span>
+<span class="ot">fpmccnbr=</span>$<span class="dt">{23}</span>
+<span class="ot">fpmccz=</span>$<span class="dt">{24}</span>
+<span class="ot">fpmocr=</span>$<span class="dt">{25}</span>
+<span class="ot">fpmocz=</span>$<span class="dt">{26}</span>
 
-
-
-<span class="ot">index=</span>$<span class="dt">{25}</span>
+<span class="ot">index=</span>$<span class="dt">{27}</span>
 
 <span class="co"># STEP PRE-PROCESSING</span>
-<span class="ot">rstep=</span>$<span class="dt">{26}</span>
+<span class="ot">rstep=</span>$<span class="dt">{28}</span>
 
 
 
@@ -2818,7 +2992,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="ot">PIAACMC_nbiter=</span>20
 
 
-<span class="ot">PIAACMC_dftgrid=</span>0 <span class="co"># full sampling</span>
+<span class="ot">PIAACMC_dftgrid=</span>0 <span class="co"># full sampling unless otherwise specified</span>
 <span class="ot">kmaxC=</span>10
 
 <span class="ot">kmaxF=</span>0
@@ -2927,10 +3101,12 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">echo</span> <span class="st">&quot;PIAACMC_extmode=</span><span class="ot">$PIAACMC_extmode</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#17</span>
 <span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmminsag=</span><span class="ot">${fpmminsag}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#19</span>
 <span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmmaxsag=</span><span class="ot">${fpmmaxsag}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#20</span>
-<span class="kw">echo</span> <span class="st">&quot;PIAACMC_NBringCentCone=</span><span class="ot">${fpmccnbr}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#21</span>
-<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmCentConeZ=</span><span class="ot">${fpmccz}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#22</span>
-<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmOuterConeRadld=</span><span class="ot">${fpmocr}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#23</span>
-<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmOuterConeZ=</span><span class="ot">${fpmocz}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#24</span>
+<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmsagreg_coeff=</span><span class="ot">${fpmsagreg_coeff}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#21</span>
+<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmsagreg_alpha=</span><span class="ot">${fpmsagreg_alpha}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#22</span>
+<span class="kw">echo</span> <span class="st">&quot;PIAACMC_NBringCentCone=</span><span class="ot">${fpmccnbr}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#23</span>
+<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmCentConeZ=</span><span class="ot">${fpmccz}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#24</span>
+<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmOuterConeRadld=</span><span class="ot">${fpmocr}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#25</span>
+<span class="kw">echo</span> <span class="st">&quot;PIAACMC_fpmOuterConeZ=</span><span class="ot">${fpmocz}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span> <span class="co">#26</span>
 
 <span class="kw">echo</span> <span class="st">&quot;PIAACMC_dftgrid=</span><span class="ot">${PIAACMC_dftgrid}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span>
 <span class="kw">echo</span> <span class="st">&quot;PIAACMC_nblambda=</span><span class="ot">${nblambda}</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> <span class="ot">$startupfile</span>
@@ -2998,6 +3174,9 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">fi</span>
 
 <span class="kw">if [</span> 210 <span class="ot">-eq</span> <span class="ot">${state}</span><span class="kw"> ]</span>; <span class="kw">then</span>
+<span class="ot">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$datestr</span><span class="st">  step210  Tune PIAA shapes and focal plane mask zones, 10 cosine modes, 5 Fourier modes&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$datestr</span><span class="st">  step210  Tune PIAA shapes and focal plane mask zones, 10 cosine modes, 5 Fourier modes&quot;</span> <span class="kw">&gt;&gt;</span> cmdlog.txt
  <span class="kw">echo</span> <span class="st">&quot;step 210&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot;210&quot;</span> <span class="kw">&gt;</span> ./<span class="ot">$1</span>/runstep
 <span class="kw">touch</span> ./<span class="ot">$1</span>/step210.run.txt
@@ -3012,10 +3191,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Cmodes_step001.fits<span class="st">&quot; piaa1Cmref</span>
 <span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa0Fmodes_step001.fits<span class="st">&quot; piaa0Fmref</span>
 <span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Fmodes_step001.fits<span class="st">&quot; piaa1Fmref</span>
-<span class="st">REGPIAA_C_COEFF=300.0</span>
-<span class="st">REGPIAA_C_ALPHA=0.2</span>
-<span class="st">REGPIAA_F_COEFF=300.0</span>
-<span class="st">REGPIAA_F_ALPHA=0.2</span>
+
+
+<span class="st">REGPIAA_C_COEFF=</span><span class="ot">${REGPIAACCOEFF}</span>
+<span class="st">REGPIAA_C_ALPHA=</span><span class="ot">${REGPIAACALPHA}</span>
+<span class="st">REGPIAA_F_COEFF=</span><span class="ot">${REGPIAAFCOEFF}</span>
+<span class="st">REGPIAA_F_ALPHA=</span><span class="ot">${REGPIAAFALPHA}</span>
+
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 40</span>
 <span class="st">exit</span>
 <span class="st">EOF</span>
@@ -3058,6 +3240,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">## TBM</span>
 <span class="st">if [ 500 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step500  Copy point source mask to extended mask<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step500  Copy point source mask to extended mask<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>cp fpm_zonea00_20_001_001.fits fpm_zonea10_20_001_001.fits<span class="st">&quot;</span>
 <span class="st">echo &quot;</span>cp fpm_zonez00_20_001_001.fits fpm_zonez10_20_001_001.fits<span class="st">&quot;</span>
 <span class="st">printf &quot;</span>Copy monochromatic mask to polychromatic extended mask\n<span class="st">&quot; </span>
@@ -3081,7 +3266,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"># 699 : compute on-axis PSF (monochromatic), no focal plane mask</span>
 <span class="st">if [ 699 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>699: Compute on-axis monochromatic PSF- idealized PIAACMC - no focal plane mask<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step699  Compute on-axis monochromatic PSF- idealized PIAACMC - no focal plane mask<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step699  Compute on-axis monochromatic PSF- idealized PIAACMC - no focal plane mask<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>699<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step699.run.txt</span>
 <span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaacmcparams_idealmonomask.conf ./</span><span class="ot">$1</span><span class="st">/piaacmcparams.conf</span>
@@ -3120,11 +3307,15 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"># 700 : compute on-axis PSF (monochromatic), idelized focal plane mask</span>
 <span class="st">if [ 700 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>700: Compute on-axis monochromatic PSF - idealized PIAACMC<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step700  Compute on-axis monochromatic PSF - idealized PIAACMC<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step700  Compute on-axis monochromatic PSF - idealized PIAACMC<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>700<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step700.run.txt</span>
 <span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaacmcparams_idealmonomask.conf ./</span><span class="ot">$1</span><span class="st">/piaacmcparams.conf</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step700 &lt;&lt; EOF</span>
+<span class="st">#</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st"># idealized mask</span>
 <span class="st">PIAACMC_MASKRADLD=0.0 </span>
 <span class="st">loadfits &quot;</span>OPDerr.fits<span class="st">&quot; opderr</span>
@@ -3144,11 +3335,17 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 
 
+
+
 <span class="st">if [ 701 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step701  Eval monochromatic contrast for on-axis PSF, and pointing sensitivity - idealized PIAACMC<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step701  Eval monochromatic contrast for on-axis PSF, and pointing sensitivity - idealized PIAACMC<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
 <span class="st"> then</span>
 <span class="st"> echo &quot;</span>====================== step 701 requires step 007 =======================================<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span>====================== step 701 requires step 007 =======================================<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> else</span>
 <span class="st"> echo &quot;</span>eval monochromatic contrast for on-axis PSF, and pointing sensitivity - idealized PIAACMC<span class="st">&quot;</span>
 <span class="st">echo &quot;</span>701<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
@@ -3175,7 +3372,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"># % : compute on-axis PSF (monochromatic) extended source</span>
 <span class="st">if [ 702 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>Compute on-axis monochromatic PSF - extended source<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step702  Compute on-axis monochromatic PSF - extended source<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step702  Compute on-axis monochromatic PSF - extended source<span class="st">&quot;  &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>702<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step702.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step702 &lt;&lt; EOF</span>
@@ -3202,10 +3401,14 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 720 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>Compute on-axis polychromatic PSF<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step720  Compute on-axis polychromatic PSF<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step720  Compute on-axis polychromatic PSF<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>720<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step720.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step720 &lt;&lt; EOF</span>
+<span class="st"># </span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3224,7 +3427,10 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 721 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  721  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.01 l/D<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  721  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.01 l/D<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st">if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
 <span class="st"> then</span>
 <span class="st"> echo &quot;</span>====================== step 721 requires step 007 =======================================<span class="st">&quot;</span>
 <span class="st"> exit</span>
@@ -3234,10 +3440,12 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>721<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step721.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step721 &lt;&lt; EOF</span>
+<span class="st">#</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
-<span class="st">PIAACMC_ldoffset=0.00001</span>
+<span class="st">PIAACMC_ldoffset=0.01</span>
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 100</span>
 <span class="st">exit</span>
 <span class="st">EOF</span>
@@ -3252,6 +3460,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 722 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step722  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.03 l/D<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step722  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.03 l/D<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
 <span class="st"> then</span>
 <span class="st"> echo &quot;</span>====================== step 722 requires step 007 =======================================<span class="st">&quot;</span>
@@ -3260,8 +3471,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"> echo &quot;</span>722: eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.03 l/D<span class="st">&quot;</span>
 <span class="st">echo &quot;</span><span class="ot">${FPM_MASKRADLD}</span> <span class="ot">$FPMsectors</span> <span class="ot">$NBrings</span> $<span class="dt">{10}</span> $<span class="dt">{11}</span> <span class="ot">$PIAACMC_resolved</span> <span class="ot">$2</span> <span class="ot">$3</span> <span class="ot">$5</span> <span class="ot">$6</span> <span class="ot">$7</span><span class="st">&quot; </span>
 <span class="st">echo &quot;</span>722<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
-<span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step721.run.txt</span>
+<span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step722.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step722 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3277,6 +3489,38 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 
 
+<span class="st">if [ 723 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
+<span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step723  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.001 l/D<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step723  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.001 l/D<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
+<span class="st"> then</span>
+<span class="st"> echo &quot;</span>====================== step 723 requires step 007 =======================================<span class="st">&quot;</span>
+<span class="st"> exit</span>
+<span class="st"> else</span>
+<span class="st"> echo &quot;</span>723: eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.001 l/D<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">${FPM_MASKRADLD}</span> <span class="ot">$FPMsectors</span> <span class="ot">$NBrings</span> $<span class="dt">{10}</span> $<span class="dt">{11}</span> <span class="ot">$PIAACMC_resolved</span> <span class="ot">$2</span> <span class="ot">$3</span> <span class="ot">$5</span> <span class="ot">$6</span> <span class="ot">$7</span><span class="st">&quot; </span>
+<span class="st">echo &quot;</span>722<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
+<span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step723.run.txt</span>
+<span class="ot">$execnamestring</span><span class="st"> -n step723 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_fpmtype=1 </span>
+<span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
+<span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
+<span class="st">PIAACMC_ldoffset=0.001</span>
+<span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 100</span>
+<span class="st">exit</span>
+<span class="st">EOF</span>
+<span class="st">mv ./</span><span class="ot">$1</span><span class="st">/psfi0_starim.fits ./</span><span class="ot">$1</span><span class="st">/psfi0_step723.fits</span>
+<span class="st">cleanup</span>
+<span class="st">exit</span>
+<span class="st">fi</span>
+<span class="st">fi</span>
+
+
+
+
 
 
 
@@ -3285,10 +3529,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 730 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>730<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step730.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step730 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3303,10 +3550,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 740 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>730<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step730.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step730 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3326,9 +3576,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 750 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step750  transmission curve<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step750  transmission curve<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
 <span class="st"> then</span>
 <span class="st"> echo &quot;</span>====================== step 750 requires step 007 =======================================<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span>====================== step 750 requires step 007 =======================================<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> exit</span>
 <span class="st"> else</span>
 <span class="st"> echo &quot;</span>750: transmission curve<span class="st">&quot;</span>
@@ -3336,6 +3590,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>750<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step750.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step750 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3355,10 +3610,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 771 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>eval polychromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step771  eval polychromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step771  eval polychromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>111<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step111.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step111 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 100</span>
@@ -3372,10 +3630,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 772 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>eval monochromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step772  Eval monochromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step772  Eval monochromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>112<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step112.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step112 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=1</span>
 <span class="st">PIAACMC_resolved=0</span>
@@ -3391,10 +3652,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 773 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>eval monochromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step773  Eval monochromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step773  Eval monochromatic contrast for on-axis PSF, and pointing sensitivity<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>113<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step113.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step113 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=1</span>
 <span class="st">PIAACMC_resolved=0</span>
@@ -3409,10 +3673,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 774 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>eval monochromatic transmission curve<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step774  Eval monochromatic transmission curve<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step774  Eval monochromatic transmission curve<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>114<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step114.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step114 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=2</span>
 <span class="st">PIAACMC_FPMsectors=0</span>
 <span class="st">PIAACMC_nblambda=1</span>
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 101</span>
@@ -3448,7 +3715,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"># 800 : import FPM configuration setting from parent directory</span>
 <span class="st">if [ 800 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>800: import FPM configuration setting from parent directory<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step800  Import FPM configuration setting from parent directory<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step800  Import FPM configuration setting from parent directory<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step800.run.txt</span>
 <span class="st">echo &quot;</span>800<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step800 &lt;&lt; EOF</span>
@@ -3466,7 +3735,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"># 801 : remove configuration settings</span>
 <span class="st">if [ 801 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>801: remove FPM configuration settings<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step801  Remove FPM configuration settings<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step801  Remove FPM configuration settings<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>801<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step801.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step801 &lt;&lt; EOF</span>
@@ -3484,7 +3755,9 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"># 802 : restore configuration settings</span>
 <span class="st">if [ 802 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
-<span class="st"> echo &quot;</span>802: restore FPM configuration settings<span class="st">&quot;</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step802  Restore FPM configuration settings<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step802  Restore FPM configuration settings<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>802<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step802.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step802 &lt;&lt; EOF</span>
@@ -3555,9 +3828,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 0 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step000.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step 000<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  step000  Compute PSF<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  step000  Compute PSF<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>000<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step000.run.txt</span>
 
@@ -3599,7 +3874,8 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">mv ./</span><span class="ot">$1</span><span class="st">/psfi0.fits ./</span><span class="ot">$1</span><span class="st">/psfi0_step000.fits </span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step000.txt</span>
 <span class="st">else</span>
-<span class="st"> printf &quot;</span>skip step 000 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration)\<span class="kw">n</span><span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 000 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration)<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 000 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC, first iteration)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">  fi</span>
 <span class="st">state=001</span>
 
@@ -3610,7 +3886,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 
 
-<span class="st">if [ &quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot; -eq &quot;</span>1<span class="st">&quot; ]; then</span>
+<span class="st">if [ &quot;</span><span class="ot">$PIAAmode</span><span class="st">&quot; -eq &quot;</span><span class="kw">1</span><span class="st">&quot; ]; then</span>
 <span class="st">rm _pupmaskload.fits</span>
 <span class="st">fi</span>
 
@@ -3640,9 +3916,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 1 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step001.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span><span class="kw">step</span> 001<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">step001</span>  Compute on-axis PSF<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step001  Compute on-axis PSF<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> echo &quot;</span>001<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st"> touch ./</span><span class="ot">$1</span><span class="st">/step001.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step001 &lt;&lt; EOF</span>
@@ -3663,9 +3941,10 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st"> cp ./</span><span class="ot">$1</span><span class="st">/piaa1Fmodes.fits ./</span><span class="ot">$1</span><span class="st">/piaa1Fmodes_step001.fits</span>
 <span class="st"> touch ./</span><span class="ot">$1</span><span class="st">/step001.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 001 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC)\<span class="kw">n</span><span class="st">&quot; </span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 001 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC)<span class="st">&quot; </span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 001 [  0] (Compute on-axis PSF, monochromatic, idealized PIAACMC)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> fi</span>
-<span class="st">state=&quot;</span>002<span class="st">&quot;</span>
+<span class="st">state=&quot;</span><span class="kw">002</span><span class="st">&quot;</span>
 <span class="st">fi</span>
 
 
@@ -3683,16 +3962,19 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ &quot;</span>002<span class="st">&quot; -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step002.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step 002<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step002  Specify input pupil geometry<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step002  Specify input pupil geometry<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> echo </span><span class="ot">$4</span>
 <span class="st"> cp </span><span class="ot">$4</span><span class="st"> ./</span><span class="ot">$1</span><span class="st">/pupa0_</span><span class="ot">$2</span><span class="st">.fits</span>
 <span class="st"> touch ./</span><span class="ot">$1</span><span class="st">/step002.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 002       (load pupil geometry)\<span class="kw">n</span><span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 002       (load pupil geometry)<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 002       (load pupil geometry)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> fi</span>
-<span class="st">state=&quot;</span>003<span class="st">&quot;</span>
+<span class="st">state=&quot;</span><span class="kw">003</span><span class="st">&quot;</span>
 <span class="st">fi</span>
 
 
@@ -3708,9 +3990,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">#</span>
 <span class="st">if [ &quot;</span>003<span class="st">&quot; -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step003.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step 003<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step003  compute on-axis PSF<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step003  compute on-axis PSF<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>003<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step003.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step003 &lt;&lt; EOF</span>
@@ -3726,9 +4010,10 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">mv ./</span><span class="ot">$1</span><span class="st">/psfi0.fits ./</span><span class="ot">$1</span><span class="st">/psfi0_step003.fits</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step003.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 003 [  0] (Compute on-axis PSF)\<span class="kw">n</span><span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 003 [  0] (Compute on-axis PSF)<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 003 [  0] (Compute on-axis PSF)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> fi</span>
-<span class="st">state=&quot;</span>004<span class="st">&quot;</span>
+<span class="st">state=&quot;</span><span class="kw">004</span><span class="st">&quot;</span>
 <span class="st">fi</span>
 
 
@@ -3751,9 +4036,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ &quot;</span>004<span class="st">&quot; -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step004.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step <span class="ot">$step</span><span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step004  Compute Lyot stops shapes and locations<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step004  Compute Lyot stops shapes and locations<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>004<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step004.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step004 &lt;&lt; EOF</span>
@@ -3780,9 +4067,10 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaacmcparams.conf ./</span><span class="ot">$1</span><span class="st">/piaacmcparams_step004.conf</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step004.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 004 [  5] (Compute Lyot stops shapes and locations, 1st pass)\<span class="kw">n</span><span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 004 [  5] (Compute Lyot stops shapes and locations, 1st pass)<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 004 [  5] (Compute Lyot stops shapes and locations, 1st pass)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> fi</span>
-<span class="st">state=&quot;</span>005<span class="st">&quot;</span>
+<span class="st">state=&quot;</span><span class="kw">005</span><span class="st">&quot;</span>
 <span class="st">fi</span>
 
 
@@ -3798,9 +4086,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">#</span>
 <span class="st">if [ &quot;</span>005<span class="st">&quot; -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step005.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step 005<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step005  Optimize focal plane mask transm<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step005  Optimize focal plane mask transm<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>005<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step005.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step005 &lt;&lt; EOF</span>
@@ -3817,9 +4107,10 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaacmcparams.conf ./</span><span class="ot">$1</span><span class="st">/piaacmcparams_step005.conf</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step005.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 005 [  2] (optimize focal plane mask transm, 1st pass - see result_fpmt.log for results)\<span class="kw">n</span><span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 005 [  2] (optimize focal plane mask transm, 1st pass - see result_fpmt.log for results)<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 005 [  2] (optimize focal plane mask transm, 1st pass - see result_fpmt.log for results)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> fi</span>
-<span class="st">state=&quot;</span>006<span class="st">&quot;</span>
+<span class="st">state=&quot;</span><span class="kw">006</span><span class="st">&quot;</span>
 <span class="st">fi</span>
 
 
@@ -3838,9 +4129,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ 006 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step006.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step 006<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step006  Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step006  Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>006<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step006.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step006 &lt;&lt; EOF</span>
@@ -3866,7 +4159,8 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step006.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 006 [  5] (Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput)\<span class="kw">n</span><span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 006 [  5] (Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput)<span class="st">&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  <span class="kw">skip</span> step 006 [  5] (Compute Lyot stops shapes and locations, 2nd pass, 70%% throughput)<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st"> fi</span>
 <span class="st">state=007</span>
 <span class="st">fi</span>
@@ -3882,7 +4176,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">kmaxC=10</span>
 
 <span class="st">kmaxF=0</span>
-<span class="st">if [ &quot;</span><span class="ot">$PIAAcirc</span><span class="st">&quot; -eq &quot;</span>0<span class="st">&quot; ]; then</span>
+<span class="st">if [ &quot;</span><span class="ot">$PIAAcirc</span><span class="st">&quot; -eq &quot;</span><span class="kw">0</span><span class="st">&quot; ]; then</span>
 <span class="st">kmaxF=5</span>
 <span class="st">fi</span>
 <span class="st">echo &quot;</span>PIAAcirc = <span class="ot">$PIAAcirc</span><span class="st">&quot;</span>
@@ -3892,10 +4186,13 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 
 <span class="st">if [ &quot;</span>007<span class="st">&quot; -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 <span class="st"> if [ ! -f ./</span><span class="ot">$1</span><span class="st">/step007.txt ]</span>
 <span class="st"> then</span>
-<span class="st"> echo &quot;</span>step 007<span class="st">&quot;</span>
-<span class="st">echo &quot;</span>007<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  step007  Tune PIAA shapes and focal plane mask transm <span class="co"># modes: $kmaxC, $kmaxF&quot;</span>
+ echo &quot;<span class="ot">$datestr</span>  step<span class="kw">007</span>  Tune PIAA shapes and focal plane mask transm <span class="co"># modes: $kmaxC, $kmaxF&quot; &gt;&gt; cmdlog.txt</span>
+ echo &quot;step 00<span class="kw">7</span><span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="kw">007</span><span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step007.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step007 &lt;&lt; EOF</span>
 <span class="st"># idealized mask</span>
@@ -3913,10 +4210,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Cmodes_step001.fits<span class="st">&quot; piaa1Cmref</span>
 <span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa0Fmodes_step001.fits<span class="st">&quot; piaa0Fmref</span>
 <span class="st">loadfits &quot;</span><span class="ot">$1</span>/piaa1Fmodes_step001.fits<span class="st">&quot; piaa1Fmref</span>
-<span class="st">REGPIAA_C_COEFF=300.0</span>
-<span class="st">REGPIAA_C_ALPHA=0.2</span>
-<span class="st">REGPIAA_F_COEFF=300.0</span>
-<span class="st">REGPIAA_F_ALPHA=0.2</span>
+
+<span class="st">REGPIAA_C_COEFF=</span><span class="ot">${REGPIAACCOEFF}</span>
+<span class="st">REGPIAA_C_ALPHA=</span><span class="ot">${REGPIAACALPHA}</span>
+<span class="st">REGPIAA_F_COEFF=</span><span class="ot">${REGPIAAFCOEFF}</span>
+<span class="st">REGPIAA_F_ALPHA=</span><span class="ot">${REGPIAAFALPHA}</span>
 
 <span class="st">PIAACMC_dftgrid=2</span>
 
@@ -3934,33 +4232,36 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">cp ./</span><span class="ot">$1</span><span class="st">/linoptval.txt ./</span><span class="ot">$1</span><span class="st">/linoptval_step007.txt</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step007.txt</span>
 <span class="st"> else</span>
-<span class="st"> printf &quot;</span>skip step 007 [ 40] (tune PIAA shapes and focal plane mask transm <span class="co"># modes: 10, 5)\n&quot;</span>
+<span class="st"> echo &quot;</span><span class="ot">$datestr</span>  skip step 007 [ 40] (tune PIAA shapes and focal plane mask transm <span class="co"># modes: 10, 5)&quot;</span>
+ echo &quot;<span class="ot">$datestr</span>  <span class="kw">skip</span> step 007 [ 40] (tune PIAA shapes and focal plane mask transm <span class="co"># modes: 10, 5)&quot; &gt;&gt; cmdlog.txt</span>
  fi
-<span class="kw">state</span>=<span class="st">&quot;008&quot;</span>
+state=&quot;008&quot;
 fi
 
 
 
-ch<span class="kw">eckexit</span>
+checkexit
 
 
 
 
 
 
-# STEP 008: <span class="kw">tune</span> PIAA shapes and focal plane mask transm, 20 cosine modes, 20 Fourier modes
+# STEP 008: tune PIAA sha<span class="kw">pes</span> and focal plane mask transm, 20 cosine modes, 20 Fourier modes
 # -&gt; linoptval.txt
 kmaxC=20
 
 kmaxF=0
-if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -<span class="kw">eq</span> <span class="st">&quot;0&quot;</span> ]<span class="kw">;</span> <span class="kw">then</span>
+if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]; then
 kmaxF=20
 fi
 
 if [ &quot;008&quot; -eq <span class="ot">${state}</span> ]
 then
- if [ ! -f ./<span class="ot">$1</span>/step008.txt ]
- then
+if [ ! -f ./<span class="ot">$1</span>/<span class="kw">step008.txt</span> ]
+ <span class="kw">then</span>
+echo &quot;<span class="ot">$datestr</span>  step008  Tu<span class="kw">ne</span> PIAA shapes and focal plane mask transm <span class="co"># modes: $kmaxC, $kmaxF&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$datestr</span><span class="st">  step008  Tune PIAA shapes and focal plane mask transm # modes: </span><span class="ot">$kmaxC</span><span class="st">, </span><span class="ot">$kmaxF</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> cmdlog.txt
 echo &quot;008&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step008.run.txt
 <span class="ot">$execnamestring</span> -n step008 &lt;&lt; EOF
@@ -3979,10 +4280,10 @@ loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cm
 loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
 loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
 loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+REGPIAA_C_COEFF=<span class="ot">${REGPIAACCOEFF}</span>
+REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
+REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
+REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
 PIAACMC_dftgrid=2
 
@@ -4000,26 +4301,29 @@ cp ./<span class="ot">$1</span>/fpm_zonea.fits ./<span class="ot">$1</span>/fpm_
 cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linoptval_step008.txt
 touch ./<span class="ot">$1</span>/step008.txt
  else
- printf &quot;skip step 008 [ 40] (tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 008 [ 40] (tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 008 [ 40] (tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot; <span class="kw">&gt;&gt;</span> <span class="kw">cmdlog.txt</span>
  fi
-state=&quot;009&quot;
+s<span class="kw">tate</span>=<span class="st">&quot;009&quot;</span>
 fi
 
 
 
-checkexit
+ch<span class="kw">eckexit</span>
 
 
 
 
 
-# STEP 009: Compute Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
+# STEP 009: Compu<span class="kw">te</span> Lyot stops shapes and locations, 3nd pass, throughput = LStransm1
 
-if [ &quot;009&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;009&quot; -<span class="kw">eq</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
  if [ ! -f ./<span class="ot">$1</span>/step009.txt ]
  then
- echo &quot;step 009&quot;
+echo &quot;<span class="ot">$datestr</span>  step009  Compute Lyot stops shapes and locations, 3nd pass, <span class="ot">$LStransm1</span> throughput&quot;
+echo &quot;<span class="ot">$datestr</span>  step009  Compute Lyot stops shapes and locations, 3nd pass, <span class="ot">$LStransm1</span> throughput&quot; &gt;&gt; cmdlog.txt
 step=&quot;009&quot;
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
@@ -4047,7 +4351,8 @@ cp ./<span class="ot">$1</span>/LyotStop3.fits ./<span class="ot">$1</span>/Lyot
 
 touch ./<span class="ot">$1</span>/step009.txt
  else
- printf &quot;skip step 009 [  5] (Compute Lyot stops shapes and locations, 3nd pass, <span class="ot">$LStransm1</span> throughput)\n&quot;
+ echo &quot;skip step 009 [  5] (Compute Lyot stops shapes and locations, 3nd pass, <span class="ot">$LStransm1</span> throughput)&quot;
+ echo &quot;skip step 009 [  5] (Compute Lyot stops shapes and locations, 3nd pass, <span class="ot">$LStransm1</span> throughput)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;010&quot;
 fi
@@ -4062,11 +4367,13 @@ checkexit
 
 # STEP 010: Tune Lyot stops conjugations
 
-if [ &quot;010&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;010&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
  if [ ! -f ./<span class="ot">$1</span>/step010.txt ]
  then
- echo &quot;step 010&quot;
+echo &quot;<span class="ot">$datestr</span>  step010  Tune Lyot stops conjugations&quot;
+echo &quot;<span class="ot">$datestr</span>  step010  Tune Lyot stops conjugations&quot; &gt;&gt; cmdlog.txt
 step=&quot;010&quot;
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
@@ -4089,7 +4396,8 @@ mv ./<span class="ot">$1</span>/psfi0.fits ./<span class="ot">$1</span>/psfi0_st
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_step010.conf
 touch ./<span class="ot">$1</span>/step010.txt
  else
- printf &quot;skip step 010 [  1] (tune Lyot stops conjugations)\n&quot;
+ echo &quot;skip step 010 [  1] (Tune Lyot stops conjugations)&quot;
+ echo &quot;skip step 010 [  1] (Tune Lyot stops conjugations)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;011&quot;
 fi
@@ -4106,15 +4414,17 @@ checkexit
 kmaxC=20
 
 kmaxF=0
-if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]<span class="kw">;</span> <span class="kw">then</span>
+if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -e<span class="kw">q</span> <span class="st">&quot;0&quot;</span> ]; <span class="kw">then</span>
 kmaxF=20
 fi
 
-if [ &quot;011&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;011&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
  if [ ! -f ./<span class="ot">$1</span>/step011.txt ]
  then
- echo &quot;step 011&quot;
+echo &quot;<span class="ot">$datestr</span>  step011  Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step011  Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot; &gt;&gt; cmdlog.txt
 step=&quot;011&quot;
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
@@ -4135,10 +4445,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cm
 loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
 loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
 loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=<span class="ot">${REGPIAACCOEFF}</span>
+REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
+REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
+REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
 PIAACMC_dftgrid=2
 
@@ -4156,7 +4467,8 @@ cp ./<span class="ot">$1</span>/fpm_zonea.fits ./<span class="ot">$1</span>/fpm_
 cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linoptval_step011.txt
 touch ./<span class="ot">$1</span>/step011.txt
  else
- printf &quot;skip step 011 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 20, 20)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 011 [ 40] (Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 011 [ 40] (Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;012&quot;
 fi
@@ -4179,16 +4491,18 @@ checkexit
 kmaxC=40
 
 kmaxF=0
-if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]<span class="kw">;</span> <span class="kw">then</span>
+if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -e<span class="kw">q</span> <span class="st">&quot;0&quot;</span> ]; <span class="kw">then</span>
 kmaxF=100
 fi
 
-if [ &quot;012&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;012&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=&quot;012&quot;
  if [ ! -f ./<span class="ot">$1</span>/step012.txt ]
  then
- echo &quot;step <span class="ot">$step</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 <span class="ot">$execnamestring</span> -n step012 &lt;&lt; EOF
@@ -4207,10 +4521,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cm
 loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
 loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
 loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=<span class="ot">${REGPIAACCOEFF}</span>
+REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
+REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
+REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
 PIAACMC_dftgrid=2
 
@@ -4229,7 +4544,8 @@ cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linop
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_idealmonomask.conf
 touch ./<span class="ot">$1</span>/step012.txt
  else
- printf &quot;skip step 012 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 100)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 012 [ 40] (Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 012 [ 40] (Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;013&quot;
 fi
@@ -4245,12 +4561,14 @@ checkexit
 
 # STEP 013: Compute Lyot stops shapes and locations, 4rth pass, <span class="ot">$LStransm2</span> throughput
 
-if [ &quot;013&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;013&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=&quot;013&quot;
  if [ ! -f ./<span class="ot">$1</span>/step013.txt ]
  then
- echo &quot;step <span class="ot">$step</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Compute Lyot stops shapes and locations, 4rth pass, <span class="ot">$LStransm2</span> throughput&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Compute Lyot stops shapes and locations, 4rth pass, <span class="ot">$LStransm2</span> throughput&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 <span class="ot">$execnamestring</span> -n step013 &lt;&lt; EOF
@@ -4279,7 +4597,8 @@ cp ./<span class="ot">$1</span>/LyotStop3.fits ./<span class="ot">$1</span>/Lyot
 
 touch ./<span class="ot">$1</span>/step013.txt
  else
- printf &quot;skip step 013 [  5] (Compute Lyot stops shapes and locations, 4rth pass, <span class="ot">$LStransm2</span> throughput)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 013 [  5] (Compute Lyot stops shapes and locations, 4rth pass, <span class="ot">$LStransm2</span> throughput)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 013 [  5] (Compute Lyot stops shapes and locations, 4rth pass, <span class="ot">$LStransm2</span> throughput)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;014&quot;
 fi
@@ -4293,12 +4612,14 @@ checkexit
 
 # STEP 014: Tune Lyot stops conjugations
 
-if [ &quot;014&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;014&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=&quot;014&quot;
  if [ ! -f ./<span class="ot">$1</span>/step014.txt ]
  then
- echo &quot;step <span class="ot">$step</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune Lyot stops conjugations&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune Lyot stops conjugations&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 <span class="ot">$execnamestring</span> -n step014 &lt;&lt; EOF
@@ -4322,7 +4643,8 @@ cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_idealmonomask.conf
 touch ./<span class="ot">$1</span>/step014.txt
  else
- printf &quot;skip step 014 [  1] (tune Lyot stops conjugations)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 014 [  1] (Tune Lyot stops conjugations)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 014 [  1] (Tune Lyot stops conjugations)\n&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;015&quot;
 fi
@@ -4340,16 +4662,18 @@ checkexit
 kmaxC=20
 
 kmaxF=0
-if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]<span class="kw">;</span> <span class="kw">then</span>
+if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -e<span class="kw">q</span> <span class="st">&quot;0&quot;</span> ]; <span class="kw">then</span>
 kmaxF=20
 fi
 
-if [ &quot;015&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;015&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=015
  if [ ! -f ./<span class="ot">$1</span>/step015.txt ]
  then
- echo &quot;step <span class="ot">$step</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 <span class="ot">$execnamestring</span> -n step015 &lt;&lt; EOF
@@ -4368,10 +4692,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cm
 loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
 loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
 loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=<span class="ot">${REGPIAACCOEFF}</span>
+REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
+REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
+REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
 PIAACMC_dftgrid=2
 
@@ -4390,7 +4715,8 @@ cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linop
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_idealmonomask.conf
 touch ./<span class="ot">$1</span>/step015.txt
  else
- printf &quot;skip step 015 [ 40] (tune PIAA shapes and focal plane mask transm # modes: 20, 20)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 015 [ 40] (Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 015 [ 40] (Tune PIAA shapes and focal plane mask transm # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;016&quot;
 fi
@@ -4410,16 +4736,18 @@ checkexit
 kmaxC=40
 
 kmaxF=0
-if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]<span class="kw">;</span> <span class="kw">then</span>
+if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -e<span class="kw">q</span> <span class="st">&quot;0&quot;</span> ]; <span class="kw">then</span>
 kmaxF=150
 fi
 
-if [ &quot;016&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;016&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=&quot;016&quot;
  if [ ! -f ./<span class="ot">$1</span>/step016.txt ]
  then
- echo &quot;step <span class="ot">$step</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$stepT</span>  une PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$stepT</span>  une PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 <span class="ot">$execnamestring</span> -n step016 &lt;&lt; EOF
@@ -4438,11 +4766,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cm
 loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
 loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
 loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
 
+REGPIAA_C_COEFF=<span class="ot">${REGPIAACCOEFF}</span>
+REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
+REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
+REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
 PIAACMC_dftgrid=2
 
@@ -4461,7 +4789,8 @@ cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linop
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_idealmonomask.conf
 touch ./<span class="ot">$1</span>/step016.txt
  else
- printf &quot;skip step 016 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 150)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 016 [ 40] (Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 016 [ 40] (Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;017&quot;
 fi
@@ -4478,16 +4807,18 @@ checkexit
 kmaxC=40
 
 kmaxF=0
-if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -eq &quot;0&quot; ]<span class="kw">;</span> <span class="kw">then</span>
+if [ &quot;<span class="ot">$PIAAcirc</span>&quot; -e<span class="kw">q</span> <span class="st">&quot;0&quot;</span> ]; <span class="kw">then</span>
 kmaxF=625
 fi
 
-if [ 017 -eq <span class="ot">${state}</span> ]
+if [ 017 -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=017
  if [ ! -f ./<span class="ot">$1</span>/step017.txt ]
  then
- echo &quot;step <span class="ot">$step</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot;
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 <span class="ot">$execnamestring</span> -n step017 &lt;&lt; EOF
@@ -4506,10 +4837,11 @@ loadfits &quot;<span class="ot">$1</span>/piaa0Cmodes_step001.fits&quot; piaa0Cm
 loadfits &quot;<span class="ot">$1</span>/piaa1Cmodes_step001.fits&quot; piaa1Cmref
 loadfits &quot;<span class="ot">$1</span>/piaa0Fmodes_step001.fits&quot; piaa0Fmref
 loadfits &quot;<span class="ot">$1</span>/piaa1Fmodes_step001.fits&quot; piaa1Fmref
-REGPIAA_C_COEFF=300.0
-REGPIAA_C_ALPHA=0.2
-REGPIAA_F_COEFF=300.0
-REGPIAA_F_ALPHA=0.2
+
+REGPIAA_C_COEFF=<span class="ot">${REGPIAACCOEFF}</span>
+REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
+REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
+REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
 PIAACMC_dftgrid=2
 
@@ -4528,7 +4860,8 @@ cp ./<span class="ot">$1</span>/linoptval.txt ./<span class="ot">$1</span>/linop
 cp ./<span class="ot">$1</span>/piaacmcparams.conf ./<span class="ot">$1</span>/piaacmcparams_idealmonomask.conf
 touch ./<span class="ot">$1</span>/step017.txt
  else
- printf &quot;skip step 017 [ 40] (tune PIAA shapes and focal plane mask transm, # modes: 40, 625)\n&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 017 [ 40] (Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot;
+ echo &quot;<span class="ot">$datestr</span>  skip step 017 [ 40] (Tune PIAA shapes and focal plane mask transm, # modes: <span class="ot">$kmaxC</span>, <span class="ot">$kmaxF</span>)&quot; &gt;&gt; cmdlog.txt
  fi
 state=&quot;018&quot;
 fi
@@ -4540,9 +4873,11 @@ checkexit
 
 # STEP 18: go to step 100
 
-if [ &quot;018&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;018&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=018
+echo &quot;<span class="ot">$datestr</span>  step<span class="ot">$step</span>  --&quot; &gt;&gt; cmdlog.txt
 echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
 touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 state=&quot;100&quot;
@@ -4565,14 +4900,16 @@ checkexit
 
 
 #
-# STEP 100: turn focal plane mask into physical mask with zones, Compute polychromatic response to zones, store result in FPMresp
+# STEP 100: Turn focal plane mask into physical mask with zones, Compute polychromatic response to zones, store result in FPMresp
 #
-if [ &quot;100&quot; -eq <span class="ot">${state}</span> ]
+if [ &quot;100&quot; -e<span class="kw">q</span> <span class="ot">${state}</span> ]
 then
+    datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 step=&quot;100&quot;
     if [ ! -f ./<span class="ot">$1</span>/step100.txt ]
     then
-    echo &quot;step 100&quot;
+    echo &quot;<span class="ot">$datestr</span>  step100  Turn focal plane mask into physical mask with zones, Compute polychromatic response to zones, store result in FPMresp&quot;
+    echo &quot;<span class="ot">$datestr</span>  step100  Turn focal plane mask into physical mask with zones, Compute polychromatic response to zones, store result in FPMresp&quot; &gt;&gt; cmdlog.txt
     echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
     touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
 
@@ -4582,7 +4919,7 @@ step=&quot;100&quot;
     echo &quot;NBthreadsFPMrespm1 = <span class="ot">${NBthreadsFPMrespm1}</span>&quot;
     echo &quot;NBthreadsFPMresp = <span class="ot">${NBthreadsFPMresp}</span>&quot;
 
-    for thread in <span class="kw">`seq</span> 0 1 <span class="ot">${NBthreadsFPMrespm1}</span><span class="kw">`;</span>
+    for thread in <span class="kw">`seq</span> 0 1 <span class="ot">${NBthreadsFPMrespm1}</span><span class="kw">`</span>;
     do
     echo &quot; - thread = <span class="ot">$thread</span>&quot;
     done
@@ -4594,7 +4931,7 @@ step=&quot;100&quot;
 
 
 
-for thread in <span class="kw">`seq</span> 0 1 <span class="ot">${NBthreadsFPMrespm1}</span><span class="kw">`;</span>
+for thread in <span class="kw">`seq</span> 0 1 <span class="ot">${NBthreadsFPMrespm1}</span><span class="kw">`</span>;
 do
 echo &quot;STARTING COMPONENT <span class="ot">$thread</span>&quot;
 echo &quot;waitforfile initOK_<span class="ot">${pid}</span>&quot; &gt; script<span class="ot">${pid}</span>FPMt<span class="ot">${thread}</span>n<span class="ot">${NBthreadsFPMresp}</span>
@@ -4631,12 +4968,12 @@ done
 
 
 
-if [ 1 -eq 1 ]
+if [ 1 -e<span class="kw">q</span> <span class="kw">1</span> ]
 then
 touch teststep_002
 thread=<span class="ot">${NBthreadsFPMresp}</span> # this thread waits for the other ones to complete
 <span class="ot">$execnamestring</span> -n <span class="ot">${pid}</span>FPMt<span class="ot">${thread}</span>n<span class="ot">${NBthreadsFPMresp}</span> &lt;&lt; EOF
-PIAACMC_fpmtype=1
+PIAACMC_fpmtype=<span class="kw">1</span>
 PIAACMC_FPMsectors=<span class="ot">$FPMsectors</span>
 SCORINGMASKTYPE=<span class="ot">$SCORINGMASKTYPE</span>
 
@@ -4647,14 +4984,14 @@ PIAACMC_FPMresp_mp=<span class="ot">${NBthreadsFPMresp}</span>
 PIAACMC_FPMresp_thread=<span class="ot">${thread}</span>
 PIAACMC_save=0
 PID=<span class="ot">${pid}</span>
-piaacmcsimrun <span class="ot">$1</span> 11
+piaacmcsimrun <span class="ot">$1</span> <span class="kw">11</span>
 exit
 EOF
 rm initOK_<span class="ot">${pid}</span>
 
 
 # clean up threads and temporary files
-for thread in <span class="kw">`seq</span> 0 1 <span class="ot">${NBthreadsFPMrespm1}</span><span class="kw">`;</span>
+for thread in <span class="kw">`seq</span> 0 1 <span class="ot">${NBthreadsFPMrespm1}</span><span class="kw">`</span>;
 do
 tmux kill-session -t <span class="ot">${pid}</span>FPMt<span class="ot">${thread}</span>n<span class="ot">${NBthreadsFPMresp}</span>
 rm script<span class="ot">${pid}</span>FPMt<span class="ot">${thread}</span>n<span class="ot">${NBthreadsFPMresp}</span>
@@ -4665,79 +5002,77 @@ fi
 
 
 
-#touch ./<span class="ot">$1</span>/step100.txt
+#touch ./<span class="ot">$1</span>/step<span class="kw">100.txt</span>
 
 
 
-#mv ./<span class="ot">$1</span>/psfi0.fits ./<span class="ot">$1</span>/psfi0_step100.fits
- else
- printf &quot;skip step 100 [ 11] turn focal plane mask into zones, Compute polychromatic response to zones, store result in FPMresp\n&quot;
+#mv ./<span class="ot">$1</span>/psfi0.fi<span class="kw">ts</span> ./<span class="ot">$1</span>/psfi0_step100.fits
+ el<span class="kw">se</span>
+ <span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$datestr</span><span class="st">  skip step 100 [ 11] turn focal plane mask into zones, Compute polychromatic response to zones, store result in FPMresp&quot;</span> 
+ ech<span class="kw">o</span> <span class="st">&quot;</span><span class="ot">$datestr</span><span class="st">  skip step 100 [ 11] turn focal plane mask into zones, Compute polychromatic response to zones, store result in FPMresp&quot;</span> <span class="kw">&gt;&gt;</span> <span class="kw">cmdlog.txt</span>
  fi
-state=&quot;101&quot;
+s<span class="kw">tate</span>=<span class="st">&quot;101&quot;</span>
 fi
 
 
 
-checkexit
+ch<span class="kw">eckexit</span>
 
 
 
-
-
-# STEP 101: search for optimal FPM solution
+# STEP 101: search for op<span class="kw">timal</span> FPM solution
 # 
 
 if [ &quot;101&quot; -eq <span class="ot">${state}</span> ]
 then
+datestr=<span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
 echo &quot;entering step 101&quot;
 if [ ! -f ./<span class="ot">$1</span>/step101.txt ]
  then
- echo &quot;step 101&quot;
-step=&quot;101&quot;
-echo &quot;<span class="ot">$step</span>&quot; &gt; ./<span class="ot">$1</span>/runstep
-touch ./<span class="ot">$1</span>/step<span class="ot">$step</span>.run.txt
-<span class="ot">$execnamestring</span> -n step101 &lt;&lt; EOF
-PIAACMC_fpmtype=1
-PIAACMC_FPMsectors=<span class="ot">$FPMsectors</span>
-SCORINGMASKTYPE=<span class="ot">$SCORINGMASKTYPE</span>
-PIAACMC_save=0
-PIAACMC_nbiterSA=10000
-PIAACMC_nbiterDS=100
+echo &quot;<span class="ot">$datestr</span>  step101  Search for optima<span class="kw">l</span> <span class="kw">FPM</span> solution<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step101  Search for optimal FPM solution<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st">step=&quot;</span>101<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$step</span><span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
+<span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step</span><span class="ot">$step</span><span class="st">.run.txt</span>
+<span class="ot">$execnamestring</span><span class="st"> -n step101 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_fpmtype=1</span>
+<span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
+<span class="st">SCORINGMASKTYPE=</span><span class="ot">$SCORINGMASKTYPE</span>
+<span class="st">PIAACMC_save=0</span>
+<span class="st">PIAACMC_nbiterSA=10000</span>
+<span class="st">PIAACMC_nbiterDS=100</span>
 
-#REGFPMSAG=1
-#REGFPMSAG_COEFF=0.1
-#REGFPMSAG_COEFF_ALPHA=1.0
-
-piaacmcsimrun <span class="ot">$1</span> 13
-exit
-EOF
- else
- echo &quot;skip step 101 [ 13] search for optimal solution&quot;
-fi
-#touch ./<span class="ot">$1</span>/step101.txt
-state=&quot;102&quot;
-fi
+<span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 13</span>
+<span class="st">exit</span>
+<span class="st">EOF</span>
+<span class="st"> else</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  skip step 101 [ 13] search for optimal solution<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  skip step 101 [ 13] search for optimal solution<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st">fi</span>
+<span class="st">#touch ./</span><span class="ot">$1</span><span class="st">/step101.txt</span>
+<span class="st">state=&quot;</span>102<span class="st">&quot;</span>
+<span class="st">fi</span>
 
 
 
-checkexit
+<span class="st">checkexit</span>
 
 
 
 
-# STEP 102: exit
+<span class="st"># STEP 102: exit</span>
 
-if [ &quot;102&quot; -eq <span class="ot">${state}</span> ]
-then
-cleanup
-exit
-fi
+<span class="st">if [ &quot;</span>102<span class="st">&quot; -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
+<span class="st">then</span>
+<span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step102  END<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step102  END<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st">cleanup</span>
+<span class="st">exit</span>
+<span class="st">fi</span>
 
 
-checkexit
-
-
-
+<span class="st">checkexit</span>
 
 
 
@@ -4746,12 +5081,15 @@ checkexit
 
 
 
-====================================== END OF STATE MACHINE ==============================================
-cleanup
 
 
 
-exit
+<span class="st">====================================== END OF STATE MACHINE ==============================================</span>
+<span class="st">cleanup</span>
+
+
+
+<span class="st">exit</span>
 
 
 </code></pre></td></tr></table></div>

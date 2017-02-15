@@ -20,11 +20,11 @@ typedef struct {
 
     // ======= SEED RADIAL PIAACMC PARAMETERS ======
 
-    double centObs0; // input central obstruction
-    double centObs1; // output central obstruction
-    double r0lim; // outer radius after extrapolation, piaa mirror 0
-    double r1lim; // outer radius after extrapolation, piaa mirror 1
-    long NBradpts; // number of points for common r0, r1, piaa sags 1D table
+    double centObs0;     /**< input central obstruction */
+    double centObs1;     /**< output central obstruction */
+    double r0lim;        /**< outer radius after extrapolation, piaa mirror 0 */
+    double r1lim;        /**< outer radius after extrapolation, piaa mirror 1 */
+    long NBradpts;       /**< number of points for common r0, r1, piaa sags 1D table */
 
 
     // Wavelength
@@ -61,7 +61,7 @@ typedef struct {
 
 
     // ========= LYOT STOPS ============
-    long NBLyotStop;
+    long NBLyotStop;          /**< Number of Lyot stops */
     long IDLyotStop[10];
     double LyotStop_zpos[10];
 
@@ -136,41 +136,173 @@ typedef struct {
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 1. INITIALIZATION, configurations
+ *  Allocate memory, import/export configurations
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
 
-
-
-// module initialization
+/**
+ * @brief Module initialization
+ *
+ * Registers command line interface (CLI) commands
+ * 
+ */
 int_fast8_t init_PIAACMCsimul();
+
+
+/**
+ * @brief Free PIAACMC memory
+ * 
+ */
 void  PIAACMCsimul_free( void );
 
-// Focal plane mask
-long PIAACMCsimul_mkFPM_zonemap(const char *IDname);
-long PIAACMCsimul_rings2sectors(const char *IDin_name, const char *sectfname, const char *IDout_name);
-long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_name,  int mode, int saveMask);
 
-// initializes the optsyst structure to simulate reflective PIAACMC system
+/**
+ * @brief initializes the optsyst structure to simulate reflective PIAACMC system
+ */
 void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, double TTyld );
 
-// PIAA optics (geometrical optics) tools
-int PIAACMCsimul_load2DRadialApodization(const char *IDapo_name, float beamradpix, const char *IDapofit_name);
+
+/**
+ * @brief initializes configuration
+ */
+int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int WFCmode, int load);
+
+/**
+ * @brief Save configuration
+ */
+int PIAAsimul_savepiaacmcconf(const char *dname);
+
+/**
+ * @brief Load configuration
+ */
+int PIAAsimul_loadpiaacmcconf(const char *dname);
+
+
+///@}
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 2. Focal plane mask construction 
+ *  Define focal plane mask geometry 
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+long PIAACMCsimul_mkFPM_zonemap(const char *IDname);
+
+long PIAACMCsimul_rings2sectors(const char *IDin_name, const char *sectfname, const char *IDout_name);
+
+long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_name,  int mode, int saveMask);
+
+///@}
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name  3. PIAA optics  (geometrical optics)
+ *  Create PIAA opics according to geometrical optics
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+uint_fast8_t PIAACMCsimul_load2DRadialApodization(const char *IDapo_name, float beamradpix, const char *IDapofit_name);
+
 int PIAACMCsimul_init_geomPIAA_rad(const char *IDapofit_name);
+
 int PIAACMCsimul_mkPIAAMshapes_from_RadSag(const char *fname, const char *ID_PIAAM0_name, const char *ID_PIAAM1_name);
 
-long PIAAsimul_mkSimpleLyotStop(const char *ID_name, float rin, float rout);
-int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0, double centobs1, int WFCmode, int load);
 int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index);
-double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode, int outsave);
-int PIAAsimul_savepiaacmcconf(const char *dname);
-int PIAAsimul_loadpiaacmcconf(const char *dname);
-long PIAACMCsimul_mkLyotMask(const char *IDincoh_name, const char *IDmc_name, const char *IDzone_name, double throughput, const char *IDout_name);
-long PIAACMCsimul_CA2propCubeInt(const char *IDamp_name, const char *IDpha_name, float zmin, float zmax, long NBz, const char *IDout_name);
+
+///@}
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name  4. Lyot stop(s)
+ *  Create, optimize and manage Lyot stop(s)
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+long PIAAsimul_mkSimpleLyotStop(const char *ID_name, float rin, float rout);
+
 double PIAACMCsimul_optimizeLyotStop(const char *IDamp_name, const char *IDpha_name, const char *IDincoh_name, float zmin, float zmax, double throughput, long NBz, long NBmasks);
+
+long PIAACMCsimul_mkLyotMask(const char *IDincoh_name, const char *IDmc_name, const char *IDzone_name, double throughput, const char *IDout_name);
+
+///@}
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name  5. Focal plane mask optimization  
+ *  Create, optimize and manage Focal plane solutions
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 double PIAACMCsimul_achromFPMsol_eval(double *fpmresp_array, double *zonez_array, double *dphadz_array, double *outtmp_array, long vsize, long nbz, long nbl);
+
+double PIAACMCsimul_achromFPMsol_eval_zonezderivative(long zone, double *fpmresp_array, double *zonez_array, double *dphadz_array, double *outtmp_array, long vsize, long nbz, long nbl);
+
 long PIAACMC_FPMresp_rmzones(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBzones);
+
 long PIAACMC_FPMresp_resample(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBlambda, long PTstep);
+
+///@}
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name  6. Focal plane processing
+ *  Process / resample focal plane solutions
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, long NBexp, const char *outname);
+
+long PIAACMC_FPMresp_resample(const char *FPMresp_in_name, const char *FPMresp_out_name, long NBlambda, long PTstep);
+
+///@}
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name  7. High level routines 
+ *  High level optimization and evaluation routines
+ */
+///@{
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int PIAACMCsimul_exec(const char *confindex, long mode);
+
+double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode, int outsave);
+
+long PIAACMCsimul_CA2propCubeInt(const char *IDamp_name, const char *IDpha_name, float zmin, float zmax, long NBz, const char *IDout_name);
 
 int PIAACMCsimul_run(const char *confindex, long mode);
 
-long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, long NBexp, const char *outname);
+///@}
+
+
 
 #endif

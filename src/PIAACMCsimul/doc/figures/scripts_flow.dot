@@ -3,9 +3,15 @@ digraph scripts_flow {
   graph [fontsize=30 labelloc="t" label="" splines=true overlap=false rankdir = "LR"];
   ratio = auto;
   
+  "runPIAACMCdesign" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
+  label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white">runPIAACMCdesign</font></td></tr>
+  <tr><td align="left">Top level script</td></tr>
+  <tr><td align="left">Executes lower scripts</td></tr>
+  </table>> ];
+
   "run" [ style = "filled, bold" penwidth = 5 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" 
   label =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white"><tr><td bgcolor="black" align="center" colspan="2"><font color="white">run</font></td></tr>
-  <tr><td align="left">Top level script</td></tr>
+  <tr><td align="left">Main script</td></tr>
   <tr><td align="left">Reads input variables</td></tr>
   </table>> ];
   
@@ -27,6 +33,7 @@ digraph scripts_flow {
 
 
   
+  runPIAACMCdesign-> run [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
   run-> runopt [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
   runopt -> sim [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];
   sim -> runPIAACMC [ penwidth = 5 fontsize = 28 fontcolor = "black" label = "" ];

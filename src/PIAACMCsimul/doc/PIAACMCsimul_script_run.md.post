@@ -63,6 +63,7 @@ loadparam NBls 4
 loadparam lambda 800
 loadparam mlambda 800
 loadparam mlambdaB 10
+loadparam nblambda 10
 loadparam FPMsectors 1
 loadparam NBrings 22
 loadparam maskradld 1.60
@@ -72,6 +73,8 @@ loadparam extmode 0
 loadparam fpmmaterial "Mirror"
 loadparam fpmminsag "-1e-6"
 loadparam fpmmaxsag "1e-6"
+loadparam fpmregsag_coeff "1.0"
+loadparam fpmregsag_alpha "1.0"
 
 loadparam fpmccnbr 0
 loadparam fpmccz $fpmmaxsag
@@ -101,6 +104,15 @@ loadparam PIAAcirc 0   # if set to 1, force PIAA shapes to be circular (no Fouri
 
 
 
+loadparam REGPIAACCOEFF 300.0
+loadparam REGPIAACALPHA 0.2
+loadparam REGPIAAFCOEFF 300.0
+loadparam REGPIAAFALPHA 0.2
+
+
+
+
+
 function printvarall() {
 
 echo -e "\033[1m          CURRENT PARAMETERS VALUES :\033[0m"
@@ -119,6 +131,10 @@ printvar "coin" "central obstruction at input beam [beam radius]"
 printvar "coout" "central obstruction at output beam [beam radius]"
 printvar "PIAAmaterial" "PIAA optics material"
 printvar "PIAAcirc" "FLAG: 1 if PIAA shapes are circular (no Fourier modes)"
+printvar "REGPIAACCOEFF" "PIAA regularization amplitude, cosine modes"
+printvar "REGPIAACALPHA" "PIAA regularization power law, cosine modes"
+printvar "REGPIAAFCOEFF" "PIAA regularization amplitude, Fourier modes"
+printvar "REGPIAAFALPHA" "PIAA regularization power law, Fourier modes"
 fi
 
 echo -e "\033[1m LYOT STOP(S) DESIGN: \033[0m"
@@ -137,6 +153,8 @@ printvar "NBrings" "number of rings in focal plane mask"
 printvar "maskradld" "mask outer radius at central wavelength [l/D]"
 printvar "fpmminsag" "min focal plane mask sag"
 printvar "fpmmaxsag" "max focal plane mask sag"
+printvar "fpmregsag_coeff" "sag regularization coefficient"
+printvar "fpmregsag_alpha" "sag regularization coefficient exponent"
 printvar "fpmccnbr" "how many central rings replaced by cone (set to 0 if no central cone)"
 printvar "fpmccz" "sag at cone center (sag at cone edge will be midpoint between minsag and maxsag)"
 printvar "fpmocradld" "outer cone outer radius [l/D]"
@@ -147,6 +165,7 @@ echo -e "\033[1m OPTIMIZATION PARAMETERS: \033[0m"
 
 printvar "mlambda" "central wavelength for polychromatic design [nm]"
 printvar "mlambdaB" "spectral bandwidth [%]"
+printvar "nblambda" "Number of wavelength values"
 printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
 printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
 
@@ -177,6 +196,66 @@ printvar "pupoutmaskrad" "output pupil mask radius (scaled to pupil radius)"
 echo " "
 }
 
+
+
+
+printhelpeval0 ()
+{
+	echo ""
+	echo "---------------------------------------------------------------------"
+	echo "               PIAACMC DESIGN evaluation level 0 (eval0)"
+	echo "                         list of files"
+	echo ""
+	echo "vallog.txt                               List of design variables"
+	echo "lambdalist.txt                           List of discrete wavelength values"
+	echo ""
+	echo "psfi0_step699.fits                       Monochromatic on-axis reference PSF, no focal plane mask"
+	echo "psfi0_step700.fits                       Monochromatic on-axis PSF, idealized focal plane mask"
+	echo "psfi0_ptsrc_sm0_s2_l...fits              Polychromatic on-axis PSF, physical focal plane mask"
+	echo "contrast_ptsrc_sm0_s2_l....txt           Contrast value"
+	echo ""
+	echo "piaam0z.fits                             PIAA mirror 0 sag [m]"
+	echo "piaam1z.fits                             PIAA mirror 1 sag [m]"
+	echo "conjugations.txt                         location of planes (unfolded collimated space)"
+	echo "WFamp0_xxx.fits, WFpha0_xxx.fits         complex amplitude in planes"
+	echo "LyotStop#.fits                           Lyot stops"
+	echo ""
+	echo "tmp_fpmsag.fits                          Focal plane mask sag [m]"
+	echo "tmp_fpmCA_pha.fits                       Focal plane mask phase [rad]"
+	echo "tmp_fpmCA_ampl.fits                      Focal plane mask amplitude"
+	echo "tmp_fpmzone.fits                         Focal plane mask zones"
+	echo "---------------------------------------------------------------------"
+	}
+
+
+printhelpeval1 ()
+{
+	echo ""
+	echo "---------------------------------------------------------------------"
+	echo "               PIAACMC DESIGN evaluation level 1 (eval1)"
+	echo "                         list of files"
+	echo ""
+	echo "psfi0_x50_y00.fits                        Polychromatic off-axis point source PSF, x=5l/D at central lambda, y=0"
+	echo "psfi0_ptsrc_sm0_s2_....fits               Polychromatic on-axis point source PSF"
+	echo "psfi0_extsrc15_sm0_s2_l....fits           Polychromatic on-axis resolved source (0.03 l/D radius)"
+	echo "ContrastCurve_extsrc15_sm0_s2_l....fits   contrast curve for 0.03 l/D radius source"
+	echo "psfi0_extsrc20_sm0_s2_l....fits           Polychromatic on-axis resolved source (0.01 l/D radius)"
+	echo "ContrastCurve_extsrc20_sm0_s2_l....fits   contrast curve for 0.01 l/D radius source"
+	echo ""
+	echo ""
+	echo "---------------------------------------------------------------------"
+}
+
+printhelpeval2 ()
+{
+	echo ""
+	echo "---------------------------------------------------------------------"
+	echo "               PIAACMC DESIGN evaluation level 2 (eval2)"
+	echo "                         list of files"
+	echo ""
+	echo ""
+	echo "---------------------------------------------------------------------"
+}
 
 
 printhelp ()
@@ -225,15 +304,31 @@ echo "                                  ..."
 echo "                       NOTE: type \"./runPIAACMC helpsteps\" to list design steps description"
 echo "     proppoly <bogusarg>   : polychromatic propagation point source"
 echo "     eval0 <stepstop>      : level 0 evaluation (compute on-axis PSF and contrast), <stepstop> should be set to 18"
-echo "                    output files:  flux_ptsrc_...          "
-echo "                                   contrast_ptsrc_...."
-echo "                                   psfi0_ptsrc_..."
+echo "                    output files:  flux_ptsrc_sm0_s2_l_...          "
+echo "                                   contrast_ptsrc_sm0_s2_l....txt"
+echo "                                   psfi0_ptsrc_sm0_s2_l...fits"
+echo "                                Notes: sm = scoring mask"
+echo "                                       s = segments (2=hex)"
 echo "     eval1 <stepstop>      : level 1 evaluation (on-axis and resolved source PSFs and contrasts), <stepstop> should be set to 18"
 echo "                    OUTPUT FILES:  ContrastCurve_extsrc15_..."
 echo "                                   ContrastVal_extsrc15_..."
 echo "                                   psfi0_extsrc15_..."
 echo "     eval2 <stepstop>      : level 2 evaluation (compute all contrasts + transmission curve), <stepstop> should be set to 18"
 echo "                    OUTPUT FILES:  transmCurve_<parameters>.txt"
+echo ""
+echo "  Focal plane mask zone response file name:"
+echo ""
+echo "  FPMresp<s>_s<sec>_l<lambdanm>_sr<bandw>_nbr<NBrings>_mr<maskradld>_ssr<sourcesize>_ssm<sourcemode>_<material>_wb<NBlambda>.fits"
+echo "    s           scroring mask type, 0 or 1"
+echo "    sec         sector type. 2: hexagonal tiling"
+echo "    lambdanm    wavelength [nm]"
+echo "    bandw       spectral bandwidth [%]"
+echo "    NBrings     number of rings"
+echo "    maskradld   focal plane mask radius [l/D]"
+echo "    sourcesize  source size. 10: 0.1 l/d, 20: 0.01 l/d, 30: 0.001 l/D"
+echo "    sourcemode  extended source mode. 0: 3pt, 1: 6pt"
+echo "    material    focal plane mask subtrate"
+echo "    NBlambda    number of wavelengths"
 echo "------------------------------------------------------------------------"
 }
 
@@ -244,12 +339,13 @@ NBARGS=2
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
         printhelp
 if [ "$#" -ne $NBARGS ]; then
+    printvarall > "varlog.txt"
     echo "Illegal number of parameters ($NBARGS params required, $# entered)"
 fi
         exit
 fi
 
-
+printvarall > "varlog.txt"
 runoptcmd=$1
 
 
@@ -263,17 +359,17 @@ fi
 echo "$2" > ./log/conf_exitpt.txt
 
 
-
-
 if [ "$runoptcmd" = "eval0" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
 echo "19" > ./log/conf_exitpt.txt
 fi
 
+
 if [ "$runoptcmd" = "eval1" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
 echo "19" > ./log/conf_exitpt.txt
 fi
+
 
 if [ "$runoptcmd" = "eval2" ]; then
 echo "$2" > ./log/conf_MdesignStepMax.txt
@@ -281,14 +377,65 @@ echo "19" > ./log/conf_exitpt.txt
 fi
 
 
+rm cmdlog.txt
 
 
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  ./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz 000" > cmdlog.txt
+
+touch run.cmd.tsart
+
+./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
 
 
-echo "./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000"
+if [ "$runoptcmd" = "eval0" ]; then
+mkdir -p eval0
+printhelpeval0 > ./eval0/readme_eval0.txt
+#cp varlog.txt ./eval0/varlog.txt
+#cp piaacmcconf_i000/lambdalist.txt ./eval0/
+#cp piaacmcconf_i000/psfi0_step699.fits ./eval0/
+#cp piaacmcconf_i000/psfi0_step700.fits ./eval0/
+#cp piaacmcconf_i000/psfi0_step720.fits ./eval0/
+#cp piaacmcconf_i000/piaam0z.fits ./eval0/
+#cp piaacmcconf_i000/piaam1z.fits ./eval0/
+#cp piaacmcconf_i000/conjugations.txt ./eval0/
+#cp piaacmcconf_i000/WFamp0_*.fits ./eval0/
+#cp piaacmcconf_i000/WFpha0_*.fits ./eval0/
+#cp piaacmcconf_i000/LyotStop[0-5].fits ./eval0/
+#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2_l*.fits ./eval0/
+#cp piaacmcconf_i000/contrast_ptsrc_sm0_s2_l*.txt ./eval0/
+#cp tmp_fpmCA_ampl.fits ./eval0/
+#cp tmp_fpmCA_pha.fits ./eval0/
+#cp tmp_fpmsag.fits ./eval0/
+#cp tmp_fpmzone.fits ./eval0/
+find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval0/
+cd eval0
+gzip -f *.fits
+cd ..
+fi
 
-./runopt $runoptcmd $pscale $coin $coout $fpmradld $lambda $PIAAmaterial $LStransm $NBls $mlambda $mlambdaB $NBrings $maskradld $ssize $extmode $fpmmaterial $fpmminsag $fpmmaxsag $fpmccnbr $fpmccz $fpmocradld $fpmocz 000
+if [ "$runoptcmd" = "eval1" ]; then
+mkdir -p eval1
+printhelpeval1 > ./eval1/readme_eval1.txt
+#cp varlog.txt ./eval1/varlog.txt
+#cp piaacmcconf_i000/psfi0_x50_y00.fits ./eval1/
+#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2*.fits ./eval1/
+#cp piaacmcconf_i000/psfi0_extsrc15_sm0_s2_l*.fits ./eval1/
+#cp piaacmcconf_i000/ContrastCurve_extsrc15_sm0_s2_l*.txt ./eval1/
+#cp piaacmcconf_i000/psfi0_extsrc20_sm0_s2_l*.fits ./eval1/
+#cp piaacmcconf_i000/ContrastCurve_extsrc20_sm0_s2_l*.txt ./eval1/
+find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval1/
+cd eval1
+gzip -f *.fits
+cd ..
+fi
+
+if [ "$runoptcmd" = "eval2" ]; then
+mkdir -p eval2
+printhelpeval2 > ./eval2/readme_eval2.txt
+fi
 
 
+rm run.cmd.tsart
 ~~~~~~~~~~~
 

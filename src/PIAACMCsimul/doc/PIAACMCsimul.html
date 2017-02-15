@@ -21,8 +21,11 @@
 <li><a href="#scope"><span class="toc-section-number">1.1</span> Scope</a></li>
 <li><a href="#usage"><span class="toc-section-number">1.2</span> Usage</a></li>
 </ul></li>
-<li><a href="#quick-start"><span class="toc-section-number">2</span> Quick start</a></li>
-<li><a href="#design-steps-monochromatic-design"><span class="toc-section-number">3</span> Design steps: Monochromatic design</a><ul>
+<li><a href="#quick-start"><span class="toc-section-number">2</span> Quick start</a><ul>
+<li><a href="#configuration-setup"><span class="toc-section-number">2.1</span> Configuration Setup</a></li>
+<li><a href="#design"><span class="toc-section-number">2.2</span> Design</a></li>
+</ul></li>
+<li><a href="#design-steps-monochromatic-design-step-100"><span class="toc-section-number">3</span> Design steps: Monochromatic design ( #step &lt; 100 )</a><ul>
 <li><a href="#overview-1"><span class="toc-section-number">3.1</span> Overview</a></li>
 <li><a href="#step-000-mode0-create-an-idealized-centrally-obscured-apodized-piaacmc-monochromatic-design"><span class="toc-section-number">3.2</span> STEP 000 (MODE=0): Create an idealized centrally obscured apodized PIAACMC monochromatic design</a></li>
 <li><a href="#step-001-propagate-solution-and-compute-psf"><span class="toc-section-number">3.3</span> STEP 001: Propagate solution and compute PSF</a></li>
@@ -101,18 +104,22 @@
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left"><strong>run</strong></td>
-<td align="center">Top level script, calls <strong>runopt</strong> script</td>
+<td align="left"><strong>runPIAACMCdesign</strong></td>
+<td align="center">Top level script (&quot;-h&quot; for help)</td>
 </tr>
 <tr class="even">
+<td align="left"><strong>run</strong></td>
+<td align="center">Main script, calls <strong>runopt</strong> script</td>
+</tr>
+<tr class="odd">
 <td align="left"><strong>runopt</strong></td>
 <td align="center">Optimize a PIAACMC design or run an existing design calls <strong>sim</strong> script</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><strong>sim</strong></td>
 <td align="center">calls <strong>runPIAACMC</strong> script</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><strong>runPIAACMC</strong></td>
 <td align="center">lower-level script calling C-written executable</td>
 </tr>
@@ -130,36 +137,27 @@
 </div>
 <div id="quick-start" class="section level1">
 <h1><span class="header-section-number">2</span> Quick start</h1>
-<p>The quickest way to get started is to run and modify one of the example design scripts provided in the <code>./examples/</code> directory. The bash scripts should be self-explanatory. For further details about the design steps, read the design steps section.</p>
-<table>
-<colgroup>
-<col width="37%" />
-<col width="62%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Script</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><strong>exampleAPLCMC</strong></td>
-<td align="left">Example APLCMC design (does not include PIAA optics)</td>
-</tr>
-<tr class="even">
-<td align="left"><strong>examplePIAACMC</strong></td>
-<td align="left">Example PIAACMC design for a segmented aperture (2028x2048 arrays)</td>
-</tr>
-<tr class="odd">
-<td align="left"><strong>examplePIAACMC_WFIRST1024</strong></td>
-<td align="left">Example PIAACMC design for the centrally obscured WFIRST pupil (1024x1024 arrays)</td>
-</tr>
-</tbody>
-</table>
+<div id="configuration-setup" class="section level2">
+<h2><span class="header-section-number">2.1</span> Configuration Setup</h2>
+<p>Print help for top level script:</p>
+<pre><code>./runPIAACMCdesign -h</code></pre>
+<p>The quickest way to get started is to setup and modify one of the example design scripts provided:</p>
+<pre><code>./runPIAACMCdesign -e 0</code></pre>
+<p>This will configure all necessary files for a specific configuration. You can view parameters with :</p>
+<pre><code>./runPIAACMCdesign -l</code></pre>
 </div>
-<div id="design-steps-monochromatic-design" class="section level1">
-<h1><span class="header-section-number">3</span> Design steps: Monochromatic design</h1>
+<div id="design" class="section level2">
+<h2><span class="header-section-number">2.2</span> Design</h2>
+<p>Design is done with the &quot;-m&quot; option. This command will execute all design steps from 0 to #step-1:</p>
+<pre><code>./runPIAACMCdesign -m &lt;#step&gt;</code></pre>
+<p>Individual design steps are described below.</p>
+<p>To run the full polychromatic design process:</p>
+<pre><code>./runPIAACMCdesign -m 201</code></pre>
+<p>This may take a long time to run ... (days ?).</p>
+</div>
+</div>
+<div id="design-steps-monochromatic-design-step-100" class="section level1">
+<h1><span class="header-section-number">3</span> Design steps: Monochromatic design ( #step &lt; 100 )</h1>
 <div id="overview-1" class="section level2">
 <h2><span class="header-section-number">3.1</span> Overview</h2>
 <p>The design proceeds in discrete steps. The example scripts show the individual steps, and each step is executed with a separate command line.</p>

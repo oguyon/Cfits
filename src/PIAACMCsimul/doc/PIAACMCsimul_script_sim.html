@@ -326,6 +326,11 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 261
 262
 263
+264
+265
+266
+267
+268
 </pre></td><td class="sourceCode"><pre><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
 
 
@@ -407,22 +412,24 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
     <span class="kw">echo</span> <span class="st">&quot; 14   fpmminsag    : Focal plane mask min sag [m]&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot; 15   fpmmaxsag    : Focal plane mask max sag [m]&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 16   fpmccnbr     : Center cone number of rings&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 17   fpmccz       : center cone sag&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 18   fpmocradld   : outer cone radius [l/D]&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 19   fpmocz       : outer cone sag [m]&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 16   fpmregsag_coeff  : regularization coefficient&quot;</span>   
+    <span class="kw">echo</span> <span class="st">&quot; 17   fpmregsag_alpha  : regularization exponent&quot;</span> 
+    <span class="kw">echo</span> <span class="st">&quot; 18   fpmccnbr     : Center cone number of rings&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 19   fpmccz       : center cone sag&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 20   fpmocradld   : outer cone radius [l/D]&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 21   fpmocz       : outer cone sag [m]&quot;</span>
 
-    <span class="kw">echo</span> <span class="st">&quot; 20   ssize        : extended source radius [-10 log(rad)]. 00 if point source&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 21   extmode      : extended source mode (0: 3pts, 1: 6pts)&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 22   fpmmaterial  : material used for the focal plane mask&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 22   ssize        : extended source radius [-10 log(rad)]. 00 if point source&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 23   extmode      : extended source mode (0: 3pts, 1: 6pts)&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 24   fpmmaterial  : material used for the focal plane mask&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
-    <span class="kw">echo</span> <span class="st">&quot; 23   index&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot; 25   index&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;------------------------------------------------------------------------------&quot;</span>
     <span class="kw">echo</span> <span class="st">&quot;&quot;</span>
 <span class="kw">}</span>
 
-<span class="ot">NBARGS=</span>23
+<span class="ot">NBARGS=</span>25
 
 <span class="kw">if [</span> <span class="st">&quot;</span><span class="ot">$1</span><span class="st">&quot;</span> <span class="ot">=</span> <span class="st">&quot;help&quot;</span><span class="kw"> ]</span> <span class="kw">|| [</span> <span class="st">&quot;</span><span class="ot">$#</span><span class="st">&quot;</span> <span class="ot">-ne</span> <span class="ot">$NBARGS</span><span class="kw"> ]</span>; <span class="kw">then</span>
     <span class="kw">printhelp</span>
@@ -471,13 +478,15 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="ot">maskradld=</span>$<span class="dt">{13}</span>
 <span class="ot">fpmminsag=</span>$<span class="dt">{14}</span>
 <span class="ot">fpmmaxsag=</span>$<span class="dt">{15}</span>
-<span class="ot">fpmccnbr=</span>$<span class="dt">{16}</span>
-<span class="ot">fpmccz=</span>$<span class="dt">{17}</span>
-<span class="ot">fpmocradld=</span>$<span class="dt">{18}</span>
-<span class="ot">fpmocz=</span>$<span class="dt">{19}</span>
-<span class="ot">ssize=</span>$<span class="dt">{20}</span>
-<span class="ot">extmode=</span>$<span class="dt">{21}</span>
-<span class="ot">fpmmaterial=</span><span class="st">&quot;${22}&quot;</span>
+<span class="ot">fpmregsag_coeff=</span>$<span class="dt">{16}</span>
+<span class="ot">fpmregsag_alpha=</span>$<span class="dt">{17}</span>
+<span class="ot">fpmccnbr=</span>$<span class="dt">{18}</span>
+<span class="ot">fpmccz=</span>$<span class="dt">{19}</span>
+<span class="ot">fpmocradld=</span>$<span class="dt">{20}</span>
+<span class="ot">fpmocz=</span>$<span class="dt">{21}</span>
+<span class="ot">ssize=</span>$<span class="dt">{22}</span>
+<span class="ot">extmode=</span>$<span class="dt">{23}</span>
+<span class="ot">fpmmaterial=</span><span class="st">&quot;${24}&quot;</span>
 
 
     
@@ -485,7 +494,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 
 <span class="co"># configuration index</span>
-<span class="ot">index=</span>$<span class="dt">{23}</span>
+<span class="ot">index=</span>$<span class="dt">{25}</span>
 
 
 
@@ -566,20 +575,21 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">exit</span>
 <span class="kw">fi</span>
 
-<span class="ot">fpmminsag=</span>$<span class="dt">{14}</span>
-<span class="ot">fpmmaxsag=</span>$<span class="dt">{15}</span>
-<span class="ot">fpmccnbr=</span>$<span class="dt">{16}</span>
-<span class="ot">fpmccz=</span>$<span class="dt">{17}</span>
-<span class="ot">fpmocradld=</span>$<span class="dt">{18}</span>
-<span class="ot">fpmocz=</span>$<span class="dt">{19}</span>
 
-<span class="kw">echo</span> <span class="st">&quot;====== EXECUTING: ./runPIAACMC </span><span class="ot">$dirname</span><span class="st"> </span><span class="ot">$size</span><span class="st"> </span><span class="ot">$pscale</span><span class="st"> </span><span class="ot">$pupfile</span><span class="st"> </span><span class="ot">$coin</span><span class="st"> </span><span class="ot">$coout</span><span class="st"> </span><span class="ot">$fpmrad</span><span class="st"> </span><span class="ot">$lambda</span><span class="st"> </span><span class="ot">$PIAAmaterial</span><span class="st"> </span><span class="ot">$LStransm</span><span class="st"> </span><span class="ot">$NBlyotstop</span><span class="st"> </span><span class="ot">$mlambda</span><span class="st"> </span><span class="ot">$mlambdaB</span><span class="st"> </span><span class="ot">$NBrings</span><span class="st"> </span><span class="ot">$maskradld</span><span class="st"> </span><span class="ot">$ssize</span><span class="st"> </span><span class="ot">$extmode</span><span class="st"> </span><span class="ot">$fpmmaterial</span><span class="st"> </span><span class="ot">$fpmminsag</span><span class="st"> </span><span class="ot">$fpmmaxsag</span><span class="st"> </span><span class="ot">$fpmccnbr</span><span class="st"> </span><span class="ot">$fpmccz</span><span class="st"> </span><span class="ot">$fpmocradld</span><span class="st"> </span><span class="ot">$fpmocz</span><span class="st"> </span><span class="ot">$index</span><span class="st"> </span><span class="ot">$designstep</span><span class="st">&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;====== EXECUTING: ./runPIAACMC </span><span class="ot">$dirname</span><span class="st"> </span><span class="ot">$size</span><span class="st"> </span><span class="ot">$pscale</span><span class="st"> </span><span class="ot">$pupfile</span><span class="st"> </span><span class="ot">$coin</span><span class="st"> </span><span class="ot">$coout</span><span class="st"> </span><span class="ot">$fpmrad</span><span class="st"> </span><span class="ot">$lambda</span><span class="st"> </span><span class="ot">$PIAAmaterial</span><span class="st"> </span><span class="ot">$LStransm</span><span class="st"> </span><span class="ot">$NBlyotstop</span><span class="st"> </span><span class="ot">$mlambda</span><span class="st"> </span><span class="ot">$mlambdaB</span><span class="st"> </span><span class="ot">$NBrings</span><span class="st"> </span><span class="ot">$maskradld</span><span class="st"> </span><span class="ot">$ssize</span><span class="st"> </span><span class="ot">$extmode</span><span class="st"> </span><span class="ot">$fpmmaterial</span><span class="st"> </span><span class="ot">$fpmminsag</span><span class="st"> </span><span class="ot">$fpmmaxsag</span><span class="st"> </span><span class="ot">$fpmregsag_coeff</span><span class="st"> </span><span class="ot">$fpmregsag_alpha</span><span class="st"> </span><span class="ot">$fpmccnbr</span><span class="st"> </span><span class="ot">$fpmccz</span><span class="st"> </span><span class="ot">$fpmocradld</span><span class="st"> </span><span class="ot">$fpmocz</span><span class="st"> </span><span class="ot">$index</span><span class="st"> </span><span class="ot">$designstep</span><span class="st">&quot;</span>
+
+
+
 
 
 <span class="co"># $fpmrad $coin $coout $rmode $emode $sprange $lambda $PIAAmaterial $designstep&quot;</span>
 <span class="co">#echo &quot;----------------$designstep -&gt;  ssize = $ssize&quot;</span>
 
-<span class="kw">./runPIAACMC</span> <span class="ot">$dirname</span> <span class="ot">$size</span> <span class="ot">$pscale</span> <span class="ot">$pupfile</span> <span class="ot">$coin</span> <span class="ot">$coout</span> <span class="ot">$fpmrad</span> <span class="ot">$lambda</span> <span class="ot">$PIAAmaterial</span> <span class="ot">$LStransm</span> <span class="ot">$NBlyotstop</span> <span class="ot">$mlambda</span> <span class="ot">$mlambdaB</span> <span class="ot">$NBrings</span> <span class="ot">$maskradld</span> <span class="ot">$ssize</span> <span class="ot">$extmode</span> <span class="ot">$fpmmaterial</span> <span class="ot">$fpmminsag</span> <span class="ot">$fpmmaxsag</span> <span class="ot">$fpmccnbr</span> <span class="ot">$fpmccz</span> <span class="ot">$fpmocradld</span> <span class="ot">$fpmocz</span> <span class="ot">$index</span> <span class="ot">$designstep</span>
+
+<span class="ot">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">$datestr</span><span class="st">  ./runPIAACMC </span><span class="ot">$dirname</span><span class="st"> </span><span class="ot">$size</span><span class="st"> </span><span class="ot">$pscale</span><span class="st"> </span><span class="ot">$pupfile</span><span class="st"> </span><span class="ot">$coin</span><span class="st"> </span><span class="ot">$coout</span><span class="st"> </span><span class="ot">$fpmrad</span><span class="st"> </span><span class="ot">$lambda</span><span class="st"> </span><span class="ot">$PIAAmaterial</span><span class="st"> </span><span class="ot">$LStransm</span><span class="st"> </span><span class="ot">$NBlyotstop</span><span class="st"> </span><span class="ot">$mlambda</span><span class="st"> </span><span class="ot">$mlambdaB</span><span class="st"> </span><span class="ot">$NBrings</span><span class="st"> </span><span class="ot">$maskradld</span><span class="st"> </span><span class="ot">$ssize</span><span class="st"> </span><span class="ot">$extmode</span><span class="st"> </span><span class="ot">$fpmmaterial</span><span class="st"> </span><span class="ot">$fpmminsag</span><span class="st"> </span><span class="ot">$fpmmaxsag</span><span class="st"> </span><span class="ot">$fpmregsag_coeff</span><span class="st"> </span><span class="ot">$fpmregsag_alpha</span><span class="st"> </span><span class="ot">$fpmccnbr</span><span class="st"> </span><span class="ot">$fpmccz</span><span class="st"> </span><span class="ot">$fpmocradld</span><span class="st"> </span><span class="ot">$fpmocz</span><span class="st"> </span><span class="ot">$index</span><span class="st"> </span><span class="ot">$designstep</span><span class="st">&quot;</span> <span class="kw">&gt;&gt;</span> cmdlog.txt
+
+<span class="kw">./runPIAACMC</span> <span class="ot">$dirname</span> <span class="ot">$size</span> <span class="ot">$pscale</span> <span class="ot">$pupfile</span> <span class="ot">$coin</span> <span class="ot">$coout</span> <span class="ot">$fpmrad</span> <span class="ot">$lambda</span> <span class="ot">$PIAAmaterial</span> <span class="ot">$LStransm</span> <span class="ot">$NBlyotstop</span> <span class="ot">$mlambda</span> <span class="ot">$mlambdaB</span> <span class="ot">$NBrings</span> <span class="ot">$maskradld</span> <span class="ot">$ssize</span> <span class="ot">$extmode</span> <span class="ot">$fpmmaterial</span> <span class="ot">$fpmminsag</span> <span class="ot">$fpmmaxsag</span> <span class="ot">$fpmregsag_coeff</span> <span class="ot">$fpmregsag_alpha</span> <span class="ot">$fpmccnbr</span> <span class="ot">$fpmccz</span> <span class="ot">$fpmocradld</span> <span class="ot">$fpmocz</span> <span class="ot">$index</span> <span class="ot">$designstep</span>
 <span class="co">#$fpmrad $coin $coout ${rmode} ${emode} ${sprange} $lambda $PIAAmaterial $designstep</span>
 
 <span class="co">#cp -rf $dirname ${dirname}_step$designstep</span>

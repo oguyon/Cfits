@@ -41,7 +41,9 @@ Code is composed of a several layers (from high to low) :
 -------------------- -----------------------------------------------------------
 Script                   Description
 -------------------- -----------------------------------------------------------
-**run**                  Top level script, calls **runopt** script
+**runPIAACMCdesign**	Top level script ("-h" for help)
+
+**run**                  Main script, calls **runopt** script
 
 **runopt**               Optimize a PIAACMC design or run an existing design
 						calls **sim** script
@@ -64,24 +66,42 @@ Script                   Description
 
 # Quick start
 
-The quickest way to get started is to run and modify one of the example design scripts provided in the `./examples/` directory. The bash scripts should be self-explanatory. For further details about the design steps, read the design steps section.
+
+## Configuration Setup
+
+Print help for top level script:
+
+	./runPIAACMCdesign -h
+
+The quickest way to get started is to setup and modify one of the example design scripts provided:
+
+	./runPIAACMCdesign -e 0
+
+This will configure all necessary files for a specific configuration. You can view parameters with :
+
+	./runPIAACMCdesign -l
+	
+If optimizing in APLC mode (no PIAA optics), type (after the -e command above):
+
+	./runPIAACMCdesign -a
+
+## Design
+
+Design is done with the "-m" option. This command will execute all design steps from 0 to #step-1:
+
+	./runPIAACMCdesign -m <#step>
+
+Individual design steps are described below.
+
+To run the full polychromatic design process:
+
+	./runPIAACMCdesign -m 200
+
+This may take a long time to run ... (days ?).
 
 
 
----------------------------------- -----------------------------------------------------------
-Script                             Description
----------------------------------- -----------------------------------------------------------
-**exampleAPLCMC**                  Example APLCMC design (does not include PIAA optics)
-
-**examplePIAACMC**                 Example PIAACMC design for a segmented aperture (2028x2048 arrays)
-					
-**examplePIAACMC_WFIRST1024**      Example PIAACMC design for the centrally obscured WFIRST pupil (1024x1024 arrays)
----------------------------------- -----------------------------------------------------------
-
-
-
-
-# Design steps: Monochromatic design
+# Design steps: Monochromatic design ( #step < 100 )
 
 
 ## Overview
