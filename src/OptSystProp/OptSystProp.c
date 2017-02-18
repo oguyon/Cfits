@@ -594,8 +594,8 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                             }
                         }
                 
-           //     save_fits("dftgridre", "!dftgridre.fits");
-           //     save_fits("dftgridim", "!dftgridim.fits");
+               // save_fits("dftgridre", "!dftgridre.fits");
+               // save_fits("dftgridim", "!dftgridim.fits");
                 
                 // combine separate Re and Im files into single Re/Im complex array
                 mk_complex_from_reim("dftgridre", "dftgridim", "_WFctmpc", 0);
@@ -758,6 +758,11 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
            // exit(0); // TEST
         }
+        
+        
+        
+        
+        
         // computes the total flux at this point
         IDa = image_ID(imnameamp_out); // output of the current element
         optsyst[index].flux[elem] = 0.0;

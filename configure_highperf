@@ -1,3 +1,5 @@
-./configure CFLAGS='-O3 -ffast-math -ftree-vectorize -march=native' --enable-cuda --enable-magma
- 
+./configure CFLAGS='-Ofast -march=native' --enable-cuda --enable-magma
+
+
+
 

@@ -400,7 +400,7 @@ fi
 
 FPMprocess="0"
 
-
+OptionSelected="0"
 # Parse command line flags
 while getopts :hs:apSm:e:lcr:q: FLAG; do
   case $FLAG in
@@ -440,13 +440,16 @@ while getopts :hs:apSm:e:lcr:q: FLAG; do
     ;;
     m)
     mSTEP=$OPTARG
+    OptionSelected="1"
     ;;
     l)
     ListParam=1
+    OptionSelected="1"    
     ;;
     e)
     DesignExampleIndex=$OPTARG
     SETparams=1
+    OptionSelected="1"
     ;;
     c)
     ./runclean 2> /dev/null
@@ -468,6 +471,7 @@ while getopts :hs:apSm:e:lcr:q: FLAG; do
     NBexp=$OPTARG
     echo "Process focal plane mask - $NBexp exposures"
     FPMprocess="1"
+    OptionSelected="1"
     ;;
     \?) 
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -485,9 +489,9 @@ shift $((OPTIND-1))
 
 
 
-if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ] || [ "$OptionSelected" = "0" ]; then
 if [ "$#" -ne $NBARGS ]; then
-    echo "$(tput setaf 1)$(tput bold) Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+    echo "$(tput setaf 1)$(tput bold) $0: Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
 fi
 printHELP
         exit
