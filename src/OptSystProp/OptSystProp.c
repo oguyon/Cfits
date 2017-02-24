@@ -834,7 +834,9 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
         // compute and print total flux
         sprintf(imname, "psfi%ld", index);
+        
         arith_image_mult(imnameamp, imnameamp, imname); // intensity is amp^2
+        
         total = arith_image_total(imname)/nblambda; // total flux "averaged" over wavelength
         printf("TOTAL = %lf\n", total);
 

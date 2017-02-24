@@ -17,7 +17,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -2053,7 +2052,10 @@ int arith_image_function_2_1(const char *ID_name1, const char *ID_name2, const c
 	atypeout = DOUBLE;
 	
 	
-  IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
+	
+	IDout = create_image_ID(ID_out, naxis, naxes, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
+
+
 
   nelement1 = data.image[ID1].md[0].nelement;
   nelement2 = data.image[ID2].md[0].nelement;

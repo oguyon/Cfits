@@ -4,6 +4,13 @@
 NBARGS=0
 
 
+srcdir="$PWD"
+
+if [ -f .scripts_src_dir.conf ]; then
+srcdir=$( cat .scripts_src_dir.conf )
+fi
+
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 echo "pname = $pname"
@@ -11,7 +18,7 @@ echo "pname = $pname"
 
 
 filelist="aolconf"
-dirlist="aolconfscripts auxscripts aohardsim aocustomscripts aosetup"
+dirlist="aolconfscripts auxscripts aohardsim aocscripts aosetup"
 
 printHELP ()
 {
@@ -20,33 +27,44 @@ echo "$(tput bold) $pname : SYNC AOloopControl scripts $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-hc]"
+echo "     $0 [-hcs]"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)          help"
-echo "     $(tput bold)-c$(tput sgr0)          clear all files in directory (USE WITH CARE)"
+echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-e$(tput sgr0) <DESTdir>    export syncscript to directory"
+echo "     $(tput bold)-s$(tput sgr0) <SRCdir>     source directory for scripts"
+echo "     $(tput bold)-c$(tput sgr0)              clear all files in directory (USE WITH CARE)"
 echo ""
 echo "------------------------------------------------------------------------"
 }
 	
-	
+
+
+
 
 # ================= OPTIONS =============================
 
-#Parse command line flags
-#If an option should be followed by an argument, it should be followed by a ":".
-#Notice there is no ":" after "h". The leading ":" suppresses error messages from
-#getopts. This is required to get unrecognized option code to work.
 
-while getopts :hc FLAG; do
+while getopts :hcs:e: FLAG; do
   case $FLAG in
     h)  #show help
       printHELP
       exit
       ;;
+    s) # source directory
+    srcdir="$OPTARG"
+    ;;
     c) # clear
     echo "Clearing all directory and files"
     ls | grep -v syncscripts | xargs rm -rf
+    ;;
+    e) # export script to directory
+    echo "$PWD" > $OPTARG/.scripts_src_dir.conf
+    ln -s $PWD/syncscripts $OPTARG/syncscripts
+    execname=$( ls $PWD/../../../bin/ )
+    rm $OPTARG/AOloopControl 2> /dev/null
+    ln -s $PWD/../../../bin/$execname $OPTARG/AOloopControl
+    exit
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -84,21 +102,27 @@ echo ""
 
 for file in ${filelist[*]}
 do
-	srcfile="$HOME/src/Cfits/src/AOloopControl/scripts/$file"
+	srcfile="$srcdir/$file"
 	echo "syncing file $srcfile -> $file"
 	ln -fs $srcfile $file	
 done
 
+
+
 for dir in ${dirlist[*]}
 do
 	mkdir -p $dir
-	srcdir="$HOME/src/Cfits/src/AOloopControl/scripts/$dir"
-	for entry in "$srcdir"/*
+	srcdir1="$srcdir/$dir"
+	echo ""
+	echo "syncing directory $srcdir1"
+
+	for entry in $srcdir1/*
 	do
 	filename="${entry##*/}"	
-	echo "syncing directory $srcdir file $filename"
+	echo "   syncing directory $srcdir1 file $filename"
 	ln -fs $entry ./$dir/$filename
 	done
+
 done
 
 

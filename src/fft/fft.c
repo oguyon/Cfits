@@ -2424,7 +2424,6 @@ printf("<<");
 fflush(stdout);
 
 
-    //# ifdef _OPENMP
 # ifdef HAVE_LIBGOMP
     #pragma omp parallel default(shared) private(kout, k, pha, re, im, cospha, sinpha, iiin, jjin, iiout, jjout, cosXX, cosYY, sinXX, sinYY, cosXY, sinXY)
     {
@@ -2441,10 +2440,6 @@ fflush(stdout);
             {
 				iiin = iiinarray[k];
 				jjin = jjinarray[k];
-				
-            //    pha = valinpha[k] + 2.0*dir*M_PI*(xinarray[k]*xoutarray[kout] + yinarray[k]*youtarray[kout]);
-			//	cospha = cosf(pha);
-			//	sinpha = sinf(pha);
 				
 				cosXX = data.image[IDcosXX].array.F[iiout*xsize + iiin];
 				cosYY = data.image[IDcosYY].array.F[jjout*ysize + jjin];
@@ -2466,7 +2461,6 @@ fflush(stdout);
             data.image[IDout].array.CF[jjoutarray[kout]*xsize+iioutarray[kout]].im = im/Zfactor;
         }
 # ifdef HAVE_LIBGOMP
-        // # ifdef _OPENMP
     }
 # endif
 

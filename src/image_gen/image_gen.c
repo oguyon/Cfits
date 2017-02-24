@@ -137,67 +137,34 @@ int_fast8_t make_line_cli()
     return 1;
 }
 
-int_fast8_t make_lincoordinate_cli()
-{
-  
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)
-    {
+int_fast8_t make_lincoordinate_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)==0)    {
 		make_lincoordinate(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf);
-       return 0;
-    }
-  else
-    return 1;
-}
+       return 0;    }  else    return 1;}
 
 
-int_fast8_t make_2Dgridpix_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)
-    {
+int_fast8_t make_2Dgridpix_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)==0)    {
       make_2Dgridpix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf);
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
 
-
-int_fast8_t make_rnd_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
-    {
+int_fast8_t make_rnd_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)    {
 		make_rnd(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, ""); 
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
 
-
-int_fast8_t make_rndgauss_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)
-    {
+int_fast8_t make_rndgauss_cli(){
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0)    {
 		make_rnd(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, "gauss"); 
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;    }  else    return 1;}
 
 
-int_fast8_t image_gen_im2coord_cli()
-{
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)
-    {
+int_fast8_t image_gen_im2coord_cli(){
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)    {
 		image_gen_im2coord(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string); 
-      return 0;
-    }
-  else
-    return 1;
-}
+      return 0;}  else    return 1;}
 
 
 //long make_rnd(const char *ID_name, long l1, long l2, const char *options)
@@ -1057,40 +1024,83 @@ long make_hexagon(const char *IDname, long l1, long l2, double x_center, double 
     long ID;
     long ii,jj;
     long naxes[2];
-    double x, y, r;
-    double value;
+    float x, y, r;
+    float value;
 
-   
-    
+	long iimin, iimax, jjmin, jjmax;
+	float radius1, radius0sq;
+	
+	radius1 = radius*2.0/sqrt(3.0);
+	radius0sq = radius*radius;
+	
     printf("Making hexagon at %f x %f\n", x_center, y_center);
         
-
-    create_2Dimage_ID(IDname,l1,l2);
+    create_2Dimage_ID(IDname, l1, l2);
     ID = image_ID(IDname);
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
 
-    for (jj = 0; jj < naxes[1]; jj++)
-        for (ii = 0; ii < naxes[0]; ii++)
+	iimin = (long) (x_center - radius1 - 1.0);
+	if(iimin<0)
+		iimin = 0;
+	if(iimin>l1-1)
+		iimin = l1-1;
+	
+	iimax = (long) (x_center + radius1 + 1.0);
+	if(iimax<0)
+		iimax = 0;
+	if(iimax>l1-1)
+		iimax = l1-1;
+	
+	jjmin = (long) (y_center - radius1 - 1.0);
+	if(jjmin<0)
+		jjmin = 0;
+	if(jjmin>l2-1)
+		jjmin = l2-1;
+	
+	jjmax = (long) (y_center + radius1 + 1.0);
+	if(jjmax<0)
+		jjmax = 0;
+	if(jjmax>l2-1)
+		jjmax = l2-1;
+	
+	# ifdef HAVE_LIBGOMP
+    #pragma omp parallel default(shared) private(ii, jj, value, x, y, r)
+    {
+        #pragma omp for
+# endif
+
+
+    for (jj = jjmin; jj < jjmax; jj++)
+        for (ii = iimin; ii < iimax; ii++)
         {
             value = 1.0;
             x = 1.0*ii-x_center;
             y = 1.0*jj-y_center;
 
-            r = y;
-            if(fabs(r)>radius)
-                value = 0.0;
-
-            // vect: cos(pi/6), sin(pi/6)
-
-            r = cos(PI/6.0)*x + sin(PI/6.0)*y;
-            if(fabs(r)>radius)
-                value = 0.0;
-            r = cos(-PI/6.0)*x + sin(-PI/6.0)*y;
-            if(fabs(r)>radius)
-                value = 0.0;
+			if(x*x+y*y > radius0sq)
+			{
+				r = y;
+				if(fabs(r)>radius)
+					value = 0.0;
+				else
+				{
+					r = cos(PI/6.0)*x + sin(PI/6.0)*y;
+					if(fabs(r)>radius)
+						value = 0.0;
+					else
+					{
+						r = cos(-PI/6.0)*x + sin(-PI/6.0)*y;
+						if(fabs(r)>radius)
+							value = 0.0;
+					}
+				}
+			}
             data.image[ID].array.F[jj*naxes[0]+ii] = value;
         }
+# ifdef HAVE_LIBGOMP
+    }
+# endif
 
 
 
@@ -1243,7 +1253,7 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
     long kk, jj;
     float xc, yc, tc;
 
-    int WriteCIF = 1;
+    int WriteCIF = 0;
     FILE *fpmlevel;
     FILE *fp;
     FILE *fp1;
@@ -1267,6 +1277,10 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
 
     int *bitval; // 0 or 1
     int bitindex = 4; // 0 = MSB
+
+
+	printf("STEP 00\n");
+	fflush(stdout);
 
     if(WriteCIF==1)
     {
@@ -1538,7 +1552,7 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
     free(bitval);
 
 
-exit(0);
+
 
     if(mkInfluenceFunctions==1) // TT and focus for each segment
     {

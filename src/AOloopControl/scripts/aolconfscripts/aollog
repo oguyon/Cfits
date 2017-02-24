@@ -1,12 +1,12 @@
 #!/bin/bash
-
+logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
+logdir="./logdir/$(date -u +'%Y%m%d')/logging"
 
 
 # number of arguments to script
 NBARGS=2
 
-# ======================= PROCESS NAME =================================
-pname=`echo "$0" | sed "s/\.\///g"`
+
 
 
 
@@ -14,20 +14,22 @@ pname=`echo "$0" | sed "s/\.\///g"`
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : MEASURE SYSTEM RESPONSE LATENCY $(tput sgr0)"
+echo "$(tput bold) WRITE TO COMMAND LOG FILE $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "  Measures latency excluding WFS reconstruction time"
-echo "   "
+echo " Suitable for slow ( < 200 Hz ) loggging"
+echo ""
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <ampl> <NBiter>"
+echo "     $0 <logname> <entry>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
-echo "     <ampl>       Poke amplitude [um]"
-echo "     <NBiter>     Number of iterations"
+echo "     <logname>     log name"
+echo "     <entry>       log entry"
 echo ""
+echo " $(tput bold)EXAMPLE:$(tput sgr0)"
+echo "     $1  comments \"this will be logged\""
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -35,8 +37,9 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Measure AO system response latency\n" "$0" 
+    printf "%20s       Write to command log file\n" "$0" 
 }
+
 
 
 
@@ -60,10 +63,6 @@ done
 
 
 
-
-
-
-
 while getopts :h FLAG; do
   case $FLAG in
     h)  #show help
@@ -73,7 +72,7 @@ while getopts :h FLAG; do
       printHELP1
       fi
       exit
-    ;;
+      ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -81,7 +80,12 @@ while getopts :h FLAG; do
   esac
 done
 
-shift $((OPTIND-1))  
+shift $((OPTIND-1))  #This tells getopts to move on to the next argument.
+
+### End getopts code ###
+
+
+
 
 
 
@@ -96,15 +100,6 @@ printHELP
 fi
 
 
+mkdir -p $logdir
+printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
 
-
-loopnb=$(cat LOOPNUMBER)
-
-
-./AOloopControl -n aol${loopnb}latency << EOF
-readshmim aol${loopnb}_wfsim
-readshmim aol${loopnb}_dmC
-aoltestlat aol${loopnb}_dmC aol${loopnb}_wfsim $1 $2
-savefits _testwfsc "!./timingstats/test_latencyC.fits"
-exit
-EOF

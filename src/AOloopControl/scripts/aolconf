@@ -18,6 +18,8 @@ LOOPNUMBER="7"
 fi
 
 
+
+
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
 #echo "pname = $pname"
@@ -47,6 +49,10 @@ echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname :  AO loop CONTROL - main script $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo " "
+echo " $(tput bold)LOOPNUMBER:$(tput sgr0)  $LOOPNUMBER"
+echo " $(tput bold)LOOPNAME:$(tput sgr0)    $LOOPNAME"
+echo " "
+echo " "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [options]"
 echo ""
@@ -54,7 +60,9 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary"
 echo "   -H  <string>         (H)elp category"
-echo "                 cf     configuration files"     
+echo "                 cf     configuration files"   
+echo "   -e <exec>            executable"  
+echo "   -l <exec>            log executable"  
 echo "   -L <long>            (L)oop number"
 echo "   -N <string>          loop (N)ame. Run ./aosetup/aosetup_<string> if available"
 echo "   -C                   run (C)PU config"
@@ -68,6 +76,26 @@ printHELP1 ()
 {
 	printf "%20s       AO loop CONTROL - main script\n" "$0" 
 }
+
+
+EXITSTATUS=0
+
+
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
+else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+
+}
+
 
 
 
@@ -93,6 +121,9 @@ LOOPNAME_file="LOOPNAME"
 LOOPNUMBER_file="LOOPNUMBER"
 CPUconfRT="1"
 
+execname="./AOloopControl"
+
+mkdir -p logdir
 
 ### Start getopts code ###
 while getopts :hH:L:N:Ccn FLAG; do
@@ -121,6 +152,10 @@ while getopts :hH:L:N:Ccn FLAG; do
     C) # configure CPU
     echo "Configure CPU"
     CPUconfRT=1
+    ;;
+    e) # set executable
+    execnameFile=$OPTARG
+    ln -s $execnameFile ./AOloopControl
     ;;
     h)  #show help
 	if [ "$singlelinehelp" -eq "0" ]; then
@@ -163,8 +198,6 @@ shift $((OPTIND-1))
 
 
 
-
-
 if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ]; then
 if [ "$#" -ne $NBARGS ]; then
     echo -e \\n"Illegal number of parameters ($NBARGS params required, $# entered)"\\n
@@ -181,6 +214,19 @@ fi
 
 
 
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
+echo ""
+exit
+else
+echo ""
+fi
+
+
+
+
+
 
 
 
@@ -189,33 +235,32 @@ fi
 
 
 # ======================= LOGGING =================================
-# NOTE: copy logging functions to external scripts
-# NOTE: dolog and dologext should be provided by user
+# NOTE: logdir can be symbolic link set by user
 
 # internal log - logs EVERYTHING
 function aoconflog {
 echo "$@" >> aolconf.log
-dolog "$LOOPNAME" "$@"
+./aolconfscripts/aollog "$LOOPNAME" "$@"
 }
 
 # external log, use for less verbose log
 function aoconflogext {
 echo "$@" >> aolconf.log
-dolog "$LOOPNAME" "$@"
-dologext "$LOOPNAME $@"
+./aolconfscripts/aollog "$LOOPNAME" "$@"
+./aolconfscripts/aollogext "$LOOPNAME $@"
 }
 
 
 
 
 
-aoconflog " STARTING NEW aolconf SESSION"
+aoconflog "STARTING NEW aolconf SESSION"
 
 
 
 
 # ====================== USER EDITS THIS SECTION =======================
-execname="Cfits"  
+
 
 # default parameters
 CPUconfRT=0 # no CPU real-time configuration
@@ -238,9 +283,9 @@ fi
 
 
 # execute CPU configuration script if it exists
-if [ -f "./aocustomscripts/cpuconfig_${LOOPNAME}" ]; then
+if [ -f "./aocscripts/cpuconfig_${LOOPNAME}" ]; then
 if [ ! -f "cpuconfigOK" ]; then
-. ./aocustomscripts/cpuconfig_${LOOPNAME}
+. ./aocscripts/cpuconfig_${LOOPNAME}
 fi
 fi
 

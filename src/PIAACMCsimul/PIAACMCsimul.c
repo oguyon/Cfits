@@ -5060,6 +5060,13 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 	
 	long NBpt;
 
+	long IDpsfi0;
+	long sizecrop;
+	long jj1;
+
+
+
+
     // Create status shared variable
     // this allows realtime monitoring of the code by other processes
     // sets status at different points in the code
@@ -5143,11 +5150,60 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
         PIAACMCsimul_makePIAAshapes(piaacmc, 0);
         optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm normalization for efficiency
 
+		
+		
+		// if file "LOOPMODE" exists, run PSF computation as a loop, waiting on OPDerrC to change
+		fp = fopen("LOOPMODE.txt", "r");
+		if(fp != NULL)
+		{
+			printf("RUNNING PSF LOOP COMPUTATION\n");
+			sizearray = (long*) malloc(sizeof(long)*2);
+			sizearray[0] = piaacmc[0].size;
+			sizearray[1] = piaacmc[0].size;
+			
+			IDopderrC = create_image_ID("opderr", 2, sizearray, FLOAT, 1, 0);
+			COREMOD_MEMORY_image_set_createsem("opderr", 10);
+			free(sizearray);		
+			
+			sizecrop = piaacmc[0].size/4;
+			sizearray = (long*) malloc(sizeof(long)*3);
+			sizearray[0] = sizecrop;
+			sizearray[1] = sizecrop;
+			sizearray[2] = piaacmc[0].nblambda;
+			IDpsfi0 = create_image_ID("psfiout0", 3, sizearray, FLOAT, 1, 0);
+			free(sizearray);
+			
+			iter = 0;
+			while(iter<10)
+			{				
+				PIAACMCsimul_computePSF(xpos, ypos, 0, optsyst[0].NBelem, 1, 0, 0, 1);
+				ID = image_ID("psfi0");
+				
+		       // copy results to IDpsfi0
+				data.image[IDpsfi0].md[0].write = 1;
 
-        // if file "scene.txt" exists, compute series of PSFs and sum
-        fp = fopen("SCENE.txt", "r");
-        if(fp!=NULL)
-        {
+				for(k=0;k<piaacmc[0].nblambda;k++)
+					for(ii1=0;ii1<sizecrop;ii1++)
+						for(jj1=0;jj1<sizecrop;jj1++)
+						{
+							ii = ii1 + (piaacmc[0].size - sizecrop)/2;
+							jj = jj1 + (piaacmc[0].size - sizecrop)/2;
+							data.image[IDpsfi0].array.F[k*sizecrop*sizecrop + jj1*sizecrop + ii1] = data.image[ID].array.F[k*piaacmc[0].size*piaacmc[0].size + jj*piaacmc[0].size + ii];
+						}
+				COREMOD_MEMORY_image_set_sempost_byID(IDpsfi0, -1);
+				data.image[IDpsfi0].md[0].cnt0 ++;
+				data.image[IDpsfi0].md[0].write = 0;
+				
+				COREMOD_MEMORY_image_set_semwait("opderr", 0);
+				//iter++;
+			}			
+		}
+		else
+		{
+			// if file "scene.txt" exists, compute series of PSFs and sum
+			fp = fopen("SCENE.txt", "r");
+			if(fp!=NULL)
+			{
             initscene = 0;
             // for each source in the scene, read position and flux
             while(fscanf(fp, "%lf %lf %lf\n", &xpos, &ypos, &fval) == 3)
@@ -5178,13 +5234,14 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
             fclose(fp);
             // we're done!  Save it, overwriting previous scene.fits file
             save_fits("scene", "!scene.fits");
-        }
-        else // scene.txt does not exist, just do an on-axis source
-        {
-            valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
-            printf("valref = %g\n", valref);
-        }
-
+			}
+			else // scene.txt does not exist, just do an on-axis source
+			{
+				valref = PIAACMCsimul_computePSF(0.0, 0.0, 0, optsyst[0].NBelem, 1, 0, 0, 1);
+				printf("valref = %g\n", valref);
+			}
+		}
+		
         printf("EXEC CASE 0 COMPLETED\n");
         fflush(stdout);
 
@@ -8141,6 +8198,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 	long NBimindex = 0;
 	char imname[200];
 	
+	long naxis;
+	
 
     // size of one side of each image array
     size = piaacmc[0].size;
@@ -8149,16 +8208,24 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
 	//printf("Loading (optional) OPDerr file\n");
 	//fflush(stdout);
+
 	// load an error if it exists
 	IDopderrC = image_ID("OPDerrC");
 	if(IDopderrC == -1)
 		IDopderrC = load_fits("OPDerrC.fits", "OPDerrC", 0);
+		
+	
+		
 
 	if(IDopderrC != -1)
 		{
-			nbOPDerr = data.image[IDopderrC].md[0].size[2];  // number of error arrays
-			//printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
-			//fflush(stdout);
+			naxis = data.image[IDopderrC].md[0].naxis;
+			if(naxis==2)
+				nbOPDerr = data.image[IDopderrC].md[0].size[2];  // number of error arrays
+			else
+				nbOPDerr = 0;
+			printf("INCLUDING %ld OPD ERROR MODES\n", nbOPDerr);
+			fflush(stdout);
 		}
 	else
 		{

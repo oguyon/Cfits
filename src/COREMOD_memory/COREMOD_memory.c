@@ -2747,12 +2747,7 @@ long copy_image_ID(const char *name, const char *newname, int shared)
     if(atype==USHORT)
         memcpy (data.image[IDout].array.U, data.image[ID].array.U, sizeof(double)*nelement);
 
-    for(s=0;s<data.image[IDout].sem; s++)
-    {
-        sem_getvalue(data.image[IDout].semptr[s], &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[IDout].semptr[s]);
-    }
+
     
     if(data.image[IDout].semlog!=NULL)
     {

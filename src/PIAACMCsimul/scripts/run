@@ -375,23 +375,6 @@ touch run.cmd.tsart
 if [ "$runoptcmd" = "eval0" ]; then
 mkdir -p eval0
 printhelpeval0 > ./eval0/readme_eval0.txt
-#cp varlog.txt ./eval0/varlog.txt
-#cp piaacmcconf_i000/lambdalist.txt ./eval0/
-#cp piaacmcconf_i000/psfi0_step699.fits ./eval0/
-#cp piaacmcconf_i000/psfi0_step700.fits ./eval0/
-#cp piaacmcconf_i000/psfi0_step720.fits ./eval0/
-#cp piaacmcconf_i000/piaam0z.fits ./eval0/
-#cp piaacmcconf_i000/piaam1z.fits ./eval0/
-#cp piaacmcconf_i000/conjugations.txt ./eval0/
-#cp piaacmcconf_i000/WFamp0_*.fits ./eval0/
-#cp piaacmcconf_i000/WFpha0_*.fits ./eval0/
-#cp piaacmcconf_i000/LyotStop[0-5].fits ./eval0/
-#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2_l*.fits ./eval0/
-#cp piaacmcconf_i000/contrast_ptsrc_sm0_s2_l*.txt ./eval0/
-#cp tmp_fpmCA_ampl.fits ./eval0/
-#cp tmp_fpmCA_pha.fits ./eval0/
-#cp tmp_fpmsag.fits ./eval0/
-#cp tmp_fpmzone.fits ./eval0/
 find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval0/
 cd eval0
 gzip -f *.fits
@@ -401,13 +384,6 @@ fi
 if [ "$runoptcmd" = "eval1" ]; then
 mkdir -p eval1
 printhelpeval1 > ./eval1/readme_eval1.txt
-#cp varlog.txt ./eval1/varlog.txt
-#cp piaacmcconf_i000/psfi0_x50_y00.fits ./eval1/
-#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2*.fits ./eval1/
-#cp piaacmcconf_i000/psfi0_extsrc15_sm0_s2_l*.fits ./eval1/
-#cp piaacmcconf_i000/ContrastCurve_extsrc15_sm0_s2_l*.txt ./eval1/
-#cp piaacmcconf_i000/psfi0_extsrc20_sm0_s2_l*.fits ./eval1/
-#cp piaacmcconf_i000/ContrastCurve_extsrc20_sm0_s2_l*.txt ./eval1/
 find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval1/
 cd eval1
 gzip -f *.fits

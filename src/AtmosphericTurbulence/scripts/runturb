@@ -49,6 +49,7 @@ echo "      $0 [-hNdT] <slambdaum>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)             help"
+echo "     $(tput bold)-e$(tput sgr0) <execname>  use executable <execname>"
 echo "     $(tput bold)-d$(tput sgr0)             double precision (default: single)"
 echo "     $(tput bold)-a$(tput sgr0)             Compute atmosphere properties only, no wavefronts"
 echo "     $(tput bold)-T$(tput sgr0)  <case>     Adopt turbulence profile case (default: custom 7-layer)"
@@ -108,7 +109,7 @@ fi
 
 
 # ================= OPTIONS =============================
-while getopts :hT:dN:a FLAG; do
+while getopts :hT:dN:ae: FLAG; do
   case $FLAG in
     h)  #show help
       printHELP
@@ -126,6 +127,9 @@ while getopts :hT:dN:a FLAG; do
     ;;
     a)
     COMPmode="0"
+    ;;
+    e)
+    execname=$OPTARG
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -513,7 +517,6 @@ printf "\n\n" >> $conffilename
 
 
 $execname << EOF
-#mkatmospheremodel $conffilename
 mkwfs ${slambdaum} ${PRECISION} ${COMPmode}
 exit
 EOF

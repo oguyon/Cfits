@@ -548,7 +548,7 @@ fifoname="runPIAACMCfifo$pid"
 
 
 
-execnamestring="$execname -s $startupfile -f $fifoname -e"
+execnamestring="$execname -s $startupfile -f $fifoname"
 
 
 cp $startupfile test_startupfile.txt
@@ -950,8 +950,8 @@ fi
 if [ 730 -eq ${state} ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-echo "$datestr  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM"
-echo "$datestr  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM" >> cmdlog.txt
+echo "$datestr  step730  Compute on-axis polychromatic PSF, includes WFC with 1 DM"
+echo "$datestr  step730  Compute on-axis polychromatic PSF, includes WFC with 1 DM" >> cmdlog.txt
 echo "730" > ./$1/runstep
 touch ./$1/step730.run.txt
 $execnamestring -n step730 << EOF
@@ -971,11 +971,11 @@ fi
 if [ 740 -eq ${state} ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM"
-echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM" >> cmdlog.txt
-echo "730" > ./$1/runstep
-touch ./$1/step730.run.txt
-$execnamestring -n step730 << EOF
+echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 2 DMs"
+echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 2 DMs" >> cmdlog.txt
+echo "740" > ./$1/runstep
+touch ./$1/step740.run.txt
+$execnamestring -n step740 << EOF
 PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors

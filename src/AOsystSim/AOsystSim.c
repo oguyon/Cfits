@@ -1348,7 +1348,10 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 	long IDdm0opd;
 	long IDphystime;
 
-
+	int fOK;
+	long knext;
+	
+	
 
     printf("AOsystSim mkWFS...\n");
 
@@ -1532,6 +1535,22 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
     kmax = 3;
     AMPfile = 1;
 
+
+	// compute kmax
+	fOK = 1;
+	kmax = 0;
+	while(fOK == 1)
+	{
+		sprintf(wf_fname,"%s/%s%08ld.%09ld.pha.fits", WFDIR, wfin_PREFIX, kmax, (long) (1.0e12*LAMBDA+0.5));
+		fOK = file_exists(wf_fname);
+		kmax++;
+	}	
+	kmax -= 2;
+	
+	printf("kmax = %ld\n", kmax);
+	//exit(0);
+
+
     IDampmask = make_disk("pupmask", ARRAYSIZE, ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*PUPDIAM/pupscale);
     for(ii=0; ii<ARRAYSIZE*ARRAYSIZE; ii++)
         data.image[IDamp0].array.F[ii] = data.image[IDampmask].array.F[ii];
@@ -1568,6 +1587,9 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
         if(frame_n > (NBframes-1))
         {
             k++;
+            if(k==kmax)
+				k = 0;
+            
             k1++;
             frame_n -= NBframes;
             frame_f -= wfin_TIME_SPAN;
@@ -1594,18 +1616,22 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
             IDwf0amp = image_ID(wfimname_amp);
             
 
-        sprintf(wfimname_pha, "wf%08ld_pha", k+1);
-        sprintf(wfimname_amp, "wf%08ld_amp", k+1);
+		knext = k+1;
+		if(k==kmax)
+			knext = 0;
+
+        sprintf(wfimname_pha, "wf%08ld_pha", knext);
+        sprintf(wfimname_amp, "wf%08ld_amp", knext);
         if(image_ID(wfimname_pha)==-1)
         {
-            sprintf(wf_fname,"%s/%s%08ld.%09ld.pha.fits", WFDIR, wfin_PREFIX, k+1, (long) (1.0e12*LAMBDA+0.5));
+            sprintf(wf_fname,"%s/%s%08ld.%09ld.pha.fits", WFDIR, wfin_PREFIX, knext, (long) (1.0e12*LAMBDA+0.5));
             printf("Loading WF file name : %s\n", wf_fname);
-            sprintf(wfimname_pha, "wf%08ld_pha", k+1);
+            sprintf(wfimname_pha, "wf%08ld_pha", knext);
             IDwf1 = load_fits(wf_fname, wfimname_pha, 1);
 
-            sprintf(wf_fname,"%s/%s%08ld.%09ld.amp.fits", WFDIR, wfin_PREFIX, k+1, (long) (1.0e12*LAMBDA+0.5));
+            sprintf(wf_fname,"%s/%s%08ld.%09ld.amp.fits", WFDIR, wfin_PREFIX, knext, (long) (1.0e12*LAMBDA+0.5));
             printf("Loading WF file name : %s\n", wf_fname);
-            sprintf(wfimname_amp, "wf%08ld_amp", k+1);
+            sprintf(wfimname_amp, "wf%08ld_amp", knext);
             IDwf1amp = load_fits(wf_fname, wfimname_amp, 1);
             if(IDwf1amp==-1)
                 AMPfile = 0;
