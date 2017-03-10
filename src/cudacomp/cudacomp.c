@@ -1602,6 +1602,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
     //fflush(stdout);
 
 
+	printf("TEST - MAGMA INIT\n");
+	fflush(stdout);
 	magma_init (); // initialize Magma
 	//  Allocate  host  memory
 	magma_smalloc_cpu (&a, lda*N);                  // host  memory  for a
@@ -1616,8 +1618,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
 
 
 
-	//printf("MAGMA READY\n");
-	//fflush(stdout);
+	printf("TEST - MAGMA READY\n");
+	fflush(stdout);
 	
 	
 	
