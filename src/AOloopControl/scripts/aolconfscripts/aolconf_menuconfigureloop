@@ -171,6 +171,7 @@ if [ "$DMMODE" = "ZONAL"]; then
 # OUTPUT:
 #	respM_LOmodes.fits
 #
+tmux send-keys -t $tmuxname "# DMMODE is ZONAL -> MAKING LOW ORDER MODES" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
@@ -212,6 +213,8 @@ do
 done
 
 
+else
+tmux send-keys -t $tmuxname "# DMMODE is MODAL = $DMMODE" C-m
 fi
 
 

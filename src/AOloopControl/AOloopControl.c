@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
-#define _PRINT_TEST
+// uncomment for test print statements to stdout
+// #define _PRINT_TEST
 
 #include <stdint.h>
 #include <unistd.h>
