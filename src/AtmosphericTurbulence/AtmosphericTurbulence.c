@@ -7,7 +7,14 @@
 #include <math.h>
 #include <assert.h>
 
+#include <time.h>
+#include <sys/time.h>
+
+
+
 #ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
 #include <mach/mach_time.h>
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 0
@@ -22,8 +29,6 @@ int clock_gettime(int clk_id, struct timespec *t){
     t->tv_nsec = nseconds;
     return 0;
 }
-#else
-#include <time.h>
 #endif
 
 

@@ -251,7 +251,7 @@ set_optparam="1"
 # ===================================================================================
 
 
-
+rm LOOPMODE.txt
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -287,6 +287,7 @@ echo "                      300  : compute polychromatic on-axis PSF -> psfi0.fi
 echo "                      400  : evaluation, level 0 (on-axis PSF)"
 echo "                      401  : evaluation, level 1 (level0 + extended source with OPD errors)"
 echo "                      402  : evaluation, level 2 (level 1 + transmission curve)"
+echo "     $(tput bold)-L$(tput sgr0)              LOOP mode (run with \"-m 300\"): opderr -> psfiout0"
 echo "     $(tput bold)-q$(tput sgr0) <NBexp>      Quantize and process focal plane mask, <NBexp> exposures"
 echo ""
 echo "------------------------------------------------------------------------"
@@ -402,7 +403,7 @@ FPMprocess="0"
 
 OptionSelected="0"
 # Parse command line flags
-while getopts :hs:apSm:e:lcr:q: FLAG; do
+while getopts :hs:apSm:e:lcr:q:L FLAG; do
   case $FLAG in
     S)
     SAVESTEP=1
@@ -442,6 +443,9 @@ while getopts :hs:apSm:e:lcr:q: FLAG; do
     mSTEP=$OPTARG
     OptionSelected="1"
     ;;
+    L) # loop mode
+	touch LOOPMODE.txt
+    ;;    
     l)
     ListParam=1
     OptionSelected="1"    

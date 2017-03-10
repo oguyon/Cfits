@@ -5165,7 +5165,7 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 			COREMOD_MEMORY_image_set_createsem("opderr", 10);
 			free(sizearray);		
 			
-			sizecrop = piaacmc[0].size/4;
+			sizecrop = piaacmc[0].size/16;
 			sizearray = (long*) malloc(sizeof(long)*3);
 			sizearray[0] = sizecrop;
 			sizearray[1] = sizecrop;

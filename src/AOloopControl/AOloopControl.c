@@ -367,6 +367,19 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
+/* =============================================================================================== */
+/* 		2.2. DATA STREAMS PROCESSING                                                               */
+/* =============================================================================================== */
+
+
+int_fast8_t AOloopControl_stream3Dto2D_cli() {
+       if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0) {
+        AOloopControl_stream3Dto2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+		return 0;	} else return 1;     
+}
+
+
 /* =============================================================================================== */
 /* 		2.3. MISC COMPUTATION ROUTINES                                                             */
 /* =============================================================================================== */
@@ -399,6 +412,12 @@ int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
 }
 
 
+int_fast8_t AOloopControl_dm2opdmaploop_cli()
+{
+	 if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)    {
+        AOloopControl_dm2opdmaploop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        return 0;    }    else        return 1;
+}
 
 
 
@@ -1030,7 +1049,8 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 
     RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
-
+    
+    RegisterCLIcommand("aolstream3Dto2D", __FILE__, AOloopControl_stream3Dto2D_cli, "remaps 3D cube into 2D image", "<input 3D stream> <output 2D stream> <# cols> <sem trigger>" , "aolstream3Dto2D in3dim out2dim 4 1", "long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)");
 
 /* =============================================================================================== */
 /* 		2.3. MISC COMPUTATION ROUTINES                                                             */
@@ -1040,6 +1060,7 @@ int_fast8_t init_AOloopControl()
 
    RegisterCLIcommand("aolmksimplezpM", __FILE__, AOloopControl_mkSimpleZpokeM_cli, "make simple poke sequence", "<dmsizex> <dmsizey> <output image>", "aolmksimplezpM 50 50 pokeM", "long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)");
 
+   RegisterCLIcommand("aoldm2opdmaploop", __FILE__, AOloopControl_dm2opdmaploop_cli, "write DM disp stream [um] to OPD map stream [m], loop", "<DMdisp_name> <OPDmap_name> <sem index>", "aoldm2opdmaploop dm06disp opderr 3", "long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex);");
 
 
 /* =============================================================================================== */
@@ -1079,7 +1100,7 @@ int_fast8_t init_AOloopControl()
 /*                                                                                                 */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("aolmkH", __FILE__, AOloopControl_mkHadamardModes_cli, "make Hadamard poke sequence", "<DM pixel mask> <output fname [string]>", "aolmkH dm50mask h50pokec", "long AOloopControl_mkHadamardModes50(char *DMmask_name, char outname)");
+    RegisterCLIcommand("aolmkH", __FILE__, AOloopControl_mkHadamardModes_cli, "make Hadamard poke sequence", "<DM pixel mask> <output fname [string]>", "aolmkH dm50mask h50pokec", "long AOloopControl_mkHadamardModes(char *DMmask_name, char outname)");
     
     RegisterCLIcommand("aolHaddec", __FILE__, AOloopControl_Hadamard_decodeRM_cli, "decode Hadamard matrix", "<input RM> <Hadamard matrix> <DMpix index frame> <output RM>", "aolHaddec imRMh Hmat pixiind imRM", "long AOloopControl_Hadamard_decodeRM(char *inname, char *Hmatname, char *indexname, char *outname)");
 
@@ -1648,6 +1669,25 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         fprintf(fplog, "AOconf[%ld].GPUall = %d\n", loop, AOconf[loop].GPUall);
     }
 
+	// Direct DM write ?
+    if((fp=fopen("./conf/conf_DMprimWriteON.txt","r"))==NULL)
+    {
+        printf("WARNING: file ./conf/conf_DMprimWriteON.txt missing\n");
+        printf("Setting DMprimaryWrite_ON = 1\n");
+        fprintf(fplog, "WARNING: file ./conf/conf_DMprimWriteON.txt missing. Setting to 1\n");
+       AOconf[loop].DMprimaryWrite_ON = 1;
+    }
+    else
+    {
+        r = fscanf(fp, "%s", content);
+        printf("GPU : %d\n", atoi(content));
+        fclose(fp);
+        fflush(stdout);
+        AOconf[loop].DMprimaryWrite_ON = atoi(content);
+        fprintf(fplog, "AOconf[%ld].DMprimaryWrite_ON = %d\n", loop, AOconf[loop].DMprimaryWrite_ON);
+   }
+	
+
 
     // TOTAL image done in separate thread ?
     AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
@@ -1962,9 +2002,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	// TO BE CHECKED
 	
-    AOconf[loop].NBMblocks = AOconf[loop].DMmodesNBblock;
-    printf("NBMblocks : %ld\n", AOconf[loop].NBMblocks);
-    fflush(stdout);
+   // AOconf[loop].NBMblocks = AOconf[loop].DMmodesNBblock;
+   // printf("NBMblocks : %ld\n", AOconf[loop].NBMblocks);
+   // fflush(stdout);
   
     
     AOconf[loop].AveStats_NBpt = 100;
@@ -2015,7 +2055,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         ID = image_ID(name);
         aoconfID_meas_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         if(ID==-1)
-            for(k=0; k<AOconf[loop].NBDMmodes; k++)
+			for(k=0; k<AOconf[loop].NBDMmodes; k++)
                 data.image[aoconfID_meas_modes].array.F[k] = 0.0;
 
         sprintf(name, "aol%ld_DMmode_AVE", loop);
@@ -2136,10 +2176,15 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         
         
         
-        
+        printf("TEST - INITIALIZE contrMc, contrMcact\n");
+        fflush(stdout);
     
         for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
-            {                
+            {          
+				
+				printf("TEST - BLOCK %3ld gain = %f\n", kk, data.image[aoconfID_gainb].array.F[kk]);
+				fflush(stdout);
+				      
                 sprintf(name, "aol%ld_DMmodes%02ld", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
                 printf("FILE = %s\n", fname);
@@ -2346,7 +2391,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             AOconf[loop].ARPFgain = 0.0;
             AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
-            AOconf[loop].NBMblocks = 3;
+            AOconf[loop].DMmodesNBblock = 1;
             AOconf[loop].GPUusesem = 1;
             
             AOconf[loop].loopfrequ = 2000.0;
@@ -2560,9 +2605,6 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     }
         return ID;
 }
-
-
-
 
 
 long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize)
@@ -2904,6 +2946,85 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 }
 
 
+long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)
+{
+	long IDin, IDout;
+	uint_fast16_t xsize0, ysize0, zsize0;
+	uint_fast32_t xysize0;
+	uint_fast16_t xsize1, ysize1;
+	uint_fast16_t ii0, jj0, kk0, ii1, jj1, kk;
+	uint_fast16_t Xindex, Yindex;
+	uint_fast16_t iioffset, jjoffset;
+	long long cnt;
+	long *sizearray;
+	int atype;
+	
+
+	IDin = image_ID(in_name);
+	xsize0 = data.image[IDin].md[0].size[0];
+	ysize0 = data.image[IDin].md[0].size[1];
+	zsize0 = data.image[IDin].md[0].size[2];	
+	xysize0 = xsize0*ysize0;
+	
+	xsize1 = xsize0*NBcols;
+	ysize1 = ysize0*(1 + (long) (1.0*zsize0/NBcols-0.00001));
+	
+	atype = FLOAT;
+	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray[0] = xsize1;
+	sizearray[1] = ysize1;
+    IDout = create_image_ID(out_name, 2, sizearray, atype, 1, 0);
+	free(sizearray);
+	
+	while(1 == 1)
+    {
+		if(data.image[IDin].sem==0)
+        {
+            while(cnt==data.image[IDin].md[0].cnt0) // test if new frame exists
+                usleep(5);
+            cnt = data.image[IDin].md[0].cnt0;
+        }
+        else
+            sem_wait(data.image[IDin].semptr[insem]);
+
+
+
+        data.image[IDout].md[0].write = 1;
+        
+        for(kk0=0;kk0<zsize0;kk0++)
+		{
+			kk = 0;
+			Xindex = 0;
+			Yindex = 0;
+			while(kk<kk0)
+			{
+				Xindex++;
+				if(Xindex==NBcols)
+				{
+					Xindex = 0;
+					Yindex++;
+				}
+				kk++;
+			}
+			iioffset = Xindex * xsize0;
+			jjoffset = Yindex * ysize0;
+
+			for(ii0=0;ii0<xsize0;ii0++)
+			for(jj0=0;jj0<ysize0;jj0++)
+			{
+				ii1 = ii0+iioffset;
+				jj1 = jj0+jjoffset;
+				data.image[IDout].array.F[jj1*xsize1+ii1] = data.image[IDin].array.F[kk0*xysize0+jj0*xsize0+ii0];
+			}
+		}
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);		
+		data.image[IDout].md[0].cnt0++;
+		data.image[IDout].md[0].write = 0;		
+	}	
+	
+		
+	return(IDout);
+}
 
 
 /* =============================================================================================== */
@@ -3068,6 +3189,68 @@ long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
 }
 
 
+long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex)
+{
+	long IDdisp;
+	long IDopd;
+	
+	uint_fast16_t xsize0;
+	uint_fast16_t ysize0;
+	uint_fast16_t xsize1;
+	uint_fast16_t ysize1;
+	
+	uint_fast16_t ii0, jj0, ii1, jj1;
+	uint_fast16_t iioffset, jjoffset;
+	
+	int semval;
+	uint_fast16_t i;
+	
+	float coeff = 1.0e-6;
+	
+	
+	IDdisp = image_ID(DMdisp_name);
+	xsize0 = data.image[IDdisp].md[0].size[0];
+	ysize0 = data.image[IDdisp].md[0].size[1];
+	
+	IDopd = image_ID(OPDmap_name);
+	xsize1 = data.image[IDopd].md[0].size[0];
+	ysize1 = data.image[IDopd].md[0].size[1];	
+	
+	iioffset = (xsize1 - xsize0)/2;
+	jjoffset = (ysize1 - ysize0)/2;
+	
+	// set DMdisp semaphore to 0
+	sem_getvalue(data.image[IDdisp].semptr[semindex], &semval);
+	printf("INITIALIZING SEMAPHORE %d   %s   (%d)\n", semindex, data.image[IDdisp].md[0].name, semval);
+	for(i=0; i<semval; i++)
+		sem_trywait(data.image[IDdisp].semptr[semindex]);
+	
+	while(1)
+	{
+		sem_wait(data.image[IDdisp].semptr[semindex]);
+
+		printf("[%d] Updating OPD map [%ld %ld] ...", semindex, iioffset, jjoffset);
+		fflush(stdout);
+		
+		data.image[IDopd].md[0].write = 1;
+		for(ii0=0;ii0<xsize0;ii0++)
+			for(jj0=0;jj0<ysize0;jj0++)
+			{
+				ii1 = ii0 + iioffset;
+				jj1 = jj0 + jjoffset;
+				data.image[IDopd].array.F[jj1*xsize1+ii1] = coeff * data.image[IDdisp].array.F[jj0*xsize0+ii0];
+			}
+		
+		COREMOD_MEMORY_image_set_sempost_byID(IDopd, -1);
+		data.image[IDopd].md[0].cnt0++;
+		data.image[IDopd].md[0].write = 0;
+		printf(" Done\n");
+		fflush(stdout);
+		
+	}
+	
+	return(IDopd);
+}
 
 
 
@@ -3254,6 +3437,9 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
                 sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
         }
 
+	printf("TEST - SEMAPHORE INITIALIZED\n");
+	fflush(stdout);
+
 
     if(RM==0)
     {
@@ -3269,7 +3455,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
  //   usleep(20);
 
 
-    if(data.image[aoconfID_wfsim].sem==0)
+	printf("TEST - WAITING FOR IMAGE %s\n", data.image[aoconfID_wfsim].md[0].name);
+	fflush(stdout);
+
+	
+	if(data.image[aoconfID_wfsim].sem==0)
     {
         if(RM==0)
             while(AOconf[loop].WFScnt==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
@@ -3279,8 +3469,14 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
                 usleep(5);
     }
     else
+    {
+		printf("TEST - waiting on semindex = %d\n", semindex);
+		fflush(stdout);
         sem_wait(data.image[aoconfID_wfsim].semptr[semindex]);
-
+		printf("TEST - semaphore posted\n");
+		fflush(stdout);
+	}
+	
    if(RM==0)
     AOconf[loop].status = 0;  // LOAD IMAGE        
     
@@ -3333,6 +3529,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         data.image[aoconfID_looptiming].md[0].wtime = tnow;
     }
 
+	printf("TEST - DARK SUBTRACT\n");
+	fflush(stdout);
+
+
     // Dark subtract and compute total
 
     if((loop==0)||(RM == 1)) // single thread, in CPU
@@ -3383,6 +3583,9 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     }
     else
     {
+		printf("TEST - DARK SUBTRACT - START\n");
+		fflush(stdout);
+		
         if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
         {
             ti = 0;
@@ -3415,6 +3618,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[aoconfID_imWFS0].semptr[s]);
             }
+		printf("TEST - DARK SUBTRACT - END\n");
+		fflush(stdout);
     }
 
     //  if(IDdark!=-1)
@@ -3431,6 +3636,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[2] = tdiffv;
     }
+
+
+	printf("TEST - NORMALIZE\n");
+	fflush(stdout);
+
 
     // Normalize
     if(normalize==1)
@@ -3514,6 +3724,9 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
     if( ((COMPUTE_GPU_SCALING==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
     {
+		printf("TEST - Normalize [%d]: totalinv = %f\n", AOconf[loop].WFSnormalize, totalinv);
+		fflush(stdout);
+		
         data.image[aoconfID_imWFS1].md[0].write = 1;
 # ifdef _OPENMP
         #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
@@ -3528,10 +3741,13 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 # ifdef _OPENMP
         }
 # endif
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS1, -1);
         data.image[aoconfID_imWFS1].md[0].cnt0 ++;
         data.image[aoconfID_imWFS1].md[0].write = 0;
     }
     
+	printf("TEST - READ CAM DONE\n");
+	fflush(stdout);
   
 
     return(0);
@@ -3710,11 +3926,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
         
         usleep(delayRM1us);    
         data.image[aoconfID_dmRM].md[0].write = 1;
-        printf("A->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
-        fflush(stdout);
         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
-        printf("--\n");
-		fflush(stdout);
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
 		data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3729,7 +3942,15 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		array_PokeIndex[imcnt] = PokeIndex;
 		array_PokeIndex1[imcnt] = PokeIndex1;
         imcnt ++;
+        
         Read_cam_frame(loop, 1, normalize, 0, 0);
+
+
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
+		data.image[aoconfID_dmRM].md[0].cnt0++;
+        
+
+        
                 
 		// read delayfr frames
         for(kk=0; kk<delayfr; kk++)               
@@ -3740,7 +3961,9 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 				array_PokeIndex[imcnt] = PokeIndex;
 				array_PokeIndex1[imcnt] = PokeIndex1;
 				imcnt ++;
+
 				Read_cam_frame(loop, 1, normalize, 0, 0);
+
 				kk1++;
                 if(kk1==NBave)
                     {
@@ -3753,11 +3976,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
                         // POKE            
 						usleep(delayRM1us);    
                         data.image[aoconfID_dmRM].md[0].write = 1;
-                        printf("B->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
-                        fflush(stdout);
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
-                   		printf("--\n");
-						fflush(stdout);
+                        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
                         data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3782,8 +4002,10 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 				array_PokeIndex[imcnt] = PokeIndex;
 				array_PokeIndex1[imcnt] = PokeIndex1;
 				imcnt ++;
+
 				Read_cam_frame(loop, 1, normalize, 0, 0);
-				
+
+								
                 if(kk<NBave)
                 {
 				   for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -3802,11 +4024,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
             
                         usleep(delayRM1us);
                         data.image[aoconfID_dmRM].md[0].write = 1;
-                        printf("C->   INDEX:  %5ld   %5ld   %5ld / %5ld    %6ld / %6ld\n", kk, kk1, PokeIndex1, data.image[IDpokeC].md[0].size[2], imcnt, imcntmax);
-                        fflush(stdout);
                         memcpy (data.image[aoconfID_dmRM].array.F, ptr0 + PokeIndex1*framesize, sizeof(float)*AOconf[loop].sizeDM);
-						printf("--\n");
-						fflush(stdout);
+                        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
 						data.image[aoconfID_dmRM].md[0].cnt1 = PokeIndex1;
                         data.image[aoconfID_dmRM].md[0].cnt0++;
                         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3827,11 +4046,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
            
         usleep(delayRM1us);
         data.image[aoconfID_dmRM].md[0].write = 1;
-        printf("zero    %6ld / %6ld\n", imcnt, imcntmax);
-		fflush(stdout);
         memcpy (data.image[aoconfID_dmRM].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-        printf("--\n");
-		fflush(stdout);
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmRM, -1);
         data.image[aoconfID_dmRM].md[0].cnt1 = 0;
         data.image[aoconfID_dmRM].md[0].cnt0++;
         data.image[aoconfID_dmRM].md[0].write = 0;
@@ -3841,68 +4057,34 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		iter++;
  
     } // end of iteration loop 
-    printf("end of loop\n");
-    fflush(stdout);
-        
+
     free(arrayf);
-    
-  	printf("free\n");
-    fflush(stdout);
     
     free(sizearray);
 
-	printf("norm\n");
-    fflush(stdout);
+
     
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
 
-	printf("write\n");
-    fflush(stdout);
     
 	// print poke log
 	fp = fopen("RMpokelog.txt", "w");
 	for(imcnt=0;imcnt<imcntmax;imcnt++)
 		{
-			printf("imcnt = %ld \n", imcnt);
-			fflush(stdout);
-			
 			fprintf(fp, "%6ld %3ld    %1d %1d     %6ld  %6ld  %6ld  %6ld     %3ld %3ld %3ld\n", imcnt, array_iter[imcnt], array_poke[imcnt], array_accum[imcnt], array_kk[imcnt], array_kk1[imcnt], array_PokeIndex[imcnt], array_PokeIndex1[imcnt], NBpoke, NBexcl, NBave);
 		}
 	fclose(fp);
 
-	printf("free 1\n");
-    fflush(stdout);    
+ 
 	free(array_iter);
-	
-	
-	printf("free 2\n");
-    fflush(stdout);
 	free(array_accum);
-	
-	printf("free 3\n");
-    fflush(stdout);
    	free(array_poke);
-	
-	printf("free 4\n");
-    fflush(stdout);
     free(array_kk);
-	
-	printf("free 5\n");
-    fflush(stdout);    
 	free(array_kk1);
-	
-	printf("free 6\n");
-    fflush(stdout);    
 	free(array_PokeIndex);
-
-	printf("free 7\n");
-    fflush(stdout);    
 	free(array_PokeIndex1);
-
-	printf("free done\n");
-    fflush(stdout);
     
     return(IDoutC);
 }
@@ -3924,9 +4106,6 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	long IDwfsresp2;
 	long poke, act, pix;
 	long IDwfsref;
-	
-	
-	
 	
 	
 	IDpokeC = image_ID(IDpokeC_name);
@@ -3957,6 +4136,9 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 				data.image[IDpokeC2].array.F[dmxysize*(2*poke+2) + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
 		}
 	save_fits("dmpokeC2", "test_dmpokeC2.fits");
+	
+	printf("NBpoke = %ld\n", NBpoke);
+	fflush(stdout);
 		
 	AOloopControl_Measure_WFSrespC(loop, delayfr, delayRM1us, NBave, NBexcl, "dmpokeC2", "wfsresp2", normalize, AOinitMode, NBcycle);
 	
@@ -3980,7 +4162,7 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 			for(pix=0;pix<wfsxysize;pix++)
 				data.image[IDrespC].array.F[wfsxysize*poke + pix] = (data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + pix] - data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/2.0/ampl;
 			for(pix=0;pix<wfsxysize;pix++)
-				data.image[IDwfsref].array.F[pix] += (data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + pix] + data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/NBpoke2;				
+				data.image[IDwfsref].array.F[pix] += (data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + pix] + data.image[IDwfsresp2].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/(2*NBpoke);				
 		}
 	
 	return(IDrespC);
@@ -5112,16 +5294,18 @@ long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_na
 
 // output:
 // Hadamard modes (outname)
-// Hadamard matrix ("H50mat.fits")
-// pixel indexes ("H50pixindex.fits", float, to be converted to long)
+// Hadamard matrix ("Hmat.fits")
+// pixel indexes ("Hpixindex.fits", float, to be converted to long)
 long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
 {
     long IDout;
     long xsize, ysize, xysize;
 //    long IDdisk;
     long cnt;
+    
     long Hsize;
-    long Hnmax = 11;
+    int n2max;
+    
     long *indexarray;
     long index;
     long IDtest;
@@ -5137,7 +5321,6 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
     xsize = data.image[IDmask].md[0].size[0];
     ysize = data.image[IDmask].md[0].size[1];
     xysize = xsize*ysize;
-    // IDdisk = make_disk("tmpdisk", xsize, ysize, 24.5, 24.5, 25.6);
 
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = xsize;
@@ -5151,8 +5334,16 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
 			cnt++;
 	
 	Hsize = 1;
+	n2max = 0;
 	while(Hsize<cnt)
+	{
 		Hsize *= 2;
+		n2max++;
+	}
+	n2max++;
+
+    printf("Hsize n2max = %ld  %d\n", Hsize, n2max);
+    fflush(stdout);
 
     for(ii=0;ii<xysize;ii++)
         data.image[IDindex].array.F[ii] = -10.0;
@@ -5185,7 +5376,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
     jj = 0;
     Hmat[jj*Hsize+ii] = 1;
     n2=1;
-    for(n=1;n<12;n++)
+    for(n=1;n<n2max;n++)
         {
             for(ii=0;ii<n2;ii++)
                 for(jj=0;jj<n2;jj++)
@@ -5197,6 +5388,8 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
             n2 *= 2;
         }    
     
+    printf("n2 = %ld\n", n2);
+    fflush(stdout);
     
     IDtest = create_2Dimage_ID("Htest", Hsize, Hsize);
     
@@ -5802,19 +5995,23 @@ int_fast8_t AOloopControl_Process_zrespM(long loop, const char *IDzrespm0_name, 
 
     // DECODE MAPS (IF REQUIRED)
     IDzrm = image_ID(IDzrespm0_name);
-    if((image_ID("Hmat")!=-1) && (image_ID("pixindexim")!=-1))
+    if((image_ID("RMmat")!=-1) && (image_ID("pixindexim")!=-1))  // start decoding
         {
             save_fits(IDzrespm0_name, "!zrespm_Hadamard.fits");
             
-            AOloopControl_Hadamard_decodeRM(IDzrespm0_name, "Hmat", "pixindexim", IDzrespm_name);
+            AOloopControl_Hadamard_decodeRM(IDzrespm0_name, "RMmat", "pixindexim", IDzrespm_name);
             IDzrm = image_ID(IDzrespm_name);
 
             if(image_ID("RMpokeC")!=-1)   
                 {
-                    AOloopControl_Hadamard_decodeRM("RMpokeC", "Hmat", "pixindexim", "RMpokeC1");
+                    AOloopControl_Hadamard_decodeRM("RMpokeC", "RMmat", "pixindexim", "RMpokeC1");
                     save_fits("RMpokeC1", "!test_RMpokeC1.fits");
                 }            
         }
+    else // NO DECODING
+    {
+		copy_image_ID(IDzrespm0_name, IDzrespm_name, 0);
+	}
 
 
 
@@ -8519,6 +8716,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 }
 
 
+/*** \brief Creates control matrices per block, using native modes
+ */
 long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmblock, float SVDlim)
 {
 	long IDin; // input WFS responses
@@ -8555,17 +8754,47 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	fflush(stdout);
 	ret = system("mkdir -p mkmodestmp");
 	
+	
+	
 	MBLOCK_NBmode = (long*) malloc(sizeof(long)*NBmblock);
 	MBLOCK_blockstart = (long*) malloc(sizeof(long)*NBmblock);
 	MBLOCK_blockend = (long*) malloc(sizeof(long)*NBmblock);
+
+
+	IDin = image_ID(IDin_name);
+	wfsxsize = data.image[IDin].md[0].size[0];
+	wfsysize = data.image[IDin].md[0].size[1];
+	wfssize = wfsxsize*wfsysize;
+	NBmodes = data.image[IDin].md[0].size[2];
+
 	// read block ends
-	for(mblock=0; mblock<NBmblock; mblock++)
+	if(NBmblock==1)
+	{
+		MBLOCK_blockend[0] = NBmodes;
+		sprintf(fname, "./conf_staged/conf_block00end.txt");
+		fp = fopen(fname, "w");
+		fprintf(fp, "%03ld\n", NBmodes);
+		fclose(fp);
+	}
+	else
+	{
+		for(mblock=0; mblock<NBmblock; mblock++)
 		{
 			sprintf(fname, "./conf_staged/conf_block%02ldend.txt", mblock);
 			fp = fopen(fname, "r");
+			if(fp==NULL)
+				{
+					printf("ERROR: File \"%s\" not found\n", fname);
+					exit(0);
+				}
 			ret = fscanf(fp, "%ld", &MBLOCK_blockend[mblock]);
 			fclose(fp);
+			
+			printf("Block end %ld = %ld\n", mblock, MBLOCK_blockend[mblock]);
+			fflush(stdout);
 		}
+	}
+	
 	MBLOCK_NBmode[0] = MBLOCK_blockend[0];
 	MBLOCK_blockstart[0] = 0;
 	for(mblock=1; mblock<NBmblock; mblock++)
@@ -8574,11 +8803,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 			MBLOCK_blockstart[mblock] =  MBLOCK_blockstart[mblock-1] + MBLOCK_NBmode[mblock-1];
 		}
 		
-	IDin = image_ID(IDin_name);
-	wfsxsize = data.image[IDin].md[0].size[0];
-	wfsysize = data.image[IDin].md[0].size[1];
-	wfssize = wfsxsize*wfsysize;
-	NBmodes = data.image[IDin].md[0].size[2];
+	
 
 	
 	IDmodes = create_3Dimage_ID("fmodesall", NBmodes, 1, NBmodes);
@@ -9745,19 +9970,21 @@ int_fast8_t AOloopControl_run()
         AOconf[loop].on = 0;
         AOconf[loop].DMprimaryWrite_ON = 0;
         AOconf[loop].ARPFon = 0;
-        printf("\n");
+        printf("entering loop ...\n");
+        fflush(stdout);
+        
         while( AOconf[loop].kill == 0)
         {
             if(timerinit==1)
             {
                 clock_gettime(CLOCK_REALTIME, &t1);
-                printf(" \n");
+                printf("timer init\n");
             }
             clock_gettime(CLOCK_REALTIME, &t2);
 
             tdiff = info_time_diff(t1, t2);
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-
+			
             printf(" WAITING     %20.3lf sec         \r", tdiffv);
             fflush(stdout);
             usleep(1000);
@@ -9768,6 +9995,8 @@ int_fast8_t AOloopControl_run()
             {
                 if(timerinit==0)
                 {
+					printf("TEST - Read first image\n");
+					fflush(stdout);
                     Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
                     clock_gettime(CLOCK_REALTIME, &t1);
                     timerinit = 1;
@@ -9776,9 +10005,11 @@ int_fast8_t AOloopControl_run()
                     fflush(stdout);
                 }
 
-
+				printf("TEST - Start AO cmpute\n");
+				fflush(stdout);
                 AOcompute(loop, AOconf[loop].WFSnormalize);
-
+				printf("TEST - exiting AOcompute\n");
+				fflush(stdout);
 
 
                 AOconf[loop].status = 12; // 12
@@ -9788,11 +10019,23 @@ int_fast8_t AOloopControl_run()
                 data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
 
+				printf("TEST -  MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
+				fflush(stdout);
+				
                 if(MATRIX_COMPUTATION_MODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
+					printf("TEST -  DMprimaryWrite_ON = %d\n", AOconf[loop].DMprimaryWrite_ON);
+					fflush(stdout);
+					
 					if(AOconf[loop].DMprimaryWrite_ON==1) // if Writing to DM
+					{
+						printf("TEST -  gain = %f\n", AOconf[loop].gain);
+						fflush(stdout);						
+						
 						if(fabs(AOconf[loop].gain)>1.0e-6)
 							set_DM_modes(loop);
+					}
+                
                 }
                 else // 1 step: WFS -> DM act
                 {
@@ -9911,6 +10154,9 @@ int_fast8_t set_DM_modes(long loop)
     double a;
     long cnttest;
     int semval;
+    
+    printf("======= set DM modes\n");
+    fflush(stdout);
     
     if(AOconf[loop].GPU == 0)
     {
@@ -10075,6 +10321,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         data.image[aoconfID_imWFS2].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_imWFS2].array.F[ii] = data.image[aoconfID_imWFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_wfsref].array.F[ii];
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2, -1);
         cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
         data.image[aoconfID_imWFS2].md[0].cnt0 ++;
         data.image[aoconfID_imWFS2].md[0].write = 0;
@@ -10171,7 +10418,7 @@ int_fast8_t AOcompute(long loop, int normalize)
             sizearray[1] = AOconf[loop].sizeyDM;
             sprintf(imname, "aol%ld_meas_act", LOOPNUMBER);
             aoconfID_meas_act = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
-            COREMOD_MEMORY_image_set_createsem(imname, 5);
+            COREMOD_MEMORY_image_set_createsem(imname, 10);
             free(sizearray);
         }
 
@@ -10190,13 +10437,24 @@ int_fast8_t AOcompute(long loop, int normalize)
     {
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
+			printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
+			fflush(stdout);
+			data.image[aoconfID_meas_modes].md[0].write = 1;
             ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
+            COREMOD_MEMORY_image_set_sempost_byID(aoconfID_meas_modes, -1);
             data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+            data.image[aoconfID_meas_modes].md[0].write = 0;
         }
         else // (*)
         {
+			printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=1 - using matrix %s\n", data.image[aoconfID_contrMc].md[0].name);
+			fflush(stdout);
+			data.image[aoconfID_meas_modes].md[0].write = 1;
             ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
             data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+            COREMOD_MEMORY_image_set_sempost_byID(aoconfID_meas_modes, -1);
+            data.image[aoconfID_meas_modes].md[0].cnt0 ++;
+            data.image[aoconfID_meas_modes].md[0].write = 0;
         }
     }
     else
@@ -10204,6 +10462,8 @@ int_fast8_t AOcompute(long loop, int normalize)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
+			printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=0 - using matrix %s\n", data.image[aoconfID_contrM].md[0].name);
+			fflush(stdout);
             GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
 
             AOconf[loop].status = 6; // 6 execute
@@ -10217,6 +10477,9 @@ int_fast8_t AOcompute(long loop, int normalize)
         }
         else // direct pixel -> actuators linear transformation
         {
+			printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1\n");
+			fflush(stdout);
+
             if(1==0)
             {
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
@@ -10234,16 +10497,27 @@ int_fast8_t AOcompute(long loop, int normalize)
 
                 if(COMPUTE_GPU_SCALING==1) // (**)
                 {
+					printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1, COMPUTE_GPU_SCALING=1\n");
+					fflush(stdout);
+			
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 1;					
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
                         data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_imWFS0].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
+					COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2_active[PIXSTREAM_SLICE], -1);
                     data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 0;
                 }
                 else
                 {
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 1;					
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
                         data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_imWFS2].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
+					COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2_active[PIXSTREAM_SLICE], -1);                    
                     data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 0;					
                 }
+                
+                // look for updated control matrix or reference
                 if(COMPUTE_GPU_SCALING==1) // (**)
                 {
                     if(data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0 != contrMcactcnt0[PIXSTREAM_SLICE])
@@ -10265,11 +10539,13 @@ int_fast8_t AOcompute(long loop, int normalize)
                     {
                         printf("\nINITIALIZE WFS REFERENCE: COPY NEW REF (WFSREF) TO imWFS2_active\n"); //TEST
                         fflush(stdout);
-
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 1;					
                         for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
                             data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
-
+						COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2_active[PIXSTREAM_SLICE], -1);
                         data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
+                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 0;					
+
                         fflush(stdout);
                     }
                 }
@@ -12061,7 +12337,7 @@ int_fast8_t AOloopControl_loopreset()
     for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
         data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
-    for(mb=0; mb<AOconf[LOOPNUMBER].NBMblocks; mb)
+    for(mb=0; mb<AOconf[LOOPNUMBER].DMmodesNBblock; mb)
     {
         AOloopControl_setgainblock(mb, 0.0);
         AOloopControl_setlimitblock(mb, 0.01);
@@ -12354,6 +12630,7 @@ int_fast8_t AOloopControl_setframesAve(long nbframes)
 }
 
 
+
 int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)
 {
 	long IDcontrM0; // local storage
@@ -12371,7 +12648,38 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 	long m, m1;
 	long sizeWFS;
 	
+
+	printf("AOconf[loop].DMmodesNBblock = %ld\n", AOconf[loop].DMmodesNBblock);
+	fflush(stdout);
 	
+	if(MATRIX_COMPUTATION_MODE==0)
+	{
+		printf("Command has no effect: modeblock gain not compatible with MATRIX_COMPUTATION_MODE = 0\n");
+		fflush(stdout);
+	}
+	else if (AOconf[loop].DMmodesNBblock<2)
+	{
+		sprintf(name2, "aol%ld_contrMc00", loop);
+        sprintf(name3, "aol%ld_contrMcact00_00", loop);
+		
+		 // for CPU mode
+        printf("UPDATING Mc matrix (CPU mode)\n");
+        ID = image_ID(name2);
+        data.image[aoconfID_contrMc].md[0].write = 1;
+        memcpy(data.image[aoconfID_contrMc].array.F, data.image[ID].array.F, sizeof(float)*AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
+        data.image[aoconfID_contrMc].md[0].cnt0++;
+        data.image[aoconfID_contrMc].md[0].write = 0;
+
+        // for GPU mode
+        printf("UPDATING Mcact matrix (GPU mode)\n");
+        ID = image_ID(name3);
+        data.image[aoconfID_contrMcact[0]].md[0].write = 1;
+        memcpy(data.image[aoconfID_contrMcact[0]].array.F, data.image[ID].array.F, sizeof(float)*AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt);
+        data.image[aoconfID_contrMcact[0]].md[0].cnt0++;
+        data.image[aoconfID_contrMcact[0]].md[0].write = 0; 
+	}
+	else
+	{
 	NBmodes = 0;
 	for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
 		NBmodes += AOconf[loop].NBmodes_block[kk];
@@ -12385,12 +12693,10 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 
 	sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
 
+
+
     if(add==1)
     {
-		IDcontrM0 = image_ID("contrM0");
-        if(IDcontrM0==-1)
-            IDcontrM0 = create_3Dimage_ID("contrM0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBmodes);
-		
 		IDcontrMc0 = image_ID("contrMc0");
         if(IDcontrMc0==-1)
             IDcontrMc0 = create_3Dimage_ID("contrMc0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
@@ -12400,32 +12706,29 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
         if(IDcontrMcact0==-1)
             IDcontrMcact0 = create_2Dimage_ID("contrMcact0", AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
 
-		arith_image_zero("contrM0");
+		//arith_image_zero("contrM0");
         arith_image_zero("contrMc0");
         arith_image_zero("contrMcact0");
+
 
 		m = 0;
         for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
         {
-				sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
+				//sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
                 sprintf(name2, "aol%ld_contrMc%02ld", loop, kk);
                 sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk);
 
-                printf("adding %ld / %ld  (%5.3f)   %s  %s\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1);
+                printf("adding %ld / %ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
 				
 				ID = image_ID(name1);
-				printf("updating %ld modes\n", data.image[ID].md[0].size[2]);
-		
-				for(m1=0;m1<data.image[ID].md[0].size[2];m1++)
-					{
-						for(ii=0;ii<sizeWFS;ii++)
-							data.image[IDcontrM0].array.F[m*sizeWFS+ii] = data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[m1*sizeWFS+ii];
-						m++;
-					}
+			
+				printf("updating %ld modes  [%ld]\n", data.image[ID].md[0].size[2], aoconfID_gainb);
+				fflush(stdout); // TEST
+				
+
 			
 			if(data.image[aoconfID_gainb].array.F[kk]>eps)
             {
-				sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
                 ID = image_ID(name2);
                 # ifdef _OPENMP
                 #pragma omp parallel for 
@@ -12440,6 +12743,7 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
                 for(ii=0; ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt; ii++)
                     data.image[IDcontrMcact0].array.F[ii] += data.image[aoconfID_gainb].array.F[kk]*data.image[ID].array.F[ii];
             }
+            
         }
 
         // for CPU mode
@@ -12457,23 +12761,10 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
         data.image[aoconfID_contrMcact[0]].md[0].cnt0++;
         data.image[aoconfID_contrMcact[0]].md[0].write = 0;
 
-       // 
-        printf("UPDATING M matrix (ID = %ld)  %ld modes %ld pixel   name = %s\n", aoconfID_contrM, NBmodes, sizeWFS, data.image[aoconfID_contrM].md[0].name);
-        data.image[aoconfID_contrM].md[0].write = 1;
-        memcpy(data.image[aoconfID_contrM].array.F, data.image[IDcontrM0].array.F, sizeof(float)*sizeWFS*NBmodes);
-        data.image[aoconfID_contrM].md[0].cnt0++;
-        data.image[aoconfID_contrM].md[0].write = 0;
-
-
-
-
-
-
         initcontrMcact_GPU[0] = 0;
     }
+	}
     
-    
-   // AOconf[loop].gainMB[blocknb] = gain;
 
     return(0);
 }
@@ -15229,7 +15520,7 @@ int_fast8_t AOloopControl_setgainblock(long mb, float gainval)
 	}
 	
 
-    if(mb<AOconf[LOOPNUMBER].NBMblocks)
+    if(mb<AOconf[LOOPNUMBER].DMmodesNBblock)
 		data.image[aoconfID_gainb].array.F[mb] = gainval;
 
     return 0;
@@ -15250,7 +15541,7 @@ int_fast8_t AOloopControl_setlimitblock(long mb, float limitval)
 		aoconfID_limitb = read_sharedmem_image(imname);
 	}
 
-    if(mb<AOconf[LOOPNUMBER].NBMblocks)
+    if(mb<AOconf[LOOPNUMBER].DMmodesNBblock)
 		data.image[aoconfID_limitb].array.F[mb] = limitval;
 
     return 0;
@@ -15271,7 +15562,7 @@ int_fast8_t AOloopControl_setmultfblock(long mb, float multfval)
 		aoconfID_multfb = read_sharedmem_image(imname);
 	}
 
-    if(mb<AOconf[LOOPNUMBER].NBMblocks)
+    if(mb<AOconf[LOOPNUMBER].DMmodesNBblock)
 		data.image[aoconfID_multfb].array.F[mb] = multfval;
 
     return 0;
@@ -15381,7 +15672,7 @@ int_fast8_t AOloopControl_AutoTune()
     }
 
     // initialize
-    for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
+    for(block=0; block<AOconf[LOOPNUMBER].DMmodesNBblock; block++)
     {
         AOloopControl_setgainblock(block, 0.0);
         AOloopControl_setlimitblock(block, 0.1);
@@ -15389,7 +15680,7 @@ int_fast8_t AOloopControl_AutoTune()
     }
 
 
-    for(block=0; block<AOconf[LOOPNUMBER].NBMblocks; block++)
+    for(block=0; block<AOconf[LOOPNUMBER].DMmodesNBblock; block++)
     {
         // tune block gain
         gOK = 1;

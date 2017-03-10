@@ -28,7 +28,7 @@ function WFSresidualOffsetLoop_init
 {
 	echo "WFSresidualOffsetLoop_init  loop ${LOOPNUMBER}"
 	sleep 2
-AOloopControl << EOF
+./AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_wfszpo6
 imzero aol${LOOPNUMBER}_wfszpo6
 readshmim aol${LOOPNUMBER}_wfsres_ave
@@ -515,7 +515,7 @@ fi
 CMmode=$( cat ./conf/conf_CMmode.txt )
 
 
-if [[ "${GPUmode}" -ne "0" && "${CMmode}" = "1" ]]; then
+if [[ "${GPUmode}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
 GPUallmode=$( cat ./conf/conf_GPUall.txt )
 
 if [[ -f "./conf/conf_GPUall.txt" && ( "$GPUallmode" = "1" || "$GPUallmode" = "0" ) ]]; then
@@ -524,7 +524,7 @@ else
 echo "0" > ./conf/conf_GPUall.txt
 fi
 
-echo "GPUsll mode = $GPUallmode"
+echo "GPUall mode = $GPUallmode"
 
 if [ "${GPUallmode}" = "0" ];
 then
@@ -768,15 +768,15 @@ menuitems+=( "m" "actuator max lim  =   ${loopmaxlim}" )
 
 
 file="./conf/conf_DMprimWriteON.txt"
-if [[ -f "$file" && ( "$DMprimWriteON" = " ON" || "$DMprimWriteON" = "OFF" ) ]]; then
+if [[ -f "$file" && ( "$DMprimWriteON" = "0" || "$DMprimWriteON" = "1" ) ]]; then
 echo "DMprimWriteON OK"
 DMprimWriteON=$( cat $file )
 else
-echo " ON" > "$file"
+echo "1" > "$file"
 DMprimWriteON=$( cat $file )
 fi
 
-if [ "$DMprimWriteON" = "OFF" ]; then
+if [ "$DMprimWriteON" = "0" ]; then
 menuitems+=( "DMpWon" " DM Primary Write is OFF - press to START" )
 else
 menuitems+=( "DMpWoff" "\Z1\Zr DM Primary Write is  ON - press to STOP\Zn  " )
@@ -868,56 +868,55 @@ stringcenter "MODAL BLOCK GAINS AND LIMITS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 if [ "$CMMODE" = "MODAL" ]; then
-menuitems+=( "gball" "Set all block to same gain")
-menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
-menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
-menuitems+=( "gball04" "Custom gain set 04 (alpha = 0.4)")
-menuitems+=( "gball08" "Custom gain set 08 (alpha = 0.8)")
-menuitems+=( "gball12" "Custom gain set 12 (alpha = 1.2)")
-menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
-menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
-menuitems+=( " " " " )
-menuitems+=( "lball" "Set all block to same limit")
-menuitems+=( "mball" "Set all block to same multf")
-menuitems+=( " " " " )
-NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+	menuitems+=( "gball" "Set all block to same gain")
+	menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
+	menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
+	menuitems+=( "gball04" "Custom gain set 04 (alpha = 0.4)")
+	menuitems+=( "gball08" "Custom gain set 08 (alpha = 0.8)")
+	menuitems+=( "gball12" "Custom gain set 12 (alpha = 1.2)")
+	menuitems+=( "gball16" "Custom gain set 16 (alpha = 1.6)")
+	menuitems+=( "gball20" "Custom gain set 20 (alpha = 2.0)")
+	menuitems+=( " " " " )
+	menuitems+=( "lball" "Set all block to same limit")
+	menuitems+=( "mball" "Set all block to same multf")
+	menuitems+=( " " " " )
+	NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
-for i in `seq 0 $(( $NBblocks - 1 ))`;
-do
-i2=$(printf "%02d" "$i")
+	for i in `seq 0 $(( $NBblocks - 1 ))`;
+	do
+	i2=$(printf "%02d" "$i")
 
-NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
-#menuitems+=( " " "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes\Zn")
+	NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 
-fname="conf/conf_gainb${i2}.txt"
-if [ -f "$fname" ]; then
-gainb[10#${i2}]=$( cat ${fname} )
-else
-gainb[10#${i2}]="1.000"
-fi
+	fname="conf/conf_gainb${i2}.txt"
+	if [ -f "$fname" ]; then
+	gainb[10#${i2}]=$( cat ${fname} )
+	else
+	gainb[10#${i2}]="1.000"
+	fi
 
-fname="conf/conf_limitb${i2}.txt"
-if [ -f "$fname" ]; then
-limitb[10#${i2}]=$( cat ${fname} )
-else
-limitb[10#${i2}]="1.00000"
-fi
+	fname="conf/conf_limitb${i2}.txt"
+	if [ -f "$fname" ]; then
+	limitb[10#${i2}]=$( cat ${fname} )
+	else
+	limitb[10#${i2}]="1.00000"
+	fi
 
-fname="conf/conf_multfb${i2}.txt"
-if [ -f "$fname" ]; then
-multfb[10#${i2}]=$( cat ${fname} )
-else
-multfb[10#${i2}]="1.000"
-fi
-
-string=$( printf "% 3d" "${NBblockmodes}" )
-menuitems+=( " "       "         \Zb\Zr======= BLOCK #${i2}  - ($string modes) ============\Zn" )
-menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ]   Modal block ${i2} gain" )
-menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit" )
-menuitems+=( "mb${i2}" "[ ${multfb[10#${i2}]} ]   Modal block ${i2} multf" )
-done
-else
-menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
+	fname="conf/conf_multfb${i2}.txt"
+	if [ -f "$fname" ]; then
+	multfb[10#${i2}]=$( cat ${fname} )
+	else
+	multfb[10#${i2}]="1.000"
+	fi
+	
+	string=$( printf "% 3d" "${NBblockmodes}" )
+	menuitems+=( " "       "         \Zb\Zr======= BLOCK #${i2}  - ($string modes) ============\Zn" )
+	menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ]   Modal block ${i2} gain" )
+	menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit" )
+	menuitems+=( "mb${i2}" "[ ${multfb[10#${i2}]} ]   Modal block ${i2} multf" )
+	done
+	else
+	menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
 fi
 
 
@@ -1720,11 +1719,11 @@ tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
 
-if [ "$CMmode" = "0" ]; then
-	DMprimWriteON="OFF"
-	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
-	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
-fi
+#if [ "$CMmode" = "0" ]; then
+#	DMprimWriteON="OFF"
+#	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
+#	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
+#fi
 
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 sleep 2
@@ -1741,17 +1740,35 @@ sleep 1
       	 do
 	     gi=$(printf "%02d" "$i")
 
-	     limitb[10#${gi}]=$(cat ./conf/conf_limitb${gi}.txt )
+		file="./conf/conf_limitb${gi}.txt"
+		if [ ! -f "$file" ]; then
+		echo "1.0" > $file
+		fi
+	     limitb[10#${gi}]=$(cat $file )
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetlimitb ${gi} ${limitb[10#${gi}]}" C-m
 
-	     multfb[10#${gi}]=$(cat ./conf/conf_multfb${gi}.txt )
+		file="./conf/conf_multfb${gi}.txt"
+		if [ ! -f "$file" ]; then
+		echo "1.0" > $file
+		fi
+	     multfb[10#${gi}]=$(cat $file )
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmultfb ${gi} ${multfb[10#${gi}]}" C-m
-
-	     gainb[10#${gi}]=$(cat ./conf/conf_gainb${gi}.txt )
+	     
+		file="./conf/conf_gainb${gi}.txt"
+		if [ ! -f "$file" ]; then
+		echo "1.0" > $file
+		fi
+	     gainb[10#${gi}]=$(cat $file )
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
 gi="00"
-tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${LOOPNUMBER} ${gainb[10#${gi}]} 1" C-m
+file="./conf/conf_gainb${gi}.txt"
+if [ ! -f "$file" ]; then
+echo "1.0" > $file
+fi
+gainb[10#${gi}]=$(cat $file )
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 1" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "# test: ${gainb[10#${gi}]}" C-m
 
 
 #  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
@@ -1785,7 +1802,8 @@ ln -s /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm /tmp/aol${LOOPNUMBER}_modeval.im.
 fi
 
 
-# process runs in CPU set aol0RT1
+# EXTRACT WFS MODES
+# process runs in GPU set aol#RT1
 if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}mexwfs"
 tmux kill-session -t $tmuxname
@@ -1802,13 +1820,13 @@ fi
 # wait to ensure that modesextractwfs has created aol${LOOPNUMBER}_modeval
 sleep 0.2
 
-# process runs in CPU set aol0RT
+# process runs in CPU set aol#RT
 if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
 tmuxname="aol${LOOPNUMBER}meol"
 tmux kill-session -t $tmuxname
 tmux new-session -d -s $tmuxname
 logRunningProcess "aolcompolm" "$tmuxname" "AO loop extract open loop WFS modes"
-tmux send-keys -t $tmuxname "AOloopControl -p ${tmuxname}" C-m
+tmux send-keys -t $tmuxname "./AOloopControl -p ${tmuxname}" C-m
 tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxname "aolcompolm ${LOOPNUMBER}" C-m
 fi
@@ -1855,9 +1873,10 @@ echo "OFF" > ./status/stat_procON.txt
 aoconflogext "STOP LOOP PROCESSES"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
-tmux send-keys -t aol${LOOPNUMBER}-ctr "exit" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr "exitCLI" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "rm aolctr.runproc" C-m
-pkill -9 aolrun-${LOOPNUMBER}
+tmux send-keys -t aol${LOOPNUMBER}-run C-c
+pkill -9 aol${LOOPNUMBER}-run
 rm aolrun.runproc
 
 if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
@@ -2039,7 +2058,7 @@ menucontrolloop_default="Nloopon"
 
  
   	 Z)
-AOloopControl << EOF
+./AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_DMmode_cmd
 imzero aol${LOOPNUMBER}_DMmode_cmd
 readshmim aol${LOOPNUMBER}_dmC
@@ -2122,7 +2141,7 @@ menucontrolloop_default="wresolinit"
 ;;
 
 wzpoinit)
-AOloopControl << EOF
+./AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_wfszpo0
 imzero aol${LOOPNUMBER}_wfszpo0
 readshmim aol${LOOPNUMBER}_wfszpo1
@@ -2183,14 +2202,14 @@ menucontrolloop_default="wzpoinit"
 
 
 	DMpWon)
-	DMprimWriteON=" ON"
+	DMprimWriteON="1"
 	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWon" C-m
 	menucontrolloop_default="DMpWoff"
 	;;
 
 	DMpWoff)
-	DMprimWriteON="OFF"
+	DMprimWriteON="0"
 	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
 	menucontrolloop_default="DMpWon"
@@ -2198,7 +2217,7 @@ menucontrolloop_default="wzpoinit"
 
 
 	limreset)
-AOloopControl << EOF
+./AOloopControl << EOF
 readshmim aol${LOOPNUMBER}_DMmode_LIMIT
 im=1.0+0*aol${LOOPNUMBER}_DMmode_LIMIT
 cpsh im aol${LOOPNUMBER}_DMmode_LIMIT

@@ -105,11 +105,9 @@ typedef struct
 	/* =============================================================================================== */
 
     char DMmodesname[80];
+     // BLOCKS OF MODES
     uint_fast16_t DMmodesNBblock; // number of mode blocks
     uint_fast16_t NBmodes_block[100]; // number of modes within each block
-
-    // BLOCKS OF MODES
-    uint_fast16_t NBMblocks; // number of mode blocks
     uint_fast16_t indexmaxMB[maxNBMB]; 
 
 	uint_fast16_t NBDMmodes;
@@ -280,6 +278,8 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
 
 long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem);
 
+long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem);
+
 /* =============================================================================================== */
 /* 		2.3. MISC COMPUTATION ROUTINES                                                             */
 /* =============================================================================================== */
@@ -294,7 +294,7 @@ static void *compute_function_dark_subtract( void *ptr );
 
 long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name);
 
-
+long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex);
 
 
 /* =============================================================================================== */

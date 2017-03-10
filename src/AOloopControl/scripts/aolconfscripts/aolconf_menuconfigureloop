@@ -39,17 +39,17 @@ tmux new-session -d -s $tmuxname
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: 
 #
+# INPUT:
+# 	conf/RMpokeCube.fits  (poke sequence)
+#		if file does not exist, create straight poke sequence (one actuator at a time) 
+#
 # OUTPUT: 
 # 	zrespmat0.fits
 #	wfsref00.fits
 #
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
-tmux send-keys -t $tmuxname "./logext $LOOPNAME START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
 
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 tmux send-keys -t $tmuxname "date" C-m
-
-
-
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
@@ -59,28 +59,36 @@ else
     echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\" &" C-m
-tmux send-keys -t $tmuxname "./dologext $LOOPNAME STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle} &" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 
 
 
-# PROCESS HIGH ORDER WFS RESPONSE: 
+
+# PROCESS & DECODE HIGH ORDER WFS RESPONSE: 
 #
 # INPUT:
-#    zrespmat0.fits
-#     wfsref00.fits 
+#	zrespmat0.fits
+#	wfsref00.fits 
+#	
+# OPTIONAL INPUT:
+# 	./conf/RMpokeCube.fits
+#	./conf/RMmat.fits
+#	./conf/RMpixindex.fits
+#		if these 3 files exist, use them to decode the zrespmat0.fits
+#	
 # OUTPUT:
-#     ./conf_zrm_staged/zrespM.fits
-#     ./conf_zrm_staged/wfsmap.fits
-#     ./conf_zrm_staged/dmmap.fits
+#	./conf_zrm_staged/zrespM.fits
+#	./conf_zrm_staged/wfsmap.fits
+#	./conf_zrm_staged/dmmap.fits   
 #
+tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP01\"" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
 stageddir="conf_zrm_staged"
 mkdir -p $stageddir
 tmux send-keys -t ${tmuxname} "cp zrespM.fits $stageddir" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmap.fits $stageddir" C-m
 tmux send-keys -t ${tmuxname} "cp dmmap.fits $stageddir" C-m
+
 
 
 # MAKE MASKS  
@@ -92,9 +100,17 @@ tmux send-keys -t ${tmuxname} "cp dmmap.fits $stageddir" C-m
 #     dmmaskRM.fits
 #
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
+if [ "$DMMODE" = "MODAL"]; then  # set dmmaskRM.fits to 1.0 over all pixels
+	tmux send-keys -t ${tmuxname} "$execname" C-m
+	tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_dmC" C-m
+	tmux send-keys -t ${tmuxname} "im0=0*aol${LOOPNUMBER}_dmC" C-m
+	tmux send-keys -t ${tmuxname} "dmmaskRM=1.0+im0" C-m
+	tmux send-keys -t ${tmuxname} "savefits dmmaskRM \"!dmmaskRM.fits\"" C-m
+	tmux send-keys -t ${tmuxname} "exitCLI" C-m	
+fi
 
 
-# MAKE SLAVED ACTUATOR MAP: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
+# MAKE SLAVED ACTUATOR DM MASK: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
 # 
 # INPUT:
 #	dmmaskRM.fits
@@ -102,10 +118,29 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 #	dmslaved.fits
 #	dmmask.fits
 #
-tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP03\"" C-m
+if [ "$DMMODE" = "ZONAL"]; then
+	tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
+else # set dmmask to 1, dmslaved to 0
+	tmux send-keys -t ${tmuxname} "$execname" C-m
+	tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_dmC" C-m
+	tmux send-keys -t ${tmuxname} "im0=0*aol${LOOPNUMBER}_dmC" C-m
+	tmux send-keys -t ${tmuxname} "dmmask=1.0+im0" C-m
+	tmux send-keys -t ${tmuxname} "savefits dmmask \"!dmmask.fits\"" C-m
+	tmux send-keys -t ${tmuxname} "savefits im0 \"!dmslaved.fits\"" C-m
+	tmux send-keys -t ${tmuxname} "exitCLI" C-m	
+fi
 
 
-# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask -> wfsref0
+# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask 
+# 
+# INPUT
+#	wfsref00.fits
+#	wfsmask.fits
+#
+# OUTPUT
+#	wfsref0.fits
+#
 tmux send-keys -t ${tmuxname} "$execname" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsref00.fits im0" C-m
 tmux send-keys -t ${tmuxname} "loadfits wfsmask.fits wfm" C-m
@@ -113,7 +148,7 @@ tmux send-keys -t ${tmuxname} "a=itot(im0)/itot(im0*wfm)" C-m
 tmux send-keys -t ${tmuxname} "im1=im0*a" C-m
 tmux send-keys -t ${tmuxname} "savefits im1 \"!wfsref0.fits\"" C-m
 tmux send-keys -t ${tmuxname} "listim" C-m
-tmux send-keys -t ${tmuxname} "exit" C-m
+tmux send-keys -t ${tmuxname} "exitCLI" C-m
 
 
 # COPY TO ARCHIVE
@@ -125,9 +160,9 @@ done
 
 
 
+if [ "$DMMODE" = "ZONAL"]; then
 
-
-# MAKE LOW ORDER MODES : dmslaved.fits, dmmask.fits 
+# MAKE LOW ORDER MODES 
 #
 # INPUT:
 #	dmslaved.fits
@@ -139,12 +174,19 @@ done
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 
-# ACQUIRE LOW ORDER RESPONSE : respM_LOmodes.fits -> LOzrespmat0.fits, LOwfsref0.fits
-tmux send-keys -t $tmuxname "aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 
-
+# ACQUIRE LOW ORDER RESPONSE
+#
+# INPUT:
+#	respM_LOmodes.fits
+#
+# OUTPUT:
+#	LOzrespmat0.fits
+#	LOwfsref0.fits
+#
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+#tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
@@ -155,10 +197,14 @@ else
     tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 
-tmux send-keys -t $tmuxname "aollog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
-# COPY TO ARCHIVE
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+#tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+
+
+
+
+# COPY LOW ORDER RESPONSE TO ARCHIVE
 for imname in $RMMODALCALIBlist
 do
 	mkdir -p ${imname}
@@ -166,28 +212,39 @@ do
 done
 
 
+fi
+
+
+
+
+# copy file names in conf_<name>_name.txt files in staged directory
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP09\"" C-m
+dir="$dir_conf_staged"
+mkdir -p $dir
+
+if [ "$DMMODE" = "ZONAL"]; then
+	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
+	do
+		tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+		tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
+	done
+else
+	for imname in $RMZONALCALIBlist
+	do
+		tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
+		tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
+	done
+fi
+
+tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\"" C-m
+#tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
+
 
 # =============================================================================================================
 #       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
 #             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
 # =============================================================================================================
 
-
-
-# copy file names in conf_<name>_name.txt files in staged directory
-
-dir="$dir_conf_staged"
-mkdir -p $dir
-
-for imname in $RMZONALCALIBlist $RMMODALCALIBlist
-do
-	tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
-	tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
-done
-
-
-tmux send-keys -t ${tmuxname} "dolog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\" &" C-m
-tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
 
 
 }
@@ -949,7 +1006,7 @@ fi
 
 # compute acquisition time
 RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
-#RMacqTimeM=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1)}' )
+
 
 
 
@@ -1021,33 +1078,36 @@ menuitems+=( "zrespM" "$menustring" )
 #menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
-if [ "$DMMODE" = "ZONAL" ]; then
+#if [ "$DMMODE" = "ZONAL" ]; then
+
 if [ -f "./conf/conf_RMpokeMode.txt" ]; then
-RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
-else
-RMpokeMode="0" # default
+	RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
+	else
+	RMpokeMode="0" # default
 fi
 if [ "${RMpokeMode}" -eq "0" ]; then
-rm ./conf/RMpokeCube.fits
-else
-cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
+	rm ./conf/RMpokeCube.fits
+	else
+	cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
 fi
 
 if [ "${RMpokeMode}" -eq "0" ]; then
-menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
-else
-menuitems+=( "Hoff" "\Zr\Z2Hadamard mode is ON\Zn    press to turn off")
+	menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
+	else
+	menuitems+=( "Hoff" "\Zr\Z2Hadamard mode is ON\Zn    press to turn off")
 fi
-else
-RMpokeMode=0
-menuitems+=( " " " " )
-fi
+
+#else
+#RMpokeMode=0
+#menuitems+=( " " " " )
+#fi
 
 
 if [ -f "./conf/conf_WFSnormalize.txt" ]; then
 WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
 else
 WFSnorm="0" # default
+echo "0" > ./conf/conf_WFSnormalize.txt
 fi
 
 if [ "${WFSnorm}" -eq "0" ]; then
@@ -1996,7 +2056,7 @@ mkdir -p "${confname}"
 cp conf/conf_* "${confname}/"
 cp conf/RMpoke.fits "${confname}/"
 cp conf/Hpoke.fits "${confname}/"
-cp conf/RMHmat.fits "${confname}/"
+cp conf/RMmat.fits "${confname}/"
 cp conf/RMpixindex.fits "${confname}/"
 cp conf/RMpokeCube.fits "${confname}/"
 ;;
@@ -2085,7 +2145,7 @@ done
 if [ "$DMMODE" = "ZONAL" ]; then
 cp "${confname}/RMpoke.fits" ./conf/
 cp "${confname}/Hpoke.fits" ./conf/
-cp "${confname}/RMHmat.fits" ./conf/
+cp "${confname}/RMmat.fits" ./conf/
 cp "${confname}/RMpixindex.fits" ./conf/
 cp "${confname}/RMpokeCube.fits" ./conf/
 fi
@@ -2218,25 +2278,26 @@ esac
 	Hon)
 echo "1" > ./conf/conf_RMpokeMode.txt
 
-if [ -f "./conf/RMpokeCube.fits" ]; then
-echo "OK"
-else
+#if [ -f "./conf/Hpoke.fits" ]; then
+#echo "OK"
+#else
 ./auxscripts/mkHpoke 
-fi
+#fi
 mv Hpoke.fits ./conf/Hpoke.fits
 cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
 mv Hpixindex.fits ./conf/
 cp ./conf/Hpixindex.fits ./conf/RMpixindex.fits
 mv Hmat.fits ./conf/
-cp ./conf/Hmat.fits ./conf/RMHmat.fits 
+cp ./conf/Hmat.fits ./conf/RMmat.fits 
 aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
 	Hoff)
 echo "0" > ./conf/conf_RMpokeMode.txt
+# by default, aolMeasureZrespmat2 will use a "straight poke" if these files are missing
 rm ./conf/RMpokeCube.fits
 rm ./conf/RMpixindex.fits
-rm ./conf/RMHmat.fits
+rm ./conf/RMmat.fits
 aoconflogext "RM: set Hadamard OFF"
 menucontrolloop_default="Hon"
 ;;

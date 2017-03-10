@@ -44,6 +44,15 @@ menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall
 
 
 
+
+
+
+
+
+
+
+
+
 if [ "$DMMODE" = "MODAL" ]; then
 
 getshmimsize aol${LOOPNUMBER}_zrespM
@@ -208,32 +217,7 @@ fi
 menuitems+=( "RM2CMm" "Compute Modes and Control matrix" )
 
 
-fi
-
-
-
-
-
-
-
-
-if [ "$DMMODE" = "ZONAL" ]; then
-
-
-CMMODEfile="conf/conf_CMMODE.txt"
-if [ -f $CMMODEfile ]; then
-CMMODE=$( cat ${CMMODEfile} )
-else
-CMMODE="MODAL"
-echo "$CMMODE" > $CMMODEfile
-fi
-
-if [ "$CMMODE" = "ZONAL" ]; then
-menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
-else
-menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
-fi
-
+fi  # end of:  if [ "$DMMODE" = "MODAL" ]; then
 
 
 
@@ -244,70 +228,101 @@ menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
 menuitems+=( "zRM" "$menustring" )
 
-menuitems+=( "RM2CM" "Compute Control matrix" )
 
-
-
-
-menuitems+=( " " " " )
-stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
-menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
-
-menuitems+=( " " " " )
-
-
-file="./conf/conf_extrablockMindex.txt"
-if [ -f $file ]; then
-extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
+SVDNBmodesfile="SVDmodes.log"
+if [ -f ${SVDNBmodesfile} ]; then
+SVDNBmodesstr=$( cat ${SVDNBmodesfile} )
+SVDNBmodes=$( echo ${SVDNBmodesstr} | awk '{ printf("%03d", $1)}' )
 else
-echo "4" > $file
-extrablockIndex="4"
+SVDNBmodes="-"
+echo "$SVDNBmodes" > $SVDNBmodes
 fi
-menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
+
+menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]" )
 
 
-if [ -f "./extrablockM.fits" ]; then
+
+
+
+
+if [ "$DMMODE" = "ZONAL" ]; then
+
+
+ CMMODEfile="conf/conf_CMMODE.txt"
+ if [ -f $CMMODEfile ]; then
+ CMMODE=$( cat ${CMMODEfile} )
+ else
+ CMMODE="MODAL"
+ echo "$CMMODE" > $CMMODEfile
+ fi
+
+ if [ "$CMMODE" = "ZONAL" ]; then
+ menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
+ else
+ menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
+ fi
+
+
+
+
+
+
+ menuitems+=( " " " " )
+ stringcenter "SYSTEM MODAL RESPONSE AND CONTROL WITH CPA DECOMPOSITION"
+ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
+
+ menuitems+=( " " " " )
+
+
+ file="./conf/conf_extrablockMindex.txt"
+ if [ -f $file ]; then
+ extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
+ else
+ echo "4" > $file
+ extrablockIndex="4"
+ fi
+ menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
+
+
+ if [ -f "./extrablockM.fits" ]; then
 	if [ -f "./conf/extrablockM.fits" ]; then
 	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
 	else
 	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
 	fi
-else
-menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
-fi
+ else
+ menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
+ fi
 
 
 
 
-menuitems+=( " " " " )
+ menuitems+=( " " " " )
 
-mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
-mkmodesdatestr=${mkmodesdatestr% *}
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/conf_NBmodes.txt )
+ mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
+ mkmodesdatestr=${mkmodesdatestr% *}
+ NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+ NBmodes=$( cat ./conf/conf_NBmodes.txt )
 
-staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
-staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
-staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
-staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
+ staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
+ staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
+ staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
+ staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
 
-menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
-#menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
+ menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
+ #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
+
+fi 
+
+
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update (ALL) \Zn" )
 
-#if [ "$DMMODE" = "ZONAL" ]; then
-#fname="aolmkmodes.runproc"
-#else
-#fname="aolmkmodesM.runproc"
-#fi
-#if [ -f "$fname" ]; then
-#menuitems+=( "chkSMloadCM" "(Load current Files) - waiting for process aolmkmodes to complete, press to check" )
-#else
+
 menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
-#fi
+
 
 
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
@@ -324,7 +339,6 @@ menuitems+=( "RM" "$menustring" )
 makemenuitemstringaolshm "contrM" "Modal Control Matrix"
 menuitems+=( "CM" "$menustring" )
 
-fi
 
 
 
@@ -713,6 +727,7 @@ getshmimsize aol${LOOPNUMBER}_contrM
 
 CMMODE="ZONAL"
 echo "$CMMODE" > $CMMODEfile
+
 
 menucontrolmatrix_default="RM2CM"
 ;;
