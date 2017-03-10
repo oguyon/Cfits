@@ -1,5 +1,7 @@
 #define _GNU_SOURCE
 
+#define _PRINT_TEST
+
 #include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
@@ -2175,15 +2177,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         aoconfID_limitb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1);        
         
         
-        
+        #ifdef _PRINT_TEST 
         printf("TEST - INITIALIZE contrMc, contrMcact\n");
         fflush(stdout);
+        #endif
     
         for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
             {          
-				
+				#ifdef _PRINT_TEST 
 				printf("TEST - BLOCK %3ld gain = %f\n", kk, data.image[aoconfID_gainb].array.F[kk]);
 				fflush(stdout);
+				#endif
 				      
                 sprintf(name, "aol%ld_DMmodes%02ld", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
@@ -3436,10 +3440,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             for(i=0; i<semval; i++)
                 sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
         }
-
+	
+	#ifdef _PRINT_TEST 
 	printf("TEST - SEMAPHORE INITIALIZED\n");
 	fflush(stdout);
-
+	#endif
 
     if(RM==0)
     {
@@ -3454,10 +3459,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 	
  //   usleep(20);
 
-
+	#ifdef _PRINT_TEST 
 	printf("TEST - WAITING FOR IMAGE %s\n", data.image[aoconfID_wfsim].md[0].name);
 	fflush(stdout);
-
+	#endif
 	
 	if(data.image[aoconfID_wfsim].sem==0)
     {
@@ -3470,11 +3475,17 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     }
     else
     {
+		#ifdef _PRINT_TEST 
 		printf("TEST - waiting on semindex = %d\n", semindex);
 		fflush(stdout);
+		#endif
+		
         sem_wait(data.image[aoconfID_wfsim].semptr[semindex]);
+		
+		#ifdef _PRINT_TEST 
 		printf("TEST - semaphore posted\n");
 		fflush(stdout);
+		#endif
 	}
 	
    if(RM==0)
@@ -3529,9 +3540,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         data.image[aoconfID_looptiming].md[0].wtime = tnow;
     }
 
+	#ifdef _PRINT_TEST 
 	printf("TEST - DARK SUBTRACT\n");
 	fflush(stdout);
-
+	#endif
 
     // Dark subtract and compute total
 
@@ -3583,8 +3595,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     }
     else
     {
+		#ifdef _PRINT_TEST 
 		printf("TEST - DARK SUBTRACT - START\n");
 		fflush(stdout);
+		#endif
 		
         if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
         {
@@ -3618,8 +3632,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[aoconfID_imWFS0].semptr[s]);
             }
+        #ifdef _PRINT_TEST 
 		printf("TEST - DARK SUBTRACT - END\n");
 		fflush(stdout);
+		#endif
     }
 
     //  if(IDdark!=-1)
@@ -3637,9 +3653,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         data.image[aoconfID_looptiming].array.F[2] = tdiffv;
     }
 
-
+	#ifdef _PRINT_TEST 
 	printf("TEST - NORMALIZE\n");
 	fflush(stdout);
+	#endif
 
 
     // Normalize
@@ -3724,8 +3741,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
     if( ((COMPUTE_GPU_SCALING==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
     {
+		#ifdef _PRINT_TEST 
 		printf("TEST - Normalize [%d]: totalinv = %f\n", AOconf[loop].WFSnormalize, totalinv);
 		fflush(stdout);
+		#endif
 		
         data.image[aoconfID_imWFS1].md[0].write = 1;
 # ifdef _OPENMP
@@ -3746,9 +3765,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         data.image[aoconfID_imWFS1].md[0].write = 0;
     }
     
+    #ifdef _PRINT_TEST 
 	printf("TEST - READ CAM DONE\n");
 	fflush(stdout);
-  
+	#endif
 
     return(0);
 }
@@ -9995,21 +10015,33 @@ int_fast8_t AOloopControl_run()
             {
                 if(timerinit==0)
                 {
+					#ifdef _PRINT_TEST 
 					printf("TEST - Read first image\n");
 					fflush(stdout);
+					#endif
+					
                     Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
                     clock_gettime(CLOCK_REALTIME, &t1);
                     timerinit = 1;
+                    
+                    #ifdef _PRINT_TEST 
                     printf("\n");
                     printf("LOOP CLOSED  ");
                     fflush(stdout);
+                    #endif
                 }
-
+				
+				#ifdef _PRINT_TEST 
 				printf("TEST - Start AO cmpute\n");
 				fflush(stdout);
+				#endif
+				
                 AOcompute(loop, AOconf[loop].WFSnormalize);
+				
+				#ifdef _PRINT_TEST 
 				printf("TEST - exiting AOcompute\n");
 				fflush(stdout);
+				#endif
 
 
                 AOconf[loop].status = 12; // 12
@@ -10018,19 +10050,24 @@ int_fast8_t AOloopControl_run()
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
-
+				#ifdef _PRINT_TEST 
 				printf("TEST -  MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
 				fflush(stdout);
+				#endif
 				
                 if(MATRIX_COMPUTATION_MODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
+					#ifdef _PRINT_TEST 
 					printf("TEST -  DMprimaryWrite_ON = %d\n", AOconf[loop].DMprimaryWrite_ON);
 					fflush(stdout);
+					#endif
 					
 					if(AOconf[loop].DMprimaryWrite_ON==1) // if Writing to DM
 					{
+						#ifdef _PRINT_TEST 
 						printf("TEST -  gain = %f\n", AOconf[loop].gain);
-						fflush(stdout);						
+						fflush(stdout);
+						#endif				
 						
 						if(fabs(AOconf[loop].gain)>1.0e-6)
 							set_DM_modes(loop);
@@ -10437,8 +10474,11 @@ int_fast8_t AOcompute(long loop, int normalize)
     {
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
+			#ifdef _PRINT_TEST 
 			printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
 			fflush(stdout);
+			#endif
+			
 			data.image[aoconfID_meas_modes].md[0].write = 1;
             ControlMatrixMultiply( data.image[aoconfID_contrM].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].NBDMmodes, AOconf[loop].sizeWFS, data.image[aoconfID_meas_modes].array.F);
             COREMOD_MEMORY_image_set_sempost_byID(aoconfID_meas_modes, -1);
@@ -10447,8 +10487,11 @@ int_fast8_t AOcompute(long loop, int normalize)
         }
         else // (*)
         {
+			#ifdef _PRINT_TEST 
 			printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=1 - using matrix %s\n", data.image[aoconfID_contrMc].md[0].name);
 			fflush(stdout);
+			#endif
+			
 			data.image[aoconfID_meas_modes].md[0].write = 1;
             ControlMatrixMultiply( data.image[aoconfID_contrMc].array.F, data.image[aoconfID_imWFS2].array.F, AOconf[loop].sizeDM, AOconf[loop].sizeWFS, data.image[aoconfID_meas_act].array.F);
             data.image[aoconfID_meas_modes].md[0].cnt0 ++;
@@ -10462,8 +10505,10 @@ int_fast8_t AOcompute(long loop, int normalize)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
+			#ifdef _PRINT_TEST 
 			printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
 			fflush(stdout);
+			#endif
 			
 			//initWFSref_GPU[PIXSTREAM_SLICE] = 1; // default: do not re-compute reference output
 			
@@ -10475,8 +10520,11 @@ int_fast8_t AOcompute(long loop, int normalize)
 				
 				if(initWFSref_GPU[PIXSTREAM_SLICE]==0) // initialize WFS reference
                     {
+                        #ifdef _PRINT_TEST 
                         printf("\nINITIALIZE WFS REFERENCE: COPY NEW REF (WFSREF) TO imWFS0\n"); //TEST
                         fflush(stdout);
+                        #endif
+                        
 						data.image[aoconfID_imWFS0].md[0].write = 1;					
                         for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                             data.image[aoconfID_imWFS0].array.F[wfselem] = data.image[aoconfID_wfsref].array.F[wfselem];
@@ -10509,8 +10557,10 @@ int_fast8_t AOcompute(long loop, int normalize)
         }
         else // direct pixel -> actuators linear transformation
         {
+			#ifdef _PRINT_TEST 
 			printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1\n");
 			fflush(stdout);
+			#endif
 
             if(1==0)
             {
@@ -10529,8 +10579,10 @@ int_fast8_t AOcompute(long loop, int normalize)
 
                 if(COMPUTE_GPU_SCALING==1) // (**)
                 {
+					#ifdef _PRINT_TEST 
 					printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1, COMPUTE_GPU_SCALING=1\n");
 					fflush(stdout);
+					#endif
 			
                     data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 1;					
                     for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
@@ -10556,6 +10608,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                     {
                         printf("NEW CONTROL MATRIX DETECTED (%s) -> RECOMPUTE REFERENCE x MATRIX\n", data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].name);
                         fflush(stdout);
+                        
                         initWFSref_GPU[PIXSTREAM_SLICE] = 0;
                         contrMcactcnt0[PIXSTREAM_SLICE] = data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0;
                     }
@@ -10564,6 +10617,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                     {
                         printf("NEW REFERENCE WFS DETECTED (%s) [ %ld %ld ]\n", data.image[aoconfID_wfsref].md[0].name, data.image[aoconfID_wfsref].md[0].cnt0, wfsrefcnt0);
                         fflush(stdout);
+                        
                         initWFSref_GPU[PIXSTREAM_SLICE] = 0;
                         wfsrefcnt0 = data.image[aoconfID_wfsref].md[0].cnt0;
                     }
