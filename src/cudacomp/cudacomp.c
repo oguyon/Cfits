@@ -1784,7 +1784,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     long ID_A, ID_AtA, ID_VT, ID_Ainv;
 
     // Timing
-    int testmode = 1;
+    int testmode = 0;
     int timing = 1;
     struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
     double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;
@@ -1948,6 +1948,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
 
         save_fits("mA", "!test_mA.fits");
+        delete_image_ID("mA");
     }
 
 
