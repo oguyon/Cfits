@@ -159,7 +159,7 @@ do
 done
 
 
-echo "DMMODE = $DMMODE"
+
 if [ "$DMMODE" = "ZONAL"]; then
 
 # MAKE LOW ORDER MODES 
@@ -218,7 +218,7 @@ fi
 
 
 # copy file names in conf_<name>_name.txt files in staged directory
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP09\"" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP009\"" C-m
 dir="$dir_conf_staged"
 mkdir -p $dir
 
@@ -235,8 +235,8 @@ else
 		tmux send-keys -t ${tmuxname} "mv ${imname}.fits ./${dir}/" C-m
 	done
 fi
-
-tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP AUTO CALIBRATION\"" C-m
+tmux send-keys -t $tmuxname "# DMMODE = $DMMODE" C-m
+tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog \"$LOOPNAME\" \"AUTO CALIBRATION DONE\"" C-m
 #tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
 
 
