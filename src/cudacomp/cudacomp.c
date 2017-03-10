@@ -1651,6 +1651,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
      
      
      // Write eigenvalues
+     printf("TEST - Writing eigenv.dat.magma\n");
+     fflush(stdout);
+     
     sprintf(fname, "eigenv.dat.magma");
     if((fp=fopen(fname, "w"))==NULL)
       {
@@ -1660,6 +1663,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_old(const char *ID_Rmatrix_name, con
     for(k=0; k<min_mn; k++)
       fprintf(fp,"%5ld %20g %20g\n", k, S1[k], S1[k]/S1[0] );
     fclose(fp);
+ 
+	printf("TEST - DONE Writing eigenv.dat.magma\n");
+     fflush(stdout);
  
     egvlim = SVDeps * S1[0];
         
