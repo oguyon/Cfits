@@ -10462,10 +10462,39 @@ int_fast8_t AOcompute(long loop, int normalize)
 #ifdef HAVE_CUDA
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
-			printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=0 - using matrix %s\n", data.image[aoconfID_contrM].md[0].name);
+			printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
 			fflush(stdout);
-            GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+			
+			//initWFSref_GPU[PIXSTREAM_SLICE] = 1; // default: do not re-compute reference output
+			
+			if(COMPUTE_GPU_SCALING==1)
+			{
+				// TBD : TEST IF contrM or wfsref have changed
+				
+				
+				
+				if(initWFSref_GPU[PIXSTREAM_SLICE]==0) // initialize WFS reference
+                    {
+                        printf("\nINITIALIZE WFS REFERENCE: COPY NEW REF (WFSREF) TO imWFS0\n"); //TEST
+                        fflush(stdout);
+						data.image[aoconfID_imWFS0].md[0].write = 1;					
+                        for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+                            data.image[aoconfID_imWFS0].array.F[wfselem] = data.image[aoconfID_wfsref].array.F[wfselem];
+						COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0, -1);
+                        data.image[aoconfID_imWFS0].md[0].cnt0++;
+						data.image[aoconfID_imWFS0].md[0].write = 0;					
+                        fflush(stdout);
+                    }
+			}
 
+
+			if(COMPUTE_GPU_SCALING==1)
+				GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS0].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
+			else
+				GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+
+			initWFSref_GPU[PIXSTREAM_SLICE] = 1;
+            
             AOconf[loop].status = 6; // 6 execute
 
             clock_gettime(CLOCK_REALTIME, &tnow);
@@ -10473,7 +10502,10 @@ int_fast8_t AOcompute(long loop, int normalize)
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
             data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
-            GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
+			if(COMPUTE_GPU_SCALING==1)
+				GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
+			else
+				GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
         }
         else // direct pixel -> actuators linear transformation
         {
@@ -10539,29 +10571,20 @@ int_fast8_t AOcompute(long loop, int normalize)
                     {
                         printf("\nINITIALIZE WFS REFERENCE: COPY NEW REF (WFSREF) TO imWFS2_active\n"); //TEST
                         fflush(stdout);
-                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 1;					
+						data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 1;					
                         for(wfselem_active=0; wfselem_active<AOconf[loop].sizeWFS_active[PIXSTREAM_SLICE]; wfselem_active++)
                             data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].array.F[wfselem_active] = data.image[aoconfID_wfsref].array.F[WFS_active_map[PIXSTREAM_SLICE*AOconf[loop].sizeWFS+wfselem_active]];
 						COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2_active[PIXSTREAM_SLICE], -1);
                         data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].cnt0++;
-                    data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 0;					
-
+						data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].md[0].write = 0;					
                         fflush(stdout);
                     }
                 }
-
-                // perform matrix mult
-                //GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, 0, AOconf[loop].GPUusesem);
-
-                //
 
                 if(initcontrMcact_GPU[PIXSTREAM_SLICE]==0)
                     initWFSref_GPU[PIXSTREAM_SLICE] = 0;
 
                 
-                
-                //printf("PIXSTREAM_SLICE = %d\n", PIXSTREAM_SLICE);
-              //  printf("GPU_loop_MultMat_setup   %s %s %s\n", data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name);
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
 
 

@@ -1352,7 +1352,7 @@ void *compute_function( void *ptr )
 
             // TEST
 
-            sprintf(fname, "gputest%d.txt", device);
+        /*    sprintf(fname, "gputest%d.txt", device);
             if((fptest = fopen(fname, "w"))==NULL)
             {
                 printf("ERROR: cannot create file \"%s\"\n", fname);
@@ -1363,7 +1363,7 @@ void *compute_function( void *ptr )
             for(ii=0; ii<gpumatmultconf[index].M; ii++)
                 fprintf(fptest, "%ld %f\n", ii, gpumatmultconf[index].dmRef_part[device][ii]);
             fclose(fptest);
-
+*/
             if(gpumatmultconf[index].sem==1)
                 sem_post(gpumatmultconf[index].semptr5[device]);
 

@@ -50,7 +50,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">AOloopControl</h1>
 <h2 class="author">Olivier Guyon</h2>
-<h3 class="date">Feb 21, 2017</h3>
+<h3 class="date">Mar 9, 2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -1043,10 +1043,12 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <div id="top-level-script" class="section level2">
 <h2><span class="header-section-number">4.1</span> Top level script</h2>
 <p>Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):</p>
-<pre><code>aolconf -L 3 -N testsim</code></pre>
+<pre><code>./aolconf -L 3 -N testsim</code></pre>
 <p>The loop name (<code>testsim</code> in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the <code>-N</code> option is specified, the custom setup script <code>./setup/setup_&lt;name&gt;</code> is ran. The script may make some of the steps described below optional.</p>
 <p>You can check the current loop number and name settings with:</p>
-<pre><code>aolconf -h</code></pre>
+<pre><code>./aolconf -h</code></pre>
+<p>The script can also launch a pre-written CPU/OS configuration script named <code>./aocscripts/cpuconfig_&lt;LOOPNAME&gt;</code> :</p>
+<pre><code>./aolconf -C</code></pre>
 </div>
 <div id="setting-the-dm-interface" class="section level2">
 <h2><span class="header-section-number">4.2</span> Setting the DM interface</h2>

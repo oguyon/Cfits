@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% MAr 3, 2017
+% Mar 9, 2017
 
 
 
@@ -592,7 +592,7 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 Start aolconf with loop number and loop name (you can ommit these arguments when launching the script again):
 
 ~~~~~
-aolconf -L 3 -N testsim
+./aolconf -L 3 -N testsim
 ~~~~~
 
 The loop name (`testsim` in the above example) will both allocate a name for the loop and execute an optional custom setup script. The software package comes with a few such pre-made custom scripts for specific systems / examples. When the `-N` option is specified, the custom setup script `./setup/setup_<name>` is ran. The script may make some of the steps described below optional.
@@ -600,8 +600,14 @@ The loop name (`testsim` in the above example) will both allocate a name for the
 You can check the current loop number and name settings with:
 
 ~~~~~
-aolconf -h
+./aolconf -h
 ~~~~~
+
+The script can also launch a pre-written CPU/OS configuration script named `./aocscripts/cpuconfig_<LOOPNAME>` :
+
+~~~~
+./aolconf -C
+~~~~
 
 
 

@@ -159,7 +159,7 @@ do
 done
 
 
-
+echo "DMMODE = $DMMODE"
 if [ "$DMMODE" = "ZONAL"]; then
 
 # MAKE LOW ORDER MODES 
