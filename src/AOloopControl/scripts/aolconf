@@ -65,7 +65,7 @@ echo "   -e <exec>            executable"
 echo "   -l <exec>            log executable"  
 echo "   -L <long>            (L)oop number"
 echo "   -N <string>          loop (N)ame. Run ./aosetup/aosetup_<string> if available"
-echo "   -C                   run (C)PU config"
+echo "   -C                   run (C)PU config: execute ./aocscripts/cpuconfig_${LOOPNAME}"
 echo "   -c                   (c)lear all settings"
 echo "   -n                   do (n)ot load configuration on startup"
 echo "------------------------------------------------------------------------"
@@ -119,7 +119,7 @@ done
 LOADMEM=1
 LOOPNAME_file="LOOPNAME"
 LOOPNUMBER_file="LOOPNUMBER"
-CPUconfRT="1"
+CPUconfRT="1"  # use CPU sets
 
 execname="./AOloopControl"
 
@@ -151,7 +151,8 @@ while getopts :hH:L:N:Ccn FLAG; do
     ;;
     C) # configure CPU
     echo "Configure CPU"
-    CPUconfRT=1
+    ./aocscripts/cpuconfig_${LOOPNAME}
+    exit
     ;;
     e) # set executable
     execnameFile=$OPTARG
@@ -263,7 +264,7 @@ aoconflog "STARTING NEW aolconf SESSION"
 
 
 # default parameters
-CPUconfRT=0 # no CPU real-time configuration
+CPUconfRT="1" # no CPU real-time configuration
 
 DMindex=0
 
