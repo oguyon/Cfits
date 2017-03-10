@@ -100,7 +100,7 @@ tmux send-keys -t ${tmuxname} "cp dmmap.fits $stageddir" C-m
 #     dmmaskRM.fits
 #
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
-if [ "$DMMODE" = "MODAL"]; then  # set dmmaskRM.fits to 1.0 over all pixels
+if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
 	tmux send-keys -t ${tmuxname} "$execname" C-m
 	tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_dmC" C-m
 	tmux send-keys -t ${tmuxname} "im0=0*aol${LOOPNUMBER}_dmC" C-m
@@ -119,7 +119,7 @@ fi
 #	dmmask.fits
 #
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP03\"" C-m
-if [ "$DMMODE" = "ZONAL"]; then
+if [ "$DMMODE" = "ZONAL" ]; then
 	tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 else # set dmmask to 1, dmslaved to 0
 	tmux send-keys -t ${tmuxname} "$execname" C-m
@@ -160,7 +160,7 @@ done
 
 
 
-if [ "$DMMODE" = "ZONAL"]; then
+if [ "$DMMODE" = "ZONAL" ]; then
 
 # MAKE LOW ORDER MODES 
 #
@@ -225,7 +225,7 @@ tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STEP009\"" 
 dir="$dir_conf_staged"
 mkdir -p $dir
 
-if [ "$DMMODE" = "ZONAL"]; then
+if [ "$DMMODE" = "ZONAL" ]; then
 	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
 	do
 		tmux send-keys -t ${tmuxname} "echo \"${imname}/${imname}_${datestr}.fits\" > ./${dir}/conf_${imname}_name.txt" C-m
