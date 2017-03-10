@@ -104,6 +104,7 @@ for file in ${filelist[*]}
 do
 	srcfile="$srcdir/$file"
 	echo "syncing file $srcfile -> $file"
+	rm $file
 	ln -fs $srcfile $file	
 done
 
@@ -120,6 +121,7 @@ do
 	do
 	filename="${entry##*/}"	
 	echo "   syncing directory $srcdir1 file $filename"
+	rm ./$dir/$filename
 	ln -fs $entry ./$dir/$filename
 	done
 

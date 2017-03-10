@@ -5195,6 +5195,8 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 				data.image[IDpsfi0].md[0].write = 0;
 				
 				COREMOD_MEMORY_image_set_semwait("opderr", 0);
+				// drive semaphore #1 to zero
+				while(sem_trywait(data.image[IDopderrC].semptr[0])==0) {}
 				//iter++;
 			}			
 		}
