@@ -7686,6 +7686,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         // time : 00:42
 
         /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)
+		printf("STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)\n");
+		fflush(stdout);
+		
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             printf("\nMODE BLOCK %ld\n", mblock);
@@ -7745,6 +7748,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
         /// fmodes1all -> fmodes2all
+		printf("STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)\n");
+		fflush(stoud);
 
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
