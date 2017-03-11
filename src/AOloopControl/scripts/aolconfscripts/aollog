@@ -118,7 +118,7 @@ while [ 1 ]; do
 read -p "Enter log text: " LOGTEXT
 logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
 printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT" >> $logdir/$1.log
-dologext "$1 $LOGEXT"
+dologext "$1 $LOGTEXT"
 done
 
 fi
