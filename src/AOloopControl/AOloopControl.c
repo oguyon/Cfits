@@ -7769,23 +7769,18 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
-                    printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-                    fflush(stdout);
+                  //  printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
+                  //  fflush(stdout);
                     
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
                     sprintf(imname, "fmodes1_%02ld", mblock0);
 					
-					printf("step 000\n");
-					fflush(stdout);
                     linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
-                  	printf("step 001\n");
-					fflush(stdout);
+
                   
                     reuse = 1;
                     linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
-                  	printf("step 002\n");
-					fflush(stdout);
                     IDSVDmode1 = image_ID("SVDmode1");
                     delete_image_ID("modecoeff");
                     value1 = 0.0;
@@ -7805,8 +7800,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     else
                         mok[m] = 0;
 
-                    printf("->  %12g (%g %g)\n", rms, value1, totm);
-					fflush(stdout);
+//                    printf("->  %12g (%g %g)\n", rms, value1, totm);
+//					fflush(stdout);
                 }
             }
             cnt = 0;
