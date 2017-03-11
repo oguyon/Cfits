@@ -119,7 +119,7 @@ if [ "$LOOPMODE" = "0" ]; then
 printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
 ln -fs $PWD/$logdir/$1.log aolconf.log
 if [ "$EXTERNAL" = "1" ]; then
-dologext "$1 $2"
+dologext "$1 $2" &
 fi
 
 else
