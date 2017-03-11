@@ -21,10 +21,11 @@ echo " Suitable for slow ( < 200 Hz ) loggging"
 echo " log directory: $logdir"
 echo ""
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 -hi <logname> <entry>"
+echo "     $0 -hei <logname> <entry>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-e$(tput sgr0)          include external log"
 echo "     $(tput bold)-i$(tput sgr0)          Interactive mode, included external log"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
@@ -66,6 +67,7 @@ done
 
 
 LOOPMODE=0
+EXTERNAL=0
 while getopts :hi FLAG; do
   case $FLAG in
     h)  #show help
@@ -78,6 +80,9 @@ while getopts :hi FLAG; do
       ;;
     i)
     LOOPMODE="1"
+    ;;
+    e)
+    EXTERNAL="1"
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -110,8 +115,13 @@ fi
 mkdir -p $logdir
 
 if [ "$LOOPMODE" = "0" ]; then
+
 printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
 ln -fs $PWD/$logdir/$1.log aolconf.log
+if [ "$EXTERNAL" = "1" ];
+dologext "$1 $2"
+fi
+
 else
 
 while [ 1 ]; do
