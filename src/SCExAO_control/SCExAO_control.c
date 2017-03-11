@@ -1149,7 +1149,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
-			sprintf(command, "dolog %s \"auto pyTT ave %6ld g %6.4f pupf %6.4f %6.4f %6.4f %6.4f  sig %+6.4f %+6.4f  XY %+5.3f %+5.3f \"", LoopName, NBframesAve, gain, tot01, tot11, tot00, tot10, xsig, ysig, SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
+			sprintf(command, "./aolconfscripts/aollog \"%s\" \"auto pyTT ave %6ld g %6.4f pupf %6.4f %6.4f %6.4f %6.4f  sig %+6.4f %+6.4f  XY %+5.3f %+5.3f \"", LoopName, NBframesAve, gain, tot01, tot11, tot00, tot10, xsig, ysig, SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
@@ -1353,7 +1353,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
             usleep(delayus);
 
 
-			sprintf(command, "dolog %s \"auto pcam ave %6ld g %6.4f totxy %+6.4f %+6.4f step %6ld %6ld  XY %7ld %7ld \"", LoopName, NBframesAve, gain, totx, toty, stepx, stepy, SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
+			sprintf(command, "./aolconfscripts/aollog \"%s\" \"auto pcam ave %6ld g %6.4f totxy %+6.4f %+6.4f step %6ld %6ld  XY %7ld %7ld \"", LoopName, NBframesAve, gain, totx, toty, stepx, stepy, SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
