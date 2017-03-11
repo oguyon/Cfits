@@ -1054,6 +1054,7 @@ state="menualign"
 
 
 	ttr)
+aoconflog "TT move to reference  ${TTposXref} ${TTposYref}"
 ./aocscripts/SCExAO_analogoutput D $TTposXref
 ./aocscripts/SCExAO_analogoutput C $TTposYref
 menualign_default="ttr"
