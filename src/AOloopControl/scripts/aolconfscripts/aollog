@@ -114,9 +114,11 @@ printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
 ln -fs $PWD/$logdir/$1.log aolconf.log
 else
 
-
-read -s -p "Enter log text: " LOGTEXT
+while [ 1 ]; do
+read -p "Enter log text: " LOGTEXT
 logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
 printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT" >> $logdir/$1.log
 dologext "$1 $LOGEXT"
+done
+
 fi
