@@ -570,7 +570,7 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 
 
 
-# AOloopControl setup
+# AOloopControl setup and overview
 
 
 
@@ -581,6 +581,15 @@ The Linear Hardware Simulation (LHS) uses a linear response matrix to compute th
 The script `aolconf` starts the main GUI, from which all setup and control can be done. The GUI consists of several main screens, as shown below.
 
 ![aolconf GUI screens](./figures/aolconfGUIscreens.jpg "GUI screens")
+
+
+## Commands log
+
+All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log. To view the log content:
+
+~~~~
+tail -f ./logdir/<UTDATE>/logging/<LOOPNAME>.log
+~~~~
 
 
 

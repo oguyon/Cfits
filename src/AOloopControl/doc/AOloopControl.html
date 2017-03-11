@@ -76,8 +76,9 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#overview-1"><span class="toc-section-number">2.4.1</span> Overview</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#aoloopcontrol-setup"><span class="toc-section-number">3</span> AOloopControl setup</a><ul>
+<li><a href="#aoloopcontrol-setup-and-overview"><span class="toc-section-number">3</span> AOloopControl setup and overview</a><ul>
 <li><a href="#gui-description"><span class="toc-section-number">3.1</span> GUI description</a></li>
+<li><a href="#commands-log"><span class="toc-section-number">3.2</span> Commands log</a></li>
 </ul></li>
 <li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4</span> Setting up the hardware interfaces</a><ul>
 <li><a href="#top-level-script"><span class="toc-section-number">4.1</span> Top level script</a></li>
@@ -1027,8 +1028,8 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </div>
 </div>
 </div>
-<div id="aoloopcontrol-setup" class="section level1">
-<h1><span class="header-section-number">3</span> AOloopControl setup</h1>
+<div id="aoloopcontrol-setup-and-overview" class="section level1">
+<h1><span class="header-section-number">3</span> AOloopControl setup and overview</h1>
 <div id="gui-description" class="section level2">
 <h2><span class="header-section-number">3.1</span> GUI description</h2>
 <p>The script <code>aolconf</code> starts the main GUI, from which all setup and control can be done. The GUI consists of several main screens, as shown below.</p>
@@ -1036,6 +1037,11 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <img src="./figures/aolconfGUIscreens.jpg" title="GUI screens" alt="aolconf GUI screens" />
 <p class="caption">aolconf GUI screens</p>
 </div>
+</div>
+<div id="commands-log" class="section level2">
+<h2><span class="header-section-number">3.2</span> Commands log</h2>
+<p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log. To view the log content:</p>
+<pre><code>tail -f ./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code></pre>
 </div>
 </div>
 <div id="setting-up-the-hardware-interfaces" class="section level1">
