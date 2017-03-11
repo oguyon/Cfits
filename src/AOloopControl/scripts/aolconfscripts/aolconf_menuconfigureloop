@@ -48,7 +48,7 @@ tmux new-session -d -s $tmuxname
 #	wfsref00.fits
 #
 
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 tmux send-keys -t $tmuxname "date" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
@@ -59,7 +59,7 @@ else
     echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 
 
 
@@ -186,7 +186,7 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 #	LOzrespmat0.fits
 #	LOwfsref0.fits
 #
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 #tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
@@ -199,7 +199,7 @@ else
 fi
 
 
-tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 #tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 
