@@ -240,15 +240,12 @@ fi
 
 # internal log - logs EVERYTHING
 function aoconflog {
-echo "$@" >> aolconf.log
 ./aolconfscripts/aollog "$LOOPNAME" "$@"
 }
 
 # external log, use for less verbose log
 function aoconflogext {
-#echo "$@" >> aolconf.log
 ./aolconfscripts/aollog -e "$LOOPNAME" "$@"
-#./aolconfscripts/aollogext "$LOOPNAME $@"
 }
 
 

@@ -68,7 +68,7 @@ done
 
 LOOPMODE=0
 EXTERNAL=0
-while getopts :hi FLAG; do
+while getopts :hei FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
