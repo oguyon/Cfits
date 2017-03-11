@@ -585,11 +585,25 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 
 ## Commands log
 
-All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log. To view the log content:
+
+### Internal log (very detailed)
+
+All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
 
 ~~~~
-tail -f ./logdir/<UTDATE>/logging/<LOOPNAME>.log
+tail -f aolconf.log
 ~~~~
+
+### External log (less verbose)
+
+The user can provide a command to externally log commands. The executable should be in the path, and named `dologext`. The syntax is:
+
+~~~
+dologext <string>
+~~~
+
+The string usually consists of the loop name followed by comments.
+
 
 
 

@@ -78,7 +78,10 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="#aoloopcontrol-setup-and-overview"><span class="toc-section-number">3</span> AOloopControl setup and overview</a><ul>
 <li><a href="#gui-description"><span class="toc-section-number">3.1</span> GUI description</a></li>
-<li><a href="#commands-log"><span class="toc-section-number">3.2</span> Commands log</a></li>
+<li><a href="#commands-log"><span class="toc-section-number">3.2</span> Commands log</a><ul>
+<li><a href="#internal-log-very-detailed"><span class="toc-section-number">3.2.1</span> Internal log (very detailed)</a></li>
+<li><a href="#external-log-less-verbose"><span class="toc-section-number">3.2.2</span> External log (less verbose)</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4</span> Setting up the hardware interfaces</a><ul>
 <li><a href="#top-level-script"><span class="toc-section-number">4.1</span> Top level script</a></li>
@@ -1040,8 +1043,17 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 </div>
 <div id="commands-log" class="section level2">
 <h2><span class="header-section-number">3.2</span> Commands log</h2>
-<p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log. To view the log content:</p>
-<pre><code>tail -f ./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code></pre>
+<div id="internal-log-very-detailed" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> Internal log (very detailed)</h3>
+<p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log into file <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code>. A sym link to <code>aolconf.log</code> is created for convenience, so the log content can be viewed with:</p>
+<pre><code>tail -f aolconf.log</code></pre>
+</div>
+<div id="external-log-less-verbose" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> External log (less verbose)</h3>
+<p>The user can provide a command to externally log commands. The executable should be in the path, and named <code>dologext</code>. The syntax is:</p>
+<pre><code>dologext &lt;string&gt;</code></pre>
+<p>The string usually consists of the loop name followed by comments.</p>
+</div>
 </div>
 </div>
 <div id="setting-up-the-hardware-interfaces" class="section level1">

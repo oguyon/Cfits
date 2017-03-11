@@ -21,10 +21,11 @@ echo " Suitable for slow ( < 200 Hz ) loggging"
 echo " log directory: $logdir"
 echo ""
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 <logname> <entry>"
+echo "     $0 -hi <logname> <entry>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
+echo "     $(tput bold)-i$(tput sgr0)          Interactive mode, included external log"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "     <logname>     log name"
@@ -64,8 +65,8 @@ done
 
 
 
-
-while getopts :h FLAG; do
+LOOPMODE=0
+while getopts :hi FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -75,6 +76,9 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+    i)
+    LOOPMODE="1"
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -102,7 +106,17 @@ printHELP
 fi
 
 
+
 mkdir -p $logdir
+
+if [ "$LOOPMODE" = "0" ]; then
 printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
 ln -fs $PWD/$logdir/$1.log aolconf.log
+else
 
+
+read -s -p "Enter log text: " LOGTEXT
+logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
+printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT" >> $logdir/$1.log
+dologext "$1 $LOGEXT"
+fi
