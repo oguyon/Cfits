@@ -1718,12 +1718,12 @@ tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
 
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
-
-#if [ "$CMmode" = "0" ]; then
-#	DMprimWriteON="OFF"
-#	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt
-#	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
-#fi
+	
+if [ "$DMprimWriteON" = "1" ]; then
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWon" C-m
+else
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
+fi
 
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 sleep 2
