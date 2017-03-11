@@ -604,6 +604,14 @@ dologext <string>
 
 The string usually consists of the loop name followed by comments.
 
+### Interactive user log
+
+To start the interactive log script:
+
+~~~
+./aolconfscripts/aollog -i <LOOPNAME> NULL
+~~~
+
 
 
 

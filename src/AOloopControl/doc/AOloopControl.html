@@ -81,6 +81,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#commands-log"><span class="toc-section-number">3.2</span> Commands log</a><ul>
 <li><a href="#internal-log-very-detailed"><span class="toc-section-number">3.2.1</span> Internal log (very detailed)</a></li>
 <li><a href="#external-log-less-verbose"><span class="toc-section-number">3.2.2</span> External log (less verbose)</a></li>
+<li><a href="#interactive-user-log"><span class="toc-section-number">3.2.3</span> Interactive user log</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#setting-up-the-hardware-interfaces"><span class="toc-section-number">4</span> Setting up the hardware interfaces</a><ul>
@@ -1053,6 +1054,11 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <p>The user can provide a command to externally log commands. The executable should be in the path, and named <code>dologext</code>. The syntax is:</p>
 <pre><code>dologext &lt;string&gt;</code></pre>
 <p>The string usually consists of the loop name followed by comments.</p>
+</div>
+<div id="interactive-user-log" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> Interactive user log</h3>
+<p>To start the interactive log script:</p>
+<pre><code>./aolconfscripts/aollog -i &lt;LOOPNAME&gt; NULL</code></pre>
 </div>
 </div>
 </div>
