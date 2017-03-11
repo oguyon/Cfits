@@ -115,7 +115,7 @@ done
 tmux send-keys -t $tmuxname "rm aolmkmodes.runproc" C-m
 
 
-tmux send-keys -t $tmuxname "dolog \"$LOOPNAME\" \"CM computation DONE\" &" C-m
+tmux send-keys -t $tmuxname "./aolconfscripts/aollog \"$LOOPNAME\" \"CM computation DONE\" &" C-m
 tmux send-keys -t $tmuxname "dologext $LOOPNAME CM computation DONE &" C-m
 
 

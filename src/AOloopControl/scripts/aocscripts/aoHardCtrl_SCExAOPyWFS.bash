@@ -44,16 +44,15 @@ fi
 # ======================= LOGGING =================================
 LOOPNAME=$( cat LOOPNAME )
 echo "LOOPNAME = $LOOPNAME"
+
 # internal log - logs EVERYTHING
 function aoconflog {
-echo "$@" >> aolconf.log
-dolog "$LOOPNAME" "$@"
+./aolconfscripts/aollog "$LOOPNAME" "$@"
 }
 
 # external log, less verbose
 function aoconflogext {
-echo "$@" >> aolconf.log
-dolog "$LOOPNAME" "$@"
+./aolconfscripts/aollog "$LOOPNAME" "$@"
 dologext "$LOOPNAME $@"
 }
 
