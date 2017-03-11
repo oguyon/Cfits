@@ -1140,14 +1140,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
                 SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_max;
 
             // sig X
-            //sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-            sprintf(command, "./aocustomscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
+            sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
             // sig Y
-            //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-            sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
+            sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
             printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
@@ -1420,12 +1418,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     // + +
     SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
     SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
-    //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
     printf("COMMAND: \"%s\"\n", command);
     r = system(command);
-    //sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
     printf("COMMAND: \"%s\"\n", command);
     r = system(command);
     IDpp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspp", 4);
@@ -1435,12 +1431,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     // + -
     SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref + voltAmpOffset;
     SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref + 2.0*voltAmpOffset;
-    //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);     
+    sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);     
     printf("COMMAND: \"%s\"\n", command);
     r = system(command);
-    //sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
     printf("COMMAND: \"%s\"\n", command);
     r = system(command);
     IDpm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfspm", 4);
@@ -1449,12 +1443,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     // - +
     SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
     SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref - 2.0*voltAmpOffset;
-    //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
 	printf("COMMAND: \"%s\"\n", command);
     r = system(command);
-    //sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
     printf("COMMAND: \"%s\"\n", command);
     r = system(command);
     IDmp = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmp", 4);
@@ -1464,12 +1456,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     // - -
     SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref - voltAmpOffset;
     SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
-    //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
 	printf("COMMAND: \"%s\"\n", command);
     r = system(command);
-    //sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
 	printf("COMMAND: \"%s\"\n", command); 
     r = system(command);
     IDmm = SCExAOcontrol_Average_image(IDwfsname, NBframes, "imwfsmm", 4);
@@ -1480,12 +1470,10 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
 
     SCExAO_PZT_STAGE_Xpos = SCExAO_PZT_STAGE_Xpos_ref;
     SCExAO_PZT_STAGE_Ypos = SCExAO_PZT_STAGE_Ypos_ref;
-    //sprintf(command, "analog_output.py voltage D %5.3f\n", SCExAO_PZT_STAGE_Xpos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
 	printf("COMMAND: \"%s\"\n", command);
     r = system(command);
-    //sprintf(command, "analog_output.py voltage C %5.3f\n", SCExAO_PZT_STAGE_Ypos);
-    sprintf(command, "./aocustomscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
+    sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
 	printf("COMMAND: \"%s\"\n", command);
     r = system(command);
 
