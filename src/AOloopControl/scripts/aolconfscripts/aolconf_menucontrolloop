@@ -1877,6 +1877,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "exitCLI" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "rm aolctr.runproc" C-m
+tmux send-keys -t aol${LOOPNUMBER}-ctr C-c
 tmux send-keys -t aol${LOOPNUMBER}-run C-c
 pkill -9 aol${LOOPNUMBER}-run
 rm aolrun.runproc

@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-// #define _PRINT_TEST
+#define _PRINT_TEST
 
 #include <stdint.h>
 #include <unistd.h>
@@ -2963,7 +2963,19 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	long long cnt;
 	long *sizearray;
 	int atype;
+	char out0name[200]; // noise-free image, in contrast
+	long IDout0;
 	
+	float ContrastCoeff = 0.0379;
+	float Flux = 5.22e8; // flux per spectral channel [NBph]
+	// spectral channel 1% broad = 0.00638 um
+	// mR = 5
+	// 6m radius disk (12m diam)
+	
+	Flux *= 0.4; // efficiency
+	Flux *= 3600.0; // second -> hr
+
+
 
 	IDin = image_ID(in_name);
 	xsize0 = data.image[IDin].md[0].size[0];
@@ -2974,11 +2986,14 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	xsize1 = xsize0*NBcols;
 	ysize1 = ysize0*(1 + (long) (1.0*zsize0/NBcols-0.00001));
 	
+	sprintf(out0name, "%sc", out_name);
+	
 	atype = FLOAT;
 	sizearray = (long*) malloc(sizeof(long)*2);
 	sizearray[0] = xsize1;
 	sizearray[1] = ysize1;
     IDout = create_image_ID(out_name, 2, sizearray, atype, 1, 0);
+	IDout0 = create_image_ID(out0name, 2, sizearray, atype, 1, 0);
 	free(sizearray);
 	
 	while(1 == 1)
@@ -2993,7 +3008,9 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
             sem_wait(data.image[IDin].semptr[insem]);
 
 
-
+		printf("Updating image %s ...", out_name);
+		fflush(stdout);
+		
         data.image[IDout].md[0].write = 1;
         
         for(kk0=0;kk0<zsize0;kk0++)
@@ -3019,12 +3036,16 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 			{
 				ii1 = ii0+iioffset;
 				jj1 = jj0+jjoffset;
-				data.image[IDout].array.F[jj1*xsize1+ii1] = data.image[IDin].array.F[kk0*xysize0+jj0*xsize0+ii0];
+				data.image[IDout].array.F[jj1*xsize1+ii1] = poisson(data.image[IDin].array.F[kk0*xysize0+jj0*xsize0+ii0]*Flux)/Flux;
+				data.image[IDout0].array.F[jj1*xsize1+ii1] = data.image[IDin].array.F[kk0*xysize0+jj0*xsize0+ii0]/ContrastCoeff;
 			}
 		}
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);		
 		data.image[IDout].md[0].cnt0++;
 		data.image[IDout].md[0].write = 0;		
+
+		printf("done\n");
+		fflush(stdout);
 	}	
 	
 		
@@ -3482,6 +3503,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 		#endif
 		
         sem_wait(data.image[aoconfID_wfsim].semptr[semindex]);
+		
+		sem_getvalue(data.image[aoconfID_wfsim].semptr[semindex], &semval);
+        for(i=0; i<semval; i++)
+           sem_trywait(data.image[aoconfID_wfsim].semptr[semindex]);
+		
 		
 		#ifdef _PRINT_TEST 
 		printf("TEST - semaphore posted\n");
@@ -10031,7 +10057,7 @@ int_fast8_t AOloopControl_run()
 					fflush(stdout);
 					#endif
 					
-                    Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
+              //      Read_cam_frame(loop, 0, AOconf[loop].WFSnormalize, 0, 1);
                     clock_gettime(CLOCK_REALTIME, &t1);
                     timerinit = 1;
                     
@@ -10043,7 +10069,7 @@ int_fast8_t AOloopControl_run()
                 }
 				
 				#ifdef _PRINT_TEST 
-				printf("TEST - Start AO cmpute\n");
+				printf("TEST - Start AO compute\n");
 				fflush(stdout);
 				#endif
 				
