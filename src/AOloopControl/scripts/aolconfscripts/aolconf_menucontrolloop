@@ -1719,11 +1719,7 @@ tmux send-keys -t aol${LOOPNUMBER}-run "./auxscripts/aolrun" C-m
 sleep 1
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain 0.0" C-m
 	
-if [ "$DMprimWriteON" = "1" ]; then
-tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWon" C-m
-else
-tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
-fi
+
 
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 sleep 2
@@ -1734,6 +1730,8 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "readshmim aol${LOOPNUMBER}_respM" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolloadconf ${LOOPNUMBER}" C-m
 sleep 1
+
+
 
 
 	 for i in `seq 0 $(( $NBblocks - 1 ))`;
@@ -1774,7 +1772,11 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "# test: ${gainb[10#${gi}]}" C-m
 #  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
 #  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
 
-
+if [ "$DMprimWriteON" = "1" ]; then
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWon" C-m
+else
+tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
+fi
 
 sleep 2
 
