@@ -12813,10 +12813,10 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 
                 printf("adding %ld / %ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
 				
-				ID = image_ID(name1);
+				//ID = image_ID(name1);
 			
-				printf("updating %ld modes  [%ld]\n", data.image[ID].md[0].size[2], aoconfID_gainb);
-				fflush(stdout); // TEST
+				//printf("updating %ld modes  [%ld]\n", data.image[ID].md[0].size[2], aoconfID_gainb);
+			//	fflush(stdout); // TEST
 				
 
 			
