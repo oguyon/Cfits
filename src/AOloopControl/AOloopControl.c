@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-#define _PRINT_TEST
+//#define _PRINT_TEST
 
 #include <stdint.h>
 #include <unistd.h>
@@ -3623,7 +3623,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     else
     {
 		#ifdef _PRINT_TEST 
-		printf("TEST - DARK SUBTRACT - START\n");
+		printf("TEST - DARK SUBTRACT - START  (init = %d, %d threads)\n", AOLCOMPUTE_DARK_SUBTRACT_THREADinit, COMPUTE_DARK_SUBTRACT_NBTHREADS);
 		fflush(stdout);
 		#endif
 		
@@ -4192,7 +4192,7 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 			for(act=0;act<dmxysize;act++)
 				data.image[IDpokeC2].array.F[dmxysize*(2*poke+2) + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
 		}
-	save_fits("dmpokeC2", "test_dmpokeC2.fits");
+	save_fits("dmpokeC2", "!test_dmpokeC2.fits");
 	
 	printf("NBpoke = %ld\n", NBpoke);
 	fflush(stdout);
