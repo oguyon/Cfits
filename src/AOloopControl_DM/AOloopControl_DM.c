@@ -1636,8 +1636,13 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long
 	long RMSvaltotcnt;
 
 
+	printf("START AOloopControl_DMturb_createconf\n");
+	fflush(stdout);
     AOloopControl_DMturb_createconf();
-
+	printf("END AOloopControl_DMturb_createconf\n");
+	fflush(stdout);
+	
+	
     IDs1 = load_fits("turbscreen1.fits", "screen1", 1);
     IDs2 = load_fits("turbscreen2.fits", "screen2", 1);
     list_image_ID();
