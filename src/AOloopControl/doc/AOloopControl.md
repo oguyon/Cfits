@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Mar 9, 2017
+% Mar 11, 2017
 
 
 
@@ -706,7 +706,7 @@ Options [C] and [D] are `MODAL` options, as the DM does not represent physical s
 
 ### Mode [C]: Create a new modal DM, mapped to an existing DM using another loop's control modes
 
-In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop.
+In this mode, the AO loop controls a virtual DM. The virtual actuators are correspond to modes controlling the zero point offset of another loop. In this section, I assume that **loopA** is the main loop (directly controls a physical DM) and that **loopB** is the virtual loop (this is the loop we are setting up).
 
 1. Select **MODAL** DM (`DMmodeZ` in `Top Menu` screen)
 
