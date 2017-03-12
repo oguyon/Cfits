@@ -1270,9 +1270,18 @@ int AOloopControl_DMturb_createconf()
     long DMindex;
     char errstr[200];
 
-    AOloopControl_DM_loadconf();    
-    AOloopControl_DMturb_loadconf();
 
+	printf("============== AOloopControl_DM_loadconf\n");
+	fflush(stdout);
+    AOloopControl_DM_loadconf();    
+	printf("=====>");
+	fflush(stdout);
+	
+	printf("=============== AOloopControl_DMturb_loadconf\n");
+	fflush(stdout);
+    AOloopControl_DMturb_loadconf();
+	printf("=====>");
+	fflush(stdout);
 
     if( dmturb_loaded == 0 )
     {
