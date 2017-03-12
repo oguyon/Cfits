@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-//#define _PRINT_TEST
+#define _PRINT_TEST
 
 #include <stdint.h>
 #include <unistd.h>
@@ -3629,6 +3629,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 		
         if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
         {
+			#ifdef _PRINT_TEST 
+			printf("TEST - DARK SUBTRACT - CREATE %ld THREADS\n", COMPUTE_DARK_SUBTRACT_NBTHREADS);
+			fflush(stdout);
+			#endif
+			
             ti = 0;
 
             while(ti<COMPUTE_DARK_SUBTRACT_NBTHREADS)
@@ -3650,6 +3655,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
                 sem_post(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti]);
             
             sem_getvalue(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[ti], &sval);
+
+			#ifdef _PRINT_TEST 
+			printf("TEST - DARK SUBTRACT - WAITING ON THREAD %ld\n", ti);
+			fflush(stdout);
+			#endif
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
         }
     
