@@ -77,6 +77,7 @@ The work directory is where all scripts and high level commands should be run fr
 	cd <srcdir>/src/AOloopControl/scripts
 	./syncscripts -e /<workdir>
 	cd /<workdir>
+	./syncscripts
 
 Symbolic links to the source scripts and executable are now installed in the work directory :
 
@@ -91,7 +92,7 @@ Symbolic links to the source scripts and executable are now installed in the wor
 	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
 	lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
 
-If new scripts are added in the source directory, running `./syncscripts` will add them to the work directory.
+If new scripts are added in the source directory, running `./syncscripts` again from the work directory will add them to the work directory.
 
 
 The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`). Type `help` within the CLI for additional directions.
