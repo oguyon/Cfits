@@ -1274,13 +1274,13 @@ int AOloopControl_DMturb_createconf()
 	printf("============== AOloopControl_DM_loadconf\n");
 	fflush(stdout);
     AOloopControl_DM_loadconf();    
-	printf("=====>");
+	printf("=====>\n");
 	fflush(stdout);
 	
 	printf("=============== AOloopControl_DMturb_loadconf\n");
 	fflush(stdout);
     AOloopControl_DMturb_loadconf();
-	printf("=====>");
+	printf("=====>\n");
 	fflush(stdout);
 
     if( dmturb_loaded == 0 )
@@ -1350,7 +1350,7 @@ int AOloopControl_DMturb_loadconf(long DMindex)
     {
         printf("Create/read configuration\n");
 
-        SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR, (mode_t)0600);
+        SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR| O_CREAT, (mode_t)0600);
         if (SMturbfd == -1) {
             sprintf(errstr, "Error opening (O_RDWR) file \"%s\" in function AOloopControl_DMturb_loadconf", DMTURBCONF_FILENAME);
             perror(errstr);
