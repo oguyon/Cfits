@@ -1348,23 +1348,27 @@ int AOloopControl_DMturb_loadconf(long DMindex)
 
     if( dmturb_loaded == 0 )
     {
-        printf("Create/read configuration\n");
+        printf("Read configuration\n");
 
-        SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR| O_CREAT, (mode_t)0600);
+        SMturbfd = open(DMTURBCONF_FILENAME, O_RDWR, (mode_t)0600);
         if (SMturbfd == -1) {
             sprintf(errstr, "Error opening (O_RDWR) file \"%s\" in function AOloopControl_DMturb_loadconf", DMTURBCONF_FILENAME);
             perror(errstr);
-            exit(EXIT_FAILURE);
-        }
+		}
+        else
+        {
+        //    exit(EXIT_FAILURE);
+        
 
-        dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF)*NB_DMindex, PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
-        if (dmturbconf == MAP_FAILED) {
-            close(SMturbfd);
-            printf("Error mmapping the file -> creating it\n");
-            AOloopControl_DMturb_createconf();
-        }
-        dmturb_loaded = 1;
-    }
+			dmturbconf = (AOLOOPCONTROL_DMTURBCONF*)mmap(0, sizeof(AOLOOPCONTROL_DMTURBCONF)*NB_DMindex, PROT_READ | PROT_WRITE, MAP_SHARED, SMturbfd, 0);
+			if (dmturbconf == MAP_FAILED) {
+				close(SMturbfd);
+				printf("Error mmapping the file -> creating it\n");
+				AOloopControl_DMturb_createconf();
+			}
+			dmturb_loaded = 1;
+		}
+	}
 
     return 0;
 }
