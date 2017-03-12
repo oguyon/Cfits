@@ -3630,7 +3630,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         if(AOLCOMPUTE_DARK_SUBTRACT_THREADinit==0)
         {
 			#ifdef _PRINT_TEST 
-			printf("TEST - DARK SUBTRACT - CREATE %ld THREADS\n", COMPUTE_DARK_SUBTRACT_NBTHREADS);
+			printf("TEST - DARK SUBTRACT - CREATE %d THREADS\n", COMPUTE_DARK_SUBTRACT_NBTHREADS);
 			fflush(stdout);
 			#endif
 			
