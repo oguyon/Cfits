@@ -245,7 +245,7 @@ function aoconflog {
 
 # external log, use for less verbose log
 function aoconflogext {
-./aolconfscripts/aollog "$LOOPNAME" "$@"
+./aolconfscripts/aollog -e "$LOOPNAME" "$@"
 }
 
 
