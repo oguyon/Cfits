@@ -1141,10 +1141,10 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].key,"imnetwreceive");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
-    strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network");
-    strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode)");
+    strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network. mode=1 uses counter instead of semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]> <RT priority>");
+    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0 80");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)");
     data.NBcmd++;
 
 

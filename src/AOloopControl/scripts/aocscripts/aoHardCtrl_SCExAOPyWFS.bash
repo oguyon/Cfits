@@ -427,11 +427,11 @@ aoconflogext "kill labjack2 scexao2 -> scexao TCP transfer"
 # labjack       scexao2->scexao, port 30107
 	ljcs)
 aoconflogext "(re-)start labjack scexao2 -> scexao TCP transfer"
-/home/scexao/bin/getTCPscexao2im -c labjack 30107
+/home/scexao/bin/getTCPscexao2im -c labjack 30109
 ;;
 	ljck)
 aoconflogext "kill labjack scexao2 -> scexao TCP transfer"
-/home/scexao/bin/getTCPscexao2im -k labjack 30107
+/home/scexao/bin/getTCPscexao2im -k labjack 30109
 ;;
 
 
