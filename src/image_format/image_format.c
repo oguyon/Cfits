@@ -308,6 +308,8 @@ int IMAGE_FORMAT_im_to_ASCII(const char *IDname, const char *foutname)
         coord[k] = 0;
     }
 
+	printf("npix = %ld\n", npix);
+
     fpout = fopen(foutname, "w");
 
     for(ii=0; ii<npix; ii++)

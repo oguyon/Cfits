@@ -708,9 +708,9 @@ long basic_add3D(const char *ID_name1, const char *ID_name2, const char *ID_name
     if ((naxes2[1]+off2)>naxes1[1]) ymax = (naxes2[1]+off2);
 
     zmax = naxes1[2];
-    if ((naxes2[2]+off3)>naxes1[2]) ymax = (naxes2[2]+off3);
+    if ((naxes2[2]+off3)>naxes1[2]) zmax = (naxes2[2]+off3);
 
-
+	
 
     if(atype==FLOAT)
     {
