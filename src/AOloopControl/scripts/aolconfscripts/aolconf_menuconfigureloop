@@ -25,6 +25,35 @@ fi
 RMZONALCALIBlist="wfsref0 zrespM wfsmap dmmap wfsmask dmmaskRM dmslaved dmmask"
 RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
 
+#
+# TOP LEVEL AUTO CALIBRATION ACQUIRE
+#
+function function_nAUTOC {
+if [ ! -f "FUNCTION_acqWFSresp.runproc" ]; then
+aoconflogext "START AUTO CALIBRATION"
+# archive
+dirnb=20
+i0=`( printf "%03d" "$dirnb" )`
+rm -rf conf_staged.$i0
+
+
+# save old RMs
+while [ $dirnb -gt 0 ]; do
+	i=$(($dirnb))
+	i1=$(($dirnb-1))
+	is=`( printf "%03d" "$i" )`
+	i1s=`( printf "%03d" "$i1" )`
+	mv conf_staged.$i1s conf_staged.$is
+	let dirnb-=1
+done    
+ 
+cp -rf conf_staged conf_staged.000
+
+# this function populates conf_staged directory
+function_acqWFSresp
+fi
+}
+
 
 
 function function_acqWFSresp {
@@ -1997,30 +2026,11 @@ fi
 
 
 
+
+
+
 nAUTOC)
-if [ ! -f "FUNCTION_acqWFSresp.runproc" ]; then
-aoconflogext "START AUTO CALIBRATION"
-# archive
-dirnb=20
-i0=`( printf "%03d" "$dirnb" )`
-rm -rf conf_staged.$i0
-
-
-# save old RMs
-while [ $dirnb -gt 0 ]; do
-	i=$(($dirnb))
-	i1=$(($dirnb-1))
-	is=`( printf "%03d" "$i" )`
-	i1s=`( printf "%03d" "$i1" )`
-	mv conf_staged.$i1s conf_staged.$is
-	let dirnb-=1
-done    
- 
-cp -rf conf_staged conf_staged.000
-
-# this function populates conf_staged directory
-function_acqWFSresp
-fi
+function_nAUTOC
 ;;
 
 
