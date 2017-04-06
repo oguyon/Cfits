@@ -2015,6 +2015,7 @@ cp -rf conf_staged conf_staged.000
 
 # this function populates conf_staged directory
 function_acqWFSresp
+fi
 ;;
 
 
@@ -2038,7 +2039,6 @@ do
 ./auxscripts/aolReadConfFile ${imname}	
 ./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
 done
-fi
 ;;
 
 
