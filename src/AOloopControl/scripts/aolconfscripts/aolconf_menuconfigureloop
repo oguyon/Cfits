@@ -1035,7 +1035,7 @@ RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.
 
 
 if [ -f "FUNCTION_acqWFSresp.runproc" ]; then
-menuitems+=( " " "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn")
+menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
 else
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
 fi
@@ -1993,6 +1993,7 @@ fi
 
 
 nAUTOC)
+if [ ! -f "FUNCTION_acqWFSresp.runproc" ]; then
 aoconflogext "START AUTO CALIBRATION"
 # archive
 dirnb=20
@@ -2037,7 +2038,9 @@ do
 ./auxscripts/aolReadConfFile ${imname}	
 ./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
 done
+fi
 ;;
+
 
 
 
