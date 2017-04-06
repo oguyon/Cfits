@@ -121,22 +121,6 @@ pyfwlist+=( "6" "850nm 40nm" )
 
 
 
-# Set FW <wheelNB>
-function SetFW {
-file="./status/status_fw.txt"
-currentfw=$(echo "$(cat $file)")
-if [ ! "${currentfw}" == "$1" ]
-then
-echo "MOVING TO FW $1"# &> ${outmesg}
-pywfs wheel $1 # &> ${outmesg}
-else
-echo "WHEEL ALREADY IN POSITION"# > ${outmesg}
-fi
-sleep 0.1
-currentfw=$1
-echo "${currentfw}" > $file
-sleep 0.1
-}
 
 
 
@@ -175,7 +159,7 @@ Pcamloopstat="OFF"
 fi
 
 
-PyrFilter=$(cat ./status/status_fw.txt)
+PyrFilter=$(cat ./conf/conf_pywfs_filter.txt)
 
 if [ "$TTloopstat" = " ON" ]; then
 TTloopstat_C="\Zr\Z2 ON\Zn"
@@ -1319,47 +1303,6 @@ fi
 
 
 
-
-
-
-
-#  CONFIGURATION SETUP INDEX - FW
-#if [ $state = "menupyfw" ]; then
-#stateok=1
-#file="./status/status_fw.txt"
-
-#if [ -f "$file" ]; then
-#pyfw=$(echo "$(cat $file)")
-#else
-#pywfs="1"
-#fi
-
-#menuname="MOVE FW\n
-#  FW current position : $pyfw\n"
-
-#ls
-
-
-
-
-#dialog --title "AO loop configuration" --ok-label "Move" --cancel-label "Back" --help-button --help-label "Exit" --default-item "${pyfw}" --menu "$menuname"  50 80 100 "${pyfwlist[@]}"  2> $tempfile
-
-
-#retval=$?
-#choiceval=$(cat $tempfile)
-#case $retval in
-#   0) state="menupyfw"
-#pyfw=$(cat $tempfile)
-#echo "setFW ${choiceval}"
-#aoconflog "set FW ${choiceval}"
-#SetFW ${choiceval}
-#;; # button 1:
-#   1) state="menualign";; 
-#   2) state="menuexit";;
-#   255) state="menuexit";;
-#esac
-#state="menualign"
-#fi
 
 
 
