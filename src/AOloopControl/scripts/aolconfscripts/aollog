@@ -114,6 +114,8 @@ fi
 
 mkdir -p $logdir
 
+echo "LOGGING to FILE \"$logdir/$1.log\""
+
 if [ "$LOOPMODE" = "0" ]; then
 
 printf "%s %-10s %s\n" "$logtime" "$1" "$2" >> $logdir/$1.log
