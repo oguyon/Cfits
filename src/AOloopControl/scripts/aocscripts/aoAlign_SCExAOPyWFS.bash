@@ -913,42 +913,42 @@ aoconflogext "Set py modulation amplitude = $pymodampl"
 	pyfilt1)
 pyfilter="1"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter} &> mesg.log
+pywfs_filter ${pyfilter} &>> mesg.log
 aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt2)
 pyfilter="2"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter} &> mesg.log
+pywfs_filter ${pyfilter} &>> mesg.log
 aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt3)
 pyfilter="3"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter} &> mesg.log
-aoconflogext "Set py filter = $pyfilter"
+pywfs_filter ${pyfilter} &>> mesg.log
+aoconflogext "Set py filter = $pyfilter" 
 ;;
 
 	pyfilt4)
 pyfilter="4"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter} &> mesg.log
+pywfs_filter ${pyfilter} &>> mesg.log
 aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt5)
 pyfilter="5"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter} &> mesg.log
+pywfs_filter ${pyfilter} &>> mesg.log
 aoconflogext "Set py filter = $pyfilter"
 ;;
 
 	pyfilt6)
 pyfilter="6"
 echo "$pyfilter" > ./conf/conf_pywfs_filter.txt
-pywfs_filter ${pyfilter} &> mesg.log
+pywfs_filter ${pyfilter} &>> mesg.log
 aoconflogext "Set py filter = $pyfilter"
 ;;
 
