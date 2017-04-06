@@ -159,7 +159,7 @@ mkdir -p status
 statfile="./status/status_alignTT.txt"
 TTloopstat=$(cat $statfile)
 if [[ -f "$statfile" && ( "$TTloopstat" = " ON" || "$TTloopstat" = "OFF" || "$TTloopstat" = "PAU" ) ]]; then
-#echo "OK"
+echo "OK" &> mesg.log
 else
 echo "OFF" > $statfile
 TTloopstat="OFF"
@@ -168,7 +168,7 @@ fi
 statfile="./status/status_alignPcam.txt"
 Pcamloopstat=$(cat $statfile)
 if [[ -f "$statfile" && ( "$Pcamloopstat" = " ON" || "$Pcamloopstat" = "OFF" || "$Pcamloopstat" = "PAU" ) ]]; then
-#echo "OK"
+echo "OK" &> mesg.log
 else
 echo "OFF" > $statfile
 Pcamloopstat="OFF"
@@ -677,11 +677,11 @@ menuitems+=( "fla" "Apply flatten DM solution" )
 menuitems+=( "flm" "Monitor DM flatten tmux session" )
 menuitems+=( "" "" )
 
-stringcenter "FILTERS"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+#stringcenter "FILTERS"
+#menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( "fw" "Set PY Filter Wheel" )
-menuitems+=( "" "" )
+#menuitems+=( "fw" "Set PY Filter Wheel" )
+#menuitems+=( "" "" )
 
 
 
