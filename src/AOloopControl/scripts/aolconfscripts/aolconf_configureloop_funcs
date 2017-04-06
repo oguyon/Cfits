@@ -340,6 +340,10 @@ fi
 # TOP LEVEL AUTO CALIBRATION ACQUIRE
 #
 function function_nAUTOC {
+	
+echo "ENTERING function_nAUTOC"
+sleep 1
+
 if [ ! -f "FUNCTION_acqWFSresp.runproc" ]; then
 aoconflogext "START AUTO CALIBRATION"
 # archive
