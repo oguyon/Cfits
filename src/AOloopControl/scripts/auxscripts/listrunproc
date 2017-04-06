@@ -111,7 +111,11 @@ comment=`sed 's/^ *[^ ][^ ]*  *//' $file | sed 's/^ *[^ ][^ ]*  *//'| sed 's/^ *
 printf "%s    %40s   %40s    %s\n"   "${arr[0]}"  "${bold}${red}${arr[1]}${reset}"   "${bold}${green}${arr[2]}${reset}"  "$comment"
 done
 echo "-------------------------------------------------------------------------------------------------------------------------------"
+
+echo " "
 echo "PROCESSES QUEUED"
+echo "Start Time                          Process Name                      Tmux session    Description"
+echo "-------------------------------------------------------------------------------------------------------------------------------"
 for file in *.runprocQ
 do
 line=$( cat $file )
