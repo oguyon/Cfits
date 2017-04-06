@@ -1312,11 +1312,11 @@ state="menualign"
 	fla) dm_update_channel 5 dmpyoffset.fits ;;
 	flm) tmux a -t pyrflatten ;;
 
-	fw)
+#	fw)
 # set FW
-menualign_default="fw"
-state="menupyfw"
-;;
+#menualign_default="fw"
+#state="menupyfw"
+#;;
 
 	esac;;
    1) state="menutop";;   
