@@ -275,6 +275,8 @@ menuitems+=( " " " ")
 stringcenter "AO CONFIGURE AND CONTROL"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
+menuitems+=( "C0" "CALIBRATE SYSTEM -> RM, CM" )
+menuitems+=( " " " ")
 menuitems+=( "M" "load all (M)emory" )
 menuitems+=( "C" "(C)onfigure/link AO loop" )
 
@@ -681,6 +683,12 @@ menutop_default="initDM"
 # =====================================================================================================================
 # ===================================  AO CONFIGURE AND CONTROL =======================================================
 # =====================================================================================================================
+
+
+C0)
+function_nAUTOC
+;;
+
 
 	M)
 AOloadMem 1
