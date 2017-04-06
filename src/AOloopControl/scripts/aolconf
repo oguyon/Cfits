@@ -383,7 +383,7 @@ echo "FUNCTIONS..."
 . ./aolconfscripts/aolconf_DMfuncs
 
 
-. ./aolconf_configureloop_funcs
+. ./aolconfscripts/aolconf_configureloop_funcs
 
 
 
