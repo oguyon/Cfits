@@ -114,9 +114,6 @@ fi
 
 mkdir -p $logdir
 
-echo "LOGGING to FILE \"$logdir/$1.log\""
-echo "LOOPMODE = $LOOPMODE"
-echo "EXTERNAL = $EXTERNAL"
 
 if [ "$LOOPMODE" = "0" ]; then
 
@@ -127,6 +124,11 @@ dologext "$1 $2" &
 fi
 
 else
+
+echo "LOGGING to FILE \"$logdir/$1.log\""
+echo "LOOPMODE = $LOOPMODE"
+echo "EXTERNAL = $EXTERNAL"
+
 
 while [ 1 ]; do
 read -p "$1 log >  " LOGTEXT
