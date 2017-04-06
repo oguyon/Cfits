@@ -36,6 +36,7 @@ dir_conf_staged="conf_staged"
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux new-session -d -s $tmuxname
+logRunningProcess "aolMeasureZrespmat2" "$tmuxname" "Acquire zonal RM"
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: 
 #
@@ -60,6 +61,7 @@ else
     tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t $tmuxname "rm aolMeasureZrespmat2.runproc" C-m
 
 
 
@@ -1027,7 +1029,6 @@ RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.
 
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
 menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
-#menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
