@@ -677,12 +677,6 @@ menuitems+=( "fla" "Apply flatten DM solution" )
 menuitems+=( "flm" "Monitor DM flatten tmux session" )
 menuitems+=( "" "" )
 
-#stringcenter "FILTERS"
-#menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
-
-#menuitems+=( "fw" "Set PY Filter Wheel" )
-#menuitems+=( "" "" )
-
 
 
 
@@ -1312,11 +1306,6 @@ state="menualign"
 	fla) dm_update_channel 5 dmpyoffset.fits ;;
 	flm) tmux a -t pyrflatten ;;
 
-#	fw)
-# set FW
-#menualign_default="fw"
-#state="menupyfw"
-#;;
 
 	esac;;
    1) state="menutop";;   
@@ -1335,42 +1324,42 @@ fi
 
 
 #  CONFIGURATION SETUP INDEX - FW
-if [ $state = "menupyfw" ]; then
-stateok=1
-file="./status/status_fw.txt"
+#if [ $state = "menupyfw" ]; then
+#stateok=1
+#file="./status/status_fw.txt"
 
-if [ -f "$file" ]; then
-pyfw=$(echo "$(cat $file)")
-else
-pywfs="1"
-fi
+#if [ -f "$file" ]; then
+#pyfw=$(echo "$(cat $file)")
+#else
+#pywfs="1"
+#fi
 
-menuname="MOVE FW\n
-  FW current position : $pyfw\n"
+#menuname="MOVE FW\n
+#  FW current position : $pyfw\n"
 
-ls
-
-
+#ls
 
 
-dialog --title "AO loop configuration" --ok-label "Move" --cancel-label "Back" --help-button --help-label "Exit" --default-item "${pyfw}" --menu "$menuname"  50 80 100 "${pyfwlist[@]}"  2> $tempfile
 
 
-retval=$?
-choiceval=$(cat $tempfile)
-case $retval in
-   0) state="menupyfw"
-pyfw=$(cat $tempfile)
-echo "setFW ${choiceval}"
-aoconflog "set FW ${choiceval}"
-SetFW ${choiceval}
-;; # button 1:
-   1) state="menualign";; 
-   2) state="menuexit";;
-   255) state="menuexit";;
-esac
-state="menualign"
-fi
+#dialog --title "AO loop configuration" --ok-label "Move" --cancel-label "Back" --help-button --help-label "Exit" --default-item "${pyfw}" --menu "$menuname"  50 80 100 "${pyfwlist[@]}"  2> $tempfile
+
+
+#retval=$?
+#choiceval=$(cat $tempfile)
+#case $retval in
+#   0) state="menupyfw"
+#pyfw=$(cat $tempfile)
+#echo "setFW ${choiceval}"
+#aoconflog "set FW ${choiceval}"
+#SetFW ${choiceval}
+#;; # button 1:
+#   1) state="menualign";; 
+#   2) state="menuexit";;
+#   255) state="menuexit";;
+#esac
+#state="menualign"
+#fi
 
 
 
