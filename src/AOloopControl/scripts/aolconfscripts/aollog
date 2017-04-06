@@ -131,10 +131,12 @@ else
 while [ 1 ]; do
 read -p "$1 log >  " LOGTEXT
 logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
-
 printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT" >> $logdir/$1.log
 printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT"
+
+if [ "$EXTERNAL" = "1" ]; then
 dologext "$1 $LOGTEXT"
+fi
 
 done
 

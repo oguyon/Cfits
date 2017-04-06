@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Mar 11, 2017
+% Apr 05, 2017
 
 
 
@@ -587,7 +587,7 @@ The script `aolconf` starts the main GUI, from which all setup and control can b
 ## Commands log
 
 
-### Internal log (very detailed)
+### Automatically generated internal log (very detailed)
 
 All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscripts/aollog` to log into file `./logdir/<UTDATE>/logging/<LOOPNAME>.log`. A sym link to `aolconf.log` is created for convenience, so the log content can be viewed with:
 
@@ -605,6 +605,7 @@ dologext <string>
 
 The string usually consists of the loop name followed by comments.
 
+
 ### Interactive user log
 
 To start the interactive log script:
@@ -612,6 +613,18 @@ To start the interactive log script:
 ~~~
 ./aolconfscripts/aollog -i <LOOPNAME> NULL
 ~~~
+
+Entries will be logged in the `./logdir/<UTDATE>/logging/<LOOPNAME>.log` file (with sym link to `aolconf.log`).
+
+It is also common practice to start a `MISC` log for misc comments:
+
+~~~
+./aolconfscripts/aollog -i MISC NULL
+~~~
+
+
+
+
 
 
 
