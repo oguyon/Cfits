@@ -1217,10 +1217,10 @@ menualign_default="pyp"
 state="menualign"
 ;;
 	ps)
-aoconflogext "Pupil align loop start"
-rm stop_PyAlignCam.txt
-rm pause_PyAlignCam.txt
-tmux kill-session -t alignPcam
+aoconflogext "Pupil align loop start" &> mesg.log &
+rm stop_PyAlignCam.txt &> mesg.log 
+rm pause_PyAlignCam.txt &> mesg.log 
+tmux kill-session -t alignPcam &> mesg.log 
 tmux new-session -d -s alignPcam
 tmux send-keys -t alignPcam "./aocscripts/alignPcam_${LOOPNAME}" C-m
 echo " ON" > ./status/status_alignPcam.txt
