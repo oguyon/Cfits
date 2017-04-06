@@ -98,10 +98,20 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 echo "DATE = $datestr"
 echo " "
-echo "PROCESSES QUEUED OR RUNNING"
+echo "PROCESSES RUNNING"
 echo "Start Time                          Process Name                      Tmux session    Description"
 echo "-------------------------------------------------------------------------------------------------------------------------------"
 for file in *.runproc
+do
+line=$( cat $file )
+arr=($line)
+comment=`sed 's/^ *[^ ][^ ]*  *//' $file | sed 's/^ *[^ ][^ ]*  *//'| sed 's/^ *[^ ][^ ]*  *//'`
+
+printf "%s    %40s   %40s    %s\n"   "${arr[0]}"  "${bold}${red}${arr[1]}${reset}"   "${bold}${green}${arr[2]}${reset}"  "$comment"
+done
+echo "-------------------------------------------------------------------------------------------------------------------------------"
+echo "PROCESSES QUEUED"
+for file in *.runprocQ
 do
 line=$( cat $file )
 arr=($line)

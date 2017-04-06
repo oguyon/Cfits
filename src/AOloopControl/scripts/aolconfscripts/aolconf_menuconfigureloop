@@ -37,7 +37,7 @@ dir_conf_staged="conf_staged"
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 tmux new-session -d -s $tmuxname
-logRunningProcess "aolMeasureZrespmat2" "$tmuxname" "Acquire zonal RM"
+logRunningProcessQ "aolMeasureZrespmat2" "$tmuxname" "Acquire zonal RM"
 
 # ACQUIRE HIGH ORDER WFS RESPONSE: 
 #
@@ -85,7 +85,7 @@ tmux send-keys -t $tmuxname "rm aolMeasureZrespmat2.runproc" C-m
 #	./conf_zrm_staged/dmmap.fits   
 #
 
-logRunningProcess "aolCleanZrespmat2" "$tmuxname" "Clean zonal RM"
+logRunningProcessQ "aolCleanZrespmat2" "$tmuxname" "Clean zonal RM"
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
 stageddir="conf_zrm_staged"
 mkdir -p $stageddir
@@ -103,7 +103,7 @@ tmux send-keys -t ${tmuxname} "rm aolCleanZrespmat2.runproc" C-m
 #     wfsmask.fits
 #     dmmaskRM.fits
 #
-logRunningProcess "aolmkMasks" "$tmuxname" "Make masks"
+logRunningProcessQ "aolmkMasks" "$tmuxname" "Make masks"
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
 	tmux send-keys -t ${tmuxname} "$execname" C-m
@@ -126,7 +126,7 @@ tmux send-keys -t ${tmuxname} "rm aolmkMasks.runproc" C-m
 #
 
 if [ "$DMMODE" = "ZONAL" ]; then
-	logRunningProcess "mkDMslaveActprox" "$tmuxname" "Make slaved actuator DM mask"
+	logRunningProcessQ "mkDMslaveActprox" "$tmuxname" "Make slaved actuator DM mask"
 	tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
 	tmux send-keys -t ${tmuxname} "rm mkDMslaveActprox.runproc" C-m
 else # set dmmask to 1, dmslaved to 0
@@ -180,7 +180,7 @@ if [ "$DMMODE" = "ZONAL" ]; then
 #	respM_LOmodes.fits
 #
 tmux send-keys -t $tmuxname "# DMMODE is ZONAL -> MAKING LOW ORDER MODES" C-m
-logRunningProcess "aolmkLO_DMmodes" "$tmuxname" "Make LO DM modes"
+logRunningProcessQ "aolmkLO_DMmodes" "$tmuxname" "Make LO DM modes"
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 tmux send-keys -t ${tmuxname} "rm aolmkLO_DMmodes.runproc" C-m
 
@@ -199,7 +199,7 @@ tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LO
 #tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
 
-logRunningProcess "aolMeasureLOrespmat2" "$tmuxname" "Acquire LO RM"
+logRunningProcessQ "aolMeasureLOrespmat2" "$tmuxname" "Acquire LO RM"
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
 	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
