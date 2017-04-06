@@ -115,6 +115,8 @@ fi
 mkdir -p $logdir
 
 echo "LOGGING to FILE \"$logdir/$1.log\""
+echo "LOOPMODE = $LOOPMODE"
+echo "EXTERNAL = $EXTERNAL"
 
 if [ "$LOOPMODE" = "0" ]; then
 
