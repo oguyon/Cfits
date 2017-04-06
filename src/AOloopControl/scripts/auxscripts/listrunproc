@@ -90,6 +90,7 @@ reset=`tput sgr0`
 bold=`tput bold`
 
 touch null.runproc # avoids error message
+touch null.runprocQ # avoids error message
 
 while true;
 do
