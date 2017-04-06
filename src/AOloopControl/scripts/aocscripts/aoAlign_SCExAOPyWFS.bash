@@ -690,7 +690,7 @@ menualign_default="$choiceval"
 pyfreq="0500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
@@ -698,7 +698,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 pyfreq="1000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
@@ -706,7 +706,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 pyfreq="1500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
@@ -714,7 +714,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 pyfreq="2000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
@@ -722,7 +722,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 pyfreq="2500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 	
@@ -730,7 +730,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 pyfreq="3000"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
@@ -738,7 +738,7 @@ aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 pyfreq="3500"
 echo "${pyfreq}" > ./conf/conf_pywfs_freq.txt
 pywfs_mod_setup ${pyfreq} ${pymodampl} &> mesg.log
-recomputeLatency ${pyfreq}
+recomputeLatency ${pyfreq} &> mesg.log &
 aoconflogext "Set pyfreq = $pyfreq Hz" &> mesg.log &
 ;;
 
