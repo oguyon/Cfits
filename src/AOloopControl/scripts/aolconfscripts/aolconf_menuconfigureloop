@@ -126,7 +126,9 @@ tmux send-keys -t ${tmuxname} "rm aolmkMasks.runproc" C-m
 #
 
 if [ "$DMMODE" = "ZONAL" ]; then
+	logRunningProcess "mkDMslaveActprox" "$tmuxname" "Make slaved actuator DM mask"
 	tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
+	tmux send-keys -t ${tmuxname} "rm mkDMslaveActprox.runproc" C-m
 else # set dmmask to 1, dmslaved to 0
 	tmux send-keys -t ${tmuxname} "$execname" C-m
 	tmux send-keys -t ${tmuxname} "readshmim aol${LOOPNUMBER}_dmC" C-m
@@ -178,8 +180,9 @@ if [ "$DMMODE" = "ZONAL" ]; then
 #	respM_LOmodes.fits
 #
 tmux send-keys -t $tmuxname "# DMMODE is ZONAL -> MAKING LOW ORDER MODES" C-m
+logRunningProcess "aolmkLO_DMmodes" "$tmuxname" "Make LO DM modes"
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
-
+tmux send-keys -t ${tmuxname} "rm aolmkLO_DMmodes.runproc" C-m
 
 
 
@@ -195,6 +198,8 @@ tmux send-keys -t ${tmuxname} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 #tmux send-keys -t $tmuxname "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
 
+
+logRunningProcess "aolMeasureLOrespmat2" "$tmuxname" "Acquire LO RM"
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
 	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
@@ -203,7 +208,7 @@ else
 	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t ${tmuxname} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-
+tmux send-keys -t ${tmuxname} "rm aolMeasureLOrespmat2.runproc" C-m
 
 tmux send-keys -t $tmuxname "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 #tmux send-keys -t $tmuxname "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m

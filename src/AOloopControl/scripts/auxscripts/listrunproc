@@ -98,7 +98,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 echo "DATE = $datestr"
 echo " "
-echo "PROCESSES RUNNING"
+echo "PROCESSES QUEUED OR RUNNING"
 echo "Start Time                          Process Name                      Tmux session    Description"
 echo "-------------------------------------------------------------------------------------------------------------------------------"
 for file in *.runproc
