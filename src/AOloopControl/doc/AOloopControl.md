@@ -616,10 +616,10 @@ To start the interactive log script:
 
 Entries will be logged in the `./logdir/<UTDATE>/logging/<LOOPNAME>.log` file (with sym link to `aolconf.log`).
 
-It is also common practice to start a `MISC` log for misc comments:
+It is also common practice to start a `MISC` log for misc comments, also to be included in the external log:
 
 ~~~
-./aolconfscripts/aollog -i MISC NULL
+./aolconfscripts/aollog -ie MISC NULL
 ~~~
 
 
