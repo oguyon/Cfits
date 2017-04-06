@@ -133,7 +133,7 @@ read -p "$1 log >  " LOGTEXT
 logtime=$(date -u +'%Y/%m/%d %H:%M:%S.%N')
 
 printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT" >> $logdir/$1.log
-echo "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT"
+printf "%s %-10s %s\n" "$logtime" "$1" "$LOGTEXT"
 dologext "$1 $LOGTEXT"
 
 done
