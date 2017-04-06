@@ -677,11 +677,11 @@ menuitems+=( "fla" "Apply flatten DM solution" )
 menuitems+=( "flm" "Monitor DM flatten tmux session" )
 menuitems+=( "" "" )
 
-#stringcenter "FILTERS"
-#menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+stringcenter "FILTERS"
+menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
-#menuitems+=( "fw" "Set PY Filter Wheel" )
-#menuitems+=( "" "" )
+menuitems+=( "fw" "Set PY Filter Wheel" )
+menuitems+=( "" "" )
 
 
 
@@ -1312,11 +1312,11 @@ state="menualign"
 	fla) dm_update_channel 5 dmpyoffset.fits ;;
 	flm) tmux a -t pyrflatten ;;
 
-#	fw)
+	fw)
 # set FW
-#menualign_default="fw"
-#state="menupyfw"
-#;;
+menualign_default="fw"
+state="menupyfw"
+;;
 
 	esac;;
    1) state="menutop";;   
