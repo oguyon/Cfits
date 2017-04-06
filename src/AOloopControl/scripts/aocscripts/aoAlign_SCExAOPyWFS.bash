@@ -1103,10 +1103,10 @@ state="menualign"
 
 
 	ts)
-aoconflogext "TT align loop start"
-rm stop_PyAlignTT.txt
-rm pause_PyAlignTT.txt
-tmux kill-session -t alignPyrTT
+aoconflogext "TT align loop start" &> mesg.log &
+rm stop_PyAlignTT.txt &> mesg.log 
+rm pause_PyAlignTT.txt &> mesg.log 
+tmux kill-session -t alignPyrTT &> mesg.log 
 tmux new-session -d -s alignPyrTT
 tmux send-keys -t alignPyrTT "$execname -n alignPyrTT" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsdark" C-m
