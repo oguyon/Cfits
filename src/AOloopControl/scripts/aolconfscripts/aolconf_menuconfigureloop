@@ -29,6 +29,7 @@ RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
 
 function function_acqWFSresp {
 tmuxname="aol${LOOPNUMBER}arespM"
+logRunningProcess "FUNCTION_acqWFSresp" "$tmuxname" "=== ACQUIRE RM ==="
 
 # STAGING DIRECTORIES
 dir_conf_staged="conf_staged"
@@ -84,13 +85,14 @@ tmux send-keys -t $tmuxname "rm aolMeasureZrespmat2.runproc" C-m
 #	./conf_zrm_staged/dmmap.fits   
 #
 
+logRunningProcess "aolCleanZrespmat2" "$tmuxname" "Clean zonal RM"
 tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat2" C-m
 stageddir="conf_zrm_staged"
 mkdir -p $stageddir
 tmux send-keys -t ${tmuxname} "cp zrespM.fits $stageddir" C-m
 tmux send-keys -t ${tmuxname} "cp wfsmap.fits $stageddir" C-m
 tmux send-keys -t ${tmuxname} "cp dmmap.fits $stageddir" C-m
-
+tmux send-keys -t ${tmuxname} "rm aolCleanZrespmat2.runproc" C-m
 
 
 # MAKE MASKS  
@@ -101,6 +103,7 @@ tmux send-keys -t ${tmuxname} "cp dmmap.fits $stageddir" C-m
 #     wfsmask.fits
 #     dmmaskRM.fits
 #
+logRunningProcess "aolmkMasks" "$tmuxname" "Make masks"
 tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
 	tmux send-keys -t ${tmuxname} "$execname" C-m
@@ -110,6 +113,7 @@ if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
 	tmux send-keys -t ${tmuxname} "savefits dmmaskRM \"!dmmaskRM.fits\"" C-m
 	tmux send-keys -t ${tmuxname} "exitCLI" C-m	
 fi
+tmux send-keys -t ${tmuxname} "rm aolmkMasks.runproc" C-m
 
 
 # MAKE SLAVED ACTUATOR DM MASK: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
@@ -241,6 +245,9 @@ else
 fi
 tmux send-keys -t $tmuxname "# DMMODE = $DMMODE" C-m
 tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"AUTO CALIBRATION DONE\"" C-m
+
+tmux send-keys -t ${tmuxname} "rm FUNCTION_acqWFSresp.runproc" C-m
+
 #tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
 
 
