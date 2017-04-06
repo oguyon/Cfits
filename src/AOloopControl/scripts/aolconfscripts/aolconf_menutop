@@ -686,6 +686,8 @@ menutop_default="initDM"
 
 
 C0)
+echo "CALIBRATE ALL"
+sleep 1
 function_nAUTOC
 ;;
 
