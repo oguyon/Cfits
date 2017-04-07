@@ -650,38 +650,7 @@ cp conf_staged/*.txt ./conf/
 
 
 SMloadCM)
-aoconflogext "LOAD CM to shared memory"
-ReadConfFile "DMmodes"
-getshmimsize aol${LOOPNUMBER}_DMmodes
-
-ReadConfFile "respM"
-getshmimsize aol${LOOPNUMBER}_respM
-
-ReadConfFile "contrM"
-getshmimsize aol${LOOPNUMBER}_contrM
-
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/conf_NBmodes.txt )
-for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
-do
-i2=$(printf "%02d" "$i")
-
-ReadConfFile "DMmodes${i2}"
-getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
-
-ReadConfFile "respM${i2}"
-getshmimsize aol${LOOPNUMBER}_respM${i2}
-
-ReadConfFile "contrM${i2}"
-getshmimsize aol${LOOPNUMBER}_contrM${i2}
-
-ReadConfFile "contrMc${i2}"
-getshmimsize aol${LOOPNUMBER}_contrMc${i2}
-
-ReadConfFile "contrMcact${i2}_00"
-getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
-
-done
+function_SharedMemLoadCM
 menucontrolmatrix_default="SMloadCM"
 ;;
 
