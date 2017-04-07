@@ -53,8 +53,9 @@ case $retval in
 
 echo "cpamax = $tempfile"
 echo "CPAmax = $cpamax"
-sleep 2
-#function_computeModesCM
+
+file="./conf/conf_cpamax.txt"
+echo "$cpamax" > $file
 
 ;; # button 1:
    1) state="menutop";;  
