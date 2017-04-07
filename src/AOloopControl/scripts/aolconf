@@ -389,7 +389,7 @@ echo "FUNCTIONS..."
 
 . ./aolconfscripts/aolconf_controlloop_funcs
 
-exit
+
 
 
 function TestModeStart {
