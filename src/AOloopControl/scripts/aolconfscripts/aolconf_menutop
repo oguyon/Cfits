@@ -697,10 +697,15 @@ menutop_default="initDM"
 C0)
 echo "CALIBRATE ALL"
 
+C0test=1
+
+
+
 # block computeModesCM until this file is removed (will be done after RMs acquisition)
 touch FUNCTION_computeModesCM.block
 touch FUNCTION_SharedMemLoadCM.block
 
+if [ $C0test -eq 0 ]; then
 # SELECT CONFIGURATION NAME
 mkdir -p ./CONF
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -719,7 +724,7 @@ confname=$(cat $tempfile)
 aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
 echo "${confname}" > ./confname.txt
- 
+fi
 
 
 
@@ -744,7 +749,7 @@ function_computeModesCM
 
 
 
-
+if [ $C0test -eq 0 ]; then
 # IF LOOP IS ON - TURN IT OFF HERE
 procONstat_old="$procONstat"
 loopONstat_old="$loopONstat"
@@ -801,6 +806,7 @@ if [ "$procONstat_old" = " ON" ]; then
  if [ "$loopONstat_old" = " ON" ]; then
   function_LOOP_ON ${tmuxnameC0}
  fi
+fi
 fi
 ;;
 
