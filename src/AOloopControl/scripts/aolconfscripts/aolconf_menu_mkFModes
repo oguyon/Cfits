@@ -51,7 +51,7 @@ retval=$?
 case $retval in
    0) state="menucontrolmatrix"
 
-cpamax="$retval"
+cpamax="$tempfile"
 
 #function_computeModesCM
 
