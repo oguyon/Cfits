@@ -10,7 +10,7 @@ function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Wait for file to appear $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "   Wait for file to appear"
+echo "   Wait for file to disappear"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h] <fname>"
