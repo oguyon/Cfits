@@ -705,7 +705,9 @@ C0test=1
 
 # block computeModesCM until this file is removed (will be done after RMs acquisition)
 touch FUNCTION_computeModesCM.block
+if [ $C0test -eq 0 ]; then
 touch FUNCTION_SharedMemLoadCM.block
+fi
 
 if [ $C0test -eq 0 ]; then
 # SELECT CONFIGURATION NAME
@@ -817,6 +819,8 @@ fi
 
 
 	C1) # ADOPT CALIBRATION
+
+touch FUNCTION_SharedMemLoadCM.block
 # SELECT CONFIGURATION NAME
 mkdir -p ./CONF
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
