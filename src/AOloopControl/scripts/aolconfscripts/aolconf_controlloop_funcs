@@ -833,7 +833,7 @@ chmod +x $scriptfile
 
 echo "echo \" ON\" > ./status/stat_procON.txt" >> $scriptfile
 
-echo "aoconflogext \"START LOOP PROCESSES\"" >> $scriptfile
+echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LOOP PROCESSES\"" >> $scriptfile
 tmuxname="aol${LOOPNUMBER}-ctr"
 echo "tmux new-session -d -s ${tmuxname}" >> $scriptfile
 
@@ -1045,7 +1045,7 @@ touch $scriptfile
 chmod +x $scriptfile
 
 echo "echo \"OFF\" > ./status/stat_procON.txt" >> $scriptfile
-echo "aoconflogext \"STOP LOOP PROCESSES\"" >> $scriptfile
+echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LOOP PROCESSES\"" >> $scriptfile
 
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aoloff\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolkill\" C-m" >> $scriptfile
