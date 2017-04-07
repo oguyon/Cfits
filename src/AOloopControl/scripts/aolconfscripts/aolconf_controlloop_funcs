@@ -835,6 +835,7 @@ echo "echo \" ON\" > ./status/stat_procON.txt" >> $scriptfile
 
 echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LOOP PROCESSES\"" >> $scriptfile
 tmuxname="aol${LOOPNUMBER}-ctr"
+echo "unset TMUX" >> $scriptfile
 echo "tmux new-session -d -s ${tmuxname}" >> $scriptfile
 
 logRunningProcessQ0 "aolctr" "$tmuxname" "AO loop control prompt"
