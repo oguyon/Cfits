@@ -504,8 +504,8 @@ else
 fi
 
 
+loopONstat=$( cat ./status/stat_loopON.txt )
 if [ "$procONstat" = " ON" ]; then
- loopONstat=$( cat ./status/stat_loopON.txt )
  if [[ -f "./status/stat_loopON.txt" && ( "$loopONstat" = " ON" || "$loopONstat" = "OFF" ) ]]; then
    echo "OK"
  else
