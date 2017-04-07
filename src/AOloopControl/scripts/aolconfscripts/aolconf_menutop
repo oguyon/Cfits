@@ -854,9 +854,13 @@ loopONstat=$( cat ./status/stat_loopON.txt )
 loopONstat_old="$loopONstat"
 if [ "$procONstat" = " ON" ]; then
  if [ "$loopONstat" = " ON" ]; then
+  tmux send-keys -t ${tmuxnameC0} "# loopONstat = 1 -> TURNING OFF LOOP" C-m
   function_LOOP_OFF ${tmuxnameC0}
  fi
+ tmux send-keys -t ${tmuxnameC0} "# procONstat = 1 -> TURNING OFF PROCESSES" C-m
 function_AOloopProcess_OFF ${tmuxnameC0}
+else
+tmux send-keys -t ${tmuxnameC0} "# loopONstat = 0 -> PROCEEDING" C-m
 fi
 
 
