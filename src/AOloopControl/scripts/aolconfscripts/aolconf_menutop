@@ -745,6 +745,8 @@ function_computeModesCM
 
 
 
+# IF LOOP IS ON - TURN IT OFF HERE
+
 
 
 # UPDATE CONFIGURATION (staged -> conf)
@@ -784,6 +786,10 @@ tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_SharedMemLoadCM.block" C-m
 function_SharedMemLoadCM
 
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
+
+
+# IF LOOP WAS OFF, RESTART HERE
+
 ;;
 
 

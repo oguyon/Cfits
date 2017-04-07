@@ -3521,6 +3521,8 @@ long basic_tableto2Dim(const char *fname, float xmin, float xmax, float ymin, fl
   return(ID);
 }
 
+
+
 long basic_2Dextrapolate_nearestpixel(const char *IDin_name, const char *IDmask_name, const char *IDout_name)
 {
   long IDin, IDmask, IDout;
@@ -4150,7 +4152,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
 
 
 // feed image to data stream
-// only works on slice #1
+// only works on slice #1 out output
 long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float frequ)
 {
     long ID, IDs;
