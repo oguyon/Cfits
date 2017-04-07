@@ -19,7 +19,8 @@ fi
 
 
 
-function function_controlloop_readparams {
+function function_controlloop_readparams 
+{
 
 file="./conf/conf_loopgain.txt"
 if [ -f $file ]; then
@@ -484,52 +485,52 @@ fi
 # LOOP CONTROL
 
 
- file="conf/conf_loopNBstep.txt"
- if [ -f "$file" ]; then
+file="conf/conf_loopNBstep.txt"
+if [ -f "$file" ]; then
   loopNBstep=$( cat $file )
-  else
+else
   echo "1" > $file
   loopNBstep=1
- fi
+fi
 
 
 file="./status/stat_procWFSres2refON.txt"
 procWFSres2refONstat=$( cat $file )
 if [[ -f "$file" && ( "$procWFSres2refONstat" = " ON" || "$procWFSres2refONstat" = "OFF" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > $file 
-procWFSres2refONstat="OFF"
+ echo "OFF" > $file 
+ procWFSres2refONstat="OFF"
 fi
 
 
 if [ "$procONstat" = " ON" ]; then
  loopONstat=$( cat ./status/stat_loopON.txt )
-  if [[ -f "./status/stat_loopON.txt" && ( "$loopONstat" = " ON" || "$loopONstat" = "OFF" ) ]]; then
+ if [[ -f "./status/stat_loopON.txt" && ( "$loopONstat" = " ON" || "$loopONstat" = "OFF" ) ]]; then
    echo "OK"
-   else
+ else
    echo "OFF" > ./status/stat_loopON.txt
    loopONstat="OFF"
-  fi
-
+ fi
+fi
 
 
 # LOOP SETTINGS
 
 file="./conf/conf_DMprimWriteON.txt"
 if [[ -f "$file" && ( "$DMprimWriteON" = "0" || "$DMprimWriteON" = "1" ) ]]; then
-echo "DMprimWriteON OK"
-DMprimWriteON=$( cat $file )
+ echo "DMprimWriteON OK"
+ DMprimWriteON=$( cat $file )
 else
-echo "1" > "$file"
-DMprimWriteON=$( cat $file )
+ echo "1" > "$file"
+ DMprimWriteON=$( cat $file )
 fi
 
 
 AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
-  if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
+if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
    echo "OK"
-   else
+else
    echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
    AUTOTUNELIMITS_ON="OFF"
 fi
@@ -537,32 +538,32 @@ fi
 
 AUTOTUNELIMITperc=1.0
 if [ -f "./conf/conf_AUTOTUNELIMITperc.txt" ]; then
-AUTOTUNELIMITperc=$( cat ./conf/conf_AUTOTUNELIMITperc.txt )
+ AUTOTUNELIMITperc=$( cat ./conf/conf_AUTOTUNELIMITperc.txt )
 fi
 
 
 AUTOTUNELIMITdelta=0.001
 if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
-AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
+ AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
 fi
 
 AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNEGAINS_ON.txt )
-  if [[ -f "./status/stat_AUTOTUNEGAINS_ON.txt" && ( "$AUTOTUNEGAINS_ON" = " ON" || "$AUTOTUNEGAINS_ON" = "OFF" ) ]]; then
-   echo "OK"
-   else
-   echo "OFF" > ./status/stat_AUTOTUNEGAINS_ON.txt
-   AUTOTUNEGAINS_ON="OFF"
+if [[ -f "./status/stat_AUTOTUNEGAINS_ON.txt" && ( "$AUTOTUNEGAINS_ON" = " ON" || "$AUTOTUNEGAINS_ON" = "OFF" ) ]]; then
+ echo "OK"
+else
+ echo "OFF" > ./status/stat_AUTOTUNEGAINS_ON.txt
+ AUTOTUNEGAINS_ON="OFF"
 fi
 
 # PREDICTIVE CONTROL
 
 file="./conf/conf_ARPFon.txt"
 if [[ -f "$file" && ( "$ARPFon" = " ON" || "$ARPFon" = "OFF" ) ]]; then
-echo "ARPFon OK"
-ARPFon=$( cat $file )
+ echo "ARPFon OK"
+ ARPFon=$( cat $file )
 else
-echo "OFF" > "$file"
-ARPFon=$( cat $file )
+ echo "OFF" > "$file"
+ ARPFon=$( cat $file )
 fi
 
 
@@ -570,34 +571,32 @@ fi
 # MODAL BLOCK GAINS AND LIMITS
 
 if [ "$CMMODE" = "MODAL" ]; then
-NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-	for i in `seq 0 $(( $NBblocks - 1 ))`;
-	do
-	i2=$(printf "%02d" "$i")
+ NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+ for i in `seq 0 $(( $NBblocks - 1 ))`;
+ do
+  i2=$(printf "%02d" "$i")
+  NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
+  fname="conf/conf_gainb${i2}.txt"
+  if [ -f "$fname" ]; then
+   gainb[10#${i2}]=$( cat ${fname} )
+  else
+   gainb[10#${i2}]="1.000"
+  fi
+  
+  fname="conf/conf_limitb${i2}.txt"
+  if [ -f "$fname" ]; then
+   limitb[10#${i2}]=$( cat ${fname} )
+  else
+   limitb[10#${i2}]="1.00000"
+  fi
 
-	NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
-
-	fname="conf/conf_gainb${i2}.txt"
-	if [ -f "$fname" ]; then
-	gainb[10#${i2}]=$( cat ${fname} )
-	else
-	gainb[10#${i2}]="1.000"
-	fi
-
-	fname="conf/conf_limitb${i2}.txt"
-	if [ -f "$fname" ]; then
-	limitb[10#${i2}]=$( cat ${fname} )
-	else
-	limitb[10#${i2}]="1.00000"
-	fi
-
-	fname="conf/conf_multfb${i2}.txt"
-	if [ -f "$fname" ]; then
-	multfb[10#${i2}]=$( cat ${fname} )
-	else
-	multfb[10#${i2}]="1.000"
-	fi
-	done
+  fname="conf/conf_multfb${i2}.txt"
+  if [ -f "$fname" ]; then
+   multfb[10#${i2}]=$( cat ${fname} )
+  else
+   multfb[10#${i2}]="1.000"
+  fi
+ done
 fi
 
 
@@ -606,70 +605,70 @@ fi
 
 zploopONstat0=$( cat ./status/stat_zploopON0.txt )
 if [[ -f "./status/stat_zploopON0.txt" && ( "$zploopONstat0" = " ON" || "$zploopONstat0" = "OFF" || "$zploopONstat0" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON0.txt
-zploopONstat0="OFF"
+ echo "OFF" > ./status/stat_zploopON0.txt
+ zploopONstat0="OFF"
 fi
 
 
 zploopONstat1=$( cat ./status/stat_zploopON1.txt )
 if [[ -f "./status/stat_zploopON1.txt" && ( "$zploopONstat1" = " ON" || "$zploopONstat1" = "OFF" || "$zploopONstat1" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON1.txt
-zploopONstat1="OFF"
+ echo "OFF" > ./status/stat_zploopON1.txt
+ zploopONstat1="OFF"
 fi
 
 
 
 zploopONstat2=$( cat ./status/stat_zploopON2.txt )
 if [[ -f "./status/stat_zploopON2.txt" && ( "$zploopONstat2" = " ON" || "$zploopONstat2" = "OFF" || "$zploopONstat2" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON2.txt
-zploopONstat2="OFF"
+ echo "OFF" > ./status/stat_zploopON2.txt
+ zploopONstat2="OFF"
 fi
 
 
 zploopONstat3=$( cat ./status/stat_zploopON3.txt )
 if [[ -f "./status/stat_zploopON3.txt" && ( "$zploopONstat3" = " ON" || "$zploopONstat3" = "OFF" || "$zploopONstat3" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON3.txt
-zploopONstat3="OFF"
+ echo "OFF" > ./status/stat_zploopON3.txt
+ zploopONstat3="OFF"
 fi
 
 zploopONstat4=$( cat ./status/stat_zploopON4.txt )
 if [[ -f "./status/stat_zploopON4.txt" && ( "$zploopONstat4" = " ON" || "$zploopONstat4" = "OFF" || "$zploopONstat4" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON4.txt
-zploopONstat4="OFF"
+ echo "OFF" > ./status/stat_zploopON4.txt
+ zploopONstat4="OFF"
 fi
 
 zploopONstat5=$( cat ./status/stat_zploopON5.txt )
 if [[ -f "./status/stat_zploopON5.txt" && ( "$zploopONstat5" = " ON" || "$zploopONstat5" = "OFF" || "$zploopONstat5" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON5.txt
-zploopONstat5="OFF"
+ echo "OFF" > ./status/stat_zploopON5.txt
+ zploopONstat5="OFF"
 fi
 
 zploopONstat6=$( cat ./status/stat_zploopON6.txt )
 if [[ -f "./status/stat_zploopON6.txt" && ( "$zploopONstat6" = " ON" || "$zploopONstat6" = "OFF" || "$zploopONstat6" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON6.txt
-zploopONstat6="OFF"
+ echo "OFF" > ./status/stat_zploopON6.txt
+ zploopONstat6="OFF"
 fi
 
 zploopONstat7=$( cat ./status/stat_zploopON7.txt )
 if [[ -f "./status/stat_zploopON7.txt" && ( "$zploopONstat7" = " ON" || "$zploopONstat7" = "OFF" || "$zploopONstat7" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_zploopON7.txt
-zploopONstat7="OFF"
+ echo "OFF" > ./status/stat_zploopON7.txt
+ zploopONstat7="OFF"
 fi
 
 
@@ -679,79 +678,79 @@ fi
 
 GPUzploopONstat0=$( cat ./status/stat_GPUzploopON0.txt )
 if [[ -f "./status/stat_GPUzploopON0.txt" && ( "GPU$zploopONstat0" = " ON" || "$GPUzploopONstat0" = "OFF" || "$GPUzploopONstat0" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON0.txt
-GPUzploopONstat0="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON0.txt
+ GPUzploopONstat0="OFF"
 fi
 
 
 GPUzploopONstat1=$( cat ./status/stat_GPUzploopON1.txt )
 if [[ -f "./status/stat_GPUzploopON1.txt" && ( "$GPUzploopONstat1" = " ON" || "$GPUzploopONstat1" = "OFF" || "$GPUzploopONstat1" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON1.txt
-GPUzploopONstat1="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON1.txt
+ GPUzploopONstat1="OFF"
 fi
 
 
 
 GPUzploopONstat2=$( cat ./status/stat_GPUzploopON2.txt )
 if [[ -f "./status/stat_GPUzploopON2.txt" && ( "$GPUzploopONstat2" = " ON" || "$GPUzploopONstat2" = "OFF" || "$GPUzploopONstat2" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON2.txt
-GPUzploopONstat2="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON2.txt
+ GPUzploopONstat2="OFF"
 fi
 
 
 GPUzploopONstat3=$( cat ./status/stat_GPUzploopON3.txt )
 if [[ -f "./status/stat_GPUzploopON3.txt" && ( "$GPUzploopONstat3" = " ON" || "$GPUzploopONstat3" = "OFF" || "$GPUzploopONstat3" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON3.txt
-GPUzploopONstat3="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON3.txt
+ GPUzploopONstat3="OFF"
 fi
 
 GPUzploopONstat4=$( cat ./status/stat_GPUzploopON4.txt )
 if [[ -f "./status/stat_GPUzploopON4.txt" && ( "$GPUzploopONstat4" = " ON" || "$GPUzploopONstat4" = "OFF" || "$GPUzploopONstat4" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON4.txt
-GPUzploopONstat4="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON4.txt
+ GPUzploopONstat4="OFF"
 fi
 
 GPUzploopONstat5=$( cat ./status/stat_GPUzploopON5.txt )
 if [[ -f "./status/stat_GPUzploopON5.txt" && ( "$GPUzploopONstat5" = " ON" || "$GPUzploopONstat5" = "OFF" || "$GPUzploopONstat5" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON5.txt
-GPUzploopONstat5="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON5.txt
+ GPUzploopONstat5="OFF"
 fi
 
 GPUzploopONstat6=$( cat ./status/stat_GPUzploopON6.txt )
 if [[ -f "./status/stat_GPUzploopON6.txt" && ( "$GPUzploopONstat6" = " ON" || "$GPUzploopONstat6" = "OFF" || "$GPUzploopONstat6" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON6.txt
-GPUzploopONstat6="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON6.txt
+ GPUzploopONstat6="OFF"
 fi
 
 GPUzploopONstat7=$( cat ./status/stat_GPUzploopON7.txt )
 if [[ -f "./status/stat_GPUzploopON7.txt" && ( "$GPUzploopONstat7" = " ON" || "$GPUzploopONstat7" = "OFF" || "$GPUzploopONstat7" = "WFS" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "OFF" > ./status/stat_GPUzploopON7.txt
-GPUzploopONstat7="OFF"
+ echo "OFF" > ./status/stat_GPUzploopON7.txt
+ GPUzploopONstat7="OFF"
 fi
 
 
 
 fname="./conf/conf_zpmultcoeff.txt"
 if [ -f "$fname" ]; then
-zpmultcoeff=$( cat ${fname} )
+ zpmultcoeff=$( cat ${fname} )
 else
-zpmultcoeff="1.000"
+ zpmultcoeff="1.000"
 fi
 
 
@@ -763,10 +762,10 @@ fi
 file="./conf/conf_GPUdm2wfsref.txt"
 GPUdm2wfsref=$( cat $file )
 if [[ -f "$file" && ( "$GPUdm2wfsref" = "1" || "$GPUdm2wfsref" = "0" ) ]]; then
-echo "OK"
+ echo "OK"
 else
-echo "0" > $file
-GPUdm2wfsref=0
+ echo "0" > $file
+ GPUdm2wfsref=0
 fi
 
 
@@ -797,4 +796,5 @@ readshmim aol${LOOPNUMBER}_wfsref
 cpsh aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref
 exit
 EOF
+
 }
