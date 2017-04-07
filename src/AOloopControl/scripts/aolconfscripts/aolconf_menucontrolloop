@@ -280,7 +280,7 @@ stringcenter "LOOP CONTROL "
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-if [ "${procONstat}" = "ON" ]; then
+if [ "${procONstat}" = " ON" ]; then
 
  if [ "${loopONstat}" = "OFF" ]; then
   menuitems+=( "Nloopon" "  \Zb\Zu ==== START control loop ====\ZB\ZU" )
