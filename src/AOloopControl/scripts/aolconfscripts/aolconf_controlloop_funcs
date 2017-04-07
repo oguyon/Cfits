@@ -826,7 +826,7 @@ fi
 function function_AOloopProcess_ON {
 
 # all commands written in script file
-scriptfile="script_AOloopProcess_OFF"
+scriptfile="script_AOloopProcess_ON"
 rm $scriptfile
 touch $scriptfile
 chmod +x $scriptfile
