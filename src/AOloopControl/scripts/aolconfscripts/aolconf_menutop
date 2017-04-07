@@ -875,7 +875,7 @@ tmux send-keys -t ${tmuxnameC0} "cp ./conf_staged/*.txt ./conf/" C-m
 
 
 # LOAD CALIBRATION (conf -> shared mem) 
-tmux send-keys -t ${tmuxnameC0} "aoconflogext \"Update calibration configuration files\"" C-m
+tmux send-keys -t ${tmuxnameC0} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"Update calibration configuration files\"" C-m
 # zonal calib
 for imname in $RMZONALCALIBlist
 do

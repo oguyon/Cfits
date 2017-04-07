@@ -117,7 +117,7 @@ fi
 
 
 if [ "9" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block09end.txt"
+file="./conf/conf_block09end.txt" 'OPEN' 1
 block09end=$( cat $file )
 if [ ! -f "$file" ]; then
 echo "09" > $file
@@ -284,6 +284,11 @@ tmux send-keys -t $tmuxnameMCM "dologext $LOOPNAME CM computation DONE &" C-m
 
 function function_SharedMemLoadCM {
 tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
+
+tmux new-session -s ${tmuxnameSMlCM} -d
+tmux send-keys -t ${tmuxnameSMlCM} "" C-c
+tmux send-keys -t ${tmuxnameSMlCM} " " C-m
+
 tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/waitonfile FUNCTION_SharedMemLoadCM.block" C-m
 tmux send-keys -t ${tmuxnameSMlCM} "aoconflogext \"LOAD CM to shared memory\"" C-m
 
