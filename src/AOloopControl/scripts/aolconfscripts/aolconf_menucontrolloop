@@ -116,53 +116,52 @@ fi
 
 #echo "GPU ARPF mode = $GPUmodeARPF"
 
-if [ "${GPUmodeARPF}" = "0" ];
-then
-menuitems+=( "GPUselARPF" "[ GPU_ARPF is OFF  ]    AR PREDICTION MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU_ARPF mode" )
+if [ "${GPUmodeARPF}" = "0" ]; then
+ menuitems+=( "GPUselARPF" "[ GPU_ARPF is OFF  ]    AR PREDICTION MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU_ARPF mode" )
 else
-menuitems+=( "GPUselARPF" " AR PREDICTION MATRIX MULT CURRENTLY USING \Z5\Zr $GPUmodeARPF \Zn GPU(S)" )
+ menuitems+=( "GPUselARPF" " AR PREDICTION MATRIX MULT CURRENTLY USING \Z5\Zr $GPUmodeARPF \Zn GPU(S)" )
 fi
 
 
 
 if [ "0" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU0ARPF" "            [ $GPU0ARPFdevice ]    GPU ARPF #0 device" )
+ menuitems+=( "GPU0ARPF" "            [ $GPU0ARPFdevice ]    GPU ARPF #0 device" )
 fi
 
 if [ "1" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU1ARPF" "            [ $GPU1ARPFdevice ]    GPU ARPF #1 device" )
+ menuitems+=( "GPU1ARPF" "            [ $GPU1ARPFdevice ]    GPU ARPF #1 device" )
 fi
 
 if [ "2" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU2ARPF" "            [ $GPU2ARPFdevice ]    GPU ARPF #2 device" )
+ menuitems+=( "GPU2ARPF" "            [ $GPU2ARPFdevice ]    GPU ARPF #2 device" )
 fi
 
 if [ "3" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU3ARPF" "            [ $GPU3ARPFdevice ]    GPU ARPF #3 device" )
+ menuitems+=( "GPU3ARPF" "            [ $GPU3ARPFdevice ]    GPU ARPF #3 device" )
 fi
 
 if [ "4" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU4ARPF" "            [ $GPU4ARPFdevice ]    GPU ARPF #4 device" )
+ menuitems+=( "GPU4ARPF" "            [ $GPU4ARPFdevice ]    GPU ARPF #4 device" )
 fi
 
 if [ "5" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU5ARPF" "            [ $GPU5ARPFdevice ]    GPU ARPF #5 device" )
+ menuitems+=( "GPU5ARPF" "            [ $GPU5ARPFdevice ]    GPU ARPF #5 device" )
 fi
 
 if [ "6" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU6ARPF" "            [ $GPU6ARPFdevice ]    GPU ARPF #6 device" )
+ menuitems+=( "GPU6ARPF" "            [ $GPU6ARPFdevice ]    GPU ARPF #6 device" )
 fi
 
 if [ "7" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU7ARPF" "            [ $GPU7ARPFdevice ]    GPU ARPF #7 device" )
+ menuitems+=( "GPU7ARPF" "            [ $GPU7ARPFdevice ]    GPU ARPF #7 device" )
 fi
 
 if [ "8" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU8ARPF" "            [ $GPU8ARPFdevice ]    GPU ARPF #8 device" )
+ menuitems+=( "GPU8ARPF" "            [ $GPU8ARPFdevice ]    GPU ARPF #8 device" )
 fi
 
 if [ "9" -lt "$GPUmodeARPF" ]; then
-menuitems+=( "GPU9ARPF" "            [ $GPU9ARPFdevice ]    GPU ARPF #9 device" )
+ menuitems+=( "GPU9ARPF" "            [ $GPU9ARPFdevice ]    GPU ARPF #9 device" )
 fi
 
 
@@ -172,13 +171,13 @@ fi
 
 
 if [ "${dm2dm_mode}" = "0" ]; then
-menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
-menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU device" )
-menuitems+=( "GPUzpZ" "[ $GPUzpoffsetZ ]    Zonal WFS zero point offset loop: GPU device" )
+ menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
+ menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU device" )
+ menuitems+=( "GPUzpZ" "[ $GPUzpoffsetZ ]    Zonal WFS zero point offset loop: GPU device" )
 fi
 
 if [ "${dm2dm_mode}" = "1" ]; then
-menuitems+=( "GPUzpM" "[ $GPUzpoffsetM ]    Modal WFS zero point offset loop: GPU device" )
+ menuitems+=( "GPUzpM" "[ $GPUzpoffsetM ]    Modal WFS zero point offset loop: GPU device" )
 fi
 
 
@@ -194,11 +193,10 @@ CMmode=$( cat ./conf/conf_CMmode.txt )
 
 
 if [[ "${GPUmode}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
- if [ "${GPUallmode}" = "0" ];
- then
- menuitems+=( "GPUaon" "[GPUall is OFF]    CURRENTLY USING CPU(s) + GPU(s)       -> Turn on GPUall mode" )
+ if [ "${GPUallmode}" = "0" ]; then
+  menuitems+=( "GPUaon" "[GPUall is OFF]    CURRENTLY USING CPU(s) + GPU(s)       -> Turn on GPUall mode" )
  else
- menuitems+=( "GPUaoff" "\Z5\Zr[GPUall is  ON]\Zn    CURRENTLY USING GPU(S) FOR ALL        -> Turn off GPUall mode" )
+  menuitems+=( "GPUaoff" "\Z5\Zr[GPUall is  ON]\Zn    CURRENTLY USING GPU(S) FOR ALL        -> Turn off GPUall mode" )
  fi
 else
  menuitems+=( " " " GPUall = 0" )
@@ -206,11 +204,10 @@ fi
 
 
 
-if [ "${CMmode}" = "0" ];
-then
-menuitems+=( "CMm1" "[CMmode is OFF]    CURRENTLY USING SEPARATE MATRICES     -> Switch to combined control matrix" )
+if [ "${CMmode}" = "0" ]; then
+ menuitems+=( "CMm1" "[CMmode is OFF]    CURRENTLY USING SEPARATE MATRICES     -> Switch to combined control matrix" )
 else
-menuitems+=( "CMm0" "\Z5\Zr[CMmode is  ON]\Zn    CURRENTLY USING COMBINED MATRIX       -> Switch to separate control matrices" )
+ menuitems+=( "CMm0" "\Z5\Zr[CMmode is  ON]\Zn    CURRENTLY USING COMBINED MATRIX       -> Switch to separate control matrices" )
 fi
 
 
@@ -224,54 +221,53 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
 
-if [ "${procONstat}" = "OFF" ];
-then
-menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
-menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
-menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
-menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
-menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
-menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
-menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
+if [ "${procONstat}" = "OFF" ]; then
+ menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
+ menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+ menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+ menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
+ menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
+ menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
+ menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
 else
-menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
+ menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
 
-if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace\Zn" )
-else
-menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
-fi
+ if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
+  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace\Zn" )
+ else
+  menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+ fi
 
-if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now\Zn" )
-else
-menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
-fi
+ if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
+  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now\Zn" )
+ else
+  menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+ fi
 
-if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMFILTWB] ---  RUNNING    ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC\Zn" )
-else
-menuitems+=( " " "     [$LOOPPROCESS_DMFILTWB] --- not running ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
-fi
+ if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
+  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMFILTWB] ---  RUNNING    ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC\Zn" )
+ else
+  menuitems+=( " " "     [$LOOPPROCESS_DMFILTWB] --- not running ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
+ fi
 
 
-if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_ZPO] ---  RUNNING    ---   Zero pt offset\Zn" )
-else
-menuitems+=( " " "     [$LOOPPROCESS_ZPO] --- not running ---   Zero pt offset" )
-fi
+ if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
+  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_ZPO] ---  RUNNING    ---   Zero pt offset\Zn" )
+ else
+  menuitems+=( " " "     [$LOOPPROCESS_ZPO] --- not running ---   Zero pt offset" )
+ fi
 
-if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMCAVE] ---  RUNNING    ---   Running average of dmC\Zn" )
-else
-menuitems+=( " " "     [$LOOPPROCESS_DMCAVE] --- not running ---   Running average of dmC" )
-fi
+ if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
+  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMCAVE] ---  RUNNING    ---   Running average of dmC\Zn" )
+ else
+  menuitems+=( " " "     [$LOOPPROCESS_DMCAVE] --- not running ---   Running average of dmC" )
+ fi
 
-if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
-menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn" )
-else
-menuitems+=( " " "     [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres" )
-fi
+ if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
+  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn" )
+ else
+  menuitems+=( " " "     [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres" )
+ fi
 
 fi
 
@@ -284,12 +280,11 @@ stringcenter "LOOP CONTROL "
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
+if [ "${procONstat}" = "ON" ]; then
 
-
- if [ "${loopONstat}" = "OFF" ];
-  then
+ if [ "${loopONstat}" = "OFF" ]; then
   menuitems+=( "Nloopon" "  \Zb\Zu ==== START control loop ====\ZB\ZU" )
-  else
+ else
   menuitems+=( "Floopoff" "\Z1\ZrLoop running, press to STOP\Zn" )
  fi
  
@@ -299,11 +294,10 @@ menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
  
  if [ "$procWFSres2refONstat" = "OFF" ]; then
   menuitems+=( "wresolON" "WFS residual offload to wfsref is OFF, press to START" )
-  else
+ else
   menuitems+=( "wresolOFF" "\Z1\ZrWFS residual offload to wfsref is ON, press to STOP\Zn" )
  fi
-
- else
+else
  menuitems+=( " " "\Z1 Processes need to be ON to turn loop ON/OFF \Zn")
  menuitems+=( "Z" "LOOP Zero" )
  menuitems+=( " " "\Z1[$loopNBstep] set loopNBsteps\Zn" )
@@ -312,6 +306,10 @@ menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 fi
 menuitems+=( "wresolinit" "WFS residual offload initialize" )
 menuitems+=( "wzpoinit" "Initialize all wfszpo" )
+
+
+
+
 
 
 

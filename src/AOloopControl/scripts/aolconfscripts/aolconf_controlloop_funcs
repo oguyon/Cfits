@@ -697,7 +697,7 @@ fi
 
 GPUzploopONstat2=$( cat ./status/stat_GPUzploopON2.txt )
 if [[ -f "./status/stat_GPUzploopON2.txt" && ( "$GPUzploopONstat2" = " ON" || "$GPUzploopONstat2" = "OFF" || "$GPUzploopONstat2" = "WFS" ) ]]; then
- echo "OK"
+ echo "OK" 
 else
  echo "OFF" > ./status/stat_GPUzploopON2.txt
  GPUzploopONstat2="OFF"
