@@ -21,7 +21,6 @@ fi
 
 function function_controlloop_readparams {
 
-
 file="./conf/conf_loopgain.txt"
 if [ -f $file ]; then
 loopgain=$(echo "$(cat $file)")

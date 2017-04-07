@@ -37,8 +37,8 @@ if [ $state = "menucontrolloop" ]; then
 stateok=1
 menuname="CONTROL LOOP"
 
-function_controlloop_readparams
 
+function_controlloop_readparams
 
 
 
