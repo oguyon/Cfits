@@ -821,6 +821,8 @@ tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 
 
 	C1) # ADOPT CALIBRATION
+C1test=1
+	
 tmuxnameC0="aol${LOOPNUMBER}caliball"
 tmux send-keys -t ${tmuxnameC0} " " C-c
 tmux send-keys -t ${tmuxnameC0} "" C-m
@@ -858,11 +860,13 @@ if [ "$procONstat" = " ON" ]; then
   function_LOOP_OFF ${tmuxnameC0}
  fi
  tmux send-keys -t ${tmuxnameC0} "# procONstat = 1 -> TURNING OFF PROCESSES" C-m
-function_AOloopProcess_OFF ${tmuxnameC0}
+ function_AOloopProcess_OFF ${tmuxnameC0}
 else
 tmux send-keys -t ${tmuxnameC0} "# loopONstat = 0 -> PROCEEDING" C-m
 fi
 
+
+if [ $C1test -eq 0 ]; then
 
 # UPDATE CONFIGURATION (staged -> conf)
 tmux send-keys -t ${tmuxnameC0} "aoconflogext \"Update all configuration files\"" C-m
@@ -909,6 +913,7 @@ if [ "$procONstat_old" = " ON" ]; then
  if [ "$loopONstat_old" = " ON" ]; then
   function_LOOP_ON ${tmuxnameC0}
  fi
+fi
 fi
 	;;
 
