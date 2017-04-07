@@ -697,6 +697,7 @@ menutop_default="initDM"
 C0)
 echo "CALIBRATE ALL"
 
+# block computeModesCM until this file is removed (will be done after RMs acquisition)
 touch FUNCTION_computeModesCM.block
 
 # SELECT CONFIGURATION NAME
@@ -763,10 +764,11 @@ tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m
 
 # COMPUTE CM
 mkModesMODE=0; # full computation
-
 tmux send-keys -t ${tmuxnameC0} "aoconflogext \"START control matrix computation mkModesMODE 0\"" C-m
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
 function_computeModesCM
+
+
 
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 ;;
