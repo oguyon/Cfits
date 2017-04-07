@@ -821,7 +821,7 @@ tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 
 
 	C1) # ADOPT CALIBRATION
-
+tmuxnameC0="aol${LOOPNUMBER}caliball"
 tmux send-keys -t ${tmuxnameC0} " " C-c
 tmux send-keys -t ${tmuxnameC0} "" C-m
 
