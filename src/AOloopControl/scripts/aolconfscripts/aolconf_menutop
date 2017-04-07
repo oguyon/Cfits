@@ -746,7 +746,14 @@ function_computeModesCM
 
 
 # IF LOOP IS ON - TURN IT OFF HERE
-
+procONstat_old="$procONstat"
+loopONstat_old="$loopONstat"
+if [ "$procONstat" = " ON" ]; then
+ if [ "$loopONstat" = " ON" ]; then
+  function_LOOP_OFF
+ fi
+function_AOloopProcess_OFF
+fi
 
 
 # UPDATE CONFIGURATION (staged -> conf)
@@ -788,8 +795,13 @@ function_SharedMemLoadCM
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 
 
-# IF LOOP WAS OFF, RESTART HERE
-
+# IF LOOP WAS ON, RESTART HERE
+if [ "$procONstat_old" = " ON" ]; then
+ function_AOloopProcess_ON
+ if [ "$loopONstat_old" = " ON" ]; then
+  function_LOOP_ON
+ fi
+fi
 ;;
 
 

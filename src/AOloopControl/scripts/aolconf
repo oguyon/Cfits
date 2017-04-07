@@ -384,10 +384,16 @@ echo "FUNCTIONS..."
 . ./aolconfscripts/aolconf_DMfuncs
 
 . ./aolconfscripts/aolconf_configureloop_funcs
+function_configureloop_readparams
 
 . ./aolconfscripts/aolconf_controlmatrix_funcs
+function_controlmatrix_readparams
 
 . ./aolconfscripts/aolconf_controlloop_funcs
+function_controlloop_readparams
+
+
+
 
 
 

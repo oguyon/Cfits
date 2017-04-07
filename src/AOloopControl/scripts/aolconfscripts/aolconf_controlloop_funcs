@@ -806,6 +806,7 @@ EOF
 function function_AOloopProcess_ON {
 	
 echo " ON" > ./status/stat_procON.txt
+procONstat=" ON"
 #rm aolctr-${LOOPNUMBER}-fifo
 aoconflogext "START LOOP PROCESSES"
 tmuxname="aol${LOOPNUMBER}-ctr"
@@ -981,6 +982,7 @@ fi
 function function_AOloopProcess_OFF {
 
 echo "OFF" > ./status/stat_procON.txt
+procONstat="OFF"
 aoconflogext "STOP LOOP PROCESSES"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolkill" C-m
@@ -1059,6 +1061,7 @@ fi
 function function_LOOP_ON {
 
 echo " ON" > ./status/stat_loopON.txt
+loopONstat=" ON"
 aoconflogext "LOOP ON [gain = ${loopgain}   maxlim = ${loopmaxlim}   multcoeff = ${loopmultcoeff}]"
 customfunction_startloop
 
@@ -1082,6 +1085,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "aolon" C-m
 
 function function_LOOP_OFF {
 echo "OFF" > ./status/stat_loopON.txt
+loopONstat="OFF"
 aoconflogext "LOOP OFF"
 customfunction_stoploop
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
