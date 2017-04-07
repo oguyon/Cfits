@@ -750,7 +750,7 @@ tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc
 mkModesMODE=0; # full computation
 tmux send-keys -t ${tmuxnameC0} "aoconflogext \"START control matrix computation mkModesMODE 0\"" C-m
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
-function_computeModesCM
+#function_computeModesCM
 
 
 
