@@ -52,7 +52,8 @@ case $retval in
    0) state="menucontrolmatrix"
 
 #cpamax="$tempfile"
-
+echo "CPAmax = $cpamax"
+sleep 2
 #function_computeModesCM
 
 ;; # button 1:
