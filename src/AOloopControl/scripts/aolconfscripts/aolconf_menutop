@@ -845,8 +845,12 @@ aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
 echo "${confname}" > ./confname.txt
 
+
+
 # IF LOOP IS ON - TURN IT OFF HERE
+procONstat=$( cat ./status/stat_procON.txt )
 procONstat_old="$procONstat"
+loopONstat=$( cat ./status/stat_loopON.txt )
 loopONstat_old="$loopONstat"
 if [ "$procONstat" = " ON" ]; then
  if [ "$loopONstat" = " ON" ]; then
