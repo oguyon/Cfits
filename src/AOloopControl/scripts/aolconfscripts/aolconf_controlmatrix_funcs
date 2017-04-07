@@ -282,15 +282,21 @@ done
 
 
 NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
-
+rm script_SharedMemLoadCM
+touch script_SharedMemLoadCM
 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
 for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2} ; do
-tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+echo "./auxscripts/aolReadConfFile ${imname}" >> script_SharedMemLoadCM	
+echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedMemLoadCM
 done
+chmod +x script_SharedMemLoadCM
+tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
+tmux send-keys -t ${tmuxnameSMlCM} "#rm script_SharedMemLoadCM" C-m	
+
+
 
 #ReadConfFile "DMmodes${i2}"
 #getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
