@@ -44,7 +44,7 @@ dialog --title "AO loop configuration" \
 --default-item ${cpamax} \
 --menu "$menuname" \
  50 80 100 "${menuitems[@]}"  2> $tempfile
-
+cpamax=$(cat $tempfile)
 retval=$?
 
 
