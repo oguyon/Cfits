@@ -53,7 +53,7 @@ case $retval in
 
 
 
-function_computeModesCM
+#function_computeModesCM
 
 ;; # button 1:
    1) state="menutop";;  

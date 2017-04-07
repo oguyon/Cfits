@@ -273,6 +273,10 @@ tmux send-keys -t $tmuxnameMCM "dologext $LOOPNAME CM computation DONE &" C-m
 }
 
 
+
+
+
+
 function function_SharedMemLoadCM {
 tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
 tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/waitonfile FUNCTION_SharedMemLoadCM.block" C-m
