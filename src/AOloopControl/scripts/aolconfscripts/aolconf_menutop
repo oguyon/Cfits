@@ -750,9 +750,9 @@ procONstat_old="$procONstat"
 loopONstat_old="$loopONstat"
 if [ "$procONstat" = " ON" ]; then
  if [ "$loopONstat" = " ON" ]; then
-  function_LOOP_OFF
+  function_LOOP_OFF ${tmuxnameC0}
  fi
-function_AOloopProcess_OFF
+function_AOloopProcess_OFF ${tmuxnameC0}
 fi
 
 
@@ -797,9 +797,9 @@ tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 
 # IF LOOP WAS ON, RESTART HERE
 if [ "$procONstat_old" = " ON" ]; then
- function_AOloopProcess_ON
+ function_AOloopProcess_ON ${tmuxnameC0}
  if [ "$loopONstat_old" = " ON" ]; then
-  function_LOOP_ON
+  function_LOOP_ON ${tmuxnameC0}
  fi
 fi
 ;;
