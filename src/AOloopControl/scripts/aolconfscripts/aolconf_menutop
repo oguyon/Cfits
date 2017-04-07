@@ -693,37 +693,36 @@ menutop_default="initDM"
 
 C0)
 echo "CALIBRATE ALL"
-tmuxname="aol${LOOPNUMBER}caliball"
-
-logRunningProcess "FUNCTION_C0" "$tmuxname" "==== CALIBRATION ===="
+tmuxnameC0="aol${LOOPNUMBER}caliball"
+logRunningProcess "FUNCTION_C0" "$tmuxnameC0" "==== CALIBRATION ===="
 
 function_configureloop_readparams
 
 function_nAUTOC
 
 sleep 0.1
-tmux new-session -d -s ${tmuxname}
-tmux send-keys -t ${tmuxname} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
+tmux new-session -d -s ${tmuxnameC0}
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
 
-tmux send-keys -t ${tmuxname} "aoconflogext \"Update all configuration files\"" C-m
-tmux send-keys -t ${tmuxname} "cp ./conf_staged/*.txt ./conf/" C-m
+tmux send-keys -t ${tmuxnameC0} "aoconflogext \"Update all configuration files\"" C-m
+tmux send-keys -t ${tmuxnameC0} "cp ./conf_staged/*.txt ./conf/" C-m
 
 
-tmux send-keys -t ${tmuxname} "aoconflogext \"Update calibration configuration files\"" C-m
+tmux send-keys -t ${tmuxnameC0} "aoconflogext \"Update calibration configuration files\"" C-m
 # zonal calib
 for imname in $RMZONALCALIBlist
 do
-tmux send-keys -t ${tmuxname} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxname} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
 done
 # modal calib
 for imname in $RMMODALCALIBlist
 do
-tmux send-keys -t ${tmuxname} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxname} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
 done
 
-tmux send-keys -t ${tmuxname} "rm FUNCTION_C0.runproc" C-m
+tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 ;;
 
 
