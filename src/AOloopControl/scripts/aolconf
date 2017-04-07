@@ -380,14 +380,16 @@ trap "rm -f $tempfile" 0 1 2 5 15
 echo "FUNCTIONS..."
 
 . ./aolconfscripts/aolconf_logfuncs
+
 . ./aolconfscripts/aolconf_DMfuncs
 
-
 . ./aolconfscripts/aolconf_configureloop_funcs
+
 . ./aolconfscripts/aolconf_controlmatrix_funcs
+
 . ./aolconfscripts/aolconf_controlloop_funcs
 
-
+exit
 
 
 
