@@ -822,6 +822,9 @@ fi
 
 	C1) # ADOPT CALIBRATION
 
+tmux send-keys -t ${tmuxnameC0} " " C-c
+tmux send-keys -t ${tmuxnameC0} "" C-m
+
 touch FUNCTION_SharedMemLoadCM.block
 # SELECT CONFIGURATION NAME
 mkdir -p ./CONF
