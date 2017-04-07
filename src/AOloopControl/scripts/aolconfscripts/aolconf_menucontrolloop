@@ -1259,7 +1259,7 @@ menucontrolloop_default="wzpoinit"
   	 loopgain=${value}
   	 echo "$loopgain" > ./conf/conf_loopgain.txt
   	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetgain ${loopgain}" C-m
-	 statusext "gain" "${loopgain}" &
+	 ./statusext "gain" "${loopgain}" &
 	 aoconflogext "set gain ${loopgain}"
   	 ;; 
    	 
