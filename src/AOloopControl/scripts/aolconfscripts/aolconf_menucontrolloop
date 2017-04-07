@@ -1039,12 +1039,12 @@ menucontrolloop_default="CMm1"
 
 # LOOP PROCESSES
    	 S)  	 
-function_AOloopProcess_ON
+function_AOloopProcess_ON "NULL"
 menucontrolloop_default="K"
 ;; 
 
 	K)
-function_AOloopProcess_OFF
+function_AOloopProcess_OFF "NULL"
 menucontrolloop_default="S"
 ;;
 
