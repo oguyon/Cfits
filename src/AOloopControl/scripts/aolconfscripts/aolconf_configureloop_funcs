@@ -343,13 +343,15 @@ function function_nAUTOC {
 	
 echo "ENTERING function_nAUTOC"
 
-tmuxname="aol${LOOPNUMBER}arespM"
-logRunningProcess "FUNCTION_nAUTOC" "$tmuxname" "=== ACQUIRE RM(s) ==="
 
-sleep 0.1
 
 if [ ! -f "FUNCTION_nAUTOC.runproc" ]; then
 aoconflogext "START AUTO CALIBRATION"
+
+tmuxname="aol${LOOPNUMBER}arespM"
+logRunningProcess "FUNCTION_nAUTOC" "$tmuxname" "=== ACQUIRE RM(s) ==="
+
+
 # archive
 dirnb=20
 i0=`( printf "%03d" "$dirnb" )`
@@ -370,6 +372,9 @@ cp -rf conf_staged conf_staged.000
 
 # this function populates conf_staged directory
 function_acqWFSresp
+
+tmux send-keys -t ${tmuxname} "rm FUNCTION_nAUTOC.runproc" C-m
+
 fi
 }
 
@@ -599,7 +604,7 @@ fi
 tmux send-keys -t $tmuxname "# DMMODE = $DMMODE" C-m
 tmux send-keys -t ${tmuxname} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"AUTO CALIBRATION DONE\"" C-m
 
-tmux send-keys -t ${tmuxname} "rm FUNCTION_nAUTOC.runproc" C-m
+
 
 #tmux send-keys -t ${tmuxname} "dologext $LOOPNAME STOP AUTO CALIBRATION &" C-m
 
