@@ -275,10 +275,13 @@ menuitems+=( " " " ")
 stringcenter "AO CONFIGURE AND CONTROL"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
+
+function_controlmatrix_readparams
+
 if [ -f "FUNCTION_C0.runproc" ]; then
 menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
 else
-menuitems+=( "C0" "CALIBRATE SYSTEM -> RM, CM" )
+menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] -> RM, CM" )
 fi
 
 
@@ -694,9 +697,9 @@ menutop_default="initDM"
 C0)
 echo "CALIBRATE ALL"
 
+touch FUNCTION_computeModesCM.block
 
-
-
+# SELECT CONFIGURATION NAME
 mkdir -p ./CONF
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
@@ -718,14 +721,7 @@ echo "${confname}" > ./confname.txt
 
 
 
-
-
-
-
-
-
-
-
+# START CALIBRATION: RM(s) ACQUISITION
 tmuxnameC0="aol${LOOPNUMBER}caliball"
 logRunningProcess "FUNCTION_C0" "$tmuxnameC0" "==== CALIBRATION ===="
 
@@ -756,7 +752,6 @@ tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_$
 done
 
 
-
 tmux send-keys -t ${tmuxnameC0} "mkdir -p \"${confname}\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/conf_* \"${confname}/\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMpoke.fits \"${confname}/\"" C-m	
@@ -766,7 +761,12 @@ tmux send-keys -t ${tmuxnameC0} "cp conf/RMpixindex.fits \"${confname}/\"" C-m
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m	
 
 
+# COMPUTE CM
+mkModesMODE=0; # full computation
 
+tmux send-keys -t ${tmuxnameC0} "aoconflogext \"START control matrix computation mkModesMODE 0\"" C-m
+tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
+function_computeModesCM
 
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 ;;

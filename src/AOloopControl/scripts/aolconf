@@ -384,6 +384,7 @@ echo "FUNCTIONS..."
 
 
 . ./aolconfscripts/aolconf_configureloop_funcs
+. ./aolconfscripts/aolconf_controlmatrix_funcs
 
 
 

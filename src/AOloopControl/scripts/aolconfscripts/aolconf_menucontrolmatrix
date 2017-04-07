@@ -27,6 +27,9 @@ For all configurations files (not including Hardware I/O links) :\n
   File is loaded in shared memory as /tmp/\Z4aol${LOOPNUMBER}_<name>\Zn.im.shm\n
 "
 
+
+function_controlmatrix_readparams
+
 confOK=1
 stringcenter "HELP"
 menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
@@ -34,18 +37,7 @@ menuitems+=( " " " " )
 
 
 
-
-SVDlimall=0.01
-if [ -f "./conf/conf_SVDlimall.txt" ]; then
-SVDlimall=$( cat ./conf/conf_SVDlimall.txt )
-fi
 menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
-
-
-
-
-
-
 
 
 
@@ -55,154 +47,61 @@ menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall
 
 if [ "$DMMODE" = "MODAL" ]; then
 
-getshmimsize aol${LOOPNUMBER}_zrespM
-mNBmodes=$( cat conf/conf_imsize_aol${LOOPNUMBER}_zrespM.txt | awk '{printf("%03ld", $3)}' )
-NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
 
 
-
-
 if [ "0" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block00end.txt"
-block00end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "001" > $file
-block00end="001"
-fi
 menuitems+=( "bl00e" "            [ $block00end ]    block 00:  000 -> $block00end" )
 fi
 
 
 if [ "1" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block01end.txt"
-block01end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "001" > $file
-block01end="001"
-fi
 menuitems+=( "bl01e" "            [ $block01end ]    block 01:  $block00end -> $block01end" )
 fi
 
 
 if [ "2" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block02end.txt"
-block02end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "02" > $file
-block02end="02"
-fi
 menuitems+=( "bl02e" "            [ $block02end ]    block 02:  $block01end -> $block02end" )
 fi
 
 
 if [ "3" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block03end.txt"
-block03end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "03" > $file
-block03end="03"
-fi
 menuitems+=( "bl03e" "            [ $block03end ]    block 03:  $block02end -> $block03end" )
 fi
 
 
 if [ "4" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block04end.txt"
-block04end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "04" > $file
-block04end="04"
-fi
 menuitems+=( "bl04e" "            [ $block04end ]    block 04:  $block03end -> $block04end" )
 fi
 
 
 if [ "5" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block05end.txt"
-block05end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "05" > $file
-block05end="05"
-fi
 menuitems+=( "bl05e" "            [ $block05end ]    block 05:  $block04end -> $block05end" )
 fi
 
 
 if [ "6" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block06end.txt"
-block06end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "06" > $file
-block06end="06"
-fi
 menuitems+=( "bl06e" "            [ $block06end ]    block 06:  $block05end -> $block06end" )
 fi
 
 
 if [ "7" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block07end.txt"
-block07end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "07" > $file
-block07end="07"
-fi
 menuitems+=( "bl07e" "            [ $block07end ]    block 07:  $block06end -> $block07end" )
 fi
 
 
 if [ "8" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block08end.txt"
-block08end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "08" > $file
-block08end="08"
-fi
 menuitems+=( "bl08e" "            [ $block08end ]    block 08:  $block07end -> $block08end" )
 fi
 
 
 if [ "9" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block09end.txt"
-block09end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "09" > $file
-block09end="09"
-fi
 menuitems+=( "bl09e" "            [ $block09end ]    block 09:  $block08end -> $block09end" )
 fi
 
 
 if [ "10" -lt "$NBmodeblocks" ]; then
-file="./conf/conf_block10end.txt"
-block10end=$( cat $file )
-if [ -f "$file" ]; then
-echo "OK"
-else
-echo "10" > $file
-block10end="10"
-fi
 menuitems+=( "bl10e" "            [ $block10end ]    block 10:  $block09end -> $block10end" )
 fi
 
@@ -229,14 +128,6 @@ makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
 menuitems+=( "zRM" "$menustring" )
 
 
-SVDNBmodesfile="SVDmodes.log"
-if [ -f ${SVDNBmodesfile} ]; then
-SVDNBmodesstr=$( cat ${SVDNBmodesfile} )
-SVDNBmodes=$( echo ${SVDNBmodesstr} | awk '{ printf("%03d", $1)}' )
-else
-SVDNBmodes="-"
-echo "$SVDNBmodes" > $SVDNBmodes
-fi
 
 menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]" )
 
@@ -247,14 +138,6 @@ menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVD
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
-
- CMMODEfile="conf/conf_CMMODE.txt"
- if [ -f $CMMODEfile ]; then
- CMMODE=$( cat ${CMMODEfile} )
- else
- CMMODE="MODAL"
- echo "$CMMODE" > $CMMODEfile
- fi
 
  if [ "$CMMODE" = "ZONAL" ]; then
  menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
@@ -274,13 +157,6 @@ if [ "$DMMODE" = "ZONAL" ]; then
  menuitems+=( " " " " )
 
 
- file="./conf/conf_extrablockMindex.txt"
- if [ -f $file ]; then
- extrablockIndex=$(echo "$(cat ./conf/conf_extrablockIndex.txt)")
- else
- echo "4" > $file
- extrablockIndex="4"
- fi
  menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
 
 
@@ -298,16 +174,6 @@ if [ "$DMMODE" = "ZONAL" ]; then
 
 
  menuitems+=( " " " " )
-
- mkmodesdatestr=$(stat -c %y ./conf/conf_NBmodeblocks.txt)
- mkmodesdatestr=${mkmodesdatestr% *}
- NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
- NBmodes=$( cat ./conf/conf_NBmodes.txt )
-
- staged_mkmodesdatestr=$(stat -c %y ./conf_staged/conf_NBmodeblocks.txt)
- staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
- staged_NBmodeblocks=$( cat ./conf_staged/conf_NBmodeblocks.txt )
- staged_NBmodes=$( cat ./conf_staged/conf_NBmodes.txt )
 
  menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
  #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
@@ -358,7 +224,6 @@ for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 
 menuitems+=( "SetSVD${i2}" "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes - SVD = ${SVDlim[10#${i2}]}\Zn")
