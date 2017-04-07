@@ -131,7 +131,7 @@ echo " "
 
 echo "LOCKS (indicates processes held waiting)"
 echo " "
-ls -1 function*.lock 2>/dev/null
+ls -1 function*.block 2>/dev/null
 
 
 sleep 1.0
