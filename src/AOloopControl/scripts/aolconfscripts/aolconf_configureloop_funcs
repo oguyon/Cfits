@@ -346,6 +346,7 @@ echo "ENTERING function_nAUTOC"
 
 
 if [ ! -f "FUNCTION_nAUTOC.runproc" ]; then
+echo "start calib"
 aoconflogext "START AUTO CALIBRATION"
 
 tmuxname="aol${LOOPNUMBER}arespM"
@@ -375,7 +376,10 @@ function_acqWFSresp
 
 tmux send-keys -t ${tmuxname} "rm FUNCTION_nAUTOC.runproc" C-m
 
+else
+echo "already running"
 fi
+
 }
 
 
