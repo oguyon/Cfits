@@ -905,17 +905,21 @@ tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile aolmkmodes.runproc" C-m
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_SharedMemLoadCM.block" C-m
 function_SharedMemLoadCM
 
-tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 
+fi
+
+sleep 2
 
 # IF LOOP WAS ON, RESTART HERE
 if [ "$procONstat_old" = " ON" ]; then
  function_AOloopProcess_ON ${tmuxnameC0}
+ sleep 5
  if [ "$loopONstat_old" = " ON" ]; then
   function_LOOP_ON ${tmuxnameC0}
  fi
 fi
-fi
+
+
 	;;
 
 
