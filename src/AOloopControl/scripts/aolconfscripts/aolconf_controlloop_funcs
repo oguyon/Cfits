@@ -817,6 +817,9 @@ fi
 
 
 
+
+
+
 # argument is tmux session name within which command should be executed
 # if agrument is NULL, execute from bash
 
@@ -846,7 +849,7 @@ echo "sleep 1" >> $scriptfile
 echo "tmux new-session -d -s aol${LOOPNUMBER}-run" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr " " C-m" >> $scriptfile
 logRunningProcessQ0 "aolrun" "aol${LOOPNUMBER}-run" "AO loop real-time loop"
-echo "tmux send-keys -t ${tmuxname} \"mv aolrun.runprocQ aolrun.runproc\" C-m" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-run \"mv aolrun.runprocQ aolrun.runproc\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-run \"./auxscripts/aolrun\" C-m" >> $scriptfile
 
 echo "sleep 1" >> $scriptfile
