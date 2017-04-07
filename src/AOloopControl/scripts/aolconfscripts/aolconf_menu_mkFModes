@@ -37,13 +37,13 @@ if [ -z "$cpamax" ]; then cpamax=${cpamaxdefault}; else echo "cpamax is set to '
 
 
 
-dialog --title "AO loop configuration" \
+cpamax=$(dialog --title "AO loop configuration" \
 --ok-label "Select" \
 --cancel-label "Main" \
 --help-button --help-label "Exit" \
 --default-item ${cpamax} \
 --menu "$menuname" \
- 50 80 100 "${menuitems[@]}"  2> $tempfile
+ 50 80 100 "${menuitems[@]}"  2> $tempfile)
 
 retval=$?
 
@@ -51,7 +51,7 @@ retval=$?
 case $retval in
    0) state="menucontrolmatrix"
 
-cpamax="$tempfile"
+#cpamax="$tempfile"
 
 #function_computeModesCM
 
