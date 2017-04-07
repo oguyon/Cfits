@@ -736,6 +736,8 @@ fi
 tmuxnameC0="aol${LOOPNUMBER}caliball"
 logRunningProcess "FUNCTION_C0" "$tmuxnameC0" "==== CALIBRATION ===="
 tmux new-session -d -s ${tmuxnameC0}
+tmux send-keys -t ${tmuxnameC0} " " C-c
+tmux send-keys -t ${tmuxnameC0} "" C-m
 
 
 

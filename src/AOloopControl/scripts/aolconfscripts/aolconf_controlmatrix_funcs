@@ -206,7 +206,8 @@ fi
 
 
 
-function function_computeModesCM {
+function function_computeModesCM 
+{
 tmuxnameMCM="aol${LOOPNUMBER}mkmodes"
 tmux send-keys -t ${tmuxnameMCM} "./auxscripts/waitonfile FUNCTION_computeModesCM.block" C-m
 
