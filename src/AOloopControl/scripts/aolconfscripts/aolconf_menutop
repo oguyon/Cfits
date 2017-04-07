@@ -821,7 +821,7 @@ tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 
 
 	C1) # ADOPT CALIBRATION
-C1test=1
+C1test=0
 	
 tmuxnameC0="aol${LOOPNUMBER}caliball"
 tmux send-keys -t ${tmuxnameC0} " " C-c
@@ -908,13 +908,13 @@ function_SharedMemLoadCM
 
 fi
 
-sleep 2
+
 
 # IF LOOP WAS ON, RESTART HERE
 if [ "$procONstat_old" = " ON" ]; then
  tmux send-keys -t ${tmuxnameC0} "# TURNING PROCESSES BACK ON" C-m
  function_AOloopProcess_ON ${tmuxnameC0}
- sleep 20
+ sleep 1
  if [ "$loopONstat_old" = " ON" ]; then
   tmux send-keys -t ${tmuxnameC0} "# TURNING LOOP BACK ON" C-m
   function_LOOP_ON ${tmuxnameC0}
