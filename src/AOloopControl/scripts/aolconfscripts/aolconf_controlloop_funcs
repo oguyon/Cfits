@@ -1131,7 +1131,7 @@ fi
 function function_LOOP_ON {
 
 # all commands written in script file
-scriptfile="script_AOloopProcess_ON"
+scriptfile="script_AOloop_ON"
 rm $scriptfile
 touch $scriptfile
 chmod +x $scriptfile
@@ -1170,7 +1170,7 @@ fi
 function function_LOOP_OFF {
 	
 # all commands written in script file
-scriptfile="script_AOloopProcess_OFF"
+scriptfile="script_AOloop_OFF"
 rm $scriptfile
 touch $scriptfile
 chmod +x $scriptfile
