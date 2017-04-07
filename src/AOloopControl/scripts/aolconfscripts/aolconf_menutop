@@ -694,7 +694,7 @@ function_configureloop_readparams
 function_nAUTOC
 
 sleep 0.5
-./auxscripts/waitonfile function_nAUTOC.runproc
+./auxscripts/waitonfile FUNCTION_nAUTOC.runproc
 
 aoconflogext "Update all configuration files"
 cp ./conf_staged/*.txt ./conf/

@@ -301,7 +301,7 @@ fi
 
 
 
-if [ -f "FUNCTION_acqWFSresp.runproc" ]; then
+if [ -f "FUNCTION_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
 else
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
