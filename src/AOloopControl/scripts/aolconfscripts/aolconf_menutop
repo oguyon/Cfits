@@ -912,11 +912,17 @@ sleep 2
 
 # IF LOOP WAS ON, RESTART HERE
 if [ "$procONstat_old" = " ON" ]; then
+ tmux send-keys -t ${tmuxnameC0} "# TURNING PROCESSES BACK ON" C-m
  function_AOloopProcess_ON ${tmuxnameC0}
- sleep 5
+ sleep 20
  if [ "$loopONstat_old" = " ON" ]; then
+  tmux send-keys -t ${tmuxnameC0} "# TURNING LOOP BACK ON" C-m
   function_LOOP_ON ${tmuxnameC0}
+ else
+  tmux send-keys -t ${tmuxnameC0} "# LEAVING LOOP OFF" C-m
  fi
+else
+tmux send-keys -t ${tmuxnameC0} "# LEAVING PROCESSES OFF" C-m
 fi
 
 
