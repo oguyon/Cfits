@@ -217,6 +217,7 @@ tmux send-keys -t ${tmuxnameMCM} "./auxscripts/waitonfile FUNCTION_computeModesC
 logRunningProcessQ "aolmkmodes" "$tmuxnameMCM" "Compute control modes and control matrix (tmux session $tmuxname)"
 
 computeModesCMscriptfile="function_computeModesCM.script"
+rm $computeModesCMscriptfile
 touch $computeModesCMscriptfile
 
 echo "mkdir -p DMmodes" >> $computeModesCMscriptfile
