@@ -1125,12 +1125,12 @@ menucontrolloop_default="LPwfsresa"
 
 
    	 Nloopon)
-function_LOOP_ON
+function_LOOP_ON "NULL"
 menucontrolloop_default="Floopoff"
 ;; 
 
    	 Floopoff)
-function_LOOP_OFF
+function_LOOP_OFF "NULL"
 menucontrolloop_default="Nloopon"
 ;;
 
