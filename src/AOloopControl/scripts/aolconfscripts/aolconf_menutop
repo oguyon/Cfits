@@ -779,6 +779,7 @@ tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m
 
 
 # LOAD CM (conf -> shared mem)
+tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile aol${LOOPNUMBER}mkmodes.runproc" C-m
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_SharedMemLoadCM.block" C-m
 function_SharedMemLoadCM
 
