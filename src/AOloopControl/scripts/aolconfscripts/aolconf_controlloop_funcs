@@ -804,6 +804,7 @@ EOF
 
 
 function function_AOloopProcess_ON {
+	
 echo " ON" > ./status/stat_procON.txt
 #rm aolctr-${LOOPNUMBER}-fifo
 aoconflogext "START LOOP PROCESSES"
@@ -972,12 +973,14 @@ tmux new-session -d -s $tmuxname
 logRunningProcess "aolmkWFSres" "$tmuxname" "compute and average WFS residual"
 tmux send-keys -t $tmuxname "./auxscripts/aolmkWFSres 0.0005" C-m
 fi
+
 }
 
  
 
 
-function function_AOloopProcess_ON {
+function function_AOloopProcess_OFF {
+
 echo "OFF" > ./status/stat_procON.txt
 aoconflogext "STOP LOOP PROCESSES"
 tmux send-keys -t aol${LOOPNUMBER}-ctr "aoloff" C-m
@@ -1042,6 +1045,7 @@ echo "OFF" > $file
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
 fi
+
 }
 
 
@@ -1054,6 +1058,7 @@ fi
 
 
 function function_LOOP_ON {
+
 echo " ON" > ./status/stat_loopON.txt
 aoconflogext "LOOP ON [gain = ${loopgain}   maxlim = ${loopmaxlim}   multcoeff = ${loopmultcoeff}]"
 customfunction_startloop
