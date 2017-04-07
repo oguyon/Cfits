@@ -209,6 +209,9 @@ fi
 function function_computeModesCM 
 {
 tmuxnameMCM="aol${LOOPNUMBER}mkmodes"
+
+tmux send-keys -t ${tmuxnameMCM} "" C-c
+tmux send-keys -t ${tmuxnameMCM} "" C-m
 tmux send-keys -t ${tmuxnameMCM} "./auxscripts/waitonfile FUNCTION_computeModesCM.block" C-m
 
 logRunningProcessQ "aolmkmodes" "$tmuxnameMCM" "Compute control modes and control matrix (tmux session $tmuxname)"
