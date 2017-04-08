@@ -13006,6 +13006,11 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
    	if(IDblknb==-1)
 		IDblknb = read_sharedmem_image(imname);
 
+	if(aoconfID_LIMIT_modes == -1)
+	{
+		sprintf(imname, "aol%ld_DMmode_LIMIT", loop);
+		aoconfID_LIMIT_modes = read_sharedmem_image(imname);
+	}
 
 
     printw("   STATUS = %3d  ", AOconf[loop].status);
