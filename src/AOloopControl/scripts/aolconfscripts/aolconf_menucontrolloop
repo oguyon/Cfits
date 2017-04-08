@@ -346,10 +346,10 @@ menuitems+=( " " " " )
 
 menuitems+=( "limreset" "Reset mode limit coefficients to 1.0" )
        
-if [ "${AUTOTUNELIMITS_ON}" = "OFF" ]; then
-  menuitems+=( "ONatlim" "  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
+if [ "$AUTOTUNELIMITS_ON" = "OFF" ]; then
+  menuitems+=( "ONatlim" "[$AUTOTUNELIMITS_ON]  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
 else
-  menuitems+=( "OFFatlim" "\Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
+  menuitems+=( "OFFatlim" "[$AUTOTUNELIMITS_ON] \Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
 fi
 
 menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMITperc}" )
