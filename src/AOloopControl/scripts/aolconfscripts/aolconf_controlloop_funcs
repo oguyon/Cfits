@@ -531,7 +531,7 @@ AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
 if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
    echo "OK"
 else
-   echo "OFF0" > ./status/stat_AUTOTUNELIMITS_ON.txt
+   echo "OFF0 $AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
    AUTOTUNELIMITS_ON="OFF"
 fi
 
