@@ -1255,6 +1255,7 @@ tmux kill-session -t alignPcam &> mesg.log
 tmux new-session -d -s alignPcam
 tmux send-keys -t alignPcam "./aocscripts/alignPcam_${LOOPNAME}" C-m
 echo " ON" > ./status/status_alignPcam.txt
+./statusext "puploop" "'CLOSED' 3" &
 menualign_default="pk"
 state="menualign"
 ;; 
@@ -1266,6 +1267,7 @@ then
 dialog --title "Message" --msgbox "Starting Pcam align\n (CTRL-C now to abort)\n" 8 30
 fi
 echo " ON" > ./status/status_alignPcam.txt
+./statusext "puploop" "'CLOSED' 3" &
 menualign_default="pp"
 state="menualign"
 ;;  
@@ -1280,6 +1282,7 @@ state="menualign"
 	pp) 
 touch pause_PyAlignCam.txt
 echo "PAU" > ./status/status_alignPcam.txt
+./statusext "puploop" "'OPEN' 1" &
 aoconflogext "Pupil align loop pause"
 menualign_default="pr"
 state="menualign"
@@ -1287,6 +1290,7 @@ state="menualign"
    	 pk) 
 touch stop_PyAlignCam.txt
 echo "OFF" > ./status/status_alignPcam.txt
+./statusext "puploop" "'OPEN' 1" &
 tmux kill-session -t alignPcam
 aoconflogext "Pupil align loop kill"
 menualign_default="ps"
