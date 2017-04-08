@@ -8701,6 +8701,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
                 printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
                 fflush(stdout);
+                
 				list_image_ID();
 				
                 sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
@@ -9509,13 +9510,14 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
             }
         sizeWFS_active[slice] = ii1;
         sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice);
-        
+
+/* CAN CRASH        
         sizearray = (long*) malloc(sizeof(long)*2);
         sizearray[0] =  sizeWFS_active[slice];
         sizearray[1] =  1;
         aoconfID_imWFS2_active[slice] = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
 		free(sizearray);
-    //    aoconfID_imWFS2_active[slice] = create_2Dimage_ID(imname, sizeWFS_active[slice], 1);
+*/
     }
 
 
@@ -9530,13 +9532,15 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
         }
     sizeDM_active = ii1;
     //   aoconfID_meas_act_active = create_2Dimage_ID("meas_act_active", sizeDM_active, 1);
+
+/* CAN CRASH
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = sizeDM_active;
     sizearray[1] = 1;
     sprintf(name, "aol%ld_meas_act_active", LOOPNUMBER);
     aoconfID_meas_act_active = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
-    free(sizearray);
-
+   free(sizearray);
+*/
 
 
 
