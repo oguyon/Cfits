@@ -8635,7 +8635,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-exit(0);//TEST
+//exit(0);//TEST
 
 
 
