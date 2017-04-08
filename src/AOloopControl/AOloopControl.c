@@ -11272,6 +11272,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	float limitblockarray[100];
 	long IDatlimbcoeff;
 	
+	float coeff;
+	
 	int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
@@ -11601,7 +11603,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				for(block=0;block<AOconf[loop].DMmodesNBblock;block++)
 					{
 						data.image[IDatlimbcoeff].array.F[block] = limitblockarray[block] / blockNBmodes[block];
-						data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * ( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
+						coeff = ( 1.0 + (data.image[IDatlimbcoeff].array.F[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
+						if(coeff < 1.0-AOconf[loop].AUTOTUNE_LIMITS_delta )
+							coeff = 1.0-AOconf[loop].AUTOTUNE_LIMITS_delta;
+						if(coeff> 1.0+AOconf[loop].AUTOTUNE_LIMITS_delta )
+							coeff = 1.0+AOconf[loop].AUTOTUNE_LIMITS_delta;
+						data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * coeff;
 					}
 				COREMOD_MEMORY_image_set_sempost_byID(IDatlimbcoeff, -1);
 				data.image[IDatlimbcoeff].md[0].cnt0++;
