@@ -11240,7 +11240,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	float *modemult;
 	float *modelimit;
 	long *modeblock;
-	long i, n, ID, m, blk, NBblock, NBmodes;
+	long i, n, ID, m, blk, NBmodes;
 	unsigned int blockNBmodes[100];
 	long *sizeout;
 	float framelatency = 2.8;
@@ -11275,7 +11275,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
-
+	char command[200];
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -11404,9 +11404,11 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     COREMOD_MEMORY_image_set_createsem(imname, 10);     
 
 
+	sprintf(command, "echo \"%ld\" > test.txt", AOconf[loop].DMmodesNBblock);
+	system(command);
 	
 	// auto limit tuning
-	sizeout[0] = NBblock;
+	sizeout[0] = AOconf[loop].DMmodesNBblock;
 	sizeout[1] = 1;
 	sprintf(imname, "aol%ld_autotune_lim_bcoeff", loop);
     IDatlimbcoeff = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
@@ -11438,7 +11440,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	COREMOD_MEMORY_image_set_sempost_byID(IDblknb, -1);
 	data.image[IDblknb].md[0].cnt0++;
 	data.image[IDblknb].md[0].write = 0;
-	NBblock = blk;
+	
 
 
 	
@@ -11575,7 +11577,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
 			{
 				data.image[IDatlimbcoeff].md[0].write = 1;
-				for(block=0;block<NBblock;block++)
+				for(block=0;block<AOconf[loop].DMmodesNBblock;block++)
 					limitblockarray[block] = 0.0;
 				
 				data.image[aoconfID_LIMIT_modes].md[0].write = 1;
@@ -11598,7 +11600,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[aoconfID_LIMIT_modes].md[0].write = 0;				
 
 				data.image[IDatlimbcoeff].md[0].write = 1;
-				for(block=0;block<NBblock;block++)
+				for(block=0;block<AOconf[loop].DMmodesNBblock;block++)
 					{
 						data.image[IDatlimbcoeff].array.F[block] = limitblockarray[block] / blockNBmodes[block];
 						//data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * ( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
