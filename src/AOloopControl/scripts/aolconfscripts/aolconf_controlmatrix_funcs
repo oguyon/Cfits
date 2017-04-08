@@ -206,6 +206,8 @@ fi
 
 
 
+
+
 function function_computeModesCM 
 {
 tmuxnameMCM="aol${LOOPNUMBER}mkmodes"
@@ -291,6 +293,7 @@ tmux send-keys -t ${tmuxnameSMlCM} "" C-c
 tmux send-keys -t ${tmuxnameSMlCM} " " C-m
 
 tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/waitonfile FUNCTION_SharedMemLoadCM.block" C-m
+logRunningProcessQ "SharedMemLoadCM" "${tmuxnameSMlCM}" "Load control matrix into shared memory" 
 tmux send-keys -t ${tmuxnameSMlCM} "aoconflogext \"LOAD CM to shared memory\"" C-m
 
 # zonal calib
@@ -314,7 +317,7 @@ echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedM
 done
 chmod +x script_SharedMemLoadCM
 tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
-tmux send-keys -t ${tmuxnameSMlCM} "#rm script_SharedMemLoadCM" C-m	
+tmux send-keys -t ${tmuxnameSMlCM} "rm SharedMemLoadCM.runproc" C-m	
 
 
 

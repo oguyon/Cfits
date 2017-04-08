@@ -11731,6 +11731,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 }
 
 
+//
+// gains autotune
+//
+// input: modeval_ol
+//
+//
 int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 {
 	long IDmodevalOL;
