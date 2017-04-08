@@ -2073,205 +2073,101 @@ aoconflogext "multiply ref by ${value}"
 
 
 	zplon0)
-echo " ON" > ./status/stat_zploopON0.txt
-tmuxname="aol${LOOPNUMBER}zploop0"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop0" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP0" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP0 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo0" C-m
+function_zplon 0
 menucontrolloop_default="zploff0"
 aoconflogext "start zero-point offset loop 0"
 ;; 
 
 	zploff0)
-echo "OFF" > ./status/stat_zploopON0.txt
-tmuxname="aol${LOOPNUMBER}zploop0"
-tmux kill-session -t $tmuxname 
+function_zploff 0
 menucontrolloop_default="zplon0"
 aoconflogext "stop zero-point offset loop 0"
 	;;
 
 
 	zplon1)
-echo " ON" > ./status/stat_zploopON1.txt
-tmuxname="aol${LOOPNUMBER}zploop1"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop1" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP1" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP1 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo1" C-m
+function_zplon 1
 menucontrolloop_default="zploff1"
 aoconflogext "start zero-point offset loop 1"
 ;; 
 
 	zploff1)
-echo "OFF" > ./status/stat_zploopON1.txt
-tmuxname="aol${LOOPNUMBER}zploop1"
-tmux kill-session -t $tmuxname 
+function_zploff 1
 menucontrolloop_default="zplon1"
 aoconflogext "stop zero-point offset loop 1"
 	;;
 
 
 	zplon2)
-echo " ON" > ./status/stat_zploopON2.txt
-tmuxname="aol${LOOPNUMBER}zploop2"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop2" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP2" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP2 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo2" C-m
+function_zplon 2
 menucontrolloop_default="zploff2"
 aoconflogext "start zero-point offset loop 2"
 ;; 
 
 	zploff2)
-echo "OFF" > ./status/stat_zploopON2.txt
-tmuxname="aol${LOOPNUMBER}zploop2"
-tmux kill-session -t $tmuxname 
+function_zploff 2
 menucontrolloop_default="zplon2"
 aoconflogext "stop zero-point offset loop 2"
 	;;
 
 	zplon3)
-echo " ON" > ./status/stat_zploopON3.txt
-tmuxname="aol${LOOPNUMBER}zploop3"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop3" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP3 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo3" C-m
+function_zplon 3
 menucontrolloop_default="zploff3"
 aoconflogext "start zero-point offset loop 3"
 ;; 
 
 	zploff3)
-echo "OFF" > ./status/stat_zploopON3.txt
-tmuxname="aol${LOOPNUMBER}zploop3"
-tmux kill-session -t $tmuxname 
+function_zploff 3
 menucontrolloop_default="zplon3"
 aoconflogext "stop zero-point offset loop 3"
 	;;
 
 	zplon4)
-echo " ON" > ./status/stat_zploopON4.txt
-tmuxname="aol${LOOPNUMBER}zploop4"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop4" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP4" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP4 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo4" C-m
+function_zplon 4
 menucontrolloop_default="zploff4"
 aoconflogext "start zero-point offset loop 4"
 ;; 
 
 	zploff4)
-echo "OFF" > ./status/stat_zploopON4.txt
-tmuxname="aol${LOOPNUMBER}zploop4"
-tmux kill-session -t $tmuxname 
+function_zploff 4
 menucontrolloop_default="zplon4"
 aoconflogext "stop zero-point offset loop 4"
 	;;
 
 
 	zplon5)
-echo " ON" > ./status/stat_zploopON5.txt
-tmuxname="aol${LOOPNUMBER}zploop5"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop5" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP5 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo5" C-m
+function_zplon 5
 menucontrolloop_default="zploff5"
 aoconflogext "start zero-point offset loop 5"
 ;; 
 
 	zploff5)
-echo "OFF" > ./status/stat_zploopON5.txt
-tmuxname="aol${LOOPNUMBER}zploop5"
-tmux kill-session -t $tmuxname 
+function_zploff 5
 menucontrolloop_default="zplon5"
 aoconflogext "stop zero-point offset loop 5"
 	;;
 
 
 	zplon6)
-echo " ON" > ./status/stat_zploopON6.txt
-tmuxname="aol${LOOPNUMBER}zploop6"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop6" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP6 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo6" C-m
+function_zplon 6
 menucontrolloop_default="zploff6"
 aoconflogext "start zero-point offset loop 6"
 ;; 
 
 	zploff6)
-echo "OFF" > ./status/stat_zploopON6.txt
-tmuxname="aol${LOOPNUMBER}zploop6"
-tmux kill-session -t $tmuxname 
+function_zploff 6
 menucontrolloop_default="zplon6"
 aoconflogext "stop zero-point offset loop 6"
 	;;
 
 	zplon7)
-echo " ON" > ./status/stat_zploopON7.txt
-tmuxname="aol${LOOPNUMBER}zploop7"
-tmux new-session -d -s $tmuxname
-tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}zploop7" C-m
-if [ "$CPUconfRT" -eq "1" ];then
-tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT" C-m
-fi
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
-tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "aolzpwfsloop aol${LOOPNUMBER}_dmZP7 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo7" C-m
+function_zplon 7
 menucontrolloop_default="zploff7"
 aoconflogext "start zero-point offset loop 7"
 ;; 
 
 	zploff7)
-echo "OFF" > ./status/stat_zploopON7.txt
-tmuxname="aol${LOOPNUMBER}zploop7"
-tmux kill-session -t $tmuxname 
+function_zploff 7
 menucontrolloop_default="zplon7"
 aoconflogext "stop zero-point offset loop 7"
 	;;

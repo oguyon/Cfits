@@ -1203,3 +1203,29 @@ tmux send-keys -t $1 "./$scriptfile" C-m
 fi
 
 }
+
+
+# args : 
+function function_zplon
+{
+echo " ON" > ./status/stat_zploopON$1.txt
+tmuxnameZP="aol${LOOPNUMBER}zploop$1"
+unset TMUX
+tmux new-session -d -s $tmuxnameZP
+tmux send-keys -t $tmuxnameZP "$execname -n aol${LOOPNUMBER}zploop$1" C-m
+if [ "$CPUconfRT" -eq "1" ];then
+tmux send-keys -t $tmuxnameZP "csetpmove aol${LOOPNUMBER}RT" C-m
+fi
+tmux send-keys -t $tmuxnameZP "readshmim aol${LOOPNUMBER}_wfszpo$1" C-m
+tmux send-keys -t $tmuxnameZP "readshmim aol${LOOPNUMBER}_dmZP$1" C-m
+tmux send-keys -t $tmuxnameZP "readshmim aol${LOOPNUMBER}_zrespM" C-m
+tmux send-keys -t $tmuxnameZP "listim" C-m
+tmux send-keys -t $tmuxnameZP "aolzpwfsloop aol${LOOPNUMBER}_dmZP$1 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo$1" C-m
+}
+
+function function_zploff
+{
+echo "OFF" > ./status/stat_zploopON$1.txt
+tmuxnameZP="aol${LOOPNUMBER}zploop$1"
+tmux kill-session -t $tmuxnameZP
+}
