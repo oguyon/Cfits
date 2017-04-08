@@ -726,6 +726,11 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc_cli(){
       AOloopControl_set_AUTOTUNE_LIMITS_perc(data.cmdargtoken[1].val.numf);
       return 0;} else return 1;}
 
+int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff_cli(){
+  if(CLI_checkarg(1,1)==0) {
+      AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(data.cmdargtoken[1].val.numf);
+      return 0;} else return 1;}
+
 int_fast8_t AOloopControl_setgain_cli(){
   if(CLI_checkarg(1,1)==0) {
       AOloopControl_setgain(data.cmdargtoken[1].val.numf);
@@ -1236,6 +1241,8 @@ int_fast8_t init_AOloopControl()
 
 	RegisterCLIcommand("aolsetATlimp", __FILE__, AOloopControl_set_AUTOTUNE_LIMITS_perc_cli, "set auto-tuning modal limits percentile", "<percentile value [percent]>", "aolsetATlimp 1.0", "int AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)");
 
+	RegisterCLIcommand("aolsetATlimm", __FILE__, AOloopControl_set_AUTOTUNE_LIMITS_mcoeff_cli, "set auto-tuning modal limits multiplicative coeff", "<multiplicative coeff [float]>", "aolsetATlimm 1.5", "int AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(float AUTOTUNE_LIMITS_mcoeff)");
+	
     RegisterCLIcommand("aolAUTOTUNEGAINon", __FILE__, AOloopControl_AUTOTUNE_GAINS_on, "turn auto-tuning modal gains on", "no arg", "aolAUTOTUNEGAINon", "int AOloopControl_AUTOTUNE_GAINS_on()");
 
     RegisterCLIcommand("aolAUTOTUNEGAINoff", __FILE__, AOloopControl_AUTOTUNE_GAINS_off, "turn auto-tuning modal gains off", "no arg", "aolAUTOTUNEGAINoff", "int AOloopControl_AUTOTUNE_GAINS_off()");
@@ -2392,6 +2399,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             AOconf[loop].mult = 1.00;
             AOconf[loop].gain = 0.0;
             AOconf[loop].AUTOTUNE_LIMITS_perc = 1.0; // percentile threshold
+            AOconf[loop].AUTOTUNE_LIMITS_mcoeff = 1.0; // multiplicative coeff
 			AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-3;
             AOconf[loop].ARPFgain = 0.0;
             AOconf[loop].WFSnormfloor = 0.0;
@@ -11586,7 +11594,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					{
 						block = data.image[IDblknb].array.U[m];	
 						
-						if( fabs(data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) 
+						if( fabs(AOconf[loop].AUTOTUNE_LIMITS_mcoeff*data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) 
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 + AOconf[loop].AUTOTUNE_LIMITS_delta);
 						else
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 - AOconf[loop].AUTOTUNE_LIMITS_delta*0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
@@ -11603,7 +11611,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				for(block=0;block<AOconf[loop].DMmodesNBblock;block++)
 					{
 						data.image[IDatlimbcoeff].array.F[block] = limitblockarray[block] / blockNBmodes[block];
-						coeff = ( 1.0 + (data.image[IDatlimbcoeff].array.F[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
+						coeff = ( 1.0 + (data.image[IDatlimbcoeff].array.F[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta*0.1 );
 						if(coeff < 1.0-AOconf[loop].AUTOTUNE_LIMITS_delta )
 							coeff = 1.0-AOconf[loop].AUTOTUNE_LIMITS_delta;
 						if(coeff> 1.0+AOconf[loop].AUTOTUNE_LIMITS_delta )
@@ -12616,6 +12624,16 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)
   return 0;
 }
 
+int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(float AUTOTUNE_LIMITS_mcoeff)
+{
+  if(AOloopcontrol_meminit==0)
+    AOloopControl_InitializeMemory(1);
+
+  AOconf[LOOPNUMBER].AUTOTUNE_LIMITS_mcoeff = AUTOTUNE_LIMITS_mcoeff;
+  AOloopControl_showparams(LOOPNUMBER);
+
+  return 0;
+}
 
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_on()
 {
@@ -13064,7 +13082,7 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     
     
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
-	printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm) GAIN = %d\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta, AOconf[loop].AUTOTUNE_GAINS_ON);
+	printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm mcoeff=%4.2f) GAIN = %d\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta, AOconf[loop].AUTOTUNE_LIMITS_mcoeff, AOconf[loop].AUTOTUNE_GAINS_ON);
 	printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardwlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
 	nbl++;
     nbl++;

@@ -136,6 +136,7 @@ typedef struct
 	// limits
 	int_fast8_t AUTOTUNE_LIMITS_ON;
 	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
+	float AUTOTUNE_LIMITS_mcoeff; // multiplicative coeff 
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
 
 	int_fast8_t AUTOTUNE_GAINS_ON;
@@ -488,6 +489,8 @@ int_fast8_t AOloopControl_AUTOTUNE_LIMITS_off();
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta);
 
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc);
+
+int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(float AUTOTUNE_LIMITS_mcoeff);
 
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_on();
 
