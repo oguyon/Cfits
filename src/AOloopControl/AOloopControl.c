@@ -11591,7 +11591,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			
 				for(block=0;block<NBblock;block++)
 					{
-						limitblockarray[block] /= blockNBmodes;
+						limitblockarray[block] /= blockNBmodes[block];
 						data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block]*( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
 					}
 				
