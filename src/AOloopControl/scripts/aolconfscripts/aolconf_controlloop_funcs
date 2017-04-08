@@ -528,11 +528,9 @@ fi
 
                           
 AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
-
 if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
-   echo "OK   $AUTOTUNELIMITS_ON" > autotunetest.txt
+   echo "OK   $AUTOTUNELIMITS_ON"
 else
-   echo "not OK   $AUTOTUNELIMITS_ON" > autotunetest.txt
    echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
    AUTOTUNELIMITS_ON="OFF"
 fi
@@ -549,7 +547,7 @@ if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
  AUTOTUNELIMITdelta=$( cat ./conf/conf_AUTOTUNELIMITdelta.txt )
 fi
 
-AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNEGAINS_ON.txt )
+AUTOTUNEGAINS_ON=$( cat ./status/stat_AUTOTUNEGAINS_ON.txt )
 if [[ -f "./status/stat_AUTOTUNEGAINS_ON.txt" && ( "$AUTOTUNEGAINS_ON" = " ON" || "$AUTOTUNEGAINS_ON" = "OFF" ) ]]; then
  echo "OK"
 else
