@@ -8702,7 +8702,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
                 fflush(stdout);
                 
-				list_image_ID();
+			//	list_image_ID();
 				
                 sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock);
                 load_fits(fname, imname, 1);

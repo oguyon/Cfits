@@ -1139,6 +1139,8 @@ chmod +x $scriptfile
 echo "echo \" ON\" > ./status/stat_loopON.txt" >> $scriptfile
 echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"LOOP ON [gain = ${loopgain}   maxlim = ${loopmaxlim}   multcoeff = ${loopmultcoeff}]\"" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolon\" C-m" >> $scriptfile
+echo "./setupAOloopON" >> $scriptfile
+
 
 
 if [ "$1" = "NULL" ]; then
@@ -1178,7 +1180,7 @@ chmod +x $scriptfile
 echo "echo \"OFF\" > ./status/stat_loopON.txt" >> $scriptfile
 echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"LOOP OFF\"" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aoloff\" C-m" >> $scriptfile
-
+echo "./setupAOloopOFF" >> $scriptfile
 
 
 if [ "$1" = "NULL" ]; then
