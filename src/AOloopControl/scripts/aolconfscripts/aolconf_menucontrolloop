@@ -1278,6 +1278,7 @@ menucontrolloop_default="wzpoinit"
  	 loopmultcoeff=${value}
  	 echo "$loopmultcoeff" > ./conf/conf_loopmultcoeff.txt
 	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmult ${loopmultcoeff}" C-m
+	 ./statusext "leak" "${loopmultcoeff}" &
 	 aoconflogext "set mult coeff ${loopmultcoeff}"
      	 ;;  
 
