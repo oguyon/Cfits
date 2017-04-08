@@ -11275,7 +11275,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
-	char command[200];
+
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -11404,8 +11404,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     COREMOD_MEMORY_image_set_createsem(imname, 10);     
 
 
-	sprintf(command, "echo \"%ld\" > test.txt", AOconf[loop].DMmodesNBblock);
-	system(command);
 	
 	// auto limit tuning
 	sizeout[0] = AOconf[loop].DMmodesNBblock;
@@ -11603,7 +11601,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				for(block=0;block<AOconf[loop].DMmodesNBblock;block++)
 					{
 						data.image[IDatlimbcoeff].array.F[block] = limitblockarray[block] / blockNBmodes[block];
-						//data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * ( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
+						data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * ( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
 					}
 				COREMOD_MEMORY_image_set_sempost_byID(IDatlimbcoeff, -1);
 				data.image[IDatlimbcoeff].md[0].cnt0++;
