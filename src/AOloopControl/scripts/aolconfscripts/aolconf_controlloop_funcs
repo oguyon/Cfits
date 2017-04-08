@@ -526,12 +526,14 @@ else
  DMprimWriteON=$( cat $file )
 fi
 
-
+                          
 AUTOTUNELIMITS_ON=$( cat ./status/stat_AUTOTUNELIMITS_ON.txt )
+
 if [[ -f "./status/stat_AUTOTUNELIMITS_ON.txt" && ( "$AUTOTUNELIMITS_ON" = " ON" || "$AUTOTUNELIMITS_ON" = "OFF" ) ]]; then
-   echo "OK"
+   echo "OK   $AUTOTUNELIMITS_ON" > autotunetest.txt
 else
-   echo "OFF0 $AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
+   echo "not OK   $AUTOTUNELIMITS_ON" > autotunetest.txt
+   echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
    AUTOTUNELIMITS_ON="OFF"
 fi
 
