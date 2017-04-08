@@ -11509,7 +11509,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-		// write gain and mult into arrays
+		// write gain, mult, limit into arrays
 		for(m=0;m<NBmodes;m++)
 		{
 			modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[modeblock[m]] * data.image[aoconfID_GAIN_modes].array.F[m];

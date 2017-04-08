@@ -345,11 +345,10 @@ fi
 menuitems+=( " " " " )
 
 menuitems+=( "limreset" "Reset mode limit coefficients to 1.0" )
-
-if [ "${AUTOTUNELIMITS_ON}" = "OFF" ];
-  then
+       
+if [ "${AUTOTUNELIMITS_ON}" = "OFF" ]; then
   menuitems+=( "ONatlim" "  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
-  else
+else
   menuitems+=( "OFFatlim" "\Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
 fi
 
@@ -1310,14 +1309,14 @@ EOF
 	
 	ONatlim)
 	AUTOTUNELIMITS_ON=" ON"
-	echo "$AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
+	echo " ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMon" C-m
 	menucontrolloop_default="OFFatlim"
 	;;
 
 	OFFatlim)
 	AUTOTUNELIMITS_ON="OFF"
-	echo "$AUTOTUNELIMITS_ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
+	echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
 	menucontrolloop_default="ONatlim"
 	;;
