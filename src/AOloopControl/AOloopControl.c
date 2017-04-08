@@ -11270,7 +11270,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	double allavelimFrac;
 	
 	float limitblockarray[100];
-	
+	long IDatlimbcoeff;
 	
 	int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
@@ -11401,11 +11401,17 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
   	sizeout[1] = modevalDM_bsize;
  	sprintf(imname, "aol%ld_modeval_dm_C", loop); // modal DM correction, circular buffer
    	IDmodevalDM_C = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(imname, 10);
-    
+    COREMOD_MEMORY_image_set_createsem(imname, 10);     
 
-    
-    
+
+	
+	// auto limit tuning
+	sizeout[0] = NBblock;
+	sizeout[1] = 1;
+	sprintf(imname, "aol%ld_autotune_lim_bcoeff", loop);
+    IDatlimbcoeff = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+
     free(sizeout);
        	
 	printf("%ld modes\n", NBmodes);
@@ -11568,6 +11574,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		
 		if(AOconf[loop].AUTOTUNE_LIMITS_ON==1) // automatically adjust modal limits
 			{
+				data.image[IDatlimbcoeff].md[0].write = 1;
 				for(block=0;block<NBblock;block++)
 					limitblockarray[block] = 0.0;
 				
@@ -11581,20 +11588,25 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 + AOconf[loop].AUTOTUNE_LIMITS_delta);
 						else
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 - AOconf[loop].AUTOTUNE_LIMITS_delta*0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
-					
+						
+											
 						limitblockarray[block] += data.image[aoconfID_LIMIT_modes].array.F[m];
 						
 					}
 				COREMOD_MEMORY_image_set_sempost_byID(aoconfID_LIMIT_modes, -1);
 				data.image[aoconfID_LIMIT_modes].md[0].cnt0++;
 				data.image[aoconfID_LIMIT_modes].md[0].write = 0;				
-			
+
+				data.image[IDatlimbcoeff].md[0].write = 1;
 				for(block=0;block<NBblock;block++)
 					{
-						limitblockarray[block] /= blockNBmodes[block];
-						data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block]*( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
+						data.image[IDatlimbcoeff].array.F[block] = limitblockarray[block] / blockNBmodes[block];
+						//data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * ( 1.0 + (limitblockarray[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta );
 					}
-				
+				COREMOD_MEMORY_image_set_sempost_byID(IDatlimbcoeff, -1);
+				data.image[IDatlimbcoeff].md[0].cnt0++;
+				data.image[IDatlimbcoeff].md[0].write = 0;								
+	
 			
 				COREMOD_MEMORY_image_set_sempost_byID(aoconfID_limitb, -1);
 				data.image[aoconfID_limitb].md[0].cnt0++;
