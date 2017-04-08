@@ -1141,6 +1141,7 @@ tmux send-keys -t alignPyrTT "cp aol${LOOPNUMBER}_wfsdark wfsdark" C-m
 tmux send-keys -t alignPyrTT "readshmim aol${LOOPNUMBER}_wfsim" C-m
 tmux send-keys -t alignPyrTT "scexaopywfsttalign aol${LOOPNUMBER}_wfsim $TTposX $TTposY" C-m
 echo " ON" > ./status/status_alignTT.txt
+./statusext "cenloop" "'CLOSED' 3" &
 menualign_default="tk"
 state="menualign"
 ;; 
@@ -1153,6 +1154,7 @@ then
 dialog --title "Message" --msgbox "Starting TT align\n (CTRL-C now to abort)\n" 8 30
 fi
 echo " ON" > ./status/status_alignTT.txt
+./statusext "cenloop" "'CLOSED' 3" &
 menualign_default="tp"
 state="menualign"
 ;; 
@@ -1168,6 +1170,7 @@ state="menualign"
 touch pause_PyAlignTT.txt
 aoconflogext "TT align loop pause"
 echo "PAU" > ./status/status_alignTT.txt
+./statusext "cenloop" "'OPEN' 1" &
 menualign_default="tr"
 state="menualign"
 ;;  
@@ -1175,6 +1178,7 @@ state="menualign"
 touch stop_PyAlignTT.txt
 tmux kill-session -t alignPyrTT
 echo "OFF" > ./status/status_alignTT.txt
+./statusext "cenloop" "'OPEN' 1" &
 aoconflogext "TT align loop off"
 menualign_default="ts"
 state="menualign"
