@@ -541,6 +541,10 @@ if [ -f "./conf/conf_AUTOTUNELIMITperc.txt" ]; then
  AUTOTUNELIMITperc=$( cat ./conf/conf_AUTOTUNELIMITperc.txt )
 fi
 
+AUTOTUNELIMITmcoeff=1.0
+if [ -f "./conf/conf_AUTOTUNELIMITmcoeff.txt" ]; then
+ AUTOTUNELIMITmcoeff=$( cat ./conf/conf_AUTOTUNELIMITmcoeff.txt )
+fi
 
 AUTOTUNELIMITdelta=0.001
 if [ -f "./conf/conf_AUTOTUNELIMITdelta.txt" ]; then
