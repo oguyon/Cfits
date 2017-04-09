@@ -11817,7 +11817,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	float latency;
 	FILE *fp;
 	
-	int RT_priority = 60; //any number from 0-99
+	int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
 
@@ -11914,6 +11914,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			array_sig2[m] = 0.0;
 		}
 	
+
 	
 	while(cnt<50020)
 	{	
@@ -11921,7 +11922,6 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
 		{
-				
 			data.image[IDout].md[0].write = 1;
 			for(m=0;m<NBmodes;m++)
 			{
