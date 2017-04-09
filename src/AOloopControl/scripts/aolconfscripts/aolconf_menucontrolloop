@@ -353,7 +353,7 @@ else
 fi
 
 menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMITperc}" )
-
+menuitems+=( "atlm" "AUTOTUNE_LIMIT_mcoeff       =   ${AUTOTUNELIMITmcoeff}" )
 menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMITdelta}" )
 
 
@@ -1345,6 +1345,15 @@ EOF
 	aoconflogext "set AUTOTUNELIMITperc ${AUTOTUNELIMITperc}"
 	;;
 	
+	atlm)
+	exec 3>&1;
+	AUTOTUNELIMITmcoeff=$(dialog --inputbox "AUTOTUNELIMITmcoeff" 0 0 "$AUTOTUNELIMITmcoeff" 2>&1 1>&3);
+	exec 3>&-;
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetATlimm $AUTOTUNELIMITmcoeff" C-m
+	echo "$AUTOTUNELIMITmcoeff" > ./conf/conf_AUTOTUNELIMITmcoeff.txt
+	aoconflogext "set AUTOTUNELIMITmcoeff ${AUTOTUNELIMITmcoeff}"
+	;;
+
 	atld)
 	exec 3>&1;
 	AUTOTUNELIMITdelta=$(dialog --inputbox "AUTOTUNELIMITdelta" 0 0 "$AUTOTUNELIMITdelta" 2>&1 1>&3);
