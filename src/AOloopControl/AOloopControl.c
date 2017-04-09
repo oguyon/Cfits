@@ -11957,8 +11957,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	{
 		ave0[m] /= cnt;
 		sig0[m] /= cnt;
-		array_sig1[m] = sig1[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
-		array_sig2[m] = sig2[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
+		array_sig1[m] = sig1[m]/cnt; 
+		array_sig2[m] = sig2[m]/cnt; 
 
 		
 		
@@ -11967,7 +11967,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			array_asq[m] = 0.0;
 		array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
 				
-		stdev[m] = sig0[m]-array_asq[m]-ave0[m]*ave0[m];;
+		stdev[m] = sig0[m] - array_sig[m] - ave0[m]*ave0[m];
 		if(stdev[m]<0.0)
 			stdev[m] = 0.0;
 		stdev[m] = sqrt(stdev[m]);
