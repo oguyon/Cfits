@@ -11794,17 +11794,23 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	long NBmodes;
 	char imname[200];
 	long m;
-	float diff1, diff2;
+	double diff1, diff2, diff3, diff4;
 	float *array_mvalOL1;
 	float *array_mvalOL2;	
-	float *array_sig1;
-	float *array_sig2;
+	float *array_mvalOL3;
+	float *array_mvalOL4;	
+	double *array_sig1;
+	double *array_sig2;
+	double *array_sig3;
+	double *array_sig4;
 	float *array_sig;
 	float *array_asq;
 	long double *ave0;
 	long double *sig0;
 	long double *sig1;
 	long double *sig2;
+	long double *sig3;
+	long double *sig4;
 	float *stdev;
 	
 	float gain;
@@ -11871,14 +11877,21 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	// last open loop move values
 	array_mvalOL1 = (float*) malloc(sizeof(float)*NBmodes);
 	array_mvalOL2 = (float*) malloc(sizeof(float)*NBmodes);
-	array_sig1 = (float*) malloc(sizeof(float)*NBmodes);
-	array_sig2 = (float*) malloc(sizeof(float)*NBmodes);
+	array_mvalOL3 = (float*) malloc(sizeof(float)*NBmodes);
+	array_mvalOL4 = (float*) malloc(sizeof(float)*NBmodes);
+	array_sig1 = (double*) malloc(sizeof(double)*NBmodes);
+	array_sig2 = (double*) malloc(sizeof(double)*NBmodes);
+	array_sig3 = (double*) malloc(sizeof(double)*NBmodes);
+	array_sig4 = (double*) malloc(sizeof(double)*NBmodes);
+
 	array_sig = (float*) malloc(sizeof(float)*NBmodes);
 	array_asq = (float*) malloc(sizeof(float)*NBmodes);
 	ave0 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig0 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig1 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig2 = (long double*) malloc(sizeof(long double)*NBmodes);
+	sig3 = (long double*) malloc(sizeof(long double)*NBmodes);
+	sig4 = (long double*) malloc(sizeof(long double)*NBmodes);
 	stdev = (float*) malloc(sizeof(float)*NBmodes);
 	
 	// prepare gain array
@@ -11925,6 +11938,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			sig0[m] = 0.0;
 			sig1[m] = 0.0;
 			sig2[m] = 0.0;
+			sig3[m] = 0.0;
+			sig4[m] = 0.0;
 			stdev[m] = 0.0;
 		}
 	
@@ -11942,6 +11957,10 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		{
 			diff1 = data.image[IDmodevalOL].array.F[m] - array_mvalOL1[m];
 			diff2 = data.image[IDmodevalOL].array.F[m] - array_mvalOL2[m];
+			diff3 = data.image[IDmodevalOL].array.F[m] - array_mvalOL3[m];
+			diff4 = data.image[IDmodevalOL].array.F[m] - array_mvalOL4[m];
+			array_mvalOL4[m] = array_mvalOL3[m];
+			array_mvalOL3[m] = array_mvalOL2[m];
 			array_mvalOL2[m] = array_mvalOL1[m];
 			array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
 			
@@ -11951,6 +11970,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				sig0[m] += data.image[IDmodevalOL].array.F[m]*data.image[IDmodevalOL].array.F[m];
 				sig1[m] += diff1*diff1;
 				sig2[m] += diff2*diff2;
+				sig3[m] += diff3*diff3;
+				sig4[m] += diff4*diff4;
 			}
 		}
 		cnt++;
@@ -11964,6 +11985,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		sig0[m] /= cnt-cntstart;
 		array_sig1[m] = sig1[m]/(cnt-cntstart); 
 		array_sig2[m] = sig2[m]/(cnt-cntstart); 
+		array_sig3[m] = sig3[m]/(cnt-cntstart); 
+		array_sig4[m] = sig4[m]/(cnt-cntstart); 
 		
 		
 		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
@@ -12016,12 +12039,18 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	free(array_mvalOL1);
 	free(array_mvalOL2);
+	free(array_mvalOL3);
+	free(array_mvalOL4);
 	free(ave0);
 	free(sig0);
 	free(sig1);
 	free(sig2);
+	free(sig3);
+	free(sig4);
 	free(array_sig1);
 	free(array_sig2);
+	free(array_sig3);
+	free(array_sig4);
 	free(array_sig);	
 	free(array_asq);
 		
