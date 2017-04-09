@@ -11974,7 +11974,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
-		fprintf(fp, "%5ld   %12.10f %12.10f    %6.4f", m, sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
+		fprintf(fp, "%5ld   %12.10f %12.10f    %6.4f\n", m, sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
 	fclose(fp);
 	
 	free(gainval_array);
