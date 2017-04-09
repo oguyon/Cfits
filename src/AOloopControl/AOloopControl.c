@@ -11505,10 +11505,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	
 	
 	while (1)
-	{
-		
-
-
+	{		
 		// read WFS measured modes (residual)
 		
 		if(data.image[IDmodeval].sem==0)
@@ -11840,6 +11837,15 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 
 
+	long IDblk;
+	unsigned short block;
+	float *modegain;
+	float *modemult;
+	
+	float *NOISEfactor;
+	
+
+
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); 
@@ -11858,10 +11864,67 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	gain0 = 1.0/(AOconf[loop].loopfrequ*AOconf[loop].AUTOTUNEGAIN_evolTimescale);
 
+
+
+
+	// CONNECT to arrays holding gain, limit, and multf values for blocks 
+
+	if(aoconfID_gainb == -1)
+	{
+		sprintf(imname, "aol%ld_gainb", loop);
+		aoconfID_gainb = read_sharedmem_image(imname);
+	}
+	
+	if(aoconfID_multfb == -1)
+	{
+		sprintf(imname, "aol%ld_multfb", loop);
+		aoconfID_multfb = read_sharedmem_image(imname);
+	}
+
+	// CONNECT to arrays holding gain, limit and multf values for individual modes
+
+	if(aoconfID_GAIN_modes == -1)
+    {
+        sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER);
+        aoconfID_GAIN_modes = read_sharedmem_image(imname);
+    }
+	printf("aoconfID_GAIN_modes = %ld\n", aoconfID_GAIN_modes);
+	
+	if(aoconfID_MULTF_modes == -1)
+	{
+		sprintf(imname, "aol%ld_DMmode_MULTF", loop);
+		aoconfID_MULTF_modes = read_sharedmem_image(imname);
+	}
+
+
+
 	// INPUT
 	sprintf(imname, "aol%ld_modeval_ol", loop); // measured from WFS
 	IDmodevalOL = read_sharedmem_image(imname);
 	NBmodes = data.image[IDmodevalOL].md[0].size[0];
+
+
+	// blocks
+	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
+   	IDblk = read_sharedmem_image(imname);
+   	
+
+	modegain = (float*) malloc(sizeof(float)*NBmodes);
+	modemult = (float*) malloc(sizeof(float)*NBmodes);
+	NOISEfactor = (float*) malloc(sizeof(float)*NBmodes);
+	
+	// write gain, mult into arrays
+	for(m=0;m<NBmodes;m++)
+		{
+			block = data.image[IDblk].array.U[m];
+			modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[block] * data.image[aoconfID_GAIN_modes].array.F[m];
+			modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[block] * data.image[aoconfID_MULTF_modes].array.F[m];
+			NOISEfactor[m] = 1.0 + modemult[m]*modemult[m]*modegain[m]*modegain[m]/(1.0-modemult[m]*modemult[m]);
+		}
+
+	
+	
+
 
 
 	sizearray = (long*) malloc(sizeof(long)*3);
@@ -11916,7 +11979,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/(gain+gain0));
 		gainval2_array[kk] = (gain/(1.0-gain));
 
-		printf("gain   %4ld  %12f   %12f  %12f\n", kk, gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
+		//printf("gain   %4ld  %12f   %12f  %12f\n", kk, gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
 		gain *= gainfactstep;
 		kk++;
 	}
@@ -11946,7 +12009,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	cnt = 0;
 	cntstart = 10;
-	while(cnt<50020)
+	while(cnt<50000)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
 			
@@ -11995,7 +12058,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			array_asq[m] = 0.0;
 		array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
 				
-		stdev[m] = sig0[m] - array_sig[m] - ave0[m]*ave0[m];
+		stdev[m] = sig0[m] - NOISEfactor[m]*array_sig[m] - ave0[m]*ave0[m];
 		if(stdev[m]<0.0)
 			stdev[m] = 0.0;
 		stdev[m] = sqrt(stdev[m]);
@@ -12054,9 +12117,15 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	free(array_sig4);
 	free(array_sig);	
 	free(array_asq);
+
+	free(modegain);
+	free(modemult);
+	free(NOISEfactor);
 		
 	return(0);
 }
+
+
 
 
 
