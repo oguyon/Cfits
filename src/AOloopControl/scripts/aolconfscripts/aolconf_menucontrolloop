@@ -1282,7 +1282,6 @@ menucontrolloop_default="wzpoinit"
      	 ;;  
 
 
-
 	DMpWon)
 	DMprimWriteON="1"
 	echo "$DMprimWriteON" > ./conf/conf_DMprimWriteON.txt

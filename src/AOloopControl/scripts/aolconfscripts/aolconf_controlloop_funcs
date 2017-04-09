@@ -518,6 +518,7 @@ fi
 # LOOP SETTINGS
 
 file="./conf/conf_DMprimWriteON.txt"
+DMprimWriteON=$( cat $file )
 if [[ -f "$file" && ( "$DMprimWriteON" = "0" || "$DMprimWriteON" = "1" ) ]]; then
  echo "DMprimWriteON OK"
  DMprimWriteON=$( cat $file )
