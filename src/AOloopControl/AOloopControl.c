@@ -11805,6 +11805,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	long double *sig0;
 	long double *sig1;
 	long double *sig2;
+	float *stdev;
 	
 	float gain;
 	long NBgain;
@@ -11879,6 +11880,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	sig0 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig1 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig2 = (long double*) malloc(sizeof(long double)*NBmodes);
+	stdev = (float*) malloc(sizeof(float)*NBmodes);
 	
 	// prepare gain array
 	latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
@@ -11953,16 +11955,23 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	data.image[IDout].md[0].write = 1;
 	for(m=0;m<NBmodes;m++)
 	{
+		ave0[m] /= cnt;
+		sig0[m] /= cnt;
 		array_sig1[m] = sig1[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
 		array_sig2[m] = sig2[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
-				
+
+		
+		
 		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
 		if(array_asq[m]<0.0)
 			array_asq[m] = 0.0;
 		array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
 				
-				
-				
+		stdev[m] = sig0[m]-array_asq[m]-ave0[m]*ave0[m];;
+		if(stdev[m]<0.0)
+			stdev[m] = 0.0;
+		stdev[m] = sqrt(stdev[m]);
+			
 		for(kk=0;kk<NBgain;kk++)
 			errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval2_array[kk];
 
@@ -11993,7 +12002,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
-		fprintf(fp, "%5ld   %12.10f %12.10f    %6.4f\n", m, sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
+		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f   %6.4f\n", m, (float) ave0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
 	fclose(fp);
 	
 	free(gainval_array);
@@ -12014,6 +12023,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		
 	return(0);
 }
+
 
 
 long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, float twait, float offcoeff, float multcoeff)
