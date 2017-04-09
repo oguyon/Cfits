@@ -11989,7 +11989,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		array_sig4[m] = sig4[m]/(cnt-cntstart); 
 		
 		
-		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
+//		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
+		array_asq[m] = (array_sig4[m]-array_sig1[m])/15.0;
 		if(array_asq[m]<0.0)
 			array_asq[m] = 0.0;
 		array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
@@ -12029,7 +12030,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
-		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig2[m]);
+		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m]);
 	fclose(fp);
 	
 	free(gainval_array);
