@@ -11867,8 +11867,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 
 	
-	// prepare autotune gain 
-	AOconf[loop].AUTOTUNEGAINcoeff = 0.0001;
+
 	// last open loop move values
 	array_mvalOL1 = (float*) malloc(sizeof(float)*NBmodes);
 	array_mvalOL2 = (float*) malloc(sizeof(float)*NBmodes);
@@ -11926,6 +11925,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			sig0[m] = 0.0;
 			sig1[m] = 0.0;
 			sig2[m] = 0.0;
+			stdev[m] = 0.0;
 		}
 	
 
@@ -12002,7 +12002,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
-		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f   %6.4f\n", m, (float) ave0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
+		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
 	fclose(fp);
 	
 	free(gainval_array);

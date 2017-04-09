@@ -140,7 +140,7 @@ typedef struct
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
 
 	int_fast8_t AUTOTUNE_GAINS_ON;
-	float AUTOTUNEGAINcoeff; // averaging coefficient (usually about 0.1)
+	float AUTOTUNE_GAINS_gain; // averaging coefficient (usually about 0.1)
 	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
 	
  
