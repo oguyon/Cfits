@@ -11957,7 +11957,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				
 				if((m==1)&&(cnt>50000))
 				{
-					printf("%12f  %12f %12f -> %12.10f %12.10f  [%5.3f fr]   slope = %12.10f    noise = %12.10f    optimal gain = %5ld / %5ld    %12f\n", data.image[IDmodevalOL].array.F[m], array_mvalOL1[m], array_mvalOL2[m], array_sig1[m], array_sig2[m], latency, sqrt(array_asq[m]), sqrt(array_sig[m]), kkmin, NBgain, gainval_array[kkmin] );
+					printf("%12f  %12f %12f -> %12.10f %12.10f  [%5.3f fr g %5.3f]   slope = %12.10f    noise = %12.10f    optimal gain = %5ld / %5ld    %12f\n", data.image[IDmodevalOL].array.F[m], array_mvalOL1[m], array_mvalOL2[m], array_sig1[m], array_sig2[m], latency, AOconf[loop].AUTOTUNEGAINcoeff, sqrt(array_asq[m]), sqrt(array_sig[m]), kkmin, NBgain, gainval_array[kkmin] );
 				}
 								
 			}
