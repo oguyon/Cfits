@@ -11830,7 +11830,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	long *sizearray;
 
 	float gain0; // corresponds to evolution timescale
-
+	long cntstart;
 
 
 
@@ -11930,23 +11930,28 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 
 	cnt = 0;
+	cntstart = 10;
 	while(cnt<50020)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
 			
 		
 		data.image[IDout].md[0].write = 1;
+		
 		for(m=0;m<NBmodes;m++)
 		{
 			diff1 = data.image[IDmodevalOL].array.F[m] - array_mvalOL1[m];
 			diff2 = data.image[IDmodevalOL].array.F[m] - array_mvalOL2[m];
 			array_mvalOL2[m] = array_mvalOL1[m];
 			array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
-				
-			ave0[m] += data.image[IDmodevalOL].array.F[m];
-			sig0[m] += data.image[IDmodevalOL].array.F[m]*data.image[IDmodevalOL].array.F[m];
-			sig1[m] += diff1*diff1;
-			sig2[m] += diff2*diff2;
+			
+			if(cnt>cntstart)
+			{	
+				ave0[m] += data.image[IDmodevalOL].array.F[m];
+				sig0[m] += data.image[IDmodevalOL].array.F[m]*data.image[IDmodevalOL].array.F[m];
+				sig1[m] += diff1*diff1;
+				sig2[m] += diff2*diff2;
+			}
 		}
 		cnt++;
 	}
@@ -11955,11 +11960,10 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	data.image[IDout].md[0].write = 1;
 	for(m=0;m<NBmodes;m++)
 	{
-		ave0[m] /= cnt;
-		sig0[m] /= cnt;
-		array_sig1[m] = sig1[m]/cnt; 
-		array_sig2[m] = sig2[m]/cnt; 
-
+		ave0[m] /= cnt-cntstart;
+		sig0[m] /= cnt-cntstart;
+		array_sig1[m] = sig1[m]/(cnt-cntstart); 
+		array_sig2[m] = sig2[m]/(cnt-cntstart); 
 		
 		
 		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
@@ -12002,7 +12006,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
-		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
+		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %12.10f %12.10f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig2[m]);
 	fclose(fp);
 	
 	free(gainval_array);
