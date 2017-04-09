@@ -11875,6 +11875,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	array_sig2 = (float*) malloc(sizeof(float)*NBmodes);
 	array_sig = (float*) malloc(sizeof(float)*NBmodes);
 	array_asq = (float*) malloc(sizeof(float)*NBmodes);
+	ave0 = (long double*) malloc(sizeof(long double)*NBmodes);
+	sig0 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig1 = (long double*) malloc(sizeof(long double)*NBmodes);
 	sig2 = (long double*) malloc(sizeof(long double)*NBmodes);
 	
@@ -12001,6 +12003,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	free(array_mvalOL1);
 	free(array_mvalOL2);
+	free(ave0);
+	free(sig0);
 	free(sig1);
 	free(sig2);
 	free(array_sig1);
