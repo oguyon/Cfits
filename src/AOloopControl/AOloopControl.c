@@ -11916,10 +11916,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			array_mvalOL2[m] = 0.0;
 			array_sig1[m] = 0.0;
 			array_sig2[m] = 0.0;
+			sig1[m] = 0.0;
+			sig2[m] = 0.0;
 		}
 	
-	sig1 = 0.0;
-	sig2 = 0.0;
+
 	cnt = 1;
 	while(cnt<50020)
 	{	
