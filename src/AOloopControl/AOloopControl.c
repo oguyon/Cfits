@@ -11815,6 +11815,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	long long cnt = 0;
 	float latency;
+	FILE *fp;
 	
 	int RT_priority = 60; //any number from 0-99
     struct sched_param schedpar;
@@ -11965,11 +11966,16 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		data.image[IDout].md[0].cnt0++;
 		data.image[IDout].md[0].write = 0;
 		}
-		
 		cnt++;
 	}
 	
+	
 	free(sizearray);
+	
+	fp = fopen("optgain.dat", "w");
+	for(m=0;m<NBmodes;m++)
+		fprintf(fp, "%5ld   %12.10f %12.10f    %6.4f", m, sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m]);
+	fclose(fp);
 	
 	free(gainval_array);
 	free(gainval1_array);
