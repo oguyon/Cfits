@@ -11801,6 +11801,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	float *array_sig2;
 	float *array_sig;
 	float *array_asq;
+	long double sig1, sig2;
 	
 	float gain;
 	long NBgain;
@@ -11914,8 +11915,9 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			array_sig2[m] = 0.0;
 		}
 	
-
-	
+	sig1 = 0.0;
+	sig2 = 0.0;
+	cnt = 1;
 	while(cnt<50020)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
@@ -11930,8 +11932,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				array_mvalOL2[m] = array_mvalOL1[m];
 				array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
 				
-				array_sig1[m] = (1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
-				array_sig2[m] = (1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
+				sig1 += diff1*diff1;
+				sig2 += diff2*diff2;
+				
+				array_sig1[m] = sig1/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
+				array_sig2[m] = sig2/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
 				
 				array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
 				if(array_asq[m]<0.0)
