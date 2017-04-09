@@ -11801,7 +11801,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	float *array_sig2;
 	float *array_sig;
 	float *array_asq;
-	long double sig1, sig2;
+	long double *sig1;
+	long double *sig2;
 	
 	float gain;
 	long NBgain;
@@ -11872,6 +11873,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	array_sig2 = (float*) malloc(sizeof(float)*NBmodes);
 	array_sig = (float*) malloc(sizeof(float)*NBmodes);
 	array_asq = (float*) malloc(sizeof(float)*NBmodes);
+	sig1 = (long double*) malloc(sizeof(float)*NBmodes);
+	sig2 = (long double*) malloc(sizeof(float)*NBmodes);
 	
 	// prepare gain array
 	latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
@@ -11932,11 +11935,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				array_mvalOL2[m] = array_mvalOL1[m];
 				array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
 				
-				sig1 += diff1*diff1;
-				sig2 += diff2*diff2;
+				sig1[m] += diff1*diff1;
+				sig2[m] += diff2*diff2;
 				
-				array_sig1[m] = sig1/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
-				array_sig2[m] = sig2/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
+				array_sig1[m] = sig1[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
+				array_sig2[m] = sig2[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
 				
 				array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
 				if(array_asq[m]<0.0)
@@ -11989,6 +11992,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	
 	free(array_mvalOL1);
 	free(array_mvalOL2);
+	free(sig1);
+	free(sig2);
 	free(array_sig1);
 	free(array_sig2);
 	free(array_sig);	
