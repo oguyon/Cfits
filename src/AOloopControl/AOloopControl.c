@@ -11801,6 +11801,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	float *array_sig2;
 	float *array_sig;
 	float *array_asq;
+	long double *ave0;
+	long double *sig0;
 	long double *sig1;
 	long double *sig2;
 	
@@ -11916,66 +11918,72 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			array_mvalOL2[m] = 0.0;
 			array_sig1[m] = 0.0;
 			array_sig2[m] = 0.0;
+			ave0[m] = 0.0;
+			sig0[m] = 0.0;
 			sig1[m] = 0.0;
 			sig2[m] = 0.0;
 		}
 	
 
-	cnt = 1;
+	cnt = 0;
 	while(cnt<50020)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
 			
-		if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
+		
+		data.image[IDout].md[0].write = 1;
+		for(m=0;m<NBmodes;m++)
 		{
-			data.image[IDout].md[0].write = 1;
-			for(m=0;m<NBmodes;m++)
-			{
-				diff1 = data.image[IDmodevalOL].array.F[m] - array_mvalOL1[m];
-				diff2 = data.image[IDmodevalOL].array.F[m] - array_mvalOL2[m];
-				array_mvalOL2[m] = array_mvalOL1[m];
-				array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
+			diff1 = data.image[IDmodevalOL].array.F[m] - array_mvalOL1[m];
+			diff2 = data.image[IDmodevalOL].array.F[m] - array_mvalOL2[m];
+			array_mvalOL2[m] = array_mvalOL1[m];
+			array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
 				
-				sig1[m] += diff1*diff1;
-				sig2[m] += diff2*diff2;
-				
-				array_sig1[m] = sig1[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
-				array_sig2[m] = sig2[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
-				
-				array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
-				if(array_asq[m]<0.0)
-					array_asq[m] = 0.0;
-				array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
-				
-				
-				
-				for(kk=0;kk<NBgain;kk++)
-					errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval2_array[kk];
-
-				errmin = errarray[0];
-				kkmin = 0;
-				
-				for(kk=0;kk<NBgain;kk++)
-					if(errarray[kk]<errmin)
-					{
-						errmin = errarray[kk];
-						kkmin = kk;						
-					}
-				
-				data.image[IDout].array.F[m] = gainval_array[kkmin];
-				
-				if((m==1)&&(cnt>50000))
-				{
-					printf("%12f  %12f %12f -> %12.10f %12.10f  [%5.3f fr g %10.8f]   slope = %12.10f    noise = %12.10f    optimal gain = %5ld / %5ld    %12f\n", data.image[IDmodevalOL].array.F[m], array_mvalOL1[m], array_mvalOL2[m], array_sig1[m], array_sig2[m], latency, AOconf[loop].AUTOTUNEGAINcoeff, sqrt(array_asq[m]), sqrt(array_sig[m]), kkmin, NBgain, gainval_array[kkmin] );
-				}
-								
-			}
-			
-		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
-		data.image[IDout].md[0].cnt0++;
-		data.image[IDout].md[0].write = 0;
+			ave0[m] += data.image[IDmodevalOL].array.F[m];
+			sig0[m] += data.image[IDmodevalOL].array.F[m]*data.image[IDmodevalOL].array.F[m];
+			sig1[m] += diff1*diff1;
+			sig2[m] += diff2*diff2;
 		}
 		cnt++;
+	}
+	
+
+	data.image[IDout].md[0].write = 1;
+	for(m=0;m<NBmodes;m++)
+	{
+		array_sig1[m] = sig1[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig1[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff1*diff1;
+		array_sig2[m] = sig2[m]/cnt; //(1.0-AOconf[loop].AUTOTUNEGAINcoeff)*array_sig2[m] + AOconf[loop].AUTOTUNEGAINcoeff*diff2*diff2;
+				
+		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
+		if(array_asq[m]<0.0)
+			array_asq[m] = 0.0;
+		array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
+				
+				
+				
+		for(kk=0;kk<NBgain;kk++)
+			errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval2_array[kk];
+
+		errmin = errarray[0];
+		kkmin = 0;
+				
+		for(kk=0;kk<NBgain;kk++)
+			if(errarray[kk]<errmin)
+			{
+				errmin = errarray[kk];
+				kkmin = kk;						
+			}
+				
+		data.image[IDout].array.F[m] = gainval_array[kkmin];
+	}	
+			
+	COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+	data.image[IDout].md[0].cnt0++;
+	data.image[IDout].md[0].write = 0;
+	
+	
+	if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
+	{
 	}
 	
 	
