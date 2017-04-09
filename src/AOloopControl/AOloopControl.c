@@ -11873,8 +11873,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	array_sig2 = (float*) malloc(sizeof(float)*NBmodes);
 	array_sig = (float*) malloc(sizeof(float)*NBmodes);
 	array_asq = (float*) malloc(sizeof(float)*NBmodes);
-	sig1 = (long double*) malloc(sizeof(float)*NBmodes);
-	sig2 = (long double*) malloc(sizeof(float)*NBmodes);
+	sig1 = (long double*) malloc(sizeof(long double)*NBmodes);
+	sig2 = (long double*) malloc(sizeof(long double)*NBmodes);
 	
 	// prepare gain array
 	latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
