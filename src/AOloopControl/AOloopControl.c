@@ -12017,7 +12017,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			printf("SYNCHRO SIGNAL WAIT\n");
 			fflush(stdout);
 			
-			cnt00 = data.image[IDsync].md[0].cnt1;
+			cnt00 = data.image[IDsync].md[0].cnt1 - 1;
 			cnt01 = cnt00+1;
 			
 			while(cnt01>=cnt00)
