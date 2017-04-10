@@ -12050,7 +12050,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	cnt = 0;
 	cntstart = 10;
-	while(cnt<50000)
+	while(cnt<5000)
 	{	
 		sem_wait(data.image[IDmodevalOL].semptr[5]);
 			
