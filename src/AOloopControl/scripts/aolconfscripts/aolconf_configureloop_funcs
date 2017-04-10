@@ -662,7 +662,7 @@ tmux new-session -d -s ${tmuxname}
 #tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
 #tmux send-keys -t ${tmuxname} "sleep $1 && touch function_zresp_off.wait &" C-m
 tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_zresp_off.wait" C-m
-tmux send-keys -t ${tmuxname} "pkill -USR1 aol${LOOPNUMBER}zrespM" C-m
+tmux send-keys -t ${tmuxname} "pkill -USR2 aol${LOOPNUMBER}zrespM" C-m
 tmux send-keys -t ${tmuxname} "echo \"OFF\" > ./status/stat_zrespM.txt" C-m
 tmux send-keys -t ${tmuxname} "rm aolMeasureZrespmat.runproc" C-m
 tmux send-keys -t ${tmuxname} "sleep 0.2" C-m

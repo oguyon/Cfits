@@ -3842,6 +3842,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
  * INPUT : DMpoke_name : set of DM patterns
  * OUTPUT : WFSmap_name : WFS response maps
  * 
+ * USR1 signal will stop acquisition immediately
+ * USR2 signal completes current cycles and stops acquisition
  * 
  * */
 
@@ -3853,7 +3855,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     long *sizearray;
 	long IDoutC;
 
-    long NBiter = LONG_MAX; // runs until USR1 signal received
+    long NBiter = 10000; // runs until USR1 signal received
     long iter;
     int r;
     long IDpokeC;
@@ -3978,9 +3980,9 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 	
 	imcnt = 0;
 	
-    while((iter<NBiter)&&(data.signal_USR1==0))
+    while((iter<NBiter)&&(data.signal_USR1==0)&&(data.signal_USR2==0))
     {
-        printf("iteration # %8ld    ( %6ld / %6ld )  \n", iter, imcnt, imcntmax);
+        printf("iteration # %8ld / %8ld   ( %6ld / %6ld )  \n", iter, NBiter, imcnt, imcntmax);
         fflush(stdout);
 
         

@@ -280,8 +280,10 @@ function_controlmatrix_readparams
 
 if [ -f "FUNCTION_C0.runproc" ]; then
 menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
+menuitems+=( "stopRM" "Stop RM acquisition" )
 menuitems+=( " " " " )
 else
+menuitems+=( "C00" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged" )
 menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged" )
 menuitems+=( "C1" "ADOPT CALIBRATION: staged -> conf, SharedMem" )
 fi
@@ -696,6 +698,20 @@ menutop_default="initDM"
 # =====================================================================================================================
 
 
+C00) 
+tmuxnameC00="aol${LOOPNUMBER}calib00"
+tmux new-session -d -s ${tmuxnameC0}
+tmux send-keys -t ${tmuxnameC0} " " C-c
+tmux send-keys -t ${tmuxnameC0} "" C-m
+
+# START CALIBRATION: RM(s) ACQUISITION
+function_configureloop_readparams
+function_nAUTOC
+;;
+
+
+
+
 C0)
 echo "CALIBRATE ALL"
 
@@ -728,7 +744,9 @@ function_computeModesCM
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 ;;
 
-
+stopRM)
+pkill -USR2 aol${LOOPNUMBER}zrespM
+;;
 
 
 	C1) # ADOPT CALIBRATION
