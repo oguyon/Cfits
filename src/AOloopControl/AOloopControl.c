@@ -12025,6 +12025,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	IDsync = image_ID("dm00disp10");
 	if(IDsync!=-1)
 		{
+			list_image_ID();
 			printf("SYNCHRO SIGNAL WAIT\n");
 			fflush(stdout);
 			
