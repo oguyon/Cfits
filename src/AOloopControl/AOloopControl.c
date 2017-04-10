@@ -11706,7 +11706,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		//
 		data.image[IDout].md[0].write = 1;
 		for(m=0;m<NBmodes;m++)
-			data.image[IDout].array.F[m] = data.image[IDmodeval].array.F[m]; // - data.image[IDmodevalDM].array.F[m];
+			data.image[IDout].array.F[m] = 0.0*data.image[IDmodeval].array.F[m] - data.image[IDmodevalDM].array.F[m];
 		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 		data.image[IDout].md[0].cnt0++;
 		data.image[IDout].md[0].write = 0;
