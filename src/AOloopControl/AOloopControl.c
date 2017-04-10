@@ -11789,6 +11789,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 {
 	long IDmodevalOL;
 	long IDmodeval;
+	long IDmodeval_dm;
 	long IDmodeval_dm_now;
 	long IDmodeval_dm_now_filt;
 	
@@ -11918,6 +11919,9 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
 	IDmodeval = read_sharedmem_image(imname);
+
+	sprintf(imname, "aol%ld_modeval_dm", loop); // measured from WFS
+	IDmodeval_dm = read_sharedmem_image(imname);
 
  	sprintf(imname, "aol%ld_modeval_dm_now", loop); // current modal DM correction 
 	IDmodeval_dm_now = read_sharedmem_image(imname);
@@ -12090,7 +12094,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		}
 
 		if(TESTMODE==1)
-			fprintf(fptest, "%5ld %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
+			fprintf(fptest, "%5ld %+12.10f %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
 
 		cnt++;
 	}
