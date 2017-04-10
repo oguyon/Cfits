@@ -506,13 +506,15 @@ tmux send-keys -t ${tmuxnameaWFSr} "cp dmmap.fits $stageddir" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "rm aolCleanZrespmat2.runproc" C-m
 
 
+
+if [ "$RMCalibReuseMasks" = "0" ]; then
 # MAKE MASKS  
 # 
 # INPUT:
 #     ./conf_zrm_staged/zrespM.fits
 # OUTPUT:
-#     wfsmask.fits
-#     dmmaskRM.fits
+#     wfsmask.fits  (overwrite)
+#     dmmaskRM.fits (overwrite)
 #
 logRunningProcessQ "aolmkMasks" "${tmuxnameaWFSr}" "Make masks"
 tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolmkMasks" C-m
@@ -527,13 +529,15 @@ fi
 tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkMasks.runproc" C-m
 
 
+
+
 # MAKE SLAVED ACTUATOR DM MASK: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
 # 
 # INPUT:
 #	dmmaskRM.fits
 # OUTPUT:
-#	dmslaved.fits
-#	dmmask.fits
+#	dmslaved.fits  (overwrite)
+#	dmmask.fits    (overwrite)
 #
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -549,6 +553,9 @@ else # set dmmask to 1, dmslaved to 0
 	tmux send-keys -t ${tmuxnameaWFSr} "savefits im0 \"!dmslaved.fits\"" C-m
 	tmux send-keys -t ${tmuxnameaWFSr} "exitCLI" C-m	
 fi
+
+fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
+
 
 
 # UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask 
