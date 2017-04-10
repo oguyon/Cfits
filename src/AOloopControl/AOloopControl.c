@@ -11848,6 +11848,13 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	long IDsync;
 
 
+	int TESTMODE = 1;
+	int TEST_m = 30;
+	FILE *fptest;
+	
+
+
+
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); 
@@ -12025,13 +12032,17 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				cnt00 = cnt01;
 				sem_wait(data.image[IDsync].semptr[4]);
 				cnt01 = data.image[IDsync].md[0].cnt1;
-				printf("%6ld %6ld\n", cnt00, cnt01);
-				fflush(stdout);
 			}
 			printf("START MEASUREMENT  [%6ld %6ld] \n", cnt00, cnt01);
 			fflush(stdout);
 		}
 	
+
+
+	if(TESTMODE==1)
+		{
+			fptest = fopen("test_autotunegain.dat", "w");
+		}
 
 	cnt = 0;
 	cntstart = 10;
@@ -12063,6 +12074,12 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				sig4[m] += diff4*diff4;
 			}
 		}
+
+		if(TESTMODE==1)
+		{
+			fprintf(fptest, "%5ld %12.10f\n", cnt, data.image[IDmodevalOL].array.F[m]);
+		}
+
 		cnt++;
 	}
 	
@@ -12108,6 +12125,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 	data.image[IDout].md[0].cnt0++;
 	data.image[IDout].md[0].write = 0;
+	
+	
+	if(TESTMODE==1)
+		fclose(fptest);
+
 	
 	
 	if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
