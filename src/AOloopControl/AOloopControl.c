@@ -11788,6 +11788,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 {
 	long IDmodevalOL;
+	long IDmodeval;
 	long NBmodes;
 	char imname[200];
 	long m;
@@ -11911,6 +11912,9 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	sprintf(imname, "aol%ld_modeval_ol", loop); // measured from WFS
 	IDmodevalOL = read_sharedmem_image(imname);
 	NBmodes = data.image[IDmodevalOL].md[0].size[0];
+
+	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
+	IDmodeval = read_sharedmem_image(imname);
 
 
 	// blocks
@@ -12077,7 +12081,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 		if(TESTMODE==1)
 		{
-			fprintf(fptest, "%5ld %12.10f\n", cnt, data.image[IDmodevalOL].array.F[m]);
+			fprintf(fptest, "%5ld %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m]);
 		}
 
 		cnt++;
