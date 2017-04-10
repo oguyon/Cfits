@@ -12025,6 +12025,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 				cnt00 = cnt01;
 				sem_wait(data.image[IDsync].semptr[4]);
 				cnt01 = data.image[IDsync].md[0].cnt1;
+				printf("%6ld %6ld\n", cnt00, cnt01);
+				fflush(stdout);
 			}
 			printf("START MEASUREMENT  [%6ld %6ld] \n", cnt00, cnt01);
 			fflush(stdout);
