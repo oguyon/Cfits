@@ -282,6 +282,7 @@ if [ -f "FUNCTION_C0.runproc" ] || [ -f "FUNCTION_C00.runproc" ]; then
 menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
 menuitems+=( "stopRM" "Stop RM acquisition" )
 menuitems+=( "stopRMLO" "Stop LO RM acquisition" )
+menuitems+=( " " " " )
 else
 menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged" )
 menuitems+=( "C00" "   CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged" )
