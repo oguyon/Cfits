@@ -11842,8 +11842,10 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	float *modegain;
 	float *modemult;
 	
+	
 	float *NOISEfactor;
 	long cnt00, cnt01;	
+	long IDsync;
 
 
     schedpar.sched_priority = RT_priority;
