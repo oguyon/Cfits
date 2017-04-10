@@ -281,7 +281,7 @@ function_controlmatrix_readparams
 if [ -f "FUNCTION_C0.runproc" ] || [ -f "FUNCTION_C00.runproc" ]; then
 menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
 menuitems+=( "stopRM" "Stop RM acquisition" )
-menuitems+=( " " " " )
+menuitems+=( "stopRMLO" "Stop LO RM acquisition" )
 else
 menuitems+=( "C00" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged" )
 menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged" )
@@ -750,9 +750,18 @@ function_computeModesCM
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
 ;;
 
+
+
 stopRM)
 pkill -USR2 aol${LOOPNUMBER}zrespM
 ;;
+
+
+
+stopRMLO)
+pkill -USR2 aol${loopnb}LOrespM
+;;
+
 
 
 	C1) # ADOPT CALIBRATION
