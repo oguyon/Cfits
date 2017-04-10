@@ -11789,6 +11789,9 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 {
 	long IDmodevalOL;
 	long IDmodeval;
+	long IDmodeval_dm_now;
+	long IDmodeval_dm_now_filt;
+	
 	long NBmodes;
 	char imname[200];
 	long m;
@@ -11915,6 +11918,14 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 	sprintf(imname, "aol%ld_modeval", loop); // measured from WFS
 	IDmodeval = read_sharedmem_image(imname);
+
+ 	sprintf(imname, "aol%ld_modeval_dm_now", loop); // current modal DM correction 
+	IDmodeval_dm_now = read_sharedmem_image(imname);
+ 
+	sprintf(imname, "aol%ld_modeval_dm_now_filt", loop); // current modal DM correction, filtered 
+	IDmodeval_dm_now_filt = read_sharedmem_image(imname);
+ 
+
 
 
 	// blocks
@@ -12045,9 +12056,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 
 	if(TESTMODE==1)
-		{
-			fptest = fopen("test_autotunegain.dat", "w");
-		}
+		fptest = fopen("test_autotunegain.dat", "w");
 
 	cnt = 0;
 	cntstart = 10;
@@ -12081,13 +12090,12 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		}
 
 		if(TESTMODE==1)
-		{
-			fprintf(fptest, "%5ld %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m]);
-		}
+			fprintf(fptest, "%5ld %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
 
 		cnt++;
 	}
-	
+	if(TESTMODE==1)
+		fclose(fptest);
 
 	data.image[IDout].md[0].write = 1;
 	for(m=0;m<NBmodes;m++)
@@ -12132,8 +12140,6 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	data.image[IDout].md[0].write = 0;
 	
 	
-	if(TESTMODE==1)
-		fclose(fptest);
 
 	
 	
