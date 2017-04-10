@@ -759,7 +759,7 @@ pkill -USR2 aol${LOOPNUMBER}zrespM
 
 
 stopRMLO)
-pkill -USR2 aol${loopnb}LOrespM
+pkill -USR2 aol${LOOPNUMBER}LOrespM
 ;;
 
 
