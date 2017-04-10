@@ -1053,6 +1053,14 @@ chmod +x $scriptfile
 echo "echo \"OFF\" > ./status/stat_procON.txt" >> $scriptfile
 echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LOOP PROCESSES\"" >> $scriptfile
 
+# TURN OFF LIMITS AUTOTUNING
+if [ "$AUTOTUNELIMITS_ON" = " ON" ]; then
+file="./status/stat_AUTOTUNELIMITS_ON.txt"
+echo "echo \"OFF\" > $file" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolAUTOTUNELIMoff\" C-m" >> $scriptfile
+fi
+
+
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aoloff\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolkill\" C-m" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"exitCLI\" C-m" >> $scriptfile
@@ -1112,6 +1120,10 @@ echo "echo \"OFF\" > $file" >> $scriptfile
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 fi
+
+
+
+
 
 if [ "$1" = "NULL" ]; then
 ./$scriptfile
@@ -1182,10 +1194,15 @@ rm $scriptfile
 touch $scriptfile
 chmod +x $scriptfile
 
+
+
 echo "echo \"OFF\" > ./status/stat_loopON.txt" >> $scriptfile
 echo "./aolconfscripts/aollog -e \"$LOOPNAME\" \"LOOP OFF\"" >> $scriptfile
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aoloff\" C-m" >> $scriptfile
 echo "./setupAOloopOFF" >> $scriptfile
+
+
+
 
 
 if [ "$1" = "NULL" ]; then
