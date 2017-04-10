@@ -283,8 +283,9 @@ menuitems+=( " " "\Zr\Z1CALIBRATION RUNNING\Zn" )
 menuitems+=( "stopRM" "Stop RM acquisition" )
 menuitems+=( "stopRMLO" "Stop LO RM acquisition" )
 else
-menuitems+=( "C00" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged" )
 menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged" )
+menuitems+=( "C00" "   CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged" )
+menuitems+=( "C01" "   RM -> CM (staged)" )
 menuitems+=( "C1" "ADOPT CALIBRATION: staged -> conf, SharedMem" )
 fi
 
@@ -720,6 +721,11 @@ menutop_default="stopRM"
 ;;
 
 
+C01)
+# COMPUTE CM
+mkModesMODE=0; # full computation
+function_computeModesCM
+;;
 
 
 C0)
