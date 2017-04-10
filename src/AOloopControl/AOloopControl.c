@@ -12006,6 +12006,28 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			stdev[m] = 0.0;
 		}
 	
+	
+	
+	// TEST mode
+	IDsync = image_ID("dm00disp10");
+	if(IDsync!=-1)
+		{
+			printf("SYNCHRO SIGNAL WAIT\n");
+			fflush(stdout);
+			
+			cnt00 = data.imge[IDsync].md[0].cnt1;
+			cnt01 = cnt00+1;
+			
+			while(cnt01>cnt00)
+			{
+				cnt00 = cnt01;
+				sem_wait(data.image[IDsync].semptr[4]);
+				cnt01 = data.image[IDsync].md[0].cnt1;
+			}
+			printf("START MEASUREMENT\n");
+			fflush(stdout);
+		}
+	
 
 	cnt = 0;
 	cntstart = 10;

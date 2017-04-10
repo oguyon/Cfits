@@ -4828,12 +4828,11 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         ptr0 = ptr0s + kk*framesize;
         data.image[IDout].md[0].write = 1;
         memcpy((void *) ptr1, (void *) ptr0, framesize);
-        
-		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);;
 		data.image[IDout].md[0].cnt1 = kk;
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].write = 0;
-
+		COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+		
         kk++;
         if(kk==data.image[IDin].md[0].size[2])
             kk = 0;
