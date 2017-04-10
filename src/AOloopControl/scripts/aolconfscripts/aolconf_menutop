@@ -284,8 +284,8 @@ menuitems+=( "stopRM" "Stop RM acquisition" )
 menuitems+=( "stopRMLO" "Stop LO RM acquisition" )
 menuitems+=( " " " " )
 else
-menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged" )
-menuitems+=( "C00" "   CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged" )
+menuitems+=( "C0" "CALIBRATE SYSTEM [CPAmax = $cpamax] RM, CM -> staged (compute masks)" )
+menuitems+=( "C00" "   CALIBRATE SYSTEM [CPAmax = $cpamax] RM -> staged (Re-use masks)" )
 menuitems+=( "C01" "   RM -> CM (staged)" )
 menuitems+=( "C1" "ADOPT CALIBRATION: staged -> conf, SharedMem" )
 fi
