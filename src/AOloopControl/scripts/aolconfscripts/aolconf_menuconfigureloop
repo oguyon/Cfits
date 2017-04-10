@@ -1129,6 +1129,7 @@ fi
 
 
 nAUTOC)
+RMCalibReuseMasks=0
 function_nAUTOC
 ;;
 

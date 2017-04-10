@@ -698,8 +698,11 @@ menutop_default="initDM"
 # =====================================================================================================================
 
 
+
 C00) 
 tmuxnameC00="aol${LOOPNUMBER}calib00"
+
+RMCalibReuseMasks=1
 
 tmux new-session -d -s ${tmuxnameC00}
 tmux send-keys -t ${tmuxnameC00} " " C-c
@@ -721,7 +724,7 @@ menutop_default="stopRM"
 
 C0)
 echo "CALIBRATE ALL"
-
+RMCalibReuseMasks=0
 # block computeModesCM until this file is removed (will be done after RMs acquisition)
 touch FUNCTION_computeModesCM.block
 if [ $C0test -eq 0 ]; then
@@ -756,6 +759,7 @@ menutop_default="stopRM"
 
 stopRM)
 pkill -USR2 aol${LOOPNUMBER}zrespM
+menutop_default="stopRMLO"
 ;;
 
 
