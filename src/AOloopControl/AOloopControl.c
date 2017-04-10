@@ -12020,13 +12020,13 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 			cnt00 = data.image[IDsync].md[0].cnt1;
 			cnt01 = cnt00+1;
 			
-			while(cnt01>cnt00)
+			while(cnt01>=cnt00)
 			{
 				cnt00 = cnt01;
 				sem_wait(data.image[IDsync].semptr[4]);
 				cnt01 = data.image[IDsync].md[0].cnt1;
 			}
-			printf("START MEASUREMENT\n");
+			printf("START MEASUREMENT  [%6ld %6ld] \n", cnt00, cnt01);
 			fflush(stdout);
 		}
 	
