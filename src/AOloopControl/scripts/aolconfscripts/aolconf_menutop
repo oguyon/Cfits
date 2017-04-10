@@ -713,6 +713,7 @@ sleep 0.1
 tmux send-keys -t ${tmuxnameC00} "./auxscripts/waitonfile FUNCTION_nAUTOC.runproc" C-m
 
 tmux send-keys -t ${tmuxnameC00} "rm FUNCTION_C00.runproc" C-m
+menutop_default="stopRM"
 ;;
 
 
@@ -748,6 +749,7 @@ tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
 function_computeModesCM
 
 tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_C0.runproc" C-m
+menutop_default="stopRM"
 ;;
 
 
