@@ -863,7 +863,7 @@ function_SharedMemLoadCM
 if [ "$procONstat_old" = " ON" ]; then
  tmux send-keys -t ${tmuxnameC0} "# TURNING PROCESSES BACK ON" C-m
  function_AOloopProcess_ON ${tmuxnameC0}
- sleep 1
+ sleep 10
  if [ "$loopONstat_old" = " ON" ]; then
   tmux send-keys -t ${tmuxnameC0} "# TURNING LOOP BACK ON" C-m
   function_LOOP_ON ${tmuxnameC0}
