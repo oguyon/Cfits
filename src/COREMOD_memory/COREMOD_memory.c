@@ -4750,8 +4750,6 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 	double tdiffv;
     struct timespec tdiff;
 	
-	long cnt00, cnt01;
-	
 	
 	
     schedpar.sched_priority = RT_priority;
