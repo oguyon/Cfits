@@ -532,8 +532,8 @@ SCORINGMASKTYPE = 0
 </ol></li>
 <li>The best solution encountered in the above step is recorded. If it is a significant improvement over the last step 3 iteration, goto step 2, if not, go to step 1. If the inner loop (steps 2-3) has been running for more than 50 iterations, go to step 1.</li>
 </ol>
-<p>In the C code, this optimization corresponds to execution mode 13. To stop the loop, create file &quot;stopmode13.txt&quot; in the working directory:</p>
-<pre><code>touch piaacmcconf_i000/stopmode13.txt</code></pre>
+<p>In the C code, this optimization corresponds to execution mode 13. To stop the loop, create file &quot;stoploop13.txt&quot; in the working optimization directory:</p>
+<pre><code>touch piaacmcconf_i000/stoploop13.txt</code></pre>
 <p>Note that this command will stop the loop on entering step 1, so the inner loop (steps 2-4) will still keep running until the solution stops improving.</p>
 </div>
 </div>

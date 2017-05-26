@@ -167,7 +167,7 @@ printvar "mlambda" "central wavelength for polychromatic design [nm]"
 printvar "mlambdaB" "spectral bandwidth [%]"
 printvar "nblambda" "Number of wavelength values"
 printvar "ssize" "source angular size for mask optimization (20: 0.01 l/D; 10: 0.1 l/D)"
-printvar "extmode" "source extent mode (0: 3 points; 1: 6 points)"
+printvar "extmode" "source extent mode (0: 1 point, 1: 3 points; 2: 6 points)"
 
 
 echo -e "\033[1m OPTICAL DESIGN: \033[0m"
@@ -326,7 +326,7 @@ echo "    bandw       spectral bandwidth [%]"
 echo "    NBrings     number of rings"
 echo "    maskradld   focal plane mask radius [l/D]"
 echo "    sourcesize  source size. 10: 0.1 l/d, 20: 0.01 l/d, 30: 0.001 l/D"
-echo "    sourcemode  extended source mode. 0: 3pt, 1: 6pt"
+echo "    sourcemode  extended source mode. 0: 1pt, 1: 3pt, 2: 6pt"
 echo "    material    focal plane mask subtrate"
 echo "    NBlambda    number of wavelengths"
 echo "------------------------------------------------------------------------"
@@ -391,23 +391,6 @@ touch run.cmd.tsart
 if [ "$runoptcmd" = "eval0" ]; then
 mkdir -p eval0
 printhelpeval0 > ./eval0/readme_eval0.txt
-#cp varlog.txt ./eval0/varlog.txt
-#cp piaacmcconf_i000/lambdalist.txt ./eval0/
-#cp piaacmcconf_i000/psfi0_step699.fits ./eval0/
-#cp piaacmcconf_i000/psfi0_step700.fits ./eval0/
-#cp piaacmcconf_i000/psfi0_step720.fits ./eval0/
-#cp piaacmcconf_i000/piaam0z.fits ./eval0/
-#cp piaacmcconf_i000/piaam1z.fits ./eval0/
-#cp piaacmcconf_i000/conjugations.txt ./eval0/
-#cp piaacmcconf_i000/WFamp0_*.fits ./eval0/
-#cp piaacmcconf_i000/WFpha0_*.fits ./eval0/
-#cp piaacmcconf_i000/LyotStop[0-5].fits ./eval0/
-#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2_l*.fits ./eval0/
-#cp piaacmcconf_i000/contrast_ptsrc_sm0_s2_l*.txt ./eval0/
-#cp tmp_fpmCA_ampl.fits ./eval0/
-#cp tmp_fpmCA_pha.fits ./eval0/
-#cp tmp_fpmsag.fits ./eval0/
-#cp tmp_fpmzone.fits ./eval0/
 find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval0/
 cd eval0
 gzip -f *.fits
@@ -417,13 +400,6 @@ fi
 if [ "$runoptcmd" = "eval1" ]; then
 mkdir -p eval1
 printhelpeval1 > ./eval1/readme_eval1.txt
-#cp varlog.txt ./eval1/varlog.txt
-#cp piaacmcconf_i000/psfi0_x50_y00.fits ./eval1/
-#cp piaacmcconf_i000/psfi0_ptsrc_sm0_s2*.fits ./eval1/
-#cp piaacmcconf_i000/psfi0_extsrc15_sm0_s2_l*.fits ./eval1/
-#cp piaacmcconf_i000/ContrastCurve_extsrc15_sm0_s2_l*.txt ./eval1/
-#cp piaacmcconf_i000/psfi0_extsrc20_sm0_s2_l*.fits ./eval1/
-#cp piaacmcconf_i000/ContrastCurve_extsrc20_sm0_s2_l*.txt ./eval1/
 find ./piaacmcconf_i000/ -type f -newer run.cmd.tsart -print0 | xargs -0 cp -t ./eval1/
 cd eval1
 gzip -f *.fits

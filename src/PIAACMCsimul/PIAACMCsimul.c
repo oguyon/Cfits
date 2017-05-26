@@ -13,7 +13,9 @@
 #include <sys/stat.h>
 #include <assert.h>
 
+
 // External libraries
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_vector.h>
@@ -21,12 +23,13 @@
 
 
 // cfitsTK includes
+//   core modules
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
-
+//   other modules
 #include "info/info.h"
 #include "fft/fft.h"
 #include "image_gen/image_gen.h"
@@ -163,7 +166,7 @@ static int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
 
 
 
-// CLI commands
+// command line interface (CLI) commands
 //
 // function CLI_checkarg used to check arguments
 // 1: float
@@ -2049,6 +2052,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
 
 
 
+
+
+
 int PIAAsimul_savepiaacmcconf(const char *dname)
 {
     char command[1000];
@@ -2117,6 +2123,8 @@ int PIAAsimul_savepiaacmcconf(const char *dname)
 
     return(0);
 }
+
+
 
 
 

@@ -564,7 +564,7 @@ fifoname="runPIAACMCfifo$pid"
 
 
 
-execnamestring="$execname -s $startupfile -f $fifoname -e"
+execnamestring="$execname -s $startupfile -f $fifoname"
 
 
 cp $startupfile test_startupfile.txt
@@ -751,7 +751,7 @@ touch ./$1/step700.run.txt
 cp ./$1/piaacmcparams_idealmonomask.conf ./$1/piaacmcparams.conf
 $execnamestring -n step700 << EOF
 #
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 # idealized mask
 PIAACMC_MASKRADLD=0.0 
 loadfits "OPDerr.fits" opderr
@@ -844,7 +844,7 @@ echo "720" > ./$1/runstep
 touch ./$1/step720.run.txt
 $execnamestring -n step720 << EOF
 # 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -877,7 +877,7 @@ echo "721" > ./$1/runstep
 touch ./$1/step721.run.txt
 $execnamestring -n step721 << EOF
 #
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -909,7 +909,7 @@ echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 
 echo "722" > ./$1/runstep
 touch ./$1/step722.run.txt
 $execnamestring -n step722 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -940,7 +940,7 @@ echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 
 echo "722" > ./$1/runstep
 touch ./$1/step723.run.txt
 $execnamestring -n step723 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -966,12 +966,12 @@ fi
 if [ 730 -eq ${state} ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-echo "$datestr  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM"
-echo "$datestr  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM" >> cmdlog.txt
+echo "$datestr  step730  Compute on-axis polychromatic PSF, includes WFC with 1 DM"
+echo "$datestr  step730  Compute on-axis polychromatic PSF, includes WFC with 1 DM" >> cmdlog.txt
 echo "730" > ./$1/runstep
 touch ./$1/step730.run.txt
 $execnamestring -n step730 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -987,12 +987,12 @@ fi
 if [ 740 -eq ${state} ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM"
-echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM" >> cmdlog.txt
-echo "730" > ./$1/runstep
-touch ./$1/step730.run.txt
-$execnamestring -n step730 << EOF
-PIAACMC_dftgrid=2
+echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 2 DMs"
+echo "$datestr  step740  Compute on-axis polychromatic PSF, includes WFC with 2 DMs" >> cmdlog.txt
+echo "740" > ./$1/runstep
+touch ./$1/step740.run.txt
+$execnamestring -n step740 << EOF
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -1026,7 +1026,7 @@ echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $PIAAC
 echo "750" > ./$1/runstep
 touch ./$1/step750.run.txt
 $execnamestring -n step750 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_fpmtype=1 
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
@@ -1052,7 +1052,7 @@ echo "$datestr  step771  eval polychromatic contrast for on-axis PSF, and pointi
 echo "111" > ./$1/runstep
 touch ./$1/step111.run.txt
 $execnamestring -n step111 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=$nblambda
 piaacmcsimrun $1 100
@@ -1072,7 +1072,7 @@ echo "$datestr  step772  Eval monochromatic contrast for on-axis PSF, and pointi
 echo "112" > ./$1/runstep
 touch ./$1/step112.run.txt
 $execnamestring -n step112 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_FPMsectors=$FPMsectors
 PIAACMC_nblambda=1
 PIAACMC_resolved=0
@@ -1115,7 +1115,7 @@ echo "$datestr  step774  Eval monochromatic transmission curve" >> cmdlog.txt
 echo "114" > ./$1/runstep
 touch ./$1/step114.run.txt
 $execnamestring -n step114 << EOF
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 PIAACMC_FPMsectors=0
 PIAACMC_nblambda=1
 piaacmcsimrun $1 101
@@ -1652,7 +1652,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit
@@ -1721,7 +1721,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit
@@ -1823,7 +1823,7 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=$NBpropStep
 
-PIAACMC_dftgrid=1
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 1
 exit
@@ -1887,7 +1887,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit
@@ -1963,7 +1963,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit
@@ -2068,7 +2068,7 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=${lambda}
 PIAACMC_nbpropstep=$NBpropStep
 
-PIAACMC_dftgrid=1
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 1
 
@@ -2134,7 +2134,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit
@@ -2208,7 +2208,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit
@@ -2279,7 +2279,7 @@ REGPIAA_C_ALPHA=${REGPIAACALPHA}
 REGPIAA_F_COEFF=${REGPIAAFCOEFF}
 REGPIAA_F_ALPHA=${REGPIAAFALPHA}
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun $1 40
 exit

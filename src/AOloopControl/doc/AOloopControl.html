@@ -147,6 +147,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li>fftw (single and double precision)</li>
 <li>gsl</li>
 <li>readline</li>
+<li>tmux</li>
 </ul>
 <p>Recommended:</p>
 <ul>
@@ -174,7 +175,7 @@ make install</code></pre>
 <p>Conventions:</p>
 <ul>
 <li><code>&lt;srcdir&gt;</code> is the source code directory, usually <code>.../AdaptiveOpticsControl-&lt;version&gt;</code></li>
-<li><code>&lt;workdir&gt;</code> is the work directory where the program and scripts will be executed</li>
+<li><code>&lt;workdir&gt;</code> is the work directory where the program and scripts will be executed. Note that the full path should end with <code>.../AOloop&lt;#&gt;</code> where <code>&lt;#&gt;</code> ranges from 0 to 9. For example, <code>AOloop2</code>.</li>
 </ul>
 <p>The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:</p>
 <pre><code>mkdir /&lt;workdir&gt;

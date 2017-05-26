@@ -3128,7 +3128,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<span class="ot">execnamestring=</span><span class="st">&quot;</span><span class="ot">$execname</span><span class="st"> -s </span><span class="ot">$startupfile</span><span class="st"> -f </span><span class="ot">$fifoname</span><span class="st"> -e&quot;</span>
+<span class="ot">execnamestring=</span><span class="st">&quot;</span><span class="ot">$execname</span><span class="st"> -s </span><span class="ot">$startupfile</span><span class="st"> -f </span><span class="ot">$fifoname</span><span class="st">&quot;</span>
 
 
 <span class="kw">cp</span> <span class="ot">$startupfile</span> test_startupfile.txt
@@ -3315,7 +3315,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">cp ./</span><span class="ot">$1</span><span class="st">/piaacmcparams_idealmonomask.conf ./</span><span class="ot">$1</span><span class="st">/piaacmcparams.conf</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step700 &lt;&lt; EOF</span>
 <span class="st">#</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st"># idealized mask</span>
 <span class="st">PIAACMC_MASKRADLD=0.0 </span>
 <span class="st">loadfits &quot;</span>OPDerr.fits<span class="st">&quot; opderr</span>
@@ -3408,7 +3408,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step720.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step720 &lt;&lt; EOF</span>
 <span class="st"># </span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3441,7 +3441,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step721.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step721 &lt;&lt; EOF</span>
 <span class="st">#</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3473,7 +3473,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>722<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step722.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step722 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3504,7 +3504,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>722<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step723.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step723 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3530,12 +3530,12 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">if [ 730 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
 <span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
-<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
-<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step720  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step730  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step730  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
 <span class="st">echo &quot;</span>730<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step730.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step730 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3551,12 +3551,12 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">if [ 740 -eq </span><span class="ot">${state}</span><span class="st"> ]</span>
 <span class="st">then</span>
 <span class="st">datestr=</span><span class="kw">`date</span> -u +%Y-%m-%d_%H:%M:%S<span class="kw">`</span>
-<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot;</span>
-<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step740  Compute on-axis polychromatic PSF, includes WFC with 1 DM<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
-<span class="st">echo &quot;</span>730<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
-<span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step730.run.txt</span>
-<span class="ot">$execnamestring</span><span class="st"> -n step730 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step740  Compute on-axis polychromatic PSF, includes WFC with 2 DMs<span class="st">&quot;</span>
+<span class="st">echo &quot;</span><span class="ot">$datestr</span>  step740  Compute on-axis polychromatic PSF, includes WFC with 2 DMs<span class="st">&quot; &gt;&gt; cmdlog.txt</span>
+<span class="st">echo &quot;</span>740<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
+<span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step740.run.txt</span>
+<span class="ot">$execnamestring</span><span class="st"> -n step740 &lt;&lt; EOF</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3590,7 +3590,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>750<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step750.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step750 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_fpmtype=1 </span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
@@ -3616,7 +3616,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>111<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step111.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step111 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=</span><span class="ot">$nblambda</span>
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 100</span>
@@ -3636,7 +3636,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>112<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step112.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step112 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_FPMsectors=</span><span class="ot">$FPMsectors</span>
 <span class="st">PIAACMC_nblambda=1</span>
 <span class="st">PIAACMC_resolved=0</span>
@@ -3679,7 +3679,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">echo &quot;</span>114<span class="st">&quot; &gt; ./</span><span class="ot">$1</span><span class="st">/runstep</span>
 <span class="st">touch ./</span><span class="ot">$1</span><span class="st">/step114.run.txt</span>
 <span class="ot">$execnamestring</span><span class="st"> -n step114 &lt;&lt; EOF</span>
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 <span class="st">PIAACMC_FPMsectors=0</span>
 <span class="st">PIAACMC_nblambda=1</span>
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 101</span>
@@ -4216,7 +4216,7 @@ loadfits &quot;<span class="ot">$1</span>/piaa0C<span class="kw">modes_step001.f
 <span class="st">REGPIAA_F_COEFF=</span><span class="ot">${REGPIAAFCOEFF}</span>
 <span class="st">REGPIAA_F_ALPHA=</span><span class="ot">${REGPIAAFALPHA}</span>
 
-<span class="st">PIAACMC_dftgrid=2</span>
+<span class="st">PIAACMC_dftgrid=0</span>
 
 <span class="st">piaacmcsimrun </span><span class="ot">$1</span><span class="st"> 40</span>
 <span class="st">exit</span>
@@ -4285,7 +4285,7 @@ REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
 REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
 REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
@@ -4387,7 +4387,7 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_nbpropstep=<span class="ot">$NBpropStep</span>
 
-PIAACMC_dftgrid=1
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 1
 exit
@@ -4451,7 +4451,7 @@ REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
 REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
 REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
@@ -4527,7 +4527,7 @@ REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
 REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
 REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
@@ -4632,7 +4632,7 @@ PIAACMC_nblambda=1
 PIAACMC_lambda=<span class="ot">${lambda}</span>
 PIAACMC_nbpropstep=<span class="ot">$NBpropStep</span>
 
-PIAACMC_dftgrid=1
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 1
 
@@ -4698,7 +4698,7 @@ REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
 REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
 REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
@@ -4772,7 +4772,7 @@ REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
 REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
 REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 40
 exit
@@ -4843,7 +4843,7 @@ REGPIAA_C_ALPHA=<span class="ot">${REGPIAACALPHA}</span>
 REGPIAA_F_COEFF=<span class="ot">${REGPIAAFCOEFF}</span>
 REGPIAA_F_ALPHA=<span class="ot">${REGPIAAFALPHA}</span>
 
-PIAACMC_dftgrid=2
+PIAACMC_dftgrid=0
 
 piaacmcsimrun <span class="ot">$1</span> 40
 exit

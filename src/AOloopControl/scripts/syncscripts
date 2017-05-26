@@ -60,7 +60,7 @@ while getopts :hcs:e: FLAG; do
     ;;
     e) # export script to directory
     echo "$PWD" > $OPTARG/.scripts_src_dir.conf
-    rm $OPTARG/syncscripts
+    rm $OPTARG/syncscripts 2> /dev/null
     ln -s $PWD/syncscripts $OPTARG/syncscripts
     execname=$( ls $PWD/../../../bin/ )
     rm $OPTARG/AOloopControl 2> /dev/null

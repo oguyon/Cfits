@@ -305,12 +305,12 @@ static FILE *loadcreateshm_fplog;
 /*
 
 NOTATIONS:
- wn >- : operations waits on semaphore #n 
+ [streamA]wn >--(function)--> [streamB]pm : function waits on semaphore #n of streamA and post #m of streamB
  pa    : post all
  
   
   
-  [aol#_wfsim] : raw WFS input image, all semaphore posted when image is read 
+  [aol#_wfsim] : raw WFS input image, all semaphores posted when image is read 
   [aol#_wfsim]w0 >--(Read_cam_frame)--> [aol#_imWFS0]pa [aol#_imWFS1]pa
   
  
@@ -335,13 +335,15 @@ NOTATIONS:
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
+// CLI_checkarg ( CLI argument index , type code )
+//
+// type codes:
 // 1: float
 // 2: long
 // 3: string, not existing image
 // 4: existing image
 // 5: string 
-
-
+//
 
 
 

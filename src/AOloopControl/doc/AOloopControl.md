@@ -29,6 +29,7 @@ Libraries required :
 - fftw (single and double precision)
 - gsl
 - readline
+- tmux
 
 
 Recommended:
@@ -69,7 +70,7 @@ The executable is `./AdaptiveOpticsControl-<version>/bin/AdaptiveOpticsControl`
 Conventions:
 
 - `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
-- `<workdir>` is the work directory where the program and scripts will be executed
+- `<workdir>` is the work directory where the program and scripts will be executed. Note that the full path should end with `.../AOloop<#>` where `<#>` ranges from 0 to 9. For example, `AOloop2`.
 
 The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
 
@@ -701,7 +702,7 @@ Options [C] and [D] are `MODAL` options, as the DM does not represent physical s
 
 - OPTIONAL: **set DM delay** ('setDMdelayON' and 'setDMdelayval' in `Top Menu` screen)
 
-3. **Create the DM streams** with the `initDM` command in the `Top Menu`.
+3. **Create the DM streams** with the `initDM` command in the `Top Menu`. You may need to run the `stopDM` command first.
 
 4. **autoconfigure DM: main DM (nolink)** (`nolink` in `Top Menu` screen). This command automactically sets up the following symbolic links:
 	- dm##disp00 is linked to aol#_dmO      (flat offset channel)

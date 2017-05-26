@@ -235,18 +235,10 @@ fi
 menuitems+=( " " " ")
 file="$HOME/status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
-if [[ -f "$file" && ( "$initDMstat" = "0" || "$initDMstat" = "1" ) ]]; then
-echo "OK"
-else
-mkdir -p ./status
-echo "0" > $file
-fi
-
-file="$HOME/status/stat_initdm${DMindex}.txt"
-initDMstat=$( cat $file )
 if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
 echo "OK"
 else
+mkdir -p ./status
 echo "0" > $file
 initDMstat=0
 fi
