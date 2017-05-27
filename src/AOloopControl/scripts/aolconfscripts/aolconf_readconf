@@ -637,17 +637,17 @@ function ReadDMturbtint {
         then
         dmturbtint=$(echo "$(cat $file)")
         else
-        dmturbtint=0.1 #default
+        dmturbtint=80 #default
     fi
     aoconflog "dmturbtint = ${dmturbtint}"
-                tmux new-session -d -s DMturbtint
-                tmux send-keys -t DMturbtint "$execname " C-m
-                if [ "$CPUconfRT" -eq "1" ]; then
-                tmux send-keys -t DMturbtint "csetpmove system" C-m
-                fi
-                tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
-                tmux send-keys -t DMturbtint "exit" C-m
-                tmux send-keys -t DMturbtint "exit" C-m
+    tmux new-session -d -s DMturbtint
+    tmux send-keys -t DMturbtint "$execname " C-m
+    if [ "$CPUconfRT" -eq "1" ]; then
+    tmux send-keys -t DMturbtint "csetpmove system" C-m
+    fi
+    tmux send-keys -t DMturbtint "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
+    tmux send-keys -t DMturbtint "exit" C-m
+    tmux send-keys -t DMturbtint "exit" C-m
 }
 
 

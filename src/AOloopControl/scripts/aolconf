@@ -127,6 +127,9 @@ execname="./AOloopControl"
 
 mkdir -p logdir
 
+# runproc files indicating which processes are running
+mkdir -p runproc
+
 ### Start getopts code ###
 while getopts :hH:L:N:Ccn FLAG; do
   case $FLAG in

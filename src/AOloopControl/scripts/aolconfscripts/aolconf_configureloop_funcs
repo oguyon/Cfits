@@ -345,7 +345,7 @@ echo "ENTERING function_nAUTOC"
 
 
 
-if [ ! -f "FUNCTION_nAUTOC.runproc" ]; then
+if [ ! -f "runproc/FUNCTION_nAUTOC.runproc" ]; then
 echo "start calib"
 aoconflogext "START AUTO CALIBRATION"
 
@@ -374,7 +374,7 @@ cp -rf conf_staged conf_staged.000
 # this function populates conf_staged directory
 function_acqWFSresp
 
-tmux send-keys -t ${tmuxname} "rm FUNCTION_nAUTOC.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/FUNCTION_nAUTOC.runproc" C-m
 
 else
 echo "already running"
@@ -413,7 +413,7 @@ else
 	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
     tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolMeasureLOrespmat2.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolMeasureLOrespmat2.runproc" C-m
 
 tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
 #tmux send-keys -t ${tmuxnameaWFSr} "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
@@ -463,7 +463,7 @@ else
     tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
 fi
 tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolMeasureZrespmat2.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolMeasureZrespmat2.runproc" C-m
 
 
 
@@ -503,7 +503,7 @@ mkdir -p $stageddir
 tmux send-keys -t ${tmuxnameaWFSr} "cp zrespM.fits $stageddir" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "cp wfsmap.fits $stageddir" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "cp dmmap.fits $stageddir" C-m
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolCleanZrespmat2.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolCleanZrespmat2.runproc" C-m
 
 
 
@@ -526,7 +526,7 @@ if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
 	tmux send-keys -t ${tmuxnameaWFSr} "savefits dmmaskRM \"!dmmaskRM.fits\"" C-m
 	tmux send-keys -t ${tmuxnameaWFSr} "exitCLI" C-m	
 fi
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkMasks.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolmkMasks.runproc" C-m
 
 
 
@@ -543,7 +543,7 @@ tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkMasks.runproc" C-m
 if [ "$DMMODE" = "ZONAL" ]; then
 	logRunningProcessQ "mkDMslaveActprox" "${tmuxnameaWFSr}" "Make slaved actuator DM mask"
 	tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
-	tmux send-keys -t ${tmuxnameaWFSr} "rm mkDMslaveActprox.runproc" C-m
+	tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/mkDMslaveActprox.runproc" C-m
 else # set dmmask to 1, dmslaved to 0
 	tmux send-keys -t ${tmuxnameaWFSr} "$execname" C-m
 	tmux send-keys -t ${tmuxnameaWFSr} "readshmim aol${LOOPNUMBER}_dmC" C-m
@@ -602,7 +602,7 @@ if [ "$RMCalibReuseMasks" = "0" ]; then
 tmux send-keys -t ${tmuxnameaWFSr} "# DMMODE is ZONAL -> MAKING LOW ORDER MODES" C-m
 logRunningProcessQ "aolmkLO_DMmodes" "${tmuxnameaWFSr}" "Make LO DM modes"
 tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
-tmux send-keys -t ${tmuxnameaWFSr} "rm aolmkLO_DMmodes.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolmkLO_DMmodes.runproc" C-m
 fi
 
 
@@ -713,7 +713,7 @@ tmux new-session -d -s ${tmuxname}
 tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $1 function_zresp_off.wait" C-m
 tmux send-keys -t ${tmuxname} "pkill -USR2 aol${LOOPNUMBER}zrespM" C-m
 tmux send-keys -t ${tmuxname} "echo \"OFF\" > ./status/stat_zrespM.txt" C-m
-tmux send-keys -t ${tmuxname} "rm aolMeasureZrespmat.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/aolMeasureZrespmat.runproc" C-m
 tmux send-keys -t ${tmuxname} "sleep 0.2" C-m
 tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
 aoconflogext "STOP HO RM acquision in $1 sec max"
@@ -768,7 +768,7 @@ fi
 # move from staged to ./conf/
 UpdateCalib_staged_zrm_tmux "${tmuxname}"
 
-tmux send-keys -t ${tmuxname} "rm aolCleanZrespmat.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/aolCleanZrespmat.runproc" C-m
 }
 
 
@@ -778,7 +778,7 @@ function function_upzrm_tmux ()
 tmux new-session -d -s $1
 logRunningProcess "aolupzrm" "$1" "Update zonal response matrix calibration to latest"
 tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
-tmux send-keys -t $1 "rm aolupzrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolupzrm.runproc" C-m
 }
 
 
@@ -811,7 +811,7 @@ tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmslaved" C-
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"dmmask\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_dmmask" C-m
 fi
-tmux send-keys -t $1 "rm SMloadzrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/SMloadzrm.runproc" C-m
 }
 
 
@@ -964,7 +964,7 @@ echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmM
 aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
 
 tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
-tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 }
 
 
@@ -980,7 +980,7 @@ tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $2 function_LOresp_o
 
 tmux send-keys -t $1 "pkill -USR1 aol${LOOPNUMBER}LOrespM" C-m
 tmux send-keys -t $1 "echo \"OFF\" > ./status/stat_LOrespM.txt" C-m
-tmux send-keys -t $1 "rm aolMeasureLOrespmat.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
@@ -1013,7 +1013,7 @@ tmux send-keys -t $1 "cp LOdmmask.fits LOdmmask/LOdmmask_${datestr}.fits" C-m
 #waitforfile cleanLOresp.run
 #rm cleanLOresp.run
 UpdateCalib_staged_mrm_tmux "$1"
-tmux send-keys -t $1 "rm aolCleanLOrespmat.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolCleanLOrespmat.runproc" C-m
 }
 
 
@@ -1022,7 +1022,7 @@ function function_upmrm_tmux ()
 tmux new-session -d -s $1
 logRunningProcess "aolupmrm" "$1" "Update LO modal response matrix calibration to latest"
 tmux send-keys -t $1 "cp ${dir_conf_staged}/conf_*.txt ./conf/" C-m
-tmux send-keys -t $1 "rm aolupmrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/aolupmrm.runproc" C-m
 }
 
 
@@ -1035,7 +1035,7 @@ tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"LOrespM\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_LOrespM" C-m
 tmux send-keys -t $1 "./auxscripts/aolReadConfFile \"LODMmodes\"" C-m
 tmux send-keys -t $1 "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_LODMmodes" C-m
-tmux send-keys -t $1 "rm SMloadmrm.runproc" C-m
+tmux send-keys -t $1 "rm runproc/SMloadmrm.runproc" C-m
 }
 
 

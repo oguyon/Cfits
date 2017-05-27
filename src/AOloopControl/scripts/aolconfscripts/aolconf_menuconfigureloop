@@ -286,7 +286,7 @@ fi
 
 
 
-#if [ -f "autocalibration.runproc" ]; then
+#if [ -f "runproc/autocalibration.runproc" ]; then
 #menuitems+=( "[ACstopK]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to KILL\Zn" )
 #menuitems+=( "[ACstopZ]" "        \Zr\Z2AUTO SYSTEM CALIBRATION RUNNING\Zn    \Zr\Z1press to COMPLETE zonal acquisition\Zn" )
 #if [ "$DMMODE" = "ZONAL" ]; then
@@ -301,7 +301,7 @@ fi
 
 
 
-if [ -f "FUNCTION_nAUTOC.runproc" ]; then
+if [ -f "runproc/FUNCTION_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
 else
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
@@ -375,7 +375,7 @@ fi
 
 
 
-#if [ -f "aolCleanZrespmat.runproc" ]; then
+#if [ -f "runproc/aolCleanZrespmat.runproc" ]; then
 #	menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
 #	menuitems+=( " " " " )
 #else
@@ -1034,18 +1034,18 @@ tmux kill-session -t aol${LOOPNUMBER}zrespMc
 if [ "$DMMODE" = "ZONAL" ]; then
 rm function_LOresp_on_tmux.lock
 rm function_LOresp_off_tmux.lock
-rm aolCleanLOrespmat.runproc  
-rm aolMeasureLOrespmat.runproc  
-rm aolupmrm.runproc  
+rm runproc/aolCleanLOrespmat.runproc  
+rm runproc/aolMeasureLOrespmat.runproc  
+rm runproc/aolupmrm.runproc  
 fi
-rm autocalibration.runproc  
+rm runproc/autocalibration.runproc  
 if [ "$DMMODE" = "ZONAL" ]; then
-rm SMloadmrm.runproc
+rm runproc/SMloadmrm.runproc
 fi
-rm aolCleanZrespmat.runproc   
-rm aolMeasureZrespmat.runproc   
-rm aolupzrm.runproc
-rm SMloadzrm.runproc
+rm runproc/aolCleanZrespmat.runproc   
+rm runproc/aolMeasureZrespmat.runproc   
+rm runproc/aolupzrm.runproc
+rm runproc/SMloadzrm.runproc
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 echo "OFF" > ./status/stat_zrespM.txt 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -1114,12 +1114,12 @@ tmuxname="aol${LOOPNUMBER}LOrespMc"
 function_LOresp_off_tmux ${tmuxname} $ACmrmtime
 function_upmrm_tmux ${tmuxname}
 function_SMloadmrm_tmux ${tmuxname}
-tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/autocalibration.runproc" C-m
 else
-tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/autocalibration.runproc" C-m
 fi
 else
-tmux send-keys -t ${tmuxname} "rm autocalibration.runproc" C-m
+tmux send-keys -t ${tmuxname} "rm runproc/autocalibration.runproc" C-m
 fi
 ;;
 

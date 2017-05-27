@@ -273,7 +273,7 @@ chmod +x $computeModesCMscriptfile
 tmux send-keys -t $tmuxnameMCM "./$computeModesCMscriptfile" C-m
 
 
-tmux send-keys -t $tmuxnameMCM "rm aolmkmodes.runproc" C-m
+tmux send-keys -t $tmuxnameMCM "rm runproc/aolmkmodes.runproc" C-m
 
 
 tmux send-keys -t $tmuxnameMCM "./aolconfscripts/aollog \"$LOOPNAME\" \"CM computation DONE\" &" C-m
@@ -317,7 +317,7 @@ echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedM
 done
 chmod +x script_SharedMemLoadCM
 tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
-tmux send-keys -t ${tmuxnameSMlCM} "rm SharedMemLoadCM.runproc" C-m	
+tmux send-keys -t ${tmuxnameSMlCM} "rm runproc/SharedMemLoadCM.runproc" C-m	
 
 
 
