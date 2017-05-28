@@ -310,7 +310,23 @@ fi
 menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
-menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded})" )
+
+
+file="conf/conf_conflastloaded_name.txt"
+if [ -f "$file" ]; then
+confnameloaded=$( cat $file )
+else
+confnameloaded=" "
+fi
+
+file="conf/conf_conflastloaded_time.txt"
+if [ -f "$file" ]; then
+confloadedtime=$( cat $file )
+else
+confloadedtime=" "
+fi
+
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded} on ${confloadedtime})" )
 menuitems+=( " " " " )
 
 
@@ -1213,6 +1229,9 @@ echo "confname = $confname"
 
 
 confnameloaded=${confname}
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+confloadedtime=$( date -u )
+echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 case $retval in
    0) # button
