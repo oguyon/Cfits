@@ -1200,7 +1200,7 @@ echo "saving to ${confname}   tempfile = $tempfile"
 
 case $retval in
    0) # button
- echo "${confname}" > ./confname.txt
+# echo "${confname}" > ./confname.txt
 mkdir -p "${confname}"
 cp conf/conf_* "${confname}/"
 cp conf/RMpoke.fits "${confname}/"
@@ -1223,7 +1223,7 @@ dialog --title "Select Configuration" --title "Select Configuration" --ok-label 
 retval="$?"
 confname=$(cat $tempfile)
 
-echo "${confname}" > confname.txt
+#echo "${confname}" > confname.txt
 aoconflogext "LOAD configuration from ${confname}"
 echo "confname = $confname"
 
