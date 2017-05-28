@@ -693,6 +693,7 @@ SF="DMmonstartup"
 echo "aoloopcontroldmcombmon $DMindex" > $SF 
 echo "exit" >> $SF
 $execname -n DMmon-$1 -f DMmonfifo -s $SF
+rm $SF
 ;;
 
 
