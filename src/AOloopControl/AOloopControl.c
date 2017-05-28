@@ -1489,9 +1489,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     
     FILE *fplog; // human-readable log of load sequence
 
-    if((fplog=fopen("loadconf.log", "w"))==NULL)
+    if((fplog=fopen("logdir/loadconf.log", "w"))==NULL)
     {
-        printf("ERROR: file loadconf.log missing\n");
+        printf("ERROR: cannot create logdir/loadconf.log\n");
         exit(0);
     }
     loadcreateshm_log = 1;
@@ -3835,7 +3835,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 /* =============================================================================================== */
 
 
-/** Measures WFS image response to a series of DM patterns
+/** 
+ * @brief Measures WFS image response to a series of DM patterns
  *
  * AOinitMode = 0:  create AO shared mem struct
  * AOinitMode = 1:  connect only to AO shared mem struct
@@ -3846,6 +3847,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
  * 
  * USR1 signal will stop acquisition immediately
  * USR2 signal completes current cycles and stops acquisition
+ * 
  * 
  * */
 
@@ -4206,7 +4208,7 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 			for(act=0;act<dmxysize;act++)
 				data.image[IDpokeC2].array.F[dmxysize*(2*poke+2) + dmxysize + act] = -ampl*data.image[IDpokeC].array.F[dmxysize*poke+act];
 		}
-	save_fits("dmpokeC2", "!test_dmpokeC2.fits");
+//	save_fits("dmpokeC2", "!tmp/test_dmpokeC2.fits");
 	
 	printf("NBpoke = %ld\n", NBpoke);
 	fflush(stdout);
@@ -4216,7 +4218,7 @@ long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, 
 	printf("STEP done\n");
 	fflush(stdout);
 	
-	save_fits("wfsresp2", "!test_wfsresp2.fits");
+//	save_fits("wfsresp2", "!tmp/test_wfsresp2.fits");
 	
 	
 	// process data cube
@@ -6076,7 +6078,7 @@ int_fast8_t AOloopControl_Process_zrespM(long loop, const char *IDzrespm0_name, 
             if(image_ID("RMpokeC")!=-1)   
                 {
                     AOloopControl_Hadamard_decodeRM("RMpokeC", "RMmat", "pixindexim", "RMpokeC1");
-                    save_fits("RMpokeC1", "!test_RMpokeC1.fits");
+                    //save_fits("RMpokeC1", "!tmp/test_RMpokeC1.fits");
                 }            
         }
     else // NO DECODING
