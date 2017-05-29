@@ -290,6 +290,7 @@ tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
 echo "tmux new-session -s ${tmuxnameSMlCM} -d"
 echo "CREATING SESSION : ${tmuxnameSMlCM}"
 tmux new-session -s ${tmuxnameSMlCM} -d
+tmux ls | grep ${tmuxnameSMlCM}
 tmux send-keys -t ${tmuxnameSMlCM} "" C-c
 tmux send-keys -t ${tmuxnameSMlCM} " " C-m
 
