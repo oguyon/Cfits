@@ -700,6 +700,11 @@ static int AOloopControl_DM_createconf()
             dmdispcombconf[DMindex].moninterval = 30000; // 33Hz
             dmdispcombconf[DMindex].status = 0;
 			dmdispcombconf[DMindex].nsecwait = 1000; // 3 us
+			
+			dmdispcombconf[DMindex].TrigMode = 0;
+			dmdispcombconf[DMindex].TrigChan = 0;
+			dmdispcombconf[DMindex].TrigSem = 0;
+
 
             dmdispcombconf[DMindex].IDdisp = -1;
             dmdispcombconf[DMindex].IDvolt = -1;
@@ -882,7 +887,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     float *dmdispptr_array[20];
     long IDdispt;
     char sname[200];
-   // long nsecwait = 10000; // 10 us
+
     int vOK;
     float maxmaxvolt = 150.0;
     char errstr[200];
@@ -906,6 +911,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     struct timespec tnow;
 	struct timespec tdiff;
 	double tdiffv;
+    
+    int DMupdate;
     
     
     
@@ -1143,7 +1150,9 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     while(dmdispcombconf[DMindex].ON == 1)
     {
+		
         dmdispcombconf[DMindex].status = 2;
+
 
 		if(DMtwaitus>0)
 			usleep(DMtwaitus);
@@ -1164,18 +1173,17 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         cntsum = 0;
 
 
-
         for(ch=0; ch<dmdispcombconf[DMindex].NBchannel; ch++)
         {
             cntch = data.image[dmdispcombconf[DMindex].dmdispID[ch]].md[0].cnt0;
             dmdispcombconf[DMindex].dmdispcnt[ch] = cntch;
             cntsum += data.image[dmdispcombconf[DMindex].dmdispID[ch]].md[0].cnt0;
 		}
-
-
+		if(cntsum != cntsumold)
+			DMupdate = 1;
         
             
-        if(cntsum != cntsumold)
+        if(DMupdate==1)
         {
 			clock_gettime(CLOCK_REALTIME, &ttrig);
 			
@@ -1420,10 +1428,26 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("delay time        = %10.3f us\n", dmdispcombconf[DMindex].tdelay*1.0e6);
         printw("disp->V time      = %10.3f us\n", dmdispcombconf[DMindex].time_disp2V*1.0e6);
 
-
-        printw("\n");     
+		printw("\n");     
 		if(dmdispcombconf[DMindex].voltmode==1)
 			attron(A_BOLD);
+		
+		
+		if(dmdispcombconf[DMindex].TrigMode==1)
+			attroff(A_BOLD);
+        printw("\n");
+        printw("=========== TRIGGER MODE ======================================\n"); 		
+		printw("TrigChan          = %10d      DM trigger channel\n", dmdispcombconf[DMindex].TrigChan);
+		printw("TrigSem           = %10d      DM trigger semaphore\n", dmdispcombconf[DMindex].TrigSem);
+		printw("==============================================================\n");
+		if(dmdispcombconf[DMindex].TrigMode==1)
+			attroff(A_BOLD);
+        printw("\n");     
+
+
+
+		if(dmdispcombconf[DMindex].voltmode==1)
+			attron(A_BOLD);			
 		printw("=========== OUTPUT VOLT ======================================\n");
         printw("voltmode          = %10d      Configured for output voltage ?\n", dmdispcombconf[DMindex].voltmode);
         printw("voltON            = %10d      DM voltage ouptut activated ?\n", dmdispcombconf[DMindex].voltON);

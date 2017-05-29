@@ -41,11 +41,18 @@ typedef struct
 	int AveMode;
     float DClevel;
 
+	int TrigMode; // 0 (std) : any channel update triggers disp update, 1: use specific channel and semaphore
+	int TrigChan; // if TrigMode = 1, use this channel for trigger
+	int TrigSem;  // if TrigMode = 1, use this semaphore for trigger
+	
+
 	long nsecwait; // inner wait loop duration, interrupted if sem[1] of disp posted
     struct timespec tstart;
     struct timespec tend;
 	double tdelay;
 	double time_disp2V;
+
+
 
     long dmdispID[DM_NUMBER_CHANMAX];
     float dmdispgain[DM_NUMBER_CHANMAX];
