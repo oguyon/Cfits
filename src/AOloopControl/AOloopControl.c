@@ -15025,9 +15025,9 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 	fprintf(fp, "# col 2 : average value (should be zero)\n");
 	fprintf(fp, "# col 3 : DM mode RMS\n");
 	fprintf(fp, "# col 4 : WFS mode RMS\n");
-	fprintf(fp, "# col 5 : SNR\n");
+	fprintf(fp, "# col 5 : SNR [DMum per sqrt(Nph)]\n");
 	fprintf(fp, "# col 6 : fraction of flux used in measurement\n");
-	fprintf(fp, "# col 7 : Photon Efficiency\n");
+	fprintf(fp, "# col 7 : Photon Efficiency --- SNR^2 for 1 radian RMS WFS\n");
 	fprintf(fp, "\n");
 	
 	
