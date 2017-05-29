@@ -41,6 +41,7 @@ typedef struct
 	int AveMode;
     float DClevel;
 
+	long nsecwait; // inner wait loop duration, interrupted if sem[1] of disp posted
     struct timespec tstart;
     struct timespec tend;
 	double tdelay;

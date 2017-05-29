@@ -699,6 +699,7 @@ static int AOloopControl_DM_createconf()
             dmdispcombconf[DMindex].MAXVOLT = 150.0;
             dmdispcombconf[DMindex].moninterval = 30000; // 33Hz
             dmdispcombconf[DMindex].status = 0;
+			dmdispcombconf[DMindex].nsecwait = 10000; // 10 us
 
             dmdispcombconf[DMindex].IDdisp = -1;
             dmdispcombconf[DMindex].IDvolt = -1;
@@ -881,7 +882,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     float *dmdispptr_array[20];
     long IDdispt;
     char sname[200];
-    long nsecwait = 10000; // 10 us
+   // long nsecwait = 10000; // 10 us
     int vOK;
     float maxmaxvolt = 150.0;
     char errstr[200];
@@ -1151,7 +1152,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             perror("clock_gettime");
             exit(EXIT_FAILURE);
         }
-        semwaitts.tv_nsec += nsecwait;
+        semwaitts.tv_nsec += dmdispcombconf[DMindex].nsecwait;
         if(semwaitts.tv_nsec >= 1000000000)
             semwaitts.tv_sec = semwaitts.tv_sec + 1;
 
@@ -1415,6 +1416,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("loopcnt           = %10ld     AO loop index\n", dmdispcombconf[DMindex].loopcnt);
         printw("updatecnt         = %10ld     Number of DM updates\n", dmdispcombconf[DMindex].updatecnt);
         printw("busy              = %10d   \n", dmdispcombconf[DMindex].busy);
+        printw("nsecwait          = %10ld ns\n", dmdispcombconf[DMindex].nsecwait);
         printw("delay time        = %10.3f us\n", dmdispcombconf[DMindex].tdelay*1.0e6);
         printw("disp->V time      = %10.3f us\n", dmdispcombconf[DMindex].time_disp2V*1.0e6);
 
