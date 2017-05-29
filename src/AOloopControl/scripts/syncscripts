@@ -125,12 +125,14 @@ do
 
 	for entry in $srcdir1/*
 	do
-	filename="${entry##*/}"	
-	echo "   syncing directory $srcdir1 file $filename"
-	if [ $HARD -eq 1 ]; then
-	cp $entry ./$dir/$filename
-	else
-	ln -fs $entry ./$dir/$filename
+	if [ ! -d $entry ]; then
+		filename="${entry##*/}"	
+		echo "   syncing directory $srcdir1 file $filename"
+		if [ $HARD -eq 1 ]; then
+		cp $entry ./$dir/$filename
+		else
+		ln -fs $entry ./$dir/$filename
+		fi
 	fi
 	done
 
