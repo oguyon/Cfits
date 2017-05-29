@@ -1470,7 +1470,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("monitor sample %ld\n", mcnt);
         printw("\n"); 
 
-        printw("=========== DM %d ============================================\n", DMindex);
+        printw("=========== DM %d ==============================================\n", DMindex);
         printw("\n");
         printw("ON                = %10d\n", dmdispcombconf[DMindex].ON);
         printw("size              = %ld x %ld = %ld\n", dmdispcombconf[DMindex].xsize, dmdispcombconf[DMindex].ysize, dmdispcombconf[DMindex].xysize);
@@ -1492,7 +1492,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("=========== TRIGGER MODE = %d ====================================\n", dmdispcombconf[DMindex].TrigMode); 		
 		printw("TrigChan          = %10d      DM trigger channel\n", dmdispcombconf[DMindex].TrigChan);
 		printw("TrigSem           = %10d      DM trigger semaphore\n", dmdispcombconf[DMindex].TrigSem);
-		printw("==============================================================\n");
+		printw("================================================================\n");
 		if(dmdispcombconf[DMindex].TrigMode==1)
 			attroff(A_BOLD);
         printw("\n");     
@@ -1501,7 +1501,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
 
 		if(dmdispcombconf[DMindex].voltmode==1)
 			attron(A_BOLD);			
-		printw("=========== OUTPUT VOLT ======================================\n");
+		printw("=========== OUTPUT VOLT ========================================\n");
         printw("voltmode          = %10d      Configured for output voltage ?\n", dmdispcombconf[DMindex].voltmode);
         printw("voltON            = %10d      DM voltage ouptut activated ?\n", dmdispcombconf[DMindex].voltON);
         printw("MAXVOLT           = %10.2f V    Maximum voltage\n", dmdispcombconf[DMindex].MAXVOLT);
@@ -1512,7 +1512,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("       Clip at 0.0.\n");
         printw("    2: Do not apply DC offset, do not offset sum, do not clip\n");
         printw("DClevel           = %10.5f um   Displacement DC offset\n", dmdispcombconf[DMindex].DClevel);
-		printw("==============================================================\n");
+		printw("================================================================\n");
 		if(dmdispcombconf[DMindex].voltmode==1)
 			attroff(A_BOLD);
         printw("\n"); 
@@ -1523,26 +1523,26 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
 
 		if(dmdispcombconf[DMindex].dm2dm_mode==1)
 			attron(A_BOLD);
-		printw("=========== DM-to-DM OUPUT (CPU-based) ========================\n");
+		printw("=========== DM-to-DM OUPUT (CPU-based) ==========================\n");
         printw("dm2dm_mode        = %10d      DM controls an output DM ?\n", dmdispcombconf[DMindex].dm2dm_mode);
         printw("xsizeout          = %10ld      x size of output DM\n", dmdispcombconf[DMindex].xsizeout);
         printw("ysizeout          = %10ld      y size of output DM\n", dmdispcombconf[DMindex].ysizeout);
         printw("dm2dm_DMmodes     = %10s      output DM modes\n", dmdispcombconf[DMindex].dm2dm_DMmodes_name);
         printw("dm2dm_outdisp     = %10s      ouput DM displacement\n", dmdispcombconf[DMindex].dm2dm_outdisp_name);
-        printw("==============================================================\n");
+        printw("================================================================\n");
 		if(dmdispcombconf[DMindex].dm2dm_mode==1)
 			attroff(A_BOLD);
         printw("\n");
 
 		if(dmdispcombconf[DMindex].dm2dm_mode==1)
 			attron(A_BOLD);
-		printw("======= DM CONTROL TO OUTPUT WFS REFERENCE (CPU-based) =======\n");
+		printw("======== DM CONTROL TO OUTPUT WFS REFERENCE (CPU-based) ========\n");
 		printw("wfsrefmode        = %10d      DM controls output wfsref ?\n", dmdispcombconf[DMindex].wfsrefmode);
         printw("xsizewfsref       = %10ld      x size of output WFS ref\n", dmdispcombconf[DMindex].xsizeout);
         printw("ysizewfsref       = %10ld      y size of output WFS ref\n", dmdispcombconf[DMindex].ysizeout);
 		printw("wfsref_RespMat    = %10s      DM-to-WFSref matrix\n", dmdispcombconf[DMindex].wfsref_RespMat_name);
 		printw("wfsref_out        = %10s      output WFSref\n", dmdispcombconf[DMindex].wfsref_out_name);
-        printw("==============================================================\n");
+        printw("================================================================\n");
 		if(dmdispcombconf[DMindex].dm2dm_mode==1)
 			attroff(A_BOLD);
         printw("\n");
