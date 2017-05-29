@@ -116,6 +116,13 @@ fi
 
 function Fits2shm {
 aoconflog "Move FITS to shared memory : $1 -> $2"
+
+# is file a link ?
+if [ -L "$1" ]; then
+flink=$( readlink -f $1 )
+echo "$flink" > $1.link
+fi
+
 if [ "$CPUconfRT" -eq "1" ];then
 $execname << EOF # move file to shared memory
 csetpmove system
