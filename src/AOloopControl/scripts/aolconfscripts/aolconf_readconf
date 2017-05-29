@@ -502,7 +502,7 @@ if [ -a $file ]
 	else
 	fname="$1.fits" #default
 fi
-aoconflog "linking $1 to ${fname}" 
+aoconflog "ReadConfFile: linking $1 to ${fname}" 
 
 # is file a link ?
 if [ -L "$fname" ]; then
