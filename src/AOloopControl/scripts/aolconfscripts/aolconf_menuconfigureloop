@@ -1238,6 +1238,7 @@ echo "confname = $confname"
 
 confnameloaded=${confname}
 echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt1
 confloadedtime=$( date -u )
 echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
