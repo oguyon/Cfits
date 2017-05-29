@@ -699,7 +699,7 @@ static int AOloopControl_DM_createconf()
             dmdispcombconf[DMindex].MAXVOLT = 150.0;
             dmdispcombconf[DMindex].moninterval = 30000; // 33Hz
             dmdispcombconf[DMindex].status = 0;
-			dmdispcombconf[DMindex].nsecwait = 10000; // 1 us
+			dmdispcombconf[DMindex].nsecwait = 3000; // 3 us
 
             dmdispcombconf[DMindex].IDdisp = -1;
             dmdispcombconf[DMindex].IDvolt = -1;
@@ -1152,7 +1152,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             perror("clock_gettime");
             exit(EXIT_FAILURE);
         }
-        semwaitts.tv_nsec += 10000; //dmdispcombconf[DMindex].nsecwait;
+        semwaitts.tv_nsec += dmdispcombconf[DMindex].nsecwait;
         if(semwaitts.tv_nsec >= 1000000000)
             semwaitts.tv_sec = semwaitts.tv_sec + 1;
 
