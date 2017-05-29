@@ -507,8 +507,8 @@ aoconflog "ReadConfFile: linking $1 to ${fname}"
 # is file a link ?
 if [ -L "$fname" ]; then
 flink=$( readlink -f $fname )
-#rm $fname
-echo "rsync -auL $flink $fname" > $fname.linkcmd
+rm $fname
+rsync -auL $flink $fname
 fi
 
 ./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
