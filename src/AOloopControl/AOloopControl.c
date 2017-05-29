@@ -15085,7 +15085,7 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 		
 	
 		
-		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %12g        %12.10f  %12.10\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac, eff, 1.0/(sigmarad*sigmarad));
+		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %12g        %12.10f  %12.10f\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac, eff, 1.0/(sigmarad*sigmarad));
 	}
 	
 	fclose(fp); 
