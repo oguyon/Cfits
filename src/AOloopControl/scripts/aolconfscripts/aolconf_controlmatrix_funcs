@@ -287,7 +287,8 @@ tmux send-keys -t $tmuxnameMCM "dologext $LOOPNAME CM computation DONE &" C-m
 
 function function_SharedMemLoadCM {
 tmuxnameSMlCM="aol${LOOPNUMBER}SMloadCM"
-echo "CREATING SESSION ${tmuxnameSMlCM}"
+echo "tmux new-session -s ${tmuxnameSMlCM} -d"
+echo "CREATING SESSION : ${tmuxnameSMlCM}"
 tmux new-session -s ${tmuxnameSMlCM} -d
 tmux send-keys -t ${tmuxnameSMlCM} "" C-c
 tmux send-keys -t ${tmuxnameSMlCM} " " C-m
