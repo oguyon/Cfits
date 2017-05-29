@@ -1484,15 +1484,12 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("delay time        = %10.3f us\n", dmdispcombconf[DMindex].tdelay*1.0e6);
         printw("disp->V time      = %10.3f us\n", dmdispcombconf[DMindex].time_disp2V*1.0e6);
 
-		printw("\n");     
-		if(dmdispcombconf[DMindex].voltmode==1)
-			attron(A_BOLD);
 		
 		
 		if(dmdispcombconf[DMindex].TrigMode==1)
-			attroff(A_BOLD);
+			attron(A_BOLD);
         printw("\n");
-        printw("=========== TRIGGER MODE ======================================\n"); 		
+        printw("=========== TRIGGER MODE = %d ====================================\n", dmdispcombconf[DMindex].TrigMode); 		
 		printw("TrigChan          = %10d      DM trigger channel\n", dmdispcombconf[DMindex].TrigChan);
 		printw("TrigSem           = %10d      DM trigger semaphore\n", dmdispcombconf[DMindex].TrigSem);
 		printw("==============================================================\n");
