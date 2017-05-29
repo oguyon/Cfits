@@ -901,6 +901,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     
     // timing
     struct timespec ttrig;
+    struct timespec t1;
     struct timespec tnow;
 	struct timespec tdiff;
 	double tdiffv;
@@ -1274,7 +1275,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             dmdispcombconf[DMindex].status = 7;
 
 			
-
+			clock_gettime(CLOCK_REALTIME, &t1);
 			if(dmdispcombconf[DMindex].voltmode==1)
 				AOloopControl_DM_disp2V(DMindex);
 			
@@ -1287,8 +1288,11 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             clock_gettime(CLOCK_REALTIME, &tnow);
             tdiff = time_diff(ttrig, tnow);
 			tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-
             dmdispcombconf[DMindex].tdelay = tdiffv;
+
+			tdiff = time_diff(t1, tnow);
+			tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+			dmdispcombconf[DMindex].time_disp2V = tdiffv;
         }
     
          if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
@@ -1411,7 +1415,9 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("loopcnt           = %10ld     AO loop index\n", dmdispcombconf[DMindex].loopcnt);
         printw("updatecnt         = %10ld     Number of DM updates\n", dmdispcombconf[DMindex].updatecnt);
         printw("busy              = %10d   \n", dmdispcombconf[DMindex].busy);
-        printw("processing time   = %10.3f us\n", dmdispcombconf[DMindex].tdelay*1.0e6);
+        printw("delay time        = %10.3f us\n", dmdispcombconf[DMindex].tdelay*1.0e6);
+        printw("disp->V time      = %10.3f us\n", dmdispcombconf[DMindex].time_disp2V*1.0e6);
+
 
         printw("\n");     
 		if(dmdispcombconf[DMindex].voltmode==1)
