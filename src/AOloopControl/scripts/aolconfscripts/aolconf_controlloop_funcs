@@ -19,6 +19,7 @@ fi
 
 
 
+
 function function_controlloop_readparams 
 {
 
@@ -1028,8 +1029,8 @@ fi
 
 
 if [ "$1" = "NULL" ]; then
-procONstat=" ON"
-./$scriptfile
+#procONstat=" ON"
+#./$scriptfile
 else
 tmux send-keys -t $1 "./$scriptfile" C-m
 fi
