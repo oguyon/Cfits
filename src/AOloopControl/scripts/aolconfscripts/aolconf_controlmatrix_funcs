@@ -337,6 +337,6 @@ tmux send-keys -t ${tmuxnameSMlCM} "rm runproc/SharedMemLoadCM.runproc" C-m
 #getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
 
 done
-
+sleep 5
 }
 
