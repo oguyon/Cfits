@@ -12100,7 +12100,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 		}
 
 		if(TESTMODE==1)
-			fprintf(fptest, "%5ld %+12.10f %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
+			fprintf(fptest, "%5lld %+12.10f %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
 
 		cnt++;
 	}
@@ -15028,7 +15028,7 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 	fprintf(fp, "# col 4 : WFS mode RMS\n");
 	fprintf(fp, "# col 5 : SNR for a 1um DM motion with 1 ph\n");
 	fprintf(fp, "# col 6 : fraction of flux used in measurement\n");
-	fprintf(fp, "# col 7 : Photon Efficiency ---  for 1 radian RMS WFS\n");
+	fprintf(fp, "# col 7 : Photon Efficiency\n");
 	fprintf(fp, "\n");
 	
 	
@@ -15080,12 +15080,11 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 		
 		// SNR is in DMum per sqrt(Nph)
 		// factor 2.0 for DM reflection
-		eff = (SNR/2.0)/(lambdanm*0.001*2.0*M_PI); // WF ampl [rad] to reach SNR=1
-		eff = eff*eff;
-		
+	
+		eff = 1.0/(sigmarad*sigmarad);
 	
 		
-		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %12g        %12.10f  %12.10f\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac, eff, 1.0/(sigmarad*sigmarad));
+		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %12g        %12.10f\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac, eff);
 	}
 	
 	fclose(fp); 
