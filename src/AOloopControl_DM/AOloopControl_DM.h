@@ -43,6 +43,7 @@ typedef struct
 
     struct timespec tstart;
     struct timespec tend;
+	double tdelay;
 
     long dmdispID[DM_NUMBER_CHANMAX];
     float dmdispgain[DM_NUMBER_CHANMAX];

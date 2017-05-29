@@ -857,6 +857,8 @@ int AOloopControl_DM_disp2V(long DMindex)
 //
 // maxvolt: maximum volt for DM volt
 // 
+
+
 int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int NBchannel, int AveMode, int dm2dm_mode, const char *dm2dm_DMmodes, const char *dm2dm_outdisp, int wfsrefmode, const char *wfsref_WFSRespMat, const char *wfsref_out, int voltmode, const char *IDvolt_name, float DClevel, float maxvolt)
 {
     long naxis = 2;
@@ -895,6 +897,14 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     long DMtwaitus = 0; // optional time interval between successive commands [us]
     // if 0, do not wait
     // read from variable name DMTWAIT
+    
+    
+    // timing
+    struct timespec ttrig;
+    struct timespec tnow;
+	struct timespec tdiff;
+	double tdiffv;
+    
     
     
     if(DMindex>NB_DMindex-1)
@@ -1165,6 +1175,8 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             
         if(cntsum != cntsumold)
         {
+			clock_gettime(CLOCK_REALTIME, &ttrig);
+			
             dmdispcombconf[0].status = 3;
             cnt++;
 
@@ -1271,6 +1283,12 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
             cntsumold = cntsum;
             dmdispcombconf[DMindex].updatecnt++;
+            
+            clock_gettime(CLOCK_REALTIME, &tnow);
+            tdiff = time_diff(ttrig, tnow);
+			tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+            dmdispcombconf[DMindex].tdelay = tdiffv;
         }
     
          if((data.signal_INT == 1)||(data.signal_TERM == 1)||(data.signal_ABRT==1)||(data.signal_BUS==1)||(data.signal_SEGV==1)||(data.signal_HUP==1)||(data.signal_PIPE==1))
@@ -1393,6 +1411,7 @@ int AOloopControl_DM_dmdispcombstatus(long DMindex)
         printw("loopcnt           = %10ld     AO loop index\n", dmdispcombconf[DMindex].loopcnt);
         printw("updatecnt         = %10ld     Number of DM updates\n", dmdispcombconf[DMindex].updatecnt);
         printw("busy              = %10d   \n", dmdispcombconf[DMindex].busy);
+        printw("processing time   = %10.3f us\n", dmdispcombconf[DMindex].tdelay*1.0e6);
 
         printw("\n");     
 		if(dmdispcombconf[DMindex].voltmode==1)
