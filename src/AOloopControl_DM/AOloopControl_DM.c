@@ -183,16 +183,29 @@ int_fast8_t AOloopControl_DM_setvoltOFF_cli() {
         AOloopControl_DM_setvoltOFF(data.cmdargtoken[1].val.numl);
 	return 0;}    else       return 1;}
 
-
 int_fast8_t AOloopControl_DM_setMAXVOLT_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
         AOloopControl_DM_setMAXVOLT(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
 	return 0;}    else        return 1;}
 
-
 int_fast8_t AOloopControl_DM_setDClevel_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
         AOloopControl_DM_setDClevel(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+        return 0;}    else        return 1;}
+
+int_fast8_t AOloopControl_DM_setTrigMode_cli() {
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
+        AOloopControl_DM_setTrigMode(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        return 0;}    else        return 1;}
+
+int_fast8_t AOloopControl_DM_setTrigChan_cli() {
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
+        AOloopControl_DM_setTrigChan(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        return 0;}    else        return 1;}
+
+int_fast8_t AOloopControl_DM_setTrigSem_cli() {
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
+        AOloopControl_DM_setTrigSem(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
         return 0;}    else        return 1;}
 
 
@@ -369,6 +382,35 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].example,"aolsetdmDC 0.5");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setDClevel(long DMindex, float DClevel)");
     data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetdmTrigMode");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setTrigMode_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM trigger mode (0:std, 1:use single channel)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <TrigMode [0, 1]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmTrigMode 0 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setTrigMode(long DMindex, int mode)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetdmTrigChan");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setTrigChan_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM trigger channel");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <TrigChan>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmTrigChan 0 3");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setTrigChan(long DMindex, int chan)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetdmTrigSem");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setTrigSem_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM trigger semaphore");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <TrigSem [0-9]>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmTrigSem 0 4");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setTrigSem(long DMindex, int sem)");
+    data.NBcmd++;
+
+
 
 
 /* =============================================================================================== */
@@ -872,6 +914,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     long ch;
     char name[200];
     long cnt = 0;
+    long long cntold;
     long long cntsumold;
     long long cntsum;
     long ii;
@@ -1153,34 +1196,47 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 		
         dmdispcombconf[DMindex].status = 2;
 
-
 		if(DMtwaitus>0)
 			usleep(DMtwaitus);
 
-        if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
-            perror("clock_gettime");
-            exit(EXIT_FAILURE);
-        }
-        semwaitts.tv_nsec += dmdispcombconf[DMindex].nsecwait;
-        if(semwaitts.tv_nsec >= 1000000000)
-            semwaitts.tv_sec = semwaitts.tv_sec + 1;
-
-		//
-		// this is semaphore that triggers the write to the DM
-		// 
-        sem_timedwait(data.image[dmdispcombconf[DMindex].IDdisp].semptr[1], &semwaitts);
-
-        cntsum = 0;
-
-
-        for(ch=0; ch<dmdispcombconf[DMindex].NBchannel; ch++)
-        {
-            cntch = data.image[dmdispcombconf[DMindex].dmdispID[ch]].md[0].cnt0;
-            dmdispcombconf[DMindex].dmdispcnt[ch] = cntch;
-            cntsum += data.image[dmdispcombconf[DMindex].dmdispID[ch]].md[0].cnt0;
+		if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
+			perror("clock_gettime");
+			exit(EXIT_FAILURE);
 		}
-		if(cntsum != cntsumold)
-			DMupdate = 1;
+		semwaitts.tv_nsec += dmdispcombconf[DMindex].nsecwait;
+		if(semwaitts.tv_nsec >= 1000000000)
+			semwaitts.tv_sec = semwaitts.tv_sec + 1;
+
+
+		DMupdate = 0;
+		
+		if(dmdispcombconf[DMindex].TrigMode==0)
+		{
+			//
+			// this is semaphore that triggers the write to the DM
+			// 
+			sem_timedwait(data.image[dmdispcombconf[DMindex].IDdisp].semptr[1], &semwaitts);
+
+			cntsum = 0;
+			for(ch=0; ch<dmdispcombconf[DMindex].NBchannel; ch++)
+			{
+				cntch = data.image[dmdispcombconf[DMindex].dmdispID[ch]].md[0].cnt0;
+				dmdispcombconf[DMindex].dmdispcnt[ch] = cntch;
+				cntsum += data.image[dmdispcombconf[DMindex].dmdispID[ch]].md[0].cnt0;
+			}
+			if(cntsum != cntsumold)
+				DMupdate = 1;
+        }
+        else
+		{
+			sem_timedwait(data.image[dmdispcombconf[DMindex].dmdispID[dmdispcombconf[DMindex].TrigChan]].semptr[dmdispcombconf[DMindex].dmdispID[dmdispcombconf[DMindex].TrigSem]], &semwaitts);
+			cnt = data.image[dmdispcombconf[DMindex].dmdispID[dmdispcombconf[DMindex].TrigChan]].md[0].cnt0;
+			if(cnt!=cntold)
+				{
+					DMupdate = 1;
+					cntold=cnt;
+				}
+        }
         
             
         if(DMupdate==1)
@@ -1558,6 +1614,34 @@ int AOloopControl_DM_setDClevel(long DMindex, float DClevel)
 {
     AOloopControl_DM_loadconf();
     dmdispcombconf[DMindex].DClevel = DClevel;
+	AOloopControl_printDMconf();
+
+    return 0;
+}
+
+
+int AOloopControl_DM_setTrigMode(long DMindex, int mode)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].TrigMode = mode;
+	AOloopControl_printDMconf();
+
+    return 0;
+}
+
+int AOloopControl_DM_setTrigChan(long DMindex, int chan)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].TrigChan = chan;
+	AOloopControl_printDMconf();
+
+    return 0;
+}
+
+int AOloopControl_DM_setTrigSem(long DMindex, int sem)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].TrigSem = sem;
 	AOloopControl_printDMconf();
 
     return 0;

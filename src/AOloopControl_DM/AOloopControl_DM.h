@@ -189,7 +189,11 @@ int AOloopControl_DM_setMAXVOLT(long DMindex, float maxvolt);
 
 int AOloopControl_DM_setDClevel(long DMindex, float DClevel);
 
+int AOloopControl_DM_setTrigMode(long DMindex, int mode);
 
+int AOloopControl_DM_setTrigChan(long DMindex, int chan);
+
+int AOloopControl_DM_setTrigSem(long DMindex, int sem);
 
 
 
