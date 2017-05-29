@@ -921,7 +921,7 @@ mkdir -p perfMeas
 str=`( printf "%04ld" "$mzRMsensAmpnm")`
 fname="./perfMeas/wfs_sensitivity_$str.${datestr}.txt"
 echo "# amplitude = $mzRMsensAmpnm nm" > $fname
-echo "# WFS lambda = $wfslambda um" >> $fname
+echo "# WFS lambda = $wfslambdanm nm" >> $fname
 echo " " >> $fname
 cat wfs_sensitivity.txt >> $fname
 rm wfs_sensitivity.txt

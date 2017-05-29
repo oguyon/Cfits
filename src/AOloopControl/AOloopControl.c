@@ -15021,6 +15021,17 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 	
 	fp = fopen(foutname, "w");
 	
+	fprintf(fp, "# col 1 : mode index\n");
+	fprintf(fp, "# col 2 : average value (should be zero)\n");
+	fprintf(fp, "# col 3 : DM mode RMS\n");
+	fprintf(fp, "# col 4 : WFS mode RMS\n");
+	fprintf(fp, "# col 5 : SNR\n");
+	fprintf(fp, "# col 6 : fraction of flux used in measurement\n");
+	fprintf(fp, "# col 7 : Photon Efficiency\n");
+	fprintf(fp, "\n");
+	
+	
+	
 	for(mode=0; mode<NBmodes; mode++)
 	{
 		dmmoderms = 0.0;
