@@ -699,7 +699,7 @@ static int AOloopControl_DM_createconf()
             dmdispcombconf[DMindex].MAXVOLT = 150.0;
             dmdispcombconf[DMindex].moninterval = 30000; // 33Hz
             dmdispcombconf[DMindex].status = 0;
-			dmdispcombconf[DMindex].nsecwait = 3000; // 3 us
+			dmdispcombconf[DMindex].nsecwait = 1000; // 3 us
 
             dmdispcombconf[DMindex].IDdisp = -1;
             dmdispcombconf[DMindex].IDvolt = -1;
@@ -1204,7 +1204,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             {
                 for(ii=0; ii<dmdispcombconf[DMindex].xysize; ii++)
                 {
-                    data.image[IDdispt].array.F[ii] += dmdispcombconf[DMindex].DClevel - ave;
+                    data.image[IDdispt].array.F[ii] += (dmdispcombconf[DMindex].DClevel - ave);
                 
 					// remove negative values
 					if(dmdispcombconf[DMindex].voltmode==1)
