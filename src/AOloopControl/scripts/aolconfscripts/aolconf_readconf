@@ -505,9 +505,9 @@ fi
 aoconflog "linking $1 to ${fname}" 
 
 # is file a link ?
-if [ -L "$1" ]; then
+if [ -L "$fname" ]; then
 flink=$( readlink -f $1 )
-echo "$flink" > $1.link
+echo "$flink" > $fname.link
 fi
 
 ./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
