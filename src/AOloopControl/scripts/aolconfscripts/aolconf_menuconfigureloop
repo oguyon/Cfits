@@ -311,6 +311,8 @@ menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn" )
+
 
 file="conf/conf_conflastloaded_name.txt"
 if [ -f "$file" ]; then
@@ -326,7 +328,8 @@ else
 confloadedtime=" "
 fi
 
-menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn  (last loaded: ${confnameloaded} on ${confloadedtime})" )
+
+menuitems+=( " " " Last loaded/saved: ${confnameloaded} on ${confloadedtime}" )
 menuitems+=( " " " " )
 
 
@@ -1197,6 +1200,11 @@ confname=$(cat $tempfile)
 
 aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
+
+confnameloaded=${confname}
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+confloadedtime=$( date -u )
+echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 case $retval in
    0) # button

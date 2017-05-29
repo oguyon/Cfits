@@ -916,18 +916,30 @@ fi
 
 ./auxscripts/aolRMmeas_sensitivity ${mzRMsensAmpnm} ${wfslambdanm}
 
+file="conf/conf_conflastloaded_name.txt"
+if [ -f "$file" ]; then
+confnameloaded=$( cat $file )
+else
+confnameloaded=" "
+fi
+
+outfname=$( basename $confnameloaded )
 
 mkdir -p perfMeas
 str=`( printf "%04ld" "$mzRMsensAmpnm")`
-fname="./perfMeas/wfs_sensitivity_$str.${datestr}.txt"
+#fname="./perfMeas/wfs_sensitivity_$str.${datestr}.txt"
+fname="./perfMeas/${outfname}_wfs_sensitivity.txt"
 echo "# amplitude = $mzRMsensAmpnm nm" > $fname
 echo "# WFS lambda = $wfslambdanm nm" >> $fname
 echo " " >> $fname
 cat wfs_sensitivity.txt >> $fname
 rm wfs_sensitivity.txt
 
-mv DMmodesXP.fits ./perfMeas/DMmodesXP.${datestr}.fits
-mv WFSmodesXP.fits ./perfMeas/WFSmodesXP.${datestr}.fits
+#mv DMmodesXP.fits ./perfMeas/DMmodesXP.${datestr}.fits
+#mv WFSmodesXP.fits ./perfMeas/WFSmodesXP.${datestr}.fits
+
+mv DMmodesXP.fits ./perfMeas/${outfname}_DMmodesXP.fits
+mv WFSmodesXP.fits ./perfMeas/${outfname}_WFSmodesXP.fits
 ;;
 
 
