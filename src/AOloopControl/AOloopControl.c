@@ -14981,6 +14981,7 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 	long IDoutXP, IDoutXP_WFS;
 	double XPval;
 	
+	double sigmarad;
 	double eff; // efficiency
 	
 	printf("amplimit = %f nm\n", amplimitnm);
@@ -15070,14 +15071,21 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 		frac = pcnt/wfsreftot;
 		
 		wfsmoderms = sqrt(wfsmoderms/wfsmodermscnt);
-		SNR = sqrt(SNR);
+		SNR = sqrt(SNR); // SNR for 1 ph, 1um DM actuation
+		// -> sigma for 1ph = 1/SNR [DMum]
+		
+		// 1umDM act = 2.0*M_PI * ( 2.0 / (lambdanm*0.001) ) rad WF
+		// -> sigma for 1ph = (1/SNR) * 2.0*M_PI * ( 2.0 / (lambdanm*0.001) ) rad WF
+		sigmarad = (1.0/SNR) * 2.0*M_PI * ( 2.0 / (lambdanm*0.001) );
 		
 		// SNR is in DMum per sqrt(Nph)
 		// factor 2.0 for DM reflection
 		eff = (SNR/2.0)/(lambdanm*0.001*2.0*M_PI); // WF ampl [rad] to reach SNR=1
 		eff = eff*eff;
 		
-		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %12g        %12.10f\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac, eff);
+	
+		
+		fprintf(fp, "%5ld   %16f   %16f   %16f    %16g      %12g        %12.10f  %12.10\n", mode, aveval, dmmoderms, wfsmoderms, SNR, frac, eff, 1.0/(sigmarad*signmarad));
 	}
 	
 	fclose(fp); 
