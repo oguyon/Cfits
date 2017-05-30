@@ -926,8 +926,8 @@ state="menuconfigureloop"
 aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
-tmux new-session -d -s adark
-tmux send-keys -t adark "./aocscripts/takedark_${LOOPNAME}" C-m
+tmux new-session -d -s adark${LOOPNUMBER}
+tmux send-keys -t adark${LOOPNUMBER} "./aocscripts/takedark_${LOOPNAME}" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
