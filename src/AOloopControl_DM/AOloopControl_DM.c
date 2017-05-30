@@ -2377,20 +2377,26 @@ long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, flo
 
 //
 // XYmode 
-//	0 : single XY pattern
+//	0 : single XYdiag pattern
 //	1 : single X pattern
 //	2 : single Y pattern
-//	3 : XY -> OFF ->
-//	4 : X -> OFF ->
-//	5 : Y -> OFF ->
-//	6 : X -> Y ->
+//	3 : single Xdiag pattern
+//	4 : single Ydiag pattern
 //
+//	5 : XYdiag -> OFF ->
+//	6 : X -> OFF ->
+//	7 : Y -> OFF ->
+//	8 : X -> Y ->
+//	9 : Xdiag -> OFF ->
+// 10 : Ydiag -> OFF ->
+//
+
 long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode, int bin, long NBcycle)
 {
 	long xsize, ysize, zsize, xysize;
 	long IDout;
 	long ii, jj, kk, kk1;
-	long IDx, IDy, IDxy;
+	long IDx, IDy, IDxy, IDxd, IDyd;
 	int sign = 1;
 	
 	AOloopControl_DM_loadconf();
@@ -2423,11 +2429,33 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 		for(jj=0;jj<ysize;jj++)
 			data.image[IDxy].array.F[jj*xsize+ii] = data.image[IDx].array.F[jj*xsize+ii] * data.image[IDy].array.F[jj*xsize+ii];
 	
+
+
+	IDxd = create_2Dimage_ID("_tmpXd", xsize, ysize);
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				if((ii/bin + jj/bin)%4==0)
+					data.image[IDxd].array.F[jj*xsize+ii] = 1.0;
+				if((ii/bin + jj/bin)%4==2)
+					data.image[IDxd].array.F[jj*xsize+ii] = -1.0;
+			}
+
+	IDyd = create_2Dimage_ID("_tmpYd", xsize, ysize);
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				if((ii/bin - jj/bin)%4==0)
+					data.image[IDxd].array.F[jj*xsize+ii] = 1.0;
+				if((ii/bin - jj/bin)%4==2)
+					data.image[IDxd].array.F[jj*xsize+ii] = -1.0;
+			}
+
 	
 	
 	switch (XYmode) {
 		
-		case 0: // single XY pattern
+		case 0: // single XY-diag pattern
 		zsize = 2; // only 2 frames
 		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);	
 		kk = 0;
@@ -2439,6 +2467,7 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 			for(jj=0;jj<ysize;jj++)
 				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = -data.image[IDxy].array.F[jj*xsize+ii];
 		break;
+		
 		
 		case 1: // single X pattern
 		zsize = 2; // only 2 frames
@@ -2452,6 +2481,7 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 			for(jj=0;jj<ysize;jj++)
 				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = -data.image[IDx].array.F[jj*xsize+ii];
 		break;
+		
 		
 		
 		case 2: // single Y pattern
@@ -2468,7 +2498,11 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 		break;
 		
 
-		case 3: // XY -> OFF ->
+
+
+
+
+		case 5: // XYdiag -> OFF ->
 		zsize = 2*NBcycle*2;
 		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
 		sign = 1;
@@ -2481,7 +2515,8 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 		}		
 		break;
 		
-		case 4: // X -> OFF ->
+		
+		case 6: // X -> OFF ->
 		zsize = 2*NBcycle*2;
 		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
 		sign = 1;
@@ -2494,7 +2529,8 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 		}		
 		break;
 		
-		case 5: // Y -> OFF ->
+		
+		case 7: // Y -> OFF ->
 		zsize = 2*NBcycle*2;
 		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
 		sign = 1;
@@ -2507,7 +2543,8 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 		}		
 		break;
 		
-		case 6: // X -> Y ->
+		
+		case 8: // X -> Y ->
 		zsize = 2*NBcycle*2;
 		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
 		sign = 1;
@@ -2529,6 +2566,8 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 			kk++;
 		}		
 		break;
+		
+		
 		
 	}
 	

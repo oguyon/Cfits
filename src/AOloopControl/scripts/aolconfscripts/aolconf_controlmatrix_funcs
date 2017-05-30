@@ -318,10 +318,10 @@ echo "./auxscripts/aolReadConfFile ${imname}" >> script_SharedMemLoadCM
 echo "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" >> script_SharedMemLoadCM
 done
 done
+
 chmod +x script_SharedMemLoadCM
 tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
 tmux send-keys -t ${tmuxnameSMlCM} "rm runproc/SharedMemLoadCM.runproc" C-m	
-
 
 
 #ReadConfFile "DMmodes${i2}"
@@ -338,7 +338,5 @@ tmux send-keys -t ${tmuxnameSMlCM} "rm runproc/SharedMemLoadCM.runproc" C-m
 
 #ReadConfFile "contrMcact${i2}_00"
 #getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
-
-sleep 5
 }
 
