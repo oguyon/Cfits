@@ -892,7 +892,7 @@ cd wfsdark
 exec 3>&1;
 wfsdarkfname=$(dialog --title "Select WFS dark file name" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
 cd ..
-echo "./wfsdark/$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
+echo "wfsdark/$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
 ReadConfFile "wfsdark"
 ;;
 	1)
