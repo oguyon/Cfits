@@ -215,17 +215,20 @@ stringcenter "I/O PRE-PROCESSING [FITS files] "
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
  
 
+makemenuitemstringaolshm "wfsdark" "WFS dark"
+menuitems+=( "wfsdark" "$menustring" )
 
 
-if [ -f $wfsdarkfile ]; then
-sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
-OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z4${wfsdark}\Zn" )
-else
-OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z1${wfsdark}\Zn" )
-confOK=0
-fi
+
+#if [ -f $wfsdarkfile ]; then
+#sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
+#OKstr="\Z2\Zr$sizestring\Zn"
+#menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z4${wfsdark}\Zn" )
+#else
+#OKstr="\Z1\Zb  MISSING \Zn"
+#menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z1${wfsdark}\Zn" )
+#confOK=0
+#fi
 
 
 
@@ -882,19 +885,39 @@ aoconflogext "set WFS lambda [nm] to ${wfslambdanm}"
 
 
 
-
-
-	dark)
+	wfsdark)
+case $amode in
+	0)
+cd wfsdark
 exec 3>&1;
-#wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
-wfsdark=$(dialog --inputbox "WFS dark" 0 0 "$wfsdark" 2>&1 1>&3);
-exec 3>&-;
-echo "$wfsdark" > ./conf/conf_wfsdark_name.txt
-Readwfsdarkname
-./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsdark
-#echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
-#ReadWFSdarkfname
+wfsdarkfname=$(dialog --title "Select DM map file name" --stdout --fselect "${dmmapfname}" $nbwlines $nbwcols)
+cd ..
+echo "./dmmap/$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
+ReadConfFile "wfsdark"
 ;;
+	1)
+imname=$( cat ./conf/conf_wfsdark_name.txt )
+ds9 $imname &
+;;
+esac
+menucontrolloop_default="wfsdark"
+state="menuconfigureloop"
+;;
+
+
+
+
+#	dark)
+#exec 3>&1;
+##wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
+#wfsdark=$(dialog --inputbox "WFS dark" 0 0 "$wfsdark" 2>&1 1>&3);
+#exec 3>&-;
+#echo "$wfsdark" > ./conf/conf_wfsdark_name.txt
+#Readwfsdarkname
+#./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsdark
+##echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
+##ReadWFSdarkfname
+#;;
 
 
 
