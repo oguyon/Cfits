@@ -2389,9 +2389,9 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 {
 	long xsize, ysize, zsize, xysize;
 	long IDout;
-	long ii, jj, kk;
+	long ii, jj, kk, kk1;
 	long IDx, IDy, IDxy;
-	
+	int sign = 1;
 	
 	AOloopControl_DM_loadconf();
 	xsize = dmdispcombconf[DMindex].xsize;
@@ -2426,10 +2426,10 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 	
 	
 	switch (XYmode) {
-		case 0:
+		
+		case 0: // single XY pattern
 		zsize = 2; // only 2 frames
 		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);	
-		
 		kk = 0;
 		for(ii=0;ii<xsize;ii++)
 			for(jj=0;jj<ysize;jj++)
@@ -2438,6 +2438,96 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 		for(ii=0;ii<xsize;ii++)
 			for(jj=0;jj<ysize;jj++)
 				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = -data.image[IDxy].array.F[jj*xsize+ii];
+		break;
+		
+		case 1: // single X pattern
+		zsize = 2; // only 2 frames
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);	
+		kk = 0;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = data.image[IDx].array.F[jj*xsize+ii];
+		kk = 1;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = -data.image[IDx].array.F[jj*xsize+ii];
+		break;
+		
+		
+		case 2: // single Y pattern
+		zsize = 2; // only 2 frames
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);	
+		kk = 0;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = data.image[IDy].array.F[jj*xsize+ii];
+		kk = 1;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = -data.image[IDy].array.F[jj*xsize+ii];
+		break;
+		
+
+		case 3: // XY -> OFF ->
+		zsize = 2*NBcycle*2;
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
+		sign = 1;
+		for(kk=0;kk<2*NBcycle;kk++)
+		{
+			for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = sign*data.image[IDxy].array.F[jj*xsize+ii];
+			sign *= -1;
+		}		
+		break;
+		
+		case 4: // X -> OFF ->
+		zsize = 2*NBcycle*2;
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
+		sign = 1;
+		for(kk=0;kk<2*NBcycle;kk++)
+		{
+			for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = sign*data.image[IDx].array.F[jj*xsize+ii];
+			sign *= -1;
+		}		
+		break;
+		
+		case 5: // Y -> OFF ->
+		zsize = 2*NBcycle*2;
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
+		sign = 1;
+		for(kk=0;kk<2*NBcycle;kk++)
+		{
+			for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = sign*data.image[IDy].array.F[jj*xsize+ii];
+			sign *= -1;
+		}		
+		break;
+		
+		case 6: // X -> Y ->
+		zsize = 2*NBcycle*2;
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);
+		sign = 1;
+		kk = 0;
+		for(kk1=0;kk1<2*NBcycle;kk1++)
+		{
+			for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = sign*data.image[IDx].array.F[jj*xsize+ii];
+			sign *= -1;
+			kk++;
+		}		
+		for(kk1=0;kk1<2*NBcycle;kk1++)
+		{
+			for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = sign*data.image[IDy].array.F[jj*xsize+ii];
+			sign *= -1;
+			kk++;
+		}		
 		break;
 		
 	}
