@@ -244,7 +244,7 @@ menuitems+=( "wfsdark" "$menustring" )
 
 
 
-menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> ./wfsdark/wfsdark_<date>.fits" )
+menuitems+=( "adark_on" "             Acquire WFS dark -> ./wfsdark/wfsdark_<date>.fits" )
 
 
 
@@ -927,7 +927,7 @@ aoconflog "START dark acquisiton"
 acqdarkstat=" ON"
 echo " ON" > ./status/stat_acqudark.txt
 tmux new-session -d -s adark
-tmux send-keys -t adark "./aocscripts/takedark_${LOOPNAME} 10000" C-m
+tmux send-keys -t adark "./aocscripts/takedark_${LOOPNAME}" C-m
 aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
