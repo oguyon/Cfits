@@ -87,7 +87,7 @@ if [ -f "./conf/conf_wfslambdanm.txt" ]; then
 wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
 fi
 
-wfsdarkfname="/tmp/aol${LOOPNUMBER}_wfsdark.im.shm"
+
 
 file="conf/conf_MASKS_LOCK.txt"
 if [ -a $file ]

@@ -244,7 +244,7 @@ menuitems+=( "wfsdark" "$menustring" )
 
 
 
-menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> ./wfsdark/wfsdark.<date>.fits" )
+menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> ./wfsdark/wfsdark_<date>.fits" )
 
 
 
