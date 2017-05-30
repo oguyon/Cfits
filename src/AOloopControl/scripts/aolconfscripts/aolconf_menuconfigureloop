@@ -890,7 +890,7 @@ case $amode in
 	0)
 cd wfsdark
 exec 3>&1;
-wfsdarkfname=$(dialog --title "Select DM map file name" --stdout --fselect "${dmmapfname}" $nbwlines $nbwcols)
+wfsdarkfname=$(dialog --title "Select WFS dark file name" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
 cd ..
 echo "./dmmap/$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
 ReadConfFile "wfsdark"
