@@ -230,13 +230,14 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                                                                                 */
-/* 5. MISC TESTS                                                                                   */
+/* 5. MISC TESTS & UTILS                                                                           */
 /*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
 long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, float ampl);
 
+long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode, int bin, long NBcycle);
 
 
 #endif

@@ -270,7 +270,11 @@ int_fast8_t AOloopControl_mkDM_TT_circle_cli(){
         AOloopControl_mkDM_TT_circle(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
         return 0;}    else        return 1;}
 
- 
+ int_fast8_t AOloopControl_DM_mkAstroGrid_seq_cli(){
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0){
+        AOloopControl_DM_mkAstroGrid_seq(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
+        return 0;}    else        return 1;}
+
 
 
 
@@ -520,7 +524,7 @@ int init_AOloopControl_DM()
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                                                                                 */
-/* 5. MISC TESTS                                                                                   */
+/* 5. MISC TESTS & UTILS                                                                           */
 /*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
@@ -533,6 +537,17 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmmkttcirc ttcirc 0 20 0.5");
     strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, float ampl)");
     data.NBcmd++;
+
+
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmastrogseq");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_mkAstroGrid_seq_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make astrogrid sequence");
+    strcpy(data.cmd[data.NBcmd].syntax,"<outfname> <DMindex (0-9)> <mode (0-6)> <bin(>1)> <NBcycle>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmastrogseq astrogridseq 0 0 1 1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode, int bin, long NBcycle)");
+    data.NBcmd++;
+
 
 
     // add atexit functions here
@@ -2319,10 +2334,11 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                                                                                 */
-/* 5. MISC TESTS                                                                                   */
+/* 5. MISC TESTS & UTILS                                                                           */
 /*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
+
 
 long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, float ampl)
 {
@@ -2358,4 +2374,76 @@ long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, flo
 	return(IDout);
 }
 
+
+//
+// XYmode 
+//	0 : single XY pattern
+//	1 : single X pattern
+//	2 : single Y pattern
+//	3 : XY -> OFF ->
+//	4 : X -> OFF ->
+//	5 : Y -> OFF ->
+//	6 : X -> Y ->
+//
+long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode, int bin, long NBcycle)
+{
+	long xsize, ysize, zsize, xysize;
+	long IDout;
+	long ii, jj, kk;
+	long IDx, IDy, IDxy;
+	
+	
+	AOloopControl_DM_loadconf();
+	xsize = dmdispcombconf[DMindex].xsize;
+	ysize = dmdispcombconf[DMindex].ysize;
+	xysize = xsize*ysize;
+	
+	IDx = create_2Dimage_ID("_tmpX", xsize, ysize);
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				if((ii/bin)%2==0)
+					data.image[IDx].array.F[jj*xsize+ii] = 1.0;
+				else
+					data.image[IDx].array.F[jj*xsize+ii] = -1.0;
+			}
+	
+	IDy = create_2Dimage_ID("_tmpY", xsize, ysize);
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			{
+				if((jj/bin)%2==0)
+					data.image[IDy].array.F[jj*xsize+ii] = 1.0;
+				else
+					data.image[IDy].array.F[jj*xsize+ii] = -1.0;
+			}
+	
+	IDxy = create_2Dimage_ID("_tmpXY", xsize, ysize);
+	for(ii=0;ii<xsize;ii++)
+		for(jj=0;jj<ysize;jj++)
+			data.image[IDxy].array.F[jj*xsize+ii] = data.image[IDx].array.F[jj*xsize+ii] * data.image[IDy].array.F[jj*xsize+ii];
+	
+	
+	
+	switch (XYmode) {
+		case 0:
+		zsize = 2; // only 2 frames
+		IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);	
+		
+		kk = 0;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = data.image[IDxy].array.F[jj*xsize+ii];
+		kk = 1;
+		for(ii=0;ii<xsize;ii++)
+			for(jj=0;jj<ysize;jj++)
+				data.image[IDout].array.F[kk*xysize+jj*ysize+ii] = -data.image[IDxy].array.F[jj*xsize+ii];
+		break;
+		
+	}
+	
+	
+	
+	return(IDout);
+}
 
