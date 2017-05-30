@@ -220,10 +220,10 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 if [ -f $wfsdarkfile ]; then
 sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "wfs" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z4${wfsdark}\Zn" )
+menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z4${wfsdark}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "wfs" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z1${wfsdark}\Zn" )
+menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z1${wfsdark}\Zn" )
 confOK=0
 fi
 
