@@ -301,7 +301,7 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 }
 
 
-unction Readwfsdarkname {
+function Readwfsdarkname {
 file="./conf/conf_wfsdark_name.txt"
 if [ -a $file ]
 	then
