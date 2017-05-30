@@ -215,26 +215,33 @@ stringcenter "I/O PRE-PROCESSING [FITS files] "
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
  
 
-if [ -f "$wfsdarkfname" ]; then
+
+
+if [ -f $wfsdarkfile ]; then
 sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "wfsdark" "[${OKstr}] WFS camera dark        \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn" )
+menuitems+=( "wfs" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z4${wfsdark}\Zn" )
 else
-OKstr="\Z5 OPTIONAL \Zn"
-menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
+OKstr="\Z1\Zb  MISSING \Zn"
+menuitems+=( "wfs" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z1${wfsdark}\Zn" )
 confOK=0
 fi
 
 
-#acqudarkstat=$( cat ./status/stat_acqudark.txt )
-#if [ "${acqudarkstat}" = "OFF" ];
-#then
+
+#if [ -f "$wfsdarkfname" ]; then
+#sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
+#OKstr="\Z2\Zr$sizestring\Zn"
+#menuitems+=( "wfsdark" "[${OKstr}] WFS camera dark        \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn" )
+#else
+#OKstr="\Z5 OPTIONAL \Zn"
+#menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
+#confOK=0
+#fi
+
+
+
 menuitems+=( "adark_on" "             Acquire WFS dark (10000 frames) -> aol${LOOPNUMBER}_wfsdark" )
-#fi
-#if [ "${acqudarkstat}" = " ON" ];
-#then
-#menuitems+=( "adarkoff" "\Z1\Zr             STOP WFS dark acquisition                     \Zn" )
-#fi
 
 
 
@@ -368,7 +375,7 @@ menuitems+=( "zrespM" "$menustring" )
 #menuitems+=( "zrmcust" "Make Custom RM and masks from zrespmat.fits and wfsref0.fits" )
 
 
-#if [ "$DMMODE" = "ZONAL" ]; then
+
 
 if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
@@ -376,10 +383,7 @@ if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hoff" "\Zr\Z2Hadamard mode is ON\Zn    press to turn off")
 fi
 
-#else
-#RMpokeMode=0
-#menuitems+=( " " " " )
-#fi
+
 
 
 if [ "${WFSnorm}" -eq "0" ]; then
@@ -394,33 +398,6 @@ fi
 
 
 
-#if [ -f "runproc/aolCleanZrespmat.runproc" ]; then
-#	menuitems+=( " " " ---- zonal response matrix processing ongoing, click again for status update ----" )
-#	menuitems+=( " " " " )
-#else
-#	if [ "${zrespMstat}" = "OFF" ];
-#	then
-#		menuitems+=( "zresp_on" "[Hadamard = ${RMpokeMode}][normalize = ${WFSnorm}] \Zb\Zu ==== START zonal RMs acquisition ====\ZB\ZU" )
-
-#		if [ "${zrespmatnbiter}" -lt 4 ]; then
-#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-#		else
-#			menuitems+=( "zrespc" "[${zrespmatnbiter} matrices] CLEAN and average zonal RMs")
-#		fi
-
-#		menuitems+=( "zrespoff" "            PROCESS zrespM" )
-#		menuitems+=( " " " ")
-#	else
-#		menuitems+=( "zrespoff" "\Z1\ZrSTOP zonal RM acquisition\Zn" )
-#		if [ "${zrespmatnbiter}" -lt 4 ]; then
-#			menuitems+=( " " "[${zrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average zonal RMs\Zn")
-#		else
-#			menuitems+=( "zrespc" "CLEAN currently accumulated zonal RMs (${zrespmatnbiter} matrices)")
-#		fi
-
-#menuitems+=( "zrespmon" "             Monitor tmux session zrespM${LOOPNUMBER}" )
-#	fi
-#fi
 
 
 makemenuitemstringaolshm "wfsmask" "WFS pixel mask"
@@ -444,27 +421,6 @@ makemenuitemstringaolshm "wfsref0" "WFS reference"
 menuitems+=( "wfsref0" "$menustring" )
 
 
-
-#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-#if [[ -f "./status/stat_acquwfsref0.txt" && ( "$acquwfsref0stat" = " ON" || "$acquwfsref0stat" = "OFF" ) ]]; then
-#echo "OK"
-#else
-#echo "OFF" > ./status/stat_acquwfsref0.txt
-#acquwfsref0stat="OFF"
-#fi
-
-#acquwfsref0stat=$( cat ./status/stat_acquwfsref0.txt )
-#if [ "${acquwfsref0stat}" = "OFF" ];
-#then
-#menuitems+=( "awfsref0_on" "    \Zb\Zu ==== START new WFS ref acquisition ====\ZB\ZU -> aol${LOOPNUMBER}_wfsref0  [waits on sem4 of aol${LOOPNUMBER}_wfsim]" )
-#menuitems+=( " " " " )
-#fi
-#if [ "${acquwfsref0stat}" = " ON" ];
-#then
-#menuitems+=( "awfsref0off" "\Z1\Zr             STOP WFS ref acquisition and update conf                \Zn" )
-#menuitems+=( "awfsref0offtest" "\Z1\Zr             STOP WFS ref acquisition, copy outuput to test_<>.fits  \Zn" )
-#menuitems+=( "awfsref0mon" "             Monitor tmux session aol${LOOPNUMBER}awfsref0" )
-#fi
 
 
 
@@ -492,10 +448,6 @@ fi
 
 fi
 
-
-#menuitems+=(" " " ")
-#menuitems+=( "upzrm"     "ADOPT STAGED ZONAL CALIBRATION (copy *.txt from staged to ./conf/)")
-#menuitems+=( "SMloadzrm" "LOAD ZONAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 
@@ -934,10 +886,19 @@ aoconflogext "set WFS lambda [nm] to ${wfslambdanm}"
 
 	dark)
 exec 3>&1;
-wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
-echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
-ReadWFSdarkfname
+#wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
+wfsdark=$(dialog --inputbox "WFS dark" 0 0 "$wfsdark" 2>&1 1>&3);
+exec 3>&-;
+echo "$wfsdark" > ./conf/conf_wfsdark_name.txt
+Readwfsdarkname
+./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsdark
+#echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
+#ReadWFSdarkfname
 ;;
+
+
+
+
 	adark_on)
 aoconflog "START dark acquisiton"
 acqdarkstat=" ON"

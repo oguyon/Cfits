@@ -301,6 +301,18 @@ ln -sf /tmp/${wfsimcam}.im.shm /tmp/aol${LOOPNUMBER}_wfsim.im.shm
 }
 
 
+unction Readwfsdarkname {
+file="./conf/conf_wfsdark_name.txt"
+if [ -a $file ]
+	then
+	wfsdark=$(echo "$(cat $file)")
+	else
+	wfsdark="wfsdark" #default
+fi
+# WFS raw image
+aoconflog "linking wfsdark to ${wfsdark}"
+ln -sf /tmp/${wfsdark}.im.shm /tmp/aol${LOOPNUMBER}_wfsdark.im.shm
+}
 
 
 
