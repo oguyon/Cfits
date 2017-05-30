@@ -2445,9 +2445,9 @@ long AOloopControl_DM_mkAstroGrid_seq(char *IDoutname, long DMindex, int XYmode,
 	for(ii=0;ii<xsize;ii++)
 		for(jj=0;jj<ysize;jj++)
 			{
-				if((ii/bin - jj/bin)%4==0)
+				if((ii/bin - jj/bin + ysize/bin)%4==0)
 					data.image[IDyd].array.F[jj*xsize+ii] = 1.0;
-				if((ii/bin - jj/bin)%4==2)
+				if((ii/bin - jj/bin + ysize/bin)%4==2)
 					data.image[IDyd].array.F[jj*xsize+ii] = -1.0;
 			}
 	
