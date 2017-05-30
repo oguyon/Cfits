@@ -1241,7 +1241,7 @@ do
 done
 
 # set up symbolic links to FITS files in conf directory
-for name in zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
+for name in wfsdark zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
 do
 	fname=$( cat "./conf/conf_${name}_name.txt" )
 	ln -s "$fname" "./conf/aol${LOOPNUMBER}_${name}.fits"
@@ -1731,7 +1731,7 @@ case $amode in
 	0)
 cd dmmap
 exec 3>&1;
-dmmapfname=$(dialog --title "Select DM map file name" --stdout --fselect "${dmmapfname}" $nbwlines $nbwcols)
+dmmapfname=$(dialog --title "Select DM map file name" --stdout --fselect "wfsdark/" $nbwlines $nbwcols)
 cd ..
 echo "./dmmap/$dmmapfname" > ./conf/conf_dmmap_name.txt
 ReadConfFile "dmmap"
