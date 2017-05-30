@@ -1232,6 +1232,9 @@ case $retval in
 if [ -d ${confname} ]; then
 cp "${confname}"/conf_*.txt ./conf/
 
+mv conf/conf_conflastloaded_name.txt1 conf/conf_conflastloaded_name.txt
+
+
 # set up symbolic links to streams
 for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 dmZP5 dmZP6 dmZP7 wfsim
 do
