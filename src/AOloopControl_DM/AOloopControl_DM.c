@@ -257,6 +257,29 @@ int_fast8_t AOloopControl_DM_dmturb_tint_cli(){
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. MISC TESTS                                                                                   */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+int_fast8_t AOloopControl_mkDM_TT_circle_cli(){
+    if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0){
+        AOloopControl_mkDM_TT_circle(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
+        return 0;}    else        return 1;}
+
+ 
+
+
+
+
+
+
+
+
+
 
 
 
@@ -494,7 +517,22 @@ int init_AOloopControl_DM()
     data.NBcmd++;
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. MISC TESTS                                                                                   */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
+    strcpy(data.cmd[data.NBcmd].key,"aoloopcontroldmmkttcirc");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_mkDM_TT_circle_cli;
+    strcpy(data.cmd[data.NBcmd].info,"make DM TT circle file");
+    strcpy(data.cmd[data.NBcmd].syntax,"<outfname> <DMindex (0-9)> <NBpt> <ampl>");
+    strcpy(data.cmd[data.NBcmd].example,"aoloopcontroldmmkttcirc ttcirc 0 20 0.5");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, float ampl)");
+    data.NBcmd++;
 
 
     // add atexit functions here
@@ -2275,3 +2313,49 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long
 
     return(0);
 }
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. MISC TESTS                                                                                   */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+long AOloopControl_mkDM_TT_circle(char *IDoutname, long DMindex, long NBpts, float ampl)
+{
+	long xsize, ysize, zsize, xysize;
+	long IDout;
+	long ii, jj, kk;
+	float x, y, xslope, yslope;
+	
+	AOloopControl_DM_loadconf();
+	xsize = dmdispcombconf[DMindex].xsize;
+	ysize = dmdispcombconf[DMindex].ysize;
+	zsize = NBpts;
+	xysize = xsize*ysize;
+	
+	IDout = create_3Dimage_ID(IDoutname, xsize, ysize, zsize);	
+	
+	for(kk=0;kk<zsize;kk++)
+	{
+		xslope = ampl*cos(2.0*M_PI*kk/zsize);
+		yslope = ampl*sin(2.0*M_PI*kk/zsize);
+		
+		for(ii=0;ii<xsize;ii++)
+		{
+			x = 2.0*ii/xsize-1.0;
+			for(jj=0;jj<ysize;jj++)
+			{
+				y = 2.0*jj/ysize-1.0;
+				data.image[IDout].array.F[kk*xysize+jj*xsize+ii] = x*xslope + y*yslope;
+			}
+		}
+	}
+	
+	return(IDout);
+}
+
+
