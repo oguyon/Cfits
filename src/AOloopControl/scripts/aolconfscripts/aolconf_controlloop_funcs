@@ -811,10 +811,10 @@ echo "cpsh aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" >> $scriptfile
 echo "exitCLI" >> $scriptfile
 echo "EOF" >> $scriptfile
 
-
 if [ "$1" = "NULL" ]; then
 ./$scriptfile
 else
+echo "tmux send-keys -t $1 \"./$scriptfile\""
 tmux send-keys -t $1 "./$scriptfile"
 fi
 }
