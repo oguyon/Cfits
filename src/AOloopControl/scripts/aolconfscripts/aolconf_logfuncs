@@ -141,8 +141,8 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 stopstreamlog aol${LOOPNUMBER}_gainb
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
 
-stopstreamlog aol${LOOPNUMBER}_DMmode_gain
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_gain.txt"
+stopstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 
 
 stopstreamlog dm${DMindex}disp
@@ -192,11 +192,11 @@ then
 stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
 
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_filt
-echo "0" > "./status/stat_log_modeval_dm_filt.txt"
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_now
+echo "0" > "./status/stat_log_modeval_dm_now.txt"
 
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_filt_now
-echo "0" > "./status/stat_log_modeval_dm_filt_now.txt"
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
+echo "0" > "./status/stat_log_modeval_dm_now_filt.txt"
 
 stopstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "0" > "./status/stat_log_modeval_ol.txt"
