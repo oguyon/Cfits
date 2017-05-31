@@ -144,7 +144,7 @@ if [ "${logwfsimstat}" = "0" ];
 then
 menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim                WFS image" )
 else
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn              WFS image\Zn" )
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn                 WFS image\Zn" )
 fi
 
 
@@ -162,7 +162,7 @@ if [ "${logwfsref0stat}" = "0" ];
 then
 menuitems+=( "lwfsref01" "START logging aol${LOOPNUMBER}_wfsref0              WFS reference0" )
 else
-menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0\Zn            WFS reference0\Zn" )
+menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0\Zn               WFS reference0\Zn" )
 fi
 
 
@@ -178,7 +178,7 @@ if [ "${logwfsrefstat}" = "0" ];
 then
 menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref               WFS reference" )
 else
-menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn             WFS reference\Zn" )
+menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn                WFS reference\Zn" )
 fi
 
 menuitems+=( " " " " )
@@ -198,7 +198,7 @@ if [ "${loggainbstat}" = "0" ];
 then
 menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                 Block gain" )
 else
-menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn               Block gain\Zn" )
+menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                 Block gain\Zn" )
 fi
 
 
@@ -215,7 +215,7 @@ if [ "${logDMmodeGAINstat}" = "0" ];
 then
 menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN            DM mode gain" )
 else
-menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn          DM mode gain\Zn" )
+menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn           DM mode gain\Zn" )
 fi
 
 
@@ -495,7 +495,7 @@ if [ "${logmodevalolstat}" = "0" ];
 then
 menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
 else
-menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn         open loop mode values" )
+menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn            open loop mode values" )
 fi
 
 fi
