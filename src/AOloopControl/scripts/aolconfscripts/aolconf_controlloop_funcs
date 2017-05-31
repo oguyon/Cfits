@@ -812,8 +812,10 @@ echo "exitCLI" >> $scriptfile
 echo "EOF" >> $scriptfile
 
 if [ "$1" = "NULL" ]; then
+echo "TMUX NULL"
 ./$scriptfile
 else
+echo "TMUX $1"
 echo "tmux send-keys -t $1 \"./$scriptfile\""
 tmux send-keys -t $1 "./$scriptfile"
 fi
