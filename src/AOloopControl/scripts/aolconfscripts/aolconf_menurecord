@@ -421,9 +421,9 @@ logmodevaldmnowstat=0
 fi
 if [ "${logmodevaldmnowstat}" = "0" ];
 then
-menuitems+=( "lmodevaldmnow1" "START logging aol${LOOPNUMBER}_modeval_dm_now    DM mode values" )
+menuitems+=( "lmodevaldmnow1" "START logging aol${LOOPNUMBER}_modeval_dm_now       DM mode values" )
 else
-menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn     DM mode values" )
+menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        DM mode values" )
 fi
 
 
@@ -437,9 +437,9 @@ logmodevaldmnowfiltstat=0
 fi
 if [ "${logmodevaldmnowfiltstat}" = "0" ];
 then
-menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now_filt WFS mode values" )
+menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now_filt  WFS mode values" )
 else
-menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn  WFS mode values" )
+menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   WFS mode values" )
 fi
 
 
@@ -455,9 +455,9 @@ logmodevalolstat=0
 fi
 if [ "${logmodevalolstat}" = "0" ];
 then
-menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol        open loop mode values" )
+menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
 else
-menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol            open loop mode values\Zn" )
+menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol               open loop mode values\Zn" )
 fi
 
 fi
