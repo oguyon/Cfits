@@ -196,9 +196,9 @@ loggainbstat="0"
 fi
 if [ "${loggainbstat}" = "0" ];
 then
-menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb               Block gain" )
+menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                 Block gain" )
 else
-menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn             Block gain\Zn" )
+menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn               Block gain\Zn" )
 fi
 
 
@@ -213,9 +213,9 @@ logDMmodeGAINstat="0"
 fi
 if [ "${logDMmodeGAINstat}" = "0" ];
 then
-menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN               DM mode gain" )
+menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN            DM mode gain" )
 else
-menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn             DM mode gain\Zn" )
+menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn          DM mode gain\Zn" )
 fi
 
 
