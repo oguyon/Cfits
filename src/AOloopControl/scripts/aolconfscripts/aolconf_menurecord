@@ -150,6 +150,22 @@ fi
 
 
 
+file="./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
+logwfsref0stat=$( cat $file )
+if [[ -f "$file" && ( "$logwfsref0stat" = "0" || "$logwfsref0stat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logwfsref0stat="0"
+fi
+if [ "${logwfsref0stat}" = "0" ];
+then
+menuitems+=( "lwfsref01" "START logging aol${LOOPNUMBER}_wfsref0         WFS reference0" )
+else
+menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0             WFS reference0\Zn" )
+fi
+
+
 file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 logwfsrefstat=$( cat $file )
 if [[ -f "$file" && ( "$logwfsrefstat" = "0" || "$logwfsrefstat" = "1" ) ]]; then
@@ -521,6 +537,18 @@ menurecord_default="lwfsim0"
 stopstreamlog aol${LOOPNUMBER}_wfsim
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
 menurecord_default="lwfsim1"
+;;
+
+
+    lwfsref01)
+startstreamlog aol${LOOPNUMBER}_wfsref0
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
+menurecord_default="lwfsref00"
+;;
+    lwfsref00)
+stopstreamlog aol${LOOPNUMBER}_wfsref0
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
+menurecord_default="lwfsref01"
 ;;
 
 
