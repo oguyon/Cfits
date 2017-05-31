@@ -802,8 +802,8 @@ confname=$(cat $tempfile)
 
 aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
-echo "${confname}" > ./confname.txt
-
+echo "${confname}" > ./status/confname.txt
+aoconglog "CONFIGURATION: ${conffile}"
 
 
 

@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Olivier Guyon" />
+  <meta name="date" content="2017-05-29" />
   <title>AOloopControl</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -50,7 +51,7 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">AOloopControl</h1>
 <h2 class="author">Olivier Guyon</h2>
-<h3 class="date">Apr 05, 2017</h3>
+<h3 class="date">May 29, 2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -1050,12 +1051,14 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 <h3><span class="header-section-number">3.2.1</span> Automatically generated internal log (very detailed)</h3>
 <p>All commands are logged in an ASCII file. <code>aolconf</code> uses the script <code>aolconfscripts/aollog</code> to log into file <code>./logdir/&lt;UTDATE&gt;/logging/&lt;LOOPNAME&gt;.log</code>. A sym link to <code>aolconf.log</code> is created for convenience, so the log content can be viewed with:</p>
 <pre><code>tail -f aolconf.log</code></pre>
+<p>Inside the bash script, function <code>aoconflog</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name.</p>
 </div>
 <div id="external-log-less-verbose" class="section level3">
 <h3><span class="header-section-number">3.2.2</span> External log (less verbose)</h3>
 <p>The user can provide a command to externally log commands. The executable should be in the path, and named <code>dologext</code>. The syntax is:</p>
 <pre><code>dologext &lt;string&gt;</code></pre>
 <p>The string usually consists of the loop name followed by comments.</p>
+<p>Inside the bash script, function <code>aoconflogext</code> is used to call <code>aolconfscripts/aollog</code> with the proper loop name.</p>
 </div>
 <div id="interactive-user-log" class="section level3">
 <h3><span class="header-section-number">3.2.3</span> Interactive user log</h3>
@@ -1678,7 +1681,6 @@ LOWFSCAMETIME            0.01              # LOWFS camera exposure time [s]</cod
 139
 140
 141
-142
 </pre></td><td class="sourceCode"><pre><code class="sourceCode">#! /bin/bash
 
 
@@ -1794,10 +1796,9 @@ readshmim aol${loopnb}_respM
 readshmim aol${loopnb}_imWFS0
 readshmim aol${loopnb}_imWFS0tot
 readshmim aol${loopnb}_wfsref
-
 readshmim aol${loopnb}_wfsmask
+listim
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
-
 exitCLI
 EOF
 
@@ -1815,8 +1816,8 @@ readshmim aol${loopnb}_imWFS0tot
 readshmim aol${loopnb}_wfsref
 readshmim aol${loopnb}_modeval
 readshmim aol${loopnb}_wfsmask
+listim
 cudaextrmodes aol${loopnb}_imWFS0 aol${loopnb}_imWFS0tot aol${loopnb}_respM aol${loopnb}_wfsref nullim aol${loopnb}_modeval $1 1 1 1 2 0 0
-
 exitCLI
 EOF
 

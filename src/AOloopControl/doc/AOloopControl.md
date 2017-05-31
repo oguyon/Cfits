@@ -596,6 +596,11 @@ All commands are logged in an ASCII file. `aolconf` uses the script `aolconfscri
 tail -f aolconf.log
 ~~~~
 
+Inside the bash script, function `aoconflog` is used to call `aolconfscripts/aollog` with the proper loop name.
+
+
+
+
 ### External log (less verbose)
 
 The user can provide a command to externally log commands. The executable should be in the path, and named `dologext`. The syntax is:
@@ -605,6 +610,9 @@ dologext <string>
 ~~~
 
 The string usually consists of the loop name followed by comments.
+
+Inside the bash script, function `aoconflogext` is used to call `aolconfscripts/aollog` with the proper loop name.
+
 
 
 ### Interactive user log
