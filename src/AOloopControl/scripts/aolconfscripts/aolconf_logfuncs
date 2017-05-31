@@ -47,7 +47,6 @@ echo "0" > ./status/stat_log$1.txt
 
 function start_Telemetrylog_all {
 
-	
 aoconflog "start ALL telemetry logging"
 
 startstreamlog aol${LOOPNUMBER}_wfsim
@@ -58,6 +57,14 @@ echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
 
 startstreamlog aol${LOOPNUMBER}_wfsref
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+
+
+startstreamlog aol${LOOPNUMBER}_gainb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+
+startstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+
 
 startstreamlog dm${DMindex}disp
 echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
@@ -130,6 +137,14 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
 stopstreamlog aol${LOOPNUMBER}_wfsref
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 
+
+stopstreamlog aol${LOOPNUMBER}_gainb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+
+stopstreamlog aol${LOOPNUMBER}_DMmode_gain
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_gain.txt"
+
+
 stopstreamlog dm${DMindex}disp
 echo "0" > "./status/stat_log_dm${DMindex}disp.txt"
 
@@ -201,6 +216,15 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
 
 killstreamlog aol${LOOPNUMBER}_wfsref
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
+
+
+killstreamlog aol${LOOPNUMBER}_gainb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+
+killstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+
+
 
 killstreamlog dm${DMindex}disp
 echo "0" > "./status/stat_log_dm${DMindex}disp.txt"

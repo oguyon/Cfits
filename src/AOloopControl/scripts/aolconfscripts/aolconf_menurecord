@@ -144,7 +144,7 @@ if [ "${logwfsimstat}" = "0" ];
 then
 menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim                WFS image" )
 else
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim                    WFS image\Zn" )
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn              WFS image\Zn" )
 fi
 
 
@@ -162,7 +162,7 @@ if [ "${logwfsref0stat}" = "0" ];
 then
 menuitems+=( "lwfsref01" "START logging aol${LOOPNUMBER}_wfsref0              WFS reference0" )
 else
-menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0                  WFS reference0\Zn" )
+menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0\Zn            WFS reference0\Zn" )
 fi
 
 
@@ -178,8 +178,51 @@ if [ "${logwfsrefstat}" = "0" ];
 then
 menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref               WFS reference" )
 else
-menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref                   WFS reference\Zn" )
+menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn             WFS reference\Zn" )
 fi
+
+menuitems+=( " " " " )
+
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+loggainbstat=$( cat $file )
+if [[ -f "$file" && ( "$loggainbstat" = "0" || "$loggainbstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+loggainbstat="0"
+fi
+if [ "${loggainbstat}" = "0" ];
+then
+menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb               Block gain" )
+else
+menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn             Block gain\Zn" )
+fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+logDMmodeGAINstat=$( cat $file )
+if [[ -f "$file" && ( "$logDMmodeGAINstat" = "0" || "$logDMmodeGAINstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logDMmodeGAINstat="0"
+fi
+if [ "${logDMmodeGAINstat}" = "0" ];
+then
+menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN               DM mode gain" )
+else
+menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn             DM mode gain\Zn" )
+fi
+
+
+
+menuitems+=( " " " " )
+
+
 
 
 file="./status/stat_log_dm${DMindex}disp.txt"
@@ -391,10 +434,10 @@ else
 menuitems+=( "ldmdisp110" "\Z1\ZrSTOP logging dm${DMindex}disp11\Zn                 DM channel 11" )
 fi
 
+menuitems+=( " " " " )
 
+if [ "${dm2dm_mode}" = "0" ]; then
 
-if [ "${dm2dm_mode}" = "0" ];
-then
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalstat" = "0" || "$logmodevalstat" = "1" ) ]]; then
@@ -409,7 +452,6 @@ menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval              WF
 else
 menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn               WFS mode values" )
 fi
-
 
 file="./status/stat_log_modeval_dm_now.txt"
 logmodevaldmnowstat=$( cat $file )
@@ -426,7 +468,6 @@ else
 menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        DM mode values" )
 fi
 
-
 file="./status/stat_log_modeval_dm_now_filt.txt"
 logmodevaldmnowfiltstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevaldmnowfiltstat" = "0" || "$logmodevaldmnowfiltstat" = "1" ) ]]; then
@@ -442,9 +483,6 @@ else
 menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   WFS mode values" )
 fi
 
-
-
-
 file="./status/stat_log_modeval_ol.txt"
 logmodevalolstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalolstat" = "0" || "$logmodevalolstat" = "1" ) ]]; then
@@ -457,10 +495,17 @@ if [ "${logmodevalolstat}" = "0" ];
 then
 menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
 else
-menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol               open loop mode values\Zn" )
+menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn         open loop mode values" )
 fi
 
 fi
+
+
+
+
+
+
+
 
 menuitems+=( " " " " )
 
@@ -596,6 +641,32 @@ stopstreamlog aol${LOOPNUMBER}_wfsref
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
 menurecord_default="lwfsref1"
 ;;
+
+
+    lgainb1)
+startstreamlog aol${LOOPNUMBER}_gainb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+menurecord_default="lgainb0"
+;;
+    lgainb0)
+stopstreamlog aol${LOOPNUMBER}_gainb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
+menurecord_default="lgainb1"
+;;
+
+
+    ldmmodegain1)
+startstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+menurecord_default="ldmmodegainb"
+;;
+    ldmmodegain0)
+stopstreamlog aol${LOOPNUMBER}_DMmode_GAIN
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+menurecord_default="ldmmodegain1"
+;;
+
+
 
 
 
