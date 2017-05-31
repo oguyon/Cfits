@@ -220,29 +220,6 @@ menuitems+=( "wfsdark" "$menustring" )
 
 
 
-#if [ -f $wfsdarkfile ]; then
-#sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
-#OKstr="\Z2\Zr$sizestring\Zn"
-#menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z4${wfsdark}\Zn" )
-#else
-#OKstr="\Z1\Zb  MISSING \Zn"
-#menuitems+=( "dark" "[${OKstr}] WFS dark                \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn -> \Z1${wfsdark}\Zn" )
-#confOK=0
-#fi
-
-
-
-#if [ -f "$wfsdarkfname" ]; then
-#sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_wfsdark.txt )
-#OKstr="\Z2\Zr$sizestring\Zn"
-#menuitems+=( "wfsdark" "[${OKstr}] WFS camera dark        \Z4\Zbaol${LOOPNUMBER}_wfsdark\Zn" )
-#else
-#OKstr="\Z5 OPTIONAL \Zn"
-#menuitems+=( "dark" "[${OKstr}] WFS dark                  {\Z4${wfsdarkfname}\Zn}" )
-#confOK=0
-#fi
-
-
 
 menuitems+=( "adark_on" "             Acquire WFS dark -> ./wfsdark/wfsdark_<date>.fits" )
 
@@ -461,29 +438,6 @@ then
 
     makemenuitemstringaolshm "LOrespM" "Modal Resp Mat"
     menuitems+=( "LOrespM" "$menustring" )
-
-
-#    if [ "${LOrespMstat}" = "OFF" ];
-#    then
-#        menuitems+=( "LOresp_on" "[normalize = ${WFSnorm}] \Zb\Zu ==== START modal RMs acquisition ====\ZB\ZU (using dmmask in staged dir)" )
-#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-#        else
-#            menuitems+=( "LOrespc" "[${LOrespmatnbiter} matrices] CLEAN and average modal RMs")
-#        fi
-#        menuitems+=( " " " ")
-#    else
-#        menuitems+=( "LOrespoff" "\Z1\Zr Modal RM acquisition running - Press to STOP\Zn" )
-#        if [ "${LOrespmatnbiter}" -lt 4 ]; then
-#            menuitems+=( " " "[${LOrespmatnbiter} matrices available] \Z1Need > 4 matrices to CLEAN and average modal RMs\Zn")
-#        else
-#            menuitems+=( "LOrespc" "CLEAN currently accumulated modal RMs (${LOrespmatnbiter} matrices)")
-#        fi
-#        menuitems+=( "LOrespmon" "             Monitor tmux session LOrespM${LOOPNUMBER}" )
-#    fi
-
-#	menuitems+=( "upmrm"     "ADOPT STAGED MODAL CALIBRATION")
-#	menuitems+=( "SMloadmrm" "LOAD MODAL CALIBRATION FILE TO SHARED MEMORY")
 
 
 fi
@@ -895,20 +849,6 @@ state="menuconfigureloop"
 
 
 
-#	dark)
-#exec 3>&1;
-##wfsdarkfname=$(dialog --title "Select WFS dark" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
-#wfsdark=$(dialog --inputbox "WFS dark" 0 0 "$wfsdark" 2>&1 1>&3);
-#exec 3>&-;
-#echo "$wfsdark" > ./conf/conf_wfsdark_name.txt
-#Readwfsdarkname
-#./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_wfsdark
-##echo "$wfsdarkfname" > ./conf/conf_wfsdark_name.txt
-##ReadWFSdarkfname
-#;;
-
-
-
 
 	adark_on)
 aoconflog "START dark acquisiton"
@@ -1015,106 +955,6 @@ menucontrolloop_default="sACmrmN"
 
 
 
-#ACstopK)
-#if [ "$DMMODE" = "ZONAL" ]; then
-#tmux kill-session -t aol${LOOPNUMBER}LOrespM
-#tmux kill-session -t aol${LOOPNUMBER}LOrespMc
-#fi
-#tmux kill-session -t aol${LOOPNUMBER}zrespM
-#tmux kill-session -t aol${LOOPNUMBER}zrespMc
-#if [ "$DMMODE" = "ZONAL" ]; then
-#rm function_LOresp_on_tmux.lock
-#rm function_LOresp_off_tmux.lock
-#rm runproc/aolCleanLOrespmat.runproc  
-#rm runproc/aolMeasureLOrespmat.runproc  
-#rm runproc/aolupmrm.runproc  
-#fi
-#rm runproc/autocalibration.runproc  
-#if [ "$DMMODE" = "ZONAL" ]; then
-#rm runproc/SMloadmrm.runproc
-#fi
-#rm runproc/aolCleanZrespmat.runproc   
-#rm runproc/aolMeasureZrespmat.runproc   
-#rm runproc/aolupzrm.runproc
-#rm runproc/SMloadzrm.runproc
-#./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
-#echo "OFF" > ./status/stat_zrespM.txt 
-#if [ "$DMMODE" = "ZONAL" ]; then
-#echo "OFF" > ./status/stat_LOrespM.txt
-#fi
-#./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
-#aoconflogext "STOP AUTO CALIBRATION"
-#menucontrolloop_default="AUTOC"
-#;;
-
-
-#ACstopZ)
-#touch function_zresp_off.wait
-#;;
-
-#ACstopM)
-#touch function_LOresp_off.wait
-#;;
-
-
-#AUTOC)
-#aoconflogext "START AUTO CALIBRATION"
-## archive
-#dirnb=20
-#i0=`( printf "%03d" "$dirnb" )`
-#rm -rf conf_staged.$i0
-
-
-## save old RMs
-#while [ $dirnb -gt 0 ]; do
-#	i=$(($dirnb))
-#	i1=$(($dirnb-1))
-#	is=`( printf "%03d" "$i" )`
-#	i1s=`( printf "%03d" "$i1" )`
-#	mv conf_staged.$i1s conf_staged.$is
-#	let dirnb-=1
-#done    
- 
-#cp -rf conf_staged conf_staged.000
-
-#logRunningProcess "autocalibration" "-" "Automatic system calibration (zonal + modal RMs)"
-#if [ "$DMMODE" = "ZONAL" ]; then
-#touch function_LOresp_on_tmux.lock
-#touch function_LOresp_off_tmux.lock
-#fi
-#function_zresp_on
-#function_zresp_off $ACzrmtime
-#tmuxname="aol${LOOPNUMBER}zrespMc"
-
-
-#function_upzrm_tmux ${tmuxname}
-
-# load to shared memory
-#function_SMloadzrm_tmux ${tmuxname}
-
-#if [ "$DMMODE" = "ZONAL" ]; then
-#tmux send-keys -t ${tmuxname} "rm function_LOresp_on_tmux.lock" C-m
-#tmux send-keys -t ${tmuxname} "rm function_LOresp_off_tmux.lock" C-m
-
-#RMmodal=$( cat ./conf/conf_RMmodal.txt )
-#if [ "${RMmodal}" = " ON" ];
-#then
-#tmuxname="aol${LOOPNUMBER}LOrespM"
-#function_LOresp_on_tmux $tmuxname
-#tmuxname="aol${LOOPNUMBER}LOrespMc"
-#function_LOresp_off_tmux ${tmuxname} $ACmrmtime
-#function_upmrm_tmux ${tmuxname}
-#function_SMloadmrm_tmux ${tmuxname}
-#tmux send-keys -t ${tmuxname} "rm runproc/autocalibration.runproc" C-m
-#else
-#tmux send-keys -t ${tmuxname} "rm runproc/autocalibration.runproc" C-m
-#fi
-#else
-#tmux send-keys -t ${tmuxname} "rm runproc/autocalibration.runproc" C-m
-#fi
-#;;
-
-
 
 
 
@@ -1193,16 +1033,12 @@ esac
 
 	Lconf)
 mkdir -p ./CONF
-#exec 3>&1;
-#confname=$(dialog --title "Select Configuration" --stdout --title "Select Configuration" --fselect "./CONF/" $nbwlines $nbwcols)
-#exec 3>&-;
 
 dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
 
-#echo "${confname}" > confname.txt
 aoconflogext "LOAD configuration from ${confname}"
 aoconflog "CONFIGURATION ${confname}"
 echo "${confname}" > ./status/confname.txt

@@ -6482,7 +6482,7 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, const cha
         break;
     }
 
-    cnt = data.image[ID].md[0].cnt0;
+    cnt = data.image[ID].md[0].cnt0 - 1;
 
     buffer = 0;
     index = 0;
