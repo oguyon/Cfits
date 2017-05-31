@@ -806,6 +806,7 @@ echo "${confname}" > ./confname.txt
 
 
 
+
 # IF LOOP IS ON - TURN IT OFF HERE
 procONstat=$( cat ./status/stat_procON.txt )
 procONstat_old="$procONstat"
@@ -853,6 +854,12 @@ tmux send-keys -t ${tmuxnameC0} "cp conf/Hpoke.fits \"${confname}/\"" C-m
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMmat.fits \"${confname}/\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMpixindex.fits \"${confname}/\"" C-m	
 tmux send-keys -t ${tmuxnameC0} "cp conf/RMpokeCube.fits \"${confname}/\"" C-m	
+
+
+confnameloaded=${confname}
+echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
+confloadedtime=$( date -u )
+echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 
 # LOAD CM (conf -> shared mem)
