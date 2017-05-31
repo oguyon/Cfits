@@ -101,10 +101,19 @@ echo "1" > "./status/stat_log_dm${DMindex}disp11.txt"
 
 if [ "${dm2dm_mode}" = "0" ];
 then
+
 startstreamlog aol${LOOPNUMBER}_modeval
 echo "1" > "./status/stat_log_modeval.txt"
+
+startstreamlog aol${LOOPNUMBER}_modeval_dm_now
+echo "1" > "./status/stat_log_modeval_dm_now.txt"
+
+startstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
+echo "1" > "./status/stat_log_modeval_dm_now_filt.txt"
+
 startstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "1" > "./status/stat_log_modeval_ol.txt"
+
 fi
 }
 
@@ -164,10 +173,19 @@ log "stop ALL telemetry logging"
 
 if [ "${dm2dm_mode}" = "0" ];
 then
+
 stopstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
+
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_filt
+echo "0" > "./status/stat_log_modeval_dm_filt.txt"
+
+stopstreamlog aol${LOOPNUMBER}_modeval_dm_filt_now
+echo "0" > "./status/stat_log_modeval_dm_filt_now.txt"
+
 stopstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "0" > "./status/stat_log_modeval_ol.txt"
+
 fi
 }
 
@@ -227,10 +245,19 @@ log "kill ALL telemetry logging"
 
 if [ "${dm2dm_mode}" = "0" ];
 then
+
 killstreamlog aol${LOOPNUMBER}_modeval
 echo "0" > "./status/stat_log_modeval.txt"
+
+killstreamlog aol${LOOPNUMBER}_modeval_dm_now
+echo "0" > "./status/stat_log_modeval_dm_now.txt"
+
+killstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
+echo "0" > "./status/stat_log_modeval_dm_now_filt.txt"
+
 killstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "0" > "./status/stat_log_modeval_ol.txt"
+
 fi
 }
 
