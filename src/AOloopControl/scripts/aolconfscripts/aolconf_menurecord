@@ -220,6 +220,23 @@ fi
 
 
 
+file="./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+logDMmodeLIMITstat=$( cat $file )
+if [[ -f "$file" && ( "$logDMmodeLIMITstat" = "0" || "$logDMmodeLIMITstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logDMmodeLIMITstat="0"
+fi
+if [ "${logDMmodeLIMITstat}" = "0" ];
+then
+menuitems+=( "ldmmodelimit1" "START logging aol${LOOPNUMBER}_DMmode_LIMIT           DM mode limit" )
+else
+menuitems+=( "ldmmodelimit0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_LIMIT\Zn          DM mode limit\Zn" )
+fi
+
+
+
 menuitems+=( " " " " )
 
 
@@ -658,7 +675,7 @@ menurecord_default="lgainb1"
     ldmmodegain1)
 startstreamlog aol${LOOPNUMBER}_DMmode_GAIN
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
-menurecord_default="ldmmodegainb"
+menurecord_default="ldmmodegain0"
 ;;
     ldmmodegain0)
 stopstreamlog aol${LOOPNUMBER}_DMmode_GAIN
@@ -666,6 +683,18 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 menurecord_default="ldmmodegain1"
 ;;
 
+
+
+    ldmmodelimit1)
+startstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+menurecord_default="ldmmodelimit0"
+;;
+    ldmmodelimit0)
+stopstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+menurecord_default="ldmmodelimit1"
+;;
 
 
 

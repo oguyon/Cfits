@@ -65,6 +65,10 @@ echo "1" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
 startstreamlog aol${LOOPNUMBER}_DMmode_GAIN
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 
+startstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+
+
 
 startstreamlog dm${DMindex}disp
 echo "1" > "./status/stat_log_dm${DMindex}disp.txt"
@@ -143,6 +147,9 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
 
 stopstreamlog aol${LOOPNUMBER}_DMmode_GAIN
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+
+stopstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
 
 
 stopstreamlog dm${DMindex}disp
@@ -223,6 +230,9 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
 
 killstreamlog aol${LOOPNUMBER}_DMmode_GAIN
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
+
+killstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
 
 
 
