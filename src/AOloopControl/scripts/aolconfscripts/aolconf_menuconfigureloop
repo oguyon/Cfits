@@ -1168,7 +1168,7 @@ retval="$?"
 confname=$(cat $tempfile)
 
 aoconflogext "SAVE configuration to ${confname}"
-aoconflog "CONFIGURATION: ${conffile}"
+aoconflog "CONFIGURATION ${confname}"
 echo "${confname}" > ./status/confname.txt
 echo "saving to ${confname}   tempfile = $tempfile"
 
@@ -1204,7 +1204,7 @@ confname=$(cat $tempfile)
 
 #echo "${confname}" > confname.txt
 aoconflogext "LOAD configuration from ${confname}"
-aoconflog "CONFIGURATION: ${conffile}"
+aoconflog "CONFIGURATION ${confname}"
 echo "${confname}" > ./status/confname.txt
 echo "confname = $confname"
 
