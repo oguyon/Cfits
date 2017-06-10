@@ -184,7 +184,7 @@ set_optconfig=1
 set_pupil=0
 
 function loadPup_WFIRST1024 {
-exampledir="$srcdir/src/PIAACMCsimul/examples"
+exampledir="$srcdir/PIAACMCsimul/examples"
 cp $exampledir/pup_WFIRST1024.fits.gz pup_1024.fits.gz
 rm pup_1024.fits 2> /dev/null
 gunzip pup_1024.fits.gz
@@ -197,7 +197,7 @@ set_pupil=1
 
 
 function loadPup_Subaru2048 {
-exampledir="$srcdir/src/PIAACMCsimul/examples"
+exampledir="$srcdir/PIAACMCsimul/examples"
 cp $exampledir/pupSubaruM_2048.fits.gz pup_2048.fits.gz
 rm pup_2048.fits 2> /dev/null
 gunzip pup_2048.fits.gz
@@ -210,7 +210,7 @@ set_pupil=1
 
 
 function loadPup_seg3rings1024 {
-exampledir="$srcdir/src/PIAACMCsimul/examples"
+exampledir="$srcdir/PIAACMCsimul/examples"
 cp $exampledir/pup_seg3rings_1024.fits.gz pup_1024.fits.gz
 rm pup_1024.fits 2> /dev/null
 gunzip pup_1024.fits.gz
@@ -567,7 +567,7 @@ if [ "$MKSETUP" = "1" ]; then
 #    MAKE LOCAL COPY (SYM LINK) OF SCRIPTS
 # ===========================================
 rm syncscripts 2> /dev/null
-ln -s $srcdir/src/PIAACMCsimul/scripts/syncscripts syncscripts
+ln -s $srcdir/PIAACMCsimul/scripts/syncscripts syncscripts
 ./syncscripts
 # you should see the following scripts in the work directory:
 # ./run
@@ -576,7 +576,7 @@ ln -s $srcdir/src/PIAACMCsimul/scripts/syncscripts syncscripts
 # ./runPIAACMC
 # ./sim
 touch step_setup.txt
-echo "$srcdir/src/PIAACMCsimul/scripts/syncscripts"
+echo "$srcdir/PIAACMCsimul/scripts/syncscripts"
 fi
 
 
