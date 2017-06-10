@@ -168,7 +168,7 @@ index=${25}
 loopmode=0
 nbDM=0
 
-searchtime=3600.0
+searchtime=36000.0
 # search time [sec]
 
 computetransmcurve=0
@@ -220,7 +220,7 @@ fi
 
 if [ $1 == "optsingle" ]; then
 	echo "optimize single configuration"
-	searchtime=7200.0
+	searchtime=72000.0
 	computecontrast=0
 	inputmode=2
 fi
@@ -228,7 +228,7 @@ fi
 
 if [ $1 == "optloop" ]; then
 	echo "optimize single configuration (loop)"
-	searchtime=7200.0
+	searchtime=72000.0
 	computecontrast=0
 	inputmode=2
 	optimizeloop=1
