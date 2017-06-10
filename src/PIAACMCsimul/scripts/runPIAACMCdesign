@@ -1,17 +1,12 @@
 #!/bin/bash
 
 
-
 # number of arguments to script
 NBARGS=0
 
 
-
-
 # ======================= PROCESS NAME =================================
 pname=`echo "$0" | sed "s/\.\///g"`
-
-
 
 
 
@@ -31,8 +26,7 @@ eval "$1=$var"
 
 # source code directory (change as needed)
 loadparam srcdir "/home/olivier/src/Cfits"
-
-echo "srcdir = $srcdir"
+# echo "srcdir = $srcdir"
 
 
 loadparam size "1024"
@@ -251,7 +245,7 @@ set_optparam="1"
 # ===================================================================================
 
 
-rm LOOPMODE.txt
+rm LOOPMODE.txt &> /dev/null
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -270,7 +264,8 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)              help"
 echo "     $(tput bold)-s$(tput sgr0) <src dir>    set source directory"
-echo "     $(tput bold)-c$(tput sgr0)              Clear directory of all results (use with care)"
+echo "     $(tput bold)-C$(tput sgr0)              Clear directory of all input and output files (use with care)"
+echo "     $(tput bold)-c$(tput sgr0)              Clear directory of all output files (use with care)"
 echo "     $(tput bold)-a$(tput sgr0)              APLCMC design (no PIAA optics)"
 echo "     $(tput bold)-p$(tput sgr0)              PIAACMC design (PIAA optics)"
 echo "     $(tput bold)-S$(tput sgr0)              save intermediate results during monochromatic design"
@@ -403,7 +398,7 @@ FPMprocess="0"
 
 OptionSelected="0"
 # Parse command line flags
-while getopts :hs:apSm:e:lcr:q:L FLAG; do
+while getopts :hs:apSm:e:lCcr:q:L FLAG; do
   case $FLAG in
     S)
     SAVESTEP=1
@@ -455,8 +450,12 @@ while getopts :hs:apSm:e:lcr:q:L FLAG; do
     SETparams=1
     OptionSelected="1"
     ;;
+    C)
+    ./runclean -l 0 &> /dev/null
+    exit
+    ;;
     c)
-    ./runclean 2> /dev/null
+    ./runclean -l 1 &> /dev/null
     exit
     ;;
     r)
@@ -479,7 +478,7 @@ while getopts :hs:apSm:e:lcr:q:L FLAG; do
     ;;
     \?) 
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
-      printHEL
+      printHELP
       ;;
   esac
 done

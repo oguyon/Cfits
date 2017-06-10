@@ -940,6 +940,78 @@ fi
 
 
 
+if [ 724 -eq ${state} ]
+then
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  step724  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.003 l/D"
+echo "$datestr  step724  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.003 l/D" >> cmdlog.txt
+ if [ ! -f ./$1/step007.txt ]
+ then
+ echo "====================== step 724 requires step 007 ======================================="
+ exit
+ else
+ echo "724: eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.003 l/D"
+echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 $5 $6 $7" 
+echo "724" > ./$1/runstep
+touch ./$1/step724.run.txt
+$execnamestring -n step724 << EOF
+PIAACMC_dftgrid=0
+PIAACMC_fpmtype=1 
+PIAACMC_FPMsectors=$FPMsectors
+PIAACMC_nblambda=$nblambda
+PIAACMC_ldoffset=0.003
+piaacmcsimrun $1 100
+exit
+EOF
+mv ./$1/psfi0_starim.fits ./$1/psfi0_step724.fits
+cleanup
+exit
+fi
+fi
+
+
+
+if [ 725 -eq ${state} ]
+then
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  step725  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.0001 l/D"
+echo "$datestr  step725  Eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.0001 l/D" >> cmdlog.txt
+ if [ ! -f ./$1/step007.txt ]
+ then
+ echo "====================== step 725 requires step 007 ======================================="
+ exit
+ else
+ echo "725: eval polychromatic contrast for on-axis PSF, and pointing sensitivity, 0.0001 l/D"
+echo "${FPM_MASKRADLD} $FPMsectors $NBrings ${10} ${11} $PIAACMC_resolved $2 $3 $5 $6 $7" 
+echo "725" > ./$1/runstep
+touch ./$1/step725.run.txt
+$execnamestring -n step725 << EOF
+PIAACMC_dftgrid=0
+PIAACMC_fpmtype=1 
+PIAACMC_FPMsectors=$FPMsectors
+PIAACMC_nblambda=$nblambda
+PIAACMC_ldoffset=0.0001
+piaacmcsimrun $1 100
+exit
+EOF
+mv ./$1/psfi0_starim.fits ./$1/psfi0_step725.fits
+cleanup
+exit
+fi
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

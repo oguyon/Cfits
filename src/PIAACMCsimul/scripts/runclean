@@ -1,3 +1,26 @@
+#!/bin/bash
+
+
+# number of arguments to script
+NBARGS=0
+
+
+# ======================= PROCESS NAME =================================
+pname=`echo "$0" | sed "s/\.\///g"`
+
+
+
+
+function CLEANinput {
+rm pup_1024.fits
+rm pup_2048.fits
+rm -rf conf
+rm piaacmcscriptsinit.txt
+}
+
+
+
+function CLEANoutput {
 rm ModesExpr_CPA.txt
 rm prePIAA0mask.fits
 rm prePIAA1mask.fits
@@ -11,7 +34,6 @@ rm -rf ./status/
 rm -rf ./log/
 rm step_setup.txt
 rm varlog.txt
-rm pup_1024.fits
 rm cpamodesfreq.fits
 rm cmdlog.txt
 rm Cmodes_*
@@ -34,8 +56,173 @@ rm stepfile*
 rm searchtime.txt
 rm looppsfcomp_done
 rm conj_test.txt
-rm piaacmcscriptsinit.txt
 rm _pupmaskload.fits
 rm SVDmodes.log
 rm eigenv_*
+}
 
+
+
+
+
+
+function printHELP {
+echo "------------------------------------------------------------------------"
+echo "$(tput bold) $pname : PIAACMC DESIGN CLEAN FILES $(tput sgr0)"
+echo "------------------------------------------------------------------------"
+echo "Remove data files"
+echo ""
+echo " $(tput bold)USAGE:$(tput sgr0)"
+echo "     $0 [-h] -l <level[0-2]"
+echo ""
+echo " $(tput bold)OPTIONS:$(tput sgr0)"
+echo "     $(tput bold)-h$(tput sgr0)              help"
+echo "     $(tput bold)-l$(tput sgr0) <level>      clean level (default = 0)"
+echo "                              0 : remove all data files, leave only scripts"
+echo "                              1 : remove all results, leave scripts and input"
+echo ""
+echo "------------------------------------------------------------------------"
+}
+
+
+printHELP1 ()
+{
+    printf "%20s       PIAACMC design script\n" "$0" 
+}
+
+
+
+
+
+
+
+
+
+EXITSTATUS=0
+
+function checkis1 {
+if [ "$2" = "1" ]
+	then
+	echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Variable $(tput bold)$1$(tput sgr0) set to 1"
+	else
+	echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Variable $(tput bold)$1$(tput sgr0) not set to 1"
+    EXITSTATUS=1
+fi
+}
+
+function checkFile {
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] File $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function checkDir {
+if [ -d $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function cmdexists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+
+function checkCommand {
+if cmdexists $1; then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) found"
+else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Command $(tput bold)$1$(tput sgr0) not installed.  Aborting."; EXITSTATUS=1;
+fi
+
+}
+
+
+
+
+
+
+
+# ================= OPTIONS =============================
+
+DesignExampleIndex=1 # default
+
+# Transform long options to short ones
+singlelinehelp=0
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--help") set -- "$@" "-h" ;;
+    "--help1") 
+set -- "$@" "-h" 
+singlelinehelp=1;
+;;
+    *)        set -- "$@" "$arg"
+  esac
+done
+
+
+CLEANlevel="0"
+# Parse command line flags
+while getopts :hl: FLAG; do
+  case $FLAG in
+    h)  #show help
+      if [ "$singlelinehelp" -eq "0" ]; then
+      printHELP
+      else
+      printHELP1
+      fi
+      exit
+      ;;
+    l)
+    CLEANlevel=$OPTARG
+    ;;
+    \?) 
+      echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+      printHELP
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))  
+
+
+
+
+
+
+
+
+if [ "$1" = "help" ] || [ "$#" -ne $NBARGS ] || [ "$OptionSelected" = "0" ]; then
+if [ "$#" -ne $NBARGS ]; then
+    echo "$(tput setaf 1)$(tput bold) $0: Illegal number of parameters ($NBARGS params required, $# entered) $(tput sgr0)"
+fi
+printHELP
+        exit
+fi
+
+CLEANok="0"
+
+if [ "$CLEANlevel" = "0" ]; then
+CLEANinput
+CLEANoutput
+CLEANok="1"
+fi
+
+
+if [ "$CLEANlevel" = "1" ]; then
+CLEANoutput
+CLEANok="1"
+fi
+
+if [ "$CLEANok" = "0" ]; then
+echo "ERROR: Clean level not recognized, nothing done"
+fi

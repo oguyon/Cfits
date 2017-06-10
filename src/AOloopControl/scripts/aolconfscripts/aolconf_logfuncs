@@ -68,6 +68,12 @@ echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 startstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
 
+startstreamlog aol${LOOPNUMBER}_multfb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+
+startstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+
 
 
 startstreamlog dm${DMindex}disp
@@ -150,6 +156,12 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 
 stopstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
+
+stopstreamlog aol${LOOPNUMBER}_multfb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+
+stopstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
 
 
 stopstreamlog dm${DMindex}disp
@@ -234,6 +246,11 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 killstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
 
+killstreamlog aol${LOOPNUMBER}_multfb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+
+killstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
 
 
 killstreamlog dm${DMindex}disp

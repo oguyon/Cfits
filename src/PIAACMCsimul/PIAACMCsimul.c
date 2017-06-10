@@ -13,6 +13,24 @@
 #include <sys/stat.h>
 #include <assert.h>
 
+#ifdef __MACH__
+#include <mach/mach_time.h>
+#define CLOCK_REALTIME 0
+#define CLOCK_MONOTONIC 0
+int clock_gettime(int clk_id, struct mach_timespec *t){
+    mach_timebase_info_data_t timebase;
+    mach_timebase_info(&timebase);
+    uint64_t time;
+    time = mach_absolute_time();
+    double nseconds = ((double)time * (double)timebase.numer)/((double)timebase.denom);
+    double seconds = ((double)time * (double)timebase.numer)/((double)timebase.denom * 1e9);
+    t->tv_sec = seconds;
+    t->tv_nsec = nseconds;
+    return 0;
+}
+#else
+#include <time.h>
+#endif
 
 // External libraries
 
@@ -181,6 +199,11 @@ static int PIAACMC_CIRC = 0; // 1 if PIAA optics must be circular symmetric
 // local function(s)
 static double f_evalmask (const gsl_vector *v, void *params);
 
+// for testing
+static char flogcomment[200];
+#define PIAASIMUL_LOGFUNC0 // top level
+//#define PIAASIMUL_LOGFUNC1 // lower level
+
 
 
 /* =============================================================================================== */
@@ -257,6 +280,10 @@ int_fast8_t PIAACMCsimul_run_cli(){
  
 int_fast8_t init_PIAACMCsimul()
 {
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+	
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "PIAACMC system simulation");
     data.NBmodule++;
@@ -321,6 +348,32 @@ int_fast8_t init_PIAACMCsimul()
 ///@}
 
 
+// first argument should be "PIAACMCsimul.fcall.log"
+// second argument should be __FUNCTION__
+// PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, "");
+void PIAACMCsimul_logFunctionCall(char *LogFileName, const char *FunctionName, long line, char *comments)
+{
+	FILE *fp;
+	time_t tnow;
+	struct tm *uttime;
+	struct timespec timenow;
+
+	char string[21];
+	
+	tnow = time(NULL);
+    uttime = gmtime(&tnow);
+	clock_gettime(CLOCK_REALTIME, &timenow);
+	
+	// add custom parameter
+	if(piaacmc == NULL)
+		sprintf(string, "NULL");
+	else
+		sprintf(string, "%20ld", piaacmc[0].focmNBzone);
+	
+	fp = fopen(LogFileName, "a");
+	fprintf(fp, "%02d:%02d:%02ld.%09ld  %10d  %40s %6ld   %20s %s\n", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec, getpid(), FunctionName, line, string, comments);
+	fclose(fp);
+}
 
 
 
@@ -389,6 +442,12 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
 
     int ret;
     char command[1000];
+
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     assert(index == 0);   // test that index is always 0
 
@@ -782,6 +841,7 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
         if(PIAACMC_save==1)
             fprintf(fp,"%02ld  %f    %s\n", elem, optsyst[0].elemZpos[elem], optsyst[0].name[elem]);
         //      fprintf(fp,"%02ld  %f    post-focal plane mask pupil\n", elem, optsyst[0].elemZpos[elem]);
+		printf("=========== FOCAL PLANE MASK : DONE ===========\n");
         elem++;
     }
 
@@ -917,6 +977,11 @@ void PIAACMCsimul_init( OPTPIAACMCDESIGN *design, long index, double TTxld, doub
  */
 void PIAACMCsimul_free( void )
 {
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "\n");
+	#endif
+
+	
     if(optsystinit ==1)
     {
         free(optsyst);
@@ -982,6 +1047,9 @@ int PIAAsimul_initpiaacmcconf(long piaacmctype, double fpmradld, double centobs0
     double coeff;
 
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     if(piaacmc == NULL)
@@ -2063,6 +2131,11 @@ int PIAAsimul_savepiaacmcconf(const char *dname)
     char fname[500];
     long i;
 
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
     
     sprintf(command, "mkdir -p %s", dname);
     r = system(command);
@@ -2142,6 +2215,9 @@ int PIAAsimul_loadpiaacmcconf(const char *dname)
     float tmpf;
     double tmplf;
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     sprintf(fname,"%s/piaacmcparams.conf", dname);
@@ -2287,6 +2363,13 @@ long PIAACMCsimul_mkFPM_zonemap(const char *IDname)
     long ID1;
 	
 	
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+	
+	printf("function PIAACMCsimul_mkFPM_zonemap\n");
+	fflush(stdout);
+
 
     sizearray = (long*) malloc(sizeof(long)*2);
     sizearray[0] = piaacmc[0].fpmarraysize;
@@ -2526,6 +2609,9 @@ long PIAACMCsimul_mkFPM_zonemap(const char *IDname)
     free(nbsector);
     free(nbsectorcumul);
 
+	printf("NUMBER OF ZONES = %ld\n", piaacmc[0].focmNBzone); //TEST
+
+
     return ID;
 }
 
@@ -2543,6 +2629,11 @@ long PIAACMCsimul_rings2sectors(const char *IDin_name, const char *sectfname, co
     long tmpl1, tmpl2;
     long zone;
     long arrayring[5000];
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     IDin = image_ID(IDin_name);
     nbring = data.image[IDin].md[0].size[0];
@@ -2615,6 +2706,17 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
 	double *cosphaarray;
 	double *sinphaarray;
 
+	char command[200];
+	time_t tnow;
+	struct tm *uttime;
+	struct timespec timenow;
+	int ret;
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
+
     size = optsyst[0].size;
     size2 = size*size;
     nblambda = optsyst[0].nblambda;
@@ -2647,6 +2749,8 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
     printf("piaacmc[0].fpmRad = %g m    fpscale[0] = %g    mode = %d\n", piaacmc[0].fpmRad, fpscale, mode);
 
     
+    printf("Allocate memory\n");
+	fflush(stdout);
     tarray = (double*) malloc(sizeof(double)*piaacmc[0].focmNBzone*nblambda);
     aarray = (double*) malloc(sizeof(double)*piaacmc[0].focmNBzone*nblambda);
     phaarray = (double*) malloc(sizeof(double)*piaacmc[0].focmNBzone*nblambda);
@@ -2654,18 +2758,46 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
     sinphaarray = (double*) malloc(sizeof(double)*piaacmc[0].focmNBzone*nblambda);
 			
 	// precompute zones phase shifts
+	printf("Precompute zones phase shifts  %ld zones, %ld wavelengths\n", piaacmc[0].focmNBzone, nblambda);
+	fflush(stdout);
+	
+
+
+	
+	
+	
 	for(k=0; k<nblambda; k++)
-	for(zi=0;zi<piaacmc[0].focmNBzone;zi++)
+		for(zi=0;zi<piaacmc[0].focmNBzone;zi++)
 		{
+			printf("lamdba %3ld  zone %4ld   ", k, zi);
+			fflush(stdout);
+	
+			printf("  %3ld %3ld -> %4ld/%4ld : ", piaacmc[0].zonezID, zi, piaacmc[0].focmNBzone*k+zi, piaacmc[0].focmNBzone*nblambda);
+			fflush(stdout);
 			tarray[piaacmc[0].focmNBzone*k+zi] = data.image[piaacmc[0].zonezID].array.D[zi];
-			aarray[piaacmc[0].focmNBzone*k+zi] = data.image[piaacmc[0].zoneaID].array.D[zi];
+			printf("%8.4f   ", tarray[piaacmc[0].focmNBzone*k+zi]);
+			fflush(stdout);
+			
+			printf("  %3ld %3ld -> %4ld/%4ld : ", piaacmc[0].zoneaID, zi, piaacmc[0].focmNBzone*k+zi, piaacmc[0].focmNBzone*nblambda);
+			fflush(stdout);			aarray[piaacmc[0].focmNBzone*k+zi] = data.image[piaacmc[0].zoneaID].array.D[zi];
+			printf("%8.4f   ", aarray[piaacmc[0].focmNBzone*k+zi]);
+			fflush(stdout);			
+			
 			phaarray[piaacmc[0].focmNBzone*k+zi] = OPTICSMATERIALS_pha_lambda(piaacmc[0].fpmmaterial_code, tarray[piaacmc[0].focmNBzone*k+zi], optsyst[0].lambdaarray[k]);
+			printf("  %8.4f  ", phaarray[piaacmc[0].focmNBzone*k+zi]);
+			fflush(stdout);		
+
 			cosphaarray[piaacmc[0].focmNBzone*k+zi] = cosf(phaarray[piaacmc[0].focmNBzone*k+zi]);
 			sinphaarray[piaacmc[0].focmNBzone*k+zi] = sinf(phaarray[piaacmc[0].focmNBzone*k+zi]);
+			
+			printf("\n");
+			fflush(stdout);
 		}
 
 
-
+	printf("Entering parallel loop\n");
+	fflush(stdout);
+	
 # ifdef HAVE_LIBGOMP
     #pragma omp parallel default(shared) private(ii, jj, x, y, r, retmp, imtmp, iii, jjj, ii1, jj1, zi, t, a, fpscale, amp, pha, cospha, sinpha, ttmp, zonetmp)
     {
@@ -2856,7 +2988,8 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
     }
 # endif
 
-
+    printf("===================== focal plane mask  : Done\n");
+    fflush(stdout);
       
         
         
@@ -2893,7 +3026,6 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
         save_fits("tfpmp", "!tmp_fpmCA_pha.fits");
         delete_image_ID("tfpma");
         delete_image_ID("tfpmp");
-      //  exit(0);//TEST
     }
 
     delete_image_ID("fpmsag");
@@ -2942,6 +3074,10 @@ uint_fast8_t PIAACMCsimul_load2DRadialApodization(const char *IDapo_name, float 
     int ret;
     char command[1000];
     int debug = 0;
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     sizem = (long) (beamradpix*2);
@@ -3067,6 +3203,11 @@ int PIAACMCsimul_init_geomPIAA_rad(const char *IDapofit_name)
     double r0c, r1c, dx, dy, dist, y3, r0n, slope, dz;
 
     char fname[500];
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     pup0 = (double*) malloc(sizeof(double)*piaacmc[0].NBradpts);
     pup1 = (double*) malloc(sizeof(double)*piaacmc[0].NBradpts);
@@ -3439,6 +3580,10 @@ int PIAACMCsimul_mkPIAAMshapes_from_RadSag(const char *fname, const char *ID_PIA
     double beamradpix;
     int ret;
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     size = piaacmc[0].size;
     beamradpix = piaacmc[0].beamrad/piaacmc[0].pixscale;
@@ -3567,6 +3712,11 @@ int PIAACMCsimul_makePIAAshapes(OPTPIAACMCDESIGN *design, long index)
     double sag2opd_coeff0;
     long k;
     FILE *fpri;
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     size = piaacmc[0].size;
 
@@ -3829,6 +3979,10 @@ long PIAAsimul_mkSimpleLyotStop(const char *ID_name, float rin, float rout)
     long ID;
     float r;
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     size = piaacmc[0].size;
     size2 = size*size;
@@ -3871,6 +4025,9 @@ long PIAACMCsimul_mkLyotMask(const char *IDincoh_name, const char *IDmc_name, co
     float sigma = 4.0;
     int filter_size = 10;
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     NBiter = 100;
@@ -4011,6 +4168,11 @@ long PIAACMCsimul_optimizeLyotStop_OAmin(const char *IDincohc_name)
     double tmpv;
     long NBz;
     
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
     
     IDincohc = image_ID(IDincohc_name);
 
@@ -4112,6 +4274,11 @@ double PIAACMCsimul_optimizeLyotStop(const char *IDamp_name, const char *IDpha_n
 
     FILE *fp;
     double alpha = 1.01; // norm alpha used to identify best plane
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
 
     sigma = 0.01*piaacmc[0].beamrad/piaacmc[0].pixscale;
@@ -4422,6 +4589,9 @@ double PIAACMCsimul_achromFPMsol_eval(double *fpmresp_array, double *zonez_array
     // indexing :  k*(data.image[piaacmc[0].zonezID].md[0].size[0]+1)*vsize + mz*vsize + ii
 
 
+	#ifdef PIAASIMUL_LOGFUNC1
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     for(evalk=0; evalk<nbl; evalk++)
@@ -4510,6 +4680,9 @@ double PIAACMCsimul_achromFPMsol_eval_zonezderivative(long zone, double *fpmresp
     //
     // indexing :  k*(data.image[piaacmc[0].zonezID].md[0].size[0]+1)*vsize + mz*vsize + ii
 
+	#ifdef PIAASIMUL_LOGFUNC1
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     for(evalk=0; evalk<nbl; evalk++) // lambda loop
@@ -4563,6 +4736,12 @@ static double f_evalmask (const gsl_vector *v, void *params)
     double value;
     long k;
 
+
+	#ifdef PIAASIMUL_LOGFUNC1
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
+
     for(k=0; k<data.image[piaacmc[0].zonezID].md[0].size[0]; k++)
         zonez_array[k] = gsl_vector_get(v, k);
 
@@ -4588,6 +4767,11 @@ long PIAACMC_FPMresp_rmzones(const char *FPMresp_in_name, const char *FPMresp_ou
     long ysize = 0;
     long zsize = 0;
     long ysize1 = 0;
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
 
     ID = image_ID(FPMresp_in_name);
     xsize = data.image[ID].md[0].size[0];
@@ -4628,6 +4812,10 @@ long PIAACMC_FPMresp_resample(const char *FPMresp_in_name, const char *FPMresp_o
     long kk1xi;
     double kk1x;
     double re, im, re0, im0, re1, im1;
+
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 
 
     ID = image_ID(FPMresp_in_name);
@@ -4740,6 +4928,9 @@ long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, l
 	FILE *fp;
 	FILE *fpout;
 	
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
 	
 	
 	IDin = image_ID(FPMsag_name);
@@ -5073,6 +5264,10 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 	long jj1;
 
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		sprintf(flogcomment, "%s %ld", confindex, mode);
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, flogcomment);
+	#endif
 
 
     // Create status shared variable
@@ -5090,7 +5285,7 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 
 
 
-    piaacmc = NULL; // set the pointer to the piaacmc structure to null
+    //piaacmc = NULL; // set the pointer to the piaacmc structure to null
 
     // if the optical system pointer is empty, create an empty version
     if(optsyst==NULL)
@@ -5106,6 +5301,9 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
     // set the result directories
     sprintf(piaacmcconfdir, "%s", confindex);
     sprintf(data.SAVEDIR, "%s", piaacmcconfdir);
+
+
+
 
 
 
@@ -5126,6 +5324,7 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
     sprintf(command, "echo \"%03ld     $(date)\" >> ./log/PIAACMC_mode_log.txt", mode);
     ret = system(command);
     printf("command = %s\n", command);
+
 
 
     // set the name of the stopfile
@@ -8211,6 +8410,11 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 	long naxis;
 	
 
+	#ifdef PIAASIMUL_LOGFUNC1
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
+
     // size of one side of each image array
     size = piaacmc[0].size;
     // number of pixels in each image
@@ -8775,6 +8979,11 @@ long PIAACMCsimul_CA2propCubeInt(const char *IDamp_name, const char *IDpha_name,
     long IDintg, IDintgg;
 
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
+
     printf("PIAACMCsimul_CA2propCubeInt   : %s %s %f %f %ld %s\n", IDamp_name, IDpha_name, zmin, zmax, NBz, IDout_name);
     fflush(stdout);
     
@@ -8869,6 +9078,11 @@ int PIAACMCsimul_run(const char *confindex, long mode)
     
     double searchtime = 3600.0*10.0; // [second] default 10 hours
 
+	#ifdef PIAASIMUL_LOGFUNC0
+		PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, __LINE__, "");
+	#endif
+
+    piaacmc = NULL; // set the pointer to the piaacmc structure to null
 
     IDbestsol = -1; // data array index of current best solution
 
@@ -8929,8 +9143,12 @@ int PIAACMCsimul_run(const char *confindex, long mode)
         i = 0;
 
         // while not exceed searchtime or no stop file
+		ret = system("touch start.loop.ttxt");
         while((loopOK==1)&&(i<1000000))
         {
+			sprintf(command, "touch start.iter%05ld.ttxt", i);
+			ret = system(command);
+			
             // read in the real searchtime nominally set by the bash script
             sprintf(fname, "searchtime.txt");
             fp = fopen(fname,"r");
@@ -8940,6 +9158,9 @@ int PIAACMCsimul_run(const char *confindex, long mode)
                 fclose(fp);
             }
 
+
+			sprintf(command, "touch step00.iter%05ld.ttxt", i);
+			ret = system(command);
 
             loopin = 1; // loop has been initialized
             if((i<1))
@@ -8986,6 +9207,8 @@ int PIAACMCsimul_run(const char *confindex, long mode)
             else
                 zeroST = 0;
 
+			sprintf(command, "touch step01.iter%05ld.ttxt", i);
+			ret = system(command);
 
             // zeroST = 3 => starting point is best solution found so far.  Same as zeroST=2
             // this flags that it's this value 'cause it's third iteration
@@ -9039,7 +9262,8 @@ int PIAACMCsimul_run(const char *confindex, long mode)
 
             }
             
-            
+            sprintf(command, "touch step02.iter%05ld.ttxt", i);
+			ret = system(command);
             
 
             // actually do the optmization
@@ -9051,6 +9275,8 @@ int PIAACMCsimul_run(const char *confindex, long mode)
 			printf("======================= sag0 = %g m  -> %g rad\n", sag0, (double) OPTICSMATERIALS_pha_lambda(piaacmc[0].fpmmaterial_code, sag0, (double) piaacmc[0].lambda));
 			
 			
+
+
 
             // if there is no best _solution_, load the current solution
             if(IDbestsol==-1)
@@ -9064,6 +9290,10 @@ int PIAACMCsimul_run(const char *confindex, long mode)
 
             // set the name of the stopfile
             sprintf(stopfile, "%s/stoploop13.txt", piaacmcconfdir);
+
+			sprintf(command, "touch step03.iter%05ld.ttxt", i);
+			ret = system(command);
+
 
             // on first iteration load the best _value_ if it exists
             if(i==0)
@@ -9080,12 +9310,17 @@ int PIAACMCsimul_run(const char *confindex, long mode)
                 }
             }
 
+			sprintf(command, "touch step04.iter%05ld.ttxt", i);
+			ret = system(command);
 
             printf("\n\n\n\n======= val = %g [%g]\n", PIAACMCSIMUL_VAL, bestval);
             fflush(stdout);
 
             if(PIAACMCSIMUL_VAL<bestval) // PIAACMCSIMUL_VAL was set in PIAACMCsimul_exec()
             {
+				sprintf(command, "touch step05.iter%05ld.ttxt", i);
+				ret = system(command);
+			
                 // we have a better solution!
                 bOK = 1;
                 bestval = PIAACMCSIMUL_VAL; // record it
@@ -9127,6 +9362,9 @@ int PIAACMCsimul_run(const char *confindex, long mode)
                 // advertise the existence of new best solution via file signaling.  Currently no listeners?
                 sprintf(command, "touch %s/newbestsol.txt", piaacmcconfdir);
                 r = system(command);
+            
+				sprintf(command, "touch step06.iter%05ld.ttxt", i);
+				ret = system(command);
             }
 
             // add current solution (possibly not best) to the mode13...opt.txt file
@@ -9141,7 +9379,9 @@ int PIAACMCsimul_run(const char *confindex, long mode)
                 fOK = 1;
             }
 
-
+			sprintf(command, "touch step07.iter%05ld.ttxt", i);
+			ret = system(command);
+			
             // open mode13...opt.txt for adding and write current value
             fp = fopen(fname, "a");
             fprintf(fp,"%10ld %20.5g   %16.5g -> %16.5g   (%16.5g) %d %5ld/%5ld [%12g %2d %12g %12g  %12g]", i, MODampl, PIAACMCSIMUL_VALREF, PIAACMCSIMUL_VAL, bestval, zeroST, cnt0, cnt00, CnormFactor, piaacmc[0].nblambda, optsyst[0].flux[0], SCORINGTOTAL, PIAACMCSIMUL_VAL0);
@@ -9161,12 +9401,15 @@ int PIAACMCsimul_run(const char *confindex, long mode)
             {
                 printf("FILE \"%s\" found\n", stopfile);
                 loopOK = 0;
+                ret = system("touch stop.stopfile.txt");
                 sprintf(command, "rm %s", stopfile);
                 ret = system(command);
             }
             else
                 printf("File \"%s\" not found\n", stopfile);
 
+			sprintf(command, "touch step08.iter%05ld.ttxt", i);
+			ret = system(command);
 
             gettimeofday(&end, NULL);
 
@@ -9180,9 +9423,18 @@ int PIAACMCsimul_run(const char *confindex, long mode)
             fprintf(fp, "%12.3f    %12.3f\n", 1.0e-6*micros_used, searchtime);
             fclose(fp);
 
+			sprintf(command, "touch step09.iter%05ld.ttxt", i);
+			ret = system(command);
+
             // check to see if time has run out
             if(micros_used > 1000000.0*searchtime) // searchtime is in seconds
-                loopOK = 0; // stop loop flag
+            {    
+				loopOK = 0; // stop loop flag
+				ret = system("touch stop.time_elapsed.ttxt");
+			}
+			
+			sprintf(command, "touch step10.iter%05ld.ttxt", i);
+			ret = system(command);
         }
 
 

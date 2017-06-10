@@ -230,10 +230,45 @@ logDMmodeLIMITstat="0"
 fi
 if [ "${logDMmodeLIMITstat}" = "0" ];
 then
-menuitems+=( "ldmmodelimit1" "START logging aol${LOOPNUMBER}_DMmode_LIMIT           DM mode limit" )
+menuitems+=( "ldmmodelimit1" "START logging aol${LOOPNUMBER}_DMmode_LIMIT         DM mode limit" )
 else
 menuitems+=( "ldmmodelimit0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_LIMIT\Zn          DM mode limit\Zn" )
 fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+logmultfbstat=$( cat $file )
+if [[ -f "$file" && ( "$logmultfbstat" = "0" || "$logmultfbstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmultfbstat="0"
+fi
+if [ "${logmultfstat}" = "0" ];
+then
+menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb                 Block mult factor" )
+else
+menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn                 Block mult factor\Zn" )
+fi
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+logDMmodeMULTFstat=$( cat $file )
+if [[ -f "$file" && ( "$logDMmodeMULTFstat" = "0" || "$logDMmodeMULTFstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logDMmodeMULTFstat="0"
+fi
+if [ "${logDMmodeMULTFstat}" = "0" ];
+then
+menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF            DM mode mult factor" )
+else
+menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn           DM mode mult factor\Zn" )
+fi
+
 
 
 
@@ -694,6 +729,31 @@ menurecord_default="ldmmodelimit0"
 stopstreamlog aol${LOOPNUMBER}_DMmode_LIMIT
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
 menurecord_default="ldmmodelimit1"
+;;
+
+
+
+    lmultfb1)
+startstreamlog aol${LOOPNUMBER}_multfb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+menurecord_default="lmultfb0"
+;;
+    lmultfb0)
+stopstreamlog aol${LOOPNUMBER}_multfb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
+menurecord_default="lmultfb1"
+;;
+
+
+    ldmmodemultf1)
+startstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+menurecord_default="ldmmodemultf0"
+;;
+    ldmmodemultf0)
+stopstreamlog aol${LOOPNUMBER}_DMmode_MULTF
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
+menurecord_default="ldmmodemultf1"
 ;;
 
 

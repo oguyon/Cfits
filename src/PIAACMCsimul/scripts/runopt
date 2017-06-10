@@ -381,6 +381,7 @@ fi
 
 # compute polychromatic PSF for extended source
 
+# 0.01 l/D
 if [ $computecontrast -gt 1 ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -389,7 +390,7 @@ echo "$datestr  ./sim 721 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LS
 checkerrorstatus
 fi
 
-
+# 0.03 l/D
 if [ $computecontrast -eq 3 ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -398,7 +399,7 @@ echo "$datestr  ./sim 722 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LS
 checkerrorstatus
 fi
 
-
+# 0.001 l/D
 if [ $computecontrast -eq 3 ]
 then
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -406,6 +407,30 @@ echo "$datestr  ./sim 723 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LS
 ./sim 723 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
 checkerrorstatus
 fi
+
+
+# 0.003 l/D
+if [ $computecontrast -eq 3 ]
+then
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  ./sim 724 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index" >> cmdlog.txt
+./sim 724 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+checkerrorstatus
+fi
+
+
+# 0.0001 l/D
+if [ $computecontrast -eq 3 ]
+then
+datestr=`date -u +%Y-%m-%d_%H:%M:%S`
+echo "$datestr  ./sim 725 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index" >> cmdlog.txt
+./sim 725 $pscale $coin $coout $fpmrad $lambda $PIAAmaterial $LStransm $NBlyotstop $mlambda $mlambdaB $NBrings $maskradld $fpmminsag $fpmmaxsag $fpmregsag_coeff $fpmregsag_alpha $fpmccnbr $fpmccz $fpmocradld $fpmocz $ssize $extmode $fpmmaterial $index
+checkerrorstatus
+fi
+
+
+
+
 
 
 if [ $computetransmcurve -eq 1 ]

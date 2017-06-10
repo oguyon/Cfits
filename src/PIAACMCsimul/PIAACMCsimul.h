@@ -136,6 +136,8 @@ typedef struct {
 
 
 
+
+
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name 1. INITIALIZATION, configurations
@@ -152,6 +154,10 @@ typedef struct {
  * 
  */
 int_fast8_t init_PIAACMCsimul();
+
+
+void PIAACMCsimul_logFunctionCall(char *LogFileName, const char *FunctionName, long line, char *comments);
+
 
 
 /**
